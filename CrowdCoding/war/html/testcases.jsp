@@ -1,0 +1,72 @@
+<div id="microtask">
+
+	<script>
+		
+		var nextTestCase = 2;
+	
+	    $(document).ready(function()
+	    {
+	    	$("#addTestCase").click(function()
+	    	{
+				$("#testCases").append(
+					'<span id="testCase' + nextTestCase + '">' +
+						'<input type="text" size="100" value="Describe a test case"/>' +				
+						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">x</a>' +	
+					'</span>');		
+				return false;
+	    	});
+	    	
+	    	$("#addTestCase").click();
+	    	
+			$('#testCasesForm').submit(function() {
+				var formData = collectFormData();
+				$.ajax({
+				    contentType: 'application/json',
+				    data: JSON.stringify( formData ),
+				    dataType: 'json',
+				    type: 'POST',
+				    url: '/submit/testcases'
+				});
+								
+				return false;
+			});
+		});
+	
+		function collectFormData()
+		{
+			var formData = { tests: [] };			
+		    $("span[id^=testCase]").each(function(){	    		    	
+		    	formData.tests.push($(this).find("input").eq(0).val());
+		    });
+		    return formData;
+		}	    
+	    
+		function deleteTestCase(testCase)
+		{
+			$(testCase).remove();
+		}
+		
+	    $("input[type=text]").focus(function(){
+	        // Select field contents
+	        this.select();
+	    });
+	</script>
+
+
+
+	<p><h3>This is the test case phase. Write some single line test cases for the given description. 
+	These test cases will be used to create unit tests, so be descriptive! Try to think of some errors that 
+	the given function may have trouble with.</h3>
+
+	<jsp:include page="elements/methodDescription.jsp" />
+	<BR>
+	<BR>
+
+	<form id="testCasesForm" action="/submit/testCases">
+		<div id="testCases"></div>
+		<button id="addTestCase">Add test case</button>				
+		<BR><BR><input type="submit" value="Submit">
+	</form>
+
+
+</div>
