@@ -1,36 +1,38 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.google.appengine.api.users.User" %>
+<%@ page import="com.google.appengine.api.users.UserService" %>
+<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
+<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Worker" %>
+<%@ page import="com.crowdcoding.microtasks.WriteUserStory" %>
+
+<%
+    Project project = Project.Create();
+    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
+    WriteUserStory microtask = (WriteUserStory) crowdUser.getMicrotask();
+%>
+
+
 <div id="microtask">
-
 	<script>
-
       $('document').ready(function(){
 		  $('#userstoryForm').submit(function() {
-			  
-			  	
-			  	
-				$.post('/submit/userstory', serializeValues(["userStory"]), function(data) {				  
-				});
-								
-				
-			  	return false;
+				var formData = { id: <%= microtask.getID() %>, text: $("#userStory").val() }
+				$.ajax({
+				    contentType: 'application/json',
+				    data: JSON.stringify( formData ),
+				    dataType: 'json',
+				    type: 'POST',
+				    url: '/submit/userstory'
+				}).done( function (data) 
+						{ alert('request succeeded');
+						    $('#contentPane').load('/fetch');
+						});
+
+			  	return false; 	// disable default submit behavior
 			});
       });
-      
-      
-      function serializeValues(names)
-      {
-  	  	  var obj = {};    	  
-    	  $.each(names, function (index, name) {
-    		  obj[name] = JSON.stringify($('#' + name).val());
-    	  });
-    	  
-    	  return obj;
-       }
-      
-
-      
 	</script>
-
-
 
 
 	<p><h3>This is the user story phase. Have a program you would like to create in mind, and write the 

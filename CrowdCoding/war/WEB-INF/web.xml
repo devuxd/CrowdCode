@@ -34,7 +34,7 @@
 	
 	<servlet>
 		<servlet-name>Test</servlet-name>
-		<servlet-class>com.crowdcoding.TestServlet</servlet-class>
+		<servlet-class>com.crowdcoding.servlets.TestServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Test</servlet-name>
@@ -43,12 +43,22 @@
 	
 	<servlet>
 		<servlet-name>CrowdCoding</servlet-name>
-		<servlet-class>com.crowdcoding.CrowdCodingServlet</servlet-class>
+		<servlet-class>com.crowdcoding.servlets.CrowdCodingServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CrowdCoding</servlet-name>
 		<url-pattern>/crowdcoding</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>FetchMicrotask</servlet-name>
+		<servlet-class>com.crowdcoding.servlets.FetchMicrotaskServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FetchMicrotask</servlet-name>
+		<url-pattern>/fetch</url-pattern>
+	</servlet-mapping>
+
 
 	<welcome-file-list>
 		<welcome-file>crowdcoding</welcome-file>
@@ -65,4 +75,12 @@
   <servlet-name>SystemServiceServlet</servlet-name>
   <url-pattern>/_ah/spi/*</url-pattern>
  </servlet-mapping>
+	<filter>
+	        <filter-name>ObjectifyFilter</filter-name>
+	        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	        <filter-name>ObjectifyFilter</filter-name>
+	        <url-pattern>/*</url-pattern>
+	</filter-mapping>
 </web-app>

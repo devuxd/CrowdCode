@@ -1,10 +1,10 @@
-package com.crowdcoding.model;
+package com.crowdcoding.dto;
 
 import java.util.List;
 
-public class Entrypoint 
+public class EntrypointDTO 
 {
-	public List<Parameter> parameters;
+	public List<ParameterDTO> parameters;
 	public String name;
 	public String event;
 	

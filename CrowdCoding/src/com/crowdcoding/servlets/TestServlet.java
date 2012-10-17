@@ -1,11 +1,12 @@
-package com.crowdcoding;
+package com.crowdcoding.servlets;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.crowdcoding.model.UserStory;
+import com.crowdcoding.artifacts.Project;
+import com.crowdcoding.dto.UserStoryDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.channel.ChannelMessage;
 import com.google.appengine.api.channel.ChannelService;
@@ -18,6 +19,8 @@ import com.google.appengine.api.users.UserServiceFactory;
 public class TestServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException 
 	{
+		Project project = Project.Create();
+		
 		//System.out.println(req.getParameter("name"));
 		
         /*UserService userService = UserServiceFactory.getUserService();
@@ -27,7 +30,7 @@ public class TestServlet extends HttpServlet {
 		
 		
 		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-		UserStory test = mapper.readValue("{ \"userStory\" : \"This is a user story\" }", UserStory.class);
+		UserStoryDTO test = mapper.readValue("{ \"userStory\" : \"This is a user story\" }", UserStoryDTO.class);
 		System.out.println(test.toString());		
 	}
 }

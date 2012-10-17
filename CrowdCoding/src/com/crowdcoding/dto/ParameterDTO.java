@@ -1,6 +1,6 @@
-package com.crowdcoding.model;
+package com.crowdcoding.dto;
 
-public class Parameter 
+public class ParameterDTO 
 {
 	public String name;
 	public String type;

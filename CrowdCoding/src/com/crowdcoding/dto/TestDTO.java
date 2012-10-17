@@ -1,7 +1,11 @@
-package com.crowdcoding.model;
+package com.crowdcoding.dto;
 
-public class Test {
+public class TestDTO 
+{
 
 	// Test change
+	
+	
+	
 	
 }

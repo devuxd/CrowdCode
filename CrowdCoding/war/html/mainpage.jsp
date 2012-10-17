@@ -16,30 +16,23 @@
 	// TODO: should have a better channel key that is not the email.
 	// TODO: only want to do this the first time. Not on any subsequent page requests....
     String token = channelService.createChannel(user.toString());
-
-
-
-
 %>
-
-
-
 
 
 <html>
 <head>
 	<meta charset="UTF-8">
 	<title>CrowdCoding</title>
-	<link rel="stylesheet" href="styles.css" type="text/css" />
-	<link rel="stylesheet" href="codemirror.css" type="text/css" />
-	<link rel="stylesheet" href="vibrant-ink.css" type="text/css" />
-  	<script src="jquery.min.js"></script> 
+	<link rel="stylesheet" href="/html/styles.css" type="text/css" />
+	<link rel="stylesheet" href="/html/codemirror.css" type="text/css" />
+	<link rel="stylesheet" href="/html/vibrant-ink.css" type="text/css" />
+  	<script src="/html/jquery.min.js"></script> 
 <!--	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script> -->
 	<script src="/_ah/channel/jsapi"></script>
 
 	<script>
 		$(document).ready(function(){
-			$('#contentPane').load('testcases.jsp');
+			$('#contentPane').load('entrypoints.html');            // '/fetch');
 			
 			var channel = new goog.appengine.Channel('{{<%= token %>}}');			
 			var socket = channel.open();
@@ -49,8 +42,6 @@
 			socket.onmessage = function(message) {
 				alert(message.data);				
 			}
-			$.post('/test');
-			
 		 });
 	</script>
 </head>
@@ -92,17 +83,14 @@
 			</div>
 		</div>
 		
-	</div>
-	
+	</div>	
 		<div id = "footer">
 			<table><tr>
-				<td><p>Editor by daveho@Github</p></td>
 				<td><p><a href="">Sign Out</a></p></td>	
 				<td><p><a href="">Preferences</a></p></td>	
-				<td><p>You are signed in as <%= user.getNickname() %></p></td>
+				<td><p><a href="">This is more text.</a></p></td>
+				<td><p><a href="">And even more text.</a></p></td>		
 			</tr></table>
 		</div>
-
-
 </body>
 </html>

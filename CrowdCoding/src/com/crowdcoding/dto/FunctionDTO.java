@@ -1,9 +1,9 @@
-package com.crowdcoding.model;
+package com.crowdcoding.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Function 
+public class FunctionDTO 
 {
 	public String code = "";
 	public List<String> tests = new ArrayList<String>();

@@ -1,16 +1,12 @@
-package com.crowdcoding.model;
+package com.crowdcoding.dto;
 
-public class UserStory 
+public class UserStoryDTO 
 {
-	private String userStory;
-	
-	public void setUserStory(String string)
-	{
-		userStory = string;		
-	}
+	public String text;
+	public long id;  // id for associated microtask
 	
 	public String toString()
 	{
-		return userStory;
+		return text;
 	}	
 }
