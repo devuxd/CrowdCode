@@ -4,6 +4,10 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Worker;
 import com.crowdcoding.microtasks.Microtask;
+import com.crowdcoding.microtasks.SketchFunction;
+import com.crowdcoding.microtasks.WriteEntrypoint;
+import com.crowdcoding.microtasks.WriteTest;
+import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.microtasks.WriteUserStory;
 import com.crowdcoding.util.IDGenerator;
 import com.googlecode.objectify.ObjectifyService;
@@ -33,6 +37,10 @@ public class Project
 		ObjectifyService.register(Test.class);
 		ObjectifyService.register(UserStory.class);
 		ObjectifyService.register(Microtask.class);
+		ObjectifyService.register(SketchFunction.class);
+		ObjectifyService.register(WriteEntrypoint.class);
+		ObjectifyService.register(WriteTest.class);
+		ObjectifyService.register(WriteTestCases.class);
 		ObjectifyService.register(WriteUserStory.class);
 	}
 		
@@ -49,9 +57,8 @@ public class Project
 		// Setup the project to be ready 
 		idgenerator = new IDGenerator(false);
 		
-		// Create two initial artifacts to get work started.
-		UserStory userStory1 = new UserStory(this);
-		UserStory userStory2 = new UserStory(this);
+		// Create an initial artifact to get work started.
+		UserStory userStory = new UserStory(this);
 		
 		ofy().save().entity(this).now();
 	}
@@ -67,4 +74,13 @@ public class Project
 		return project;
 	}	
 	
+	public long generateID(String tag)
+	{
+		long id = idgenerator.generateID(tag);
+		
+		// State of embedded object (id generator) changed, so state must be saved.
+		ofy().save().entity(this).now();
+		
+		return id;		
+	}	
 }

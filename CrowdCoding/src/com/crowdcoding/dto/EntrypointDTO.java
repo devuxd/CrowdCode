@@ -2,7 +2,7 @@ package com.crowdcoding.dto;
 
 import java.util.List;
 
-public class EntrypointDTO 
+public class EntrypointDTO extends MicrotaskDTO
 {
 	public List<ParameterDTO> parameters;
 	public String name;

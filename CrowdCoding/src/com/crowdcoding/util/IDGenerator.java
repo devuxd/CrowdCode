@@ -13,31 +13,28 @@ import com.googlecode.objectify.annotation.Serialize;
 @Embed
 public class IDGenerator 
 {
-	@Ignore public static IDGenerator Instance;
-	@Serialize private HashMap<Class, Long> nextIDs;
+	@Serialize private HashMap<String, Long> nextIDs;
 
 	// Default constructor for deserialization
 	private IDGenerator()
 	{		
-		// Since this field is not persisted (statics are not persisted), manually rebuild it.
-		Instance = this;
 	}
 	
 	// Initialization constructor. Should be called exactly once per lifecycle of a project. Parameter is ignored.
 	public IDGenerator(boolean flag)
 	{
-		nextIDs = new HashMap<Class, Long>();
-		Instance = this;
+		nextIDs = new HashMap<String, Long>();
 	}
 	
 	// Generates a new ID for the object obj. Does not check if obj has already been allocated an id.
-	public long generateID(Object obj)
+	public long generateID(String tag)
 	{
-		Long id = nextIDs.get(obj.getClass());
+		Long id = nextIDs.get(tag);
 		if (id == null)			
 			id = (long) 1;		
 
-		nextIDs.put(obj.getClass(), id + 1);
+		nextIDs.put(tag, id + 1);
+		
 		return id;
 	}	
 }

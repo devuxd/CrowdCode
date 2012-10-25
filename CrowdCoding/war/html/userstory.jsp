@@ -17,17 +17,14 @@
 	<script>
       $('document').ready(function(){
 		  $('#userstoryForm').submit(function() {
-				var formData = { id: <%= microtask.getID() %>, text: $("#userStory").val() }
+				var formData = { text: $("#userStory").val() }
 				$.ajax({
 				    contentType: 'application/json',
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit/userstory'
-				}).done( function (data) 
-						{ alert('request succeeded');
-						    $('#contentPane').load('/fetch');
-						});
+				    url: '/submit?type=writeuserstory&id=<%= microtask.getID() %>',
+				}).done( function (data) { loadMicrotask();	});
 
 			  	return false; 	// disable default submit behavior
 			});

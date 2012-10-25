@@ -20,10 +20,10 @@ public /*abstract*/ class Artifact
 	{		
 	}
 	
-	// Constructor for initialization. Flag is ignored.
-	protected Artifact(boolean flag)
+	// Constructor for initialization. 
+	protected Artifact(Project project)
 	{
-		id = IDGenerator.Instance.generateID(this);
+		id = project.generateID("artifact");
 	}
 		
 	public Key<? extends Artifact> getKey()

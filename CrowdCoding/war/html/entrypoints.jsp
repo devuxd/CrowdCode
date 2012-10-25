@@ -1,3 +1,18 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.google.appengine.api.users.User" %>
+<%@ page import="com.google.appengine.api.users.UserService" %>
+<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
+<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Worker" %>
+<%@ page import="com.crowdcoding.microtasks.WriteEntrypoint" %>
+
+<%
+    Project project = Project.Create();
+    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
+    WriteEntrypoint microtask = (WriteEntrypoint) crowdUser.getMicrotask();
+%>
+
+
 <div id="microtask">
 	<script>
 		var nextParam = 2;
@@ -24,8 +39,8 @@
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit/entrypoints'
-				});
+				    url: '/submit?type=writeentrypoint&id=<%= microtask.getID() %>'
+				}).done( function (data) { loadMicrotask();	});
 								
 				return false;
 			});
@@ -66,7 +81,7 @@
 
 	
 
-	<form id="entrypointsForm" action="/submit/entrypoints">
+	<form id="entrypointsForm" action="">
 		<input type="text" size="25" id="event" value="$(document).ready(" class="identifierInput">
 		function 
 		<input type="text" size="20" id="name" value = "functionName" class="identifierInput">(

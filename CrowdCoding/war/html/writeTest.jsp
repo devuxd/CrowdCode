@@ -4,12 +4,12 @@
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.SketchFunction" %>
+<%@ page import="com.crowdcoding.microtasks.WriteTest" %>
 
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
-    SketchFunction microtask = (SketchFunction) crowdUser.getMicrotask();
+    WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
 %>
 
 
@@ -21,14 +21,14 @@
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
 	
-		$('#sketchForm').submit(function() {
+		$('#testForm').submit(function() {
 			var formData = { code: $("#code").val() };
 			$.ajax({
 			    contentType: 'application/json',
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=sketchfunction&id=<%= microtask.getID() %>'
+			    url: '/submit?type=writetest&id=<%= microtask.getID() %>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;
@@ -36,13 +36,10 @@
 	</script>
 
 
-	<p><h3> This is the sketch phase. Write the method that takes the parameters given. and 
-	returns what the description asks for. Use the pound symbol '#' to denote a line of pseudocode, 
-	comment with //. If your method is not done, make sure one of your lines starts with # so it is 
-	not flagged as complete! </h3>
+	<p><h3> Write a unit test for the following method: </h3>
 	
 	
-	<form id="sketchForm" action="">
+	<form id="testForm" action="">
 
 
 

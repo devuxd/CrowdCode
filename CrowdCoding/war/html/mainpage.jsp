@@ -24,15 +24,15 @@
 	<meta charset="UTF-8">
 	<title>CrowdCoding</title>
 	<link rel="stylesheet" href="/html/styles.css" type="text/css" />
-	<link rel="stylesheet" href="/html/codemirror.css" type="text/css" />
-	<link rel="stylesheet" href="/html/vibrant-ink.css" type="text/css" />
-  	<script src="/html/jquery.min.js"></script> 
+	<link rel="stylesheet" href="/include/codemirror.css" type="text/css" />
+	<link rel="stylesheet" href="/include/vibrant-ink.css" type="text/css" />
+  	<script src="/include/jquery.min.js"></script> 
 <!--	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script> -->
 	<script src="/_ah/channel/jsapi"></script>
 
 	<script>
 		$(document).ready(function(){
-			$('#contentPane').load('entrypoints.html');            // '/fetch');
+			loadMicrotask();
 			
 			var channel = new goog.appengine.Channel('{{<%= token %>}}');			
 			var socket = channel.open();
@@ -43,6 +43,11 @@
 				alert(message.data);				
 			}
 		 });
+		
+		function loadMicrotask()
+		{
+			$('#contentPane').load('/fetch');		
+		}
 	</script>
 </head>
 

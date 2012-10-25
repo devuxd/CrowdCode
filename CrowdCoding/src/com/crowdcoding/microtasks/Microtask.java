@@ -2,13 +2,18 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.io.IOException;
+
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Project;
-import com.crowdcoding.util.IDGenerator;
+import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.MicrotaskDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.googlecode.objectify.cmd.Query;
 
 /*
  * NOTE: The Microtask class is abstract and SHOULD NOT be instantiated, except for internally inside objectify
@@ -29,12 +34,14 @@ public /*abstract*/ class Microtask
 	// Constructor for initialization.
 	protected Microtask(Project project)
 	{
-		id = IDGenerator.Instance.generateID(this);
+		id = project.generateID("microtask");
 	}
 		
 	// Assigns a microtask and returns it. Returns null if no microtasks are available.
 	public static Microtask Assign(Worker crowdUser)
 	{		
+		dumpMicrotasks();
+		
 		Microtask microtask = ofy().load().type(Microtask.class).filter("assigned", false).first().get();         
 		
 		// If there's no unassigned microtasks available, return null
@@ -43,7 +50,7 @@ public /*abstract*/ class Microtask
 
 		microtask.assigned = true;
 		crowdUser.setMicrotask(microtask);
-		ofy().save().entity(microtask);
+		ofy().save().entity(microtask).now();
 		
 		return microtask;
 	}
@@ -60,4 +67,50 @@ public /*abstract*/ class Microtask
 	
 	// returns the relative path to the UI for this microtask
 	public String getUIURL() { return ""; }
+	
+	// Sets the microtask as completed using the submission data (in json format)
+	public void submit(String jsonDTOData, Worker worker, Project project)
+	{	
+		ObjectMapper mapper = new ObjectMapper();
+		
+		MicrotaskDTO dto = null;
+		try {
+			dto = mapper.readValue(jsonDTOData, getDTOClass());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		doSubmitWork(dto, project);	
+		this.completed = true;
+		worker.setMicrotask(null);
+		ofy().save().entity(this).now();		
+	}
+
+	// This method MUST be overridden in the subclass to do submit work.
+	protected void doSubmitWork(MicrotaskDTO dto, Project project)
+	{
+		throw new RuntimeException("Error - must implement doSubmitWork!");
+	}
+	
+	// This method MUST be overridden in the subclass
+	protected Class getDTOClass()
+	{
+		throw new RuntimeException("Error - must implement in subclass!");
+	}
+	
+	// Writes all microtasks to the console
+	public static void dumpMicrotasks()
+	{
+		System.out.println("**** ALL MICROTASKS ****");
+		
+		Query<Microtask> q = ofy().load().type(Microtask.class);		
+		for (Microtask microtask : q)
+			System.out.println(microtask.toString());
+	}
+	
+	public String toString()
+	{
+		return "" + this.id + " " + this.getClass().getSimpleName() + (assigned ? " assigned " : " unassigned ") + 
+				(completed ? " completed " : " incomplete ");
+	}
 }

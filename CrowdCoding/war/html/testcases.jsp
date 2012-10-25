@@ -1,3 +1,18 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.google.appengine.api.users.User" %>
+<%@ page import="com.google.appengine.api.users.UserService" %>
+<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
+<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Worker" %>
+<%@ page import="com.crowdcoding.microtasks.WriteTestCases" %>
+
+<%
+    Project project = Project.Create();
+    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
+    WriteTestCases microtask = (WriteTestCases) crowdUser.getMicrotask();
+%>
+
+
 <div id="microtask">
 
 	<script>
@@ -25,8 +40,8 @@
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit/testcases'
-				});
+				    url: '/submit?type=writetestcases&id=<%= microtask.getID() %>',
+				}).done( function (data) {  loadMicrotask() });
 								
 				return false;
 			});
@@ -62,7 +77,7 @@
 	<BR>
 	<BR>
 
-	<form id="testCasesForm" action="/submit/testCases">
+	<form id="testCasesForm" action="">
 		<div id="testCases"></div>
 		<button id="addTestCase">Add test case</button>				
 		<BR><BR><input type="submit" value="Submit">

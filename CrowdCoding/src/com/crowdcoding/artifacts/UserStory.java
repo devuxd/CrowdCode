@@ -12,6 +12,7 @@ import com.googlecode.objectify.annotation.Load;
 public class UserStory extends Artifact
 {
 	@Load protected Ref<Microtask> microtask;
+	protected Ref<Entrypoint> entrypoint;
 	protected String text;
 	
 	// Constructor for deserialization
@@ -22,19 +23,26 @@ public class UserStory extends Artifact
 	// Constructor for initial creation
 	public UserStory(Project project)
 	{	
-		super(false);
+		super(project);
 		
 		// Initial state of the user story is an empty user story.
 		// To create content, a write user story microtask is created.		
-		WriteUserStory writeUserStory = WriteUserStory.Create(this, project);
+		WriteUserStory writeUserStory = new WriteUserStory(this, project);
 		this.microtask = Ref.create(writeUserStory.getKey());		
 		
-		ofy().save().entity(this);
+		ofy().save().entity(this).now();
 	}
 
-	public void setText(String text)
+	// Sets the text for the user story. This transitions the state of the artifact from
+	// empty (waiting for text) to has initial text.
+	public void submitInitialText(String text, Project project)
 	{
 		this.text = text;
-		ofy().save().entity(this);
+		this.microtask = null;
+		
+		// Transitioning generates a new Entrypoint artifact
+		Entrypoint entrypoint = new Entrypoint(project);
+		this.entrypoint = (Ref<Entrypoint>) Ref.create(entrypoint.getKey());
+		ofy().save().entity(this).now();
 	}
 }
