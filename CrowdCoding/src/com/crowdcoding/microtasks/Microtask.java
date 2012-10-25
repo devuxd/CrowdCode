@@ -25,6 +25,7 @@ public /*abstract*/ class Microtask
 	@Id protected long id;
 	@Index protected boolean assigned = false;
 	@Index protected boolean completed = false;
+	protected int submitValue = 10;
 	
 	// Default constructor for deserialization
 	protected Microtask()
@@ -83,6 +84,7 @@ public /*abstract*/ class Microtask
 		doSubmitWork(dto, project);	
 		this.completed = true;
 		worker.setMicrotask(null);
+		worker.awardPoints(this.submitValue);
 		ofy().save().entity(this).now();		
 	}
 

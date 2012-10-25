@@ -25,7 +25,7 @@
 	    	{
 				$("#testCases").append(
 					'<span id="testCase' + nextTestCase + '">' +
-						'<input type="text" size="100" value="Describe a test case"/>' +				
+						'<input type="text" class="input-xxlarge" value="Describe a test case"/>' +				
 						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">x</a>' +	
 					'</span>');		
 				return false;
@@ -69,9 +69,9 @@
 
 
 
-	<p><h3>This is the test case phase. Write some single line test cases for the given description. 
+	<p><h4>This is the test case phase. Write some single line test cases for the given description. 
 	These test cases will be used to create unit tests, so be descriptive! Try to think of some errors that 
-	the given function may have trouble with.</h3>
+	the given function may have trouble with.</h4>
 
 	<jsp:include page="elements/methodDescription.jsp" />
 	<BR>
@@ -79,8 +79,8 @@
 
 	<form id="testCasesForm" action="">
 		<div id="testCases"></div>
-		<button id="addTestCase">Add test case</button>				
-		<BR><BR><input type="submit" value="Submit">
+		<button id="addTestCase" class="btn btn-small">Add test case</button>				
+		<BR><BR><input type="submit" value="Submit" class="btn btn-primary">
 	</form>
 
 

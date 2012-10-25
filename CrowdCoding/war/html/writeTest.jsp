@@ -15,8 +15,8 @@
 
 
 <div id="microtask">
-	<script src="/include/codemirror.js"></script>
-	<script src="/include/javascript.js"></script>
+	<script src="/include/codemirror/codemirror.js"></script>
+	<script src="/include/codemirror/javascript.js"></script>
 	<script>
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
@@ -36,7 +36,7 @@
 	</script>
 
 
-	<p><h3> Write a unit test for the following method: </h3>
+	<p><h4> Write a unit test for the following method: </h4>
 	
 	
 	<form id="testForm" action="">
@@ -56,7 +56,7 @@
 		</tr>	
 	</table>
 	} <BR><BR>
-	<input type="submit" value="Submit" />
+	<input type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>
 

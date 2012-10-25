@@ -22,9 +22,9 @@
 			$("#addParameter").click(function()
 			{
 				$("#addParamRow").before('<tr id="params' + nextParam + '"><td></td><td>' +						
-					    '<input type="text" size="15" value = "param1" class="identifierInput">,&nbsp;&nbsp;//' + 
-						'&nbsp;<input type="text" size="15" value = "type" class="identifierInput">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
-						'<input type="text" size="40" value = "what is it for?" class="identifierInput"> ' +	
+					    '<input type="text" size="12" value = "param1" class="input-medium">,&nbsp;&nbsp;//' + 
+						'&nbsp;<input type="text" size="10" value = "type" class="input-medium">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
+						'<input type="text" size="50" value = "what is it for?" class="input-medium"> ' +	
 						'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">x</a>' +	
 						'</td>');
 				nextParam++;
@@ -74,10 +74,10 @@
 	
 	
 
-	<h3> This is the entry point phase. Designate "entry points" by reading the user story thoroughly 
+	<h4> This is the entry point phase. Designate "entry points" by reading the user story thoroughly 
 	and identifying all the method calls to successfully create the program. Each method description
 	 should contain a detailed description of what the method does, and what is returned. Don't forget 
-	 to give your methods names and types! </h3>
+	 to give your methods names and types! </h4>
 
 	
 
@@ -90,21 +90,21 @@
 			<tr id="params1">
 				<td width="20">
 				<td>
-					<input type="text" size="15" value = "param1" class="identifierInput">,&nbsp;&nbsp;// 
-					<input type="text" size="15" value = "type" class="identifierInput">&nbsp;&nbsp;-&nbsp; 
-					<input type="text" size="40" value = "what's it for?" class="identifierInput">
+					<input type="text" size="12" value = "param1" class="input-medium">,&nbsp;&nbsp;// 
+					<input type="text" size="10" value = "type" class="input-medium">&nbsp;&nbsp;-&nbsp; 
+					<input type="text" size="80" value = "what's it for?" class="input-medium">
 					<a href="#" onclick="deleteParams('#params1')" class="closeButton">x</a>		
 				<td>
 			<tr>
 			<tr id="addParamRow">
 				<td></td>					
-				<td><button id="addParameter">Add parameter</button></td>			
+				<td><button id="addParameter" class="btn btn-small">Add parameter</button></td>			
 			</tr>
 		</table>
 		);
 		<BR>	
 		<BR>	
-		<input type="submit" value="Submit" />
+		<input type="submit" value="Submit" class="btn btn-primary"/>
 	</form>
 	
 

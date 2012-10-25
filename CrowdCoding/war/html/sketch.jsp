@@ -15,8 +15,8 @@
 
 
 <div id="microtask">
-	<script src="/include/codemirror.js"></script>
-	<script src="/include/javascript.js"></script>
+	<script src="/include/codemirror/codemirror.js"></script>
+	<script src="/include/codemirror/javascript.js"></script>
 	<script>
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
@@ -36,10 +36,10 @@
 	</script>
 
 
-	<p><h3> This is the sketch phase. Write the method that takes the parameters given. and 
+	<p><h4> This is the sketch phase. Write the method that takes the parameters given. and 
 	returns what the description asks for. Use the pound symbol '#' to denote a line of pseudocode, 
 	comment with //. If your method is not done, make sure one of your lines starts with # so it is 
-	not flagged as complete! </h3>
+	not flagged as complete! </h4>
 	
 	
 	<form id="sketchForm" action="">
@@ -48,8 +48,7 @@
 
 	<BR>
 	
-	<jsp:include page="elements/methodDescription.jsp" />
-
+	<%@include file="/html/elements/methodDescription.jsp"%>
 
 	{ <BR>
 	<table width="100%">
@@ -59,7 +58,7 @@
 		</tr>	
 	</table>
 	} <BR><BR>
-	<input type="submit" value="Submit" />
+	<input type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>
 

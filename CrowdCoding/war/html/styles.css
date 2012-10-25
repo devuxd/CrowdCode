@@ -6,7 +6,7 @@ body	{ margin:0; padding:0; }
 #leftbar, #rightbar, #contentPane { float:left; }
 
 #titlebar { background:#1B87E0; }
-#titlebar h3 { color:white; padding:5px; }
+#titlebar h4 { color:white; padding:5px; }
 
 #leftbar { width: 195px; text-align:center; background:white; margin-right:5px; }
 #scoreTable { width: 140px; margin-left:auto; margin-right:auto; background:#EBEBEB;

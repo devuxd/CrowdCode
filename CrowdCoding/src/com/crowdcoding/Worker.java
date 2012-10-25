@@ -15,6 +15,7 @@ public class Worker
 	@Load private Ref<Microtask> microtask;
 	private String nickname;
 	@Id private String userid;
+	private int score;
 	
 	// Default constructor for deserialization
 	private Worker()
@@ -26,6 +27,7 @@ public class Worker
 	{
 		this.userid = userid;
 		this.nickname = nickname;
+		this.score = 0;
 		ofy().save().entity(this);
 		
 	}
@@ -62,4 +64,21 @@ public class Worker
 			this.microtask = Ref.create(microtask.getKey());
 		ofy().save().entity(this);
 	}	
+	
+	public int getScore()
+	{
+		return score;
+	}		
+	
+	// Adds the specified number of points to the score.
+	public void awardPoints(int points)
+	{
+		score += points;	
+		ofy().save().entity(this).now();
+	}
+	
+	public String getNickname()
+	{
+		return nickname;
+	}
 }
