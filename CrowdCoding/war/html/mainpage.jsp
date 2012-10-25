@@ -50,7 +50,7 @@
 		</div>			
 		<div id = "contentPane"></div>	
 		<div id = "rightbar">
-            <span><br><br><br><br><br><br><br><br></span>		  		
+            <span><br><br><br><br><br><br></span>		  		
 			<div id="leaderboard">	
 				<table id="leaderboardTable">
 					<tr><td colspan=2 id="leaderboardTableTitle"><p>High Scores</p></td></tr>

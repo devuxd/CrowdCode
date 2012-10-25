@@ -23,7 +23,7 @@ textarea { width:100%; height: 400px; resize:none; }
 #leaderboardTableTitle p { font-weight: bold;  }
 
 #footer { background:#fff; text-align:center; }
-#footer p { font-size:small; }
+#footer p { font-size:x-small; }
 #footer table {margin-left:auto; margin-right:auto;}
 #footer td { padding-right:20px;  }
 

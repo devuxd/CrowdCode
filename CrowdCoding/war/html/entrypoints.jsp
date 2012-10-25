@@ -22,9 +22,9 @@
 			$("#addParameter").click(function()
 			{
 				$("#addParamRow").before('<tr id="params' + nextParam + '"><td></td><td>' +						
-					    '<input type="text" size="12" value = "param1" class="input-medium">,&nbsp;&nbsp;//' + 
-						'&nbsp;<input type="text" size="10" value = "type" class="input-medium">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
-						'<input type="text" size="50" value = "what is it for?" class="input-medium"> ' +	
+					    '<input type="text" value = "param1" class="input-small">,&nbsp;&nbsp;//' + 
+						'&nbsp;<input type="text" value = "type" class="input-small">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
+						'<input type="text" value = "what is it for?" class="input-xlarge"> ' +	
 						'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">x</a>' +	
 						'</td>');
 				nextParam++;
@@ -82,17 +82,17 @@
 	
 
 	<form id="entrypointsForm" action="">
-		<input type="text" size="25" id="event" value="$(document).ready(" class="identifierInput">
+		<input type="text" size="25" id="event" value="$(document).ready(" class="input-large">
 		function 
-		<input type="text" size="20" id="name" value = "functionName" class="identifierInput">(
+		<input type="text" size="20" id="name" value = "functionName" class="input-medium">(
 		<BR>
 		<table>
 			<tr id="params1">
 				<td width="20">
 				<td>
-					<input type="text" size="12" value = "param1" class="input-medium">,&nbsp;&nbsp;// 
-					<input type="text" size="10" value = "type" class="input-medium">&nbsp;&nbsp;-&nbsp; 
-					<input type="text" size="80" value = "what's it for?" class="input-medium">
+					<input type="text" value = "param1" class="input-small">,&nbsp;&nbsp;// 
+					<input type="text" value = "type" class="input-small">&nbsp;&nbsp;-&nbsp; 
+					<input type="text" value = "what's it for?" class="input-xlarge">
 					<a href="#" onclick="deleteParams('#params1')" class="closeButton">x</a>		
 				<td>
 			<tr>
