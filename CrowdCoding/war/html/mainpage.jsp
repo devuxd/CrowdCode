@@ -35,22 +35,20 @@
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
 </head>
 
-<body>
+<body id = "mainpagebody">
 	<div id = "titlebar">
 		<h4>CrowdCode</h4>		
 	</div>
 		
 	<div id="container">		
 		<div id = "leftbar">
-		    <span><br><br><br><br><br><br><br><br></span>
 			<table id="scoreTable">
 				<tr><td><%= worker.getNickname() %></td></tr>		
 				<tr><td id="score"><p>0 points</p> </td></tr>
 			</table>
 		</div>			
 		<div id = "contentPane"></div>	
-		<div id = "rightbar">
-            <span><br><br><br><br><br><br></span>		  		
+		<div id = "rightbar">	  		
 			<div id="leaderboard">	
 				<table id="leaderboardTable">
 					<tr><td colspan=2 id="leaderboardTableTitle"><p>High Scores</p></td></tr>
