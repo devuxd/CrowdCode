@@ -36,7 +36,25 @@
 	</script>
 
 
-	<p><h4> Write a unit test for the following method: </h4>
+	<p>
+	<p>
+	Unit tests can be: 	</br>
+	deepEqual: comparing to objects </br>
+	equal: check if both are equal </br>
+	notDeepEqual: </br>
+	notEqual: </br>
+	notStrickEqual: </br>
+	ok: boolean assertion </br>
+	strictEqual: strict type and value comparision</br>
+	throws: if exception is expected </br>
+	</br>
+	A sample test has form:</br>
+	( actual, expected, message )</br>
+	Please place code you write in the message:</br>
+	example: equal(1,'1',"equal 1,'1'");</br>
+	</p></br>
+	<h4> Write a unit test for the following method: </h4>
+	
 	
 	
 	<form id="testForm" action="">

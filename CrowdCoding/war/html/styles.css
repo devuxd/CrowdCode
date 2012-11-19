@@ -8,7 +8,7 @@ body	{ margin:0; padding:0; }
 #titlebar { background:#1B87E0; }
 #titlebar h4 { color:white; padding:5px; }
 
-#leftbar { width: 195px; text-align:center; background:white; margin-right:5px; }
+#leftbar {background: none repeat scroll 0 0 white; margin-right: 4%; margin-top: 26%; text-align: center; width: auto; }
 #scoreTable { width: 140px; margin-left:auto; margin-right:auto; background:#EBEBEB;
 					border-color:#9E9E9E;}
 #score p { font-size: larger;}
@@ -16,13 +16,16 @@ body	{ margin:0; padding:0; }
 #contentPane { width: 640px; background:#fff;  border-radius: 5px; }
 textarea { width:100%; height: 400px; resize:none; }
 
-#rightbar {width: 195px; background:white; margin-left: 5px }
+#rightbar { background: none repeat scroll 0 0; margin-left: 4%;margin-top: 23%;width: auto;}
 #leaderboardTable { margin-left:auto; margin-right:auto; background:#EBEBEB; border-width:1px;
 					border-radius:10px; border-color:#9E9E9E; border-style: solid; }
 #leaderboardTable td { padding-right:10px;   }
 #leaderboardTableTitle p { font-weight: bold;  }
+#leaderboard{border-radius: 10px 10px 10px 10px;}
+#mainpagebody{background:none;}
+#userStory{    border: 1px solid black; padding: 0;}
 
-#footer { background:#fff; text-align:center; }
+#footer {     background: none repeat scroll 0 0 transparent;float: left;margin-top: 10px;text-align: center;width: 100%;}
 #footer p { font-size:x-small; }
 #footer table {margin-left:auto; margin-right:auto;}
 #footer td { padding-right:20px;  }

@@ -13,6 +13,7 @@ import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.SketchFunction;
+import com.crowdcoding.microtasks.UnitTestFunction;
 import com.crowdcoding.microtasks.WriteEntrypoint;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
@@ -33,6 +34,7 @@ public class SubmitMicrotaskServlet extends HttpServlet
 		microtaskTypes.put("writetest", WriteTest.class);
 		microtaskTypes.put("writetestcases", WriteTestCases.class);
 		microtaskTypes.put("writeuserstory", WriteUserStory.class);
+		microtaskTypes.put("unittestfunction", UnitTestFunction.class);
 	}	
 	
 	// Notify the server that a microtask has been completed. 

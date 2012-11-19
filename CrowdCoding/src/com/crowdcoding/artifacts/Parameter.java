@@ -25,4 +25,9 @@ public class Parameter
 	{
 		return type + " " + name + " //" + description;		
 	}
+	
+	public String getName()
+	{
+		return name;
+	}
 }

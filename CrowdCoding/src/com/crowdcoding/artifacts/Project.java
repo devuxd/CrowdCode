@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.Worker;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.SketchFunction;
+import com.crowdcoding.microtasks.UnitTestFunction;
 import com.crowdcoding.microtasks.WriteEntrypoint;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
@@ -42,6 +43,7 @@ public class Project
 		ObjectifyService.register(WriteTest.class);
 		ObjectifyService.register(WriteTestCases.class);
 		ObjectifyService.register(WriteUserStory.class);
+		ObjectifyService.register(UnitTestFunction.class);
 	}
 		
 	// Default constructor for deserialization only
