@@ -35,6 +35,14 @@
 		<url-pattern>/fetch</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>Reset</servlet-name>
+		<servlet-class>com.crowdcoding.servlets.ResetServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Reset</servlet-name>
+		<url-pattern>/reset</url-pattern>
+	</servlet-mapping>
 
 	<welcome-file-list>
 		<welcome-file>crowdcoding</welcome-file>

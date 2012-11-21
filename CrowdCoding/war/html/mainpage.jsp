@@ -67,7 +67,8 @@
 			<td><p><a href="">Sign Out</a></p></td>	
 			<td><p><a href="">Preferences</a></p></td>	
 			<td><p><a href="">Terms</a></p></td>
-			<td><p><a href="">About</a></p></td>		
+			<td><p><a href="">About</a></p></td>	
+			<td><p><a href="" id="Reset">Reset</a></p></td>					
 		</tr></table>
 	</div>		
 		
@@ -91,6 +92,12 @@
 	<script>
 		$(document).ready(function(){
 			loadMicrotask();
+			
+			$("#Reset").click(function() {
+				$.post('/reset');  
+				// Default action of clicking on the link (with no href) will now cause
+				// the page to be reloaded.
+			});
 		});
 		
 		function loadMicrotask()
