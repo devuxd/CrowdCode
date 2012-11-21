@@ -19,6 +19,8 @@ public class Function extends Artifact
 {
 	private String code;
 	private String name;
+	private String description;
+	private String returnType;
 	@Load private List<Parameter> parameters = new ArrayList<Parameter>();  	
 	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
 	
@@ -27,11 +29,13 @@ public class Function extends Artifact
 	{
 	}
 	
-	public Function(String name, List<ParameterDTO> params, Project project)
+	public Function(String name, String description, String returnType, List<ParameterDTO> params, Project project)
 	{
 		super(project);
 		
 		this.name = name;
+		this.description = description;
+		this.returnType = returnType;
 		for (ParameterDTO param : params)
 			this.parameters.add(new Parameter(param.name, param.type, param.description));
 		

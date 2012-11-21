@@ -12,7 +12,6 @@
     WriteEntrypoint microtask = (WriteEntrypoint) crowdUser.getMicrotask();
 %>
 
-
 <div id="microtask">
 	<script>
 		var nextParam = 2;
@@ -61,6 +60,8 @@
 		function collectFormData()
 		{
 			var formData = { name: $("#name").val(),
+						     description: $("#functionDescription").val(),
+						     returnValue: $("#returnValue").val(),
 					         event: $("#event").val(),
 						     parameters: [] };			
 		    $("tr[id^=params]").each(function(){	    		    	
@@ -71,20 +72,18 @@
 		    return formData;
 		}
 	</script>
-	
-	
-
+		
 	<h4> This is the entry point phase. Designate "entry points" by reading the user story thoroughly 
 	and identifying all the method calls to successfully create the program. Each method description
 	 should contain a detailed description of what the method does, and what is returned. Don't forget 
 	 to give your methods names and types! </h4>
-
 	
-
 	<form id="entrypointsForm" action="">
-		<input type="text" size="25" id="event" value="$(document).ready(" class="input-large">
+		<textarea id="functionDescription" draggable="true">What does the function do?</textarea>
+		returns &nbsp;&nbsp;<input type="text" id="returnValue" value = "void" class="input-medium"><BR>
+		<input type="text" id="event" value="$(document).ready(" class="input-large">
 		function 
-		<input type="text" size="20" id="name" value = "functionName" class="input-medium">(
+		<input type="text" id="name" value = "functionName" class="input-medium">(
 		<BR>
 		<table>
 			<tr id="params1">
@@ -105,8 +104,6 @@
 		<BR>	
 		<BR>	
 		<input type="submit" value="Submit" class="btn btn-primary"/>
-	</form>
-	
-
+	</form>	
 
 </div>

@@ -1,7 +1,6 @@
-
-
 html	{ background:#eee }
 body	{ margin:0; padding:0; }
+textarea { -webkit-user-select: auto; }
 #container, #titlebar, #footer { width: 1040px; margin: 0 auto; }
 #leftbar, #rightbar, #contentPane { float:left; }
 
@@ -14,7 +13,6 @@ body	{ margin:0; padding:0; }
 #score p { font-size: larger;}
 
 #contentPane { width: 640px; background:#fff;  border-radius: 5px; }
-textarea { width:100%; height: 400px; resize:none; }
 
 #rightbar { background: none repeat scroll 0 0; margin-left: 4%;margin-top: 23%;width: auto;}
 #leaderboardTable { margin-left:auto; margin-right:auto; background:#EBEBEB; border-width:1px;
@@ -23,7 +21,8 @@ textarea { width:100%; height: 400px; resize:none; }
 #leaderboardTableTitle p { font-weight: bold;  }
 #leaderboard{border-radius: 10px 10px 10px 10px;}
 #mainpagebody{background:none;}
-#userStory{    border: 1px solid black; padding: 0;}
+#userStory{ width:100%; height: 400px; resize:none; border: 1px solid black; padding: 0;}
+#functionDescription{ width:95%; }
 
 #footer {     background: none repeat scroll 0 0 transparent;float: left;margin-top: 10px;text-align: center;width: 100%;}
 #footer p { font-size:x-small; }

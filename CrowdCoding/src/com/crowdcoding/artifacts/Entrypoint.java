@@ -39,7 +39,7 @@ public class Entrypoint extends Artifact
 		this.event = dto.event;
 		
 		// Create a new function for this entrypoint. This will spawn a new microtask to create it.
-		Function function = new Function(dto.name, dto.parameters, project);		
+		Function function = new Function(dto.name, dto.description, dto.returnType, dto.parameters, project);		
 		this.microtask = null;
 		ofy().save().entity(this).now();		
 	}	
