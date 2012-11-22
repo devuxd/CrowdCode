@@ -61,7 +61,7 @@
 		{
 			var formData = { name: $("#name").val(),
 						     description: $("#functionDescription").val(),
-						     returnValue: $("#returnValue").val(),
+						     returnType: $("#returnType").val(),
 					         event: $("#event").val(),
 						     parameters: [] };			
 		    $("tr[id^=params]").each(function(){	    		    	
@@ -80,7 +80,7 @@
 	
 	<form id="entrypointsForm" action="">
 		<textarea id="functionDescription" draggable="true">What does the function do?</textarea>
-		returns &nbsp;&nbsp;<input type="text" id="returnValue" value = "void" class="input-medium"><BR>
+		returns &nbsp;&nbsp;<input type="text" id="returnType" value = "void" class="input-medium"><BR>
 		<input type="text" id="event" value="$(document).ready(" class="input-large">
 		function 
 		<input type="text" id="name" value = "functionName" class="input-medium">(
