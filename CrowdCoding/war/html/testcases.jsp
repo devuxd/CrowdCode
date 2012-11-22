@@ -5,11 +5,13 @@
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteTestCases" %>
+<%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
     WriteTestCases microtask = (WriteTestCases) crowdUser.getMicrotask();
+    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 %>
 
 
@@ -73,7 +75,7 @@
 	These test cases will be used to create unit tests, so be descriptive! Try to think of some errors that 
 	the given function may have trouble with.</h4>
 
-	<jsp:include page="elements/methodDescription.jsp" />
+	<%= methodFormatted %>
 	<BR>
 	<BR>
 

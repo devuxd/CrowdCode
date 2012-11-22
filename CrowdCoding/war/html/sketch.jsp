@@ -5,11 +5,13 @@
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.SketchFunction" %>
+<%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
     SketchFunction microtask = (SketchFunction) crowdUser.getMicrotask();
+    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 %>
 
 
@@ -48,9 +50,9 @@
 
 	<BR>
 	
-	<%@include file="/html/elements/methodDescription.jsp"%>
+	<%= methodFormatted %>
 
-	{ <BR>
+	<BR>{
 	<table width="100%">
 		<tr>
 			<td width = "20"></td>

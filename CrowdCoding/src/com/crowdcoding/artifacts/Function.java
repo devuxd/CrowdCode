@@ -78,7 +78,7 @@ public class Function extends Artifact
 	{
 		return tests;
 	}
-	
+	// this the header used for code. it is valid js
 	public String getFunctionHeader()
 	{
 		StringBuilder parameterAsAString = new StringBuilder();
@@ -88,6 +88,29 @@ public class Function extends Artifact
 			parameterAsAString.append(",");
 		}
 		parameterAsAString.replace(parameterAsAString.toString().length()-1,parameterAsAString.toString().length(), "");
-		return "function " + this.name + "(" + parameterAsAString.toString() + "){" ;
+		return "function " + this.name + "(" + parameterAsAString.toString() + ")" ;
+	}
+
+	public String getReturnType()
+	{
+		return returnType;
+	}
+
+	public String getDescription() 
+	{
+		return description;
+	}
+
+	// this has the type and the description
+	public String getFunctionDisplayHeader() 
+	{
+		StringBuilder parameterAsAString = new StringBuilder();
+		for(Parameter functionParameter: parameters)
+		{
+			parameterAsAString.append(functionParameter.toString());
+			parameterAsAString.append(",<br>");
+		}
+		parameterAsAString.replace(parameterAsAString.toString().length()-5,parameterAsAString.toString().length(), "");
+		return "function " + this.name + "(</br>" + parameterAsAString.toString() + "</br>)" ;
 	}
 }

@@ -5,6 +5,7 @@
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.UnitTestFunction" %>
+<%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="java.io.StringWriter" %>
 <%@ page import="java.io.Writer" %>
@@ -27,6 +28,7 @@
     System.out.println(microtask.getTestCases());
     System.out.println(testCases);
     System.out.println("header:" + functionHeader);
+    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 %>
 
 <body>
@@ -52,6 +54,7 @@
 		});
 		</script>
 		<script>
+		var javaTestCases = new Array();
 function runUnitTests(arrayOfTests, functionName)
 {
 debugger;
@@ -71,15 +74,13 @@ var htmlContent = "";
 
 	var testCases = "test('" + functionName + "', function() {";
 	// constructs the function header and puts code  from the above code window
-	testCases += functionHeader + myCodeMirror.getValue() + "}"
+	testCases += functionHeader + "{"  + myCodeMirror.getValue() + "}"
 	for(var p = 0; p < arrayOfTests.length; p++)
 	{
 		testCases += arrayOfTests[p];
 	}
 	
 	testCases+= "});";
-	var dynamicCreate = " test( 'functionName', function() {   equal( 1 == '2', 'Fail!' ); }); alert('hi there');";
-//	test( 'functionName', function() {   equal( 1 == '2', 'Fail!' ); });
 	QUnit.log = function(result, message)
 
 	{
@@ -126,6 +127,7 @@ var htmlContent = "";
 	     {
 	     	$("input").removeAttr("disabled");
 	     }
+	     javaTestCases = resultOfTest;
 	   }
 	eval(testCases);
 
@@ -140,24 +142,63 @@ var htmlContent = "";
 function test1()
 {
 debugger;
-var testCasess = new Array();
-testCasess = <%= testCases %>;
+javaTestCases = <%= testCases %>;
 //arrayOfTests = new Array(); arrayOfTests[0] = "var a = 1; var b = 2; function plus(a,b) { return a + b; } equal(plus(a,b), 3); equal( 1 == '2', 'Fail!' );"; arrayOfTests[1] = "equal( 1 == '1', true );"; runUnitTests(arrayOfTests,"TEST 1");
-runUnitTests(testCasess,"TEST 1");
+runUnitTests(javaTestCases,"TEST 1");
 }
 function resetScrollbar(area)
 {
 window.scroll(300,0);
 }
+function revertCodeAs()
+{
+myCodeMirror.setValue("<%= microtask.getFunctionCode()%> ");
+}
+function showReportInformation()
+{
+	debugger;
+	if(javaTestCases.length == 0)
+	{
+	  alert("No TEST CASES");
+	}
+	else
+	{
+		$("#reportInformation").css('display',"block");
+		var TestCases = "<form>";
+		var allEmpty  = true;
+		for(var p = 0; p < javaTestCases.length; p++)
+		{
+			if(javaTestCases[p] != "")
+			{
+			   allEmpty = false;
+			}
+			TestCases += "<input type = 'checkbox' value=" + p + ">" + javaTestCases[p].message + "</input>";
+		}
+		TestCases += "</form>";
+		TestCases += "";
+		if(allEmpty)
+		{
+			alert("No TEST CASES");
+		}
+		$("#reportInformation").html(TestCases);
+	}
+	
+}
+$("input[type='checkbox']:checked").each( 
+    function() { 
+       // Your code goes here...
+    } 
+);
 </script>
+		<button style="float:right;"onclick="revertCodeAs();"> Revert Code </button>
 <form id="sketchForm" action="">
 
 
 	<BR>
 	
-	<%@include file="/html/elements/methodDescription.jsp"%>
-
-	{ <BR>
+	<%= methodFormatted %>
+	<BR>
+	{
 	<table width="100%">
 		<tr>
 			<td width = "20"></td>
@@ -168,7 +209,7 @@ window.scroll(300,0);
 	<input type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>
-	<button style="float:right;"> Dispute Unit Tests </button>
+	<button style="float:left;" onclick="showReportInformation()"> Report Issue In Test </button>
 				<div id="alltestcases" style="margin: 25px;"> </div>
 	<button style="float:right;" onclick="test1();">Run the Unit Tests</button>
 	<div class="bs-docs-example">
@@ -190,6 +231,7 @@ window.scroll(300,0);
 		</div>
 		<!-- /tabbable -->
 	</div>
+	<div id = "reportInformation" style = "display:none"> </div>
 	<script>
 	 test1();
 	 </script>

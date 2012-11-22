@@ -85,4 +85,9 @@ public class UnitTestFunction extends Microtask
 	{
 		return function.getValue().getFunctionHeader();
 	}
+	
+	public Function getFunction()
+	{
+		return function.getValue();
+	}
 }

@@ -56,4 +56,9 @@ public class Test extends Artifact
 	{
 		return description + " code: " + code;
 	}
+	
+	public Function getFunction()
+	{
+		return function.getValue();
+	}
 }

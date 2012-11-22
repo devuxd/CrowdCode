@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.io.IOException;
 
 import com.crowdcoding.Worker;
+import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.EntrypointDTO;
@@ -46,5 +47,10 @@ public class WriteTest extends Microtask
 	public String getUIURL()
 	{
 		return "/html/writeTest.jsp";
+	}
+	
+	public Function getFunction()
+	{
+		return test.getValue().getFunction();
 	}
 }

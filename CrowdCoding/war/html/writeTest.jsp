@@ -5,11 +5,13 @@
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteTest" %>
+<%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
     WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
+    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 %>
 
 
@@ -63,10 +65,8 @@
 
 	<BR>
 	
-	<jsp:include page="elements/methodDescription.jsp" />
-
-
-	{ <BR>
+	<%= methodFormatted %>
+	<BR>{
 	<table width="100%">
 		<tr>
 			<td width = "20"></td>

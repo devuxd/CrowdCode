@@ -46,4 +46,9 @@ public class SketchFunction extends Microtask
 	{
 		return "/html/sketch.jsp";
 	}
+	
+	public Function getFunction()
+	{
+		return function.getValue();
+	}
 }

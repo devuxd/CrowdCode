@@ -48,4 +48,9 @@ public class WriteTestCases extends Microtask
 	{
 		return "/html/testcases.jsp";
 	}
+	
+	public Function getFunction()
+	{
+		return function.getValue();
+	}
 }
