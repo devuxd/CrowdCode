@@ -80,6 +80,28 @@ public class UnitTestFunction extends Microtask
 		return stringVersion;
 	}
 	
+	public String[] getTestDescriptions()
+	{
+		List<Ref<Test>> tempCases = function.getValue().getTestCases();
+		String [] stringVersion = new String[tempCases.size()];
+		int i = 0;
+		for(Ref<Test>  temp : tempCases)
+		{
+			if(temp != null)
+			{
+				if(temp.getValue() != null)
+				{
+					if(temp.getValue().getTestCode() != null)
+					{
+						stringVersion[i] = temp.getValue().getDescription();
+					}
+					i++;
+				}
+			}
+		}
+		return stringVersion;
+	}
+	
 	
 	public String getFunctionHeaderAssociatedWithTestCase()
 	{

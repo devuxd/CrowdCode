@@ -52,9 +52,9 @@ public class Test extends Artifact
 		return code;
 	}
 	
-	public String getDescriptionAndCode()
+	public String getDescription()
 	{
-		return description + " code: " + code;
+		return description;
 	}
 	
 	public Function getFunction()

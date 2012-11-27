@@ -21,13 +21,16 @@
     strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunctionHeaderAssociatedWithTestCase());
     String functionHeader = strWriter.toString();
+    strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.getTestDescriptions());
+    String testCaseDescriptions = strWriter.toString();
     for(String s: microtask.getTestCases())
     {
     System.out.println(s);
     }
-    System.out.println(microtask.getTestCases());
     System.out.println(testCases);
     System.out.println("header:" + functionHeader);
+    System.out.println(microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]"," "));
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 %>
 
@@ -37,7 +40,7 @@
 	<script src="/include/codemirror/javascript.js"></script>
 	<script>
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    myCodeMirror.setValue("<%= microtask.getFunctionCode()%> ");
+	    myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]"," ") %>");
 	    myCodeMirror.setOption("theme", "vibrant-ink");
 		$("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() {
@@ -55,7 +58,12 @@
 		</script>
 		<script>
 		var javaTestCases = new Array();
-function runUnitTests(arrayOfTests, functionName)
+		var javaTestCaseDescriptions = new Array();
+		javaTestCaseDescriptions = <%= testCaseDescriptions %>;
+		// i made this so we can have global state of whether all test cases passed
+		var allTestPassed = true;
+		var atLeastOneTestCase = false;
+function runUnitTests(arrayOfTests, functionName,isFirstTime)
 {
 debugger;
 var testCases2 = <%= functionHeader %>;
@@ -71,124 +79,167 @@ var resultOfTest = new Array();
 var i = 0;;
 var htmlTab = "";
 var htmlContent = "";
-
-	var testCases = "test('" + functionName + "', function() {";
-	// constructs the function header and puts code  from the above code window
-	testCases += functionHeader + "{"  + myCodeMirror.getValue() + "}"
-	for(var p = 0; p < arrayOfTests.length; p++)
-	{
-		testCases += arrayOfTests[p];
-	}
-	
-	testCases+= "});";
-	QUnit.log = function(result, message)
-
-	{
-		console.log(result);
-		resultOfTest[i]= result;   
-		if(i == 0)
+for(var p = 0; p < arrayOfTests.length; p++)
+{
+if(arrayOfTests[p] == "")
+{
+continue;
+}
+	if(p == 0)
 		{   
-			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
-			htmlTab +=  "<li class='active'><a href=";
+			htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";
+			htmlTab +=  "<li class='active'>";
 		}
 
 		else
 		{
-			htmlContent += "<div class='tab-pane' id=" + "'A" + i + "'>";
-			htmlTab +=  "<li><a href=";
+			htmlContent += "<div class='tab-pane' id=" + "'A" + p + "'>";
+			htmlTab +=  "<li>"
+			
 		}
-		htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + result.result + "'>" +  "test: " + result.message;
+		htmlTab += "<a id='TabNumber"+ p + "' href=";
+		htmlTab += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
 		htmlTab +=  "</a></li>";
-		htmlContent += "<p>" + "Function Name: " + result.name + "</br>"; 
+	var testCases = "test('" + functionName + "', function() {";
+	// constructs the function header and puts code  from the above code window
+	testCases += functionHeader + "{"  + myCodeMirror.getValue().replace('\n',"") + "}";
+	
+	//{
+		testCases += arrayOfTests[p].replace(/\"/g,"'");
+	//}
+	testCases+= "});";
+	var QunitTestCases = parseTheTestCases(testCases);
+	console.log(QunitTestCases);
+	QUnit.log = function(result, message)
+
+	{
+		debugger;
+		console.log(result);
+		resultOfTest[i]= result;   
+		atLeastOneTestCase = true;
+		htmlContent += "<p>" + "</br>"; 
 		if(!result.result)
 		{
-			htmlContent += " Error At " + result.message + " </br>" ;
+			htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
+			if(result.expected == null)
+			{
+				htmlContent += " Message: " + result.message.match("\\)\\:[a-zA-Z0-9\\,\\'\\(\\) ]*") + "</br>";
+			}
+			else
+			{
 			htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
+			htmlContent += " Outcome Message: " + result.message + "</br>";
+			}
+			htmlTab = htmlTab.replace("class='true'",'class=false')
 		}
 		else
 		{
 			if(result.message != null)
 			{
-				htmlContent += " Outcome Message " + result.message + "</br>";
+				htmlContent += " Passed: " + QunitTestCases[i] + "</br>";
 			}
 		}
-		htmlContent += "</p></div>";
 		i++;
 	}
 
 	   QUnit.testDone = function( details )
 	 {
-	 	alert(details.failed);
+	 	console.log(details);
 	     if(details.failed > 0)
 	     {
 	     	$("input").attr('disabled', 'false');
+	     	allTestPassed = false;
 	     }
-	     else
+	     else if(details.failed == 0 && allTestPassed)
 	     {
 	     	$("input").removeAttr("disabled");
+	     	if(isFirstTime)
+	     	{
+	     	  alert("submitted");
+	     	  }
 	     }
 	     javaTestCases = resultOfTest;
 	   }
+	try
+	{
 	eval(testCases);
-
+	}
+	catch (err)
+	{
+		debugger;
+		if(i == 0)
+		{   
+			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
+			htmlTab +=  "<li class='active'><a href=";
+		}
+		else
+		{
+			htmlContent += "<div class='tab-pane' id=" + "'A" + i + "'>";
+			htmlTab +=  "<li><a href=";
+		}
+		htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+		htmlTab +=  "</a></li>";
+		htmlContent += "<p>" + "Function Name: " + result.name + "</br>"; 
+		htmlContent += " Error At " + err.message + " </br>" ;
+		htmlContent += "</p></div>";
+		i++;
+	}
+			htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
+}
 	$(document).ready(function()
 	{
-		$("#alltestcases").html("All the test cases together: </br>" + testCases + "</br>");
 		$("#tabContent").html(htmlContent);
 		$("#tabs").html(htmlTab);
 	});
 	return testCases;
 }
-function test1()
+function test1(isFirstTime)
 {
 debugger;
+allTestPassed = true;
 javaTestCases = <%= testCases %>;
-//arrayOfTests = new Array(); arrayOfTests[0] = "var a = 1; var b = 2; function plus(a,b) { return a + b; } equal(plus(a,b), 3); equal( 1 == '2', 'Fail!' );"; arrayOfTests[1] = "equal( 1 == '1', true );"; runUnitTests(arrayOfTests,"TEST 1");
-runUnitTests(javaTestCases,"TEST 1");
-}
-function resetScrollbar(area)
-{
-window.scroll(300,0);
+runUnitTests(javaTestCases,"TEST 1",isFirstTime);
 }
 function revertCodeAs()
 {
-myCodeMirror.setValue("<%= microtask.getFunctionCode()%> ");
+myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]"," ") %>");
 }
-function showReportInformation()
+function parseTheTestCases(QunitTest)
 {
-	debugger;
-	if(javaTestCases.length == 0)
-	{
-	  alert("No TEST CASES");
-	}
-	else
-	{
-		$("#reportInformation").css('display',"block");
-		var TestCases = "<form>";
-		var allEmpty  = true;
-		for(var p = 0; p < javaTestCases.length; p++)
-		{
-			if(javaTestCases[p] != "")
-			{
-			   allEmpty = false;
-			}
-			TestCases += "<input type = 'checkbox' value=" + p + ">" + javaTestCases[p].message + "</input>";
-		}
-		TestCases += "</form>";
-		TestCases += "";
-		if(allEmpty)
-		{
-			alert("No TEST CASES");
-		}
-		$("#reportInformation").html(TestCases);
-	}
+var i = 0; 
+answers = new Array();
+ var expression = ""; 
+ var patt = new RegExp("equal\\([a-zA-Z0-9\\,\\'\\(\\) ]*\\);",'\g');
+  while(expression != null)
+  {
+   expression = patt.exec(QunitTest);
+    if(expression == null) 
+    {
+     break;
+    }
+    answers[i] = expression[0];
+    i = i + 1; 
+   }
+return answers;
+}
+function showReportInformation(testNumber)
+{
+	//debugger;
+	//if(javaTestCases.length == 0)
+	//{
+	//  alert("No TEST CASES");
+	//}
+	//else
+	//{
+	//	$("#reportInformation").css('display',"block");
+	//	var TestCases = "";
+	//	var tabName = "#A" + testNumber;
+	//	TestCases += $(tabName).html().match("\\<br\\> [a-zA-Z0-9 \\/ \\< \\> \\: \\' \\( \\) \\,\\;]*\\<br\\>") + "";
+	//	TestCases += "";
+	//	$("#reportInformation").html(TestCases);
+	//}
 	
 }
-$("input[type='checkbox']:checked").each( 
-    function() { 
-       // Your code goes here...
-    } 
-);
 </script>
 		<button style="float:right;"onclick="revertCodeAs();"> Revert Code </button>
 <form id="sketchForm" action="">
@@ -209,12 +260,11 @@ $("input[type='checkbox']:checked").each(
 	<input type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>
-	<button style="float:left;" onclick="showReportInformation()"> Report Issue In Test </button>
 				<div id="alltestcases" style="margin: 25px;"> </div>
-	<button style="float:right;" onclick="test1();">Run the Unit Tests</button>
+	<button style="float:right;" onclick="test1(false);">Run the Unit Tests</button>
 	<div class="bs-docs-example">
 		<div class="tabbable tabs-left">
-			<ul id="tabs" onclick="resetScrollbar(this)" class="nav nav-tabs">
+			<ul id="tabs"" class="nav nav-tabs">
 				<li class="active">
 			</ul>
 			<div id="tabContent" class="tab-content">
@@ -233,7 +283,7 @@ $("input[type='checkbox']:checked").each(
 	</div>
 	<div id = "reportInformation" style = "display:none"> </div>
 	<script>
-	 test1();
+	 test1(true);
 	 </script>
 </body>
 </html>
