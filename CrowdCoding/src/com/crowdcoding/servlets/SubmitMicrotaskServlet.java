@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Project;
+import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.SketchFunction;
 import com.crowdcoding.microtasks.UnitTestFunction;
@@ -35,6 +36,7 @@ public class SubmitMicrotaskServlet extends HttpServlet
 		microtaskTypes.put("writetestcases", WriteTestCases.class);
 		microtaskTypes.put("writeuserstory", WriteUserStory.class);
 		microtaskTypes.put("unittestfunction", UnitTestFunction.class);
+		microtaskTypes.put("disputeunittestfunction", DisputeUnitTestFunction.class);
 	}	
 	
 	// Notify the server that a microtask has been completed. 

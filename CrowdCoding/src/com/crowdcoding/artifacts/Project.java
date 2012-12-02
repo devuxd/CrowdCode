@@ -3,6 +3,7 @@ package com.crowdcoding.artifacts;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Worker;
+import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.SketchFunction;
 import com.crowdcoding.microtasks.UnitTestFunction;
@@ -44,6 +45,7 @@ public class Project
 		ObjectifyService.register(WriteTestCases.class);
 		ObjectifyService.register(WriteUserStory.class);
 		ObjectifyService.register(UnitTestFunction.class);
+		ObjectifyService.register(DisputeUnitTestFunction.class);
 	}
 		
 	// Default constructor for deserialization only

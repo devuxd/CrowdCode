@@ -5,6 +5,7 @@
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.UnitTestFunction" %>
+<%@ page import="com.crowdcoding.microtasks.DisputeUnitTestFunction" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="java.io.StringWriter" %>
@@ -24,13 +25,6 @@
     strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getTestDescriptions());
     String testCaseDescriptions = strWriter.toString();
-    for(String s: microtask.getTestCases())
-    {
-    System.out.println(s);
-    }
-    System.out.println(testCases);
-    System.out.println("header:" + functionHeader);
-    System.out.println(microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]"," "));
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 %>
 
@@ -40,11 +34,13 @@
 	<script src="/include/codemirror/javascript.js"></script>
 	<script>
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]"," ") %>");
+	    myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]","") %>");
+	    myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
 	    myCodeMirror.setOption("theme", "vibrant-ink");
-		$("input").attr('disabled', 'false');
+		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() {
-			var formData = { code: $("#code").val() };
+		debugger;
+			var formData = collectFormDataForNormal();
 			$.ajax({
 			    contentType: 'application/json',
 			    data: JSON.stringify( formData ),
@@ -55,6 +51,22 @@
 							
 			return false;
 		});
+		
+		
+		$('#issueForm').submit(function() {
+			var formData = collectFormDataForDispute();
+			$.ajax({
+			    contentType: 'application/json',
+			    data: JSON.stringify( formData ),
+			    dataType: 'json',
+			    type: 'POST',
+			    url: '/submit?type=unittestfunction&id=<%= microtask.getID() %>'
+			}).done( function (data) { loadMicrotask();	});						
+			
+			return false;
+		});
+		
+		
 		</script>
 		<script>
 		var javaTestCases = new Array();
@@ -76,11 +88,11 @@ var functionHeader = testCases2.replace(/\"/g,"'");
 // be annoying ot have to scroll up then down to change the test case
 
 var resultOfTest = new Array(); 
-var i = 0;;
 var htmlTab = "";
 var htmlContent = "";
 for(var p = 0; p < arrayOfTests.length; p++)
 {
+var i = 0;
 if(arrayOfTests[p] == "")
 {
 continue;
@@ -102,12 +114,10 @@ continue;
 		htmlTab +=  "</a></li>";
 	var testCases = "test('" + functionName + "', function() {";
 	// constructs the function header and puts code  from the above code window
-	testCases += functionHeader + "{"  + myCodeMirror.getValue().replace('\n',"") + "}";
-	
-	//{
-		testCases += arrayOfTests[p].replace(/\"/g,"'");
-	//}
+	testCases += functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+	testCases += arrayOfTests[p];
 	testCases+= "});";
+	console.log(testCases);
 	var QunitTestCases = parseTheTestCases(testCases);
 	console.log(QunitTestCases);
 	QUnit.log = function(result, message)
@@ -123,7 +133,7 @@ continue;
 			htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
 			if(result.expected == null)
 			{
-				htmlContent += " Message: " + result.message.match("\\)\\:[a-zA-Z0-9\\,\\'\\(\\) ]*") + "</br>";
+				htmlContent += " Message " + result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$") + "</br>";
 			}
 			else
 			{
@@ -145,18 +155,15 @@ continue;
 	   QUnit.testDone = function( details )
 	 {
 	 	console.log(details);
+	 	console.log("iteraton" + p + "size" + arrayOfTests.length);
 	     if(details.failed > 0)
 	     {
-	     	$("input").attr('disabled', 'false');
+	     	$("#sketchForm").children("input").attr('disabled', 'false');
 	     	allTestPassed = false;
 	     }
 	     else if(details.failed == 0 && allTestPassed)
 	     {
-	     	$("input").removeAttr("disabled");
-	     	if(isFirstTime)
-	     	{
-	     	  alert("submitted");
-	     	  }
+	     	$("#sketchForm").children("input").removeAttr("disabled");
 	     }
 	     javaTestCases = resultOfTest;
 	   }
@@ -179,66 +186,116 @@ continue;
 		}
 		htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
 		htmlTab +=  "</a></li>";
-		htmlContent += "<p>" + "Function Name: " + result.name + "</br>"; 
+		htmlContent += "<p>" + "</br>"; 
 		htmlContent += " Error At " + err.message + " </br>" ;
 		htmlContent += "</p></div>";
 		i++;
 	}
-			htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
+	htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
 }
 	$(document).ready(function()
 	{
 		$("#tabContent").html(htmlContent);
 		$("#tabs").html(htmlTab);
+		if(htmlTab.search("false") == -1 && isFirstTime)
+		{
+			$("#codeSubmit").submit()
+		}
 	});
 	return testCases;
 }
+// this has boolean to tell it if it is the first time
+// we are running tests, if it is then we will auto 
+// submit
 function test1(isFirstTime)
 {
-debugger;
-allTestPassed = true;
-javaTestCases = <%= testCases %>;
-runUnitTests(javaTestCases,"TEST 1",isFirstTime);
+	debugger;
+	allTestPassed = true;
+	javaTestCases = <%= testCases %>;
+	runUnitTests(javaTestCases,"TEST 1",isFirstTime);
 }
 function revertCodeAs()
 {
-myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]"," ") %>");
+	myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]"," ") %>");
 }
 function parseTheTestCases(QunitTest)
 {
-var i = 0; 
-answers = new Array();
- var expression = ""; 
- var patt = new RegExp("equal\\([a-zA-Z0-9\\,\\'\\(\\) ]*\\);",'\g');
-  while(expression != null)
-  {
-   expression = patt.exec(QunitTest);
-    if(expression == null) 
-    {
-     break;
-    }
-    answers[i] = expression[0];
-    i = i + 1; 
-   }
-return answers;
+	var i = 0; 
+	answers = new Array();
+	 var expression = ""; 
+	 var patt = new RegExp("equal\\([a-zA-Z0-9\\,\\'\\(\\)\" ]*\\);",'\g');
+	  while(expression != null)
+	  {
+	   expression = patt.exec(QunitTest);
+	    if(expression == null) 
+	    {
+	     break;
+	    }
+	    answers[i] = expression[0];
+	    i = i + 1; 
+	   }
+	return answers;
 }
 function showReportInformation(testNumber)
 {
-	//debugger;
-	//if(javaTestCases.length == 0)
-	//{
-	//  alert("No TEST CASES");
-	//}
-	//else
-	//{
-	//	$("#reportInformation").css('display',"block");
-	//	var TestCases = "";
-	//	var tabName = "#A" + testNumber;
-	//	TestCases += $(tabName).html().match("\\<br\\> [a-zA-Z0-9 \\/ \\< \\> \\: \\' \\( \\) \\,\\;]*\\<br\\>") + "";
-	//	TestCases += "";
-	//	$("#reportInformation").html(TestCases);
-	//}
+	debugger;
+	var myCodeMirror2 = null;
+	var TestCases = "";
+	var tabName = "#A" + testNumber;
+	TestCases += $(tabName).html().match("\\<br\\> [a-zA-Z0-9 \\/ \\< \\> \\: \\' \\( \\) \\,\\;]*\\<br\\>") + "";
+	TestCases += "";
+	var originalTestCases = <%= testCases %>;
+	var myTest = originalTestCases[testNumber] + " ";
 	
+	if(javaTestCases.length == 0)
+	{
+	 alert("No TEST CASES");
+	}
+	else if($("#reportInformation").css('display') == 'block')
+	{
+	    myCodeMirror2.setValue(myTest);	
+	   $("#userInput").val("");
+	}
+	else
+	{
+		$("#reportInformation").css('display',"block");
+		myCodeMirror2 = CodeMirror.fromTextArea(unedit);
+	    myCodeMirror2.setValue(myTest);
+	    myCodeMirror2.setOption("readOnly", "true");
+	    myCodeMirror2.setOption("theme", "vibrant-ink");
+		//$("#reportInformation").html(TestCases);
+	}
+}
+
+function collectFormDataForDispute()
+{
+debugger;
+	// active tab is the one disputed
+	var testNumber = $(".active").children()[0].id.match("[0-9]+");
+	var name = javaTestCaseDescriptions[testNumber] + " ";
+	var codes = myCodeMirror.getValue();
+	var theCode = $("#code").val();
+	var description = $("#userInput").val();
+	var formData = { name: name,
+			     description: description,
+				 testCaseNumber: testNumber[0],
+				 code: codes};
+	return formData;
+}
+
+function collectFormDataForNormal()
+{
+	// active tab is the one disputed
+	debugger;
+	var testNumber = null;
+	var name = null;
+	var description = null;
+	var codes = myCodeMirror.getValue();
+	var formData = { name: name,
+			     description: description,
+				 testCaseNumber: testNumber,
+				 code: codes};
+	return formData;
 }
 </script>
 		<button style="float:right;"onclick="revertCodeAs();"> Revert Code </button>
@@ -246,22 +303,24 @@ function showReportInformation(testNumber)
 
 
 	<BR>
-	
+	This function has failed a potentially rigorous test set.
+Here is the function description and implementation, the test that failed, and the error message it gave.  
+Can you fix it?
+	<BR>
 	<%= methodFormatted %>
 	<BR>
 	{
 	<table width="100%">
 		<tr>
-			<td width = "20"></td>
+			<td></td>
 			<td><textarea id="code"></textarea></td>
 		</tr>	
 	</table>
 	} <BR><BR>
-	<input type="submit" value="Submit" class="btn btn-primary"/>
+	<input id = "codeSubmit" type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>
-				<div id="alltestcases" style="margin: 25px;"> </div>
-	<button style="float:right;" onclick="test1(false);">Run the Unit Tests</button>
+	<button style="" onclick="test1(false);">Run the Unit Tests</button>
 	<div class="bs-docs-example">
 		<div class="tabbable tabs-left">
 			<ul id="tabs"" class="nav nav-tabs">
@@ -281,9 +340,30 @@ function showReportInformation(testNumber)
 		</div>
 		<!-- /tabbable -->
 	</div>
-	<div id = "reportInformation" style = "display:none"> </div>
 	<script>
 	 test1(true);
 	 </script>
+	 
+	 <div id = "reportInformation" style = "display:none"> 
+	 <form id="issueForm" action="">
+	 Here is the test case code, and please note you can only dispute one test case at a time:
+	 <table width="100%">
+		<tr>
+			<td width = "20"></td>
+			<td><textarea id="unedit"></textarea></td>
+		</tr>	
+	</table>
+	
+	Please describe what needs to be fixed:
+	<br>
+		 <table width="100%">
+		<tr>
+			<td width = "20"></td>
+			<td><textarea id="userInput"></textarea></td>
+		</tr>	
+	</table>
+	<input type="submit" value="Submit" class="btn btn-primary"/>
+	</form>
+	</div>
 </body>
 </html>

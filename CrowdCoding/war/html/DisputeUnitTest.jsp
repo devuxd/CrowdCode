@@ -4,7 +4,7 @@
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.WriteTest" %>
+<%@ page import="com.crowdcoding.microtasks.DisputeUnitTestFunction" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="java.io.StringWriter" %>
@@ -13,12 +13,15 @@
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
-    WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
-     ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = new ObjectMapper();
     Writer strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getDescription());
-    String description = strWriter.toString();
+    DisputeUnitTestFunction microtask = (DisputeUnitTestFunction) crowdUser.getMicrotask();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
+    mapper.writeValue(strWriter,microtask.getTestCode());
+    String unitTests = strWriter.toString();
+    String disputeDescription = microtask.getDescription();
+    System.out.println(unitTests);
+    System.out.println(unitTests.replaceAll("[\t\n\\x0B\f\r]",""));
 %>
 
 
@@ -27,9 +30,14 @@
 	<script src="/include/codemirror/codemirror.js"></script>
 	<script src="/include/codemirror/javascript.js"></script>
 	<script>
+		debugger;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
+	    console.log(<%= unitTests %>);
+	    myCodeMirror.setValue(<%= unitTests %>);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
-	
+		//myCodeMirror.setValue("<%= unitTests.replaceAll("[\t\n\\x0B\f\r]","") %>");
+		//myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
+		
 		$('#testForm').submit(function() {
 			var formData = { code: $("#code").val() };
 			$.ajax({
@@ -37,7 +45,7 @@
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=writetest&id=<%= microtask.getID() %>'
+			    url: '/submit?type=disputeunittestfunction&id=<%= microtask.getID() %>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;
@@ -47,32 +55,41 @@
 
 	<p>
 	<p>
-	We are writing the following function: </br> <%= methodFormatted %></br>
-Write a unit test for the following test case: <%= description %></br>
-</br>
-Reference Section:</br>
-Assertions you can use when writing unit tests include: </br>
-deepEqual( actual, expected, message ): comparing to objects </br>
-equal( actual, expected, message ): check if both are equal </br>
-notDeepEqual( actual, expected, message ): </br>
-notEqual( actual, expected, message ): </br>
-notStrickEqual( actual, expected, message ): </br>
-ok( actual, expected, message ): boolean assertion </br>
-strictEqual( actual, expected, message ): strict type and value comparision</br>
-throws( actual, expected, message ): if exception is expected </br>
-
-examples:</br>
-equal(price, qty*itemCost, "line item price looks incorrect");</br>
-equal(plus(5, 3), 8, "Two positive numbers don't sum correctly");</br>
+	DIPUTED TASK
+	</br>
+	This unit test suite was disputed for the following reason:
+	</br>
+	<%= disputeDescription %>
+	</br>
+	</br>
 	
 	
-<form id="testForm" action="">
+	Unit tests can be: 	</br>
+	deepEqual: comparing to objects </br>
+	equal: check if both are equal </br>
+	notDeepEqual: </br>
+	notEqual: </br>
+	notStrickEqual: </br>
+	ok: boolean assertion </br>
+	strictEqual: strict type and value comparision</br>
+	throws: if exception is expected </br>
+	</br>
+	A sample test has form:</br>
+	( actual, expected, message )</br>
+	Please place code you write in the message:</br>
+	example: equal(1,'1',"equal 1,'1'");</br>
+	</p></br>
+	<h4> Write a unit test for the following method: </h4>
+	
+	
+	
+	<form id="testForm" action="">
 
 
 
 	<BR>
 	
-
+	<%= methodFormatted %>
 	<BR>{
 	<table width="100%">
 		<tr>

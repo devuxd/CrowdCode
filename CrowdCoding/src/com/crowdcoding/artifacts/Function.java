@@ -66,6 +66,11 @@ public class Function extends Artifact
 	public void unitTestCorrectionCompleted(FunctionDTO dto, Project project)
 	{
 		this.code = dto.code;
+		if(dto.testCaseNumber != null)
+		{
+			// creates a disputed test case
+			tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
+		}
 		ofy().save().entity(this).now();
 	}
 	
@@ -112,5 +117,22 @@ public class Function extends Artifact
 		}
 		parameterAsAString.replace(parameterAsAString.toString().length()-5,parameterAsAString.toString().length(), "");
 		return "function " + this.name + "(</br>" + parameterAsAString.toString() + "</br>)" ;
+	}
+	
+	public boolean anyTestCasesDisputed()
+	{
+		for(int i = 0; i < tests.size(); i++)
+		{
+			if(tests.get(i).getValue().isDisputed())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void createDisputedTestCase(FunctionDTO dto, Project project)
+	{
+	 tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
 	}
 }
