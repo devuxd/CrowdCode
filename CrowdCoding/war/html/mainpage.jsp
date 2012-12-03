@@ -1,27 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.google.appengine.api.users.User" %>
-<%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.google.appengine.api.channel.ChannelService" %>
-<%@ page import="com.google.appengine.api.channel.ChannelServiceFactory" %>
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 
 <%
 	Project project = Project.Create();
 	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
-
-     //UserService userService = UserServiceFactory.getUserService();
-    //User user = userService.getCurrentUser();
-
-
-    //ChannelService channelService = ChannelServiceFactory.getChannelService();
-
-
-	// TODO: should have a better channel key that is not the email.
-	// TODO: only want to do this the first time. Not on any subsequent page requests....
-    //String token = channelService.createChannel(user.toString());
+    String leaderboard = project.getLeaderboard().buildDTO();
 %>
 
 <!DOCTYPE html>
@@ -44,20 +29,14 @@
 	<div id="container">		
 		<div id = "leftbar">
 			<table id="scoreTable">
-				<tr><td><%= worker.getNickname() %></td></tr>		
-				<tr><td id="score"><p>0 points</p> </td></tr>
+				<tr><td><%=worker.getHandle()%></td></tr>		
+				<tr><td><p><span id="score">0 points</span></p></td></tr>
 			</table>
 		</div>			
 		<div id = "contentPane"></div>	
 		<div id = "rightbar">	  		
 			<div id="leaderboard">	
 				<table id="leaderboardTable">
-					<tr><td colspan=2 id="leaderboardTableTitle"><p>High Scores</p></td></tr>
-					<tr><td>500</td><td>Patrick</td>
-					<tr><td>450</td><td>Ben</td>
-					<tr><td>320</td><td>Steven</td>
-					<tr><td>270</td><td>Andre</td>
-					<tr><td>210</td><td>Thomas</td>
 				</table>
 			</div>
 		</div>		
@@ -76,22 +55,14 @@
 	<script src="/include/jquery-1.8.2.min.js"></script> 
     <script src="/include/bootstrap/js/bootstrap.min.js"></script>
   	<script src="/_ah/channel/jsapi"></script>
-
-	<!--	
-			
-			var channel = new goog.appengine.Channel('{{<= token >}}');			
-			var socket = channel.open();
-			socket.onopen = function() { 
-				alert("socket opened!");
-			};
-			socket.onmessage = function(message) {
-				alert(message.data);				
-			}
-	 -->
-
 	<script>
-		$(document).ready(function(){
+		 var points = <%= worker.getScore() %>;
+	
+	     $(document).ready(function(){			
+	        updateScoreDisplay(points);	
+	        updateLeaderboardDisplay(<%= leaderboard %>);	
 			loadMicrotask();
+			fetchMessages();
 			
 			$("#Reset").click(function() {
 				$.post('/reset');  
@@ -99,10 +70,53 @@
 				// the page to be reloaded.
 			});
 		});
+	     
+	    function fetchMessages()
+	    {
+	    	$.getJSON('/fetchMessages', function(messages) 
+	    	{
+    			$.each(messages.messages, function(index, message)
+  				{
+   			  		handleMessage(message);		    				  
+  				});
+	    	});
+	    	
+	    	// Fetch messages again in 10 seconds
+	    	setTimeout(fetchMessages, 10 * 1000);
+	    }
+	     
+	    function handleMessage(wrappedMessage)
+	    {
+			var message = jQuery.parseJSON(wrappedMessage);
+	    	if (message.messageType == 'PointEventDTO')
+	    	{	    	
+				points += message.points;
+				updateScoreDisplay(points);
+	    	}
+	    	else if (message.messageType == 'LeaderboardDTO')
+	    	{
+	    		updateLeaderboardDisplay(message);	
+	    	}
+	    }
 		
 		function loadMicrotask()
 		{
 			$('#contentPane').load('/fetch');		
+		}
+		
+		function updateLeaderboardDisplay(leaderboard)
+		{
+			var newHTML = '<tr><td colspan=2 id="leaderboardTableTitle"><p>High Scores</p></td></tr>';
+			$.each(leaderboard.leaders, function(index, leader)
+			{
+				newHTML += '<tr><td>' + leader.score + '</td><td>' + leader.name + '</td></tr>';			
+			});
+			$('#leaderboardTable').html(newHTML);	
+		}
+		
+		function updateScoreDisplay(points)
+		{
+			$('#score').html(points);			
 		}
 	</script>			
 </body>

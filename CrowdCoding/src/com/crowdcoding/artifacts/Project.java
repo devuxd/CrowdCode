@@ -2,6 +2,8 @@ package com.crowdcoding.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.Leaderboard;
+import com.crowdcoding.PointEvent;
 import com.crowdcoding.Worker;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
@@ -24,6 +26,7 @@ import com.googlecode.objectify.annotation.Id;
 public class Project 
 {
 	private IDGenerator idgenerator;
+	private Leaderboard leaderboard;
 	@Id private long id = 1L;
 	
 	// Static initializer for class Project
@@ -32,6 +35,7 @@ public class Project
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Worker.class);
+		ObjectifyService.register(PointEvent.class);
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Entrypoint.class);
 		ObjectifyService.register(Function.class);
@@ -60,6 +64,7 @@ public class Project
 		
 		// Setup the project to be ready 
 		idgenerator = new IDGenerator(false);
+		leaderboard = new Leaderboard(this);
 		
 		// Create an initial artifact to get work started.
 		UserStory userStory = new UserStory(this);
@@ -87,4 +92,10 @@ public class Project
 		
 		return id;		
 	}	
+	
+	public Leaderboard getLeaderboard()
+	{
+		return leaderboard;
+	}
+
 }

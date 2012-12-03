@@ -92,6 +92,7 @@
 					<input type="text" value = "param1" class="input-small">,&nbsp;&nbsp;// 
 					<input type="text" value = "type" class="input-small">&nbsp;&nbsp;-&nbsp; 
 					<input type="text" value = "what's it for?" class="input-xlarge">
+					<!--  <button class="close" onclick="deleteParams('#params1')">&times;</button> -->
 					<a href="#" onclick="deleteParams('#params1')" class="closeButton">x</a>		
 				<td>
 			<tr>

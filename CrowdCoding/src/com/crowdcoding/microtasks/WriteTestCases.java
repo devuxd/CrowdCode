@@ -8,7 +8,7 @@ import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.MicrotaskDTO;
+import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
@@ -34,7 +34,7 @@ public class WriteTestCases extends Microtask
 		ofy().save().entity(this).now();
 	}
 
-	protected void doSubmitWork(MicrotaskDTO dto, Project project)
+	protected void doSubmitWork(DTO dto, Project project)
 	{
 		function.get().writeTestCasesCompleted((TestCasesDTO) dto, project);	
 	}

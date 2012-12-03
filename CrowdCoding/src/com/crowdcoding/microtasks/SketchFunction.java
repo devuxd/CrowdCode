@@ -8,7 +8,7 @@ import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.MicrotaskDTO;
+import com.crowdcoding.dto.DTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -32,7 +32,7 @@ public class SketchFunction extends Microtask
 		ofy().save().entity(this).now();
 	}
 	
-	protected void doSubmitWork(MicrotaskDTO dto, Project project)
+	protected void doSubmitWork(DTO dto, Project project)
 	{
 		function.get().sketchCompleted((FunctionDTO) dto, project);	
 	}

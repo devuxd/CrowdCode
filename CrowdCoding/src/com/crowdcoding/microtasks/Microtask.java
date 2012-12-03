@@ -7,7 +7,7 @@ import java.io.IOException;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.MicrotaskDTO;
+import com.crowdcoding.dto.DTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
@@ -35,7 +35,7 @@ public /*abstract*/ class Microtask
 	// Constructor for initialization.
 	protected Microtask(Project project)
 	{
-		id = project.generateID("microtask");
+		id = project.generateID("Microtask");
 	}
 		
 	// Assigns a microtask and returns it. Returns null if no microtasks are available.
@@ -56,6 +56,18 @@ public /*abstract*/ class Microtask
 		return microtask;
 	}
 	
+	// Unassigns worker from this microtask
+	// Precondition - the worker must be assigned to this microtask
+	public void unassign(Worker worker)
+	{
+		assert (worker.getMicrotask() == this);
+		assert (assigned == true);
+		
+		worker.setMicrotask(null);
+		assigned = false;	
+		ofy().save().entity(this).now();
+	}
+		
 	public Key<Microtask> getKey()
 	{
 		return Key.create(Microtask.class, id);
@@ -74,7 +86,7 @@ public /*abstract*/ class Microtask
 	{	
 		ObjectMapper mapper = new ObjectMapper();
 		
-		MicrotaskDTO dto = null;
+		DTO dto = null;
 		try {
 			dto = mapper.readValue(jsonDTOData, getDTOClass());
 		} catch (IOException e) {
@@ -84,12 +96,12 @@ public /*abstract*/ class Microtask
 		doSubmitWork(dto, project);	
 		this.completed = true;
 		worker.setMicrotask(null);
-		worker.awardPoints(this.submitValue);
+		worker.awardPoints(this.submitValue, project);
 		ofy().save().entity(this).now();		
 	}
 
 	// This method MUST be overridden in the subclass to do submit work.
-	protected void doSubmitWork(MicrotaskDTO dto, Project project)
+	protected void doSubmitWork(DTO dto, Project project)
 	{
 		throw new RuntimeException("Error - must implement doSubmitWork!");
 	}

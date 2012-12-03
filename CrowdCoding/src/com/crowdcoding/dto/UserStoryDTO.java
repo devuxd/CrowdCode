@@ -1,7 +1,8 @@
 package com.crowdcoding.dto;
 
-public class UserStoryDTO extends MicrotaskDTO 
+public class UserStoryDTO extends DTO 
 {
+	public String messageType = "UserStoryDTO";
 	public String text;
 	
 	public String toString()

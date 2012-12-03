@@ -9,15 +9,6 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>Test</servlet-name>
-		<servlet-class>com.crowdcoding.servlets.TestServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Test</servlet-name>
-		<url-pattern>/test</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
 		<servlet-name>CrowdCoding</servlet-name>
 		<servlet-class>com.crowdcoding.servlets.CrowdCodingServlet</servlet-class>
 	</servlet>
@@ -34,7 +25,7 @@
 		<servlet-name>FetchMicrotask</servlet-name>
 		<url-pattern>/fetch</url-pattern>
 	</servlet-mapping>
-
+	
 	<servlet>
 		<servlet-name>Reset</servlet-name>
 		<servlet-class>com.crowdcoding.servlets.ResetServlet</servlet-class>
@@ -43,6 +34,16 @@
 		<servlet-name>Reset</servlet-name>
 		<url-pattern>/reset</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>FetchMessages</servlet-name>
+		<servlet-class>com.crowdcoding.servlets.FetchMessagesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FetchMessages</servlet-name>
+		<url-pattern>/fetchMessages</url-pattern>
+	</servlet-mapping>
+
 
 	<welcome-file-list>
 		<welcome-file>crowdcoding</welcome-file>

@@ -10,7 +10,7 @@ import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.EntrypointDTO;
 import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.MicrotaskDTO;
+import com.crowdcoding.dto.DTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -34,7 +34,7 @@ public class WriteTest extends Microtask
 		ofy().save().entity(this).now();
 	}
 
-	protected void doSubmitWork(MicrotaskDTO dto, Project project)
+	protected void doSubmitWork(DTO dto, Project project)
 	{
 		test.get().writeTestCompleted((FunctionDTO) dto, project);
 	}

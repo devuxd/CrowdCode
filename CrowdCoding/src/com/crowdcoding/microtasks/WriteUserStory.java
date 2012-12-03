@@ -7,7 +7,7 @@ import java.io.IOException;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.artifacts.UserStory;
-import com.crowdcoding.dto.MicrotaskDTO;
+import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.UserStoryDTO;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -36,7 +36,7 @@ public class WriteUserStory extends Microtask
 		ofy().save().entity(this).now();
 	}
 	
-	protected void doSubmitWork(MicrotaskDTO dto, Project project)
+	protected void doSubmitWork(DTO dto, Project project)
 	{
 		userStory.get().submitInitialText(((UserStoryDTO) dto).text, project);
 	}

@@ -9,7 +9,7 @@ import com.crowdcoding.artifacts.Entrypoint;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.EntrypointDTO;
 import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.MicrotaskDTO;
+import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.UserStoryDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
@@ -34,7 +34,7 @@ public class WriteEntrypoint extends Microtask
 		ofy().save().entity(this).now();
 	}
 	
-	protected void doSubmitWork(MicrotaskDTO dto, Project project)
+	protected void doSubmitWork(DTO dto, Project project)
 	{
 		entrypoint.get().setInitial((EntrypointDTO) dto, project);	
 	}

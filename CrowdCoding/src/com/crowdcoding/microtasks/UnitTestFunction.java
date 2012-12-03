@@ -13,7 +13,7 @@ import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.MicrotaskDTO;
+import com.crowdcoding.dto.DTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
@@ -38,7 +38,7 @@ public class UnitTestFunction extends Microtask
 		ofy().save().entity(this).now();
 	}
 
-	protected void doSubmitWork(MicrotaskDTO dto, Project project)
+	protected void doSubmitWork(DTO dto, Project project)
 	{
 		function.get().unitTestCorrectionCompleted((FunctionDTO) dto, project);	
 	}

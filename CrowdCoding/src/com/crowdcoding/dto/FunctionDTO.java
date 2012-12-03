@@ -1,8 +1,10 @@
 package com.crowdcoding.dto;
 
 
-public class FunctionDTO extends MicrotaskDTO
+public class FunctionDTO extends DTO
 {
+	public String messageType = "FunctionDTO";
+	
 	public String code = "";
 	public String testCaseNumber;
 	public String description;

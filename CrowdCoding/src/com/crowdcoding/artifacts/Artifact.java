@@ -23,7 +23,7 @@ public /*abstract*/ class Artifact
 	// Constructor for initialization. 
 	protected Artifact(Project project)
 	{
-		id = project.generateID("artifact");
+		id = project.generateID("Artifact");
 	}
 		
 	public Key<? extends Artifact> getKey()
