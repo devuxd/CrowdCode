@@ -15,7 +15,7 @@ public class Test extends Artifact
 {
 	private String description;
 	private String code; 	
-	private boolean disputed;
+	@Load private boolean disputed;
 	@Load private Ref<Function> function;
 	
 	// Constructor for deserialization
@@ -28,12 +28,21 @@ public class Test extends Artifact
 		super(project);		
 		this.description = description;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
-		this.disputed = false;
 		ofy().save().entity(this).now();
 		
 		WriteTest writeTest = new WriteTest(this, project);
 		// this should only trigger if completed, need to figure out how to distinguish
-		UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
+		if(this.function.getValue() != null)
+		{
+			if(!this.function.getValue().anyTestCasesDisputed())
+			{
+				UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
+			}
+		}
+		else
+		{
+			UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
+		}
 	}
 	
 	public void writeTestCompleted(FunctionDTO dto, Project project)
@@ -69,13 +78,23 @@ public class Test extends Artifact
 	public void disputeUnitTestCorrectionCreated(FunctionDTO dto, Project project) 
 	{
 		this.disputed = true;
+		System.out.println(getTestCode());
+		System.out.println(getDescription());
+		System.out.println(function.getValue().getDescription());
+		System.out.println(function.getValue().getFunctionHeader());
+		System.out.println(function.getValue().getCode());
+		System.out.println(function.getValue().anyTestCasesDisputed());
+		ofy().save().entity(this).now();
 		DisputeUnitTestFunction disputedTest = new DisputeUnitTestFunction(this, dto.description, project);
+		ofy().save().entity(this).now();
 	}
 	
 	public void disputeUnitTestCorrectionCompleted(FunctionDTO dto2, Project project) 
 	{
 		this.disputed = false;
+		
 		writeTestCompleted(dto2, project);
+		ofy().save().entity(this).now();
 		// only when no other unit test are disputed will we see the unit test function 
 		if(!function.getValue().anyTestCasesDisputed())
 		{

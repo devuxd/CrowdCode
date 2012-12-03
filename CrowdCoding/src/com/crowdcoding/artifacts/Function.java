@@ -123,9 +123,12 @@ public class Function extends Artifact
 	{
 		for(int i = 0; i < tests.size(); i++)
 		{
-			if(tests.get(i).getValue().isDisputed())
+			if(tests.get(i).getValue() != null)
 			{
-				return true;
+				if(tests.get(i).getValue().isDisputed())
+				{
+					return true;
+				}
 			}
 		}
 		return false;

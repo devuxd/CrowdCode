@@ -33,6 +33,7 @@
 	<script src="/include/codemirror/codemirror.js"></script>
 	<script src="/include/codemirror/javascript.js"></script>
 	<script>
+		var myCodeMirrorForDispute;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]","") %>");
 	    myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
@@ -97,6 +98,7 @@ if(arrayOfTests[p] == "")
 {
 continue;
 }
+	var htmlTab1 = "";
 	if(p == 0)
 		{   
 			htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";
@@ -109,9 +111,10 @@ continue;
 			htmlTab +=  "<li>"
 			
 		}
-		htmlTab += "<a id='TabNumber"+ p + "' href=";
-		htmlTab += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
-		htmlTab +=  "</a></li>";
+		// this is a temp tab
+		htmlTab1 += "<a id='TabNumber"+ p + "' href=";
+		htmlTab1 += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
+		htmlTab1 +=  "</a></li>";
 	var testCases = "test('" + functionName + "', function() {";
 	// constructs the function header and puts code  from the above code window
 	testCases += functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
@@ -140,7 +143,7 @@ continue;
 			htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
 			htmlContent += " Outcome Message: " + result.message + "</br>";
 			}
-			htmlTab = htmlTab.replace("class='true'",'class=false')
+			htmlTab1 = htmlTab1.replace("class='true'",'class=false')
 		}
 		else
 		{
@@ -149,6 +152,7 @@ continue;
 				htmlContent += " Passed: " + QunitTestCases[i] + "</br>";
 			}
 		}
+		htmlTab += htmlTab1;
 		i++;
 	}
 
@@ -239,7 +243,6 @@ function parseTheTestCases(QunitTest)
 function showReportInformation(testNumber)
 {
 	debugger;
-	var myCodeMirror2 = null;
 	var TestCases = "";
 	var tabName = "#A" + testNumber;
 	TestCases += $(tabName).html().match("\\<br\\> [a-zA-Z0-9 \\/ \\< \\> \\: \\' \\( \\) \\,\\;]*\\<br\\>") + "";
@@ -253,16 +256,16 @@ function showReportInformation(testNumber)
 	}
 	else if($("#reportInformation").css('display') == 'block')
 	{
-	    myCodeMirror2.setValue(myTest);	
+	    myCodeMirrorForDispute.setValue(myTest);	
 	   $("#userInput").val("");
 	}
 	else
 	{
 		$("#reportInformation").css('display',"block");
-		myCodeMirror2 = CodeMirror.fromTextArea(unedit);
-	    myCodeMirror2.setValue(myTest);
-	    myCodeMirror2.setOption("readOnly", "true");
-	    myCodeMirror2.setOption("theme", "vibrant-ink");
+		myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
+	    myCodeMirrorForDispute.setValue(myTest);
+	    myCodeMirrorForDispute.setOption("readOnly", "true");
+	    myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
 		//$("#reportInformation").html(TestCases);
 	}
 }
