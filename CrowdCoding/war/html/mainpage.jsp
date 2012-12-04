@@ -62,7 +62,6 @@
 	        updateScoreDisplay(points);	
 	        updateLeaderboardDisplay(<%= leaderboard %>);	
 			loadMicrotask();
-			fetchMessages();
 			
 			$("#Reset").click(function() {
 				$.post('/reset');  
@@ -101,7 +100,7 @@
 		
 		function loadMicrotask()
 		{
-			$('#contentPane').load('/fetch');		
+			$('#contentPane').load('/fetch', fetchMessages);		
 		}
 		
 		function updateLeaderboardDisplay(leaderboard)
