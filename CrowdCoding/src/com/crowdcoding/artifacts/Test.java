@@ -16,6 +16,7 @@ public class Test extends Artifact
 	private String description;
 	private String code; 	
 	@Load private boolean disputed;
+	@Load private boolean unitTestIsOpen;
 	@Load private Ref<Function> function;
 	
 	// Constructor for deserialization
@@ -31,23 +32,35 @@ public class Test extends Artifact
 		ofy().save().entity(this).now();
 		
 		WriteTest writeTest = new WriteTest(this, project);
-		// this should only trigger if completed, need to figure out how to distinguish
-		if(this.function.getValue() != null)
-		{
-			if(!this.function.getValue().anyTestCasesDisputed())
-			{
-				UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
-			}
-		}
-		else
-		{
-			UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
-		}
 	}
 	
 	public void writeTestCompleted(FunctionDTO dto, Project project)
 	{
 		this.code = dto.code;
+		boolean areThereOpenUnitTestFunctions = false;
+		for (Ref<Test> testCase: function.getValue().getTestCases())
+		{
+			if(testCase.getValue().isUnitTestOpen())
+			{
+				areThereOpenUnitTestFunctions = true;
+			}		
+		}
+		// this should only trigger if completed, need to figure out how to distinguish
+		if(!areThereOpenUnitTestFunctions)
+		{
+				if(this.function.getValue() != null)
+				{
+					if(!this.function.getValue().anyTestCasesDisputed())
+					{
+						UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
+					}
+				}
+				else
+				{
+					UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
+				}
+				this.unitTestIsOpen = true;
+		}
 		ofy().save().entity(this).now();
 	}	
 	
@@ -75,6 +88,11 @@ public class Test extends Artifact
 		return disputed;
 	}
 
+	public boolean isUnitTestOpen()
+	{
+		return unitTestIsOpen;
+	}
+
 	public void disputeUnitTestCorrectionCreated(FunctionDTO dto, Project project) 
 	{
 		this.disputed = true;
@@ -92,13 +110,13 @@ public class Test extends Artifact
 	public void disputeUnitTestCorrectionCompleted(FunctionDTO dto2, Project project) 
 	{
 		this.disputed = false;
-		
 		writeTestCompleted(dto2, project);
 		ofy().save().entity(this).now();
-		// only when no other unit test are disputed will we see the unit test function 
-		if(!function.getValue().anyTestCasesDisputed())
-		{
-			UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
-		}
+	}
+
+	public void closeUnitTest()
+	{
+		this.unitTestIsOpen = false;
+		ofy().save().entity(this).now();
 	}
 }
