@@ -71,6 +71,12 @@ public class Function extends Artifact
 			// creates a disputed test case
 			tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
 		}
+		// all unit tests are closed, we only generate one at a time
+		for(Ref<Test> testCases: tests)
+		{
+			testCases.get().closeUnitTest();
+		}
+		// generate the next Unittest microtask, debug microtask
 		ofy().save().entity(this).now();
 	}
 	
