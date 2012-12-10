@@ -71,11 +71,11 @@
 
 
 
-	<p><h4>This is the test case phase. Write some single line test cases for the given description. 
-	These test cases will be used to create unit tests, so be descriptive! Try to think of some errors that 
-	the given function may have trouble with.</h4>
+	<p><h4>We will be writing the following function: <BR><%= methodFormatted %><BR>
+Your mission is to set up tests to identify whether or not it’s working.  Test it rigorously!
+Think of ways that this function might misbehave/show unexpected results and briefly describe them here, in plain English.</h4>
 
-	<%= methodFormatted %>
+	
 	<BR>
 	<BR>
 

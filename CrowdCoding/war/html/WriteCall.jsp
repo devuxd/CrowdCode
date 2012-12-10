@@ -4,16 +4,15 @@
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.SketchFunction" %>
+<%@ page import="com.crowdcoding.microtasks.WriteCall" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
-    SketchFunction microtask = (SketchFunction) crowdUser.getMicrotask();
-    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
+    WriteCall microtask = (WriteCall) crowdUser.getMicrotask();
+    String calleeFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getCallee());
 %>
-
 
 
 <div id="microtask">
@@ -21,16 +20,20 @@
 	<script src="/include/codemirror/javascript.js"></script>
 	<script>
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
+	    
+	    myCodeMirror.setValue("<%= microtask.getCaller().getCode().replaceAll("[\t\n\\x0B\f\r]","") %>");
+	    myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
+	    
 	    myCodeMirror.setOption("theme", "vibrant-ink");
 	
-		$('#sketchForm').submit(function() {
+		$('#writeCallForm').submit(function() {
 			var formData = { code: $("#code").val() };
 			$.ajax({
 			    contentType: 'application/json',
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=sketchfunction&id=<%= microtask.getID() %>'
+			    url: '/submit?type=WriteCall&id=<%= microtask.getID() %>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;
@@ -38,20 +41,11 @@
 	</script>
 
 
-	<p><h4> Your mission is to implement the following function: <BR>	<%= methodFormatted %><BR>
-
-You can implement the whole function or you can write pseudocode [warning: not yet!].
-Flag pseudocode by starting a line with the octothorpe '#', comment with //.
-If your method is not done, make sure one of your lines starts with # so it is not flagged as complete!</h4>
-	
-	
-	<form id="sketchForm" action="">
+	<form id="writeCallForm" action="">
 
 
-
-	<BR>
-	
-
+	<p><h4> Replace the psuedocode with an actual call to the function: </h4> <BR>	
+	<%= calleeFormatted %>
 
 	<BR>{
 	<table width="100%">

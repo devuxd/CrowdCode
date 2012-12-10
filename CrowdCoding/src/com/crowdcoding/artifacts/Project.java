@@ -7,9 +7,12 @@ import com.crowdcoding.PointEvent;
 import com.crowdcoding.Worker;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
+import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
 import com.crowdcoding.microtasks.UnitTestFunction;
+import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteEntrypoint;
+import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.microtasks.WriteUserStory;
@@ -42,14 +45,18 @@ public class Project
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
 		ObjectifyService.register(UserStory.class);
+		
+		ObjectifyService.register(DisputeUnitTestFunction.class);
 		ObjectifyService.register(Microtask.class);
+		ObjectifyService.register(ReuseSearch.class);
 		ObjectifyService.register(SketchFunction.class);
+		ObjectifyService.register(UnitTestFunction.class);
+		ObjectifyService.register(WriteCall.class);
 		ObjectifyService.register(WriteEntrypoint.class);
+		ObjectifyService.register(WriteFunctionDescription.class);
 		ObjectifyService.register(WriteTest.class);
 		ObjectifyService.register(WriteTestCases.class);
 		ObjectifyService.register(WriteUserStory.class);
-		ObjectifyService.register(UnitTestFunction.class);
-		ObjectifyService.register(DisputeUnitTestFunction.class);
 	}
 		
 	// Default constructor for deserialization only

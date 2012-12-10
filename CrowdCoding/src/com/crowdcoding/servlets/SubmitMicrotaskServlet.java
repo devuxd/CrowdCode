@@ -13,9 +13,12 @@ import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
+import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
 import com.crowdcoding.microtasks.UnitTestFunction;
+import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteEntrypoint;
+import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.microtasks.WriteUserStory;
@@ -30,13 +33,17 @@ public class SubmitMicrotaskServlet extends HttpServlet
 	static
 	{
 		// Every microtask MUST be registered here, mapping its name to its class.
+		// Microtasks are listed in alphabetical order.
+		microtaskTypes.put("disputeunittestfunction", DisputeUnitTestFunction.class);
+		microtaskTypes.put("ReuseSearch", ReuseSearch.class);
 		microtaskTypes.put("sketchfunction", SketchFunction.class);
+		microtaskTypes.put("unittestfunction", UnitTestFunction.class);
+		microtaskTypes.put("WriteCall", WriteCall.class);
 		microtaskTypes.put("writeentrypoint", WriteEntrypoint.class);
+		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
 		microtaskTypes.put("writetest", WriteTest.class);
 		microtaskTypes.put("writetestcases", WriteTestCases.class);
 		microtaskTypes.put("writeuserstory", WriteUserStory.class);
-		microtaskTypes.put("unittestfunction", UnitTestFunction.class);
-		microtaskTypes.put("disputeunittestfunction", DisputeUnitTestFunction.class);
 	}	
 	
 	// Notify the server that a microtask has been completed. 

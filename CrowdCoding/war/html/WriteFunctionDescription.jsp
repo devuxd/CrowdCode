@@ -4,12 +4,12 @@
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.WriteEntrypoint" %>
+<%@ page import="com.crowdcoding.microtasks.WriteFunctionDescription" %>
 
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
-    WriteEntrypoint microtask = (WriteEntrypoint) crowdUser.getMicrotask();
+    WriteFunctionDescription microtask = (WriteFunctionDescription) crowdUser.getMicrotask();
 %>
 
 <div id="microtask">
@@ -30,7 +30,7 @@
 				return false;
 			});
 			
-			$("#entrypointsForm").submit(function()
+			$("#descripForm").submit(function()
 			{
 				var formData = collectFormData();
 				$.ajax({
@@ -38,7 +38,7 @@
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit?type=writeentrypoint&id=<%= microtask.getID() %>'
+				    url: '/submit?type=WriteFunctionDescription&id=<%= microtask.getID() %>'
 				}).done( function (data) { loadMicrotask();	});
 								
 				return false;
@@ -62,7 +62,6 @@
 			var formData = { name: $("#name").val(),
 						     description: $("#functionDescription").val(),
 						     returnType: $("#returnType").val(),
-					         event: $("#event").val(),
 						     parameters: [] };			
 		    $("tr[id^=params]").each(function(){	    		    	
 		    	formData.parameters.push( { name: $(this).find("input").eq(0).val(), 
@@ -73,18 +72,14 @@
 		}
 	</script>
 		
-	<h4> We are working together to make the following application: app descrpition.
-Here’s a user story: user story.
-To make this happen, a function must be called to do the action.
-What should that function be called?
-When (under what conditions) should it be called? What event should trigger this function (dropdown)? [should that be a separate microtask?]
-What parameters does it need? What will it return?
-For each parameter or return type, please also specify its type and what it means (to guide somebody trying to interpret it).  </h4>
+	<h4> This is the entry point phase. Designate "entry points" by reading the user story thoroughly 
+	and identifying all the method calls to successfully create the program. Each method description
+	 should contain a detailed description of what the method does, and what is returned. Don't forget 
+	 to give your methods names and types! </h4>
 	
-	<form id="entrypointsForm" action="">
+	<form id="descripForm" action="">
 		<textarea id="functionDescription" draggable="true">What does the function do?</textarea>
 		returns &nbsp;&nbsp;<input type="text" id="returnType" value = "void" class="input-medium"><BR>
-		<input type="text" id="event" value="$(document).ready(" class="input-large">
 		function 
 		<input type="text" id="name" value = "functionName" class="input-medium">(
 		<BR>

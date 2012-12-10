@@ -32,9 +32,9 @@
 	</script>
 
 
-	<p><h4>This is the user story phase. Have a program you would like to create in mind, and write the 
-	specifications here. Please be as descriptive and thorough as possible, as this is all the information all
-	the other users will have to create the program.</h4></p>
+	<p><h4>We are working together to make the following application: app description. [description provided by application sponsor: us or client]
+What is something a user might want to do with this application?
+Please be as descriptive and thorough as possible, as this is all the information all the other users will have to create the program.</h4></p>
 
 	<form id="userstoryForm" action="">
 		<textarea name="userStory" id="userStory"></textarea>

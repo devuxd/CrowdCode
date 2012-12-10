@@ -29,6 +29,10 @@ textarea { -webkit-user-select: auto; }
 #footer table {margin-left:auto; margin-right:auto;}
 #footer td { padding-right:20px;  }
 
+/* Search results styles */
+.result:hover {background:lightblue;}
+.selectedResult {background:blue;}
+
 
 /* Button styles */
 .closeButton {

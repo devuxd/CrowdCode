@@ -307,7 +307,7 @@ function collectFormDataForNormal()
 
 	<BR>
 	This function has failed a potentially rigorous test set.
-Here is the function description and implementation, the test that failed, and the error message it gave.  
+Here’s the function description and implementation, the test that failed, and the error message it gave.  
 Can you fix it?
 	<BR>
 	<%= methodFormatted %>

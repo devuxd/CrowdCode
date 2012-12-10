@@ -6,6 +6,11 @@ public class PointEventDTO extends DTO
 	public int points;
 	public String description;
 
+	// Default constructor (required by Jackson JSON library)
+	public PointEventDTO()
+	{		
+	}
+	
 	public PointEventDTO(int points, String description)
 	{
 		this.points = points;
