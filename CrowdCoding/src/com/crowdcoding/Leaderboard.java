@@ -72,8 +72,11 @@ public class Leaderboard
 	{
 		LeaderboardDTO dto = new LeaderboardDTO();
 		dto.leaders = new ArrayList<LeaderboardDTO.Leader>();
+		
+		// TODO: should not have null workers here. This test should not be necessary.
 		for (Worker worker : leadWorkers)
-			dto.leaders.add(new LeaderboardDTO.Leader(worker.getScore(), worker.getHandle()));
+			if (worker != null)
+				dto.leaders.add(new LeaderboardDTO.Leader(worker.getScore(), worker.getHandle()));
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    try {
