@@ -117,6 +117,8 @@ public class Function extends Artifact
 			else
 				index = nextLineStart;
 		}		
+		
+		ofy().save().entity(this).now();
 	}	
 	
 	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, Project project)
