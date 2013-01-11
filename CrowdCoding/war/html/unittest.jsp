@@ -26,20 +26,57 @@
     mapper.writeValue(strWriter,microtask.getTestDescriptions());
     String testCaseDescriptions = strWriter.toString();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
+    strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.getFunctionCode());
+    String functionCode = strWriter.toString();
+    System.out.println(functionCode);
+    System.out.println(functionHeader);
+    
 %>
 
 <body>
 <div id="microtask">
 	<script src="/include/codemirror/codemirror.js"></script>
 	<script src="/include/codemirror/javascript.js"></script>
+	<script src="/include/jslint.js"></script>
+	<script src="/html/errorCheck.js"></script>
 	<script>
+	window.onerror = function(err, url, lineNumber) {  
+  //save error and send to server for example.
+console.log(err);
+i = 0;
+			var htmlContent = "";
+			var htmlTab= "";
+			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
+			htmlTab +=  "<li class='active'><a href=";
+		
+		htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+		htmlTab +=  "</a></li>";
+		htmlContent += "<p>" + "</br>"; 
+		htmlContent += " Error At " + err + " </br>" ;
+		htmlContent += "</p></div>";
+		i++;
+			htmlContent += "<button onclick='showReportInformation(" + i + ")'> Report Issue In Test </button>" + "</p></div>";
+		$(document).ready(function() 
+	{
+		$("#tabContent").html(htmlContent);
+		$("#tabs").html(htmlTab);
+
+	});
+};  
 		var myCodeMirrorForDispute;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]","") %>");
+	    myCodeMirror.setValue(<%= functionCode %>);
+
 	    myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
 	    myCodeMirror.setOption("theme", "vibrant-ink");
 		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() {
+		test1(false);
+		if($("#sketchForm").children("input").attr('disabled') == 'disabled')
+		{
+		return false;
+		}
 		debugger;
 			var formData = collectFormDataForNormal();
 			$.ajax({
@@ -76,138 +113,6 @@
 		// i made this so we can have global state of whether all test cases passed
 		var allTestPassed = true;
 		var atLeastOneTestCase = false;
-function runUnitTests(arrayOfTests, functionName,isFirstTime)
-{
-debugger;
-var testCases2 = <%= functionHeader %>;
-var functionHeader = testCases2.replace(/\"/g,"'");
-
-//chooses Thomas needs to make, if I leave these as global then 
-//we can continously add to the tabs, but if I put them inside
-//the function then we will replace the tabs with last call
-//to runUnitTests. also if we have alot of test cases it is going to
-// be annoying ot have to scroll up then down to change the test case
-
-var resultOfTest = new Array(); 
-var htmlTab = "";
-var htmlContent = "";
-for(var p = 0; p < arrayOfTests.length; p++)
-{
-var i = 0;
-if(arrayOfTests[p] == "")
-{
-continue;
-}
-	var htmlTab1 = "";
-	if(p == 0)
-		{   
-			htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";
-			htmlTab +=  "<li class='active'>";
-		}
-
-		else
-		{
-			htmlContent += "<div class='tab-pane' id=" + "'A" + p + "'>";
-			htmlTab +=  "<li>"
-			
-		}
-		// this is a temp tab
-		htmlTab1 += "<a id='TabNumber"+ p + "' href=";
-		htmlTab1 += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
-		htmlTab1 +=  "</a></li>";
-	var testCases = "test('" + functionName + "', function() {";
-	// constructs the function header and puts code  from the above code window
-	testCases += functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
-	testCases += arrayOfTests[p];
-	testCases+= "});";
-	console.log(testCases);
-	var QunitTestCases = parseTheTestCases(testCases);
-	console.log(QunitTestCases);
-	QUnit.log = function(result, message)
-
-	{
-		debugger;
-		console.log(result);
-		resultOfTest[i]= result;   
-		atLeastOneTestCase = true;
-		htmlContent += "<p>" + "</br>"; 
-		if(!result.result)
-		{
-			htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
-			if(result.expected == null)
-			{
-				htmlContent += " Message " + result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$") + "</br>";
-			}
-			else
-			{
-			htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
-			htmlContent += " Outcome Message: " + result.message + "</br>";
-			}
-			htmlTab1 = htmlTab1.replace("class='true'",'class=false')
-		}
-		else
-		{
-			if(result.message != null)
-			{
-				htmlContent += " Passed: " + QunitTestCases[i] + "</br>";
-			}
-		}
-		htmlTab += htmlTab1;
-		i++;
-	}
-
-	   QUnit.testDone = function( details )
-	 {
-	 	console.log(details);
-	 	console.log("iteraton" + p + "size" + arrayOfTests.length);
-	     if(details.failed > 0)
-	     {
-	     	$("#sketchForm").children("input").attr('disabled', 'false');
-	     	allTestPassed = false;
-	     }
-	     else if(details.failed == 0 && allTestPassed)
-	     {
-	     	$("#sketchForm").children("input").removeAttr("disabled");
-	     }
-	     javaTestCases = resultOfTest;
-	   }
-	try
-	{
-	eval(testCases);
-	}
-	catch (err)
-	{
-		debugger;
-		if(i == 0)
-		{   
-			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
-			htmlTab +=  "<li class='active'><a href=";
-		}
-		else
-		{
-			htmlContent += "<div class='tab-pane' id=" + "'A" + i + "'>";
-			htmlTab +=  "<li><a href=";
-		}
-		htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
-		htmlTab +=  "</a></li>";
-		htmlContent += "<p>" + "</br>"; 
-		htmlContent += " Error At " + err.message + " </br>" ;
-		htmlContent += "</p></div>";
-		i++;
-	}
-	htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
-}
-	$(document).ready(function()
-	{
-		$("#tabContent").html(htmlContent);
-		$("#tabs").html(htmlTab);
-		if(htmlTab.search("false") == -1 && isFirstTime)
-		{
-			$("#codeSubmit").submit()
-		}
-	});
-	return testCases;
-}
 // this has boolean to tell it if it is the first time
 // we are running tests, if it is then we will auto 
 // submit
@@ -218,10 +123,14 @@ function test1(isFirstTime)
 	javaTestCases = <%= testCases %>;
 	runUnitTests(javaTestCases,"TEST 1",isFirstTime);
 }
+</script>
+<script>
 function revertCodeAs()
 {
-	myCodeMirror.setValue("<%= microtask.getFunctionCode().replaceAll("[\t\n\\x0B\f\r]"," ") %>");
+	 myCodeMirror.setValue(<%= functionCode %>);
 }
+</script>
+<script>
 function parseTheTestCases(QunitTest)
 {
 	var i = 0; 
@@ -240,6 +149,8 @@ function parseTheTestCases(QunitTest)
 	   }
 	return answers;
 }
+</script>
+<script>
 function showReportInformation(testNumber)
 {
 	debugger;
@@ -269,7 +180,8 @@ function showReportInformation(testNumber)
 		//$("#reportInformation").html(TestCases);
 	}
 }
-
+</script>
+<script>
 function collectFormDataForDispute()
 {
 debugger;
@@ -285,7 +197,8 @@ debugger;
 				 code: codes};
 	return formData;
 }
-
+</script>
+<script>
 function collectFormDataForNormal()
 {
 	// active tab is the one disputed
@@ -301,13 +214,166 @@ function collectFormDataForNormal()
 	return formData;
 }
 </script>
+<script>
+function runUnitTests(arrayOfTests, functionName,isFirstTime)
+{
+debugger;
+var testCases2 = <%= functionHeader %>;
+var functionHeader = testCases2.replace(/\"/g,"'");
+var resultOfTest = new Array(); 
+var htmlTab = "";
+var htmlContent = "";
+for(var p = 0; p < arrayOfTests.length; p++)
+{
+	var i = 0;
+	if(arrayOfTests[p] == "")
+	{
+		continue;
+	}
+	var lintCheckFunction = functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+	var lintResult = JSLINT(lintCheckFunction,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
+	var errors = checkForErrors(JSLINT.errors);
+	console.log(errors);
+	// no errors by jslint
+	if(errors == "")
+	{
+		var htmlTab1 = "";
+		if(p == 0)
+			{   
+				htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";
+				htmlTab +=  "<li class='active'>";
+			}
+	
+			else
+			{
+				htmlContent += "<div class='tab-pane' id=" + "'A" + p + "'>";
+				htmlTab +=  "<li>"
+				
+			}
+			// this is a temp tab
+			htmlTab1 += "<a id='TabNumber"+ p + "' href=";
+			htmlTab1 += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
+			htmlTab1 +=  "</a></li>";
+		var testCases = "test('" + functionName + "', function() {";
+		// constructs the function header and puts code  from the above code window
+		testCases += functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+		testCases += arrayOfTests[p];
+		testCases+= "});";
+		console.log(testCases);
+		var QunitTestCases = parseTheTestCases(testCases);
+		console.log(QunitTestCases);
+		QUnit.log = function(result, message)
+	
+		{
+			debugger;
+			console.log(result);
+			resultOfTest[i]= result;   
+			atLeastOneTestCase = true;
+			htmlContent += "<p>" + "</br>"; 
+			if(!result.result)
+			{
+				htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
+				if(result.expected == null)
+				{
+					htmlContent += " Message " + result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$") + "</br>";
+				}
+				else
+				{
+				htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
+				htmlContent += " Outcome Message: " + result.message + "</br>";
+				}
+				htmlTab1 = htmlTab1.replace("class='true'",'class=false')
+			}
+			else
+			{
+				if(result.message != null)
+				{
+					htmlContent += " Passed: " + QunitTestCases[i] + "</br>";
+				}
+			}
+			htmlTab += htmlTab1;
+			i++;
+		}
+	
+		   QUnit.testDone = function( details )
+		 {
+		 	console.log(details);
+		 	console.log("iteraton" + p + "size" + arrayOfTests.length);
+		     if(details.failed > 0)
+		     {
+		     	$("#sketchForm").children("input").attr('disabled', 'false');
+		     	allTestPassed = false;
+		     }
+		     else if(details.failed == 0 && allTestPassed)
+		     {
+		     	$("#sketchForm").children("input").removeAttr("disabled");
+		     }
+		     javaTestCases = resultOfTest;
+		   }
+		try
+		{
+		eval(testCases);
+		}
+		catch (err)
+		{
+			debugger;
+			if(i == 0)
+			{   
+				htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
+				htmlTab +=  "<li class='active'><a href=";
+			}
+			else
+			{
+				htmlContent += "<div class='tab-pane' id=" + "'A" + i + "'>";
+				htmlTab +=  "<li><a href=";
+			}
+			htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+			htmlTab +=  "</a></li>";
+			htmlContent += "<p>" + "</br>"; 
+			htmlContent += " Error At " + err.message + " </br>" ;
+			htmlContent += "</p></div>";
+			i++;
+		}
+		htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
+	}
+	else
+	{
+		if(i == 0)
+		{   
+			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
+			htmlTab +=  "<li class='active'><a href=";
+		}
+		else
+		{
+			htmlContent += "<div class='tab-pane' id=" + "'A" + i + "'>";
+			htmlTab +=  "<li><a href=";
+		}
+		htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+		htmlTab +=  "</a></li>";
+		htmlContent += "<p>" + "</br>"; 
+		htmlContent += " Error At " + errors + " </br>" ;
+		htmlContent += "</p></div>";
+		i++;
+	}}
+	$(document).ready(function()
+	{
+		$("#tabContent").html(htmlContent);
+		$("#tabs").html(htmlTab);
+		if(htmlTab.search("false") == -1 && isFirstTime)
+		{
+			$("#codeSubmit").submit()
+		}
+	});
+	return testCases;
+}
+</script>
 		<button style="float:right;"onclick="revertCodeAs();"> Revert Code </button>
 <form id="sketchForm" action="">
 
 
 	<BR>
 	This function has failed a potentially rigorous test set.
-Here’s the function description and implementation, the test that failed, and the error message it gave.  
+Here is the function description and implementation, the test that failed, and the error message it gave.  
 Can you fix it?
 	<BR>
 	<%= methodFormatted %>
@@ -344,6 +410,7 @@ Can you fix it?
 		<!-- /tabbable -->
 	</div>
 	<script>
+    debugger;
 	 test1(true);
 	 </script>
 	 

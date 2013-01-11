@@ -17,18 +17,30 @@
     Writer strWriter = new StringWriter();
     DisputeUnitTestFunction microtask = (DisputeUnitTestFunction) crowdUser.getMicrotask();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
+    strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
+    String functionHeader = strWriter.toString();
+    strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.getFunction().getCode());
+    String functionCode = strWriter.toString();
+    strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getTestCode());
     String unitTests = strWriter.toString();
-    String disputeDescription = microtask.getDescription();
+    strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.getDescription());
+    String disputeDescription = strWriter.toString();
     System.out.println(unitTests);
     System.out.println(unitTests.replaceAll("[\t\n\\x0B\f\r]",""));
 %>
 
 
 
+
 <div id="microtask">
 	<script src="/include/codemirror/codemirror.js"></script>
 	<script src="/include/codemirror/javascript.js"></script>
+	<script src="/include/jslint.js"></script>
+	<script src="/html/errorCheck.js"></script>
 	<script>
 		debugger;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
@@ -39,6 +51,28 @@
 		//myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
 		
 		$('#testForm').submit(function() {
+			var equal
+		 	var functionHeader = <%= functionHeader %>;
+			functionHeader = functionHeader.replace(/\"/g,"'");
+			var functionCode = functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val();
+			var errors = "";
+		    console.log(functionCode);
+		    var jQueryLint = "/*global window: false, document: false, $: false, log: false, bleep: false, QUnit: false, test: false, asyncTest: false, expect: false,module: false,ok: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false,raises: false,start: false,stop: false*/";
+		    var lintResult = JSLINT(jQueryLint + functionCode,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true, equal: false});
+			debugger;
+			console.log(JSLINT.errors);
+			if(!lintResult)
+			{
+				var errors = checkForErrors(JSLINT.errors);
+				console.log(errors);
+				if(errors != "")
+				{
+					$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
+					return false; 
+				}
+			}
+				
+		
 			var formData = { code: $("#code").val() };
 			$.ajax({
 			    contentType: 'application/json',
@@ -101,5 +135,5 @@
 	<input type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>
-
+	<div id = "errors"> </div>
 </div>

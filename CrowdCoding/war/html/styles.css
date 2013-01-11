@@ -13,7 +13,7 @@ textarea { -webkit-user-select: auto; }
 #score p { font-size: larger;}
 
 #contentPane { width: 640px; background:#fff;  border-radius: 5px; }
-
+#errors{ color:red; background-color:lightgrey;}
 #rightbar { background: none repeat scroll 0 0; margin-left: 4%;margin-top: 23%;width: auto;}
 #leaderboardTable { margin-left:auto; margin-right:auto; background:#EBEBEB; border-width:1px;
 					border-radius:10px; border-color:#9E9E9E; border-style: solid; }
