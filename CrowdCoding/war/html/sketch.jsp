@@ -6,12 +6,18 @@
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.SketchFunction" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
-
+<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
+<%@ page import="java.io.StringWriter" %>
+<%@ page import="java.io.Writer" %>
 <%
     Project project = Project.Create();
+    ObjectMapper mapper = new ObjectMapper();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
     SketchFunction microtask = (SketchFunction) crowdUser.getMicrotask();
-    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
+    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());;
+    StringWriter strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
+    String functionHeader = strWriter.toString();
 %>
 
 
@@ -19,11 +25,30 @@
 <div id="microtask">
 	<script src="/include/codemirror/codemirror.js"></script>
 	<script src="/include/codemirror/javascript.js"></script>
+	<script src="/include/jslint.js"></script>
+	<script src="/html/errorCheck.js"></script>
 	<script>
-	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    myCodeMirror.setOption("theme", "vibrant-ink");
-	
+	    	var myCodeMirror = CodeMirror.fromTextArea(code);
+	   	 	myCodeMirror.setOption("theme", "vibrant-ink");
+
 		$('#sketchForm').submit(function() {
+		    var functionHeader = <%= functionHeader %>;
+			functionHeader = functionHeader.replace(/\"/g,"'");
+			var functionCode = functionHeader + "{"  + $("#code").val() + "}";
+			var errors = "";
+		    console.log(functionCode);
+		    var lintResult = JSLINT(functionCode,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
+			console.log(JSLINT.errors);
+			if(!lintResult)
+			{
+				var errors = checkForErrors(JSLINT.errors);
+				console.log(errors);
+				if(errors != "")
+				{
+					$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
+					return false; 
+				}
+			}
 			var formData = { code: $("#code").val() };
 			$.ajax({
 			    contentType: 'application/json',
@@ -52,7 +77,6 @@ If your method is not done, make sure one of your lines starts with # so it is n
 	<BR>
 	
 
-
 	<BR>{
 	<table width="100%">
 		<tr>
@@ -64,5 +88,6 @@ If your method is not done, make sure one of your lines starts with # so it is n
 	<input type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>
+	<div id = "errors"> </div>
 
 </div>
