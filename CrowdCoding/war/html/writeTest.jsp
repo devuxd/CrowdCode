@@ -15,11 +15,9 @@
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
     WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
     ObjectMapper mapper = new ObjectMapper();
-    Writer strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getDescription());
-    String description = strWriter.toString();
+    String description = microtask.getDescription();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
-    strWriter = new StringWriter();
+    Writer strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
     String functionHeader = strWriter.toString();
     strWriter = new StringWriter();
@@ -41,7 +39,7 @@
 		$('#testForm').submit(function() {
 			 var functionHeader = <%= functionHeader %>;
 			functionHeader = functionHeader.replace(/\"/g,"'");
-			var functionCode = "test('" + "dog" + "', function() {" + functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val() + "});";
+			var functionCode = "test('" + "functionCoder" + "', function() {" + functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val() + "});";
 			var errors = "";
 		    console.log(functionCode);
 		    var jQueryLint = "/*global window: false, document: false, $: false, log: false, bleep: false, QUnit: false, test: false, asyncTest: false, expect: false,module: false,ok: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false,raises: false,start: false,stop: false*/";
@@ -72,12 +70,11 @@
 	</script>
 
 
-	<p>
-	<p>
+<h4>
 	We are writing the following function: </br> <%= methodFormatted %></br>
 Write a unit test for the following test case: <%= description %></br>
 </br>
-Reference Section:</br>
+Reference Section:</br></br>
 Assertions you can use when writing unit tests include: </br>
 deepEqual( actual, expected, message ): comparing to objects </br>
 equal( actual, expected, message ): check if both are equal </br>
@@ -88,9 +85,10 @@ ok( actual, expected, message ): boolean assertion </br>
 strictEqual( actual, expected, message ): strict type and value comparision</br>
 throws( actual, expected, message ): if exception is expected </br>
 
-examples:</br>
+Examples:</br></br>
 equal(price, qty*itemCost, "line item price looks incorrect");</br>
-equal(plus(5, 3), 8, "Two positive numbers don't sum correctly");</br>
+equal(plus(5, 3), 8, "Two positive numbers don't sum correctly");
+</h4>
 	
 	
 <form id="testForm" action="">
