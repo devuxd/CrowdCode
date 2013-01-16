@@ -4,7 +4,7 @@
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.UnitTestFunction" %>
+<%@ page import="com.crowdcoding.microtasks.DebugTestFailure" %>
 <%@ page import="com.crowdcoding.microtasks.DisputeUnitTestFunction" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
@@ -14,7 +14,7 @@
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
-    UnitTestFunction microtask = (UnitTestFunction) crowdUser.getMicrotask();
+    DebugTestFailure microtask = (DebugTestFailure) crowdUser.getMicrotask();
     ObjectMapper mapper = new ObjectMapper();
     Writer strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getTestCases());
@@ -98,7 +98,7 @@ i = 0;
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=unittestfunction&id=<%= microtask.getID() %>'
+			    url: '/submit?type=DebugTestFailure&id=<%= microtask.getID() %>'
 			}).done( function (data) { loadMicrotask();	});						
 			
 			return false;

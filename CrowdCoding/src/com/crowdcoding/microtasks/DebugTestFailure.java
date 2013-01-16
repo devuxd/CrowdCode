@@ -21,17 +21,17 @@ import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
 
 @EntitySubclass(index=true)
-public class UnitTestFunction extends Microtask 
+public class DebugTestFailure extends Microtask 
 {
 	@Load private Ref<Function> function;
 
 	// Default constructor for deserialization
-	private UnitTestFunction() 
+	private DebugTestFailure() 
 	{				
 	}
 
 	// Constructor for initial construction
-	public UnitTestFunction(Ref<Function> function2, Project project)
+	public DebugTestFailure(Ref<Function> function2, Project project)
 	{
 		super(project);
 		this.function = (Ref<Function>) Ref.create(function2.getKey());		
@@ -50,7 +50,7 @@ public class UnitTestFunction extends Microtask
 
 	public String getUIURL()
 	{
-		return "/html/unittest.jsp";
+		return "/html/DebugTestFailure.jsp";
 	}
 
 	public String getFunctionCode()
