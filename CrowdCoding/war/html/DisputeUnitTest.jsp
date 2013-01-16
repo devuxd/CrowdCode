@@ -33,9 +33,6 @@
     System.out.println(unitTests.replaceAll("[\t\n\\x0B\f\r]",""));
 %>
 
-
-
-
 <div id="microtask">
 	<script src="/include/codemirror/codemirror.js"></script>
 	<script src="/include/codemirror/javascript.js"></script>
@@ -87,34 +84,32 @@
 	</script>
 
 
-	<p>
-	<p>
-	DIPUTED TASK
-	</br>
+	<h4>
+	DISPUTED TASK
+	<br>
 	This unit test suite was disputed for the following reason:
-	</br>
+	<br>
 	<%= disputeDescription %>
-	</br>
-	</br>
+	<br>
+	<br>
 	
 	
-	Unit tests can be: 	</br>
-	deepEqual: comparing to objects </br>
-	equal: check if both are equal </br>
-	notDeepEqual: </br>
-	notEqual: </br>
-	notStrickEqual: </br>
-	ok: boolean assertion </br>
-	strictEqual: strict type and value comparision</br>
-	throws: if exception is expected </br>
-	</br>
-	A sample test has form:</br>
-	( actual, expected, message )</br>
-	Please place code you write in the message:</br>
-	example: equal(1,'1',"equal 1,'1'");</br>
-	</p></br>
-	<h4> Write a unit test for the following method: </h4>
-	
+	Unit tests can be: 	<br>
+	deepEqual: comparing to objects <br>
+	equal: check if both are equal <br>
+	notDeepEqual: <br>
+	notEqual: <br>
+	notStrickEqual: <br>
+	ok: boolean assertion <br>
+	strictEqual: strict type and value comparision<br>
+	throws: if exception is expected <br>
+	<br>
+	A sample test has form:<br>
+	( actual, expected, message )<br>
+	Please place code you write in the message:<br>
+	example: equal(1,'1',"equal 1,'1'");<br>
+	</p><br>
+	<h4>Write a unit test for the following method: 	
 	
 	
 	<form id="testForm" action="">
@@ -124,14 +119,14 @@
 	<BR>
 	
 	<%= methodFormatted %>
-	<BR>{
+	<BR>{</h4>
 	<table width="100%">
 		<tr>
 			<td width = "20"></td>
 			<td><textarea id="code"></textarea></td>
 		</tr>	
 	</table>
-	} <BR><BR>
+	} <BR><BR></h4>
 	<input type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>

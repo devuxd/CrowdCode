@@ -272,10 +272,23 @@ for(var p = 0; p < arrayOfTests.length; p++)
 			htmlContent += "<p>" + "</br>"; 
 			if(!result.result)
 			{
+				if(QunitTestCases.length < 1)
+				{
+					var originalTestCases = <%= testCases %>;
+					htmlContent += "Error At: " + originalTestCases[i] + " </br>";
+				}
+				else
+				{
 				htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
+				}
 				if(result.expected == null)
 				{
-					htmlContent += " Message " + result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$") + "</br>";
+					var errorMessage = result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$");
+					if(errorMessage == null)
+					{
+						errorMessage = result.message;
+					}
+					htmlContent += " Message: " + errorMessage + "</br>";
 				}
 				else
 				{
@@ -372,20 +385,21 @@ for(var p = 0; p < arrayOfTests.length; p++)
 
 
 	<BR>
-	This function failed a test.
-Here is the function description and implementation, the test that failed, and the error message it gave.  
+	<h4>
+	This function has failed a potentially rigorous test set.
+Here's the function description and implementation, the test that failed, and the error message it gave.  
 Can you fix it?
 	<BR>
 	<%= methodFormatted %>
 	<BR>
-	{
+	{</h4>
 	<table width="100%">
 		<tr>
 			<td></td>
 			<td><textarea id="code"></textarea></td>
 		</tr>	
 	</table>
-	} <BR><BR>
+	<h4> } <BR><BR></h4>
 	<input id = "codeSubmit" type="submit" value="Submit" class="btn btn-primary"/>
 	
 	</form>
@@ -416,16 +430,17 @@ Can you fix it?
 	 
 	 <div id = "reportInformation" style = "display:none"> 
 	 <form id="issueForm" action="">
-	 Here is the test case code, and please note you can only dispute one test case at a time:
+	 <h4>
+	 Here is the test case code, and please note you can only dispute one test case at a time:</h4>
 	 <table width="100%">
 		<tr>
 			<td width = "20"></td>
 			<td><textarea id="unedit"></textarea></td>
 		</tr>	
 	</table>
-	
+	<h4>
 	Please describe what needs to be fixed:
-	<br>
+	<br></h4>
 		 <table width="100%">
 		<tr>
 			<td width = "20"></td>
