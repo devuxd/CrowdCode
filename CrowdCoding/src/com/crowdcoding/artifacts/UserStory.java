@@ -41,8 +41,13 @@ public class UserStory extends Artifact
 		this.microtask = null;
 		
 		// Transitioning generates a new Entrypoint artifact
-		Entrypoint entrypoint = new Entrypoint(project);
+		Entrypoint entrypoint = new Entrypoint(project, this);
 		this.entrypoint = (Ref<Entrypoint>) Ref.create(entrypoint.getKey());
 		ofy().save().entity(this).now();
+	}
+	
+	public String getText()
+	{
+		return text;
 	}
 }

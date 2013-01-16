@@ -372,7 +372,7 @@ for(var p = 0; p < arrayOfTests.length; p++)
 
 
 	<BR>
-	This function has failed a potentially rigorous test set.
+	This function failed a test.
 Here is the function description and implementation, the test that failed, and the error message it gave.  
 Can you fix it?
 	<BR>
