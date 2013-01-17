@@ -13,7 +13,6 @@ import com.googlecode.objectify.annotation.Load;
 public class Entrypoint extends Artifact 
 {
 	@Load protected Ref<Microtask> microtask;
-	protected Ref<UserStory> userStory;
 	protected Ref<Entrypoint> entrypoint;
 	protected String event;
 	
@@ -23,11 +22,9 @@ public class Entrypoint extends Artifact
 	}
 	
 	// Constructor for initial creation
-	public Entrypoint(Project project, UserStory userStory)
+	public Entrypoint(Project project)
 	{	
 		super(project);
-		
-		this.userStory = (Ref<UserStory>) Ref.create(userStory.getKey());
 		
 		// Initial state of an entrypoint is no content. To create content, a microtask is spawned.	
 		WriteEntrypoint writeEntrypoint = new WriteEntrypoint(this, project);
@@ -46,9 +43,4 @@ public class Entrypoint extends Artifact
 		this.microtask = null;
 		ofy().save().entity(this).now();		
 	}	
-	
-	public UserStory getUserStory()
-	{
-		return ofy().load().ref(userStory).get();
-	}
 }

@@ -63,9 +63,9 @@
 	</script>
 
 
-	<p><h4> <%= methodFormatted %><BR>
+	<p><h4> Your mission is to implement the following function: <BR>	<%= methodFormatted %><BR>
 
-Your mission is to implement the following function. You can implement the whole function or you can write pseudocode [warning: not yet!].
+You can implement the whole function or you can write pseudocode [warning: not yet!].
 Flag pseudocode by starting a line with the octothorpe '#', comment with //.
 If your method is not done, make sure one of your lines starts with # so it is not flagged as complete!</h4>
 	
