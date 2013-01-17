@@ -1,46 +1,49 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.google.appengine.api.users.User" %>
-<%@ page import="com.google.appengine.api.users.UserService" %>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.artifacts.Project" %>
-<%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.DebugTestFailure" %>
-<%@ page import="com.crowdcoding.microtasks.DisputeUnitTestFunction" %>
-<%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
-<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
-<%@ page import="java.io.StringWriter" %>
-<%@ page import="java.io.Writer" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page import="com.google.appengine.api.users.User"%>
+<%@ page import="com.google.appengine.api.users.UserService"%>
+<%@ page import="com.google.appengine.api.users.UserServiceFactory"%>
+<%@ page import="com.crowdcoding.artifacts.Project"%>
+<%@ page import="com.crowdcoding.Worker"%>
+<%@ page import="com.crowdcoding.microtasks.DebugTestFailure"%>
+<%@ page import="com.crowdcoding.microtasks.DisputeUnitTestFunction"%>
+<%@ page import="com.crowdcoding.util.FunctionHeaderUtil"%>
+<%@ page import="com.fasterxml.jackson.databind.ObjectMapper"%>
+<%@ page import="java.io.StringWriter"%>
+<%@ page import="java.io.Writer"%>
 
 <%
-    Project project = Project.Create();
-    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
-    DebugTestFailure microtask = (DebugTestFailure) crowdUser.getMicrotask();
-    ObjectMapper mapper = new ObjectMapper();
-    Writer strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getTestCases());
-    String testCases = strWriter.toString();
-    strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getFunctionHeaderAssociatedWithTestCase());
-    String functionHeader = strWriter.toString();
-    strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getTestDescriptions());
-    String testCaseDescriptions = strWriter.toString();
-    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
-    strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getFunctionCode());
-    String functionCode = strWriter.toString();
-    System.out.println(functionCode);
-    System.out.println(functionHeader);
-    
+	Project project = Project.Create();
+	Worker crowdUser = Worker.Create(UserServiceFactory
+			.getUserService().getCurrentUser());
+	DebugTestFailure microtask = (DebugTestFailure) crowdUser
+			.getMicrotask();
+	ObjectMapper mapper = new ObjectMapper();
+	Writer strWriter = new StringWriter();
+	mapper.writeValue(strWriter, microtask.getTestCases());
+	String testCases = strWriter.toString();
+	strWriter = new StringWriter();
+	mapper.writeValue(strWriter,
+			microtask.getFunctionHeaderAssociatedWithTestCase());
+	String functionHeader = strWriter.toString();
+	strWriter = new StringWriter();
+	mapper.writeValue(strWriter, microtask.getTestDescriptions());
+	String testCaseDescriptions = strWriter.toString();
+	String methodFormatted = FunctionHeaderUtil
+			.returnFunctionHeaderFormatted(microtask.getFunction());
+	strWriter = new StringWriter();
+	mapper.writeValue(strWriter, microtask.getFunctionCode());
+	String functionCode = strWriter.toString();
+	System.out.println(functionCode);
+	System.out.println(functionHeader);
 %>
 
 <body>
-<div id="microtask">
-	<script src="/include/codemirror/codemirror.js"></script>
-	<script src="/include/codemirror/javascript.js"></script>
-	<script src="/include/jslint.js"></script>
-	<script src="/html/errorCheck.js"></script>
-	<script>
+	<div id="microtask">
+		<script src="/include/codemirror/codemirror.js"></script>
+		<script src="/include/codemirror/javascript.js"></script>
+		<script src="/include/jslint.js"></script>
+		<script src="/html/errorCheck.js"></script>
+		<script>
 	window.onerror = function(err, url, lineNumber) {  
   //save error and send to server for example.
 console.log(err);
@@ -66,7 +69,7 @@ i = 0;
 };  
 		var myCodeMirrorForDispute;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    myCodeMirror.setValue(<%= functionCode %>);
+	    myCodeMirror.setValue(<%=functionCode%>);
 
 	    myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
 	    myCodeMirror.setOption("theme", "vibrant-ink");
@@ -84,7 +87,7 @@ i = 0;
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=unittestfunction&id=<%= microtask.getID() %>'
+			    url: '/submit?type=unittestfunction&id=<%=microtask.getID()%>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;
@@ -98,7 +101,7 @@ i = 0;
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=DebugTestFailure&id=<%= microtask.getID() %>'
+			    url: '/submit?type=DebugTestFailure&id=<%=microtask.getID()%>'
 			}).done( function (data) { loadMicrotask();	});						
 			
 			return false;
@@ -109,7 +112,7 @@ i = 0;
 		<script>
 		var javaTestCases = new Array();
 		var javaTestCaseDescriptions = new Array();
-		javaTestCaseDescriptions = <%= testCaseDescriptions %>;
+		javaTestCaseDescriptions = <%=testCaseDescriptions%>;
 		// i made this so we can have global state of whether all test cases passed
 		var allTestPassed = true;
 		var atLeastOneTestCase = false;
@@ -120,17 +123,17 @@ function test1(isFirstTime)
 {
 	debugger;
 	allTestPassed = true;
-	javaTestCases = <%= testCases %>;
+	javaTestCases = <%=testCases%>;
 	runUnitTests(javaTestCases,"TEST 1",isFirstTime);
 }
 </script>
-<script>
+		<script>
 function revertCodeAs()
 {
-	 myCodeMirror.setValue(<%= functionCode %>);
+	 myCodeMirror.setValue(<%=functionCode%>);
 }
 </script>
-<script>
+		<script>
 function parseTheTestCases(QunitTest)
 {
 	var i = 0; 
@@ -150,7 +153,7 @@ function parseTheTestCases(QunitTest)
 	return answers;
 }
 </script>
-<script>
+		<script>
 function showReportInformation(testNumber)
 {
 	debugger;
@@ -158,7 +161,7 @@ function showReportInformation(testNumber)
 	var tabName = "#A" + testNumber;
 	TestCases += $(tabName).html().match("\\<br\\> [a-zA-Z0-9 \\/ \\< \\> \\: \\' \\( \\) \\,\\;]*\\<br\\>") + "";
 	TestCases += "";
-	var originalTestCases = <%= testCases %>;
+	var originalTestCases = <%=testCases%>;
 	var myTest = originalTestCases[testNumber] + " ";
 	
 	if(javaTestCases.length == 0)
@@ -181,7 +184,7 @@ function showReportInformation(testNumber)
 	}
 }
 </script>
-<script>
+		<script>
 function collectFormDataForDispute()
 {
 debugger;
@@ -198,7 +201,7 @@ debugger;
 	return formData;
 }
 </script>
-<script>
+		<script>
 function collectFormDataForNormal()
 {
 	// active tab is the one disputed
@@ -214,15 +217,16 @@ function collectFormDataForNormal()
 	return formData;
 }
 </script>
-<script>
+		<script>
 function runUnitTests(arrayOfTests, functionName,isFirstTime)
 {
 debugger;
-var testCases2 = <%= functionHeader %>;
+var testCases2 = <%=functionHeader%>;
 var functionHeader = testCases2.replace(/\"/g,"'");
 var resultOfTest = new Array(); 
 var htmlTab = "";
 var htmlContent = "";
+var hasAtLeast1Test = false;
 for(var p = 0; p < arrayOfTests.length; p++)
 {
 	var i = 0;
@@ -230,6 +234,7 @@ for(var p = 0; p < arrayOfTests.length; p++)
 	{
 		continue;
 	}
+	hasAtLeast1Test = true;
 	var lintCheckFunction = functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
 	var lintResult = JSLINT(lintCheckFunction,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
 	var errors = checkForErrors(JSLINT.errors);
@@ -272,9 +277,10 @@ for(var p = 0; p < arrayOfTests.length; p++)
 			htmlContent += "<p>" + "</br>"; 
 			if(!result.result)
 			{
+			debugger;
 				if(QunitTestCases.length < 1)
 				{
-					var originalTestCases = <%= testCases %>;
+					var originalTestCases = <%=testCases%>;
 					htmlContent += "Error At: " + originalTestCases[i] + " </br>";
 				}
 				else
@@ -368,6 +374,27 @@ for(var p = 0; p < arrayOfTests.length; p++)
 		htmlContent += "</p></div>";
 		i++;
 	}}
+	
+	if(!hasAtLeast1Test)
+	{
+			debugger;
+			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
+			htmlTab +=  "<li class='active'><a href=";
+			htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+			htmlTab +=  "</a></li>";
+			htmlContent += "<p>" + "</br>"; 
+			htmlContent += " No Unit Tests Exist for this function" + " </br>" ;
+			htmlContent += "</p></div>";
+			i++;
+			$("#reportInformation").css('display',"block");
+			myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
+	    	myCodeMirrorForDispute.setValue("No Unit Test Exist For this Function");
+	    	myCodeMirrorForDispute.setOption("readOnly", "true");
+	    	myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
+	}
+	
+	
+	
 	$(document).ready(function()
 	{
 		$("#tabContent").html(htmlContent);
@@ -380,75 +407,73 @@ for(var p = 0; p < arrayOfTests.length; p++)
 	return testCases;
 }
 </script>
-		<button style="float:right;"onclick="revertCodeAs();"> Revert Code </button>
-<form id="sketchForm" action="">
+		<button style="float: right;" onclick="revertCodeAs();">
+			Revert Code</button>
+		<form id="sketchForm" action="">
 
 
-	<BR>
-	<h4>
-	This function has failed a potentially rigorous test set.
-Here's the function description and implementation, the test that failed, and the error message it gave.  
-Can you fix it?
-	<BR>
-	<%= methodFormatted %>
-	<BR>
-	{</h4>
-	<table width="100%">
-		<tr>
-			<td></td>
-			<td><textarea id="code"></textarea></td>
-		</tr>	
-	</table>
-	<h4> } <BR><BR></h4>
-	<input id = "codeSubmit" type="submit" value="Submit" class="btn btn-primary"/>
-	
-	</form>
-	<button style="" onclick="test1(false);">Run the Unit Tests</button>
-	<div class="bs-docs-example">
-		<div class="tabbable tabs-left">
-			<ul id="tabs"" class="nav nav-tabs">
-				<li class="active">
-			</ul>
-			<div id="tabContent" class="tab-content">
-				<div class="tab-pane active" id="lA">
-					
-				</div>
-				<div class="tab-pane" id="lB">
-				
-				</div>
-				<div class="tab-pane" id="lC">
-					
+			<BR>
+			<h4>
+				This function has failed a potentially rigorous test set. Here's the
+				function description and implementation, the test that failed, and
+				the error message it gave. Can you fix it? <BR>
+				<%=methodFormatted%>
+				<BR> {
+			</h4>
+			<table width="100%">
+				<tr>
+					<td></td>
+					<td><textarea id="code"></textarea></td>
+				</tr>
+			</table>
+			<h4>
+				} <BR>
+				<BR>
+			</h4>
+			<input id="codeSubmit" type="submit" value="Submit"
+				class="btn btn-primary" />
+
+		</form>
+		<button style="" onclick="test1(false);">Run the Unit Tests</button>
+		<div class="bs-docs-example">
+			<div class="tabbable tabs-left">
+				<ul id="tabs" " class="nav nav-tabs">
+					<li class="active">
+				</ul>
+				<div id="tabContent" class="tab-content">
+					<div class="tab-pane active" id="lA"></div>
+					<div class="tab-pane" id="lB"></div>
+					<div class="tab-pane" id="lC"></div>
 				</div>
 			</div>
+			<!-- /tabbable -->
 		</div>
-		<!-- /tabbable -->
-	</div>
-	<script>
+		<script>
     debugger;
 	 test1(true);
 	 </script>
-	 
-	 <div id = "reportInformation" style = "display:none"> 
-	 <form id="issueForm" action="">
-	 <h4>
-	 Here is the test case code, and please note you can only dispute one test case at a time:</h4>
-	 <table width="100%">
-		<tr>
-			<td width = "20"></td>
-			<td><textarea id="unedit"></textarea></td>
-		</tr>	
-	</table>
-	<h4>
-	Please describe what needs to be fixed:
-	<br></h4>
-		 <table width="100%">
-		<tr>
-			<td width = "20"></td>
-			<td><textarea id="userInput"></textarea></td>
-		</tr>	
-	</table>
-	<input type="submit" value="Submit" class="btn btn-primary"/>
-	</form>
-	</div>
+
+		<div id="reportInformation" style="display: none">
+			<form id="issueForm" action="">
+				<h4>Here is the test case code, and please note you can only
+					dispute one test case at a time:</h4>
+				<table width="100%">
+					<tr>
+						<td width="20"></td>
+						<td><textarea id="unedit"></textarea></td>
+					</tr>
+				</table>
+				<h4>
+					Please describe what needs to be fixed: <br>
+				</h4>
+				<table width="100%">
+					<tr>
+						<td width="20"></td>
+						<td><textarea id="userInput"></textarea></td>
+					</tr>
+				</table>
+				<input type="submit" value="Submit" class="btn btn-primary" />
+			</form>
+		</div>
 </body>
 </html>
