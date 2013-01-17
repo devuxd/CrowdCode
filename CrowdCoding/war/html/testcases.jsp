@@ -71,9 +71,9 @@
 
 
 
-	<p><h4>We will be writing the following function: <BR><%= methodFormatted %><BR>
-Your mission is to set up tests to identify whether or not it’s working.  Test it rigorously!
-Think of ways that this function might misbehave/show unexpected results and briefly describe them here, in plain English.</h4>
+	<p><h4><%= methodFormatted %><BR>
+In what situations or cases might this function misbehave, show unexpected results, or fail? Are there unexpected
+corner cases that might not work?
 
 	
 	<BR>
