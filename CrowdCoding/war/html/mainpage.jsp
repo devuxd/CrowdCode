@@ -15,7 +15,7 @@
 	<meta charset="UTF-8">
 	<title>CrowdCode</title>
     <link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" >
-	<link rel="stylesheet" href="/html/unittest.css" type="text/css" />
+	<link rel="stylesheet" href="/html/DebugTestFailure.css" type="text/css" />
 	<link rel="stylesheet" href="/html/styles.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
