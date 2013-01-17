@@ -42,21 +42,18 @@
 
 
 	<form id="writeCallForm" action="">
-
-
-	<p><h4> Replace the psuedocode with an actual call to the function: </h4> <BR>	
-	<%= calleeFormatted %>
-
-	<BR>{
-	<table width="100%">
-		<tr>
-			<td width = "20"></td>
-			<td><textarea id="code"></textarea></td>
-		</tr>	
-	</table>
-	} <BR><BR>
-	<input type="submit" value="Submit" class="btn btn-primary"/>
+		<p><h4> Replace the psuedocode with an actual call to the function: </h4> <BR>	
+		<%= calleeFormatted %>
 	
+		<BR>{
+		<table width="100%">
+			<tr>
+				<td width = "20"></td>
+				<td><textarea id="code"></textarea></td>
+			</tr>	
+		</table>
+		} <BR><BR>
+		<input type="submit" value="Submit" class="btn btn-primary"/>	
 	</form>
 
 </div>

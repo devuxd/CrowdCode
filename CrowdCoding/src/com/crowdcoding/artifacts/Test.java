@@ -4,7 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
-import com.crowdcoding.microtasks.UnitTestFunction;
+import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.WriteTest;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -52,12 +52,12 @@ public class Test extends Artifact
 				{
 					if(!this.function.getValue().anyTestCasesDisputed())
 					{
-						UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
+						DebugTestFailure unitTest = new DebugTestFailure(this.function,project);
 					}
 				}
 				else
 				{
-					UnitTestFunction unitTest = new UnitTestFunction(this.function,project);
+					DebugTestFailure unitTest = new DebugTestFailure(this.function,project);
 				}
 				this.unitTestIsOpen = true;
 		}

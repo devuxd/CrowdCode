@@ -48,4 +48,9 @@ public class WriteEntrypoint extends Microtask
 	{
 		return "/html/entrypoints.jsp";
 	}	
+	
+	public Entrypoint getEntrypoint()
+	{
+		return entrypoint.get();
+	}
 }
