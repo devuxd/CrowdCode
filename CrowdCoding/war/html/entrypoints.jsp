@@ -5,13 +5,11 @@
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteEntrypoint" %>
-<%@ page import="com.crowdcoding.artifacts.UserStory" %>
 
 <%
     Project project = Project.Create();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
     WriteEntrypoint microtask = (WriteEntrypoint) crowdUser.getMicrotask();
-    UserStory userStory = microtask.getEntrypoint().getUserStory();
 %>
 
 <div id="microtask">
@@ -75,9 +73,13 @@
 		}
 	</script>
 		
-	<h4> For an application that [description], consider the following user scenario: <BR> <%=userStory.getText() %><BR>
-	What framework event should be used to initially trigger this user scenario to occur? What should the function
-	that listens for this event do, and what parameters does it require?</h4>
+	<h4> We are working together to make the following application: app descrpition.
+Here’s a user story: user story.
+To make this happen, a function must be called to do the action.
+What should that function be called?
+When (under what conditions) should it be called? What event should trigger this function (dropdown)? [should that be a separate microtask?]
+What parameters does it need? What will it return?
+For each parameter or return type, please also specify its type and what it means (to guide somebody trying to interpret it).  </h4>
 	
 	<form id="entrypointsForm" action="">
 		<textarea id="functionDescription" draggable="true">What does the function do?</textarea>

@@ -15,7 +15,7 @@ import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
-import com.crowdcoding.microtasks.DebugTestFailure;
+import com.crowdcoding.microtasks.UnitTestFunction;
 import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteEntrypoint;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
@@ -37,7 +37,7 @@ public class SubmitMicrotaskServlet extends HttpServlet
 		microtaskTypes.put("disputeunittestfunction", DisputeUnitTestFunction.class);
 		microtaskTypes.put("ReuseSearch", ReuseSearch.class);
 		microtaskTypes.put("sketchfunction", SketchFunction.class);
-		microtaskTypes.put("DebugTestFailure", DebugTestFailure.class);
+		microtaskTypes.put("unittestfunction", UnitTestFunction.class);
 		microtaskTypes.put("WriteCall", WriteCall.class);
 		microtaskTypes.put("writeentrypoint", WriteEntrypoint.class);
 		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
