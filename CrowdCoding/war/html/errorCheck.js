@@ -8,12 +8,11 @@ function checkForErrors(e)
 	var stringOfErrors = "";
 	for (var i = 0; i < e.length; i++) 
 	{
-		if(e[i].reason != "Weird program." && e[i].reason != "Unexpected 'return'.") 
+		// I am not sure if checking making sure not null is okay, I think so
+		// but I am commenting just to be sure. If all reasons are null then
+		// I think should be okay
+		if(e[i] != null && e[i].reason != "Weird program." && e[i].reason != "Unexpected 'return'.") 
 		{
-			if(e[i] == null)
-			{
-				continue;
-			}
 			if(e[i].reason == "Stopping. (100% scanned).")
 			{
 				continue;
@@ -25,7 +24,9 @@ function checkForErrors(e)
 	}
 	if(anyErrors)
 	{
+		debugger;
 		return stringOfErrors; 
 	}
+	debugger;
 	return "";
 }

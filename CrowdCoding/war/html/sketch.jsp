@@ -35,21 +35,38 @@
 		    var functionHeader = <%= functionHeader %>;
 			functionHeader = functionHeader.replace(/\"/g,"'");
 			var functionCode = functionHeader + "{"  + $("#code").val() + "}";
-			var errors = "";
-		    console.log(functionCode);
-		    var lintResult = JSLINT(functionCode,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
-			console.log(JSLINT.errors);
-			if(!lintResult)
+			debugger;
+			if(("\n" + $("#code").val()).indexOf("\n#") == -1 && ("\n" + $("#code").val()).indexOf("\n!") == -1)
 			{
-				var errors = checkForErrors(JSLINT.errors);
-				console.log(errors);
-				if(errors != "")
+				if($("#code").val().indexOf("#") != -1)
 				{
-					$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
+					$("#errors").html("<bold> ERRORS: </bold> </br>" + "wrong placement of # needs to go at beginning of line");
 					return false; 
 				}
+				//else if($("#code").val()).indexOf("!") != -1)
+				//{
+				//	$("#errors").html("<bold> ERRORS: </bold> </br>" + "wrong placement of ! needs to go at beginning of line");
+				//	return false; 
+				//}
+				else
+				{
+					var errors = "";
+				    console.log(functionCode);
+				    var lintResult = JSLINT(functionCode,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
+					console.log(JSLINT.errors);
+					if(!lintResult)
+					{
+						var errors = checkForErrors(JSLINT.errors);
+						console.log(errors);
+						if(errors != "")
+						{
+							$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
+							return false; 
+						}
+					}
+				}
 			}
-			var formData = { code: $("#code").val() };
+			var formData = { code: $("#code").val()};
 			$.ajax({
 			    contentType: 'application/json',
 			    data: JSON.stringify( formData ),
