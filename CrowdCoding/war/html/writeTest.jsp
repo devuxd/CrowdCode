@@ -39,7 +39,8 @@
 		$('#testForm').submit(function() {
 			 var functionHeader = <%= functionHeader %>;
 			functionHeader = functionHeader.replace(/\"/g,"'");
-			var functionCode = "test('" + "functionCoder" + "', function() {" + functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val() + "});";
+			// only looks at the function header not the function body for JSLINT checking
+			var functionCode = "test('" + "functionCoder" + "', function() {" + functionHeader + "{" + "}" + $("#code").val() + "});";
 			var errors = "";
 		    console.log(functionCode);
 		    var jQueryLint = "/*global window: false, document: false, $: false, log: false, bleep: false, QUnit: false, test: false, asyncTest: false, expect: false,module: false,ok: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false,raises: false,start: false,stop: false*/";

@@ -97,7 +97,7 @@ public class Function extends Artifact
 		while (true)
 		{
 			String callDescription;
-		
+			// this code handles reuse, but does not handle psuedocode
 			index = searchCode.indexOf("\n!", index);
 			if (index == -1)
 				break;
