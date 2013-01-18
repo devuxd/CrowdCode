@@ -10,12 +10,11 @@ import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.MessagesDTO;
 import com.crowdcoding.microtasks.Microtask;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.api.channel.ChannelMessage;
-import com.google.appengine.api.channel.ChannelService;
-import com.google.appengine.api.channel.ChannelServiceFactory;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.VoidWork;
+import com.googlecode.objectify.Work;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -94,23 +93,32 @@ public class Worker
 	}		
 	
 	// Adds the specified number of points to the score.
-	public void awardPoints(int points, Project project)
+	public void awardPoints(final int points, final Project project)
 	{
-		score += points;	
-		PointEvent pointEvent = new PointEvent(points, "Empty description", project);
-		pointEvents.add(Ref.create(pointEvent.getKey()));
-		ofy().save().entity(this).now();
+		final Worker worker = this;
+		// Awarding points needs to be atomic. Other requests may be concurrently mutating messages, 
+		// and the actions here should not interfere with those.
 		
-		// Send score update over channel to client.
-		ObjectMapper mapper = new ObjectMapper();
-	    try {
-	    	sendMessage(mapper.writeValueAsString(pointEvent.buildDTO()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	    
+		ofy().transact(new VoidWork() {
+			public void vrun() 
+			{
+				score += points;	
+				PointEvent pointEvent = new PointEvent(points, "Empty description", project);
+				pointEvents.add(Ref.create(pointEvent.getKey()));
+				ofy().save().entity(worker).now();
+				
+				// Send score update over channel to client.
+				ObjectMapper mapper = new ObjectMapper();
+			    try {
+			    	sendMessage(mapper.writeValueAsString(pointEvent.buildDTO()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}			
+		}); 
+			    
 	    // Update the leaderboard, if necessary
-	    project.getLeaderboard().update(this, project);
+	    project.getLeaderboard().update(worker, project);		    
 	}
 	
 	// Gets the handle (i.e., publicly visible nickname) for the worker.
@@ -148,15 +156,22 @@ public class Worker
 	
 	// Sends the worker's client a message if their client is logged in. If the worker is not logged
 	// in, the message is dropped (nothing is done)
-	public void sendMessage(String message)
+	public void sendMessage(final String message)
 	{
+		final Worker worker = this;
+		
 		// TODO: this should check if the worker is logged in. But first need to reimplement
 		// logic to determine when the worker is or is not logged in.
 		
 		//if (loggedIn)
 		//{
-			messages.add(message);
-			ofy().save().entity(this).now();
+		ofy().transact(new VoidWork() {
+			public void vrun() 
+			{
+				messages.add(message);
+				ofy().save().entity(worker).now();
+			}
+		});
 		//}
 	}
 	
@@ -172,20 +187,29 @@ public class Worker
 	// deletes them from the queue.
 	public String fetchMessages()
 	{
-		MessagesDTO dto = new MessagesDTO(messages);
-		String wrappedMessages = "";
-		ObjectMapper mapper = new ObjectMapper();
-	    try {
-	    	wrappedMessages = mapper.writeValueAsString(dto);
-	    	messages.clear();
-			ofy().save().entity(this).now();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	    
-	    return wrappedMessages;		
-	}
-	
+		final Worker worker = this;
+		
+		return ofy().transact(new Work<String>() {
+		    public String run() 
+		    {
+				System.out.println("Fetching messages. Current messages:");
+				System.out.println(messages.toString());
+				
+				MessagesDTO dto = new MessagesDTO(messages);
+				String wrappedMessages = "";
+				ObjectMapper mapper = new ObjectMapper();
+			    try {
+			    	wrappedMessages = mapper.writeValueAsString(dto);
+			    	messages.clear();
+					ofy().save().entity(worker).now();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			    
+			    return wrappedMessages;		
+		    }
+		});
+	}	
 
 	@Override
 	public int hashCode() {
