@@ -12,6 +12,7 @@ import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.LeaderboardDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.VoidWork;
 import com.googlecode.objectify.annotation.Embed;
 
 @Embed
@@ -34,35 +35,44 @@ public class Leaderboard
 
 	// Checks the worker against the leaderboard, adding them and/or updating the score
 	// as required.
-	public void update(Worker worker, Project project)
+	public void update(final Worker worker, final Project project)
 	{
 		if (worker.getScore() > lowestScore)
 		{
-			List<Worker> leadWorkers = loadLeaders();
-			if (!leadWorkers.contains(worker))
-				leadWorkers.add(worker);
-			Collections.sort(leadWorkers, new Comparator<Worker>()
-			{
-				public int compare(Worker a, Worker b) 
-				{ 
-					return a.getScore() - b.getScore();
-				}		
+			// TODO: Since the conditional is not in the transaction, there is a small chance
+			// it may no longer be true. Is this ok?
+			
+			ofy().transact(new VoidWork() {
+				public void vrun() 
+				{
+					List<Worker> leadWorkers = loadLeaders();
+					if (!leadWorkers.contains(worker))
+						leadWorkers.add(worker);
+					Collections.sort(leadWorkers, new Comparator<Worker>()
+					{
+						public int compare(Worker a, Worker b) 
+						{ 
+							return a.getScore() - b.getScore();
+						}		
+					});
+					
+					// If we exceed the max size, drop the lowest
+					if (leadWorkers.size() > SIZE)			
+						leadWorkers.remove(leadWorkers.size() - 1);
+					
+					// Update the lowest score to the last leader
+					lowestScore = leadWorkers.get(leadWorkers.size() - 1).getScore();
+		
+					// Store the leaderboard back
+					leaders.clear();
+					for (Worker leadWorker : leadWorkers)
+						leaders.add(Ref.create(leadWorker.getKey()));
+					ofy().save().entity(project).now();
+				}
 			});
 			
-			// If we exceed the max size, drop the lowest
-			if (leadWorkers.size() > SIZE)			
-				leadWorkers.remove(leadWorkers.size() - 1);
-			
-			// Update the lowest score to the last leader
-			lowestScore = leadWorkers.get(leadWorkers.size() - 1).getScore();
-
-			// Store the leaderboard back
-			leaders.clear();
-			for (Worker leadWorker : leadWorkers)
-				leaders.add(Ref.create(leadWorker.getKey()));
-			ofy().save().entity(project).now();
-			
 			// Build a leaderboard DTO message and send to all clients
+			// This cannot be in the transaction, as it uses a query
 			Worker.MessageAll(buildDTO());
 		}		
 	}
