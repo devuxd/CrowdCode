@@ -33,6 +33,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>CrowdCode</title>
+	<link type="text/css" rel="stylesheet" href="/include/jquery.rating.css" />
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/html/DebugTestFailure.css" type="text/css" />
 	<link rel="stylesheet" href="/html/styles.css" type="text/css" /> 
@@ -90,10 +91,11 @@
 
 
 <!-- Scripts --> 
-<script src="include/qunit.js"> </script> 
+<script src="/include/qunit.js"> </script> 
 <script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/_ah/channel/jsapi"></script> 
+<script src="/include/stars/jquery.rating.js"></script>
 <script>
 	var points = <%=worker.getScore()%>;
 
