@@ -35,6 +35,8 @@ public class IDGenerator
 
 		nextIDs.put(tag, id + 1);
 		
+		System.out.println(nextIDs);
+		
 		return id;
 	}	
 }

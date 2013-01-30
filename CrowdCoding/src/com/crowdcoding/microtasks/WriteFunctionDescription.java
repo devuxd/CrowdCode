@@ -14,24 +14,26 @@ import com.googlecode.objectify.annotation.Load;
 @EntitySubclass(index=true)
 public class WriteFunctionDescription extends Microtask 
 {
-	 @Load private Ref<Function> function;
-		
+	@Load private Ref<Function> function;
+	private String callDescription;
+	 
 	// Default constructor for deserialization
 	private WriteFunctionDescription()
 	{		
 	}
 	
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, Project project)
+	public WriteFunctionDescription(Function function, String callDescription, Project project)
 	{
 		super(project);
+		this.callDescription = callDescription;
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
 	}
 	
 	protected void doSubmitWork(DTO dto, Project project)
 	{
-		FunctionDescriptionDTO functionDTO = (FunctionDescriptionDTO) dto;		
+		FunctionDescriptionDTO functionDTO = (FunctionDescriptionDTO) dto;	
 		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.description, functionDTO.returnType, 
 				functionDTO.parameters, project);	
 	}
@@ -39,11 +41,15 @@ public class WriteFunctionDescription extends Microtask
 	protected Class getDTOClass()
 	{
 		return FunctionDescriptionDTO.class;
-	}		
+	}	
+	
+	public String getCallDescription()
+	{
+		return callDescription;
+	}
 	
 	public String getUIURL()
 	{
 		return "/html/WriteFunctionDescription.jsp";
 	}	
-
 }

@@ -148,7 +148,7 @@
 		});
 
 		// Fetch messages again in 10 seconds
-		setTimeout(fetchMessages, 10 * 1000);
+		//setTimeout(fetchMessages, 10 * 1000);
 	}
 
 	function handleMessage(wrappedMessage) 

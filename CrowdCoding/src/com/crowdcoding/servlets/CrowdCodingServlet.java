@@ -18,7 +18,7 @@ public class CrowdCodingServlet extends HttpServlet {
         UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
 
-        Project project = Project.Create();
+        //Project project = Project.Create();
         
         if (user != null) 
         {

@@ -30,9 +30,15 @@ public class WriteCall extends Microtask
 		ofy().save().entity(this).now();
 	}
 	
+	public void onAssign()
+	{
+		System.out.println("WriteCall for " + caller.get().getName() + " setting active coding");
+		caller.get().activeCodingStarted();
+	}
+	
 	protected void doSubmitWork(DTO dto, Project project)
 	{
-		callee.get().writeCallCompleted((FunctionDTO) dto, project);	
+		caller.get().writeCallCompleted((FunctionDTO) dto, project);	
 	}
 	
 	protected Class getDTOClass()

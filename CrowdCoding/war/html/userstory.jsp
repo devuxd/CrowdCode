@@ -32,8 +32,9 @@
 	</script>
 
 
-	<p><h4>For an application that [description], what is a single scenario that a user might wish to do with it?
-How precisely and thoroughly can you describe it? </h4></p>
+	<p><h4>We are writing an application for calculating traffic tickets.
+	<br>What is a single scenario that a user might wish to do with the application?
+		How precisely and thoroughly can you describe it? </h4></p>
 
 	<form id="userstoryForm" action="">
 		<textarea name="userStory" id="userStory"></textarea>

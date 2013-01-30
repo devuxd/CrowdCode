@@ -14,7 +14,6 @@ public class Entrypoint extends Artifact
 {
 	@Load protected Ref<Microtask> microtask;
 	protected Ref<UserStory> userStory;
-	protected Ref<Entrypoint> entrypoint;
 	protected String event;
 	
 	// Constructor for deserialization

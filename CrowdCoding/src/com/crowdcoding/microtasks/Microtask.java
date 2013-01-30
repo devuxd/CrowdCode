@@ -50,11 +50,15 @@ public /*abstract*/ class Microtask
 			return null;
 
 		microtask.assigned = true;
+		microtask.onAssign();
 		crowdUser.setMicrotask(microtask);
 		ofy().save().entity(microtask).now();
 		
 		return microtask;
 	}
+	
+	// Override this method to handle an assigment event.
+	public void onAssign() {};
 	
 	// Unassigns worker from this microtask
 	// Precondition - the worker must be assigned to this microtask
