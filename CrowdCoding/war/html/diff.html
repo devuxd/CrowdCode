@@ -1,0 +1,33 @@
+<script src="/include/diff/diff_match_patch.js" type="text/javascript"></script>
+<script src="/include/diff/jquery.pretty-text-diff.js" type="text/javascript"></script>
+ <link type="text/css" rel="stylesheet" href="/include/diff.css" />
+
+<script>
+$("input[type=button]").click(function () {
+    $("#wrapper div").prettyTextDiff({
+        cleanup: $("#cleanup").is(":checked")
+    });
+});
+$("#diffButton").trigger('click');
+</script>
+<div id="wrapper">
+<div>
+<form>
+    old:    <br/>
+    <span class="original">Today is Jan the 24th, 2013</span> <br/>
+    orignal:
+                <span class="changed">Today is January the 25th of the year 2013</span>
+    <br/>
+                <span class="diff"></span>
+
+    <div style="display:none;">
+        <label style='display:none' class="checkbox">
+            <input id="cleanup" type="checkbox" value="true" checked="checked" />
+        </label>
+
+        <input id = 'diffButton' type='button' class='btn btn-primary' value='Diff'></input>
+    </form>
+    </div>
+
+    
+</div>

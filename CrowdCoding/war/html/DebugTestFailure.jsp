@@ -264,7 +264,6 @@ for(var p = 0; p < arrayOfTests.length; p++)
 			{
 				htmlContent += "<div class='tab-pane' id=" + "'A" + p + "'>";
 				htmlTab +=  "<li>"
-				
 			}
 			// this is a temp tab
 			htmlTab1 += "<a id='TabNumber"+ p + "' href=";
@@ -322,6 +321,7 @@ for(var p = 0; p < arrayOfTests.length; p++)
 				}
 			}
 			htmlTab += htmlTab1;
+			htmlTab1 = "";
 			i++;
 		}
 	
