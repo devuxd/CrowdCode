@@ -180,13 +180,16 @@
 
 </script>
 
-Is there a function that does this:<BR>
-<%=microtask.getCallDescription()%><BR>
+Is there a function that does this?
+
+<h4><%=microtask.getCallDescription()%></h4><bR>
+Here's a search box that searches existing function descriptions:<BR>
 
 
 <form id="searchForm" action="">
 	<input type="text" id="SearchText" class="input-small" oninput="doSearch()">
 	<div id="results"></div><BR>	
+	If you can't find any, click this button and then submit:<br>
 	<button id="noFunction" type="button" class="btn">No function does this</button><BR><BR>		
 	<input type="submit" value="Submit" class="btn btn-primary"/>
 </form>

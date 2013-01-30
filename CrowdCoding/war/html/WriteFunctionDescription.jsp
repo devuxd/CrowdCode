@@ -72,10 +72,12 @@
 		}
 	</script>
 		
-	<h4> This is the entry point phase. Designate "entry points" by reading the user story thoroughly 
-	and identifying all the method calls to successfully create the program. Each method description
-	 should contain a detailed description of what the method does, and what is returned. Don't forget 
-	 to give your methods names and types! </h4>
+	<h4> Please write a description for the following function: <BR><BR>
+	
+	<%= microtask.getCallDescription() %>
+	<BR>
+	
+	</h4>
 	
 	<form id="descripForm" action="">
 		<textarea id="functionDescription" draggable="true">What does the function do?</textarea>

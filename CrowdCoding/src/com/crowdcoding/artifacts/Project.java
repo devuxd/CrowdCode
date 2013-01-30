@@ -5,11 +5,11 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.Leaderboard;
 import com.crowdcoding.PointEvent;
 import com.crowdcoding.Worker;
+import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
-import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteEntrypoint;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
@@ -17,9 +17,12 @@ import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.microtasks.WriteUserStory;
 import com.crowdcoding.util.IDGenerator;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+
+
 
 /*
  * Projects are the root of the artifact and microtask graphs. A project instance MUST be created before
@@ -28,6 +31,10 @@ import com.googlecode.objectify.annotation.Id;
 @Entity
 public class Project 
 {
+	// The one and only project, which is always initialized in Create (which must be called first
+	// when a servlet begins).   
+	public static Project project;
+	
 	private IDGenerator idgenerator;
 	private Leaderboard leaderboard;
 	@Id private long id = 1L;
@@ -83,7 +90,7 @@ public class Project
 	// Otherwise, a new project will be created.
 	public static Project Create()
 	{
-		Project project = ofy().load().type(Project.class).first().get();
+		project = ofy().load().type(Project.class).first().get();
 		if (project == null)		
 			project = new Project(false);			
 			
@@ -98,7 +105,12 @@ public class Project
 		ofy().save().entity(this).now();
 		
 		return id;		
-	}	
+	}
+	
+	public Key<Project> getKey()
+	{
+		return Key.create(Project.class, id);
+	}
 	
 	public Leaderboard getLeaderboard()
 	{

@@ -13,11 +13,15 @@ import com.googlecode.objectify.annotation.Load;
 @EntitySubclass(index=true)
 public class Test extends Artifact
 {
+	public enum State { DESCRIBED, IMPLEMENTED, DISPUTED };
+	
 	private String description;
 	private String code; 	
-	@Load private boolean disputed;
-	@Load private boolean unitTestIsOpen;
+	private boolean unitTestIsOpen;
+	private State state;
+	
 	@Load private Ref<Function> function;
+	private boolean notifyFunctionOnImplemented;
 	
 	// Constructor for deserialization
 	protected Test()
@@ -28,15 +32,19 @@ public class Test extends Artifact
 	{
 		super(project);		
 		this.description = description;
+		this.state = State.DESCRIBED;
+		logState();
 		this.function = (Ref<Function>) Ref.create(function.getKey());
+		notifyFunctionOnImplemented = false;
 		ofy().save().entity(this).now();
-		
 		WriteTest writeTest = new WriteTest(this, project);
 	}
 	
 	public void writeTestCompleted(FunctionDTO dto, Project project)
 	{
 		this.code = dto.code;
+		state = State.IMPLEMENTED;
+		logState();
 		boolean areThereOpenUnitTestFunctions = false;
 		for (Ref<Test> testCase: function.getValue().getTestCases())
 		{
@@ -45,6 +53,10 @@ public class Test extends Artifact
 				areThereOpenUnitTestFunctions = true;
 			}		
 		}
+		if (notifyFunctionOnImplemented) {
+			this.function.getValue().runTestsIfReady(project);
+		}
+		/*
 		// this should only trigger if completed, need to figure out how to distinguish
 		if(!areThereOpenUnitTestFunctions)
 		{
@@ -60,7 +72,7 @@ public class Test extends Artifact
 					DebugTestFailure unitTest = new DebugTestFailure(this.function,project);
 				}
 				this.unitTestIsOpen = true;
-		}
+		}*/
 		ofy().save().entity(this).now();
 	}	
 	
@@ -85,9 +97,20 @@ public class Test extends Artifact
 	
 	public boolean isDisputed()
 	{
-		return disputed;
+		return (state == State.DISPUTED);
 	}
-
+	public boolean isImplemented()
+	{
+		System.out.println("Test '"+description+"' was asked if it was implemented.");
+		logState();
+		return (state == State.IMPLEMENTED);
+	}
+	public void registerCallback()
+	{
+		notifyFunctionOnImplemented = true;
+		ofy().save().entity(this).now();
+	}
+	
 	public boolean isUnitTestOpen()
 	{
 		return unitTestIsOpen;
@@ -95,7 +118,8 @@ public class Test extends Artifact
 
 	public void disputeUnitTestCorrectionCreated(FunctionDTO dto, Project project) 
 	{
-		this.disputed = true;
+		this.state = State.DISPUTED;
+		logState();
 		System.out.println(getTestCode());
 		System.out.println(getDescription());
 		System.out.println(function.getValue().getDescription());
@@ -109,7 +133,8 @@ public class Test extends Artifact
 	
 	public void disputeUnitTestCorrectionCompleted(FunctionDTO dto2, Project project) 
 	{
-		this.disputed = false;
+		this.state = State.IMPLEMENTED;
+		logState();
 		writeTestCompleted(dto2, project);
 		ofy().save().entity(this).now();
 	}
@@ -118,5 +143,10 @@ public class Test extends Artifact
 	{
 		this.unitTestIsOpen = false;
 		ofy().save().entity(this).now();
+	}
+	
+	private void logState() 
+	{
+		System.out.println("State of test '"+description+"' is now "+state.name()+".");		
 	}
 }

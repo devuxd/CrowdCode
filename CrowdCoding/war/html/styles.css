@@ -63,5 +63,7 @@ textarea { -webkit-user-select: auto; }
 
 }
 
-
+.reference {
+	color:#444;
+}
 
