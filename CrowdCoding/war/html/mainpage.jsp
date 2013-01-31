@@ -168,6 +168,7 @@
 
 	function loadMicrotask() 
 	{
+		$('body').scrollTop(0);
 		$('#contentPane').load('/fetch', fetchMessages);
 	}
 
