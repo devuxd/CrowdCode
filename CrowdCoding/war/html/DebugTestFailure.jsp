@@ -31,8 +31,12 @@
 	String methodFormatted = FunctionHeaderUtil
 			.returnFunctionHeaderFormatted(microtask.getFunction());
 	strWriter = new StringWriter();
-	mapper.writeValue(strWriter, microtask.getFunctionCode());
-	String functionCode = strWriter.toString();
+	//mapper.writeValue(strWriter, microtask.getFunctionCode());
+	//String functionCode = strWriter.toString();
+	String functionCode = "'"+microtask.getFunctionCode()+"'";
+	strWriter = new StringWriter();
+	mapper.writeValue(strWriter, microtask.getAllActiveFunctions());
+	String allFunctionCodeInSystem = strWriter.toString();
 	System.out.println(functionCode);
 	System.out.println(functionHeader);
 %>
@@ -67,11 +71,11 @@ i = 0;
 
 	});
 };  
+debugger;
 		var myCodeMirrorForDispute;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    myCodeMirror.setValue(<%=functionCode%>);
-
-	    myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
+	    myCodeMirror.setValue(/*'"'+*/<%=functionCode%>/*+'"'*/);
+	    //myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
 	    myCodeMirror.setOption("theme", "vibrant-ink");
 		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() {
@@ -221,12 +225,19 @@ function collectFormDataForNormal()
 function runUnitTests(arrayOfTests, functionName,isFirstTime)
 {
 debugger;
-var testCases2 = <%=functionHeader%>;
-var functionHeader = testCases2.replace(/\"/g,"'");
+var unStringEscapedFunctionHeader = <%=functionHeader%>;
+var functionHeader = unStringEscapedFunctionHeader.replace(/\"/g,"'");
 var resultOfTest = new Array(); 
 var htmlTab = "";
 var htmlContent = "";
 var hasAtLeast1Test = false;
+var allTheFunctionCodeUnExcaped = <%= allFunctionCodeInSystem %>;
+console.log(allTheFunctionCodeUnExcaped);
+var allTheFunctionCodeEscapedString = allTheFunctionCodeUnExcaped.replace(/\"/g,"'");
+console.log(allTheFunctionCodeEscapedString);
+var allTheFunctionCode = allTheFunctionCodeEscapedString.replace(/[\r\n]/g,"");
+var allTheFunctionCode = "";
+console.log(allTheFunctionCode);
 for(var p = 0; p < arrayOfTests.length; p++)
 {
 	var i = 0;
@@ -235,7 +246,7 @@ for(var p = 0; p < arrayOfTests.length; p++)
 		continue;
 	}
 	hasAtLeast1Test = true;
-	var lintCheckFunction = functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+	var lintCheckFunction = allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
 	var lintResult = JSLINT(lintCheckFunction,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
 	var errors = checkForErrors(JSLINT.errors);
 	console.log(errors);
@@ -260,7 +271,7 @@ for(var p = 0; p < arrayOfTests.length; p++)
 			htmlTab1 +=  "</a></li>";
 		var testCases = "test('" + functionName + "', function() {";
 		// constructs the function header and puts code  from the above code window
-		testCases += functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+		testCases += allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
 		testCases += arrayOfTests[p];
 		testCases+= "});";
 		console.log(testCases);
@@ -427,8 +438,7 @@ for(var p = 0; p < arrayOfTests.length; p++)
 				</tr>
 			</table>
 			<h4>
-				} <BR>
-				<BR>
+				} <BR> <BR>
 			</h4>
 			<input id="codeSubmit" type="submit" value="Submit"
 				class="btn btn-primary" />

@@ -75,7 +75,7 @@
 		}
 	</script>
 		
-	<h4> For an application that [description], consider the following user scenario: <BR> <%=userStory.getText() %><BR>
+	<h4> Consider the following user scenario: <BR><BR> <%=userStory.getText() %><BR><BR>
 	What framework event should be used to initially trigger this user scenario to occur? What should the function
 	that listens for this event do, and what parameters does it require?</h4>
 	

@@ -85,15 +85,16 @@
 
 
 	<h4>
-	DISPUTED TASK
+	DISPUTED TEST
 	<br>
 	This unit test suite was disputed for the following reason:
 	<br>
 	<%= disputeDescription %>
 	<br>
 	<br>
+	</h4>
 	
-	
+	<span class="reference">
 	Unit tests can be: 	<br>
 	deepEqual: comparing to objects <br>
 	equal: check if both are equal <br>
@@ -108,7 +109,9 @@
 	( actual, expected, message )<br>
 	Please place code you write in the message:<br>
 	example: equal(1,'1',"equal 1,'1'");<br>
-	</p><br>
+	<br>
+	</span>
+	
 	<h4>Write a unit test for the following method: 	
 	
 	

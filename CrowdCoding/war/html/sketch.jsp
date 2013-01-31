@@ -4,6 +4,7 @@
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.artifacts.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
+<%@ page import="com.crowdcoding.artifacts.Function" %>
 <%@ page import="com.crowdcoding.microtasks.SketchFunction" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
@@ -18,6 +19,9 @@
     StringWriter strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
     String functionHeader = strWriter.toString();
+    
+    Function function = microtask.getFunction();
+    String functionCode = function.getEscapedCode();
 %>
 
 
@@ -29,6 +33,7 @@
 	<script src="/html/errorCheck.js"></script>
 	<script>
 	    	var myCodeMirror = CodeMirror.fromTextArea(code);
+		    myCodeMirror.setValue('<%=functionCode%>');
 	   	 	myCodeMirror.setOption("theme", "vibrant-ink");
 
 		$('#sketchForm').submit(function() {
@@ -82,9 +87,11 @@
 
 	<p><h4> <%= methodFormatted %><BR>
 
-Your mission is to implement the following function. You can implement the whole function or you can write pseudocode [warning: not yet!].
-Flag pseudocode by starting a line with the octothorpe '#', comment with //.
-If your method is not done, make sure one of your lines starts with # so it is not flagged as complete!</h4>
+Your mission is to implement the following function. You may choose to either completely
+implement the function or to leave portions as <i>pseudocode</i>.<BR>
+Lines beginning with '#' are considered pseudocode.<BR>
+Line beginning with '!' are treated as a <i>single</i> function call pseudocode line.<BR>
+</h4>
 	
 	
 	<form id="sketchForm" action="">

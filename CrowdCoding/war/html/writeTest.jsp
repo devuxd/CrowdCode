@@ -52,7 +52,7 @@
 				console.log(errors);
 				if(errors != "")
 				{
-					$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
+					$("#errors").html("<bold> ERRORS: </bold> <br />" + errors);
 					return false; 
 				}
 			}
@@ -72,24 +72,27 @@
 
 
 <h4>
-	We are writing the following function: </br> <%= methodFormatted %></br>
-Write a unit test for the following test case: <%= description %></br>
-</br>
-Reference Section:</br></br>
-Assertions you can use when writing unit tests include: </br>
-deepEqual( actual, expected, message ): comparing to objects </br>
-equal( actual, expected, message ): check if both are equal </br>
-notDeepEqual( actual, expected, message ): </br>
-notEqual( actual, expected, message ): </br>
-notStrictEqual( actual, expected, message ): </br>
-ok( actual, expected, message ): boolean assertion </br>
-strictEqual( actual, expected, message ): strict type and value comparison</br>
-throws( actual, expected, message ): if exception is expected </br>
-
-Examples:</br></br>
-equal(price, qty*itemCost, "line item price looks incorrect");</br>
+	We are writing the following function: <br /> <%= methodFormatted %><br />
+Write a unit test for the following test case:</h4>
+<h3>
+<%= description %>
+</h3>
+<span class="reference">
+Reference Section:<br /><br />
+Assertions you can use when writing unit tests include: <br />
+deepEqual( actual, expected, message ): comparing to objects <br />
+equal( actual, expected, message ): check if both are equal <br />
+notDeepEqual( actual, expected, message ): <br />
+notEqual( actual, expected, message ): <br />
+notStrictEqual( actual, expected, message ): <br />
+ok( actual, expected, message ): boolean assertion <br />
+strictEqual( actual, expected, message ): strict type and value comparison<br />
+throws( actual, expected, message ): if exception is expected <br />
+<br />
+Examples:<br />
+equal(price, qty*itemCost, "line item price looks incorrect");<br />
 equal(plus(5, 3), 8, "Two positive numbers don't sum correctly");
-</h4>
+</span>
 	
 	
 <form id="testForm" action="">

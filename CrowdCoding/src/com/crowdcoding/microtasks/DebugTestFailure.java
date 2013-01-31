@@ -19,6 +19,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.cmd.LoadType;
 
 @EntitySubclass(index=true)
 public class DebugTestFailure extends Microtask 
@@ -31,16 +32,22 @@ public class DebugTestFailure extends Microtask
 	}
 
 	// Constructor for initial construction
-	public DebugTestFailure(Ref<Function> function2, Project project)
+	public DebugTestFailure(Function function, Project project)
 	{
 		super(project);
-		this.function = (Ref<Function>) Ref.create(function2.getKey());		
+		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
+	}
+	
+	public void onAssign()
+	{
+		System.out.println("DebugTestFailure for " + function.get().getName() + " setting active coding");
+		function.get().activeCodingStarted();
 	}
 
 	protected void doSubmitWork(DTO dto, Project project)
 	{
-		function.get().unitTestCorrectionCompleted((FunctionDTO) dto, project);	
+		function.get().debugTestFailureCompleted((FunctionDTO) dto, project);	
 	}
 
 	protected Class getDTOClass()
@@ -55,7 +62,7 @@ public class DebugTestFailure extends Microtask
 
 	public String getFunctionCode()
 	{
-		return function.getValue().getCode();
+		return function.getValue().getEscapedCode();
 	}
 	
 	public String[] getTestCases()
@@ -102,6 +109,28 @@ public class DebugTestFailure extends Microtask
 		return stringVersion;
 	}
 	
+	public String getAllActiveFunctions()
+	{
+		List<Function> listOFunctions = ofy().load().type(Function.class).list();
+		StringBuilder b = new StringBuilder();
+		for(Function function : listOFunctions)
+		{
+			// todo: what does it mean to be equal?
+			// if current function we are debugging equals
+			// the loop then skip do not add again because 
+			// current function's code may be different since
+			// user is editing it
+			if(function.getKey().equals(this.function.getKey()))
+			{
+				continue;
+			}
+			b.append(function.getFunctionHeader());
+			b.append("{");
+			b.append(function.getEscapedCode());
+			b.append("}");
+		}
+		return b.toString();
+	}
 	
 	public String getFunctionHeaderAssociatedWithTestCase()
 	{
