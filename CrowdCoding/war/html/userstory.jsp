@@ -32,7 +32,7 @@
 	</script>
 
 
-	<p><h4>We are writing an application for calculating traffic tickets.
+	<p><h4>We are writing an app for calculating traffic tickets.
 	<br>What is a single scenario that a user might wish to do with the application?
 		How precisely and thoroughly can you describe it? </h4></p>
 
