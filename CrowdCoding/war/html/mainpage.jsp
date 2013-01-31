@@ -103,7 +103,7 @@
     {
         updateScoreDisplay(points);
         updateLeaderboardDisplay(<%=leaderboard%>);
-		loadMicrotask();
+        loadAndFetchMessages();
 
 		$("#Reset").click(function() {
 			$.post('/reset');
@@ -138,6 +138,7 @@
 		});
 	});
    
+    // Fetches messages every 10 seconds. Should only be called a single time.
 	function fetchMessages()
 	{
 		$.getJSON('/fetchMessages', function(messages) 
@@ -150,7 +151,7 @@
 		});
 
 		// Fetch messages again in 10 seconds
-		//setTimeout(fetchMessages, 10 * 1000);
+		setTimeout(fetchMessages, 10 * 1000);
 	}
 
 	function handleMessage(wrappedMessage) 
@@ -167,6 +168,14 @@
 	}
 
 	function loadMicrotask() 
+	{
+		$('body').scrollTop(0);
+		$('#contentPane').load('/fetch');
+	}
+	
+	// Loads a microtask and then fetches messages
+	// Makes sure the microtask is loaded before messages are fetched
+	function loadAndFetchMessages()
 	{
 		$('body').scrollTop(0);
 		$('#contentPane').load('/fetch', fetchMessages);
