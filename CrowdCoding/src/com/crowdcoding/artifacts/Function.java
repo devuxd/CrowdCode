@@ -526,4 +526,16 @@ public class Function extends Artifact
 	{
 		System.out.println("State of function "+name+" is now "+state.name()+".");		
 	}
+	
+	public boolean equals(Object function)
+	{
+		if(function instanceof Function)
+		{
+			return this.name.equals(((Function) function).getName()) && this.description.equals(((Function) function).getDescription());
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

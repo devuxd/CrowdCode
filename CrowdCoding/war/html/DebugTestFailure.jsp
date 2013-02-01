@@ -34,9 +34,7 @@
 	//mapper.writeValue(strWriter, microtask.getFunctionCode());
 	//String functionCode = strWriter.toString();
 	String functionCode = "'"+microtask.getFunctionCode()+"'";
-	strWriter = new StringWriter();
-	mapper.writeValue(strWriter, microtask.getAllActiveFunctions());
-	String allFunctionCodeInSystem = strWriter.toString();
+	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(microtask.getFunction()) + "'";
 	System.out.println(functionCode);
 	System.out.println(functionHeader);
 %>
@@ -231,12 +229,7 @@ var resultOfTest = new Array();
 var htmlTab = "";
 var htmlContent = "";
 var hasAtLeast1Test = false;
-var allTheFunctionCodeUnExcaped = <%= allFunctionCodeInSystem %>;
-console.log(allTheFunctionCodeUnExcaped);
-var allTheFunctionCodeEscapedString = allTheFunctionCodeUnExcaped.replace(/\"/g,"'");
-console.log(allTheFunctionCodeEscapedString);
-var allTheFunctionCode = allTheFunctionCodeEscapedString.replace(/[\r\n]/g,"");
-var allTheFunctionCode = "";
+var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
 console.log(allTheFunctionCode);
 for(var p = 0; p < arrayOfTests.length; p++)
 {
