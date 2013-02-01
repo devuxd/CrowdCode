@@ -19,7 +19,7 @@
     StringWriter strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
     String functionHeader = strWriter.toString();
-    
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getFunction()) + "'";
     Function function = microtask.getFunction();
     String functionCode = function.getEscapedCode();
 %>
@@ -39,7 +39,8 @@
 		$('#sketchForm').submit(function() {
 		    var functionHeader = <%= functionHeader %>;
 			functionHeader = functionHeader.replace(/\"/g,"'");
-			var functionCode = functionHeader + "{"  + $("#code").val() + "}";
+			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+			var functionCode = allTheFunctionCode + " " + functionHeader + "{"  + $("#code").val() + "}";
 			debugger;
 			if(("\n" + $("#code").val()).indexOf("\n#") == -1 && ("\n" + $("#code").val()).indexOf("\n!") == -1)
 			{
