@@ -17,6 +17,7 @@
     ObjectMapper mapper = new ObjectMapper();
     String description = microtask.getDescription();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getFunction()) + "'";
     Writer strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
     String functionHeader = strWriter.toString();
@@ -40,7 +41,8 @@
 			 var functionHeader = <%= functionHeader %>;
 			functionHeader = functionHeader.replace(/\"/g,"'");
 			// only looks at the function header not the function body for JSLINT checking
-			var functionCode = "test('" + "functionCoder" + "', function() {" + functionHeader + "{" + "}" + $("#code").val() + "});";
+			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+			var functionCode = "test('" + "functionCoder" + "', function() {" + allTheFunctionCode + " " + functionHeader + "{" + "}" + $("#code").val() + "});";
 			var errors = "";
 		    console.log(functionCode);
 		    var jQueryLint = "/*global window: false, document: false, $: false, log: false, bleep: false, QUnit: false, test: false, asyncTest: false, expect: false,module: false,ok: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false,raises: false,start: false,stop: false*/";

@@ -109,29 +109,6 @@ public class DebugTestFailure extends Microtask
 		return stringVersion;
 	}
 	
-	public String getAllActiveFunctions()
-	{
-		List<Function> listOFunctions = ofy().load().type(Function.class).list();
-		StringBuilder b = new StringBuilder();
-		for(Function function : listOFunctions)
-		{
-			// todo: what does it mean to be equal?
-			// if current function we are debugging equals
-			// the loop then skip do not add again because 
-			// current function's code may be different since
-			// user is editing it
-			if(function.getKey().equals(this.function.getKey()))
-			{
-				continue;
-			}
-			b.append(function.getFunctionHeader());
-			b.append("{");
-			b.append(function.getEscapedCode());
-			b.append("}");
-		}
-		return b.toString();
-	}
-	
 	public String getFunctionHeaderAssociatedWithTestCase()
 	{
 		return function.getValue().getFunctionHeader();
