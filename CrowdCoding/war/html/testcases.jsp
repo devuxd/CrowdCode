@@ -29,7 +29,8 @@
 					'<span id="testCase' + nextTestCase + '">' +
 						'<input type="text" class="input-xxlarge" value="Describe a test case"/>' +				
 						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">x</a>' +	
-					'</span>');		
+					'</span>');	
+				nextTestCase = nextTestCase + 1;	
 				return false;
 	    	});
 	    	
