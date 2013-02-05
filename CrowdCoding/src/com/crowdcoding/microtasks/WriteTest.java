@@ -1,6 +1,7 @@
 package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
+import com.crowdcoding.artifacts.Parameter;
 
 import java.io.IOException;
 
@@ -57,5 +58,21 @@ public class WriteTest extends Microtask
 	public String getDescription()
 	{
 		return test.getValue().getDescription();
+	}
+	
+    public String generateDefaultUnitTest(){
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append("equal(");
+		builder.append(getFunction().getName());
+		builder.append("(");
+		for(Parameter param: getFunction().getParameters()){
+			builder.append("<");
+			builder.append(param.getName());
+			builder.append(">,");
+		}
+		builder.replace(builder.length()-1,builder.length(),"");
+		builder.append("), <expectedResult>, <'Message to report if this test fails'>);");
+		return builder.toString();
 	}
 }

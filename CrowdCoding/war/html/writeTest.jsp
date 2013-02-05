@@ -24,6 +24,9 @@
     strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getCode());
     String functionCode = strWriter.toString();
+        strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.generateDefaultUnitTest());
+    String defaultVariable = strWriter.toString();
 %>
 
 
@@ -36,6 +39,8 @@
 	<script>
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
+		debugger;
+	    myCodeMirror.setValue(<%=defaultVariable%>);
 	
 		$('#testForm').submit(function() {
 			 var functionHeader = <%= functionHeader %>;
