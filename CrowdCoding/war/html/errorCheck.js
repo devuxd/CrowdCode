@@ -30,3 +30,9 @@ function checkForErrors(e)
 	debugger;
 	return "";
 }
+
+function getJSLintGlobals()
+{
+	debugger;
+	return {browser: true, continue: true, debug: true, devel: true, eqeq: true, evil: false, fragment: true, newcap: true, node: true, on: true, plusplus: true, rhino: true, sloppy: true, stupid: true, sub: true, todo: true, undef: true,vars: true , white: true,windows: true ,bitwise: true,nomen: true,stupid: true };
+}

@@ -58,7 +58,7 @@
 				{
 					var errors = "";
 				    console.log(functionCode);
-				    var lintResult = JSLINT(functionCode,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
+				    var lintResult = JSLINT(functionCode,getJSLintGlobals());
 					console.log(JSLINT.errors);
 					if(!lintResult)
 					{
