@@ -105,6 +105,12 @@
 		
 		
 		$('#issueForm').submit(function() {
+			if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
+			{
+				myCodeMirror.setValue(myCodeMirror.getValue().replace(/printDebugStatement\([a-zA-Z0-9\\,\\'\\(\\) \" ]*[ ]*\);/g,"[Please Remove debug statements before submission]"));
+				alert("please remove debug statements from code ");
+				return false;
+			}
 			var formData = collectFormDataForDispute();
 			$.ajax({
 			    contentType: 'application/json',
@@ -238,7 +244,7 @@
 			}
 			hasAtLeast1Test = true;
 			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
-			var lintResult = JSLINT(lintCheckFunction,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
+			var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
 			var errors = checkForErrors(JSLINT.errors);
 			console.log(errors);
 			// no errors by jslint
