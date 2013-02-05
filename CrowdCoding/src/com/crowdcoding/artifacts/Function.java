@@ -104,6 +104,10 @@ public class Function extends Artifact
 	//  ACCESSORS
 	//////////////////////////////////////////////////////////////////////////////
 	
+	public List<Parameter> getParameters(){
+		return parameters;
+	}
+	
 	public String getName()
 	{
 		return name;
