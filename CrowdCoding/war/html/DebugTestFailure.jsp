@@ -73,11 +73,18 @@
 		debugger;
 		var myCodeMirrorForDispute;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
+	    var myCodeMirrorForConsoleOutPut = CodeMirror.fromTextArea(debugconsole);
 	    myCodeMirror.setValue(/*'"'+*/<%=functionCode%>/*+'"'*/);
 	    //myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
 	    myCodeMirror.setOption("theme", "vibrant-ink");
 		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() {
+		debugger;
+		if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
+		{
+			myCodeMirror.setValue(myCodeMirror.getValue().replace(/printDebugStatement\([a-zA-Z0-9\\,\\'\\(\\) \" ]*[ ]*\);/g,"[Please Remove debug statements before submission]"));
+			return false;
+		}
 		test1(false);
 		if($("#sketchForm").children("input").attr('disabled') == 'disabled')
 		{
@@ -135,7 +142,7 @@
 				var i = 0; 
 				answers = new Array();
 				 var expression = ""; 
-				 var patt = new RegExp("equal\\([a-zA-Z0-9\\,\\'\\(\\)\" ]*\\);",'\g');
+				 var patt = new RegExp("equal\\([a-zA-Z0-9\\,\\'\\ \" (\\)\" ]*\\);",'\g');
 				  while(expression != null)
 				  {
 				   expression = patt.exec(QunitTest);
@@ -230,7 +237,7 @@
 				continue;
 			}
 			hasAtLeast1Test = true;
-			var lintCheckFunction = allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
 			var lintResult = JSLINT(lintCheckFunction,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
 			var errors = checkForErrors(JSLINT.errors);
 			console.log(errors);
@@ -423,7 +430,32 @@
 					$("#codeSubmit").submit()
 				}
 			});
+			
+			if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)			
+			{
+				var existingText = myCodeMirrorForConsoleOutPut.getValue();
+				 myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
+			}
 			return testCases;
+	}
+	// for debuggin purposes
+	function printDebugStatement(statement)
+	{
+		debugger;
+		var existingText = myCodeMirrorForConsoleOutPut.getValue();
+		//var existingText = "";
+		if($("#consoleDiv").css('display') == 'block')
+		{
+		    myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + statement);	
+		}
+		else
+		{
+			$("#consoleDiv").css('display',"block");
+			
+		    myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + statement);
+		    myCodeMirrorForConsoleOutPut.setOption("readOnly", "true");
+		    myCodeMirrorForConsoleOutPut.setOption("theme", "vibrant-ink");
+		}
 	}
 </script>
 		<button style="float: right;" onclick="revertCodeAs();">
@@ -435,7 +467,10 @@
 			<h4>
 				This function has failed a potentially rigorous test set. Here's the
 				function description and implementation, the test that failed, and
-				the error message it gave. Can you fix it? <BR>
+				the error message it gave. Can you fix it? As a note you may use the function:<BR>
+				printDebugStatement(...);
+				</br>
+				to print data to the console
 				<%=methodFormatted%>
 				<BR> {
 			</h4>
@@ -452,6 +487,22 @@
 				class="btn btn-primary" />
 
 		</form>
+		</br>
+		<div style = 'display:none;' id = 'consoleDiv'>
+		</h3>
+		<h3> Debug Console Output:
+		</h3>
+			<table width="100%">
+				<tr>
+					<td></td>
+					<td><textarea id="debugconsole"></textarea></td>
+				</tr>
+			</table>
+			<h3>
+					</br>
+			</div>
+		
+
 		<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button>
 		<div class="bs-docs-example">
 			<div class="tabbable tabs-left">
