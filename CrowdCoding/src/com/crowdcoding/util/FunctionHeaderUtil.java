@@ -26,12 +26,12 @@ public class FunctionHeaderUtil
 		StringBuilder b = new StringBuilder();
 		for(Function function : listOFunctions)
 		{
-			// todo: what does it mean to be equal?
+			// TODO: what does it mean to be equal?
 			// if current function we are debugging equals
 			// the loop then skip do not add again because 
 			// current function's code may be different since
 			// user is editing it
-			if(function.equals(currentFunctionIn))
+			if(function.equals(currentFunctionIn) || !function.getIsCodeReadyToBeIncluded())
 			{
 				continue;
 			}
@@ -49,12 +49,12 @@ public class FunctionHeaderUtil
 		StringBuilder b = new StringBuilder();
 		for(Function function : listOFunctions)
 		{
-			// todo: what does it mean to be equal?
+			// TODO: what does it mean to be equal?
 			// if current function we are debugging equals
 			// the loop then skip do not add again because 
 			// current function's code may be different since
 			// user is editing it
-			if(function.equals(currentFunctionIn))
+			if(function.equals(currentFunctionIn) || !function.getIsCodeReadyToBeIncluded())
 			{
 				continue;
 			}
