@@ -24,6 +24,9 @@
     strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getCode());
     String functionCode = strWriter.toString();
+        strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.generateDefaultUnitTest());
+    String defaultVariable = strWriter.toString();
 %>
 
 
@@ -36,6 +39,8 @@
 	<script>
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
+		debugger;
+	    myCodeMirror.setValue(<%=defaultVariable%>);
 	
 		$('#testForm').submit(function() {
 			 var functionHeader = <%= functionHeader %>;
@@ -46,8 +51,8 @@
 			var errors = "";
 		    console.log(functionCode);
 		    var jQueryLint = "/*global window: false, document: false, $: false, log: false, bleep: false, QUnit: false, test: false, asyncTest: false, expect: false,module: false,ok: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false,raises: false,start: false,stop: false*/";
-		    var lintResult = JSLINT(jQueryLint + functionCode,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true});
-			console.log(JSLINT.errors);
+		    var lintResult = JSLINT(jQueryLint + functionCode,getJSLintGlobals());
+		    console.log(JSLINT.errors);
 			if(!lintResult)
 			{
 				var errors = checkForErrors(JSLINT.errors);

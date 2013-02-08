@@ -66,7 +66,8 @@ public class Function extends Artifact
 	private List<Ref<Function>> notifyOnTested = new ArrayList<Ref<Function>>(); 
 	
 	// Calls that have not yet been intregrated into the code
-	private Queue<Ref<Function>> callsToIntegrate = new LinkedList<Ref<Function>>();	
+	private Queue<Ref<Function>> callsToIntegrate = new LinkedList<Ref<Function>>();
+	private boolean isCodeReadyToBeIncluded;	
 	
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -90,8 +91,8 @@ public class Function extends Artifact
 	public Function(String callDescription, Project project)
 	{
 		super(project);
-		
-		state = State.CREATED;
+		isCodeReadyToBeIncluded = false;
+		updateState(State.CREATED);
 		logState();
 		ofy().save().entity(this).now();
 		
@@ -103,6 +104,10 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 	//  ACCESSORS
 	//////////////////////////////////////////////////////////////////////////////
+	
+	public List<Parameter> getParameters(){
+		return parameters;
+	}
 	
 	public String getName()
 	{
@@ -243,13 +248,13 @@ public class Function extends Artifact
 	
 	public void runTestsIfReady(Project project)
 	{
-		if(state == State.IMPLEMENTED)
+		if(getState() == State.IMPLEMENTED)
 		{
 			//if all tests are implemented, state = State.READY_TO_TEST;
 			//and if not, register a callback to call this again
 			if (allUnitTestsImplemented(true))
 			{
-				state = State.READY_TO_TEST;
+				updateState(State.READY_TO_TEST);
 				logState();
 				//run tests
 				DebugTestFailure debugMicrotask = new DebugTestFailure(this, project);
@@ -271,11 +276,11 @@ public class Function extends Artifact
 			List<String> pseudoCode = findPseudocode(code);
 			if(pseudoCode.isEmpty())
 			{
-				state = State.IMPLEMENTED;
+				updateState(State.IMPLEMENTED);
 				logState();
 				runTestsIfReady(project);
 			} else {
-				state = State.OPEN_FOR_CODING;
+				updateState(State.OPEN_FOR_CODING);
 				logState();
 				//create new Sketch microtask
 				SketchFunction sketchFunction = new SketchFunction(this, project);
@@ -295,7 +300,7 @@ public class Function extends Artifact
 					
 					if(callsToIntegrate.isEmpty())
 					{
-						state = State.WAITING_FOR_CALLEES;
+						updateState(State.WAITING_FOR_CALLEES);
 						logState();
 					} else 
 					{
@@ -310,7 +315,7 @@ public class Function extends Artifact
 	
 	private void addCall(Function callee, Project project) 
 	{
-		state = State.READY_TO_ADD_CALL;
+		updateState(State.READY_TO_ADD_CALL);
 		logState();
 		
 		// Create a microtask to add the call
@@ -319,7 +324,7 @@ public class Function extends Artifact
 	
 	public void calleeBecameTested(Function callee, Project project)
 	{
-		if (state == State.WAITING_FOR_CALLEES)
+		if (getState() == State.WAITING_FOR_CALLEES)
 		{ 			
 			addCall(callee, project);
 		}
@@ -351,7 +356,7 @@ public class Function extends Artifact
 	
 	public void activeCodingStarted() 
 	{
-		this.state = State.ACTIVE_CODING;
+		this.updateState(State.ACTIVE_CODING);
 		logState();
 	}
 	
@@ -359,7 +364,7 @@ public class Function extends Artifact
 	public void writeDescriptionCompleted(String name, String description, String returnType, 
 	List<ParameterDTO> params, Project project)
 	{
-		this.state = State.DESCRIBED;
+		this.updateState(State.DESCRIBED);
 		logState();
 		
 		this.name = name;
@@ -376,7 +381,7 @@ public class Function extends Artifact
 		
 		//Spawn off microtask to write test cases
 		WriteTestCases writeTestCases = new WriteTestCases(this, project);
-		this.state = State.OPEN_FOR_CODING;
+		this.updateState(State.OPEN_FOR_CODING);
 		logState();
 
 		ofy().save().entity(this).now();
@@ -405,7 +410,7 @@ public class Function extends Artifact
 			{ //integrate the new changes
 				onWorkerEdited(dto, project);
 			} else/*if all tests passed*/ { //tests ran through all smoothly
-				state = State.TESTED;
+				updateState(State.TESTED);
 				logState();
 				notifyOnTested(project);
 			}
@@ -433,7 +438,7 @@ public class Function extends Artifact
 		notifyOnTested.add(newSubscriberRef);
 		
 		//if it's already tested, send the notification to the new subscriber (only) immediately.
-		if(state == State.TESTED) 
+		if(getState() == State.TESTED) 
 		{
 			sendTestedNotification(newSubscriberRef, project);
 		}
@@ -524,7 +529,7 @@ public class Function extends Artifact
 		
 	private void logState() 
 	{
-		System.out.println("State of function "+name+" is now "+state.name()+".");		
+		System.out.println("State of function "+name+" is now "+getState().name()+".");		
 	}
 	
 	public boolean equals(Object function)
@@ -537,5 +542,60 @@ public class Function extends Artifact
 		{
 			return false;
 		}
+	}
+
+	private State getState() {
+		return state;
+	}
+
+	private void updateState(State state) {
+		switch(state)
+		{
+		case ACTIVE_CODING:
+			setIsCodeReadyToBeIncluded(true);
+			break;
+		case CREATED:
+			setIsCodeReadyToBeIncluded(false);
+			break;
+		case DESCRIBED:
+			setIsCodeReadyToBeIncluded(false);
+			break;
+		case IMPLEMENTED:
+			setIsCodeReadyToBeIncluded(true);
+			break;
+		case NEEDS_DEBUGGING:
+			setIsCodeReadyToBeIncluded(true);
+			break;
+		case OPEN_FOR_CODING:
+			setIsCodeReadyToBeIncluded(false);
+			break;
+		case READY_TO_ADD_CALL:
+			setIsCodeReadyToBeIncluded(false);
+			break;
+		case READY_TO_TEST:
+			setIsCodeReadyToBeIncluded(true);
+			break;
+		case TESTED:
+			setIsCodeReadyToBeIncluded(true);
+			break;
+		case WAITING_FOR_CALLEES:
+			setIsCodeReadyToBeIncluded(false);
+			break;
+		default:
+			break;
+		}
+		this.state = state;
+		ofy().save().entity(this).now();
+	}
+
+	private void setIsCodeReadyToBeIncluded(boolean b)
+	{
+		this.isCodeReadyToBeIncluded = b;
+		ofy().save().entity(this).now();
+	}
+	
+	public boolean getIsCodeReadyToBeIncluded()
+	{
+		return isCodeReadyToBeIncluded;
 	}
 }

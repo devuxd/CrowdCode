@@ -55,8 +55,7 @@
 			var errors = "";
 		    console.log(functionCode);
 		    var jQueryLint = "/*global window: false, document: false, $: false, log: false, bleep: false, QUnit: false, test: false, asyncTest: false, expect: false,module: false,ok: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false,raises: false,start: false,stop: false*/";
-		    var lintResult = JSLINT(jQueryLint + functionCode,{nomen: true, sloppy: true, white: true, debug: true, evil: false, vars: true ,stupid: true, equal: false});
-			debugger;
+		    var lintResult = JSLINT(jQueryLint + functionCode,getJSLintGlobals());
 			console.log(JSLINT.errors);
 			if(!lintResult)
 			{
