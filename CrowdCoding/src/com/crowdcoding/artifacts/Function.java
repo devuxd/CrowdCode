@@ -105,6 +105,40 @@ public class Function extends Artifact
 	//  ACCESSORS
 	//////////////////////////////////////////////////////////////////////////////
 	
+	private State getState() {
+		return state;
+	}
+
+	private void updateState(State state) 
+	{
+		switch(state)
+		{
+		case ACTIVE_CODING:
+		case CREATED:
+		case DESCRIBED:
+		case OPEN_FOR_CODING:
+		case READY_TO_ADD_CALL:
+		case WAITING_FOR_CALLEES:
+			this.isCodeReadyToBeIncluded = false;
+			break;
+		case READY_TO_TEST:
+		case IMPLEMENTED:
+		case NEEDS_DEBUGGING:
+		case TESTED:
+			this.isCodeReadyToBeIncluded = true;
+			break;
+		default:
+			break;
+		}
+		this.state = state;
+		ofy().save().entity(this).now();
+	}
+	
+	public boolean getIsCodeReadyToBeIncluded()
+	{
+		return isCodeReadyToBeIncluded;
+	}
+	
 	public List<Parameter> getParameters(){
 		return parameters;
 	}
@@ -476,9 +510,9 @@ public class Function extends Artifact
 		return findSpecialLines(code, "#");
 	}
 	
+	// Finds lines in a string of code whose first non-whitespace character is linestarter
 	public List<String> findSpecialLines(String code, String linestarter)
-	{
-		
+	{		
 		// Create a new String with a \n at the beginning, so that ! on the first line will
 		// still be matched.
 		String searchCode = "\n" + code;
@@ -517,7 +551,7 @@ public class Function extends Artifact
 	
 	public void createDisputedTestCase(FunctionDTO dto, Project project)
 	{
-	 tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
+		tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
 	}
 	
 	// Given a ref to a function that has not been loaded from the datastore,
@@ -542,60 +576,5 @@ public class Function extends Artifact
 		{
 			return false;
 		}
-	}
-
-	private State getState() {
-		return state;
-	}
-
-	private void updateState(State state) {
-		switch(state)
-		{
-		case ACTIVE_CODING:
-			setIsCodeReadyToBeIncluded(true);
-			break;
-		case CREATED:
-			setIsCodeReadyToBeIncluded(false);
-			break;
-		case DESCRIBED:
-			setIsCodeReadyToBeIncluded(false);
-			break;
-		case IMPLEMENTED:
-			setIsCodeReadyToBeIncluded(true);
-			break;
-		case NEEDS_DEBUGGING:
-			setIsCodeReadyToBeIncluded(true);
-			break;
-		case OPEN_FOR_CODING:
-			setIsCodeReadyToBeIncluded(false);
-			break;
-		case READY_TO_ADD_CALL:
-			setIsCodeReadyToBeIncluded(false);
-			break;
-		case READY_TO_TEST:
-			setIsCodeReadyToBeIncluded(true);
-			break;
-		case TESTED:
-			setIsCodeReadyToBeIncluded(true);
-			break;
-		case WAITING_FOR_CALLEES:
-			setIsCodeReadyToBeIncluded(false);
-			break;
-		default:
-			break;
-		}
-		this.state = state;
-		ofy().save().entity(this).now();
-	}
-
-	private void setIsCodeReadyToBeIncluded(boolean b)
-	{
-		this.isCodeReadyToBeIncluded = b;
-		ofy().save().entity(this).now();
-	}
-	
-	public boolean getIsCodeReadyToBeIncluded()
-	{
-		return isCodeReadyToBeIncluded;
 	}
 }
