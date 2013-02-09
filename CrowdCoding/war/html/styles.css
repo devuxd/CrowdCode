@@ -33,6 +33,13 @@ textarea { -webkit-user-select: auto; }
 .result:hover {background:lightblue;}
 .selectedResult {background:blue;}
 
+/* CodeMirror code editor */
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+  width: 600px;
+}
+
 
 /* Button styles */
 .closeButton {
