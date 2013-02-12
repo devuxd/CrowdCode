@@ -96,6 +96,7 @@
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/_ah/channel/jsapi"></script> 
 <script src="/include/stars/jquery.rating.js"></script>
+<script src="/html/keybind.js"></script>
 <script>
 	var points = <%=worker.getScore()%>;
 
@@ -154,6 +155,11 @@
 		setTimeout(fetchMessages, 10 * 1000);
 	}
 
+	function resetSubmitButtons()
+	{
+			defaultSubmitButtonArray = new Array();
+			hasBeenIntialized = false;
+	}
 	function handleMessage(wrappedMessage) 
 	{
 		var message = jQuery.parseJSON(wrappedMessage);
@@ -171,6 +177,7 @@
 	{
 		$('body').scrollTop(0);
 		$('#contentPane').load('/fetch');
+    	resetSubmitButtons();
 	}
 	
 	// Loads a microtask and then fetches messages
@@ -179,6 +186,7 @@
 	{
 		$('body').scrollTop(0);
 		$('#contentPane').load('/fetch', fetchMessages);
+    	resetSubmitButtons();
 	}
 
 	function updateLeaderboardDisplay(leaderboard)
