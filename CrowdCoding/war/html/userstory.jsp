@@ -8,7 +8,7 @@
 
 <%
     Project project = Project.Create();
-    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
+    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteUserStory microtask = (WriteUserStory) crowdUser.getMicrotask();
 %>
 

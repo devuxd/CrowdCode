@@ -18,11 +18,21 @@ import com.googlecode.objectify.Work;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.googlecode.objectify.annotation.Parent;
 import com.googlecode.objectify.cmd.Query;
+
+/* Represents a crowd worker. 
+ * 
+ * NOTE: parenting Worker in the project's entity group (like all other entities) was causing
+ * a bug where data would be stored but not read out consistently. To fix this bug, worker is
+ * not parented under project. It is unclear whether this was a logic bug in our codebase or in 
+ * objectify itself. Instead, worker is parented under a WorkerParent entity.
+ */
 
 @Entity
 public class Worker 
 {
+	@Parent Key<WorkerParent> workerParent;
 	private Ref<Microtask> microtask;
 	private String nickname;
 	@Id private String userid;
@@ -37,26 +47,24 @@ public class Worker
 	}
 	
 	// Initialization constructor
-	private Worker(String userid, String nickname)
+	private Worker(String userid, String nickname, Project project)
 	{
+		this.workerParent = WorkerParent.getKey();
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
 		this.loggedIn = true;
-		ofy().save().entity(this);		
+		ofy().save().entity(this).now();		
 	}
 	
 	// Finds, or if it does not exist creates, a CrowdUser corresponding to user
 	// Preconditions: 
 	//                user != null
-	public static Worker Create(User user)
+	public static Worker Create(User user, Project project)
 	{
-		Worker crowdWorker = ofy().load().type(Worker.class).id(user.getUserId()).get();
+		Worker crowdWorker = ofy().load().key(Key.create(WorkerParent.getKey(), Worker.class, user.getUserId())).get();
 		if (crowdWorker == null)		
-		{
-			crowdWorker = new Worker(user.getUserId(), user.getNickname());					
-			ofy().save().entity(crowdWorker);
-		}
+			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);							
 			
 		return crowdWorker;
 	}
@@ -64,9 +72,9 @@ public class Worker
 	// Finds the specified worker. Returns null if no such worker exists.
 	// Preconditions: 
 	//                userid != null
-	public static Worker Find(String userid)
+	public static Worker Find(String userid, Project project)
 	{
-		return ofy().load().type(Worker.class).id(userid).get();
+		return ofy().load().key(Key.create(WorkerParent.getKey(), Worker.class, userid)).get();
 	}
 	
 	public Microtask getMicrotask()
@@ -84,7 +92,8 @@ public class Worker
 			this.microtask = null;
 		else
 			this.microtask = Ref.create(microtask.getKey());
-		ofy().save().entity(this);
+		
+		ofy().save().entity(this).now();		
 	}	
 	
 	public int getScore()
@@ -95,30 +104,21 @@ public class Worker
 	// Adds the specified number of points to the score.
 	public void awardPoints(final int points, final Project project)
 	{
-		final Worker worker = this;
-		// Awarding points needs to be atomic. Other requests may be concurrently mutating messages, 
-		// and the actions here should not interfere with those.
+		score += points;	
+		PointEvent pointEvent = new PointEvent(points, "Empty description", project);
+		pointEvents.add(Ref.create(pointEvent.getKey()));
+		ofy().save().entity(this).now();
 		
-		ofy().transact(new VoidWork() {
-			public void vrun() 
-			{
-				score += points;	
-				PointEvent pointEvent = new PointEvent(points, "Empty description", project);
-				pointEvents.add(Ref.create(pointEvent.getKey()));
-				ofy().save().entity(worker).now();
-				
-				// Send score update over channel to client.
-				ObjectMapper mapper = new ObjectMapper();
-			    try {
-			    	sendMessage(mapper.writeValueAsString(pointEvent.buildDTO()));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}			
-		}); 
+		// Send score update over channel to client.
+		ObjectMapper mapper = new ObjectMapper();
+	    try {
+	    	sendMessage(mapper.writeValueAsString(pointEvent.buildDTO()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 			    
 	    // Update the leaderboard, if necessary
-	    project.getLeaderboard().update(worker, project);		    
+	    project.getLeaderboard().update(this, project);		    
 	}
 	
 	// Gets the handle (i.e., publicly visible nickname) for the worker.
@@ -134,7 +134,7 @@ public class Worker
 	
 	public Key<Worker> getKey()
 	{
-		return Key.create(Worker.class, userid);
+		return Key.create(WorkerParent.getKey(), Worker.class, userid);
 	}
 	
 	public void login()
@@ -156,59 +156,54 @@ public class Worker
 	
 	// Sends the worker's client a message if their client is logged in. If the worker is not logged
 	// in, the message is dropped (nothing is done)
-	public void sendMessage(final String message)
+	public void sendMessage(String message)
 	{
-		final Worker worker = this;
-		
 		// TODO: this should check if the worker is logged in. But first need to reimplement
 		// logic to determine when the worker is or is not logged in.
 		
 		//if (loggedIn)
 		//{
-		ofy().transact(new VoidWork() {
-			public void vrun() 
-			{
-				messages.add(message);
-				ofy().save().entity(worker).now();
-			}
-		});
+
+		messages.add(message);
+		ofy().save().entity(this).now();
 		//}
 	}
 	
 	// Sends the specified message to all currently logged in workers
-	public static void MessageAll(String message)
+	public static void MessageAll(String message, Project project)
 	{
-		Query<Worker> q = ofy().load().type(Worker.class).filter("loggedIn", true);   
+		// TODO: this might eventually need to be in a transaction. But cannot be at the moment,
+		// as each worker is in their own entity group and thus there is no way to get all
+		// workers through a query.
+		// Other way to design this would be to have the worker poll for messages centrally rather than 
+		// pushed (e.g., a central message queue everyone sees).
+		
+		/*Query<Worker> q = ofy().load().type(Worker.class).ancestor(WorkerParent.getKey()).filter("loggedIn", true);   
 		for (Worker worker : q)		
+		{
 			worker.sendMessage(message);
+		}*/
 	}
 	
 	// Gets a single JSON String describing all of the messages currently queued for delivery, and
 	// deletes them from the queue.
 	public String fetchMessages()
 	{
-		final Worker worker = this;
+		System.out.println("Fetching messages. Current messages:");
+		System.out.println(messages.toString());
 		
-		return ofy().transact(new Work<String>() {
-		    public String run() 
-		    {
-				System.out.println("Fetching messages. Current messages:");
-				System.out.println(messages.toString());
-				
-				MessagesDTO dto = new MessagesDTO(messages);
-				String wrappedMessages = "";
-				ObjectMapper mapper = new ObjectMapper();
-			    try {
-			    	wrappedMessages = mapper.writeValueAsString(dto);
-			    	messages.clear();
-					ofy().save().entity(worker).now();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			    
-			    return wrappedMessages;		
-		    }
-		});
+		MessagesDTO dto = new MessagesDTO(messages);
+		String wrappedMessages = "";
+		ObjectMapper mapper = new ObjectMapper();
+	    try {
+	    	wrappedMessages = mapper.writeValueAsString(dto);
+	    	messages.clear();
+			ofy().save().entity(this).now();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	    
+	    return wrappedMessages;		
 	}	
 
 	@Override
@@ -235,4 +230,10 @@ public class Worker
 			return false;
 		return true;
 	}
+	
+	public String toString()
+	{
+		return userid + ": { score: " + score + " loggedIn: " + loggedIn + "}"; 
+	}
+	
 }

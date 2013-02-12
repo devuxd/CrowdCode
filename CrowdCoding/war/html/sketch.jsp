@@ -13,13 +13,13 @@
 <%
     Project project = Project.Create();
     ObjectMapper mapper = new ObjectMapper();
-    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
+    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     SketchFunction microtask = (SketchFunction) crowdUser.getMicrotask();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());;
     StringWriter strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
     String functionHeader = strWriter.toString();
-    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getFunction()) + "'";
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getFunction(), project) + "'";
     Function function = microtask.getFunction();
     String functionCode = function.getEscapedCode();
 %>

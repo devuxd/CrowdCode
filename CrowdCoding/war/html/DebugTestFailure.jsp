@@ -13,28 +13,24 @@
 
 <%
 	Project project = Project.Create();
-	Worker crowdUser = Worker.Create(UserServiceFactory
-			.getUserService().getCurrentUser());
-	DebugTestFailure microtask = (DebugTestFailure) crowdUser
-			.getMicrotask();
+	Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
+	DebugTestFailure microtask = (DebugTestFailure) crowdUser.getMicrotask();
 	ObjectMapper mapper = new ObjectMapper();
 	Writer strWriter = new StringWriter();
 	mapper.writeValue(strWriter, microtask.getTestCases());
 	String testCases = strWriter.toString();
 	strWriter = new StringWriter();
-	mapper.writeValue(strWriter,
-			microtask.getFunctionHeaderAssociatedWithTestCase());
+	mapper.writeValue(strWriter, microtask.getFunctionHeaderAssociatedWithTestCase());
 	String functionHeader = strWriter.toString();
 	strWriter = new StringWriter();
 	mapper.writeValue(strWriter, microtask.getTestDescriptions());
 	String testCaseDescriptions = strWriter.toString();
-	String methodFormatted = FunctionHeaderUtil
-			.returnFunctionHeaderFormatted(microtask.getFunction());
+	String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 	strWriter = new StringWriter();
 	//mapper.writeValue(strWriter, microtask.getFunctionCode());
 	//String functionCode = strWriter.toString();
 	String functionCode = "'"+microtask.getFunctionCode()+"'";
-	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(microtask.getFunction()) + "'";
+	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(microtask.getFunction(), project) + "'";
 	System.out.println(functionCode);
 	System.out.println(functionHeader);
 %>

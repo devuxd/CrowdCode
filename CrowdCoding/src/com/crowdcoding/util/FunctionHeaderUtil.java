@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.List;
 
 import com.crowdcoding.artifacts.Function;
+import com.crowdcoding.artifacts.Project;
 
 public class FunctionHeaderUtil
 {
@@ -20,9 +21,9 @@ public class FunctionHeaderUtil
 	}
 	
 	// need a better place for this do not know where a util function is
-	public static String getAllActiveFunctions(Function currentFunctionIn)
+	public static String getAllActiveFunctions(Function currentFunctionIn, Project project)
 	{
-		List<Function> listOFunctions = ofy().load().type(Function.class).list();
+		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
 		StringBuilder b = new StringBuilder();
 		for(Function function : listOFunctions)
 		{
@@ -43,9 +44,9 @@ public class FunctionHeaderUtil
 		return b.toString();
 	} 
 	
-	public static String getAllActiveFunctionsHeader(Function currentFunctionIn)
+	public static String getAllActiveFunctionsHeader(Function currentFunctionIn, Project project)
 	{
-		List<Function> listOFunctions = ofy().load().type(Function.class).list();
+		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
 		StringBuilder b = new StringBuilder();
 		for(Function function : listOFunctions)
 		{
