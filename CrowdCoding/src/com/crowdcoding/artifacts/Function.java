@@ -67,7 +67,7 @@ public class Function extends Artifact
 	
 	// Calls that have not yet been intregrated into the code
 	private Queue<Ref<Function>> callsToIntegrate = new LinkedList<Ref<Function>>();
-	private boolean isCodeReadyToBeIncluded;	
+	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ public class Function extends Artifact
 	public Function(String callDescription, Project project)
 	{
 		super(project);
-		isCodeReadyToBeIncluded = false;
+		isWritten = false;
 		updateState(State.CREATED);
 		logState();
 		ofy().save().entity(this).now();
@@ -119,13 +119,13 @@ public class Function extends Artifact
 		case OPEN_FOR_CODING:
 		case READY_TO_ADD_CALL:
 		case WAITING_FOR_CALLEES:
-			this.isCodeReadyToBeIncluded = false;
+			this.isWritten = false;
 			break;
 		case READY_TO_TEST:
 		case IMPLEMENTED:
 		case NEEDS_DEBUGGING:
 		case TESTED:
-			this.isCodeReadyToBeIncluded = true;
+			this.isWritten = true;
 			break;
 		default:
 			break;
@@ -134,9 +134,11 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 	
-	public boolean getIsCodeReadyToBeIncluded()
+	// Is the fucntion written and all pseudocode no replaced with code? 
+	// NOTE: Being written does not imply that all tests pass.
+	public boolean isWritten()
 	{
-		return isCodeReadyToBeIncluded;
+		return isWritten;
 	}
 	
 	public List<Parameter> getParameters(){
