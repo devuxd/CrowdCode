@@ -6,7 +6,7 @@
 
 <%
 	Project project = Project.Create();
-	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
+	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     ReuseSearch microtask = (ReuseSearch) worker.getMicrotask();	
 %>
 
@@ -36,7 +36,7 @@
 	        'name': 'arg1', 'type': 'String', 'description': 'a red parameter' }]}]; -->
 
 <script>
-	var functionDescriptions = <%=Function.getFunctionDescriptions() %>; 
+	var functionDescriptions = <%=Function.getFunctionDescriptions(project) %>; 
 	
 	var minSearchTimePassed = false;
 	var noFunction = false;

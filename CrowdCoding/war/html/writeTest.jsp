@@ -12,12 +12,12 @@
 
 <%
     Project project = Project.Create();
-    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
+    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
     ObjectMapper mapper = new ObjectMapper();
     String description = microtask.getDescription();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
-    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getFunction()) + "'";
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getFunction(), project) + "'";
     Writer strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
     String functionHeader = strWriter.toString();

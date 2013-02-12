@@ -15,11 +15,11 @@ import com.google.appengine.api.users.UserServiceFactory;
 public class CrowdCodingServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException 
 	{
+		// NOTE: because there is no interaction with the datastore, the crowdcoding servlet
+		// does not execute in a transaction.
+		
         UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser();
-
-        //Project project = Project.Create();
-        
+        User user = userService.getCurrentUser();  
         if (user != null) 
         {
         	try {

@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.Leaderboard;
 import com.crowdcoding.PointEvent;
 import com.crowdcoding.Worker;
+import com.crowdcoding.WorkerParent;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
@@ -45,6 +46,7 @@ public class Project
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Worker.class);
+		ObjectifyService.register(WorkerParent.class);
 		ObjectifyService.register(PointEvent.class);
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Entrypoint.class);
@@ -76,6 +78,9 @@ public class Project
 	{	
 		System.out.println("Creating new project");	
 		
+		// Create the entity used to parent workers
+		WorkerParent workerParent = new WorkerParent(false);
+		
 		// Setup the project to be ready 
 		idgenerator = new IDGenerator(false);
 		leaderboard = new Leaderboard(this);
@@ -90,7 +95,9 @@ public class Project
 	// Otherwise, a new project will be created.
 	public static Project Create()
 	{
-		project = ofy().load().type(Project.class).first().get();
+		// Need to use an ancestor query to do this inside a transaction. But the ancestor of project is project.
+		// So we just create a normal key with only the type and id
+		project = ofy().load().key(Key.create(Project.class, 1L)).get();
 		if (project == null)		
 			project = new Project(false);			
 			

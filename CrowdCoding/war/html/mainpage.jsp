@@ -1,4 +1,6 @@
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
+<%@page import="com.googlecode.objectify.Work"%>
+<%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
 <%@page import="com.crowdcoding.artifacts.Project"%>
 <%@page import="com.crowdcoding.Worker"%>
@@ -6,16 +8,25 @@
 
 
 <%
-	Logger log = Logger.getLogger(Project.class.getName());
+    // Create the project. This operation needs to be transactional to ensure one project is only
+    // created. Getting the leaderboard relies on the state of the project when it is created.
+    // But data in worker may be stale or even internally inconsistent, as other operations
+    // may be concurrently updating it.
 
+	final Logger log = Logger.getLogger(Project.class.getName());
 	log.severe("Maingpage loading");
 	log.severe("Creating project");
 
-	Project project = Project.Create();
-
+	Project project = ObjectifyService.ofy().transact(new Work<Project>() 
+	{
+	    public Project run() 
+	    {
+			return Project.Create();
+	    }
+	});
+	
 	log.severe("Loading worker");
-	Worker worker = Worker.Create(UserServiceFactory.getUserService()
-			.getCurrentUser());
+	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
 
 	log.severe("Loading leaderboard");
 	String leaderboard = project.getLeaderboard().buildDTO();

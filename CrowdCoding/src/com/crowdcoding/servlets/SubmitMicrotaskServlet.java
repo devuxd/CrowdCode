@@ -24,6 +24,8 @@ import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.microtasks.WriteUserStory;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.VoidWork;
 
 @SuppressWarnings("serial")
 public class SubmitMicrotaskServlet extends HttpServlet 
@@ -47,23 +49,38 @@ public class SubmitMicrotaskServlet extends HttpServlet
 	}	
 	
 	// Notify the server that a microtask has been completed. 
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException 
+	public void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws IOException 
 	{
-	    Project project = Project.Create();
-		
-		String payload = Util.convertStreamToString(req.getInputStream());
-		System.out.println(payload);
+		// Collect information from the request parameter. Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+    	try 
+    	{		
+			final long microtaskID = Long.parseLong(req.getParameter("id"));
+			System.out.println("microtaskid: " + microtaskID);
+			
+			final String payload = Util.convertStreamToString(req.getInputStream());
+			System.out.println("Submitted microtask: " + payload);
+	
+			final String type = req.getParameter("type");
 				
-		long microtaskID = Long.parseLong(req.getParameter("id"));
-		
-		Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
-		
-		String type = req.getParameter("type");
-		Class microtaskType = microtaskTypes.get(type);
-		if (microtaskType == null)
-			throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
-		
-		Microtask microtask = (Microtask) ofy().load().type(microtaskType).id(microtaskID).get();
-		microtask.submit(payload, worker, project);		
+	        ofy().transact(new VoidWork() {
+	            public void vrun()
+	            {
+            	    Project project = Project.Create();					
+					Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);					
+					Class microtaskType = microtaskTypes.get(type);
+					if (microtaskType == null)
+						throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
+					
+					Microtask microtask = ofy().load().key(Key.create(project.getKey(), Microtask.class, microtaskID)).get();
+					microtask.submit(payload, worker, project);	
+	            }            
+	        });
+    	}        
+    	catch (IOException e)
+    	{
+    		e.printStackTrace();
+    	}        
 	}
 }

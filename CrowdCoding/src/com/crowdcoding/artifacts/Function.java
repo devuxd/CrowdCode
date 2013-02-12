@@ -188,10 +188,10 @@ public class Function extends Artifact
 	}
 		
 	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
-	public static String getFunctionDescriptions()
+	public static String getFunctionDescriptions(Project project)
 	{
 		List<FunctionDescriptionDTO> dtos = new ArrayList<FunctionDescriptionDTO>();
-		Query<Function> q = ofy().load().type(Function.class);   
+		Query<Function> q = ofy().load().type(Function.class).ancestor(project.getKey());   
 		for (Function function : q)
 			dtos.add(function.getDescriptionDTO());
 		
@@ -380,7 +380,7 @@ public class Function extends Artifact
 		else
 		{	
 			// lookup the function by name
-			callee = ofy().load().type(Function.class).filter("name", dto.functionName).first().get();
+			callee = ofy().load().type(Function.class).ancestor(project.getKey()).filter("name", dto.functionName).first().get();
 		}
 		
 		// Have the callee let us know when it's tested (which may already be true; 
