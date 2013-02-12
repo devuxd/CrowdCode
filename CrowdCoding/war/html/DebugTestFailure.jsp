@@ -39,6 +39,7 @@
 	<div id="microtask">
 		<script src="/include/codemirror/codemirror.js"></script>
 		<script src="/include/codemirror/javascript.js"></script>
+		<script src="/include/bootbox.min.js"></script>
 		<script src="/include/jslint.js"></script>
 		<script src="/html/errorCheck.js"></script>
 		<script>
@@ -459,6 +460,11 @@
 		    myCodeMirrorForConsoleOutPut.setOption("theme", "vibrant-ink");
 		}
 	}
+	
+	function hideThePopUp()
+	{
+	    $("#submissionBox").css('display',"none");
+	}
 </script>
 		<button style="float: right;" onclick="revertCodeAs();">
 			Revert Code</button>
@@ -546,5 +552,16 @@
 				<input type="submit" value="Submit" class="btn btn-primary" />
 			</form>
 		</div>
+		
+		
+		
+		
+<span id = 'submissionBox' style = 'display:none'> 		
+		<div class="bootbox modal fade in" tabindex="-1" style="overflow: hidden;" aria-hidden="false">
+<div class="modal-body">There is no auto submit, please either enter a dispute description or if you passed all the test cases submit </div>
+<div class="modal-footer"><button style="" onclick="hideThePopUp();"> Confirm </button></div>
+</div>
+<div class="modal-backdrop fade in"></div>
+</span>
 </body>
 </html>
