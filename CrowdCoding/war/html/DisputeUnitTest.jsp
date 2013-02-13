@@ -12,7 +12,7 @@
 
 <%
     Project project = Project.Create();
-    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser());
+    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     ObjectMapper mapper = new ObjectMapper();
     Writer strWriter = new StringWriter();
     DisputeUnitTestFunction microtask = (DisputeUnitTestFunction) crowdUser.getMicrotask();

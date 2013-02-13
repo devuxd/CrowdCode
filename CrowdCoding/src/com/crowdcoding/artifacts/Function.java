@@ -67,7 +67,7 @@ public class Function extends Artifact
 	
 	// Calls that have not yet been intregrated into the code
 	private Queue<Ref<Function>> callsToIntegrate = new LinkedList<Ref<Function>>();
-	private boolean isCodeReadyToBeIncluded;	
+	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ public class Function extends Artifact
 	public Function(String callDescription, Project project)
 	{
 		super(project);
-		isCodeReadyToBeIncluded = false;
+		isWritten = false;
 		updateState(State.CREATED);
 		logState();
 		ofy().save().entity(this).now();
@@ -119,13 +119,13 @@ public class Function extends Artifact
 		case OPEN_FOR_CODING:
 		case READY_TO_ADD_CALL:
 		case WAITING_FOR_CALLEES:
-			this.isCodeReadyToBeIncluded = false;
+			this.isWritten = false;
 			break;
 		case READY_TO_TEST:
 		case IMPLEMENTED:
 		case NEEDS_DEBUGGING:
 		case TESTED:
-			this.isCodeReadyToBeIncluded = true;
+			this.isWritten = true;
 			break;
 		default:
 			break;
@@ -134,9 +134,11 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 	
-	public boolean getIsCodeReadyToBeIncluded()
+	// Is the fucntion written and all pseudocode no replaced with code? 
+	// NOTE: Being written does not imply that all tests pass.
+	public boolean isWritten()
 	{
-		return isCodeReadyToBeIncluded;
+		return isWritten;
 	}
 	
 	public List<Parameter> getParameters(){
@@ -188,10 +190,10 @@ public class Function extends Artifact
 	}
 		
 	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
-	public static String getFunctionDescriptions()
+	public static String getFunctionDescriptions(Project project)
 	{
 		List<FunctionDescriptionDTO> dtos = new ArrayList<FunctionDescriptionDTO>();
-		Query<Function> q = ofy().load().type(Function.class);   
+		Query<Function> q = ofy().load().type(Function.class).ancestor(project.getKey());   
 		for (Function function : q)
 			dtos.add(function.getDescriptionDTO());
 		
@@ -380,7 +382,7 @@ public class Function extends Artifact
 		else
 		{	
 			// lookup the function by name
-			callee = ofy().load().type(Function.class).filter("name", dto.functionName).first().get();
+			callee = ofy().load().type(Function.class).ancestor(project.getKey()).filter("name", dto.functionName).first().get();
 		}
 		
 		// Have the callee let us know when it's tested (which may already be true; 

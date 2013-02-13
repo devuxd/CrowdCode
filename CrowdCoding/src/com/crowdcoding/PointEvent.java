@@ -5,10 +5,12 @@ import com.crowdcoding.dto.PointEventDTO;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Parent;
 
 @Entity
 public class PointEvent 
 {
+	@Parent private Key<Project> project;
 	@Id private long id;
 	public int points;	
 	public String description;
@@ -20,6 +22,7 @@ public class PointEvent
 	
 	public PointEvent(int points, String description, Project project)
 	{
+		this.project = project.getKey();
 		this.points = points;
 		this.description = description;
 		id = project.generateID("PointEvent");
@@ -32,6 +35,6 @@ public class PointEvent
 	
 	public Key<PointEvent> getKey()
 	{
-		return Key.create(PointEvent.class, id);
+		return Key.create(project, PointEvent.class, id);
 	}
 }

@@ -27,7 +27,7 @@ $(document).live({
 		keyup: function (e) {
 			debugger;
 		    var submitIt = false;
-		    if(keys[13] && [17])
+		    if(keys[13] && keys[17])
 		    {
 		        submitIt = true;
 		    }        

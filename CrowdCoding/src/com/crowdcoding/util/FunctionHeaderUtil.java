@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.List;
 
 import com.crowdcoding.artifacts.Function;
+import com.crowdcoding.artifacts.Project;
 
 public class FunctionHeaderUtil
 {
@@ -20,9 +21,10 @@ public class FunctionHeaderUtil
 	}
 	
 	// need a better place for this do not know where a util function is
-	public static String getAllActiveFunctions(Function currentFunctionIn)
+	public static String getAllActiveFunctions(Function currentFunctionIn, Project project)
 	{
-		List<Function> listOFunctions = ofy().load().type(Function.class).list();
+		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey())
+				.filter("isWritten", true).list();
 		StringBuilder b = new StringBuilder();
 		for(Function function : listOFunctions)
 		{
@@ -31,7 +33,7 @@ public class FunctionHeaderUtil
 			// the loop then skip do not add again because 
 			// current function's code may be different since
 			// user is editing it
-			if(function.equals(currentFunctionIn) || !function.getIsCodeReadyToBeIncluded())
+			if(function.equals(currentFunctionIn))
 			{
 				continue;
 			}
@@ -43,9 +45,10 @@ public class FunctionHeaderUtil
 		return b.toString();
 	} 
 	
-	public static String getAllActiveFunctionsHeader(Function currentFunctionIn)
+	public static String getAllActiveFunctionsHeader(Function currentFunctionIn, Project project)
 	{
-		List<Function> listOFunctions = ofy().load().type(Function.class).list();
+		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey())
+				.filter("isWritten", true).list();
 		StringBuilder b = new StringBuilder();
 		for(Function function : listOFunctions)
 		{
@@ -54,7 +57,7 @@ public class FunctionHeaderUtil
 			// the loop then skip do not add again because 
 			// current function's code may be different since
 			// user is editing it
-			if(function.equals(currentFunctionIn) || !function.getIsCodeReadyToBeIncluded())
+			if(function.equals(currentFunctionIn))
 			{
 				continue;
 			}
