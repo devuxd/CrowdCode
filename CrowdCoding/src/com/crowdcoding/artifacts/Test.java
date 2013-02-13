@@ -9,6 +9,7 @@ import com.crowdcoding.microtasks.WriteTest;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.cmd.Query;
 
 @EntitySubclass(index=true)
 public class Test extends Artifact
@@ -148,5 +149,23 @@ public class Test extends Artifact
 	private void logState() 
 	{
 		System.out.println("State of test '"+description+"' is now "+state.name()+".");		
+	}
+	
+	public String toString()
+	{
+		return "Test " + function.get().getName() + " for '" + description + "' status: " + state.name();
+	}
+	
+	public static String StatusReport(Project project)
+	{
+		StringBuilder output = new StringBuilder();
+		
+		output.append("**** ALL TESTS ****\n");
+		
+		Query<Test> q = ofy().load().type(Test.class).ancestor(project.getKey());		
+		for (Test test : q)
+			output.append(test.toString() + "\n");
+		
+		return output.toString();
 	}
 }

@@ -43,7 +43,7 @@ public /*abstract*/ class Microtask
 	// Assigns a microtask and returns it. Returns null if no microtasks are available.
 	public static Microtask Assign(Worker crowdUser, Project project)
 	{		
-		dumpMicrotasks(project);
+		System.out.println(StatusReport(project));
 		
 		Microtask microtask = ofy().load().type(Microtask.class).ancestor(project.getKey()).filter(
 				"assigned", false).first().get();         
@@ -131,14 +131,17 @@ public /*abstract*/ class Microtask
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 	
-	// Writes all microtasks to the console
-	public static void dumpMicrotasks(Project project)
+	public static String StatusReport(Project project)
 	{
-		System.out.println("**** ALL MICROTASKS ****");
+		StringBuilder output = new StringBuilder();
+		
+		output.append("**** ALL MICROTASKS ****\n");
 		
 		Query<Microtask> q = ofy().load().type(Microtask.class).ancestor(project.getKey());		
 		for (Microtask microtask : q)
-			System.out.println(microtask.toString());
+			output.append(microtask.toString() + "\n");
+		
+		return output.toString();
 	}
 	
 	public String toString()
