@@ -21,7 +21,7 @@
 	<script>
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    
-	    myCodeMirror.setValue("<%= microtask.getCaller().getCode().replaceAll("[\t\n\\x0B\f\r]","") %>");
+	    myCodeMirror.setValue("<%= microtask.getCaller().getEscapedCode().replaceAll("[\t\n\\x0B\f\r]","") %>");
 	    myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
 	    
 	    myCodeMirror.setOption("theme", "vibrant-ink");
