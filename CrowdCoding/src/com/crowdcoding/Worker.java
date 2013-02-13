@@ -26,13 +26,12 @@ import com.googlecode.objectify.cmd.Query;
  * NOTE: parenting Worker in the project's entity group (like all other entities) was causing
  * a bug where data would be stored but not read out consistently. To fix this bug, worker is
  * not parented under project. It is unclear whether this was a logic bug in our codebase or in 
- * objectify itself. Instead, worker is parented under a WorkerParent entity.
+ * objectify itself. 
  */
 
 @Entity
 public class Worker 
 {
-	@Parent Key<WorkerParent> workerParent;
 	private Ref<Microtask> microtask;
 	private String nickname;
 	@Id private String userid;
@@ -49,7 +48,6 @@ public class Worker
 	// Initialization constructor
 	private Worker(String userid, String nickname, Project project)
 	{
-		this.workerParent = WorkerParent.getKey();
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
@@ -62,7 +60,7 @@ public class Worker
 	//                user != null
 	public static Worker Create(User user, Project project)
 	{
-		Worker crowdWorker = ofy().load().key(Key.create(WorkerParent.getKey(), Worker.class, user.getUserId())).get();
+		Worker crowdWorker = ofy().load().key(Key.create(Worker.class, user.getUserId())).get();
 		if (crowdWorker == null)		
 			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);							
 			
@@ -74,7 +72,7 @@ public class Worker
 	//                userid != null
 	public static Worker Find(String userid, Project project)
 	{
-		return ofy().load().key(Key.create(WorkerParent.getKey(), Worker.class, userid)).get();
+		return ofy().load().key(Key.create(Worker.class, userid)).get();
 	}
 	
 	public Microtask getMicrotask()
@@ -134,7 +132,7 @@ public class Worker
 	
 	public Key<Worker> getKey()
 	{
-		return Key.create(WorkerParent.getKey(), Worker.class, userid);
+		return Key.create(Worker.class, userid);
 	}
 	
 	public void login()
