@@ -74,6 +74,22 @@ public class Worker
 	{
 		return ofy().load().key(Key.create(Worker.class, userid)).get();
 	}
+		
+	public static String StatusReport(Project project)
+	{
+		StringBuilder output = new StringBuilder();
+		
+		output.append("**** ALL WORKERS ****\n");
+		
+		// As workers are all in their own entity group, this operation has to be transactionless
+		// and, as a result, could produce inconsistent results (e.g., partially created
+		// or modified workers).		
+		Query<Worker> q = ofy().transactionless().load().type(Worker.class);		
+		for (Worker worker : q)
+			output.append(worker.toString() + "\n");
+		
+		return output.toString();
+	}
 	
 	public Microtask getMicrotask()
 	{
@@ -231,7 +247,7 @@ public class Worker
 	
 	public String toString()
 	{
-		return userid + ": { score: " + score + " loggedIn: " + loggedIn + "}"; 
+		return nickname + "(" + userid + "): { score: " + score + " loggedIn: " + loggedIn + "}"; 
 	}
 	
 }
