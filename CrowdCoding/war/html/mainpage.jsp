@@ -81,7 +81,6 @@
 			<td><p><a href="">Preferences</a></p></td>
 			<td><p><a href="">Terms</a></p></td>
 			<td><p><a href="">About</a></p></td>
-			<td><p><a href="" id="Reset">Reset</a></p></td>
 		</tr>
 	</table>
 </div>
@@ -117,18 +116,6 @@
         updateLeaderboardDisplay(<%=leaderboard%>);
         loadAndFetchMessages();
 
-		$("#Reset").click(function() {
-			$.post('/reset');
-			// Default action of clicking on the link (with no href) will now cause
-			// the page to be reloaded.
-			
-			// TODO: the server is resetting and is not really ready yet. Would logging out help?
-			// Or can we pause requests to server while reset is in progress?
-					
-			window.location.href = 'about:blank';
-			return false;
-		});
-		
 		$("#logoutLink").click(function() {
 			// Tell server to logout
 			// Clear the microtask div of content

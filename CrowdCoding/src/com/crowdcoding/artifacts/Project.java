@@ -5,7 +5,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.Leaderboard;
 import com.crowdcoding.PointEvent;
 import com.crowdcoding.Worker;
-import com.crowdcoding.WorkerParent;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.Microtask;
@@ -46,7 +45,6 @@ public class Project
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Worker.class);
-		ObjectifyService.register(WorkerParent.class);
 		ObjectifyService.register(PointEvent.class);
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Entrypoint.class);
@@ -78,9 +76,6 @@ public class Project
 	{	
 		System.out.println("Creating new project");	
 		
-		// Create the entity used to parent workers
-		WorkerParent workerParent = new WorkerParent(false);
-		
 		// Setup the project to be ready 
 		idgenerator = new IDGenerator(false);
 		leaderboard = new Leaderboard(this);
@@ -102,7 +97,13 @@ public class Project
 			project = new Project(false);			
 			
 		return project;
-	}	
+	}
+	
+	public static void Clear()
+	{
+		// Clears the default project, returning it to the initial state.
+    	ofy().transactionless().delete().keys(ofy().transactionless().load().keys());	
+	}
 	
 	public long generateID(String tag)
 	{
@@ -123,5 +124,4 @@ public class Project
 	{
 		return leaderboard;
 	}
-
 }

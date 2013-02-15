@@ -10,6 +10,7 @@ import java.util.Queue;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.crowdcoding.Worker;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.ParameterDTO;
@@ -578,5 +579,23 @@ public class Function extends Artifact
 		{
 			return false;
 		}
+	}
+	
+	public String toString()
+	{
+		return name + " state: " + state.name();		
+	}
+	
+	public static String StatusReport(Project project)
+	{
+		StringBuilder output = new StringBuilder();
+		
+		output.append("**** ALL FUNCTIONS ****\n");
+		
+		Query<Function> q = ofy().load().type(Function.class).ancestor(project.getKey());		
+		for (Function function : q)
+			output.append(function.toString() + "\n");
+		
+		return output.toString();
 	}
 }

@@ -26,13 +26,12 @@ import com.googlecode.objectify.cmd.Query;
  * NOTE: parenting Worker in the project's entity group (like all other entities) was causing
  * a bug where data would be stored but not read out consistently. To fix this bug, worker is
  * not parented under project. It is unclear whether this was a logic bug in our codebase or in 
- * objectify itself. Instead, worker is parented under a WorkerParent entity.
+ * objectify itself. 
  */
 
 @Entity
 public class Worker 
 {
-	@Parent Key<WorkerParent> workerParent;
 	private Ref<Microtask> microtask;
 	private String nickname;
 	@Id private String userid;
@@ -49,7 +48,6 @@ public class Worker
 	// Initialization constructor
 	private Worker(String userid, String nickname, Project project)
 	{
-		this.workerParent = WorkerParent.getKey();
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
@@ -62,7 +60,7 @@ public class Worker
 	//                user != null
 	public static Worker Create(User user, Project project)
 	{
-		Worker crowdWorker = ofy().load().key(Key.create(WorkerParent.getKey(), Worker.class, user.getUserId())).get();
+		Worker crowdWorker = ofy().load().key(Key.create(Worker.class, user.getUserId())).get();
 		if (crowdWorker == null)		
 			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);							
 			
@@ -74,7 +72,23 @@ public class Worker
 	//                userid != null
 	public static Worker Find(String userid, Project project)
 	{
-		return ofy().load().key(Key.create(WorkerParent.getKey(), Worker.class, userid)).get();
+		return ofy().load().key(Key.create(Worker.class, userid)).get();
+	}
+		
+	public static String StatusReport(Project project)
+	{
+		StringBuilder output = new StringBuilder();
+		
+		output.append("**** ALL WORKERS ****\n");
+		
+		// As workers are all in their own entity group, this operation has to be transactionless
+		// and, as a result, could produce inconsistent results (e.g., partially created
+		// or modified workers).		
+		Query<Worker> q = ofy().transactionless().load().type(Worker.class);		
+		for (Worker worker : q)
+			output.append(worker.toString() + "\n");
+		
+		return output.toString();
 	}
 	
 	public Microtask getMicrotask()
@@ -134,7 +148,7 @@ public class Worker
 	
 	public Key<Worker> getKey()
 	{
-		return Key.create(WorkerParent.getKey(), Worker.class, userid);
+		return Key.create(Worker.class, userid);
 	}
 	
 	public void login()
@@ -233,7 +247,7 @@ public class Worker
 	
 	public String toString()
 	{
-		return userid + ": { score: " + score + " loggedIn: " + loggedIn + "}"; 
+		return nickname + "(" + userid + "): { score: " + score + " loggedIn: " + loggedIn + "}"; 
 	}
 	
 }

@@ -27,14 +27,24 @@
 	</servlet-mapping>
 	
 	<servlet>
-		<servlet-name>Reset</servlet-name>
-		<servlet-class>com.crowdcoding.servlets.ResetServlet</servlet-class>
+		<servlet-name>Admin</servlet-name>
+		<servlet-class>com.crowdcoding.servlets.AdminServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>Reset</servlet-name>
-		<url-pattern>/reset</url-pattern>
+		<servlet-name>Admin</servlet-name>
+		<url-pattern>/admin/*</url-pattern>
 	</servlet-mapping>
-
+	
+	<servlet>
+		<servlet-name>AdminJSP</servlet-name>
+		<jsp-file>/html/admin.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AdminJSP</servlet-name>
+		<url-pattern>/admin</url-pattern>
+	</servlet-mapping>
+	
+	
 	<servlet>
 		<servlet-name>FetchMessages</servlet-name>
 		<servlet-class>com.crowdcoding.servlets.FetchMessagesServlet</servlet-class>
