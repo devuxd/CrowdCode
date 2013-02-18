@@ -8,6 +8,7 @@ import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.WriteTest;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.cmd.Query;
 
@@ -19,6 +20,7 @@ public class Test extends Artifact
 	private String description;
 	private String code; 	
 	private boolean unitTestIsOpen;
+	@Index private boolean isImplemented;
 	private State state;
 	
 	@Load private Ref<Function> function;
@@ -34,6 +36,7 @@ public class Test extends Artifact
 		super(project);		
 		this.description = description;
 		this.state = State.DESCRIBED;
+		this.isImplemented = false;
 		logState();
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		notifyFunctionOnImplemented = false;
@@ -45,6 +48,7 @@ public class Test extends Artifact
 	{
 		this.code = dto.code;
 		state = State.IMPLEMENTED;
+		isImplemented = true;
 		logState();
 		boolean areThereOpenUnitTestFunctions = false;
 		for (Ref<Test> testCase: function.getValue().getTestCases())
@@ -104,6 +108,9 @@ public class Test extends Artifact
 	{
 		System.out.println("Test '"+description+"' was asked if it was implemented.");
 		logState();
+		// NOT sure if we need this
+		isImplemented = (state == State.IMPLEMENTED);
+		ofy().save().entity(this).now();
 		return (state == State.IMPLEMENTED);
 	}
 	public void registerCallback()

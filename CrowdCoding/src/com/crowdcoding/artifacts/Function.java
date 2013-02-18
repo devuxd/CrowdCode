@@ -17,6 +17,7 @@ import com.crowdcoding.dto.ParameterDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.microtasks.DebugTestFailure;
+import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
 import com.crowdcoding.microtasks.WriteCall;
@@ -294,8 +295,9 @@ public class Function extends Artifact
 				updateState(State.READY_TO_TEST);
 				logState();
 				//run tests
-				DebugTestFailure debugMicrotask = new DebugTestFailure(this, project);
+//				DebugTestFailure debugMicrotask = new DebugTestFailure(this, project);
 				//DebugTestFailure unitTest = new DebugTestFailure(this.function,project);
+				MachineUnitTest writeMachineUnitTest = new MachineUnitTest(project);
 			}			
 		}
 		ofy().save().entity(this).now();			
