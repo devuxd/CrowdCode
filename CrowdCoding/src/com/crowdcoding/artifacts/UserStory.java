@@ -11,7 +11,7 @@ import com.googlecode.objectify.annotation.Load;
 @EntitySubclass(index=true)
 public class UserStory extends Artifact
 {
-	@Load protected Ref<Microtask> microtask;
+	protected Ref<Microtask> microtask;
 	protected Ref<Entrypoint> entrypoint;
 	protected String text;
 	
@@ -49,5 +49,11 @@ public class UserStory extends Artifact
 	public String getText()
 	{
 		return text;
+	}
+	
+	// Gets the currently associated microtask, or null if none exists.
+	public Microtask getMicrotask()
+	{
+		return ofy().load().ref(microtask).get();
 	}
 }
