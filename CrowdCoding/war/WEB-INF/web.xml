@@ -1,31 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<servlet>
 		<servlet-name>SubmitMicrotask</servlet-name>
-		<servlet-class>com.crowdcoding.servlets.SubmitMicrotaskServlet</servlet-class>
+		<servlet-class>com.crowdcoding.servlets.SubmitMicrotaskServlet
+		</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SubmitMicrotask</servlet-name>
 		<url-pattern>/submit</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>CrowdCoding</servlet-name>
-		<servlet-class>com.crowdcoding.servlets.CrowdCodingServlet</servlet-class>
+		<servlet-class>com.crowdcoding.servlets.CrowdCodingServlet
+		</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CrowdCoding</servlet-name>
 		<url-pattern>/crowdcoding</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>FetchMicrotask</servlet-name>
-		<servlet-class>com.crowdcoding.servlets.FetchMicrotaskServlet</servlet-class>
+		<servlet-class>com.crowdcoding.servlets.FetchMicrotaskServlet
+		</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FetchMicrotask</servlet-name>
 		<url-pattern>/fetch</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>Admin</servlet-name>
 		<servlet-class>com.crowdcoding.servlets.AdminServlet</servlet-class>
@@ -34,7 +37,7 @@
 		<servlet-name>Admin</servlet-name>
 		<url-pattern>/admin/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>AdminJSP</servlet-name>
 		<jsp-file>/html/admin.jsp</jsp-file>
@@ -43,11 +46,12 @@
 		<servlet-name>AdminJSP</servlet-name>
 		<url-pattern>/admin</url-pattern>
 	</servlet-mapping>
-	
-	
+
+
 	<servlet>
 		<servlet-name>FetchMessages</servlet-name>
-		<servlet-class>com.crowdcoding.servlets.FetchMessagesServlet</servlet-class>
+		<servlet-class>com.crowdcoding.servlets.FetchMessagesServlet
+		</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FetchMessages</servlet-name>
@@ -58,24 +62,25 @@
 	<welcome-file-list>
 		<welcome-file>crowdcoding</welcome-file>
 	</welcome-file-list>
- <servlet>
-  <servlet-name>SystemServiceServlet</servlet-name>
-  <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
-  <init-param>
-   <param-name>services</param-name>
-   <param-value/>
-  </init-param>
- </servlet>
- <servlet-mapping>
-  <servlet-name>SystemServiceServlet</servlet-name>
-  <url-pattern>/_ah/spi/*</url-pattern>
- </servlet-mapping>
+	<servlet>
+		<servlet-name>SystemServiceServlet</servlet-name>
+		<servlet-class>com.google.api.server.spi.SystemServiceServlet
+		</servlet-class>
+		<init-param>
+			<param-name>services</param-name>
+			<param-value/>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SystemServiceServlet</servlet-name>
+		<url-pattern>/_ah/spi/*</url-pattern>
+	</servlet-mapping>
 	<filter>
-	        <filter-name>ObjectifyFilter</filter-name>
-	        <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+		<filter-name>ObjectifyFilter</filter-name>
+		<filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
 	</filter>
 	<filter-mapping>
-	        <filter-name>ObjectifyFilter</filter-name>
-	        <url-pattern>/*</url-pattern>
+		<filter-name>ObjectifyFilter</filter-name>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 </web-app>
