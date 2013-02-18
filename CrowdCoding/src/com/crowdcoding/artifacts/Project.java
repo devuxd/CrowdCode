@@ -7,6 +7,7 @@ import com.crowdcoding.PointEvent;
 import com.crowdcoding.Worker;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
+import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
@@ -58,6 +59,7 @@ public class Project
 		ObjectifyService.register(ReuseSearch.class);
 		ObjectifyService.register(SketchFunction.class);
 		ObjectifyService.register(DebugTestFailure.class);
+		ObjectifyService.register(MachineUnitTest.class);
 		ObjectifyService.register(WriteCall.class);
 		ObjectifyService.register(WriteEntrypoint.class);
 		ObjectifyService.register(WriteFunctionDescription.class);

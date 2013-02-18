@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
+import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
@@ -40,6 +41,7 @@ public class SubmitMicrotaskServlet extends HttpServlet
 		microtaskTypes.put("ReuseSearch", ReuseSearch.class);
 		microtaskTypes.put("sketchfunction", SketchFunction.class);
 		microtaskTypes.put("DebugTestFailure", DebugTestFailure.class);
+		microtaskTypes.put("MachineUnitTest", MachineUnitTest.class);
 		microtaskTypes.put("WriteCall", WriteCall.class);
 		microtaskTypes.put("writeentrypoint", WriteEntrypoint.class);
 		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
