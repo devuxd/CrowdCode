@@ -100,11 +100,21 @@ public class Project
 			
 		return project;
 	}
-	
+
+	// Clears the default project, returning it to the initial state
 	public static void Clear()
 	{
-		// Clears the default project, returning it to the initial state.
-    	ofy().transactionless().delete().keys(ofy().transactionless().load().keys());	
+		// Get microtasks, workers, artifacts, and project (roots of the entity trees)
+		Iterable<Key<Worker>> workers = ofy().transactionless().load().type(Worker.class).keys();
+		Iterable<Key<Artifact>> artifacts = ofy().transactionless().load().type(Artifact.class).keys();
+		Iterable<Key<Microtask>> microtasks = ofy().transactionless().load().type(Microtask.class).keys();
+		Iterable<Key<Project>> projects = ofy().transactionless().load().type(Project.class).keys();
+		
+		// Delete each
+		ofy().transactionless().delete().keys(workers);
+		ofy().transactionless().delete().keys(artifacts);
+		ofy().transactionless().delete().keys(microtasks);
+		ofy().transactionless().delete().keys(projects);
 	}
 	
 	public long generateID(String tag)

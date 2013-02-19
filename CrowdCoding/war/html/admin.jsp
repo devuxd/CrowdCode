@@ -19,6 +19,12 @@
 			{
 				$('#output').html('');
 			});
+			$('#command').keypress(function (e) 
+			{
+				// When user hits enter in input box, do the execute action
+			  	if (e.which == 13)
+			    	$('#execute').click();
+			});
 		});	
 	</script>
 </head>
