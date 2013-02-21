@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Project;
+import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.DTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
@@ -48,9 +49,16 @@ public /*abstract*/ class Microtask
 		Microtask microtask = ofy().load().type(Microtask.class).ancestor(project.getKey()).filter(
 				"assigned", false).first().get();         
 		
-		// If there's no unassigned microtasks available, return null
+		// If there's no unassigned microtasks available, signifying that work
+		// on the current user stories is complete (or nearly complete), 
+		// generate a new WriteUserStory microtask.
 		if (microtask == null)
-			return null;
+		{
+			UserStory userStory = new UserStory(project);
+			microtask = userStory.getMicrotask();			
+			if (microtask == null)
+				throw new RuntimeException("Error - creating a user story did not create a microtask as expected");			
+		}
 
 		microtask.assigned = true;
 		microtask.onAssign();
