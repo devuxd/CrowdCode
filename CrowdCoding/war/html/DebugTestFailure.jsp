@@ -12,7 +12,8 @@
 <%@ page import="java.io.Writer"%>
 
 <%
-	Project project = Project.Create();
+	String projectID = (String) request.getParameter("project");
+    Project project = Project.Create(projectID);
 	Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
 	DebugTestFailure microtask = (DebugTestFailure) crowdUser.getMicrotask();
 	ObjectMapper mapper = new ObjectMapper();
@@ -94,7 +95,7 @@
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=DebugTestFailure&id=<%=microtask.getID()%>'
+			    url: '/<%=projectID%>/submit?type=DebugTestFailure&id=<%=microtask.getID()%>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;
@@ -472,42 +473,40 @@
 
 
 			<BR>
-			<h4>
+			<h5>
 				This function has failed a potentially rigorous test set. Here's the
 				function description and implementation, the test that failed, and
 				the error message it gave. Can you fix it? As a note you may use the function:<BR>
 				printDebugStatement(...);
-				</br>
+				<br>
 				to print data to the console
 				<%=methodFormatted%>
 				<BR> {
-			</h4>
+			</h5>
 			<table width="100%">
 				<tr>
 					<td></td>
 					<td><textarea id="code"></textarea></td>
 				</tr>
 			</table>
-			<h4>
+			<h5>
 				} <BR> <BR>
-			</h4>
+			</h5>
 			<input id="codeSubmit" type="submit" value="Submit"
 				class="btn btn-primary" />
 
 		</form>
-		</br>
+		<br>
 		<div style = 'display:none;' id = 'consoleDiv'>
-		</h3>
-		<h3> Debug Console Output:
-		</h3>
+		<h5> Debug Console Output:
+		</h5>
 			<table width="100%">
 				<tr>
 					<td></td>
 					<td><textarea id="debugconsole"></textarea></td>
 				</tr>
 			</table>
-			<h3>
-					</br>
+					<br>
 			</div>
 		
 
@@ -532,17 +531,17 @@
 
 		<div id="reportInformation" style="display: none">
 			<form id="issueForm" action="">
-				<h4>Here is the test case code, and please note you can only
-					dispute one test case at a time:</h4>
+				<h5>Here is the test case code, and please note you can only
+					dispute one test case at a time:</h5>
 				<table width="100%">
 					<tr>
 						<td width="20"></td>
 						<td><textarea id="unedit"></textarea></td>
 					</tr>
 				</table>
-				<h4>
+				<h5>
 					Please describe what needs to be fixed: <br>
-				</h4>
+				</h5>
 				<table width="100%">
 					<tr>
 						<td width="20"></td>

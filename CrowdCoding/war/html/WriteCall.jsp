@@ -8,7 +8,8 @@
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
-    Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteCall microtask = (WriteCall) crowdUser.getMicrotask();
     String calleeFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getCallee());
@@ -33,7 +34,7 @@
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=WriteCall&id=<%= microtask.getID() %>'
+			    url: '/<%=projectID%>/submit?type=WriteCall&id=<%= microtask.getID() %>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;

@@ -6,36 +6,25 @@
 <%@page import="com.crowdcoding.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
-
 <%
     // Create the project. This operation needs to be transactional to ensure one project is only
     // created. Getting the leaderboard relies on the state of the project when it is created.
     // But data in worker may be stale or even internally inconsistent, as other operations
     // may be concurrently updating it.
 
+    final String projectID = (String) request.getAttribute("project");
 	final Logger log = Logger.getLogger(Project.class.getName());
-	log.severe("Maingpage loading");
-	log.severe("Creating project");
 
 	Project project = ObjectifyService.ofy().transact(new Work<Project>() 
 	{
 	    public Project run() 
 	    {
-			return Project.Create();
+			return Project.Create(projectID);
 	    }
 	});
 	
-	log.severe("Loading worker");
 	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-
-	log.severe("Loading leaderboard");
-	String leaderboard = project.getLeaderboard().buildDTO();
-
-	log.severe("Done loading leaderboard");
-	log.severe(worker.toString());
-	log.severe(leaderboard);
 %>
-
 
 
 <!DOCTYPE html>
@@ -98,8 +87,6 @@
 	</div>
 </div>
 
-
-
 <!-- Scripts --> 
 <script src="/include/qunit.js"> </script> 
 <script src="/include/jquery-1.8.2.min.js"></script> 
@@ -107,14 +94,13 @@
 <script src="/_ah/channel/jsapi"></script> 
 <script src="/include/stars/jquery.rating.js"></script>
 <script src="/html/keybind.js"></script>
+<script src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script>
-	var points = <%=worker.getScore()%>;
+	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 
     $(document).ready(function()
     {
-        updateScoreDisplay(points);
-        updateLeaderboardDisplay(<%=leaderboard%>);
-        loadAndFetchMessages();
+        loadMicrotask();
 
 		$("#logoutLink").click(function() {
 			// Tell server to logout
@@ -135,58 +121,39 @@
 
 			return false;
 		});
+		
+		// Hook the leaderboard to Firebase		
+		var leaderboardRef = new Firebase(firebaseURL + '/leaderboard');
+		leaderboardRef.on('value', function(snapshot) {
+		  	updateLeaderboardDisplay(snapshot.val());
+		});
+		
+		// Hook the newsfeed to Firebase
+		var newsfeedRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/newsfeed');
+		newsfeedRef.on('child_added', function(snapshot) {
+			newNewsfeedItem(snapshot.val());
+		});		
+		
+		// Hook the score to Firebase
+		var scoreRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/score');
+		scoreRef.on('value', function(snapshot) {
+			updateScoreDisplay(snapshot.val());
+		});		
 	});
    
-    // Fetches messages every 10 seconds. Should only be called a single time.
-	function fetchMessages()
-	{
-		$.getJSON('/fetchMessages', function(messages) 
-		{
-			$.each(messages.messages, function(index, message)
-			{
-				handleMessage(message);
-			});
-
-		});
-
-		// Fetch messages again in 10 seconds
-		setTimeout(fetchMessages, 10 * 1000);
-	}
-
 	function resetSubmitButtons()
 	{
-			defaultSubmitButtonArray = new Array();
-			hasBeenIntialized = false;
-	}
-	function handleMessage(wrappedMessage) 
-	{
-		var message = jQuery.parseJSON(wrappedMessage);
-		if (message.messageType == 'PointEventDTO') 
-		{
-			points += message.points;
-			updateScoreDisplay(points);
-		} else if (message.messageType == 'LeaderboardDTO') 
-		{
-			updateLeaderboardDisplay(message);
-		}
+		defaultSubmitButtonArray = new Array();
+		hasBeenIntialized = false;
 	}
 
 	function loadMicrotask() 
 	{
 		$('body').scrollTop(0);
-		$('#contentPane').load('/fetch');
+		$('#contentPane').load('/<%=projectID%>/fetch');
     	resetSubmitButtons();
 	}
 	
-	// Loads a microtask and then fetches messages
-	// Makes sure the microtask is loaded before messages are fetched
-	function loadAndFetchMessages()
-	{
-		$('body').scrollTop(0);
-		$('#contentPane').load('/fetch', fetchMessages);
-    	resetSubmitButtons();
-	}
-
 	function updateLeaderboardDisplay(leaderboard)
 	{
 		var newHTML = '<tr><td colspan=2 id="leaderboardTableTitle"><p>High Scores</p></td></tr>';
@@ -201,6 +168,10 @@
 	{
 		$('#score').html(points);
 	}
+	
+	function newNewsfeedItem(item)
+	{
+	}	
 	
 </script>
 </body>

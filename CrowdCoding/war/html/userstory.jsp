@@ -7,7 +7,8 @@
 <%@ page import="com.crowdcoding.microtasks.WriteUserStory" %>
 
 <%
-    Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteUserStory microtask = (WriteUserStory) crowdUser.getMicrotask();
 %>
@@ -23,7 +24,7 @@
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit?type=writeuserstory&id=<%= microtask.getID() %>',
+				    url: '/<%=projectID%>/submit?type=writeuserstory&id=<%= microtask.getID() %>',
 				}).done( function (data) { loadMicrotask();	});
 
 			  	return false; 	// disable default submit behavior
@@ -32,9 +33,9 @@
 	</script>
 
 
-	<p><h4>We are writing an application for calculating traffic tickets.
-	<br>What is a single scenario that a user might wish to do with the application?
-		How precisely and thoroughly can you describe it? </h4></p>
+	<p><h5>Imagine a command line calculator. 
+	<br><BR>What is a single scenario that a user might wish to do with it?
+		How specifically and thoroughly can you describe it? </h5></p>
 
 	<form id="userstoryForm" action="">
 		<textarea name="userStory" id="userStory"></textarea>
