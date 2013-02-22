@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.LeaderboardDTO;
+import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.VoidWork;
@@ -37,7 +38,7 @@ public class Leaderboard
 	// as required.
 	public void update(final Worker worker, final Project project)
 	{
-		if (worker.getScore() > lowestScore)
+		if (leaders.size() < SIZE || worker.getScore() >= lowestScore)
 		{
 			List<Worker> leadWorkers = loadLeaders();
 			if (!leadWorkers.contains(worker))
@@ -46,7 +47,7 @@ public class Leaderboard
 			{
 				public int compare(Worker a, Worker b) 
 				{ 
-					return a.getScore() - b.getScore();
+					return b.getScore() - a.getScore();
 				}		
 			});
 			
@@ -65,7 +66,7 @@ public class Leaderboard
 			
 			// Build a leaderboard DTO message and send to all clients
 			// This cannot be in the transaction, as it uses a query
-			Worker.MessageAll(buildDTO(), project);
+			FirebaseService.updateLeaderboard(buildDTO(), project);
 		}		
 	}
 	

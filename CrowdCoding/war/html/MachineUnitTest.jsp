@@ -11,7 +11,8 @@
 <%@ page import="java.io.Writer"%>
 
 <%
-	Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
 	Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
 	MachineUnitTest microtask = (MachineUnitTest) crowdUser.getMicrotask();
 	ObjectMapper mapper = new ObjectMapper();
@@ -54,7 +55,7 @@
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=MachineUnitTest&id=<%=microtask.getID()%>'
+			    url: '/<%=projectID%>/submit?type=MachineUnitTest&id=<%=microtask.getID()%>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;

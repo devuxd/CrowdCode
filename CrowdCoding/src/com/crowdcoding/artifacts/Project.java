@@ -3,7 +3,6 @@ package com.crowdcoding.artifacts;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Leaderboard;
-import com.crowdcoding.PointEvent;
 import com.crowdcoding.Worker;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
@@ -17,6 +16,7 @@ import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.microtasks.WriteUserStory;
+import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
@@ -38,7 +38,7 @@ public class Project
 	
 	private IDGenerator idgenerator;
 	private Leaderboard leaderboard;
-	@Id private long id = 1L;
+	@Id private String id;
 	
 	// Static initializer for class Project
 	static
@@ -46,7 +46,6 @@ public class Project
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Worker.class);
-		ObjectifyService.register(PointEvent.class);
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Entrypoint.class);
 		ObjectifyService.register(Function.class);
@@ -74,9 +73,11 @@ public class Project
 	}
 	
 	// Constructor for initial creation (flag is ignored)
-	private Project(boolean flag)
+	private Project(String id)
 	{	
 		System.out.println("Creating new project");	
+		
+		this.id = id;
 		
 		// Setup the project to be ready 
 		idgenerator = new IDGenerator(false);
@@ -90,31 +91,37 @@ public class Project
 	
 	// Creates a new project instance. If there is a project in the database, it will be backed by that project.
 	// Otherwise, a new project will be created.
-	public static Project Create()
+	public static Project Create(String id)
 	{
 		// Need to use an ancestor query to do this inside a transaction. But the ancestor of project is project.
 		// So we just create a normal key with only the type and id
-		project = ofy().load().key(Key.create(Project.class, 1L)).get();
+		project = ofy().load().key(Key.create(Project.class, id)).get();
 		if (project == null)		
-			project = new Project(false);			
+			project = new Project(id);			
 			
 		return project;
 	}
 
 	// Clears the default project, returning it to the initial state
-	public static void Clear()
+	public static void Clear(String projectID)
 	{
-		// Get microtasks, workers, artifacts, and project (roots of the entity trees)
-		Iterable<Key<Worker>> workers = ofy().transactionless().load().type(Worker.class).keys();
-		Iterable<Key<Artifact>> artifacts = ofy().transactionless().load().type(Artifact.class).keys();
-		Iterable<Key<Microtask>> microtasks = ofy().transactionless().load().type(Microtask.class).keys();
-		Iterable<Key<Project>> projects = ofy().transactionless().load().type(Project.class).keys();
+		// Clear data for the project in firebase
+		FirebaseService.clear(projectID);	
+		
+		Key<Project> project = Key.create(Project.class, projectID);
+		
+		// Get microtasks, workers, artifacts (roots of the entity trees) of anything related to project
+		Iterable<Key<Worker>> workers = ofy().transactionless().load().type(Worker.class).ancestor(project).keys();
+		Iterable<Key<Artifact>> artifacts = ofy().transactionless().load().type(Artifact.class).ancestor(project).keys();
+		Iterable<Key<Microtask>> microtasks = ofy().transactionless().load().type(Microtask.class).ancestor(project).keys();
 		
 		// Delete each
 		ofy().transactionless().delete().keys(workers);
 		ofy().transactionless().delete().keys(artifacts);
 		ofy().transactionless().delete().keys(microtasks);
-		ofy().transactionless().delete().keys(projects);
+		
+		// delete project
+		ofy().transactionless().delete().key(project);
 	}
 	
 	public long generateID(String tag)
@@ -130,6 +137,11 @@ public class Project
 	public Key<Project> getKey()
 	{
 		return Key.create(Project.class, id);
+	}
+	
+	public String getID()
+	{
+		return id;
 	}
 	
 	public Leaderboard getLeaderboard()

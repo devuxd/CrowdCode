@@ -12,7 +12,8 @@
 <%@ page import="java.io.Writer" %>
 
 <%
-    Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteUserStory microtask = (WriteUserStory) crowdUser.getMicrotask();
 %>
@@ -121,7 +122,7 @@ var flip = 0;
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit?type=reviewTask&id=<%= microtask.getID() %>',
+				    url: '/<%=projectID%>/submit?type=reviewTask&id=<%= microtask.getID() %>',
 				}).done( function (data) { loadMicrotask();	});
 
 			  	return false; 	// disable default submit behavior
