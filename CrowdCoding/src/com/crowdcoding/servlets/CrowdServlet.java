@@ -93,27 +93,32 @@ public class CrowdServlet extends HttpServlet
 				req.setAttribute("project", path[1]);
 				String projectID = path[1];
 				
-	        	try 
-	        	{				
-					if (path.length == 2)
+				if (path.length == 2)
+				{
+		        	try {
 						req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
-					else
+					} catch (ServletException e) {
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					// Third token is action, fourth (or more) tokens are commands for action
+					String action = path[2];
+					if (action.equals("fetch"))					
+						doFetch(req, resp, projectID, user);
+					else if (action.equals("submit"))
+						doSubmit(req, resp);
+					else if (action.equals("admin") && path.length == 3)
 					{
-						// Third token is action, fourth (or more) tokens are commands for action
-						String action = path[2];
-						if (action.equals("fetch"))					
-							doFetch(req, resp, projectID, user);
-						else if (action.equals("submit"))
-							doSubmit(req, resp);
-						else if (action.equals("admin") && path.length == 3)
+			        	try {						
 			        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
-						else if (action.equals("admin") && path.length > 3)
-							doAdmin(req, resp, projectID, path);
-						else if (action.equals("run"))
-			        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
-					}				
-				} catch (ServletException e) {
-					e.printStackTrace();
+						} catch (ServletException e) {
+							e.printStackTrace();
+						}
+					}
+					else if (action.equals("admin") && path.length > 3)
+						doAdmin(req, resp, projectID, path);
 				}
 			}
 			else

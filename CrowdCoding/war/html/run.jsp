@@ -8,10 +8,7 @@
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
 	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-	String allCodeRaw = FunctionHeaderUtil.getAllActiveFunctions(null, project);
-	// Has /n as newline. For running it, replace with nothing. For display, replace with <BR>
-	String allCodeJS = allCodeRaw.replace("\n", "");
-	String allCodeDisplay = allCodeRaw.replace("\n", "<BR>");
+	String allFunctionCodeInSystem = FunctionHeaderUtil.getAllActiveFunctions(null, project);
 %>
 
 
@@ -24,7 +21,7 @@
 	<script>
 		$(document).ready(function()
 		{
-			$('#code').html('<%=allCodeDisplay%>');
+			$('#code').html('<%=allFunctionCodeInSystem%>');
 			
 			$('#execute').click(function()
 			{
@@ -46,7 +43,7 @@
 		});	
 	</script>
 	<script>
-		<%=allCodeJS%>
+		<%=allFunctionCodeInSystem%>
 	</script>
 </head>
 <body>
