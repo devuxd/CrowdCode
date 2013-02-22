@@ -10,6 +10,7 @@ import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.DTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -28,6 +29,7 @@ public /*abstract*/ class Microtask
 	@Index protected boolean assigned = false;
 	@Index protected boolean completed = false;
 	protected int submitValue = 10;
+	protected Ref<Worker> worker;
 	
 	// Default constructor for deserialization
 	protected Microtask()
@@ -60,6 +62,7 @@ public /*abstract*/ class Microtask
 				throw new RuntimeException("Error - creating a user story did not create a microtask as expected");			
 		}
 
+		microtask.worker = Ref.create(crowdUser.getKey());
 		microtask.assigned = true;
 		microtask.onAssign();
 		crowdUser.setMicrotask(microtask);
@@ -78,6 +81,7 @@ public /*abstract*/ class Microtask
 		assert (worker.getMicrotask() == this);
 		assert (assigned == true);
 		
+		this.worker = null;
 		worker.setMicrotask(null);
 		assigned = false;	
 		ofy().save().entity(this).now();
@@ -155,6 +159,7 @@ public /*abstract*/ class Microtask
 	public String toString()
 	{
 		return "" + this.id + " " + this.getClass().getSimpleName() + (assigned ? " assigned " : " unassigned ") + 
-				(completed ? " completed " : " incomplete ");
+				(completed ? " completed " : " incomplete ") + 
+				((worker != null) ? ("worker: " + ofy().load().key(worker.getKey()).get().getHandle()) : " ");
 	}
 }
