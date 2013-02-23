@@ -8,7 +8,8 @@
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
-    Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteTestCases microtask = (WriteTestCases) crowdUser.getMicrotask();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
@@ -27,7 +28,7 @@
 	    	{
 				$("#testCases").append(
 					'<span id="testCase' + nextTestCase + '">' +
-						'<input type="text" class="input-xxlarge" value="Describe a test case"/>' +				
+						'<input type="text" class="input-xxlarge" placeholder="Describe a test case"/>' +				
 						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">x</a>' +	
 					'</span>');	
 				nextTestCase = nextTestCase + 1;	
@@ -43,7 +44,7 @@
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit?type=writetestcases&id=<%= microtask.getID() %>',
+				    url: '/<%=projectID%>/submit?type=writetestcases&id=<%= microtask.getID() %>',
 				}).done( function (data) {  loadMicrotask() });
 								
 				return false;
@@ -72,9 +73,9 @@
 
 
 
-	<p><h4><%= methodFormatted %><BR>
+	<p><h5><%= methodFormatted %><BR>
 In what situations or cases might this function misbehave, show unexpected results, or fail? Are there unexpected
-corner cases that might not work?
+corner cases that might not work?</h5></h5>
 
 	
 	<BR>

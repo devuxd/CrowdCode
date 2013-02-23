@@ -8,7 +8,8 @@
 <%@ page import="com.crowdcoding.artifacts.UserStory" %>
 
 <%
-    Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteEntrypoint microtask = (WriteEntrypoint) crowdUser.getMicrotask();
     UserStory userStory = microtask.getEntrypoint().getUserStory();
@@ -23,9 +24,9 @@
 			$("#addParameter").click(function()
 			{
 				$("#addParamRow").before('<tr id="params' + nextParam + '"><td></td><td>' +						
-					    '<input type="text" value = "param1" class="input-small">,&nbsp;&nbsp;//' + 
-						'&nbsp;<input type="text" value = "type" class="input-small">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
-						'<input type="text" value = "what is it for?" class="input-xlarge"> ' +	
+					    '<input type="text" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;//' + 
+						'&nbsp;<input type="text" placeholder = "type" class="input-small">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
+						'<input type="text" placeholder = "what is it for?" class="input-xlarge"> ' +	
 						'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">x</a>' +	
 						'</td>');
 				nextParam++;
@@ -40,7 +41,7 @@
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit?type=writeentrypoint&id=<%= microtask.getID() %>'
+				    url: '/<%=projectID%>/submit?type=writeentrypoint&id=<%= microtask.getID() %>'
 				}).done( function (data) { loadMicrotask();	});
 								
 				return false;
@@ -75,24 +76,24 @@
 		}
 	</script>
 		
-	<h4> Consider the following user scenario: <BR><BR> <%=userStory.getText() %><BR><BR>
+	<h5> Consider the following user scenario: <BR><BR> <%=userStory.getText() %><BR><BR>
 	What framework event should be used to initially trigger this user scenario to occur? What should the function
-	that listens for this event do, and what parameters does it require?</h4>
+	that listens for this event do, and what parameters does it require?</h5><BR>
 	
 	<form id="entrypointsForm" action="">
-		<textarea id="functionDescription" draggable="true">What does the function do?</textarea>
+		<textarea id="functionDescription" draggable="true" placeholder="What does the function do?"></textarea>
 		returns &nbsp;&nbsp;<input type="text" id="returnType" value = "void" class="input-medium"><BR>
 		<input type="text" id="event" value="$(document).ready(" class="input-large">
 		function 
-		<input type="text" id="name" value = "functionName" class="input-medium">(
+		<input type="text" id="name" placeholder = "functionName" class="input-medium">(
 		<BR>
 		<table>
 			<tr id="params1">
 				<td width="20">
 				<td>
-					<input type="text" value = "param1" class="input-small">,&nbsp;&nbsp;// 
-					<input type="text" value = "type" class="input-small">&nbsp;&nbsp;-&nbsp; 
-					<input type="text" value = "what's it for?" class="input-xlarge">
+					<input type="text" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;// 
+					<input type="text" placeholder = "type" class="input-small">&nbsp;&nbsp;-&nbsp; 
+					<input type="text" placeholder = "what's it for?" class="input-xlarge">
 					<!--  <button class="close" onclick="deleteParams('#params1')">&times;</button> -->
 					<a href="#" onclick="deleteParams('#params1')" class="closeButton">x</a>		
 				<td>

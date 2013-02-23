@@ -11,7 +11,8 @@
 <%@ page import="java.io.Writer" %>
 
 <%
-    Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
     ObjectMapper mapper = new ObjectMapper();
@@ -70,7 +71,7 @@
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=writetest&id=<%= microtask.getID() %>'
+			    url: '/<%=projectID%>/submit?type=writetest&id=<%= microtask.getID() %>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;
@@ -78,12 +79,12 @@
 	</script>
 
 
-<h4>
+<h5>
 	We are writing the following function: <br /> <%= methodFormatted %><br />
-Write a unit test for the following test case:</h4>
-<h3>
+Write a unit test for the following test case:</h5>
+<h4>
 <%= description %>
-</h3>
+</h4><BR>
 <span class="reference">
 Reference Section:<br /><br />
 Assertions you can use when writing unit tests include: <br />

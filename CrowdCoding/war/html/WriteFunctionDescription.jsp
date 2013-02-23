@@ -7,7 +7,8 @@
 <%@ page import="com.crowdcoding.microtasks.WriteFunctionDescription" %>
 
 <%
-    Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteFunctionDescription microtask = (WriteFunctionDescription) crowdUser.getMicrotask();
 %>
@@ -21,9 +22,9 @@
 			$("#addParameter").click(function()
 			{
 				$("#addParamRow").before('<tr id="params' + nextParam + '"><td></td><td>' +						
-					    '<input type="text" value = "param1" class="input-small">,&nbsp;&nbsp;//' + 
-						'&nbsp;<input type="text" value = "type" class="input-small">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
-						'<input type="text" value = "what is it for?" class="input-xlarge"> ' +	
+					    '<input type="text" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;//' + 
+						'&nbsp;<input type="text" placeholder = "type" class="input-small">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
+						'<input type="text" placeholder = "what is it for?" class="input-xlarge"> ' +	
 						'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">x</a>' +	
 						'</td>');
 				nextParam++;
@@ -38,7 +39,7 @@
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit?type=WriteFunctionDescription&id=<%= microtask.getID() %>'
+				    url: '/<%=projectID%>/submit?type=WriteFunctionDescription&id=<%= microtask.getID() %>'
 				}).done( function (data) { loadMicrotask();	});
 								
 				return false;
@@ -72,26 +73,26 @@
 		}
 	</script>
 		
-	<h4> Please write a description for the following function: <BR><BR>
+	<h5> Please write a description for the following function: <BR><BR>
 	
 	<%= microtask.getCallDescription() %>
-	<BR>
+	<BR><BR>
 	
-	</h4>
+	</h5>
 	
 	<form id="descripForm" action="">
-		<textarea id="functionDescription" draggable="true">What does the function do?</textarea>
+		<textarea id="functionDescription" draggable="true" placeholder="What does the function do?"></textarea>
 		returns &nbsp;&nbsp;<input type="text" id="returnType" value = "void" class="input-medium"><BR>
 		function 
-		<input type="text" id="name" value = "functionName" class="input-medium">(
+		<input type="text" id="name" placeholder = "functionName" class="input-medium">(
 		<BR>
 		<table>
 			<tr id="params1">
 				<td width="20">
 				<td>
-					<input type="text" value = "param1" class="input-small">,&nbsp;&nbsp;// 
-					<input type="text" value = "type" class="input-small">&nbsp;&nbsp;-&nbsp; 
-					<input type="text" value = "what's it for?" class="input-xlarge">
+					<input type="text" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;// 
+					<input type="text" placeholder = "type" class="input-small">&nbsp;&nbsp;-&nbsp; 
+					<input type="text" placeholder = "what's it for?" class="input-xlarge">
 					<!--  <button class="close" onclick="deleteParams('#params1')">&times;</button> -->
 					<a href="#" onclick="deleteParams('#params1')" class="closeButton">x</a>		
 				<td>

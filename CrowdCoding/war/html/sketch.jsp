@@ -11,7 +11,8 @@
 <%@ page import="java.io.StringWriter" %>
 <%@ page import="java.io.Writer" %>
 <%
-    Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
     ObjectMapper mapper = new ObjectMapper();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     SketchFunction microtask = (SketchFunction) crowdUser.getMicrotask();
@@ -78,7 +79,7 @@
 			    data: JSON.stringify( formData ),
 			    dataType: 'json',
 			    type: 'POST',
-			    url: '/submit?type=sketchfunction&id=<%= microtask.getID() %>'
+			    url: '/<%=projectID%>/submit?type=sketchfunction&id=<%= microtask.getID() %>'
 			}).done( function (data) { loadMicrotask();	});
 							
 			return false;
@@ -86,13 +87,13 @@
 	</script>
 
 
-	<p><h4> <%= methodFormatted %><BR>
+	<p><h5> <%= methodFormatted %><BR>
 
-Your mission is to implement the following function. You may choose to either completely
+Your mission is to implement the above function. You may choose to either completely
 implement the function or to leave portions as <i>pseudocode</i>.<BR>
 Lines beginning with '#' are considered pseudocode.<BR>
 Line beginning with '!' are treated as a <i>single</i> function call pseudocode line.<BR>
-</h4>
+</h5>
 	
 	
 	<form id="sketchForm" action="">

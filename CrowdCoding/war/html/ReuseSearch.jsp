@@ -5,7 +5,8 @@
 <%@ page import="com.crowdcoding.microtasks.ReuseSearch" %>
 
 <%
-	Project project = Project.Create();
+	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
 	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     ReuseSearch microtask = (ReuseSearch) worker.getMicrotask();	
 %>
@@ -56,7 +57,7 @@
 				    data: JSON.stringify( formData ),
 				    dataType: 'json',
 				    type: 'POST',
-				    url: '/submit?type=ReuseSearch&id=<%= microtask.getID() %>'
+				    url: '/<%=projectID%>/submit?type=ReuseSearch&id=<%= microtask.getID() %>'
 				}).done( function (data) { loadMicrotask();	});
 			}			
 			

@@ -1,11 +1,18 @@
+<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.artifacts.Function" %>
+<%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
+<%@ page import="com.crowdcoding.Worker" %>
+<%@ page import="com.crowdcoding.util.FunctionHeaderUtil"%>
+
 <%
 	String projectID = (String) request.getAttribute("project");
+	Project project = Project.Create(projectID);
+	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
+	String allCodeRaw = FunctionHeaderUtil.getAllActiveFunctions(null, project);
+	// Has /n as newline. For running it, replace with nothing. For display, replace with <BR>
+	String allCodeJS = allCodeRaw.replace("\n", "");
+	String allCodeDisplay = allCodeRaw.replace("\n", "<BR>");
 %>
-
-
-
-
-
 
 
 <html>
@@ -17,13 +24,14 @@
 	<script>
 		$(document).ready(function()
 		{
+			$('#code').html('<%=allCodeDisplay%>');
+			
 			$('#execute').click(function()
 			{
 				var command = $('#command').val();
-				$.get('/' + '<%=projectID%>/admin/' + command, function(data) 
-				{
-					$('#output').prepend(data);
-				});
+				var output = eval(command);
+				$('#output').append('<BR>' + command + '<BR>');
+				$('#output').append(output + '<BR>');								
 			});
 			$('#clear').click(function()
 			{
@@ -37,25 +45,27 @@
 			});
 		});	
 	</script>
+	<script>
+		<%=allCodeJS%>
+	</script>
 </head>
 <body>
 	<div class="row-fluid">
 	  	<div class="span1"></div>
 	  	<div class="span10">
-			<h3>Welcome to the <b>CrowdCode Administration Service</b></h3>
-			Commands can be invoked by 1) directly submitting a post or get request containing a command 
-			(e.g., "http://[...]/admin/Status") or 2) by using the textbox below to submit a 
-			command (e.g., "Status").<BR><BR>
-			The following commands are currently available:
-			<ul>
-				<li><b>Reset</b> - resets the default project back to the initial state.</li>
-				<li><b>Status</b> - returns a status message describing the current status of the system.</li>
-			</ul><BR>
+			<h3>Run the code</b></h3>
+			Enter javascript commands, which will be executed against the code below.<BR><BR>
 		
 		   	<input type="text" class="input-xlarge" id="command">
 		   	<button id="execute" class="btn btn-small">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		   	<button id="clear" class="btn btn-small">Clear Output</button><BR><BR>
+		   	
+		   	<h4>Output</b></h4>
 			<div id="output"></div>
+			<BR><BR>
+			
+			 <h4>Code</b></h4>
+			<div id="code"></div>
 		</div>
 		<div class="span1"></div>
 	</div>
