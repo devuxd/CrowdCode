@@ -108,6 +108,8 @@
 <script src="/include/stars/jquery.rating.js"></script>
 <script src="/html/keybind.js"></script>
 <script>
+// global QUNIT config thing I ADDED THIS MAY MOVE or remove
+// QUnit.config.testTimeout = 1000;
 	var points = <%=worker.getScore()%>;
 
     $(document).ready(function()
