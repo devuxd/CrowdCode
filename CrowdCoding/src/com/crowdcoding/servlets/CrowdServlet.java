@@ -203,6 +203,7 @@ public class CrowdServlet extends HttpServlet
 					
 					Microtask microtask = ofy().load().key(Key.create(project.getKey(), Microtask.class, microtaskID)).get();
 					microtask.submit(payload, worker, project);	
+					project.publishStatistics();
 	            }            
 	        });
     	}        

@@ -32,10 +32,10 @@ public class SketchFunction extends Microtask
 		ofy().save().entity(this).now();
 	}
 	
-	public void onAssign()
+	public void onAssign(Project project)
 	{
 		System.out.println("Sketch for " + function.get().getName() + " setting active coding");
-		function.get().activeCodingStarted();
+		function.get().activeCodingStarted(project);
 	}
 	
 	protected void doSubmitWork(DTO dto, Project project)

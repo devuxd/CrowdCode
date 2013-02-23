@@ -4,6 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Leaderboard;
 import com.crowdcoding.Worker;
+import com.crowdcoding.dto.CurrentStatisticsDTO;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.MachineUnitTest;
@@ -23,8 +24,6 @@ import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
-
-
 /*
  * Projects are the root of the artifact and microtask graphs. A project instance MUST be created before
  * any interactions with artifacts or microtasks can take place.
@@ -39,6 +38,9 @@ public class Project
 	private IDGenerator idgenerator;
 	private Leaderboard leaderboard;
 	@Id private String id;
+	private int writtenFunctions;
+	private int linesOfCode;
+	private int microtasksCompleted;
 	
 	// Static initializer for class Project
 	static
@@ -124,6 +126,35 @@ public class Project
 		ofy().transactionless().delete().key(project);
 	}
 	
+	// Publish new statistics to Firebase
+	public void publishStatistics() 
+	{
+		CurrentStatisticsDTO stats = new CurrentStatisticsDTO(microtasksCompleted, linesOfCode, 
+				writtenFunctions);
+		FirebaseService.publishStatistics(stats.json(), this);		
+	}
+	
+	// Report that a function is now written
+	public void functionWritten()
+	{
+		writtenFunctions++;
+		ofy().save().entity(this).now();
+	}
+	
+	// Report that lines of code in the system increased by
+	public void locIncreasedBy(int lines)
+	{
+		linesOfCode += lines;
+		ofy().save().entity(this).now();
+	}
+	
+	// Report that a microtask has been completed
+	public void microtaskCompleted()
+	{
+		microtasksCompleted++;
+		ofy().save().entity(this).now();
+	}
+	
 	public long generateID(String tag)
 	{
 		long id = idgenerator.generateID(tag);
@@ -148,4 +179,6 @@ public class Project
 	{
 		return leaderboard;
 	}
+
+
 }

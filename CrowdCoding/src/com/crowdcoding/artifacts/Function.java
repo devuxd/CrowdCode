@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.Queue;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import com.crowdcoding.Worker;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.ParameterDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCasesDTO;
-import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
@@ -94,8 +93,7 @@ public class Function extends Artifact
 	{
 		super(project);
 		isWritten = false;
-		updateState(State.CREATED);
-		logState();
+		updateState(State.CREATED, project);
 		ofy().save().entity(this).now();
 		
 		// Spawn off a microtask to write the function description
@@ -111,8 +109,10 @@ public class Function extends Artifact
 		return state;
 	}
 
-	private void updateState(State state) 
+	private void updateState(State state, Project project) 
 	{
+		boolean isNowWritten = false;
+		
 		switch(state)
 		{
 		case ACTIVE_CODING:
@@ -121,17 +121,22 @@ public class Function extends Artifact
 		case OPEN_FOR_CODING:
 		case READY_TO_ADD_CALL:
 		case WAITING_FOR_CALLEES:
-			this.isWritten = false;
+			isNowWritten = false;
 			break;
 		case READY_TO_TEST:
 		case IMPLEMENTED:
 		case NEEDS_DEBUGGING:
 		case TESTED:
-			this.isWritten = true;
+			isNowWritten = true;
 			break;
 		default:
 			break;
 		}
+		
+		if (isNowWritten && !isWritten)
+			project.functionWritten();
+		
+		this.isWritten = isNowWritten;
 		this.state = state;
 		ofy().save().entity(this).now();
 	}
@@ -292,8 +297,7 @@ public class Function extends Artifact
 			//and if not, register a callback to call this again
 			if (allUnitTestsImplemented(true))
 			{
-				updateState(State.READY_TO_TEST);
-				logState();
+				updateState(State.READY_TO_TEST, project);
 				//run tests
 //				DebugTestFailure debugMicrotask = new DebugTestFailure(this, project);
 				//DebugTestFailure unitTest = new DebugTestFailure(this.function,project);
@@ -306,8 +310,15 @@ public class Function extends Artifact
 	
 	public void onWorkerEdited(FunctionDTO dto, Project project)
 	{
+		// Measure the LOC increase. 
+		int	oldLOC = StringUtils.countMatches(this.code, "\n") + 1;
+		int newLOC = StringUtils.countMatches(dto.code, "\n") + 1;		
+		project.locIncreasedBy(newLOC - oldLOC);		
+		
+		// Update the code
 		this.code = dto.code;				
 
+		// Look for pseudocode and psuedocalls
 		List<String> currentPseudoCalls = findPseudocalls(code);
 	
 		if(currentPseudoCalls.isEmpty())
@@ -315,12 +326,10 @@ public class Function extends Artifact
 			List<String> pseudoCode = findPseudocode(code);
 			if(pseudoCode.isEmpty())
 			{
-				updateState(State.IMPLEMENTED);
-				logState();
+				updateState(State.IMPLEMENTED, project);
 				runTestsIfReady(project);
 			} else {
-				updateState(State.OPEN_FOR_CODING);
-				logState();
+				updateState(State.OPEN_FOR_CODING, project);
 				//create new Sketch microtask
 				SketchFunction sketchFunction = new SketchFunction(this, project);
 			}
@@ -338,24 +347,19 @@ public class Function extends Artifact
 					/*ReuseSearch reuseSearch =*/ new ReuseSearch(this, callDescription, project);
 					
 					if(callsToIntegrate.isEmpty())
-					{
-						updateState(State.WAITING_FOR_CALLEES);
-						logState();
-					} else 
-					{
+						updateState(State.WAITING_FOR_CALLEES, project);
+					else 
 						addCall(load(callsToIntegrate.remove()), project);
-					}
 				}
 			}
 		}
-			
+					
 		ofy().save().entity(this).now();
 	}
 	
 	private void addCall(Function callee, Project project) 
 	{
-		updateState(State.READY_TO_ADD_CALL);
-		logState();
+		updateState(State.READY_TO_ADD_CALL, project);
 		
 		// Create a microtask to add the call
 		WriteCall writeCall = new WriteCall(this, callee, project);	
@@ -393,19 +397,16 @@ public class Function extends Artifact
 		callee.addToNotifyOnTested(this, project);
 	}
 	
-	public void activeCodingStarted() 
+	public void activeCodingStarted(Project project) 
 	{
-		this.updateState(State.ACTIVE_CODING);
-		logState();
+		this.updateState(State.ACTIVE_CODING, project);
 	}
 	
 	
 	public void writeDescriptionCompleted(String name, String description, String returnType, 
 	List<ParameterDTO> params, Project project)
 	{
-		this.updateState(State.DESCRIBED);
-		logState();
-		
+		this.updateState(State.DESCRIBED, project);
 		this.name = name;
 		this.description = description;
 		this.returnType = returnType;
@@ -416,12 +417,12 @@ public class Function extends Artifact
 		// the worker to only remove it when the function is done. This keeps regenerating
 		// new sketch tasks until the worker has marked it as done by removing the pseudocode
 		// line.
-		this.code = "#Mark this function as implemented by removing this line.";		
+		this.code = "#Mark this function as implemented by removing this line.";	
+		project.locIncreasedBy(1);
 		
 		//Spawn off microtask to write test cases
 		WriteTestCases writeTestCases = new WriteTestCases(this, project);
-		this.updateState(State.OPEN_FOR_CODING);
-		logState();
+		this.updateState(State.OPEN_FOR_CODING, project);
 
 		ofy().save().entity(this).now();
 		
@@ -449,8 +450,7 @@ public class Function extends Artifact
 			{ //integrate the new changes
 				onWorkerEdited(dto, project);
 			} else/*if all tests passed*/ { //tests ran through all smoothly
-				updateState(State.TESTED);
-				logState();
+				updateState(State.TESTED, project);
 				notifyOnTested(project);
 			}
 		}
@@ -590,8 +590,7 @@ public class Function extends Artifact
 	
 	public static String StatusReport(Project project)
 	{
-		StringBuilder output = new StringBuilder();
-		
+		StringBuilder output = new StringBuilder();		
 		output.append("**** ALL FUNCTIONS ****\n");
 		
 		Query<Function> q = ofy().load().type(Function.class).ancestor(project.getKey());		

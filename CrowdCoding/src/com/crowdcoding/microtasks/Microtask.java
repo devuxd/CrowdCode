@@ -64,7 +64,7 @@ public /*abstract*/ class Microtask
 
 		microtask.worker = Ref.create(crowdUser.getKey());
 		microtask.assigned = true;
-		microtask.onAssign();
+		microtask.onAssign(project);
 		crowdUser.setMicrotask(microtask);
 		ofy().save().entity(microtask).now();
 		
@@ -72,7 +72,7 @@ public /*abstract*/ class Microtask
 	}
 	
 	// Override this method to handle an assigment event.
-	public void onAssign() {};
+	public void onAssign(Project project) {};
 	
 	// Unassigns worker from this microtask
 	// Precondition - the worker must be assigned to this microtask
@@ -128,6 +128,7 @@ public /*abstract*/ class Microtask
 		this.completed = true;
 		worker.setMicrotask(null);
 		worker.awardPoints(this.submitValue, project);
+		project.microtaskCompleted();
 		ofy().save().entity(this).now();		
 	}
 

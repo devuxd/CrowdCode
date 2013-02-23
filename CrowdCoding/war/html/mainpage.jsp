@@ -57,11 +57,17 @@
 			<td><p><span id="score">0 points</span></p></td>
 		</tr>
 	</table>
-</div>
-<div id="contentPane"></div>
-<div id="rightbar">
-	<div id="leaderboard"><table id="leaderboardTable"></table></div>
-</div>
+	</div>
+	<div id="contentPane"></div>
+	<div id="rightbar">
+		<div id="leaderboard"><table id="leaderboardTable"></table></div><BR><BR><BR>
+		<div id="statistics">
+			<p><B>Project</B></p>
+			<p><span id="loc"></span><small>&nbsp;&nbsp;&nbsp;lines of code</small></p>
+			<p><span id="functionsWritten"></span><small>&nbsp;&nbsp;&nbsp;functions written</small></p>
+			<p><span id="microtasksCompleted"></span><small>&nbsp;&nbsp;&nbsp;microtasks completed</small></p>
+		</div>
+	</div>
 </div>
 <div id="footer">
 	<table>
@@ -136,9 +142,17 @@
 		
 		// Hook the score to Firebase
 		var scoreRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/score');
-		scoreRef.on('value', function(snapshot) {
+		scoreRef.on('value', function(snapshot) { 
 			updateScoreDisplay(snapshot.val());
 		});		
+		
+		// Hook stats to firebase
+		var locRef = new Firebase(firebaseURL + '/statistics/linesOfCode');
+		locRef.on('value', function(snapshot) { $('#loc').html(snapshot.val()); });
+		var locRef = new Firebase(firebaseURL + '/statistics/functionsImplemented');
+		locRef.on('value', function(snapshot) { $('#functionsWritten').html(snapshot.val()); });
+		var locRef = new Firebase(firebaseURL + '/statistics/microtasksCompleted');
+		locRef.on('value', function(snapshot) { $('#microtasksCompleted').html(snapshot.val()); });		
 	});
    
 	function resetSubmitButtons()
