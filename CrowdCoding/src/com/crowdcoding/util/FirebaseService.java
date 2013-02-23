@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.crowdcoding.artifacts.Project;
+import com.crowdcoding.dto.CurrentStatisticsDTO;
 
 /* Wrapper service that handles all interactions with Firebase, providing an API
  * for interacting with Firebase that hides all its implementation details.
@@ -27,6 +28,12 @@ public class FirebaseService
 	public static void postToNewsfeed(String workerID, String message, Project project)
 	{
 		writeData(message, "/workers/" + workerID + "/newsfeed.json", "POST", project);		
+	}
+	
+	// Publishes the specified statistics
+	public static void publishStatistics(String message, Project project)
+	{
+		writeData(message, "/statistics.json", "PUT", project); 
 	}
 	
 	// Clears all data in the current project, reseting it to an empty, initial state

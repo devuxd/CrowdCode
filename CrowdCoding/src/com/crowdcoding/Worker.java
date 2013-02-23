@@ -119,14 +119,8 @@ public class Worker
 		ofy().save().entity(this).now();
 		
 		FirebaseService.setPoints(userid, score, project);
-		
-		ObjectMapper mapper = new ObjectMapper();
-	    try {
-	    	FirebaseService.postToNewsfeed(userid, 
-	    			mapper.writeValueAsString(new PointEventDTO(points, "Empty description")), project);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    	FirebaseService.postToNewsfeed(userid, (new PointEventDTO(points, "Empty description")).json(), 
+    			project);
 			    
 	    // Update the leaderboard, if necessary
 	    project.getLeaderboard().update(this, project);		    
@@ -198,6 +192,5 @@ public class Worker
 	public String toString()
 	{
 		return nickname + "(" + userid + "): { score: " + score + " loggedIn: " + loggedIn + "}"; 
-	}
-	
+	}	
 }

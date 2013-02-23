@@ -81,14 +81,7 @@ public class Leaderboard
 			if (worker != null)
 				dto.leaders.add(new LeaderboardDTO.Leader(worker.getScore(), worker.getHandle()));
 		
-		ObjectMapper mapper = new ObjectMapper();
-	    try {
-	    	return mapper.writeValueAsString(dto);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	    
-	    return "";
+		return dto.json();
 	}
 	
 	// Builds a LeaderboardDTO message for this Leaderboard

@@ -1,3 +1,6 @@
 *.class
 
 # Package Files #*.war*.ear
+CrowdCoding/war/WEB-INF/appengine-generated/datastore-indexes-auto.xml
+
+CrowdCoding/war/WEB-INF/appengine-generated/local_db.bin
