@@ -12,7 +12,7 @@
 <%@ page import="java.io.Writer"%>
 
 <%
-	String projectID = (String) request.getParameter("project");
+	String projectID = (String) request.getAttribute("project");
     Project project = Project.Create(projectID);
 	Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
 	DebugTestFailure microtask = (DebugTestFailure) crowdUser.getMicrotask();
