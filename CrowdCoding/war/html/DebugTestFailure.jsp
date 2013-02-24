@@ -275,9 +275,10 @@
 						tabHtml[p] += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
 						tabHtml[p] +=  "</a></li>";
 					}
+					// change to asyncTest if you want try that, but that broke stuff when i changed it
 				var testCases = "test('" + functionName + "', function() {";
 				// constructs the function header and puts code  from the above code window
-				testCases += allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+				testCases += "" + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
 				testCases += arrayOfTests[p];
 				testCases+= "});";
 				console.log(testCases);

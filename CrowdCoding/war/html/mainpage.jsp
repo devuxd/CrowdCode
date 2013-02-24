@@ -106,6 +106,8 @@
 
     $(document).ready(function()
     {
+        // global QUNIT config thing I ADDED THIS MAY MOVE or remove
+		// QUnit.config.testTimeout = 1000;
         loadMicrotask();
 
 		$("#logoutLink").click(function() {
