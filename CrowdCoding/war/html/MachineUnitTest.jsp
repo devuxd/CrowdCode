@@ -40,24 +40,18 @@
 	};  
 	</script>
 	<script>
+		var microtaskType = 'MachineUnitTest';
+		var microtaskID = <%= microtask.getID() %>;
 		var testCaseNumberThatFailed = -1;
 	    var javaTestCases = new Array();
 	    $("#machineSubmit").children("input").attr('disabled', 'false');
 		$('#machineSubmit').submit(function() {
-		debugger;
-		if($("#machineSubmit").children("input").attr('disabled') == 'disabled')
-		{
-		return false;
-		}
-			var formData = collectFormDataForNormal(testCaseNumberThatFailed);
-			$.ajax({
-			    contentType: 'application/json',
-			    data: JSON.stringify( formData ),
-			    dataType: 'json',
-			    type: 'POST',
-			    url: '/<%=projectID%>/submit?type=MachineUnitTest&id=<%=microtask.getID()%>'
-			}).done( function (data) { loadMicrotask();	});
-							
+			debugger;
+			if($("#machineSubmit").children("input").attr('disabled') == 'disabled')
+			{
+				return false;
+			}
+			submit(collectFormDataForNormal(testCaseNumberThatFailed));
 			return false;
 		});
 		

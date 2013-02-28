@@ -64,11 +64,14 @@
 			{
 				$("#tabContent").html(htmlContent);
 				$("#tabs").html(htmlTab);
+			  	$('#skip').click(function() { skip(); });
 			});
 	};  
 	</script>
 	<script>
 		debugger;
+		var microtaskType = 'DebugTestFailure';
+		var microtaskID = <%= microtask.getID() %>;
 		var myCodeMirrorForDispute;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    var myCodeMirrorForConsoleOutPut = CodeMirror.fromTextArea(debugconsole);
@@ -86,18 +89,10 @@
 		test1(false);
 		if($("#sketchForm").children("input").attr('disabled') == 'disabled')
 		{
-		return false;
+			return false;
 		}
 		debugger;
-			var formData = collectFormDataForNormal();
-			$.ajax({
-			    contentType: 'application/json',
-			    data: JSON.stringify( formData ),
-			    dataType: 'json',
-			    type: 'POST',
-			    url: '/<%=projectID%>/submit?type=DebugTestFailure&id=<%=microtask.getID()%>'
-			}).done( function (data) { loadMicrotask();	});
-							
+			submit(collectFormDataForNormal());
 			return false;
 		});
 		
@@ -109,15 +104,7 @@
 				alert("please remove debug statements from code ");
 				return false;
 			}
-			var formData = collectFormDataForDispute();
-			$.ajax({
-			    contentType: 'application/json',
-			    data: JSON.stringify( formData ),
-			    dataType: 'json',
-			    type: 'POST',
-			    url: '/submit?type=DebugTestFailure&id=<%=microtask.getID()%>'
-			}).done( function (data) { loadMicrotask();	});						
-			
+			submit(collectFormDataForDispute());
 			return false;
 		});
 		
@@ -424,8 +411,6 @@
 			    	$("#unittest").attr('disabled', 'false');
 			}
 			
-			
-			
 			$(document).ready(function()
 			{
 				$("#tabContent").html(htmlContent);
@@ -439,7 +424,7 @@
 			if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)			
 			{
 				var existingText = myCodeMirrorForConsoleOutPut.getValue();
-				 myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
+				myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
 			}
 			return testCases;
 	}
@@ -549,7 +534,7 @@
 						<td><textarea id="userInput"></textarea></td>
 					</tr>
 				</table>
-				<input type="submit" value="Submit" class="btn btn-primary" />
+				<%@include file="/html/elements/submitFooter.jsp" %>
 			</form>
 		</div>
 		

@@ -33,10 +33,18 @@
 	<script src="/include/jslint.js"></script>
 	<script src="/html/errorCheck.js"></script>
 	<script>
-	    	var myCodeMirror = CodeMirror.fromTextArea(code);
-		    myCodeMirror.setValue('<%=functionCode%>');
-	   	 	myCodeMirror.setOption("theme", "vibrant-ink");
-
+		var microtaskType = 'sketchfunction';
+		var microtaskID = <%= microtask.getID() %>;
+		
+    	var myCodeMirror = CodeMirror.fromTextArea(code);
+	    myCodeMirror.setValue('<%=functionCode%>');
+   	 	myCodeMirror.setOption("theme", "vibrant-ink");
+   	 	
+   		$(document).ready(function() 
+		{
+		  	$('#skip').click(function() { skip(); });	
+		});
+   	 	
 		$('#sketchForm').submit(function() {
 		    var functionHeader = <%= functionHeader %>;
 			functionHeader = functionHeader.replace(/\"/g,"'");
@@ -73,15 +81,7 @@
 					}
 				}
 			}
-			var formData = { code: $("#code").val()};
-			$.ajax({
-			    contentType: 'application/json',
-			    data: JSON.stringify( formData ),
-			    dataType: 'json',
-			    type: 'POST',
-			    url: '/<%=projectID%>/submit?type=sketchfunction&id=<%= microtask.getID() %>'
-			}).done( function (data) { loadMicrotask();	});
-							
+			submit({ code: $("#code").val()});
 			return false;
 		});
 	</script>
@@ -111,7 +111,7 @@ Line beginning with '!' are treated as a <i>single</i> function call pseudocode 
 		</tr>	
 	</table>
 	} <BR><BR>
-	<input type="submit" value="Submit" class="btn btn-primary"/>
+	<%@include file="/html/elements/submitFooter.jsp" %>
 	
 	</form>
 	<div id = "errors"> </div>
