@@ -160,7 +160,7 @@ public class Worker
 		messages.clear();
 		Microtask microtaskObj = getMicrotask();
 		if (microtaskObj != null)
-			microtaskObj.unassign(this);
+			microtaskObj.skip(this);
 		ofy().save().entity(this).now();
 	}
 

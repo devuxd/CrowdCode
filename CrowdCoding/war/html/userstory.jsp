@@ -16,20 +16,13 @@
 
 <div id="microtask">
 	<script>
-      $('document').ready(function(){
-		  $('#userstoryForm').submit(function() {
-				var formData = { text: $("#userStory").val() }
-				$.ajax({
-				    contentType: 'application/json',
-				    data: JSON.stringify( formData ),
-				    dataType: 'json',
-				    type: 'POST',
-				    url: '/<%=projectID%>/submit?type=writeuserstory&id=<%= microtask.getID() %>',
-				}).done( function (data) { loadMicrotask();	});
-
-			  	return false; 	// disable default submit behavior
-			});
-      });
+		var microtaskType = 'writeuserstory';
+		var microtaskID = <%= microtask.getID() %>;
+	
+      	$('document').ready(function(){
+		  	$('#userstoryForm').submit(function() { submit({ text: $("#userStory").val() }); return false; });
+		  	$('#skip').click(function() { skip(); });
+      	});
 	</script>
 
 
@@ -39,7 +32,7 @@
 
 	<form id="userstoryForm" action="">
 		<textarea name="userStory" id="userStory"></textarea>
-		<input class="btn btn-primary" type="submit" value="Submit" />
+		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
 
 

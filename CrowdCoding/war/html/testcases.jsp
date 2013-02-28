@@ -19,11 +19,15 @@
 <div id="microtask">
 
 	<script>
-		
+		var microtaskType = 'writetestcases';
+		var microtaskID = <%= microtask.getID() %>;	
+	
 		var nextTestCase = 2;
 	
 	    $(document).ready(function()
 	    {
+		  	$('#skip').click(function() { skip(); });	
+	    	
 	    	$("#addTestCase").click(function()
 	    	{
 				$("#testCases").append(
@@ -38,15 +42,7 @@
 	    	$("#addTestCase").click();
 	    	
 			$('#testCasesForm').submit(function() {
-				var formData = collectFormData();
-				$.ajax({
-				    contentType: 'application/json',
-				    data: JSON.stringify( formData ),
-				    dataType: 'json',
-				    type: 'POST',
-				    url: '/<%=projectID%>/submit?type=writetestcases&id=<%= microtask.getID() %>',
-				}).done( function (data) {  loadMicrotask() });
-								
+				submit(collectFormData());
 				return false;
 			});
 		});
@@ -84,7 +80,7 @@ corner cases that might not work?</h5></h5>
 	<form id="testCasesForm" action="">
 		<div id="testCases"></div>
 		<button id="addTestCase" class="btn btn-small">Add test case</button>				
-		<BR><BR><input type="submit" value="Submit" class="btn btn-primary">
+		<BR><BR><%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
 
 

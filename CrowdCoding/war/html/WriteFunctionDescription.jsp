@@ -15,10 +15,14 @@
 
 <div id="microtask">
 	<script>
+		var microtaskType = 'WriteFunctionDescription';
+		var microtaskID = <%= microtask.getID() %>;	
 		var nextParam = 2;
 	
 	    $(document).ready(function()
 		{
+   			$('#skip').click(function() { skip(); });	
+	    	
 			$("#addParameter").click(function()
 			{
 				$("#addParamRow").before('<tr id="params' + nextParam + '"><td></td><td>' +						
@@ -33,15 +37,7 @@
 			
 			$("#descripForm").submit(function()
 			{
-				var formData = collectFormData();
-				$.ajax({
-				    contentType: 'application/json',
-				    data: JSON.stringify( formData ),
-				    dataType: 'json',
-				    type: 'POST',
-				    url: '/<%=projectID%>/submit?type=WriteFunctionDescription&id=<%= microtask.getID() %>'
-				}).done( function (data) { loadMicrotask();	});
-								
+				submit(collectFormData());			
 				return false;
 			});
 			
@@ -105,7 +101,7 @@
 		);
 		<BR>	
 		<BR>	
-		<input type="submit" value="Submit" class="btn btn-primary"/>
+		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>	
 
 </div>

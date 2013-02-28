@@ -3,8 +3,11 @@ package com.crowdcoding.microtasks;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.crowdcoding.Worker;
+import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.DTO;
@@ -30,6 +33,7 @@ public /*abstract*/ class Microtask
 	@Index protected boolean completed = false;
 	protected int submitValue = 10;
 	protected Ref<Worker> worker;
+	protected List<Ref<Worker>> excludedWorkers = new ArrayList<Ref<Worker>>();  // Workers who may not be assigned this microtask
 	
 	// Default constructor for deserialization
 	protected Microtask()
@@ -48,8 +52,24 @@ public /*abstract*/ class Microtask
 	{		
 		System.out.println(StatusReport(project));
 		
-		Microtask microtask = ofy().load().type(Microtask.class).ancestor(project.getKey()).filter(
-				"assigned", false).first().get();         
+		// Look for an unassigned microtask that crowdUser is not excluded from doing
+		Microtask microtask = null;
+		Key<Worker> workerKey = crowdUser.getKey();
+		Query<Microtask> q = ofy().load().type(Microtask.class).ancestor(project.getKey()).filter(
+				"assigned", false);  
+		microtaskSearch: for (Microtask potentialMicrotask : q)
+		{
+			for (Ref<Worker> excludedWorker : potentialMicrotask.excludedWorkers)
+			{
+				if (excludedWorker.equivalent(workerKey))
+					continue microtaskSearch;				
+			}
+			
+			// Not excluded. A microtask was found.
+			microtask = potentialMicrotask;
+			break;			
+		}
+		
 		
 		// If there's no unassigned microtasks available, signifying that work
 		// on the current user stories is complete (or nearly complete), 
@@ -76,11 +96,18 @@ public /*abstract*/ class Microtask
 	
 	// Unassigns worker from this microtask
 	// Precondition - the worker must be assigned to this microtask
-	public void unassign(Worker worker)
+	public void skip(Worker worker)
 	{
 		assert (worker.getMicrotask() == this);
 		assert (assigned == true);
 		
+		// Increment the point value by 10
+		this.submitValue += 10;
+		
+		// Exclude this worker from being assigned this microtask in the future
+		excludedWorkers.add(Ref.create(worker.getKey()));
+		
+		// Unassign the microtask
 		this.worker = null;
 		worker.setMicrotask(null);
 		assigned = false;	
@@ -107,11 +134,12 @@ public /*abstract*/ class Microtask
 	{	
 		System.out.println("Handling microtask submission: " + this.toString() + " " + jsonDTOData);
 		
-		// If this microtask has already been submitted, drop it.
+		// If this microtask has already been completed, drop it, and clear the worker from the microtask 
 		if (this.completed)
 		{
 			System.out.println("For microtask " + this.toString() + " JSON submitted for already completed work: " 
 					+ jsonDTOData);
+			worker.setMicrotask(null);
 			return;
 		}
 				
@@ -160,7 +188,7 @@ public /*abstract*/ class Microtask
 	public String toString()
 	{
 		return "" + this.id + " " + this.getClass().getSimpleName() + (assigned ? " assigned " : " unassigned ") + 
-				(completed ? " completed " : " incomplete ") + 
-				((worker != null) ? ("worker: " + ofy().load().key(worker.getKey()).get().getHandle()) : " ");
+				(completed ? " completed " : " incomplete ") + "points: " + submitValue + 
+				((worker != null) ? (" worker: " + ofy().load().key(worker.getKey()).get().getHandle()) : " ");
 	}
 }

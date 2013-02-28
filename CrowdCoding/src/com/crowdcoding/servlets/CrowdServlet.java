@@ -185,6 +185,7 @@ public class CrowdServlet extends HttpServlet
     	{		
     		final String projectID = (String) req.getAttribute("project");
 			final long microtaskID = Long.parseLong(req.getParameter("id"));
+			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));
 			System.out.println("microtaskid: " + microtaskID);
 			
 			final String payload = Util.convertStreamToString(req.getInputStream());
@@ -202,7 +203,10 @@ public class CrowdServlet extends HttpServlet
 						throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
 					
 					Microtask microtask = ofy().load().key(Key.create(project.getKey(), Microtask.class, microtaskID)).get();
-					microtask.submit(payload, worker, project);	
+					if (skip)
+						microtask.skip(worker);
+					else
+						microtask.submit(payload, worker, project);	
 					project.publishStatistics();
 	            }            
 	        });
