@@ -156,6 +156,9 @@ var target = document.getElementById('foo');
 var spinner = new Spinner(opts).spin(target);
 
 </script>
+<div class="bootbox modal fade in" tabindex="-1" style="overflow: hidden;" aria-hidden="false">
+<div class="modal-body">Unit Tests are Running Please Wait </div>
+</div>
 <div class="modal-backdrop fade in"></div>
 </body>
 </html>
