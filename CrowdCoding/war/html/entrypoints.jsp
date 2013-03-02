@@ -17,6 +17,8 @@
 
 <div id="microtask">
 	<script>
+		var microtaskType = 'writeentrypoint';
+		var microtaskID = <%= microtask.getID() %>;
 		var nextParam = 2;
 	
 	    $(document).ready(function()
@@ -33,21 +35,8 @@
 				return false;
 			});
 			
-			$("#entrypointsForm").submit(function()
-			{
-				var formData = collectFormData();
-				$.ajax({
-				    contentType: 'application/json',
-				    data: JSON.stringify( formData ),
-				    dataType: 'json',
-				    type: 'POST',
-				    url: '/<%=projectID%>/submit?type=writeentrypoint&id=<%= microtask.getID() %>'
-				}).done( function (data) { loadMicrotask();	});
-								
-				return false;
-			});
-			
-			
+			$("#entrypointsForm").submit(function() { submit(collectFormData()); return false; });
+		  	$('#skip').click(function() { skip(); });			
 		});
 	        
 	    $("input[type=text]").focus(function(){
@@ -106,7 +95,7 @@
 		);
 		<BR>	
 		<BR>	
-		<input type="submit" value="Submit" class="btn btn-primary"/>
+		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>	
 
 </div>

@@ -37,6 +37,9 @@
 	        'name': 'arg1', 'type': 'String', 'description': 'a red parameter' }]}]; -->
 
 <script>
+	var microtaskType = 'ReuseSearch';
+	var microtaskID = <%= microtask.getID() %>;
+	
 	var functionDescriptions = <%=Function.getFunctionDescriptions(project) %>; 
 	
 	var minSearchTimePassed = false;
@@ -46,20 +49,12 @@
 	$(document).ready(function() 
 	{
 		$('#noFunction').click(selectNoFunction);
+	  	$('#skip').click(function() { skip(); });		
 		$('#searchForm').submit(function() 
 		{
 			// Submit only if the worker has either selected a function or the no function button
-			if (noFunction || selectedFunction != '')
-			{
-				var formData = { functionName: selectedFunction, noFunction: noFunction };
-				$.ajax({
-				    contentType: 'application/json',
-				    data: JSON.stringify( formData ),
-				    dataType: 'json',
-				    type: 'POST',
-				    url: '/<%=projectID%>/submit?type=ReuseSearch&id=<%= microtask.getID() %>'
-				}).done( function (data) { loadMicrotask();	});
-			}			
+			if (noFunction || selectedFunction != '')			
+				submit({ functionName: selectedFunction, noFunction: noFunction });						
 			
 			return false;
 		});
@@ -192,5 +187,5 @@ Here's a search box that searches existing function descriptions:<BR>
 	<div id="results"></div><BR>	
 	If you can't find any, click this button and then submit:<br>
 	<button id="noFunction" type="button" class="btn">No function does this</button><BR><BR>		
-	<input type="submit" value="Submit" class="btn btn-primary"/>
+	<%@include file="/html/elements/submitFooter.jsp" %>
 </form>

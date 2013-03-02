@@ -156,6 +156,23 @@
 		var locRef = new Firebase(firebaseURL + '/statistics/microtasksCompleted');
 		locRef.on('value', function(snapshot) { $('#microtasksCompleted').html(snapshot.val()); });		
 	});
+    
+    function submit(formData)
+    {
+		$.ajax({
+		    contentType: 'application/json',
+		    data: JSON.stringify( formData ),
+		    dataType: 'json',
+		    type: 'POST',
+		    url: '/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID,
+		}).done( function (data) { loadMicrotask();	});   	 
+    }
+     
+	function skip() 
+	{
+		$.ajax('/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID + '&skip=true')
+	  		.done( function (data) { loadMicrotask(); });
+	}    
    
 	function resetSubmitButtons()
 	{

@@ -97,7 +97,7 @@
 				</tr>
 			</table>
 			</br>
-			<input type="submit" value="Submit" class="btn btn-primary" />
+			<%@include file="/html/elements/submitFooter.jsp" %>
 
 		</form>
 		</div>
@@ -105,28 +105,25 @@
 
 
 <script>
-$(document).ready(function() 
+	var microtaskType = 'reviewTask';
+	var microtaskID = <%= microtask.getID() %>;
+
+	$(document).ready(function() 
 	{
-var flip = 0;
-		  $('#testForm').submit(function() {
-		  debugger;
-		  		console.log(doStarCalculation());
-		  		return false;
-				var formData = { 
+	  	$('#skip').click(function() { skip(); });	
+		
+		var flip = 0;
+	  	$('#testForm').submit(function() {
+	  		debugger;
+	  		console.log(doStarCalculation());
+	  		return false;
+			submit({ 
 				text: $("#userInput").val(),
 				quality: $("#contrib-rating"),
 				quantity:$("#quality-rating"),
-				 }
-				$.ajax({
-				    contentType: 'application/json',
-				    data: JSON.stringify( formData ),
-				    dataType: 'json',
-				    type: 'POST',
-				    url: '/<%=projectID%>/submit?type=reviewTask&id=<%= microtask.getID() %>',
-				}).done( function (data) { loadMicrotask();	});
-
-			  	return false; 	// disable default submit behavior
 			});
+		  	return false; 	// disable default submit behavior
+	});
       
        
  

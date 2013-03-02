@@ -41,12 +41,19 @@
 	<script src="/html/errorCheck.js"></script>
 	<script>
 		debugger;
+		var microtaskType = 'disputeunittestfunction';
+		var microtaskID = <%= microtask.getID() %>;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    console.log(<%= unitTests %>);
 	    myCodeMirror.setValue(<%= unitTests %>);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
 		//myCodeMirror.setValue("<%= unitTests.replaceAll("[\t\n\\x0B\f\r]","") %>");
 		//myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
+		
+		$('document').ready(function(){
+		{
+			$('#skip').click(function() { skip(); });
+		});
 		
 		$('#testForm').submit(function() {
 			var equal
@@ -68,17 +75,8 @@
 					return false; 
 				}
 			}
-				
-		
-			var formData = { code: $("#code").val() };
-			$.ajax({
-			    contentType: 'application/json',
-			    data: JSON.stringify( formData ),
-			    dataType: 'json',
-			    type: 'POST',
-			    url: '/<%=projectID%>/submit?type=disputeunittestfunction&id=<%= microtask.getID() %>'
-			}).done( function (data) { loadMicrotask();	});
-							
+						
+			submit({ code: $("#code").val() });
 			return false;
 		});
 	</script>
@@ -130,7 +128,7 @@
 		</tr>	
 	</table>
 	} <BR><BR></h4>
-	<input type="submit" value="Submit" class="btn btn-primary"/>
+	<%@include file="/html/elements/submitFooter.jsp" %>
 	
 	</form>
 	<div id = "errors"> </div>
