@@ -26,7 +26,7 @@
 			$("#addParameter").click(function()
 			{
 				$("#addParamRow").before('<tr id="params' + nextParam + '"><td></td><td>' +						
-					    '<input type="text" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;//' + 
+					    '<input type="text" onblur="checkLength(this)" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;//' + 
 						'&nbsp;<input type="text" placeholder = "type" class="input-small">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
 						'<input type="text" placeholder = "what is it for?" class="input-xlarge"> ' +	
 						'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">x</a>' +	
@@ -48,6 +48,16 @@
 		{
 			$(params).remove();
 		}
+		
+		 function checkLength(inputText)
+	    {
+	    	inputText.value = inputText.value.trim();
+	    	if(inputText.value.split(" ").length > 1)
+	    	{
+	    	 	$("#popUp").modal();
+	    	 	inputText.value = inputText.value.split(" ").join("");
+	    	}
+	    }
 		
 		function collectFormData()
 		{
@@ -74,13 +84,13 @@
 		returns &nbsp;&nbsp;<input type="text" id="returnType" value = "void" class="input-medium"><BR>
 		<input type="text" id="event" value="$(document).ready(" class="input-large">
 		function 
-		<input type="text" id="name" placeholder = "functionName" class="input-medium">(
+		<input type="text" id="name" onblur="checkLength(this)" placeholder = "functionName" class="input-medium">(
 		<BR>
 		<table>
 			<tr id="params1">
 				<td width="20">
 				<td>
-					<input type="text" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;// 
+					<input type="text" onblur="checkLength(this)" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;// 
 					<input type="text" placeholder = "type" class="input-small">&nbsp;&nbsp;-&nbsp; 
 					<input type="text" placeholder = "what's it for?" class="input-xlarge">
 					<!--  <button class="close" onclick="deleteParams('#params1')">&times;</button> -->
@@ -97,5 +107,14 @@
 		<BR>	
 		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>	
-
+<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="logoutLabel">This field may only be 1 word</h3>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>	
 </div>
