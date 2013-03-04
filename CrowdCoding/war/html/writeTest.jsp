@@ -33,10 +33,6 @@
 
 
 <div id="microtask">
-	<script src="/include/codemirror/codemirror.js"></script>
-	<script src="/include/codemirror/javascript.js"></script>
-	<script src="/include/jslint.js"></script>
-	<script src="/html/errorCheck.js"></script>
 	<script>
 		var microtaskType = 'writetest';
 		var microtaskID = <%= microtask.getID() %>;	
@@ -58,8 +54,7 @@
 			var functionCode = "test('" + "functionCoder" + "', function() {" + allTheFunctionCode + " " + functionHeader + "{" + "}" + $("#code").val() + "});";
 			var errors = "";
 		    console.log(functionCode);
-		    var jQueryLint = "/*global window: false, document: false, $: false, log: false, bleep: false, QUnit: false, test: false, asyncTest: false, expect: false,module: false,ok: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false,raises: false,start: false,stop: false*/";
-		    var lintResult = JSLINT(jQueryLint + functionCode,getJSLintGlobals());
+		    var lintResult = JSLINT(functionCode,getJSLintGlobals());
 		    console.log(JSLINT.errors);
 			if(!lintResult)
 			{

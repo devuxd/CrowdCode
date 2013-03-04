@@ -34,5 +34,5 @@ function checkForErrors(e)
 function getJSLintGlobals()
 {
 	debugger;
-	return {browser: true, continue: true, debug: true, devel: true, eqeq: true, evil: false, fragment: true, newcap: true, node: true, on: true, plusplus: true, rhino: true, sloppy: true, stupid: true, sub: true, todo: true, undef: true,vars: true , white: true,windows: true ,bitwise: true,nomen: true,stupid: true };
+	return {browser: true, continue: true, debug: true, devel: true, eqeq: true, evil: false, fragment: true, newcap: true, node: true, on: true, plusplus: true, rhino: true, sloppy: true, stupid: true, sub: true, todo: true, undef: true,vars: true , white: true,windows: true ,bitwise: true,nomen: true,stupid: true , window: false, document: false, $: false, log: false, bleep: false, QUnit: false, test: false, asyncTest: false, expect: false,module: false,ok: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false,raises: false,start: false,stop: false};
 }
