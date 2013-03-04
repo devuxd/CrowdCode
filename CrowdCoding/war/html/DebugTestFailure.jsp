@@ -39,30 +39,32 @@
 <body>
 	<div id="microtask">
 		<script src="/include/bootbox.min.js"></script>
+		<script src="/html/assertionFunctions.js"></script>
 		<script>
-			window.onerror = function(err, url, lineNumber) {  
-			 //save error and send to server for example.
-			console.log(err);
-			i = 0;
-			var htmlContent = "";
-			var htmlTab= "";
-			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
-			htmlTab +=  "<li class='active'><a href=";
-			
-			htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
-			htmlTab +=  "</a></li>";
-			htmlContent += "<p>" + "</br>"; 
-			htmlContent += " Error At " + err + " </br>" ;
-			htmlContent += "</p></div>";
-			i++;
-			htmlContent += "<button onclick='showReportInformation(" + i + ")'> Report Issue In Test </button>" + "</p></div>";
-			$(document).ready(function() 
-			{
-				$("#tabContent").html(htmlContent);
-				$("#tabs").html(htmlTab);
-			  	$('#skip').click(function() { skip(); });
-			});
-	};  
+			window.onerror = function(err, url, lineNumber) 
+			{  
+				 //save error and send to server for example.
+				console.log(err);
+				i = 0;
+				var htmlContent = "";
+				var htmlTab= "";
+				htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
+				htmlTab +=  "<li class='active'><a href=";
+				
+				htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+				htmlTab +=  "</a></li>";
+				htmlContent += "<p>" + "</br>"; 
+				htmlContent += " Error At " + err + " </br>" ;
+				htmlContent += "</p></div>";
+				i++;
+				htmlContent += "<button onclick='showReportInformation(" + i + ")'> Report Issue In Test </button>" + "</p></div>";
+				$(document).ready(function() 
+				{
+					$("#tabContent").html(htmlContent);
+					$("#tabs").html(htmlTab);
+				  	$('#skip').click(function() { skip(); });
+				});
+			};  
 	</script>
 	<script>
 		debugger;
@@ -125,53 +127,55 @@
 		{
 			 myCodeMirror.setValue(<%=functionCode%>);
 		}
-			function parseTheTestCases(QunitTest)
-			{
-				var i = 0; 
-				answers = new Array();
-				 var expression = ""; 
-				 var patt = new RegExp("equal\\([a-zA-Z0-9\\,\\'\\ \" (\\)\" ]*\\);",'\g');
-				  while(expression != null)
-				  {
-				   expression = patt.exec(QunitTest);
-				    if(expression == null) 
-				    {
-				     break;
-				    }
-				    answers[i] = expression[0];
-				    i = i + 1; 
-				   }
-				return answers;
-			}
-	function showReportInformation(testNumber)
-	{
-		debugger;
-		var TestCases = "";
-		var tabName = "#A" + testNumber;
-		TestCases += $(tabName).html().match("\\<br\\> [a-zA-Z0-9 \\/ \\< \\> \\: \\' \\( \\) \\,\\;]*\\<br\\>") + "";
-		TestCases += "";
-		var originalTestCases = <%=testCases%>;
-		var myTest = originalTestCases[testNumber] + " ";
+		function parseTheTestCases(QunitTest)
+		{
+			var i = 0; 
+			answers = new Array();
+			 var expression = ""; 
+			 var patt = new RegExp("equal\\([a-zA-Z0-9\\,\\'\\ \" (\\)\" ]*\\);",'\g');
+			  while(expression != null)
+			  {
+			   expression = patt.exec(QunitTest);
+			    if(expression == null) 
+			    {
+			     break;
+			    }
+			    answers[i] = expression[0];
+			    i = i + 1; 
+			   }
+			return answers;
+		}
 		
-		if(javaTestCases.length == 0)
+		function showReportInformation(testNumber)
 		{
-		 alert("No TEST CASES");
+			debugger;
+			var TestCases = "";
+			var tabName = "#A" + testNumber;
+			TestCases += $(tabName).html().match("\\<br\\> [a-zA-Z0-9 \\/ \\< \\> \\: \\' \\( \\) \\,\\;]*\\<br\\>") + "";
+			TestCases += "";
+			var originalTestCases = <%=testCases%>;
+			var myTest = originalTestCases[testNumber] + " ";
+			
+			if(javaTestCases.length == 0)
+			{
+			 alert("No TEST CASES");
+			}
+			else if($("#reportInformation").css('display') == 'block')
+			{
+			    myCodeMirrorForDispute.setValue(myTest);	
+			   $("#userInput").val("");
+			}
+			else
+			{
+				$("#reportInformation").css('display',"block");
+				myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
+			    myCodeMirrorForDispute.setValue(myTest);
+			    myCodeMirrorForDispute.setOption("readOnly", "true");
+			    myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
+				//$("#reportInformation").html(TestCases);
+			}
 		}
-		else if($("#reportInformation").css('display') == 'block')
-		{
-		    myCodeMirrorForDispute.setValue(myTest);	
-		   $("#userInput").val("");
-		}
-		else
-		{
-			$("#reportInformation").css('display',"block");
-			myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
-		    myCodeMirrorForDispute.setValue(myTest);
-		    myCodeMirrorForDispute.setOption("readOnly", "true");
-		    myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
-			//$("#reportInformation").html(TestCases);
-		}
-	}
+		
 		function collectFormDataForDispute()
 		{
 		debugger;
@@ -204,14 +208,14 @@
 		}
 	function runUnitTests(arrayOfTests, functionName,isFirstTime)
 	{
-		debugger;
+ 		debugger;
 		var unStringEscapedFunctionHeader = <%=functionHeader%>;
 		var functionHeader = unStringEscapedFunctionHeader.replace(/\"/g,"'");
 		var resultOfTest = new Array(); 
 		var htmlTab = "";
 		var htmlContent = "";
 		var hasAtLeast1Test = false;
-		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+		var allTheFunctionCode = <%=allFunctionCodeInSystem%>;
 		// keep an array of html tabs which we concanate at the end
 		// do it this way so we can make some tabs with mulitple tests
 		// reflect correct color
@@ -233,119 +237,92 @@
 			if(errors == "")
 			{
 				if(p == 0)
-					{   
-						htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";
-						
+				{   
+					htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";						
+				}
+				else
+				{
+					htmlContent += "<div class='tab-pane' id=" + "'A" + p + "'>";
+					
+				}
+				// checking if tab has been intialized, only intialize once
+				if(tabHtml[p] == undefined)
+				{
+					tabHtml[p] = "";
+					if(p==0)
+					{
+						tabHtml[p] +=  "<li class='active'>";
 					}
-			
 					else
 					{
-						htmlContent += "<div class='tab-pane' id=" + "'A" + p + "'>";
-						
+						tabHtml[p] +=  "<li>"
 					}
-					// checking if tab has been intialized, only intialize once
-					if(tabHtml[p] == undefined)
-					{
-						tabHtml[p] = "";
-						if(p==0)
-						{
-							tabHtml[p] +=  "<li class='active'>";
-						}
-						else
-						{
-							tabHtml[p] +=  "<li>"
-						}
-						tabHtml[p] += "<a id='TabNumber"+ p + "' href=";
-						tabHtml[p] += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
-						tabHtml[p] +=  "</a></li>";
-					}
-					// change to asyncTest if you want try that, but that broke stuff when i changed it
-				var testCases = "test('" + functionName + "', function() {";
+					tabHtml[p] += "<a id='TabNumber"+ p + "' href=";
+					tabHtml[p] += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
+					tabHtml[p] +=  "</a></li>";
+				}
+				// change to asyncTest if you want try that, but that broke stuff when i changed it
+				var testCases = "";
 				// constructs the function header and puts code  from the above code window
 				testCases += "" + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
 				testCases += arrayOfTests[p];
-				testCases+= "});";
 				console.log(testCases);
 				var QunitTestCases = parseTheTestCases(testCases);
 				console.log(QunitTestCases);
-				QUnit.log = function(result, message)
-			
-				{
-					debugger;
-					console.log(result);
-					resultOfTest[i]= result;   
-					atLeastOneTestCase = true;
-					htmlContent += "<p>" + "</br>"; 
-					if(!result.result)
-					{
-					debugger;
-						if(QunitTestCases.length < 1)
-						{
-							var originalTestCases = <%=testCases%>;
-							htmlContent += "Error At: " + originalTestCases[i] + " </br>";
-						}
-						else
-						{
-						htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
-						}
-						if(result.expected == null)
-						{
-							var errorMessage = result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$");
-							if(errorMessage == null)
-							{
-								errorMessage = result.message;
-							}
-							htmlContent += " Message: " + errorMessage + "</br>";
-						}
-						else
-						{
-						htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
-						htmlContent += " Outcome Message: " + result.message + "</br>";
-						}
-						tabHtml[p] = tabHtml[p].replace("class='true'",'class=false')
-					}
-					else
-					{
-						if(result.message != null)
-						{
-							htmlContent += " Passed: " + QunitTestCases[i] + "</br>";
-						}
-					}
-					// make sure only add the tab(html code for the tab) once
-					// I do it by keep an array
-					debugger;
-					i++;
-				}
-			
-				 QUnit.testDone = function( details )
-				 {
-					 // make sure only execute once, we loop through the array that holds
-					 //the html code for the tabs once at the very end. each cell in 
-					 // array has html code for that tab
-					 if(p == arrayOfTests.length-1)
-					 {
-					 	for(var z = 0; z < tabHtml.length; z++)
-					 	{
-					 	    htmlTab += tabHtml[z];
-					 	}
-					 }
-					 	console.log(details);
-					 	console.log("iteraton" + p + "size" + arrayOfTests.length);
-					     if(details.failed > 0)
-					     {
-					     	$("#sketchForm").children("input").attr('disabled', 'false');
-					     	allTestPassed = false;
-					     }
-					     else if(details.failed == 0 && allTestPassed)
-					     {
-					     	$("#sketchForm").children("input").removeAttr("disabled");
-					     }
-					     javaTestCases = resultOfTest;
-				   }
+
 				try
 				{
-				eval(testCases);
-				}
+					resetAssertions();
+					eval(testCases);					
+					$.each(results, function(index, result)		
+					{
+						debugger;
+						console.log(result);
+						resultOfTest[i]= result;   
+						atLeastOneTestCase = true;
+						htmlContent += "<p>" + "</br>"; 
+						if(!result.result)
+						{
+						debugger;
+							if(QunitTestCases.length < 1)
+							{
+								var originalTestCases = <%=testCases%>;
+								htmlContent += "Error At: " + originalTestCases[i] + " </br>";
+							}
+							else
+							{
+							htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
+							}
+							if(result.expected == null)
+							{
+								var errorMessage = result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$");
+								if(errorMessage == null)
+								{
+									errorMessage = result.message;
+								}
+								htmlContent += " Message: " + errorMessage + "</br>";
+							}
+							else
+							{
+							htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
+							htmlContent += " Outcome Message: " + result.message + "</br>";
+							}
+							tabHtml[p] = tabHtml[p].replace("class='true'",'class=false')
+						}
+						else
+						{
+							if(result.message != null)
+							{
+								htmlContent += " Passed: " + QunitTestCases[i] + "</br>";
+							}
+						}
+						// make sure only add the tab(html code for the tab) once
+						// I do it by keep an array
+						debugger;
+						i++;
+						
+					});
+				}					
 				catch (err)
 				{
 					debugger;
@@ -367,6 +344,32 @@
 					i++;
 				}
 				htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
+
+				// Change the color of the tab based on the result of running all of 
+				// the assertions within the tab
+				
+				// make sure only execute once, we loop through the array that holds
+				//the html code for the tabs once at the very end. each cell in 
+				// array has html code for that tab
+				if(p == arrayOfTests.length-1)
+				{
+				 	for(var z = 0; z < tabHtml.length; z++)
+				 	{
+				 	    htmlTab += tabHtml[z];
+				 	}
+				}
+			 	console.log(details);
+			 	console.log("iteraton" + p + "size" + arrayOfTests.length);
+			    if(details.failed > 0)
+			    {
+			     	$("#sketchForm").children("input").attr('disabled', 'false');
+			     	allTestPassed = false;
+			    }
+			    else if(details.failed == 0 && allTestPassed)
+			    {
+			     	$("#sketchForm").children("input").removeAttr("disabled");
+			    }
+			    javaTestCases = resultOfTest;				   
 			}
 			else
 			{
@@ -389,44 +392,46 @@
 				i++;
 				$("#sketchForm").children("input").attr('disabled', 'false');
 				allTestPassed = false;
-			}}
-			
-			if(!hasAtLeast1Test)
-			{
-					debugger;
-					htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
-					htmlTab +=  "<li class='active'><a href=";
-					htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
-					htmlTab +=  "</a></li>";
-					htmlContent += "<p>" + "</br>"; 
-					htmlContent += " No Unit Tests Exist for this function" + " </br>" ;
-					htmlContent += "</p></div>";
-					i++;
-					$("#reportInformation").css('display',"block");
-					myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
-			    	myCodeMirrorForDispute.setValue("No Unit Test Exist For this Function");
-			    	myCodeMirrorForDispute.setOption("readOnly", "true");
-			    	myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
-			    	$("#unittest").attr('disabled', 'false');
 			}
+		}
 			
-			$(document).ready(function()
+		if(!hasAtLeast1Test)
+		{
+			debugger;
+			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
+			htmlTab +=  "<li class='active'><a href=";
+			htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+			htmlTab +=  "</a></li>";
+			htmlContent += "<p>" + "</br>"; 
+			htmlContent += " No Unit Tests Exist for this function" + " </br>" ;
+			htmlContent += "</p></div>";
+			i++;
+			$("#reportInformation").css('display',"block");
+			myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
+	    	myCodeMirrorForDispute.setValue("No Unit Test Exist For this Function");
+	    	myCodeMirrorForDispute.setOption("readOnly", "true");
+	    	myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
+	    	$("#unittest").attr('disabled', 'false');
+		}
+		
+		$(document).ready(function()
+		{
+			$("#tabContent").html(htmlContent);
+			$("#tabs").html(htmlTab);
+			if(htmlTab.search("false") == -1 && isFirstTime)
 			{
-				$("#tabContent").html(htmlContent);
-				$("#tabs").html(htmlTab);
-				if(htmlTab.search("false") == -1 && isFirstTime)
-				{
-					$("#codeSubmit").submit()
-				}
-			});
-			
-			if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)			
-			{
-				var existingText = myCodeMirrorForConsoleOutPut.getValue();
-				myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
+				$("#codeSubmit").submit()
 			}
-			return testCases;
+		});
+		
+		if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)			
+		{
+			var existingText = myCodeMirrorForConsoleOutPut.getValue();
+			myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
+		}
+		return testCases;
 	}
+	
 	// for debuggin purposes
 	function printDebugStatement(statement)
 	{
@@ -556,5 +561,7 @@
 </div>
 <div class="modal-backdrop fade in"></div>
 </span>
+</div>
+
 </body>
 </html>
