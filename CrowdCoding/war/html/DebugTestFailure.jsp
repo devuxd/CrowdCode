@@ -80,14 +80,15 @@
 		if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
 		{
 			myCodeMirror.setValue(myCodeMirror.getValue().replace(/printDebugStatement\([a-zA-Z0-9\\,\\'\\(\\) \" ]*[ ]*\);/g,"[Please Remove debug statements before submission]"));
+			$('#popUp').modal();
 			return false;
 		}
+		debugger;
 		test1(false);
 		if($("#sketchForm").children("input").attr('disabled') == 'disabled')
 		{
 			return false;
 		}
-		debugger;
 			submit(collectFormDataForNormal());
 			return false;
 		});
@@ -97,7 +98,7 @@
 			if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
 			{
 				myCodeMirror.setValue(myCodeMirror.getValue().replace(/printDebugStatement\([a-zA-Z0-9\\,\\'\\(\\) \" ]*[ ]*\);/g,"[Please Remove debug statements before submission]"));
-				alert("please remove debug statements from code ");
+				$('#popUp').modal();
 				return false;
 			}
 			submit(collectFormDataForDispute());
@@ -386,6 +387,8 @@
 				htmlContent += " Syntax Error: </br> " + errors + " </br>" ;
 				htmlContent += "</p></div>";
 				i++;
+				$("#sketchForm").children("input").attr('disabled', 'false');
+				allTestPassed = false;
 			}}
 			
 			if(!hasAtLeast1Test)
@@ -536,7 +539,16 @@
 		
 		
 		
-		
+<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="logoutLabel">Please Remove Debug Statements</h3>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>		
 <span id = 'submissionBox' style = 'display:none'> 		
 		<div class="bootbox modal fade in" tabindex="-1" style="overflow: hidden;" aria-hidden="false">
 <div class="modal-body">There is no auto submit, please either enter a dispute description or if you passed all the test cases submit </div>
