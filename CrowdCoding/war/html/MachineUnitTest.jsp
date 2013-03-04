@@ -26,11 +26,7 @@
 
 <body>
 	<div id="microtask">
-		<script src="/include/codemirror/codemirror.js"></script>
-		<script src="/include/codemirror/javascript.js"></script>
 		<script src="/include/bootbox.min.js"></script>
-		<script src="/include/jslint.js"></script>
-		<script src="/html/errorCheck.js"></script>
 		<script src="/include/spin.js"></script>
 		<script>
 			window.onerror = function(err, url, lineNumber) {  

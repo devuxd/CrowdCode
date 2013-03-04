@@ -15,46 +15,27 @@
     String calleeFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getCallee());
 %>
 
-
 <div id="microtask">
-	<script src="/include/codemirror/codemirror.js"></script>
-	<script src="/include/codemirror/javascript.js"></script>
 	<script>
 		var microtaskType = 'WriteCall';
 		var microtaskID = <%= microtask.getID() %>;	
-	
-	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    
+		    
    		$(document).ready(function() 
    		{
-   			$('#skip').click(function() { skip(); });	
+   			$('#skip').click(function() { skip(); });
+   			
+   			$('#writeCallForm').submit(function() {
+				doPresubmitWork();
+   				submit( { code: $("#code").val() } );
+   				return false;
+   			});
    		});	    
-	    
-	    myCodeMirror.setValue("<%= microtask.getCaller().getEscapedCode().replaceAll("[\t\n\\x0B\f\r]","") %>");
-	    myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
-	    
-	    myCodeMirror.setOption("theme", "vibrant-ink");
-	
-		$('#writeCallForm').submit(function() {
-			submit( { code: $("#code").val() } );
-			return false;
-		});
 	</script>
-
 
 	<form id="writeCallForm" action="">
 		<p><h4> Replace the psuedocode with an actual call to the function: </h4> <BR>	
-		<%= calleeFormatted %>
-	
-		<BR>{
-		<table width="100%">
-			<tr>
-				<td width = "20"></td>
-				<td><textarea id="code"></textarea></td>
-			</tr>	
-		</table>
-		} <BR><BR>
+		<%= calleeFormatted %><BR>
+		<%@include file="/html/elements/functionEditor.jsp" %>		
 		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
-
 </div>
