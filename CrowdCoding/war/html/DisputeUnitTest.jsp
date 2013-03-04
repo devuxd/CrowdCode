@@ -46,10 +46,10 @@
 		//myCodeMirror.setValue("<%= unitTests.replaceAll("[\t\n\\x0B\f\r]","") %>");
 		//myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
 		
-		$('document').ready(function(){
+		$('document').ready(function()
 		{
 			$('#skip').click(function() { skip(); });
-		});
+		});    	
 		
 		$('#testForm').submit(function() {
 			var equal
