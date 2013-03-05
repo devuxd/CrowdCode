@@ -94,7 +94,10 @@
 </div>
 
 <!-- Scripts --> 
-<script src="/include/qunit.js"> </script> 
+<script src="/include/codemirror/codemirror.js"></script>
+<script src="/include/codemirror/javascript.js"></script>
+<script src="/include/jslint.js"></script>
+<script src="/html/errorCheck.js"></script>
 <script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/_ah/channel/jsapi"></script> 
@@ -133,19 +136,22 @@
 		// Hook the leaderboard to Firebase		
 		var leaderboardRef = new Firebase(firebaseURL + '/leaderboard');
 		leaderboardRef.on('value', function(snapshot) {
-		  	updateLeaderboardDisplay(snapshot.val());
+			if (snapshot.val() != null)
+		  		updateLeaderboardDisplay(snapshot.val());
 		});
 		
 		// Hook the newsfeed to Firebase
 		var newsfeedRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/newsfeed');
 		newsfeedRef.on('child_added', function(snapshot) {
-			newNewsfeedItem(snapshot.val());
+			if (snapshot.val() != null)
+				newNewsfeedItem(snapshot.val());
 		});		
 		
 		// Hook the score to Firebase
 		var scoreRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/score');
 		scoreRef.on('value', function(snapshot) { 
-			updateScoreDisplay(snapshot.val());
+			if (snapshot.val() != null)
+				updateScoreDisplay(snapshot.val());
 		});		
 		
 		// Hook stats to firebase

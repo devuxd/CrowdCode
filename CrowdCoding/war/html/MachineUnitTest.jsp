@@ -13,25 +13,26 @@
 <%
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
-	Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-	MachineUnitTest microtask = (MachineUnitTest) crowdUser.getMicrotask();
+	Worker crowdUser = Worker.Create(UserServiceFactory
+			.getUserService().getCurrentUser(), project);
+	MachineUnitTest microtask = (MachineUnitTest) crowdUser
+			.getMicrotask();
 	ObjectMapper mapper = new ObjectMapper();
 	Writer strWriter = new StringWriter();
 	// get all test cases in system
 	mapper.writeValue(strWriter, microtask.getAllTestCodeInSystem());
 	String testCases = strWriter.toString();
 	// get all active functions
-	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(null, project) + "'";
+	String allFunctionCodeInSystem = "'"
+			+ FunctionHeaderUtil.getAllActiveFunctions(null, project)
+			+ "'";
 %>
 
 <body>
 	<div id="microtask">
-		<script src="/include/codemirror/codemirror.js"></script>
-		<script src="/include/codemirror/javascript.js"></script>
 		<script src="/include/bootbox.min.js"></script>
-		<script src="/include/jslint.js"></script>
-		<script src="/html/errorCheck.js"></script>
 		<script src="/include/spin.js"></script>
+		<script src="/html/assertionFunctions.js"></script>
 		<script>
 			window.onerror = function(err, url, lineNumber) {  
 			// todo: on error need to get the test case number that caused error 
@@ -39,9 +40,9 @@
 			console.log(err);
 	};  
 	</script>
-	<script>
+		<script>
 		var microtaskType = 'MachineUnitTest';
-		var microtaskID = <%= microtask.getID() %>;
+		var microtaskID = <%=microtask.getID()%>;
 		var testCaseNumberThatFailed = -1;
 	    var javaTestCases = new Array();
 	    $("#machineSubmit").children("input").attr('disabled', 'false');
@@ -67,7 +68,7 @@
 	{
 		debugger;
 		var resultOfTest = new Array(); 
-		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+		var allTheFunctionCode = <%=allFunctionCodeInSystem%>;
 		for(var p = 0; p < arrayOfTests.length; p++)
 		{
 			if(arrayOfTests[p] == "")
@@ -81,23 +82,21 @@
 			// no errors by jslint
 			if(errors == "")
 			{
-				var testCases = "test('" + functionName + "', function() {";
+				var testCases = "";
 				// constructs the function header and puts code  from the above code window
 				testCases += allTheFunctionCode;
 				testCases += arrayOfTests[p];
-				testCases+= "});";
-				QUnit.log = function(result, message)
-				{
-					if(!result.result)
-					{
-						testCaseNumberThatFailed = p;
-					}
-					debugger;
-				}
-			
 				try
 				{
-				eval(testCases);
+					eval(testCases);
+					$.each(results, function(index, result)		
+					{
+						if(!result.result)
+						{
+							testCaseNumberThatFailed = p;
+						}
+						debugger;
+					});
 				}
 				catch (err)
 				{
@@ -106,8 +105,8 @@
 			}
 			else
 			{
-			// jslint found errors
-			testCaseNumberThatFailed = p;
+				// jslint found errors
+				testCaseNumberThatFailed = p;
 			}
 		}
 		$("#machineSubmit").children("input").removeAttr("disabled");
@@ -121,20 +120,20 @@
 			return formData;
 	}
 </script>
-<div style = 'display:none'>
-		<form id="machineSubmit" action="">
-			<input id="codeSubmit" type="submit" value="Submit"
-				class="btn btn-primary" />
+		<div style='display: none'>
+			<form id="machineSubmit" action="">
+				<input id="codeSubmit" type="submit" value="Submit"
+					class="btn btn-primary" />
 
-		</form>
+			</form>
 		</div>
-	<script>
+		<script>
     	debugger;
 	 	test1(true);
 	 </script>
-<div style= 'margin-top:30%;' id = 'foo' > </div>
+		<div style='margin-top: 30%;' id='foo'></div>
 
-<script>
+		<script>
 var opts = {
   lines: 15, // The number of lines to draw
   length: 7, // The length of each line
@@ -156,9 +155,10 @@ var target = document.getElementById('foo');
 var spinner = new Spinner(opts).spin(target);
 
 </script>
-<div class="bootbox modal fade in" tabindex="-1" style="overflow: hidden;" aria-hidden="false">
-<div class="modal-body">Unit Tests are Running Please Wait </div>
-</div>
-<div class="modal-backdrop fade in"></div>
+		<div class="bootbox modal fade in" tabindex="-1"
+			style="overflow: hidden;" aria-hidden="false">
+			<div class="modal-body">Unit Tests are Running Please Wait</div>
+		</div>
+		<div class="modal-backdrop fade in"></div>
 </body>
 </html>

@@ -16,7 +16,7 @@
     ObjectMapper mapper = new ObjectMapper();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     SketchFunction microtask = (SketchFunction) crowdUser.getMicrotask();
-    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());;
+    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
     StringWriter strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
     String functionHeader = strWriter.toString();
@@ -28,64 +28,28 @@
 
 
 <div id="microtask">
-	<script src="/include/codemirror/codemirror.js"></script>
-	<script src="/include/codemirror/javascript.js"></script>
-	<script src="/include/jslint.js"></script>
-	<script src="/html/errorCheck.js"></script>
 	<script>
 		var microtaskType = 'sketchfunction';
 		var microtaskID = <%= microtask.getID() %>;
-		
-    	var myCodeMirror = CodeMirror.fromTextArea(code);
-	    myCodeMirror.setValue('<%=functionCode%>');
-   	 	myCodeMirror.setOption("theme", "vibrant-ink");
-   	 	
+		   	 	
    		$(document).ready(function() 
 		{
 		  	$('#skip').click(function() { skip(); });	
+		  	
+			$('#sketchForm').submit(function() 
+			{
+				doPresubmitWork();
+				
+				if (checkCodeForErrors())			
+					submit({ code: $("#code").val()});
+				
+				// Disable default submit functionality.
+				return false;
+			});
 		});
    	 	
-		$('#sketchForm').submit(function() {
-		    var functionHeader = <%= functionHeader %>;
-			functionHeader = functionHeader.replace(/\"/g,"'");
-			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
-			var functionCode = allTheFunctionCode + " " + functionHeader + "{"  + $("#code").val() + "}";
-			debugger;
-			if(("\n" + $("#code").val()).indexOf("\n#") == -1 && ("\n" + $("#code").val()).indexOf("\n!") == -1)
-			{
-				if($("#code").val().indexOf("#") != -1)
-				{
-					$("#errors").html("<bold> ERRORS: </bold> </br>" + "wrong placement of # needs to go at beginning of line");
-					return false; 
-				}
-				//else if($("#code").val()).indexOf("!") != -1)
-				//{
-				//	$("#errors").html("<bold> ERRORS: </bold> </br>" + "wrong placement of ! needs to go at beginning of line");
-				//	return false; 
-				//}
-				else
-				{
-					var errors = "";
-				    console.log(functionCode);
-				    var lintResult = JSLINT(functionCode,getJSLintGlobals());
-					console.log(JSLINT.errors);
-					if(!lintResult)
-					{
-						var errors = checkForErrors(JSLINT.errors);
-						console.log(errors);
-						if(errors != "")
-						{
-							$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
-							return false; 
-						}
-					}
-				}
-			}
-			submit({ code: $("#code").val()});
-			return false;
-		});
-	</script>
 
+	</script>
 
 	<p><h5> <%= methodFormatted %><BR>
 
@@ -94,26 +58,10 @@ implement the function or to leave portions as <i>pseudocode</i>.<BR>
 Lines beginning with '#' are considered pseudocode.<BR>
 Line beginning with '!' are treated as a <i>single</i> function call pseudocode line.<BR>
 </h5>
-	
-	
-	<form id="sketchForm" action="">
-
-
-
 	<BR>
 	
-
-	<BR>{
-	<table width="100%">
-		<tr>
-			<td width = "20"></td>
-			<td><textarea id="code"></textarea></td>
-		</tr>	
-	</table>
-	} <BR><BR>
-	<%@include file="/html/elements/submitFooter.jsp" %>
-	
+	<form id="sketchForm" action="">
+		<%@include file="/html/elements/functionEditor.jsp" %>
+		<%@include file="/html/elements/submitFooter.jsp" %>	
 	</form>
-	<div id = "errors"> </div>
-
 </div>
