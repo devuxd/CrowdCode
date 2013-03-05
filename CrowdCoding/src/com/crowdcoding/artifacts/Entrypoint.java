@@ -2,7 +2,7 @@ package com.crowdcoding.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import com.crowdcoding.dto.EntrypointDTO;
+import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.WriteEntrypoint;
 import com.googlecode.objectify.Ref;
@@ -13,8 +13,8 @@ import com.googlecode.objectify.annotation.Load;
 public class Entrypoint extends Artifact 
 {
 	@Load protected Ref<Microtask> microtask;
+	protected Ref<Function> function;
 	protected Ref<UserStory> userStory;
-	protected String event;
 	
 	// Constructor for deserialization
 	protected Entrypoint()
@@ -36,12 +36,12 @@ public class Entrypoint extends Artifact
 	}
 
 	// Sets the initial content for the entrypoint. 
-	public void setInitial(EntrypointDTO dto, Project project)
+	public void setInitial(FunctionDescriptionDTO dto, Project project)
 	{
-		this.event = dto.event;
-		
 		// Create a new function for this entrypoint. This will spawn a new microtask to create it.
 		Function function = new Function(dto.name, dto.description, dto.returnType, dto.parameters, project);		
+		
+		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.microtask = null;
 		ofy().save().entity(this).now();		
 	}	
