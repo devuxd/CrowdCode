@@ -2,16 +2,11 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.io.IOException;
-
-import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Entrypoint;
 import com.crowdcoding.artifacts.Project;
-import com.crowdcoding.dto.EntrypointDTO;
-import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.UserStoryDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.crowdcoding.dto.EntrypointDTO;
+import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -36,7 +31,7 @@ public class WriteEntrypoint extends Microtask
 	
 	protected void doSubmitWork(DTO dto, Project project)
 	{
-		entrypoint.get().setInitial((EntrypointDTO) dto, project);	
+		entrypoint.get().setInitial((FunctionDescriptionDTO) dto, project);	
 	}
 	
 	protected Class getDTOClass()
