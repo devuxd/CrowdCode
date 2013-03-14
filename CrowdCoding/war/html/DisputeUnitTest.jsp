@@ -58,18 +58,20 @@
 			var functionCode = functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val();
 			var errors = "";
 		    console.log(functionCode);
-		    var lintResult = JSLINT(functionCode,getJSLintGlobals());
-			console.log(JSLINT.errors);
-			if(!lintResult)
-			{
-				var errors = checkForErrors(JSLINT.errors);
-				console.log(errors);
-				if(errors != "")
-				{
-					$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
-					return false; 
-				}
-			}
+		    
+		    // Disabled linting because it was broken. Should reenable!
+		    //var lintResult = JSLINT(functionCode,getJSLintGlobals());
+			//console.log(JSLINT.errors);
+			//if(!lintResult)
+			//{
+			//	var errors = checkForErrors(JSLINT.errors);
+			//	console.log(errors);
+			//	if(errors != "")
+			//	{
+			//		$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
+			//		return false; 
+			//	}
+			//}
 						
 			submit({ code: $("#code").val() });
 			return false;

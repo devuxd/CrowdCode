@@ -16,6 +16,7 @@ import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.ParameterDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCasesDTO;
+import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.SketchFunction;
@@ -133,12 +134,21 @@ public class Function extends Artifact
 			break;
 		}
 		
+		// If we transitioned to tested from not tested, send notify on tested after we have
+		// finished transitioning our state
+		boolean notifyOnTested = false;
+		if (this.state != State.TESTED && state == State.TESTED)
+			notifyOnTested = true;
+		
 		if (isNowWritten && !isWritten)
 			project.functionWritten();
 		
 		this.isWritten = isNowWritten;
 		this.state = state;
 		ofy().save().entity(this).now();
+		
+		if (notifyOnTested)
+			notifyOnTested(project);
 	}
 	
 	// Is the fucntion written and all pseudocode no replaced with code? 
@@ -451,7 +461,6 @@ public class Function extends Artifact
 				onWorkerEdited(dto, project);
 			} else/*if all tests passed*/ { //tests ran through all smoothly
 				updateState(State.TESTED, project);
-				notifyOnTested(project);
 			}
 		}
 /*		// all unit tests are closed, we only generate one at a time
@@ -463,6 +472,29 @@ public class Function extends Artifact
 		// Save the entity again to the datastore		
 		ofy().save().entity(this).now(); 
 	}
+	
+	// This method notifies the function that it has just passed all of its tests.
+	public void passedTests(Project project)
+	{
+		// If we're not yet written or if we're already tested, ignore this notification
+		// But if we are ready to test, implemented, or needs debugging, transition to tested
+		if (state == State.READY_TO_TEST || state == State.IMPLEMENTED || state == State.NEEDS_DEBUGGING)
+			updateState(State.TESTED, project);
+	}
+	
+	// This method notifies the function that it has failed at least one of its tests
+	public void failedTests(Project project)
+	{
+		// If we are not yet written or if we already need debugging, ignore this
+		// TODO: do we really want to ignore the case when we are already in needs debugging? Can it 
+		// ever happen where we stay there after a transition? Really only just want to create a 
+		// DebugTestFailure only if one does not already exist.
+		if (isWritten && state != State.NEEDS_DEBUGGING)
+		{
+			updateState(State.NEEDS_DEBUGGING, project);
+			new DebugTestFailure(this, project);
+		}				
+	}	
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//   NOTIFICATION SENDERS

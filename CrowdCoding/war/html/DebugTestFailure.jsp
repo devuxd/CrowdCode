@@ -230,8 +230,10 @@
 			}
 			hasAtLeast1Test = true;
 			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
-			var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
-			var errors = checkForErrors(JSLINT.errors);
+			console.log(lintCheckFunction);
+			
+			//var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
+			var errors = '' // disabled lint checking checkForErrors(JSLINT.errors);
 			console.log(errors);
 			// no errors by jslint
 			if(errors == "")

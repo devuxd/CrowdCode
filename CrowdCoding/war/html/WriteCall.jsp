@@ -6,13 +6,23 @@
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteCall" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
+<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
+<%@ page import="java.io.StringWriter" %>
+<%@ page import="java.io.Writer" %>
 
 <%
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
+    ObjectMapper mapper = new ObjectMapper();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteCall microtask = (WriteCall) crowdUser.getMicrotask();
     String calleeFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getCallee());
+    String functionCode = microtask.getCaller().getEscapedCode();
+    
+    StringWriter strWriter = new StringWriter();
+    mapper.writeValue(strWriter,microtask.getCaller().getFunctionHeader());
+    String functionHeader = strWriter.toString();
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getCaller(), project) + "'";
 %>
 
 <div id="microtask">

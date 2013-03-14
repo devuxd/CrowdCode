@@ -51,7 +51,7 @@
 			functionHeader = functionHeader.replace(/\"/g,"'");
 			// only looks at the function header not the function body for JSLINT checking
 			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
-			var functionCode = "test('" + "functionCoder" + "', function() {" + allTheFunctionCode + " " + functionHeader + "{" + "}" + $("#code").val() + "});";
+			var functionCode = "function equal(a, b, c) {} " + allTheFunctionCode + " " + functionHeader + "{" + $("#code").val() + "}";
 			var errors = "";
 		    console.log(functionCode);
 		    var lintResult = JSLINT(functionCode,getJSLintGlobals());
