@@ -3,17 +3,18 @@ package com.crowdcoding.microtasks;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.MachineUnitTestDTO;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
+
 @EntitySubclass(index=true)
 public class MachineUnitTest extends Microtask
 {
@@ -22,7 +23,6 @@ public class MachineUnitTest extends Microtask
 
 	private MachineUnitTest()
 	{
-
 	}
 
 	public MachineUnitTest(Project project)
@@ -36,15 +36,28 @@ public class MachineUnitTest extends Microtask
 	protected void doSubmitWork(DTO dto, Project project)
 	{
 		MachineUnitTestDTO dto2 = (MachineUnitTestDTO)dto;
-		// if there was an error then create a new disputeUnittest means
-		// we remove from list of testCases, so anything left in there is a passed test case
-		for(int i = 0; i <dto2.errorTestCase.length; i++)
+
+		// Compute the set of functions that failed at least one test.
+		Set<Function> failed = new HashSet<Function>();
+		for (Integer failingTestIndex : dto2.errorTestCase)
 		{
-			Test failedTestCase = testCaseList.remove(dto2.errorTestCase[i]);
-			new DebugTestFailure(failedTestCase.getFunction(), project);
+			failed.add(testCaseList.get(failingTestIndex).getFunction());			
 		}
-		// TODO:
-		// do something for passed tests
+		
+		// Compute the set of functions that were tested and are not in the set of failing functions
+		Set<Function> passed = new HashSet<Function>();
+		for (Test test : testCaseList)
+		{
+			Function function = test.getFunction();
+			if (!failed.contains(function))
+				passed.add(function);
+		}
+		
+		// Notify each function if it passed or failed its tests
+		for (Function function : failed)
+			function.failedTests(project);
+		for (Function function : passed)
+			function.passedTests(project);	
 	}
 
 	protected Class getDTOClass()
@@ -69,6 +82,4 @@ public class MachineUnitTest extends Microtask
 		ofy().save().entity(this).now();
 		return arrayOfTestCaseCode;
 	}
-
-
 }
