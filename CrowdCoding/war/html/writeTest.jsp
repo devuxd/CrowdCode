@@ -86,9 +86,6 @@ deepEqual( actual, expected, message ): comparing to objects <br />
 equal( actual, expected, message ): check if both are equal <br />
 notDeepEqual( actual, expected, message ): <br />
 notEqual( actual, expected, message ): <br />
-notStrictEqual( actual, expected, message ): <br />
-ok( actual, expected, message ): boolean assertion <br />
-strictEqual( actual, expected, message ): strict type and value comparison<br />
 throws( actual, expected, message ): if exception is expected <br />
 <br />
 Examples:<br />

@@ -37,14 +37,14 @@ public class MachineUnitTest extends Microtask
 	{
 		MachineUnitTestDTO dto2 = (MachineUnitTestDTO)dto;
 		// if there was an error then create a new disputeUnittest means
-		if(dto2.errorTestCase == -1)
+		// we remove from list of testCases, so anything left in there is a passed test case
+		for(int i = 0; i <dto2.errorTestCase.length; i++)
 		{
-			return;
+			Test failedTestCase = testCaseList.remove(dto2.errorTestCase[i]);
+			new DebugTestFailure(failedTestCase.getFunction(), project);
 		}
-		else
-		{
-			new DebugTestFailure(testCaseList.get(dto2.errorTestCase).getFunction(), project);
-		}
+		// TODO:
+		// do something for passed tests
 	}
 
 	protected Class getDTOClass()
