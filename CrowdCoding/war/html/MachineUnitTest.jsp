@@ -32,7 +32,7 @@
 	<div id="microtask">
 		<script src="/include/bootbox.min.js"></script>
 		<script src="/include/spin.js"></script>
-		<script src="/html/assertionFunctions.js"></script>
+		
 		<script>
 			window.onerror = function(err, url, lineNumber) {  
 			// todo: on error need to get the test case number that caused error 
@@ -41,10 +41,11 @@
 	};  
 	</script>
 		<script>
+		var timeOutTime = 1500;
 		var microtaskType = 'MachineUnitTest';
 		var microtaskID = <%=microtask.getID()%>;
-		var testCaseNumberThatFailed = -1;
 	    var javaTestCases = new Array();
+	    var allFailedTestCases = new Array();
 	    $("#machineSubmit").children("input").attr('disabled', 'false');
 		$('#machineSubmit').submit(function() {
 			debugger;
@@ -52,7 +53,7 @@
 			{
 				return false;
 			}
-			submit(collectFormDataForNormal(testCaseNumberThatFailed));
+			submit(collectFormDataForNormal(allFailedTestCases));
 			return false;
 		});
 		
@@ -64,59 +65,85 @@
 			runUnitTests(javaTestCases,"TEST 1",isFirstTime);
 		}
 
+ 					
 	function runUnitTests(arrayOfTests, functionName,isFirstTime)
 	{
 		debugger;
-		var resultOfTest = new Array(); 
 		var allTheFunctionCode = <%=allFunctionCodeInSystem%>;
-		for(var p = 0; p < arrayOfTests.length; p++)
-		{
-			if(arrayOfTests[p] == "")
+		// set interval so only run it once per 1500 milliseconds
+		var p = 0;
+		var myInterval = setInterval(function(){
+			if(arrayOfTests[p] != "")
 			{
-				continue;
-			}
-			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode;
-			var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
-			var errors = checkForErrors(JSLINT.errors);
-			console.log(errors);
-			// no errors by jslint
-			if(errors == "")
-			{
-				var testCases = "";
-				// constructs the function header and puts code  from the above code window
-				testCases += allTheFunctionCode;
-				testCases += arrayOfTests[p];
-				try
+				arrayOfTests[p] = arrayOfTests[p].replace(/\n/g,"");
+				var timedOut = true;
+				//console.log(arrayOfTests);
+				var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + arrayOfTests[p];
+				var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
+				var errors = checkForErrors(JSLINT.errors);
+				var isTestCasePassed = false;
+				console.log(errors);
+				// no errors by jslint
+				if(errors == "")
 				{
-					eval(testCases);
-					$.each(results, function(index, result)		
+					var testCases = "";
+					// constructs the function header and puts code  from the above code window
+					testCases += allTheFunctionCode;
+					testCases += arrayOfTests[p];
+					// call the worker with test cases
+					window.URL = window.URL || window.webkiURL;
+				    var blob = new Blob([document.querySelector('#worker1').textContent]);
+				    var worker = new Worker(window.URL.createObjectURL(blob));
+				    var done = false;
+				    worker.onmessage = function(e) {
+				      console.log("Received: " + e.data);
+					  isTestCasePassed = e.data;
+					  timedOut = false;
+					  console.log(e.data);
+				    }
+				    // var b = "hello there";
+				    // worker.postMessage(b); // Start the worker.
+				
+					function stop()
 					{
-						if(!result.result)
-						{
-							testCaseNumberThatFailed = p;
-						}
-						debugger;
-					});
+						worker.terminate();
+					}
+					// load the script
+					worker.postMessage({url: document.location.origin});
+					// load the test cases
+					worker.postMessage({number: p, testCase: testCases});
+					setTimeout(function(){stop();},1000);
+					console.log(done);
+					setTimeout(function(){
+							if(!isTestCasePassed.result || timedOut)
+							{
+								allFailedTestCases.push(p);
+							}
+					},timeOutTime);
 				}
-				catch (err)
+				else
 				{
+					// jslint found errors
 					testCaseNumberThatFailed = p;
+					console.log(testCaseNumberThatFailed);
+					allFailedTestCases.push(testCaseNumberThatFailed);
 				}
 			}
-			else
+			p++;
+			if(p >= arrayOfTests.length)
 			{
-				// jslint found errors
-				testCaseNumberThatFailed = p;
+			  clearInterval(myInterval);
+			  $("#machineSubmit").children("input").removeAttr("disabled");
+			  $("#machineSubmit").children("input").click();
 			}
-		}
-		$("#machineSubmit").children("input").removeAttr("disabled");
-		$("#machineSubmit").children("input").click();
+		},timeOutTime+200);
+
 	}
 	
 	
 	function collectFormDataForNormal(testCaseThatFailed)
 	{
-			var formData = { errorTestCase: testCaseThatFailed};
+			var formData = { errorTestCase: allFailedTestCases};
 			return formData;
 	}
 </script>
@@ -155,6 +182,53 @@ var target = document.getElementById('foo');
 var spinner = new Spinner(opts).spin(target);
 
 </script>
+
+
+<script id="worker1" type="javascript/worker">
+    // This script won't be parsed by JS engines because its type is javascript/worker.
+    var testCasedPassed = true;
+    self.onmessage = function(e) 
+    {
+    	var data = e.data;
+     	//self.postMessage(e.data);
+		if (data.url)
+		{
+			    var url = data.url;
+			    var index = url.indexOf('index.html');
+			    if (index != -1)
+			     {
+			      url = url.substring(0, index);
+			     }
+			    importScripts(url + '/html/assertionFunctions.js');
+		 }
+		 else
+		 {
+		   		// Rest of your worker code goes here.
+				try
+				{
+					eval(data.testCase);
+					for(var index = 0; index < result.length; index++)
+					{
+						//self.postMessage(result[index].message + 'entered');
+						if(!result.result)
+						{
+							testCasedPassed = false;
+							break;
+						}
+					}
+				}
+				catch (err)
+				{
+					testCasedPassed = false;
+					//self.postMessage(err.message);
+				}
+				self.postMessage({number:data.number, result:testCasedPassed});
+		 }
+		 //self.postMessage(testCasedPassed);
+   };
+//}
+  </script>
+
 		<div class="bootbox modal fade in" tabindex="-1"
 			style="overflow: hidden;" aria-hidden="false">
 			<div class="modal-body">Unit Tests are Running Please Wait</div>
