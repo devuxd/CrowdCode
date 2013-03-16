@@ -35,8 +35,10 @@
 %>
 
 <div id="microtask">
+	<script src="/html/assertionFunctions.js"></script>
 	<script>
 		debugger;
+		
 		var microtaskType = 'disputeunittestfunction';
 		var microtaskID = <%= microtask.getID() %>;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
@@ -58,20 +60,18 @@
 			var functionCode = functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val();
 			var errors = "";
 		    console.log(functionCode);
-		    
-		    // Disabled linting because it was broken. Should reenable!
-		    //var lintResult = JSLINT(functionCode,getJSLintGlobals());
-			//console.log(JSLINT.errors);
-			//if(!lintResult)
-			//{
-			//	var errors = checkForErrors(JSLINT.errors);
-			//	console.log(errors);
-			//	if(errors != "")
-			//	{
-			//		$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
-			//		return false; 
-			//	}
-			//}
+		    var lintResult = JSLINT(getUnitTestGlobals() + functionCode,getJSLintGlobals());
+			console.log(JSLINT.errors);
+			if(!lintResult)
+			{
+				var errors = checkForErrors(JSLINT.errors);
+				console.log(errors);
+				if(errors != "")
+				{
+					$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
+					return false; 
+				}
+			}
 						
 			submit({ code: $("#code").val() });
 			return false;
