@@ -79,7 +79,7 @@
 				var timedOut = true;
 				//console.log(arrayOfTests);
 				var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + arrayOfTests[p];
-				var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
+				var lintResult = JSLINT(getUnitTestGlobals()+lintCheckFunction,getJSLintGlobals());
 				var errors = checkForErrors(JSLINT.errors);
 				var isTestCasePassed = false;
 				console.log(errors);
