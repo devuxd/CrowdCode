@@ -34,5 +34,12 @@ function checkForErrors(e)
 function getJSLintGlobals()
 {
 	debugger;
-	return {browser: true, continue: true, debug: true, devel: true, eqeq: true, evil: false, fragment: true, newcap: true, node: true, on: true, plusplus: true, rhino: true, sloppy: true, stupid: true, sub: true, todo: true,vars: true , white: true,windows: true ,bitwise: true,nomen: true,stupid: true , window: false, document: false, $: false, log: false, bleep: false, test: false, expect: false,equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,strictEqual: false,notStrictEqual: false};
+	// if releated to a parameter you can check box in JLINT website add here
+	return {browser: true, continue: true, debug: true, devel: true, eqeq: true, evil: false, fragment: true, newcap: true, node: true, on: true, plusplus: true, rhino: true, sloppy: true, stupid: true, sub: true, todo: true,vars: true , white: true,windows: true ,bitwise: true,nomen: true,stupid: true , window: false, document: false, $: false, log: false, bleep: false};
+}
+
+function getUnitTestGlobals()
+{
+	// if related to unittest for lint add here
+	return "/*global window: false, document: false, $: false, throws:false, log: false, bleep: false, equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,raises: false*/";
 }

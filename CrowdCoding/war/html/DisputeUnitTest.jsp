@@ -35,8 +35,10 @@
 %>
 
 <div id="microtask">
+	<script src="/html/assertionFunctions.js"></script>
 	<script>
 		debugger;
+		
 		var microtaskType = 'disputeunittestfunction';
 		var microtaskID = <%= microtask.getID() %>;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
@@ -58,7 +60,7 @@
 			var functionCode = functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val();
 			var errors = "";
 		    console.log(functionCode);
-		    var lintResult = JSLINT(functionCode,getJSLintGlobals());
+		    var lintResult = JSLINT(getUnitTestGlobals() + functionCode,getJSLintGlobals());
 			console.log(JSLINT.errors);
 			if(!lintResult)
 			{

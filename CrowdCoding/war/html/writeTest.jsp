@@ -54,7 +54,7 @@
 			var functionCode = "test('" + "functionCoder" + "', function() {" + allTheFunctionCode + " " + functionHeader + "{" + "}" + $("#code").val() + "});";
 			var errors = "";
 		    console.log(functionCode);
-		    var lintResult = JSLINT(functionCode,getJSLintGlobals());
+		    var lintResult = JSLINT(getUnitTestGlobals() + functionCode,getJSLintGlobals());
 		    console.log(JSLINT.errors);
 			if(!lintResult)
 			{

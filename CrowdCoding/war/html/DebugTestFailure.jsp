@@ -40,6 +40,7 @@
 	<div id="microtask">
 		<script src="/include/bootbox.min.js"></script>
 		<script src="/html/assertionFunctions.js"></script>
+				<script src="/include/spin.js"></script>
 		<script>
 			window.onerror = function(err, url, lineNumber) 
 			{  
@@ -68,6 +69,7 @@
 	</script>
 	<script>
 		debugger;
+		var timeOutPeriod = 1500;
 		var microtaskType = 'DebugTestFailure';
 		var microtaskID = <%= microtask.getID() %>;
 		var myCodeMirrorForDispute;
@@ -131,18 +133,18 @@
 		{
 			var i = 0; 
 			answers = new Array();
-			 var expression = ""; 
-			 var patt = new RegExp("equal\\([a-zA-Z0-9\\,\\'\\ \" (\\)\" ]*\\);",'\g');
-			  while(expression != null)
+			var expression = ""; 
+			var patt = new RegExp("(equal|notEqual|deepEqual|notDeepEqual)\\([a-zA-Z0-9\\,\\'\\ \" (\\)\" \\- ]*\\)[;]",'\g');
+			while(expression != null)
+			{
+			  expression = patt.exec(QunitTest);
+			  if(expression == null) 
 			  {
-			   expression = patt.exec(QunitTest);
-			    if(expression == null) 
-			    {
 			     break;
-			    }
-			    answers[i] = expression[0];
-			    i = i + 1; 
-			   }
+			  }
+			  answers[i] = expression[0];
+			  i = i + 1; 
+			}
 			return answers;
 		}
 		
@@ -209,124 +211,199 @@
 	function runUnitTests(arrayOfTests, functionName,isFirstTime)
 	{
  		debugger;
+ 		$("#foo").css("display","block");
 		var unStringEscapedFunctionHeader = <%=functionHeader%>;
 		var functionHeader = unStringEscapedFunctionHeader.replace(/\"/g,"'");
 		var resultOfTest = new Array(); 
 		var htmlTab = "";
 		var htmlContent = "";
 		var hasAtLeast1Test = false;
+		var i = 0;
 		var allTheFunctionCode = <%=allFunctionCodeInSystem%>;
 		// keep an array of html tabs which we concanate at the end
 		// do it this way so we can make some tabs with mulitple tests
 		// reflect correct color
 		var tabHtml = new Array(arrayOfTests.length);
 		console.log(allTheFunctionCode);
-		for(var p = 0; p < arrayOfTests.length; p++)
-		{
-			var i = 0;
-			if(arrayOfTests[p] == "")
+		var p = 0;
+			var myInterval = setInterval(function(){
+			if(arrayOfTests[p] != "")
 			{
-				continue;
-			}
 			hasAtLeast1Test = true;
 			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
 			var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
 			var errors = checkForErrors(JSLINT.errors);
 			console.log(errors);
 			// no errors by jslint
-			if(errors == "")
-			{
-				if(p == 0)
-				{   
-					htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";						
-				}
-				else
+				if(errors == "")
 				{
-					htmlContent += "<div class='tab-pane' id=" + "'A" + p + "'>";
-					
-				}
-				// checking if tab has been intialized, only intialize once
-				if(tabHtml[p] == undefined)
-				{
-					tabHtml[p] = "";
-					if(p==0)
-					{
-						tabHtml[p] +=  "<li class='active'>";
+					if(p == 0)
+					{   
+						htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";						
 					}
 					else
 					{
-						tabHtml[p] +=  "<li>"
+						htmlContent += "<div class='tab-pane' id=" + "'A" + p + "'>";
+						
 					}
-					tabHtml[p] += "<a id='TabNumber"+ p + "' href=";
-					tabHtml[p] += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
-					tabHtml[p] +=  "</a></li>";
-				}
-				// change to asyncTest if you want try that, but that broke stuff when i changed it
-				var testCases = "";
-				// constructs the function header and puts code  from the above code window
-				testCases += "" + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
-				testCases += arrayOfTests[p];
-				console.log(testCases);
-				var QunitTestCases = parseTheTestCases(testCases);
-				console.log(QunitTestCases);
-
-				try
-				{
-					resetAssertions();
-					eval(testCases);					
-					$.each(results, function(index, result)		
+					// checking if tab has been intialized, only intialize once
+					if(tabHtml[p] == undefined)
 					{
-						debugger;
-						console.log(result);
-						resultOfTest[i]= result;   
-						atLeastOneTestCase = true;
-						htmlContent += "<p>" + "</br>"; 
-						if(!result.result)
+						tabHtml[p] = "";
+						if(p==0)
 						{
-						debugger;
-							if(QunitTestCases.length < 1)
-							{
-								var originalTestCases = <%=testCases%>;
-								htmlContent += "Error At: " + originalTestCases[i] + " </br>";
-							}
-							else
-							{
-							htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
-							}
-							if(result.expected == null)
-							{
-								var errorMessage = result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$");
-								if(errorMessage == null)
-								{
-									errorMessage = result.message;
-								}
-								htmlContent += " Message: " + errorMessage + "</br>";
-							}
-							else
-							{
-							htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
-							htmlContent += " Outcome Message: " + result.message + "</br>";
-							}
-							tabHtml[p] = tabHtml[p].replace("class='true'",'class=false')
+							tabHtml[p] +=  "<li class='active'>";
 						}
 						else
 						{
-							if(result.message != null)
-							{
-								htmlContent += " Passed: " + QunitTestCases[i] + "</br>";
-							}
+							tabHtml[p] +=  "<li>"
 						}
-						// make sure only add the tab(html code for the tab) once
-						// I do it by keep an array
-						debugger;
-						i++;
+						tabHtml[p] += "<a id='TabNumber"+ p + "' href=";
+						tabHtml[p] += "'#A" + p + "' data-toggle='tab'"+ "class='" + true + "'>" +  "test: " + javaTestCaseDescriptions[p].substring(0,50);
+						tabHtml[p] +=  "</a></li>";
+					}
+					// change to asyncTest if you want try that, but that broke stuff when i changed it
+					var testCases = "";
+					// constructs the function header and puts code  from the above code window
+					testCases += "" + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+					testCases += arrayOfTests[p];
+					console.log(testCases);
+					var QunitTestCases = parseTheTestCases(testCases);
+					console.log("the test before");
+					console.log(QunitTestCases);
+					console.log("the tests after");
+					//try
+					//{
+						var results;
+						resetAssertions();
+						// worker code
+						window.URL = window.URL || window.webkiURL;
+					    var blob = new Blob([document.querySelector('#worker1').textContent]);
+					    var worker = new Worker(window.URL.createObjectURL(blob));
+					    var done = false;
+					    worker.onmessage = function(e) {
+					      console.log("Received: " + e.data);
+						  results = e.data;
+						 // timedOut = false;
+						  console.log(e.data);
+						  // print out the debug statements only once, since it is not dependent on the test
+						  // cases it only gets printed once so when p = 0
+						  for(var g = 0; g < e.data.debugStatements.length && p==0; g++)
+						  {
+						  	printDebugStatementOuter(e.data.debugStatements[g] + g);
+						  }
+					    }
+					    // var b = "hello there";
+					    // worker.postMessage(b); // Start the worker.
+					
+						function stop()
+						{
+							worker.terminate();
+						}
+						// load the script
+						worker.postMessage({url: document.location.origin});
+						// load the test cases
+						worker.postMessage({number: p, testCase: testCases});
+						setTimeout(function(){stop();},timeOutPeriod-500);
+						console.log(done);
+						setTimeout(function(){
+						if(results == null)
+						{
+							var tempResult = new Array();
+							tempResult.push({'expected': "", 'actual': "", 'message': "Test case Timeout, no debug statements printed", 'result':  false});
+							results = {'number':p, 'result':tempResult, 'detail':1, 'debugStatements':new Array()};
+						}	
+						$.each(results.result, function(index, result)		
+						{
+							debugger;
+							i = p;
+							resultOfTest[i]= result;   
+							atLeastOneTestCase = true;
+							htmlContent += "<p>" + "</br>"; 
+							if(!result.result)
+							{
+								debugger;
+								if(QunitTestCases.length < 1)
+								{
+									var originalTestCases = <%=testCases%>;
+									htmlContent += "Error At: " + originalTestCases[i] + " </br>";
+								}
+								else
+								{
+									htmlContent += " Error At " + QunitTestCases[i] + " </br>" ;
+								}
+								if(result.expected == null)
+								{
+									var errorMessage = result.message.match("\\:[a-zA-Z0-9\\,\\'\\(\\) ]+$");
+									if(errorMessage == null)
+									{
+										errorMessage = result.message;
+									}
+									htmlContent += " Message: " + errorMessage + "</br>";
+								}
+								else
+								{
+								htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
+								htmlContent += " Outcome Message: " + result.message + "</br>";
+								}
+								console.log(tabHtml[p] + " " + p);
+								tabHtml[p] = tabHtml[p].replace("class='true'",'class=false')
+							}
+							else
+							{
+								if(result.message != null)
+								{
+									// I dont think we should show them a passed test case 
+									htmlContent += " Passed: " + QunitTestCases[index] + index + "</br>";
+								}
+							}
+						});
+							// make sure only add the tab(html code for the tab) once
+							// I do it by keep an array
+							debugger;
+							htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
 						
-					});
-				}					
-				catch (err)
+							// Change the color of the tab based on the result of running all of 
+							// the assertions within the tab
+							
+							// make sure only execute once, we loop through the array that holds
+							//the html code for the tabs once at the very end. each cell in 
+							// array has html code for that tab
+							if(p == arrayOfTests.length-1)
+							{
+							 	for(var z = 0; z < tabHtml.length; z++)
+							 	{
+							 		console.log(tabHtml);
+							 	    htmlTab += tabHtml[z];
+							 	}
+	
+							details = results.detail;
+						 	console.log(details);
+						 	console.log("iteraton" + p + "size" + arrayOfTests.length);
+						    if(details.failed > 0)
+						    {
+						     	$("#sketchForm").children("input").attr('disabled', 'false');
+						     	allTestPassed = false;
+						    }
+						    else if(details.failed == 0 && allTestPassed)
+						    {
+						     	$("#sketchForm").children("input").removeAttr("disabled");
+						    }
+						    javaTestCases = resultOfTest;	
+							i++;
+						  }
+							
+	
+						},timeOutPeriod);
+						//eval(testCases);	
+					
+				}
+				else
 				{
-					debugger;
-					if(i == 0)
+				console.log("lint errors");
+				setTimeout(function(){
+				// jslint found errors
+					if(p == 0)
 					{   
 						htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
 						htmlTab +=  "<li class='active'><a href=";
@@ -339,101 +416,65 @@
 					htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
 					htmlTab +=  "</a></li>";
 					htmlContent += "<p>" + "</br>"; 
-					htmlContent += " Error At " + err.message + " </br>" ;
+					htmlContent += " Syntax Error: </br> " + errors + " </br>" ;
 					htmlContent += "</p></div>";
 					i++;
-				}
-				htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
-
-				// Change the color of the tab based on the result of running all of 
-				// the assertions within the tab
+					$("#sketchForm").children("input").attr('disabled', 'false');
+					allTestPassed = false;
 				
-				// make sure only execute once, we loop through the array that holds
-				//the html code for the tabs once at the very end. each cell in 
-				// array has html code for that tab
-				if(p == arrayOfTests.length-1)
-				{
-				 	for(var z = 0; z < tabHtml.length; z++)
-				 	{
-				 	    htmlTab += tabHtml[z];
-				 	}
+				},timeOutPeriod);
 				}
-			 	console.log(details);
-			 	console.log("iteraton" + p + "size" + arrayOfTests.length);
-			    if(details.failed > 0)
-			    {
-			     	$("#sketchForm").children("input").attr('disabled', 'false');
-			     	allTestPassed = false;
-			    }
-			    else if(details.failed == 0 && allTestPassed)
-			    {
-			     	$("#sketchForm").children("input").removeAttr("disabled");
-			    }
-			    javaTestCases = resultOfTest;				   
 			}
-			else
-			{
-			// jslint found errors
-				if(p == 0)
-				{   
+			setTimeout(function(){
+			p++;
+			// the closing section if it enters
+			if(p >= arrayOfTests.length)
+			{	
+				if(!hasAtLeast1Test)
+				{
+					debugger;
 					htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
 					htmlTab +=  "<li class='active'><a href=";
+					htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+					htmlTab +=  "</a></li>";
+					htmlContent += "<p>" + "</br>"; 
+					htmlContent += " No Unit Tests Exist for this function" + " </br>" ;
+					htmlContent += "</p></div>";
+					i++;
+					$("#reportInformation").css('display',"block");
+					myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
+			    	myCodeMirrorForDispute.setValue("No Unit Test Exist For this Function");
+			    	myCodeMirrorForDispute.setOption("readOnly", "true");
+			    	myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
+			    	$("#unittest").attr('disabled', 'false');
 				}
-				else
+				
+				$(document).ready(function()
 				{
-					htmlContent += "<div class='tab-pane' id=" + "'A" + i + "'>";
-					htmlTab +=  "<li><a href=";
+					$("#tabContent").html(htmlContent);
+					$("#tabs").html(htmlTab);
+					if(htmlTab.search("false") == -1 && isFirstTime)
+					{
+						$("#codeSubmit").click()
+					}
+				});
+				
+				if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)			
+				{
+					var existingText = myCodeMirrorForConsoleOutPut.getValue();
+					myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
 				}
-				htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
-				htmlTab +=  "</a></li>";
-				htmlContent += "<p>" + "</br>"; 
-				htmlContent += " Syntax Error: </br> " + errors + " </br>" ;
-				htmlContent += "</p></div>";
-				i++;
-				$("#sketchForm").children("input").attr('disabled', 'false');
-				allTestPassed = false;
+				//return testCases;
+					
+			  	clearInterval(myInterval);
+			 	$("#foo").css("display","none");
 			}
-		}
-			
-		if(!hasAtLeast1Test)
-		{
-			debugger;
-			htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
-			htmlTab +=  "<li class='active'><a href=";
-			htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
-			htmlTab +=  "</a></li>";
-			htmlContent += "<p>" + "</br>"; 
-			htmlContent += " No Unit Tests Exist for this function" + " </br>" ;
-			htmlContent += "</p></div>";
-			i++;
-			$("#reportInformation").css('display',"block");
-			myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
-	    	myCodeMirrorForDispute.setValue("No Unit Test Exist For this Function");
-	    	myCodeMirrorForDispute.setOption("readOnly", "true");
-	    	myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
-	    	$("#unittest").attr('disabled', 'false');
-		}
-		
-		$(document).ready(function()
-		{
-			$("#tabContent").html(htmlContent);
-			$("#tabs").html(htmlTab);
-			if(htmlTab.search("false") == -1 && isFirstTime)
-			{
-				$("#codeSubmit").submit()
-			}
-		});
-		
-		if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)			
-		{
-			var existingText = myCodeMirrorForConsoleOutPut.getValue();
-			myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
-		}
-		return testCases;
+			},timeOutPeriod);
+		},timeOutPeriod+200);
 	}
 	
 	// for debuggin purposes
-	function printDebugStatement(statement)
+	function printDebugStatementOuter(statement)
 	{
 		debugger;
 		var existingText = myCodeMirrorForConsoleOutPut.getValue();
@@ -457,6 +498,59 @@
 	    $("#submissionBox").css('display',"none");
 	}
 </script>
+
+<script id="worker1" type="javascript/worker">
+    // This script won't be parsed by JS engines because its type is javascript/worker.
+    var isFirstTimeThrough = 1;
+    var testCasedPassed = true;
+    // since debug statements require the dom and eval goes inside the worker
+    var debugStatementToRun = new Array();
+    // for debuggin purposes
+	function printDebugStatement(statement)
+	{
+		// eval is called for each test case but debug statement wont change
+		
+		if(isFirstTimeThrough == 0)
+		{
+			debugStatementToRun.push(statement);
+			isFirstTimeThrough = 1;
+		}
+	}
+    
+    
+    self.onmessage = function(e) 
+    {
+    	var data = e.data;
+     	//self.postMessage(e.data);
+		if (data.url)
+		{
+			    var url = data.url;
+			    var index = url.indexOf('index.html');
+			    if (index != -1)
+			     {
+			      url = url.substring(0, index);
+			     }
+			    importScripts(url + '/html/assertionFunctions.js');
+		 }
+		 else
+		 {
+		   		// Rest of your worker code goes here.
+				try
+				{
+					isFirstTimeThrough = data.number;
+					eval(data.testCase);
+				}
+				catch (err)
+				{
+					//results = 
+					//self.postMessage(err.message);
+				}
+				self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun});
+		 }
+		 //self.postMessage(testCasedPassed);
+   };
+//}
+  </script>
 		<button style="float: right;" onclick="revertCodeAs();">
 			Revert Code</button>
 		<form id="sketchForm" action="">
@@ -562,6 +656,29 @@
 <div class="modal-backdrop fade in"></div>
 </span>
 </div>
+		<div style='display:none' id='foo'></div>
 
+		<script>
+var opts = {
+  lines: 15, // The number of lines to draw
+  length: 7, // The length of each line
+  width: 4, // The line thickness
+  radius: 10, // The radius of the inner circle
+  corners: 1, // Corner roundness (0..1)
+  rotate: 49, // The rotation offset
+  color: '#000', // #rgb or #rrggbb
+  speed: 0.7, // Rounds per second
+  trail: 88, // Afterglow percentage
+  shadow: false, // Whether to render a shadow
+  hwaccel: false, // Whether to use hardware acceleration
+  className: 'spinner', // The CSS class to assign to the spinner
+  zIndex: 2e9, // The z-index (defaults to 2000000000)
+  top: 'auto', // Top position relative to parent in px
+  left: 'auto' // Left position relative to parent in px
+};
+var target = document.getElementById('foo');
+var spinner = new Spinner(opts).spin(target);
+
+</script>
 </body>
 </html>
