@@ -2,7 +2,7 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteTestCases" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
@@ -68,7 +68,7 @@
 	</script>
 
 
-
+	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<p><h5><%= methodFormatted %><BR>
 In what situations or cases might this function misbehave, show unexpected results, or fail? Are there unexpected
 corner cases that might not work?</h5></h5>

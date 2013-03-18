@@ -2,7 +2,7 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteUserStory" %>
 
@@ -26,6 +26,7 @@
 	</script>
 
 
+	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<p><h5>Imagine a command line calculator. 
 	<br><BR>What is a single scenario that a user might wish to do with it?
 		How specifically and thoroughly can you describe it? </h5></p>

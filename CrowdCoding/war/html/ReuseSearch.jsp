@@ -1,4 +1,4 @@
-<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.artifacts.Function" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.Worker" %>
@@ -176,6 +176,7 @@
 
 </script>
 
+<%@include file="/html/elements/microtaskTitle.jsp" %>
 Is there a function that does this?
 
 <h4><%=microtask.getCallDescription()%></h4><bR>

@@ -2,7 +2,7 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.DisputeUnitTestFunction" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
@@ -78,9 +78,7 @@
 		});
 	</script>
 
-
-	<h4>
-	DISPUTED TEST
+	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<br>
 	This unit test suite was disputed for the following reason:
 	<br>

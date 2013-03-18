@@ -2,7 +2,7 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteCall" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
@@ -43,6 +43,7 @@
 	</script>
 
 	<form id="writeCallForm" action="">
+		<%@include file="/html/elements/microtaskTitle.jsp" %>
 		<p><h4> Replace the psuedocode with an actual call to the function: </h4> <BR>	
 		<%= calleeFormatted %><BR>
 		<%@include file="/html/elements/functionEditor.jsp" %>		

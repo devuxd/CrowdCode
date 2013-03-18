@@ -2,11 +2,13 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.Project;
+import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Entrypoint;
-import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.EntrypointDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.history.MicrotaskSpawned;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -27,6 +29,9 @@ public class WriteEntrypoint extends Microtask
 		super(project);
 		this.entrypoint = (Ref<Entrypoint>) Ref.create(entrypoint.getKey());		
 		ofy().save().entity(this).now();
+		
+		project.historyLog().beginEvent(new MicrotaskSpawned(this, entrypoint));
+		project.historyLog().endEvent();
 	}
 	
 	protected void doSubmitWork(DTO dto, Project project)
@@ -47,5 +52,15 @@ public class WriteEntrypoint extends Microtask
 	public Entrypoint getEntrypoint()
 	{
 		return entrypoint.get();
+	}
+	
+	public Artifact getOwningArtifact()
+	{
+		return getEntrypoint();
+	}
+	
+	public String microtaskTitle()
+	{
+		return "Write an entrypoint";
 	}
 }

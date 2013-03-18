@@ -11,11 +11,14 @@ import java.util.Queue;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.ParameterDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCasesDTO;
+import com.crowdcoding.dto.history.MessageReceived;
+import com.crowdcoding.dto.history.StateChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.ReuseSearch;
@@ -34,19 +37,6 @@ import com.googlecode.objectify.cmd.Query;
 /* A function represents a function of code. Functions transition through states, spawning microtasks, 
  * which, upon completion, transition the state. Some of these microtasks may create other artifacts,
  * which also transition through states; these transitions may in turn be signaled back to a function.
- * 
- *  States of a Function:
- *    Created: function exists (true iff an object for the function exists)
- *    Described: function description exists
- *    Written: described + function written (no pseudocode remaining), unit tests written
- *    Implemented: all callees tested
- *    Tested: written + all unit tests pass
- *
- *  after function is created, generates WriteDescription microtask
- *  after this completes, transitions to Described, spawns microtasks to write test cases and sketch function
- *  after unit tests are all written and no pseudocode remains, transitions to written
- *  after all callees tested, transitions to implemented, and tests are run (which occurs in debug microtasks)
- *  after all tests pass, transitions to tested
  * 
  */
 @EntitySubclass(index=true)
@@ -94,12 +84,17 @@ public class Function extends Artifact
 	{
 		super(project);
 		isWritten = false;
+		
+		project.historyLog().beginEvent(new StateChange(State.CREATED.name(), this));
+		
 		updateState(State.CREATED, project);
 		ofy().save().entity(this).now();
 		
 		// Spawn off a microtask to write the function description
 		WriteFunctionDescription writeFunctionDescription = 
 				new WriteFunctionDescription(this, callDescription, project);
+		
+		project.historyLog().endEvent();
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -112,8 +107,8 @@ public class Function extends Artifact
 
 	private void updateState(State state, Project project) 
 	{
-		boolean isNowWritten = false;
-		
+		// Compute isNowWritten based on the new state
+		boolean isNowWritten = false;		
 		switch(state)
 		{
 		case ACTIVE_CODING:
@@ -145,7 +140,7 @@ public class Function extends Artifact
 		
 		this.isWritten = isNowWritten;
 		this.state = state;
-		ofy().save().entity(this).now();
+		ofy().save().entity(this).now();		
 		
 		if (notifyOnTested)
 			notifyOnTested(project);
@@ -307,11 +302,10 @@ public class Function extends Artifact
 			//and if not, register a callback to call this again
 			if (allUnitTestsImplemented(true))
 			{
+				project.historyLog().beginEvent(new StateChange(State.READY_TO_TEST.name(), this));
 				updateState(State.READY_TO_TEST, project);
-				//run tests
-//				DebugTestFailure debugMicrotask = new DebugTestFailure(this, project);
-				//DebugTestFailure unitTest = new DebugTestFailure(this.function,project);
 				MachineUnitTest writeMachineUnitTest = new MachineUnitTest(project);
+				project.historyLog().endEvent();
 			}			
 		}
 		ofy().save().entity(this).now();			
@@ -336,12 +330,16 @@ public class Function extends Artifact
 			List<String> pseudoCode = findPseudocode(code);
 			if(pseudoCode.isEmpty())
 			{
+				project.historyLog().beginEvent(new StateChange(State.IMPLEMENTED.name(), this));
 				updateState(State.IMPLEMENTED, project);
 				runTestsIfReady(project);
+				project.historyLog().endEvent();
 			} else {
+				project.historyLog().beginEvent(new StateChange(State.OPEN_FOR_CODING.name(), this));
 				updateState(State.OPEN_FOR_CODING, project);
 				//create new Sketch microtask
 				SketchFunction sketchFunction = new SketchFunction(this, project);
+				project.historyLog().endEvent();
 			}
 		}	
 		else
@@ -357,7 +355,11 @@ public class Function extends Artifact
 					/*ReuseSearch reuseSearch =*/ new ReuseSearch(this, callDescription, project);
 					
 					if(callsToIntegrate.isEmpty())
+					{
+						project.historyLog().beginEvent(new StateChange(State.WAITING_FOR_CALLEES.name(), this));						
 						updateState(State.WAITING_FOR_CALLEES, project);
+						project.historyLog().endEvent();
+					}
 					else 
 						addCall(load(callsToIntegrate.remove()), project);
 				}
@@ -369,14 +371,20 @@ public class Function extends Artifact
 	
 	private void addCall(Function callee, Project project) 
 	{
+		project.historyLog().beginEvent(new StateChange(State.READY_TO_ADD_CALL.name(), this));
+		
 		updateState(State.READY_TO_ADD_CALL, project);
 		
 		// Create a microtask to add the call
 		WriteCall writeCall = new WriteCall(this, callee, project);	
+		
+		project.historyLog().endEvent();
 	}
 	
 	public void calleeBecameTested(Function callee, Project project)
 	{
+		project.historyLog().beginEvent(new MessageReceived("AddCall", this));
+		
 		if (getState() == State.WAITING_FOR_CALLEES)
 		{ 			
 			addCall(callee, project);
@@ -384,7 +392,9 @@ public class Function extends Artifact
 		else
 		{	
 			callsToIntegrate.add((Ref<Function>) Ref.create(callee.getKey()));			
-		}		
+		}	
+		
+		project.historyLog().endEvent();
 	}
 		
 	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, Project project)
@@ -409,13 +419,17 @@ public class Function extends Artifact
 	
 	public void activeCodingStarted(Project project) 
 	{
+		project.historyLog().beginEvent(new StateChange(State.ACTIVE_CODING.name(), this));	
 		this.updateState(State.ACTIVE_CODING, project);
+		project.historyLog().endEvent();
 	}
 	
 	
 	public void writeDescriptionCompleted(String name, String description, String returnType, 
 	List<ParameterDTO> params, Project project)
 	{
+		project.historyLog().beginEvent(new StateChange(State.DESCRIBED.name(), this));	
+		
 		this.updateState(State.DESCRIBED, project);
 		this.name = name;
 		this.description = description;
@@ -438,6 +452,8 @@ public class Function extends Artifact
 		
 		// Spawn off microtask to sketch the method
 		SketchFunction sketchFunction = new SketchFunction(this, project);
+		
+		project.historyLog().endEvent();
 	}
 	
 	public void writeCallCompleted(FunctionDTO dto, Project project)
@@ -460,7 +476,9 @@ public class Function extends Artifact
 			{ //integrate the new changes
 				onWorkerEdited(dto, project);
 			} else/*if all tests passed*/ { //tests ran through all smoothly
+				project.historyLog().beginEvent(new StateChange(State.TESTED.name(), this));	
 				updateState(State.TESTED, project);
+				project.historyLog().endEvent();
 			}
 		}
 /*		// all unit tests are closed, we only generate one at a time
@@ -479,7 +497,13 @@ public class Function extends Artifact
 		// If we're not yet written or if we're already tested, ignore this notification
 		// But if we are ready to test, implemented, or needs debugging, transition to tested
 		if (state == State.READY_TO_TEST || state == State.IMPLEMENTED || state == State.NEEDS_DEBUGGING)
+		{
+			project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
+			project.historyLog().beginEvent(new StateChange(State.TESTED.name(), this));	
 			updateState(State.TESTED, project);
+			project.historyLog().endEvent();
+			project.historyLog().endEvent();
+		}
 	}
 	
 	// This method notifies the function that it has failed at least one of its tests
@@ -491,8 +515,12 @@ public class Function extends Artifact
 		// DebugTestFailure only if one does not already exist.
 		if (isWritten && state != State.NEEDS_DEBUGGING)
 		{
+			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
+			project.historyLog().beginEvent(new StateChange(State.NEEDS_DEBUGGING.name(), this));	
 			updateState(State.NEEDS_DEBUGGING, project);
 			new DebugTestFailure(this, project);
+			project.historyLog().endEvent();
+			project.historyLog().endEvent();
 		}				
 	}	
 	

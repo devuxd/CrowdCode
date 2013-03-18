@@ -4,11 +4,13 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
 
+import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
+import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.history.MicrotaskSpawned;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -30,6 +32,9 @@ public class SketchFunction extends Microtask
 		super(project);
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
+		
+		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		project.historyLog().endEvent();
 	}
 	
 	public void onAssign(Project project)
@@ -56,5 +61,15 @@ public class SketchFunction extends Microtask
 	public Function getFunction()
 	{
 		return function.getValue();
+	}
+	
+	public Artifact getOwningArtifact()
+	{
+		return getFunction();
+	}
+	
+	public String microtaskTitle()
+	{
+		return "Write a function";
 	}
 }

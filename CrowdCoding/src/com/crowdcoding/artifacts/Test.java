@@ -2,7 +2,10 @@ package com.crowdcoding.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.Project;
+import com.crowdcoding.artifacts.Function.State;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.history.StateChange;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.WriteTest;
@@ -33,19 +36,26 @@ public class Test extends Artifact
 	
 	public Test(String description, Function function, Project project)
 	{
-		super(project);		
+		super(project);	
+				
 		this.description = description;
 		this.state = State.DESCRIBED;
 		this.isImplemented = false;
+		project.historyLog().beginEvent(new StateChange(State.DESCRIBED.name(), this));
+		
 		logState();
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		notifyFunctionOnImplemented = false;
 		ofy().save().entity(this).now();
 		WriteTest writeTest = new WriteTest(this, project);
+		
+		project.historyLog().endEvent();
 	}
 	
 	public void writeTestCompleted(FunctionDTO dto, Project project)
 	{
+		project.historyLog().beginEvent(new StateChange(State.IMPLEMENTED.name(), this));
+		
 		this.code = dto.code;
 		state = State.IMPLEMENTED;
 		isImplemented = true;
@@ -79,6 +89,8 @@ public class Test extends Artifact
 				this.unitTestIsOpen = true;
 		}*/
 		ofy().save().entity(this).now();
+		
+		project.historyLog().endEvent();
 	}	
 	
 	public String getTestCode()
@@ -91,6 +103,11 @@ public class Test extends Artifact
 	}
 	
 	public String getDescription()
+	{
+		return description;
+	}
+	
+	public String getName()
 	{
 		return description;
 	}
@@ -126,6 +143,8 @@ public class Test extends Artifact
 
 	public void disputeUnitTestCorrectionCreated(FunctionDTO dto, Project project) 
 	{
+		project.historyLog().beginEvent(new StateChange(State.DISPUTED.name(), this));
+		
 		this.state = State.DISPUTED;
 		logState();
 		System.out.println(getTestCode());
@@ -137,14 +156,18 @@ public class Test extends Artifact
 		ofy().save().entity(this).now();
 		DisputeUnitTestFunction disputedTest = new DisputeUnitTestFunction(this, dto.description, project);
 		ofy().save().entity(this).now();
+		
+		project.historyLog().endEvent();
 	}
 	
 	public void disputeUnitTestCorrectionCompleted(FunctionDTO dto2, Project project) 
 	{
+		project.historyLog().beginEvent(new StateChange(State.IMPLEMENTED.name(), this));
 		this.state = State.IMPLEMENTED;
 		logState();
 		writeTestCompleted(dto2, project);
 		ofy().save().entity(this).now();
+		project.historyLog().endEvent();
 	}
 
 	public void closeUnitTest()

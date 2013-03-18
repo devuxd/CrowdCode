@@ -2,7 +2,7 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteTest" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
@@ -73,6 +73,7 @@
 	</script>
 
 
+	<%@include file="/html/elements/microtaskTitle.jsp" %>
 <h5>
 	We are writing the following function: <br /> <%= methodFormatted %><br />
 Write a unit test for the following test case:</h5>

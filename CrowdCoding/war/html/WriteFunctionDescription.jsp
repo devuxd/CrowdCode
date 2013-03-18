@@ -2,7 +2,7 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteFunctionDescription" %>
 
@@ -29,7 +29,8 @@
 		});
 
 	</script>
-		
+	
+	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<h5> Please write a description for the following function: <BR><BR>	
 	<%= microtask.getCallDescription() %><BR><BR>	
 	</h5>

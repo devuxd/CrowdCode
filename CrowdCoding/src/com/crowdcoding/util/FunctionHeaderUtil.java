@@ -4,8 +4,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.List;
 
+import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Project;
 
 public class FunctionHeaderUtil
 {

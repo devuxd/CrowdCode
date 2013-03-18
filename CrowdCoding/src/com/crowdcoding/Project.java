@@ -1,9 +1,12 @@
-package com.crowdcoding.artifacts;
+package com.crowdcoding;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import com.crowdcoding.Leaderboard;
-import com.crowdcoding.Worker;
+import com.crowdcoding.artifacts.Artifact;
+import com.crowdcoding.artifacts.Entrypoint;
+import com.crowdcoding.artifacts.Function;
+import com.crowdcoding.artifacts.Test;
+import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.CurrentStatisticsDTO;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
@@ -23,6 +26,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Ignore;
 
 /*
  * Projects are the root of the artifact and microtask graphs. A project instance MUST be created before
@@ -41,6 +45,7 @@ public class Project
 	private int writtenFunctions;
 	private int linesOfCode;
 	private int microtasksCompleted;
+	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
 	// Static initializer for class Project
 	static
@@ -79,6 +84,7 @@ public class Project
 	{	
 		System.out.println("Creating new project");	
 		
+		this.historyLog = new HistoryLog();		
 		this.id = id;
 		
 		// Setup the project to be ready 
@@ -98,9 +104,18 @@ public class Project
 		// Need to use an ancestor query to do this inside a transaction. But the ancestor of project is project.
 		// So we just create a normal key with only the type and id
 		project = ofy().load().key(Key.create(Project.class, id)).get();
-		if (project == null)		
-			project = new Project(id);			
-			
+		if (project == null)	
+		{
+			project = new Project(id);
+		}
+		else
+		{
+			// When a project is intialized (above), the history log is created inside the project constructor.
+			// It has to be created there because it must be created before the project can be initialized.
+			// When the project is loaded from the datastore, we create a fresh history log here.
+			project.historyLog = new HistoryLog();
+		}
+		
 		return project;
 	}
 
@@ -132,6 +147,12 @@ public class Project
 		CurrentStatisticsDTO stats = new CurrentStatisticsDTO(microtasksCompleted, linesOfCode, 
 				writtenFunctions);
 		FirebaseService.publishStatistics(stats.json(), this);		
+	}
+	
+	// Publishes the history log to Firebase
+	public void publishHistoryLog()
+	{
+		FirebaseService.publishHistoryLog(historyLog.json(), this);
 	}
 	
 	// Report that a function is now written
@@ -180,5 +201,8 @@ public class Project
 		return leaderboard;
 	}
 
-
+	public HistoryLog historyLog()
+	{
+		return historyLog;
+	}
 }

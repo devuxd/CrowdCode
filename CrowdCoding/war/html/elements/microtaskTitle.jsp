@@ -1,0 +1,1 @@
+<h3><%= microtask.microtaskTitle() %> (<%= microtask.getSubmitValue() %> points)</h3>

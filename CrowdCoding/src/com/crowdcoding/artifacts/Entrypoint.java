@@ -2,6 +2,7 @@ package com.crowdcoding.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.WriteEntrypoint;
@@ -49,5 +50,17 @@ public class Entrypoint extends Artifact
 	public UserStory getUserStory()
 	{
 		return ofy().load().ref(userStory).get();
+	}
+		
+	public String getName() 
+	{ 
+		if (function != null)
+		{
+			return ofy().load().ref(function).get().getName();
+		}
+		else
+		{
+			return "";
+		}		
 	}
 }
