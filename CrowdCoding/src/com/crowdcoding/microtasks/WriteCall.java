@@ -2,10 +2,12 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.Project;
+import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.history.MicrotaskSpawned;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -28,6 +30,9 @@ public class WriteCall extends Microtask
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
 		this.callee = (Ref<Function>) Ref.create(callee.getKey());		
 		ofy().save().entity(this).now();
+		
+		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));
+		project.historyLog().endEvent();
 	}
 	
 	public void onAssign(Project project)
@@ -59,5 +64,15 @@ public class WriteCall extends Microtask
 	public Function getCallee()
 	{
 		return callee.getValue();
+	}
+	
+	public Artifact getOwningArtifact()
+	{
+		return getCaller();
+	}
+	
+	public String microtaskTitle()
+	{
+		return "Add a call";
 	}
 }

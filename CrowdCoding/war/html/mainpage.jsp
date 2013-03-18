@@ -2,7 +2,7 @@
 <%@page import="com.googlecode.objectify.Work"%>
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@page import="com.crowdcoding.artifacts.Project"%>
+<%@page import="com.crowdcoding.Project"%>
 <%@page import="com.crowdcoding.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
@@ -100,17 +100,15 @@
 <script src="/html/errorCheck.js"></script>
 <script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
-<script src="/_ah/channel/jsapi"></script> 
 <script src="/include/stars/jquery.rating.js"></script>
 <script src="/html/keybind.js"></script>
 <script src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
+	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
 
     $(document).ready(function()
     {
-        // global QUNIT config thing I ADDED THIS MAY MOVE or remove
-		// QUnit.config.testTimeout = 1000;
         loadMicrotask();
 
 		$("#logoutLink").click(function() {
@@ -165,13 +163,23 @@
     
     function submit(formData)
     {
+    	var stringifiedData = JSON.stringify( formData );
+    	
 		$.ajax({
 		    contentType: 'application/json',
-		    data: JSON.stringify( formData ),
+		    data: stringifiedData,
 		    dataType: 'json',
 		    type: 'POST',
 		    url: '/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID,
-		}).done( function (data) { loadMicrotask();	});   	 
+		}).done( function (data) { loadMicrotask();	});   
+		
+		// Push the microtask submit data onto the Firebase history stream
+		var eventData = {'microtaskType': microtaskType, 
+					   'microtaskID': microtaskID,
+					   'workerHandle': '<%= worker.getHandle() %>',
+					   'workerID': '<%= worker.getUserID() %>'};
+		eventData.microtask = formData;
+		eventListRef.child(microtaskID).set(eventData);
     }
      
 	function skip() 

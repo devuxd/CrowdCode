@@ -2,11 +2,13 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.Project;
+import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.EntrypointDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.history.MicrotaskSpawned;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -29,6 +31,9 @@ public class WriteFunctionDescription extends Microtask
 		this.callDescription = callDescription;
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
+		
+		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		project.historyLog().endEvent();
 	}
 	
 	protected void doSubmitWork(DTO dto, Project project)
@@ -52,4 +57,14 @@ public class WriteFunctionDescription extends Microtask
 	{
 		return "/html/WriteFunctionDescription.jsp";
 	}	
+	
+	public Artifact getOwningArtifact()
+	{
+		return function.get();
+	}
+	
+	public String microtaskTitle()
+	{
+		return "Write a function description";
+	}
 }
