@@ -86,7 +86,7 @@ deepEqual( actual, expected, message ): comparing to objects <br />
 equal( actual, expected, message ): check if both are equal <br />
 notDeepEqual( actual, expected, message ): <br />
 notEqual( actual, expected, message ): <br />
-throws( actual, expected, message ): if exception is expected <br />
+throws( 'actual', expected, message ): if exception is expected, actual needs to be in ' <br />
 <br />
 Examples:<br />
 equal(price, qty*itemCost, "line item price looks incorrect");<br />
