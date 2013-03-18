@@ -78,9 +78,7 @@
 		});
 	</script>
 
-
-	<h4>
-	DISPUTED TEST
+	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<br>
 	This unit test suite was disputed for the following reason:
 	<br>

@@ -562,12 +562,10 @@
 			Revert Code</button>
 		<form id="sketchForm" action="">
 
-
+			<%@include file="/html/elements/microtaskTitle.jsp" %>
 			<BR>
 			<h5>
-				This function has failed a potentially rigorous test set. Here's the
-				function description and implementation, the test that failed, and
-				the error message it gave. Can you fix it? As a note you may use the function:<BR>
+				This function has failed its tests. Can you fix it? <BR>You may use the function:<BR>
 				printDebugStatement(...);
 				<br>
 				to print data to the console
