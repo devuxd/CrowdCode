@@ -218,6 +218,11 @@ public /*abstract*/ class Microtask
 			return null;
 	}
 	
+	public int getSubmitValue()
+	{
+		return submitValue;
+	}
+	
 	public static String StatusReport(Project project)
 	{
 		StringBuilder output = new StringBuilder();
