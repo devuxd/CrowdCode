@@ -2,6 +2,7 @@ package com.crowdcoding.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.Project;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.WriteUserStory;
 import com.googlecode.objectify.Ref;
@@ -24,6 +25,10 @@ public class UserStory extends Artifact
 	public UserStory(Project project)
 	{	
 		super(project);
+		
+		// Save this entity before WriteUserStory is created, as it requires us to already be created as
+		// an entity (in WriteUserStory.getOwningArtifact()).
+		ofy().save().entity(this).now();
 		
 		// Initial state of the user story is an empty user story.
 		// To create content, a write user story microtask is created.		
@@ -49,6 +54,11 @@ public class UserStory extends Artifact
 	public String getText()
 	{
 		return text;
+	}
+	
+	public String getName()
+	{
+		return "";
 	}
 	
 	// Gets the currently associated microtask, or null if none exists.

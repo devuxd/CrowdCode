@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
+import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.history.MicrotaskSpawned;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
@@ -38,6 +40,9 @@ public class DisputeUnitTestFunction extends Microtask
 		this.test = (Ref<Test>) Ref.create(test2.getKey());		
 		this.description = description;
 		ofy().save().entity(this).now();
+		
+		project.historyLog().beginEvent(new MicrotaskSpawned(this, test2));
+		project.historyLog().endEvent();
 	}
 
 	protected void doSubmitWork(DTO dto, Project project)
@@ -69,5 +74,15 @@ public class DisputeUnitTestFunction extends Microtask
 	public Function getFunction()
 	{
 		return test.getValue().getFunction();
+	}
+	
+	public Artifact getOwningArtifact()
+	{
+		return test.get();
+	}
+	
+	public String microtaskTitle()
+	{
+		return "Dispute unit test";
 	}
 }

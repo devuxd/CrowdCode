@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
-import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Project;
+import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.history.MicrotaskSkipped;
+import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.dto.history.MicrotaskSubmitted;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
@@ -32,6 +35,7 @@ public /*abstract*/ class Microtask
 	@Index protected boolean assigned = false;
 	@Index protected boolean completed = false;
 	protected int submitValue = 10;
+	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
 	protected Ref<Worker> worker;
 	protected List<Ref<Worker>> excludedWorkers = new ArrayList<Ref<Worker>>();  // Workers who may not be assigned this microtask
 	
@@ -84,6 +88,7 @@ public /*abstract*/ class Microtask
 
 		microtask.worker = Ref.create(crowdUser.getKey());
 		microtask.assigned = true;
+		microtask.assignmentTimeInMillis = System.currentTimeMillis();
 		microtask.onAssign(project);
 		crowdUser.setMicrotask(microtask);
 		ofy().save().entity(microtask).now();
@@ -96,10 +101,12 @@ public /*abstract*/ class Microtask
 	
 	// Unassigns worker from this microtask
 	// Precondition - the worker must be assigned to this microtask
-	public void skip(Worker worker)
+	public void skip(Worker worker, Project project)
 	{
 		assert (worker.getMicrotask() == this);
 		assert (assigned == true);
+		
+		project.historyLog().beginEvent(new MicrotaskSkipped(this));
 		
 		// Increment the point value by 10
 		this.submitValue += 10;
@@ -112,6 +119,8 @@ public /*abstract*/ class Microtask
 		worker.setMicrotask(null);
 		assigned = false;	
 		ofy().save().entity(this).now();
+		
+		project.historyLog().endEvent();
 	}
 		
 	public Key<Microtask> getKey()
@@ -142,6 +151,8 @@ public /*abstract*/ class Microtask
 			worker.setMicrotask(null);
 			return;
 		}
+		
+		project.historyLog().beginEvent(new MicrotaskSubmitted(this));
 				
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -157,7 +168,9 @@ public /*abstract*/ class Microtask
 		worker.setMicrotask(null);
 		worker.awardPoints(this.submitValue, project);
 		project.microtaskCompleted();
-		ofy().save().entity(this).now();		
+		ofy().save().entity(this).now();
+		
+		project.historyLog().endEvent();
 	}
 
 	// This method MUST be overridden in the subclass to do submit work.
@@ -170,6 +183,39 @@ public /*abstract*/ class Microtask
 	protected Class getDTOClass()
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
+	}
+	
+	// This method MUST be overridden in the subclass to provide the owning artifact.
+	// The owning artifact is the artifact that will be modified by this microtask. If multiple artifacts 
+	// may be modified, the owning artifact is null.
+	public Artifact getOwningArtifact()
+	{
+		throw new RuntimeException("Error - must implement in subclass!");
+	}
+	
+	// This method MUST be overridden in the subclass to provide the name of the microtask.
+	public String microtaskTitle()
+	{
+		throw new RuntimeException("Error - must implement in subclass!");
+	}	
+	
+	public String microtaskName()
+	{
+		// Get the name of the runtime microtask instance (e.g., ReuseSearch)
+		return this.getClass().getSimpleName();
+	}
+	
+	public long assignmentTimeInMillis()
+	{
+		return assignmentTimeInMillis;
+	}
+	
+	public Worker getWorker()
+	{
+		if (worker != null)
+			return ofy().load().key(worker.getKey()).get();
+		else
+			return null;
 	}
 	
 	public static String StatusReport(Project project)

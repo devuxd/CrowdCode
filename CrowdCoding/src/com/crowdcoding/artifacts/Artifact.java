@@ -1,5 +1,6 @@
 package com.crowdcoding.artifacts;
 
+import com.crowdcoding.Project;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -32,4 +33,17 @@ public /*abstract*/ class Artifact
 	{
 		return Key.create(project, Artifact.class, id);
 	}
+	
+	public long getID()
+	{
+		return id;
+	}
+
+	public String getArtifactType() 
+	{ 
+		// Return the name of the runtime class of this instance (e.g., Function)
+		return this.getClass().getSimpleName();
+	}
+	
+	public /* abstract */  String getName() { throw new RuntimeException("Must implement getName()."); };
 }

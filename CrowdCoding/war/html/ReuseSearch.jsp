@@ -1,4 +1,4 @@
-<%@ page import="com.crowdcoding.artifacts.Project" %>
+<%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.artifacts.Function" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.Worker" %>

@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
@@ -204,10 +204,11 @@ public class CrowdServlet extends HttpServlet
 					
 					Microtask microtask = ofy().load().key(Key.create(project.getKey(), Microtask.class, microtaskID)).get();
 					if (skip)
-						microtask.skip(worker);
+						microtask.skip(worker, project);
 					else
 						microtask.submit(payload, worker, project);	
 					project.publishStatistics();
+					project.publishHistoryLog();
 	            }            
 	        });
     	}        

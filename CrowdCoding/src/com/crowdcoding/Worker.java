@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.PointEventDTO;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.util.FirebaseService;
@@ -154,13 +153,13 @@ public class Worker
 	}
 	
 	// Sets the worker to be logged out. This deletes all queued messages.
-	public void logout()
+	public void logout(Project project)
 	{
 		loggedIn = false;
 		messages.clear();
 		Microtask microtaskObj = getMicrotask();
 		if (microtaskObj != null)
-			microtaskObj.skip(this);
+			microtaskObj.skip(this, project);
 		ofy().save().entity(this).now();
 	}
 

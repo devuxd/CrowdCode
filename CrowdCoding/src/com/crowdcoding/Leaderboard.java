@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.crowdcoding.artifacts.Project;
 import com.crowdcoding.dto.LeaderboardDTO;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
