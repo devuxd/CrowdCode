@@ -26,21 +26,33 @@
 		getResults(actual,expected,message,succeeded);
 	}
 	
-	// TODO: Throws its complicated maybe try catch entire block and on error 
 	// report the actual as error, expected as error and message as thrown error
-//	function throws(actual,expect,message)
-//	{
-//		var succeeded = false;
-//		try
-//		{
-//			actual
-//		}
-//		catch(err)
-//		{
-//			succeeded = expect = err
-//		}
-//		getResults(actual,expected,message,succeeded);
-//	}
+	// in order for this method to work we must take actual as a string and evaluate
+	// it inside throws 
+	function throws(actual,expect,message)
+	{
+		var succeeded = false;
+		// if does not throw an error will not succeed 
+		try
+		{
+			eval(actual)
+		}
+		catch(err)
+		{
+			// succeed if expected error message is same
+			succeeded = err.message.indexOf(expect) > -1;
+			actual = "";
+			if(succeeded)
+			{
+				message = "Error Messages match";
+			}
+		}
+		if(!succeeded)
+		{
+			actual = "no error was thrown";
+		}
+		getResults(actual,expect,message,succeeded);
+	}
 	
 	
 	

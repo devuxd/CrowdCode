@@ -207,11 +207,12 @@ var spinner = new Spinner(opts).spin(target);
 				try
 				{
 					eval(data.testCase);
-					for(var index = 0; index < result.length; index++)
+					for(var index = 0; index < results.length; index++)
 					{
-						//self.postMessage(result[index].message + 'entered');
-						if(!result.result)
+						//self.postMessage("this is from worker" + results[index].message + " " + results[index].actual + results[index].expected + results[index].result + "is it passed" + testCasedPassed);
+						if(!results[index].result)
 						{
+							//self.postMessage("this is from worker ERROR" + results[index].message + " " + results[index].actual + results[index].expected + results[index].result + "is it passed" + testCasedPassed);
 							testCasedPassed = false;
 							break;
 						}
@@ -224,9 +225,7 @@ var spinner = new Spinner(opts).spin(target);
 				}
 				self.postMessage({number:data.number, result:testCasedPassed});
 		 }
-		 //self.postMessage(testCasedPassed);
    };
-//}
   </script>
 
 		<div class="bootbox modal fade in" tabindex="-1"

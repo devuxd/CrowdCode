@@ -42,10 +42,12 @@
 		<script src="/html/assertionFunctions.js"></script>
 				<script src="/include/spin.js"></script>
 		<script>
+			var windowErrorFound = false;
 			window.onerror = function(err, url, lineNumber) 
 			{  
 				 //save error and send to server for example.
 				console.log(err);
+				windowErrorFound = true;
 				i = 0;
 				var htmlContent = "";
 				var htmlTab= "";
@@ -343,8 +345,8 @@
 								}
 								else
 								{
-								htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
-								htmlContent += " Outcome Message: " + result.message + "</br>";
+									htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
+									htmlContent += " Outcome Message: " + result.message + "</br>";
 								}
 								console.log(tabHtml[p] + " " + p);
 								tabHtml[p] = tabHtml[p].replace("class='true'",'class=false')
@@ -451,11 +453,16 @@
 				
 				$(document).ready(function()
 				{
-					$("#tabContent").html(htmlContent);
-					$("#tabs").html(htmlTab);
-					if(htmlTab.search("false") == -1 && isFirstTime)
+					if(!windowErrorFound)
 					{
-						$("#codeSubmit").click()
+						$("#tabContent").html(htmlContent);
+						$("#tabs").html(htmlTab);
+					}
+					// stop the interval before submission
+					clearInterval(myInterval);
+					if(htmlTab.search("false") == -1 && isFirstTime && !windowErrorFound)
+					{
+						//$("#codeSubmit").click()
 					}
 				});
 				
@@ -543,7 +550,7 @@
 				catch (err)
 				{
 					//results = 
-					//self.postMessage(err.message);
+					self.postMessage("ERRROR:     " + err.message + "    " + data.testCase);
 				}
 				self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun});
 		 }
