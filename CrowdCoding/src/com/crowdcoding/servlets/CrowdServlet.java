@@ -80,13 +80,14 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project/submit - doSubmit
 		 *  /  - 404
 		 */
+        String[] path = req.getPathInfo().split("/");
+		
 		
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();  
+        
         if (user != null) 
         {
-	        String[] path = req.getPathInfo().split("/");
-	        
 			// First token will always be empty (portion before the first slash)
 			if (path.length > 1)
 			{
@@ -122,7 +123,14 @@ public class CrowdServlet extends HttpServlet
 			}		
         } else 
         {
-            resp.sendRedirect(userService.createLoginURL(req.getRequestURI()));
+        	if (path.length > 1)
+        	{        	
+        		resp.sendRedirect(userService.createLoginURL("/" + path[1]));
+        	}
+        	else
+        	{
+				writeResponseString(resp, "404 - no resource found for " + req.getPathInfo());
+        	}
         }
 	}
 	
