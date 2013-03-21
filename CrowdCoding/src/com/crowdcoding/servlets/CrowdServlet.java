@@ -75,6 +75,7 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project> - mainpage.jsp
 		 *  /<project>/admin - admin.jsp
 		 *  /<project>/admin/* - doAdmin
+		 *  /<project>/history - history.jsp
 		 *  /<project>/run - run.jsp
 		 *  /<project>/fetch - doFetch
 		 *  /<project/submit - doSubmit
@@ -108,6 +109,8 @@ public class CrowdServlet extends HttpServlet
 							doSubmit(req, resp);
 						else if (action.equals("admin") && path.length == 3)
 			        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
+						else if (action.equals("history") && path.length == 3)
+			        		req.getRequestDispatcher("/html/history.jsp").forward(req, resp);
 						else if (action.equals("admin") && path.length > 3)
 							doAdmin(req, resp, projectID, path);
 						else if (action.equals("run"))
