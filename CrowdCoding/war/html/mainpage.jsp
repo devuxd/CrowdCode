@@ -67,6 +67,10 @@
 			<p><span id="functionsWritten"></span><small>&nbsp;&nbsp;&nbsp;functions written</small></p>
 			<p><span id="microtasksCompleted"></span><small>&nbsp;&nbsp;&nbsp;microtasks completed</small></p>
 		</div>
+		<div id="feedback">
+			<textarea id="feedbackBox" placeholder="What works well in CrowdCode? What doesn't?"></textarea><BR>
+			<button class="btn btn-primary" id="sendFeedback" >Send feedback</button>		
+		</div>
 	</div>
 </div>
 <div id="footer">
@@ -106,7 +110,8 @@
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
-
+	var feedbackRef = new Firebase(firebaseURL + '/feedback');
+	
     $(document).ready(function()
     {
         loadMicrotask();
@@ -130,6 +135,8 @@
 
 			return false;
 		});
+		
+		$("#sendFeedback").click(sendFeedback);
 		
 		// Hook the leaderboard to Firebase		
 		var leaderboardRef = new Firebase(firebaseURL + '/leaderboard');
@@ -219,6 +226,18 @@
 	function newNewsfeedItem(item)
 	{
 	}	
+	
+	function sendFeedback()
+	{
+		// Push the feedback to firebase
+		var feedback = {'microtaskType': microtaskType, 
+					   'microtaskID': microtaskID,
+					   'workerHandle': '<%= worker.getHandle() %>',
+					   'workerID': '<%= worker.getUserID() %>',
+					   'feedback': $("#feedbackBox").val()};
+		feedbackRef.push(feedback);
+		$("#feedbackBox").val("");		
+	}
 	
 </script>
 </body>
