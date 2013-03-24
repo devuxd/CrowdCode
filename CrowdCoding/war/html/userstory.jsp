@@ -16,6 +16,9 @@
 
 <div id="microtask">
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
+	
 		var microtaskType = 'writeuserstory';
 		var microtaskID = <%= microtask.getID() %>;
 	

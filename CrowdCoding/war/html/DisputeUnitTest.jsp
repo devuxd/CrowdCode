@@ -39,6 +39,9 @@
 	<script>
 		debugger;
 		
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
+		
 		var microtaskType = 'disputeunittestfunction';
 		var microtaskID = <%= microtask.getID() %>;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);

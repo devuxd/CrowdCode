@@ -37,6 +37,8 @@
 	        'name': 'arg1', 'type': 'String', 'description': 'a red parameter' }]}]; -->
 
 <script>
+	var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
 	var microtaskType = 'ReuseSearch';
 	var microtaskID = <%= microtask.getID() %>;
 	

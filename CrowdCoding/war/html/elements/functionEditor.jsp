@@ -1,6 +1,6 @@
 	<script>
 		var myCodeMirror = CodeMirror.fromTextArea(code);
-	   	myCodeMirror.setValue('<%=functionCode%>');
+	   	myCodeMirror.setValue(editorCode);
 	 	myCodeMirror.setOption("theme", "vibrant-ink");
 		  			
 	 	function doPresubmitWork()
@@ -15,9 +15,7 @@
 		// occur, write an error message.
 	 	function checkCodeForErrors()
 	 	{
-		    var functionHeader = <%= functionHeader %>;
 			functionHeader = functionHeader.replace(/\"/g,"'");
-			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
 			var functionCode = allTheFunctionCode + " " + functionHeader + "{"  + $("#code").val() + "}";
 			debugger;
 			if(("\n" + $("#code").val()).indexOf("\n#") == -1 && ("\n" + $("#code").val()).indexOf("\n!") == -1)

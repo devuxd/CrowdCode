@@ -34,6 +34,9 @@
 
 <div id="microtask">
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
+	
 		var microtaskType = 'writetest';
 		var microtaskID = <%= microtask.getID() %>;	
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
