@@ -40,8 +40,11 @@
 	<div id="microtask">
 		<script src="/include/bootbox.min.js"></script>
 		<script src="/html/assertionFunctions.js"></script>
-				<script src="/include/spin.js"></script>
+		<script src="/include/spin.js"></script>
 		<script>
+			var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+			var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
+		
 			var windowErrorFound = false;
 			window.onerror = function(err, url, lineNumber) 
 			{  

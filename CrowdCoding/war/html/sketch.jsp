@@ -26,11 +26,16 @@
 %>
 
 
-
 <div id="microtask">
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
 		var microtaskType = 'sketchfunction';
 		var microtaskID = <%= microtask.getID() %>;
+		
+		var editorCode = '<%=functionCode%>';
+		var functionHeader = <%= functionHeader %>;
+		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
 		   	 	
    		$(document).ready(function() 
 		{
