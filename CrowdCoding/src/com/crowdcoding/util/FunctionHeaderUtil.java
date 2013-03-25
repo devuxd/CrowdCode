@@ -37,6 +37,18 @@ public class FunctionHeaderUtil
 			{
 				continue;
 			}
+			// this will make lint formated globals if we ever need, just need merge with unitTestGlobals inside errorCheck.js
+//			String a = b.toString();
+//			String[] temp = a.split("[\\w]+\\(");
+//			for(int i = 0; i < temp.length; i++)
+//			{
+//				a = a.replace(temp[i], "");
+//			}
+//			a = a.replaceAll("\\(", " ");
+//			a = a.replaceAll(" ", " :false, ");
+//			a = a.trim();
+//			a = a.substring(0, a.length()-1);
+//			System.out.println(a);
 			b.append(function.getFunctionHeader());
 			b.append("{");
 			b.append(function.getEscapedCode());
