@@ -32,6 +32,8 @@
 	//String functionCode = strWriter.toString();
 	String functionCode = "'"+microtask.getFunctionCode()+"'";
 	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(microtask.getFunction(), project) + "'";
+	// add current header becuase of recursive issue not marked in correct state so getAllActive ignores it
+	String allFunctionCodeInSystemHeader = "'" + microtask.getFunction().getFunctionHeader() + "{}" + FunctionHeaderUtil.getAllActiveFunctionsHeader(null, project) + "'";
 	System.out.println(functionCode);
 	System.out.println(functionHeader);
 %>
@@ -221,7 +223,7 @@
 		var htmlContent = "";
 		var hasAtLeast1Test = false;
 		var i = 0;
-		var allTheFunctionCode = <%=allFunctionCodeInSystem%>;
+		var allTheFunctionCode = <%=allFunctionCodeInSystemHeader%> + <%=allFunctionCodeInSystem%>;
 		// keep an array of html tabs which we concanate at the end
 		// do it this way so we can make some tabs with mulitple tests
 		// reflect correct color
@@ -233,6 +235,7 @@
 			{
 			hasAtLeast1Test = true;
 			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+			console.log("LINT" + lintCheckFunction);
 			var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
 			var errors = checkForErrors(JSLINT.errors);
 			console.log(errors);
@@ -356,7 +359,7 @@
 								if(result.message != null)
 								{
 									// I dont think we should show them a passed test case 
-									htmlContent += " Passed: " + QunitTestCases[index] + index + "</br>";
+									htmlContent += " Passed: " + QunitTestCases[index] + "</br>";
 								}
 							}
 						});
@@ -462,7 +465,7 @@
 					clearInterval(myInterval);
 					if(htmlTab.search("false") == -1 && isFirstTime && !windowErrorFound)
 					{
-						//$("#codeSubmit").click()
+						$("#codeSubmit").click()
 					}
 				});
 				
