@@ -23,9 +23,8 @@
 	mapper.writeValue(strWriter, microtask.getAllTestCodeInSystem());
 	String testCases = strWriter.toString();
 	// get all active functions
-	String allFunctionCodeInSystem = "'"
-			+ FunctionHeaderUtil.getAllActiveFunctions(null, project)
-			+ "'";
+	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(null, project) + "'";
+	String allFunctionCodeInSystemHeader = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(null, project) + "'";
 %>
 
 <body>
@@ -69,7 +68,7 @@
 	function runUnitTests(arrayOfTests, functionName,isFirstTime)
 	{
 		debugger;
-		var allTheFunctionCode = <%=allFunctionCodeInSystem%>;
+		var allTheFunctionCode = <%=allFunctionCodeInSystemHeader%> + <%=allFunctionCodeInSystem%>;
 		// set interval so only run it once per 1500 milliseconds
 		var p = 0;
 		var myInterval = setInterval(function(){
