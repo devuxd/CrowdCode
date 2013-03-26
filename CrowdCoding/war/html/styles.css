@@ -131,8 +131,13 @@ font-family: Lucida Console, Monaco, monospace;
 					}
 #score p { font-size: larger; }
 
-#contentPane { width: 640px; background:#ffdb66;  border-radius: 5px; margin-left:3%; }
+#contentPane { width: 610px; background:white;  border-radius: 10px; margin-left:3%; padding: 15px;
+				box-shadow: 10px 10px 5px #888888;	}
 #contentPane h4, h5 {margin-left:2%;}
+#microtaskValueTD { width: 250px;}
+#microtaskTitleTable { padding: 0px; margin: 0px; }
+#microtaskTitleTable p, h3 { padding: 0px; margin: 0px; }
+
 #errors{ color:red; background-color:lightgrey;}
 #rightbar { background: none repeat scroll 0 0; margin-top: 0%;width: auto; float:right;}
 #leaderboardTable 
