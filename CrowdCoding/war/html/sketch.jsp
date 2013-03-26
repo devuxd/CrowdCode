@@ -57,7 +57,7 @@
 	</script>
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
-	<p><h5> <%= methodFormatted %><BR>
+	<h5> <%= methodFormatted %><BR>
 
 Your mission is to implement the above function. You may choose to either completely
 implement the function or to leave portions as <i>pseudocode</i>.<BR>
