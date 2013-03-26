@@ -35,43 +35,93 @@
 	<title>CrowdCode</title>
 	<link type="text/css" rel="stylesheet" href="/include/jquery.rating.css" />
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/html/animate.css" type="text/css" />
 	<link rel="stylesheet" href="/html/DebugTestFailure.css" type="text/css" />
 	<link rel="stylesheet" href="/html/styles.css" type="text/css" /> 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
 </head>
 
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header" style="background: #1B87E0">
+  </div>
+  <div class="modal-body" style="background: #FFFFFF">
+      <h3 id="myModalLabel"><center>Microtask complete!</center></h3>
+  
+  </div>
+  <div class="modal-footer" style="background: #1B87E0">
+  </div>
+</div>
+
 <body id= "mainpagebody">
  
 <!-- Main content -->
-<div id="titlebar">
-	<h4>CrowdCode</h4>
+<div id="titlebar" class="animated pulse">
+	<h4>CrowdCode
+
+	
+			<div id="statistics" >
+						<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
+			<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
+			<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
+	<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font></div>  </h4>
 </div>
 <div id="container">
-	<div id= "leftbar">
+
+<div class="row-fluid">
+
+
+ <div class="span2">
+ 
+<!-- Modal -->
+
+
+
+	<div id= "leftbar" class="animated fadeInLeftBig">
+	<div id="scoreTableAnimHolder" class="animated flip">	<div id="scoreTableTitle" class="animated wiggle" >   &nbsp;&nbsp;  Your score <i class=" icon-star"> </i> &nbsp;</div> </div>
+	
 	<table id="scoreTable">
+	
 		<tr>
-			<td><%=worker.getHandle()%></td>
-		</tr>
-		<tr>
-			<td><p><span id="score">0 points</span></p></td>
+			<td class="animated fadeInLeftBig"><b ><p><span id="score" >0 </span> points</p></b></td>
 		</tr>
 	</table>
+	
+	
+			<div id="leaderboardTitle" class="animated wiggle" >   &nbsp;&nbsp;  Leaders  &nbsp; <i class=" icon-th-list"> </i> </div>
+	
+			<div id="leaderboard"><table id="leaderboardTable"><tr><td></td></tr></table></div>
+
+	
 	</div>
-	<div id="contentPane"></div>
-	<div id="rightbar">
-		<div id="leaderboard"><table id="leaderboardTable"></table></div><BR><BR><BR>
-		<div id="statistics">
-			<p><B>Project</B></p>
-			<p><span id="loc"></span><small>&nbsp;&nbsp;&nbsp;lines of code</small></p>
-			<p><span id="functionsWritten"></span><small>&nbsp;&nbsp;&nbsp;functions written</small></p>
-			<p><span id="microtasksCompleted"></span><small>&nbsp;&nbsp;&nbsp;microtasks completed</small></p>
-		</div>
-		<div id="feedback">
-			<textarea id="feedbackBox" placeholder="What works well in CrowdCode? What doesn't?"></textarea><BR>
-			<button class="btn btn-primary" id="sendFeedback" >Send feedback</button>		
-		</div>
+</div>
+
+ <div class="span8">
+<div id="contentPane" class="animated bounceIn"></div>
+</div>
+
+ <div class="span2">
+<div id="rightbar" class="animated fadeInRightBig ">
+
+<div id="activityFeedTitle" class="animated wiggle" >   &nbsp;&nbsp;  Recent Activity <i class=" icon-comment"> </i> &nbsp;</div>
+<div id="activityFeed">
+	
+			<div id="activityFeedTable" >
+			
+	
+	
 	</div>
+	</div>
+	
+
+</div>
+</div>
+
+
+
+
+
+</div>
 </div>
 <div id="footer">
 	<table>
@@ -201,11 +251,18 @@
 		hasBeenIntialized = false;
 	}
 
-	function loadMicrotask() 
+		function loadMicrotask() 
 	{
 		$('body').scrollTop(0);
-		$('#contentPane').load('/<%=projectID%>/fetch');
+		$('#contentPane').load('/<%=projectID%>/fetch', 
+		
+		function() {
+  	  		  $('#microtask').addClass('animated rollIn');
+  		    		
+  		    	   });
     	resetSubmitButtons();
+		    
+    	
 	}
 	
 	function updateLeaderboardDisplay(leaderboard)
@@ -221,12 +278,19 @@
 	function updateScoreDisplay(points)
 	{
 		$('#score').html(points);
+				$('#scoreTableAnimHolder').toggleClass('animated flip');
+		
+		
 	}
-	
-	function newNewsfeedItem(item)
+		function newNewsfeedItem(item)
 	{
-	}	
-	
+	 var itemValue = item.description;
+	 var itemPoints = item.points;
+
+		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' + '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' +"You earned " + itemPoints +  " points for "   + itemValue + "!" +  '</td> </tr> </br> </table>');					
+								 
+	 
+	}
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
