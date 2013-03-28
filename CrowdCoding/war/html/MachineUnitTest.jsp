@@ -129,12 +129,14 @@
 				}
 			}
 			p++;
+			setTimeout(function(){
 			if(p >= arrayOfTests.length)
 			{
 			  clearInterval(myInterval);
 			  $("#machineSubmit").children("input").removeAttr("disabled");
 			  $("#machineSubmit").children("input").click();
 			}
+		   },timeOutTime+50);
 		},timeOutTime+200);
 
 	}
