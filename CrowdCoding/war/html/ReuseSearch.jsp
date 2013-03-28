@@ -37,6 +37,8 @@
 	        'name': 'arg1', 'type': 'String', 'description': 'a red parameter' }]}]; -->
 
 <script>
+	var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
 	var microtaskType = 'ReuseSearch';
 	var microtaskID = <%= microtask.getID() %>;
 	
@@ -178,10 +180,8 @@
 
 <%@include file="/html/elements/microtaskTitle.jsp" %>
 Is there a function that does this?
-
-<h4><%=microtask.getCallDescription()%></h4><bR>
+<blockquote><%=microtask.getCallDescription()%></blockquote>
 Here's a search box that searches existing function descriptions:<BR>
-
 
 <form id="searchForm" action="">
 	<input type="text" id="SearchText" class="input-small" oninput="doSearch()">

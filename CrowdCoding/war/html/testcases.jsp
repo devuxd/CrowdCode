@@ -19,6 +19,8 @@
 <div id="microtask">
 
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
 		var microtaskType = 'writetestcases';
 		var microtaskID = <%= microtask.getID() %>;	
 	
@@ -71,7 +73,7 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<p><h5><%= methodFormatted %><BR>
 In what situations or cases might this function misbehave, show unexpected results, or fail? Are there unexpected
-corner cases that might not work?</h5></h5>
+corner cases that might not work?</h5>
 
 	
 	<BR>

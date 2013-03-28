@@ -39,6 +39,9 @@
 	<script>
 		debugger;
 		
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
+		
 		var microtaskType = 'disputeunittestfunction';
 		var microtaskID = <%= microtask.getID() %>;
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
@@ -81,11 +84,10 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<br>
 	This unit test suite was disputed for the following reason:
-	<br>
-	<%= disputeDescription %>
-	<br>
-	<br>
-	</h4>
+	
+	<blockquote><%= disputeDescription %></blockquote>
+	
+	
 	
 	<span class="reference">
 	Unit tests can be: 	<br>

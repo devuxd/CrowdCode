@@ -15,6 +15,9 @@
 
 <div id="microtask">
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
+	
 		var microtaskType = 'WriteFunctionDescription';
 		var microtaskID = <%= microtask.getID() %>;	
 	
@@ -31,9 +34,9 @@
 	</script>
 	
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<h5> Please write a description for the following function: <BR><BR>	
-	<%= microtask.getCallDescription() %><BR><BR>	
-	</h5>
+	<h5> Please write a description for the following function: </h5>	
+	<blockquote><%= microtask.getCallDescription() %></blockquote>
+	
 	
 	<form id="signatureForm" action="">	
 		<%@include file="/html/elements/signatureEditor.jsp" %>

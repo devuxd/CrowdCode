@@ -61,6 +61,6 @@ public class WriteEntrypoint extends Microtask
 	
 	public String microtaskTitle()
 	{
-		return "Write an entrypoint";
+		return "Describe a function";
 	}
 }

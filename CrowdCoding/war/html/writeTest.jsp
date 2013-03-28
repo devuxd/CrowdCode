@@ -34,6 +34,9 @@
 
 <div id="microtask">
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
+	
 		var microtaskType = 'writetest';
 		var microtaskID = <%= microtask.getID() %>;	
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
@@ -77,9 +80,9 @@
 <h5>
 	We are writing the following function: <br /> <%= methodFormatted %><br />
 Write a unit test for the following test case:</h5>
-<h4>
-<%= description %>
-</h4><BR>
+
+<blockquote><%= description %></blockquote>
+
 <span class="reference">
 Reference Section:<br /><br />
 Assertions you can use when writing unit tests include: <br />

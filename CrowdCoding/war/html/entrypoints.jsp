@@ -17,6 +17,8 @@
 
 <div id="microtask">
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
 		var microtaskType = 'writeentrypoint';
 		var microtaskID = <%= microtask.getID() %>;
 	
@@ -28,8 +30,9 @@
 	</script>
 		
 	<%@include file="/html/elements/microtaskTitle.jsp" %>	
-	<h5> Consider the following user scenario: <BR><BR> <%=userStory.getText() %><BR><BR>
-	What should the first function be that implements this scenario, 
+	<h5>Consider a user scenario:</h5>
+	<blockquote><%=userStory.getText() %></blockquote>
+	<h5>What should the first function be that implements this scenario, 
 	and what parameters does it require?</h5><BR>
 	
 	<form id="signatureForm" action="">	

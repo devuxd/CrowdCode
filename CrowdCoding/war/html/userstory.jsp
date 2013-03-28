@@ -16,6 +16,9 @@
 
 <div id="microtask">
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
+	
 		var microtaskType = 'writeuserstory';
 		var microtaskID = <%= microtask.getID() %>;
 	
@@ -27,9 +30,9 @@
 
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<p><h5>Imagine a command line calculator. 
-	<br><BR>What is a single scenario that a user might wish to do with it?
-		How specifically and thoroughly can you describe it? </h5></p>
+	<br><blockquote>Imagine a traffic officer's mobile management system.</blockquote>
+	<h5>What is a single scenario that a user might wish to do with it?
+		How specifically and thoroughly can you describe it? </h5>
 
 	<form id="userstoryForm" action="">
 		<textarea name="userStory" id="userStory"></textarea>

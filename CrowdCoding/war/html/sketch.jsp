@@ -26,11 +26,16 @@
 %>
 
 
-
 <div id="microtask">
 	<script>
+		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
 		var microtaskType = 'sketchfunction';
 		var microtaskID = <%= microtask.getID() %>;
+		
+		var editorCode = '<%=functionCode%>';
+		var functionHeader = <%= functionHeader %>;
+		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
 		   	 	
    		$(document).ready(function() 
 		{
@@ -52,7 +57,7 @@
 	</script>
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
-	<p><h5> <%= methodFormatted %><BR>
+	<h5> <%= methodFormatted %><BR>
 
 Your mission is to implement the above function. You may choose to either completely
 implement the function or to leave portions as <i>pseudocode</i>.<BR>
