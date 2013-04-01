@@ -52,15 +52,17 @@
 	{
 		$('#noFunction').click(selectNoFunction);
 	  	$('#skip').click(function() { skip(); });		
-		$('#searchForm').submit(function() 
-		{
-			// Submit only if the worker has either selected a function or the no function button
-			if (noFunction || selectedFunction != '')			
-				submit({ functionName: selectedFunction, noFunction: noFunction });						
-			
-			return false;
-		});
+		$('#searchForm').submit(submitReuseSearch);
 	});
+	
+	function submitReuseSearch() 
+	{
+		// Submit only if the worker has either selected a function or the no function button
+		if (noFunction || selectedFunction != '')			
+			submit({ functionName: selectedFunction, noFunction: noFunction });						
+		
+		return false;
+	}
 	
 	function doSearch()
 	{
@@ -161,19 +163,9 @@
 	
 	function selectNoFunction()
 	{
-		// If there's currently a function selected, toggle it off
-		if (selectedFunction != '')
-		{
-			$('result_' + selectedFunction).removeClass('selectedResult');			
-			selectedFunction = '';				
-		}		
-		
-		// only toggle if no function is not already selected
-		if (!noFunction)
-		{
-			noFunction = true;		
-			$('#noFunction').button('toggle');
-		}
+		selectedFunction = '';	
+		noFunction = true;	
+		submitReuseSearch();
 	}	
 
 </script>
@@ -184,9 +176,9 @@ Is there a function that does this?
 Here's a search box that searches existing function descriptions:<BR>
 
 <form id="searchForm" action="">
-	<input type="text" id="SearchText" class="input-small" oninput="doSearch()">
+	<input type="text" id="SearchText" class="input-large" oninput="doSearch()">
 	<div id="results"></div><BR>	
-	If you can't find any, click this button and then submit:<br>
-	<button id="noFunction" type="button" class="btn">No function does this</button><BR><BR>		
+	If you can't find any, click this:<br>
+	<button id="noFunction" type="button" class="btn btn-primary">No function does this</button><BR><BR>		
 	<%@include file="/html/elements/submitFooter.jsp" %>
 </form>
