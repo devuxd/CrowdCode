@@ -153,16 +153,8 @@ public /*abstract*/ class Microtask
 		}
 		
 		project.historyLog().beginEvent(new MicrotaskSubmitted(this));
-				
-		ObjectMapper mapper = new ObjectMapper();
-		
-		DTO dto = null;
-		try {
-			dto = mapper.readValue(jsonDTOData, getDTOClass());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+
+		DTO dto = DTO.read(jsonDTOData, getDTOClass());
 		doSubmitWork(dto, project);	
 		this.completed = true;
 		worker.setMicrotask(null);

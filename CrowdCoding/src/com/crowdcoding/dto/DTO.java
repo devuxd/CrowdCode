@@ -22,4 +22,19 @@ public abstract class DTO
 		}	    
 	    return "";	
 	}
+	
+	// Reads a DTO of type dtoClass from the specified string
+	public static DTO read(String jsonDTOData, Class dtoClass)
+	{
+		ObjectMapper mapper = new ObjectMapper();
+		
+		DTO dto = null;
+		try {
+			dto = mapper.readValue(jsonDTOData, dtoClass);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return dto;		
+	}
 }

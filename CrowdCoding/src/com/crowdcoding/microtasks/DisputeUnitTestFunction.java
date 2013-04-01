@@ -83,6 +83,6 @@ public class DisputeUnitTestFunction extends Microtask
 	
 	public String microtaskTitle()
 	{
-		return "Dispute unit test";
+		return "Correct a unit test";
 	}
 }
