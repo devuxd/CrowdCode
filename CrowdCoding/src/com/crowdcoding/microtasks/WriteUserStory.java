@@ -65,4 +65,9 @@ public class WriteUserStory extends Microtask
 	{
 		return "Write a user story";
 	}
+	
+	public String microtaskDescription()
+	{
+		return "writing a user story";
+	}
 }

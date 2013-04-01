@@ -74,6 +74,11 @@ public class WriteTest extends Microtask
      {
           return "Write a test";
      }
+     
+ 	 public String microtaskDescription()
+ 	 {
+ 		  return "writing a test";
+ 	 }
     
     public String generateDefaultUnitTest(){
          

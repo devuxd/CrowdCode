@@ -85,6 +85,11 @@ public class MachineUnitTest extends Microtask
      {
           return "Run unit tests";
      }
+     
+ 	 public String microtaskDescription()
+ 	 {
+ 		return "running unit tests";
+ 	 }
 
      public String[] getAllTestCodeInSystem()
      {

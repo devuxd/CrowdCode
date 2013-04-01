@@ -67,4 +67,9 @@ public class WriteFunctionDescription extends Microtask
 	{
 		return "Write a function description";
 	}
+	
+	public String microtaskDescription()
+	{
+		return "describing a function";
+	}
 }
