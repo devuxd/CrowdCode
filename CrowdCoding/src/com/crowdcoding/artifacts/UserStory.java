@@ -21,7 +21,7 @@ public class UserStory extends Artifact
 	{
 	}
 	
-	// Constructor for initial creation
+	// Constructor to create a user story with crowdsourced text from a WriteUserStory microtask.
 	public UserStory(Project project)
 	{	
 		super(project);
@@ -37,7 +37,20 @@ public class UserStory extends Artifact
 		
 		ofy().save().entity(this).now();
 	}
-
+	
+	// Constructor to create a user story with prespecified text.
+	public UserStory(String text, Project project)
+	{	
+		super(project);
+		
+		this.text = text;
+		ofy().save().entity(this).now();
+		
+		Entrypoint entrypoint = new Entrypoint(project, this);
+		this.entrypoint = (Ref<Entrypoint>) Ref.create(entrypoint.getKey());
+		ofy().save().entity(this).now();
+	}
+	
 	// Sets the text for the user story. This transitions the state of the artifact from
 	// empty (waiting for text) to has initial text.
 	public void submitInitialText(String text, Project project)

@@ -180,6 +180,9 @@ font-family: Lucida Console, Monaco, monospace;
 	color: #FFFFFF;
 	
 }
+
+.userStoryDescrip { width:60%; }
+
 #functionDescription{ width:95%; }
 
 #footer {     background: none repeat scroll 0 0 transparent;float: left;margin-top: 10px;text-align: center;width: 100%;}

@@ -83,13 +83,14 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<br>
-	This unit test suite was disputed for the following reason:
+	The following issue was reported with this unit test:
 	
 	<blockquote><%= disputeDescription %></blockquote>
 	
-	
-	
+	Can you fix the test to address this issue?<BR><BR>
+			
 	<span class="reference">
+	<b>Reference</b><BR>
 	Unit tests can be: 	<br>
 	deepEqual: comparing to objects <br>
 	equal: check if both are equal <br>
@@ -107,17 +108,14 @@
 	<br>
 	</span>
 	
-	<h4>Write a unit test for the following method: 	
-	
+
 	
 	<form id="testForm" action="">
-
-
 
 	<BR>
 	
 	<%= methodFormatted %>
-	<BR>{</h4>
+	<BR>{
 	<table width="100%">
 		<tr>
 			<td width = "20"></td>
