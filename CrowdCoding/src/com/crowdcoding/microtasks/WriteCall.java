@@ -75,4 +75,9 @@ public class WriteCall extends Microtask
 	{
 		return "Add a call";
 	}
+	
+	public String microtaskDescription()
+	{
+		return "adding a call";
+	}
 }

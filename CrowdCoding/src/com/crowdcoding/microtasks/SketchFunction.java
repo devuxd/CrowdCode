@@ -72,4 +72,9 @@ public class SketchFunction extends Microtask
 	{
 		return "Write a function";
 	}
+	
+	public String microtaskDescription()
+	{
+		return "writing a function";
+	}
 }

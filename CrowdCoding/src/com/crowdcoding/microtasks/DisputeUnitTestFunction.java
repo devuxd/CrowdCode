@@ -85,4 +85,9 @@ public class DisputeUnitTestFunction extends Microtask
 	{
 		return "Correct a unit test";
 	}
+	
+	public String microtaskDescription()
+	{
+		return "correcting a unit test";
+	}
 }

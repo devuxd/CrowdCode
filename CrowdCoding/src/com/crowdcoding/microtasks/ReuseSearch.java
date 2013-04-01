@@ -64,4 +64,9 @@ public class ReuseSearch extends Microtask
 	{
 		return "Reuse search";
 	}
+	
+	public String microtaskDescription()
+	{
+		return "conducting a reuse search";
+	}
 }

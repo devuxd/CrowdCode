@@ -125,4 +125,9 @@ public class DebugTestFailure extends Microtask
      {
           return "Debug a test failure";
      }
+     
+ 	public String microtaskDescription()
+ 	{
+ 		return "debugging a test failure";
+ 	}
 }
