@@ -37,6 +37,10 @@
 						'<input type="text" class="input-xxlarge" placeholder="Describe a test case"/>' +				
 						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">x</a>' +	
 					'</span>');	
+				
+				// Set focus to the new test case
+				$('#testCase' + nextTestCase).find("input").eq(0).focus();
+				
 				nextTestCase = nextTestCase + 1;	
 				return false;
 	    	});

@@ -16,7 +16,10 @@
 					'<input type="text" placeholder = "what is it for?" class="input-xlarge"> ' +	
 					'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">x</a>' +	
 					'</td>');
-			nextParam++;
+			// Set focus to the first input field in the new row.
+			$('#params' + nextParam).find("input").eq(0).focus();
+
+			nextParam++;						
 			return false;
 		});
 	});
