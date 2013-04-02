@@ -93,7 +93,7 @@
 	
 	</div>
 
-	<div>&nbsp;	<BR><BR><BR><BR></div>
+	<div>&nbsp;	<BR><BR></div>
 	<div id="feedbackThanks"><span><b>Thanks for the feedback!</b></span></div>
 	<div id="feedback">
 		<textarea id="feedbackBox" placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?"></textarea><BR>
