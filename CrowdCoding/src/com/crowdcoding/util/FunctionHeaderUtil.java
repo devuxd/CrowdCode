@@ -4,11 +4,51 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.List;
 
+import org.mortbay.util.Pool.PondLife;
+
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Function;
+import com.crowdcoding.artifacts.Parameter;
+import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.ParameterDTO;
 
 public class FunctionHeaderUtil
 {
+	/**
+	 * Checks to see if function signature matches
+	 * @param dto, describe function to check
+	 * @return true if there is a match
+	 */
+	public static boolean checkForDuplicateFunction(FunctionDescriptionDTO dto,Project project)
+	{
+		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
+		for(Function function: listOFunctions)
+		{
+			if(function.getName() == null || function.getParameters() == null)
+			{
+				continue;
+			}
+			if(function.getName().equals(dto.name) && checkParameters(function.getParameters(),dto.parameters))
+			{
+				// has a duplicate
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * returns if two functions match in parameters
+	 * @param parameters
+	 * @param parameters2
+	 * @return true if they are the same parameters
+	 */
+	private static boolean checkParameters(List<Parameter> parameters,
+			List<ParameterDTO> parameters2)
+	{
+		// since it is javascript if same number of parameters then its true
+		return parameters.size() == parameters2.size();
+		
+	}
 	public static String returnFunctionHeaderFormatted(Function function)
 	{
 		StringBuilder b = new StringBuilder();
