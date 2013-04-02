@@ -6,6 +6,7 @@ import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.WriteEntrypoint;
+import com.crowdcoding.util.FunctionHeaderUtil;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -40,6 +41,13 @@ public class Entrypoint extends Artifact
 	public void setInitial(FunctionDescriptionDTO dto, Project project)
 	{
 		// Create a new function for this entrypoint. This will spawn a new microtask to create it.
+		if(FunctionHeaderUtil.checkForDuplicateFunction(dto, project))
+		{
+			// we have a duplicate so do nothing
+			// here we can notify user or we can silently do nothing
+			// we should call discard when it gets created here
+			return;
+		}
 		Function function = new Function(dto.name, dto.description, dto.returnType, dto.parameters, project);		
 		
 		this.function = (Ref<Function>) Ref.create(function.getKey());

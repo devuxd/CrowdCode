@@ -128,8 +128,8 @@
 					allFailedTestCases.push(testCaseNumberThatFailed);
 				}
 			}
-			p++;
 			setTimeout(function(){
+			p++;
 			if(p >= arrayOfTests.length)
 			{
 			  clearInterval(myInterval);
