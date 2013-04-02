@@ -119,14 +119,14 @@
 </div>
 </div>
 <div id="footer">
-	<table>
+	<!-- <table>
 		<tr>
 			<td><p><a href="" id="logoutLink">Log out</a></p></td>
 			<td><p><a href="">Preferences</a></p></td>
 			<td><p><a href="">Terms</a></p></td>
 			<td><p><a href="">About</a></p></td>
 		</tr>
-	</table>
+	</table>  -->
 </div>
 
 <!-- Popups -->
