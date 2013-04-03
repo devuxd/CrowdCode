@@ -16,9 +16,7 @@ input {border-radius: 15px;}
  		-webkit-transition-duration: .2s, .2s;  
  		-webkit-transition-timing-function: linear, ease-in;  
       }
-      
-
-      
+     
       
    #activityFeedTable tr
       {
@@ -117,7 +115,10 @@ border: 1px solid #eee;
 }
 
 #titlebar { background:#1B87E0; }
-#titlebar h4 { color:white; padding:5px; }
+#titlebar h4 { color:white; padding: 5px; border-width:0px; margin:0px;  }  
+#titlebar table { padding: 0px; border-width:0px; margin:0px; }
+.titlebarScore { align:right; width: 100% }
+
 
 #leftbar {background: none; margin-right: 2%; margin-top: 1%; text-align: center; width: auto; }
 #scoreTable { 
@@ -136,7 +137,7 @@ font-family: Lucida Console, Monaco, monospace;
 #contentPane h4, h5 {margin-left:2%;}
 #microtaskValueTD { width: 250px;}
 #microtaskTitleTable { padding: 0px; margin: 0px; }
-#microtaskTitleTable p, h3 { padding: 0px; margin: 0px; }
+.microtaskTitleHeadings { padding: 0px; margin: 0px; line-height:14px; }
 
 #errors{ color:red; background-color:lightgrey;}
 #rightbar { background: none repeat scroll 0 0; margin-top: 0%;width: auto; float:right;}
@@ -172,6 +173,7 @@ font-family: Lucida Console, Monaco, monospace;
 
 
 }
+
 
 #userStory:hover  
 {
