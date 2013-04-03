@@ -57,14 +57,21 @@
  
 <!-- Main content -->
 <div id="titlebar" class="animated pulse">
-	<h4>CrowdCode
-
-		<div id="statistics" >
-			<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
-			<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
-			<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
-			<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font></div>  </h4>
-		</div>
+	<table>
+		<tr>
+			<td>  	<h4>CrowdCode</h4> </td>
+			<td class="titlebarScore"> 				
+				<div id="statistics" >
+					<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
+					<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
+					<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
+					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font>
+				</div>  
+			</td>
+		</tr>
+	</table>
+</div>
+<BR>
 
 <div id="container">
 
