@@ -22,7 +22,7 @@ public class FirebaseService
 	public static String readUserStories(Project project)
 	{
 		String result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/" + project.getID() + ".json");
-		if (result.equals(""))
+		if (result == null || result.equals("null"))
 			result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/default.json");
 		return result;
 	}
