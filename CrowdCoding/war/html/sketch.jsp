@@ -53,17 +53,18 @@
 			});
 		});
    	 	
-
 	</script>
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
 	<h5> <%= methodFormatted %><BR>
 
-Your mission is to implement the above function. You may choose to either completely
-implement the function or to leave portions as <i>pseudocode</i>.<BR>
-Lines beginning with '#' are considered pseudocode.<BR>
-Line beginning with '!' are treated as a <i>single</i> function call pseudocode line.<BR>
-</h5>
+	Implement the function below. If you're not sure how to do something, indicate a line as <b>pseudocode</b>
+	by beginning it with '#'.<BR>
+	If you'd like to call a <b>function</b> to do something, describe what you'd like it to do with a line
+	beginning with '!'.<BR></h5>
+	
+	Show example<BR>
+	
 	<BR>
 	
 	<form id="sketchForm" action="">

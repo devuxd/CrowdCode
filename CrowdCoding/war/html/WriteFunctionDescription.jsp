@@ -34,8 +34,16 @@
 	</script>
 	
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<h5> Please write a description for the following function: </h5>	
 	<blockquote><%= microtask.getCallDescription() %></blockquote>
+	
+	<h5> Can you write a description for this function?   </h5><BR>
+	
+	Show example:<BR>
+	
+		
+	
+	
+	
 	
 	
 	<form id="signatureForm" action="">	
