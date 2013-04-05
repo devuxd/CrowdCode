@@ -565,10 +565,8 @@
    };
 //}
   </script>
-		<button style="float: right;" onclick="revertCodeAs();">
-			Revert Code</button>
-		<form id="sketchForm" action="">
 
+		<form id="sketchForm" action="">
 			<%@include file="/html/elements/microtaskTitle.jsp" %>
 			<BR>
 			<h5>
@@ -579,6 +577,8 @@
 				<%=methodFormatted%>
 				<BR> {
 			</h5>
+
+			<button style="float: right;" onclick="revertCodeAs();">Revert Code</button>
 			<table width="100%">
 				<tr>
 					<td></td>
