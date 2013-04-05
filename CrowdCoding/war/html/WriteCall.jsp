@@ -22,7 +22,7 @@
     StringWriter strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getCaller().getFunctionHeader());
     String functionHeader = strWriter.toString();
-    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getCaller(), project) + "'";
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getCaller(), project) + "'";
 %>
 
 <div id="microtask">

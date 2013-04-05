@@ -33,7 +33,7 @@
 	String functionCode = "'"+microtask.getFunctionCode()+"'";
 	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(microtask.getFunction(), project) + "'";
 	// add current header becuase of recursive issue not marked in correct state so getAllActive ignores it
-	String allFunctionCodeInSystemHeader = "'" + microtask.getFunction().getFunctionHeader() + "{}" + FunctionHeaderUtil.getAllActiveFunctionsHeader(null, project) + "'";
+	String allFunctionCodeInSystemHeader = "'" + microtask.getFunction().getFunctionHeader() + "{}" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
 	System.out.println(functionCode);
 	System.out.println(functionHeader);
 %>
