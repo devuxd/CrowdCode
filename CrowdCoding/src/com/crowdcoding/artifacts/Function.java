@@ -55,12 +55,12 @@ public class Function extends Artifact
 	private State state;
 	
 	// When a function becomes tested, functions that are calling it want to be notified.
-	private List<Ref<Function>> notifyOnTested = new ArrayList<Ref<Function>>(); 
+	private List<Ref<Function>> notifyOnDescribed = new ArrayList<Ref<Function>>(); 
 	
 	// Calls that have not yet been intregrated into the code
 	private Queue<Ref<Function>> callsToIntegrate = new LinkedList<Ref<Function>>();
 	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
-	
+	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -129,11 +129,15 @@ public class Function extends Artifact
 			break;
 		}
 		
-		// If we transitioned to tested from not tested, send notify on tested after we have
+		// If we transitioned to described, send notify on described after we have
 		// finished transitioning our state
-		boolean notifyOnTested = false;
-		if (this.state != State.TESTED && state == State.TESTED)
-			notifyOnTested = true;
+		boolean notifyDescribed = false;
+		if (this.state != State.DESCRIBED && state == State.DESCRIBED)
+			notifyDescribed = true;
+
+		// If we are now at least described (regardless of how we got there, set the flag)
+		if (this.state != State.CREATED)
+			this.hasBeenDescribed = true;		
 		
 		if (isNowWritten && !isWritten)
 			project.functionWritten();
@@ -142,8 +146,8 @@ public class Function extends Artifact
 		this.state = state;
 		ofy().save().entity(this).now();		
 		
-		if (notifyOnTested)
-			notifyOnTested(project);
+		if (notifyDescribed)
+			notifyOnDescribed(project);
 	}
 	
 	// Is the fucntion written and all pseudocode no replaced with code? 
@@ -151,6 +155,12 @@ public class Function extends Artifact
 	public boolean isWritten()
 	{
 		return isWritten;
+	}
+	
+	// Has the function been described (had a description written)?
+	public boolean hasBeenDescribed()
+	{
+		return hasBeenDescribed;
 	}
 	
 	public List<Parameter> getParameters(){
@@ -205,7 +215,8 @@ public class Function extends Artifact
 	public static String getFunctionDescriptions(Project project)
 	{
 		List<FunctionDescriptionDTO> dtos = new ArrayList<FunctionDescriptionDTO>();
-		Query<Function> q = ofy().load().type(Function.class).ancestor(project.getKey());   
+		Query<Function> q = ofy().load().type(Function.class)
+				.ancestor(project.getKey()).filter("hasBeenDescribed", true);   
 		for (Function function : q)
 			dtos.add(function.getDescriptionDTO());
 		
@@ -381,7 +392,7 @@ public class Function extends Artifact
 		project.historyLog().endEvent();
 	}
 	
-	public void calleeBecameTested(Function callee, Project project)
+	public void calleeBecameDescribed(Function callee, Project project)
 	{
 		project.historyLog().beginEvent(new MessageReceived("AddCall", this));
 		
@@ -414,7 +425,7 @@ public class Function extends Artifact
 		
 		// Have the callee let us know when it's tested (which may already be true; 
 		// signal sent immediately in that case)
-		callee.addToNotifyOnTested(this, project);
+		callee.addToNotifyOnDescribed(this, project);
 	}
 	
 	public void activeCodingStarted(Project project) 
@@ -528,35 +539,35 @@ public class Function extends Artifact
 	//   NOTIFICATION SENDERS
 	//////////////////////////////////////////////////////////////////////////////
 
-	public void addToNotifyOnTested(Function newSubscriber, Project project) 
+	public void addToNotifyOnDescribed(Function newSubscriber, Project project) 
 	{
 		//Create the reference object to the new subscriber
 		Ref<Function> newSubscriberRef = (Ref<Function>) Ref.create(newSubscriber.getKey());
 		
 		//add it to the list
-		notifyOnTested.add(newSubscriberRef);
+		notifyOnDescribed.add(newSubscriberRef);
 		
-		//if it's already tested, send the notification to the new subscriber (only) immediately.
-		if(getState() == State.TESTED) 
+		//if it's already been described, send the notification to the new subscriber (only) immediately.
+		if(hasBeenDescribed()) 
 		{
-			sendTestedNotification(newSubscriberRef, project);
+			sendDescribedNotification(newSubscriberRef, project);
 		}
 		
 		ofy().save().entity(this).now();
 	}
 	
 	// Notify all subscribers that this function has become tested.
-	private void notifyOnTested(Project project)
+	private void notifyOnDescribed(Project project)
 	{
-		for (Ref<Function> subscriber : notifyOnTested)
+		for (Ref<Function> subscriber : notifyOnDescribed)
 		{
-			sendTestedNotification(subscriber, project);
+			sendDescribedNotification(subscriber, project);
 		}		
 	}
 	
-	private void sendTestedNotification(Ref<Function> subscriber, Project project)
+	private void sendDescribedNotification(Ref<Function> subscriber, Project project)
 	{
-		load(subscriber).calleeBecameTested(this, project);
+		load(subscriber).calleeBecameDescribed(this, project);
 	}
 		
 	//////////////////////////////////////////////////////////////////////////////
@@ -635,7 +646,7 @@ public class Function extends Artifact
 	{
 		if(function instanceof Function)
 		{
-			return this.name.equals(((Function) function).getName()) && this.description.equals(((Function) function).getDescription());
+			return this.id == ((Function) function).id;
 		}
 		else
 		{
