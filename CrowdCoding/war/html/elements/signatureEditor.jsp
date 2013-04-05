@@ -56,8 +56,8 @@
 </script>
 
 
-<textarea id="functionDescription" draggable="true" placeholder="What does the function do?"></textarea>
-returns &nbsp;&nbsp;<input type="text" id="returnType" value = "void" class="input-medium"><BR>
+<textarea id="functionDescription" draggable="true" placeholder="Can you briefly describe the purpose and behavior of the function?"></textarea>
+returns &nbsp;&nbsp;<input type="text" id="returnType" placeholdeer = "What type of data will it return?" class="input-medium"><BR>
 function 
 <input type="text" id="name" onblur="checkLength(this)" placeholder = "functionName" class="input-medium">(
 <BR>

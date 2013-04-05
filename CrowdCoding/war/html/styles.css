@@ -1,6 +1,7 @@
 html	{ background:#eee }
 body	{ margin:0; padding:0; overflow-x: hidden; }
 textarea { -webkit-user-select: auto; }
+h5		{ padding: 0px; margin: 0px; border-radius: 0px;}
 #container, #titlebar, #footer { width: 1040px; margin: 0 auto; }
 #leftbar, #rightbar, #contentPane { float:left; }
 
