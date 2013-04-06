@@ -70,7 +70,6 @@
 				{
 					$("#tabContent").html(htmlContent);
 					$("#tabs").html(htmlTab);
-				  	$('#skip').click(function() { skip(); });
 				});
 			};  
 	</script>
@@ -115,6 +114,8 @@
 			submit(collectFormDataForDispute());
 			return false;
 		});
+		
+	  	$('#skip').click(function() { skip(); });
 		
 		var javaTestCases = new Array();
 		var javaTestCaseDescriptions = new Array();
@@ -564,10 +565,8 @@
    };
 //}
   </script>
-		<button style="float: right;" onclick="revertCodeAs();">
-			Revert Code</button>
-		<form id="sketchForm" action="">
 
+		<form id="sketchForm" action="">
 			<%@include file="/html/elements/microtaskTitle.jsp" %>
 			<BR>
 			<h5>
@@ -578,6 +577,8 @@
 				<%=methodFormatted%>
 				<BR> {
 			</h5>
+
+			<button style="float: right;" onclick="revertCodeAs();">Revert Code</button>
 			<table width="100%">
 				<tr>
 					<td></td>
@@ -587,8 +588,7 @@
 			<h5>
 				} <BR> <BR>
 			</h5>
-			<input id="codeSubmit" type="submit" value="Submit"
-				class="btn btn-primary" />
+			<%@include file="/html/elements/submitFooter.jsp" %>
 
 		</form>
 		<br>
