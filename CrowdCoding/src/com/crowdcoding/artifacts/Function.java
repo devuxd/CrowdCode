@@ -452,7 +452,7 @@ public class Function extends Artifact
 		// the worker to only remove it when the function is done. This keeps regenerating
 		// new sketch tasks until the worker has marked it as done by removing the pseudocode
 		// line.
-		this.code = "#Mark this function as implemented by removing this line.";	
+		this.code = "/#Mark this function as implemented by removing this line.";	
 		project.locIncreasedBy(1);
 		
 		//Spawn off microtask to write test cases
@@ -578,42 +578,38 @@ public class Function extends Artifact
 	// of lines (may be empty) which are the pseudocode for the function call
 	public List<String> findPseudocalls(String code)
 	{	
-		return findSpecialLines(code, "!");
+		return findSpecialLines(code, "/!");
 	}
 	
 	public List<String> findPseudocode(String code)
 	{
-		return findSpecialLines(code, "#");
+		return findSpecialLines(code, "/#");
 	}
 	
-	// Finds lines in a string of code whose first non-whitespace character is linestarter
-	public List<String> findSpecialLines(String code, String linestarter)
+	// Finds segments of lines in a string of code starting with linestarter
+	public List<String> findSpecialLines(String code, String starter)
 	{		
-		// Create a new String with a \n at the beginning, so that ! on the first line will
-		// still be matched.
-		String searchCode = "\n" + code;
+		String searchCode = code;
 		
 		List<String> results = new ArrayList<String>();
-		
-		// Look for lines that begin with a ! and spawn reuse searches for each
 		int index = 0;
 		
 		while (true)
 		{
-			String callDescription;
-			index = searchCode.indexOf("\n"+linestarter, index);
+			String segment;
+			index = searchCode.indexOf(starter, index);
 			if (index == -1)
 				break;
 			
 			 // We found a match. Take the whole line (or to the end if this is the last line)
 			int nextLineStart = searchCode.indexOf("\n", index + 1);
 			if (nextLineStart == -1)
-				callDescription = searchCode.substring(index + 2);
+				segment = searchCode.substring(index + 2);
 			else 
-				callDescription = searchCode.substring(index + 2, nextLineStart);
+				segment = searchCode.substring(index + 2, nextLineStart);
 
 			// add to collection
-			results.add(callDescription);
+			results.add(segment);
 			
 			// If we hit the end of the string (no more new lines), we're done. Otherwise update to the next line.
 			if (nextLineStart == -1)

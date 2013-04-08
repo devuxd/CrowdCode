@@ -58,10 +58,10 @@
 
 	<h5> <%= methodFormatted %><BR>
 
-	Implement the function below. If you're not sure how to do something, indicate a line as <b>pseudocode</b>
-	by beginning it with '#'.<BR>
+	Implement the function below. If you're not sure how to do something, indicate a line or portion 
+	of a line as <b>pseudocode</b> by beginning it with '/#'.<BR>
 	If you'd like to call a <b>function</b> to do something, describe what you'd like it to do with a line
-	beginning with '!'.<BR></h5>
+	or portion of a line beginning with '/!'.<BR></h5>
 	
 	Show example<BR>
 	
