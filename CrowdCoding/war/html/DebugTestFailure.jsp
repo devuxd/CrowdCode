@@ -31,7 +31,7 @@
 	//mapper.writeValue(strWriter, microtask.getFunctionCode());
 	//String functionCode = strWriter.toString();
 	String functionCode = "'"+microtask.getFunctionCode()+"'";
-	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(microtask.getFunction(), project) + "'";
+	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctions(microtask.getFunction(), project) + "'";
 	// add current header becuase of recursive issue not marked in correct state so getAllActive ignores it
 	String allFunctionCodeInSystemHeader = "'" + microtask.getFunction().getFunctionHeader() + "{}" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
 	System.out.println(functionCode);

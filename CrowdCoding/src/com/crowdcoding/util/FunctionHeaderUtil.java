@@ -5,7 +5,6 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.mortbay.util.Pool.PondLife;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Function;
@@ -52,8 +51,7 @@ public class FunctionHeaderUtil
 			List<ParameterDTO> parameters2)
 	{
 		// since it is javascript if same number of parameters then its true
-		return parameters.size() == parameters2.size();
-		
+		return parameters.size() == parameters2.size();		
 	}
 	
 	public static String returnFunctionHeaderFormatted(Function function)
@@ -68,7 +66,7 @@ public class FunctionHeaderUtil
 	}
 	
 	// need a better place for this do not know where a util function is
-	public static String getAllActiveFunctions(Function currentFunctionIn, Project project)
+	public static String getAllFunctions(Function currentFunctionIn, Project project)
 	{
 		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
 		StringBuilder b = new StringBuilder();
@@ -131,5 +129,5 @@ public class FunctionHeaderUtil
 			b.append("} ");
 		}
 		return b.toString();
-	} 
+	} 	
 }

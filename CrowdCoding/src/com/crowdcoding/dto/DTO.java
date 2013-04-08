@@ -14,14 +14,20 @@ public abstract class DTO
 	// Gets the JSON for this DTO
 	public String json()
 	{
+		return json(this);
+	}
+	
+	// Gets JSON for the specified object
+	protected static String json(Object obj)
+	{
 		ObjectMapper mapper = new ObjectMapper();
 	    try {
-	    	return mapper.writeValueAsString(this);
+	    	return mapper.writeValueAsString(obj);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	    
 	    return "";	
-	}
+	}	
 	
 	// Reads a DTO of type dtoClass from the specified string
 	public static DTO read(String jsonDTOData, Class dtoClass)
