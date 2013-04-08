@@ -23,7 +23,7 @@
 	mapper.writeValue(strWriter, microtask.getAllTestCodeInSystem());
 	String testCases = strWriter.toString();
 	// get all active functions
-	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(null, project) + "'";
+	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctions(null, project) + "'";
 	String allFunctionCodeInSystemHeader = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
 %>
 
