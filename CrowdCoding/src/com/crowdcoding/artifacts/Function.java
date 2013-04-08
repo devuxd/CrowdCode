@@ -80,7 +80,7 @@ public class Function extends Artifact
 	}
 	
 	// Constructor for a function that only has a short call description and still needs a full description
-	public Function(String callDescription, Project project)
+	public Function(String callDescription, Function caller, Project project)
 	{
 		super(project);
 		isWritten = false;
@@ -92,7 +92,7 @@ public class Function extends Artifact
 		
 		// Spawn off a microtask to write the function description
 		WriteFunctionDescription writeFunctionDescription = 
-				new WriteFunctionDescription(this, callDescription, project);
+				new WriteFunctionDescription(this, callDescription, caller, project);
 		
 		project.historyLog().endEvent();
 	}
@@ -415,7 +415,7 @@ public class Function extends Artifact
 		if (dto.noFunction)
 		{
 			// Create a new function for this call, spawning microtasks to create it.
-			callee = new Function(callDescription, project);
+			callee = new Function(callDescription, this, project);
 		}
 		else
 		{	

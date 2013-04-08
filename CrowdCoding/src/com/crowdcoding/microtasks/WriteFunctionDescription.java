@@ -18,6 +18,7 @@ import com.googlecode.objectify.annotation.Load;
 public class WriteFunctionDescription extends Microtask 
 {
 	@Load private Ref<Function> function;
+	@Load private Ref<Function> caller;
 	private String callDescription;
 	 
 	// Default constructor for deserialization
@@ -26,11 +27,13 @@ public class WriteFunctionDescription extends Microtask
 	}
 	
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, String callDescription, Project project)
+	public WriteFunctionDescription(Function function, String callDescription, Function caller, 
+			Project project)
 	{
 		super(project);
 		this.callDescription = callDescription;
-		this.function = (Ref<Function>) Ref.create(function.getKey());		
+		this.function = (Ref<Function>) Ref.create(function.getKey());	
+		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
 		ofy().save().entity(this).now();
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
@@ -71,6 +74,11 @@ public class WriteFunctionDescription extends Microtask
 	public Artifact getOwningArtifact()
 	{
 		return function.get();
+	}
+	
+	public Function getCaller()
+	{
+		return caller.get();
 	}
 	
 	public String microtaskTitle()

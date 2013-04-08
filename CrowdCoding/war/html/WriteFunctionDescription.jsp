@@ -4,6 +4,7 @@
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
+<%@ page import="com.crowdcoding.artifacts.Function" %>
 <%@ page import="com.crowdcoding.microtasks.WriteFunctionDescription" %>
 
 <%
@@ -11,6 +12,7 @@
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteFunctionDescription microtask = (WriteFunctionDescription) crowdUser.getMicrotask();
+    Function caller = microtask.getCaller();
 %>
 
 <div id="microtask">
@@ -29,6 +31,21 @@
 				submit(collectSignatureData());			
 				return false;
 			});
+			
+			// Toggle show context text when user clicks on it
+			$('#callContext').on('show', function () 
+			{
+				$('#showContext').text('Hide context');
+			});
+			$('#callContext').on('hide', function () 
+			{
+				$('#showContext').text('Show context');
+			});		
+			
+			var codeContext = CodeMirror.fromTextArea(codeContextTextArea);
+			codeContext.setValue('<%= caller.getEscapedCode() %>');
+			codeContext.setOption("readOnly", "true");
+			codeContext.setOption("theme", "vibrant-ink");			
 		});
 
 	</script>
@@ -38,13 +55,10 @@
 	
 	<h5> Can you write a description for this function?   </h5><BR>
 	
-	Show example:<BR>
-	
-		
-	
-	
-	
-	
+	Show example:<BR><BR>
+
+	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
+	<div id="callContext" class="collapse"><textarea id="codeContextTextArea"></textarea>  </div><BR>
 	
 	<form id="signatureForm" action="">	
 		<%@include file="/html/elements/signatureEditor.jsp" %>
