@@ -75,10 +75,11 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project> - mainpage.jsp
 		 *  /<project>/admin - admin.jsp
 		 *  /<project>/admin/* - doAdmin
+		 *  /<project>/fetch - doFetch		   
 		 *  /<project>/history - history.jsp
 		 *  /<project>/run - run.jsp
-		 *  /<project>/fetch - doFetch
 		 *  /<project/submit - doSubmit
+		 *  /userStories - EditUserStories.jsp
 		 *  /  - 404
 		 */
         String[] path = req.getPathInfo().split("/");
@@ -98,7 +99,12 @@ public class CrowdServlet extends HttpServlet
 	        	try 
 	        	{				
 					if (path.length == 2)
-						req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+					{
+						if (path[1].equals("userStories"))
+							req.getRequestDispatcher("/html/EditUserStories.jsp").forward(req, resp);						
+						else
+							req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+					}
 					else
 					{
 						// Third token is action, fourth (or more) tokens are commands for action

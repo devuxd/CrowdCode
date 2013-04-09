@@ -8,6 +8,8 @@ import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.CurrentStatisticsDTO;
+import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.UserStoriesDTO;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.MachineUnitTest;
@@ -91,8 +93,11 @@ public class Project
 		idgenerator = new IDGenerator(false);
 		leaderboard = new Leaderboard(this);
 		
-		// Create an initial artifact to get work started.
-		UserStory userStory = new UserStory(this);
+		String userStories = FirebaseService.readUserStories(this);
+		System.out.println(userStories);	
+		UserStoriesDTO dto = (UserStoriesDTO) DTO.read(userStories, UserStoriesDTO.class);		
+		for (String userStoryText : dto.userStories)
+			new UserStory(userStoryText, this);
 		
 		ofy().save().entity(this).now();
 	}

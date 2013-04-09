@@ -63,4 +63,9 @@ public class WriteEntrypoint extends Microtask
 	{
 		return "Describe a function";
 	}
+	
+	public String microtaskDescription()
+	{
+		return "describing a function";
+	}
 }

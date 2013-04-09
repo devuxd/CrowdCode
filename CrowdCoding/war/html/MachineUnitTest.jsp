@@ -14,17 +14,17 @@
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
 	Worker crowdUser = Worker.Create(UserServiceFactory
-			.getUserService().getCurrentUser(), project);
+	.getUserService().getCurrentUser(), project);
 	MachineUnitTest microtask = (MachineUnitTest) crowdUser
-			.getMicrotask();
+	.getMicrotask();
 	ObjectMapper mapper = new ObjectMapper();
 	Writer strWriter = new StringWriter();
 	// get all test cases in system
 	mapper.writeValue(strWriter, microtask.getAllTestCodeInSystem());
 	String testCases = strWriter.toString();
 	// get all active functions
-	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctions(null, project) + "'";
-	String allFunctionCodeInSystemHeader = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(null, project) + "'";
+	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctions(null, project) + "'";
+	String allFunctionCodeInSystemHeader = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
 %>
 
 <body>
@@ -44,6 +44,7 @@
 		var microtaskType = 'MachineUnitTest';
 		var microtaskID = <%=microtask.getID()%>;
 	    var javaTestCases = new Array();
+	    var allPassedTestCases = new Array();
 	    var allFailedTestCases = new Array();
 	    $("#machineSubmit").children("input").attr('disabled', 'false');
 		$('#machineSubmit').submit(function() {
@@ -80,7 +81,7 @@
 				var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + arrayOfTests[p];
 				var lintResult = JSLINT(getUnitTestGlobals()+lintCheckFunction,getJSLintGlobals());
 				var errors = checkForErrors(JSLINT.errors);
-				var isTestCasePassed = false;
+				var testResult;
 				console.log(errors);
 				// no errors by jslint
 				if(errors == "")
@@ -96,7 +97,7 @@
 				    var done = false;
 				    worker.onmessage = function(e) {
 				      console.log("Received: " + e.data);
-					  isTestCasePassed = e.data;
+				      testResult = e.data;
 					  timedOut = false;
 					  console.log(e.data);
 				    }
@@ -114,9 +115,14 @@
 					setTimeout(function(){stop();},1000);
 					console.log(done);
 					setTimeout(function(){
-							if(!isTestCasePassed.result || timedOut)
+							// If the code is unimplemented, the test neither failed nor passed. If the test
+							// did not pass or timed out, it failed. Otherwise, it passed.
+							if(!testResult.codeUnimplemented)
 							{
-								allFailedTestCases.push(p);
+								if (!testResult.passed || timedOut)
+									allFailedTestCases.push(p);
+								else
+									allPassedTestCases.push(p);
 							}
 					},timeOutTime);
 				}
@@ -138,21 +144,18 @@
 			}
 		   },timeOutTime+50);
 		},timeOutTime+200);
-
 	}
 	
 	
-	function collectFormDataForNormal(testCaseThatFailed)
+	function collectFormDataForNormal()
 	{
-			var formData = { errorTestCase: allFailedTestCases};
+			var formData = { passingTestCases: allPassedTestCases, failingTestCases: allFailedTestCases };
 			return formData;
 	}
 </script>
 		<div style='display: none'>
 			<form id="machineSubmit" action="">
-				<input id="codeSubmit" type="submit" value="Submit"
-					class="btn btn-primary" />
-
+				<input id="codeSubmit" type="submit" value="Submit" class="btn btn-primary" />
 			</form>
 		</div>
 		<script>
@@ -188,6 +191,7 @@ var spinner = new Spinner(opts).spin(target);
 <script id="worker1" type="javascript/worker">
     // This script won't be parsed by JS engines because its type is javascript/worker.
     var testCasedPassed = true;
+	var codeUnimplemented = false;		// is any of the code under test unimplemented?
     self.onmessage = function(e) 
     {
     	var data = e.data;
@@ -222,9 +226,12 @@ var spinner = new Spinner(opts).spin(target);
 				catch (err)
 				{
 					testCasedPassed = false;
+					if (err instanceof NotImplementedException)					
+						codeUnimplemented = true;	
+
 					//self.postMessage(err.message);
 				}
-				self.postMessage({number:data.number, result:testCasedPassed});
+				self.postMessage({number:data.number, passed:testCasedPassed, codeUnimplemented: codeUnimplemented});
 		 }
    };
   </script>

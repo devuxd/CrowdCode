@@ -22,7 +22,7 @@
     StringWriter strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getCaller().getFunctionHeader());
     String functionHeader = strWriter.toString();
-    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllActiveFunctionsHeader(microtask.getCaller(), project) + "'";
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getCaller(), project) + "'";
 %>
 
 <div id="microtask">
@@ -50,7 +50,7 @@
 
 	<form id="writeCallForm" action="">
 		<%@include file="/html/elements/microtaskTitle.jsp" %>
-		<p><h4> Replace the psuedocode with an actual call to the function: </h4> <BR>	
+		<p><h4> Can you replace the following call to the function with an actual call? </h4> <BR>	
 		<%= calleeFormatted %><BR>
 		<%@include file="/html/elements/functionEditor.jsp" %>		
 		<%@include file="/html/elements/submitFooter.jsp" %>

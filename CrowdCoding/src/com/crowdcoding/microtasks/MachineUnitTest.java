@@ -42,20 +42,25 @@ public class MachineUnitTest extends Microtask
      {
           MachineUnitTestDTO dto2 = (MachineUnitTestDTO)dto;
 
-          // Compute the set of functions that failed at least one test.
+          // The DTO contains a list of test cases that passed and a list of test cases that failed.
+          // Other tests - those that call unimplemented functions - neither pass nor fail. From this,
+          // we compute the set of functions that 1) passed at least one test and did not fail any
+          // and 2) failed at least one test.          
+          
+          // Compute the set of functions that 2) failed at least one test.
           Set<Function> failed = new HashSet<Function>();
-          for (Integer failingTestIndex : dto2.errorTestCase)
+          for (Integer failingTestIndex : dto2.failingTestCases)
           {
                failed.add(testCaseList.get(failingTestIndex).getFunction());              
           }
          
-          // Compute the set of functions that were tested and are not in the set of failing functions
+          // Compute the set of functions that 1) passed at least one test and did not fail any
           Set<Function> passed = new HashSet<Function>();
-          for (Test test : testCaseList)
+          for (Integer passingTestIndex : dto2.passingTestCases)
           {
-               Function function = test.getFunction();
-               if (!failed.contains(function))
-                    passed.add(function);
+        	  Function function = testCaseList.get(passingTestIndex).getFunction(); 
+              if (!failed.contains(function))
+            	  passed.add(function);        	  
           }
          
           // Notify each function if it passed or failed its tests
@@ -85,6 +90,11 @@ public class MachineUnitTest extends Microtask
      {
           return "Run unit tests";
      }
+     
+ 	 public String microtaskDescription()
+ 	 {
+ 		return "running unit tests";
+ 	 }
 
      public String[] getAllTestCodeInSystem()
      {

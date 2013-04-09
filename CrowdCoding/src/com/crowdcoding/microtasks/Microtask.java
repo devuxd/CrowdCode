@@ -153,20 +153,12 @@ public /*abstract*/ class Microtask
 		}
 		
 		project.historyLog().beginEvent(new MicrotaskSubmitted(this));
-				
-		ObjectMapper mapper = new ObjectMapper();
-		
-		DTO dto = null;
-		try {
-			dto = mapper.readValue(jsonDTOData, getDTOClass());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+
+		DTO dto = DTO.read(jsonDTOData, getDTOClass());
 		doSubmitWork(dto, project);	
 		this.completed = true;
 		worker.setMicrotask(null);
-		worker.awardPoints(this.submitValue, project);
+		worker.awardPoints(this.submitValue, this.microtaskDescription(), project);
 		project.microtaskCompleted();
 		ofy().save().entity(this).now();
 		
@@ -198,6 +190,12 @@ public /*abstract*/ class Microtask
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}	
+	
+	// This method MUST be overridden in the subclass to provide the name of the microtask.
+	public String microtaskDescription()
+	{
+		throw new RuntimeException("Error - must implement in subclass!");
+	}
 	
 	public String microtaskName()
 	{

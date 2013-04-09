@@ -17,7 +17,8 @@
 
 
 <div id="microtask">
-
+		
+		
 	<script>
 		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
 		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
@@ -35,8 +36,12 @@
 				$("#testCases").append(
 					'<span id="testCase' + nextTestCase + '">' +
 						'<input type="text" class="input-xxlarge" placeholder="Describe a test case"/>' +				
-						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">x</a>' +	
+						'<button onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="close">&times;</button>' +	
 					'</span>');	
+				
+				// Set focus to the new test case
+				$('#testCase' + nextTestCase).find("input").eq(0).focus();
+				
 				nextTestCase = nextTestCase + 1;	
 				return false;
 	    	});
@@ -71,19 +76,37 @@
 
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<p><h5><%= methodFormatted %><BR>
-In what situations or cases might this function misbehave, show unexpected results, or fail? Are there unexpected
-corner cases that might not work?</h5>
-
+	<%= methodFormatted %><BR>
 	
-	<BR>
-	<BR>
+	<B>What are some cases in which this function might be used? Are there any unexpected corner 
+	cases that might not work?</B><BR><BR>
+	
+	<div class="accordion" id="exampleRoot">
+	  <div class="accordion-group">
+	    <div class="accordion-heading">
+	      <a class="accordion-toggle" data-toggle="collapse" data-parent="#exampleRoot" href="#collapseOne">
+	        	Show example
+	      </a>
+	    </div>
+	    <div id="collapseOne" class="accordion-body collapse">
+	      <div class="accordion-inner">
+				subtract(a, b)<BR>
+				
+				<B>Here's some test cases:</B><BR>
+				a is greater than b<BR>
+				b is greater than a<BR>
+				a is the same as b<BR>
+				a is positive, b is negative<BR>
+				a is negative, b is zero<BR>
+				a is positive, b is zero<BR>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 	<form id="testCasesForm" action="">
 		<div id="testCases"></div>
 		<button id="addTestCase" class="btn btn-small">Add test case</button>				
 		<BR><BR><%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
-
-
 </div>

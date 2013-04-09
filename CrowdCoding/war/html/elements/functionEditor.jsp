@@ -18,44 +18,29 @@
 			functionHeader = functionHeader.replace(/\"/g,"'");
 			var functionCode = allTheFunctionCode + " " + functionHeader + "{"  + $("#code").val() + "}";
 			debugger;
-			if(("\n" + $("#code").val()).indexOf("\n#") == -1 && ("\n" + $("#code").val()).indexOf("\n!") == -1)
+			// Only do syntax checking if there are no pseudocalls or pseudocode.
+			if($("#code").val().indexOf("/#") == -1 && $("#code").val().indexOf("/!") == -1)
 			{
-				if($("#code").val().indexOf("#") != -1)
+				var errors = "";
+			    console.log(functionCode);
+			    var lintResult = JSLINT(functionCode,getJSLintGlobals());
+				console.log(JSLINT.errors);
+				if(!lintResult)
 				{
-					$("#errors").html("<bold> ERRORS: </bold> </br>" + "wrong placement of # needs to go at beginning of line");
-					return false; 
-				}
-				//else if($("#code").val()).indexOf("!") != -1)
-				//{
-				//	$("#errors").html("<bold> ERRORS: </bold> </br>" + "wrong placement of ! needs to go at beginning of line");
-				//	return false; 
-				//}
-				else
-				{
-					var errors = "";
-				    console.log(functionCode);
-				    var lintResult = JSLINT(functionCode,getJSLintGlobals());
-					console.log(JSLINT.errors);
-					if(!lintResult)
+					var errors = checkForErrors(JSLINT.errors);
+					console.log(errors);
+					if(errors != "")
 					{
-						var errors = checkForErrors(JSLINT.errors);
-						console.log(errors);
-						if(errors != "")
-						{
-							$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
-							return false; 
-						}
+						$("#errors").html("<bold> ERRORS: </bold> </br>" + errors);
+						return false; 
 					}
-				}
+				}				
 			}
 			
 			// Success: no errors
 			return true;
 	 	}
-	
-	
 	</script>
-
 
 	<BR>{
 	<table width="100%">

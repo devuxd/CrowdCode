@@ -16,7 +16,10 @@
 					'<input type="text" placeholder = "what is it for?" class="input-xlarge"> ' +	
 					'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">x</a>' +	
 					'</td>');
-			nextParam++;
+			// Set focus to the first input field in the new row.
+			$('#params' + nextParam).find("input").eq(0).focus();
+
+			nextParam++;						
 			return false;
 		});
 	});
@@ -53,8 +56,8 @@
 </script>
 
 
-<textarea id="functionDescription" draggable="true" placeholder="What does the function do?"></textarea>
-returns &nbsp;&nbsp;<input type="text" id="returnType" value = "void" class="input-medium"><BR>
+<textarea id="functionDescription" draggable="true" placeholder="Can you briefly describe the purpose and behavior of the function?"></textarea>
+returns &nbsp;&nbsp;<input type="text" id="returnType" placeholdeer = "What type of data will it return?" class="input-medium"><BR>
 function 
 <input type="text" id="name" onblur="checkLength(this)" placeholder = "functionName" class="input-medium">(
 <BR>
@@ -86,10 +89,4 @@ function
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 	</div>
 </div>	
-
-
-
-
-
-
 

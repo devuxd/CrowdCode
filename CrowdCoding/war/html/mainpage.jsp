@@ -57,14 +57,21 @@
  
 <!-- Main content -->
 <div id="titlebar" class="animated pulse">
-	<h4>CrowdCode
-
-		<div id="statistics" >
-			<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
-			<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
-			<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
-			<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font></div>  </h4>
-		</div>
+	<table>
+		<tr>
+			<td>  	<h4>CrowdCode</h4> </td>
+			<td class="titlebarScore"> 				
+				<div id="statistics" >
+					<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
+					<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
+					<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
+					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font>
+				</div>  
+			</td>
+		</tr>
+	</table>
+</div>
+<BR>
 
 <div id="container">
 
@@ -93,7 +100,7 @@
 	
 	</div>
 
-	<div>&nbsp;	<BR><BR><BR><BR></div>
+	<div>&nbsp;	<BR><BR></div>
 	<div id="feedbackThanks"><span><b>Thanks for the feedback!</b></span></div>
 	<div id="feedback">
 		<textarea id="feedbackBox" placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?"></textarea><BR>
@@ -119,14 +126,14 @@
 </div>
 </div>
 <div id="footer">
-	<table>
+	<!-- <table>
 		<tr>
 			<td><p><a href="" id="logoutLink">Log out</a></p></td>
 			<td><p><a href="">Preferences</a></p></td>
 			<td><p><a href="">Terms</a></p></td>
 			<td><p><a href="">About</a></p></td>
 		</tr>
-	</table>
+	</table>  -->
 </div>
 
 <!-- Popups -->

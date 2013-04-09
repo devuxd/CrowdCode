@@ -1,11 +1,11 @@
 package com.crowdcoding.dto;
 
-import com.googlecode.objectify.annotation.Load;
 
 public class MachineUnitTestDTO extends DTO
 {
 	public String messageType = "MachineUnitTestDTO";
-	@Load public int[] errorTestCase;
+	public int[] failingTestCases;
+	public int[] passingTestCases;
 	
 	// Default constructor (required by Jackson JSON library)
 	public MachineUnitTestDTO()
@@ -14,6 +14,6 @@ public class MachineUnitTestDTO extends DTO
 	
 	public String toString()
 	{
-		return errorTestCase + "";
+		return "Passing tests:" + passingTestCases + " Failing tests: " + failingTestCases;
 	}
 }
