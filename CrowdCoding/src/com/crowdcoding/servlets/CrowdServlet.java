@@ -83,21 +83,20 @@ public class CrowdServlet extends HttpServlet
 		 *  /  - 404
 		 */
         String[] path = req.getPathInfo().split("/");
-		
-		
+				
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();  
         
-        if (user != null) 
-        {
-			// First token will always be empty (portion before the first slash)
-			if (path.length > 1)
-			{
-				req.setAttribute("project", path[1]);
-				String projectID = path[1];
-				
-	        	try 
-	        	{				
+    	try 
+    	{	        
+	        if (user != null) 
+	        {
+				// First token will always be empty (portion before the first slash)
+				if (path.length > 1)
+				{
+					req.setAttribute("project", path[1]);
+					String projectID = path[1];
+	
 					if (path.length == 2)
 					{
 						if (path[1].equals("userStories"))
@@ -122,25 +121,20 @@ public class CrowdServlet extends HttpServlet
 						else if (action.equals("run"))
 			        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
 					}				
-				} catch (ServletException e) {
-					e.printStackTrace();
 				}
-			}
-			else
-			{
-				writeResponseString(resp, "404 - no resource found for " + req.getPathInfo());
-			}		
-        } else 
-        {
-        	if (path.length > 1)
-        	{        	
-        		resp.sendRedirect(userService.createLoginURL("/" + path[1]));
-        	}
-        	else
-        	{
-				writeResponseString(resp, "404 - no resource found for " + req.getPathInfo());
-        	}
-        }
+				else				
+					req.getRequestDispatcher("/html/welcome.html").forward(req, resp);					
+	        } 
+	        else 
+	        {
+	        	if (path.length > 1)	        	        	
+	        		resp.sendRedirect(userService.createLoginURL("/" + path[1]));	        	
+	        	else	        	
+					req.getRequestDispatcher("/html/welcome.html").forward(req, resp);	        	
+	        }
+		} catch (ServletException e) {
+			e.printStackTrace();
+		}        
 	}
 	
 	private void doAdmin(HttpServletRequest req, HttpServletResponse resp, 
