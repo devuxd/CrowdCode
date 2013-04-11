@@ -79,11 +79,11 @@
 				var timedOut = true;
 				//console.log(arrayOfTests);
 				var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + arrayOfTests[p];
-				var lintResult = JSLINT(getUnitTestGlobals()+lintCheckFunction,getJSLintGlobals());
-				var errors = checkForErrors(JSLINT.errors);
+				var lintResult = JSHINT(getUnitTestGlobals()+lintCheckFunction,getJSHintGlobals());
+				var errors = checkForErrors(JSHINT.errors);
 				var testResult;
 				console.log(errors);
-				// no errors by jslint
+				// no errors by jshint
 				if(errors == "")
 				{
 					var testCases = "";
@@ -128,7 +128,7 @@
 				}
 				else
 				{
-					// jslint found errors
+					// jshint found errors
 					testCaseNumberThatFailed = p;
 					console.log(testCaseNumberThatFailed);
 					allFailedTestCases.push(testCaseNumberThatFailed);

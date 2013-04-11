@@ -73,16 +73,16 @@
 
 			var functionHeader = <%= functionHeader %>;
 			functionHeader = functionHeader.replace(/\"/g,"'");
-			// only looks at the function header not the function body for JSLINT checking
+			// only looks at the function header not the function body for JSHINT checking
 			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
 			var functionCode = allTheFunctionCode + " " + functionHeader + "{" + code + "}";
 			var errors = "";
 		    console.log(functionCode);
-		    var lintResult = JSLINT(getUnitTestGlobals() + functionCode,getJSLintGlobals());
-		    console.log(JSLINT.errors);
-			if(!lintResult)
+		    var lintResult = JSHINT(getUnitTestGlobals() + functionCode,getJSHintGlobals());
+		    console.log(JSHINT.errors);
+			if(!lintResult && !simpleModeActive)
 			{
-				var errors = checkForErrors(JSLINT.errors);
+				var errors = checkForErrors(JSHINT.errors);
 				console.log(errors);
 				if(errors != "")
 				{
