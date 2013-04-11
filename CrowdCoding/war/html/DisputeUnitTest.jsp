@@ -63,11 +63,11 @@
 			var functionCode = functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val();
 			var errors = "";
 		    console.log(functionCode);
-		    var lintResult = JSLINT(getUnitTestGlobals() + functionCode,getJSLintGlobals());
-			console.log(JSLINT.errors);
+		    var lintResult = JSHINT(getUnitTestGlobals() + functionCode,getJSHintGlobals());
+			console.log(JSHINT.errors);
 			if(!lintResult)
 			{
-				var errors = checkForErrors(JSLINT.errors);
+				var errors = checkForErrors(JSHINT.errors);
 				console.log(errors);
 				if(errors != "")
 				{

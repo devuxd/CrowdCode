@@ -152,7 +152,7 @@
 <!-- Scripts --> 
 <script src="/include/codemirror/codemirror.js"></script>
 <script src="/include/codemirror/javascript.js"></script>
-<script src="/include/jslint.js"></script>
+<script src="/include/jshint-1.1.0.js"></script>
 <script src="/html/errorCheck.js"></script>
 <script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
