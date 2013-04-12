@@ -240,10 +240,10 @@
 			hasAtLeast1Test = true;
 			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
 			console.log("LINT" + lintCheckFunction);
-			var lintResult = JSLINT(lintCheckFunction,getJSLintGlobals());
-			var errors = checkForErrors(JSLINT.errors);
+			var lintResult = JSHINT(lintCheckFunction,getJSHintGlobals());
+			var errors = checkForErrors(JSHINT.errors);
 			console.log(errors);
-			// no errors by jslint
+			// no errors by jshint
 				if(errors == "")
 				{
 					if(p == 0)
@@ -411,7 +411,7 @@
 				{
 				console.log("lint errors");
 				setTimeout(function(){
-				// jslint found errors
+				// jshint found errors
 					if(p == 0)
 					{   
 						htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
