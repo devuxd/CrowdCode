@@ -63,8 +63,11 @@
 			<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
 			<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
 			<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
-			<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font></div>  </h4>
-		</div>
+			<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font></div>  
+			
+	</h4>	
+</div>
+
 
 <div id="container">
 
@@ -78,11 +81,12 @@
 
 
 <div id= "leftbar" class="animated fadeInLeftBig">
-	<div id="scoreTableAnimHolder" class="animated flip">	<div id="scoreTableTitle" class="animated wiggle" >   &nbsp;&nbsp;  Your score <i class=" icon-star"> </i> &nbsp;</div> </div>
+	<div id="scoreTableAnimHolder" class="animated flip">	<div id="scoreTableTitle" class="animated wiggle" >   &nbsp;&nbsp;Score <i class=" icon-star"> </i> &nbsp;</div> </div>
 	
 	<table id="scoreTable">	
 		<tr>
-			<td class="animated fadeInLeftBig"><b ><p><span id="score" >0 </span> points</p></b></td>
+			<td class="animated fadeInLeftBig"><b ><p ><span id="score" style="font-size: x-large;" >0 </span> pts</p></b>
+			</td>
 		</tr>
 	</table>
 	
@@ -94,11 +98,9 @@
 	</div>
 
 	<div>&nbsp;	<BR><BR><BR><BR></div>
-	<div id="feedbackThanks"><span><b>Thanks for the feedback!</b></span></div>
-	<div id="feedback">
-		<textarea id="feedbackBox" placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?"></textarea><BR>
-		<button class="btn btn-primary" id="sendFeedback" >Send feedback</button>		
-	</div>
+
+			<button class="btn btn-primary btn-success" id="sendFeedbackMaster" >Send feedback <i class="icon-flag"></i>
+			</button>		
 	
 </div>
 
@@ -122,7 +124,7 @@
 	<table>
 		<tr>
 			<td><p><a href="" id="logoutLink">Log out</a></p></td>
-			<td><p><a href="">Preferences</a></p></td>
+			<td><p><a href="" id="prefLink">Preferences</a></p></td>
 			<td><p><a href="">Terms</a></p></td>
 			<td><p><a href="">About</a></p></td>
 		</tr>
@@ -130,12 +132,60 @@
 </div>
 
 <!-- Popups -->
+
+<div id="feedbackModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" logoutLabel"" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="logoutLabel">Feedback.</h3>
+	</div>
+	<div class="modal-body">
+	
+		<div id="feedbackThanks"><span><b>Thanks for the feedback!</b></span></div>
+	<div id="feedback">
+		<textarea id="feedbackBox" placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?"></textarea><BR>
+		<button class="btn btn-primary" id="sendFeedback" >Send feedback</button>		
+	</div>
+	
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>
+
+
+
+
+
+
+
 <div id="logout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" logoutLabel"" aria-hidden="true">
 	<div class="logout-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 		<h3 id="logoutLabel">You are now logged out.</h3>
 	</div>
 	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button id="loginButton" class="btn btn-primary">Log in</button>
+	</div>
+</div>
+
+<div id="preferences" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" logoutLabel"" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="logoutLabel">Preferences</h3>
+		<p><b>User:</b> &nbsp; &nbsp;<%=worker.getHandle()%> </p>
+	</div>
+		<div class="modal-body">
+			   	<div><b>Profile picture  </b>&nbsp; &nbsp;<input type="file" class="input-xlarge" id="command" style="float:right;"></div>
+			   	</br>
+			   	<div><b>Preference 2  </b>&nbsp; &nbsp;<input type="text" class="input-xlarge"  style="float:right;"></div>
+			   	</br>
+			   	<div><b>Preference 3  </b>&nbsp; &nbsp;<input type="text" class="input-xlarge" style="float:right;"></div>
+	
+	
+	
+		</div>
 	<div class="modal-footer">
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		<button id="loginButton" class="btn btn-primary">Log in</button>
@@ -170,6 +220,27 @@
 			$('#logout').modal();
 			return false;
 		});
+		
+		
+		$("#prefLink").click(function() {
+			// Tell server to logout
+			// Clear the microtask div of content
+			// Need to stop fetching messages!!!
+
+			$('#preferences').modal();
+			return false;
+		});
+		
+			$("#sendFeedbackMaster").click(function() {
+			// Tell server to logout
+			// Clear the microtask div of content
+			// Need to stop fetching messages!!!
+
+			$('#feedbackModal').modal();
+			return false;
+		});
+		
+		
 
 		$("#loginButton").click(function() {
 			alert('login');
@@ -218,6 +289,10 @@
     {
     	var stringifiedData = JSON.stringify( formData );
     	
+    	 $('#myModal').modal('toggle');
+		setTimeout(function() {  $('#myModal').modal('hide');},1400);		
+		 $('#microtask').addClass('animated rollOut');
+    	
 		$.ajax({
 		    contentType: 'application/json',
 		    data: stringifiedData,
@@ -262,7 +337,7 @@
 		var newHTML = '';
 		$.each(leaderboard.leaders, function(index, leader)
 		{
-			newHTML += '<tr><td>' + leader.score + '</td><td>' + leader.name + '</td></tr>';
+			newHTML += '<tr><td style="font-size: x-large;">' + leader.score + '</td><td>' + leader.name + '</td></tr>';
 		});
 		$('#leaderboardTable').html(newHTML);
 	}

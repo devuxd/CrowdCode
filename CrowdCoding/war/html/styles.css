@@ -9,7 +9,7 @@ input {border-radius: 15px;}
 .modal-backdrop {background: none;}
  #activityFeedTable
       {
-         overflow-y: scroll;  overflow-x: hidden; height:397px; width:180px; background:#D9D9D9; 
+         overflow-y: scroll;  overflow-x: hidden; height:397px; width:180px; background:#FFF0C1; 
          margin-left:0%; margin-right:0%; border-style:solid; border-width:2px; font-size:75%;
     	border-color:#8F8F8F;
         -webkit-transition-property:color, background-color;  
@@ -26,6 +26,7 @@ input {border-radius: 15px;}
         -webkit-transition-property:color, background-color;  
  		-webkit-transition-duration: .1s, .1s;  
  		-webkit-transition-timing-function: linear, ease-in;  
+ 		
       }  
       
     #activityFeedTable td
@@ -81,7 +82,7 @@ input {border-radius: 15px;}
 {
 	background:#5FABE9;
 	height:30px;
-	width:177px;
+	width:120px;
 	margin-bottom:3%;
     border-radius:3px;
 	padding-top:5%;
@@ -121,14 +122,15 @@ border: 1px solid #eee;
 
 #leftbar {background: none; margin-right: 2%; margin-top: 1%; text-align: center; width: auto; }
 #scoreTable { 
-	width: 177px; margin-left:0%; margin-right:auto; background:#CFCFCF;
+	width: 120px; margin-left:0%; margin-right:auto; background:#FFF0C1;
 	border-color:#8F8F8F; border-style:solid;
 	border-width:2px;   border-radius:10px;
     -webkit-transition-property:color, background-color;  
  	-webkit-transition-duration: .2s, .2s;  
  	-webkit-transition-timing-function: linear, ease-in;  
-font-family: Lucida Console, Monaco, monospace;
+font-family: ‘Arial Black’, Gadget, sans-serif;
 					}
+#scoreTable tr,td {padding-top:15px;}
 #score p { font-size: larger; }
 
 #contentPane { width: 640px; background:#ffdb66;  border-radius: 5px; margin-left:3%; }
@@ -136,13 +138,13 @@ font-family: Lucida Console, Monaco, monospace;
 #errors{ color:red; background-color:lightgrey;}
 #rightbar { background: none repeat scroll 0 0; margin-top: 0%;width: auto; float:right;}
 #leaderboardTable 
-{		 margin-left:auto; margin-right:auto; background:#CFCFCF; border-width:2px;
+{		 margin-left:auto; margin-right:auto; background:#FFF0C1; border-width:2px;
 		 border-radius:10px; border-color:#8F8F8F; border-style: solid; margin-top:0%;
 		 width:175px; height: 50px; float:left;
 		-webkit-transition-property:color, background-color;  
  		-webkit-transition-duration: .2s, .2s;  
  		-webkit-transition-timing-function: linear, ease-in;  
- 		font-family: Lucida Console, Monaco, monospace; 		
+font-family: ‘Arial Black’, Gadget, sans-serif;
 }
 #leaderboardTable td { padding-right:10px; font-size: smaller;   }
 #leaderboardTableTitle p, tr { font-weight: bold;  }
