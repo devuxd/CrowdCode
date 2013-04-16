@@ -103,7 +103,10 @@
 
 	<div>&nbsp;	<BR><BR></div>
 	
-<button class="btn btn-primary btn-success" id="sendFeedbackMaster" >Send feedback <i class="icon-pencil"></i> </button>	
+<button class="btn btn-primary btn-info" id="sendFeedbackMaster" >Send feedback <i class="icon-pencil"></i> </button>	
+<button class="btn " id="prefLink" >Preferences <i class=" icon-indent-left"></i> </button>	
+	
+					
 	
 </div>
 
@@ -157,7 +160,8 @@
 		<div id="feedbackThanks"><span><b>Thanks for the feedback!</b></span></div>
 	<div id="feedback">
 		<textarea id="feedbackBox" placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?"></textarea><BR>
-		<button class="btn btn-primary" id="sendFeedback" >Send feedback</button>		
+		<button class="btn btn-info" id="sendFeedback" >Send feedback</button>	
+			
 	</div>
 	
 	</div>
@@ -173,8 +177,10 @@
 		<p><b>User:</b> &nbsp; &nbsp;<%=worker.getHandle()%> </p>
 	</div>
 		<div class="modal-body">
+			   	<div>	<img src="/include/imgs/user.png" class="img-circle" width="80px" heigth="80px" style="float:right"></div>
+			   </br> 	
 			   	<div><b>Profile picture  </b>&nbsp; &nbsp;<input type="file" class="input-xlarge" id="command" style="float:right;"></div>
-			   	</br>
+			   	</br>  </br>   </br>
 			   	<div><b>Preference 2  </b>&nbsp; &nbsp;<input type="text" class="input-xlarge"  style="float:right;"></div>
 			   	</br>
 			   	<div><b>Preference 3  </b>&nbsp; &nbsp;<input type="text" class="input-xlarge" style="float:right;"></div>
@@ -184,7 +190,6 @@
 		</div>
 	<div class="modal-footer">
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button id="loginButton" class="btn btn-primary">Log in</button>
 	</div>
 </div>
 

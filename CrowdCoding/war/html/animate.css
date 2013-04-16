@@ -115,7 +115,7 @@ body { /* Addresses a small issue in webkit: http://bit.ly/NEdoDq */
 	60% {transform: translateY(-15px);}
 }
 
-.bounce {
+.bounce:hover {
 	-webkit-animation-name: bounce;
 	-moz-animation-name: bounce;
 	-o-animation-name: bounce;

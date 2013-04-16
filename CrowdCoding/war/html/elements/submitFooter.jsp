@@ -1,4 +1,6 @@
 	
-	<input class="btn btn-primary" type="submit" value="Submit" />
+	<input class="btn btn-danger animated wiggle"  id="skip" value="Skip" />
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<a href="" id="skip">Skip</a>
+
+	<input class="btn btn-primary animated pulseButton" type="submit" value="Submit" style="float:right" />
+
