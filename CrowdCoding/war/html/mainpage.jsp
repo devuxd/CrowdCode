@@ -297,6 +297,8 @@
 					   'workerID': '<%= worker.getUserID() %>'};
 		eventData.microtask = formData;
 		eventListRef.child(microtaskID).set(eventData);
+     	    	$('#microtask').addClass('animated rollOut');  		
+   
     }
      
 	function skip() 
