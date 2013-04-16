@@ -21,9 +21,10 @@ import com.crowdcoding.dto.history.MessageReceived;
 import com.crowdcoding.dto.history.StateChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
+import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
-import com.crowdcoding.microtasks.SketchFunction;
 import com.crowdcoding.microtasks.WriteCall;
+import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,9 +43,6 @@ import com.googlecode.objectify.cmd.Query;
 @EntitySubclass(index=true)
 public class Function extends Artifact
 {
-	public enum State { CREATED, DESCRIBED, OPEN_FOR_CODING, ACTIVE_CODING, WAITING_FOR_CALLEES, 
-		IMPLEMENTED, READY_TO_TEST, TESTED, READY_TO_ADD_CALL, NEEDS_DEBUGGING }; 
-	
 	private String code;
 	@Index private String name;
 	private String description;
@@ -52,15 +50,18 @@ public class Function extends Artifact
 	@Load private List<Parameter> parameters = new ArrayList<Parameter>();  	
 	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
 	private List<String> pseudoCalls = new ArrayList<String>();
-	private State state;
 	
 	// When a function becomes tested, functions that are calling it want to be notified.
 	private List<Ref<Function>> notifyOnDescribed = new ArrayList<Ref<Function>>(); 
 	
-	// Calls that have not yet been intregrated into the code
-	private Queue<Ref<Function>> callsToIntegrate = new LinkedList<Ref<Function>>();
 	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
+	private boolean needsDebugging;		// true iff the function is failing its unit tests.
+	
+	// Queued microtasks waiting to be done (not yet in the ready state)
+	private Queue<Ref<Microtask>> queuedMicrotasks = new LinkedList<Ref<Microtask>>();	
+	
+	private Ref<Microtask> microtaskOut;
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -74,8 +75,7 @@ public class Function extends Artifact
 	// Constructor for a function that already has a full function description
 	public Function(String name, String description, String returnType, List<ParameterDTO> params, Project project)
 	{
-		super(project);
-		
+		super(project);		
 		writeDescriptionCompleted(name, description, returnType, params, project);
 	}
 	
@@ -85,71 +85,30 @@ public class Function extends Artifact
 		super(project);
 		isWritten = false;
 		
-		project.historyLog().beginEvent(new StateChange(State.CREATED.name(), this));
-		
-		updateState(State.CREATED, project);
-		ofy().save().entity(this).now();
-		
 		// Spawn off a microtask to write the function description
-		WriteFunctionDescription writeFunctionDescription = 
-				new WriteFunctionDescription(this, callDescription, caller, project);
+		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, project));
+	}
+	
+	// Constructor for the special main function, which acts as the root of the call graph
+	public Function(Project project)
+	{
+		super(project);
 		
-		project.historyLog().endEvent();
+		this.name = "main";
+		this.description = "Main function for a commandline application. Given a userInput string describing\n" +
+				"an action to take, executes the action and returns the result as a String.";
+		this.parameters.add(new Parameter("userInput", "String", "Describes the action to take"));
+		this.returnType = "String";
+		this.code = "";
+		this.hasBeenDescribed = true;
+		
+		ofy().save().entity(this).now();
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  ACCESSORS
 	//////////////////////////////////////////////////////////////////////////////
-	
-	private State getState() {
-		return state;
-	}
 
-	private void updateState(State state, Project project) 
-	{
-		// Compute isNowWritten based on the new state
-		boolean isNowWritten = false;		
-		switch(state)
-		{
-		case ACTIVE_CODING:
-		case CREATED:
-		case DESCRIBED:
-		case OPEN_FOR_CODING:
-		case READY_TO_ADD_CALL:
-		case WAITING_FOR_CALLEES:
-			isNowWritten = false;
-			break;
-		case READY_TO_TEST:
-		case IMPLEMENTED:
-		case NEEDS_DEBUGGING:
-		case TESTED:
-			isNowWritten = true;
-			break;
-		default:
-			break;
-		}
-		
-		// If we transitioned to described, send notify on described after we have
-		// finished transitioning our state
-		boolean notifyDescribed = false;
-		if (this.state != State.DESCRIBED && state == State.DESCRIBED)
-			notifyDescribed = true;
-
-		// If we are now at least described (regardless of how we got there, set the flag)
-		if (this.state != State.CREATED)
-			this.hasBeenDescribed = true;		
-		
-		if (isNowWritten && !isWritten)
-			project.functionWritten();
-		
-		this.isWritten = isNowWritten;
-		this.state = state;
-		ofy().save().entity(this).now();		
-		
-		if (notifyDescribed)
-			notifyOnDescribed(project);
-	}
-	
 	// Is the fucntion written and all pseudocode no replaced with code? 
 	// NOTE: Being written does not imply that all tests pass.
 	public boolean isWritten()
@@ -255,35 +214,137 @@ public class Function extends Artifact
 		return new FunctionDescriptionDTO(name, returnType, paramDTOs, description);
 	}
 	
-	public boolean anyTestCasesDisputed()
+	// Queues the specified microtask and looks for work
+	public void queueMicrotask(Microtask microtask, Project project)
 	{
-		for(int i = 0; i < tests.size(); i++)
+		queuedMicrotasks.add(Ref.create(microtask.getKey()));
+		ofy().save().entity(this).now();
+		lookForWork(project);		
+	}
+		
+	//////////////////////////////////////////////////////////////////////////////
+	//  PRIVATE CORE FUNCTIONALITY
+	//////////////////////////////////////////////////////////////////////////////
+	
+	private void setWritten(boolean isWritten, Project project)
+	{
+		if (this.isWritten != isWritten)
 		{
-			if(tests.get(i).getValue() != null)
-			{
-				if(tests.get(i).getValue().isDisputed())
-				{
-					return true;
-				}
-			}
-		}
-		return false;
+			this.isWritten = isWritten;
+			ofy().save().entity(this).now();	
+			if (isWritten)
+				project.functionWritten();
+			else
+				project.functionNotWritten();
+		}		
 	}
 	
-	private boolean allUnitTestsImplemented(boolean registerCallback)
+	// Sets the function as being described
+	private void setDescribed(Project project)
+	{
+		if (!this.hasBeenDescribed)
+		{
+			this.hasBeenDescribed = true;
+			ofy().save().entity(this).now();	
+			notifyOnDescribed(project);
+		}
+	}
+	
+	// Makes the specified microtask out for work
+	private void makeMicrotaskOut(Microtask microtask)
+	{
+		microtask.makeReady();
+		microtaskOut = Ref.create(microtask.getKey());
+		ofy().save().entity(this).now();
+	}
+	
+	private void microtaskOutCompleted()
+	{
+		microtaskOut = null;
+		ofy().save().entity(this).now();
+	}
+	
+	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
+	// If there is a microtasks available, marks it as ready to be done.
+	private void lookForWork(Project project)
+	{
+		// If there is currently not already a microtask being done on this function, 
+		// determine if there is work to be done
+		if (microtaskOut == null)
+		{
+			// Microtask must have been described, as there is no microtask out to describe it.
+			if (isWritten && needsDebugging)			
+				makeMicrotaskOut(new DebugTestFailure(this, project));
+			else if (!queuedMicrotasks.isEmpty())
+				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get());
+		}
+	}	
+		
+	// Determines if all unit tests are implemented (e.g., not merely described or currently disputed)
+	private boolean allUnitTestsImplemented()
 	{
 		for (Ref<Test> t : tests) 
 		{
 			if (!t.get().isImplemented())
-			{
-				t.get().registerCallback(); //"let me know when you're ready"
-				return false;
-			}
+				return false;			
 		}
+		
 		//if there are no unit tests, the tests aren't all ready yet, so return false...
 		//otherwise, you've gotten here and all the unit tests are implemented
 		return !tests.isEmpty();
 	}
+	
+	private void runTestsIfReady(Project project)
+	{
+		if(isWritten && allUnitTestsImplemented())
+			project.requestTestRun();
+	}
+		
+	private void onWorkerEdited(FunctionDTO dto, Project project)
+	{
+		// Measure the LOC increase. 
+		int	oldLOC = StringUtils.countMatches(this.code, "\n") + 1;
+		int newLOC = StringUtils.countMatches(dto.code, "\n") + 1;		
+		project.locIncreasedBy(newLOC - oldLOC);		
+		
+		// Update the code
+		this.code = dto.code;				
+
+		// Look for pseudocode and psuedocalls
+		List<String> currentPseudoCalls = findPseudocalls(code);
+	
+		if(currentPseudoCalls.isEmpty())
+		{
+			List<String> pseudoCode = findPseudocode(code);
+			if(pseudoCode.isEmpty())
+			{
+				setWritten(true, project);
+				runTestsIfReady(project);
+			}
+			else 
+			{
+				setWritten(false, project);
+				queueMicrotask(new WriteFunction(this, project), project);	
+			}
+		}	
+		else
+		{
+			for (String callDescription : currentPseudoCalls)
+			{
+				if (!pseudoCalls.contains(callDescription))		
+				{
+					setWritten(false, project);
+					
+					//for any currentPseudoCall not in pseudoCalls, add it
+					pseudoCalls.add(callDescription); 
+					// Spawn microtask immediately, as it does not require access to the function itself
+					new ReuseSearch(this, callDescription, project);
+				}
+			}
+		}
+					
+		ofy().save().entity(this).now();
+	}	
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  NOTIFICATION HANDLERS
@@ -302,109 +363,14 @@ public class Function extends Artifact
 		
 	public void sketchCompleted(FunctionDTO dto, Project project)
 	{
+		microtaskOutCompleted();
 		onWorkerEdited(dto, project);
-	}
-	
-	public void runTestsIfReady(Project project)
-	{
-		if(getState() == State.IMPLEMENTED)
-		{
-			//if all tests are implemented, state = State.READY_TO_TEST;
-			//and if not, register a callback to call this again
-			if (allUnitTestsImplemented(true))
-			{
-				project.historyLog().beginEvent(new StateChange(State.READY_TO_TEST.name(), this));
-				updateState(State.READY_TO_TEST, project);
-				MachineUnitTest writeMachineUnitTest = new MachineUnitTest(project);
-				project.historyLog().endEvent();
-			}			
-		}
-		ofy().save().entity(this).now();			
-	}
-	
-	
-	public void onWorkerEdited(FunctionDTO dto, Project project)
-	{
-		// Measure the LOC increase. 
-		int	oldLOC = StringUtils.countMatches(this.code, "\n") + 1;
-		int newLOC = StringUtils.countMatches(dto.code, "\n") + 1;		
-		project.locIncreasedBy(newLOC - oldLOC);		
-		
-		// Update the code
-		this.code = dto.code;				
-
-		// Look for pseudocode and psuedocalls
-		List<String> currentPseudoCalls = findPseudocalls(code);
-	
-		if(currentPseudoCalls.isEmpty())
-		{
-			List<String> pseudoCode = findPseudocode(code);
-			if(pseudoCode.isEmpty())
-			{
-				project.historyLog().beginEvent(new StateChange(State.IMPLEMENTED.name(), this));
-				updateState(State.IMPLEMENTED, project);
-				runTestsIfReady(project);
-				project.historyLog().endEvent();
-			} else {
-				project.historyLog().beginEvent(new StateChange(State.OPEN_FOR_CODING.name(), this));
-				updateState(State.OPEN_FOR_CODING, project);
-				//create new Sketch microtask
-				SketchFunction sketchFunction = new SketchFunction(this, project);
-				project.historyLog().endEvent();
-			}
-		}	
-		else
-		{
-			for (String callDescription : currentPseudoCalls)
-			{
-				if (!pseudoCalls.contains(callDescription))		
-				{
-					//for any currentPseudoCall not in pseudoCalls, add it
-					pseudoCalls.add(callDescription); 
-		
-					// TODO: we need to pass the string of the call and get that back...
-					/*ReuseSearch reuseSearch =*/ new ReuseSearch(this, callDescription, project);
-					
-					if(callsToIntegrate.isEmpty())
-					{
-						project.historyLog().beginEvent(new StateChange(State.WAITING_FOR_CALLEES.name(), this));						
-						updateState(State.WAITING_FOR_CALLEES, project);
-						project.historyLog().endEvent();
-					}
-					else 
-						addCall(load(callsToIntegrate.remove()), project);
-				}
-			}
-		}
-					
-		ofy().save().entity(this).now();
-	}
-	
-	private void addCall(Function callee, Project project) 
-	{
-		project.historyLog().beginEvent(new StateChange(State.READY_TO_ADD_CALL.name(), this));
-		
-		updateState(State.READY_TO_ADD_CALL, project);
-		
-		// Create a microtask to add the call
-		WriteCall writeCall = new WriteCall(this, callee, project);	
-		
-		project.historyLog().endEvent();
 	}
 	
 	public void calleeBecameDescribed(Function callee, Project project)
 	{
 		project.historyLog().beginEvent(new MessageReceived("AddCall", this));
-		
-		if (getState() == State.WAITING_FOR_CALLEES)
-		{ 			
-			addCall(callee, project);
-		}
-		else
-		{	
-			callsToIntegrate.add((Ref<Function>) Ref.create(callee.getKey()));			
-		}	
-		
+		queueMicrotask(new WriteCall(this, callee, project), project);
 		project.historyLog().endEvent();
 	}
 		
@@ -428,20 +394,10 @@ public class Function extends Artifact
 		callee.addToNotifyOnDescribed(this, project);
 	}
 	
-	public void activeCodingStarted(Project project) 
-	{
-		project.historyLog().beginEvent(new StateChange(State.ACTIVE_CODING.name(), this));	
-		this.updateState(State.ACTIVE_CODING, project);
-		project.historyLog().endEvent();
-	}
-	
-	
 	public void writeDescriptionCompleted(String name, String description, String returnType, 
 	List<ParameterDTO> params, Project project)
 	{
-		project.historyLog().beginEvent(new StateChange(State.DESCRIBED.name(), this));	
-		
-		this.updateState(State.DESCRIBED, project);
+		microtaskOutCompleted();
 		this.name = name;
 		this.description = description;
 		this.returnType = returnType;
@@ -455,25 +411,29 @@ public class Function extends Artifact
 		this.code = "/#Mark this function as implemented by removing this line.";	
 		project.locIncreasedBy(1);
 		
-		//Spawn off microtask to write test cases
-		WriteTestCases writeTestCases = new WriteTestCases(this, project);
-		this.updateState(State.OPEN_FOR_CODING, project);
-
 		ofy().save().entity(this).now();
 		
-		// Spawn off microtask to sketch the method
-		SketchFunction sketchFunction = new SketchFunction(this, project);
+		setDescribed(project);		
 		
-		project.historyLog().endEvent();
+		//Spawn off microtask to write test cases. As it does not impact the artifact itself,
+		// the microtask can be directly started rather than queued.
+		WriteTestCases writeTestCases = new WriteTestCases(this, project);
+		
+		// Spawn off microtask to sketch the method
+		queueMicrotask(new WriteFunction(this, project), project);
 	}
 	
 	public void writeCallCompleted(FunctionDTO dto, Project project)
 	{
+		microtaskOutCompleted();
 		onWorkerEdited(dto, project);
 	}
 	
 	public void debugTestFailureCompleted(FunctionDTO dto, Project project)
 	{				
+		microtaskOutCompleted();
+		this.needsDebugging = false;
+		
 		// Check to see if there any disputed tests
 		//Current: If it doesn't have a test case number indicating a dispute, all passed.
 		//That should change in the future, to indicate which ones passed		
@@ -483,21 +443,12 @@ public class Function extends Artifact
 			tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
 			onWorkerEdited(dto, project);
 		} else { //at present, reaching here means all tests passed.
-			if(!this.code.trim().equals(dto.code.trim())) //this may be the source of a bug, always returning unequal.
+			if(!this.code.trim().equals(dto.code.trim()))
 			{ //integrate the new changes
 				onWorkerEdited(dto, project);
-			} else/*if all tests passed*/ { //tests ran through all smoothly
-				project.historyLog().beginEvent(new StateChange(State.TESTED.name(), this));	
-				updateState(State.TESTED, project);
-				project.historyLog().endEvent();
-			}
+			} 
 		}
-/*		// all unit tests are closed, we only generate one at a time
-		for(Ref<Test> testCases: tests)
-		{
-			testCases.get().closeUnitTest();
-		}
-	*/	
+
 		// Save the entity again to the datastore		
 		ofy().save().entity(this).now(); 
 	}
@@ -505,14 +456,10 @@ public class Function extends Artifact
 	// This method notifies the function that it has just passed all of its tests.
 	public void passedTests(Project project)
 	{
-		// If we're not yet written or if we're already tested, ignore this notification
-		// But if we are ready to test, implemented, or needs debugging, transition to tested
-		if (state == State.READY_TO_TEST || state == State.IMPLEMENTED || state == State.NEEDS_DEBUGGING)
+		if (this.needsDebugging)
 		{
 			project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
-			project.historyLog().beginEvent(new StateChange(State.TESTED.name(), this));	
-			updateState(State.TESTED, project);
-			project.historyLog().endEvent();
+			this.needsDebugging = false;
 			project.historyLog().endEvent();
 		}
 	}
@@ -520,20 +467,22 @@ public class Function extends Artifact
 	// This method notifies the function that it has failed at least one of its tests
 	public void failedTests(Project project)
 	{
-		// If we are not yet written or if we already need debugging, ignore this
-		// TODO: do we really want to ignore the case when we are already in needs debugging? Can it 
-		// ever happen where we stay there after a transition? Really only just want to create a 
-		// DebugTestFailure only if one does not already exist.
-		if (isWritten && state != State.NEEDS_DEBUGGING)
+		if (isWritten && !needsDebugging)
 		{
 			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
-			project.historyLog().beginEvent(new StateChange(State.NEEDS_DEBUGGING.name(), this));	
-			updateState(State.NEEDS_DEBUGGING, project);
-			new DebugTestFailure(this, project);
+			this.needsDebugging = true;
+			ofy().save().entity(this).now(); 
+			
+			lookForWork(project);			
 			project.historyLog().endEvent();
-			project.historyLog().endEvent();
-		}				
+		}			
 	}	
+	
+	// Provides notification that a test has transitioned to being implemented
+	public void testBecameImplemented(Test test, Project project)
+	{
+		runTestsIfReady(project);
+	}
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//   NOTIFICATION SENDERS
@@ -548,21 +497,17 @@ public class Function extends Artifact
 		notifyOnDescribed.add(newSubscriberRef);
 		
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
-		if(hasBeenDescribed()) 
-		{
-			sendDescribedNotification(newSubscriberRef, project);
-		}
+		if(hasBeenDescribed()) 		
+			sendDescribedNotification(newSubscriberRef, project);		
 		
 		ofy().save().entity(this).now();
 	}
 	
-	// Notify all subscribers that this function has become tested.
+	// Notify all subscribers that this function has become described.
 	private void notifyOnDescribed(Project project)
 	{
-		for (Ref<Function> subscriber : notifyOnDescribed)
-		{
-			sendDescribedNotification(subscriber, project);
-		}		
+		for (Ref<Function> subscriber : notifyOnDescribed)		
+			sendDescribedNotification(subscriber, project);		
 	}
 	
 	private void sendDescribedNotification(Ref<Function> subscriber, Project project)
@@ -635,7 +580,7 @@ public class Function extends Artifact
 		
 	private void logState() 
 	{
-		System.out.println("State of function "+name+" is now "+getState().name()+".");		
+		System.out.println("State of function: " + this.toString() +".");		
 	}
 	
 	public boolean equals(Object function)
@@ -652,7 +597,8 @@ public class Function extends Artifact
 	
 	public String toString()
 	{
-		return name + " state: " + state.name();		
+		return name + " described: " + hasBeenDescribed + " written: " + isWritten + " needsDebugging: "
+				+ needsDebugging + " queuedMicrotasks: " + queuedMicrotasks.size();
 	}
 	
 	public static String StatusReport(Project project)

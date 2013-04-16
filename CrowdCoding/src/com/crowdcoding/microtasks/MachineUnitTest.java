@@ -37,6 +37,11 @@ public class MachineUnitTest extends Microtask
           project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
           project.historyLog().endEvent();
      }
+     
+  	public void onAssign(Project project) 
+  	{
+  		project.testsAboutToRun();
+  	}
 
      protected void doSubmitWork(DTO dto, Project project)
      {

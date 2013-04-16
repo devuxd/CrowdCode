@@ -5,6 +5,7 @@
 <%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteTestCases" %>
+<%@ page import="com.crowdcoding.microtasks.WriteTestCases.PromptType" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
@@ -13,12 +14,12 @@
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteTestCases microtask = (WriteTestCases) crowdUser.getMicrotask();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
+    
+    PromptType promptType = microtask.getPromptType();
 %>
 
 
 <div id="microtask">
-		
-		
 	<script>
 		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
 		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
@@ -26,9 +27,19 @@
 		var microtaskID = <%= microtask.getID() %>;	
 	
 		var nextTestCase = 2;
+		
+		var showFunctionSignaturePrompt = <%= (promptType == PromptType.FUNCTION_SIGNATURE) %>;
+		var showTestUserStoryPrompt = <%= (promptType == PromptType.TEST_USER_STORY) %>;
 	
 	    $(document).ready(function()
 	    {
+   		    // Based on the prompt type, load and setup the appropriate prompt divs
+   		    if (showTestUserStoryPrompt)
+	   			$("#testUserStoryPrompt").css('display',"block");
+   			if (showFunctionSignaturePrompt)
+	   			$("#testFunctionSignaturePrompt").css('display',"block");
+	    	
+	    	
 		  	$('#skip').click(function() { skip(); });	
 	    	
 	    	$("#addTestCase").click(function()
@@ -78,8 +89,20 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<%= methodFormatted %><BR>
 	
-	<B>What are some cases in which this function might be used? Are there any unexpected corner 
-	cases that might not work?</B><BR><BR>
+	
+	<div id="testUserStoryPrompt" style="display: none">
+		Consider the following user story: <BR>
+		<%= microtask.getUserStoryText() %><BR><BR>
+		
+		<B>What are some examples of cases where this user story might occur? Are there any unexpected corner 
+	cases that might not work?</B><BR><BR>		
+	</div>
+
+	<div id="testFunctionSignaturePrompt" style="display: none">
+		<B>What are some cases in which this function might be used? Are there any unexpected corner 
+		cases that might not work?</B><BR><BR>
+	</div>
+
 	
 	<div class="accordion" id="exampleRoot">
 	  <div class="accordion-group">
