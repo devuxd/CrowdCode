@@ -3282,7 +3282,7 @@ body { /* Addresses a small issue in webkit: http://bit.ly/NEdoDq */
 	100% { transform: skewX(0deg); }
 }
 
-.wiggle {
+.wiggle:hover {
     -webkit-animation-name: wiggle;
     -moz-animation-name: wiggle;
     -o-animation-name: wiggle;

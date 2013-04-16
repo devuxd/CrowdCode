@@ -57,17 +57,21 @@
  
 <!-- Main content -->
 <div id="titlebar" class="animated pulse">
-	<h4>CrowdCode
-
-		<div id="statistics" >
-			<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
-			<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
-			<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
-			<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font></div>  
-			
-	</h4>	
+	<table>
+		<tr>
+			<td>  	<h4>CrowdCode</h4> </td>
+			<td class="titlebarScore"> 				
+				<div id="statistics" >
+					<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
+					<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
+					<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
+					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font>
+				</div>  
+			</td>
+		</tr>
+	</table>
 </div>
-
+<BR>
 
 <div id="container">
 
@@ -81,7 +85,7 @@
 
 
 <div id= "leftbar" class="animated fadeInLeftBig">
-	<div id="scoreTableAnimHolder" class="animated flip">	<div id="scoreTableTitle" class="animated wiggle" >   &nbsp;&nbsp;Score <i class=" icon-star"> </i> &nbsp;</div> </div>
+	<div id="scoreTableAnimHolder" class="animated flip">	<div id="scoreTableTitle" class="animated wiggle" >   &nbsp;&nbsp;  Score <i class=" icon-star"> </i> &nbsp;</div> </div>
 	
 	<table id="scoreTable">	
 		<tr>
@@ -97,10 +101,9 @@
 	
 	</div>
 
-	<div>&nbsp;	<BR><BR><BR><BR></div>
-
-			<button class="btn btn-primary btn-success" id="sendFeedbackMaster" >Send feedback <i class="icon-flag"></i>
-			</button>		
+	<div>&nbsp;	<BR><BR></div>
+	
+<button class="btn btn-primary btn-success" id="sendFeedbackMaster" >Send feedback <i class="icon-pencil"></i> </button>	
 	
 </div>
 
@@ -121,21 +124,32 @@
 </div>
 </div>
 <div id="footer">
-	<table>
+	<!-- <table>
 		<tr>
 			<td><p><a href="" id="logoutLink">Log out</a></p></td>
-			<td><p><a href="" id="prefLink">Preferences</a></p></td>
+			<td><p><a href="">Preferences</a></p></td>
 			<td><p><a href="">Terms</a></p></td>
 			<td><p><a href="">About</a></p></td>
 		</tr>
-	</table>
+	</table>  -->
 </div>
 
 <!-- Popups -->
+<div id="logout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" logoutLabel"" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="logoutLabel">You are now logged out.</h3>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button id="loginButton" class="btn btn-primary">Log in</button>
+	</div>
+</div>
 
 <div id="feedbackModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" logoutLabel"" aria-hidden="true">
 	<div class="logout-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">�</button>
 		<h3 id="logoutLabel">Feedback.</h3>
 	</div>
 	<div class="modal-body">
@@ -152,27 +166,9 @@
 	</div>
 </div>
 
-
-
-
-
-
-
-<div id="logout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" logoutLabel"" aria-hidden="true">
-	<div class="logout-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="logoutLabel">You are now logged out.</h3>
-	</div>
-	<div class="modal-body"></div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button id="loginButton" class="btn btn-primary">Log in</button>
-	</div>
-</div>
-
 <div id="preferences" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" logoutLabel"" aria-hidden="true">
 	<div class="logout-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">�</button>
 		<h3 id="logoutLabel">Preferences</h3>
 		<p><b>User:</b> &nbsp; &nbsp;<%=worker.getHandle()%> </p>
 	</div>
@@ -195,7 +191,7 @@
 <!-- Scripts --> 
 <script src="/include/codemirror/codemirror.js"></script>
 <script src="/include/codemirror/javascript.js"></script>
-<script src="/include/jslint.js"></script>
+<script src="/include/jshint-1.1.0.js"></script>
 <script src="/html/errorCheck.js"></script>
 <script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
@@ -221,8 +217,7 @@
 			return false;
 		});
 		
-		
-		$("#prefLink").click(function() {
+				$("#prefLink").click(function() {
 			// Tell server to logout
 			// Clear the microtask div of content
 			// Need to stop fetching messages!!!
@@ -239,8 +234,6 @@
 			$('#feedbackModal').modal();
 			return false;
 		});
-		
-		
 
 		$("#loginButton").click(function() {
 			alert('login');
@@ -289,10 +282,6 @@
     {
     	var stringifiedData = JSON.stringify( formData );
     	
-    	 $('#myModal').modal('toggle');
-		setTimeout(function() {  $('#myModal').modal('hide');},1400);		
-		 $('#microtask').addClass('animated rollOut');
-    	
 		$.ajax({
 		    contentType: 'application/json',
 		    data: stringifiedData,
@@ -337,7 +326,7 @@
 		var newHTML = '';
 		$.each(leaderboard.leaders, function(index, leader)
 		{
-			newHTML += '<tr><td style="font-size: x-large;">' + leader.score + '</td><td>' + leader.name + '</td></tr>';
+			newHTML += '<tr><td>' + leader.score + '</td><td>' + leader.name + '</td></tr>';
 		});
 		$('#leaderboardTable').html(newHTML);
 	}
