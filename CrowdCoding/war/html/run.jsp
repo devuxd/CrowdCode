@@ -22,14 +22,23 @@
 	<script src="/include/jquery-1.8.2.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 	
 	<script>
+		var code = '<%=allCodeJS%>';
+		
 		$(document).ready(function()
 		{
 			$('#code').html('<%=allCodeDisplay%>');
 			
-			$('#execute').click(function()
+			$('#executeCommand').click(function()
 			{
 				var command = $('#command').val();
-				var output = eval(command);
+				var output = eval(code + ' ' + ' main(\'' + command + '\');');
+				$('#output').append('<BR>' + command + '<BR>');
+				$('#output').append(output + '<BR>');								
+			});			
+			$('#execute').click(function()
+			{
+				var command = $('#functionCall').val();
+				var output = eval(code + ' ' + command);
 				$('#output').append('<BR>' + command + '<BR>');
 				$('#output').append(output + '<BR>');								
 			});
@@ -45,24 +54,25 @@
 			});
 		});	
 	</script>
-	<script>
-		<%=allCodeJS%>
-	</script>
 </head>
 <body>
 	<div class="row-fluid">
 	  	<div class="span1"></div>
 	  	<div class="span10">
 			<h3>Run the code</b></h3>
-			Enter javascript commands, which will be executed against the code below.<BR><BR>
+			Enter commands, which will be executed against the main function<BR><BR>
 		
 		   	<input type="text" class="input-xlarge" id="command">
-		   	<button id="execute" class="btn btn-small">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		   	<button id="clear" class="btn btn-small">Clear Output</button><BR><BR>
-		   	
-		   	<h4>Output</b></h4>
+		   	<button id="executeCommand" class="btn btn-small">Submit</button><BR><BR><BR>
+
+			Enter javascript function calls, which will be executed against the code below.<BR><BR>
+		
+		   	<input type="text" class="input-xlarge" id="functionCall">
+		   	<button id="execute" class="btn btn-small">Submit</button><BR><BR>
+		   		
+		   	<h4>Output</b></h4>		   	
 			<div id="output"></div>
-			<BR><BR>
+			<BR><button id="clear" class="btn btn-small">Clear Output</button><BR><BR>
 			
 			 <h4>Code</b></h4>
 			<div id="code"></div>
