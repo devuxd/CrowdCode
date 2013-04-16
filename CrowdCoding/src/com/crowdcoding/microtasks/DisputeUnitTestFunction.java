@@ -48,7 +48,7 @@ public class DisputeUnitTestFunction extends Microtask
 	protected void doSubmitWork(DTO dto, Project project)
 	{
 		FunctionDTO dto2 = (FunctionDTO)dto;
-		test.get().disputeUnitTestCorrectionCompleted(dto2, project);	
+		test.get().writeTestCompleted(dto2, project);	
 	}
 
 	protected Class getDTOClass()

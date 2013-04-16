@@ -5,7 +5,8 @@
 <%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.artifacts.Function" %>
-<%@ page import="com.crowdcoding.microtasks.SketchFunction" %>
+<%@ page import="com.crowdcoding.microtasks.WriteFunction" %>
+<%@ page import="com.crowdcoding.microtasks.WriteFunction.PromptType" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="java.io.StringWriter" %>
@@ -15,7 +16,7 @@
 	Project project = Project.Create(projectID);
     ObjectMapper mapper = new ObjectMapper();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-    SketchFunction microtask = (SketchFunction) crowdUser.getMicrotask();
+    WriteFunction microtask = (WriteFunction) crowdUser.getMicrotask();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
     StringWriter strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
@@ -23,6 +24,8 @@
     String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'";
     Function function = microtask.getFunction();
     String functionCode = function.getEscapedCode();
+    
+    PromptType promptType = microtask.getPromptType();
 %>
 
 
@@ -30,15 +33,25 @@
 	<script>
 		var microtaskTitle = '<%= microtask.microtaskTitle() %>';
 		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
-		var microtaskType = 'sketchfunction';
+		var microtaskType = 'writeFunction';
 		var microtaskID = <%= microtask.getID() %>;
 		
 		var editorCode = '<%=functionCode%>';
 		var functionHeader = <%= functionHeader %>;
 		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+		
+		var showUserStoryPrompt = <%= (promptType == PromptType.IMPLEMENT_USER_STORY) %>;
+		var showSketchPrompt = <%= (promptType == PromptType.SKETCH) %>;
 		   	 	
    		$(document).ready(function() 
-		{
+		{   			
+   		    // Based on the prompt type, load and setup the appropriate prompt divs
+   		    if (showUserStoryPrompt)
+	   			$("#userStoryPrompt").css('display',"block");
+   			if (showSketchPrompt)
+	   			$("#sketchPrompt").css('display',"block");
+   			   			
+   			
 		  	$('#skip').click(function() { skip(); });	
 		  	
 			$('#sketchForm').submit(function() 
@@ -56,9 +69,20 @@
 	</script>
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
-	<h5> <%= methodFormatted %><BR>
 
-	Implement the function below. If you're not sure how to do something, indicate a line or portion 
+	<div id="userStoryPrompt" style="display: none">
+		Implement functionality for the following user story: <BR>
+		<%= microtask.getUserStoryText() %><BR><BR>
+	</div>
+
+	<div id="sketchPrompt" style="display: none">
+		Implement the function below. <BR>
+	</div>
+	
+	<h5> <%= methodFormatted %><BR>
+	
+
+	If you're not sure how to do something, indicate a line or portion 
 	of a line as <b>pseudocode</b> by beginning it with '/#'.<BR>
 	If you'd like to call a <b>function</b> to do something, describe what you'd like it to do with a line
 	or portion of a line beginning with '/!'.<BR></h5>

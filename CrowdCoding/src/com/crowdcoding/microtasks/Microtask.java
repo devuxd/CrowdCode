@@ -32,6 +32,7 @@ public /*abstract*/ class Microtask
 {
 	@Parent private Key<Project> project;
 	@Id protected long id;
+	@Index protected boolean ready = false;	// Is the microtask ready to be assigned?
 	@Index protected boolean assigned = false;
 	@Index protected boolean completed = false;
 	protected int submitValue = 10;
@@ -44,12 +45,21 @@ public /*abstract*/ class Microtask
 	{		
 	}
 	
-	// Constructor for initialization.
+	// Constructor for initialization. Microtask is set as ready.
 	protected Microtask(Project project)
 	{
 		this.project = project.getKey();
+		this.ready = true;
 		id = project.generateID("Microtask");
 	}
+	
+	// Constructor for initialization. Ready determines if the microtask is ready to be assigned
+	protected Microtask(Project project, boolean ready)
+	{
+		this.project = project.getKey();
+		this.ready = ready;
+		id = project.generateID("Microtask");
+	}		
 		
 	// Assigns a microtask and returns it. Returns null if no microtasks are available.
 	public static Microtask Assign(Worker crowdUser, Project project)
@@ -60,7 +70,7 @@ public /*abstract*/ class Microtask
 		Microtask microtask = null;
 		Key<Worker> workerKey = crowdUser.getKey();
 		Query<Microtask> q = ofy().load().type(Microtask.class).ancestor(project.getKey()).filter(
-				"assigned", false);  
+				"assigned", false).filter("ready", true);  
 		microtaskSearch: for (Microtask potentialMicrotask : q)
 		{
 			for (Ref<Worker> excludedWorker : potentialMicrotask.excludedWorkers)
@@ -72,19 +82,20 @@ public /*abstract*/ class Microtask
 			// Not excluded. A microtask was found.
 			microtask = potentialMicrotask;
 			break;			
-		}
+		}		
 		
-		
-		// If there's no unassigned microtasks available, signifying that work
-		// on the current user stories is complete (or nearly complete), 
-		// generate a new WriteUserStory microtask.
-		if (microtask == null)
+		// Functionality to crowdsource a userStory if there is nothing to do. This behavior
+		// is currently disabled.
+		/*if (microtask == null)
 		{
 			UserStory userStory = new UserStory(project);
 			microtask = userStory.getMicrotask();			
 			if (microtask == null)
 				throw new RuntimeException("Error - creating a user story did not create a microtask as expected");			
-		}
+		}*/
+		
+		if (microtask == null)
+			return null;
 
 		microtask.worker = Ref.create(crowdUser.getKey());
 		microtask.assigned = true;
@@ -121,6 +132,21 @@ public /*abstract*/ class Microtask
 		ofy().save().entity(this).now();
 		
 		project.historyLog().endEvent();
+	}
+	
+	// Sets the microtask as ready to be assigned
+	public void makeReady()
+	{
+		if (!this.ready)
+		{
+			this.ready = true;
+			ofy().save().entity(this).now();
+		}
+	}
+	
+	public boolean isReady()
+	{
+		return ready;
 	}
 		
 	public Key<Microtask> getKey()
@@ -236,7 +262,8 @@ public /*abstract*/ class Microtask
 	
 	public String toString()
 	{
-		return "" + this.id + " " + this.getClass().getSimpleName() + (assigned ? " assigned " : " unassigned ") + 
+		return "" + this.id + " " + this.getClass().getSimpleName() + (ready? " ready " : " not ready ") + 
+				(assigned ? " assigned " : " unassigned ") + 
 				(completed ? " completed " : " incomplete ") + "points: " + submitValue + 
 				((worker != null) ? (" worker: " + ofy().load().key(worker.getKey()).get().getHandle()) : " ");
 	}
