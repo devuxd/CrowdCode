@@ -4,17 +4,17 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.microtasks.Microtask;
+import com.crowdcoding.microtasks.WriteFunction;
+import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.microtasks.WriteUserStory;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
-import com.googlecode.objectify.annotation.Load;
 
 @EntitySubclass(index=true)
 public class UserStory extends Artifact
 {
-	protected Ref<Microtask> microtask;
-	protected Ref<Entrypoint> entrypoint;
 	protected String text;
+	protected Ref<Microtask> microtask;
 	
 	// Constructor for deserialization
 	protected UserStory()
@@ -41,14 +41,8 @@ public class UserStory extends Artifact
 	// Constructor to create a user story with prespecified text.
 	public UserStory(String text, Project project)
 	{	
-		super(project);
-		
-		this.text = text;
-		ofy().save().entity(this).now();
-		
-		Entrypoint entrypoint = new Entrypoint(project, this);
-		this.entrypoint = (Ref<Entrypoint>) Ref.create(entrypoint.getKey());
-		ofy().save().entity(this).now();
+		super(project);		
+		submitInitialText(text, project);
 	}
 	
 	// Sets the text for the user story. This transitions the state of the artifact from
@@ -58,9 +52,14 @@ public class UserStory extends Artifact
 		this.text = text;
 		this.microtask = null;
 		
-		// Transitioning generates a new Entrypoint artifact
-		Entrypoint entrypoint = new Entrypoint(project, this);
-		this.entrypoint = (Ref<Entrypoint>) Ref.create(entrypoint.getKey());
+		Function mainFunction = project.getMainFunction();
+		
+		// Create a write function microtask to implement this functionality
+		mainFunction.queueMicrotask(new WriteFunction(mainFunction, this, project), project);
+		
+		// And create tests to test this functionality
+		new WriteTestCases(mainFunction, this, project);
+		
 		ofy().save().entity(this).now();
 	}
 	

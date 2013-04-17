@@ -3,11 +3,9 @@ package com.crowdcoding.artifacts;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Project;
-import com.crowdcoding.artifacts.Function.State;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.history.StateChange;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
-import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.WriteTest;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -22,12 +20,10 @@ public class Test extends Artifact
 	
 	private String description;
 	private String code; 	
-	private boolean unitTestIsOpen;
 	@Index private boolean isImplemented;
 	private State state;
 	
 	@Load private Ref<Function> function;
-	private boolean notifyFunctionOnImplemented;
 	
 	// Constructor for deserialization
 	protected Test()
@@ -37,61 +33,18 @@ public class Test extends Artifact
 	public Test(String description, Function function, Project project)
 	{
 		super(project);	
-				
-		this.description = description;
-		this.state = State.DESCRIBED;
-		this.isImplemented = false;
+
 		project.historyLog().beginEvent(new StateChange(State.DESCRIBED.name(), this));
 		
-		logState();
+		this.description = description;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
-		notifyFunctionOnImplemented = false;
+		setState(State.DESCRIBED, project);
+
 		ofy().save().entity(this).now();
 		WriteTest writeTest = new WriteTest(this, project);
 		
 		project.historyLog().endEvent();
 	}
-	
-	public void writeTestCompleted(FunctionDTO dto, Project project)
-	{
-		project.historyLog().beginEvent(new StateChange(State.IMPLEMENTED.name(), this));
-		
-		this.code = dto.code;
-		state = State.IMPLEMENTED;
-		isImplemented = true;
-		logState();
-		boolean areThereOpenUnitTestFunctions = false;
-		for (Ref<Test> testCase: function.getValue().getTestCases())
-		{
-			if(testCase.getValue().isUnitTestOpen())
-			{
-				areThereOpenUnitTestFunctions = true;
-			}		
-		}
-		if (notifyFunctionOnImplemented) {
-			this.function.getValue().runTestsIfReady(project);
-		}
-		/*
-		// this should only trigger if completed, need to figure out how to distinguish
-		if(!areThereOpenUnitTestFunctions)
-		{
-				if(this.function.getValue() != null)
-				{
-					if(!this.function.getValue().anyTestCasesDisputed())
-					{
-						DebugTestFailure unitTest = new DebugTestFailure(this.function,project);
-					}
-				}
-				else
-				{
-					DebugTestFailure unitTest = new DebugTestFailure(this.function,project);
-				}
-				this.unitTestIsOpen = true;
-		}*/
-		ofy().save().entity(this).now();
-		
-		project.historyLog().endEvent();
-	}	
 	
 	public String getTestCode()
 	{
@@ -121,60 +74,47 @@ public class Test extends Artifact
 	{
 		return (state == State.DISPUTED);
 	}
+	
 	public boolean isImplemented()
 	{
-		System.out.println("Test '"+description+"' was asked if it was implemented.");
-		logState();
-		// NOT sure if we need this
-		isImplemented = (state == State.IMPLEMENTED);
-		ofy().save().entity(this).now();
-		return (state == State.IMPLEMENTED);
-	}
-	public void registerCallback()
-	{
-		notifyFunctionOnImplemented = true;
-		ofy().save().entity(this).now();
+		return isImplemented;
 	}
 	
-	public boolean isUnitTestOpen()
+	private void setState(State newState, Project project)
 	{
-		return unitTestIsOpen;
+		if (this.state != newState)
+		{
+			this.state = newState;
+			logState();		
+			if (newState == State.IMPLEMENTED)
+			{
+				isImplemented = true;
+				ofy().save().entity(this).now();
+				function.get().testBecameImplemented(this, project);
+			}
+			else
+				ofy().save().entity(this).now();			
+		}				
 	}
 
 	public void disputeUnitTestCorrectionCreated(FunctionDTO dto, Project project) 
 	{
-		project.historyLog().beginEvent(new StateChange(State.DISPUTED.name(), this));
-		
-		this.state = State.DISPUTED;
-		logState();
-		System.out.println(getTestCode());
-		System.out.println(getDescription());
-		System.out.println(function.getValue().getDescription());
-		System.out.println(function.getValue().getFunctionHeader());
-		System.out.println(function.getValue().getCode());
-		System.out.println(function.getValue().anyTestCasesDisputed());
-		ofy().save().entity(this).now();
-		DisputeUnitTestFunction disputedTest = new DisputeUnitTestFunction(this, dto.description, project);
-		ofy().save().entity(this).now();
-		
+		project.historyLog().beginEvent(new StateChange(State.DISPUTED.name(), this));		
+		setState(State.DISPUTED, project);		
+		new DisputeUnitTestFunction(this, dto.description, project);		
 		project.historyLog().endEvent();
 	}
 	
-	public void disputeUnitTestCorrectionCompleted(FunctionDTO dto2, Project project) 
+	public void writeTestCompleted(FunctionDTO dto, Project project)
 	{
 		project.historyLog().beginEvent(new StateChange(State.IMPLEMENTED.name(), this));
-		this.state = State.IMPLEMENTED;
-		logState();
-		writeTestCompleted(dto2, project);
+		
+		this.code = dto.code;
 		ofy().save().entity(this).now();
+		setState(State.IMPLEMENTED, project);
+		
 		project.historyLog().endEvent();
-	}
-
-	public void closeUnitTest()
-	{
-		this.unitTestIsOpen = false;
-		ofy().save().entity(this).now();
-	}
+	}	
 	
 	private void logState() 
 	{
