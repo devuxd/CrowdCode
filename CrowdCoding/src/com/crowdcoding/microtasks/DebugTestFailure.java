@@ -107,7 +107,7 @@ public class DebugTestFailure extends Microtask
     
      public String getFunctionHeaderAssociatedWithTestCase()
      {
-          return function.getValue().getFunctionHeader();
+          return function.getValue().getHeader();
      }
     
      public Function getFunction()

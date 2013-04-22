@@ -40,9 +40,10 @@
 	<link rel="stylesheet" href="/html/styles.css" type="text/css" /> 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
+	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
 </head>
 
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!--  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header" style="background: #1B87E0">
   </div>
   <div class="modal-body" style="background: #FFFFFF">
@@ -51,7 +52,7 @@
   </div>
   <div class="modal-footer" style="background: #1B87E0">
   </div>
-</div>
+</div>-->
 
 <body id= "mainpagebody">
  
@@ -159,6 +160,7 @@
 <script src="/include/stars/jquery.rating.js"></script>
 <script src="/html/keybind.js"></script>
 <script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='/include/esprima.js'></script>
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
@@ -223,6 +225,8 @@
     
     function submit(formData)
     {
+    	debugger;
+    	
     	var stringifiedData = JSON.stringify( formData );
     	
 		$.ajax({

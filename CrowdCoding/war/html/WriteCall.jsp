@@ -6,22 +6,14 @@
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteCall" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
-<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
-<%@ page import="java.io.StringWriter" %>
-<%@ page import="java.io.Writer" %>
 
 <%
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
-    ObjectMapper mapper = new ObjectMapper();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteCall microtask = (WriteCall) crowdUser.getMicrotask();
-    String calleeFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getCallee());
-    String functionCode = microtask.getCaller().getEscapedCode();
     
-    StringWriter strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getCaller().getFunctionHeader());
-    String functionHeader = strWriter.toString();
+    String functionCode = microtask.getCaller().getEscapedFullCode();
     String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getCaller(), project) + "'";
 %>
 
@@ -32,8 +24,11 @@
 		var microtaskType = 'WriteCall';
 		var microtaskID = <%= microtask.getID() %>;	
 		
+		// Description for the description box of the callee
+		var codeBoxCode = '<%= microtask.getCallee().getEscapedFullDescription() %>';
+		
 		var editorCode = '<%=functionCode%>';
-		var functionHeader = <%= functionHeader %>;
+		var functionHeader = '<%= microtask.getCaller().getEscapedHeader() %>';
 		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
 		    
    		$(document).ready(function() 
@@ -42,7 +37,8 @@
    			
    			$('#writeCallForm').submit(function() {
 				doPresubmitWork();
-   				submit( { code: $("#code").val() } );
+				if (checkCodeForErrors())
+   					submit(collectCode());
    				return false;
    			});
    		});	    
@@ -50,8 +46,9 @@
 
 	<form id="writeCallForm" action="">
 		<%@include file="/html/elements/microtaskTitle.jsp" %>
-		<p><h4> Can you replace the following call to the function with an actual call? </h4> <BR>	
-		<%= calleeFormatted %><BR>
+		<p><h4> Can you replace the pseudocall below with a call to the following function: </h4> <BR>	
+		<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>	
+
 		<%@include file="/html/elements/functionEditor.jsp" %>		
 		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>

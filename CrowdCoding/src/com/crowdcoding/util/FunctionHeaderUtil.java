@@ -8,13 +8,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Parameter;
-import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.ParameterDTO;
 
 public class FunctionHeaderUtil
 {
-	private static final String unimplementedFunctionBody = "throw new NotImplementedException();";
+	private static final String unimplementedFunctionBody = "{ throw new NotImplementedException(); }";
 	// Function declarations for functions to insert for running testing infrastructure.
 	private static final String testingFunctions = "function NotImplementedException() {}";
 		
@@ -23,7 +20,7 @@ public class FunctionHeaderUtil
 	 * @param dto, describe function to check
 	 * @return true if there is a match
 	 */
-	public static boolean checkForDuplicateFunction(FunctionDescriptionDTO dto,Project project)
+	/*public static boolean checkForDuplicateFunction(FunctionDescriptionDTO dto,Project project)
 	{
 		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
 		for(Function function: listOFunctions)
@@ -39,30 +36,12 @@ public class FunctionHeaderUtil
 			}
 		}
 		return false;
-	}
-	
-	/**
-	 * returns if two functions match in parameters
-	 * @param parameters
-	 * @param parameters2
-	 * @return true if they are the same parameters
-	 */
-	private static boolean checkParameters(List<Parameter> parameters,
-			List<ParameterDTO> parameters2)
-	{
-		// since it is javascript if same number of parameters then its true
-		return parameters.size() == parameters2.size();		
-	}
-	
+	}*/
+		
 	public static String returnFunctionHeaderFormatted(Function function)
 	{
-		StringBuilder b = new StringBuilder();
-		b.append("Function Description: " + function.getDescription() +" <BR><BR>");
-		b.append("returns " + function.getReturnType());
-		b.append("<BR><BR>");
-		b.append(function.getFunctionDisplayHeader().replaceAll("\\)",")<BR>"));
-		b.append(" <BR>");
-		return b.toString();
+		String fullDescription = function.getDescription() + function.getHeader();
+		return fullDescription.replaceAll("\n", "<BR>");
 	}
 	
 	// need a better place for this do not know where a util function is
@@ -82,16 +61,13 @@ public class FunctionHeaderUtil
 				continue;
 			}
 			
-			b.append(function.getFunctionHeader());
-			b.append("{");
+			b.append(function.getHeader());
 			
 			// If the function is written, use the actual code. Otherwise, use the unimplemented body.
 			if (function.isWritten())
 				b.append(function.getEscapedCode());
 			else
-				b.append(StringEscapeUtils.escapeEcmaScript(unimplementedFunctionBody));
-			
-			b.append("} ");
+				b.append(StringEscapeUtils.escapeEcmaScript(unimplementedFunctionBody));			
 		}
 		return b.toString();
 				
@@ -124,7 +100,7 @@ public class FunctionHeaderUtil
 			{
 				continue;
 			}
-			b.append(function.getFunctionHeader());
+			b.append(function.getHeader());
 			b.append("{");
 			b.append("} ");
 		}

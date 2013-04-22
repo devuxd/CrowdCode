@@ -33,7 +33,6 @@ $(document).live({
 		    
 		},
 		keyup: function (e) {
-			debugger;
 		    var submitIt = false;
 		    if(keys[13] && keys[17])
 		    {

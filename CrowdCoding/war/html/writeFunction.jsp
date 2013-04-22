@@ -17,13 +17,10 @@
     ObjectMapper mapper = new ObjectMapper();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteFunction microtask = (WriteFunction) crowdUser.getMicrotask();
-    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
-    StringWriter strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
-    String functionHeader = strWriter.toString();
-    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'";
-    Function function = microtask.getFunction();
-    String functionCode = function.getEscapedCode();
+    
+    String functionHeader = microtask.getFunction().getEscapedHeader();
+    String functionCode = microtask.getFunction().getEscapedFullCode();
+    String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project);
     
     PromptType promptType = microtask.getPromptType();
 %>
@@ -37,8 +34,8 @@
 		var microtaskID = <%= microtask.getID() %>;
 		
 		var editorCode = '<%=functionCode%>';
-		var functionHeader = <%= functionHeader %>;
-		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+		var functionHeader = '<%= functionHeader %>';
+		var allTheFunctionCode = '<%= allFunctionCodeInSystem %>';
 		
 		var showUserStoryPrompt = <%= (promptType == PromptType.IMPLEMENT_USER_STORY) %>;
 		var showSketchPrompt = <%= (promptType == PromptType.SKETCH) %>;
@@ -59,7 +56,7 @@
 				doPresubmitWork();
 				
 				if (checkCodeForErrors())			
-					submit({ code: $("#code").val()});
+					submit(collectCode());
 				
 				// Disable default submit functionality.
 				return false;
@@ -79,13 +76,12 @@
 		Implement the function below. <BR>
 	</div>
 	
-	<h5> <%= methodFormatted %><BR>
+	<h5>
 	
-
 	If you're not sure how to do something, indicate a line or portion 
-	of a line as <b>pseudocode</b> by beginning it with '/#'.<BR>
+	of a line as <b>pseudocode</b> by beginning it with '//#'.<BR>
 	If you'd like to call a <b>function</b> to do something, describe what you'd like it to do with a line
-	or portion of a line beginning with '/!'.<BR></h5>
+	or portion of a line beginning with '//!'.<BR></h5>
 	
 	Show example<BR>
 	

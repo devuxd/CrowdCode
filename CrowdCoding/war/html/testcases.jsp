@@ -13,11 +13,9 @@
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteTestCases microtask = (WriteTestCases) crowdUser.getMicrotask();
-    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
     
     PromptType promptType = microtask.getPromptType();
 %>
-
 
 <div id="microtask">
 	<script>
@@ -25,6 +23,9 @@
 		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
 		var microtaskType = 'writetestcases';
 		var microtaskID = <%= microtask.getID() %>;	
+		
+		// Function description for the function description box.
+		var codeBoxCode = '<%= microtask.getFunction().getEscapedFullDescription() %>';
 	
 		var nextTestCase = 2;
 		
@@ -37,8 +38,7 @@
    		    if (showTestUserStoryPrompt)
 	   			$("#testUserStoryPrompt").css('display',"block");
    			if (showFunctionSignaturePrompt)
-	   			$("#testFunctionSignaturePrompt").css('display',"block");
-	    	
+	   			$("#testFunctionSignaturePrompt").css('display',"block");	    	
 	    	
 		  	$('#skip').click(function() { skip(); });	
 	    	
@@ -87,8 +87,7 @@
 
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<%= methodFormatted %><BR>
-	
+	<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>		
 	
 	<div id="testUserStoryPrompt" style="display: none">
 		Consider the following user story: <BR>
@@ -102,7 +101,6 @@
 		<B>What are some cases in which this function might be used? Are there any unexpected corner 
 		cases that might not work?</B><BR><BR>
 	</div>
-
 	
 	<div class="accordion" id="exampleRoot">
 	  <div class="accordion-group">

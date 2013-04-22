@@ -11,31 +11,6 @@
     ReuseSearch microtask = (ReuseSearch) worker.getMicrotask();	
 %>
 
-<!--  [{ 'name': 'cool', 
-		  'description': 'bar bal baz bar bal rhino boring',
-		  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'this is arg1' }]},
-	{ 'name': 'boring', 
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'this a nifty arg' }]},
-	{ 'name': 'nifty', 
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'a cool arg' }]},
-	{ 'name': 'red', 
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'a more boring arg' }]},
-	{ 'name': 'blue', 
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'a green arg' }]},
-	{ 'name': 'green',
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'a red parameter' }]}]; -->
-
 <script>
 	var microtaskTitle = '<%= microtask.microtaskTitle() %>';
 	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
@@ -110,38 +85,18 @@
 			score += 5;
 		if (re.test(functionDescription.description)) 
 			score += 1;
-		if (re.test(functionDescription.returnType)) 
-			score += 5;
-		
-		$.each(functionDescription.parameters, function(index, value) 
-		{
-			if (re.test(value.name)) 
-				score += 1;
-			if (re.test(value.type)) 
-				score += 1;
-			if (re.test(value.description)) 
-				score += 1;			
-		});
-	
+		if (re.test(functionDescription.header)) 
+			score += 1;
+
 	    return score;
 	}
 	
 	function formatResult(functionDescription, index)
 	{
-		var result = '<div id="result_' + functionDescription.name + 
+		return '<div id="result_' + functionDescription.name + 
 		        '" onclick="selectResult(\'' + functionDescription.name + 
-				'\')" class="result"> <b>function ' + functionDescription.name + '</b> ( <BR>';
-		var temp = functionDescription.parameters;
-		
-		$.each(temp, function(index, param)
-		{
-			result += '&nbsp;&nbsp;&nbsp; ' + param.name + ', // ' + param.type + ' - ' 
-				+ param.description + '<BR>';	
-		});
-		result += ') // returns ' + functionDescription.returnType + '<BR>' 
-		     + functionDescription.description + '</div>';
-		
-		return result;
+				'\')" class="result"> <b>' + functionDescription.header + '</b> <BR>' +
+				functionDescription.description.replace(/\n/g, '<BR>') + '</div>';		
 	}
 	
 	function selectResult(functionName)
