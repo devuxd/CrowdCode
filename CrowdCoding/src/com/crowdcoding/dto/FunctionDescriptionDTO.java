@@ -1,33 +1,39 @@
 package com.crowdcoding.dto;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class FunctionDescriptionDTO extends DTO 
 {
 	public String messageType = "FunctionDescriptionDTO";
 	
-	public List<ParameterDTO> parameters;
 	public String name;
-	public String description;
-	public String returnType;
+	public List<String> paramNames = new ArrayList<String>();
+	public String header;
+	public String description; 
+	
+	// Description includes all comments and the signature block itself. e.g.,
+	// // A description of foo, describing what it does and its parameters and return value.
+	
+	// Header consists of the header: e.g., 
+	// function foo(arg1, arg2)
 	
 	// Default constructor (required by Jackson JSON library)
 	public FunctionDescriptionDTO()
 	{		
 	}
 
-	public FunctionDescriptionDTO(String name, String returnType, List<ParameterDTO> parameters,  
-			String description) 
+	public FunctionDescriptionDTO(String name, List<String> paramNames, String header, String description) 
 	{
-		this.parameters = parameters;
 		this.name = name;
+		this.paramNames = paramNames;
+		this.header = header;
 		this.description = description;
-		this.returnType = returnType;
 	}
 	
 	public String toString()
 	{
-		return description + "\n" + returnType + " function " + name + 
-				"(" + parameters.toString() + ")";
+		return description + "\n" + header;
 	}
 }

@@ -3,7 +3,6 @@ package com.crowdcoding;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.artifacts.Artifact;
-import com.crowdcoding.artifacts.Entrypoint;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.artifacts.UserStory;
@@ -16,7 +15,6 @@ import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.WriteCall;
-import com.crowdcoding.microtasks.WriteEntrypoint;
 import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
@@ -61,7 +59,6 @@ public class Project
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Worker.class);
 		ObjectifyService.register(Artifact.class);
-		ObjectifyService.register(Entrypoint.class);
 		ObjectifyService.register(Function.class);
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
@@ -74,7 +71,6 @@ public class Project
 		ObjectifyService.register(DebugTestFailure.class);
 		ObjectifyService.register(MachineUnitTest.class);
 		ObjectifyService.register(WriteCall.class);
-		ObjectifyService.register(WriteEntrypoint.class);
 		ObjectifyService.register(WriteFunctionDescription.class);
 		ObjectifyService.register(WriteTest.class);
 		ObjectifyService.register(WriteTestCases.class);

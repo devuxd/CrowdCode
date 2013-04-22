@@ -11,7 +11,7 @@
 <%@ page import="java.io.Writer" %>
 
 <%
-    String projectID = (String) request.getAttribute("project");
+	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     ObjectMapper mapper = new ObjectMapper();
@@ -19,7 +19,7 @@
     DisputeUnitTestFunction microtask = (DisputeUnitTestFunction) crowdUser.getMicrotask();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
     strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
+    mapper.writeValue(strWriter,microtask.getFunction().getHeader());
     String functionHeader = strWriter.toString();
     strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getCode());

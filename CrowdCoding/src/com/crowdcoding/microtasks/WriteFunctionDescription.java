@@ -6,10 +6,8 @@ import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.EntrypointDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
-import com.crowdcoding.util.FunctionHeaderUtil;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -43,17 +41,8 @@ public class WriteFunctionDescription extends Microtask
 	protected void doSubmitWork(DTO dto, Project project)
 	{
 		FunctionDescriptionDTO functionDTO = (FunctionDescriptionDTO) dto;	
-		if(FunctionHeaderUtil.checkForDuplicateFunction(functionDTO, project))
-		{
-			// we have a duplicate so do nothing
-			// here we can notify user or we can silently do nothing
-			// we should call discard when it gets created here
-			// the discard event should log 
-			System.out.println("duplicate");
-			return;
-		}
-		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.description, functionDTO.returnType, 
-				functionDTO.parameters, project);	
+		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.paramNames, functionDTO.header, 
+				functionDTO.description, project);	
 	}
 	
 	protected Class getDTOClass()

@@ -21,9 +21,8 @@ import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
-import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteCall;
-import com.crowdcoding.microtasks.WriteEntrypoint;
+import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
@@ -51,7 +50,6 @@ public class CrowdServlet extends HttpServlet
 		microtaskTypes.put("DebugTestFailure", DebugTestFailure.class);
 		microtaskTypes.put("MachineUnitTest", MachineUnitTest.class);
 		microtaskTypes.put("WriteCall", WriteCall.class);
-		microtaskTypes.put("writeentrypoint", WriteEntrypoint.class);
 		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
 		microtaskTypes.put("writetest", WriteTest.class);
 		microtaskTypes.put("writetestcases", WriteTestCases.class);

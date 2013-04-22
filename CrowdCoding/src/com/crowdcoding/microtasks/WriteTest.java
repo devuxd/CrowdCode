@@ -1,20 +1,14 @@
 package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
-import com.crowdcoding.artifacts.Parameter;
-
-import java.io.IOException;
 
 import com.crowdcoding.Project;
-import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
-import com.crowdcoding.dto.EntrypointDTO;
-import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -42,7 +36,7 @@ public class WriteTest extends Microtask
 	
 	 protected void doSubmitWork(DTO dto, Project project)
 	 {
-	      test.get().writeTestCompleted((FunctionDTO) dto, project);
+	      test.get().editTestCompleted((FunctionDTO) dto, project);
 	 }
 	
 	 protected Class getDTOClass()
@@ -86,10 +80,8 @@ public class WriteTest extends Microtask
 	      builder.append("equal(");
 	      builder.append(getFunction().getName());
 	      builder.append("(");
-	      for(Parameter param: getFunction().getParameters()){
-	           builder.append("<");
-	           builder.append(param.getName());
-	           builder.append(">,");
+	      for(String paramName : getFunction().getParamNames()){
+	           builder.append("<" + paramName + ">,");
 	      }
 	      builder.replace(builder.length()-1,builder.length(),"");
 	      builder.append("), <expectedResult>, '" + test.get().getDescription() + "');");
