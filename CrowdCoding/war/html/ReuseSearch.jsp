@@ -11,31 +11,6 @@
     ReuseSearch microtask = (ReuseSearch) worker.getMicrotask();	
 %>
 
-<!--  [{ 'name': 'cool', 
-		  'description': 'bar bal baz bar bal rhino boring',
-		  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'this is arg1' }]},
-	{ 'name': 'boring', 
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'this a nifty arg' }]},
-	{ 'name': 'nifty', 
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'a cool arg' }]},
-	{ 'name': 'red', 
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'a more boring arg' }]},
-	{ 'name': 'blue', 
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'a green arg' }]},
-	{ 'name': 'green',
-				  'description': 'bar bal baz bar bal rhino boring',
-				  'returnType': 'void', 'parameters': [{
-	        'name': 'arg1', 'type': 'String', 'description': 'a red parameter' }]}]; -->
-
 <script>
 	var microtaskTitle = '<%= microtask.microtaskTitle() %>';
 	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
@@ -52,15 +27,17 @@
 	{
 		$('#noFunction').click(selectNoFunction);
 	  	$('#skip').click(function() { skip(); });		
-		$('#searchForm').submit(function() 
-		{
-			// Submit only if the worker has either selected a function or the no function button
-			if (noFunction || selectedFunction != '')			
-				submit({ functionName: selectedFunction, noFunction: noFunction });						
-			
-			return false;
-		});
+		$('#searchForm').submit(submitReuseSearch);
 	});
+	
+	function submitReuseSearch() 
+	{
+		// Submit only if the worker has either selected a function or the no function button
+		if (noFunction || selectedFunction != '')			
+			submit({ functionName: selectedFunction, noFunction: noFunction });						
+		
+		return false;
+	}
 	
 	function doSearch()
 	{
@@ -108,38 +85,18 @@
 			score += 5;
 		if (re.test(functionDescription.description)) 
 			score += 1;
-		if (re.test(functionDescription.returnType)) 
-			score += 5;
-		
-		$.each(functionDescription.parameters, function(index, value) 
-		{
-			if (re.test(value.name)) 
-				score += 1;
-			if (re.test(value.type)) 
-				score += 1;
-			if (re.test(value.description)) 
-				score += 1;			
-		});
-	
+		if (re.test(functionDescription.header)) 
+			score += 1;
+
 	    return score;
 	}
 	
 	function formatResult(functionDescription, index)
 	{
-		var result = '<div id="result_' + functionDescription.name + 
+		return '<div id="result_' + functionDescription.name + 
 		        '" onclick="selectResult(\'' + functionDescription.name + 
-				'\')" class="result"> <b>function ' + functionDescription.name + '</b> ( <BR>';
-		var temp = functionDescription.parameters;
-		
-		$.each(temp, function(index, param)
-		{
-			result += '&nbsp;&nbsp;&nbsp; ' + param.name + ', // ' + param.type + ' - ' 
-				+ param.description + '<BR>';	
-		});
-		result += ') // returns ' + functionDescription.returnType + '<BR>' 
-		     + functionDescription.description + '</div>';
-		
-		return result;
+				'\')" class="result"> <b>' + functionDescription.header + '</b> <BR>' +
+				functionDescription.description.replace(/\n/g, '<BR>') + '</div>';		
 	}
 	
 	function selectResult(functionName)
@@ -161,34 +118,22 @@
 	
 	function selectNoFunction()
 	{
-		// If there's currently a function selected, toggle it off
-		if (selectedFunction != '')
-		{
-			$('result_' + selectedFunction).removeClass('selectedResult');			
-			selectedFunction = '';				
-		}		
-		
-		// only toggle if no function is not already selected
-		if (!noFunction)
-		{
-			noFunction = true;		
-			$('#noFunction').button('toggle');
-		}
+		selectedFunction = '';	
+		noFunction = true;	
+		submitReuseSearch();
 	}	
 
 </script>
 
 <%@include file="/html/elements/microtaskTitle.jsp" %>
 Is there a function that does this?
-
-<h4><%=microtask.getCallDescription()%></h4><bR>
+<blockquote><%=microtask.getCallDescription()%></blockquote>
 Here's a search box that searches existing function descriptions:<BR>
 
-
 <form id="searchForm" action="">
-	<input type="text" id="SearchText" class="input-small" oninput="doSearch()">
+	<input type="text" id="SearchText" class="input-large" oninput="doSearch()">
 	<div id="results"></div><BR>	
-	If you can't find any, click this button and then submit:<br>
-	<button id="noFunction" type="button" class="btn">No function does this</button><BR><BR>		
+	If you can't find any, click this:<br>
+	<button id="noFunction" type="button" class="btn btn-primary">No function does this</button><BR><BR>		
 	<%@include file="/html/elements/submitFooter.jsp" %>
 </form>

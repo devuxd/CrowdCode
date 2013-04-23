@@ -1,5 +1,6 @@
 package com.crowdcoding.util;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import com.crowdcoding.Project;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
+import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
@@ -15,6 +17,16 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
  */
 public class FirebaseService 
 {
+	// Reads the user stories for the specified project. If there are no user stories,
+	// instead reads the default user stories.
+	public static String readUserStories(Project project)
+	{
+		String result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/" + project.getID() + ".json");
+		if (result == null || result.equals("null"))
+			result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/default.json");
+		return result;
+	}
+		
 	public static void updateLeaderboard(String message, Project project)	
 	{
 		writeData(message, "/leaderboard.json", HTTPMethod.PUT, project);
@@ -52,30 +64,6 @@ public class FirebaseService
 				"https://crowdcode.firebaseio.com/projects/" + projectID + ".json", HTTPMethod.PUT);		
 	}
 	
-	public static void readSomeData()
-	{
-		 /*try 
-		 {
-			 URL url = new URL("http://www.example.com/atom.xml");
-			 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-			 String output = reader.
-		
-			 while ((line = reader.readLine()) != null) 
-			 {
-				 	
-			 }
-		    reader.close();
-		
-		 } 
-		 catch (MalformedURLException e) {
-			 System.out.println(e.toString());
-		 } catch (IOException e) {
-			 System.out.println(e.toString());
-		 }
-		
-		*/		
-	}
-	
 	// Writes the specified data using the URL, relative to the BaseURL.
 	// Operation specifies the type of http request to make (e.g., PUT, POST, DELETE)
 	private static void writeData(String data, String relativeURL, HTTPMethod operation, Project project)
@@ -83,7 +71,7 @@ public class FirebaseService
 		writeDataAbsolute(data, getBaseURL(project) + relativeURL, operation);
 	}
 			
-	// Writes the specified data using specified absolute URL.
+	// Writes the specified data using specified absolute URL asyncrhonously (does not block waiting on write).
 	// Operation specifies the type of http request to make (e.g., PUT, POST, DELETE)
 	private static void writeDataAbsolute(String data, String absoluteURL, HTTPMethod operation)
 	{
@@ -98,6 +86,29 @@ public class FirebaseService
 		    // ...
 		}
 	}	
+
+	// Reads a JSON string from the specified absolute URL synchronously (blocks waiting on read to return).
+	// Uses the GET operation to read the data.
+	private static String readDataAbsolute(String absoluteURL)
+	{
+		try 
+		{	
+			URLFetchService fetchService = URLFetchServiceFactory.getURLFetchService();
+			HTTPRequest request = new HTTPRequest(new URL(absoluteURL), HTTPMethod.GET);
+			HTTPResponse response = fetchService.fetch(request);
+			byte[] payload = response.getContent();
+			if (payload != null)			
+				return new String(payload);
+		} 
+		catch (MalformedURLException e) {
+		    // ...
+		}	
+		catch (IOException e) {
+			// ...
+		}
+		
+		return "";
+	}
 	
 	// Gets the base URL for the current deployment project 
 	private static String getBaseURL(Project project)

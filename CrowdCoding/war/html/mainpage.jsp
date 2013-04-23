@@ -40,9 +40,10 @@
 	<link rel="stylesheet" href="/html/styles.css" type="text/css" /> 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
+	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
 </head>
 
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!--  <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header" style="background: #1B87E0">
   </div>
   <div class="modal-body" style="background: #FFFFFF">
@@ -51,7 +52,7 @@
   </div>
   <div class="modal-footer" style="background: #1B87E0">
   </div>
-</div>
+</div>-->
 
 <body id= "mainpagebody">
  
@@ -89,8 +90,7 @@
 	
 	<table id="scoreTable">	
 		<tr>
-			<td class="animated fadeInLeftBig"><b ><p ><span id="score" style="font-size: x-large;" >0 </span> pts</p></b>
-			</td>
+			<td class="animated fadeInLeftBig"><b ><p><span id="score" >0 </span></p></b></td>
 		</tr>
 	</table>
 	
@@ -101,12 +101,8 @@
 	
 	</div>
 
-	<div>&nbsp;	<BR><BR></div>
-	
 <button class="btn btn-primary btn-info" id="sendFeedbackMaster" >Send feedback <i class="icon-pencil"></i> </button>	
 <button class="btn " id="prefLink" >Preferences <i class=" icon-indent-left"></i> </button>	
-	
-					
 	
 </div>
 
@@ -179,7 +175,13 @@
 		<div class="modal-body">
 			   	<div>	<img src="/include/imgs/user.png" class="img-circle" width="80px" heigth="80px" style="float:right"></div>
 			   </br> 	
-			   	<div><b>Profile picture  </b>&nbsp; &nbsp;<input type="file" class="input-xlarge" id="command" style="float:right;"></div>
+			   	<div><b>Profile picture  </b>&nbsp; &nbsp;
+				<body>
+  					  <form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data">
+       						 <input type="file" name="myFile" style="float:left">
+       						 <input type="submit" value="Submit">
+    				  </form>
+				</body></div>
 			   	</br>  </br>   </br>
 			   	<div><b>Preference 2  </b>&nbsp; &nbsp;<input type="text" class="input-xlarge"  style="float:right;"></div>
 			   	</br>
@@ -203,6 +205,7 @@
 <script src="/include/stars/jquery.rating.js"></script>
 <script src="/html/keybind.js"></script>
 <script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='/include/esprima.js'></script>
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
@@ -221,24 +224,6 @@
 			$('#logout').modal();
 			return false;
 		});
-		
-				$("#prefLink").click(function() {
-			// Tell server to logout
-			// Clear the microtask div of content
-			// Need to stop fetching messages!!!
-
-			$('#preferences').modal();
-			return false;
-		});
-		
-			$("#sendFeedbackMaster").click(function() {
-			// Tell server to logout
-			// Clear the microtask div of content
-			// Need to stop fetching messages!!!
-
-			$('#feedbackModal').modal();
-			return false;
-		});
 
 		$("#loginButton").click(function() {
 			alert('login');
@@ -251,7 +236,27 @@
 			return false;
 		});
 		
+		
+			$("#prefLink").click(function() {
+			// Tell server to logout
+			// Clear the microtask div of content
+			// Need to stop fetching messages!!!
+
+			$('#preferences').modal();
+			return false;
+		});
+		
 		$("#sendFeedback").click(sendFeedback);
+		
+			$("#sendFeedbackMaster").click(function() {
+			// Tell server to logout
+			// Clear the microtask div of content
+			// Need to stop fetching messages!!!
+
+			$('#feedbackModal').modal();
+			return false;
+		});
+		
 		
 		// Hook the leaderboard to Firebase		
 		var leaderboardRef = new Firebase(firebaseURL + '/leaderboard');
@@ -285,6 +290,8 @@
     
     function submit(formData)
     {
+    	debugger;
+    	
     	var stringifiedData = JSON.stringify( formData );
     	
 		$.ajax({
@@ -302,9 +309,31 @@
 					   'workerID': '<%= worker.getUserID() %>'};
 		eventData.microtask = formData;
 		eventListRef.child(microtaskID).set(eventData);
-     	    	$('#microtask').addClass('animated rollOut');  		
-   
+		   $('#microtask').addClass('animated rollOut');  		
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
      
 	function skip() 
 	{

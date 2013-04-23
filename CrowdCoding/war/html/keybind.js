@@ -23,9 +23,16 @@ $(document).live({
 			  hasBeenIntialized = true;
 		  }
 		    keys[e.which] = true;
+		    
+		    // If the user enters control enter, prevent any other default actions (e.g., those associated
+		    // with enter) from occurring.
+		    if(keys[13] && keys[17])
+		    {
+		        e.preventDefault();
+		    }        
+		    
 		},
 		keyup: function (e) {
-			debugger;
 		    var submitIt = false;
 		    if(keys[13] && keys[17])
 		    {

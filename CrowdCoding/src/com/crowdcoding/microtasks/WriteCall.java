@@ -23,22 +23,16 @@ public class WriteCall extends Microtask
 	{				
 	}
 	
-	// Constructor for initial construction
+	// Constructor for initial construction. Microtask is set as not yet ready.
 	public WriteCall(Function caller, Function callee, Project project)
 	{
-		super(project);
+		super(project, false);
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
 		this.callee = (Ref<Function>) Ref.create(callee.getKey());		
 		ofy().save().entity(this).now();
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));
 		project.historyLog().endEvent();
-	}
-	
-	public void onAssign(Project project)
-	{
-		System.out.println("WriteCall for " + caller.get().getName() + " setting active coding");
-		caller.get().activeCodingStarted(project);
 	}
 	
 	protected void doSubmitWork(DTO dto, Project project)
@@ -74,5 +68,10 @@ public class WriteCall extends Microtask
 	public String microtaskTitle()
 	{
 		return "Add a call";
+	}
+	
+	public String microtaskDescription()
+	{
+		return "adding a call";
 	}
 }

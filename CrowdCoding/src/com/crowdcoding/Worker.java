@@ -112,13 +112,13 @@ public class Worker
 	}		
 	
 	// Adds the specified number of points to the score.
-	public void awardPoints(int points, Project project)
+	public void awardPoints(int points, String description, Project project)
 	{
 		score += points;	
 		ofy().save().entity(this).now();
 		
 		FirebaseService.setPoints(userid, score, project);
-    	FirebaseService.postToNewsfeed(userid, (new PointEventDTO(points, "Empty description")).json(), 
+    	FirebaseService.postToNewsfeed(userid, (new PointEventDTO(points, description)).json(), 
     			project);
 			    
 	    // Update the leaderboard, if necessary

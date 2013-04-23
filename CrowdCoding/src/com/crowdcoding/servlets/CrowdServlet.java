@@ -21,9 +21,8 @@ import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
-import com.crowdcoding.microtasks.SketchFunction;
 import com.crowdcoding.microtasks.WriteCall;
-import com.crowdcoding.microtasks.WriteEntrypoint;
+import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
@@ -47,11 +46,10 @@ public class CrowdServlet extends HttpServlet
 		// Microtasks are listed in alphabetical order.
 		microtaskTypes.put("disputeunittestfunction", DisputeUnitTestFunction.class);
 		microtaskTypes.put("ReuseSearch", ReuseSearch.class);
-		microtaskTypes.put("sketchfunction", SketchFunction.class);
+		microtaskTypes.put("writeFunction", WriteFunction.class);
 		microtaskTypes.put("DebugTestFailure", DebugTestFailure.class);
 		microtaskTypes.put("MachineUnitTest", MachineUnitTest.class);
 		microtaskTypes.put("WriteCall", WriteCall.class);
-		microtaskTypes.put("writeentrypoint", WriteEntrypoint.class);
 		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
 		microtaskTypes.put("writetest", WriteTest.class);
 		microtaskTypes.put("writetestcases", WriteTestCases.class);
@@ -75,30 +73,35 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project> - mainpage.jsp
 		 *  /<project>/admin - admin.jsp
 		 *  /<project>/admin/* - doAdmin
+		 *  /<project>/fetch - doFetch		   
 		 *  /<project>/history - history.jsp
 		 *  /<project>/run - run.jsp
-		 *  /<project>/fetch - doFetch
 		 *  /<project/submit - doSubmit
+		 *  /userStories - EditUserStories.jsp
 		 *  /  - 404
 		 */
         String[] path = req.getPathInfo().split("/");
-		
-		
+				
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();  
         
-        if (user != null) 
-        {
-			// First token will always be empty (portion before the first slash)
-			if (path.length > 1)
-			{
-				req.setAttribute("project", path[1]);
-				String projectID = path[1];
-				
-	        	try 
-	        	{				
+    	try 
+    	{	        
+	        if (user != null) 
+	        {
+				// First token will always be empty (portion before the first slash)
+				if (path.length > 1)
+				{
+					req.setAttribute("project", path[1]);
+					String projectID = path[1];
+	
 					if (path.length == 2)
-						req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+					{
+						if (path[1].equals("userStories"))
+							req.getRequestDispatcher("/html/EditUserStories.jsp").forward(req, resp);						
+						else
+							req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+					}
 					else
 					{
 						// Third token is action, fourth (or more) tokens are commands for action
@@ -116,25 +119,20 @@ public class CrowdServlet extends HttpServlet
 						else if (action.equals("run"))
 			        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
 					}				
-				} catch (ServletException e) {
-					e.printStackTrace();
 				}
-			}
-			else
-			{
-				writeResponseString(resp, "404 - no resource found for " + req.getPathInfo());
-			}		
-        } else 
-        {
-        	if (path.length > 1)
-        	{        	
-        		resp.sendRedirect(userService.createLoginURL("/" + path[1]));
-        	}
-        	else
-        	{
-				writeResponseString(resp, "404 - no resource found for " + req.getPathInfo());
-        	}
-        }
+				else				
+					req.getRequestDispatcher("/html/welcome.html").forward(req, resp);					
+	        } 
+	        else 
+	        {
+	        	if (path.length > 1)	        	        	
+	        		resp.sendRedirect(userService.createLoginURL("/" + path[1]));	        	
+	        	else	        	
+					req.getRequestDispatcher("/html/welcome.html").forward(req, resp);	        	
+	        }
+		} catch (ServletException e) {
+			e.printStackTrace();
+		}        
 	}
 	
 	private void doAdmin(HttpServletRequest req, HttpServletResponse resp, 

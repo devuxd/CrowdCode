@@ -30,9 +30,9 @@
 
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<p><h5>Imagine a traffic officer's mobile management system.
-	<br><BR>What is a single scenario that a user might wish to do with it?
-		How specifically and thoroughly can you describe it? </h5></p>
+	<br><blockquote>Imagine a traffic officer's mobile management system.</blockquote>
+	<h5>What is a single scenario that a user might wish to do with it?
+		How specifically and thoroughly can you describe it? </h5>
 
 	<form id="userstoryForm" action="">
 		<textarea name="userStory" id="userStory"></textarea>

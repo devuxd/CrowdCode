@@ -10,16 +10,21 @@ input {border-radius: 15px;}
 .modal-backdrop {background: none;}
  #activityFeedTable
       {
-         overflow-y: scroll;  overflow-x: hidden; height:497px; width:180px; background:#FFFFEB; 
+         overflow-y: scroll;  overflow-x: hidden; height:497px; width:180px; background:#eee; 
          margin-left:0%; margin-right:0%; border-style:solid; border-width:2px; font-size:75%;
     	border-color:#8F8F8F;
         -webkit-transition-property:color, background-color;  
  		-webkit-transition-duration: .2s, .2s;  
  		-webkit-transition-timing-function: linear, ease-in;  
- 		box-shadow: 10px 10px 5px #888888;
       }
      
-      
+      #activityFeedTable:hover  
+{
+
+	background-color: #FFFFEB;
+	
+
+}
    #activityFeedTable tr
       {
          background:white; 
@@ -81,7 +86,7 @@ input {border-radius: 15px;}
 {
 	background:#5FABE9;
 	height:30px;
-	width:177px;
+	width:120px;
 	margin-bottom:3%;
     border-radius:3px;
 	padding-top:5%;
@@ -124,15 +129,16 @@ border: 1px solid #eee;
 
 #leftbar {background: none; margin-right: 2%; margin-top: 1%; text-align: center; width: auto; }
 #scoreTable { 
-	width: 177px; margin-left:0%; margin-right:auto; background:#FFFFEB;
+	width: 120px; margin-left:0%; margin-right:auto; background:#FFFFEB;
 	border-color:#8F8F8F; border-style:solid;
 	border-width:2px;   border-radius:10px;
     -webkit-transition-property:color, background-color;  
  	-webkit-transition-duration: .2s, .2s;  
  	-webkit-transition-timing-function: linear, ease-in;  
 	font-family: Lucida Console, Monaco, monospace;
-	box-shadow: 10px 10px 5px #888888;
-					}
+	font-size:larger; font-weight:bold;
+	
+			}
 #score p { font-size: larger; }
 
 #contentPane { width: 610px; background:white;  border-radius: 10px; margin-left:3%; padding: 15px;
@@ -152,7 +158,6 @@ border: 1px solid #eee;
  		-webkit-transition-duration: .2s, .2s;  
  		-webkit-transition-timing-function: linear, ease-in;  
  		font-family: Lucida Console, Monaco, monospace; 	
- 		box-shadow: 10px 10px 5px #888888;	
 }
 #leaderboardTable td { padding-right:10px; font-size: smaller;  }
 #leaderboardTableTitle p, tr { font-weight: bold;  }

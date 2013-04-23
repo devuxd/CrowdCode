@@ -11,7 +11,7 @@
 <%@ page import="java.io.Writer" %>
 
 <%
-    String projectID = (String) request.getAttribute("project");
+	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     ObjectMapper mapper = new ObjectMapper();
@@ -19,7 +19,7 @@
     DisputeUnitTestFunction microtask = (DisputeUnitTestFunction) crowdUser.getMicrotask();
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
     strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
+    mapper.writeValue(strWriter,microtask.getFunction().getHeader());
     String functionHeader = strWriter.toString();
     strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getCode());
@@ -63,11 +63,11 @@
 			var functionCode = functionHeader + "{"  + <%= functionCode %> + "}" + $("#code").val();
 			var errors = "";
 		    console.log(functionCode);
-		    var lintResult = JSLINT(getUnitTestGlobals() + functionCode,getJSLintGlobals());
-			console.log(JSLINT.errors);
+		    var lintResult = JSHINT(getUnitTestGlobals() + functionCode,getJSHintGlobals());
+			console.log(JSHINT.errors);
 			if(!lintResult)
 			{
-				var errors = checkForErrors(JSLINT.errors);
+				var errors = checkForErrors(JSHINT.errors);
 				console.log(errors);
 				if(errors != "")
 				{
@@ -83,14 +83,14 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<br>
-	This unit test suite was disputed for the following reason:
-	<br>
-	<%= disputeDescription %>
-	<br>
-	<br>
-	</h4>
+	The following issue was reported with this unit test:
 	
+	<blockquote><%= disputeDescription %></blockquote>
+	
+	Can you fix the test to address this issue?<BR><BR>
+			
 	<span class="reference">
+	<b>Reference</b><BR>
 	Unit tests can be: 	<br>
 	deepEqual: comparing to objects <br>
 	equal: check if both are equal <br>
@@ -108,17 +108,14 @@
 	<br>
 	</span>
 	
-	<h4>Write a unit test for the following method: 	
-	
+
 	
 	<form id="testForm" action="">
-
-
 
 	<BR>
 	
 	<%= methodFormatted %>
-	<BR>{</h4>
+	<BR>{
 	<table width="100%">
 		<tr>
 			<td width = "20"></td>

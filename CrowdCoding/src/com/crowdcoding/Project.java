@@ -3,19 +3,19 @@ package com.crowdcoding;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.artifacts.Artifact;
-import com.crowdcoding.artifacts.Entrypoint;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.CurrentStatisticsDTO;
+import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.UserStoriesDTO;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
-import com.crowdcoding.microtasks.SketchFunction;
 import com.crowdcoding.microtasks.WriteCall;
-import com.crowdcoding.microtasks.WriteEntrypoint;
+import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
@@ -24,6 +24,7 @@ import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
@@ -47,6 +48,10 @@ public class Project
 	private int microtasksCompleted;
 	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
+	private Ref<Function> mainFunction;	// root function in the call graph
+	
+	private boolean waitingForTestRun = false;	// is the project currently waiting for tests to be run?
+	
 	// Static initializer for class Project
 	static
 	{
@@ -54,7 +59,6 @@ public class Project
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Worker.class);
 		ObjectifyService.register(Artifact.class);
-		ObjectifyService.register(Entrypoint.class);
 		ObjectifyService.register(Function.class);
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
@@ -63,11 +67,10 @@ public class Project
 		ObjectifyService.register(DisputeUnitTestFunction.class);
 		ObjectifyService.register(Microtask.class);
 		ObjectifyService.register(ReuseSearch.class);
-		ObjectifyService.register(SketchFunction.class);
+		ObjectifyService.register(WriteFunction.class);
 		ObjectifyService.register(DebugTestFailure.class);
 		ObjectifyService.register(MachineUnitTest.class);
 		ObjectifyService.register(WriteCall.class);
-		ObjectifyService.register(WriteEntrypoint.class);
 		ObjectifyService.register(WriteFunctionDescription.class);
 		ObjectifyService.register(WriteTest.class);
 		ObjectifyService.register(WriteTestCases.class);
@@ -91,8 +94,18 @@ public class Project
 		idgenerator = new IDGenerator(false);
 		leaderboard = new Leaderboard(this);
 		
-		// Create an initial artifact to get work started.
-		UserStory userStory = new UserStory(this);
+		ofy().save().entity(this).now();
+		
+		// Create the main function
+		Function function = new Function(this);
+		mainFunction = (Ref<Function>) Ref.create(function.getKey());
+		
+		// Load user stories from Firebase and spawn work to implement them
+		String userStories = FirebaseService.readUserStories(this);
+		System.out.println(userStories);	
+		UserStoriesDTO dto = (UserStoriesDTO) DTO.read(userStories, UserStoriesDTO.class);		
+		for (String userStoryText : dto.userStories)
+			new UserStory(userStoryText, this);
 		
 		ofy().save().entity(this).now();
 	}
@@ -162,6 +175,13 @@ public class Project
 		ofy().save().entity(this).now();
 	}
 	
+	// Report that a function that was written is no longer written
+	public void functionNotWritten()
+	{
+		writtenFunctions--;
+		ofy().save().entity(this).now();
+	}
+	
 	// Report that lines of code in the system increased by
 	public void locIncreasedBy(int lines)
 	{
@@ -174,6 +194,28 @@ public class Project
 	{
 		microtasksCompleted++;
 		ofy().save().entity(this).now();
+	}
+	
+	// Requests that the tests be run for the project
+	public void requestTestRun()
+	{
+		// Schedule a MachineUnitTest to be run, if one is not already scheduled
+		if (!waitingForTestRun)
+		{
+			waitingForTestRun = true;
+			ofy().save().entity(this).now();
+			new MachineUnitTest(this);			
+		}		
+	}
+	
+	// Notifies the project that tests are currently out and about to run
+	public void testsAboutToRun()
+	{
+		// Reset the waitingForTestRun, as the current tests to be run are now frozen and any
+		// subsequent changes to the tests or functions will not be reflected in the current test
+		// run.
+		waitingForTestRun = false;
+		ofy().save().entity(this).now();		
 	}
 	
 	public long generateID(String tag)
@@ -204,5 +246,11 @@ public class Project
 	public HistoryLog historyLog()
 	{
 		return historyLog;
+	}
+	
+	// Gets the main function, the root of the call graph
+	public Function getMainFunction()
+	{
+		return ofy().load().ref(mainFunction).get();
 	}
 }

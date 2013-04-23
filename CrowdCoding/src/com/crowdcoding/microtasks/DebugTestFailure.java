@@ -25,7 +25,7 @@ public class DebugTestFailure extends Microtask
      {                   
      }
 
-     // Constructor for initial construction
+     // Constructor for initial construction.
      public DebugTestFailure(Function function, Project project)
      {
           super(project);
@@ -34,12 +34,6 @@ public class DebugTestFailure extends Microtask
          
           project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
           project.historyLog().endEvent();
-     }
-    
-     public void onAssign(Project project)
-     {
-          System.out.println("DebugTestFailure for " + function.get().getName() + " setting active coding");
-          function.get().activeCodingStarted(project);
      }
 
      protected void doSubmitWork(DTO dto, Project project)
@@ -113,7 +107,7 @@ public class DebugTestFailure extends Microtask
     
      public String getFunctionHeaderAssociatedWithTestCase()
      {
-          return function.getValue().getFunctionHeader();
+          return function.getValue().getHeader();
      }
     
      public Function getFunction()
@@ -125,4 +119,9 @@ public class DebugTestFailure extends Microtask
      {
           return "Debug a test failure";
      }
+     
+ 	public String microtaskDescription()
+ 	{
+ 		return "debugging a test failure";
+ 	}
 }
