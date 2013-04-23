@@ -39,7 +39,8 @@
 		
 		var showUserStoryPrompt = <%= (promptType == PromptType.IMPLEMENT_USER_STORY) %>;
 		var showSketchPrompt = <%= (promptType == PromptType.SKETCH) %>;
-		   	 	
+		var showSketchPrompt = <%= (promptType == PromptType.SKETCH) %>;   	 
+		
    		$(document).ready(function() 
 		{   			
    		    // Based on the prompt type, load and setup the appropriate prompt divs
@@ -47,7 +48,10 @@
 	   			$("#userStoryPrompt").css('display',"block");
    			if (showSketchPrompt)
 	   			$("#sketchPrompt").css('display',"block");
-   			   			
+   			if (showDescriptionChangedPrompt)
+   			{
+   				$('#descriptionDiff').append(diffString('The quick brown fox ', 'The ba quick fox '));
+   			}  			
    			
 		  	$('#skip').click(function() { skip(); });	
 		  	
