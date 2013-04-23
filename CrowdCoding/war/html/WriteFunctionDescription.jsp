@@ -22,6 +22,8 @@
 	
 		var microtaskType = 'WriteFunctionDescription';
 		var microtaskID = <%= microtask.getID() %>;	
+		
+		var codeBoxCode = '<%= caller.getEscapedCode() %>';
 	
 	    $(document).ready(function()
 		{
@@ -40,12 +42,7 @@
 			$('#callContext').on('hide', function () 
 			{
 				$('#showContext').text('Show context');
-			});		
-			
-			var codeContext = CodeMirror.fromTextArea(codeContextTextArea);
-			codeContext.setValue('<%= caller.getEscapedCode() %>');
-			codeContext.setOption("readOnly", "true");
-			codeContext.setOption("theme", "vibrant-ink");			
+			});				
 		});
 
 	</script>
@@ -58,7 +55,7 @@
 	Show example:<BR><BR>
 
 	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
-	<div id="callContext" class="collapse"><textarea id="codeContextTextArea"></textarea>  </div><BR>
+	<div id="callContext" class="collapse"><%@include file="/html/elements/readonlyCodeBox.jsp" %></div><BR>
 	
 	<form id="signatureForm" action="">	
 		<%@include file="/html/elements/signatureEditor.jsp" %>

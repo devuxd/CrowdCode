@@ -41,23 +41,41 @@
 	
 	function collectSignatureData()
 	{
-		var formData = { name: $("#name").val(),
-			     	description: $("#functionDescription").val(),
-			     	returnType: $("#returnType").val(),
-			     	parameters: [] };				
-	    $("tr[id^=params]").each(function(){	    		    	
-	    	formData.parameters.push( { name: $(this).find("input").eq(0).val(), 
-	    								 type: $(this).find("input").eq(1).val(),
-	    								 description: $(this).find("input").eq(2).val() });
+		var numParams = 0;
+		var description = '/**\n' + ' * ' + $("#functionDescription").val() + '\n' + ' * \n'; 
+		var paramNames = [];
+		
+		var header = 'function ' + $("#name").val() + '(';
+	    $("tr[id^=params]").each(function(index, value)
+	    {	    		    	
+	    	if (numParams > 0)
+	    		header += ', ';
+	    	
+	    	var paramName = $(this).find("input").eq(0).val();
+	    	var paramType = $(this).find("input").eq(1).val();
+	    	var paramDescrip = $(this).find("input").eq(2).val();
+	    	
+	    	paramNames.push(paramName);
+	    	header += paramName;
+	    	description += ' * @param {' + paramType + '} ' + paramName + ' - ' + paramDescrip + '\n'; 
+	    	
+	    	numParams++;
 	    });
+	    header += ')';
+		description += ' * @return {' + $("#returnType").val() + '} \n' + ' */\n';
+		
+		var formData = { name: $("#name").val(),
+				    paramNames: paramNames,
+			     	description: description,
+					header: header };				
+
 	    return formData;
 	}
-
 </script>
 
 
 <textarea id="functionDescription" draggable="true" placeholder="Can you briefly describe the purpose and behavior of the function?"></textarea>
-returns &nbsp;&nbsp;<input type="text" id="returnType" placeholdeer = "What type of data will it return?" class="input-medium"><BR>
+returns &nbsp;&nbsp;<input type="text" id="returnType" placeholder = "return type" class="input-medium"><BR>
 function 
 <input type="text" id="name" onblur="checkLength(this)" placeholder = "functionName" class="input-medium">(
 <BR>

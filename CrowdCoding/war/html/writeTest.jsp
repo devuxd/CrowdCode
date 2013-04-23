@@ -5,7 +5,7 @@
 <%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteTest" %>
-<%@ page import="com.crowdcoding.dto.ParameterDTO" %>
+<%@ page import="com.crowdcoding.artifacts.Function" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
@@ -23,7 +23,7 @@
     String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
     String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'";
     Writer strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getFunction().getFunctionHeader());
+    mapper.writeValue(strWriter,microtask.getFunction().getHeader());
     String functionHeader = strWriter.toString();
     strWriter = new StringWriter();
     mapper.writeValue(strWriter,microtask.getFunction().getCode());
@@ -40,22 +40,24 @@
 		var microtaskType = 'writetest';
 		var microtaskID = <%= microtask.getID() %>;			
 		
-		var params = <%= ParameterDTO.getParamsJSON(microtask.getFunction()) %>;
+		var fullDescription = <%=microtask.getFunction().getDescriptionDTO().json() %>; 
+		var paramNames = fullDescription.paramNames;
+		var codeBoxCode = '<%= microtask.getFunction().getEscapedFullDescription() %>';
+		
 		var simpleModeActive = true;
 		
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
-		debugger;
 	    myCodeMirror.setValue(<%=defaultVariable%>);
 	    
    		$(document).ready(function() 
-   		{
+   		{   			
    			$('#skip').click(function() { skip(); });	
    			
    			// Generate input elements for the simple test editor
-   			$.each(params, function(index, value) 
+   			$.each(paramNames, function(index, value) 
    			{
-   				$('#parameterValues').append(value.name + ': &nbsp;&nbsp;<input type="text" class="input-xlarge"><BR>');
+   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<input type="text" class="input-xlarge"><BR>');
    			});   
    			
    			// Track whether we are currently in simple or advanced test writing mode
@@ -130,12 +132,12 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	<h5>
-		<%= methodFormatted %><BR>	
 		Write a unit test for the test case:
 	</h5>
 
 	<blockquote><%= description %></blockquote>
-	
+	<%@include file="/html/elements/readonlyCodeBox.jsp" %>	
+		
 	<form id="testForm" action="">
 		<BR><BR>
 		<div class="accordion" id="testEditors">

@@ -27,15 +27,10 @@
 	mapper.writeValue(strWriter, microtask.getTestDescriptions());
 	String testCaseDescriptions = strWriter.toString();
 	String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
-	strWriter = new StringWriter();
-	//mapper.writeValue(strWriter, microtask.getFunctionCode());
-	//String functionCode = strWriter.toString();
-	String functionCode = "'"+microtask.getFunctionCode()+"'";
+
 	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctions(microtask.getFunction(), project) + "'";
 	// add current header becuase of recursive issue not marked in correct state so getAllActive ignores it
-	String allFunctionCodeInSystemHeader = "'" + microtask.getFunction().getFunctionHeader() + "{}" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
-	System.out.println(functionCode);
-	System.out.println(functionHeader);
+	String allFunctionCodeInSystemHeader = "'" + microtask.getFunction().getHeader() + "{}" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
 %>
 
 <body>
@@ -74,35 +69,38 @@
 			};  
 	</script>
 	<script>
-		debugger;
 		var timeOutPeriod = 1500;
 		var microtaskType = 'DebugTestFailure';
 		var microtaskID = <%= microtask.getID() %>;
-		var myCodeMirrorForDispute;
-	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    var myCodeMirrorForConsoleOutPut = CodeMirror.fromTextArea(debugconsole);
-	    myCodeMirror.setValue(/*'"'+*/<%=functionCode%>/*+'"'*/);
-	    //myCodeMirror.setValue(myCodeMirror.getValue().replace(/;/g,";\n"));
-	    myCodeMirror.setOption("theme", "vibrant-ink");
-		$("#sketchForm").children("input").attr('disabled', 'false');
-		$('#sketchForm').submit(function() {
-		debugger;
-		if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
-		{
-			myCodeMirror.setValue(myCodeMirror.getValue().replace(/printDebugStatement\([a-zA-Z0-9\\,\\'\\(\\) \" ]*[ ]*\);/g,"[Please Remove debug statements before submission]"));
-			$('#popUp').modal();
-			return false;
-		}
-		debugger;
-		test1(false);
-		if($("#sketchForm").children("input").attr('disabled') == 'disabled')
-		{
-			return false;
-		}
-			submit(collectFormDataForNormal());
-			return false;
-		});
 		
+		var myCodeMirrorForDispute;
+	    var myCodeMirrorForConsoleOutPut = CodeMirror.fromTextArea(debugconsole);
+	    
+	    // Code for the function editor
+	    var editorCode = '<%= microtask.getFunction().getEscapedFullCode() %>';
+	    
+		$("#sketchForm").children("input").attr('disabled', 'false');
+		$('#sketchForm').submit(function() 
+		{
+			doPresubmitWork();
+			
+			if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
+			{
+				myCodeMirror.setValue(myCodeMirror.getValue().replace(/printDebugStatement\([a-zA-Z0-9\\,\\'\\(\\) \" ]*[ ]*\);/g,"[Please Remove debug statements before submission]"));
+				$('#popUp').modal();
+				return false;
+			}
+
+			test1(false);
+			if($("#sketchForm").children("input").attr('disabled') == 'disabled')
+			{
+				return false;
+			}
+					
+			submit(collectCode());
+
+			return false;
+		});		
 		
 		$('#issueForm').submit(function() {
 			if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
@@ -135,7 +133,7 @@
 		}
 		function revertCodeAs()
 		{
-			 myCodeMirror.setValue(<%=functionCode%>);
+			myCodeMirror.setValue('<%= microtask.getFunction().getEscapedFullCode() %>');
 		}
 		function parseTheTestCases(QunitTest)
 		{
@@ -202,20 +200,6 @@
 			return formData;
 		}
 
-		function collectFormDataForNormal()
-		{
-			// active tab is the one disputed
-			debugger;
-			var testNumber = null;
-			var name = null;
-			var description = null;
-			var codes = myCodeMirror.getValue();
-			var formData = { name: name,
-					     description: description,
-						 testCaseNumber: testNumber,
-						 code: codes};
-			return formData;
-		}
 	function runUnitTests(arrayOfTests, functionName,isFirstTime)
 	{
  		debugger;
@@ -238,7 +222,7 @@
 			if(arrayOfTests[p] != "")
 			{
 			hasAtLeast1Test = true;
-			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + myCodeMirror.getValue().replace(/\n/g,"");
 			console.log("LINT" + lintCheckFunction);
 			var lintResult = JSHINT(lintCheckFunction,getJSHintGlobals());
 			var errors = checkForErrors(JSHINT.errors);
@@ -274,7 +258,7 @@
 					// change to asyncTest if you want try that, but that broke stuff when i changed it
 					var testCases = "";
 					// constructs the function header and puts code  from the above code window
-					testCases += "" + allTheFunctionCode + " " + functionHeader + "{"  + myCodeMirror.getValue().replace(/\n/g,"") + "}";
+					testCases += "" + allTheFunctionCode + " " + myCodeMirror.getValue().replace(/\n/g,"");
 					testCases += arrayOfTests[p];
 					console.log(testCases);
 					var QunitTestCases = parseTheTestCases(testCases);
@@ -401,11 +385,7 @@
 						    javaTestCases = resultOfTest;	
 							i++;
 						  }
-							
-	
-						},timeOutPeriod);
-						//eval(testCases);	
-					
+						},timeOutPeriod);	
 				}
 				else
 				{
@@ -434,55 +414,56 @@
 				},timeOutPeriod);
 				}
 			}
-			setTimeout(function(){
-			p++;
-			// the closing section if it enters
-			if(p >= arrayOfTests.length)
-			{	
-				if(!hasAtLeast1Test)
-				{
-					debugger;
-					htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
-					htmlTab +=  "<li class='active'><a href=";
-					htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
-					htmlTab +=  "</a></li>";
-					htmlContent += "<p>" + "</br>"; 
-					htmlContent += " No Unit Tests Exist for this function" + " </br>" ;
-					htmlContent += "</p></div>";
-					i++;
-					$("#reportInformation").css('display',"block");
-					myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
-			    	myCodeMirrorForDispute.setValue("No Unit Test Exist For this Function");
-			    	myCodeMirrorForDispute.setOption("readOnly", "true");
-			    	myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
-			    	$("#unittest").attr('disabled', 'false');
-				}
-				
-				$(document).ready(function()
-				{
-					if(!windowErrorFound)
+			setTimeout(function()
+			{
+				p++;
+				// the closing section if it enters
+				if(p >= arrayOfTests.length)
+				{	
+					if(!hasAtLeast1Test)
 					{
-						$("#tabContent").html(htmlContent);
-						$("#tabs").html(htmlTab);
+						debugger;
+						htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
+						htmlTab +=  "<li class='active'><a href=";
+						htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
+						htmlTab +=  "</a></li>";
+						htmlContent += "<p>" + "</br>"; 
+						htmlContent += " No Unit Tests Exist for this function" + " </br>" ;
+						htmlContent += "</p></div>";
+						i++;
+						$("#reportInformation").css('display',"block");
+						myCodeMirrorForDispute = CodeMirror.fromTextArea(unedit);
+				    	myCodeMirrorForDispute.setValue("No Unit Test Exist For this Function");
+				    	myCodeMirrorForDispute.setOption("readOnly", "true");
+				    	myCodeMirrorForDispute.setOption("theme", "vibrant-ink");
+				    	$("#unittest").attr('disabled', 'false');
 					}
-					// stop the interval before submission
-					clearInterval(myInterval);
-					if(htmlTab.search("false") == -1 && isFirstTime && !windowErrorFound)
-					{
-						$("#codeSubmit").click()
-					}
-				});
-				
-				if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)			
-				{
-					var existingText = myCodeMirrorForConsoleOutPut.getValue();
-					myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
-				}
-				//return testCases;
 					
-			  	clearInterval(myInterval);
-			 	$("#foo").css("display","none");
-			}
+					$(document).ready(function()
+					{
+						if(!windowErrorFound)
+						{
+							$("#tabContent").html(htmlContent);
+							$("#tabs").html(htmlTab);
+						}
+						// stop the interval before submission
+						clearInterval(myInterval);
+						if(htmlTab.search("false") == -1 && isFirstTime && !windowErrorFound)
+						{
+							$("#codeSubmit").click()
+						}
+					});
+					
+					if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)			
+					{
+						var existingText = myCodeMirrorForConsoleOutPut.getValue();
+						myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + new Date());	
+					}
+					//return testCases;
+						
+				  	clearInterval(myInterval);
+				 	$("#foo").css("display","none");
+				}
 			},timeOutPeriod);
 		},timeOutPeriod+200);
 	}
@@ -570,24 +551,15 @@
 			<%@include file="/html/elements/microtaskTitle.jsp" %>
 			<BR>
 			<h5>
-				This function has failed its tests. Can you fix it? <BR>You may use the function:<BR>
-				printDebugStatement(...);
-				<br>
-				to print data to the console
-				<%=methodFormatted%>
-				<BR> {
-			</h5>
+				This function has failed its tests. Can you fix it? <BR>
+				To check if you've fixed it, run the unit tests. <BR>
+				If there is a problem with the tests, report an issue.
+				You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR>
+			</h5><BR>
 
 			<button style="float: right;" onclick="revertCodeAs();">Revert Code</button>
-			<table width="100%">
-				<tr>
-					<td></td>
-					<td><textarea id="code"></textarea></td>
-				</tr>
-			</table>
-			<h5>
-				} <BR> <BR>
-			</h5>
+
+			<%@include file="/html/elements/functionEditor.jsp" %>
 			<%@include file="/html/elements/submitFooter.jsp" %>
 
 		</form>

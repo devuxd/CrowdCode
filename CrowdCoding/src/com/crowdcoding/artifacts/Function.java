@@ -14,13 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.ParameterDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.history.MessageReceived;
-import com.crowdcoding.dto.history.StateChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
-import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.WriteCall;
@@ -45,9 +42,9 @@ public class Function extends Artifact
 {
 	private String code;
 	@Index private String name;
+	private List<String> paramNames = new ArrayList<String>();
+	private String header;
 	private String description;
-	private String returnType;
-	@Load private List<Parameter> parameters = new ArrayList<Parameter>();  	
 	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
 	private List<String> pseudoCalls = new ArrayList<String>();
 	
@@ -73,10 +70,10 @@ public class Function extends Artifact
 	}
 	
 	// Constructor for a function that already has a full function description
-	public Function(String name, String description, String returnType, List<ParameterDTO> params, Project project)
+	public Function(String name, List<String> paramNames, String signature, String description, Project project)
 	{
 		super(project);		
-		writeDescriptionCompleted(name, description, returnType, params, project);
+		writeDescriptionCompleted(name, paramNames, header, description, project);
 	}
 	
 	// Constructor for a function that only has a short call description and still needs a full description
@@ -95,12 +92,20 @@ public class Function extends Artifact
 		super(project);
 		
 		this.name = "main";
-		this.description = "Main function for a commandline application. Given a userInput string describing\n" +
-				"an action to take, executes the action and returns the result as a String.";
-		this.parameters.add(new Parameter("userInput", "String", "Describes the action to take"));
-		this.returnType = "String";
-		this.code = "";
+		this.paramNames.add("userInput");
+		this.description = "/** \n" +
+				           " * Main function for a commandline application. Given a userInput string \n" +
+				           " * describing an action to take, executes the action and returns the \n" +
+				           " * result as a String. \n" +
+				           " * \n" +
+				           " * @param {String} userInput - user input describing the action to take \n" + 
+				           " * @return {String} - output from executing the action \n" +
+				           " */\n";
+		this.header = "function main(userInput)";
+		this.code = "{\n\n}";
 		this.hasBeenDescribed = true;
+		
+		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 1);
 		
 		ofy().save().entity(this).now();
 	}
@@ -121,53 +126,80 @@ public class Function extends Artifact
 	{
 		return hasBeenDescribed;
 	}
-	
-	public List<Parameter> getParameters(){
-		return parameters;
-	}
-	
+		
 	public String getName()
 	{
 		return name;
 	}
+	
+	public int getNumParams()
+	{
+		return paramNames.size();
+	}
+	
+	public List<String> getParamNames()
+	{
+		return paramNames;
+	}
+	
+	public String getHeader()
+	{
+		return header;
+	}
+	
+	public String getEscapedHeader()
+	{
+		return StringEscapeUtils.escapeEcmaScript(header);
+	}
+	
+	public String getDescription()
+	{
+		return description;
+	}
+	
+	public String getEscapedDescription()
+	{
+		return StringEscapeUtils.escapeEcmaScript(description);
+	}
+	
+	// Gets the description and the header
+	public String getFullDescription()
+	{
+		return description + header;
+	}
+	
+	// Gets the description and the header
+	public String getEscapedFullDescription()
+	{
+		return StringEscapeUtils.escapeEcmaScript(getFullDescription());
+	}
 		
+	// gets the body of the function (including braces)
 	public String getCode()
 	{
 		return code;
 	}
 	
+	// gets the body of the function (including braces)
 	public String getEscapedCode()
 	{
 		return StringEscapeUtils.escapeEcmaScript(code);
 	}
 	
+	// Gets the description, header, and bady of the function
+	public String getFullCode()
+	{
+		return description + header + "\n" + code;
+	}
+	
+	public String getEscapedFullCode()
+	{
+		return StringEscapeUtils.escapeEcmaScript(getFullCode());
+	}	
+	
 	public List<Ref<Test>> getTestCases()
 	{
 		return tests;
-	}
-	// this the header used for code. it is valid js
-	public String getFunctionHeader()
-	{
-		StringBuilder parameterAsAString = new StringBuilder();
-		for(Parameter functionParameter: parameters)
-		{
-			parameterAsAString.append(functionParameter.getName());
-			parameterAsAString.append(",");
-		}
-		// If there is at least one parameter, get rid of the trailing comma
-		if (parameters.size() > 0)
-			parameterAsAString.replace(parameterAsAString.toString().length()-1,parameterAsAString.toString().length(), "");
-		return "function " + this.name + "(" + parameterAsAString.toString() + ")" ;
-	}
-
-	public String getReturnType()
-	{
-		return returnType;
-	}
-
-	public String getDescription() 
-	{
-		return description;
 	}
 		
 	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
@@ -189,29 +221,10 @@ public class Function extends Artifact
 	
 	    return "";   
 	}
-	
-	// this has the type and the description
-	public String getFunctionDisplayHeader() 
-	{
-		StringBuilder parameterAsAString = new StringBuilder();
-		for(Parameter functionParameter: parameters)
-		{
-			parameterAsAString.append(functionParameter.toString());
-			parameterAsAString.append(",<br>");
-		}
-		// If there is at least one parameter, get rid of the trailing comma and <BR>
-		if (parameters.size() > 0)
-			parameterAsAString.replace(parameterAsAString.toString().length()-5,parameterAsAString.toString().length(), "");
-		return "function " + this.name + "(</br>" + parameterAsAString.toString() + "</br>)" ;
-	}
-	
+
 	public FunctionDescriptionDTO getDescriptionDTO()
 	{
-		List<ParameterDTO> paramDTOs = new ArrayList<ParameterDTO>();
-		for (Parameter param : parameters)
-			paramDTOs.add(param.getDTO());
-		
-		return new FunctionDescriptionDTO(name, returnType, paramDTOs, description);
+		return new FunctionDescriptionDTO(name, paramNames, header, description); 
 	}
 	
 	// Queues the specified microtask and looks for work
@@ -307,8 +320,11 @@ public class Function extends Artifact
 		int newLOC = StringUtils.countMatches(dto.code, "\n") + 1;		
 		project.locIncreasedBy(newLOC - oldLOC);		
 		
-		// Update the code
-		this.code = dto.code;				
+		// Update the function data
+		this.code = dto.code;		
+		this.name = dto.name;
+		this.description = dto.description;
+		this.header = dto.header;
 
 		// Look for pseudocode and psuedocalls
 		List<String> currentPseudoCalls = findPseudocalls(code);
@@ -393,23 +409,22 @@ public class Function extends Artifact
 		// signal sent immediately in that case)
 		callee.addToNotifyOnDescribed(this, project);
 	}
-	
-	public void writeDescriptionCompleted(String name, String description, String returnType, 
-	List<ParameterDTO> params, Project project)
+		
+	public void writeDescriptionCompleted(String name, List<String> paramNames, String header, String description, 
+			Project project)
 	{
 		microtaskOutCompleted();
 		this.name = name;
+		this.paramNames = paramNames;
+		this.header = header;
 		this.description = description;
-		this.returnType = returnType;
-		for (ParameterDTO param : params)
-			this.parameters.add(new Parameter(param.name, param.type, param.description));
 
 		// The initial code for a function is a line of pseudocode that instructs
 		// the worker to only remove it when the function is done. This keeps regenerating
 		// new sketch tasks until the worker has marked it as done by removing the pseudocode
 		// line.
-		this.code = "/#Mark this function as implemented by removing this line.";	
-		project.locIncreasedBy(1);
+		this.code = "{\n//#Mark this function as implemented by removing this line.\n}";	
+		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 1);
 		
 		ofy().save().entity(this).now();
 		
@@ -523,17 +538,19 @@ public class Function extends Artifact
 	// of lines (may be empty) which are the pseudocode for the function call
 	public List<String> findPseudocalls(String code)
 	{	
-		return findSpecialLines(code, "/!");
+		return findSpecialLines(code, "//!");
 	}
 	
 	public List<String> findPseudocode(String code)
 	{
-		return findSpecialLines(code, "/#");
+		return findSpecialLines(code, "//#");
 	}
 	
 	// Finds segments of lines in a string of code starting with linestarter
 	public List<String> findSpecialLines(String code, String starter)
 	{		
+		int starterLength = starter.length();
+		
 		String searchCode = code;
 		
 		List<String> results = new ArrayList<String>();
@@ -549,9 +566,9 @@ public class Function extends Artifact
 			 // We found a match. Take the whole line (or to the end if this is the last line)
 			int nextLineStart = searchCode.indexOf("\n", index + 1);
 			if (nextLineStart == -1)
-				segment = searchCode.substring(index + 2);
+				segment = searchCode.substring(index + starterLength);
 			else 
-				segment = searchCode.substring(index + 2, nextLineStart);
+				segment = searchCode.substring(index + starterLength, nextLineStart);
 
 			// add to collection
 			results.add(segment);

@@ -105,7 +105,7 @@ public class Test extends Artifact
 		project.historyLog().endEvent();
 	}
 	
-	public void writeTestCompleted(FunctionDTO dto, Project project)
+	public void editTestCompleted(FunctionDTO dto, Project project)
 	{
 		project.historyLog().beginEvent(new StateChange(State.IMPLEMENTED.name(), this));
 		
