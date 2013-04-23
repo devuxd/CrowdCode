@@ -4,3 +4,7 @@
 CrowdCoding/war/WEB-INF/appengine-generated/datastore-indexes-auto.xml
 
 CrowdCoding/war/WEB-INF/appengine-generated/local_db.bin
+
+CrowdCoding/war/html/.DS_Store
+
+CrowdCoding/war/html/test.html

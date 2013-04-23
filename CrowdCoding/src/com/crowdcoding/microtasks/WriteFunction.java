@@ -16,22 +16,35 @@ import com.googlecode.objectify.annotation.Load;
 @EntitySubclass(index=true)
 public class WriteFunction extends Microtask 
 {
-	public enum PromptType { SKETCH, IMPLEMENT_USER_STORY };		
+	public enum PromptType { SKETCH, DESCRIPTION_CHANGE, IMPLEMENT_USER_STORY };		
 	@Load private Ref<Function> function;
 	private PromptType promptType;		
+	
 	private Ref<UserStory> userStory;		// Only defined for IMPLEMENT_USER_STORY
+	private String oldFullDescription;		// Only defined for DESCRIPTION_CHANGE
+	private String newFullDescription;		// Only defined for DESCRIPTION_CHANGE
 	
 		
 	// Default constructor for deserialization
 	private WriteFunction() 
 	{				
 	}
-	
+		
 	// Initialization constructor for a SKETCH write function. Microtask is not ready.
 	public WriteFunction(Function function, Project project)
 	{
 		super(project, false);
 		this.promptType = PromptType.SKETCH;
+		commonInitialization(function, project);
+	}
+	
+	// Initialization constructor for a DESCRIPTION_CHANGE write function. Microtask is not ready. 
+	public WriteFunction(Function function, String oldFullDescription, String newFullDescription, Project project)
+	{
+		super(project, false);		
+		this.promptType = PromptType.DESCRIPTION_CHANGE;
+		this.oldFullDescription = oldFullDescription;
+		this.newFullDescription = newFullDescription;		
 		commonInitialization(function, project);
 	}
 	
@@ -70,6 +83,16 @@ public class WriteFunction extends Microtask
 			return ofy().load().ref(userStory).get().getText();
 		else
 			return "";
+	}
+	
+	public String getOldFullDescription()
+	{
+		return oldFullDescription;
+	}
+	
+	public String getNewFullDescription()
+	{
+		return newFullDescription;
 	}
 	
 	protected Class getDTOClass()

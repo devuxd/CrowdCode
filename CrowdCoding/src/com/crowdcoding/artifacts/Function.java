@@ -315,6 +315,13 @@ public class Function extends Artifact
 		
 	private void onWorkerEdited(FunctionDTO dto, Project project)
 	{
+		// Check if the description or header changed (ignoring whitespace changes).
+		// If so, generate DescriptionChange microtasks for callers and tests.				
+		String strippedOldFullDescrip = (this.description + this.header).replace(" ", "").replace("\n", "");
+		String strippedNewFullDescrip = (dto.description + dto.header).replace(" ", "").replace("\n", "");				
+		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))		
+			descriptionChanged(dto, project);		
+		
 		// Measure the LOC increase. 
 		int	oldLOC = StringUtils.countMatches(this.code, "\n") + 1;
 		int newLOC = StringUtils.countMatches(dto.code, "\n") + 1;		
@@ -362,6 +369,18 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}	
 	
+	// Send out notifications, as appropriate, that the description or header of this 
+	// function has changed
+	private void descriptionChanged(FunctionDTO dto, Project project)
+	{
+		// queue DescriptionChanged microtasks on each of the callers 
+		
+		
+		
+		
+		
+	}
+		
 	//////////////////////////////////////////////////////////////////////////////
 	//  NOTIFICATION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
