@@ -47,9 +47,7 @@ public class Function extends Artifact
 	private String description;
 	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
 	private List<String> pseudoCalls = new ArrayList<String>();
-	
-	// When a function becomes tested, functions that are calling it want to be notified.
-	private List<Ref<Function>> notifyOnDescribed = new ArrayList<Ref<Function>>(); 
+	private List<Ref<Function>> callers = new ArrayList<Ref<Function>>(); 
 	
 	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
@@ -374,11 +372,12 @@ public class Function extends Artifact
 	private void descriptionChanged(FunctionDTO dto, Project project)
 	{
 		// queue DescriptionChanged microtasks on each of the callers 
-		
-		
-		
-		
-		
+		for (Ref<Function> callerRef : callers)
+		{
+			Function caller = load(callerRef);
+			caller.queueMicrotask(new WriteFunction(caller, this.getFullDescription(), 
+					dto.description + dto.header, project), project);
+		}
 	}
 		
 	//////////////////////////////////////////////////////////////////////////////
@@ -528,7 +527,7 @@ public class Function extends Artifact
 		Ref<Function> newSubscriberRef = (Ref<Function>) Ref.create(newSubscriber.getKey());
 		
 		//add it to the list
-		notifyOnDescribed.add(newSubscriberRef);
+		callers.add(newSubscriberRef);
 		
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed()) 		
@@ -540,7 +539,7 @@ public class Function extends Artifact
 	// Notify all subscribers that this function has become described.
 	private void notifyOnDescribed(Project project)
 	{
-		for (Ref<Function> subscriber : notifyOnDescribed)		
+		for (Ref<Function> subscriber : callers)		
 			sendDescribedNotification(subscriber, project);		
 	}
 	
@@ -555,18 +554,18 @@ public class Function extends Artifact
 
 	// Looks through a string of a function's implementation and returns a list
 	// of lines (may be empty) which are the pseudocode for the function call
-	public List<String> findPseudocalls(String code)
+	private List<String> findPseudocalls(String code)
 	{	
 		return findSpecialLines(code, "//!");
 	}
 	
-	public List<String> findPseudocode(String code)
+	private List<String> findPseudocode(String code)
 	{
 		return findSpecialLines(code, "//#");
 	}
 	
 	// Finds segments of lines in a string of code starting with linestarter
-	public List<String> findSpecialLines(String code, String starter)
+	private List<String> findSpecialLines(String code, String starter)
 	{		
 		int starterLength = starter.length();
 		
@@ -602,11 +601,6 @@ public class Function extends Artifact
 		return results;		
 	}
 	
-	public void createDisputedTestCase(FunctionDTO dto, Project project)
-	{
-		tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
-	}
-	
 	// Given a ref to a function that has not been loaded from the datastore,
 	// load it and get the object
 	public static Function load(Ref<Function> ref)
@@ -614,11 +608,6 @@ public class Function extends Artifact
 		return ofy().load().ref(ref).get();
 	}		
 		
-	private void logState() 
-	{
-		System.out.println("State of function: " + this.toString() +".");		
-	}
-	
 	public boolean equals(Object function)
 	{
 		if(function instanceof Function)

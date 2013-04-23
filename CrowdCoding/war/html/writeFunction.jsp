@@ -71,6 +71,13 @@
 		Implement functionality for the following user story: <BR>
 		<%= microtask.getUserStoryText() %><BR><BR>
 	</div>
+	
+	<div id="descriptionChangedPrompt" style="display: none">
+		The description of a function this function is calling has changed. Can you update this function
+		(if necessary)? <BR>
+		<div id="descriptionDiff"></div><BR><BR>
+	</div>
+	
 
 	<div id="sketchPrompt" style="display: none">
 		Implement the function below. <BR>
