@@ -5,7 +5,6 @@
 <%@ page import="com.crowdcoding.Project"%>
 <%@ page import="com.crowdcoding.Worker"%>
 <%@ page import="com.crowdcoding.microtasks.DebugTestFailure"%>
-<%@ page import="com.crowdcoding.microtasks.DisputeUnitTestFunction"%>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil"%>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@ page import="java.io.StringWriter"%>
@@ -78,26 +77,32 @@
 	    
 	    // Code for the function editor
 	    var editorCode = '<%= microtask.getFunction().getEscapedFullCode() %>';
+		var functionName = '<%= microtask.getFunction().getName() %>';	    
 	    
 		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() 
 		{
-			doPresubmitWork();
-			
-			if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
-			{
-				myCodeMirror.setValue(myCodeMirror.getValue().replace(/printDebugStatement\([a-zA-Z0-9\\,\\'\\(\\) \" ]*[ ]*\);/g,"[Please Remove debug statements before submission]"));
-				$('#popUp').modal();
-				return false;
+			var result = checkAndCollectCode();
+			if (!result.errors)
+			{			
+				if(myCodeMirror.getValue().indexOf("printDebugStatement") != -1)
+				{
+					myCodeMirror.setValue(myCodeMirror.getValue().replace(/printDebugStatement\([a-zA-Z0-9\\,\\'\\(\\) \" ]*[ ]*\);/g,"[Please Remove debug statements before submission]"));
+					$('#popUp').modal();
+					return false;
+				}
+	
+				// TODO: we are checking JSHint errors twice 
+				// (once in checkAndCollectCode and a second time below...)				
+				// And we are not checking AST errors before we run the unit tests.
+				
+				test1(false);
+				if($("#sketchForm").children("input").attr('disabled') == 'disabled')
+				{
+					return false;
+				}						
+				submit(result.code);
 			}
-
-			test1(false);
-			if($("#sketchForm").children("input").attr('disabled') == 'disabled')
-			{
-				return false;
-			}
-					
-			submit(collectCode());
 
 			return false;
 		});		
@@ -126,7 +131,6 @@
 		// submit
 		function test1(isFirstTime)
 		{
-			debugger;
 			allTestPassed = true;
 			javaTestCases = <%=testCases%>;
 			runUnitTests(javaTestCases,"TEST 1",isFirstTime);
@@ -156,7 +160,6 @@
 		
 		function showReportInformation(testNumber)
 		{
-			debugger;
 			var TestCases = "";
 			var tabName = "#A" + testNumber;
 			TestCases += $(tabName).html().match("\\<br\\> [a-zA-Z0-9 \\/ \\< \\> \\: \\' \\( \\) \\,\\;]*\\<br\\>") + "";
@@ -186,7 +189,6 @@
 		
 		function collectFormDataForDispute()
 		{
-		debugger;
 			// active tab is the one disputed
 			var testNumber = $("div.active")[0].id.match("[0-9]+");
 			var name = javaTestCaseDescriptions[testNumber] + " ";
@@ -202,7 +204,6 @@
 
 	function runUnitTests(arrayOfTests, functionName,isFirstTime)
 	{
- 		debugger;
  		$("#foo").css("display","block");
 		var unStringEscapedFunctionHeader = <%=functionHeader%>;
 		var functionHeader = unStringEscapedFunctionHeader.replace(/\"/g,"'");
@@ -471,9 +472,8 @@
 	// for debuggin purposes
 	function printDebugStatementOuter(statement)
 	{
-		debugger;
 		var existingText = myCodeMirrorForConsoleOutPut.getValue();
-		//var existingText = "";
+
 		if($("#consoleDiv").css('display') == 'block')
 		{
 		    myCodeMirrorForConsoleOutPut.setValue(existingText + "\n" + statement);	
@@ -592,7 +592,6 @@
 			<!-- /tabbable -->
 		</div>
 		<script>
-    debugger;
 	 test1(true);
 	 </script>
 

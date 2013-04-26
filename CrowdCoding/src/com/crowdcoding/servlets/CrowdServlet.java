@@ -17,7 +17,6 @@ import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.microtasks.DebugTestFailure;
-import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
@@ -44,7 +43,6 @@ public class CrowdServlet extends HttpServlet
 	{
 		// Every microtask MUST be registered here, mapping its name to its class.
 		// Microtasks are listed in alphabetical order.
-		microtaskTypes.put("disputeunittestfunction", DisputeUnitTestFunction.class);
 		microtaskTypes.put("ReuseSearch", ReuseSearch.class);
 		microtaskTypes.put("writeFunction", WriteFunction.class);
 		microtaskTypes.put("DebugTestFailure", DebugTestFailure.class);

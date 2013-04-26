@@ -161,14 +161,15 @@
 <script src="/html/keybind.js"></script>
 <script src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script src='/include/esprima.js'></script>
+<script src="/include/diff/diff_match_patch.js"></script>
+<script src="/include/diff/jquery.pretty-text-diff.js"></script>
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
 	
     $(document).ready(function()
-    {
-    	
+    {    	
         loadMicrotask();
 
 		$("#logoutLink").click(function() {

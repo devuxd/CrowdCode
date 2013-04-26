@@ -2,6 +2,8 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
@@ -39,12 +41,16 @@ public class WriteFunction extends Microtask
 	}
 	
 	// Initialization constructor for a DESCRIPTION_CHANGE write function. Microtask is not ready. 
-	public WriteFunction(Function function, String oldFullDescription, String newFullDescription, Project project)
+	public WriteFunction(Function function, String oldFullDescription, 
+			String newFullDescription, Project project)
 	{
 		super(project, false);		
 		this.promptType = PromptType.DESCRIPTION_CHANGE;
-		this.oldFullDescription = oldFullDescription;
-		this.newFullDescription = newFullDescription;		
+		
+		// First replace \n with BR to format for display. Then, escape chars as necessary.
+		this.oldFullDescription = oldFullDescription;	
+		this.newFullDescription = newFullDescription;
+		
 		commonInitialization(function, project);
 	}
 	

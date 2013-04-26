@@ -23,6 +23,7 @@ import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
+import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
@@ -52,11 +53,6 @@ public class Function extends Artifact
 	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	private boolean needsDebugging;		// true iff the function is failing its unit tests.
-	
-	// Queued microtasks waiting to be done (not yet in the ready state)
-	private Queue<Ref<Microtask>> queuedMicrotasks = new LinkedList<Ref<Microtask>>();	
-	
-	private Ref<Microtask> microtaskOut;
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -224,15 +220,7 @@ public class Function extends Artifact
 	{
 		return new FunctionDescriptionDTO(name, paramNames, header, description); 
 	}
-	
-	// Queues the specified microtask and looks for work
-	public void queueMicrotask(Microtask microtask, Project project)
-	{
-		queuedMicrotasks.add(Ref.create(microtask.getKey()));
-		ofy().save().entity(this).now();
-		lookForWork(project);		
-	}
-		
+			
 	//////////////////////////////////////////////////////////////////////////////
 	//  PRIVATE CORE FUNCTIONALITY
 	//////////////////////////////////////////////////////////////////////////////
@@ -261,23 +249,9 @@ public class Function extends Artifact
 		}
 	}
 	
-	// Makes the specified microtask out for work
-	private void makeMicrotaskOut(Microtask microtask)
-	{
-		microtask.makeReady();
-		microtaskOut = Ref.create(microtask.getKey());
-		ofy().save().entity(this).now();
-	}
-	
-	private void microtaskOutCompleted()
-	{
-		microtaskOut = null;
-		ofy().save().entity(this).now();
-	}
-	
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	private void lookForWork(Project project)
+	protected void lookForWork(Project project)
 	{
 		// If there is currently not already a microtask being done on this function, 
 		// determine if there is work to be done
@@ -367,19 +341,6 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}	
 	
-	// Send out notifications, as appropriate, that the description or header of this 
-	// function has changed
-	private void descriptionChanged(FunctionDTO dto, Project project)
-	{
-		// queue DescriptionChanged microtasks on each of the callers 
-		for (Ref<Function> callerRef : callers)
-		{
-			Function caller = load(callerRef);
-			caller.queueMicrotask(new WriteFunction(caller, this.getFullDescription(), 
-					dto.description + dto.header, project), project);
-		}
-	}
-		
 	//////////////////////////////////////////////////////////////////////////////
 	//  NOTIFICATION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
@@ -546,6 +507,27 @@ public class Function extends Artifact
 	private void sendDescribedNotification(Ref<Function> subscriber, Project project)
 	{
 		load(subscriber).calleeBecameDescribed(this, project);
+	}
+	
+	// Send out notifications, as appropriate, that the description or header of this 
+	// function has changed
+	private void descriptionChanged(FunctionDTO dto, Project project)
+	{
+		// queue DescriptionChanged microtasks on each of the callers 
+		for (Ref<Function> callerRef : callers)
+		{
+			Function caller = load(callerRef);
+			caller.queueMicrotask(new WriteFunction(caller, this.getFullDescription(), 
+					dto.description + dto.header, project), project);
+		}
+		
+		// queue FUNCTION_CHANGED edit test microtasks on each of this function's tests
+		for (Ref<Test> testRef : tests)
+		{
+			Test test = ofy().load().ref(testRef).get();
+			test.queueMicrotask(new WriteTest(test, this.getFullDescription(),  
+					dto.description + dto.header, project), project);
+		}
 	}
 		
 	//////////////////////////////////////////////////////////////////////////////

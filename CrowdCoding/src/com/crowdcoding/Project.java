@@ -10,7 +10,6 @@ import com.crowdcoding.dto.CurrentStatisticsDTO;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.UserStoriesDTO;
 import com.crowdcoding.microtasks.DebugTestFailure;
-import com.crowdcoding.microtasks.DisputeUnitTestFunction;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
@@ -64,7 +63,6 @@ public class Project
 		ObjectifyService.register(Test.class);
 		ObjectifyService.register(UserStory.class);
 		
-		ObjectifyService.register(DisputeUnitTestFunction.class);
 		ObjectifyService.register(Microtask.class);
 		ObjectifyService.register(ReuseSearch.class);
 		ObjectifyService.register(WriteFunction.class);
