@@ -46,7 +46,7 @@
 
 	<form id="writeCallForm" action="">
 		<%@include file="/html/elements/microtaskTitle.jsp" %>
-		<p><h4> Can you replace the pseudocall below with a call to the following function: </h4> <BR>	
+		Can you replace the pseudocall below with a call to this function: <BR>	
 		<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>	
 
 		<%@include file="/html/elements/functionEditor.jsp" %>		

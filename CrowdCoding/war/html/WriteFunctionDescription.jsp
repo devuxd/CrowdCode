@@ -48,9 +48,9 @@
 	</script>
 	
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<blockquote><%= microtask.getCallDescription() %></blockquote>
 	
-	<h5> Can you write a description for this function?   </h5><BR>
+	Can you write a description for a function that<BR>
+	<span class="label label-inverse"><%= microtask.getCallDescription() %></span><BR><BR>
 	
 	Show example:<BR><BR>
 
