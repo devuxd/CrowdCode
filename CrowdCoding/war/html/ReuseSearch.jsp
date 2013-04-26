@@ -126,9 +126,9 @@
 </script>
 
 <%@include file="/html/elements/microtaskTitle.jsp" %>
-Is there a function that does this?
-<blockquote><%=microtask.getCallDescription()%></blockquote>
-Here's a search box that searches existing function descriptions:<BR>
+Is there a function that does<BR>
+<span class="label label-inverse"><%=microtask.getCallDescription()%></span><BR>
+Use the search box to see if a function exists to do this. Otherwise, select "No function does this".<BR>
 
 <form id="searchForm" action="">
 	<input type="text" id="SearchText" class="input-large" oninput="doSearch()">

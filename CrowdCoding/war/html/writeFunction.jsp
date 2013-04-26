@@ -69,8 +69,13 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
 	<div id="userStoryPrompt" style="display: none">
-		Implement functionality for the following user story: <BR>
-		<%= microtask.getUserStoryText() %><BR><BR>
+		Can you figure out how this user story should be implemented: <BR>
+		<span class="label label-inverse"><%= microtask.getUserStoryText() %></span><BR><BR>
+		
+		The main function - the entrypoint into the application - is below. Sketch a design
+		of this user story by editing the function. Use <b>pseudocalls</b> to describe behavior that
+		should be implemented in another function. Try not to break other user stories that may already
+		be implemented. But don't worry too much - it'll all be tested.<BR><BR>
 	</div>
 	
 	<div id="sketchPrompt" style="display: none">
@@ -78,7 +83,7 @@
 	</div>
 	
 	<div id="descriptionChangedPrompt" style="display: none">
-		The description of a function this function is calling has changed. Can you update this function
+		The description of a function called in the code below has changed. Can you update the code
 		(if necessary)? <BR>
 		
 		<span class="original" style="display: none"><%=microtask.getOldFullDescription()%></span>
@@ -86,11 +91,13 @@
 		<span id="diff" class="diff"></span><BR><BR>
 	</div>	
 	
-	<h5>	
 	If you're not sure how to do something, indicate a line or portion 
-	of a line as <b>pseudocode</b> by beginning it with '//#'.<BR>
-	If you'd like to call a <b>function</b> to do something, describe what you'd like it to do with a line
-	or portion of a line beginning with '//!'.<BR></h5>
+	of a line as <b>pseudocode</b> by beginning it with '//#'.
+	If you'd like to call a <b>function</b> to do something, describe what you'd like it to do with a
+	<b>pseudocall</b> - a line or portion of a line beginning with '//!'.
+	Update the description and header to reflect the function's actual behavior - the crowd will
+	refactor callers and tests to match the new behavior (but you can't change the description
+	or signature of main).<BR><BR>
 	
 	Show example<BR>
 	

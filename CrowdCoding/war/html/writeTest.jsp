@@ -191,17 +191,13 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	
 	<div id="writePrompt" style="display: none">
-		<h5>
-			Write a simple or advanced test for
-		</h5>	
-		<blockquote><%= microtask.getDescription() %></blockquote>
+		Write a simple or advanced test for<BR>			
+		<span class="label label-inverse"><%= microtask.getDescription() %></span><BR>
 	</div>
 
 	<div id="correctPrompt" style="display: none">
-		The following issue was reported with this test:
-		
-		<blockquote><%= microtask.getIssueDescription() %></blockquote>
-		
+		The following issue was reported with this test:<BR>		
+		<span class="label label-important"><%= microtask.getIssueDescription() %></span><BR>		
 		Can you fix the test to address this issue?<BR>
 	</div>
 	
@@ -214,7 +210,7 @@
 		<span id="diff" class="diff"></span><BR>
 	</div>
 	
-	Here's the description of the function to test:
+	<BR>Here's the description of the function to test:
 	<%@include file="/html/elements/readonlyCodeBox.jsp" %>	
 		
 	<form id="writeTestForm" action="">

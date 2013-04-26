@@ -549,33 +549,26 @@
 
 		<form id="sketchForm" action="">
 			<%@include file="/html/elements/microtaskTitle.jsp" %>
-			<BR>
-			<h5>
-				This function has failed its tests. Can you fix it? <BR>
-				To check if you've fixed it, run the unit tests. <BR>
-				If there is a problem with the tests, report an issue.
-				You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR>
-			</h5><BR>
+			This function has failed its tests. Can you fix it? <BR>
+			To check if you've fixed it, run the unit tests. <BR>
+			If there is a problem with the tests, report an issue.
+			You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR><BR>
 
 			<button style="float: right;" onclick="revertCodeAs();">Revert Code</button>
 
 			<%@include file="/html/elements/functionEditor.jsp" %>
 			<%@include file="/html/elements/submitFooter.jsp" %>
-
-		</form>
-		<br>
-		<div style = 'display:none;' id = 'consoleDiv'>
-		<h5> Debug Console Output:
-		</h5>
-			<table width="100%">
-				<tr>
-					<td></td>
-					<td><textarea id="debugconsole"></textarea></td>
-				</tr>
-			</table>
-					<br>
-			</div>
+		</form><br>
 		
+		<div style = 'display:none;' id = 'consoleDiv'>
+			<h5> Debug Console Output:</h5>
+				<table width="100%">
+					<tr>
+						<td></td>
+						<td><textarea id="debugconsole"></textarea></td>
+					</tr>
+				</table><br>
+		</div>		
 
 		<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button>
 		<div class="bs-docs-example">

@@ -123,11 +123,11 @@ public class WriteFunction extends Microtask
 	
 	public String microtaskTitle()
 	{
-		return "Write a function";
+		return "Edit a function";
 	}
 	
 	public String microtaskDescription()
 	{
-		return "writing a function";
+		return "editing a function";
 	}
 }
