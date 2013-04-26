@@ -13,7 +13,26 @@
 	if (functionName == 'main')
  		makeFullDescriptionReadOnly();
  	
+ 	// Find the list of all function names elsewhere in the system
+ 	var functionNames = buildFunctionNames();
+ 	
  	$('#errorMessages').hide();
+ 	
+ 	// Builds a list of all of the function names that are currently in use
+ 	function buildFunctionNames()
+ 	{
+ 		var names = [];
+ 		var functionsAST = esprima.parse(allTheFunctionCode);	
+ 		
+ 		// Iterate over each function declaration, grabbing its name
+ 		$.each(functionsAST.body, function(index, bodyNode)
+ 		{
+ 			if (bodyNode.type == "FunctionDeclaration")		
+ 				names.push(bodyNode.id.name);
+ 		});
+ 		
+ 		return names;
+ 	}
  	
  	// First checks the code for any errors. If errors are found, they are displayed.
  	// If not, collects the code for submission.
@@ -92,21 +111,24 @@
 	
 	function hasASTErrors(text, ast)
 	{
-		if (ast.body.length == 0 || ast.body[0].type != "FunctionDeclaration")
+		var errorMessages = "";
+		
+		if (ast.body.length == 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
+			errorMessages += "All code should be in a single function.<BR>"
+		else if (functionNames.indexOf(ast.body[0].id.name) != -1)
+			errorMessages += "The function name '" + ast.body[0].id.name + "' is already taken. Please use another.<BR>";					
+		
+		if (errorMessages != "")
 		{
+			$("#errorMessages").html(errorMessages);
 			$("#errorMessages").show();
-			$("#errorMessages").html("All code should be in a single function.");
-			return true; 			
+			return true;
 		}
-		else if (ast.body.length > 1)
-		{
-			$("#errorMessages").show();
-			$("#errorMessages").html("All code should be in a single function." +
-					"To ask the crowd to find or create a function, add a pseudocall.");
-			return true; 			
-		}	    
-		$("#errorMessages").hide();
-		return false;
+		else
+		{		
+			$("#errorMessages").hide();
+			return false;
+		}
 	}
 	
 	// Returns an object capturing the code and other related information.

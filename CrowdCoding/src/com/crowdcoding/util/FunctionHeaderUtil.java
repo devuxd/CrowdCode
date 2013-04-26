@@ -13,30 +13,7 @@ public class FunctionHeaderUtil
 {
 	private static final String unimplementedFunctionBody = "{ throw new NotImplementedException(); }";
 	// Function declarations for functions to insert for running testing infrastructure.
-	private static final String testingFunctions = "function NotImplementedException() {}";
-		
-	/**
-	 * Checks to see if function signature matches
-	 * @param dto, describe function to check
-	 * @return true if there is a match
-	 */
-	/*public static boolean checkForDuplicateFunction(FunctionDescriptionDTO dto,Project project)
-	{
-		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
-		for(Function function: listOFunctions)
-		{
-			if(function.getName() == null || function.getParameters() == null)
-			{
-				continue;
-			}
-			if(function.getName().equals(dto.name) && checkParameters(function.getParameters(),dto.parameters))
-			{
-				// has a duplicate
-				return true;
-			}
-		}
-		return false;
-	}*/
+	private static final String testingFunctions = "function NotImplementedException() {}";		
 		
 	public static String returnFunctionHeaderFormatted(Function function)
 	{
@@ -105,5 +82,5 @@ public class FunctionHeaderUtil
 			b.append("} ");
 		}
 		return b.toString();
-	} 	
+	}
 }
