@@ -5,32 +5,20 @@
 <%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.microtasks.WriteTest" %>
+<%@ page import="com.crowdcoding.microtasks.WriteTest.PromptType" %>
 <%@ page import="com.crowdcoding.artifacts.Function" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
-<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
-<%@ page import="java.io.StringWriter" %>
-<%@ page import="java.io.Writer" %>
-<%@ page import="java.util.List" %>
 
 <%
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
-    ObjectMapper mapper = new ObjectMapper();
-    String description = microtask.getDescription();
-    String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
+    
+    Function function = microtask.getFunction();
     String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'";
-    Writer strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getFunction().getHeader());
-    String functionHeader = strWriter.toString();
-    strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.getFunction().getCode());
-    String functionCode = strWriter.toString();
-        strWriter = new StringWriter();
-    mapper.writeValue(strWriter,microtask.generateDefaultUnitTest());
-    String defaultVariable = strWriter.toString();
+	PromptType promptType = microtask.getPromptType();
 %>
 
 <div id="microtask">
@@ -40,18 +28,25 @@
 		var microtaskType = 'writetest';
 		var microtaskID = <%= microtask.getID() %>;			
 		
-		var fullDescription = <%=microtask.getFunction().getDescriptionDTO().json() %>; 
-		var paramNames = fullDescription.paramNames;
-		var codeBoxCode = '<%= microtask.getFunction().getEscapedFullDescription() %>';
+		// Determine the prompt type
+		var showWritePrompt = <%= (promptType == PromptType.WRITE) %>;
+		var showCorrectPrompt = <%= (promptType == PromptType.CORRECT) %>;
+		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;				
 		
-		var simpleModeActive = true;
+		// Load test data
+		var fullDescription = <%=function.getDescriptionDTO().json() %>; 
+		var paramNames = fullDescription.paramNames;
+		var codeBoxCode = '<%= function.getEscapedFullDescription() %>';
+		
+		var testData = <%= microtask.getTest().getTestDTO() %>;
+		var simpleModeActive = testData.hasSimpleTest;		
 		
 	    var myCodeMirror = CodeMirror.fromTextArea(code);
 	    myCodeMirror.setOption("theme", "vibrant-ink");
-	    myCodeMirror.setValue(<%=defaultVariable%>);
+	    myCodeMirror.setValue(testData.code);
 	    
    		$(document).ready(function() 
-   		{   			
+   		{    			
    			$('#skip').click(function() { skip(); });	
    			
    			// Generate input elements for the simple test editor
@@ -61,23 +56,25 @@
    			});   
    			
    			// Track whether we are currently in simple or advanced test writing mode
-   			$('#collapseOne').on('hide', function () {
- 				 simpleModeActive = false;
+			$('a[data-toggle="tab"]').on('shown', function (e) 
+			{
+				if (e.target.id == 'simpleTestTab')
+					simpleModeActive = true;
+				else if (e.target.id == 'advancedTestTab')
+					simpleModeActive = false;
 			});
    			
-   			$('#collapseOne').on('show', function () {
-				 simpleModeActive = true;
-			});   			
+   			showPrompt();
+   			loadSimpleTestData(testData);			
    		});	    
 	
-		$('#testForm').submit(function() {
-			var code = buildTestCode();
+		$('#writeTestForm').submit(function() {
+			var formData = collectTestData();
 
-			var functionHeader = <%= functionHeader %>;
-			functionHeader = functionHeader.replace(/\"/g,"'");
+			var functionHeader = '<%= function.getEscapedHeader() %>';
 			// only looks at the function header not the function body for JSHINT checking
 			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
-			var functionCode = allTheFunctionCode + " " + functionHeader + "{" + code + "}";
+			var functionCode = allTheFunctionCode + " " + functionHeader + "{" + formData.code + "}";
 			var errors = "";
 		    console.log(functionCode);
 		    var lintResult = JSHINT(getUnitTestGlobals() + functionCode,getJSHintGlobals());
@@ -93,9 +90,70 @@
 				}
 			}
 			
-			submit({ code: code });			
+			submit(formData);			
 			return false;
 		});
+		
+		// Shows the appropriate prompt
+		function showPrompt()
+		{
+			if (showWritePrompt)
+	   			$("#writePrompt").css('display',"block");
+			else if (showCorrectPrompt)
+	   			$("#correctPrompt").css('display',"block");
+			else if (showFunctionChangedPrompt)
+   			{
+   				$('#functionChangedPrompt').prettyTextDiff();
+	   			$("#functionChangedPrompt").css('display',"block");	   			
+   			}  				
+		}
+		
+		// Configures the form based on the state from the testData object (in TestDTO format)
+		function loadSimpleTestData(testData)
+		{
+			if (simpleModeActive)
+			{
+				$('#testTabs a[href="#simpleTest"]').tab('show');
+				
+				// For each of the parameters we have (up to the number of params we expect - which
+				// might be smaller), populate it into the param textbox
+				$.each(testData.simpleTestInputs, function(index, value)
+				{
+					// If we've exceeded the number of params we expect, stop populating
+					if (index >= paramNames.length)
+						return false;
+					
+					// Get the corresponding input element for this param and populate it
+					$('#parameterValues').children('input').get(index).value = value;
+				});
+				$('#expectedOutput').val(testData.simpleTestOutput);
+			}
+			else
+			{
+				$('#testTabs a[href="#advancedTest"]').tab('show');		
+			}			
+		}		
+		
+		// Collects form data from simple and advanced tests (as appropriate) into an 
+		// object in TestDTO format
+		function collectTestData()
+		{
+			var code = buildTestCode();
+			var simpleTestInputs = [];
+			var simpleTestOutput = '';
+			
+			if (simpleModeActive)
+			{			
+				$.each($('#parameterValues').children('input'), function(index, inputElement)
+				{
+					simpleTestInputs.push(inputElement.value);
+				});						
+				simpleTestOutput = $('#expectedOutput').val();
+			}
+			
+			return { code: code, hasSimpleTest: simpleModeActive, simpleTestInputs: simpleTestInputs, 
+					 simpleTestOutput: simpleTestOutput };
+		}
 		
 		function buildTestCode()
 		{
@@ -104,7 +162,7 @@
 			if (simpleModeActive)
 			{				
 				// Build code corresponding to the values entered in simple mode.
-				code = 'equal(<%= microtask.getFunction().getName() %>(';
+				code = 'equal(<%= function.getName() %>(';
 				
 				// Add a parameter for each input element ni the parameterValues div				
 				$.each($('#parameterValues').children('input'), function(index, inputElement)
@@ -118,7 +176,7 @@
 				
 				// TODO: this may not work for single quotes in the test descrption...
 				code = code + '), ' + $('#expectedOutput').val() 
-					+ ", '<%= StringEscapeUtils.escapeEcmaScript(description) %>'" + ");";
+					+ ", '<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
 			}	
 			else
 			{
@@ -131,67 +189,73 @@
 
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<h5>
-		Write a unit test for the test case:
-	</h5>
+	
+	<div id="writePrompt" style="display: none">
+		<h5>
+			Write a simple or advanced test for
+		</h5>	
+		<blockquote><%= microtask.getDescription() %></blockquote>
+	</div>
 
-	<blockquote><%= description %></blockquote>
+	<div id="correctPrompt" style="display: none">
+		The following issue was reported with this test:
+		
+		<blockquote><%= microtask.getIssueDescription() %></blockquote>
+		
+		Can you fix the test to address this issue?<BR>
+	</div>
+	
+	<div id="functionChangedPrompt" style="display: none">
+		The description of the function being tested has changed. Can you update the test below,
+		if necessary? <BR>
+		
+		<span class="original" style="display: none"><%=microtask.getOldFunctionDescription() %></span>
+   		<span class="changed" style="display: none"><%=microtask.getNewFunctionDescription() %></span>
+		<span id="diff" class="diff"></span><BR>
+	</div>
+	
+	Here's the description of the function to test:
 	<%@include file="/html/elements/readonlyCodeBox.jsp" %>	
 		
-	<form id="testForm" action="">
-		<BR><BR>
-		<div class="accordion" id="testEditors">
-		  <div class="accordion-group">
-		    <div class="accordion-heading">
-		      <a class="accordion-toggle" data-toggle="collapse" data-parent="#testEditors" href="#collapseOne">
-		        	Simple Test
-		      </a>
-		    </div>
-		    <div id="collapseOne" class="accordion-body collapse in">
-		      <div class="accordion-inner">
-					<b>Parameter Values</b><BR>
-						<div id="parameterValues"></div>
-					<b>Expected Output</b><BR>
-						<input type="text" id="expectedOutput" class="input-xlarge"><BR>
-		      </div>
-		    </div>
+	<form id="writeTestForm" action="">
+		<BR><BR><ul class="nav nav-tabs" id="testTabs">
+		  <li><a href="#simpleTest" data-toggle="tab" id="simpleTestTab">Simple Test</a></li>
+		  <li><a href="#advancedTest" data-toggle="tab" id="advancedTestTab">Advanced Test</a></li>
+		</ul>		
+		
+		<div class="tab-content">
+		  <div class="tab-pane active" id="simpleTest">
+			<b>Parameter Values</b><BR>
+				<div id="parameterValues"></div>
+			<b>Expected Output</b><BR>
+				<input type="text" id="expectedOutput" class="input-xlarge"><BR>
 		  </div>
-		  <div class="accordion-group">
-		    <div class="accordion-heading">
-		      <a class="accordion-toggle" data-toggle="collapse" data-parent="#testEditors" href="#collapseTwo">
-		        	Advanced Test
-		      </a>
-		    </div>
-		    <div id="collapseTwo" class="accordion-body collapse">
-		      <div class="accordion-inner">	
-		      	<span class="reference">
-					Reference Section:<br /><br />
-					Assertions you can use when writing unit tests include: <br />
-					deepEqual( actual, expected, message ): comparing to objects <br />
-					equal( actual, expected, message ): check if both are equal <br />
-					notDeepEqual( actual, expected, message ): <br />
-					notEqual( actual, expected, message ): <br />
-					throws( 'actual', expected, message ): if exception is expected, actual needs to be in ' <br />
-					<br />
-					Examples:<br />
-					equal(price, qty*itemCost, "line item price looks incorrect");<br />
-					equal(plus(5, 3), 8, "Two positive numbers don't sum correctly");
-					</span><BR><BR>
-		      	
-				{
-				<table width="100%">
-					<tr>
-						<td width = "20"></td>
-						<td><textarea id="code"></textarea></td>
-					</tr>	
-				</table>
-				} <BR><BR>
-		      </div>
-		    </div>
+		  <div class="tab-pane" id="advancedTest">
+			  <span class="reference">
+						Reference Section:<br /><br />
+						Assertions you can use when writing unit tests include: <br />
+						deepEqual( actual, expected, message ): comparing to objects <br />
+						equal( actual, expected, message ): check if both are equal <br />
+						notDeepEqual( actual, expected, message ): <br />
+						notEqual( actual, expected, message ): <br />
+						throws( 'actual', expected, message ): if exception is expected, actual needs to be in ' <br />
+						<br />
+						Examples:<br />
+						equal(price, qty*itemCost, "line item price looks incorrect");<br />
+						equal(plus(5, 3), 8, "Two positive numbers don't sum correctly");
+						</span><BR><BR>		      	
+					{
+					<table width="100%">
+						<tr>
+							<td width = "20"></td>
+							<td><textarea id="code"></textarea></td>
+						</tr>	
+					</table>
+					} <BR><BR>
 		  </div>
-		</div>		
+		</div>				
 
-		<%@include file="/html/elements/submitFooter.jsp" %>	
+		<BR><BR><%@include file="/html/elements/submitFooter.jsp" %>	
 	</form>
 	<div id = "errors"> </div>
 </div>

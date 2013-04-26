@@ -23,6 +23,7 @@ import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
+import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
@@ -47,18 +48,11 @@ public class Function extends Artifact
 	private String description;
 	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
 	private List<String> pseudoCalls = new ArrayList<String>();
-	
-	// When a function becomes tested, functions that are calling it want to be notified.
-	private List<Ref<Function>> notifyOnDescribed = new ArrayList<Ref<Function>>(); 
+	private List<Ref<Function>> callers = new ArrayList<Ref<Function>>(); 
 	
 	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	private boolean needsDebugging;		// true iff the function is failing its unit tests.
-	
-	// Queued microtasks waiting to be done (not yet in the ready state)
-	private Queue<Ref<Microtask>> queuedMicrotasks = new LinkedList<Ref<Microtask>>();	
-	
-	private Ref<Microtask> microtaskOut;
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -226,15 +220,7 @@ public class Function extends Artifact
 	{
 		return new FunctionDescriptionDTO(name, paramNames, header, description); 
 	}
-	
-	// Queues the specified microtask and looks for work
-	public void queueMicrotask(Microtask microtask, Project project)
-	{
-		queuedMicrotasks.add(Ref.create(microtask.getKey()));
-		ofy().save().entity(this).now();
-		lookForWork(project);		
-	}
-		
+			
 	//////////////////////////////////////////////////////////////////////////////
 	//  PRIVATE CORE FUNCTIONALITY
 	//////////////////////////////////////////////////////////////////////////////
@@ -263,23 +249,9 @@ public class Function extends Artifact
 		}
 	}
 	
-	// Makes the specified microtask out for work
-	private void makeMicrotaskOut(Microtask microtask)
-	{
-		microtask.makeReady();
-		microtaskOut = Ref.create(microtask.getKey());
-		ofy().save().entity(this).now();
-	}
-	
-	private void microtaskOutCompleted()
-	{
-		microtaskOut = null;
-		ofy().save().entity(this).now();
-	}
-	
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	private void lookForWork(Project project)
+	protected void lookForWork(Project project)
 	{
 		// If there is currently not already a microtask being done on this function, 
 		// determine if there is work to be done
@@ -315,6 +287,13 @@ public class Function extends Artifact
 		
 	private void onWorkerEdited(FunctionDTO dto, Project project)
 	{
+		// Check if the description or header changed (ignoring whitespace changes).
+		// If so, generate DescriptionChange microtasks for callers and tests.				
+		String strippedOldFullDescrip = (this.description + this.header).replace(" ", "").replace("\n", "");
+		String strippedNewFullDescrip = (dto.description + dto.header).replace(" ", "").replace("\n", "");				
+		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))		
+			descriptionChanged(dto, project);		
+		
 		// Measure the LOC increase. 
 		int	oldLOC = StringUtils.countMatches(this.code, "\n") + 1;
 		int newLOC = StringUtils.countMatches(dto.code, "\n") + 1;		
@@ -509,7 +488,7 @@ public class Function extends Artifact
 		Ref<Function> newSubscriberRef = (Ref<Function>) Ref.create(newSubscriber.getKey());
 		
 		//add it to the list
-		notifyOnDescribed.add(newSubscriberRef);
+		callers.add(newSubscriberRef);
 		
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed()) 		
@@ -521,13 +500,34 @@ public class Function extends Artifact
 	// Notify all subscribers that this function has become described.
 	private void notifyOnDescribed(Project project)
 	{
-		for (Ref<Function> subscriber : notifyOnDescribed)		
+		for (Ref<Function> subscriber : callers)		
 			sendDescribedNotification(subscriber, project);		
 	}
 	
 	private void sendDescribedNotification(Ref<Function> subscriber, Project project)
 	{
 		load(subscriber).calleeBecameDescribed(this, project);
+	}
+	
+	// Send out notifications, as appropriate, that the description or header of this 
+	// function has changed
+	private void descriptionChanged(FunctionDTO dto, Project project)
+	{
+		// queue DescriptionChanged microtasks on each of the callers 
+		for (Ref<Function> callerRef : callers)
+		{
+			Function caller = load(callerRef);
+			caller.queueMicrotask(new WriteFunction(caller, this.getFullDescription(), 
+					dto.description + dto.header, project), project);
+		}
+		
+		// queue FUNCTION_CHANGED edit test microtasks on each of this function's tests
+		for (Ref<Test> testRef : tests)
+		{
+			Test test = ofy().load().ref(testRef).get();
+			test.queueMicrotask(new WriteTest(test, this.getFullDescription(),  
+					dto.description + dto.header, project), project);
+		}
 	}
 		
 	//////////////////////////////////////////////////////////////////////////////
@@ -536,18 +536,18 @@ public class Function extends Artifact
 
 	// Looks through a string of a function's implementation and returns a list
 	// of lines (may be empty) which are the pseudocode for the function call
-	public List<String> findPseudocalls(String code)
+	private List<String> findPseudocalls(String code)
 	{	
 		return findSpecialLines(code, "//!");
 	}
 	
-	public List<String> findPseudocode(String code)
+	private List<String> findPseudocode(String code)
 	{
 		return findSpecialLines(code, "//#");
 	}
 	
 	// Finds segments of lines in a string of code starting with linestarter
-	public List<String> findSpecialLines(String code, String starter)
+	private List<String> findSpecialLines(String code, String starter)
 	{		
 		int starterLength = starter.length();
 		
@@ -583,11 +583,6 @@ public class Function extends Artifact
 		return results;		
 	}
 	
-	public void createDisputedTestCase(FunctionDTO dto, Project project)
-	{
-		tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
-	}
-	
 	// Given a ref to a function that has not been loaded from the datastore,
 	// load it and get the object
 	public static Function load(Ref<Function> ref)
@@ -595,11 +590,6 @@ public class Function extends Artifact
 		return ofy().load().ref(ref).get();
 	}		
 		
-	private void logState() 
-	{
-		System.out.println("State of function: " + this.toString() +".");		
-	}
-	
 	public boolean equals(Object function)
 	{
 		if(function instanceof Function)

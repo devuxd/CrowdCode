@@ -28,7 +28,7 @@
 		var codeBoxCode = '<%= microtask.getCallee().getEscapedFullDescription() %>';
 		
 		var editorCode = '<%=functionCode%>';
-		var functionHeader = '<%= microtask.getCaller().getEscapedHeader() %>';
+		var functionName = '<%= microtask.getCaller().getName() %>';
 		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
 		    
    		$(document).ready(function() 
@@ -36,9 +36,9 @@
    			$('#skip').click(function() { skip(); });
    			
    			$('#writeCallForm').submit(function() {
-				doPresubmitWork();
-				if (checkCodeForErrors())
-   					submit(collectCode());
+				var result = checkAndCollectCode();
+				if (!result.errors)
+					submit(result.code);
    				return false;
    			});
    		});	    

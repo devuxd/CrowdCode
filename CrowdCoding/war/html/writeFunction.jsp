@@ -18,13 +18,11 @@
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteFunction microtask = (WriteFunction) crowdUser.getMicrotask();
     
-    String functionHeader = microtask.getFunction().getEscapedHeader();
     String functionCode = microtask.getFunction().getEscapedFullCode();
     String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project);
     
     PromptType promptType = microtask.getPromptType();
 %>
-
 
 <div id="microtask">
 	<script>
@@ -34,12 +32,13 @@
 		var microtaskID = <%= microtask.getID() %>;
 		
 		var editorCode = '<%=functionCode%>';
-		var functionHeader = '<%= functionHeader %>';
+		var functionName = '<%= microtask.getFunction().getName() %>';
 		var allTheFunctionCode = '<%= allFunctionCodeInSystem %>';
 		
 		var showUserStoryPrompt = <%= (promptType == PromptType.IMPLEMENT_USER_STORY) %>;
 		var showSketchPrompt = <%= (promptType == PromptType.SKETCH) %>;
-		   	 	
+		var showDescriptionChangedPrompt = <%= (promptType == PromptType.DESCRIPTION_CHANGE) %>;   	 
+		
    		$(document).ready(function() 
 		{   			
    		    // Based on the prompt type, load and setup the appropriate prompt divs
@@ -47,16 +46,19 @@
 	   			$("#userStoryPrompt").css('display',"block");
    			if (showSketchPrompt)
 	   			$("#sketchPrompt").css('display',"block");
-   			   			
+   			if (showDescriptionChangedPrompt)
+   			{
+   				$('#descriptionChangedPrompt').prettyTextDiff();
+	   			$("#descriptionChangedPrompt").css('display',"block");	   			
+   			}  			
    			
 		  	$('#skip').click(function() { skip(); });	
 		  	
 			$('#sketchForm').submit(function() 
 			{
-				doPresubmitWork();
-				
-				if (checkCodeForErrors())			
-					submit(collectCode());
+				var result = checkAndCollectCode();
+				if (!result.errors)
+					submit(result.code);
 				
 				// Disable default submit functionality.
 				return false;
@@ -66,18 +68,25 @@
 	</script>
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
-
 	<div id="userStoryPrompt" style="display: none">
 		Implement functionality for the following user story: <BR>
 		<%= microtask.getUserStoryText() %><BR><BR>
 	</div>
-
+	
 	<div id="sketchPrompt" style="display: none">
 		Implement the function below. <BR>
 	</div>
 	
-	<h5>
+	<div id="descriptionChangedPrompt" style="display: none">
+		The description of a function this function is calling has changed. Can you update this function
+		(if necessary)? <BR>
+		
+		<span class="original" style="display: none"><%=microtask.getOldFullDescription()%></span>
+   		<span class="changed" style="display: none"><%=microtask.getNewFullDescription()%></span>
+		<span id="diff" class="diff"></span><BR><BR>
+	</div>	
 	
+	<h5>	
 	If you're not sure how to do something, indicate a line or portion 
 	of a line as <b>pseudocode</b> by beginning it with '//#'.<BR>
 	If you'd like to call a <b>function</b> to do something, describe what you'd like it to do with a line

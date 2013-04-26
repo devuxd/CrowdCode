@@ -262,7 +262,9 @@ public /*abstract*/ class Microtask
 	
 	public String toString()
 	{
-		return "" + this.id + " " + this.getClass().getSimpleName() + (ready? " ready " : " not ready ") + 
+		return "" + this.id + " " + this.getClass().getSimpleName() + 
+				(this.getOwningArtifact() != null ? (" on " + this.getOwningArtifact().getName()) : "") + 
+				": " + (ready? " ready " : " not ready ") + 
 				(assigned ? " assigned " : " unassigned ") + 
 				(completed ? " completed " : " incomplete ") + "points: " + submitValue + 
 				((worker != null) ? (" worker: " + ofy().load().key(worker.getKey()).get().getHandle()) : " ");

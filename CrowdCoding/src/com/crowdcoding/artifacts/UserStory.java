@@ -70,7 +70,7 @@ public class UserStory extends Artifact
 	
 	public String getName()
 	{
-		return "";
+		return "UserStory" + id;
 	}
 	
 	// Gets the currently associated microtask, or null if none exists.
