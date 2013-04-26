@@ -23,6 +23,8 @@
 	var noFunction = false;
 	var selectedFunction = '';
 	
+	var codeBoxCode = '<%= microtask.getCaller().getEscapedCode() %>';	
+	
 	$(document).ready(function() 
 	{
 		$('#noFunction').click(selectNoFunction);
@@ -127,8 +129,11 @@
 
 <%@include file="/html/elements/microtaskTitle.jsp" %>
 Is there a function that does<BR>
-<span class="label label-inverse"><%=microtask.getCallDescription()%></span><BR>
-Use the search box to see if a function exists to do this. Otherwise, select "No function does this".<BR>
+<span class="label label-inverse"><%=microtask.getCallDescription()%></span><BR><BR>
+Use the search box to see if a function exists to do this. Otherwise, select "No function does this".<BR><BR>
+
+<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
+<div id="callContext" class="collapse"><%@include file="/html/elements/readonlyCodeBox.jsp" %></div><BR>
 
 <form id="searchForm" action="">
 	<input type="text" id="SearchText" class="input-large" oninput="doSearch()">

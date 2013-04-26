@@ -79,7 +79,7 @@
 	</div>
 	
 	<div id="sketchPrompt" style="display: none">
-		Implement the function below. <BR>
+		Implement the function below. <BR><BR>
 	</div>
 	
 	<div id="descriptionChangedPrompt" style="display: none">
