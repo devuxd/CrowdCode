@@ -178,17 +178,35 @@ public /*abstract*/ class Microtask
 			return;
 		}
 		
-		project.historyLog().beginEvent(new MicrotaskSubmitted(this));
-
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
-		doSubmitWork(dto, project);	
-		this.completed = true;
-		worker.setMicrotask(null);
-		worker.awardPoints(this.submitValue, this.microtaskDescription(), project);
-		project.microtaskCompleted();
-		ofy().save().entity(this).now();
 		
-		project.historyLog().endEvent();
+		// Give the microtask an opportunity to check the submissions.
+		// If the microtask fails its validation tests, drop submission and treat it as a skip.
+		if (submitAccepted(dto, project))
+		{		
+			project.historyLog().beginEvent(new MicrotaskSubmitted(this));
+	
+			doSubmitWork(dto, project);	
+			this.completed = true;
+			worker.setMicrotask(null);
+			worker.awardPoints(this.submitValue, this.microtaskDescription(), project);
+			project.microtaskCompleted();
+			ofy().save().entity(this).now();
+			
+			project.historyLog().endEvent();
+		}
+		else
+		{
+			skip(worker, project);
+		}
+	}
+	
+	// Runs machine validation on the submitted data to determine if it is accepted as completing
+	// the microtask. Subclasses may choose to override this method to provide logic to perform this 
+	// check. The default behavior is to accept all submissions.
+	protected boolean submitAccepted(DTO dto, Project project)
+	{
+		return true;
 	}
 
 	// This method MUST be overridden in the subclass to do submit work.
