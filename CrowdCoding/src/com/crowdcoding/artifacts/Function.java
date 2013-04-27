@@ -345,9 +345,9 @@ public class Function extends Artifact
 	//  NOTIFICATION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
 			
-	public void writeTestCasesCompleted(TestCasesDTO dto, Project project)
+	public void writeTestCasesCompleted(List<String> testCases, Project project)
 	{
-		for (String testDescription : dto.tests)
+		for (String testDescription : testCases)
 		{
 			Test test = new Test(testDescription, this, project);
 			tests.add((Ref<Test>) Ref.create(test.getKey()));
