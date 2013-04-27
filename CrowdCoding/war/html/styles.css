@@ -90,31 +90,6 @@ input {border-radius: 15px;}
 	
 }
 
-     
-  ::-webkit-scrollbar {
-width: 10px;
-height: 60px;
-}
-
-::-webkit-scrollbar-button:start:decrement,
-::-webkit-scrollbar-button:end:increment  {
-height: 10px;
-display: block;
-background-color:#1B87E0;
-}
-
-::-webkit-scrollbar-track-piece  {
-background-color: #E6E6E6;
--webkit-border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb:vertical {
-height: 50px;
-background-color: #858585;
-border: 1px solid #eee;
--webkit-border-radius: 6px;
-}
-
 #titlebar { background:#1B87E0; }
 #titlebar h4 { color:white; padding: 5px; border-width:0px; margin:0px;  }  
 #titlebar table { padding: 0px; border-width:0px; margin:0px; }
