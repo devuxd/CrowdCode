@@ -177,26 +177,17 @@ font-family: Lucida Console, Monaco, monospace;
 
 /* Button styles */
 .closeButton {
-	background-color:#bdbdbd;
-	-moz-border-radius:14px;
-	-webkit-border-radius:14px;
-	border-radius:14px;
-	border:1px solid #dcdcdc;
+	background:transparent;
 	display:inline-block;
-	color:#777777;
-	font-family:arial;
-	font-size:11px;
-	font-weight:bold;
+	color:gray;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size:18px;
 	padding:1px 5px;
 	text-decoration:none;
 }
 .closeButton:hover {
-	background-color:#dedede;
-}
-
-.closeButton:active {
-	position:relative;
-	top:1px;
+	color:#000000;
+	text-decoration: none;
 }
 
 .identifierInput {
@@ -206,9 +197,7 @@ font-family: Lucida Console, Monaco, monospace;
 
 }
 
-.reference {
-	color:#444;
-}
+.reference { 	color:#444; }
 
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
 ins {  background-color: #c6ffc6;  text-decoration: none; }
@@ -227,7 +216,4 @@ background-color: #f9f9f9;
 padding: 1px 3px;
 font-size: 0.60em;
 }
-
-
-
 

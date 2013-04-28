@@ -47,7 +47,7 @@
 				$("#testCases").append(
 					'<span id="testCase' + nextTestCase + '">' +
 						'<input type="text" class="input-xxlarge" placeholder="Describe a test case"/>' +				
-						'<button onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="close">&times;</button>' +	
+						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">&times;</a>' +	
 					'</span>');	
 				
 				// Set focus to the new test case
