@@ -213,3 +213,21 @@ font-family: Lucida Console, Monaco, monospace;
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
 ins {  background-color: #c6ffc6;  text-decoration: none; }
 del {  background-color: #ffc6c6; }
+
+/* Style for showing keyboard keys */
+.keyboardKey {
+border: 1px solid #aaa;
+-moz-border-radius: 2px;
+-webkit-border-radius: 2px;
+border-radius: 2px;
+-moz-box-shadow: 1px 2px 2px #ddd;
+-webkit-box-shadow: 1px 2px 2px #ddd;
+box-shadow: 1px 2px 2px #ddd;
+background-color: #f9f9f9;
+padding: 1px 3px;
+font-size: 0.60em;
+}
+
+
+
+

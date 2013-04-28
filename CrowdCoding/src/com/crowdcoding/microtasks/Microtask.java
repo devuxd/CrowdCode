@@ -131,7 +131,24 @@ public /*abstract*/ class Microtask
 		assigned = false;	
 		ofy().save().entity(this).now();
 		
+		// Check if microtask is highly skipped and should be reset
+		resetIfHighlySkipped(project);
+		
 		project.historyLog().endEvent();
+	}
+	
+	// Checks the microtask to see if most workers have skipped it. If so, resets the
+	// excluded workers to give workers another chance.
+	private void resetIfHighlySkipped(Project project)
+	{
+		// If at least all but one worker has skipped it, reset exclusion constraints.
+		// TODO: we really should reset based on the status of logged in workers. But there
+		// is currently no way to track that accurately.
+		if (excludedWorkers.size() >= Worker.allWorkers(project).size() - 1)
+		{
+			excludedWorkers.clear();
+			ofy().save().entity(this).now();
+		}
 	}
 	
 	// Sets the microtask as ready to be assigned
