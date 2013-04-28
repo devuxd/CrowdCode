@@ -1,13 +1,7 @@
-<style type="text/css">
-  .CodeMirror-scroll {
-    overflow-x: hidden;
-  }
-</style>
-
 <script>
 	var myCodeMirror = CodeMirror.fromTextArea(code, { autofocus: true });
 	var doc = myCodeMirror.getDoc();
-	myCodeMirror.setOption("theme", "vibrant-ink");	 
+	myCodeMirror.setOption("theme", "vibrant-ink");	 	
 	doc.setValue(editorCode);
 	positionCursorAtStart();
  	
@@ -20,7 +14,12 @@
  	
  	$('#errorMessages').hide();
  	
- 	
+ 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
+ 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
+    // typing).
+    var changeTimeout;
+ 	myCodeMirror.on("change", codeChanged);
+	
  	// Positions the cursor in the CodeMirror instance on the line after the beginning of the function's body
  	// (the line after the opening brace line)
  	function positionCursorAtStart()
@@ -49,6 +48,46 @@
  		return names;
  	}
  	
+	// Mangage code change timeout
+	function codeChanged(editorInstance, changeObject)
+	{
+		clearTimeout(changeTimeout);
+		changeTimeout = setTimeout(
+				function(){processCodeChanged(editorInstance, changeObject);}, 500);
+	}
+	
+	// Process a change to the code
+	function processCodeChanged(editorInstance, changeObject)
+	{
+		highlightPseudoSegments();
+		doErrorCheck();
+	}
+	
+	// Highlight regions of code that are pseudocalls or pseudocode
+	function highlightPseudoSegments()
+	{
+		// Break up the code into 
+ 		myCodeMirror.save();	 			
+ 		var text = $("#code").val();
+ 		
+ 		var lines = text.split('\n');
+		$.each(lines, function(i, line)
+		{
+			var pseudoCallCol = line.indexOf('//!');
+			if (pseudoCallCol != -1)
+			 	doc.markText({line: i, ch: pseudoCallCol}, 
+			 			     {line: i, ch: line.length}, 
+			 			     {className: 'pseudoCall', inclusiveRight: true });
+			
+			var pseudoCodeCol = line.indexOf('//#');
+			if (pseudoCodeCol != -1)
+			 	doc.markText({line: i, ch: pseudoCodeCol}, 
+			 			     {line: i, ch: line.length}, 
+			 			     {className: 'pseudoCode', inclusiveRight: true });
+		});
+	}
+	
+ 	
  	// First checks the code for any errors. If errors are found, they are displayed.
  	// If not, collects the code for submission.
  	// Returns an object of the form { errors: BOOLEAN, code: collectedCode } where collectedCode
@@ -62,7 +101,7 @@
  		
  		var text = $("#code").val();
  		
-		if(hasErrorsHelper(text, ast))
+		if(hasErrorsHelper(text))
 		{
 			return { errors: true, code: null };	
 		}
@@ -85,17 +124,19 @@
  	
 	// Check the code for errors. If there are errors present, write an error message. Returns true 
 	// iff there are no errors.
- 	function hasErrors()
+ 	function doErrorCheck()
 	{
- 		// Possibly due to some issue in how the microtask div is getting initialized and loaded,
- 		// codeMirror is not being correctly bound to the textArea. To manually force it
- 		// to save its value back to the textarea so we can read it, we execute the following line:
-	 	myCodeMirror.save();	 	
-		
+	 	myCodeMirror.save();	 			
  		var text = $("#code").val();
-		var ast = esprima.parse(text, {loc: true});
-		
-		return hasErrorsHelper(text, ast);
+		if(!hasErrorsHelper(text))
+		{
+			// Code is syntactically valid and should be able to build an ast.
+			// Build the ast and do additional checks using the ast.
+			var ast = esprima.parse(text, {loc: true});			
+			if(!hasASTErrors(text, ast))
+				return false;
+		}		
+		return true;
 	}
 
 	// Returns true iff there are errors

@@ -100,7 +100,7 @@ public class Function extends Artifact
 		this.code = "{\n\n}";
 		this.hasBeenDescribed = true;
 		
-		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 1);
+		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
 		
 		ofy().save().entity(this).now();
 	}
@@ -304,9 +304,9 @@ public class Function extends Artifact
 		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))		
 			descriptionChanged(dto, project);		
 		
-		// Measure the LOC increase. 
-		int	oldLOC = StringUtils.countMatches(this.code, "\n") + 1;
-		int newLOC = StringUtils.countMatches(dto.code, "\n") + 1;		
+		// Measure the LOC increase. (add one for last line without newline and one for the header) 
+		int	oldLOC = StringUtils.countMatches(this.code, "\n") + 2;
+		int newLOC = StringUtils.countMatches(dto.code, "\n") + 2;		
 		project.locIncreasedBy(newLOC - oldLOC);		
 		
 		// Update the function data
@@ -413,7 +413,7 @@ public class Function extends Artifact
 		// new sketch tasks until the worker has marked it as done by removing the pseudocode
 		// line.
 		this.code = "{\n//#Mark this function as implemented by removing this line.\n}";	
-		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 1);
+		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
 		
 		ofy().save().entity(this).now();
 		
