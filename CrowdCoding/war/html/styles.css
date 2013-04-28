@@ -203,7 +203,7 @@ font-family: Lucida Console, Monaco, monospace;
 ins {  background-color: #c6ffc6;  text-decoration: none; }
 del {  background-color: #ffc6c6; }
 
-/* Style for showing keyboard keys */
+/* Style for listing keyboard shortcuts */
 .keyboardKey {
 border: 1px solid #aaa;
 -moz-border-radius: 2px;
@@ -217,3 +217,6 @@ padding: 1px 3px;
 font-size: 0.60em;
 }
 
+/* Style for highlighted lines in CodeMirror */
+.pseudoCall { background-color: white; }
+.pseudoCode { background-color: yellow;	}
