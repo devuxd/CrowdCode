@@ -35,7 +35,7 @@
 	<title>CrowdCode</title>
 	<link type="text/css" rel="stylesheet" href="/include/jquery.rating.css" />
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/html/animate.css" type="text/css" />
+<!-- 	<link rel="stylesheet" href="/html/animate.css" type="text/css" />  -->
 	<link rel="stylesheet" href="/html/DebugTestFailure.css" type="text/css" />
 	<link rel="stylesheet" href="/html/styles.css" type="text/css" /> 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
