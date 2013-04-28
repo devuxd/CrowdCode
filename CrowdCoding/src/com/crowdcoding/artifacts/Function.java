@@ -17,6 +17,7 @@ import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.history.MessageReceived;
+import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
@@ -229,12 +230,17 @@ public class Function extends Artifact
 	{
 		if (this.isWritten != isWritten)
 		{
+			project.historyLog().beginEvent(new PropertyChange("implemented", 
+					Boolean.toString(isWritten), this));		
+			
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();	
 			if (isWritten)
 				project.functionWritten();
 			else
 				project.functionNotWritten();
+			
+			project.historyLog().endEvent();
 		}		
 	}
 	
@@ -243,9 +249,13 @@ public class Function extends Artifact
 	{
 		if (!this.hasBeenDescribed)
 		{
+			project.historyLog().beginEvent(new PropertyChange("hasBeenDescribed", "true", this));	
+			
 			this.hasBeenDescribed = true;
 			ofy().save().entity(this).now();	
 			notifyOnDescribed(project);
+			
+			project.historyLog().endEvent();
 		}
 	}
 	

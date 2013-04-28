@@ -172,12 +172,7 @@ font-family: Lucida Console, Monaco, monospace;
 .result:hover {background:lightblue;}
 .selectedResult {background:blue;}
 
-/* CodeMirror code editor */
-.CodeMirror {
-  border: 1px solid #eee;
-  height: auto;
-  width: 600px;
-}
+
 
 
 /* Button styles */

@@ -5,9 +5,10 @@
 </style>
 
 <script>
-	var myCodeMirror = CodeMirror.fromTextArea(code);
-   	myCodeMirror.setValue(editorCode);
- 	myCodeMirror.setOption("theme", "vibrant-ink");
+	var myCodeMirror = CodeMirror.fromTextArea(code, { autofocus: true });
+	var doc = myCodeMirror.getDoc();
+	myCodeMirror.setOption("theme", "vibrant-ink");	 
+	doc.setValue(editorCode);
  	
  	// If we are editing the main function, make the full description readonly
 	if (functionName == 'main')
