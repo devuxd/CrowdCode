@@ -9,6 +9,7 @@
 	var doc = myCodeMirror.getDoc();
 	myCodeMirror.setOption("theme", "vibrant-ink");	 
 	doc.setValue(editorCode);
+	positionCursorAtStart();
  	
  	// If we are editing the main function, make the full description readonly
 	if (functionName == 'main')
@@ -18,6 +19,19 @@
  	var functionNames = buildFunctionNames();
  	
  	$('#errorMessages').hide();
+ 	
+ 	
+ 	// Positions the cursor in the CodeMirror instance on the line after the beginning of the function's body
+ 	// (the line after the opening brace line)
+ 	function positionCursorAtStart()
+ 	{
+ 		myCodeMirror.save();	 			
+ 		var text = $("#code").val();
+		var ast = esprima.parse(text, {loc: true});
+		
+		// esprima is 1 indexed, codeMirror is 0 indexed. So positioning on line after start.
+ 		doc.setCursor(ast.body[0].body.loc.start.line, 0);		
+ 	}
  	
  	// Builds a list of all of the function names that are currently in use
  	function buildFunctionNames()
