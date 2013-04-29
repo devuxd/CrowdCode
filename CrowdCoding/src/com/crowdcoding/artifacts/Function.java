@@ -4,9 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,17 +13,16 @@ import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
-import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.history.MessageReceived;
 import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
-import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
+import com.crowdcoding.util.Pair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -48,8 +45,11 @@ public class Function extends Artifact
 	private String header;
 	private String description;
 	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
-	private List<String> pseudoCalls = new ArrayList<String>();
-	private List<Ref<Function>> callers = new ArrayList<Ref<Function>>(); 
+	// pseudocalls made by this function:
+	private List<String> pseudoCalls = new ArrayList<String>();   
+	// pseudocall callsites calling this function (these two lists must be in sync)
+	private List<String> pseudoCallsites = new ArrayList<String>();  
+	private List<Ref<Function>> pseudoCallers = new ArrayList<Ref<Function>>();
 	
 	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
@@ -221,6 +221,12 @@ public class Function extends Artifact
 	{
 		return new FunctionDescriptionDTO(name, paramNames, header, description); 
 	}
+	
+	// Returns true iff the specified pseudocall is currently in the code
+	public boolean containsPseudoCall(String pseudoCall)
+	{
+		return pseudoCalls.contains(pseudoCall);
+	}
 			
 	//////////////////////////////////////////////////////////////////////////////
 	//  PRIVATE CORE FUNCTIONALITY
@@ -317,6 +323,7 @@ public class Function extends Artifact
 
 		// Look for pseudocode and psuedocalls
 		List<String> currentPseudoCalls = findPseudocalls(code);
+		List<String> newPseudoCalls = new ArrayList<String>();
 	
 		if(currentPseudoCalls.isEmpty())
 		{
@@ -341,14 +348,18 @@ public class Function extends Artifact
 					setWritten(false, project);
 					
 					//for any currentPseudoCall not in pseudoCalls, add it
-					pseudoCalls.add(callDescription); 
+					newPseudoCalls.add(callDescription); 
 					// Spawn microtask immediately, as it does not require access to the function itself
 					new ReuseSearch(this, callDescription, project);
 				}
 			}
 		}
+		
+		// Update the list of pseudocalls to match the current (distinct) pseudocalls now in the code
+		this.pseudoCalls = newPseudoCalls;		
 					
 		ofy().save().entity(this).now();
+		lookForWork(project);
 	}	
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -372,10 +383,10 @@ public class Function extends Artifact
 		onWorkerEdited(dto, project);
 	}
 	
-	public void calleeBecameDescribed(Function callee, Project project)
+	public void calleeBecameDescribed(Function callee, String pseudoCall, Project project)
 	{
 		project.historyLog().beginEvent(new MessageReceived("AddCall", this));
-		queueMicrotask(new WriteCall(this, callee, project), project);
+		queueMicrotask(new WriteCall(this, callee, pseudoCall, project), project);
 		project.historyLog().endEvent();
 	}
 		
@@ -396,7 +407,7 @@ public class Function extends Artifact
 		
 		// Have the callee let us know when it's tested (which may already be true; 
 		// signal sent immediately in that case)
-		callee.addToNotifyOnDescribed(this, project);
+		callee.addToNotifyOnDescribed(this, callDescription, project);
 	}
 		
 	public void writeDescriptionCompleted(String name, List<String> paramNames, String header, String description, 
@@ -412,7 +423,7 @@ public class Function extends Artifact
 		// the worker to only remove it when the function is done. This keeps regenerating
 		// new sketch tasks until the worker has marked it as done by removing the pseudocode
 		// line.
-		this.code = "{\n//#Mark this function as implemented by removing this line.\n}";	
+		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n}";	
 		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
 		
 		ofy().save().entity(this).now();
@@ -455,6 +466,8 @@ public class Function extends Artifact
 
 		// Save the entity again to the datastore		
 		ofy().save().entity(this).now(); 
+		
+		lookForWork(project);
 	}
 	
 	// This method notifies the function that it has just passed all of its tests.
@@ -464,6 +477,9 @@ public class Function extends Artifact
 		{
 			project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
 			this.needsDebugging = false;
+			ofy().save().entity(this).now(); 
+			
+			lookForWork(project);		
 			project.historyLog().endEvent();
 		}
 	}
@@ -492,17 +508,19 @@ public class Function extends Artifact
 	//   NOTIFICATION SENDERS
 	//////////////////////////////////////////////////////////////////////////////
 
-	public void addToNotifyOnDescribed(Function newSubscriber, Project project) 
+	public void addToNotifyOnDescribed(Function newSubscriber, String pseudoCall, Project project) 
 	{
 		//Create the reference object to the new subscriber
 		Ref<Function> newSubscriberRef = (Ref<Function>) Ref.create(newSubscriber.getKey());
 		
-		//add it to the list
-		callers.add(newSubscriberRef);
+		//add it to the lists
+		pseudoCallers.add(newSubscriberRef);
+		pseudoCallsites.add(pseudoCall);
+
 		
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed()) 		
-			sendDescribedNotification(newSubscriberRef, project);		
+			sendDescribedNotification(newSubscriberRef, pseudoCall, project);		
 		
 		ofy().save().entity(this).now();
 	}
@@ -510,13 +528,14 @@ public class Function extends Artifact
 	// Notify all subscribers that this function has become described.
 	private void notifyOnDescribed(Project project)
 	{
-		for (Ref<Function> subscriber : callers)		
-			sendDescribedNotification(subscriber, project);		
+		// Loop over the psuedocallsites and pseudocallers in parallel
+		for (int i = 0; i < pseudoCallsites.size(); i++)
+			sendDescribedNotification(pseudoCallers.get(i), pseudoCallsites.get(i), project);
 	}
 	
-	private void sendDescribedNotification(Ref<Function> subscriber, Project project)
+	private void sendDescribedNotification(Ref<Function> subscriber, String pseudoCall, Project project)
 	{
-		load(subscriber).calleeBecameDescribed(this, project);
+		load(subscriber).calleeBecameDescribed(this, pseudoCall, project);
 	}
 	
 	// Send out notifications, as appropriate, that the description or header of this 
@@ -524,9 +543,9 @@ public class Function extends Artifact
 	private void descriptionChanged(FunctionDTO dto, Project project)
 	{
 		// queue DescriptionChanged microtasks on each of the callers 
-		for (Ref<Function> callerRef : callers)
+		for (Ref<Function> pseudoCaller : pseudoCallers)
 		{
-			Function caller = load(callerRef);
+			Function caller = load(pseudoCaller);
 			caller.queueMicrotask(new WriteFunction(caller, this.getFullDescription(), 
 					dto.description + dto.header, project), project);
 		}

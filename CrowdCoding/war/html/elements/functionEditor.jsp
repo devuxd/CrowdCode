@@ -4,6 +4,9 @@
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	
 	doc.setValue(editorCode);
 	positionCursorAtStart();
+	
+	var marks = [];
+	highlightPseudoSegments(marks);
  	
  	// If we are editing the main function, make the full description readonly
 	if (functionName == 'main')
@@ -59,13 +62,19 @@
 	// Process a change to the code
 	function processCodeChanged(editorInstance, changeObject)
 	{
-		highlightPseudoSegments();
+		highlightPseudoSegments(marks);
 		doErrorCheck();
 	}
 	
 	// Highlight regions of code that are pseudocalls or pseudocode
-	function highlightPseudoSegments()
+	function highlightPseudoSegments(marks)
 	{
+		// Clear the old marks (if any)
+		$.each(marks, function(index, mark)
+		{
+			mark.clear();
+		});
+		
 		// Break up the code into 
  		myCodeMirror.save();	 			
  		var text = $("#code").val();
@@ -75,18 +84,28 @@
 		{
 			var pseudoCallCol = line.indexOf('//!');
 			if (pseudoCallCol != -1)
-			 	doc.markText({line: i, ch: pseudoCallCol}, 
+			 	marks.push(doc.markText({line: i, ch: pseudoCallCol}, 
 			 			     {line: i, ch: line.length}, 
-			 			     {className: 'pseudoCall', inclusiveRight: true });
+			 			     {className: 'pseudoCall', inclusiveRight: true }));
 			
 			var pseudoCodeCol = line.indexOf('//#');
 			if (pseudoCodeCol != -1)
-			 	doc.markText({line: i, ch: pseudoCodeCol}, 
+			 	marks.push(doc.markText({line: i, ch: pseudoCodeCol}, 
 			 			     {line: i, ch: line.length}, 
-			 			     {className: 'pseudoCode', inclusiveRight: true });
+			 			     {className: 'pseudoCode', inclusiveRight: true }));
+			
+			// If there is currently a pseudocall that is being replaced, highlight that in a special 
+			// color
+			if (highlightPseudoCall != false)
+			{
+				var pseudoCallCol = line.indexOf(highlightPseudoCall);
+				if (pseudoCallCol != -1)
+				 	marks.push(doc.markText({line: i, ch: pseudoCallCol}, 
+				 			     {line: i, ch: line.length}, 
+				 			     {className: 'highlightPseudoCall', inclusiveRight: true }));
+			}
 		});
-	}
-	
+	}	
  	
  	// First checks the code for any errors. If errors are found, they are displayed.
  	// If not, collects the code for submission.

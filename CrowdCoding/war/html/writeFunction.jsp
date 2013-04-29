@@ -34,6 +34,7 @@
 		var editorCode = '<%=functionCode%>';
 		var functionName = '<%= microtask.getFunction().getName() %>';
 		var allTheFunctionCode = '<%= allFunctionCodeInSystem %>';
+		var highlightPseudoCall = false;
 		
 		var showUserStoryPrompt = <%= (promptType == PromptType.IMPLEMENT_USER_STORY) %>;
 		var showSketchPrompt = <%= (promptType == PromptType.SKETCH) %>;

@@ -220,3 +220,4 @@ font-size: 0.60em;
 /* Style for highlighted lines in CodeMirror */
 .pseudoCall { background-color: white; }
 .pseudoCode { background-color: yellow;	}
+.highlightPseudoCall { background-color: lime; }

@@ -2,6 +2,8 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
@@ -17,6 +19,7 @@ public class WriteCall extends Microtask
 {
 	@Load private Ref<Function> callee;
 	@Load private Ref<Function> caller;
+	private String pseudoCall;
 		
 	// Default constructor for deserialization
 	private WriteCall() 
@@ -24,11 +27,12 @@ public class WriteCall extends Microtask
 	}
 	
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, Function callee, Project project)
+	public WriteCall(Function caller, Function callee, String pseudoCall, Project project)
 	{
 		super(project, false);
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
-		this.callee = (Ref<Function>) Ref.create(callee.getKey());		
+		this.callee = (Ref<Function>) Ref.create(callee.getKey());
+		this.pseudoCall = pseudoCall;
 		ofy().save().entity(this).now();
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));
@@ -38,6 +42,13 @@ public class WriteCall extends Microtask
 	protected void doSubmitWork(DTO dto, Project project)
 	{
 		caller.get().writeCallCompleted((FunctionDTO) dto, project);	
+	}
+	
+	// Returns true iff the microtask still needs to be done
+	protected boolean isStillNeeded(Project project) 
+	{
+		// AddCall is still needed iff the pseudocall is still in the code
+		return caller.get().containsPseudoCall(pseudoCall);		
 	}
 	
 	protected Class getDTOClass()
@@ -58,6 +69,11 @@ public class WriteCall extends Microtask
 	public Function getCallee()
 	{
 		return callee.getValue();
+	}
+	
+	public String getEscapedPseudoCall()
+	{
+		return StringEscapeUtils.escapeEcmaScript(pseudoCall);
 	}
 	
 	public Artifact getOwningArtifact()
