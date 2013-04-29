@@ -20,15 +20,28 @@
 				if (snapshot.val() != null)
 					addHistoryEvent(snapshot.val());
 			});	
-			
-			
-
 		});	
 		
 		function addHistoryEvent(event)
 		{
-			$('#historyStream').append(event.timeInMillis + ' ' + event.artifactType + event.artifactID +
-					': ' + event.artifactName + '<BR>');			
+			$('#historyStream').append(event.timestamp + '&nbsp;&nbsp;&nbsp;' + event.eventType + ' on ' + 
+					'"' + event.artifactName + '"(' + event.artifactType + event.artifactID + ') ');
+			if ( event.eventType == 'MicrotaskSpawned')
+			{
+				$('#historyStream').append(' ' + event.microtaskID + ' ' + event.microtaskType);
+			}
+			else if (event.eventType == 'MicrotaskSubmitted' || event.eventType == 'MicrotaskSkipped')
+			{
+				$('#historyStream').append(' by ' + event.workerHandle + 
+						' in ' + (event.timeWorkedOn / 1000) + ' sec '   
+						+ event.microtaskID + ' ' + event.microtaskType);
+			}
+			else if (event.eventType == 'PropertyChange')
+			{
+				$('#historyStream').append(' ' + event.propertyName + ' became ' + event.propertyValue);
+			}
+			
+			$('#historyStream').append('<BR>');
 		}
 		
 	</script>

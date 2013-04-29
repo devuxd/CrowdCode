@@ -76,15 +76,18 @@ public class Worker
 		
 	public static String StatusReport(Project project)
 	{
-		StringBuilder output = new StringBuilder();
-		
-		output.append("**** ALL WORKERS ****\n");
-			
-		Query<Worker> q = ofy().load().type(Worker.class).ancestor(project);		
-		for (Worker worker : q)
+		StringBuilder output = new StringBuilder();		
+		output.append("**** ALL WORKERS ****\n");	
+		for (Worker worker : allWorkers(project))
 			output.append(worker.toString() + "\n");
 		
 		return output.toString();
+	}
+	
+	// returns all workers in the specified project
+	public static List<Worker> allWorkers(Project project)
+	{
+		return ofy().load().type(Worker.class).ancestor(project).list();	
 	}
 	
 	public Microtask getMicrotask()

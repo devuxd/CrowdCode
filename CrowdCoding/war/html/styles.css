@@ -90,31 +90,6 @@ input {border-radius: 15px;}
 	
 }
 
-     
-  ::-webkit-scrollbar {
-width: 10px;
-height: 60px;
-}
-
-::-webkit-scrollbar-button:start:decrement,
-::-webkit-scrollbar-button:end:increment  {
-height: 10px;
-display: block;
-background-color:#1B87E0;
-}
-
-::-webkit-scrollbar-track-piece  {
-background-color: #E6E6E6;
--webkit-border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb:vertical {
-height: 50px;
-background-color: #858585;
-border: 1px solid #eee;
--webkit-border-radius: 6px;
-}
-
 #titlebar { background:#1B87E0; }
 #titlebar h4 { color:white; padding: 5px; border-width:0px; margin:0px;  }  
 #titlebar table { padding: 0px; border-width:0px; margin:0px; }
@@ -197,36 +172,22 @@ font-family: Lucida Console, Monaco, monospace;
 .result:hover {background:lightblue;}
 .selectedResult {background:blue;}
 
-/* CodeMirror code editor */
-.CodeMirror {
-  border: 1px solid #eee;
-  height: auto;
-  width: 600px;
-}
+
 
 
 /* Button styles */
 .closeButton {
-	background-color:#bdbdbd;
-	-moz-border-radius:14px;
-	-webkit-border-radius:14px;
-	border-radius:14px;
-	border:1px solid #dcdcdc;
+	background:transparent;
 	display:inline-block;
-	color:#777777;
-	font-family:arial;
-	font-size:11px;
-	font-weight:bold;
+	color:gray;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size:18px;
 	padding:1px 5px;
 	text-decoration:none;
 }
 .closeButton:hover {
-	background-color:#dedede;
-}
-
-.closeButton:active {
-	position:relative;
-	top:1px;
+	color:#000000;
+	text-decoration: none;
 }
 
 .identifierInput {
@@ -236,7 +197,27 @@ font-family: Lucida Console, Monaco, monospace;
 
 }
 
-.reference {
-	color:#444;
+.reference { 	color:#444; }
+
+/* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
+ins {  background-color: #c6ffc6;  text-decoration: none; }
+del {  background-color: #ffc6c6; }
+
+/* Style for listing keyboard shortcuts */
+.keyboardKey {
+border: 1px solid #aaa;
+-moz-border-radius: 2px;
+-webkit-border-radius: 2px;
+border-radius: 2px;
+-moz-box-shadow: 1px 2px 2px #ddd;
+-webkit-box-shadow: 1px 2px 2px #ddd;
+box-shadow: 1px 2px 2px #ddd;
+background-color: #f9f9f9;
+padding: 1px 3px;
+font-size: 0.60em;
 }
 
+/* Style for highlighted lines in CodeMirror */
+.pseudoCall { background-color: white; }
+.pseudoCode { background-color: yellow;	}
+.highlightPseudoCall { background-color: lime; }

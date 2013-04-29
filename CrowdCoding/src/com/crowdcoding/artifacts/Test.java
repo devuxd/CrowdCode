@@ -2,10 +2,13 @@ package com.crowdcoding.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.history.StateChange;
-import com.crowdcoding.microtasks.DisputeUnitTestFunction;
+import com.crowdcoding.dto.TestDTO;
+import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.WriteTest;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -16,14 +19,14 @@ import com.googlecode.objectify.cmd.Query;
 @EntitySubclass(index=true)
 public class Test extends Artifact
 {
-	public enum State { DESCRIBED, IMPLEMENTED, DISPUTED };
-	
-	private String description;
-	private String code; 	
+	private String description;		// initial one line description give of the test. May be null for tests generated through other means
 	@Index private boolean isImplemented;
-	private State state;
-	
 	@Load private Ref<Function> function;
+
+	private String code; 	
+	private boolean hasSimpleTest;
+	private List<String> simpleTestInputs = new ArrayList<String>();
+	private String simpleTestOutput;	
 	
 	// Constructor for deserialization
 	protected Test()
@@ -34,16 +37,32 @@ public class Test extends Artifact
 	{
 		super(project);	
 
-		project.historyLog().beginEvent(new StateChange(State.DESCRIBED.name(), this));
+		project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
 		
-		this.description = description;
+		this.isImplemented = false;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
-		setState(State.DESCRIBED, project);
+		this.description = description;
+		this.hasSimpleTest = true;
+		this.code = generateDefaultUnitTest(function);
 
 		ofy().save().entity(this).now();
-		WriteTest writeTest = new WriteTest(this, project);
+		queueMicrotask(new WriteTest(this, project), project);
 		
 		project.historyLog().endEvent();
+	}	
+
+	private String generateDefaultUnitTest(Function function)
+	{	     
+	      StringBuilder builder = new StringBuilder();
+	      builder.append("equal(");
+	      builder.append(function.getName());
+	      builder.append("(");
+	      for(String paramName : function.getParamNames()){
+	           builder.append("<" + paramName + ">,");
+	      }
+	      builder.replace(builder.length()-1,builder.length(),"");
+	      builder.append("), <expectedResult>, '" + getDescription() + "');");
+	      return builder.toString();
 	}
 	
 	public String getTestCode()
@@ -70,60 +89,60 @@ public class Test extends Artifact
 		return function.getValue();
 	}
 	
-	public boolean isDisputed()
-	{
-		return (state == State.DISPUTED);
-	}
-	
 	public boolean isImplemented()
 	{
 		return isImplemented;
 	}
 	
-	private void setState(State newState, Project project)
+	// Gets a TestDTO (in String format) corresponding to the state of this test
+	public String getTestDTO()
 	{
-		if (this.state != newState)
+		TestDTO dto = new TestDTO(this.code, this.hasSimpleTest, this.simpleTestInputs, this.simpleTestOutput);
+		return dto.json();		
+	}	
+	
+	// Checks the status of the test, marking it as implemented if appropriate
+	private void checkIfBecameImplemented(Project project)
+	{
+		if (!isImplemented && !workToBeDone())
 		{
-			this.state = newState;
-			logState();		
-			if (newState == State.IMPLEMENTED)
-			{
-				isImplemented = true;
-				ofy().save().entity(this).now();
-				function.get().testBecameImplemented(this, project);
-			}
-			else
-				ofy().save().entity(this).now();			
+			// A test becomes implemented when it has no more work to do
+			project.historyLog().beginEvent(new PropertyChange("implemented", "true", this));
+			this.isImplemented = true;
+			ofy().save().entity(this).now();
+			
+			function.get().testBecameImplemented(this, project);
+			
+			project.historyLog().endEvent();
 		}				
 	}
 
 	public void disputeUnitTestCorrectionCreated(FunctionDTO dto, Project project) 
 	{
-		project.historyLog().beginEvent(new StateChange(State.DISPUTED.name(), this));		
-		setState(State.DISPUTED, project);		
-		new DisputeUnitTestFunction(this, dto.description, project);		
-		project.historyLog().endEvent();
-	}
-	
-	public void editTestCompleted(FunctionDTO dto, Project project)
-	{
-		project.historyLog().beginEvent(new StateChange(State.IMPLEMENTED.name(), this));
-		
-		this.code = dto.code;
+		project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));		
+		this.isImplemented = false;
 		ofy().save().entity(this).now();
-		setState(State.IMPLEMENTED, project);
-		
+		queueMicrotask(new WriteTest(this, dto.description, project), project);		
 		project.historyLog().endEvent();
-	}	
-	
-	private void logState() 
-	{
-		System.out.println("State of test '"+description+"' is now "+state.name()+".");		
 	}
+	
+	public void writeTestCompleted(TestDTO dto, Project project)
+	{
+		this.code = dto.code;
+		this.hasSimpleTest = dto.hasSimpleTest;
+		this.simpleTestInputs = dto.simpleTestInputs;
+		this.simpleTestOutput = dto.simpleTestOutput;		
+		ofy().save().entity(this).now();
+		
+		microtaskOutCompleted();
+		lookForWork(project);		
+		checkIfBecameImplemented(project);
+	}	
 	
 	public String toString()
 	{
-		return "Test " + function.get().getName() + " for '" + description + "' status: " + state.name();
+		return "Test " + function.get().getName() + " for '" + description + "' " +
+				(isImplemented? " implemented" : " not implemented");
 	}
 	
 	public static String StatusReport(Project project)

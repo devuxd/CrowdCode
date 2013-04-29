@@ -55,6 +55,11 @@ public class ReuseSearch extends Microtask
 		return callDescription;
 	}
 	
+	public Function getCaller()
+	{
+		return function.get();
+	}
+	
 	public Artifact getOwningArtifact()
 	{
 		return function.get();

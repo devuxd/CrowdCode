@@ -2,19 +2,15 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Artifact;
-import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.history.MicrotaskSkipped;
-import com.crowdcoding.dto.history.MicrotaskSpawned;
 import com.crowdcoding.dto.history.MicrotaskSubmitted;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
@@ -66,20 +62,28 @@ public /*abstract*/ class Microtask
 	{		
 		System.out.println(StatusReport(project));
 		
-		// Look for an unassigned microtask that crowdUser is not excluded from doing
+		// Look for a microtask, checking constraints on it along the way
 		Microtask microtask = null;
 		Key<Worker> workerKey = crowdUser.getKey();
 		Query<Microtask> q = ofy().load().type(Microtask.class).ancestor(project.getKey()).filter(
-				"assigned", false).filter("ready", true);  
+				"assigned", false).filter("completed", false).filter("ready", true);  
 		microtaskSearch: for (Microtask potentialMicrotask : q)
 		{
+			// 1. If the worker is excluded from doing it, keep looking
 			for (Ref<Worker> excludedWorker : potentialMicrotask.excludedWorkers)
 			{
 				if (excludedWorker.equivalent(workerKey))
 					continue microtaskSearch;				
 			}
 			
-			// Not excluded. A microtask was found.
+			// 2. If the microtask is no longer needed, keep looking
+			if (!potentialMicrotask.isStillNeeded(project))
+			{
+				potentialMicrotask.markCompleted();
+				continue microtaskSearch;
+			}
+			
+			// A microtask was found!
 			microtask = potentialMicrotask;
 			break;			
 		}		
@@ -110,6 +114,24 @@ public /*abstract*/ class Microtask
 	// Override this method to handle an assigment event.
 	public void onAssign(Project project) {};
 	
+	// Override this method to allow the microtask to decide, right before it is assigned,
+	// if it is still needed
+	protected boolean isStillNeeded(Project project) { return true; }
+	
+	// Marks the microtask as completed. 
+	public void markCompleted()
+	{
+		this.completed = true;
+		if (this.worker != null)
+		{
+			this.assigned = false;
+			Worker worker = ofy().load().ref(this.worker).get();
+			worker.setMicrotask(null);
+			this.worker = null;					
+		}
+		ofy().save().entity(this).now();
+	}
+	
 	// Unassigns worker from this microtask
 	// Precondition - the worker must be assigned to this microtask
 	public void skip(Worker worker, Project project)
@@ -131,7 +153,24 @@ public /*abstract*/ class Microtask
 		assigned = false;	
 		ofy().save().entity(this).now();
 		
+		// Check if microtask is highly skipped and should be reset
+		resetIfHighlySkipped(project);
+		
 		project.historyLog().endEvent();
+	}
+	
+	// Checks the microtask to see if most workers have skipped it. If so, resets the
+	// excluded workers to give workers another chance.
+	private void resetIfHighlySkipped(Project project)
+	{
+		// If at least all but one worker has skipped it, reset exclusion constraints.
+		// TODO: we really should reset based on the status of logged in workers. But there
+		// is currently no way to track that accurately.
+		if (excludedWorkers.size() >= Worker.allWorkers(project).size() - 1)
+		{
+			excludedWorkers.clear();
+			ofy().save().entity(this).now();
+		}
 	}
 	
 	// Sets the microtask as ready to be assigned
@@ -178,17 +217,35 @@ public /*abstract*/ class Microtask
 			return;
 		}
 		
-		project.historyLog().beginEvent(new MicrotaskSubmitted(this));
-
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
-		doSubmitWork(dto, project);	
-		this.completed = true;
-		worker.setMicrotask(null);
-		worker.awardPoints(this.submitValue, this.microtaskDescription(), project);
-		project.microtaskCompleted();
-		ofy().save().entity(this).now();
 		
-		project.historyLog().endEvent();
+		// Give the microtask an opportunity to check the submissions.
+		// If the microtask fails its validation tests, drop submission and treat it as a skip.
+		if (submitAccepted(dto, project))
+		{		
+			project.historyLog().beginEvent(new MicrotaskSubmitted(this));
+	
+			doSubmitWork(dto, project);	
+			this.completed = true;
+			worker.setMicrotask(null);
+			worker.awardPoints(this.submitValue, this.microtaskDescription(), project);
+			project.microtaskCompleted();
+			ofy().save().entity(this).now();
+			
+			project.historyLog().endEvent();
+		}
+		else
+		{
+			skip(worker, project);
+		}
+	}
+	
+	// Runs machine validation on the submitted data to determine if it is accepted as completing
+	// the microtask. Subclasses may choose to override this method to provide logic to perform this 
+	// check. The default behavior is to accept all submissions.
+	protected boolean submitAccepted(DTO dto, Project project)
+	{
+		return true;
 	}
 
 	// This method MUST be overridden in the subclass to do submit work.
@@ -262,7 +319,9 @@ public /*abstract*/ class Microtask
 	
 	public String toString()
 	{
-		return "" + this.id + " " + this.getClass().getSimpleName() + (ready? " ready " : " not ready ") + 
+		return "" + this.id + " " + this.getClass().getSimpleName() + 
+				(this.getOwningArtifact() != null ? (" on " + this.getOwningArtifact().getName()) : "") + 
+				": " + (ready? " ready " : " not ready ") + 
 				(assigned ? " assigned " : " unassigned ") + 
 				(completed ? " completed " : " incomplete ") + "points: " + submitValue + 
 				((worker != null) ? (" worker: " + ofy().load().key(worker.getKey()).get().getHandle()) : " ");

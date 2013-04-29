@@ -47,7 +47,7 @@
 				$("#testCases").append(
 					'<span id="testCase' + nextTestCase + '">' +
 						'<input type="text" class="input-xxlarge" placeholder="Describe a test case"/>' +				
-						'<button onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="close">&times;</button>' +	
+						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">&times;</a>' +	
 					'</span>');	
 				
 				// Set focus to the new test case
@@ -86,21 +86,23 @@
 	</script>
 
 
-	<%@include file="/html/elements/microtaskTitle.jsp" %>
-	<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>		
+	<%@include file="/html/elements/microtaskTitle.jsp" %>	
 	
 	<div id="testUserStoryPrompt" style="display: none">
-		Consider the following user story: <BR>
-		<%= microtask.getUserStoryText() %><BR><BR>
+		Consider the user story <BR>
+		<span class="label label-inverse"><%= microtask.getUserStoryText() %></span><BR><BR>
 		
-		<B>What are some examples of cases where this user story might occur? Are there any unexpected corner 
-	cases that might not work?</B><BR><BR>		
+		This user story is implemented by the function main (description below). 
+		What are some examples of cases where this user story might occur? Are there any unexpected corner 
+	cases that might not work?<BR><BR>		
 	</div>
 
 	<div id="testFunctionSignaturePrompt" style="display: none">
-		<B>What are some cases in which this function might be used? Are there any unexpected corner 
-		cases that might not work?</B><BR><BR>
+		What are some cases in which this function might be used? Are there any unexpected corner 
+		cases that might not work?<BR><BR>
 	</div>
+	
+	<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>	
 	
 	<div class="accordion" id="exampleRoot">
 	  <div class="accordion-group">

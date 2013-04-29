@@ -14,7 +14,7 @@
 				    '<input type="text" onblur="checkLength(this)" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;//' + 
 					'&nbsp;<input type="text" placeholder = "type" class="input-small">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
 					'<input type="text" placeholder = "what is it for?" class="input-xlarge"> ' +	
-					'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">x</a>' +	
+					'<a href="#" onclick="deleteParams(\'#params' + nextParam + '\')" class="closeButton">&times;</a>' +	
 					'</td>');
 			// Set focus to the first input field in the new row.
 			$('#params' + nextParam).find("input").eq(0).focus();
@@ -86,8 +86,8 @@ function
 			<input type="text" onblur="checkLength(this)" placeholder = "paramName" class="input-small">,&nbsp;&nbsp;// 
 			<input type="text" placeholder = "type" class="input-small">&nbsp;&nbsp;-&nbsp; 
 			<input type="text" placeholder = "what's it for?" class="input-xlarge">
-			<a href="#" onclick="deleteParams('#params1')" class="closeButton">x</a>		
-		<td>
+			<a href="#" onclick="deleteParams('#params1')" class="closeButton">&times;</a>
+		</td>
 	<tr>
 	<tr id="addParamRow">
 		<td></td>					

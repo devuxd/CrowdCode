@@ -28,17 +28,18 @@
 		var codeBoxCode = '<%= microtask.getCallee().getEscapedFullDescription() %>';
 		
 		var editorCode = '<%=functionCode%>';
-		var functionHeader = '<%= microtask.getCaller().getEscapedHeader() %>';
+		var functionName = '<%= microtask.getCaller().getName() %>';
 		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+		var highlightPseudoCall = '//!<%= microtask.getEscapedPseudoCall() %>';
 		    
    		$(document).ready(function() 
    		{
    			$('#skip').click(function() { skip(); });
    			
    			$('#writeCallForm').submit(function() {
-				doPresubmitWork();
-				if (checkCodeForErrors())
-   					submit(collectCode());
+				var result = checkAndCollectCode();
+				if (!result.errors)
+					submit(result.code);
    				return false;
    			});
    		});	    
@@ -46,9 +47,12 @@
 
 	<form id="writeCallForm" action="">
 		<%@include file="/html/elements/microtaskTitle.jsp" %>
-		<p><h4> Can you replace the pseudocall below with a call to the following function: </h4> <BR>	
-		<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>	
-
+		The crowd found the following function for the <span class="highlightPseudoCall">pseudocall below</span>:
+		<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR>
+		
+		Can you either replace the pseudocall with a call to this function, or find a different way to do it?
+		Feel free to update the function as necessary.
+		
 		<%@include file="/html/elements/functionEditor.jsp" %>		
 		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
