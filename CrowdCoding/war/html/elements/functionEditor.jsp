@@ -188,11 +188,17 @@
 	{
 		var errorMessages = "";
 		
+		// Check for AST errors
 		if (ast.body.length == 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
 			errorMessages += "All code should be in a single function.<BR>"
 		else if (functionNames.indexOf(ast.body[0].id.name) != -1)
 			errorMessages += "The function name '" + ast.body[0].id.name + "' is already taken. Please use another.<BR>";					
 		
+		// Also check for purely textual errors
+		// 1. If there is a pseudocall to replace, make sure it is gone
+		if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)			
+			errorMessages += "Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.";			
+			
 		if (errorMessages != "")
 		{
 			$("#errorMessages").html(errorMessages);
