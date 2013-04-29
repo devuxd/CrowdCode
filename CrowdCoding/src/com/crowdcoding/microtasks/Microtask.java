@@ -2,19 +2,15 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Artifact;
-import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.history.MicrotaskSkipped;
-import com.crowdcoding.dto.history.MicrotaskSpawned;
 import com.crowdcoding.dto.history.MicrotaskSubmitted;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
@@ -66,20 +62,28 @@ public /*abstract*/ class Microtask
 	{		
 		System.out.println(StatusReport(project));
 		
-		// Look for an unassigned microtask that crowdUser is not excluded from doing
+		// Look for a microtask, checking constraints on it along the way
 		Microtask microtask = null;
 		Key<Worker> workerKey = crowdUser.getKey();
 		Query<Microtask> q = ofy().load().type(Microtask.class).ancestor(project.getKey()).filter(
-				"assigned", false).filter("ready", true);  
+				"assigned", false).filter("completed", false).filter("ready", true);  
 		microtaskSearch: for (Microtask potentialMicrotask : q)
 		{
+			// 1. If the worker is excluded from doing it, keep looking
 			for (Ref<Worker> excludedWorker : potentialMicrotask.excludedWorkers)
 			{
 				if (excludedWorker.equivalent(workerKey))
 					continue microtaskSearch;				
 			}
 			
-			// Not excluded. A microtask was found.
+			// 2. If the microtask is no longer needed, keep looking
+			if (!potentialMicrotask.isStillNeeded(project))
+			{
+				potentialMicrotask.markCompleted();
+				continue microtaskSearch;
+			}
+			
+			// A microtask was found!
 			microtask = potentialMicrotask;
 			break;			
 		}		
@@ -109,6 +113,24 @@ public /*abstract*/ class Microtask
 	
 	// Override this method to handle an assigment event.
 	public void onAssign(Project project) {};
+	
+	// Override this method to allow the microtask to decide, right before it is assigned,
+	// if it is still needed
+	protected boolean isStillNeeded(Project project) { return true; }
+	
+	// Marks the microtask as completed. 
+	public void markCompleted()
+	{
+		this.completed = true;
+		if (this.worker != null)
+		{
+			this.assigned = false;
+			Worker worker = ofy().load().ref(this.worker).get();
+			worker.setMicrotask(null);
+			this.worker = null;					
+		}
+		ofy().save().entity(this).now();
+	}
 	
 	// Unassigns worker from this microtask
 	// Precondition - the worker must be assigned to this microtask

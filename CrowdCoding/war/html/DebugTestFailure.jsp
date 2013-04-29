@@ -77,7 +77,8 @@
 	    
 	    // Code for the function editor
 	    var editorCode = '<%= microtask.getFunction().getEscapedFullCode() %>';
-		var functionName = '<%= microtask.getFunction().getName() %>';	    
+		var functionName = '<%= microtask.getFunction().getName() %>';	   
+		var highlightPseudoCall = false;
 	    
 		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() 

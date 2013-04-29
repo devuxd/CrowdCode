@@ -30,6 +30,7 @@
 		var editorCode = '<%=functionCode%>';
 		var functionName = '<%= microtask.getCaller().getName() %>';
 		var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+		var highlightPseudoCall = '//!<%= microtask.getEscapedPseudoCall() %>';
 		    
    		$(document).ready(function() 
    		{
@@ -46,9 +47,9 @@
 
 	<form id="writeCallForm" action="">
 		<%@include file="/html/elements/microtaskTitle.jsp" %>
-		Can you replace the pseudocall below with a call to this function: <BR>	
+		Can you replace the <span class="highlightPseudoCall">pseudocall below</span> with a call to this function: <BR>	
 		<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>	
-
+		
 		<%@include file="/html/elements/functionEditor.jsp" %>		
 		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
