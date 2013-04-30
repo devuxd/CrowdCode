@@ -79,6 +79,7 @@
 	    var editorCode = '<%= microtask.getFunction().getEscapedFullCode() %>';
 		var functionName = '<%= microtask.getFunction().getName() %>';	   
 		var highlightPseudoCall = false;
+		var allTheFunctionCode = <%= "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'" %>;
 	    
 		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() 

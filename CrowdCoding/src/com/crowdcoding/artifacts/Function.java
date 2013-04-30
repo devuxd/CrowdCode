@@ -45,6 +45,10 @@ public class Function extends Artifact
 	private String header;
 	private String description;
 	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
+	// fully implemented (i.e., not psuedo) calls made by this function
+	private List<String> callees = new ArrayList<String>();	
+	// current callers with a fully implemented callsite to this function:
+	private List<Ref<Function>> callers = new ArrayList<Ref<Function>>();
 	// pseudocalls made by this function:
 	private List<String> pseudoCalls = new ArrayList<String>();   
 	// pseudocall callsites calling this function (these two lists must be in sync)
@@ -97,7 +101,7 @@ public class Function extends Artifact
 				           " * @return {String} - output from executing the action \n" +
 				           " */\n";
 		this.header = "function main(userInput)";
-		this.code = "{\n\n}";
+		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n\n}";
 		this.hasBeenDescribed = true;
 		
 		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
@@ -320,6 +324,10 @@ public class Function extends Artifact
 		this.name = dto.name;
 		this.description = dto.description;
 		this.header = dto.header;
+		this.paramNames = dto.paramNames;
+		
+		// Looper over all of the callers, rebuilding our list of callers
+		rebuildCalleeList(dto.calleeNames, project);
 
 		// Look for pseudocode and psuedocalls
 		List<String> currentPseudoCalls = findPseudocalls(code);
@@ -361,6 +369,38 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 		lookForWork(project);
 	}	
+	
+	// Diffs the new and old callee list, sending notifications to callees about who their
+	// callers are as appropriate. Updates the callee list when done
+	private void rebuildCalleeList(List<String> calleeNames, Project project)
+	{
+		// First, find new callees added, if any
+		List<String> newCallees = new ArrayList<String>(calleeNames);
+		newCallees.removeAll(this.callees);
+		
+		// If there are any, send notifications to these functions that they have a new caller
+		for (String newCalleeName : newCallees)
+		{
+			Function callee = lookupFunction(newCalleeName, project);
+			if (callee != null)
+				callee.newCaller(this);
+		}
+		
+		// Next, find any callees removed, if any
+		List<String> removedCallees = new ArrayList<String>(this.callees);
+		removedCallees.remove(calleeNames);
+		
+		// Send notifications to these functions that they no longer have this caller
+		for (String removedCalleeName : removedCallees)
+		{
+			Function callee = lookupFunction(removedCalleeName, project);
+			if (callee != null)
+				callee.noLongerCalledBy(this);
+		}
+		
+		this.callees = newCallees;
+		ofy().save().entity(this).now();
+	}
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  NOTIFICATION HANDLERS
@@ -504,6 +544,20 @@ public class Function extends Artifact
 		runTestsIfReady(project);
 	}
 	
+	// Notifies the function that it has a new caller function
+	public void newCaller(Function function)
+	{
+		callers.add((Ref<Function>) Ref.create(function.getKey()));
+		ofy().save().entity(this).now();
+	}
+	
+	// Notifies the function that it is no longer called by function
+	public void noLongerCalledBy(Function function)
+	{
+		callers.remove((Ref<Function>) Ref.create(function.getKey()));
+		ofy().save().entity(this).now();
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////
 	//   NOTIFICATION SENDERS
 	//////////////////////////////////////////////////////////////////////////////
@@ -516,7 +570,6 @@ public class Function extends Artifact
 		//add it to the lists
 		pseudoCallers.add(newSubscriberRef);
 		pseudoCallsites.add(pseudoCall);
-
 		
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed()) 		
@@ -543,9 +596,9 @@ public class Function extends Artifact
 	private void descriptionChanged(FunctionDTO dto, Project project)
 	{
 		// queue DescriptionChanged microtasks on each of the callers 
-		for (Ref<Function> pseudoCaller : pseudoCallers)
+		for (Ref<Function> callerRef : callers)
 		{
-			Function caller = load(pseudoCaller);
+			Function caller = load(callerRef);
 			caller.queueMicrotask(new WriteFunction(caller, this.getFullDescription(), 
 					dto.description + dto.header, project), project);
 		}
@@ -563,6 +616,16 @@ public class Function extends Artifact
 	//  UTILITY METHODS
 	//////////////////////////////////////////////////////////////////////////////
 
+	// Looks up a Function object by name. Returns the function or null if no such function exists
+	public static Function lookupFunction(String name, Project project)
+	{
+		Ref<Function> ref = ofy().load().type(Function.class).ancestor(project.getKey()).filter("name", name).first();
+		if (ref == null)
+			return null;
+		else
+			return ref.get();
+	}	
+	
 	// Looks through a string of a function's implementation and returns a list
 	// of lines (may be empty) which are the pseudocode for the function call
 	private List<String> findPseudocalls(String code)

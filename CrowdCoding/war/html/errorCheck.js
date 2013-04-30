@@ -24,16 +24,13 @@ function checkForErrors(e)
 	}
 	if(anyErrors)
 	{
-		debugger;
 		return stringOfErrors; 
 	}
-	debugger;
 	return "";
 }
 
 function getJSHintGlobals()
 {
-	debugger;
 	// if releated to a parameter you can check box in JLINT website add here
 	return {latedef:true, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true};
 }
