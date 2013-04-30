@@ -1,3 +1,10 @@
+<%
+	String projectID = (String) request.getAttribute("project");
+	if (projectID == null || projectID.equals(""))
+		projectID = "publicDemo";
+%>
+
+
 <html>
 <head>
 	<title>CrowdCode</title>
@@ -38,7 +45,7 @@
 	</div>
 	
 	<div class="jumbotron jumbotronCentered">
-		  <a class="btn btn-large btn-success bigButton" href="/publicDemo">Let's get started!</a>
+		  <a class="btn btn-large btn-success bigButton" href="/<%= projectID %>">Let's get started!</a>
 	</div>
 </body>
 </html>
