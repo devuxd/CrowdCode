@@ -221,3 +221,8 @@ font-size: 0.60em;
 .pseudoCall { background-color: white; color: gray; font-weight: bold; }
 .pseudoCode { background-color: yellow;	}
 .highlightPseudoCall { background-color: lime; }
+
+/* Other typography styles */
+.minorNote { font-size: x-small; }
+
+

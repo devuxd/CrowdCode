@@ -303,5 +303,8 @@
 </script>
 
 <BR>
-<textarea id="code"></textarea><BR>
+<textarea id="code"></textarea>
+<a href="http://www.crockford.com/javascript/survey.html" target="_blank" class="muted pull-right minorNote">
+	Help, I don't know Javascript!
+</a><BR>
 <div id = "errorMessages" class="alert alert-error"></div>
