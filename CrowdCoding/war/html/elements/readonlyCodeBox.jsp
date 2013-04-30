@@ -13,7 +13,7 @@
 	// text to show in the description box.
 
     	// Load the fullDescription into codeMirror
-    	var codeMirror = CodeMirror.fromTextArea(readonlyCodeBox, { viewportMargin: Infinity });
+    	var codeMirror = CodeMirror.fromTextArea(readonlyCodeBox, { viewportMargin: Infinity, indentUnit: 4, indentWithTabs: true });
     	codeMirror.setValue(codeBoxCode);
     	codeMirror.setOption("readOnly", "true");
     	codeMirror.setOption("theme", "solarized");	 		
