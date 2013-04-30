@@ -10,10 +10,11 @@ public class FunctionDTO extends DTO
 	
 	public String testCaseNumber;
 	public String description;
-	public List<String> paramNames = new ArrayList<String>();;
+	public List<String> paramNames = new ArrayList<String>();
 	public String header;
 	public String name;	
 	public String code = "";
+	public List<String> calleeNames = new ArrayList<String>();
 	
 	public String toString()
 	{

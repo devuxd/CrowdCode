@@ -51,7 +51,7 @@
 		<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR>
 		
 		Can you either replace the pseudocall with a call to this function, or find a different way to do it?
-		Feel free to update the function as necessary.
+		Feel free to update the code as necessary.<BR>
 		
 		<%@include file="/html/elements/functionEditor.jsp" %>		
 		<%@include file="/html/elements/submitFooter.jsp" %>
