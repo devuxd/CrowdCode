@@ -218,6 +218,6 @@ font-size: 0.60em;
 }
 
 /* Style for highlighted lines in CodeMirror */
-.pseudoCall { background-color: white; }
+.pseudoCall { background-color: white; color: gray; font-weight: bold; }
 .pseudoCode { background-color: yellow;	}
 .highlightPseudoCall { background-color: lime; }
