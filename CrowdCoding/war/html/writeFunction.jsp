@@ -60,6 +60,10 @@
 				var result = checkAndCollectCode();
 				if (!result.errors)
 					submit(result.code);
+				else
+					{
+					$("#popUp").modal();
+					}
 				
 				// Disable default submit functionality.
 				return false;
@@ -110,4 +114,16 @@
 		<%@include file="/html/elements/functionEditor.jsp" %>
 		<%@include file="/html/elements/submitFooter.jsp" %>	
 	</form>
+	
+	
+	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="logoutLabel">Please fix errors and retry</h3>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>	
 </div>
