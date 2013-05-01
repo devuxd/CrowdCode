@@ -1,5 +1,5 @@
 <script>
-	var myCodeMirror = CodeMirror.fromTextArea(code, { autofocus: true });
+	var myCodeMirror = CodeMirror.fromTextArea(code, { autofocus: true, indentUnit: 4, indentWithTabs: true });
 	var doc = myCodeMirror.getDoc();
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	
 	doc.setValue(editorCode);
@@ -35,7 +35,7 @@
  		doc.setCursor(ast.body[0].body.loc.start.line, 0);		
  	}
  	
- 	// Builds a list of all of the function names that are currently in use
+ 	// Builds a list of names of every function declared in the system
  	function buildFunctionNames()
  	{
  		var names = [];
@@ -51,6 +51,42 @@
  		return names;
  	}
  	
+ 	// Builds and returns a list of distinct callee names called in the specified AST
+ 	function findCalleeNames(ast)
+ 	{
+ 		var calleeNames = []; 		
+		traverse(ast, function (node)
+		{
+			if((node!=null) && (node.type === 'CallExpression'))
+			{
+				// Add it to the list of callee names if we have not seen it before
+				if (calleeNames.indexOf(node.callee.name) == -1)
+					calleeNames.push(node.callee.name);
+			}
+		});
+		return calleeNames;
+ 	}
+ 	
+ 	// Based on esprima example at http://sevinf.github.io/blog/2012/09/29/esprima-tutorial/
+ 	function traverse(node, func) 
+ 	{
+	    func(node);
+    	for (var key in node) {
+        	if (node.hasOwnProperty(key)) {
+            	var child = node[key];
+            	if (typeof child === 'object' && child !== null) {
+                	if (Array.isArray(child)) {
+                   	 child.forEach(function(node) {
+                   	     traverse(node, func);
+                   	 });
+                	} else {
+                    	traverse(child, func); 
+               	 }
+            	}
+        	}
+    	}
+	}
+		
 	// Mangage code change timeout
 	function codeChanged(editorInstance, changeObject)
 	{
@@ -78,6 +114,13 @@
 		// Break up the code into 
  		myCodeMirror.save();	 			
  		var text = $("#code").val();
+ 		
+ 		// Depending on the state of CodeMirror, we might not get code back. 
+ 		// In this case, do nothing
+ 		if(typeof text === 'undefined')
+ 		{
+ 			return;
+ 		}; 		
  		
  		var lines = text.split('\n');
 		$.each(lines, function(i, line)
@@ -215,6 +258,8 @@
 	// Returns an object capturing the code and other related information.
 	function collectCode(text, ast)
 	{
+		var calleeNames = findCalleeNames(ast);
+		
 		// Get the text for the function description, header, and code.
 		// Note esprima (the source of line numbers) starts numbering lines at 1, while
 	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
@@ -222,6 +267,7 @@
 		var descriptionEnd = { line: ast.loc.start.line - 1, ch: 0 };
 		var description = myCodeMirror.getRange(descriptionStart, descriptionEnd);			
 		var name = ast.body[0].id.name;
+		var paramNames = [];
 		
 		var header = 'function ' + name + '(';
 		$.each(ast.body[0].params, function(index, value)
@@ -229,13 +275,15 @@
 			if (index > 0)
 				header += ', ';
 			header += ast.body[0].params[index].name;
+			paramNames.push(ast.body[0].params[index].name);
 		});
 		header += ')';
 		
 		var body = myCodeMirror.getRange(
 				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
 			    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-		return { description: description, header: header, name: name, code: body};
+		return { description: description, header: header, name: name, code: body, paramNames: paramNames,
+					calleeNames: calleeNames};
 	}
 	
 	// Makes the description and header of the function readonly (not editable in CodeMirror)
@@ -255,5 +303,8 @@
 </script>
 
 <BR>
-<textarea id="code"></textarea><BR>
+<textarea id="code"></textarea>
+<a href="http://www.crockford.com/javascript/survey.html" target="_blank" class="muted pull-right minorNote">
+	Help, I don't know Javascript!
+</a><BR>
 <div id = "errorMessages" class="alert alert-error"></div>

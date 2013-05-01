@@ -74,7 +74,8 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project>/fetch - doFetch		   
 		 *  /<project>/history - history.jsp
 		 *  /<project>/run - run.jsp
-		 *  /<project/submit - doSubmit
+		 *  /<project>/submit - doSubmit
+		 *  /<project>/welcome - welcome.jsp
 		 *  /userStories - EditUserStories.jsp
 		 *  /  - 404
 		 */
@@ -116,17 +117,19 @@ public class CrowdServlet extends HttpServlet
 							doAdmin(req, resp, projectID, path);
 						else if (action.equals("run"))
 			        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
+						else if (action.equals("welcome"))
+			        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
 					}				
 				}
 				else				
-					req.getRequestDispatcher("/html/welcome.html").forward(req, resp);					
+					req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);					
 	        } 
 	        else 
 	        {
 	        	if (path.length > 1)	        	        	
 	        		resp.sendRedirect(userService.createLoginURL("/" + path[1]));	        	
 	        	else	        	
-					req.getRequestDispatcher("/html/welcome.html").forward(req, resp);	        	
+					req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);	        	
 	        }
 		} catch (ServletException e) {
 			e.printStackTrace();

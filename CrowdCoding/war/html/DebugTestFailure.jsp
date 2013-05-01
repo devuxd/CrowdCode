@@ -79,6 +79,7 @@
 	    var editorCode = '<%= microtask.getFunction().getEscapedFullCode() %>';
 		var functionName = '<%= microtask.getFunction().getName() %>';	   
 		var highlightPseudoCall = false;
+		var allTheFunctionCode = <%= "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'" %>;
 	    
 		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() 
@@ -260,7 +261,8 @@
 					// change to asyncTest if you want try that, but that broke stuff when i changed it
 					var testCases = "";
 					// constructs the function header and puts code  from the above code window
-					testCases += "" + allTheFunctionCode + " " + myCodeMirror.getValue().replace(/\n/g,"");
+					testCases += "" + allTheFunctionCode + " " + 
+					      instrumentCallerForLogging(myCodeMirror.getValue()).replace(/\n/g,"");
 					testCases += arrayOfTests[p];
 					console.log(testCases);
 					var QunitTestCases = parseTheTestCases(testCases);
@@ -277,7 +279,7 @@
 					    var worker = new Worker(window.URL.createObjectURL(blob));
 					    var done = false;
 					    worker.onmessage = function(e) {
-					      console.log("Received: " + e.data);
+					      console.log("Received: " + JSON.stringify(e.data));
 						  results = e.data;
 						 // timedOut = false;
 						  console.log(e.data);
@@ -307,7 +309,17 @@
 							var tempResult = new Array();
 							tempResult.push({'expected': "", 'actual': "", 'message': "Test case Timeout, no debug statements printed", 'result':  false});
 							results = {'number':p, 'result':tempResult, 'detail':1, 'debugStatements':new Array()};
-						}	
+						}
+						else
+						{
+							// If the function did not time out, we get a result that has the list of callees and their
+							// inputs and outputs.
+							// Display this data to the user.
+							console.log("calleeMap before displayDebugFields");
+							console.log(results.calleeMap);
+							displayDebugFields(calleeList, results.calleeMap);
+							
+						}
 						$.each(results.result, function(index, result)		
 						{
 							debugger;
@@ -527,9 +539,11 @@
 			      url = url.substring(0, index);
 			     }
 			    importScripts(url + '/html/assertionFunctions.js');
+			    importScripts(url + '/html/js/instrumentFunction.js');
 		 }
 		 else
 		 {
+		 
 		   		// Rest of your worker code goes here.
 				try
 				{
@@ -541,7 +555,8 @@
 					//results = 
 					self.postMessage("ERRROR:     " + err.message + "    " + data.testCase);
 				}
-				self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun});
+				self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun,
+					calleeList: calleeList, calleeMap: calleeMap});
 		 }
 		 //self.postMessage(testCasedPassed);
    };
@@ -612,7 +627,9 @@
 			</form>
 		</div>
 		
-		
+		<div>
+			<%@include file="/html/elements/calleeDebugOutputEditor.jsp" %>
+		</div>
 		
 <div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 	<div class="logout-header">
