@@ -12,7 +12,7 @@
 
 <%
 	String projectID = (String) request.getAttribute("project");
-    Project project = Project.Create(projectID);
+	Project project = Project.Create(projectID);
 	Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
 	DebugTestFailure microtask = (DebugTestFailure) crowdUser.getMicrotask();
 	ObjectMapper mapper = new ObjectMapper();
@@ -20,7 +20,7 @@
 	mapper.writeValue(strWriter, microtask.getTestCases());
 	String testCases = strWriter.toString();
 	strWriter = new StringWriter();
-	mapper.writeValue(strWriter, microtask.getFunctionHeaderAssociatedWithTestCase());
+	mapper.writeValue(strWriter,microtask.getFunctionHeaderAssociatedWithTestCase());
 	String functionHeader = strWriter.toString();
 	strWriter = new StringWriter();
 	mapper.writeValue(strWriter, microtask.getTestDescriptions());
@@ -29,7 +29,10 @@
 
 	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctions(microtask.getFunction(), project) + "'";
 	// add current header becuase of recursive issue not marked in correct state so getAllActive ignores it
-	String allFunctionCodeInSystemHeader = "'" + microtask.getFunction().getHeader() + "{}" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
+	String allFunctionCodeInSystemHeader = "'"
+			+ microtask.getFunction().getHeader()
+			+ "{}"
+			+ FunctionHeaderUtil.getDescribedFunctionHeaders(null,project) + "'";
 %>
 
 <body>
@@ -38,9 +41,11 @@
 		<script src="/html/assertionFunctions.js"></script>
 		<script src="/include/spin.js"></script>
 		<script>
-			var microtaskTitle = '<%= microtask.microtaskTitle() %>';
-			var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
-		
+			var microtaskTitle = '<%=microtask.microtaskTitle()%>';
+			var microtaskSubmitValue = <%=microtask.getSubmitValue()%>;
+			// being used in includes so must be moved to global variable 
+			var allTheFunctionCode = <%=allFunctionCodeInSystemHeader%> + <%=allFunctionCodeInSystem%>;
+			
 			var windowErrorFound = false;
 			window.onerror = function(err, url, lineNumber) 
 			{  
@@ -67,19 +72,18 @@
 				});
 			};  
 	</script>
-	<script>
+		<script>
 		var timeOutPeriod = 1500;
 		var microtaskType = 'DebugTestFailure';
-		var microtaskID = <%= microtask.getID() %>;
+		var microtaskID = <%=microtask.getID()%>;
 		
 		var myCodeMirrorForDispute;
 	    var myCodeMirrorForConsoleOutPut = CodeMirror.fromTextArea(debugconsole);
 	    
 	    // Code for the function editor
-	    var editorCode = '<%= microtask.getFunction().getEscapedFullCode() %>';
-		var functionName = '<%= microtask.getFunction().getName() %>';	   
+	    var editorCode = '<%=microtask.getFunction().getEscapedFullCode()%>';
+		var functionName = '<%=microtask.getFunction().getName()%>';	   
 		var highlightPseudoCall = false;
-		var allTheFunctionCode = <%= "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'" %>;
 	    
 		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() 
@@ -101,6 +105,7 @@
 				test1(false);
 				if($("#sketchForm").children("input").attr('disabled') == 'disabled')
 				{
+					$("#popUpForNoSubmit").modal();
 					return false;
 				}						
 				submit(result.code);
@@ -139,7 +144,7 @@
 		}
 		function revertCodeAs()
 		{
-			myCodeMirror.setValue('<%= microtask.getFunction().getEscapedFullCode() %>');
+			myCodeMirror.setValue('<%=microtask.getFunction().getEscapedFullCode()%>');
 		}
 		function parseTheTestCases(QunitTest)
 		{
@@ -214,7 +219,6 @@
 		var htmlContent = "";
 		var hasAtLeast1Test = false;
 		var i = 0;
-		var allTheFunctionCode = <%=allFunctionCodeInSystemHeader%> + <%=allFunctionCodeInSystem%>;
 		// keep an array of html tabs which we concanate at the end
 		// do it this way so we can make some tabs with mulitple tests
 		// reflect correct color
@@ -319,7 +323,7 @@
 							console.log(results.calleeMap);
 							displayDebugFields(calleeList, results.calleeMap);
 							
-						}
+						}	
 						$.each(results.result, function(index, result)		
 						{
 							debugger;
@@ -390,6 +394,7 @@
 						    if(details.failed > 0)
 						    {
 						     	$("#sketchForm").children("input").attr('disabled', 'false');
+						     	$("#popUpForNoSubmit").modal();
 						     	allTestPassed = false;
 						    }
 						    else if(details.failed == 0 && allTestPassed)
@@ -423,6 +428,7 @@
 					htmlContent += "</p></div>";
 					i++;
 					$("#sketchForm").children("input").attr('disabled', 'false');
+					$("#popUpForNoSubmit").modal();
 					allTestPassed = false;
 				
 				},timeOutPeriod);
@@ -507,7 +513,7 @@
 	}
 </script>
 
-<script id="worker1" type="javascript/worker">
+		<script id="worker1" type="javascript/worker">
     // This script won't be parsed by JS engines because its type is javascript/worker.
     var isFirstTimeThrough = 1;
     var testCasedPassed = true;
@@ -564,29 +570,34 @@
   </script>
 
 		<form id="sketchForm" action="">
-			<%@include file="/html/elements/microtaskTitle.jsp" %>
-			This function has failed its tests. Can you fix it? <BR>
-			To check if you've fixed it, run the unit tests. <BR>
-			If there is a problem with the tests, report an issue.
-			You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR><BR>
+			<%@include file="/html/elements/microtaskTitle.jsp"%>
+			This function has failed its tests. Can you fix it? <BR> To
+			check if you've fixed it, run the unit tests. <BR> If there is a
+			problem with the tests, report an issue. You may use the function <I>printDebugStatement(...);
+			</I> to print data to the console. <BR>
+			<BR>
 
-			<button style="float: right;" onclick="revertCodeAs();">Revert Code</button>
+			<button style="float: right;" onclick="revertCodeAs();">Revert
+				Code</button>
 
-			<%@include file="/html/elements/functionEditor.jsp" %>
-			<%@include file="/html/elements/submitFooter.jsp" %>
-		</form><br>
-		
-		<div style = 'display:none;' id = 'consoleDiv'>
-			<h5> Debug Console Output:</h5>
-				<table width="100%">
-					<tr>
-						<td></td>
-						<td><textarea id="debugconsole"></textarea></td>
-					</tr>
-				</table><br>
-		</div>		
+			<%@include file="/html/elements/functionEditor.jsp"%>
+			<%@include file="/html/elements/submitFooter.jsp"%>
+		</form>
+		<br>
 
-		<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button>
+		<div style='display: none;' id='consoleDiv'>
+			<h5>Debug Console Output:</h5>
+			<table width="100%">
+				<tr>
+					<td></td>
+					<td><textarea id="debugconsole"></textarea></td>
+				</tr>
+			</table>
+			<br>
+		</div>
+
+		<button id='unittest' style="" onclick="test1(false);">Run
+			the Unit Tests</button>
 		<div class="bs-docs-example">
 			<div class="tabbable tabs-left">
 				<ul id="tabs" " class="nav nav-tabs">
@@ -623,35 +634,53 @@
 						<td><textarea id="userInput"></textarea></td>
 					</tr>
 				</table>
-				<%@include file="/html/elements/submitFooter.jsp" %>
+				<%@include file="/html/elements/submitFooter.jsp"%>
 			</form>
 		</div>
-		
-		<div>
-			<%@include file="/html/elements/calleeDebugOutputEditor.jsp" %>
-		</div>
-		
-<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="logout-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
-		<h3 id="logoutLabel">Please Remove Debug Statements</h3>
-	</div>
-	<div class="modal-body"></div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-	</div>
-</div>		
-<span id = 'submissionBox' style = 'display:none'> 		
-		<div class="bootbox modal fade in" tabindex="-1" style="overflow: hidden;" aria-hidden="false">
-<div class="modal-body">There is no auto submit, please either enter a dispute description or if you passed all the test cases submit </div>
-<div class="modal-footer"><button style="" onclick="hideThePopUp();"> Confirm </button></div>
-</div>
-<div class="modal-backdrop fade in"></div>
-</span>
-</div>
-		<div style='display:none' id='foo'></div>
 
-		<script>
+		<div>
+			<%@include file="/html/elements/calleeDebugOutputEditor.jsp"%>
+		</div>
+
+		<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog"
+			aria-labelledby="" aria-hidden="true">
+			<div class="logout-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">Ã—</button>
+				<h3 id="logoutLabel">Please Remove Debug Statements</h3>
+			</div>
+			<div class="modal-body"></div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			</div>
+		</div>
+		<span id='submissionBox' style='display: none'>
+			<div class="bootbox modal fade in" tabindex="-1"
+				style="overflow: hidden;" aria-hidden="false">
+				<div class="modal-body">There is no auto submit, please either
+					enter a dispute description or if you passed all the test cases
+					submit</div>
+				<div class="modal-footer">
+					<button style="" onclick="hideThePopUp();">Confirm</button>
+				</div>
+			</div>
+			<div class="modal-backdrop fade in"></div>
+		</span>
+	</div>
+	<div style='display: none' id='foo'></div>
+	<div id="popUpForNoSubmit" class="modal hide fade" tabindex="-1"
+		role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="logout-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true"></button>
+			<h3 id="logoutLabel">Cannot Submit Due To Failed Tests</h3>
+		</div>
+		<div class="modal-body"></div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+	<script>
 var opts = {
   lines: 15, // The number of lines to draw
   length: 7, // The length of each line
