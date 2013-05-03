@@ -2,12 +2,14 @@ package com.crowdcoding.util;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Function;
+import com.crowdcoding.dto.FullDescriptionsDTO;
 
 public class FunctionHeaderUtil
 {
@@ -82,5 +84,20 @@ public class FunctionHeaderUtil
 			b.append("} ");
 		}
 		return b.toString();
+	}
+	
+	// Get full escaped descriptions for every described function in the system formatted as
+	// a string in FullDescriptionsDTO format
+	public static String getAllFullEscapedDescriptions(Project project)
+	{
+		List<Function> functions = ofy().load().type(Function.class).ancestor(project.getKey())
+				.filter("hasBeenDescribed", true).list();
+		
+		HashMap<String, String> functionNameToDescription = new HashMap<String, String>();
+		for (Function function : functions)
+			functionNameToDescription.put(function.getName(), function.getFullDescription());
+		
+		FullDescriptionsDTO dto = new FullDescriptionsDTO(functionNameToDescription);
+		return dto.json();
 	}
 }

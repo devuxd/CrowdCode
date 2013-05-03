@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.history.MessageReceived;
 import com.crowdcoding.dto.history.PropertyChange;
@@ -22,7 +23,6 @@ import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
-import com.crowdcoding.util.Pair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -506,6 +506,21 @@ public class Function extends Artifact
 
 		// Save the entity again to the datastore		
 		ofy().save().entity(this).now(); 
+		
+		// Update or create tests for any mocks
+		for (MockDTO mockDTO : dto.mocks)
+		{
+			// Is there already a simple test / mock for this function with these inputs?
+			Test test = Test.findSimpleTestFor(mockDTO.functionName, mockDTO.inputs, project);			
+			
+			// If so, update it.
+			// Otherwise, create a new test
+			if (test != null)
+				test.setSimpleTestOutput(mockDTO.expectedOutput, project);
+			else
+				test = new Test(Function.lookupFunction(mockDTO.functionName, project), 
+						mockDTO.inputs, mockDTO.expectedOutput, project);
+		}		
 		
 		lookForWork(project);
 	}

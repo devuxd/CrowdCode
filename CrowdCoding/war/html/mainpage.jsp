@@ -227,8 +227,6 @@
     
     function submit(formData)
     {
-    	debugger;
-    	
     	var stringifiedData = JSON.stringify( formData );
     	
 		$.ajax({

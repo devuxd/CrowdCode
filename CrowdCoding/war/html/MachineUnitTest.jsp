@@ -77,7 +77,7 @@
 			{
 				arrayOfTests[p] = arrayOfTests[p].replace(/\n/g,"");
 				var timedOut = true;
-				//console.log(arrayOfTests);
+				console.log(arrayOfTests);
 				var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + arrayOfTests[p];
 				var lintResult = JSHINT(getUnitTestGlobals()+lintCheckFunction,getJSHintGlobals());
 				var errors = checkForErrors(JSHINT.errors);
