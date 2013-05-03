@@ -34,7 +34,7 @@
 		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;				
 		
 		// Load test data
-		var fullDescription = <%=function.getDescriptionDTO().json() %>; 
+		var fullDescription = <%=function.getDescriptionDTO().json() %>; 		
 		var paramNames = fullDescription.paramNames;
 		var codeBoxCode = '<%= function.getEscapedFullDescription() %>';
 		

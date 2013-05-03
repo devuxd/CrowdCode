@@ -5,6 +5,7 @@
 <%@ page import="com.crowdcoding.Project"%>
 <%@ page import="com.crowdcoding.Worker"%>
 <%@ page import="com.crowdcoding.microtasks.DebugTestFailure"%>
+<%@ page import="com.crowdcoding.artifacts.Test"%>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil"%>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@ page import="java.io.StringWriter"%>
@@ -626,6 +627,20 @@
 	<br><br><form id="sketchForm" action="">
 		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
+		
+	<script>
+	
+		$(document).ready(function()
+		{
+			var mockData = JSON.parse('<%= Test.allMocksInSystemEscaped(project) %>');
+			loadMocks(mockData.mocks);
+		});
+
+	
+	
+	</script>	
+		
+		
 		
 		
 		

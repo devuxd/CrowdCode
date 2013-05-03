@@ -5,11 +5,14 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.MockDTO;
+import com.crowdcoding.dto.MocksDTO;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.history.PropertyChange;
-import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.WriteTest;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -26,7 +29,7 @@ public class Test extends Artifact
 	@Load private Ref<Function> function;
 
 	private String code; 	
-	private boolean hasSimpleTest;
+	@Index private boolean hasSimpleTest;
 	// string that uniquely describes what the simple test tests. Null for tests that don't have a simple test.
 	@Index private String simpleTestKey;		
 	private List<String> simpleTestInputs = new ArrayList<String>();
@@ -43,6 +46,20 @@ public class Test extends Artifact
 		else
 			return testRef.get();
 	}
+	
+	// Returns a JSON string (in MockDTO format), escaped for Javascriptt
+	public static String allMocksInSystemEscaped(Project project)
+	{
+		List<MockDTO> mockDTOs = new ArrayList<MockDTO>();
+		Query<Test> simpleTests = ofy().load().type(Test.class).ancestor(project.getKey()).filter(
+				"hasSimpleTest", true).filter("isImplemented", true);
+		for (Test simpleTest : simpleTests)		
+			mockDTOs.add(new MockDTO(simpleTest.getFunction().getName(), simpleTest.simpleTestInputs, 
+					simpleTest.simpleTestOutput));
+
+		MocksDTO mocksDTO = new MocksDTO(mockDTOs);
+		return StringEscapeUtils.escapeEcmaScript(mocksDTO.json());
+	}	
 	
 	// Constructor for deserialization
 	protected Test()
@@ -62,12 +79,13 @@ public class Test extends Artifact
 		this.code = generateDefaultUnitTest(function);
 
 		ofy().save().entity(this).now();
+		function.addTest(this);
 		queueMicrotask(new WriteTest(this, project), project);
 		
 		project.historyLog().endEvent();
 	}	
 	
-	public Test(Function function, List<String> inputs, String output, Project project)
+	public Test(Function function, List<String> inputs, String output, String code, Project project)
 	{
 		super(project);	
 
@@ -77,9 +95,13 @@ public class Test extends Artifact
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.description = "";
 		this.hasSimpleTest = true;
-		this.code = generateDefaultUnitTest(function);
+		this.code = code;
+		this.simpleTestInputs = inputs;
+		this.simpleTestOutput = output;
+		this.simpleTestKey = generateSimpleTestKey(function.getName(), inputs);
 
 		ofy().save().entity(this).now();
+		function.addTest(this);
 		
 		// The test is already fully implemented. It just needs to be run.
 		project.requestTestRun();
@@ -140,6 +162,8 @@ public class Test extends Artifact
 	public void setSimpleTestOutput(String simpleTestOutput, Project project)
 	{
 		this.simpleTestOutput = simpleTestOutput;
+		ofy().save().entity(this).now();
+		
 		project.requestTestRun();
 	}
 	

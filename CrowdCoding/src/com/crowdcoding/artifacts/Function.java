@@ -231,7 +231,14 @@ public class Function extends Artifact
 	{
 		return pseudoCalls.contains(pseudoCall);
 	}
-			
+	
+	// Adds the specified test for this function
+	public void addTest(Test test)
+	{
+		tests.add((Ref<Test>) Ref.create(test.getKey()));
+		ofy().save().entity(this).now();	
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////
 	//  PRIVATE CORE FUNCTIONALITY
 	//////////////////////////////////////////////////////////////////////////////
@@ -411,12 +418,9 @@ public class Function extends Artifact
 		for (String testDescription : testCases)
 		{
 			Test test = new Test(testDescription, this, project);
-			tests.add((Ref<Test>) Ref.create(test.getKey()));
 		}
-		
-		ofy().save().entity(this).now();			
 	}
-		
+	
 	public void sketchCompleted(FunctionDTO dto, Project project)
 	{
 		microtaskOutCompleted();
@@ -496,7 +500,8 @@ public class Function extends Artifact
 		{
 			// creates a disputed test case
 			tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
-			onWorkerEdited(dto, project);
+			
+			// Since there was an issue, ignore any code changes they may have submitted.			
 		} else { //at present, reaching here means all tests passed.
 			if(!this.code.trim().equals(dto.code.trim()))
 			{ //integrate the new changes
@@ -519,7 +524,7 @@ public class Function extends Artifact
 				test.setSimpleTestOutput(mockDTO.expectedOutput, project);
 			else
 				test = new Test(Function.lookupFunction(mockDTO.functionName, project), 
-						mockDTO.inputs, mockDTO.expectedOutput, project);
+						mockDTO.inputs, mockDTO.expectedOutput, mockDTO.code, project);
 		}		
 		
 		lookForWork(project);
