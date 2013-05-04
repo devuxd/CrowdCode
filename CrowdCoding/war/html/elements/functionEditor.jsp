@@ -10,7 +10,7 @@
  	
  	// If we are editing the main function, make the full description readonly
 	if (functionName == 'main')
- 		makeFullDescriptionReadOnly();
+		makeHeaderReadOnly();
  	
  	// Find the list of all function names elsewhere in the system
  	var functionNames = buildFunctionNames();
@@ -286,9 +286,9 @@
 					calleeNames: calleeNames};
 	}
 	
-	// Makes the description and header of the function readonly (not editable in CodeMirror)
+	// Makes the header of the function readonly (not editable in CodeMirror)
 	// Note: the code must be loaded into CodeMirror before this function is called.
-	function makeFullDescriptionReadOnly()
+	function makeHeaderReadOnly()
 	{
 	 	myCodeMirror.save();	 			
  		var text = $("#code").val();		
@@ -296,8 +296,8 @@
 		
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		myCodeMirror.getDoc().markText({line: 0, ch: 0}, 
-				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column}, 
+		myCodeMirror.getDoc().markText({line:  ast.body[0].body.loc.start.line - 2, ch: 0}, 
+				{ line: ast.body[0].body.loc.start.line - 1, ch: 1}, 
 				{ readOnly: true }); 
 	}
 </script>

@@ -93,15 +93,14 @@ public class Function extends Artifact
 		this.name = "main";
 		this.paramNames.add("userInput");
 		this.description = "/** \n" +
-				           " * Main function for a commandline application. Given a userInput string \n" +
-				           " * describing an action to take, executes the action and returns the \n" +
-				           " * result as a String. \n" +
+				           " * Empty main function of a commandline application. Takes a Javascript \n" +
+				           " * object as an input and returns a Javascript object as an output. \n" +
 				           " * \n" +
-				           " * @param {String} userInput - user input describing the action to take \n" + 
-				           " * @return {String} - output from executing the action \n" +
+				           " * @param {Object} input - user input describing the action to take \n" + 
+				           " * @return {Object} - output from executing the action \n" +
 				           " */\n";
-		this.header = "function main(userInput)";
-		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n\n}";
+		this.header = "function main(input)";
+		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}";
 		this.hasBeenDescribed = true;
 		
 		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);

@@ -99,8 +99,8 @@
 	<span class="pseudoCall">pseudocall</span> - a line or portion of a line beginning with 
 	<span class="pseudoCall">'//!'</span>.
 	Update the description and header to reflect the function's actual behavior - the crowd will
-	refactor callers and tests to match the new behavior (but you can't change the description
-	or signature of main).<BR><BR>
+	refactor callers and tests to match the new behavior. (Except if you are editing the function "main" - 
+    you can't change this function's name or number of parameters, but you can still change its description).<BR><BR>
 	
 	Show example<BR>
 	
