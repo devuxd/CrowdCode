@@ -52,7 +52,7 @@
    			// Generate input elements for the simple test editor
    			$.each(paramNames, function(index, value) 
    			{
-   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<input type="text" class="input-xlarge"><BR>');
+   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<textarea></textarea><BR>');
    			});   
    			
    			// Track whether we are currently in simple or advanced test writing mode
@@ -123,8 +123,8 @@
 					if (index >= paramNames.length)
 						return false;
 					
-					// Get the corresponding input element for this param and populate it
-					$('#parameterValues').children('input').get(index).value = value;
+					// Get the corresponding textArea element for this param and populate it
+					$('#parameterValues').children('textarea').get(index).value = value;
 				});
 				$('#expectedOutput').val(testData.simpleTestOutput);
 			}
@@ -144,7 +144,7 @@
 			
 			if (simpleModeActive)
 			{			
-				$.each($('#parameterValues').children('input'), function(index, inputElement)
+				$.each($('#parameterValues').children('textarea'), function(index, inputElement)
 				{
 					simpleTestInputs.push(inputElement.value);
 				});						
@@ -224,7 +224,7 @@
 			<b>Parameter Values</b><BR>
 				<div id="parameterValues"></div>
 			<b>Expected Output</b><BR>
-				<input type="text" id="expectedOutput" class="input-xlarge"><BR>
+				<textarea id="expectedOutput"></textarea><BR>
 		  </div>
 		  <div class="tab-pane" id="advancedTest">
 			  <span class="reference">
