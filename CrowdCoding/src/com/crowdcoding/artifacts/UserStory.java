@@ -38,16 +38,23 @@ public class UserStory extends Artifact
 		ofy().save().entity(this).now();
 	}
 	
-	// Constructor to create a user story with prespecified text.
-	public UserStory(String text, Project project)
+	// Constructor to create an empty UserStory and do nothing
+	private UserStory(Project project, boolean ignoredFlag)
 	{	
 		super(project);		
-		submitInitialText(text, project);
 	}
+	
+	// Creates a user story with the specified text, returning a microtask to start working on
+	public static Microtask CreateUserStory(String text, Project project)
+	{
+		UserStory userStory = new UserStory(project, true);
+		return userStory.submitInitialText(text, project);
+	}	
 	
 	// Sets the text for the user story. This transitions the state of the artifact from
 	// empty (waiting for text) to has initial text.
-	public void submitInitialText(String text, Project project)
+	// The function returns a microtask that can be started working on.
+	public Microtask submitInitialText(String text, Project project)
 	{
 		this.text = text;
 		this.microtask = null;
@@ -58,9 +65,11 @@ public class UserStory extends Artifact
 		mainFunction.queueMicrotask(new WriteFunction(mainFunction, this, project), project);
 		
 		// And create tests to test this functionality
-		new WriteTestCases(mainFunction, this, project);
+		Microtask microtask = new WriteTestCases(mainFunction, this, project);
 		
 		ofy().save().entity(this).now();
+		
+		return microtask;
 	}
 	
 	public String getText()

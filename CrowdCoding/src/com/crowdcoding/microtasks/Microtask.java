@@ -86,8 +86,19 @@ public /*abstract*/ class Microtask
 			// A microtask was found!
 			microtask = potentialMicrotask;
 			break;			
-		}		
+		}
 		
+		// If there are no more microtasks currently available, ask the project to start
+		// work on another user story.
+		if (microtask == null)
+		{
+			// If the project starts a new user story, it will give us a microtask to work on.
+			// If it returns null, give up and return null.
+			microtask = project.startAUserStory();
+			if (microtask == null)
+				return null;
+		}
+				
 		// Functionality to crowdsource a userStory if there is nothing to do. This behavior
 		// is currently disabled.
 		/*if (microtask == null)
@@ -97,9 +108,6 @@ public /*abstract*/ class Microtask
 			if (microtask == null)
 				throw new RuntimeException("Error - creating a user story did not create a microtask as expected");			
 		}*/
-		
-		if (microtask == null)
-			return null;
 
 		microtask.worker = Ref.create(crowdUser.getKey());
 		microtask.assigned = true;
