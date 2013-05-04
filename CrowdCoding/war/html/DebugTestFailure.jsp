@@ -85,7 +85,6 @@
 		
 		var mocks = {};
 		
-		$("#sketchForm").children("input").attr('disabled', 'false');
 		$('#sketchForm').submit(function() 
 		{
 			var result = checkAndCollectCode();
@@ -100,13 +99,7 @@
 	
 				// TODO: we are checking JSHint errors twice 
 				// (once in checkAndCollectCode and a second time below...)				
-				// And we are not checking AST errors before we run the unit tests.
-				
-				test1(false);
-				if($("#sketchForm").children("input").attr('disabled') == 'disabled')
-				{
-					return false;
-				}						
+				// And we are not checking AST errors before we run the unit tests.					
 				
 				// Add the mocks to the code pieces
 				var codePieces = result.code;
@@ -391,12 +384,7 @@
 						 	console.log("iteraton" + p + "size" + arrayOfTests.length);
 						    if(details.failed > 0)
 						    {
-						     	$("#sketchForm").children("input").attr('disabled', 'false');
 						     	allTestPassed = false;
-						    }
-						    else if(details.failed == 0 && allTestPassed)
-						    {
-						     	$("#sketchForm").children("input").removeAttr("disabled");
 						    }
 						    javaTestCases = resultOfTest;	
 							i++;
@@ -424,7 +412,6 @@
 					htmlContent += " Syntax Error: </br> " + errors + " </br>" ;
 					htmlContent += "</p></div>";
 					i++;
-					$("#sketchForm").children("input").attr('disabled', 'false');
 					allTestPassed = false;
 				
 				},timeOutPeriod);
@@ -629,19 +616,12 @@
 	</form>
 		
 	<script>
-	
 		$(document).ready(function()
 		{
 			var mockData = JSON.parse('<%= Test.allMocksInSystemEscaped(project) %>');
 			loadMocks(mockData.mocks);
 		});
-
-	
-	
 	</script>	
-		
-		
-		
 		
 		
 <div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
