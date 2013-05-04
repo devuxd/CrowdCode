@@ -93,8 +93,8 @@ public class Function extends Artifact
 		this.name = "main";
 		this.paramNames.add("userInput");
 		this.description = "/** \n" +
-				           " * Empty main function of a commandline application. Takes a Javascript \n" +
-				           " * object as an input and returns a Javascript object as an output. \n" +
+				           " * Empty main function of a commandline application. Takes an  \n" +
+				           " * object as an input and returns an object as an output. \n" +
 				           " * \n" +
 				           " * @param {Object} input - user input describing the action to take \n" + 
 				           " * @return {Object} - output from executing the action \n" +

@@ -1,5 +1,6 @@
 <script>
-	var myCodeMirror = CodeMirror.fromTextArea(code, { autofocus: true, indentUnit: 4, indentWithTabs: true });
+	var myCodeMirror = CodeMirror.fromTextArea(code, 
+			{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
 	var doc = myCodeMirror.getDoc();
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	
 	doc.setValue(editorCode);

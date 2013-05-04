@@ -18,7 +18,7 @@ function checkForErrors(e)
 //				continue;
 //			}
 //			debugger;
-			stringOfErrors += e[i].reason + "</br>";
+			stringOfErrors += "Line " + e[i].line + ": " + e[i].reason + "</br>";
 			anyErrors = true;
 //		}
 	}
