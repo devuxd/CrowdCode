@@ -165,7 +165,7 @@
 				code = 'equal(<%= function.getName() %>(';
 				
 				// Add a parameter for each input element ni the parameterValues div				
-				$.each($('#parameterValues').children('input'), function(index, inputElement)
+				$.each($('#parameterValues').children('textarea'), function(index, inputElement)
 				{
 					// Add a comma for any but the first param
 					if (index != 0)

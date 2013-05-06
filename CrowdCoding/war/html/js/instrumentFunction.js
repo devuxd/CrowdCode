@@ -62,10 +62,7 @@
 	//Generate instrumented callees
 	function instrumentCallees()
 	{
-		var wrapperFunctionBodies = "";
-		console.log("logging calleeList:");
-		console.log(calleeList);
-		
+		var wrapperFunctionBodies = "";		
 		$.each(calleeList, function(i,calleeName)
 		{
 			var wrapperName = calleeName + "_Wrapper";
@@ -75,14 +72,9 @@
 			var wrapperBody = 
 			"function "+ wrapperName+"()" + 
 			"{ " +
-				" var returnValue;" + 
-			    " var mockFor = hasMockFor('" + calleeName + "', arguments, mocks);" + 
-			    " if (mockFor.hasMock) " +
-			    "     returnValue = mockFor.mockOutput;" + 
-			    " else " +
-				"     returnValue = " + calleeName + ".apply(null,arguments); " +
-				" logCall("+ "'"+calleeName + "'"+",arguments,returnValue, mocks); " +
-				" return returnValue;" +
+				" var returnValue = " + calleeName + ".apply(null,arguments); " +
+				" logCall("+ "'" + calleeName + "'" + ",arguments,returnValue, mocks); " +
+				" return returnValue;" +        // JSON.parse(JSON.stringify
 			"} ";			
 			wrapperFunctionBodies = wrapperFunctionBodies + wrapperBody;
 		});
@@ -107,7 +99,7 @@
 					toString: function(){ return JSON.stringify(parameters); }  };	
 		
 		inputsMap[args] = { returnValue: returnValue, parameters:parameters};
-		calleeMap[functionName] = inputsMap;		
+		calleeMap[functionName] = inputsMap;
 	}
 	
 	// Checks if there is a mock for the function and parameters. Returns values in form
@@ -129,4 +121,34 @@
 			}			
 		}
 		return { hasMock: hasMock, mockOutput: mockOutput };
+	}
+	
+	// Loads the mock datastructure using the data found in the mockData - an object in MocksDTO format
+	function loadMocks(mockData)
+	{
+		$.each(mockData, function(index, storedMock)
+		{
+			// If there is not already mocks for this function, create an entry
+			var functionMocks;
+			if (mocks.hasOwnProperty(storedMock.functionName))
+			{
+				functionMocks = mocks[storedMock.functionName];
+			}
+			else
+			{
+				functionMocks = {};
+				mocks[storedMock.functionName] = functionMocks;
+			}
+			
+			// We currently have the inputs in the format [x, y, z]. To build the inputs key,
+			// we need them in the format {"0": 1}
+			var inputsKey = {};
+			$.each(storedMock.inputs, function(index, input)
+			{
+				inputsKey[JSON.stringify(index)] = JSON.parse(input);				
+			});
+			
+			functionMocks[JSON.stringify(inputsKey)] = { inputs: storedMock.inputs, 
+					      output: JSON.parse(storedMock.expectedOutput) };
+		});
 	}

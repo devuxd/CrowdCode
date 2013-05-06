@@ -189,17 +189,21 @@
 	// iff there are no errors.
  	function doErrorCheck()
 	{
+		console.log("Starting error check");
+		
 	 	myCodeMirror.save();	 			
  		var text = $("#code").val();
 		if(!hasErrorsHelper(text))
 		{
+			console.log("Passed jshint. Now looking for AST errors.");
+			
 			// Code is syntactically valid and should be able to build an ast.
 			// Build the ast and do additional checks using the ast.
 			var ast = esprima.parse(text, {loc: true});			
 			if(!hasASTErrors(text, ast))
-				return false;
+				return true;
 		}		
-		return true;
+		return false;
 	}
 
 	// Returns true iff there are errors
@@ -207,10 +211,12 @@
  	{
 		var functionCode = allTheFunctionCode + " "  + text;
 		var errors = "";
-	    console.log(functionCode);
+	    console.log("linting on: " + functionCode);
 	    
 	    var lintResult = JSHINT(functionCode,getJSHintGlobals());
 		console.log(JSHINT.errors);
+		console.log("lintResult: " + JSON.stringify(lintResult));
+		
 		if(!lintResult)
 		{
 			var errors = checkForErrors(JSHINT.errors);

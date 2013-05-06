@@ -5,6 +5,7 @@
 <%@ page import="com.crowdcoding.Project"%>
 <%@ page import="com.crowdcoding.Worker"%>
 <%@ page import="com.crowdcoding.microtasks.MachineUnitTest"%>
+<%@ page import="com.crowdcoding.artifacts.Test"%>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil"%>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@ page import="java.io.StringWriter"%>
@@ -13,17 +14,15 @@
 <%
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
-	Worker crowdUser = Worker.Create(UserServiceFactory
-	.getUserService().getCurrentUser(), project);
-	MachineUnitTest microtask = (MachineUnitTest) crowdUser
-	.getMicrotask();
+	Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
+	MachineUnitTest microtask = (MachineUnitTest) crowdUser.getMicrotask();
 	ObjectMapper mapper = new ObjectMapper();
 	Writer strWriter = new StringWriter();
 	// get all test cases in system
 	mapper.writeValue(strWriter, microtask.getAllTestCodeInSystem());
 	String testCases = strWriter.toString();
 	// get all active functions
-	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctions(null, project) + "'";
+	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctionsMocked(null, project) + "'";
 	String allFunctionCodeInSystemHeader = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
 %>
 
@@ -31,6 +30,7 @@
 	<div id="microtask">
 		<script src="/include/bootbox.min.js"></script>
 		<script src="/include/spin.js"></script>
+		<script src='/html/js/instrumentFunction.js'></script>
 		
 		<script>
 			window.onerror = function(err, url, lineNumber) {  
@@ -46,6 +46,11 @@
 	    var javaTestCases = new Array();
 	    var allPassedTestCases = new Array();
 	    var allFailedTestCases = new Array();
+	    
+		var mocks = {};
+		var mockData = JSON.parse('<%= Test.allMocksInSystemEscaped(project) %>');
+		loadMocks(mockData.mocks);
+	    
 	    $("#machineSubmit").children("input").attr('disabled', 'false');
 		$('#machineSubmit').submit(function() {
 			debugger;
@@ -56,16 +61,14 @@
 			submit(collectFormDataForNormal(allFailedTestCases));
 			return false;
 		});
-		
-		
+			
 		function test1(isFirstTime)
 		{
 			debugger;
 			javaTestCases = <%=testCases%>;
 			runUnitTests(javaTestCases,"TEST 1",isFirstTime);
 		}
-
- 					
+					
 	function runUnitTests(arrayOfTests, functionName,isFirstTime)
 	{
 		debugger;
@@ -78,12 +81,13 @@
 				arrayOfTests[p] = arrayOfTests[p].replace(/\n/g,"");
 				var timedOut = true;
 				console.log(arrayOfTests);
-				var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + arrayOfTests[p];
-				var lintResult = JSHINT(getUnitTestGlobals()+lintCheckFunction,getJSHintGlobals());
-				var errors = checkForErrors(JSHINT.errors);
+				//var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + arrayOfTests[p];
+				//var lintResult = JSHINT(getUnitTestGlobals()+lintCheckFunction,getJSHintGlobals());
+				//var errors = checkForErrors(JSHINT.errors);
+				var errors = "";
+				
 				var testResult;
-				console.log(errors);
-				// no errors by jshint
+				
 				if(errors == "")
 				{
 					var testCases = "";
@@ -101,17 +105,14 @@
 					  timedOut = false;
 					  console.log(e.data);
 				    }
-				    // var b = "hello there";
-				    // worker.postMessage(b); // Start the worker.
 				
 					function stop()
 					{
 						worker.terminate();
 					}
 					// load the script
-					worker.postMessage({url: document.location.origin});
-					// load the test cases
-					worker.postMessage({number: p, testCase: testCases});
+					worker.postMessage({url: document.location.origin});					
+					worker.postMessage({number: p, testCase: testCases, mocks: mocks});
 					setTimeout(function(){stop();},1000);
 					console.log(done);
 					setTimeout(function(){
@@ -205,13 +206,15 @@ var spinner = new Spinner(opts).spin(target);
 			      url = url.substring(0, index);
 			     }
 			    importScripts(url + '/html/assertionFunctions.js');
+			    importScripts(url + '/html/js/instrumentFunction.js');
 		 }
 		 else
 		 {
 		   		// Rest of your worker code goes here.
 				try
 				{
-					eval(data.testCase);
+					var finalCode = 'var mocks = ' + JSON.stringify(data.mocks) + '; ' + data.testCase;
+					eval(finalCode);
 					for(var index = 0; index < results.length; index++)
 					{
 						//self.postMessage("this is from worker" + results[index].message + " " + results[index].actual + results[index].expected + results[index].result + "is it passed" + testCasedPassed);

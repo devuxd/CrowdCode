@@ -111,35 +111,6 @@
 	    return mockData;
 	}
 	
-	// Loads the mock datastructure using the data found in the mockData - an object in MocksDTO format
-	function loadMocks(mockData)
-	{
-		$.each(mockData, function(index, storedMock)
-		{
-			// If there is not already mocks for this function, create an entry
-			var functionMocks;
-			if (mocks.hasOwnProperty(storedMock.functionName))
-			{
-				functionMocks = mocks[storedMock.functionName];
-			}
-			else
-			{
-				functionMocks = {};
-				mocks[storedMock.functionName] = functionMocks;
-			}
-			
-			// We currently have the inputs in the format [x, y, z]. To build the inputs key,
-			// we need them in the format {"0": 1}
-			var inputsKey = {};
-			$.each(storedMock.inputs, function(index, input)
-			{
-				inputsKey[JSON.stringify(index)] = JSON.parse(input);				
-			});
-			
-			functionMocks[JSON.stringify(inputsKey)] = { inputs: storedMock.inputs, 
-					      output: JSON.parse(storedMock.expectedOutput) };
-		});
-	}
 	
 	// Given a function, an array of inputs, and an output, builds a string of test code
 	// to test this

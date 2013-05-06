@@ -178,6 +178,23 @@ public class Function extends Artifact
 		return code;
 	}
 	
+	// Gets a mock implementation that checks to see if there are any mocks
+	// for the specified function.
+	public String getMockCode()
+	{
+		StringBuilder mockCode = new StringBuilder();
+		mockCode.append("{ var returnValue; ");
+		mockCode.append("var params = arguments; ");
+		mockCode.append("var mockFor = hasMockFor('" + name + "', arguments, mocks); ");
+		mockCode.append("if (mockFor.hasMock) ");
+		mockCode.append("     returnValue = mockFor.mockOutput; ");
+		mockCode.append("else ");
+		mockCode.append("     returnValue = " + name + "aaaActualIMP.apply(null, params); "); // JSON.parse(JSON.stringify(
+	//	mockCode.append("alert( JSON.stringify(JSON.parse(JSON.stringify(params)))); ");
+		mockCode.append("return returnValue; }");
+		return mockCode.toString();
+	}
+	
 	// gets the body of the function (including braces)
 	public String getEscapedCode()
 	{
