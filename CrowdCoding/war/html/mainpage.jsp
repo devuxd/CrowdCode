@@ -164,6 +164,7 @@
 <script src='/include/escodegen.browser.js'></script>
 <script src="/include/diff/diff_match_patch.js"></script>
 <script src="/include/diff/jquery.pretty-text-diff.js"></script>
+<script src="/html/js/reminder.js"></script>
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
@@ -268,6 +269,7 @@
   	    	$('#microtask').addClass('animated rollIn');  		
   		});
     	resetSubmitButtons();	
+    	resetTimer();
 	}
 	
 	function updateLeaderboardDisplay(leaderboard)
@@ -311,5 +313,20 @@
 	}
 	
 </script>
+
+
+<div id="popUpReminder" class="modal hide fade" tabindex="-1"
+		role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="logout-header">
+			<button type="button" class="close" data-dismiss="modal"
+				aria-hidden="true"></button>
+			<h3 id="logoutLabel">You have been working fo</h3>
+		</div>
+		<div class="modal-body"></div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
 </body>
 </html>
