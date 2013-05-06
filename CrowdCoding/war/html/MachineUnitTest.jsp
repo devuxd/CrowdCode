@@ -23,7 +23,7 @@
 	String testCases = strWriter.toString();
 	// get all active functions
 	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctionsMocked(null, project) + "'";
-	String allFunctionCodeInSystemHeader = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
+	String allFunctionCodeInSystemHeader = "'" + FunctionHeaderUtil.getDescribedHeadersAndMocks(null, project) + "'";
 %>
 
 <body>
@@ -81,10 +81,13 @@
 				arrayOfTests[p] = arrayOfTests[p].replace(/\n/g,"");
 				var timedOut = true;
 				console.log(arrayOfTests);
-				//var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + arrayOfTests[p];
-				//var lintResult = JSHINT(getUnitTestGlobals()+lintCheckFunction,getJSHintGlobals());
-				//var errors = checkForErrors(JSHINT.errors);
-				var errors = "";
+				var extraDefs = "var mocks = {}; function hasMockFor(){} function printDebugStatement (){} ";
+				
+				var lintCheckFunction = extraDefs + allTheFunctionCode + arrayOfTests[p];
+				console.log("MachineUnitTest linting on: " + lintCheckFunction);
+				var lintResult = JSHINT(getUnitTestGlobals()+lintCheckFunction,getJSHintGlobals());
+				var errors = checkForErrors(JSHINT.errors);
+				console.log("errors: " + JSON.stringify(errors));
 				
 				var testResult;
 				

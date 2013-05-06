@@ -195,6 +195,19 @@ public class Function extends Artifact
 		return mockCode.toString();
 	}
 	
+	// Gets the special header used for the actual implementation when running with mocks
+	public String getMockHeader()
+	{
+		StringBuilder b = new StringBuilder();
+		b.append(" function " + name + "aaaActualIMP");
+		
+		// Gets the params string out of the header by looking for the first instance of a paren (which
+		// must be the start of the functions params)
+		b.append(header.substring(header.indexOf("(")));
+		
+		return b.toString();
+	}
+	
 	// gets the body of the function (including braces)
 	public String getEscapedCode()
 	{

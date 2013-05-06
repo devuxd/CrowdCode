@@ -86,12 +86,7 @@ public class FunctionHeaderUtil
 			b.append(function.getHeader() + StringEscapeUtils.escapeEcmaScript(function.getMockCode()) + " ");
 			
 			// 2. Insert the header with aaaActualIMP and the actual body (unless it's not yet written)			
-			b.append(" function " + function.getName() + "aaaActualIMP");
-			
-			// Gets the params string out of the header by looking for the first instance of a paren (which
-			// must be the start of the functions params)
-			String header = function.getHeader();
-			b.append(header.substring(header.indexOf("(")));
+			b.append(function.getMockHeader());
 			
 			// If the function is written, use the actual code. Otherwise, use the unimplemented body.
 			if (function.isWritten())
@@ -114,8 +109,7 @@ public class FunctionHeaderUtil
 //		a = a.substring(0, a.length()-1);
 //		System.out.println(a);
 	} 
-	
-	
+		
 	
 		
 	public static String getDescribedFunctionHeaders(Function currentFunctionIn, Project project)
@@ -140,6 +134,34 @@ public class FunctionHeaderUtil
 		return b.toString();
 	}
 	
+	// For every described function in the system (except currentFunctionIn), returns
+	// a header for the function and the function's mock header
+	public static String getDescribedHeadersAndMocks(Function currentFunctionIn, Project project)
+	{
+		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey())
+				.filter("hasBeenDescribed", true).list();
+		StringBuilder b = new StringBuilder();
+		for(Function function : listOFunctions)
+		{
+			// if current function we are debugging equals
+			// the loop then skip do not add again because 
+			// current function's code may be different since
+			// user is editing it
+			if(function.equals(currentFunctionIn))
+			{
+				continue;
+			}
+			b.append(function.getHeader());
+			b.append("{");
+			b.append("} ");
+			
+			b.append(function.getMockHeader());
+			b.append("{");
+			b.append("} ");
+		}
+		return b.toString();				
+	}
+		
 	// Get full escaped descriptions for every described function in the system formatted as
 	// a string in FullDescriptionsDTO format
 	public static String getAllFullEscapedDescriptions(Project project)
