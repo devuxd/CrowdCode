@@ -32,125 +32,122 @@
 		<script src="/include/spin.js"></script>
 		<script src='/html/js/instrumentFunction.js'></script>
 		
-		<script>
-			window.onerror = function(err, url, lineNumber) {  
-			// todo: on error need to get the test case number that caused error 
-			 //save error and send to server for example.
-			console.log(err);
+<script>
+	window.onerror = function(err, url, lineNumber) {  
+		// todo: on error need to get the test case number that caused error 
+		 //save error and send to server for example.
+		console.log(err);
 	};  
-	</script>
-		<script>
-		var timeOutTime = 1500;
-		var microtaskType = 'MachineUnitTest';
-		var microtaskID = <%=microtask.getID()%>;
-	    var javaTestCases = new Array();
-	    var allPassedTestCases = new Array();
-	    var allFailedTestCases = new Array();
-	    
-		var mocks = {};
-		var mockData = JSON.parse('<%= Test.allMocksInSystemEscaped(project) %>');
-		loadMocks(mockData.mocks);
-	    
-	    $("#machineSubmit").children("input").attr('disabled', 'false');
-		$('#machineSubmit').submit(function() {
-			debugger;
-			if($("#machineSubmit").children("input").attr('disabled') == 'disabled')
-			{
-				return false;
-			}
-			submit(collectFormDataForNormal(allFailedTestCases));
-			return false;
-		});
-			
-		function test1(isFirstTime)
-		{
-			debugger;
-			javaTestCases = <%=testCases%>;
-			runUnitTests(javaTestCases,"TEST 1",isFirstTime);
-		}
-					
-	function runUnitTests(arrayOfTests, functionName,isFirstTime)
-	{
+</script>
+<script>
+	var timeOutTime = 1500;
+	var microtaskType = 'MachineUnitTest';
+	var microtaskID = <%=microtask.getID()%>;
+    var javaTestCases = <%=testCases%>;
+    var allPassedTestCases = new Array();
+    var allFailedTestCases = new Array();
+	var allTheFunctionCode = <%=allFunctionCodeInSystemHeader%> + <%=allFunctionCodeInSystem%>;
+    
+	var mocks = {};
+	var mockData = JSON.parse('<%= Test.allMocksInSystemEscaped(project) %>');
+	loadMocks(mockData.mocks);
+	
+	var worker;
+	var testRunTimeout;
+	var p = 0;
+    
+    $("#machineSubmit").children("input").attr('disabled', 'false');
+	$('#machineSubmit').submit(function() {
 		debugger;
-		var allTheFunctionCode = <%=allFunctionCodeInSystemHeader%> + <%=allFunctionCodeInSystem%>;
-		// set interval so only run it once per 1500 milliseconds
-		var p = 0;
-		var myInterval = setInterval(function(){
-			if(arrayOfTests[p] != "")
-			{
-				arrayOfTests[p] = arrayOfTests[p].replace(/\n/g,"");
-				var timedOut = true;
-				console.log(arrayOfTests);
-				var extraDefs = "var mocks = {}; function hasMockFor(){} function printDebugStatement (){} ";
-				
-				var lintCheckFunction = extraDefs + allTheFunctionCode + arrayOfTests[p];
-				console.log("MachineUnitTest linting on: " + lintCheckFunction);
-				var lintResult = JSHINT(getUnitTestGlobals()+lintCheckFunction,getJSHintGlobals());
-				var errors = checkForErrors(JSHINT.errors);
-				console.log("errors: " + JSON.stringify(errors));
-				
-				var testResult;
-				
-				if(errors == "")
-				{
-					var testCases = "";
-					// constructs the function header and puts code  from the above code window
-					testCases += allTheFunctionCode;
-					testCases += arrayOfTests[p];
-					// call the worker with test cases
-					window.URL = window.URL || window.webkiURL;
-				    var blob = new Blob([document.querySelector('#worker1').textContent]);
-				    var worker = new Worker(window.URL.createObjectURL(blob));
-				    var done = false;
-				    worker.onmessage = function(e) {
-				      console.log("Received: " + e.data);
-				      testResult = e.data;
-					  timedOut = false;
-					  console.log(e.data);
-				    }
-				
-					function stop()
-					{
-						worker.terminate();
-					}
-					// load the script
-					worker.postMessage({url: document.location.origin});					
-					worker.postMessage({number: p, testCase: testCases, mocks: mocks});
-					setTimeout(function(){stop();},1000);
-					console.log(done);
-					setTimeout(function(){
-							// If the code is unimplemented, the test neither failed nor passed. If the test
-							// did not pass or timed out, it failed. Otherwise, it passed.
-							if(!testResult.codeUnimplemented)
-							{
-								if (!testResult.passed || timedOut)
-									allFailedTestCases.push(p);
-								else
-									allPassedTestCases.push(p);
-							}
-					},timeOutTime);
-				}
-				else
-				{
-					// jshint found errors
-					testCaseNumberThatFailed = p;
-					console.log(testCaseNumberThatFailed);
-					allFailedTestCases.push(testCaseNumberThatFailed);
-				}
-			}
-			setTimeout(function(){
-			p++;
-			if(p >= arrayOfTests.length)
-			{
-			  clearInterval(myInterval);
-			  $("#machineSubmit").children("input").removeAttr("disabled");
-			  $("#machineSubmit").children("input").click();
-			}
-		   },timeOutTime+50);
-		},timeOutTime+200);
+		if($("#machineSubmit").children("input").attr('disabled') == 'disabled')
+		{
+			return false;
+		}
+		submit(collectFormDataForNormal(allFailedTestCases));
+		return false;
+	});
+		
+	function test1(isFirstTime)
+	{
+		runTest(p);
+	}
+					
+	function finishTesting()
+	{		
+		$("#machineSubmit").children("input").removeAttr("disabled");
+		$("#machineSubmit").children("input").click();
 	}
 	
+	function runTest(p)
+	{
+		// If we've run out of tests
+		if (p >= javaTestCases.length)
+			finishTesting();
+		
+		javaTestCases[p] = javaTestCases[p].replace(/\n/g,"");
+
+		var extraDefs = "var mocks = {}; function hasMockFor(){} function printDebugStatement (){} ";		
+		var lintCheckFunction = extraDefs + allTheFunctionCode + javaTestCases[p];
+		console.log("MachineUnitTest linting on: " + lintCheckFunction);
+		var lintResult = JSHINT(getUnitTestGlobals()+lintCheckFunction,getJSHintGlobals());
+		var errors = checkForErrors(JSHINT.errors);
+		console.log("errors: " + JSON.stringify(errors));
+		
+		var testResult;
+		
+		if(errors == "")
+		{
+			testRunTimeout = setTimeout(function(){stopTest(p);},1000);
+
+			var testCases = allTheFunctionCode + javaTestCases[p];
+
+			// call the worker with test cases
+			window.URL = window.URL || window.webkiURL;
+		    var blob = new Blob([document.querySelector('#worker1').textContent]);
+		    worker = new Worker(window.URL.createObjectURL(blob));
+		    worker.onmessage = function(e) 
+		    {
+			    clearTimeout(testRunTimeout);					    	
+			    console.log("Received: " + e.data);
+				processTestFinished(false, e.data);
+		    }
+		    
+			// load the script and start the worker
+			worker.postMessage({url: document.location.origin});					
+			worker.postMessage({number: p, testCase: testCases, mocks: mocks});			
+		}
+		else
+		{
+			// jshint found errors
+			testCaseNumberThatFailed = p;
+			console.log(testCaseNumberThatFailed);
+			allFailedTestCases.push(testCaseNumberThatFailed);
+		}
+	}
 	
+	function stopTest()
+	{
+		worker.terminate();
+		processTestFinished(true, null);
+	}
+		
+	function processTestFinished(testStopped, testResult)
+	{
+		// If the code is unimplemented, the test neither failed nor passed. If the test
+		// did not pass or timed out, it failed. Otherwise, it passed.
+		if(!testResult.codeUnimplemented)
+		{
+			if (testStopped || !testResult.passed)
+				allFailedTestCases.push(p);
+			else
+				allPassedTestCases.push(p);
+		}
+		
+		// Increment the test and run the next one.
+		p++;
+		runTest(p);		
+	}
+		
 	function collectFormDataForNormal()
 	{
 			var formData = { passingTestCases: allPassedTestCases, failingTestCases: allFailedTestCases };
@@ -163,7 +160,7 @@
 			</form>
 		</div>
 		<script>
-    	debugger;
+
 	 	test1(true);
 	 </script>
 		<div style='margin-top: 30%;' id='foo'></div>
@@ -199,8 +196,7 @@ var spinner = new Spinner(opts).spin(target);
     self.onmessage = function(e) 
     {
     	var data = e.data;
-     	//self.postMessage(e.data);
-		if (data.url)
+ 		if (data.url)
 		{
 			    var url = data.url;
 			    var index = url.indexOf('index.html');
@@ -235,7 +231,6 @@ var spinner = new Spinner(opts).spin(target);
 					if (err instanceof NotImplementedException)					
 						codeUnimplemented = true;	
 
-					//self.postMessage(err.message);
 				}
 				self.postMessage({number:data.number, passed:testCasedPassed, codeUnimplemented: codeUnimplemented});
 		 }
