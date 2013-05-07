@@ -10,6 +10,7 @@
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="java.io.StringWriter" %>
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 <%@ page import="java.io.Writer" %>
 <%
 	String projectID = (String) request.getAttribute("project");
@@ -70,8 +71,8 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
 	<div id="userStoryPrompt" style="display: none">
-		Can you figure out how this user story should be implemented: <BR>
-		<span class="label label-inverse"><%= microtask.getUserStoryText() %></span><BR><BR>
+		Can you figure out how this user story should be implemented? <BR><BR>
+		<div class="alert alert-success"><%= microtask.getUserStoryText() %></div>
 		
 		The main function - the entrypoint into the application - is below. Sketch a design
 		of this user story by editing the function. Use <span class="pseudoCall">pseudocalls</span> 
