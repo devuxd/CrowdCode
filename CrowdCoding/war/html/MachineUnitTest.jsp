@@ -122,11 +122,16 @@
 			testCaseNumberThatFailed = p;
 			console.log(testCaseNumberThatFailed);
 			allFailedTestCases.push(testCaseNumberThatFailed);
+			
+			p++;
+			runTest(p);	
 		}
 	}
 	
 	function stopTest()
 	{
+		console.log("Hit timeout in MachineUnit test on test " + p);
+		
 		worker.terminate();
 		processTestFinished(true, null);
 	}

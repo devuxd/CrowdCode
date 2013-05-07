@@ -66,7 +66,7 @@
 			};  
 	</script>
 	<script>
-		var timeOutPeriod = 1500;
+		var timeOutPeriod = 1000;
 		var microtaskType = 'DebugTestFailure';
 		var microtaskID = <%= microtask.getID() %>;
 		
@@ -464,7 +464,7 @@
 				 	$("#foo").css("display","none");
 				}
 			},timeOutPeriod);
-		},timeOutPeriod+200);
+		},timeOutPeriod+50);
 	}
 	
 	// for debuggin purposes
