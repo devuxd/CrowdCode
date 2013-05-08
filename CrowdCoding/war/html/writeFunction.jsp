@@ -75,9 +75,10 @@
 		<div class="alert alert-success"><%= microtask.getUserStoryText() %></div>
 		
 		The main function - the entrypoint into the application - is below. Sketch a design
-		of this user story by editing the function. Use <span class="pseudoCall">pseudocalls</span> 
-		to describe behavior that
-		should be implemented in another function. Try not to break other user stories that may already
+		of this user story by editing the function's description (the comments above the function header)
+		and sketching an implementation. Note that you should NOT implement everything in main, but instead
+		use pseudocalls (see below) to ask the crowd to create new functions or reuse existing functionality. 
+		Try not to break other user stories that may already
 		be implemented. But don't worry too much - it'll all be tested.<BR><BR>
 	</div>
 	
@@ -94,9 +95,9 @@
 		<span id="diff" class="diff"></span><BR><BR>
 	</div>	
 	
-	If you're not sure how to do something, indicate a line or portion 
+	If you're not yet exactly sure how to do something, indicate a line or portion 
 	of a line as <span class="pseudoCode">pseudocode</span> by beginning it with <span class="pseudoCode">'//#'</span>.
-	If you'd like to call a function to do something, describe what you'd like it to do with a
+	If you'd like to call a function, describe what you'd like it to do with a
 	<span class="pseudoCall">pseudocall</span> - a line or portion of a line beginning with 
 	<span class="pseudoCall">'//!'</span>.
 	Update the description and header to reflect the function's actual behavior - the crowd will
