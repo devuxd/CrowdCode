@@ -128,27 +128,35 @@
 	{
 		$.each(mockData, function(index, storedMock)
 		{
-			// If there is not already mocks for this function, create an entry
-			var functionMocks;
-			if (mocks.hasOwnProperty(storedMock.functionName))
+			// If the mock is poorly formatted somehow, want to keep going...
+			try
 			{
-				functionMocks = mocks[storedMock.functionName];
+				// If there is not already mocks for this function, create an entry
+				var functionMocks;
+				if (mocks.hasOwnProperty(storedMock.functionName))
+				{
+					functionMocks = mocks[storedMock.functionName];
+				}
+				else
+				{
+					functionMocks = {};
+					mocks[storedMock.functionName] = functionMocks;
+				}
+				
+				// We currently have the inputs in the format [x, y, z]. To build the inputs key,
+				// we need them in the format {"0": 1}
+				var inputsKey = {};
+				$.each(storedMock.inputs, function(index, input)
+				{
+					inputsKey[JSON.stringify(index)] = JSON.parse(input);				
+				});
+				
+				functionMocks[JSON.stringify(inputsKey)] = { inputs: storedMock.inputs, 
+						      output: JSON.parse(storedMock.expectedOutput) };
 			}
-			else
+			catch (e)
 			{
-				functionMocks = {};
-				mocks[storedMock.functionName] = functionMocks;
-			}
-			
-			// We currently have the inputs in the format [x, y, z]. To build the inputs key,
-			// we need them in the format {"0": 1}
-			var inputsKey = {};
-			$.each(storedMock.inputs, function(index, input)
-			{
-				inputsKey[JSON.stringify(index)] = JSON.parse(input);				
-			});
-			
-			functionMocks[JSON.stringify(inputsKey)] = { inputs: storedMock.inputs, 
-					      output: JSON.parse(storedMock.expectedOutput) };
+				console.log("Error loading mock " + index);				
+			}			
 		});
 	}

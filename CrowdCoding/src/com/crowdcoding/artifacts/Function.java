@@ -93,11 +93,18 @@ public class Function extends Artifact
 		this.name = "main";
 		this.paramNames.add("userInput");
 		this.description = "/** \n" +
-				           " * Empty main function of a commandline application. Takes an  \n" +
-				           " * object as an input and returns an object as an output. \n" +
-				           " * \n" +
-				           " * @param {Object} input - user input describing the action to take \n" + 
-				           " * @return {Object} - output from executing the action \n" +
+				           "  [INSERT A DESCRIPTION OF THE FUNCTION HERE!]  \n" +
+				           "  \n" +
+				           "  Describe the purpose and intent of the function. \n" + 
+				           "  List each parameter, describing its structure (what fields it has)\n" +
+				           "  and it's intent. For example, if you had a function that took \n" +
+				           "  a param named parsedSentence that looked like \n" +
+				           "  { sentence: [ 'Hello,', 'world!' ]} and returns a \n" + 
+				           "  boolean, you might describe its params and return as follows: \n" +
+				           "  \n" + 
+				           "  @param { sentence: [ strings ] } parsedSentence - sentence parsed \n" +
+				           "         into an array of words \n" + 
+				           "  @return boolean - whether something is true about the sentence \n" +
 				           " */\n";
 		this.header = "function main(input)";
 		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}";

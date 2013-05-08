@@ -138,7 +138,6 @@
 		// object in TestDTO format
 		function collectTestData()
 		{
-			var code = buildTestCode();
 			var simpleTestInputs = [];
 			var simpleTestOutput = '';
 			
@@ -146,16 +145,24 @@
 			{			
 				$.each($('#parameterValues').children('textarea'), function(index, inputElement)
 				{
-					simpleTestInputs.push(inputElement.value);
+					// Parse empty textboxes as empty strings
+					var testInput = inputElement.value;
+					if (testInput == "")
+						testInput = "''";
+					
+					simpleTestInputs.push(testInput);
 				});						
+				
 				simpleTestOutput = $('#expectedOutput').val();
+				if (simpleTestOutput == "")				
+					simpleTestOutput = "''";
 			}
-			
+			var code = buildTestCode(simpleTestInputs, simpleTestOutput);
 			return { code: code, hasSimpleTest: simpleModeActive, simpleTestInputs: simpleTestInputs, 
 					 simpleTestOutput: simpleTestOutput };
 		}
 		
-		function buildTestCode()
+		function buildTestCode(simpleTestInputs, simpleTestOutput)
 		{
 			var code;
 			
@@ -164,19 +171,18 @@
 				// Build code corresponding to the values entered in simple mode.
 				code = 'equal(<%= function.getName() %>(';
 				
-				// Add a parameter for each input element ni the parameterValues div				
-				$.each($('#parameterValues').children('textarea'), function(index, inputElement)
+				// Add a parameter for each input element in the parameterValues div				
+				$.each(simpleTestInputs, function(index, input)
 				{
 					// Add a comma for any but the first param
 					if (index != 0)
 						code = code + ', ';
 					
-					code = code + inputElement.value;
+					code = code + input;
 				});
 				
-				// TODO: this may not work for single quotes in the test descrption...
-				code = code + '), ' + $('#expectedOutput').val() 
-					+ ", '<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
+				code = code + '), ' + simpleTestOutput 
+					+ ", " + "'<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
 			}	
 			else
 			{

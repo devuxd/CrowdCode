@@ -341,8 +341,9 @@
 								}
 								else
 								{
-									htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
-									htmlContent += " Outcome Message: " + result.message + "</br>";
+									htmlContent += " <b>Expected</b> <pre>" + JSON.stringify(result.expected, null, 4) 
+									       + "</pre> <b>Actual</b> <pre>" + JSON.stringify(result.actual, null, 4) 
+									       + "</pre> <b>Test case description</b> " + result.message + "<br>";
 								}
 								console.log(tabHtml[p] + " " + p);
 								tabHtml[p] = tabHtml[p].replace("class='true'",'class=false')

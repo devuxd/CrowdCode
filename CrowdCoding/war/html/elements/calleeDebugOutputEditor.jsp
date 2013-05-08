@@ -75,12 +75,22 @@
 			mocks[rowData.functionName] = functionMocks;
 		}
 
-		functionMocks[rowData.inputsKey] = { inputs: rowData.inputs, output: JSON.parse(inputText.value.trim()) };
+		// Try to parse the output as JSON. If it fails, use the input as a string
+		var output = inputText.value.trim();
+		try 
+		{
+			output = JSON.parse(output);
+		}
+		catch (e)
+		{
+			// Do nothing
+		}
+		functionMocks[rowData.inputsKey] = { inputs: rowData.inputs, output: output };
 		
 		// Mark this output as being mock output
 		$(inputText).addClass("mockOutput");
 	}
-	
+    
 	// Collects and returns mock data as an arry of MockDTO format objects
 	function collectMocks()
 	{
