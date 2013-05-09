@@ -108,7 +108,17 @@ public class MachineUnitTest extends Microtask
           String [] arrayOfTestCaseCode = new String[testCaseList.size()];
           for(int i = 0; i < arrayOfTestCaseCode.length; i++)
           {
-               arrayOfTestCaseCode[i] = testCaseList.get(i).getTestCode();
+        	  String functionName = testCaseList.get(i).getFunction().getName();
+        	  // We need to replace every call to the function under test (functionName) in the test code with a 
+        	  // call to our mock (functionNameaaaActualName). Since we don't have a parse tree here, 
+        	  // we're just going to do a string replace. That is, we'll replace every occurence
+        	  // of "functionName(" with with "functionNameaaaActualImp(. And also 
+        	  // replace "functionName (" with "functionNameaaaActualImp (". Including the parens hopefully
+        	  // avoids most (but certainly not all) situations where the function name is used in the
+        	  // error description in the test case or elsewhere. 
+        	  String rawTestCode = testCaseList.get(i).getTestCode();       	  
+              arrayOfTestCaseCode[i] = rawTestCode.replace(functionName + "(", functionName + "aaaActualIMP(")
+            		                               .replace(functionName + " (", functionName + "aaaActualIMP (");
           }
           ofy().save().entity(this).now();
           return arrayOfTestCaseCode;

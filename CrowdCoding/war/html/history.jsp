@@ -19,6 +19,11 @@
 			newsfeedRef.on('child_added', function(snapshot) {
 				if (snapshot.val() != null)
 					addHistoryEvent(snapshot.val());
+			});
+			var feedbackFeedRef = new Firebase(firebaseURL + '/feedback');
+			feedbackFeedRef.on('child_added', function(snapshot) {
+				if (snapshot.val() != null)
+					addFeedbackEvent(snapshot.val());
 			});	
 		});	
 		
@@ -42,6 +47,12 @@
 			}
 			
 			$('#historyStream').append('<BR>');
+		}
+		
+		function addFeedbackEvent(event)
+		{
+			$('#historyStream').append(event.workerHandle + ' gave feedback on ' + event.microtaskID + ' ' + 
+					event.microtaskType + ': "' + event.feedback + '"<BR>');
 		}
 		
 	</script>

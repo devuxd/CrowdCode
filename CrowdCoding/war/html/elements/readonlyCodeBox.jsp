@@ -1,13 +1,15 @@
 <style type="text/css">
-  .CodeMirror {
+  #codemirrorBox .CodeMirror {
     height: auto;
+    font-size: small;
   }
-  .CodeMirror-scroll {
+  #codemirrorBox .CodeMirror-scroll {
     overflow-y: hidden;
     overflow-x: auto;
   }
 </style>
 
+<div id="codemirrorBox">
 <script>
 	// Sets up the description box. Takes a description that is the 
 	// text to show in the description box.
@@ -20,4 +22,4 @@
 
 </script>
 
-<textarea id="readonlyCodeBox"></textarea>
+<textarea id="readonlyCodeBox"></textarea></div>

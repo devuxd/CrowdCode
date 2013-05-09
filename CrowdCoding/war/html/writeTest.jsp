@@ -34,7 +34,7 @@
 		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;				
 		
 		// Load test data
-		var fullDescription = <%=function.getDescriptionDTO().json() %>; 
+		var fullDescription = <%=function.getDescriptionDTO().json() %>; 		
 		var paramNames = fullDescription.paramNames;
 		var codeBoxCode = '<%= function.getEscapedFullDescription() %>';
 		
@@ -52,7 +52,7 @@
    			// Generate input elements for the simple test editor
    			$.each(paramNames, function(index, value) 
    			{
-   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<input type="text" class="input-xlarge"><BR>');
+   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<textarea></textarea><BR>');
    			});   
    			
    			// Track whether we are currently in simple or advanced test writing mode
@@ -123,8 +123,8 @@
 					if (index >= paramNames.length)
 						return false;
 					
-					// Get the corresponding input element for this param and populate it
-					$('#parameterValues').children('input').get(index).value = value;
+					// Get the corresponding textArea element for this param and populate it
+					$('#parameterValues').children('textarea').get(index).value = value;
 				});
 				$('#expectedOutput').val(testData.simpleTestOutput);
 			}
@@ -138,24 +138,31 @@
 		// object in TestDTO format
 		function collectTestData()
 		{
-			var code = buildTestCode();
 			var simpleTestInputs = [];
 			var simpleTestOutput = '';
 			
 			if (simpleModeActive)
 			{			
-				$.each($('#parameterValues').children('input'), function(index, inputElement)
+				$.each($('#parameterValues').children('textarea'), function(index, inputElement)
 				{
-					simpleTestInputs.push(inputElement.value);
+					// Parse empty textboxes as empty strings
+					var testInput = inputElement.value;
+					if (testInput == "")
+						testInput = "''";
+					
+					simpleTestInputs.push(testInput);
 				});						
+				
 				simpleTestOutput = $('#expectedOutput').val();
+				if (simpleTestOutput == "")				
+					simpleTestOutput = "''";
 			}
-			
+			var code = buildTestCode(simpleTestInputs, simpleTestOutput);
 			return { code: code, hasSimpleTest: simpleModeActive, simpleTestInputs: simpleTestInputs, 
 					 simpleTestOutput: simpleTestOutput };
 		}
 		
-		function buildTestCode()
+		function buildTestCode(simpleTestInputs, simpleTestOutput)
 		{
 			var code;
 			
@@ -164,19 +171,18 @@
 				// Build code corresponding to the values entered in simple mode.
 				code = 'equal(<%= function.getName() %>(';
 				
-				// Add a parameter for each input element ni the parameterValues div				
-				$.each($('#parameterValues').children('input'), function(index, inputElement)
+				// Add a parameter for each input element in the parameterValues div				
+				$.each(simpleTestInputs, function(index, input)
 				{
 					// Add a comma for any but the first param
 					if (index != 0)
 						code = code + ', ';
 					
-					code = code + inputElement.value;
+					code = code + input;
 				});
 				
-				// TODO: this may not work for single quotes in the test descrption...
-				code = code + '), ' + $('#expectedOutput').val() 
-					+ ", '<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
+				code = code + '), ' + simpleTestOutput 
+					+ ", " + "'<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
 			}	
 			else
 			{
@@ -224,7 +230,7 @@
 			<b>Parameter Values</b><BR>
 				<div id="parameterValues"></div>
 			<b>Expected Output</b><BR>
-				<input type="text" id="expectedOutput" class="input-xlarge"><BR>
+				<textarea id="expectedOutput"></textarea><BR>
 		  </div>
 		  <div class="tab-pane" id="advancedTest">
 			  <span class="reference">

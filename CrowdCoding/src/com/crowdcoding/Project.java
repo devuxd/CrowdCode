@@ -2,6 +2,9 @@ package com.crowdcoding;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
@@ -47,9 +50,10 @@ public class Project
 	private int microtasksCompleted;
 	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
-	private Ref<Function> mainFunction;	// root function in the call graph
-	
+	private Ref<Function> mainFunction;	// root function in the call graph	
 	private boolean waitingForTestRun = false;	// is the project currently waiting for tests to be run?
+	private Queue<String> unstartedUserStories = new LinkedList<String>();  // descriptions of UserStories yet to be created
+	
 	
 	// Static initializer for class Project
 	static
@@ -101,11 +105,11 @@ public class Project
 		// Load user stories from Firebase and spawn work to implement them
 		String userStories = FirebaseService.readUserStories(this);
 		System.out.println(userStories);	
-		UserStoriesDTO dto = (UserStoriesDTO) DTO.read(userStories, UserStoriesDTO.class);		
-		for (String userStoryText : dto.userStories)
-			new UserStory(userStoryText, this);
-		
+		UserStoriesDTO dto = (UserStoriesDTO) DTO.read(userStories, UserStoriesDTO.class);
+		this.unstartedUserStories = new LinkedList<String>(dto.userStories);	
 		ofy().save().entity(this).now();
+		
+		startAUserStory();
 	}
 	
 	// Creates a new project instance. If there is a project in the database, it will be backed by that project.
@@ -152,6 +156,24 @@ public class Project
 		ofy().transactionless().delete().key(project);
 	}
 	
+	// Requests that work on an additional user story be started. If the request is granted, returns
+	// a new, unassigned microtask. Otherwise, returns null.
+	public Microtask startAUserStory()
+	{
+		// Start a user story if there is any to be started.
+		if (unstartedUserStories.size() > 0)
+		{
+			Microtask microtask = UserStory.CreateUserStory(unstartedUserStories.remove(), this);
+			ofy().save().entity(this).now();
+			
+			return microtask;
+		}
+		else
+		{
+			return null;
+		}
+	}
+		
 	// Publish new statistics to Firebase
 	public void publishStatistics() 
 	{
