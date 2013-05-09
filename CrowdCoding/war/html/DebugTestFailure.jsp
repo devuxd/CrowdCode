@@ -66,7 +66,7 @@
 			};  
 	</script>
 	<script>
-		var timeOutPeriod = 1000;
+		var timeOutPeriod = 500;
 		var microtaskType = 'DebugTestFailure';
 		var microtaskID = <%= microtask.getID() %>;
 		
@@ -294,7 +294,7 @@
 					worker.postMessage({url: document.location.origin});
 					// load the test cases
 					worker.postMessage({number: p, testCase: testCases, mocks: mocks});
-					setTimeout(function(){stop();},timeOutPeriod-500);
+					setTimeout(function(){stop();},timeOutPeriod-200);
 					console.log(done);
 					setTimeout(function()
 					{
