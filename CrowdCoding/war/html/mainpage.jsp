@@ -107,7 +107,9 @@
 		<textarea id="feedbackBox" placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?"></textarea><BR>
 		<button class="btn btn-primary" id="sendFeedback" >Send feedback</button>		
 	</div>
-	
+	<BR><div id="chatDiv" class="chatDiv">
+		<textarea id="chatOutput" class="chatOutput" readonly></textarea><textarea id="chatInput" class="chatInput"></textarea>
+	</div>	
 </div>
 
  <div class="span8">
@@ -119,7 +121,7 @@
 
 	<div id="activityFeedTitle" class="animated wiggle" >   &nbsp;&nbsp;  Recent Activity &nbsp;</div>
 	<div id="activityFeed"><div id="activityFeedTable" ></div></div>
-	
+
 </div>
 </div>
 
@@ -223,6 +225,27 @@
 		locRef.on('value', function(snapshot) { $('#functionsWritten').html(snapshot.val()); });
 		var locRef = new Firebase(firebaseURL + '/statistics/microtasksCompleted');
 		locRef.on('value', function(snapshot) { $('#microtasksCompleted').html(snapshot.val()); });		
+		
+		// Setup chat service
+		var chatRef = new Firebase(firebaseURL + '/chat');
+
+		// When the user presses enter on the message input, write the message to firebase.
+		$('#chatInput').keypress(function (e) {
+		    if (e.keyCode == 13) 
+		    {
+		      chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=worker.getHandle()%>'});
+		      $('#chatInput').val('');
+		      return false;
+		    }
+		});
+
+		// Add a callback that is triggered for each chat message.
+		chatRef.on('child_added', function (snapshot) 
+		{
+			var message = snapshot.val();
+			$('#chatOutput').append(message.workerHandle + ": " + message.text + "\n");
+			$('#chatOutput').scrollTop($('#chatOutput')[0].scrollHeight);
+		});
 	});
     
     function submit(formData)
