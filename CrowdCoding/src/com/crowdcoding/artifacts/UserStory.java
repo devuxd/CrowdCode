@@ -9,6 +9,7 @@ import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.microtasks.WriteUserStory;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.cmd.Query;
 
 @EntitySubclass(index=true)
 public class UserStory extends Artifact
@@ -86,5 +87,23 @@ public class UserStory extends Artifact
 	public Microtask getMicrotask()
 	{
 		return ofy().load().ref(microtask).get();
+	}
+	
+	public String toString()
+	{
+		return getName() + ": '"+ text.split("\n")[0] + "'"; 
+	}
+	
+	public static String StatusReport(Project project)
+	{
+		StringBuilder output = new StringBuilder();
+		
+		output.append("**** ALL USER STORIES ****\n");
+		
+		Query<UserStory> q = ofy().load().type(UserStory.class).ancestor(project.getKey());		
+		for (UserStory userStory : q)
+			output.append(userStory.toString() + "\n");
+		
+		return output.toString();
 	}
 }
