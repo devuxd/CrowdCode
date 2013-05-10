@@ -67,6 +67,7 @@ public class CrowdServlet extends HttpServlet
 	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException 
 	{
 		/* Dispatch requests as follows:
+		 * Not using Chrome - browserCompat.html		 
 		 * Not logged in - AppEngine login service
 		 *  /<project> - mainpage.jsp
 		 *  /<project>/admin - admin.jsp
@@ -77,7 +78,7 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project>/submit - doSubmit
 		 *  /<project>/welcome - welcome.jsp
 		 *  /userStories - EditUserStories.jsp
-		 *  /  - 404
+		 *  /  welcome.jsp
 		 */
         String[] path = req.getPathInfo().split("/");
 				
@@ -86,51 +87,61 @@ public class CrowdServlet extends HttpServlet
         
     	try 
     	{	        
-	        if (user != null) 
-	        {
-				// First token will always be empty (portion before the first slash)
-				if (path.length > 1)
-				{
-					req.setAttribute("project", path[1]);
-					String projectID = path[1];
-	
-					if (path.length == 2)
+    		// First check the browser. If the browser is not Chrome, redirect to a browser
+    		// compatability page.
+    		if (!req.getHeader("User-Agent").contains("Chrome"))
+    			req.getRequestDispatcher("/html/browserCompat.html").forward(req, resp);
+    		else
+    		{    	
+    			// Next check if the user is logged in by checking if we have a user object for them.
+		        if (user != null) 
+		        {
+					// First token will always be empty (portion before the first slash)
+					if (path.length > 1)
 					{
-						if (path[1].equals("userStories"))
-							req.getRequestDispatcher("/html/EditUserStories.jsp").forward(req, resp);						
+						req.setAttribute("project", path[1]);
+						String projectID = path[1];
+		
+						if (path.length == 2)
+						{
+							if (path[1].equals("userStories"))
+								req.getRequestDispatcher("/html/EditUserStories.jsp").forward(req, resp);						
+							else
+								req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+						}
 						else
-							req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+						{
+							// Third token is action, fourth (or more) tokens are commands for action
+							String action = path[2];
+							if (action.equals("fetch"))					
+								doFetch(req, resp, projectID, user);
+							else if (action.equals("submit"))
+								doSubmit(req, resp);
+							else if (action.equals("admin") && path.length == 3)
+				        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
+							else if (action.equals("history") && path.length == 3)
+				        		req.getRequestDispatcher("/html/history.jsp").forward(req, resp);
+							else if (action.equals("admin") && path.length > 3)
+								doAdmin(req, resp, projectID, path);
+							else if (action.equals("run"))
+				        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
+							else if (action.equals("welcome"))
+				        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
+						}				
 					}
-					else
-					{
-						// Third token is action, fourth (or more) tokens are commands for action
-						String action = path[2];
-						if (action.equals("fetch"))					
-							doFetch(req, resp, projectID, user);
-						else if (action.equals("submit"))
-							doSubmit(req, resp);
-						else if (action.equals("admin") && path.length == 3)
-			        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
-						else if (action.equals("history") && path.length == 3)
-			        		req.getRequestDispatcher("/html/history.jsp").forward(req, resp);
-						else if (action.equals("admin") && path.length > 3)
-							doAdmin(req, resp, projectID, path);
-						else if (action.equals("run"))
-			        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
-						else if (action.equals("welcome"))
-			        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
-					}				
-				}
-				else				
-					req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);					
-	        } 
-	        else 
-	        {
-	        	if (path.length > 1)	        	        	
-	        		resp.sendRedirect(userService.createLoginURL("/" + path[1]));	        	
-	        	else	        	
-					req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);	        	
-	        }
+					else				
+						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);					
+		        } 
+		        else 
+		        {
+		        	// If not, either let them login if they have a project specified or else
+		        	// send them to the welcome page if not.
+		        	if (path.length > 1)	        	        	
+		        		resp.sendRedirect(userService.createLoginURL("/" + path[1]));	        	
+		        	else	        	
+						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);	        	
+		        }
+    		}
 		} catch (ServletException e) {
 			e.printStackTrace();
 		}        
