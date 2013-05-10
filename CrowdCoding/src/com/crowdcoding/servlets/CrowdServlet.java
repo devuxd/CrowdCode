@@ -16,6 +16,7 @@ import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
+import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
@@ -177,6 +178,7 @@ public class CrowdServlet extends HttpServlet
 	    		{
 	      			output.append("STATUS executed at " + currentTime.toString() + "<BR>");
 	    			Project project = Project.Create(projectID);
+	    			output.append(UserStory.StatusReport(project).replace("\n", "<BR>"));   
 	    			output.append(Worker.StatusReport(project).replace("\n", "<BR>")); 
 	    			output.append(Microtask.StatusReport(project).replace("\n", "<BR>"));    
 	    			output.append(Function.StatusReport(project).replace("\n", "<BR>"));   
