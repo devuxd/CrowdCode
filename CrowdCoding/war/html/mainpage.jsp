@@ -336,12 +336,10 @@
 </script>
 
 
-<div id="popUpReminder" class="modal hide fade" tabindex="-1"
-		role="dialog" aria-labelledby="" aria-hidden="true">
+<div id="popUpReminder" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 		<div class="logout-header">
-			<button type="button" class="close" data-dismiss="modal"
-				aria-hidden="true"></button>
-			<h3 id="logoutLabel">You have been working fo</h3>
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+			<h3 id="logoutLabel" class="popupReminderHeading"></h3>
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
