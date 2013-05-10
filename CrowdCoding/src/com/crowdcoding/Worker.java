@@ -36,7 +36,6 @@ public class Worker
 	@Id private String userid;
 	private int score;
 	@Index private boolean loggedIn;
-	private List<String> messages = new ArrayList<String>();
 	
 	// Default constructor for deserialization
 	private Worker()
@@ -159,7 +158,6 @@ public class Worker
 	public void logout(Project project)
 	{
 		loggedIn = false;
-		messages.clear();
 		Microtask microtaskObj = getMicrotask();
 		if (microtaskObj != null)
 			microtaskObj.skip(this, project);

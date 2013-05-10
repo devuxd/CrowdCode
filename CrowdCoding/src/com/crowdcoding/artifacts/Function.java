@@ -44,7 +44,7 @@ public class Function extends Artifact
 	private List<String> paramNames = new ArrayList<String>();
 	private String header;
 	private String description;
-	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
+	private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<String> callees = new ArrayList<String>();	
 	// current callers with a fully implemented callsite to this function:
@@ -333,7 +333,7 @@ public class Function extends Artifact
 	{
 		for (Ref<Test> t : tests) 
 		{
-			if (!t.get().isImplemented())
+			if (!Test.load(t).isImplemented())
 				return false;			
 		}
 		
@@ -535,7 +535,8 @@ public class Function extends Artifact
 		if(dto.testCaseNumber != null)
 		{
 			// creates a disputed test case
-			tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
+			Test.load(tests.get(Integer.parseInt(dto.testCaseNumber)))
+					.disputeUnitTestCorrectionCreated(dto, project);	
 			
 			// Since there was an issue, ignore any code changes they may have submitted.			
 		} else { //at present, reaching here means all tests passed.
@@ -662,7 +663,7 @@ public class Function extends Artifact
 		// queue FUNCTION_CHANGED edit test microtasks on each of this function's tests
 		for (Ref<Test> testRef : tests)
 		{
-			Test test = ofy().load().ref(testRef).get();
+			Test test = Test.load(testRef);
 			test.queueMicrotask(new WriteTest(test, this.getFullDescription(),  
 					dto.description + dto.header, project), project);
 		}

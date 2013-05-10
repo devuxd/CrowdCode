@@ -2,7 +2,6 @@ package com.crowdcoding;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,9 +9,7 @@ import java.util.List;
 
 import com.crowdcoding.dto.LeaderboardDTO;
 import com.crowdcoding.util.FirebaseService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.VoidWork;
 import com.googlecode.objectify.annotation.Embed;
 
 @Embed

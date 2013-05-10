@@ -66,17 +66,18 @@ public class DebugTestFailure extends Microtask
           List<Ref<Test>> tempCases = function.getValue().getTestCases();
           String [] stringVersion = new String[tempCases.size()];
           int i = 0;
-          for(Ref<Test>  temp : tempCases)
+          for(Ref<Test>  testRef : tempCases)
           {
-               if(temp != null)
+               if(testRef != null)
                {
-                    if(temp.getValue() != null)
-                    {
-                         if(temp.getValue().getTestCode() != null)
-                         {
-                              stringVersion[i] = temp.getValue().getTestCode();
-                         }
-                         i++;
+            	   Test test = Test.load(testRef);
+                   if(test != null)
+                   {
+                	   if(test.getTestCode() != null)
+                       {
+                		   	stringVersion[i] = test.getTestCode();
+                       }
+                	   i++;
                     }
                }
           }
@@ -88,20 +89,22 @@ public class DebugTestFailure extends Microtask
           List<Ref<Test>> tempCases = function.getValue().getTestCases();
           String [] stringVersion = new String[tempCases.size()];
           int i = 0;
-          for(Ref<Test>  temp : tempCases)
+          for(Ref<Test>  testRef : tempCases)
           {
-               if(temp != null)
+               if(testRef != null)
                {
-                    if(temp.getValue() != null)
-                    {
-                         if(temp.getValue().getTestCode() != null)
-                         {
-                              stringVersion[i] = temp.getValue().getDescription();
-                         }
-                         i++;
+            	   Test test = Test.load(testRef);
+                   if(test != null)
+                   {
+                	   if(test.getTestCode() != null)
+                       {
+                           stringVersion[i] = test.getDescription();
+                       }
+                	   i++;
                     }
                }
           }
+          
           return stringVersion;
      }
     

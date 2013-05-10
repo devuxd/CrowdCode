@@ -167,6 +167,13 @@ public class Test extends Artifact
 		project.requestTestRun();
 	}
 	
+	// Given a ref to a function that has not been loaded from the datastore,
+	// load it and get the object
+	public static Test load(Ref<Test> ref)
+	{
+		return ofy().load().ref(ref).get();
+	}	
+	
 	// Checks the status of the test, marking it as implemented if appropriate
 	private void checkIfBecameImplemented(Project project)
 	{
