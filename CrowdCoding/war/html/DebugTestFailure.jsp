@@ -33,7 +33,7 @@
 <body>
 	<div id="microtask">
 		<script src="/include/bootbox.min.js"></script>
-		<script src="/html/assertionFunctions.js"></script>
+		<script src="/js/assertionFunctions.js"></script>
 		<script src="/include/spin.js"></script>
 		<script>
 			var microtaskTitle = '<%= microtask.microtaskTitle() %>';
@@ -521,8 +521,8 @@
 			{
 				url = url.substring(0, index);
 			}
-			importScripts(url + '/html/assertionFunctions.js');
-			importScripts(url + '/html/js/instrumentFunction.js');
+			importScripts(url + '/js/assertionFunctions.js');
+			importScripts(url + '/js/instrumentFunction.js');
 		 }
 		 else
 		 {

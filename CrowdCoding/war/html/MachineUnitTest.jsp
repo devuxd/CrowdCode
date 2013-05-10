@@ -30,7 +30,7 @@
 	<div id="microtask">
 		<script src="/include/bootbox.min.js"></script>
 		<script src="/include/spin.js"></script>
-		<script src='/html/js/instrumentFunction.js'></script>
+		<script src='/js/instrumentFunction.js'></script>
 		
 <script>
 	window.onerror = function(err, url, lineNumber) {  
@@ -209,8 +209,8 @@ var spinner = new Spinner(opts).spin(target);
 			     {
 			      url = url.substring(0, index);
 			     }
-			    importScripts(url + '/html/assertionFunctions.js');
-			    importScripts(url + '/html/js/instrumentFunction.js');
+			    importScripts(url + '/js/assertionFunctions.js');
+			    importScripts(url + '/js/instrumentFunction.js');
 		 }
 		 else
 		 {

@@ -156,17 +156,19 @@
 <script src="/include/codemirror/codemirror.js"></script>
 <script src="/include/codemirror/javascript.js"></script>
 <script src="/include/jshint-1.1.0.js"></script>
-<script src="/html/errorCheck.js"></script>
 <script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/include/stars/jquery.rating.js"></script>
-<script src="/html/keybind.js"></script>
 <script src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script src='/include/esprima.js'></script>
 <script src='/include/escodegen.browser.js'></script>
 <script src="/include/diff/diff_match_patch.js"></script>
 <script src="/include/diff/jquery.pretty-text-diff.js"></script>
-<script src="/html/js/reminder.js"></script>
+
+<script src="/js/reminder.js"></script>
+<script src="/js/errorCheck.js"></script>
+<script src="/js/keybind.js"></script>
+
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');

@@ -22,6 +22,6 @@
 <script>
 	var tutorialCodeMirror = CodeMirror.fromTextArea(tutorialCode, { 
 		viewportMargin: Infinity, indentUnit: 4, indentWithTabs: true });
-	$.get('/html/js/javascriptTutorial.txt', function(code) { tutorialCodeMirror.setValue(code);  });
+	$.get('/js/javascriptTutorial.txt', function(code) { tutorialCodeMirror.setValue(code);  });
 	$('#javascriptTutorial').on('shown', function () { tutorialCodeMirror.refresh(); } );	
 </script>
