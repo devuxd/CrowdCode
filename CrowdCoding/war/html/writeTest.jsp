@@ -61,7 +61,10 @@
 				if (e.target.id == 'simpleTestTab')
 					simpleModeActive = true;
 				else if (e.target.id == 'advancedTestTab')
+				{
 					simpleModeActive = false;
+				    myCodeMirror.refresh();
+				}
 			});
    			
    			showPrompt();
@@ -131,6 +134,7 @@
 			else
 			{
 				$('#testTabs a[href="#advancedTest"]').tab('show');		
+			    myCodeMirror.refresh();
 			}			
 		}		
 		

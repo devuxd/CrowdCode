@@ -1,4 +1,4 @@
-<script src='/html/js/instrumentFunction.js'></script>
+<script src='/js/instrumentFunction.js'></script>
 
 <div id="addCalleeSection"></div>
 
