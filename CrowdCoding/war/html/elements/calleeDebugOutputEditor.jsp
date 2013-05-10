@@ -11,7 +11,9 @@
     	// reset rowMap
     	rowMap = [];    	
 		var i = 0;
-		var newHTML = '<table><tr><td>Inputs</td><td>Outputs</td>';
+		var newHTML = '';
+		if (calleeList.length > 0)
+			newHTML += '<table><tr><td>Inputs</td><td>Outputs</td>';
 			
 		$.each(calleeList,function(i,calleeName)
 		{
@@ -54,7 +56,9 @@
 			newHTML += '</div>';
 		});
 
-		newHTML += '</table>';		
+		if (calleeList.length > 0)
+			newHTML += '</table>';
+			
 		$("#addCalleeSection").html(newHTML);
 	}
 	
