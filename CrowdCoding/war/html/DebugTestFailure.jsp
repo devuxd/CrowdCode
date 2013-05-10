@@ -318,7 +318,6 @@
 							i = p;
 							resultOfTest[i]= result;   
 							atLeastOneTestCase = true;
-							htmlContent += "<p>" + "</br>"; 
 							if(!result.result)
 							{
 								if(QunitTestCases.length < 1)
@@ -392,25 +391,8 @@
 					console.log("errors found");
 					setTimeout(function()
 					{
-						// jshint found errors
-							/* if(p == 0)
-							{   
-								htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
-								htmlTab +=  "<li class='active'><a href=";
-							}
-							else
-							{
-								htmlContent += "<div class='tab-pane' id=" + "'A" + i + "'>";
-								htmlTab +=  "<li><a href=";
-							}
-							htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
-							htmlTab +=  "</a></li>";
-							htmlContent += "<p>" + "</br>"; 
-							htmlContent += " Syntax Error: </br> " + errors + " </br>" ;
-							htmlContent += "</p></div>"; */
-							i++;
-							allTestPassed = false;
-					
+						i++;
+						allTestPassed = false;					
 					} ,timeOutPeriod);
 				}
 			}
