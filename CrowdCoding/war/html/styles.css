@@ -10,7 +10,7 @@ input {border-radius: 15px;}
 .modal-backdrop {background: none;}
  #activityFeedTable
    {
-      overflow-y: scroll;  overflow-x: hidden; height:347px; width:180px; background:#D9D9D9; 
+      overflow-y: scroll;  overflow-x: hidden; height:397px; width:180px; background:#D9D9D9; 
       margin-left:0%; margin-right:0%; border-style:solid; border-width:2px; font-size:75%;
  	border-color:#8F8F8F;
      -webkit-transition-property:color, background-color;  
@@ -111,7 +111,7 @@ font-family: Lucida Console, Monaco, monospace;
 #leaderboardTable td { padding-right:10px; font-size: smaller;   }
 #leaderboardTableTitle p, tr { font-weight: bold;  }
 #leaderboard{border-radius: 10px 10px 10px 10px;}
-#feedbackBox { width: 100%; height: 150px; resize:none; font-size: smaller}
+#feedbackBox { width: 170px; height: 150px; resize:none; font-size: smaller}
 #feedbackThanks { font-size: smaller; color: green; visibility: hidden; }
 
 #mainpagebody{background:none;}
