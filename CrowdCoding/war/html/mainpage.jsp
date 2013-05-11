@@ -236,7 +236,7 @@
 		chatRef.on('child_added', function (snapshot) 
 		{
 			var message = snapshot.val();
-			$('#chatOutput').append("<b>" + message.workerHandle + "</b> " + message.text + "\n");
+			$('#chatOutput').append("<b>" + message.workerHandle + "</b> " + message.text + "<BR>");
 			$('#chatOutput').scrollTop($('#chatOutput')[0].scrollHeight);
 		});
 	});
