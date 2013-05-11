@@ -201,13 +201,13 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	
 	<div id="writePrompt" style="display: none">
-		Write a simple or advanced test for<BR>			
-		<span class="label label-inverse"><%= microtask.getDescription() %></span><BR>
+		Write a simple or advanced test for<BR>		<BR>
+		<div class="alert alert-info"><%= microtask.getDescription() %></div>
 	</div>
 
 	<div id="correctPrompt" style="display: none">
-		The following issue was reported with this test:<BR>		
-		<span class="label label-important"><%= microtask.getIssueDescription() %></span><BR>		
+		The following issue was reported with this test:<BR><BR>		
+		<div class="alert alert-error"><%= microtask.getIssueDescription() %></div>	
 		Can you fix the test to address this issue?<BR>
 	</div>
 	
@@ -224,7 +224,7 @@
 	<%@include file="/html/elements/readonlyCodeBox.jsp" %>	
 		
 	<form id="writeTestForm" action="">
-		<BR><BR><ul class="nav nav-tabs" id="testTabs">
+		<BR><ul class="nav nav-tabs" id="testTabs">
 		  <li><a href="#simpleTest" data-toggle="tab" id="simpleTestTab">Simple Test</a></li>
 		  <li><a href="#advancedTest" data-toggle="tab" id="advancedTestTab">Advanced Test</a></li>
 		</ul>		

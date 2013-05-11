@@ -1,7 +1,7 @@
 <style type="text/css">
   #codemirrorBox .CodeMirror {
     height: auto;
-    font-size: small;
+    font-size: x-small;
   }
   #codemirrorBox .CodeMirror-scroll {
     overflow-y: hidden;
