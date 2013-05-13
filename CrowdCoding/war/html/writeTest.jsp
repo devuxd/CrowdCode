@@ -101,9 +101,15 @@
 		function showPrompt()
 		{
 			if (showWritePrompt)
+			{
 	   			$("#writePrompt").css('display',"block");
+	   			setupReadonlyCodeBox(writeCodeBox);
+			}
 			else if (showCorrectPrompt)
+			{
 	   			$("#correctPrompt").css('display',"block");
+	   			setupReadonlyCodeBox(correctCodeBox);
+			}
 			else if (showFunctionChangedPrompt)
    			{
    				$('#functionChangedPrompt').prettyTextDiff();
@@ -203,12 +209,19 @@
 	<div id="writePrompt" style="display: none">
 		Write a simple or advanced test for<BR>		<BR>
 		<div class="alert alert-info"><%= microtask.getDescription() %></div>
+		
+		<BR>Here's the description of the function to test:
+		<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
 	</div>
 
 	<div id="correctPrompt" style="display: none">
-		The following issue was reported with this test:<BR><BR>		
+		The following issue was reported with this test:<BR><BR>
+		<div class="alert alert-info"><%= microtask.getDescription() %></div>		
 		<div class="alert alert-error"><%= microtask.getIssueDescription() %></div>	
 		Can you fix the test to address this issue?<BR>
+		
+		<BR>Here's the description of the function to test:
+		<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
 	</div>
 	
 	<div id="functionChangedPrompt" style="display: none">
@@ -218,11 +231,11 @@
 		<span class="original" style="display: none"><%=microtask.getOldFunctionDescription() %></span>
    		<span class="changed" style="display: none"><%=microtask.getNewFunctionDescription() %></span>
 		<span id="diff" class="diff"></span><BR>
+		
+		Here's the test description:
+		<div class="alert alert-info"><%= microtask.getDescription() %></div>
 	</div>
 	
-	<BR>Here's the description of the function to test:
-	<%@include file="/html/elements/readonlyCodeBox.jsp" %>	
-		
 	<form id="writeTestForm" action="">
 		<BR><ul class="nav nav-tabs" id="testTabs">
 		  <li><a href="#simpleTest" data-toggle="tab" id="simpleTestTab">Simple Test</a></li>

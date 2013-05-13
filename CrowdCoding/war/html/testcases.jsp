@@ -34,6 +34,8 @@
 	
 	    $(document).ready(function()
 	    {
+			setupReadonlyCodeBox(readonlyCodeBox);
+	    	
    		    // Based on the prompt type, load and setup the appropriate prompt divs
    		    if (showTestUserStoryPrompt)
 	   			$("#testUserStoryPrompt").css('display',"block");
@@ -101,7 +103,7 @@
 		cases that might not work?<BR><BR>
 	</div>
 	
-	<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>	
+	<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div><BR><BR>	
 	
 	<div class="accordion" id="exampleRoot">
 	  <div class="accordion-group">

@@ -155,6 +155,7 @@
 <script src="/include/diff/diff_match_patch.js"></script>
 <script src="/include/diff/jquery.pretty-text-diff.js"></script>
 
+<script src="/js/readonlyCodeBox.js"></script>
 <script src="/js/reminder.js"></script>
 <script src="/js/errorCheck.js"></script>
 <script src="/js/keybind.js"></script>
