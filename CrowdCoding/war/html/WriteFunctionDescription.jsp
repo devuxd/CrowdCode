@@ -27,6 +27,8 @@
 	
 	    $(document).ready(function()
 		{
+			setupReadonlyCodeBox(readonlyCodeBox);
+	    	
    			$('#skip').click(function() { skip(); });	
 			$("#signatureForm").submit(function()
 			{
@@ -55,7 +57,7 @@
 	Show example:<BR><BR>
 
 	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
-	<div id="callContext" class="collapse"><%@include file="/html/elements/readonlyCodeBox.jsp" %></div><BR>
+	<div id="callContext" class="collapse"><div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div></div><BR>
 	
 	<form id="signatureForm" action="">	
 		<%@include file="/html/elements/signatureEditor.jsp" %>

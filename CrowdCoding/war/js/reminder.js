@@ -5,7 +5,8 @@ var int=self.setInterval(function(){clock()},fiveMinutes);
 function clock()
 {
 	count++;
-	var message = "You've been working for a while now... Maybe it's time to submit or skip and let someone else take a look?";
+	var message = "You've been working on this for a while now... Maybe it's time to submit or " +
+	   "skip and let the crowd take a look?";
 	if(count > 0)
 	{
 		$("#popUpReminder").find("h3").html(message);

@@ -179,6 +179,9 @@ font-family: Lucida Console, Monaco, monospace;
 /* Styles for timeout popup reminder */
 .popupReminderHeading { margin:20px; }
 
+/* Styles for the readonly code mirror box */
+.codemirrorBox .CodeMirror { height: auto; font-size: x-small; }
+#codemirrorBox .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
 
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
 ins {  background-color: #c6ffc6;  text-decoration: none; }
