@@ -78,51 +78,43 @@
 
 <div class="row-fluid">
 
-
- <div class="span2">
- 
-<!-- Modal -->
-
-
-
-<div id= "leftbar" class="animated fadeInLeftBig">
-	<div id="scoreTableAnimHolder" class="animated flip">	<div id="scoreTableTitle" class="animated wiggle" >   &nbsp;&nbsp;  Your score <i class=" icon-star"> </i> &nbsp;</div> </div>
-	
-	<table id="scoreTable">	
-		<tr>
-			<td class="animated fadeInLeftBig"><b ><p><span id="score" >0 </span> points</p></b></td>
-		</tr>
-	</table>
-	
-	
+<div class="span2">
+	<div id= "leftbar" class="animated fadeInLeftBig">
+		<div id="scoreTableAnimHolder" class="animated flip">	<div id="scoreTableTitle" class="sidebarTitle animated wiggle" >   &nbsp;&nbsp;  Your score <i class=" icon-star"> </i> &nbsp;</div> </div>
+		
+		<table id="scoreTable">	
+			<tr>
+				<td class="animated fadeInLeftBig"><b ><span id="score" >0 </span> points</b></td>
+			</tr>
+		</table>
 		<div id="leaderboardTitle" class="animated wiggle" >   &nbsp;&nbsp;  Leaders  &nbsp; <i class=" icon-th-list"> </i> </div>
 		<div id="leaderboard"><table id="leaderboardTable"><tr><td></td></tr></table></div>
-
-	
 	</div>
+	<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+	<div id="chatTitle" class="sidebarTitle" > &nbsp;&nbsp; Ask the Crowd</div>
+	<div id="chatDiv" class="chatDiv">
+		<div id="chatOutput" class="chatOutput" ></div><textarea id="chatInput" class="chatInput"></textarea>
+	</div>	
+</div>
 
-	<div>&nbsp;	<BR><BR></div>
-	<div id="feedbackThanks"><span><b>Thanks for the feedback!</b></span></div>
-	<div id="feedback">
-		<textarea id="feedbackBox" placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?"></textarea><BR>
-		<button class="btn btn-primary" id="sendFeedback" >Send feedback</button>		
+<div class="span8">
+	<div id="contentPane" class="animated bounceIn"></div>
+</div>
+
+<div class="span2">
+	<div id="rightbar" class="animated fadeInRightBig ">
+		<div id="activityFeedTitle" class="animated wiggle" >   &nbsp;&nbsp;  Recent Activity &nbsp;</div>
+		<div id="activityFeed"><div id="activityFeedTable" ></div></div>
+		<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
+
+		<div>&nbsp;	<BR><BR></div>
+		<div id="feedbackThanks"><span><b>Thanks for the feedback!</b></span></div>
+		<div id="feedback">
+			<textarea id="feedbackBox" placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?"></textarea><BR>
+			<button class="btn btn-primary" id="sendFeedback" >Send feedback</button>		
+		</div>
 	</div>
-	
 </div>
-
- <div class="span8">
-<div id="contentPane" class="animated bounceIn"></div>
-</div>
-
- <div class="span2">
-<div id="rightbar" class="animated fadeInRightBig ">
-
-	<div id="activityFeedTitle" class="animated wiggle" >   &nbsp;&nbsp;  Recent Activity &nbsp;</div>
-	<div id="activityFeed"><div id="activityFeedTable" ></div></div>
-	
-</div>
-</div>
-
 
 </div>
 </div>
@@ -154,16 +146,20 @@
 <script src="/include/codemirror/codemirror.js"></script>
 <script src="/include/codemirror/javascript.js"></script>
 <script src="/include/jshint-1.1.0.js"></script>
-<script src="/html/errorCheck.js"></script>
 <script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/include/stars/jquery.rating.js"></script>
-<script src="/html/keybind.js"></script>
 <script src='https://cdn.firebase.com/v0/firebase.js'></script>
 <script src='/include/esprima.js'></script>
 <script src='/include/escodegen.browser.js'></script>
 <script src="/include/diff/diff_match_patch.js"></script>
 <script src="/include/diff/jquery.pretty-text-diff.js"></script>
+
+<script src="/js/readonlyCodeBox.js"></script>
+<script src="/js/reminder.js"></script>
+<script src="/js/errorCheck.js"></script>
+<script src="/js/keybind.js"></script>
+
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
@@ -223,12 +219,31 @@
 		locRef.on('value', function(snapshot) { $('#functionsWritten').html(snapshot.val()); });
 		var locRef = new Firebase(firebaseURL + '/statistics/microtasksCompleted');
 		locRef.on('value', function(snapshot) { $('#microtasksCompleted').html(snapshot.val()); });		
+		
+		// Setup chat service
+		var chatRef = new Firebase(firebaseURL + '/chat');
+
+		// When the user presses enter on the message input, write the message to firebase.
+		$('#chatInput').keypress(function (e) {
+		    if (e.keyCode == 13) 
+		    {
+		      chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=worker.getHandle()%>'});
+		      $('#chatInput').val('');
+		      return false;
+		    }
+		});
+
+		// Add a callback that is triggered for each chat message.
+		chatRef.on('child_added', function (snapshot) 
+		{
+			var message = snapshot.val();
+			$('#chatOutput').append("<b>" + message.workerHandle + "</b> " + message.text + "<BR>");
+			$('#chatOutput').scrollTop($('#chatOutput')[0].scrollHeight);
+		});
 	});
     
     function submit(formData)
     {
-    	debugger;
-    	
     	var stringifiedData = JSON.stringify( formData );
     	
 		$.ajax({
@@ -268,6 +283,7 @@
   	    	$('#microtask').addClass('animated rollIn');  		
   		});
     	resetSubmitButtons();	
+    	resetTimer();
 	}
 	
 	function updateLeaderboardDisplay(leaderboard)
@@ -311,5 +327,18 @@
 	}
 	
 </script>
+
+
+<div id="popUpReminder" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="logout-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+			<h3 id="logoutLabel" class="popupReminderHeading"></h3>
+		</div>
+		<div class="modal-body"></div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+
 </body>
 </html>

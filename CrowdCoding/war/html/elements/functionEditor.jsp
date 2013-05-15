@@ -1,5 +1,7 @@
 <script>
-	var myCodeMirror = CodeMirror.fromTextArea(code, { autofocus: true, indentUnit: 4, indentWithTabs: true });
+	var myCodeMirror = CodeMirror.fromTextArea(code, 
+			{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
+	myCodeMirror.setSize(null, 500);
 	var doc = myCodeMirror.getDoc();
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	
 	doc.setValue(editorCode);
@@ -10,7 +12,7 @@
  	
  	// If we are editing the main function, make the full description readonly
 	if (functionName == 'main')
- 		makeFullDescriptionReadOnly();
+		makeHeaderReadOnly();
  	
  	// Find the list of all function names elsewhere in the system
  	var functionNames = buildFunctionNames();
@@ -188,17 +190,21 @@
 	// iff there are no errors.
  	function doErrorCheck()
 	{
+		console.log("Starting error check");
+		
 	 	myCodeMirror.save();	 			
  		var text = $("#code").val();
 		if(!hasErrorsHelper(text))
 		{
+			console.log("Passed jshint. Now looking for AST errors.");
+			
 			// Code is syntactically valid and should be able to build an ast.
 			// Build the ast and do additional checks using the ast.
 			var ast = esprima.parse(text, {loc: true});			
 			if(!hasASTErrors(text, ast))
-				return false;
+				return true;
 		}		
-		return true;
+		return false;
 	}
 
 	// Returns true iff there are errors
@@ -206,10 +212,12 @@
  	{
 		var functionCode = allTheFunctionCode + " "  + text;
 		var errors = "";
-	    console.log(functionCode);
+	    console.log("linting on: " + functionCode);
 	    
 	    var lintResult = JSHINT(functionCode,getJSHintGlobals());
 		console.log(JSHINT.errors);
+		console.log("lintResult: " + JSON.stringify(lintResult));
+		
 		if(!lintResult)
 		{
 			var errors = checkForErrors(JSHINT.errors);
@@ -286,9 +294,9 @@
 					calleeNames: calleeNames};
 	}
 	
-	// Makes the description and header of the function readonly (not editable in CodeMirror)
+	// Makes the header of the function readonly (not editable in CodeMirror)
 	// Note: the code must be loaded into CodeMirror before this function is called.
-	function makeFullDescriptionReadOnly()
+	function makeHeaderReadOnly()
 	{
 	 	myCodeMirror.save();	 			
  		var text = $("#code").val();		
@@ -296,15 +304,13 @@
 		
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		myCodeMirror.getDoc().markText({line: 0, ch: 0}, 
-				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column}, 
+		myCodeMirror.getDoc().markText({line:  ast.body[0].body.loc.start.line - 2, ch: 0}, 
+				{ line: ast.body[0].body.loc.start.line - 1, ch: 1}, 
 				{ readOnly: true }); 
 	}
 </script>
 
 <BR>
 <textarea id="code"></textarea>
-<a href="http://www.crockford.com/javascript/survey.html" target="_blank" class="muted pull-right minorNote">
-	Help, I don't know Javascript!
-</a><BR>
+	<%@include file="/html/elements/javascriptTutorial.jsp" %><BR>
 <div id = "errorMessages" class="alert alert-error"></div>

@@ -34,7 +34,7 @@
 		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;				
 		
 		// Load test data
-		var fullDescription = <%=function.getDescriptionDTO().json() %>; 
+		var fullDescription = <%=function.getDescriptionDTO().json() %>; 		
 		var paramNames = fullDescription.paramNames;
 		var codeBoxCode = '<%= function.getEscapedFullDescription() %>';
 		
@@ -52,7 +52,7 @@
    			// Generate input elements for the simple test editor
    			$.each(paramNames, function(index, value) 
    			{
-   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<input type="text" class="input-xlarge"><BR>');
+   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<textarea></textarea><BR>');
    			});   
    			
    			// Track whether we are currently in simple or advanced test writing mode
@@ -61,7 +61,10 @@
 				if (e.target.id == 'simpleTestTab')
 					simpleModeActive = true;
 				else if (e.target.id == 'advancedTestTab')
+				{
 					simpleModeActive = false;
+				    myCodeMirror.refresh();
+				}
 			});
    			
    			showPrompt();
@@ -98,9 +101,15 @@
 		function showPrompt()
 		{
 			if (showWritePrompt)
+			{
 	   			$("#writePrompt").css('display',"block");
+	   			setupReadonlyCodeBox(writeCodeBox);
+			}
 			else if (showCorrectPrompt)
+			{
 	   			$("#correctPrompt").css('display',"block");
+	   			setupReadonlyCodeBox(correctCodeBox);
+			}
 			else if (showFunctionChangedPrompt)
    			{
    				$('#functionChangedPrompt').prettyTextDiff();
@@ -123,14 +132,15 @@
 					if (index >= paramNames.length)
 						return false;
 					
-					// Get the corresponding input element for this param and populate it
-					$('#parameterValues').children('input').get(index).value = value;
+					// Get the corresponding textArea element for this param and populate it
+					$('#parameterValues').children('textarea').get(index).value = value;
 				});
 				$('#expectedOutput').val(testData.simpleTestOutput);
 			}
 			else
 			{
 				$('#testTabs a[href="#advancedTest"]').tab('show');		
+			    myCodeMirror.refresh();
 			}			
 		}		
 		
@@ -138,24 +148,31 @@
 		// object in TestDTO format
 		function collectTestData()
 		{
-			var code = buildTestCode();
 			var simpleTestInputs = [];
 			var simpleTestOutput = '';
 			
 			if (simpleModeActive)
 			{			
-				$.each($('#parameterValues').children('input'), function(index, inputElement)
+				$.each($('#parameterValues').children('textarea'), function(index, inputElement)
 				{
-					simpleTestInputs.push(inputElement.value);
+					// Parse empty textboxes as empty strings
+					var testInput = inputElement.value;
+					if (testInput == "")
+						testInput = "''";
+					
+					simpleTestInputs.push(testInput);
 				});						
+				
 				simpleTestOutput = $('#expectedOutput').val();
+				if (simpleTestOutput == "")				
+					simpleTestOutput = "''";
 			}
-			
+			var code = buildTestCode(simpleTestInputs, simpleTestOutput);
 			return { code: code, hasSimpleTest: simpleModeActive, simpleTestInputs: simpleTestInputs, 
 					 simpleTestOutput: simpleTestOutput };
 		}
 		
-		function buildTestCode()
+		function buildTestCode(simpleTestInputs, simpleTestOutput)
 		{
 			var code;
 			
@@ -164,19 +181,18 @@
 				// Build code corresponding to the values entered in simple mode.
 				code = 'equal(<%= function.getName() %>(';
 				
-				// Add a parameter for each input element ni the parameterValues div				
-				$.each($('#parameterValues').children('input'), function(index, inputElement)
+				// Add a parameter for each input element in the parameterValues div				
+				$.each(simpleTestInputs, function(index, input)
 				{
 					// Add a comma for any but the first param
 					if (index != 0)
 						code = code + ', ';
 					
-					code = code + inputElement.value;
+					code = code + input;
 				});
 				
-				// TODO: this may not work for single quotes in the test descrption...
-				code = code + '), ' + $('#expectedOutput').val() 
-					+ ", '<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
+				code = code + '), ' + simpleTestOutput 
+					+ ", " + "'<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
 			}	
 			else
 			{
@@ -191,14 +207,21 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	
 	<div id="writePrompt" style="display: none">
-		Write a simple or advanced test for<BR>			
-		<span class="label label-inverse"><%= microtask.getDescription() %></span><BR>
+		Write a simple or advanced test for<BR>		<BR>
+		<div class="alert alert-info"><%= microtask.getDescription() %></div>
+		
+		<BR>Here's the description of the function to test:
+		<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
 	</div>
 
 	<div id="correctPrompt" style="display: none">
-		The following issue was reported with this test:<BR>		
-		<span class="label label-important"><%= microtask.getIssueDescription() %></span><BR>		
+		The following issue was reported with this test:<BR><BR>
+		<div class="alert alert-info"><%= microtask.getDescription() %></div>		
+		<div class="alert alert-error"><%= microtask.getIssueDescription() %></div>	
 		Can you fix the test to address this issue?<BR>
+		
+		<BR>Here's the description of the function to test:
+		<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
 	</div>
 	
 	<div id="functionChangedPrompt" style="display: none">
@@ -208,13 +231,13 @@
 		<span class="original" style="display: none"><%=microtask.getOldFunctionDescription() %></span>
    		<span class="changed" style="display: none"><%=microtask.getNewFunctionDescription() %></span>
 		<span id="diff" class="diff"></span><BR>
+		
+		Here's the test description:
+		<div class="alert alert-info"><%= microtask.getDescription() %></div>
 	</div>
 	
-	<BR>Here's the description of the function to test:
-	<%@include file="/html/elements/readonlyCodeBox.jsp" %>	
-		
 	<form id="writeTestForm" action="">
-		<BR><BR><ul class="nav nav-tabs" id="testTabs">
+		<BR><ul class="nav nav-tabs" id="testTabs">
 		  <li><a href="#simpleTest" data-toggle="tab" id="simpleTestTab">Simple Test</a></li>
 		  <li><a href="#advancedTest" data-toggle="tab" id="advancedTestTab">Advanced Test</a></li>
 		</ul>		
@@ -224,7 +247,7 @@
 			<b>Parameter Values</b><BR>
 				<div id="parameterValues"></div>
 			<b>Expected Output</b><BR>
-				<input type="text" id="expectedOutput" class="input-xlarge"><BR>
+				<textarea id="expectedOutput"></textarea><BR>
 		  </div>
 		  <div class="tab-pane" id="advancedTest">
 			  <span class="reference">

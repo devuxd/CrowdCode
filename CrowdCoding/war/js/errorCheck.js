@@ -1,7 +1,7 @@
 function checkForErrors(e)
 {
 	/**JSHINT CONFIG*/
-	/*jshint white: false, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true*/
+	/*jshint camelcase: false, white: false, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true*/
 	/*global window: false, document: false, $: false, log: false, bleep: false,test: false*/
 	  
 	var anyErrors = false;
@@ -18,8 +18,11 @@ function checkForErrors(e)
 //				continue;
 //			}
 //			debugger;
-			stringOfErrors += e[i].reason + "</br>";
-			anyErrors = true;
+		    if (e[i] != null)
+		    {
+				stringOfErrors += "Line " + e[i].line + ": " + e[i].reason + "</br>";
+				anyErrors = true;
+		    }
 //		}
 	}
 	if(anyErrors)

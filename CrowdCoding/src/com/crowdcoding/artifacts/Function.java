@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.Project;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.history.MessageReceived;
 import com.crowdcoding.dto.history.PropertyChange;
@@ -22,7 +23,6 @@ import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
-import com.crowdcoding.util.Pair;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -44,7 +44,7 @@ public class Function extends Artifact
 	private List<String> paramNames = new ArrayList<String>();
 	private String header;
 	private String description;
-	@Load private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
+	private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<String> callees = new ArrayList<String>();	
 	// current callers with a fully implemented callsite to this function:
@@ -93,15 +93,21 @@ public class Function extends Artifact
 		this.name = "main";
 		this.paramNames.add("userInput");
 		this.description = "/** \n" +
-				           " * Main function for a commandline application. Given a userInput string \n" +
-				           " * describing an action to take, executes the action and returns the \n" +
-				           " * result as a String. \n" +
-				           " * \n" +
-				           " * @param {String} userInput - user input describing the action to take \n" + 
-				           " * @return {String} - output from executing the action \n" +
+				           "  [INSERT A DESCRIPTION OF THE FUNCTION HERE!]  \n" +
+				           "  \n" +
+				           "  Describe the purpose and intent of the function. \n" + 
+				           "  List each parameter, describing its structure (what fields it has)\n" +
+				           "  and it's intent. For example, if you had a function that took \n" +
+				           "  a param named parsedSentence that looked like \n" +
+				           "  { sentence: [ 'Hello,', 'world!' ]} and returns a \n" + 
+				           "  boolean, you might describe its params and return as follows: \n" +
+				           "  \n" + 
+				           "  @param { sentence: [ strings ] } parsedSentence - sentence parsed \n" +
+				           "         into an array of words \n" + 
+				           "  @return boolean - whether something is true about the sentence \n" +
 				           " */\n";
-		this.header = "function main(userInput)";
-		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n\n}";
+		this.header = "function main(input)";
+		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}";
 		this.hasBeenDescribed = true;
 		
 		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
@@ -179,6 +185,36 @@ public class Function extends Artifact
 		return code;
 	}
 	
+	// Gets a mock implementation that checks to see if there are any mocks
+	// for the specified function.
+	public String getMockCode()
+	{
+		StringBuilder mockCode = new StringBuilder();
+		mockCode.append("{ var returnValue; ");
+		mockCode.append("var params = arguments; ");
+		mockCode.append("var mockFor = hasMockFor('" + name + "', arguments, mocks); ");
+		mockCode.append("if (mockFor.hasMock) ");
+		mockCode.append("     returnValue = mockFor.mockOutput; ");
+		mockCode.append("else ");
+		mockCode.append("     returnValue = " + name + "aaaActualIMP.apply(null, params); "); // JSON.parse(JSON.stringify(
+	//	mockCode.append("alert( JSON.stringify(JSON.parse(JSON.stringify(params)))); ");
+		mockCode.append("return returnValue; }");
+		return mockCode.toString();
+	}
+	
+	// Gets the special header used for the actual implementation when running with mocks
+	public String getMockHeader()
+	{
+		StringBuilder b = new StringBuilder();
+		b.append(" function " + name + "aaaActualIMP");
+		
+		// Gets the params string out of the header by looking for the first instance of a paren (which
+		// must be the start of the functions params)
+		b.append(header.substring(header.indexOf("(")));
+		
+		return b.toString();
+	}
+	
 	// gets the body of the function (including braces)
 	public String getEscapedCode()
 	{
@@ -231,7 +267,14 @@ public class Function extends Artifact
 	{
 		return pseudoCalls.contains(pseudoCall);
 	}
-			
+	
+	// Adds the specified test for this function
+	public void addTest(Test test)
+	{
+		tests.add((Ref<Test>) Ref.create(test.getKey()));
+		ofy().save().entity(this).now();	
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////
 	//  PRIVATE CORE FUNCTIONALITY
 	//////////////////////////////////////////////////////////////////////////////
@@ -290,7 +333,7 @@ public class Function extends Artifact
 	{
 		for (Ref<Test> t : tests) 
 		{
-			if (!t.get().isImplemented())
+			if (!Test.load(t).isImplemented())
 				return false;			
 		}
 		
@@ -411,12 +454,9 @@ public class Function extends Artifact
 		for (String testDescription : testCases)
 		{
 			Test test = new Test(testDescription, this, project);
-			tests.add((Ref<Test>) Ref.create(test.getKey()));
 		}
-		
-		ofy().save().entity(this).now();			
 	}
-		
+	
 	public void sketchCompleted(FunctionDTO dto, Project project)
 	{
 		microtaskOutCompleted();
@@ -495,8 +535,10 @@ public class Function extends Artifact
 		if(dto.testCaseNumber != null)
 		{
 			// creates a disputed test case
-			tests.get(Integer.parseInt(dto.testCaseNumber)).get().disputeUnitTestCorrectionCreated(dto, project);	
-			onWorkerEdited(dto, project);
+			Test.load(tests.get(Integer.parseInt(dto.testCaseNumber)))
+					.disputeUnitTestCorrectionCreated(dto, project);	
+			
+			// Since there was an issue, ignore any code changes they may have submitted.			
 		} else { //at present, reaching here means all tests passed.
 			if(!this.code.trim().equals(dto.code.trim()))
 			{ //integrate the new changes
@@ -506,6 +548,21 @@ public class Function extends Artifact
 
 		// Save the entity again to the datastore		
 		ofy().save().entity(this).now(); 
+		
+		// Update or create tests for any mocks
+		for (MockDTO mockDTO : dto.mocks)
+		{
+			// Is there already a simple test / mock for this function with these inputs?
+			Test test = Test.findSimpleTestFor(mockDTO.functionName, mockDTO.inputs, project);			
+			
+			// If so, update it.
+			// Otherwise, create a new test
+			if (test != null)
+				test.setSimpleTestOutput(mockDTO.expectedOutput, project);
+			else
+				test = new Test(Function.lookupFunction(mockDTO.functionName, project), 
+						mockDTO.inputs, mockDTO.expectedOutput, mockDTO.code, project);
+		}		
 		
 		lookForWork(project);
 	}
@@ -606,7 +663,7 @@ public class Function extends Artifact
 		// queue FUNCTION_CHANGED edit test microtasks on each of this function's tests
 		for (Ref<Test> testRef : tests)
 		{
-			Test test = ofy().load().ref(testRef).get();
+			Test test = Test.load(testRef);
 			test.queueMicrotask(new WriteTest(test, this.getFullDescription(),  
 					dto.description + dto.header, project), project);
 		}

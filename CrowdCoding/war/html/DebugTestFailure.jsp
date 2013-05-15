@@ -5,6 +5,7 @@
 <%@ page import="com.crowdcoding.Project"%>
 <%@ page import="com.crowdcoding.Worker"%>
 <%@ page import="com.crowdcoding.microtasks.DebugTestFailure"%>
+<%@ page import="com.crowdcoding.artifacts.Test"%>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil"%>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@ page import="java.io.StringWriter"%>
@@ -20,14 +21,11 @@
 	mapper.writeValue(strWriter, microtask.getTestCases());
 	String testCases = strWriter.toString();
 	strWriter = new StringWriter();
-	mapper.writeValue(strWriter, microtask.getFunctionHeaderAssociatedWithTestCase());
-	String functionHeader = strWriter.toString();
-	strWriter = new StringWriter();
 	mapper.writeValue(strWriter, microtask.getTestDescriptions());
 	String testCaseDescriptions = strWriter.toString();
 	String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 
-	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctions(microtask.getFunction(), project) + "'";
+	String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getAllFunctionsMocked(microtask.getFunction(), project) + "'";
 	// add current header becuase of recursive issue not marked in correct state so getAllActive ignores it
 	String allFunctionCodeInSystemHeader = "'" + microtask.getFunction().getHeader() + "{}" + FunctionHeaderUtil.getDescribedFunctionHeaders(null, project) + "'";
 %>
@@ -35,7 +33,7 @@
 <body>
 	<div id="microtask">
 		<script src="/include/bootbox.min.js"></script>
-		<script src="/html/assertionFunctions.js"></script>
+		<script src="/js/assertionFunctions.js"></script>
 		<script src="/include/spin.js"></script>
 		<script>
 			var microtaskTitle = '<%= microtask.microtaskTitle() %>';
@@ -68,7 +66,7 @@
 			};  
 	</script>
 	<script>
-		var timeOutPeriod = 1500;
+		var timeOutPeriod = 500;
 		var microtaskType = 'DebugTestFailure';
 		var microtaskID = <%= microtask.getID() %>;
 		
@@ -80,8 +78,12 @@
 		var functionName = '<%= microtask.getFunction().getName() %>';	   
 		var highlightPseudoCall = false;
 		var allTheFunctionCode = <%= "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'" %>;
+	    allTheFunctionCode = allTheFunctionCode.replace(/\n/g, "").replace(/\t/g, "");
 	    
-		$("#sketchForm").children("input").attr('disabled', 'false');
+		var functionToDescription = <%= FunctionHeaderUtil.getAllFullEscapedDescriptions(project) %>.functionNameToDescription;
+		
+		var mocks = {};
+		
 		$('#sketchForm').submit(function() 
 		{
 			var result = checkAndCollectCode();
@@ -94,16 +96,11 @@
 					return false;
 				}
 	
-				// TODO: we are checking JSHint errors twice 
-				// (once in checkAndCollectCode and a second time below...)				
-				// And we are not checking AST errors before we run the unit tests.
 				
-				test1(false);
-				if($("#sketchForm").children("input").attr('disabled') == 'disabled')
-				{
-					return false;
-				}						
-				submit(result.code);
+				// Add the mocks to the code pieces
+				var codePieces = result.code;
+				codePieces.mocks = collectMocks();				
+				submit(codePieces);
 			}
 
 			return false;
@@ -207,8 +204,6 @@
 	function runUnitTests(arrayOfTests, functionName,isFirstTime)
 	{
  		$("#foo").css("display","block");
-		var unStringEscapedFunctionHeader = <%=functionHeader%>;
-		var functionHeader = unStringEscapedFunctionHeader.replace(/\"/g,"'");
 		var resultOfTest = new Array(); 
 		var htmlTab = "";
 		var htmlContent = "";
@@ -221,18 +216,17 @@
 		var tabHtml = new Array(arrayOfTests.length);
 		console.log(allTheFunctionCode);
 		var p = 0;
-			var myInterval = setInterval(function(){
+		var myInterval = setInterval(function()
+		{
 			if(arrayOfTests[p] != "")
 			{
-			hasAtLeast1Test = true;
-			var lintCheckFunction = "function printDebugStatement (){} " + allTheFunctionCode + " " + myCodeMirror.getValue().replace(/\n/g,"");
-			console.log("LINT" + lintCheckFunction);
-			var lintResult = JSHINT(lintCheckFunction,getJSHintGlobals());
-			var errors = checkForErrors(JSHINT.errors);
-			console.log(errors);
-			// no errors by jshint
-				if(errors == "")
+				hasAtLeast1Test = true;
+				
+				// run the tests if there are no errors
+				if(doErrorCheck())
 				{
+					console.log("Passed error check");
+					
 					if(p == 0)
 					{   
 						htmlContent += "<div class='tab-pane active' id=" + "'A" + p + "'>";						
@@ -261,49 +255,49 @@
 					// change to asyncTest if you want try that, but that broke stuff when i changed it
 					var testCases = "";
 					// constructs the function header and puts code  from the above code window
-					testCases += "" + allTheFunctionCode + " " + 
-					      instrumentCallerForLogging(myCodeMirror.getValue()).replace(/\n/g,"");
+					console.log("Building test code");
+					
+					testCases += ("" + allTheFunctionCode + " " + 
+					      instrumentCallerForLogging(myCodeMirror.getValue())).replace(/\n/g,"").replace(/\t/g,"");
 					testCases += arrayOfTests[p];
-					console.log(testCases);
 					var QunitTestCases = parseTheTestCases(testCases);
 					console.log("the test before");
 					console.log(QunitTestCases);
-					console.log("the tests after");
-					//try
-					//{
-						var results;
-						resetAssertions();
-						// worker code
-						window.URL = window.URL || window.webkiURL;
-					    var blob = new Blob([document.querySelector('#worker1').textContent]);
-					    var worker = new Worker(window.URL.createObjectURL(blob));
-					    var done = false;
-					    worker.onmessage = function(e) {
-					      console.log("Received: " + JSON.stringify(e.data));
-						  results = e.data;
-						 // timedOut = false;
-						  console.log(e.data);
-						  // print out the debug statements only once, since it is not dependent on the test
-						  // cases it only gets printed once so when p = 0
-						  for(var g = 0; g < e.data.debugStatements.length && p==0; g++)
-						  {
-						  	printDebugStatementOuter(e.data.debugStatements[g] + g);
-						  }
-					    }
-					    // var b = "hello there";
-					    // worker.postMessage(b); // Start the worker.
-					
-						function stop()
-						{
-							worker.terminate();
-						}
-						// load the script
-						worker.postMessage({url: document.location.origin});
-						// load the test cases
-						worker.postMessage({number: p, testCase: testCases});
-						setTimeout(function(){stop();},timeOutPeriod-500);
-						console.log(done);
-						setTimeout(function(){
+					console.log("the tests after");					
+					console.log("Final code to run: " + testCases);
+							
+					var results;
+					resetAssertions();
+					// worker code
+					window.URL = window.URL || window.webkiURL;
+				    var blob = new Blob([document.querySelector('#worker1').textContent]);
+				    var worker = new Worker(window.URL.createObjectURL(blob));
+				    var done = false;
+				    worker.onmessage = function(e) 
+				    {
+				      console.log("Received: " + JSON.stringify(e.data));
+					  results = e.data;
+					  console.log(e.data);
+					  // print out the debug statements only once, since it is not dependent on the test
+					  // cases it only gets printed once so when p = 0
+					  for(var g = 0; g < e.data.debugStatements.length && p==0; g++)
+					  {
+					  	printDebugStatementOuter(e.data.debugStatements[g] + g);
+					  }
+				    }
+				
+					function stop()
+					{
+						worker.terminate();
+					}
+					// load the script
+					worker.postMessage({url: document.location.origin});
+					// load the test cases
+					worker.postMessage({number: p, testCase: testCases, mocks: mocks});
+					setTimeout(function(){stop();},timeOutPeriod-200);
+					console.log(done);
+					setTimeout(function()
+					{
 						if(results == null)
 						{
 							var tempResult = new Array();
@@ -317,19 +311,15 @@
 							// Display this data to the user.
 							console.log("calleeMap before displayDebugFields");
 							console.log(results.calleeMap);
-							displayDebugFields(calleeList, results.calleeMap);
-							
+							displayDebugFields(calleeList, results.calleeMap);								
 						}
 						$.each(results.result, function(index, result)		
 						{
-							debugger;
 							i = p;
 							resultOfTest[i]= result;   
 							atLeastOneTestCase = true;
-							htmlContent += "<p>" + "</br>"; 
 							if(!result.result)
 							{
-								debugger;
 								if(QunitTestCases.length < 1)
 								{
 									var originalTestCases = <%=testCases%>;
@@ -350,8 +340,9 @@
 								}
 								else
 								{
-									htmlContent += " Expected " + result.expected + " actual: " + result.actual + "</br>";
-									htmlContent += " Outcome Message: " + result.message + "</br>";
+									htmlContent += " <b>Expected</b> <pre>" + JSON.stringify(result.expected, null, 4) 
+									       + "</pre> <b>Actual</b> <pre>" + JSON.stringify(result.actual, null, 4) 
+									       + "</pre> <b>Test case description</b> " + result.message + "<br>";
 								}
 								console.log(tabHtml[p] + " " + p);
 								tabHtml[p] = tabHtml[p].replace("class='true'",'class=false')
@@ -365,67 +356,44 @@
 								}
 							}
 						});
-							// make sure only add the tab(html code for the tab) once
-							// I do it by keep an array
-							debugger;
-							htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
+						// make sure only add the tab(html code for the tab) once
+						// I do it by keep an array
+						htmlContent += "<button onclick='showReportInformation(" + p + ")'> Report Issue In Test </button>" + "</p></div>";
+					
+						// Change the color of the tab based on the result of running all of 
+						// the assertions within the tab
 						
-							// Change the color of the tab based on the result of running all of 
-							// the assertions within the tab
-							
-							// make sure only execute once, we loop through the array that holds
-							//the html code for the tabs once at the very end. each cell in 
-							// array has html code for that tab
-							if(p == arrayOfTests.length-1)
-							{
-							 	for(var z = 0; z < tabHtml.length; z++)
-							 	{
-							 		console.log(tabHtml);
-							 	    htmlTab += tabHtml[z];
-							 	}
+						// make sure only execute once, we loop through the array that holds
+						//the html code for the tabs once at the very end. each cell in 
+						// array has html code for that tab
+						if(p == arrayOfTests.length-1)
+						{
+						 	for(var z = 0; z < tabHtml.length; z++)
+						 	{
+						 		console.log(tabHtml);
+						 	    htmlTab += tabHtml[z];
+						 	}
 	
 							details = results.detail;
 						 	console.log(details);
 						 	console.log("iteraton" + p + "size" + arrayOfTests.length);
 						    if(details.failed > 0)
 						    {
-						     	$("#sketchForm").children("input").attr('disabled', 'false');
 						     	allTestPassed = false;
-						    }
-						    else if(details.failed == 0 && allTestPassed)
-						    {
-						     	$("#sketchForm").children("input").removeAttr("disabled");
 						    }
 						    javaTestCases = resultOfTest;	
 							i++;
-						  }
-						},timeOutPeriod);	
+						}
+					},timeOutPeriod);	
 				}
 				else
 				{
-				console.log("lint errors");
-				setTimeout(function(){
-				// jshint found errors
-					if(p == 0)
-					{   
-						htmlContent += "<div class='tab-pane active' id=" + "'A" + i + "'>";
-						htmlTab +=  "<li class='active'><a href=";
-					}
-					else
+					console.log("errors found");
+					setTimeout(function()
 					{
-						htmlContent += "<div class='tab-pane' id=" + "'A" + i + "'>";
-						htmlTab +=  "<li><a href=";
-					}
-					htmlTab += "'#A" + i + "' data-toggle='tab'"+ "class='" + "false" + "'>" +  "test: " + "error";
-					htmlTab +=  "</a></li>";
-					htmlContent += "<p>" + "</br>"; 
-					htmlContent += " Syntax Error: </br> " + errors + " </br>" ;
-					htmlContent += "</p></div>";
-					i++;
-					$("#sketchForm").children("input").attr('disabled', 'false');
-					allTestPassed = false;
-				
-				},timeOutPeriod);
+						i++;
+						allTestPassed = false;					
+					} ,timeOutPeriod);
 				}
 			}
 			setTimeout(function()
@@ -479,7 +447,7 @@
 				 	$("#foo").css("display","none");
 				}
 			},timeOutPeriod);
-		},timeOutPeriod+200);
+		},timeOutPeriod+50);
 	}
 	
 	// for debuggin purposes
@@ -516,90 +484,81 @@
     // for debuggin purposes
 	function printDebugStatement(statement)
 	{
-		// eval is called for each test case but debug statement wont change
-		
+		// eval is called for each test case but debug statement wont change		
 		if(isFirstTimeThrough == 0)
 		{
 			debugStatementToRun.push(statement);
 			isFirstTimeThrough = 1;
 		}
-	}
-    
+	}    
     
     self.onmessage = function(e) 
     {
     	var data = e.data;
-     	//self.postMessage(e.data);
-		if (data.url)
+  		if (data.url)
 		{
-			    var url = data.url;
-			    var index = url.indexOf('index.html');
-			    if (index != -1)
-			     {
-			      url = url.substring(0, index);
-			     }
-			    importScripts(url + '/html/assertionFunctions.js');
-			    importScripts(url + '/html/js/instrumentFunction.js');
+	    	var url = data.url;
+			var index = url.indexOf('index.html');
+			if (index != -1)
+			{
+				url = url.substring(0, index);
+			}
+			importScripts(url + '/js/assertionFunctions.js');
+			importScripts(url + '/js/instrumentFunction.js');
 		 }
 		 else
 		 {
-		 
-		   		// Rest of your worker code goes here.
-				try
-				{
-					isFirstTimeThrough = data.number;
-					eval(data.testCase);
-				}
-				catch (err)
-				{
-					//results = 
-					self.postMessage("ERRROR:     " + err.message + "    " + data.testCase);
-				}
-				self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun,
-					calleeList: calleeList, calleeMap: calleeMap});
+			try
+			{
+				var finalCode = 'var mocks = ' + JSON.stringify(data.mocks) + '; ' + data.testCase;
+				isFirstTimeThrough = data.number;
+				eval(finalCode);
+			}
+			catch (err)
+			{
+				//results = 
+				self.postMessage("ERRROR:     " + err.message + "    " + data.testCase);
+			}
+			self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun,
+				calleeList: calleeList, calleeMap: calleeMap});
 		 }
-		 //self.postMessage(testCasedPassed);
    };
-//}
   </script>
 
-		<form id="sketchForm" action="">
-			<%@include file="/html/elements/microtaskTitle.jsp" %>
-			This function has failed its tests. Can you fix it? <BR>
-			To check if you've fixed it, run the unit tests. <BR>
-			If there is a problem with the tests, report an issue.
-			You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR><BR>
 
-			<button style="float: right;" onclick="revertCodeAs();">Revert Code</button>
-
-			<%@include file="/html/elements/functionEditor.jsp" %>
-			<%@include file="/html/elements/submitFooter.jsp" %>
-		</form><br>
-		
-		<div style = 'display:none;' id = 'consoleDiv'>
-			<h5> Debug Console Output:</h5>
-				<table width="100%">
-					<tr>
-						<td></td>
-						<td><textarea id="debugconsole"></textarea></td>
-					</tr>
-				</table><br>
-		</div>		
-
-		<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button>
-		<div class="bs-docs-example">
-			<div class="tabbable tabs-left">
-				<ul id="tabs" " class="nav nav-tabs">
-					<li class="active">
-				</ul>
-				<div id="tabContent" class="tab-content">
-					<div class="tab-pane active" id="lA"></div>
-					<div class="tab-pane" id="lB"></div>
-					<div class="tab-pane" id="lC"></div>
-				</div>
+	<%@include file="/html/elements/microtaskTitle.jsp" %>
+	This function has failed its tests. Can you fix it?
+	To check if you've fixed it, run the unit tests.
+	If there is a problem with the tests, report an issue.
+	You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR>
+	
+	<button style="float: right;" onclick="revertCodeAs();">Revert Code</button><BR>	
+	<%@include file="/html/elements/functionEditor.jsp" %>	
+	
+	<div style = 'display:none;' id = 'consoleDiv'>
+		<h5> Debug Console Output:</h5>
+			<table width="100%">
+				<tr>
+					<td></td>
+					<td><textarea id="debugconsole"></textarea></td>
+				</tr>
+			</table><br>
+	</div>		
+	
+	<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button>
+	<div class="bs-docs-example">
+		<div class="tabbable tabs-left">
+			<ul id="tabs" " class="nav nav-tabs">
+				<li class="active">
+			</ul>
+			<div id="tabContent" class="tab-content">
+				<div class="tab-pane active" id="lA"></div>
+				<div class="tab-pane" id="lB"></div>
+				<div class="tab-pane" id="lC"></div>
 			</div>
-			<!-- /tabbable -->
 		</div>
+		<!-- /tabbable -->
+	</div>
 		<script>
 	 test1(true);
 	 </script>
@@ -627,9 +586,22 @@
 			</form>
 		</div>
 		
-		<div>
-			<%@include file="/html/elements/calleeDebugOutputEditor.jsp" %>
-		</div>
+	<div>
+		<BR><%@include file="/html/elements/calleeDebugOutputEditor.jsp" %>
+	</div>
+	
+	<br><br><form id="sketchForm" action="">
+		<%@include file="/html/elements/submitFooter.jsp" %>
+	</form>
+		
+	<script>
+		$(document).ready(function()
+		{
+			var mockData = JSON.parse('<%= Test.allMocksInSystemEscaped(project) %>');
+			loadMocks(mockData.mocks);
+		});
+	</script>	
+		
 		
 <div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 	<div class="logout-header">

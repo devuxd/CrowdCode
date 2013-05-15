@@ -15,6 +15,7 @@ public class FunctionDTO extends DTO
 	public String name;	
 	public String code = "";
 	public List<String> calleeNames = new ArrayList<String>();
+	public List<MockDTO> mocks = new ArrayList<MockDTO>();
 	
 	public String toString()
 	{

@@ -30,6 +30,7 @@
 		$('#noFunction').click(selectNoFunction);
 	  	$('#skip').click(function() { skip(); });		
 		$('#searchForm').submit(submitReuseSearch);
+		setupReadonlyCodeBox(readonlyCodeBox);
 	});
 	
 	function submitReuseSearch() 
@@ -133,7 +134,7 @@ Is there a function that does<BR>
 Use the search box to see if a function exists to do this. Otherwise, select "No function does this".<BR><BR>
 
 <a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
-<div id="callContext" class="collapse"><%@include file="/html/elements/readonlyCodeBox.jsp" %></div><BR>
+<div id="callContext" class="collapse"><div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div></div><BR>
 
 <form id="searchForm" action="">
 	<input type="text" id="SearchText" class="input-large" oninput="doSearch()">

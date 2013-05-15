@@ -34,6 +34,8 @@
 	
 	    $(document).ready(function()
 	    {
+			setupReadonlyCodeBox(readonlyCodeBox);
+	    	
    		    // Based on the prompt type, load and setup the appropriate prompt divs
    		    if (showTestUserStoryPrompt)
 	   			$("#testUserStoryPrompt").css('display',"block");
@@ -89,9 +91,8 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>	
 	
 	<div id="testUserStoryPrompt" style="display: none">
-		Consider the user story <BR>
-		<span class="label label-inverse"><%= microtask.getUserStoryText() %></span><BR><BR>
-		
+		Consider the user story <BR><BR>
+		<div class="alert alert-success"><%= microtask.getUserStoryText() %></div>		
 		This user story is implemented by the function main (description below). 
 		What are some examples of cases where this user story might occur? Are there any unexpected corner 
 	cases that might not work?<BR><BR>		
@@ -102,7 +103,7 @@
 		cases that might not work?<BR><BR>
 	</div>
 	
-	<%@include file="/html/elements/readonlyCodeBox.jsp" %><BR><BR>	
+	<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div><BR><BR>	
 	
 	<div class="accordion" id="exampleRoot">
 	  <div class="accordion-group">
