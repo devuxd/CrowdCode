@@ -106,11 +106,8 @@
 	<span class="pseudoCall">'//!'</span>.
 	Update the description and header to reflect the function's actual behavior - the crowd will
 	refactor callers and tests to match the new behavior. (Except if you are editing the function "main" - 
-    you can't change this function's name or number of parameters, but you can still change its description).<BR><BR>
+    you can't change this function's name or number of parameters, but you can still change its description).<BR>
 	
-	Show example<BR>
-	
-	<BR>
 	
 	<form id="sketchForm" action="">
 		<%@include file="/html/elements/functionEditor.jsp" %>
