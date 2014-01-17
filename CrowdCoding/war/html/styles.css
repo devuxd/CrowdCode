@@ -130,7 +130,6 @@ font-family: Lucida Console, Monaco, monospace;
  -o-transition-timing-function: linear, ease-in;  
 }
 
-.userStoryDescrip { width:60%; }
 #functionDescription{ width:95%; }
 
 #footer {     background: none repeat scroll 0 0 transparent;float: left;margin-top: 10px;text-align: center;width: 100%;}
@@ -209,3 +208,13 @@ font-size: 0.60em;
 /* Other typography styles */
 .minorNote { font-size: x-small; }
 .smallNote { font-size: x-small; }
+
+/* Styles for client editor */
+
+.userStoryDescrip { width:700px; } 
+.ADTDescrip { width:700px; font-family: Consolas,Monaco,Lucida Console; }
+.ADT { border-color: BLACK; border: 1px solid; display: inline-block; }
+.ADTContainer { width: 100%; }
+
+
+

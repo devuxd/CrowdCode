@@ -149,7 +149,7 @@
 <script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/include/stars/jquery.rating.js"></script>
-<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='https://cdn.firebase.com/js/client/1.0.2/firebase.js'></script>
 <script src='/include/esprima.js'></script>
 <script src='/include/escodegen.browser.js'></script>
 <script src="/include/diff/diff_match_patch.js"></script>

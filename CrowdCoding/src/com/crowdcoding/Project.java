@@ -5,10 +5,13 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.crowdcoding.artifacts.ADT;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.artifacts.UserStory;
+import com.crowdcoding.dto.ADTDTO;
+import com.crowdcoding.dto.ADTsDTO;
 import com.crowdcoding.dto.CurrentStatisticsDTO;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.UserStoriesDTO;
@@ -63,6 +66,7 @@ public class Project
 		ObjectifyService.register(Worker.class);
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Function.class);
+		ObjectifyService.register(ADT.class);
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
 		ObjectifyService.register(UserStory.class);
@@ -102,13 +106,22 @@ public class Project
 		Function function = new Function(this);
 		mainFunction = (Ref<Function>) Ref.create(function.getKey());
 		
-		// Load user stories from Firebase and spawn work to implement them
+		// Load user stories from Firebase 
 		String userStories = FirebaseService.readUserStories(this);
 		System.out.println(userStories);	
 		UserStoriesDTO dto = (UserStoriesDTO) DTO.read(userStories, UserStoriesDTO.class);
 		this.unstartedUserStories = new LinkedList<String>(dto.userStories);	
+		
+		// Load ADTs from Firebase
+		String ADTs = FirebaseService.readADTs(this);
+		System.out.println(ADTs);	
+		ADTsDTO adtsDTO = (ADTsDTO) DTO.read(ADTs, ADTsDTO.class);
+		for (ADTDTO adtDTO : adtsDTO.ADTs)
+			ADT.createFromDTO(this, adtDTO);		
+		
 		ofy().save().entity(this).now();
 		
+		// Spawn work to implement the user stories
 		startAUserStory();
 	}
 	
@@ -272,5 +285,18 @@ public class Project
 	public Function getMainFunction()
 	{
 		return ofy().load().ref(mainFunction).get();
+	}
+	
+	public String statusReport()
+	{
+		StringBuilder output = new StringBuilder();
+		output.append(UserStory.StatusReport(this));   
+		output.append(Worker.StatusReport(this)); 
+		output.append(Microtask.StatusReport(this));    
+		output.append(ADT.StatusReport(this));
+		output.append(Function.StatusReport(this));   
+		output.append(Test.StatusReport(this));
+		
+		return output.toString();
 	}
 }
