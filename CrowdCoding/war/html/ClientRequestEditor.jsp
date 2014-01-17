@@ -179,8 +179,9 @@
 			<h4>ADTs</h4>
 			Describe ADTs with a name, JSON structure, and description. The JSON structure should be of the form
 			<b>fieldA: TypeName, fieldB: String</b>, where each TypeName is either defined separately as an 
-			ADT or is one of the three primitives String, Number, Boolean. The description should describe
-			any rules about the ADT and include an example of a value of the ADT in JSON format.
+			ADT or is one of the three primitives String, Number, Boolean. To indicate an n-dimensional array, add
+			n sets of brackets after the type name (e.g., 2 dimensional array - TypeName[][]). The description should describe
+			any rules about the ADT and include an example of a value of the ADT in JSON format.<BR>
 			<div id="ADTs"></div>	
 			<button id="save" class="btn btn-primary">Save</button>	   	
 		   	<button id="addUserStory" class="btn btn-small">Add user story</button>
