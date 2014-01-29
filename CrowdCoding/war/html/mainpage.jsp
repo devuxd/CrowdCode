@@ -3,6 +3,7 @@
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
 <%@page import="com.crowdcoding.Project"%>
+<%@page import="com.crowdcoding.artifacts.ADT" %>
 <%@page import="com.crowdcoding.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
@@ -24,6 +25,8 @@
 	});
 	
 	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
+	
+    String allADTs = ADT.getAllADTs(project);
 %>
 
 
@@ -165,8 +168,13 @@
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
 	
+	var allADTs = <%= allADTs %>.ADTs;
+	var typeNames = [];
+	
     $(document).ready(function()
-    {    	
+    {
+    	setupADTData();
+    	
         loadMicrotask();
 
 		$("#logoutLink").click(function() {
@@ -325,6 +333,17 @@
     		$('#feedbackThanks').css('visibility','hidden');
 		}, 10000);   	
 	}
+	
+	// Generate the list of typenames based on the list of allADTs, adding type names for primitives
+	function setupADTData()
+	{
+		for (var i = 0; i < allADTs.length; i++)		
+			typeNames.push(allADTs[0].name);			
+		
+		typeNames.push('String');
+		typeNames.push('Number');
+		typeNames.push('Boolean');		
+	}	
 	
 </script>
 

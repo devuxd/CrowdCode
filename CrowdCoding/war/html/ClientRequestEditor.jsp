@@ -158,8 +158,7 @@
 		function deleteField(field)
 		{
 			$(field).remove();
-		}
-		
+		}		
 		
 	</script>
 </head>

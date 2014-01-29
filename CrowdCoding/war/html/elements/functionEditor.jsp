@@ -248,7 +248,9 @@
 		// Also check for purely textual errors
 		// 1. If there is a pseudocall to replace, make sure it is gone
 		if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)			
-			errorMessages += "Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.";			
+			errorMessages += "Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.<BR>";			
+		
+		errorMessages += hasTypeNameError(ast, errorMessages);	
 			
 		if (errorMessages != "")
 		{
@@ -263,6 +265,90 @@
 		}
 	}
 	
+	// Checks if the function description is missing or has undefined type names.
+	// i.e., checks that a valid TypeName follows @param  (@param TypeName)
+	// and checks that a valid TypeName follows @return.
+	// A valid type name is any type name in allADTs and the type names String, Number, Boolean followed
+	// by zero or more sets of array brackets (e.g., Number[][]).
+	// Returns an error message(s) if there is an error 
+	function hasTypeNameError(ast)
+	{
+		var errorMessages = '';
+		var paramKeyword = '@param ';
+		var returnKeyword = '@return ';
+		
+		// Loop over every line of the function description, checking for lines that have @param or @return
+		var descriptionLines = getDescription(ast).split('\n');
+		for (var i = 0; i < descriptionLines.length; i++)
+		{
+			var line = descriptionLines[i];
+			errorMessages += checkForValidType(paramKeyword, line);
+			errorMessages += checkForValidType(returnKeyword, line);
+		}
+		
+		return errorMessages;		
+	}
+
+	// Checks that, if the specified keyword occurs in line, it is followed by a valid type name. If so,
+	// it returns an empty string. If not, an error message is returned.
+	function checkForValidType(keyword, line)
+	{
+		var loc = line.search(keyword);
+		if (loc != -1)	
+		{
+			var nextWord = findNextWord(line, loc + keyword.length);
+			if (nextWord == -1)
+				return "The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.<BR>";				
+			else if (!isValidTypeName(nextWord))
+				return nextWord + " is not a valid type name.<BR>";						
+		}
+		
+		return '';
+	}
+	
+	// Returns true if name is a valid type name and false otherwise.
+	function isValidTypeName(name)
+	{
+		var simpleName;
+		
+		// Check if there is any array characters at the end. If so, split off that portion of the string. 
+		var arrayIndex = name.indexOf('[]');
+		if (arrayIndex != -1)
+			simpleName = name.substring(0, arrayIndex);
+		else
+			simpleName = name;
+		
+		if (typeNames.indexOf(simpleName) == -1)
+			return false;
+		else if (arrayIndex != -1)
+		{
+			// Check that the array suffix contains only matched brackets..
+			var suffix = name.substring(arrayIndex);
+			if (suffix != '[]' && suffix != '[][]' && suffix != '[][][]' && suffix != '[][][][]')
+				return false;			
+		}
+			
+		return true;		
+	}	
+	
+	// Starting at index start, finds the next contiguous set of nonspace characters that end in a space or the end of a line
+	// (not returning the space). If no such set of characters exists, returns -1
+	// Must be called where start is a nonspace character, but may be past the end of text.
+	function findNextWord(text, start)
+	{
+		if (start >= text.length)
+			return -1;
+				
+		var nextSpace = text.indexOf(' ', start);
+		
+		// If there is no next space, return the whole string. Otherwise, return everything from start up to 
+		// (but not incluing) nextSpace.
+		if (nextSpace == -1)
+			return text.substring(start);
+		else
+			return text.substring(start, nextSpace);
+	}
+	
 	// Returns an object capturing the code and other related information.
 	function collectCode(text, ast)
 	{
@@ -271,9 +357,7 @@
 		// Get the text for the function description, header, and code.
 		// Note esprima (the source of line numbers) starts numbering lines at 1, while
 	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-		var descriptionStart = { line: 0, ch: 0};
-		var descriptionEnd = { line: ast.loc.start.line - 1, ch: 0 };
-		var description = myCodeMirror.getRange(descriptionStart, descriptionEnd);			
+		var description = getDescription(ast)		
 		var name = ast.body[0].id.name;
 		var paramNames = [];
 		
@@ -294,6 +378,16 @@
 					calleeNames: calleeNames};
 	}
 	
+	function getDescription(ast)
+	{
+		// Get the text for the function description, header, and code.
+		// Note esprima (the source of line numbers) starts numbering lines at 1, while
+	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+		var descriptionStart = { line: 0, ch: 0};
+		var descriptionEnd = { line: ast.loc.start.line - 1, ch: 0 };
+		return myCodeMirror.getRange(descriptionStart, descriptionEnd);	
+	}
+	
 	// Makes the header of the function readonly (not editable in CodeMirror)
 	// Note: the code must be loaded into CodeMirror before this function is called.
 	function makeHeaderReadOnly()
@@ -310,7 +404,6 @@
 	}
 </script>
 
-<BR>
 <textarea id="code"></textarea>
 	<%@include file="/html/elements/javascriptTutorial.jsp" %><BR>
 <div id = "errorMessages" class="alert alert-error"></div>

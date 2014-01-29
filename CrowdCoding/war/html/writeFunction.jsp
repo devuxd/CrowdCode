@@ -106,19 +106,19 @@
 	<span class="pseudoCall">'//!'</span>.
 	Update the description and header to reflect the function's actual behavior - the crowd will
 	refactor callers and tests to match the new behavior. (Except if you are editing the function "main" - 
-    you can't change this function's name or number of parameters, but you can still change its description).<BR>
+    you can't change this function's name or number of parameters, but you can still change its description).<BR><BR>
 	
+	<%@include file="/html/elements/typeBrowser.jsp" %>
 	
 	<form id="sketchForm" action="">
 		<%@include file="/html/elements/functionEditor.jsp" %>
 		<%@include file="/html/elements/submitFooter.jsp" %>	
 	</form>
-	
-	
+		
 	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 	<div class="logout-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="logoutLabel">Please fix errors and retry</h3>
+		<h3 id="logoutLabel">Please fix the listed errors and try again!</h3>
 	</div>
 	<div class="modal-body"></div>
 	<div class="modal-footer">
