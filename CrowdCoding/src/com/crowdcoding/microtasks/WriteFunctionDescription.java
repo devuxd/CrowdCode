@@ -41,8 +41,15 @@ public class WriteFunctionDescription extends Microtask
 	protected void doSubmitWork(DTO dto, Project project)
 	{
 		FunctionDescriptionDTO functionDTO = (FunctionDescriptionDTO) dto;	
-		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.paramNames, functionDTO.header, 
-				functionDTO.description, project);	
+		
+		// The initial code for a function is a line of pseudocode that instructs
+		// the worker to only remove it when the function is done. This keeps regenerating
+		// new sketch tasks until the worker has marked it as done by removing the pseudocode
+		// line.
+		String code = "{\n\t//#Mark this function as implemented by removing this line.\n}";	
+		
+		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.paramNames, 
+				functionDTO.paramTypes, functionDTO.header, functionDTO.description, code, project);	
 	}
 	
 	protected Class getDTOClass()

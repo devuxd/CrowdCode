@@ -30,17 +30,11 @@
 		var nextTestCase = 2;
 		
 		var showFunctionSignaturePrompt = <%= (promptType == PromptType.FUNCTION_SIGNATURE) %>;
-		var showTestUserStoryPrompt = <%= (promptType == PromptType.TEST_USER_STORY) %>;
 	
 	    $(document).ready(function()
 	    {
 			setupReadonlyCodeBox(readonlyCodeBox);
-	    	
-   		    // Based on the prompt type, load and setup the appropriate prompt divs
-   		    if (showTestUserStoryPrompt)
-	   			$("#testUserStoryPrompt").css('display',"block");
-   			if (showFunctionSignaturePrompt)
-	   			$("#testFunctionSignaturePrompt").css('display',"block");	    	
+   			$("#testFunctionSignaturePrompt").css('display',"block");	    	
 	    	
 		  	$('#skip').click(function() { skip(); });	
 	    	
@@ -90,14 +84,6 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>	
 	
-	<div id="testUserStoryPrompt" style="display: none">
-		Consider the user story <BR><BR>
-		<div class="alert alert-success"><%= microtask.getUserStoryText() %></div>		
-		This user story is implemented by the function main (description below). 
-		What are some examples of cases where this user story might occur? Are there any unexpected corner 
-	cases that might not work?<BR><BR>		
-	</div>
-
 	<div id="testFunctionSignaturePrompt" style="display: none">
 		What are some cases in which this function might be used? Are there any unexpected corner 
 		cases that might not work?<BR><BR>

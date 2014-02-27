@@ -8,7 +8,6 @@ import java.util.List;
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
@@ -22,7 +21,6 @@ public class WriteTestCases extends Microtask
 	public enum PromptType { FUNCTION_SIGNATURE, TEST_USER_STORY };
 	
 	@Load private Ref<Function> function;
-	private Ref<UserStory> userStory; // userStory associated with TEST_USER_STORY prompts
 	private PromptType promptType;
 		
 	// Default constructor for deserialization
@@ -40,20 +38,7 @@ public class WriteTestCases extends Microtask
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
-	}
-	
-	// Constructor for testing a function for its ability to implement a user story
-	public WriteTestCases(Function function, UserStory userStory, Project project)
-	{
-		super(project);
-		this.promptType = PromptType.TEST_USER_STORY;
-		this.function = (Ref<Function>) Ref.create(function.getKey());	
-		this.userStory = (Ref<UserStory>) Ref.create(userStory.getKey());
-		ofy().save().entity(this).now();
-		
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
-		project.historyLog().endEvent();
-	}
+	}	
 
 	protected void doSubmitWork(DTO dto, Project project)
 	{
@@ -104,16 +89,7 @@ public class WriteTestCases extends Microtask
 	public Artifact getOwningArtifact()
 	{
 		return getFunction();
-	}
-	
-	// Gets the user story text. Returns an empty string for any prompt types other than TEST_USER_STORY
-	public String getUserStoryText()
-	{
-		if (promptType == PromptType.TEST_USER_STORY)
-			return ofy().load().ref(userStory).get().getText();
-		else
-			return "";
-	}
+	}	
 	
 	public String microtaskTitle()
 	{

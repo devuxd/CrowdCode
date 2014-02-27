@@ -37,15 +37,12 @@
 		var allTheFunctionCode = '<%= allFunctionCodeInSystem %>';
 		var highlightPseudoCall = false;
 		
-		var showUserStoryPrompt = <%= (promptType == PromptType.IMPLEMENT_USER_STORY) %>;
 		var showSketchPrompt = <%= (promptType == PromptType.SKETCH) %>;
 		var showDescriptionChangedPrompt = <%= (promptType == PromptType.DESCRIPTION_CHANGE) %>;   	 
 		
    		$(document).ready(function() 
 		{   			
    		    // Based on the prompt type, load and setup the appropriate prompt divs
-   		    if (showUserStoryPrompt)
-	   			$("#userStoryPrompt").css('display',"block");
    			if (showSketchPrompt)
 	   			$("#sketchPrompt").css('display',"block");
    			if (showDescriptionChangedPrompt)
@@ -74,18 +71,6 @@
 	</script>
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
-	<div id="userStoryPrompt" style="display: none">
-		Can you figure out how this user story should be implemented? <BR><BR>
-		<div class="alert alert-success"><%= microtask.getUserStoryText() %></div>
-		
-		The main function - the entrypoint into the application - is below. Sketch a design
-		of this user story by editing the function's description (the comments above the function header)
-		and sketching an implementation. Note that you should NOT implement everything in main, but instead
-		use pseudocalls (see below) to ask the crowd to create new functions or reuse existing functionality. 
-		Try not to break other user stories that may already
-		be implemented. But don't worry too much - it'll all be tested.<BR><BR>
-	</div>
-	
 	<div id="sketchPrompt" style="display: none">
 		Implement the function below. <BR><BR>
 	</div>

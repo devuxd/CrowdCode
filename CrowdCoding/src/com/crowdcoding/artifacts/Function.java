@@ -42,6 +42,7 @@ public class Function extends Artifact
 	private String code;
 	@Index private String name;
 	private List<String> paramNames = new ArrayList<String>();
+	private List<String> paramTypes = new ArrayList<String>();
 	private String header;
 	private String description;
 	private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
@@ -67,12 +68,13 @@ public class Function extends Artifact
 	protected Function()
 	{
 	}
-	
-	// Constructor for a function that already has a full function description
-	public Function(String name, List<String> paramNames, String signature, String description, Project project)
+		
+	// Constructor for a function that has a full description and code
+	public Function(String name, List<String> paramNames, List<String> paramTypes, String header, 
+			String description, String code, Project project)
 	{
 		super(project);		
-		writeDescriptionCompleted(name, paramNames, header, description, project);
+		writeDescriptionCompleted(name, paramNames, paramTypes, header, description, code, project);
 	}
 	
 	// Constructor for a function that only has a short call description and still needs a full description
@@ -490,20 +492,16 @@ public class Function extends Artifact
 		callee.addToNotifyOnDescribed(this, callDescription, project);
 	}
 		
-	public void writeDescriptionCompleted(String name, List<String> paramNames, String header, String description, 
-			Project project)
+	public void writeDescriptionCompleted(String name, List<String> paramNames, List<String> paramTypes, 
+			String header, String description, String code, Project project)
 	{
 		microtaskOutCompleted();
 		this.name = name;
 		this.paramNames = paramNames;
+		this.paramTypes = paramTypes;
 		this.header = header;
 		this.description = description;
-
-		// The initial code for a function is a line of pseudocode that instructs
-		// the worker to only remove it when the function is done. This keeps regenerating
-		// new sketch tasks until the worker has marked it as done by removing the pseudocode
-		// line.
-		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n}";	
+		this.code = code;
 		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
 		
 		ofy().save().entity(this).now();

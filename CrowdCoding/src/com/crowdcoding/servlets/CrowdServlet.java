@@ -14,10 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
-import com.crowdcoding.artifacts.ADT;
-import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Test;
-import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
@@ -27,7 +23,6 @@ import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
-import com.crowdcoding.microtasks.WriteUserStory;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -53,7 +48,6 @@ public class CrowdServlet extends HttpServlet
 		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
 		microtaskTypes.put("writetest", WriteTest.class);
 		microtaskTypes.put("writetestcases", WriteTestCases.class);
-		microtaskTypes.put("writeuserstory", WriteUserStory.class);
 	}	
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException 

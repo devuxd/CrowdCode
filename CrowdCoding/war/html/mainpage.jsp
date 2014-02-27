@@ -338,7 +338,7 @@
 	function setupADTData()
 	{
 		for (var i = 0; i < allADTs.length; i++)		
-			typeNames.push(allADTs[0].name);			
+			typeNames.push(allADTs[i].name);			
 		
 		typeNames.push('String');
 		typeNames.push('Number');

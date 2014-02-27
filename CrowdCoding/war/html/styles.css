@@ -179,7 +179,7 @@ font-family: Lucida Console, Monaco, monospace;
 .popupReminderHeading { margin:20px; }
 
 /* Styles for the readonly code mirror box */
-.codemirrorBox .CodeMirror { height: auto; font-size: x-small; }
+.codemirrorBox .CodeMirror { height: auto; font-size: small; }
 #codemirrorBox .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
 
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
@@ -187,8 +187,9 @@ ins {  background-color: #c6ffc6;  text-decoration: none; }
 del {  background-color: #ffc6c6; }
 
 /* Styles for ADT lists */
-.adtList { height: 180px; overflow:auto; border: 2px solid black; }
-.adtListTitle { background: black; color: white; width: 100%; height: 32px; }
+.typeBrowser { width: 100%; }
+.adtList { height: 260px; width: 100%; overflow:auto; box-sizing:border-box; border: 2px solid black; }
+.adtListTitle { background: black; color: white; height: 32px; }
 .adtSearch { float: right;}
 
 /* Style for listing keyboard shortcuts */

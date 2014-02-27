@@ -44,6 +44,7 @@
 		var numParams = 0;
 		var description = '/**\n' + ' * ' + $("#functionDescription").val() + '\n' + ' * \n'; 
 		var paramNames = [];
+		var paramTypes = [];
 		
 		var header = 'function ' + $("#name").val() + '(';
 	    $("tr[id^=params]").each(function(index, value)
@@ -56,6 +57,7 @@
 	    	var paramDescrip = $(this).find("input").eq(2).val();
 	    	
 	    	paramNames.push(paramName);
+	    	paramTypes.push(paramType);
 	    	header += paramName;
 	    	description += ' * @param {' + paramType + '} ' + paramName + ' - ' + paramDescrip + '\n'; 
 	    	
@@ -66,6 +68,7 @@
 		
 		var formData = { name: $("#name").val(),
 				    paramNames: paramNames,
+				    paramTypes: paramTypes,
 			     	description: description,
 					header: header };				
 
