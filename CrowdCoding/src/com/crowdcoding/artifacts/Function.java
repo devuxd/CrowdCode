@@ -261,7 +261,7 @@ public class Function extends Artifact
 
 	public FunctionDescriptionDTO getDescriptionDTO()
 	{
-		return new FunctionDescriptionDTO(name, paramNames, header, description); 
+		return new FunctionDescriptionDTO(name, paramNames, paramTypes, header, description); 
 	}
 	
 	// Returns true iff the specified pseudocall is currently in the code

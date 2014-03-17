@@ -187,9 +187,9 @@ ins {  background-color: #c6ffc6;  text-decoration: none; }
 del {  background-color: #ffc6c6; }
 
 /* Styles for ADT lists */
-.typeBrowser { width: 100%; }
-.adtList { height: 260px; width: 100%; overflow:auto; box-sizing:border-box; border: 2px solid black; }
-.adtListTitle { background: black; color: white; height: 32px; }
+.typeBrowser { width: 100%; background: black;  }
+.adtList { height: 260px; background: white; width: 100%; overflow:auto; box-sizing:border-box; border: 2px solid black; }
+.adtListTitle { background: black; color: white; height: 32px; line-height: 32px;  }
 .adtSearch { float: right;}
 
 /* Style for listing keyboard shortcuts */

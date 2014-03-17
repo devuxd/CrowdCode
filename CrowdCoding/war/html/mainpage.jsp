@@ -146,6 +146,7 @@
 </div>
 
 <!-- Scripts --> 
+<script src="/include/polyfill.js"></script>
 <script src="/include/codemirror/codemirror.js"></script>
 <script src="/include/codemirror/javascript.js"></script>
 <script src="/include/jshint-1.1.0.js"></script>
@@ -162,6 +163,7 @@
 <script src="/js/reminder.js"></script>
 <script src="/js/errorCheck.js"></script>
 <script src="/js/keybind.js"></script>
+<script src="/js/TestEditor.js"></script>
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
@@ -170,6 +172,7 @@
 	
 	var allADTs = <%= allADTs %>.ADTs;
 	var typeNames = [];
+	var nameToADT = {};
 	
     $(document).ready(function()
     {
@@ -337,8 +340,13 @@
 	// Generate the list of typenames based on the list of allADTs, adding type names for primitives
 	function setupADTData()
 	{
-		for (var i = 0; i < allADTs.length; i++)		
-			typeNames.push(allADTs[i].name);			
+		// Build a type name (String) to structure map and a list of type names
+		
+		for (var i = 0; i < allADTs.length; i++)
+		{
+			typeNames.push(allADTs[i].name);
+			nameToADT[allADTs[i].name] = allADTs[i];	
+		}
 		
 		typeNames.push('String');
 		typeNames.push('Number');

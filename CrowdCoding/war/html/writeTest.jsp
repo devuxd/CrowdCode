@@ -34,8 +34,9 @@
 		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;				
 		
 		// Load test data
-		var fullDescription = <%=function.getDescriptionDTO().json() %>; 		
+		var fullDescription = <%=function.getDescriptionDTO().json() %>;
 		var paramNames = fullDescription.paramNames;
+		var paramTypes = fullDescription.paramTypes;
 		var codeBoxCode = '<%= function.getEscapedFullDescription() %>';
 		
 		var testData = <%= microtask.getTest().getTestDTO() %>;
@@ -50,10 +51,17 @@
    			$('#skip').click(function() { skip(); });	
    			
    			// Generate input elements for the simple test editor
-   			$.each(paramNames, function(index, value) 
+   			for (var index = 0; index < paramNames.length; index++)
    			{
-   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<textarea></textarea><BR>');
-   			});   
+   				var name = paramNames[index];
+   				var type = paramTypes[index];   				
+   				var paramID = "param" + index;   	
+   				var testErrorsDiv = "testErrors" + index;    				
+   				$('#parameterValues').append(name + ' (' + type + '): &nbsp;&nbsp;<textarea id="' + paramID + '"></textarea>'
+   					+ '<div class="alert alert-error" id="' + testErrorsDiv + '"></div><BR>');
+   				testEditor = new TestEditor();
+   				testEditor.initialize($('#' + paramID)[0], $('#' + testErrorsDiv), name, type);
+   			}  
    			
    			// Track whether we are currently in simple or advanced test writing mode
 			$('a[data-toggle="tab"]').on('shown', function (e) 
@@ -234,7 +242,9 @@
 		
 		Here's the test description:
 		<div class="alert alert-info"><%= microtask.getDescription() %></div>
-	</div>
+	</div><BR>
+	
+	<%@include file="/html/elements/typeBrowser.jsp" %>
 	
 	<form id="writeTestForm" action="">
 		<BR><ul class="nav nav-tabs" id="testTabs">

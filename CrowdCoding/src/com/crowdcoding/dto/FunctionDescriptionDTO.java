@@ -26,10 +26,11 @@ public class FunctionDescriptionDTO extends DTO
 	{		
 	}
 
-	public FunctionDescriptionDTO(String name, List<String> paramNames, String header, String description) 
+	public FunctionDescriptionDTO(String name, List<String> paramNames, List<String> paramTypes, String header, String description) 
 	{
 		this.name = name;
 		this.paramNames = paramNames;
+		this.paramTypes = paramTypes;
 		this.header = header;
 		this.description = description;
 	}
