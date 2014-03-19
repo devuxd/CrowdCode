@@ -59,14 +59,15 @@
 	    	paramNames.push(paramName);
 	    	paramTypes.push(paramType);
 	    	header += paramName;
-	    	description += ' * @param {' + paramType + '} ' + paramName + ' - ' + paramDescrip + '\n'; 
+	    	description += ' * @param ' + paramType + ' ' + paramName + ' - ' + paramDescrip + '\n'; 
 	    	
 	    	numParams++;
 	    });
 	    header += ')';
-		description += ' * @return {' + $("#returnType").val() + '} \n' + ' */\n';
+		description += ' * @return ' + $("#returnType").val() + ' \n' + ' */\n';
 		
 		var formData = { name: $("#name").val(),
+				    returnType: $("#returnType").val(),
 				    paramNames: paramNames,
 				    paramTypes: paramTypes,
 			     	description: description,

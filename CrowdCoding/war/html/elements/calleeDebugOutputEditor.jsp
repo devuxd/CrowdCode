@@ -13,7 +13,7 @@
 		var i = 0;
 		var newHTML = '';
 		if (calleeList.length > 0)
-			newHTML += '<table><tr><td>Inputs</td><td>Outputs</td>';
+			newHTML += '<table><tr><td>Inputs</td><td>Output</td>';
 			
 		$.each(calleeList,function(i,calleeName)
 		{
@@ -40,9 +40,8 @@
 					}
 					objContent=objContent.substr(1);
 					
-					newHTML += '<tr><td><textarea class="functionValues" readonly>' + objContent +  
-						'</textarea></td>' +
-						'<td><textarea class="functionValues ';
+					newHTML += '<tr><td><pre>' + objContent + '</pre></td>' 
+					    + '<td><textarea class="functionValues ';
 					if (hasMockForKey(calleeName, key))
 						newHTML += ' mockOutput';
 					newHTML += '" onchange="updateMock(this, ' + i + ')">' + 

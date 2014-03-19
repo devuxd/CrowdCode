@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>CrowdCode User Story Editor</title>
+	<title>CrowdCode Client Request Editor</title>
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/html/styles.css">
 	<script src="/include/jquery-1.8.2.min.js"></script> 
@@ -11,35 +11,22 @@
 		var firebaseRef;
 		
 		// User stories are numbered from 0 to userStoryCount - 1 (as are ADTs).
-		var userStoryCount = 0;
 		var ADTCount = 0;
 		var functionCount = 0;
 	
 		$(document).ready(function()
 		{
-			$('#addUserStory').click(function()
-			{
-				addUserStory('');
-			});
 			$('#addADT').click(function()
 			{
 				addADT('', '', '');
 			});
 			$('#addFunction').click(function()
 			{
-				addFunction('', '', '', '/** \n [INSERT A DESCRIPTION OF THE FUNCTION HERE!] \n*/ \n', 
+				addFunction('', '', '', '', '/** \n [INSERT A DESCRIPTION OF THE FUNCTION HERE!] \n*/ \n', 
 						'{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}');
 			});
 			$('#save').click(function()
 			{
-				// Save UserStories
-				firebaseRef = new Firebase(firebaseURL + '/userStories/' + $('#project').val() + '/userStories');
-				var userStories = [];
-				$("textarea[id^=userStory]").each(function(){	    		    	
-			    	userStories.push( $(this).val() );
-			    });
-				firebaseRef.set(userStories);
-				
 				// Save ADTs
 				firebaseRef = new Firebase(firebaseURL + '/clientRequests/' + $('#project').val() + '/ADTs/ADTs');
 				var ADTs = [];
@@ -56,32 +43,23 @@
 				var functions = [];
 				$("div[id^=FunctionContainer]").each(function(){	    		    	
 					var name = $(this).find("input[id^=FunctionName]").val();
+					var returnType = $(this).find("input[id^=FunctionReturnType]").val();
 					var params = $(this).find("textarea[id^=FunctionParams]").val();
 					var paramTypes = parseList($(this).find("textarea[id^=ParamTypes]").val());	
 					var description = $(this).find("textarea[id^=FunctionDescription]").val();
 					var code = $(this).find("textarea[id^=FunctionCode]").val();	
 					
-					functions.push( { name: name, paramNames: parseList(params), paramTypes: paramTypes, 
+					functions.push( { name: name, returnType: returnType, paramNames: parseList(params), paramTypes: paramTypes, 
 						header: 'function ' + name + '(' + params + ')', description: description, code: code }); 
 			    });				
 				firebaseRef.set(functions);
 			});
 			$('#load').click(function()
 			{
-				// Delete all the existing user stories and ADTs
-				$('#userStories').html('');
-				$('#ADTs').html('');			
+				// Delete all the existing ADTs and functions
+				$('#ADTs').html('');	
+				$('#functions').html('');		
 								
-				// Add user stories for each user story in firebase		
-				firebaseRef = new Firebase(firebaseURL + '/userStories/' + $('#project').val() + '/userStories');
-				firebaseRef.once('value', function(dataSnapshot) 
-				{ 
-					$.each(dataSnapshot.val(), function(index, text)
-					{
-						addUserStory(text);						
-					});					
-				});
-				
 				// Add ADTs for each ADT in firebase				
 				firebaseRef = new Firebase(firebaseURL + '/clientRequests/' + $('#project').val() + '/ADTs/ADTs');
 				firebaseRef.once('value', function(dataSnapshot) 
@@ -98,7 +76,7 @@
 				{ 
 					$.each(dataSnapshot.val(), function(index, functionObj)
 					{
-						addFunction(functionObj.name, renderList(functionObj.paramNames), 
+						addFunction(functionObj.name, functionObj.returnType, renderList(functionObj.paramNames), 
 								renderList(functionObj.paramTypes), functionObj.description, functionObj.code);
 					});
 				});
@@ -168,21 +146,7 @@
 				
 			return output;
 		}
-						
-		function addUserStory(text)
-		{
-			$('#userStories').append('<div id="userStoryDiv' + userStoryCount + '">'
-					+ '<textarea class="userStoryDescrip" id="userStory' 
-					+ userStoryCount + '">' + text + '</textarea><a href="#" onclick="deleteUserStory(\'#userStoryDiv' 
-					+ userStoryCount + '\')" class="closeButton">x</a></div>');
-			userStoryCount++;
-		}
-		
-		function deleteUserStory(userStory)
-		{
-			$(userStory).remove();
-		}
-		
+								
 		function addADT(name, structure, description)
 		{
 			$('#ADTs').append('<div class="ADTContainer" id="ADTContainer' + ADTCount + '"><div class="ADT">'
@@ -221,17 +185,18 @@
 			$(field).remove();
 		}
 		
-		function addFunction(name, params, paramTypes, description, code)
+		function addFunction(name, returnType, params, paramTypes, description, code)
 		{
 			$('#functions').append('<div class="ADTContainer" id="FunctionContainer' + functionCount + '"><div class="ADT">'
 					+ 'Name: <input type="text" id="FunctionName' + functionCount + '" value="' + name + '"><BR>'
-					+ 'params: <textarea class="ADTDescrip" id="FunctionParams' + functionCount + '">' 
+					+ 'Return type: <input type="text" id="FunctionReturnType' + functionCount + '" value="' + returnType + '"><BR>'
+					+ 'Params: <textarea class="ADTDescrip" id="FunctionParams' + functionCount + '">' 
 					    + params + '</textarea><BR>'  
-					+ 'param Types: <textarea class="ADTDescrip" id="ParamTypes' + functionCount + '">'
+					+ 'Param Types: <textarea class="ADTDescrip" id="ParamTypes' + functionCount + '">'
 					+ paramTypes + '</textarea><BR>' 
-					+ 'description: <textarea class="ADTDescrip" id="FunctionDescription' + functionCount + '">'
+					+ 'Description: <textarea class="ADTDescrip" id="FunctionDescription' + functionCount + '">'
 					+ description + '</textarea><BR>' 
-					+ 'code: <textarea class="ADTDescrip" id="FunctionCode' + functionCount + '">'
+					+ 'Code: <textarea class="ADTDescrip" id="FunctionCode' + functionCount + '">'
 					+ code + '</textarea><BR>' 
 					+ '</div>'
 					+ '<a href="#" onclick="deleteFunction(\'#FunctionContainer' 
@@ -256,8 +221,6 @@
 		
 		   	<input type="text" class="input-xlarge" id="project">
 		   	<button id="load" class="btn btn-small">Load</button> 
-		   	<h4>User Stories</h4>
-			<div id="userStories"></div>
 			<h4>ADTs</h4>
 			Describe ADTs with a name, JSON structure, and description. The JSON structure should be of the form
 			<b>fieldA: TypeName, fieldB: String</b>, where each TypeName is either defined separately as an 
@@ -273,7 +236,6 @@
 			 <BR>
 			<div id="functions"></div><BR>	
 			<button id="save" class="btn btn-primary">Save</button>	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       	
-		   	<button id="addUserStory" class="btn btn-small">Add user story</button>
 		   	<button id="addADT" class="btn btn-small">Add ADT</button>
 			<button id="addFunction" class="btn btn-small">Add function</button><BR>
 		</div>

@@ -163,7 +163,7 @@
 <script src="/js/reminder.js"></script>
 <script src="/js/errorCheck.js"></script>
 <script src="/js/keybind.js"></script>
-<script src="/js/TestEditor.js"></script>
+<script src="/js/JSONEditor.js"></script>
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';

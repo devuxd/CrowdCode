@@ -41,6 +41,7 @@ public class Function extends Artifact
 {
 	private String code;
 	@Index private String name;
+	private String returnType;
 	private List<String> paramNames = new ArrayList<String>();
 	private List<String> paramTypes = new ArrayList<String>();
 	private String header;
@@ -70,11 +71,11 @@ public class Function extends Artifact
 	}
 		
 	// Constructor for a function that has a full description and code
-	public Function(String name, List<String> paramNames, List<String> paramTypes, String header, 
+	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, String header, 
 			String description, String code, Project project)
 	{
 		super(project);		
-		writeDescriptionCompleted(name, paramNames, paramTypes, header, description, code, project);
+		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, header, description, code, project);
 	}
 	
 	// Constructor for a function that only has a short call description and still needs a full description
@@ -85,36 +86,6 @@ public class Function extends Artifact
 		
 		// Spawn off a microtask to write the function description
 		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, project));
-	}
-	
-	// Constructor for the special main function, which acts as the root of the call graph
-	public Function(Project project)
-	{
-		super(project);
-		
-		this.name = "main";
-		this.paramNames.add("userInput");
-		this.description = "/** \n" +
-				           "  [INSERT A DESCRIPTION OF THE FUNCTION HERE!]  \n" +
-				           "  \n" +
-				           "  Describe the purpose and intent of the function. \n" + 
-				           "  List each parameter, describing its structure (what fields it has)\n" +
-				           "  and it's intent. For example, if you had a function that took \n" +
-				           "  a param named parsedSentence that looked like \n" +
-				           "  { sentence: [ 'Hello,', 'world!' ]} and returns a \n" + 
-				           "  boolean, you might describe its params and return as follows: \n" +
-				           "  \n" + 
-				           "  @param { sentence: [ strings ] } parsedSentence - sentence parsed \n" +
-				           "         into an array of words \n" + 
-				           "  @return boolean - whether something is true about the sentence \n" +
-				           " */\n";
-		this.header = "function main(input)";
-		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}";
-		this.hasBeenDescribed = true;
-		
-		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
-		
-		ofy().save().entity(this).now();
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -261,7 +232,7 @@ public class Function extends Artifact
 
 	public FunctionDescriptionDTO getDescriptionDTO()
 	{
-		return new FunctionDescriptionDTO(name, paramNames, paramTypes, header, description); 
+		return new FunctionDescriptionDTO(name, returnType, paramNames, paramTypes, header, description); 
 	}
 	
 	// Returns true iff the specified pseudocall is currently in the code
@@ -492,11 +463,12 @@ public class Function extends Artifact
 		callee.addToNotifyOnDescribed(this, callDescription, project);
 	}
 		
-	public void writeDescriptionCompleted(String name, List<String> paramNames, List<String> paramTypes, 
+	public void writeDescriptionCompleted(String name, String returnType, List<String> paramNames, List<String> paramTypes, 
 			String header, String description, String code, Project project)
 	{
 		microtaskOutCompleted();
 		this.name = name;
+		this.returnType = returnType;
 		this.paramNames = paramNames;
 		this.paramTypes = paramTypes;
 		this.header = header;

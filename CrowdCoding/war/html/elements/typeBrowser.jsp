@@ -3,15 +3,15 @@
 	{  
 		for (i = 0; i < allADTs.length; i++)
 		{
-			var adtsHTML = '<p><b>' + allADTs[i].name + '</b>&nbsp;&nbsp; fields: <i>'; 
+			var adtsHTML = '<b>' + allADTs[i].name + '</b>&nbsp;&nbsp; properties-  '; 
 			for (j = 0; j < allADTs[i].structure.length; j++)
 			{
 				if (j > 0)
 					adtsHTML += ', ';
-				adtsHTML += allADTs[i].structure[j].type + ' ' + allADTs[i].structure[j].name;
+				adtsHTML += '"' + allADTs[i].structure[j].name + '": ' + allADTs[i].structure[j].type;
 			}
 			
-			adtsHTML += '</i><BR>' + allADTs[i].description + '</p>';			
+			adtsHTML += '<BR><pre class="ADTDescriptionText">' + allADTs[i].description + '</pre>';			
 			$('#ADTList').append(adtsHTML.replace('\n', '<BR>'));
 		}
 	});

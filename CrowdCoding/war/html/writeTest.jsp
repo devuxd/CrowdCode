@@ -8,7 +8,7 @@
 <%@ page import="com.crowdcoding.microtasks.WriteTest.PromptType" %>
 <%@ page import="com.crowdcoding.artifacts.Function" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
-<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %> 
 
 <%
 	String projectID = (String) request.getAttribute("project");
@@ -35,6 +35,7 @@
 		
 		// Load test data
 		var fullDescription = <%=function.getDescriptionDTO().json() %>;
+		var returnType = fullDescription.returnType;
 		var paramNames = fullDescription.paramNames;
 		var paramTypes = fullDescription.paramTypes;
 		var codeBoxCode = '<%= function.getEscapedFullDescription() %>';
@@ -57,10 +58,9 @@
    				var type = paramTypes[index];   				
    				var paramID = "param" + index;   	
    				var testErrorsDiv = "testErrors" + index;    				
-   				$('#parameterValues').append(name + ' (' + type + '): &nbsp;&nbsp;<textarea id="' + paramID + '"></textarea>'
-   					+ '<div class="alert alert-error" id="' + testErrorsDiv + '"></div><BR>');
-   				testEditor = new TestEditor();
-   				testEditor.initialize($('#' + paramID)[0], $('#' + testErrorsDiv), name, type);
+   				$('#parameterValues').append(name + ' (' + type + '): &nbsp;&nbsp;<textarea id="' 
+   				    + paramID + '"></textarea>'
+   					+ '<div class="alert alert-error" id="' + testErrorsDiv + '"></div>');
    			}  
    			
    			// Track whether we are currently in simple or advanced test writing mode
@@ -76,7 +76,22 @@
 			});
    			
    			showPrompt();
-   			loadSimpleTestData(testData);			
+   			loadTestData(testData);		
+   			
+   			// Setup TestEditor instances (has to be done after data loaded)
+   			for (var index = 0; index < paramNames.length; index++)
+   			{
+  				var paramID = "param" + index;   
+   				var testErrorsDiv = "testErrors" + index; 
+  				var type = paramTypes[index];  
+   				jsonEditor = new JSONEditor();
+   				jsonEditor.initialize($('#' + paramID)[0], $('#' + testErrorsDiv), type);
+   			}
+   			
+   			// Generate a TestEditor for the expectedOutput
+   			$('#expectedOutputTitle').html("Expected Return Value (" + returnType + ")");
+   			var outputEditor = new JSONEditor();
+			outputEditor.initialize($('#expectedOutput')[0], $('#expectedOutputErrors'), returnType);    			
    		});	    
 	
 		$('#writeTestForm').submit(function() {
@@ -126,7 +141,7 @@
 		}
 		
 		// Configures the form based on the state from the testData object (in TestDTO format)
-		function loadSimpleTestData(testData)
+		function loadTestData(testData)
 		{
 			if (simpleModeActive)
 			{
@@ -254,10 +269,14 @@
 		
 		<div class="tab-content">
 		  <div class="tab-pane active" id="simpleTest">
+		    Provide a JSON parameter value for each parameter and a JSON value for the expected 
+		    return value.<BR><BR>  
+		  
 			<b>Parameter Values</b><BR>
 				<div id="parameterValues"></div>
-			<b>Expected Output</b><BR>
-				<textarea id="expectedOutput"></textarea><BR>
+			<b><span id="expectedOutputTitle"></span></b><BR>
+				<textarea id="expectedOutput"></textarea>
+				<div class="alert alert-error" id="expectedOutputErrors"></div>
 		  </div>
 		  <div class="tab-pane" id="advancedTest">
 			  <span class="reference">

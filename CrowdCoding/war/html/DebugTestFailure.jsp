@@ -528,11 +528,14 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	This function has failed its tests. Can you fix it?
-	To check if you've fixed it, run the unit tests.
-	If there is a problem with the tests, report an issue.
+	You can 1) edit the function to fix issues with the code, 2) report a problem with the tests, and 3) 
+	edit the output of function calls to fix problems with other functions. 
+	To check if you've fixed the issue, run the unit tests.
 	You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR>
 	
-	<button style="float: right;" onclick="revertCodeAs();">Revert Code</button><BR>	
+	<button style="float: right;" onclick="revertCodeAs();">Revert Code</button><BR><BR>
+	
+	<%@include file="/html/elements/typeBrowser.jsp" %>	
 	<%@include file="/html/elements/functionEditor.jsp" %>	
 	
 	<div style = 'display:none;' id = 'consoleDiv'>

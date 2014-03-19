@@ -49,12 +49,14 @@
 
 	<form id="writeCallForm" action="">
 		<%@include file="/html/elements/microtaskTitle.jsp" %>
-		The crowd found the following function for the <span class="highlightPseudoCall">pseudocall below</span>:
+		The crowd found the following function for the <span class="highlightPseudoCall">
+		   pseudocall below</span>:<BR><BR>
 		<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div><BR>
 		
-		Can you either replace the pseudocall with a call to this function, or find a different way to do it?
-		Feel free to update the code as necessary.<BR>
+		Can you replace the pseudocall with a call to this function, or find another way to do it?
+		<BR><BR>
 		
+		<%@include file="/html/elements/typeBrowser.jsp" %>		
 		<%@include file="/html/elements/functionEditor.jsp" %>		
 		<%@include file="/html/elements/submitFooter.jsp" %>
 	</form>

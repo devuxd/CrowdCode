@@ -156,13 +156,15 @@ public /*abstract*/ class Microtask
 	// excluded workers to give workers another chance.
 	private void resetIfHighlySkipped(Project project)
 	{
-		// If at least all but one worker has skipped it, reset exclusion constraints.
+		// If all workers have skipped it, reset exclusion constraints.
 		// TODO: we really should reset based on the status of logged in workers. But there
 		// is currently no way to track that accurately.
-		if (excludedWorkers.size() >= Worker.allWorkers(project).size() - 1)
+		if (excludedWorkers.size() >= Worker.allWorkers(project).size())
 		{
 			excludedWorkers.clear();
 			ofy().save().entity(this).now();
+			
+			System.out.println("Reset excluded workers for " + this.toString());
 		}
 	}
 	

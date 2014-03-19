@@ -51,10 +51,8 @@ public class Project
 	private int microtasksCompleted;
 	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
-	//private Ref<Function> mainFunction;	// root function in the call graph	
 	private boolean waitingForTestRun = false;	// is the project currently waiting for tests to be run?
-	private Queue<String> unstartedUserStories = new LinkedList<String>();  // descriptions of UserStories yet to be created
-	
+
 	
 	// Static initializer for class Project
 	static
@@ -111,8 +109,8 @@ public class Project
 		FunctionDescriptionsDTO functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
 		for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
 		{
-			Function newFunction = new Function(functionDTO.name, functionDTO.paramNames, functionDTO.paramTypes,
-					functionDTO.header, functionDTO.description, functionDTO.code, this);					
+			Function newFunction = new Function(functionDTO.name, functionDTO.returnType, functionDTO.paramNames, 
+					functionDTO.paramTypes, functionDTO.header, functionDTO.description, functionDTO.code, this);					
 		}		
 		
 		ofy().save().entity(this).now();

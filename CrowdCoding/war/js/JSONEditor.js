@@ -1,26 +1,22 @@
 /*
- *  A TestEditor provides a means for editing tests. It takes a list of parameters
- * 
- * 
+ *  A JSONEditor provides a means for editing JSON values.
  * 
  */
 
-function TestEditor() {
+function JSONEditor() {
 	// private variables	
 	var textArea;
-	var paramName;
 	var paramType;   // String indicating type of parameter
 	var errorsDiv;
 	var codeMirror;
 	var changeTimeout;
 	var isValidParam = true;
 	
-	this.initialize = function(newTextArea, newErrorsDiv, newParamName, newParamType)
+	this.initialize = function(newTextArea, newErrorsDiv, newParamType)
 	{
 		textArea = newTextArea;
 		errorsDiv = newErrorsDiv;
 		errorsDiv.hide();
-		paramName = newParamName;
 		paramType = newParamType;
 		codeMirror = CodeMirror.fromTextArea(textArea); 	
 		codeMirror.setSize(null, 120);
@@ -30,6 +26,7 @@ function TestEditor() {
 	// Event handler for changes to the CodeMirror box
 	function testChanged(editorInstance, changeObject)
 	{
+		// Setup a timeout to do syntax checking
 		clearTimeout(changeTimeout);
 		changeTimeout = setTimeout(
 				function(){processTestChanged(editorInstance, changeObject);}, 500);		
@@ -66,7 +63,7 @@ function TestEditor() {
 			{
 				// We can get an error here if the 1) field names are not surrounded by double quotes, 2) there's a trailing ,
 				// Also need to check that strings are surrounded by double quotes, not single quotes....				
-				errors = "Error - 1) field names are surrounded by double quotes, 2) strings are surounded by double quotes - not" 
+				errors = "Error - 1) property names are surrounded by double quotes, 2) strings are surounded by double quotes - not" 
 					+ " single quotes, and 3) there are no trailing commas in the list of fields.";
 			}
 		}
@@ -137,13 +134,9 @@ function TestEditor() {
 				var fieldType = typeDescrip[i].type;
 				
 				if (struct.hasOwnProperty(fieldName))
-				{
 					errors += checkStructure(struct[fieldName], fieldType);
-				}
 				else
-				{
-					errors +=  "'" + JSON.stringify(struct) + "' is missing the required field " + fieldName + "<BR>"; 
-				}
+					errors +=  "'" + JSON.stringify(struct) + "' is missing the required property " + fieldName + "<BR>"; 
 			}
 		}
 		else	
@@ -152,8 +145,5 @@ function TestEditor() {
 		}
 		
 		return errors;
-	}
-	
-	
-	
+	}	
 }

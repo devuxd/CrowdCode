@@ -72,7 +72,7 @@
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 
 	<div id="sketchPrompt" style="display: none">
-		Implement the function below. <BR><BR>
+		Can you implement the function below? <BR><BR>
 	</div>
 	
 	<div id="descriptionChangedPrompt" style="display: none">
@@ -84,7 +84,7 @@
 		<span id="diff" class="diff"></span><BR><BR>
 	</div>	
 	
-	If you're not yet exactly sure how to do something, indicate a line or portion 
+	If you're not sure how to do something, you can indicate a line or portion 
 	of a line as <span class="pseudoCode">pseudocode</span> by beginning it with <span class="pseudoCode">'//#'</span>.
 	If you'd like to call a function, describe what you'd like it to do with a
 	<span class="pseudoCall">pseudocall</span> - a line or portion of a line beginning with 

@@ -219,8 +219,13 @@ font-size: 0.60em;
 
 .userStoryDescrip { width:700px; } 
 .ADTDescrip { width:700px; font-family: Consolas,Monaco,Lucida Console; }
+.ADTDescriptionText { font-size: smaller; padding: 3px} 
 .ADT { border-color: BLACK; border: 1px solid; display: inline-block; }
 .ADTContainer { width: 100%; }
+
+
+
+
 
 
 
