@@ -306,31 +306,6 @@
 		return '';
 	}
 	
-	// Returns true if name is a valid type name and false otherwise.
-	function isValidTypeName(name)
-	{
-		var simpleName;
-		
-		// Check if there is any array characters at the end. If so, split off that portion of the string. 
-		var arrayIndex = name.indexOf('[]');
-		if (arrayIndex != -1)
-			simpleName = name.substring(0, arrayIndex);
-		else
-			simpleName = name;
-		
-		if (typeNames.indexOf(simpleName) == -1)
-			return false;
-		else if (arrayIndex != -1)
-		{
-			// Check that the array suffix contains only matched brackets..
-			var suffix = name.substring(arrayIndex);
-			if (suffix != '[]' && suffix != '[][]' && suffix != '[][][]' && suffix != '[][][][]')
-				return false;			
-		}
-			
-		return true;		
-	}	
-	
 	// Starting at index start, finds the next contiguous set of nonspace characters that end in a space or the end of a line
 	// (not returning the space). If no such set of characters exists, returns -1
 	// Must be called where start is a nonspace character, but may be past the end of text.

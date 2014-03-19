@@ -98,10 +98,13 @@ public class Project
 		
 		// Load ADTs from Firebase
 		String ADTs = FirebaseService.readADTs(this);
-		System.out.println(ADTs);	
-		ADTsDTO adtsDTO = (ADTsDTO) DTO.read(ADTs, ADTsDTO.class);
-		for (ADTDTO adtDTO : adtsDTO.ADTs)
-			ADT.createFromDTO(this, adtDTO);	
+		if (!ADTs.equals(""))
+		{
+			System.out.println(ADTs);	
+			ADTsDTO adtsDTO = (ADTsDTO) DTO.read(ADTs, ADTsDTO.class);
+			for (ADTDTO adtDTO : adtsDTO.ADTs)
+				ADT.createFromDTO(this, adtDTO);
+		}
 		
 		// Load functions from Firebase
 		String functions = FirebaseService.readFunctions(this);

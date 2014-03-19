@@ -5,6 +5,7 @@
 <%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
 <%@ page import="com.crowdcoding.artifacts.Function" %>
+<%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.crowdcoding.microtasks.WriteFunctionDescription" %>
 
 <%
@@ -13,6 +14,7 @@
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteFunctionDescription microtask = (WriteFunctionDescription) crowdUser.getMicrotask();
     Function caller = microtask.getCaller();
+    String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(null, project);
 %>
 
 <div id="microtask">
@@ -23,6 +25,8 @@
 		var microtaskType = 'WriteFunctionDescription';
 		var microtaskID = <%= microtask.getID() %>;	
 		
+		var allTheFunctionCode = '<%= allFunctionCodeInSystem %>';
+		
 		var codeBoxCode = '<%= caller.getEscapedCode() %>';
 	
 	    $(document).ready(function()
@@ -32,7 +36,11 @@
    			$('#skip').click(function() { skip(); });	
 			$("#signatureForm").submit(function()
 			{
-				submit(collectSignatureData());			
+				if (validateAll(false))
+					submit(collectSignatureData());	
+				else					
+					$("#popUp").modal();
+				
 				return false;
 			});
 			
