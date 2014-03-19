@@ -10,8 +10,9 @@
 	var marks = [];
 	highlightPseudoSegments(marks);
  	
- 	// If we are editing the main function, make the full description readonly
-	if (functionName == 'main')
+ 	// If we are editing a function that is a client request and starts with CR, make the header
+ 	// readonly.
+	if (functionName.startsWith('CR'))
 		makeHeaderReadOnly();
  	
  	// Find the list of all function names elsewhere in the system
