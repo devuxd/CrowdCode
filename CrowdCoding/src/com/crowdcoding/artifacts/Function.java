@@ -520,7 +520,7 @@ public class Function extends Artifact
 		ofy().save().entity(this).now(); 
 		
 		// Update or create tests for any mocks
-		for (MockDTO mockDTO : dto.mocks)
+/*		for (MockDTO mockDTO : dto.mocks)
 		{
 			// Is there already a simple test / mock for this function with these inputs?
 			Test test = Test.findSimpleTestFor(mockDTO.functionName, mockDTO.inputs, project);			
@@ -532,7 +532,7 @@ public class Function extends Artifact
 			else
 				test = new Test(Function.lookupFunction(mockDTO.functionName, project), 
 						mockDTO.inputs, mockDTO.expectedOutput, mockDTO.code, project);
-		}		
+		}  */		
 		
 		lookForWork(project);
 	}

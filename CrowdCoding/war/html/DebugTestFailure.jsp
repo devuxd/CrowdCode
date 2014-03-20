@@ -99,7 +99,7 @@
 				
 				// Add the mocks to the code pieces
 				var codePieces = result.code;
-				codePieces.mocks = collectMocks();				
+				//codePieces.mocks = collectMocks();				
 				submit(codePieces);
 			}
 
