@@ -97,27 +97,54 @@
 		$('#writeTestForm').submit(function() {
 			var formData = collectTestData();
 
-			var functionHeader = '<%= function.getEscapedHeader() %>';
-			// only looks at the function header not the function body for JSHINT checking
-			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
-			var functionCode = allTheFunctionCode + " " + functionHeader + "{" + formData.code + "}";
-			var errors = "";
-		    console.log(functionCode);
-		    var lintResult = JSHINT(getUnitTestGlobals() + functionCode,getJSHintGlobals());
-		    console.log(JSHINT.errors);
-			if(!lintResult && !simpleModeActive)
+			var hasErrors = false;
+			
+			if (simpleModeActive)
 			{
-				var errors = checkForErrors(JSHINT.errors);
-				console.log(errors);
-				if(errors != "")
+				// Loop over all the values. If any are empty or have errors, show an error message
+				// and do not submit.
+				
+				$.each($('#parameterValues').children('textarea'), function(index, inputElement)
 				{
-					$("#errors").html("<bold> ERRORS: </bold> <br />" + errors);
-					return false; 
+					// Parse empty textboxes as empty strings
+					var testInput = inputElement.value;
+					if (testInput == "")
+						hasErrors = true;
+				});						
+				if ($('#expectedOutput').val() == "")				
+					hasErrors = true;
+			}
+			else
+			{			
+				var functionHeader = '<%= function.getEscapedHeader() %>';
+				// only looks at the function header not the function body for JSHINT checking
+				var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
+				var functionCode = allTheFunctionCode + " " + functionHeader + "{" + formData.code + "}";
+				var errors = "";
+			    console.log(functionCode);
+			    var lintResult = JSHINT(getUnitTestGlobals() + functionCode,getJSHintGlobals());
+			    console.log(JSHINT.errors);
+				if(!lintResult && !simpleModeActive)
+				{
+					var errors = checkForErrors(JSHINT.errors);
+					console.log(errors);
+					if(errors != "")
+					{
+						$("#errors").html("<bold> ERRORS: </bold> <br />" + errors);
+						hasErrors = true;
+					}
 				}
 			}
 			
-			submit(formData);			
-			return false;
+			if (hasErrors)
+			{
+				$("#popUp").modal();
+			}
+			else
+			{
+				submit(formData);
+			}
+			return false;			
 		});
 		
 		// Shows the appropriate prompt
@@ -269,8 +296,8 @@
 		
 		<div class="tab-content">
 		  <div class="tab-pane active" id="simpleTest">
-		    Provide a JSON parameter value for each parameter and a JSON value for the expected 
-		    return value.<BR><BR>  
+		    Provide a JSON object literal of the specified type for each parameter and the expected 
+		    return value (e.g., { "propertyName": "String value" } ).<BR><BR>  
 		  
 			<b>Parameter Values</b><BR>
 				<div id="parameterValues"></div>
@@ -306,4 +333,15 @@
 		<BR><BR><%@include file="/html/elements/submitFooter.jsp" %>	
 	</form>
 	<div id = "errors"> </div>
+	
+	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="logoutLabel">Please fix the listed errors and ensure all values have been provided and try again!</h3>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+	
 </div>
