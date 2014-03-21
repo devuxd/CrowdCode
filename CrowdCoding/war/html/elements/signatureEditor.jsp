@@ -162,9 +162,12 @@
 	function collectSignatureData()
 	{
 		var numParams = 0;
-		var description = '/**\n' + ' * ' + $("#functionDescription").val() + '\n' + ' * \n'; 
+		var description = '/**\n' + $("#functionDescription").val() + '\n'; 
 		var paramNames = [];
 		var paramTypes = [];
+		
+    	// Format description into 66 column max lines, with two spaces as starting character
+		description = wordwrap(description, 66, '\n  ') + '\n'; 
 		
 		var header = 'function ' + $("#name").val() + '(';
 	    $("tr[id^=params]").each(function(index, value)
@@ -179,12 +182,12 @@
 	    	paramNames.push(paramName);
 	    	paramTypes.push(paramType);
 	    	header += paramName;
-	    	description += ' * @param ' + paramType + ' ' + paramName + ' - ' + paramDescrip + '\n'; 
+	    	description += '  @param ' + paramType + ' ' + paramName + ' - ' + paramDescrip + '\n'; 
 	    	
 	    	numParams++;
 	    });
 	    header += ')';
-		description += ' * @return ' + $("#returnType").val() + ' \n' + ' */\n';
+		description += '  @return ' + $("#returnType").val() + ' \n' + '**/\n';
 		
 		var formData = { name: $("#name").val(),
 				    returnType: $("#returnType").val(),
