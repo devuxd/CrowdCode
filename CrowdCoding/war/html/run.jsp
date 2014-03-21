@@ -19,7 +19,7 @@
 <head>
 	<title>CrowdCode Admin Interface </title>
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-	<script src="/include/jquery-1.8.2.min.js"></script> 
+	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 	
 	<script>
 		var code = '<%=allCodeJS%>';

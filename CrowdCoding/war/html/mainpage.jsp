@@ -146,11 +146,11 @@
 </div>
 
 <!-- Scripts --> 
+<script src="/include/jquery-2.1.0.min.js"></script> 
 <script src="/include/polyfill.js"></script>
 <script src="/include/codemirror/codemirror.js"></script>
 <script src="/include/codemirror/javascript.js"></script>
 <script src="/include/jshint-1.1.0.js"></script>
-<script src="/include/jquery-1.8.2.min.js"></script> 
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/include/stars/jquery.rating.js"></script>
 <script src='https://cdn.firebase.com/js/client/1.0.2/firebase.js'></script>
@@ -260,7 +260,6 @@
 		$.ajax({
 		    contentType: 'application/json',
 		    data: stringifiedData,
-		    dataType: 'json',
 		    type: 'POST',
 		    url: '/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID,
 		}).done( function (data) { loadMicrotask();	});   
@@ -316,25 +315,25 @@
 	function newNewsfeedItem(item)
 	{
 		var itemValue = item.description;
-	 	var itemPoints = item.points;
-		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' + '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' +"You earned " + itemPoints +  " points for "   + itemValue + "!" +  '</td> </tr> </br> </table>');					
+		var itemPoints = item.points;
+		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' + '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' +"You earned " + itemPoints +  " points for "   + itemValue + "!" +  '</td> </tr> </br> </table>');
 	}
-	
+
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
 		var feedback = {'microtaskType': microtaskType, 
-					   'microtaskID': microtaskID,
-					   'workerHandle': '<%= worker.getHandle() %>',
-					   'workerID': '<%= worker.getUserID() %>',
-					   'feedback': $("#feedbackBox").val()};
+						  'microtaskID': microtaskID,
+						  'workerHandle': '<%= worker.getHandle() %>',
+						  'workerID': '<%= worker.getUserID() %>',
+						  'feedback': $("#feedbackBox").val()};
 		feedbackRef.push(feedback);
-		$("#feedbackBox").val("");	
+		$("#feedbackBox").val("");
 		$('#feedbackThanks').css('visibility','visible');
 		setTimeout(function() 
 		{
-    		$('#feedbackThanks').css('visibility','hidden');
-		}, 10000);   	
+		    $('#feedbackThanks').css('visibility','hidden');
+		}, 10000);   
 	}
 	
 	// Generate the list of typenames based on the list of allADTs, adding type names for primitives

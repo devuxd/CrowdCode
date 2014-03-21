@@ -10,7 +10,7 @@
 	<title>CrowdCode</title>
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/html/welcomeStyles.css">
-	<script src="/include/jquery-1.8.2.min.js"></script> 
+	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 	
 </head>
 <body>
