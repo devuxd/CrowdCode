@@ -301,7 +301,8 @@
 			if (nextWord == -1)
 				return "The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.<BR>";				
 			else if (!isValidTypeName(nextWord))
-				return nextWord + " is not a valid type name - String, Number, Boolean, or a data structure name. <BR>";						
+				return nextWord + " is not a valid type name. Valid type names are '
+				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';					
 		}
 		
 		return '';

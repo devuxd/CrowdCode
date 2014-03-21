@@ -136,7 +136,8 @@
 		if (value == '')
 			return 'Missing a type name for ' + paramName + '.<BR>';
 		else if(!isValidTypeName(value))
-			return 'The type for ' + paramName + ' - ' + value + ' is not String, Number, Boolean, or a data structure name. <BR>';
+			return 'The type for ' + paramName + ' - ' + value + ' is not a valid type name. Valid type names are '
+			  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';
 		else
 			return '';
 	}
@@ -152,7 +153,8 @@
 		if (value == '')
 			return 'Missing a return type.<BR>';
 		else if(!isValidTypeName(value))
-			return 'The return type ' + value + ' is not String, Number, Boolean, or a data structure name. <BR>';
+			return 'The return type ' + value + ' is not a valid type name. Valid type names are '
+			  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';
 		else
 			return '';
 	}
