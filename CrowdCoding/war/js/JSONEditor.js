@@ -102,8 +102,8 @@ function JSONEditor() {
 			}
 			else
 			{
-				errors += "'" + JSON.stringify(struct) + "' should be an array, but is not. Try enclosing ' +" +
-						'the value in array bracks ([]).<BR>";
+				errors += "'" + JSON.stringify(struct) + "' should be an array, but is not. Try enclosing " +
+						"the value in array bracks ([]).<BR>";
 			}
 		}	
 		// Base case: check for typeNames that are simple types
