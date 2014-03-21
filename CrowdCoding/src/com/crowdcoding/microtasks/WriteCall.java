@@ -30,6 +30,7 @@ public class WriteCall extends Microtask
 	public WriteCall(Function caller, Function callee, String pseudoCall, Project project)
 	{
 		super(project, false);
+		this.submitValue = 7;
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
 		this.callee = (Ref<Function>) Ref.create(callee.getKey());
 		this.pseudoCall = pseudoCall;

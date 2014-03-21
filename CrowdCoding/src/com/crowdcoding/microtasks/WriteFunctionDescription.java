@@ -29,6 +29,7 @@ public class WriteFunctionDescription extends Microtask
 			Project project)
 	{
 		super(project);
+		this.submitValue = 8;
 		this.callDescription = callDescription;
 		this.function = (Ref<Function>) Ref.create(function.getKey());	
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
