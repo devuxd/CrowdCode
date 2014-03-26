@@ -27,11 +27,25 @@ public class Test extends Artifact
 	private String description;		
 	@Index private boolean isImplemented;
 	@Load private Ref<Function> function;
+
 	private String code; 	
 	@Index private boolean hasSimpleTest;
+	// string that uniquely describes what the simple test tests. Null for tests that don't have a simple test.
+	@Index private String simpleTestKey;		
 	private List<String> simpleTestInputs = new ArrayList<String>();
 	private String simpleTestOutput;	
 	
+	// Attempts to find a simple test for the specified function and inputs.
+	// Returns the test, if such a test exists, or null otherwise.
+	public static Test findSimpleTestFor(String functionName, List<String> inputs, Project project)
+	{
+		Ref<Test> testRef = ofy().load().type(Test.class).ancestor(project.getKey()).filter(
+				"simpleTestKey", generateSimpleTestKey(functionName, inputs)).first();  
+		if (testRef == null)
+			return null;
+		else
+			return testRef.get();
+	}
 	
 	// Returns a JSON string (in MockDTO format), escaped for Javascriptt
 	public static String allMocksInSystemEscaped(Project project)
@@ -84,6 +98,7 @@ public class Test extends Artifact
 		this.code = code;
 		this.simpleTestInputs = inputs;
 		this.simpleTestOutput = output;
+		this.simpleTestKey = generateSimpleTestKey(function.getName(), inputs);
 
 		ofy().save().entity(this).now();
 		function.addTest(this);
@@ -190,11 +205,19 @@ public class Test extends Artifact
 		this.hasSimpleTest = dto.hasSimpleTest;
 		this.simpleTestInputs = dto.simpleTestInputs;
 		this.simpleTestOutput = dto.simpleTestOutput;	
+		if (dto.hasSimpleTest)
+			this.simpleTestKey = generateSimpleTestKey(getFunction().getName(), dto.simpleTestInputs);		
 		ofy().save().entity(this).now();
 		
 		microtaskOutCompleted();
 		lookForWork(project);		
 		checkIfBecameImplemented(project);
+	}
+	
+	// Generates a simple test key for the specified function and list of inputs
+	private static String generateSimpleTestKey(String functionName, List<String> inputs)
+	{
+		return functionName + "**:" + inputs.toString();		
 	}
 	
 	public String toString()
