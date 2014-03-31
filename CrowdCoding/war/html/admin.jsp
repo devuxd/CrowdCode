@@ -50,6 +50,7 @@
 			<ul>
 				<li><b>Reset</b> - resets the default project back to the initial state.</li>
 				<li><b>Status</b> - returns a status message describing the current status of the system.</li>
+				<li><b>Tests</b> - lists detailed information for each test.</li>
 			</ul><BR>
 		
 		   	<input type="text" class="input-xlarge" id="command">

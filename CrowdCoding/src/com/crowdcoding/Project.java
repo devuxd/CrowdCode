@@ -268,4 +268,10 @@ public class Project
 		
 		return output.toString();
 	}
+	
+	// Lists detailed information for each test in the system.
+	public String listTests()
+	{
+		return Test.allMocksInSystemEscaped(this);
+	}
 }

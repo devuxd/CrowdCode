@@ -175,6 +175,12 @@ public class CrowdServlet extends HttpServlet
 	    			Project project = Project.Create(projectID);
 	    			output.append(project.statusReport().replace("\n", "<BR>"));
 	    		}   
+	    		else if (command.equals("TESTS"))
+	    		{
+	      			output.append("TESTS executed at " + currentTime.toString() + "<BR>");
+	    			Project project = Project.Create(projectID);
+	    			output.append(project.listTests().replace("\n", "<BR>"));
+	    		}   
 	    		else
 	    		{
 	    			output.append("Unrecognized command " + command);
