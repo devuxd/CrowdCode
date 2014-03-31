@@ -112,9 +112,13 @@
 					{
 						var aMock = functionMocksB[inputKeys];
 						var inputs = Array.prototype.slice.call(aMock.inputs, 0);
+						var stringifiedInputs = [];
+						for (var i = 0; i < inputs.length; i++)
+							stringifiedInputs.push(inputs[i]);
+												
 						mockData.push({ functionName: functionName, 
-							inputs: inputs, 
-							expectedOutput: aMock.output,
+							inputs: stringifiedInputs, 
+							expectedOutput: JSON.stringify(aMock.output),
 							code: buildTestImp(functionName, inputs, JSON.stringify(aMock.output))});		
 					}
 				}
