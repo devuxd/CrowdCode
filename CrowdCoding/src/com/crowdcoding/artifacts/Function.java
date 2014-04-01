@@ -727,6 +727,11 @@ public class Function extends Artifact
 				+ needsDebugging + " queuedMicrotasks: " + queuedMicrotasks.size();
 	}
 	
+	public String fullToString()
+	{
+		return toString() + "\n" + getFullCode();
+	}
+	
 	public static String StatusReport(Project project)
 	{
 		StringBuilder output = new StringBuilder();		

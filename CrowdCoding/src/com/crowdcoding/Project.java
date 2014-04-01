@@ -3,6 +3,7 @@ package com.crowdcoding;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import com.crowdcoding.artifacts.ADT;
@@ -273,5 +274,17 @@ public class Project
 	public String listTests()
 	{
 		return Test.allMocksInSystemEscaped(this);
+	}
+	
+	// Lists detailed information for each function in the system.
+	public String listFunctions()
+	{
+		StringBuilder output = new StringBuilder();
+		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
+		 
+		for (Function function : listOFunctions)
+			output.append(function.fullToString());
+		
+		return output.toString();
 	}
 }

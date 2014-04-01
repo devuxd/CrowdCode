@@ -2,12 +2,6 @@
 	String projectID = (String) request.getAttribute("project");
 %>
 
-
-
-
-
-
-
 <html>
 <head>
 	<title>CrowdCode Admin Interface </title>
@@ -51,6 +45,7 @@
 				<li><b>Reset</b> - resets the default project back to the initial state.</li>
 				<li><b>Status</b> - returns a status message describing the current status of the system.</li>
 				<li><b>Tests</b> - lists detailed information for each test.</li>
+				<li><b>Functions</b> - lists detailed information for each function.</li>
 			</ul><BR>
 		
 		   	<input type="text" class="input-xlarge" id="command">
