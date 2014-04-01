@@ -91,7 +91,7 @@
 	<span class="pseudoCall">'//!'</span>.
 	Update the description and header to reflect the function's actual behavior - the crowd will
 	refactor callers and tests to match the new behavior. (Except if you are editing a function that was
-	specified and directly requested by the cleint - denoted by a function that starts with CR - in which case
+	specified and directly requested by the client - denoted by a function that starts with CR - in which case
     you can't change this function's name or number of parameters, but you can still change its description).<BR><BR>
 	
 	<%@include file="/html/elements/typeBrowser.jsp" %>
