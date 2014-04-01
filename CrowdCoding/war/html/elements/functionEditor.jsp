@@ -5,7 +5,7 @@
 	var doc = myCodeMirror.getDoc();
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	
 	doc.setValue(editorCode);
-	positionCursorAtStart();
+	//positionCursorAtStart();
 	
 	var marks = [];
 	highlightPseudoSegments(marks);
@@ -164,10 +164,35 @@
  		// to save its value back to the textarea so we can read it, we execute the following line:
 	 	myCodeMirror.save();	 	
  		
- 		var text = $("#code").val();
- 		
+ 		var text = $("#code").val();		
 		if(hasErrorsHelper(text))
 		{
+			// If there are syntax errors, but there are also pseudocalls or pseudocode, attempt to 
+			// parse the code without the central code block. If this succeeds, return no errors
+			// and collect the code. Otherwise, indicate errors.
+			if (hasPseudocallsOrPseudocode(text))
+			{
+				var replacedText = replaceFunctionCodeBlock(text);
+				// If the text does not contain a function block, display an error.
+				if (replacedText == '')				
+					showErrors('No function block could be found. Make sure that there is a line that starts with "function".');									
+				else
+				{
+					if (!hasErrorsHelper(replacedText))						
+					{
+						// Code is syntactically valid and should be able to build an ast.
+						// Build the ast and do additional checks using the ast.
+						var ast = esprima.parse(replacedText, {loc: true});			
+						if (!hasASTErrors(replacedText, ast))
+						{
+							var codePieces = collectCode(replacedText, ast);
+							// Replace the code in codePieces with the actual, syntactically invalid code
+							codePieces.code = findCodeblockInInvalidCode(text);	
+							return { errors: false, code: codePieces };	
+						}						
+					}					
+				}	
+			}			
 			return { errors: true, code: null };	
 		}
 		else
@@ -195,7 +220,26 @@
 		
 	 	myCodeMirror.save();	 			
  		var text = $("#code").val();
-		if(!hasErrorsHelper(text))
+		if(hasErrorsHelper(text))			
+		{
+			if (hasPseudocallsOrPseudocode(text))
+			{
+				var replacedText = replaceFunctionCodeBlock(text);
+				// If the text does not contain a function block, display an error.
+				if (replacedText == '')
+					showErrors('No function block could be found. Make sure that there is a line that starts with "function".');
+				else
+				{
+					if (!hasErrorsHelper(replacedText))
+					{
+						var ast = esprima.parse(replacedText, {loc: true});			
+						if(!hasASTErrors(replacedText, ast))
+							return true;
+					}					
+				}
+			}
+		}
+		else
 		{
 			console.log("Passed jshint. Now looking for AST errors.");
 			
@@ -225,8 +269,7 @@
 			console.log(errors);
 			if(errors != "")
 			{
-				$("#errorMessages").show();
-				$("#errorMessages").html(errors);
+				showErrors(errors);
 				return true; 
 			}
 		}							
@@ -235,6 +278,13 @@
 		$("#errorMessages").hide();
 		return false;
  	}
+	
+	// Shows the error messages with the specified errors
+	function showErrors(errors)
+	{
+		$("#errorMessages").show();
+		$("#errorMessages").html(errors);
+	}
 	
 	function hasASTErrors(text, ast)
 	{
@@ -365,20 +415,97 @@
 		return myCodeMirror.getRange(descriptionStart, descriptionEnd);	
 	}
 	
-	// Makes the header of the function readonly (not editable in CodeMirror)
+	// Makes the header of the function readonly (not editable in CodeMirror).
+	// The header is the line that starts with 'function'
 	// Note: the code must be loaded into CodeMirror before this function is called.
 	function makeHeaderReadOnly()
 	{
 	 	myCodeMirror.save();	 			
- 		var text = $("#code").val();		
-		var ast = esprima.parse(text, {loc: true});		
+ 		var text = $("#code").val();			
 		
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		myCodeMirror.getDoc().markText({line:  ast.body[0].body.loc.start.line - 2, ch: 0}, 
-				{ line: ast.body[0].body.loc.start.line - 1, ch: 1}, 
+		var headerLine = indexOfFirstLineStartingFunction(text);
+		
+		myCodeMirror.getDoc().markText({line: headerLine, ch: 0}, 
+				{ line: headerLine + 1, ch: 1}, 
 				{ readOnly: true }); 
 	}
+	
+	// Replaces function code block with empty code. Function code blocks must start on the line
+	// after a function statement.
+	// Returns a block of text with the code block replaced or '' if no code block can be found
+	function replaceFunctionCodeBlock(text)
+	{     
+		var lines = text.split('\n');			
+        for (var i = 0; i < lines.length; i++)
+        {
+			if (lines[i].startsWith('function'))
+			{       
+				// If there is not any more lines after this one, return an error
+				if (i + 1 >= lines.length - 1)
+					return '';
+				
+				// Return a string replacing everything from the start of the next line to the end
+				// Concatenate all of the lines together
+				var newText = '';
+				for (var j = 0; j <= i; j++)
+					newText += lines[j] + '\n';
+				
+				newText += '{}';
+				return newText;		
+			}
+		}
+        
+		return '';
+	}
+	
+	// Uses text search to try to find a code block in syntactically invalid code. Gets the lines starting
+	// from the first line after a line starting with "function" till the end of text.
+	// Returns a block of text with the code block replaced or '' if no code block can be found
+	function findCodeblockInInvalidCode(text)
+	{     
+		var lines = text.split('\n');			
+        for (var i = 0; i < lines.length; i++)
+        {
+			if (lines[i].startsWith('function'))
+			{
+				// Return a string replacing everything from the start of the next line to the end
+				// Concatenate all of the lines together
+				var newText = '';
+				for (var j = i + 1; j < lines.length; j++)
+				{
+					newText += lines[j];
+					if (j < lines.length - 1)
+						newText += '\n';
+				}
+	
+				return newText;		
+			}
+		}
+        
+		return '';
+	}
+	
+	// Finds and returns the index of the first line (0 indexed) starting with the string function, or -1 if no such
+	// line exists
+	function indexOfFirstLineStartingFunction(text)
+	{
+		// Look for a line of text that starts with 'function'.
+		var lines = text.split('\n');			
+        for (var i = 0; i < lines.length; i++)
+        {
+			if (lines[i].startsWith('function'))
+				return i;
+        }
+	}
+		
+	// Returns true iff the text contains at least one pseudocall or pseudocode
+	function hasPseudocallsOrPseudocode(text)
+	{
+		return (text.indexOf('//!') != -1) || (text.indexOf('//#') != -1);
+	}
+	
 </script>
 
 <textarea id="code"></textarea>
