@@ -41,6 +41,9 @@
 		var codeBoxCode = '<%= function.getEscapedFullDescription() %>';
 		
 		var testData = <%= microtask.getTest().getTestDTO() %>;
+		
+		var paramEditors = [];
+		var outputEditor;
 			    
    		$(document).ready(function() 
    		{    			
@@ -67,13 +70,14 @@
   				var paramID = "param" + index;   
    				var testErrorsDiv = "testErrors" + index; 
   				var type = paramTypes[index];  
-   				jsonEditor = new JSONEditor();
+   				var jsonEditor = new JSONEditor();
    				jsonEditor.initialize($('#' + paramID)[0], $('#' + testErrorsDiv), type);
+   				paramEditors.push(jsonEditor); 				
    			}
    			
    			// Generate a TestEditor for the expectedOutput
    			$('#expectedOutputTitle').html("Expected Return Value (" + returnType + ")");
-   			var outputEditor = new JSONEditor();
+   			outputEditor = new JSONEditor();
 			outputEditor.initialize($('#expectedOutput')[0], $('#expectedOutputErrors'), returnType);    			
    		});	    
 	
@@ -82,16 +86,16 @@
 			var hasErrors = false;			
 
 			// Loop over all the values. If any are empty or have errors, show an error message
-			// and do not submit.
-			
-			$.each($('#parameterValues').children('textarea'), function(index, inputElement)
+			// and do not submit.			
+			$.each(paramEditors, function(index, paramEditor)
 			{
-				// Parse empty textboxes as empty strings
-				var testInput = inputElement.value;
-				if (testInput == "")
+				paramEditor.errorCheck();
+				if (!paramEditor.isValid())				
 					hasErrors = true;
-			});						
-			if ($('#expectedOutput').val() == "")				
+			});
+			
+			outputEditor.errorCheck();
+			if (!outputEditor.isValid())				
 				hasErrors = true;
 
 			if (hasErrors)
@@ -194,39 +198,46 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	
-	<div id="writePrompt" style="display: none">
-		Write a simple or advanced test for<BR>		<BR>
-		<div class="alert alert-info"><%= microtask.getDescription() %></div>
-		
-		Here's the description of the function to test:<BR><BR>
-		<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
-	</div>
-
-	<div id="correctPrompt" style="display: none">
-		The following issue was reported with this test:<BR><BR>
-		<div class="alert alert-info"><%= microtask.getDescription() %></div>		
-		<div class="alert alert-error"><%= microtask.getIssueDescription() %></div>	
-		Can you fix the test to address this issue?<BR>
-		
-		<BR>Here's the description of the function to test:
-		<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
-	</div>
-	
-	<div id="functionChangedPrompt" style="display: none">
-		The description of the function being tested has changed. Can you update the test below,
-		if necessary? <BR>
-		
-		<span class="original" style="display: none"><%=microtask.getOldFunctionDescription() %></span>
-   		<span class="changed" style="display: none"><%=microtask.getNewFunctionDescription() %></span>
-		<span id="diff" class="diff"></span><BR>
-		
-		Here's the test description:
-		<div class="alert alert-info"><%= microtask.getDescription() %></div>
-	</div><BR>
-	
-	<%@include file="/html/elements/typeBrowser.jsp" %><BR>
-	
 	<form id="writeTestForm" action="">		
+	
+		<div id="writePrompt" style="display: none">
+			Can you write a test for<BR>		<BR>
+			<div class="alert alert-info"><%= microtask.getDescription() %>
+	   		    <button class="btn btn-mini pull-right" type="button">Report as incorrect test case</button>
+			
+			</div>
+			
+
+			
+			<BR>Here's the description of the function to test:<BR><BR>
+			<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
+		</div>
+	
+		<div id="correctPrompt" style="display: none">
+			The following issue was reported with this test:<BR><BR>
+			<div class="alert alert-info"><%= microtask.getDescription() %></div>		
+			<div class="alert alert-error"><%= microtask.getIssueDescription() %></div>	
+			Can you fix the test to address this issue?<BR>
+			
+			<BR>Here's the description of the function to test:
+			<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
+		</div>
+		
+		<div id="functionChangedPrompt" style="display: none">
+			The description of the function being tested has changed. Can you update the test below,
+			if necessary? <BR>
+			
+			<span class="original" style="display: none"><%=microtask.getOldFunctionDescription() %></span>
+	   		<span class="changed" style="display: none"><%=microtask.getNewFunctionDescription() %></span>
+			<span id="diff" class="diff"></span><BR>
+			
+			Here's the test description:
+			<div class="alert alert-info"><%= microtask.getDescription() %></div>
+		</div><BR>
+		
+		<%@include file="/html/elements/typeBrowser.jsp" %><BR>
+	
+
 	  <div id="simpleTest">
 	    Provide a JSON object literal of the specified type for each parameter and the expected 
 	    return value (e.g., { "propertyName": "String value" } ).<BR><BR>  
@@ -244,7 +255,7 @@
 	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 	<div class="logout-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="logoutLabel">Please fix the listed errors and ensure all values have been provided and try again!</h3>
+		<h4 id="logoutLabel">You need to fix the errors before you submit.</h4>
 	</div>
 	<div class="modal-body"></div>
 	<div class="modal-footer">

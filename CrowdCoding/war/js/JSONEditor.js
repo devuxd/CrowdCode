@@ -23,6 +23,10 @@ function JSONEditor() {
 		codeMirror.on("change", testChanged);
 	};
 	
+	this.isValid = function() { return isValid(); };
+	this.getValue = function() { return getValue(); };
+	this.errorCheck = function() { return errorCheck(); };	
+	
 	// Event handler for changes to the CodeMirror box
 	function testChanged(editorInstance, changeObject)
 	{
@@ -42,6 +46,12 @@ function JSONEditor() {
 	function isValid()
 	{
 		return isValidParam;
+	}
+	
+	// Returns the current value of the JSON editor as a string.
+	function getValue()
+	{
+		return codeMirror.getDoc().getValue();
 	}
 	
 	function errorCheck()
