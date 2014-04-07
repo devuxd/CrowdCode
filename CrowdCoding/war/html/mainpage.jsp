@@ -150,7 +150,7 @@
 <script src="/include/polyfill.js"></script>
 <script src="/include/codemirror/codemirror.js"></script>
 <script src="/include/codemirror/javascript.js"></script>
-<script src="/include/jshint-1.1.0.js"></script>
+<script src="/include/jshint.js"></script>
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/include/stars/jquery.rating.js"></script>
 <script src='https://cdn.firebase.com/js/client/1.0.2/firebase.js'></script>

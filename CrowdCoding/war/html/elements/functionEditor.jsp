@@ -259,7 +259,19 @@
 		var errors = "";
 	    console.log("linting on: " + functionCode);
 	    
-	    var lintResult = JSHINT(functionCode,getJSHintGlobals());
+	    var lintResult = -1;
+	    try
+	    {	    
+	    	lintResult = JSHINT(functionCode,getJSHintGlobals());
+	    }
+	    catch (e)
+	    {
+	    	console.log("Error in running JSHHint. " + e.name + " " + e.message);
+	    }
+	    
+	    if (lintResult == -1)
+	    	return true;
+	    
 		console.log(JSHINT.errors);
 		console.log("lintResult: " + JSON.stringify(lintResult));
 		
