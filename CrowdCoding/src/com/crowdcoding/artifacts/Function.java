@@ -14,6 +14,8 @@ import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
+import com.crowdcoding.dto.TestCaseDTO;
+import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.history.MessageReceived;
 import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
@@ -24,10 +26,10 @@ import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.cmd.Query;
 
 
@@ -208,6 +210,20 @@ public class Function extends Artifact
 	public List<Ref<Test>> getTestCases()
 	{
 		return tests;
+	}
+	
+	// Deletes the specified test from the list of tests
+	public void deleteTest(Key<Test> testToDelete)
+	{
+		for (int i = 0; i < tests.size(); i++)
+		{
+			Ref<Test> testRef = tests.get(i);
+			if (testRef.equivalent(testToDelete))
+			{
+				tests.remove(i);
+				return;
+			}
+		}		
 	}
 		
 	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
@@ -421,14 +437,6 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 	//  NOTIFICATION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
-			
-	public void writeTestCasesCompleted(List<String> testCases, Project project)
-	{
-		for (String testDescription : testCases)
-		{
-			Test test = new Test(testDescription, this, project);
-		}
-	}
 	
 	public void sketchCompleted(FunctionDTO dto, Project project)
 	{
@@ -486,6 +494,43 @@ public class Function extends Artifact
 		
 		// Spawn off microtask to sketch the method
 		queueMicrotask(new WriteFunction(this, project), project);
+	}
+	
+	public void writeTestCasesCompleted(TestCasesDTO dto, Project project)
+	{
+		microtaskOutCompleted();
+		
+		for (TestCaseDTO testCase : dto.testCases)
+		{
+			// Note: the id in the testCase is *only* valid for testcases where added is false.
+			
+			// If it's an add, create a test
+			if (testCase.added)
+			{
+				Test test = new Test(testCase.text, this, project);				
+			}
+			else if (testCase.deleted)
+			{
+				Ref<Test> testRef = Test.find(testCase.id, project);
+				Test test = testRef.get();
+				test.delete();				
+			}
+			else
+			{
+				// Check if it was edited
+				Ref<Test> testRef = Test.find(testCase.id, project);
+				Test test = testRef.get();				
+				if (!test.getDescription().equals(testCase.text))
+				{
+					String oldDescription = test.getDescription();
+					test.setDescription(testCase.text);									
+					test.queueMicrotask(new WriteTest(project, test, oldDescription), project);
+				}
+			}
+		}		
+		
+		ofy().save().entity(this).now();
+		lookForWork(project);
 	}
 	
 	public void writeCallCompleted(FunctionDTO dto, Project project)

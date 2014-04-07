@@ -31,7 +31,11 @@
 		// Determine the prompt type
 		var showWritePrompt = <%= (promptType == PromptType.WRITE) %>;
 		var showCorrectPrompt = <%= (promptType == PromptType.CORRECT) %>;
-		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;				
+		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;		
+		var showTestCaseChangedPrompt = <%= (promptType == PromptType.TESTCASE_CHANGED) %>;	
+		
+		// Whether or not dispute mode is active
+		var testInDispute = false;
 		
 		// Load test data
 		var fullDescription = <%=function.getDescriptionDTO().json() %>;
@@ -79,33 +83,47 @@
    			$('#expectedOutputTitle').html("Expected Return Value (" + returnType + ")");
    			outputEditor = new JSONEditor();
 			outputEditor.initialize($('#expectedOutput')[0], $('#expectedOutputErrors'), returnType);    			
-   		});	    
+   		});	  
+   		
+   		$('#reportTestCase').click(function() { showDisputeForm(); });
+   		$('#cancelDispute').click(function() { hideDisputeForm(); });   		
 	
 		$('#writeTestForm').submit(function() {
-			var formData = collectTestData();
-			var hasErrors = false;			
-
-			// Loop over all the values. If any are empty or have errors, show an error message
-			// and do not submit.			
-			$.each(paramEditors, function(index, paramEditor)
+			if (testInDispute)				
 			{
-				paramEditor.errorCheck();
-				if (!paramEditor.isValid())				
-					hasErrors = true;
-			});
-			
-			outputEditor.errorCheck();
-			if (!outputEditor.isValid())				
-				hasErrors = true;
-
-			if (hasErrors)
-			{
-				$("#popUp").modal();
+				// Submit empty test data for the test
+				var formData = { code: '', inDispute: true, disputeText: $('#disputeText').val(), 
+						hasSimpleTest: true, simpleTestInputs: [], simpleTestOutput: '' };
+				submit(formData);				
 			}
 			else
 			{
-				submit(formData);
+				var formData = collectTestData();
+				var hasErrors = false;			
+
+				// Loop over all the values. If any are empty or have errors, show an error message
+				// and do not submit.			
+				$.each(paramEditors, function(index, paramEditor)
+				{
+					paramEditor.errorCheck();
+					if (!paramEditor.isValid())				
+						hasErrors = true;
+				});
+				
+				outputEditor.errorCheck();
+				if (!outputEditor.isValid())				
+					hasErrors = true;
+
+				if (hasErrors)
+				{
+					$("#popUp").modal();
+				}
+				else
+				{
+					submit(formData);
+				}
 			}
+
 			return false;			
 		});
 		
@@ -126,7 +144,32 @@
    			{
    				$('#functionChangedPrompt').prettyTextDiff();
 	   			$("#functionChangedPrompt").css('display',"block");	   			
-   			}  				
+   			}
+			else if (showTestCaseChangedPrompt)
+   			{
+	   			$("#testCaseChangedPrompt").css('display',"block");	 
+	   			setupReadonlyCodeBox(testCaseChangedCodeBox);
+   			}  	
+		}
+		
+		// Configures the microtask to show information for disputing the test, hiding 
+		// other irrelevant portions of the microtask.
+		function showDisputeForm()
+		{
+			testInDispute = true;
+   			$("#disputeDiv").css('display',"block");			
+			$('#simpleTest').hide();
+			$('#submitFooter').hide();
+		}
+		
+		// Configures the microtask to hide the information for disputing the test, showing
+		// other relevant information that may be hidden.
+		function hideDisputeForm()
+		{
+			testInDispute = false;
+   			$("#disputeDiv").css('display',"none");			
+			$('#simpleTest').show();
+			$('#submitFooter').show();
 		}
 		
 		// Configures the form based on the state from the testData object (in TestDTO format)
@@ -168,8 +211,8 @@
 				simpleTestOutput = "''";
 
 			var code = buildTestCode(simpleTestInputs, simpleTestOutput);
-			return { code: code, hasSimpleTest: true, simpleTestInputs: simpleTestInputs, 
-					 simpleTestOutput: simpleTestOutput };
+			return { code: code, hasSimpleTest: true, inDispute: false, disputeText: '', 
+				     simpleTestInputs: simpleTestInputs, simpleTestOutput: simpleTestOutput };
 		}
 		
 		function buildTestCode(simpleTestInputs, simpleTestOutput)
@@ -198,17 +241,13 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	
-	<form id="writeTestForm" action="">		
-	
+	<form id="writeTestForm" action="">			
 		<div id="writePrompt" style="display: none">
 			Can you write a test for<BR>		<BR>
 			<div class="alert alert-info"><%= microtask.getDescription() %>
-	   		    <button class="btn btn-mini pull-right" type="button">Report as incorrect test case</button>
-			
+	   		    <button class="btn btn-mini pull-right" type="button" id="reportTestCase">
+	   		    	Report as incorrect test case</button>			
 			</div>
-			
-
-			
 			<BR>Here's the description of the function to test:<BR><BR>
 			<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
 		</div>
@@ -223,6 +262,17 @@
 			<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
 		</div>
 		
+		<div id="testCaseChangedPrompt" style="display: none">
+			The test case for this has change from <BR><BR>
+			<div class="alert alert-info"><%= microtask.getOldTestCase() %></div>	
+			to <BR><BR>	
+			<div class="alert alert-info"><%= microtask.getDescription() %></div>	
+			Can you update the test below, if necessary?<BR>
+			
+			<BR>Here's the description of the function to test:
+			<div class="codemirrorBox"><textarea id="testCaseChangedCodeBox"></textarea></div>
+		</div>
+		
 		<div id="functionChangedPrompt" style="display: none">
 			The description of the function being tested has changed. Can you update the test below,
 			if necessary? <BR>
@@ -235,21 +285,28 @@
 			<div class="alert alert-info"><%= microtask.getDescription() %></div>
 		</div><BR>
 		
+		<div id="disputeDiv" style="display: none">
+			What's wrong with this test case? <BR>			
+			<textarea id="disputeText"></textarea><BR>
+			<input class="btn btn-primary" type="submit" id="submitDispute" value="Submit"> 
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;			
+			<a id="cancelDispute">Nothing is wrong with the test case.</a><BR><BR><BR>
+		</div>
+		
 		<%@include file="/html/elements/typeBrowser.jsp" %><BR>
-	
 
-	  <div id="simpleTest">
-	    Provide a JSON object literal of the specified type for each parameter and the expected 
-	    return value (e.g., { "propertyName": "String value" } ).<BR><BR>  
-	  
-		<b>Parameter Values</b><BR>
-			<div id="parameterValues"></div>
-		<b><span id="expectedOutputTitle"></span></b><BR>
-			<textarea id="expectedOutput"></textarea>
-			<div class="alert alert-error" id="expectedOutputErrors"></div>
-	  </div>
+		<div id="simpleTest">
+		    Provide a JSON object literal of the specified type for each parameter and the expected 
+		    return value (e.g., { "propertyName": "String value" } ).<BR><BR>  
+		  
+			<b>Parameter Values</b><BR>
+				<div id="parameterValues"></div>
+			<b><span id="expectedOutputTitle"></span></b><BR>
+				<textarea id="expectedOutput"></textarea>
+				<div class="alert alert-error" id="expectedOutputErrors"></div>
+		</div>
 
-	    <BR><BR><%@include file="/html/elements/submitFooter.jsp" %>	
+		<div id="submitFooter"><BR><BR><%@include file="/html/elements/submitFooter.jsp" %></div>	
 	</form>
 	
 	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">

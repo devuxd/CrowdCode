@@ -46,6 +46,12 @@ public /*abstract*/ class Artifact
 		return Key.create(project, Artifact.class, id);
 	}
 	
+	// Gets the corresponding key for an artifact based on its id
+	public static Key<? extends Artifact> getKey(long id, Project project)
+	{
+		return Key.create(project.getKey(), Artifact.class, id);
+	}
+	
 	public long getID()
 	{
 		return id;

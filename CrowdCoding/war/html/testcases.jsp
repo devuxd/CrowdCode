@@ -26,54 +26,138 @@
 		
 		// Function description for the function description box.
 		var codeBoxCode = '<%= microtask.getFunction().getEscapedFullDescription() %>';
-	
-		var nextTestCase = 2;
+		
+		var testCases = <%= microtask.getEscapedTestCasesList() %>.testCases;	
+		var nextTestCase = 1000;
 		
 		var showFunctionSignaturePrompt = <%= (promptType == PromptType.FUNCTION_SIGNATURE) %>;
+		var showCorrectTestCasePrompt = <%= (promptType == PromptType.CORRECT_TEST_CASE) %>;
 	
 	    $(document).ready(function()
 	    {
 			setupReadonlyCodeBox(readonlyCodeBox);
-   			$("#testFunctionSignaturePrompt").css('display',"block");	    	
+			
+			if (showFunctionSignaturePrompt)
+   				$("#testFunctionSignaturePrompt").css('display',"block");	  
+			if (showCorrectTestCasePrompt)
+   				$("#fixTestCases").css('display',"block");	
 	    	
 		  	$('#skip').click(function() { skip(); });	
 	    	
 	    	$("#addTestCase").click(function()
 	    	{
-				$("#testCases").append(
-					'<span id="testCase' + nextTestCase + '">' +
-						'<input type="text" class="input-xxlarge" placeholder="Describe a test case"/>' +				
-						'<a href="#" onclick="deleteTestCase(\'#testCase' + nextTestCase + '\')" class="closeButton">&times;</a>' +	
-					'</span>');	
+	    		var testCase = { text: '', added: true, deleted: false, id: nextTestCase };
+				testCases.push(testCase);				
+				addTestCase(testCase);
 				
 				// Set focus to the new test case
 				$('#testCase' + nextTestCase).find("input").eq(0).focus();
-				
+												
 				nextTestCase = nextTestCase + 1;	
 				return false;
 	    	});
 	    	
-	    	$("#addTestCase").click();
+	    	// If there are currently no test cases, create a first test case
+	    	if (testCases.length == 0)
+	    		$("#addTestCase").click();
+	    	else
+	    		loadTestCases(testCases);
 	    	
 			$('#testCasesForm').submit(function() {
-				submit(collectFormData());
+				var formData = collectFormData();
+				if (formData == null)
+				{
+					$("#popUp").modal();	
+				}
+				else
+				{				
+					console.log(JSON.stringify(formData));				
+					submit(formData);
+				}
 				return false;
 			});
 		});
 	
+	    // Creates items for each specified test case
+	    function loadTestCases(testCases)
+	    {
+	    	for (var i=0; i < testCases.length; i++)
+	    		addTestCase(testCases[i]);	    	
+	    }	    
+	    
+	    // Collects the form data. Returns null if there is not at least one current testcase.
 		function collectFormData()
 		{
-			var formData = { tests: [] };			
-		    $("span[id^=testCase]").each(function(){	    		    	
-		    	formData.tests.push($(this).find("input").eq(0).val());
-		    });
-		    return formData;
+	    	var countOfCurrentTestCases = 0;
+	    	
+			var formData = { testCases: [] };			
+			for (var i=0; i < testCases.length; i++)
+			{
+				var testCase = testCases[i];
+								
+		    	// Get the value of the test case if it is not deleted
+		    	if (!testCase.deleted)		    	
+		    		testCase.text = $('#testCaseInput' + testCase.id).val();
+		    	
+		    	// Mark test cases with no text as deletes
+		    	if (testCase.text == null || testCase.text.trim().length == 0)
+		    		testCase.deleted = true;
+
+		    	
+		    	// Add to the list of test cases, unless it was both added and deleted, in which
+		    	// case the test case was never submitted as a test case and can be ignored.
+		    	if (!(testCase.added && testCase.deleted))
+		    		formData.testCases.push(testCase);		
+		    	
+		    	// Count how many current test cases there are
+		    	if (!testCase.deleted)
+		    		countOfCurrentTestCases++;
+		    }
+			
+			if (countOfCurrentTestCases == 0)
+				return null;
+			else			
+		    	return formData;
 		}	    
-	    
-		function deleteTestCase(testCase)
+		
+		function addTestCase(testCase)
 		{
-			$(testCase).remove();
+			var idString = "testCaseInput" + testCase.id;
+			
+    		$("#testCases").append(
+					'<span id="testCase' + testCase.id + '">' +
+						'<input type="text" class="input-xxlarge" id="' + idString + '" data-caseID="' + testCase.id
+						      + '" placeholder="Describe a test case"/>' +				
+						'<a href="#" onclick="deleteTestCase(\'#testCase' + testCase.id + '\', ' + testCase.id + 
+								  ')" class="closeButton">&times;</a>' +	
+					'</span>');	
+    		
+    		if (testCase.text != "")
+    			$('#testCaseInput' + testCase.id).val(testCase.text);   		
+		}		
+	    
+		function deleteTestCase(testCaseInput, id)
+		{
+			var testCase = findTestCase(id);
+			if (testCase == null)
+				return;
+			
+			testCase.deleted = true;			
+			$(testCaseInput).remove();
 		}
+		
+		// Given a test case id, finds the corresponding test case object. Returns null if no test
+		// case can be found.
+		function findTestCase(id)
+		{
+			for (var i = 0; i < testCases.length; i++)
+			{
+				if (testCases[i].id == id)
+					return testCases[i];
+			}
+			
+			return null;			
+		}		
 		
 	    $("input[type=text]").focus(function(){
 	        // Select field contents
@@ -81,12 +165,20 @@
 	    });
 	</script>
 
-
 	<%@include file="/html/elements/microtaskTitle.jsp" %>	
 	
 	<div id="testFunctionSignaturePrompt" style="display: none">
 		What are some cases in which this function might be used? Are there any unexpected corner 
 		cases that might not work?<BR><BR>
+	</div>
+	
+	<div id="fixTestCases" style="display: none">
+	    The following issue was reported with the following test case:<BR><BR>
+	    
+	    <div class="alert alert-info"><%= microtask.getDisputeDescription() %></div>		
+		<div class="alert alert-error"><%= microtask.getDisputedTestCase() %></div>		    
+	    
+	    Can you fix the test case (and others if necessary) to address the issue?<BR><BR>
 	</div>
 	
 	<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div><BR><BR>	
@@ -119,4 +211,15 @@
 		<button id="addTestCase" class="btn btn-small">Add test case</button>				
 		<BR><BR><%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
+	
+	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="logout-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h4 id="logoutLabel">Please write at least one test case.</h4>
+		</div>
+		<div class="modal-body"></div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>	
+	</div>
 </div>

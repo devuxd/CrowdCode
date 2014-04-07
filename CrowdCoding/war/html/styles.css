@@ -216,7 +216,7 @@ font-size: 0.60em;
 .minorNote { font-size: x-small; }
 .smallNote { font-size: x-small; }
 
-/* Styles for client editor */
+/* Styles for client request editor */
 
 .userStoryDescrip { width:700px; } 
 .ADTDescrip { width:700px; font-family: Consolas,Monaco,Lucida Console; }
@@ -224,9 +224,5 @@ font-size: 0.60em;
 .ADT { border-color: BLACK; border: 1px solid; display: inline-block; }
 .ADTContainer { width: 100%; }
 
-
-
-
-
-
-
+/* Styles for Write Test Case */
+#disputeText { width: 600px; height: 100px; }

@@ -16,7 +16,7 @@ import com.googlecode.objectify.annotation.Load;
 @EntitySubclass(index=true)
 public class WriteTest extends Microtask
 {
-	public enum PromptType { WRITE, CORRECT, FUNCTION_CHANGED };	
+	public enum PromptType { WRITE, CORRECT, FUNCTION_CHANGED, TESTCASE_CHANGED };	
 	
 	@Load private Ref<Test> test;
 	private PromptType promptType;
@@ -24,6 +24,7 @@ public class WriteTest extends Microtask
 	private String issueDescription;			// Only defined for CORRECT
 	private String oldFunctionDescription;		// Only defined for FUNCTION_CHANGED
 	private String newFunctionDescription;		// Only defined for FUNCTION_CHANGED	
+	private String oldTestCase;					// Only defined for TESTCASE_CHANGED
 	
 	
 	// Default constructor for deserialization
@@ -67,6 +68,20 @@ public class WriteTest extends Microtask
 		ofy().save().entity(this).now();
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test2));
+		project.historyLog().endEvent();
+	}	 
+	
+	// Constructor for TESTCASE_CHANGED prompt
+	public WriteTest(Project project, Test test, String oldTestCase)
+	{
+		super(project, false);
+		this.promptType = PromptType.TESTCASE_CHANGED;
+		this.test = (Ref<Test>) Ref.create(test.getKey());		
+		this.oldTestCase = oldTestCase;
+
+		ofy().save().entity(this).now();
+		
+		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
 		project.historyLog().endEvent();
 	}	 
 	
@@ -120,6 +135,11 @@ public class WriteTest extends Microtask
 	public String getNewFunctionDescription()
 	{
 		return newFunctionDescription;
+	}
+	
+	public String getOldTestCase()
+	{
+		return oldTestCase;
 	}
 	
 	public PromptType getPromptType()
