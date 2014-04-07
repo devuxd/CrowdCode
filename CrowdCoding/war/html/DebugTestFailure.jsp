@@ -516,8 +516,11 @@
 			}
 			catch (err)
 			{
-				//results = 
-				self.postMessage("ERRROR:     " + err.message + "    " + data.testCase);
+				details.failed++;				
+				results.push({ 'expected': '', 'actual': 'ERROR EXECUTING CODE: ' + JSON.stringify(err.message), 'message': '', 'result': false});
+
+				self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun,
+					calleeList: calleeList, calleeMap: calleeMap});
 			}
 			self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun,
 				calleeList: calleeList, calleeMap: calleeMap});
