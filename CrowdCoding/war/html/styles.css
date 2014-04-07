@@ -192,6 +192,7 @@ del {  background-color: #ffc6c6; }
 .adtList { height: 260px; background: white; width: 100%; overflow:auto; box-sizing:border-box; border: 2px solid black; }
 .adtListTitle { background: black; color: white; height: 32px; line-height: 32px;  }
 .adtSearch { float: right;}
+.adtSubtitle { font-size: x-small; }
 
 /* Style for listing keyboard shortcuts */
 .keyboardKey {

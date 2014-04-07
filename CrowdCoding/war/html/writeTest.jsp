@@ -297,7 +297,8 @@
 
 		<div id="simpleTest">
 		    Provide a JSON object literal of the specified type for each parameter and the expected 
-		    return value (e.g., { "propertyName": "String value" } ).<BR><BR>  
+		    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
+		    an example from the description of a type above.<BR><BR>  
 		  
 			<b>Parameter Values</b><BR>
 				<div id="parameterValues"></div>

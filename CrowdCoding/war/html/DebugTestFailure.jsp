@@ -548,7 +548,13 @@
 			</table><br>
 	</div>		
 	
-	<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button>
+	<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button><BR><BR>
+	
+	Here's the list of test cases (on the left) and the error for the currently selected test (on the right). Tests
+	that are green are currently passing while those that are red are failing. You can switch between 
+	tests by clicking on a test on the left.<BR><BR>
+	
+	
 	<div class="bs-docs-example">
 		<div class="tabbable tabs-left">
 			<ul id="tabs" " class="nav nav-tabs">

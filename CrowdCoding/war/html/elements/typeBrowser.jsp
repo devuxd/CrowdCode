@@ -18,7 +18,9 @@
 </script>
 
 <div class="typeBrowser">
-	<div class="adtListTitle">&nbsp;Data Structures
+	<div class="adtListTitle">&nbsp;Types&nbsp;&nbsp;
+	   <span class="adtSubtitle"> Type names may be String, Boolean, Number, any type 
+	   below (bold text), and arrays of any type (e.g., String[], Number[][]).</span>
 	    <!-- <span id="adtSearch" class="adtSearch">Search: <input type="text" class="input-small"/></span> -->
 	</div>
 	<div id='ADTList' class='adtList'></div>
