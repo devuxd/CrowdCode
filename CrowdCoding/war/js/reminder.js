@@ -8,7 +8,7 @@ var reminderTimeStart = Date.now();
 var activityTimer = window.setInterval(function(){clock()}, activityTime);
 
 document.addEventListener('keydown', function(event) {
-	resetTimer();
+	resetActivityTime();
 });
 
 function clock()
@@ -21,16 +21,23 @@ function clock()
 		$("#popUpReminder").modal();
 		
 		// Reset the reminder time clock to now.
-		reminderTimeStart = Date.now();
+		resetStartTime();
 	}
 
-	resetTimer();
+	resetActivityTime();
 }
 
-function resetTimer()
+// Resets the clock on the time since the last activity.
+function resetActivityTime()
 {
 	window.clearInterval(activityTimer);
 	activityTimer = window.setInterval(function(){clock()},activityTime);
+}
+
+// Resets the time since the start of the reminder interval.
+function resetStartTime()
+{
+	reminderTimeStart = Date.now();
 }
 	
 

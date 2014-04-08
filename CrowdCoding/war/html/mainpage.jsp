@@ -293,7 +293,7 @@
   	    	$('#microtask').addClass('animated rollIn');  		
   		});
     	resetSubmitButtons();	
-    	resetTimer();
+    	resetStartTime();
 	}
 	
 	function updateLeaderboardDisplay(leaderboard)
