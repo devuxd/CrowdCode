@@ -221,6 +221,7 @@ public class Function extends Artifact
 			if (testRef.equivalent(testToDelete))
 			{
 				tests.remove(i);
+				ofy().save().entity(this).now();	
 				return;
 			}
 		}		
@@ -513,7 +514,7 @@ public class Function extends Artifact
 			{
 				Ref<Test> testRef = Test.find(testCase.id, project);
 				Test test = testRef.get();
-				test.delete();				
+				test.delete(this);				
 			}
 			else
 			{

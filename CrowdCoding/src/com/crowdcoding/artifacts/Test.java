@@ -185,11 +185,11 @@ public class Test extends Artifact
 	}
 	
 	// Marks this test as deleted, removing it from the list of tests on its owning function.
-	public void delete()
+	public void delete(Function function)
 	{
 		this.isDeleted = true;
 		ofy().save().entity(this).now();		
-		function.get().deleteTest((Key<Test>) this.getKey());
+		function.deleteTest((Key<Test>) this.getKey());
 	}
 	
 	// Given a ref to a function that has not been loaded from the datastore,

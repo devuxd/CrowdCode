@@ -178,7 +178,9 @@
 	    <div class="alert alert-info"><%= microtask.getDisputeDescription() %></div>		
 		<div class="alert alert-error"><%= microtask.getDisputedTestCase() %></div>		    
 	    
-	    Can you fix the test case (and others if necessary) to address the issue?<BR><BR>
+	    Can you fix the test case (and others if necessary) to address the issue?<BR><BR> 
+	    (Note: if the above test case is not below, the test case has already been changed,
+	    and you can ignore this microtask).<BR><BR>
 	</div>
 	
 	<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div><BR><BR>	
