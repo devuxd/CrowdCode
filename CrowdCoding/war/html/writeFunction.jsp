@@ -92,7 +92,13 @@
 	Update the description and header to reflect the function's actual behavior - the crowd will
 	refactor callers and tests to match the new behavior. (Except if you are editing a function that was
 	specified and directly requested by the client - denoted by a function that starts with CR - in which case
-    you can't change this function's name or number of parameters, but you can still change its description).<BR><BR>
+    you can't change this function's name or parameters, but you can change its description).<BR><BR>
+    
+    Note that all function calls are pass by value (i.e., if you pass an object to a function and
+    the function changes the object you will not see the change).<BR><BR>
+    
+        
+    
 	
 	<%@include file="/html/elements/typeBrowser.jsp" %>
 	
