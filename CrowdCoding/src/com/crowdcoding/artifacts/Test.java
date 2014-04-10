@@ -34,7 +34,8 @@ public class Test extends Artifact
 	private String code; 	
 	@Index private boolean hasSimpleTest;
 	// string that uniquely describes what the simple test tests. Null for tests that don't have a simple test.
-	@Index private String simpleTestKey;		
+	@Index private int simpleTestKeyHash;  // a hash of the key
+	
 	private List<String> simpleTestInputs = new ArrayList<String>();
 	private String simpleTestOutput;	
 	
@@ -42,14 +43,22 @@ public class Test extends Artifact
 	// Returns the test, if such a test exists, or null otherwise.
 	public static Test findSimpleTestFor(String functionName, List<String> inputs, Project project)
 	{
-		Ref<Test> testRef = ofy().load().type(Test.class).ancestor(project.getKey())
-				.filter("simpleTestKey", generateSimpleTestKey(functionName, inputs))
-				.filter("isDeleted", false)
-				.first();  
-		if (testRef == null)
-			return null;
-		else
-			return testRef.get();
+		List<Test> tests = ofy().load().type(Test.class).ancestor(project.getKey())
+				.filter("simpleTestKeyHash", generateSimpleTestKeyHash(functionName, inputs))
+				.filter("isDeleted", false).list();
+
+		String simpleTestKey = generateSimpleTestKey(functionName, inputs);
+		
+		// iterate over the matches to find the exact one, in case the hash matches multiple test cases
+		for (Test test : tests)
+		{
+			if (simpleTestKey.equals(generateSimpleTestKey(test.function.get().getName(), test.simpleTestInputs)))
+			{
+				return test;
+			}
+		}
+		
+		return null;
 	}
 	
 	// Returns a JSON string (in MockDTO format), escaped for Javascriptt
@@ -105,7 +114,7 @@ public class Test extends Artifact
 		this.code = code;
 		this.simpleTestInputs = inputs;
 		this.simpleTestOutput = output;
-		this.simpleTestKey = generateSimpleTestKey(function.getName(), inputs);
+		this.simpleTestKeyHash = generateSimpleTestKeyHash(function.getName(), inputs);
 
 		ofy().save().entity(this).now();
 		function.addTest(this);
@@ -257,8 +266,9 @@ public class Test extends Artifact
 			this.hasSimpleTest = dto.hasSimpleTest;
 			this.simpleTestInputs = dto.simpleTestInputs;
 			this.simpleTestOutput = dto.simpleTestOutput;	
-			if (dto.hasSimpleTest)
-				this.simpleTestKey = generateSimpleTestKey(getFunction().getName(), dto.simpleTestInputs);		
+			if (dto.hasSimpleTest)			
+				this.simpleTestKeyHash = generateSimpleTestKeyHash(getFunction().getName(), dto.simpleTestInputs);
+
 			ofy().save().entity(this).now();
 			
 			microtaskOutCompleted();
@@ -271,6 +281,11 @@ public class Test extends Artifact
 	private static String generateSimpleTestKey(String functionName, List<String> inputs)
 	{
 		return functionName + "**:" + inputs.toString();		
+	}
+	
+	private static int generateSimpleTestKeyHash(String functionName, List<String> inputs)
+	{
+		return generateSimpleTestKey(functionName, inputs).hashCode(); 		
 	}
 	
 	public String toString()
