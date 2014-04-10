@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.FullDescriptionsDTO;
+import com.crowdcoding.dto.ReturnTypesDTO;
 
 public class FunctionHeaderUtil
 {
@@ -174,6 +175,21 @@ public class FunctionHeaderUtil
 			functionNameToDescription.put(function.getName(), function.getFullDescription());
 		
 		FullDescriptionsDTO dto = new FullDescriptionsDTO(functionNameToDescription);
+		return dto.json();
+	}
+	
+	// Get return types for every described function in the system formatted as
+	// a string in ReturnTypesDTO format
+	public static String getAllReturnTypes(Project project)
+	{
+		List<Function> functions = ofy().load().type(Function.class).ancestor(project.getKey())
+				.filter("hasBeenDescribed", true).list();
+		
+		HashMap<String, String> functionNameToReturnType = new HashMap<String, String>();
+		for (Function function : functions)
+			functionNameToReturnType.put(function.getName(), function.getReturnType());
+		
+		ReturnTypesDTO dto = new ReturnTypesDTO(functionNameToReturnType);
 		return dto.json();
 	}
 }

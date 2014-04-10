@@ -153,6 +153,11 @@ public class Function extends Artifact
 	{
 		return StringEscapeUtils.escapeEcmaScript(getFullDescription());
 	}
+	
+	public String getReturnType()
+	{
+		return returnType;
+	}
 		
 	// gets the body of the function (including braces)
 	public String getCode()

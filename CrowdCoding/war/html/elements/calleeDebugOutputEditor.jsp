@@ -4,14 +4,19 @@
 
 <script>
 	var rowMap = [];
+	var outputEditors = [];
 
     //Iterates through the calleeList and the calleeMap to obtain inputs and outputs for all executed callees.
 	function displayDebugFields(calleeList, calleeMap)
 	{
     	// reset rowMap
-    	rowMap = [];    	
+    	rowMap = [];    
+    	outputEditors = [];
 		var i = 0;
 		var newHTML = '';
+
+		// For each text area that is to be created as an output editor, the name of the function being called.
+		var functionNamesForOutputEditors = [];
 		
 		var nonLibraryCallees = findNonLibraryCallees(calleeList);
 		
@@ -52,11 +57,14 @@
 						    + '<td><textarea class="functionValues ';
 						if (hasMockForKey(calleeName, key))
 							newHTML += ' mockOutput';
-						newHTML += '" onchange="updateMock(this, ' + i + ')">' + 
-							JSON.stringify(obj.returnValue, null, 4) + '</textarea></td></tr>';
+						newHTML += '" id="mockTextArea' + i + '" >' + 
+							JSON.stringify(obj.returnValue, null, 4) 
+							+ '</textarea><div class="alert alert-error" id="erorrsForMock' + i + '"</div></td></tr>';
 					     
 					    rowMap.push({ functionName: calleeName, inputsKey: key, 
 					    	         inputs: paramsArray, returnValue: obj.returnValue });
+					    
+					    functionNamesForOutputEditors.push(calleeName);
 						i++;	
 					}
 				}			
@@ -68,6 +76,18 @@
 			newHTML += '</table>';
 			
 		$("#addCalleeSection").html(newHTML);
+		
+		for (var j=0; j < i; j++ )
+		{
+			var mockTextArea = "mockTextArea" + j;   
+   			var errorsForMockDiv = "erorrsForMock" + j; 
+  			var type = functionToReturnType[functionNamesForOutputEditors[j]];  
+   			var jsonEditor = new JSONEditor();
+   			jsonEditor.initialize($('#' + mockTextArea)[0], $('#' + errorsForMockDiv), type);
+   			outputEditors.push(jsonEditor);
+   			//jsonEditor.getCodeMirror().on('change', function() { jsonEditor.getCodeMirror().save(); updateMock($('#' + mockTextArea)[0], j) });
+		}
+		
 	}
         
     // Returns a new list of callees, removing any calls to library functions.
@@ -87,13 +107,15 @@
     // Update the specified mock
 	function updateMock(inputText, index)
 	{
+    	alert(inputText.value);
+    	
 		var rowData = rowMap[index];
 		
 		// If there's no row for this function (e.g., it is a library call), do nothing,
 		if (rowData == undefined)
 			return;		
 		
-		
+
 		// If there is not already mocks for this function, create an entry
 		var functionMocks;
 		if (mocks.hasOwnProperty(rowData.functionName))

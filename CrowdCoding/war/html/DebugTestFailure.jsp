@@ -81,6 +81,7 @@
 	    allTheFunctionCode = allTheFunctionCode.replace(/\n/g, "").replace(/\t/g, "");
 	    
 		var functionToDescription = <%= FunctionHeaderUtil.getAllFullEscapedDescriptions(project) %>.functionNameToDescription;
+		var functionToReturnType = <%= FunctionHeaderUtil.getAllReturnTypes(project) %>.functionNameToReturnType;
 		
 		var mocks = {};
 		
