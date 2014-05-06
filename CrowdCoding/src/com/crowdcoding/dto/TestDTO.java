@@ -9,8 +9,9 @@ public class TestDTO extends DTO
 	
 	public String code = "";
 	public boolean hasSimpleTest;	// is there a simple test defined for this test? 
+	public boolean inDispute;	    // is the test being disputed?
+	public String disputeText;      // only available if the test is in dispute.	
 	
-	// If there is a simple test, the following describe it.
 	public List<String> simpleTestInputs = new ArrayList<String>();
 	public String simpleTestOutput;
 
@@ -26,5 +27,6 @@ public class TestDTO extends DTO
 		this.hasSimpleTest = hasSimpleTest;
 		this.simpleTestInputs = simpleTestInputs;
 		this.simpleTestOutput = simpleTestOutput;
+		this.inDispute = false;
 	}
 }

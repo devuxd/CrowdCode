@@ -1,6 +1,7 @@
 html	{ background:#eee }
 body	{ margin:0; padding:0; overflow-x: hidden; }
 textarea { -webkit-user-select: auto; }
+pre { word-break: normal; }
 h5		{ padding: 0px; margin: 0px; border-radius: 0px;}
 #container, #titlebar, #footer { width: 1040px; margin: 0 auto; }
 #leftbar, #rightbar, #contentPane { float:left; }
@@ -130,7 +131,6 @@ font-family: Lucida Console, Monaco, monospace;
  -o-transition-timing-function: linear, ease-in;  
 }
 
-.userStoryDescrip { width:60%; }
 #functionDescription{ width:95%; }
 
 #footer {     background: none repeat scroll 0 0 transparent;float: left;margin-top: 10px;text-align: center;width: 100%;}
@@ -180,12 +180,19 @@ font-family: Lucida Console, Monaco, monospace;
 .popupReminderHeading { margin:20px; }
 
 /* Styles for the readonly code mirror box */
-.codemirrorBox .CodeMirror { height: auto; font-size: x-small; }
+.codemirrorBox .CodeMirror { height: auto; font-size: small; }
 #codemirrorBox .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
 
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
 ins {  background-color: #c6ffc6;  text-decoration: none; }
 del {  background-color: #ffc6c6; }
+
+/* Styles for ADT lists */
+.typeBrowser { width: 100%; background: black;  }
+.adtList { height: 260px; background: white; width: 100%; overflow:auto; box-sizing:border-box; border: 2px solid black; }
+.adtListTitle { background: black; color: white; height: 32px; line-height: 32px;  }
+.adtSearch { float: right;}
+.adtSubtitle { font-size: x-small; }
 
 /* Style for listing keyboard shortcuts */
 .keyboardKey {
@@ -209,3 +216,14 @@ font-size: 0.60em;
 /* Other typography styles */
 .minorNote { font-size: x-small; }
 .smallNote { font-size: x-small; }
+
+/* Styles for client request editor */
+
+.userStoryDescrip { width:700px; } 
+.ADTDescrip { width:700px; font-family: Consolas,Monaco,Lucida Console; }
+.ADTDescriptionText { font-size: smaller; padding: 3px} 
+.ADT { border-color: BLACK; border: 1px solid; display: inline-block; }
+.ADTContainer { width: 100%; }
+
+/* Styles for Write Test Case */
+#disputeText { width: 600px; height: 100px; }

@@ -9,9 +9,12 @@ public class FunctionDescriptionDTO extends DTO
 	public String messageType = "FunctionDescriptionDTO";
 	
 	public String name;
+	public String returnType;
 	public List<String> paramNames = new ArrayList<String>();
+	public List<String> paramTypes = new ArrayList<String>();
 	public String header;
-	public String description; 
+	public String description;
+	public String code;
 	
 	// Description includes all comments and the signature block itself. e.g.,
 	// // A description of foo, describing what it does and its parameters and return value.
@@ -24,10 +27,13 @@ public class FunctionDescriptionDTO extends DTO
 	{		
 	}
 
-	public FunctionDescriptionDTO(String name, List<String> paramNames, String header, String description) 
+	public FunctionDescriptionDTO(String name, String returnType, List<String> paramNames, List<String> paramTypes, 
+			String header, String description) 	
 	{
 		this.name = name;
+		this.returnType = returnType;
 		this.paramNames = paramNames;
+		this.paramTypes = paramTypes;
 		this.header = header;
 		this.description = description;
 	}

@@ -8,7 +8,7 @@
 <%@ page import="com.crowdcoding.microtasks.WriteTest.PromptType" %>
 <%@ page import="com.crowdcoding.artifacts.Function" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
-<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %> 
 
 <%
 	String projectID = (String) request.getAttribute("project");
@@ -31,70 +31,100 @@
 		// Determine the prompt type
 		var showWritePrompt = <%= (promptType == PromptType.WRITE) %>;
 		var showCorrectPrompt = <%= (promptType == PromptType.CORRECT) %>;
-		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;				
+		var showFunctionChangedPrompt = <%= (promptType == PromptType.FUNCTION_CHANGED) %>;		
+		var showTestCaseChangedPrompt = <%= (promptType == PromptType.TESTCASE_CHANGED) %>;	
+		
+		// Whether or not dispute mode is active
+		var testInDispute = false;
 		
 		// Load test data
-		var fullDescription = <%=function.getDescriptionDTO().json() %>; 		
+		var fullDescription = <%=function.getDescriptionDTO().json() %>;
+		var returnType = fullDescription.returnType;
 		var paramNames = fullDescription.paramNames;
+		var paramTypes = fullDescription.paramTypes;
 		var codeBoxCode = '<%= function.getEscapedFullDescription() %>';
 		
 		var testData = <%= microtask.getTest().getTestDTO() %>;
-		var simpleModeActive = testData.hasSimpleTest;		
 		
-	    var myCodeMirror = CodeMirror.fromTextArea(code);
-	    myCodeMirror.setOption("theme", "vibrant-ink");
-	    myCodeMirror.setValue(testData.code);
-	    
+		var paramEditors = [];
+		var outputEditor;
+			    
    		$(document).ready(function() 
    		{    			
    			$('#skip').click(function() { skip(); });	
    			
    			// Generate input elements for the simple test editor
-   			$.each(paramNames, function(index, value) 
+   			for (var index = 0; index < paramNames.length; index++)
    			{
-   				$('#parameterValues').append(value + ': &nbsp;&nbsp;<textarea></textarea><BR>');
-   			});   
-   			
-   			// Track whether we are currently in simple or advanced test writing mode
-			$('a[data-toggle="tab"]').on('shown', function (e) 
-			{
-				if (e.target.id == 'simpleTestTab')
-					simpleModeActive = true;
-				else if (e.target.id == 'advancedTestTab')
-				{
-					simpleModeActive = false;
-				    myCodeMirror.refresh();
-				}
-			});
-   			
+   				var name = paramNames[index];
+   				var type = paramTypes[index];   				
+   				var paramID = "param" + index;   	
+   				var testErrorsDiv = "testErrors" + index;    				
+   				$('#parameterValues').append(name + ' (' + type + '): &nbsp;&nbsp;<textarea id="' 
+   				    + paramID + '"></textarea>'
+   					+ '<div class="alert alert-error" id="' + testErrorsDiv + '"></div>');
+   			}  
+   			   			
    			showPrompt();
-   			loadSimpleTestData(testData);			
-   		});	    
+   			loadTestData(testData);		
+   			
+   			// Setup TestEditor instances (has to be done after data loaded)
+   			for (var index = 0; index < paramNames.length; index++)
+   			{
+  				var paramID = "param" + index;   
+   				var testErrorsDiv = "testErrors" + index; 
+  				var type = paramTypes[index];  
+   				var jsonEditor = new JSONEditor();
+   				jsonEditor.initialize($('#' + paramID)[0], $('#' + testErrorsDiv), type);
+   				paramEditors.push(jsonEditor); 				
+   			}
+   			
+   			// Generate a TestEditor for the expectedOutput
+   			$('#expectedOutputTitle').html("Expected Return Value (" + returnType + ")");
+   			outputEditor = new JSONEditor();
+			outputEditor.initialize($('#expectedOutput')[0], $('#expectedOutputErrors'), returnType);    			
+   		});	  
+   		
+   		$('#reportTestCase').click(function() { showDisputeForm(); });
+   		$('#cancelDispute').click(function() { hideDisputeForm(); });   		
 	
 		$('#writeTestForm').submit(function() {
-			var formData = collectTestData();
-
-			var functionHeader = '<%= function.getEscapedHeader() %>';
-			// only looks at the function header not the function body for JSHINT checking
-			var allTheFunctionCode = <%= allFunctionCodeInSystem %>;
-			var functionCode = allTheFunctionCode + " " + functionHeader + "{" + formData.code + "}";
-			var errors = "";
-		    console.log(functionCode);
-		    var lintResult = JSHINT(getUnitTestGlobals() + functionCode,getJSHintGlobals());
-		    console.log(JSHINT.errors);
-			if(!lintResult && !simpleModeActive)
+			if (testInDispute)				
 			{
-				var errors = checkForErrors(JSHINT.errors);
-				console.log(errors);
-				if(errors != "")
+				// Submit empty test data for the test
+				var formData = { code: '', inDispute: true, disputeText: $('#disputeText').val(), 
+						hasSimpleTest: true, simpleTestInputs: [], simpleTestOutput: '' };
+				submit(formData);				
+			}
+			else
+			{
+				var formData = collectTestData();
+				var hasErrors = false;			
+
+				// Loop over all the values. If any are empty or have errors, show an error message
+				// and do not submit.			
+				$.each(paramEditors, function(index, paramEditor)
 				{
-					$("#errors").html("<bold> ERRORS: </bold> <br />" + errors);
-					return false; 
+					paramEditor.errorCheck();
+					if (!paramEditor.isValid())				
+						hasErrors = true;
+				});
+				
+				outputEditor.errorCheck();
+				if (!outputEditor.isValid())				
+					hasErrors = true;
+
+				if (hasErrors)
+				{
+					$("#popUp").modal();
+				}
+				else
+				{
+					submit(formData);
 				}
 			}
-			
-			submit(formData);			
-			return false;
+
+			return false;			
 		});
 		
 		// Shows the appropriate prompt
@@ -114,34 +144,49 @@
    			{
    				$('#functionChangedPrompt').prettyTextDiff();
 	   			$("#functionChangedPrompt").css('display',"block");	   			
-   			}  				
+   			}
+			else if (showTestCaseChangedPrompt)
+   			{
+	   			$("#testCaseChangedPrompt").css('display',"block");	 
+	   			setupReadonlyCodeBox(testCaseChangedCodeBox);
+   			}  	
+		}
+		
+		// Configures the microtask to show information for disputing the test, hiding 
+		// other irrelevant portions of the microtask.
+		function showDisputeForm()
+		{
+			testInDispute = true;
+   			$("#disputeDiv").css('display',"block");			
+			$('#simpleTest').hide();
+			$('#submitFooter').hide();
+		}
+		
+		// Configures the microtask to hide the information for disputing the test, showing
+		// other relevant information that may be hidden.
+		function hideDisputeForm()
+		{
+			testInDispute = false;
+   			$("#disputeDiv").css('display',"none");			
+			$('#simpleTest').show();
+			$('#submitFooter').show();
 		}
 		
 		// Configures the form based on the state from the testData object (in TestDTO format)
-		function loadSimpleTestData(testData)
+		function loadTestData(testData)
 		{
-			if (simpleModeActive)
+			// For each of the parameters we have (up to the number of params we expect - which
+			// might be smaller), populate it into the param textbox
+			$.each(testData.simpleTestInputs, function(index, value)
 			{
-				$('#testTabs a[href="#simpleTest"]').tab('show');
+				// If we've exceeded the number of params we expect, stop populating
+				if (index >= paramNames.length)
+					return false;
 				
-				// For each of the parameters we have (up to the number of params we expect - which
-				// might be smaller), populate it into the param textbox
-				$.each(testData.simpleTestInputs, function(index, value)
-				{
-					// If we've exceeded the number of params we expect, stop populating
-					if (index >= paramNames.length)
-						return false;
-					
-					// Get the corresponding textArea element for this param and populate it
-					$('#parameterValues').children('textarea').get(index).value = value;
-				});
-				$('#expectedOutput').val(testData.simpleTestOutput);
-			}
-			else
-			{
-				$('#testTabs a[href="#advancedTest"]').tab('show');		
-			    myCodeMirror.refresh();
-			}			
+				// Get the corresponding textArea element for this param and populate it
+				$('#parameterValues').children('textarea').get(index).value = value;
+			});
+			$('#expectedOutput').val(testData.simpleTestOutput);					
 		}		
 		
 		// Collects form data from simple and advanced tests (as appropriate) into an 
@@ -151,130 +196,127 @@
 			var simpleTestInputs = [];
 			var simpleTestOutput = '';
 			
-			if (simpleModeActive)
-			{			
-				$.each($('#parameterValues').children('textarea'), function(index, inputElement)
-				{
-					// Parse empty textboxes as empty strings
-					var testInput = inputElement.value;
-					if (testInput == "")
-						testInput = "''";
-					
-					simpleTestInputs.push(testInput);
-				});						
+			$.each($('#parameterValues').children('textarea'), function(index, inputElement)
+			{
+				// Parse empty textboxes as empty strings
+				var testInput = inputElement.value;
+				if (testInput == "")
+					testInput = "''";
 				
-				simpleTestOutput = $('#expectedOutput').val();
-				if (simpleTestOutput == "")				
-					simpleTestOutput = "''";
-			}
+				simpleTestInputs.push(testInput);
+			});						
+			
+			simpleTestOutput = $('#expectedOutput').val();
+			if (simpleTestOutput == "")				
+				simpleTestOutput = "''";
+
 			var code = buildTestCode(simpleTestInputs, simpleTestOutput);
-			return { code: code, hasSimpleTest: simpleModeActive, simpleTestInputs: simpleTestInputs, 
-					 simpleTestOutput: simpleTestOutput };
+			return { code: code, hasSimpleTest: true, inDispute: false, disputeText: '', 
+				     simpleTestInputs: simpleTestInputs, simpleTestOutput: simpleTestOutput };
 		}
 		
 		function buildTestCode(simpleTestInputs, simpleTestOutput)
 		{
 			var code;
 			
-			if (simpleModeActive)
-			{				
-				// Build code corresponding to the values entered in simple mode.
-				code = 'equal(<%= function.getName() %>(';
-				
-				// Add a parameter for each input element in the parameterValues div				
-				$.each(simpleTestInputs, function(index, input)
-				{
-					// Add a comma for any but the first param
-					if (index != 0)
-						code = code + ', ';
-					
-					code = code + input;
-				});
-				
-				code = code + '), ' + simpleTestOutput 
-					+ ", " + "'<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
-			}	
-			else
-			{
-				code = $('#code').val();	
-			}
+			// Build code corresponding to the values entered in simple mode.
+			code = 'equal(<%= function.getName() %>(';
 			
+			// Add a parameter for each input element in the parameterValues div				
+			$.each(simpleTestInputs, function(index, input)
+			{
+				// Add a comma for any but the first param
+				if (index != 0)
+					code = code + ', ';
+				
+				code = code + input;
+			});
+			
+			code = code + '), ' + simpleTestOutput 
+				+ ", " + "'<%= StringEscapeUtils.escapeEcmaScript(microtask.getDescription()) %>'" + ");";
+						
 			return code;
 		}
 	</script>
 
-
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	
-	<div id="writePrompt" style="display: none">
-		Write a simple or advanced test for<BR>		<BR>
-		<div class="alert alert-info"><%= microtask.getDescription() %></div>
+	<form id="writeTestForm" action="">			
+		<div id="writePrompt" style="display: none">
+			Can you write a test for<BR>		<BR>
+			<div class="alert alert-info"><%= microtask.getDescription() %>
+	   		    <button class="btn btn-mini pull-right" type="button" id="reportTestCase">
+	   		    	Report as incorrect test case</button>			
+			</div>
+			<BR>Here's the description of the function to test:<BR><BR>
+			<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
+		</div>
+	
+		<div id="correctPrompt" style="display: none">
+			The following issue was reported with this test:<BR><BR>
+			<div class="alert alert-info"><%= microtask.getDescription() %></div>		
+			<div class="alert alert-error"><%= microtask.getIssueDescription() %></div>	
+			Can you fix the test to address this issue?<BR>
+			
+			<BR>Here's the description of the function to test:
+			<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
+		</div>
 		
-		<BR>Here's the description of the function to test:
-		<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
-	</div>
+		<div id="testCaseChangedPrompt" style="display: none">
+			The test case for this has change from <BR><BR>
+			<div class="alert alert-info"><%= microtask.getOldTestCase() %></div>	
+			to <BR><BR>	
+			<div class="alert alert-info"><%= microtask.getDescription() %></div>	
+			Can you update the test below, if necessary?<BR>
+			
+			<BR>Here's the description of the function to test:
+			<div class="codemirrorBox"><textarea id="testCaseChangedCodeBox"></textarea></div>
+		</div>
+		
+		<div id="functionChangedPrompt" style="display: none">
+			The description of the function being tested has changed. Can you update the test below,
+			if necessary? <BR>
+			
+			<span class="original" style="display: none"><%=microtask.getOldFunctionDescription() %></span>
+	   		<span class="changed" style="display: none"><%=microtask.getNewFunctionDescription() %></span>
+			<span id="diff" class="diff"></span><BR>
+			
+			Here's the test description:
+			<div class="alert alert-info"><%= microtask.getDescription() %></div>
+		</div><BR>
+		
+		<div id="disputeDiv" style="display: none">
+			What's wrong with this test case? <BR>			
+			<textarea id="disputeText"></textarea><BR>
+			<input class="btn btn-primary" type="submit" id="submitDispute" value="Submit"> 
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;			
+			<a id="cancelDispute">Nothing is wrong with the test case.</a><BR><BR><BR>
+		</div>
+		
+		<%@include file="/html/elements/typeBrowser.jsp" %><BR>
 
-	<div id="correctPrompt" style="display: none">
-		The following issue was reported with this test:<BR><BR>
-		<div class="alert alert-info"><%= microtask.getDescription() %></div>		
-		<div class="alert alert-error"><%= microtask.getIssueDescription() %></div>	
-		Can you fix the test to address this issue?<BR>
-		
-		<BR>Here's the description of the function to test:
-		<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
-	</div>
-	
-	<div id="functionChangedPrompt" style="display: none">
-		The description of the function being tested has changed. Can you update the test below,
-		if necessary? <BR>
-		
-		<span class="original" style="display: none"><%=microtask.getOldFunctionDescription() %></span>
-   		<span class="changed" style="display: none"><%=microtask.getNewFunctionDescription() %></span>
-		<span id="diff" class="diff"></span><BR>
-		
-		Here's the test description:
-		<div class="alert alert-info"><%= microtask.getDescription() %></div>
-	</div>
-	
-	<form id="writeTestForm" action="">
-		<BR><ul class="nav nav-tabs" id="testTabs">
-		  <li><a href="#simpleTest" data-toggle="tab" id="simpleTestTab">Simple Test</a></li>
-		  <li><a href="#advancedTest" data-toggle="tab" id="advancedTestTab">Advanced Test</a></li>
-		</ul>		
-		
-		<div class="tab-content">
-		  <div class="tab-pane active" id="simpleTest">
+		<div id="simpleTest">
+		    Provide a JSON object literal of the specified type for each parameter and the expected 
+		    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
+		    an example from the description of a type above.<BR><BR>  
+		  
 			<b>Parameter Values</b><BR>
 				<div id="parameterValues"></div>
-			<b>Expected Output</b><BR>
-				<textarea id="expectedOutput"></textarea><BR>
-		  </div>
-		  <div class="tab-pane" id="advancedTest">
-			  <span class="reference">
-						Reference Section:<br /><br />
-						Assertions you can use when writing unit tests include: <br />
-						deepEqual( actual, expected, message ): comparing to objects <br />
-						equal( actual, expected, message ): check if both are equal <br />
-						notDeepEqual( actual, expected, message ): <br />
-						notEqual( actual, expected, message ): <br />
-						throws( 'actual', expected, message ): if exception is expected, actual needs to be in ' <br />
-						<br />
-						Examples:<br />
-						equal(price, qty*itemCost, "line item price looks incorrect");<br />
-						equal(plus(5, 3), 8, "Two positive numbers don't sum correctly");
-						</span><BR><BR>		      	
-					{
-					<table width="100%">
-						<tr>
-							<td width = "20"></td>
-							<td><textarea id="code"></textarea></td>
-						</tr>	
-					</table>
-					} <BR><BR>
-		  </div>
-		</div>				
+			<b><span id="expectedOutputTitle"></span></b><BR>
+				<textarea id="expectedOutput"></textarea>
+				<div class="alert alert-error" id="expectedOutputErrors"></div>
+		</div>
 
-		<BR><BR><%@include file="/html/elements/submitFooter.jsp" %>	
+		<div id="submitFooter"><BR><BR><%@include file="/html/elements/submitFooter.jsp" %></div>	
 	</form>
-	<div id = "errors"> </div>
+	
+	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h4 id="logoutLabel">You need to fix the errors before you submit.</h4>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>	
 </div>

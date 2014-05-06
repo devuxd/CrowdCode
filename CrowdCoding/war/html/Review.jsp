@@ -4,7 +4,6 @@
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
 <%@ page import="com.crowdcoding.Project" %>
 <%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.WriteUserStory" %>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="java.io.StringWriter" %>
@@ -14,7 +13,6 @@
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-    WriteUserStory microtask = (WriteUserStory) crowdUser.getMicrotask();
 %>
 <script src="/include/stars/example.js"></script>
 <script src="/include/codemirror/codemirror.js"></script>
@@ -105,7 +103,6 @@
 
 <script>
 	var microtaskType = 'reviewTask';
-	var microtaskID = <%= microtask.getID() %>;
 
 	$(document).ready(function() 
 	{

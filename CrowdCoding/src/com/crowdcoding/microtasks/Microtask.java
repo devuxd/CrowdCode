@@ -26,12 +26,14 @@ import com.googlecode.objectify.cmd.Query;
 @Entity
 public /*abstract*/ class Microtask 
 {
+	static protected int DEFAULT_SUBMIT_VALUE = 10;
+	
 	@Parent private Key<Project> project;
 	@Id protected long id;
 	@Index protected boolean ready = false;	// Is the microtask ready to be assigned?
 	@Index protected boolean assigned = false;
 	@Index protected boolean completed = false;
-	protected int submitValue = 10;
+	protected int submitValue = DEFAULT_SUBMIT_VALUE;
 	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
 	protected Ref<Worker> worker;
 	protected List<Ref<Worker>> excludedWorkers = new ArrayList<Ref<Worker>>();  // Workers who may not be assigned this microtask
@@ -88,26 +90,11 @@ public /*abstract*/ class Microtask
 			break;			
 		}
 		
-		// If there are no more microtasks currently available, ask the project to start
-		// work on another user story.
+		// If there are no more microtasks currently available, return null
 		if (microtask == null)
 		{
-			// If the project starts a new user story, it will give us a microtask to work on.
-			// If it returns null, give up and return null.
-			microtask = project.startAUserStory();
-			if (microtask == null)
-				return null;
+			return null;
 		}
-				
-		// Functionality to crowdsource a userStory if there is nothing to do. This behavior
-		// is currently disabled.
-		/*if (microtask == null)
-		{
-			UserStory userStory = new UserStory(project);
-			microtask = userStory.getMicrotask();			
-			if (microtask == null)
-				throw new RuntimeException("Error - creating a user story did not create a microtask as expected");			
-		}*/
 
 		microtask.worker = Ref.create(crowdUser.getKey());
 		microtask.assigned = true;
@@ -171,13 +158,15 @@ public /*abstract*/ class Microtask
 	// excluded workers to give workers another chance.
 	private void resetIfHighlySkipped(Project project)
 	{
-		// If at least all but one worker has skipped it, reset exclusion constraints.
+		// If all workers have skipped it, reset exclusion constraints.
 		// TODO: we really should reset based on the status of logged in workers. But there
 		// is currently no way to track that accurately.
-		if (excludedWorkers.size() >= Worker.allWorkers(project).size() - 1)
+		if (excludedWorkers.size() >= Worker.allWorkers(project).size())
 		{
 			excludedWorkers.clear();
 			ofy().save().entity(this).now();
+			
+			System.out.println("Reset excluded workers for " + this.toString());
 		}
 	}
 	

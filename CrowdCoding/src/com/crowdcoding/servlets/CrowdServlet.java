@@ -14,9 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
-import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Test;
-import com.crowdcoding.artifacts.UserStory;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
@@ -26,7 +23,6 @@ import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
-import com.crowdcoding.microtasks.WriteUserStory;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -52,7 +48,6 @@ public class CrowdServlet extends HttpServlet
 		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
 		microtaskTypes.put("writetest", WriteTest.class);
 		microtaskTypes.put("writetestcases", WriteTestCases.class);
-		microtaskTypes.put("writeuserstory", WriteUserStory.class);
 	}	
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException 
@@ -78,7 +73,7 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project>/run - run.jsp
 		 *  /<project>/submit - doSubmit
 		 *  /<project>/welcome - welcome.jsp
-		 *  /userStories - EditUserStories.jsp
+		 *  /clientRequest - ClientRequestEditor.jsp
 		 *  /  welcome.jsp
 		 */
         String[] path = req.getPathInfo().split("/");
@@ -105,8 +100,8 @@ public class CrowdServlet extends HttpServlet
 		
 						if (path.length == 2)
 						{
-							if (path[1].equals("userStories"))
-								req.getRequestDispatcher("/html/EditUserStories.jsp").forward(req, resp);						
+							if (path[1].equals("clientRequest"))
+								req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);						
 							else
 								req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
 						}
@@ -178,12 +173,20 @@ public class CrowdServlet extends HttpServlet
 	    		{
 	      			output.append("STATUS executed at " + currentTime.toString() + "<BR>");
 	    			Project project = Project.Create(projectID);
-	    			output.append(UserStory.StatusReport(project).replace("\n", "<BR>"));   
-	    			output.append(Worker.StatusReport(project).replace("\n", "<BR>")); 
-	    			output.append(Microtask.StatusReport(project).replace("\n", "<BR>"));    
-	    			output.append(Function.StatusReport(project).replace("\n", "<BR>"));   
-	    			output.append(Test.StatusReport(project).replace("\n", "<BR>"));   
+	    			output.append(project.statusReport().replace("\n", "<BR>"));
 	    		}   
+	    		else if (command.equals("TESTS"))
+	    		{
+	      			output.append("TESTS executed at " + currentTime.toString() + "<BR>");
+	    			Project project = Project.Create(projectID);
+	    			output.append(project.listTests().replace("\n", "<BR>"));
+	    		}  
+	    		else if (command.equals("FUNCTIONS"))
+	    		{
+	      			output.append("FUNCTIONS executed at " + currentTime.toString() + "<BR>");
+	    			Project project = Project.Create(projectID);
+	    			output.append(project.listFunctions().replace("\n", "<BR>"));
+	    		}
 	    		else
 	    		{
 	    			output.append("Unrecognized command " + command);

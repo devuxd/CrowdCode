@@ -63,7 +63,7 @@ public class FunctionHeaderUtil
 //		System.out.println(a);
 	} 
 	
-	// For every function (except currentFunctionIn), returns two functions:
+	// For every function (except currentFunctionIn) that is described, returns two functions:
 	//     1. the fucntion's actual header, with the mocked body
 	//     2. the function's header with __ActualIMP appended to the name with the actual body
 	public static String getAllFunctionsMocked(Function currentFunctionIn, Project project)
@@ -77,7 +77,7 @@ public class FunctionHeaderUtil
 			// the loop then skip do not add again because 
 			// current function's code may be different since
 			// user is editing it
-			if(function.equals(currentFunctionIn))
+			if(function.equals(currentFunctionIn) || !function.hasBeenDescribed())
 			{
 				continue;
 			}

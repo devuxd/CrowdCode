@@ -10,3 +10,7 @@ CrowdCoding/war/html/.DS_Store
 CrowdCoding/war/html/test.html
 
 .DS_Store
+
+CrowdCoding/war/include/hashmap.js
+
+CrowdCoding/war/include/typeahead.js

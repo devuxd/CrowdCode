@@ -3,15 +3,19 @@ package com.crowdcoding;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
+import com.crowdcoding.artifacts.ADT;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
-import com.crowdcoding.artifacts.UserStory;
+import com.crowdcoding.dto.ADTDTO;
+import com.crowdcoding.dto.ADTsDTO;
 import com.crowdcoding.dto.CurrentStatisticsDTO;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.UserStoriesDTO;
+import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.FunctionDescriptionsDTO;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
@@ -21,12 +25,10 @@ import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
-import com.crowdcoding.microtasks.WriteUserStory;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
@@ -50,10 +52,8 @@ public class Project
 	private int microtasksCompleted;
 	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
-	private Ref<Function> mainFunction;	// root function in the call graph	
 	private boolean waitingForTestRun = false;	// is the project currently waiting for tests to be run?
-	private Queue<String> unstartedUserStories = new LinkedList<String>();  // descriptions of UserStories yet to be created
-	
+
 	
 	// Static initializer for class Project
 	static
@@ -63,9 +63,9 @@ public class Project
 		ObjectifyService.register(Worker.class);
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Function.class);
+		ObjectifyService.register(ADT.class);
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
-		ObjectifyService.register(UserStory.class);
 		
 		ObjectifyService.register(Microtask.class);
 		ObjectifyService.register(ReuseSearch.class);
@@ -76,7 +76,6 @@ public class Project
 		ObjectifyService.register(WriteFunctionDescription.class);
 		ObjectifyService.register(WriteTest.class);
 		ObjectifyService.register(WriteTestCases.class);
-		ObjectifyService.register(WriteUserStory.class);
 	}
 		
 	// Default constructor for deserialization only
@@ -98,18 +97,27 @@ public class Project
 		
 		ofy().save().entity(this).now();
 		
-		// Create the main function
-		Function function = new Function(this);
-		mainFunction = (Ref<Function>) Ref.create(function.getKey());
+		// Load ADTs from Firebase
+		String ADTs = FirebaseService.readADTs(this);
+		if (!ADTs.equals(""))
+		{
+			System.out.println(ADTs);	
+			ADTsDTO adtsDTO = (ADTsDTO) DTO.read(ADTs, ADTsDTO.class);
+			for (ADTDTO adtDTO : adtsDTO.ADTs)
+				ADT.createFromDTO(this, adtDTO);
+		}
 		
-		// Load user stories from Firebase and spawn work to implement them
-		String userStories = FirebaseService.readUserStories(this);
-		System.out.println(userStories);	
-		UserStoriesDTO dto = (UserStoriesDTO) DTO.read(userStories, UserStoriesDTO.class);
-		this.unstartedUserStories = new LinkedList<String>(dto.userStories);	
+		// Load functions from Firebase
+		String functions = FirebaseService.readFunctions(this);
+		System.out.println(functions);	
+		FunctionDescriptionsDTO functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
+		for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
+		{
+			Function newFunction = new Function(functionDTO.name, functionDTO.returnType, functionDTO.paramNames, 
+					functionDTO.paramTypes, functionDTO.header, functionDTO.description, functionDTO.code, this);					
+		}		
+		
 		ofy().save().entity(this).now();
-		
-		startAUserStory();
 	}
 	
 	// Creates a new project instance. If there is a project in the database, it will be backed by that project.
@@ -156,24 +164,6 @@ public class Project
 		ofy().transactionless().delete().key(project);
 	}
 	
-	// Requests that work on an additional user story be started. If the request is granted, returns
-	// a new, unassigned microtask. Otherwise, returns null.
-	public Microtask startAUserStory()
-	{
-		// Start a user story if there is any to be started.
-		if (unstartedUserStories.size() > 0)
-		{
-			Microtask microtask = UserStory.CreateUserStory(unstartedUserStories.remove(), this);
-			ofy().save().entity(this).now();
-			
-			return microtask;
-		}
-		else
-		{
-			return null;
-		}
-	}
-		
 	// Publish new statistics to Firebase
 	public void publishStatistics() 
 	{
@@ -266,11 +256,35 @@ public class Project
 	public HistoryLog historyLog()
 	{
 		return historyLog;
+	}	
+	
+	public String statusReport()
+	{
+		StringBuilder output = new StringBuilder();
+		output.append(Worker.StatusReport(this)); 
+		output.append(Microtask.StatusReport(this));    
+		output.append(ADT.StatusReport(this));
+		output.append(Function.StatusReport(this));   
+		output.append(Test.StatusReport(this));
+		
+		return output.toString();
 	}
 	
-	// Gets the main function, the root of the call graph
-	public Function getMainFunction()
+	// Lists detailed information for each test in the system.
+	public String listTests()
 	{
-		return ofy().load().ref(mainFunction).get();
+		return Test.allMocksInSystemEscaped(this);
+	}
+	
+	// Lists detailed information for each function in the system.
+	public String listFunctions()
+	{
+		StringBuilder output = new StringBuilder();
+		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
+		 
+		for (Function function : listOFunctions)
+			output.append(function.fullToString());
+		
+		return output.toString();
 	}
 }

@@ -2,14 +2,12 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.UserStory;
+import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
 import com.googlecode.objectify.Ref;
@@ -19,11 +17,14 @@ import com.googlecode.objectify.annotation.Load;
 @EntitySubclass(index=true)
 public class WriteTestCases extends Microtask
 {
-	public enum PromptType { FUNCTION_SIGNATURE, TEST_USER_STORY };
+	public enum PromptType { FUNCTION_SIGNATURE, CORRECT_TEST_CASE };
 	
 	@Load private Ref<Function> function;
-	private Ref<UserStory> userStory; // userStory associated with TEST_USER_STORY prompts
 	private PromptType promptType;
+	
+	// Data for edit test cases microtask
+	private String disputeDescription;    // Description of the problem with the test case
+	private String disputedTestCase;      // Text of the test case in dispute
 		
 	// Default constructor for deserialization
 	private WriteTestCases()
@@ -40,45 +41,31 @@ public class WriteTestCases extends Microtask
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
-	}
+	}	
 	
-	// Constructor for testing a function for its ability to implement a user story
-	public WriteTestCases(Function function, UserStory userStory, Project project)
+	// Constructor for initial construction for disputing a test case
+	public WriteTestCases(Function function, String disputeDescription, String disputedTestCase, 
+			Project project)
 	{
 		super(project);
-		this.promptType = PromptType.TEST_USER_STORY;
+		this.promptType = PromptType.CORRECT_TEST_CASE;
 		this.function = (Ref<Function>) Ref.create(function.getKey());	
-		this.userStory = (Ref<UserStory>) Ref.create(userStory.getKey());
+		this.disputeDescription = disputeDescription;
+		this.disputedTestCase = disputedTestCase;
 		ofy().save().entity(this).now();
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
-	}
+	}	
 
 	protected void doSubmitWork(DTO dto, Project project)
 	{
-		List<String> testCases = new ArrayList<String>();
-		// Extract each of the test cases and drop whitespace. Drop blank testcases.
-		for (String rawTestCase : ((TestCasesDTO) dto).tests)
-		{
-			String testCase = rawTestCase.trim();
-			if (!testCase.equals(""))
-				testCases.add(testCase);
-		}
-		
-		function.get().writeTestCasesCompleted(testCases, project);	
+		this.function.get().writeTestCasesCompleted((TestCasesDTO) dto, project);		
 	}
 	
 	protected boolean submitAccepted(DTO dto, Project project)
 	{
-		// Check if any of the test cases are non-empty
-		for (String rawTestCase : ((TestCasesDTO) dto).tests)
-		{
-			if (!rawTestCase.trim().equals(""))
-				return true;
-		}
-		
-		return false;
+		return true;
 	}
 	
 	protected Class getDTOClass()
@@ -106,15 +93,24 @@ public class WriteTestCases extends Microtask
 		return getFunction();
 	}
 	
-	// Gets the user story text. Returns an empty string for any prompt types other than TEST_USER_STORY
-	public String getUserStoryText()
+	public String getDisputeDescription()
 	{
-		if (promptType == PromptType.TEST_USER_STORY)
-			return ofy().load().ref(userStory).get().getText();
-		else
-			return "";
+		return disputeDescription;
 	}
 	
+	public String getDisputedTestCase()
+	{
+		return disputedTestCase;
+	}
+	
+	// Gets the list of test cases, formatted as a JSON string that's a list
+	// of test cases (with properly escpaed strings)
+	public String getEscapedTestCasesList()
+	{
+		TestCasesDTO testCasesDTO = new TestCasesDTO(function.get());
+		return testCasesDTO.json();
+	}
+		
 	public String microtaskTitle()
 	{
 		return "Write test cases";

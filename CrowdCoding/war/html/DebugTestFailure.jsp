@@ -516,8 +516,11 @@
 			}
 			catch (err)
 			{
-				//results = 
-				self.postMessage("ERRROR:     " + err.message + "    " + data.testCase);
+				details.failed++;				
+				results.push({ 'expected': '', 'actual': 'ERROR EXECUTING CODE: ' + JSON.stringify(err.message), 'message': '', 'result': false});
+
+				self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun,
+					calleeList: calleeList, calleeMap: calleeMap});
 			}
 			self.postMessage({number:data.number, result:results, detail:details, debugStatements:debugStatementToRun,
 				calleeList: calleeList, calleeMap: calleeMap});
@@ -528,11 +531,14 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>
 	This function has failed its tests. Can you fix it?
-	To check if you've fixed it, run the unit tests.
-	If there is a problem with the tests, report an issue.
+	You can 1) edit the function to fix issues with the code, 2) report a problem with the tests, and 3) 
+	edit the output of function calls to fix problems with other functions. 
+	To check if you've fixed the issue, run the unit tests.
 	You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR>
 	
-	<button style="float: right;" onclick="revertCodeAs();">Revert Code</button><BR>	
+	<button style="float: right;" onclick="revertCodeAs();">Revert Code</button><BR><BR>
+	
+	<%@include file="/html/elements/typeBrowser.jsp" %>	
 	<%@include file="/html/elements/functionEditor.jsp" %>	
 	
 	<div style = 'display:none;' id = 'consoleDiv'>
@@ -545,7 +551,13 @@
 			</table><br>
 	</div>		
 	
-	<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button>
+	<button id = 'unittest' style="" onclick="test1(false);">Run the Unit Tests</button><BR><BR>
+	
+	Here's the list of test cases (on the left) and the error for the currently selected test (on the right). Tests
+	that are green are currently passing while those that are red are failing. You can switch between 
+	tests by clicking on a test on the left.<BR><BR>
+	
+	
 	<div class="bs-docs-example">
 		<div class="tabbable tabs-left">
 			<ul id="tabs" " class="nav nav-tabs">

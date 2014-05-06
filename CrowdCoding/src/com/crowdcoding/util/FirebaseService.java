@@ -21,9 +21,30 @@ public class FirebaseService
 	// instead reads the default user stories.
 	public static String readUserStories(Project project)
 	{
-		String result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/" + project.getID() + ".json");
+		String result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/" + project.getID() 
+				+ ".json");
 		if (result == null || result.equals("null"))
 			result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/default.json");
+		return result;
+	}
+	
+	// Reads the ADTs for the specified project. If there are no ADTs, returns an empty string.
+	public static String readADTs(Project project)
+	{
+		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID() 
+				+ "/ADTs.json");
+		if (result == null || result.equals("null"))
+			result = "";
+		return result;
+	}
+	
+	// Reads the functions for the specified project. If there are no functions, returns an empty string.
+	public static String readFunctions(Project project)
+	{
+		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID() 
+				+ "/functions.json");
+		if (result == null || result.equals("null"))
+			result = "";
 		return result;
 	}
 		

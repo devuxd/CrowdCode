@@ -5,13 +5,14 @@
 	var doc = myCodeMirror.getDoc();
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	
 	doc.setValue(editorCode);
-	positionCursorAtStart();
+	//positionCursorAtStart();
 	
 	var marks = [];
 	highlightPseudoSegments(marks);
  	
- 	// If we are editing the main function, make the full description readonly
-	if (functionName == 'main')
+ 	// If we are editing a function that is a client request and starts with CR, make the header
+ 	// readonly.
+	if (functionName.startsWith('CR'))
 		makeHeaderReadOnly();
  	
  	// Find the list of all function names elsewhere in the system
@@ -163,10 +164,35 @@
  		// to save its value back to the textarea so we can read it, we execute the following line:
 	 	myCodeMirror.save();	 	
  		
- 		var text = $("#code").val();
- 		
+ 		var text = $("#code").val();		
 		if(hasErrorsHelper(text))
 		{
+			// If there are syntax errors, but there are also pseudocalls or pseudocode, attempt to 
+			// parse the code without the central code block. If this succeeds, return no errors
+			// and collect the code. Otherwise, indicate errors.
+			if (hasPseudocallsOrPseudocode(text))
+			{
+				var replacedText = replaceFunctionCodeBlock(text);
+				// If the text does not contain a function block, display an error.
+				if (replacedText == '')				
+					showErrors('No function block could be found. Make sure that there is a line that starts with "function".');									
+				else
+				{
+					if (!hasErrorsHelper(replacedText))						
+					{
+						// Code is syntactically valid and should be able to build an ast.
+						// Build the ast and do additional checks using the ast.
+						var ast = esprima.parse(replacedText, {loc: true});			
+						if (!hasASTErrors(replacedText, ast))
+						{
+							var codePieces = collectCode(replacedText, ast);
+							// Replace the code in codePieces with the actual, syntactically invalid code
+							codePieces.code = findCodeblockInInvalidCode(text);	
+							return { errors: false, code: codePieces };	
+						}						
+					}					
+				}	
+			}			
 			return { errors: true, code: null };	
 		}
 		else
@@ -194,7 +220,26 @@
 		
 	 	myCodeMirror.save();	 			
  		var text = $("#code").val();
-		if(!hasErrorsHelper(text))
+		if(hasErrorsHelper(text))			
+		{
+			if (hasPseudocallsOrPseudocode(text))
+			{
+				var replacedText = replaceFunctionCodeBlock(text);
+				// If the text does not contain a function block, display an error.
+				if (replacedText == '')
+					showErrors('No function block could be found. Make sure that there is a line that starts with "function".');
+				else
+				{
+					if (!hasErrorsHelper(replacedText))
+					{
+						var ast = esprima.parse(replacedText, {loc: true});			
+						if(!hasASTErrors(replacedText, ast))
+							return true;
+					}					
+				}
+			}
+		}
+		else
 		{
 			console.log("Passed jshint. Now looking for AST errors.");
 			
@@ -214,7 +259,19 @@
 		var errors = "";
 	    console.log("linting on: " + functionCode);
 	    
-	    var lintResult = JSHINT(functionCode,getJSHintGlobals());
+	    var lintResult = -1;
+	    try
+	    {	    
+	    	lintResult = JSHINT(functionCode,getJSHintGlobals());
+	    }
+	    catch (e)
+	    {
+	    	console.log("Error in running JSHHint. " + e.name + " " + e.message);
+	    }
+	    
+	    if (lintResult == -1)
+	    	return true;
+	    
 		console.log(JSHINT.errors);
 		console.log("lintResult: " + JSON.stringify(lintResult));
 		
@@ -224,8 +281,7 @@
 			console.log(errors);
 			if(errors != "")
 			{
-				$("#errorMessages").show();
-				$("#errorMessages").html(errors);
+				showErrors(errors);
 				return true; 
 			}
 		}							
@@ -234,6 +290,13 @@
 		$("#errorMessages").hide();
 		return false;
  	}
+	
+	// Shows the error messages with the specified errors
+	function showErrors(errors)
+	{
+		$("#errorMessages").show();
+		$("#errorMessages").html(errors);
+	}
 	
 	function hasASTErrors(text, ast)
 	{
@@ -248,7 +311,9 @@
 		// Also check for purely textual errors
 		// 1. If there is a pseudocall to replace, make sure it is gone
 		if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)			
-			errorMessages += "Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.";			
+			errorMessages += "Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.<BR>";			
+		
+		errorMessages += hasTypeNameError(ast, errorMessages);	
 			
 		if (errorMessages != "")
 		{
@@ -263,6 +328,66 @@
 		}
 	}
 	
+	// Checks if the function description is missing or has undefined type names.
+	// i.e., checks that a valid TypeName follows @param  (@param TypeName)
+	// and checks that a valid TypeName follows @return.
+	// A valid type name is any type name in allADTs and the type names String, Number, Boolean followed
+	// by zero or more sets of array brackets (e.g., Number[][]).
+	// Returns an error message(s) if there is an error 
+	function hasTypeNameError(ast)
+	{
+		var errorMessages = '';
+		var paramKeyword = '@param ';
+		var returnKeyword = '@return ';
+		
+		// Loop over every line of the function description, checking for lines that have @param or @return
+		var descriptionLines = getDescription(ast).split('\n');
+		for (var i = 0; i < descriptionLines.length; i++)
+		{
+			var line = descriptionLines[i];
+			errorMessages += checkForValidType(paramKeyword, line);
+			errorMessages += checkForValidType(returnKeyword, line);
+		}
+		
+		return errorMessages;		
+	}
+
+	// Checks that, if the specified keyword occurs in line, it is followed by a valid type name. If so,
+	// it returns an empty string. If not, an error message is returned.
+	function checkForValidType(keyword, line)
+	{
+		var loc = line.search(keyword);
+		if (loc != -1)	
+		{
+			var nextWord = findNextWord(line, loc + keyword.length);
+			if (nextWord == -1)
+				return "The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.<BR>";				
+			else if (!isValidTypeName(nextWord))
+				return nextWord + ' is not a valid type name. Valid type names are '
+				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';					
+		}
+		
+		return '';
+	}
+	
+	// Starting at index start, finds the next contiguous set of nonspace characters that end in a space or the end of a line
+	// (not returning the space). If no such set of characters exists, returns -1
+	// Must be called where start is a nonspace character, but may be past the end of text.
+	function findNextWord(text, start)
+	{
+		if (start >= text.length)
+			return -1;
+				
+		var nextSpace = text.indexOf(' ', start);
+		
+		// If there is no next space, return the whole string. Otherwise, return everything from start up to 
+		// (but not incluing) nextSpace.
+		if (nextSpace == -1)
+			return text.substring(start);
+		else
+			return text.substring(start, nextSpace);
+	}
+	
 	// Returns an object capturing the code and other related information.
 	function collectCode(text, ast)
 	{
@@ -271,9 +396,7 @@
 		// Get the text for the function description, header, and code.
 		// Note esprima (the source of line numbers) starts numbering lines at 1, while
 	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-		var descriptionStart = { line: 0, ch: 0};
-		var descriptionEnd = { line: ast.loc.start.line - 1, ch: 0 };
-		var description = myCodeMirror.getRange(descriptionStart, descriptionEnd);			
+		var description = getDescription(ast)		
 		var name = ast.body[0].id.name;
 		var paramNames = [];
 		
@@ -294,23 +417,109 @@
 					calleeNames: calleeNames};
 	}
 	
-	// Makes the header of the function readonly (not editable in CodeMirror)
+	function getDescription(ast)
+	{
+		// Get the text for the function description, header, and code.
+		// Note esprima (the source of line numbers) starts numbering lines at 1, while
+	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+		var descriptionStart = { line: 0, ch: 0};
+		var descriptionEnd = { line: ast.loc.start.line - 1, ch: 0 };
+		return myCodeMirror.getRange(descriptionStart, descriptionEnd);	
+	}
+	
+	// Makes the header of the function readonly (not editable in CodeMirror).
+	// The header is the line that starts with 'function'
 	// Note: the code must be loaded into CodeMirror before this function is called.
 	function makeHeaderReadOnly()
 	{
 	 	myCodeMirror.save();	 			
- 		var text = $("#code").val();		
-		var ast = esprima.parse(text, {loc: true});		
+ 		var text = $("#code").val();			
 		
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		myCodeMirror.getDoc().markText({line:  ast.body[0].body.loc.start.line - 2, ch: 0}, 
-				{ line: ast.body[0].body.loc.start.line - 1, ch: 1}, 
+		var headerLine = indexOfFirstLineStartingFunction(text);
+		
+		myCodeMirror.getDoc().markText({line: headerLine, ch: 0}, 
+				{ line: headerLine + 1, ch: 1}, 
 				{ readOnly: true }); 
 	}
+	
+	// Replaces function code block with empty code. Function code blocks must start on the line
+	// after a function statement.
+	// Returns a block of text with the code block replaced or '' if no code block can be found
+	function replaceFunctionCodeBlock(text)
+	{     
+		var lines = text.split('\n');			
+        for (var i = 0; i < lines.length; i++)
+        {
+			if (lines[i].startsWith('function'))
+			{       
+				// If there is not any more lines after this one, return an error
+				if (i + 1 >= lines.length - 1)
+					return '';
+				
+				// Return a string replacing everything from the start of the next line to the end
+				// Concatenate all of the lines together
+				var newText = '';
+				for (var j = 0; j <= i; j++)
+					newText += lines[j] + '\n';
+				
+				newText += '{}';
+				return newText;		
+			}
+		}
+        
+		return '';
+	}
+	
+	// Uses text search to try to find a code block in syntactically invalid code. Gets the lines starting
+	// from the first line after a line starting with "function" till the end of text.
+	// Returns a block of text with the code block replaced or '' if no code block can be found
+	function findCodeblockInInvalidCode(text)
+	{     
+		var lines = text.split('\n');			
+        for (var i = 0; i < lines.length; i++)
+        {
+			if (lines[i].startsWith('function'))
+			{
+				// Return a string replacing everything from the start of the next line to the end
+				// Concatenate all of the lines together
+				var newText = '';
+				for (var j = i + 1; j < lines.length; j++)
+				{
+					newText += lines[j];
+					if (j < lines.length - 1)
+						newText += '\n';
+				}
+	
+				return newText;		
+			}
+		}
+        
+		return '';
+	}
+	
+	// Finds and returns the index of the first line (0 indexed) starting with the string function, or -1 if no such
+	// line exists
+	function indexOfFirstLineStartingFunction(text)
+	{
+		// Look for a line of text that starts with 'function'.
+		var lines = text.split('\n');			
+        for (var i = 0; i < lines.length; i++)
+        {
+			if (lines[i].startsWith('function'))
+				return i;
+        }
+	}
+		
+	// Returns true iff the text contains at least one pseudocall or pseudocode
+	function hasPseudocallsOrPseudocode(text)
+	{
+		return (text.indexOf('//!') != -1) || (text.indexOf('//#') != -1);
+	}
+	
 </script>
 
-<BR>
 <textarea id="code"></textarea>
 	<%@include file="/html/elements/javascriptTutorial.jsp" %><BR>
 <div id = "errorMessages" class="alert alert-error"></div>

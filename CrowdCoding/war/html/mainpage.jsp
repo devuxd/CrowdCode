@@ -3,6 +3,7 @@
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
 <%@page import="com.crowdcoding.Project"%>
+<%@page import="com.crowdcoding.artifacts.ADT" %>
 <%@page import="com.crowdcoding.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
@@ -24,6 +25,8 @@
 	});
 	
 	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
+	
+    String allADTs = ADT.getAllADTs(project);
 %>
 
 
@@ -143,13 +146,14 @@
 </div>
 
 <!-- Scripts --> 
+<script src="/include/jquery-2.1.0.min.js"></script> 
+<script src="/include/polyfill.js"></script>
 <script src="/include/codemirror/codemirror.js"></script>
 <script src="/include/codemirror/javascript.js"></script>
-<script src="/include/jshint-1.1.0.js"></script>
-<script src="/include/jquery-1.8.2.min.js"></script> 
+<script src="/include/jshint.js"></script>
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/include/stars/jquery.rating.js"></script>
-<script src='https://cdn.firebase.com/v0/firebase.js'></script>
+<script src='https://cdn.firebase.com/js/client/1.0.2/firebase.js'></script>
 <script src='/include/esprima.js'></script>
 <script src='/include/escodegen.browser.js'></script>
 <script src="/include/diff/diff_match_patch.js"></script>
@@ -159,14 +163,21 @@
 <script src="/js/reminder.js"></script>
 <script src="/js/errorCheck.js"></script>
 <script src="/js/keybind.js"></script>
+<script src="/js/JSONEditor.js"></script>
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
 	
+	var allADTs = <%= allADTs %>.ADTs;
+	var typeNames = [];
+	var nameToADT = {};
+	
     $(document).ready(function()
-    {    	
+    {
+    	setupADTData();
+    	
         loadMicrotask();
 
 		$("#logoutLink").click(function() {
@@ -249,7 +260,6 @@
 		$.ajax({
 		    contentType: 'application/json',
 		    data: stringifiedData,
-		    dataType: 'json',
 		    type: 'POST',
 		    url: '/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID,
 		}).done( function (data) { loadMicrotask();	});   
@@ -283,7 +293,7 @@
   	    	$('#microtask').addClass('animated rollIn');  		
   		});
     	resetSubmitButtons();	
-    	resetTimer();
+    	resetStartTime();
 	}
 	
 	function updateLeaderboardDisplay(leaderboard)
@@ -305,25 +315,66 @@
 	function newNewsfeedItem(item)
 	{
 		var itemValue = item.description;
-	 	var itemPoints = item.points;
-		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' + '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' +"You earned " + itemPoints +  " points for "   + itemValue + "!" +  '</td> </tr> </br> </table>');					
+		var itemPoints = item.points;
+		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' + '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' +"You earned " + itemPoints +  " points for "   + itemValue + "!" +  '</td> </tr> </br> </table>');
 	}
-	
+
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
 		var feedback = {'microtaskType': microtaskType, 
-					   'microtaskID': microtaskID,
-					   'workerHandle': '<%= worker.getHandle() %>',
-					   'workerID': '<%= worker.getUserID() %>',
-					   'feedback': $("#feedbackBox").val()};
+						  'microtaskID': microtaskID,
+						  'workerHandle': '<%= worker.getHandle() %>',
+						  'workerID': '<%= worker.getUserID() %>',
+						  'feedback': $("#feedbackBox").val()};
 		feedbackRef.push(feedback);
-		$("#feedbackBox").val("");	
+		$("#feedbackBox").val("");
 		$('#feedbackThanks').css('visibility','visible');
 		setTimeout(function() 
 		{
-    		$('#feedbackThanks').css('visibility','hidden');
-		}, 10000);   	
+		    $('#feedbackThanks').css('visibility','hidden');
+		}, 10000);   
+	}
+	
+	// Generate the list of typenames based on the list of allADTs, adding type names for primitives
+	function setupADTData()
+	{
+		// Build a type name (String) to structure map and a list of type names
+		
+		for (var i = 0; i < allADTs.length; i++)
+		{
+			typeNames.push(allADTs[i].name);
+			nameToADT[allADTs[i].name] = allADTs[i];	
+		}
+		
+		typeNames.push('String');
+		typeNames.push('Number');
+		typeNames.push('Boolean');		
+	}	
+	
+	// Returns true if name is a valid type name and false otherwise.
+	function isValidTypeName(name)
+	{
+		var simpleName;
+		
+		// Check if there is any array characters at the end. If so, split off that portion of the string. 
+		var arrayIndex = name.indexOf('[]');
+		if (arrayIndex != -1)
+			simpleName = name.substring(0, arrayIndex);
+		else
+			simpleName = name;
+		
+		if (typeNames.indexOf(simpleName) == -1)
+			return false;
+		else if (arrayIndex != -1)
+		{
+			// Check that the array suffix contains only matched brackets..
+			var suffix = name.substring(arrayIndex);
+			if (suffix != '[]' && suffix != '[][]' && suffix != '[][][]' && suffix != '[][][][]')
+				return false;			
+		}
+			
+		return true;		
 	}
 	
 </script>

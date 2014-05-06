@@ -14,6 +14,8 @@ import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
+import com.crowdcoding.dto.TestCaseDTO;
+import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.history.MessageReceived;
 import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
@@ -24,10 +26,10 @@ import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.cmd.Query;
 
 
@@ -41,7 +43,9 @@ public class Function extends Artifact
 {
 	private String code;
 	@Index private String name;
+	private String returnType;
 	private List<String> paramNames = new ArrayList<String>();
+	private List<String> paramTypes = new ArrayList<String>();
 	private String header;
 	private String description;
 	private List<Ref<Test>> tests = new ArrayList<Ref<Test>>();
@@ -67,12 +71,13 @@ public class Function extends Artifact
 	protected Function()
 	{
 	}
-	
-	// Constructor for a function that already has a full function description
-	public Function(String name, List<String> paramNames, String signature, String description, Project project)
+		
+	// Constructor for a function that has a full description and code
+	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, String header, 
+			String description, String code, Project project)
 	{
 		super(project);		
-		writeDescriptionCompleted(name, paramNames, header, description, project);
+		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, header, description, code, project);
 	}
 	
 	// Constructor for a function that only has a short call description and still needs a full description
@@ -83,36 +88,6 @@ public class Function extends Artifact
 		
 		// Spawn off a microtask to write the function description
 		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, project));
-	}
-	
-	// Constructor for the special main function, which acts as the root of the call graph
-	public Function(Project project)
-	{
-		super(project);
-		
-		this.name = "main";
-		this.paramNames.add("userInput");
-		this.description = "/** \n" +
-				           "  [INSERT A DESCRIPTION OF THE FUNCTION HERE!]  \n" +
-				           "  \n" +
-				           "  Describe the purpose and intent of the function. \n" + 
-				           "  List each parameter, describing its structure (what fields it has)\n" +
-				           "  and it's intent. For example, if you had a function that took \n" +
-				           "  a param named parsedSentence that looked like \n" +
-				           "  { sentence: [ 'Hello,', 'world!' ]} and returns a \n" + 
-				           "  boolean, you might describe its params and return as follows: \n" +
-				           "  \n" + 
-				           "  @param { sentence: [ strings ] } parsedSentence - sentence parsed \n" +
-				           "         into an array of words \n" + 
-				           "  @return boolean - whether something is true about the sentence \n" +
-				           " */\n";
-		this.header = "function main(input)";
-		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}";
-		this.hasBeenDescribed = true;
-		
-		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
-		
-		ofy().save().entity(this).now();
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -236,6 +211,21 @@ public class Function extends Artifact
 	{
 		return tests;
 	}
+	
+	// Deletes the specified test from the list of tests
+	public void deleteTest(Key<Test> testToDelete)
+	{
+		for (int i = 0; i < tests.size(); i++)
+		{
+			Ref<Test> testRef = tests.get(i);
+			if (testRef.equivalent(testToDelete))
+			{
+				tests.remove(i);
+				ofy().save().entity(this).now();	
+				return;
+			}
+		}		
+	}
 		
 	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
 	public static String getFunctionDescriptions(Project project)
@@ -259,7 +249,7 @@ public class Function extends Artifact
 
 	public FunctionDescriptionDTO getDescriptionDTO()
 	{
-		return new FunctionDescriptionDTO(name, paramNames, header, description); 
+		return new FunctionDescriptionDTO(name, returnType, paramNames, paramTypes, header, description); 
 	}
 	
 	// Returns true iff the specified pseudocall is currently in the code
@@ -448,14 +438,6 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 	//  NOTIFICATION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
-			
-	public void writeTestCasesCompleted(List<String> testCases, Project project)
-	{
-		for (String testDescription : testCases)
-		{
-			Test test = new Test(testDescription, this, project);
-		}
-	}
 	
 	public void sketchCompleted(FunctionDTO dto, Project project)
 	{
@@ -490,20 +472,17 @@ public class Function extends Artifact
 		callee.addToNotifyOnDescribed(this, callDescription, project);
 	}
 		
-	public void writeDescriptionCompleted(String name, List<String> paramNames, String header, String description, 
-			Project project)
+	public void writeDescriptionCompleted(String name, String returnType, List<String> paramNames, List<String> paramTypes, 
+			String header, String description, String code, Project project)
 	{
 		microtaskOutCompleted();
 		this.name = name;
+		this.returnType = returnType;
 		this.paramNames = paramNames;
+		this.paramTypes = paramTypes;
 		this.header = header;
 		this.description = description;
-
-		// The initial code for a function is a line of pseudocode that instructs
-		// the worker to only remove it when the function is done. This keeps regenerating
-		// new sketch tasks until the worker has marked it as done by removing the pseudocode
-		// line.
-		this.code = "{\n\t//#Mark this function as implemented by removing this line.\n}";	
+		this.code = code;
 		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
 		
 		ofy().save().entity(this).now();
@@ -516,6 +495,43 @@ public class Function extends Artifact
 		
 		// Spawn off microtask to sketch the method
 		queueMicrotask(new WriteFunction(this, project), project);
+	}
+	
+	public void writeTestCasesCompleted(TestCasesDTO dto, Project project)
+	{
+		microtaskOutCompleted();
+		
+		for (TestCaseDTO testCase : dto.testCases)
+		{
+			// Note: the id in the testCase is *only* valid for testcases where added is false.
+			
+			// If it's an add, create a test
+			if (testCase.added)
+			{
+				Test test = new Test(testCase.text, this, project);				
+			}
+			else if (testCase.deleted)
+			{
+				Ref<Test> testRef = Test.find(testCase.id, project);
+				Test test = testRef.get();
+				test.delete(this);				
+			}
+			else
+			{
+				// Check if it was edited
+				Ref<Test> testRef = Test.find(testCase.id, project);
+				Test test = testRef.get();				
+				if (!test.getDescription().equals(testCase.text))
+				{
+					String oldDescription = test.getDescription();
+					test.setDescription(testCase.text);									
+					test.queueMicrotask(new WriteTest(project, test, oldDescription), project);
+				}
+			}
+		}		
+		
+		ofy().save().entity(this).now();
+		lookForWork(project);
 	}
 	
 	public void writeCallCompleted(FunctionDTO dto, Project project)
@@ -755,6 +771,11 @@ public class Function extends Artifact
 	{
 		return name + " described: " + hasBeenDescribed + " written: " + isWritten + " needsDebugging: "
 				+ needsDebugging + " queuedMicrotasks: " + queuedMicrotasks.size();
+	}
+	
+	public String fullToString()
+	{
+		return toString() + "\n" + getFullCode();
 	}
 	
 	public static String StatusReport(Project project)

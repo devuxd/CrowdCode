@@ -12,60 +12,87 @@
     	rowMap = [];    	
 		var i = 0;
 		var newHTML = '';
-		if (calleeList.length > 0)
-			newHTML += '<table><tr><td>Inputs</td><td>Outputs</td>';
+		
+		var nonLibraryCallees = findNonLibraryCallees(calleeList);
+		
+		if (nonLibraryCallees.length > 0)
+			newHTML += '<table><tr><td>Inputs</td><td>Output</td>';
 			
-		$.each(calleeList,function(i,calleeName)
+		$.each(nonLibraryCallees,function(j,calleeName)
 		{
-			var inputsMap={};
-			inputsMap=calleeMap[calleeName];
-			newHTML += '<div functionName='+"\'"+calleeName+"\'"+'><pre>';
-			newHTML += functionToDescription[calleeName].replace(/\n/g, "<BR>") + '</pre>';
+			// If there is no function description for the call, assume it is a library function
+			// and ignore it, as the output of library functions cannot be edited.
 			
-			for (var key in inputsMap) 
-			{
-				if (inputsMap.hasOwnProperty(key)) 
+			if (functionToDescription.hasOwnProperty(calleeName))
+			{			
+				var inputsMap={};
+				inputsMap=calleeMap[calleeName];
+				newHTML += '<div functionName='+"\'"+calleeName+"\'"+'><pre>';
+				newHTML += functionToDescription[calleeName].replace(/\n/g, "<BR>") + '</pre>';
+				
+				for (var key in inputsMap) 
 				{
-					var obj = inputsMap[key];
-					var paramObj = obj.parameters;
-					var objContent = "";
-					var paramsArray = [];
-					
-					for(var prop in paramObj){
-						if (paramObj.hasOwnProperty(prop))
-						{
-							objContent = objContent +","+ JSON.stringify(paramObj[prop], null, 4);
-							paramsArray.push(JSON.stringify(paramObj[prop]));
+					if (inputsMap.hasOwnProperty(key)) 
+					{
+						var obj = inputsMap[key];
+						var paramObj = obj.parameters;
+						var objContent = "";
+						var paramsArray = [];
+						
+						for(var prop in paramObj){
+							if (paramObj.hasOwnProperty(prop))
+							{
+								objContent = objContent +","+ JSON.stringify(paramObj[prop], null, 4);
+								paramsArray.push(JSON.stringify(paramObj[prop]));
+							}
 						}
+						objContent=objContent.substr(1);
+						
+						newHTML += '<tr><td><pre>' + objContent + '</pre></td>' 
+						    + '<td><textarea class="functionValues ';
+						if (hasMockForKey(calleeName, key))
+							newHTML += ' mockOutput';
+						newHTML += '" onchange="updateMock(this, ' + i + ')">' + 
+							JSON.stringify(obj.returnValue, null, 4) + '</textarea></td></tr>';
+					     
+					    rowMap.push({ functionName: calleeName, inputsKey: key, 
+					    	         inputs: paramsArray, returnValue: obj.returnValue });
+						i++;	
 					}
-					objContent=objContent.substr(1);
-					
-					newHTML += '<tr><td><textarea class="functionValues" readonly>' + objContent +  
-						'</textarea></td>' +
-						'<td><textarea class="functionValues ';
-					if (hasMockForKey(calleeName, key))
-						newHTML += ' mockOutput';
-					newHTML += '" onchange="updateMock(this, ' + i + ')">' + 
-						JSON.stringify(obj.returnValue, null, 4) + '</textarea></td></tr>';
-				     
-				    rowMap.push({ functionName: calleeName, inputsKey: key, 
-				    	         inputs: paramsArray, returnValue: obj.returnValue });
-					i++;	
-				}
+				}			
 			}
 			newHTML += '</div>';
 		});
 
-		if (calleeList.length > 0)
+		if (nonLibraryCallees.length > 0)
 			newHTML += '</table>';
 			
 		$("#addCalleeSection").html(newHTML);
 	}
+        
+    // Returns a new list of callees, removing any calls to library functions.
+    function findNonLibraryCallees(calleeList)
+    {
+		var nonLibraryCallees = [];
+		
+		$.each(calleeList,function(i,calleeName)
+		{
+    		if (functionToDescription.hasOwnProperty(calleeName))
+    			nonLibraryCallees.push(calleeName);			
+		});
+
+    	return nonLibraryCallees;
+    }  
 	
     // Update the specified mock
 	function updateMock(inputText, index)
 	{
 		var rowData = rowMap[index];
+		
+		// If there's no row for this function (e.g., it is a library call), do nothing,
+		if (rowData == undefined)
+			return;		
+		
 		
 		// If there is not already mocks for this function, create an entry
 		var functionMocks;
@@ -113,9 +140,13 @@
 					{
 						var aMock = functionMocksB[inputKeys];
 						var inputs = Array.prototype.slice.call(aMock.inputs, 0);
+						var stringifiedInputs = [];
+						for (var i = 0; i < inputs.length; i++)
+							stringifiedInputs.push(inputs[i]);
+												
 						mockData.push({ functionName: functionName, 
-							inputs: inputs, 
-							expectedOutput: aMock.output,
+							inputs: stringifiedInputs, 
+							expectedOutput: JSON.stringify(aMock.output),
 							code: buildTestImp(functionName, inputs, JSON.stringify(aMock.output))});		
 					}
 				}

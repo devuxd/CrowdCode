@@ -10,7 +10,7 @@
 	<title>CrowdCode</title>
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/html/welcomeStyles.css">
-	<script src="/include/jquery-1.8.2.min.js"></script> 
+	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 	
 </head>
 <body>
@@ -30,11 +30,11 @@
 	      <div class="jumbotron">
 	        <p class="lead">	        
 	        	CrowdCode organizes work into <b>microtasks</b>,
-				small, self-describing bites like writing psuedocode or brainstorming 
+				small, self-describing bits like writing psuedocode or brainstorming 
 				test cases. After you finish a microtask, CrowdCode figures out what to do next,
 				generating and distributing microtasks to the <b>crowd</b>.
-	 			So you might write a description for function1, debug a test failure for function2, and then 
-	 			add a call into the pseudocode the crowd wrote for function1.
+	 			So you might write a description for function one, debug a test failure for another, and then 
+	 			edit the pseudocode the crowd wrote for function one to add a call.
 				As you complete microtasks, you earn <b>points</b>, and can see how you're doing on the leaderboard.
 	        	        
 	        </p>
