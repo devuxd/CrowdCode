@@ -97,7 +97,9 @@
     Note that all function calls are pass by value (i.e., if you pass an object to a function and
     the function changes the object you will not see the change).<BR><BR>
     
-        
+    <B>IMPORTANT: If you think the function may require more than a few minutes to write, please
+    use pseudocode and psuedocalls to break up the function into smaller pieces that others can work
+    on. If you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW! </B>  <BR><BR>
     
 	
 	<%@include file="/html/elements/typeBrowser.jsp" %>
