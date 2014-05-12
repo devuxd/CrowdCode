@@ -119,12 +119,9 @@ public class Worker
 		score += points;	
 		ofy().save().entity(this).now();
 		
-		FirebaseService.setPoints(userid, score, project);
+		FirebaseService.setPoints(userid, nickname, score, project);
     	FirebaseService.postToNewsfeed(userid, (new PointEventDTO(points, description)).json(), 
     			project);
-			    
-	    // Update the leaderboard, if necessary
-	    project.getLeaderboard().update(this, project);		    
 	}
 	
 	// Gets the handle (i.e., publicly visible nickname) for the worker.

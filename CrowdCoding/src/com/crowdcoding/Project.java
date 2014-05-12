@@ -45,7 +45,6 @@ public class Project
 	public static Project project;
 	
 	private IDGenerator idgenerator;
-	private Leaderboard leaderboard;
 	@Id private String id;
 	private int writtenFunctions;
 	private int linesOfCode;
@@ -93,7 +92,6 @@ public class Project
 		
 		// Setup the project to be ready 
 		idgenerator = new IDGenerator(false);
-		leaderboard = new Leaderboard(this);
 		
 		ofy().save().entity(this).now();
 		
@@ -248,11 +246,6 @@ public class Project
 		return id;
 	}
 	
-	public Leaderboard getLeaderboard()
-	{
-		return leaderboard;
-	}
-
 	public HistoryLog historyLog()
 	{
 		return historyLog;

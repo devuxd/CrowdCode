@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.List;
 
 import com.crowdcoding.Project;
+import com.crowdcoding.dto.LeaderDTO;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -47,21 +48,18 @@ public class FirebaseService
 			result = "";
 		return result;
 	}
-		
-	public static void updateLeaderboard(String message, Project project)	
-	{
-		writeData(message, "/leaderboard.json", HTTPMethod.PUT, project);
-	}
 	
-	public static void setPoints(String workerID, int points, Project project)
+	public static void setPoints(String workerID, String workerDisplayName, int points, Project project)
 	{
 		writeData(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, project);
+		LeaderDTO leader = new LeaderDTO(points, workerDisplayName);
+		writeData(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, project);
 	}
 	
 	// Posts the specified JSON message to the specified workers newsfeed
 	public static void postToNewsfeed(String workerID, String message, Project project)
 	{
-		writeData(message, "/workers/" + workerID + "/newsfeed.json", HTTPMethod.POST, project);		
+		writeData(message, "/leaderboard/" + workerID + "/newsfeed.json", HTTPMethod.POST, project);		
 	}
 	
 	// Publishes the specified statistics
