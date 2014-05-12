@@ -59,7 +59,7 @@ public class FirebaseService
 	// Posts the specified JSON message to the specified workers newsfeed
 	public static void postToNewsfeed(String workerID, String message, Project project)
 	{
-		writeData(message, "/leaderboard/" + workerID + "/newsfeed.json", HTTPMethod.POST, project);		
+		writeData(message, "/workers/" + workerID + "/newsfeed.json", HTTPMethod.POST, project);		
 	}
 	
 	// Publishes the specified statistics
