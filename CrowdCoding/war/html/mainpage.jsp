@@ -3,7 +3,6 @@
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
 <%@page import="com.crowdcoding.Project"%>
-<%@page import="com.crowdcoding.artifacts.ADT" %>
 <%@page import="com.crowdcoding.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
@@ -25,10 +24,7 @@
 	});
 	
 	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-	
-    String allADTs = ADT.getAllADTs(project);
 %>
-
 
 <!DOCTYPE html>
 <html>
@@ -170,15 +166,24 @@
 	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
 	
-	var allADTs = <%= allADTs %>.ADTs;
+	var allADTs = [];
 	var typeNames = [];
 	var nameToADT = {};
 	
     $(document).ready(function()
     {
-    	setupADTData();
-    	
-        loadMicrotask();
+		// Load the ADTs from firebase
+		var leaderboardRef = new Firebase(firebaseURL + '/ADTs');
+		leaderboardRef.on('value', function(snapshot) {
+			if (snapshot.val() != null)
+			{
+				allADTs = snapshot.val().ADTs;		
+		    	setupADTData();		    	
+			}
+			
+			// Wait for the ADTs to load before loading the microtask!
+	        loadMicrotask();
+		});
 
 		$("#logoutLink").click(function() {
 			// Tell server to logout

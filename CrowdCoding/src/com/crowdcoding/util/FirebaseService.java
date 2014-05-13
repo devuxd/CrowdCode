@@ -39,6 +39,18 @@ public class FirebaseService
 		return result;
 	}
 	
+	// Copies the specified ADTs from the client request into the project
+	public static void copyADTs(Project project)
+	{
+		String adts = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID() 
+				+ "/ADTs.json");
+		if (adts == null || adts.equals("null"))
+			adts = "";
+		
+		System.out.println("ADTs for copy:" + adts);		
+		writeData(adts, "/ADTs.json", HTTPMethod.PUT, project);
+	}
+	
 	// Reads the functions for the specified project. If there are no functions, returns an empty string.
 	public static String readFunctions(Project project)
 	{

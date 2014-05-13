@@ -2,16 +2,11 @@ package com.crowdcoding;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
-import com.crowdcoding.artifacts.ADT;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
-import com.crowdcoding.dto.ADTDTO;
-import com.crowdcoding.dto.ADTsDTO;
 import com.crowdcoding.dto.CurrentStatisticsDTO;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
@@ -62,7 +57,6 @@ public class Project
 		ObjectifyService.register(Worker.class);
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Function.class);
-		ObjectifyService.register(ADT.class);
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
 		
@@ -96,14 +90,7 @@ public class Project
 		ofy().save().entity(this).now();
 		
 		// Load ADTs from Firebase
-		String ADTs = FirebaseService.readADTs(this);
-		if (!ADTs.equals(""))
-		{
-			System.out.println(ADTs);	
-			ADTsDTO adtsDTO = (ADTsDTO) DTO.read(ADTs, ADTsDTO.class);
-			for (ADTDTO adtDTO : adtsDTO.ADTs)
-				ADT.createFromDTO(this, adtDTO);
-		}
+		FirebaseService.copyADTs(this);
 		
 		// Load functions from Firebase
 		String functions = FirebaseService.readFunctions(this);
@@ -256,7 +243,6 @@ public class Project
 		StringBuilder output = new StringBuilder();
 		output.append(Worker.StatusReport(this)); 
 		output.append(Microtask.StatusReport(this));    
-		output.append(ADT.StatusReport(this));
 		output.append(Function.StatusReport(this));   
 		output.append(Test.StatusReport(this));
 		
