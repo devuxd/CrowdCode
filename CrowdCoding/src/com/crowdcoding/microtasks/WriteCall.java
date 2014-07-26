@@ -17,9 +17,9 @@ import com.googlecode.objectify.annotation.Load;
 @EntitySubclass(index=true)
 public class WriteCall extends Microtask 
 {
-	@Load private Ref<Function> callee;
 	@Load private Ref<Function> caller;
 	private String pseudoCall;
+	private String calleeFullDescription;
 		
 	// Default constructor for deserialization
 	private WriteCall() 
@@ -27,12 +27,12 @@ public class WriteCall extends Microtask
 	}
 	
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, Function callee, String pseudoCall, Project project)
+	public WriteCall(Function caller, String calleeFullDescription, String pseudoCall, Project project)
 	{
 		super(project, false);
 		this.submitValue = 7;
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
-		this.callee = (Ref<Function>) Ref.create(callee.getKey());
+		this.calleeFullDescription = calleeFullDescription;
 		this.pseudoCall = pseudoCall;
 		ofy().save().entity(this).now();
 		
@@ -67,9 +67,9 @@ public class WriteCall extends Microtask
 		return caller.getValue();
 	}
 	
-	public Function getCallee()
+	public String getEscapedCalleeFullDescription()
 	{
-		return callee.getValue();
+		return StringEscapeUtils.escapeEcmaScript(calleeFullDescription);
 	}
 	
 	public String getEscapedPseudoCall()

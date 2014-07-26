@@ -18,10 +18,10 @@
 	DebugTestFailure microtask = (DebugTestFailure) crowdUser.getMicrotask();
 	ObjectMapper mapper = new ObjectMapper();
 	Writer strWriter = new StringWriter();
-	mapper.writeValue(strWriter, microtask.getTestCases());
+	mapper.writeValue(strWriter, microtask.getTestCases(project));
 	String testCases = strWriter.toString();
 	strWriter = new StringWriter();
-	mapper.writeValue(strWriter, microtask.getTestDescriptions());
+	mapper.writeValue(strWriter, microtask.getTestDescriptions(project));
 	String testCaseDescriptions = strWriter.toString();
 	String methodFormatted = FunctionHeaderUtil.returnFunctionHeaderFormatted(microtask.getFunction());
 
@@ -617,7 +617,7 @@
 		
 <div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 	<div class="logout-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">    </button>
 		<h3 id="logoutLabel">Please Remove Debug Statements</h3>
 	</div>
 	<div class="modal-body"></div>

@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
+import com.crowdcoding.artifacts.commands.Command;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
@@ -28,7 +32,6 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.VoidWork;
 import com.googlecode.objectify.Work;
 
 @SuppressWarnings("serial")
@@ -218,12 +221,15 @@ public class CrowdServlet extends HttpServlet
 			System.out.println("Submitted microtask: " + payload);
 	
 			final String type = req.getParameter("type");
-				
-	        ofy().transact(new VoidWork() {
-	            public void vrun()
+			Queue<Command> commands = new LinkedList<Command>();
+						
+	        commands.addAll(ofy().transact(new Work<List<Command>>() {
+	            public List<Command> run()
 	            {
             	    Project project = Project.Create(projectID);					
 					Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);					
+					ExecutionContext context = new ExecutionContext(project);					
+					
 					Class microtaskType = microtaskTypes.get(type);
 					if (microtaskType == null)
 						throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
@@ -235,8 +241,28 @@ public class CrowdServlet extends HttpServlet
 						microtask.submit(payload, worker, project);	
 					project.publishStatistics();
 					project.publishHistoryLog();
+					
+					return context.commands(); 
 	            }            
-	        });
+	        }));
+	        
+	        // Execute all commands created by the microtask until complete, adding more commands if they
+	        // are created.
+	        while(!commands.isEmpty())
+	        {
+	        	final Command command = commands.remove();
+		        commands.addAll(ofy().transact(new Work<List<Command>>() {
+		            public List<Command> run()
+		            {
+	            	    Project project = Project.Create(projectID);					
+						Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);					
+						ExecutionContext context = new ExecutionContext(project);	
+						
+						command.execute(project);
+						return context.commands(); 
+		            }
+		        }));
+	        }	        
     	}        
     	catch (IOException e)
     	{

@@ -61,9 +61,9 @@ public class DebugTestFailure extends Microtask
           return function.getValue().getEscapedCode();
      }
     
-     public String[] getTestCases()
+     public String[] getTestCases(Project project)
      {
-          List<Ref<Test>> tempCases = function.getValue().getTestCases();
+          List<Ref<Test>> tempCases = function.getValue().getTestCases(project);
           String [] stringVersion = new String[tempCases.size()];
           int i = 0;
           for(Ref<Test>  testRef : tempCases)
@@ -84,9 +84,9 @@ public class DebugTestFailure extends Microtask
           return stringVersion;
      }
     
-     public String[] getTestDescriptions()
+     public String[] getTestDescriptions(Project project)
      {
-          List<Ref<Test>> tempCases = function.getValue().getTestCases();
+          List<Ref<Test>> tempCases = function.getValue().getTestCases(project);
           String [] stringVersion = new String[tempCases.size()];
           int i = 0;
           for(Ref<Test>  testRef : tempCases)

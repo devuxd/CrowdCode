@@ -100,14 +100,14 @@ public class WriteTest extends Microtask
 	     return "/html/writeTest.jsp";
 	}
 	
-	public Function getFunction()
+	public Function getFunction(Project project)
 	{
-	     return test.getValue().getFunction();
+	     return Function.find(test.getValue().getFunctionID(), project).get();
 	}
 	
 	public Artifact getOwningArtifact()
 	{
-	     return getFunction();
+		return test.get();
 	}
 	 
 	public Test getTest()

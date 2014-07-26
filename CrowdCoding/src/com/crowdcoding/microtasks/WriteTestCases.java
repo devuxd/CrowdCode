@@ -104,10 +104,10 @@ public class WriteTestCases extends Microtask
 	}
 	
 	// Gets the list of test cases, formatted as a JSON string that's a list
-	// of test cases (with properly escpaed strings)
-	public String getEscapedTestCasesList()
+	// of test cases (with properly escaped strings)
+	public String getEscapedTestCasesList(Project project)
 	{
-		TestCasesDTO testCasesDTO = new TestCasesDTO(function.get());
+		TestCasesDTO testCasesDTO = new TestCasesDTO(function.get(), project);
 		return testCasesDTO.json();
 	}
 		

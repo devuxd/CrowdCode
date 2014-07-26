@@ -16,8 +16,8 @@
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
     WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
     
-    Function function = microtask.getFunction();
-    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'";
+    Function function = microtask.getFunction(project);
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(project), project) + "'";
 	PromptType promptType = microtask.getPromptType();
 %>
 

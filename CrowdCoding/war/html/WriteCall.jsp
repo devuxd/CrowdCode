@@ -25,7 +25,7 @@
 		var microtaskID = <%= microtask.getID() %>;	
 		
 		// Description for the description box of the callee
-		var codeBoxCode = '<%= microtask.getCallee().getEscapedFullDescription() %>';
+		var codeBoxCode = '<%= microtask.getEscapedCalleeFullDescription() %>';
 		
 		var editorCode = '<%=functionCode%>';
 		var functionName = '<%= microtask.getCaller().getName() %>';

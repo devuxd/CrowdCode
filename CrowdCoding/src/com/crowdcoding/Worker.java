@@ -106,11 +106,6 @@ public class Worker
 			this.microtask = Ref.create(microtask.getKey());
 		
 		ofy().save().entity(this).now();		
-	}	
-	
-	public int getScore()
-	{
-		return score;
 	}		
 	
 	// Adds the specified number of points to the score.

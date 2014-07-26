@@ -27,7 +27,7 @@
 		// Function description for the function description box.
 		var codeBoxCode = '<%= microtask.getFunction().getEscapedFullDescription() %>';
 		
-		var testCases = <%= microtask.getEscapedTestCasesList() %>.testCases;	
+		var testCases = <%= microtask.getEscapedTestCasesList(project) %>.testCases;	
 		var nextTestCase = 1000;
 		
 		var showFunctionSignaturePrompt = <%= (promptType == PromptType.FUNCTION_SIGNATURE) %>;
@@ -216,7 +216,7 @@
 	
 	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 		<div class="logout-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">��</button>
 			<h4 id="logoutLabel">Please write at least one test case.</h4>
 		</div>
 		<div class="modal-body"></div>
