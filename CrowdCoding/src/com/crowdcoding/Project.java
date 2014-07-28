@@ -47,29 +47,6 @@ public class Project
 	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
 	private boolean waitingForTestRun = false;	// is the project currently waiting for tests to be run?
-
-	
-	// Static initializer for class Project
-	static
-	{
-		// Must register ALL entities and entity subclasses here.
-		// And embedded classes are also not registered.
-		ObjectifyService.register(Worker.class);
-		ObjectifyService.register(Artifact.class);
-		ObjectifyService.register(Function.class);
-		ObjectifyService.register(Project.class);
-		ObjectifyService.register(Test.class);
-		
-		ObjectifyService.register(Microtask.class);
-		ObjectifyService.register(ReuseSearch.class);
-		ObjectifyService.register(WriteFunction.class);
-		ObjectifyService.register(DebugTestFailure.class);
-		ObjectifyService.register(MachineUnitTest.class);
-		ObjectifyService.register(WriteCall.class);
-		ObjectifyService.register(WriteFunctionDescription.class);
-		ObjectifyService.register(WriteTest.class);
-		ObjectifyService.register(WriteTestCases.class);
-	}
 		
 	// Default constructor for deserialization only
 	private Project()
@@ -93,7 +70,7 @@ public class Project
 		FirebaseService.copyADTs(this);
 		
 		// Load functions from Firebase
-		String functions = FirebaseService.readFunctions(this);
+		String functions = FirebaseService.readClientRequestFunctions(this);
 		System.out.println(functions);	
 		FunctionDescriptionsDTO functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
 		for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)

@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
+import com.crowdcoding.artifacts.Artifact;
+import com.crowdcoding.artifacts.Function;
+import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.artifacts.commands.Command;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
@@ -32,6 +35,7 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Work;
 
 @SuppressWarnings("serial")
@@ -51,6 +55,24 @@ public class CrowdServlet extends HttpServlet
 		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
 		microtaskTypes.put("writetest", WriteTest.class);
 		microtaskTypes.put("writetestcases", WriteTestCases.class);
+		
+		// Must register ALL entities and entity subclasses here.
+		// And embedded classes are also not registered.
+		ObjectifyService.register(Worker.class);
+		ObjectifyService.register(Artifact.class);
+		ObjectifyService.register(Function.class);
+		ObjectifyService.register(Project.class);
+		ObjectifyService.register(Test.class);
+		
+		ObjectifyService.register(Microtask.class);
+		ObjectifyService.register(ReuseSearch.class);
+		ObjectifyService.register(WriteFunction.class);
+		ObjectifyService.register(DebugTestFailure.class);
+		ObjectifyService.register(MachineUnitTest.class);
+		ObjectifyService.register(WriteCall.class);
+		ObjectifyService.register(WriteFunctionDescription.class);
+		ObjectifyService.register(WriteTest.class);
+		ObjectifyService.register(WriteTestCases.class);
 	}	
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException 
@@ -228,7 +250,7 @@ public class CrowdServlet extends HttpServlet
 	            {
             	    Project project = Project.Create(projectID);					
 					Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);					
-					ExecutionContext context = new ExecutionContext(project);					
+					CommandContext context = new CommandContext(project);					
 					
 					Class microtaskType = microtaskTypes.get(type);
 					if (microtaskType == null)
@@ -239,6 +261,7 @@ public class CrowdServlet extends HttpServlet
 						microtask.skip(worker, project);
 					else
 						microtask.submit(payload, worker, project);	
+					
 					project.publishStatistics();
 					project.publishHistoryLog();
 					
@@ -256,9 +279,15 @@ public class CrowdServlet extends HttpServlet
 		            {
 	            	    Project project = Project.Create(projectID);					
 						Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);					
-						ExecutionContext context = new ExecutionContext(project);	
+						CommandContext context = new CommandContext(project);	
 						
 						command.execute(project);
+						
+						
+						
+						project.publishStatistics();
+						project.publishHistoryLog();
+						
 						return context.commands(); 
 		            }
 		        }));

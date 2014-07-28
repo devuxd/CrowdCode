@@ -3,7 +3,7 @@ package com.crowdcoding.artifacts.commands;
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
-import com.crowdcoding.servlets.ExecutionContext;
+import com.crowdcoding.servlets.CommandContext;
 import com.googlecode.objectify.Ref;
 
 public abstract class FunctionCommand extends Command 
@@ -42,7 +42,7 @@ public abstract class FunctionCommand extends Command
 	// All constructors for FunctionCommand MUST call queueCommand by calling the super constructor
 	private static void queueCommand(Command command)
 	{
-		ExecutionContext.ctx.addCommand(command);
+		CommandContext.ctx.addCommand(command);
 	}
 	
 	public void execute(Project project)
@@ -51,7 +51,12 @@ public abstract class FunctionCommand extends Command
 		if (function == null)		
 			System.out.println("Cannot execute FunctionCommand. Could not find the function for FunctionID " + functionID);		
 		else
-			execute(function.get(), project);			
+		{
+			execute(function.get(), project);
+
+			// Save the associated artifact to Firebase
+			function.get().storeToFirebase(project);
+		}
 	}
 
 	public abstract void execute(Function function, Project project);

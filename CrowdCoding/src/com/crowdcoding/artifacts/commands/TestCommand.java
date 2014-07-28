@@ -2,7 +2,7 @@ package com.crowdcoding.artifacts.commands;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Test;
-import com.crowdcoding.servlets.ExecutionContext;
+import com.crowdcoding.servlets.CommandContext;
 import com.googlecode.objectify.Ref;
 
 public abstract class TestCommand extends Command
@@ -21,7 +21,7 @@ public abstract class TestCommand extends Command
 	// command to the queue.
 	private static void queueCommand(Command command)
 	{
-		ExecutionContext.ctx.addCommand(command);
+		CommandContext.ctx.addCommand(command);
 	}
 	
 	public void execute(Project project)
@@ -30,7 +30,12 @@ public abstract class TestCommand extends Command
 		if (test == null)		
 			System.out.println("Cannot execute TestCommand. Could not find test for TestID " + testID);		
 		else
-			execute(test.get(), project);			
+		{
+			execute(test.get(), project);
+		
+			// Save the associated artifact to Firebase
+			test.get().storeToFirebase(project);
+		}
 	}
 
 	public abstract void execute(Test test, Project project);

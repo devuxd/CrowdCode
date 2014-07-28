@@ -227,7 +227,13 @@ public /*abstract*/ class Microtask
 			worker.setMicrotask(null);
 			worker.awardPoints(this.submitValue, this.microtaskDescription(), project);
 			project.microtaskCompleted();
+			
 			ofy().save().entity(this).now();
+
+			// Save the associated artifact to Firebase if there is one
+			Artifact owningArtifact = this.getOwningArtifact();
+			if (owningArtifact != null)
+				owningArtifact.storeToFirebase(project);
 			
 			project.historyLog().endEvent();
 		}

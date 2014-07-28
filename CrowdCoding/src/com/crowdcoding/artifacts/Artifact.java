@@ -65,6 +65,8 @@ public /*abstract*/ class Artifact
 	
 	public /* abstract */  String getName() { throw new RuntimeException("Must implement getName()."); };
 	
+	// Writes the artifact out to Firebase, publishing the current state of the artifact to all clients.
+	public void storeToFirebase(Project project) { throw new RuntimeException("Must implement storeToFirebase().");  };
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  MICROTASK QUEUEING

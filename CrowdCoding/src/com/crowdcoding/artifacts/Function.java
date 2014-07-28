@@ -14,6 +14,7 @@ import com.crowdcoding.artifacts.commands.FunctionCommand;
 import com.crowdcoding.artifacts.commands.TestCommand;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.FunctionInFirebase;
 import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
@@ -27,6 +28,7 @@ import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.microtasks.WriteTestCases;
+import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
@@ -693,6 +695,15 @@ public class Function extends Artifact
 	//  UTILITY METHODS
 	//////////////////////////////////////////////////////////////////////////////
 
+	public void storeToFirebase(Project project)
+	{
+		if (hasBeenDescribed)
+		{
+			FirebaseService.writeFunction(new FunctionInFirebase(name, returnType, paramNames, paramTypes,
+				header, description), this.id, project);		
+		}
+	}	
+	
 	// Looks up a Function object by name. Returns the function or null if no such function exists
 	public static Function lookupFunction(String name, Project project)
 	{

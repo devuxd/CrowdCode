@@ -9,18 +9,16 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.commands.FunctionCommand;
-import com.crowdcoding.artifacts.commands.TestCommand;
 import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.MocksDTO;
 import com.crowdcoding.dto.TestDTO;
+import com.crowdcoding.dto.TestInFirebase;
 import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.WriteTest;
-import com.crowdcoding.microtasks.WriteTestCases;
-import com.googlecode.objectify.Key;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.cmd.Query;
 
 @EntitySubclass(index=true)
@@ -252,6 +250,12 @@ public class Test extends Artifact
 			checkIfBecameImplemented(project);
 		}
 	}
+	
+	public void storeToFirebase(Project project)
+	{
+		FirebaseService.writeTest(new TestInFirebase(code, hasSimpleTest, simpleTestInputs, 
+				simpleTestOutput, description, functionName, functionID), this.id, project);
+	}	
 	
 	/******************************************************************************************
 	 * Commands

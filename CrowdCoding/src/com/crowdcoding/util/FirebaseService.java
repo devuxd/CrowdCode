@@ -6,7 +6,9 @@ import java.net.URL;
 import java.util.List;
 
 import com.crowdcoding.Project;
+import com.crowdcoding.dto.FunctionInFirebase;
 import com.crowdcoding.dto.LeaderDTO;
+import com.crowdcoding.dto.TestInFirebase;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -18,17 +20,18 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
  */
 public class FirebaseService 
 {
-	// Reads the user stories for the specified project. If there are no user stories,
-	// instead reads the default user stories.
-	public static String readUserStories(Project project)
+	// Stores the specified function to Firebase
+	public static void writeFunction(FunctionInFirebase dto, long functionID, Project project)
 	{
-		String result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/" + project.getID() 
-				+ ".json");
-		if (result == null || result.equals("null"))
-			result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/default.json");
-		return result;
+		writeData(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PUT, project); 
 	}
 	
+	// Stores the specified function to Firebase
+	public static void writeTest(TestInFirebase dto, long testID, Project project)
+	{
+		writeData(dto.json(), "/artifacts/tests/" + testID + ".json", HTTPMethod.PUT, project); 
+	}
+		
 	// Reads the ADTs for the specified project. If there are no ADTs, returns an empty string.
 	public static String readADTs(Project project)
 	{
@@ -52,7 +55,7 @@ public class FirebaseService
 	}
 	
 	// Reads the functions for the specified project. If there are no functions, returns an empty string.
-	public static String readFunctions(Project project)
+	public static String readClientRequestFunctions(Project project)
 	{
 		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID() 
 				+ "/functions.json");
