@@ -7,6 +7,7 @@ public class TestInFirebase extends DTO
 {
 	public String messageType = "TestInFirebase";
 	
+	public long id;
 	public String code = "";
 	public boolean hasSimpleTest;	// is there a simple test defined for this test? 
 	public boolean inDispute;	    // is the test being disputed?
@@ -24,10 +25,11 @@ public class TestInFirebase extends DTO
 	{		
 	}	
 	
-	public TestInFirebase(String code, boolean hasSimpleTest,
+	public TestInFirebase(long id, String code, boolean hasSimpleTest,
 			List<String> simpleTestInputs, String simpleTestOutput, String description, 
 			String functionName, long functionID) 
 	{
+		this.id = id;
 		this.code = code;
 		this.hasSimpleTest = hasSimpleTest;
 		this.simpleTestInputs = simpleTestInputs;

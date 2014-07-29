@@ -60,6 +60,7 @@ public class Function extends Artifact
 	// pseudocall callsites calling this function (these two lists must be in sync)
 	private List<String> pseudoCallsites = new ArrayList<String>();  
 	private List<Long> pseudoCallers = new ArrayList<Long>();
+	private int linesOfCode;
 	
 	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
@@ -281,10 +282,6 @@ public class Function extends Artifact
 			
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();	
-			if (isWritten)
-				project.functionWritten();
-			else
-				project.functionNotWritten();
 			
 			project.historyLog().endEvent();
 		}		
@@ -352,18 +349,14 @@ public class Function extends Artifact
 		String strippedNewFullDescrip = (dto.description + dto.header).replace(" ", "").replace("\n", "");				
 		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))		
 			notifyDescriptionChanged(dto, project);		
-		
-		// Measure the LOC increase. (add one for last line without newline and one for the header) 
-		int	oldLOC = StringUtils.countMatches(this.code, "\n") + 2;
-		int newLOC = StringUtils.countMatches(dto.code, "\n") + 2;		
-		project.locIncreasedBy(newLOC - oldLOC);		
-		
+					
 		// Update the function data
 		this.code = dto.code;		
 		this.name = dto.name;
 		this.description = dto.description;
 		this.header = dto.header;
 		this.paramNames = dto.paramNames;
+		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;				
 		
 		// Looper over all of the callers, rebuilding our list of callers
 		rebuildCalleeList(dto.calleeNames, project);
@@ -482,7 +475,7 @@ public class Function extends Artifact
 		this.header = header;
 		this.description = description;
 		this.code = code;
-		project.locIncreasedBy(StringUtils.countMatches(this.code, "\n") + 2);
+		this.linesOfCode = StringUtils.countMatches(this.code, "\n") + 2;
 		
 		ofy().save().entity(this).now();
 		
@@ -699,8 +692,8 @@ public class Function extends Artifact
 	{
 		if (hasBeenDescribed)
 		{
-			FirebaseService.writeFunction(new FunctionInFirebase(name, returnType, paramNames, paramTypes,
-				header, description), this.id, project);		
+			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, returnType, paramNames, 
+					paramTypes, header, description, linesOfCode), this.id, project);		
 		}
 	}	
 	

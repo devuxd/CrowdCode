@@ -262,7 +262,6 @@ public class CrowdServlet extends HttpServlet
 					else
 						microtask.submit(payload, worker, project);	
 					
-					project.publishStatistics();
 					project.publishHistoryLog();
 					
 					return context.commands(); 
@@ -279,15 +278,10 @@ public class CrowdServlet extends HttpServlet
 		            {
 	            	    Project project = Project.Create(projectID);					
 						Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);					
-						CommandContext context = new CommandContext(project);	
-						
-						command.execute(project);
-						
-						
-						
-						project.publishStatistics();
-						project.publishHistoryLog();
-						
+						CommandContext context = new CommandContext(project);							
+						command.execute(project);					
+												
+						project.publishHistoryLog();						
 						return context.commands(); 
 		            }
 		        }));

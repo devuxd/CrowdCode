@@ -77,12 +77,6 @@ public class FirebaseService
 		writeData(message, "/workers/" + workerID + "/newsfeed.json", HTTPMethod.POST, project);		
 	}
 	
-	// Publishes the specified statistics
-	public static void publishStatistics(String message, Project project)
-	{
-		writeData(message, "/statistics.json", HTTPMethod.PUT, project); 
-	}
-	
 	// Publishes the history log
 	public static void publishHistoryLog(List<Pair<String, String>> list, Project project)
 	{

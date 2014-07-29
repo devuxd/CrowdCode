@@ -226,7 +226,6 @@ public /*abstract*/ class Microtask
 			this.completed = true;
 			worker.setMicrotask(null);
 			worker.awardPoints(this.submitValue, this.microtaskDescription(), project);
-			project.microtaskCompleted();
 			
 			ofy().save().entity(this).now();
 

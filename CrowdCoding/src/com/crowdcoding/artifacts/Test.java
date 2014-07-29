@@ -253,7 +253,7 @@ public class Test extends Artifact
 	
 	public void storeToFirebase(Project project)
 	{
-		FirebaseService.writeTest(new TestInFirebase(code, hasSimpleTest, simpleTestInputs, 
+		FirebaseService.writeTest(new TestInFirebase(this.id, code, hasSimpleTest, simpleTestInputs, 
 				simpleTestOutput, description, functionName, functionID), this.id, project);
 	}	
 	

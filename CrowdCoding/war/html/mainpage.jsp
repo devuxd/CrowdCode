@@ -62,9 +62,9 @@
 			<td>  	<h4>CrowdCode</h4> </td>
 			<td class="titlebarScore"> 				
 				<div id="statistics" >
-					<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
-					<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
-					<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
+					<span id="locSpan" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
+					<span id="functionCountSpan" class="badge"></span><small>&nbsp;&nbsp;functions</small>&nbsp;&nbsp;
+					<span id="testCountSpan" class="badge"></span><small>&nbsp;&nbsp;tests</small>&nbsp;&nbsp;&nbsp;&nbsp;
 					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font>
 				</div>  
 			</td>
@@ -160,6 +160,8 @@
 <script src="/js/errorCheck.js"></script>
 <script src="/js/keybind.js"></script>
 <script src="/js/JSONEditor.js"></script>
+<script src="/js/functions.js"></script>
+<script src="/js/tests.js"></script>
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
@@ -169,6 +171,8 @@
 	var allADTs = [];
 	var typeNames = [];
 	var nameToADT = {};
+	var functions;
+	var tests;
 	
     $(document).ready(function()
     {
@@ -228,14 +232,6 @@
 				updateScoreDisplay(snapshot.val());
 		});		
 		
-		// Hook stats to firebase
-		var locRef = new Firebase(firebaseURL + '/statistics/linesOfCode');
-		locRef.on('value', function(snapshot) { $('#loc').html(snapshot.val()); });
-		var locRef = new Firebase(firebaseURL + '/statistics/functionsImplemented');
-		locRef.on('value', function(snapshot) { $('#functionsWritten').html(snapshot.val()); });
-		var locRef = new Firebase(firebaseURL + '/statistics/microtasksCompleted');
-		locRef.on('value', function(snapshot) { $('#microtasksCompleted').html(snapshot.val()); });		
-		
 		// Setup chat service
 		var chatRef = new Firebase(firebaseURL + '/chat');
 
@@ -255,6 +251,34 @@
 			var message = snapshot.val();
 			$('#chatOutput').append("<b>" + message.workerHandle + "</b> " + message.text + "<BR>");
 			$('#chatOutput').scrollTop($('#chatOutput')[0].scrollHeight);
+		});
+		
+		// Create the Functions and Tests services, creating a local repository of functions
+		// and tests synced to firebase
+		functions = new Functions();       
+    	functions.init(updateFunctionStats);
+		
+		var functionsRef = new Firebase(firebaseURL + '/artifacts/functions');
+		functionsRef.on('child_added', function (snapshot) 
+		{
+			functions.functionAdded(snapshot.val());
+		});
+		functionsRef.on('child_changed', function (snapshot) 
+		{
+			functions.functionChanged(snapshot.val());
+		});
+		
+		tests = new Tests();       
+    	tests.init(updateTestStats);
+		
+		var testsRef = new Firebase(firebaseURL + '/artifacts/tests');
+		testsRef.on('child_added', function (snapshot) 
+		{
+			tests.testAdded(snapshot.val());
+		});
+		testsRef.on('child_changed', function (snapshot) 
+		{
+			tests.testChanged(snapshot.val());
 		});
 	});
     
@@ -380,6 +404,17 @@
 		}
 			
 		return true;		
+	}
+	
+	function updateFunctionStats(linesOfCode, functionCount)
+	{
+		$('#locSpan').html(linesOfCode);
+		$('#functionCountSpan').html(functionCount);
+	}
+	
+	function updateTestStats(testCount)
+	{
+		$('#testCountSpan').html(testCount);
 	}
 	
 </script>

@@ -7,23 +7,14 @@ import java.util.List;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
-import com.crowdcoding.dto.CurrentStatisticsDTO;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionDescriptionsDTO;
-import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
-import com.crowdcoding.microtasks.ReuseSearch;
-import com.crowdcoding.microtasks.WriteCall;
-import com.crowdcoding.microtasks.WriteFunction;
-import com.crowdcoding.microtasks.WriteFunctionDescription;
-import com.crowdcoding.microtasks.WriteTest;
-import com.crowdcoding.microtasks.WriteTestCases;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
@@ -41,9 +32,6 @@ public class Project
 	
 	private IDGenerator idgenerator;
 	@Id private String id;
-	private int writtenFunctions;
-	private int linesOfCode;
-	private int microtasksCompleted;
 	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
 	private boolean waitingForTestRun = false;	// is the project currently waiting for tests to be run?
@@ -126,48 +114,12 @@ public class Project
 		ofy().transactionless().delete().key(project);
 	}
 	
-	// Publish new statistics to Firebase
-	public void publishStatistics() 
-	{
-		CurrentStatisticsDTO stats = new CurrentStatisticsDTO(microtasksCompleted, linesOfCode, 
-				writtenFunctions);
-		FirebaseService.publishStatistics(stats.json(), this);		
-	}
-	
 	// Publishes the history log to Firebase
 	public void publishHistoryLog()
 	{
 		FirebaseService.publishHistoryLog(historyLog.json(), this);
 	}
-	
-	// Report that a function is now written
-	public void functionWritten()
-	{
-		writtenFunctions++;
-		ofy().save().entity(this).now();
-	}
-	
-	// Report that a function that was written is no longer written
-	public void functionNotWritten()
-	{
-		writtenFunctions--;
-		ofy().save().entity(this).now();
-	}
-	
-	// Report that lines of code in the system increased by
-	public void locIncreasedBy(int lines)
-	{
-		linesOfCode += lines;
-		ofy().save().entity(this).now();
-	}
-	
-	// Report that a microtask has been completed
-	public void microtaskCompleted()
-	{
-		microtasksCompleted++;
-		ofy().save().entity(this).now();
-	}
-	
+		
 	// Requests that the tests be run for the project
 	public void requestTestRun()
 	{
