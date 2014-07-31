@@ -65,6 +65,7 @@
 					<span id="locSpan" class="badge">0</span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
 					<span id="functionCountSpan" class="badge">0</span><small>&nbsp;&nbsp;functions</small>&nbsp;&nbsp;
 					<span id="testCountSpan" class="badge">0</span><small>&nbsp;&nbsp;tests</small>&nbsp;&nbsp;&nbsp;&nbsp;
+					<span id="microtaskCountSpan" class="badge">0</span><small>&nbsp;&nbsp;microtasks</small>&nbsp;&nbsp;&nbsp;&nbsp;
 					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font>
 				</div>  
 			</td>
@@ -173,6 +174,7 @@
 	var nameToADT = {};
 	var functions;
 	var tests;
+	var microtasksCount = 0;
 	
     $(document).ready(function()
     {
@@ -279,6 +281,14 @@
 		testsRef.on('child_changed', function (snapshot) 
 		{
 			tests.testChanged(snapshot.val());
+		});
+		
+		// Track microtasks so that we can update the total count of microtasks.
+		var microtasksRef = new Firebase(firebaseURL + '/microtasks');
+		microtasksRef.on('child_added', function (snapshot) 
+		{
+			microtasksCount++;
+			$('#microtaskCountSpan').html(microtasksCount);
 		});
 	});
     
