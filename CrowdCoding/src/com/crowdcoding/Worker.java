@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.crowdcoding.dto.PointEventDTO;
+import com.crowdcoding.dto.firebase.PointEvent;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +50,8 @@ public class Worker
 		this.nickname = nickname;
 		this.score = 0;
 		this.loggedIn = true;
-		ofy().save().entity(this).now();		
+		ofy().save().entity(this).now();	
+		FirebaseService.writeWorker(userid, nickname, project);
 	}
 	
 	// Finds, or if it does not exist creates, a CrowdUser corresponding to user
@@ -71,16 +72,6 @@ public class Worker
 	public static Worker Find(String userid, Project project)
 	{
 		return ofy().load().key(getKey(project.getKey(), userid)).get();
-	}
-		
-	public static String StatusReport(Project project)
-	{
-		StringBuilder output = new StringBuilder();		
-		output.append("**** ALL WORKERS ****\n");	
-		for (Worker worker : allWorkers(project))
-			output.append(worker.toString() + "\n");
-		
-		return output.toString();
 	}
 	
 	// returns all workers in the specified project
@@ -115,7 +106,7 @@ public class Worker
 		ofy().save().entity(this).now();
 		
 		FirebaseService.setPoints(userid, nickname, score, project);
-    	FirebaseService.postToNewsfeed(userid, (new PointEventDTO(points, description)).json(), 
+    	FirebaseService.postToNewsfeed(userid, (new PointEvent(points, description)).json(), 
     			project);
 	}
 	

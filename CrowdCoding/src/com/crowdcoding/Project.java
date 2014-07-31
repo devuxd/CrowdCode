@@ -166,33 +166,4 @@ public class Project
 	{
 		return historyLog;
 	}	
-	
-	public String statusReport()
-	{
-		StringBuilder output = new StringBuilder();
-		output.append(Worker.StatusReport(this)); 
-		output.append(Microtask.StatusReport(this));    
-		output.append(Function.StatusReport(this));   
-		output.append(Test.StatusReport(this));
-		
-		return output.toString();
-	}
-	
-	// Lists detailed information for each test in the system.
-	public String listTests()
-	{
-		return Test.allMocksInSystemEscaped(this);
-	}
-	
-	// Lists detailed information for each function in the system.
-	public String listFunctions()
-	{
-		StringBuilder output = new StringBuilder();
-		List<Function> listOFunctions = ofy().load().type(Function.class).ancestor(project.getKey()).list();
-		 
-		for (Function function : listOFunctions)
-			output.append(function.fullToString());
-		
-		return output.toString();
-	}
 }

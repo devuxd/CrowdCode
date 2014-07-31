@@ -9,8 +9,10 @@ import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSkipped;
 import com.crowdcoding.dto.history.MicrotaskSubmitted;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
@@ -48,7 +50,7 @@ public /*abstract*/ class Microtask
 	{
 		this.project = project.getKey();
 		this.ready = true;
-		id = project.generateID("Microtask");
+		id = project.generateID("Microtask");		
 	}
 	
 	// Constructor for initialization. Ready determines if the microtask is ready to be assigned
@@ -62,8 +64,6 @@ public /*abstract*/ class Microtask
 	// Assigns a microtask and returns it. Returns null if no microtasks are available.
 	public static Microtask Assign(Worker crowdUser, Project project)
 	{		
-		System.out.println(StatusReport(project));
-		
 		// Look for a microtask, checking constraints on it along the way
 		Microtask microtask = null;
 		Key<Worker> workerKey = crowdUser.getKey();
@@ -81,7 +81,7 @@ public /*abstract*/ class Microtask
 			// 2. If the microtask is no longer needed, keep looking
 			if (!potentialMicrotask.isStillNeeded(project))
 			{
-				potentialMicrotask.markCompleted();
+				potentialMicrotask.markCompleted(project);
 				continue microtaskSearch;
 			}
 			
@@ -102,6 +102,7 @@ public /*abstract*/ class Microtask
 		microtask.onAssign(project);
 		crowdUser.setMicrotask(microtask);
 		ofy().save().entity(microtask).now();
+		microtask.postToFirebase(project, microtask.getOwningArtifact());
 		
 		return microtask;
 	}
@@ -114,7 +115,7 @@ public /*abstract*/ class Microtask
 	protected boolean isStillNeeded(Project project) { return true; }
 	
 	// Marks the microtask as completed. 
-	public void markCompleted()
+	public void markCompleted(Project project)
 	{
 		this.completed = true;
 		if (this.worker != null)
@@ -125,6 +126,7 @@ public /*abstract*/ class Microtask
 			this.worker = null;					
 		}
 		ofy().save().entity(this).now();
+		postToFirebase(project, this.getOwningArtifact());
 	}
 	
 	// Unassigns worker from this microtask
@@ -150,6 +152,7 @@ public /*abstract*/ class Microtask
 		
 		// Check if microtask is highly skipped and should be reset
 		resetIfHighlySkipped(project);
+		postToFirebase(project, this.getOwningArtifact());
 		
 		project.historyLog().endEvent();
 	}
@@ -171,12 +174,13 @@ public /*abstract*/ class Microtask
 	}
 	
 	// Sets the microtask as ready to be assigned
-	public void makeReady()
+	public void makeReady(Project project)
 	{
 		if (!this.ready)
 		{
 			this.ready = true;
 			ofy().save().entity(this).now();
+			postToFirebase(project, this.getOwningArtifact());
 		}
 	}
 	
@@ -240,6 +244,8 @@ public /*abstract*/ class Microtask
 		{
 			skip(worker, project);
 		}
+		
+		postToFirebase(project, this.getOwningArtifact());
 	}
 	
 	// Runs machine validation on the submitted data to determine if it is accepted as completing
@@ -306,17 +312,15 @@ public /*abstract*/ class Microtask
 		return submitValue;
 	}
 	
-	public static String StatusReport(Project project)
+	// Posts the current state of the microtask to firebase
+	protected void postToFirebase(Project project, Artifact owningArtifact)
 	{
-		StringBuilder output = new StringBuilder();
-		
-		output.append("**** ALL MICROTASKS ****\n");
-		
-		Query<Microtask> q = ofy().load().type(Microtask.class).ancestor(project.getKey());		
-		for (Microtask microtask : q)
-			output.append(microtask.toString() + "\n");
-		
-		return output.toString();
+		String owningArtifactName = (owningArtifact == null) ? "" : owningArtifact.getName();
+		Worker worker = getWorker();
+		String workerName = (worker == null) ? "" : worker.getHandle();
+		FirebaseService.writeMicrotask(new MicrotaskInFirebase(id, this.microtaskName(),
+				owningArtifactName, ready, assigned, completed, submitValue, workerName), 
+				id, project);
 	}
 	
 	public String toString()

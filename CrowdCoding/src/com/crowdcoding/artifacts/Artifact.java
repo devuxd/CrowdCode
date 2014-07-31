@@ -81,9 +81,9 @@ public /*abstract*/ class Artifact
 	}
 	
 	// Makes the specified microtask out for work
-	protected void makeMicrotaskOut(Microtask microtask)
+	protected void makeMicrotaskOut(Microtask microtask, Project project)
 	{
-		microtask.makeReady();
+		microtask.makeReady(project);
 		microtaskOut = Ref.create(microtask.getKey());
 		ofy().save().entity(this).now();
 	}
@@ -102,7 +102,7 @@ public /*abstract*/ class Artifact
 		// determine if there is work to be done
 		if (microtaskOut == null && !queuedMicrotasks.isEmpty())
 		{	
-			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get());
+			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
 		}
 	}
 	

@@ -1,7 +1,9 @@
-package com.crowdcoding.dto;
+package com.crowdcoding.dto.firebase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.crowdcoding.dto.DTO;
 
 public class FunctionInFirebase extends DTO 
 {
@@ -16,6 +18,10 @@ public class FunctionInFirebase extends DTO
 	public String description;
 	public String code;
 	public int linesOfCode;
+	public boolean described;
+	public boolean written;
+	public boolean needsDebugging;
+	public int queuedMicrotasks;
 	
 	// Description includes all comments and the signature block itself. e.g.,
 	// // A description of foo, describing what it does and its parameters and return value.
@@ -29,7 +35,8 @@ public class FunctionInFirebase extends DTO
 	}
 
 	public FunctionInFirebase(String name, long id, String returnType, List<String> paramNames, 
-			List<String> paramTypes, String header, String description, int linesOfCode) 	
+			List<String> paramTypes, String header, String description, String code, int linesOfCode,
+			boolean described, boolean written, boolean needsDebugging, int queuedMicrotasks) 	
 	{
 		this.name = name;
 		this.id = id;
@@ -38,7 +45,12 @@ public class FunctionInFirebase extends DTO
 		this.paramTypes = paramTypes;
 		this.header = header;
 		this.description = description;
+		this.code = code;
 		this.linesOfCode = linesOfCode;
+		this.described = described;
+		this.written = written;
+		this.needsDebugging = needsDebugging;
+		this.queuedMicrotasks = queuedMicrotasks;
 	}
 	
 	public String toString()

@@ -35,6 +35,7 @@ public class WriteCall extends Microtask
 		this.calleeFullDescription = calleeFullDescription;
 		this.pseudoCall = pseudoCall;
 		ofy().save().entity(this).now();
+        postToFirebase(project, caller);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));
 		project.historyLog().endEvent();

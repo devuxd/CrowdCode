@@ -1,7 +1,9 @@
-package com.crowdcoding.dto;
+package com.crowdcoding.dto.firebase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.crowdcoding.dto.DTO;
 
 public class TestInFirebase extends DTO 
 {

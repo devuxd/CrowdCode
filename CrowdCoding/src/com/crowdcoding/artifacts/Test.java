@@ -12,7 +12,7 @@ import com.crowdcoding.artifacts.commands.FunctionCommand;
 import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.MocksDTO;
 import com.crowdcoding.dto.TestDTO;
-import com.crowdcoding.dto.TestInFirebase;
+import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.WriteTest;
 import com.crowdcoding.util.FirebaseService;
@@ -62,20 +62,6 @@ public class Test extends Artifact
 		
 		return null;
 	}
-	
-	// Returns a JSON string (in MockDTO format), escaped for Javascriptt
-	public static String allMocksInSystemEscaped(Project project)
-	{
-		List<MockDTO> mockDTOs = new ArrayList<MockDTO>();
-		Query<Test> simpleTests = ofy().load().type(Test.class).ancestor(project.getKey()).filter(
-				"hasSimpleTest", true).filter("isImplemented", true).filter("isDeleted", false);
-		for (Test simpleTest : simpleTests)		
-			mockDTOs.add(new MockDTO(simpleTest.getFunctionName(), simpleTest.simpleTestInputs, 
-					simpleTest.simpleTestOutput));
-
-		MocksDTO mocksDTO = new MocksDTO(mockDTOs);
-		return StringEscapeUtils.escapeEcmaScript(mocksDTO.json());
-	}	
 	
 	// Constructor for deserialization
 	protected Test()
@@ -323,18 +309,5 @@ public class Test extends Artifact
 		return "Test " + functionName + " for '" + description + "' " +
 				(isImplemented? " implemented" : " not implemented")
 				+ (isDeleted? " DELETED " : "");
-	}
-	
-	public static String StatusReport(Project project)
-	{
-		StringBuilder output = new StringBuilder();
-		
-		output.append("**** ALL TESTS ****\n");
-		
-		Query<Test> q = ofy().load().type(Test.class).ancestor(project.getKey());		
-		for (Test test : q)
-			output.append(test.toString() + "\n");
-		
-		return output.toString();
 	}
 }

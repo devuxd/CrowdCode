@@ -62,9 +62,9 @@
 			<td>  	<h4>CrowdCode</h4> </td>
 			<td class="titlebarScore"> 				
 				<div id="statistics" >
-					<span id="locSpan" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
-					<span id="functionCountSpan" class="badge"></span><small>&nbsp;&nbsp;functions</small>&nbsp;&nbsp;
-					<span id="testCountSpan" class="badge"></span><small>&nbsp;&nbsp;tests</small>&nbsp;&nbsp;&nbsp;&nbsp;
+					<span id="locSpan" class="badge">0</span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
+					<span id="functionCountSpan" class="badge">0</span><small>&nbsp;&nbsp;functions</small>&nbsp;&nbsp;
+					<span id="testCountSpan" class="badge">0</span><small>&nbsp;&nbsp;tests</small>&nbsp;&nbsp;&nbsp;&nbsp;
 					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font>
 				</div>  
 			</td>

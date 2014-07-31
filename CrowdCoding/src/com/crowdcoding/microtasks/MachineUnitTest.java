@@ -33,7 +33,8 @@ public class MachineUnitTest extends Microtask
           super(project);
           this.project = project;
           testCaseList = new ArrayList<Test>();
-          ofy().save().entity(this).now();
+          ofy().save().entity(this).now();          
+          postToFirebase(project, null);
          
           project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
           project.historyLog().endEvent();

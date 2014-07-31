@@ -1,24 +1,25 @@
-package com.crowdcoding.dto;
+package com.crowdcoding.dto.firebase;
 
+import com.crowdcoding.dto.DTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /* 
  * Represents a single worker's score on the leaderboard in a format appropriate for Firebase.
  */
-public class LeaderDTO extends DTO 
+public class LeaderboardEntry extends DTO 
 {
 	public int score;
 	public String name;
 	@JsonProperty(".priority") public double priority;  // Special Firebase property establishing order
 	
 	// Default constructor for derserialization
-	private LeaderDTO()
+	private LeaderboardEntry()
 	{			
 	}
 	
 	// Initialization constructor
-	public LeaderDTO(int score, String name)
+	public LeaderboardEntry(int score, String name)
 	{
 		this.score = score;
 		this.name = name;

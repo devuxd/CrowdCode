@@ -1,17 +1,19 @@
-package com.crowdcoding.dto;
+package com.crowdcoding.dto.firebase;
 
-public class PointEventDTO extends DTO 
+import com.crowdcoding.dto.DTO;
+
+public class PointEvent extends DTO 
 {
 	public String messageType = "PointEventDTO";	
 	public int points;
 	public String description;
 
 	// Default constructor (required by Jackson JSON library)
-	public PointEventDTO()
+	public PointEvent()
 	{		
 	}
 	
-	public PointEventDTO(int points, String description)
+	public PointEvent(int points, String description)
 	{
 		this.points = points;
 		this.description = description;

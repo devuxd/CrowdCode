@@ -194,24 +194,6 @@ public class CrowdServlet extends HttpServlet
 	    			Project.Clear(projectID);
 	    			output.append("Project successfully reset to default state.<BR>");
 	    		}
-	    		else if (command.equals("STATUS"))
-	    		{
-	      			output.append("STATUS executed at " + currentTime.toString() + "<BR>");
-	    			Project project = Project.Create(projectID);
-	    			output.append(project.statusReport().replace("\n", "<BR>"));
-	    		}   
-	    		else if (command.equals("TESTS"))
-	    		{
-	      			output.append("TESTS executed at " + currentTime.toString() + "<BR>");
-	    			Project project = Project.Create(projectID);
-	    			output.append(project.listTests().replace("\n", "<BR>"));
-	    		}  
-	    		else if (command.equals("FUNCTIONS"))
-	    		{
-	      			output.append("FUNCTIONS executed at " + currentTime.toString() + "<BR>");
-	    			Project project = Project.Create(projectID);
-	    			output.append(project.listFunctions().replace("\n", "<BR>"));
-	    		}
 	    		else
 	    		{
 	    			output.append("Unrecognized command " + command);

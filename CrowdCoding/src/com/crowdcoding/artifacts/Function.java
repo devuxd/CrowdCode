@@ -14,11 +14,11 @@ import com.crowdcoding.artifacts.commands.FunctionCommand;
 import com.crowdcoding.artifacts.commands.TestCommand;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.FunctionInFirebase;
 import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
+import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.history.MessageReceived;
 import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
@@ -90,7 +90,7 @@ public class Function extends Artifact
 		isWritten = false;
 		
 		// Spawn off a microtask to write the function description
-		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, project));
+		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, project), project);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -312,9 +312,9 @@ public class Function extends Artifact
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && needsDebugging)			
-				makeMicrotaskOut(new DebugTestFailure(this, project));
+				makeMicrotaskOut(new DebugTestFailure(this, project), project);
 			else if (!queuedMicrotasks.isEmpty())
-				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get());
+				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
 		}
 	}	
 		
@@ -693,7 +693,9 @@ public class Function extends Artifact
 		if (hasBeenDescribed)
 		{
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, returnType, paramNames, 
-					paramTypes, header, description, linesOfCode), this.id, project);		
+					paramTypes, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging,
+					queuedMicrotasks.size()), 
+					this.id, project);		
 		}
 	}	
 	
@@ -790,17 +792,5 @@ public class Function extends Artifact
 	public String fullToString()
 	{
 		return toString() + "\n" + getFullCode();
-	}
-	
-	public static String StatusReport(Project project)
-	{
-		StringBuilder output = new StringBuilder();		
-		output.append("**** ALL FUNCTIONS ****\n");
-		
-		Query<Function> q = ofy().load().type(Function.class).ancestor(project.getKey());		
-		for (Function function : q)
-			output.append(function.toString() + "\n");
-		
-		return output.toString();
 	}
 }

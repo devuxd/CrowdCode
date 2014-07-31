@@ -6,9 +6,10 @@ import java.net.URL;
 import java.util.List;
 
 import com.crowdcoding.Project;
-import com.crowdcoding.dto.FunctionInFirebase;
-import com.crowdcoding.dto.LeaderDTO;
-import com.crowdcoding.dto.TestInFirebase;
+import com.crowdcoding.dto.firebase.FunctionInFirebase;
+import com.crowdcoding.dto.firebase.LeaderboardEntry;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -20,6 +21,12 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
  */
 public class FirebaseService 
 {
+	// Writes the specified microtask to firebase
+	public static void writeMicrotask(MicrotaskInFirebase dto, long microtaskID, Project project)
+	{
+		writeData(dto.json(), "/microtasks/" + microtaskID + ".json", HTTPMethod.PUT, project); 
+	}	
+	
 	// Stores the specified function to Firebase
 	public static void writeFunction(FunctionInFirebase dto, long functionID, Project project)
 	{
@@ -67,8 +74,14 @@ public class FirebaseService
 	public static void setPoints(String workerID, String workerDisplayName, int points, Project project)
 	{
 		writeData(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, project);
-		LeaderDTO leader = new LeaderDTO(points, workerDisplayName);
+		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		writeData(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, project);
+	}
+	
+	public static void writeWorker(String workerID, String workerDisplayName, Project project)
+	{
+		writeData(workerID, "/workers/" + workerID + "/workerID.json", HTTPMethod.PUT, project);
+		writeData(workerDisplayName, "/workers/" + workerID + "/displayName.json", HTTPMethod.PUT, project);
 	}
 	
 	// Posts the specified JSON message to the specified workers newsfeed
