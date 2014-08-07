@@ -38,7 +38,7 @@ public class WriteTestCases extends Microtask
 		this.promptType = PromptType.FUNCTION_SIGNATURE;
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
-        postToFirebase(project, function);
+        postToFirebase(project, function, false);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
@@ -54,7 +54,7 @@ public class WriteTestCases extends Microtask
 		this.disputeDescription = disputeDescription;
 		this.disputedTestCase = disputedTestCase;
 		ofy().save().entity(this).now();
-        postToFirebase(project, function);
+        postToFirebase(project, function, false);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();

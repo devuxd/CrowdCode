@@ -34,7 +34,7 @@ public class WriteFunctionDescription extends Microtask
 		this.function = (Ref<Function>) Ref.create(function.getKey());	
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
 		ofy().save().entity(this).now();
-        postToFirebase(project, function);
+        postToFirebase(project, function, false);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();

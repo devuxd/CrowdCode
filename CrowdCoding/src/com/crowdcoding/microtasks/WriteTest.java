@@ -39,7 +39,7 @@ public class WriteTest extends Microtask
 	     this.promptType = PromptType.WRITE;
 	     this.test = (Ref<Test>) Ref.create(test.getKey());         
 	     ofy().save().entity(this).now();
-         postToFirebase(project, test);
+         postToFirebase(project, test, false);
 	    
 	     project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
 	     project.historyLog().endEvent();
@@ -53,7 +53,7 @@ public class WriteTest extends Microtask
 		this.test = (Ref<Test>) Ref.create(test2.getKey());		
 		this.issueDescription = issueDescription;
 		ofy().save().entity(this).now();
-        postToFirebase(project, test2);
+        postToFirebase(project, test2, false);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test2));
 		project.historyLog().endEvent();
@@ -68,7 +68,7 @@ public class WriteTest extends Microtask
 		this.oldFunctionDescription = oldFullDescription;
 		this.newFunctionDescription = newFullDescription;
 		ofy().save().entity(this).now();
-        postToFirebase(project, test2);
+        postToFirebase(project, test2, false);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test2));
 		project.historyLog().endEvent();
@@ -83,7 +83,7 @@ public class WriteTest extends Microtask
 		this.oldTestCase = oldTestCase;
 
 		ofy().save().entity(this).now();
-        postToFirebase(project, test);
+        postToFirebase(project, test, false);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
 		project.historyLog().endEvent();
