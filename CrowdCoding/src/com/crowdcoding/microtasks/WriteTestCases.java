@@ -65,11 +65,6 @@ public class WriteTestCases extends Microtask
 		this.function.get().writeTestCasesCompleted((TestCasesDTO) dto, project);		
 	}
 	
-	protected boolean submitAccepted(DTO dto, Project project)
-	{
-		return true;
-	}
-	
 	protected Class getDTOClass()
 	{
 		return TestCasesDTO.class;

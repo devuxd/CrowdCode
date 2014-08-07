@@ -21,6 +21,7 @@ import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.artifacts.commands.Command;
+import com.crowdcoding.artifacts.commands.ProjectCommand;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
@@ -179,32 +180,39 @@ public class CrowdServlet extends HttpServlet
 		else
 			command = "";
 		
-	    // Actions that touch the project need to be in a transaction to ensure that the project
-	    // is seen in a consistent state. And transactions may be retried, so they cannot mutate
-	    // state other than that which can be reset. 
-	    String responseText = ofy().transact(new Work<String>() {
-	        public String run()
-	        {
-	    	    StringBuilder output = new StringBuilder();	
-	    	    Date currentTime = new Date();
-	    	    
-	    		if (command.equals("RESET"))
-	    		{
-	    			output.append("RESET executed at " + currentTime.toString() + "<BR>");
-	    			Project.Clear(projectID);
-	    			output.append("Project successfully reset to default state.<BR>");
-	    		}
-	    		else
-	    		{
-	    			output.append("Unrecognized command " + command);
-	    		}
-	    		output.append("<BR>");
-	        	
-	        	return output.toString();
-	        }
-	    });
-	
-	    writeResponseString(resp, responseText);	    
+	    final StringBuilder output = new StringBuilder();	
+	    final Date currentTime = new Date();
+	    
+		if (command.equals("RESET"))
+		{
+			output.append("RESET executed at " + currentTime.toString() + "<BR>");
+			Project.Clear(projectID);
+			output.append("Project successfully reset to default state.<BR>");
+		}
+		else if (command.equals("START"))
+		{
+			Queue<Command> commands = new LinkedList<Command>();
+			commands.addAll(ofy().transact(new Work<List<Command>>() {
+		        public List<Command> run()
+		        {
+	    			CommandContext context = new CommandContext();	
+	    			Project.Construct(projectID);
+	    			output.append("New project successfully constructed.<BR>"); 
+		        	
+					return context.commands(); 
+		        }
+		    }));
+			
+			executeCommands(commands, projectID);	
+		}		
+		else
+		{
+			output.append("Unrecognized command " + command);
+		}
+				
+		output.append("<BR>");
+
+	    writeResponseString(resp, output.toString());	    
 	}	
 
 	
@@ -217,57 +225,29 @@ public class CrowdServlet extends HttpServlet
     	try 
     	{		
     		final String projectID = (String) req.getAttribute("project");
+			final String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();		
 			final long microtaskID = Long.parseLong(req.getParameter("id"));
-			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));
-			System.out.println("microtaskid: " + microtaskID);
-			
-			final String payload = Util.convertStreamToString(req.getInputStream());
-			System.out.println("Submitted microtask: " + payload);
-	
+			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));			
 			final String type = req.getParameter("type");
-			Queue<Command> commands = new LinkedList<Command>();
-						
-	        commands.addAll(ofy().transact(new Work<List<Command>>() {
-	            public List<Command> run()
-	            {
-            	    Project project = Project.Create(projectID);					
-					Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);					
-					CommandContext context = new CommandContext(project);					
+			final String payload = Util.convertStreamToString(req.getInputStream());
+			
+			System.out.println("microtaskid: " + microtaskID);			
+			System.out.println("Submitted microtask: " + payload);
+			Class microtaskType = microtaskTypes.get(type);
+			if (microtaskType == null)
+				throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
+			
+			// Create an initial context, then build a command to skip or submit
+			CommandContext context = new CommandContext();	
+			
+			// Create the skip or submit commands
+			if (skip)
+				ProjectCommand.skipMicrotask(microtaskID, workerID);
+			else
+				ProjectCommand.submitMicrotask(microtaskID, payload, workerID);	
 					
-					Class microtaskType = microtaskTypes.get(type);
-					if (microtaskType == null)
-						throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
-					
-					Microtask microtask = ofy().load().key(Key.create(project.getKey(), Microtask.class, microtaskID)).get();
-					if (skip)
-						microtask.skip(worker, project);
-					else
-						microtask.submit(payload, worker, project);	
-					
-					project.publishHistoryLog();
-					
-					return context.commands(); 
-	            }            
-	        }));
-	        
-	        // Execute all commands created by the microtask until complete, adding more commands if they
-	        // are created.
-	        while(!commands.isEmpty())
-	        {
-	        	final Command command = commands.remove();
-		        commands.addAll(ofy().transact(new Work<List<Command>>() {
-		            public List<Command> run()
-		            {
-	            	    Project project = Project.Create(projectID);					
-						Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);					
-						CommandContext context = new CommandContext(project);							
-						command.execute(project);					
-												
-						project.publishHistoryLog();						
-						return context.commands(); 
-		            }
-		        }));
-	        }	        
+			// Copy the command back out the context to initially populate the command queue.
+			executeCommands(new LinkedList<Command>(context.commands()), projectID);			       
     	}        
     	catch (IOException e)
     	{
@@ -282,42 +262,81 @@ public class CrowdServlet extends HttpServlet
 		// Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
-	    Microtask microtask = ofy().transact(new Work<Microtask>() {
-            public Microtask run()
+	    final Long microtaskID = ofy().transact(new Work<Long>() {
+            public Long run()
             {                	
-            	Project project = Project.Create(projectID);  
-            	Worker crowdUser = Worker.Create(user, project);
-
+            	Project project = Project.Create(projectID); 
+            	String workerID = user.getUserId();
+            	
             	// If the user does not have a microtask assigned, get them a microtask.
-            	Microtask microtask = crowdUser.getMicrotask();
-            	if (microtask == null)
+            	Long microtaskID = project.lookupMicrotaskAssignment(workerID);
+            	if (microtaskID == null)
             	{
-            		System.out.println("Assigning worker " + crowdUser.getKey().toString() + " a microtask");
-            		microtask = Microtask.Assign(crowdUser, project);
+            		System.out.println("Assigning worker " + workerID + " a microtask");
+            		microtaskID = project.assignMicrotask(workerID);
             	}
             	else
             	{
-            		System.out.println("Worker " + crowdUser.getKey().toString() + " already has a microtask");
+            		System.out.println("Worker " + workerID + " already has a microtask");
             	}
             		
-            	return microtask;
+            	return microtaskID;
             }
         });
+	    
+    	// Load the microtask
+	    Microtask microtask = null;	    
+	    if (microtaskID != null)
+	    {
+		    microtask = ofy().transact(new Work<Microtask>() {
+	            public Microtask run()
+	            {    
+	            	Key<Microtask> microtaskKey = Key.create(Key.create(Project.class, projectID), 
+	            			Microtask.class, microtaskID);
+	        		return ofy().load().key(microtaskKey).get();	
+	            }
+		    });	    	
+	    }	    
             
     	// If there are no microtasks available, send an empty response. Otherwise, redirect
     	// to microtask UI.
     	try
     	{
         	if (microtask == null)
-        		req.getRequestDispatcher("/html/nomicrotask.jsp").forward(req, resp);	
-        	else        	
-        		req.getRequestDispatcher(microtask.getUIURL()).forward(req,  resp);
+        	{
+        		req.getRequestDispatcher("/html/nomicrotask.jsp").forward(req, resp);
+        	}
+        	else
+        	{
+        		this.getServletContext().setAttribute("microtask", microtask);        		
+        		req.getRequestDispatcher(microtask.getUIURL()).forward(req,  resp);        		
+        	}        	
     	}
     	catch (ServletException e) {
 			e.printStackTrace();
 		}                      		        	
 	}
 	
+	// Executes all of the specified commands and any commands that may subsequently be generated
+	private void executeCommands(Queue<Command> commands, final String projectID)
+	{
+		// Execute commands until done, adding commands as created.
+        while(!commands.isEmpty())
+        {
+        	final Command command = commands.remove();
+	        commands.addAll(ofy().transact(new Work<List<Command>>() {
+	            public List<Command> run()
+	            {
+            	    Project project = Project.Create(projectID);					
+					CommandContext context = new CommandContext();							
+					command.execute(project);					
+											
+					project.publishHistoryLog();						
+					return context.commands(); 
+	            }
+	        }));
+        }	 		
+	}
 	
 	// Writes the specified html message to resp, wrapping it in an html page
 	private void writeResponseString(HttpServletResponse resp, String message) throws IOException

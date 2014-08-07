@@ -1,6 +1,5 @@
 package com.crowdcoding.dto.history;
 
-import com.crowdcoding.Worker;
 import com.crowdcoding.microtasks.Microtask;
 
 public class MicrotaskSubmitted extends HistoryEvent 
@@ -14,24 +13,13 @@ public class MicrotaskSubmitted extends HistoryEvent
 	public String workerHandle;
 	public String timeWorkedOn;		// in milliseconds
 	
-	public MicrotaskSubmitted(Microtask microtask)
+	public MicrotaskSubmitted(Microtask microtask, String workerID)
 	{
 		super(microtask.getOwningArtifact());
 		
 		this.microtaskType = microtask.microtaskName();
 		this.microtaskID = Long.toString(microtask.getID());
-		
-		Worker worker = microtask.getWorker();
-		if (worker != null)
-		{
-			this.workerID = worker.getUserID();
-			this.workerHandle = worker.getHandle();
-		}
-		else
-		{
-			this.workerID = "";
-			this.workerHandle = "";
-		}
+		this.workerID = workerID;
 		
 		this.timeWorkedOn = Long.toString(System.currentTimeMillis() - microtask.assignmentTimeInMillis());
 	}

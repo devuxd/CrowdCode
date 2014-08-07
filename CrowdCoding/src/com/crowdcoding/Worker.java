@@ -31,7 +31,6 @@ import com.googlecode.objectify.cmd.Query;
 public class Worker 
 {
 	@Parent Key<Project> project;
-	private Ref<Microtask> microtask;
 	private String nickname;
 	@Id private String userid;
 	private int score;
@@ -66,39 +65,12 @@ public class Worker
 		return crowdWorker;
 	}
 	
-	// Finds the specified worker. Returns null if no such worker exists.
-	// Preconditions: 
-	//                userid != null
-	public static Worker Find(String userid, Project project)
-	{
-		return ofy().load().key(getKey(project.getKey(), userid)).get();
-	}
-	
 	// returns all workers in the specified project
 	public static List<Worker> allWorkers(Project project)
 	{
 		return ofy().load().type(Worker.class).ancestor(project).list();	
 	}
-	
-	public Microtask getMicrotask()
-	{
-		if (microtask == null)
-			return null;
-		else
-			return ofy().load().ref(microtask).get();
-	}
-	
-	// Sets the active microtask for the worker. May be null if there is no microtask.
-	public void setMicrotask(Microtask microtask)
-	{
-		if (microtask == null)
-			this.microtask = null;
-		else
-			this.microtask = Ref.create(microtask.getKey());
 		
-		ofy().save().entity(this).now();		
-	}		
-	
 	// Adds the specified number of points to the score.
 	public void awardPoints(int points, String description, Project project)
 	{
@@ -126,7 +98,7 @@ public class Worker
 		return getKey(project, userid);
 	}
 	
-	private static Key<Worker> getKey(Key<Project> project, String userid)
+	public static Key<Worker> getKey(Key<Project> project, String userid)
 	{
 		return Key.create(project, Worker.class, userid);
 	}
@@ -141,9 +113,6 @@ public class Worker
 	public void logout(Project project)
 	{
 		loggedIn = false;
-		Microtask microtaskObj = getMicrotask();
-		if (microtaskObj != null)
-			microtaskObj.skip(this, project);
 		ofy().save().entity(this).now();
 	}
 

@@ -178,9 +178,13 @@
 	
     $(document).ready(function()
     {
+    	// Notify firebase when this worker (eventually) logs out
+    	var logoutRef = new Firebase(firebaseURL + '/logouts/<%=worker.getUserID()%>');
+    	logoutRef.onDisconnect().set(true);    	
+    	
 		// Load the ADTs from firebase
-		var leaderboardRef = new Firebase(firebaseURL + '/ADTs');
-		leaderboardRef.on('value', function(snapshot) {
+		var adtRef = new Firebase(firebaseURL + '/ADTs');
+		adtRef.on('value', function(snapshot) {
 			if (snapshot.val() != null)
 			{
 				allADTs = snapshot.val().ADTs;		

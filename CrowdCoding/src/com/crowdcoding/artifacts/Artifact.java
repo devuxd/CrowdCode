@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.crowdcoding.Project;
+import com.crowdcoding.artifacts.commands.ProjectCommand;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.Microtask;
 import com.googlecode.objectify.Key;
@@ -83,7 +84,7 @@ public /*abstract*/ class Artifact
 	// Makes the specified microtask out for work
 	protected void makeMicrotaskOut(Microtask microtask, Project project)
 	{
-		microtask.makeReady(project);
+		ProjectCommand.queueMicrotask(microtask.getID());
 		microtaskOut = Ref.create(microtask.getKey());
 		ofy().save().entity(this).now();
 	}

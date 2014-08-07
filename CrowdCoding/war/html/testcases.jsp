@@ -11,9 +11,7 @@
 <%
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
-    Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-    WriteTestCases microtask = (WriteTestCases) crowdUser.getMicrotask();
-    
+    WriteTestCases microtask = (WriteTestCases) this.getServletContext().getAttribute("microtask");
     PromptType promptType = microtask.getPromptType();
 %>
 

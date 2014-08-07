@@ -12,7 +12,8 @@
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-    WriteFunctionDescription microtask = (WriteFunctionDescription) crowdUser.getMicrotask();
+    WriteFunctionDescription microtask = (WriteFunctionDescription) this.getServletContext().getAttribute("microtask");    
+
     Function caller = microtask.getCaller();
     String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(null, project);
 %>

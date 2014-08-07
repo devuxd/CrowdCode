@@ -12,15 +12,13 @@ import com.crowdcoding.artifacts.commands.Command;
 public class CommandContext 
 {
 	public static CommandContext ctx;  // currently active execution context
-	public static Project project;		 // currently active project for the active execution context
 	
 	private List<Command> commands = new ArrayList<Command>();
 
 	// Execution contexts should only be created by the CrowdServlet as it is processing requests.
-	public CommandContext(Project project) 
+	public CommandContext() 
 	{
 		CommandContext.ctx = this;	
-		CommandContext.project = project;
 	}
 	
 	public void addCommand(Command command)

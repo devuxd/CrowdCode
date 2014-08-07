@@ -8,6 +8,8 @@ import java.util.List;
 import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Artifact;
+import com.crowdcoding.artifacts.commands.ProjectCommand;
+import com.crowdcoding.artifacts.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSkipped;
@@ -32,13 +34,9 @@ public /*abstract*/ class Microtask
 	
 	@Parent private Key<Project> project;
 	@Id protected long id;
-	@Index protected boolean ready = false;	// Is the microtask ready to be assigned?
-	@Index protected boolean assigned = false;
-	@Index protected boolean completed = false;
+	protected boolean completed = false;
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
 	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
-	protected Ref<Worker> worker;
-	protected List<Ref<Worker>> excludedWorkers = new ArrayList<Ref<Worker>>();  // Workers who may not be assigned this microtask
 	
 	// Default constructor for deserialization
 	protected Microtask()
@@ -49,144 +47,59 @@ public /*abstract*/ class Microtask
 	protected Microtask(Project project)
 	{
 		this.project = project.getKey();
-		this.ready = true;
-		id = project.generateID("Microtask");		
+		id = project.generateID("Microtask");
+		ProjectCommand.queueMicrotask(id);
 	}
 	
 	// Constructor for initialization. Ready determines if the microtask is ready to be assigned
 	protected Microtask(Project project, boolean ready)
 	{
 		this.project = project.getKey();
-		this.ready = ready;
 		id = project.generateID("Microtask");
+		if (ready)
+			ProjectCommand.queueMicrotask(id);
 	}		
-		
-	// Assigns a microtask and returns it. Returns null if no microtasks are available.
-	public static Microtask Assign(Worker crowdUser, Project project)
-	{		
-		// Look for a microtask, checking constraints on it along the way
-		Microtask microtask = null;
-		Key<Worker> workerKey = crowdUser.getKey();
-		Query<Microtask> q = ofy().load().type(Microtask.class).ancestor(project.getKey()).filter(
-				"assigned", false).filter("completed", false).filter("ready", true);  
-		microtaskSearch: for (Microtask potentialMicrotask : q)
-		{
-			// 1. If the worker is excluded from doing it, keep looking
-			for (Ref<Worker> excludedWorker : potentialMicrotask.excludedWorkers)
-			{
-				if (excludedWorker.equivalent(workerKey))
-					continue microtaskSearch;				
-			}
-			
-			// 2. If the microtask is no longer needed, keep looking
-			if (!potentialMicrotask.isStillNeeded(project))
-			{
-				potentialMicrotask.markCompleted(project);
-				continue microtaskSearch;
-			}
-			
-			// A microtask was found!
-			microtask = potentialMicrotask;
-			break;			
-		}
-		
-		// If there are no more microtasks currently available, return null
-		if (microtask == null)
-		{
-			return null;
-		}
-
-		microtask.worker = Ref.create(crowdUser.getKey());
-		microtask.assigned = true;
-		microtask.assignmentTimeInMillis = System.currentTimeMillis();
-		microtask.onAssign(project);
-		crowdUser.setMicrotask(microtask);
-		ofy().save().entity(microtask).now();
-		microtask.postToFirebase(project, microtask.getOwningArtifact());
-		
-		return microtask;
-	}
-	
-	// Override this method to handle an assigment event.
-	public void onAssign(Project project) {};
 	
 	// Override this method to allow the microtask to decide, right before it is assigned,
 	// if it is still needed
 	protected boolean isStillNeeded(Project project) { return true; }
 	
-	// Marks the microtask as completed. 
-	public void markCompleted(Project project)
+	public void submit(String jsonDTOData, String workerID, Project project)
 	{
-		this.completed = true;
-		if (this.worker != null)
+		// If this microtask has already been completed, drop it, and clear the worker from the microtask 
+		if (this.completed)
 		{
-			this.assigned = false;
-			Worker worker = ofy().load().ref(this.worker).get();
-			worker.setMicrotask(null);
-			this.worker = null;					
+			System.out.println("For microtask " + this.toString() + " JSON submitted for already completed work: " 
+					+ jsonDTOData);
+			return;
 		}
+		
+		DTO dto = DTO.read(jsonDTOData, getDTOClass());
+		project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
+
+		doSubmitWork(dto, project);	
+		this.completed = true;
 		ofy().save().entity(this).now();
-		postToFirebase(project, this.getOwningArtifact());
-	}
-	
-	// Unassigns worker from this microtask
-	// Precondition - the worker must be assigned to this microtask
-	public void skip(Worker worker, Project project)
-	{
-		assert (worker.getMicrotask() == this);
-		assert (assigned == true);
-		
-		project.historyLog().beginEvent(new MicrotaskSkipped(this));
-		
-		// Increment the point value by 10
-		this.submitValue += 10;
-		
-		// Exclude this worker from being assigned this microtask in the future
-		excludedWorkers.add(Ref.create(worker.getKey()));
-		
-		// Unassign the microtask
-		this.worker = null;
-		worker.setMicrotask(null);
-		assigned = false;	
-		ofy().save().entity(this).now();
-		
-		// Check if microtask is highly skipped and should be reset
-		resetIfHighlySkipped(project);
-		postToFirebase(project, this.getOwningArtifact());
+
+		WorkerCommand.awardPoints(workerID, this.submitValue, this.microtaskDescription());		
+				
+		// Save the associated artifact to Firebase if there is one
+		Artifact owningArtifact = this.getOwningArtifact();
+		if (owningArtifact != null)
+			owningArtifact.storeToFirebase(project);
 		
 		project.historyLog().endEvent();
-	}
+		postToFirebase(project, this.getOwningArtifact());
+	}	
 	
-	// Checks the microtask to see if most workers have skipped it. If so, resets the
-	// excluded workers to give workers another chance.
-	private void resetIfHighlySkipped(Project project)
+	public void skip(String workerID, Project project)
 	{
-		// If all workers have skipped it, reset exclusion constraints.
-		// TODO: we really should reset based on the status of logged in workers. But there
-		// is currently no way to track that accurately.
-		if (excludedWorkers.size() >= Worker.allWorkers(project).size())
-		{
-			excludedWorkers.clear();
-			ofy().save().entity(this).now();
-			
-			System.out.println("Reset excluded workers for " + this.toString());
-		}
-	}
-	
-	// Sets the microtask as ready to be assigned
-	public void makeReady(Project project)
-	{
-		if (!this.ready)
-		{
-			this.ready = true;
-			ofy().save().entity(this).now();
-			postToFirebase(project, this.getOwningArtifact());
-		}
-	}
-	
-	public boolean isReady()
-	{
-		return ready;
+		project.historyLog().beginEvent(new MicrotaskSkipped(this, workerID));
+		// Increment the point value by 10
+		this.submitValue += 10;
+		ofy().save().entity(this).now();				
+		postToFirebase(project, this.getOwningArtifact());		
+		project.historyLog().endEvent();
 	}
 		
 	public Key<Microtask> getKey()
@@ -201,60 +114,6 @@ public /*abstract*/ class Microtask
 	
 	// returns the relative path to the UI for this microtask
 	public String getUIURL() { return ""; }
-	
-	// Called to process a microtask submission based on form data (in json format)
-	// If the microtask has previously been submitted or is no longer open, the submission is
-	// dropped, ensuring workers cannot submit against already completed microtasks.
-	public void submit(String jsonDTOData, Worker worker, Project project)
-	{	
-		System.out.println("Handling microtask submission: " + this.toString() + " " + jsonDTOData);
-		
-		// If this microtask has already been completed, drop it, and clear the worker from the microtask 
-		if (this.completed)
-		{
-			System.out.println("For microtask " + this.toString() + " JSON submitted for already completed work: " 
-					+ jsonDTOData);
-			worker.setMicrotask(null);
-			return;
-		}
-		
-		DTO dto = DTO.read(jsonDTOData, getDTOClass());
-		
-		// Give the microtask an opportunity to check the submissions.
-		// If the microtask fails its validation tests, drop submission and treat it as a skip.
-		if (submitAccepted(dto, project))
-		{		
-			project.historyLog().beginEvent(new MicrotaskSubmitted(this));
-	
-			doSubmitWork(dto, project);	
-			this.completed = true;
-			worker.setMicrotask(null);
-			worker.awardPoints(this.submitValue, this.microtaskDescription(), project);
-			
-			ofy().save().entity(this).now();
-
-			// Save the associated artifact to Firebase if there is one
-			Artifact owningArtifact = this.getOwningArtifact();
-			if (owningArtifact != null)
-				owningArtifact.storeToFirebase(project);
-			
-			project.historyLog().endEvent();
-		}
-		else
-		{
-			skip(worker, project);
-		}
-		
-		postToFirebase(project, this.getOwningArtifact());
-	}
-	
-	// Runs machine validation on the submitted data to determine if it is accepted as completing
-	// the microtask. Subclasses may choose to override this method to provide logic to perform this 
-	// check. The default behavior is to accept all submissions.
-	protected boolean submitAccepted(DTO dto, Project project)
-	{
-		return true;
-	}
 
 	// This method MUST be overridden in the subclass to do submit work.
 	protected void doSubmitWork(DTO dto, Project project)
@@ -299,14 +158,6 @@ public /*abstract*/ class Microtask
 		return assignmentTimeInMillis;
 	}
 	
-	public Worker getWorker()
-	{
-		if (worker != null)
-			return ofy().load().key(worker.getKey()).get();
-		else
-			return null;
-	}
-	
 	public int getSubmitValue()
 	{
 		return submitValue;
@@ -316,10 +167,10 @@ public /*abstract*/ class Microtask
 	protected void postToFirebase(Project project, Artifact owningArtifact)
 	{
 		String owningArtifactName = (owningArtifact == null) ? "" : owningArtifact.getName();
-		Worker worker = getWorker();
+		Worker worker = null;
 		String workerName = (worker == null) ? "" : worker.getHandle();
 		FirebaseService.writeMicrotask(new MicrotaskInFirebase(id, this.microtaskName(),
-				owningArtifactName, ready, assigned, completed, submitValue, workerName), 
+				owningArtifactName, false, false, completed, submitValue, workerName), 
 				id, project);
 	}
 	
@@ -327,9 +178,6 @@ public /*abstract*/ class Microtask
 	{
 		return "" + this.id + " " + this.getClass().getSimpleName() + 
 				(this.getOwningArtifact() != null ? (" on " + this.getOwningArtifact().getName()) : "") + 
-				": " + (ready? " ready " : " not ready ") + 
-				(assigned ? " assigned " : " unassigned ") + 
-				(completed ? " completed " : " incomplete ") + "points: " + submitValue + 
-				((worker != null) ? (" worker: " + ofy().load().key(worker.getKey()).get().getHandle()) : " ");
+				(completed ? " completed " : " incomplete ") + "points: " + submitValue;
 	}
 }

@@ -27,6 +27,19 @@ public class FirebaseService
 		writeData(dto.json(), "/microtasks/" + microtaskID + ".json", HTTPMethod.PUT, project); 
 	}	
 	
+	// Writes information about microtask assignment to Firebase
+	public static void writeMicrotaskAssigned(long microtaskID, String workerID, Project project)
+	{
+		writeData("true", "/microtasks/" + microtaskID + "/assigned.json", HTTPMethod.PUT, project); 
+		writeData(workerID, "/microtasks/" + microtaskID + "/workerID.json", HTTPMethod.PUT, project); 
+	}
+	
+	// Marks a microtask as being ready in Firebase
+	public static void writeMicrotaskReady(long microtaskID, Project project)
+	{
+		writeData("true", "/microtasks/" + microtaskID + "/ready.json", HTTPMethod.PUT, project); 
+	}	
+	
 	// Stores the specified function to Firebase
 	public static void writeFunction(FunctionInFirebase dto, long functionID, Project project)
 	{

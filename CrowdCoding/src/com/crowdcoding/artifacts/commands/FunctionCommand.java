@@ -1,5 +1,9 @@
 package com.crowdcoding.artifacts.commands;
 
+import java.util.List;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
@@ -9,6 +13,10 @@ import com.googlecode.objectify.Ref;
 public abstract class FunctionCommand extends Command 
 {
 	protected long functionID;
+	
+	public static FunctionCommand create(String name, String returnType, List<String> paramNames, 
+			List<String> paramTypes, String header, String description, String code) 
+		{ return new Create(name, returnType, paramNames, paramTypes, header, description, code); }
 	
 	public static FunctionCommand removeCaller(long functionID, long callerFunctionID) 
 		{ return new RemoveCaller(functionID, callerFunctionID); }
@@ -60,7 +68,44 @@ public abstract class FunctionCommand extends Command
 	}
 
 	public abstract void execute(Function function, Project project);
+			
+	protected static class Create extends FunctionCommand
+	{
+		private String name;
+		private String returnType;
+		private List<String> paramNames;
+		private List<String> paramTypes;
+		private String header;
+		private String description;
+		private String code;		
 		
+		public Create(String name, String returnType, List<String> paramNames, 
+				List<String> paramTypes, String header, String description, String code)
+		{
+			super(0);
+			this.name = name;
+			this.returnType = returnType;
+			this.paramNames = paramNames;
+			this.paramTypes = paramTypes;
+			this.header = header;
+			this.description = description;
+			this.code = code;
+		}
+		
+		// Override the default execute behavior, as there is no function yet to be loaded.
+		public void execute(Project project)
+		{
+			Function newFunction = new Function(name, returnType, paramNames, paramTypes, header, description,
+					code, project);
+			newFunction.storeToFirebase(project);
+		}	
+		
+		public void execute(Function function, Project project)
+		{
+			throw new RuntimeException("Should not call this method on Create!");		
+		}	
+	}	
+	
 	protected static class RemoveCaller extends FunctionCommand
 	{
 		private long callerFunctionID;

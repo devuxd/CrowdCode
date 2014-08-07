@@ -8,7 +8,7 @@
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
 	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-    ReuseSearch microtask = (ReuseSearch) worker.getMicrotask();	
+	ReuseSearch microtask = (ReuseSearch) this.getServletContext().getAttribute("microtask");
 %>
 
 <script>
