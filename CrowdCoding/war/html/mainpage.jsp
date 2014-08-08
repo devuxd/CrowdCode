@@ -23,7 +23,8 @@
 	    }
 	});
 	
-	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
+	String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+	String workerHandle = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 %>
 
 <!DOCTYPE html>
@@ -66,7 +67,7 @@
 					<span id="functionCountSpan" class="badge">0</span><small>&nbsp;&nbsp;functions</small>&nbsp;&nbsp;
 					<span id="testCountSpan" class="badge">0</span><small>&nbsp;&nbsp;tests</small>&nbsp;&nbsp;&nbsp;&nbsp;
 					<span id="microtaskCountSpan" class="badge">0</span><small>&nbsp;&nbsp;microtasks</small>&nbsp;&nbsp;&nbsp;&nbsp;
-					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font>
+					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=workerHandle%> </font>
 				</div>  
 			</td>
 		</tr>
@@ -179,8 +180,45 @@
     $(document).ready(function()
     {
     	// Notify firebase when this worker (eventually) logs out
-    	var logoutRef = new Firebase(firebaseURL + '/logouts/<%=worker.getUserID()%>');
-    	logoutRef.onDisconnect().set(true);    	
+    	var onLogoutRef = new Firebase(firebaseURL + '/logouts/<%=workerID%>');
+    	onLogoutRef.onDisconnect().set(true);
+    	
+    	// Subscribe to logouts by other workers and forward them to the server
+    	var logoutsRef = new Firebase(firebaseURL + '/logouts');
+    	logoutsRef.on('child_added', function(childSnapshot, prevChildName) {
+    		if (childSnapshot.val() != null)
+    		{	    		
+	    		// Build a new ref to this child in particular. 
+	    		var loggedoutWorkerID = childSnapshot.name();
+	    	   	var workerLoggedOutRef = new Firebase(firebaseURL + '/logouts/' + loggedoutWorkerID);
+	
+	    		// Attempt to "take" the logout work item by deleting it. If the take succeeds, do the 
+	    		// logout work by sending a message to the server about the logout.
+	    		workerLoggedOutRef.transaction(function(currentData) {
+	    			if (currentData === null) {
+	    				// If someone already took the logout work, abort the transaction by returning nothing.
+	    		    	return;
+	    			} else {
+	    				// If the work item is still there, accept the work by attempting to (atomicly) remove
+	    				// the work item by setting it to null.
+	    		    	return null;
+	    			}
+	    		}, function(error, committed, snapshot) {
+	    			if (error) {
+	    		    	console.log('Transaction failed abnormally!', error);
+	    			} else if (committed)  {
+	    		  		// Successfully grabbed the work. Do the work now.
+						
+	    		  		
+						$.ajax({
+						    contentType: 'application/json',
+						    type: 'POST',
+						    url: '/<%=projectID%>/logout/' + loggedoutWorkerID
+						}).done( function (data) { alert('succeed logging out work')	}); 
+	    		  	}
+	    		});
+    		}
+    	});
     	
 		// Load the ADTs from firebase
 		var adtRef = new Firebase(firebaseURL + '/ADTs');
@@ -225,14 +263,14 @@
 		});
 		
 		// Hook the newsfeed to Firebase
-		var newsfeedRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/newsfeed');
+		var newsfeedRef = new Firebase(firebaseURL + '/workers/<%=workerID%>/newsfeed');
 		newsfeedRef.on('child_added', function(snapshot) {
 			if (snapshot.val() != null)
 				newNewsfeedItem(snapshot.val());
 		});		
 		
 		// Hook the score to Firebase
-		var scoreRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/score');
+		var scoreRef = new Firebase(firebaseURL + '/workers/<%=workerID%>/score');
 		scoreRef.on('value', function(snapshot) { 
 			if (snapshot.val() != null)
 				updateScoreDisplay(snapshot.val());
@@ -245,7 +283,7 @@
 		$('#chatInput').keypress(function (e) {
 		    if (e.keyCode == 13) 
 		    {
-		      chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=worker.getHandle()%>'});
+		      chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=workerHandle%>'});
 		      $('#chatInput').val('');
 		      return false;
 		    }
@@ -310,8 +348,8 @@
 		// Push the microtask submit data onto the Firebase history stream
 		var eventData = {'microtaskType': microtaskType, 
 					   'microtaskID': microtaskID,
-					   'workerHandle': '<%= worker.getHandle() %>',
-					   'workerID': '<%= worker.getUserID() %>'};
+					   'workerHandle': '<%= workerHandle %>',
+					   'workerID': '<%= workerID %>'};
 		eventData.microtask = formData;
 		eventListRef.child(microtaskID).set(eventData);
     }
@@ -367,8 +405,8 @@
 		// Push the feedback to firebase
 		var feedback = {'microtaskType': microtaskType, 
 						  'microtaskID': microtaskID,
-						  'workerHandle': '<%= worker.getHandle() %>',
-						  'workerID': '<%= worker.getUserID() %>',
+						  'workerHandle': '<%= workerHandle %>',
+						  'workerID': '<%= workerID %>',
 						  'feedback': $("#feedbackBox").val()};
 		feedbackRef.push(feedback);
 		$("#feedbackBox").val("");

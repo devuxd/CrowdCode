@@ -28,9 +28,9 @@ public class FirebaseService
 	}	
 	
 	// Writes information about microtask assignment to Firebase
-	public static void writeMicrotaskAssigned(long microtaskID, String workerID, Project project)
+	public static void writeMicrotaskAssigned(long microtaskID, String workerID, Project project, boolean assigned)
 	{
-		writeData("true", "/microtasks/" + microtaskID + "/assigned.json", HTTPMethod.PUT, project); 
+		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskID + "/assigned.json", HTTPMethod.PUT, project); 
 		writeData(workerID, "/microtasks/" + microtaskID + "/workerID.json", HTTPMethod.PUT, project); 
 	}
 	

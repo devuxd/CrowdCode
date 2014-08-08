@@ -34,7 +34,6 @@ public class Worker
 	private String nickname;
 	@Id private String userid;
 	private int score;
-	@Index private boolean loggedIn;
 	
 	// Default constructor for deserialization
 	private Worker()
@@ -48,7 +47,6 @@ public class Worker
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
-		this.loggedIn = true;
 		ofy().save().entity(this).now();	
 		FirebaseService.writeWorker(userid, nickname, project);
 	}
@@ -82,17 +80,6 @@ public class Worker
     			project);
 	}
 	
-	// Gets the handle (i.e., publicly visible nickname) for the worker.
-	public String getHandle()
-	{
-		return nickname;
-	}
-	
-	public String getUserID()
-	{
-		return userid;
-	}	
-	
 	public Key<Worker> getKey()
 	{
 		return getKey(project, userid);
@@ -101,19 +88,6 @@ public class Worker
 	public static Key<Worker> getKey(Key<Project> project, String userid)
 	{
 		return Key.create(project, Worker.class, userid);
-	}
-	
-	public void login()
-	{
-		loggedIn = true;
-		ofy().save().entity(this).now();
-	}
-	
-	// Sets the worker to be logged out. This deletes all queued messages.
-	public void logout(Project project)
-	{
-		loggedIn = false;
-		ofy().save().entity(this).now();
 	}
 
 	@Override
@@ -141,8 +115,4 @@ public class Worker
 		return true;
 	}
 	
-	public String toString()
-	{
-		return nickname + "(" + userid + "): { score: " + score + " loggedIn: " + loggedIn + "}"; 
-	}	
 }

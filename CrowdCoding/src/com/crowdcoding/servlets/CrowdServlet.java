@@ -4,6 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -96,6 +97,7 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project>/admin/* - doAdmin
 		 *  /<project>/fetch - doFetch		   
 		 *  /<project>/history - history.jsp
+		 *  /<project>/logout/[workerID] - doLogout
 		 *  /<project>/run - run.jsp
 		 *  /<project>/submit - doSubmit
 		 *  /<project>/welcome - welcome.jsp
@@ -139,6 +141,8 @@ public class CrowdServlet extends HttpServlet
 								doFetch(req, resp, projectID, user);
 							else if (action.equals("submit"))
 								doSubmit(req, resp);
+							else if (action.equals("logout"))					
+								doLogout(projectID, path[3]);
 							else if (action.equals("admin") && path.length == 3)
 				        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
 							else if (action.equals("history") && path.length == 3)
@@ -191,7 +195,7 @@ public class CrowdServlet extends HttpServlet
 		}
 		else if (command.equals("START"))
 		{
-			Queue<Command> commands = new LinkedList<Command>();
+			List<Command> commands = new ArrayList<Command>();
 			commands.addAll(ofy().transact(new Work<List<Command>>() {
 		        public List<Command> run()
 		        {
@@ -247,7 +251,7 @@ public class CrowdServlet extends HttpServlet
 				ProjectCommand.submitMicrotask(microtaskID, payload, workerID);	
 					
 			// Copy the command back out the context to initially populate the command queue.
-			executeCommands(new LinkedList<Command>(context.commands()), projectID);			       
+			executeCommands(context.commands(), projectID);			       
     	}        
     	catch (IOException e)
     	{
@@ -317,13 +321,28 @@ public class CrowdServlet extends HttpServlet
 		}                      		        	
 	}
 	
-	// Executes all of the specified commands and any commands that may subsequently be generated
-	private void executeCommands(Queue<Command> commands, final String projectID)
+	// Logs out the specified user from the service
+	public void doLogout(final String projectID, final String userID) 
 	{
+		if (userID == null || userID.length() == 0)
+			return;
+			
+		CommandContext context = new CommandContext();	    		
+		ProjectCommand.logoutWorker(userID);    		
+		executeCommands(context.commands(), projectID);   
+		
+		System.out.println("Logged out " + userID);
+	}
+	
+	// Executes all of the specified commands and any commands that may subsequently be generated
+	private void executeCommands(List<Command> commands, final String projectID)
+	{
+		Queue<Command> commandQueue = new LinkedList<Command>(commands);
+				
 		// Execute commands until done, adding commands as created.
-        while(!commands.isEmpty())
+        while(!commandQueue.isEmpty())
         {
-        	final Command command = commands.remove();
+        	final Command command = commandQueue.remove();
 	        commands.addAll(ofy().transact(new Work<List<Command>>() {
 	            public List<Command> run()
 	            {

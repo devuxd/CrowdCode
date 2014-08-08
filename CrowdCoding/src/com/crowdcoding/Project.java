@@ -43,6 +43,7 @@ public class Project
 	private LinkedList<Long> microtaskQueue = new LinkedList<Long>();			// Global queue of microtasks waiting to be done
 	@Serialize private Map<String, Long> microtaskAssignments = new HashMap<String, Long>(); // Map from workerID to microtaskID; workers with no microtask have a null entry	
 	@Serialize private Map<Long, HashSet<String>> excludedWorkers = new HashMap<Long, HashSet<String>>(); // Map from microtaskID to a set of workerIDs that are excluded from doing the microtask
+	@Serialize private HashSet<String> loggedInWorkers = new HashSet<String>();
 	
 	// Default constructor for deserialization only
 	private Project()
@@ -141,10 +142,25 @@ public class Project
 	{
 		return microtaskAssignments.get(workerID);		
 	}
+	
+	// Logs out the specified worker, clearing all of their current assigned work
+	public void logoutWorker(String workerID)
+	{
+		Long currentAssignment = microtaskAssignments.get(workerID);
+		if (currentAssignment != null)
+			microtaskQueue.add(currentAssignment);
+				
+		microtaskAssignments.put(workerID, null);
+		
+		ofy().save().entity(this).now();
+	}
 
 	// Assigns a microtask to worker and returns its microtaskID. Returns null if no microtasks are available.
 	public Long assignMicrotask(String workerID)
 	{		
+		// Ensure that the worker is marked as logged in
+		loggedInWorkers.add(workerID);
+		
 		// Look for a microtask, checking constraints on it along the way
 		Long microtaskID = null;
 
@@ -173,6 +189,7 @@ public class Project
 		// If there are no more microtasks currently available, return null
 		if (microtaskID == null)
 		{
+			ofy().save().entity(this).now();
 			return null;
 		}
 		else
@@ -181,7 +198,7 @@ public class Project
 			
 			microtaskQueue.remove(microtaskID);
 			microtaskAssignments.put(workerID, microtaskID);
-			FirebaseService.writeMicrotaskAssigned(microtaskID, workerID, this);
+			FirebaseService.writeMicrotaskAssigned(microtaskID, workerID, this, true);
 			
 			ofy().save().entity(this).now();
 			return microtaskID;
@@ -220,26 +237,23 @@ public class Project
 		}
 		
 		excludedWorkersForMicrotask.add(workerID);
-		// TODO: check if there are now too many excluded workers... We may need to keep
-		// the list of logged in workers in the project to do this?
-		
+		resetIfAllSkipped(microtaskID, project);
+				
 		ofy().save().entity(this).now();
 		MicrotaskCommand.skip(microtaskID, workerID);		
 	}
 	
-	// Checks the microtask to see if most workers have skipped it. If so, resets the
+	// Checks the microtask to see if all workers have skipped it. If so, resets the
 	// excluded workers to give workers another chance.
-	private void resetIfHighlySkipped(Project project)
+	private void resetIfAllSkipped(long microtaskID, Project project)
 	{
-		// If all workers have skipped it, reset exclusion constraints.
-		// TODO: we really should reset based on the status of logged in workers. But there
-		// is currently no way to track that accurately.
-		if (excludedWorkers.size() >= Worker.allWorkers(project).size())
+		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get(microtaskID);
+		if (excludedWorkersForMicrotask.containsAll(loggedInWorkers))
 		{
-			excludedWorkers.clear();
+			excludedWorkersForMicrotask.clear();
 			ofy().save().entity(this).now();
 			
-			System.out.println("Reset excluded workers for " + this.toString());
+			System.out.println("Reset excluded workers for microtask " + microtaskID);
 		}
 	}
 		

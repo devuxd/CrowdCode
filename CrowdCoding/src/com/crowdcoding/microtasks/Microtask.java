@@ -2,9 +2,6 @@ package com.crowdcoding.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.crowdcoding.Project;
 import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Artifact;
@@ -15,13 +12,11 @@ import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSkipped;
 import com.crowdcoding.dto.history.MicrotaskSubmitted;
 import com.crowdcoding.util.FirebaseService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Parent;
-import com.googlecode.objectify.cmd.Query;
 
 /*
  * NOTE: The Microtask class is abstract and SHOULD NOT be instantiated, except for internally inside objectify
@@ -167,8 +162,7 @@ public /*abstract*/ class Microtask
 	protected void postToFirebase(Project project, Artifact owningArtifact, boolean ready)
 	{
 		String owningArtifactName = (owningArtifact == null) ? "" : owningArtifact.getName();
-		Worker worker = null;
-		String workerName = (worker == null) ? "" : worker.getHandle();
+		String workerName = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 		FirebaseService.writeMicrotask(new MicrotaskInFirebase(id, this.microtaskName(),
 				owningArtifactName, ready, false, completed, submitValue, workerName), 
 				id, project);

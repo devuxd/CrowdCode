@@ -11,7 +11,9 @@ public abstract class ProjectCommand extends Command
 		{ return new SkipMicrotask(microtaskID, workerID); }
 	public static ProjectCommand submitMicrotask(long microtaskID, String jsonDTOData, String workerID) 
 		{ return new SubmitMicrotask(microtaskID, jsonDTOData, workerID); }
-
+	public static ProjectCommand logoutWorker(String workerID) 
+		{ return new LogoutWorker(workerID); }
+	
 	private ProjectCommand()
 	{
 		queueCommand(this);
@@ -74,6 +76,22 @@ public abstract class ProjectCommand extends Command
 		public void execute(Project project)
 		{
 			project.submitMicrotask(microtaskID, jsonDTOData, workerID, project);
+		}		
+	}
+	
+	protected static class LogoutWorker extends ProjectCommand
+	{
+		private String workerID;
+		
+		public LogoutWorker(String workerID)
+		{
+			super();
+			this.workerID = workerID;
+		}
+		
+		public void execute(Project project)
+		{
+			project.logoutWorker(workerID);
 		}		
 	}
 }
