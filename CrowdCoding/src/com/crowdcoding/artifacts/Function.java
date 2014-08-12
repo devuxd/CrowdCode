@@ -23,6 +23,7 @@ import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.history.MessageReceived;
 import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.DebugTestFailure;
+import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
 import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteFunction;
@@ -309,7 +310,7 @@ public class Function extends Artifact
 	{
 		// If there is currently not already a microtask being done on this function, 
 		// determine if there is work to be done
-		if (microtaskOut == null)
+		if (!microtaskOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && needsDebugging)			
@@ -391,7 +392,8 @@ public class Function extends Artifact
 					//for any currentPseudoCall not in pseudoCalls, add it
 					newPseudoCalls.add(callDescription); 
 					// Spawn microtask immediately, as it does not require access to the function itself
-					new ReuseSearch(this, callDescription, project);
+					Microtask microtask = new ReuseSearch(this, callDescription, project);
+					ProjectCommand.queueMicrotask(microtask.getID(), null);
 				}
 			}
 		}
@@ -485,6 +487,7 @@ public class Function extends Artifact
 		//Spawn off microtask to write test cases. As it does not impact the artifact itself,
 		// the microtask can be directly started rather than queued.
 		WriteTestCases writeTestCases = new WriteTestCases(this, project);
+		ProjectCommand.queueMicrotask(writeTestCases.getID(), null);
 		
 		// Spawn off microtask to sketch the method
 		queueMicrotask(new WriteFunction(this, project), project);

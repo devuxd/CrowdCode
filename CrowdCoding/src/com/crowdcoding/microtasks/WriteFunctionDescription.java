@@ -25,8 +25,7 @@ public class WriteFunctionDescription extends Microtask
 	}
 	
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, String callDescription, Function caller, 
-			Project project)
+	public WriteFunctionDescription(Function function, String callDescription, Function caller, Project project)
 	{
 		super(project);
 		this.submitValue = 8;
@@ -39,6 +38,12 @@ public class WriteFunctionDescription extends Microtask
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
 	}
+	
+    public Microtask copy(Project project)
+    {
+    	return new WriteFunctionDescription(this.function.getValue(),this.callDescription, 
+    			this.caller.getValue(), project); 
+    }
 	
 	protected void doSubmitWork(DTO dto, Project project)
 	{

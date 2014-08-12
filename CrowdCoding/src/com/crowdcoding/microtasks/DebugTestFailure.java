@@ -37,6 +37,11 @@ public class DebugTestFailure extends Microtask
           project.historyLog().endEvent();
      }
 
+     public Microtask copy(Project project)
+     {
+    	 return new DebugTestFailure(this.function.getValue(), project);
+     }
+     
      protected void doSubmitWork(DTO dto, Project project)
      {
           function.get().debugTestFailureCompleted((FunctionDTO) dto, project);    

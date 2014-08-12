@@ -37,6 +37,11 @@ public class ReuseSearch extends Microtask
 		project.historyLog().endEvent();
 	}
 	
+    public Microtask copy(Project project)
+    {
+    	return new ReuseSearch(this.function.getValue(), this.callDescription, project);
+    } 
+	
 	protected void doSubmitWork(DTO dto, Project project)
 	{
 		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);	

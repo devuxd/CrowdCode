@@ -4,6 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.microtasks.Microtask;
+import com.crowdcoding.microtasks.Review;
 import com.crowdcoding.servlets.CommandContext;
 import com.googlecode.objectify.Key;
 
@@ -14,7 +15,13 @@ public abstract class MicrotaskCommand extends Command
 	public static MicrotaskCommand submit(long microtaskID, String jsonDTOData, String workerID) 
 		{ return new Submit(microtaskID, jsonDTOData, workerID); }
 	public static MicrotaskCommand skip(long microtaskID, String workerID) 
-	{ return new Skip(microtaskID, workerID); }
+		{ return new Skip(microtaskID, workerID); }
+	public static MicrotaskCommand createReview(long microtaskIDToReview, String excludedWorkerID) 
+		{ return new CreateReview(microtaskIDToReview, excludedWorkerID); }
+	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
+	// worker excluded from performing it.
+	public static MicrotaskCommand reissueMicrotask(long microtaskID, String excludedWorkerID) 
+		{ return new ReissueMicrotask(microtaskID, excludedWorkerID); }
 
 	private MicrotaskCommand(long microtaskID)
 	{
@@ -80,5 +87,49 @@ public abstract class MicrotaskCommand extends Command
 		{
 			microtask.skip(workerID, project);
 		}		
+	}
+	
+	protected static class CreateReview extends MicrotaskCommand
+	{
+		private long microtaskIDToReview;
+		private String excludedWorkerID;
+		
+		public CreateReview(long microtaskIDToReview, String excludedWorkerID)
+		{
+			super(0L);
+			this.microtaskIDToReview = microtaskIDToReview;
+			this.excludedWorkerID = excludedWorkerID;
+		}
+		
+		// Overrides the default execute as no microtask is to be loaded.
+		public void execute(Project project)
+		{
+			Review review = new Review(microtaskIDToReview, project);
+			ProjectCommand.queueReviewMicrotask(review.getID(), excludedWorkerID);
+		}	
+		
+		public void execute(Microtask microtask, Project project)
+		{
+			throw new RuntimeException("This method is not applicable for this class");
+			
+		}
+	}
+	
+	protected static class ReissueMicrotask extends MicrotaskCommand
+	{
+		private String excludedWorkerID;
+		
+		public ReissueMicrotask(long microtaskID, String excludedWorkerID)
+		{
+			super(microtaskID);
+			this.excludedWorkerID = excludedWorkerID;
+		}
+		
+		// Overrides the default execute as no microtask is to be loaded.
+		public void execute(Microtask microtask, Project project)
+		{
+			Microtask newMicrotask = microtask.copy(project);
+			ProjectCommand.queueMicrotask(newMicrotask.getID(), excludedWorkerID);
+		}	
 	}
 }

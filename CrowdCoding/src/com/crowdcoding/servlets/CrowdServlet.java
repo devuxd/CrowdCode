@@ -27,6 +27,7 @@ import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.ReuseSearch;
+import com.crowdcoding.microtasks.Review;
 import com.crowdcoding.microtasks.WriteCall;
 import com.crowdcoding.microtasks.WriteFunction;
 import com.crowdcoding.microtasks.WriteFunctionDescription;
@@ -247,8 +248,8 @@ public class CrowdServlet extends HttpServlet
 			// Create the skip or submit commands
 			if (skip)
 				ProjectCommand.skipMicrotask(microtaskID, workerID);
-			else
-				ProjectCommand.submitMicrotask(microtaskID, payload, workerID);	
+			else			
+				ProjectCommand.submitMicrotask(microtaskID, microtaskType, payload, workerID);
 					
 			// Copy the command back out the context to initially populate the command queue.
 			executeCommands(context.commands(), projectID);			       

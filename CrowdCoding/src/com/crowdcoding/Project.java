@@ -16,6 +16,7 @@ import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionDescriptionsDTO;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
+import com.crowdcoding.microtasks.Review;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
 import com.googlecode.objectify.Key;
@@ -41,8 +42,17 @@ public class Project
 	
 	private boolean waitingForTestRun = false;								// is the project currently waiting for tests to be run?
 	private LinkedList<Long> microtaskQueue = new LinkedList<Long>();			// Global queue of microtasks waiting to be done
+	private LinkedList<Long> reviewQueue = new LinkedList<Long>();			// Global queue of review microtasks waiting to be done
 	@Serialize private Map<String, Long> microtaskAssignments = new HashMap<String, Long>(); // Map from workerID to microtaskID; workers with no microtask have a null entry	
-	@Serialize private Map<Long, HashSet<String>> excludedWorkers = new HashMap<Long, HashSet<String>>(); // Map from microtaskID to a set of workerIDs that are excluded from doing the microtask
+	
+	// Workers that are currently excluded from doing the microtask. This set may change over time as workers
+	// skip and this count is reset. This list is always a superset of permanentlyExcludedWorkers.
+	// Map from microtaskID to a set of workerIDs.
+	@Serialize private Map<Long, HashSet<String>> excludedWorkers = new HashMap<Long, HashSet<String>>();
+	
+	// Workers that are permanently excluded from doing a microtask. In constrast to excludedWorkers, this set only
+	// grows over time. Map from microtaskID to a set of workerIDs
+	@Serialize private Map<Long, HashSet<String>> permanentlyExcludedWorkers = new HashMap<Long, HashSet<String>>(); 
 	@Serialize private HashSet<String> loggedInWorkers = new HashSet<String>();
 	
 	// Default constructor for deserialization only
@@ -128,12 +138,40 @@ public class Project
 	//////////////////////////////////////////////////////////////////////////////
 	
 	// Queues the microtask onto the project's global queue
-	public void queueMicrotask(long microtaskID)
+	// Provides an optional parameter (which may be left null) for an excludedWorker, 
+	// who, if provided, will be permanently excluded from doing the microtask.
+	public void queueMicrotask(long microtaskID, String excludedWorkerID)
 	{
 		microtaskQueue.addLast(microtaskID);
+		if (excludedWorkerID != null)
+			addPermExcludedWorkerForMicrotask(microtaskID, excludedWorkerID);
+
 		ofy().save().entity(this).now();
 		
 		FirebaseService.writeMicrotaskReady(microtaskID, this);
+	}
+	
+	// Queues the microtask onto the project's review microtask queue
+	public void queueReviewMicrotask(long microtaskID, String excludedWorkerID)
+	{
+		reviewQueue.addLast(microtaskID);
+		addPermExcludedWorkerForMicrotask(microtaskID, excludedWorkerID);
+		
+		ofy().save().entity(this).now();
+		
+		FirebaseService.writeMicrotaskReady(microtaskID, this);
+	}
+	
+	private void addPermExcludedWorkerForMicrotask(long microtaskID, String excludedWorkerID)
+	{
+		HashSet<String> permExcludedForMicrotask = permanentlyExcludedWorkers.get(microtaskID);
+		if (permExcludedForMicrotask == null)
+		{
+			permExcludedForMicrotask = new HashSet<String>();
+			permanentlyExcludedWorkers.put(microtaskID, permExcludedForMicrotask);			
+		}
+		permExcludedForMicrotask.add(excludedWorkerID);
+		addExcludedWorkerForMicrotask(microtaskID, excludedWorkerID);
 	}
 	
 	// Gets the currently assigned microtask for the specified worker or returns null if the worker
@@ -163,18 +201,34 @@ public class Project
 		
 		// Look for a microtask, checking constraints on it along the way
 		Long microtaskID = null;
-
-		for (Long potentialMicrotask : microtaskQueue)
+		
+		// First, check if there any review microtasks queued. Review microtasks get priority, as
+		// they need to be done quickly.
+		for (Long potentialMicrotask : reviewQueue)
 		{
-			// If the worker is excluded from doing it, keep looking
-			HashSet<String> microtaskExcludedWorkers = excludedWorkers.get(potentialMicrotask);
+			if (assignmentIsValid(potentialMicrotask, workerID))
+			{
+				microtaskID = potentialMicrotask;
+				break;
+			}		
+		}
+
+		if (microtaskID != null)
+			reviewQueue.remove(microtaskID);
+		else
+		{
+			// If no suitable microtask has yet been found, continue looking in the global microtask queue.
+			for (Long potentialMicrotask : microtaskQueue)
+			{
+				if (assignmentIsValid(potentialMicrotask, workerID))
+				{
+					microtaskID = potentialMicrotask;
+					break;
+				}
+			}
 			
-			if (microtaskExcludedWorkers != null && microtaskExcludedWorkers.contains(workerID))
-				continue;
-			
-			// A microtask was found!
-			microtaskID = potentialMicrotask;
-			break;			
+			if (microtaskID != null)
+				microtaskQueue.remove(microtaskID);
 		}
 		
 		// TODO: we need to check if the microtask is no longer needed
@@ -196,7 +250,6 @@ public class Project
 		{
 			System.out.println(workerID);
 			
-			microtaskQueue.remove(microtaskID);
 			microtaskAssignments.put(workerID, microtaskID);
 			FirebaseService.writeMicrotaskAssigned(microtaskID, workerID, this, true);
 			
@@ -208,18 +261,39 @@ public class Project
 		//microtask.assignmentTimeInMillis = System.currentTimeMillis();
 	}
 	
+	// Checks both the excludedWorkers and skippedWorkers to see if microtaskID is a valid
+	// microtask assignment for workerID. Returns true iff this is the case.
+	private boolean assignmentIsValid(Long microtaskID, String workerID)
+	{
+		HashSet<String> microtaskExcludedWorkers = excludedWorkers.get(microtaskID);		
+		if (microtaskExcludedWorkers != null && microtaskExcludedWorkers.contains(workerID))
+			return false;
+		else
+			return true;
+	}	
+	
 	// Called to process a microtask submission based on form data (in json format)
 	// If the microtask has previously been submitted or is no longer open, the submission is
 	// dropped, ensuring workers cannot submit against already completed microtasks.
-	public void submitMicrotask(long microtaskID, String jsonDTOData, String workerID, Project project)
+	public void submitMicrotask(long microtaskID, Class microtaskType, String jsonDTOData, String workerID, 
+			Project project)
 	{	
 		System.out.println("Handling microtask submission: " + microtaskID + " " + jsonDTOData);
 		
 		// Unassign the microtask from the worker
 		microtaskAssignments.put(workerID, null);
 		ofy().save().entity(this).now();
-
-		MicrotaskCommand.submit(microtaskID, jsonDTOData, workerID);
+		
+		// If this is not a review microtask, spawn a new review microtask to review the work.
+		if (!microtaskType.equals(Review.class))
+		{
+			MicrotaskCommand.createReview(microtaskID, workerID); 
+		}
+		else
+		{
+			// Do a submit of the review microtask
+			MicrotaskCommand.submit(microtaskID, jsonDTOData, workerID);			
+		}
 	} 
 	
 	// Unassigns worker from this microtask
@@ -228,7 +302,16 @@ public class Project
 	{
 		// Unassign the microtask from the worker and exclude the worker
 		microtaskAssignments.put(workerID, null);
-		
+		addExcludedWorkerForMicrotask(microtaskID, workerID);
+
+		resetIfAllSkipped(microtaskID, project);
+				
+		ofy().save().entity(this).now();
+		MicrotaskCommand.skip(microtaskID, workerID);		
+	}
+	
+	private void addExcludedWorkerForMicrotask(long microtaskID, String workerID)
+	{
 		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get(microtaskID);
 		if (excludedWorkersForMicrotask == null)
 		{
@@ -236,11 +319,7 @@ public class Project
 			excludedWorkers.put(microtaskID, excludedWorkersForMicrotask);			
 		}
 		
-		excludedWorkersForMicrotask.add(workerID);
-		resetIfAllSkipped(microtaskID, project);
-				
-		ofy().save().entity(this).now();
-		MicrotaskCommand.skip(microtaskID, workerID);		
+		excludedWorkersForMicrotask.add(workerID);		
 	}
 	
 	// Checks the microtask to see if all workers have skipped it. If so, resets the
@@ -251,6 +330,12 @@ public class Project
 		if (excludedWorkersForMicrotask.containsAll(loggedInWorkers))
 		{
 			excludedWorkersForMicrotask.clear();
+			
+			// Add back the permanently excluded workers
+			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get(microtaskID);
+			if (permanentlyExcludedWorkersForMicrotask != null)
+				excludedWorkersForMicrotask.addAll(permanentlyExcludedWorkersForMicrotask);
+			
 			ofy().save().entity(this).now();
 			
 			System.out.println("Reset excluded workers for microtask " + microtaskID);
@@ -271,7 +356,8 @@ public class Project
 		{
 			waitingForTestRun = true;
 			ofy().save().entity(this).now();
-			new MachineUnitTest(this);			
+			Microtask microtask = new MachineUnitTest(this);
+			ProjectCommand.queueMicrotask(microtask.getID(), null);			
 		}		
 	}
 	

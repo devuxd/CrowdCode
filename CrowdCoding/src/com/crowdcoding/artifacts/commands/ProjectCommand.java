@@ -5,12 +5,18 @@ import com.crowdcoding.servlets.CommandContext;
 
 public abstract class ProjectCommand extends Command 
 {
-	public static ProjectCommand queueMicrotask(long microtaskID) 
-		{ return new QueueMicrotask(microtaskID); }
+	// Queues the specified microtask onto the global microtask queue. Provides an optional
+	// excludedWorkerID, which will permanently exlucde the worker from doing the microtask.
+	// This parameter may be left null.
+	public static ProjectCommand queueMicrotask(long microtaskID, String excludedWorkerID) 
+		{ return new QueueMicrotask(microtaskID, excludedWorkerID); }
+	public static ProjectCommand queueReviewMicrotask(long microtaskID, String excludedWorkerID) 
+		{ return new QueueReviewMicrotask(microtaskID, excludedWorkerID); }
 	public static ProjectCommand skipMicrotask(long microtaskID, String workerID) 
 		{ return new SkipMicrotask(microtaskID, workerID); }
-	public static ProjectCommand submitMicrotask(long microtaskID, String jsonDTOData, String workerID) 
-		{ return new SubmitMicrotask(microtaskID, jsonDTOData, workerID); }
+	public static ProjectCommand submitMicrotask(long microtaskID, Class microtaskType, String jsonDTOData, 
+			String workerID) 
+		{ return new SubmitMicrotask(microtaskID, microtaskType, jsonDTOData, workerID); }
 	public static ProjectCommand logoutWorker(String workerID) 
 		{ return new LogoutWorker(workerID); }
 	
@@ -28,16 +34,36 @@ public abstract class ProjectCommand extends Command
 	protected static class QueueMicrotask extends ProjectCommand
 	{
 		private long microtaskID;
+		private String excludedWorkerID;
 		
-		public QueueMicrotask(long microtaskID)
+		public QueueMicrotask(long microtaskID, String excludedWorkerID)
 		{
 			super();
 			this.microtaskID = microtaskID;
+			this.excludedWorkerID = excludedWorkerID;
 		}
 		
 		public void execute(Project project)
 		{
-			project.queueMicrotask(microtaskID);
+			project.queueMicrotask(microtaskID, excludedWorkerID);
+		}		
+	}
+	
+	protected static class QueueReviewMicrotask extends ProjectCommand
+	{
+		private long microtaskID;
+		private String excludedWorkerID;
+		
+		public QueueReviewMicrotask(long microtaskID, String excludedWorkerID)
+		{
+			super();
+			this.microtaskID = microtaskID;
+			this.excludedWorkerID = excludedWorkerID;
+		}
+		
+		public void execute(Project project)
+		{
+			project.queueReviewMicrotask(microtaskID, excludedWorkerID);
 		}		
 	}
 	
@@ -62,20 +88,22 @@ public abstract class ProjectCommand extends Command
 	protected static class SubmitMicrotask extends ProjectCommand
 	{
 		private long microtaskID;
+		private Class microtaskType;
 		private String jsonDTOData;
 		private String workerID;
 		
-		public SubmitMicrotask(long microtaskID, String jsonDTOData, String workerID)
+		public SubmitMicrotask(long microtaskID, Class microtaskType, String jsonDTOData, String workerID)
 		{
 			super();
 			this.microtaskID = microtaskID;
+			this.microtaskType = microtaskType;
 			this.jsonDTOData = jsonDTOData;
 			this.workerID = workerID;
 		}
 		
 		public void execute(Project project)
 		{
-			project.submitMicrotask(microtaskID, jsonDTOData, workerID, project);
+			project.submitMicrotask(microtaskID, microtaskType, jsonDTOData, workerID, project);
 		}		
 	}
 	

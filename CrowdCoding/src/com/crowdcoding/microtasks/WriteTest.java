@@ -35,7 +35,7 @@ public class WriteTest extends Microtask
 	// Constructor for WRITE prompt
 	public WriteTest(Test test, Project project)
 	{
-	     super(project, false);
+	     super(project);
 	     this.promptType = PromptType.WRITE;
 	     this.test = (Ref<Test>) Ref.create(test.getKey());         
 	     ofy().save().entity(this).now();
@@ -48,7 +48,7 @@ public class WriteTest extends Microtask
 	// Constructor for CORRECT prompt
 	public WriteTest(Test test2, String issueDescription, Project project)
 	{
-		super(project, false);
+		super(project);
 		this.promptType = PromptType.CORRECT;
 		this.test = (Ref<Test>) Ref.create(test2.getKey());		
 		this.issueDescription = issueDescription;
@@ -62,7 +62,7 @@ public class WriteTest extends Microtask
 	// Constructor for FUNCTION_CHANGED prompt
 	public WriteTest(Test test2, String oldFullDescription, String newFullDescription, Project project)
 	{
-		super(project, false);
+		super(project);
 		this.promptType = PromptType.FUNCTION_CHANGED;
 		this.test = (Ref<Test>) Ref.create(test2.getKey());		
 		this.oldFunctionDescription = oldFullDescription;
@@ -77,7 +77,7 @@ public class WriteTest extends Microtask
 	// Constructor for TESTCASE_CHANGED prompt
 	public WriteTest(Project project, Test test, String oldTestCase)
 	{
-		super(project, false);
+		super(project);
 		this.promptType = PromptType.TESTCASE_CHANGED;
 		this.test = (Ref<Test>) Ref.create(test.getKey());		
 		this.oldTestCase = oldTestCase;
@@ -87,7 +87,32 @@ public class WriteTest extends Microtask
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
 		project.historyLog().endEvent();
+	}	
+	
+	// Private copy constructor initialize all data elements
+	private WriteTest(Test test, PromptType promptType, String issueDescription, String oldFunctionDescription,
+			String newFunctionDescription, String oldTestCase, Project project)
+	{
+		super(project);
+		this.test = (Ref<Test>) Ref.create(test.getKey());	
+		this.promptType = promptType;
+		this.issueDescription = issueDescription;
+		this.oldFunctionDescription = oldFunctionDescription;
+		this.newFunctionDescription = newFunctionDescription;
+		this.oldTestCase = oldTestCase;		
+
+		ofy().save().entity(this).now();
+        postToFirebase(project, test, false);
+		
+		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
+		project.historyLog().endEvent();
 	}	 
+	
+    public Microtask copy(Project project)
+    {
+    	return new WriteTest(this.test.getValue(), this.promptType, this.issueDescription,
+    			this.oldFunctionDescription, this.newFunctionDescription, this.oldTestCase, project);
+    }
 	
 	protected void doSubmitWork(DTO dto, Project project)
 	{

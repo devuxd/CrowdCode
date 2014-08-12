@@ -38,6 +38,11 @@ public class MachineUnitTest extends Microtask
          
           project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
           project.historyLog().endEvent();
+     }    
+     
+     public Microtask copy(Project project)
+     {
+    	 return new MachineUnitTest(project);
      }     
 
      protected void doSubmitWork(DTO dto, Project project)

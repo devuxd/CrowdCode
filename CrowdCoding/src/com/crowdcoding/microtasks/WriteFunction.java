@@ -31,7 +31,7 @@ public class WriteFunction extends Microtask
 	// Initialization constructor for a SKETCH write function. Microtask is not ready.
 	public WriteFunction(Function function, Project project)
 	{
-		super(project, false);
+		super(project);
 		this.promptType = PromptType.SKETCH;
 		commonInitialization(function, project);
 	}
@@ -40,7 +40,7 @@ public class WriteFunction extends Microtask
 	public WriteFunction(Function function, String oldFullDescription, 
 			String newFullDescription, Project project)
 	{
-		super(project, false);		
+		super(project);		
 		this.promptType = PromptType.DESCRIPTION_CHANGE;
 		
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
@@ -49,6 +49,11 @@ public class WriteFunction extends Microtask
 		
 		commonInitialization(function, project);
 	}
+	
+    public Microtask copy(Project project)
+    {
+    	return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
+    } 
 	
 	private void commonInitialization(Function function, Project project)
 	{

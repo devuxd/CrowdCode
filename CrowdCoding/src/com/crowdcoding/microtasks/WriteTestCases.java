@@ -59,6 +59,12 @@ public class WriteTestCases extends Microtask
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
 	}	
+	
+    public Microtask copy(Project project)
+    {
+    	return new WriteTestCases(this.function.getValue(), this.disputeDescription, this.disputedTestCase,
+    			project);
+    }
 
 	protected void doSubmitWork(DTO dto, Project project)
 	{

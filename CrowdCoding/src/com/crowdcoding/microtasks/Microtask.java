@@ -43,17 +43,15 @@ public /*abstract*/ class Microtask
 	{
 		this.project = project.getKey();
 		id = project.generateID("Microtask");
-		ProjectCommand.queueMicrotask(id);
 	}
-	
-	// Constructor for initialization. Ready determines if the microtask is ready to be assigned
-	protected Microtask(Project project, boolean ready)
+			
+	// Creates a copy of this microtask, identical in all respects except with a new microtaskID
+	// and with a reset completed and assignmentTime. The microtask is NOT queued onto the project work queue.
+	// This method MUST be overridden in the subclass
+	public Microtask copy(Project project)
 	{
-		this.project = project.getKey();
-		id = project.generateID("Microtask");
-		if (ready)
-			ProjectCommand.queueMicrotask(id);
-	}		
+		throw new RuntimeException("Error - must implement in subclass!");
+	}
 	
 	// Override this method to allow the microtask to decide, right before it is assigned,
 	// if it is still needed
@@ -61,7 +59,8 @@ public /*abstract*/ class Microtask
 	
 	public void submit(String jsonDTOData, String workerID, Project project)
 	{
-		// If this microtask has already been completed, drop it, and clear the worker from the microtask 
+		// If this microtask has already been completed, drop it, and clear the worker from the microtask
+		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
 		if (this.completed)
 		{
 			System.out.println("For microtask " + this.toString() + " JSON submitted for already completed work: " 
