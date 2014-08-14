@@ -45,7 +45,7 @@ public class WriteFunctionDescription extends Microtask
     			this.caller.getValue(), project); 
     }
 	
-	protected void doSubmitWork(DTO dto, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		FunctionDescriptionDTO functionDTO = (FunctionDescriptionDTO) dto;	
 		
@@ -91,6 +91,6 @@ public class WriteFunctionDescription extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "describing a function";
+		return "describe a function";
 	}
 }

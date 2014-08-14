@@ -84,16 +84,55 @@
 				$('#test' + test.id).remove();
 			});
 			
+			var workersRef = new Firebase(firebaseURL + '/status/loggedInWorkers');
+			workersRef.on('child_added', function (snapshot) 
+			{
+				var workerID = snapshot.name();
+				var workerHandle = snapshot.val().workerHandle;
+				$('#workers').append(constructWorkerDiv(workerID, workerHandle));
+			});
+			workersRef.on('child_removed', function (snapshot) 
+			{
+				var workerID = snapshot.name();
+				$('#worker' + workerID).remove();
+			});
+			
+			var microtaskQueueRef = new Firebase(firebaseURL + '/status/microtaskQueue');
+			microtaskQueueRef.on('value', function (snapshot) 
+			{
+				if (snapshot.val() != null && snapshot.val().hasOwnProperty('queue'))
+				{				
+					var microtaskQueue = snapshot.val().queue;
+					$('#microtaskQueueDiv').html(JSON.stringify(microtaskQueue));
+				}
+				else
+				{
+					$('#microtaskQueueDiv').html('');					
+				}
+			});
+
+			var reviewQueueRef = new Firebase(firebaseURL + '/status/reviewQueue');
+			reviewQueueRef.on('value', function (snapshot) 
+			{
+				if (snapshot.val() != null && snapshot.val().hasOwnProperty('queue'))
+				{	
+					var reviewQueue = snapshot.val().queue;
+					$('#reviewQueueDiv').html(JSON.stringify(reviewQueue));
+				}
+				else
+				{
+					$('#reviewQueueDiv').html('');					
+				}
+			});
+			
 			function constructMicrotaskDiv(microtask)
 			{
 				var divTag = '<div id="microtask' + microtask.id + '">';
 				var divContent = '' + microtask.id + ' ' + microtask.type + ' on ' 
 					+ (microtask.hasOwnProperty('owningArtifact') ? microtask.owningArtifact : '') + ':' 
-					+ (microtask.ready ? ' ready' : ' not ready')
-					+ (microtask.assigned ? ' assigned' : ' unassigned')
 					+ (microtask.completed ? ' completed' : ' incomplete')
-					+ ' points: ' + microtask.points 
-					+ (microtask.hasOwnProperty('workerID') ? (' worker: ' + microtask.workerID) : '');
+					+ ' points: ' + microtask.points
+					+ (microtask.hasOwnProperty('workerHandle') ? ' worker: ' + microtask.workerHandle : '' );
 				var divEnd = '</div>';
 				return divTag + divContent + divEnd;
 			}
@@ -123,7 +162,15 @@
 					+ '<BR>Outputs:<BR>' + test.simpleTestOutput.replace(/\n/g, '<BR>');
 				var divEnd = '</div>';	
 				return divTag + divContent + divEnd;
-			}			
+			}		
+			
+			function constructWorkerDiv(workerID, workerHandle)
+			{
+				var divTag = '<div id="worker' + workerID + '">';
+				var divContent = 'ID: ' + workerID + ' name: ' + workerHandle + '<BR>';
+				var divEnd = '</div>';	
+				return divTag + divContent + divEnd;
+			}	
 		});	
 	</script>
 </head>
@@ -144,8 +191,10 @@
 		   	<button id="execute" class="btn btn-small">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		   	<button id="clear" class="btn btn-small">Clear Output</button><BR><BR>
 			<div id="output"></div><BR><BR>
-			<b>All Workers</b><BR><div id="workers"></div>
+			<b>Logged in Workers</b><BR><div id="workers"></div>
 			<b>All Microtasks</b><BR><div id="microtasks"></div>
+			<b>Microtask Queue</b><BR><div id="microtaskQueueDiv"></div>
+			<b>Review Queue</b><BR><div id="reviewQueueDiv"></div>
 			<b>All Functions</b><BR><div id="functions"></div>
 			<b>All Tests</b><BR><div id="tests"></div>
 		</div>

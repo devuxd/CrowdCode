@@ -66,7 +66,7 @@ public class WriteTestCases extends Microtask
     			project);
     }
 
-	protected void doSubmitWork(DTO dto, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		this.function.get().writeTestCasesCompleted((TestCasesDTO) dto, project);		
 	}
@@ -121,6 +121,6 @@ public class WriteTestCases extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "writing test cases";
+		return "write test cases";
 	}
 }

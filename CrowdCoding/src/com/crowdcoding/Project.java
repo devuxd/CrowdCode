@@ -14,6 +14,7 @@ import com.crowdcoding.artifacts.commands.ProjectCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionDescriptionsDTO;
+import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.microtasks.MachineUnitTest;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.microtasks.Review;
@@ -148,7 +149,7 @@ public class Project
 
 		ofy().save().entity(this).now();
 		
-		FirebaseService.writeMicrotaskReady(microtaskID, this);
+		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project);
 	}
 	
 	// Queues the microtask onto the project's review microtask queue
@@ -159,7 +160,7 @@ public class Project
 		
 		ofy().save().entity(this).now();
 		
-		FirebaseService.writeMicrotaskReady(microtaskID, this);
+		FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project);
 	}
 	
 	private void addPermExcludedWorkerForMicrotask(long microtaskID, String excludedWorkerID)
@@ -185,16 +186,22 @@ public class Project
 	public void logoutWorker(String workerID)
 	{
 		Long currentAssignment = microtaskAssignments.get(workerID);
+		
+		// TODO: if the current assignment is a review, this should go in the review queue!
+		
 		if (currentAssignment != null)
 			microtaskQueue.add(currentAssignment);
 				
 		microtaskAssignments.put(workerID, null);
 		
 		ofy().save().entity(this).now();
+		
+		FirebaseService.writeWorkerLoggedOut(workerID, this);
+		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project);
 	}
 
 	// Assigns a microtask to worker and returns its microtaskID. Returns null if no microtasks are available.
-	public Long assignMicrotask(String workerID)
+	public Long assignMicrotask(String workerID, String workerHandle)
 	{		
 		// Ensure that the worker is marked as logged in
 		loggedInWorkers.add(workerID);
@@ -214,7 +221,10 @@ public class Project
 		}
 
 		if (microtaskID != null)
+		{
 			reviewQueue.remove(microtaskID);
+			FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project);
+		}
 		else
 		{
 			// If no suitable microtask has yet been found, continue looking in the global microtask queue.
@@ -228,7 +238,10 @@ public class Project
 			}
 			
 			if (microtaskID != null)
+			{
 				microtaskQueue.remove(microtaskID);
+				FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project);
+			}
 		}
 		
 		// TODO: we need to check if the microtask is no longer needed
@@ -251,7 +264,7 @@ public class Project
 			System.out.println(workerID);
 			
 			microtaskAssignments.put(workerID, microtaskID);
-			FirebaseService.writeMicrotaskAssigned(microtaskID, workerID, this, true);
+			FirebaseService.writeMicrotaskAssigned(microtaskID, workerID, workerHandle, this, true);
 			
 			ofy().save().entity(this).now();
 			return microtaskID;
@@ -287,7 +300,7 @@ public class Project
 		// If this is not a review microtask, spawn a new review microtask to review the work.
 		if (!microtaskType.equals(Review.class))
 		{
-			MicrotaskCommand.createReview(microtaskID, workerID); 
+			MicrotaskCommand.createReview(microtaskID, workerID, jsonDTOData, workerID); 
 		}
 		else
 		{
@@ -303,6 +316,10 @@ public class Project
 		// Unassign the microtask from the worker and exclude the worker
 		microtaskAssignments.put(workerID, null);
 		addExcludedWorkerForMicrotask(microtaskID, workerID);
+		
+		// Add the work back to the appropriate queue
+		// TODO: this should be added to the review queue if appropriate
+		microtaskQueue.addLast(microtaskID);
 
 		resetIfAllSkipped(microtaskID, project);
 				

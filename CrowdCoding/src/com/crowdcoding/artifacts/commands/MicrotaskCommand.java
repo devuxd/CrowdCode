@@ -16,8 +16,9 @@ public abstract class MicrotaskCommand extends Command
 		{ return new Submit(microtaskID, jsonDTOData, workerID); }
 	public static MicrotaskCommand skip(long microtaskID, String workerID) 
 		{ return new Skip(microtaskID, workerID); }
-	public static MicrotaskCommand createReview(long microtaskIDToReview, String excludedWorkerID) 
-		{ return new CreateReview(microtaskIDToReview, excludedWorkerID); }
+	public static MicrotaskCommand createReview(long microtaskIDToReview, String excludedWorkerID,
+			String initiallySubmittedDTO, String workerOfReviewedWork) 
+		{ return new CreateReview(microtaskIDToReview, excludedWorkerID, initiallySubmittedDTO, workerOfReviewedWork); }
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it.
 	public static MicrotaskCommand reissueMicrotask(long microtaskID, String excludedWorkerID) 
@@ -93,18 +94,23 @@ public abstract class MicrotaskCommand extends Command
 	{
 		private long microtaskIDToReview;
 		private String excludedWorkerID;
+		private String initiallySubmittedDTO;
+		private String workerOfReviewedWork;
 		
-		public CreateReview(long microtaskIDToReview, String excludedWorkerID)
+		public CreateReview(long microtaskIDToReview, String excludedWorkerID, String initiallySubmittedDTO, 
+				String workerOfReviewedWork)
 		{
 			super(0L);
 			this.microtaskIDToReview = microtaskIDToReview;
 			this.excludedWorkerID = excludedWorkerID;
+			this.initiallySubmittedDTO = initiallySubmittedDTO;
+			this.workerOfReviewedWork = workerOfReviewedWork;
 		}
 		
 		// Overrides the default execute as no microtask is to be loaded.
 		public void execute(Project project)
 		{
-			Review review = new Review(microtaskIDToReview, project);
+			Review review = new Review(microtaskIDToReview, initiallySubmittedDTO, workerOfReviewedWork, project);
 			ProjectCommand.queueReviewMicrotask(review.getID(), excludedWorkerID);
 		}	
 		

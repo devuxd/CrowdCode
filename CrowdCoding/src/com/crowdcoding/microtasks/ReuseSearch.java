@@ -42,7 +42,7 @@ public class ReuseSearch extends Microtask
     	return new ReuseSearch(this.function.getValue(), this.callDescription, project);
     } 
 	
-	protected void doSubmitWork(DTO dto, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);	
 	}
@@ -79,6 +79,6 @@ public class ReuseSearch extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "conducting a reuse search";
+		return "do a reuse search";
 	}
 }

@@ -208,13 +208,18 @@
 	    		    	console.log('Transaction failed abnormally!', error);
 	    			} else if (committed)  {
 	    		  		// Successfully grabbed the work. Do the work now.
+						// Except, if we are asked to log out ourself, ignore this work. Because
+						// we are now logged in again, and logging us out while we are logged in
+						// can cause problems.
 						
-	    		  		
-						$.ajax({
-						    contentType: 'application/json',
-						    type: 'POST',
-						    url: '/<%=projectID%>/logout/' + loggedoutWorkerID
-						}).done( function (data) { alert('succeed logging out work')	}); 
+						if (loggedoutWorkerID != <%=workerID%>)
+						{
+							$.ajax({
+							    contentType: 'application/json',
+							    type: 'POST',
+							    url: '/<%=projectID%>/logout/' + loggedoutWorkerID
+							}).done( function (data) { console.log('succeed logging out worker ' + loggedoutWorkerID);	});
+						}
 	    		  	}
 	    		});
     		}
@@ -397,7 +402,8 @@
 	{
 		var itemValue = item.description;
 		var itemPoints = item.points;
-		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' + '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' +"You earned " + itemPoints +  " points for "   + itemValue + "!" +  '</td> </tr> </br> </table>');
+		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' 
+				+ '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' + itemValue +  '</td> </tr> </br> </table>');
 	}
 
 	function sendFeedback()

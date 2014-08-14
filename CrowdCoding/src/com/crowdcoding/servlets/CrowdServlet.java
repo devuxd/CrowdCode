@@ -51,6 +51,7 @@ public class CrowdServlet extends HttpServlet
 		// Every microtask MUST be registered here, mapping its name to its class.
 		// Microtasks are listed in alphabetical order.
 		microtaskTypes.put("ReuseSearch", ReuseSearch.class);
+		microtaskTypes.put("Review", Review.class);
 		microtaskTypes.put("writeFunction", WriteFunction.class);
 		microtaskTypes.put("DebugTestFailure", DebugTestFailure.class);
 		microtaskTypes.put("MachineUnitTest", MachineUnitTest.class);
@@ -69,6 +70,7 @@ public class CrowdServlet extends HttpServlet
 		
 		ObjectifyService.register(Microtask.class);
 		ObjectifyService.register(ReuseSearch.class);
+		ObjectifyService.register(Review.class);		
 		ObjectifyService.register(WriteFunction.class);
 		ObjectifyService.register(DebugTestFailure.class);
 		ObjectifyService.register(MachineUnitTest.class);
@@ -193,9 +195,7 @@ public class CrowdServlet extends HttpServlet
 			output.append("RESET executed at " + currentTime.toString() + "<BR>");
 			Project.Clear(projectID);
 			output.append("Project successfully reset to default state.<BR>");
-		}
-		else if (command.equals("START"))
-		{
+			
 			List<Command> commands = new ArrayList<Command>();
 			commands.addAll(ofy().transact(new Work<List<Command>>() {
 		        public List<Command> run()
@@ -209,7 +209,7 @@ public class CrowdServlet extends HttpServlet
 		    }));
 			
 			executeCommands(commands, projectID);	
-		}		
+		}	
 		else
 		{
 			output.append("Unrecognized command " + command);
@@ -272,17 +272,18 @@ public class CrowdServlet extends HttpServlet
             {                	
             	Project project = Project.Create(projectID); 
             	String workerID = user.getUserId();
+            	String workerHandle = user.getNickname();
             	
             	// If the user does not have a microtask assigned, get them a microtask.
             	Long microtaskID = project.lookupMicrotaskAssignment(workerID);
             	if (microtaskID == null)
             	{
-            		System.out.println("Assigning worker " + workerID + " a microtask");
-            		microtaskID = project.assignMicrotask(workerID);
+            		System.out.println("Assigning worker " + workerHandle + " a microtask");
+            		microtaskID = project.assignMicrotask(workerID, workerHandle);
             	}
             	else
             	{
-            		System.out.println("Worker " + workerID + " already has a microtask");
+            		System.out.println("Worker " + workerHandle + " already has a microtask");
             	}
             		
             	return microtaskID;
@@ -344,7 +345,7 @@ public class CrowdServlet extends HttpServlet
         while(!commandQueue.isEmpty())
         {
         	final Command command = commandQueue.remove();
-	        commands.addAll(ofy().transact(new Work<List<Command>>() {
+        	commandQueue.addAll(ofy().transact(new Work<List<Command>>() {
 	            public List<Command> run()
 	            {
             	    Project project = Project.Create(projectID);					

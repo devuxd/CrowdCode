@@ -9,6 +9,7 @@ import com.crowdcoding.Project;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
@@ -28,17 +29,30 @@ public class FirebaseService
 	}	
 	
 	// Writes information about microtask assignment to Firebase
-	public static void writeMicrotaskAssigned(long microtaskID, String workerID, Project project, boolean assigned)
+	public static void writeMicrotaskAssigned(long microtaskID, String workerID, 
+			String workerHandle, Project project, boolean assigned)
 	{
 		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskID + "/assigned.json", HTTPMethod.PUT, project); 
-		writeData(workerID, "/microtasks/" + microtaskID + "/workerID.json", HTTPMethod.PUT, project); 
+		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskID + ".json", HTTPMethod.PATCH, project);
+		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.PUT, project); 
 	}
 	
-	// Marks a microtask as being ready in Firebase
-	public static void writeMicrotaskReady(long microtaskID, Project project)
+	public static void writeWorkerLoggedOut(String workerID, Project project)
 	{
-		writeData("true", "/microtasks/" + microtaskID + "/ready.json", HTTPMethod.PUT, project); 
-	}	
+		writeData("", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.DELETE, project); 
+	}
+	
+	public static void writeMicrotaskQueue(QueueInFirebase dto, Project project)
+	{
+		System.out.println("Current microtask queue: " + dto.json());		
+		writeData(dto.json(), "/status/microtaskQueue.json", HTTPMethod.PUT, project); 
+	}
+	
+	public static void writeReviewQueue(QueueInFirebase dto, Project project)
+	{
+		System.out.println("Current review queue: " + dto.json());
+		writeData(dto.json(), "/status/reviewQueue.json", HTTPMethod.PUT, project); 
+	}
 	
 	// Stores the specified function to Firebase
 	public static void writeFunction(FunctionInFirebase dto, long functionID, Project project)

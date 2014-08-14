@@ -3,17 +3,15 @@ package com.crowdcoding.microtasks;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Project;
-import com.crowdcoding.Worker;
 import com.crowdcoding.artifacts.Artifact;
-import com.crowdcoding.artifacts.commands.ProjectCommand;
-import com.crowdcoding.artifacts.commands.WorkerCommand;
+import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSkipped;
 import com.crowdcoding.dto.history.MicrotaskSubmitted;
 import com.crowdcoding.util.FirebaseService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Parent;
@@ -71,12 +69,10 @@ public /*abstract*/ class Microtask
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
 		project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
 
-		doSubmitWork(dto, project);	
+		doSubmitWork(dto, workerID, project);	
 		this.completed = true;
 		ofy().save().entity(this).now();
 
-		WorkerCommand.awardPoints(workerID, this.submitValue, this.microtaskDescription());		
-				
 		// Save the associated artifact to Firebase if there is one
 		Artifact owningArtifact = this.getOwningArtifact();
 		if (owningArtifact != null)
@@ -110,7 +106,7 @@ public /*abstract*/ class Microtask
 	public String getUIURL() { return ""; }
 
 	// This method MUST be overridden in the subclass to do submit work.
-	protected void doSubmitWork(DTO dto, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		throw new RuntimeException("Error - must implement doSubmitWork!");
 	}
@@ -161,10 +157,14 @@ public /*abstract*/ class Microtask
 	protected void postToFirebase(Project project, Artifact owningArtifact, boolean ready)
 	{
 		String owningArtifactName = (owningArtifact == null) ? "" : owningArtifact.getName();
-		String workerName = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 		FirebaseService.writeMicrotask(new MicrotaskInFirebase(id, this.microtaskName(),
-				owningArtifactName, ready, false, completed, submitValue, workerName), 
-				id, project);
+				owningArtifactName, completed, submitValue), id, project);
+	}
+	
+	// Should only be called from within the entity group of the owning artifact
+	public static Ref<Microtask> find(long id, Project project)
+	{
+		return (Ref<Microtask>) ofy().load().key(Key.create(project.getKey(), Microtask.class, id));		
 	}
 	
 	public String toString()

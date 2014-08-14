@@ -65,7 +65,7 @@ public class WriteFunction extends Microtask
 		project.historyLog().endEvent();
 	}
 	
-	protected void doSubmitWork(DTO dto, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().sketchCompleted((FunctionDTO) dto, project);	
 	}
@@ -112,6 +112,6 @@ public class WriteFunction extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "editing a function";
+		return "edit a function";
 	}
 }

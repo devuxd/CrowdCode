@@ -114,7 +114,7 @@ public class WriteTest extends Microtask
     			this.oldFunctionDescription, this.newFunctionDescription, this.oldTestCase, project);
     }
 	
-	protected void doSubmitWork(DTO dto, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 	     test.get().writeTestCompleted((TestDTO) dto, project);
 	}
@@ -183,6 +183,6 @@ public class WriteTest extends Microtask
 	 
 	public String microtaskDescription()
 	{
-		return "writing a test";
+		return "write a test";
 	}
 }

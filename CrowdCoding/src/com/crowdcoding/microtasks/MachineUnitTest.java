@@ -45,7 +45,7 @@ public class MachineUnitTest extends Microtask
     	 return new MachineUnitTest(project);
      }     
 
-     protected void doSubmitWork(DTO dto, Project project)
+     protected void doSubmitWork(DTO dto, String workerID, Project project)
      {
           MachineUnitTestDTO dto2 = (MachineUnitTestDTO)dto;
 
@@ -100,7 +100,7 @@ public class MachineUnitTest extends Microtask
      
  	 public String microtaskDescription()
  	 {
- 		return "running unit tests";
+ 		return "run unit tests";
  	 }
 
      public String[] getAllTestCodeInSystem()

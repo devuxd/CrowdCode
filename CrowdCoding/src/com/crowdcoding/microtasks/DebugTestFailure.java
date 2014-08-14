@@ -42,7 +42,7 @@ public class DebugTestFailure extends Microtask
     	 return new DebugTestFailure(this.function.getValue(), project);
      }
      
-     protected void doSubmitWork(DTO dto, Project project)
+     protected void doSubmitWork(DTO dto, String workerID, Project project)
      {
           function.get().debugTestFailureCompleted((FunctionDTO) dto, project);    
      }
@@ -131,6 +131,6 @@ public class DebugTestFailure extends Microtask
      
  	public String microtaskDescription()
  	{
- 		return "debugging a test failure";
+ 		return "debug a test failure";
  	}
 }

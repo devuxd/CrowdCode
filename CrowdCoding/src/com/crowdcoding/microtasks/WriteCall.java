@@ -46,7 +46,7 @@ public class WriteCall extends Microtask
     	return new WriteCall(this.caller.getValue(), this.calleeFullDescription, this.pseudoCall, project);
     } 
 	
-	protected void doSubmitWork(DTO dto, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		caller.get().writeCallCompleted((FunctionDTO) dto, project);	
 	}
@@ -95,6 +95,6 @@ public class WriteCall extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "adding a call";
+		return "write a call";
 	}
 }
