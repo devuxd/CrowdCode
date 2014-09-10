@@ -11,6 +11,7 @@ import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
+import com.crowdcoding.artifacts.commands.FunctionCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.MachineUnitTestDTO;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
@@ -32,18 +33,19 @@ public class MachineUnitTest extends Microtask
           super(project);
           this.project = project;
           testCaseList = new ArrayList<Test>();
-          ofy().save().entity(this).now();
+          ofy().save().entity(this).now();          
+          //postToFirebase(project, null, false);
          
           project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
           project.historyLog().endEvent();
-     }
+     }    
      
-  	public void onAssign(Project project) 
-  	{
-  		project.testsAboutToRun();
-  	}
+     public Microtask copy(Project project)
+     {
+    	 return new MachineUnitTest(project);
+     }     
 
-     protected void doSubmitWork(DTO dto, Project project)
+     protected void doSubmitWork(DTO dto, String workerID, Project project)
      {
           MachineUnitTestDTO dto2 = (MachineUnitTestDTO)dto;
 
@@ -53,26 +55,26 @@ public class MachineUnitTest extends Microtask
           // and 2) failed at least one test.          
           
           // Compute the set of functions that 2) failed at least one test.
-          Set<Function> failed = new HashSet<Function>();
+          Set<Long> failed = new HashSet<Long>();
           for (Integer failingTestIndex : dto2.failingTestCases)
           {
-               failed.add(testCaseList.get(failingTestIndex).getFunction());              
+               failed.add(testCaseList.get(failingTestIndex).getFunctionID());              
           }
          
           // Compute the set of functions that 1) passed at least one test and did not fail any
-          Set<Function> passed = new HashSet<Function>();
+          Set<Long> passed = new HashSet<Long>();
           for (Integer passingTestIndex : dto2.passingTestCases)
           {
-        	  Function function = testCaseList.get(passingTestIndex).getFunction(); 
-              if (!failed.contains(function))
-            	  passed.add(function);        	  
+        	  long functionID = testCaseList.get(passingTestIndex).getFunctionID(); 
+              if (!failed.contains(functionID))
+            	  passed.add(functionID);        	  
           }
          
           // Notify each function if it passed or failed its tests
-          for (Function function : failed)
-               function.failedTests(project);
-          for (Function function : passed)
-               function.passedTests(project);    
+          for (long functionID : failed)
+        	  FunctionCommand.failedTests(functionID);
+          for (long functionID : passed)
+        	  FunctionCommand.passedTests(functionID);
      }
 
      protected Class getDTOClass()
@@ -98,7 +100,7 @@ public class MachineUnitTest extends Microtask
      
  	 public String microtaskDescription()
  	 {
- 		return "running unit tests";
+ 		return "run unit tests";
  	 }
 
      public String[] getAllTestCodeInSystem()
@@ -108,7 +110,7 @@ public class MachineUnitTest extends Microtask
           String [] arrayOfTestCaseCode = new String[testCaseList.size()];
           for(int i = 0; i < arrayOfTestCaseCode.length; i++)
           {
-        	  String functionName = testCaseList.get(i).getFunction().getName();
+        	  String functionName = testCaseList.get(i).getFunctionName();
         	  // We need to replace every call to the function under test (functionName) in the test code with a 
         	  // call to our mock (functionNameaaaActualName). Since we don't have a parse tree here, 
         	  // we're just going to do a string replace. That is, we'll replace every occurence

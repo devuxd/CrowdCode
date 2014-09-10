@@ -9,7 +9,9 @@ import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -17,9 +19,9 @@ import com.googlecode.objectify.annotation.Load;
 @EntitySubclass(index=true)
 public class WriteCall extends Microtask 
 {
-	@Load private Ref<Function> callee;
 	@Load private Ref<Function> caller;
 	private String pseudoCall;
+	private String calleeFullDescription;
 		
 	// Default constructor for deserialization
 	private WriteCall() 
@@ -27,20 +29,27 @@ public class WriteCall extends Microtask
 	}
 	
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, Function callee, String pseudoCall, Project project)
+	public WriteCall(Function caller, String calleeFullDescription, String pseudoCall, Project project)
 	{
-		super(project, false);
+		super(project);
 		this.submitValue = 7;
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
-		this.callee = (Ref<Function>) Ref.create(callee.getKey());
+		this.calleeFullDescription = calleeFullDescription;
 		this.pseudoCall = pseudoCall;
 		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskCreated(new MicrotaskInFirebase(id, this.microtaskName(), caller.getName(), 
+				false, submitValue), id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));
 		project.historyLog().endEvent();
 	}
 	
-	protected void doSubmitWork(DTO dto, Project project)
+    public Microtask copy(Project project)
+    {
+    	return new WriteCall(this.caller.getValue(), this.calleeFullDescription, this.pseudoCall, project);
+    } 
+	
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		caller.get().writeCallCompleted((FunctionDTO) dto, project);	
 	}
@@ -67,9 +76,9 @@ public class WriteCall extends Microtask
 		return caller.getValue();
 	}
 	
-	public Function getCallee()
+	public String getEscapedCalleeFullDescription()
 	{
-		return callee.getValue();
+		return StringEscapeUtils.escapeEcmaScript(calleeFullDescription);
 	}
 	
 	public String getEscapedPseudoCall()
@@ -89,6 +98,6 @@ public class WriteCall extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "adding a call";
+		return "write a call";
 	}
 }

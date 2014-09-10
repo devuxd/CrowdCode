@@ -11,7 +11,7 @@
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-    WriteCall microtask = (WriteCall) crowdUser.getMicrotask();
+    WriteCall microtask = (WriteCall) this.getServletContext().getAttribute("microtask");
     
     String functionCode = microtask.getCaller().getEscapedFullCode();
     String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getCaller(), project) + "'";
@@ -25,7 +25,7 @@
 		var microtaskID = <%= microtask.getID() %>;	
 		
 		// Description for the description box of the callee
-		var codeBoxCode = '<%= microtask.getCallee().getEscapedFullDescription() %>';
+		var codeBoxCode = '<%= microtask.getEscapedCalleeFullDescription() %>';
 		
 		var editorCode = '<%=functionCode%>';
 		var functionName = '<%= microtask.getCaller().getName() %>';
@@ -34,7 +34,7 @@
 		    
    		$(document).ready(function() 
    		{
-   			setupReadonlyCodeBox(readonlyCodeBox);
+   			setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);
    			
    			$('#skip').click(function() { skip(); });
    			

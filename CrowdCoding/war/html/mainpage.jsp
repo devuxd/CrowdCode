@@ -3,7 +3,6 @@
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
 <%@page import="com.crowdcoding.Project"%>
-<%@page import="com.crowdcoding.artifacts.ADT" %>
 <%@page import="com.crowdcoding.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
@@ -24,11 +23,9 @@
 	    }
 	});
 	
-	Worker worker = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-	
-    String allADTs = ADT.getAllADTs(project);
+	String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+	String workerHandle = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 %>
-
 
 <!DOCTYPE html>
 <html>
@@ -66,10 +63,11 @@
 			<td>  	<h4>CrowdCode</h4> </td>
 			<td class="titlebarScore"> 				
 				<div id="statistics" >
-					<span id="loc" class="badge"></span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
-					<span id="functionsWritten" class="badge"></span><small>&nbsp;&nbsp;functions written</small>&nbsp;&nbsp;
-					<span id="microtasksCompleted" class="badge"></span><small>&nbsp;&nbsp;microtasks completed</small>&nbsp;&nbsp;&nbsp;&nbsp;
-					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=worker.getHandle()%> </font>
+					<span id="locSpan" class="badge">0</span><small>&nbsp;&nbsp;lines of code</small> &nbsp;&nbsp;
+					<span id="functionCountSpan" class="badge">0</span><small>&nbsp;&nbsp;functions</small>&nbsp;&nbsp;
+					<span id="testCountSpan" class="badge">0</span><small>&nbsp;&nbsp;tests</small>&nbsp;&nbsp;&nbsp;&nbsp;
+					<span id="microtaskCountSpan" class="badge">0</span><small>&nbsp;&nbsp;microtasks</small>&nbsp;&nbsp;&nbsp;&nbsp;
+					<font color="white" style="font-weight:bold; font-size:larger;">	<i class=" icon-user"> </i> <%=workerHandle%> </font>
 				</div>  
 			</td>
 		</tr>
@@ -153,7 +151,7 @@
 <script src="/include/jshint.js"></script>
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/include/stars/jquery.rating.js"></script>
-<script src='https://cdn.firebase.com/js/client/1.0.2/firebase.js'></script>
+<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 <script src='/include/esprima.js'></script>
 <script src='/include/escodegen.browser.js'></script>
 <script src="/include/diff/diff_match_patch.js"></script>
@@ -164,21 +162,81 @@
 <script src="/js/errorCheck.js"></script>
 <script src="/js/keybind.js"></script>
 <script src="/js/JSONEditor.js"></script>
+<script src="/js/functions.js"></script>
+<script src="/js/tests.js"></script>
+<script src="/js/review.js"></script>
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
-	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
+	var reviews = new Firebase(firebaseURL + '/history/reviews/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
 	
-	var allADTs = <%= allADTs %>.ADTs;
+	var allADTs = [];
 	var typeNames = [];
 	var nameToADT = {};
+	var functions;
+	var tests;
 	
     $(document).ready(function()
     {
-    	setupADTData();
+    	// Notify firebase when this worker (eventually) logs out
+    	var onLogoutRef = new Firebase(firebaseURL + '/logouts/<%=workerID%>');
+    	onLogoutRef.onDisconnect().set(true);
     	
-        loadMicrotask();
+    	// Subscribe to logouts by other workers and forward them to the server
+    	var logoutsRef = new Firebase(firebaseURL + '/logouts');
+    	logoutsRef.on('child_added', function(childSnapshot, prevChildName) {
+    		if (childSnapshot.val() != null)
+    		{	    		
+	    		// Build a new ref to this child in particular. 
+	    		var loggedoutWorkerID = childSnapshot.name();
+	    	   	var workerLoggedOutRef = new Firebase(firebaseURL + '/logouts/' + loggedoutWorkerID);
+	
+	    		// Attempt to "take" the logout work item by deleting it. If the take succeeds, do the 
+	    		// logout work by sending a message to the server about the logout.
+	    		workerLoggedOutRef.transaction(function(currentData) {
+	    			if (currentData === null) {
+	    				// If someone already took the logout work, abort the transaction by returning nothing.
+	    		    	return;
+	    			} else {
+	    				// If the work item is still there, accept the work by attempting to (atomicly) remove
+	    				// the work item by setting it to null.
+	    		    	return null;
+	    			}
+	    		}, function(error, committed, snapshot) {
+	    			if (error) {
+	    		    	console.log('Transaction failed abnormally!', error);
+	    			} else if (committed)  {
+	    		  		// Successfully grabbed the work. Do the work now.
+						// Except, if we are asked to log out ourself, ignore this work. Because
+						// we are now logged in again, and logging us out while we are logged in
+						// can cause problems.
+						
+						if (loggedoutWorkerID != <%=workerID%>)
+						{
+							$.ajax({
+							    contentType: 'application/json',
+							    type: 'POST',
+							    url: '/<%=projectID%>/logout/' + loggedoutWorkerID
+							}).done( function (data) { console.log('succeed logging out worker ' + loggedoutWorkerID);	});
+						}
+	    		  	}
+	    		});
+    		}
+    	});
+    	
+		// Load the ADTs from firebase
+		var adtRef = new Firebase(firebaseURL + '/ADTs');
+		adtRef.on('value', function(snapshot) {
+			if (snapshot.val() != null)
+			{
+				allADTs = snapshot.val().ADTs;		
+		    	setupADTData();		    	
+			}
+			
+			// Wait for the ADTs to load before loading the microtask!
+	        loadMicrotask();
+		});
 
 		$("#logoutLink").click(function() {
 			// Tell server to logout
@@ -210,26 +268,18 @@
 		});
 		
 		// Hook the newsfeed to Firebase
-		var newsfeedRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/newsfeed');
+		var newsfeedRef = new Firebase(firebaseURL + '/workers/<%=workerID%>/newsfeed');
 		newsfeedRef.on('child_added', function(snapshot) {
 			if (snapshot.val() != null)
 				newNewsfeedItem(snapshot.val());
 		});		
 		
 		// Hook the score to Firebase
-		var scoreRef = new Firebase(firebaseURL + '/workers/<%=worker.getUserID()%>/score');
+		var scoreRef = new Firebase(firebaseURL + '/workers/<%=workerID%>/score');
 		scoreRef.on('value', function(snapshot) { 
 			if (snapshot.val() != null)
 				updateScoreDisplay(snapshot.val());
 		});		
-		
-		// Hook stats to firebase
-		var locRef = new Firebase(firebaseURL + '/statistics/linesOfCode');
-		locRef.on('value', function(snapshot) { $('#loc').html(snapshot.val()); });
-		var locRef = new Firebase(firebaseURL + '/statistics/functionsImplemented');
-		locRef.on('value', function(snapshot) { $('#functionsWritten').html(snapshot.val()); });
-		var locRef = new Firebase(firebaseURL + '/statistics/microtasksCompleted');
-		locRef.on('value', function(snapshot) { $('#microtasksCompleted').html(snapshot.val()); });		
 		
 		// Setup chat service
 		var chatRef = new Firebase(firebaseURL + '/chat');
@@ -238,7 +288,7 @@
 		$('#chatInput').keypress(function (e) {
 		    if (e.keyCode == 13) 
 		    {
-		      chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=worker.getHandle()%>'});
+		      chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=workerHandle%>'});
 		      $('#chatInput').val('');
 		      return false;
 		    }
@@ -250,6 +300,45 @@
 			var message = snapshot.val();
 			$('#chatOutput').append("<b>" + message.workerHandle + "</b> " + message.text + "<BR>");
 			$('#chatOutput').scrollTop($('#chatOutput')[0].scrollHeight);
+		});
+		
+		// Create the Functions and Tests services, creating a local repository of functions
+		// and tests synced to firebase
+		functions = new Functions();       
+    	functions.init(updateFunctionStats);
+		
+		var functionsRef = new Firebase(firebaseURL + '/artifacts/functions');
+		functionsRef.on('child_added', function (snapshot) 
+		{
+			functions.functionAdded(snapshot.val());
+		});
+		functionsRef.on('child_changed', function (snapshot) 
+		{
+			functions.functionChanged(snapshot.val());
+		});
+		
+		tests = new Tests();       
+    	tests.init(updateTestStats);
+		
+		var testsRef = new Firebase(firebaseURL + '/artifacts/tests');
+		testsRef.on('child_added', function (snapshot) 
+		{
+			tests.testAdded(snapshot.val());
+		});
+		testsRef.on('child_changed', function (snapshot) 
+		{
+			tests.testChanged(snapshot.val());
+		});
+		testsRef.on('child_removed', function (snapshot) 
+		{
+			tests.testDeleted(snapshot.val());
+		});
+		
+		// Track microtasks so that we can update the total count of microtasks.
+		var microtasksRef = new Firebase(firebaseURL + '/status/microtaskCount');
+		microtasksRef.on('value', function (snapshot) 
+		{
+			$('#microtaskCountSpan').html(snapshot.val());
 		});
 	});
     
@@ -265,14 +354,10 @@
 		}).done( function (data) { loadMicrotask();	});   
 		
 		// Push the microtask submit data onto the Firebase history stream
-		var eventData = {'microtaskType': microtaskType, 
-					   'microtaskID': microtaskID,
-					   'workerHandle': '<%= worker.getHandle() %>',
-					   'workerID': '<%= worker.getUserID() %>'};
-		eventData.microtask = formData;
-		eventListRef.child(microtaskID).set(eventData);
+		var submissionRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID + '/submission');
+		submissionRef.set(formData);
     }
-     
+
 	function skip() 
 	{
 		$.ajax('/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID + '&skip=true')
@@ -316,7 +401,21 @@
 	{
 		var itemValue = item.description;
 		var itemPoints = item.points;
-		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' + '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' +"You earned " + itemPoints +  " points for "   + itemValue + "!" +  '</td> </tr> </br> </table>');
+		var iconHTML = (item.points > 0) ? '<i class="icon-thumbs-up"></i>' : '<i class="icon-thumbs-down"></i>';
+		
+		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse" '
+				+ 'onclick="viewReview(1)"> ' 
+				+ '&nbsp;' + iconHTML + '&nbsp;&nbsp;' + itemValue +  '</td> </tr> </br> </table>');
+	}
+	
+	function viewReview(microtaskID)
+	{
+		var microtaskRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID);
+		microtaskRef.once('value', function (snapshot) 
+		{
+			displayWriteTestCases(viewReviewDiv, snapshot.val());
+			$("#viewReviewModal").modal();
+		});
 	}
 
 	function sendFeedback()
@@ -324,8 +423,8 @@
 		// Push the feedback to firebase
 		var feedback = {'microtaskType': microtaskType, 
 						  'microtaskID': microtaskID,
-						  'workerHandle': '<%= worker.getHandle() %>',
-						  'workerID': '<%= worker.getUserID() %>',
+						  'workerHandle': '<%= workerHandle %>',
+						  'workerID': '<%= workerID %>',
 						  'feedback': $("#feedbackBox").val()};
 		feedbackRef.push(feedback);
 		$("#feedbackBox").val("");
@@ -377,10 +476,21 @@
 		return true;		
 	}
 	
+	function updateFunctionStats(linesOfCode, functionCount)
+	{
+		$('#locSpan').html(linesOfCode);
+		$('#functionCountSpan').html(functionCount);
+	}
+	
+	function updateTestStats(testCount)
+	{
+		$('#testCountSpan').html(testCount);
+	}
+	
 </script>
 
-
-<div id="popUpReminder" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<!-- Popup for reminder to submit soon. -->
+	<div id="popUpReminder" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 		<div class="logout-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
 			<h3 id="logoutLabel" class="popupReminderHeading"></h3>
@@ -390,6 +500,20 @@
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>
 	</div>
+	
+	<!-- Popup for viewing review. -->
+	<div id="viewReviewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="logout-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+			<h3 id="logoutLabel" class="popupReminderHeading"></h3>
+		</div>
+		<div class="modal-body" id="viewReviewDiv"></div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+	
+	
 
 </body>
 </html>

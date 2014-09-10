@@ -6,8 +6,8 @@ public class MicrotaskSkipped extends MicrotaskSubmitted
 {
 	public String eventType = "MicrotaskSkipped";
 	
-	public MicrotaskSkipped(Microtask microtask)
+	public MicrotaskSkipped(Microtask microtask, String workerID)
 	{
-		super(microtask);
+		super(microtask, workerID);
 	}
 }

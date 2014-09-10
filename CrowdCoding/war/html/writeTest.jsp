@@ -14,10 +14,10 @@
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-    WriteTest microtask = (WriteTest) crowdUser.getMicrotask();
+    WriteTest microtask = (WriteTest) this.getServletContext().getAttribute("microtask");    
     
-    Function function = microtask.getFunction();
-    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project) + "'";
+    Function function = microtask.getFunction(project);
+    String allFunctionCodeInSystem = "'" + FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(project), project) + "'";
 	PromptType promptType = microtask.getPromptType();
 %>
 
@@ -133,12 +133,12 @@
 			if (showWritePrompt)
 			{
 	   			$("#writePrompt").css('display',"block");
-	   			setupReadonlyCodeBox(writeCodeBox);
+	   			setupReadonlyCodeBox(writeCodeBox, codeBoxCode);
 			}
 			else if (showCorrectPrompt)
 			{
 	   			$("#correctPrompt").css('display',"block");
-	   			setupReadonlyCodeBox(correctCodeBox);
+	   			setupReadonlyCodeBox(correctCodeBox, codeBoxCode);
 			}
 			else if (showFunctionChangedPrompt)
    			{
@@ -148,7 +148,7 @@
 			else if (showTestCaseChangedPrompt)
    			{
 	   			$("#testCaseChangedPrompt").css('display',"block");	 
-	   			setupReadonlyCodeBox(testCaseChangedCodeBox);
+	   			setupReadonlyCodeBox(testCaseChangedCodeBox, codeBoxCode);
    			}  	
 		}
 		

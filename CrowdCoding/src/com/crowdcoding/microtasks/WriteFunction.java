@@ -7,7 +7,9 @@ import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -31,7 +33,7 @@ public class WriteFunction extends Microtask
 	// Initialization constructor for a SKETCH write function. Microtask is not ready.
 	public WriteFunction(Function function, Project project)
 	{
-		super(project, false);
+		super(project);
 		this.promptType = PromptType.SKETCH;
 		commonInitialization(function, project);
 	}
@@ -40,7 +42,7 @@ public class WriteFunction extends Microtask
 	public WriteFunction(Function function, String oldFullDescription, 
 			String newFullDescription, Project project)
 	{
-		super(project, false);		
+		super(project);		
 		this.promptType = PromptType.DESCRIPTION_CHANGE;
 		
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
@@ -50,16 +52,23 @@ public class WriteFunction extends Microtask
 		commonInitialization(function, project);
 	}
 	
+    public Microtask copy(Project project)
+    {
+    	return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
+    } 
+	
 	private void commonInitialization(Function function, Project project)
 	{
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskCreated(new MicrotaskInFirebase(id, this.microtaskName(), function.getName(), 
+				false, submitValue), id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
 	}
 	
-	protected void doSubmitWork(DTO dto, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().sketchCompleted((FunctionDTO) dto, project);	
 	}
@@ -106,6 +115,6 @@ public class WriteFunction extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "editing a function";
+		return "edit a function";
 	}
 }

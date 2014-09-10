@@ -6,6 +6,12 @@ import java.net.URL;
 import java.util.List;
 
 import com.crowdcoding.Project;
+import com.crowdcoding.dto.ReviewDTO;
+import com.crowdcoding.dto.firebase.FunctionInFirebase;
+import com.crowdcoding.dto.firebase.LeaderboardEntry;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.QueueInFirebase;
+import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -17,17 +23,68 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
  */
 public class FirebaseService 
 {
-	// Reads the user stories for the specified project. If there are no user stories,
-	// instead reads the default user stories.
-	public static String readUserStories(Project project)
+	// Writes the specified microtask to firebase
+	public static void writeMicrotaskCreated(MicrotaskInFirebase dto, long microtaskID, Project project)
 	{
-		String result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/" + project.getID() 
-				+ ".json");
-		if (result == null || result.equals("null"))
-			result = readDataAbsolute("https://crowdcode.firebaseio.com/userStories/default.json");
-		return result;
+		writeData(dto.json(), "/microtasks/" + microtaskID + ".json", HTTPMethod.PUT, project);
+		
+		// Since microtaskIDs increase consequentively and start at 1, we can update the total number of microtasks
+		// to be microtaskID.		
+		writeData(Long.toString(microtaskID), "/status/microtaskCount.json", HTTPMethod.PUT, project);
+	}	
+	
+	// Writes information about microtask assignment to Firebase
+	public static void writeMicrotaskAssigned(long microtaskID, String workerID, 
+			String workerHandle, Project project, boolean assigned)
+	{
+		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskID + "/assigned.json", HTTPMethod.PUT, project); 
+		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskID + ".json", HTTPMethod.PATCH, project);
+		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.PUT, project); 
 	}
 	
+	public static void writeWorkerLoggedOut(String workerID, Project project)
+	{
+		writeData("", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.DELETE, project); 
+	}
+	
+	public static void writeMicrotaskQueue(QueueInFirebase dto, Project project)
+	{
+		System.out.println("Current microtask queue: " + dto.json());		
+		writeData(dto.json(), "/status/microtaskQueue.json", HTTPMethod.PUT, project); 
+	}
+	
+	public static void writeReviewQueue(QueueInFirebase dto, Project project)
+	{
+		System.out.println("Current review queue: " + dto.json());
+		writeData(dto.json(), "/status/reviewQueue.json", HTTPMethod.PUT, project); 
+	}
+	
+	// Stores the specified function to Firebase
+	public static void writeFunction(FunctionInFirebase dto, long functionID, int version, Project project)
+	{
+		writeData(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PUT, project); 
+		writeData(dto.json(), "/history/artifacts/functions/" + functionID + "/" + version + ".json", HTTPMethod.PUT, project); 				
+	}
+	
+	// Stores the specified test to Firebase
+	public static void writeTest(TestInFirebase dto, long testID, int version, Project project)
+	{
+		writeData(dto.json(), "/artifacts/tests/" + testID + ".json", HTTPMethod.PUT, project);
+		writeData(dto.json(), "/history/artifacts/tests/" + testID + "/" + version + ".json", HTTPMethod.PUT, project);		
+	}
+	
+	// Deletes the specified test in Firebase
+	public static void deleteTest(long testID, Project project)
+	{
+		writeData("", "/artifacts/tests/" + testID + ".json", HTTPMethod.DELETE, project);
+	}
+	
+	// Stores the specified review to firebase
+	public static void writeReview(ReviewDTO dto, long microtaskID, Project project)
+	{
+		writeData(dto.json(), "/microtasks/" + microtaskID + "/review.json", HTTPMethod.PUT, project);
+	}
+		
 	// Reads the ADTs for the specified project. If there are no ADTs, returns an empty string.
 	public static String readADTs(Project project)
 	{
@@ -38,8 +95,20 @@ public class FirebaseService
 		return result;
 	}
 	
+	// Copies the specified ADTs from the client request into the project
+	public static void copyADTs(Project project)
+	{
+		String adts = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID() 
+				+ "/ADTs.json");
+		if (adts == null || adts.equals("null"))
+			adts = "";
+		
+		System.out.println("ADTs for copy:" + adts);		
+		writeData(adts, "/ADTs.json", HTTPMethod.PUT, project);
+	}
+	
 	// Reads the functions for the specified project. If there are no functions, returns an empty string.
-	public static String readFunctions(Project project)
+	public static String readClientRequestFunctions(Project project)
 	{
 		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID() 
 				+ "/functions.json");
@@ -47,27 +116,24 @@ public class FirebaseService
 			result = "";
 		return result;
 	}
-		
-	public static void updateLeaderboard(String message, Project project)	
-	{
-		writeData(message, "/leaderboard.json", HTTPMethod.PUT, project);
-	}
 	
-	public static void setPoints(String workerID, int points, Project project)
+	public static void setPoints(String workerID, String workerDisplayName, int points, Project project)
 	{
 		writeData(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, project);
+		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
+		writeData(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, project);
+	}
+	
+	public static void writeWorker(String workerID, String workerDisplayName, Project project)
+	{
+		writeData(workerID, "/workers/" + workerID + "/workerID.json", HTTPMethod.PUT, project);
+		writeData(workerDisplayName, "/workers/" + workerID + "/displayName.json", HTTPMethod.PUT, project);
 	}
 	
 	// Posts the specified JSON message to the specified workers newsfeed
 	public static void postToNewsfeed(String workerID, String message, Project project)
 	{
 		writeData(message, "/workers/" + workerID + "/newsfeed.json", HTTPMethod.POST, project);		
-	}
-	
-	// Publishes the specified statistics
-	public static void publishStatistics(String message, Project project)
-	{
-		writeData(message, "/statistics.json", HTTPMethod.PUT, project); 
 	}
 	
 	// Publishes the history log

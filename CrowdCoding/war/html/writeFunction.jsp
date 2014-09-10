@@ -17,7 +17,7 @@
 	Project project = Project.Create(projectID);
     ObjectMapper mapper = new ObjectMapper();
     Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-    WriteFunction microtask = (WriteFunction) crowdUser.getMicrotask();
+    WriteFunction microtask = (WriteFunction) this.getServletContext().getAttribute("microtask");    
     
     String functionCode = microtask.getFunction().getEscapedFullCode();
     String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(), project);

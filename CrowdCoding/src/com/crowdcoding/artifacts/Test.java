@@ -5,22 +5,16 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.crowdcoding.Project;
-import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.MockDTO;
-import com.crowdcoding.dto.MocksDTO;
+import com.crowdcoding.artifacts.commands.FunctionCommand;
 import com.crowdcoding.dto.TestDTO;
+import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.dto.history.PropertyChange;
 import com.crowdcoding.microtasks.WriteTest;
-import com.crowdcoding.microtasks.WriteTestCases;
-import com.googlecode.objectify.Key;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.annotation.Load;
-import com.googlecode.objectify.cmd.Query;
 
 @EntitySubclass(index=true)
 public class Test extends Artifact
@@ -29,7 +23,8 @@ public class Test extends Artifact
 	private String description;		
 	@Index private boolean isImplemented;
 	@Index private boolean isDeleted;			// true iff the test has been deleted.
-	@Load private Ref<Function> function;
+	private long functionID;
+	private String functionName;	
 
 	private String code; 	
 	@Index private boolean hasSimpleTest;
@@ -52,7 +47,9 @@ public class Test extends Artifact
 		// iterate over the matches to find the exact one, in case the hash matches multiple test cases
 		for (Test test : tests)
 		{
-			if (simpleTestKey.equals(generateSimpleTestKey(test.function.get().getName(), test.simpleTestInputs)))
+			// TODO: this will not work whenever the function changes name. We should prob use the 
+			// function ID here instead.
+			if (simpleTestKey.equals(generateSimpleTestKey(test.functionName, test.simpleTestInputs)))
 			{
 				return test;
 			}
@@ -61,26 +58,12 @@ public class Test extends Artifact
 		return null;
 	}
 	
-	// Returns a JSON string (in MockDTO format), escaped for Javascriptt
-	public static String allMocksInSystemEscaped(Project project)
-	{
-		List<MockDTO> mockDTOs = new ArrayList<MockDTO>();
-		Query<Test> simpleTests = ofy().load().type(Test.class).ancestor(project.getKey()).filter(
-				"hasSimpleTest", true).filter("isImplemented", true).filter("isDeleted", false);
-		for (Test simpleTest : simpleTests)		
-			mockDTOs.add(new MockDTO(simpleTest.getFunction().getName(), simpleTest.simpleTestInputs, 
-					simpleTest.simpleTestOutput));
-
-		MocksDTO mocksDTO = new MocksDTO(mockDTOs);
-		return StringEscapeUtils.escapeEcmaScript(mocksDTO.json());
-	}	
-	
 	// Constructor for deserialization
 	protected Test()
 	{
 	}
 	
-	public Test(String description, Function function, Project project)
+	public Test(String description, long functionID, String functionName, Project project)
 	{
 		super(project);	
 
@@ -88,19 +71,20 @@ public class Test extends Artifact
 		
 		this.isImplemented = false;
 		this.isDeleted = false;
-		this.function = (Ref<Function>) Ref.create(function.getKey());
+		this.functionID = functionID;
+		this.functionName = functionName;
 		this.description = description;
 		this.hasSimpleTest = true;
-		this.code = generateDefaultUnitTest(function);
+		this.code = ""; //generateDefaultUnitTest(function);
 
 		ofy().save().entity(this).now();
-		function.addTest(this);
+		FunctionCommand.addTest(functionID, this.id);
 		queueMicrotask(new WriteTest(this, project), project);
 		
 		project.historyLog().endEvent();
 	}	
 	
-	public Test(Function function, List<String> inputs, String output, String code, Project project)
+	public Test(long functionID, String functionName, List<String> inputs, String output, String code, Project project)
 	{
 		super(project);	
 
@@ -108,16 +92,17 @@ public class Test extends Artifact
 		
 		this.isImplemented = true;
 		this.isDeleted = false;
-		this.function = (Ref<Function>) Ref.create(function.getKey());
+		this.functionID = functionID;
+		this.functionName = functionName;
 		this.description = "";
 		this.hasSimpleTest = true;
 		this.code = code;
 		this.simpleTestInputs = inputs;
 		this.simpleTestOutput = output;
-		this.simpleTestKeyHash = generateSimpleTestKeyHash(function.getName(), inputs);
+		this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, inputs);
 
 		ofy().save().entity(this).now();
-		function.addTest(this);
+		FunctionCommand.addTest(functionID, this.id);
 		
 		// The test is already fully implemented. It just needs to be run.
 		project.requestTestRun();
@@ -127,7 +112,7 @@ public class Test extends Artifact
 
 	private String generateDefaultUnitTest(Function function)
 	{	     
-	      StringBuilder builder = new StringBuilder();
+	      /*StringBuilder builder = new StringBuilder();
 	      builder.append("equal(");
 	      builder.append(function.getName());
 	      builder.append("(");
@@ -136,7 +121,8 @@ public class Test extends Artifact
 	      }
 	      builder.replace(builder.length()-1,builder.length(),"");
 	      builder.append("), <expectedResult>, '" + getDescription() + "');");
-	      return builder.toString();
+	      return builder.toString();*/
+		 return null;
 	}
 	
 	public String getTestCode()
@@ -168,9 +154,14 @@ public class Test extends Artifact
 		return description;
 	}
 	
-	public Function getFunction()
+	public String getFunctionName()
 	{
-		return function.getValue();
+		return functionName;
+	}
+	
+	public long getFunctionID()
+	{
+		return functionID;
 	}
 	
 	public boolean isImplemented()
@@ -193,27 +184,6 @@ public class Test extends Artifact
 		project.requestTestRun();
 	}
 	
-	// Marks this test as deleted, removing it from the list of tests on its owning function.
-	public void delete(Function function)
-	{
-		this.isDeleted = true;
-		ofy().save().entity(this).now();		
-		function.deleteTest((Key<Test>) this.getKey());
-	}
-	
-	// Given a ref to a function that has not been loaded from the datastore,
-	// load it and get the object
-	public static Test load(Ref<Test> ref)
-	{
-		return ofy().load().ref(ref).get();
-	}	
-	
-	// Given an id for a test, finds the corresponding test. Returns null if no such test exists.
-	public static Ref<Test> find(long id, Project project)
-	{
-		return (Ref<Test>) ofy().load().key(Artifact.getKey(id, project));		
-	}
-	
 	// Checks the status of the test, marking it as implemented if appropriate
 	private void checkIfBecameImplemented(Project project)
 	{
@@ -224,19 +194,10 @@ public class Test extends Artifact
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
 			
-			function.get().testBecameImplemented(this, project);
+			FunctionCommand.testBecameImplemented(functionID, this.id);
 			
 			project.historyLog().endEvent();
 		}				
-	}
-
-	public void disputeUnitTestCorrectionCreated(FunctionDTO dto, Project project) 
-	{
-		project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));		
-		this.isImplemented = false;
-		ofy().save().entity(this).now();
-		queueMicrotask(new WriteTest(this, dto.description, project), project);		
-		project.historyLog().endEvent();
 	}
 	
 	public void writeTestCompleted(TestDTO dto, Project project)
@@ -250,12 +211,7 @@ public class Test extends Artifact
 			ofy().save().entity(this).now();
 			microtaskOutCompleted();
 			
-			// Queue a microtask to edit the test cases.
-			// The function needs to queue the microtask, as it spans all tests and there
-			// should only be one of these on a function at a time. But ok if tests are being edited - 
-			// can still queue something when its done...
-			Function function = this.function.get();			
-			function.queueMicrotask(new WriteTestCases(function, dto.disputeText, this.description, project), project);
+			FunctionCommand.disputeTestCases(functionID, dto.disputeText, this.description);
 			
 			project.historyLog().endEvent();			
 			lookForWork(project);	
@@ -267,7 +223,7 @@ public class Test extends Artifact
 			this.simpleTestInputs = dto.simpleTestInputs;
 			this.simpleTestOutput = dto.simpleTestOutput;	
 			if (dto.hasSimpleTest)			
-				this.simpleTestKeyHash = generateSimpleTestKeyHash(getFunction().getName(), dto.simpleTestInputs);
+				this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, dto.simpleTestInputs);
 
 			ofy().save().entity(this).now();
 			
@@ -277,6 +233,62 @@ public class Test extends Artifact
 		}
 	}
 	
+	public void storeToFirebase(Project project)
+	{
+		version++;
+		if (this.isDeleted)
+			FirebaseService.deleteTest(this.id, project);
+		else
+			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs, 
+				simpleTestOutput, description, functionName, functionID), this.id, version, project);
+	}	
+	
+	/******************************************************************************************
+	 * Commands
+	 *****************************************************************************************/
+	
+	public void dispute(String issueDescription, Project project) 
+	{
+		project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));		
+		this.isImplemented = false;
+		ofy().save().entity(this).now();
+		queueMicrotask(new WriteTest(this, issueDescription, project), project);		
+		project.historyLog().endEvent();
+	}
+	
+	// Marks this test as deleted, removing it from the list of tests on its owning function.
+	public void delete()
+	{
+		this.isDeleted = true;
+		ofy().save().entity(this).now();		
+	}
+	
+	// Notify this test that the function under test has changed its interface.
+	public void functionChangedInterface(String oldFullDescription, String newFullDescription, Project project)
+	{
+		// TODO: should we resave the function name here??
+		
+		queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, project), project);
+	}
+	
+	
+	/******************************************************************************************
+	 * Objectify Datastore methods
+	 *****************************************************************************************/
+	
+	// Given a ref to a function that has not been loaded from the datastore,
+	// load it and get the object
+	public static Test load(Ref<Test> ref)
+	{
+		return ofy().load().ref(ref).get();
+	}	
+	
+	// Given an id for a test, finds the corresponding test. Returns null if no such test exists.
+	public static Ref<Test> find(long id, Project project)
+	{
+		return (Ref<Test>) ofy().load().key(Artifact.getKey(id, project));		
+	}
+		
 	// Generates a simple test key for the specified function and list of inputs
 	private static String generateSimpleTestKey(String functionName, List<String> inputs)
 	{
@@ -288,23 +300,14 @@ public class Test extends Artifact
 		return generateSimpleTestKey(functionName, inputs).hashCode(); 		
 	}
 	
+	/******************************************************************************************
+	 * Logging methods
+	 *****************************************************************************************/
+	
 	public String toString()
 	{
-		return "Test " + function.get().getName() + " for '" + description + "' " +
+		return "Test " + functionName + " for '" + description + "' " +
 				(isImplemented? " implemented" : " not implemented")
 				+ (isDeleted? " DELETED " : "");
-	}
-	
-	public static String StatusReport(Project project)
-	{
-		StringBuilder output = new StringBuilder();
-		
-		output.append("**** ALL TESTS ****\n");
-		
-		Query<Test> q = ofy().load().type(Test.class).ancestor(project.getKey());		
-		for (Test test : q)
-			output.append(test.toString() + "\n");
-		
-		return output.toString();
 	}
 }

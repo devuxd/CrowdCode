@@ -7,7 +7,9 @@ import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -31,12 +33,19 @@ public class ReuseSearch extends Microtask
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		this.callDescription = callDescription;
 		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskCreated(new MicrotaskInFirebase(id, this.microtaskName(), function.getName(), 
+				false, submitValue), id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
 	}
 	
-	protected void doSubmitWork(DTO dto, Project project)
+    public Microtask copy(Project project)
+    {
+    	return new ReuseSearch(this.function.getValue(), this.callDescription, project);
+    } 
+	
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);	
 	}
@@ -73,6 +82,6 @@ public class ReuseSearch extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "conducting a reuse search";
+		return "do a reuse search";
 	}
 }

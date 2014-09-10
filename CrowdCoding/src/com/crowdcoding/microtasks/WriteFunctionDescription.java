@@ -7,7 +7,9 @@ import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -25,8 +27,7 @@ public class WriteFunctionDescription extends Microtask
 	}
 	
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, String callDescription, Function caller, 
-			Project project)
+	public WriteFunctionDescription(Function function, String callDescription, Function caller, Project project)
 	{
 		super(project);
 		this.submitValue = 8;
@@ -34,12 +35,20 @@ public class WriteFunctionDescription extends Microtask
 		this.function = (Ref<Function>) Ref.create(function.getKey());	
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());	
 		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskCreated(new MicrotaskInFirebase(id, this.microtaskName(), function.getName(), 
+				false, submitValue), id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
 	}
 	
-	protected void doSubmitWork(DTO dto, Project project)
+    public Microtask copy(Project project)
+    {
+    	return new WriteFunctionDescription(this.function.getValue(),this.callDescription, 
+    			this.caller.getValue(), project); 
+    }
+	
+	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		FunctionDescriptionDTO functionDTO = (FunctionDescriptionDTO) dto;	
 		
@@ -85,6 +94,6 @@ public class WriteFunctionDescription extends Microtask
 	
 	public String microtaskDescription()
 	{
-		return "describing a function";
+		return "describe a function";
 	}
 }

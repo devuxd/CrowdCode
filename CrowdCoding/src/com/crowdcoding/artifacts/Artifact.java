@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.crowdcoding.Project;
+import com.crowdcoding.artifacts.commands.ProjectCommand;
 import com.crowdcoding.microtasks.DebugTestFailure;
 import com.crowdcoding.microtasks.Microtask;
 import com.googlecode.objectify.Key;
@@ -24,10 +25,11 @@ public /*abstract*/ class Artifact
 {
 	@Parent Key<Project> project;
 	@Id protected long id;
+	protected int version;		// version of the artifact
 	
 	// Queued microtasks waiting to be done (not yet in the ready state)
 	protected Queue<Ref<Microtask>> queuedMicrotasks = new LinkedList<Ref<Microtask>>();		
-	protected Ref<Microtask> microtaskOut;
+	protected boolean microtaskOut;		// Is there an associated microtask currently in progress?
 	
 	// Default constructor for deserialization
 	protected Artifact()
@@ -39,6 +41,7 @@ public /*abstract*/ class Artifact
 	{
 		this.project = project.getKey();
 		id = project.generateID("Artifact");
+		version = 0;
 	}
 		
 	public Key<? extends Artifact> getKey()
@@ -65,6 +68,8 @@ public /*abstract*/ class Artifact
 	
 	public /* abstract */  String getName() { throw new RuntimeException("Must implement getName()."); };
 	
+	// Writes the artifact out to Firebase, publishing the current state of the artifact to all clients.
+	public void storeToFirebase(Project project) { throw new RuntimeException("Must implement storeToFirebase().");  };
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  MICROTASK QUEUEING
@@ -79,16 +84,16 @@ public /*abstract*/ class Artifact
 	}
 	
 	// Makes the specified microtask out for work
-	protected void makeMicrotaskOut(Microtask microtask)
+	protected void makeMicrotaskOut(Microtask microtask, Project project)
 	{
-		microtask.makeReady();
-		microtaskOut = Ref.create(microtask.getKey());
+		ProjectCommand.queueMicrotask(microtask.getID(), null);
+		microtaskOut = true;
 		ofy().save().entity(this).now();
 	}
 	
 	protected void microtaskOutCompleted()
 	{
-		microtaskOut = null;
+		microtaskOut = false;
 		ofy().save().entity(this).now();
 	}
 	
@@ -98,15 +103,15 @@ public /*abstract*/ class Artifact
 	{
 		// If there is currently not already a microtask being done on this function, 
 		// determine if there is work to be done
-		if (microtaskOut == null && !queuedMicrotasks.isEmpty())
+		if (!microtaskOut && !queuedMicrotasks.isEmpty())
 		{	
-			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get());
+			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
 		}
 	}
 	
 	// Returns if there is work to be done (either a microtask out or queued work)
 	protected boolean workToBeDone()
 	{
-		return microtaskOut != null || !queuedMicrotasks.isEmpty();		
+		return microtaskOut || !queuedMicrotasks.isEmpty();		
 	}
 }

@@ -10,7 +10,9 @@ import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -31,12 +33,19 @@ public class DebugTestFailure extends Microtask
           super(project);
           this.function = (Ref<Function>) Ref.create(function.getKey());         
           ofy().save().entity(this).now();
-         
+  		  FirebaseService.writeMicrotaskCreated(new MicrotaskInFirebase(id, this.microtaskName(), function.getName(), 
+				false, submitValue), id, project);
+          
           project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
           project.historyLog().endEvent();
      }
 
-     protected void doSubmitWork(DTO dto, Project project)
+     public Microtask copy(Project project)
+     {
+    	 return new DebugTestFailure(this.function.getValue(), project);
+     }
+     
+     protected void doSubmitWork(DTO dto, String workerID, Project project)
      {
           function.get().debugTestFailureCompleted((FunctionDTO) dto, project);    
      }
@@ -61,9 +70,9 @@ public class DebugTestFailure extends Microtask
           return function.getValue().getEscapedCode();
      }
     
-     public String[] getTestCases()
+     public String[] getTestCases(Project project)
      {
-          List<Ref<Test>> tempCases = function.getValue().getTestCases();
+          List<Ref<Test>> tempCases = function.getValue().getTestCases(project);
           String [] stringVersion = new String[tempCases.size()];
           int i = 0;
           for(Ref<Test>  testRef : tempCases)
@@ -84,9 +93,9 @@ public class DebugTestFailure extends Microtask
           return stringVersion;
      }
     
-     public String[] getTestDescriptions()
+     public String[] getTestDescriptions(Project project)
      {
-          List<Ref<Test>> tempCases = function.getValue().getTestCases();
+          List<Ref<Test>> tempCases = function.getValue().getTestCases(project);
           String [] stringVersion = new String[tempCases.size()];
           int i = 0;
           for(Ref<Test>  testRef : tempCases)
@@ -125,6 +134,6 @@ public class DebugTestFailure extends Microtask
      
  	public String microtaskDescription()
  	{
- 		return "debugging a test failure";
+ 		return "debug a test failure";
  	}
 }

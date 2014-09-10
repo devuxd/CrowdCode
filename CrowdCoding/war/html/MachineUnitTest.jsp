@@ -15,7 +15,7 @@
 	String projectID = (String) request.getAttribute("project");
 	Project project = Project.Create(projectID);
 	Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
-	MachineUnitTest microtask = (MachineUnitTest) crowdUser.getMicrotask();
+	MachineUnitTest microtask = (MachineUnitTest) this.getServletContext().getAttribute("microtask");
 	ObjectMapper mapper = new ObjectMapper();
 	Writer strWriter = new StringWriter();
 	// get all test cases in system
