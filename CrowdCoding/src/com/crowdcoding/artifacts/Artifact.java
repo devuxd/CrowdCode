@@ -41,6 +41,7 @@ public /*abstract*/ class Artifact
 	{
 		this.project = project.getKey();
 		id = project.generateID("Artifact");
+		version = 0;
 	}
 		
 	public Key<? extends Artifact> getKey()
