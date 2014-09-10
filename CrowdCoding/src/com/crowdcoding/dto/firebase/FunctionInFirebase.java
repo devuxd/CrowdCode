@@ -11,6 +11,7 @@ public class FunctionInFirebase extends DTO
 	
 	public String name;
 	public long id;
+	public int version;
 	public String returnType;
 	public List<String> paramNames = new ArrayList<String>();
 	public List<String> paramTypes = new ArrayList<String>();
@@ -34,12 +35,13 @@ public class FunctionInFirebase extends DTO
 	{		
 	}
 
-	public FunctionInFirebase(String name, long id, String returnType, List<String> paramNames, 
+	public FunctionInFirebase(String name, long id, int version, String returnType, List<String> paramNames, 
 			List<String> paramTypes, String header, String description, String code, int linesOfCode,
 			boolean described, boolean written, boolean needsDebugging, int queuedMicrotasks) 	
 	{
 		this.name = name;
 		this.id = id;
+		this.version = version;
 		this.returnType = returnType;
 		this.paramNames = paramNames;
 		this.paramTypes = paramTypes;

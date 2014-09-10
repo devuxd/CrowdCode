@@ -4,12 +4,9 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Artifact;
-import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSkipped;
 import com.crowdcoding.dto.history.MicrotaskSubmitted;
-import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
@@ -79,7 +76,6 @@ public /*abstract*/ class Microtask
 			owningArtifact.storeToFirebase(project);
 		
 		project.historyLog().endEvent();
-		postToFirebase(project, this.getOwningArtifact(), true);
 	}	
 	
 	public void skip(String workerID, Project project)
@@ -88,7 +84,6 @@ public /*abstract*/ class Microtask
 		// Increment the point value by 10
 		this.submitValue += 10;
 		ofy().save().entity(this).now();				
-		postToFirebase(project, this.getOwningArtifact(), true);		
 		project.historyLog().endEvent();
 	}
 		
@@ -151,14 +146,6 @@ public /*abstract*/ class Microtask
 	public int getSubmitValue()
 	{
 		return submitValue;
-	}
-	
-	// Posts the current state of the microtask to firebase
-	protected void postToFirebase(Project project, Artifact owningArtifact, boolean ready)
-	{
-		String owningArtifactName = (owningArtifact == null) ? "" : owningArtifact.getName();
-		FirebaseService.writeMicrotask(new MicrotaskInFirebase(id, this.microtaskName(),
-				owningArtifactName, completed, submitValue), id, project);
 	}
 	
 	// Should only be called from within the entity group of the owning artifact

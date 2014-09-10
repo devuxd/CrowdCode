@@ -10,7 +10,9 @@ import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -31,7 +33,8 @@ public class DebugTestFailure extends Microtask
           super(project);
           this.function = (Ref<Function>) Ref.create(function.getKey());         
           ofy().save().entity(this).now();
-          postToFirebase(project, function, false);
+  		  FirebaseService.writeMicrotaskCreated(new MicrotaskInFirebase(id, this.microtaskName(), function.getName(), 
+				false, submitValue), id, project);
           
           project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
           project.historyLog().endEvent();

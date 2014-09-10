@@ -210,6 +210,42 @@ public class CrowdServlet extends HttpServlet
 			
 			executeCommands(commands, projectID);	
 		}	
+		else if (command.equals("REVIEWS ON"))
+		{
+			output.append("REVIEWS ON executed at " + currentTime.toString() + "<BR>");
+			
+			List<Command> commands = new ArrayList<Command>();
+			commands.addAll(ofy().transact(new Work<List<Command>>() {
+		        public List<Command> run()
+		        {
+	    			CommandContext context = new CommandContext();	
+	    			ProjectCommand.enableReviews(true);
+	    			output.append("Reviews successfully set to on.<BR>"); 
+		        	
+					return context.commands(); 
+		        }
+		    }));
+			
+			executeCommands(commands, projectID);	
+		}
+		else if (command.equals("REVIEWS OFF"))
+		{
+			output.append("REVIEWS OFF executed at " + currentTime.toString() + "<BR>");
+			
+			List<Command> commands = new ArrayList<Command>();
+			commands.addAll(ofy().transact(new Work<List<Command>>() {
+		        public List<Command> run()
+		        {
+	    			CommandContext context = new CommandContext();	
+	    			ProjectCommand.enableReviews(false);
+	    			output.append("Reviews successfully set to off.<BR>"); 
+		        	
+					return context.commands(); 
+		        }
+		    }));
+			
+			executeCommands(commands, projectID);	
+		}
 		else
 		{
 			output.append("Unrecognized command " + command);

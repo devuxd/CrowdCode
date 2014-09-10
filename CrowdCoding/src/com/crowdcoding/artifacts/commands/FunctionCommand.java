@@ -23,7 +23,9 @@ public abstract class FunctionCommand extends Command
 	public static FunctionCommand addCaller(long functionID, long callerFunctionID) 
 		{ return new AddCaller(functionID, callerFunctionID); }
 	public static FunctionCommand addDependency(long functionID, long newDependency, String pseudoCall)
-		{ return new AddDependency(functionID, newDependency, pseudoCall); }
+		{ return new AddDependency(functionID, newDependency, pseudoCall); }	
+	public static FunctionCommand addTest(long functionID, long testID)
+		{ return new AddTest(functionID, testID); }
 	
 	public static FunctionCommand testBecameImplemented(long functionID, long testID) 
 		{ return new TestBecameImplemented(functionID, testID); }
@@ -231,6 +233,22 @@ public abstract class FunctionCommand extends Command
 			function.addDependency(newDependency, pseudoCall, project);
 		}		
 	}
+	
+	protected static class AddTest extends FunctionCommand
+	{
+		private long testID;
+		
+		public AddTest(long functionID, long testID)
+		{
+			super(functionID);
+			this.testID = testID;
+		}
+		
+		public void execute(Function function, Project project)
+		{
+			function.addTest(testID);
+		}		
+	}	
 	
 	protected static class CalleeBecameDescribed extends FunctionCommand
 	{

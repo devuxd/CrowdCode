@@ -10,8 +10,8 @@ public abstract class WorkerCommand extends Command
 {
 	protected String workerID;
 	
-	public static WorkerCommand awardPoints(String workerID, int points, String description) 
-		{ return new AwardPoints(workerID, points, description); }
+	public static WorkerCommand awardPoints(String workerID, int points) 
+		{ return new AwardPoints(workerID, points); }
 
 
 	private WorkerCommand(String workerID)
@@ -51,19 +51,17 @@ public abstract class WorkerCommand extends Command
 	protected static class AwardPoints extends WorkerCommand
 	{
 		private int points;
-		private String description;
 		
-		public AwardPoints(String workerID, int points, String description)
+		public AwardPoints(String workerID, int points)
 		{
 			super(workerID);
 			this.workerID = workerID;
 			this.points = points;
-			this.description = description;
 		}
 		
 		public void execute(Worker worker, Project project)
 		{
-			worker.awardPoints(points, description, project);
+			worker.awardPoints(points, project);
 		}		
 	}
 }

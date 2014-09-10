@@ -151,7 +151,7 @@
 <script src="/include/jshint.js"></script>
 <script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 <script src="/include/stars/jquery.rating.js"></script>
-<script src='https://cdn.firebase.com/js/client/1.0.2/firebase.js'></script>
+<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 <script src='/include/esprima.js'></script>
 <script src='/include/escodegen.browser.js'></script>
 <script src="/include/diff/diff_match_patch.js"></script>
@@ -164,10 +164,11 @@
 <script src="/js/JSONEditor.js"></script>
 <script src="/js/functions.js"></script>
 <script src="/js/tests.js"></script>
+<script src="/js/review.js"></script>
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
-	var eventListRef = new Firebase(firebaseURL + '/history/microtaskSubmits/');
+	var reviews = new Firebase(firebaseURL + '/history/reviews/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
 	
 	var allADTs = [];
@@ -175,7 +176,6 @@
 	var nameToADT = {};
 	var functions;
 	var tests;
-	var microtasksCount = 0;
 	
     $(document).ready(function()
     {
@@ -329,13 +329,16 @@
 		{
 			tests.testChanged(snapshot.val());
 		});
+		testsRef.on('child_removed', function (snapshot) 
+		{
+			tests.testDeleted(snapshot.val());
+		});
 		
 		// Track microtasks so that we can update the total count of microtasks.
-		var microtasksRef = new Firebase(firebaseURL + '/microtasks');
-		microtasksRef.on('child_added', function (snapshot) 
+		var microtasksRef = new Firebase(firebaseURL + '/status/microtaskCount');
+		microtasksRef.on('value', function (snapshot) 
 		{
-			microtasksCount++;
-			$('#microtaskCountSpan').html(microtasksCount);
+			$('#microtaskCountSpan').html(snapshot.val());
 		});
 	});
     
@@ -351,14 +354,10 @@
 		}).done( function (data) { loadMicrotask();	});   
 		
 		// Push the microtask submit data onto the Firebase history stream
-		var eventData = {'microtaskType': microtaskType, 
-					   'microtaskID': microtaskID,
-					   'workerHandle': '<%= workerHandle %>',
-					   'workerID': '<%= workerID %>'};
-		eventData.microtask = formData;
-		eventListRef.child(microtaskID).set(eventData);
+		var submissionRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID + '/submission');
+		submissionRef.set(formData);
     }
-     
+
 	function skip() 
 	{
 		$.ajax('/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID + '&skip=true')
@@ -402,8 +401,21 @@
 	{
 		var itemValue = item.description;
 		var itemPoints = item.points;
-		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse"> ' 
-				+ '&nbsp;<i class="icon-thumbs-up"></i>&nbsp;&nbsp;' + itemValue +  '</td> </tr> </br> </table>');
+		var iconHTML = (item.points > 0) ? '<i class="icon-thumbs-up"></i>' : '<i class="icon-thumbs-down"></i>';
+		
+		$('#activityFeedTable').prepend('<tr class="animated minipulse"> <td class="animated pulse" '
+				+ 'onclick="viewReview(1)"> ' 
+				+ '&nbsp;' + iconHTML + '&nbsp;&nbsp;' + itemValue +  '</td> </tr> </br> </table>');
+	}
+	
+	function viewReview(microtaskID)
+	{
+		var microtaskRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID);
+		microtaskRef.once('value', function (snapshot) 
+		{
+			displayWriteTestCases(viewReviewDiv, snapshot.val());
+			$("#viewReviewModal").modal();
+		});
 	}
 
 	function sendFeedback()
@@ -477,8 +489,8 @@
 	
 </script>
 
-
-<div id="popUpReminder" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<!-- Popup for reminder to submit soon. -->
+	<div id="popUpReminder" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 		<div class="logout-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
 			<h3 id="logoutLabel" class="popupReminderHeading"></h3>
@@ -488,6 +500,20 @@
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>
 	</div>
+	
+	<!-- Popup for viewing review. -->
+	<div id="viewReviewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="logout-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+			<h3 id="logoutLabel" class="popupReminderHeading"></h3>
+		</div>
+		<div class="modal-body" id="viewReviewDiv"></div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
+	</div>
+	
+	
 
 </body>
 </html>

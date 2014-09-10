@@ -8,7 +8,10 @@ import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.TestDTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.WriteTestInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -39,7 +42,8 @@ public class WriteTest extends Microtask
 	     this.promptType = PromptType.WRITE;
 	     this.test = (Ref<Test>) Ref.create(test.getKey());         
 	     ofy().save().entity(this).now();
-         postToFirebase(project, test, false);
+		 FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskName(), test.getName(), 
+			  false, submitValue, test.getID(), promptType.name(), "", "", "", ""), id, project);
 	    
 	     project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
 	     project.historyLog().endEvent();
@@ -53,7 +57,8 @@ public class WriteTest extends Microtask
 		this.test = (Ref<Test>) Ref.create(test2.getKey());		
 		this.issueDescription = issueDescription;
 		ofy().save().entity(this).now();
-        postToFirebase(project, test2, false);
+		 FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskName(), test2.getName(), 
+				  false, submitValue, test2.getID(), promptType.name(), issueDescription, "", "", ""), id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test2));
 		project.historyLog().endEvent();
@@ -68,7 +73,9 @@ public class WriteTest extends Microtask
 		this.oldFunctionDescription = oldFullDescription;
 		this.newFunctionDescription = newFullDescription;
 		ofy().save().entity(this).now();
-        postToFirebase(project, test2, false);
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskName(), test2.getName(), 
+				  false, submitValue, test2.getID(), promptType.name(), "", oldFullDescription, newFullDescription, ""), 
+			  id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test2));
 		project.historyLog().endEvent();
@@ -83,7 +90,8 @@ public class WriteTest extends Microtask
 		this.oldTestCase = oldTestCase;
 
 		ofy().save().entity(this).now();
-        postToFirebase(project, test, false);
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskName(), test.getName(), 
+				  false, submitValue, test.getID(), promptType.name(), "", "", "", oldTestCase), id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
 		project.historyLog().endEvent();
@@ -102,7 +110,9 @@ public class WriteTest extends Microtask
 		this.oldTestCase = oldTestCase;		
 
 		ofy().save().entity(this).now();
-        postToFirebase(project, test, false);
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskName(), test.getName(), 
+				  false, submitValue, test.getID(), promptType.name(), issueDescription, 
+				  oldFunctionDescription, newFunctionDescription, oldTestCase), id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
 		project.historyLog().endEvent();

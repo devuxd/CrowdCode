@@ -133,12 +133,12 @@
 			if (showWritePrompt)
 			{
 	   			$("#writePrompt").css('display',"block");
-	   			setupReadonlyCodeBox(writeCodeBox);
+	   			setupReadonlyCodeBox(writeCodeBox, codeBoxCode);
 			}
 			else if (showCorrectPrompt)
 			{
 	   			$("#correctPrompt").css('display',"block");
-	   			setupReadonlyCodeBox(correctCodeBox);
+	   			setupReadonlyCodeBox(correctCodeBox, codeBoxCode);
 			}
 			else if (showFunctionChangedPrompt)
    			{
@@ -148,7 +148,7 @@
 			else if (showTestCaseChangedPrompt)
    			{
 	   			$("#testCaseChangedPrompt").css('display',"block");	 
-	   			setupReadonlyCodeBox(testCaseChangedCodeBox);
+	   			setupReadonlyCodeBox(testCaseChangedCodeBox, codeBoxCode);
    			}  	
 		}
 		

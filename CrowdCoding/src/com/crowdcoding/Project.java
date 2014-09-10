@@ -41,6 +41,7 @@ public class Project
 	@Id private String id;
 	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
+	private boolean reviewingEnabled = true;			// Disabling this flag stops new review microtasks from being generated
 	private boolean waitingForTestRun = false;								// is the project currently waiting for tests to be run?
 	private LinkedList<Long> microtaskQueue = new LinkedList<Long>();			// Global queue of microtasks waiting to be done
 	private LinkedList<Long> reviewQueue = new LinkedList<Long>();			// Global queue of review microtasks waiting to be done
@@ -297,14 +298,13 @@ public class Project
 		microtaskAssignments.put(workerID, null);
 		ofy().save().entity(this).now();
 		
-		// If this is not a review microtask, spawn a new review microtask to review the work.
-		if (!microtaskType.equals(Review.class))
+		// If reviewing is enabled and this is not a review microtask, spawn a new review microtask to review the work.
+		if (reviewingEnabled && !microtaskType.equals(Review.class))
 		{
 			MicrotaskCommand.createReview(microtaskID, workerID, jsonDTOData, workerID); 
 		}
 		else
 		{
-			// Do a submit of the review microtask
 			MicrotaskCommand.submit(microtaskID, jsonDTOData, workerID);			
 		}
 	} 
@@ -373,8 +373,8 @@ public class Project
 		{
 			waitingForTestRun = true;
 			ofy().save().entity(this).now();
-			Microtask microtask = new MachineUnitTest(this);
-			ProjectCommand.queueMicrotask(microtask.getID(), null);			
+			//Microtask microtask = new MachineUnitTest(this);
+			//ProjectCommand.queueMicrotask(microtask.getID(), null);			
 		}		
 	}
 	
@@ -386,6 +386,12 @@ public class Project
 		// run.
 		waitingForTestRun = false;
 		ofy().save().entity(this).now();		
+	}
+	
+	public void enableReviews(boolean reviewsEnabled)
+	{
+		this.reviewingEnabled = reviewsEnabled;
+		ofy().save().entity(this).now();
 	}
 	
 	public long generateID(String tag)

@@ -30,7 +30,7 @@
 		$('#noFunction').click(selectNoFunction);
 	  	$('#skip').click(function() { skip(); });		
 		$('#searchForm').submit(submitReuseSearch);
-		setupReadonlyCodeBox(readonlyCodeBox);
+		setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);
 	});
 	
 	function submitReuseSearch() 

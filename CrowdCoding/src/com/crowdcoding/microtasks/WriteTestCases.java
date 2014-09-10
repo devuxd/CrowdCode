@@ -5,11 +5,12 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.Artifact;
 import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Test;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
+import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.WriteTestCasesInFirebase;
 import com.crowdcoding.dto.history.MicrotaskSpawned;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -38,7 +39,9 @@ public class WriteTestCases extends Microtask
 		this.promptType = PromptType.FUNCTION_SIGNATURE;
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
-        postToFirebase(project, function, false);
+		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskName(), function.getName(), 
+				  false, submitValue, function.getID(), promptType.name(), "", ""),
+			 id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
@@ -54,7 +57,9 @@ public class WriteTestCases extends Microtask
 		this.disputeDescription = disputeDescription;
 		this.disputedTestCase = disputedTestCase;
 		ofy().save().entity(this).now();
-        postToFirebase(project, function, false);
+		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskName(), function.getName(), 
+				  false, submitValue, function.getID(), promptType.name(), disputeDescription, disputedTestCase),
+			 id, project);
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
@@ -93,7 +98,7 @@ public class WriteTestCases extends Microtask
 	
 	public Artifact getOwningArtifact()
 	{
-		return getFunction();
+		return null;
 	}
 	
 	public String getDisputeDescription()

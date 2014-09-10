@@ -7,6 +7,7 @@ public class TestDTO extends DTO
 {
 	public String messageType = "TestDTO";
 	
+	public int functionVersion;		// version of the function under test that the worker saw when authoring this test.
 	public String code = "";
 	public boolean hasSimpleTest;	// is there a simple test defined for this test? 
 	public boolean inDispute;	    // is the test being disputed?

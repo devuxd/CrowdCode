@@ -75,3 +75,19 @@ function clone(obj) {
 
     throw new Error("Unable to copy obj! Its type isn't supported.");
 }
+
+// Removes the first instance of the specified item from array, if it is present.
+// Based on http://stackoverflow.com/questions/5767325/remove-specific-element-from-an-array
+function removeFromArray(array, item)
+{
+	var index = array.indexOf(item);
+	if (index > -1) {
+	    array.splice(index, 1);
+	}
+}
+
+// From: http://stackoverflow.com/questions/3614212/jquery-get-html-of-a-whole-element
+jQuery.fn.outerHTML = function() 
+{
+	return jQuery('<div />').append(this.eq(0).clone()).html();
+};

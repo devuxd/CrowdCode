@@ -25,6 +25,7 @@ public /*abstract*/ class Artifact
 {
 	@Parent Key<Project> project;
 	@Id protected long id;
+	protected int version;		// version of the artifact
 	
 	// Queued microtasks waiting to be done (not yet in the ready state)
 	protected Queue<Ref<Microtask>> queuedMicrotasks = new LinkedList<Ref<Microtask>>();		

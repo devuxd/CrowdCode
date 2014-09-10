@@ -5,12 +5,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import com.crowdcoding.Project;
 import com.crowdcoding.artifacts.commands.FunctionCommand;
-import com.crowdcoding.dto.MockDTO;
-import com.crowdcoding.dto.MocksDTO;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.dto.history.PropertyChange;
@@ -19,7 +15,6 @@ import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.cmd.Query;
 
 @EntitySubclass(index=true)
 public class Test extends Artifact
@@ -68,7 +63,7 @@ public class Test extends Artifact
 	{
 	}
 	
-	public Test(String description, Function function, Project project)
+	public Test(String description, long functionID, String functionName, Project project)
 	{
 		super(project);	
 
@@ -76,20 +71,20 @@ public class Test extends Artifact
 		
 		this.isImplemented = false;
 		this.isDeleted = false;
-		this.functionID = function.getID();
-		this.functionName = function.getName();
+		this.functionID = functionID;
+		this.functionName = functionName;
 		this.description = description;
 		this.hasSimpleTest = true;
-		this.code = generateDefaultUnitTest(function);
+		this.code = ""; //generateDefaultUnitTest(function);
 
 		ofy().save().entity(this).now();
-		function.addTest(this);
+		FunctionCommand.addTest(functionID, this.id);
 		queueMicrotask(new WriteTest(this, project), project);
 		
 		project.historyLog().endEvent();
 	}	
 	
-	public Test(Function function, List<String> inputs, String output, String code, Project project)
+	public Test(long functionID, String functionName, List<String> inputs, String output, String code, Project project)
 	{
 		super(project);	
 
@@ -97,17 +92,17 @@ public class Test extends Artifact
 		
 		this.isImplemented = true;
 		this.isDeleted = false;
-		this.functionID = function.getID();
-		this.functionName = function.getName();
+		this.functionID = functionID;
+		this.functionName = functionName;
 		this.description = "";
 		this.hasSimpleTest = true;
 		this.code = code;
 		this.simpleTestInputs = inputs;
 		this.simpleTestOutput = output;
-		this.simpleTestKeyHash = generateSimpleTestKeyHash(function.getName(), inputs);
+		this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, inputs);
 
 		ofy().save().entity(this).now();
-		function.addTest(this);
+		FunctionCommand.addTest(functionID, this.id);
 		
 		// The test is already fully implemented. It just needs to be run.
 		project.requestTestRun();
@@ -117,7 +112,7 @@ public class Test extends Artifact
 
 	private String generateDefaultUnitTest(Function function)
 	{	     
-	      StringBuilder builder = new StringBuilder();
+	      /*StringBuilder builder = new StringBuilder();
 	      builder.append("equal(");
 	      builder.append(function.getName());
 	      builder.append("(");
@@ -126,7 +121,8 @@ public class Test extends Artifact
 	      }
 	      builder.replace(builder.length()-1,builder.length(),"");
 	      builder.append("), <expectedResult>, '" + getDescription() + "');");
-	      return builder.toString();
+	      return builder.toString();*/
+		 return null;
 	}
 	
 	public String getTestCode()
@@ -239,8 +235,12 @@ public class Test extends Artifact
 	
 	public void storeToFirebase(Project project)
 	{
-		FirebaseService.writeTest(new TestInFirebase(this.id, code, hasSimpleTest, simpleTestInputs, 
-				simpleTestOutput, description, functionName, functionID), this.id, project);
+		version++;
+		if (this.isDeleted)
+			FirebaseService.deleteTest(this.id, project);
+		else
+			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs, 
+				simpleTestOutput, description, functionName, functionID), this.id, version, project);
 	}	
 	
 	/******************************************************************************************

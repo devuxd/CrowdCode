@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.List;
 
 import com.crowdcoding.Project;
+import com.crowdcoding.dto.ReviewDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
@@ -23,9 +24,13 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 public class FirebaseService 
 {
 	// Writes the specified microtask to firebase
-	public static void writeMicrotask(MicrotaskInFirebase dto, long microtaskID, Project project)
+	public static void writeMicrotaskCreated(MicrotaskInFirebase dto, long microtaskID, Project project)
 	{
-		writeData(dto.json(), "/microtasks/" + microtaskID + ".json", HTTPMethod.PUT, project); 
+		writeData(dto.json(), "/microtasks/" + microtaskID + ".json", HTTPMethod.PUT, project);
+		
+		// Since microtaskIDs increase consequentively and start at 1, we can update the total number of microtasks
+		// to be microtaskID.		
+		writeData(Long.toString(microtaskID), "/status/microtaskCount.json", HTTPMethod.PUT, project);
 	}	
 	
 	// Writes information about microtask assignment to Firebase
@@ -55,15 +60,29 @@ public class FirebaseService
 	}
 	
 	// Stores the specified function to Firebase
-	public static void writeFunction(FunctionInFirebase dto, long functionID, Project project)
+	public static void writeFunction(FunctionInFirebase dto, long functionID, int version, Project project)
 	{
 		writeData(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PUT, project); 
+		writeData(dto.json(), "/history/artifacts/functions/" + functionID + "/" + version + ".json", HTTPMethod.PUT, project); 				
 	}
 	
-	// Stores the specified function to Firebase
-	public static void writeTest(TestInFirebase dto, long testID, Project project)
+	// Stores the specified test to Firebase
+	public static void writeTest(TestInFirebase dto, long testID, int version, Project project)
 	{
-		writeData(dto.json(), "/artifacts/tests/" + testID + ".json", HTTPMethod.PUT, project); 
+		writeData(dto.json(), "/artifacts/tests/" + testID + ".json", HTTPMethod.PUT, project);
+		writeData(dto.json(), "/history/artifacts/tests/" + testID + "/" + version + ".json", HTTPMethod.PUT, project);		
+	}
+	
+	// Deletes the specified test in Firebase
+	public static void deleteTest(long testID, Project project)
+	{
+		writeData("", "/artifacts/tests/" + testID + ".json", HTTPMethod.DELETE, project);
+	}
+	
+	// Stores the specified review to firebase
+	public static void writeReview(ReviewDTO dto, long microtaskID, Project project)
+	{
+		writeData(dto.json(), "/microtasks/" + microtaskID + "/review.json", HTTPMethod.PUT, project);
 	}
 		
 	// Reads the ADTs for the specified project. If there are no ADTs, returns an empty string.

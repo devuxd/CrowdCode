@@ -230,6 +230,7 @@ font-size: 0.60em;
 
 /* Styles for Review */
 #reviewText { width: 600px; height: 60px; }
+.workUnderReview {  background-color: #EFEFFC ; }
 
 
 
@@ -285,4 +286,6 @@ font-size: 0.60em;
     left:2px;
 }
 
+#star3label { border-left: medium solid #999;  }
+p#ratinglegend { clear:both;  color:#888; font-style:italic; }
    

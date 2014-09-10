@@ -21,25 +21,15 @@
 		var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
 		var microtaskType = 'writetestcases';
 		var microtaskID = <%= microtask.getID() %>;	
-		
-		// Function description for the function description box.
-		var codeBoxCode = '<%= microtask.getFunction().getEscapedFullDescription() %>';
-		
-		var testCases = <%= microtask.getEscapedTestCasesList(project) %>.testCases;	
-		var nextTestCase = 1000;
-		
-		var showFunctionSignaturePrompt = <%= (promptType == PromptType.FUNCTION_SIGNATURE) %>;
-		var showCorrectTestCasePrompt = <%= (promptType == PromptType.CORRECT_TEST_CASE) %>;
+				
+		var codeBoxCode;		
+		var testCases;	
+		var functionTested;
+		var nextTestCase = 1000;	
+
 	
 	    $(document).ready(function()
 	    {
-			setupReadonlyCodeBox(readonlyCodeBox);
-			
-			if (showFunctionSignaturePrompt)
-   				$("#testFunctionSignaturePrompt").css('display',"block");	  
-			if (showCorrectTestCasePrompt)
-   				$("#fixTestCases").css('display',"block");	
-	    	
 		  	$('#skip').click(function() { skip(); });	
 	    	
 	    	$("#addTestCase").click(function()
@@ -55,26 +45,49 @@
 				return false;
 	    	});
 	    	
-	    	// If there are currently no test cases, create a first test case
-	    	if (testCases.length == 0)
-	    		$("#addTestCase").click();
-	    	else
-	    		loadTestCases(testCases);
+			// Load the microtask from firebase
+			var microtaskRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID);
+			microtaskRef.once('value', function(snapshot) 
+			{
+				if (snapshot.val() != null)
+					setupMicrotask(snapshot.val());								
+			});
 	    	
 			$('#testCasesForm').submit(function() {
 				var formData = collectFormData();
+				
 				if (formData == null)
 				{
 					$("#popUp").modal();	
 				}
 				else
 				{				
-					console.log(JSON.stringify(formData));				
-					submit(formData);
+					console.log(JSON.stringify(formData));
+					submit(formData);					
 				}
 				return false;
 			});
 		});
+	    
+	    // Creates the interface elements for the microtask
+	    function setupMicrotask(microtask)
+	    {
+	    	functionTested = functions.get(microtask.testedFunctionID);
+	    	codeBoxCode = functionTested.description + functionTested.header;	    	
+			setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);
+			testCases = tests.testCasesForFunction(microtask.testedFunctionID);
+						
+			if (microtask.promptType === 'FUNCTION_SIGNATURE')
+  				$("#testFunctionSignaturePrompt").css('display',"block");	  
+			else if (microtask.promptType === 'CORRECT_TEST_CASE')
+  				$("#fixTestCases").css('display',"block");	
+	    		    	
+	    	// If there are currently no test cases, create a first test case
+	    	if (testCases.length == 0)
+	    		$("#addTestCase").click();
+	    	else
+	    		loadTestCases(testCases);	    	
+	    }
 	
 	    // Creates items for each specified test case
 	    function loadTestCases(testCases)
@@ -88,7 +101,7 @@
 		{
 	    	var countOfCurrentTestCases = 0;
 	    	
-			var formData = { testCases: [] };			
+			var formData = { testCases: [], functionVersion: functionTested.version };			
 			for (var i=0; i < testCases.length; i++)
 			{
 				var testCase = testCases[i];
@@ -116,7 +129,7 @@
 				return null;
 			else			
 		    	return formData;
-		}	    
+		}	       
 		
 		function addTestCase(testCase)
 		{
@@ -165,23 +178,25 @@
 
 	<%@include file="/html/elements/microtaskTitle.jsp" %>	
 	
-	<div id="testFunctionSignaturePrompt" style="display: none">
-		What are some cases in which this function might be used? Are there any unexpected corner 
-		cases that might not work?<BR><BR>
+	<div id="promptAreaDiv">	
+		<div id="testFunctionSignaturePrompt" style="display: none">
+			What are some cases in which this function might be used? Are there any unexpected corner 
+			cases that might not work?<BR><BR>
+		</div>
+		
+		<div id="fixTestCases" style="display: none">
+		    The following issue was reported with the following test case:<BR><BR>
+		    
+		    <div class="alert alert-info"><%= microtask.getDisputeDescription() %></div>		
+			<div class="alert alert-error"><%= microtask.getDisputedTestCase() %></div>		    
+		    
+		    Can you fix the test case (and others if necessary) to address the issue?<BR><BR> 
+		    (Note: if the above test case is not below, the test case has already been changed,
+		    and you can ignore this microtask).<BR><BR>
+		</div>
+		
+		<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div><BR><BR>	
 	</div>
-	
-	<div id="fixTestCases" style="display: none">
-	    The following issue was reported with the following test case:<BR><BR>
-	    
-	    <div class="alert alert-info"><%= microtask.getDisputeDescription() %></div>		
-		<div class="alert alert-error"><%= microtask.getDisputedTestCase() %></div>		    
-	    
-	    Can you fix the test case (and others if necessary) to address the issue?<BR><BR> 
-	    (Note: if the above test case is not below, the test case has already been changed,
-	    and you can ignore this microtask).<BR><BR>
-	</div>
-	
-	<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div><BR><BR>	
 	
 	<div class="accordion" id="exampleRoot">
 	  <div class="accordion-group">
@@ -222,4 +237,5 @@
 			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		</div>	
 	</div>
+	
 </div>

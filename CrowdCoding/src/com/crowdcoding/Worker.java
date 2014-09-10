@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.crowdcoding.dto.firebase.PointEvent;
+import com.crowdcoding.dto.firebase.NewsItemInFirebase;
 import com.crowdcoding.microtasks.Microtask;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,14 +70,12 @@ public class Worker
 	}
 		
 	// Adds the specified number of points to the score.
-	public void awardPoints(int points, String description, Project project)
+	public void awardPoints(int points, Project project)
 	{
 		score += points;	
 		ofy().save().entity(this).now();
 		
 		FirebaseService.setPoints(userid, nickname, score, project);
-    	FirebaseService.postToNewsfeed(userid, (new PointEvent(points, description)).json(), 
-    			project);
 	}
 	
 	public Key<Worker> getKey()

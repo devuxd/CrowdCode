@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
 	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"></script> 	
-	<script src='https://cdn.firebase.com/js/client/1.0.2/firebase.js'></script>
+	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script>
 		$(document).ready(function()
 		{
@@ -125,6 +125,14 @@
 				}
 			});
 			
+			var reviewMaterialsRef = new Firebase(firebaseURL + '/history/reviewMaterials');
+			reviewMaterialsRef.on('child_added', function (snapshot) 
+			{
+				var reviewMaterials = snapshot.val();
+				$('#reviewMaterialsDiv').append(reviewMaterials.workOutput);
+			});
+			
+			
 			function constructMicrotaskDiv(microtask)
 			{
 				var divTag = '<div id="microtask' + microtask.id + '">';
@@ -155,11 +163,10 @@
 			function constructTestDiv(test)
 			{
 				var divTag = '<div id="test' + test.id + '">';
-				var divContent = '' + test.id + ' <b>' + test.functionName + '</b> for "<b>' 
-					+ test.description + '</b>"'
+				var divContent = '' + test.id + ' ' + test.functionName + ' for "' + test.description + '"'
 					+ ' disputed: ' + (test.inDispute ? 'true' : 'false') 
-					+ '<BR>Inputs:<BR>' + test.simpleTestInputs
-					+ '<BR>Outputs:<BR>' + test.simpleTestOutput.replace(/\n/g, '<BR>');
+					+ (test.hasOwnProperty('simpleTestInputs') ? '<BR>Inputs:<BR>' + test.simpleTestInputs : '')
+					+ (test.hasOwnProperty('simpleTestOutput') ? '<BR>Outputs:<BR>' + test.simpleTestOutput.replace(/\n/g, '<BR>') : '');
 				var divEnd = '</div>';	
 				return divTag + divContent + divEnd;
 			}		
@@ -185,6 +192,8 @@
 			The following commands are currently available:
 			<ul>
 				<li><b>Reset</b> - resets the default project back to the initial state.</li>
+				<li><b>Reviews on</b> - turns on generation of review microtasks (default)</li>
+				<li><b>Reviews off</b> - turns off generation of review microtasks</li>
 			</ul><BR>
 		
 		   	<input type="text" class="input-xlarge" id="command">
@@ -197,6 +206,7 @@
 			<b>Review Queue</b><BR><div id="reviewQueueDiv"></div>
 			<b>All Functions</b><BR><div id="functions"></div>
 			<b>All Tests</b><BR><div id="tests"></div>
+			<b>Review Materials</b><BR><div id="reviewMaterialsDiv"></div>
 		</div>
 		<div class="span1"></div>
 	</div>

@@ -8,5 +8,4 @@ public class ReviewDTO extends DTO
 	public long microtaskIDReviewed;
 	public String reviewText;
 	public int qualityScore;
-	public int quantityScore;	
 }

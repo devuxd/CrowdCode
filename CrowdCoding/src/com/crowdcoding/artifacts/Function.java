@@ -265,9 +265,9 @@ public class Function extends Artifact
 	}
 	
 	// Adds the specified test for this function
-	public void addTest(Test test)
+	public void addTest(long testID)
 	{
-		tests.add(test.getID());
+		tests.add(testID);
 		ofy().save().entity(this).now();	
 	}
 	
@@ -504,7 +504,7 @@ public class Function extends Artifact
 			// If it's an add, create a test
 			if (testCase.added)
 			{
-				Test test = new Test(testCase.text, this, project);				
+				TestCommand.create(testCase.text, this.id, this.name);				
 			}
 			else if (testCase.deleted)
 			{
@@ -570,8 +570,7 @@ public class Function extends Artifact
 			if (test != null)
 				test.setSimpleTestOutput(mockDTO.expectedOutput, project);
 			else
-				test = new Test(Function.lookupFunction(mockDTO.functionName, project), 
-						mockDTO.inputs, mockDTO.expectedOutput, mockDTO.code, project);
+				TestCommand.create(this.id, this.name, mockDTO.inputs, mockDTO.expectedOutput, mockDTO.code);
 		}		
 		
 		lookForWork(project);
@@ -696,10 +695,11 @@ public class Function extends Artifact
 	{
 		if (hasBeenDescribed)
 		{
-			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, returnType, paramNames, 
+			version++;
+			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames, 
 					paramTypes, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging,
 					queuedMicrotasks.size()), 
-					this.id, project);		
+					this.id, version, project);		
 		}
 	}	
 	

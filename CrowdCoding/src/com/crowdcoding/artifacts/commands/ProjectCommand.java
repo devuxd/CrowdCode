@@ -5,6 +5,9 @@ import com.crowdcoding.servlets.CommandContext;
 
 public abstract class ProjectCommand extends Command 
 {
+	public static ProjectCommand enableReviews(boolean reviewsEnabled) 
+		{ return new EnableReviews(reviewsEnabled); }
+	
 	// Queues the specified microtask onto the global microtask queue. Provides an optional
 	// excludedWorkerID, which will permanently exlucde the worker from doing the microtask.
 	// This parameter may be left null.
@@ -29,6 +32,22 @@ public abstract class ProjectCommand extends Command
 	private static void queueCommand(Command command)
 	{
 		CommandContext.ctx.addCommand(command);
+	}
+	
+	protected static class EnableReviews extends ProjectCommand
+	{
+		private boolean reviewsEnabled;
+		
+		public EnableReviews(boolean reviewsEnabled)
+		{
+			super();
+			this.reviewsEnabled = reviewsEnabled;
+		}
+		
+		public void execute(Project project)
+		{
+			project.enableReviews(reviewsEnabled);
+		}		
 	}
 			
 	protected static class QueueMicrotask extends ProjectCommand

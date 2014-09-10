@@ -34,7 +34,7 @@
 		    
    		$(document).ready(function() 
    		{
-   			setupReadonlyCodeBox(readonlyCodeBox);
+   			setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);
    			
    			$('#skip').click(function() { skip(); });
    			
