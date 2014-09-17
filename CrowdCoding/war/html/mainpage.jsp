@@ -77,34 +77,34 @@
 
 <div id="container">
 
-<div class="row-fluid">
+<div class="row">
 
-<div class="span2">
+<div class="col-md-2">
 	<div id= "leftbar" class="animated fadeInLeftBig">
-		<div id="scoreTableAnimHolder" class="animated flip">	<div id="scoreTableTitle" class="sidebarTitle animated wiggle" >   &nbsp;&nbsp;  Your score <i class=" icon-star"> </i> &nbsp;</div> </div>
+		<div id="scoreTableAnimHolder" class="boxTitle animated flip">	<div id="scoreTableTitle" class="sidebarTitle animated wiggle" >   &nbsp;&nbsp;  Your score <i class=" icon-star"> </i> &nbsp;</div> </div>
 		
-		<table id="scoreTable">	
+		<table id="scoreTable" class="boxContent">	
 			<tr>
 				<td class="animated fadeInLeftBig"><b ><span id="score" >0 </span> points</b></td>
 			</tr>
 		</table>
-		<div id="leaderboardTitle" class="animated wiggle" >   &nbsp;&nbsp;  Leaders  &nbsp; <i class=" icon-th-list"> </i> </div>
-		<div id="leaderboard"><table id="leaderboardTable"><tr><td></td></tr></table></div>
+		<div id="leaderboardTitle" class="boxTitle animated wiggle" >   &nbsp;&nbsp;  Leaders  &nbsp; <i class=" icon-th-list"> </i> </div>
+		<div id="leaderboard" class="boxContent"><table id="leaderboardTable"><tr><td></td></tr></table></div>
 	</div>
 	<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
-	<div id="chatTitle" class="sidebarTitle" > &nbsp;&nbsp; Ask the Crowd</div>
+	<div id="chatTitle" class="boxTitle" > &nbsp;&nbsp; Ask the Crowd</div>
 	<div id="chatDiv" class="chatDiv">
 		<div id="chatOutput" class="chatOutput" ></div><textarea id="chatInput" class="chatInput"></textarea>
 	</div>	
 </div>
 
-<div class="span8">
+<div class="col-md-8">
 	<div id="contentPane" class="animated bounceIn"></div>
 </div>
 
-<div class="span2">
+<div class="col-md-2">
 	<div id="rightbar" class="animated fadeInRightBig ">
-		<div id="activityFeedTitle" class="animated wiggle" >   &nbsp;&nbsp;  Recent Activity &nbsp;</div>
+		<div id="activityFeedTitle" class="boxTitle animated wiggle" >   &nbsp;&nbsp;  Recent Activity &nbsp;</div>
 		<div id="activityFeed"><div id="activityFeedTable" ></div></div>
 		<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
 
@@ -133,7 +133,7 @@
 <!-- Popups -->
 <div id="logout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" logoutLabel"" aria-hidden="true">
 	<div class="logout-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">��</button>
 		<h3 id="logoutLabel">You are now logged out.</h3>
 	</div>
 	<div class="modal-body"></div>
@@ -490,26 +490,32 @@
 </script>
 
 	<!-- Popup for reminder to submit soon. -->
-	<div id="popUpReminder" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-		<div class="logout-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-			<h3 id="logoutLabel" class="popupReminderHeading"></h3>
-		</div>
-		<div class="modal-body"></div>
-		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	<div id="popUpReminder" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h3 id="logoutLabel" class="popupReminderHeading"></h3>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+				</div>	
+			</div>
 		</div>
 	</div>
 	
 	<!-- Popup for viewing review. -->
-	<div id="viewReviewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-		<div class="logout-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-			<h3 id="logoutLabel" class="popupReminderHeading"></h3>
-		</div>
-		<div class="modal-body" id="viewReviewDiv"></div>
-		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	<div id="viewReviewModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+					<h3 id="logoutLabel" class="popupReminderHeading"></h3>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+				</div>	
+			</div>
 		</div>
 	</div>
 	

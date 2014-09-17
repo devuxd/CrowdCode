@@ -54,6 +54,7 @@
 			});
 	    	
 			$('#testCasesForm').submit(function() {
+				
 				var formData = collectFormData();
 				
 				if (formData == null)
@@ -137,7 +138,7 @@
 			
     		$("#testCases").append(
 					'<span id="testCase' + testCase.id + '">' +
-						'<input type="text" class="input-xxlarge" id="' + idString + '" data-caseID="' + testCase.id
+						'<input type="text" class="input-lg" id="' + idString + '" data-caseID="' + testCase.id
 						      + '" placeholder="Describe a test case"/>' +				
 						'<a href="#" onclick="deleteTestCase(\'#testCase' + testCase.id + '\', ' + testCase.id + 
 								  ')" class="closeButton">&times;</a>' +	
@@ -223,19 +224,22 @@
 
 	<form id="testCasesForm" action="">
 		<div id="testCases"></div>
-		<button id="addTestCase" class="btn btn-small">Add test case</button>				
+		<button id="addTestCase" class="btn btn-sm">Add test case</button>				
 		<BR><BR><%@include file="/html/elements/submitFooter.jsp" %>
 	</form>
 	
-	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-		<div class="logout-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">��</button>
-			<h4 id="logoutLabel">Please write at least one test case.</h4>
+	<div id="popUp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+					<h4 id="logoutLabel">Please write at least one test case.</h4>
+				</div>
+				<div class="modal-footer">
+					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+				</div>	
+			</div>
 		</div>
-		<div class="modal-body"></div>
-		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		</div>	
 	</div>
 	
 </div>

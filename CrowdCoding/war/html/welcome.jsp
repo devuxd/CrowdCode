@@ -24,9 +24,9 @@
         <h1><BR>Build software with a crowd!<BR><BR></h1>
 	</div>
 
-	<div class="row-fluid">
-		<div class="span1"></div>
-	  	<div class="span5">
+	<div class="row">
+		<div class="col-md-1"></div>
+	  	<div class="col-md-5">
 	      <div class="jumbotron">
 	        <p class="lead">	        
 	        	CrowdCode organizes work into <b>microtasks</b>,
@@ -40,8 +40,8 @@
 	        </p>
 	      </div>
 		</div>
-		<div class="span5"><BR><img src="/html/workflow.png"></img></div>
-		<div class="span1"></div>
+		<div class="col-md-5"><BR><img src="/html/workflow.png"></img></div>
+		<div class="col-md-1"></div>
 	</div>
 	
 	<div class="jumbotron jumbotronCentered">
