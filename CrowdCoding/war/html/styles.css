@@ -84,7 +84,7 @@ font-family: Lucida Console, Monaco, monospace;
 
 #leaderboardTable td { padding-right:10px; font-size: smaller;   }
 #leaderboardTableTitle p, tr { font-weight: bold;  }
-#leaderboard{border-radius: 10px 10px 10px 10px;}
+#leaderboard{}
 #feedbackBox { width: 170px; height: 150px; resize:none; font-size: smaller}
 #feedbackThanks { font-size: smaller; color: green; visibility: hidden; }
 
@@ -223,8 +223,8 @@ font-size: 0.60em;
 }
 .rating:not(:checked) > label {
     float:right;
-    width:1em;
-    padding:0 .1em;
+    width:1.1em;
+    padding:0em;
     overflow:hidden;
     white-space:nowrap;
     cursor:pointer;

@@ -88,7 +88,7 @@ public class WriteTestCases extends Microtask
 	
 	public String getUIURL()
 	{
-		return "/html/testcases.jsp";
+		return "/html/microtasks/writeTestCases.jsp";
 	}
 	
 	public Function getFunction()

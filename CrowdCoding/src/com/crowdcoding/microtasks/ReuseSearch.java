@@ -57,7 +57,7 @@ public class ReuseSearch extends Microtask
 	
 	public String getUIURL()
 	{
-		return "/html/ReuseSearch.jsp";
+		return "/html/microtasks/reuseSearch.jsp";
 	}
 	
 	public String getCallDescription()

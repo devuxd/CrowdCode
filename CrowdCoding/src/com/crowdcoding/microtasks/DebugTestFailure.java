@@ -62,7 +62,7 @@ public class DebugTestFailure extends Microtask
 
      public String getUIURL()
      {
-          return "/html/DebugTestFailure.jsp";
+          return "/html/microtasks/debugTestFailure.jsp";
      }
 
      public String getFunctionCode()

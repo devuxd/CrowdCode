@@ -105,13 +105,19 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project>/submit - doSubmit
 		 *  /<project>/welcome - welcome.jsp
 		 *  /clientRequest - ClientRequestEditor.jsp
-		 *  /  welcome.jsp
+		 *  /welcome.jsp
+		 *  /superadmin - SuperAdmin.jsp
 		 */
         String[] path = req.getPathInfo().split("/");
 				
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();  
-        
+
+    	//System.out.println("requested "+req.getPathInfo()+", path length: "+path.length);
+    	
+    	for(int i=0;i<path.length;i++){
+    		System.out.println("token "+i+": "+path[i]);
+    	}
     	try 
     	{	        
     		// First check the browser. If the browser is not Chrome, redirect to a browser
@@ -123,21 +129,31 @@ public class CrowdServlet extends HttpServlet
     			// Next check if the user is logged in by checking if we have a user object for them.
 		        if (user != null) 
 		        {
+		        		
 					// First token will always be empty (portion before the first slash)
-					if (path.length > 1)
+					if (path.length == 0)
+						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
+					else
 					{
 						req.setAttribute("project", path[1]);
 						String projectID = path[1];
-		
+						
 						if (path.length == 2)
 						{
+							System.out.println("length 2");
 							if (path[1].equals("clientRequest"))
 								req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);						
-							else
+							else if (path[1].equals("superadmin"))
+								req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);						
+							else if(req.getParameter("oldLayout")!=null)
 								req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+							else
+								req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
+								
 						}
-						else
+						else 
 						{
+							System.out.println("length 3");
 							// Third token is action, fourth (or more) tokens are commands for action
 							String action = path[2];
 							if (action.equals("fetch"))					
@@ -156,10 +172,8 @@ public class CrowdServlet extends HttpServlet
 				        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
 							else if (action.equals("welcome"))
 				        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
-						}				
-					}
-					else				
-						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);					
+						}	
+					}								
 		        } 
 		        else 
 		        {
@@ -350,6 +364,7 @@ public class CrowdServlet extends HttpServlet
         	}
         	else
         	{
+        		System.out.println(microtask.getUIURL());
         		this.getServletContext().setAttribute("microtask", microtask);        		
         		req.getRequestDispatcher(microtask.getUIURL()).forward(req,  resp);        		
         	}        	

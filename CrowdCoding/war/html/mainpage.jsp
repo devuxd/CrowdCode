@@ -413,7 +413,8 @@
 		var microtaskRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID);
 		microtaskRef.once('value', function (snapshot) 
 		{
-			displayWriteTestCases(viewReviewDiv, snapshot.val());
+			displayReviewMaterial($("#viewReviewModal > .modal-header"), snapshot.val());
+			//displayWriteTestCases($("#viewReviewModal"), snapshot.val());
 			$("#viewReviewModal").modal();
 		});
 	}
@@ -509,6 +510,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
+					<span>not implemented yet!</span>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
 					<h3 id="logoutLabel" class="popupReminderHeading"></h3>
 				</div>
