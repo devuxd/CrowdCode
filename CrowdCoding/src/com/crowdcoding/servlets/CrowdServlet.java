@@ -135,14 +135,7 @@ public class CrowdServlet extends HttpServlet
 						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
 					else
 					{
-						req.setAttribute("project", path[1]);
-						String projectID = path[1];
-						
-						
-						// be sure that the project exists in the datastore 
-						if( ofy().load().key(Key.create(Project.class, projectID)).get() == null ){
-							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
-						} else if (path.length == 2)
+						if (path.length == 2)
 						{
 							if (path[1].equals("clientRequest"))
 								req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);						
@@ -153,27 +146,35 @@ public class CrowdServlet extends HttpServlet
 							else
 								req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
 								
-						} else 
-						{
-							// Third token is action, fourth (or more) tokens are commands for action
-							String action = path[2];
-							if (action.equals("fetch"))					
-								doFetch(req, resp, projectID, user);
-							else if (action.equals("submit"))
-								doSubmit(req, resp);
-							else if (action.equals("logout"))					
-								doLogout(projectID, path[3]);
-							else if (action.equals("admin") && path.length == 3)
-				        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
-							else if (action.equals("history") && path.length == 3)
-				        		req.getRequestDispatcher("/html/history.jsp").forward(req, resp);
-							else if (action.equals("admin") && path.length > 3)
-								doAdmin(req, resp, projectID, path);
-							else if (action.equals("run"))
-				        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
-							else if (action.equals("welcome"))
-				        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
-						}	
+						} else {
+							req.setAttribute("project", path[1]);
+							String projectID = path[1];
+							
+							// be sure that the project exists in the datastore or forward to 404.jsp
+							if( ofy().load().key(Key.create(Project.class, projectID)).get() == null ){
+								req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+							} else  
+							{
+								// Third token is action, fourth (or more) tokens are commands for action
+								String action = path[2];
+								if (action.equals("fetch"))					
+									doFetch(req, resp, projectID, user);
+								else if (action.equals("submit"))
+									doSubmit(req, resp);
+								else if (action.equals("logout"))					
+									doLogout(projectID, path[3]);
+								else if (action.equals("admin") && path.length == 3)
+					        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
+								else if (action.equals("history") && path.length == 3)
+					        		req.getRequestDispatcher("/html/history.jsp").forward(req, resp);
+								else if (action.equals("admin") && path.length > 3)
+									doAdmin(req, resp, projectID, path);
+								else if (action.equals("run"))
+					        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
+								else if (action.equals("welcome"))
+					        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
+							}	
+						}
 					}								
 		        } 
 		        else 
