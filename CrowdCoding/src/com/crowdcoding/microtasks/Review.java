@@ -56,37 +56,36 @@ public class Review extends Microtask
 		// Write the review to firebase
 		FirebaseService.writeReview(reviewDTO, submittedMicrotask.getID(), project);
 		
-		// If above thereshold, load the original microtask submit from firebase and ask it to be submitted
+		// set default award points to 0
+		int points = 0;
+		
+		// If above thereshold, submit the original microtask, award worker with submitValue
 		if (reviewDTO.qualityScore > 2)		
 		{
-			MicrotaskCommand.submit(microtaskIDUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
-						
-			// Award the worker of the reviewed work points, and give them feedback
+			MicrotaskCommand.submit(microtaskIDUnderReview, initiallySubmittedDTO, workerOfReviewedWork);			
 			WorkerCommand.awardPoints(workerOfReviewedWork, submittedMicrotask.submitValue);
-	    	FirebaseService.postToNewsfeed(workerOfReviewedWork, (new NewsItemInFirebase(submittedMicrotask.submitValue, 
-					"Your work to " + submittedMicrotask.microtaskDescription() + " was reviewed and rated "
-					+ reviewDTO.qualityScore + "/5." 
-					+ " You have been awarded " + submittedMicrotask.submitValue + " points. (hover for review)",
-					"WorkReviewed", submittedMicrotask.getID())).json(), project);
+			points = submittedMicrotask.submitValue;
 		}
 		// Otherwise, reisuse a new microtask to do the original work again.
 		else		
-		{
 			MicrotaskCommand.reissueMicrotask(microtaskIDUnderReview, workerOfReviewedWork);
-			
-			// Microtask rejected. Give the worker feedback, but no points.
-			WorkerCommand.awardPoints(workerOfReviewedWork, 0);
-	    	FirebaseService.postToNewsfeed(workerID, (new NewsItemInFirebase(0, 
-					"Your work to " + submittedMicrotask.microtaskDescription() + " was reviewed and rejected, "
-					+ "with a quality score of "
-					+ reviewDTO.qualityScore + "/5. You have been awarded 0 points. (hover to see review)",
-	    			"WorkReviewed", submittedMicrotask.getID()).json()), project);
-		}
+
+		// send feedback
+    	FirebaseService.postToNewsfeed(workerOfReviewedWork, (
+    		new NewsItemInFirebase(
+    			submittedMicrotask.submitValue, 
+			    submittedMicrotask.microtaskDescription(),
+				"WorkReviewed", 
+				submittedMicrotask.getID(),
+				reviewDTO.qualityScore)
+	    	).json(), 
+	    	project
+	    );
 		
 		// Award points to the reviewer for the review task
 		WorkerCommand.awardPoints(workerID, this.submitValue);
     	FirebaseService.postToNewsfeed(workerID, (new NewsItemInFirebase(this.submitValue, 
-    			"You reviewed a microtask and receieved " + this.submitValue + " points.", "SubmittedReview",
+    			"You reviewed a microtask", "SubmittedReview",
     			this.id).json()), project);
 	}
 	

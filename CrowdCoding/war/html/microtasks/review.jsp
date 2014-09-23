@@ -44,6 +44,7 @@
     	var microtaskSubmitRef = new Firebase(firebaseURL + '/microtasks/' + microtaskIDUnderReview);
     	microtaskSubmitRef.once('value', function (snapshot) 
 		{
+		
     		displayReviewMaterial(microtaskUnderReviewDiv, snapshot.val());
 		});
     }

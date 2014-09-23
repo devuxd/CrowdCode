@@ -323,11 +323,46 @@ footer.navbar-default { background-color: #3C9764; }
 	</div>
 
 	<footer class="navbar-default navbar-fixed-bottom"> 
-        	<button id="feedbackBtn" type="button" class="btn btn-primary pull-right">Send Us Feedback!</button>
+        	<button id="sendFeedbackBtn" type="button" class="btn btn-primary pull-right">Send Us Feedback!</button>
 			<span class="clearfix"></span>
 	</footer>
 	
 	
+
+
+
+<!-- Popup for reminder to submit soon. -->
+<div id="popUpReminder" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+				<h3 id="logoutLabel" class="popupReminderHeading"></h3>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			</div>	
+		</div>
+	</div>
+</div>
+
+<!-- Popup for feedback. -->
+<div id="popUpFeedback" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span>Send us your opinions about CrowdCode</span>
+				<button type="button" class="close" data-dismiss="modal">X</button>
+			</div>
+			<div class="modal-footer">
+			    <textarea id="textFeedback" rows="" cols="" style="width:100%;"></textarea><br />
+				<button id="submitFeedback" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
+			</div>	
+		</div>
+	</div>
+</div>
+
+
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
@@ -401,6 +436,7 @@ footer.navbar-default { background-color: #3C9764; }
 			
 			// Wait for the ADTs to load before loading the microtask!
 	        loadMicrotask();
+	        
 		});
 
 		/*
@@ -424,11 +460,11 @@ footer.navbar-default { background-color: #3C9764; }
 			return false;
 		});*/
 		
-		//$("#sendFeedback").click(sendFeedback);
+		 $("#sendFeedbackBtn").click(function(){
+			$("#popUpFeedback").modal('show');
+			$("#submitFeedback").click(sendFeedback());
+		});
 	
-		/*
-		*/
-		
 	});
 	
     
@@ -472,32 +508,24 @@ footer.navbar-default { background-color: #3C9764; }
 	}
 
 	
-	function viewReview(microtaskID)
-	{
-		var microtaskRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID);
-		microtaskRef.once('value', function (snapshot) 
-		{
-			displayReviewMaterial($("#viewReviewModal > .modal-header"), snapshot.val());
-			//displayWriteTestCases($("#viewReviewModal"), snapshot.val());
-			$("#viewReviewModal").modal();
-		});
-	}
-
+	       
+			
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
-		var feedback = {'microtaskType': microtaskType, 
+		var feedback = {  'microtaskType': microtaskType, 
 						  'microtaskID': microtaskID,
 						  'workerHandle': '<%= workerHandle %>',
 						  'workerID': '<%= workerID %>',
-						  'feedback': $("#feedbackBox").val()};
+						  'feedback': $("#textFeedback").val()};
 		feedbackRef.push(feedback);
-		$("#feedbackBox").val("");
-		$('#feedbackThanks').css('visibility','visible');
-		setTimeout(function() 
-		{
-		    $('#feedbackThanks').css('visibility','hidden');
-		}, 10000);   
+		$("#textFeedback").val("");
+		console.log("feedback sent!");
+		//$('#feedbackThanks').css('visibility','visible');
+		//setTimeout(function() 
+		//{
+		//    $('#feedbackThanks').css('visibility','hidden');
+		//}, 10000);   
 	}
 	
 	// Generate the list of typenames based on the list of allADTs, adding type names for primitives
