@@ -135,27 +135,25 @@ public class CrowdServlet extends HttpServlet
 						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
 					else
 					{
-						if (path.length == 2)
-						{
-							if (path[1].equals("clientRequest"))
-								req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);						
-							else if (path[1].equals("superadmin"))
-								req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);						
-							else if(req.getParameter("oldLayout")!=null)
-								req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
-							else
-								req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
-								
-						} else {
-							req.setAttribute("project", path[1]);
-							String projectID = path[1];
-							
-							// be sure that the project exists in the datastore or forward to 404.jsp
-							if( ofy().load().key(Key.create(Project.class, projectID)).get() == null ){
-								req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
-							} else  
-							{
-								// Third token is action, fourth (or more) tokens are commands for action
+
+						req.setAttribute("project", path[1]);
+						String projectID = path[1];
+						
+						// check first for non-project pages routing
+						if (path[1].equals("clientRequest"))
+						{	req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);	}					
+						else if (path[1].equals("superadmin"))
+						{	req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp); }					
+						// now check for project pages (only if project exists)
+						else if( ofy().load().filterKey(Key.create(Project.class, projectID)).keys().first() != null ){
+							// if is requested the main page
+							if(path.length==2) {
+								if(req.getParameter("oldLayout")!=null)
+									req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+								else
+									req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
+							} else {
+								// if are requested secondary pages
 								String action = path[2];
 								if (action.equals("fetch"))					
 									doFetch(req, resp, projectID, user);
@@ -173,7 +171,10 @@ public class CrowdServlet extends HttpServlet
 					        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
 								else if (action.equals("welcome"))
 					        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
-							}	
+							}
+						} else {
+							// not found
+							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 						}
 					}								
 		        } 
