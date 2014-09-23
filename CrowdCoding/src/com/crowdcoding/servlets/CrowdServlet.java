@@ -105,13 +105,19 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project>/submit - doSubmit
 		 *  /<project>/welcome - welcome.jsp
 		 *  /clientRequest - ClientRequestEditor.jsp
-		 *  /  welcome.jsp
+		 *  /welcome.jsp
+		 *  /superadmin - SuperAdmin.jsp
 		 */
         String[] path = req.getPathInfo().split("/");
 				
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();  
-        
+
+
+    	for(int i=0;i<path.length;i++){
+    		System.out.println("token "+i+": "+path[i]);
+    	}
+    	
     	try 
     	{	        
     		// First check the browser. If the browser is not Chrome, redirect to a browser
@@ -123,43 +129,53 @@ public class CrowdServlet extends HttpServlet
     			// Next check if the user is logged in by checking if we have a user object for them.
 		        if (user != null) 
 		        {
+		        		
 					// First token will always be empty (portion before the first slash)
-					if (path.length > 1)
+					if (path.length == 0)
+						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
+					else
 					{
-						req.setAttribute("project", path[1]);
-						String projectID = path[1];
-		
 						if (path.length == 2)
 						{
 							if (path[1].equals("clientRequest"))
 								req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);						
-							else
+							else if (path[1].equals("superadmin"))
+								req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);						
+							else if(req.getParameter("oldLayout")!=null)
 								req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+							else
+								req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
+								
+						} else {
+							req.setAttribute("project", path[1]);
+							String projectID = path[1];
+							
+							// be sure that the project exists in the datastore or forward to 404.jsp
+							if( ofy().load().key(Key.create(Project.class, projectID)).get() == null ){
+								req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+							} else  
+							{
+								// Third token is action, fourth (or more) tokens are commands for action
+								String action = path[2];
+								if (action.equals("fetch"))					
+									doFetch(req, resp, projectID, user);
+								else if (action.equals("submit"))
+									doSubmit(req, resp);
+								else if (action.equals("logout"))					
+									doLogout(projectID, path[3]);
+								else if (action.equals("admin") && path.length == 3)
+					        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
+								else if (action.equals("history") && path.length == 3)
+					        		req.getRequestDispatcher("/html/history.jsp").forward(req, resp);
+								else if (action.equals("admin") && path.length > 3)
+									doAdmin(req, resp, projectID, path);
+								else if (action.equals("run"))
+					        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
+								else if (action.equals("welcome"))
+					        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
+							}	
 						}
-						else
-						{
-							// Third token is action, fourth (or more) tokens are commands for action
-							String action = path[2];
-							if (action.equals("fetch"))					
-								doFetch(req, resp, projectID, user);
-							else if (action.equals("submit"))
-								doSubmit(req, resp);
-							else if (action.equals("logout"))					
-								doLogout(projectID, path[3]);
-							else if (action.equals("admin") && path.length == 3)
-				        		req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
-							else if (action.equals("history") && path.length == 3)
-				        		req.getRequestDispatcher("/html/history.jsp").forward(req, resp);
-							else if (action.equals("admin") && path.length > 3)
-								doAdmin(req, resp, projectID, path);
-							else if (action.equals("run"))
-				        		req.getRequestDispatcher("/html/run.jsp").forward(req, resp);
-							else if (action.equals("welcome"))
-				        		req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
-						}				
-					}
-					else				
-						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);					
+					}								
 		        } 
 		        else 
 		        {
@@ -350,6 +366,7 @@ public class CrowdServlet extends HttpServlet
         	}
         	else
         	{
+        		System.out.println(microtask.getUIURL());
         		this.getServletContext().setAttribute("microtask", microtask);        		
         		req.getRequestDispatcher(microtask.getUIURL()).forward(req,  resp);        		
         	}        	

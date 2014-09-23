@@ -102,7 +102,7 @@ public class Review extends Microtask
 	
 	public String getUIURL()
 	{
-		return "/html/review.jsp";
+		return "/html/microtasks/review.jsp";
 	}
 	
 	public Artifact getOwningArtifact()

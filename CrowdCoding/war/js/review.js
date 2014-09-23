@@ -8,7 +8,6 @@ function displayReviewMaterial(containerDiv, microtask)
 		displayWriteTestCases(containerDiv, microtask);
 	else if (microtask.type == 'WriteTest')
 		displayWriteTest(containerDiv, microtask);
-
 }
 
 

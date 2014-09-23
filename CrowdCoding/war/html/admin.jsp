@@ -17,10 +17,11 @@
 			$('#execute').click(function()
 			{
 				var command = $('#command').val();
-				$.get('/' + '<%=projectID%>/admin/' + command, function(data) 
-				{
-					$('#output').prepend(data);
-				});
+				if (command!='')
+					$.get('/' + '<%=projectID%>/admin/' + command, function(data) 
+					{
+						$('#output').prepend(data);
+					});
 			});
 			$('#clear').click(function()
 			{
@@ -37,12 +38,12 @@
 			var microtasksRef = new Firebase(firebaseURL + '/microtasks');
 			microtasksRef.on('child_added', function (snapshot) 
 			{
-				$('#microtasks').append(constructMicrotaskDiv(snapshot.val()));
+				$('#microtasks').append(constructMicrotaskTr(snapshot.val()));
 			});
 			microtasksRef.on('child_changed', function (snapshot) 
 			{
 				var microtask = snapshot.val();		
-				$('#microtask' + microtask.id).replaceWith(constructMicrotaskDiv(microtask));				
+				$('#microtask' + microtask.id).replaceWith(constructMicrotaskTr(microtask));				
 			});
 			microtasksRef.on('child_removed', function (snapshot) 
 			{
@@ -54,12 +55,12 @@
 			functionsRef.on('child_added', function (snapshot) 
 			{
 				var functionObj = snapshot.val();
-				$('#functions').append(constructFunctionDiv(functionObj));
+				$('#functions').append(constructFunctionTr(functionObj));
 			});
 			functionsRef.on('child_changed', function (snapshot) 
 			{
 				var functionObj = snapshot.val();
-				$('#function' + functionObj.id).replaceWith(constructFunctionDiv(functionObj));
+				$('#function' + functionObj.id).replaceWith(constructFunctionTr(functionObj));
 			});
 			functionsRef.on('child_removed', function (snapshot) 
 			{
@@ -71,12 +72,12 @@
 			testsRef.on('child_added', function (snapshot) 
 			{
 				var test = snapshot.val();
-				$('#tests').append(constructTestDiv(test));
+				$('#tests').append(constructTestTr(test));
 			});
 			testsRef.on('child_changed', function (snapshot) 
 			{
 				var test = snapshot.val();
-				$('#test' + test.id).replaceWith(constructTestDiv(test));
+				$('#test' + test.id).replaceWith(constructTestTr(test));
 			});
 			testsRef.on('child_removed', function (snapshot) 
 			{
@@ -89,7 +90,7 @@
 			{
 				var workerID = snapshot.name();
 				var workerHandle = snapshot.val().workerHandle;
-				$('#workers').append(constructWorkerDiv(workerID, workerHandle));
+				$('#workers').append(constructWorkerTr(workerID, workerHandle));
 			});
 			workersRef.on('child_removed', function (snapshot) 
 			{
@@ -133,82 +134,198 @@
 			});
 			
 			
-			function constructMicrotaskDiv(microtask)
+			function constructMicrotaskTr(microtask)
 			{
-				var divTag = '<div id="microtask' + microtask.id + '">';
-				var divContent = '' + microtask.id + ' ' + microtask.type + ' on ' 
-					+ (microtask.hasOwnProperty('owningArtifact') ? microtask.owningArtifact : '') + ':' 
-					+ (microtask.completed ? ' completed' : ' incomplete')
-					+ ' points: ' + microtask.points
-					+ (microtask.hasOwnProperty('workerHandle') ? ' worker: ' + microtask.workerHandle : '' );
-				var divEnd = '</div>';
-				return divTag + divContent + divEnd;
+				var trTag = '<tr id="microtask' + microtask.id + '">';
+				var trContent =   '<td>' + microtask.id + '</td> ' 
+								+ '<td>' + microtask.type + ' on ' + (microtask.hasOwnProperty('owningArtifact') ? microtask.owningArtifact : '')  + '</td> '  
+								+ '<td>' + (microtask.completed ? ' completed' : ' incomplete') + '</td>'
+								+ '<td>' + microtask.points + '</td>'
+								+ '<td>' + (microtask.hasOwnProperty('workerHandle') ? microtask.workerHandle : 'N.A.') + '</td>' ;
+				var trEnd = '</tr>';
+				return trTag + trContent + trEnd;
 			}
 			
-			function constructFunctionDiv(functionObj)
+			function constructFunctionTr(functionObj)
 			{
-				var divTag = '<div id="function' + functionObj.id + '">';
-				var divContent = '' + functionObj.id + ' <b>' + functionObj.name + '</b>' 
-					+ ' described: ' + functionObj.described
-					+ ' written: ' + functionObj.written
-					+ ' needsDebugging: ' + functionObj.needsDebugging
-					+ ' queuedMicrotasks: ' + functionObj.queuedMicrotasks
-					+ ' lines: ' + functionObj.linesOfCode
-					+ '<br>' + functionObj.description.replace(/\n/g, '<BR>') + functionObj.header + '<BR>'
-					+ (functionObj.hasOwnProperty('code') ? functionObj.code.replace(/\n/g, '<BR>') : '') + '<br>';				
-				var divEnd = '</div>';	
-				return divTag + divContent + divEnd;
+				var trTag = '<tr id="function' + functionObj.id + '">';
+				var trContent =  '<td>'  + functionObj.id + '</td>'
+					 + '<td>' + functionObj.name + '</td>' 
+					 + '<td>' + functionObj.described + '</td>'
+					 + '<td>' + functionObj.written + '</td>'
+					 + '<td>' + functionObj.needsDebugging + '</td>'
+					 + '<td>' + functionObj.queuedMicrotasks + '</td>'
+					 + '<td>' + functionObj.linesOfCode + '</td>'
+					//+ '<br>' + functionObj.description.replace(/\n/g, '<BR>') + functionObj.header + '<BR>'
+					//+ (functionObj.hasOwnProperty('code') ? functionObj.code.replace(/\n/g, '<BR>') : '') + '<br>';				
+				var trEnd = '</tr>';	
+				return trTag + trContent + trEnd;
 			}
 			
-			function constructTestDiv(test)
+			function constructTestTr(test)
 			{
-				var divTag = '<div id="test' + test.id + '">';
-				var divContent = '' + test.id + ' ' + test.functionName + ' for "' + test.description + '"'
-					+ ' disputed: ' + (test.inDispute ? 'true' : 'false') 
-					+ (test.hasOwnProperty('simpleTestInputs') ? '<BR>Inputs:<BR>' + test.simpleTestInputs : '')
-					+ (test.hasOwnProperty('simpleTestOutput') ? '<BR>Outputs:<BR>' + test.simpleTestOutput.replace(/\n/g, '<BR>') : '');
-				var divEnd = '</div>';	
-				return divTag + divContent + divEnd;
+				var trTag = '<tr id="test' + test.id + '">';
+				var trContent = '<td>' + test.id + '</td>'
+					 + '<td>' + test.functionName + ' for "' + test.description+ '</td>'
+					 + '<td>' + (test.inDispute ? 'true' : 'false')+ '</td>'
+					 + '<td>' + (test.hasOwnProperty('simpleTestInputs') ? test.simpleTestInputs : '')+ '</td>'
+					 + '<td>' + (test.hasOwnProperty('simpleTestOutput') ? test.simpleTestOutput.replace(/\n/g, '<BR>') : '')+ '</td>';
+				var trEnd = '</tr>';	
+				return trTag + trContent + trEnd;
 			}		
 			
-			function constructWorkerDiv(workerID, workerHandle)
+			function constructWorkerTr(workerID, workerHandle)
 			{
-				var divTag = '<div id="worker' + workerID + '">';
-				var divContent = 'ID: ' + workerID + ' name: ' + workerHandle + '<BR>';
-				var divEnd = '</div>';	
-				return divTag + divContent + divEnd;
+				var trTag = '<tr id="worker' + workerID + '">';
+				var trContent = '<td>' + workerID + '</td><td>' + workerHandle + '</td>';
+				var trEnd = '</tr>';	
+				return trTag + trContent + trEnd;
 			}	
 		});	
 	</script>
 </head>
-<body>
-	<div class="row-fluid">
-	  	<div class="span1"></div>
-	  	<div class="span10">
-			<h3>Welcome to the <b>CrowdCode Administration Service</b></h3>
-			Commands can be invoked by 1) directly submitting a post or get request containing a command 
-			(e.g., "http://[...]/admin/Status") or 2) by using the textbox below to submit a 
-			command (e.g., "Status").<BR><BR>
-			The following commands are currently available:
-			<ul>
-				<li><b>Reset</b> - resets the default project back to the initial state.</li>
-				<li><b>Reviews on</b> - turns on generation of review microtasks (default)</li>
-				<li><b>Reviews off</b> - turns off generation of review microtasks</li>
-			</ul><BR>
+<body >
+	
+	<nav class="navbar navbar-default" role="navigation">
+  		<div class="container-fluid">
+		    <!-- Brand and toggle get grouped for better mobile display -->
+		    <div class="navbar-header">
+		      <a class="navbar-brand" href="#">CrowdCode Administration Service</a>
+		    </div>
+	    </div>
+	</nav>
+	
+	<div class="container-fluid">
+	
+		<div class="row">
+		  	<div class="col-md-6">
+		  		<div class="panel panel-default">
+				  <div class="panel-heading">Console</div>
+				  <div class="panel-body"> 
+					The following commands are currently available:
+					<ul>
+						<li><b>Reset</b> - resets the default project back to the initial state.</li>
+						<li><b>Reviews on</b> - turns on generation of review microtasks (default)</li>
+						<li><b>Reviews off</b> - turns off generation of review microtasks</li>
+					</ul>
+				
+				   	<input type="text" class="input-xlarge" id="command">
+				   	<button id="execute" class="btn btn-small">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				   	<button id="clear" class="btn btn-small">Clear Output</button> <br />
+					<div id="output"></div>
+				
+				  </div>
+				</div>
+		  	</div>
+		  	
+		  	<div class="col-md-6">
+				<div class="panel panel-default">
+				  <div class="panel-heading">Logged in Workers</div>
+				  <table id="workers" class="table table-hover">
+				  	<thead>
+				  		<tr>
+					  		<th>Id</th>
+					  		<th>Name</th>
+				  		</tr>
+				  	</thead>
+				  </table>
+				</div>
+			</div>
+	  	</div>
 		
-		   	<input type="text" class="input-xlarge" id="command">
-		   	<button id="execute" class="btn btn-small">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		   	<button id="clear" class="btn btn-small">Clear Output</button><BR><BR>
-			<div id="output"></div><BR><BR>
-			<b>Logged in Workers</b><BR><div id="workers"></div>
-			<b>All Microtasks</b><BR><div id="microtasks"></div>
-			<b>Microtask Queue</b><BR><div id="microtaskQueueDiv"></div>
-			<b>Review Queue</b><BR><div id="reviewQueueDiv"></div>
-			<b>All Functions</b><BR><div id="functions"></div>
-			<b>All Tests</b><BR><div id="tests"></div>
-			<b>Review Materials</b><BR><div id="reviewMaterialsDiv"></div>
+		<div class="row">
+		  	<div class="col-md-12">		
+				<div class="panel panel-default">
+				  <div class="panel-heading">All Microtasks</div>
+				  <table id="microtasks" class="table table-hover">
+				  	<thead>
+				  		<tr>
+					  		<th>Id</th>
+					  		<th>Name</th>
+					  		<th>Status</th>
+					  		<th>Points</th>
+					  		<th>Worker</th>
+				  		</tr>
+				  	</thead>
+				  </table>
+				</div>
+			</div>
 		</div>
-		<div class="span1"></div>
+		
+		<div class="row">
+		
+		  	<div class="col-md-6">		
+				<div class="panel panel-default">
+				  <div class="panel-heading">Microtask Queue</div>
+				  <div class="panel-body"> 
+					<div id="microtaskQueueDiv"></div>
+				  </div>
+				</div>
+			</div>
+			
+			
+		  	<div class="col-md-6">	
+				<div class="panel panel-default">
+				  <div class="panel-heading">Review Queue</div>
+				  <div class="panel-body"> 
+					<div id="reviewQueueDiv"></div>
+				  </div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+				
+		  	<div class="col-md-12">
+				<div class="panel panel-default">
+				  <div class="panel-heading">All Functions</div>
+				  <table id="functions" class="table table-hover">
+				  	<thead>
+				  		<tr>
+					  		<th>Id</th>
+					  		<th>Name</th>
+					  		<th>Described</th>
+					  		<th>Written</th>
+					  		<th>NeedsDebugging</th>
+					  		<th>QueuedMicrotasks</th>
+					  		<th>Lines</th>
+				  		</tr>
+				  	</thead>
+				  </table>
+				</div>
+			</div>
+			
+		</div>
+				
+		<div class="row">
+		  	<div class="col-md-12">
+				<div class="panel panel-default">
+				  <div class="panel-heading">All Tests</div>
+				  <table id="tests" class="table table-hover">
+				  	<thead>
+				  		<tr>
+					  		<th>Id</th>
+					  		<th>Name</th>
+					  		<th>Disputed</th>
+					  		<th>Inputs</th>
+					  		<th>Output</th>
+				  		</tr>
+				  	</thead>
+				  </table>
+				</div>
+			</div>	
+		</div>
+				
+		<div class="row">
+		  	<div class="col-md-12">
+				<div class="panel panel-default">
+				  <div class="panel-heading">Review Materials</div>
+				  <div class="panel-body"> 
+					<div id="reviewMaterialsDiv"></div>
+				  </div>
+				</div>
+		</div>
+		
 	</div>
 </body>
 </html>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-
-
-	 <welcome-file-list>
+	
+	<welcome-file-list>
 		<welcome-file>crowdcoding</welcome-file>
 	</welcome-file-list>
+	
+	<!-- SERVLETS -->
 	<servlet>
 		<servlet-name>SystemServiceServlet</servlet-name>
 		<servlet-class>com.google.api.server.spi.SystemServiceServlet
@@ -17,15 +18,7 @@
 		<servlet-name>SystemServiceServlet</servlet-name>
 		<url-pattern>/_ah/spi/*</url-pattern>
 	</servlet-mapping>
-	<filter>
-		<filter-name>ObjectifyFilter</filter-name>
-		<filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>ObjectifyFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping> 
-
+	
 	<servlet>
 		<servlet-name>CrowdCoding</servlet-name>
 		<servlet-class>com.crowdcoding.servlets.CrowdServlet
@@ -35,8 +28,8 @@
 		<servlet-name>CrowdCoding</servlet-name>
 		<url-pattern>/servlet/*</url-pattern>
 	</servlet-mapping>
-
-
+	
+	<!-- FILTERS -->
 	<filter>
 	    <filter-name>filter</filter-name>
 	    <filter-class>com.crowdcoding.servlets.DispatchFilter</filter-class>
@@ -45,4 +38,14 @@
 	    <filter-name>filter</filter-name>
 	    <url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<filter>
+		<filter-name>ObjectifyFilter</filter-name>
+		<filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>ObjectifyFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping> 
+
 </web-app>

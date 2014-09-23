@@ -68,7 +68,7 @@ public class WriteCall extends Microtask
 	
 	public String getUIURL()
 	{
-		return "/html/WriteCall.jsp";
+		return "/html/microtasks/writeCall.jsp";
 	}
 	
 	public Function getCaller()

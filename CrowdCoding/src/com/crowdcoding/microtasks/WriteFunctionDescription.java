@@ -74,7 +74,7 @@ public class WriteFunctionDescription extends Microtask
 	
 	public String getUIURL()
 	{
-		return "/html/WriteFunctionDescription.jsp";
+		return "/html/microtasks/writeFunctionDescription.jsp";
 	}	
 	
 	public Artifact getOwningArtifact()

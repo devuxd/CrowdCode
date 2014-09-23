@@ -521,5 +521,4 @@
 </script>
 
 <textarea id="code"></textarea>
-	<%@include file="/html/elements/javascriptTutorial.jsp" %><BR>
 <div id = "errorMessages" class="alert alert-error"></div>
