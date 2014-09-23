@@ -242,13 +242,7 @@
 	
 
 <div id="taskDescription" class="bg-success">
-	descrizione task
-
-</div>
-
-
-<form id="taskForm" action="#">
-		
+	
 		<div id="writePrompt" style="display: none">
 			Can you write a test for<BR>		<BR>
 			<div class="alert alert-info"><%= microtask.getDescription() %>
@@ -302,6 +296,12 @@
 		
 		<%@include file="/html/elements/typeBrowser.jsp" %><BR>
 
+</div>
+
+
+<form id="taskForm" action="#">
+	<div class=" bg-warning">	
+
 		<div id="simpleTest">
 		    Provide a JSON object literal of the specified type for each parameter and the expected 
 		    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
@@ -313,7 +313,8 @@
 				<textarea id="expectedOutput"></textarea>
 				<div class="alert alert-error" id="expectedOutputErrors"></div>
 		</div>
-
+	</div>
+	<br/>
 	<%@include file="/html/elements/microtaskFormButtons.jsp"%>
 </form>
 	

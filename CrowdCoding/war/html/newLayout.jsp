@@ -266,6 +266,13 @@ footer.navbar-default { background-color: #3C9764; }
 /* Styles for the readonly code mirror box */
 .codemirrorBox .CodeMirror { height: auto; font-size: small; }
 #codemirrorBox .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
+
+/* Style for highlighted lines in CodeMirror */
+.pseudoCall { background-color: white; color: gray; font-weight: bold; }
+.pseudoCode { background-color: yellow;	}
+.highlightPseudoCall { background-color: lime; }
+
+
 </style>
 </head>
 
