@@ -87,10 +87,13 @@ function Tests()
 	{
 		var testsFor = forFunction(functionID);
 		var testCasesFor = [];
-		
+	
 		for (var i=0; i < testsFor.length; i++)
+		{
+			testFor = testsFor[i];
 			testCasesFor.push({ text: testFor.description, added: false, deleted: false, id: testFor.id });
-		
+		}
+	
 		return testCasesFor;
 	}
 }
