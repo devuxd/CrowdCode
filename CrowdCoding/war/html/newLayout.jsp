@@ -1,5 +1,6 @@
 <%@page contentType="text/html;charset=UTF-8" language="java"%>
 <%@page import="com.googlecode.objectify.Work"%>
+<%@page import="com.googlecode.objectify.Key"%>
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
 <%@page import="com.crowdcoding.Project"%>
@@ -14,9 +15,9 @@
     // may be concurrently updating it.
 
     final String projectID = (String) request.getAttribute("project");
-	final Logger log       = Logger.getLogger(Project.class.getName());
+	final Logger log = Logger.getLogger(Project.class.getName());
 
-
+	
 	Project project = ObjectifyService.ofy().transact(new Work<Project>() 
 	{
 	    public Project run() 
@@ -24,8 +25,8 @@
 			return Project.Create(projectID);
 	    }
 	});
-	
-	String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+		
+	String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 	String workerHandle = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 %>
 
