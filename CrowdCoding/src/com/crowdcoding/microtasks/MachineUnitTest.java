@@ -84,7 +84,7 @@ public class MachineUnitTest extends Microtask
 
      public String getUIURL()
      {
-          return "/html/MachineUnitTest.jsp";
+          return "/html/microtasks/machineUnitTest.jsp";
      }
     
      public Artifact getOwningArtifact()

@@ -136,7 +136,7 @@ public class WriteTest extends Microtask
 	     
 	public String getUIURL()
 	{
-	     return "/html/writeTest.jsp";
+	     return "/html/microtasks/writeTest.jsp";
 	}
 	
 	public Function getFunction(Project project)

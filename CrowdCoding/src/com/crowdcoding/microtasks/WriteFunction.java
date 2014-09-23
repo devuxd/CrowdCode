@@ -95,7 +95,7 @@ public class WriteFunction extends Microtask
 	
 	public String getUIURL()
 	{
-		return "/html/writeFunction.jsp";
+		return "/html/microtasks/writeFunction.jsp";
 	}
 	
 	public Function getFunction()

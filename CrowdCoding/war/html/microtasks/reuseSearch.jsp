@@ -28,8 +28,8 @@
 	$(document).ready(function() 
 	{
 		$('#noFunction').click(selectNoFunction);
-	  	$('#skip').click(function() { skip(); });		
-		$('#searchForm').submit(submitReuseSearch);
+	  	$('#skipBtn').click(function() { skip(); });		
+		$('#taskForm').submit(submitReuseSearch);
 		setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);
 	});
 	
@@ -129,17 +129,25 @@
 </script>
 
 <%@include file="/html/elements/microtaskTitle.jsp" %>
-Is there a function that does<BR>
-<span class="label label-inverse"><%=microtask.getCallDescription()%></span><BR><BR>
-Use the search box to see if a function exists to do this. Otherwise, select "No function does this".<BR><BR>
 
-<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
-<div id="callContext" class="collapse"><div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div></div><BR>
+
+<div id="taskDescription" class="bg-success">
+	Is there a function that does<BR>
+	<span class="label label-inverse"><%=microtask.getCallDescription()%></span><BR><BR>
+	Use the search box to see if a function exists to do this. Otherwise, select "No function does this".<BR><BR>
+	
+	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
+	<div id="callContext" class="collapse"><div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div></div><BR>
+</div>
 
 <form id="searchForm" action="">
-	<input type="text" id="SearchText" class="input-large" oninput="doSearch()">
-	<div id="results"></div><BR>	
-	If you can't find any, click this:<br>
-	<button id="noFunction" type="button" class="btn btn-primary">No function does this</button><BR><BR>		
-	<%@include file="/html/elements/submitFooter.jsp" %>
+	<div class=" bg-warning">
+		<input type="text" id="SearchText" class="input-large" oninput="doSearch()">
+		<div id="results"></div><BR>	
+		If you can't find any, click this:<br>
+		<button id="noFunction" type="button" class="btn btn-primary">No function does this</button>
+	</div>
+	<br />
+	
+	<%@include file="/html/elements/microtaskFormButtons.jsp"%>
 </form>
