@@ -3,6 +3,7 @@ package com.crowdcoding.servlets;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,10 +12,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 
 import com.crowdcoding.commands.Command;
 import com.crowdcoding.commands.ProjectCommand;
@@ -22,6 +30,7 @@ import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
+import com.crowdcoding.entities.UserPicture;
 import com.crowdcoding.entities.Worker;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.MachineUnitTest;
@@ -34,6 +43,7 @@ import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
 import com.crowdcoding.util.Util;
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -67,6 +77,7 @@ public class CrowdServlet extends HttpServlet
 		ObjectifyService.register(Function.class);
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
+		ObjectifyService.register(UserPicture.class);
 		
 		ObjectifyService.register(Microtask.class);
 		ObjectifyService.register(ReuseSearch.class);
@@ -90,11 +101,13 @@ public class CrowdServlet extends HttpServlet
 		doAction(req, resp);
 	}
 	
-	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException 
+	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		/* Dispatch requests as follows:
 		 * Not using Chrome - browserCompat.html		 
 		 * Not logged in - AppEngine login service
+		 *  /user/picture/change - doChangePicture
+		 *  /user/picture - doChangePicture
 		 *  /<project> - mainpage.jsp
 		 *  /<project>/admin - admin.jsp
 		 *  /<project>/admin/* - doAdmin
@@ -133,6 +146,10 @@ public class CrowdServlet extends HttpServlet
 					// First token will always be empty (portion before the first slash)
 					if (path.length == 0)
 						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
+					else if(req.getPathInfo().equals("/user/picture/change")) 
+						doChangePicture(user,req,resp);
+					else if(req.getPathInfo().equals("/user/picture")) 
+						getPicture(req,resp);
 					else
 					{
 
@@ -141,9 +158,13 @@ public class CrowdServlet extends HttpServlet
 						
 						// check first for non-project pages routing
 						if (path[1].equals("clientRequest"))
-						{	req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);	}					
+						{	
+							req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);	
+						}					
 						else if (path[1].equals("superadmin"))
-						{	req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp); }					
+						{	
+							req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp); 
+						}					
 						// now check for project pages (only if project exists)
 						else if( ofy().load().filterKey(Key.create(Project.class, projectID)).keys().first() != null ){
 							// if is requested the main page
@@ -190,9 +211,12 @@ public class CrowdServlet extends HttpServlet
     		}
 		} catch (ServletException e) {
 			e.printStackTrace();
-		}        
+		} catch (FileUploadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}      
 	}
-	
+			
 	private void doAdmin(HttpServletRequest req, HttpServletResponse resp, 
 			final String projectID, final String[] commandString) throws IOException 
 	{
@@ -273,6 +297,40 @@ public class CrowdServlet extends HttpServlet
 	    writeResponseString(resp, output.toString());	    
 	}	
 
+	// changes user picture
+	private void doChangePicture(User user, HttpServletRequest req, HttpServletResponse res) throws IOException, FileUploadException {
+		// Get the image representation
+	    ServletFileUpload upload = new ServletFileUpload();
+	    FileItemIterator iter = upload.getItemIterator(req);
+	    FileItemStream imageItem = iter.next();
+	    InputStream imgStream = imageItem.openStream();
+
+	    // construct our entity objects
+	    Blob imageBlob = new Blob(IOUtils.toByteArray(imgStream));
+	    UserPicture picture = new UserPicture(user.getUserId(), imageBlob);
+
+	    // persist image
+	    ofy().save().entity(picture).now();
+
+	    // respond to query
+	    res.setContentType("text/plain");
+	    res.getWriter().append("success");
+	}
+	
+	// get user picture
+	private void getPicture(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+		//retrieve request GET parameter userId and retrieve picture
+		String userId = req.getParameter("userId");
+		UserPicture picture = (userId==null)?null:ofy().load().key(Key.create(UserPicture.class, userId)).get();
+		
+		if(userId==null || picture ==null){
+			req.getRequestDispatcher("/img/40x40.gif").forward(req, res);
+		} else {
+		    res.setContentType("image/jpeg");
+		    res.getOutputStream().write(picture.getImage().getBytes());
+		}
+
+	}
 	
 	// Notify the server that a microtask has been completed. 
 	public void doSubmit(final HttpServletRequest req, final HttpServletResponse resp) throws IOException 

@@ -136,12 +136,10 @@
 		var idString = "testCaseInput" + testCase.id;
 		
    		$("#testCases").append(
-				'<br/><span id="testCase' + testCase.id + '">' +
-					'<input type="text" class="input-lg" id="' + idString + '" data-caseID="' + testCase.id
-					      + '" placeholder="Describe a test case"/>' +				
-					'<a href="#" onclick="deleteTestCase(\'#testCase' + testCase.id + '\', ' + testCase.id + 
-							  ')" class="closeButton">&times;</a>' +	
-				'</span>');	
+				'<span id="testCase' + testCase.id + '">' +
+					'<input type="text" class="form-control form-control-90" id="' + idString + '" data-caseID="' + testCase.id + '" placeholder="Describe a test case"/>' +				
+					'<a href="#" onclick="deleteTestCase(\'#testCase' + testCase.id + '\', ' + testCase.id + ')" class="closeButton">&times;</a>' +	
+				'</span><br/>');	
    		
    		if (testCase.text != "")
    			$('#testCaseInput' + testCase.id).val(testCase.text);   		

@@ -107,6 +107,8 @@ footer.navbar-default { background-color: #3C9764; }
 }
 #leaderboard img {
 	margin-bottom:1px;
+	width:30px;
+	height:30px;
 }
 #leaderboard td:nth-child(2) {
 	font-style:italic;
@@ -185,18 +187,34 @@ footer.navbar-default { background-color: #3C9764; }
 	padding:5px;
 }
 
-#taskForm {
-	
+#taskForm .bg-warning{
+	padding:10px;
 }
 
 #taskButtons {
 	float:right;
 }
 
+#popUpChangePicture .modal-footer {
+	text-align:center;
+}
+#popUpChangePicture form {
+	width:80%;
+}
+
+#userProfile {
+	cursor:pointer;
+}
+#userProfile img {
+	width:40px;
+	height:40px;
+}
+
+.form-control-90 { width:90%; display:inline;}
 
 /* Styles for the readonly code mirror box */
-.codemirrorBox .CodeMirror { height: auto; font-size: small; }
-#codemirrorBox .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
+.CodeMirror {font-weight:normal; height: auto;  }
+.CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
 
 /* Style for highlighted lines in CodeMirror */
 .pseudoCall { background-color: white; color: gray; font-weight: bold; }

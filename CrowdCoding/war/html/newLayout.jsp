@@ -78,10 +78,10 @@
 					<h3>CrowdCode</h3>
 				</div>
 				
-				<div class="pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown">
-				    <img src="http://placehold.it/40x40" alt="worker1" />
+				<div class="pull-right" type="button" id="userProfile" data-toggle="dropdown">
+				    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" />
 					<span>&nbsp;&nbsp;</span> 
-					<strong>worker1@crowdcode.com</span>
+					<strong><%=workerHandle%></span>
 				  </div>
 				  <!-- 
 				<div class="dropdown pull-right">
@@ -163,6 +163,27 @@
 </div>
 
 
+<!-- Popup for changing profile picture. -->
+<div id="popUpChangePicture" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span>change your profile picture!</span>
+				<button type="button" class="close" data-dismiss="modal">X</button>
+			</div>
+			<div class="modal-footer">
+			    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" class="pull-left" />	
+			    <div class="pull-left">
+			    	<form action="/user/picture/change" enctype='multipart/form-data' method="POST" >
+			    		<input type="file" name="picture" accept="image/*" /><br/>
+			    		<input type="submit" class="btn btn-primary" value="change picture" />
+			    	</form>
+			    </div>
+			    <span class="clearfix"></span>
+			</div>	
+		</div>
+	</div>
+</div>
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
@@ -259,6 +280,11 @@
 
 			return false;
 		});*/
+		
+		
+		$("#userProfile").click(function(){
+			$("#popUpChangePicture").modal('show');
+		});
 		
 		 $("#sendFeedbackBtn").click(function(){
 			$("#popUpFeedback").modal('show');
