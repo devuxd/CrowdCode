@@ -3,8 +3,8 @@
 <%@page import="com.googlecode.objectify.Key"%>
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@page import="com.crowdcoding.Project"%>
-<%@page import="com.crowdcoding.Worker"%>
+<%@page import="com.crowdcoding.entities.Project"%>
+<%@page import="com.crowdcoding.entities.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
 
@@ -40,6 +40,7 @@
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
+	<link rel="stylesheet" href="/css/worker.css" type="text/css" />
 	
 	
 	<!-- Javascript 3rd part libraries --> 
@@ -66,214 +67,6 @@
 	<script src="/js/tests.js"></script>
 	<script src="/js/review.js"></script>
 	
-<style type="text/css">
-
-
-html,body { height: 100%; }
-body {
-	background-color: rgba(211, 211, 211, 0.22);
-}
-
-header h3 { margin:0px }
-header {
-	background-color: #3C9764;
-	color: white;
-	margin: 0px;
-	padding-left:10px;
-	padding-right:10px;
-	padding-top:10px;
-	padding-bottom:5px;
-	margin-bottom:10px;
-	
-	-webkit-box-shadow: 0px 2px 5px 0px gray;
-	-moz-box-shadow:    0px 2px 5px 0px gray;
-	box-shadow:         0px 2px 5px 0px gray;
-}
-
-#wrapper {
-  min-height: 100%;
-  height: auto;
-  margin: 0 auto -40px;
-  padding: 0 0 40px;
-}
-
-footer {
-	bottom: 0;
-	height: 40px;
-	position: relative;
-	width: 100%;
-	background-color: #3C9764;
-}
-
-footer.navbar-default { background-color: #3C9764; }
-
-.btn-primary { border-color:#3C9764; background-color:#3C9764;}
-#feedbackBtn { margin:5px; }
-
-
-.row {
-	margin: 0px;
-	padding-bottom:20px;
-}
-
-.row>div { padding-top: 10px;}
-
-#leftBar, #rightBar {
-	padding-left: 0px;
-	padding-right: 0px;
-	border: none;
-}
-
-#container {
-	padding-left: 3%;
-	padding-right: 3%;
-}
-
-#leftBar {
-	padding-left:1%;
-}
-
-#rightBar {
-	padding-right:1%;
-}
-
-#leftBar .panel, #rightBar .panel {
-	margin: 0px;
-	border: none;
-	border-radius: 0px;
-	border:0px;
-	margin-bottom:10px;
-	background-color:transparent;
-	box-shadow: none;
-}
-
-#leftBar .panel-body, #rightBar .panel-body {
-	margin: 0px;
-	padding: 0px;
-}
-
-#leftBar .panel-heading, #rightBar .panel-heading {
-	text-transform:uppercase;
-	font-size:10px;
-	background-color: transparent;
-	color: gray;
-	border-radius: 0px;
-	border: none;
-	padding: 5px;
-}
-
-
-#score .panel-body span:first-child {
-	font-size:40px;
-	margin-top:5px;
-}
-#stats .badge { width:50px; }
-
-#leaderboard table {width:100%;}
-#leaderboard tr {
-	font-size:14px;
-	font-weight:normal;
-}
-#leaderboard img {
-	margin-bottom:1px;
-}
-#leaderboard td:nth-child(2) {
-	font-style:italic;
-}
-#leaderboard td:nth-child(3) {
-	font-weight:bold;
-}
-
-#recentActivity {
-	font-weight:normal;
-	height: 300px;
-	overflow:auto;
-}
-#recentActivity tr {
-	border-bottom:1px solid white;
-}
-#recentActivity td {
-	text-transform: capitalize;
-	padding:2px;
-}
-#recentActivity td:hover {
-	cursor:pointer;
-	background-color:bisque;
-}
-
-#chatInput{
-	width: 100%;
-	resize: none;
-	border: none;
-	background-color: lightgray;
-	color:black;
-	font-weight: normal;
-	padding: 3px;
-	height: 30px;
-}
-#chatOutput {
-	font-weight:normal;
-	height: 300px;
-	overflow:auto;
-	padding: 3px;
-	background-color: #CDECCC;
-	margin-bottom:5px;
-}
-#chatOutput span:first-child {
-	font-weight:bold;
-}
-
-
-#task {
-	padding:10px;
-	background-color:white;
-	border-radius:10px;
-	border:1px solid lightgray;
-	
-	
-	-webkit-box-shadow: 0px 2px 5px 0px gray;
-	-moz-box-shadow:    0px 2px 5px 0px gray;
-	box-shadow:         0px 2px 5px 0px gray;
-}
-#task>div {
-	margin-bottom: 10px;
-}
-
-#taskHeader {
-	padding: 0px;
-	margin: 0px;
-}
-
-#taskDate {
-	font-size: 12px;
-	font-weight: normal;
-}
-
-#taskDescription {
-	font-weight:normal;
-	padding:5px;
-}
-
-#taskForm {
-	
-}
-
-#taskButtons {
-	float:right;
-}
-
-
-/* Styles for the readonly code mirror box */
-.codemirrorBox .CodeMirror { height: auto; font-size: small; }
-#codemirrorBox .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
-
-/* Style for highlighted lines in CodeMirror */
-.pseudoCall { background-color: white; color: gray; font-weight: bold; }
-.pseudoCode { background-color: yellow;	}
-.highlightPseudoCall { background-color: lime; }
-
-
-</style>
 </head>
 
 <body>

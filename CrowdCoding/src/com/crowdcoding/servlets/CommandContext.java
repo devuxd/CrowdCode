@@ -3,8 +3,8 @@ package com.crowdcoding.servlets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.crowdcoding.Project;
-import com.crowdcoding.artifacts.commands.Command;
+import com.crowdcoding.commands.Command;
+import com.crowdcoding.entities.Project;
 
 /* An execution context represents the top level context for a Command that is currently being executed. 
  * State that is local to the command execution context can be stored here.

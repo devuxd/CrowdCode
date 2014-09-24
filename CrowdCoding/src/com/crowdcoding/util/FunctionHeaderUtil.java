@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import com.crowdcoding.Project;
-import com.crowdcoding.artifacts.Function;
 import com.crowdcoding.dto.FullDescriptionsDTO;
+import com.crowdcoding.entities.Function;
+import com.crowdcoding.entities.Project;
 
 public class FunctionHeaderUtil
 {

@@ -2,11 +2,11 @@
 <%@ page import="com.google.appengine.api.users.User"%>
 <%@ page import="com.google.appengine.api.users.UserService"%>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@ page import="com.crowdcoding.Project"%>
-<%@ page import="com.crowdcoding.Worker"%>
-<%@ page import="com.crowdcoding.artifacts.Function"%>
-<%@ page import="com.crowdcoding.microtasks.WriteFunction"%>
-<%@ page import="com.crowdcoding.microtasks.WriteFunction.PromptType"%>
+<%@ page import="com.crowdcoding.entities.Project"%>
+<%@ page import="com.crowdcoding.entities.Worker"%>
+<%@ page import="com.crowdcoding.entities.Function"%>
+<%@ page import="com.crowdcoding.entities.microtasks.WriteFunction"%>
+<%@ page import="com.crowdcoding.entities.microtasks.WriteFunction.PromptType"%>
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil"%>
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@ page import="java.io.StringWriter"%>

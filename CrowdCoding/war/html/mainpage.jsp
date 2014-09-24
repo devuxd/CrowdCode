@@ -2,8 +2,8 @@
 <%@page import="com.googlecode.objectify.Work"%>
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@page import="com.crowdcoding.Project"%>
-<%@page import="com.crowdcoding.Worker"%>
+<%@page import="com.crowdcoding.entities.Project"%>
+<%@page import="com.crowdcoding.entities.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
 <%
