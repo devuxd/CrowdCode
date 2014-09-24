@@ -305,16 +305,34 @@ public class CrowdServlet extends HttpServlet
 	    FileItemStream imageItem = iter.next();
 	    InputStream imgStream = imageItem.openStream();
 
-	    // construct our entity objects
+
 	    Blob imageBlob = new Blob(IOUtils.toByteArray(imgStream));
-	    UserPicture picture = new UserPicture(user.getUserId(), imageBlob);
+	    
+	    // if image size > 0 bytes
+	    if(imageBlob.getBytes().length>0){
+	    	
+		    //retrieve picture object if exists or instantiate a new one
+		    UserPicture picture = ofy().load().key(Key.create(UserPicture.class, user.getUserId())).get();
+		    if(picture == null) 
+		    	picture = new UserPicture(user.getUserId());
 
-	    // persist image
-	    ofy().save().entity(picture).now();
+		    picture.setImage(imageBlob);
+		    
+		    // persist image
+	    	System.out.println("salvo immagine!");
+		    ofy().save().entity(picture).now();
+		    
+		    // print success
+		    res.setContentType("text/plain");
+		    res.getWriter().append("success");
+		    
+	    } else {
 
-	    // respond to query
-	    res.setContentType("text/plain");
-	    res.getWriter().append("success");
+		    // print fail
+		    res.setContentType("text/plain");
+		    res.getWriter().append("fail");
+	    }
+	    
 	}
 	
 	// get user picture

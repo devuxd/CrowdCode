@@ -78,25 +78,28 @@
 					<h3>CrowdCode</h3>
 				</div>
 				
+				<!--
 				<div class="pull-right" type="button" id="userProfile" data-toggle="dropdown">
 				    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" />
 					<span>&nbsp;&nbsp;</span> 
 					<strong><%=workerHandle%></span>
-				  </div>
-				  <!-- 
-				<div class="dropdown pull-right">
-				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-				    <img src="http://placehold.it/40x40" alt="worker1" />
-					<span>&nbsp;&nbsp;</span> 
-					<strong>worker1@crowdcode.com</span>
-				  </button>
-				  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Settings</a></li>
-				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Stats</a></li>
-				    <li role="presentation" class="divider"></li>
-				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Logoutk</a></li>
+					(<a href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">LogOut</a>)
+				  </div>-->
+				 
+				<div id="userProfile" class="dropdown pull-right">
+				  <a id="dLabel" role="button" data-toggle="dropdown" data-target="#">
+				    <img src="/user/picture?userId=<%=workerID%>" class="profile-picture" alt="<%=workerHandle%>" />
+					<%=workerHandle%>
+				    <span class="caret"></span>
+				  </a>
+				
+				
+				  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+				  	<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
+				  	<li><a href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
 				  </ul>
-				</div> -->
+				</div>
+				
 				
 				<div class="clearfix"></div>
 			</div>
@@ -172,9 +175,9 @@
 				<button type="button" class="close" data-dismiss="modal">X</button>
 			</div>
 			<div class="modal-footer">
-			    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" class="pull-left" />	
+			    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" class="pull-left profile-picture" />	
 			    <div class="pull-left">
-			    	<form action="/user/picture/change" enctype='multipart/form-data' method="POST" >
+			    	<form  enctype='multipart/form-data' method="post" >
 			    		<input type="file" name="picture" accept="image/*" /><br/>
 			    		<input type="submit" class="btn btn-primary" value="change picture" />
 			    	</form>
@@ -265,9 +268,6 @@
 			// Tell server to logout
 			// Clear the microtask div of content
 			// Need to stop fetching messages!!!
-
-			$('#logout').modal();
-			return false;
 		});
 
 		$("#loginButton").click(function() {
@@ -282,8 +282,26 @@
 		});*/
 		
 		
-		$("#userProfile").click(function(){
-			$("#popUpChangePicture").modal('show');
+		$('#popUpChangePicture form').submit(function(){
+			var formData = new FormData($(this)[0]);
+
+		    $.ajax({
+		        url: '/user/picture/change',
+		        type: 'POST',
+		        data: formData,
+		        async: false,
+		        success: function (data) {
+		            $('#popUpChangePicture').modal('hide');
+		            if(data=="success"){
+			            location.reload();
+		            }
+		        },
+		        cache: false,
+		        contentType: false,
+		        processData: false
+		    });
+		
+		    return false;
 		});
 		
 		 $("#sendFeedbackBtn").click(function(){

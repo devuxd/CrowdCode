@@ -20,9 +20,8 @@ public class UserPicture {
         this.userId = userId; 
         this.image  = image;
     }
-    public UserPicture(User user, Blob image) {
-        this.userId = user.getUserId(); 
-        this.image  = image;
+    public UserPicture(String userId) {
+        this.userId = userId; 
     }
 
     public Blob getImage()              { return image; }

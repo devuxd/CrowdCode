@@ -115,6 +115,7 @@
 <form id="taskForm" action="#">
 	<div class=" bg-warning">
 		<%@include file="/html/elements/functionEditor.jsp"%>
+		<%@include file="/html/elements/javascriptTutorial.jsp"%>
 	</div>
 	<br />
 	<%@include file="/html/elements/microtaskFormButtons.jsp"%>

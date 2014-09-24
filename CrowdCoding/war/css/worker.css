@@ -6,6 +6,7 @@ body {
 }
 
 header h3 { margin:0px }
+header a { color:white; }
 header {
 	background-color: #3C9764;
 	color: white;
@@ -26,6 +27,11 @@ header {
   height: auto;
   margin: 0 auto -40px;
   padding: 0 0 40px;
+}
+
+header .dropdown-menu {
+	background-color:lightgreen;
+	color:white;
 }
 
 footer {
@@ -202,10 +208,10 @@ footer.navbar-default { background-color: #3C9764; }
 	width:80%;
 }
 
-#userProfile {
-	cursor:pointer;
-}
+
+
 #userProfile img {
+	cursor:pointer;
 	width:40px;
 	height:40px;
 }
