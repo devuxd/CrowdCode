@@ -77,3 +77,7 @@ top: -1px;
 	padding-right: 0px;
 	height: 24px;
 }
+
+.rating input, .rating label, .rating #reset, .rating #borderTextAccept, .rating #borderTextReject  {
+	display:none;
+}
