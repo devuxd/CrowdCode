@@ -21,7 +21,6 @@
 
 	String functionCode     = microtask.getFunction().getEscapedFullCode();
 	String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(),project);
-
 	PromptType promptType   = microtask.getPromptType();
 %>
 
@@ -116,6 +115,7 @@
 	<div class=" bg-warning">
 		<%@include file="/html/elements/functionEditor.jsp"%>
 		<%@include file="/html/elements/javascriptTutorial.jsp"%>
+		<span class="clearfix"></span>
 	</div>
 	<br />
 	<%@include file="/html/elements/microtaskFormButtons.jsp"%>

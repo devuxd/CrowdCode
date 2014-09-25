@@ -43,10 +43,11 @@
  	{
  		var names = [];
  		var functionsAST = esprima.parse(allTheFunctionCode);	
- 		
+ 		console.log(allTheFunctionCode);
  		// Iterate over each function declaration, grabbing its name
  		$.each(functionsAST.body, function(index, bodyNode)
  		{
+ 			console.log(bodyNode.id.name);
  			if (bodyNode.type == "FunctionDeclaration")		
  				names.push(bodyNode.id.name);
  		});
@@ -301,7 +302,7 @@
 	function hasASTErrors(text, ast)
 	{
 		var errorMessages = "";
-		
+		console.log(functionNames);
 		// Check for AST errors
 		if (ast.body.length == 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
 			errorMessages += "All code should be in a single function.<BR>"
@@ -317,12 +318,14 @@
 			
 		if (errorMessages != "")
 		{
+			console.log("AST Error check: true");
 			$("#errorMessages").html(errorMessages);
 			$("#errorMessages").show();
 			return true;
 		}
 		else
 		{		
+			console.log("AST Error check: false");
 			$("#errorMessages").hide();
 			return false;
 		}

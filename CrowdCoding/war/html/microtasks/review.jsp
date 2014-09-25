@@ -22,21 +22,32 @@
 
     $(document).ready(function()
 	{    	
+		// enable the star rating plugin
+		$('#qualityRating').ratings(5).bind('ratingchanged', function(event, data) {
+			// catch the ratingchanged event and check the right radio button
+			$("input#quality-star"+data.rating).attr('checked','checked');
+		});
+		
   		$('#skipBtn').click(function() { skip(); });	
+  		
 		$("#taskForm").submit(function()
 		{		
 			submit(collectReviewFormData());
 			return false;
 		});
 		
-		loadMicrotaskUnderReview(microtaskIDUnderReview);			
+		loadMicrotaskUnderReview(microtaskIDUnderReview);	
+		
 	});
     
     // Colects data from the review form, building and returning the appropriate JSON object for submission
     function collectReviewFormData()
     {
-    	return { microtaskIDReviewed: microtaskIDUnderReview, reviewText: $('#reviewText').val(),
-					qualityScore: $('#qualityRating').children().filter(':checked').val() }; 
+    	return { 
+    		microtaskIDReviewed: microtaskIDUnderReview, 
+    		reviewText: $('#reviewText').val(),
+			qualityScore: $('#qualityRating').children().filter(':checked').val() 
+		}; 
     }
     
     function loadMicrotaskUnderReview(microtaskIDUnderReview)
@@ -63,11 +74,11 @@
 		<div id="ratingsDiv">
 			<p><B>Please rate the quality of this work:</B></p><BR>
 			<fieldset class="rating" id="qualityRating">
-			    <input type="radio" id="quality-star5" name="ratingQuality" value="5" /><label for="quality-star5" title="Really awesome">5 stars</label>
-			    <input type="radio" id="quality-star4" name="ratingQuality" value="4" /><label for="quality-star4" title="Pretty good">4 stars</label>
-			    <input type="radio" id="quality-star3" name="ratingQuality" value="3" /><label for="quality-star3" id="star3label" title="Just good enough">3 stars</label>
-			    <input type="radio" id="quality-star2" name="ratingQuality" value="2" /><label for="quality-star2" title="Should be rejected">2 stars</label>
 			    <input type="radio" id="quality-star1" name="ratingQuality" value="1" /><label for="quality-star1" title="Pretty terrible">1 star</label>
+			    <input type="radio" id="quality-star2" name="ratingQuality" value="2" /><label for="quality-star2" title="Should be rejected">2 stars</label>
+			    <input type="radio" id="quality-star3" name="ratingQuality" value="3" /><label for="quality-star3" id="star3label" title="Just good enough">3 stars</label>
+			    <input type="radio" id="quality-star4" name="ratingQuality" value="4" /><label for="quality-star4" title="Pretty good">4 stars</label>
+			    <input type="radio" id="quality-star5" name="ratingQuality" value="5" /><label for="quality-star5" title="Really awesome">5 stars</label>
 			</fieldset>
 			<p id="ratinglegend">Work rated 3 or above will be accepted.</p>
 		</div>	

@@ -50,6 +50,8 @@ public class Review extends Microtask
 	
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
+		System.out.println("--- SUBMITTING REVIEW ---");
+		
 		ReviewDTO reviewDTO = (ReviewDTO) dto;	
 		Microtask submittedMicrotask = Microtask.find(microtaskIDUnderReview, project).getValue();
 		

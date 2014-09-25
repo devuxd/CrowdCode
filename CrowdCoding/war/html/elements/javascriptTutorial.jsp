@@ -1,5 +1,5 @@
-<a href="#javascriptTutorial"  role="button" data-toggle="modal" class="muted pull-right minorNote">
-	Help, I don't know Javascript!
+<a href="#javascriptTutorial"  role="button" data-toggle="modal" class="muted pull-left minorNote">
+	<small>Help, I don't know Javascript!</small>
 </a>
 
 
@@ -10,11 +10,11 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<span>Javascript in 2 minutes!</span>
+				<strong>Javascript in 2 minutes!</strong>
 				<button type="button" class="close" data-dismiss="modal">X</button>
 			</div>
 			<div class="modal-footer">
-			    <textarea id="tutorialCode">example tutorial code</textarea>
+			    <textarea id="tutorialCode" style="text-align:left">example tutorial code</textarea>
 			</div>	
 		</div>
 	</div>
@@ -26,7 +26,7 @@
 	//var tutorialCodeMirror = $('#tutorialCode');
 	var tutCodeMirror = CodeMirror.fromTextArea(tutorialCode,{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
 	tutCodeMirror.setSize(null, 500);
-	$(document).ready(function(){
+	$('#javascriptTutorial').on('shown.bs.modal',function(){
 		$.get('/js/javascriptTutorial.txt', function(code) { 
 			tutCodeMirror.getDoc().setValue(code); 
 		});
