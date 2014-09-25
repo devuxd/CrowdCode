@@ -219,7 +219,7 @@ footer.navbar-default { background-color: #3C9764; }
 .form-control-90 { width:90%; display:inline;}
 
 /* Styles for the readonly code mirror box */
-.CodeMirror {font-weight:normal; height: auto;  }
+.CodeMirror { text-align:left; font-weight:normal; height: auto;  }
 .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
 
 /* Style for highlighted lines in CodeMirror */

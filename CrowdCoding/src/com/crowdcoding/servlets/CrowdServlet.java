@@ -126,10 +126,9 @@ public class CrowdServlet extends HttpServlet
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();  
 
-
-    	for(int i=0;i<path.length;i++){
-    		System.out.println("token "+i+": "+path[i]);
-    	}
+//    	for(int i=0;i<path.length;i++){
+//    		System.out.println("token "+i+": "+path[i]);
+//    	}
     	
     	try 
     	{	        

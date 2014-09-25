@@ -7,7 +7,6 @@
 <script>
 	$(document).ready(function(){
 		// Hook the leaderboard to Firebase		
-		console.log("loading leaderboard from: "+firebaseURL + '/leaderboard');
 		var leaderboardRef = new Firebase(firebaseURL + '/leaderboard');
 		leaderboardRef.on('value', function(snapshot) {
 		
@@ -28,7 +27,6 @@
 						   '<td>' + leader.score + '</td>'+
 						   '</tr>'
 			});
-			console.log(newHTML);
 			$('#leaderboard table').html(newHTML);
 		}
 	}

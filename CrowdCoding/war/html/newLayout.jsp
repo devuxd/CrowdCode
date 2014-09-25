@@ -36,6 +36,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
 	<!-- Stylesheets -->
+	<link rel="stylesheet"  href="/include/jquery.rating.css" />
 	<link rel="stylesheet" href="../include/bootstrap/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
