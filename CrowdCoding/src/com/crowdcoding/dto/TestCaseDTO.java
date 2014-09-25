@@ -2,7 +2,7 @@ package com.crowdcoding.dto;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
-import com.crowdcoding.artifacts.Test;
+import com.crowdcoding.entities.Test;
 
 
 public class TestCaseDTO extends DTO 

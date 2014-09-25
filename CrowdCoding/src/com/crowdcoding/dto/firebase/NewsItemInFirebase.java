@@ -9,10 +9,12 @@ public class NewsItemInFirebase extends DTO
 	public String description;
 	public String type;			// May be WorkReviewed or SubmittedReview
 	public long microtaskID;	// Corresponding microtask for the new item.
+	public int score;
 
 	// Default constructor (required by Jackson JSON library)
 	public NewsItemInFirebase()
 	{		
+		score = 0;
 	}
 	
 	public NewsItemInFirebase(int points, String description, String type, long microtaskID)
@@ -22,4 +24,15 @@ public class NewsItemInFirebase extends DTO
 		this.type = type;
 		this.microtaskID = microtaskID;
 	}	
+	
+
+	public NewsItemInFirebase(int points, String description, String type, long microtaskID, int score)
+	{
+		this.points = points;
+		this.description = description;
+		this.type = type;
+		this.microtaskID = microtaskID;
+		this.score = score;
+	}
+
 }

@@ -3,8 +3,8 @@
 <%@page import="com.googlecode.objectify.Key"%>
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@page import="com.crowdcoding.Project"%>
-<%@page import="com.crowdcoding.Worker"%>
+<%@page import="com.crowdcoding.entities.Project"%>
+<%@page import="com.crowdcoding.entities.Worker"%>
 <%@page import="java.util.logging.Logger"%>
 
 
@@ -40,6 +40,7 @@
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
+	<link rel="stylesheet" href="/css/worker.css" type="text/css" />
 	
 	
 	<!-- Javascript 3rd part libraries --> 
@@ -66,207 +67,6 @@
 	<script src="/js/tests.js"></script>
 	<script src="/js/review.js"></script>
 	
-<style type="text/css">
-
-
-html,body { height: 100%; }
-body {
-	background-color: rgba(211, 211, 211, 0.22);
-}
-
-header h3 { margin:0px }
-header {
-	background-color: #3C9764;
-	color: white;
-	margin: 0px;
-	padding-left:10px;
-	padding-right:10px;
-	padding-top:10px;
-	padding-bottom:5px;
-	margin-bottom:10px;
-	
-	-webkit-box-shadow: 0px 2px 5px 0px gray;
-	-moz-box-shadow:    0px 2px 5px 0px gray;
-	box-shadow:         0px 2px 5px 0px gray;
-}
-
-#wrapper {
-  min-height: 100%;
-  height: auto;
-  margin: 0 auto -40px;
-  padding: 0 0 40px;
-}
-
-footer {
-	bottom: 0;
-	height: 40px;
-	position: relative;
-	width: 100%;
-	background-color: #3C9764;
-}
-
-footer.navbar-default { background-color: #3C9764; }
-
-.btn-primary { border-color:#3C9764; background-color:#3C9764;}
-#feedbackBtn { margin:5px; }
-
-
-.row {
-	margin: 0px;
-	padding-bottom:20px;
-}
-
-.row>div { padding-top: 10px;}
-
-#leftBar, #rightBar {
-	padding-left: 0px;
-	padding-right: 0px;
-	border: none;
-}
-
-#container {
-	padding-left: 3%;
-	padding-right: 3%;
-}
-
-#leftBar {
-	padding-left:1%;
-}
-
-#rightBar {
-	padding-right:1%;
-}
-
-#leftBar .panel, #rightBar .panel {
-	margin: 0px;
-	border: none;
-	border-radius: 0px;
-	border:0px;
-	margin-bottom:10px;
-	background-color:transparent;
-	box-shadow: none;
-}
-
-#leftBar .panel-body, #rightBar .panel-body {
-	margin: 0px;
-	padding: 0px;
-}
-
-#leftBar .panel-heading, #rightBar .panel-heading {
-	text-transform:uppercase;
-	font-size:10px;
-	background-color: transparent;
-	color: gray;
-	border-radius: 0px;
-	border: none;
-	padding: 5px;
-}
-
-
-#score .panel-body span:first-child {
-	font-size:40px;
-	margin-top:5px;
-}
-#stats .badge { width:50px; }
-
-#leaderboard table {width:100%;}
-#leaderboard tr {
-	font-size:14px;
-	font-weight:normal;
-}
-#leaderboard img {
-	margin-bottom:1px;
-}
-#leaderboard td:nth-child(2) {
-	font-style:italic;
-}
-#leaderboard td:nth-child(3) {
-	font-weight:bold;
-}
-
-#recentActivity {
-	font-weight:normal;
-	height: 300px;
-	overflow:auto;
-}
-#recentActivity tr {
-	border-bottom:1px solid white;
-}
-#recentActivity td {
-	text-transform: capitalize;
-	padding:2px;
-}
-#recentActivity td:hover {
-	cursor:pointer;
-	background-color:bisque;
-}
-
-#chatInput{
-	width: 100%;
-	resize: none;
-	border: none;
-	background-color: lightgray;
-	color:black;
-	font-weight: normal;
-	padding: 3px;
-	height: 30px;
-}
-#chatOutput {
-	font-weight:normal;
-	height: 300px;
-	overflow:auto;
-	padding: 3px;
-	background-color: #CDECCC;
-	margin-bottom:5px;
-}
-#chatOutput span:first-child {
-	font-weight:bold;
-}
-
-
-#task {
-	padding:10px;
-	background-color:white;
-	border-radius:10px;
-	border:1px solid lightgray;
-	
-	
-	-webkit-box-shadow: 0px 2px 5px 0px gray;
-	-moz-box-shadow:    0px 2px 5px 0px gray;
-	box-shadow:         0px 2px 5px 0px gray;
-}
-#task>div {
-	margin-bottom: 10px;
-}
-
-#taskHeader {
-	padding: 0px;
-	margin: 0px;
-}
-
-#taskDate {
-	font-size: 12px;
-	font-weight: normal;
-}
-
-#taskDescription {
-	font-weight:normal;
-	padding:5px;
-}
-
-#taskForm {
-	
-}
-
-#taskButtons {
-	float:right;
-}
-
-
-/* Styles for the readonly code mirror box */
-.codemirrorBox .CodeMirror { height: auto; font-size: small; }
-#codemirrorBox .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
-</style>
 </head>
 
 <body>
@@ -278,25 +78,28 @@ footer.navbar-default { background-color: #3C9764; }
 					<h3>CrowdCode</h3>
 				</div>
 				
-				<div class="pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown">
-				    <img src="http://placehold.it/40x40" alt="worker1" />
+				<!--
+				<div class="pull-right" type="button" id="userProfile" data-toggle="dropdown">
+				    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" />
 					<span>&nbsp;&nbsp;</span> 
-					<strong>worker1@crowdcode.com</span>
-				  </div>
-				  <!-- 
-				<div class="dropdown pull-right">
-				  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
-				    <img src="http://placehold.it/40x40" alt="worker1" />
-					<span>&nbsp;&nbsp;</span> 
-					<strong>worker1@crowdcode.com</span>
-				  </button>
-				  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Settings</a></li>
-				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Stats</a></li>
-				    <li role="presentation" class="divider"></li>
-				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Logoutk</a></li>
+					<strong><%=workerHandle%></span>
+					(<a href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">LogOut</a>)
+				  </div>-->
+				 
+				<div id="userProfile" class="dropdown pull-right">
+				  <a id="dLabel" role="button" data-toggle="dropdown" data-target="#">
+				    <img src="/user/picture?userId=<%=workerID%>" class="profile-picture" alt="<%=workerHandle%>" />
+					<%=workerHandle%>
+				    <span class="caret"></span>
+				  </a>
+				
+				
+				  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+				  	<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
+				  	<li><a href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
 				  </ul>
-				</div> -->
+				</div>
+				
 				
 				<div class="clearfix"></div>
 			</div>
@@ -323,11 +126,67 @@ footer.navbar-default { background-color: #3C9764; }
 	</div>
 
 	<footer class="navbar-default navbar-fixed-bottom"> 
-        	<button id="feedbackBtn" type="button" class="btn btn-primary pull-right">Send Us Feedback!</button>
+        	<button id="sendFeedbackBtn" type="button" class="btn btn-primary pull-right">Send Us Feedback!</button>
 			<span class="clearfix"></span>
 	</footer>
 	
 	
+
+
+
+<!-- Popup for reminder to submit soon. -->
+<div id="popUpReminder" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+				<h3 id="logoutLabel" class="popupReminderHeading"></h3>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			</div>	
+		</div>
+	</div>
+</div>
+
+<!-- Popup for feedback. -->
+<div id="popUpFeedback" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span>Send us your opinions about CrowdCode</span>
+				<button type="button" class="close" data-dismiss="modal">X</button>
+			</div>
+			<div class="modal-footer">
+			    <textarea id="textFeedback" rows="" cols="" style="width:100%;"></textarea><br />
+				<button id="submitFeedback" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
+			</div>	
+		</div>
+	</div>
+</div>
+
+
+<!-- Popup for changing profile picture. -->
+<div id="popUpChangePicture" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span>change your profile picture!</span>
+				<button type="button" class="close" data-dismiss="modal">X</button>
+			</div>
+			<div class="modal-footer">
+			    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" class="pull-left profile-picture" />	
+			    <div class="pull-left">
+			    	<form  enctype='multipart/form-data' method="post" >
+			    		<input type="file" name="picture" accept="image/*" /><br/>
+			    		<input type="submit" class="btn btn-primary" value="change picture" />
+			    	</form>
+			    </div>
+			    <span class="clearfix"></span>
+			</div>	
+		</div>
+	</div>
+</div>
 
 <script>
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
@@ -401,6 +260,7 @@ footer.navbar-default { background-color: #3C9764; }
 			
 			// Wait for the ADTs to load before loading the microtask!
 	        loadMicrotask();
+	        
 		});
 
 		/*
@@ -408,9 +268,6 @@ footer.navbar-default { background-color: #3C9764; }
 			// Tell server to logout
 			// Clear the microtask div of content
 			// Need to stop fetching messages!!!
-
-			$('#logout').modal();
-			return false;
 		});
 
 		$("#loginButton").click(function() {
@@ -424,11 +281,34 @@ footer.navbar-default { background-color: #3C9764; }
 			return false;
 		});*/
 		
-		//$("#sendFeedback").click(sendFeedback);
-	
-		/*
-		*/
 		
+		$('#popUpChangePicture form').submit(function(){
+			var formData = new FormData($(this)[0]);
+
+		    $.ajax({
+		        url: '/user/picture/change',
+		        type: 'POST',
+		        data: formData,
+		        async: false,
+		        success: function (data) {
+		            $('#popUpChangePicture').modal('hide');
+		            if(data=="success"){
+			            location.reload();
+		            }
+		        },
+		        cache: false,
+		        contentType: false,
+		        processData: false
+		    });
+		
+		    return false;
+		});
+		
+		 $("#sendFeedbackBtn").click(function(){
+			$("#popUpFeedback").modal('show');
+			$("#submitFeedback").click(sendFeedback());
+		});
+	
 	});
 	
     
@@ -472,32 +352,24 @@ footer.navbar-default { background-color: #3C9764; }
 	}
 
 	
-	function viewReview(microtaskID)
-	{
-		var microtaskRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID);
-		microtaskRef.once('value', function (snapshot) 
-		{
-			displayReviewMaterial($("#viewReviewModal > .modal-header"), snapshot.val());
-			//displayWriteTestCases($("#viewReviewModal"), snapshot.val());
-			$("#viewReviewModal").modal();
-		});
-	}
-
+	       
+			
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
-		var feedback = {'microtaskType': microtaskType, 
+		var feedback = {  'microtaskType': microtaskType, 
 						  'microtaskID': microtaskID,
 						  'workerHandle': '<%= workerHandle %>',
 						  'workerID': '<%= workerID %>',
-						  'feedback': $("#feedbackBox").val()};
+						  'feedback': $("#textFeedback").val()};
 		feedbackRef.push(feedback);
-		$("#feedbackBox").val("");
-		$('#feedbackThanks').css('visibility','visible');
-		setTimeout(function() 
-		{
-		    $('#feedbackThanks').css('visibility','hidden');
-		}, 10000);   
+		$("#textFeedback").val("");
+		console.log("feedback sent!");
+		//$('#feedbackThanks').css('visibility','visible');
+		//setTimeout(function() 
+		//{
+		//    $('#feedbackThanks').css('visibility','hidden');
+		//}, 10000);   
 	}
 	
 	// Generate the list of typenames based on the list of allADTs, adding type names for primitives

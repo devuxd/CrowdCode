@@ -2,10 +2,10 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.Project" %>
-<%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.WriteTestCases" %>
-<%@ page import="com.crowdcoding.microtasks.WriteTestCases.PromptType" %> 
+<%@ page import="com.crowdcoding.entities.Project" %>
+<%@ page import="com.crowdcoding.entities.Worker" %>
+<%@ page import="com.crowdcoding.entities.microtasks.WriteTestCases" %>
+<%@ page import="com.crowdcoding.entities.microtasks.WriteTestCases.PromptType" %> 
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
@@ -136,12 +136,10 @@
 		var idString = "testCaseInput" + testCase.id;
 		
    		$("#testCases").append(
-				'<br/><span id="testCase' + testCase.id + '">' +
-					'<input type="text" class="input-lg" id="' + idString + '" data-caseID="' + testCase.id
-					      + '" placeholder="Describe a test case"/>' +				
-					'<a href="#" onclick="deleteTestCase(\'#testCase' + testCase.id + '\', ' + testCase.id + 
-							  ')" class="closeButton">&times;</a>' +	
-				'</span>');	
+				'<span id="testCase' + testCase.id + '">' +
+					'<input type="text" class="form-control form-control-90" id="' + idString + '" data-caseID="' + testCase.id + '" placeholder="Describe a test case"/>' +				
+					'<a href="#" onclick="deleteTestCase(\'#testCase' + testCase.id + '\', ' + testCase.id + ')" class="closeButton">&times;</a>' +	
+				'</span><br/>');	
    		
    		if (testCase.text != "")
    			$('#testCaseInput' + testCase.id).val(testCase.text);   		

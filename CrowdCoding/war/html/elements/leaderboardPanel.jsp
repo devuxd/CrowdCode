@@ -7,6 +7,7 @@
 <script>
 	$(document).ready(function(){
 		// Hook the leaderboard to Firebase		
+		console.log("loading leaderboard from: "+firebaseURL + '/leaderboard');
 		var leaderboardRef = new Firebase(firebaseURL + '/leaderboard');
 		leaderboardRef.on('value', function(snapshot) {
 		
@@ -22,7 +23,7 @@
 			$.each(leaderboard.leaders, function(index, leader)
 			{
 				newHTML += '<tr>'+
-						   '<td><img src="http://placehold.it/30x30" alt="worker1" /></td>'+
+						   '<td><img src="/user/picture?userId='+index+'" alt="" /></td>'+
 						   '<td>' + leader.name + '</td>'+
 						   '<td>' + leader.score + '</td>'+
 						   '</tr>'
