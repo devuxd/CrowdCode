@@ -5,13 +5,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import com.crowdcoding.Project;
 import com.crowdcoding.dto.ReviewDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
+import com.crowdcoding.entities.Project;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;

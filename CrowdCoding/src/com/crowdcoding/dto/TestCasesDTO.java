@@ -3,9 +3,9 @@ package com.crowdcoding.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.crowdcoding.Project;
-import com.crowdcoding.artifacts.Function;
-import com.crowdcoding.artifacts.Test;
+import com.crowdcoding.entities.Function;
+import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.Test;
 import com.googlecode.objectify.Ref;
 
 public class TestCasesDTO extends DTO 

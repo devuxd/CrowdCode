@@ -2,9 +2,9 @@
 <%@ page import="com.google.appengine.api.users.User" %>
 <%@ page import="com.google.appengine.api.users.UserService" %>
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-<%@ page import="com.crowdcoding.Project" %>
-<%@ page import="com.crowdcoding.Worker" %>
-<%@ page import="com.crowdcoding.microtasks.Review" %>
+<%@ page import="com.crowdcoding.entities.Project" %>
+<%@ page import="com.crowdcoding.entities.Worker" %>
+<%@ page import="com.crowdcoding.entities.microtasks.Review" %>
 
 <%
 	String projectID = (String) request.getAttribute("project");
