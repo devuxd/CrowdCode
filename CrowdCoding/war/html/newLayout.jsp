@@ -41,6 +41,7 @@
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
+	<link rel="stylesheet" href="/include/codemirror/pastel-on-dark.css" type="text/css" />
 	<link rel="stylesheet" href="/css/worker.css" type="text/css" />
 	
 	
