@@ -21,10 +21,6 @@ import com.googlecode.objectify.cmd.Query;
 
 /* Represents a crowd worker. 
  * 
- * NOTE: parenting Worker in the project's entity group (like all other entities) was causing
- * a bug where data would be stored but not read out consistently. To fix this bug, worker is
- * not parented under project. It is unclear whether this was a logic bug in our codebase or in 
- * objectify itself. 
  */
 
 @Entity
