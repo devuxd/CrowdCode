@@ -109,21 +109,6 @@ public class Test extends Artifact
 		project.historyLog().endEvent();		
 	}
 
-	private String generateDefaultUnitTest(Function function)
-	{	     
-	      /*StringBuilder builder = new StringBuilder();
-	      builder.append("equal(");
-	      builder.append(function.getName());
-	      builder.append("(");
-	      for(String paramName : function.getParamNames()){
-	           builder.append("<" + paramName + ">,");
-	      }
-	      builder.replace(builder.length()-1,builder.length(),"");
-	      builder.append("), <expectedResult>, '" + getDescription() + "');");
-	      return builder.toString();*/
-		 return null;
-	}
-	
 	public String getTestCode()
 	{
 		if(code == null)
