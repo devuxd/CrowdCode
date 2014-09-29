@@ -67,7 +67,10 @@ public class WriteTestCases extends Microtask
 	
     public Microtask copy(Project project)
     {
-    	return new WriteTestCases(this.function.getValue(), this.disputeDescription, this.disputedTestCase,
+    	if(this.promptType==PromptType.FUNCTION_SIGNATURE)
+    		return new WriteTestCases(this.function.getValue(),project);
+    	else
+    		return new WriteTestCases(this.function.getValue(), this.disputeDescription, this.disputedTestCase,
     			project);
     }
 

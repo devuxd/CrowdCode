@@ -318,7 +318,6 @@ public class CrowdServlet extends HttpServlet
 		    picture.setImage(imageBlob);
 		    
 		    // persist image
-	    	System.out.println("salvo immagine!");
 		    ofy().save().entity(picture).now();
 		    
 		    // print success
@@ -442,7 +441,6 @@ public class CrowdServlet extends HttpServlet
         	}
         	else
         	{
-        		System.out.println(microtask.getUIURL());
         		this.getServletContext().setAttribute("microtask", microtask);        		
         		req.getRequestDispatcher(microtask.getUIURL()).forward(req,  resp);        		
         	}        	

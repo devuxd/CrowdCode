@@ -70,6 +70,8 @@ public abstract class MicrotaskCommand extends Command
 		
 		public void execute(Microtask microtask, Project project)
 		{
+			System.out.println("-- SUBMITTING MICROTASK -- ");
+			System.out.println(jsonDTOData);
 			microtask.submit(jsonDTOData, workerID, project);
 		}		
 	}
@@ -97,8 +99,7 @@ public abstract class MicrotaskCommand extends Command
 		private String initiallySubmittedDTO;
 		private String workerOfReviewedWork;
 		
-		public CreateReview(long microtaskIDToReview, String excludedWorkerID, String initiallySubmittedDTO, 
-				String workerOfReviewedWork)
+		public CreateReview(long microtaskIDToReview, String excludedWorkerID, String initiallySubmittedDTO, String workerOfReviewedWork)
 		{
 			super(0L);
 			this.microtaskIDToReview = microtaskIDToReview;

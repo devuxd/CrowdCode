@@ -79,13 +79,6 @@
 					<h3>CrowdCode</h3>
 				</div>
 				
-				<!--
-				<div class="pull-right" type="button" id="userProfile" data-toggle="dropdown">
-				    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" />
-					<span>&nbsp;&nbsp;</span> 
-					<strong><%=workerHandle%></span>
-					(<a href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">LogOut</a>)
-				  </div>-->
 				 
 				<div id="userProfile" class="dropdown pull-right">
 				  <a id="dLabel" role="button" data-toggle="dropdown" data-target="#">
@@ -97,7 +90,7 @@
 				
 				  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 				  	<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
-				  	<li><a href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
+				  	<li><a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
 				  </ul>
 				</div>
 				
@@ -193,6 +186,7 @@
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var reviews = new Firebase(firebaseURL + '/history/reviews/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
+    var onLogoutRef = new Firebase(firebaseURL + '/logouts/<%=workerID%>');
 	
 	var allADTs = [];
 	var typeNames = [];
@@ -204,10 +198,8 @@
     {
   
     	// Notify firebase when this worker (eventually) logs out
-    	//var onLogoutRef = new Firebase(firebaseURL + '/logouts/<%=workerID%>');
-    	//onLogoutRef.onDisconnect().set(true);
+    	onLogoutRef.onDisconnect().set(true);
     	
-    	/*
     	// Subscribe to logouts by other workers and forward them to the server
     	var logoutsRef = new Firebase(firebaseURL + '/logouts');
     	logoutsRef.on('child_added', function(childSnapshot, prevChildName) {
@@ -248,7 +240,27 @@
 	    		  	}
 	    		});
     		}
-    	});*/
+    	});
+    	
+    	
+    	
+		$("#logoutLink").click(function() {
+			// Tell server to logout
+			// Clear the microtask div of content
+			// Need to stop fetching messages!!!
+		});
+
+		/*
+		$("#loginButton").click(function() {
+			alert('login');
+
+			// Tell server to login
+			// Fetch microtask
+
+			$('#logout').modal('hide');
+
+			return false;
+		});*/
     	
 		// Load the ADTs from firebase
 		var adtRef = new Firebase(firebaseURL + '/ADTs');
@@ -263,25 +275,7 @@
 	        loadMicrotask();
 	        
 		});
-
-		/*
-		$("#logoutLink").click(function() {
-			// Tell server to logout
-			// Clear the microtask div of content
-			// Need to stop fetching messages!!!
-		});
-
-		$("#loginButton").click(function() {
-			alert('login');
-
-			// Tell server to login
-			// Fetch microtask
-
-			$('#logout').modal('hide');
-
-			return false;
-		});*/
-		
+		setupADTData();	// first setup of ADT data	 
 		
 		$('#popUpChangePicture form').submit(function(){
 			var formData = new FormData($(this)[0]);
@@ -352,9 +346,6 @@
     	resetStartTime();
 	}
 
-	
-	       
-			
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
@@ -392,6 +383,7 @@
 	// Returns true if name is a valid type name and false otherwise.
 	function isValidTypeName(name)
 	{
+	
 		var simpleName;
 		
 		// Check if there is any array characters at the end. If so, split off that portion of the string. 

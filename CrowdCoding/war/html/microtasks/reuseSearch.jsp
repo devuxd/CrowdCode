@@ -96,27 +96,36 @@
 	
 	function formatResult(functionDescription, index)
 	{
-		return '<div id="result_' + functionDescription.name + 
-		        '" onclick="selectResult(\'' + functionDescription.name + 
-				'\')" class="result"> <b>' + functionDescription.header + '</b> <BR>' +
-				functionDescription.description.replace(/\n/g, '<BR>') + '</div>';		
+		cleanDescription = functionDescription.description.replace('/**', '');
+		cleanDescription = cleanDescription.replace('*/', '');
+		cleanDescription = cleanDescription.replace("/n/n", "<br/>");
+		
+		return '<div id="result_' + functionDescription.name + '" onclick="selectResult(\'' + functionDescription.name + '\')" class="result">'+
+					cleanDescription + ' <br/><b>' + functionDescription.header + '</b>' + 
+			   '</div>';		
 	}
 	
 	function selectResult(functionName)
 	{
+		console.log($('result_' + functionName).html());
+		console.log("noFunct: "+noFunction+" - selected:"+selectedFunction);
 		// Toggle the no function button to off if it is currently selected
 		if (noFunction)
 		{
 			noFunction = false;
-			$('#noFunction').button('toggle');
+			$('#noFunction').disa;
 		}
 		
 		// If there's currently a function selected, toggle it off
 		if (selectedFunction != '')
-			$('result_' + selectedFunction).removeClass('selectedResult');						
+			$('#result_' + selectedFunction).removeClass('selectedResult');						
 		
 		selectedFunction = functionName;
-		$('result_' + functionName).addClass('selectedResult');
+		$('#result_' + functionName).addClass('selectedResult');
+		
+		
+		
+		
 	}
 	
 	function selectNoFunction()
@@ -133,7 +142,7 @@
 
 <div id="taskDescription" class="bg-success">
 	Is there a function that does<BR>
-	<span class="label label-inverse"><%=microtask.getCallDescription()%></span><BR><BR>
+	<strong><%=microtask.getCallDescription()%></strong><BR><BR>
 	Use the search box to see if a function exists to do this. Otherwise, select "No function does this".<BR><BR>
 	
 	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 

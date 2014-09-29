@@ -9,17 +9,17 @@
 <%@ page import="com.crowdcoding.util.FunctionHeaderUtil" %>
 
 <%
-	String projectID = (String) request.getAttribute("project");
-	Project project = Project.Create(projectID);
+	String projectID         = (String) request.getAttribute("project");
+	Project project          = Project.Create(projectID);
     WriteTestCases microtask = (WriteTestCases) this.getServletContext().getAttribute("microtask");
-    PromptType promptType = microtask.getPromptType();
+    PromptType promptType    = microtask.getPromptType();
 %>
 
 <script>
-	var microtaskTitle = '<%= microtask.microtaskTitle() %>';
+	var microtaskTitle       = '<%= microtask.microtaskTitle() %>';
 	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
-	var microtaskType = 'writetestcases';
-	var microtaskID = <%= microtask.getID() %>;	
+	var microtaskType        = 'writetestcases';
+	var microtaskID          = <%= microtask.getID() %>;	
 			
 	var codeBoxCode;		
 	var testCases;	
@@ -88,6 +88,9 @@
     		$("#addTestCase").click();
     	else
     		loadTestCases(testCases);	    	
+    	
+    	console.log("test cases:");	
+    	console.log(testCases);
     }
 
     // Creates items for each specified test case
@@ -172,6 +175,7 @@
         // Select field contents
         this.select();
     });
+    
 </script>
 
 <%@include file="/html/elements/microtaskTitle.jsp" %>	

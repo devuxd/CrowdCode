@@ -63,9 +63,9 @@ public class Function extends Artifact
 	private List<Long> pseudoCallers = new ArrayList<Long>();
 	private int linesOfCode;
 	
-	@Index private boolean isWritten;	// true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
+	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
-	private boolean needsDebugging;		// true iff the function is failing its unit tests.
+	private boolean needsDebugging;		     // true iff the function is failing its unit tests.
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -211,6 +211,8 @@ public class Function extends Artifact
 		return StringEscapeUtils.escapeEcmaScript(getFullCode());
 	}	
 	
+	// ------- TEST CASES 
+	
 	public List<Ref<Test>> getTestCases(Project project)
 	{
 		// Build refs for each test case
@@ -230,6 +232,13 @@ public class Function extends Artifact
 			tests.remove(position);
 			ofy().save().entity(this).now();	
 		}	
+	}
+	
+	// Adds the specified test for this function
+	public void addTest(long testID)
+	{
+		tests.add(testID);
+		ofy().save().entity(this).now();	
 	}
 		
 	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
@@ -263,12 +272,6 @@ public class Function extends Artifact
 		return pseudoCalls.contains(pseudoCall);
 	}
 	
-	// Adds the specified test for this function
-	public void addTest(long testID)
-	{
-		tests.add(testID);
-		ofy().save().entity(this).now();	
-	}
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  PRIVATE CORE FUNCTIONALITY
