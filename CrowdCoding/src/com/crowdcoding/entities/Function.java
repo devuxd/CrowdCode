@@ -314,6 +314,8 @@ public class Function extends Artifact
 		// determine if there is work to be done
 		if (!microtaskOut)
 		{
+			
+			System.out.println("function "+name+" looking for work: isWritten="+isWritten+" - "+"needsDebugging="+needsDebugging);
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && needsDebugging)			
 				makeMicrotaskOut(new DebugTestFailure(this, project), project);

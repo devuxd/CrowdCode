@@ -168,7 +168,12 @@ public class CrowdServlet extends HttpServlet
 						else if( ofy().load().filterKey(Key.create(Project.class, projectID)).keys().first() != null ){
 							// if is requested the main page
 							if(path.length==2) {
-								if(req.getParameter("oldLayout")!=null)
+								if(req.getParameter("distributedJS")!=null)
+									if(req.getParameter("distributedJS").equals("admin"))
+										req.getRequestDispatcher("/html/distributedJSAdmin.jsp").forward(req, resp);
+									else
+										req.getRequestDispatcher("/html/distributedJSWorker.jsp").forward(req, resp);
+								else if(req.getParameter("oldLayout")!=null)
 									req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
 								else
 									req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);

@@ -79,7 +79,6 @@
 					<h3>CrowdCode</h3>
 				</div>
 				
-				 
 				<div id="userProfile" class="dropdown pull-right">
 				  <a id="dLabel" role="button" data-toggle="dropdown" data-target="#">
 				    <img src="/user/picture?userId=<%=workerID%>" class="profile-picture" alt="<%=workerHandle%>" />
@@ -87,13 +86,11 @@
 				    <span class="caret"></span>
 				  </a>
 				
-				
 				  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 				  	<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
 				  	<li><a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
 				  </ul>
 				</div>
-				
 				
 				<div class="clearfix"></div>
 			</div>
@@ -196,7 +193,6 @@
 	
     $(document).ready(function()
     {
-  
     	// Notify firebase when this worker (eventually) logs out
     	onLogoutRef.onDisconnect().set(true);
     	
@@ -277,9 +273,11 @@
 		});
 		setupADTData();	// first setup of ADT data	 
 		
+		// submit selected picture to the server
 		$('#popUpChangePicture form').submit(function(){
+			// get form data
 			var formData = new FormData($(this)[0]);
-
+			// create ajax POST request
 		    $.ajax({
 		        url: '/user/picture/change',
 		        type: 'POST',
@@ -299,6 +297,7 @@
 		    return false;
 		});
 		
+		// callback for feedbackButton
 		 $("#sendFeedbackBtn").click(function(){
 			$("#popUpFeedback").modal('show');
 			$("#submitFeedback").click(sendFeedback());
@@ -306,11 +305,11 @@
 	
 	});
 	
-    
+    // submit microtask form data
     function submit(formData)
     {
+    	// stringify formData and send it via an AJAX POST call
     	var stringifiedData = JSON.stringify( formData );
-    	
 		$.ajax({
 		    contentType: 'application/json',
 		    data: stringifiedData,
@@ -323,29 +322,32 @@
 		submissionRef.set(formData);
     }
 
+	// skip microtask
 	function skip() 
 	{
+		// skip the task and load the new one
 		$.ajax('/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID + '&skip=true')
 	  		.done( function (data) { loadMicrotask(); });
 	}    
    
+    // resets the submit buttons 
+    // STILL IN USE????
 	function resetSubmitButtons()
 	{
 		defaultSubmitButtonArray = new Array();
 		hasBeenIntialized = false;
 	}
 
+	// load the microtask for the current worker
 	function loadMicrotask() 
 	{
 		$('body').scrollTop(0);
-		$('#task').load('/<%=projectID%>/fetch', function() 
-		{
-		
-  		});
+		$('#task').load('/<%=projectID%>/fetch');
     	resetSubmitButtons();	
     	resetStartTime();
 	}
 
+	// send the feedback to firebase
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
@@ -368,7 +370,6 @@
 	function setupADTData()
 	{
 		// Build a type name (String) to structure map and a list of type names
-		
 		for (var i = 0; i < allADTs.length; i++)
 		{
 			typeNames.push(allADTs[i].name);
@@ -383,9 +384,7 @@
 	// Returns true if name is a valid type name and false otherwise.
 	function isValidTypeName(name)
 	{
-	
-		var simpleName;
-		
+		var simpleName;	
 		// Check if there is any array characters at the end. If so, split off that portion of the string. 
 		var arrayIndex = name.indexOf('[]');
 		if (arrayIndex != -1)
