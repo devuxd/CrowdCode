@@ -19,7 +19,8 @@
 	var microtaskType = 'Review';
 	var microtaskID = <%= microtask.getID() %>;	
 	var microtaskIDUnderReview = <%= microtask.getMicrotaskIDUnderReview() %>;
-
+	loadMicrotaskUnderReview(microtaskIDUnderReview);	
+	
     $(document).ready(function()
 	{    	
 		// enable the star rating plugin
@@ -36,7 +37,7 @@
 			return false;
 		});
 		
-		loadMicrotaskUnderReview(microtaskIDUnderReview);	
+		
 		
 	});
     

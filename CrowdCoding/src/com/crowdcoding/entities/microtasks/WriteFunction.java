@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.WriteFunctionInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
@@ -61,8 +62,9 @@ public class WriteFunction extends Microtask
 	{
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new MicrotaskInFirebase(id, this.microtaskName(), function.getName(), 
-				false, submitValue), id, project);
+		FirebaseService.writeMicrotaskCreated(new WriteFunctionInFirebase(id, this.microtaskName(), function.getName(), 
+				false, submitValue, function.getID(), this.promptType.name()), id, project);
+		
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();

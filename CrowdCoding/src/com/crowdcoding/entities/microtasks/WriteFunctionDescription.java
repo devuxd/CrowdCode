@@ -59,7 +59,7 @@ public class WriteFunctionDescription extends Microtask
 		String code = "{\n\t//#Mark this function as implemented by removing this line.\n}";	
 		
 		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.returnType, functionDTO.paramNames, 
-				functionDTO.paramTypes, functionDTO.header, functionDTO.description, code, project);	
+				functionDTO.paramTypes, functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, code, project);	
 	}
 	
 	protected Class getDTOClass()

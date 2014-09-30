@@ -1,4 +1,5 @@
 <script>
+console.log("===============================parte function editor================================");
 	var myCodeMirror = CodeMirror.fromTextArea(code, 
 			{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
 	myCodeMirror.setSize(null, 500);
@@ -365,7 +366,7 @@
 			var nextWord = findNextWord(line, loc + keyword.length);
 			if (nextWord == -1)
 				return "The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.<BR>";				
-			else if (!isValidTypeName(nextWord))
+			else if (!isValidTypeName(nextWord)&&!isNotAlreadyTaken(nextWord))
 				return nextWord + ' is not a valid type name. Valid type names are '
 				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';					
 		}

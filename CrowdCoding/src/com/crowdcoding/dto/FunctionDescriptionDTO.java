@@ -12,6 +12,7 @@ public class FunctionDescriptionDTO extends DTO
 	public String returnType;
 	public List<String> paramNames = new ArrayList<String>();
 	public List<String> paramTypes = new ArrayList<String>();
+	public List<String> paramDescriptions = new ArrayList<String>();
 	public String header;
 	public String description;
 	public String code;
@@ -28,12 +29,13 @@ public class FunctionDescriptionDTO extends DTO
 	}
 
 	public FunctionDescriptionDTO(String name, String returnType, List<String> paramNames, List<String> paramTypes, 
-			String header, String description) 	
+			 List<String> paramDescriptions, String header, String description) 	
 	{
 		this.name = name;
 		this.returnType = returnType;
 		this.paramNames = paramNames;
 		this.paramTypes = paramTypes;
+		this.paramDescriptions = paramDescriptions;
 		this.header = header;
 		this.description = description;
 	}

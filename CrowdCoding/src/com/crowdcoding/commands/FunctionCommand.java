@@ -15,8 +15,8 @@ public abstract class FunctionCommand extends Command
 	protected long functionID;
 	
 	public static FunctionCommand create(String name, String returnType, List<String> paramNames, 
-			List<String> paramTypes, String header, String description, String code) 
-		{ return new Create(name, returnType, paramNames, paramTypes, header, description, code); }
+			List<String> paramTypes, List<String> paramDescriptions, String header, String description, String code) 
+		{ return new Create(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code); }
 	
 	public static FunctionCommand removeCaller(long functionID, long callerFunctionID) 
 		{ return new RemoveCaller(functionID, callerFunctionID); }
@@ -77,18 +77,20 @@ public abstract class FunctionCommand extends Command
 		private String returnType;
 		private List<String> paramNames;
 		private List<String> paramTypes;
+		private List<String> paramDescriptions;
 		private String header;
 		private String description;
 		private String code;		
 		
 		public Create(String name, String returnType, List<String> paramNames, 
-				List<String> paramTypes, String header, String description, String code)
+				List<String> paramTypes,List<String> paramDescriptions,  String header, String description, String code)
 		{
 			super(0);
 			this.name = name;
 			this.returnType = returnType;
 			this.paramNames = paramNames;
 			this.paramTypes = paramTypes;
+			this.paramDescriptions = paramDescriptions;
 			this.header = header;
 			this.description = description;
 			this.code = code;
@@ -97,7 +99,7 @@ public abstract class FunctionCommand extends Command
 		// Override the default execute behavior, as there is no function yet to be loaded.
 		public void execute(Project project)
 		{
-			Function newFunction = new Function(name, returnType, paramNames, paramTypes, header, description,
+			Function newFunction = new Function(name, returnType, paramNames, paramTypes, paramDescriptions, header, description,
 					code, project);
 			newFunction.storeToFirebase(project);
 		}	

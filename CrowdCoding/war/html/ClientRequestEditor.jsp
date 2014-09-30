@@ -2,10 +2,15 @@
 <head>
 	<title>CrowdCode Client Request Editor</title>
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/html/styles.css">
+	<link rel="stylesheet" href="/css/styles.css">
 	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>	
+	<script src="/include/polyfill.js"></script>
+	<script src="/include/jshint.js"></script>
+	<script src="/js/errorCheck.js"></script>
+	<script src="/js/functionSupport.js"></script>
+	<script src="/js/ADTandDataCheck.js"></script>
 	<script>
 		var firebaseURL = 'https://crowdcode.firebaseio.com';
 		var firebaseRef;
@@ -13,20 +18,30 @@
 		// User stories are numbered from 0 to userStoryCount - 1 (as are ADTs).
 		var ADTCount = 0;
 		var functionCount = 0;
-	
+		var nextParameter = [];
+		var typeNames = [];
+		
+		
 		$(document).ready(function()
 		{
+			addDefaultADTData();
+			
+			$("#newFunctionDiv , #newParameterDiv, #errorMessages").hide();
+			
 			$('#addADT').click(function()
 			{
 				addADT('', '', '');
 			});
+		
 			$('#addFunction').click(function()
-			{
-				addFunction('', '', '', '', '/** \n [INSERT A DESCRIPTION OF THE FUNCTION HERE!] \n*/ \n', 
-						'{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}');
-			});
+					{
+						addFunction("","","","","","", '{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}');
+					});
+			
 			$('#save').click(function()
 			{
+				if(validateAll())
+				{
 				// Save ADTs
 				firebaseRef = new Firebase(firebaseURL + '/clientRequests/' + $('#project').val() + '/ADTs/ADTs');
 				var ADTs = [];
@@ -42,18 +57,52 @@
 				firebaseRef = new Firebase(firebaseURL + '/clientRequests/' + $('#project').val() + '/functions/functions');
 				var functions = [];
 				$("div[id^=FunctionContainer]").each(function(){	    		    	
-					var name = $(this).find("input[id^=FunctionName]").val();
-					var returnType = $(this).find("input[id^=FunctionReturnType]").val();
-					var params = $(this).find("textarea[id^=FunctionParams]").val();
-					var paramTypes = parseList($(this).find("textarea[id^=ParamTypes]").val());	
-					var description = $(this).find("textarea[id^=FunctionDescription]").val();
-					var code = $(this).find("textarea[id^=FunctionCode]").val();	
+								
 					
-					functions.push( { name: name, returnType: returnType, paramNames: parseList(params), paramTypes: paramTypes, 
-						header: 'function ' + name + '(' + params + ')', description: description, code: code }); 
+					var numParams = 0;
+					var paramNames = [];
+					var paramTypes = [];
+					var paramDescriptions = [];
+			    	
+					var header = 'function ' + $(this).find("input[id^=FunctionName]").val() + '(';
+					$(this).find("tr[id=params]").each(function(index, value)
+				    {	    		    	
+				    	if (numParams > 0)
+				    		header += ', ';
+				    	
+				    	var paramName = $(this).find("input").eq(0).val();
+				    	var paramType = $(this).find("input").eq(1).val();
+				    	var paramDescrip = $(this).find("input").eq(2).val();
+				    	
+				    	paramNames.push(paramName);
+				    	paramTypes.push(paramType);
+				    	paramDescriptions.push(paramDescrip);
+				    	header += paramName;
+				    	
+				    	numParams++;
+				    });
+					
+					
+				    header += ')';
+					
+					console.log(paramDescriptions+"   "+ paramNames);
+									
+					
+					
+					functions.push( { name: $(this).find("input[id^=FunctionName]").val(),
+									returnType: $(this).find("input[id^=FunctionReturnType]").val(),
+									paramNames: paramNames,
+									paramTypes: paramTypes,
+									paramDescriptions: paramDescriptions,
+									header: header,
+									description: $(this).find("textarea[id^=FunctionDescription]").val(),
+									code: $(this).find("textarea[id^=FunctionCode]").val(),	
+														}); 
 			    });				
 				firebaseRef.set(functions);
-			});
+				}});
+			
+			
 			$('#load').click(function()
 			{
 				// Delete all the existing ADTs and functions
@@ -76,8 +125,9 @@
 				{ 
 					$.each(dataSnapshot.val(), function(index, functionObj)
 					{
-						addFunction(functionObj.name, functionObj.returnType, renderList(functionObj.paramNames), 
-								renderList(functionObj.paramTypes), functionObj.description, functionObj.code);
+										
+						addFunction(functionObj.description, functionObj.returnType, functionObj.name,  functionObj.paramNames, 
+								functionObj.paramTypes, functionObj.paramDescriptions , functionObj.code);
 					});
 				});
 			});
@@ -100,7 +150,31 @@
 
 			return fields;
 		}
-						
+		
+		//Add the default ADT Data
+		function addDefaultADTData()
+		{
+			typeNames.push('String');
+			typeNames.push('Number');
+			typeNames.push('Boolean');		
+		}
+		
+		function addClientADTData(value)
+		{
+			typeNames.push(value);
+		}
+		
+		function removeClientADTData(value)
+		{
+			
+			var index = typeNames.indexOf(value);
+			
+			if (index != -1) {
+				typeNames.splice(index, 1);
+			}
+		}
+		
+		
 		// Renders a structure in JSON format of [{ name: fieldName, type: typeName }, ... ] into the format of
 		// "fieldName: typeName, ..."
 		function renderStructure(structureJSON)
@@ -117,7 +191,7 @@
 			
 			return structureString;
 		}
-		
+		/*
 		// Takes a string with a list of zero or more comma delimeted items
 		// Produces a JSON array of strings corresponding to each element in the list
 		function parseList(input)
@@ -146,7 +220,10 @@
 				
 			return output;
 		}
-								
+		
+		*/
+		
+		//add a new ADTField
 		function addADT(name, structure, description)
 		{
 			$('#ADTs').append('<div class="ADTContainer" id="ADTContainer' + ADTCount + '"><div class="ADT">'
@@ -158,6 +235,29 @@
 					+ '</div>'
 					+ '<a href="#" onclick="deleteADT(\'#ADTContainer' 
 						+ ADTCount + '\')" class="closeButton">x</a></div>');
+			
+			//when the field loses fous add that name to the ADTlist
+			$("#ADTContainer" + ADTCount).find("[id^=ADTName]").blur(function()
+					{
+				addClientADTData($(this).val());
+
+			});
+			
+			//whenever the field name is selected remove that value from the ADTlist
+			$("#ADTContainer" + ADTCount).find("[id^=ADTName]").focus(function()
+					{
+				removeClientADTData($(this).val());
+
+			});
+			
+			
+			//add the name to the list if already exists
+			if(name!="")
+				{
+				addClientADTData(name);
+				}
+			
+			
 			ADTCount++;
 		}
 		
@@ -184,30 +284,170 @@
 		{
 			$(field).remove();
 		}
+				
 		
-		function addFunction(name, returnType, params, paramTypes, description, code)
+		function addFunction(description, returnType, name, paramNames, paramTypes, paramDescriptions, code)
 		{
-			$('#functions').append('<div class="ADTContainer" id="FunctionContainer' + functionCount + '"><div class="ADT">'
-					+ 'Name: <input type="text" id="FunctionName' + functionCount + '" value="' + name + '"><BR>'
-					+ 'Return type: <input type="text" id="FunctionReturnType' + functionCount + '" value="' + returnType + '"><BR>'
-					+ 'Params: <textarea class="ADTDescrip" id="FunctionParams' + functionCount + '">' 
-					    + params + '</textarea><BR>'  
-					+ 'Param Types: <textarea class="ADTDescrip" id="ParamTypes' + functionCount + '">'
-					+ paramTypes + '</textarea><BR>' 
-					+ 'Description: <textarea class="ADTDescrip" id="FunctionDescription' + functionCount + '">'
-					+ description + '</textarea><BR>' 
-					+ 'Code: <textarea class="ADTDescrip" id="FunctionCode' + functionCount + '">'
-					+ code + '</textarea><BR>' 
-					+ '</div>'
-					+ '<a href="#" onclick="deleteFunction(\'#FunctionContainer' 
-						+ functionCount + '\')" class="closeButton">x</a></div>');
+			$('#functions').append('<div class="ADTContainer" id="FunctionContainer' + functionCount + '"><div id=adt class="ADT">' +
+							$("#newFunctionDiv").html() + '</div>'
+							+ '<a href="#" onclick="deleteFunction(\'#FunctionContainer' 
+							+ functionCount + '\')" class="closeButton">x</a></div>'
+					);
+			
+			//set the behavior of the fields
+			setActionFunction();
+				
+			//set the value in the fileds
+			setValueFunction(description,  returnType, name, paramNames, paramTypes, paramDescriptions, code);
+	   		
+			
 			functionCount++;
 		}
+		
+		
+		function setValueFunction( description,  returnType, name, paramNames, paramTypes, paramDescriptions, code)
+		{
+		
+			$("#FunctionContainer"+functionCount+" #FunctionDescription").val(description);
+			$("#FunctionContainer"+functionCount+" #FunctionName").val(name);
+			$("#FunctionContainer"+functionCount+" #FunctionReturnType").val(returnType);
+			$("#FunctionContainer"+functionCount+" #FunctionCode").val(code);
+			
+			//for each parameter in the list I create a new parameter field with the given data
+			for	(index = 0; index < paramNames.length; index++) {
+			
+				addParameterFunction(paramNames[index],paramTypes[index], paramDescriptions[index], $("#FunctionContainer"+functionCount+" #addParamRow"));
+				
+			}
+			
+			//if is a new function creates an empty parameter field
+			if(name==="")
+				{
+				addParameterFunction("","","", $("#FunctionContainer" +functionCount+" #addParamRow"));
+						
+				}
+			
+		}
+		
+		
+		
+		function setActionFunction()
+		{
+			$("#FunctionContainer"+functionCount+" #addParameter").click(function()
+					{
+						addParameterFunction("","","",$(this).closest("[id=addParamRow]"));		
+					});
+					
+					
+			$("#FunctionContainer" +functionCount+" #FunctionReturnType").blur(function()
+					{
+						validateFunction($(this).closest("[id^=FunctionContainer]"),true);
+					});
+					
+					
+			$("#FunctionContainer" +functionCount+" #FunctionName").blur(function()
+					{
+						validateFunction($(this).closest("[id^=FunctionContainer]"),true);
+					});
+		}
+		
+		
 		
 		function deleteFunction(functionDiv)
 		{
 			$(functionDiv).remove();			
 		}
+		
+		function addParameterFunction(name,type,description,addParamRowDiv)
+		{
+			
+			 $(addParamRowDiv).before('<tr id="params"><td></td><td>' +						
+				    '<input id="paramName" type="text" placeholder = "Parameter Name" value="'+name+'" class="input-small">,&nbsp;&nbsp;//' + 
+					'&nbsp;<input id="paramType" type="text" placeholder = "type" value="'+type+'" class="input-small">&nbsp;&nbsp;-&nbsp;&nbsp;' + 
+					'<input type="text" placeholder = "what is it for?" value="'+description+'" class="input-xlarge"> ' +	
+					'<a id="deleteParam" href="#" class="closeButton">&times;</a>' +	
+					'</td>');
+			
+			
+			
+				// Set focus to the first input field in the new row.
+			 $(addParamRowDiv).prev().find("input").eq(0).focus();		
+			
+			 $(addParamRowDiv).prev().find("#deleteParam").click(function(){
+				 
+						deleteParams($(this).closest("[id=params]"));
+						
+					});
+			 
+			 $(addParamRowDiv).prev().find("#paramName").blur(function(){
+				 
+						validateFunction($(this).closest("[id^=FunctionContainer]"),true);
+								
+					});
+			 
+			 $(addParamRowDiv).prev().find("#paramType").blur(function(){
+				 
+				 validateFunction($(this).closest("[id^=FunctionContainer]"),true);
+								
+					});
+					
+		}
+	
+		
+		function deleteParams(params)
+		{
+			
+			$(params).remove();
+		}
+		
+		// Validates all form fields that require validity checking for one function, updating the 
+		// errorMessages div as appropriate to show errors. If ignoreEmpty is true, fields that are currently
+		// empty are ignored. Returns true iff all of the validated fields are correct.
+		function validateFunction(functionDiv, ignoreEmpty)
+		{
+			
+			var errors = '';
+					var functionName = $(functionDiv).find("#FunctionName");
+					var functionReturn = $(functionDiv).find("#FunctionReturnType");
+					
+			errors += validateFunctionName(functionName, ignoreEmpty);
+			
+		    errors += validateReturnTypeName(functionReturn, ignoreEmpty);
+			
+		   $(functionDiv).find("tr[id^=params]").each( function(){ 
+			   
+	   	    	errors += validateParamName($(this).find("input").eq(0), ignoreEmpty);
+	   	    	errors += validateParamTypeName($(this).find("input").eq(1), $(this).find("input").eq(0).val(),
+	   	    			ignoreEmpty);   	    	
+		   });
+			
+			if (errors != '')
+			{
+				$(functionDiv).find("#errorMessages").show();
+				$(functionDiv).find("#errorMessages").html(errors);
+				return false;
+			}
+			else
+			{
+				$(functionDiv).find("#errorMessages").hide();
+				return true;
+			}		
+		}
+		
+		
+		//return true if all the form are filled otherwise false and sets the errors
+		function validateAll()
+		{
+			$("[id^=FunctionContainer]").each(function(){
+				
+				if(!validateFunction(this,false))
+					return false;
+				
+				
+			});
+			return true;
+		}
+		
 	</script>
 </head>
 <body>
@@ -241,5 +481,24 @@
 		</div>
 		<div class="span1"></div>
 	</div>
+	<div id="newFunctionDiv"> 
+		<textarea id="FunctionDescription" draggable="true" placeholder="Describe the purpose and behavior of the function"></textarea>
+			returns &nbsp;&nbsp;<input type="text" id="FunctionReturnType" placeholder = "return type" class="input-medium"><BR>
+			function 
+			<input type="text" id="FunctionName" placeholder = "functionName" class="input-medium">(
+			<BR>
+			<table>
+				<tr></tr>
+				<tr id="addParamRow">
+					<td></td>					
+					<td><button id="addParameter"  class="btn btn-small">Add parameter</button></td>			
+				</tr>
+			</table>
+		);
+		<BR>
+		 Code: <textarea class="ADTDescrip" id="FunctionCode"></textarea><BR>' 
+		<div id="errorMessages" class="alert alert-error"></div>
+	</div>	
+	
 </body>
 </html>

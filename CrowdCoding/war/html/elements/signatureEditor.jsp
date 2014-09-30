@@ -79,7 +79,7 @@
 			return true;
 		}		
 	}
-	
+	/*
 	function validateFunctionName(inputText, ignoreEmpty)
 	{
 		var value = inputText.val().trim();
@@ -135,7 +135,7 @@
 		
 		if (value == '')
 			return 'Missing a type name for ' + paramName + '.<BR>';
-		else if(!isValidTypeName(value))
+		else if(!isValidTypeName(value)&&!isNotAlreadyTaken(value))
 			return 'The type for ' + paramName + ' - ' + value + ' is not a valid type name. Valid type names are '
 			  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';
 		else
@@ -158,7 +158,7 @@
 		else
 			return '';
 	}
-	
+	*/
 	function collectSignatureData()
 	{
 		var numParams = 0;
