@@ -1,5 +1,4 @@
 <script>
-console.log("===============================parte function editor================================");
 	var myCodeMirror = CodeMirror.fromTextArea(code, 
 			{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
 	myCodeMirror.setSize(null, 500);
@@ -366,7 +365,7 @@ console.log("===============================parte function editor===============
 			var nextWord = findNextWord(line, loc + keyword.length);
 			if (nextWord == -1)
 				return "The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.<BR>";				
-			else if (!isValidTypeName(nextWord)&&!isNotAlreadyTaken(nextWord))
+			else if (!isValidTypeName(nextWord))
 				return nextWord + ' is not a valid type name. Valid type names are '
 				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';					
 		}
@@ -395,12 +394,26 @@ console.log("===============================parte function editor===============
 	// Returns an object capturing the code and other related information.
 	function collectCode(text, ast)
 	{
+		console.log(ast);
 		var calleeNames = findCalleeNames(ast);
 		
 		// Get the text for the function description, header, and code.
 		// Note esprima (the source of line numbers) starts numbering lines at 1, while
 	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-		var description = getDescription(ast)		
+		var fullDescription = getDescription(ast);	
+		
+		//Temporary way to take the derscription
+		//TODO take also name type and description of the parameters and increase robustness
+		var linesDescription = fullDescription.split('\n');
+		var description="";
+		for(var i=0; i<linesDescription.length; i++)
+			{
+			if(linesDescription[i].search('\\*\\*')==-1 && linesDescription[i].search('@param')==-1 &&linesDescription[i].search('@return')==-1)
+				description=description + linesDescription[i];
+			}
+		
+		
+		
 		var name = ast.body[0].id.name;
 		var paramNames = [];
 		

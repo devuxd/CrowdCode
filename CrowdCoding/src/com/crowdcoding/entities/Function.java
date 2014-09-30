@@ -170,7 +170,7 @@ public class Function extends Artifact
 	// Gets the description and the header
 	public String getFullDescription()
 	{
-		return getFullDescription()+ "\n"  + header;
+		return getCompleteDescription()+ "\n"  + header;
 	}
 	
 	// Gets the description and the header

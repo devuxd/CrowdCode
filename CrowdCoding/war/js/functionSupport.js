@@ -6,8 +6,7 @@
 	
 	function renderDescription(description, returnType, paramNames, paramTypes, paramsDescriptions)
 	{
-		console.log("paramNames /n  "+ paramNames.length);
-    	
+		    	
 			var numParams = 0;
 			var fullDescription = '/**\n' + description + '\n'; 
 						
@@ -16,8 +15,8 @@
 		
 	    	for(var i=0; i<paramNames.length; i++)
 				{
-				if(paramsDescriptions!=undefined && paramsDescriptions.lenght>i)
-				fullDescription += '  @param ' + paramTypes[i] + ' ' + paramNames[i] + ' - ' + paramsDescriptions[i] + '\n'; 
+				if(paramsDescriptions!=undefined && paramsDescriptions.length>i)
+					fullDescription += '  @param ' + paramTypes[i] + ' ' + paramNames[i] + ' - ' + paramsDescriptions[i] + '\n'; 
 				
 				}
 			
