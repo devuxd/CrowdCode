@@ -41,7 +41,7 @@ public class Project
 	@Id private String id;
 	@Ignore private HistoryLog historyLog;	// created and lives only for a single session; not persisted to datastore
 	
-	private boolean reviewingEnabled = true;			// Disabling this flag stops new review microtasks from being generated
+	private boolean reviewingEnabled = false;			// Disabling this flag stops new review microtasks from being generated
 	private boolean waitingForTestRun = false;								// is the project currently waiting for tests to be run?
 	private LinkedList<Long> microtaskQueue = new LinkedList<Long>();			// Global queue of microtasks waiting to be done
 	private LinkedList<Long> reviewQueue = new LinkedList<Long>();			// Global queue of review microtasks waiting to be done
