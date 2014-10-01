@@ -13,6 +13,8 @@
 			<div class="modal-header">
 				not yet implemented
 			</div>
+			<div class="modal-body">
+			  </div>
 			<div class="modal-footer">
 				<button id="" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 
@@ -37,8 +39,49 @@
 		var microtaskRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID);
 		microtaskRef.once('value', function (snapshot) 
 		{
+			var data = snapshot.val();
+			var header = '';
+			var content = '';
+			
+			switch(data.type){
+			
+				case 'WriteFunction':
+					header  = 'You edited this function:'
+					content = '<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div>';
+					$("#popUpReview .modal-body").html(content);
+					//setupReadonlyCodeBox(readonlyCodeBox, data.submission.description + data.submission.header + data.submission.code);
+					break;
+					
+				case 'WriteTestCases':
+
+					header  = 'You wrote these test cases:'
+					content = 'test cases';
+					$("#popUpReview .modal-body").html(content);
+					break;
+					
+				case 'WriteFunctionDescription':
+					header  = 'You wrote this function description:'
+					content = 'function description';
+					$("#popUpReview .modal-body").html(content);
+					break;
+					
+				case 'WriteTest':
+					header  = 'You wrote these tests:'
+					content = 'tests';
+					$("#popUpReview .modal-body").html(content);
+					break;
+					
+				default:
+					header = 'you reviewd a microtask';
+					$("#popUpReview .modal-body").html(content);
+			}
+			
 			$("#popUpReview").modal('show');
-			$("#popUpReview .modal-header").html("review material for microtask id="+microtaskID)
+			
+			$("#popUpReview .modal-header").html('<b>'+header+'</b');
+			
+			
+					
 		});
 	}
 

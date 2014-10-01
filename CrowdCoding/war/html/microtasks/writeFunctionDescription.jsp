@@ -38,7 +38,7 @@ String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(
 			if (validateAll(false))
 				submit(collectSignatureData());	
 			else					
-				$("#popUp").modal();
+				$("#popUpErrors").modal();
 			
 			return false;
 		});
@@ -62,7 +62,7 @@ String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(
 
 <div id="taskDescription" class="bg-success">
 	Can you write a description for a function that<BR>
-	<span class="label label-inverse"><%= microtask.getCallDescription() %></span><BR>	
+	<strong><%= microtask.getCallDescription() %></strong><BR>	
 	
 	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
 	<div id="callContext" class="collapse"><div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div></div>
@@ -80,13 +80,17 @@ String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(
 	<%@include file="/html/elements/microtaskFormButtons.jsp"%>
 </form>
 
-<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="logout-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="logoutLabel">Please fix the listed errors and try again!</h3>
-	</div>
-	<div class="modal-body"></div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+<!-- Popup -->
+<div id="popUpErrors" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span>Please, fix the listed errors!</span>
+				<button type="button" class="close" data-dismiss="modal">X</button>
+			</div>
+			<div class="modal-footer">
+			    
+			</div>	
+		</div>
 	</div>
 </div>
