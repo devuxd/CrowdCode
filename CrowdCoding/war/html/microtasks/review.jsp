@@ -70,7 +70,7 @@
 	
 		
 <form id="taskForm" action="">
-	<div class=" bg-warning">
+	<div class="bg-warning">
 		<div id="ratingsDiv">
 			<p><B>Please rate the quality of this work:</B></p><BR>
 			<fieldset class="rating" id="qualityRating">

@@ -81,14 +81,6 @@
 					<h3>CrowdCode</h3>
 				</div>
 				
-				<!--
-				<div class="pull-right" type="button" id="userProfile" data-toggle="dropdown">
-				    <img src="/user/picture?userId=<%=workerID%>" alt="<%=workerHandle%>" />
-					<span>&nbsp;&nbsp;</span> 
-					<strong><%=workerHandle%></span>
-					(<a href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">LogOut</a>)
-				  </div>-->
-				 
 				<div id="userProfile" class="dropdown pull-right">
 				  <a id="dLabel" role="button" data-toggle="dropdown" data-target="#">
 				    <img src="/user/picture?userId=<%=workerID%>" class="profile-picture" alt="<%=workerHandle%>" />
@@ -96,13 +88,11 @@
 				    <span class="caret"></span>
 				  </a>
 				
-				
 				  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 				  	<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
-				  	<li><a href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
+				  	<li><a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
 				  </ul>
 				</div>
-				
 				
 				<div class="clearfix"></div>
 			</div>
@@ -195,6 +185,7 @@
 	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var reviews = new Firebase(firebaseURL + '/history/reviews/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
+    var onLogoutRef = new Firebase(firebaseURL + '/logouts/<%=workerID%>');
 	
 	var allADTs = [];
 	var typeNames = [];
@@ -204,12 +195,9 @@
 	
     $(document).ready(function()
     {
-  
     	// Notify firebase when this worker (eventually) logs out
-    	//var onLogoutRef = new Firebase(firebaseURL + '/logouts/<%=workerID%>');
-    	//onLogoutRef.onDisconnect().set(true);
+    	onLogoutRef.onDisconnect().set(true);
     	
-    	/*
     	// Subscribe to logouts by other workers and forward them to the server
     	var logoutsRef = new Firebase(firebaseURL + '/logouts');
     	logoutsRef.on('child_added', function(childSnapshot, prevChildName) {
@@ -250,7 +238,27 @@
 	    		  	}
 	    		});
     		}
-    	});*/
+    	});
+    	
+    	
+    	
+		$("#logoutLink").click(function() {
+			// Tell server to logout
+			// Clear the microtask div of content
+			// Need to stop fetching messages!!!
+		});
+
+		/*
+		$("#loginButton").click(function() {
+			alert('login');
+
+			// Tell server to login
+			// Fetch microtask
+
+			$('#logout').modal('hide');
+
+			return false;
+		});*/
     	
 		// Load the ADTs from firebase
 		var adtRef = new Firebase(firebaseURL + '/ADTs');
@@ -265,29 +273,13 @@
 	        loadMicrotask();
 	        
 		});
-
-		/*
-		$("#logoutLink").click(function() {
-			// Tell server to logout
-			// Clear the microtask div of content
-			// Need to stop fetching messages!!!
-		});
-
-		$("#loginButton").click(function() {
-			alert('login');
-
-			// Tell server to login
-			// Fetch microtask
-
-			$('#logout').modal('hide');
-
-			return false;
-		});*/
+		setupADTData();	// first setup of ADT data	 
 		
-		
+		// submit selected picture to the server
 		$('#popUpChangePicture form').submit(function(){
+			// get form data
 			var formData = new FormData($(this)[0]);
-
+			// create ajax POST request
 		    $.ajax({
 		        url: '/user/picture/change',
 		        type: 'POST',
@@ -307,6 +299,7 @@
 		    return false;
 		});
 		
+		// callback for feedbackButton
 		 $("#sendFeedbackBtn").click(function(){
 			$("#popUpFeedback").modal('show');
 			$("#submitFeedback").click(sendFeedback());
@@ -314,11 +307,11 @@
 	
 	});
 	
-    
+    // submit microtask form data
     function submit(formData)
     {
+    	// stringify formData and send it via an AJAX POST call
     	var stringifiedData = JSON.stringify( formData );
-    	
 		$.ajax({
 		    contentType: 'application/json',
 		    data: stringifiedData,
@@ -331,32 +324,32 @@
 		submissionRef.set(formData);
     }
 
+	// skip microtask
 	function skip() 
 	{
+		// skip the task and load the new one
 		$.ajax('/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID + '&skip=true')
 	  		.done( function (data) { loadMicrotask(); });
 	}    
    
+    // resets the submit buttons 
+    // STILL IN USE????
 	function resetSubmitButtons()
 	{
 		defaultSubmitButtonArray = new Array();
 		hasBeenIntialized = false;
 	}
 
+	// load the microtask for the current worker
 	function loadMicrotask() 
 	{
 		$('body').scrollTop(0);
-		$('#task').load('/<%=projectID%>/fetch', function() 
-		{
-		
-  		});
+		$('#task').load('/<%=projectID%>/fetch');
     	resetSubmitButtons();	
     	resetStartTime();
 	}
 
-	
-	       
-			
+	// send the feedback to firebase
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
@@ -379,7 +372,6 @@
 	function setupADTData()
 	{
 		// Build a type name (String) to structure map and a list of type names
-		
 		for (var i = 0; i < allADTs.length; i++)
 		{
 			typeNames.push(allADTs[i].name);
@@ -394,8 +386,7 @@
 	// Returns true if name is a valid type name and false otherwise.
 	function isValidTypeName(name)
 	{
-		var simpleName;
-		
+		var simpleName;	
 		// Check if there is any array characters at the end. If so, split off that portion of the string. 
 		var arrayIndex = name.indexOf('[]');
 		if (arrayIndex != -1)

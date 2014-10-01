@@ -41,6 +41,7 @@ public class Review extends Microtask
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
 		project.historyLog().endEvent();
+		System.out.println("instantiating new review for microtask: "+microtaskIDUnderReview);
 	}
 	
     public Microtask copy(Project project)
@@ -50,7 +51,6 @@ public class Review extends Microtask
 	
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
-		System.out.println("--- SUBMITTING REVIEW ---");
 		
 		ReviewDTO reviewDTO = (ReviewDTO) dto;	
 		Microtask submittedMicrotask = Microtask.find(microtaskIDUnderReview, project).getValue();

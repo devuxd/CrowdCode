@@ -80,7 +80,6 @@ public class Project
 		
 		// Load functions from Firebase
 		String functions = FirebaseService.readClientRequestFunctions(this);
-		System.out.println(functions);	
 		FunctionDescriptionsDTO functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
 		for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
 		{
@@ -262,8 +261,6 @@ public class Project
 		}
 		else
 		{
-			System.out.println(workerID);
-			
 			microtaskAssignments.put(workerID, microtaskID);
 			FirebaseService.writeMicrotaskAssigned(microtaskID, workerID, workerHandle, this, true);
 			

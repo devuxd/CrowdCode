@@ -19,9 +19,9 @@
 	Worker crowdUser        = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), project);
 	WriteFunction microtask = (WriteFunction) this.getServletContext().getAttribute("microtask");
 
-	String functionCode     = microtask.getFunction().getEscapedFullCode();
+	String functionCode            = microtask.getFunction().getEscapedFullCode();
 	String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(microtask.getFunction(),project);
-	PromptType promptType   = microtask.getPromptType();
+	PromptType promptType          = microtask.getPromptType();
 %>
 
 
@@ -29,7 +29,7 @@
 	// get microtask informations
 	var microtaskTitle       = '<%=microtask.microtaskTitle()%>';
 	var microtaskSubmitValue = <%=microtask.getSubmitValue()%>;
-	var microtaskType        = 'writeFunction';
+	var microtaskType        = 'writeFunction';	
 	var microtaskID          = <%=microtask.getID()%>;
 	
 	var editorCode          = '<%=functionCode%>';
@@ -65,27 +65,28 @@
 	});
 </script>
 
-<!-- title -->
+
 <%@include file="/html/elements/microtaskTitle.jsp"%>
 
-<!--
-<div id="sketchPrompt" style="display: none">
-	Can you implement the function below? <BR><BR>
-</div>
-
-<div id="descriptionChangedPrompt" style="display: none">
-	The description of a function called in the code below has changed. Can you update the code
-	(if necessary)? <BR>
-	
-	<span class="original" style="display: none"><%=microtask.getOldFullDescription()%></span>
-  	<span class="changed" style="display: none"><%=microtask.getNewFullDescription()%></span>
-	<span id="diff" class="diff"></span><BR><BR>
-</div>	
--->
-
 <!-- infos -->
-<div id="taskDescription" class="bg-success">
+<div id="taskDescription" class="bg-success"><!-- title -->
+
+
+	<div id="sketchPrompt" style="display: none">
+		Can you implement the function below? <BR><BR>
+	</div>
+	
+	<div id="descriptionChangedPrompt" style="display: none">
+		The description of a function called in the code below has changed. Can you update the code
+		(if necessary)? <BR>
+		
+		<span class="original" style="display: none;background-color:white;color:black;"><%=microtask.getOldFullDescription()%></span>
+	  	<span class="changed" style="display: none;background-color:white;color:black;"><%=microtask.getNewFullDescription()%></span>
+		<div id="diff" class="diff" style="background-color:white;color:black;"></div><BR><BR>
+	</div>	
+	
 	<p>
+	
 		<strong>Not sure how to do something? </strong> Indicate a line as <span
 			class="pseudoCode">pseudocode</span> by beginning it with <span
 			class="pseudoCode">'//#'</span>.

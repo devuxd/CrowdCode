@@ -50,9 +50,43 @@
 			    
 	$(document).ready(function(){    		
 					
+		// Generate input elements for the simple test editor
+		for (var index = 0; index < paramNames.length; index++)
+		{
+			var name = paramNames[index];
+			var type = paramTypes[index];   				
+			var paramID = "param" + index;   	
+			var testErrorsDiv = "testErrors" + index;    				
+			$('#parameterValues').append(name + ' (' + type + '): &nbsp;&nbsp;<textarea id="' 
+			    + paramID + '"></textarea>'
+				+ '<div class="alert alert-error" id="' + testErrorsDiv + '"></div>');
+		}  
+					   			
+		showPrompt();
+		loadTestData(testData);		
+		
+		// Setup TestEditor instances (has to be done after data loaded)
+		for (var index = 0; index < paramNames.length; index++){
+			var paramID = "param" + index;   
+			var testErrorsDiv = "testErrors" + index; 
+			var type = paramTypes[index];  
+			var jsonEditor = new JSONEditor();
+			jsonEditor.initialize($('#' + paramID)[0], $('#' + testErrorsDiv), type);
+			paramEditors.push(jsonEditor); 				
+		}
+				
+		// Generate a TestEditor for the expectedOutput
+		$('#expectedOutputTitle').html("Expected Return Value (" + returnType + ")");
+		outputEditor = new JSONEditor();
+		outputEditor.initialize($('#expectedOutput')[0], $('#expectedOutputErrors'), returnType); 
+		   
+		$('#reportTestCase').click(function() { showDisputeForm(); });
+		$('#cancelDispute').click(function() { hideDisputeForm(); });   
+		
 		$('#skipBtn').click(function() { skip(); });	
 					
 		$('#taskForm').submit(function() {
+		
 			if (testInDispute)				
 			{
 				// Submit empty test data for the test
@@ -91,38 +125,7 @@
 			return false;			
 		});
 		
-		// Generate input elements for the simple test editor
-		for (var index = 0; index < paramNames.length; index++)
-		{
-			var name = paramNames[index];
-			var type = paramTypes[index];   				
-			var paramID = "param" + index;   	
-			var testErrorsDiv = "testErrors" + index;    				
-			$('#parameterValues').append(name + ' (' + type + '): &nbsp;&nbsp;<textarea id="' 
-			    + paramID + '"></textarea>'
-				+ '<div class="alert alert-error" id="' + testErrorsDiv + '"></div>');
-		}  
-					   			
-		showPrompt();
-		loadTestData(testData);		
-		
-		// Setup TestEditor instances (has to be done after data loaded)
-		for (var index = 0; index < paramNames.length; index++){
-			var paramID = "param" + index;   
-			var testErrorsDiv = "testErrors" + index; 
-			var type = paramTypes[index];  
-			var jsonEditor = new JSONEditor();
-			jsonEditor.initialize($('#' + paramID)[0], $('#' + testErrorsDiv), type);
-			paramEditors.push(jsonEditor); 				
-		}
-				
-		// Generate a TestEditor for the expectedOutput
-		$('#expectedOutputTitle').html("Expected Return Value (" + returnType + ")");
-		outputEditor = new JSONEditor();
-		outputEditor.initialize($('#expectedOutput')[0], $('#expectedOutputErrors'), returnType); 
-		   
-		$('#reportTestCase').click(function() { showDisputeForm(); });
-		$('#cancelDispute').click(function() { hideDisputeForm(); });   				
+						
 	});	  
 	  			
 	
@@ -195,6 +198,7 @@
 		var simpleTestInputs = [];
 		var simpleTestOutput = '';
 		
+		// build simple test inputs array
 		$.each($('#parameterValues').children('textarea'), function(index, inputElement)
 		{
 			// Parse empty textboxes as empty strings
@@ -205,11 +209,15 @@
 			simpleTestInputs.push(testInput);
 		});						
 		
+		// build simple test output value
 		simpleTestOutput = $('#expectedOutput').val();
 		if (simpleTestOutput == "")				
 			simpleTestOutput = "''";
 	
+		// build test code
 		var code = buildTestCode(simpleTestInputs, simpleTestOutput);
+		
+		// return jSON object
 		return { code: code, hasSimpleTest: true, inDispute: false, disputeText: '', 
 			     simpleTestInputs: simpleTestInputs, simpleTestOutput: simpleTestOutput };
 	}

@@ -126,6 +126,7 @@ public class WriteTest extends Microtask
 	
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
+		 System.out.println("do submit test become complete");
 	     test.get().writeTestCompleted((TestDTO) dto, project);
 	}
 	

@@ -168,7 +168,12 @@ public class CrowdServlet extends HttpServlet
 						else if( ofy().load().filterKey(Key.create(Project.class, projectID)).keys().first() != null ){
 							// if is requested the main page
 							if(path.length==2) {
-								if(req.getParameter("oldLayout")!=null)
+								if(req.getParameter("distributedJS")!=null)
+									if(req.getParameter("distributedJS").equals("admin"))
+										req.getRequestDispatcher("/html/distributedJSAdmin.jsp").forward(req, resp);
+									else
+										req.getRequestDispatcher("/html/distributedJSWorker.jsp").forward(req, resp);
+								else if(req.getParameter("oldLayout")!=null)
 									req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
 								else
 									req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
@@ -318,7 +323,6 @@ public class CrowdServlet extends HttpServlet
 		    picture.setImage(imageBlob);
 		    
 		    // persist image
-	    	System.out.println("salvo immagine!");
 		    ofy().save().entity(picture).now();
 		    
 		    // print success
@@ -442,7 +446,6 @@ public class CrowdServlet extends HttpServlet
         	}
         	else
         	{
-        		System.out.println(microtask.getUIURL());
         		this.getServletContext().setAttribute("microtask", microtask);        		
         		req.getRequestDispatcher(microtask.getUIURL()).forward(req,  resp);        		
         	}        	
