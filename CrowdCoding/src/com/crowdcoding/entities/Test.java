@@ -224,7 +224,7 @@ public class Test extends Artifact
 			FirebaseService.deleteTest(this.id, project);
 		else
 			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs, 
-				simpleTestOutput, description, functionName, functionID), this.id, version, project);
+				simpleTestOutput, description, functionName, functionID, isImplemented), this.id, version, project);
 	}	
 	
 	/******************************************************************************************

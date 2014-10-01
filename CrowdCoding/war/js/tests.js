@@ -20,9 +20,12 @@ function Tests()
 	this.testChanged = function(changedTest) { return testChanged(changedTest); };	
 	this.testDeleted = function(deletedTest) { return testDeleted(deletedTest); };	
 	this.forFunction = function(functionID) { return forFunction(functionID) };
-	this.testCasesForFunction = function(functionID) { return testCasesForFunction(functionID); };
-	
 	this.get = function(id) { return get(id); };
+	this.getValidTests = function() { return getValidTests(); };	
+	this.forFunction = function(functionID) { return forFunction(functionID) };
+	this.testCasesForFunction = function(functionID) { return testCasesForFunction(functionID); };
+	this.getAllTestsToRun = function() { return getAllTestsToRun(); };
+
 	
 	// Function bodies
 	
@@ -55,7 +58,7 @@ function Tests()
 	
 	function testDeleted(deletedTest)
 	{
-		delete tests[addedTest.id];
+		delete tests[deletedTest.id];
 		
 		var testsForFunction = functionIDToTests[deletedTest.functionID];
 		if (testsForFunction != null)		
@@ -71,6 +74,18 @@ function Tests()
 			return tests[id];
 		else
 			return null;
+	}
+	
+	// Returns an array of all tests in the system that are not currently in dispute
+	function getValidTests()
+	{
+		var validTests = [];		
+		$.each(tests, function(i, test)
+		{
+			if (test.isImplemented)
+				validTests.push(test);			
+		});
+		return validTests;
 	}
 	
 	// Returns an array of the tests, in TestInFirebase format, of all of the tests for the specified functionID.
@@ -95,5 +110,44 @@ function Tests()
 		}
 	
 		return testCasesFor;
+	}
+	
+	// Gets the tests for the specified function as a string, replacing any calls to the specified function
+	// with calls to a mock.
+//	function allTestCodeToRunFor(functionID)
+//	{
+//		var testsForFuncArray = forFunction(functionID);
+//		var functionName = functions.get(functionID).name;
+//		var testsForFuncString = '';
+//		
+//		for (var i = 0; i < testsForFunc.length; i++)
+//			testsForFuncString += testsForFuncArray[i].code;
+//		
+//		// We need to replace every call to the function under test (functionName) in the test code with a 
+//		// call to our mock (functionNameaaaActualName). Since we don't have a parse tree here, 
+//		// we're just going to do a string replace. That is, we'll replace every occurence
+//		// of "functionName(" with with "functionNameaaaActualImp(. And also 
+//		// replace "functionName (" with "functionNameaaaActualImp (". Including the parens hopefully
+//		// avoids most (but certainly not all) situations where the function name is used in the
+//		// error description in the test case or elsewhere. 				
+//		var callsiteTemplate1 = functionName + '(';
+//		var callsiteTemplate2 = functionName + ' (';
+//		var mockedCallsite = functionName + 'aaaActualIMP(';
+//		
+//		return testsForFuncString.replace(new RegExp(callsiteTemplate1, 'g'), mockedCallsite)
+//						  .replace(new RegExp(callsiteTemplate2, 'g'), mockedCallsite);
+//	}	
+
+	// Returns a string containing every test that is not currently in dispute, 
+	// where each test includes the complete code of the test
+	function getAllTestsToRun()
+	{
+		var testCode = '';		
+		$.each(tests, function(i, test)
+		{
+			if (test.isImplemented)
+				testCode += test.code +'\n\n';
+		});
+		return testCode;
 	}
 }

@@ -67,6 +67,7 @@
 	<script src="/js/JSONEditor.js"></script>
 	<script src="/js/functions.js"></script>
 	<script src="/js/tests.js"></script>
+	<script src="/js/testRunner.js"></script>
 	<script src="/js/review.js"></script>
 	
 </head>

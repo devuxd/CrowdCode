@@ -13,7 +13,7 @@ public class TestInFirebase extends DTO
 	public int version;
 	public String code = "";
 	public boolean hasSimpleTest;	// is there a simple test defined for this test? 
-	public boolean inDispute;	    // is the test being disputed?
+	public boolean isImplemented;	// does the test currently have a valid implementation?
 	public String disputeText;      // only available if the test is in dispute.	
 	
 	public List<String> simpleTestInputs = new ArrayList<String>();
@@ -30,7 +30,7 @@ public class TestInFirebase extends DTO
 	
 	public TestInFirebase(long id, int version, String code, boolean hasSimpleTest,
 			List<String> simpleTestInputs, String simpleTestOutput, String description, 
-			String functionName, long functionID) 
+			String functionName, long functionID, boolean isImplemented) 
 	{
 		this.id = id;
 		this.version = version;
@@ -38,9 +38,9 @@ public class TestInFirebase extends DTO
 		this.hasSimpleTest = hasSimpleTest;
 		this.simpleTestInputs = simpleTestInputs;
 		this.simpleTestOutput = simpleTestOutput;
-		this.inDispute = false;
 		this.description = description;
 		this.functionName = functionName;
 		this.functionID = functionID;
+		this.isImplemented = isImplemented;
 	}
 }
