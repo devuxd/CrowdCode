@@ -2,7 +2,7 @@
 <head>
 	<title>CrowdCode Client Request Editor</title>
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/html/styles.css">
+	<link rel="stylesheet" href="/css/styles.css">
 	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>	

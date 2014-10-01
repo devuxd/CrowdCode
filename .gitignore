@@ -34,3 +34,11 @@ CrowdCoding/.idea/workspace.xml
 CrowdCoding/war/.idea/workspace.xml
 
 CrowdCoding/war/.idea/workspace.xml
+
+*.jar
+
+*.jar
+
+CrowdCoding/war/WEB-INF/lib/datanucleus-core-1.1.5.jar
+
+CrowdCoding/.classpath

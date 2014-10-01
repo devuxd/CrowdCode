@@ -41,6 +41,7 @@
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
+	<link rel="stylesheet" href="/include/codemirror/pastel-on-dark.css" type="text/css" />
 	<link rel="stylesheet" href="/css/worker.css" type="text/css" />
 	
 	
@@ -66,6 +67,7 @@
 	<script src="/js/JSONEditor.js"></script>
 	<script src="/js/functions.js"></script>
 	<script src="/js/tests.js"></script>
+	<script src="/js/testRunner.js"></script>
 	<script src="/js/review.js"></script>
 	
 </head>
