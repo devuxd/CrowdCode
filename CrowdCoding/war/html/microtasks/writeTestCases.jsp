@@ -75,7 +75,7 @@
     {
     	functionTested = functions.get(microtask.testedFunctionID);
     	
-    	var description=renderDescription( functionTested.description, functionTested.returnType, functionTested.paramNames, functionTested.paramTypes, functionTested.paramDescriptions);
+    	var description=renderDescription(functionTested);
     			
     	codeBoxCode =description + functionTested.header;
     	setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);

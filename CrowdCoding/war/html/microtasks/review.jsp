@@ -11,7 +11,7 @@
 	Project project = Project.Create(projectID);
     Review microtask = (Review) this.getServletContext().getAttribute("microtask");    
 %>
-
+	<script src="/js/functionSupport.js"></script>
 <script>
 	var microtaskTitle = '<%= microtask.microtaskTitle() %>';
 	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;

@@ -4,24 +4,27 @@
 
 
 	
-	function renderDescription(description, returnType, paramNames, paramTypes, paramsDescriptions)
+	function renderDescription(functionCalled)
 	{
+		    	console.log("paramNames"+functionCalled.paramNames.length );
+		    	//console.log("paramTypes"+functionCalled.paramTypes.length );
+		    	console.log("paramdescriptins"+functionCalled.paramDescriptions.length );
 		    	
 			var numParams = 0;
-			var fullDescription = '/**\n' + description + '\n'; 
+			var fullDescription = '/**\n' + functionCalled.description + '\n'; 
 						
 	    	// Format description into 66 column max lines, with two spaces as starting character
 			fullDescription = wordwrap(fullDescription, 66, '\n  ') + '\n'; 
 		
-	    	for(var i=0; i<paramNames.length; i++)
+	    	for(var i=0; i<functionCalled.paramNames.length; i++)
 				{
-				if(paramsDescriptions!=undefined && paramsDescriptions.length>i)
-					fullDescription += '  @param ' + paramTypes[i] + ' ' + paramNames[i] + ' - ' + paramsDescriptions[i] + '\n'; 
+				if(functionCalled.paramDescriptions!=undefined && functionCalled.paramDescriptions.length>i)
+					fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' - ' + functionCalled.paramDescriptions[i] + '\n'; 
 				
 				}
 			
 			
-			fullDescription += '\n  @return ' + returnType + ' \n' + '**/\n\n';
+			fullDescription += '\n  @return ' + functionCalled.returnType + ' \n' + '**/\n\n';
 			
 			return fullDescription;
 			

@@ -13,7 +13,8 @@
  	// If we are editing a function that is a client request and starts with CR, make the header
  	// readonly.
 	if (functionName.startsWith('CR'))
-		makeHeaderReadOnly();
+		makeHeaderAndParameterReadOnly();
+	
  	
  	// Find the list of all function names elsewhere in the system
  	var functionNames = buildFunctionNames();
@@ -160,12 +161,14 @@
  	// is null if there are errors.
  	function checkAndCollectCode()
  	{
+ 		
  		// Possibly due to some issue in how the microtask div is getting initialized and loaded,
  		// codeMirror is not being correctly bound to the textArea. To manually force it
  		// to save its value back to the textarea so we can read it, we execute the following line:
 	 	myCodeMirror.save();	 	
  		
- 		var text = $("#code").val();		
+ 		var text = $("#code").val();	
+ 	
 		if(hasErrorsHelper(text))
 		{
 			// If there are syntax errors, but there are also pseudocalls or pseudocode, attempt to 
@@ -193,7 +196,8 @@
 						}						
 					}					
 				}	
-			}			
+			}	
+			
 			return { errors: true, code: null };	
 		}
 		else
@@ -416,6 +420,8 @@
 		
 		var name = ast.body[0].id.name;
 		var paramNames = [];
+		var paramTypes = [];
+		var paramDescriptions = [];
 		
 		var header = 'function ' + name + '(';
 		$.each(ast.body[0].params, function(index, value)
@@ -424,6 +430,8 @@
 				header += ', ';
 			header += ast.body[0].params[index].name;
 			paramNames.push(ast.body[0].params[index].name);
+			paramTypes.push(ast.body[0].params[index].name);
+			paramDescriptions.push(ast.body[0].params[index].name);
 		});
 		header += ')';
 		
@@ -431,7 +439,7 @@
 				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
 			    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
 		return { description: description, header: header, name: name, code: body, paramNames: paramNames,
-					calleeNames: calleeNames};
+			paramTypes: paramTypes, paramDescriptions: paramDescriptions, calleeNames: calleeNames};
 	}
 	
 	function getDescription(ast)
@@ -447,18 +455,26 @@
 	// Makes the header of the function readonly (not editable in CodeMirror).
 	// The header is the line that starts with 'function'
 	// Note: the code must be loaded into CodeMirror before this function is called.
-	function makeHeaderReadOnly()
+	function makeHeaderAndParameterReadOnly()
 	{
-	 	myCodeMirror.save();	 			
+		console.log("metto read only riga0");
+		
+		myCodeMirror.save();	 			
  		var text = $("#code").val();			
 		
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		var headerLine = indexOfFirstLineStartingFunction(text);
 		
-		myCodeMirror.getDoc().markText({line: headerLine, ch: 0}, 
-				{ line: headerLine + 1, ch: 1}, 
+		var readOnlyLines = indexesOfTheReadOnlyLines(text);
+		
+		for(var i=0; i<readOnlyLines.length; i++)
+			{
+			console.log("metto read only riga"+i);
+		myCodeMirror.getDoc().markText({line: readOnlyLines[i], ch: 0}, 
+				{ line: readOnlyLines[i] + 1, ch: 1}, 
 				{ readOnly: true }); 
+			}
+	
 	}
 	
 	// Replaces function code block with empty code. Function code blocks must start on the line
@@ -518,15 +534,22 @@
 	
 	// Finds and returns the index of the first line (0 indexed) starting with the string function, or -1 if no such
 	// line exists
-	function indexOfFirstLineStartingFunction(text)
+	function indexesOfTheReadOnlyLines(text)
 	{
-		// Look for a line of text that starts with 'function'.
+		// Look for a line of text that starts with 'function', '@param' or '@return'.
+		var indexesLines=[];
 		var lines = text.split('\n');			
         for (var i = 0; i < lines.length; i++)
         {
-			if (lines[i].startsWith('function'))
-				return i;
+        	console.log("riga "+ i);
+			if (lines[i].startsWith('function')||lines[i].search('@param')||lines[i].search('@return'))
+				{
+					console.log("pusho");
+					indexesLines.push(i);
+				}
         }
+		
+        return indexesLines;
 	}
 		
 	// Returns true iff the text contains at least one pseudocall or pseudocode

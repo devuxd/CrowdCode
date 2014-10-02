@@ -144,7 +144,7 @@ public class Function extends Artifact
 	
 	public String getCompleteDescription()
 	{
-		String fullDescription="/**\n" + description + "\n";
+		String fullDescription="/**\n" + description + "\n\n";
 		
 					
     	
@@ -371,8 +371,10 @@ public class Function extends Artifact
 	{
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.				
-		String strippedOldFullDescrip = (this.description + this.header).replace(" ", "").replace("\n", "");
-		String strippedNewFullDescrip = (dto.description + dto.header).replace(" ", "").replace("\n", "");				
+		String strippedOldFullDescrip = (this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", "");
+		String strippedNewFullDescrip = (dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", "");				
+		System.out.println("comparo "+this.getCompleteDescription()+"\n con"+ dto.getCompleteDescription());
+		
 		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))		
 			notifyDescriptionChanged(dto, project);		
 					
@@ -382,6 +384,8 @@ public class Function extends Artifact
 		this.description = dto.description;
 		this.header = dto.header;
 		this.paramNames = dto.paramNames;
+		this.paramTypes=dto.paramTypes;
+		this.paramDescriptions=dto.paramDescriptions;
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;				
 		
 		// Looper over all of the callers, rebuilding our list of callers
@@ -706,10 +710,10 @@ public class Function extends Artifact
 	private void notifyDescriptionChanged(FunctionDTO dto, Project project)
 	{
 		for (long callerID : callers)		
-			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.description + dto.header);
+			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 		
 		for (long testID : tests)
-			TestCommand.functionChangedInterface(testID, this.getFullDescription(), dto.description + dto.header);
+			TestCommand.functionChangedInterface(testID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 	}
 		
 	//////////////////////////////////////////////////////////////////////////////
