@@ -23,6 +23,7 @@ function Tests()
 	this.get = function(id) { return get(id); };
 	this.getValidTests = function() { return getValidTests(); };	
 	this.forFunction = function(functionID) { return forFunction(functionID) };
+	this.validTestsforFunction = function(functionID) { return validTestsforFunction(functionID) };
 	this.testCasesForFunction = function(functionID) { return testCasesForFunction(functionID); };
 	this.getAllTestsToRun = function() { return getAllTestsToRun(); };
 
@@ -94,7 +95,35 @@ function Tests()
 		if (!functionIDToTests.hasOwnProperty(functionID))		
 			return [];
 		else
-			return clone(functionIDToTests[functionID]);
+		{
+			var testsForFunction = [];			
+			$.each(functionIDToTests[functionID], function(i, testID)
+			{
+				var test = get(testID);				
+				if (test.isImplemented)
+					testsForFunction.push(test);				
+			});			
+
+			return testsForFunction;
+		}	
+	}	
+	
+	// Returns an array of the valid, implemented tests, in TestInFirebase format, for the specified functionID.
+	function validTestsforFunction(functionID)
+	{
+		if (!functionIDToTests.hasOwnProperty(functionID))		
+			return [];
+		else
+		{
+			var testsForFunction = [];
+			$.each(functionIDToTests[functionID], function(i, testID)
+			{
+				var test = get(testID);	
+				if (test.isImplemented)
+					testsForFunction.push(test);				
+			});			
+			return testsForFunction;
+		}
 	}
 	
 	// Returns an array of test cases, in TestCaseDTO format, for the specifieid functionID

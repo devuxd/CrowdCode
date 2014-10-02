@@ -9,14 +9,19 @@ var mocks;
 var worker;
 var testRunTimeout;
 var currentTextIndex;
+var functionID;
 
-// Runs all currently valid tests, sending the results from the test run to the server.
-function runAllTests()
+
+//Runs all of the tests for the specified function, sending the results to the server
+function runTestsForFunction(idForFunction)
 {
-	// Load the tests
-	validTests = tests.getValidTests();
+	functionID = idForFunction;
 	
-	// Load the functions.	
+	// Load the tests
+	validTests = tests.validTestsforFunction(functionID);
+	
+	// Load the functions. As the specified function may itself directly or indirectly call every function, 
+	// load all functions in the system.
 	// For every function in the system, get the actual function name with a mocked implementation
 	// and the corresponding mocked function with the actual function implementation.
 	// As we will be using JSHint to check for syntax errors and JSHint requires that functions be defined
@@ -92,7 +97,7 @@ function runTest()
 	// If we've run out of tests
 	if (currentTextIndex >= validTests.length)
 	{
-		finishTesting();
+		submitResultsToServer();
 		return;
 	}
 	
@@ -118,11 +123,15 @@ function runTest()
 		var codeToExecute = allTheFunctionCode + testCode;
 
 		// execute the tests on the worker thread
-	    worker = new Worker('testRunnerWorker.js');
+		window.URL = window.URL || window.webkiURL;
+	    var blob = new Blob([document.querySelector('#worker').textContent]);
+	    worker = new Worker(window.URL.createObjectURL(blob));
+
+	    // Add a callback on the worker for receiving and processing messages from the worker. 
 	    worker.onmessage = function(e) 
 	    {
 		    clearTimeout(testRunTimeout);					    	
-		    console.log("Received: " + e.data);
+		    console.log("Received: " + JSON.stringify(e.data));
 			processTestFinished(false, e.data);
 	    }
 	    
@@ -169,14 +178,28 @@ function processTestFinished(testStopped, testResult)
 	runTest();		
 }
 
-function finishTesting()
+function submitResultsToServer()
 {		
-	// TODO: submit results to server
+	// Determine if the function passed or failed its tests. 
+	// If at least one test failed, the function failed its tests.
+	// If at least one test succeeded and no tests failed, the function passed its tests.
+	// If no tests succeeded or failed, none of the tests could be successfully run - don't submit anything to the server.
+	var passedTests;
 	
-}
+	if (allFailedTestCases.length > 0)
+		passedTests = false;
+	else if (allPassedTestCases.length > 0 && allFailedTestCases.length == 0)
+		passedTests = true;
+	else 
+		passedTests = null;
 	
-function collectFormDataForNormal()
-{
-		var formData = { passingTestCases: allPassedTestCases, failingTestCases: allFailedTestCases };
-		return formData;
+	if (passedTests != null)
+	{
+		$.ajax({
+		    contentType: 'application/json',
+		    data: '',
+		    type: 'POST',
+		    url: '/' + projectID + '/testResult?functionID=' + functionID + '&passedTests=' + passedTests
+		});
+	}
 }
