@@ -25,6 +25,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 
 import com.crowdcoding.commands.Command;
+import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
@@ -116,6 +117,7 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project>/logout/[workerID] - doLogout
 		 *  /<project>/run - run.jsp
 		 *  /<project>/submit - doSubmit
+		 *  /<project>/testResult - submitTestResult
 		 *  /<project>/welcome - welcome.jsp
 		 *  /clientRequest - ClientRequestEditor.jsp
 		 *  /welcome.jsp
@@ -184,6 +186,8 @@ public class CrowdServlet extends HttpServlet
 									doFetch(req, resp, projectID, user);
 								else if (action.equals("submit"))
 									doSubmit(req, resp);
+								else if (action.equals("testResult"))
+									submitTestResult(req, resp);
 								else if (action.equals("logout"))					
 									doLogout(projectID, path[3]);
 								else if (action.equals("admin") && path.length == 3)
@@ -216,7 +220,6 @@ public class CrowdServlet extends HttpServlet
 		} catch (ServletException e) {
 			e.printStackTrace();
 		} catch (FileUploadException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}      
 	}
@@ -356,9 +359,6 @@ public class CrowdServlet extends HttpServlet
 	// Notify the server that a microtask has been completed. 
 	public void doSubmit(final HttpServletRequest req, final HttpServletResponse resp) throws IOException 
 	{
-		// Collect information from the request parameter. Since the transaction may fail and retry,
-		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
-		// And anything inside the transaction MUST not mutate the values produced.
     	try 
     	{		
     		final String projectID = (String) req.getAttribute("project");
@@ -392,6 +392,28 @@ public class CrowdServlet extends HttpServlet
     	}        
 	}
 	
+	// Notify the server that a test for a function has been run, noting the results.
+	public void submitTestResult(final HttpServletRequest req, final HttpServletResponse resp)
+	{		
+		final String projectID = (String) req.getAttribute("project");
+		final long functionID = Long.parseLong(req.getParameter("functionID"));	
+		final boolean passedTests = Boolean.parseBoolean(req.getParameter("passedTests"));
+		
+		System.out.println("functionID: " + functionID);			
+		System.out.println("passedTests: " + passedTests);
+		
+		// Create an initial context, then build a command to skip or submit
+		CommandContext context = new CommandContext();	
+		
+		// Create the skip or submit commands
+		if (passedTests)
+			FunctionCommand.passedTests(functionID);
+		else			
+			FunctionCommand.failedTests(functionID);
+				
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectID);			       
+	}	
 	
 	public void doFetch(final HttpServletRequest req, final HttpServletResponse resp, 
 			final String projectID, final User user) throws IOException 

@@ -68,11 +68,14 @@
 	<script src="/js/functions.js"></script>
 	<script src="/js/tests.js"></script>
 	<script src="/js/testRunner.js"></script>
+	
 	<script src="/js/review.js"></script>
 	
 </head>
 
 <body>
+	<%@include file="/js/testRunnerWorker.html" %>
+
 	
 	<div id="wrapper" class="container-fluid">
 		<header>
@@ -182,7 +185,8 @@
 </div>
 
 <script>
-	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
+	var projectID = '<%=projectID%>';
+	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/' + projectID;
 	var reviews = new Firebase(firebaseURL + '/history/reviews/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
     var onLogoutRef = new Firebase(firebaseURL + '/logouts/<%=workerID%>');
