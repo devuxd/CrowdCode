@@ -37,11 +37,13 @@
 	
 	function updateLoggedIn(loggedIn)
 	{
+		if(loggedIn != null && Object.keys(loggedIn).length>0){
 			$('#leaderboard tr').removeClass('loggedIn');
 			$.each(loggedIn, function(index, worker)
 			{
 				$('#leader'+index).addClass('loggedIn');
 			});
+		}
 	}
 
 </script>

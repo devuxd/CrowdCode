@@ -41,6 +41,7 @@
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
+	<link rel="stylesheet" href="/include/codemirror/pastel-on-dark.css" type="text/css" />
 	<link rel="stylesheet" href="/css/worker.css" type="text/css" />
 	
 	
@@ -66,6 +67,8 @@
 	<script src="/js/JSONEditor.js"></script>
 	<script src="/js/functions.js"></script>
 	<script src="/js/tests.js"></script>
+	<script src="/js/testRunner.js"></script>
+	
 	<script src="/js/review.js"></script>
 	<script src="/js/functionSupport.js"></script>
 	<script src="/js/ADTandDataCheck.js"></script>
@@ -74,6 +77,8 @@
 </head>
 
 <body>
+	<%@include file="/js/testRunnerWorker.html" %>
+
 	
 	<div id="wrapper" class="container-fluid">
 		<header>
@@ -82,7 +87,6 @@
 					<h3>CrowdCode</h3>
 				</div>
 				
-				 
 				<div id="userProfile" class="dropdown pull-right">
 				  <a id="dLabel" role="button" data-toggle="dropdown" data-target="#">
 				    <img src="/user/picture?userId=<%=workerID%>" class="profile-picture" alt="<%=workerHandle%>" />
@@ -90,13 +94,11 @@
 				    <span class="caret"></span>
 				  </a>
 				
-				
 				  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 				  	<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
 				  	<li><a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
 				  </ul>
 				</div>
-				
 				
 				<div class="clearfix"></div>
 			</div>
@@ -186,7 +188,8 @@
 </div>
 
 <script>
-	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
+	var projectID = '<%=projectID%>';
+	var firebaseURL = 'https://crowdcode.firebaseio.com/projects/' + projectID;
 	var reviews = new Firebase(firebaseURL + '/history/reviews/');
 	var feedbackRef = new Firebase(firebaseURL + '/feedback');
     var onLogoutRef = new Firebase(firebaseURL + '/logouts/<%=workerID%>');
@@ -199,7 +202,6 @@
 	
     $(document).ready(function()
     {
-  
     	// Notify firebase when this worker (eventually) logs out
     	onLogoutRef.onDisconnect().set(true);
     	
@@ -280,9 +282,11 @@
 		});
 		setupADTData();	// first setup of ADT data	 
 		
+		// submit selected picture to the server
 		$('#popUpChangePicture form').submit(function(){
+			// get form data
 			var formData = new FormData($(this)[0]);
-
+			// create ajax POST request
 		    $.ajax({
 		        url: '/user/picture/change',
 		        type: 'POST',
@@ -302,6 +306,7 @@
 		    return false;
 		});
 		
+		// callback for feedbackButton
 		 $("#sendFeedbackBtn").click(function(){
 			$("#popUpFeedback").modal('show');
 			$("#submitFeedback").click(sendFeedback());
@@ -309,11 +314,11 @@
 	
 	});
 	
-    
+    // submit microtask form data
     function submit(formData)
     {
+    	// stringify formData and send it via an AJAX POST call
     	var stringifiedData = JSON.stringify( formData );
-    	
 		$.ajax({
 		    contentType: 'application/json',
 		    data: stringifiedData,
@@ -326,29 +331,32 @@
 		submissionRef.set(formData);
     }
 
+	// skip microtask
 	function skip() 
 	{
+		// skip the task and load the new one
 		$.ajax('/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID + '&skip=true')
 	  		.done( function (data) { loadMicrotask(); });
 	}    
    
+    // resets the submit buttons 
+    // STILL IN USE????
 	function resetSubmitButtons()
 	{
 		defaultSubmitButtonArray = new Array();
 		hasBeenIntialized = false;
 	}
 
+	// load the microtask for the current worker
 	function loadMicrotask() 
 	{
 		$('body').scrollTop(0);
-		$('#task').load('/<%=projectID%>/fetch', function() 
-		{
-		
-  		});
+		$('#task').load('/<%=projectID%>/fetch');
     	resetSubmitButtons();	
     	resetStartTime();
 	}
 
+	// send the feedback to firebase
 	function sendFeedback()
 	{
 		// Push the feedback to firebase
@@ -371,7 +379,6 @@
 	function setupADTData()
 	{
 		// Build a type name (String) to structure map and a list of type names
-		
 		for (var i = 0; i < allADTs.length; i++)
 		{
 			typeNames.push(allADTs[i].name);
@@ -379,9 +386,11 @@
 		}
 		typeNames.push('String');
 		typeNames.push('Number');
-		typeNames.push('Boolean');	
-		
+
+		typeNames.push('Boolean');		
 	}	
+	
+
 	
 	
 </script>
