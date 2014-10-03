@@ -244,3 +244,5 @@ footer.navbar-default { background-color: #3C9764; }
 .pseudoCall { background-color: white; color: gray; font-weight: bold; }
 .pseudoCode { background-color: yellow;	}
 .highlightPseudoCall { background-color: lime; }
+
+.adtListTitle { background: black; color: white; height: 32px; line-height: 32px; }

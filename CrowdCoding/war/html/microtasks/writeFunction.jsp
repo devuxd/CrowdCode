@@ -109,6 +109,8 @@
 		break up the function into smaller pieces that others can work on. If
 		you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW!
 	</p>
+	
+	<%@include file="/html/elements/typeBrowser.jsp" %><BR>
 </div>
 
 <form id="taskForm" action="#">
@@ -127,13 +129,6 @@
 </script>
 
 <!--
-<div id="descriptionChangedPrompt" style="display: none">
-	The description of a function called in the code below has changed. Can
-	you update the code (if necessary)? <BR> <span class="original"
-		style="display: none"><%=microtask.getOldFullDescription()%></span> <span
-		class="changed" style="display: none"><%=microtask.getNewFullDescription()%></span>
-	<span id="diff" class="diff"></span><BR> <BR>
-</div>
 
 <div id="popUp" class="modal hide fade" tabindex="-1" role="dialog"
 	aria-labelledby="" aria-hidden="true">
