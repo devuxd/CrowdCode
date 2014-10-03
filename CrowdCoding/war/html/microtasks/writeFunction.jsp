@@ -24,7 +24,7 @@
 	PromptType promptType   = microtask.getPromptType();
 %>
 
-
+<script src="/js/functionSupport.js"></script>
 <script>
 	// get microtask informations
 	var microtaskTitle       = '<%=microtask.microtaskTitle()%>';
