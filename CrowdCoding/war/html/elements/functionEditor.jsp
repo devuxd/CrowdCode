@@ -13,7 +13,8 @@
  	// If we are editing a function that is a client request and starts with CR, make the header
  	// readonly.
 	if (functionName.startsWith('CR'))
-		makeHeaderReadOnly();
+		makeHeaderAndParameterReadOnly();
+	
  	
  	// Find the list of all function names elsewhere in the system
  	var functionNames = buildFunctionNames();
@@ -43,11 +44,10 @@
  	{
  		var names = [];
  		var functionsAST = esprima.parse(allTheFunctionCode);	
- 		console.log(allTheFunctionCode);
+ 		
  		// Iterate over each function declaration, grabbing its name
  		$.each(functionsAST.body, function(index, bodyNode)
  		{
- 			console.log(bodyNode.id.name);
  			if (bodyNode.type == "FunctionDeclaration")		
  				names.push(bodyNode.id.name);
  		});
@@ -160,12 +160,14 @@
  	// is null if there are errors.
  	function checkAndCollectCode()
  	{
+ 		console.log("collect code");
  		// Possibly due to some issue in how the microtask div is getting initialized and loaded,
  		// codeMirror is not being correctly bound to the textArea. To manually force it
  		// to save its value back to the textarea so we can read it, we execute the following line:
 	 	myCodeMirror.save();	 	
  		
- 		var text = $("#code").val();		
+ 		var text = $("#code").val();	
+ 	
 		if(hasErrorsHelper(text))
 		{
 			// If there are syntax errors, but there are also pseudocalls or pseudocode, attempt to 
@@ -193,14 +195,17 @@
 						}						
 					}					
 				}	
-			}			
+			}	
+			
 			return { errors: true, code: null };	
 		}
 		else
 		{
 			// Code is syntactically valid and should be able to build an ast.
 			// Build the ast and do additional checks using the ast.
-			var ast = esprima.parse(text, {loc: true});			
+			var ast = esprima.parse(text, {loc: true});		
+			
+				
 			if (hasASTErrors(text, ast))
 			{
 				return { errors: true, code: null };	
@@ -210,6 +215,7 @@
 				var codePieces = collectCode(text, ast);
 				return { errors: false, code: codePieces };	
 			}
+				
 		} 		
  	}
  	
@@ -217,9 +223,7 @@
 	// iff there are no errors.
  	function doErrorCheck()
 	{
-		console.log("Starting error check");
-		
-	 	myCodeMirror.save();	 			
+			myCodeMirror.save();	 			
  		var text = $("#code").val();
 		if(hasErrorsHelper(text))			
 		{
@@ -314,7 +318,7 @@
 		if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)			
 			errorMessages += "Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.<BR>";			
 		
-		errorMessages += hasTypeNameError(ast, errorMessages);	
+		errorMessages += hasDescriptionError(ast, errorMessages);	
 			
 		if (errorMessages != "")
 		{
@@ -331,94 +335,140 @@
 		}
 	}
 	
-	// Checks if the function description is missing or has undefined type names.
+	// Checks if the function description is in he form " @param [Type] [name] - [description]"
+	// and if has undefined type names.
 	// i.e., checks that a valid TypeName follows @param  (@param TypeName)
-	// and checks that a valid TypeName follows @return.
+	// checks that a valid TypeName follows @return.
 	// A valid type name is any type name in allADTs and the type names String, Number, Boolean followed
 	// by zero or more sets of array brackets (e.g., Number[][]).
 	// Returns an error message(s) if there is an error 
-	function hasTypeNameError(ast)
+	function hasDescriptionError(ast)
 	{
 		var errorMessages = '';
 		var paramKeyword = '@param ';
 		var returnKeyword = '@return ';
+		var paramDescriptionNames=[];
 		
 		// Loop over every line of the function description, checking for lines that have @param or @return
 		var descriptionLines = getDescription(ast).split('\n');
+		
 		for (var i = 0; i < descriptionLines.length; i++)
 		{
 			var line = descriptionLines[i];
-			errorMessages += checkForValidType(paramKeyword, line);
-			errorMessages += checkForValidType(returnKeyword, line);
-		}
+			errorMessages += checkForValidTypeNameDescription(paramKeyword, line, paramDescriptionNames);
+			errorMessages += checkForValidTypeNameDescription(returnKeyword, line);
 		
+		}
+		//if the description doesn't contain error checks the consistency between the parameter in the descriptions and the
+		// ones in the header
+		
+		if( errorMessages === '')
+			{
+			
+			var paramHeaderNames=[];
+			$.each(ast.body[0].params, function(index, value)
+			{
+				paramHeaderNames.push(ast.body[0].params[index].name);
+			});
+			
+			errorMessages+=checkNameConsistency(paramDescriptionNames,paramHeaderNames);
+			}
 		return errorMessages;		
 	}
 
 	// Checks that, if the specified keyword occurs in line, it is followed by a valid type name. If so,
 	// it returns an empty string. If not, an error message is returned.
-	function checkForValidType(keyword, line)
+	function checkForValidTypeNameDescription(keyword, line, paramDescriptionNames)
 	{
+		//subtitues multiple spaces with a single space
+		line = line.replace(/\s{2,}/g,' ');
+		
 		var loc = line.search(keyword);
+		
 		if (loc != -1)	
 		{
-			var nextWord = findNextWord(line, loc + keyword.length);
-			if (nextWord == -1)
+			var type = findNextWord(line, loc + keyword.length);
+			var name = findNextWord(line, loc + keyword.length+type.length+1);
+			if(paramDescriptionNames!=undefined)
+				{
+				paramDescriptionNames.push(name);
+				}
+			
+			if (type == -1)
 				return "The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.<BR>";				
-			else if (!isValidTypeName(nextWord))
-				return nextWord + ' is not a valid type name. Valid type names are '
-				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';					
+			else if (!isValidTypeName(type))
+				return type + ' is not a valid type name. Valid type names are '
+				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';
+			else if (keyword==='@param '&& !isValidName(name))
+				return name+ ' is not a valid name. Use upper and lowercase letters, numbers, and underscores. <BR>';	
+			else if (keyword==='@param '&& !isValidParamDescription(line))
+				return line+' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] - [description]". <BR>';		
+			else if (keyword==='@return ' && name!=-1)
+				return 'The return value must be in the form  " @return [Type]". <BR>';	
 		}
 		
 		return '';
 	}
-	
-	// Starting at index start, finds the next contiguous set of nonspace characters that end in a space or the end of a line
-	// (not returning the space). If no such set of characters exists, returns -1
-	// Must be called where start is a nonspace character, but may be past the end of text.
-	function findNextWord(text, start)
+	// checks that the two vectors have the same value, if not reports the error
+	function checkNameConsistency(paramDescriptionNames,paramHeaderNames)
 	{
-		if (start >= text.length)
-			return -1;
-				
-		var nextSpace = text.indexOf(' ', start);
+		var errorMessage='';
+		for( var i=0;i<paramHeaderNames.length; i++){
+			
+			if (paramDescriptionNames.indexOf(paramHeaderNames[i])==-1){
+			
+				errorMessage+='Write a desciption for the parameter '+paramHeaderNames[i]+'. <BR>';
+			}
+		}
 		
-		// If there is no next space, return the whole string. Otherwise, return everything from start up to 
-		// (but not incluing) nextSpace.
-		if (nextSpace == -1)
-			return text.substring(start);
-		else
-			return text.substring(start, nextSpace);
+		
+		if(errorMessage===''){
+			for( var i=0;i<paramDescriptionNames.length;i++){
+				
+				if (paramHeaderNames.indexOf(paramDescriptionNames[i])==-1){
+					
+					errorMessage+='The parameter '+paramDescriptionNames[i] +' does not exist in the header of the function <BR>';
+				}
+			}
+		}
+		
+		return errorMessage;
+		
+		
 	}
+	
+	
+	
 	
 	// Returns an object capturing the code and other related information.
 	function collectCode(text, ast)
 	{
+		
 		var calleeNames = findCalleeNames(ast);
 		
 		// Get the text for the function description, header, and code.
 		// Note esprima (the source of line numbers) starts numbering lines at 1, while
 	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-		var description = getDescription(ast)		
-		var name = ast.body[0].id.name;
-		var paramNames = [];
+		var fullDescription = getDescription(ast);	
 		
-		var header = 'function ' + name + '(';
-		$.each(ast.body[0].params, function(index, value)
-		{
-			if (index > 0)
-				header += ', ';
-			header += ast.body[0].params[index].name;
-			paramNames.push(ast.body[0].params[index].name);
-		});
-		header += ')';
+		var linesDescription = fullDescription.split('\n');
+		var name = ast.body[0].id.name;
+		
+		var functionParsed= parseDescription(linesDescription,name);
+		
+		
+		
 		
 		var body = myCodeMirror.getRange(
 				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
 			    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-		return { description: description, header: header, name: name, code: body, paramNames: paramNames,
-					calleeNames: calleeNames};
+
+		return { description: functionParsed.description, header: functionParsed.header, name: name, code: body, paramNames: functionParsed.paramNames,
+			paramTypes: functionParsed.paramTypes, paramDescriptions: functionParsed.paramDescriptions, calleeNames: calleeNames};
 	}
+	
+		
+		
 	
 	function getDescription(ast)
 	{
@@ -433,18 +483,25 @@
 	// Makes the header of the function readonly (not editable in CodeMirror).
 	// The header is the line that starts with 'function'
 	// Note: the code must be loaded into CodeMirror before this function is called.
-	function makeHeaderReadOnly()
+	function makeHeaderAndParameterReadOnly()
 	{
-	 	myCodeMirror.save();	 			
+		
+		myCodeMirror.save();	 			
  		var text = $("#code").val();			
 		
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		var headerLine = indexOfFirstLineStartingFunction(text);
 		
-		myCodeMirror.getDoc().markText({line: headerLine, ch: 0}, 
-				{ line: headerLine + 1, ch: 1}, 
+		var readOnlyLines = indexesOfTheReadOnlyLines(text);
+		
+		for(var i=0; i<readOnlyLines.length; i++)
+			{
+	
+			myCodeMirror.getDoc().markText({line: readOnlyLines[i], ch: 0}, 
+				{ line: readOnlyLines[i] + 1, ch: 1}, 
 				{ readOnly: true }); 
+			}
+	
 	}
 	
 	// Replaces function code block with empty code. Function code blocks must start on the line
@@ -504,15 +561,21 @@
 	
 	// Finds and returns the index of the first line (0 indexed) starting with the string function, or -1 if no such
 	// line exists
-	function indexOfFirstLineStartingFunction(text)
+	function indexesOfTheReadOnlyLines(text)
 	{
-		// Look for a line of text that starts with 'function'.
-		var lines = text.split('\n');			
+		// Look for a line of text that starts with 'function', '@param' or '@return'.
+		var indexesLines=[];
+		var lines = text.split('\n');	
+		
         for (var i = 0; i < lines.length; i++)
         {
-			if (lines[i].startsWith('function'))
-				return i;
+			if (lines[i].startsWith('function')||lines[i].search('@param')!=-1||lines[i].search('@return')!=-1)
+				{
+					indexesLines.push(i);
+				}
         }
+		
+        return indexesLines;
 	}
 		
 	// Returns true iff the text contains at least one pseudocall or pseudocode

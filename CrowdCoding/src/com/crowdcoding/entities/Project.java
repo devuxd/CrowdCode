@@ -84,7 +84,7 @@ public class Project
 		for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
 		{
 			FunctionCommand.create(functionDTO.name, functionDTO.returnType, functionDTO.paramNames, 
-					functionDTO.paramTypes, functionDTO.header, functionDTO.description, functionDTO.code);					
+					functionDTO.paramTypes,functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, functionDTO.code);					
 		}		
 		
 		ofy().save().entity(this).now();

@@ -12,6 +12,8 @@ import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -195,5 +197,18 @@ public class WriteTest extends Microtask
 	public String microtaskDescription()
 	{
 		return "write a test";
+	}
+	
+	public String toJSON(){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("promptType",this.getPromptType());
+			json.put("issueDescription",this.getIssueDescription());
+			json.put("oldTestCase",this.getOldTestCase());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return super.toJSON(json);
 	}
 }

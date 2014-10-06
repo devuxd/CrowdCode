@@ -7,6 +7,9 @@ import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.MicrotaskSkipped;
 import com.crowdcoding.history.MicrotaskSubmitted;
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
@@ -159,5 +162,21 @@ public /*abstract*/ class Microtask
 		return "" + this.id + " " + this.getClass().getSimpleName() + 
 				(this.getOwningArtifact() != null ? (" on " + this.getOwningArtifact().getName()) : "") + 
 				(completed ? " completed " : " incomplete ") + "points: " + submitValue;
+	}
+	public String toJSON(){
+		return toJSON(new JSONObject());
+	}
+	
+	public String toJSON(JSONObject json){
+		try {
+			json.put("id", this.id);
+			json.put("type", this.microtaskName());
+			json.put("description", this.microtaskDescription());
+			json.put("title", this.microtaskTitle());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return json.toString();
 	}
 }

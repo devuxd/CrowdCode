@@ -74,8 +74,11 @@
     function setupMicrotask(microtask)
     {
     	functionTested = functions.get(microtask.testedFunctionID);
-    	codeBoxCode = functionTested.description + functionTested.header;	    	
-		setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);
+    	
+    	var description=renderDescription(functionTested);
+    			
+    	codeBoxCode =description + functionTested.header;
+    	setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);
 		testCases = tests.testCasesForFunction(microtask.testedFunctionID);
 					
 		if (microtask.promptType === 'FUNCTION_SIGNATURE')

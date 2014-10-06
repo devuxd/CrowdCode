@@ -70,6 +70,9 @@
 	<script src="/js/testRunner.js"></script>
 	
 	<script src="/js/review.js"></script>
+	<script src="/js/functionSupport.js"></script>
+	<script src="/js/ADTandDataCheck.js"></script>
+	
 	
 </head>
 
@@ -412,8 +415,7 @@
 		//    $('#feedbackThanks').css('visibility','hidden');
 		//}, 10000);   
 	}
-	
-	
+
 </script>
 
 </body>
