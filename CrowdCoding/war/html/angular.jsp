@@ -120,8 +120,15 @@
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script>
 	
+	
+	<script src="/js/testRunner.js"></script>
+	
 	<script src="/js/app.js"></script>
-	<script src="/js/services/worker.js"></script>
+	<script src="/js/services/services.js"></script>
+	<script src="/js/services/tests.js"></script>
+	<script src="/js/services/functions.js"></script>
+	<script src="/js/services/user.js"></script>
+	<script src="/js/services/testRunner.js"></script>
 	<script src="/js/controllers/controllers.js"></script>
 	
 <script>
