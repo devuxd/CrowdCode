@@ -134,12 +134,7 @@ public class CrowdServlet extends HttpServlet
     	
     	try 
     	{	        
-    		// First check the browser. If the browser is not Chrome, redirect to a browser
-    		// compatability page.
-    		if (!req.getHeader("User-Agent").contains("Chrome"))
-    			req.getRequestDispatcher("/html/browserCompat.html").forward(req, resp);
-    		else
-    		{    	
+    		 	
     			// Next check if the user is logged in by checking if we have a user object for them.
 		        if (user != null) 
 		        {
@@ -216,7 +211,7 @@ public class CrowdServlet extends HttpServlet
 		        	else	        	
 						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);	        	
 		        }
-    		}
+    	
 		} catch (ServletException e) {
 			e.printStackTrace();
 		} catch (FileUploadException e) {
