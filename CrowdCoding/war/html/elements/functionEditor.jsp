@@ -1,6 +1,8 @@
 <script>
-	var myCodeMirror = CodeMirror.fromTextArea(code, 
+	var myCodeMirror = CodeMirror.fromTextArea({{microtask.type}}, 
 			{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
+	
+	console.log("dwesgsdh"+{{microtask.type}});
 	myCodeMirror.setSize(null, 500);
 	var doc = myCodeMirror.getDoc();
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	

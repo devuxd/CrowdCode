@@ -36,8 +36,7 @@
 
 <form id="taskForm" action="#">
 	<div class=" bg-warning">
-		  <div ui-codemirror="{ onLoad : codemirrorLoaded }" ></div>
-		<div id = "errorMessages" class="alert alert-error"></div>
+		<ng-include file="/html/elements/functionEditor.jsp"></ng-include>
 		<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
 		<span class="clearfix"></span>
 	</div>
