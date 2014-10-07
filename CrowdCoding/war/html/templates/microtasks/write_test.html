@@ -1,1 +1,92 @@
-<h1>{{microtask.title}}</h1>
+
+<h2 id="taskHeader">
+	<span id="taskTitle" >{{datas.title}}</span>
+	<span id="taskPoints" class="label label-default">{{microtask.points}} points</span>
+</h2>
+<br />
+
+
+<div id="taskDescription" class="bg-success">
+	
+		<div ng-show="microtask.promptType==WRITE">
+			Can you write a test for<BR>		<BR>
+			<div class="alert alert-info">microtask description
+	   		    <button class="btn btn-mini pull-right" type="button" id="reportTestCase">
+	   		    	Report as incorrect test case</button>			
+			</div>
+			<BR>Here's the description of the function to test:<BR><BR>
+			<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
+		</div>
+	
+		<div ng-show="microtask.promptType=CORRECT">
+			The following issue was reported with this test:<BR><BR>
+			<div class="alert alert-info">microtask description</div>		
+			<div class="alert alert-error">microtask issue description</div>	
+			Can you fix the test to address this issue?<BR>
+			
+			<BR>Here's the description of the function to test:
+			<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
+		</div>
+		
+		<div ng-show="microtask.promptType=TESTCASE_CHANGED">
+			The test case for this has change from <BR><BR>
+			<div class="alert alert-info">microtask old test case</div>	
+			to <BR><BR>	
+			<div class="alert alert-info">microtask description</div>	
+			Can you update the test below, if necessary?<BR>
+			
+			<BR>Here's the description of the function to test:
+			<div class="codemirrorBox"><textarea id="testCaseChangedCodeBox"></textarea></div>
+		</div>
+		
+		<div ng-show="microtask.promptType=FUNCTION_CHANGED">
+			The description of the function being tested has changed. Can you update the test below,
+			if necessary? <BR>
+			
+			<span class="original" style="display: none">function oldDescription</span>
+	   		<span class="changed" style="display: none">function newDescription</span>
+			<span id="diff" class="diff"></span><BR>
+			
+			Here's the test description:
+			<div class="alert alert-info">test description</div>
+		</div><BR>
+		
+		<div id="disputeDiv" style="display: none">
+			What's wrong with this test case? <BR>			
+			<textarea id="disputeText"></textarea><BR>
+			<input class="btn btn-primary" type="submit" id="submitDispute" value="Submit"> 
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;			
+			<a id="cancelDispute">Nothing is wrong with the test case.</a><BR><BR><BR>
+		</div>
+		
+		<div>here goes the type browser</div>
+
+</div>
+
+
+<div class=" bg-warning">	
+
+	<div id="simpleTest">
+	    Provide a JSON object literal of the specified type for each parameter and the expected 
+	    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
+	    an example from the description of a type above.<BR><BR>  
+	  
+		<b>Parameter Values</b><BR>
+			<div id="parameterValues"></div>
+		<b><span id="expectedOutputTitle"></span></b><BR>
+			<textarea id="expectedOutput"></textarea>
+			<div class="alert alert-error" id="expectedOutputErrors"></div>
+	</div>
+</div>
+<br/>
+	
+<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h4 id="logoutLabel">You need to fix the errors before you submit.</h4>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>	
+</div>
