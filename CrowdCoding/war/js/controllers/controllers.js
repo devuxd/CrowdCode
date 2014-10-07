@@ -194,12 +194,67 @@ myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','
 	
 	//var tutCodeMirror = CodeMirror.fromTextArea(tutorialCode,{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
 	//tutCodeMirror.setSize(null, 500);
-	$scope.mycode=5;
+	/*
+	 // The modes
+	  $scope.modes = ['Scheme', 'XML', 'Javascript'];
+	  $scope.mode = $scope.modes[0];
+	 
+	 
+	  // The ui-codemirror option
+	  $scope.cmOption = {
+	    lineNumbers: true,
+	    indentWithTabs: true,
+	    onLoad : function(_cm){
+	 
+	      // HACK to have the codemirror instance in the scope...
+	      $scope.modeChanged = function(){
+	        _cm.setOption("mode", $scope.mode.toLowerCase());
+	      };
+	    }
+	  };
+	 
+	 
+	 
+	  // Initial code content...
+	  $scope.cmModel = ';; Scheme code in here.\n' +
+	    '(define (double x)\n\t(* x x))\n\n\n' +
+	    '<!-- XML code in here. -->\n' +
+	    '<root>\n\t<foo>\n\t</foo>\n\t<bar/>\n</root>\n\n\n' +
+	    '// Javascript code in here.\n' +
+	    'function foo(msg) {\n\tvar r = Math.random();\n\treturn "" + r + " : " + msg;\n}';
+	 
+	}]);
+	*/
 	//console.log('entro');
-		$.get('/js/javascriptTutorial.txt', function(code) { 
-			console.log('code   '+code);
-			$scope.mycode=code;
-});
+	//$scope.codemirrorLoaded = function(tutCodeMirror){
+	    // Editor part
+	  //  var _doc = _editor.getDoc();
+	  //_editor.focus();
+
+	    // Options
+	 //   _editor.setOption('firstLineNumber', 10);
+	 //   _doc.markClean();
+
+	    // Events
+	    //_editor.getDoc().setValue("dagssssssssssssss");
+		//var tutCodeMirror = CodeMirror.fromTextArea(tutorialCode,{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
+		//tutCodeMirror.autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true});
+	//tutCodeMirror.setOption('autofocus', true);
+	//tutCodeMirror.setOption('indentUnit', 4);
+	//	tutCodeMirror.setOption('indentWithTabs', true);
+	//tutCodeMirror.setOption('lineNumbers', true);
+		
+		//tutCodeMirror.setSize(null, 500);
+		//tutCodeMirror.getDoc().setValue("ciao"); 
+		//	$.get('/js/javascriptTutorial.txt', function(code) { 
+		//		tutCodeMirror.getDoc().setValue(code); 
+		
+	//	});
+		
+		
+		
+	//  };
+
 
 	
 	

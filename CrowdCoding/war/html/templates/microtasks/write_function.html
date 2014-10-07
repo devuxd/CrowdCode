@@ -1,8 +1,28 @@
+
+<html ng-app="crowdCodeWorker">
 <h2 id="taskHeader">
 	<span id="taskTitle" >{{ microtask.type }}</span>
 	<span id="taskPoints" class="label label-default">{{ microtask.points}} points</span>
 </h2>
 
+<section>
+  <div ui-codemirror="{
+      lineNumbers: true,
+      theme:'twilight',
+      readOnly: 'nocursor',
+      lineWrapping : true,
+      mode: 'xml'
+    }" >&lt;html style=&quot;color: green&quot;&gt;
+&lt;!-- this is a comment --&gt;
+&lt;head&gt;
+&lt;title&gt;HTML Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+The indentation tries to be &lt;em&gt;somewhat &amp;quot;do what
+I mean&amp;quot;&lt;/em&gt;... but might not match your style.
+&lt;/body&gt;
+&lt;/html&gt;</div>
+</section>
 <div id="taskDescription" class="bg-success">
 	<p>
 		<strong>Not sure how to do something? </strong> Indicate a line as <span
@@ -40,3 +60,4 @@
 	</div>
 	<br />
 </form>
+</html>
