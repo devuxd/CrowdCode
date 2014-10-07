@@ -120,7 +120,7 @@
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script>
-	<script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script>
+	<!--  <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script>-->
 	
 	
 	<script src="/js/testRunner.js"></script>
@@ -135,7 +135,10 @@
 	<script src="/js/services/user.js"></script>
 	<script src="/js/services/testRunner.js"></script>
 	<script src="/js/controllers/controllers.js"></script>
-	
+	 <script src="http://codemirror.net/lib/codemirror.js"></script>
+      <script src="http://codemirror.net/mode/xml/xml.js"></script>
+	  <script src="https://rawgithub.com/angular-ui/ui-codemirror/bower/ui-codemirror.min.js"></script>
+   
 <script>
 var projectId    = '<%=projectID%>';
 var workerId     = '<%=workerID%>';
