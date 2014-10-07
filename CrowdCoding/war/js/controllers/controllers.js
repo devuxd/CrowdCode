@@ -59,10 +59,26 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		console.log("loading microtask");
 		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
 		  success(function(data, status, headers, config) {
-			  $scope.microtask = data;
+			 
 			  $scope.templatePath = "/html/templates/microtasks/"+templates[data.type]+".html";
-			  console.log($scope.microtask);
-			  console.log($scope.templatePath);
+			
+			  // create the reference and the sync
+				var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
+			    var sync = $firebase(ref);
+			    // create the object and bind the firebase ref to the scope.score var
+			    $scope.microtask = sync.$asObject();
+			    
+			    
+			    $scope.microtask.$loaded().then(function(){
+			    	console.log(	$scope.microtask);
+			    	$scope.microtask.description = renderDescription($scope.microtask);
+			    	
+			    
+			    });
+			    
+			//  console.log('dsgasdggdsadsag'+$scope.microtask);
+			//  console.log($scope.templatePath);microtask
+			  
 		  }).
 		  error(function(data, status, headers, config) {
 			  $scope.templatePath = "/html/templates/microtasks/no_microtask.html";
@@ -170,3 +186,24 @@ myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter',
 	    }
 	};
 }]);  
+
+//////////////////////
+//JAVA TUTORIAL     //
+//////////////////////
+myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
+	
+	//var tutCodeMirror = CodeMirror.fromTextArea(tutorialCode,{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
+	//tutCodeMirror.setSize(null, 500);
+	$scope.mycode=5;
+	//console.log('entro');
+		$.get('/js/javascriptTutorial.txt', function(code) { 
+			console.log('code   '+code);
+			$scope.mycode=code;
+});
+
+	
+	
+	
+	
+
+}]); 

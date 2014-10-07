@@ -14,14 +14,16 @@
 						
 	    	// Format description into 66 column max lines, with two spaces as starting character
 			fullDescription = wordwrap(fullDescription, 66, '\n  ') + '\n'; 
-		
+			
+			if(functionCalled.paramNames!=undefined && functionCalled.paramNames.length>0)
+			{	
 	    	for(var i=0; i<functionCalled.paramNames.length; i++)
 				{
 				if(functionCalled.paramDescriptions!=undefined && functionCalled.paramDescriptions.length>i)
 					fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' - ' + functionCalled.paramDescriptions[i] + '\n'; 
 				
 				}
-			
+			}
 			
 			fullDescription += '\n  @return ' + functionCalled.returnType + ' \n' + '**/\n\n';
 			

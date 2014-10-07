@@ -173,6 +173,7 @@ public /*abstract*/ class Microtask
 			json.put("type", this.microtaskName());
 			json.put("description", this.microtaskDescription());
 			json.put("title", this.microtaskTitle());
+			json.put("submitValue", this.getSubmitValue());
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

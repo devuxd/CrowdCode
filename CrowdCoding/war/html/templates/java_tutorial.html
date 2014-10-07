@@ -1,0 +1,23 @@
+<div ng-controller="JavaTutorialController">
+<a href="#javascriptTutorial"  role="button"  data-toggle="modal" ng-click="show = !show" class="muted pull-left minorNote">
+	<small>Help, I don't know Javascript!</small>
+</a>
+
+
+<!-- ==================================================================================== -->
+<!-- Modal for showing Javascript tutorial -->
+<!-- ==================================================================================== -->
+<div id="javascriptTutorial" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" ng-show="show" >
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<strong>Javascript in 2 minutes! </strong>
+				<button type="button" class="close" data-dismiss="modal" ng-click="show = !show">X</button>
+			</div>
+			<div class="modal-footer">
+			    <textarea id="tutorialCode" style="text-align:left">{{mycode}}</textarea>
+			</div>	
+		</div>
+	</div>
+</div>
+</div>

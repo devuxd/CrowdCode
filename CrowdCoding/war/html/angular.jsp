@@ -29,7 +29,11 @@
 	String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 	String workerHandle = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 %>
-
+<script src="/js/functionSupport.js"></script>
+	<script src="/js/ADTandDataCheck.js"></script>
+	
+	
+	
 <!DOCTYPE html>
 <html lang="en" ng-app="crowdCodeWorker">
 <head>
