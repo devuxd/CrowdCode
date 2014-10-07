@@ -7,15 +7,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	
 	var service = new function(){
 		// Private variables	
-		var functionCount;			// count of the number of functions
-		var statsChangeCallback;	// function to call when statistics change
-		var linesOfCode;		
-		
-		// public attributes
-		this.allFunctions = [];
-		
-		// Constructor
-		this.initialize = function() {};     
+		var functions;
 		
 		// Public functions
 		this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); }
@@ -28,20 +20,15 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.getMockHeader = function(id) { return getMockHeader(id); };		
 		
 		// Function bodies
-		
-		function init(newStatsChangeCallback)
+		function init()
 		{
-
 		    // hook from firebase all the functions declarations of the project
 			var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
-			this.allFunctions = functionsSync.$asArray();
-			
-			statsChangeCallback = newStatsChangeCallback;
-			functions = {};
-			functionCount = 0;
-			linesOfCode = 0;
+			functions = functionsSync.$asArray();
+			functions.$loaded().then(function(){ console.log('functions loaded');  });
 		}
 		
+		/*
 		// Event handler for a function being added or changed
 		function functionAdded(addedFunction)
 		{
@@ -56,7 +43,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			linesOfCode += changedFunction.linesOfCode - functions[changedFunction.id].linesOfCode;
 			functions[changedFunction.id] = changedFunction;
 			statsChangeCallback(linesOfCode, functionCount);		
-		}	
+		}	*/
 		
 		// Returns an array with every current function ID
 		function allFunctionIDs()

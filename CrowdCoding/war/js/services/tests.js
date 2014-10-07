@@ -8,13 +8,8 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 		
 		// Private variables	
 		var tests;  				// map from testID to a TestInFirebase format object
-		var testsCount;				// count of the number of tests
-		var statsChangeCallback;	// function to call when statistics change
 		var functionIDToTests;		// map from a functionID to an array of testIDs that are tests for the function
-		
-		//Public attributes
-		this.allTests = [];
-		
+
 		// Constructor
 		this.initialize = function()  {
 		};     
@@ -38,16 +33,25 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 		function init(newStatsChangeCallback)
 		{
 
+			functionIDToTests = {};
+			
 			// get the list of all tests from firebase
 			console.log($rootScope.firebaseURL+'/artifacts/tests');
 			var testsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/tests'));
-			this.allTests = testsSync.$asArray();
+			tests = testsSync.$asArray();
+			tests.$loaded().then(function(){ console.log('tests loaded');  });
 			
-			statsChangeCallback = newStatsChangeCallback;
-			tests = {};
-			testCount = 0;
-			functionIDToTests = {};
+			// watch for changes in the tests data
+			tests.$watch(function(obj){ 
+				switch(obj.event){
+					case 'child_added':   testAdded(tests.$getRecord(obj.key));   break;
+					case 'child_changed': testChanged(tests.$getRecord(obj.key)); break;
+					case 'child_deleted': testDeleted(tests.$getRecord(obj.key)); break;
+				}
+			});
 		}
+		
+		
 		
 		// Event handler for a function being added or changed
 		function testAdded(addedTest)
@@ -58,14 +62,11 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 				functionIDToTests[addedTest.functionID] = [];
 			functionIDToTests[addedTest.functionID].push(addedTest.id);
 			
-			testCount++;
-			statsChangeCallback(testCount);
 		}	
 		
 		function testChanged(changedTest)
 		{
 			tests[addedTest.id] = addedTest;
-			statsChangeCallback(testCount);		
 		}	
 		
 		function testDeleted(deletedTest)
@@ -75,9 +76,7 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 			var testsForFunction = functionIDToTests[deletedTest.functionID];
 			if (testsForFunction != null)		
 				removeFromArray(functionIDToTests[deletedTest.functionID], deletedTest.id); 
-
-			testCount--;
-			statsChangeCallback(testCount);		
+	
 		}	
 			
 		function get(id)

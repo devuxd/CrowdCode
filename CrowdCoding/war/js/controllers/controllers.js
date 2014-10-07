@@ -30,8 +30,8 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	//user.listenForJobs();			
 	testsService.init();		
 	functionsService.init();
-	
-	console.log(testRunnerService.runTestsForFunction(1));
+
+	//console.log(testRunnerService.runTestsForFunction(1));
 }]); 
 
 

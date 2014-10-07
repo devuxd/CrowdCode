@@ -29,7 +29,7 @@
 	// get microtask informations
 	var microtaskTitle       = '<%=microtask.microtaskTitle()%>';
 	var microtaskSubmitValue = <%=microtask.getSubmitValue()%>;
-	var microtaskType        = 'writeFunction';
+	var microtaskType        = 'WriteFunction';
 	var microtaskID          = <%=microtask.getID()%>;
 	
 	var editorCode          = '<%=functionCode%>';

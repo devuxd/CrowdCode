@@ -70,6 +70,9 @@ public class CrowdServlet extends HttpServlet
 		microtaskTypes.put("WriteTest", WriteTest.class);
 		microtaskTypes.put("WriteTestCases", WriteTestCases.class);
 		
+
+		microtaskTypes.put("WriteFunction", WriteFunction.class);
+		
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Worker.class);
@@ -174,7 +177,7 @@ public class CrowdServlet extends HttpServlet
 									else
 										req.getRequestDispatcher("/html/distributedJSWorker.jsp").forward(req, resp);
 								else if(req.getParameter("oldLayout")!=null)
-									req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
+									req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
 								else
 									req.getRequestDispatcher("/html/angular.jsp").forward(req, resp);
 							} else {
