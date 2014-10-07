@@ -1,11 +1,3 @@
-<!-- NOW THE WORKER IS IN /js/workers/testRunnerWorker.js -->
-
-
-<!-- While this file is all Javascript, it must be an html file in order for it to correctly be included
-     and loaded as a webworker. -->
-<!-- 
-<script id="worker" type="javascript/worker">
-
 // This Javascript file corresponds to an HTML5 WebWorker, and it should only be loaded through a new Worker(...)
 // command. Workers execute in their own thread, and only communicate by message passing. This worker
 // is designed to run the specified test code and return the results.
@@ -60,6 +52,3 @@ self.onmessage = function(e)
 		});
 	}
 };
-
-</script>
- -->

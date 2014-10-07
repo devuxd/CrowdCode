@@ -125,6 +125,9 @@
 	
 	<script src="/js/testRunner.js"></script>
 	
+	
+	<script src="/js/testRunner.js"></script>
+	
 	<script src="/js/app.js"></script>
 	<script src="/js/services/services.js"></script>
 	<script src="/js/services/tests.js"></script>

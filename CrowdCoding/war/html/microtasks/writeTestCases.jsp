@@ -18,7 +18,7 @@
 <script>
 	var microtaskTitle       = '<%= microtask.microtaskTitle() %>';
 	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
-	var microtaskType        = 'writetestcases';
+	var microtaskType        = 'WriteTestCases';
 	var microtaskID          = <%= microtask.getID() %>;	
 			
 	var codeBoxCode;		

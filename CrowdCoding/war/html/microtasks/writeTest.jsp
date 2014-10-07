@@ -24,7 +24,7 @@
 <script>
 	var microtaskTitle = '<%= microtask.microtaskTitle() %>';
 	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;	
-	var microtaskType = 'writetest';
+	var microtaskType = 'WriteTest';
 	var microtaskID = <%= microtask.getID() %>;			
 	
 	// Determine the prompt type

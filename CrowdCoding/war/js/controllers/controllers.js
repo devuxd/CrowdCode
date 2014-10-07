@@ -4,7 +4,7 @@
 // APP CONTROLLER //
 ////////////////////
 //prepare variables and execute inizialization stuff
-myApp.controller('AppController', ['$scope','$rootScope','$firebase','worker', function($scope,$rootScope,$firebase,worker) {
+myApp.controller('AppController', ['$scope','$rootScope','$firebase','userService', 'testsService', 'functionsService', 'testRunnerService', function($scope,$rootScope,$firebase,userService,testsService,functionsService, testRunnerService) {
 	
 	// current session variables
     $rootScope.projectId    = projectId;
@@ -16,25 +16,22 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','worker', f
 	var workersSync = $firebase(new Firebase($rootScope.firebaseURL+'/status/loggedInWorkers'));
 	$rootScope.onlineWorkers = workersSync.$asArray();
 	
-    // hook from firebase all the functions declarations of the project
-	var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
-	$rootScope.functions = functionsSync.$asArray();
-	
-	 // hook from firebase all the tests of the project
-	var testsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/tests'));
-	$rootScope.tests = testsSync.$asArray();
+	     
 		
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
-		worker.login();
+		userService.login();
 	}
 	
 	$rootScope.workerLogout = function(){
-		worker.logout();
+		userService.logout();
 	}
 	
-	worker.listenForJobs();			
-	
+	//user.listenForJobs();			
+	testsService.init();		
+	functionsService.init();
+
+	//console.log(testRunnerService.runTestsForFunction(1));
 }]); 
 
 
@@ -135,17 +132,19 @@ myApp.controller('LeaderboardController', ['$scope','$rootScope','$firebase',fun
 //////////////////////
 // STATS CONTROLLER //
 //////////////////////
-myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
+myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter','functionsService','testsService',function($scope,$rootScope,$firebase,$filter,functionsService,testsService) {
 	$scope.locCount = 5;
 	$scope.microtasksCount = 0;
-	
-	$rootScope.functions.$loaded(function(x) {
+	$scope.functionsCount = 0;
+	$scope.testsCount = 0;
+	/*
+	functionsService.allFunctions.$loaded(function(x) {
 		$scope.functionsCount = x.length
 	});
 	
-	$rootScope.tests.$loaded(function(x) {
+	testsService.allTests.$loaded(function(x) {
 		$scope.testsCount = x.length
-	});
+	});*/
 }]); 
 
 /////////////////////
