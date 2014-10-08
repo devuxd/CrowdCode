@@ -1,6 +1,6 @@
 
 <h2 id="taskHeader">
-	<span id="taskTitle" >{{microtask_title}}</span>
+	<span id="taskTitle" >{{datas.title}}</span>
 	<span id="taskPoints" class="label label-default">{{microtask.points}} points</span>
 </h2>
 <br />
@@ -9,7 +9,7 @@
 	<div id="promptAreaDiv">	
 		<div id="testFunctionSignaturePrompt" style="display: none">
 			What are some cases in which this function might be used? Are there any unexpected corner 
-			cases that might not work?<BR><BR>
+			cases that might not work?
 		</div>
 		
 		<div ng-show="microtask.promptType==FUNCTION_SIGNATURE" >
