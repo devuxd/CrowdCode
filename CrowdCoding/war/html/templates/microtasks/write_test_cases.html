@@ -1,1 +1,76 @@
-<h1>{{microtask.title}}</h1> test cases asdasdasdasdas
+
+<h2 id="taskHeader">
+	<span id="taskTitle" >{{microtask_title}}</span>
+	<span id="taskPoints" class="label label-default">{{microtask.points}} points</span>
+</h2>
+<br />
+
+<div id="taskDescription" class="bg-success">
+	<div id="promptAreaDiv">	
+		<div id="testFunctionSignaturePrompt" style="display: none">
+			What are some cases in which this function might be used? Are there any unexpected corner 
+			cases that might not work?<BR><BR>
+		</div>
+		
+		<div ng-show="microtask.promptType==FUNCTION_SIGNATURE" >
+		    The following issue was reported with the following test case:<BR><BR>
+		    
+		    <div class="alert alert-info">disputed description</div>		
+			<div class="alert alert-error">disputed testcase</div>		    
+		    
+		    Can you fix the test case (and others if necessary) to address the issue?<BR><BR> 
+		    (Note: if the above test case is not below, the test case has already been changed,
+		    and you can ignore this microtask).<BR><BR>
+		</div>
+		
+		<div class="codemirrorBox"><textarea id="readonlyCodeBox">{{funct.description}}</textarea></div>
+	</div>
+	
+	<div class="accordion" id="exampleRoot">
+	  <div class="accordion-group">
+	    <div class="accordion-heading">
+	      <a class="accordion-toggle" data-toggle="collapse" data-parent="#exampleRoot" href="#collapseOne">
+	        	Show example
+	      </a>
+	    </div>
+	    <div id="collapseOne" class="accordion-body collapse">
+	      <div class="accordion-inner">
+				subtract(a, b)<BR>
+				
+				<B>Here's some test cases:</B><BR>
+				a is greater than b<BR>
+				b is greater than a<BR>
+				a is the same as b<BR>
+				a is positive, b is negative<BR>
+				a is negative, b is zero<BR>
+				a is positive, b is zero<BR>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>
+
+<div class=" bg-warning">
+	<div>
+		<span id="" ng-repeat="(index,test) in testCases">
+			<input type="text" ng-model="testCases[index].text" class="form-control form-control-90" id="" placeholder="Describe a test case"/>				
+			<button ng-click="deleteTestCase(index)" class="closeButton">x</button>
+		</span>
+	</div>
+	<button ng-click="addTestCase()" class="btn btn-sm">Add test case</button>				
+</div>
+
+	
+<div id="popUp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+				<h4 id="logoutLabel">Please write at least one test case.</h4>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+			</div>	
+		</div>
+	</div>
+</div>

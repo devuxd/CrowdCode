@@ -1,5 +1,4 @@
 
-
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
@@ -16,8 +15,6 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	var workersSync = $firebase(new Firebase($rootScope.firebaseURL+'/status/loggedInWorkers'));
 	$rootScope.onlineWorkers = workersSync.$asArray();
 	
-	     
-		
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
 		userService.login();
@@ -40,6 +37,8 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 //////////////////////////
 myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', function($scope,$rootScope,$firebase,$http) {
 	
+	// private vars
+	var templatesURL = "/html/templates/microtasks/";
 	var templates = {
 			'WriteFunction':'write_function',
 			'WriteFunctionDescription':'write_function_description',
@@ -47,53 +46,103 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			'WriteTestCases':'write_test_cases',
 			'WriteCall':'write_call',
 	}
-	
-	// load microtask function
+
+
+	// initialize microtask and templatePath
 	$scope.microtask = {};
 	$scope.templatePath = "";//"/html/templates/microtasks/";
 	
-	$scope.load = function(){
-		console.log("loading microtask");
-		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
-		  success(function(data, status, headers, config) {
-			 
-			  $scope.templatePath = "/html/templates/microtasks/"+templates[data.type]+".html";
-			
-			  // create the reference and the sync
-				var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
-			    var sync = $firebase(ref);
-			    // create the object and bind the firebase ref to the scope.score var
-			    $scope.microtask = sync.$asObject();
-			    
-			    
-			    $scope.microtask.$loaded().then(function(){
-			    	console.log(	$scope.microtask);
-			    	$scope.microtask.description = renderDescription($scope.microtask);
-			    	
-			    
-			    });
-			    
-			//  console.log('dsgasdggdsadsag'+$scope.microtask);
-			//  console.log($scope.templatePath);microtask
-			  
-		  }).
-		  error(function(data, status, headers, config) {
-			  $scope.templatePath = "/html/templates/microtasks/no_microtask.html";
-		  });
-	};
-	
+
+
+	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask',function(event,data){
 		console.log('submit fired');
 	});
 	
+	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask',function(event,data){
-		console.log('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true');
 		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
 		  success(function(data, status, headers, config) {
-			  console.log(data);
+			  console.log("skip fired");
+			  $scope.load();
 		  });
-		$scope.load();
 	});
+
+	// load microtask:
+	// request a new microtask from the backend and if success
+	// inizialize template and microtask-related values
+	$scope.load = function(){
+
+		console.log("loading microtask");
+
+		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
+		  success(function(data, status, headers, config) {
+
+		  	//choose the right template
+		 	$scope.templatePath = templatesURL + templates[data.type] + ".html";
+
+		  	// create the reference and the sync
+			var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
+			var sync = $firebase(ref);
+
+			// load the microtask data
+			$scope.microtask = sync.$asObject();
+			$scope.microtask.$loaded().then(function(){
+
+				// assign title 
+				$scope.datas = data;
+
+				// retrieve the related function
+				// IMPROVEMENT: is possible to avoid the query to firebase and use functionService????
+				var functionId = angular.isDefined($scope.microtask.functionID) ? $scope.microtask.functionID : $scope.microtask.testedFunctionID;
+				if( angular.isDefined(functionId) ) {
+					var ref  = new Firebase($rootScope.firebaseURL+'/artifacts/functions/' + functionId);
+					$scope.funct = $firebase(ref).$asObject();
+				}
+
+				// retrieve the related test 
+				// IMPROVEMENT: is possible to avoid the query to firebase and use testService????
+				var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : $scope.microtask.testedFunctionID;
+				if( angular.isDefined($scope.microtask.testID) ) {
+					var ref  = new Firebase($rootScope.firebaseURL+'/artifacts/tests/' + $scope.microtask.testID);
+					$scope.test = $firebase(ref).$asObject();
+				}
+
+
+				// initialize testCases
+				// if microtask.submission and microtask.submission.testCases are defined 
+				// assign available testCases otherwise initialize a new array
+				$scope.testCases = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.testCases) ) ? 
+								   $scope.microtask.submission.testCases : [] ;
+
+
+				// debug stuff
+				console.log(data);
+				console.log($scope.microtask); 
+				console.log($scope.funct);
+				
+
+			});
+		  }).
+		  error(function(data, status, headers, config) {
+
+				$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+
+		  });
+	};
+	
+
+
+
+	// ------- WRITE TEST CASES UTILS ------- //
+	// addTestCase and deleteTestCase utils function for microtask WRITE TEST CASES
+	$scope.addTestCase = function(){
+		var testCase = { text: '', added: true, deleted: false, id: $scope.testCases.length };
+		$scope.testCases.push(testCase);	
+	}
+	$scope.deleteTestCase = function(index){
+		$scope.testCases.splice(index,1);
+	}
 
 	// auto-load microtask on document load
 	$scope.load();
@@ -185,51 +234,3 @@ myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter',
 	    }
 	};
 }]);  
-
-//////////////////////
-//JAVA TUTORIAL     //
-//////////////////////
-myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
-	 
-	$scope.codemirrorLoaded = function(tutCodeMirror){
-		
-	tutCodeMirror.setOption('autofocus', true);
-	tutCodeMirror.setOption('indentUnit', 4);
-	tutCodeMirror.setOption('indentWithTabs', true);
-	tutCodeMirror.setOption('lineNumbers', true);
-		
-	tutCodeMirror.setSize(null, 500);
-			$.get('/js/javascriptTutorial.txt', function(code) { 
-				tutCodeMirror.getDoc().setValue(code); 
-		
-		});
-		
-	  };
-
-
-}]); 
-
-
-
-//////////////////////
-//WRITE FUNCTION CONTROLLER     //
-//////////////////////
-myApp.controller('WriteFunctionController',  ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
-	 
-	$scope.codemirrorLoaded = function(tutCodeMirror){
-		
-	tutCodeMirror.setOption('autofocus', true);
-	tutCodeMirror.setOption('indentUnit', 4);
-	tutCodeMirror.setOption('indentWithTabs', true);
-	tutCodeMirror.setOption('lineNumbers', true);
-		
-	tutCodeMirror.setSize(null, 500);
-			$.get('/js/javascriptTutorial.txt', function(code) { 
-				tutCodeMirror.getDoc().setValue(code); 
-		
-		});
-		
-	  };
-
-
-}]); 

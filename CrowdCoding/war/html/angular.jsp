@@ -81,11 +81,16 @@
 
 			<div id="container" class="col-md-8 col-xs-8">
 				
-				<div id="task" ng-controller="MicrotaskController">
+				
+				<form id="task" ng-controller="MicrotaskController">
 					<ng-include src="templatePath"></ng-include>
-					<button ng-click="$emit('submitMicrotask')" >submit</button>
-					<button ng-click="$emit('skipMicrotask')" >skip</button>
-				</div>
+					<br/>
+					<div class="task-buttons pull-right">
+						<button ng-click="$emit('submitMicrotask')" class="btn btn-primary">Submit</button>
+						<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
+					</div>
+					<div class="clearfix"></div>
+				</form>
 			</div>
 
 			<div id="rightBar" class="col-md-2 col-xs-2">
@@ -127,6 +132,7 @@
 	
 	
 	<script src="/js/testRunner.js"></script>
+	<script src="/js/functionSupport.js"></script>
 	
 	<script src="/js/app.js"></script>
 	<script src="/js/services/services.js"></script>
