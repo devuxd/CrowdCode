@@ -132,6 +132,59 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 			},
 			'WriteFunction': function(){
+				
+				
+				
+			//	console.log($scope.funct);
+			//	$scope.code="";
+		//		$scope.code= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+				
+				//console.log(functionsService.get(0));
+				
+			/*	
+				// create the reference and the sync
+				var ref  = new Firebase($rootScope.firebaseURL+'/artifacts/functions' + data.id);
+				var sync = $firebase(ref);
+
+				// load the microtask data
+				$scope.microtask = sync.$asObject();
+				
+				
+				var microtaskTitle       = '<%=microtask.microtaskTitle()%>';
+				var microtaskSubmitValue = <%=microtask.getSubmitValue()%>;
+				var microtaskType        = 'writeFunction';
+				var microtaskID          = <%=microtask.getID()%>;
+				
+				var editorCode          = '<%=functionCode%>';
+				var functionName        = '<%=microtask.getFunction().getName()%>';
+				var allTheFunctionCode  = '<%=allFunctionCodeInSystem%>';
+				var showSketchPrompt    = <%=(promptType == PromptType.SKETCH)%>;
+				var showDescriptionChangedPrompt = <%=(promptType == PromptType.DESCRIPTION_CHANGE)%>;
+
+				$(document).ready(function() {
+					// Based on the prompt type, load and setup the appropriate prompt divs
+					if (showSketchPrompt)
+						$("#sketchPrompt").css('display', "block");
+					if (showDescriptionChangedPrompt) {
+						$('#descriptionChangedPrompt').prettyTextDiff();
+						$("#descriptionChangedPrompt").css('display', "block");
+					}
+
+					$('#skipBtn').click(function() {
+						skip();
+					});
+
+					$('#taskForm').submit(function() {
+						var result = checkAndCollectCode();
+						if (!result.errors)
+							submit(result.code);
+						else {
+							$("#popUp").modal();
+						}
+						// Disable default submit functionality.
+						return false;
+					});
+				});*/
 			},
 			'WriteFunctionDescription': function(){
 			},
@@ -319,3 +372,59 @@ myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter',
 	    }
 	};
 }]);  
+
+
+//////////////////////
+//JAVA TUTORIAL     //
+//////////////////////
+myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
+   
+  $scope.codemirrorLoaded = function(tutCodeMirror){
+      
+  tutCodeMirror.setOption('autofocus', true);
+  tutCodeMirror.setOption('indentUnit', 4);
+  tutCodeMirror.setOption('indentWithTabs', true);
+  tutCodeMirror.setOption('lineNumbers', true);
+      
+  tutCodeMirror.setSize(null, 500);
+          $.get('/js/javascriptTutorial.txt', function(code) { 
+              tutCodeMirror.getDoc().setValue(code); 
+      
+      });
+      
+    };
+
+
+}]); 
+
+
+
+
+
+
+
+///////////////////////////////////
+//FUNCTION EDITOR CONTROLLER     //
+///////////////////////////////////
+myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
+ 
+	//console.log("====================="+$scope.code);
+	/*
+$scope.codemirrorLoaded = function(tutCodeMirror){
+    
+tutCodeMirror.setOption('autofocus', true);
+tutCodeMirror.setOption('indentUnit', 4);
+tutCodeMirror.setOption('indentWithTabs', true);
+tutCodeMirror.setOption('lineNumbers', true);
+    
+tutCodeMirror.setSize(null, 500);
+        $.get('/js/javascriptTutorial.txt', function(code) { 
+            tutCodeMirror.getDoc().setValue(code); 
+    
+    });
+    
+  };
+
+*/
+}]); 
+

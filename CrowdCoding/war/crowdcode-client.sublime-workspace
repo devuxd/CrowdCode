@@ -79,6 +79,7 @@
 				"line_ending": "Unix"
 			}
 		},
+		
 		{
 			"file": "js/services/tests.js",
 			"settings":

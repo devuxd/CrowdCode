@@ -38,7 +38,7 @@ public class WriteFunction extends Microtask
 	{
 		super(project);
 		this.promptType = PromptType.SKETCH;
-		commonInitialization(function, project);
+		WriteFunction(function, project);
 	}
 	
 	// Initialization constructor for a DESCRIPTION_CHANGE write function. Microtask is not ready. 
@@ -52,7 +52,7 @@ public class WriteFunction extends Microtask
 		this.oldFullDescription = oldFullDescription;	
 		this.newFullDescription = newFullDescription;
 		
-		commonInitialization(function, project);
+		WriteFunction(function, project);
 	}
 	
     public Microtask copy(Project project)
@@ -60,7 +60,7 @@ public class WriteFunction extends Microtask
     	return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
     } 
 	
-	private void commonInitialization(Function function, Project project)
+	private void WriteFunction(Function function, Project project)
 	{
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();

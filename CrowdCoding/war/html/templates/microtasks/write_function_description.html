@@ -1,1 +1,36 @@
-<h1>{{microtask.title}}</h1>
+<h2 id="taskHeader">
+	<span id="taskTitle" >{{datas.title}}</span>
+	<span id="taskPoints" class="label label-default">{{microtask.points}} points</span>
+</h2>
+<br />
+
+<div id="taskDescription" class="bg-success">
+	Can you write a description for a function that<BR>
+	<strong>{{microtask.callDescription}}</strong><BR>	
+	
+	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
+	<div id="callContext" class="collapse"><div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div></div>
+	
+	
+	<%@include file="/html/elements/typeBrowser.jsp" %><BR>
+</div>
+
+<form id="taskForm" action="#">
+	<div class=" bg-warning">
+		<ng-include file="/html/elements/signatureEditor.jsp"></ng-include>
+	</div>
+	<br />
+</form>
+
+
+
+<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+	<div class="logout-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h4 id="logoutLabel">You need to fix the errors before you submit.</h4>
+	</div>
+	<div class="modal-body"></div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>	
+</div>
