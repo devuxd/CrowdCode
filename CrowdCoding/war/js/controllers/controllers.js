@@ -35,38 +35,109 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', function($scope,$rootScope,$firebase,$http) {
+myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService',  function($scope,$rootScope,$firebase,$http,testsService,functionsService) {
 	
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
 	var templates = {
-			'WriteFunction':'write_function',
-			'WriteFunctionDescription':'write_function_description',
-			'WriteTest':'write_test',
-			'WriteTestCases':'write_test_cases',
-			'WriteCall':'write_call',
-	}
+		'WriteFunction':'write_function',
+		'WriteFunctionDescription':'write_function_description',
+		'WriteTest':'write_test',
+		'WriteTestCases':'write_test_cases',
+		'WriteCall':'write_call',
+	};
+	var formData = {};
+
 
 
 	// initialize microtask and templatePath
+	$scope.funct = {};
+	$scope.test = {};
+	$scope.testData = {};
 	$scope.microtask = {};
 	$scope.templatePath = "";//"/html/templates/microtasks/";
+
+	// collect form data is different for each microtask
+	var collectFormData = {
+			'WriteTest': function(){
+				if($scope.dispute){
+					// return jSON object
+					formData = { code: '', 
+								inDispute: true, 
+								disputeText: $scope.testData.disputeText, 
+								hasSimpleTest: true, 
+								simpleTestInputs: [], 
+								simpleTestOutput: '' };
+				} else {
+					// build the test code
+					var testCode = 'equal('+$scope.funct.name+'(';
+					angular.forEach($scope.testData.inputs, function(value, key) {
+					  testCode +=  value ;
+					  testCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
+					});
+					testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\')' ; 
+					// return jSON object
+					formData = { code: testCode, 
+								 hasSimpleTest: true, 
+								 inDispute: false, 
+								 disputeText: '', 
+				     			 simpleTestInputs: $scope.testData.inputs, simpleTestOutput: $scope.testData.output };
+				}
+			},
+			'WriteTestCases': function(){
+			},
+			'WriteFunction': function(){
+			},
+			'WriteFunctionDescription': function(){
+			},
+			'WriteCall': function(){
+			},
+	};
 	
+	// initialize form data is different for each microtask
+	var initializeFormData = {
+			'WriteTest': function(){
+				// initialize testData
+				// if microtask.submission and microtask.submission.simpleTestInputs are defined
+				// assign test inputs and output to testData, otherwise initialize an empty object
+				$scope.testData = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.simpleTestInputs) ) ? 
+								   {inputs: $scope.microtask.submission.simpleTestInputs , output: $scope.microtask.submission.simpleTestOutput } : 
+								   {inputs:[],output:''} ;
+
+				// Configures the microtask to show information for disputing the test, hiding 
+				// other irrelevant portions of the microtask.
+				$scope.dispute = false;
+				$scope.toggleDispute = function(){ 
+					$scope.dispute = !$scope.dispute; 
+					if(!$scope.dispute) 
+						$scope.testData.disputeText = ""; 
+				};
 
 
-	// listen for message 'submit microtask'
-	$scope.$on('submitMicrotask',function(event,data){
-		console.log('submit fired');
-	});
-	
-	// listen for message 'skip microtask'
-	$scope.$on('skipMicrotask',function(event,data){
-		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
-		  success(function(data, status, headers, config) {
-			  console.log("skip fired");
-			  $scope.load();
-		  });
-	});
+			},
+			'WriteTestCases': function(){
+				// initialize testCases
+				// if microtask.submission and microtask.submission.testCases are defined 
+				// assign available testCases otherwise initialize a new array
+				$scope.testCases = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.testCases) ) ? 
+								   $scope.microtask.submission.testCases : [] ;
+
+			    // addTestCase and deleteTestCase utils function for microtask WRITE TEST CASES
+				$scope.addTestCase = function(){
+					var testCase = { text: '', added: true, deleted: false, id: $scope.testCases.length };
+					$scope.testCases.push(testCase);	
+				}
+				$scope.deleteTestCase = function(index){
+					$scope.testCases.splice(index,1);
+				}
+			},
+			'WriteFunction': function(){
+			},
+			'WriteFunctionDescription': function(){
+			},
+			'WriteCall': function(){
+			},
+	};
 
 	// load microtask:
 	// request a new microtask from the backend and if success
@@ -78,8 +149,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
 		  success(function(data, status, headers, config) {
 
-		  	//choose the right template
-		 	$scope.templatePath = templatesURL + templates[data.type] + ".html";
 
 		  	// create the reference and the sync
 			var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
@@ -89,38 +158,34 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			$scope.microtask = sync.$asObject();
 			$scope.microtask.$loaded().then(function(){
 
+
+			  	//choose the right template
+			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+
 				// assign title 
 				$scope.datas = data;
 
 				// retrieve the related function
-				// IMPROVEMENT: is possible to avoid the query to firebase and use functionService????
 				var functionId = angular.isDefined($scope.microtask.functionID) ? $scope.microtask.functionID : $scope.microtask.testedFunctionID;
 				if( angular.isDefined(functionId) ) {
-					var ref  = new Firebase($rootScope.firebaseURL+'/artifacts/functions/' + functionId);
-					$scope.funct = $firebase(ref).$asObject();
+					$scope.funct = functionsService.get(functionId);
 				}
 
 				// retrieve the related test 
-				// IMPROVEMENT: is possible to avoid the query to firebase and use testService????
-				var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : $scope.microtask.testedFunctionID;
-				if( angular.isDefined($scope.microtask.testID) ) {
-					var ref  = new Firebase($rootScope.firebaseURL+'/artifacts/tests/' + $scope.microtask.testID);
-					$scope.test = $firebase(ref).$asObject();
+				var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : 0;
+				if( angular.isDefined(testId) ) {
+					$scope.test = testsService.get(testId);
 				}
 
-
-				// initialize testCases
-				// if microtask.submission and microtask.submission.testCases are defined 
-				// assign available testCases otherwise initialize a new array
-				$scope.testCases = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.testCases) ) ? 
-								   $scope.microtask.submission.testCases : [] ;
-
+				// initialize form data for the current microtask
+				initializeFormData[$scope.microtask.type]();
 
 				// debug stuff
-				console.log(data);
-				console.log($scope.microtask); 
-				console.log($scope.funct);
-				
+				console.log("data: ");console.log(data);
+				console.log("microtask: ");console.log($scope.microtask); 
+				console.log("function: ");console.log($scope.funct);
+				console.log("test: ");console.log($scope.test);
+								
 
 			});
 		  }).
@@ -132,19 +197,39 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	};
 	
 
+	// ------- MESSAGE LISTENERS ------- //
 
+	// listen for message 'submit microtask'
+	$scope.$on('submitMicrotask',function(event,data){
+		console.log('submit fired');
+		// call collect form data for the current microtask
+		collectFormData[$scope.microtask.type](); 
+		// SEND THE DATA
+		// // stringify formData and send it via an AJAX POST call
+  //   	var stringifiedData = JSON.stringify( formData );
+		// $.ajax({
+		//     contentType: 'application/json',
+		//     data: stringifiedData,
+		//     type: 'POST',
+		//     url: '/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID,
+		// }).done( function (data) { loadMicrotask();	});   
+		
+		// Push the microtask submit data onto the Firebase history stream
+		// var submissionRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID + '/submission');
+		// submissionRef.set(formData);
+		console.log(formData);
+	});
+	
+	// listen for message 'skip microtask'
+	$scope.$on('skipMicrotask',function(event,data){
+		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
+		  success(function(data, status, headers, config) {
+			  console.log("skip fired");
+			  $scope.load();
+		  });
+	});
 
-	// ------- WRITE TEST CASES UTILS ------- //
-	// addTestCase and deleteTestCase utils function for microtask WRITE TEST CASES
-	$scope.addTestCase = function(){
-		var testCase = { text: '', added: true, deleted: false, id: $scope.testCases.length };
-		$scope.testCases.push(testCase);	
-	}
-	$scope.deleteTestCase = function(index){
-		$scope.testCases.splice(index,1);
-	}
-
-	// auto-load microtask on document load
+	// auto-load microtask on controller load
 	$scope.load();
 }]);  
 

@@ -7,7 +7,7 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 	var service = new function(){
 		
 		// Private variables	
-		var tests;  				// map from testID to a TestInFirebase format object
+		var tests = [];  				// map from testID to a TestInFirebase format object
 		var functionIDToTests;		// map from a functionID to an array of testIDs that are tests for the function
 
 		// Constructor
@@ -38,15 +38,15 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 			// get the list of all tests from firebase
 			console.log($rootScope.firebaseURL+'/artifacts/tests');
 			var testsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/tests'));
-			tests = testsSync.$asArray();
-			tests.$loaded().then(function(){ console.log('tests loaded');  });
+			var testsInFirebase = testsSync.$asArray();
+			testsInFirebase.$loaded().then(function(){ console.log('tests loaded');  });
 			
 			// watch for changes in the tests data
-			tests.$watch(function(obj){ 
+			testsInFirebase.$watch(function(obj){ 
 				switch(obj.event){
-					case 'child_added':   testAdded(tests.$getRecord(obj.key));   break;
-					case 'child_changed': testChanged(tests.$getRecord(obj.key)); break;
-					case 'child_deleted': testDeleted(tests.$getRecord(obj.key)); break;
+					case 'child_added':   testAdded(testsInFirebase.$getRecord(obj.key));   break;
+					case 'child_changed': testChanged(testsInFirebase.$getRecord(obj.key)); break;
+					case 'child_deleted': testDeleted(testsInFirebase.$getRecord(obj.key)); break;
 				}
 			});
 		}

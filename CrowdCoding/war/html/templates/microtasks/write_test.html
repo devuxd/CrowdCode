@@ -4,31 +4,29 @@
 	<span id="taskPoints" class="label label-default">{{microtask.points}} points</span>
 </h2>
 <br />
-
-
 <div id="taskDescription" class="bg-success">
 	
-		<div ng-show="microtask.promptType==WRITE">
-			Can you write a test for<BR>		<BR>
-			<div class="alert alert-info">microtask description
-	   		    <button class="btn btn-mini pull-right" type="button" id="reportTestCase">
-	   		    	Report as incorrect test case</button>			
+		<div ng-show="microtask.promptType=='WRITE'">
+			Can you write a test for
+			<div class="alert alert-info">
+				<span>{{test.description}}</span>
+	   		    <button class="btn btn-mini pull-right" ng-hide="dispute" ng-click="toggleDispute()">Report as incorrect test case</button>			
 			</div>
-			<BR>Here's the description of the function to test:<BR><BR>
-			<div class="codemirrorBox"><textarea id="writeCodeBox"></textarea></div>
+			Here's the description of the function to test:
+			<div class="codemirrorBox"><textarea id="writeCodeBox">{{funct.description}}</textarea></div>
 		</div>
 	
-		<div ng-show="microtask.promptType=CORRECT">
-			The following issue was reported with this test:<BR><BR>
-			<div class="alert alert-info">microtask description</div>		
-			<div class="alert alert-error">microtask issue description</div>	
+		<div ng-show="microtask.promptType=='CORRECT'">
+			The following issue was reported with this test:
+			<div class="alert alert-info">{{microtask.description}}</div>		
+			<div class="alert alert-error">{{microtask.issueDescription}}</div>	
 			Can you fix the test to address this issue?<BR>
 			
 			<BR>Here's the description of the function to test:
-			<div class="codemirrorBox"><textarea id="correctCodeBox"></textarea></div>
+			<div class="codemirrorBox"><textarea id="correctCodeBox">{{funct.description}}</textarea></div>
 		</div>
 		
-		<div ng-show="microtask.promptType=TESTCASE_CHANGED">
+		<div ng-show="microtask.promptType=='TESTCASE_CHANGED'">
 			The test case for this has change from <BR><BR>
 			<div class="alert alert-info">microtask old test case</div>	
 			to <BR><BR>	
@@ -36,28 +34,21 @@
 			Can you update the test below, if necessary?<BR>
 			
 			<BR>Here's the description of the function to test:
-			<div class="codemirrorBox"><textarea id="testCaseChangedCodeBox"></textarea></div>
+			<div class="codemirrorBox"><textarea id="testCaseChangedCodeBox">{{funct.description}}</textarea></div>
 		</div>
 		
-		<div ng-show="microtask.promptType=FUNCTION_CHANGED">
+		<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
 			The description of the function being tested has changed. Can you update the test below,
 			if necessary? <BR>
 			
-			<span class="original" style="display: none">function oldDescription</span>
-	   		<span class="changed" style="display: none">function newDescription</span>
+			<span class="original">{{microtask.oldFunctionDescription}}</span>
+	   		<span class="changed">{{microtask.newFunctionDescription}}</span>
 			<span id="diff" class="diff"></span><BR>
 			
 			Here's the test description:
-			<div class="alert alert-info">test description</div>
-		</div><BR>
-		
-		<div id="disputeDiv" style="display: none">
-			What's wrong with this test case? <BR>			
-			<textarea id="disputeText"></textarea><BR>
-			<input class="btn btn-primary" type="submit" id="submitDispute" value="Submit"> 
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;			
-			<a id="cancelDispute">Nothing is wrong with the test case.</a><BR><BR><BR>
+			<div class="alert alert-info">{{test.description}}</div>
 		</div>
+		
 		
 		<div>here goes the type browser</div>
 
@@ -66,16 +57,33 @@
 
 <div class=" bg-warning">	
 
-	<div id="simpleTest">
+	<div id="disputeDiv" ng-show="dispute">
+		<b>Dispute test case:</b>what's wrong with this test case? <BR>			
+		<textarea ng-model="testData.disputeText"></textarea><BR>
+		<button class="btn btn-link" ng-click="toggleDispute()" >Nothing is wrong with the test case</button> 
+	</div>
+
+	<div id="simpleTest" ng-hide="dispute">
 	    Provide a JSON object literal of the specified type for each parameter and the expected 
 	    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
-	    an example from the description of a type above.<BR><BR>  
+	    an example from the description of a type above.<BR>
 	  
-		<b>Parameter Values</b><BR>
-			<div id="parameterValues"></div>
-		<b><span id="expectedOutputTitle"></span></b><BR>
-			<textarea id="expectedOutput"></textarea>
-			<div class="alert alert-error" id="expectedOutputErrors"></div>
+		<b>Parameter Values:</b><br>
+
+
+		<span ng-repeat="(index,paramName) in funct.paramNames">
+			{{paramName}} ({{funct.paramTypes[index]}}): 
+			<input type="text" id="{{index}}" ng-model="testData.inputs[index]"/>
+			<div class="" id="errors{{index}}"></div>
+		</span>
+
+
+		<span>
+			expected Return value ({{funct.returnType}}): 
+			<input type="text" id="{{index}}" ng-model="testData.output"/>
+			<div class="" id="errors{{index}}"></div>
+		</span>
+
 	</div>
 </div>
 <br/>
