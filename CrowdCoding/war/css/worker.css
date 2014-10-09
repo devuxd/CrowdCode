@@ -196,14 +196,23 @@ footer.navbar-default { background-color: #3C9764; }
 #taskDescription {
 	font-weight:normal;
 	padding:5px;
+	background-color: #dff0d8;
 }
 
-#taskForm .bg-warning{
+#taskForm {
+	margin-top:10px;
 	padding:10px;
+	background-color: #fcf8e3;
+
 }
 
 #taskButtons {
 	float:right;
+}
+
+#task .alert {
+	padding:5px	;
+	width:100%;
 }
 
 #popUpChangePicture .modal-footer {
@@ -212,7 +221,6 @@ footer.navbar-default { background-color: #3C9764; }
 #popUpChangePicture form {
 	width:80%;
 }
-
 
 
 #userProfile img {
@@ -227,7 +235,16 @@ footer.navbar-default { background-color: #3C9764; }
 	resize:none;
 }
 
+#taskForm .col-md-10, #taskForm .col-md-1 {
+   margin:0px;
+   padding:0px;
+}
 
+#taskForm .form-group {
+	margin-left: 0px;
+	margin-right: 0px;
+
+}
 
 /* Search results styles in reuseSearch */
 .result:hover {background:#dff0d8; cursor:pointer;}
