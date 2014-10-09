@@ -135,26 +135,9 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				
 				
 				
-			//	console.log($scope.funct);
-			//	$scope.code="";
-		//		$scope.code= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-				
-				//console.log(functionsService.get(0));
-				
-			/*	
-				// create the reference and the sync
-				var ref  = new Firebase($rootScope.firebaseURL+'/artifacts/functions' + data.id);
-				var sync = $firebase(ref);
-
-				// load the microtask data
-				$scope.microtask = sync.$asObject();
-				
-				
-				var microtaskTitle       = '<%=microtask.microtaskTitle()%>';
-				var microtaskSubmitValue = <%=microtask.getSubmitValue()%>;
-				var microtaskType        = 'writeFunction';
-				var microtaskID          = <%=microtask.getID()%>;
-				
+			/	$scope.code="";
+				$scope.code= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+	/*
 				var editorCode          = '<%=functionCode%>';
 				var functionName        = '<%=microtask.getFunction().getName()%>';
 				var allTheFunctionCode  = '<%=allFunctionCodeInSystem%>';
@@ -406,25 +389,62 @@ myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','
 ///////////////////////////////////
 //FUNCTION EDITOR CONTROLLER     //
 ///////////////////////////////////
-myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
+myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase','$filter','functionEditorService',function($scope,$rootScope,$firebase,$filter, functionEditorService) {
  
+	
+	
+//	console.log($scope.microtask.points+"=====================");
 	//console.log("====================="+$scope.code);
-	/*
-$scope.codemirrorLoaded = function(tutCodeMirror){
-    
-tutCodeMirror.setOption('autofocus', true);
-tutCodeMirror.setOption('indentUnit', 4);
-tutCodeMirror.setOption('indentWithTabs', true);
-tutCodeMirror.setOption('lineNumbers', true);
-    
-tutCodeMirror.setSize(null, 500);
-        $.get('/js/javascriptTutorial.txt', function(code) { 
-            tutCodeMirror.getDoc().setValue(code); 
-    
-    });
-    
-  };
 
-*/
+	$scope.codemirrorLoaded = function(myCodeMirror){
+    
+	myCodeMirror.setOption('autofocus', true);
+	myCodeMirror.setOption('indentUnit', 4);
+	myCodeMirror.setOption('indentWithTabs', true);
+	myCodeMirror.setOption('lineNumbers', true);
+	myCodeMirror.getDoc().setValue($scope.code); 
+	myCodeMirror.setSize(null, 500);
+	myCodeMirror.setOption("theme", "vibrant-ink");	 	
+	var _doc = myCodeMirror.getValue();
+	console.log(_doc);
+	functionEditorService.highlightPseudoSegments(myCodeMirror);
+
+	myCodeMirror.on("change", function(){
+	
+		functionEditorService.codeChanged(myCodeMirror);
+	});
+ };
+  
+  
+  
+ 		
+			
+	
+		//positionCursorAtStart();
+	/*	
+		var marks = [];
+		highlightPseudoSegments(marks);
+	 	
+	 	// If we are editing a function that is a client request and starts with CR, make the header
+	 	// readonly.
+		if (functionName.startsWith('CR'))
+			makeHeaderAndParameterReadOnly();
+		
+	 	
+	 	// Find the list of all function names elsewhere in the system
+	 	var functionNames = buildFunctionNames();
+	 	
+	 	$('#errorMessages').hide();
+	 	
+	 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
+	 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
+	    // typing).
+	    var changeTimeout;
+	 	myCodeMirror.on("change", codeChanged);*/
+	//});
+
+
+  
+  
 }]); 
 

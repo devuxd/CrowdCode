@@ -1,5 +1,4 @@
-CIAO
-<!-- 
+ 
 <h2 id="taskHeader">
 	<span id="taskTitle" >{{ microtask.type }}</span>
 	<span id="taskPoints" class="label label-default">{{ microtask.points}} points</span>
@@ -35,11 +34,16 @@ CIAO
 </div>
 
 <form id="taskForm" action="#">
-	<div class=" bg-warning"> -->
-	<!-- 	<ng-include  src="'/html/templates/function_editor.html'"></ng-include> -->
-		<!--<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
+	<div class=" bg-warning"> 
+		<div ng-controller="FunctionEditorController">
+
+ <div ui-codemirror="{ onLoad : codemirrorLoaded }" ></div>
+<div id = "errorMessages" class="alert alert-error"></div>
+
+</div>
+		<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
 		<span class="clearfix"></span>
 	</div>
 	<br />
 </form>
-</div> -->
+</div> 

@@ -13,14 +13,14 @@ function JSONEditor() {
 	var isValidParam = true;
 	
 	this.initialize = function(newTextArea, newErrorsDiv, newParamType)
-	{/*
+	{
 		textArea = newTextArea;
 		errorsDiv = newErrorsDiv;
 		errorsDiv.hide();
 		paramType = newParamType;
 		codeMirror = CodeMirror.fromTextArea(textArea); 	
 		codeMirror.setSize(null, 120);
-		codeMirror.on("change", testChanged);*/
+		codeMirror.on("change", testChanged);
 	};
 	
 	this.isValid = function() { return isValid(); };
