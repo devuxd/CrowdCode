@@ -19,8 +19,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
 		this.getMockHeader = function(id) { return getMockHeader(id); };
 		this.renderDescription= function(functionCalled) { return renderDescription(functionCalled); };
-		
-		
+		this.getAllDescribedFunctionCoode = function(idFunction) { return getAllDescribedFunctionCoode(idFunction); };
+		this.getAllDescribedFunctionNames = function(idFunction) { return getAllDescribedFunctionNames(idFunction); };
+	 	this.isValidParamDescription = function(line) { return isValidParamDescription(line); };
 		
 		
 		// Function bodies
@@ -31,6 +32,8 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			functions = functionsSync.$asArray();
 			functions.$loaded().then(function(){ console.log('functions loaded');  });
 		}
+		
+		
 		
 		/*
 		// Event handler for a function being added or changed
@@ -60,6 +63,36 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 			return functionIDs;
 		}
+		
+		// Returns all the described function Names except the one with the passed ID 
+		function getAllDescribedFunctionNames(idFunction)
+		{
+			var functionNames = [];	
+			$.each(functions, function(i, value)
+			{
+				if(value.described && value.id!=idFunction)
+					functionNames.push(value.name);
+				
+			});
+
+			return functionNames;
+		}
+	
+		// Returns all the described function signature except the one with the passed ID 
+		function getAllDescribedFunctionCoode(idFunction)
+		{
+
+			var functionsCode = "";	
+			$.each(functions, function(i, value)
+			{
+				if(value.described && value.id!=idFunction)
+					functionsCode+=value.header+"{ }";
+				
+			});
+
+			return functionsCode;
+		}
+		
 		
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function get(id)

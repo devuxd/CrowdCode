@@ -3,7 +3,7 @@
 // APP CONTROLLER //
 ////////////////////
 //prepare variables and execute inizialization stuff
-myApp.controller('AppController', ['$scope','$rootScope','$firebase','userService', 'testsService', 'functionsService', 'testRunnerService', function($scope,$rootScope,$firebase,userService,testsService,functionsService, testRunnerService) {
+myApp.controller('AppController', ['$scope','$rootScope','$firebase','userService', 'testsService', 'functionsService', 'testRunnerService','ADTService', function($scope,$rootScope,$firebase,userService,testsService,functionsService, testRunnerServe, ADTService) {
 	
 	// current session variables
     $rootScope.projectId    = projectId;
@@ -27,7 +27,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	//user.listenForJobs();			
 	testsService.init();		
 	functionsService.init();
-
+	ADTService.init();
 	//console.log(testRunnerService.runTestsForFunction(1));
 }]); 
 
@@ -35,7 +35,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService',  function($scope,$rootScope,$firebase,$http,testsService,functionsService) {
+myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService','functionEditorService',function($scope,$rootScope,$firebase,$http,testsService,functionsService,functionEditorService) {
 	
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -87,6 +87,15 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			'WriteTestCases': function(){
 			},
 			'WriteFunction': function(){
+				
+				var collectedCode= functionEditorService.checkAndCollectCode();
+				
+				console.log('error '+collectedCode.errors);
+				//TODO se error =false submit if true popup
+				console.log('collected code'+collectedCode.code);
+				
+				formData=collectedCode.code;
+				
 			},
 			'WriteFunctionDescription': function(){
 			},
@@ -135,8 +144,10 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				
 				
 				
-			/	$scope.code="";
+				$scope.code="";
 				$scope.code= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+				
+				
 	/*
 				var editorCode          = '<%=functionCode%>';
 				var functionName        = '<%=microtask.getFunction().getName()%>';
@@ -389,15 +400,20 @@ myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','
 ///////////////////////////////////
 //FUNCTION EDITOR CONTROLLER     //
 ///////////////////////////////////
-myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase','$filter','functionEditorService',function($scope,$rootScope,$firebase,$filter, functionEditorService) {
+myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase','$filter','functionEditorService','functionsService',function($scope,$rootScope,$firebase,$filter, functionEditorService, functionsService) {
  
 	
 	
-//	console.log($scope.microtask.points+"=====================");
-	//console.log("====================="+$scope.code);
+
 
 	$scope.codemirrorLoaded = function(myCodeMirror){
-    
+	
+	var allFunctionNames=functionsService.getAllDescribedFunctionNames($scope.funct.id);
+	var allFunctionCode=functionsService.getAllDescribedFunctionCoode($scope.funct.id);
+
+	console.log("names  "+allFunctionNames);
+	console.log("code "+allFunctionCode);
+	
 	myCodeMirror.setOption('autofocus', true);
 	myCodeMirror.setOption('indentUnit', 4);
 	myCodeMirror.setOption('indentWithTabs', true);
@@ -405,14 +421,27 @@ myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase'
 	myCodeMirror.getDoc().setValue($scope.code); 
 	myCodeMirror.setSize(null, 500);
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	
-	var _doc = myCodeMirror.getValue();
-	console.log(_doc);
-	functionEditorService.highlightPseudoSegments(myCodeMirror);
+	
+	
+	functionEditorService.initService(myCodeMirror, allFunctionNames, allFunctionCode);
+	functionEditorService.highlightPseudoSegments();
 
+	
+	// If we are editing a function that is a client request and starts with CR, make the header
+ 	// readonly.
+	if ($scope.funct.name.startsWith('CR'))
+		functionEditorService.makeHeaderAndParameterReadOnly();
+	
+ 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
+ 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
+    // typing).
 	myCodeMirror.on("change", function(){
 	
-		functionEditorService.codeChanged(myCodeMirror);
+		functionEditorService.codeChanged();
 	});
+	
+	
+	
  };
   
   

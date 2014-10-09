@@ -115,9 +115,6 @@
 	<!-- Javascript 3rd part libraries --> 
 	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/polyfill.js"></script>
-	<!--<script src="/include/codemirror/javascript.js"></script>-->
-	
-		<!--  <script src="/include/codemirror/codemirror.js"></script>-->
 	<script src="/js/errorCheck.js"></script>
 	<script src="/include/jshint.js"></script>
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
@@ -132,7 +129,6 @@
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script>
-	<!--  <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> -->
 	
 	
 	
@@ -145,6 +141,7 @@
 	
 	<script src="/js/services/services.js"></script>
 	<script src="/js/services/functionEditor.js"></script>
+	<script src="/js/services/ADT.js"></script>
 	
 	<script src="/js/services/tests.js"></script>
 	<script src="/js/services/functions.js"></script>

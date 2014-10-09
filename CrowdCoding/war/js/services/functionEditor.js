@@ -2,78 +2,48 @@
 //FUNCTION EDITOR SERVICE   //
 //////////////////////////////
 
-myApp.factory('functionEditorService', [function() {
+myApp.factory('functionEditorService',['ADTService','functionsService',function(ADTService, functionsService) {
 	
+	var myCodeMirror;
 	var service = new function(){
-		// Private variables	
-		var functionEditor;
-		var marks = [];
-		 var changeTimeout;
-		 
-		 //TODO
-		 var allTheFunctionCode="";
+	// Private variables	
+	var functionEditor;
+	var marks = [];
+	 var changeTimeout;
+	 var functionNames=[];
+	 var allTheFunctionCode="";
+	
 		var highlightPseudoCall =false;
 		// Public functions
-		this.positionCursorAtStart = function(text) { return positionCursorAtStart(text); };
+		this.initService = function(codeMirrior, allFunctionNames, allFunctionCode) { return initService(codeMirrior, allFunctionNames, allFunctionCode); };
+		this.positionCursorAtStart = function() { return positionCursorAtStart(); };
 		this.buildFunctionNames = function() { return buildFunctionNames(); };
-		this.codeChanged = function(text) { return codeChanged(text); };	
-		//this.traverse = function(node, func) { return traverse(node, func); };
-		this.highlightPseudoSegments = function(doc) { return highlightPseudoSegments(doc); };
-	/*	this.get = function(id) { return get(id); };
-		this.getMockCodeFor = function(id) { return getMockCodeFor(id); };
-		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
-		this.getMockHeader = function(id) { return getMockHeader(id); };
-		this.renderDescription= function(functionCalled) { return renderDescription(functionCalled); };
+		this.codeChanged = function() { return codeChanged(); };	
+		this.checkAndCollectCode = function() { return checkAndCollectCode(); };
+		this.highlightPseudoSegments = function() { return highlightPseudoSegments(); };
+		this.makeHeaderAndParameterReadOnly = function() { return makeHeaderAndParameterReadOnly(); };
+ 	
+ 
 
-
-
-
-
-var myCodeMirror = CodeMirror.fromTextArea(code, 
-		{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
 		
+	function initService(codeMirrior, allFunctionNames, allFunctionCode)
+	{
+		functionNames=allFunctionNames
+		allTheFunctionCode=allFunctionCode
+		console.log("init "+ allTheFunctionCode );
+		myCodeMirror=codeMirrior;
+	}
 		
-		
-
-	myCodeMirror.setSize(null, 500);
-	var doc = myCodeMirror.getDoc();
-	myCodeMirror.setOption("theme", "vibrant-ink");	 	
-	doc.setValue( code);
-	//positionCursorAtStart();
-	
-	var marks = [];
-	highlightPseudoSegments(marks);
- 	
- 	// If we are editing a function that is a client request and starts with CR, make the header
- 	// readonly.
-	if (functionName.startsWith('CR'))
-		makeHeaderAndParameterReadOnly();
-	
- 	
- 	// Find the list of all function names elsewhere in the system
- 	var functionNames = buildFunctionNames();
- 	
- 	$('#errorMessages').hide();
- 	
- 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
- 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
-    // typing).
-    var changeTimeout;
- 	myCodeMirror.on("change", codeChanged);
-});
-
-*/
-
 
  	// Positions the cursor in the CodeMirror instance on the line after the beginning of the function's body
  	// (the line after the opening brace line)
- 	function positionCursorAtStart(text)
+ 	function positionCursorAtStart()
  	{
  		
 		var ast = esprima.parse(text, {loc: true});
 		
 		// esprima is 1 indexed, codeMirror is 0 indexed. So positioning on line after start.
- 		doc.setCursor(ast.body[0].body.loc.start.line, 0);		
+		myCodeMirror.setCursor(ast.body[0].body.loc.start.line, 0);		
  	}
  	
  	
@@ -131,29 +101,29 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
 	}
 		
 	// Mangage code change timeout
-	function codeChanged(doc)
+	function codeChanged()
 	{
 		clearTimeout(changeTimeout);
 		changeTimeout = setTimeout(
-				function(){processCodeChanged(doc);}, 500);
+				function(){processCodeChanged();}, 500);
 	}
 	
 	// Process a change to the code
-	function processCodeChanged(doc)
+	function processCodeChanged()
 	{
 		
-		highlightPseudoSegments(doc);
-		doErrorCheck(doc);
+		highlightPseudoSegments();
+		doErrorCheck();
 	}
 	
-	// Highlight regions of code that are pseudocalls or pseudocode
-	function highlightPseudoSegments(doc)
+	// Highlight regions of code that  pseudocalls or pseudocode
+	function highlightPseudoSegments()
 	
 	
 	
 	{
 		
-		var text= doc.getValue();
+		var text= myCodeMirror.getValue();
 		//console.log("testo"+ text);
 		// Clear the old marks (if any)
 		$.each(marks, function(index, mark)
@@ -174,13 +144,13 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
 		{
 			var pseudoCallCol = line.indexOf('//!');
 			if (pseudoCallCol != -1)
-			 	marks.push(doc.markText({line: i, ch: pseudoCallCol}, 
+			 	marks.push(myCodeMirror.markText({line: i, ch: pseudoCallCol}, 
 			 			     {line: i, ch: line.length}, 
 			 			     {className: 'pseudoCall', inclusiveRight: true }));
 			
 			var pseudoCodeCol = line.indexOf('//#');
 			if (pseudoCodeCol != -1)
-			 	marks.push(doc.markText({line: i, ch: pseudoCodeCol}, 
+			 	marks.push(myCodeMirror.markText({line: i, ch: pseudoCodeCol}, 
 			 			     {line: i, ch: line.length}, 
 			 			     {className: 'pseudoCode', inclusiveRight: true }));
 			
@@ -190,7 +160,7 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
 			{
 				var pseudoCallCol = line.indexOf(highlightPseudoCall);
 				if (pseudoCallCol != -1)
-				 	marks.push(doc.markText({line: i, ch: pseudoCallCol}, 
+				 	marks.push(myCodeMirror.markText({line: i, ch: pseudoCallCol}, 
 				 			     {line: i, ch: line.length}, 
 				 			     {className: 'highlightPseudoCall', inclusiveRight: true }));
 			}
@@ -201,7 +171,7 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
  	// If not, collects the code for submission.
  	// Returns an object of the form { errors: BOOLEAN, code: collectedCode } where collectedCode
  	// is null if there are errors.
- 	function checkAndCollectCode(text)
+ 	function checkAndCollectCode()
  	{
  		console.log("collect code");
  		// Possibly due to some issue in how the microtask div is getting initialized and loaded,
@@ -209,7 +179,7 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
  		// to save its value back to the textarea so we can read it, we execute the following line:
 	 //	myCodeMirror.save();	 	
  		
- 	//	var text = $("#code").val();	
+ 		var text = myCodeMirror.getValue();	
  	
 		if(hasErrorsHelper(text))
 		{
@@ -264,9 +234,9 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
  	
 	// Check the code for errors. If there are errors present, write an error message. Returns true 
 	// iff there are no errors.
- 	function doErrorCheck(doc)
+ 	function doErrorCheck()
 	{
- 		var text = doc.getValue();
+ 		var text = myCodeMirror.getValue();
  		
  		
 		if(hasErrorsHelper(text))			
@@ -304,6 +274,7 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
 	// Returns true iff there are errors
  	function hasErrorsHelper(text)
  	{
+ 		console.log(allTheFunctionCode);
 		var functionCode = allTheFunctionCode + " "  + text;
 		var errors = "";
 	    console.log("linting on: " + functionCode);
@@ -440,12 +411,12 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
 			
 			if (type == -1)
 				return "The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.<BR>";				
-			else if (!isValidTypeName(type))
+			else if (!ADTService.isValidTypeName(type))
 				return type + ' is not a valid type name. Valid type names are '
 				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';
 			else if (keyword==='@param '&& !isValidName(name))
 				return name+ ' is not a valid name. Use upper and lowercase letters, numbers, and underscores. <BR>';	
-			else if (keyword==='@param '&& !isValidParamDescription(line))
+			else if (keyword==='@param '&& !functionsService.isValidParamDescription(line))
 				return line+' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] - [description]". <BR>';		
 			else if (keyword==='@return ' && name!=-1)
 				return 'The return value must be in the form  " @return [Type]". <BR>';	
@@ -482,7 +453,17 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
 	}
 	
 	
-	
+	// checks that the name is vith alphanumerical characters or underscore
+	function isValidName(name)
+	{
+		var regexp = /^[a-zA-Z0-9_]+$/;
+		
+		if (name.search(regexp)==-1)
+		 	return false;
+		else
+			return true;
+		
+	}
 	
 	// Returns an object capturing the code and other related information.
 	function collectCode(text, ast)
@@ -527,11 +508,11 @@ var myCodeMirror = CodeMirror.fromTextArea(code,
 	// Makes the header of the function readonly (not editable in CodeMirror).
 	// The header is the line that starts with 'function'
 	// Note: the code must be loaded into CodeMirror before this function is called.
-	function makeHeaderAndParameterReadOnly(text)
+	function makeHeaderAndParameterReadOnly()
 	{
 		
-	//	myCodeMirror.save();	 			
- 		//var text = $("#code").val();			
+				
+ 		var text = myCodeMirror.getValue();			
 		
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
