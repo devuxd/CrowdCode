@@ -82,7 +82,7 @@
 		</ng-form>
 		<div class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
 			<label for="output">expected Return value ({{funct.returnType}}):</label>
-			<textarea class="form-control" name="output" ng-model="testData.output"  ></textarea>
+			<textarea class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" ></textarea>
 			<ul class="help-block" ng-show="form.output.$dirty && form.output.$invalid">
 				<li ng-show="form.output.$error.required" >This field is required!</li>
 				<li ng-show="form.output.$error.json" >Some errors with this JSON!</li>
@@ -106,6 +106,6 @@
 <br/>
 <div class="task-buttons pull-right">
 	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
-	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
+	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link">Skip</button>
 </div>
 <div class="clearfix"></div>
