@@ -155,13 +155,9 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			},
 			'WriteFunction': function(){
                 
-                var collectedCode= functionEditorService.checkAndCollectCode();
-                
-                console.log('error '+collectedCode.errors);
-                //TODO se error =false submit if true popup
-                console.log('collected code'+collectedCode.code);
-                
-                formData=collectedCode.code;
+                $scope.code="";
+                $scope.code= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+
 
                 
 			},
