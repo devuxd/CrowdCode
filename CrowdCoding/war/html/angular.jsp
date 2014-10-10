@@ -78,10 +78,7 @@
 			</div>
 
 			<div id="container" class="col-md-8 col-xs-8" ng-controller="MicrotaskController" >
-				
-				
 				<form id="task" name="form" novalidate ng-class="{ 'form-horizontal': inlineForm }">
-					
 					<ng-include src="templatePath"></ng-include>
 				</form>
 			</div>

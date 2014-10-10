@@ -74,7 +74,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					var testCode = 'equal('+$scope.funct.name+'(';
 					angular.forEach($scope.testData.inputs, function(value, key) {
 					  testCode +=  value ;
-					  tangularestCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
+					  testCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
 					});
 					testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\')' ; 
 					// return jSON object
@@ -163,8 +163,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
 		  success(function(data, status, headers, config) {
-
-
 		  	// create the reference and the sync
 			var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
 			var sync = $firebase(ref);
@@ -173,6 +171,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			$scope.microtask = sync.$asObject();
 			$scope.microtask.$loaded().then(function(){
 
+
+				console.log("data: ");console.log(data);
 
 			  	//choose the right template
 			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
@@ -195,7 +195,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				initializeFormData[$scope.microtask.type]();
 
 				// debug stuff
-				console.log("data: ");console.log(data);
 				console.log("microtask: ");console.log($scope.microtask); 
 				console.log("function: ");console.log($scope.funct);
 				console.log("test: ");console.log($scope.test);

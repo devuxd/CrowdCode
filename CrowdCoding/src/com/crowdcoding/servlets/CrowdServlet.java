@@ -47,6 +47,8 @@ import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Work;
@@ -137,10 +139,10 @@ public class CrowdServlet extends HttpServlet
     	{	        
     		// First check the browser. If the browser is not Chrome, redirect to a browser
     		// compatability page.
-    		if (!req.getHeader("User-Agent").contains("Chrome"))
-    			req.getRequestDispatcher("/html/browserCompat.html").forward(req, resp);
-    		else
-    		{    	
+//    		if (!req.getHeader("User-Agent").contains("Chrome"))
+//    			req.getRequestDispatcher("/html/browserCompat.html").forward(req, resp);
+//    		else
+//    		{    	
     			// Next check if the user is logged in by checking if we have a user object for them.
 		        if (user != null) 
 		        {
@@ -215,7 +217,7 @@ public class CrowdServlet extends HttpServlet
 		        	else	        	
 						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);	        	
 		        }
-    		}
+    		//}
 		} catch (ServletException e) {
 			e.printStackTrace();
 		} catch (FileUploadException e) {
@@ -446,10 +448,21 @@ public class CrowdServlet extends HttpServlet
     		// IF IS AN AJAX REQUEST RETURN JSON {microtaskId:id}
     		if(req.getParameter("AJAX")!=null)
     		{
+    			// prepare the json content type
     			resp.setContentType("application/json");
     			PrintWriter out = resp.getWriter();
-    			out.print(microtask.toJSON());
-    			out.flush();
+    			
+    			if (microtask == null) {
+    				resp.sendError(503); 
+    				
+    			} 
+    			else{
+    				out.print(microtask.toJSON());
+        			out.flush();
+    			}
+        
+    			
+    			
     		}
     		else
     			if (microtask == null)
