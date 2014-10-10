@@ -1,22 +1,22 @@
 
 <h2 id="taskHeader">
 	<span id="taskTitle" >{{datas.title}}</span>
-	<span id="taskPoints" class="label label-default">{{microtask.points}} points</span>
+	<span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
 </h2>
 <br />
 
-<div id="taskDescription" class="bg-success">
+<div id="taskDescription" >
 	<div id="promptAreaDiv">	
-		<div id="testFunctionSignaturePrompt" style="display: none">
+		<div ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
 			What are some cases in which this function might be used? Are there any unexpected corner 
 			cases that might not work?
 		</div>
 		
-		<div ng-show="microtask.promptType==FUNCTION_SIGNATURE" >
+		<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
 		    The following issue was reported with the following test case:<BR><BR>
 		    
-		    <div class="alert alert-info">disputed description</div>		
-			<div class="alert alert-error">disputed testcase</div>		    
+		    <div class="alert alert-info">{{microtask.disputedDescription}}</div>		
+			<div class="alert alert-error">{{microtask.disputedTestCase}}</div>		    
 		    
 		    Can you fix the test case (and others if necessary) to address the issue?<BR><BR> 
 		    (Note: if the above test case is not below, the test case has already been changed,
@@ -50,16 +50,33 @@
 	</div>
 </div>
 
-<div class=" bg-warning">
+<div id="taskForm" >
 	<div>
-		<span id="" ng-repeat="(index,test) in testCases">
-			<input type="text" ng-model="testCases[index].text" class="form-control form-control-90" id="" placeholder="Describe a test case"/>				
-			<button ng-click="deleteTestCase(index)" class="closeButton">x</button>
-		</span>
+		<b>Test Cases</b><br/>
+		<ng-form ng-if="testCases.length > 0" name="testCaseForm" ng-repeat="(index,test) in testCases" >
+			<div class="form-group" ng-class="{ 'has-error': testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid , 'has-success': testCaseForm.testcase.$valid}" >
+		
+				<label class="col-md-1" for="testcase">#{{index+1}}: </label>
+				<span class="col-md-10"> 
+					<input class="form-control input-sm" type="text" ng-model="testCases[index].text" name="testcase" placeholder="Describe a test case" required/>
+					<ul class="help-block" ng-show="testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid">
+						<li ng-show="testCaseForm.testcase.$error.required" >
+							This field is required! 
+							<button class="btn-link" ng-click="deleteTestCase(index)">remove this test case</button>
+						</li>
+					</ul>
+				</span>
+				<div class="col-md-1" ><button ng-click="deleteTestCase(index)" class="btn btn-sm">X</button></div>
+			</div>
+		</ng-form>
+		<span ng-if="testCases.length == 0" >write at least one test case</span>
 	</div>
-	<button ng-click="addTestCase()" class="btn btn-sm">Add test case</button>				
+	<div ng-show="fillOutLast" class="alert alert-danger" >
+		Before adding a new test case, you have to fill out the last one you added!
+		<a ng-click="setFillOutLast(false)">dismiss</a>
+	</div>
+	<button ng-click="addTestCase()" class="btn btn-sm">Add test case</button>	
 </div>
-
 	
 <div id="popUp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
 	<div class="modal-dialog">
@@ -74,3 +91,10 @@
 		</div>
 	</div>
 </div>
+
+<br/>
+<div class="task-buttons pull-right">
+	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid || testCases.length==0" >Submit</button>
+	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
+</div>
+<div class="clearfix"></div>

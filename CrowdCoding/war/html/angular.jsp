@@ -83,17 +83,12 @@
 				<ng-include src="'/html/templates/news_panel.html'"></ng-include>
 			</div>
 
-			<div id="container" class="col-md-8 col-xs-8">
+			<div id="container" class="col-md-8 col-xs-8" ng-controller="MicrotaskController" >
 				
 				
-				<form id="task" ng-controller="MicrotaskController">
+				<form id="task" name="form" novalidate ng-class="{ 'form-horizontal': inlineForm }">
+					
 					<ng-include src="templatePath"></ng-include>
-					<br/>
-					<div class="task-buttons pull-right">
-						<button ng-click="$emit('submitMicrotask')" class="btn btn-primary">Submit</button>
-						<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
-					</div>
-					<div class="clearfix"></div>
 				</form>
 			</div>
 
@@ -136,6 +131,9 @@
 	
 	<script src="/js/testRunner.js"></script>
 	<script src="/js/functionSupport.js"></script>
+	<script src="/js/errorCheck.js"></script>
+
+	<script src="/js/JSONValidator.js"></script>
 	
 	<script src="/js/app.js"></script>
 	
@@ -147,6 +145,7 @@
 	<script src="/js/services/functions.js"></script>
 	<script src="/js/services/user.js"></script>
 	<script src="/js/services/testRunner.js"></script>
+	<script src="/js/directives/directives.js"></script>
 	<script src="/js/controllers/controllers.js"></script>
     <script src="http://codemirror.net/lib/codemirror.js"></script> 
  	<script src="http://codemirror.net/mode/javascript/javascript.js"></script> 

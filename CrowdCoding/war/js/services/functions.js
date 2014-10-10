@@ -97,10 +97,14 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function get(id)
 		{
-			if (functions.hasOwnProperty(id))		
-				return functions[id];
-			else
-				return null;
+			var funct = null;
+			$.each(functions, function(i, value)
+			{
+				if(value.id == id){
+					funct = value;
+				}
+			});
+			return funct;
 		}
 		
 		// Get the function declaration and mock implementation for the function with the specified id.

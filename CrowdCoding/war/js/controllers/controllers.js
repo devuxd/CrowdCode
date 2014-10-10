@@ -52,6 +52,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// initialize microtask and templatePath
 	$scope.funct = {};
+	$scope.inlineForm = false;
 	$scope.test = {};
 	$scope.testData = {};
 	$scope.microtask = {};
@@ -73,7 +74,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					var testCode = 'equal('+$scope.funct.name+'(';
 					angular.forEach($scope.testData.inputs, function(value, key) {
 					  testCode +=  value ;
-					  testCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
+					  tangularestCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
 					});
 					testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\')' ; 
 					// return jSON object
@@ -85,6 +86,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 			},
 			'WriteTestCases': function(){
+				formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
 			},
 			'WriteFunction': function(){
 				
@@ -125,60 +127,43 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 			},
 			'WriteTestCases': function(){
+				$scope.inlineForm = true;
 				// initialize testCases
 				// if microtask.submission and microtask.submission.testCases are defined 
 				// assign available testCases otherwise initialize a new array
 				$scope.testCases = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.testCases) ) ? 
 								   $scope.microtask.submission.testCases : [] ;
-
+				$scope.fillOutLast = false;
+				$scope.setFillOutLast = function(val){
+					if(val!=true && val!=false) return; 
+					$scope.fillOutLast = val;
+				};
 			    // addTestCase and deleteTestCase utils function for microtask WRITE TEST CASES
 				$scope.addTestCase = function(){
-					var testCase = { text: '', added: true, deleted: false, id: $scope.testCases.length };
-					$scope.testCases.push(testCase);	
+					console.log("adding test case");
+					var lastTestCase = $scope.testCases[$scope.testCases.length-1];
+					if(lastTestCase==null || lastTestCase.text!=""){
+						$scope.setFillOutLast(false);
+						var testCase = { text: '', added: true, deleted: false, id: $scope.testCases.length };
+						$scope.testCases.push(testCase);
+					}
+					else $scope.setFillOutLast(true);
 				}
 				$scope.deleteTestCase = function(index){
 					$scope.testCases.splice(index,1);
 				}
 			},
 			'WriteFunction': function(){
-				
-				
-				
-				$scope.code="";
-				$scope.code= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-				
-				
-	/*
-				var editorCode          = '<%=functionCode%>';
-				var functionName        = '<%=microtask.getFunction().getName()%>';
-				var allTheFunctionCode  = '<%=allFunctionCodeInSystem%>';
-				var showSketchPrompt    = <%=(promptType == PromptType.SKETCH)%>;
-				var showDescriptionChangedPrompt = <%=(promptType == PromptType.DESCRIPTION_CHANGE)%>;
+                
+                var collectedCode= functionEditorService.checkAndCollectCode();
+                
+                console.log('error '+collectedCode.errors);
+                //TODO se error =false submit if true popup
+                console.log('collected code'+collectedCode.code);
+                
+                formData=collectedCode.code;
 
-				$(document).ready(function() {
-					// Based on the prompt type, load and setup the appropriate prompt divs
-					if (showSketchPrompt)
-						$("#sketchPrompt").css('display', "block");
-					if (showDescriptionChangedPrompt) {
-						$('#descriptionChangedPrompt').prettyTextDiff();
-						$("#descriptionChangedPrompt").css('display', "block");
-					}
-
-					$('#skipBtn').click(function() {
-						skip();
-					});
-
-					$('#taskForm').submit(function() {
-						var result = checkAndCollectCode();
-						if (!result.errors)
-							submit(result.code);
-						else {
-							$("#popUp").modal();
-						}
-						// Disable default submit functionality.
-						return false;
-					});
-				});*/
+                
 			},
 			'WriteFunctionDescription': function(){
 			},
@@ -191,6 +176,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// inizialize template and microtask-related values
 	$scope.load = function(){
 
+		$scope.inlineForm = false; // reset form as non-inline
 		console.log("loading microtask");
 
 		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
@@ -217,7 +203,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				if( angular.isDefined(functionId) ) {
 					$scope.funct = functionsService.get(functionId);
 				}
-
 				// retrieve the related test 
 				var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : 0;
 				if( angular.isDefined(testId) ) {
@@ -265,13 +250,23 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		// var submissionRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID + '/submission');
 		// submissionRef.set(formData);
 		console.log(formData);
+		$http.post('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
+			success(function(data, status, headers, config) {
+				console.log("submit success");
+				$scope.microtask.submission = formData;
+				$scope.microtask.$save();
+			  	$scope.load();
+		  	})
+		  	.error(function(data, status, headers, config) {
+		  		console.log("submit error");
+  		 	});
 	});
 	
 	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask',function(event,data){
+		  console.log("skip fired");
 		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
 		  success(function(data, status, headers, config) {
-			  console.log("skip fired");
 			  $scope.load();
 		  });
 	});
