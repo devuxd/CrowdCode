@@ -156,7 +156,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			'WriteFunction': function(){
                 
                 $scope.code="";
-                $scope.code= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+                $scope.code+= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
 
                 
@@ -435,34 +435,12 @@ myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase'
 	
  };
   
-  
-  
- 		
-			
-	
-		//positionCursorAtStart();
-	/*	
-		var marks = [];
-		highlightPseudoSegments(marks);
-	 	
-	 	// If we are editing a function that is a client request and starts with CR, make the header
-	 	// readonly.
-		if (functionName.startsWith('CR'))
-			makeHeaderAndParameterReadOnly();
-		
-	 	
-	 	// Find the list of all function names elsewhere in the system
-	 	var functionNames = buildFunctionNames();
-	 	
-	 	$('#errorMessages').hide();
-	 	
-	 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
-	 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
-	    // typing).
-	    var changeTimeout;
-	 	myCodeMirror.on("change", codeChanged);*/
-	//});
+}]); 
+ myApp.controller('typeBrowserController',  ['$scope','$rootScope','$firebase','$filter','ADTService',function($scope,$rootScope,$firebase,$filter, ADTService) {
 
+  console.log(ADTService.getAllADTs());
+ $scope.ADTs = ADTService.getAllADTs();
+ 		
 
   
   
