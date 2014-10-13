@@ -1,32 +1,12 @@
 <script>
-
-var highlightPseudoCall = false;
-
-
-
-var myCodeMirror = CodeMirror.fromTextArea(code, 
-		{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
-		
-		
-		
-$(document).ready(function(){
+	var myCodeMirror = CodeMirror.fromTextArea(code, 
+			{ autofocus: true, indentUnit: 4, indentWithTabs: true, lineNumbers: true });
 	
-var functionName = clone($('#functionName').html());
-
-var code =clone( $('#codeToDisplay').html());
-
-
-$("#codeToDisplay , #functionName").hide();
-
-	
-	//var a={{microtask.type}};
-	//onsole.log("dwesgsdh"+a );
-
-//console.log({{code}});
+//	console.log("dwesgsdh"+{{microtask.type}});
 	myCodeMirror.setSize(null, 500);
 	var doc = myCodeMirror.getDoc();
 	myCodeMirror.setOption("theme", "vibrant-ink");	 	
-	doc.setValue( code);
+	doc.setValue(editorCode);
 	//positionCursorAtStart();
 	
 	var marks = [];
@@ -48,7 +28,7 @@ $("#codeToDisplay , #functionName").hide();
     // typing).
     var changeTimeout;
  	myCodeMirror.on("change", codeChanged);
-});
+	
  	// Positions the cursor in the CodeMirror instance on the line after the beginning of the function's body
  	// (the line after the opening brace line)
  	function positionCursorAtStart()
@@ -610,6 +590,3 @@ $("#codeToDisplay , #functionName").hide();
 
 <textarea id="code"></textarea>
 <div id = "errorMessages" class="alert alert-error"></div>
-
-<textarea id = "functionName">{{funct.name}}</textarea>
-<textarea id = "codeToDisplay">{{code}}</textarea>

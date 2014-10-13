@@ -8,6 +8,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	var service = new function(){
 		// Private variables	
 		var functions;
+		var loaded = false;
 		
 		// Public functions
 		this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); };
@@ -19,10 +20,10 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
 		this.getMockHeader = function(id) { return getMockHeader(id); };
 		this.renderDescription= function(functionCalled) { return renderDescription(functionCalled); };
-		this.getAllDescribedFunctionCoode = function(idFunction) { return getAllDescribedFunctionCoode(idFunction); };
+		this.getAllDescribedFunctionCode = function(idFunction) { return getAllDescribedFunctionCode(idFunction); };
 		this.getAllDescribedFunctionNames = function(idFunction) { return getAllDescribedFunctionNames(idFunction); };
 	 	this.isValidParamDescription = function(line) { return isValidParamDescription(line); };
-		
+		this.isLoaded = function() { return loaded };
 		
 		// Function bodies
 		function init()
@@ -30,7 +31,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		    // hook from firebase all the functions declarations of the project
 			var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functions = functionsSync.$asArray();
-			functions.$loaded().then(function(){ console.log('functions loaded');  });
+			functions.$loaded().then(function(){ console.log("functions loaded"); });
 		}
 		
 		
@@ -79,7 +80,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		}
 	
 		// Returns all the described function signature except the one with the passed ID 
-		function getAllDescribedFunctionCoode(idFunction)
+		function getAllDescribedFunctionCode(idFunction)
 		{
 
 			var functionsCode = "";	
@@ -98,11 +99,10 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		function get(id)
 		{
 			var funct = null;
-			$.each(functions, function(i, value)
-			{
-				if(value.id == id){
-					funct = value;
-				}
+			angular.forEach(functions, function(value, key) {
+				if( funct==null && value.id == id ) {
+			  		funct = value;
+			  	}
 			});
 			return funct;
 		}

@@ -9,11 +9,11 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 		var nameToADT=[];
 		var ADTs=[];
 		// Public functions
-		this.init = function() { return init(); };
-		this.isValidTypeName = function(name) { return isValidTypeName(name); };
-		this.validateFunctionName = function(inputText, ignoreEmpty) { return validateFunctionName(inputText, ignoreEmpty); };
-		this.validateParamName = function(inputText, ignoreEmpty) { return validateParamName(inputText, ignoreEmpty); };
-		this.validateParamTypeName = function(inputText, paramName, ignoreEmpty) { return validateParamTypeName(inputText, paramName, ignoreEmpty); };
+		this.init                   = function() { return init(); };
+		this.isValidTypeName        = function(name) { return isValidTypeName(name); };
+		this.validateFunctionName   = function(inputText, ignoreEmpty) { return validateFunctionName(inputText, ignoreEmpty); };
+		this.validateParamName      = function(inputText, ignoreEmpty) { return validateParamName(inputText, ignoreEmpty); };
+		this.validateParamTypeName  = function(inputText, paramName, ignoreEmpty) { return validateParamTypeName(inputText, paramName, ignoreEmpty); };
 		this.validateReturnTypeName = function(inputText, ignoreEmpty) { return validateReturnTypeName(inputText, ignoreEmpty); };
 		this.getAllADTs = function() { return getAllADTs(); };
 		
@@ -23,23 +23,24 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			
 			addDefaultADT();
 			
+
 			// hook from firebase all the functions declarations of the project
 			var ADTSync = $firebase(new Firebase($rootScope.firebaseURL+'/ADTs/ADTs'));
+
 			ADTs = ADTSync.$asArray();
 			ADTs.$loaded().then(function(){ 
 				if(ADTs.length>0){
 					for(var i; i<ADTs.length;i++ ){
-					
 						typeNames.push(ADTs[i].name);
-						nameToADT[ADTs[i].name] = ADTs[i];	
-						
+						nameToADT[ADTs[i].name] = ADTs[i];		
 					}
 				}
 			
 			});
 			
 	
-	}
+		}
+
 		// Adds type names for primitives
 		function addDefaultADT()
 		{
@@ -53,38 +54,38 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			return ADTs;
 		}
 	
-	// Returns true if name is a valid type name and false otherwise.
-	function isValidTypeName(name)
-	{
-		var simpleName;	
-		// Check if there is any array characters at the end. If so, split off that portion of the string. 
-		var arrayIndex = name.indexOf('[]');
-		if (arrayIndex != -1)
-			simpleName = name.substring(0, arrayIndex);
-		else
-			simpleName = name;
-		
-		if (typeNames.indexOf(simpleName) == -1)
-			return false;
-		else if (arrayIndex != -1)
+		// Returns true if name is a valid type name and false otherwise.
+		function isValidTypeName(name)
 		{
-			// Check that the array suffix contains only matched brackets..
-			var suffix = name.substring(arrayIndex);
-			if (suffix != '[]' && suffix != '[][]' && suffix != '[][][]' && suffix != '[][][][]')
-				return false;			
-		}
+			var simpleName;	
+			// Check if there is any array characters at the end. If so, split off that portion of the string. 
+			var arrayIndex = name.indexOf('[]');
+			if (arrayIndex != -1)
+				simpleName = name.substring(0, arrayIndex);
+			else
+				simpleName = name;
 			
-		return true;		
-	}
-	
-	
-	/*
-	 *  ADTandDataCheck check the integrity and validity of the data.
-	 */
-
-
-
+			if (typeNames.indexOf(simpleName) == -1)
+				return false;
+			else if (arrayIndex != -1)
+			{
+				// Check that the array suffix contains only matched brackets..
+				var suffix = name.substring(arrayIndex);
+				if (suffix != '[]' && suffix != '[][]' && suffix != '[][][]' && suffix != '[][][][]')
+					return false;			
+			}
+				
+			return true;		
+		}
 		
+		
+		/*
+		 *  ADTandDataCheck check the integrity and validity of the data.
+		 */
+
+
+
+			
 		function validateFunctionName(inputText, ignoreEmpty)
 		{
 			var value = inputText.val().trim();
@@ -92,12 +93,11 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			
 			var nameList=[];
 				
-				$("input[id=FunctionName").each(function(){
-				
-					var value=($(this).val()).trim();
-					nameList.push(value);
-				
-				
+			$("input[id=FunctionName").each(function(){
+			
+				var value=($(this).val()).trim();
+				nameList.push(value);
+			
 			});
 			
 			
@@ -120,7 +120,8 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			else
 				return '';
 		}
-		
+
+			
 		function hasDuplicates(nameList, value) {
 		    var valuesSoFar = {};
 		    for (var i = 0; i < array.length; ++i) {
@@ -132,7 +133,7 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 		    }
 		    return false;
 		}
-		
+			
 		function validateParamName(inputText, ignoreEmpty)
 		{
 			var value = inputText.val().trim();
@@ -153,7 +154,7 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			else
 				return '';
 		}
-		
+			
 		function validateParamTypeName(inputText, paramName, ignoreEmpty)
 		{
 			
@@ -171,7 +172,7 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			else
 				return '';
 		}
-		
+			
 		function validateReturnTypeName(inputText, ignoreEmpty)
 		{
 			var value = inputText.val().trim();
@@ -187,13 +188,8 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';
 			else
 				return '';
-		}
+		}	
 
-		
-
-
-
-		
 	}
 	
 	return service;
