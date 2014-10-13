@@ -15,7 +15,7 @@ function Functions()
 	this.initialize = function() {};     
 	
 	// Public functions
-	this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); }
+	this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); };
 	this.functionAdded = function(addedFunction) { return functionAdded(addedFunction); };
 	this.functionChanged = function(changedFunction) { return functionChanged(changedFunction); };	
 	this.allFunctionIDs = function() { return allFunctionIDs(); };

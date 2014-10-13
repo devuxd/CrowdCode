@@ -1,8 +1,61 @@
-<h1>{{microtask.title}}asd</h1>
+  
+ <h2 id="taskHeader">
+ 	<span id="taskTitle" >{{ microtask.type }}</span>
+ 	<span id="taskPoints" class="label label-default">{{ microtask.points}} points</span>
+ </h2>
 
-<br/>
-<div class="task-buttons pull-right">
-	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
-	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
-</div>
-<div class="clearfix"></div>
+
+ <br />
+ <div>
+ <div id="taskDescription" class="bg-success">
+ 	<p>
+ 		<strong>Not sure how to do something? </strong> Indicate a line as <span
+ 			class="pseudoCode">pseudocode</span> by beginning it with <span
+ 			class="pseudoCode">'//#'</span>.
+ 	</p>
+
+ 	<p>
+ 		<strong>Want to call a function? </strong>Write a <span
+ 			class="pseudoCall">pseudocall</span> beginning it with <span
+ 			class="pseudoCall">'//! functionName(arguments,..)'</span>
+ 	</p>
+
+ 	<p>
+ 		Note that all function calls are pass by value (i.e., if you pass an
+ 		object to a function and the function changes the object you will not
+ 		see the change).
+ 	</p>
+
+ 	<p>
+ 		<strong>IMPORTANT:</strong> If you think the function may require more
+ 		than a few minutes to write, please use pseudocode and psuedocalls to
+ 		break up the function into smaller pieces that others can work on. If
+ 		you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW!
+ 	</p>
+ 	
+ 	<%@include file="/html/elements/typeBrowser.jsp" %><BR>
+ </div>
+
+ <div id="taskForm" >
+ 	
+	<div ng-controller="FunctionEditorController">
+		<label for="code">Write function:</label>
+		<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+		<textarea function-validator class="form-control" name="code" ng-model="code" ></textarea>
+		<ul class="help-block" ng-show="form.code.$error.function">
+			<span>There are some errors. Please fix them before submit:</span>
+			<ul ng-repeat="error in form.code.$error.function_errors">
+				<li>{{error}}</li>
+			</ul>
+		</ul>
+	</div>
+	<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
+	<span class="clearfix"></span>
+ </div>
+
+ <br/>
+ <div class="task-buttons pull-right">
+ 	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
+ 	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
+ </div>
+ <div class="clearfix"></div> 

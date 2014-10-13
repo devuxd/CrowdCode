@@ -73,19 +73,29 @@
 	    <ng-form name="inputForm" ng-repeat="(index,paramName) in funct.paramNames" >
 			<div class="form-group" ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" >
 				<label for="input">{{paramName}} ({{funct.paramTypes[index]}}): </label>
-				<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" ></textarea>
+				<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json ></textarea>
 				<ul class="help-block" ng-show="inputForm.input.$dirty && inputForm.input.$invalid">
 					<li ng-show="inputForm.input.$error.required" >This field is required!</li>
-					<li ng-show="inputForm.input.$error.json" >{{inputForm.input.$error.json_message}}</li>
+					<li ng-show="inputForm.input.$error.json" > 
+						<span>There are JSON errors. Please fix them:</span>
+						<ul ng-repeat="error in inputForm.input.$error.json_errors">
+							<li>{{error}}</li>
+						</ul>
+					</li>
 				</ul>
 			</div>			
 		</ng-form>
 		<div class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
 			<label for="output">expected Return value ({{funct.returnType}}):</label>
-			<textarea class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" ></textarea>
+			<textarea class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json ></textarea>
 			<ul class="help-block" ng-show="form.output.$dirty && form.output.$invalid">
 				<li ng-show="form.output.$error.required" >This field is required!</li>
-				<li ng-show="form.output.$error.json" >Some errors with this JSON!</li>
+				<li ng-show="inputForm.input.$error.json" > 
+					<span>There are JSON errors. Please fix them:</span>
+					<ul ng-repeat="error in inputForm.input.$error.json_errors">
+						<li>{{error}}</li>
+					</ul>
+				</li>
 			</ul>
 		</div>
 	</div>
