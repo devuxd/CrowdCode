@@ -38,17 +38,15 @@
 
  <div id="taskForm" >
  	
-	<div ng-controller="FunctionEditorController">
-		<label for="code">Write function:</label>
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
-		<textarea function-validator class="form-control" name="code" ng-model="code" ></textarea>
-		<ul class="help-block" ng-show="form.code.$error.function">
-			<span>There are some errors. Please fix them before submit:</span>
-			<ul ng-repeat="error in form.code.$error.function_errors">
-				<li>{{error}}</li>
-			</ul>
+	<label for="code">Write function:</label>
+	<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+	<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+	<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
+		<span>There are some errors. Please fix them before submit:</span>
+		<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
+			<li>{{error}}</li>
 		</ul>
-	</div>
+	</ul>
 	<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
 	<span class="clearfix"></span>
  </div>
