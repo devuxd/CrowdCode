@@ -308,7 +308,9 @@
 				
 		    	setupADTData();		    	
 			}
-			
+			typeNames.push('String');
+			typeNames.push('Number');
+			typeNames.push('Boolean');		
 			// Wait for the ADTs to load before loading the microtask!
 	        loadMicrotask();
 		});
@@ -326,9 +328,7 @@
 			nameToADT[allADTs[i].name] = allADTs[i];	
 		}
 		
-		typeNames.push('String');
-		typeNames.push('Number');
-		typeNames.push('Boolean');		
+		
 	}	
 	
 	// Returns true if name is a valid type name and false otherwise.

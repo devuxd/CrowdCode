@@ -7,7 +7,7 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 		
 		var typeNames=[];
 		var nameToADT=[];
-		
+		var ADTs=[];
 		// Public functions
 		this.init                   = function() { return init(); };
 		this.isValidTypeName        = function(name) { return isValidTypeName(name); };
@@ -15,7 +15,7 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 		this.validateParamName      = function(inputText, ignoreEmpty) { return validateParamName(inputText, ignoreEmpty); };
 		this.validateParamTypeName  = function(inputText, paramName, ignoreEmpty) { return validateParamTypeName(inputText, paramName, ignoreEmpty); };
 		this.validateReturnTypeName = function(inputText, ignoreEmpty) { return validateReturnTypeName(inputText, ignoreEmpty); };
-//	 	this.isValidParamDescription = function() { return isValidParamDescription(); };
+		this.getAllADTs = function() { return getAllADTs(); };
 		
 		
 		function init()
@@ -23,8 +23,10 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			
 			addDefaultADT();
 			
-			// hook from firebase all the adt of the project
-			var ADTSync = $firebase(new Firebase($rootScope.firebaseURL+'/ADTs'));
+
+			// hook from firebase all the functions declarations of the project
+			var ADTSync = $firebase(new Firebase($rootScope.firebaseURL+'/ADTs/ADTs'));
+
 			ADTs = ADTSync.$asArray();
 			ADTs.$loaded().then(function(){ 
 				if(ADTs.length>0){
@@ -47,7 +49,10 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			typeNames.push('Boolean');	
 		}
 		
-	
+		function getAllADTs()
+		{
+			return ADTs;
+		}
 	
 		// Returns true if name is a valid type name and false otherwise.
 		function isValidTypeName(name)

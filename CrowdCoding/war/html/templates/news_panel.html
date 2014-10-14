@@ -2,7 +2,7 @@
 <div id="News" class="panel panel-default" ng-controller="NewsController">
 	<div class="panel-heading">Recent tasks</div>
 	<table class="panel-body">
-		<tr g-if="news.length > 0" ng-repeat="n in news">
+		<tr ng-if="news.length > 0" ng-repeat="n in news">
 			<td ng-if="n.score == 0" class="bg-success">Your review work has awarded you with <b>{{n.points}} points</b></td>
 			<td ng-if="n.score != 0 && n.score < 3" class="bg-warning">Your work on {{n.description}} has been rejected</td>
 			<td ng-if="n.score >= 3" class="bg-success">Your work on {{n.description}} has awarded you with <b>{{n.points}} points</b></td>
