@@ -40,6 +40,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
 	var templates = {
+		'ReuseSearch':'reuse_search',
 		'WriteFunction':'write_function',
 		'WriteFunctionDescription':'write_function_description',
 		'WriteTest':'write_test',
@@ -57,9 +58,29 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.testData = {};
 	$scope.microtask = {};
 	$scope.templatePath = "";//"/html/templates/microtasks/";
+	$scope.reuseSearch={};
+	$scope.reuseSearch.functions=[];
 
 	// collect form data is different for each microtask
 	var collectFormData = {
+			'ReuseSearch': function(){
+				
+			
+				//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
+				if($scope.reuseSearch.selected==-1)
+				{
+					formData = {  functionName: "",
+								  noFunction: true
+								};
+				}
+				else
+				{
+					formData = { functionName: $scope.reuseSearch.functions[$scope.reuseSearch.selected].value.name,
+								 noFunction: false
+							};	
+				}
+							
+			},
 			'WriteTest': function(){
 				if($scope.dispute){
 					// return jSON object
@@ -107,6 +128,22 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	
 	// initialize form data is different for each microtask
 	var initializeFormData = {
+			
+			
+			'ReuseSearch': function(){
+			
+				$scope.reuseSearch.selected=-2;
+				$scope.reuseSearch.functions= [];
+				
+				
+				$scope.doSearch = function(){ 	
+					$scope.reuseSearch.selected=-2;
+					$scope.reuseSearch.functions= functionsService.findMatches($scope.reuseSearch.text);
+				};
+		
+				
+				
+			},
 			'WriteTest': function(){
 				// initialize testData
 				// if microtask.submission and microtask.submission.simpleTestInputs are defined
@@ -183,8 +220,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			// load the microtask data
 			$scope.microtask = sync.$asObject();
 			$scope.microtask.$loaded().then(function(){
-
-
+			//	$scope.inputSearch="";
 
 			  	//choose the right template
 			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
@@ -244,6 +280,9 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		// Push the microtask submit data onto the Firebase history stream
 		// var submissionRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID + '/submission');
 		// submissionRef.set(formData);
+		
+		
+		
 		console.log(formData);
 		$http.post('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
 			success(function(data, status, headers, config) {
@@ -381,8 +420,13 @@ myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','
 
 }]); 
 
+///////////////////////////////////
+//TYPE BROWSER    CONTROLLER     //
+///////////////////////////////////
+myApp.controller('typeBrowserController',  ['$scope','$rootScope','$firebase','$filter','ADTService',function($scope,$rootScope,$firebase,$filter, ADTService) {
 
-
+	 $scope.ADTs = ADTService.getAllADTs();
+}]); 
 
 
 
@@ -473,7 +517,7 @@ myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase'
 
 	$scope.codemirrorLoaded = function(myCodeMirror){
 	
-<<<<<<< HEAD
+/*
 	// If we are editing a function that is a client request and starts with CR, make the header
  	// readonly.
 	if ($scope.funct.name.startsWith('CR'))
@@ -497,7 +541,7 @@ myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase'
   console.log(ADTService.getAllADTs());
  $scope.ADTs = ADTService.getAllADTs();
  		
-=======
+*/
 		codemirror = myCodeMirror;
 		var allFunctionNames = functionsService.getAllDescribedFunctionNames($scope.$parent.funct.id);
 		var allFunctionCode  = functionsService.getAllDescribedFunctionCode($scope.$parent.funct.id);
@@ -534,7 +578,7 @@ myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase'
 	
 	
  	};
->>>>>>> origin/arturo
+
 
 }]); 
 

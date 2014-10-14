@@ -23,7 +23,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.getAllDescribedFunctionCode = function(idFunction) { return getAllDescribedFunctionCode(idFunction); };
 		this.getAllDescribedFunctionNames = function(idFunction) { return getAllDescribedFunctionNames(idFunction); };
 	 	this.isValidParamDescription = function(line) { return isValidParamDescription(line); };
-		this.isLoaded = function() { return loaded };
+		this.findMatches = function(searchText) { return findMatches(searchText); };
+		
+	 	this.isLoaded = function() { return loaded };
 		
 		// Function bodies
 		function init()
@@ -314,7 +316,38 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 				return functionData;
 			}
 		
+
+	// Given a String return all the functions that have either or in the description or in the header that String
+	function findMatches(searchText)
+	{
+		var re = new RegExp(searchText);
+		var results = [];
+		
+		$.each(functions, function(index, value) 
+		{
+			var score = computeMatchScore(value, re);
+			if (score > 0)
+				results.push({ 'score': score, 'value': value});							
+		});
+		
+		return results;
 	}
 	
+	function computeMatchScore (functionDescription, re) 
+	{
+		// Loop over each piece of the function description. For each piece that matches regex,
+		// add one to score. For matches to function name, add 5.
+		var score = 0;
+		
+		if (re.test(functionDescription.name)) 
+			score += 5;
+		if (re.test(functionDescription.description)) 
+			score += 1;
+		if (re.test(functionDescription.header)) 
+			score += 1;
+
+	    return score;
+	}
+	}
 	return service;
 }]); 
