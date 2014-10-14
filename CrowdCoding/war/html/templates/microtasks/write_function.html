@@ -6,8 +6,22 @@
 
 
  <br />
- <div>
  <div id="taskDescription" class="bg-success">
+
+
+	<div id="sketchPrompt" ng-show="microtask.promptType=='SKETCH'">
+		Can you implement the function below? <BR><BR>
+	</div>
+
+	<div id="descriptionChangedPrompt" ng-show="microtask.promptType=='DESCRIPTION_CHANGE'">
+		The description of a function called in the code below has changed. Can you update the code
+		(if necessary)? <BR>
+		
+		<span class="original" style="display: none"><%=microtask.getOldFullDescription()%></span>
+	  	<span class="changed" style="display: none"><%=microtask.getNewFullDescription()%></span>
+		<span id="diff" class="diff"></span><BR><BR>
+	</div>	
+
  	<p>
  		<strong>Not sure how to do something? </strong> Indicate a line as <span
  			class="pseudoCode">pseudocode</span> by beginning it with <span
