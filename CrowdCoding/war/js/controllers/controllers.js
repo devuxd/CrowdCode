@@ -160,6 +160,10 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			
 			'ReuseSearch': function(){
 			
+				
+				//Retreves the code of the function that generated the pseudocall
+				$scope.reuseSearch.code=functionsService.get($scope.microtask.callerID).code;
+				
 				// set selected to -2 to initialize the default value
 				//-2 nothing selected (need an action to submit)
 				//-1 no function does this

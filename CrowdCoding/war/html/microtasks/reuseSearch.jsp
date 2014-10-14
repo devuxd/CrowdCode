@@ -25,6 +25,7 @@
 	
 	var codeBoxCode = '<%= microtask.getCaller().getEscapedCode() %>';	
 	
+	console.log("code :  "+codeBoxCode);
 	$(document).ready(function() 
 	{
 		$('#noFunction').click(selectNoFunction);

@@ -12,8 +12,13 @@
 	Use the search box to see if a function exists to do this. Otherwise, select "No function does this".
 	<BR><BR>
 	
-<!--	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
-	<div id="callContext" class="collapse"><div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div></div><BR>-->
+	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
+	<div id="callContext" class="collapse">
+		<div class="codemirrorBox">
+			<textarea id="readonlyCodeBox">{{reuseSearch.code}}</textarea>	
+		</div>
+	</div>
+	<BR>
 </div>
 <div class=" bg-warning">
 	<input type="text" id="SearchText" class="input-large" ng-model="reuseSearch.text" ng-change="doSearch()">
