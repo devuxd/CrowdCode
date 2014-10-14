@@ -87,7 +87,15 @@
 					
 					console.log(paramDescriptions+"   "+ paramNames);
 									
-					
+					var description = "";	
+					var descLines = $(this).find("textarea[id^=FunctionDescription]").val().split("\n");
+
+					for(var i=0; i < descLines.length; i++){
+						
+						if( descLines[i] != "" )
+							description += descLines[i].trim() + "\n";
+					}
+
 					
 					functions.push( { name: $(this).find("input[id^=FunctionName]").val(),
 									returnType: $(this).find("input[id^=FunctionReturnType]").val(),
@@ -95,12 +103,12 @@
 									paramTypes: paramTypes,
 									paramDescriptions: paramDescriptions,
 									header: header,
-									description: $(this).find("textarea[id^=FunctionDescription]").val(),
+									description: description,
 									code: $(this).find("textarea[id^=FunctionCode]").val(),	
 														}); 
 			    });				
 				firebaseRef.set(functions);
-				}});
+			}});
 			
 			
 			$('#load').click(function()

@@ -135,7 +135,6 @@
 	<script src="/js/app.js"></script>
 	
 	<script src="/js/services/services.js"></script>
-	<script src="/js/services/functionEditor.js"></script>
 	<script src="/js/services/ADT.js"></script>
 	
 	<script src="/js/services/tests.js"></script>

@@ -371,11 +371,14 @@ public class Function extends Artifact
 		
 	private void onWorkerEdited(FunctionDTO dto, Project project)
 	{
+		
+		System.out.println("old: "+(this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", ""));
+		System.out.println("new: "+(dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", ""));
+		
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.				
 		String strippedOldFullDescrip = (this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", "");
 		String strippedNewFullDescrip = (dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", "");				
-		System.out.println("comparo "+this.getCompleteDescription()+"\n con"+ dto.getCompleteDescription());
 		
 		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))		
 			notifyDescriptionChanged(dto, project);		

@@ -174,47 +174,35 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		
 		
 		
-		function renderDescription(functionCalled)
+		function getDescriptionFor(id)
 		{
-				var numParams = 0;
-				var fullDescription = '/**\n' + functionCalled.description + '\n'; 
-							
-		    	// Format description into 66 column max lines, with two spaces as starting character
-				fullDescription = wordwrap(fullDescription, 66, '\n  ') + '\n'; 
-				
-				if(functionCalled.paramNames!=undefined && functionCalled.paramNames.length>0)
-				{	
-		    	for(var i=0; i<functionCalled.paramNames.length; i++)
-					{
-					if(functionCalled.paramDescriptions!=undefined && functionCalled.paramDescriptions.length>i)
-						fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' - ' + functionCalled.paramDescriptions[i] + '\n'; 
-					
-					}
-				}
-				
-				fullDescription += '\n  @return ' + functionCalled.returnType + ' \n' + '**/\n\n';
-				
-				return fullDescription;
-				
+			var functionObj = get(id);
+			var numParams = 0;
+			var fullDescription = '/**\n' + functionObj.description + '\n'; 
+						
+	    	// Format description into 66 column max lines, with two spaces as starting character
+			fullDescription = wordwrap(fullDescription, 66, '\n  ') + '\n'; 
 			
+			if(functionObj.paramNames!=undefined && functionObj.paramNames.length>0)
+			{	
+	    	for(var i=0; i<functionObj.paramNames.length; i++)
+				{
+				if(functionObj.paramDescriptions!=undefined && functionObj.paramDescriptions.length>i)
+					fullDescription += '  @param ' + functionObj.paramTypes[i] + ' ' + functionObj.paramNames[i] + ' - ' + functionCalled.paramDescriptions[i] + '\n'; 
+				
+				}
+			}
+			
+			fullDescription += '\n  @return ' + functionObj.returnType + ' \n' + '**/\n\n';
+			
+			return fullDescription;		
 		}
 		
 		
-		function renderHeader(functionName, paramNames)
+		function getHeaderFor(id)
 		{
-			var header = 'function ' + functionName + '(';
-			var numParams = 0;
-			
-			for(var i=0; i<paramNames.lenght; i++)
-			{
-			  	if (numParams > 0)
-	    			header += ', ';
-	     
-		  		header += paramNames[i];	
-			}
-		    header += ')';
-			
-			return header;
+			var functionObj = get(id);
+			return functionObj.header;
 		}
 		
 		//Checks that exists a description of the parameter 

@@ -1,5 +1,20 @@
 <h1>{{microtask.title}}</h1>
 
+<div id="taskDescription" class="bg-success">
+	Can you write a description for a function that<BR>
+	<strong><%= microtask.getCallDescription() %></strong><BR>	
+	
+	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
+	<div id="callContext" class="collapse"><div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div></div>
+	
+	
+	<%@include file="/html/elements/typeBrowser.jsp" %><BR>
+</div>
+
+<div id="taskForm" action="#">
+	
+		<%@include file="/html/elements/signatureEditor.jsp" %>
+</div>
 <br/>
 <div class="task-buttons pull-right">
 	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>

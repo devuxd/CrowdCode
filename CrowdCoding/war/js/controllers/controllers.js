@@ -1,107 +1,4 @@
-// Highlight regions of code that  pseudocalls or pseudocode
-	function highlightPseudoSegments(codemirror,marks,highlightPseudoCall){
-		var text = codemirror.getValue();		
 
-		// Clear the old marks (if any)
-		$.each(marks, function(index, mark)
-		{
-			mark.clear();
-		});
-		
-			
- 		// Depending on the state of CodeMirror, we might not get code back. 
- 		// In this case, do nothing
- 		if(typeof text === 'undefined')
- 		{
- 			return;
- 		}; 		
- 		
- 		var lines = text.split('\n');
-		$.each(lines, function(i, line)
-		{
-			var pseudoCallCol = line.indexOf('//!');
-			if (pseudoCallCol != -1)
-			 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol}, 
-			 			     {line: i, ch: line.length}, 
-			 			     {className: 'pseudoCall', inclusiveRight: true }));
-			
-			var pseudoCodeCol = line.indexOf('//#');
-			if (pseudoCodeCol != -1)
-			 	marks.push(codemirror.markText({line: i, ch: pseudoCodeCol}, 
-			 			     {line: i, ch: line.length}, 
-			 			     {className: 'pseudoCode', inclusiveRight: true }));
-			
-			// If there is currently a pseudocall that is being replaced, highlight that in a special 
-			// color
-			if (highlightPseudoCall != false)
-			{
-				var pseudoCallCol = line.indexOf(highlightPseudoCall);
-				if (pseudoCallCol != -1)
-				 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol}, 
-				 			     {line: i, ch: line.length}, 
-				 			     {className: 'highlightPseudoCall', inclusiveRight: true }));
-			}
-		});
-	}	
-
-
-
-	// Makes the header of the function readonly (not editable in CodeMirror).
-	// The header is the line that starts with 'function'
-	// Note: the code must be loaded into CodeMirror before this function is called.
-	function makeHeaderAndParameterReadOnly(codemirror)
-	{
-				
- 		var text = codemirror.getValue();			
-		
-		// Take the range beginning at the start of the code and ending with the first character of the body
-		// (the opening {})
-		
-		var readOnlyLines = indexesOfTheReadOnlyLines(text);
-		
-		for(var i=0; i<readOnlyLines.length; i++)
-		{
-			codemirror.getDoc().markText({line: readOnlyLines[i], ch: 0}, 
-				{ line: readOnlyLines[i] + 1, ch: 1}, 
-				{ readOnly: true }); 
-		}
-	
-	}
-
-	function getCalleeNames(ast)
- 	{
- 		var calleeNames = []; 		
-		traverse(ast, function (node)
-		{
-			if((node!=null) && (node.type === 'CallExpression'))
-			{
-				// Add it to the list of callee names if we have not seen it before
-				if (calleeNames.indexOf(node.callee.name) == -1)
-					calleeNames.push(node.callee.name);
-			}
-		});
-		return calleeNames;
- 	}
-
- 	// Based on esprima example at http://sevinf.github.io/blog/2012/09/29/esprima-tutorial/
- 	function traverse(node, func) 
- 	{
-	    func(node);
-    	for (var key in node) {
-        	if (node.hasOwnProperty(key)) {
-            	var child = node[key];
-            	if (typeof child === 'object' && child !== null) {
-                	if (Array.isArray(child)) {
-                   	 child.forEach(function(node) {
-                   	     traverse(node, func);
-                   	 });
-                	} else {
-                    	traverse(child, func); 
-               	 }
-            	}
-        	}
-    	}
-	}
 
 
 
@@ -141,11 +38,12 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService','functionEditorService',function($scope,$rootScope,$firebase,$http,testsService,functionsService,functionEditorService) {
+myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService',function($scope,$rootScope,$firebase,$http,testsService,functionsService) {
 	
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
 	var templates = {
+		'ReuseSearch':'reuse_search',
 		'WriteFunction':'write_function',
 		'WriteFunctionDescription':'write_function_description',
 		'WriteTest':'write_test',
@@ -171,6 +69,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// collect form data is different for each microtask
 	var collectFormData = {
+			'ReuseSearch': function(){
+			},
 			'WriteTest': function(){
 				if($scope.dispute){
 					// return jSON object
@@ -213,20 +113,22 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				var linesDescription = fullDescription.split('\n');
 				var name = ast.body[0].id.name;
 				
-				var functionParsed= parseDescription(linesDescription,name);
-				
+				var functionParsed = parseDescription(linesDescription,name);
+				console.log(functionParsed);
+
 				var body = codemirror.getRange(
 						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
 					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
 
 				formData =  { description: functionParsed.description, 
-											 header: functionParsed.header, 
-											 name: name, 
-											 code: body, 
-											 paramNames: functionParsed.paramNames,
-											 paramTypes: functionParsed.paramTypes, 
-											 paramDescriptions: functionParsed.paramDescriptions,
-											 calleeNames: calleeNames};
+							 header:       functionParsed.header, 
+							 name:         name, 
+							 code:         body, 
+							 returnType:   functionParsed.returnType,
+							 paramNames:   functionParsed.paramNames,
+							 paramTypes:   functionParsed.paramTypes, 
+							 paramDescriptions: functionParsed.paramDescriptions,
+							 calleeNames:  calleeNames};
 			},
 			'WriteFunctionDescription': function(){
 			},
@@ -236,6 +138,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	
 	// initialize form data is different for each microtask
 	var initializeFormData = {
+			'ReuseSearch': function(){
+			},
 			'WriteTest': function(){
 				// initialize testData
 				// if microtask.submission and microtask.submission.simpleTestInputs are defined
@@ -280,6 +184,12 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 				$scope.deleteTestCase = function(index){
 					$scope.testCases.splice(index,1);
+				}
+				$scope.codemirrorLoaded = function(codeMirror){
+					codeMirror.setValue(renderDescription($scope.funct) + $scope.funct.header);
+					codeMirror.setOption("readOnly", "true");
+					codeMirror.setOption("theme", "pastel-on-dark");	 	
+					codeMirror.refresh();
 				}
 			},
 			'WriteFunction': function(){
@@ -340,9 +250,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 
 
-			  	//choose the right template
-			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-
 				// assign title 
 				$scope.datas = data;
 
@@ -357,8 +264,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					$scope.test = testsService.get(testId);
 				}
 
-				// initialize form data for the current microtask
-				initializeFormData[$scope.microtask.type]();
 
 				// debug stuff
 				/*
@@ -366,7 +271,12 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				console.log("microtask: ");console.log($scope.microtask); 
 				console.log("function: ");console.log($scope.funct);
 				console.log("test: ");console.log($scope.test);
-				*/				
+						*/	
+				// initialize form data for the current microtask
+				initializeFormData[$scope.microtask.type]();
+
+			  	//choose the right template
+			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 			});
 		  }).
@@ -383,25 +293,13 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask',function(event,data){
 		console.log('submit fired');
-		// call collect form data for the current microtask
-		collectFormData[$scope.microtask.type](); 
-		// SEND THE DATA
-		// // stringify formData and send it via an AJAX POST call
-  //   	var stringifiedData = JSON.stringify( formData );
-		// $.ajax({
-		//     contentType: 'application/json',
-		//     data: stringifiedData,
-		//     type: 'POST',
-		//     url: '/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID,
-		// }).done( function (data) { loadMicrotask();	});   
-		
-		// Push the microtask submit data onto the Firebase history stream
-		// var submissionRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID + '/submission');
-		// submissionRef.set(formData);
 		console.log(formData);
-		/*
-		$http.post('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
-			success(function(data, status, headers, config) {
+		
+		collectFormData[$scope.microtask.type](); 
+
+		
+		$http.post('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData)
+			.success(function(data, status, headers, config) {
 				console.log("submit success");
 				$scope.microtask.submission = formData;
 				$scope.microtask.$save();
@@ -409,12 +307,12 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		  	})
 		  	.error(function(data, status, headers, config) {
 		  		console.log("submit error");
-  		 	});*/
+  		 	});
 	});
 	
 	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask',function(event,data){
-		  console.log("skip fired");
+		console.log("skip fired");
 		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
 		  success(function(data, status, headers, config) {
 			  $scope.load();
