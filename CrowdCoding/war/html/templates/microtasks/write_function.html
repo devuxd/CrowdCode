@@ -6,15 +6,33 @@
 
 
  <br />
- <div>
  <div id="taskDescription" class="bg-success">
+
+
+	<div id="sketchPrompt" ng-show="microtask.promptType=='SKETCH'">
+		Can you implement the function below? <BR><BR>
+	</div>
+
+	<div id="descriptionChangedPrompt" ng-show="microtask.promptType=='DESCRIPTION_CHANGE'">
+		The description of a function called in the code below has changed. Can you update the code
+		(if necessary)? <BR>
+		
+		<span class="original" style="display: none"><%=microtask.getOldFullDescription()%></span>
+	  	<span class="changed" style="display: none"><%=microtask.getNewFullDescription()%></span>
+		<span id="diff" class="diff"></span><BR><BR>
+	</div>	
+
+ 	<p>
+ 		<strong>Not sure how to do something? </strong> Indicate a line as <span
+ 			class="pseudoCode">pseudocode</span> by beginning it with <span
+ 			class="pseudoCode">'//#'</span>.
+ 	</p>
 
  	<p>
  		<strong>Want to call a function? </strong>Write a <span
  			class="pseudoCall">pseudocall</span> beginning it with <span
  			class="pseudoCall">'//! functionName(arguments,..)'</span>
  	</p>
-
 
  	<p>
  		Note that all function calls are pass by value (i.e., if you pass an
@@ -29,22 +47,20 @@
  		you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW!
  	</p>
  	
- 	<ng-include src="'/html/templates/typeBrowser.html'"></ng-include> <BR>
+ 	<%@include file="/html/elements/typeBrowser.jsp" %><BR>
  </div>
 
  <div id="taskForm" >
  	
-	<div ng-controller="FunctionEditorController">
-		<label for="code">Write function:</label>
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
-		<textarea function-validator class="form-control" name="code" ng-model="code" ></textarea>
-		<ul class="help-block" ng-show="form.code.$error.function">
-			<span>There are some errors. Please fix them before submit:</span>
-			<ul ng-repeat="error in form.code.$error.function_errors">
-				<li>{{error}}</li>
-			</ul>
+	<label for="code">Write function:</label>
+	<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+	<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+	<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
+		<span>There are some errors. Please fix them before submit:</span>
+		<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
+			<li>{{error}}</li>
 		</ul>
-	</div>
+	</ul>
 	<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
 	<span class="clearfix"></span>
  </div>

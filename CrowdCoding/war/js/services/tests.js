@@ -66,7 +66,7 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 		
 		function testChanged(changedTest)
 		{
-			tests[changedTest.id] = addedTest;
+			tests[changedTest.id] = changedTest;
 		}	
 		
 		function testDeleted(deletedTest)

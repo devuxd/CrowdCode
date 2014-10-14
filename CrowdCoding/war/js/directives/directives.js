@@ -37,20 +37,23 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     var allFunctionCode;
     var errors = [];
     var code = "";
+    var valid;
 
     return {
         restrict: 'A',
         require: 'ngModel',
         link: function (scope, elm, attrs, ctrl) {
             functionId = attrs.function;
+            valid = true;
             allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
             allFunctionCode  = functionsService.getAllDescribedFunctionCode(functionId);
 
-            ctrl.$parsers.unshift(function (viewValue) {
+            ctrl.$formatters.unshift(function (viewValue) {
 
                 code = viewValue;
-                if(validate()==false){
+                validate(code);
 
+                if(errors.length>0){
                     ctrl.$setValidity('function', false);
                     ctrl.$error.function_errors = errors;
                     return undefined;
@@ -60,7 +63,6 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
                     return viewValue;
                 }
                 
-                return viewValue;
             });
             
         }
@@ -77,29 +79,26 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     
     // Check the code for errors. If there are errors present, write an error message. Returns true 
     // iff there are no errors.
-    function validate(){
+    function validate(code){
         errors = [];
         // 1. check for syntactical errors
         // 2. check for AST error
         if(hasSyntacticalErrors(code)) // if has errors
             if (hasPseudocallsOrPseudocode(code)) { // and has pseudocalls/code
-            
-                var replacedText = replaceFunctionCodeBlock(text);
+                var replacedText = replaceFunctionCodeBlock(code);
                 // If the text does not contain a function block, display an error.
                 if (replacedText == '')
                     errors.push('No function block could be found. Make sure that there is a line that starts with "function".');
-                else if (!hasErrors(replacedText)) {
+                else if (!hasSyntacticalErrors(replacedText)) {
                     var ast = esprima.parse(replacedText, {loc: true});         
-                    if(!hasASTErrors(replacedText, ast)) 
-                        return true;              
+                    return hasASTErrors(code, ast);           
                 }
             }
         else {
             // Code is syntactically valid and should be able to build an ast.
             // Build the ast and do additional checks using the ast.
-            var ast = esprima.parse(code, {loc: true});         
-            if(!hasASTErrors(code, ast)) 
-                return true;
+             var ast = esprima.parse(code, {loc: true});     
+            return hasASTErrors(code, ast);
         }       
         return false;
     }
@@ -126,6 +125,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     // returns true iff there are AST errors
     function hasASTErrors(text, ast)
     {
+        console.log(ast);
         var errorMessages = [];
 
         // Check for AST errors
@@ -259,6 +259,34 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     function hasPseudocallsOrPseudocode(text)
     {
         return (text.indexOf('//!') != -1) || (text.indexOf('//#') != -1);
+    }
+
+    // Replaces function code block with empty code. Function code blocks must start on the line
+    // after a function statement.
+    // Returns a block of text with the code block replaced or '' if no code block can be found
+    function replaceFunctionCodeBlock(text)
+    {     
+        var lines = text.split('\n');           
+        for (var i = 0; i < lines.length; i++)
+        {
+            if (lines[i].startsWith('function'))
+            {       
+                // If there is not any more lines after this one, return an error
+                if (i + 1 >= lines.length - 1)
+                    return '';
+                
+                // Return a string replacing everything from the start of the next line to the end
+                // Concatenate all of the lines together
+                var newText = '';
+                for (var j = 0; j <= i; j++)
+                    newText += lines[j] + '\n';
+                
+                newText += '{}';
+                return newText;     
+            }
+        }
+        
+        return '';
     }
 
 }]); 

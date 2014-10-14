@@ -64,8 +64,16 @@ public class WriteFunction extends Microtask
 	{
 		this.function = (Ref<Function>) Ref.create(function.getKey());		
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteFunctionInFirebase(id, this.microtaskName(), function.getName(), 
-				false, submitValue, function.getID(), this.promptType.name()), id, project);
+		FirebaseService.writeMicrotaskCreated(new WriteFunctionInFirebase(
+				id, 
+				this.microtaskName(), 
+				function.getName(), 
+				false, 
+				submitValue, 
+				function.getID(), 
+				this.promptType.name(),
+				this.oldFullDescription, 
+				this.newFullDescription), id, project);
 		
 		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));

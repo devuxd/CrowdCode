@@ -1,4 +1,7 @@
 
+
+
+
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
@@ -35,7 +38,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService','functionEditorService',function($scope,$rootScope,$firebase,$http,testsService,functionsService,functionEditorService) {
+myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService',function($scope,$rootScope,$firebase,$http,testsService,functionsService) {
 	
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -49,6 +52,10 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	};
 	var formData = {};
 
+	var codemirrorr;
+	var marks = [];
+	var highlightPseudoCall =false;
+	var changeTimeout;
 
 
 	// initialize microtask and templatePath
@@ -61,10 +68,11 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.reuseSearch={};
 	$scope.reuseSearch.functions=[];
 
+
 	// collect form data is different for each microtask
 	var collectFormData = {
 			'ReuseSearch': function(){
-				
+		
 			
 				//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
 				if($scope.reuseSearch.selected==-1)
@@ -110,15 +118,35 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
 			},
 			'WriteFunction': function(){
+				var text = codemirror.getValue();		
+		 		var ast = esprima.parse(text, {loc: true});  
+
+				var calleeNames = getCalleeNames(ast);
 				
-				var collectedCode= functionEditorService.checkAndCollectCode();
+				// Get the text for the function description, header, and code.
+				// Note esprima (the source of line numbers) starts numbering lines at 1, while
+			    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+				var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });	
 				
-				console.log('error '+collectedCode.errors);
-				//TODO se error =false submit if true popup
-				console.log('collected code'+collectedCode.code);
+				var linesDescription = fullDescription.split('\n');
+				var name = ast.body[0].id.name;
 				
-				formData=collectedCode.code;
-				
+				var functionParsed = parseDescription(linesDescription,name);
+				console.log(functionParsed);
+
+				var body = codemirror.getRange(
+						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+				formData =  { description: functionParsed.description, 
+							 header:       functionParsed.header, 
+							 name:         name, 
+							 code:         body, 
+							 returnType:   functionParsed.returnType,
+							 paramNames:   functionParsed.paramNames,
+							 paramTypes:   functionParsed.paramTypes, 
+							 paramDescriptions: functionParsed.paramDescriptions,
+							 calleeNames:  calleeNames};
 			},
 			'WriteFunctionDescription': function(){
 			},
@@ -128,20 +156,22 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	
 	// initialize form data is different for each microtask
 	var initializeFormData = {
-			
+	
 			
 			'ReuseSearch': function(){
 			
+				// set selected to -2 to initialize the default value
+				//-2 nothing selected (need an action to submit)
+				//-1 no function does this
+				// 0- n index of the function selected
 				$scope.reuseSearch.selected=-2;
 				$scope.reuseSearch.functions= [];
 				
-				
+				// search for all the functions that have $scope.reuseSearch.text in theirs description or header
 				$scope.doSearch = function(){ 	
-					$scope.reuseSearch.selected=-2;
-					$scope.reuseSearch.functions= functionsService.findMatches($scope.reuseSearch.text);
+				$scope.reuseSearch.selected=-2;
+				$scope.reuseSearch.functions= functionsService.findMatches($scope.reuseSearch.text);
 				};
-		
-				
 				
 			},
 			'WriteTest': function(){
@@ -189,12 +219,45 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				$scope.deleteTestCase = function(index){
 					$scope.testCases.splice(index,1);
 				}
+				$scope.codemirrorLoaded = function(codeMirror){
+					codeMirror.setValue(renderDescription($scope.funct) + $scope.funct.header);
+					codeMirror.setOption("readOnly", "true");
+					codeMirror.setOption("theme", "pastel-on-dark");	 	
+					codeMirror.refresh();
+				}
 			},
 			'WriteFunction': function(){
-                
-                $scope.code="";
-                $scope.code+= functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
+                $scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+                $scope.codemirrorLoaded = function(myCodeMirror){
+					codemirror = myCodeMirror;
+					codemirror.setOption('autofocus', true);
+					codemirror.setOption('indentUnit', 4);
+					codemirror.setOption('indentWithTabs', true);
+					codemirror.setOption('lineNumbers', true);
+					codemirror.setSize(null, 500);
+					codemirror.setOption("theme", "vibrant-ink");
+					codemirror.doc.setValue($scope.code);
+					
+					highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
+
+					// If we are editing a function that is a client request and starts with CR, make the header
+				 	// readonly.
+					if ($scope.funct.name.startsWith('CR'))
+						makeHeaderAndParameterReadOnly();
+					
+				 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
+				 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
+				    // typing).
+
+					codemirror.on("change", function(){
+						$scope.code = codemirror.doc.getValue();
+						// Mangage code change timeout
+						clearTimeout(changeTimeout);
+						changeTimeout = setTimeout( function(){highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
+							
+					});			
+			 	};
 
 			},
 			'WriteFunctionDescription': function(){
@@ -222,9 +285,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			$scope.microtask.$loaded().then(function(){
 			//	$scope.inputSearch="";
 
-			  	//choose the right template
-			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-
 				// assign title 
 				$scope.datas = data;
 
@@ -239,16 +299,19 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					$scope.test = testsService.get(testId);
 				}
 
-				// initialize form data for the current microtask
-				initializeFormData[$scope.microtask.type]();
 
 				// debug stuff
-				/*
+				
 				console.log("data: ");console.log(data);
 				console.log("microtask: ");console.log($scope.microtask); 
 				console.log("function: ");console.log($scope.funct);
 				console.log("test: ");console.log($scope.test);
-				*/				
+						
+				// initialize form data for the current microtask
+				initializeFormData[$scope.microtask.type]();
+
+			  	//choose the right template
+			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 			});
 		  }).
@@ -265,17 +328,10 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask',function(event,data){
 		console.log('submit fired');
-		// call collect form data for the current microtask
+		console.log(formData);
+		
 		collectFormData[$scope.microtask.type](); 
-		// SEND THE DATA
-		// // stringify formData and send it via an AJAX POST call
-  //   	var stringifiedData = JSON.stringify( formData );
-		// $.ajax({
-		//     contentType: 'application/json',
-		//     data: stringifiedData,
-		//     type: 'POST',
-		//     url: '/<%=projectID%>/submit?type=' + microtaskType + '&id=' + microtaskID,
-		// }).done( function (data) { loadMicrotask();	});   
+
 		
 		// Push the microtask submit data onto the Firebase history stream
 		// var submissionRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID + '/submission');
@@ -286,6 +342,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		console.log(formData);
 		$http.post('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
 			success(function(data, status, headers, config) {
+
 				console.log("submit success");
 				$scope.microtask.submission = formData;
 				$scope.microtask.$save();
@@ -298,7 +355,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	
 	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask',function(event,data){
-		  console.log("skip fired");
+		console.log("skip fired");
 		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
 		  success(function(data, status, headers, config) {
 			  $scope.load();
