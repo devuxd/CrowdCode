@@ -71,6 +71,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.templatePath = "";//"/html/templates/microtasks/";
 	$scope.reuseSearch={};
 	$scope.reuseSearch.functions=[];
+	$scope.newTestCase = "";
+	$scope.viewData = {};
 
 
 	// collect form data is different for each microtask
@@ -238,26 +240,25 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			},
 			'WriteTestCases': function(){
 				$scope.inlineForm = true;
+				$scope.newTestCase = "";
 				// initialize testCases
 				// if microtask.submission and microtask.submission.testCases are defined 
 				// assign available testCases otherwise initialize a new array
 				$scope.testCases = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.testCases) ) ? 
 								   $scope.microtask.submission.testCases : [] ;
-				$scope.fillOutLast = false;
-				$scope.setFillOutLast = function(val){
-					if(val!=true && val!=false) return; 
-					$scope.fillOutLast = val;
-				};
+
 			    // addTestCase and deleteTestCase utils function for microtask WRITE TEST CASES
 				$scope.addTestCase = function(){
 					console.log("adding test case");
-					var lastTestCase = $scope.testCases[$scope.testCases.length-1];
-					if(lastTestCase==null || lastTestCase.text!=""){
-						$scope.setFillOutLast(false);
-						var testCase = { text: '', added: true, deleted: false, id: $scope.testCases.length };
+					console.log($scope.viewData.newTestCase);
+					if($scope.viewData.newTestCase!=undefined && $scope.viewData.newTestCase!=""){
+						
+						var testCase = { text: $scope.viewData.newTestCase, added: true, deleted: false, id: $scope.testCases.length };
 						$scope.testCases.push(testCase);
+						$scope.viewData.newTestCase="";
+						
 					}
-					else $scope.setFillOutLast(true);
+					//else $scope.setFillOutLast(true);
 				}
 				$scope.deleteTestCase = function(index){
 					$scope.testCases.splice(index,1);
@@ -267,7 +268,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				$scope.codemirrorLoaded = function(codeMirror){
 					//codeMirror.setValue(renderDescription($scope.funct) + $scope.funct.header);
 					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");	
+					codeMirror.setOption("theme", "pastel-on-dark");
+					codeMirror.setOption("tabindex", "-1");
 					codeMirror.refresh();
 				}
 			},

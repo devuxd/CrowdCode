@@ -243,7 +243,20 @@ footer.navbar-default { background-color: #3C9764; }
 #taskForm .form-group {
 	margin-left: 0px;
 	margin-right: 0px;
+	margin-bottom: 0px;
 
+}
+
+.transparent { background-color: transparent; }
+
+.testcases {
+}
+
+.testcases .testcase {
+}
+
+hr {
+	margin:0px;
 }
 
 /* Search results styles in reuseSearch */
