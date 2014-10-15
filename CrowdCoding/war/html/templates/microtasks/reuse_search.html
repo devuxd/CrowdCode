@@ -12,10 +12,10 @@
 	Use the search box to see if a function exists to do this. Otherwise, select "No function does this".
 	<BR><BR>
 	
-	<a id="showContext" data-toggle="collapse" data-target="#callContext">Show context</a> 
-	<div id="callContext" class="collapse">
+	<a ng-init="showContext=false" ng-click="showContext = !showContext">Show context</a> 
+	<div id="callContext" ng-show="showContext">
 		<div class="codemirrorBox">
-			<textarea id="readonlyCodeBox">{{reuseSearch.code}}</textarea>	
+			<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
 		</div>
 	</div>
 	<BR>

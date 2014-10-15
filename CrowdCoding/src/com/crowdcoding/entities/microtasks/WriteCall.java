@@ -107,6 +107,7 @@ public class WriteCall extends Microtask
 	public String toJSON(){
 		JSONObject json = new JSONObject();
 		try {
+			json.put("functionId",this.getCaller().getID());
 			json.put("pseudoCall",this.getEscapedPseudoCall());
 			json.put("caller",this.getCaller());
 			json.put("calleeFullDescription",this.getEscapedCalleeFullDescription());

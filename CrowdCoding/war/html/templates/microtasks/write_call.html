@@ -1,6 +1,34 @@
-<h1>{{microtask.title}}</h1>
+  
+ <h2 id="taskHeader">
+ 	<span id="taskTitle" >{{ microtask.type }}</span>
+ 	<span id="taskPoints" class="label label-default">{{ microtask.points}} points</span>
+ </h2>
 
-<br/>
+
+ <br />
+<div id="taskDescription" class="bg-success">
+	<p>
+	The crowd found the following function for the <span class="highlightPseudoCall">pseudocall below</span>:<BR><BR>
+		
+		<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : readonlyCodemirrorLoaded }"></div>
+		Can you replace the pseudocall with a call to this function, or find another way to do it?
+	</p>
+	
+ 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>	
+</div>
+		
+
+<div id="taskForm" >
+	<div class="codemirrorBox" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+	<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+	<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
+		<span>There are some errors. Please fix them before submit:</span>
+		<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
+			<li>{{error}}</li>
+		</ul>
+	</ul>
+</div>
+
 <div class="task-buttons pull-right">
 	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
 	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
