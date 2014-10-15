@@ -13,7 +13,7 @@
 	   		<span class="clearfix"></span>
 
 			Here's the description of the function to test:
-			<div class="codemirrorBox"><textarea id="writeCodeBox">{{funct.description}}</textarea></div>
+			<div class="readOnlyCodemirror"><textarea id="writeCodeBox">{{funct.description}}</textarea></div>
 		</div>
 	
 		<div ng-show="microtask.promptType=='CORRECT'">
@@ -23,7 +23,7 @@
 			Can you fix the test to address this issue?<BR>
 			
 			<BR>Here's the description of the function to test:
-			<div class="codemirrorBox"><textarea id="correctCodeBox">{{funct.description}}</textarea></div>
+			<div class="readOnlyCodemirror"><textarea id="correctCodeBox">{{funct.description}}</textarea></div>
 		</div>
 		
 		<div ng-show="microtask.promptType=='TESTCASE_CHANGED'">
@@ -34,7 +34,7 @@
 			Can you update the test below, if necessary?<BR>
 			
 			<BR>Here's the description of the function to test:
-			<div class="codemirrorBox"><textarea id="testCaseChangedCodeBox">{{funct.description}}</textarea></div>
+			<div class="readOnlyCodemirror" ><textarea id="testCaseChangedCodeBox">{{funct.description}}</textarea></div>
 		</div>
 		
 		<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
@@ -50,7 +50,8 @@
 		</div>
 		
 		
-		<div>here goes the type browser</div>
+		
+ 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>
 
 </div>
 

@@ -27,6 +27,9 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 		userService.logout();
 	}
 	
+
+
+
 	//user.listenForJobs();			
 	testsService.init();		
 	functionsService.init();
@@ -43,6 +46,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
 	var templates = {
+		'Review':'review',
 		'ReuseSearch':'reuse_search',
 		'WriteFunction':'write_function',
 		'WriteFunctionDescription':'write_function_description',
@@ -71,9 +75,10 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// collect form data is different for each microtask
 	var collectFormData = {
+			'Review': function(){
+
+			},
 			'ReuseSearch': function(){
-		
-			
 				//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
 				if($scope.reuseSearch.selected==-1)
 				{
@@ -151,31 +156,65 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			'WriteFunctionDescription': function(){
 			},
 			'WriteCall': function(){
+				
+				var text = codemirror.getValue();		
+		 		var ast = esprima.parse(text, {loc: true});  
+
+				var calleeNames = getCalleeNames(ast);
+				
+				// Get the text for the function description, header, and code.
+				// Note esprima (the source of line numbers) starts numbering lines at 1, while
+			    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+				var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });	
+				
+				var linesDescription = fullDescription.split('\n');
+				var name = ast.body[0].id.name;
+				
+				var functionParsed = parseDescription(linesDescription,name);
+				console.log(functionParsed);
+
+				var body = codemirror.getRange(
+						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+				formData =  { description: functionParsed.description, 
+							 header:       functionParsed.header, 
+							 name:         name, 
+							 code:         body, 
+							 returnType:   functionParsed.returnType,
+							 paramNames:   functionParsed.paramNames,
+							 paramTypes:   functionParsed.paramTypes, 
+							 paramDescriptions: functionParsed.paramDescriptions,
+							 calleeNames:  calleeNames};
 			},
 	};
 	
 	// initialize form data is different for each microtask
 	var initializeFormData = {
-	
-			
+			'Review': function(){
+
+			},
 			'ReuseSearch': function(){
-			
-				
-				//Retreves the code of the function that generated the pseudocall
-				$scope.reuseSearch.code=functionsService.get($scope.microtask.callerID).code;
-				
 				// set selected to -2 to initialize the default value
 				//-2 nothing selected (need an action to submit)
 				//-1 no function does this
 				// 0- n index of the function selected
+				var code = functionsService.get($scope.microtask.callerID).code;
 				$scope.reuseSearch.selected=-2;
 				$scope.reuseSearch.functions= [];
 				
 				// search for all the functions that have $scope.reuseSearch.text in theirs description or header
 				$scope.doSearch = function(){ 	
-				$scope.reuseSearch.selected=-2;
-				$scope.reuseSearch.functions= functionsService.findMatches($scope.reuseSearch.text);
+					$scope.reuseSearch.selected=-2;
+					$scope.reuseSearch.functions= functionsService.findMatches($scope.reuseSearch.text);
 				};
+				$scope.codemirrorLoaded = function(codeMirror){
+					//Retreves the code of the function that generated the pseudocall
+					codeMirror.setValue(code);
+					codeMirror.setOption("readOnly", "true");
+					codeMirror.setOption("theme", "pastel-on-dark");	 	
+					codeMirror.refresh();
+				}
 				
 			},
 			'WriteTest': function(){
@@ -222,11 +261,13 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 				$scope.deleteTestCase = function(index){
 					$scope.testCases.splice(index,1);
+					console.log("deleting test case");
 				}
+				$scope.code = renderDescription($scope.funct) + $scope.funct.header;
 				$scope.codemirrorLoaded = function(codeMirror){
-					codeMirror.setValue(renderDescription($scope.funct) + $scope.funct.header);
+					//codeMirror.setValue(renderDescription($scope.funct) + $scope.funct.header);
 					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");	 	
+					codeMirror.setOption("theme", "pastel-on-dark");	
 					codeMirror.refresh();
 				}
 			},
@@ -267,6 +308,42 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			'WriteFunctionDescription': function(){
 			},
 			'WriteCall': function(){
+				$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+				$scope.readonlyCodemirrorLoaded = function(codeMirror){
+					codeMirror.setValue($scope.datas.pseudoCall);
+					codeMirror.setOption("readOnly", "true");
+					codeMirror.setOption("theme", "pastel-on-dark");	 	
+					codeMirror.refresh();
+				}
+                $scope.codemirrorLoaded = function(myCodeMirror){
+					codemirror = myCodeMirror;
+					codemirror.setOption('autofocus', true);
+					codemirror.setOption('indentUnit', 4);
+					codemirror.setOption('indentWithTabs', true);
+					codemirror.setOption('lineNumbers', true);
+					codemirror.setSize(null, 500);
+					codemirror.setOption("theme", "vibrant-ink");
+					codemirror.doc.setValue($scope.code);
+					
+					highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
+
+					// If we are editing a function that is a client request and starts with CR, make the header
+				 	// readonly.
+					if ($scope.funct.name.startsWith('CR'))
+						makeHeaderAndParameterReadOnly();
+					
+				 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
+				 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
+				    // typing).
+
+					codemirror.on("change", function(){
+						$scope.code = codemirror.doc.getValue();
+						// Mangage code change timeout
+						clearTimeout(changeTimeout);
+						changeTimeout = setTimeout( function(){highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
+							
+					});			
+			 	};
 			},
 	};
 
@@ -274,6 +351,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// request a new microtask from the backend and if success
 	// inizialize template and microtask-related values
 	$scope.load = function(){
+		// set the loading template
+		$scope.templatePath = templatesURL + "loading.html";
 
 		$scope.inlineForm = false; // reset form as non-inline
 		console.log("loading microtask");
@@ -463,22 +542,18 @@ myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter',
 //////////////////////
 myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
    
-  $scope.codemirrorLoaded = function(tutCodeMirror){
-      
-  tutCodeMirror.setOption('autofocus', true);
-  tutCodeMirror.setOption('indentUnit', 4);
-  tutCodeMirror.setOption('indentWithTabs', true);
-  tutCodeMirror.setOption('lineNumbers', true);
-      
-  tutCodeMirror.setSize(null, 500);
-          $.get('/js/javascriptTutorial.txt', function(code) { 
-              tutCodeMirror.getDoc().setValue(code); 
-      
-      });
-      
+	var tutorialText="";
+	$.get('/js/javascriptTutorial.txt', function(code) { 
+		 tutorialText = code;
+	});   
+  	$scope.codemirrorLoaded = function(tutCodeMirror){
+	    tutCodeMirror.getDoc().setValue(tutorialText); 
+		tutCodeMirror.setOption('autofocus', true);
+		tutCodeMirror.setOption('indentUnit', 4);
+		tutCodeMirror.setOption('indentWithTabs', true);
+		tutCodeMirror.setOption('lineNumbers', true);
+	  	tutCodeMirror.setSize(null, 500);
     };
-
-
 }]); 
 
 ///////////////////////////////////
@@ -489,157 +564,4 @@ myApp.controller('typeBrowserController',  ['$scope','$rootScope','$firebase','$
 	 $scope.ADTs = ADTService.getAllADTs();
 }]); 
 
-
-
-
-///////////////////////////////////
-//FUNCTION EDITOR CONTROLLER     //
-///////////////////////////////////
-myApp.controller('FunctionEditorController',  ['$scope','$rootScope','$firebase','$filter','functionsService',function($scope,$rootScope,$firebase,$filter, functionsService) {
- 
-    var codemirror;
-
-	var marks = [];
-	var highlightPseudoCall =false;
-	var changeTimeout;
-
-
- 	// Highlight regions of code that  pseudocalls or pseudocode
-	function highlightPseudoSegments(){
-		
-		var text= codemirror.getValue();
-		console.log("testo"+ text);
-		// Clear the old marks (if any)
-		$.each(marks, function(index, mark)
-		{
-			mark.clear();
-		});
-		
-			
- 		// Depending on the state of CodeMirror, we might not get code back. 
- 		// In this case, do nothing
- 		if(typeof text === 'undefined')
- 		{
- 			return;
- 		}; 		
- 		
- 		var lines = text.split('\n');
-		$.each(lines, function(i, line)
-		{
-			var pseudoCallCol = line.indexOf('//!');
-			if (pseudoCallCol != -1)
-			 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol}, 
-			 			     {line: i, ch: line.length}, 
-			 			     {className: 'pseudoCall', inclusiveRight: true }));
-			
-			var pseudoCodeCol = line.indexOf('//#');
-			if (pseudoCodeCol != -1)
-			 	marks.push(codemirror.markText({line: i, ch: pseudoCodeCol}, 
-			 			     {line: i, ch: line.length}, 
-			 			     {className: 'pseudoCode', inclusiveRight: true }));
-			
-			// If there is currently a pseudocall that is being replaced, highlight that in a special 
-			// color
-			if (highlightPseudoCall != false)
-			{
-				var pseudoCallCol = line.indexOf(highlightPseudoCall);
-				if (pseudoCallCol != -1)
-				 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol}, 
-				 			     {line: i, ch: line.length}, 
-				 			     {className: 'highlightPseudoCall', inclusiveRight: true }));
-			}
-		});
-	}	
-
-	// Makes the header of the function readonly (not editable in CodeMirror).
-	// The header is the line that starts with 'function'
-	// Note: the code must be loaded into CodeMirror before this function is called.
-	function makeHeaderAndParameterReadOnly()
-	{
-		
-				
- 		var text = codemirror.getValue();			
-		
-		// Take the range beginning at the start of the code and ending with the first character of the body
-		// (the opening {})
-		
-		var readOnlyLines = indexesOfTheReadOnlyLines(text);
-		
-		for(var i=0; i<readOnlyLines.length; i++)
-		{
-			codemirror.getDoc().markText({line: readOnlyLines[i], ch: 0}, 
-				{ line: readOnlyLines[i] + 1, ch: 1}, 
-				{ readOnly: true }); 
-		}
-	
-	}
-
-
-
-	$scope.codemirrorLoaded = function(myCodeMirror){
-	
-/*
-	// If we are editing a function that is a client request and starts with CR, make the header
- 	// readonly.
-	if ($scope.funct.name.startsWith('CR'))
-		functionEditorService.makeHeaderAndParameterReadOnly();
-	
- 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
- 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
-    // typing).
-	myCodeMirror.on("change", function(){
-	
-		functionEditorService.codeChanged();
-	});
-	
-	
-	
- };
-  
-}]); 
- myApp.controller('typeBrowserController',  ['$scope','$rootScope','$firebase','$filter','ADTService',function($scope,$rootScope,$firebase,$filter, ADTService) {
-
-  console.log(ADTService.getAllADTs());
- $scope.ADTs = ADTService.getAllADTs();
- 		
-*/
-		codemirror = myCodeMirror;
-		var allFunctionNames = functionsService.getAllDescribedFunctionNames($scope.$parent.funct.id);
-		var allFunctionCode  = functionsService.getAllDescribedFunctionCode($scope.$parent.funct.id);
-	
-		codemirror.setOption('autofocus', true);
-		codemirror.setOption('indentUnit', 4);
-		codemirror.setOption('indentWithTabs', true);
-		codemirror.setOption('lineNumbers', true);
-		codemirror.setSize(null, 500);
-		codemirror.setOption("theme", "vibrant-ink");
-		codemirror.doc.setValue($scope.code);
-		
-		
-		highlightPseudoSegments();
-
-		
-		// If we are editing a function that is a client request and starts with CR, make the header
-	 	// readonly.
-		if ($scope.funct.name.startsWith('CR'))
-			makeHeaderAndParameterReadOnly();
-		
-	 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
-	 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
-	    // typing).
-
-		codemirror.on("change", function(){
-			$scope.code = codemirror.doc.getValue();
-			// Mangage code change timeout
-			clearTimeout(changeTimeout);
-			changeTimeout = setTimeout( function(){highlightPseudoSegments();}, 500);
-				
-		});
-	
-	
-	
- 	};
-
-
-}]); 
 
