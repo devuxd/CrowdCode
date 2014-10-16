@@ -26,7 +26,8 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 
 
 
-	//user.listenForJobs();			
+	//user.listenForJobs();	
+	userService.init();		
 	testsService.init();		
 	functionsService.init();
 	ADTService.init();
@@ -482,12 +483,14 @@ myApp.controller('LeaderboardController', ['$scope','$rootScope','$firebase',fun
 // ONLINE WORKERS CONTROLLER //
 ///////////////////////////////
 myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',function($scope,$rootScope,$firebase) {
-	// create the reference and the sync
-	var diffInMinutes  = 5; 
+	
+	var diffInMinutes  = 5; // how far in the past consider 
 	var date = new Date();
 	var endTimestamp   = date.getTime()+1*60*1000;
 	date.setTime(endTimestamp - diffInMinutes*1000*60);
 	var startTimestamp = date.getTime();
+
+	console.log("from: "+startTimestamp+" to: "+endTimestamp);
 
 	var ref  = new Firebase($rootScope.firebaseURL+'/presence/').startAt(startTimestamp).endAt(endTimestamp);
 	var sync = $firebase(ref);

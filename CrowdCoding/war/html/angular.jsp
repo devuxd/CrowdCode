@@ -120,8 +120,10 @@
 	
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
-	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
-	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script>
+    <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
+ 	<script src="/include/codemirror/javascript.js"></script> 
+	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
+	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 	
 	
 	
@@ -144,8 +146,6 @@
 	<script src="/js/services/testRunner.js"></script>
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/controllers/controllers.js"></script>
-    <script src="http://codemirror.net/lib/codemirror.js"></script> 
- 	<script src="http://codemirror.net/mode/javascript/javascript.js"></script> 
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script>  
 		
    

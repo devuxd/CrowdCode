@@ -1,7 +1,7 @@
 ////////////////////
 // USER SERVICE   //
 ////////////////////
-myApp.factory('userService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
+myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout', function($window,$rootScope,$firebase,$timeout) {
     var user = {};
     
 
@@ -9,18 +9,25 @@ myApp.factory('userService', ['$window','$rootScope','$firebase', function($wind
  	// retrieve connection status and userRef
 	var isConnected = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
 	var userRef     = new Firebase(firebaseURL + '/presence/' + workerId);
-	// when firebase is connected
-	isConnected.on('value', function(snapshot) {
-	  if (snapshot.val()) {
-	  	// set true to connection status
-	    userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
-	    // on disconnect, set false to connection status
-	    userRef.onDisconnect().setWithPriority({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
-	  }
-	});
+	
 
-	user.onlineWorkers = 
-
+	var updateUserReference = function(){
+		userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
+		console.log("update user reference");
+		$timeout(updateUserReference,1000*60*2); // re-do every 2 minutes
+	}
+	
+	user.init = function(){	
+		// when firebase is connected
+		isConnected.on('value', function(snapshot) {
+		  if (snapshot.val()) {
+		  	// update user reference
+		    updateUserReference();
+		    // on disconnect, set false to connection status
+		    userRef.onDisconnect().setWithPriority({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
+		  }
+		});
+	}
 
 	// logout the worker
     user.login = function(){
