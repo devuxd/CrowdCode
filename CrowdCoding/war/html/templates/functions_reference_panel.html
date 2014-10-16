@@ -1,0 +1,12 @@
+<div id="functionsReference" class="panel panel-default " ng-controller="FunctionsReferenceController">
+	<div class="panel-heading">Functions Reference</div>
+	<table class="panel-body">
+		<tbody ng-repeat="(key,function) in functions" >
+			<tr id="function{{key}}">
+			    <td>
+			    	{{function.header}}): {{function.returnType}}
+			    </td>
+		    </tr>
+		</tbody>
+	</table>
+</div>

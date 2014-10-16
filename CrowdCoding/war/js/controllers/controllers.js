@@ -466,6 +466,17 @@ myApp.controller('ScoreController', ['$scope','$rootScope','$firebase', function
 }]);  
 
 
+////////////////////////////////////
+// FUNCTIONS REFERENCE CONTROLLER //
+////////////////////////////////////
+myApp.controller('FunctionsReferenceController', ['$scope','$rootScope','$firebase','functionsService',function($scope,$rootScope,$firebase,functionsService) {
+	// bind the array to scope.leaders
+	$scope.functions = functionsService.getAll();
+	
+	console.log("functions");
+	console.log($scope.functions);
+}]);
+
 ////////////////////////////
 // LEADERBOARD CONTROLLER //
 ////////////////////////////
@@ -483,21 +494,26 @@ myApp.controller('LeaderboardController', ['$scope','$rootScope','$firebase',fun
 // ONLINE WORKERS CONTROLLER //
 ///////////////////////////////
 myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',function($scope,$rootScope,$firebase) {
-	
-	var diffInMinutes  = 5; // how far in the past consider 
-	var date = new Date();
-	var endTimestamp   = date.getTime()+1*60*1000;
-	date.setTime(endTimestamp - diffInMinutes*1000*60);
-	var startTimestamp = date.getTime();
+	/*
+	var diffInSec = 60+60*5; // how wide is the timewindow
+	var currDate  = new Date();
+	var endTimestamp   = currDate.getTime()+1*60*1000; // +1 to see also the current worker 
+	var startTimestamp = endTimestamp - diffInSec*1000;   
 
-	console.log("from: "+startTimestamp+" to: "+endTimestamp);
-
-	var ref  = new Firebase($rootScope.firebaseURL+'/presence/').startAt(startTimestamp).endAt(endTimestamp);
+	var startDate = new Date();
+	startDate.setTime(startTimestamp);
+	var endDate   = new Date();
+	endDate.setTime(endTimestamp);
+	console.log(startDate);
+	console.log(endDate);
+	console.log("diff: "+(endTimestamp-startTimestamp)/60000);
+*/
+	var ref  = new Firebase($rootScope.firebaseURL+'/presence/');
 	var sync = $firebase(ref);
 	// bind the array to scope.onlineWorkers
 
 	$scope.onlineWorkers = sync.$asArray();
-	$scope.onlineWorkers.$loaded().then(function(){ console.log($scope.onlineWorkers); });
+	$scope.onlineWorkers.$loaded().then(function(){  });
 }]); 
 
 //////////////////////

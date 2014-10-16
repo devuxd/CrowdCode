@@ -93,6 +93,7 @@
 				<ng-include src="'/html/templates/online_workers_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/leaderboard_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/chat_panel.html'"></ng-include>
+				<ng-include src="'/html/templates/functions_reference_panel.html'"></ng-include>
 			</div>
 
 		</div>

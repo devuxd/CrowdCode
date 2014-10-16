@@ -16,7 +16,8 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout', fun
 		console.log("update user reference");
 		$timeout(updateUserReference,1000*60*2); // re-do every 2 minutes
 	}
-	
+
+	user.onl
 	user.init = function(){	
 		// when firebase is connected
 		isConnected.on('value', function(snapshot) {
@@ -24,9 +25,11 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout', fun
 		  	// update user reference
 		    updateUserReference();
 		    // on disconnect, set false to connection status
-		    userRef.onDisconnect().setWithPriority({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
+		    userRef.onDisconnect().remove();//setWithPriority({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
 		  }
 		});
+
+
 	}
 
 	// logout the worker
