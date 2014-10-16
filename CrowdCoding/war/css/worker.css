@@ -128,6 +128,24 @@ footer.navbar-default { background-color: #3C9764; }
 	font-weight:bold;
 }
 
+#onlineWorkers table {width:100%;}
+#onlineWorkers tr {
+	font-size:14px;
+	font-weight:normal;
+}
+
+#onlineWorkers img {
+	margin-bottom:1px;
+	width:30px;
+	height:30px;
+}
+#onlineWorkers td:nth-child(2) {
+	font-style:italic;
+}
+#onlineWorkers td:nth-child(3) {
+	font-weight:bold;
+}
+
 #recentActivity {
 	font-weight:normal;
 	height: 300px;
@@ -195,7 +213,7 @@ footer.navbar-default { background-color: #3C9764; }
 
 #taskDescription {
 	font-weight:normal;
-	padding:5px;
+	padding:0px;
 	background-color: #dff0d8;
 }
 
@@ -240,10 +258,23 @@ footer.navbar-default { background-color: #3C9764; }
    padding:0px;
 }
 
+
 #taskForm .form-group {
 	margin-left: 0px;
 	margin-right: 0px;
+	margin-bottom: 0px;
 
+}
+
+.transparent { background-color: transparent; }
+
+
+.testcases .testcase {
+	margin-top:5px;
+	margin-top:5px;
+}
+
+hr {margin:0px;
 }
 
 /* Search results styles in reuseSearch */

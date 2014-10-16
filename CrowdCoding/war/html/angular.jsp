@@ -90,6 +90,7 @@
 			</div>
 
 			<div id="rightBar" class="col-md-2 col-xs-2">
+				<ng-include src="'/html/templates/online_workers_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/leaderboard_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/chat_panel.html'"></ng-include>
 			</div>
@@ -119,8 +120,10 @@
 	
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
-	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
-	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script>
+    <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
+ 	<script src="/include/codemirror/javascript.js"></script> 
+	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
+	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 	
 	
 	
@@ -143,8 +146,6 @@
 	<script src="/js/services/testRunner.js"></script>
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/controllers/controllers.js"></script>
-    <script src="http://codemirror.net/lib/codemirror.js"></script> 
- 	<script src="http://codemirror.net/mode/javascript/javascript.js"></script> 
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script>  
 		
    
@@ -154,17 +155,6 @@ var workerId     = '<%=workerID%>';
 var workerHandle = '<%=workerHandle%>';
 var firebaseURL  = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 
-
- 	
-	var amOnline = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-	console.log(firebaseURL + '/presence/' + workerHandle.replace('@','_at_').replace('.','_dot_'));
-	var userRef = new Firebase(firebaseURL + '/presence/' + workerHandle.replace('@','_at_').replace('.','_dot'));
-	amOnline.on('value', function(snapshot) {
-	  if (snapshot.val()) {
-	    userRef.onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
-	    userRef.set(true);
-	  }
-	});
 
 
 </script>

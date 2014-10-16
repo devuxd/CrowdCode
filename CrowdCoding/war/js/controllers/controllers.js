@@ -13,11 +13,15 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
     $rootScope.workerId     = workerId;
     $rootScope.workerHandle = workerHandle;
     $rootScope.firebaseURL  = firebaseURL;
+<<<<<<< HEAD
 
     // hook from firebase the workers online
 	var workersSync = $firebase(new Firebase($rootScope.firebaseURL+'/status/loggedInWorkers'));
 	$rootScope.onlineWorkers = workersSync.$asArray();
 
+=======
+    
+>>>>>>> origin/arturo
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
 		userService.login();
@@ -30,6 +34,13 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	//user.listenForJobs();
 	testsService.init();
 
+<<<<<<< HEAD
+=======
+
+	//user.listenForJobs();	
+	userService.init();		
+	testsService.init();		
+>>>>>>> origin/arturo
 	functionsService.init();
 	ADTService.init();
 }]);
@@ -66,10 +77,18 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.testData = {};
 	$scope.microtask = {};
 	$scope.templatePath = "";//"/html/templates/microtasks/";
+<<<<<<< HEAD
 	$scope.reuseSearch= {};
 	$scope.reuseSearch.functions= [];
 	$scope.writeFunctionDescription= {};
 	$scope.review={};
+=======
+	$scope.reuseSearch={};
+	$scope.reuseSearch.functions=[];
+	$scope.newTestCase = "";
+	$scope.viewData = {};
+
+>>>>>>> origin/arturo
 
 	// collect form data is different for each microtask
 	var collectFormData = {
@@ -364,26 +383,33 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			},
 			'WriteTestCases': function(){
 				$scope.inlineForm = true;
+				$scope.newTestCase = "";
 				// initialize testCases
 				// if microtask.submission and microtask.submission.testCases are defined
 				// assign available testCases otherwise initialize a new array
 				$scope.testCases = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.testCases) ) ?
 								   $scope.microtask.submission.testCases : [] ;
+<<<<<<< HEAD
 				$scope.fillOutLast = false;
 				$scope.setFillOutLast = function(val){
 					if(val!=true && val!=false) return;
 					$scope.fillOutLast = val;
 				};
+=======
+
+>>>>>>> origin/arturo
 			    // addTestCase and deleteTestCase utils function for microtask WRITE TEST CASES
 				$scope.addTestCase = function(){
 					console.log("adding test case");
-					var lastTestCase = $scope.testCases[$scope.testCases.length-1];
-					if(lastTestCase==null || lastTestCase.text!=""){
-						$scope.setFillOutLast(false);
-						var testCase = { text: '', added: true, deleted: false, id: $scope.testCases.length };
+					console.log($scope.viewData.newTestCase);
+					if($scope.viewData.newTestCase!=undefined && $scope.viewData.newTestCase!=""){
+						
+						var testCase = { text: $scope.viewData.newTestCase, added: true, deleted: false, id: $scope.testCases.length };
 						$scope.testCases.push(testCase);
+						$scope.viewData.newTestCase="";
+
 					}
-					else $scope.setFillOutLast(true);
+					//else $scope.setFillOutLast(true);
 				}
 				$scope.deleteTestCase = function(index){
 					$scope.testCases.splice(index,1);
@@ -393,9 +419,14 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				$scope.codemirrorLoaded = function(codeMirror){
 
 					codeMirror.setOption("readOnly", "true");
+<<<<<<< HEAD
 
 					codeMirror.setOption("theme", "pastel-on-dark");
 
+=======
+					codeMirror.setOption("theme", "pastel-on-dark");
+					codeMirror.setOption("tabindex", "-1");
+>>>>>>> origin/arturo
 					codeMirror.refresh();
 				}
 			},
@@ -638,6 +669,28 @@ myApp.controller('LeaderboardController', ['$scope','$rootScope','$firebase',fun
 	$scope.leaders = sync.$asArray();
 	$scope.leaders.$loaded().then(function(){});
 }]);
+
+
+///////////////////////////////
+// ONLINE WORKERS CONTROLLER //
+///////////////////////////////
+myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',function($scope,$rootScope,$firebase) {
+	
+	var diffInMinutes  = 5; // how far in the past consider 
+	var date = new Date();
+	var endTimestamp   = date.getTime()+1*60*1000;
+	date.setTime(endTimestamp - diffInMinutes*1000*60);
+	var startTimestamp = date.getTime();
+
+	console.log("from: "+startTimestamp+" to: "+endTimestamp);
+
+	var ref  = new Firebase($rootScope.firebaseURL+'/presence/').startAt(startTimestamp).endAt(endTimestamp);
+	var sync = $firebase(ref);
+	// bind the array to scope.onlineWorkers
+
+	$scope.onlineWorkers = sync.$asArray();
+	$scope.onlineWorkers.$loaded().then(function(){ console.log($scope.onlineWorkers); });
+}]); 
 
 //////////////////////
 // STATS CONTROLLER //
