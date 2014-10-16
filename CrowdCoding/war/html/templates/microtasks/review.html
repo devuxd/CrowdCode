@@ -1,30 +1,107 @@
+<h2 id="taskHeader">
+	<span id="taskTitle">{{datas.title}}</span> <span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
+</h2>
+<br />
+
+
 <div id="taskDescription" class="bg-success">
 	The following work has been submitted: <BR><BR>
-	
+
+	<div ng-if="review.microtaskUnderReview.type == 'WriteTestCases'" >
+
+		<b>Write test cases</b><BR>
+
+			<span ng-if= "review.microtaskUnderReview.promptType == 'FUNCTION_SIGNATURE'">
+				What are some cases in which this function might be used? Are there any unexpected corner cases that might not work?<BR><BR>
+			</span>
+
+			<span ng-if= "review.microtaskUnderReview.promptType == 'CORRECT_TEST_CASE'">
+
+				The following issue was reported with the following test case:<BR><BR>
+				<div class="alert alert-info">{{review.microtaskUnderReview.disputeDescription }}</div>
+				<div class="alert alert-error">{{review.microtaskUnderReview.disputedTestCase }}</div>'
+				Can you fix the test case (and others if necessary) to address the issue?<BR>
+		  		(Note: if the above test case is not below, the test case has already been changed,
+		  		and you can ignore this microtask).<BR><BR>';
+
+			</span>
+
+			<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+
+			<b>Submitted Test cases</b><BR>
+
+			<div ng-if="review.currenttestcases.length>0" id="diffDiv">
+				<span class="original" style="display: none">
+
+					<ul ng-repeat="currentTestCase in currentTestCases">
+						<li>{{currentTestCase.text}}</li>
+					</ul>
+				</span>
+
+				<span class="changed" style="display: none">'
+					<ul ng-repeat="submittedTestCase in review.microtaskUnderReview.submission.testCases">
+						<li>{{submittedTestCase.text}}</li>
+					</ul>
+				</span>
+				<span id="diff" class="diff"></span><BR>
+			</div>
+
+			<ul ng-if="review.currenttestcases.length==0" ng-repeat="submittedTestCase in review.microtaskUnderReview.submission.testCases">
+				<li>{{submittedTestCase.text}}</li>
+			</ul>
+	<!--  TODO if (currentTestCases != null && currentTestCases.length > 0)
+				$('#diffDiv').prettyTextDiff();-->
+	</div>
+
+
+	<div  ng-if="review.microtaskUnderReview.type == 'WriteTest'">
+		<b>Write a test</b><BR>';
+	<!-- 	if (microtask.promptType === 'WRITE')
+		{
+			content += 'Can you write a test for <BR><BR>';
+			//content += ''
+
+			// Load the test...
+		}
+		console.log(snapshot.val()); -->
+	</div>
+
+	<div ng-if="review.microtaskUnderReview.type == 'WriteFunction'">
+	<b>Write a function description</b><BR>
+
+		<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+
+	</div>
 </div>
-	
-		
-<div id="taskForm" action="">
-	<div id="ratingsDiv">
-		<p><B>Please rate the quality of this work:</B></p><BR>
-		<fieldset class="rating" id="qualityRating">
-		    <input type="radio" id="quality-star1" name="ratingQuality" value="1" /><label for="quality-star1" title="Pretty terrible">1 star</label>
-		    <input type="radio" id="quality-star2" name="ratingQuality" value="2" /><label for="quality-star2" title="Should be rejected">2 stars</label>
-		    <input type="radio" id="quality-star3" name="ratingQuality" value="3" /><label for="quality-star3" id="star3label" title="Just good enough">3 stars</label>
-		    <input type="radio" id="quality-star4" name="ratingQuality" value="4" /><label for="quality-star4" title="Pretty good">4 stars</label>
-		    <input type="radio" id="quality-star5" name="ratingQuality" value="5" /><label for="quality-star5" title="Really awesome">5 stars</label>
-		</fieldset>
-		<p id="ratinglegend">Work rated 3 or above will be accepted.</p>
-	</div>	
+
+
+<form id="reviewForm" action="">
+		<div id="ratingsDiv">
+			<p><B>Please rate the quality of this work:</B></p><BR>
+			<fieldset class="rating" id="qualityRating">
+			    <input type="radio" id="quality-star5" name="ratingQuality" value="5" /><label for="quality-star5" title="Really awesome">5 stars</label>
+			    <input type="radio" id="quality-star4" name="ratingQuality" value="4" /><label for="quality-star4" title="Pretty good">4 stars</label>
+			    <input type="radio" id="quality-star3" name="ratingQuality" value="3" /><label for="quality-star3" id="star3label" title="Just good enough">3 stars</label>
+			    <input type="radio" id="quality-star2" name="ratingQuality" value="2" /><label for="quality-star2" title="Should be rejected">2 stars</label>
+			    <input type="radio" id="quality-star1" name="ratingQuality" value="1" /><label for="quality-star1" title="Pretty terrible">1 star</label>
+			</fieldset>
+			<p id="ratinglegend">Work rated 3 or above will be accepted.</p>
+		</div>	<BR>
+
+
+
 
 	<B>Please briefly explain your rating:</B><BR>
-	<textarea id="reviewText"></textarea>
+	<span ng-class="{ 'has-error': form.reviewText.$dirty && form.reviewText.$invalid , 'has-success': form.reviewText.$valid}">
 
+	<textarea id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" required></textarea>
+	<span class="help-block" ng-show="form.reviewText.$dirty && form.reviewText.$invalid && form.reviewText.$error.required">
+		This field is required!
+	</span>
+	</span>
 	<br />
-	
-	<%@include file="/html/elements/microtaskFormButtons.jsp"%>
-</div>
-
+	<br />
+</form>
 <br/>
 <div class="task-buttons pull-right">
 	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
