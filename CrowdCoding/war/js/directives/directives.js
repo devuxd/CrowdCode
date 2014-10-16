@@ -13,7 +13,7 @@ myApp.directive('json', function () {
                 // initialize JSONValidator and execute errorCheck
                 validator.initialize(viewValue,paramType)
                 validator.errorCheck();
-                
+
                 if (!validator.isValid()) {
                     ctrl.$setValidity('json', false);
                     ctrl.$error.json_errors = validator.getErrors();
@@ -24,15 +24,47 @@ myApp.directive('json', function () {
                 }
             });
         }
-    };  
+    };
 });
 
+//<div function-validator ng-model="somevar"></div>
+myApp.directive('adtValidator',['ADTService',function(ADTService) {
+
+
+    var errors = [];
+    var valid;
+
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elm, attrs, ctrl) {
+
+            ctrl.$parsers.unshift(function (viewValue) {
+
+            	var valid=ADTService.isValidTypeName(viewValue)||viewValue=="";
+            	console.log("vie "+viewValue);
+            	console.log(valid)
+
+                if(!valid){
+                    ctrl.$setValidity('adt', false);
+                    ctrl.$error.adt_errors =  "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
+                    return viewValue;
+                } else {
+                    ctrl.$setValidity('adt', true);
+                    return viewValue;
+                }
+
+            });
+
+        }
+    };
+}]);
 
 // <div function-validator ng-model="somevar"></div>
 myApp.directive('functionValidator',['ADTService','functionsService',function(ADTService, functionsService) {
-    
-    var functionId
-    var funct;    
+
+    var functionId;
+    var funct;
     var allFunctionNames;
     var allFunctionCode;
     var errors = [];
@@ -62,11 +94,11 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
                     ctrl.$error.function_errors = [];
                     return viewValue;
                 }
-                
+
             });
-            
+
         }
-    };  
+    };
 
 
     function getDescription(ast){
@@ -76,8 +108,8 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         var descLines     = codeLines.slice(descStartLine, descEndLine);
         return descLines;
     }
-    
-    // Check the code for errors. If there are errors present, write an error message. Returns true 
+
+    // Check the code for errors. If there are errors present, write an error message. Returns true
     // iff there are no errors.
     function validate(code){
         errors = [];
@@ -90,16 +122,16 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
                 if (replacedText == '')
                     errors.push('No function block could be found. Make sure that there is a line that starts with "function".');
                 else if (!hasSyntacticalErrors(replacedText)) {
-                    var ast = esprima.parse(replacedText, {loc: true});         
-                    return hasASTErrors(code, ast);           
+                    var ast = esprima.parse(replacedText, {loc: true});
+                    return hasASTErrors(code, ast);
                 }
             }
         else {
             // Code is syntactically valid and should be able to build an ast.
             // Build the ast and do additional checks using the ast.
-             var ast = esprima.parse(code, {loc: true});     
+             var ast = esprima.parse(code, {loc: true});
             return hasASTErrors(code, ast);
-        }       
+        }
         return false;
     }
 
@@ -116,12 +148,12 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
             errors = errors.concat(checkForErrors(JSHINT.errors));
             if(errors.length > 0) {
                 return true;
-            } 
-        }                           
+            }
+        }
 
         return false;
     }
-    
+
     // returns true iff there are AST errors
     function hasASTErrors(text, ast)
     {
@@ -132,34 +164,34 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         if (ast.body.length == 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
             errorMessages.push("All code should be in a single function");
         else if (allFunctionNames.indexOf(ast.body[0].id.name) != -1)
-            errorMessages.push("The function name '" + ast.body[0].id.name + "' is already taken. Please use another.");                   
-        
+            errorMessages.push("The function name '" + ast.body[0].id.name + "' is already taken. Please use another.");
+
         // Also check for purely textual errors
         // 1. If there is a pseudocall to replace, make sure it is gone
         /*
-        if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)            
-            errorMessages.push("Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.");   */      
-        
-        errorMessages = errorMessages.concat(hasDescriptionError(ast));   
-            
+        if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)
+            errorMessages.push("Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.");   */
+
+        errorMessages = errorMessages.concat(hasDescriptionError(ast));
+
         if (errorMessages.length != 0)
         {
             errors = errors.concat(errorMessages);
             return true;
         }
         else
-        {       
+        {
             return false;
         }
     }
-    
+
     // Checks if the function description is in he form " @param [Type] [name] - [description]"
     // and if has undefined type names.
     // i.e., checks that a valid TypeName follows @param  (@param TypeName)
     // checks that a valid TypeName follows @return.
     // A valid type name is any type name in allADTs and the type names String, Number, Boolean followed
     // by zero or more sets of array brackets (e.g., Number[][]).
-    // Returns an error message(s) if there is an error 
+    // Returns an error message(s) if there is an error
     function hasDescriptionError(ast)
     {
         var errorMessages =  [];
@@ -179,16 +211,16 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         //if the description doesn't contain error checks the consistency between the parameter in the descriptions and the
         // ones in the header
         if( errorMessages.length == 0 && !(ast.body[0].params === undefined) ){
-            
+
             var paramHeaderNames=[];
             $.each(ast.body[0].params, function(index, value)
             {
                 paramHeaderNames.push(ast.body[0].params[index].name);
             });
-            
+
             errorMessages = errorMessages.concat(checkNameConsistency(paramDescriptionNames,paramHeaderNames));
         }
-        return errorMessages;       
+        return errorMessages;
     }
 
     // Checks that, if the specified keyword occurs in line, it is followed by a valid type name. If so,
@@ -198,31 +230,31 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
          var errorMessage = [];
         //subtitues multiple spaces with a single space
         line = line.replace(/\s{2,}/g,' ');
-        
+
         var loc = line.search(keyword);
-        
-        if (loc != -1)  
+
+        if (loc != -1)
         {
             var type = findNextWord(line, loc + keyword.length);
             var name = findNextWord(line, loc + keyword.length+type.length+1);
-           
+
 
             if(paramDescriptionNames!=undefined)
                 paramDescriptionNames.push(name);
-            
+
             if (type == -1)
-                errorMessage.push("The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.");              
+                errorMessage.push("The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.");
             else if (!ADTService.isValidTypeName(type))
                 errorMessage.push(type + ' is not a valid type name. Valid type names are '
                   + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).');
             else if (keyword==='@param '&& !isValidName(name))
-                errorMessage.push(name+ ' is not a valid name. Use upper and lowercase letters, numbers, and underscores.');   
+                errorMessage.push(name+ ' is not a valid name. Use upper and lowercase letters, numbers, and underscores.');
             else if (keyword==='@param '&& !functionsService.isValidParamDescription(line))
-                errorMessage.push(line+' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] - [description]".');      
+                errorMessage.push(line+' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] - [description]".');
             else if (keyword==='@return ' && name!=-1)
-                errorMessage.push('The return value must be in the form  " @return [Type]".'); 
+                errorMessage.push('The return value must be in the form  " @return [Type]".');
         }
-        
+
         return errorMessage;
     }
 
@@ -232,29 +264,29 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
         var errors = [];
 
-        for( var i=0 ; i<paramHeaderNames.length ; i++){ 
+        for( var i=0 ; i<paramHeaderNames.length ; i++){
             if ( paramDescriptionNames.indexOf(paramHeaderNames[i]) == -1 )
                 errors.push('Write a desciption for the parameter '+paramHeaderNames[i]+'.');
         }
-    
+
         if(errors.length == 0)
             for( var i=0;i<paramDescriptionNames.length;i++){
                 if (paramHeaderNames.indexOf(paramDescriptionNames[i])==-1){
                     errors.push('The parameter '+paramDescriptionNames[i] +' does not exist in the header of the function');
                 }
             }
-        
+
         return errors;
     }
-    
-    
+
+
     // checks that the name is vith alphanumerical characters or underscore
     function isValidName(name){
         var regexp = /^[a-zA-Z0-9_]+$/;
         if (name.search(regexp)==-1) return false;
-        return true;    
+        return true;
     }
-    
+
     // Returns true iff the text contains at least one pseudocall or pseudocode
     function hasPseudocallsOrPseudocode(text)
     {
@@ -265,27 +297,27 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     // after a function statement.
     // Returns a block of text with the code block replaced or '' if no code block can be found
     function replaceFunctionCodeBlock(text)
-    {     
-        var lines = text.split('\n');           
+    {
+        var lines = text.split('\n');
         for (var i = 0; i < lines.length; i++)
         {
             if (lines[i].startsWith('function'))
-            {       
+            {
                 // If there is not any more lines after this one, return an error
                 if (i + 1 >= lines.length - 1)
                     return '';
-                
+
                 // Return a string replacing everything from the start of the next line to the end
                 // Concatenate all of the lines together
                 var newText = '';
                 for (var j = 0; j <= i; j++)
                     newText += lines[j] + '\n';
-                
+
                 newText += '{}';
-                return newText;     
+                return newText;
             }
         }
-        
+
         return '';
     }
 
@@ -322,4 +354,3 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
         }
     }
 });
-
