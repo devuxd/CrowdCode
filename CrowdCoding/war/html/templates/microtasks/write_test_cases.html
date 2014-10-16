@@ -7,10 +7,10 @@
 
 <div id="taskDescription" >
 	<div id="promptAreaDiv">	
-		<div ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
+		<strong ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
 			What are some cases in which this function might be used? Are there any unexpected corner 
 			cases that might not work?
-		</div>
+		</strong>
 		
 		<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
 		    The following issue was reported with the following test case:<BR><BR>
@@ -50,10 +50,9 @@
 </div>
 
 <div id="taskForm" >
-	<h3>Test Cases</h3>
 	<div class="testcases">
 		<ng-form ng-if="testCases.length > 0" name="testCaseForm" ng-repeat="(index,test) in testCases" >
-			<div class="form-group testcase" ng-class="{ 'has-error': testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid , 'has-success': testCaseForm.testcase.$valid}" ng-init="editMode=false" >
+			<div class="form-group testcase" ng-class="{ 'bg-danger': testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid }" ng-init="editMode=false" >
 				<label for="testcase" class="col-sm-1 control-label" >#{{index+1}}</label>
 				<div class="col-sm-9"> 
 					<div ng-show="editMode">

@@ -90,6 +90,7 @@
 			</div>
 
 			<div id="rightBar" class="col-md-2 col-xs-2">
+				<ng-include src="'/html/templates/online_workers_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/leaderboard_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/chat_panel.html'"></ng-include>
 			</div>
@@ -154,17 +155,6 @@ var workerId     = '<%=workerID%>';
 var workerHandle = '<%=workerHandle%>';
 var firebaseURL  = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 
-
- 	
-	var amOnline = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-	console.log(firebaseURL + '/presence/' + workerHandle.replace('@','_at_').replace('.','_dot_'));
-	var userRef = new Firebase(firebaseURL + '/presence/' + workerHandle.replace('@','_at_').replace('.','_dot'));
-	amOnline.on('value', function(snapshot) {
-	  if (snapshot.val()) {
-	    userRef.onDisconnect().set(Firebase.ServerValue.TIMESTAMP);
-	    userRef.set(true);
-	  }
-	});
 
 
 </script>

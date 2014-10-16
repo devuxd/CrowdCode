@@ -14,10 +14,6 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
     $rootScope.workerHandle = workerHandle;
     $rootScope.firebaseURL  = firebaseURL;
     
-    // hook from firebase the workers online
-	var workersSync = $firebase(new Firebase($rootScope.firebaseURL+'/status/loggedInWorkers'));
-	$rootScope.onlineWorkers = workersSync.$asArray();
-	
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
 		userService.login();
@@ -256,7 +252,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 						var testCase = { text: $scope.viewData.newTestCase, added: true, deleted: false, id: $scope.testCases.length };
 						$scope.testCases.push(testCase);
 						$scope.viewData.newTestCase="";
-						
+
 					}
 					//else $scope.setFillOutLast(true);
 				}
@@ -480,6 +476,26 @@ myApp.controller('LeaderboardController', ['$scope','$rootScope','$firebase',fun
 	$scope.leaders = sync.$asArray();
 	$scope.leaders.$loaded().then(function(){});
 }]);  
+
+
+///////////////////////////////
+// ONLINE WORKERS CONTROLLER //
+///////////////////////////////
+myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',function($scope,$rootScope,$firebase) {
+	// create the reference and the sync
+	var diffInMinutes  = 5; 
+	var date = new Date();
+	var endTimestamp   = date.getTime()+1*60*1000;
+	date.setTime(endTimestamp - diffInMinutes*1000*60);
+	var startTimestamp = date.getTime();
+
+	var ref  = new Firebase($rootScope.firebaseURL+'/presence/').startAt(startTimestamp).endAt(endTimestamp);
+	var sync = $firebase(ref);
+	// bind the array to scope.onlineWorkers
+
+	$scope.onlineWorkers = sync.$asArray();
+	$scope.onlineWorkers.$loaded().then(function(){ console.log($scope.onlineWorkers); });
+}]); 
 
 //////////////////////
 // STATS CONTROLLER //

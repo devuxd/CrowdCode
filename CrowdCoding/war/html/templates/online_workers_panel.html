@@ -1,0 +1,11 @@
+<div id="onlineWorkers" class="panel panel-default " ng-controller="OnlineWorkersController">
+	<div class="panel-heading">Online Workers</div>
+	<table class="panel-body">
+		<tbody ng-repeat="(key,worker) in onlineWorkers" >
+			<tr id="worker">
+			    <td><img src="/user/picture?userId={{worker.$id}}" alt="{{ worker.name }}" /></td>
+			    <td ng-class="{'text-warning':worker.connected==false}">{{ worker.name }}</td>
+		    </tr>
+		</tbody>
+	</table>
+</div>
