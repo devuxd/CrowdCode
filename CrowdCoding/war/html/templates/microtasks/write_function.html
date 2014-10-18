@@ -1,4 +1,5 @@
-  
+ <div ng-controller="WriteFunctionController">
+
  <h2 id="taskHeader">
  	<span id="taskTitle" >{{ microtask.type }}</span>
  	<span id="taskPoints" class="label label-default">{{ microtask.points}} points</span>
@@ -71,3 +72,5 @@
  	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
  </div>
  <div class="clearfix"></div> 
+
+</div>

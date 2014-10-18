@@ -8,8 +8,10 @@
  * @param queueRef A Firebase reference to the list of work items
  * @param processingCallback The callback to be called for each work item
  */
-function Worker(workerID, queueRef, processingCallback) {
+function DistributedWorker(workerID, queueRef, processingCallback) {
 	
+	console.log("WORK QUEUE STARTED");
+
 	this.workerID = workerID;
 	
 	// retrieve callback
@@ -22,20 +24,20 @@ function Worker(workerID, queueRef, processingCallback) {
 	// retrieve the item and try to process it
 	queueRef.startAt().limit(1).on("child_added", function(snapshot) {
 		this.currentItem = snapshot.ref();
-		this.tryToProcess();
+		this.readyToProcess();
 	}, this);
 	
 }
 
 //reset busy flag and try again to process
-Worker.prototype.readyToProcess = function() {
+DistributedWorker.prototype.readyToProcess = function() {
 	this.busy = false;
 	this.tryToProcess();
 }
 
 // executes the transaction to pop() an
 // object from the firebase queue
-Worker.prototype.tryToProcess = function() {
+DistributedWorker.prototype.tryToProcess = function() {
 	
 	if(!this.busy && this.currentItem) {
 		
@@ -62,9 +64,6 @@ Worker.prototype.tryToProcess = function() {
 			if (error) throw error;
 			
 			if(committed) { // if transaction committed 
-				
-				console.log(self.workerID+" claimed a job.");
-				
 				//execute callback and after again ready to process
 				self.processingCallback(dataToProcess, function() {
 					self.readyToProcess();

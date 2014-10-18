@@ -116,7 +116,7 @@
 	  }, executionTime);
 	}
 	
-	new Worker(<%=workerID%>,queueRef	, executeWorkCallback);
+	var worker = new Worker(<%=workerID%>,queueRef	, executeWorkCallback);
 	
 	
 </script>

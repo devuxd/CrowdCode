@@ -31,6 +31,7 @@ import com.crowdcoding.history.MessageReceived;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Index;
@@ -347,26 +348,36 @@ public class Function extends Artifact
 	}	
 		
 	// Determines if all unit tests are implemented (e.g., not merely described or currently disputed)
-	private boolean allUnitTestsImplemented()
+	private boolean allUnitTestsImplemented(Project project)
 	{
-		/*for (Ref<Test> t : tests) 
+		System.out.println("checking if all test implemented");
+		
+		if(tests.size()==0) return false;
+		for (Long testId : tests) 
 		{
-			if (!Test.load(t).isImplemented())
+			Ref<Test> testRef = Test.find(testId, project);
+		    System.out.println("test Id = "+testRef.get().id+" implemented "+testRef.get().isImplemented());
+			if (!testRef.get().isImplemented())
 				return false;			
-		}*/
+		}
 		
 		// Assume all unit tests are implemented, and run tests whenever anyone requests them to be run.
 		// TODO: do we need to do this more intelligently?
 		
 		//if there are no unit tests, the tests aren't all ready yet, so return false...
 		//otherwise, you've gotten here and all the unit tests are implemented
-		return !tests.isEmpty();
+		
+		return true;
 	}
 	
 	private void runTestsIfReady(Project project)
 	{
-		if(isWritten && allUnitTestsImplemented())
-			project.requestTestRun();
+		if(isWritten && allUnitTestsImplemented(project)){
+			// enqueue test job in firebase
+			FirebaseService.writeTestJobQueue(this.getID(),project);
+			
+			//project.requestTestRun();
+		}
 	}
 		
 	private void onWorkerEdited(FunctionDTO dto, Project project)

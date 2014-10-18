@@ -130,11 +130,11 @@
 	
 	
 	
-	<script src="/js/testRunner.js"></script>
 	<script src="/js/functionSupport.js"></script>
 	<script src="/js/errorCheck.js"></script>
 
 	<script src="/js/JSONValidator.js"></script>
+	<script src="/js/workqueue.js"></script>
 	
 	<script src="/js/app.js"></script>
 	
@@ -147,6 +147,7 @@
 	<script src="/js/services/testRunner.js"></script>
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/controllers/controllers.js"></script>
+	<script src="/js/controllers/microtasks.js"></script>
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script>  
 		
    

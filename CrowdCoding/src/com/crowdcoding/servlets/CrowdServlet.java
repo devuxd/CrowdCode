@@ -26,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.crowdcoding.commands.Command;
 import com.crowdcoding.commands.ProjectCommand;
+import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
@@ -160,6 +161,8 @@ public class CrowdServlet extends HttpServlet
 						req.setAttribute("project", path[1]);
 						String projectID = path[1];
 						
+						System.out.println("project ID="+projectID);
+						
 						// check first for non-project pages routing
 						if (path[1].equals("clientRequest"))
 						{	
@@ -189,6 +192,8 @@ public class CrowdServlet extends HttpServlet
 									doFetch(req, resp, projectID, user);
 								else if (action.equals("submit"))
 									doSubmit(req, resp);
+								else if (action.equals("testResult"))
+									processTestResult(req, resp, projectID);
 								else if (action.equals("logout"))					
 									doLogout(projectID, path[3]);
 								else if (action.equals("admin") && path.length == 3)
@@ -341,6 +346,29 @@ public class CrowdServlet extends HttpServlet
 		    res.getWriter().append("fail");
 	    }
 	    
+	}
+	
+	// process test result submit
+	private void processTestResult(final HttpServletRequest req, final HttpServletResponse resp, String projectID) throws IOException, FileUploadException {
+
+		final long functionID = Long.parseLong(req.getParameter("functionID"));
+		final boolean testResult = Boolean.parseBoolean(req.getParameter("passedTests"));
+		System.out.println("function id ="+projectID);
+		List<Command> commands = new ArrayList<Command>();
+		commands.addAll(ofy().transact(new Work<List<Command>>() {
+	        public List<Command> run()
+	        {
+    			CommandContext context = new CommandContext();	
+    			if(testResult)
+    				FunctionCommand.passedTests(functionID);
+    			else
+    				FunctionCommand.failedTests(functionID);
+    			
+				return context.commands(); 
+	        }
+	    }));
+		
+		executeCommands(commands, projectID);	
 	}
 	
 	// get user picture
