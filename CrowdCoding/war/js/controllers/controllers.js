@@ -74,6 +74,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// collect form data is different for each microtask
 	var collectFormData = {
+			'DebugTestFailure':function(){
+			},
 			'Review': function(){
 
 				formData = {
@@ -218,6 +220,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// initialize form data is different for each microtask
 	var initializeFormData = {
+			'DebugTestFailure':function(){
+			},
 
 			'Review': function(){
 

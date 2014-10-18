@@ -7,8 +7,7 @@ myApp.directive('json', function () {
         link: function (scope, elm, attrs, ctrl) {
             // instantiate a new JSONValidator
             var validator = new JSONValidator();
-            var paramType = "Number";
-
+            var paramType = attrs['json'];
             ctrl.$parsers.unshift(function (viewValue) {
                 // initialize JSONValidator and execute errorCheck
                 validator.initialize(viewValue,paramType)
