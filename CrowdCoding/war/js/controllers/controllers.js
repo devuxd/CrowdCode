@@ -23,16 +23,11 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 		userService.logout();
 	}
 
-<<<<<<< HEAD
 	//user.listenForJobs();
 	userService.init();
+	userService.listenForJobs();
 	testsService.init();
-=======
-	//user.listenForJobs();	
-	userService.init();		
-	userService.listenForJobs();	
-	testsService.init();	
->>>>>>> origin/arturo
+
 	functionsService.init();
 	ADTService.init();
 }]);
