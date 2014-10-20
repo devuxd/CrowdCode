@@ -1,14 +1,14 @@
 ////////////////////
 // USER SERVICE   //
 ////////////////////
-myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout', function($window,$rootScope,$firebase,$timeout) {
+myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','testRunnerService', function($window,$rootScope,$firebase,$timeout,testRunnerService) {
     var user = {};
     
 
 
  	// retrieve connection status and userRef
 	var isConnected = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-	var userRef     = new Firebase(firebaseURL + '/presence/' + workerId);
+	var userRef     = new Firebase(firebaseURL + '/status/presences/' + workerId);
 	
 
 	var updateUserReference = function(){
@@ -17,7 +17,6 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout', fun
 		$timeout(updateUserReference,1000*60*2); // re-do every 2 minutes
 	}
 
-	user.onl
 	user.init = function(){	
 		// when firebase is connected
 		isConnected.on('value', function(snapshot) {
@@ -42,9 +41,20 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout', fun
 		
 	}
 	
+
+	var executeWorkCallback = function(data, whenFinished) {
+	  //This is where we actually process the data. We need to call "whenFinished" when we're done
+	  //to let the queue know we're ready to handle a new job.
+		console.log("Trying to run tests for function "+data.functionId);
+		testRunnerService.runTestsForFunction(data.functionId);
+		whenFinished();
+	}
+
 	// distributed test work
     user.listenForJobs = function(){
-		console.log('listening from jobs');
+		// worker
+		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
+		new DistributedWorker($rootScope.workerId,queueRef,executeWorkCallback);
 	}
 	
     return user;

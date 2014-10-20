@@ -90,12 +90,16 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 		// Returns an array of all tests in the system that are not currently in dispute
 		function getValidTests()
 		{
-			var validTests = [];		
+			var validTests = [];
+			console.log(tests);
+			/*		
 			$.each(tests, function(i, test)
 			{
+				console.log(i);
+				console.log(test);
 				if (test.isImplemented)
 					validTests.push(test);			
-			});
+			});*/
 			return validTests;
 		}
 		

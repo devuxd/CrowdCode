@@ -23,9 +23,16 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 		userService.logout();
 	}
 
+<<<<<<< HEAD
 	//user.listenForJobs();
 	userService.init();
 	testsService.init();
+=======
+	//user.listenForJobs();	
+	userService.init();		
+	userService.listenForJobs();	
+	testsService.init();	
+>>>>>>> origin/arturo
 	functionsService.init();
 	ADTService.init();
 }]);
@@ -40,6 +47,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	var templatesURL = "/html/templates/microtasks/";
 	var templates = {
 		'Review':'review',
+		'DebugTestFailure':'debug_test_failure',
 		'ReuseSearch':'reuse_search',
 		'WriteFunction':'write_function',
 		'WriteFunctionDescription':'write_function_description',
@@ -72,6 +80,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// collect form data is different for each microtask
 	var collectFormData = {
+			'DebugTestFailure':function(){
+			},
 			'Review': function(){
 
 				formData = {
@@ -115,7 +125,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					  testCode +=  value ;
 					  testCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
 					});
-					testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\')' ;
+					testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\');' ;
 					// return jSON object
 					formData = { code: testCode,
 								 hasSimpleTest: true,
@@ -216,6 +226,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// initialize form data is different for each microtask
 	var initializeFormData = {
+			'DebugTestFailure':function(){
+			},
 
 			'Review': function(){
 
@@ -515,13 +527,13 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 
 				// debug stuff
-
+/*
 				console.log("data: ");console.log(data);
 				console.log("microtask: ");console.log($scope.microtask);
 				console.log("function: ");console.log($scope.funct);
 				console.log("test: ");console.log($scope.test);
 
-				// initialize form data for the current microtask
+*/				// initialize form data for the current microtask
 				initializeFormData[$scope.microtask.type]();
 
 			  	//choose the right template
@@ -640,7 +652,7 @@ myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',f
 	console.log(endDate);
 	console.log("diff: "+(endTimestamp-startTimestamp)/60000);
 */
-	var ref  = new Firebase($rootScope.firebaseURL+'/presence/');
+	var ref  = new Firebase($rootScope.firebaseURL+'/status/presences/');
 	var sync = $firebase(ref);
 	// bind the array to scope.onlineWorkers
 

@@ -73,7 +73,7 @@
 	    <ng-form name="inputForm" ng-repeat="(index,paramName) in funct.paramNames" >
 			<div class="form-group" ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" >
 				<label for="input">{{paramName}} ({{funct.paramTypes[index]}}): </label>
-				<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json ></textarea>
+				<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json="{{funct.paramTypes[index]}}" ></textarea>
 				<ul class="help-block" ng-show="inputForm.input.$dirty && inputForm.input.$invalid">
 					<li ng-show="inputForm.input.$error.required" >This field is required!</li>
 					<li ng-show="inputForm.input.$error.json" >
@@ -87,7 +87,7 @@
 		</ng-form>
 		<div class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
 			<label for="output">expected Return value ({{funct.returnType}}):</label>
-			<textarea class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json ></textarea>
+			<textarea class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json="{{funct.returnType}}" ></textarea>
 			<ul class="help-block" ng-show="form.output.$dirty && form.output.$invalid">
 				<li ng-show="form.output.$error.required" >This field is required!</li>
 				<li ng-show="inputForm.input.$error.json" >

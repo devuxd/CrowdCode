@@ -128,17 +128,30 @@
 
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
+<<<<<<< HEAD
 
 
 
 
 
 	<script src="/js/testRunner.js"></script>
+=======
+	
+	
+	
+	
+	
+>>>>>>> origin/arturo
 	<script src="/js/functionSupport.js"></script>
 	<script src="/js/errorCheck.js"></script>
 
 	<script src="/js/JSONValidator.js"></script>
+<<<<<<< HEAD
 
+=======
+	<script src="/js/workqueue.js"></script>
+	
+>>>>>>> origin/arturo
 	<script src="/js/app.js"></script>
 
 	<script src="/js/services/services.js"></script>
@@ -150,9 +163,16 @@
 	<script src="/js/services/testRunner.js"></script>
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/controllers/controllers.js"></script>
+<<<<<<< HEAD
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script>
 
 
+=======
+	<script src="/js/controllers/microtasks.js"></script>
+    <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script>  
+		
+   
+>>>>>>> origin/arturo
 <script>
 var projectId    = '<%=projectID%>';
 var workerId     = '<%=workerID%>';

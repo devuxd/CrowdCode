@@ -42,8 +42,8 @@ myApp.factory('testRunnerService', ['$window','$rootScope','testsService','funct
 		var allFunctionIDs = functionsService.allFunctionIDs();
 		for (var i=0; i < allFunctionIDs.length; i++)
 		{
-			functionsWithEmptyBodies += functions.getMockEmptyBodiesFor(allFunctionIDs[i]);
-			functionsWithMockBodies += functions.getMockCodeFor(allFunctionIDs[i]);
+			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
+			functionsWithMockBodies += functionsService.getMockCodeFor(allFunctionIDs[i]);
 		}	
 		allTheFunctionCode = functionsWithEmptyBodies + '\n' + functionsWithMockBodies;	
 		
@@ -99,8 +99,29 @@ myApp.factory('testRunnerService', ['$window','$rootScope','testsService','funct
 		});
 	}
 
+
+	testRunner.processTestFinished = function(testStopped, testResult)
+	{
+		// If the code is unimplemented, the test neither failed nor passed. If the test
+		// did not pass or timed out, it failed. Otherwise, it passed.
+		if (testStopped)
+			allFailedTestCases.push(currentTextIndex);
+		else if(!testResult.codeUnimplemented)
+		{
+			if (!testResult.passed)
+				allFailedTestCases.push(currentTextIndex);
+			else
+				allPassedTestCases.push(currentTextIndex);
+		}
+		
+		// Increment the test and run the next one.
+		currentTextIndex++;
+		this.runTest();		
+	}
+
 	testRunner.runTest = function()
 	{
+		console.log("running test "); console.log(validTests[currentTextIndex]);
 		// If we've run out of tests
 		if (currentTextIndex >= validTests.length)
 		{
@@ -116,7 +137,7 @@ myApp.factory('testRunnerService', ['$window','$rootScope','testsService','funct
 		// add extra defs for references to the instrumentation code.
 		var extraDefs = "var mocks = {}; function hasMockFor(){} function printDebugStatement (){} ";		
 		var codeToLint = extraDefs + allTheFunctionCode + testCode;
-		console.log("TestRunner linting on: " + codeToLint);
+		//console.log("TestRunner linting on: " + codeToLint);
 		var lintResult = JSHINT(getUnitTestGlobals() + codeToLint, getJSHintGlobals());
 		var errors = checkForErrors(JSHINT.errors);
 		console.log("errors: " + JSON.stringify(errors));
@@ -137,7 +158,7 @@ myApp.factory('testRunnerService', ['$window','$rootScope','testsService','funct
 		    {
 			    clearTimeout(testRunTimeout);					    	
 			    console.log("Received: " + JSON.stringify(e.data));
-				processTestFinished(false, e.data);
+				testRunner.processTestFinished(false, e.data);
 		    }
 		    
 			// load the script and start the worker
@@ -164,24 +185,6 @@ myApp.factory('testRunnerService', ['$window','$rootScope','testsService','funct
 		this.processTestFinished(true, null);
 	}
 		
-	testRunner.processTestFinished = function(testStopped, testResult)
-	{
-		// If the code is unimplemented, the test neither failed nor passed. If the test
-		// did not pass or timed out, it failed. Otherwise, it passed.
-		if (testStopped)
-			allFailedTestCases.push(currentTextIndex);
-		else if(!testResult.codeUnimplemented)
-		{
-			if (!testResult.passed)
-				allFailedTestCases.push(currentTextIndex);
-			else
-				allPassedTestCases.push(currentTextIndex);
-		}
-		
-		// Increment the test and run the next one.
-		currentTextIndex++;
-		this.runTest();		
-	}
 
 	testRunner.submitResultsToServer = function()
 	{		
@@ -200,13 +203,14 @@ myApp.factory('testRunnerService', ['$window','$rootScope','testsService','funct
 		
 		if (passedTests != null)
 		{
-			
+			console.log("passed:"+allPassedTestCases);
+			console.log("failed:"+allFailedTestCases);
 			console.log('test runner result: ?functionID=' + functionID + '&passedTests=' + passedTests)
 			$.ajax({
 			    contentType: 'application/json',
 			    data: '',
 			    type: 'POST',
-			    url: '/' + projectID + '/testResult?functionID=' + functionID + '&passedTests=' + passedTests
+			    url: '/' + $rootScope.projectId + '/testResult?functionID=' + functionID + '&passedTests=' + passedTests
 			});
 		}
 	}

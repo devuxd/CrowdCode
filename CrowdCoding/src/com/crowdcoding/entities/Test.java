@@ -178,6 +178,7 @@ public class Test extends Artifact
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
 			
+			System.out.println("Test became implemented for functionID="+functionID);
 			FunctionCommand.testBecameImplemented(functionID, this.id);
 			
 			project.historyLog().endEvent();
