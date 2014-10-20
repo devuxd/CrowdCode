@@ -67,6 +67,7 @@ public class Review extends Microtask
 		{
 			MicrotaskCommand.submit(microtaskIDUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
 			WorkerCommand.awardPoints(workerOfReviewedWork, submittedMicrotask.submitValue);
+			WorkerCommand.increaseStat(workerOfReviewedWork, "microtasks",1);
 			points = submittedMicrotask.submitValue;
 		}
 		// Otherwise, reisuse a new microtask to do the original work again.
@@ -87,9 +88,12 @@ public class Review extends Microtask
 
 		// Award points to the reviewer for the review task
 		WorkerCommand.awardPoints(workerID, this.submitValue);
-    	FirebaseService.postToNewsfeed(workerID, (new NewsItemInFirebase(this.submitValue,
-    			"You reviewed a microtask", "SubmittedReview",
-    			this.id).json()), project);
+    	FirebaseService.postToNewsfeed(workerID, (new NewsItemInFirebase(
+    			this.submitValue,
+    			"You reviewed a microtask", 
+    			"SubmittedReview",
+    			this.id
+    	).json()), project);
 	}
 
 	protected Class getDTOClass()

@@ -133,6 +133,25 @@ public class FirebaseService
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		writeData(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, project);
 	}
+
+	public static String readStat(String workerID, String label, Project project){
+		String result = readDataAbsolute(getBaseURL(project) + workerID + "/stats/"+label+".json");
+		if (result == null || result.equals("null"))
+			result = "";
+		return result;
+	}
+	
+	public static void setStat(String workerID, String label, String value, Project project)
+	{
+		writeData(value, "/workers/" + workerID + "/stats/"+label+".json", HTTPMethod.PUT, project);
+	}
+	
+	public static void increaseStatBy(String workerID, String label, int increaseAmount, Project project){
+		Integer actualValue = Integer.parseInt(readStat(workerID,label,project));
+		Integer value = actualValue + increaseAmount ;
+		setStat(workerID,label,value.toString(),project);
+	}
+	
 	
 	public static void writeWorker(String workerID, String workerDisplayName, Project project)
 	{
