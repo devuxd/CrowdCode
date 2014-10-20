@@ -3,12 +3,17 @@
 </h2>
 <br />
 <div id="taskDescription" class="bg-success">
-	Can you write a description for a function that<BR> <strong>{{ microtask.callDescription}}</strong><BR> <a id="showContext"
-		data-toggle="collapse" data-target="#callContext"
-	>Show context</a>
-	<div id="callContext" class="collapse">
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+	Can you write a description for a function that<BR> <strong>{{ microtask.callDescription}}</strong><BR>
+
+
+
+	<a ng-init="showContext=false" ng-click="showContext = !showContext">Show context</a>
+	<div id="callContext" ng-show="showContext">
+		<div class="codemirrorBox">
+			<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="writeFunctionDescription.code"></div>
+		</div>
 	</div>
+
 	<ng-include src="'/html/templates/typeBrowser.html'"> <BR>
 </div>
 

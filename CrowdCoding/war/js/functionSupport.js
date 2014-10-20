@@ -95,7 +95,7 @@ function renderHeader(functionName, paramNames)
 	var header = 'function ' + functionName + '(';
 	var numParams = 0;
 
-	for(var i=0; i<paramNames.lenght; i++)
+	for(var i=0; i<paramNames.length; i++)
 	{
 	  	if (numParams > 0)
 			header += ', ';

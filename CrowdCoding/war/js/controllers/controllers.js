@@ -173,7 +173,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					{
 					paramNames.push($scope.writeFunctionDescription.parameters[i].paramName);
 					paramTypes.push($scope.writeFunctionDescription.parameters[i].paramType);
-					paramDescriptions.push($scoope.writeFunctionDescription.parameters[i].paramDescritpion)
+					paramDescriptions.push($scope.writeFunctionDescription.parameters[i].paramDescritpion)
 					}
 
 				formData = { name: $scope.writeFunctionDescription.functionName,
@@ -207,9 +207,9 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
 					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
 
-				formData =  { description: writeFunctionDescription.description,
+				formData =  { description: functionParsed.description,
 							 header:       functionParsed.header,
-							 name:         writeFunctionDescription.name,
+							 name:         name,
 							 code:         body,
 							 returnType:   functionParsed.returnType,
 							 paramNames:   functionParsed.paramNames,
@@ -250,8 +250,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 						//retrievs the reference of the existing test cases to see if the are differents
 						$scope.review.currenttestcases=testsService.testCasesForFunction($scope.review.microtaskUnderReview.testedFunctionID);
 
-
-
 						//load the version of the function with witch the test cases where made
 						var functionUnderTestSync =$firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtaskUnderReview.testedFunctionID
 								+ '/' + $scope.review.microtaskUnderReview.submission.functionVersion));
@@ -272,14 +270,29 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					else if ($scope.review.microtaskUnderReview.type == 'WriteFunction')
 					{
 
-							$scope.review.codeMirrorCode=renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header+$scope.review.microtaskUnderReview.submission.code;
+						$scope.review.codeMirrorCode=renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header+$scope.review.microtaskUnderReview.submission.code;
 
 					}
+					else if ($scope.review.microtaskUnderReview.type == 'WriteCall')
+					{
+
+						$scope.functionChanged=functionsService.get($scope.review.microtaskUnderReview.functionID);
+						$scope.review.codeMirrorCode=renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
+
+					}
+					else if ($scope.review.microtaskUnderReview.type == 'WriteFunctionDescription')
+					{
+
+						$scope.review.codeMirrorCode=renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header;
+
+					}
+
+
+
 				});
 
 
 				//Star rating manager
-				//===========================================================
 				$scope.review.rate = 0;
 				$scope.max = 5;
 
@@ -287,7 +300,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				   $scope.overStar = value;
 				   $scope.percent = 100 * (value / $scope.max);
 				};
-				//==========================================================
+
 
 			},
 			'ReuseSearch': function(){
@@ -296,7 +309,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				//-2 nothing selected (need an action to submit)
 				//-1 no function does this
 				// 0- n index of the function selected
-				var code = functionsService.get($scope.microtask.callerID).code;
+				var functionWithPseudoCall=functionsService.get($scope.microtask.callerID);
+				var code = renderDescription(functionWithPseudoCall) + functionWithPseudoCall.header+ functionWithPseudoCall.code;
 				$scope.reuseSearch.selected=-2;
 				$scope.reuseSearch.functions= [];
 
@@ -306,6 +320,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					$scope.reuseSearch.selected=-2;
 					$scope.reuseSearch.functions= functionsService.findMatches($scope.reuseSearch.text);
 				};
+
 				$scope.codemirrorLoaded = function(codeMirror){
 					//Retreves the code of the function that generated the pseudocall
 					codeMirror.setValue(code);
@@ -432,10 +447,12 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					$scope.writeFunctionDescription.parameters.splice(index,1);
 				}
 
+				//prepare the codemirror Value
+				var callerFunction= functionsService.get($scope.microtask.callerID);
+				$scope.writeFunctionDescription.code=renderDescription(callerFunction) + callerFunction.header + callerFunction.code;
+
 				//Setup the codemirror box with the code of the function that created the pseudocall
 				$scope.codemirrorLoaded = function(codeMirror){
-					var callerFunction= functionsService.get($scope.microtask.callerID);
-					codeMirror.setValue(renderDescription(callerFunction) + callerFunction.header + callerFunction.code);
 					codeMirror.setOption("readOnly", "true");
 					codeMirror.setOption("theme", "pastel-on-dark");
 					codeMirror.refresh();
@@ -447,6 +464,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			},
 			'WriteCall': function(){
 				$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+
 				$scope.readonlyCodemirrorLoaded = function(codeMirror){
 					codeMirror.setValue($scope.datas.pseudoCall);
 					codeMirror.setOption("readOnly", "true");
@@ -454,7 +472,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					codeMirror.refresh();
 				}
                 $scope.codemirrorLoaded = function(myCodeMirror){
-					codemirror = myCodeMirror;
+
+                	codemirror = myCodeMirror;
 					codemirror.setOption('autofocus', true);
 					codemirror.setOption('indentUnit', 4);
 					codemirror.setOption('indentWithTabs', true);
@@ -464,11 +483,10 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					codemirror.doc.setValue($scope.code);
 
 					highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
-
 					// If we are editing a function that is a client request and starts with CR, make the header
 				 	// readonly.
 					if ($scope.funct.name.startsWith('CR'))
-						makeHeaderAndParameterReadOnly();
+						makeHeaderAndParameterReadOnly(codemirror);
 
 				 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
 				 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
