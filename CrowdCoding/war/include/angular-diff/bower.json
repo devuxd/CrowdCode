@@ -1,0 +1,25 @@
+{
+  "name": "angular-diff",
+  "version": "v1.0.0",
+  "description": "Diff filter for angular.js. Show inline text diff in your page",
+  "homepage": "https://github.com/matteosuppo/angular-diff",
+  "authors": [
+    "Matteo Suppo <matteo.suppo@gmail.com>"
+  ],
+  "keywords": [
+    "angular",
+    "diff"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.18",
+    "angular-mocks": "~1.2.18"
+  }
+}
