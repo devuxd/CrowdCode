@@ -1,7 +1,5 @@
 
 
-
-
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
@@ -22,6 +20,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	$rootScope.workerLogout = function(){
 		userService.logout();
 	}
+
 
 	//user.listenForJobs();	
 	userService.init();		
