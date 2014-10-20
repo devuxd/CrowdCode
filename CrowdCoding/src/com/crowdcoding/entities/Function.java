@@ -653,6 +653,10 @@ public class Function extends Artifact
 		}			
 	}	
 	
+	public void failedTest(Project project,Long testID){
+		
+	}
+	
 	// Provides notification that a test has transitioned to being implemented
 	public void testBecameImplemented(Test test, Project project)
 	{

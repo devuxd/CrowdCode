@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -193,7 +194,7 @@ public class CrowdServlet extends HttpServlet
 								else if (action.equals("submit"))
 									doSubmit(req, resp);
 								else if (action.equals("testResult"))
-									processTestResult(req, resp, projectID);
+									doSubmitTestResult(req, resp, projectID);
 								else if (action.equals("logout"))					
 									doLogout(projectID, path[3]);
 								else if (action.equals("admin") && path.length == 3)
@@ -349,17 +350,25 @@ public class CrowdServlet extends HttpServlet
 	}
 	
 	// process test result submit
-	private void processTestResult(final HttpServletRequest req, final HttpServletResponse resp, String projectID) throws IOException, FileUploadException {
-
+	private void doSubmitTestResult(final HttpServletRequest req, final HttpServletResponse resp, String projectID) throws IOException, FileUploadException {
+		
+		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
-		final boolean testResult = Boolean.parseBoolean(req.getParameter("passedTests"));
-		System.out.println("function id ="+projectID);
+		final long testID     = Long.parseLong(req.getParameter("testID"));
+
+		/*
+		// SEND 503 error if some of the parameter are null
+		if( ){
+			resp.sendError(503); 
+		}
+		*/
+		
 		List<Command> commands = new ArrayList<Command>();
 		commands.addAll(ofy().transact(new Work<List<Command>>() {
 	        public List<Command> run()
 	        {
     			CommandContext context = new CommandContext();	
-    			if(testResult)
+    			if(result)
     				FunctionCommand.passedTests(functionID);
     			else
     				FunctionCommand.failedTests(functionID);

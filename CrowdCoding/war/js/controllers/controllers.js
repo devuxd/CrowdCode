@@ -34,7 +34,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService',function($scope,$rootScope,$firebase,$http,testsService,functionsService) {
+myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService','userService',function($scope,$rootScope,$firebase,$http,testsService,functionsService,userService) {
 
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -512,7 +512,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// load microtask:
 	// request a new microtask from the backend and if success
 	// inizialize template and microtask-related values
-	$scope.load = function(){
+	function load(){
 		// set the loading template
 		$scope.templatePath = templatesURL + "loading.html";
 
@@ -591,7 +591,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				console.log("submit success");
 				$scope.microtask.submission = formData;
 				$scope.microtask.$save();
-			  	$scope.load();
+			  	load();
 		  	})
 		  	.error(function(data, status, headers, config) {
 		  		console.log("submit error");
@@ -603,12 +603,12 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		console.log("skip fired");
 		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
 		  success(function(data, status, headers, config) {
-			  $scope.load();
+			  load();
 		  });
 	});
 
 	// auto-load microtask on controller load
-	$scope.load();
+	load();
 }]);
 
 
@@ -684,7 +684,14 @@ myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',f
 //////////////////////
 myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter','functionsService','testsService',function($scope,$rootScope,$firebase,$filter,functionsService,testsService) {
 	$scope.locCount = 5;
+	/*
+
+
+	new Firebase($rootScope.firebaseURL+'/status/microtaskCount/');
+	var sync = $firebase(ref);*/
 	$scope.microtasksCount = 0;
+
+
 	$scope.functionsCount = 0;
 	$scope.testsCount = 0;
 	/*

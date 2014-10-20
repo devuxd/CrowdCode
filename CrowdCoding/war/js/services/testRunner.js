@@ -1,7 +1,7 @@
 /////////////////////////
 // TEST RUNNER SERVICE //
 /////////////////////////
-myApp.factory('testRunnerService', ['$window','$rootScope','testsService','functionsService', function($window,$rootScope,testsService,functionsService) {
+myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService','functionsService', function($window,$rootScope,$http,testsService,functionsService) {
 
 	var timeOutTime = 1000;
 	var validTests;
@@ -188,6 +188,10 @@ myApp.factory('testRunnerService', ['$window','$rootScope','testsService','funct
 
 	testRunner.submitResultsToServer = function()
 	{		
+		console.log("passed="+allPassedTestCases.join(','));
+		console.log("failed="+allFailedTestCases.join(','));
+
+
 		// Determine if the function passed or failed its tests. 
 		// If at least one test failed, the function failed its tests.
 		// If at least one test succeeded and no tests failed, the function passed its tests.
@@ -203,16 +207,26 @@ myApp.factory('testRunnerService', ['$window','$rootScope','testsService','funct
 		
 		if (passedTests != null)
 		{
-			console.log("passed:"+allPassedTestCases);
-			console.log("failed:"+allFailedTestCases);
-			console.log('test runner result: ?functionID=' + functionID + '&passedTests=' + passedTests)
-			$.ajax({
-			    contentType: 'application/json',
-			    data: '',
-			    type: 'POST',
-			    url: '/' + $rootScope.projectId + '/testResult?functionID=' + functionID + '&passedTests=' + passedTests
-			});
+			var getData = [];
+			getData.push('functionID='+functionID);
+			getData.push('result='+passedTests);
+
+			// PASS THE FIRST FAILED TEST ID TO THE SERVER 
+			// USEFUL FOR SPAWNING A DIFFERENT DEBUG MICROTASK FOR 
+			// EACH FAILED TEST
+			if( allFailedTestCases.length > 0 )
+				getData.push("testID="+validTests[allFailedTestCases[0]].id);
+
+			console.log(getData);
+			$http.get('/' + $rootScope.projectId + '/testResult?'+getData.join("&")).
+			  success(function(data, status, headers, config) {
+			    console.log("test result submitted GET");
+			  }).
+			  error(function(data, status, headers, config) {
+			    console.log("test result submit error");
+			  });
 		}
+			
 	}
 	
 	return testRunner;

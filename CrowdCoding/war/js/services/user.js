@@ -17,7 +17,16 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 		$timeout(updateUserReference,1000*60*2); // re-do every 2 minutes
 	}
 
+	user.statusEnum = {
+		'WAITING':1,
+		'WORKING':2,
+		'IDLE':3
+	};
+
+	user.status = 0;
+
 	user.init = function(){	
+		user.status = user.statusEnum.WAITING;
 		// when firebase is connected
 		isConnected.on('value', function(snapshot) {
 		  if (snapshot.val()) {
@@ -27,8 +36,6 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 		    userRef.onDisconnect().remove();//setWithPriority({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
 		  }
 		});
-
-
 	}
 
 	// logout the worker
