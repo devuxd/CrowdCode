@@ -2,109 +2,152 @@
 	<span id="taskTitle">{{datas.title}}</span> <span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
 </h2>
 <br />
-
-
 <div id="taskDescription" class="bg-success">
-	The following work has been submitted: <BR><BR>
+	The following work has been submitted: <BR> <BR>
 
-	<div ng-if="review.microtaskUnderReview.type == 'WriteTestCases'" >
-
+	<!--//////////////////////////////////////////-->
+	<!--//        WRITE TEST CASE MICROTASK     //-->
+	<!--//////////////////////////////////////////-->
+	<div ng-if="review.microtaskUnderReview.type == 'WriteTestCases'">
 		<b>Write test cases</b><BR>
+		<span ng-if="review.microtaskUnderReview.promptType == 'FUNCTION_SIGNATURE'">
+			What are some cases in which this function might be used? Are there any unexpected corner cases that might not work?<BR> <BR>
+		</span>
 
-			<span ng-if= "review.microtaskUnderReview.promptType == 'FUNCTION_SIGNATURE'">
-				What are some cases in which this function might be used? Are there any unexpected corner cases that might not work?<BR><BR>
+		<span ng-if="review.microtaskUnderReview.promptType == 'CORRECT_TEST_CASE'">
+			The following issue was reported with the following test case:
+			<BR> <BR>
+			<div class="alert alert-info">{{review.microtaskUnderReview.disputeDescription }}</div>
+			<div class="alert alert-error">{{review.microtaskUnderReview.disputedTestCase }}</div>
+			Can you fix the test case (and others if necessary) to address the issue?
+			<BR>
+			(Note: if the above test case is not below, the test case has already been changed, and you can ignore this microtask).
+			<BR> <BR>
+		</span>
+
+		<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.codeMirrorCode"></div>
+		<b>Submitted Test cases</b> <BR>
+		<div ng-if="review.currenttestcases.length>0" id="diffDiv">
+			<span class="original" style="display: none">
+				<ul ng-repeat="currentTestCase in currentTestCases">
+					<li>{{currentTestCase.text}}</li>
+				</ul>
+			</span> <span class="changed" style="display: none">'
+				<ul ng-repeat="submittedTestCase in review.microtaskUnderReview.submission.testCases">
+					<li>{{submittedTestCase.text}}</li>
+				</ul>
 			</span>
-
-			<span ng-if= "review.microtaskUnderReview.promptType == 'CORRECT_TEST_CASE'">
-
-				The following issue was reported with the following test case:<BR><BR>
-				<div class="alert alert-info">{{review.microtaskUnderReview.disputeDescription }}</div>
-				<div class="alert alert-error">{{review.microtaskUnderReview.disputedTestCase }}</div>'
-				Can you fix the test case (and others if necessary) to address the issue?<BR>
-		  		(Note: if the above test case is not below, the test case has already been changed,
-		  		and you can ignore this microtask).<BR><BR>';
-
-			</span>
-
-			<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
-
-			<b>Submitted Test cases</b><BR>
-
-			<div ng-if="review.currenttestcases.length>0" id="diffDiv">
-				<span class="original" style="display: none">
-
-					<ul ng-repeat="currentTestCase in currentTestCases">
-						<li>{{currentTestCase.text}}</li>
-					</ul>
-				</span>
-
-				<span class="changed" style="display: none">'
-					<ul ng-repeat="submittedTestCase in review.microtaskUnderReview.submission.testCases">
-						<li>{{submittedTestCase.text}}</li>
-					</ul>
-				</span>
-				<span id="diff" class="diff"></span><BR>
-			</div>
-
-			<ul ng-if="review.currenttestcases.length==0" ng-repeat="submittedTestCase in review.microtaskUnderReview.submission.testCases">
-				<li>{{submittedTestCase.text}}</li>
-			</ul>
-	<!--  TODO if (currentTestCases != null && currentTestCases.length > 0)
+			<span id="diff" class="diff"></span><BR>
+		</div>
+		<ul ng-if="review.currenttestcases.length==0" ng-repeat="submittedTestCase in review.microtaskUnderReview.submission.testCases">
+			<li>{{submittedTestCase.text}}</li>
+		</ul>
+		<!--  TODO if (currentTestCases != null && currentTestCases.length > 0)
 				$('#diffDiv').prettyTextDiff();-->
 	</div>
 
+	<!--//////////////////////////////////////////-->
+	<!--//           WRITE TEST MICROTASK       //-->
+	<!--//////////////////////////////////////////-->
+	<div ng-if="review.microtaskUnderReview.type == 'WriteTest'">
 
-	<div  ng-if="review.microtaskUnderReview.type == 'WriteTest'">
-		<b>Write a test</b><BR>';
-	<!-- 	if (microtask.promptType === 'WRITE')
-		{
-			content += 'Can you write a test for <BR><BR>';
-			//content += ''
+		<b>Write a test</b><BR>
+		Can you write a test for
+		<BR>
+		<div class="alert alert-info">{{review.microtaskUnderReview.owningArtifact}}</div>
 
-			// Load the test...
-		}
-		console.log(snapshot.val()); -->
+		Here's the description of the function to test:
+		<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.codeMirrorCode"></div>
+		<br/>
+		<div ng-if="! review.microtaskUnderReview.submission.inDispute">
+			<span>Test Written</span>
+			<span> Parameter </span>
+			<ul ng-repeat="testInput in review.microtaskUnderReview.submission.simpleTestInputs track by $index">
+				<li>Type:{{functionUnderTest.paramTypes[$index]}} ----- value: {{testInput}}</li>
+			</ul>
+			<span>Returns:{{functionUnderTest.returnType}} ---- value {{review.microtaskUnderReview.submission.simpleTestOutput}}  </span>
+		</div>
+		<div ng-if="review.microtaskUnderReview.submission.inDispute">
+			<span> The Test Case Above has been disputed because:</span>
+			<br />
+			<span><b>{{review.microtaskUnderReview.submission.disputeText}}</b></b></span>
+		</div>
 	</div>
 
+	<!--//////////////////////////////////////////-->
+	<!--//        WRITE FUNCTION MICROTASK      //-->
+	<!--//////////////////////////////////////////-->
 	<div ng-if="review.microtaskUnderReview.type == 'WriteFunction'">
-	<b>Write a function description</b><BR>
+		<b>Write a function description</b><BR>
+		<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.codeMirrorCode"></div>
+	</div>
 
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+	<!--//////////////////////////////////////////-->
+	<!--//        REUSE SEARCH MICROTASK        //-->
+	<!--//////////////////////////////////////////-->
+	<div ng-if="review.microtaskUnderReview.type == 'ReuseSearch'">
+		<b>Reuse Search</b><BR>
+		Is there a function that does<BR><BR>
+		<strong>{{review.microtaskUnderReview.callDescription}}</strong>
+		<BR><BR>
+		<div ng-if="review.microtaskUnderReview.submission.noFunction">
+			"No function does this" What kind of review can I do?.
+			<BR><BR>
+		</div>
+		<div ng-if="! review.microtaskUnderReview.submission.noFunction">
+			The following function Has been found:<BR>
+			<strong>{{review.microtaskUnderReview.submission.functionName}}</strong>
+			<BR><BR>
+		</div>
 
 	</div>
+
+	<!--//////////////////////////////////////////-->
+	<!--// WRITE FUNCTION DESCRIPTION MICROTASK //-->
+	<!--//////////////////////////////////////////-->
+	<div ng-if="review.microtaskUnderReview.type == 'WriteFunctionDescription'">
+	<b>Write function description</b><BR>
+	To solve the following pseudo code: <BR>
+	<span class="highlightPseudoCall">{{review.microtaskUnderReview.callDescription}}</span> <BR>
+	has been written this function:
+	<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.codeMirrorCode"></div>
+
+	</div>
+
+	<!--//////////////////////////////////////////-->
+	<!--//          WRITE CALL MICROTASK        //-->
+	<!--//////////////////////////////////////////-->
+	<div ng-if="review.microtaskUnderReview.type == 'WriteCall'">
+		<b>Write Call</b><BR>
+
+		The following pseudoCall <span class="highlightPseudoCall">pseudocall below</span>
+
+		has been replaced in this way
+
+		<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.codeMirrorCode"></div>
+
+	</div>
+
 </div>
-
-
-<form id="reviewForm" action="">
-		<div id="ratingsDiv">
-			<p><B>Please rate the quality of this work:</B></p><BR>
-			<fieldset class="rating" id="qualityRating">
-			    <input type="radio" id="quality-star5" name="ratingQuality" value="5" /><label for="quality-star5" title="Really awesome">5 stars</label>
-			    <input type="radio" id="quality-star4" name="ratingQuality" value="4" /><label for="quality-star4" title="Pretty good">4 stars</label>
-			    <input type="radio" id="quality-star3" name="ratingQuality" value="3" /><label for="quality-star3" id="star3label" title="Just good enough">3 stars</label>
-			    <input type="radio" id="quality-star2" name="ratingQuality" value="2" /><label for="quality-star2" title="Should be rejected">2 stars</label>
-			    <input type="radio" id="quality-star1" name="ratingQuality" value="1" /><label for="quality-star1" title="Pretty terrible">1 star</label>
-			</fieldset>
-			<p id="ratinglegend">Work rated 3 or above will be accepted.</p>
-		</div>	<BR>
-
-
-
-
-	<B>Please briefly explain your rating:</B><BR>
-	<span ng-class="{ 'has-error': form.reviewText.$dirty && form.reviewText.$invalid , 'has-success': form.reviewText.$valid}">
-
-	<textarea id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" required></textarea>
-	<span class="help-block" ng-show="form.reviewText.$dirty && form.reviewText.$invalid && form.reviewText.$error.required">
-		This field is required!
-	</span>
-	</span>
+<div id="ratingsDiv">
+	<p>
+		<B>Please rate the quality of this work:</B>
+	</p>
+	<rating ng-model="review.rate" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="hoveringOver(review.rate)"></rating>
+	<span class="label"
+		ng-class="{'label-danger': percent<50,'label-warning': percent<70, 'label-info': percent>=70 && percent<90, 'label-success': percent>=90}">{{percent}}%</span>
 	<br />
-	<br />
-</form>
+	<p id="ratinglegend">Work rated 3 or above will be accepted.</p>
+</div>
 <br/>
+	<B>Please briefly explain your rating:</B><BR> <span
+		ng-class="{ 'has-error': form.reviewText.$dirty && form.reviewText.$invalid , 'has-success': form.reviewText.$valid}"> <textarea
+			id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" required></textarea> <span
+		class="help-block" ng-show="form.reviewText.$dirty && form.reviewText.$invalid && form.reviewText.$error.required"> This field is required! </span>
+	</span> <br /> <br />
+<br />
 <div class="task-buttons pull-right">
-	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
-	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
+	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid">Submit</button>
+	<button ng-click="$emit('skipMicrotask')" class="btn btn-link">Skip</button>
 </div>
 <div class="clearfix"></div>
