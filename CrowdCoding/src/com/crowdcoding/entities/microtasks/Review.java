@@ -67,7 +67,7 @@ public class Review extends Microtask
 		{
 			MicrotaskCommand.submit(microtaskIDUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
 			WorkerCommand.awardPoints(workerOfReviewedWork, submittedMicrotask.submitValue);
-			WorkerCommand.increaseStat(workerOfReviewedWork, "microtasks",1);
+			WorkerCommand.increaseStat(workerOfReviewedWork, "microtasks",1);//
 			points = submittedMicrotask.submitValue;
 		}
 		// Otherwise, reisuse a new microtask to do the original work again.
