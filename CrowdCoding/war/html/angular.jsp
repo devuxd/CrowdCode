@@ -121,6 +121,7 @@
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
 
     <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> <!-- codemirror ui for Angularjs-->
@@ -154,6 +155,8 @@
 	<script src="/js/controllers/controllers.js"></script>
 
 	<script src="/js/controllers/microtasks.js"></script>
+
+	<script src="/js/filters/filter.js"></script>
 
 
 

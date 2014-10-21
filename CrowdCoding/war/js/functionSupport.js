@@ -52,7 +52,8 @@ function parseDescription(lineDescription,functionName)
 
 
 	// build header
-	header = 'function ' + functionName + '(' + paramNames.join(',') + ')';
+//	header = 'function ' + functionName + '(' + paramNames.join(', ') + ')';
+	header=renderHeader(functionName,paramNames);
 
 	// return all the infos
 	return { 'header'           : header,

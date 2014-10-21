@@ -1,4 +1,4 @@
-  
+
  <h2 id="taskHeader">
  	<span id="taskTitle" >{{ microtask.type }}</span>
  	<span id="taskPoints" class="label label-default">{{ microtask.points}} points</span>
@@ -8,15 +8,19 @@
  <br />
 <div id="taskDescription" class="bg-success">
 	<p>
-	The crowd found the following function for the <span class="highlightPseudoCall">pseudocall below</span>:<BR><BR>
-		
+	The crowd found the following function
+	<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : readonlyFunctionCodemirrorLoaded }"></div>
+
+
+	for the <span class="highlightPseudoCall">pseudocall below</span>:<BR>
+
 		<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : readonlyCodemirrorLoaded }"></div>
 		Can you replace the pseudocall with a call to this function, or find another way to do it?
 	</p>
-	
- 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>	
+
+ 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>
 </div>
-		
+
 
 <div id="taskForm" >
 	<div class="codemirrorBox" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>

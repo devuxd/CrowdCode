@@ -78,7 +78,7 @@
 	<!--//        WRITE FUNCTION MICROTASK      //-->
 	<!--//////////////////////////////////////////-->
 	<div ng-if="review.microtaskUnderReview.type == 'WriteFunction'">
-		<b>Write a function description</b><BR>
+		<b>Write a function</b><BR>
 		<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.codeMirrorCode"></div>
 	</div>
 
@@ -147,7 +147,7 @@
 	</span> <br /> <br />
 <br />
 <div class="task-buttons pull-right">
-	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid">Submit</button>
+	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid || percent<=10">Submit</button>
 	<button ng-click="$emit('skipMicrotask')" class="btn btn-link">Skip</button>
 </div>
 <div class="clearfix"></div>

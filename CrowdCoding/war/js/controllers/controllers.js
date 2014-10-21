@@ -33,7 +33,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService','userService',function($scope,$rootScope,$firebase,$http,testsService,functionsService,userService) {
+myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService','userService','$filter',function($scope,$rootScope,$firebase,$http,testsService,functionsService,userService, $filter) {
 
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -328,6 +328,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 			},
 			'WriteTest': function(){
+
+
 				// initialize testData
 				// if microtask.submission and microtask.submission.simpleTestInputs are defined
 				// assign test inputs and output to testData, otherwise initialize an empty object
@@ -468,6 +470,14 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					codeMirror.setOption("theme", "pastel-on-dark");
 					codeMirror.refresh();
 				}
+
+				$scope.readonlyFunctionCodemirrorLoaded= function(codeMirror){
+					codeMirror.setValue($scope.microtask.calleeFullDescription);
+					codeMirror.setOption("readOnly", "true");
+					codeMirror.setOption("theme", "pastel-on-dark");
+					codeMirror.refresh();
+				}
+
                 $scope.codemirrorLoaded = function(myCodeMirror){
 
                 	codemirror = myCodeMirror;

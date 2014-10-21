@@ -18,6 +18,7 @@
 
 		<div ng-show="microtask.promptType=='CORRECT'">
 			The following issue was reported with this test:
+
 			<div class="alert alert-info">{{microtask.description}}</div>
 			<div class="alert alert-error">{{microtask.issueDescription}}</div>
 			Can you fix the test to address this issue?<BR>
@@ -38,15 +39,16 @@
 		</div>
 
 		<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
-			The description of the function being tested has changed. Can you update the test below,
-			if necessary? <BR><BR>
-			<BR><BR>
-			<div ng-bind-html="microtask.oldFunctionDescription|diff:microtask.newFunctionDescription"></div>
+			The description of the function being tested has changed<BR>
+			<div ng-bind-html="microtask.oldFunctionDescription |diff:microtask.newFunctionDescription | newline" ></div>
+			<br>
+			Can you update the test Case below,if necessary?<BR>
 
+			<span   style="width:60%" class="alert alert-info pull-left">{{test.description}}</span>
+	   		<button style="width:40%" class="btn btn-mini pull-left" ng-hide="dispute" ng-click="toggleDispute()">Report as incorrect test case</button>
+	   		<span class="clearfix"></span>
 
-			Here's the test description:
-			<div class="alert alert-info">{{test.description}}</div>
-		</div>
+	   	</div>
 
 
 

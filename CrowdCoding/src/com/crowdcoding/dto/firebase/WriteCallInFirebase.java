@@ -16,7 +16,7 @@ public class WriteCallInFirebase extends MicrotaskInFirebase
 		super(id, type, owningArtifact, completed, points);
 
 		this.functionID=functionID;
-		this.calleeFullDescription=calleeFullDescription.replace("\n", "<br>");
+		this.calleeFullDescription=calleeFullDescription;
 
 
 	}
