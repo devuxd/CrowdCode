@@ -66,8 +66,7 @@ public class Review extends Microtask
 		if (reviewDTO.qualityScore > 2)
 		{
 			MicrotaskCommand.submit(microtaskIDUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
-			WorkerCommand.awardPoints(workerOfReviewedWork, submittedMicrotask.submitValue);
-			WorkerCommand.increaseStat(workerOfReviewedWork, "microtasks",1);
+			WorkerCommand.awardPoints(workerOfReviewedWork, submittedMicrotask.submitValue);//
 			points = submittedMicrotask.submitValue;
 		}
 		// Otherwise, reisuse a new microtask to do the original work again.
@@ -78,10 +77,10 @@ public class Review extends Microtask
     	FirebaseService.postToNewsfeed(workerOfReviewedWork, (
     		new NewsItemInFirebase(
     			submittedMicrotask.submitValue,
-			    submittedMicrotask.microtaskDescription(),
+    			"Your work on " + submittedMicrotask.microtaskName() + " has been " + ( (reviewDTO.qualityScore>2) ? "approved" : "rejected") ,
 				"WorkReviewed",
 				submittedMicrotask.getID(),
-				reviewDTO.qualityScore)
+				(reviewDTO.qualityScore > 2) ? true : false )
 	    	).json(),
 	    	project
 	    );
@@ -94,6 +93,14 @@ public class Review extends Microtask
     			"SubmittedReview",
     			this.id
     	).json()), project);
+    	
+    	System.out.println("reviewer id="+workerID);
+    	System.out.println("reviewed  id="+workerOfReviewedWork);
+    	
+
+		// increase the stats counter 
+		WorkerCommand.increaseStat(workerID, "reviews",1);
+    	
 	}
 
 	protected Class getDTOClass()

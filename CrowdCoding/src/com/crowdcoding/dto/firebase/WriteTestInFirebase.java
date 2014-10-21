@@ -35,8 +35,8 @@ public class WriteTestInFirebase extends MicrotaskInFirebase
 		this.testedFunctionID = testedFunctionID;
 		this.promptType = promptType;
 		this.issueDescription = issueDescription;
-		this.oldFunctionDescription = oldFunctionDescription;
-		this.newFunctionDescription = newFunctionDescription;
+		this.oldFunctionDescription = oldFunctionDescription.replace("\n", "<br/>");;
+		this.newFunctionDescription = newFunctionDescription.replace("\n", "<br/>");;
 		this.oldTestCase = oldTestCase;
 	}
 }

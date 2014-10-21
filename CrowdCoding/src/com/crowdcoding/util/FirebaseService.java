@@ -135,9 +135,13 @@ public class FirebaseService
 	}
 
 	public static String readStat(String workerID, String label, Project project){
-		String result = readDataAbsolute(getBaseURL(project) + workerID + "/stats/"+label+".json");
-		if (result == null || result.equals("null"))
-			result = "";
+		String result = readDataAbsolute(getBaseURL(project)  + "/workers/" + workerID + "/stats/"+label+".json");
+
+		System.out.println("Stat absolute url="+getBaseURL(project) + "/workers/" + workerID + "/stats/"+label+".json");
+		if (result == null || result.equals("null")){
+			System.out.println("result of read stat is null ");
+			result = "0";
+		}
 		return result;
 	}
 	
@@ -147,8 +151,10 @@ public class FirebaseService
 	}
 	
 	public static void increaseStatBy(String workerID, String label, int increaseAmount, Project project){
-		Integer actualValue = Integer.parseInt(readStat(workerID,label,project));
+		String stringValue = readStat(workerID,label,project);
+		Integer actualValue = Integer.parseInt(stringValue);
 		Integer value = actualValue + increaseAmount ;
+		System.out.println("Increase stat '"+label+"' from "+actualValue+" to "+value+" for "+workerID);
 		setStat(workerID,label,value.toString(),project);
 	}
 	

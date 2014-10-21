@@ -69,6 +69,8 @@ public class Function extends Artifact
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	private boolean needsDebugging;		     // true iff the function is failing its unit tests.
 	
+	private Test failedTest;
+	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
 	//////////////////////////////////////////////////////////////////////////////
@@ -337,11 +339,9 @@ public class Function extends Artifact
 		// determine if there is work to be done
 		if (!microtaskOut)
 		{
-			
-			System.out.println("function "+name+" looking for work: isWritten="+isWritten+" - "+"needsDebugging="+needsDebugging);
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && needsDebugging)			
-				makeMicrotaskOut(new DebugTestFailure(this, project), project);
+				makeMicrotaskOut(new DebugTestFailure(this, this.failedTest, project), project);
 			else if (!queuedMicrotasks.isEmpty())
 				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
 		}
@@ -356,8 +356,7 @@ public class Function extends Artifact
 		for (Long testId : tests) 
 		{
 			Ref<Test> testRef = Test.find(testId, project);
-		    System.out.println("test Id = "+testRef.get().id+" implemented "+testRef.get().isImplemented());
-			if (!testRef.get().isImplemented())
+		    if (!testRef.get().isImplemented())
 				return false;			
 		}
 		
@@ -646,6 +645,20 @@ public class Function extends Artifact
 		{
 			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
 			this.needsDebugging = true;
+			ofy().save().entity(this).now(); 
+			
+			lookForWork(project);			
+			project.historyLog().endEvent();
+		}			
+	}	
+	
+	public void failedTest(Test test,Project project)
+	{
+		if (isWritten && !needsDebugging)
+		{
+			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
+			this.needsDebugging = true;
+			this.failedTest     = test;
 			ofy().save().entity(this).now(); 
 			
 			lookForWork(project);			

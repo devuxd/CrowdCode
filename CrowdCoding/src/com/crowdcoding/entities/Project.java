@@ -295,7 +295,9 @@ public class Project
 		microtaskAssignments.put(workerID, null);
 		ofy().save().entity(this).now();
 
-		// If reviewing is enabled and this is not a review microtask, spawn a new review microtask to review the work.
+		// If reviewing is enabled and there is not a review microtask
+		// for the current non-review microtask,
+		// spawn a new review microtask to let the crowd review the work
 		if (reviewingEnabled && !microtaskType.equals(Review.class))
 		{
 			MicrotaskCommand.createReview(microtaskID, workerID, jsonDTOData, workerID);

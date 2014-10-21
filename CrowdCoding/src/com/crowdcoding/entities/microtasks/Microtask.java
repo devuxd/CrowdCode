@@ -2,6 +2,7 @@ package com.crowdcoding.entities.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
@@ -78,6 +79,9 @@ public /*abstract*/ class Microtask
 		Artifact owningArtifact = this.getOwningArtifact();
 		if (owningArtifact != null)
 			owningArtifact.storeToFirebase(project);
+		
+		// increase the stats counter 
+		WorkerCommand.increaseStat(workerID, "microtasks",1);
 		
 		project.historyLog().endEvent();
 	}	

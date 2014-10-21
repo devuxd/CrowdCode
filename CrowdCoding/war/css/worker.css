@@ -1,8 +1,10 @@
-
+.glyphicon {
+	font-size:1em;
+}
 
 html,body { height: 100%; }
 body {
-	background-color: rgba(211, 211, 211, 0.22);
+	background-color: #e9eaed;
 }
 
 header h3 { margin:0px }
@@ -62,8 +64,8 @@ footer.navbar-default { background-color: #3C9764; }
 }
 
 #container {
-	padding-left: 3%;
-	padding-right: 3%;
+	padding-left: 1.5%;
+	padding-right: 1.5%;
 }
 
 #leftBar {
@@ -99,68 +101,128 @@ footer.navbar-default { background-color: #3C9764; }
 	padding: 5px;
 }
 
-
-#score .panel-body span:first-child {
-	font-size:40px;
-	margin-top:5px;
+#score ul {
+	margin:0px;
 }
-#stats .badge { width:50px; }
-
-#leaderboard table {width:100%;}
-#leaderboard tr {
-	font-size:14px;
-	font-weight:normal;
-}
-
-#leaderboard .loggedIn {
-	background-color: #CDECCC;
-}
-
-#leaderboard img {
-	margin-bottom:1px;
-	width:30px;
-	height:30px;
-}
-#leaderboard td:nth-child(2) {
-	font-style:italic;
-}
-#leaderboard td:nth-child(3) {
+#score .panel-body li div {
+	font-size:0.7em;
 	font-weight:bold;
 }
-
-#onlineWorkers table {width:100%;}
-#onlineWorkers tr {
-	font-size:14px;
-	font-weight:normal;
+#score .panel-body li .count {
+	font-size:0.8em;
+	line-height:2em;
 }
 
-#onlineWorkers img {
-	margin-bottom:1px;
-	width:30px;
-	height:30px;
-}
-#onlineWorkers td:nth-child(2) {
-	font-style:italic;
-}
-#onlineWorkers td:nth-child(3) {
+#score .panel-body li.current div {
+	font-size:1em;
 	font-weight:bold;
+	color:#999;
+}
+#score .panel-body li.current .count {
+	font-size:1em;
+	line-height:2em;
+}
+#score .btn {
+	margin:0px;
+	width:100%;
 }
 
-#recentActivity {
-	font-weight:normal;
-	height: 300px;
-	overflow:auto;
+/*  PANEL LIST */
+
+.panel-body .panel-list {
+  	border-top: 1px solid #EEE; 
+  	padding:0px;
+  	margin:0px;
 }
-#recentActivity tr {
-	border-bottom:1px solid white;
+.panel-body .panel-list li { 
+  	position: relative;
+ 	display: block;  
+  	border-bottom: 1px solid #EEE; 
+  	_zoom: 1;
 }
-#recentActivity td {
-	text-transform: capitalize;
-	padding:2px;
+.panel-body .panel-list li div {
 }
-#recentActivity td:hover {
+
+.panel-body .panel-list .count {
+  display: block; 
+  position: absolute; 
+  top: 0; 
+  right: 0; 
+  margin: 0 0.3em; 
+  text-align: right; 
+  color: #999; 
+  font-weight: bold; 
+  font-size: 0.875em; 
+  line-height: 2.6em; 
+}
+.panel-body .panel-list li:hover { 
+  background: #EFEFEF; 
+}
+
+/* CHART LISTS */
+.chartlist li div {
+	display: block; 
+  	padding: 0.4em 4.5em 0.4em 0.5em;
+  	position: relative; 
+  	z-index: 2; 
+  	font-size:0.95em;
+}
+.chartlist .index { 
+  display: block; 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  height: 100%; 
+  background: #CDECCC; 
+  text-indent: -9999px; 
+  overflow: hidden; 
+  line-height: 2em;
+}
+.chartlist li:hover .index{ 
+  background: rgba(123, 123, 123, 0.22); 
+}
+
+
+#stats li.total { 
+	background-color:#ADADAD;
+	color:#4D4D4D;
+}
+#stats li.total .count{ 
+	color:#565656;
+}
+
+
+ul.user-list li {
+	position:relative;
+	height:30px;
+	line-height:29px;
+	clear:left;
+}
+ul.user-list  .avatar {
+	display:block;
+	width:28px;
+	height:28px;
+	float:left;
+}
+ul.user-list  .avatar img{
+	width:28px;
+	height:28px;
+}
+ul.user-list  .name {
+	position:absolute;
+	top:0px;
+	width:100%;
+	padding-left:35px;
+	text-overflow:ellipsis;
+	overflow:hidden;
+}
+
+#leaderboard .name {
+	padding-right:20px;
+}
+
+#newsPanel li:hover {
 	cursor:pointer;
-	background-color:bisque;
 }
 
 #chatInput{
@@ -173,23 +235,46 @@ footer.navbar-default { background-color: #3C9764; }
 	padding: 3px;
 	height: 30px;
 }
-#chatOutput {
-	font-weight:normal;
-	height: 300px;
-	overflow:auto;
-	padding: 3px;
-	background-color: #CDECCC;
-	margin-bottom:5px;
+#chatOutput li {
+	height:auto;
+	margin-bottom:2px;
+	background-color:white;
 }
+
+#chatOutput .message{
+	top:0px;
+	line-height:1em;
+	overflow:hidden;
+	padding:3px;
+}
+#chatOutput .message div { width:100%; overflow:hidden; text-overflow:ellipsis; }
+#chatOutput .message .text{ order:2; font-style:italic; margin:0px; }
+#chatOutput .message .nickname { order:1; font-weight:bold; font-size:0.9em;}
+#chatOutput .message .time { order:3; font-weight:bold; font-size:0.5em;}
+
+
+/*
+#chatOutput li {
+	display:flex;
+	padding:2px;
+}
+#chatOutput .message {
+	background-color:black;
+	padding:5px;
+}
+#chatOutput .message p {
+	font-size:0.8em;
+}
+
 #chatOutput span:first-child {
 	font-weight:bold;
 }
-
+*/
 
 #task {
 	padding:10px;
 	background-color:white;
-	border-radius:10px;
+	border-radius:4px;
 	border:1px solid lightgray;
 	
 	
