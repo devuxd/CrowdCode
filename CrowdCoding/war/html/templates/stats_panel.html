@@ -1,8 +1,22 @@
-<div id="stats" class="panel panel-default " ng-controller="StatsController">
-	<div class="panel-heading">Your Stats</div>
+<div id="stats" class="panel panel-default " ng-controller="StatsController" >
+	<div class="panel-heading"><span class="glyphicon glyphicon-stats"></span> Your Stats</div>
 	<div class="panel-body">
-		<span id="microtaskCountSpan" class="badge">{{microtasksCount}}</span><small>&nbsp;microtasks&nbsp;&nbsp;</small><br />
-		<span id="functionCountSpan" class="badge">{{functionsCount}}</span><small>&nbsp;functions&nbsp;&nbsp;</small><br />
-		<span id="testCountSpan" class="badge">{{testsCount}}</span><small>&nbsp;tests&nbsp;&nbsp;</small>
+		<!--
+		<span class="badge">{{stats.microtasks}}</span><small>&nbsp;microtasks&nbsp;&nbsp;</small><br />
+		<span class="badge">{{stats.functions}}</span><small>&nbsp;functions&nbsp;&nbsp;</small><br />
+		<span class="badge">{{stats.tests}}</span><small>&nbsp;tests&nbsp;&nbsp;</small><br />
+		<span class="badge">{{stats.testcases}}</span><small>&nbsp;testcases&nbsp;&nbsp;</small><br />
+		<span class="badge">{{stats.reviews}}</span><small>&nbsp;reviews&nbsp;&nbsp;</small><br />
+		<span class="badge">{{stats.searches}}</span><small>&nbsp;searches&nbsp;&nbsp;</small><br />
+		<span class="badge">{{stats.function_descriptions}}</span><small>&nbsp;funct desc&nbsp;&nbsp;</small><br />
+		<span class="badge">{{stats.function_calls}}</span><small>&nbsp;funct calls&nbsp;&nbsp;</small><br />
+		<span class="badge">{{stats.debugs}}</span><small>&nbsp;debugs&nbsp;&nbsp;</small><br />-->
+		<ul class="panel-list chartlist">
+	      <li ng-repeat="(label,value) in stats" ng-if=" label != 'microtasks' && value > 0 ">
+	        <span class="index" style="width:{{ ( (stats.microtasks==0) ? 0 : value/total*100 ) | number : 3 }}%;"></span>
+	        <div >{{label}}</div>
+	        <span class="count">{{value}}</span>
+	      </li>
+	    </ul>
 	</div>
 </div>

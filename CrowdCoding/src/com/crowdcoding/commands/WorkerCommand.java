@@ -2,9 +2,13 @@ package com.crowdcoding.commands;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Worker;
 import com.crowdcoding.servlets.CommandContext;
+import com.google.appengine.api.users.UserServiceFactory;
 
 public abstract class WorkerCommand extends Command 
 {
@@ -34,7 +38,7 @@ public abstract class WorkerCommand extends Command
 		Worker worker = find(workerID, project);
 		if (worker == null)		
 			System.out.println("Cannot execute WorkerCommand. Could not find the worker for WorkerID " 
-						+ workerID);		
+						+ workerID+" ("+this.getClass()+")");		
 		else
 		{
 			execute(worker, project);
@@ -58,7 +62,6 @@ public abstract class WorkerCommand extends Command
 		public AwardPoints(String workerID, int points)
 		{
 			super(workerID);
-			this.workerID = workerID;
 			this.points = points;
 		}
 		
@@ -76,7 +79,6 @@ public abstract class WorkerCommand extends Command
 		public IncreaseStat(String workerID, String label,int increaseAmount)
 		{
 			super(workerID);
-			this.workerID = workerID;
 			this.label = label;
 			this.increaseAmount = increaseAmount;
 		}

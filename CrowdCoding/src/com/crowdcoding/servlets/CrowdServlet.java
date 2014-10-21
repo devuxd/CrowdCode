@@ -132,13 +132,10 @@ public class CrowdServlet extends HttpServlet
 				
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();  
-
-//    	for(int i=0;i<path.length;i++){
-//    		System.out.println("token "+i+": "+path[i]);
-//    	}
-    	
+		
     	try 
     	{	        
+    		
     		// First check the browser. If the browser is not Chrome, redirect to a browser
     		// compatability page.
 //    		if (!req.getHeader("User-Agent").contains("Chrome"))
@@ -162,8 +159,8 @@ public class CrowdServlet extends HttpServlet
 						req.setAttribute("project", path[1]);
 						String projectID = path[1];
 						
-						System.out.println("project ID="+projectID);
-						
+			    		
+
 						// check first for non-project pages routing
 						if (path[1].equals("clientRequest"))
 						{	
@@ -177,6 +174,10 @@ public class CrowdServlet extends HttpServlet
 						else if( ofy().load().filterKey(Key.create(Project.class, projectID)).keys().first() != null ){
 							// if is requested the main page
 							if(path.length==2) {
+								
+								// CREATE THE CROWD USER - IS NOT THE RIGHT POSITION TO DO THIS
+								Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), Project.Create(projectID));
+								
 								if(req.getParameter("distributedJS")!=null)
 									if(req.getParameter("distributedJS").equals("admin"))
 										req.getRequestDispatcher("/html/distributedJSAdmin.jsp").forward(req, resp);
@@ -186,6 +187,8 @@ public class CrowdServlet extends HttpServlet
 									req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
 								else
 									req.getRequestDispatcher("/html/angular.jsp").forward(req, resp);
+							
+							
 							} else {
 								// if are requested secondary pages
 								String action = path[2];
@@ -371,7 +374,7 @@ public class CrowdServlet extends HttpServlet
     			if(result)
     				FunctionCommand.passedTests(functionID);
     			else
-    				FunctionCommand.failedTests(functionID);
+    				FunctionCommand.failedTest(functionID,testID);
     			
 				return context.commands(); 
 	        }
@@ -410,8 +413,6 @@ public class CrowdServlet extends HttpServlet
 			final String type = req.getParameter("type");
 			final String payload = Util.convertStreamToString(req.getInputStream());
 			
-			System.out.println("microtaskid: " + microtaskID);			
-			System.out.println("Submitted microtask: " + payload);
 			Class microtaskType = microtaskTypes.get(type);
 			if (microtaskType == null)
 				throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
@@ -490,7 +491,7 @@ public class CrowdServlet extends HttpServlet
     			PrintWriter out = resp.getWriter();
     			
     			if (microtask == null) {
-    				resp.sendError(503); 
+    				resp.sendError(404); 
     				
     			} 
     			else{

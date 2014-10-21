@@ -2,6 +2,7 @@ package com.crowdcoding.entities.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
@@ -49,6 +50,9 @@ public class ReuseSearch extends Microtask
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);	
+
+		// increase the stats counter 
+		WorkerCommand.increaseStat(workerID, "searches",1);
 	}
 	
 	protected Class getDTOClass()

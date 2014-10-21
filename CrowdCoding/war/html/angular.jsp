@@ -39,6 +39,7 @@
 	<link rel="stylesheet"  href="/include/jquery.rating.css" />
 	<link rel="stylesheet" href="../include/bootstrap/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="/css/worker.css" type="text/css" />
+	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
 
 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
@@ -81,6 +82,7 @@
 				<ng-include src="'/html/templates/score_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/stats_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/news_panel.html'"></ng-include>
+				<ng-include src="'/html/templates/functions_reference_panel.html'"></ng-include>
 			</div>
 
 			<div id="container" class="col-md-8 col-xs-8" ng-controller="MicrotaskController" >
@@ -90,10 +92,9 @@
 			</div>
 
 			<div id="rightBar" class="col-md-2 col-xs-2">
-				<ng-include src="'/html/templates/online_workers_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/leaderboard_panel.html'"></ng-include>
 				<ng-include src="'/html/templates/chat_panel.html'"></ng-include>
-				<ng-include src="'/html/templates/functions_reference_panel.html'"></ng-include>
+				<ng-include src="'/html/templates/online_workers_panel.html'"></ng-include>
 			</div>
 
 		</div>
@@ -121,10 +122,11 @@
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
+    <script src="/include/angular-diff/angular-diff.min.js"></script><!-- Angular substitute of PrettyTextDiff -->
+    <script src="/include/angular-animate/angular-animate.min.js"></script><!-- Angular animate -->
 
     <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> <!-- codemirror ui for Angularjs-->
-    <script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
  	<script src="/include/codemirror/javascript.js"></script><!-- Codemirror Javascript Style -->
 
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->

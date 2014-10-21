@@ -1,5 +1,6 @@
 <div id="leaderboard" class="panel panel-default " ng-controller="LeaderboardController">
-	<div class="panel-heading">Leaders</div>
+	<div class="panel-heading"> <span class="glyphicon glyphicon-th-list"></span> Project Leaders</div>
+	<!--
 	<table class="panel-body">
 			<tr ng-if="leaders.length > 0" id="leader" ng-repeat="leader in leaders | orderBy:'-score'" class="{{ (onlineWorkers.$indexFor(leaders.$keyAt(leader))>-1) && 'loggedIn' || '' }}">
 			    <td><img src="/user/picture?userId={{ leaders.$keyAt(leader) }}" alt="{{ leader.name }}" /></td>
@@ -9,5 +10,17 @@
 		    <tr ng-if="leaders.length == 0">
 		    	<td>no leaders yet!</td>
 		    </tr>
-	</table>
+	</table>-->
+
+
+	<div class="panel-body">
+		<ul class="panel-list user-list">
+	      <li ng-repeat="leader in leaders | orderBy:'-score'" ng-if="leaders.length > 0" 
+	      	  class="{{ (onlineWorkers.$indexFor(leaders.$keyAt(leader))>-1) && 'loggedIn' || '' }}">
+	      	<div class="avatar"><img src="/user/picture?userId={{leaders.$keyAt(leader) }}" alt="{{ leader.name }}" /></div>
+	      	<div class="name">{{ leader.name }}</div>
+	      	<div class="count">{{ leader.score }}</div>
+	      </li>
+	    </ul>
+	</div>
 </div>

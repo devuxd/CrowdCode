@@ -1,5 +1,6 @@
 <div id="onlineWorkers" class="panel panel-default " ng-controller="OnlineWorkersController">
 	<div class="panel-heading">Online Workers</div>
+	<!--
 	<table class="panel-body">
 		<tbody ng-repeat="(key,worker) in onlineWorkers" >
 			<tr id="worker">
@@ -7,5 +8,13 @@
 			    <td ng-class="{'text-warning':worker.connected==false}">{{ worker.name }}</td>
 		    </tr>
 		</tbody>
-	</table>
+	</table>-->
+	<div class="panel-body">
+		<ul class="panel-list user-list">
+	      <li ng-repeat="(key,worker) in onlineWorkers" >
+	      	<div class="avatar"><img src="/user/picture?userId={{worker.$id}}" alt="{{ worker.name }}" /></div>
+	      	<div class="name">{{ worker.name }}</div>
+	      </li>
+	    </ul>
+	</div>
 </div>

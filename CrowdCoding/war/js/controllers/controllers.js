@@ -537,13 +537,13 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 
 				// debug stuff
-/*
+
 				console.log("data: ");console.log(data);
-				console.log("microtask: ");console.log($scope.microtask);
+				console.log("microtask: ");console.log($scope.microtask);console.log($scope.microtask.type);
 				console.log("function: ");console.log($scope.funct);
 				console.log("test: ");console.log($scope.test);
 
-*/				// initialize form data for the current microtask
+				// initialize form data for the current microtask
 				initializeFormData[$scope.microtask.type]();
 
 			  	//choose the right template
@@ -675,24 +675,37 @@ myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',f
 //////////////////////
 myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter','functionsService','testsService',function($scope,$rootScope,$firebase,$filter,functionsService,testsService) {
 	$scope.locCount = 5;
-	/*
+	
 
 
-	new Firebase($rootScope.firebaseURL+'/status/microtaskCount/');
-	var sync = $firebase(ref);*/
-	$scope.microtasksCount = 0;
+	var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/stats');
+	var sync = $firebase(ref);
+	$scope.stats = sync.$asObject();
+	$scope.stats.$watch(function(){
 
+		if($scope.stats.$value == null){
+			$scope.stats.$value = {
+				microtasks:0,
+				functions:0,
+				tests:0,
+				testcases:0,
+				reviews:0,
+				function_descriptions:0,
+				function_calls:0,
+				debugs:0,
+				searches:0
+			};
+			$scope.stats.$save();
+			$scope.total = 0;
+			angular.forEach($scope.stats,function(value,key){
+				if(key!="microtasks")
+					$scope.total += value;
+			})
+		}
+			
 
-	$scope.functionsCount = 0;
-	$scope.testsCount = 0;
-	/*
-	functionsService.allFunctions.$loaded(function(x) {
-		$scope.functionsCount = x.length
 	});
 
-	testsService.allTests.$loaded(function(x) {
-		$scope.testsCount = x.length
-	});*/
 }]);
 
 /////////////////////
@@ -711,7 +724,7 @@ myApp.controller('NewsController', ['$scope','$rootScope','$firebase','$filter',
 /////////////////////
 myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
 	// create the reference and the sync
-	var chatRef  = new Firebase($rootScope.firebaseURL+'/chat');
+	var chatRef  = new Firebase($rootScope.firebaseURL+'/chat').limit(10);
 	var sync = $firebase(chatRef);
 	// bind the array to scope.leaders
 	$scope.messages = sync.$asArray();

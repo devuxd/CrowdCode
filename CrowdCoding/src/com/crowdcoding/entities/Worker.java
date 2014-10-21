@@ -77,7 +77,7 @@ public class Worker
 	// Update the stat label to the stat value.
 	public void increaseStat(String label,int amount, Project project)
 	{
-		FirebaseService.increaseStatBy(userid, nickname, amount, project);
+		FirebaseService.increaseStatBy(userid, label, amount, project);
 	}
 	
 	public Key<Worker> getKey()

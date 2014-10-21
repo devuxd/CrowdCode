@@ -2,6 +2,7 @@ package com.crowdcoding.entities.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
@@ -63,6 +64,11 @@ public class WriteFunctionDescription extends Microtask
 
 		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
 				functionDTO.paramTypes, functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, code, project);
+	
+
+		// increase the stats counter 
+		WorkerCommand.increaseStat(workerID, "function_descriptions",1);
+		
 	}
 
 	protected Class getDTOClass()

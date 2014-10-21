@@ -1,6 +1,18 @@
 <div id="score" class="panel panel-default " ng-controller="ScoreController">
-	<div class="panel-heading">Your Score</div>
+	<div class="panel-heading"><span class="glyphicon glyphicon glyphicon-user"></span> Your Score</div>
 	<div class="panel-body">
-		<span id="scoreValue" >{{score.$value}}</span> <span>points</span>
+		<ul class="panel-list">
+			<li class="current">
+				<div>this session</div>
+				<span class="count">{{score.$value}}</span>
+	       		<span class="index" style="width:0%;"></span>
+			</li>
+			<li>
+				<div>last session</div>
+				<span class="count">{{score.$value}}</span>
+	       		<span class="index" style="width:0%;"></span>
+			</li>
+		</ul>
+		<a class="btn ">view history</a>
 	</div>
 </div>

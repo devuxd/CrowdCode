@@ -1,0 +1,27 @@
+/*
+ We're using CSS transitions for when
+ the enter and move events are triggered
+ for the element that has the .repeated-item
+ class
+*/
+.news-item.ng-enter, 
+.news-item.ng-move {
+ -webkit-transition:0.5s linear all;
+ -moz-transition:0.5s linear all;
+ -o-transition:0.5s linear all;
+ transition:0.5s linear all;
+ opacity:0;
+ background-color:gray;
+}
+
+/*
+The ng-enter-active and ng-move-active
+are where the transition destination properties
+are set so that the animation knows what to
+animate.
+*/
+.news-item.ng-enter.ng-enter-active,
+.news-item.ng-move.ng-move-active {
+ opacity:1;
+ background-color:transparent;
+}
