@@ -31,6 +31,7 @@ import com.crowdcoding.history.MessageReceived;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Index;
@@ -49,6 +50,7 @@ public class Function extends Artifact
 	private String returnType;
 	private List<String> paramNames = new ArrayList<String>();
 	private List<String> paramTypes = new ArrayList<String>();
+	private List<String> paramDescriptions = new ArrayList<String>();
 	private String header;
 	private String description;
 	private List<Long> tests = new ArrayList<Long>();
@@ -67,6 +69,8 @@ public class Function extends Artifact
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	private boolean needsDebugging;		     // true iff the function is failing its unit tests.
 	
+	private Test failedTest;
+	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
 	//////////////////////////////////////////////////////////////////////////////
@@ -77,11 +81,11 @@ public class Function extends Artifact
 	}
 		
 	// Constructor for a function that has a full description and code
-	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, String header, 
+	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, List<String> paramDescriptions, String header, 
 			String description, String code, Project project)
 	{
 		super(project);		
-		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, header, description, code, project);
+		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, project);
 	}
 	
 	// Constructor for a function that only has a short call description and still needs a full description
@@ -141,6 +145,26 @@ public class Function extends Artifact
 		return description;
 	}
 	
+	public String getCompleteDescription()
+	{
+		String fullDescription="/**\n" + description + "\n\n";
+		
+					
+    	
+	
+    	for(int i=0; i<paramNames.size(); i++)
+			{
+			if(paramDescriptions.size()>i)
+				fullDescription += "  @param " + paramTypes.get(i) + ' ' + paramNames.get(i) + " - " + paramDescriptions.get(i) + "\n"; 
+			
+			}
+		
+		
+		fullDescription += "\n  @return " + returnType + " \n**/\n\n";
+		
+		return fullDescription;
+	}
+	
 	public String getEscapedDescription()
 	{
 		return StringEscapeUtils.escapeEcmaScript(description);
@@ -149,7 +173,7 @@ public class Function extends Artifact
 	// Gets the description and the header
 	public String getFullDescription()
 	{
-		return description + header;
+		return getCompleteDescription()+ "\n"  + header;
 	}
 	
 	// Gets the description and the header
@@ -203,7 +227,8 @@ public class Function extends Artifact
 	// Gets the description, header, and bady of the function
 	public String getFullCode()
 	{
-		return description + header + "\n" + code;
+		
+		return getCompleteDescription()+ "\n"  + header + "\n" + code;
 	}
 	
 	public String getEscapedFullCode()
@@ -263,7 +288,7 @@ public class Function extends Artifact
 
 	public FunctionDescriptionDTO getDescriptionDTO()
 	{
-		return new FunctionDescriptionDTO(name, returnType, paramNames, paramTypes, header, description); 
+		return new FunctionDescriptionDTO(name, returnType, paramNames, paramTypes, paramDescriptions, header, description); 
 	}
 	
 	// Returns true iff the specified pseudocall is currently in the code
@@ -314,45 +339,57 @@ public class Function extends Artifact
 		// determine if there is work to be done
 		if (!microtaskOut)
 		{
-			
-			System.out.println("function "+name+" looking for work: isWritten="+isWritten+" - "+"needsDebugging="+needsDebugging);
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && needsDebugging)			
-				makeMicrotaskOut(new DebugTestFailure(this, project), project);
+				makeMicrotaskOut(new DebugTestFailure(this, this.failedTest, project), project);
 			else if (!queuedMicrotasks.isEmpty())
 				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
 		}
 	}	
 		
 	// Determines if all unit tests are implemented (e.g., not merely described or currently disputed)
-	private boolean allUnitTestsImplemented()
+	private boolean allUnitTestsImplemented(Project project)
 	{
-		/*for (Ref<Test> t : tests) 
+		System.out.println("checking if all test implemented");
+		
+		if(tests.size()==0) return false;
+		for (Long testId : tests) 
 		{
-			if (!Test.load(t).isImplemented())
+			Ref<Test> testRef = Test.find(testId, project);
+		    if (!testRef.get().isImplemented())
 				return false;			
-		}*/
+		}
 		
 		// Assume all unit tests are implemented, and run tests whenever anyone requests them to be run.
 		// TODO: do we need to do this more intelligently?
 		
 		//if there are no unit tests, the tests aren't all ready yet, so return false...
 		//otherwise, you've gotten here and all the unit tests are implemented
-		return !tests.isEmpty();
+		
+		return true;
 	}
 	
 	private void runTestsIfReady(Project project)
 	{
-		if(isWritten && allUnitTestsImplemented())
-			project.requestTestRun();
+		if(isWritten && allUnitTestsImplemented(project)){
+			// enqueue test job in firebase
+			FirebaseService.writeTestJobQueue(this.getID(),project);
+			
+			//project.requestTestRun();
+		}
 	}
 		
 	private void onWorkerEdited(FunctionDTO dto, Project project)
 	{
+		
+		System.out.println("old: "+(this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", ""));
+		System.out.println("new: "+(dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", ""));
+		
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.				
-		String strippedOldFullDescrip = (this.description + this.header).replace(" ", "").replace("\n", "");
-		String strippedNewFullDescrip = (dto.description + dto.header).replace(" ", "").replace("\n", "");				
+		String strippedOldFullDescrip = (this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", "");
+		String strippedNewFullDescrip = (dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", "");				
+		
 		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))		
 			notifyDescriptionChanged(dto, project);		
 					
@@ -362,6 +399,8 @@ public class Function extends Artifact
 		this.description = dto.description;
 		this.header = dto.header;
 		this.paramNames = dto.paramNames;
+		this.paramTypes=dto.paramTypes;
+		this.paramDescriptions=dto.paramDescriptions;
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;				
 		
 		// Looper over all of the callers, rebuilding our list of callers
@@ -472,13 +511,14 @@ public class Function extends Artifact
 	}
 		
 	public void writeDescriptionCompleted(String name, String returnType, List<String> paramNames, List<String> paramTypes, 
-			String header, String description, String code, Project project)
+			List<String> paramDescriptions, String header, String description, String code, Project project)
 	{
 		microtaskOutCompleted();
 		this.name = name;
 		this.returnType = returnType;
 		this.paramNames = paramNames;
 		this.paramTypes = paramTypes;
+		this.paramDescriptions = paramDescriptions;
 		this.header = header;
 		this.description = description;
 		this.code = code;
@@ -612,6 +652,24 @@ public class Function extends Artifact
 		}			
 	}	
 	
+	public void failedTest(Test test,Project project)
+	{
+		if (isWritten && !needsDebugging)
+		{
+			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
+			this.needsDebugging = true;
+			this.failedTest     = test;
+			ofy().save().entity(this).now(); 
+			
+			lookForWork(project);			
+			project.historyLog().endEvent();
+		}			
+	}	
+	
+	public void failedTest(Project project,Long testID){
+		
+	}
+	
 	// Provides notification that a test has transitioned to being implemented
 	public void testBecameImplemented(Test test, Project project)
 	{
@@ -685,10 +743,10 @@ public class Function extends Artifact
 	private void notifyDescriptionChanged(FunctionDTO dto, Project project)
 	{
 		for (long callerID : callers)		
-			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.description + dto.header);
+			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 		
 		for (long testID : tests)
-			TestCommand.functionChangedInterface(testID, this.getFullDescription(), dto.description + dto.header);
+			TestCommand.functionChangedInterface(testID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 	}
 		
 	//////////////////////////////////////////////////////////////////////////////
@@ -701,7 +759,7 @@ public class Function extends Artifact
 		{
 			version++;
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames, 
-					paramTypes, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging,
+					paramTypes, paramDescriptions, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging,
 					queuedMicrotasks.size()), 
 					this.id, version, project);		
 		}

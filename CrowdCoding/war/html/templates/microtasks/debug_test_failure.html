@@ -1,0 +1,31 @@
+<h2 id="taskHeader">
+	<span id="taskTitle">{{datas.title}}</span> <span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
+</h2>
+<br />
+
+<div id="taskDescription">
+	<p>
+		This function has failed its tests. Can you fix it?<br/>
+		You can: 
+		<ol>
+			<li>edit the function to fix issues with the code</li>
+			<li>report a problem with the tests, and</li>
+			<li>edit the output of function calls to fix problems with other functions</li>
+		</ol>
+
+		To check if you've fixed the issue, run the unit tests.
+		You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR>
+	</p>
+	<button style="float: right;" onclick="revertCodeAs();">Revert Code</button><BR><BR>
+	<p>
+		This is the failing test: <br/>
+		
+	</p>
+</div>
+
+<br/>
+<div class="task-buttons pull-right">
+	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
+	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
+</div>
+<div class="clearfix"></div>

@@ -70,6 +70,9 @@
 	<script src="/js/testRunner.js"></script>
 	
 	<script src="/js/review.js"></script>
+	<script src="/js/functionSupport.js"></script>
+	<script src="/js/ADTandDataCheck.js"></script>
+	
 	
 </head>
 
@@ -194,8 +197,6 @@
 	var allADTs = [];
 	var typeNames = [];
 	var nameToADT = {};
-	var functions;
-	var tests;
 	
     $(document).ready(function()
     {
@@ -263,21 +264,7 @@
 
 			return false;
 		});*/
-    	
-		// Load the ADTs from firebase
-		var adtRef = new Firebase(firebaseURL + '/ADTs');
-		adtRef.on('value', function(snapshot) {
-			if (snapshot.val() != null)
-			{
-				allADTs = snapshot.val().ADTs;		
-		    	setupADTData();		    	
-			}
-			
-			// Wait for the ADTs to load before loading the microtask!
-	        loadMicrotask();
-	        
-		});
-		setupADTData();	// first setup of ADT data	 
+    	 
 		
 		// submit selected picture to the server
 		$('#popUpChangePicture form').submit(function(){
@@ -309,7 +296,64 @@
 			$("#submitFeedback").click(sendFeedback());
 		});
 	
+	
+	
+		// Load the ADTs from firebase
+		var adtRef = new Firebase(firebaseURL + '/ADTs');
+		adtRef.on('value', function(snapshot) {
+			if (snapshot.val() != null)
+			{
+				allADTs = snapshot.val().ADTs;	
+				
+				
+		    	setupADTData();		    	
+			}
+			typeNames.push('String');
+			typeNames.push('Number');
+			typeNames.push('Boolean');		
+			// Wait for the ADTs to load before loading the microtask!
+	        loadMicrotask();
+		});
 	});
+	
+	
+		//setupADTData();	// first setup of ADT data	
+	// Generate the list of typenames based on the list of allADTs, adding type names for primitives
+	function setupADTData()
+	{
+		// Build a type name (String) to structure map and a list of type names
+		for (var i = 0; i < allADTs.length; i++)
+		{
+			typeNames.push(allADTs[i].name);
+			nameToADT[allADTs[i].name] = allADTs[i];	
+		}
+		
+		
+	}	
+	
+	// Returns true if name is a valid type name and false otherwise.
+	function isValidTypeName(name)
+	{
+		var simpleName;	
+		// Check if there is any array characters at the end. If so, split off that portion of the string. 
+		var arrayIndex = name.indexOf('[]');
+		if (arrayIndex != -1)
+			simpleName = name.substring(0, arrayIndex);
+		else
+			simpleName = name;
+		
+		if (typeNames.indexOf(simpleName) == -1)
+			return false;
+		else if (arrayIndex != -1)
+		{
+			// Check that the array suffix contains only matched brackets..
+			var suffix = name.substring(arrayIndex);
+			if (suffix != '[]' && suffix != '[][]' && suffix != '[][][]' && suffix != '[][][][]')
+				return false;			
+		}
+			
+		return true;		
+	}
 	
     // submit microtask form data
     function submit(formData)
@@ -371,47 +415,7 @@
 		//    $('#feedbackThanks').css('visibility','hidden');
 		//}, 10000);   
 	}
-	
-	// Generate the list of typenames based on the list of allADTs, adding type names for primitives
-	function setupADTData()
-	{
-		// Build a type name (String) to structure map and a list of type names
-		for (var i = 0; i < allADTs.length; i++)
-		{
-			typeNames.push(allADTs[i].name);
-			nameToADT[allADTs[i].name] = allADTs[i];	
-		}
-		
-		typeNames.push('String');
-		typeNames.push('Number');
-		typeNames.push('Boolean');		
-	}	
-	
-	// Returns true if name is a valid type name and false otherwise.
-	function isValidTypeName(name)
-	{
-		var simpleName;	
-		// Check if there is any array characters at the end. If so, split off that portion of the string. 
-		var arrayIndex = name.indexOf('[]');
-		if (arrayIndex != -1)
-			simpleName = name.substring(0, arrayIndex);
-		else
-			simpleName = name;
-		
-		if (typeNames.indexOf(simpleName) == -1)
-			return false;
-		else if (arrayIndex != -1)
-		{
-			// Check that the array suffix contains only matched brackets..
-			var suffix = name.substring(arrayIndex);
-			if (suffix != '[]' && suffix != '[][]' && suffix != '[][][]' && suffix != '[][][][]')
-				return false;			
-		}
-			
-		return true;		
-	}
-	
-	
+
 </script>
 
 </body>

@@ -5,7 +5,7 @@ function checkForErrors(e)
 	/*global window: false, document: false, $: false, log: false, bleep: false,test: false*/
 	  
 	var anyErrors = false;
-	var stringOfErrors = "";
+	var arrayOfErrors = [];
 	for (var i = 0; i < e.length; i++) 
 	{
 		// I am not sure if checking making sure not null is okay, I think so
@@ -20,14 +20,14 @@ function checkForErrors(e)
 //			debugger;
 		    if (e[i] != null)
 		    {
-				stringOfErrors += "Line " + e[i].line + ": " + e[i].reason + "</br>";
+				arrayOfErrors.push("Line " + e[i].line + ": " + e[i].reason) ;
 				anyErrors = true;
 		    }
 //		}
 	}
 	if(anyErrors)
 	{
-		return stringOfErrors; 
+		return arrayOfErrors; 
 	}
 	return "";
 }

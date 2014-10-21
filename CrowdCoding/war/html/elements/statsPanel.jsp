@@ -10,6 +10,9 @@
 </div>
 
 <script>
+	
+	var functions;
+	var tests;
 	$(document).ready(function(){
 	
 		// Create the Functions and Tests services, creating a local repository of functions

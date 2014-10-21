@@ -1,0 +1,25 @@
+
+<div id="newsPanel" class="panel panel-default" ng-controller="NewsController">
+	<div class="panel-heading">Recent tasks</div>
+	<div class="panel-body">
+		<!--
+		<table >
+			<tr ng-if="news.length > 0" ng-repeat="n in news">
+				<td ng-if="n.score == 0" class="bg-success">Your review work has awarded you with <b>{{n.points}} points</b></td>
+				<td ng-if="n.score != 0 && n.score < 3" class="bg-warning">Your work on {{n.description}} has been rejected</td>
+				<td ng-if="n.score >= 3" class="bg-success">Your work on {{n.description}} has awarded you with <b>{{n.points}} points</b></td>
+			</tr>
+			<tr ng-if="news.length == 0">
+		    	<td>no news yet!</td>
+		    </tr>
+		</table>
+	-->
+		<ul class="panel-list">
+			<li ng-if="news.length > 0" ng-repeat="n in news" class="news-item">
+				<div >{{n.description}}</div>
+				<span class="count">{{n.points}}</span>
+	       		<span class="index" style="width:0%;"></span>
+			</li>
+		<ul>
+	</div>
+</div>

@@ -1,0 +1,16 @@
+<div id="chat" class="panel panel-default" ng-controller="ChatController">
+	<div class="panel-heading"><span class="glyphicon glyphicon-pencil"></span> Ask The Crowd</div>
+	<div class="panel-body">
+		<ul class="panel-list user-list" id="chatOutput">
+			<li ng-repeat="m in messages" >
+	      		<div class="avatar"><img src="/user/picture?userId={{ m.workerHandle }}" alt="" /></div>
+	      		<div class="message">
+	      			<div class="nickname">{{m.workerHandle}}</div>
+	      			<div class="text">{{ m.text }}</div>
+	      			<div class="time">{{ m.text }}</div>
+	      		</div>
+	      	</li>
+		</ul>
+		<input type="text" id="chatInput"  ng-model="input" ng-keypress="key($event)">
+	</div>
+</div>

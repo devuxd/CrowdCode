@@ -2,11 +2,15 @@ package com.crowdcoding.entities.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.MicrotaskSkipped;
 import com.crowdcoding.history.MicrotaskSubmitted;
+import com.google.appengine.labs.repackaged.org.json.JSONArray;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
@@ -62,7 +66,8 @@ public /*abstract*/ class Microtask
 					+ jsonDTOData);
 			return;
 		}
-		
+		//System.out.println("PRINTING JSON DTO DATA");
+		//System.out.println(jsonDTOData);
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
 		project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
 
@@ -74,6 +79,9 @@ public /*abstract*/ class Microtask
 		Artifact owningArtifact = this.getOwningArtifact();
 		if (owningArtifact != null)
 			owningArtifact.storeToFirebase(project);
+		
+		// increase the stats counter 
+		WorkerCommand.increaseStat(workerID, "microtasks",1);
 		
 		project.historyLog().endEvent();
 	}	
@@ -159,5 +167,22 @@ public /*abstract*/ class Microtask
 		return "" + this.id + " " + this.getClass().getSimpleName() + 
 				(this.getOwningArtifact() != null ? (" on " + this.getOwningArtifact().getName()) : "") + 
 				(completed ? " completed " : " incomplete ") + "points: " + submitValue;
+	}
+	public String toJSON(){
+		return toJSON(new JSONObject());
+	}
+	
+	public String toJSON(JSONObject json){
+		try {
+			json.put("id", this.id);
+			json.put("type", this.microtaskName());
+			json.put("description", this.microtaskDescription());
+			json.put("title", this.microtaskTitle());
+			json.put("submitValue", this.getSubmitValue());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return json.toString();
 	}
 }
