@@ -27,6 +27,11 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	testsService.init();
 	functionsService.init();
 	ADTService.init();
+
+	$scope.$on('popup_show',function(){ console.log('show popup'); $('#popUp').modal('show'); });
+	$scope.$on('popup_hide',function(){ $('#popUp').modal('hide'); });
+	$scope.popupContent = '';
+	$scope.popupTitle = 'popup title';
 }]);
 
 
@@ -62,12 +67,15 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.testData = {};
 	$scope.microtask = {};
 	$scope.templatePath = "";//"/html/templates/microtasks/";
+
 	$scope.reuseSearch={};
 	$scope.reuseSearch.functions=[];
 	$scope.newTestCase = "";
 	$scope.viewData = {};
 	$scope.writeFunctionDescription= {};
 	$scope.review={};
+
+
 
 
 	// collect form data is different for each microtask
@@ -240,7 +248,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 				$scope.review.microtaskUnderReview = microtaskUnderReviewSync.$asObject();
 				$scope.review.microtaskUnderReview.$loaded().then(function(){
-					console.log("microtak under review loaded");
+					
 
 					if ($scope.review.microtaskUnderReview.type == 'WriteTestCases')
 					{
@@ -516,9 +524,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	function load(){
 		// set the loading template
 		$scope.templatePath = templatesURL + "loading.html";
-
 		$scope.inlineForm = false; // reset form as non-inline
-		console.log("loading microtask");
 
 		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
 		  success(function(data, status, headers, config) {
@@ -545,19 +551,18 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 					$scope.test = testsService.get(testId);
 				}
 
-
 				// debug stuff
-
-				console.log("data: ");console.log(data);
-				console.log("microtask: ");console.log($scope.microtask);console.log($scope.microtask.type);
-				console.log("function: ");console.log($scope.funct);
-				console.log("test: ");console.log($scope.test);
+				// console.log("data: ");console.log(data);
+				 console.log("microtask: ");console.log($scope.microtask);console.log($scope.microtask.type);
+				// console.log("function: ");console.log($scope.funct);
+				// console.log("test: ");console.log($scope.test);
 
 				// initialize form data for the current microtask
 				initializeFormData[$scope.microtask.type]();
 
 			  	//choose the right template
 			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+
 
 			});
 		  }).

@@ -105,7 +105,7 @@
 			<span class="clearfix"></span>
 	</footer>
 
-
+	<ng-include src="'/html/templates/popups/popup_template.html'"></ng-include>
 
 	<!-- Javascript 3rd part libraries -->
 	<script src="/include/jquery-2.1.0.min.js"></script>

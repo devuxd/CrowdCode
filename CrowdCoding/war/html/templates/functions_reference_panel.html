@@ -1,12 +1,17 @@
 <div id="functionsReference" class="panel panel-default " ng-controller="FunctionsReferenceController">
-	<div class="panel-heading">Functions Reference</div>
-	<table class="panel-body">
-		<tbody ng-repeat="(key,function) in functions" >
-			<tr id="function{{key}}">
-			    <td>
-			    	{{function.header}}): {{function.returnType}}
-			    </td>
-		    </tr>
-		</tbody>
-	</table>
+	<div class="panel-heading"><span class="glyphicon glyphicon-book"></span> Functions Reference</div>
+	<div class="panel-body">
+
+		<ul class="panel-list">
+	      <li ng-repeat="(key,function) in functions">
+
+	        <div >
+	        	{{function.name}}
+	        	(<span ng-repeat="(key,type) in function.paramTypes track by $index">
+	        		{{type}}<span ng-if="key < function.paramTypes.length-1">,</span>
+	        	</span>):
+	        	{{function.returnType}}</div>
+	      </li>
+	    </ul>
+	</div>
 </div>

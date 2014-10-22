@@ -130,14 +130,14 @@ footer.navbar-default { background-color: #3C9764; }
 /*  PANEL LIST */
 
 .panel-body .panel-list {
-  	border-top: 1px solid #EEE; 
+  	border-top: 1px solid #BBB; 
   	padding:0px;
   	margin:0px;
 }
 .panel-body .panel-list li { 
   	position: relative;
  	display: block;  
-  	border-bottom: 1px solid #EEE; 
+  	border-bottom: 1px solid #BBB; 
   	_zoom: 1;
 }
 .panel-body .panel-list li div {
@@ -153,7 +153,6 @@ footer.navbar-default { background-color: #3C9764; }
   color: #999; 
   font-weight: bold; 
   font-size: 0.875em; 
-  line-height: 2.6em; 
 }
 .panel-body .panel-list li:hover { 
   background: #EFEFEF; 
@@ -162,10 +161,12 @@ footer.navbar-default { background-color: #3C9764; }
 /* CHART LISTS */
 .chartlist li div {
 	display: block; 
-  	padding: 0.4em 4.5em 0.4em 0.5em;
   	position: relative; 
   	z-index: 2; 
   	font-size:0.95em;
+  	font-weight:bold;
+  	padding:2px;
+  	padding-left:10px;
 }
 .chartlist .index { 
   display: block; 
@@ -173,10 +174,9 @@ footer.navbar-default { background-color: #3C9764; }
   top: 0; 
   left: 0; 
   height: 100%; 
-  background: #CDECCC; 
+  background: rgba(60, 151, 100, 0.23); 
   text-indent: -9999px; 
   overflow: hidden; 
-  line-height: 2em;
 }
 .chartlist li:hover .index{ 
   background: rgba(123, 123, 123, 0.22); 
@@ -221,7 +221,24 @@ ul.user-list  .name {
 	padding-right:20px;
 }
 
+#newsPanel li div {
+	font-size:0.9em;
+	width:90%;
+}
 #newsPanel li:hover {
+	cursor:pointer;
+}
+
+
+#functionsReference li div {
+	background-color:black;
+	color:white;
+	font-size:0.8em;
+	width:100%;
+	padding:2px;
+	font-weight:bold;
+}
+#functionsReference li:hover {
 	cursor:pointer;
 }
 
