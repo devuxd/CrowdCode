@@ -102,6 +102,7 @@ function renderHeader(functionName, paramNames)
 			header += ', ';
 
   		header += paramNames[i];
+  		numParams++;
 	}
     header += ')';
 

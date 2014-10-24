@@ -17,11 +17,11 @@
 		<div id="descriptionChangedPrompt" ng-show="microtask.promptType=='DESCRIPTION_CHANGE'">
 			The description of a function called in the code below has changed. Can you update the code
 			(if necessary)? <BR>
-			
+
 			<span class="original" style="display: none"><%=microtask.getOldFullDescription()%></span>
 		  	<span class="changed" style="display: none"><%=microtask.getNewFullDescription()%></span>
 			<span id="diff" class="diff"></span><BR><BR>
-		</div>	
+		</div>
 
 	 	<p>
 	 		<strong>Not sure how to do something? </strong> Indicate a line as <span
@@ -47,14 +47,14 @@
 	 		break up the function into smaller pieces that others can work on. If
 	 		you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW!
 	 	</p>
-	 	
+
 	 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>
 	 </div>
 
 	 <div id="taskForm" >
-	 	
+
 		<label for="code">Write function:</label>
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+		<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="code"></div>
 		<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
 		<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
 			<span>There are some errors. Please fix them before submit:</span>
@@ -71,6 +71,6 @@
 	 	<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
 	 	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
 	 </div>
-	 <div class="clearfix"></div> 
+	 <div class="clearfix"></div>
 
 </div>

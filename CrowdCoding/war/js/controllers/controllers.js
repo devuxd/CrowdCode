@@ -4,13 +4,19 @@
 // APP CONTROLLER //
 ////////////////////
 //prepare variables and execute inizialization stuff
-myApp.controller('AppController', ['$scope','$rootScope','$firebase','userService', 'testsService', 'functionsService', 'testRunnerService','ADTService', function($scope,$rootScope,$firebase,userService,testsService,functionsService, testRunnerServe, ADTService) {
+myApp.controller('AppController', ['$scope','$rootScope','$firebase','userService', 'testsService', 'functionsService', 'testRunnerService','ADTService','microtasksService', function($scope,$rootScope,$firebase,userService,testsService,functionsService, testRunnerServe, ADTService,microtasksService) {
 
 	// current session variables
     $rootScope.projectId    = projectId;
     $rootScope.workerId     = workerId;
     $rootScope.workerHandle = workerHandle;
     $rootScope.firebaseURL  = firebaseURL;
+    $rootScope.loaded={};
+    $rootScope.loaded.microtasks=false;
+    $rootScope.loaded.functions=false;
+    $rootScope.loaded.tests=false;
+    $rootScope.loaded.ADTs=false;
+
 
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
@@ -22,6 +28,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	}
 
 	//user.listenForJobs();
+	microtasksService.init();
 	userService.init();
 	userService.listenForJobs();
 	testsService.init();
@@ -38,7 +45,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService','userService','$filter',function($scope,$rootScope,$firebase,$http,testsService,functionsService,userService, $filter) {
+myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$http', 'testsService', 'functionsService','userService','microtasksService',function($scope,$rootScope,$firebase,$http,testsService,functionsService,userService, microtasksService) {
 
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -55,14 +62,13 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	var formData = {};
 
 	var codemirrorr;
-	var marks = [];
-	var highlightPseudoCall =false;
-	var changeTimeout;
+
+
 
 
 	// initialize microtask and templatePath
 	$scope.funct = {};
-	$scope.inlineForm = false;
+	$rootScope.inlineForm = false;
 	$scope.test = {};
 	$scope.testData = {};
 	$scope.microtask = {};
@@ -78,445 +84,24 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 
 
-	// collect form data is different for each microtask
-	var collectFormData = {
-			'DebugTestFailure':function(){
-			},
-			'Review': function(){
+	//Whait for the inizializations of all service
+	//when the microtask array is syncronize with firebase load the first microtask
 
-				formData = {
-		    		microtaskIDReviewed: $scope.microtask.microtaskIDUnderReview,
-		    		reviewText: $scope.review.reviewText,
-					qualityScore: $scope.review.rate
-				};
 
+	$scope.$watch(function () {
 
-			},
-			'ReuseSearch': function(){
+        return $rootScope.loaded;
+    },function(newVal) {
+    	if($rootScope.loaded.functions && $rootScope.loaded.tests && $rootScope.loaded.ADTs && $rootScope.loaded.microtasks)
+    		{
+    		 console.log("all Services loaded loaded");
+    		 load();
+    		}
+       },true
+    );
 
-				//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
-				if($scope.reuseSearch.selected==-1)
-				{
-					formData = {  functionName: "",
-								  noFunction: true
-								};
-				}
-				else
-				{
-					formData = { functionName: $scope.reuseSearch.functions[$scope.reuseSearch.selected].value.name,
-								 noFunction: false
-							};
-				}
 
-			},
-			'WriteTest': function(){
-				if($scope.dispute){
-					// return jSON object
-					formData = { code: '',
-								inDispute: true,
-								disputeText: $scope.testData.disputeText,
-								hasSimpleTest: true,
-								simpleTestInputs: [],
-								simpleTestOutput: '' };
-				} else {
-					// build the test code
-					var testCode = 'equal('+$scope.funct.name+'(';
-					angular.forEach($scope.testData.inputs, function(value, key) {
-					  testCode +=  value ;
-					  testCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
-					});
-					testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\');' ;
-					// return jSON object
-					formData = { code: testCode,
-								 hasSimpleTest: true,
-								 inDispute: false,
-								 disputeText: '',
-				     			 simpleTestInputs: $scope.testData.inputs, simpleTestOutput: $scope.testData.output };
-				}
-			},
-			'WriteTestCases': function(){
-				formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
-			},
-			'WriteFunction': function(){
-				var text = codemirror.getValue();
-		 		var ast = esprima.parse(text, {loc: true});
 
-				var calleeNames = getCalleeNames(ast);
-
-				// Get the text for the function description, header, and code.
-				// Note esprima (the source of line numbers) starts numbering lines at 1, while
-			    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-				var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
-
-				var linesDescription = fullDescription.split('\n');
-				var name = ast.body[0].id.name;
-
-				var functionParsed = parseDescription(linesDescription,name);
-				console.log(functionParsed);
-
-				var body = codemirror.getRange(
-						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-
-				formData =  { description: functionParsed.description,
-							 header:       functionParsed.header,
-							 name:         name,
-							 code:         body,
-							 returnType:   functionParsed.returnType,
-							 paramNames:   functionParsed.paramNames,
-							 paramTypes:   functionParsed.paramTypes,
-							 paramDescriptions: functionParsed.paramDescriptions,
-							 calleeNames:  calleeNames};
-			},
-			'WriteFunctionDescription': function(){
-
-				var paramNames=[];
-				var paramTypes=[];
-				var paramDescriptions=[];
-
-				for(var i=0; i<$scope.writeFunctionDescription.parameters.length;i++)
-					{
-					paramNames.push($scope.writeFunctionDescription.parameters[i].paramName);
-					paramTypes.push($scope.writeFunctionDescription.parameters[i].paramType);
-					paramDescriptions.push($scope.writeFunctionDescription.parameters[i].paramDescritpion)
-					}
-
-				formData = { name: $scope.writeFunctionDescription.functionName,
-						    returnType: $scope.writeFunctionDescription.returnType,
-						    paramNames: paramNames,
-						    paramTypes: paramTypes,
-						    paramDescriptions: paramDescriptions,
-					     	description: $scope.writeFunctionDescription.description,
-							header: renderHeader($scope.writeFunctionDescription.functionName, paramNames)
-							};
-			},
-			'WriteCall': function(){
-
-				var text = codemirror.getValue();
-		 		var ast = esprima.parse(text, {loc: true});
-
-				var calleeNames = getCalleeNames(ast);
-
-				// Get the text for the function description, header, and code.
-				// Note esprima (the source of line numbers) starts numbering lines at 1, while
-			    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-				var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
-
-				var linesDescription = fullDescription.split('\n');
-				var name = ast.body[0].id.name;
-
-				var functionParsed = parseDescription(linesDescription,name);
-				console.log(functionParsed);
-
-				var body = codemirror.getRange(
-						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-
-				formData =  { description: functionParsed.description,
-							 header:       functionParsed.header,
-							 name:         name,
-							 code:         body,
-							 returnType:   functionParsed.returnType,
-							 paramNames:   functionParsed.paramNames,
-							 paramTypes:   functionParsed.paramTypes,
-							 paramDescriptions: functionParsed.paramDescriptions,
-							 calleeNames:  calleeNames};
-			},
-	};
-
-	// initialize form data is different for each microtask
-	var initializeFormData = {
-			'DebugTestFailure':function(){
-			},
-
-			'Review': function(){
-
-				$scope.review.reviewText="";
-				$scope.review.codeMirrorCode="";
-				//setup codemirror box
-				$scope.codemirrorLoaded = function(codeMirror){
-
-					codeMirror.setSize(null,200);
-					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");
-
-					codeMirror.refresh();
-				}
-
-				//load the microtask to review
-				var microtaskUnderReviewSync=$firebase( new Firebase ($rootScope.firebaseURL+'/microtasks/'+$scope.microtask.microtaskIDUnderReview));
-
-				$scope.review.microtaskUnderReview = microtaskUnderReviewSync.$asObject();
-				$scope.review.microtaskUnderReview.$loaded().then(function(){
-					
-
-					if ($scope.review.microtaskUnderReview.type == 'WriteTestCases')
-					{
-						//retrievs the reference of the existing test cases to see if the are differents
-						$scope.review.currenttestcases=testsService.testCasesForFunction($scope.review.microtaskUnderReview.testedFunctionID);
-
-						//load the version of the function with witch the test cases where made
-						var functionUnderTestSync =$firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtaskUnderReview.testedFunctionID
-								+ '/' + $scope.review.microtaskUnderReview.submission.functionVersion));
-						$scope.functionUnderTest = functionUnderTestSync.$asObject();
-						$scope.functionUnderTest.$loaded().then(function(){
-
-						$scope.review.codeMirrorCode=renderDescription($scope.functionUnderTest)+$scope.functionUnderTest.header;
-						});
-
-					}
-					else if ($scope.review.microtaskUnderReview.type == 'WriteTest')
-					{
-
-						$scope.functionUnderTest=functionsService.get($scope.review.microtaskUnderReview.testedFunctionID);
-						$scope.review.codeMirrorCode=renderDescription($scope.functionUnderTest)+$scope.functionUnderTest.header;
-
-					}
-					else if ($scope.review.microtaskUnderReview.type == 'WriteFunction')
-					{
-
-						$scope.review.codeMirrorCode=renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header+$scope.review.microtaskUnderReview.submission.code;
-
-					}
-					else if ($scope.review.microtaskUnderReview.type == 'WriteCall')
-					{
-
-						$scope.functionChanged=functionsService.get($scope.review.microtaskUnderReview.functionID);
-						$scope.review.codeMirrorCode=renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
-
-					}
-					else if ($scope.review.microtaskUnderReview.type == 'WriteFunctionDescription')
-					{
-
-						$scope.review.codeMirrorCode=renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header;
-
-					}
-
-
-
-				});
-
-
-				//Star rating manager
-				$scope.review.rate = 0;
-				$scope.max = 5;
-
-				$scope.hoveringOver = function(value) {
-				   $scope.overStar = value;
-				   $scope.percent = 100 * (value / $scope.max);
-				};
-
-
-			},
-			'ReuseSearch': function(){
-
-				// set selected to -2 to initialize the default value
-				//-2 nothing selected (need an action to submit)
-				//-1 no function does this
-				// 0- n index of the function selected
-				var functionWithPseudoCall=functionsService.get($scope.microtask.callerID);
-				var code = renderDescription(functionWithPseudoCall) + functionWithPseudoCall.header+ functionWithPseudoCall.code;
-				$scope.reuseSearch.selected=-2;
-				$scope.reuseSearch.functions= [];
-
-				// search for all the functions that have $scope.reuseSearch.text in theirs description or header
-
-				$scope.doSearch = function(){
-					$scope.reuseSearch.selected=-2;
-					$scope.reuseSearch.functions= functionsService.findMatches($scope.reuseSearch.text);
-				};
-
-				$scope.codemirrorLoaded = function(codeMirror){
-					//Retreves the code of the function that generated the pseudocall
-					codeMirror.setValue(code);
-					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");
-					codeMirror.refresh();
-				}
-
-			},
-			'WriteTest': function(){
-
-
-				// initialize testData
-				// if microtask.submission and microtask.submission.simpleTestInputs are defined
-				// assign test inputs and output to testData, otherwise initialize an empty object
-				$scope.testData = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.simpleTestInputs) ) ?
-								   {inputs: $scope.microtask.submission.simpleTestInputs , output: testsService.get().simpleTestOutput } :
-								   {inputs:[],output:''} ;
-
-				// Configures the microtask to show information for disputing the test, hiding
-				// other irrelevant portions of the microtask.
-				$scope.dispute = false;
-				$scope.toggleDispute = function(){
-					$scope.dispute = !$scope.dispute;
-					if(!$scope.dispute)
-						$scope.testData.disputeText = "";
-				};
-				$scope.code = renderDescription($scope.funct) + $scope.funct.header;
-				$scope.codemirrorLoaded = function(codeMirror){
-
-					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");
-					codeMirror.setOption("tabindex", "-1");
-					codeMirror.refresh();
-				}
-
-			},
-			'WriteTestCases': function(){
-				$scope.inlineForm = true;
-				$scope.newTestCase = "";
-				// initialize testCases
-				// if microtask.submission and microtask.submission.testCases are defined
-				// assign available testCases otherwise initialize a new array
-				$scope.testCases = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.testCases) ) ?
-								   $scope.microtask.submission.testCases : [] ;
-
-			    // addTestCase and deleteTestCase utils function for microtask WRITE TEST CASES
-				$scope.addTestCase = function(){
-					console.log("adding test case");
-					console.log($scope.viewData.newTestCase);
-					if($scope.viewData.newTestCase!=undefined && $scope.viewData.newTestCase!=""){
-
-						var testCase = { text: $scope.viewData.newTestCase, added: true, deleted: false, id: $scope.testCases.length };
-						$scope.testCases.push(testCase);
-						$scope.viewData.newTestCase="";
-
-					}
-					//else $scope.setFillOutLast(true);
-				}
-				$scope.deleteTestCase = function(index){
-					$scope.testCases.splice(index,1);
-					console.log("deleting test case");
-				}
-				$scope.code = renderDescription($scope.funct) + $scope.funct.header;
-				$scope.codemirrorLoaded = function(codeMirror){
-
-					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");
-					codeMirror.setOption("tabindex", "-1");
-					codeMirror.setSize(null,200);
-					codeMirror.refresh();
-				}
-			},
-			'WriteFunction': function(){
-
-                $scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-                $scope.codemirrorLoaded = function(myCodeMirror){
-					codemirror = myCodeMirror;
-					codemirror.setOption('autofocus', true);
-					codemirror.setOption('indentUnit', 4);
-					codemirror.setOption('indentWithTabs', true);
-					codemirror.setOption('lineNumbers', true);
-					codemirror.setSize(null, 500);
-					codemirror.setOption("theme", "vibrant-ink");
-					codemirror.doc.setValue($scope.code);
-
-					highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
-
-					// If we are editing a function that is a client request and starts with CR, make the header
-				 	// readonly.
-					if ($scope.funct.name.startsWith('CR'))
-						makeHeaderAndParameterReadOnly(myCodeMirror);
-
-				 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
-				 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
-				    // typing).
-
-					codemirror.on("change", function(){
-						$scope.code = codemirror.doc.getValue();
-						// Mangage code change timeout
-						clearTimeout(changeTimeout);
-						changeTimeout = setTimeout( function(){highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
-
-					});
-			 	};
-
-			},
-			'WriteFunctionDescription': function(){
-
-				//Set the form in line
-				$scope.inlineForm = true;
-
-				//inizialize the empty array of the parameters
-				$scope.writeFunctionDescription.parameters=[];
-
-
-			   // addParameter and deleteParameter utils function for microtask WRITE FUNCTION DESCRIPTION
-				$scope.addParameter = function(){
-
-					var parameter = { text: '', added: true, deleted: false, id: $scope.writeFunctionDescription.parameters.length };
-						$scope.writeFunctionDescription.parameters.push(parameter);
-				}
-
-
-				$scope.deleteParameter = function(index){
-					$scope.writeFunctionDescription.parameters.splice(index,1);
-				}
-
-				//prepare the codemirror Value
-				var callerFunction= functionsService.get($scope.microtask.callerID);
-				$scope.writeFunctionDescription.code=renderDescription(callerFunction) + callerFunction.header + callerFunction.code;
-
-				//Setup the codemirror box with the code of the function that created the pseudocall
-				$scope.codemirrorLoaded = function(codeMirror){
-					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");
-					codeMirror.refresh();
-				}
-
-				//Add the first parameter
-				$scope.addParameter();
-
-			},
-			'WriteCall': function(){
-				$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-
-				$scope.readonlyCodemirrorLoaded = function(codeMirror){
-					codeMirror.setValue($scope.datas.pseudoCall);
-					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");
-					codeMirror.refresh();
-				}
-
-				$scope.readonlyFunctionCodemirrorLoaded= function(codeMirror){
-					codeMirror.setValue($scope.microtask.calleeFullDescription);
-					codeMirror.setOption("readOnly", "true");
-					codeMirror.setOption("theme", "pastel-on-dark");
-					codeMirror.refresh();
-				}
-
-                $scope.codemirrorLoaded = function(myCodeMirror){
-
-                	codemirror = myCodeMirror;
-					codemirror.setOption('autofocus', true);
-					codemirror.setOption('indentUnit', 4);
-					codemirror.setOption('indentWithTabs', true);
-					codemirror.setOption('lineNumbers', true);
-					codemirror.setSize(null, 500);
-					codemirror.setOption("theme", "vibrant-ink");
-					codemirror.doc.setValue($scope.code);
-
-					highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
-					// If we are editing a function that is a client request and starts with CR, make the header
-				 	// readonly.
-					if ($scope.funct.name.startsWith('CR'))
-						makeHeaderAndParameterReadOnly(codemirror);
-
-				 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
-				 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
-				    // typing).
-
-					codemirror.on("change", function(){
-						$scope.code = codemirror.doc.getValue();
-						// Mangage code change timeout
-						clearTimeout(changeTimeout);
-						changeTimeout = setTimeout( function(){highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
-
-					});
-			 	};
-			},
-	};
 
 	// load microtask:
 	// request a new microtask from the backend and if success
@@ -524,26 +109,28 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	function load(){
 		// set the loading template
 		$scope.templatePath = templatesURL + "loading.html";
-		$scope.inlineForm = false; // reset form as non-inline
+		$rootScope.inlineForm = false; // reset form as non-inline
 
 		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
 		  success(function(data, status, headers, config) {
+
+		  $scope.microtask= microtasksService.get(data.id);
+
 		  	// create the reference and the sync
-			var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
-			var sync = $firebase(ref);
+			//var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
+			//var sync = $firebase(ref);
 
 			// load the microtask data
-			$scope.microtask = sync.$asObject();
-			$scope.microtask.$loaded().then(function(){
+			//$scope.microtask = sync.$asObject();
+			//$scope.microtask.$loaded().then(function(){
 			//	$scope.inputSearch="";
 
 				// assign title
 				$scope.datas = data;
 
 				// retrieve the related function
-				var functionId = angular.isDefined($scope.microtask.functionID) ? $scope.microtask.functionID : $scope.microtask.testedFunctionID;
-				if( angular.isDefined(functionId) ) {
-					$scope.funct = functionsService.get(functionId);
+				if( angular.isDefined($scope.microtask.functionID) ) {
+					$scope.funct = functionsService.get($scope.microtask.functionID);
 				}
 				// retrieve the related test
 				var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : 0;
@@ -553,18 +140,16 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 				// debug stuff
 				// console.log("data: ");console.log(data);
-				 console.log("microtask: ");console.log($scope.microtask);console.log($scope.microtask.type);
+				 console.log("microtask: ");console.log($scope.microtask);
 				// console.log("function: ");console.log($scope.funct);
 				// console.log("test: ");console.log($scope.test);
 
-				// initialize form data for the current microtask
-				initializeFormData[$scope.microtask.type]();
 
 			  	//choose the right template
 			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 
-			});
+		//	});
 		  }).
 		  error(function(data, status, headers, config) {
 
@@ -577,26 +162,17 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// ------- MESSAGE LISTENERS ------- //
 
 	// listen for message 'submit microtask'
-	$scope.$on('submitMicrotask',function(event,data){
+	$scope.$on('submitMicrotask',function(event,formData){
+
 		console.log('submit fired');
 		console.log(formData);
 
-		collectFormData[$scope.microtask.type]();
-
-
-		// Push the microtask submit data onto the Firebase history stream
-		// var submissionRef = new Firebase(firebaseURL + '/microtasks/' + microtaskID + '/submission');
-		// submissionRef.set(formData);
-
-
-
-		console.log(formData);
 		$http.post('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
 			success(function(data, status, headers, config) {
 
+				 //Push the microtask submit data onto the Firebase history stream
+				microtasksService.submit($scope.microtask,formData );
 				console.log("submit success");
-				$scope.microtask.submission = formData;
-				$scope.microtask.$save();
 			  	load();
 		  	})
 		  	.error(function(data, status, headers, config) {
@@ -613,8 +189,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		  });
 	});
 
-	// auto-load microtask on controller load
-	load();
+
+
 }]);
 
 
@@ -690,7 +266,7 @@ myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',f
 //////////////////////
 myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter','functionsService','testsService',function($scope,$rootScope,$firebase,$filter,functionsService,testsService) {
 	$scope.locCount = 5;
-	
+
 
 
 	var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/stats');
@@ -717,7 +293,7 @@ myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter'
 					$scope.total += value;
 			})
 		}
-			
+
 
 	});
 
