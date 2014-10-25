@@ -1,7 +1,8 @@
 ///////////////////////////////
 //  NO MICROTASK CONTROLLER //
 ///////////////////////////////
-myApp.controller('NoMicrotaskController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
+myApp.controller('NoMicrotaskController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService','$interval', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService, $interval) {
+	$interval(function(){ $scope.$emit('load')}, 2000);
 }]);
 
 ///////////////////////////////
@@ -150,6 +151,10 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
     		reviewText: $scope.review.reviewText,
 			qualityScore: $scope.review.rate
 		};
+
+
+
+		console.log(formData);
 		$scope.$emit('submitMicrotask',formData);
 	}
 
@@ -182,8 +187,8 @@ myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','te
 	//-2 nothing selected (need an action to submit)
 	//-1 no function does this
 	// 0- n index of the function selected
-	var functionWithPseudoCall=functionsService.get($scope.microtask.callerID);
-	var code = functionsService.renderDescription(functionWithPseudoCall) + functionWithPseudoCall.header+ functionWithPseudoCall.code;
+
+	var code = functionsService.renderDescription($scope.funct) + $scope.funct.header+ $scope.funct.code;
 	$scope.reuseSearch.selected=-2;
 	$scope.reuseSearch.functions= [];
 
@@ -230,6 +235,8 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	console.log("initialization of write call");
 
+	var marks=[];
+	var highlightPseudoCall = false;
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
 	$scope.readonlyCodemirrorLoaded = function(codeMirror){
@@ -257,11 +264,11 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 		codemirror.setOption("theme", "vibrant-ink");
 		codemirror.doc.setValue($scope.code);
 
-		highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
+		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
 		// If we are editing a function that is a client request and starts with CR, make the header
 	 	// readonly.
 		if ($scope.funct.name.startsWith('CR'))
-			makeHeaderAndParameterReadOnly(codemirror);
+			functionsService.makeHeaderAndParameterReadOnly(codemirror);
 
 	 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
 	 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
@@ -271,7 +278,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 			$scope.code = codemirror.doc.getValue();
 			// Mangage code change timeout
 			clearTimeout(changeTimeout);
-			changeTimeout = setTimeout( function(){highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
+			changeTimeout = setTimeout( function(){functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
 
 		});
  	};
@@ -335,13 +342,14 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 			codemirror.setOption('lineNumbers', true);
 			codemirror.setSize(null, 500);
 			codemirror.setOption("theme", "vibrant-ink");
+			codemirror.setValue($scope.code);
 
-			highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
+			functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
 
 			// If we are editing a function that is a client request and starts with CR, make the header
 		 	// readonly.
 			if ($scope.funct.name.startsWith('CR'))
-				makeHeaderAndParameterReadOnly(myCodeMirror);
+				functionsService.makeHeaderAndParameterReadOnly(codemirror);
 
 		 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
 		 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
@@ -351,7 +359,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 				$scope.code = codemirror.doc.getValue();
 				// Mangage code change timeout
 				clearTimeout(changeTimeout);
-				changeTimeout = setTimeout( function(){highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
+				changeTimeout = setTimeout( function(){ functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
 
 			});
 	 	};
@@ -361,7 +369,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 		var text = codemirror.getValue();
  		var ast = esprima.parse(text, {loc: true});
 
-		var calleeNames = getCalleeNames(ast);
+		var calleeNames = functionsService.getCalleeNames(ast);
 
 		// Get the text for the function description, header, and code.
 		// Note esprima (the source of line numbers) starts numbering lines at 1, while
@@ -371,7 +379,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 		var linesDescription = fullDescription.split('\n');
 		var name = ast.body[0].id.name;
 
-		var functionParsed = parseDescription(linesDescription,name);
+		var functionParsed = functionsService.parseDescription(linesDescription,name);
 		console.log(functionParsed);
 
 		var body = codemirror.getRange(
@@ -393,16 +401,16 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 
 }]);
 
-///////////////////////////////
+////////////////////////////////////////////
 //  WRITE FUNCTION DESCRIPTION CONTROLLER //
-///////////////////////////////
+////////////////////////////////////////////
 myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	console.log("initialization of write function description");
 
 	//Set the form in line
-	$scope.$rootScope.inlineForm = true;
+	$rootScope.inlineForm = true;
 
 	//inizialize the empty array of the parameters
 	$scope.writeFunctionDescription.parameters=[];
@@ -421,8 +429,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 	}
 
 	//prepare the codemirror Value
-	var callerFunction= functionsService.get($scope.microtask.callerID);
-	$scope.writeFunctionDescription.code=functionsService.renderDescription(callerFunction) + callerFunction.header + callerFunction.code;
+	$scope.writeFunctionDescription.code=functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
 
 	//Setup the codemirror box with the code of the function that created the pseudocall
 	$scope.codemirrorLoaded = function(codeMirror){
@@ -449,13 +456,14 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 			}
 
 		formData = { name: $scope.writeFunctionDescription.functionName,
-				    returnType: $scope.writeFunctionDescription.returnType,
+				    returnType: $scope.writeFunctionDescription.returnType==undefined ? '' : $scope.writeFunctionDescription.returnType ,
 				    paramNames: paramNames,
 				    paramTypes: paramTypes,
 				    paramDescriptions: paramDescriptions,
 			     	description: $scope.writeFunctionDescription.description,
-					header: renderHeader($scope.writeFunctionDescription.functionName, paramNames)
+					header: functionsService.renderHeader($scope.writeFunctionDescription.functionName, paramNames)
 					};
+
 		$scope.$emit('submitMicrotask',formData);
 	}
 
@@ -519,6 +527,8 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','test
 						 disputeText: '',
 		     			 simpleTestInputs: $scope.testData.inputs, simpleTestOutput: $scope.testData.output };
 		}
+
+
 		$scope.$emit('submitMicrotask',formData);
 	}
 

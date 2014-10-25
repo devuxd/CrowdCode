@@ -138,7 +138,7 @@
 	<script src="/js/testRunner.js"></script>
 
 	<script src="/js/errorCheck.js"></script>
-	<script src="/js/functionSupport.js"></script>
+	<<!-- <script src="/js/functionSupport.js"></script> -->
 	<script src="/js/JSONValidator.js"></script>
 
 	<script src="/js/workqueue.js"></script>

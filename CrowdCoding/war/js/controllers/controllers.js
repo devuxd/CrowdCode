@@ -95,8 +95,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
     	if($rootScope.loaded.functions && $rootScope.loaded.tests && $rootScope.loaded.ADTs && $rootScope.loaded.microtasks)
     		{
     		 console.log("all Services loaded loaded");
-    		 load();
-    		}
+    		 $scope.$emit('load');    		}
        },true
     );
 
@@ -106,7 +105,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// load microtask:
 	// request a new microtask from the backend and if success
 	// inizialize template and microtask-related values
-	function load(){
+	$scope.$on('load', function (){
 		// set the loading template
 		$scope.templatePath = templatesURL + "loading.html";
 		$rootScope.inlineForm = false; // reset form as non-inline
@@ -156,7 +155,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 
 		  });
-	};
+	});
 
 
 	// ------- MESSAGE LISTENERS ------- //
@@ -173,7 +172,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				 //Push the microtask submit data onto the Firebase history stream
 				microtasksService.submit($scope.microtask,formData );
 				console.log("submit success");
-			  	load();
+			  	$scope.$emit('load');
 		  	})
 		  	.error(function(data, status, headers, config) {
 		  		console.log("submit error");
@@ -185,7 +184,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		console.log("skip fired");
 		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
 		  success(function(data, status, headers, config) {
-			  load();
+			  $scope.$emit('load');
 		  });
 	});
 

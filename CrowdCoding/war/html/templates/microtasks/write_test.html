@@ -64,7 +64,7 @@
 			<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
 			<textarea name="disputeText" class="form-control" ng-model="testData.disputeText"></textarea><br>
 			<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
-			<button class="btn btn-primary" ng-if="dispute" ng-click="$emit('submitMicrotask')" >Submit dispute</button>
+			<button class="btn btn-primary" ng-if="dispute" ng-click="submit()" >Submit dispute</button>
 		</div>
 
 		<div id="simpleTest" ng-hide="dispute">
