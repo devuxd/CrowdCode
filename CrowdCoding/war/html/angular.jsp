@@ -110,15 +110,14 @@
 	<!-- Javascript 3rd part libraries -->
 	<script src="/include/jquery-2.1.0.min.js"></script>
 	<script src="/include/polyfill.js"></script>
-	<script src="/js/errorCheck.js"></script>
 	<script src="/include/jshint.js"></script>
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
 	<script src="/include/stars/jquery.rating.js"></script>
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script src='/include/esprima.js'></script>
 	<script src='/include/escodegen.browser.js'></script>
-	<script src="/include/diff/diff_match_patch.js"></script>
-	<script src="/include/diff/jquery.pretty-text-diff.js"></script>
+	<!--<script src="/include/diff/diff_match_patch.js"></script>
+	<script src="/include/diff/jquery.pretty-text-diff.js"></script>-->
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
@@ -134,11 +133,12 @@
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
-
 	<script src="/js/testRunner.js"></script>
 
-	<script src="/js/errorCheck.js"></script>
-	<<!-- <script src="/js/functionSupport.js"></script> -->
+	<script src="/js/errorCheck.js"></script> <!-- to refactor -->
+	<script src="/js/functionSupport.js"></script> <!-- to refactor -->
+
+
 	<script src="/js/JSONValidator.js"></script>
 
 	<script src="/js/workqueue.js"></script>

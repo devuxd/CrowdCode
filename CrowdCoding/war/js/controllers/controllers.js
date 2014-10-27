@@ -39,6 +39,25 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	$scope.$on('popup_hide',function(){ $('#popUp').modal('hide'); });
 	$scope.popupContent = '';
 	$scope.popupTitle = 'popup title';
+	
+	$scope.$watch(function () {
+
+        return $rootScope.loaded;
+    },function(newVal) {
+    	if($rootScope.loaded.functions && $rootScope.loaded.tests && $rootScope.loaded.ADTs && $rootScope.loaded.microtasks)
+    		{
+    			var count = 0;
+    			angular.forEach($rootScope.loaded,function(value,key){
+    				if(value)
+    					count++;
+    				
+    				
+    			});
+    		 console.log("all Services loaded loaded");
+    		 $rootScope.$broadcast('load'); 
+    		 }
+       },true
+    );
 }]);
 
 
@@ -62,44 +81,16 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	var formData = {};
 
 	var codemirrorr;
-
-
-
+	$rootScope.inlineForm = false;
 
 	// initialize microtask and templatePath
 	$scope.funct = {};
-	$rootScope.inlineForm = false;
 	$scope.test = {};
-	$scope.testData = {};
 	$scope.microtask = {};
 	$scope.templatePath = "";//"/html/templates/microtasks/";
 
-	$scope.reuseSearch={};
-	$scope.reuseSearch.functions=[];
-	$scope.newTestCase = "";
-	$scope.viewData = {};
-	$scope.writeFunctionDescription= {};
-	$scope.review={};
-
-
-
-
 	//Whait for the inizializations of all service
 	//when the microtask array is syncronize with firebase load the first microtask
-
-
-	$scope.$watch(function () {
-
-        return $rootScope.loaded;
-    },function(newVal) {
-    	if($rootScope.loaded.functions && $rootScope.loaded.tests && $rootScope.loaded.ADTs && $rootScope.loaded.microtasks)
-    		{
-    		 console.log("all Services loaded loaded");
-    		 $scope.$emit('load');    		}
-       },true
-    );
-
-
 
 
 	// load microtask:

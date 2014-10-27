@@ -181,6 +181,8 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
+	$scope.reuseSearch={};
+	$scope.reuseSearch.functions=[];
 	console.log("initialization of reuse search controller");
 
 	// set selected to -2 to initialize the default value
