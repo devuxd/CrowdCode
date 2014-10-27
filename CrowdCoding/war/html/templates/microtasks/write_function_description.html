@@ -1,114 +1,118 @@
-<h2 id="taskHeader">
-	<span id="taskTitle">{{datas.title}}</span> <span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
-</h2>
-<br />
-<div id="taskDescription" class="bg-success">
-	Can you write a description for a function that<BR> <strong>{{ microtask.callDescription}}</strong><BR>
+<div ng-controller="WriteFunctionDescriptionController">
+
+	<h2 id="taskHeader">
+		<span id="taskTitle">{{datas.title}}</span> <span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
+	</h2>
+	<br />
+	<div id="taskDescription" class="bg-success">
+		Can you write a description for a function that<BR> <strong>{{ microtask.callDescription}}</strong><BR>
 
 
 
-	<a ng-init="showContext=false" ng-click="showContext = !showContext">Show context</a>
-	<div id="callContext" ng-show="showContext">
-		<div class="codemirrorBox">
-			<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="writeFunctionDescription.code"></div>
+		<a ng-init="showContext=false" ng-click="showContext = !showContext">Show context</a>
+		<div id="callContext" ng-show="showContext">
+			<div class="codemirrorBox">
+				<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="writeFunctionDescription.code"></div>
+			</div>
 		</div>
+
+		<ng-include src="'/html/templates/typeBrowser.html'"> <BR>
 	</div>
 
-	<ng-include src="'/html/templates/typeBrowser.html'"> <BR>
-</div>
+	<span ng-class="{ 'has-error': form.description.$dirty && form.description.$invalid , 'has-success': form.description.$valid}">
 
-<span ng-class="{ 'has-error': form.description.$dirty && form.description.$invalid , 'has-success': form.description.$valid}">
+		<textarea
+		id="functionDescription" class="col-md-12 form-control input-sm" draggable="false" name="description"
+		placeholder="Can you briefly describe the purpose and behavior of the function?" ng-model="writeFunctionDescription.description" required>
+		</textarea>
 
-	<textarea
-	id="functionDescription" class="col-md-12 form-control input-sm" draggable="false" name="description"
-	placeholder="Can you briefly describe the purpose and behavior of the function?" ng-model="writeFunctionDescription.description" required>
-	</textarea>
-
-	<span class="help-block" ng-show="form.description.$dirty && form.description.$invalid && form.description.$error.required">
-		This field is required!
+		<span class="help-block" ng-show="form.description.$dirty && form.description.$invalid && form.description.$error.required">
+			This field is required!
+		</span>
 	</span>
-</span>
 
-<span class="col-md-12" ng-class="{ 'has-error': form.returnType.$dirty && form.returnType.$invalid , 'has-success': form.returnType.$valid}">
-	<span class="col-md-2">returns</span>
-	<span class="col-md-3">
-		<input class="form-control input-sm" type="text" id="returnType"
-		placeholder="return type" name=returnType ng-model="writeFunctionDescription.returnType" adt-validator>
-		<span class="help-block" ng-show="form.returnType.$dirty && form.returnType.$invalid && form.returnType.$error.adt">
-				 {{form.returnType.$error.adt_errors}}
+	<span class="col-md-12" ng-class="{ 'has-error': form.returnType.$dirty && form.returnType.$invalid , 'has-success': form.returnType.$valid}">
+		<span class="col-md-2">returns</span>
+		<span class="col-md-3">
+			<input class="form-control input-sm" type="text" id="returnType"
+			placeholder="return type" name=returnType ng-model="writeFunctionDescription.returnType" adt-validator>
+			<span class="help-block" ng-show="form.returnType.$dirty && form.returnType.$invalid && form.returnType.$error.adt">
+					 {{form.returnType.$error.adt_errors}}
+			</span>
+
+		</span>
+	</span>
+
+
+	<span class="col-md-12" ng-class="{ 'has-error': form.functionName.$dirty && form.functionName.$invalid , 'has-success': form.functionName.$valid}">
+		<span class="col-md-2">function</span>
+		<span class="col-md-3">
+			<input class="form-control input-sm" type="text" id="name"
+			placeholder="functionName" name="functionName" ng-model="writeFunctionDescription.functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/"  >
+
+			<ul class="help-block" ng-show="form.functionName.$dirty && form.functionName.$invalid">
+				<li ng-show="form.functionName.$error.required">This field is required!</li>
+				<li ng-show="form.functionName.$error.pattern">Is not a valid function name!</li>
+			</ul>
 		</span>
 
-	</span>
-</span>
-
-
-<span class="col-md-12" ng-class="{ 'has-error': form.functionName.$dirty && form.functionName.$invalid , 'has-success': form.functionName.$valid}">
-	<span class="col-md-2">function</span>
-	<span class="col-md-3">
-		<input class="form-control input-sm" type="text" id="name"
-		placeholder="functionName" name="functionName" ng-model="writeFunctionDescription.functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/"  >
-
-		<ul class="help-block" ng-show="form.functionName.$dirty && form.functionName.$invalid">
-			<li ng-show="form.functionName.$error.required">This field is required!</li>
-			<li ng-show="form.functionName.$error.pattern">Is not a valid function name!</li>
-		</ul>
+		<span class="col-md-1">(</span>
 	</span>
 
-	<span class="col-md-1">(</span>
-</span>
 
+	<div>
+		<ng-form name="parameterForm" ng-repeat="(index,test) in writeFunctionDescription.parameters"> <span class="col-md-12">
+			<div class="col-md-3 form-group"
+			ng-class="{ 'has-error': parameterForm.paramName.$dirty && parameterForm.paramName.$invalid , 'has-success': parameterForm.paramName.$valid}">
 
-<div>
-	<ng-form name="parameterForm" ng-repeat="(index,test) in writeFunctionDescription.parameters"> <span class="col-md-12">
-		<div class="col-md-3 form-group"
-		ng-class="{ 'has-error': parameterForm.paramName.$dirty && parameterForm.paramName.$invalid , 'has-success': parameterForm.paramName.$valid}">
+				<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramName" name="paramName"
+					placeholder="Parameter Name" required ng-pattern="/^[a-zA-Z0-9_]+$/"/>
 
-			<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramName" name="paramName"
-				placeholder="Parameter Name" required ng-pattern="/^[a-zA-Z0-9_]+$/"/>
+				<ul class="help-block" ng-show="parameterForm.paramName.$dirty && parameterForm.paramName.$invalid">
+					<li ng-show="parameterForm.paramName.$error.required">This field is required!</li>
+					<li ng-show="parameterForm.paramName.$error.pattern">Is not a valid parameter name!</li>
+				</ul>
 
-			<ul class="help-block" ng-show="parameterForm.paramName.$dirty && parameterForm.paramName.$invalid">
-				<li ng-show="parameterForm.paramName.$error.required">This field is required!</li>
-				<li ng-show="parameterForm.paramName.$error.pattern">Is not a valid parameter name!</li>
-			</ul>
+			</div>
 
-		</div>
+			<span class="col-md-1"> , // </span>
 
-		<span class="col-md-1"> , // </span>
+			<div class="col-md-3 form-group"
+				ng-class="{ 'has-error': parameterForm.paramType.$dirty && parameterForm.paramType.$invalid , 'has-success': parameterForm.paramType.$valid}">
 
-		<div class="col-md-3 form-group"
-			ng-class="{ 'has-error': parameterForm.paramType.$dirty && parameterForm.paramType.$invalid , 'has-success': parameterForm.paramType.$valid}">
+				<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramType" name="paramType"
+					placeholder="Parameter Type" adt-validator required/>
 
-			<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramType" name="paramType"
-				placeholder="Parameter Type" adt-validator required/>
+				<ul class="help-block" ng-show="parameterForm.paramType.$dirty && parameterForm.paramType.$invalid">
+					<li ng-show="parameterForm.paramType.$error.required">This field is required!</li>
+					<li ng-show="parameterForm.paramType.$error.adt">{{parameterForm.paramType.$error.adt_errors}}</li>
+				</ul>
 
-			<ul class="help-block" ng-show="parameterForm.paramType.$dirty && parameterForm.paramType.$invalid">
-				<li ng-show="parameterForm.paramType.$error.required">This field is required!</li>
-				<li ng-show="parameterForm.paramType.$error.adt">{{parameterForm.paramType.$error.adt_errors}}</li>
-			</ul>
+			</div>
+			<span class="col-md-1"> - </span>
 
-		</div>
-		<span class="col-md-1"> - </span>
+			<div class="col-md-3 form-group"
+				ng-class="{ 'has-error': parameterForm.paramDescritpion.$dirty && parameterForm.paramDescritpion.$invalid , 'has-success': parameterForm.paramDescritpion.$valid}">
+				<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramDescritpion" name="paramDescritpion"
+					placeholder="Parameter Description" required/>
 
-		<div class="col-md-3 form-group"
-			ng-class="{ 'has-error': parameterForm.paramDescritpion.$dirty && parameterForm.paramDescritpion.$invalid , 'has-success': parameterForm.paramDescritpion.$valid}">
-			<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramDescritpion" name="paramDescritpion"
-				placeholder="Parameter Description" required/>
+				<ul class="help-block" ng-show="parameterForm.paramDescritpion.$dirty && parameterForm.paramDescritpion.$invalid">
+					<li ng-show="parameterForm.paramDescritpion.$error.required">This field is required!</li>
+				</ul>
 
-			<ul class="help-block" ng-show="parameterForm.paramDescritpion.$dirty && parameterForm.paramDescritpion.$invalid">
-				<li ng-show="parameterForm.paramDescritpion.$error.required">This field is required!</li>
-			</ul>
+			</div>
+			<div class="col-md-1">
+				<button ng-click="deleteParameter(index)" class="btn btn-sm">X</button>
+			</div>
+		</span> </ng-form>
+		<button ng-click="addParameter()" class="btn btn-sm">Add Parameter</button>
+	</div>
+	<br>
 
-		</div>
-		<div class="col-md-1">
-			<button ng-click="deleteParameter(index)" class="btn btn-sm">X</button>
-		</div>
-	</span> </ng-form>
-	<button ng-click="addParameter()" class="btn btn-sm">Add Parameter</button>
+	<div class="task-buttons pull-right">
+		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid">Submit</button>
+		<button ng-click="$emit('skipMicrotask')" class="btn btn-link">Skip</button>
+	</div>
+	<div class="clearfix"></div>
+
 </div>
-<br>
-
-<div class="task-buttons pull-right">
-	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid">Submit</button>
-	<button ng-click="$emit('skipMicrotask')" class="btn btn-link">Skip</button>
-</div>
-<div class="clearfix"></div>

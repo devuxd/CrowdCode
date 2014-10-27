@@ -56,8 +56,9 @@ public class WriteCall extends Microtask
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		caller.get().writeCallCompleted((FunctionDTO) dto, project);
-		// increase the stats counter 
+		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "function_calls",1);
+
 	}
 
 	// Returns true iff the microtask still needs to be done

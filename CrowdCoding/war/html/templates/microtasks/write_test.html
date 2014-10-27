@@ -1,81 +1,98 @@
+<div ng-controller="WriteTestController">
 
-<h2 id="taskHeader">
-	<span id="taskTitle" >{{datas.title}}</span>
-	<span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
-</h2>
-<br />
-<div id="taskDescription">
+	<h2 id="taskHeader">
+		<span id="taskTitle" >{{datas.title}}</span>
+		<span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
+	</h2>
+	<br />
+	<div id="taskDescription">
 
-		<div ng-show="microtask.promptType=='WRITE'">
-			Please, write a test for the following test case: <br>
-			<span   style="width:60%" class="alert alert-info pull-left">{{test.description}}</span>
-	   		<button style="width:40%" class="btn btn-mini pull-left" ng-hide="dispute" ng-click="toggleDispute()">Report as incorrect test case</button>
-	   		<span class="clearfix"></span>
+			<div ng-show="microtask.promptType=='WRITE'">
+				Please, write a test for the following test case: <br>
+				<span   style="width:60%" class="alert alert-info pull-left">{{test.description}}</span>
+		   		<button style="width:40%" class="btn btn-mini pull-left" ng-hide="dispute" ng-click="toggleDispute()">Report as incorrect test case</button>
+		   		<span class="clearfix"></span>
 
-			Here's the description of the function to test:
-			<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="code" ></div>
-		</div>
+				Here's the description of the function to test:
+				<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="code" ></div>
+			</div>
 
-		<div ng-show="microtask.promptType=='CORRECT'">
-			The following issue was reported with this test:
-			<div class="alert alert-info">{{microtask.description}}</div>
-			<div class="alert alert-error">{{microtask.issueDescription}}</div>
-			Can you fix the test to address this issue?<BR>
+			<div ng-show="microtask.promptType=='CORRECT'">
+				The following issue was reported with this test:
 
-			<BR>Here's the description of the function to test:
-			<div class="readOnlyCodemirror"><textarea id="correctCodeBox">{{funct.description}}</textarea></div>
-		</div>
+				<div class="alert alert-info">{{microtask.description}}</div>
+				<div class="alert alert-error">{{microtask.issueDescription}}</div>
+				Can you fix the test to address this issue?<BR>
 
-		<div ng-show="microtask.promptType=='TESTCASE_CHANGED'">
-			The test case for this has change from <BR><BR>
-			<div class="alert alert-info">microtask old test case</div>
-			to <BR><BR>
-			<div class="alert alert-info">microtask description</div>
-			Can you update the test below, if necessary?<BR>
+				<BR>Here's the description of the function to test:
+				<div class="readOnlyCodemirror"><textarea id="correctCodeBox">{{funct.description}}</textarea></div>
+			</div>
 
-			<BR>Here's the description of the function to test:
-			<div class="readOnlyCodemirror" ><textarea id="testCaseChangedCodeBox">{{funct.description}}</textarea></div>
-		</div>
+			<div ng-show="microtask.promptType=='TESTCASE_CHANGED'">
+				The test case for this has change from <BR><BR>
+				<div class="alert alert-info">microtask old test case</div>
+				to <BR><BR>
+				<div class="alert alert-info">microtask description</div>
+				Can you update the test below, if necessary?<BR>
 
-		<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
-			The description of the function being tested has changed. Can you update the test below,
-			if necessary? <BR><BR>
-			<BR><BR>
-			<div ng-bind-html="microtask.oldFunctionDescription|diff:microtask.newFunctionDescription"></div>
+				<BR>Here's the description of the function to test:
+				<div class="readOnlyCodemirror" ><textarea id="testCaseChangedCodeBox">{{funct.description}}</textarea></div>
+			</div>
 
+			<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
+				The description of the function being tested has changed<BR>
+				<div ng-bind-html="microtask.oldFunctionDescription |diff:microtask.newFunctionDescription | newline" ></div>
+				<br>
+				Can you update the test Case below,if necessary?<BR>
 
-			Here's the test description:
-			<div class="alert alert-info">{{test.description}}</div>
-		</div>
+				<span   style="width:60%" class="alert alert-info pull-left">{{test.description}}</span>
+		   		<button style="width:40%" class="btn btn-mini pull-left" ng-hide="dispute" ng-click="toggleDispute()">Report as incorrect test case</button>
+		   		<span class="clearfix"></span>
 
-
-
- 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>
-
-</div>
+		   	</div>
 
 
-<div id="taskForm" >
 
-	<div id="disputeDiv" ng-show="dispute" class="form-group">
-		<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
-		<textarea name="disputeText" class="form-control" ng-model="testData.disputeText"></textarea><br>
-		<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
-		<button class="btn btn-primary" ng-if="dispute" ng-click="$emit('submitMicrotask')" >Submit dispute</button>
+	 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>
+
 	</div>
 
-	<div id="simpleTest" ng-hide="dispute">
-		<p>Provide a JSON object literal of the specified type for each parameter and the expected
-	    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
-	    an example from the description of a type above.</p>
-	    <BR>
 
-	    <ng-form name="inputForm" ng-repeat="(index,paramName) in funct.paramNames" >
-			<div class="form-group" ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" >
-				<label for="input">{{paramName}} ({{funct.paramTypes[index]}}): </label>
-				<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json="{{funct.paramTypes[index]}}" ></textarea>
-				<ul class="help-block" ng-show="inputForm.input.$dirty && inputForm.input.$invalid">
-					<li ng-show="inputForm.input.$error.required" >This field is required!</li>
+	<div id="taskForm" >
+
+		<div id="disputeDiv" ng-show="dispute" class="form-group">
+			<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
+			<textarea name="disputeText" class="form-control" ng-model="testData.disputeText"></textarea><br>
+			<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
+			<button class="btn btn-primary" ng-if="dispute" ng-click="$emit('submitMicrotask')" >Submit dispute</button>
+		</div>
+
+		<div id="simpleTest" ng-hide="dispute">
+			<p>Provide a JSON object literal of the specified type for each parameter and the expected
+		    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
+		    an example from the description of a type above.</p>
+		    <BR>
+
+		    <ng-form name="inputForm" ng-repeat="(index,paramName) in funct.paramNames" >
+				<div class="form-group" ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" >
+					<label for="input">{{paramName}} ({{funct.paramTypes[index]}}): </label>
+					<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json="{{funct.paramTypes[index]}}" ></textarea>
+					<ul class="help-block" ng-show="inputForm.input.$dirty && inputForm.input.$invalid">
+						<li ng-show="inputForm.input.$error.required" >This field is required!</li>
+						<li ng-show="inputForm.input.$error.json" >
+							<span>There are JSON errors. Please fix them:</span>
+							<ul ng-repeat="error in inputForm.input.$error.json_errors">
+								<li>{{error}}</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</ng-form>
+			<div class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
+				<label for="output">expected Return value ({{funct.returnType}}):</label>
+				<textarea class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json="{{funct.returnType}}" ></textarea>
+				<ul class="help-block" ng-show="form.output.$dirty && form.output.$invalid">
+					<li ng-show="form.output.$error.required" >This field is required!</li>
 					<li ng-show="inputForm.input.$error.json" >
 						<span>There are JSON errors. Please fix them:</span>
 						<ul ng-repeat="error in inputForm.input.$error.json_errors">
@@ -84,38 +101,25 @@
 					</li>
 				</ul>
 			</div>
-		</ng-form>
-		<div class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
-			<label for="output">expected Return value ({{funct.returnType}}):</label>
-			<textarea class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json="{{funct.returnType}}" ></textarea>
-			<ul class="help-block" ng-show="form.output.$dirty && form.output.$invalid">
-				<li ng-show="form.output.$error.required" >This field is required!</li>
-				<li ng-show="inputForm.input.$error.json" >
-					<span>There are JSON errors. Please fix them:</span>
-					<ul ng-repeat="error in inputForm.input.$error.json_errors">
-						<li>{{error}}</li>
-					</ul>
-				</li>
-			</ul>
 		</div>
 	</div>
-</div>
-<br/>
+	<br/>
 
-<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="logout-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h4 id="logoutLabel">You need to fix the errors before you submit.</h4>
+	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+		<div class="logout-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h4 id="logoutLabel">You need to fix the errors before you submit.</h4>
+		</div>
+		<div class="modal-body"></div>
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		</div>
 	</div>
-	<div class="modal-body"></div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-	</div>
-</div>
 
-<br/>
-<div class="task-buttons pull-right">
-	<button ng-click="$emit('submitMicrotask')" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
-	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link">Skip</button>
+	<br/>
+	<div class="task-buttons pull-right">
+		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
+		<button ng-click="$emit('skipMicrotask')"   class="btn btn-link">Skip</button>
+	</div>
+	<div class="clearfix"></div>
 </div>
-<div class="clearfix"></div>
