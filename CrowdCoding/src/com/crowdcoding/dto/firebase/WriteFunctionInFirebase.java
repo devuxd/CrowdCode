@@ -1,6 +1,6 @@
 package com.crowdcoding.dto.firebase;
 
-public class WriteFunctionInFirebase extends MicrotaskInFirebase 
+public class WriteFunctionInFirebase extends MicrotaskInFirebase
 {
 	public long functionID;
 	public String promptType;
@@ -8,7 +8,7 @@ public class WriteFunctionInFirebase extends MicrotaskInFirebase
 	public String newFullDescription;
 
 
-	public WriteFunctionInFirebase() 
+	public WriteFunctionInFirebase()
 	{
 	}
 
@@ -17,13 +17,11 @@ public class WriteFunctionInFirebase extends MicrotaskInFirebase
 			long functionID, String promptType,String oldFullDescription,String newFullDescription)
 	{
 		super(id, type, owningArtifact, completed, points);
-		
+
 		this.functionID = functionID;
 		this.promptType = promptType;
 		this.oldFullDescription = oldFullDescription;
 		this.newFullDescription = newFullDescription;
-		
-		System.out.println("write function in firebase");
-		
+
 	}
 }

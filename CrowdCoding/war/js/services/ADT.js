@@ -35,6 +35,7 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 						nameToADT[ADTs[i].name] = ADTs[i];
 					}
 				}
+				$rootScope.loaded.ADTs=true;
 
 			});
 

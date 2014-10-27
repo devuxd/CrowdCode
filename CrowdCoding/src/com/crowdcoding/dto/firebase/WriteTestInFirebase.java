@@ -4,7 +4,7 @@ package com.crowdcoding.dto.firebase;
 public class WriteTestInFirebase extends MicrotaskInFirebase
 {
 	public long testID;
-	public long testedFunctionID;
+	public long functionID;
 	public String promptType;
 	public String issueDescription;
 	public String oldFunctionDescription;
@@ -32,11 +32,11 @@ public class WriteTestInFirebase extends MicrotaskInFirebase
 	{
 		super(id, type, owningArtifact, completed, points);
 		this.testID = testID;
-		this.testedFunctionID = testedFunctionID;
+		this.functionID = testedFunctionID;
 		this.promptType = promptType;
 		this.issueDescription = issueDescription;
-		this.oldFunctionDescription = oldFunctionDescription.replace("\n", "<br/>");;
-		this.newFunctionDescription = newFunctionDescription.replace("\n", "<br/>");;
+		this.oldFunctionDescription = oldFunctionDescription;
+		this.newFunctionDescription = newFunctionDescription;
 		this.oldTestCase = oldTestCase;
 	}
 }

@@ -122,8 +122,10 @@
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
-    <script src="/include/angular-diff/angular-diff.min.js"></script><!-- Angular substitute of PrettyTextDiff -->
+    <script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
     <script src="/include/angular-animate/angular-animate.min.js"></script><!-- Angular animate -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
+
 
     <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> <!-- codemirror ui for Angularjs-->
@@ -135,26 +137,32 @@
 
 	<script src="/js/testRunner.js"></script>
 
-	<script src="/js/functionSupport.js"></script>
 	<script src="/js/errorCheck.js"></script>
-
+	<<!-- <script src="/js/functionSupport.js"></script> -->
 	<script src="/js/JSONValidator.js"></script>
 
 	<script src="/js/workqueue.js"></script>
 
-
+	<!-- Angular Application -->
 	<script src="/js/app.js"></script>
 
+	<!-- Angular Services -->
 	<script src="/js/services/services.js"></script>
 	<script src="/js/services/ADT.js"></script>
-
+	<script src="/js/services/microtasks.js"></script>
 	<script src="/js/services/tests.js"></script>
 	<script src="/js/services/functions.js"></script>
 	<script src="/js/services/user.js"></script>
 	<script src="/js/services/testRunner.js"></script>
-	<script src="/js/directives/directives.js"></script>
-	<script src="/js/controllers/controllers.js"></script>
 
+	<!-- Angular Directives -->
+	<script src="/js/directives/directives.js"></script>
+
+	<!-- Angular Filter -->
+	<script src="/js/filters/filter.js"></script>
+
+	<!-- Angular Controllers -->
+	<script src="/js/controllers/controllers.js"></script>
 	<script src="/js/controllers/microtasks.js"></script>
 
 

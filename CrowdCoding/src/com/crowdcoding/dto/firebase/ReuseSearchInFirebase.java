@@ -1,11 +1,11 @@
 package com.crowdcoding.dto.firebase;
 
-public class ReuseSearchInFirebase extends MicrotaskInFirebase 
+public class ReuseSearchInFirebase extends MicrotaskInFirebase
 {
 	public String callDescription;
-	public long callerID;
+	public long functionID;
 
-	public ReuseSearchInFirebase() 
+	public ReuseSearchInFirebase()
 	{
 	}
 
@@ -14,8 +14,8 @@ public class ReuseSearchInFirebase extends MicrotaskInFirebase
 			 String callDescription, long callerID)
 	{
 		super(id, type, owningArtifact, completed, points);
-		
+
 		this.callDescription = callDescription;
-		this.callerID=callerID;
+		this.functionID=callerID;
 	}
 }

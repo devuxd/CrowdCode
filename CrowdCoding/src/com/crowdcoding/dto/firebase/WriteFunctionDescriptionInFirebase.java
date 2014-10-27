@@ -3,7 +3,7 @@ package com.crowdcoding.dto.firebase;
 public class WriteFunctionDescriptionInFirebase extends MicrotaskInFirebase
 {
 	public String callDescription;
-	public long callerID;
+	public long functionID;
 
 	public WriteFunctionDescriptionInFirebase()
 	{
@@ -16,7 +16,7 @@ public class WriteFunctionDescriptionInFirebase extends MicrotaskInFirebase
 		super(id, type, owningArtifact, completed, points);
 
 		this.callDescription = callDescription;
-		this.callerID=callerID;
+		this.functionID=callerID;
 
 
 	}
