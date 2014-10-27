@@ -3,6 +3,7 @@ package com.crowdcoding.util;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 import com.crowdcoding.dto.ReviewDTO;
@@ -11,6 +12,7 @@ import com.crowdcoding.dto.firebase.LeaderboardEntry;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
+import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
@@ -40,6 +42,14 @@ public class FirebaseService
 		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskID + "/assigned.json", HTTPMethod.PUT, project); 
 		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskID + ".json", HTTPMethod.PATCH, project);
 		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.PUT, project); 
+	}
+	
+
+	public static void writeTestJobQueue(long functionID, Project project)
+	{	
+		Date date = new Date();
+		System.out.println("appending test job for function "+functionID);
+		writeData("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+date.getTime()+".json", HTTPMethod.PUT, project); 
 	}
 	
 	public static void writeWorkerLoggedOut(String workerID, Project project)
@@ -123,6 +133,31 @@ public class FirebaseService
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		writeData(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, project);
 	}
+
+	public static String readStat(String workerID, String label, Project project){
+		String result = readDataAbsolute(getBaseURL(project)  + "/workers/" + workerID + "/stats/"+label+".json");
+
+		System.out.println("Stat absolute url="+getBaseURL(project) + "/workers/" + workerID + "/stats/"+label+".json");
+		if (result == null || result.equals("null")){
+			System.out.println("result of read stat is null ");
+			result = "0";
+		}
+		return result;
+	}
+	
+	public static void setStat(String workerID, String label, String value, Project project)
+	{
+		writeData(value, "/workers/" + workerID + "/stats/"+label+".json", HTTPMethod.PUT, project);
+	}
+	
+	public static void increaseStatBy(String workerID, String label, int increaseAmount, Project project){
+		String stringValue = readStat(workerID,label,project);
+		Integer actualValue = Integer.parseInt(stringValue);
+		Integer value = actualValue + increaseAmount ;
+		System.out.println("Increase stat '"+label+"' from "+actualValue+" to "+value+" for "+workerID);
+		setStat(workerID,label,value.toString(),project);
+	}
+	
 	
 	public static void writeWorker(String workerID, String workerDisplayName, Project project)
 	{

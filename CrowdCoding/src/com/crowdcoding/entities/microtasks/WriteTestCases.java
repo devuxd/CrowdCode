@@ -2,6 +2,7 @@ package com.crowdcoding.entities.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
@@ -11,6 +12,8 @@ import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
@@ -77,6 +80,11 @@ public class WriteTestCases extends Microtask
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		this.function.get().writeTestCasesCompleted((TestCasesDTO) dto, project);		
+		
+
+		// increase the stats counter 
+		WorkerCommand.increaseStat(workerID, "test_cases",1);
+		
 	}
 	
 	protected Class getDTOClass()
@@ -130,5 +138,18 @@ public class WriteTestCases extends Microtask
 	public String microtaskDescription()
 	{
 		return "write test cases";
+	}
+	
+	public String toJSON(){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("promptType",this.getPromptType());
+			json.put("disputedTestCase",this.getDisputedTestCase());
+			json.put("disputeDescription",this.getDisputeDescription());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return super.toJSON(json);
 	}
 }

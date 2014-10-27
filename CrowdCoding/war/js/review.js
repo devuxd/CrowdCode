@@ -119,5 +119,6 @@ function displayWriteFunction(containerDiv, microtask)
 	var content = '<div><b>Write a function description</b><BR>';
 	content += '<div class="codemirrorBox"><textarea id="readonlyCodeBox"></textarea></div><BR>';
 	$(containerDiv).html(content); 
-	setupReadonlyCodeBox(readonlyCodeBox, microtask.submission.description + microtask.submission.header + microtask.submission.code);
+	
+	setupReadonlyCodeBox(readonlyCodeBox,renderDescription(microtask.submission), microtask.submission.header + microtask.submission.code);
 }	

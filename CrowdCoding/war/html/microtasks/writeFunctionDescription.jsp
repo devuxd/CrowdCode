@@ -17,6 +17,8 @@ WriteFunctionDescription microtask = (WriteFunctionDescription) this.getServletC
 Function caller = microtask.getCaller();
 String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(null, project);
 %>
+
+
 <script>
 	var microtaskTitle = '<%= microtask.microtaskTitle() %>';
 	var microtaskSubmitValue = <%= microtask.getSubmitValue() %>;
@@ -30,6 +32,7 @@ String allFunctionCodeInSystem = FunctionHeaderUtil.getDescribedFunctionHeaders(
 
     $(document).ready(function()
 	{
+    	
 		setupReadonlyCodeBox(readonlyCodeBox, codeBoxCode);
     	
  		$('#skipBtn').click(function() { skip(); });

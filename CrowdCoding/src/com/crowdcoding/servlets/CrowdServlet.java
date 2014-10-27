@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,8 +26,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 
 import com.crowdcoding.commands.Command;
-import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
+import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
@@ -48,6 +49,8 @@ import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Work;
@@ -63,13 +66,16 @@ public class CrowdServlet extends HttpServlet
 		// Microtasks are listed in alphabetical order.
 		microtaskTypes.put("ReuseSearch", ReuseSearch.class);
 		microtaskTypes.put("Review", Review.class);
-		microtaskTypes.put("writeFunction", WriteFunction.class);
+		microtaskTypes.put("WriteFunction", WriteFunction.class);
 		microtaskTypes.put("DebugTestFailure", DebugTestFailure.class);
 		microtaskTypes.put("MachineUnitTest", MachineUnitTest.class);
 		microtaskTypes.put("WriteCall", WriteCall.class);
 		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
-		microtaskTypes.put("writetest", WriteTest.class);
-		microtaskTypes.put("writetestcases", WriteTestCases.class);
+		microtaskTypes.put("WriteTest", WriteTest.class);
+		microtaskTypes.put("WriteTestCases", WriteTestCases.class);
+		
+
+		microtaskTypes.put("WriteFunction", WriteFunction.class);
 		
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
@@ -117,7 +123,6 @@ public class CrowdServlet extends HttpServlet
 		 *  /<project>/logout/[workerID] - doLogout
 		 *  /<project>/run - run.jsp
 		 *  /<project>/submit - doSubmit
-		 *  /<project>/testResult - submitTestResult
 		 *  /<project>/welcome - welcome.jsp
 		 *  /clientRequest - ClientRequestEditor.jsp
 		 *  /welcome.jsp
@@ -127,19 +132,16 @@ public class CrowdServlet extends HttpServlet
 				
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();  
-
-//    	for(int i=0;i<path.length;i++){
-//    		System.out.println("token "+i+": "+path[i]);
-//    	}
-    	
+		
     	try 
     	{	        
+    		
     		// First check the browser. If the browser is not Chrome, redirect to a browser
     		// compatability page.
-    		if (!req.getHeader("User-Agent").contains("Chrome"))
-    			req.getRequestDispatcher("/html/browserCompat.html").forward(req, resp);
-    		else
-    		{    	
+//    		if (!req.getHeader("User-Agent").contains("Chrome"))
+//    			req.getRequestDispatcher("/html/browserCompat.html").forward(req, resp);
+//    		else
+//    		{    	
     			// Next check if the user is logged in by checking if we have a user object for them.
 		        if (user != null) 
 		        {
@@ -157,6 +159,8 @@ public class CrowdServlet extends HttpServlet
 						req.setAttribute("project", path[1]);
 						String projectID = path[1];
 						
+			    		
+
 						// check first for non-project pages routing
 						if (path[1].equals("clientRequest"))
 						{	
@@ -170,15 +174,21 @@ public class CrowdServlet extends HttpServlet
 						else if( ofy().load().filterKey(Key.create(Project.class, projectID)).keys().first() != null ){
 							// if is requested the main page
 							if(path.length==2) {
+								
+								// CREATE THE CROWD USER - IS NOT THE RIGHT POSITION TO DO THIS
+								Worker crowdUser = Worker.Create(UserServiceFactory.getUserService().getCurrentUser(), Project.Create(projectID));
+								
 								if(req.getParameter("distributedJS")!=null)
 									if(req.getParameter("distributedJS").equals("admin"))
 										req.getRequestDispatcher("/html/distributedJSAdmin.jsp").forward(req, resp);
 									else
 										req.getRequestDispatcher("/html/distributedJSWorker.jsp").forward(req, resp);
 								else if(req.getParameter("oldLayout")!=null)
-									req.getRequestDispatcher("/html/mainpage.jsp").forward(req, resp);
-								else
 									req.getRequestDispatcher("/html/newLayout.jsp").forward(req, resp);
+								else
+									req.getRequestDispatcher("/html/angular.jsp").forward(req, resp);
+							
+							
 							} else {
 								// if are requested secondary pages
 								String action = path[2];
@@ -187,7 +197,7 @@ public class CrowdServlet extends HttpServlet
 								else if (action.equals("submit"))
 									doSubmit(req, resp);
 								else if (action.equals("testResult"))
-									submitTestResult(req, resp);
+									doSubmitTestResult(req, resp, projectID);
 								else if (action.equals("logout"))					
 									doLogout(projectID, path[3]);
 								else if (action.equals("admin") && path.length == 3)
@@ -216,10 +226,11 @@ public class CrowdServlet extends HttpServlet
 		        	else	        	
 						req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);	        	
 		        }
-    		}
+    		//}
 		} catch (ServletException e) {
 			e.printStackTrace();
 		} catch (FileUploadException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}      
 	}
@@ -341,6 +352,37 @@ public class CrowdServlet extends HttpServlet
 	    
 	}
 	
+	// process test result submit
+	private void doSubmitTestResult(final HttpServletRequest req, final HttpServletResponse resp, String projectID) throws IOException, FileUploadException {
+		
+		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
+		final long functionID = Long.parseLong(req.getParameter("functionID"));
+		final long testID     = Long.parseLong(req.getParameter("testID"));
+
+		/*
+		// SEND 503 error if some of the parameter are null
+		if( ){
+			resp.sendError(503); 
+		}
+		*/
+		
+		List<Command> commands = new ArrayList<Command>();
+		commands.addAll(ofy().transact(new Work<List<Command>>() {
+	        public List<Command> run()
+	        {
+    			CommandContext context = new CommandContext();	
+    			if(result)
+    				FunctionCommand.passedTests(functionID);
+    			else
+    				FunctionCommand.failedTest(functionID,testID);
+    			
+				return context.commands(); 
+	        }
+	    }));
+		
+		executeCommands(commands, projectID);	
+	}
+	
 	// get user picture
 	private void getPicture(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		//retrieve request GET parameter userId and retrieve picture
@@ -359,6 +401,9 @@ public class CrowdServlet extends HttpServlet
 	// Notify the server that a microtask has been completed. 
 	public void doSubmit(final HttpServletRequest req, final HttpServletResponse resp) throws IOException 
 	{
+		// Collect information from the request parameter. Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
     	try 
     	{		
     		final String projectID = (String) req.getAttribute("project");
@@ -368,8 +413,6 @@ public class CrowdServlet extends HttpServlet
 			final String type = req.getParameter("type");
 			final String payload = Util.convertStreamToString(req.getInputStream());
 			
-			System.out.println("microtaskid: " + microtaskID);			
-			System.out.println("Submitted microtask: " + payload);
 			Class microtaskType = microtaskTypes.get(type);
 			if (microtaskType == null)
 				throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
@@ -392,28 +435,6 @@ public class CrowdServlet extends HttpServlet
     	}        
 	}
 	
-	// Notify the server that a test for a function has been run, noting the results.
-	public void submitTestResult(final HttpServletRequest req, final HttpServletResponse resp)
-	{		
-		final String projectID = (String) req.getAttribute("project");
-		final long functionID = Long.parseLong(req.getParameter("functionID"));	
-		final boolean passedTests = Boolean.parseBoolean(req.getParameter("passedTests"));
-		
-		System.out.println("functionID: " + functionID);			
-		System.out.println("passedTests: " + passedTests);
-		
-		// Create an initial context, then build a command to skip or submit
-		CommandContext context = new CommandContext();	
-		
-		// Create the skip or submit commands
-		if (passedTests)
-			FunctionCommand.passedTests(functionID);
-		else			
-			FunctionCommand.failedTests(functionID);
-				
-		// Copy the command back out the context to initially populate the command queue.
-		executeCommands(context.commands(), projectID);			       
-	}	
 	
 	public void doFetch(final HttpServletRequest req, final HttpServletResponse resp, 
 			final String projectID, final User user) throws IOException 
@@ -462,15 +483,35 @@ public class CrowdServlet extends HttpServlet
     	// to microtask UI.
     	try
     	{
-        	if (microtask == null)
-        	{
-        		req.getRequestDispatcher("/html/nomicrotask.jsp").forward(req, resp);
-        	}
-        	else
-        	{
-        		this.getServletContext().setAttribute("microtask", microtask);        		
-        		req.getRequestDispatcher(microtask.getUIURL()).forward(req,  resp);        		
-        	}        	
+    		// IF IS AN AJAX REQUEST RETURN JSON {microtaskId:id}
+    		if(req.getParameter("AJAX")!=null)
+    		{
+    			// prepare the json content type
+    			resp.setContentType("application/json");
+    			PrintWriter out = resp.getWriter();
+    			
+    			if (microtask == null) {
+    				resp.sendError(404); 
+    				
+    			} 
+    			else{
+    				out.print(microtask.toJSON());
+        			out.flush();
+    			}
+        
+    			
+    			
+    		}
+    		else
+    			if (microtask == null)
+	        	{
+	        		req.getRequestDispatcher("/html/nomicrotask.jsp").forward(req, resp);
+	        	}
+	        	else
+	        	{
+	        		this.getServletContext().setAttribute("microtask", microtask);        		
+	        		req.getRequestDispatcher(microtask.getUIURL()).forward(req,  resp);        		
+	        	}        	
     	}
     	catch (ServletException e) {
 			e.printStackTrace();

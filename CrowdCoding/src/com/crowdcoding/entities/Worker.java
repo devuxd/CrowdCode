@@ -74,6 +74,12 @@ public class Worker
 		FirebaseService.setPoints(userid, nickname, score, project);
 	}
 	
+	// Update the stat label to the stat value.
+	public void increaseStat(String label,int amount, Project project)
+	{
+		FirebaseService.increaseStatBy(userid, label, amount, project);
+	}
+	
 	public Key<Worker> getKey()
 	{
 		return getKey(project, userid);
