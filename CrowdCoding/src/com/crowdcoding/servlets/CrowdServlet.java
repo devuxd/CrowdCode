@@ -357,7 +357,7 @@ public class CrowdServlet extends HttpServlet
 		
 		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
-		final long testID     = Long.parseLong(req.getParameter("testID"));
+		//final long testID     = Long.parseLong(req.getParameter("testID"));
 
 		/*
 		// SEND 503 error if some of the parameter are null
@@ -374,7 +374,7 @@ public class CrowdServlet extends HttpServlet
     			if(result)
     				FunctionCommand.passedTests(functionID);
     			else
-    				FunctionCommand.failedTest(functionID,testID);
+    				FunctionCommand.failedTests(functionID);
     			
 				return context.commands(); 
 	        }

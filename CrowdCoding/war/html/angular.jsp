@@ -133,8 +133,6 @@
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
-	<script src="/js/testRunner.js"></script>
-
 	<script src="/js/errorCheck.js"></script> <!-- to refactor -->
 	<script src="/js/functionSupport.js"></script> <!-- to refactor -->
 

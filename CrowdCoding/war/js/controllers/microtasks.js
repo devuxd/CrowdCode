@@ -2,7 +2,7 @@
 //  NO MICROTASK CONTROLLER //
 ///////////////////////////////
 myApp.controller('NoMicrotaskController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService','$interval', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService, $interval) {
-	$interval(function(){ $scope.$emit('load')}, 2000);
+	//$interval(function(){ $scope.$emit('load')}, 2000);
 }]);
 
 ///////////////////////////////
@@ -163,9 +163,98 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
 ///////////////////////////////
-myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
+myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase','$timeout','testsService', 'testRunnerService','functionsService', 'ADTService', function($scope,$rootScope,$firebase,$timeout,testsService,testRunnerService,functionsService, ADTService) {
+
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
+
+	// load the function code and start codemirror
+	var marks=[];
+	var highlightPseudoCall = false;
+	var changeTimeout;
+
+	$scope.console = {
+		content: [],
+		newLinesCount: 0 
+	}
+
+ 	//retrieve tests for the current function
+	$scope.tests = testsService.validTestsforFunction($scope.microtask.functionID);
+	$scope.passedTests = [];
+	$scope.testsRunning = false; // for cheching if tests are running
+	$scope.runTests = function(){};
+
+
+	$scope.reportTest = function(){
+		console.log("reporting test");
+	}
+
+	// check if test is passed
+	// testKey is the key of the test in $scope.tests 
+	$scope.testPassed = function(testKey){
+		if( $scope.passedTests != 'undefined' && $scope.passedTests.indexOf(testKey) !=-1 )
+			return true;
+		return false;
+	}
+
+	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+	$scope.codemirrorLoaded = function(myCodeMirror){
+
+	console.log("initialize codemirror");
+    	codemirror = myCodeMirror;
+		codemirror.doc.setValue($scope.code);
+		codemirror.setOption('autofocus', true);
+		codemirror.setOption('indentUnit', 4);
+		codemirror.setOption('indentWithTabs', true);
+		codemirror.setOption('lineNumbers', true);
+
+		codemirror.setOption("theme", "vibrant-ink");
+
+		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
+		// If we are editing a function that is a client request and starts with CR, make the header
+	 	// readonly.
+		if ($scope.funct.name.startsWith('CR'))
+			functionsService.makeHeaderAndParameterReadOnly(codemirror);
+
+		// refresh codemirror when the tab is changed 
+		// otherwise the line numbers are not properly aligned
+		$scope.$watch(function(){ return $scope.selectedTab },function(){ 
+			$timeout(function(){codemirror.refresh()},10); 
+		});
+
+	 	// on code change highlight pseudo segments
+		codemirror.on("change", function(){
+			$scope.code = codemirror.doc.getValue();
+			functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
+		});
+
+		$scope.runTests = function(){
+			$scope.testsRunning = true;
+
+			var text = codemirror.getValue();
+	 		var ast = esprima.parse(text, {loc: true});
+			var body = codemirror.getRange(
+					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+
+
+			testRunnerService.runTestsForFunction($scope.microtask.functionID,body).then(function(data){
+				$scope.passedTests = data.passedTests;
+
+				$scope.console.content = $scope.console.content.concat(data.console);
+				if( $scope.selectedTab != 'console') 
+					$scope.console.newLinesCount += data.console.length;
+				$('.console-frame').scrollTop( $('.console-output')[0].scrollHeight );
+
+				$timeout(function(){$scope.testsRunning = false;},200);
+			});
+		};
+		$scope.runTests();
+ 	};
+
+	
+
 	console.log("initialization of debug test failure");
 
 	$scope.submit = function(){
@@ -337,6 +426,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 	 $scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
      $scope.codemirrorLoaded = function(myCodeMirror){
+     	console.log("codemirror loaded");
 			codemirror = myCodeMirror;
 			codemirror.setOption('autofocus', true);
 			codemirror.setOption('indentUnit', 4);

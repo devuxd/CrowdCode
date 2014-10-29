@@ -91,7 +91,6 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 		function getValidTests()
 		{
 			var validTests = [];
-			console.log(tests);
 			/*
 			$.each(tests, function(i, test)
 			{

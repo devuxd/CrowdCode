@@ -36,8 +36,14 @@ public class DebugTestFailure extends Microtask
           super(project);
           this.function = (Ref<Function>) Ref.create(function.getKey());         
           ofy().save().entity(this).now();
-  		  FirebaseService.writeMicrotaskCreated(new MicrotaskInFirebase(id, this.microtaskName(), function.getName(), 
-				false, submitValue), id, project);
+  		  FirebaseService.writeMicrotaskCreated(new DebugTestFailureInFirebase(
+  				  id, 
+  				  this.microtaskName(), 
+  				  function.getName(), 
+				  false, 
+				  submitValue,
+				  function.getID()), 
+		id, project);
           
           project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
           project.historyLog().endEvent();

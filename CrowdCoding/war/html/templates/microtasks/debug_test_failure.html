@@ -19,12 +19,93 @@
 			You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR>
 		</p>
 		<button style="float: right;" onclick="revertCodeAs();">Revert Code</button><BR><BR>
-		<p>
-			This is the failing test: <br/>
-			
-		</p>
 	</div>
 
+	<br />
+	<br />
+
+
+	
+
+	<ul class="nav nav-tabs" ng-init="selectedTab='tests'">
+	  <li ng-class="{'active': selectedTab == 'tests'}" ng-click="selectedTab = 'tests'">
+	  	<a href="#">Test Cases</a>
+	  </li>
+	  <li ng-class="{'active': selectedTab == 'function_editor'}" ng-click="selectedTab = 'function_editor'">
+	  	<a href="#">Function Editor</a>
+	  </li>
+	  <li ng-class="{'active': selectedTab == 'console'}" ng-click="selectedTab = 'console'; console.newLinesCount = 0">
+	  	<a href="#">Console
+	  		<span ng-if="console.newLinesCount > 0" class="badge">{{console.newLinesCount}}</span></a>
+	  	</a>
+	  </li>
+
+	  <li >
+	  	<button ng-click="runTests()" class="btn btn-primary"  >Run the tests!</button>
+	  </li>
+	</ul>
+	<div id="taskForm">
+
+
+		<div ng-show="selectedTab=='function_editor'">
+			<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+			<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+			<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
+				<span>There are some errors. Please fix them before submit:</span>
+				<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
+					<li>{{error}}</li>
+				</ul>
+			</ul>
+			<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
+			<span class="clearfix"></span>
+		</div>
+
+		<div ng-show="selectedTab=='tests'">
+			<strong>Tests for this function:</strong>
+			<ul class="debugTests list-group" ng-if="!testsRunning">
+				<li class="list-group-item "
+					ng-init="showDetails[key]=false"
+					ng-repeat="(key,test) in tests" 
+					ng-class="{ 'list-group-item-success': testPassed(key), 'list-group-item-danger': !testPassed(key)}">
+
+					<div class="glyphicon result" ng-class="{ 'glyphicon-ok': testPassed(key), 'glyphicon-remove': !testPassed(key)}"></div>
+					<div class="description">{{test.description}}</div>
+
+					<a ng-if="!showDetails[key]" ng-click="showDetails[key]=true" class="btn btn-link pull-right">
+						<span class="caret"></span> show details 
+					</a>
+					<a ng-if="showDetails[key]"  ng-click="showDetails[key]=false" class="dropup btn btn-link pull-right">
+						<span class="caret"></span> hide details 
+					</a>
+
+					<a class="btn btn-link btn-report pull-right" 
+						ng-click="reportTest(key)" 
+						ng-hide="testPassed(key)" 
+						>
+						<span class=" glyphicon glyphicon-exclamation-sign"></span>
+						Dispute test 
+					</a>
+
+					<div class="details clearfix" ng-show="showDetails[key]">
+						<div class="">Simple test code: </div>
+						<div class="">{{test.code}}</div>
+					</div>
+				</li>
+			</ul>
+			<div ng-if="testsRunning"><div class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></div> running tests...</div>
+			<br/>
+		</div>
+
+
+		<div ng-show="selectedTab=='console'" >
+			<div class="console-frame">
+				<ul class="console-output">
+					<li ng-repeat="line in console.content track by $index">{{line}}</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
 	<br/>
 	<div class="task-buttons pull-right">
 		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>

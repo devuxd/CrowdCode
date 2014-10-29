@@ -373,11 +373,42 @@ ul.user-list  .name {
 
 .testcases .testcase {
 	margin-top:5px;
-	margin-top:5px;
 }
 
 hr {margin:0px;
 }
+
+.debugTests {
+}
+.debugTests li {
+}
+
+.debugTests .result { margin:0px; display:inline;}
+.debugTests .description { margin-left:10px; display:inline;}
+.debugTests .details {
+	 margin-top:10px;
+}
+
+.console-frame {
+	width: 100%;
+	color: white;
+	resize: vertical;
+	overflow: scroll;
+	height: 200px;
+	padding:5px;
+	padding-bottom:30px;
+
+	background-color: black;
+}
+
+.console-output {
+	margin:0px;
+	padding:0px;
+	list-style: none;
+}
+
+
+
 
 /* Search results styles in reuseSearch */
 .result:hover {background:#dff0d8; cursor:pointer;}

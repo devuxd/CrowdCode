@@ -35,6 +35,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	functionsService.init();
 	ADTService.init();
 
+
 	$scope.$on('popup_show',function(){ console.log('show popup'); $('#popUp').modal('show'); });
 	$scope.$on('popup_hide',function(){ $('#popUp').modal('hide'); });
 	$scope.popupContent = '';
@@ -119,7 +120,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				$scope.datas = data;
 
 				// retrieve the related function
-				if( angular.isDefined($scope.microtask.functionID) ) {
+				if( angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) {
 					$scope.funct = functionsService.get($scope.microtask.functionID);
 				}
 				// retrieve the related test
@@ -130,8 +131,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 				// debug stuff
 				// console.log("data: ");console.log(data);
-				 console.log("microtask: ");console.log($scope.microtask);
-				// console.log("function: ");console.log($scope.funct);
+				// console.log("microtask: ");console.log($scope.microtask);
+				 console.log("function: ");console.log($scope.funct);
 				// console.log("test: ");console.log($scope.test);
 
 
@@ -207,9 +208,6 @@ myApp.controller('ScoreController', ['$scope','$rootScope','$firebase', function
 myApp.controller('FunctionsReferenceController', ['$scope','$rootScope','$firebase','functionsService',function($scope,$rootScope,$firebase,functionsService) {
 	// bind the array to scope.leaders
 	$scope.functions = functionsService.getAll();
-
-	console.log("functions");
-	console.log($scope.functions);
 }]);
 
 ////////////////////////////

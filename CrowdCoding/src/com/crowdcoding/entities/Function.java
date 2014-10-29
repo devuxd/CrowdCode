@@ -69,7 +69,7 @@ public class Function extends Artifact
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	private boolean needsDebugging;		     // true iff the function is failing its unit tests.
 	
-	private Test failedTest;
+	//private Test failedTest;
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -341,7 +341,7 @@ public class Function extends Artifact
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && needsDebugging)			
-				makeMicrotaskOut(new DebugTestFailure(this, this.failedTest, project), project);
+				makeMicrotaskOut(new DebugTestFailure(this,project), project);
 			else if (!queuedMicrotasks.isEmpty())
 				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
 		}
@@ -658,7 +658,7 @@ public class Function extends Artifact
 		{
 			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
 			this.needsDebugging = true;
-			this.failedTest     = test;
+			//this.failedTest     = test;
 			ofy().save().entity(this).now(); 
 			
 			lookForWork(project);			
