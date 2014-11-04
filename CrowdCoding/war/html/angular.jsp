@@ -16,16 +16,6 @@
 
     final String projectID = (String) request.getAttribute("project");
 	final Logger log = Logger.getLogger(Project.class.getName());
-
-
-	Project project = ObjectifyService.ofy().transact(new Work<Project>()
-	{
-	    public Project run()
-	    {
-			return Project.Create(projectID);
-	    }
-	});
-
 	String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 	String workerHandle = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 %>

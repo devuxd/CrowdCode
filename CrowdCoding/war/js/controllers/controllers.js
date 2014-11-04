@@ -4,7 +4,7 @@
 // APP CONTROLLER //
 ////////////////////
 //prepare variables and execute inizialization stuff
-myApp.controller('AppController', ['$scope','$rootScope','$firebase','userService', 'testsService', 'functionsService', 'testRunnerService','ADTService','microtasksService', function($scope,$rootScope,$firebase,userService,testsService,functionsService, testRunnerServe, ADTService,microtasksService) {
+myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','userService', 'testsService', 'functionsService', 'testRunnerService','ADTService','microtasksService', function($scope,$rootScope,$firebase,$http,userService,testsService,functionsService, testRunnerServe, ADTService,microtasksService) {
 
 	// current session variables
     $rootScope.projectId    = projectId;
@@ -101,19 +101,20 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		// set the loading template
 		$scope.templatePath = templatesURL + "loading.html";
 		$rootScope.inlineForm = false; // reset form as non-inline
-
-		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
+		console.log('/'+projectId+'/ajax/fetch');
+		$http.get('/'+projectId+'/ajax/fetch').
 		  success(function(data, status, headers, config) {
-
+		  	console.log(data);
 		  $scope.microtask= microtasksService.get(data.id);
 
+/*
 		  	// create the reference and the sync
-			//var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
-			//var sync = $firebase(ref);
+			var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
+			var sync = $firebase(ref);
 
 			// load the microtask data
-			//$scope.microtask = sync.$asObject();
-			//$scope.microtask.$loaded().then(function(){
+			$scope.microtask = sync.$asObject();
+			$scope.microtask.$loaded().then(function(){*/
 			//	$scope.inputSearch="";
 
 				// assign title
@@ -140,7 +141,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 
-		//	});
+			//});
 		  }).
 		  error(function(data, status, headers, config) {
 
@@ -158,7 +159,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		console.log('submit fired');
 		console.log(formData);
 
-		$http.post('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
+		$http.post('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
 			success(function(data, status, headers, config) {
 
 				 //Push the microtask submit data onto the Firebase history stream
@@ -174,7 +175,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask',function(event,data){
 		console.log("skip fired");
-		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
+		$http.get('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
 		  success(function(data, status, headers, config) {
 			  $scope.$emit('load');
 		  });
