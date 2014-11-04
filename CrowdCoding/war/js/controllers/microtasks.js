@@ -67,6 +67,7 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	console.log("initialization of review controller");
+	$scope.review = {};
 	$scope.review.reviewText="";
 	$scope.review.codeMirrorCode="";
 	//setup codemirror box
@@ -182,11 +183,76 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	$scope.tests = testsService.validTestsforFunction($scope.microtask.functionID);
 	$scope.passedTests = [];
 	$scope.testsRunning = false; // for cheching if tests are running
-	$scope.runTests = function(){};
 
+	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+	$scope.codemirrorLoaded = function(myCodeMirror){
 
-	$scope.reportTest = function(){
-		console.log("reporting test");
+	$scope.runTests = function(){
+		// set testsRunning flag 
+		$scope.testsRunning = true;
+
+		if( typeof codemirror === 'undefined' ){ // IF BODY NOT YET LOADED (first run of the function)
+			
+			testRunnerService.runTestsForFunction($scope.microtask.functionID).then(function(data){
+				// copy passed tests content locally
+				$scope.passedTests = data.passedTests;
+
+				// assign the content of the console
+				$scope.console.content = $scope.console.content.concat(data.console);
+
+				// show notifications about new lines added to the console
+				if( $scope.selectedTab != 'console') 
+					$scope.console.newLinesCount += data.console.length;
+
+				// reset testsRunning flag
+				$timeout(function(){
+					$scope.testsRunning = false;
+					// scroll console on last line inserted
+					console.log( $('.console-output > li').last().offset().top );
+					$('.console-frame').scrollTop( $('.console-output > li').last().offset().top );
+				},200);
+			});
+
+		} else {
+
+			// retrieve the codemirror content and select the body
+			var text = codemirror.getValue();
+		
+			var ast = esprima.parse(text, {loc: true});
+			var body = codemirror.getRange(
+					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+			// run the tests from the service 
+			testRunnerService.runTestsForFunction($scope.microtask.functionID,body).then(function(data){
+				// copy passed tests content locally
+				$scope.passedTests = data.passedTests;
+
+				// assign the content of the console
+				$scope.console.content = $scope.console.content.concat(data.console);
+
+				// show notifications about new lines added to the console
+				if( $scope.selectedTab != 'console') 
+					$scope.console.newLinesCount += data.console.length;
+
+				// reset testsRunning flag
+				$timeout(function(){
+					$scope.testsRunning = false;
+					// scroll console on last line inserted
+					console.log( $('.console-output > li').last().offset().top );
+					$('.console-frame').scrollTop( $('.console-output > li').last().offset().top );
+				},200);
+			});
+		}
+	};
+	// run the tests 
+	$scope.runTests();
+
+	$scope.dispute = false;
+	$scope.disputedTest = null;
+	$scope.disputeTest = function(testKey){
+		$scope.dispute = true;
+		$scope.disputedTest = $scope.tests[testKey];console.log($scope.disputedTest);
 	}
 
 	// check if test is passed
@@ -196,9 +262,6 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 			return true;
 		return false;
 	}
-
-	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-	$scope.codemirrorLoaded = function(myCodeMirror){
 
 	console.log("initialize codemirror");
     	codemirror = myCodeMirror;
@@ -228,29 +291,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 			functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
 		});
 
-		$scope.runTests = function(){
-			$scope.testsRunning = true;
 
-			var text = codemirror.getValue();
-	 		var ast = esprima.parse(text, {loc: true});
-			var body = codemirror.getRange(
-					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-
-
-
-			testRunnerService.runTestsForFunction($scope.microtask.functionID,body).then(function(data){
-				$scope.passedTests = data.passedTests;
-
-				$scope.console.content = $scope.console.content.concat(data.console);
-				if( $scope.selectedTab != 'console') 
-					$scope.console.newLinesCount += data.console.length;
-				$('.console-frame').scrollTop( $('.console-output')[0].scrollHeight );
-
-				$timeout(function(){$scope.testsRunning = false;},200);
-			});
-		};
-		$scope.runTests();
  	};
 
 	
@@ -258,7 +299,49 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	console.log("initialization of debug test failure");
 
 	$scope.submit = function(){
-		console.log("debug test failure controlle prepare form data");
+		formData = {};
+		if($scope.dispute){
+			// return jSON object
+			console.log($scope.disputedTest);
+
+			formData = { 
+				name:        $scope.disputedTest.description,
+				description: $scope.disputedTest.disputeText,
+				testId:      $scope.disputedTest.$id
+			};
+
+		} else {
+			var text = codemirror.getValue();
+	 		var ast = esprima.parse(text, {loc: true});
+
+			var calleeNames = functionsService.getCalleeNames(ast);
+
+			// Get the text for the function description, header, and code.
+			// Note esprima (the source of line numbers) starts numbering lines at 1, while
+		    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+			var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+
+			var linesDescription = fullDescription.split('\n');
+			var name = ast.body[0].id.name;
+
+			var functionParsed = functionsService.parseDescription(linesDescription,name);
+			console.log(functionParsed);
+
+			var body = codemirror.getRange(
+					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+			formData =  { description: functionParsed.description,
+						 header:       functionParsed.header,
+						 name:         name,
+						 code:         body,
+						 returnType:   functionParsed.returnType,
+						 paramNames:   functionParsed.paramNames,
+						 paramTypes:   functionParsed.paramTypes,
+						 paramDescriptions: functionParsed.paramDescriptions,
+						 calleeNames:  calleeNames};
+		}
+
 		$scope.$emit('submitMicrotask',formData);
 	}
 
@@ -572,8 +655,8 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','test
 	// initialize testData
 	// if microtask.submission and microtask.submission.simpleTestInputs are defined
 	// assign test inputs and output to testData, otherwise initialize an empty object
-	$scope.testData = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.simpleTestInputs) ) ?
-					   {inputs: $scope.microtask.submission.simpleTestInputs , output: testsService.get().simpleTestOutput } :
+	$scope.testData = ( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ) ?
+					   {inputs: $scope.test.simpleTestInputs , output: $scope.test.simpleTestOutput } :
 					   {inputs:[],output:''} ;
 
 	// Configures the microtask to show information for disputing the test, hiding
@@ -605,14 +688,7 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','test
 						simpleTestInputs: [],
 						simpleTestOutput: '' };
 		} else {
-			// build the test code
-			var testCode = 'equal('+$scope.funct.name+'(';
-			angular.forEach($scope.testData.inputs, function(value, key) {
-			  testCode +=  value ;
-			  testCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
-			});
-			testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\');' ;
-			// return jSON object
+			
 			formData = { code: testCode,
 						 hasSimpleTest: true,
 						 inDispute: false,

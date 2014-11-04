@@ -22,22 +22,21 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 	function resetConsole(){
 		consoleData = [];
 	}
-	function addToConsole(line){
-		console.log('-> console before ');
-		console.log(consoleData);
-		console.log('-> adding');
-		console.log(line);
 
+	function addToConsole(line,color){
+		// if no color is set, default is white
+		if(!color) color="white";
+
+		// if line is a string, concat to consoleData
 		if( typeof line == 'string' || line instanceof String)
-			consoleData.push(line);
+			consoleData.push({text:line,color:color});
+		// if line is an array of lines 
 		else if( line instanceof Array )
-			consoleData = consoleData.concat(line);
+			angular.forEach(line,function(value,key){
+				addToConsole(value,color);
+			});
 		else
-			consoleData.push(line.toString());
-
-
-		console.log('-> console after ');
-		console.log(consoleData);
+			addToConsole(value.toString(),color)
 	}
 
 
@@ -46,7 +45,6 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 	{
 		deferred = $q.defer();
 
-		console.log('running tests for function ='+idForFunction);
 		functionID = idForFunction;
 		this.running = false;
 		// Load the tests
@@ -66,7 +64,7 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 		var functionsWithMockBodies = '';
 		var functionsWithEmptyBodies = '';	
 		var allFunctionIDs = functionsService.allFunctionIDs();
-		console.log(allFunctionIDs);
+
 		for (var i=0; i < allFunctionIDs.length; i++)
 		{
 			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
@@ -78,6 +76,7 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 		}	
 		allTheFunctionCode = functionsWithEmptyBodies + '\n' + functionsWithMockBodies;	
 
+		console.log(functionsWithMockBodies);
 		// Load the mocks
 		mocks = {};
 		this.loadMocks(testsService.getValidTests());
@@ -99,8 +98,13 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 	// Loads the mock datastructure using the data found in the mockData - an object in MocksDTO format
 	testRunner.loadMocks = function(testData)
 	{
+		console.log("loading mocks");
+		console.log(testData);
 		$.each(testData, function(index, storedMock)
 		{
+			console.log("-- loading mock index="+index);
+			console.log(storedMock);
+
 			// If the mock is poorly formatted somehow, want to keep going...
 			try
 			{
@@ -143,10 +147,14 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 			allFailedTestCases.push(currentTextIndex);
 		else if(!testResult.codeUnimplemented)
 		{
-			if (!testResult.passed)
+			if (!testResult.passed){
+				addToConsole("Result: FAILED","rgb(184, 134, 134)");
 				allFailedTestCases.push(currentTextIndex);
-			else
+			}
+			else{
+				addToConsole("Result: PASSED","rgb(125, 171, 125)");
 				allPassedTestCases.push(currentTextIndex);
+			}
 		}
 		
 		addToConsole(testResult.log);
@@ -177,7 +185,7 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 		// add extra defs for references to the instrumentation code.
 		var extraDefs = "var mocks = {}; function hasMockFor(){} function printDebugStatement (){} ";		
 		var codeToLint = extraDefs + allTheFunctionCode + testCode;
-		//console.log("TestRunner linting on: " + codeToLint);
+		console.log("TestRunner linting on: " + codeToLint);
 		var lintResult = JSHINT(getUnitTestGlobals() + codeToLint, getJSHintGlobals());
 		var errors = checkForErrors(JSHINT.errors);
 		//console.log("errors: " + JSON.stringify(errors));

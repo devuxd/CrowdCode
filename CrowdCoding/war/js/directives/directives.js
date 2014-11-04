@@ -353,3 +353,101 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
         }
     }
 });
+
+myApp.directive('resizer', function($document) {
+
+    
+    
+
+    return function($scope, $element, $attrs) {
+        // calculate the sum of the 2 element's dimensions in percentage
+        // respect to the parent element dimension
+        // - height: if vertical resizer 
+        // - width:  if horizontal resizer
+        // and position the resize bar in between the elements
+
+        // on mouse down attach mousemove and mouseup callbacks
+        $element.on('mousedown', function(event) {
+            event.preventDefault();
+            $document.on('mousemove', mousemove);
+            $document.on('mouseup', mouseup);
+        });
+
+        function mousemove(event) {
+
+            if ($attrs.resizer == 'vertical') {
+                var datas = {
+                    leftX:  $($attrs.resizerLeft).offset().left,
+                    rightX: $($attrs.resizerRight).offset().left,
+                    mouseX: event.pageX
+                }
+                //$element.css({ left: $($attrs.resizerRight).position().left + 'px' });
+
+                var totalSizePx  = $($attrs.resizerLeft).width()+$($attrs.resizerRight).width();
+                var totalSizePer = Math.round(totalSizePx / $element.parent().width() * 100);
+
+                var leftWidthPer  = Math.round( (datas.mouseX-datas.leftX) / $element.parent().width() * 100 );
+
+                if( $attrs.resizerMain == "left" ){
+                    
+                    
+                    if(leftWidthPer < 0)            leftWidthPer = 0;
+                    if(leftWidthPer > totalSizePer) leftWidthPer = totalSizePer;
+                    if($attrs.resizerMin && leftWidthPer < $attrs.resizerMin) leftWidthPer = $attrs.resizerMin;
+                    if($attrs.resizerMax && leftWidthPer > $attrs.resizerMax) leftWidthPer = $attrs.resizerMax;
+
+                    var rightWidthPer = totalSizePer - leftWidthPer;
+
+                } else if( $attrs.resizerMain == "right" ){
+
+                    var rightWidthPer  = totalSizePer - leftWidthPer ;
+
+                    if(rightWidthPer < 0)            rightWidthPer = 0;
+                    if(rightWidthPer > totalSizePer) rightWidthPer = totalSizePer;
+                    if($attrs.resizerMin && rightWidthPer < $attrs.resizerMin) rightWidthPer = $attrs.resizerMin;
+                    if($attrs.resizerMax && rightWidthPer > $attrs.resizerMax) rightWidthPer = $attrs.resizerMax;
+
+                    //var leftWidthPer = totalSizePer - rightWidthPer;
+                }
+
+                $($attrs.resizerLeft).css({ width: leftWidthPer + '%' });
+                $($attrs.resizerRight).css({ width: rightWidthPer + '%' });
+            
+            } else {
+                var datas = {
+                    topY:  $($attrs.resizerTop).offset().top ,
+                    bottomY: $($attrs.resizerBottom).position().top ,
+                    mouseY: event.pageY
+                }
+
+                var totalSizePx  = $($attrs.resizerTop).height()+$($attrs.resizerBottom).height();
+                var totalSizePer = Math.round(totalSizePx / $element.parent().height() * 100);
+
+                var topHeightPer   = Math.round( (datas.mouseY-datas.topY) / $element.parent().height() * 100 );
+                
+                if( $attrs.resizerMain == "top" ){
+
+                    var bottomHeightPer = totalSizePer - topHeightPer;
+
+                } else {
+
+                    var bottomHeightPer = totalSizePer - topHeightPer;
+                }
+
+                $($attrs.resizerTop).css({ height: topHeightPer + '%' });
+                $($attrs.resizerBottom).css({ height: bottomHeightPer + '%' });
+
+                console.log( [datas.mouseY,datas.topY,topHeightPer] );
+                console.log($($attrs.resizerTop).position());
+            }
+
+
+        }
+
+        // when mouse up detach the callbacks
+        function mouseup() {
+            $document.unbind('mousemove', mousemove);
+            $document.unbind('mouseup', mouseup);
+        }
+    };
+});

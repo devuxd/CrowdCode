@@ -130,10 +130,10 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 
 				// debug stuff
-				// console.log("data: ");console.log(data);
-				// console.log("microtask: ");console.log($scope.microtask);
-				 console.log("function: ");console.log($scope.funct);
-				// console.log("test: ");console.log($scope.test);
+				 console.log("data: ");console.log(data);
+				 console.log("microtask: ");console.log($scope.microtask);
+				// console.log("function: ");console.log($scope.funct);
+				 console.log("test: ");console.log($scope.test);
 
 
 			  	//choose the right template
@@ -193,9 +193,8 @@ myApp.controller('ScoreController', ['$scope','$rootScope','$firebase', function
 	var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/score');
     var sync = $firebase(ref);
     // create the object and bind the firebase ref to the scope.score var
-    var obj = sync.$asObject();
-    obj.$bindTo($scope,"score");
-    obj.$loaded().then(function(){
+    $scope.score = sync.$asObject();
+    $scope.score.$loaded().then(function(){
     	if($scope.score.$value===null)
     		$scope.score.$value=0;
     });
@@ -253,18 +252,16 @@ myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',f
 // STATS CONTROLLER //
 //////////////////////
 myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter','functionsService','testsService',function($scope,$rootScope,$firebase,$filter,functionsService,testsService) {
-	$scope.locCount = 5;
-
-
 
 	var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/stats');
 	var sync = $firebase(ref);
 	$scope.stats = sync.$asObject();
-	$scope.stats.$watch(function(){
+	$scope.total = 0;
 
+	$scope.stats.$watch(function(event){
+		/*
 		if($scope.stats.$value == null){
 			$scope.stats.$value = {
-				microtasks:0,
 				functions:0,
 				tests:0,
 				testcases:0,
@@ -274,17 +271,23 @@ myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter'
 				debugs:0,
 				searches:0
 			};
-			$scope.stats.$save();
 			$scope.total = 0;
-			angular.forEach($scope.stats,function(value,key){
-				if(key!="microtasks")
-					$scope.total += value;
-			})
+			$scope.stats.$save();
+			
+		} else {
+			updateTotal();
 		}
-
+		
+		*/
 
 	});
 
+	function updateTotal(){
+		$scope.total = 0;
+			angular.forEach($scope.stats,function(value,key){
+					$scope.total += value;
+			});
+	}
 }]);
 
 /////////////////////
@@ -301,23 +304,30 @@ myApp.controller('NewsController', ['$scope','$rootScope','$firebase','$filter',
 /////////////////////
 // CHAT CONTROLLER //
 /////////////////////
-myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
+myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter','$timeout',function($scope,$rootScope,$firebase,$filter,$timeout) {
 	// create the reference and the sync
 	var chatRef  = new Firebase($rootScope.firebaseURL+'/chat').limit(10);
 	var sync = $firebase(chatRef);
 	// bind the array to scope.leaders
 	$scope.messages = sync.$asArray();
 
+	$scope.messages.$watch(function(event){
+		if(event.event=='child_added'){
+			$timeout(function(){
+				//console.log($('#chatOutput > li').last().position().top);
+				$('#chatOutput').scrollTop($('#chatOutput > li').last().offset().top)
+			},200);
+		}
+	});
 
 	$scope.input = "";
 	// key press function
 	$scope.key = function(e){
-
 		//console.log("keypress "+e.keyCode);
 	    if (e.keyCode == 13)
 	    {
-	    	$scope.messages.$add({text: $scope.input,workerHandle: $rootScope.workerHandle}).then(function(ref) {
-    		   // after the add event
+	    	$scope.messages.$add({text: $scope.input,createdAt: Date.now(),workerHandle: $rootScope.workerHandle}).then(function(ref) {
+    		   // after the add event	   
     		});
 	    	//chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=workerHandle%>'});
 	    	$scope.input = "";

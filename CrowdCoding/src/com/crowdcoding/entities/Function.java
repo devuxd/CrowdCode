@@ -587,13 +587,15 @@ public class Function extends Artifact
 		// Check to see if there any disputed tests
 		//Current: If it doesn't have a test case number indicating a dispute, all passed.
 		//That should change in the future, to indicate which ones passed		
-		if(dto.testCaseNumber != null)
+		if(dto.testId != null)
 		{
 			// creates a disputed test case
-			TestCommand.dispute(tests.get(Integer.parseInt(dto.testCaseNumber)), dto.description);
+			int position = tests.indexOf((long)dto.testId);
+			TestCommand.dispute(tests.get(position), dto.description);
 			
 			// Since there was an issue, ignore any code changes they may have submitted.			
 		} else { //at present, reaching here means all tests passed.
+			this.needsDebugging = false;
 			if(!this.code.trim().equals(dto.code.trim()))
 			{ //integrate the new changes
 				onWorkerEdited(dto, project);
