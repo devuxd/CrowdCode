@@ -69,7 +69,7 @@ public class Function extends Artifact
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	private boolean needsDebugging;		     // true iff the function is failing its unit tests.
 	
-	private Test failedTest;
+	//private Test failedTest;
 	
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -341,7 +341,7 @@ public class Function extends Artifact
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && needsDebugging)			
-				makeMicrotaskOut(new DebugTestFailure(this, this.failedTest, project), project);
+				makeMicrotaskOut(new DebugTestFailure(this,project), project);
 			else if (!queuedMicrotasks.isEmpty())
 				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
 		}
@@ -587,13 +587,15 @@ public class Function extends Artifact
 		// Check to see if there any disputed tests
 		//Current: If it doesn't have a test case number indicating a dispute, all passed.
 		//That should change in the future, to indicate which ones passed		
-		if(dto.testCaseNumber != null)
+		if(dto.testId != null)
 		{
 			// creates a disputed test case
-			TestCommand.dispute(tests.get(Integer.parseInt(dto.testCaseNumber)), dto.description);
+			int position = tests.indexOf((long)dto.testId);
+			TestCommand.dispute(tests.get(position), dto.description);
 			
 			// Since there was an issue, ignore any code changes they may have submitted.			
 		} else { //at present, reaching here means all tests passed.
+			this.needsDebugging = false;
 			if(!this.code.trim().equals(dto.code.trim()))
 			{ //integrate the new changes
 				onWorkerEdited(dto, project);
@@ -658,7 +660,7 @@ public class Function extends Artifact
 		{
 			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
 			this.needsDebugging = true;
-			this.failedTest     = test;
+			//this.failedTest     = test;
 			ofy().save().entity(this).now(); 
 			
 			lookForWork(project);			

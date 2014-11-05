@@ -95,28 +95,15 @@
 		<br/>
 		<div class="form-group" >
 			<span class="col-sm-10">
-				<input class="form-control input-sm" tabindex="1" type="text" ng-model="viewData.newTestCase" placeholder="Describe a test case"/>
+				<input class="form-control input-sm" tabindex="1" type="text" press-enter="addTestCase()" ng-model="viewData.newTestCase" placeholder="Describe a test case"/>
 			</span>
 			<span class="col-sm-2">
-				<button class="btn btn-sm" type="button" ng-click="addTestCase()" tabindex="2" >Add test case</button>
+				<button class="btn btn-sm" type="button" ng-click="addTestCase()"  tabindex="2" >Add test case</button>
 			</span>
 		</div>
 
 	</div>
 
-	<div id="popUp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-					<h4 id="logoutLabel">Please write at least one test case.</h4>
-				</div>
-				<div class="modal-footer">
-					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	<br/>
 	<div class="task-buttons pull-right">
