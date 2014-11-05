@@ -2,7 +2,7 @@
 // command. Workers execute in their own thread, and only communicate by message passing. This worker
 // is designed to run the specified test code and return the results.
 //
-
+var logArray = [];
 var testCasedPassed = true;
 var codeUnimplemented = false;		// is any of the code under test unimplemented?
 self.onmessage = function(e) 
@@ -27,6 +27,8 @@ self.onmessage = function(e)
 		try
 		{
 			var finalCode = 'var mocks = ' + JSON.stringify(data.mocks) + '; ' + data.code;
+			
+			finalCode = finalCode.replace("printDebugStatement","logArray.push");
 			eval(finalCode);
 			
 			// If any of the tests failed, set test cases passed to false
@@ -48,7 +50,8 @@ self.onmessage = function(e)
 		self.postMessage({
 			number : data.number,
 			passed : testCasedPassed,
-			codeUnimplemented : codeUnimplemented
+			codeUnimplemented : codeUnimplemented,
+			log: logArray
 		});
 	}
 };

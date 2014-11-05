@@ -49,11 +49,18 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 	}
 	
 
-	var executeWorkCallback = function(data, whenFinished) {
+	var executeWorkCallback = function(jobData, whenFinished) {
 	  //This is where we actually process the data. We need to call "whenFinished" when we're done
 	  //to let the queue know we're ready to handle a new job.
-		console.log("Trying to run tests for function "+data.functionId);
-		testRunnerService.runTestsForFunction(data.functionId);
+		console.log("Trying to run tests for function "+jobData.functionId);
+		testRunnerService.runTestsForFunction(jobData.functionId).then(function(data){
+		   console.log("tests executed!");
+		   testRunnerService.submitResultsToServer();
+		}, function(error) {
+		   console.log("Error running the tests for functionId="+jobData.functionId);
+	    });
+		
+
 		whenFinished();
 	}
 

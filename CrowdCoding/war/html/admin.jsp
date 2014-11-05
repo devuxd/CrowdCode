@@ -1,5 +1,6 @@
 <%
 	String projectID = (String) request.getAttribute("project");
+
 %>
 
 <html>
@@ -10,23 +11,44 @@
 	<script src="/include/bootstrap/js/bootstrap.min.js"></script> 	
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script>
+
+		
+
 		$(document).ready(function()
 		{
 			var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 			
-			$('#execute').click(function()
+			$('.execute').click(function()
 			{
-				var command = $('#command').val();
-				if (command!='')
-					$.get('/' + '<%=projectID%>/admin/' + command, function(data) 
-					{
-						$('#output').prepend(data);
-					});
+				var command = $(this).html();
+				var url = 'http://localhost:8888/<%=projectID%>/admin/' + command;
+				
+				$.get(url).done(function(data){
+					$('#output').prepend(data.message.replace("\n","<br/>")+"<br />");
+				});
+
 			});
+
+			$('#reset').click(function()
+			{
+			});
+
+			var reviews = true;
+			$('#reviewsOn').click(function()
+			{
+			});
+
+			$('#reviewsOff').click(function()
+			{
+			});
+
+
 			$('#clear').click(function()
 			{
 				$('#output').html('');
 			});
+
+
 			$('#command').keypress(function (e) 
 			{
 				// When user hits enter in input box, do the execute action
@@ -202,16 +224,12 @@
 		  		<div class="panel panel-default">
 				  <div class="panel-heading">Console</div>
 				  <div class="panel-body"> 
-					The following commands are currently available:
-					<ul>
-						<li><b>Reset</b> - resets the default project back to the initial state.</li>
-						<li><b>Reviews on</b> - turns on generation of review microtasks (default)</li>
-						<li><b>Reviews off</b> - turns off generation of review microtasks</li>
-					</ul>
+					The following commands are currently available:<br />
 				
-				   	<input type="text" class="input-xlarge" id="command">
-				   	<button id="execute" class="btn btn-small">Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				   	<button id="clear" class="btn btn-small">Clear Output</button> <br />
+				   	<button id="reset"      class="execute btn btn-small">Reset</button>
+					<button id="reviewsOff" class="execute btn btn-small">ReviewsOff</button>
+				   	<button id="reviewsOn"  class="execute btn btn-small">ReviewsOn</button>
+				   	<button id="clear" class="btn btn-small btn-reset">Clear Output</button> <br />
 					<div id="output"></div>
 				
 				  </div>

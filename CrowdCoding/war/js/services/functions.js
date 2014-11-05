@@ -16,7 +16,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.functionChanged = function(changedFunction) { return functionChanged(changedFunction); };
 		this.allFunctionIDs = function() { return allFunctionIDs(); };
 		this.get = function(id) { return get(id); };
-		this.getMockCodeFor = function(id) { return getMockCodeFor(id); };
+		this.getMockCodeFor = function(id,code) { return getMockCodeFor(id,code); };
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
 		this.getMockHeader = function(id) { return getMockHeader(id); };
 		this.renderDescription= function(functionCalled) { return renderDescription(functionCalled); };
@@ -103,8 +103,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		// that checks for a corresponding mock and only calls the corresponding actual implementation
 		// if the mock is not present.
 		// Returns an empty string if the specified function cannot be found.
-		function getMockCodeFor(id)
-		{
+		function getMockCodeFor(id,code){
 			var mockCode = '';
 			var functionObj = get(id);
 			if (functionObj == null)
@@ -127,7 +126,10 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			mockCode += getMockHeader(id);
 
 			// Fourth, add the actual code body of the function
-			mockCode += functionObj.code + '\n';
+			if(code!=undefined)
+				mockCode += code + '\n';
+			else
+				mockCode += functionObj.code + '\n';
 
 			return mockCode;
 		}
