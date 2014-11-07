@@ -1,30 +1,29 @@
 
 // directive for json field validation
-myApp.directive('json', function () {
+myApp.directive('json1', ['ADTService',function(ADTService) {
     return {
         restrict: 'A',
         require: 'ngModel',
         link: function (scope, elm, attrs, ctrl) {
             // instantiate a new JSONValidator
             var validator = new JSONValidator();
-            var paramType = attrs['json'];
+
             ctrl.$parsers.unshift(function (viewValue) {
                 // initialize JSONValidator and execute errorCheck
-                validator.initialize(viewValue,paramType)
+                validator.initialize(ADTService.getNameToADT,viewValue,attrs['json1'])
                 validator.errorCheck();
-
                 if (!validator.isValid()) {
-                    ctrl.$setValidity('json', false);
+                   ctrl.$setValidity('json1', false);
                     ctrl.$error.json_errors = validator.getErrors();
-                    return undefined;
+                    return viewValue;
                 } else {
-                    ctrl.$setValidity('json', true);
+                     ctrl.$setValidity('json1', true);
                     return viewValue;
                 }
             });
         }
     };
-});
+}]);
 
 //<div function-validator ng-model="somevar"></div>
 myApp.directive('adtValidator',['ADTService',function(ADTService) {
@@ -74,7 +73,8 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         restrict: 'A',
         require: 'ngModel',
         link: function (scope, elm, attrs, ctrl) {
-            functionId = attrs.function;
+
+            functionId = scope.microtask.functionID;
             valid = true;
             allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
             allFunctionCode  = functionsService.getAllDescribedFunctionCode(functionId);
@@ -112,26 +112,32 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     // iff there are no errors.
     function validate(code){
         errors = [];
-        // 1. check for syntactical errors
-        // 2. check for AST error
-        if(hasSyntacticalErrors(code)) // if has errors
-            if (hasPseudocallsOrPseudocode(code)) { // and has pseudocalls/code
-                var replacedText = replaceFunctionCodeBlock(code);
-                // If the text does not contain a function block, display an error.
-                if (replacedText == '')
-                    errors.push('No function block could be found. Make sure that there is a line that starts with "function".');
-                else if (!hasSyntacticalErrors(replacedText)) {
-                    var ast = esprima.parse(replacedText, {loc: true});
-                    return hasASTErrors(code, ast);
-                }
-            }
-        else {
-            // Code is syntactically valid and should be able to build an ast.
-            // Build the ast and do additional checks using the ast.
-             var ast = esprima.parse(code, {loc: true});
-            return hasASTErrors(code, ast);
+        var ast;
+
+        // 1. If the text does not contain a function block, display an error and return.
+        if (replaceFunctionCodeBlock(code) == ''){
+            errors.push('No function block could be found. Make sure that there is a line that starts with "function".');
+            return false;
         }
-        return false;
+         // 2. If the are syntactical errors displays the error and returns
+        if(hasSyntacticalErrors(code))
+        	return false;
+        // 3. Trys to build the Est if not displays the error and return
+        try {
+        	ast = esprima.parse(code, {loc: true});
+        	}
+        catch (e) {
+        	console.log("Error in running Esprima. " + e.name + " " + e.message);
+        	errors.push("Error "+e.message);
+        	return false;
+        }
+        // 4. checks if the are ast Errors and displays it
+    	hasASTErrors(code, ast);
+    	// 5. checks if the are errors in the descriptions structure
+    	hasDescriptionError(ast);
+
+    	return false;
+
     }
 
     // Returns true iff there are syntactical errors
@@ -156,7 +162,8 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     // returns true iff there are AST errors
     function hasASTErrors(text, ast)
     {
-        console.log(ast);
+       // console.log(ast);
+    	console.log("hasASTErrors");
         var errorMessages = [];
 
         // Check for AST errors
@@ -164,14 +171,13 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
             errorMessages.push("All code should be in a single function");
         else if (allFunctionNames.indexOf(ast.body[0].id.name) != -1)
             errorMessages.push("The function name '" + ast.body[0].id.name + "' is already taken. Please use another.");
-
         // Also check for purely textual errors
         // 1. If there is a pseudocall to replace, make sure it is gone
         /*
         if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)
             errorMessages.push("Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.");   */
 
-        errorMessages = errorMessages.concat(hasDescriptionError(ast));
+
 
         if (errorMessages.length != 0)
         {
@@ -193,6 +199,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     // Returns an error message(s) if there is an error
     function hasDescriptionError(ast)
     {
+    	console.log("hasDescriptionError");
         var errorMessages =  [];
         var paramKeyword = '@param ';
         var returnKeyword = '@return ';
@@ -209,7 +216,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
         //if the description doesn't contain error checks the consistency between the parameter in the descriptions and the
         // ones in the header
-        if( errorMessages.length == 0 && !(ast.body[0].params === undefined) ){
+        if(!(ast.body[0].params === undefined) ){
 
             var paramHeaderNames=[];
             $.each(ast.body[0].params, function(index, value)
@@ -219,7 +226,15 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
             errorMessages = errorMessages.concat(checkNameConsistency(paramDescriptionNames,paramHeaderNames));
         }
-        return errorMessages;
+        if (errorMessages.length != 0)
+        {
+            errors = errors.concat(errorMessages);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     // Checks that, if the specified keyword occurs in line, it is followed by a valid type name. If so,
@@ -320,7 +335,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         return '';
     }
 
-}]); 
+}]);
 
 myApp.directive('pressEnter', function () {
     return function (scope, element, attrs) {

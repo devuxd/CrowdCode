@@ -16,6 +16,7 @@ import com.crowdcoding.dto.FunctionDescriptionsDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.entities.microtasks.MachineUnitTest;
 import com.crowdcoding.entities.microtasks.Microtask;
+import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.util.FirebaseService;
@@ -298,7 +299,7 @@ public class Project
 		// If reviewing is enabled and there is not a review microtask
 		// for the current non-review microtask,
 		// spawn a new review microtask to let the crowd review the work
-		if (reviewingEnabled && !microtaskType.equals(Review.class))
+		if (reviewingEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class)) )
 		{
 			MicrotaskCommand.createReview(microtaskID, workerID, jsonDTOData, workerID);
 		}

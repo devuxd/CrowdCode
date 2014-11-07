@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* overwrite bootstrap classes */
 .glyphicon { font-size:1em; }
 .btn-primary { border-color:#3C9764; background-color:#3C9764; }
@@ -6,7 +7,40 @@
 
 .fullwidth {
 	width:100%;
+=======
+json-tree input[type="Number"] {
+width: 4em;
+height: 30px;
 }
+
+
+
+
+.input-control{
+	width: 40%;
+	display: inline;
+}
+
+.glyphicon {
+	font-size:1em;
+>>>>>>> refs/remotes/origin/fabio
+}
+
+.star-rating {
+ width: 36px;
+	height: 36px;
+	margin-right: 2px;
+}
+
+
+.bar-rating {
+	 width: 5px;
+	height: 42px;
+	margin-right: 2px;
+	margin-left: 2px;
+}
+
+
 
 .fullheight {
 	height:100%;
@@ -20,6 +54,7 @@ body {
 	font-size: 12px;
 }
 
+<<<<<<< HEAD
 .navbar {
 	border-radius:0px;
 	border:none;
@@ -28,6 +63,23 @@ body {
 	font-family: 'Lato' !important;
 	font-style: normal;
 	font-weight: 900;
+=======
+header h3 { margin:0px }
+header a { color:white; }
+header {
+	background-color: #3C9764;
+	color: white;
+	margin: 0px;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:10px;
+	padding-bottom:5px;
+	margin-bottom:10px;
+
+	-webkit-box-shadow: 0px 2px 5px 0px gray;
+	-moz-box-shadow:    0px 2px 5px 0px gray;
+	box-shadow:         0px 2px 5px 0px gray;
+>>>>>>> refs/remotes/origin/fabio
 }
 
 .navbar .navbar-brand {
@@ -288,19 +340,35 @@ footer.navbar-default { background-color: #3C9764; }
 
 /*  PANEL LIST */
 
+<<<<<<< HEAD
 .panel-list {
+=======
+.panel-body .panel-list {
+  	border-top: 1px solid #BBB;
+>>>>>>> refs/remotes/origin/fabio
   	padding:0px;
   	margin:0px;
 }
+<<<<<<< HEAD
 .panel-list li { 
+=======
+.panel-body .panel-list li {
+>>>>>>> refs/remotes/origin/fabio
   	position: relative;
+<<<<<<< HEAD
  	display: block;  
   	border-bottom: 1px solid #BBB; 
+=======
+ 	display: block;
+  	border-bottom: 1px solid #BBB;
+  	_zoom: 1;
+>>>>>>> refs/remotes/origin/fabio
 }
 .panel-list li div {
 
 }
 
+<<<<<<< HEAD
 .panel-list .count {
   display: block; 
   position: absolute; 
@@ -311,20 +379,38 @@ footer.navbar-default { background-color: #3C9764; }
   color: #999; 
   font-weight: bold; 
   font-size: 0.875em; 
+=======
+.panel-body .panel-list .count {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0 0.3em;
+  text-align: right;
+  color: #999;
+  font-weight: bold;
+  font-size: 0.875em;
+>>>>>>> refs/remotes/origin/fabio
 }
+<<<<<<< HEAD
 .panel-list li:hover { 
   background: #EFEFEF; 
+=======
+.panel-body .panel-list li:hover {
+  background: #EFEFEF;
+>>>>>>> refs/remotes/origin/fabio
 }
 
 /* CHART LISTS */
 .chartlist li div {
-	display: block; 
-  	position: relative; 
-  	z-index: 2; 
+	display: block;
+  	position: relative;
+  	z-index: 2;
   	font-size:0.95em;
   	font-weight:bold;
   	padding-right:20px;
 }
+<<<<<<< HEAD
 
 .chartlist .index { 
 	display: block; 
@@ -335,17 +421,28 @@ footer.navbar-default { background-color: #3C9764; }
 	background: rgba(60, 151, 100, 0.23); 
 	text-indent: -9999px; 
 	overflow: hidden; 
+=======
+.chartlist .index {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(60, 151, 100, 0.23);
+  text-indent: -9999px;
+  overflow: hidden;
+>>>>>>> refs/remotes/origin/fabio
 }
-.chartlist li:hover .index{ 
-  background: rgba(123, 123, 123, 0.22); 
+.chartlist li:hover .index{
+  background: rgba(123, 123, 123, 0.22);
 }
 
 
-#stats li.total { 
+#stats li.total {
 	background-color:#ADADAD;
 	color:#4D4D4D;
 }
-#stats li.total .count{ 
+#stats li.total .count{
 	color:#565656;
 }
 
@@ -448,7 +545,12 @@ ul.user-list  .name {
 	/*
 	background-color:white;
 	border:1px solid lightgray;
+<<<<<<< HEAD
 	border-radius:4px;
+=======
+
+
+>>>>>>> refs/remotes/origin/fabio
 	-webkit-box-shadow: 0px 2px 5px 0px gray;
 	-moz-box-shadow:    0px 2px 5px 0px gray;
 	box-shadow:         0px 2px 5px 0px gray;*/

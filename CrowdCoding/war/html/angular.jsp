@@ -280,6 +280,13 @@
 	<!--<script src="/include/diff/diff_match_patch.js"></script>
 	<script src="/include/diff/jquery.pretty-text-diff.js"></script>-->
 
+
+
+
+
+
+
+
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
     <script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
@@ -298,9 +305,33 @@
 	<script src="/js/functionSupport.js"></script> <!-- to refactor -->
 
 
+
 	<script src="/js/JSONValidator.js"></script>
 
 	<script src="/js/workqueue.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/include/jsoneditor/jsoneditor.min.css">
+<script type="text/javascript" src="/include/jsoneditor/jsoneditor.js"></script>
+
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+<script type="text/javascript" src="/include/jsoneditor/asset/ace/ace.js"></script>
+
+
+
+<script src="/include/json-tree/json-tree.js"></script>
+<link rel="stylesheet" href="/include/json-tree/json-tree.css">
+
+
+<!-- include JSONedit files -->
+<script src="/include/JSONedit-gh-pages/js/directives.js"></script>
+<link  href="/include/JSONedit-gh-pages/css/styles.css" rel="stylesheet" type="text/css" />
+
+
+
+<script src="/include/JSONedit-gh-pages/bower_components/angular-ui-sortable/sortable.min.js"></script>
+
+
 
 	<!-- Angular Application -->
 	<script src="/js/app.js"></script>
@@ -316,6 +347,7 @@
 
 	<!-- Angular Directives -->
 	<script src="/js/directives/directives.js"></script>
+	<script src="/js/my_rating.js"></script>
 
 	<!-- Angular Filter -->
 	<script src="/js/filters/filter.js"></script>

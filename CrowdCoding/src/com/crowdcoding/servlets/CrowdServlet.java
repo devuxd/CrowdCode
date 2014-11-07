@@ -130,7 +130,7 @@ public class CrowdServlet extends HttpServlet
 				
 				// PAGES URLS
 				if(Pattern.matches("/clientRequest",path)){
-					req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);
+					req.getRequestDispatcher("/html/client_request.html").forward(req, resp);
 				}
 				// USERS URLS
 				else if(Pattern.matches("/user/[\\w]*",path)){

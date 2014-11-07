@@ -11,6 +11,7 @@ myApp.controller('NoMicrotaskController', ['$scope','$rootScope','$firebase','te
 myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
 
 
+
 	// DECLARE VARIABLES HERE
 	$rootScope.inlineForm = true;
 	$scope.newTestCase = "";
@@ -67,6 +68,7 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	console.log("initialization of review controller");
+
 	$scope.review = {};
 	$scope.review.reviewText="";
 	$scope.review.codeMirrorCode="";
@@ -135,14 +137,30 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 
 	//Star rating manager
 	$scope.review.rate = 0;
-	$scope.max = 5;
+	$scope.review.max = new Array(5);
+	$scope.value=0;
 
-	$scope.hoveringOver = function(value) {
-	   $scope.overStar = value;
-	   $scope.percent = 100 * (value / $scope.max);
+	$scope.getImageSource = function(index){
+
+		if(index < $scope.value)
+			return "/include/imgs/star3Full.png";
+		return "/include/imgs/star3Empty.png";
 	};
 
+	 $scope.rate = function(value) {
+    if (value >= 0 && value <= $scope.review.max.length ) {
+    	$scope.review.rate=value;
+    }
+  };
 
+
+  $scope.reset = function() {
+	    $scope.value = $scope.review.rate;
+	  };
+
+  $scope.enter = function(value) {
+	      $scope.value = value;
+	  };
 
 	$scope.submit = function(){
 		console.log("review controlle prepare form data");
@@ -648,7 +666,25 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 ///////////////////////////////
 //  WRITE TEST CONTROLLER //
 ///////////////////////////////
-myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
+myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$filter','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,$filter,testsService,functionsService, ADTService) {
+
+
+$rootScope.inlineForm=true;
+
+    $scope.$watch('jsonData', function(json) {
+        $scope.jsonString = $filter('json')(json);
+    }, true);
+    $scope.$watch('jsonString', function(json) {
+        try {
+            $scope.jsonData = JSON.parse(json);
+            $scope.wellFormed = true;
+        } catch(e) {
+            $scope.wellFormed = false;
+        }
+    }, true);
+
+
+
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	console.log("initialization of write test controller");
@@ -659,6 +695,7 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','test
 					   {inputs: $scope.test.simpleTestInputs , output: $scope.test.simpleTestOutput } :
 					   {inputs:[],output:''} ;
 
+					 //  $scope.testData.inputs[0]={};
 	// Configures the microtask to show information for disputing the test, hiding
 	// other irrelevant portions of the microtask.
 	$scope.dispute = false;

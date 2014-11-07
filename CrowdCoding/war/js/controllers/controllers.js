@@ -42,7 +42,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
 	$scope.$on('popup_hide',function(){ $('#popUp').modal('hide'); });
 	$scope.popupContent = '';
 	$scope.popupTitle = 'popup title';
-	
+
 	$scope.$watch(function () {
 
         return $rootScope.loaded;
@@ -53,11 +53,11 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
     			angular.forEach($rootScope.loaded,function(value,key){
     				if(value)
     					count++;
-    				
-    				
+
+
     			});
     		 console.log("all Services loaded loaded");
-    		 $rootScope.$broadcast('load'); 
+    		 $rootScope.$broadcast('load');
     		 }
        },true
     );

@@ -15,8 +15,9 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 		this.validateParamName      = function(inputText, ignoreEmpty) { return validateParamName(inputText, ignoreEmpty); };
 		this.validateParamTypeName  = function(inputText, paramName, ignoreEmpty) { return validateParamTypeName(inputText, paramName, ignoreEmpty); };
 		this.validateReturnTypeName = function(inputText, ignoreEmpty) { return validateReturnTypeName(inputText, ignoreEmpty); };
-		this.getAllADTs = function() { return getAllADTs(); };
-
+		this.getAllADTs				= function() { return getAllADTs(); };
+		this.getByName				= function(name){return getByName(name)};
+		this.getNameToADT			= function() { return nameToADT };
 
 		function init()
 		{
@@ -35,11 +36,31 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 						nameToADT[ADTs[i].name] = ADTs[i];
 					}
 				}
+
+				console.log("adt");
+				console.log(ADTs);
 				$rootScope.loaded.ADTs=true;
 
 			});
 
 
+		}
+
+		function getByName(name)
+		{
+
+			var adt=[];
+
+			for(var i=0; i<ADTs.length; i++)
+				{
+				if(ADTs[i].name===name)
+					{
+
+					return ADTs[i];
+					}
+				}
+
+			return [];
 		}
 
 		// Adds type names for primitives
