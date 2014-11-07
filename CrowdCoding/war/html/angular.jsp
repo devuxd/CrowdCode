@@ -16,17 +16,12 @@
 
     final String projectID = (String) request.getAttribute("project");
 	final Logger log = Logger.getLogger(Project.class.getName());
-
-
 	Project project = ObjectifyService.ofy().transact(new Work<Project>()
 	{
-	    public Project run()
-	    {
-			return Project.Create(projectID);
-	    }
+	    public Project run(){ return Project.Create(projectID); }
 	});
-
-	String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+	
+	String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 	String workerHandle = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 %>
 
@@ -51,15 +46,56 @@
 
 </head>
 
-<body ng-controller="AppController">
+<body ng-controller="AppController" >
 
-	<div id="wrapper" class="container-fluid">
 		<header>
-			<div>
-				<div class="pull-left">
-					<h3>CrowdCode</h3>
-				</div>
+			<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<span class="navbar-brand">
+						CrowdCode
+						</span>
+					</div>
 
+
+
+					<ul class="nav navbar-nav">
+						<li id="projectSelector">
+							
+							<a href=""><strong>Current Project: </strong>{{ projectId }}</a>
+							<!--
+							<a data-toggle="dropdown" class="dropdown" href="">
+								Current Project
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="">Project1</a></li>
+								<li><a href="">Project2</a></li>
+							</ul>-->
+						</li>
+					</ul>
+
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a data-toggle="dropdown" class="dropdown" href="">
+								<img src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
+								{{workerHandle}}
+								<span class="caret"></span>
+							</a>
+
+							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+								<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
+								<li><a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
+							</ul>
+
+						</li>
+					</ul>
+				</div>
+				
+
+
+
+<!--
 				<div id="userProfile" class="dropdown pull-right" >
 				  <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" >
 				    <img src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
@@ -72,10 +108,138 @@
 				  	<li><a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
 				  </ul>
 				</div>
-
-				<div class="clearfix"></div>
+-->
 			</div>
 		</header>
+
+	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;">
+	    <div class="container-flex-row">
+	        
+	        <!-- LEFT SIDEBAR -->
+	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1">
+	            <div class="sidebar-wrapper container-flex-column">
+					<!-- LEFT SIDEBAR PANELS -->
+					<ng-include src="'/html/templates/score_panel.html'" id="first"  class="order-1" style="height:33%;"></ng-include>
+					<ng-include src="'/html/templates/stats_panel.html'" id="second" class="order-3" style="height:33%;"></ng-include>
+					<ng-include src="'/html/templates/news_panel.html'"  id="third"  class="order-5" style="height:33%;"></ng-include> 
+
+					<!-- LEFT SIDEBAR RESIZERS -->
+					<div class="row-resizer order-2" 
+			        	ng-show="true"
+			        	resizer="horizontal" 
+			    		resizer-width="5" 
+			    		resizer-top    = "#sidebarLeft #first" 
+			    		resizer-bottom = "#sidebarLeft #second"
+			    		resizer-main="top"
+			    		>
+	    			</div>
+					<div class="row-resizer order-4"
+			        	ng-show="true"
+			        	resizer="horizontal" 
+			    		resizer-width="5" 
+			    		resizer-top    = "#sidebarLeft #second" 
+			    		resizer-bottom = "#sidebarLeft #third"
+			    		resizer-main="top"></div>
+	            </div>
+	        </div>
+
+	        <!-- RIGHT SIDEBAR -->
+			<div ng-show="rightBar" id="sidebarRight" class="sidebar order-5">
+	           <div class="sidebar-wrapper container-flex-column">
+	           	
+					<ng-include src="'/html/templates/leaderboard_panel.html'"    id="first"  class="order-1" style="height:33%;"></ng-include>
+					<ng-include src="'/html/templates/online_workers_panel.html'" id="second"  class="order-3" style="height:33%;"></ng-include>
+					<ng-include src="'/html/templates/chat_panel.html'"           id="third" class="order-5" style="height:33%;" ></ng-include>
+					
+					<!-- LEFT SIDEBAR RESIZERS -->
+					<div class="row-resizer order-2" 
+			        	ng-show="true"
+			        	resizer="horizontal" 
+			    		resizer-width="5" 
+			    		resizer-top    = "#sidebarRight #first" 
+			    		resizer-bottom = "#sidebarRight #second"
+			    		resizer-main="top">
+	    			</div>
+					<div class="row-resizer order-3"
+			        	ng-show="true"
+			        	resizer="horizontal" 
+			    		resizer-width="5" 
+			    		resizer-top    = "#sidebarRight #second" 
+			    		resizer-bottom = "#sidebarRight #third"
+			    		resizer-main="bottom"></div>
+	           </div>
+	        </div>
+
+	        <!-- CONTENT -->
+	        <div id="content" class="order-3">
+				<div class="wrapper" ng-controller="MicrotaskController" >
+					<form id="task" name="form" novalidate ng-class="{ 'form-horizontal': inlineForm }" >
+						<ng-include src="templatePath"></ng-include>
+					</form>
+				</div>
+	        </div>
+
+
+
+	        <div class="column-resizer order-2" 
+	        	ng-show="leftBar"
+	        	resizer="vertical" 
+	    		resizer-width="5" 
+	    		resizer-left  = "#sidebarLeft" 
+	    		resizer-right = "#content"
+	    		resizer-main="left"
+	    		resizer-max="20"
+	    		resizer-min="10"
+	    		>
+	    	</div>
+
+
+	        <div class="column-resizer order-4" 
+	        	ng-show="rightBar"
+	        	resizer="vertical" 
+	    		resizer-width="5" 
+	    		resizer-left  = "#content" 
+	    		resizer-right = "#sidebarRight"
+	    		resizer-main="right"
+	    		resizer-max="20"
+	    		resizer-min="10">
+	    	</div>
+
+	    </div>    
+	</div>
+<!--
+<div id="wrapper" ng-init="leftBar=true;rightBar=true;">
+    <div class="container-fluid fullwidth no-margin no-padding">
+        <div class="row" >
+            <div ng-show="leftBar" class="col-md-2 sidebar sidebar-left no-padding ">
+               <div class="sidebar-controls">
+               	<div class="control glyphicon glyphicon-remove"ng-click="leftBar=!leftBar" ></div>
+               </div>
+               <div class="sidebar-wrapper">
+               	<ng-include src="'/html/templates/score_panel.html'"></ng-include>
+				<ng-include src="'/html/templates/stats_panel.html'"></ng-include>
+				<ng-include src="'/html/templates/news_panel.html'"></ng-include>
+               </div>
+            </div>
+            <div class="middle col-md-{{ 8+((leftBar)?0:2)+((rightBar)?0:2)}} "
+                 ng-class="{'col-md-offset-2': leftBar}">
+                 <div class="middle-wrapper">
+
+               <button ng-click="leftBar=!leftBar" >left</button>
+               <button ng-click="rightBar=!rightBar" >right</button>
+                 </div>
+            </div>
+            <div ng-show="rightBar" class="col-md-2 sidebar sidebar-right no-padding">
+               <div class="sidebar-controls">
+               	<div class="control glyphicon glyphicon-remove"ng-click="rightBar=!rightBar" ></div>
+               </div>
+               <div class="sidebar-wrapper"></div>
+            </div>
+        </div>
+    </div>    
+</div>-->
+    <!--
+	<div id="wrapper" class="container-fluid">
 		<div class="row row-eq-height">
 
 			<div id="leftBar" class="col-md-2 col-xs-2">
@@ -92,13 +256,10 @@
 			</div>
 
 			<div id="rightBar" class="col-md-2 col-xs-2">
-				<ng-include src="'/html/templates/leaderboard_panel.html'"></ng-include>
-				<ng-include src="'/html/templates/chat_panel.html'"></ng-include>
-				<ng-include src="'/html/templates/online_workers_panel.html'"></ng-include>
 			</div>
 
 		</div>
-	</div>
+	</div>-->
 
 	<footer class="navbar-default navbar-fixed-bottom">
         	<button id="sendFeedbackBtn" type="button" class="btn btn-primary pull-right">Send Us Feedback!</button>
@@ -139,8 +300,6 @@
 
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
-
-	<script src="/js/testRunner.js"></script>
 
 	<script src="/js/errorCheck.js"></script> <!-- to refactor -->
 	<script src="/js/functionSupport.js"></script> <!-- to refactor -->

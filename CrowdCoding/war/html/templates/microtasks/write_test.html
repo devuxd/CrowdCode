@@ -20,12 +20,13 @@
 			<div ng-show="microtask.promptType=='CORRECT'">
 				The following issue was reported with this test:
 
-				<div class="alert alert-info">{{microtask.description}}</div>
-				<div class="alert alert-error">{{microtask.issueDescription}}</div>
-				Can you fix the test to address this issue?<BR>
+				<div class="alert alert-info">{{test.description}}</div>
+				<div class="alert alert-info">{{microtask.issueDescription}}</div>
 
 				<BR>Here's the description of the function to test:
 				<div class="readOnlyCodemirror"><textarea id="correctCodeBox">{{funct.description}}</textarea></div>
+				
+				Can you fix the test to address this issue?<BR>
 			</div>
 
 			<div ng-show="microtask.promptType=='TESTCASE_CHANGED'">

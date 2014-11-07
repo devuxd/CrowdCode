@@ -340,7 +340,8 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 myApp.directive('pressEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {
-            if(event.which === 13) {
+            console.log(event)
+            if(event.which === 13 && !event.shiftKey) {
                 scope.$apply(function (){
                     scope.$eval(attrs.pressEnter);
                 });
@@ -365,6 +366,213 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
                     $element[0].blur();
                 }
             })
+        }
+    }
+});
+
+myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
+
+    return {
+     restrict: "A",
+        scope: {
+            panels: "=navbar",
+            icons: "=icons"
+        },
+        link: function($scope, $element, $attributes){
+
+
+            angular.forEach($scope.panels,function(value,key){
+                var toggler = $("<h3></h3>");
+                toggler.attr('id',value+'Toggler');
+                toggler.addClass('toggler');
+                toggler.html('<span class="glyphicon glyphicon-'+$scope.icons[key]+'"></span>'+value);
+
+                var elementBody = "<ng-include src=\"'/html/templates/panels/"+value+"_panel.html'\"></ng-include>";
+                elementBody = $('<div class="element-body">'+elementBody+'</div>');
+
+                var element = $("<div></div>");
+                element.attr('id',value+'Element');
+                element.addClass('element');
+
+                element.append(elementBody);
+               
+
+                $element.append(toggler);
+                $element.append(element);
+                $compile($element.contents())($scope);
+                console.log(elementBody.height());
+            });
+            
+            function activateElement(el){
+                // remove class active for all togglers
+                $element.find('.toggler').removeClass('active');
+                // reset height for all elements
+                $element.find('.element').height(0);
+
+                // add class active to the toggler
+                el.addClass('active');
+                // set max height for current element
+                var successor = el.next();
+                successor.height(successor.find('.element-body').outerHeight());
+            }
+
+            $element.find('.toggler').on('click',function(){
+                activateElement($(this));
+            })
+
+
+            $timeout(function(){
+                $element.find('.toggler:first-child').click();
+            },100);
+        }
+
+    }   
+}]);
+
+
+myApp.directive('resizer', function($document) {
+
+    return function($scope, $element, $attrs) {
+        // calculate the sum of the 2 element's dimensions in percentage
+        // respect to the parent element dimension
+        // - height: if vertical resizer 
+        // - width:  if horizontal resizer
+        // and position the resize bar in between the elements
+
+        // on mouse down attach mousemove and mouseup callbacks
+        $element.on('mousedown', function(event) {
+            event.preventDefault();
+            $document.on('mousemove', mousemove);
+            $document.on('mouseup', mouseup);
+        });
+
+        function mousemove(event) {
+
+            if ($attrs.resizer == 'vertical') {
+                var datas = {
+                    leftX:  $($attrs.resizerLeft).offset().left,
+                    rightX: $($attrs.resizerRight).offset().left,
+                    mouseX: event.pageX
+                }
+                //$element.css({ left: $($attrs.resizerRight).position().left + 'px' });
+
+                var totalSizePx  = $($attrs.resizerLeft).outerWidth()+$element.outerWidth()+$($attrs.resizerRight).outerWidth();
+                var totalSizePer = Math.round(totalSizePx / $element.parent().outerWidth() * 100);
+
+                var leftWidthPer  = Math.round( (datas.mouseX-datas.leftX) / $element.parent().outerWidth() * 100 );
+
+                if( $attrs.resizerMain == "left" ){
+                    
+                    
+                    if(leftWidthPer < 0)            leftWidthPer = 0;
+                    if(leftWidthPer > totalSizePer) leftWidthPer = totalSizePer;
+                    if($attrs.resizerMin && leftWidthPer < $attrs.resizerMin) leftWidthPer = $attrs.resizerMin;
+                    if($attrs.resizerMax && leftWidthPer > $attrs.resizerMax) leftWidthPer = $attrs.resizerMax;
+
+                    var rightWidthPer = totalSizePer - leftWidthPer;
+
+                } else if( $attrs.resizerMain == "right" ){
+
+                    var rightWidthPer  = totalSizePer - leftWidthPer ;
+
+                    if(rightWidthPer < 0)            rightWidthPer = 0;
+                    if(rightWidthPer > totalSizePer) rightWidthPer = totalSizePer;
+                    if($attrs.resizerMin && rightWidthPer < $attrs.resizerMin) rightWidthPer = $attrs.resizerMin;
+                    if($attrs.resizerMax && rightWidthPer > $attrs.resizerMax) rightWidthPer = $attrs.resizerMax;
+
+                    //var leftWidthPer = totalSizePer - rightWidthPer;
+                }
+
+                $($attrs.resizerLeft).css({ width: leftWidthPer + '%' });
+                $($attrs.resizerRight).css({ width: rightWidthPer + '%' });
+            
+            } else {
+                var datas = {
+                    topY:  $($attrs.resizerTop).offset().top ,
+                    bottomY: $($attrs.resizerBottom).position().top ,
+                    mouseY: event.pageY
+                }
+
+                var totalSizePx     = $($attrs.resizerTop).outerHeight()+$element.outerHeight()+$($attrs.resizerBottom).outerHeight();
+                var resizerHeightPx = $element.outerHeight();
+                var topHeightPx     = (datas.mouseY-datas.topY)  ;
+                var bottomHeightPx  = totalSizePx - resizerHeightPx - topHeightPx ;
+
+                if( $attrs.resizerMain == "top" ){
+
+                    
+
+                } else {
+
+                   
+                }
+
+                if( topHeightPx + resizerHeightPx + bottomHeightPx == totalSizePx)
+                    console.log("MATCH");
+                else
+                    console.log("DONT MATCH");
+
+                console.log( [totalSizePx,topHeightPx+resizerHeightPx+bottomHeightPx,topHeightPx,resizerHeightPx,bottomHeightPx] );
+
+                $($attrs.resizerTop).css({ height: topHeightPx + 'px' });
+                $($attrs.resizerBottom).css({ height: bottomHeightPx  + 'px' });
+
+            }
+
+
+        }
+
+        // when mouse up detach the callbacks
+        function mouseup() {
+            $document.unbind('mousemove', mousemove);
+            $document.unbind('mouseup', mouseup);
+        }
+    };
+});
+
+
+myApp.directive('chat', function($timeout, $rootScope,$firebase) {
+    return {
+        restrict: 'E',
+        templateUrl: '/html/templates/panels/chat_panel.html',
+        scope: {
+            //focusValue: "=syncFocusWith"
+        },
+        link: function($scope, $element, attrs) {
+            console.log("CHAT DIRECTIVE INITIALIZED");
+            $rootScope.chatActive = false;
+            $rootScope.toggleChat = function(){
+                $element.find('.chat').toggleClass('active');
+                $element.find('.output').scrollTop($element.find('.output').height())
+            }
+        },
+        controller: function($scope,$element){
+            var $output = $element.find('.output');
+
+            // create the reference and the sync
+            var chatRef  = new Firebase($rootScope.firebaseURL+'/chat').limit(10);
+            var sync = $firebase(chatRef); 
+                       
+            // bind the array to scope.leaders
+            $scope.messages = sync.$asArray();
+            $scope.messages.$watch(function(event){
+                if(event.event=='child_added'){
+                    console.log($element.find('.output'))
+                    $element.find('.output-wrapper').animate({
+                        scrollTop: 650//$element.find('.output').height()
+                    }, 100);
+                }
+            });
+
+            $scope.asd = "";
+            // key press function
+            $scope.addMessage = function(){
+                $scope.messages.$add({text: $scope.asd,createdAt: Date.now(),workerHandle: $rootScope.workerHandle}).then(function(ref) { 
+                    
+                });
+                $scope.asd = "";    
+                return true;
+            };
         }
     }
 });

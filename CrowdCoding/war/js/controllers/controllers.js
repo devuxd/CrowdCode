@@ -4,7 +4,7 @@
 // APP CONTROLLER //
 ////////////////////
 //prepare variables and execute inizialization stuff
-myApp.controller('AppController', ['$scope','$rootScope','$firebase','userService', 'testsService', 'functionsService', 'testRunnerService','ADTService','microtasksService', function($scope,$rootScope,$firebase,userService,testsService,functionsService, testRunnerServe, ADTService,microtasksService) {
+myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','userService', 'testsService', 'functionsService', 'testRunnerService','ADTService','microtasksService', function($scope,$rootScope,$firebase,$http,userService,testsService,functionsService, testRunnerServe, ADTService,microtasksService) {
 
 	// current session variables
     $rootScope.projectId    = projectId;
@@ -18,6 +18,8 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
     $rootScope.loaded.ADTs=false;
 
 
+
+    
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
 		userService.login();
@@ -34,6 +36,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','userServic
 	testsService.init();
 	functionsService.init();
 	ADTService.init();
+
 
 	$scope.$on('popup_show',function(){ console.log('show popup'); $('#popUp').modal('show'); });
 	$scope.$on('popup_hide',function(){ $('#popUp').modal('hide'); });
@@ -88,7 +91,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.test = {};
 	$scope.microtask = {};
 	$scope.templatePath = "";//"/html/templates/microtasks/";
-
+	$scope.validatorCondition = false;
 	//Whait for the inizializations of all service
 	//when the microtask array is syncronize with firebase load the first microtask
 
@@ -100,26 +103,27 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		// set the loading template
 		$scope.templatePath = templatesURL + "loading.html";
 		$rootScope.inlineForm = false; // reset form as non-inline
-
-		$http.get('/'+$rootScope.projectId+'/fetch?AJAX').
+		console.log('/'+projectId+'/ajax/fetch');
+		$http.get('/'+projectId+'/ajax/fetch').
 		  success(function(data, status, headers, config) {
-
+		  	console.log(data);
 		  $scope.microtask= microtasksService.get(data.id);
 
+/*
 		  	// create the reference and the sync
-			//var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
-			//var sync = $firebase(ref);
+			var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
+			var sync = $firebase(ref);
 
 			// load the microtask data
-			//$scope.microtask = sync.$asObject();
-			//$scope.microtask.$loaded().then(function(){
+			$scope.microtask = sync.$asObject();
+			$scope.microtask.$loaded().then(function(){*/
 			//	$scope.inputSearch="";
 
 				// assign title
 				$scope.datas = data;
 
 				// retrieve the related function
-				if( angular.isDefined($scope.microtask.functionID) ) {
+				if( angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) {
 					$scope.funct = functionsService.get($scope.microtask.functionID);
 				}
 				// retrieve the related test
@@ -129,17 +133,17 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 
 				// debug stuff
-				// console.log("data: ");console.log(data);
+				 console.log("data: ");console.log(data);
 				 console.log("microtask: ");console.log($scope.microtask);
 				// console.log("function: ");console.log($scope.funct);
-				// console.log("test: ");console.log($scope.test);
+				 console.log("test: ");console.log($scope.test);
 
 
 			  	//choose the right template
 			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 
-		//	});
+			//});
 		  }).
 		  error(function(data, status, headers, config) {
 
@@ -157,7 +161,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		console.log('submit fired');
 		console.log(formData);
 
-		$http.post('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
+		$http.post('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
 			success(function(data, status, headers, config) {
 
 				 //Push the microtask submit data onto the Firebase history stream
@@ -173,7 +177,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask',function(event,data){
 		console.log("skip fired");
-		$http.get('/'+$rootScope.projectId+'/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
+		$http.get('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
 		  success(function(data, status, headers, config) {
 			  $scope.$emit('load');
 		  });
@@ -192,25 +196,13 @@ myApp.controller('ScoreController', ['$scope','$rootScope','$firebase', function
 	var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/score');
     var sync = $firebase(ref);
     // create the object and bind the firebase ref to the scope.score var
-    var obj = sync.$asObject();
-    obj.$bindTo($scope,"score");
-    obj.$loaded().then(function(){
+    $scope.score = sync.$asObject();
+    $scope.score.$loaded().then(function(){
     	if($scope.score.$value===null)
     		$scope.score.$value=0;
     });
 }]);
 
-
-////////////////////////////////////
-// FUNCTIONS REFERENCE CONTROLLER //
-////////////////////////////////////
-myApp.controller('FunctionsReferenceController', ['$scope','$rootScope','$firebase','functionsService',function($scope,$rootScope,$firebase,functionsService) {
-	// bind the array to scope.leaders
-	$scope.functions = functionsService.getAll();
-
-	console.log("functions");
-	console.log($scope.functions);
-}]);
 
 ////////////////////////////
 // LEADERBOARD CONTROLLER //
@@ -255,18 +247,16 @@ myApp.controller('OnlineWorkersController', ['$scope','$rootScope','$firebase',f
 // STATS CONTROLLER //
 //////////////////////
 myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter','functionsService','testsService',function($scope,$rootScope,$firebase,$filter,functionsService,testsService) {
-	$scope.locCount = 5;
-
-
 
 	var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/stats');
 	var sync = $firebase(ref);
 	$scope.stats = sync.$asObject();
-	$scope.stats.$watch(function(){
+	$scope.total = 0;
 
+	$scope.stats.$watch(function(event){
+		/*
 		if($scope.stats.$value == null){
 			$scope.stats.$value = {
-				microtasks:0,
 				functions:0,
 				tests:0,
 				testcases:0,
@@ -276,17 +266,23 @@ myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter'
 				debugs:0,
 				searches:0
 			};
-			$scope.stats.$save();
 			$scope.total = 0;
-			angular.forEach($scope.stats,function(value,key){
-				if(key!="microtasks")
-					$scope.total += value;
-			})
+			$scope.stats.$save();
+			
+		} else {
+			updateTotal();
 		}
-
+		
+		*/
 
 	});
 
+	function updateTotal(){
+		$scope.total = 0;
+			angular.forEach($scope.stats,function(value,key){
+					$scope.total += value;
+			});
+	}
 }]);
 
 /////////////////////
@@ -300,33 +296,6 @@ myApp.controller('NewsController', ['$scope','$rootScope','$firebase','$filter',
 	$scope.news = sync.$asArray();
 }]);
 
-/////////////////////
-// CHAT CONTROLLER //
-/////////////////////
-myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
-	// create the reference and the sync
-	var chatRef  = new Firebase($rootScope.firebaseURL+'/chat').limit(10);
-	var sync = $firebase(chatRef);
-	// bind the array to scope.leaders
-	$scope.messages = sync.$asArray();
-
-
-	$scope.input = "";
-	// key press function
-	$scope.key = function(e){
-
-		//console.log("keypress "+e.keyCode);
-	    if (e.keyCode == 13)
-	    {
-	    	$scope.messages.$add({text: $scope.input,workerHandle: $rootScope.workerHandle}).then(function(ref) {
-    		   // after the add event
-    		});
-	    	//chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=workerHandle%>'});
-	    	$scope.input = "";
-	    	return false;
-	    }
-	};
-}]);
 
 
 //////////////////////

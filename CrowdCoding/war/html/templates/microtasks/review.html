@@ -31,8 +31,10 @@
 			<b>Submitted Test cases</b> <BR>
 			<div ng-if="review.currenttestcases.length>0" id="diffDiv">
 				<span class="original" style="display: none">
-					<ul ng-repeat="currentTestCase in currentTestCases">
-						<li>{{currentTestCase.text}}</li>
+					<ul>
+						<li ng-repeat="currentTestCase in currentTestCases">
+							{{currentTestCase.text}}
+						</li>
 					</ul>
 				</span> <span class="changed" style="display: none">'
 					<ul ng-repeat="submittedTestCase in review.microtaskUnderReview.submission.testCases">

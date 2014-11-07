@@ -1,12 +1,10 @@
 /////////////////////////
 // TEST RUNNER SERVICE //
 /////////////////////////
-myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService','functionsService', function($window,$rootScope,$http,testsService,functionsService) {
+myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsService','functionsService', function($window,$rootScope,$http,$q,testsService,functionsService) {
 
 	var timeOutTime = 1000;
 	var validTests;
-	var allPassedTestCases;
-	var allFailedTestCases;
 	var allTheFunctionCode;
 	var mocks;
 	var worker;
@@ -16,13 +14,39 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 	
 	
 	var testRunner = {};
+
 	
+	var deferred = $q.defer();
+
+	var consoleData = [];
+	function resetConsole(){
+		consoleData = [];
+	}
+
+	function addToConsole(line,color){
+		// if no color is set, default is white
+		if(!color) color="white";
+
+		// if line is a string, concat to consoleData
+		if( typeof line == 'string' || line instanceof String)
+			consoleData.push({text:line,color:color});
+		// if line is an array of lines 
+		else if( line instanceof Array )
+			angular.forEach(line,function(value,key){
+				addToConsole(value,color);
+			});
+		else
+			addToConsole(value.toString(),color)
+	}
+
+
 	//Runs all of the tests for the specified function, sending the results to the server
-	testRunner.runTestsForFunction = function(idForFunction)
+	testRunner.runTestsForFunction = function(idForFunction,functionCode)
 	{
-		console.log('running tests for function ='+idForFunction);
+		deferred = $q.defer();
+
 		functionID = idForFunction;
-		
+		this.running = false;
 		// Load the tests
 		validTests = testsService.validTestsforFunction(functionID);
 		
@@ -40,16 +64,24 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 		var functionsWithMockBodies = '';
 		var functionsWithEmptyBodies = '';	
 		var allFunctionIDs = functionsService.allFunctionIDs();
+
 		for (var i=0; i < allFunctionIDs.length; i++)
 		{
 			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
-			functionsWithMockBodies += functionsService.getMockCodeFor(allFunctionIDs[i]);
+			if(functionCode!=undefined && (typeof functionCode) == "string"){
+				functionsWithMockBodies += functionsService.getMockCodeFor(allFunctionIDs[i],functionCode);
+			}
+			else
+				functionsWithMockBodies  += functionsService.getMockCodeFor(allFunctionIDs[i]);
 		}	
 		allTheFunctionCode = functionsWithEmptyBodies + '\n' + functionsWithMockBodies;	
-		
+
+		console.log(functionsWithMockBodies);
 		// Load the mocks
 		mocks = {};
 		this.loadMocks(testsService.getValidTests());
+
+		resetConsole();
 
 		// Initialize test running state
 		allPassedTestCases = new Array();
@@ -58,14 +90,21 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 		
 		// Run the tests
 		this.runTest();
+
+		return deferred.promise;
 	}
 	
 	
 	// Loads the mock datastructure using the data found in the mockData - an object in MocksDTO format
 	testRunner.loadMocks = function(testData)
 	{
+		console.log("loading mocks");
+		console.log(testData);
 		$.each(testData, function(index, storedMock)
 		{
+			console.log("-- loading mock index="+index);
+			console.log(storedMock);
+
 			// If the mock is poorly formatted somehow, want to keep going...
 			try
 			{
@@ -108,12 +147,17 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 			allFailedTestCases.push(currentTextIndex);
 		else if(!testResult.codeUnimplemented)
 		{
-			if (!testResult.passed)
+			if (!testResult.passed){
+				addToConsole("Result: FAILED","rgb(184, 134, 134)");
 				allFailedTestCases.push(currentTextIndex);
-			else
+			}
+			else{
+				addToConsole("Result: PASSED","rgb(125, 171, 125)");
 				allPassedTestCases.push(currentTextIndex);
+			}
 		}
 		
+		addToConsole(testResult.log);
 		// Increment the test and run the next one.
 		currentTextIndex++;
 		this.runTest();		
@@ -121,33 +165,37 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 
 	testRunner.runTest = function()
 	{
-		console.log("running test "); console.log(validTests[currentTextIndex]);
+		//console.log("running test "); console.log(validTests[currentTextIndex]);
 		// If we've run out of tests
 		if (currentTextIndex >= validTests.length)
 		{
-			this.submitResultsToServer();
+			deferred.resolve({
+				passedTests:allPassedTestCases,
+				console:consoleData
+			});
 			return;
 		}
 		
 		var testCode = validTests[currentTextIndex].code;  //.replace(/\n/g,"");
-		console.log("test code: " + testCode);
+		
+		addToConsole("> Running test for test code: " + testCode);
 		
 		
 		// Check the code for syntax errors using JSHint. Since only the user defined code will be checked,
 		// add extra defs for references to the instrumentation code.
 		var extraDefs = "var mocks = {}; function hasMockFor(){} function printDebugStatement (){} ";		
 		var codeToLint = extraDefs + allTheFunctionCode + testCode;
-		//console.log("TestRunner linting on: " + codeToLint);
+		console.log("TestRunner linting on: " + codeToLint);
 		var lintResult = JSHINT(getUnitTestGlobals() + codeToLint, getJSHintGlobals());
 		var errors = checkForErrors(JSHINT.errors);
-		console.log("errors: " + JSON.stringify(errors));
+		//console.log("errors: " + JSON.stringify(errors));
 		
 		var testResult;
 		
 		// If there are no errors, run the test
 		if(errors == "")
 		{
-			testRunTimeout = setTimeout(function(){stopTest();}, timeOutTime);
+			testRunTimeout = setTimeout(function(){this.stopTest();}, timeOutTime);
 			var codeToExecute = allTheFunctionCode + testCode;
 
 			// execute the tests on the worker thread
@@ -157,19 +205,18 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 		    worker.onmessage = function(e) 
 		    {
 			    clearTimeout(testRunTimeout);					    	
-			    console.log("Received: " + JSON.stringify(e.data));
 				testRunner.processTestFinished(false, e.data);
 		    }
 		    
 			// load the script and start the worker
 			worker.postMessage({url: document.location.origin});					
-			worker.postMessage({number: currentTextIndex, code: codeToExecute, mocks: mocks});			
+			worker.postMessage({number: currentTextIndex, code: codeToExecute, mocks: mocks});	
+
 		}
 		else
 		{
 			// jshint found errors
 			testCaseNumberThatFailed = currentTextIndex;
-			console.log(testCaseNumberThatFailed);
 			allFailedTestCases.push(testCaseNumberThatFailed);
 			
 			currentTextIndex++;
@@ -188,16 +235,14 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 
 	testRunner.submitResultsToServer = function()
 	{		
-		console.log("passed="+allPassedTestCases.join(','));
-		console.log("failed="+allFailedTestCases.join(','));
 
-
+		console.log("SUBMITTING DATA TO SERVER");
 		// Determine if the function passed or failed its tests. 
 		// If at least one test failed, the function failed its tests.
 		// If at least one test succeeded and no tests failed, the function passed its tests.
 		// If no tests succeeded or failed, none of the tests could be successfully run - don't submit anything to the server.
 		var passedTests;
-		
+
 		if (allFailedTestCases.length > 0)
 			passedTests = false;
 		else if (allPassedTestCases.length > 0 && allFailedTestCases.length == 0)
@@ -206,7 +251,7 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 			passedTests = null;
 		
 		if (passedTests != null)
-		{
+		{ 
 			var getData = [];
 			getData.push('functionID='+functionID);
 			getData.push('result='+passedTests);
@@ -214,8 +259,8 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','testsService
 			// PASS THE FIRST FAILED TEST ID TO THE SERVER 
 			// USEFUL FOR SPAWNING A DIFFERENT DEBUG MICROTASK FOR 
 			// EACH FAILED TEST
-			if( allFailedTestCases.length > 0 )
-				getData.push("testID="+validTests[allFailedTestCases[0]].id);
+			//if( allFailedTestCases.length > 0 )
+			//	getData.push("testID="+validTests[allFailedTestCases[0]].id);
 
 			console.log(getData);
 			$http.get('/' + $rootScope.projectId + '/testResult?'+getData.join("&")).

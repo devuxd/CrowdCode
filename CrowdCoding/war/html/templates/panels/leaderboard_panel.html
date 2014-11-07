@@ -1,0 +1,19 @@
+
+<div ng-controller="LeaderboardController">
+	<ul class="sidebar-list user-list" >
+	  <li ng-repeat="leader in leaders | orderBy:'-score'" ng-if="leaders.length > 0" 
+	  	  class="{{ (onlineWorkers.$indexFor(leaders.$keyAt(leader))>-1) && 'loggedIn' || '' }}">
+	  	
+		<span class="left">
+			<div class="avatar"><img src="/user/picture?userId={{leaders.$keyAt(leader) }}" alt="{{ leader.name }}" /></div>
+	  		<div class="name">{{ leader.name }}</div>
+	  		<div class="clearfix"></div>
+		</span>
+	  	<span class="right">{{ leader.score }} points</span>
+	  	<div class="clearfix"></div>
+	  </li>
+	</ul>
+	<span ng-if="leaders.length == 0" >
+		no leaders yet!
+	</span>
+</div>

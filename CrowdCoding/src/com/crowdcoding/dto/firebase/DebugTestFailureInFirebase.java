@@ -4,10 +4,22 @@ package com.crowdcoding.dto.firebase;
 public class DebugTestFailureInFirebase extends MicrotaskInFirebase
 {
 	public long testID;
-	public long testedFunctionID;
+	public long functionID;
 
 	public DebugTestFailureInFirebase()
 	{
+	}
+
+	public DebugTestFailureInFirebase(
+			long id,
+			String type,
+			String owningArtifact,
+			boolean completed,
+			int points,
+			long testedFunctionID)
+	{
+		super(id, type, owningArtifact, completed, points);
+		this.functionID = testedFunctionID;
 	}
 
 	public DebugTestFailureInFirebase(
@@ -21,6 +33,6 @@ public class DebugTestFailureInFirebase extends MicrotaskInFirebase
 	{
 		super(id, type, owningArtifact, completed, points);
 		this.testID = testID;
-		this.testedFunctionID = testedFunctionID;
+		this.functionID = testedFunctionID;
 	}
 }

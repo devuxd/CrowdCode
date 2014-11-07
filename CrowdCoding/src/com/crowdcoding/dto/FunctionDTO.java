@@ -8,7 +8,7 @@ public class FunctionDTO extends DTO
 {
 	public String messageType = "FunctionDTO";
 	
-	public String testCaseNumber;
+	public Long testId;
 	public String description;
 	public String returnType;
 	public List<String> paramNames = new ArrayList<String>();
@@ -22,11 +22,11 @@ public class FunctionDTO extends DTO
 	
 	public String toString()
 	{
-		if(testCaseNumber == null)
+		if(testId == null)
 		{
 			return description + "\n" + header + "\n" + code;
 		}
-		return description + "\n" + " function " + name + "test case number of function disputed: " + testCaseNumber;
+		return description + "\n" + " function " + name + "test case number of function disputed: " + testId;
 	}
 	
 	

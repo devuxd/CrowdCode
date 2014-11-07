@@ -1,18 +1,30 @@
-<div ng-controller="WriteTestCasesController">
 
-	<h2 id="taskHeader">
-		<span id="taskTitle" >{{datas.title}}</span>
-		<span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
-	</h2>
-	<br />
+<div ng-controller="WriteTestCasesController" class="task-container container-flex-column">
+	
+	<div class="section section-description " >
+		<div class="section-content no-padding" >
+			<ul class="microtask-details clearfix">
+				<li>{{datas.title}}</li>
+				<li>
+					<span>{{datas.submitValue}} points</span>
+				</li>
+				<li>
+					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+				</li>
+			</ul>
+		</div>
+	</div>
 
-	<div id="taskDescription" >
-		<div id="promptAreaDiv">
-			<strong ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
+	<div class="section section-description">
+		<div class="section-title" >
+		JOB DESCRIPTION
+		</div>
+		<div class="section-content" >
+			<div ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
 
 				What are some cases in which this function might be used? Are there any unexpected corner
 				cases that might not work?
-			</strong>
+			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
 			    The following issue was reported with the following test case:<BR><BR>
@@ -24,18 +36,24 @@
 			    (Note: if the above test case is not below, the test case has already been changed,
 			    and you can ignore this microtask).<BR><BR>
 			</div>
+		</div>
+	</div>
+	<div class="section section-description">
+		<div class="section-title" >
+			FUNCTION SIGNATURE
+		</div>
+		<div class="section-content no-padding" >
 			<div class="readOnlyCodemirror" ng-model="code" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
 		</div>
-
-		<div class="accordion" id="exampleRoot">
-		  <div class="accordion-group">
-		    <div class="accordion-heading">
-		      <a tabindex="-1" class="accordion-toggle" data-toggle="collapse" data-parent="#exampleRoot" href="#collapseOne">
-		        	Show example
-		      </a>
-		    </div>
-		    <div id="collapseOne" class="accordion-body collapse">
-		      <div class="accordion-inner">
+	</div>
+	<div class="section-cols" >
+		<div class="container-flex-row">
+		<div class="section section-help" style="width:30%">
+			<div class="section-title" >
+				EXAMPLE 
+			</div>
+			<div class="section-content" >
+				<div class="accordion-inner">
 					subtract(a, b)<BR>
 
 					<B>Here's some test cases:</B><BR>
@@ -45,83 +63,74 @@
 					a is positive, b is negative<BR>
 					a is negative, b is zero<BR>
 					a is positive, b is zero<BR>
-		      </div>
-		    </div>
-		  </div>
-		</div>
-	</div>
-
-	<div id="taskForm" >
-		<div class="testcases">
-			<ng-form ng-if="testCases.length > 0" name="testCaseForm" ng-repeat="(index,test) in testCases" >
-				<div class="form-group testcase" ng-class="{ 'bg-danger': testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid }" ng-init="editMode=false" >
-					<label for="testcase" class="col-sm-1 control-label" >#{{index+1}}</label>
-					<div class="col-sm-9">
-						<div ng-show="editMode">
-							<input class="form-control transparent"
-								   type="text"
-								   name="testcase"
-								   placeholder="Describe a test case"
-								   ng-model="test.text"
-								   press-enter=" editMode = testCaseForm.testcase.$invalid ? true : false "
-								   ng-blur="editMode = testCaseForm.testcase.$invalid ? true : false"
-								   sync-focus-with="editMode"
-								   data-toggle="tooltip"
-								   data-placement="left"
-								   title="press Enter to exit edit mode"
-								   required/>
-						</div>
-						<div class="form-control-static"
-						     ng-show="!editMode"
-							 ng-click="editMode = true"
-						     data-toggle="tooltip"
-						     data-placement="left"
-						     title="click to edit this test case">
-							{{test.text}}
-						</div>
-						<span class="help-block" ng-show="testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid && testCaseForm.testcase.$error.required">
-							a test case name can't be empty!
-						</span>
-					</div>
-
-					<div class="col-sm-2"><button class="btn btn-sm" type="button" ng-click="deleteTestCase(index)">Delete</button></div>
-				</div>
-				<hr>
-			</ng-form>
-
-			<span ng-if="testCases.length == 0" >write at least one test case</span>
-
-		</div>
-		<br/>
-		<div class="form-group" >
-			<span class="col-sm-10">
-				<input class="form-control input-sm" tabindex="1" type="text" press-enter="addTestCase()" ng-model="viewData.newTestCase" placeholder="Describe a test case"/>
-			</span>
-			<span class="col-sm-2">
-				<button class="btn btn-sm" type="button" ng-click="addTestCase()"  tabindex="2" >Add test case</button>
-			</span>
-		</div>
-
-	</div>
-
-	<div id="popUp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-					<h4 id="logoutLabel">Please write at least one test case.</h4>
-				</div>
-				<div class="modal-footer">
-					<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<br/>
+		<div class="section section-form" style="width:70%;" >
+
+			<div class="section-title form-group" >
+				<input 
+					class="form-control input-sm" 
+					tabindex="1" 
+					type="text" 
+					name="newtestcase"
+					ng-model="viewData.newTestCase" 
+					press-enter="addTestCase()"
+					placeholder="Describe a test case"/>
+				<button class="btn btn-sm btn-primary" type="button" 
+					ng-click="addTestCase()" 
+					tabindex="2" >
+					Add
+				</button>
+			</div>
+			<div class="section-content" >
+				<ul ng-if="testCases.length > 0">
+					<li ng-repeat="(index,test) in testCases">
+						<ng-form  name="testCaseForm"  class="form-group" ng-class="{ 'bg-danger': testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid }" ng-init="editMode=false" >
+
+								<label for="testcase" class="col-sm-1 control-label" >#{{index+1}}</label>
+								<div >
+									<input class="form-control input-transparent "
+											   type="text"
+											   name="testcase"
+											   placeholder="Describe a test case"
+											   ng-model="test.text"
+											   press-enter=" editMode = testCaseForm.testcase.$invalid ? true : false "
+											   ng-focus="editMode=true" 
+											   ng-blur="editMode=false" 
+											   tabindex="{{2*index+2}}"
+											   data-toggle="tooltip"
+											   data-placement="left"
+											   title="press Enter to exit edit mode"
+											   required/>
+									<span class="help-block" ng-show="testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid && testCaseForm.testcase.$error.required">
+										a test case name can't be empty!
+									</span>
+								</div>
+
+								<div>
+									<button class="btn btn-sm" type="button" tabindex="{{2*index+3}}" ng-click="deleteTestCase(index)">
+										<span class="glyphicon glyphicon-remove"></span>
+									</button>
+								</div>
+						</ng-form>
+					</li>
+				<ul>
+				<span ng-if="testCases.length == 0" >write at least one test case</span>
+
+			</div>
+
+
+		</div>
+		
+		</div>
+	</div>
+<!--
 	<div class="task-buttons pull-right">
 		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || testCases.length==0" >Submit</button>
 		<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
 	</div>
 	<div class="clearfix"></div>
+-->
 </div>
