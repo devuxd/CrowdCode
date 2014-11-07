@@ -135,9 +135,15 @@
 		<p>
 			<B>Please rate the quality of this work:</B>
 		</p>
-		<rating ng-model="review.rate" max="max" readonly="isReadonly" on-hover="hoveringOver(value)" on-leave="hoveringOver(review.rate)"></rating>
-		<span class="label"
-			ng-class="{'label-danger': percent<50,'label-warning': percent<70, 'label-info': percent>=70 && percent<90, 'label-success': percent>=90}">{{percent}}%</span>
+
+
+			<span ng-repeat="i in review.max track by $index" ng-mouseenter="enter($index + 1)" ng-mouseleave="reset()" ng-click="rate($index + 1)">
+
+				<img ng-src="{{getImageSource($index)}}" class="star-rating"/>
+				<img ng-if="$index==1" src="/include/imgs/bar-blue.png" class="bar-rating"/>
+			</span>
+			<br />
+
 		<br />
 		<p id="ratinglegend">Work rated 3 or above will be accepted.</p>
 	</div>
@@ -149,8 +155,8 @@
 		</span> <br /> <br />
 	<br />
 	<div class="task-buttons pull-right">
-		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || percent<=10">Submit</button>
+		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || review.rate<1 " >Submit</button>
 		<button ng-click="$emit('skipMicrotask')" class="btn btn-link">Skip</button>
 	</div>
 	<div class="clearfix"></div>
-</div
+</div>

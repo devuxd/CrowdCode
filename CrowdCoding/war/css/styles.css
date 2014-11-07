@@ -1,3 +1,6 @@
+
+
+
 html	{ background:#eee }
 body	{ margin:0; padding:0; overflow-x: hidden; }
 textarea { -webkit-user-select: auto; }
@@ -11,22 +14,22 @@ input {border-radius: 15px;}
 .modal-backdrop {background: none;}
  #activityFeedTable
    {
-      overflow-y: scroll;  overflow-x: hidden; height:397px; width:180px; background:#D9D9D9; 
+      overflow-y: scroll;  overflow-x: hidden; height:397px; width:180px; background:#D9D9D9;
       margin-left:0%; margin-right:0%; border-style:solid; border-width:2px; font-size:75%;
  	border-color:#8F8F8F;
-     -webkit-transition-property:color, background-color;  
--webkit-transition-duration: .2s, .2s;  
--webkit-transition-timing-function: linear, ease-in;  
+     -webkit-transition-property:color, background-color;
+-webkit-transition-duration: .2s, .2s;
+-webkit-transition-timing-function: linear, ease-in;
    }
-      
+
 #activityFeedTable tr
 {
-      background:white; 
-     -webkit-transition-property:color, background-color;  
--webkit-transition-duration: .1s, .1s;  
--webkit-transition-timing-function: linear, ease-in;  
-}  
-   
+      background:white;
+     -webkit-transition-property:color, background-color;
+-webkit-transition-duration: .1s, .1s;
+-webkit-transition-timing-function: linear, ease-in;
+}
+
 #activityFeedTable td { padding-top:3px; padding-bottom:3px; }
 #activityFeedTable tr:hover { background-color: #ffdb66;  cursor:pointer; }
 
@@ -44,14 +47,14 @@ input {border-radius: 15px;}
 }
 
 .boxContent {
-	 width: 177px; 
+	 width: 177px;
 	 height: 40px;
 	 margin-left:0%; margin-right:auto; background:#CFCFCF;margin-bottom:3%;
 	border-width:0px;   border-radius:3px;
-    -webkit-transition-property:color, background-color;  
- 	-webkit-transition-duration: .2s, .2s;  
- 	-webkit-transition-timing-function: linear, ease-in; 
- 	font-family: Lucida Console, Monaco, monospace; 		 
+    -webkit-transition-property:color, background-color;
+ 	-webkit-transition-duration: .2s, .2s;
+ 	-webkit-transition-timing-function: linear, ease-in;
+ 	font-family: Lucida Console, Monaco, monospace;
 }
 
 #statistics p { font-size: small; }
@@ -61,13 +64,13 @@ input {border-radius: 15px;}
 
 
 #titlebar { background:#1B87E0; }
-#titlebar h4 { color:white; padding: 5px; border-width:0px; margin:0px;  }  
+#titlebar h4 { color:white; padding: 5px; border-width:0px; margin:0px;  }
 #titlebar table { padding: 0px; border-width:0px; margin:0px; }
 .titlebarScore { align:right; width: 100% }
 
 #leftbar {background: none; margin-right: 2%; margin-top: 1%; text-align: center; width: auto; }
-#scoreTable { 
-	height: 40px;  
+#scoreTable {
+	height: 40px;
 font-family: Lucida Console, Monaco, monospace;
 					}
 #score p { font-size: x-large; }
@@ -89,19 +92,19 @@ font-family: Lucida Console, Monaco, monospace;
 #feedbackThanks { font-size: smaller; color: green; visibility: hidden; }
 
 #mainpagebody{background:none;}
-#userStory{font-size:200%; width:98%; height: 400px; resize:none; margin-left: 1%; border: 2px solid black; padding: 0; 
+#userStory{font-size:200%; width:98%; height: 400px; resize:none; margin-left: 1%; border: 2px solid black; padding: 0;
 
- -webkit-transition-property:color, background-color;  
- -webkit-transition-duration: .9s, 0.5s;  
- -webkit-transition-timing-function: linear, ease-in;  
+ -webkit-transition-property:color, background-color;
+ -webkit-transition-duration: .9s, 0.5s;
+ -webkit-transition-timing-function: linear, ease-in;
 
- -moz-transition-property:color, background-color;  
- -moz-transition-duration: .9s, 0.5s;  
- -moz-transition-timing-function: linear, ease-in;  
+ -moz-transition-property:color, background-color;
+ -moz-transition-duration: .9s, 0.5s;
+ -moz-transition-timing-function: linear, ease-in;
 
- -o-transition-property:color, background-color;  
- -o-transition-duration: .9s, 0.5s;  
- -o-transition-timing-function: linear, ease-in;  
+ -o-transition-property:color, background-color;
+ -o-transition-duration: .9s, 0.5s;
+ -o-transition-timing-function: linear, ease-in;
 }
 
 #functionDescription{ width:95%; }
@@ -192,9 +195,9 @@ font-size: 0.60em;
 
 /* Styles for client request editor */
 
-.userStoryDescrip { width:700px; } 
+.userStoryDescrip { width:700px; }
 .ADTDescrip { width:700px; font-family: Consolas,Monaco,Lucida Console; }
-.ADTDescriptionText { font-size: smaller; padding: 3px} 
+.ADTDescriptionText { font-size: smaller; padding: 3px}
 .ADT { border-color: BLACK; border: 1px solid; display: inline-block; }
 .ADTContainer { width: 100%; }
 
@@ -213,7 +216,7 @@ font-size: 0.60em;
 .rating {
     float:left;
 }
-/* :not(:checked) is a filter, so that browsers that don’t support :checked don’t 
+/* :not(:checked) is a filter, so that browsers that don’t support :checked don’t
    follow these rules. Every browser that supports :checked also supports :not(), so
    it doesn’t make the test unnecessarily selective */
 .rating:not(:checked) > input {
@@ -269,4 +272,3 @@ p#ratinglegend { clear:both;  color:#888; font-style:italic; }
 #testCases > span {
 	display:block;
 }
-   

@@ -1,6 +1,35 @@
+json-tree input[type="Number"] {
+width: 4em;
+height: 30px;
+}
+
+
+
+
+.input-control{
+	width: 40%;
+	display: inline;
+}
+
 .glyphicon {
 	font-size:1em;
 }
+
+.star-rating {
+ width: 36px;
+	height: 36px;
+	margin-right: 2px;
+}
+
+
+.bar-rating {
+	 width: 5px;
+	height: 42px;
+	margin-right: 2px;
+	margin-left: 2px;
+}
+
+
 
 html,body { height: 100%; }
 body {
@@ -18,7 +47,7 @@ header {
 	padding-top:10px;
 	padding-bottom:5px;
 	margin-bottom:10px;
-	
+
 	-webkit-box-shadow: 0px 2px 5px 0px gray;
 	-moz-box-shadow:    0px 2px 5px 0px gray;
 	box-shadow:         0px 2px 5px 0px gray;
@@ -130,64 +159,64 @@ footer.navbar-default { background-color: #3C9764; }
 /*  PANEL LIST */
 
 .panel-body .panel-list {
-  	border-top: 1px solid #BBB; 
+  	border-top: 1px solid #BBB;
   	padding:0px;
   	margin:0px;
 }
-.panel-body .panel-list li { 
+.panel-body .panel-list li {
   	position: relative;
- 	display: block;  
-  	border-bottom: 1px solid #BBB; 
+ 	display: block;
+  	border-bottom: 1px solid #BBB;
   	_zoom: 1;
 }
 .panel-body .panel-list li div {
 }
 
 .panel-body .panel-list .count {
-  display: block; 
-  position: absolute; 
-  top: 0; 
-  right: 0; 
-  margin: 0 0.3em; 
-  text-align: right; 
-  color: #999; 
-  font-weight: bold; 
-  font-size: 0.875em; 
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0 0.3em;
+  text-align: right;
+  color: #999;
+  font-weight: bold;
+  font-size: 0.875em;
 }
-.panel-body .panel-list li:hover { 
-  background: #EFEFEF; 
+.panel-body .panel-list li:hover {
+  background: #EFEFEF;
 }
 
 /* CHART LISTS */
 .chartlist li div {
-	display: block; 
-  	position: relative; 
-  	z-index: 2; 
+	display: block;
+  	position: relative;
+  	z-index: 2;
   	font-size:0.95em;
   	font-weight:bold;
   	padding:2px;
   	padding-left:10px;
 }
-.chartlist .index { 
-  display: block; 
-  position: absolute; 
-  top: 0; 
-  left: 0; 
-  height: 100%; 
-  background: rgba(60, 151, 100, 0.23); 
-  text-indent: -9999px; 
-  overflow: hidden; 
+.chartlist .index {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(60, 151, 100, 0.23);
+  text-indent: -9999px;
+  overflow: hidden;
 }
-.chartlist li:hover .index{ 
-  background: rgba(123, 123, 123, 0.22); 
+.chartlist li:hover .index{
+  background: rgba(123, 123, 123, 0.22);
 }
 
 
-#stats li.total { 
+#stats li.total {
 	background-color:#ADADAD;
 	color:#4D4D4D;
 }
-#stats li.total .count{ 
+#stats li.total .count{
 	color:#565656;
 }
 
@@ -293,8 +322,8 @@ ul.user-list  .name {
 	background-color:white;
 	border-radius:4px;
 	border:1px solid lightgray;
-	
-	
+
+
 	-webkit-box-shadow: 0px 2px 5px 0px gray;
 	-moz-box-shadow:    0px 2px 5px 0px gray;
 	box-shadow:         0px 2px 5px 0px gray;

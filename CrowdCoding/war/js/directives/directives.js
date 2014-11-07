@@ -1,30 +1,29 @@
 
 // directive for json field validation
-myApp.directive('json', function () {
+myApp.directive('json1', ['ADTService',function(ADTService) {
     return {
         restrict: 'A',
         require: 'ngModel',
         link: function (scope, elm, attrs, ctrl) {
             // instantiate a new JSONValidator
             var validator = new JSONValidator();
-            var paramType = attrs['json'];
+
             ctrl.$parsers.unshift(function (viewValue) {
                 // initialize JSONValidator and execute errorCheck
-                validator.initialize(viewValue,paramType)
+                validator.initialize(ADTService.getNameToADT,viewValue,attrs['json1'])
                 validator.errorCheck();
-
                 if (!validator.isValid()) {
-                    ctrl.$setValidity('json', false);
+                   ctrl.$setValidity('json1', false);
                     ctrl.$error.json_errors = validator.getErrors();
-                    return undefined;
+                    return viewValue;
                 } else {
-                    ctrl.$setValidity('json', true);
+                     ctrl.$setValidity('json1', true);
                     return viewValue;
                 }
             });
         }
     };
-});
+}]);
 
 //<div function-validator ng-model="somevar"></div>
 myApp.directive('adtValidator',['ADTService',function(ADTService) {
