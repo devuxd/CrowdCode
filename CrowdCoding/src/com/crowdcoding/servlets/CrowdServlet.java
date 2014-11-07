@@ -59,10 +59,10 @@ import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.QueryKeys;
 
 @SuppressWarnings("serial")
-public class CrowdServlet extends HttpServlet 
+public class CrowdServlet extends HttpServlet
 {
 	private static HashMap<String, Class> microtaskTypes = new HashMap<String, Class>();
-	
+
 	static
 	{
 		// Every microtask MUST be registered here, mapping its name to its class.
@@ -77,7 +77,7 @@ public class CrowdServlet extends HttpServlet
 		microtaskTypes.put("WriteTest", WriteTest.class);
 		microtaskTypes.put("WriteTestCases", WriteTestCases.class);
 		microtaskTypes.put("WriteFunction", WriteFunction.class);
-		
+
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Worker.class);
@@ -86,10 +86,10 @@ public class CrowdServlet extends HttpServlet
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
 		ObjectifyService.register(UserPicture.class);
-		
+
 		ObjectifyService.register(Microtask.class);
 		ObjectifyService.register(ReuseSearch.class);
-		ObjectifyService.register(Review.class);		
+		ObjectifyService.register(Review.class);
 		ObjectifyService.register(WriteFunction.class);
 		ObjectifyService.register(DebugTestFailure.class);
 		ObjectifyService.register(MachineUnitTest.class);
@@ -97,24 +97,24 @@ public class CrowdServlet extends HttpServlet
 		ObjectifyService.register(WriteFunctionDescription.class);
 		ObjectifyService.register(WriteTest.class);
 		ObjectifyService.register(WriteTestCases.class);
-	}	
-	
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException 
+	}
+
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		doAction(req, resp);
 	}
-	
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException 
+
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
 		doAction(req, resp);
 	}
-	
+
 	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException
-	{ 
+	{
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser(); 
-        
+        User user = userService.getCurrentUser();
+
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
@@ -123,14 +123,14 @@ public class CrowdServlet extends HttpServlet
 			// -- PATHS WITHOUT USER AUTHENTICATION
 			 if(Pattern.matches("/welcome",path)){
 				req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
-			 } 
-		
+			 }
+
 			// PATHS WITH USER AUTHENTICATION
 			 else if ( user != null ) { // if the user is authenticated
-				
+
 				// PAGES URLS
 				if(Pattern.matches("/clientRequest",path)){
-					req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);
+					req.getRequestDispatcher("/html/client_request.html").forward(req, resp);
 				}
 				// USERS URLS
 				else if(Pattern.matches("/user/[\\w]*",path)){
@@ -139,19 +139,19 @@ public class CrowdServlet extends HttpServlet
 				// SUPERADMIN URLS
 				else if(Pattern.matches("/_admin/[\\w]*",path)){
 					req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);
-				} 
+				}
 				// PROJECT URLS match /word/ or /word/(word)*
 				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
 					String projectId = pathSeg[1];
 					req.setAttribute("project", projectId);
 					Key<Project> projectKey = Key.create(Project.class, projectId);
 					boolean projectExists =  ( ofy().load().filterKey(projectKey).count() != 0 );
-					
+
 					System.out.println(pathSeg.length);
-					
+
 					if(!projectExists){
 						req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
-						System.out.println("Project not found ("+projectId+")!");	
+						System.out.println("Project not found ("+projectId+")!");
 					} else if ( pathSeg.length <= 2 ){
 						req.getRequestDispatcher("/html/angular_2_col.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
@@ -165,7 +165,7 @@ public class CrowdServlet extends HttpServlet
 				}
 			// LOGIN PAGE
 			} else {
-				resp.sendRedirect(userService.createLoginURL(path));	
+				resp.sendRedirect(userService.createLoginURL(path));
 			}
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
@@ -175,12 +175,12 @@ public class CrowdServlet extends HttpServlet
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void doUser(HttpServletRequest req, HttpServletResponse resp, User user,
-			final String[] pathSeg) throws IOException, ServletException, FileUploadException 
-	{	
-		
-        
+			final String[] pathSeg) throws IOException, ServletException, FileUploadException
+	{
+
+
         if( pathSeg.length >= 3 ){
         	if (pathSeg[2].equals("picture")){
     			getUserPicture(req,resp);
@@ -192,13 +192,13 @@ public class CrowdServlet extends HttpServlet
     			renderJson(resp,"{userId:"+user.getUserId()+",userHandle:"+user.getNickname()+"}");
     		}
         }
-		
-        
+
+
 	}
-	
-	private void doAjax(HttpServletRequest req, HttpServletResponse resp, 
-			final String projectID, User user, final String[] pathSeg) throws IOException 
-	{	
+
+	private void doAjax(HttpServletRequest req, HttpServletResponse resp,
+			final String projectID, User user, final String[] pathSeg) throws IOException
+	{
 		if (pathSeg[3].equals("fetch")){
 			doFetchMicrotask(req, resp, projectID, user);
 
@@ -206,85 +206,85 @@ public class CrowdServlet extends HttpServlet
 			doSubmitMicrotask(req, resp);
 		}
 	}
-	
-	private void doAdmin(HttpServletRequest req, HttpServletResponse resp, 
-			final String projectID, final String[] pathSeg) throws IOException, ServletException 
+
+	private void doAdmin(HttpServletRequest req, HttpServletResponse resp,
+			final String projectID, final String[] pathSeg) throws IOException, ServletException
 	{
 		System.out.println("doing admin");
 		if(pathSeg.length <=3 ){
 			req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
 		} else {
-			// The command should be in the fourth position. If nothing exists there, 
+			// The command should be in the fourth position. If nothing exists there,
 			// use "" as the command.
 			String command = pathSeg[3].toUpperCase();
 
 			System.out.println("command="+command);
-		    final StringBuilder output = new StringBuilder();	
+		    final StringBuilder output = new StringBuilder();
 		    final Date currentTime = new Date();
-		    
+
 			if (command.equals("RESET"))
 			{
 				output.append("RESET executed at " + currentTime.toString() + "\n");
 				Project.Clear(projectID);
 				output.append("Project successfully reset to default state.\n");
-				
+
 				List<Command> commands = new ArrayList<Command>();
 				commands.addAll(ofy().transact(new Work<List<Command>>() {
 			        public List<Command> run()
 			        {
-		    			CommandContext context = new CommandContext();	
+		    			CommandContext context = new CommandContext();
 		    			Project.Construct(projectID);
-		    			output.append("New project successfully constructed.\n"); 
-			        	
-						return context.commands(); 
+		    			output.append("New project successfully constructed.\n");
+
+						return context.commands();
 			        }
 			    }));
-				
-				executeCommands(commands, projectID);	
-			}	
+
+				executeCommands(commands, projectID);
+			}
 			else if (command.equals("REVIEWSON"))
 			{
 				output.append("REVIEWS ON executed at " + currentTime.toString() + "\n");
-				
+
 				List<Command> commands = new ArrayList<Command>();
 				commands.addAll(ofy().transact(new Work<List<Command>>() {
 			        public List<Command> run()
 			        {
-		    			CommandContext context = new CommandContext();	
+		    			CommandContext context = new CommandContext();
 		    			ProjectCommand.enableReviews(true);
-		    			output.append("Reviews successfully set to on.\n"); 
-			        	
-						return context.commands(); 
+		    			output.append("Reviews successfully set to on.\n");
+
+						return context.commands();
 			        }
 			    }));
-				
-				executeCommands(commands, projectID);	
+
+				executeCommands(commands, projectID);
 			}
 			else if (command.equals("REVIEWSOFF"))
 			{
 				output.append("REVIEWS OFF executed at " + currentTime.toString() + "\n");
-				
+
 				List<Command> commands = new ArrayList<Command>();
 				commands.addAll(ofy().transact(new Work<List<Command>>() {
 			        public List<Command> run()
 			        {
-		    			CommandContext context = new CommandContext();	
+		    			CommandContext context = new CommandContext();
 		    			ProjectCommand.enableReviews(false);
-		    			output.append("Reviews successfully set to off.\n"); 
-			        	
-						return context.commands(); 
+		    			output.append("Reviews successfully set to off.\n");
+
+						return context.commands();
 			        }
 			    }));
-				
-				executeCommands(commands, projectID);	
+
+				executeCommands(commands, projectID);
 			}
 			else
 			{
 				output.append("Unrecognized command " + command);
 			}
-					
+
 			output.append("\n");
-			
+
 			JSONObject jsonObj = new JSONObject();
 			try {
 				jsonObj.put("message",output.toString());
@@ -292,10 +292,10 @@ public class CrowdServlet extends HttpServlet
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	
-		    renderJson(resp,jsonObj.toString());				  
+
+		    renderJson(resp,jsonObj.toString());
 		}
-	}	
+	}
 
 
 	// get user picture
@@ -303,7 +303,7 @@ public class CrowdServlet extends HttpServlet
 		//retrieve request GET parameter userId and retrieve picture
 		String userId = req.getParameter("userId");
 		UserPicture picture = (userId==null)?null:ofy().load().key(Key.create(UserPicture.class, userId)).get();
-		
+
 		if(userId==null || picture ==null){
 			req.getRequestDispatcher("/img/40x40.gif").forward(req, res);
 		} else {
@@ -322,36 +322,36 @@ public class CrowdServlet extends HttpServlet
 
 
 	    Blob imageBlob = new Blob(IOUtils.toByteArray(imgStream));
-	    
+
 	    // if image size > 0 bytes
 	    if(imageBlob.getBytes().length>0){
-	    	
+
 		    //retrieve picture object if exists or instantiate a new one
 		    UserPicture picture = ofy().load().key(Key.create(UserPicture.class, user.getUserId())).get();
-		    if(picture == null) 
+		    if(picture == null)
 		    	picture = new UserPicture(user.getUserId());
 
 		    picture.setImage(imageBlob);
-		    
+
 		    // persist image
 		    ofy().save().entity(picture).now();
-		    
+
 		    // print success
 		    res.setContentType("text/plain");
 		    res.getWriter().append("success");
-		    
+
 	    } else {
 
 		    // print fail
 		    res.setContentType("text/plain");
 		    res.getWriter().append("fail");
 	    }
-	    
+
 	}
-	
+
 	// process test result submit
 	private void doSubmitTestResult(final HttpServletRequest req, final HttpServletResponse resp, String projectID) throws IOException, FileUploadException {
-		
+
 		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
 		//final long testID     = Long.parseLong(req.getParameter("testID"));
@@ -359,79 +359,79 @@ public class CrowdServlet extends HttpServlet
 		/*
 		// SEND 503 error if some of the parameter are null
 		if( ){
-			resp.sendError(503); 
+			resp.sendError(503);
 		}
 		*/
-		
+
 		List<Command> commands = new ArrayList<Command>();
 		commands.addAll(ofy().transact(new Work<List<Command>>() {
 	        public List<Command> run()
 	        {
-    			CommandContext context = new CommandContext();	
+    			CommandContext context = new CommandContext();
     			if(result)
     				FunctionCommand.passedTests(functionID);
     			else
     				FunctionCommand.failedTests(functionID);
-    			
-				return context.commands(); 
+
+				return context.commands();
 	        }
 	    }));
-		
-		executeCommands(commands, projectID);	
+
+		executeCommands(commands, projectID);
 	}
-	
-	
-	// Notify the server that a microtask has been completed. 
-	public void doSubmitMicrotask(final HttpServletRequest req, final HttpServletResponse resp) throws IOException 
+
+
+	// Notify the server that a microtask has been completed.
+	public void doSubmitMicrotask(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
 	{
 		// Collect information from the request parameter. Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
-    	try 
-    	{		
+    	try
+    	{
     		final String projectID = (String) req.getAttribute("project");
-			final String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();		
+			final String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 			final long microtaskID = Long.parseLong(req.getParameter("id"));
-			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));			
+			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));
 			final String type = req.getParameter("type");
 			final String payload = Util.convertStreamToString(req.getInputStream());
-			
+
 			Class microtaskType = microtaskTypes.get(type);
 			if (microtaskType == null)
 				throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
-			
+
 			// Create an initial context, then build a command to skip or submit
-			CommandContext context = new CommandContext();	
-			
+			CommandContext context = new CommandContext();
+
 			// Create the skip or submit commands
 			if (skip)
 				ProjectCommand.skipMicrotask(microtaskID, workerID);
-			else			
+			else
 				ProjectCommand.submitMicrotask(microtaskID, microtaskType, payload, workerID);
-					
+
 			// Copy the command back out the context to initially populate the command queue.
-			executeCommands(context.commands(), projectID);			       
-    	}        
+			executeCommands(context.commands(), projectID);
+    	}
     	catch (IOException e)
     	{
     		e.printStackTrace();
-    	}        
+    	}
 	}
-	
-	
-	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp, 
-			final String projectID, final User user) throws IOException 
+
+
+	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,
+			final String projectID, final User user) throws IOException
 	{
 		// Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
 	    final Long microtaskID = ofy().transact(new Work<Long>() {
             public Long run()
-            {                	
-            	Project project = Project.Create(projectID); 
+            {
+            	Project project = Project.Create(projectID);
             	String workerID = user.getUserId();
             	String workerHandle = user.getNickname();
-            	
+
             	// If the user does not have a microtask assigned, get them a microtask.
             	Long microtaskID = project.lookupMicrotaskAssignment(workerID);
             	if (microtaskID == null)
@@ -443,64 +443,64 @@ public class CrowdServlet extends HttpServlet
             	{
             		System.out.println("Worker " + workerHandle + " already has a microtask");
             	}
-            		
+
             	return microtaskID;
             }
         });
-	    
+
     	// Load the microtask
-	    Microtask microtask = null;	    
+	    Microtask microtask = null;
 	    if (microtaskID != null)
 	    {
 		    microtask = ofy().transact(new Work<Microtask>() {
 	            public Microtask run()
-	            {    
-	            	Key<Microtask> microtaskKey = Key.create(Key.create(Project.class, projectID), 
+	            {
+	            	Key<Microtask> microtaskKey = Key.create(Key.create(Project.class, projectID),
 	            			Microtask.class, microtaskID);
-	        		return ofy().load().key(microtaskKey).get();	
+	        		return ofy().load().key(microtaskKey).get();
 	            }
-		    });	    	
-	    }	    
-            
+		    });
+	    }
+
     	// If there are no microtasks available, send an empty response.
 	    //Otherwise, redirect
     	// to microtask UI.
 		if (microtask == null) {
-			resp.sendError(404); 	
-		} 
+			resp.sendError(404);
+		}
 		else{
 			renderJson(resp,microtask.toJSON());
 		}
-        
-    		                    		        	
+
+
 	}
-	
+
 	private void renderJson(final HttpServletResponse resp,String json) throws IOException{
 		System.out.println("json="+json);
-		resp.setContentType("json");
+		resp.setContentType("json;charset=utf-8");
 		PrintWriter out = resp.getWriter();
 		out.print(json);
 		out.flush();
 	}
-	
+
 	// Logs out the specified user from the service
-	public void doUserLogout(final String projectID, final String userID) 
+	public void doUserLogout(final String projectID, final String userID)
 	{
 		if (userID == null || userID.length() == 0)
 			return;
-			
-		CommandContext context = new CommandContext();	    		
-		ProjectCommand.logoutWorker(userID);    		
-		executeCommands(context.commands(), projectID);   
-		
+
+		CommandContext context = new CommandContext();
+		ProjectCommand.logoutWorker(userID);
+		executeCommands(context.commands(), projectID);
+
 		System.out.println("Logged out " + userID);
 	}
-	
+
 	// Executes all of the specified commands and any commands that may subsequently be generated
 	private void executeCommands(List<Command> commands, final String projectID)
 	{
 		Queue<Command> commandQueue = new LinkedList<Command>(commands);
-				
+
 		// Execute commands until done, adding commands as created.
         while(!commandQueue.isEmpty())
         {
@@ -508,17 +508,17 @@ public class CrowdServlet extends HttpServlet
         	commandQueue.addAll(ofy().transact(new Work<List<Command>>() {
 	            public List<Command> run()
 	            {
-            	    Project project = Project.Create(projectID);					
-					CommandContext context = new CommandContext();							
-					command.execute(project);					
-											
-					project.publishHistoryLog();						
-					return context.commands(); 
+            	    Project project = Project.Create(projectID);
+					CommandContext context = new CommandContext();
+					command.execute(project);
+
+					project.publishHistoryLog();
+					return context.commands();
 	            }
 	        }));
-        }	 		
+        }
 	}
-	
+
 	// Writes the specified html message to resp, wrapping it in an html page
 	private void writeResponseString(HttpServletResponse resp, String message) throws IOException
 	{
@@ -530,9 +530,9 @@ public class CrowdServlet extends HttpServlet
 	    out.println("<title>CrowdCoding</title>");
 	    out.println("</head>");
 	    out.println("<body>");
-	    out.println(message);        
+	    out.println(message);
 	    out.println("</body>");
 	    out.println("</html>");
-		out.flush();  			
+		out.flush();
 	}
 }
