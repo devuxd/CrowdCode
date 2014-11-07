@@ -12,6 +12,7 @@
 	height:100%;
 }
 
+
 /* main tags */
 html,body { height: 100%; }
 body {
@@ -22,11 +23,11 @@ body {
 .navbar {
 	border-radius:0px;
 	border:none;
-	background: -webkit-linear-gradient(#3C9764, #3D7C58); /* For Safari 5.1 to 6.0 */
-	background: -o-linear-gradient(#3C9764, #3D7C58); /* For Opera 11.1 to 12.0 */
-	background: -moz-linear-gradient(#3C9764, #3D7C58); /* For Firefox 3.6 to 15 */
-	background: linear-gradient(#3C9764, #3D7C58); /* Standard syntax */
-	color: white;
+
+
+	font-family: 'Lato' !important;
+	font-style: normal;
+	font-weight: 900;
 }
 
 .navbar .navbar-brand {
@@ -87,12 +88,13 @@ footer.navbar-default { background-color: #3C9764; }
 	width:60%;
     padding:0px;
     margin:0px;
-    overflow:scroll;
+    overflow-x:hidden;
+    overflow-y:auto;
     background-color: white;
+    height:100%;
 }
 
 #content > .wrapper {
-	margin:5px;
 	height:100%;
 }
 
@@ -105,7 +107,6 @@ footer.navbar-default { background-color: #3C9764; }
 	display: flex; 
 }
 .container-flex-row {
-	display: flex;
 	flex-direction: row;
 	align-items: stretch;
 	height:100%;
@@ -113,7 +114,7 @@ footer.navbar-default { background-color: #3C9764; }
 }
 
 .container-flex-column {
-	display: flex;
+	align-items: stretch;
 	flex-direction: column;
 }
 
@@ -153,6 +154,34 @@ footer.navbar-default { background-color: #3C9764; }
   order: 5;                       /* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
 
+.order-6 {
+  -webkit-box-ordinal-group: 6;   /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-ordinal-group: 6;      /* OLD - Firefox 19- */
+  -ms-flex-order: 6;              /* TWEENER - IE 10 */
+  -webkit-order: 6;               /* NEW - Chrome */
+  order: 6;                       /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+.order-7 {
+  -webkit-box-ordinal-group: 7;   /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-ordinal-group: 7;      /* OLD - Firefox 19- */
+  -ms-flex-order: 7;              /* TWEENER - IE 10 */
+  -webkit-order: 7;               /* NEW - Chrome */
+  order: 7;                       /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+.order-8 {
+  -webkit-box-ordinal-group: 8;   /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-ordinal-group: 8;      /* OLD - Firefox 19- */
+  -ms-flex-order: 8;              /* TWEENER - IE 10 */
+  -webkit-order: 8;               /* NEW - Chrome */
+  order: 8;                       /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+.order-9 {
+  -webkit-box-ordinal-group: 9;   /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-ordinal-group: 9;      /* OLD - Firefox 19- */
+  -ms-flex-order: 9;              /* TWEENER - IE 10 */
+  -webkit-order: 9;               /* NEW - Chrome */
+  order: 9;                       /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
 .column-resizer {
 	cursor:col-resize;
 	width:3px;
@@ -167,7 +196,7 @@ footer.navbar-default { background-color: #3C9764; }
 }
 
 .row-resizer, .column-resizer {
-	background-color: #C8C8C8;
+	background-color: rgb(86, 85, 85);
 }
 
 
@@ -203,12 +232,12 @@ footer.navbar-default { background-color: #3C9764; }
 }
 
 .sidebar .panel-heading {
-	background-color:rgb(239, 239, 239);
+	background-color:rgb(200, 200, 200);
 	text-transform:uppercase;
 	font-size:0.8em;
 	border-radius: 0px;
 	padding: 5px;
-	color: gray;
+	color: rgb(86, 85, 85);
 	border:none;
 	font-weight: bold;
 }
@@ -259,21 +288,20 @@ footer.navbar-default { background-color: #3C9764; }
 
 /*  PANEL LIST */
 
-.panel-body .panel-list {
-  	border-top: 1px solid #BBB; 
+.panel-list {
   	padding:0px;
   	margin:0px;
 }
-.panel-body .panel-list li { 
+.panel-list li { 
   	position: relative;
  	display: block;  
   	border-bottom: 1px solid #BBB; 
 }
-.panel-body .panel-list li div {
+.panel-list li div {
 
 }
 
-.panel-body .panel-list .count {
+.panel-list .count {
   display: block; 
   position: absolute; 
   top: 0; 
@@ -284,7 +312,7 @@ footer.navbar-default { background-color: #3C9764; }
   font-weight: bold; 
   font-size: 0.875em; 
 }
-.panel-body .panel-list li:hover { 
+.panel-list li:hover { 
   background: #EFEFEF; 
 }
 
@@ -297,6 +325,7 @@ footer.navbar-default { background-color: #3C9764; }
   	font-weight:bold;
   	padding-right:20px;
 }
+
 .chartlist .index { 
 	display: block; 
 	position: absolute; 
@@ -415,28 +444,7 @@ ul.user-list  .name {
 #chatOutput .message .nickname { order:1; font-weight:bold; font-size:0.9em;}
 #chatOutput .message .time { order:3; font-weight:bold; font-size:0.5em;}
 
-
-/*
-#chatOutput li {
-	display:flex;
-	padding:2px;
-}
-#chatOutput .message {
-	background-color:black;
-	padding:5px;
-}
-#chatOutput .message p {
-	font-size:0.8em;
-}
-
-#chatOutput span:first-child {
-	font-weight:bold;
-}
-*/
-
 #task {
-	padding:10px;
-	
 	/*
 	background-color:white;
 	border:1px solid lightgray;
@@ -444,14 +452,21 @@ ul.user-list  .name {
 	-webkit-box-shadow: 0px 2px 5px 0px gray;
 	-moz-box-shadow:    0px 2px 5px 0px gray;
 	box-shadow:         0px 2px 5px 0px gray;*/
+
 }
 #task>div {
-	margin-bottom: 10px;
 }
+
+
+
 
 #taskHeader {
 	padding: 0px;
 	margin: 0px;
+}
+
+#taskHeader > div {
+	
 }
 
 #taskDate {
@@ -465,12 +480,6 @@ ul.user-list  .name {
 	background-color: #dff0d8;
 }
 
-#taskForm {
-	margin-top:10px;
-	padding:10px;
-	background-color: #fcf8e3;
-
-}
 
 #taskButtons {
 	float:right;
@@ -501,18 +510,6 @@ ul.user-list  .name {
 	resize:none;
 }
 
-#taskForm .col-md-10, #taskForm .col-md-1 {
-   margin:0px;
-   padding:0px;
-}
-
-
-#taskForm .form-group {
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-
-}
 
 .transparent { background-color: transparent; }
 

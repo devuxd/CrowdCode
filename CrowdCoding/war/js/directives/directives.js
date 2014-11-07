@@ -325,7 +325,8 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 myApp.directive('pressEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {
-            if(event.which === 13) {
+            console.log(event)
+            if(event.which === 13 && !event.shiftKey) {
                 scope.$apply(function (){
                     scope.$eval(attrs.pressEnter);
                 });
@@ -354,10 +355,67 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
     }
 });
 
-myApp.directive('resizer', function($document) {
+myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
 
-    
-    
+    return {
+     restrict: "A",
+        scope: {
+            panels: "=navbar",
+            icons: "=icons"
+        },
+        link: function($scope, $element, $attributes){
+
+
+            angular.forEach($scope.panels,function(value,key){
+                var toggler = $("<h3></h3>");
+                toggler.attr('id',value+'Toggler');
+                toggler.addClass('toggler');
+                toggler.html('<span class="glyphicon glyphicon-'+$scope.icons[key]+'"></span>'+value);
+
+                var elementBody = "<ng-include src=\"'/html/templates/panels/"+value+"_panel.html'\"></ng-include>";
+                elementBody = $('<div class="element-body">'+elementBody+'</div>');
+
+                var element = $("<div></div>");
+                element.attr('id',value+'Element');
+                element.addClass('element');
+
+                element.append(elementBody);
+               
+
+                $element.append(toggler);
+                $element.append(element);
+                $compile($element.contents())($scope);
+                console.log(elementBody.height());
+            });
+            
+            function activateElement(el){
+                // remove class active for all togglers
+                $element.find('.toggler').removeClass('active');
+                // reset height for all elements
+                $element.find('.element').height(0);
+
+                // add class active to the toggler
+                el.addClass('active');
+                // set max height for current element
+                var successor = el.next();
+                successor.height(successor.find('.element-body').outerHeight());
+            }
+
+            $element.find('.toggler').on('click',function(){
+                activateElement($(this));
+            })
+
+
+            $timeout(function(){
+                $element.find('.toggler:first-child').click();
+            },100);
+        }
+
+    }   
+}]);
+
+
+myApp.directive('resizer', function($document) {
 
     return function($scope, $element, $attrs) {
         // calculate the sum of the 2 element's dimensions in percentage
@@ -383,10 +441,10 @@ myApp.directive('resizer', function($document) {
                 }
                 //$element.css({ left: $($attrs.resizerRight).position().left + 'px' });
 
-                var totalSizePx  = $($attrs.resizerLeft).width()+$($attrs.resizerRight).width();
-                var totalSizePer = Math.round(totalSizePx / $element.parent().width() * 100);
+                var totalSizePx  = $($attrs.resizerLeft).outerWidth()+$element.outerWidth()+$($attrs.resizerRight).outerWidth();
+                var totalSizePer = Math.round(totalSizePx / $element.parent().outerWidth() * 100);
 
-                var leftWidthPer  = Math.round( (datas.mouseX-datas.leftX) / $element.parent().width() * 100 );
+                var leftWidthPer  = Math.round( (datas.mouseX-datas.leftX) / $element.parent().outerWidth() * 100 );
 
                 if( $attrs.resizerMain == "left" ){
                     
@@ -420,25 +478,30 @@ myApp.directive('resizer', function($document) {
                     mouseY: event.pageY
                 }
 
-                var totalSizePx  = $($attrs.resizerTop).height()+$($attrs.resizerBottom).height();
-                var totalSizePer = Math.round(totalSizePx / $element.parent().height() * 100);
+                var totalSizePx     = $($attrs.resizerTop).outerHeight()+$element.outerHeight()+$($attrs.resizerBottom).outerHeight();
+                var resizerHeightPx = $element.outerHeight();
+                var topHeightPx     = (datas.mouseY-datas.topY)  ;
+                var bottomHeightPx  = totalSizePx - resizerHeightPx - topHeightPx ;
 
-                var topHeightPer   = Math.round( (datas.mouseY-datas.topY) / $element.parent().height() * 100 );
-                
                 if( $attrs.resizerMain == "top" ){
 
-                    var bottomHeightPer = totalSizePer - topHeightPer;
+                    
 
                 } else {
 
-                    var bottomHeightPer = totalSizePer - topHeightPer;
+                   
                 }
 
-                $($attrs.resizerTop).css({ height: topHeightPer + '%' });
-                $($attrs.resizerBottom).css({ height: bottomHeightPer + '%' });
+                if( topHeightPx + resizerHeightPx + bottomHeightPx == totalSizePx)
+                    console.log("MATCH");
+                else
+                    console.log("DONT MATCH");
 
-                console.log( [datas.mouseY,datas.topY,topHeightPer] );
-                console.log($($attrs.resizerTop).position());
+                console.log( [totalSizePx,topHeightPx+resizerHeightPx+bottomHeightPx,topHeightPx,resizerHeightPx,bottomHeightPx] );
+
+                $($attrs.resizerTop).css({ height: topHeightPx + 'px' });
+                $($attrs.resizerBottom).css({ height: bottomHeightPx  + 'px' });
+
             }
 
 
@@ -450,4 +513,51 @@ myApp.directive('resizer', function($document) {
             $document.unbind('mouseup', mouseup);
         }
     };
+});
+
+
+myApp.directive('chat', function($timeout, $rootScope,$firebase) {
+    return {
+        restrict: 'E',
+        templateUrl: '/html/templates/panels/chat_panel.html',
+        scope: {
+            //focusValue: "=syncFocusWith"
+        },
+        link: function($scope, $element, attrs) {
+            console.log("CHAT DIRECTIVE INITIALIZED");
+            $rootScope.chatActive = false;
+            $rootScope.toggleChat = function(){
+                $element.find('.chat').toggleClass('active');
+                $element.find('.output').scrollTop($element.find('.output').height())
+            }
+        },
+        controller: function($scope,$element){
+            var $output = $element.find('.output');
+
+            // create the reference and the sync
+            var chatRef  = new Firebase($rootScope.firebaseURL+'/chat').limit(10);
+            var sync = $firebase(chatRef); 
+                       
+            // bind the array to scope.leaders
+            $scope.messages = sync.$asArray();
+            $scope.messages.$watch(function(event){
+                if(event.event=='child_added'){
+                    console.log($element.find('.output'))
+                    $element.find('.output-wrapper').animate({
+                        scrollTop: 650//$element.find('.output').height()
+                    }, 100);
+                }
+            });
+
+            $scope.asd = "";
+            // key press function
+            $scope.addMessage = function(){
+                $scope.messages.$add({text: $scope.asd,createdAt: Date.now(),workerHandle: $rootScope.workerHandle}).then(function(ref) { 
+                    
+                });
+                $scope.asd = "";    
+                return true;
+            };
+        }
+    }
 });

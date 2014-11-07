@@ -18,6 +18,8 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
     $rootScope.loaded.ADTs=false;
 
 
+
+    
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
 		userService.login();
@@ -89,7 +91,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.test = {};
 	$scope.microtask = {};
 	$scope.templatePath = "";//"/html/templates/microtasks/";
-
+	$scope.validatorCondition = false;
 	//Whait for the inizializations of all service
 	//when the microtask array is syncronize with firebase load the first microtask
 
@@ -202,14 +204,6 @@ myApp.controller('ScoreController', ['$scope','$rootScope','$firebase', function
 }]);
 
 
-////////////////////////////////////
-// FUNCTIONS REFERENCE CONTROLLER //
-////////////////////////////////////
-myApp.controller('FunctionsReferenceController', ['$scope','$rootScope','$firebase','functionsService',function($scope,$rootScope,$firebase,functionsService) {
-	// bind the array to scope.leaders
-	$scope.functions = functionsService.getAll();
-}]);
-
 ////////////////////////////
 // LEADERBOARD CONTROLLER //
 ////////////////////////////
@@ -302,40 +296,6 @@ myApp.controller('NewsController', ['$scope','$rootScope','$firebase','$filter',
 	$scope.news = sync.$asArray();
 }]);
 
-/////////////////////
-// CHAT CONTROLLER //
-/////////////////////
-myApp.controller('ChatController', ['$scope','$rootScope','$firebase','$filter','$timeout',function($scope,$rootScope,$firebase,$filter,$timeout) {
-	// create the reference and the sync
-	var chatRef  = new Firebase($rootScope.firebaseURL+'/chat').limit(10);
-	var sync = $firebase(chatRef);
-	// bind the array to scope.leaders
-	$scope.messages = sync.$asArray();
-
-	$scope.messages.$watch(function(event){
-		if(event.event=='child_added'){
-			$timeout(function(){
-				//console.log($('#chatOutput > li').last().position().top);
-				$('#chatOutput').scrollTop($('#chatOutput > li').last().offset().top)
-			},200);
-		}
-	});
-
-	$scope.input = "";
-	// key press function
-	$scope.key = function(e){
-		//console.log("keypress "+e.keyCode);
-	    if (e.keyCode == 13)
-	    {
-	    	$scope.messages.$add({text: $scope.input,createdAt: Date.now(),workerHandle: $rootScope.workerHandle}).then(function(ref) {
-    		   // after the add event	   
-    		});
-	    	//chatRef.push({text: $('#chatInput').val(), workerHandle: '<%=workerHandle%>'});
-	    	$scope.input = "";
-	    	return false;
-	    }
-	};
-}]);
 
 
 //////////////////////

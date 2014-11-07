@@ -30,17 +30,22 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
+	<link href='http://fonts.googleapis.com/css?family=Merriweather:300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic|Lato:100normal,100italic,300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic' rel='stylesheet' type='text/css'>
+
 	<!-- Stylesheets -->
 	<link rel="stylesheet"  href="/include/jquery.rating.css" />
 	<link rel="stylesheet" href="../include/bootstrap/css/bootstrap.min.css" type="text/css" />
-	<link rel="stylesheet" href="/css/worker.css" type="text/css" />
-	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
-
 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/pastel-on-dark.css" type="text/css" />
+	<link rel="stylesheet" href="/include/codemirror/custom.css" type="text/css" />
+
+	<link rel="stylesheet" href="/css/worker_2_col.css" type="text/css" />
+	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
+
+
 
 
 
@@ -49,7 +54,7 @@
 <body ng-controller="AppController" >
 
 		<header>
-			<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<div class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
 				<div class="container-fluid">
 					<div class="navbar-header">
 						<span class="navbar-brand">
@@ -92,23 +97,6 @@
 					</ul>
 				</div>
 				
-
-
-
-<!--
-				<div id="userProfile" class="dropdown pull-right" >
-				  <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" >
-				    <img src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
-						{{workerHandle}}
-				    <span class="caret"></span>
-				  </a>
-
-				  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-				  	<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
-				  	<li><a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
-				  </ul>
-				</div>
--->
 			</div>
 		</header>
 
@@ -116,67 +104,47 @@
 	    <div class="container-flex-row">
 	        
 	        <!-- LEFT SIDEBAR -->
-	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1">
-	            <div class="sidebar-wrapper container-flex-column">
-					<!-- LEFT SIDEBAR PANELS -->
-					<ng-include src="'/html/templates/score_panel.html'" id="first"  class="order-1" style="height:33%;"></ng-include>
-					<ng-include src="'/html/templates/stats_panel.html'" id="second" class="order-3" style="height:33%;"></ng-include>
-					<ng-include src="'/html/templates/news_panel.html'"  id="third"  class="order-5" style="height:33%;"></ng-include> 
+	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
+	        	<h3 class="toggler">Leaderboard</h3>
+	        	<div class="element active" style="height:40%">
+	        		<div class="element-body">
+						<ng-include src="'/html/templates/panels/leaderboard_panel.html'"></ng-include>
+	        		</div>
+	        	</div>
 
-					<!-- LEFT SIDEBAR RESIZERS -->
-					<div class="row-resizer order-2" 
-			        	ng-show="true"
-			        	resizer="horizontal" 
-			    		resizer-width="5" 
-			    		resizer-top    = "#sidebarLeft #first" 
-			    		resizer-bottom = "#sidebarLeft #second"
-			    		resizer-main="top"
-			    		>
-	    			</div>
-					<div class="row-resizer order-4"
-			        	ng-show="true"
-			        	resizer="horizontal" 
-			    		resizer-width="5" 
-			    		resizer-top    = "#sidebarLeft #second" 
-			    		resizer-bottom = "#sidebarLeft #third"
-			    		resizer-main="top"></div>
-	            </div>
-	        </div>
-
-	        <!-- RIGHT SIDEBAR -->
-			<div ng-show="rightBar" id="sidebarRight" class="sidebar order-5">
-	           <div class="sidebar-wrapper container-flex-column">
-	           	
-					<ng-include src="'/html/templates/leaderboard_panel.html'"    id="first"  class="order-1" style="height:33%;"></ng-include>
-					<ng-include src="'/html/templates/online_workers_panel.html'" id="second"  class="order-3" style="height:33%;"></ng-include>
-					<ng-include src="'/html/templates/chat_panel.html'"           id="third" class="order-5" style="height:33%;" ></ng-include>
-					
-					<!-- LEFT SIDEBAR RESIZERS -->
-					<div class="row-resizer order-2" 
-			        	ng-show="true"
-			        	resizer="horizontal" 
-			    		resizer-width="5" 
-			    		resizer-top    = "#sidebarRight #first" 
-			    		resizer-bottom = "#sidebarRight #second"
-			    		resizer-main="top">
-	    			</div>
-					<div class="row-resizer order-3"
-			        	ng-show="true"
-			        	resizer="horizontal" 
-			    		resizer-width="5" 
-			    		resizer-top    = "#sidebarRight #second" 
-			    		resizer-bottom = "#sidebarRight #third"
-			    		resizer-main="bottom"></div>
-	           </div>
+	        	<h3 class="toggler">News</h3>
+	        	<div class="element active"  style="height:40%">
+	        		<div class="element-body">
+						<ng-include src="'/html/templates/panels/news_panel.html'"></ng-include>
+	        		</div>
+	        	</div>
 	        </div>
 
 	        <!-- CONTENT -->
-	        <div id="content" class="order-3">
-				<div class="wrapper" ng-controller="MicrotaskController" >
-					<form id="task" name="form" novalidate ng-class="{ 'form-horizontal': inlineForm }" >
-						<ng-include src="templatePath"></ng-include>
-					</form>
-				</div>
+	        <div id="content" class="order-3" ng-controller="MicrotaskController">
+				<form name="form" class="{{ inlineForm?'form-horizontal':''  }}"
+						  novalidate>
+					<div id="task"  class="task" style="" microtask >
+						<ng-include onload="initLayout()" src="templatePath"></ng-include>
+					</div>
+					<div class="button-bar">
+						<span class="pull-left">
+
+							<button ng-click="submit()" tabindex="99" class="btn btn-sm btn-primary" 
+									ng-disabled="form.$invalid" >
+									Submit
+							</button>
+							<button ng-click="$emit('skipMicrotask')" tabindex="100"   class="btn btn-sm"   >Skip</button>
+						</span>
+						<span class="pull-right">
+							<button ng-click="toggleChat()" tabindex="101" class="btn {{chatActive?'btn-chat-active':''}} btn-sm"  >
+
+								<span class="glyphicon glyphicon-comment"></span>
+							</button>
+						</span>
+						<span class="clearfix"></span>
+					</div>
+				</form>
 	        </div>
 
 
@@ -193,78 +161,11 @@
 	    		>
 	    	</div>
 
-
-	        <div class="column-resizer order-4" 
-	        	ng-show="rightBar"
-	        	resizer="vertical" 
-	    		resizer-width="5" 
-	    		resizer-left  = "#content" 
-	    		resizer-right = "#sidebarRight"
-	    		resizer-main="right"
-	    		resizer-max="20"
-	    		resizer-min="10">
-	    	</div>
-
 	    </div>    
 	</div>
-<!--
-<div id="wrapper" ng-init="leftBar=true;rightBar=true;">
-    <div class="container-fluid fullwidth no-margin no-padding">
-        <div class="row" >
-            <div ng-show="leftBar" class="col-md-2 sidebar sidebar-left no-padding ">
-               <div class="sidebar-controls">
-               	<div class="control glyphicon glyphicon-remove"ng-click="leftBar=!leftBar" ></div>
-               </div>
-               <div class="sidebar-wrapper">
-               	<ng-include src="'/html/templates/score_panel.html'"></ng-include>
-				<ng-include src="'/html/templates/stats_panel.html'"></ng-include>
-				<ng-include src="'/html/templates/news_panel.html'"></ng-include>
-               </div>
-            </div>
-            <div class="middle col-md-{{ 8+((leftBar)?0:2)+((rightBar)?0:2)}} "
-                 ng-class="{'col-md-offset-2': leftBar}">
-                 <div class="middle-wrapper">
 
-               <button ng-click="leftBar=!leftBar" >left</button>
-               <button ng-click="rightBar=!rightBar" >right</button>
-                 </div>
-            </div>
-            <div ng-show="rightBar" class="col-md-2 sidebar sidebar-right no-padding">
-               <div class="sidebar-controls">
-               	<div class="control glyphicon glyphicon-remove"ng-click="rightBar=!rightBar" ></div>
-               </div>
-               <div class="sidebar-wrapper"></div>
-            </div>
-        </div>
-    </div>    
-</div>-->
-    <!--
-	<div id="wrapper" class="container-fluid">
-		<div class="row row-eq-height">
 
-			<div id="leftBar" class="col-md-2 col-xs-2">
-				<ng-include src="'/html/templates/score_panel.html'"></ng-include>
-				<ng-include src="'/html/templates/stats_panel.html'"></ng-include>
-				<ng-include src="'/html/templates/news_panel.html'"></ng-include>
-				<ng-include src="'/html/templates/functions_reference_panel.html'"></ng-include>
-			</div>
-
-			<div id="container" class="col-md-8 col-xs-8" ng-controller="MicrotaskController" >
-				<form id="task" name="form" novalidate ng-class="{ 'form-horizontal': inlineForm }">
-					<ng-include src="templatePath"></ng-include>
-				</form>
-			</div>
-
-			<div id="rightBar" class="col-md-2 col-xs-2">
-			</div>
-
-		</div>
-	</div>-->
-
-	<footer class="navbar-default navbar-fixed-bottom">
-        	<button id="sendFeedbackBtn" type="button" class="btn btn-primary pull-right">Send Us Feedback!</button>
-			<span class="clearfix"></span>
-	</footer>
+	<chat></chat>
 
 	<ng-include src="'/html/templates/popups/popup_template.html'"></ng-include>
 
@@ -285,7 +186,7 @@
     <script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
     <script src="/include/angular-animate/angular-animate.min.js"></script><!-- Angular animate -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
-
+	
 
     <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> <!-- codemirror ui for Angularjs-->

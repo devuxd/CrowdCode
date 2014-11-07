@@ -46,13 +46,13 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 	$scope.codemirrorLoaded = function(codeMirror){
 
 		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "pastel-on-dark");
+		codeMirror.setOption("theme", "custom");
 		codeMirror.setOption("tabindex", "-1");
-		codeMirror.setSize(null,200);
+		codeMirror.setSize(null,'auto');
 		codeMirror.refresh();
 	}
 
-	$scope.submit = function(){
+	$rootScope.submit = function(){
 		// PREPARE FORM DATA HERE
 		formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
 		$scope.$emit('submitMicrotask',formData);

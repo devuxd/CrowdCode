@@ -1,0 +1,14 @@
+<div ng-controller="NewsController">
+	<ul class="sidebar-list news-list">
+		<li ng-if="news.length > 0" ng-repeat="n in news">
+			<span class="left">
+				<div class="text">{{n.description}}</div>
+			</span>
+			<span class="right">{{n.points}} points</span>
+	  		<div class="clearfix"></div>
+		</li>
+	</ul>
+	<div ng-if="news.length == 0" >
+		no news yet!
+	</div>
+</div>

@@ -111,49 +111,61 @@ public class CrowdServlet extends HttpServlet
 	
 	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{ 
-		
+		// retrieve the current user
+		UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser(); 
+        
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
 		System.out.println(path);
 		try {
-			
-
-			// PAGES URLS
-			if(Pattern.matches("/clientRequest",path)){
-				req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);
-			} else if(Pattern.matches("/welcome",path)){
+			// -- PATHS WITHOUT USER AUTHENTICATION
+			 if(Pattern.matches("/welcome",path)){
 				req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
-			} 
-			// USERS URLS
-			else if(Pattern.matches("/user/[\\w]*",path)){
-				doUser(req,resp,pathSeg);
-			}
-			// SUPERADMIN URLS
-			else if(Pattern.matches("/_admin/[\\w]*",path)){
-				req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);
-			} 
-			// PROJECT URLS match /word/ or /word/(word)*
-			else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
-				String projectId = pathSeg[1];
-				req.setAttribute("project", projectId);
-				Key<Project> projectKey = Key.create(Project.class, projectId);
-				boolean projectExists =  ( ofy().load().filterKey(projectKey).count() != 0 );
+			 } 
+		
+			// PATHS WITH USER AUTHENTICATION
+			 else if ( user != null ) { // if the user is authenticated
 				
-				System.out.println(pathSeg.length);
-				
-				if(!projectExists)
-					req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
-				else if ( pathSeg.length <= 2 ){
-					req.getRequestDispatcher("/html/angular.jsp").forward(req, resp);
-				} else if( pathSeg[2].equals("admin")){
-					doAdmin(req, resp, projectId, pathSeg);
-				} else if (pathSeg[2].equals("ajax")){
-					doAjax(req, resp, projectId, pathSeg);
+				// PAGES URLS
+				if(Pattern.matches("/clientRequest",path)){
+					req.getRequestDispatcher("/html/ClientRequestEditor.jsp").forward(req, resp);
 				}
-			// NOT FOUND 404 PAGE
+				// USERS URLS
+				else if(Pattern.matches("/user/[\\w]*",path)){
+					doUser(req,resp,user,pathSeg);
+				}
+				// SUPERADMIN URLS
+				else if(Pattern.matches("/_admin/[\\w]*",path)){
+					req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);
+				} 
+				// PROJECT URLS match /word/ or /word/(word)*
+				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
+					String projectId = pathSeg[1];
+					req.setAttribute("project", projectId);
+					Key<Project> projectKey = Key.create(Project.class, projectId);
+					boolean projectExists =  ( ofy().load().filterKey(projectKey).count() != 0 );
+					
+					System.out.println(pathSeg.length);
+					
+					if(!projectExists){
+						req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+						System.out.println("Project not found ("+projectId+")!");	
+					} else if ( pathSeg.length <= 2 ){
+						req.getRequestDispatcher("/html/angular_2_col.jsp").forward(req, resp);
+					} else if( pathSeg[2].equals("admin")){
+						doAdmin(req, resp, projectId, pathSeg);
+					} else if (pathSeg[2].equals("ajax")){
+						doAjax(req, resp, projectId, user, pathSeg);
+					}
+				// NOT FOUND 404 PAGE
+				} else {
+					req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+				}
+			// LOGIN PAGE
 			} else {
-				req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+				resp.sendRedirect(userService.createLoginURL(path));	
 			}
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
@@ -164,12 +176,10 @@ public class CrowdServlet extends HttpServlet
 		}
 	}
 	
-	private void doUser(HttpServletRequest req, HttpServletResponse resp, 
+	private void doUser(HttpServletRequest req, HttpServletResponse resp, User user,
 			final String[] pathSeg) throws IOException, ServletException, FileUploadException 
 	{	
-		// retrieve the current user
-		UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser(); 
+		
         
         if( pathSeg.length >= 3 ){
         	if (pathSeg[2].equals("picture")){
@@ -187,12 +197,8 @@ public class CrowdServlet extends HttpServlet
 	}
 	
 	private void doAjax(HttpServletRequest req, HttpServletResponse resp, 
-			final String projectID, final String[] pathSeg) throws IOException 
+			final String projectID, User user, final String[] pathSeg) throws IOException 
 	{	
-		// retrieve the current user
-		UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser(); 
-        
 		if (pathSeg[3].equals("fetch")){
 			doFetchMicrotask(req, resp, projectID, user);
 
