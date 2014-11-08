@@ -1,60 +1,107 @@
  <div ng-controller="WriteFunctionController">
 
-	 <h2 id="taskHeader">
-	 	<span id="taskTitle" >{{ microtask.type }}</span>
-	 	<span id="taskPoints" class="label label-default">{{ microtask.points}} points</span>
-	 </h2>
 
-
-	 <br />
-	 <div id="taskDescription" class="bg-success">
-
-
-		<div id="sketchPrompt" ng-show="microtask.promptType=='SKETCH'">
-			Can you implement the function below? <BR><BR>
+	<div class="section section-description " >
+		<div class="section-content no-padding" >
+			<ul class="microtask-details clearfix">
+				<li>{{ microtask.type }}</li>
+				<li>
+					<span>{{ microtask.points}} points</span>
+				</li>
+				<li>
+					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+				</li>
+			</ul>
 		</div>
+	</div>
 
-		<div id="descriptionChangedPrompt" ng-show="microtask.promptType=='DESCRIPTION_CHANGE'">
-			The description of a function called in the code below has changed. Can you update the code
-			(if necessary)?<BR>
-
-			<span class="original" style="display: none"><%=microtask.getOldFullDescription()%></span>
-		  	<span class="changed" style="display: none"><%=microtask.getNewFullDescription()%></span>
-			<span id="diff" class="diff"></span><BR><BR>
+	<div class="section section-description">
+		<div class="section-title" >
+		JOB DESCRIPTION
 		</div>
+		<div class="section-content" >
+			<div ng-show="microtask.promptType=='SKETCH'">
+				Can you implement the function below? <BR><BR>
+			</div>
 
-	 	<p>
-	 		<strong>Not sure how to do something? </strong> Indicate a line as <span
+			<div ng-show="microtask.promptType=='DESCRIPTION_CHANGE'">
+				The description of a function called in the code below has changed. Can you update the code
+				(if necessary)?<BR>
+
+		<!--  	<span class="original" style="display: none"><%=microtask.getOldFullDescription()%></span>
+			  	<span class="changed" style="display: none"><%=microtask.getNewFullDescription()%></span>
+				<span id="diff" class="diff"></span><BR><BR>-->
+			</div>
+
+
+
+
+		</div>
+	</div>
+
+
+
+	<div class="section section-description">
+		<div class="section-title" >
+			FUNCTION CONVENTION
+		</div>
+		<div class="section-content no-padding" >
+			<p>
+	 			<strong>Not sure how to do something? </strong> Indicate a line as <span
 	 			class="pseudoCode">pseudocode</span> by beginning it with <span
 	 			class="pseudoCode">'//#'</span>.
-	 	</p>
+	 		</p>
 
-	 	<p>
-	 		<strong>Want to call a function? </strong>Write a <span
-	 			class="pseudoCall">pseudocall</span> beginning it with <span
-	 			class="pseudoCall">'//! functionName(arguments,..)'</span>
-	 	</p>
+		 	<p>
+		 		<strong>Want to call a function? </strong>Write a <span
+		 			class="pseudoCall">pseudocall</span> beginning it with <span
+		 			class="pseudoCall">'//! functionName(arguments,..)'</span>
+		 	</p>
 
-	 	<p>
-	 		Note that all function calls are pass by value (i.e., if you pass an
-	 		object to a function and the function changes the object you will not
-	 		see the change).
-	 	</p>
+		 	<p>
+		 		Note that all function calls are pass by value (i.e., if you pass an
+		 		object to a function and the function changes the object you will not
+		 		see the change).
+		 	</p>
 
-	 	<p>
-	 		<strong>IMPORTANT:</strong> If you think the function may require more
-	 		than a few minutes to write, please use pseudocode and psuedocalls to
-	 		break up the function into smaller pieces that others can work on. If
-	 		you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW!
-	 	</p>
+		 	<p>
+		 		<strong>IMPORTANT:</strong> If you think the function may require more
+		 		than a few minutes to write, please use pseudocode and psuedocalls to
+		 		break up the function into smaller pieces that others can work on. If
+		 		you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW!
+		 	</p>
+	 	</div>
+	</div>
+	<div class="section-cols" >
+		<div class="container-flex-row">
+		<div class="section section-help" style="width:30%">
+			<div class="section-title" >
+				EXAMPLE
+			</div>
+			<div class="section-content" >
+				<div class="accordion-inner">
+					/**<br>
+				  descrizione eccola qua<br>
+				<br>
+				  @param Number add1 - primo addendo<br>
+				  @param Number add2 - secondo addendo<br>
+				<br>
+				  @return Number <br>
+				**/<br>
+				function somma(add1, add2){<br>
+					//#Mark this function as implemented by removing this line.<br>
+					return {}; <br>
+				}<br>
+				</div>
+						<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
 
-	 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>
-	 </div>
+			</div>
+		</div>
 
-	 <div id="taskForm" >
+		<div class="section section-form" style="width:70%;" >
 
-		<label for="code">Write function:</label>
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+
+<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
 		<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
 		<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
 			<span>There are some errors. Please fix them before submit:</span>
@@ -62,15 +109,17 @@
 				<li>{{error}}</li>
 			</ul>
 		</ul>
-		<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
-		<span class="clearfix"></span>
-	 </div>
 
-	 <br/>
-	 <div class="task-buttons pull-right">
-	 	<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
-	 	<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
-	 </div>
-	 <div class="clearfix"></div>
+		</div>
 
+		</div>
+	</div>
+
+
+
+
+
+
+<div class="clearfix"></div>
+-->
 </div>

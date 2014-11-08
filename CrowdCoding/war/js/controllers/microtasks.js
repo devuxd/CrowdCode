@@ -194,7 +194,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 	$scope.console = {
 		content: [],
-		newLinesCount: 0 
+		newLinesCount: 0
 	}
 
  	//retrieve tests for the current function
@@ -206,11 +206,11 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	$scope.codemirrorLoaded = function(myCodeMirror){
 
 	$scope.runTests = function(){
-		// set testsRunning flag 
+		// set testsRunning flag
 		$scope.testsRunning = true;
 
 		if( typeof codemirror === 'undefined' ){ // IF BODY NOT YET LOADED (first run of the function)
-			
+
 			testRunnerService.runTestsForFunction($scope.microtask.functionID).then(function(data){
 				// copy passed tests content locally
 				$scope.passedTests = data.passedTests;
@@ -219,7 +219,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 				$scope.console.content = $scope.console.content.concat(data.console);
 
 				// show notifications about new lines added to the console
-				if( $scope.selectedTab != 'console') 
+				if( $scope.selectedTab != 'console')
 					$scope.console.newLinesCount += data.console.length;
 
 				// reset testsRunning flag
@@ -235,13 +235,13 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 			// retrieve the codemirror content and select the body
 			var text = codemirror.getValue();
-		
+
 			var ast = esprima.parse(text, {loc: true});
 			var body = codemirror.getRange(
 					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
 				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
 
-			// run the tests from the service 
+			// run the tests from the service
 			testRunnerService.runTestsForFunction($scope.microtask.functionID,body).then(function(data){
 				// copy passed tests content locally
 				$scope.passedTests = data.passedTests;
@@ -250,7 +250,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 				$scope.console.content = $scope.console.content.concat(data.console);
 
 				// show notifications about new lines added to the console
-				if( $scope.selectedTab != 'console') 
+				if( $scope.selectedTab != 'console')
 					$scope.console.newLinesCount += data.console.length;
 
 				// reset testsRunning flag
@@ -263,7 +263,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 			});
 		}
 	};
-	// run the tests 
+	// run the tests
 	$scope.runTests();
 
 	$scope.dispute = false;
@@ -274,7 +274,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	}
 
 	// check if test is passed
-	// testKey is the key of the test in $scope.tests 
+	// testKey is the key of the test in $scope.tests
 	$scope.testPassed = function(testKey){
 		if( $scope.passedTests != 'undefined' && $scope.passedTests.indexOf(testKey) !=-1 )
 			return true;
@@ -297,10 +297,10 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		if ($scope.funct.name.startsWith('CR'))
 			functionsService.makeHeaderAndParameterReadOnly(codemirror);
 
-		// refresh codemirror when the tab is changed 
+		// refresh codemirror when the tab is changed
 		// otherwise the line numbers are not properly aligned
-		$scope.$watch(function(){ return $scope.selectedTab },function(){ 
-			$timeout(function(){codemirror.refresh()},10); 
+		$scope.$watch(function(){ return $scope.selectedTab },function(){
+			$timeout(function(){codemirror.refresh()},10);
 		});
 
 	 	// on code change highlight pseudo segments
@@ -312,7 +312,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
  	};
 
-	
+
 
 	console.log("initialization of debug test failure");
 
@@ -322,7 +322,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 			// return jSON object
 			console.log($scope.disputedTest);
 
-			formData = { 
+			formData = {
 				name:        $scope.disputedTest.description,
 				description: $scope.disputedTest.disputeText,
 				testId:      $scope.disputedTest.$id
@@ -526,6 +526,21 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 	console.log("initialization of write function");
 	 $scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
+
+	 $scope.codemirrorExample= function(codeMirror){
+
+
+
+
+			codeMirror.setOption("readOnly", "true");
+			codeMirror.setOption("theme", "custom");
+			codeMirror.setOption("tabindex", "-1");
+			codeMirror.setSize(null,'auto');
+			codeMirror.refresh();
+	 };
+
+
+
      $scope.codemirrorLoaded = function(myCodeMirror){
      	console.log("codemirror loaded");
 			codemirror = myCodeMirror;
@@ -536,6 +551,10 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 			codemirror.setSize(null, 500);
 			codemirror.setOption("theme", "vibrant-ink");
 			codemirror.setValue($scope.code);
+
+
+
+
 
 			functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
 
@@ -725,7 +744,7 @@ $rootScope.inlineForm=true;
 						simpleTestInputs: [],
 						simpleTestOutput: '' };
 		} else {
-			
+
 			formData = { code: testCode,
 						 hasSimpleTest: true,
 						 inDispute: false,

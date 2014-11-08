@@ -1,9 +1,9 @@
 <div ng-controller="JavaTutorialController">
 
- 
+
 
 <a href="#javascriptTutorial"  role="button"  data-toggle="modal" ng-click="show = !show" class="muted pull-left minorNote">
-	<small>Help, I don't know Javascript!</small>
+	<small>Help, I don't know Javascript!{{show}}</small>
 </a>
 
 
@@ -18,8 +18,8 @@
 				<button type="button" class="close" data-dismiss="modal" ng-click="show = !show">X</button>
 			</div>
 			<div class="modal-footer">
-			  <div ui-codemirror="{ onLoad : codemirrorLoaded }" ></div>
-			</div>	
+	 			 <div ui-codemirror="{ onLoad : codemirrorLoaded }" ></div>
+			</div>
 		</div>
 	</div>
 </div>
