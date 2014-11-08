@@ -70,110 +70,87 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 	console.log("initialization of review controller");
 
 	$scope.review = {};
-	$scope.review.reviewText="";
-	$scope.review.codeMirrorCode="";
+	$scope.review.reviewText   = "";
+	$scope.review.functionCode = "";
 	//setup codemirror box
 
 	$scope.codemirrorLoaded = function(codeMirror){
 
-		codeMirror.setSize(null,200);
+		codeMirror.setSize(null,'auto');
 		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "pastel-on-dark");
+		codeMirror.setOption("theme", "custom");
 
 		codeMirror.refresh();
 	}
 
 	//load the microtask to review
-	//var microtaskUnderReviewSync=$firebase( new Firebase ($rootScope.firebaseURL+'/microtasks/'+$scope.microtask.microtaskIDUnderReview));
+	$scope.review.microtask = microtasksService.get($scope.microtask.microtaskIDUnderReview);
+	
+	console.log("TYPE="+$scope.review.microtask.type);
 
-	//$scope.review.microtaskUnderReview = microtaskUnderReviewSync.$asObject();
-	//$scope.review.microtaskUnderReview.$loaded().then(function(){
+	if ($scope.review.microtask.type == 'WriteTestCases'){
+		//retrievs the reference of the existing test cases to see if the are differents
+		$scope.review.testcases = $scope.review.microtask.submission.testCases;
 
-	$scope.review.microtaskUnderReview=microtasksService.get($scope.microtask.microtaskIDUnderReview);
+		//load the version of the function with witch the test cases where made
+		var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtask.functionID
+				+ '/' + $scope.review.microtask.submission.functionVersion));
+		var functionUnderTest = functionUnderTestSync.$asObject();
+		functionUnderTest.$loaded().then(function(){
+			$scope.review.functionCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
+		});
 
+	} else if ($scope.review.microtask.type == 'WriteTest') {
 
-		if ($scope.review.microtaskUnderReview.type == 'WriteTestCases')
-		{
-			//retrievs the reference of the existing test cases to see if the are differents
-			$scope.review.currenttestcases=testsService.testCasesForFunction($scope.review.microtaskUnderReview.functionID);
+		//load the version of the function with witch the test cases where made
+		var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtask.functionID
+				+ '/' + $scope.review.microtask.submission.functionVersion));
+		var functionUnderTest = functionUnderTestSync.$asObject();
+		functionUnderTest.$loaded().then(function(){
+			$scope.review.functionCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
+		});
+	}
+	/*
+	else if ($scope.review.microtaskUnderReview.type == 'WriteFunction')
+	{
 
-			//load the version of the function with witch the test cases where made
-			var functionUnderTestSync =$firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtaskUnderReview.functionID
-					+ '/' + $scope.review.microtaskUnderReview.submission.functionVersion));
-			$scope.functionUnderTest = functionUnderTestSync.$asObject();
-			$scope.functionUnderTest.$loaded().then(function(){
+		$scope.review.codeMirrorCode=functionsService.renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header+$scope.review.microtaskUnderReview.submission.code;
 
-			$scope.review.codeMirrorCode=functionsService.renderDescription($scope.functionUnderTest)+$scope.functionUnderTest.header;
-			});
+	}
+	else if ($scope.review.microtaskUnderReview.type == 'WriteCall')
+	{
 
-		}
-		else if ($scope.review.microtaskUnderReview.type == 'WriteTest')
-		{
+		$scope.functionChanged=functionsService.get($scope.review.microtaskUnderReview.functionID);
+		$scope.review.codeMirrorCode=functionsService.renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
 
-			$scope.functionUnderTest=functionsService.get($scope.review.microtaskUnderReview.functionID);
-			$scope.review.codeMirrorCode=functionsService.renderDescription($scope.functionUnderTest)+$scope.functionUnderTest.header;
+	}
+	else if ($scope.review.microtaskUnderReview.type == 'WriteFunctionDescription')
+	{
 
-		}
-		else if ($scope.review.microtaskUnderReview.type == 'WriteFunction')
-		{
+		$scope.review.codeMirrorCode=functionsService.renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header;
 
-			$scope.review.codeMirrorCode=functionsService.renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header+$scope.review.microtaskUnderReview.submission.code;
-
-		}
-		else if ($scope.review.microtaskUnderReview.type == 'WriteCall')
-		{
-
-			$scope.functionChanged=functionsService.get($scope.review.microtaskUnderReview.functionID);
-			$scope.review.codeMirrorCode=functionsService.renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
-
-		}
-		else if ($scope.review.microtaskUnderReview.type == 'WriteFunctionDescription')
-		{
-
-			$scope.review.codeMirrorCode=functionsService.renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header;
-
-		}
+	}*/
 
 
 	//Star rating manager
-	$scope.review.rate = 0;
-	$scope.review.max = new Array(5);
-	$scope.value=0;
+	$scope.review.mouseOn   = 0;
+	$scope.review.maxRating = 5;
+	$scope.review.rating    = 0;
 
-	$scope.getImageSource = function(index){
-
-		if(index < $scope.value)
-			return "/include/imgs/star3Full.png";
-		return "/include/imgs/star3Empty.png";
+	$scope.rate = function(value) {
+		if (value >= 0 && value <= $scope.review.maxRating ) {
+			$scope.review.rating = value;
+		}
 	};
 
-	 $scope.rate = function(value) {
-    if (value >= 0 && value <= $scope.review.max.length ) {
-    	$scope.review.rate=value;
-    }
-  };
-
-
-  $scope.reset = function() {
-	    $scope.value = $scope.review.rate;
-	  };
-
-  $scope.enter = function(value) {
-	      $scope.value = value;
-	  };
-
-	$scope.submit = function(){
-		console.log("review controlle prepare form data");
+	$rootScope.submit = function(){
 
 		formData = {
-    		microtaskIDReviewed: $scope.microtask.microtaskIDUnderReview,
-    		reviewText: $scope.review.reviewText,
-			qualityScore: $scope.review.rate
+			microtaskIDReviewed: $scope.microtask.microtaskIDUnderReview,
+			reviewText:          $scope.review.reviewText,
+			qualityScore:        $scope.review.rating
 		};
-
-
-
-		console.log(formData);
+		
 		$scope.$emit('submitMicrotask',formData);
 	}
 
@@ -316,7 +293,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 	console.log("initialization of debug test failure");
 
-	$scope.submit = function(){
+	$rootScope.submit = function(){
 		formData = {};
 		if($scope.dispute){
 			// return jSON object
@@ -399,7 +376,7 @@ myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','te
 		codeMirror.refresh();
 	}
 
-	$scope.submit = function(){
+	$rootScope.submit = function(){
 		console.log("reuse search controlle prepare form data");
 		//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
 		if($scope.reuseSearch.selected==-1)
@@ -476,7 +453,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
  	};
 
 
-	$scope.submit = function(){
+	$rootScope.submit = function(){
 		console.log("write call controlle prepare form data");
 		var text = codemirror.getValue();
  		var ast = esprima.parse(text, {loc: true});
@@ -558,7 +535,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 	 	};
 
 
-	$scope.submit = function(){
+	$rootScope.submit = function(){
 		var text = codemirror.getValue();
  		var ast = esprima.parse(text, {loc: true});
 
@@ -634,7 +611,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 	//Add the first parameter
 	$scope.addParameter();
 
-	$scope.submit = function(){
+	$rootScope.submit = function(){
 		console.log("write function description controlle prepare form data");
 
 		var paramNames=[];
@@ -669,23 +646,6 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$filter','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,$filter,testsService,functionsService, ADTService) {
 
 
-$rootScope.inlineForm=true;
-
-    $scope.$watch('jsonData', function(json) {
-        $scope.jsonString = $filter('json')(json);
-    }, true);
-    $scope.$watch('jsonString', function(json) {
-        try {
-            $scope.jsonData = JSON.parse(json);
-            $scope.wellFormed = true;
-        } catch(e) {
-            $scope.wellFormed = false;
-        }
-    }, true);
-
-
-
-
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	console.log("initialization of write test controller");
 	// initialize testData
@@ -708,13 +668,14 @@ $rootScope.inlineForm=true;
 	$scope.codemirrorLoaded = function(codeMirror){
 
 		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "pastel-on-dark");
+		codeMirror.setOption("theme", "custom");
 		codeMirror.setOption("tabindex", "-1");
+		codeMirror.setSize(null,'auto');
 		codeMirror.refresh();
 	}
 
 
-	$scope.submit = function(){
+	$rootScope.submit = function(){
 		console.log("write test controlle prepare form data");
 		if($scope.dispute){
 			// return jSON object
@@ -726,11 +687,12 @@ $rootScope.inlineForm=true;
 						simpleTestOutput: '' };
 		} else {
 			
-			formData = { code: testCode,
+			formData = { code: '',
 						 hasSimpleTest: true,
 						 inDispute: false,
 						 disputeText: '',
-		     			 simpleTestInputs: $scope.testData.inputs, simpleTestOutput: $scope.testData.output };
+		     			 simpleTestInputs: $scope.testData.inputs, 
+		     			 simpleTestOutput: $scope.testData.output };
 		}
 
 

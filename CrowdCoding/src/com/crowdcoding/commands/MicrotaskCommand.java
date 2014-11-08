@@ -70,8 +70,8 @@ public abstract class MicrotaskCommand extends Command
 		
 		public void execute(Microtask microtask, Project project)
 		{
-			//System.out.println("-- SUBMITTING MICROTASK -- ");
-			//System.out.println(jsonDTOData);
+			System.out.println("-- SUBMITTING MICROTASK -- ");
+			System.out.println(jsonDTOData);
 			microtask.submit(jsonDTOData, workerID, project);
 		}		
 	}

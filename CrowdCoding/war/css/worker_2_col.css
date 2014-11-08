@@ -362,6 +362,22 @@ h1, h2, h3, h4 {
 }
 
 
+span.rating-star {
+	 background-image: url('/img/stars.png');
+	 background-position: 25px 0px;
+
+	 width:25px;
+	 height:25px;
+	 display:block;
+	 float:left;
+}
+
+span.rating-star.full {
+	 background-position: 0px 0px;
+}
+
+.rating-separator { float:left; content:'s'; width:1px; height:25px; background-color: black;}
+
 /* ------ FLEXBOX ORDERS -------- */
 
 .column-resizer {
