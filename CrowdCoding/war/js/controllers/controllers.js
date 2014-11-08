@@ -135,7 +135,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				// debug stuff
 				 console.log("data: ");console.log(data);
 				 console.log("microtask: ");console.log($scope.microtask);
-				// console.log("function: ");console.log($scope.funct);
+				 console.log("function: ");console.log($scope.funct);
 				 console.log("test: ");console.log($scope.test);
 
 

@@ -1,10 +1,19 @@
-<div ng-controller="WriteTestController">
+<div ng-controller="WriteTestController" class="task-container container-flex-column">
 
-	<h2 id="taskHeader">
-		<span id="taskTitle" >{{datas.title}}</span>
-		<span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
-	</h2>
-	<br />
+	<div class="section section-description " >
+		<div class="section-content no-padding" >
+			<ul class="microtask-details clearfix">
+				<li>{{datas.title}}</li>
+				<li>
+					<span>{{datas.submitValue}} points</span>
+				</li>
+				<li>
+					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
 	<div id="taskDescription">
 
 			<div ng-show="microtask.promptType=='WRITE'">
@@ -51,10 +60,6 @@
 		   		<span class="clearfix"></span>
 
 		   	</div>
-
-
-
-	 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>
 
 	</div>
 
@@ -107,21 +112,12 @@
 	</div>
 	<br/>
 
-	<div id="popUp" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-		<div class="logout-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h4 id="logoutLabel">You need to fix the errors before you submit.</h4>
-		</div>
-		<div class="modal-body"></div>
-		<div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		</div>
-	</div>
-
+<!--
 	<br/>
 	<div class="task-buttons pull-right">
 		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
 		<button ng-click="$emit('skipMicrotask')"   class="btn btn-link">Skip</button>
 	</div>
 	<div class="clearfix"></div>
+-->
 </div>
