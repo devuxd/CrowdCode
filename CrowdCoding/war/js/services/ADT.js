@@ -27,18 +27,20 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 
 			// hook from firebase all the functions declarations of the project
 			var ADTSync = $firebase(new Firebase($rootScope.firebaseURL+'/ADTs/ADTs'));
-
-			ADTs = ADTSync.$asArray();
-			ADTs.$loaded().then(function(){
-				if(ADTs.length>0){
-					for(var i; i<ADTs.length;i++ ){
-						typeNames.push(ADTs[i].name);
-						nameToADT[ADTs[i].name] = ADTs[i];
+			var firebaseADTs=[];
+			firebaseADTs = ADTSync.$asArray();
+			firebaseADTs.$loaded().then(function(){
+				if(firebaseADTs.length>0){
+					for(var i=0; i<firebaseADTs.length;i++ ){
+						typeNames.push(firebaseADTs[i].name);
+						nameToADT[firebaseADTs[i].name] = firebaseADTs[i];
+						ADTs.push(firebaseADTs[i]);
 					}
 				}
 
 				console.log("adt");
-				console.log(ADTs);
+				console.log(nameToADT);
+
 				$rootScope.loaded.ADTs=true;
 
 			});
@@ -67,8 +69,30 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 		function addDefaultADT()
 		{
 			typeNames.push('String');
+			ADTs.push( { name:'String',
+									description:'A String simply stores a series of characters like \"John Doe\".'+
+												'A string can be any text inside double quotes',
+									example:'\"John Doe\"',
+									structure:[]
+									});
+
 			typeNames.push('Number');
+			ADTs.push( { name:'Number',
+									description:'Number is the only type of number.'+
+												'Numbers can be written with, or without, decimals.',
+
+
+									example:'14.00',
+									structure:[]
+									});
+
 			typeNames.push('Boolean');
+			ADTs.push({ name:'Boolean',
+									description:'A Boolean represents one of two values: true or false.',
+									example:'true',
+									structure:[]
+									});
+
 		}
 
 		function getAllADTs()

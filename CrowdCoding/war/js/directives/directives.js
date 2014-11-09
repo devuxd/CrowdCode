@@ -119,9 +119,11 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
             errors.push('No function block could be found. Make sure that there is a line that starts with "function".');
             return false;
         }
-         // 2. If the are syntactical errors displays the error and returns
+
+        // 2. If the are syntactical errors displays the error and returns
         if(hasSyntacticalErrors(code))
         	return false;
+
         // 3. Trys to build the Est if not displays the error and return
         try {
         	ast = esprima.parse(code, {loc: true});
@@ -131,6 +133,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         	errors.push("Error "+e.message);
         	return false;
         }
+
         // 4. checks if the are ast Errors and displays it
     	hasASTErrors(code, ast);
     	// 5. checks if the are errors in the descriptions structure
@@ -150,6 +153,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         catch (e) { console.log("Error in running JSHHint. " + e.name + " " + e.message); }
 
         if(!lintResult){
+
             errors = errors.concat(checkForErrors(JSHINT.errors));
             if(errors.length > 0) {
                 return true;
@@ -165,6 +169,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
        // console.log(ast);
     	console.log("hasASTErrors");
         var errorMessages = [];
+
 
         // Check for AST errors
         if (ast.body.length == 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
@@ -375,8 +380,8 @@ myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
     return {
      restrict: "A",
         scope: {
-            panels: "=navbar",
-            icons: "=icons"
+            panels: "=ADT",
+        //    icons: "?=icons"
         },
         link: function($scope, $element, $attributes){
 
@@ -385,7 +390,7 @@ myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
                 var toggler = $("<h3></h3>");
                 toggler.attr('id',value+'Toggler');
                 toggler.addClass('toggler');
-                toggler.html('<span class="glyphicon glyphicon-'+$scope.icons[key]+'"></span>'+value);
+            //    toggler.html('<span class="glyphicon glyphicon-'+$scope.icons[key]+'"></span>'+value);
 
                 var elementBody = "<ng-include src=\"'/html/templates/panels/"+value+"_panel.html'\"></ng-include>";
                 elementBody = $('<div class="element-body">'+elementBody+'</div>');
@@ -395,14 +400,14 @@ myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
                 element.addClass('element');
 
                 element.append(elementBody);
-               
+
 
                 $element.append(toggler);
                 $element.append(element);
                 $compile($element.contents())($scope);
                 console.log(elementBody.height());
             });
-            
+
             function activateElement(el){
                 // remove class active for all togglers
                 $element.find('.toggler').removeClass('active');
@@ -426,7 +431,78 @@ myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
             },100);
         }
 
-    }   
+    }
+}]);
+
+
+
+
+myApp.directive('adtBar', ['$compile','$timeout','ADTService',function($compile,$timeout,ADTService) {
+
+    return {
+     restrict: "EA",
+
+        link: function($scope, $element, $attributes){
+
+           	$scope.ADTs=ADTService.getAllADTs();
+
+
+
+
+            angular.forEach($scope.ADTs,function(value,key){
+
+	        	console.log("direttiva "+value.name);
+
+	        var	childScope=$scope.$new();
+	        	childScope.ADT=value;
+	            var toggler = $("<h3></h3>");
+	          //  toggler.attr('id',value.name+'Toggler');
+	            toggler.addClass('toggler-adt');
+	           toggler.html(value.name);
+
+	            var elementBody = "<ng-include src=\"'/html/templates/adt_detail.html'\"></ng-include>";
+	            elementBody = $('<div class="element-body-adt">'+elementBody+'</div>');
+
+	            var element = $("<div></div>");
+	            element.attr('id',value.name+'Element');
+	            element.addClass('element-adt');
+
+	            element.append(elementBody);
+
+
+	            $element.append(toggler);
+	            $element.append(element);
+	           	$compile($element.contents())(childScope);
+	            console.log(elementBody.height());
+	        });
+
+
+
+
+            function activateElement(el){
+                // remove class active for all togglers
+                $element.find('.toggler-adt').removeClass('active');
+                // reset height for all elements
+                $element.find('.element-adt').height(0);
+
+                // add class active to the toggler
+                el.addClass('active');
+                // set max height for current element
+                var successor = el.next();
+                successor.height(successor.find('.element-body-adt').outerHeight());
+            }
+
+            $element.find('.toggler-adt').on('click',function(){
+                activateElement($(this));
+            })
+
+
+            $timeout(function(){
+                $element.find('.toggler-adt:first-child').click();
+            },100);
+        }
+
+    }
 }]);
 
 
@@ -435,7 +511,7 @@ myApp.directive('resizer', function($document) {
     return function($scope, $element, $attrs) {
         // calculate the sum of the 2 element's dimensions in percentage
         // respect to the parent element dimension
-        // - height: if vertical resizer 
+        // - height: if vertical resizer
         // - width:  if horizontal resizer
         // and position the resize bar in between the elements
 
@@ -462,8 +538,8 @@ myApp.directive('resizer', function($document) {
                 var leftWidthPer  = Math.round( (datas.mouseX-datas.leftX) / $element.parent().outerWidth() * 100 );
 
                 if( $attrs.resizerMain == "left" ){
-                    
-                    
+
+
                     if(leftWidthPer < 0)            leftWidthPer = 0;
                     if(leftWidthPer > totalSizePer) leftWidthPer = totalSizePer;
                     if($attrs.resizerMin && leftWidthPer < $attrs.resizerMin) leftWidthPer = $attrs.resizerMin;
@@ -485,7 +561,7 @@ myApp.directive('resizer', function($document) {
 
                 $($attrs.resizerLeft).css({ width: leftWidthPer + '%' });
                 $($attrs.resizerRight).css({ width: rightWidthPer + '%' });
-            
+
             } else {
                 var datas = {
                     topY:  $($attrs.resizerTop).offset().top ,
@@ -500,11 +576,11 @@ myApp.directive('resizer', function($document) {
 
                 if( $attrs.resizerMain == "top" ){
 
-                    
+
 
                 } else {
 
-                   
+
                 }
 
                 if( topHeightPx + resizerHeightPx + bottomHeightPx == totalSizePx)
@@ -551,8 +627,8 @@ myApp.directive('chat', function($timeout, $rootScope,$firebase) {
 
             // create the reference and the sync
             var chatRef  = new Firebase($rootScope.firebaseURL+'/chat').limit(10);
-            var sync = $firebase(chatRef); 
-                       
+            var sync = $firebase(chatRef);
+
             // bind the array to scope.leaders
             $scope.messages = sync.$asArray();
             $scope.messages.$watch(function(event){
@@ -567,10 +643,10 @@ myApp.directive('chat', function($timeout, $rootScope,$firebase) {
             $scope.asd = "";
             // key press function
             $scope.addMessage = function(){
-                $scope.messages.$add({text: $scope.asd,createdAt: Date.now(),workerHandle: $rootScope.workerHandle}).then(function(ref) { 
-                    
+                $scope.messages.$add({text: $scope.asd,createdAt: Date.now(),workerHandle: $rootScope.workerHandle}).then(function(ref) {
+
                 });
-                $scope.asd = "";    
+                $scope.asd = "";
                 return true;
             };
         }

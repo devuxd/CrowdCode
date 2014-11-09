@@ -23,7 +23,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.getAllDescribedFunctionCode = function(idFunction) { return getAllDescribedFunctionCode(idFunction); };
 		this.getAllDescribedFunctionNames = function(idFunction) { return getAllDescribedFunctionNames(idFunction); };
 	 	this.isValidParamDescription = function(line) { return isValidParamDescription(line); };
-		this.findMatches = function(searchText) { return findMatches(searchText); };
+		this.findMatches = function(searchText, functionSourceName) { return findMatches(searchText, functionSourceName); };
 		this.makeHeaderAndParameterReadOnly = function(codemirror){return makeHeaderAndParameterReadOnly(codemirror);};
 		this.highlightPseudoSegments =function(codemirror,marks,highlightPseudoCall){ return highlightPseudoSegments(codemirror,marks,highlightPseudoCall);};
 		this.findNextWord = function (text, start){ return findNextWord(text, start);};
@@ -63,7 +63,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			$.each(functions, function(i, value)
 			{
 				if(value.described && value.id!=idFunction)
+					{
 					functionNames.push(value.name);
+					}
 
 			});
 
@@ -227,16 +229,18 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 
 	// Given a String return all the functions that have either or in the description or in the header that String
-	function findMatches(searchText)
+	function findMatches(searchText, functionSourceName)
 	{
 		var re = new RegExp(searchText);
 		var results = [];
 
 		$.each(functions, function(index, value)
 		{
+			if(value.name!=functionSourceName){
 			var score = computeMatchScore(value, re);
 			if (score > 0)
 				results.push({ 'score': score, 'value': value});
+			}
 		});
 
 		return results;
@@ -420,6 +424,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 		// Highlight regions of code that  pseudocalls or pseudocode
 	function highlightPseudoSegments(codemirror,marks,highlightPseudoCall){
+
 		var text = codemirror.getValue();
 
 		// Clear the old marks (if any)
@@ -472,12 +477,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	function makeHeaderAndParameterReadOnly(codemirror)
 	{
 		var text = codemirror.getValue();
+
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		console.log("text");
+		console.log("text "+text);
 		//console.log(codemirror);
 		var readOnlyLines = indexesOfTheReadOnlyLines(text);
-
+		console.log(readOnlyLines);
 		for(var i=0; i<readOnlyLines.length; i++)
 		{
 			codemirror.getDoc().markText({line: readOnlyLines[i], ch: 0},

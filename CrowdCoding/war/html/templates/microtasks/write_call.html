@@ -19,7 +19,8 @@
 		JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
-			The crowd found the function {{funct.header}} to solve the pseudocall:<br>{{datas.pseudocall}}
+			The crowd found that the pseudocall:<span class="pseudoCall">{{datas.pseudoCall}}</span>
+			can be solved using the function below.
 			Can you replace the pseudocall with a call to this function, or find another way to do it?
 
 		</div>
@@ -41,7 +42,7 @@
 				</div>
 				<div class="section-content" >
 					<div class="accordion-inner">
-						<ng-include src="/html/templates/type_browser.html"></ng-include> >
+						<adt-bar></adt-bar>
 					</div>
 				</div>
 			</div>

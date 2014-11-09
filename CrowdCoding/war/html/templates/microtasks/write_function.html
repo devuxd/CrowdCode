@@ -43,7 +43,7 @@
 
 	<div class="section section-description">
 		<div class="section-title" >
-			FUNCTION CONVENTION
+			FUNCTION CONVENTIONS
 		</div>
 		<div class="section-content no-padding" >
 			<p>
@@ -74,52 +74,29 @@
 	</div>
 	<div class="section-cols" >
 		<div class="container-flex-row">
-		<div class="section section-help" style="width:30%">
-			<div class="section-title" >
-				EXAMPLE
-			</div>
-			<div class="section-content" >
-				<div class="accordion-inner">
-					/**<br>
-				  descrizione eccola qua<br>
-				<br>
-				  @param Number add1 - primo addendo<br>
-				  @param Number add2 - secondo addendo<br>
-				<br>
-				  @return Number <br>
-				**/<br>
-				function somma(add1, add2){<br>
-					//#Mark this function as implemented by removing this line.<br>
-					return {}; <br>
-				}<br>
+			<div class="section section-help" style="width:30%">
+				<div class="section-title" >
+					DATA STRUCTURE AVAILABLE
 				</div>
-						<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
+				<div class="section-content" >
+					<adt-bar></adt-bar>
 
+
+											<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
+
+				</div>
 			</div>
-		</div>
 
-		<div class="section section-form" style="width:70%;" >
-
-
-<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
-		<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-		<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
-			<span>There are some errors. Please fix them before submit:</span>
-			<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
-				<li>{{error}}</li>
-			</ul>
-		</ul>
-
-		</div>
-
+			<div class="section section-form" style="width:70%;" >
+				<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+				<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+				<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
+					<span>There are some errors. Please fix them before submit:</span>
+					<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
+						<li>{{error}}</li>
+					</ul>
+				</ul>
+			</div>
 		</div>
 	</div>
-
-
-
-
-
-
-<div class="clearfix"></div>
--->
 </div>

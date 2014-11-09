@@ -1,0 +1,18 @@
+
+<div>
+	<span>{{ADT.description}} </span><br>
+	<span>Example: {{ADT.example}}</span><br>
+	<div ng-if="ADT.structure.length>0">
+
+		<span>Name: {{ADT.name}}</span><br>
+		<span>{</span><br>
+		<div ng-repeat="field in ADT.structure" >
+			<span>{{field.type}} : {{field.name}};</span><br>
+		</div>
+		<span>}</span><br>
+
+	</div>
+
+</div>
+
+

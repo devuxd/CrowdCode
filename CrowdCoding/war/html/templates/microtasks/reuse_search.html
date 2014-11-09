@@ -19,16 +19,16 @@
 		JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
-			Is there a function that does<BR>
-			<strong>{{microtask.callDescription}}</strong>
+			Is there any function that could substitute the pseudocall:<BR>
+			<span class="pseudoCall">{{microtask.callDescription}}</span>
 			<BR><BR>
-			Use the search box to see if a function exists to do this. Otherwise, select "No function does this".
+			Looking at the context try to find it using the search box, otherwise just select "No function does this".
 		</div>
 	</div>
 
 	<div class="section section-description">
 		<div class="section-title" >
-			FUNCTION SIGNATURE
+			FUNCTION WITH THE PSEUDOCALL
 		</div>
 		<div class="section-content no-padding" >
 			<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
@@ -56,23 +56,38 @@
 			</div>
 			<div class="section section-form" style="width:70%;" >
 				<div class="section-title form-group" >
-					<input type="text" id="SearchText" class="input-large" ng-model="reuseSearch.text" ng-change="doSearch()">
+					<input
+						class="form-control input-sm"
+						tabindex="1"
+						type="text"
+						name="newtestcase"
+						ng-model="reuseSearch.text"
+						ng-change="doSearch()"
+						placeholder="insert search"/>
 
+					<button class="btn btn-sm btn-primary" type="button"
+						ng-click=""
+						tabindex="2" >
+						Add
+					</button>
+				</div>
+				<div class="section-content" >
+
+					<div ng-if="reuseSearch.functions.length > 0" class="section-content" >
+						<ul>
+							<li ng-repeat= "function in reuseSearch.functions | orderBy:'-score'">
+								<div id="result" ng-class="{ 'result' : reuseSearch.selected != $index , 'selectedResult' : reuseSearch.selected == $index } " ng-click="reuseSearch.selected = $index">
+								 	{{function.value.description}}<br/>
+									<b>{{function.value.header}}</b>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<span ng-if="reuseSearch.functions.length == 0" >No function found</span>
 					<BR>
 					If you can't find any, click this:<br>
 					<button id="noFunction" type="button" class="btn btn-primary" ng-click= "reuseSearch.selected = -1" >No function does this</button>
-				</div>
-				<div ng-if="reuseSearch.functions.length > 0" class="section-content" >
-					<ul >
-						<li ng-repeat= "function in reuseSearch.functions | orderBy:'-score'">
-							<div id="result" ng-class="{ 'result' : reuseSearch.selected != $index , 'selectedResult' : reuseSearch.selected == $index } " ng-click="reuseSearch.selected = $index">
-							 	{{function.value.description}}<br/>
-								<b>{{function.value.header}}</b>
-							</div>
-						</li>
-					</ul>
-					<span ng-if="reuseSearch.functions.length == 0" >No function found</span>
-				</div>
+					</div>
 			</div>
 		</div>
 	</div>
