@@ -652,3 +652,132 @@ myApp.directive('chat', function($timeout, $rootScope,$firebase) {
         }
     }
 });
+
+
+myApp.directive('tutorial', function($compile) {
+    return {
+        restrict: 'E',
+
+        scope: {
+            title: "@"
+        },
+        link: function($scope, $element, attrs) {
+            // $element.prepend('<div style="position:absolute;width:100%;height:100%;background-color:black;opacity:0.7"></div>')
+        },
+        controller: function($scope,$element){
+            console.log("TUTORIAL ");
+            console.log("appending overlay");
+
+
+
+            $scope.currentStep = 0;
+            $scope.totSteps    = $element.find('step').length;
+
+            // create overlay and append to the $element
+            var $overlay    = $('<div class="overlay"></div>');
+            //var $nextButton = $('');
+            var $content    = $('<div class="content"></div>');
+            var $buttonBar  = $('<div class="button-bar"><div class="title">CrowdCode Tutorial: {{title}} </div><button class="btn btn-primary btn-next" ng-click="nextStep()">next step</button></div>');
+
+            var circlesHtml = '<div class="circles">'+
+                                '<div ng-repeat="n in [] | range:totSteps" class="circle"><div class="{{ n >= currentStep ? \'\' : \'completed\'}}"></div></div>' +
+                              '</div>';
+            var $circles = $(circlesHtml);
+
+            $scope.init = function(){
+
+
+                $buttonBar.append($circles);
+                // append overlay and next button to 
+                $element.append($overlay);
+                $element.append($content);
+                $element.append($buttonBar);
+                
+                // compile the element
+                $compile($element.contents())($scope);
+
+                $(document).find('.main-wrapper').css('bottom',$buttonBar.outerHeight());
+
+                $overlay.animate({ top:0,left:0,width:0,height:0,opacity:1},50);
+                // init the current step
+                currentStep = 0;
+                // visualize next step
+                this.nextStep();
+            }
+
+            $scope.destroy = function(){
+                // remove the tutorial from the document 
+                $overlay.remove();
+                $content.remove();
+                $circles.remove();
+                $buttonBar.remove();
+
+                $(document).find('.main-wrapper').css('bottom',0);
+            }
+
+            //$scope.init = function(){ };
+            $scope.nextStep = function(){ // increment current Step (first step is = 1)
+                $scope.currentStep += 1;
+                // loop through steps
+                if($scope.currentStep > $scope.totSteps) {
+                    $scope.destroy();
+                    return;
+                }
+
+                // retrieve the elements
+                var $step        = $element.find('step:nth-child('+$scope.currentStep+')');
+                var $stepTag     = $(document).find($step.find('tag').html());
+                var stepContent = $step.find('content').html();
+                var contentPosition = $step.find('content-position').html();
+
+
+                // initialize offset with the tag offset
+                var top  = $stepTag.offset().top;
+                var left = $stepTag.offset().left;
+                var width = 200;
+                var height = 200; 
+                var margin = 20;
+
+                if(contentPosition == 'left'){
+                    left = left - width - margin;
+                } else if(contentPosition == 'right'){
+                    left = left + $stepTag.outerWidth() + margin;
+                } else if(contentPosition == 'top'){
+                    top = top - height - margin;
+                } else if(contentPosition == 'bottom'){
+                    top = top + height + margin;
+                } 
+
+                $content.animate({ opacity:0 },500,function(){
+
+                    $overlay.animate({ backgroundColor:"black"},500,function(){
+                        // resize the overlay and move to the tag to hightlight
+                        $overlay.css('top', $stepTag.offset().top)
+                                .css('left',$stepTag.offset().left)
+                                .css('width',$stepTag.outerWidth())
+                                .css('height',$stepTag.outerHeight());
+
+                        $overlay.animate({ backgroundColor:"white"},500,function(){
+                            // end of overlay animation
+                            $content.html(stepContent);
+                            $content.css('top',top)
+                                    .css('left',left)
+                                    .css('width',width)
+                                    .css('height',height);
+                            $content.animate({ 
+                                top:    top+'px',
+                                left:   left+'px',
+                                width:  width+'px',
+                                height: height+'px',
+                                opacity: 1 
+                            },500);
+                        });
+                    });
+                });
+                
+            };
+            
+            //$scope.init();
+        }
+    }
+});

@@ -22,7 +22,7 @@
 	<div ng-if="review.microtask.type == 'WriteTestCases' && review.microtask.promptType == 'FUNCTION_SIGNATURE'">
 		<div class="section section-description">
 			<div class="section-title" >
-				submitted work description
+				Job description
 			</div>
 			<div class="section-content" >
 				The worker was asked to write all possible testcases for the following function. <br /> Can you rate his work?
@@ -52,7 +52,7 @@
 	<div ng-if="review.microtask.type == 'WriteTestCases' && review.microtask.promptType == 'CORRECT_TEST_CASE'">
 		<div class="section section-description">
 			<div class="section-title" >
-				submitted work description
+				Job description
 			</div>
 			<div class="section-content" >
 				The worker was asked to fix the an issue related to the disputed test case. <br /> Can you rate his work?
@@ -117,9 +117,44 @@
 	<!--//////////////////////////////////////////-->
 	<!--//        WRITE FUNCTION MICROTASK      //-->
 	<!--//////////////////////////////////////////-->
-	<div ng-if="review.microtaskUnderReview.type == 'WriteFunction'">
-		<b>Write a function</b><BR>
-		<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.codeMirrorCode"></div>
+	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'SKETCH'">
+		<div class="section section-description">
+			<div class="section-title" >
+				Job description
+			</div>
+			<div class="section-content" >
+				The worker was asked write the following function. <br /> Can you rate his work?
+			</div>
+		</div>
+
+		<div class="section section-description">
+			<div class="section-title" >
+				submitted function code
+			</div>
+			<div class="section-content" >
+				<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.functionCode"></div>
+			</div>
+		</div>
+	</div>
+
+	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'DESCRIPTION_CHANGE'">
+		<div class="section section-description">
+			<div class="section-title" >
+				submitted work description
+			</div>
+			<div class="section-content" >
+				The worker was asked write the following function. <br /> Can you rate his work?asdasasd
+			</div>
+		</div>
+
+		<div class="section section-description">
+			<div class="section-title" >
+				submitted function code
+			</div>
+			<div class="section-content" >
+				<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.functionCode"></div>
+			</div>
+		</div>
 	</div>
 
 	<!--//////////////////////////////////////////-->

@@ -100,7 +100,12 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 			$scope.review.functionCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
 		});
 
-	} else if ($scope.review.microtask.type == 'WriteTest') {
+	} else if ($scope.review.microtask.type == 'WriteFunction') {
+
+		$scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header+$scope.review.microtask.submission.code;
+
+	}
+	/*else if ($scope.review.microtask.type == 'WriteTest') {
 
 		//load the version of the function with witch the test cases where made
 		var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtask.functionID
@@ -111,12 +116,6 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 		});
 	}
 	/*
-	else if ($scope.review.microtaskUnderReview.type == 'WriteFunction')
-	{
-
-		$scope.review.codeMirrorCode=functionsService.renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header+$scope.review.microtaskUnderReview.submission.code;
-
-	}
 	else if ($scope.review.microtaskUnderReview.type == 'WriteCall')
 	{
 
