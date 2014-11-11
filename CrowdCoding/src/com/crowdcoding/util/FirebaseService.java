@@ -185,6 +185,23 @@ public class FirebaseService
 		writeDataAbsolute("{ \"" + projectID + "\" : null }", 
 				"https://crowdcode.firebaseio.com/projects/" + projectID + ".json", HTTPMethod.PUT);		
 	}
+	// check if a project exists in firebase
+	public static boolean existsProject(String projectID)
+	{
+		// set the root of the project to null.
+		String payload = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectID + ".json");		
+		//System.out.println(payload);
+		return !payload.equals("null");
+	}
+	
+	// check if a project exists in firebase
+	public static boolean existsClientRequest(String projectID)
+	{
+		// set the root of the project to null.
+		String payload = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectID + ".json");		
+		//System.out.println(payload);
+		return !payload.equals("null");
+	}
 	
 	// Writes the specified data using the URL, relative to the BaseURL.
 	// Operation specifies the type of http request to make (e.g., PUT, POST, DELETE)

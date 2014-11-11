@@ -4,18 +4,21 @@
 // APP CONTROLLER //
 ////////////////////
 //prepare variables and execute inizialization stuff
-myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','userService', 'testsService', 'functionsService', 'testRunnerService','ADTService','microtasksService', function($scope,$rootScope,$firebase,$http,userService,testsService,functionsService, testRunnerServe, ADTService,microtasksService) {
+myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','userService', 'testsService', 'functionsService', 'mocksService','testRunnerService','ADTService','microtasksService','TestList', function($scope,$rootScope,$firebase,$http,userService,testsService,functionsService, mocksService, testRunnerService, ADTService,microtasksService,TestList) {
 
 	// current session variables
     $rootScope.projectId    = projectId;
     $rootScope.workerId     = workerId;
     $rootScope.workerHandle = workerHandle;
     $rootScope.firebaseURL  = firebaseURL;
+
+    // flags for knowing if service is loaded
     $rootScope.loaded={};
-    $rootScope.loaded.microtasks=false;
-    $rootScope.loaded.functions=false;
-    $rootScope.loaded.tests=false;
-    $rootScope.loaded.ADTs=false;
+    $rootScope.loaded.microtasks = false;
+    $rootScope.loaded.functions  = false;
+    $rootScope.loaded.mocks      = false;
+    $rootScope.loaded.tests      = false;
+    $rootScope.loaded.ADTs       = false;
 
 
 
@@ -29,12 +32,12 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
 		userService.logout();
 	}
 
-	//user.listenForJobs();
-	microtasksService.init();
 	userService.init();
 	userService.listenForJobs();
+	microtasksService.init();
 	testsService.init();
 	functionsService.init();
+	mocksService.init();
 	ADTService.init();
 
 
@@ -44,23 +47,21 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
 	$scope.popupTitle = 'popup title';
 
 	$scope.$watch(function () {
-
-        return $rootScope.loaded;
+		return $rootScope.loaded;
     },function(newVal) {
-    	if($rootScope.loaded.functions && $rootScope.loaded.tests && $rootScope.loaded.ADTs && $rootScope.loaded.microtasks)
-    		{
-    			var count = 0;
-    			angular.forEach($rootScope.loaded,function(value,key){
-    				if(value)
-    					count++;
+    	if( $rootScope.loaded.functions && $rootScope.loaded.mocks && 
+    	    $rootScope.loaded.tests     && $rootScope.loaded.ADTs  && 
+    	    $rootScope.loaded.microtasks){
 
-
-    			});
-    		 console.log("all Services loaded loaded");
-    		 $rootScope.$broadcast('load');
-    		 }
-       },true
-    );
+			
+			$rootScope.$broadcast('load');
+		/*
+			TestList.$loaded().then(function(){
+				var t = TestList.getByFunctionName('sum');
+				console.log(t);
+			})*/
+    	}
+    },true);
 }]);
 
 
@@ -133,11 +134,11 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 
 				// debug stuff
-				 console.log("data: ");console.log(data);
+				/* console.log("data: ");console.log(data);
 				 console.log("microtask: ");console.log($scope.microtask);
 				 console.log("function: ");console.log($scope.funct);
 				 console.log("test: ");console.log($scope.test);
-
+*/
 
 			  	//choose the right template
 			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";

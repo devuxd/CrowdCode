@@ -45,6 +45,7 @@ import com.crowdcoding.entities.microtasks.WriteFunction;
 import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
+import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.users.User;
@@ -56,6 +57,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Work;
+import com.googlecode.objectify.cmd.Query;
 import com.googlecode.objectify.cmd.QueryKeys;
 
 @SuppressWarnings("serial")
@@ -143,15 +145,30 @@ public class CrowdServlet extends HttpServlet
 				// PROJECT URLS match /word/ or /word/(word)*
 				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
 					String projectId = pathSeg[1];
+					
 					req.setAttribute("project", projectId);
 					Key<Project> projectKey = Key.create(Project.class, projectId);
 					boolean projectExists =  ( ofy().load().filterKey(projectKey).count() != 0 );
-
-					System.out.println(pathSeg.length);
+					
+/*
+					Query<Project> all = ofy().load().type(Project.class);
+					for (Project project : all) {
+						System.out.println(project.getID());
+					}
+					System.out.println(pathSeg.length);*/
 
 					if(!projectExists){
-						req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
-						System.out.println("Project not found ("+projectId+")!");
+						System.out.println("project doesn't exists in appengine");
+						System.out.println("projects: "+FirebaseService.existsProject(projectId));
+						System.out.println("clientRequest: "+FirebaseService.existsClientRequest(projectId));
+						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
+							Project.Construct(projectId);
+						} else {
+							//
+							System.out.println("project doesn't exists in firebase");
+							System.out.println("Project not found ("+projectId+")!");
+							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+						}
 					} else if ( pathSeg.length <= 2 ){
 						req.getRequestDispatcher("/html/angular_2_col.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
@@ -197,13 +214,15 @@ public class CrowdServlet extends HttpServlet
 	}
 
 	private void doAjax(HttpServletRequest req, HttpServletResponse resp,
-			final String projectID, User user, final String[] pathSeg) throws IOException
+			final String projectID, User user, final String[] pathSeg) throws IOException, FileUploadException
 	{
 		if (pathSeg[3].equals("fetch")){
-			doFetchMicrotask(req, resp, projectID, user);
+			doFetchMicrotask(req, resp, user);
 
 		} else if (pathSeg[3].equals("submit")){
 			doSubmitMicrotask(req, resp);
+		} else if (pathSeg[3].equals("testResult")){
+			doSubmitTestResult(req, resp);
 		}
 	}
 
@@ -350,8 +369,9 @@ public class CrowdServlet extends HttpServlet
 	}
 
 	// process test result submit
-	private void doSubmitTestResult(final HttpServletRequest req, final HttpServletResponse resp, String projectID) throws IOException, FileUploadException {
+	private void doSubmitTestResult(final HttpServletRequest req, final HttpServletResponse resp) throws IOException, FileUploadException {
 
+		final String projectID = (String) req.getAttribute("project");
 		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
 		//final long testID     = Long.parseLong(req.getParameter("testID"));
@@ -419,13 +439,13 @@ public class CrowdServlet extends HttpServlet
 	}
 
 
-	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,
-			final String projectID, final User user) throws IOException
+	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException
 	{
 		// Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
-	    final Long microtaskID = ofy().transact(new Work<Long>() {
+		final String projectID = (String) req.getAttribute("project");
+    	final Long microtaskID = ofy().transact(new Work<Long>() {
             public Long run()
             {
             	Project project = Project.Create(projectID);

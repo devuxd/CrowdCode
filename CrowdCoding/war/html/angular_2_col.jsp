@@ -41,7 +41,11 @@
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/pastel-on-dark.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/custom.css" type="text/css" />
+
 	<link rel="stylesheet" href="/include/codemirror/custom-editor.css" type="text/css" />
+
+
+	<link rel="stylesheet" href="/include/codemirror/console.css" type="text/css" />
 
 
 	<link rel="stylesheet" href="/css/worker_2_col.css" type="text/css" />
@@ -238,6 +242,17 @@
 
 
 
+	<script>
+	var projectId    = '<%=projectID%>';
+	var workerId     = '<%=workerID%>';
+	var workerHandle = '<%=workerHandle%>';
+	var firebaseURL  = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
+
+
+
+	</script>
+
+
 	<!-- Angular Application -->
 	<script src="/js/app.js"></script>
 
@@ -247,8 +262,12 @@
 	<script src="/js/services/microtasks.js"></script>
 	<script src="/js/services/tests.js"></script>
 	<script src="/js/services/functions.js"></script>
+	<script src="/js/services/mocks.js"></script>
 	<script src="/js/services/user.js"></script>
 	<script src="/js/services/testRunner.js"></script>
+
+
+	<script src="/js/services/testFactory.js"></script>
 
 	<!-- Angular Directives -->
 	<script src="/js/directives/directives.js"></script>
@@ -262,16 +281,6 @@
 	<script src="/js/controllers/microtasks.js"></script>
 
 
-
-<script>
-var projectId    = '<%=projectID%>';
-var workerId     = '<%=workerID%>';
-var workerHandle = '<%=workerHandle%>';
-var firebaseURL  = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
-
-
-
-</script>
 
 </body>
 </html>
