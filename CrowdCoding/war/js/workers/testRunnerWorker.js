@@ -26,9 +26,11 @@ self.onmessage = function(e)
 		// Execute the tests for a function
 		try
 		{
-			var finalCode = 'var mocks = ' + JSON.stringify(data.mocks) + '; ' + data.code;
+			var finalCode = 'var mocks = ' + JSON.stringify(data.mocks) + ';\n ' + data.code;
 			
 			finalCode = finalCode.replace("printDebugStatement","logArray.push");
+			console.log("+++++ FINAL CODE +++++");
+			console.log(finalCode);
 			eval(finalCode);
 			
 			// If any of the tests failed, set test cases passed to false
@@ -44,8 +46,8 @@ self.onmessage = function(e)
 			testCasedPassed = false;
 			// Check if the tests cases failed because code was discovered that was not yet implemented.
 			// (as observed by the special NotImplementedException). If so, set the approrpriate flag.			
-			if (err instanceof NotImplementedException)
-				codeUnimplemented = true;
+			//if (err instanceof NotImplementedException)
+			//	codeUnimplemented = true;
 		}
 		self.postMessage({
 			number : data.number,

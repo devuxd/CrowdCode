@@ -3,7 +3,7 @@
 ////////////////////
 //FUNCTIONS SERVICE   //
 ////////////////////
-myApp.factory('functionsService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
+myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksService', function($window,$rootScope,$firebase,mocks) {
 
 	var service = new function(){
 		// Private variables
@@ -15,6 +15,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.functionAdded = function(addedFunction) { return functionAdded(addedFunction); };
 		this.functionChanged = function(changedFunction) { return functionChanged(changedFunction); };
 		this.allFunctionIDs = function() { return allFunctionIDs(); };
+		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
 		this.getMockCodeFor = function(id,code) { return getMockCodeFor(id,code); };
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
@@ -28,8 +29,10 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.highlightPseudoSegments =function(codemirror,marks,highlightPseudoCall){ return highlightPseudoSegments(codemirror,marks,highlightPseudoCall);};
 		this.findNextWord = function (text, start){ return findNextWord(text, start);};
 		this.getCalleeNames = function (ast){ return getCalleeNames(ast);};
+		this.getCalleeNamesById = function (functionId){ return getCalleeNamesById(functionId);};
 		this.parseDescription = function (lineDescription,functionName) { return parseDescription(lineDescription,functionName);};
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
+		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
 
 	 	this.isLoaded = function() { return loaded };
 		this.getAll = function(){
@@ -54,6 +57,17 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			});
 
 			return functionIDs;
+		}
+
+		function allFunctionNames()
+		{
+			var functionsNames = [];
+			$.each(functions, function(i, value)
+			{
+				functionName.push(value.nameget);
+			});
+
+			return functionNames;
 		}
 
 		// Returns all the described function Names except the one with the passed ID
@@ -115,23 +129,22 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			mockCode += functionObj.header + '\n';
 
 			// Next, add the mock implementation body
-			mockCode += '{ var returnValue; \n';
-			mockCode += 'var params = arguments; \n';
-			mockCode += 'var mockFor = hasMockFor(\'' + functionObj.name + '\', arguments, mocks); \n';
-			mockCode += 'if (mockFor.hasMock) \n';
-			mockCode += '     returnValue = mockFor.mockOutput; \n';
-			mockCode += 'else \n';
-			mockCode += '     returnValue = ' + functionObj.name + 'aaaActualIMP.apply(null, params); \n';
-			mockCode += 'return returnValue; \n}\n\n';
+			mockCode += '{\n';
+			mockCode += '  var mockFor = hasMockFor(\'' + functionObj.name + '\', arguments, mocks); \n';
+			mockCode += '  if (mockFor.hasMock) \n';
+			mockCode += '    return mockFor.mockOutput; \n';
+			mockCode += '  else \n';
+			mockCode += '    return ' + functionObj.name + 'ActualIMP.apply(null, arguments); \n';
+			mockCode += '\n}\n\n';
 
 			// Third, add the special header for the actual implementation
 			mockCode += getMockHeader(id);
 
 			// Fourth, add the actual code body of the function
 			if(code!=undefined)
-				mockCode += code + '\n';
+				mockCode += '\n' + code + '\n';
 			else
-				mockCode += functionObj.code + '\n';
+				mockCode += '\n' + functionObj.code + '\n';
 
 			return mockCode;
 		}
@@ -145,7 +158,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			if (functionObj == null)
 				return '';
 
-			return functionObj.header + '\n { } \n' + getMockHeader(id) + '\n { } \n';
+			return functionObj.header + '{}\n'+ getMockHeader(id) + '{}\n';
 		}
 
 		// For the function with the specified function id,
@@ -160,7 +173,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			// Generate the mock header.
 			// Get the params string out of the header by looking for the first instance of a paren (which
 			// must be the start of the functions params)
-			var mockHeader = ' function ' + functionObj.name + 'aaaActualIMP'
+			var mockHeader = 'function ' + functionObj.name + 'ActualIMP'
 				+ functionObj.header.substring(functionObj.header.indexOf('('));
 			return mockHeader;
 		}
@@ -315,7 +328,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 
 		// build header
-	header=renderHeader(functionName,paramNames);
+		header=renderHeader(functionName,paramNames);
 
 		// return all the infos
 		return { 'header'           : header,
@@ -371,6 +384,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	    header += ')';
 
 		return header;
+	}
+
+
+	function renderHeaderById(functionId)
+	{
+		var funct = get(functionId);
+		return renderHeader(funct.name,funct.paramNames);
 	}
 
 	//Checks that exists a description of the parameter
@@ -506,6 +526,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			}
 		});
 		return calleeNames;
+	}
+
+	function getCalleeNamesById(functionId)
+	{
+
+		var ast = esprima.parse(renderHeaderById(functionId)+get(functionId).code, {loc: true})
+		return getCalleeNames(ast);
 	}
 
 	// Based on esprima example at http://sevinf.github.io/blog/2012/09/29/esprima-tutorial/

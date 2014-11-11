@@ -1,58 +1,79 @@
-<div ng-controller="DebugTestFailureController">
 
-	<h2 id="taskHeader">
-		<span id="taskTitle">{{datas.title}}</span> <span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
-	</h2>
-	<br />
+<div ng-controller="DebugTestFailureController" class="task-container container-flex-column">
 
-	<div id="taskDescription">
-		<p>
-			This function has failed its tests. Can you fix it?<br/>
-			You can: 
-			<ol>
-				<li>edit the function to fix issues with the code</li>
-				<li>report a problem with the tests</li>
-				<!--<li>edit the output of function calls to fix problems with other functions</li>-->
-			</ol>
-
-			To check if you've fixed the issue, run the unit tests.
-			You may use the function <I>printDebugStatement(...); </I> to print data to the console. <BR>
-		</p>
-		<button style="float: right;" onclick="revertCodeAs();">Revert Code</button><BR><BR>
+	<div class="section section-description " >
+		<div class="section-content no-padding" >
+			<ul class="microtask-details clearfix">
+				<li>{{datas.title}}</li>
+				<li>
+					<span>{{datas.submitValue}} points</span>
+				</li>
+				<li>
+					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+				</li>
+			</ul>
+		</div>
 	</div>
 
-	<div id="taskForm" ng-show="dispute">
-		<span><b>Test description:</b> {{disputedTest.description}}</span><br/>
-		<span><b>Test code:</b> {{disputedTest.code}}</span><br/>
+	<div class="section section-form">
+		<div class="section-title" >
+		TEST CASES
+		</div>
+		<div class="section-content" >
+			<table class="debugTests">
+				<tr>
+					<th>Description</th>
+					<th>Test Code</th>
+					<th>Result</th>
+					<th></th>
+				</tr>
+				<tr class="{{ testPassed(key) ? 'passed' : 'failed' }}"
+					ng-init="showDetails[key]=false"
+					ng-repeat="(key,test) in tests"
+					>
+					<td class="description">{{test.description}}</td>
 
-		<label for="disputeText">Dispute test:</b> what's wrong with this test? </label>
-		<textarea name="disputeText" class="form-control" ng-model="disputedTest.disputeText"></textarea><br>
-		<button class="btn " ng-click="dispute = !dispute" >Nothing is wrong with the test</button>
-		<button class="btn btn-primary" ng-if="dispute" ng-click="submit()" >Submit dispute</button>
+					<td class="">
+						{{test.code}}
+
+						<div ng-repeat="callee in callees">
+							{{callee.name}}
+						</div>
+					</td>
+
+					<td>
+						<span ng-if="testPassed(key)">PASSED</span>
+						<span ng-if="!testPassed(key)">FAILED</span>
+					</td>
+
+					<td>
+						<button class="btn btn-primary" 
+							ng-click="disputeTest(key)" 
+							ng-hide="testPassed(key)" 
+						> Dispute </button>
+					</td>
+				</tr>
+			</table>
+			<button ng-click="runTests()" class="btn btn-primary"  >Run the tests!</button>
+			<br/>
+		</div>
 	</div>
 
-	<div id="taskForm" ng-show="!dispute">
 
+	<div class="section section-form">
+		<div class="section-title" >
+		CONSOLE
+		</div>
+		<div class="section-content" >
+			<div ng-model="consoleOutput" ui-codemirror="{ onLoad : consoleLoaded }"></div>
+		</div>
+	</div>
 
-		<ul class="nav nav-tabs" ng-init="selectedTab='tests'">
-		  <li ng-class="{'active': selectedTab == 'tests'}" ng-click="selectedTab = 'tests'">
-		  	<a href="#">Test Cases</a>
-		  </li>
-		  <li ng-class="{'active': selectedTab == 'function_editor'}" ng-click="selectedTab = 'function_editor'">
-		  	<a href="#">Function Editor</a>
-		  </li>
-		  <li ng-class="{'active': selectedTab == 'console'}" ng-click="selectedTab = 'console'; console.newLinesCount = 0">
-		  	<a href="#">Console
-		  		<span ng-if="console.newLinesCount > 0" class="badge">{{console.newLinesCount}}</span></a>
-		  	</a>
-		  </li>
-
-		  <li >
-		  	<button ng-click="runTests()" class="btn btn-primary"  >Run the tests!</button>
-		  </li>
-		</ul>
-
-		<div ng-show="selectedTab=='function_editor'">
+	<div class="section section-form">
+		<div class="section-title" >
+		FUNCTION EDITOR
+		</div>
+		<div class="section-content" >
 			<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
 			<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
 			<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
@@ -64,61 +85,28 @@
 			<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
 			<span class="clearfix"></span>
 		</div>
-
-		<div ng-show="selectedTab=='tests'">
-			<strong>Tests for this function:</strong>
-			<ul class="debugTests list-group" ng-if="!testsRunning">
-				<li class="list-group-item "
-					ng-init="showDetails[key]=false"
-					ng-repeat="(key,test) in tests" 
-					ng-class="{ 'list-group-item-success': testPassed(key), 'list-group-item-danger': !testPassed(key)}">
-
-					<div class="glyphicon result" ng-class="{ 'glyphicon-ok': testPassed(key), 'glyphicon-remove': !testPassed(key)}"></div>
-					<div class="description">{{test.description}}</div>
-
-					<a ng-if="!showDetails[key]" ng-click="showDetails[key]=true" class="btn btn-link pull-right">
-						<span class="caret"></span> show details 
-					</a>
-					<a ng-if="showDetails[key]"  ng-click="showDetails[key]=false" class="dropup btn btn-link pull-right">
-						<span class="caret"></span> hide details 
-					</a>
-
-					<a class="btn btn-link btn-report pull-right" 
-						ng-click="disputeTest(key)" 
-						ng-hide="testPassed(key)" 
-						>
-						<span class=" glyphicon glyphicon-exclamation-sign"></span>
-						Dispute test 
-					</a>
-
-					<div class="details clearfix" ng-show="showDetails[key]">
-						<div class="">Simple test code: </div>
-						<div class="">{{test.code}}</div>
-					</div>
-				</li>
-			</ul>
-			<div ng-if="testsRunning"><div class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></div> running tests...</div>
-			<br/>
-		</div>
-
-
-		<div ng-show="selectedTab=='console'" >
-			<div class="console-frame">
-				<ul class="console-output">
-					<li style="color: {{element.color}}" ng-repeat="element in console.content track by $index">
-						{{element.text}}
-					</li>
-				</ul>
-			</div>
-		</div>
-
 	</div>
-	<br/>
 
+
+	
+
+	<div id="taskForm" ng-show="dispute">
+		<span><b>Test description:</b> {{disputedTest.description}}</span><br/>
+		<span><b>Test code:</b> {{disputedTest.code}}</span><br/>
+
+		<label for="disputeText">Dispute test:</b> what's wrong with this test? </label>
+		<textarea name="disputeText" class="form-control" ng-model="disputedTest.disputeText"></textarea><br>
+		<button class="btn " ng-click="dispute = !dispute" >Nothing is wrong with the test</button>
+		<button class="btn btn-primary" ng-if="dispute" ng-click="submit()" >Submit dispute</button>
+	</div>
+
+
+	<br/>
+<!--
 	<div class="task-buttons pull-right">
 		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || passedTests.length != tests.length" >Submit</button>
 		<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
 	</div>
 	<div class="clearfix"></div>
-
+-->
 </div>

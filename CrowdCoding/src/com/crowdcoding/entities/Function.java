@@ -373,6 +373,7 @@ public class Function extends Artifact
 	{
 		if(isWritten && allUnitTestsImplemented(project)){
 			// enqueue test job in firebase
+			System.out.println("write test job queue");
 			FirebaseService.writeTestJobQueue(this.getID(),project);
 			
 			//project.requestTestRun();

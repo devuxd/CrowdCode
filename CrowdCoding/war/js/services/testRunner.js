@@ -1,7 +1,7 @@
 /////////////////////////
 // TEST RUNNER SERVICE //
 /////////////////////////
-myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsService','functionsService', function($window,$rootScope,$http,$q,testsService,functionsService) {
+myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','$timeout','testsService','functionsService','TestList', function($window,$rootScope,$http,$q,$timeout,testsService,functionsService,TestList) {
 
 	var timeOutTime = 1000;
 	var validTests;
@@ -24,6 +24,10 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 	}
 
 	function addToConsole(line,color){
+
+		consoleData.push(line);
+		/*
+
 		// if no color is set, default is white
 		if(!color) color="white";
 
@@ -36,21 +40,21 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 				addToConsole(value,color);
 			});
 		else
-			addToConsole(value.toString(),color)
+			addToConsole(value.toString(),color)*/
 	}
 
 
 	//Runs all of the tests for the specified function, sending the results to the server
-	testRunner.runTestsForFunction = function(idForFunction,functionCode)
+	testRunner.runTestsForFunction = function(idForFunction,actualFunctionCode,ast)
 	{
+
 		deferred = $q.defer();
 
 		functionID = idForFunction;
 		this.running = false;
-		// Load the tests
-		validTests = testsService.validTestsforFunction(functionID);
-		
-		// Load the functions. As the specified function may itself directly or indirectly call every function, 
+
+		// Load the functions. 
+		// As the specified function may itself directly or indirectly call every function, 
 		// load all functions in the system.
 		// For every function in the system, get the actual function name with a mocked implementation
 		// and the corresponding mocked function with the actual function implementation.
@@ -61,81 +65,75 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 		// are originally defined above, they will be redefined below with the actual implementation, which will 
 		// overwrite the empty first definitions.
 
-		var functionsWithMockBodies = '';
-		var functionsWithEmptyBodies = '';	
-		var allFunctionIDs = functionsService.allFunctionIDs();
+		
 
-		for (var i=0; i < allFunctionIDs.length; i++)
-		{
-			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
-			if(functionCode!=undefined && (typeof functionCode) == "string"){
-				functionsWithMockBodies += functionsService.getMockCodeFor(allFunctionIDs[i],functionCode);
-			}
-			else
-				functionsWithMockBodies  += functionsService.getMockCodeFor(allFunctionIDs[i]);
-		}	
-		allTheFunctionCode = functionsWithEmptyBodies + '\n' + functionsWithMockBodies;	
-
-		console.log(functionsWithMockBodies);
+		//console.log(functionsWithMockBodies);
 		// Load the mocks
-		mocks = {};
-		this.loadMocks(testsService.getValidTests());
 
-		resetConsole();
+		// Load the tests
+		validTests = TestList.getByFunctionId(functionID);
+
+		// load all the function code
+		this.loadAllTheFunctionCode(actualFunctionCode);
+
+		// load the mocks
+		this.loadMocks();
 
 		// Initialize test running state
 		allPassedTestCases = new Array();
 		allFailedTestCases = new Array();
 		currentTextIndex = 0;
-		
+
+		// TODO MAYBE THE CONSOLE SHOULD NOT BE INITIALIZED HERE
+		resetConsole();
+
 		// Run the tests
 		this.runTest();
 
 		return deferred.promise;
 	}
+
+	testRunner.loadAllTheFunctionCode = function(actualFunctionCode){
+		var functionsWithMockBodies = '';
+		var functionsWithEmptyBodies = '';	
+
+		var allFunctionIDs = functionsService.allFunctionIDs();
+
+		allTheFunctionCode = "";
+
+		for (var i=0; i < allFunctionIDs.length; i++)
+		{
+			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
+			if( allFunctionIDs[i] == functionID && actualFunctionCode!=undefined && (typeof actualFunctionCode) == "string" )
+				functionsWithMockBodies += functionsService.getMockCodeFor(allFunctionIDs[i],functionCode);
+			else
+				functionsWithMockBodies  += functionsService.getMockCodeFor(allFunctionIDs[i]);
+		}	
+		allTheFunctionCode = functionsWithEmptyBodies + '\n' + functionsWithMockBodies;	
+	}
 	
 	
 	// Loads the mock datastructure using the data found in the mockData - an object in MocksDTO format
-	testRunner.loadMocks = function(testData)
+	testRunner.loadMocks = function()
 	{
-		console.log("loading mocks");
-		console.log(testData);
-		$.each(testData, function(index, storedMock)
-		{
-			console.log("-- loading mock index="+index);
-			console.log(storedMock);
+		mocks = {}	;
+		
+		var allFunctionNames = functionsService.getAllDescribedFunctionNames()
 
-			// If the mock is poorly formatted somehow, want to keep going...
-			try
-			{
-				// If there is not already mocks for this function, create an entry
-				var functionMocks;
-				if (mocks.hasOwnProperty(storedMock.functionName))
-				{
-					functionMocks = mocks[storedMock.functionName];
-				}
-				else
-				{
-					functionMocks = {};
-					mocks[storedMock.functionName] = functionMocks;
-				}
-				
-				// We currently have the inputs in the format [x, y, z]. To build the inputs key,
-				// we need them in the format {"0": 1}
-				var inputsKey = {};
-				$.each(storedMock.simpleTestInputs, function(index, input)
-				{
-					inputsKey[JSON.stringify(index)] = JSON.parse(input);				
-				});
-				
-				functionMocks[JSON.stringify(inputsKey)] = { inputs: storedMock.simpleTestInputs, 
-						      output: JSON.parse(storedMock.simpleTestOutput) };
+		// for each described function
+		angular.forEach(allFunctionNames,function(functionName){
+			try{
+				var mocksForFunction = TestList.buildMocksByFunctionName(functionName);
+				mocks[functionName] = mocksForFunction;
 			}
 			catch (e)
 			{
-				console.log("Error loading mock " + index);				
-			}			
-		});
+				console.log("Error loading mock " + functionName);				
+			}	
+
+		})
+
+		console.log(mocks);
 	}
 
 
@@ -163,6 +161,15 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 		this.runTest();		
 	}
 
+
+	testRunner.stopTest = function()
+	{
+		console.log("Hit timeout in TestRunner running the test " + currentTextIndex);
+		
+		worker.terminate();
+		this.processTestFinished(true, null);
+	}
+		
 	testRunner.runTest = function()
 	{
 		//console.log("running test "); console.log(validTests[currentTextIndex]);
@@ -176,27 +183,36 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 			return;
 		}
 		
-		var testCode = validTests[currentTextIndex].code;  //.replace(/\n/g,"");
+		var testCode = validTests[currentTextIndex].getCode();  //.replace(/\n/g,"");
 		
 		addToConsole("> Running test for test code: " + testCode);
 		
 		
 		// Check the code for syntax errors using JSHint. Since only the user defined code will be checked,
 		// add extra defs for references to the instrumentation code.
-		var extraDefs = "var mocks = {}; function hasMockFor(){} function printDebugStatement (){} ";		
+		var extraDefs  = "var mocks = {}; function hasMockFor(){} function printDebugStatement (){} ";		
 		var codeToLint = extraDefs + allTheFunctionCode + testCode;
-		console.log("TestRunner linting on: " + codeToLint);
 		var lintResult = JSHINT(getUnitTestGlobals() + codeToLint, getJSHintGlobals());
-		var errors = checkForErrors(JSHINT.errors);
-		//console.log("errors: " + JSON.stringify(errors));
-		
+		var errors     = checkForErrors(JSHINT.errors);
 		var testResult;
+
+
+		//console.log("======= CODE TO LINT ");
+		//console.log(codeToLint);
 		
 		// If there are no errors, run the test
 		if(errors == "")
 		{
-			testRunTimeout = setTimeout(function(){this.stopTest();}, timeOutTime);
+			// TODO: timeout for the web worker
+			/*
+			$timeout(function(){
+				this.stopTest();
+			}, timeOutTime);
+*/
 			var codeToExecute = allTheFunctionCode + testCode;
+
+			//console.log("======= CODE TO EXECUTE ");
+			//console.log(codeToExecute);
 
 			// execute the tests on the worker thread
 		    worker = new Worker('/js/workers/testRunnerWorker.js');
@@ -204,7 +220,7 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 		    // Add a callback on the worker for receiving and processing messages from the worker. 
 		    worker.onmessage = function(e) 
 		    {
-			    clearTimeout(testRunTimeout);					    	
+			    // TODO: clear timeout					    	
 				testRunner.processTestFinished(false, e.data);
 		    }
 		    
@@ -215,6 +231,9 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 		}
 		else
 		{
+			console.log("======= JSHINT FOUND ERRORS ");
+			console.log(errors);
+
 			// jshint found errors
 			testCaseNumberThatFailed = currentTextIndex;
 			allFailedTestCases.push(testCaseNumberThatFailed);
@@ -223,15 +242,6 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 			this.runTest();	
 		}
 	}
-
-	testRunner.stopTest = function()
-	{
-		console.log("Hit timeout in TestRunner running the test " + currentTextIndex);
-		
-		worker.terminate();
-		this.processTestFinished(true, null);
-	}
-		
 
 	testRunner.submitResultsToServer = function()
 	{		
@@ -256,14 +266,7 @@ myApp.factory('testRunnerService', ['$window','$rootScope','$http','$q','testsSe
 			getData.push('functionID='+functionID);
 			getData.push('result='+passedTests);
 
-			// PASS THE FIRST FAILED TEST ID TO THE SERVER 
-			// USEFUL FOR SPAWNING A DIFFERENT DEBUG MICROTASK FOR 
-			// EACH FAILED TEST
-			//if( allFailedTestCases.length > 0 )
-			//	getData.push("testID="+validTests[allFailedTestCases[0]].id);
-
-			console.log(getData);
-			$http.get('/' + $rootScope.projectId + '/testResult?'+getData.join("&")).
+			$http.get('/' + $rootScope.projectId + '/ajax/testResult?'+getData.join("&")).
 			  success(function(data, status, headers, config) {
 			    console.log("test result submitted GET");
 			  }).
