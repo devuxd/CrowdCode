@@ -50,9 +50,12 @@ clienRequestApp.directive('adtValidator',function() {
             ctrl.$parsers.unshift(function (viewValue) {
 
             	typeNames=["Boolean", "String", "Number"];
-            	angular.forEach(scope.ADTs, function(key,value){
+            	angular.forEach(scope.ADTs, function(value,key){
+            		console.log(value);
             		typeNames.push(value.name);
             	});
+            	console.log("adt");
+            		console.log(scope.ADTs);
 
             	var valid=isValidTypeName(viewValue, typeNames)||viewValue=="";
             	// Returns true if name is a valid type name and false otherwise.

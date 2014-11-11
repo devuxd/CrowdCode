@@ -44,15 +44,6 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 
 	$scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header;
 
-	$scope.codemirrorLoaded = function(codeMirror){
-
-		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "custom");
-		codeMirror.setOption("tabindex", "-1");
-		codeMirror.setSize(null,'auto');
-		codeMirror.refresh();
-	}
-
 	$rootScope.submit = function(){
 		// PREPARE FORM DATA HERE
 		formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
@@ -265,7 +256,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		codemirror.setOption('indentWithTabs', true);
 		codemirror.setOption('lineNumbers', true);
 
-		codemirror.setOption("theme", "vibrant-ink");
+		codemirror.setOption("theme", "custom-editor");
 
 		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
 		// If we are editing a function that is a client request and starts with CR, make the header
@@ -415,7 +406,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 	$scope.readonlyCodemirrorLoaded = function(codeMirror){
 		codeMirror.setValue($scope.datas.pseudoCall);
 		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "pastel-on-dark");
+		codeMirror.setOption("theme", "custom-editor");
 		codeMirror.refresh();
 	}
 
@@ -435,7 +426,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 		codemirror.setOption('indentWithTabs', true);
 		codemirror.setOption('lineNumbers', true);
 		codemirror.setSize(null, 500);
-		codemirror.setOption("theme", "vibrant-ink");
+		codemirror.setOption("theme", "custom-editor");
 		codemirror.doc.setValue($scope.code);
 
 		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
@@ -532,8 +523,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 		codemirror.setOption('indentWithTabs', true);
 		codemirror.setOption('lineNumbers', true);
 		codemirror.setSize(null, 500);
-		codemirror.setOption("theme", "vibrant-ink");
-		codemirror.setValue($scope.code);
+		codemirror.setOption("theme", "custom-editor");
 
 		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
 
@@ -627,6 +617,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 	$scope.codemirrorLoaded = function(codeMirror){
 		codeMirror.setOption("readOnly", "true");
 		codeMirror.setOption("theme", "custom");
+		codeMirror.setSize(null,'auto');
 		codeMirror.setValue($scope.writeFunctionDescription.code);
 		codeMirror.refresh();
 	}
@@ -669,6 +660,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$filter','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,$filter,testsService,functionsService, ADTService) {
 
 
+
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	console.log("initialization of write test controller");
 	// initialize testData
@@ -688,14 +680,12 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 			$scope.testData.disputeText = "";
 	};
 	$scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header;
-	$scope.codemirrorLoaded = function(codeMirror){
 
-		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "custom");
-		codeMirror.setOption("tabindex", "-1");
-		codeMirror.setSize(null,'auto');
-		codeMirror.refresh();
-	}
+
+	$scope.loadExample=function(ADTName)
+		{
+			return ADTService.getByName(ADTName).example;
+		}
 
 
 	$rootScope.submit = function(){

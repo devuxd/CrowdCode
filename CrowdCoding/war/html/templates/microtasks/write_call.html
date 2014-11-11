@@ -48,7 +48,7 @@
 			</div>
 			<div class="section section-form" style="width:70%;" >
 				<div id="taskForm" >
-					<div class="codemirrorBox" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+					<div class="codemirrorBox" ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="code"></div>
 					<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
 					<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
 						<span>There are some errors. Please fix them before submit:</span>

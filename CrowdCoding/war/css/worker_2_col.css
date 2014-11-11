@@ -8,7 +8,8 @@
 #969696 - medium gray - headers of the sidebar, scores,
 
 */
-
+.ace_editor-test { height: 100px;
+			width: 100%; }
 
 /* --------- BOOTSTRAP OVERWRITE ---------  */
 .btn:focus {outline:none;}
@@ -409,6 +410,16 @@ span.rating-star.full {
 
 .rating-separator { float:left; content:'s'; width:1px; height:25px; background-color: black;}
 
+
+/* Search results styles in reuseSearch */
+.result:hover {background:#dff0d8; cursor:pointer;}
+.result { margin-top:10px; padding-left:10px;}
+.selectedResult {background:rgb(229, 199, 179);color:black;}
+
+/* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
+ins {  background-color: #c6ffc6;  text-decoration: none; }
+del {  background-color: #ffc6c6; }
+
 /* ------ FLEXBOX ORDERS -------- */
 
 .column-resizer {
@@ -456,8 +467,8 @@ span.rating-star.full {
 }
 
 /* Style for highlighted lines in CodeMirror */
-.pseudoCall { background-color: white; color: gray; font-weight: bold; }
-.pseudoCode { background-color: yellow;	}
+.pseudoCall { background-color: white; color: #2D2D2D !important; font-weight: bold; }
+.pseudoCode { background-color: yellow;	color: #2D2D2D!important; font-weight: bold; }
 .highlightPseudoCall { background-color: lime; }
 
 

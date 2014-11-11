@@ -8,11 +8,11 @@ myApp.directive('json1', ['ADTService',function(ADTService) {
             // instantiate a new JSONValidator
             var validator = new JSONValidator();
 
-            ctrl.$parsers.unshift(function (viewValue) {
+            ctrl.$formatters.unshift(function (viewValue) {
                 // initialize JSONValidator and execute errorCheck
                 validator.initialize(ADTService.getNameToADT,viewValue,attrs['json1'])
                 validator.errorCheck();
-                if (!validator.isValid()) {
+                if (!validator.isValid()&&viewValue!=undefined) {
                    ctrl.$setValidity('json1', false);
                     ctrl.$error.json_errors = validator.getErrors();
                     return viewValue;
@@ -40,10 +40,9 @@ myApp.directive('adtValidator',['ADTService',function(ADTService) {
             ctrl.$parsers.unshift(function (viewValue) {
 
             	var valid=ADTService.isValidTypeName(viewValue)||viewValue=="";
-            	console.log("vie "+viewValue);
-            	console.log(valid)
 
-                if(!valid){
+                 if(!valid){
+
                     ctrl.$setValidity('adt', false);
                     ctrl.$error.adt_errors =  "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
                     return viewValue;
@@ -433,7 +432,38 @@ myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
 
     }
 }]);
+//////////////////////
+//  JAVA HELPER     //
+//////////////////////
 
+
+myApp.directive('javaHelper', ['$compile','$timeout','$http','ADTService',function($compile,$timeout,$http,ADTService) {
+
+    return {
+	     restrict: "EA",
+	     templateUrl:"/html/templates/java_tutorial.html",
+
+	        link: function($scope, $element, $attributes){
+
+	        	$http.get('/js/javascriptTutorial.txt').success( function(code) {
+					$scope.javaTutorial = code;
+			    });
+
+	        },
+	    controller: function($scope,$element){
+
+
+
+			$scope.aceLoaded = function(_editor) {
+		    		_editor.setOptions({
+		    	    maxLines: Infinity
+		    	});
+
+			 };
+		}
+ }
+
+}]);
 
 
 
@@ -447,11 +477,7 @@ myApp.directive('adtBar', ['$compile','$timeout','ADTService',function($compile,
            	$scope.ADTs=ADTService.getAllADTs();
 
 
-
-
-            angular.forEach($scope.ADTs,function(value,key){
-
-	        	console.log("direttiva "+value.name);
+           angular.forEach($scope.ADTs,function(value,key){
 
 	        var	childScope=$scope.$new();
 	        	childScope.ADT=value;
@@ -473,11 +499,7 @@ myApp.directive('adtBar', ['$compile','$timeout','ADTService',function($compile,
 	            $element.append(toggler);
 	            $element.append(element);
 	           	$compile($element.contents())(childScope);
-	            console.log(elementBody.height());
-	        });
-
-
-
+	         });
 
             function activateElement(el){
                 // remove class active for all togglers
@@ -500,8 +522,14 @@ myApp.directive('adtBar', ['$compile','$timeout','ADTService',function($compile,
             $timeout(function(){
                 $element.find('.toggler-adt:first-child').click();
             },100);
-        }
-
+        },
+    controller: function($scope,$element){
+    	 $scope.aceLoaded = function(_editor) {
+    		_editor.setOptions({
+    	    maxLines: Infinity
+    	});
+    	 };
+    }
     }
 }]);
 
@@ -688,11 +716,11 @@ myApp.directive('tutorial', function($compile) {
 
 
                 $buttonBar.append($circles);
-                // append overlay and next button to 
+                // append overlay and next button to
                 $element.append($overlay);
                 $element.append($content);
                 $element.append($buttonBar);
-                
+
                 // compile the element
                 $compile($element.contents())($scope);
 
@@ -706,7 +734,7 @@ myApp.directive('tutorial', function($compile) {
             }
 
             $scope.destroy = function(){
-                // remove the tutorial from the document 
+                // remove the tutorial from the document
                 $overlay.remove();
                 $content.remove();
                 $circles.remove();
@@ -735,7 +763,7 @@ myApp.directive('tutorial', function($compile) {
                 var top  = $stepTag.offset().top;
                 var left = $stepTag.offset().left;
                 var width = 200;
-                var height = 200; 
+                var height = 200;
                 var margin = 20;
 
                 if(contentPosition == 'left'){
@@ -746,7 +774,7 @@ myApp.directive('tutorial', function($compile) {
                     top = top - height - margin;
                 } else if(contentPosition == 'bottom'){
                     top = top + height + margin;
-                } 
+                }
 
                 $content.animate({ opacity:0 },500,function(){
 
@@ -764,19 +792,19 @@ myApp.directive('tutorial', function($compile) {
                                     .css('left',left)
                                     .css('width',width)
                                     .css('height',height);
-                            $content.animate({ 
+                            $content.animate({
                                 top:    top+'px',
                                 left:   left+'px',
                                 width:  width+'px',
                                 height: height+'px',
-                                opacity: 1 
+                                opacity: 1
                             },500);
                         });
                     });
                 });
-                
+
             };
-            
+
             //$scope.init();
         }
     }

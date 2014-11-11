@@ -19,7 +19,7 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
 
 
 
-    
+
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
 		userService.login();
@@ -184,6 +184,15 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	});
 
 
+	//----------------Code Mirror Option-------------//
+	$scope.readOnlyOption={
+
+	};
+
+	$scope.editingOption={
+
+	};
+
 
 }]);
 
@@ -268,11 +277,11 @@ myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter'
 			};
 			$scope.total = 0;
 			$scope.stats.$save();
-			
+
 		} else {
 			updateTotal();
 		}
-		
+
 		*/
 
 	});
@@ -298,25 +307,7 @@ myApp.controller('NewsController', ['$scope','$rootScope','$firebase','$filter',
 
 
 
-//////////////////////
-// JAVA TUTORIAL    //
-//////////////////////
-myApp.controller('JavaTutorialController',  ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
 
-
-	var tutorialText="";
-	$.get('/js/javascriptTutorial.txt', function(code) {
-		 tutorialText = code;
-	});
-  	$scope.codemirrorLoaded = function(tutCodeMirror){
-	    tutCodeMirror.getDoc().setValue(tutorialText);
-		tutCodeMirror.setOption('autofocus', true);
-		tutCodeMirror.setOption('indentUnit', 4);
-		tutCodeMirror.setOption('indentWithTabs', true);
-		tutCodeMirror.setOption('lineNumbers', true);
-	  	tutCodeMirror.setSize(null, 500);
-    };
-}]);
 
 ///////////////////////////////////
 //TYPE BROWSER    CONTROLLER     //
