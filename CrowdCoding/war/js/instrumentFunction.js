@@ -3,8 +3,84 @@
 //This script in inserted in the file DebugTestFailure.jsp, therefore, 
 //some object definitions used here come from that file. 
  
-	var debugInput = 2;
-	var calleeList = [];  //List of all callees by function name
+
+
+var debugInput = 2;
+var calleeList = []; 
+var calleeMap = {};
+var debugStatements = {};
+console.log(debugStatements);
+var numDebugStatements = 0;
+
+
+//Inserts the inputs and outputs to a map datastructure that will be used 
+//later to displays these values in the debug fields.
+function logCall( functionName, parameters, mockReturnValue, realReturnValue )
+{
+	// Load up the inputs map first for this function (if it exists). Otherwise, create it.		
+	var inputsMap;
+	if(!calleeMap.hasOwnProperty(functionName)){ 
+		inputsMap = {};
+		calleeMap[functionName]=inputsMap;
+	}else
+		inputsMap = calleeMap[functionName];
+	
+	//we had to stringify parameters so we obtain a unique identifier to be used in the inputsMap 
+	var args = {
+		arguments:parameters, 
+		toString: function(){ return JSON.stringify(parameters); }  
+	};	
+
+	if( mockReturnValue == null ) mockReturnValue = realReturnValue;
+	
+	inputsMap[JSON.stringify(parameters)] = { 
+		inputs : parameters,
+		mockOutput : mockReturnValue,
+		realOutput : realReturnValue,
+	};
+
+	calleeMap[functionName] = inputsMap;
+}
+
+
+console.log(debugStatements);
+function logDebug(statement){
+	console.log("debug stat + "+statement);
+	console.log("debug stat + "+numDebugStatements);
+	debugStatements[++numDebugStatements] = statement.toString();
+
+	console.log(debugStatements);
+
+}
+
+console.log(debugStatements);
+
+// Checks if there is a mock for the function and parameters. Returns values in form
+// { hasMock: BOOLEAN, mockOutput: VALUE }
+function hasMockFor(functionName, parameters, mocks)
+{
+	var hasMock = false;
+	var mockOutput = null;
+	
+	if(mocks.hasOwnProperty(functionName))
+	{
+		var inputOutputMap = mocks[functionName];
+		
+		var argsKey = JSON.stringify(parameters);
+		if (inputOutputMap.hasOwnProperty(argsKey))
+		{
+			hasMock = true;
+			mockOutput = inputOutputMap[argsKey].output;
+		}			
+	}
+	return { hasMock: hasMock, mockOutput: mockOutput };
+}
+
+function replaceAll(find, replace, str) {
+  return str.replace(new RegExp(find, 'g'), replace);
+}
+
+ //List of all callees by function name
 	 //Map with information from callee to their inputs-output
 		
 		/*

@@ -10,10 +10,6 @@ myApp.controller('NoMicrotaskController', ['$scope','$rootScope','$firebase','te
 ///////////////////////////////
 myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
 
-
-
-	// DECLARE VARIABLES HERE
-	$rootScope.inlineForm = true;
 	$scope.newTestCase = "";
 
 
@@ -44,11 +40,14 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 
 	$scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header;
 
-	$rootScope.submit = function(){
+
+
+	/** collect form data is invoked from the submit button **/
+	$scope.$on('collectFormData',function(){
 		// PREPARE FORM DATA HERE
 		formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
 		$scope.$emit('submitMicrotask',formData);
-	}
+	});
 
 }]);
 
@@ -133,7 +132,7 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 		}
 	};
 
-	$rootScope.submit = function(){
+	$scope.$on('collectFormData',function(){
 
 		formData = {
 			microtaskIDReviewed: $scope.microtask.microtaskIDUnderReview,
@@ -142,7 +141,7 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 		};
 
 		$scope.$emit('submitMicrotask',formData);
-	}
+	});
 
 }]);
 
@@ -236,7 +235,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		return false;
 	}
 
-	$rootScope.submit = function(){
+	$scope.$on('collectFormData',function(){
 		formData = {};/*
 		if($scope.dispute){
 			// return jSON object
@@ -283,7 +282,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		}
 
 		$scope.$emit('submitMicrotask',formData);*/
-	}
+	});
 
 	// run the tests
 	$scope.runTests();
@@ -327,7 +326,7 @@ myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','te
 		codeMirror.refresh();
 	}
 
-	$rootScope.submit = function(){
+	$scope.$on('collectFormData',function(){
 		console.log("reuse search controlle prepare form data");
 		//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
 		if($scope.reuseSearch.selected==-1)
@@ -343,7 +342,7 @@ myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','te
 					};
 		}
 		$scope.$emit('submitMicrotask',formData);
-	}
+	});
 
 }]);
 
@@ -407,7 +406,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
  	};
 
 
-	$rootScope.submit = function(){
+	$scope.$on('collectFormData',function(){
 		console.log("write call controlle prepare form data");
 		var text = codemirror.getValue();
  		var ast = esprima.parse(text, {loc: true});
@@ -439,7 +438,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 					 paramDescriptions: functionParsed.paramDescriptions,
 					 calleeNames:  calleeNames};
 		$scope.$emit('submitMicrotask',formData);
-	}
+	});
 
 }]);
 
@@ -504,7 +503,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 	 	};
 
 
-	$rootScope.submit = function(){
+	$scope.$on('collectFormData',function(){
 		var text = codemirror.getValue();
  		var ast = esprima.parse(text, {loc: true});
 
@@ -536,7 +535,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 					 calleeNames:  calleeNames};
 		console.log("write function controller prepare form data");
 		$scope.$emit('submitMicrotask',formData);
-	}
+	});
 
 }]);
 
@@ -583,7 +582,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 	//Add the first parameter
 	$scope.addParameter();
 
-	$rootScope.submit = function(){
+	$scope.$on('collectFormData',function(){
 		console.log("write function description controlle prepare form data");
 
 		var paramNames=[];
@@ -607,7 +606,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 					};
 
 		$scope.$emit('submitMicrotask',formData);
-	}
+	});
 
 }]);
 
@@ -646,7 +645,7 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 		}
 
 
-	$rootScope.submit = function(){
+	$scope.$on('collectFormData',function(){
 		console.log("write test controlle prepare form data");
 		if($scope.dispute){
 			// return jSON object
@@ -676,6 +675,6 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 
 
 		$scope.$emit('submitMicrotask',formData);
-	}
+	});
 
 }]);

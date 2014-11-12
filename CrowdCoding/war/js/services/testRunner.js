@@ -173,9 +173,9 @@ myApp.factory('testRunnerService', [
 	testRunner.stopTest = function()
 	{
 		console.log("Hit timeout in TestRunner running the test " + currentTextIndex);
-		
 		worker.terminate();
-		this.processTestFinished(true, null);
+		testRunner.processTestFinished(true, null);
+		
 	}
 		
 	testRunner.runTest = function()
@@ -195,21 +195,24 @@ myApp.factory('testRunnerService', [
 		
 		// Check the code for syntax errors using JSHint. Since only the user defined code will be checked,
 		// add extra defs for references to the instrumentation code.
-		var extraDefs  = "var mocks = {}; function logCall(){} function hasMockFor(){} function printDebugStatement (){} ";		
+		var extraDefs  = "var mocks = {}; function logCall(){} function logDebug(){} function hasMockFor(){} function printDebugStatement(statement){} ";		
 		var codeToLint = extraDefs + allTheFunctionCode + testCode;
 		var lintResult = JSHINT(getUnitTestGlobals() + codeToLint, getJSHintGlobals());
 		var errors     = checkForErrors(JSHINT.errors);
 		var testResult;
 
 
-		//console.log("======= CODE TO LINT ");
-		//console.log(codeToLint);
+		console.log("======= CODE TO LINT ");
+		console.log(codeToLint);
 		
 		// If there aren't LINT errors, run the test
 		if(errors == ""){
 
 			// set the max execution time
-			//var timeoutPromise = $timeout( this.stopTest() , timeOutTime);
+			var timeoutPromise = $timeout( function(){
+				worker.terminate();
+				testRunner.stopTest();
+			} , timeOutTime);
 
 			// build the code to be executed by the worker
 			var codeToExecute = allTheFunctionCode + testCode;
@@ -224,7 +227,7 @@ myApp.factory('testRunnerService', [
 		    // Add a callback for receiving and processing messages from the worker. 
 		    worker.onmessage = function(e) {
 		    	// cancel the test execution timeout
-			    //$timeout.cancel(timeoutPromise);
+			    $timeout.cancel(timeoutPromise);
 			    // add the returned data
 			    calleeMap                    = e.data.calleeMap;
 			    returnData[currentTextIndex] = e.data.testData;	

@@ -31,7 +31,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.findNextWord = function (text, start){ return findNextWord(text, start);};
 		this.getCalleeNames = function (ast){ return getCalleeNames(ast);};
 		this.getCalleeNamesById = function (functionId){ return getCalleeNamesById(functionId);};
-		this.getCalleeIdsById = function (functionId){ return getCalleeIdsById(functionId);};
 		this.parseDescription = function (lineDescription,functionName) { return parseDescription(lineDescription,functionName);};
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
@@ -527,7 +526,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 
 	}
 
-	function getCalleeNames(functionCode)
+	function getCalleeNames(ast)
 	{
 		var calleeNames = [];
 		traverse(ast, function (node)

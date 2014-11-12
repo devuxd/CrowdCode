@@ -3,6 +3,7 @@
 <%@page import="com.googlecode.objectify.Key"%>
 <%@page import="com.googlecode.objectify.ObjectifyService"%>
 <%@page import="com.google.appengine.api.users.UserServiceFactory"%>
+<%@page import="com.google.appengine.api.users.User"%>
 <%@page import="com.crowdcoding.entities.Project"%>
 <%@page import="com.crowdcoding.entities.Worker"%>
 <%@page import="java.util.logging.Logger"%>
@@ -16,13 +17,15 @@
 
     final String projectID = (String) request.getAttribute("project");
 	final Logger log = Logger.getLogger(Project.class.getName());
+	User user = UserServiceFactory.getUserService().getCurrentUser();
 	Project project = ObjectifyService.ofy().transact(new Work<Project>()
 	{
 	    public Project run(){ return Project.Create(projectID); }
 	});
+	Worker worker = Worker.Create(user, project);
 
-	String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
-	String workerHandle = UserServiceFactory.getUserService().getCurrentUser().getNickname();
+	String workerID     = user.getUserId();
+	String workerHandle = user.getNickname();
 %>
 
 <!DOCTYPE html>
@@ -127,15 +130,15 @@
 
 	        <!-- CONTENT -->
 	        <div id="content" class="order-3" ng-controller="MicrotaskController">
-				<form name="form" class="{{ inlineForm?'form-horizontal':''  }}"
+				<form name="form" class="form-horizontal"
 						  novalidate>
 					<div id="task"  class="task" style="" microtask >
-						<ng-include onload="initLayout()" src="templatePath"></ng-include>
+						<ng-include src="templatePath"></ng-include>
 					</div>
 					<div class="button-bar">
 						<span class="pull-left">
 
-							<button ng-click="submit()" tabindex="99" class="btn btn-sm btn-primary"
+							<button ng-click="$broadcast('collectFormData')" tabindex="99" class="btn btn-sm btn-primary"
 									ng-disabled="form.$invalid" >
 									Submit
 							</button>
@@ -232,7 +235,7 @@
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
 
-	<script src="/js/instrumentFunction.js"></script> <!-- to refactor -->
+	<!--<script src="/js/instrumentFunction.js"></script> <!-- to refactor -->
 
 	<script src="/js/errorCheck.js"></script> <!-- to refactor -->
 	<script src="/js/functionSupport.js"></script> <!-- to refactor -->
@@ -275,7 +278,7 @@
 	<!-- Angular Directives -->
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/directives/codemirror-directives.js"></script>
-	<script src="/js/directives/ace-editor-directives.js"></script>
+	<!--<script src="/js/directives/ace-editor-directives.js"></script>-->
 	<!-- Angular Filter -->
 	<script src="/js/filters/filter.js"></script>
 

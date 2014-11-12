@@ -158,10 +158,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask',function(event,formData){
-
-		console.log('submit fired');
-		console.log(formData);
-
 		$http.post('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
 			success(function(data, status, headers, config) {
 
@@ -183,18 +179,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			  $scope.$emit('load');
 		  });
 	});
-
-
-	//----------------Code Mirror Option-------------//
-	$scope.readOnlyOption={
-
-	};
-
-	$scope.editingOption={
-
-	};
-
-
 }]);
 
 

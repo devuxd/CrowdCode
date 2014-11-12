@@ -7,31 +7,53 @@
 <script src="../assertionFunctions.js"></script>
 
 <script type="text/javascript">
-var mocks = {"sum":{"{\"0\":1,\"1\":2}":{"inputs":["1","2"],"output":3},"{\"0\":3,\"1\":4}":{"inputs":["3","4"],"output":5}},"doCommand":{"{\"0\":true,\"1\":2}":{"inputs":["true","2"],"output":3}}};
- function doCommand(command, first){}
-function doCommandActualIMP(command, first){}
+var mocks = {}; 
+function hasMockFor(){} 
+function printDebugStatement(statement){} 
+function doCommand (command ){}
+function doCommandActualIMP(command ){}
+function doCommand2 (command ){}
+function doCommand2ActualIMP(command ){}
 
-function doCommand(command, first)
+function doCommand (command )
 {
   var returnValue;  var mockFor = hasMockFor('doCommand', arguments, mocks); 
   if (mockFor.hasMock) 
     returnValue = mockFor.mockOutput; 
   else 
     returnValue = doCommandActualIMP.apply(null, arguments); 
-  logCall('doCommand',arguments,returnValue); 
-   return returnValue;
+  return returnValue;
 }
 
-function doCommandActualIMP(command, first)
+function doCommandActualIMP(command )
 {
-	//Mark this function as implemented by removing this line.
-	return {}; 
+  //#Mark this function as implemented by removing this line.
+  return {}; 
 }
-function sum(first, second){
-	doCommand('sum',1);
-	return {}; 
-}equal(sum(3,4),5,'asdasdsd'); 
+function doCommand2 (command )
+{
+  var returnValue;  var mockFor = hasMockFor('doCommand2', arguments, mocks); 
+  if (mockFor.hasMock) 
+    returnValue = mockFor.mockOutput; 
+  else 
+    returnValue = doCommand2ActualIMP.apply(null, arguments); 
+  return returnValue;
+}
 
+function doCommand2ActualIMP(command )
+{
+  //#Mark this function as implemented by removing this line.
+  return {}; 
+}
+
+function sum(first, second){
+  
+  logDebug(1);
+  logDebug(1);
+  //Mark this function as implemented by removing this line.
+  return {}; 
+}
+equal(sum(1,2),3,'al??djakjd');
 
 </script>
 </body>
