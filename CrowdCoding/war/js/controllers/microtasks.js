@@ -160,150 +160,93 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 ///////////////////////////////
 myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase','$timeout','testsService', 'testRunnerService','functionsService', 'ADTService', function($scope,$rootScope,$firebase,$timeout,testsService,testRunnerService,functionsService, ADTService) {
 
-
-	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
-
-	// load the function code and start codemirror
-	var marks=[];
-	var highlightPseudoCall = false;
-	var changeTimeout;
-/*
-	$scope.console = {
-		content: [],
-		newLinesCount: 0
-	}*/
-
  	//retrieve tests for the current function
-	$scope.tests = testsService.validTestsforFunction($scope.microtask.functionID);
-	$scope.passedTests = [];
+	$scope.tests        = testsService.validTestsforFunction($scope.microtask.functionID);
+	$scope.passedTests  = [];    
 	$scope.testsRunning = false; // for cheching if tests are running
 
 
-	$scope.consoleOutput = "";
-	var consoleCM = null;
-	$scope.consoleLoaded = function(consoleCodemirror){
-		consoleCM = consoleCodemirror;
-		consoleCodemirror.setOption("readOnly", "true");
-		consoleCodemirror.setOption("theme", "console");
-		consoleCodemirror.setOption("tabindex", "-1");
-		consoleCodemirror.setSize(null,'200px');
-		consoleCodemirror.refresh();
+	// INITIALIZE THE CONSOLE CODEMIRROR
+	$scope.consoleOutput  = "";
+	var consoleCodeMirror = null;
+	$scope.consoleLoaded  = function(codemirror){
+		consoleCodeMirror = codemirror;
+		codemirror.setOption("readOnly", "true");
+		codemirror.setOption("theme", "console");
+		codemirror.setOption("tabindex", "-1");
+		codemirror.setSize(null,'200px');
+		codemirror.refresh();
 	}
 
-
+	// INITIALIZE THE FUNCTION EDITOR CODEMIRROR
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-	
-	var callees = functionsService.getCalleeNamesById($scope.funct.id);
-	$scope.callees = [];
-	angular.forEach(callees,function(value,key){
-		$scope.callees.push({name:value,description:functionsService.renderDescription(value)});
-	});
-
-	console.log("callees");
-	console.log($scope.callees);
-	$scope.codemirrorLoaded = function(myCodeMirror){
-
-		$scope.runTests = function(){
-			// set testsRunning flag
-			$scope.testsRunning = true;
-			$scope.consoleOutput += "> RUNNING ALL THE TESTS\n";
-			if( typeof codemirror === 'undefined' ){ // IF BODY NOT YET LOADED (first run of the function)
-
-				testRunnerService.runTestsForFunction($scope.microtask.functionID).then(function(data){
-					// copy passed tests content locally
-					$scope.passedTests = data.passedTests;
-
-					// assign the content of the console
-					$scope.consoleOutput += data.console.join('\n')+"\n";
-
-					// reset testsRunning flag
-					$timeout(function(){
-						$scope.testsRunning = false;
-						consoleCM.scrollTo(0,consoleCM.getScrollInfo().height);
-					},200);
-				});
-
-			} else {
-
-				// retrieve the codemirror content and select the body
-				var text = codemirror.getValue();
-
-				var ast = esprima.parse(text, {loc: true});
-				var body = codemirror.getRange(
-						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-
-				// run the tests from the service
-				console.log(ast);
-				testRunnerService.runTestsForFunction($scope.microtask.functionID,body,ast).then(function(data){
-					// copy passed tests content locally
-					$scope.passedTests = data.passedTests;
-
-					// assign the content of the console
-					$scope.consoleOutput += data.console.join('\n')+"\n";
-					// reset testsRunning flag
-					$timeout(function(){
-						$scope.testsRunning = false;
-						consoleCM.scrollTo(0,consoleCM.getScrollInfo().height);
-					},200);
-				});
-			}
-		};
-		// run the tests
-		$scope.runTests();
-
-		$scope.dispute = false;
-		$scope.disputedTest = null;
-		$scope.disputeTest = function(testKey){
-			$scope.dispute = true;
-			$scope.disputedTest = $scope.tests[testKey];console.log($scope.disputedTest);
-		}
-
-		// check if test is passed
-		// testKey is the key of the test in $scope.tests
-		$scope.testPassed = function(testKey){
-			if( $scope.passedTests != 'undefined' && $scope.passedTests.indexOf(testKey) !=-1 )
-				return true;
-			return false;
-		}
-
-		console.log("initialize codemirror");
-    	codemirror = myCodeMirror;
+	var functionCodeMirror  = null;
+	var highlightPseudoCall = false;
+	$scope.codemirrorLoaded = function(codemirror){
+    	functionCodeMirror = codemirror;
 		codemirror.doc.setValue($scope.code);
 		codemirror.setOption('autofocus', true);
 		codemirror.setOption('indentUnit', 4);
 		codemirror.setOption('indentWithTabs', true);
 		codemirror.setOption('lineNumbers', true);
-
 		codemirror.setOption("theme", "vibrant-ink");
-
-		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
-		// If we are editing a function that is a client request and starts with CR, make the header
-	 	// readonly.
-		if ($scope.funct.name.startsWith('CR'))
-			functionsService.makeHeaderAndParameterReadOnly(codemirror);
-
-		// refresh codemirror when the tab is changed
-		// otherwise the line numbers are not properly aligned
-		$scope.$watch(function(){ return $scope.selectedTab },function(){
-			$timeout(function(){codemirror.refresh()},10);
-		});
-
-	 	// on code change highlight pseudo segments
-		codemirror.on("change", function(){
-			$scope.code = codemirror.doc.getValue();
-			functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
-		});
-
-
+		codemirror.refresh();
  	};
 
+ 	$scope.results   = {};
+ 	$scope.calleeMap = {};
+	$scope.runTests = function(){
+		// set testsRunning flag
+		$scope.testsRunning = true;
+		var functionBody = undefined;
+		if( functionCodeMirror != null ){
+			var ast = esprima.parse(functionCodeMirror.doc.getValue(), {loc: true});
+		    functionBody = functionCodeMirror.getRange(
+				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+			    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+		}
 
+		// ask the worker to run the tests
+		testRunnerService.runTestsForFunction($scope.microtask.functionID,functionBody).then(function(data){
 
-	console.log("initialization of debug test failure");
+			console.log(" ----- RESULTS FROM THE TEST RUNNER ");
+
+			$scope.results   = data.results;
+			$scope.calleeMap = data.calleeMap;
+
+			console.log($scope.results);
+			console.log($scope.calleeMap);
+
+			// copy passed tests content locally
+			$scope.passedTests = data.passedTests;
+
+			// assign the content of the console
+			//$scope.consoleOutput += data.console.join('\n')+"\n";
+			// reset testsRunning flag
+			$timeout(function(){
+				$scope.testsRunning = false;
+				//consoleCM.scrollTo(0,consoleCM.getScrollInfo().height);
+			},200);
+		});
+	};
+
+	$scope.dispute      = false;
+	$scope.disputedTest = null;
+	$scope.disputeTest = function(testKey){
+		$scope.dispute = true;
+		$scope.disputedTest = $scope.tests[testKey];console.log($scope.disputedTest);
+	}
+
+	// check if test is passed
+	// testKey is the key of the test in $scope.tests
+	$scope.isTestPassed = function(testKey){
+		if( $scope.passedTests != 'undefined' && $scope.passedTests.indexOf(testKey) !=-1 )
+			return true;
+		return false;
+	}
 
 	$rootScope.submit = function(){
-		formData = {};
+		formData = {};/*
 		if($scope.dispute){
 			// return jSON object
 			console.log($scope.disputedTest);
@@ -315,6 +258,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 			};
 
 		} else {
+			
 			var text = codemirror.getValue();
 	 		var ast = esprima.parse(text, {loc: true});
 
@@ -344,10 +288,14 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 						 paramTypes:   functionParsed.paramTypes,
 						 paramDescriptions: functionParsed.paramDescriptions,
 						 calleeNames:  calleeNames};
+						 
 		}
 
-		$scope.$emit('submitMicrotask',formData);
+		$scope.$emit('submitMicrotask',formData);*/
 	}
+
+	// run the tests
+	$scope.runTests();
 
 }]);
 

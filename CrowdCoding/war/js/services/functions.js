@@ -17,7 +17,8 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.allFunctionIDs = function() { return allFunctionIDs(); };
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
-		this.getMockCodeFor = function(id,code) { return getMockCodeFor(id,code); };
+		this.getNameById  = function(id) { return getNameById(id); };
+		this.getMockCodeFor = function(id,logEnabled) { return getMockCodeFor(id,logEnabled); };
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
 		this.getMockHeader = function(id) { return getMockHeader(id); };
 		this.renderDescription= function(functionCalled) { return renderDescription(functionCalled); };
@@ -30,6 +31,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.findNextWord = function (text, start){ return findNextWord(text, start);};
 		this.getCalleeNames = function (ast){ return getCalleeNames(ast);};
 		this.getCalleeNamesById = function (functionId){ return getCalleeNamesById(functionId);};
+		this.getCalleeIdsById = function (functionId){ return getCalleeIdsById(functionId);};
 		this.parseDescription = function (lineDescription,functionName) { return parseDescription(lineDescription,functionName);};
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
@@ -114,12 +116,19 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			return funct;
 		}
 
+		function getNameById(id)
+		{
+			var funct = get(id);
+			if( funct != null) return funct.name;
+			return "";
+		}
+
 		// Get the function declaration and mock implementation for the function with the specified id.
 		// Rather than the actual implementation, the implementation is replace with an implementation
 		// that checks for a corresponding mock and only calls the corresponding actual implementation
 		// if the mock is not present.
 		// Returns an empty string if the specified function cannot be found.
-		function getMockCodeFor(id,code){
+		function getMockCodeFor(id,logEnabled){
 			var mockCode = '';
 			var functionObj = get(id);
 			if (functionObj == null)
@@ -130,21 +139,26 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 
 			// Next, add the mock implementation body
 			mockCode += '{\n';
+			mockCode += '  var returnValue;';
 			mockCode += '  var mockFor = hasMockFor(\'' + functionObj.name + '\', arguments, mocks); \n';
 			mockCode += '  if (mockFor.hasMock) \n';
-			mockCode += '    return mockFor.mockOutput; \n';
+			mockCode += '    returnValue = mockFor.mockOutput; \n';
 			mockCode += '  else \n';
-			mockCode += '    return ' + functionObj.name + 'ActualIMP.apply(null, arguments); \n';
+			mockCode += '    returnValue = ' + functionObj.name + 'ActualIMP.apply(null, arguments); \n';
+
+			// TODO: WRITE A BETTER LOG CALL, now can call two times the actual implementation
+			if( logEnabled != undefined && logEnabled ){
+				mockCode += '  logCall(\'' + functionObj.name + '\',arguments,mockFor.mockOutput,' + functionObj.name + 'ActualIMP.apply(null, arguments) ); \n ';
+			} 
+
+			mockCode += '  return returnValue;';
 			mockCode += '\n}\n\n';
 
 			// Third, add the special header for the actual implementation
 			mockCode += getMockHeader(id);
 
 			// Fourth, add the actual code body of the function
-			if(code!=undefined)
-				mockCode += '\n' + code + '\n';
-			else
-				mockCode += '\n' + functionObj.code + '\n';
+			mockCode += '\n' + functionObj.code + '\n';
 
 			return mockCode;
 		}
@@ -513,7 +527,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 
 	}
 
-	function getCalleeNames(ast)
+	function getCalleeNames(functionCode)
 	{
 		var calleeNames = [];
 		traverse(ast, function (node)

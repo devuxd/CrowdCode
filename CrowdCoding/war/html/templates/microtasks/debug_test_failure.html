@@ -15,59 +15,6 @@
 		</div>
 	</div>
 
-	<div class="section section-form">
-		<div class="section-title" >
-		TEST CASES
-		</div>
-		<div class="section-content" >
-			<table class="debugTests">
-				<tr>
-					<th>Description</th>
-					<th>Test Code</th>
-					<th>Result</th>
-					<th></th>
-				</tr>
-				<tr class="{{ testPassed(key) ? 'passed' : 'failed' }}"
-					ng-init="showDetails[key]=false"
-					ng-repeat="(key,test) in tests"
-					>
-					<td class="description">{{test.description}}</td>
-
-					<td class="">
-						{{test.code}}
-
-						<div ng-repeat="callee in callees">
-							{{callee.name}}
-						</div>
-					</td>
-
-					<td>
-						<span ng-if="testPassed(key)">PASSED</span>
-						<span ng-if="!testPassed(key)">FAILED</span>
-					</td>
-
-					<td>
-						<button class="btn btn-primary" 
-							ng-click="disputeTest(key)" 
-							ng-hide="testPassed(key)" 
-						> Dispute </button>
-					</td>
-				</tr>
-			</table>
-			<button ng-click="runTests()" class="btn btn-primary"  >Run the tests!</button>
-			<br/>
-		</div>
-	</div>
-
-
-	<div class="section section-form">
-		<div class="section-title" >
-		CONSOLE
-		</div>
-		<div class="section-content" >
-			<div ng-model="consoleOutput" ui-codemirror="{ onLoad : consoleLoaded }"></div>
-		</div>
-	</div>
 
 	<div class="section section-form">
 		<div class="section-title" >
@@ -88,7 +35,54 @@
 	</div>
 
 
-	
+	<div class="section section-form">
+		<div class="section-title" >
+		TEST CASES
+		</div>
+		<div class="section-content" >
+			<div ng-init="showDetails[key]=false" ng-repeat="(key,test) in tests">
+				<strong>{{test.description}} </strong>
+
+				<span ng-if="results[key].testResult">PASSED</span>
+				<span ng-if="!results[key].testResult">FAILED</span>
+
+				<br />
+
+				<strong> debug statements</strong>
+				<ul>
+					<li ng-repeat="statement in results[key].debugStatements" > 
+						{{statement}}
+					</li>
+				</ul>
+
+				<button class="btn btn-primary" ng-click="disputeTest(key)" ng-hide="results[key].testResult" > Dispute </button>
+				<br />
+			</div>
+
+			<button ng-click="runTests()" class="btn btn-primary"  >Run the tests!</button>
+			<br/>
+		</div>
+	</div>
+
+	<div class="section section-form">
+		<div class="section-title" >
+		FUNCTIONS CALLED
+		</div>
+		<div class="section-content" >
+			<ul>
+				<li ng-repeat="(callee,inputMap) in calleeMap" > 
+					{{callee}}
+					<ul>
+						<li ng-repeat="result in inputMap">
+							INPUTS: {{result.inputs}} <br />
+							MOCK OUTPUT: {{result.mockOutput}} <br />
+							REAL OUTPUT: {{result.realOutput}}
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
 
 	<div id="taskForm" ng-show="dispute">
 		<span><b>Test description:</b> {{disputedTest.description}}</span><br/>
