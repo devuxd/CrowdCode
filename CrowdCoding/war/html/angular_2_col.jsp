@@ -20,7 +20,7 @@
 	{
 	    public Project run(){ return Project.Create(projectID); }
 	});
-	
+
 	String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 	String workerHandle = UserServiceFactory.getUserService().getCurrentUser().getNickname();
 %>
@@ -41,7 +41,12 @@
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/pastel-on-dark.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/custom.css" type="text/css" />
+
+	<link rel="stylesheet" href="/include/codemirror/custom-editor.css" type="text/css" />
+
+
 	<link rel="stylesheet" href="/include/codemirror/console.css" type="text/css" />
+
 
 	<link rel="stylesheet" href="/css/worker_2_col.css" type="text/css" />
 	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
@@ -55,7 +60,7 @@
 <body ng-controller="AppController"  >
 
 		<header tutorial="1" class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
-			
+
 				<div class="container-fluid">
 					<div class="navbar-header">
 						<span class="navbar-brand">
@@ -67,7 +72,7 @@
 
 					<ul class="nav navbar-nav">
 						<li id="projectSelector">
-							
+
 							<a href=""><strong>Current Project: </strong>{{ projectId }}</a>
 							<!--
 							<a data-toggle="dropdown" class="dropdown" href="">
@@ -97,12 +102,12 @@
 						</li>
 					</ul>
 				</div>
-				
+
 		</header>
 
 	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;">
 	    <div class="container-flex-row">
-	        
+
 	        <!-- LEFT SIDEBAR -->
 	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
 	        	<h3 class="toggler">Leaderboard</h3>
@@ -130,7 +135,7 @@
 					<div class="button-bar">
 						<span class="pull-left">
 
-							<button ng-click="submit()" tabindex="99" class="btn btn-sm btn-primary" 
+							<button ng-click="submit()" tabindex="99" class="btn btn-sm btn-primary"
 									ng-disabled="form.$invalid" >
 									Submit
 							</button>
@@ -149,11 +154,11 @@
 
 
 
-	        <div class="column-resizer order-2" 
+	        <div class="column-resizer order-2"
 	        	ng-show="leftBar"
-	        	resizer="vertical" 
-	    		resizer-width="5" 
-	    		resizer-left  = "#sidebarLeft" 
+	        	resizer="vertical"
+	    		resizer-width="5"
+	    		resizer-left  = "#sidebarLeft"
 	    		resizer-right = "#content"
 	    		resizer-main="left"
 	    		resizer-max="20"
@@ -161,7 +166,7 @@
 	    		>
 	    	</div>
 
-	    </div>    
+	    </div>
 	</div>
 
 
@@ -210,13 +215,20 @@
     <script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
     <script src="/include/angular-animate/angular-animate.min.js"></script><!-- Angular animate -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
-	
+
 
     <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> <!-- codemirror ui for Angularjs-->
  	<script src="/include/codemirror/javascript.js"></script><!-- Codemirror Javascript Style -->
 
+
+
+ 	<script src="/include/ui-ace-editor/src/ui-ace.js"> </script>
+	<script src="/include/ace-editor/src-min-noconflict/ace.js"> </script>
+
+
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
+
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
 
@@ -230,7 +242,8 @@
 
 	<script src="/js/workqueue.js"></script>
 
-    
+
+
 
 	<script>
 	var projectId    = '<%=projectID%>';
@@ -241,6 +254,7 @@
 
 
 	</script>
+
 
 	<!-- Angular Application -->
 	<script src="/js/app.js"></script>
@@ -260,7 +274,8 @@
 
 	<!-- Angular Directives -->
 	<script src="/js/directives/directives.js"></script>
-
+	<script src="/js/directives/codemirror-directives.js"></script>
+	<script src="/js/directives/ace-editor-directives.js"></script>
 	<!-- Angular Filter -->
 	<script src="/js/filters/filter.js"></script>
 

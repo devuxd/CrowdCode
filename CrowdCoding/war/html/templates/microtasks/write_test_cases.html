@@ -1,4 +1,3 @@
-
 <div ng-controller="WriteTestCasesController" class="task-container container-flex-column">
 
 	<div class="section section-description " >
@@ -44,7 +43,8 @@
 			FUNCTION SIGNATURE
 		</div>
 		<div class="section-content no-padding" >
-			<div class="readOnlyCodemirror" ng-model="code" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+			<!--  <div ng-model="code" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>-->
+			<code-mirror-readonly code="code"></code-mirror-readonly>
 		</div>
 	</div>
 	<div class="section-cols" >
@@ -118,7 +118,7 @@
 									</div>
 							</ng-form>
 						</li>
-					<ul>
+					</ul>
 					<span ng-if="testCases.length == 0" >write at least one test case</span>
 
 				</div>

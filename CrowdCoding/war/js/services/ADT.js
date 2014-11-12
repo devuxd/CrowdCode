@@ -73,6 +73,7 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 									description:'A String simply stores a series of characters like \"John Doe\".'+
 												'A string can be any text inside double quotes',
 									example:'\"John Doe\"',
+									fullExample:'var x = \"John Doe\";',
 									structure:[]
 									});
 
@@ -81,8 +82,8 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 									description:'Number is the only type of number.'+
 												'Numbers can be written with, or without, decimals.',
 
-
 									example:'14.00',
+									fullExample:'var x = 14.00;',
 									structure:[]
 									});
 
@@ -90,6 +91,7 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 			ADTs.push({ name:'Boolean',
 									description:'A Boolean represents one of two values: true or false.',
 									example:'true',
+									fullExample:'var x = true;',
 									structure:[]
 									});
 

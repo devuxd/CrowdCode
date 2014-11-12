@@ -1,9 +1,8 @@
 
 <div>
 	<span>{{ADT.description}} </span><br>
-	<span>Example: {{ADT.example}}</span><br>
 	<div ng-if="ADT.structure.length>0">
-
+		<b>Data Structure</b><br>
 		<span>Name: {{ADT.name}}</span><br>
 		<span>{</span><br>
 		<div ng-repeat="field in ADT.structure" >
@@ -12,6 +11,9 @@
 		<span>}</span><br>
 
 	</div>
+
+	Example:<div ui-ace="{showGutter: false, theme:'xcode',  mode: 'javascript', onLoad : aceLoaded }"  readonly="true" ng-model="ADT.fullExample"> </div>  <br>
+
 
 </div>
 

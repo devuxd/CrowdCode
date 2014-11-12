@@ -14,7 +14,11 @@
 		</div>
 	</div>
 
-	<div id="taskDescription">
+	<div class="section section-description">
+		<div class="section-title" >
+			JOB DESCRIPTION
+		</div>
+		<div class="section-content" >
 
 			<div ng-show="microtask.promptType=='WRITE'">
 				Please, write a test for the following test case: <br>
@@ -23,7 +27,6 @@
 		   		<span class="clearfix"></span>
 
 				Here's the description of the function to test:
-				<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="code" ></div>
 			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT'">
@@ -33,8 +36,7 @@
 				<div class="alert alert-info">{{microtask.issueDescription}}</div>
 
 				<BR>Here's the description of the function to test:
-				<div class="readOnlyCodemirror"><textarea id="correctCodeBox">{{funct.description}}</textarea></div>
-				
+
 				Can you fix the test to address this issue?<BR>
 			</div>
 
@@ -46,12 +48,10 @@
 				Can you update the test below, if necessary?<BR>
 
 				<BR>Here's the description of the function to test:
-				<div class="readOnlyCodemirror" ><textarea id="testCaseChangedCodeBox">{{funct.description}}</textarea></div>
 			</div>
 
 			<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
 				The description of the function being tested has changed<BR>
-				<div ng-bind-html="microtask.oldFunctionDescription |diff:microtask.newFunctionDescription | newline" ></div>
 				<br>
 				Can you update the test Case below,if necessary?<BR>
 
@@ -60,57 +60,98 @@
 		   		<span class="clearfix"></span>
 
 		   	</div>
-
+		</div>
 	</div>
 
-
-	<div id="taskForm" >
-
-		<div id="disputeDiv" ng-show="dispute" class="form-group">
-			<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
-			<textarea name="disputeText" class="form-control" ng-model="testData.disputeText"></textarea><br>
-			<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
-			<button class="btn btn-primary" ng-if="dispute" ng-click="submit()" >Submit dispute</button>
+	<div class="section section-description">
+		<div class="section-title" >
+			FUNCTION SIGNATURE
 		</div>
+		<div class="section-content no-padding" >
+			<code-mirror-readonly ng-if="microtask.promptType!='FUNCTION_CHANGED'" code="code"></code-mirror-readonly>
+			<div ng-if="microtask.promptType=='FUNCTION_CHANGED'" ng-bind-html="microtask.oldFunctionDescription |diff:microtask.newFunctionDescription | newline" ></div>
 
-		<div id="simpleTest" ng-hide="dispute">
-			<p>Provide a JSON object literal of the specified type for each parameter and the expected
-		    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
-		    an example from the description of a type above.</p>
-		    <BR>
-
-		    <ng-form name="inputForm" ng-repeat="(index,paramName) in funct.paramNames" >
-				<div class="form-group" ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" >
-					<label for="input">{{paramName}} ({{funct.paramTypes[index]}}): </label>
-					<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json1="{{funct.paramTypes[index]}}" ></textarea>
-					<ul class="help-block" ng-show="inputForm.input.$dirty && inputForm.input.$invalid">
-						<li ng-show="inputForm.input.$error.required" >This field is required!</li>
-						<li ng-show="inputForm.input.$error.json1" >
-							<span>There are JSON errors. Please fix them:</span>
-							<ul ng-repeat="error in inputForm.input.$error.json_errors">
-								<li>{{error}}</li>
-							</ul>
-						</li>
-					</ul>
+		</div>
+	</div>
+	<div class="section-cols" >
+		<div class="container-flex-row">
+			<div class="section section-help" style="width:30%">
+				<div class="section-title" >
+					EXAMPLE
 				</div>
-			</ng-form>
+				<div class="section-content" >
+					<div class="accordion-inner">
+						subtract(a, b)<BR>
 
-			<div ng-if="funct.returnType!=''" class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
-				<label for="output">expected Return value ({{funct.returnType}}):</label>
-				<textarea class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json1="{{funct.returnType}}" ></textarea>
-				<ul class="help-block" ng-show="form.output.$dirty && form.output.$invalid">
-					<li ng-show="form.output.$error.required" >This field is required!</li>
-					<li ng-show="inputForm.input.$error.json1" >
-						<span>There are JSON errors. Please fix them:</span>
-						<ul ng-repeat="error in inputForm.input.$error.json_errors">
-							<li>{{error}}</li>
+						<B>Here's some test cases:</B><BR>
+						a is greater than b<BR>
+						b is greater than a<BR>
+						a is the same as b<BR>
+						a is positive, b is negative<BR>
+						a is negative, b is zero<BR>
+						a is positive, b is zero<BR>
+					</div>
+				</div>
+			</div>
+
+			<div class="section section-form" style="width:70%;" >
+				<div id="disputeDiv" ng-show="dispute" class="form-group">
+					<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
+					<textarea name="disputeText" class="form-control" ng-model="testData.disputeText"></textarea><br>
+					<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
+					<button class="btn btn-primary" ng-if="dispute" ng-click="submit()" >Submit dispute</button>
+				</div>
+
+				<div id="simpleTest" ng-hide="dispute">
+					<p>Provide a JSON object literal of the specified type for each parameter and the expected
+				    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
+				    an example from the description of a type above.</p>
+				    <BR>
+
+				    <ng-form name="inputForm" ng-repeat="(index,paramName) in funct.paramNames" >
+						<div class="form-group" ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" >
+							<span for="input">{{paramName}} ({{funct.paramTypes[index]}}): </span>
+							<a href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index])" >Paste Example </a>
+							<ace-editor-test ng-model="testData.inputs[index]"></ace-editor-test>
+							<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json1="{{funct.paramTypes[index]}}" ng-show="false"></textarea>
+							<ul class="help-block" ng-show="inputForm.input.$invalid">
+								<!-- <li ng-show="inputForm.input.$error.required" >This field is required!</li> -->
+								<li ng-show="inputForm.input.$error.json1" >
+									<span>There are JSON errors. Please fix them:</span>
+									<ul ng-repeat="error in inputForm.input.$error.json_errors">
+										<li>{{error}}</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</ng-form>
+
+					<div ng-if="funct.returnType!=''" class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
+						<label for="output">expected Return value ({{funct.returnType}}):</label>
+						<a href="#" ng-click="testData.output=loadExample(funct.returnType)" >Paste Example </a>
+
+						<ace-editor-test ng-model="testData.output"></ace-editor-test>
+
+						<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json1="{{funct.returnType}}" ></textarea>
+						<ul class="help-block" ng-show="form.output.$invalid">
+							<!--<li ng-show="form.output.$error.required" >This field is required!</li> -->
+							<li ng-show="inputForm.input.$error.json1" >
+								<span>There are JSON errors. Please fix them:</span>
+								<ul ng-repeat="error in inputForm.input.$error.json_errors">
+									<li>{{error}}</li>
+								</ul>
+							</li>
 						</ul>
-					</li>
-				</ul>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<br/>
+</div>
+
+
+
+
 
 <!--
 	<br/>
@@ -120,4 +161,3 @@
 	</div>
 	<div class="clearfix"></div>
 -->
-</div>
