@@ -9,6 +9,7 @@
 
 */
 
+
 ul.clearlist:after { clear: both;}
 
 .ace_editor-test { height: 100px;
@@ -82,16 +83,13 @@ ul.clearlist:after { clear: both;}
 
 .toggler-adt {
 	cursor: pointer;
-	color: #969696;
+	color: #575757;
 	margin-top: 10px;
 	margin-bottom: 2px;
-	padding-left: 10px;
 	text-transform: uppercase;
 	font-size: 0.9em;
 }
 .toggler-adt.active {color:black;}
-.toggler-adt .glyphicon {margin-right:10px;}
-
 .element-adt {
 	border-bottom:1px solid #D0D0D0;
 	height:0px;
@@ -104,9 +102,6 @@ ul.clearlist:after { clear: both;}
 .element-adt.active {height:auto;}
 .element-adt:last-child{border:0px;}
 .element-body-adt {
-	padding-top:10px;
-	padding-left:10px;
-	padding-right:10px;
 }
 
 /* GENERAL STYLES AND LAYOUT */
@@ -200,7 +195,7 @@ h1, h2, h3, h4 {
 
 .section-content.no-padding { padding:0px; }
 
-.section.section-help { background-color:#B8D3E5; }
+.section.section-help { background-color:#BFC7CD; }
 .section.section-help .section-title { color:#5F5F5F; }
 
 .section.section-description {  }
@@ -216,7 +211,7 @@ h1, h2, h3, h4 {
 .section-content ul .form-group input { background-color:white; }
 
 .section-title.form-group {	background-color: rgba(63, 129, 172, 0.8); padding:5px;}
-.section-title.form-group:after { clear:both; }
+.section-title.form-group::after { clear:both; }
 .section-title.form-group input  { background-color:white; border-radius:0px; float:left; width: 90%; border: none; }
 .section-title.form-group input::-webkit-input-placeholder {  color: gray; font-style:italic;}
 .section-title.form-group button { float:left; width: 10%; border-radius:0px; background-color:transparent; }
@@ -485,8 +480,10 @@ del {  background-color: #ffc6c6; }
 }
 
 /* Style for highlighted lines in CodeMirror */
-.pseudoCall { background-color: white; color: #2D2D2D !important; font-weight: bold; }
-.pseudoCode { background-color: yellow;	color: #2D2D2D!important; font-weight: bold; }
+
+.pseudoCall { background-color: white; color: #2D2D2D !important; }
+.pseudoCode { background-color: yellow;	color: #2D2D2D!important;  }
+
 .highlightPseudoCall { background-color: lime; }
 
 

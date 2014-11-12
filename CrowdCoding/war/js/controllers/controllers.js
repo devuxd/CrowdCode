@@ -49,11 +49,11 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
 	$scope.$watch(function () {
 		return $rootScope.loaded;
     },function(newVal) {
-    	if( $rootScope.loaded.functions && $rootScope.loaded.mocks && 
-    	    $rootScope.loaded.tests     && $rootScope.loaded.ADTs  && 
+    	if( $rootScope.loaded.functions && $rootScope.loaded.mocks &&
+    	    $rootScope.loaded.tests     && $rootScope.loaded.ADTs  &&
     	    $rootScope.loaded.microtasks){
 
-			
+
 			$rootScope.$broadcast('load');
 		/*
 			TestList.$loaded().then(function(){
@@ -158,10 +158,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask',function(event,formData){
-
-		console.log('submit fired');
-		console.log(formData);
-
 		$http.post('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
 			success(function(data, status, headers, config) {
 
@@ -185,6 +181,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	});
 
 
+
 	//----------------Code Mirror Option-------------//
 	$scope.readOnlyOption={
 
@@ -193,6 +190,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.editingOption={
 
 	};
+
 
 
 }]);

@@ -65,7 +65,7 @@ public class WriteFunctionDescription extends Microtask
 		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
 				functionDTO.paramTypes, functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, code, project);
 	
-
+		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter 
 		WorkerCommand.increaseStat(workerID, "function_descriptions",1);
 		

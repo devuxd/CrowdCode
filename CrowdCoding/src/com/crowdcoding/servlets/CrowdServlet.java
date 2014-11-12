@@ -116,6 +116,8 @@ public class CrowdServlet extends HttpServlet
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
+        
+
 
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
@@ -145,18 +147,11 @@ public class CrowdServlet extends HttpServlet
 				// PROJECT URLS match /word/ or /word/(word)*
 				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
 					String projectId = pathSeg[1];
-					
+	
 					req.setAttribute("project", projectId);
 					Key<Project> projectKey = Key.create(Project.class, projectId);
-					boolean projectExists =  ( ofy().load().filterKey(projectKey).count() != 0 );
+					boolean projectExists =  (ofy().load().filterKey(projectKey).count() != 0 );
 					
-/*
-					Query<Project> all = ofy().load().type(Project.class);
-					for (Project project : all) {
-						System.out.println(project.getID());
-					}
-					System.out.println(pathSeg.length);*/
-
 					if(!projectExists){
 						System.out.println("project doesn't exists in appengine");
 						System.out.println("projects: "+FirebaseService.existsProject(projectId));

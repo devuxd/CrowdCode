@@ -78,6 +78,7 @@ public class DebugTestFailure extends Microtask
      protected void doSubmitWork(DTO dto, String workerID, Project project)
      {
     	function.get().debugTestFailureCompleted((FunctionDTO) dto, project);
+    	WorkerCommand.awardPoints(workerID, this.submitValue);
   		// increase the stats counter 
   		WorkerCommand.increaseStat(workerID, "debugs",1);    
      }

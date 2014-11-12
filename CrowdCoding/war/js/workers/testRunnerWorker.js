@@ -2,9 +2,10 @@
 // command. Workers execute in their own thread, and only communicate by message passing. This worker
 // is designed to run the specified test code and return the results.
 //
-var logArray = [];
-var testCasedPassed = true;
+var calleeMap = {};
+var testCasedPassed   = true;
 var codeUnimplemented = false;		// is any of the code under test unimplemented?
+
 self.onmessage = function(e) 
 {
 	var data = e.data;
@@ -19,20 +20,37 @@ self.onmessage = function(e)
 		     url = url.substring(0, index);
 	     }
 		 importScripts(url + '/js/assertionFunctions.js');
-		 importScripts(url + '/js/instrumentFunction.js');
+		 importScripts(url + '/js/instrumentFunction.js'); //ALL UTILITY FUNCTIONS ARE BOTTOM
 	}
 	else
 	{
 		// Execute the tests for a function
 		try
 		{
-			var finalCode = 'var mocks = ' + JSON.stringify(data.mocks) + ';\n ' + data.code;
-			
-			finalCode = finalCode.replace("printDebugStatement","logArray.push");
-			console.log("+++++ FINAL CODE +++++");
-			console.log(finalCode);
+
+			// insert all the mocks for the final code
+			var finalCode = 'var mocks = ' + JSON.stringify(data.mocks) + '; \n'
+					      + data.code;
+			calleeMap = data.calleeMap;
+			debugStatements    = {};
+			numDebugStatements = 0;
+
+			// REPLACE THE LOG STATEMENTS 
+			finalCode = replaceAll("printDebugStatement","logDebug",finalCode);
+
+		/*
+			//SHOW IN THE CONSOLE THE FINAL CODE 			
+			console.log("+++++ FINAL CODE IN WORKER +++++");
+			console.log(finalCode);		
+			console.log("++++++++++++++++++++++");
+
+			console.log("DEBUG STATEMENTS");
+			console.log(debugStatements);
+*/
+			// EXECUTE ALL THE CODE
 			eval(finalCode);
-			
+
+
 			// If any of the tests failed, set test cases passed to false
 			for (var index = 0; index < results.length; index++) 
 			{
@@ -42,18 +60,28 @@ self.onmessage = function(e)
 					break;
 				}
 			}
+
 		} catch (err) {
+			console.log("+++++ THERE WAS AN ERROR IN THE TEST RUNNER WORKER ");
+			console.log(err);
 			testCasedPassed = false;
 			// Check if the tests cases failed because code was discovered that was not yet implemented.
 			// (as observed by the special NotImplementedException). If so, set the approrpriate flag.			
-			//if (err instanceof NotImplementedException)
-			//	codeUnimplemented = true;
+			if (err instanceof NotImplementedException)
+				codeUnimplemented = true;
 		}
+
 		self.postMessage({
-			number : data.number,
-			passed : testCasedPassed,
-			codeUnimplemented : codeUnimplemented,
-			log: logArray
+			testData  : {
+				testNumber        : data.number,
+				testResult        : testCasedPassed,
+				debugStatements   : debugStatements,
+				codeUnimplemented : codeUnimplemented,
+			},
+			calleeMap : calleeMap,
 		});
 	}
 };
+
+
+	

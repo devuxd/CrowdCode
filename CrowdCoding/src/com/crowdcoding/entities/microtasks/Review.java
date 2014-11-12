@@ -66,8 +66,7 @@ public class Review extends Microtask
 		if (reviewDTO.qualityScore > 2)
 		{
 			MicrotaskCommand.submit(microtaskIDUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
-			WorkerCommand.awardPoints(workerOfReviewedWork, submittedMicrotask.submitValue);//
-			FirebaseService.setPoints(workerID, workerOfReviewedWork, submittedMicrotask.submitValue, project);
+			//FirebaseService.setPoints(workerID, workerOfReviewedWork, submittedMicrotask.submitValue, project);
 		}
 		// Otherwise, reisuse a new microtask to do the original work again.
 		else
@@ -76,7 +75,7 @@ public class Review extends Microtask
 		// send feedback
     	FirebaseService.postToNewsfeed(workerOfReviewedWork, (
     		new NewsItemInFirebase(
-    			submittedMicrotask.submitValue,
+    			(reviewDTO.qualityScore > 2) ? submittedMicrotask.submitValue : 0,
     			"Your work on " + submittedMicrotask.microtaskName() + " has been " + ( (reviewDTO.qualityScore>2) ? "approved" : "rejected") ,
 				"WorkReviewed",
 				submittedMicrotask.getID(),
