@@ -12,7 +12,7 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 
 	$scope.newTestCase = "";
 
-
+ 
 	// initialize testCases
 	// if microtask.submission and microtask.submission.testCases are defined
 	// assign available testCases otherwise initialize a new array
@@ -356,6 +356,9 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 	var highlightPseudoCall = false;
 	var changeTimeout;
 	var readOnlyDone=false;
+
+
+
 
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 

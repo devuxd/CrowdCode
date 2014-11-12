@@ -92,7 +92,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 				angular.forEach($scope.functions,function(value,key){
 
-					value.header='function '+value.name+' ('+value.paramNames.join(", ")+' )';
+					value.header='function '+value.name+' ('+value.paramNames.join(", ")+')';
 				});
 
 				project.functions={};
