@@ -5,6 +5,7 @@ public class WriteTestInFirebase extends MicrotaskInFirebase
 {
 	public long testID;
 	public long functionID;
+	public int functionVersion;
 	public String promptType;
 	public String issueDescription;
 	public String oldFunctionDescription;
@@ -24,6 +25,7 @@ public class WriteTestInFirebase extends MicrotaskInFirebase
 			int points,
 			long testID,
 			long testedFunctionID,
+			int functionVersion,
 			String promptType,
 			String issueDescription, 				// Only defined for CORRECT
 			String oldFunctionDescription,			// Only defined for FUNCTION_CHANGED
@@ -33,6 +35,7 @@ public class WriteTestInFirebase extends MicrotaskInFirebase
 		super(id, type, owningArtifact, completed, points);
 		this.testID = testID;
 		this.functionID = testedFunctionID;
+		this.functionVersion = functionVersion;
 		this.promptType = promptType;
 		this.issueDescription = issueDescription;
 		this.oldFunctionDescription = oldFunctionDescription;

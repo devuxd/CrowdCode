@@ -26,14 +26,12 @@
 			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
-			    The following issue was reported with the following test case:<BR><BR>
-
+			    The following test case:<BR><BR>
 			    <div class="alert alert-info">{{microtask.disputeDescription}}</div>
-				<div class="alert alert-error">{{microtask.disputedTestCase}}</div>
+			    Has been reported to have this issues:
+				<div class="alert alert-danger">{{microtask.disputedTestCase}}</div>
 
-			    Can you fix the test case (and others if necessary) to address the issue?<BR><BR>
-			    (Note: if the above test case is not below, the test case has already been changed,
-			    and you can ignore this microtask).<BR><BR>
+			    Can you rewrite the test case (and others if necessary) to address the issue?<BR>
 			</div>
 		</div>
 	</div>

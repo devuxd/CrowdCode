@@ -63,16 +63,6 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 	$scope.review = {};
 	$scope.review.reviewText   = "";
 	$scope.review.functionCode = "";
-	//setup codemirror box
-
-	$scope.codemirrorLoaded = function(codeMirror){
-
-		codeMirror.setSize(null,'auto');
-		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "custom");
-
-		codeMirror.refresh();
-	}
 
 	//load the microtask to review
 	$scope.review.microtask = microtasksService.get($scope.microtask.microtaskIDUnderReview);
@@ -96,30 +86,32 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 		$scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header+$scope.review.microtask.submission.code;
 
 	}
-	/*else if ($scope.review.microtask.type == 'WriteTest') {
+	else if ($scope.review.microtask.type == 'WriteTest') {
 
 		//load the version of the function with witch the test cases where made
 		var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtask.functionID
-				+ '/' + $scope.review.microtask.submission.functionVersion));
-		var functionUnderTest = functionUnderTestSync.$asObject();
-		functionUnderTest.$loaded().then(function(){
-			$scope.review.functionCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
+				+ '/' + ($scope.review.microtask.functionVersion>0?$scope.review.microtask.functionVersion:1)));
+		$scope.functionUnderTest = functionUnderTestSync.$asObject();
+		$scope.functionUnderTest.$loaded().then(function(){
+			console.log("funci");
+			console.log($scope.functionUnderTest);
+			$scope.review.functionCode = functionsService.renderDescription($scope.functionUnderTest)+$scope.functionUnderTest.header;
 		});
 	}
-	/*
-	else if ($scope.review.microtaskUnderReview.type == 'WriteCall')
+
+	else if ($scope.review.microtask.type == 'WriteCall')
 	{
 
-		$scope.functionChanged=functionsService.get($scope.review.microtaskUnderReview.functionID);
-		$scope.review.codeMirrorCode=functionsService.renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
+		$scope.functionChanged=functionsService.get($scope.review.microtask.functionID);
+		$scope.review.functionCode=functionsService.renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
 
 	}
-	else if ($scope.review.microtaskUnderReview.type == 'WriteFunctionDescription')
+	else if ($scope.review.microtask.type == 'WriteFunctionDescription')
 	{
 
-		$scope.review.codeMirrorCode=functionsService.renderDescription($scope.review.microtaskUnderReview.submission)+$scope.review.microtaskUnderReview.submission.header;
+		$scope.review.functionCode=functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header;
 
-	}*/
+	}
 
 
 	//Star rating manager
@@ -183,7 +175,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-	
+
 	var callees = functionsService.getCalleeNamesById($scope.funct.id);
 	$scope.callees = [];
 	angular.forEach(callees,function(value,key){
@@ -410,23 +402,10 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 	var marks=[];
 	var highlightPseudoCall = false;
 	var changeTimeout;
+	var readOnlyDone=false;
 
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
-	$scope.readonlyCodemirrorLoaded = function(codeMirror){
-		codeMirror.setValue($scope.datas.pseudoCall);
-		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "custom-editor");
-		codeMirror.refresh();
-	}
-
-	$scope.readonlyFunctionCodemirrorLoaded= function(codeMirror){
-		codeMirror.setValue($scope.microtask.calleeFullDescription);
-		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "custom");
-		codeMirror.setSize(null, "auto");
-		codeMirror.refresh();
-	}
 
     $scope.codemirrorLoaded = function(myCodeMirror){
 
@@ -437,20 +416,23 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 		codemirror.setOption('lineNumbers', true);
 		codemirror.setSize(null, 500);
 		codemirror.setOption("theme", "custom-editor");
-		codemirror.doc.setValue($scope.code);
 
 		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
-		// If we are editing a function that is a client request and starts with CR, make the header
-	 	// readonly.
-		if ($scope.funct.name.startsWith('CR'))
-			functionsService.makeHeaderAndParameterReadOnly(codemirror);
 
 	 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
 	 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
 	    // typing).
 
 		codemirror.on("change", function(){
-			$scope.code = codemirror.doc.getValue();
+
+			// If we are editing a function that is a client request and starts with CR, make the header
+		 	// readonly.
+
+			if (!readOnlyDone && $scope.funct.name.startsWith('CR')){
+				functionsService.makeHeaderAndParameterReadOnly(codemirror);
+				readOnlyDone=true;
+			}
+
 			// Mangage code change timeout
 			clearTimeout(changeTimeout);
 			changeTimeout = setTimeout( function(){functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
@@ -503,25 +485,12 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 
 	var marks = [];
 	var highlightPseudoCall =false;
+	var readOnlyDone=false;
 	var changeTimeout;
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	console.log("initialization of write function");
 	 $scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-
-
-	 $scope.codemirrorExample= function(codeMirror){
-
-
-
-
-			codeMirror.setOption("readOnly", "true");
-			codeMirror.setOption("theme", "custom");
-			codeMirror.setOption("tabindex", "-1");
-			codeMirror.setSize(null,'auto');
-			codeMirror.refresh();
-	 };
-
 
 
      $scope.codemirrorLoaded = function(myCodeMirror){
@@ -534,23 +503,26 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 		codemirror.setOption('lineNumbers', true);
 		codemirror.setSize(null, 500);
 		codemirror.setOption("theme", "custom-editor");
+		codemirror.refresh();
+		codemirror.doc.getValue();
 
 		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
-
-		// If we are editing a function that is a client request and starts with CR, make the header
-	 	// readonly.
-		if ($scope.funct.name.startsWith('CR'))
-			functionsService.makeHeaderAndParameterReadOnly(codemirror);
 
 	 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
 	 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
 	    // typing).
 
 		codemirror.on("change", function(){
-		$scope.code = codemirror.doc.getValue();
-		// Mangage code change timeout
-		clearTimeout(changeTimeout);
-		changeTimeout = setTimeout( function(){ functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
+			// If we are editing a function that is a client request and starts with CR, make the header
+		 	// readonly.
+
+			if (!readOnlyDone && $scope.funct.name.startsWith('CR')){
+				functionsService.makeHeaderAndParameterReadOnly(codemirror);
+				readOnlyDone=true;
+			}
+			// Mangage code change timeout
+			clearTimeout(changeTimeout);
+			changeTimeout = setTimeout( function(){ functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
 
 			});
 	 	};
@@ -669,6 +641,18 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 ///////////////////////////////
 myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$filter','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,$filter,testsService,functionsService, ADTService) {
 
+	$scope.code="";
+
+
+	//load the version of the function with witch the test cases where made
+	var functionVersionSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.microtask.functionID
+			+ '/' + ($scope.microtask.functionVersion>0?$scope.microtask.functionVersion:1)));
+	$scope.funct = functionVersionSync.$asObject();
+	$scope.funct.$loaded().then(function(){
+		$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header;
+	});
+
+
 
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
@@ -702,7 +686,8 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 		console.log("write test controlle prepare form data");
 		if($scope.dispute){
 			// return jSON object
-			formData = { code: '',
+			formData = {functionVersion: $scope.funct.version,
+						code: '',
 						inDispute: true,
 						disputeText: $scope.testData.disputeText,
 						hasSimpleTest: true,
@@ -718,7 +703,8 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 			});
 			testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\');' ;
 
-			formData = { code: testCode,
+			formData = { functionVersion: $scope.funct.version,
+						 code: testCode,
 						 hasSimpleTest: true,
 						 inDispute: false,
 						 disputeText: '',

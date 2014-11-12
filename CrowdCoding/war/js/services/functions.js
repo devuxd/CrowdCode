@@ -8,6 +8,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 	var service = new function(){
 		// Private variables
 		var functions;
+		var functionsHistory;
 		var loaded = false;
 
 		// Public functions
@@ -44,7 +45,11 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		    // hook from firebase all the functions declarations of the project
 			var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functions = functionsSync.$asArray();
-			functions.$loaded().then(function(){ $rootScope.loaded.functions=true; });
+			functions.$loaded().then(function(){$rootScope.loaded.functions=true;  });
+
+			/*var functionsArraySync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
+			functionsHistory = functionsSync.$asArray();
+			functionsHistory.$loaded().then(function(){ $rootScope.loaded.functions=true; });*/
 		}
 
 		// Returns an array with every current function ID

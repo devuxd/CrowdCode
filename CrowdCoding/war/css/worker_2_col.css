@@ -8,6 +8,9 @@
 #969696 - medium gray - headers of the sidebar, scores,
 
 */
+
+ul.clearlist:after { clear: both;}
+
 .ace_editor-test { height: 100px;
 			width: 100%; }
 
