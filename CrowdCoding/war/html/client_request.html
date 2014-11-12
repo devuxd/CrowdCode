@@ -103,27 +103,6 @@
 				</span>
 			</div>
 			<button ng-click="deleteADT(ADTindex)" class="col-md-1 btn btn-sm">Delete ADT</button>
-			<div class="col-md-11">
-				<span ng-class="{ 'has-error': ADTForm.example.$dirty && ADTForm.example.$invalid , 'has-success': ADTForm.example.$valid}">
-					<span class="col-md-2">Example:</span>
-
-					<textarea
-					class="col-md-8 form-control input-sm" draggable="false" name="example"
-					placeholder="Can you write an esemple of the ADT?" ng-model="ADT.example" ng-attr-required="dispute" json1="{{ADT.name}}" required>
-					</textarea>
-
-					<ul class="help-block" ng-show="ADTForm.example.$dirty && ADTForm.example.$invalid">
-						<li ng-show="ADTForm.example.$error.required">This field is required!</li>
-						<li ng-show="ADTForm.example.$error.json1" >
-							<span>There are JSON errors. Please fix them:</span>
-							<ul ng-repeat="error in ADTForm.example.$error.json_errors">
-								<li>{{error}}</li>
-							</ul>
-						</li>
-					</ul>
-				</span>
-			</div>
-
 			<span class="col-md-12" ng-class="{ 'has-error': ADTForm.ADTName.$dirty && ADTForm.functionName.$invalid , 'has-success': ADTForm.functionName.$valid}">
 				<span class="col-md-2">Name: </span>
 				<span class="col-md-3">
@@ -171,6 +150,27 @@
 					</ng-form>
 					<button ng-click="addStructure(ADTindex)" class="col-md-1 btn btn-sm">Add Field</button>
 				</div>
+				<div class="col-md-11">
+				<span ng-class="{ 'has-error': ADTForm.example.$dirty && ADTForm.example.$invalid , 'has-success': ADTForm.example.$valid}">
+					<span class="col-md-2">Example:</span>
+
+					<textarea
+					class="col-md-8 form-control input-sm" draggable="false" name="example"
+					placeholder="Can you write an esemple of the ADT?" ng-model="ADT.example" ng-attr-required="dispute"  required>
+					</textarea>
+
+					<ul class="help-block" ng-show="ADTForm.example.$dirty && ADTForm.example.$invalid">
+						<li ng-show="ADTForm.example.$error.required">This field is required!</li>
+						<li ng-show="ADTForm.example.$error.json1" >
+							<span>There are JSON errors. Please fix them:</span>
+							<ul ng-repeat="error in ADTForm.example.$error.json_errors">
+								<li>{{error}}</li>
+							</ul>
+						</li>
+					</ul>
+				</span>
+			</div>
+
 
 
 			</ng-form>

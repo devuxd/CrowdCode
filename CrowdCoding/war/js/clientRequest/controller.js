@@ -100,7 +100,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 				angular.forEach($scope.ADTs,function(value,key){
 
-					value.fullExample='var x = '+vale.example+';';
+					value.fullExample='var x = '+value.example+';';
 				});
 
 				project.ADTs= {};
