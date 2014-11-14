@@ -7,11 +7,12 @@
 myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$interval','userService', 'testsService', 'functionsService', 'mocksService','testRunnerService','ADTService','microtasksService','TestList', function($scope,$rootScope,$firebase,$http,$interval,userService,testsService,functionsService, mocksService, testRunnerService, ADTService,microtasksService,TestList) {
 
 	// current session variables
+   	$rootScope.loaded={};	
     $rootScope.projectId    = projectId;
     $rootScope.workerId     = workerId;
     $rootScope.workerHandle = workerHandle;
     $rootScope.firebaseURL  = firebaseURL;
-	$rootScope.loaded={};		
+	
     // flags for knowing if service is loaded
    
 
