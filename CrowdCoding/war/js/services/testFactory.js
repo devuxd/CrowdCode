@@ -137,25 +137,26 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			return test;
 		},
 
-		buildMocksByFunctionName: function(functionName){
+		buildStubsByFunctionName: function(functionName){
 			var tests = this.getByFunctionName(functionName);
-			var mocks = {};
+			var stubs = {};
 
 			angular.forEach(tests,function(test){
+				if( test.hasSimpleTest() ){
+					var inputsKey = {};
+					angular.forEach(test.rec.simpleTestInputs, function(value,key){
+						inputsKey[JSON.stringify(key)] = value;				
+					});
 
-				var inputsKey = {};
-				angular.forEach(test.rec.simpleTestInputs, function(value,key)
-				{
-					inputsKey[JSON.stringify(key)] = JSON.parse(value);				
-				});
-				
-				mocks[JSON.stringify(inputsKey)] = { 
-					  inputs: test.rec.simpleTestInputs, 
-				      output: JSON.parse(test.rec.simpleTestOutput) 
-				};
+					stubs[JSON.stringify(inputsKey)] = { 
+						  inputs: test.rec.simpleTestInputs, 
+					      stubOutput: JSON.parse(test.rec.simpleTestOutput),
+					      realOutput : ""
+					};
+				}
 			});
 
-			return mocks;
+			return stubs;
 		}
 
 	});
@@ -199,6 +200,12 @@ myApp.factory("Test", function ($FirebaseArray) {
 		},
 		setDescription: function(description){
 			this.rec.description = description;
+		},
+		getCode: function(){
+			return this.rec.code;
+		},
+		setCode: function(code){
+			this.rec.code = code;
 		},
 		hasSimpleTest: function(){
 			if( this.rec.hasOwnProperty('simpleTestInputs') && this.rec.hasOwnProperty('simpleTestOutput') )

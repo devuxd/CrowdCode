@@ -15,7 +15,6 @@ myApp.factory('testRunnerService', [
 	var timeOutTime = 1000;
 	var validTests;
 	var allTheFunctionCode;
-	var mocks;
 	var worker;
 	var testRunTimeout;
 	var currentTextIndex;
@@ -24,8 +23,8 @@ myApp.factory('testRunnerService', [
 	var functionCode;
 	var returnData;
 	var worker;
-	var calleeMap = {}
-	
+	var stubs = {}
+	var callee = [];
 	
 	var testRunner = {};
 
@@ -33,14 +32,14 @@ myApp.factory('testRunnerService', [
 	var deferred = $q.defer();
 
 	//Runs all of the tests for the specified function, sending the results to the server
-	testRunner.runTestsForFunction = function(passedFunctionId,passedFunctionBody)
+	testRunner.runTestsForFunction = function(passedFunctionId,passedFunctionBody,passedStubs)
 	{
 
 		deferred = $q.defer();
 
 		// initialize globals
 		returnData         = {}; 
-		calleeMap          = {};
+		stubs          = {};
 		functionId         = passedFunctionId;
 		functionBody       = passedFunctionBody;
 		allPassedTestCases = new Array();
@@ -49,6 +48,7 @@ myApp.factory('testRunnerService', [
 
 		// Load the tests for the specified function
 		validTests = TestList.getByFunctionId(functionId);
+		console.log(validTests);
 
 		// build the tested function code with the header
 		functionCode = functionsService.renderHeaderById(functionId);
@@ -61,13 +61,51 @@ myApp.factory('testRunnerService', [
 		// load all the function code
 		this.loadAllTheFunctionCode();
 
-		// load all the mocks in the system
-		this.loadMocks();
+		//console.log("LOADED FUNCTION CODE");
+		//console.log(allTheFunctionCode);
+
+		// load all the stubs in the system
+		this.loadStubs();
+
+
+		console.log("LOADED CALLEE MAP");
+		console.log(JSON.stringify(stubs));
+
+		if( passedStubs != undefined )
+			this.mergeStubs(passedStubs);
+
+		console.log("MERGED CALLEE MAP");
+		console.log(JSON.stringify(stubs));
 
 		// Run the tests
 		this.runTest();
 
 		return deferred.promise;
+	}
+
+	testRunner.mergeStubs = function(passedStubs){
+
+		angular.forEach(passedStubs,function(functionStubs,functionName){
+			
+			if( ! stubs.hasOwnProperty(functionName) )
+				stubs[functionName] = {};
+			
+
+			angular.forEach(functionStubs,function(inputSet,inputSetKey){
+				stubs[functionName][inputSetKey] = inputSet;
+			}); 
+		});
+
+	}
+
+	testRunner.getCalleeStubs = function(){
+		var calleeStubs = {};
+		angular.forEach(stubs,function(functionStubs,functionName){
+			
+			if( callee.indexOf(functionName) != -1  )
+				calleeStubs[functionName] = functionStubs;
+		});
+		return calleeStubs;
 	}
 
 
@@ -90,8 +128,7 @@ myApp.factory('testRunnerService', [
 		allTheFunctionCode = ""; // reset the all functions code
 
 		var functionName = functionsService.getNameById(functionId);
-
-		var callee = [];
+		callee = [];
 		var ast = esprima.parse( functionCode , {loc: true})
 		traverse(ast, function (node)
 		{
@@ -103,10 +140,6 @@ myApp.factory('testRunnerService', [
 			}
 		});
 
-
-		console.log("CALLEE");
-		console.log(callee);
-	
 		// for each function in the system
 		var allFunctionIDs = functionsService.allFunctionIDs();
 		for (var i=0; i < allFunctionIDs.length; i++)
@@ -131,23 +164,26 @@ myApp.factory('testRunnerService', [
 	}
 	
 	
-	// Loads the mock datastructure using the data found in the mockData - an object in MocksDTO format
-	testRunner.loadMocks = function()
+	// Loads the stubs datastructure using the data found in the mockData - an object in MocksDTO format
+	testRunner.loadStubs = function()
 	{
-		mocks = {}	;
+		stubs = {}	;
 		
 		var allFunctionNames = functionsService.getAllDescribedFunctionNames()
 
 		// for each described function
 		angular.forEach(allFunctionNames,function(functionName){
-			try{
-				var mocksForFunction = TestList.buildMocksByFunctionName(functionName);
-				mocks[functionName]  = mocksForFunction;
-			}
-			catch (e)
-			{
-				console.log("Error loading mock " + functionName);				
-			}	
+			if( functionName != functionsService.getNameById(functionId) )
+				try{
+					var stubsForFunction = TestList.buildStubsByFunctionName(functionName);
+					stubs[functionName]  = stubsForFunction;
+
+				}
+				catch (e)
+				{
+					console.log("Error loading stubs for the function " + functionName);	
+					console.log(e);			
+				}	
 		})
 	}
 
@@ -183,10 +219,11 @@ myApp.factory('testRunnerService', [
 		// IF ALL THE TESTS HAD RUNNED
 		if (currentTextIndex >= validTests.length)
 		{
-
+			// console.log("SENDING BACK STUBS");
+			// console.log(stubs);
 			deferred.resolve({
-				calleeMap : calleeMap,
-				results   : returnData
+				stubs   : this.getCalleeStubs(),
+				results : returnData
 			});
 			return;
 		}
@@ -195,7 +232,7 @@ myApp.factory('testRunnerService', [
 		
 		// Check the code for syntax errors using JSHint. Since only the user defined code will be checked,
 		// add extra defs for references to the instrumentation code.
-		var extraDefs  = "var mocks = {}; function logCall(){} function logDebug(){} function hasMockFor(){} function printDebugStatement(statement){} ";		
+		var extraDefs  = "var workingStubs = {}; function logCall(){} function logDebug(){} function hasStubFor(){} function printDebugStatement(statement){} ";		
 		var codeToLint = extraDefs + allTheFunctionCode + testCode;
 		var lintResult = JSHINT(getUnitTestGlobals() + codeToLint, getJSHintGlobals());
 		var errors     = checkForErrors(JSHINT.errors);
@@ -204,6 +241,7 @@ myApp.factory('testRunnerService', [
 
 		console.log("======= CODE TO LINT ");
 		console.log(codeToLint);
+		console.log(errors);
 		
 		// If there aren't LINT errors, run the test
 		if(errors == ""){
@@ -228,9 +266,17 @@ myApp.factory('testRunnerService', [
 		    worker.onmessage = function(e) {
 		    	// cancel the test execution timeout
 			    $timeout.cancel(timeoutPromise);
+
+
+			// console.log("STUBS FROM WORKER "+e.data.testNumber);
+			// console.log(stubs);
+
 			    // add the returned data
-			    calleeMap                    = e.data.calleeMap;
-			    returnData[currentTextIndex] = e.data.testData;	
+			    stubs                                       = e.data.stubs;
+			    returnData[e.data.testNumber]               = e.data.result;	
+			    returnData[e.data.testNumber]['test']       = validTests[e.data.testNumber];	
+			    returnData[e.data.testNumber]['paramNames'] = functionsService.getParamNamesById(functionId);	
+
 			    // process test finished	    	
 				testRunner.processTestFinished(false, e.data);
 		    }
@@ -243,8 +289,7 @@ myApp.factory('testRunnerService', [
 				test       : validTests[currentTextIndex], 
 				testNumber : currentTextIndex,             
 				code       : codeToExecute,    
-				calleeMap  : calleeMap,           
-				mocks      : mocks                  
+				stubs      : stubs           
 			});	
 
 		} else { // if the lint found errors

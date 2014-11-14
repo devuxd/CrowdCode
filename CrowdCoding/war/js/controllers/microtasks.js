@@ -180,8 +180,8 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
  	};
 
 
- 	$scope.results   = {};
- 	$scope.calleeMap = {};
+ 	$scope.results = {};
+ 	$scope.stubs   = {};
 	$scope.runTests = function(){
 		// set testsRunning flag
 		$scope.testsRunning = true;
@@ -195,25 +195,20 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 
 		// ask the worker to run the tests
-		testRunnerService.runTestsForFunction($scope.microtask.functionID,functionBody).then(function(data){
+		testRunnerService.runTestsForFunction($scope.microtask.functionID, functionBody, $scope.stubs).then(function(data){
 
 			console.log(" ----- RESULTS FROM THE TEST RUNNER ");
 
+			//$scope.results = 
 			$scope.results   = data.results;
-			$scope.calleeMap = data.calleeMap;
+			$scope.stubs = data.stubs;
 
-			console.log($scope.results);
-			console.log($scope.calleeMap);
-
-			// copy passed tests content locally
-			$scope.passedTests = data.passedTests;
-
-			// assign the content of the console
-			//$scope.consoleOutput += data.console.join('\n')+"\n";
+			console.log(data.results);
+			console.log(data.stubs);
+		
 			// reset testsRunning flag
 			$timeout(function(){
 				$scope.testsRunning = false;
-				//consoleCM.scrollTo(0,consoleCM.getScrollInfo().height);
 			},200);
 		});
 	};

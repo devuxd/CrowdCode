@@ -40,11 +40,11 @@
 			</div>
 		</div>
 
-		<div class="section section-description">
+		<div class="section section-description-2">
 			<div class="section-title" >submitted test cases</div>
 			<div class="section-content" >
 				<ul>
-					<li class= "alert alert-info" ng-repeat="testcase in review.testcases">{{testcase.text}}</li>
+					<li class="" ng-repeat="testcase in review.testcases">{{testcase.text}}</li>
 				</ul>
 			</div>
 		</div>
@@ -70,14 +70,14 @@
 			</div>
 		</div>
 
-		<div class="section section-description">
+		<div class="section section-description-2">
 			<div class="section-title" >Disputed test case</div>
 			<div class="section-content no-padding" >
 				{{review.microtask.disputedTestCase }}
 			</div>
 		</div>
 
-		<div class="section section-description">
+		<div class="section section-description-2">
 			<div class="section-title" >Dispute description</div>
 			<div class="section-content no-padding" >
 				{{review.microtask.disputeDescription }}
@@ -116,7 +116,8 @@
 				<code-mirror-readonly code="review.functionCode"></code-mirror-readonly>
 			</div>
 		</div>
-		<div ng-if="! review.microtask.submission.inDispute" class="section section-description">
+
+		<div ng-if="! review.microtask.submission.inDispute" class="section section-description-2">
 			<div  class="section-title" >test written</div>
 			<div class="section-content no-padding" >
 				<div>
@@ -129,7 +130,8 @@
 				</div>
 			</div>
 		</div>
-		<div ng-if="review.microtask.submission.inDispute" class="section section-description">
+
+		<div ng-if="review.microtask.submission.inDispute" class="section section-description-2">
 			<div class="section-title" >dispute reason</div>
 			<div class="section-content no-padding" >
 				<span> The Test Case has been disputed because:</span>
@@ -177,7 +179,7 @@
 			</div>
 		</div>
 
-		<div class="section section-description">
+		<div class="section section-description-2">
 			<div class="section-title" >
 				submitted function code
 			</div>
@@ -203,7 +205,7 @@
 			</div>
 		</div>
 
-		<div class="section section-description">
+		<div class="section section-description-2">
 			<div class="section-title" >
 				submitted function code
 			</div>
@@ -228,7 +230,7 @@
 			</div>
 		</div>
 
-		<div class="section section-description">
+		<div class="section section-description-2">
 			<div class="section-title" >
 				submitted function code
 			</div>
