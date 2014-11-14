@@ -38,20 +38,13 @@
 		<div class="container-flex-row">
 			<div class="section section-help" style="width:30%">
 				<div class="section-title" >
-					EXAMPLE
+					HINT
 				</div>
 				<div class="section-content" >
-					<div class="accordion-inner">
-						subtract(a, b)<BR>
+					Choose a function that does what the pseudocall
+					asks ( you can filter the list of functions typing some characters in the input box).
+					<strong>If in the list there isn't the right function, click on the button "no function does this"</strong>
 
-						<B>Here's some test cases:</B><BR>
-						a is greater than b<BR>
-						b is greater than a<BR>
-						a is the same as b<BR>
-						a is positive, b is negative<BR>
-						a is negative, b is zero<BR>
-						a is positive, b is zero<BR>
-					</div>
 				</div>
 			</div>
 			<div class="section section-form" style="width:70%;" >
@@ -63,13 +56,7 @@
 						name="newtestcase"
 						ng-model="reuseSearch.text"
 						ng-change="doSearch()"
-						placeholder="insert search"/>
-
-					<button class="btn btn-sm btn-primary" type="button"
-						ng-click=""
-						tabindex="2" >
-						Add
-					</button>
+						placeholder="filter functions"/>
 					<div class="clearfix"></div>
 				</div>
 				<div class="section-content" >

@@ -2,7 +2,7 @@
 // command. Workers execute in their own thread, and only communicate by message passing. This worker
 // is designed to run the specified test code and return the results.
 //
-var calleeMap = {};
+var stubs = {};
 var testCasedPassed   = true;
 var codeUnimplemented = false;		// is any of the code under test unimplemented?
 
@@ -24,29 +24,37 @@ self.onmessage = function(e)
 	}
 	else
 	{
+		console.log("WORKER RECEIVED MESSAGE");
 		// Execute the tests for a function
 		try
 		{
 
 			// insert all the mocks for the final code
-			var finalCode = 'var mocks = ' + JSON.stringify(data.mocks) + '; \n'
+			var finalCode = 'var workingStubs = ' + JSON.stringify(data.stubs) + '; \n'
 					      + data.code;
-			calleeMap = data.calleeMap;
-			debugStatements    = {};
+
+			// initialize the callee map to the passed callee map
+			stubs = data.stubs;
+
+			// console.log("EXECUTING TEST WITH STUBS ");
+			// console.log(stubs);
+
+			// re-initialize the debug statements array and counter
+			debugStatements    = [];
 			numDebugStatements = 0;
 
 			// REPLACE THE LOG STATEMENTS 
 			finalCode = replaceAll("printDebugStatement","logDebug",finalCode);
 
-		/*
-			//SHOW IN THE CONSOLE THE FINAL CODE 			
-			console.log("+++++ FINAL CODE IN WORKER +++++");
-			console.log(finalCode);		
-			console.log("++++++++++++++++++++++");
+		
+			//SHOW IN THE CONSOLE THE FINAL CODE 	
+			// console.log("+++++ FINAL CODE IN WORKER +++++");
+			// console.log(finalCode);		
+			// console.log("++++++++++++++++++++++");
 
-			console.log("DEBUG STATEMENTS");
-			console.log(debugStatements);
-*/
+			// console.log("DEBUG STATEMENTS");
+			// console.log(debugStatements);
+
 			// EXECUTE ALL THE CODE
 			eval(finalCode);
 
@@ -70,15 +78,16 @@ self.onmessage = function(e)
 			if (err instanceof NotImplementedException)
 				codeUnimplemented = true;
 		}
-
+		 console.log("WORKER IS SENDING BACK STUBS");
+		 console.log(stubs);
 		self.postMessage({
-			testData  : {
-				testNumber        : data.number,
+			result     : {
 				testResult        : testCasedPassed,
-				debugStatements   : debugStatements,
+				debugStatements   : debugStatements.join('\n'),
 				codeUnimplemented : codeUnimplemented,
 			},
-			calleeMap : calleeMap,
+			testNumber : data.testNumber,
+			stubs  : stubs,
 		});
 	}
 };

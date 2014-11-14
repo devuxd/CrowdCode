@@ -6,6 +6,7 @@
 	lineDescription is the description lines array (split on \n)
 	functionName is the name of the function
 */
+
 function parseDescription(lineDescription,functionName)
 {
 	// initialize vars
@@ -107,30 +108,6 @@ function renderHeader(functionName, paramNames)
     header += ')';
 
 	return header;
-}
-
-//Checks that exists a description of the parameter
-function isValidParamDescription(line)
-{
-	var beginDescription = line.indexOf(' - ');
-	if(beginDescription==-1||line.substring(beginDescription).lenght<5)
-		return false;
-	else
-		return true;
-}
-
-
-
-// checks that the name is vith alphanumerical characters or underscore
-function isValidName(name)
-{
-	var regexp = /^[a-zA-Z0-9_]+$/;
-
-	if (name.search(regexp)==-1)
-	 	return false;
-	else
-		return true;
-
 }
 
 

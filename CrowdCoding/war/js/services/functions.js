@@ -25,7 +25,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.renderDescription= function(functionCalled) { return renderDescription(functionCalled); };
 		this.getAllDescribedFunctionCode = function(idFunction) { return getAllDescribedFunctionCode(idFunction); };
 		this.getAllDescribedFunctionNames = function(idFunction) { return getAllDescribedFunctionNames(idFunction); };
-	 	this.isValidParamDescription = function(line) { return isValidParamDescription(line); };
 		this.findMatches = function(searchText, functionSourceName) { return findMatches(searchText, functionSourceName); };
 		this.makeHeaderAndParameterReadOnly = function(codemirror){return makeHeaderAndParameterReadOnly(codemirror);};
 		this.highlightPseudoSegments =function(codemirror,marks,highlightPseudoCall){ return highlightPseudoSegments(codemirror,marks,highlightPseudoCall);};
@@ -35,7 +34,8 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.parseDescription = function (lineDescription,functionName) { return parseDescription(lineDescription,functionName);};
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
-
+		this.getParamNamesById = function (functionId) { return getParamNamesById(functionId);};
+	 	
 	 	this.isLoaded = function() { return loaded };
 		this.getAll = function(){
 			return functions;
@@ -143,16 +143,16 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 
 			// Next, add the mock implementation body
 			mockCode += '{\n';
-			mockCode += '  var returnValue;';
-			mockCode += '  var mockFor = hasMockFor(\'' + functionObj.name + '\', arguments, mocks); \n';
-			mockCode += '  if (mockFor.hasMock) \n';
-			mockCode += '    returnValue = mockFor.mockOutput; \n';
+			mockCode += '  var returnValue;\n';
+			mockCode += '  var stubFor = hasStubFor(\'' + functionObj.name + '\', arguments, workingStubs); \n';
+			mockCode += '  if (stubFor.hasStub) \n';
+			mockCode += '    returnValue = stubFor.stubOutput; \n';
 			mockCode += '  else \n';
 			mockCode += '    returnValue = ' + functionObj.name + 'ActualIMP.apply(null, arguments); \n';
 
 			// TODO: WRITE A BETTER LOG CALL, now can call two times the actual implementation
 			if( logEnabled != undefined && logEnabled ){
-				mockCode += '  logCall(\'' + functionObj.name + '\',arguments,mockFor.mockOutput,' + functionObj.name + 'ActualIMP.apply(null, arguments) ); \n ';
+				mockCode += '  logCall(\'' + functionObj.name + '\',arguments,stubFor.stubOutput,' + functionObj.name + 'ActualIMP.apply(null, arguments) ); \n ';
 			} 
 
 			mockCode += '  return returnValue;';
@@ -214,7 +214,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 	    	for(var i=0; i<functionObj.paramNames.length; i++)
 				{
 				if(functionObj.paramDescriptions!=undefined && functionObj.paramDescriptions.length>i)
-					fullDescription += '  @param ' + functionObj.paramTypes[i] + ' ' + functionObj.paramNames[i] + ' - ' + functionCalled.paramDescriptions[i] + '\n';
+					fullDescription += '  @param ' + functionObj.paramTypes[i] + ' ' + functionObj.paramNames[i] + ' , ' + functionCalled.paramDescriptions[i] + '\n';
 
 				}
 			}
@@ -230,17 +230,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			var functionObj = get(id);
 			return functionObj.header;
 		}
-
-		//Checks that exists a description of the parameter
-		function isValidParamDescription(line)
-		{
-			var beginDescription = line.indexOf(' - ');
-			if(beginDescription==-1||line.substring(beginDescription).lenght<5)
-				return false;
-			else
-				return true;
-		}
-
 
 
 		// checks that the name is vith alphanumerical characters or underscore
@@ -372,7 +361,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 	    		for(var i=0; i<functionCalled.paramNames.length; i++)
 				{
 					if(functionCalled.paramDescriptions!=undefined && functionCalled.paramDescriptions.length>i)
-						fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' - ' + functionCalled.paramDescriptions[i] + '\n';
+						fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' , ' + functionCalled.paramDescriptions[i] + '\n';
 
 				}
 			}
@@ -411,15 +400,10 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		return renderHeader(funct.name,funct.paramNames);
 	}
 
-	//Checks that exists a description of the parameter
-	function isValidParamDescription(line)
-	{
-		var beginDescription = line.indexOf(' - ');
-		if(beginDescription==-1||line.substring(beginDescription).lenght<5)
-			return false;
-		else
-			return true;
+	function getParamNamesById(functionId){
+		return get(functionId).paramNames;
 	}
+
 
 
 

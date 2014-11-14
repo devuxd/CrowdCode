@@ -84,54 +84,54 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 
 
-		$scope.submit=function(){
+	$scope.submit=function(){
 
-			var projectSync = $firebase(new Firebase(firebaseURL+'/clientRequests/'+$scope.projectName));
-			project = projectSync.$asObject();
-			project.$loaded().then(function(){
+		var projectSync = $firebase(new Firebase(firebaseURL+'/clientRequests/'+$scope.projectName));
+		project = projectSync.$asObject();
+		project.$loaded().then(function(){
 
-				angular.forEach($scope.functions,function(value,key){
+			angular.forEach($scope.functions,function(value,key){
 
-					value.header='function '+value.name+' ('+value.paramNames.join(", ")+')';
-				});
-
-				project.functions={};
-				project.functions.functions=$scope.functions;
-
-				angular.forEach($scope.ADTs,function(value,key){
-
-					value.fullExample='var x = '+value.example+';';
-				});
-
-				project.ADTs= {};
-				project.ADTs.ADTs=$scope.ADTs;
-
-
-				project.$save();
-				console.log("salvato");
+				value.header='function '+value.name+' ('+value.paramNames.join(", ")+')';
 			});
-		}
 
+			project.functions={};
+			project.functions.functions=$scope.functions;
 
-		$scope.load=function()
-		{
+			angular.forEach($scope.ADTs,function(value,key){
 
-			var projectSync = $firebase(new Firebase(firebaseURL+'/clientRequests/'+$scope.projectName));
-			project = projectSync.$asObject();
-			project.$loaded().then(function(){
-
-			if(angular.isDefined(project.functions))
-				$scope.functions=project.functions.functions;
-			else
-				$scope.functions=[];
-
-			if(angular.isDefined(project.ADTs))
-				$scope.ADTs=project.ADTs.ADTs;
-			else
-				$scope.ADTs=[];
-
+				value.fullExample='var x = '+value.example+';';
 			});
-		}
+
+			project.ADTs= {};
+			project.ADTs.ADTs=$scope.ADTs;
+
+
+			project.$save();
+			console.log("salvato");
+		});
+	}
+
+
+	$scope.load=function()
+	{
+
+		var projectSync = $firebase(new Firebase(firebaseURL+'/clientRequests/'+$scope.projectName));
+		project = projectSync.$asObject();
+		project.$loaded().then(function(){
+
+		if(angular.isDefined(project.functions))
+			$scope.functions=project.functions.functions;
+		else
+			$scope.functions=[];
+
+		if(angular.isDefined(project.ADTs))
+			$scope.ADTs=project.ADTs.ADTs;
+		else
+			$scope.ADTs=[];
+
+		});
+	}
 
 
 }]);

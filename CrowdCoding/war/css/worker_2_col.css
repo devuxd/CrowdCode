@@ -15,8 +15,6 @@
 
 ul.clearlist:after { clear: both;}
 
-.ace_editor-test { height: 100px;
-			width: 100%; }
 
 /* --------- BOOTSTRAP OVERWRITE ---------  */
 .btn:focus {outline:none;}
@@ -82,31 +80,6 @@ ul.clearlist:after { clear: both;}
 }
 
 
-/* ADT PANEL */
-
-.toggler-adt {
-	cursor: pointer;
-	color: #575757;
-	margin-top: 10px;
-	margin-bottom: 2px;
-	text-transform: uppercase;
-	font-size: 0.9em;
-}
-.toggler-adt.active {color:black;}
-.element-adt {
-	border-bottom:1px solid #D0D0D0;
-	height:0px;
-	overflow:hidden;
-	-webkit-transition: height 0.5s;
-	-moz-transition: height 0.5s;
-	transition: height 0.5s;
-}
-
-.element-adt.active {height:auto;}
-.element-adt:last-child{border:0px;}
-.element-body-adt {
-}
-
 /* GENERAL STYLES AND LAYOUT */
 
 
@@ -144,7 +117,7 @@ h1, h2, h3, h4 {
     margin:0px;
     height:100%;
     position:relative;
-	background-color: #ECECEC;
+	background-color: #FFFFFF;
 }
 
 
@@ -198,6 +171,10 @@ h1, h2, h3, h4 {
 
 .section-content.no-padding { padding:0px; }
 
+
+.section.section-description-2 { background-color:rgba(63, 129, 172, 0.65); }
+.section.section-description-2 .section-title { color:white; }
+
 .section.section-help { background-color:#BFC7CD; }
 .section.section-help .section-title { color:#5F5F5F; }
 
@@ -225,7 +202,7 @@ h1, h2, h3, h4 {
 
 /* SIDEBAR PANELS */
 
-.toggler {
+.sidebar .toggler {
 	cursor: pointer;
 	color: #969696;
 	margin-top: 10px;
@@ -234,10 +211,7 @@ h1, h2, h3, h4 {
 	text-transform: uppercase;
 	font-size: 0.9em;
 }
-.toggler.active {color:black;}
-.toggler .glyphicon {margin-right:10px;}
-
-.element {
+.sidebar .element {
 	border-bottom:1px solid #D0D0D0;
 	height:0px;
 	overflow:hidden;
@@ -245,10 +219,8 @@ h1, h2, h3, h4 {
 	-moz-transition: height 0.5s;
 	transition: height 0.5s;
 }
-
-.element.active {height:auto;}
-.element:last-child{border:0px;}
-.element-body {
+.sidebar .element:last-child{border:0px;}
+.sidebar .element-body {
 	padding-top:10px;
 	padding-left:10px;
 	padding-right:10px;
@@ -395,16 +367,64 @@ h1, h2, h3, h4 {
 }
 
 
-table.debugTests {
-	width:100%;
-}
-table.debugTests td.description { width:40%;}
-table.debugTests th{
-	font-family: 'Lato' !important;
-	font-style: normal;
-	font-weight: 800;
+
+/* ADT PANEL */
+
+.toggler-adt {
+	cursor: pointer;
+	color: #575757;
+	margin-top: 10px;
+	margin-bottom: 2px;
 	text-transform: uppercase;
+	font-size: 0.9em;
 }
+.toggler-adt.active {color:black;}
+.element-adt {
+	border-bottom:1px solid #D0D0D0;
+	height:0px;
+	overflow:hidden;
+	-webkit-transition: height 0.5s;
+	-moz-transition: height 0.5s;
+	transition: height 0.5s;
+}
+
+.element-adt.active {height:auto;}
+.element-adt:last-child{border:0px;}
+.element-body-adt {
+}
+
+
+/** COLLAPSABLE LIST **/
+ul.collapsable-list { margin:0px; padding:0px; list-style:none; }
+ul.collapsable-list li { margin-bottom:5px; }
+ul.collapsable-list li.success { background-color:rgba(0,255,0,0.2);}
+ul.collapsable-list li.failed  { background-color:rgba(255,0,0,0.2);}
+ul.collapsable-list li.active .toggler { color:black; }
+ul.collapsable-list li.active .element { height:auto; }
+ul.collapsable-list .toggler {
+	cursor: pointer;
+	color: #575757;
+	margin-top: 10px;
+	margin-bottom: 2px;
+	text-transform: uppercase;
+	font-size: 0.9em;
+}
+ul.collapsable-list .element {
+	padding:5px;
+	border-bottom:1px solid black;
+	/*height:0px;*/
+	overflow:hidden;
+	-webkit-transition: height 0.5s;
+	-moz-transition: height 0.5s;
+	transition: height 0.5s;
+}
+
+.test-collapsable-list table { width: 100%;}
+.test-collapsable-list table td:first-child { width:20%; text-align: right; padding-right:5px;}
+
+
+.mock-collapsable-list table { width: 100%;}
+.mock-collapsable-list table td:first-child { width:20%; text-align: right; padding-right:5px;}
 
 /*table.debugTests tr.passed { background-color:green;}
 table.debugTests tr.failed { background-color:red;}
@@ -558,3 +578,13 @@ tutorial .title { position: absolute; left: 0; }
 tutorial .btn-next { position: absolute; right: 0; }
 
 
+.ace-editor { 
+    height: 200px;
+    /*width: 100%;*/
+}
+.ace-editor .ace_marker-layer .ace_selection {
+   background: transparent;
+}
+.ace-editor .ace_hidden-cursors {opacity:0} 
+.ace-editor-test { height: 100px;
+			width: 100%; }

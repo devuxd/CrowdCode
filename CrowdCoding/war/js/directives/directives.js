@@ -267,13 +267,24 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
                   + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).');
             else if (keyword==='@param '&& !isValidName(name))
                 errorMessage.push(name+ ' is not a valid name. Use upper and lowercase letters, numbers, and underscores.');
-            else if (keyword==='@param '&& !functionsService.isValidParamDescription(line))
-                errorMessage.push(line+' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] - [description]".');
+            else if (keyword==='@param '&& !isValidParamDescription(line))
+                errorMessage.push(line+' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] , [description]".');
             else if (keyword==='@return ' && name!=-1)
                 errorMessage.push('The return value must be in the form  " @return [Type]".');
         }
 
         return errorMessage;
+    }
+
+
+    //Checks that exists a description of the parameter
+    function isValidParamDescription(line)
+    {
+        var beginDescription = line.indexOf(' , ');
+        if(beginDescription==-1||line.substring(beginDescription).lenght<5)
+            return false;
+        else
+            return true;
     }
 
     // checks that the two vectors have the same value, if not return the errors (array of strings)
@@ -373,64 +384,45 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
     }
 });
 
-myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
+myApp.directive('collapsableList', ['$compile','$timeout',function($compile,$timeout) {
 
     return {
-     restrict: "A",
+        restrict: "E",
         scope: {
-            panels: "=ADT",
-        //    icons: "?=icons"
+            dataObjects     : "=data",
+            togglerTemplate : "@togglerTemplate",
+            elementTemplate : "@elementTemplate",
+            classCondition  : "@listElementClassCondition"
         },
         link: function($scope, $element, $attributes){
+            var classCondition = '';
+            if( $attributes.listElementClassCondition )
+                classCondition = 'ng-class="{'+$scope.classCondition+'}"';
+            var toCompile = '<ul class="collapsable-list">'
+                          +'    <li ng-repeat="(key,data) in dataObjects" class="{{ key == activeElement ? \'active\':\'\' }}" '+classCondition+'>'
+                          +'        <div class="toggler" ng-include="togglerTemplate"></div>'
+                          +'        <div class="element"><div class="element-body" ng-include="elementTemplate"></div></div>'
+                          +'    </li>'
+                          +'</ul>';
 
+            var $toggler = $(toCompile);
+            $element.append($toggler);
+            $compile($element.contents())($scope);
 
-            angular.forEach($scope.panels,function(value,key){
-                var toggler = $("<h3></h3>");
-                toggler.attr('id',value+'Toggler');
-                toggler.addClass('toggler');
-            //    toggler.html('<span class="glyphicon glyphicon-'+$scope.icons[key]+'"></span>'+value);
+            console.log($element.find('.toggler'));
+/*
+            $scope.activeElement = 0;
+            $scope.doToggle = function(key){
+                $scope.activeElement = key;
+            }*/
+        },
+         controller: function($scope,$element){
 
-                var elementBody = "<ng-include src=\"'/html/templates/panels/"+value+"_panel.html'\"></ng-include>";
-                elementBody = $('<div class="element-body">'+elementBody+'</div>');
-
-                var element = $("<div></div>");
-                element.attr('id',value+'Element');
-                element.addClass('element');
-
-                element.append(elementBody);
-
-
-                $element.append(toggler);
-                $element.append(element);
-                $compile($element.contents())($scope);
-                console.log(elementBody.height());
-            });
-
-            function activateElement(el){
-                // remove class active for all togglers
-                $element.find('.toggler').removeClass('active');
-                // reset height for all elements
-                $element.find('.element').height(0);
-
-                // add class active to the toggler
-                el.addClass('active');
-                // set max height for current element
-                var successor = el.next();
-                successor.height(successor.find('.element-body').outerHeight());
-            }
-
-            $element.find('.toggler').on('click',function(){
-                activateElement($(this));
-            })
-
-
-            $timeout(function(){
-                $element.find('.toggler:first-child').click();
-            },100);
         }
-
     }
 }]);
+
+
 //////////////////////
 //  JAVA HELPER     //
 //////////////////////
@@ -442,13 +434,13 @@ myApp.directive('javascriptHelper', ['$compile','$timeout','$http','ADTService',
 	     restrict: "EA",
 	     templateUrl:"/html/templates/java_tutorial.html",
 
-	        link: function($scope, $element, $attributes){
+        link: function($scope, $element, $attributes){
 
-	        	$http.get('/js/javascriptTutorial.txt').success( function(code) {
-					$scope.javaTutorial = code;
-			    });
+        	$http.get('/js/javascriptTutorial.txt').success( function(code) {
+				$scope.javaTutorial = code;
+		    });
 
-	        },
+        },
 	    controller: function($scope,$element){
 
 
@@ -473,17 +465,17 @@ myApp.directive('adtBar', ['$compile','$timeout','ADTService',function($compile,
 
         link: function($scope, $element, $attributes){
 
-           	$scope.ADTs=ADTService.getAllADTs();
+            $scope.ADTs=ADTService.getAllADTs();
 
 
-           angular.forEach($scope.ADTs,function(value,key){
+            angular.forEach($scope.ADTs,function(value,key){
 
-	        var	childScope=$scope.$new();
+	            var	childScope=$scope.$new();
 	        	childScope.ADT=value;
 	            var toggler = $("<h3></h3>");
 	          //  toggler.attr('id',value.name+'Toggler');
 	            toggler.addClass('toggler-adt');
-	           toggler.html(value.name);
+	            toggler.html(value.name);
 
 	            var elementBody = "<ng-include src=\"'/html/templates/adt_detail.html'\"></ng-include>";
 	            elementBody = $('<div class="element-body-adt">'+elementBody+'</div>');

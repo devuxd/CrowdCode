@@ -1,0 +1,25 @@
+
+<table>
+	<tr ng-repeat="(key,input) in data.test.rec.simpleTestInputs">
+		<td>{{data.paramNames[key]}}</td>
+		<td>
+			<div ace-readonly ng-model="input" ></div>
+		</td>
+	</tr>
+	<tr>
+		<td>expected output</td>
+		<td><div ace-readonly ng-model="data.test.rec.simpleTestOutput" ></div></td>
+	</tr>
+	<tr>
+		<td>test code</td>
+		<td><div ace-readonly ng-model="data.test.rec.code" ></div></td>
+	</tr>
+	<tr>
+		<td>debug console</td>
+		<td>
+			<ul><div ace-readonly ng-model="data.debugStatements" ></div>
+		</td>
+	</tr>
+</table>
+
+<button class="btn btn-primary btn-sm" ng-click="disputeTest(key)"> Dispute </button>
