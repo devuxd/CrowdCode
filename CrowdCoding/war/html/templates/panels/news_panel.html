@@ -1,7 +1,7 @@
-<div ng-controller="NewsController">
+<div>
 	<ul class="sidebar-list news-list">
-		<li ng-if="news.length > 0" ng-repeat="n in news">
-			<span class="left">
+		<li ng-if="news.length > 0" ng-repeat="n in news"  ng-mouseenter="loadMicrotask(n)" data-template="/html/templates/popover/news_popover.html" data-animation="am-flip-x" data-auto-close="1"trigger="hover" bs-popover>
+		<span class="left">
 				<div class="text">{{n.description}}</div>
 			</span>
 			<span class="right">{{n.points}} points</span>

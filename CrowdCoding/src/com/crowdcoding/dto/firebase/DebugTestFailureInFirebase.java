@@ -12,18 +12,20 @@ public class DebugTestFailureInFirebase extends MicrotaskInFirebase
 
 	public DebugTestFailureInFirebase(
 			long id,
+			String title,
 			String type,
 			String owningArtifact,
 			boolean completed,
 			int points,
 			long testedFunctionID)
 	{
-		super(id, type, owningArtifact, completed, points);
+		super(id,title, type, owningArtifact, completed, points);
 		this.functionID = testedFunctionID;
 	}
 
 	public DebugTestFailureInFirebase(
 			long id,
+			String title,
 			String type,
 			String owningArtifact,
 			boolean completed,
@@ -31,7 +33,7 @@ public class DebugTestFailureInFirebase extends MicrotaskInFirebase
 			long testID,
 			long testedFunctionID)
 	{
-		super(id, type, owningArtifact, completed, points);
+		super(id,title, type, owningArtifact, completed, points);
 		this.testID = testID;
 		this.functionID = testedFunctionID;
 	}

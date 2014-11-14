@@ -27,67 +27,69 @@ public class DebugTestFailure extends Microtask
 
      // Default constructor for deserialization
      private DebugTestFailure()
-     {                   
+     {
      }
 
      // Constructor for initial construction.
      public DebugTestFailure(Function function, Project project)
      {
           super(project);
-          this.function = (Ref<Function>) Ref.create(function.getKey());         
+          this.function = (Ref<Function>) Ref.create(function.getKey());
           ofy().save().entity(this).now();
   		  FirebaseService.writeMicrotaskCreated(new DebugTestFailureInFirebase(
-  				  id, 
-  				  this.microtaskName(), 
-  				  function.getName(), 
-				  false, 
+  				  id,
+  				  this.microtaskTitle(),
+  				  this.microtaskName(),
+  				  function.getName(),
+				  false,
 				  submitValue,
-				  function.getID()), 
+				  function.getID()),
 		id, project);
-          
+
           project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
           project.historyLog().endEvent();
      }
-     
+
      // Constructor for initial construction.
      public DebugTestFailure(Function function, Test test, Project project)
      {
           super(project);
-          this.function = (Ref<Function>) Ref.create(function.getKey());    
-          this.failedTest = (Ref<Test>) Ref.create(test.getKey());          
+          this.function = (Ref<Function>) Ref.create(function.getKey());
+          this.failedTest = (Ref<Test>) Ref.create(test.getKey());
           ofy().save().entity(this).now();
   		  FirebaseService.writeMicrotaskCreated(new DebugTestFailureInFirebase(
-  				  id, 
-  				  this.microtaskName(), 
-  				  function.getName(), 
-				  false, 
+  				  id,
+  				  this.microtaskTitle(),
+  				  this.microtaskName(),
+  				  function.getName(),
+				  false,
 				  submitValue,
 				  test.getID(),
-				  function.getID()), 
+				  function.getID()),
 		  id, project);
-          
+
           project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
           project.historyLog().endEvent();
      }
-     
+
      public Microtask copy(Project project)
      {
     	 return new DebugTestFailure(this.function.getValue(), project);
      }
-     
+
      protected void doSubmitWork(DTO dto, String workerID, Project project)
      {
     	function.get().debugTestFailureCompleted((FunctionDTO) dto, project);
     	WorkerCommand.awardPoints(workerID, this.submitValue);
-  		// increase the stats counter 
-  		WorkerCommand.increaseStat(workerID, "debugs",1);    
+  		// increase the stats counter
+  		WorkerCommand.increaseStat(workerID, "debugs",1);
      }
 
      protected Class getDTOClass()
      {
           return FunctionDTO.class;
      }
-    
+
      public Artifact getOwningArtifact()
      {
           return function.get();
@@ -102,7 +104,7 @@ public class DebugTestFailure extends Microtask
      {
           return function.getValue().getEscapedCode();
      }
-    
+
      public String[] getTestCases(Project project)
      {
           List<Ref<Test>> tempCases = function.getValue().getTestCases(project);
@@ -125,7 +127,7 @@ public class DebugTestFailure extends Microtask
           }
           return stringVersion;
      }
-    
+
      public String[] getTestDescriptions(Project project)
      {
           List<Ref<Test>> tempCases = function.getValue().getTestCases(project);
@@ -146,25 +148,25 @@ public class DebugTestFailure extends Microtask
                     }
                }
           }
-          
+
           return stringVersion;
      }
-    
+
      public String getFunctionHeaderAssociatedWithTestCase()
      {
           return function.getValue().getHeader();
      }
-    
+
      public Function getFunction()
      {
           return function.getValue();
      }
-    
+
      public String microtaskTitle()
      {
           return "Debug a test failure";
      }
-     
+
  	public String microtaskDescription()
  	{
  		return "debug a test failure";

@@ -53,7 +53,7 @@
 			<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
 				The description of the function being tested has changed<BR>
 				<br>
-				Can you update the test Case below,if necessary?<BR>
+				Can you update the test below, or if necessary dispute the test case?<BR>
 
 				<span   style="width:60%" class="alert alert-info pull-left">{{test.description}}</span>
 		   		<button style="width:40%" class="btn btn-mini pull-left" ng-hide="dispute" ng-click="toggleDispute()">Report as incorrect test case</button>
@@ -135,9 +135,9 @@
 						<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json1="{{funct.returnType}}" ></textarea>
 						<ul class="help-block" ng-show="form.output.$invalid">
 							<!--<li ng-show="form.output.$error.required" >This field is required!</li> -->
-							<li ng-show="inputForm.input.$error.json1" >
+							<li ng-show="form.output.$error.json1" >
 								<span>There are JSON errors. Please fix them:</span>
-								<ul ng-repeat="error in inputForm.input.$error.json_errors">
+								<ul ng-repeat="error in form.output.$error.json_errors">
 									<li>{{error}}</li>
 								</ul>
 							</li>

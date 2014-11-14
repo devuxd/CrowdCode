@@ -4,22 +4,16 @@
 // APP CONTROLLER //
 ////////////////////
 //prepare variables and execute inizialization stuff
-myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','userService', 'testsService', 'functionsService', 'mocksService','testRunnerService','ADTService','microtasksService','TestList', function($scope,$rootScope,$firebase,$http,userService,testsService,functionsService, mocksService, testRunnerService, ADTService,microtasksService,TestList) {
+myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$interval','userService', 'testsService', 'functionsService', 'mocksService','testRunnerService','ADTService','microtasksService','TestList', function($scope,$rootScope,$firebase,$http,$interval,userService,testsService,functionsService, mocksService, testRunnerService, ADTService,microtasksService,TestList) {
 
 	// current session variables
     $rootScope.projectId    = projectId;
     $rootScope.workerId     = workerId;
     $rootScope.workerHandle = workerHandle;
     $rootScope.firebaseURL  = firebaseURL;
-
+	$rootScope.loaded={};		
     // flags for knowing if service is loaded
-    $rootScope.loaded={};
-    $rootScope.loaded.microtasks = false;
-    $rootScope.loaded.functions  = false;
-    $rootScope.loaded.mocks      = false;
-    $rootScope.loaded.tests      = false;
-    $rootScope.loaded.ADTs       = false;
-
+   
 
 
 
@@ -32,13 +26,24 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
 		userService.logout();
 	}
 
-	userService.init();
-	userService.listenForJobs();
-	microtasksService.init();
-	testsService.init();
-	functionsService.init();
-	mocksService.init();
-	ADTService.init();
+
+	$scope.promise= $interval(
+		function(){
+		 	console.log("execute timer function");
+		    $rootScope.loaded.microtasks = false;
+		    $rootScope.loaded.functions  = false;
+		    $rootScope.loaded.mocks      = false;
+		    $rootScope.loaded.tests      = false;
+		    $rootScope.loaded.ADTs       = false;
+			userService.init();
+			userService.listenForJobs();
+			microtasksService.init();
+			testsService.init();
+			functionsService.init();
+			mocksService.init();
+			ADTService.init();
+	}, 1000);
+	
 
 
 	$scope.$on('popup_show',function(){ console.log('show popup'); $('#popUp').modal('show'); });
@@ -49,18 +54,14 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','us
 	$scope.$watch(function () {
 		return $rootScope.loaded;
     },function(newVal) {
+
     	if( $rootScope.loaded.functions && $rootScope.loaded.mocks &&
     	    $rootScope.loaded.tests     && $rootScope.loaded.ADTs  &&
-    	    $rootScope.loaded.microtasks){
+    	    $rootScope.loaded.microtasks){	
+				$interval.cancel($scope.promise);
+				$rootScope.$broadcast('load');
+		   	}
 
-
-			$rootScope.$broadcast('load');
-		/*
-			TestList.$loaded().then(function(){
-				var t = TestList.getByFunctionName('sum');
-				console.log(t);
-			})*/
-    	}
     },true);
 }]);
 
@@ -292,21 +293,6 @@ myApp.controller('StatsController', ['$scope','$rootScope','$firebase','$filter'
 			});
 	}
 }]);
-
-/////////////////////
-// NEWS CONTROLLER //
-/////////////////////
-myApp.controller('NewsController', ['$scope','$rootScope','$firebase','$filter',function($scope,$rootScope,$firebase,$filter) {
-	// create the reference and the sync
-	var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/newsfeed');
-	var sync = $firebase(ref);
-	// bind the array to scope.leaders
-	$scope.news = sync.$asArray();
-}]);
-
-
-
-
 
 ///////////////////////////////////
 //TYPE BROWSER    CONTROLLER     //

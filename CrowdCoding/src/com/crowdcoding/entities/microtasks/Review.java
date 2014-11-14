@@ -37,7 +37,7 @@ public class Review extends Microtask
 		this.initiallySubmittedDTO = initiallySubmittedDTO;
 		this.workerOfReviewedWork = workerOfReviewedWork;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new ReviewInFirebase(id, this.microtaskName(), "",
+		FirebaseService.writeMicrotaskCreated(new ReviewInFirebase(id,this.microtaskTitle(), this.microtaskName(), "",
 				false, submitValue, microtaskIDUnderReview), id, project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
@@ -89,18 +89,18 @@ public class Review extends Microtask
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
     	FirebaseService.postToNewsfeed(workerID, (new NewsItemInFirebase(
     			this.submitValue,
-    			"You reviewed a microtask", 
+    			"You reviewed a microtask",
     			"SubmittedReview",
     			this.id
     	).json()), project);
-    	
+
     	System.out.println("reviewer id="+workerID);
     	System.out.println("reviewed  id="+workerOfReviewedWork);
-    	
 
-		// increase the stats counter 
+
+		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "reviews",1);
-    	
+
 	}
 
 	protected Class getDTOClass()

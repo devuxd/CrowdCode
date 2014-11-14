@@ -29,6 +29,7 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase', function
 
 		function get(id)
 		{
+			console.log("id microtask"+ id)
 			return microtasks[id-1];
 		}
 

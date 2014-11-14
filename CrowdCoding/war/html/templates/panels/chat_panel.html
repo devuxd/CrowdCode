@@ -1,7 +1,7 @@
 <div class="chat {{chatActive?'active':''}}">
 	<div class="header"> 
 		<span>Project chat</span>
-		<span class="pull-right btn-close glyphicon glyphicon-remove" ng-click="toggleChat()"></span>
+		<span class="pull-right btn-close glyphicon glyphicon-remove" ng-click="$emit('toggleChat')"></span>
 	</div>
 	<div class="output-wrapper">
 		<ul class="output">

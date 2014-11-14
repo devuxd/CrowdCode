@@ -115,6 +115,13 @@
 
 	        <!-- LEFT SIDEBAR -->
 	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
+	        
+	        	<h3 class="toggler">News</h3>
+	        	<div class="element active"  style="height:40%">
+	        		<div class="element-body">
+						<news-panel></news-panel> 
+	        		</div>
+	        	</div>
 	        	<h3 class="toggler">Leaderboard</h3>
 	        	<div class="element active" style="height:40%">
 	        		<div class="element-body">
@@ -122,12 +129,6 @@
 	        		</div>
 	        	</div>
 
-	        	<h3 class="toggler">News</h3>
-	        	<div class="element active"  style="height:40%">
-	        		<div class="element-body">
-						<ng-include src="'/html/templates/panels/news_panel.html'"></ng-include>
-	        		</div>
-	        	</div>
 	        </div>
 
 	        <!-- CONTENT -->
@@ -146,7 +147,7 @@
 							<button ng-click="$emit('skipMicrotask')" tabindex="100"   class="btn btn-sm"   >Skip</button>
 						</span>
 						<span class="pull-right">
-							<button ng-click="toggleChat()" tabindex="101" class="btn {{chatActive?'btn-chat-active':''}} btn-sm"  >
+							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn {{chatActive?'btn-chat-active':''}} btn-sm"  >
 
 								<span class="glyphicon glyphicon-comment"></span>
 							</button>
@@ -215,7 +216,7 @@
 	<script src="/include/diff/jquery.pretty-text-diff.js"></script>-->
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
-	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
+<!--	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
     <script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
     <script src="/include/angular-animate/angular-animate.min.js"></script><!-- Angular animate -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
@@ -227,9 +228,14 @@
 
 
 
- 	<script src="/include/ui-ace-editor/src/ui-ace.js"> </script>
-	<script src="/include/ace-editor/src-min-noconflict/ace.js"> </script>
+ 	<script src="/include/ui-ace-editor/src/ui-ace.js"> </script> <!-- UI Ace Editor-->
+	<script src="/include/ace-editor/src-min-noconflict/ace.js"> </script> <!-- Ace Editor-->
 
+
+
+	<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
+	<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
+	
 
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 

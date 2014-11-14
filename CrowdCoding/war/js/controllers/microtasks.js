@@ -12,7 +12,7 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 
 	$scope.newTestCase = "";
 
- 
+	 
 	// initialize testCases
 	// if microtask.submission and microtask.submission.testCases are defined
 	// assign available testCases otherwise initialize a new array

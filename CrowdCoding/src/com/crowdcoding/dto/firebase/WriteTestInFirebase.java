@@ -19,6 +19,7 @@ public class WriteTestInFirebase extends MicrotaskInFirebase
 
 	public WriteTestInFirebase(
 			long id,
+			String title,
 			String type,
 			String owningArtifact,
 			boolean completed,
@@ -32,7 +33,7 @@ public class WriteTestInFirebase extends MicrotaskInFirebase
 			String newFunctionDescription,			// Only defined for FUNCTION_CHANGED
 			String oldTestCase)
 	{
-		super(id, type, owningArtifact, completed, points);
+		super(id,title, type, owningArtifact, completed, points);
 		this.testID = testID;
 		this.functionID = testedFunctionID;
 		this.functionVersion = functionVersion;

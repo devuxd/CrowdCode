@@ -21,7 +21,7 @@
 			$('.execute').click(function()
 			{
 				var command = $(this).html();
-				var url = 'http://localhost:8888/<%=projectID%>/admin/' + command;
+				var url = 'http://crowd-coding-dev.appspot.com/<%=projectID%>/admin/' + command;
 				
 				$.get(url).done(function(data){
 					$('#output').prepend(data.message.replace("\n","<br/>")+"<br />");

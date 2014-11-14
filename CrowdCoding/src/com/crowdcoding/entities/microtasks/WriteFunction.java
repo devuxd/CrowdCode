@@ -19,21 +19,21 @@ import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
 
 @EntitySubclass(index=true)
-public class WriteFunction extends Microtask 
+public class WriteFunction extends Microtask
 {
-	public enum PromptType { SKETCH, DESCRIPTION_CHANGE };		
+	public enum PromptType { SKETCH, DESCRIPTION_CHANGE };
 	@Load private Ref<Function> function;
-	private PromptType promptType;		
-	
+	private PromptType promptType;
+
 	private String oldFullDescription;		// Only defined for DESCRIPTION_CHANGE
 	private String newFullDescription;		// Only defined for DESCRIPTION_CHANGE
-	
-		
+
+
 	// Default constructor for deserialization
-	private WriteFunction() 
-	{				
+	private WriteFunction()
+	{
 	}
-		
+
 	// Initialization constructor for a SKETCH write function. Microtask is not ready.
 	public WriteFunction(Function function, Project project)
 	{
@@ -41,101 +41,102 @@ public class WriteFunction extends Microtask
 		this.promptType = PromptType.SKETCH;
 		WriteFunction(function, project);
 	}
-	
-	// Initialization constructor for a DESCRIPTION_CHANGE write function. Microtask is not ready. 
-	public WriteFunction(Function function, String oldFullDescription, 
+
+	// Initialization constructor for a DESCRIPTION_CHANGE write function. Microtask is not ready.
+	public WriteFunction(Function function, String oldFullDescription,
 			String newFullDescription, Project project)
 	{
-		super(project);		
+		super(project);
 		this.promptType = PromptType.DESCRIPTION_CHANGE;
-		
+
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
-		this.oldFullDescription = oldFullDescription;	
+		this.oldFullDescription = oldFullDescription;
 		this.newFullDescription = newFullDescription;
-		
+
 		WriteFunction(function, project);
 	}
-	
+
     public Microtask copy(Project project)
     {
     	return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
-    } 
-	
+    }
+
 	private void WriteFunction(Function function, Project project)
 	{
-		this.function = (Ref<Function>) Ref.create(function.getKey());		
+		this.function = (Ref<Function>) Ref.create(function.getKey());
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteFunctionInFirebase(
-				id, 
-				this.microtaskName(), 
-				function.getName(), 
-				false, 
-				submitValue, 
-				function.getID(), 
+				id,
+				this.microtaskTitle(),
+				this.microtaskName(),
+				function.getName(),
+				false,
+				submitValue,
+				function.getID(),
 				this.promptType.name(),
-				this.oldFullDescription, 
+				this.oldFullDescription,
 				this.newFullDescription), id, project);
-		
-		
+
+
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
 	}
-	
+
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
-		function.get().sketchCompleted((FunctionDTO) dto, project);	
+		function.get().sketchCompleted((FunctionDTO) dto, project);
 		WorkerCommand.awardPoints(workerID, this.submitValue);
-		// increase the stats counter 
+		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "functions",1);
-		
+
 	}
-	
+
 	public PromptType getPromptType()
 	{
 		return promptType;
-	}	
-	
+	}
+
 	public String getOldFullDescription()
 	{
 		return oldFullDescription;
 	}
-	
+
 	public String getNewFullDescription()
 	{
 		return newFullDescription;
 	}
-	
+
 	protected Class getDTOClass()
 	{
 		return FunctionDTO.class;
 	}
-	
+
 	public String getUIURL()
 	{
 		return "/html/microtasks/writeFunction.jsp";
 	}
-	
+
 	public Function getFunction()
 	{
 		return function.getValue();
 	}
-	
+
 	public Artifact getOwningArtifact()
 	{
 		return getFunction();
 	}
-	
+
 	public String microtaskTitle()
 	{
 		return "Edit a function";
 	}
-	
+
 	public String microtaskDescription()
 	{
 		return "edit a function";
 	}
-	
-	
+
+
 	public String toJSON(){
 		JSONObject json = new JSONObject();
 		try {

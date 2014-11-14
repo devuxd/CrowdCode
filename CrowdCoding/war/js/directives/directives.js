@@ -436,7 +436,7 @@ myApp.directive('navbar', ['$compile','$timeout',function($compile,$timeout) {
 //////////////////////
 
 
-myApp.directive('javaHelper', ['$compile','$timeout','$http','ADTService',function($compile,$timeout,$http,ADTService) {
+myApp.directive('javascriptHelper', ['$compile','$timeout','$http','ADTService',function($compile,$timeout,$http,ADTService) {
 
     return {
 	     restrict: "EA",
@@ -633,6 +633,87 @@ myApp.directive('resizer', function($document) {
     };
 });
 
+/////////////////////
+//  NEWS DIRECTIVE //
+/////////////////////
+
+myApp.directive('newsPanel', function($timeout, $rootScope,$firebase, microtasksService, functionsService) {
+    return {
+        restrict: 'E',
+        templateUrl: '/html/templates/panels/news_panel.html',
+        scope: {
+            //focusValue: "=syncFocusWith"
+        },
+        link: function($scope, $element, attrs) {
+            console.log("NEWS DIRECTIVE INITIALIZED");
+        },
+        controller: function($scope,$element){
+             var loadData = {
+                'WriteFunction': function(news) {
+                    console.log('WriteFunction');
+                    news.editorCode= functionsService.renderDescription(news.microtask.submission)+news.microtask.submission.header+news.microtask.submission.code;                     
+                },
+
+                'WriteTestCases': function(news) {
+                    console.log('WriteTestCase');
+                    news.testcases = news.microtask.submission.testCases;
+                },
+
+                'ReuseSearch': function(news) {
+                    console.log('ReuseSearch');
+                 },
+                'WriteTest': function(news) {
+                    console.log('WriteTest');
+                    news.test=news.microtask.submission;
+                    //news.test=
+                },
+                'WriteFunctionDescription': function(news) {
+
+                    console.log('WriteFunctionDescription');
+
+                    news.editorCode=functionsService.renderDescription(news.microtask.submission)+news.microtask.submission.header+news.microtask.submission.code;   
+                },
+                'WriteCall': function(news) {
+                    console.log('WriteCall');
+                    news.editorCode=functionsService.renderDescription(news.microtask.submission)+news.microtask.submission.header+news.microtask.submission.code;
+
+                },
+                'Review': function(news) {
+                    console.log('Review');
+                    news.microtask=microtasksService.get(news.microtask.microtaskIDUnderReview);
+                    loadData[news.microtask.type](news);
+                }
+            }
+
+
+
+            // create the reference and the sync
+            var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/newsfeed');
+            var sync = $firebase(ref);
+           
+            // bind the array to scope.leaders
+            $scope.news = sync.$asArray();
+            $scope.loadMicrotask=function(news){
+
+             
+                news.microtask=microtasksService.get(news.microtaskID);
+                //if the microtask is a review
+                if(news.microtask.type=="Review"){
+                    news.isReview=true;
+                    news.qualityScore=news.microtask.submission.qualityScore;
+                    news.reviewText=news.microtask.submission.reviewText;
+                }
+                else if(angular.isDefined(news.microtask.review)){
+                    console.log("qualityScore"+news.microtask.review.qualityScore);
+                    news.qualityScore=news.microtask.review.qualityScore;
+                    news.reviewText=news.microtask.review.reviewText;    
+                }
+                loadData[news.microtask.type](news);
+           };
+        }
+    }
+});
+
 
 myApp.directive('chat', function($timeout, $rootScope,$firebase) {
     return {
@@ -644,10 +725,10 @@ myApp.directive('chat', function($timeout, $rootScope,$firebase) {
         link: function($scope, $element, attrs) {
             console.log("CHAT DIRECTIVE INITIALIZED");
             $rootScope.chatActive = false;
-            $rootScope.toggleChat = function(){
+            $rootScope.$on('toggleChat', function(){
                 $element.find('.chat').toggleClass('active');
                 $element.find('.output').scrollTop($element.find('.output').height())
-            }
+            });
         },
         controller: function($scope,$element){
             var $output = $element.find('.output');

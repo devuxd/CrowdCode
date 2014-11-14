@@ -41,7 +41,7 @@ public class WriteCall extends Microtask
 		this.calleeFullDescription = calleeFullDescription;
 		this.pseudoCall = pseudoCall;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteCallInFirebase(id, this.microtaskName(), caller.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteCallInFirebase(id,this.microtaskTitle(), this.microtaskName(), caller.getName(),
 				false, submitValue, caller.getID(), calleeFullDescription, pseudoCall ), id, project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));

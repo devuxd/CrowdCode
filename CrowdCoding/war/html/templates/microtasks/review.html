@@ -19,24 +19,28 @@
 	<!--///////////////////////////////////////////-->
 
 	<!-- prompt type = FUNCTION_SIGNATURE -->
-	<div ng-if="review.microtask.type == 'WriteTestCases' && review.microtask.promptType == 'FUNCTION_SIGNATURE'">
+	<div ng-if="review.microtask.type == 'WriteTestCases'"> 
 		<div class="section section-description">
 			<div class="section-title" >
 				Job description
 			</div>
-			<div class="section-content" >
+			<div class="section-content" ng-if="review.microtask.promptType == 'FUNCTION_SIGNATURE'" >
 				The worker was asked to write all possible testcases for the following function. <br /> Can you rate his work?
 			</div>
+			<div class="section-content" ng-if="review.microtask.promptType == 'CORRECT_TEST_CASE'" >
+				The worker was asked to rewrite the test case :
+				<span class="alert alert-info" >{{review.microtask.disputedTestCase }}</span>for the function below,
+				because hase been dispute for the motivation: <span class="alert alert-danger"> {{review.microtask.disputeDescription }} </span>
+				<br/> with the new testCase/s below. Can you review his work?
+			</div>
+	
 		</div>
 		<div class="section section-description">
 			<div class="section-title" >
 			function description
 			</div>
-			<div class="section-content no-padding" >
-
+			<div class="section-content no-padding" >			
 				<code-mirror-readonly code="review.functionCode"></code-mirror-readonly>
-
-
 			</div>
 		</div>
 
@@ -49,43 +53,6 @@
 			</div>
 		</div>
 	</div>
-
-	<!-- prompt type = CORRECT_TEST_CASE -->
-	<div ng-if="review.microtask.type == 'WriteTestCases' && review.microtask.promptType == 'CORRECT_TEST_CASE'">
-		<div class="section section-description">
-			<div class="section-title" >
-				Job description
-			</div>
-			<div class="section-content" >
-				The worker was asked to fix the an issue related to the disputed test case. <br /> Can you rate his work?
-			</div>
-		</div>
-
-		<div class="section section-description">
-			<div class="section-title" >
-			function description
-			</div>
-			<div class="section-content no-padding" >
-				<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="review.functionCode"></div>
-			</div>
-		</div>
-
-		<div class="section section-description">
-			<div class="section-title" >Disputed test case</div>
-			<div class="section-content no-padding" >
-				{{review.microtask.disputedTestCase }}
-			</div>
-		</div>
-
-		<div class="section section-description">
-			<div class="section-title" >Dispute description</div>
-			<div class="section-content no-padding" >
-				{{review.microtask.disputeDescription }}
-			</div>
-		</div>
-
-	</div>
-
 
 	<!--//////////////////////////////////////////-->
 	<!--//           WRITE TEST MICROTASK       //-->

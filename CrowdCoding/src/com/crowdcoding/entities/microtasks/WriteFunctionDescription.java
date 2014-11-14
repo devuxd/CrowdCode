@@ -39,7 +39,7 @@ public class WriteFunctionDescription extends Microtask
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteFunctionDescriptionInFirebase(id, this.microtaskName(), function.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteFunctionDescriptionInFirebase(id,this.microtaskTitle(), this.microtaskName(), function.getName(),
 				false, submitValue,callDescription, caller.getID()), id, project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
@@ -64,11 +64,11 @@ public class WriteFunctionDescription extends Microtask
 
 		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
 				functionDTO.paramTypes, functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, code, project);
-	
+
 		WorkerCommand.awardPoints(workerID, this.submitValue);
-		// increase the stats counter 
+		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "function_descriptions",1);
-		
+
 	}
 
 	protected Class getDTOClass()
