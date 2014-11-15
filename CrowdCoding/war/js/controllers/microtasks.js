@@ -28,7 +28,7 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 			$scope.viewData.newTestCase="";
 
 		}
-	}
+	};
 
 
 	$scope.deleteTestCase = function(index){

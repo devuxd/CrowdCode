@@ -7,11 +7,12 @@
 myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$interval','userService', 'testsService', 'functionsService', 'mocksService','testRunnerService','ADTService','microtasksService','TestList', function($scope,$rootScope,$firebase,$http,$interval,userService,testsService,functionsService, mocksService, testRunnerService, ADTService,microtasksService,TestList) {
 
 	// current session variables
+   	$rootScope.loaded={};	
     $rootScope.projectId    = projectId;
     $rootScope.workerId     = workerId;
     $rootScope.workerHandle = workerHandle;
     $rootScope.firebaseURL  = firebaseURL;
-	$rootScope.loaded={};		
+	
     // flags for knowing if service is loaded
    
 
@@ -20,11 +21,11 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$i
 	// wrapper for user login and logout
 	$rootScope.workerLogin = function(){
 		userService.login();
-	}
-
+	};
 	$rootScope.workerLogout = function(){
 		userService.logout();
-	}
+	};
+
 
 
 	$scope.promise= $interval(
@@ -63,6 +64,8 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$i
 		   	}
 
     },true);
+
+
 }]);
 
 
@@ -155,6 +158,28 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	});
 
 
+	$rootScope.$on('sendFeedback', function(event, message) {
+		console.log("message " + message);
+		var feedback = {
+			'microtaskType': $scope.microtask.type,
+			'microtaskID': $scope.microtask.id,
+			'workerHandle': $rootScope.workerId,
+			'workerID': $rootScope.workerId,
+			'feedback': message.toString()
+		};
+
+
+		var feedbackRef = $firebase(new Firebase(firebaseURL + '/feedback'));
+
+		feedbacks = feedbackRef.$asArray();
+		feedbacks.$loaded().then(function() {
+			feedbacks.$add(feedback);
+	//		$rootScope.feedback.sent=true;
+		});
+
+
+
+	});
 	// ------- MESSAGE LISTENERS ------- //
 
 	// listen for message 'submit microtask'
@@ -303,3 +328,41 @@ myApp.controller('typeBrowserController',  ['$scope','$rootScope','$firebase','$
 }]);
 
 
+
+myApp.config(function($dropdownProvider) {
+  angular.extend($dropdownProvider.defaults, {
+    html: true
+  });
+
+});
+
+myApp.controller('dropdownController', ['$scope', function($scope){
+$scope.dropdown = [
+  {
+    "text": '<i >change profile picture</i>',
+    "href": "#",
+    "data-animation":"am-fade-and-scale",
+    "data-placement":"center",
+    "data-template":"/html/templates/popups/popup_feedback.html",
+    "bs-modal":"modal"
+  },
+  {
+    "text": "<i class=\"fa fa-globe\"></i>&nbsp;Display an alert",
+    "click": "$alert(\"Holy guacamole!\")"
+  },
+  {
+    "text": "<i class=\"fa fa-external-link\"></i>&nbsp;External link",
+    "href": "/auth/facebook",
+    "target": "_self"
+  },
+  {
+    "divider": true
+  },
+  {
+    "text": "Separated link",
+    "href": "#separatedLink"
+  }
+];
+
+
+}]);

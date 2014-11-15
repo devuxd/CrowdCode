@@ -23,7 +23,9 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase', function
 		{
 			var microtasksSync = $firebase(new Firebase($rootScope.firebaseURL+'/microtasks'));
 			microtasks = microtasksSync.$asArray();
-			microtasks.$loaded().then(function(){ $rootScope.loaded.microtasks=true;	});
+			microtasks.$loaded().then(function(){ 
+				console.log("MICROTASK INITIALIZED");
+				$rootScope.loaded.microtasks=true;	});
 
 		}
 

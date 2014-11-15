@@ -38,9 +38,8 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 					}
 				}
 
-				console.log("adt");
-				console.log(nameToADT);
-
+				console.log("ADT INITIALIZED");
+				
 				$rootScope.loaded.ADTs=true;
 
 			});

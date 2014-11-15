@@ -36,17 +36,18 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
 		this.getParamNamesById = function (functionId) { return getParamNamesById(functionId);};
 	 	
-	 	this.isLoaded = function() { return loaded };
-		this.getAll = function(){
-			return functions;
-		}
+	 	this.isLoaded = function() { return loaded; };
+		this.getAll = function(){ return functions;	};
 		// Function bodies
 		function init()
 		{
 		    // hook from firebase all the functions declarations of the project
 			var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functions = functionsSync.$asArray();
-			functions.$loaded().then(function(){$rootScope.loaded.functions=true;  });
+			functions.$loaded().then(function(){
+				$rootScope.loaded.functions=true;  
+				console.log("FUNCTION INITIALIZED");
+			});
 
 			/*var functionsArraySync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functionsHistory = functionsSync.$asArray();

@@ -40,7 +40,9 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 			console.log($rootScope.firebaseURL+'/artifacts/tests');
 			var ref = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/tests'));
 			var testsInFirebase = ref.$asArray();
-			testsInFirebase.$loaded().then(function(){ $rootScope.loaded.tests=true;  });
+			testsInFirebase.$loaded().then(function(){ 
+				console.log("TESTS INITIALIZED");
+				$rootScope.loaded.tests=true;  });
 
 			// watch for changes in the tests data
 			testsInFirebase.$watch(function(obj){
