@@ -57,7 +57,10 @@
 	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
 
 
-
+ <!--    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/angular-motion.min.css">
+    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/bootstrap-additions.min.css"> -->
+    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
+    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
 
 
 </head>
@@ -66,48 +69,54 @@
 
 		<header tutorial="1" class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
 
-				<div class="container-fluid">
-					<div class="navbar-header">
-						<span class="navbar-brand">
-						CrowdCode
-						</span>
-					</div>
-
-
-
-					<ul class="nav navbar-nav">
-						<li id="projectSelector">
-
-							<a href=""><strong>Current Project: </strong>{{ projectId }}</a>
-							<!--
-							<a data-toggle="dropdown" class="dropdown" href="">
-								Current Project
-								<span class="caret"></span>
-							</a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="">Project1</a></li>
-								<li><a href="">Project2</a></li>
-							</ul>-->
-						</li>
-					</ul>
-
-					<ul class="nav navbar-nav navbar-right">
-						<li>
-							<a data-toggle="dropdown" class="dropdown" href="">
-								<img src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
-								{{workerHandle}}
-								<span class="caret"></span>
-							</a>
-
-							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-								<li><a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a></li>
-								<li><a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a></li>
-							</ul>
-
-						</li>
-					</ul>
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<span class="navbar-brand">CrowdCode</span>
 				</div>
 
+				<ul class="nav navbar-nav">
+					<li id="projectSelector">
+
+						<a href=""> <strong>Current Project:</strong>
+							{{ projectId }}
+						</a>
+						<!--
+							<a data-toggle="dropdown" class="dropdown" href="">
+						Current Project
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li>
+							<a href="">Project1</a>
+						</li>
+						<li>
+							<a href="">Project2</a>
+						</li>
+					</ul>
+					-->
+				</li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a data-toggle="dropdown" class="dropdown" href="">
+						<img src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
+						{{workerHandle}}
+						<span class="caret"></span>
+					</a>
+
+					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						<li>
+							<a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a>
+						</li>
+						<li>
+							<a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a>
+						</li>
+					</ul>
+
+				</li>
+			</ul>
+		</div>
 		</header>
 
 	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;">
@@ -115,21 +124,22 @@
 
 	        <!-- LEFT SIDEBAR -->
 	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
-	        
-	        	<h3 class="toggler">News</h3>
-	        	<div class="element active"  style="height:40%">
-	        		<div class="element-body">
-						<news-panel></news-panel> 
-	        		</div>
-	        	</div>
-	        	<h3 class="toggler">Leaderboard</h3>
-	        	<div class="element active" style="height:40%">
-	        		<div class="element-body">
-						<ng-include src="'/html/templates/panels/leaderboard_panel.html'"></ng-include>
-	        		</div>
-	        	</div>
-
-	        </div>
+				<div class="sidebar-panels">
+		        	<h3 class="toggler">News</h3>
+		        	<div class="element active"  style="height:40%">
+		        		<div class="element-body scrollable">
+							<news-panel></news-panel>
+		        		</div>
+		        	</div>
+		        	<h3 class="toggler">Leaderboard</h3>
+		        	<div class="element active" style="height:40%">
+		        		<div class="element-body scrollable">
+							<ng-include src="'/html/templates/panels/leaderboard_panel.html'"></ng-include>
+		        		</div>
+		        	</div>
+		        </div>
+		        <a href="#" class="linkclass send-feedback" data-animation="am-fade-and-scale" data-placement="center" data-template="/html/templates/popups/popup_feedback.html" bs-modal="modal">Send Us Feedback!</a>
+			</div>
 
 	        <!-- CONTENT -->
 	        <div id="content" class="order-3" ng-controller="MicrotaskController">
@@ -235,7 +245,7 @@
 
 	<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
 	<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
-	
+
 
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 

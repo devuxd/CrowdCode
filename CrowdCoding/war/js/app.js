@@ -8,5 +8,9 @@ myApp.constant('firebaseUrl',firebaseURL);
 myApp.run();
 
 
+myApp.config(function($dropdownProvider) {
+  angular.extend($dropdownProvider.defaults, {
+    html: true
+  });
 
-
+});

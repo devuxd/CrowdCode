@@ -13,7 +13,7 @@
                     <li ng-repeat="input in n.test.simpleTestInputs track by $index">Input: {{input}}</li>
                     <li>Output: {{n.test.simpleTestOutput}}</li>
                 </ul>
-                <span ng-if="n.test.inDispute">{{n.test.disputeText}}</span>  
+                <span ng-if="n.test.inDispute">{{n.test.disputeText}}</span>
             </div>
         </div>
         <div ng-if="n.microtask.review">
@@ -24,7 +24,8 @@
 
                 <br>
                 <br>
-                <span><b>{{n.reviewText}}</b></span>
+                <span> <b>{{n.reviewText}}</b>
+                </span>
             </div>
         </div>
     </div>
@@ -34,7 +35,8 @@
             <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  ng-if="currentValue<=n.qualityScore" class="rating-star-news full"></span>
             <br>
             <br>
-            <span><b>{{n.reviewText}}</b></span>
+            <span> <b>{{n.reviewText}}</b>
+            </span>
 
         </div>
         <h3 class="popover-title">For the work above:</h3>
@@ -48,7 +50,7 @@
                     <li ng-repeat="input in n.test.simpleTestInputs track by $index">Input: {{input}}</li>
                     <li>Output: {{n.test.simpleTestOutput}}</li>
                 </ul>
-                <span ng-if="n.test.inDispute">{{n.test.disputeText}}</span>  
+                <span ng-if="n.test.inDispute">{{n.test.disputeText}}</span>
             </div>
 
         </div>

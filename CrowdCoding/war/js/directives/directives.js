@@ -10,9 +10,9 @@ myApp.directive('json1', ['ADTService',function(ADTService) {
 
             ctrl.$formatters.unshift(function (viewValue) {
                 // initialize JSONValidator and execute errorCheck
-                validator.initialize(ADTService.getNameToADT,viewValue,attrs['json1'])
+                validator.initialize(ADTService.getNameToADT,viewValue,attrs['json1']);
                 validator.errorCheck();
-                if (!validator.isValid()&&viewValue!=undefined) {
+                if (!validator.isValid()&&viewValue!==undefined) {
                    ctrl.$setValidity('json1', false);
                     ctrl.$error.json_errors = validator.getErrors();
                     return viewValue;
@@ -39,7 +39,7 @@ myApp.directive('adtValidator',['ADTService',function(ADTService) {
 
             ctrl.$parsers.unshift(function (viewValue) {
 
-            	var valid=ADTService.isValidTypeName(viewValue)||viewValue=="";
+            	var valid=ADTService.isValidTypeName(viewValue)||viewValue==="";
 
                  if(!valid){
 
@@ -114,7 +114,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         var ast;
 
         // 1. If the text does not contain a function block, display an error and return.
-        if (replaceFunctionCodeBlock(code) == ''){
+        if (replaceFunctionCodeBlock(code) === ''){
             errors.push('No function block could be found. Make sure that there is a line that starts with "function".');
             return false;
         }
@@ -171,7 +171,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
 
         // Check for AST errors
-        if (ast.body.length == 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
+        if (ast.body.length === 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
             errorMessages.push("All code should be in a single function");
         else if (allFunctionNames.indexOf(ast.body[0].id.name) != -1)
             errorMessages.push("The function name '" + ast.body[0].id.name + "' is already taken. Please use another.");
@@ -183,7 +183,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
 
 
-        if (errorMessages.length != 0)
+        if (errorMessages.length !== 0)
         {
             errors = errors.concat(errorMessages);
             return true;
@@ -230,7 +230,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
             errorMessages = errorMessages.concat(checkNameConsistency(paramDescriptionNames,paramHeaderNames));
         }
-        if (errorMessages.length != 0)
+        if (errorMessages.length !== 0)
         {
             errors = errors.concat(errorMessages);
             return true;
@@ -257,7 +257,7 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
             var name = findNextWord(line, loc + keyword.length+type.length+1);
 
 
-            if(paramDescriptionNames!=undefined)
+            if(paramDescriptionNames!==undefined)
                 paramDescriptionNames.push(name);
 
             if (type == -1)
@@ -379,9 +379,9 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
                 } else if (currentValue === false && previousValue) {
                     $element[0].blur();
                 }
-            })
+            });
         }
-    }
+    };
 });
 
 myApp.directive('collapsableList', ['$compile','$timeout',function($compile,$timeout) {
@@ -625,6 +625,8 @@ myApp.directive('resizer', function($document) {
     };
 });
 
+
+
 /////////////////////
 //  NEWS DIRECTIVE //
 /////////////////////
@@ -643,7 +645,7 @@ myApp.directive('newsPanel', function($timeout, $rootScope,$firebase, microtasks
              var loadData = {
                 'WriteFunction': function(news) {
                     console.log('WriteFunction');
-                    news.editorCode= functionsService.renderDescription(news.microtask.submission)+news.microtask.submission.header+news.microtask.submission.code;                     
+                    news.editorCode= functionsService.renderDescription(news.microtask.submission)+news.microtask.submission.header+news.microtask.submission.code;
                 },
 
                 'WriteTestCases': function(news) {
@@ -663,7 +665,7 @@ myApp.directive('newsPanel', function($timeout, $rootScope,$firebase, microtasks
 
                     console.log('WriteFunctionDescription');
 
-                    news.editorCode=functionsService.renderDescription(news.microtask.submission)+news.microtask.submission.header+news.microtask.submission.code;   
+                    news.editorCode=functionsService.renderDescription(news.microtask.submission)+news.microtask.submission.header+news.microtask.submission.code;
                 },
                 'WriteCall': function(news) {
                     console.log('WriteCall');
@@ -675,19 +677,19 @@ myApp.directive('newsPanel', function($timeout, $rootScope,$firebase, microtasks
                     news.microtask=microtasksService.get(news.microtask.microtaskIDUnderReview);
                     loadData[news.microtask.type](news);
                 }
-            }
+            };
 
 
 
             // create the reference and the sync
             var ref  = new Firebase($rootScope.firebaseURL+'/workers/'+$rootScope.workerId+'/newsfeed');
             var sync = $firebase(ref);
-           
+
             // bind the array to scope.leaders
             $scope.news = sync.$asArray();
             $scope.loadMicrotask=function(news){
 
-             
+
                 news.microtask=microtasksService.get(news.microtaskID);
                 //if the microtask is a review
                 if(news.microtask.type=="Review"){
@@ -698,12 +700,12 @@ myApp.directive('newsPanel', function($timeout, $rootScope,$firebase, microtasks
                 else if(angular.isDefined(news.microtask.review)){
                     console.log("qualityScore"+news.microtask.review.qualityScore);
                     news.qualityScore=news.microtask.review.qualityScore;
-                    news.reviewText=news.microtask.review.reviewText;    
+                    news.reviewText=news.microtask.review.reviewText;
                 }
                 loadData[news.microtask.type](news);
            };
         }
-    }
+    };
 });
 
 

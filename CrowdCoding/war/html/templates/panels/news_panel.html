@@ -1,6 +1,6 @@
 <div>
 	<ul class="sidebar-list news-list">
-		<li ng-if="news.length > 0" ng-repeat="n in news.slice().reverse()"  ng-mouseenter="loadMicrotask(n)" data-template="/html/templates/popover/news_popover.html" data-animation="am-flip-x" data-auto-close="1"trigger="hover" bs-popover>
+		<li ng-if="news.length > 0" ng-repeat="n in news.slice().reverse()"  ng-mouseenter="loadMicrotask(n)" data-template="/html/templates/popover/news_popover.html" data-animation="" data-auto-close="1"trigger="hover"  data-placement="right-bottom" bs-popover>
 		<span class="left">
 				<div class="text">{{n.description}}</div>
 			</span>
