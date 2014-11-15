@@ -66,53 +66,53 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 
 	//load the microtask to review
 	$scope.review.microtask = microtasksService.get($scope.microtask.microtaskIDUnderReview);
+	$scope.review.microtask.$loaded().then(function(){
 
-	console.log("TYPE="+$scope.review.microtask.type);
+		if ($scope.review.microtask.type == 'WriteTestCases'){
+			//retrievs the reference of the existing test cases to see if the are differents
+			$scope.review.testcases = $scope.review.microtask.submission.testCases;
 
-	if ($scope.review.microtask.type == 'WriteTestCases'){
-		//retrievs the reference of the existing test cases to see if the are differents
-		$scope.review.testcases = $scope.review.microtask.submission.testCases;
+			//load the version of the function with witch the test cases where made
+			var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtask.functionID
+					+ '/' + $scope.review.microtask.submission.functionVersion));
+			var functionUnderTest = functionUnderTestSync.$asObject();
+			functionUnderTest.$loaded().then(function(){
+				$scope.review.functionCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
+			});
 
-		//load the version of the function with witch the test cases where made
-		var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtask.functionID
-				+ '/' + $scope.review.microtask.submission.functionVersion));
-		var functionUnderTest = functionUnderTestSync.$asObject();
-		functionUnderTest.$loaded().then(function(){
-			$scope.review.functionCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
-		});
+		} else if ($scope.review.microtask.type == 'WriteFunction') {
 
-	} else if ($scope.review.microtask.type == 'WriteFunction') {
+			$scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header+$scope.review.microtask.submission.code;
 
-		$scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header+$scope.review.microtask.submission.code;
+		}
+		else if ($scope.review.microtask.type == 'WriteTest') {
 
-	}
-	else if ($scope.review.microtask.type == 'WriteTest') {
+			//load the version of the function with witch the test cases where made
+			var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtask.functionID
+					+ '/' + ($scope.review.microtask.functionVersion>0?$scope.review.microtask.functionVersion:1)));
+			$scope.functionUnderTest = functionUnderTestSync.$asObject();
+			$scope.functionUnderTest.$loaded().then(function(){
+				console.log("funci");
+				console.log($scope.functionUnderTest);
+				$scope.review.functionCode = functionsService.renderDescription($scope.functionUnderTest)+$scope.functionUnderTest.header;
+			});
+		}
 
-		//load the version of the function with witch the test cases where made
-		var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.review.microtask.functionID
-				+ '/' + ($scope.review.microtask.functionVersion>0?$scope.review.microtask.functionVersion:1)));
-		$scope.functionUnderTest = functionUnderTestSync.$asObject();
-		$scope.functionUnderTest.$loaded().then(function(){
-			console.log("funci");
-			console.log($scope.functionUnderTest);
-			$scope.review.functionCode = functionsService.renderDescription($scope.functionUnderTest)+$scope.functionUnderTest.header;
-		});
-	}
+		else if ($scope.review.microtask.type == 'WriteCall')
+		{
 
-	else if ($scope.review.microtask.type == 'WriteCall')
-	{
+			$scope.functionChanged=functionsService.get($scope.review.microtask.functionID);
+			$scope.review.functionCode=functionsService.renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
 
-		$scope.functionChanged=functionsService.get($scope.review.microtask.functionID);
-		$scope.review.functionCode=functionsService.renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
+		}
+		else if ($scope.review.microtask.type == 'WriteFunctionDescription')
+		{
 
-	}
-	else if ($scope.review.microtask.type == 'WriteFunctionDescription')
-	{
+			$scope.review.functionCode=functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header;
 
-		$scope.review.functionCode=functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header;
+		}
 
-	}
-
+	});
 
 	//Star rating manager
 	$scope.review.mouseOn   = 0;

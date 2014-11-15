@@ -31,17 +31,13 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$i
 	$scope.promise= $interval(
 		function(){
 		 	console.log("execute timer function");
-		    $rootScope.loaded.microtasks = false;
 		    $rootScope.loaded.functions  = false;
-		    $rootScope.loaded.mocks      = false;
 		    $rootScope.loaded.tests      = false;
 		    $rootScope.loaded.ADTs       = false;
 			userService.init();
 			userService.listenForJobs();
-			microtasksService.init();
 			testsService.init();
 			functionsService.init();
-			mocksService.init();
 			ADTService.init();
 	}, 1000);
 	
@@ -56,14 +52,37 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$i
 		return $rootScope.loaded;
     },function(newVal) {
 
-    	if( $rootScope.loaded.functions && $rootScope.loaded.mocks &&
-    	    $rootScope.loaded.tests     && $rootScope.loaded.ADTs  &&
-    	    $rootScope.loaded.microtasks){	
-				$interval.cancel($scope.promise);
-				$rootScope.$broadcast('load');
-		   	}
+    	if( $rootScope.loaded.functions && $rootScope.loaded.tests && $rootScope.loaded.ADTs ){	
+			$interval.cancel($scope.promise);
+			$rootScope.$broadcast('load');
+	   	}
 
     },true);
+
+
+
+	$rootScope.$on('sendFeedback', function(event, message) {
+		console.log("message " + message);
+		var feedback = {
+			// 'microtaskType': $scope.microtask.type,
+			// 'microtaskID': $scope.microtask.id,
+			'workerHandle': $rootScope.workerHandle,
+			'workerID': $rootScope.workerId,
+			'feedback': message.toString()
+		};
+
+
+		var feedbackRef = $firebase(new Firebase(firebaseURL + '/feedback'));
+
+		feedbacks = feedbackRef.$asArray();
+		feedbacks.$loaded().then(function() {
+			feedbacks.$add(feedback);
+	//		$rootScope.feedback.sent=true;
+		});
+
+
+
+	});
 
 
 }]);
@@ -112,18 +131,11 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		$http.get('/'+projectId+'/ajax/fetch').
 		  success(function(data, status, headers, config) {
 		  	console.log(data);
-		  $scope.microtask= microtasksService.get(data.id);
+		  	$scope.microtask= microtasksService.get(data.id);
+		  	$scope.microtask.$loaded().then(function(){
 
-/*
-		  	// create the reference and the sync
-			var ref  = new Firebase($rootScope.firebaseURL+'/microtasks/' + data.id);
-			var sync = $firebase(ref);
-
-			// load the microtask data
-			$scope.microtask = sync.$asObject();
-			$scope.microtask.$loaded().then(function(){*/
-			//	$scope.inputSearch="";
-
+		  		console.log("MICROTASK LOADED");
+		  		
 				// assign title
 				$scope.datas = data;
 
@@ -138,17 +150,15 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 
 				// debug stuff
-				/* console.log("data: ");console.log(data);
-				 console.log("microtask: ");console.log($scope.microtask);
-				 console.log("function: ");console.log($scope.funct);
-				 console.log("test: ");console.log($scope.test);
-*/
+				 // console.log("data: ");console.log(data);
+				 // console.log("microtask: ");console.log($scope.microtask);
+				 // console.log("function: ");console.log($scope.funct);
+				 // console.log("test: ");console.log($scope.test);
+
 
 			  	//choose the right template
 			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-
-
-			//});
+		  	});
 		  }).
 		  error(function(data, status, headers, config) {
 
@@ -158,28 +168,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	});
 
 
-	$rootScope.$on('sendFeedback', function(event, message) {
-		console.log("message " + message);
-		var feedback = {
-			'microtaskType': $scope.microtask.type,
-			'microtaskID': $scope.microtask.id,
-			'workerHandle': $rootScope.workerId,
-			'workerID': $rootScope.workerId,
-			'feedback': message.toString()
-		};
-
-
-		var feedbackRef = $firebase(new Firebase(firebaseURL + '/feedback'));
-
-		feedbacks = feedbackRef.$asArray();
-		feedbacks.$loaded().then(function() {
-			feedbacks.$add(feedback);
-	//		$rootScope.feedback.sent=true;
-		});
-
-
-
-	});
 	// ------- MESSAGE LISTENERS ------- //
 
 	// listen for message 'submit microtask'
@@ -188,7 +176,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			success(function(data, status, headers, config) {
 
 				 //Push the microtask submit data onto the Firebase history stream
-				microtasksService.submit($scope.microtask,formData );
+				$scope.microtask.submission = formData;
+				$scope.microtask.$save();
 				console.log("submit success");
 			  	$scope.$emit('load');
 		  	})
@@ -205,17 +194,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 			  $scope.$emit('load');
 		  });
 	});
-
-
-
-	//----------------Code Mirror Option-------------//
-	$scope.readOnlyOption={
-
-	};
-
-	$scope.editingOption={
-
-	};
 
 
 

@@ -18,10 +18,11 @@
 		{
 			var firebaseURL = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 			
-			$('.execute').click(function()
+			$('.execute').click(function(e)
 			{
+				e.preventDefault();
 				var command = $(this).html();
-				var url = 'http://crowd-coding-dev.appspot.com/<%=projectID%>/admin/' + command;
+				var url = '/<%=projectID%>/admin/' + command;
 				
 				$.get(url).done(function(data){
 					$('#output').prepend(data.message.replace("\n","<br/>")+"<br />");
@@ -31,6 +32,7 @@
 
 			$('#reset').click(function()
 			{
+
 			});
 
 			var reviews = true;

@@ -10,7 +10,7 @@ myApp.directive('json1', ['ADTService',function(ADTService) {
 
             ctrl.$formatters.unshift(function (viewValue) {
                 // initialize JSONValidator and execute errorCheck
-                validator.initialize(ADTService.getNameToADT,viewValue,attrs['json1']);
+                validator.initialize(ADTService.getNameToADT,viewValue,attrs.json1);
                 validator.errorCheck();
                 if (!validator.isValid()&&viewValue!==undefined) {
                    ctrl.$setValidity('json1', false);
@@ -675,7 +675,11 @@ myApp.directive('newsPanel', function($timeout, $rootScope,$firebase, microtasks
                 'Review': function(news) {
                     console.log('Review');
                     news.microtask=microtasksService.get(news.microtask.microtaskIDUnderReview);
-                    loadData[news.microtask.type](news);
+                    news.microtask.$loaded().then(function(){
+
+                        loadData[news.microtask.type](news);
+
+                    });
                 }
             };
 
@@ -690,19 +694,22 @@ myApp.directive('newsPanel', function($timeout, $rootScope,$firebase, microtasks
             $scope.loadMicrotask=function(news){
 
 
-                news.microtask=microtasksService.get(news.microtaskID);
-                //if the microtask is a review
-                if(news.microtask.type=="Review"){
-                    news.isReview=true;
-                    news.qualityScore=news.microtask.submission.qualityScore;
-                    news.reviewText=news.microtask.submission.reviewText;
-                }
-                else if(angular.isDefined(news.microtask.review)){
-                    console.log("qualityScore"+news.microtask.review.qualityScore);
-                    news.qualityScore=news.microtask.review.qualityScore;
-                    news.reviewText=news.microtask.review.reviewText;
-                }
-                loadData[news.microtask.type](news);
+                news.microtask= microtasksService.get(news.microtaskID);
+                news.microtask.$loaded().then(function(){
+                    //if the microtask is a review
+                    if(news.microtask.type=="Review"){
+                        news.isReview=true;
+                        news.qualityScore=news.microtask.submission.qualityScore;
+                        news.reviewText=news.microtask.submission.reviewText;
+                    }
+                    else if(angular.isDefined(news.microtask.review)){
+                        console.log("qualityScore"+news.microtask.review.qualityScore);
+                        news.qualityScore=news.microtask.review.qualityScore;
+                        news.reviewText=news.microtask.review.reviewText;
+                    }
+                    loadData[news.microtask.type](news);
+                });
+                    
            };
         }
     };
