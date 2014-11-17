@@ -96,7 +96,7 @@
 
 			<div class="section section-form" style="width:70%;" >
 				<div id="disputeDiv" ng-show="dispute" class="form-group">
-					<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
+					<label for="disputeText"><b>Dispute test case:</b> what's wrong with this test case? </label>
 					<textarea name="disputeText" class="form-control" ng-model="testData.disputeText"></textarea><br>
 					<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
 					<button class="btn btn-primary" ng-if="dispute" ng-click="$emit('collectFormData')" >Submit dispute</button>
