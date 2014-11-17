@@ -455,7 +455,7 @@ myApp.directive('javascriptHelper', ['$compile','$timeout','$http','ADTService',
 myApp.directive('adtBar', ['$compile','$timeout','ADTService',function($compile,$timeout,ADTService) {
 
     return {
-     restrict: "EA",
+        restrict: "EA",
 
         link: function($scope, $element, $attributes){
 
@@ -505,16 +505,9 @@ myApp.directive('adtBar', ['$compile','$timeout','ADTService',function($compile,
 
 
             $timeout(function(){
-                $element.find('.toggler-adt:first-child').click();
+                $element.find('.toggler-adt:first-child').addClass('active');
             },100);
-        },
-    controller: function($scope,$element){
-    	 $scope.aceLoaded = function(_editor) {
-    		_editor.setOptions({
-    	    maxLines: Infinity
-    	});
-    	 };
-    }
+        }
     }
 }]);
 

@@ -26,10 +26,10 @@
 			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
-			    The following test case:<BR><BR>
-			    <div class="alert alert-info">{{microtask.disputeDescription}}</div>
-			    Has been reported to have this issues:
+			    The following test case:
 				<div class="alert alert-danger">{{microtask.disputedTestCase}}</div>
+			    Has been reported to have this issues:
+			    <div class="alert alert-info">{{microtask.disputeDescription}}</div>
 
 			    Can you rewrite the test case (and others if necessary) to address the issue?<BR>
 			</div>
@@ -68,7 +68,7 @@
 
 			<div class="section section-form" style="width:70%;" >
 
-				<div class="section-title" >
+				<div class="section-title  no-padding" >
 
 					<div class="input-group" ng-form="newForm">
 				    	<input type="text" 
@@ -88,7 +88,7 @@
 				<div class="section-content" >
 
 					<div class="list-group" >
-						<div ng-form="testCase" ng-repeat="(index,test) in testCases" class="list-item input-group input-group-sm animate-repeat">
+						<div ng-form="testCase" ng-repeat="(index,test) in testCases | filter: { deleted:false }" class="list-item input-group input-group-sm animate-repeat">
 						  	<input type="text" class="form-control" 
 							    placeholder="Describe a test case"
 							  	name="testcase"

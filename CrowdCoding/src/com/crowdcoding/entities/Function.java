@@ -550,9 +550,9 @@ public class Function extends Artifact
 			// If it's an add, create a test
 			if (testCase.added)
 			{
-			//	testCase.
 				TestCommand.create(testCase.text, this.id, this.name, testCase.functionVersion);
 			}
+			// else if is a delete, remove the test
 			else if (testCase.deleted)
 			{
 				TestCommand.delete(testCase.id);

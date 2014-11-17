@@ -21,12 +21,7 @@
 		<div class="section-content" >
 
 			<div ng-show="microtask.promptType=='WRITE'">
-				Please, write a test for the following test case: <br>
-				<span   style="width:60%" class="alert alert-info pull-left">{{test.description}}</span>
-		   		<button style="width:40%" class="btn btn-mini pull-left" ng-hide="dispute" ng-click="toggleDispute()">Report as incorrect test case</button>
-		   		<span class="clearfix"></span>
-
-				Here's the description of the function to test:
+				Please, write a test for the following test case: 
 			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT'">
@@ -34,32 +29,32 @@
 
 				<div class="alert alert-info">{{test.description}}</div>
 				<div class="alert alert-info">{{microtask.issueDescription}}</div>
-
-				<BR>Here's the description of the function to test:
-
 				Can you fix the test to address this issue?<BR>
 			</div>
 
 			<div ng-show="microtask.promptType=='TESTCASE_CHANGED'">
-				The test case for this has change from <BR><BR>
-				<div class="alert alert-info">microtask old test case</div>
-				to <BR><BR>
-				<div class="alert alert-info">microtask description</div>
+				The description for this testcase has changed from:
+				<div class="alert alert-info">{{microtask.oldTestCase}}</div> to : 
+				<div class="alert alert-info">{{microtask.owningArtifact}}</div>
 				Can you update the test below, if necessary?<BR>
-
-				<BR>Here's the description of the function to test:
 			</div>
 
 			<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
 				The description of the function being tested has changed<BR>
-				<br>
-				Can you update the test below, or if necessary dispute the test case?<BR>
-
-				<span   style="width:60%" class="alert alert-info pull-left">{{test.description}}</span>
-		   		<button style="width:40%" class="btn btn-mini pull-left" ng-hide="dispute" ng-click="toggleDispute()">Report as incorrect test case</button>
-		   		<span class="clearfix"></span>
-
+				Can you update the test relative to the following description, or if necessary dispute the test case?<BR>
 		   	</div>
+
+			<div class="input-group">
+		    	<input type="text" 
+		    		class="form-control"
+		      		disabled="true"
+		      		name="newTestCase"
+					ng-model="test.description"
+		      	>
+				<span class="input-group-btn">
+					<button class="btn btn-primary" ng-disabled="dispute" ng-click="toggleDispute()">Dispute test case</button>
+				</span>
+		    </div>
 		</div>
 	</div>
 
@@ -69,82 +64,95 @@
 		</div>
 		<div class="section-content no-padding" >
 			<code-mirror-readonly ng-if="microtask.promptType!='FUNCTION_CHANGED'" code="code"></code-mirror-readonly>
-			<div ng-if="microtask.promptType=='FUNCTION_CHANGED'" ng-bind-html="microtask.oldFunctionDescription |diff:microtask.newFunctionDescription | newline" ></div>
-
+			<code-mirror-readonly ng-if="microtask.promptType=='FUNCTION_CHANGED'" code="diffCode" ></code-mirror-readonly>
 		</div>
 	</div>
+
 	<div class="section-cols" >
 		<div class="container-flex-row">
 			<div class="section section-help" style="width:30%">
 				<div class="section-title" >
-					EXAMPLE
+					AVAILABLE DATA STRUCTURES 
 				</div>
 				<div class="section-content" >
-					<div class="accordion-inner">
-						subtract(a, b)<BR>
-
-						<B>Here's some test cases:</B><BR>
-						a is greater than b<BR>
-						b is greater than a<BR>
-						a is the same as b<BR>
-						a is positive, b is negative<BR>
-						a is negative, b is zero<BR>
-						a is positive, b is zero<BR>
-					</div>
+					<adt-bar></adt-bar>
 				</div>
 			</div>
 
-			<div class="section section-form" style="width:70%;" >
-				<div id="disputeDiv" ng-show="dispute" class="form-group">
-					<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
-					<textarea name="disputeText" class="form-control" ng-model="testData.disputeText"></textarea><br>
-					<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
-					<button class="btn btn-primary" ng-if="dispute" ng-click="$emit('collectFormData')" >Submit dispute</button>
+			<div class="section section-form" style="width:70%;" ng-if="!dispute">
+
+				<div class="section-title" >
+					WRITE TEST 
 				</div>
+				<div class="section-content" >
+					
+					<div id="simpleTest" ng-hide="dispute">
+						<p>Provide a JSON object literal of the specified type for each parameter and the expected
+					    return value. If you need help for the available data structures, check the box on the left. </p>
 
-				<div id="simpleTest" ng-hide="dispute">
-					<p>Provide a JSON object literal of the specified type for each parameter and the expected
-				    return value (e.g., { "propertyName": "String value" } ). To get started, you might want to copy
-				    an example from the description of a type above.</p>
-				    <BR>
-
-				    <ng-form name="inputForm" ng-repeat="(index,paramName) in funct.paramNames" >
-						<div class="form-group" ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" >
+					    <div class="form-group"
+					    	 ng-form="inputForm" 
+					         ng-repeat="(index,paramName) in funct.paramNames" 
+					         ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" 
+					         >
 							<span for="input">{{paramName}} ({{funct.paramTypes[index]}}): </span>
 							<a href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index])" >Paste Example </a>
-							<ace-editor-test ng-model="testData.inputs[index]"></ace-editor-test>
+							<ace-edit-json ng-model="testData.inputs[index]"></ace-editor-test>
 							<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json1="{{funct.paramTypes[index]}}" ng-show="false"></textarea>
-							<ul class="help-block" ng-show="inputForm.input.$invalid">
-								<!-- <li ng-show="inputForm.input.$error.required" >This field is required!</li> -->
+							{{inputForm.input.$dirty}}
+							<ul class="help-block" ng-show="inputForm.input.$invalid ">
+								<li ng-show="inputForm.input.$error.required" >This field is required!</li> 
 								<li ng-show="inputForm.input.$error.json1" >
-									<span>There are JSON errors. Please fix them:</span>
+									<!--<span>There are JSON errors. Please fix them:</span>-->
 									<ul ng-repeat="error in inputForm.input.$error.json_errors">
 										<li>{{error}}</li>
 									</ul>
 								</li>
 							</ul>
-						</div>
-					</ng-form>
+						</div> <!-- /. FORM GROUP TEST INPUT -->
 
-					<div ng-if="funct.returnType!=''" class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
-						<label for="output">expected Return value ({{funct.returnType}}):</label>
-						<a href="#" ng-click="testData.output=loadExample(funct.returnType)" >Paste Example </a>
+						<div ng-if="funct.returnType!=''" class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
+							<label for="output">expected Return value ({{funct.returnType}}):</label>
+							<a href="#" ng-click="testData.output=loadExample(funct.returnType)" >Paste Example </a>
 
-						<ace-editor-test ng-model="testData.output"></ace-editor-test>
+							<ace-edit-json ng-model="testData.output"></ace-editor-test>
 
-						<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json1="{{funct.returnType}}" ></textarea>
-						<ul class="help-block" ng-show="form.output.$invalid">
-							<!--<li ng-show="form.output.$error.required" >This field is required!</li> -->
-							<li ng-show="form.output.$error.json1" >
-								<span>There are JSON errors. Please fix them:</span>
-								<ul ng-repeat="error in form.output.$error.json_errors">
-									<li>{{error}}</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
-				</div>
+							<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json1="{{funct.returnType}}" ></textarea>
+							<ul class="help-block" ng-show="form.output.$invalid">
+								<!--<li ng-show="form.output.$error.required" >This field is required!</li> -->
+								<li ng-show="form.output.$error.json1" >
+									<span>There are JSON errors. Please fix them:</span>
+									<ul ng-repeat="error in form.output.$error.json_errors">
+										<li>{{error}}</li>
+									</ul>
+								</li>
+							</ul>
+						</div> <!-- /. FORM GROUP TEST OUTPUT -->
+
+					</div> <!-- /. WRITE TEST DIV -->
+
+				</div> <!-- ./ SECTION CONTENT -->
+
+
 			</div>
+
+			<div class="section section-form" style="width:70%;" ng-if="dispute">
+
+				<div class="section-title" >
+					DISPUTE THE TEST CASE
+				</div>
+				<div class="section-content" >
+
+					<div id="disputeDiv" ng-show="dispute" class="form-group">
+						<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
+						<textarea name="disputeText" class="form-control" class="resize:none" ng-model="testData.disputeText"></textarea><br>
+						<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
+					</div> <!-- /. DISPUTE DIV -->
+				</div> <!-- /. WRITE TEST DIV -->
+
+			</div> <!-- ./ SECTION CONTENT -->
+					
+
 		</div>
 	</div>
 </div>

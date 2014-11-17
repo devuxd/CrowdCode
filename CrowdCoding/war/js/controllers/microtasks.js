@@ -8,21 +8,40 @@ myApp.controller('NoMicrotaskController', ['$scope','$rootScope','$firebase','te
 ///////////////////////////////
 //  WRITE TEST CASES CONTROLLER //
 ///////////////////////////////
-myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
+myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase','testsService','TestList', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,TestList,functionsService, ADTService) {
 
 	$scope.newTestCase = "";
-	$scope.testCases   = angular.isDefined($scope.microtask.submission) ? $scope.microtask.submission.testCases : [] ;
+
+	$scope.testCases = [];
+
+	// retrieve the tests for the functionID
+	var tests = TestList.getByFunctionId($scope.microtask.functionID);
+	console.log(tests);
+	// for each test push the test case entry in the test cases list
+	angular.forEach(tests,function(test,index){
+		$scope.testCases.push( { id: test.getId(), text: test.getDescription() , added: false, deleted: false } );
+		console.log($scope.testCases);
+	});
+
 	$scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
 	
 
     // addTestCase and deleteTestCase actions
 	$scope.addTestCase = function(){
-		var testCase = { id: $scope.testCases.length, text: $scope.newTestCase , added: true, deleted: false };
+		// push the new test case and set the flag added to TRUE
+		var testCase = { id: null, text: $scope.newTestCase , added: true, deleted: false };
 		$scope.testCases.push(testCase);
 		$scope.newTestCase="";
 	};
 	$scope.removeTestCase = function(index){
-		$scope.testCases.splice(index,1);
+		// if the testcase was added during this microtask, remove it from the array
+		if( $scope.testCases[index].added == true)
+			$scope.testCases.splice(index,1);
+		// else set the flag DELETED to true
+		else 
+			$scope.testCases[index].deleted = true;
+	
+		console.log($scope.testCases);
 	}
 
 	// collect form data
@@ -31,15 +50,6 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 		// if the new test case field is not empty, 
 		// add as a new test case
 		if( $scope.newTestCase != "" ) $scope.addTestCase();
-
-
-		// console.log("THE FORM IS");
-		// console.log(microtaskForm);
-
-
-		// console.log("TEST CASES ARE");
-		// console.log($scope.testCases);
-
 
 		// prepare form data for submission
 		formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
@@ -574,17 +584,6 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 ///////////////////////////////
 myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$filter','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,$filter,testsService,functionsService, ADTService) {
 
-	$scope.code="";
-
-
-	//load the version of the function with witch the test cases where made
-	var functionVersionSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.microtask.functionID
-			+ '/' + ($scope.microtask.functionVersion>0?$scope.microtask.functionVersion:1)));
-	$scope.funct = functionVersionSync.$asObject();
-	$scope.funct.$loaded().then(function(){
-		$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header;
-	});
-
 	// initialize testData
 	// if microtask.submission and microtask.submission.simpleTestInputs are defined
 	// assign test inputs and output to testData, otherwise initialize an empty object
@@ -592,7 +591,8 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 					   {inputs: $scope.test.simpleTestInputs , output: $scope.test.simpleTestOutput } :
 					   {inputs:[],output:''} ;
 
-					 //  $scope.testData.inputs[0]={};
+	
+	//  $scope.testData.inputs[0]={};
 	// Configures the microtask to show information for disputing the test, hiding
 	// other irrelevant portions of the microtask.
 	$scope.dispute = false;
@@ -601,7 +601,37 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 		if(!$scope.dispute)
 			$scope.testData.disputeText = "";
 	};
-	$scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header;
+
+	// IF THE PROMPT TYPE IS FUNCTION CHANGED, CALC THE DIFF TO SHOW WITH CODEMIRROR
+	if( $scope.microtask.promptType == 'FUNCTION_CHANGED'){
+		var oldCode = $scope.microtask.oldFunctionDescription.split("\n");
+		var newCode = $scope.microtask.newFunctionDescription.split("\n");
+		var diffRes = diff( oldCode, newCode );
+		var diffCode = "";
+		angular.forEach(diffRes,function(diffRow){
+
+			if(diffRow[0]=="="){
+				diffCode += diffRow[1].join("\n");
+			} else {
+				diffCode += diffRow[0]+diffRow[1].join("\n");
+			}
+			diffCode += "\n";
+		})
+    	$scope.diffCode = diffCode;
+    	console.log(diffRes);
+
+	}
+	// LOAD THE VERSION OF THE FUNCTION WHEN THE MICROTASK HAS BEEN SPAWNED
+	else {
+		console.log("FIND FUN VERSION");
+		//load the version of the function with witch the test cases where made
+		var functionVersionSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.microtask.functionID
+				+ '/' + ($scope.microtask.functionVersion>0?$scope.microtask.functionVersion:1)));
+		$scope.funct = functionVersionSync.$asObject();
+		$scope.funct.$loaded().then(function(){
+			$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header;
+		});
+	}
 
 
 	$scope.loadExample=function(ADTName){

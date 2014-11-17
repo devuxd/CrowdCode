@@ -52,19 +52,19 @@
 								<tr ng-repeat="(inputKey,input) in stub.inputs">
 									<td>input {{inputKey}}</td>
 									<td>
-										<div ace-readonly ng-model="input" ></div>
+										<div ace-read-json ng-model="input" ></div>
 									</td>
 								</tr>
 								<tr>
 									<td>stub output</td>
 									<td>
-										<div ace-readonly ng-model="stub.stubOutput" ></div>
+										<div ace-read-json ng-model="stub.stubOutput" ></div>
 										<input ng-model="stub.stubOutput" />
 									</td>
 								</tr>
 								<tr ng-if="stub.stubOutput != stub.realOutput">
 									<td>real output</td>
-									<td><div ace-readonly ng-model="stub.realOutput" ></div></td>
+									<td><div ace-read-json ng-model="stub.realOutput" ></div></td>
 								</tr>
 							</table>
 						</li>

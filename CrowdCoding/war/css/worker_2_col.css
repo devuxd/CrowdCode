@@ -166,6 +166,7 @@ h1, h2, h3, h4 {
 	font-weight: 600;
 	color: #3F81AC;
 }
+.section-title.no-padding { padding:0px; }
 .section-content {
 	padding:5px;
 }
@@ -182,7 +183,7 @@ h1, h2, h3, h4 {
 
 
 .section.section-form { background-color:lightgray; }
-.section.section-form .section-title { padding: 0px; }
+/*.section.section-form .section-title { padding: 0px; }*/
 
 
 .section.section-form .section-title .input-group { background-color: rgba(63, 129, 172, 0.8); padding:5px;}

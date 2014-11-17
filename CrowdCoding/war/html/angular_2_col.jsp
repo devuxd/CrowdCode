@@ -64,7 +64,7 @@
 
 </head>
 
-<body ng-controller="AppController"  >
+<body ng-controller="AppController"  ng-cloak >
 
 	<header tutorial="1" class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
 
@@ -201,6 +201,7 @@
 	<script src="/include/jquery-2.1.0.min.js"></script>
 	<script src="/include/polyfill.js"></script>
 	<script src="/include/jshint.js"></script>
+	<script src="/include/simplediff/simplediff.js"></script>
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script src='/include/esprima.js'></script>
@@ -210,7 +211,7 @@
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 <!--	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
-    <script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
+    <!--<script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
     <script src="/include/angular-animate/angular-animate.min.js"></script><!-- Angular animate -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
 

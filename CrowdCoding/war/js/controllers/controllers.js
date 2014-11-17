@@ -133,6 +133,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		  	$scope.microtask.$loaded().then(function(){
 
 		  		console.log("MICROTASK LOADED");
+		  		console.log($scope.microtask);
 		  		
 				// assign title
 				$scope.datas = data;
@@ -155,7 +156,11 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 
 			  	//choose the right template
-			 	$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+			  	if( $scope.microtask.type != undefined && templates[$scope.microtask.type] != undefined )
+			 		$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+			 	else
+					$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+
 		  	});
 		  }).
 		  error(function(data, status, headers, config) {
