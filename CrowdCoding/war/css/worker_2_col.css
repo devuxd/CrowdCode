@@ -34,8 +34,6 @@ ul.clearlist:after { clear: both;}
 	font-weight: 400;
 }
 
-.input-transparent { background-color: transparent !important; border:none; outline:none; box-shadow:none;}
-.input-transparent:focus { background-color: white !important; }
 
 .glyphicon { font-size:1em; }
 
@@ -52,6 +50,8 @@ ul.clearlist:after { clear: both;}
 .navbar .navbar-nav > li > a { color:white; background-color:transparent; }
 .navbar .navbar-nav > li > a:hover{ color:white; opacity:0.8; }
 .navbar img { width:20px; }
+
+.list-group { margin: 0px;}
 
 /* --------- CODEMIRROR OVERWRITE ---------  */
 .CodeMirror { border: none; }
@@ -179,26 +179,47 @@ h1, h2, h3, h4 {
 .section.section-help { background-color:#BFC7CD; }
 .section.section-help .section-title { color:#5F5F5F; }
 
-.section.section-description {  }
+
+
 .section.section-form { background-color:lightgray; }
+.section.section-form .section-title { padding: 0px; }
 
-.section-content ul { list-style:none; margin:0px; padding:0px; }
-.section-content ul .form-group {background-color:red;}
-.section-content ul .form-group > * { float:left;}
-.section-content ul .form-group:after {clear:both;}
-.section-content ul .form-group > label:first-child { width:10%; text-align:right;}
-.section-content ul .form-group > div:nth-child(2)  { width:70%; }
-.section-content ul .form-group > div:nth-child(3)  { width:20%; text-align: right;}
-.section-content ul .form-group input { background-color:white; }
 
-.section-title.form-group {	background-color: rgba(63, 129, 172, 0.8); padding:5px;}
-.section-title.form-group::after { clear:both; }
-.section-title.form-group input  { background-color:white; border-radius:0px; float:left; width: 90%; border: none; }
-.section-title.form-group input::-webkit-input-placeholder {  color: gray; font-style:italic;}
-.section-title.form-group button { float:left; width: 10%; border-radius:0px; background-color:transparent; }
-.section-title.form-group button:hover,
-.section-title.form-group button:focus
+.section.section-form .section-title .input-group { background-color: rgba(63, 129, 172, 0.8); padding:5px;}
+.section.section-form .section-title .input-group input  { background-color:white; border-radius:0px; border: none; }
+.section.section-form .section-title .input-group input::-webkit-input-placeholder {  color: gray; font-style:italic;}
+.section.section-form .section-title .input-group button { border:none; font-weight: bold; border-radius:0px; background-color:transparent; }
+.section.section-form .section-title .input-group button:hover,
+.section.section-form .section-title .input-group button:focus
  { background-color:rgba(130, 169, 195, 1); }
+
+
+.section.section-form .section-content .input-group { cursor:pointer;}
+.section.section-form .section-content .input-group input { background-color: transparent !important; border:none; outline:none; box-shadow:none;}
+.section.section-form .section-content .input-group input:focus { background-color: white !important; }
+.section.section-form .section-content .input-group .btn { background-color:transparent; }
+
+
+.animate-repeat.ng-move,
+.animate-repeat.ng-enter,
+.animate-repeat.ng-leave {
+  -webkit-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+}
+
+.animate-repeat.ng-leave.ng-leave-active,
+.animate-repeat.ng-move,
+.animate-repeat.ng-enter {
+  opacity:0;
+}
+
+.animate-repeat.ng-leave,
+.animate-repeat.ng-move.ng-move-active,
+.animate-repeat.ng-enter.ng-enter-active {
+  opacity:1;
+}
+
+
 
 
 /* SIDEBAR PANELS */
@@ -515,7 +536,7 @@ del {  background-color: #ffc6c6; }
 }
 
 .row-resizer, .column-resizer {
-	background-color: #969696;
+	background-color: #E0E0E0;
 }
 
 .order-1 {
@@ -553,6 +574,16 @@ del {  background-color: #ffc6c6; }
 .pseudoCode { background-color: yellow;	color: #2D2D2D!important;  }
 
 .highlightPseudoCall { background-color: lime; }
+
+
+
+.loading {
+	position: absolute;
+	margin-right:50%;
+	margin-left:50%;
+	width: 200px;
+	height: 200px;
+}
 
 
 tutorial .overlay, tutorial .content {

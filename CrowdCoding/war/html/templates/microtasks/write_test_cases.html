@@ -41,10 +41,10 @@
 			FUNCTION SIGNATURE
 		</div>
 		<div class="section-content no-padding" >
-			<!--  <div ng-model="code" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>-->
-			<code-mirror-readonly code="code"></code-mirror-readonly>
+			<code-mirror-readonly code="functionDescription"></code-mirror-readonly>
 		</div>
 	</div>
+
 	<div class="section-cols" >
 		<div class="container-flex-row">
 			<div class="section section-help" style="width:30%">
@@ -55,7 +55,7 @@
 					<div class="accordion-inner">
 						subtract(a, b)<BR>
 
-						<B>Here's some test cases:</B><BR>
+						<B>Here are some test cases:</B><BR>
 						a is greater than b<BR>
 						b is greater than a<BR>
 						a is the same as b<BR>
@@ -68,56 +68,52 @@
 
 			<div class="section section-form" style="width:70%;" >
 
-				<div class="section-title form-group" >
-					<input
-						class="form-control input-sm"
-						tabindex="1"
-						type="text"
-						name="newtestcase"
-						ng-model="viewData.newTestCase"
-						press-enter="addTestCase()"
-						placeholder="Describe a test case"/>
+				<div class="section-title" >
 
-					<button class="btn btn-sm btn-primary" type="button"
-						ng-click="addTestCase()"
-						tabindex="2" >
-						Add
-					</button>
+					<div class="input-group" ng-form="newForm">
+				    	<input type="text" 
+				      		tabindex="1"
+				      		name="newTestCase"
+							ng-model="newTestCase"
+							press-enter="addTestCase()"
+							placeholder="Describe a test case"
+				      		 class="form-control"
+				      	>
+						<span class="input-group-btn">
+							<button class="btn btn-default" ng-click="addTestCase()" type="button" tabindex="2">Add</button>
+						</span>
+				    </div>
 
 				</div>
 				<div class="section-content" >
-					<ul ng-if="testCases.length > 0">
-						<li ng-repeat="(index,test) in testCases">
-							<ng-form  name="testCaseForm"  class="form-group" ng-class="{ 'bg-danger': testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid }" ng-init="editMode=false" >
 
-									<label for="testcase" class="col-sm-1 control-label" >#{{index+1}}</label>
-									<div >
-										<input class="form-control input-transparent "
-												   type="text"
-												   name="testcase"
-												   placeholder="Describe a test case"
-												   ng-model="test.text"
-												   press-enter=" editMode = testCaseForm.testcase.$invalid ? true : false "
-												   ng-focus="editMode=true"
-												   ng-blur="editMode=false"
-												   tabindex="{{2*index+2}}"
-												   data-toggle="tooltip"
-												   data-placement="left"
-												   title="press Enter to exit edit mode"
-												   required/>
-										<span class="help-block" ng-show="testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid && testCaseForm.testcase.$error.required">
-											a test case name can't be empty!
-										</span>
-									</div>
+					<div class="list-group" >
+						<div ng-form="testCase" ng-repeat="(index,test) in testCases" class="list-item input-group input-group-sm animate-repeat">
+						  	<input type="text" class="form-control" 
+							    placeholder="Describe a test case"
+							  	name="testcase"
+								ng-model="test.text"
 
-									<div>
-										<button class="btn btn-sm" type="button" tabindex="{{2*index+3}}" ng-click="deleteTestCase(index)">
-											<span class="glyphicon glyphicon-remove"></span>
-										</button>
-									</div>
-							</ng-form>
-						</li>
-					</ul>
+								press-enter=" editMode = testCaseForm.testcase.$invalid ? true : false "
+							    ng-focus="editMode=true"
+							    ng-blur="editMode=false"
+
+							    tabindex="{{2*index+2}}"
+							    required
+							>
+					  		<span class="input-group-btn" >
+					  			<button class="btn"  tabindex="{{2*index+3}}" ng-click="removeTestCase($index)" type="button">
+					  				<span class="glyphicon glyphicon-remove"></span>
+					  			</button>
+							</span>
+
+<!--
+								<span class="help-block" ng-show="testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid && testCaseForm.testcase.$error.required">
+										a test case name can't be empty!
+									</span>-->
+						</div>
+					</div>
+
 					<span ng-if="testCases.length == 0" >write at least one test case</span>
 
 				</div>

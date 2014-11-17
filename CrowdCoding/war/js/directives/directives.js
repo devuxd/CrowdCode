@@ -165,8 +165,6 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     // returns true iff there are AST errors
     function hasASTErrors(text, ast)
     {
-       // console.log(ast);
-    	console.log("hasASTErrors");
         var errorMessages = [];
 
 
@@ -180,9 +178,6 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         /*
         if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)
             errorMessages.push("Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.");   */
-
-
-
         if (errorMessages.length !== 0)
         {
             errors = errors.concat(errorMessages);
@@ -203,7 +198,6 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     // Returns an error message(s) if there is an error
     function hasDescriptionError(ast)
     {
-    	console.log("hasDescriptionError");
         var errorMessages =  [];
         var paramKeyword = '@param ';
         var returnKeyword = '@return ';

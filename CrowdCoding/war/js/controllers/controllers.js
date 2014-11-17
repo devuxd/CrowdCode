@@ -30,7 +30,6 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$i
 
 	$scope.promise= $interval(
 		function(){
-		 	console.log("execute timer function");
 		    $rootScope.loaded.functions  = false;
 		    $rootScope.loaded.tests      = false;
 		    $rootScope.loaded.ADTs       = false;
@@ -127,7 +126,6 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		// set the loading template
 		$scope.templatePath = templatesURL + "loading.html";
 		$rootScope.inlineForm = false; // reset form as non-inline
-		console.log('/'+projectId+'/ajax/fetch');
 		$http.get('/'+projectId+'/ajax/fetch').
 		  success(function(data, status, headers, config) {
 		  	console.log(data);
@@ -183,6 +181,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		  	})
 		  	.error(function(data, status, headers, config) {
 		  		console.log("submit error");
+		  		console.log(data);
   		 	});
 	});
 

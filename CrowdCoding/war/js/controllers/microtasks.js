@@ -11,42 +11,40 @@ myApp.controller('NoMicrotaskController', ['$scope','$rootScope','$firebase','te
 myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
 
 	$scope.newTestCase = "";
+	$scope.testCases   = angular.isDefined($scope.microtask.submission) ? $scope.microtask.submission.testCases : [] ;
+	$scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
+	
 
-	// initialize testCases
-	// if microtask.submission and microtask.submission.testCases are defined
-	// assign available testCases otherwise initialize a new array
-	$scope.testCases = ( angular.isDefined($scope.microtask.submission) && angular.isDefined($scope.microtask.submission.testCases) ) ?
-					   $scope.microtask.submission.testCases : [] ;
-
-    // addTestCase and deleteTestCase utils function for microtask WRITE TEST CASES
+    // addTestCase and deleteTestCase actions
 	$scope.addTestCase = function(){
-
-		if($scope.viewData.newTestCase!=undefined && $scope.viewData.newTestCase!=""){
-
-			var testCase = { text: $scope.viewData.newTestCase, added: true, deleted: false, id: $scope.testCases.length };
-			$scope.testCases.push(testCase);
-			$scope.viewData.newTestCase="";
-
-		}
+		var testCase = { id: $scope.testCases.length, text: $scope.newTestCase , added: true, deleted: false };
+		$scope.testCases.push(testCase);
+		$scope.newTestCase="";
 	};
-
-
-	$scope.deleteTestCase = function(index){
+	$scope.removeTestCase = function(index){
 		$scope.testCases.splice(index,1);
-		console.log("deleting test case");
 	}
 
+	// collect form data
+	$scope.$on('collectFormData',function(event,microtaskForm){
 
-	$scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header;
+		// if the new test case field is not empty, 
+		// add as a new test case
+		if( $scope.newTestCase != "" ) $scope.addTestCase();
 
 
+		// console.log("THE FORM IS");
+		// console.log(microtaskForm);
 
 
-	/** collect form data is invoked from the submit button **/
-	$scope.$on('collectFormData',function(){
+		// console.log("TEST CASES ARE");
+		// console.log($scope.testCases);
 
-		// PREPARE FORM DATA HERE
+
+		// prepare form data for submission
 		formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
+		console.log(formData);
+		// call microtask submission
 		$scope.$emit('submitMicrotask',formData);
 	});
 
@@ -56,9 +54,6 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 //  Review CONTROLLER //
 ///////////////////////////////
 myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService','microtasksService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService, microtasksService) {
-
-	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
-	console.log("initialization of review controller");
 
 	$scope.review = {};
 	$scope.review.reviewText   = "";
@@ -92,8 +87,6 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','testsSe
 					+ '/' + ($scope.review.microtask.functionVersion>0?$scope.review.microtask.functionVersion:1)));
 			$scope.functionUnderTest = functionUnderTestSync.$asObject();
 			$scope.functionUnderTest.$loaded().then(function(){
-				console.log("funci");
-				console.log($scope.functionUnderTest);
 				$scope.review.functionCode = functionsService.renderDescription($scope.functionUnderTest)+$scope.functionUnderTest.header;
 			});
 		}
@@ -180,7 +173,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 
  	$scope.results = {};
- 	$scope.stubs   = {};
+ 	$scope.stubs   = { key1:"value" };
 	$scope.runTests = function(){
 		// set testsRunning flag
 		$scope.testsRunning = true;
@@ -216,7 +209,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	$scope.disputedTest = null;
 	$scope.disputeTest = function(testKey){
 		$scope.dispute = true;
-		$scope.disputedTest = $scope.tests[testKey];console.log($scope.disputedTest);
+		$scope.disputedTest = $scope.tests[testKey];
 	}
 
 	// check if test is passed
@@ -289,7 +282,6 @@ myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','te
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	$scope.reuseSearch={};
 	$scope.reuseSearch.functions=[];
-	console.log("initialization of reuse search controller");
 
 	// set selected to -2 to initialize the default value
 	//-2 nothing selected (need an action to submit)
@@ -298,7 +290,6 @@ myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','te
 
 	var code = functionsService.renderDescription($scope.funct) + $scope.funct.header+ $scope.funct.code;
 	$scope.reuseSearch.selected=-2;
-	console.log("name name"+$scope.funct.name);
 	$scope.reuseSearch.functions= functionsService.findMatches('', $scope.funct.name);
 
 	// search for all the functions that have $scope.reuseSearch.text in theirs description or header
@@ -319,7 +310,7 @@ myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','te
 	}
 
 	$scope.$on('collectFormData',function(){
-		console.log("reuse search controlle prepare form data");
+
 		//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
 		if($scope.reuseSearch.selected==-1)
 		{
@@ -344,7 +335,6 @@ myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','te
 myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
-	console.log("initialization of write call");
 
 	var marks=[];
 	var highlightPseudoCall = false;
@@ -393,7 +383,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 
 
 	$scope.$on('collectFormData',function(){
-		console.log("write call controlle prepare form data");
+
 		var text = codemirror.getValue();
  		var ast = esprima.parse(text, {loc: true});
 
@@ -408,7 +398,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','test
 		var name = ast.body[0].id.name;
 
 		var functionParsed = parseDescription(linesDescription,name);
-		console.log(functionParsed);
+
 
 		var body = codemirror.getRange(
 				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
@@ -440,13 +430,10 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 	var changeTimeout;
 
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
-	console.log("initialization of write function");
-	 $scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
+	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
 
-     $scope.codemirrorLoaded = function(myCodeMirror){
-     	console.log("codemirror loaded");
-
+    $scope.codemirrorLoaded = function(myCodeMirror){
      	codemirror = myCodeMirror;
 		codemirror.setOption('autofocus', true);
 		codemirror.setOption('indentUnit', 4);
@@ -474,8 +461,8 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 			clearTimeout(changeTimeout);
 			changeTimeout = setTimeout( function(){ functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);}, 500);
 
-			});
-	 	};
+		});
+	};
 
 
 	$scope.$on('collectFormData',function(){
@@ -493,7 +480,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 		var name = ast.body[0].id.name;
 
 		var functionParsed = functionsService.parseDescription(linesDescription,name);
-		console.log(functionParsed);
+
 
 		var body = codemirror.getRange(
 				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
@@ -508,7 +495,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 					 paramTypes:   functionParsed.paramTypes,
 					 paramDescriptions: functionParsed.paramDescriptions,
 					 calleeNames:  calleeNames};
-		console.log("write function controller prepare form data");
+
 		$scope.$emit('submitMicrotask',formData);
 	});
 
@@ -518,9 +505,6 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 //  WRITE FUNCTION DESCRIPTION CONTROLLER //
 ////////////////////////////////////////////
 myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$firebase','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,testsService,functionsService, ADTService) {
-
-	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
-	console.log("initialization of write function description");
 
 	//Set the form in line
 	$rootScope.inlineForm = true;
@@ -558,7 +542,6 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 	$scope.addParameter();
 
 	$scope.$on('collectFormData',function(){
-		console.log("write function description controlle prepare form data");
 
 		var paramNames=[];
 		var paramTypes=[];
@@ -602,12 +585,6 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 		$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header;
 	});
 
-
-
-
-
-	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
-	console.log("initialization of write test controller");
 	// initialize testData
 	// if microtask.submission and microtask.submission.simpleTestInputs are defined
 	// assign test inputs and output to testData, otherwise initialize an empty object
@@ -627,14 +604,13 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 	$scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header;
 
 
-	$scope.loadExample=function(ADTName)
-		{
-			return ADTService.getByName(ADTName).example;
-		}
+	$scope.loadExample=function(ADTName){
+		return ADTService.getByName(ADTName).example;
+	}
 
 
 	$scope.$on('collectFormData',function(){
-		console.log("write test controlle prepare form data");
+
 		if($scope.dispute){
 			// return jSON object
 			formData = {functionVersion: $scope.funct.version,

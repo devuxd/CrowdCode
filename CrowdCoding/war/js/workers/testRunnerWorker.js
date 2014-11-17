@@ -2,12 +2,16 @@
 // command. Workers execute in their own thread, and only communicate by message passing. This worker
 // is designed to run the specified test code and return the results.
 //
+
+console.log("TEST RUNNER WORKER INCLUDED");
 var stubs = {};
 var testCasedPassed   = true;
 var codeUnimplemented = false;		// is any of the code under test unimplemented?
 
 self.onmessage = function(e) 
 {
+
+	console.log("TEST RUNNER WORKER RECEIVE MESSAGE");
 	var data = e.data;
 	if (data.url)
 	{
@@ -89,6 +93,7 @@ self.onmessage = function(e)
 			testNumber : data.testNumber,
 			stubs  : stubs,
 		});
+		//self.close();
 	}
 };
 

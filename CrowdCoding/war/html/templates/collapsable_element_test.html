@@ -1,6 +1,6 @@
 
 <table>
-	<tr ng-repeat="(key,input) in data.test.rec.simpleTestInputs">
+	<tr ng-repeat="(key,input) in data.test.rec.simpleTestInputs track by $index">
 		<td>{{data.paramNames[key]}}</td>
 		<td>
 			<div ace-readonly ng-model="input" ></div>

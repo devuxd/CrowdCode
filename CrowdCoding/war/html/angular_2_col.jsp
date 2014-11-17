@@ -38,7 +38,6 @@
 	<link href='http://fonts.googleapis.com/css?family=Merriweather:300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic|Lato:100normal,100italic,300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic' rel='stylesheet' type='text/css'>
 
 	<!-- Stylesheets -->
-	<link rel="stylesheet"  href="/include/jquery.rating.css" />
 	<link rel="stylesheet" href="../include/bootstrap/css/bootstrap.min.css" type="text/css" />
 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
@@ -67,57 +66,40 @@
 
 <body ng-controller="AppController"  >
 
-		<header tutorial="1" class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
+	<header tutorial="1" class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
 
+		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<div class="container-fluid">
+
 				<div class="navbar-header">
-					<span class="navbar-brand">CrowdCode</span>
-				</div>
-
+			      <a class="navbar-brand" href="#">CrowdCode</a>
+			    </div>
+				
 				<ul class="nav navbar-nav">
-					<li id="projectSelector">
-
-						<a href=""> <strong>Current Project:</strong>
-							{{ projectId }}
-						</a>
-						<!--
-							<a data-toggle="dropdown" class="dropdown" href="">
-						Current Project
-						<span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li>
-							<a href="">Project1</a>
-						</li>
-						<li>
-							<a href="">Project2</a>
-						</li>
-					</ul>
-					-->
-				</li>
-			</ul>
-
-			<ul class="nav navbar-nav navbar-right">
-				<li>
-					<a data-toggle="dropdown" class="dropdown" href="">
-						<img src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
+			        <li><a href="#"><strong>Current Project:</strong>{{ projectId }}</a></li>
+			    </ul>
+			    <ul class="nav navbar-nav navbar-right">
+			        <li class="dropdown">
+			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+		          		<img src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
 						{{workerHandle}}
 						<span class="caret"></span>
-					</a>
-
-					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-						<li>
+			          </a>
+			          <ul class="dropdown-menu" role="menu">
+			            <li>
 							<a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a>
 						</li>
 						<li>
 							<a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a>
 						</li>
-					</ul>
+			          </ul>
+			        </li>
+			    </ul>
 
-				</li>
-			</ul>
-		</div>
-		</header>
+
+			</div><!-- /.container-fluid -->
+		</div><!-- /. navbar -->
+	</header>
 
 	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;">
 	    <div class="container-flex-row">
@@ -143,18 +125,20 @@
 
 	        <!-- CONTENT -->
 	        <div id="content" class="order-3" ng-controller="MicrotaskController">
-				<form name="form" class="form-horizontal"
+				<form name="microtaskForm" class="form-horizontal"
 						  novalidate>
 					<div id="task"  class="task" style="" microtask >
 						<ng-include src="templatePath"></ng-include>
 					</div>
 					<div class="button-bar">
 						<span class="pull-left">
-						<button ng-click="$broadcast('collectFormData')" tabindex="99" class="btn btn-sm btn-primary"
-								ng-disabled="form.$invalid" >
+							<button ng-click="$broadcast('collectFormData', microtaskForm)" 
+								tabindex="99" 
+								class="btn btn-sm btn-primary"
+								>
 									Submit
 							</button>
-							<button ng-click="$emit('skipMicrotask')" tabindex="100"   class="btn btn-sm"   >Skip</button>
+							<button ng-click="$emit('skipMicrotask')" tabindex="100" class="btn btn-sm">Skip</button>
 						</span>
 						<span class="pull-right">
 							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn {{chatActive?'btn-chat-active':''}} btn-sm"  >
@@ -218,7 +202,6 @@
 	<script src="/include/polyfill.js"></script>
 	<script src="/include/jshint.js"></script>
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
-	<script src="/include/stars/jquery.rating.js"></script>
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script src='/include/esprima.js'></script>
 	<script src='/include/escodegen.browser.js'></script>

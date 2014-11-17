@@ -13,7 +13,6 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 
 	var updateUserReference = function(){
 		userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
-		console.log("update user reference");
 		$timeout(updateUserReference,1000*60*2); // re-do every 2 minutes
 	}
 

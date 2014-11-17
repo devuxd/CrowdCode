@@ -37,7 +37,6 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 			functionIDToTests = {};
 
 			// get the list of all tests from firebase
-			console.log($rootScope.firebaseURL+'/artifacts/tests');
 			var ref = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/tests'));
 			var testsInFirebase = ref.$asArray();
 			testsInFirebase.$loaded().then(function(){ 
