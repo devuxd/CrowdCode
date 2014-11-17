@@ -438,10 +438,8 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 	var highlightPseudoCall =false;
 	var readOnlyDone=false;
 	var changeTimeout;
-
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
-
 
     $scope.codemirrorLoaded = function(myCodeMirror){
      	codemirror = myCodeMirror;
@@ -454,7 +452,6 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 
 
 		functionsService.highlightPseudoSegments(codemirror,marks,highlightPseudoCall);
-
 	 	// Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
 	 	// changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
 	    // typing).

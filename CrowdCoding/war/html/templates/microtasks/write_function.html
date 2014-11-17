@@ -31,30 +31,7 @@
 	<div class="section section-description" ng-if="microtask.promptType=='SKETCH'">
 		<div class="section-title" > FUNCTION CONVENTIONS </div>
 		<div  class="section-content" >
-			<p>
-	 			<strong>Not sure how to do something? </strong>
-	 			 Indicate a line as <strong>pseudocode</strong> by beginning it with 
-	 			 <span class="pseudoCode">'//#'</span>.
-	 		</p>
-
-		 	<p>
-		 		<strong>Want to call a function? </strong>
-		 		Write a <strong>pseudocall</strong> beginning it with 
-		 		<span class="pseudoCall">'//! functionName'</span>
-		 	</p>
-
-		 	<p>
-		 		Note that all function calls are passed by value (i.e., if you pass an
-		 		object to a function and the function changes the object you will not
-		 		see the change).
-		 	</p>
-
-		 	<p>
-		 		<strong>IMPORTANT:</strong> 
-		 		If you think the function may require more than a few minutes to write, 
-		 		please use pseudocode and psuedocalls to break up the function into smaller 
-		 		pieces that others can work on. If you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW!
-		 	</p>
+			<function-convections></function-convections>
 	 	</div>
 	</div>
 
@@ -78,7 +55,7 @@
 			</div>
 
 			<div class="section section-form" style="width:70%;" >
-				<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="code"></div>
+				<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
 				<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
 				<ul class="help-block" ng-if="form.code.$error.function_errors.length > 0">
 					<span>There are some errors. Please fix them before submit:</span>

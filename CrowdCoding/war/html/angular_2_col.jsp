@@ -74,7 +74,7 @@
 				<div class="navbar-header">
 			      <a class="navbar-brand" href="#">CrowdCode</a>
 			    </div>
-				
+
 				<ul class="nav navbar-nav">
 			        <li><a href="#"><strong>Current Project:</strong>{{ projectId }}</a></li>
 			    </ul>
@@ -125,17 +125,19 @@
 
 	        <!-- CONTENT -->
 	        <div id="content" class="order-3" ng-controller="MicrotaskController">
+	         <hr>
+    <div id="alerts-container"></div>
 				<form name="microtaskForm" class="form-horizontal"
-						  novalidate>
+						  novalidate submit-hot-key>
 					<div id="task"  class="task" style="" microtask >
 						<ng-include src="templatePath"></ng-include>
 					</div>
 					<div class="button-bar">
-						<span class="pull-left">
-							<button ng-click="$broadcast('collectFormData', microtaskForm)" 
-								tabindex="99" 
-								class="btn btn-sm btn-primary"
-								>
+					<!-- You can use a custom html template with the `data-template` attr -->
+  						<span class="pull-left">
+							<button ng-click="$broadcast('collectFormData', microtaskForm)"
+								tabindex="99"
+								class="btn btn-sm btn-primary">
 									Submit
 							</button>
 							<button ng-click="$emit('skipMicrotask')" tabindex="100" class="btn btn-sm">Skip</button>
