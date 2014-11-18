@@ -102,21 +102,20 @@
 							    tabindex="{{2*index+2}}"
 							    required
 							>
+							<span class="help-block" ng-show="testCase.testcase.$dirty && testCase.testcase.$invalid && testCase.testcase.$error.required">
+								a test case name can't be empty!
+							</span>
 					  		<span class="input-group-btn" >
 					  			<button class="btn"  tabindex="{{2*index+3}}" ng-click="removeTestCase($index)" type="button">
 					  				<span class="glyphicon glyphicon-remove"></span>
 					  			</button>
 							</span>
-
-<!--
-								<span class="help-block" ng-show="testCaseForm.testcase.$dirty && testCaseForm.testcase.$invalid && testCaseForm.testcase.$error.required">
-										a test case name can't be empty!
-									</span>-->
 						</div>
 					</div>
 
 					<span ng-if="testCases.length == 0" >write at least one test case</span>
-
+					<alertcontainer></alertcontainer>
+					<div class="clearfix"></div>
 				</div>
 
 

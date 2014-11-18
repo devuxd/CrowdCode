@@ -125,8 +125,6 @@
 
 	        <!-- CONTENT -->
 	        <div id="content" class="order-3" ng-controller="MicrotaskController">
-	         <hr>
-    <div id="alerts-container"></div>
 				<form name="microtaskForm" class="form-horizontal"
 						  novalidate submit-hot-key>
 					<div id="task"  class="task" style="" microtask >

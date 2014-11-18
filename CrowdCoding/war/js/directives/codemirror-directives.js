@@ -15,7 +15,7 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
         		codeMirror.setOption("theme", "custom");
         		codeMirror.setOption("tabindex", "-1");
 
-                if($scope.mode!=undefined) 
+                if($scope.mode!==undefined) 
                     codeMirror.setOption('mode',$scope.mode);
                 
         		codeMirror.setSize(null,'auto');

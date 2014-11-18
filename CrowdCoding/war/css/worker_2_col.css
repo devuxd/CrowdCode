@@ -16,6 +16,11 @@
 
 ul.clearlist:after { clear: both;}
 
+.submit-alert {
+	 position:relative !important;
+	 margin-top: 0px !important;
+	 margin-bottom: 10px !important;
+}
 
 /* --------- BOOTSTRAP OVERWRITE ---------  */
 .btn:focus {outline:none;}
