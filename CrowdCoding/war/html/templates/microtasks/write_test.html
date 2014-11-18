@@ -100,13 +100,13 @@
 							<span for="input">{{paramName}} ({{funct.paramTypes[index]}}): </span>
 							<a href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index])" >Paste Example </a>
 							<ace-edit-json ng-model="testData.inputs[index]" focus-ace=" index == 0" ></ace-editor-json>
-							<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" ng-show="false"></textarea>
+							<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json1="{{funct.paramTypes[index]}}" ng-show="false"></textarea>
 							{{inputForm.input.$dirty}}
 							<ul class="help-block" ng-show="inputForm.input.$invalid ">
 								<li ng-show="inputForm.input.$error.required" >This field is required!</li> 
-								<li ng-show="inputForm.input.$error.json" >
+								<li ng-show="inputForm.input.$error.json1" >
 									<!--<span>There are JSON errors. Please fix them:</span>-->
-									<ul ng-repeat="error in inputForm.input.$error.json">
+									<ul ng-repeat="error in inputForm.input.$error.json_errors">
 										<li>{{error}}</li>
 									</ul>
 								</li>
@@ -119,12 +119,12 @@
 
 							<ace-edit-json ng-model="testData.output" focus-ace></ace-editor-json>
 
-							<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json-validator="{{funct.returnType}}" ></textarea>
+							<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json1="{{funct.returnType}}" ></textarea>
 							<ul class="help-block" ng-show="form.output.$invalid">
 								<!--<li ng-show="form.output.$error.required" >This field is required!</li> -->
-								<li ng-show="form.output.$error.json" >
+								<li ng-show="form.output.$error.json1" >
 									<span>There are JSON errors. Please fix them:</span>
-									<ul ng-repeat="error in form.output.$error.json">
+									<ul ng-repeat="error in form.output.$error.json_errors">
 										<li>{{error}}</li>
 									</ul>
 								</li>

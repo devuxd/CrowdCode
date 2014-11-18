@@ -141,7 +141,7 @@
 
 							<ul class="help-block" ng-show="ADTStructureForm.fieldType.$dirty && ADTStructureForm.fieldType.$invalid">
 								<li ng-show="ADTStructureForm.fieldType.$error.required">This field is required!</li>
-								<li ng-show="ADTStructureForm.fieldType.$error.adt">{{ADTStructureForm.fieldType.$error.adt}}</li>
+								<li ng-show="ADTStructureForm.fieldType.$error.adt">{{ADTStructureForm.fieldType.$error.adt_errors}}</li>
 							</ul>
 						</div>
 						<div class="col-md-1">
@@ -161,9 +161,9 @@
 
 					<ul class="help-block" ng-show="ADTForm.example.$dirty && ADTForm.example.$invalid">
 						<li ng-show="ADTForm.example.$error.required">This field is required!</li>
-						<li ng-show="ADTForm.example.$error.json" >
+						<li ng-show="ADTForm.example.$error.json1" >
 							<span>There are JSON errors. Please fix them:</span>
-							<ul ng-repeat="error in ADTForm.example.$error.json">
+							<ul ng-repeat="error in ADTForm.example.$error.json_errors">
 								<li>{{error}}</li>
 							</ul>
 						</li>
@@ -203,7 +203,7 @@
 						<input class="form-control input-sm" type="text" id="returnType"
 						placeholder="return type" name=returnType ng-model="function.returnType" adt-validator>
 						<span class="help-block" ng-show="functionForm.returnType.$dirty && functionForm.returnType.$invalid && functionForm.returnType.$error.adt">
-								 {{functionForm.returnType.$error.adt}}
+								 {{functionForm.returnType.$error.adt_errors}}
 						</span>
 
 					</span>
@@ -251,7 +251,7 @@
 
 						<ul class="help-block" ng-show="parameterForm.paramType.$dirty && parameterForm.paramType.$invalid">
 							<li ng-show="parameterForm.paramType.$error.required">This field is required!</li>
-							<li ng-show="parameterForm.paramType.$error.adt">{{parameterForm.paramType.$error.adt}}</li>
+							<li ng-show="parameterForm.paramType.$error.adt">{{parameterForm.paramType.$error.adt_errors}}</li>
 						</ul>
 
 					</div>

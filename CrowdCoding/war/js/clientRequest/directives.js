@@ -1,6 +1,6 @@
 
 // directive for json field validation
-clienRequestApp.directive('jsonValidator', function()  {
+clienRequestApp.directive('json1', function()  {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -17,14 +17,14 @@ clienRequestApp.directive('jsonValidator', function()  {
             	});
 
                  // initialize JSONValidator and execute errorCheck
-                validator.initialize(nameToADT,viewValue,attrs.jsonValidator)
+                validator.initialize(nameToADT,viewValue,attrs['json1'])
                 validator.errorCheck();
                 if (!validator.isValid()) {
-                   ctrl.$setValidity('json', false);
-                    ctrl.$error.json = validator.getErrors();
+                   ctrl.$setValidity('json1', false);
+                    ctrl.$error.json_errors = validator.getErrors();
                     return viewValue;
                 } else {
-                     ctrl.$setValidity('json', true);
+                     ctrl.$setValidity('json1', true);
                     return viewValue;
                 }
             });
@@ -57,13 +57,13 @@ clienRequestApp.directive('adtValidator',function() {
             	console.log("adt");
             		console.log(scope.ADTs);
 
-            	var valid=isValidTypeName(viewValue, typeNames)||viewValue==="";
+            	var valid=isValidTypeName(viewValue, typeNames)||viewValue=="";
             	// Returns true if name is a valid type name and false otherwise.
 
 
                 if(!valid){
                     ctrl.$setValidity('adt', false);
-                    ctrl.$error.adt =  "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
+                    ctrl.$error.adt_errors =  "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
                     return viewValue;
                 } else {
                     ctrl.$setValidity('adt', true);
@@ -130,7 +130,7 @@ clienRequestApp.directive('syncFocusWith', function($timeout, $rootScope) {
                 } else if (currentValue === false && previousValue) {
                     $element[0].blur();
                 }
-            });
+            })
         }
-    };
+    }
 });

@@ -1,5 +1,5 @@
 // directive for json field validation
-myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
+myApp.directive('json1', ['ADTService', function(ADTService) {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -9,14 +9,14 @@ myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
 
             ctrl.$formatters.unshift(function(viewValue) {
                 // initialize JSONValidator and execute errorCheck
-                validator.initialize(ADTService.getNameToADT, viewValue, attrs.json-validator);
+                validator.initialize(ADTService.getNameToADT, viewValue, attrs.json1);
                 validator.errorCheck();
                 if (!validator.isValid() && viewValue !== undefined) {
-                    ctrl.$setValidity('json', false);
-                    ctrl.$error.json = validator.getErrors();
+                    ctrl.$setValidity('json1', false);
+                    ctrl.$error.json_errors = validator.getErrors();
                     return viewValue;
                 } else {
-                    ctrl.$setValidity('json', true);
+                    ctrl.$setValidity('json1', true);
                     return viewValue;
                 }
             });
@@ -37,48 +37,16 @@ myApp.directive('adtValidator', ['ADTService', function(ADTService) {
         link: function(scope, elm, attrs, ctrl) {
 
             ctrl.$parsers.unshift(function(viewValue) {
-                var valid =  viewValue === ""|| viewValue === undefined || ADTService.isValidTypeName(viewValue) ;
+
+                var valid = ADTService.isValidTypeName(viewValue) || viewValue === "";
+
                 if (!valid) {
 
                     ctrl.$setValidity('adt', false);
-                    ctrl.$error.adt = "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
+                    ctrl.$error.adt_errors = "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
                     return viewValue;
                 } else {
                     ctrl.$setValidity('adt', true);
-
-                    return viewValue;
-                }
-
-            });
-
-        }
-    };
-}]);
-
-//<div name-validator ng-model="somevar"></div>
-myApp.directive('nameValidator', ['functionsService', function(functionsService) {
-
-
-    var errors = [];
-    var valid;
-
-    return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, elm, attrs, ctrl) {
-
-            ctrl.$parsers.unshift(function(viewValue) {
-                console.log("viewValue");
-                var functionsName=functionsService.getAllDescribedFunctionNames();
-                var valid =  viewValue === ""|| viewValue === undefined || (functionsName.indexOf(viewValue) == -1);
-
-                if (!valid) {
-
-                    ctrl.$setValidity('name', false);
-                    ctrl.$error.name = "The function name: "+viewValue+" is already taken, please change it";
-                    return viewValue;
-                } else {
-                    ctrl.$setValidity('name', true);
                     return viewValue;
                 }
 

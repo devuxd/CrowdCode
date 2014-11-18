@@ -304,10 +304,10 @@
 
 	             		  '<ng-form name="inputForm">'+
 	             		  	'<div class="form-group" ng-class="{ \'has-error\': inputForm.input.$dirty && inputForm.input.$invalid , \'has-success\': inputForm.input.$valid}" >'+
-	             			  	'<input  class="form-control input-control" name="input" ng-model="$parent.json" ng-attr-required="dispute" placeholder="{{type}}" json-validator="{{type}}"/>' +
+	             			  	'<input  class="form-control input-control" name="input" ng-model="$parent.json" ng-attr-required="dispute" placeholder="{{type}}" json1="{{type}}"/>' +
 	             			  	'<ul class="help-block" ng-show="inputForm.input.$dirty && inputForm.input.$invalid">'+
 		             			  	'<li ng-show="inputForm.input.$error.required" >This field is required!</li>'+
-		    						'<li ng-show="inputForm.input.$error.json" >'+
+		    						'<li ng-show="inputForm.input.$error.json1" >'+
 		    							'<span>There are JSON errors. Please fix them:</span>'+
 		    							'<ul ng-repeat="error in inputForm.input.$error.json_errors">'+
 		    								'<li>{{error}}</li>'+
@@ -334,12 +334,12 @@
 		                         		  	'<div class="form-group" ng-class="{ \'has-error\': inputForm.input.$dirty && inputForm.input.$invalid , \'has-success\': inputForm.input.$valid}" >'+
 		                         		   '<span  class="key" ng-click="utils.clickNode(childs[key])" >{{ key }} ({{childs[key].type()}}) :  </span>' +
 
-		                         		  	'<input ng-init="types=childs[key].type()" class="form-control input-control" name="input" ng-model="json[key]" ng-attr-required="dispute" placeholder="{{childs[key].type()}}" json-validator="{{childs[key].type()}}" />'+
+		                         		  	'<input ng-init="types=childs[key].type()" class="form-control input-control" name="input" ng-model="json[key]" ng-attr-required="dispute" placeholder="{{childs[key].type()}}" json1="{{childs[key].type()}}" />'+
 		                         		       '<span class="remove" ng-dblclick="utils.removeNode(key)" ng-show="node.isHighEditLevel">Remove</span>' +
 
 		                         			  	'<ul class="help-block" ng-show="inputForm.input.$dirty && inputForm.input.$invalid">'+
 			                						'<li ng-show="inputForm.input.$error.required" >This field is required!</li>'+
-			                						'<li ng-show="inputForm.input.$error.json" >'+
+			                						'<li ng-show="inputForm.input.$error.json1" >'+
 			                							'<span>There are JSON errors. Please fix them:</span>'+
 			                							'<ul ng-repeat="error in inputForm.input.$error.json_errors">'+
 			                								'<li>{{error}}</li>'+
@@ -380,10 +380,10 @@
                                     '<span ng-hide="childs[ADT.name].isObject()  || childs[ADT.name].type()==\'array\' ">' +
                                     '<ng-form ng-hide="childs[key].isObject()" name="inputForm">'+
                          		  	'<div class="form-group" ng-class="{ \'has-error\': inputForm.input.$dirty && inputForm.input.$invalid , \'has-success\': inputForm.input.$valid}" >'+
-                         			  	'<input class="form-control input-control" name="input" ng-model="json[ADT.name]" ng-attr-required="dispute" placeholder="{{ADT.type}} oggetto" json-validator="{{ADT.type}}" />'+
+                         			  	'<input class="form-control input-control" name="input" ng-model="json[ADT.name]" ng-attr-required="dispute" placeholder="{{ADT.type}} oggetto" json1="{{ADT.type}}" />'+
                          			  	'<ul class="help-block" ng-show="inputForm.input.$dirty && inputForm.input.$invalid">'+
 	                						'<li ng-show="inputForm.input.$error.required" >This field is required!</li>'+
-	                						'<li ng-show="inputForm.input.$error.json" >'+
+	                						'<li ng-show="inputForm.input.$error.json1" >'+
 	                							'<span>There are JSON errors. Please fix them:</span>'+
 	                							'<ul ng-repeat="error in inputForm.input.$error.json_errors">'+
 	                								'<li>{{error}}</li>'+

@@ -6,7 +6,7 @@
 			<li ng-show="inputForm.input.$error.required" >This field is required!</li>
 			<li ng-show="inputForm.input.$error.json" >
 				<span>There are JSON errors. Please fix them:</span>
-				<ul ng-repeat="error in inputForm.input.$error.json">
+				<ul ng-repeat="error in inputForm.input.$error.json_errors">
 					<li>{{error}}</li>
 				</ul>
 			</li>
