@@ -657,7 +657,7 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 	// assign test inputs and output to testData, otherwise initialize an empty object
 	$scope.testData = ( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ) ?
 					   {inputs: $scope.test.simpleTestInputs , output: $scope.test.simpleTestOutput } :
-					   {inputs:['asd'],output:''} ;
+					   {inputs:[],output:''} ;
 
 	
 	//  $scope.testData.inputs[0]={};
