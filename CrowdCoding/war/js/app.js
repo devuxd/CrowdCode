@@ -12,5 +12,4 @@ myApp.config(function($dropdownProvider) {
   angular.extend($dropdownProvider.defaults, {
     html: true
   });
-
 });

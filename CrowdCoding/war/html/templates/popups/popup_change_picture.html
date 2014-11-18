@@ -1,54 +1,20 @@
-<!--
-
-<div id="popUpChangePicture" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<span>change your profile picture!</span>
-				<button type="button" class="close" data-dismiss="modal">X</button>
-			</div>
-			<div class="modal-footer">
-				<img src="/user/picture?userId=<%=workerID%>
-				" alt="
-				<%=workerHandle%>
-				" class="pull-left profile-picture" />
-				<div class="pull-left">
-					<form  enctype='multipart/form-data' method="post" >
-						<input type="file" name="picture" accept="image/*" />
-						<br/>
-						<input type="submit" class="btn btn-primary" value="change picture" />
-					</form>
-				</div>
-				<span class="clearfix"></span>
-			</div>
-		</div>
-	</div>
-</div> -->
-
-<div class="modal" tabindex="-1" role="dialog">
+<div class="modal" tabindex="-1" role="dialog" ng-controller="UserProfileController">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" ng-click="$hide()">&times;</button>
-				<h4 class="modal-title">change your profile picture!</h4>
+				<h4 class="modal-title">Profile picture</h4>
 			</div>
 			<div class="modal-body">
-				<!-- <img src="/user/picture?userId=<%=workerID%>
-				" alt="
-				<%=workerHandle%>
-				" class="pull-left profile-picture" /> -->
-			<!-- 	<div class="pull-left">
-					<form  enctype='multipart/form-data' method="post" >
-						<input type="file" name="picture" accept="image/*" />
-						<br/>
-						<input type="submit" class="btn btn-primary" value="change picture" />
-					</form>
-				</div>
-				<span class="clearfix"></span> -->
+				<img ng-src="{{imageUrl}}" alt="{{workerHandle}}" style="width:150px" class="pull-left" />
+				<span class="pull-left">
+					<input type="file" file-model="image"/>
+	    			<button ng-click="uploadFile()">Change Profile Picture</button>
+    			</span>
+    			<span class="clearfix"></span>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
-				<button type="button" class="btn btn-primary">Send</button>
 			</div>
 		</div>
 	</div>

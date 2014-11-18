@@ -14,8 +14,6 @@
 }
 
 
-ul.clearlist:after { clear: both;}
-
 .submit-alert {
 	 position:relative !important;
 	 margin-top: 0px !important;
@@ -59,7 +57,7 @@ ul.clearlist:after { clear: both;}
 .list-group { margin: 0px;}
 
 /* --------- CODEMIRROR OVERWRITE ---------  */
-.CodeMirror { border: none; font-size: 1em;}
+.CodeMirror { border: none; font-size: 1.1em;}
 
 
 /* UTILS */
@@ -478,6 +476,9 @@ ul.collapsable-list .element {
 	transition: height 0.5s;
 }
 
+table.test { width: 100%;}
+table.test td:first-child { width:20%; text-align: right; padding-right:5px;}
+
 .test-collapsable-list table { width: 100%;}
 .test-collapsable-list table td:first-child { width:20%; text-align: right; padding-right:5px;}
 
@@ -487,6 +488,15 @@ ul.collapsable-list .element {
 /*table.debugTests tr.passed { background-color:green;}
 table.debugTests tr.failed { background-color:red;}
 */
+
+span.rating-star-fixed {
+	 background-image: url('/img/stars.png');
+	 background-position: 0px 0px;
+
+	 width:25px;
+	 height:25px;
+	 display:block;
+}
 
 span.rating-star {
 	 background-image: url('/img/stars.png');
