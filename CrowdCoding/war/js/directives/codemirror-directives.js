@@ -20,11 +20,18 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
 
         		codeMirror.setOption("tabindex", "-1");
         		codeMirror.setSize(null,'auto');
+                console.log("entro");
+                codeMirror.refresh();
+               // functionsService.highlightPseudoSegments(codeMirror,[],false);
 
-               /* $scope.$watch( 'code' ,function(newValue, oldValue) { 
+                codeMirror.on("change", function(){
                     functionsService.highlightPseudoSegments(codeMirror,[],false);
-                });*/
-                   
+
+                });
+
+                // $scope.$watch( 'code' ,function(newValue, oldValue) {
+                //    functionsService.highlightPseudoSegments(codeMirror,[],false);
+                // });
            	};
         }
     };

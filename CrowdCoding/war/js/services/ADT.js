@@ -3,7 +3,7 @@
 ////////////////////
 myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
 
-	var service = new function(){
+	var service = new  function(){
 
 		var typeNames=[];
 		var nameToADT=[];
@@ -16,12 +16,14 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 		this.validateParamTypeName  = function(inputText, paramName, ignoreEmpty) { return validateParamTypeName(inputText, paramName, ignoreEmpty); };
 		this.validateReturnTypeName = function(inputText, ignoreEmpty) { return validateReturnTypeName(inputText, ignoreEmpty); };
 		this.getAllADTs				= function() { return getAllADTs(); };
-		this.getByName				= function(name){return getByName(name)};
-		this.getNameToADT			= function() { return nameToADT };
+		this.getByName				= function(name){return getByName(name);};
+		this.getNameToADT			= function() { return nameToADT; };
 
 		function init()
 		{
-
+			typeNames=[];
+			nameToADT=[];
+			ADTs=[];
 			addDefaultADT();
 
 

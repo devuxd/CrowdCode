@@ -45,8 +45,6 @@
 	</div>
 
 	<div class="section-cols" >
-		<alertcontainer></alertcontainer>
-		<div class="clearfix"></div>
 		<div class="container-flex-row">
 
 			<div class="section section-help" style="width:30%">
@@ -59,13 +57,16 @@
 			<div class="section section-form" style="width:70%;" >
 				<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
 				<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-				<ul class="help-block" ng-if="form.code.$error.function_errors.length > 0">
+				<ul class="help-block" ng-if="microtaskForm.code.$error.function_errors.length > 0">
 					<span>There are some errors. Please fix them before submit:</span>
-					<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
+					<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
 						<li>{{error}}</li>
 					</ul>
 				</ul>
+				<alertcontainer></alertcontainer>
+				<div class="clearfix"></div>
 				<javascript-helper class="pull-right"></javascript-helper>
+				
 			</div>
 
 		</div>
