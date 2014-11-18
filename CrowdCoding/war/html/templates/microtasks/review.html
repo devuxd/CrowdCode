@@ -245,16 +245,15 @@
 
 					<span >Please briefly explain your rating:</span>
 					<span
-						ng-class="{ 'has-error': form.reviewText.$dirty && form.reviewText.$invalid , 'has-success': form.reviewText.$valid}">
+						ng-class="{ 'has-error': microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid , 'has-success': microtaskForm.reviewText.$valid}">
 						<textarea
 							id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" required focus></textarea>
 						<span
-						class="help-block" ng-show="form.reviewText.$dirty && form.reviewText.$invalid && form.reviewText.$error.required">This field is required!</span>
+						class="help-block" ng-show="microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
 					</span>
-					<alertcontainer></alertcontainer>
-					<div class="clearfix"></div>
-
 				</div>
+				<alertcontainer></alertcontainer>
+				<div class="clearfix"></div>
 			</div>
 
 		</div>

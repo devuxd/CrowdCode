@@ -428,38 +428,48 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','$ale
  	};
 
 
-	$scope.$on('collectFormData',function(){
+$scope.$on('collectFormData',function(event,microtaskForm){
 
-		var text = codemirror.getValue();
- 		var ast = esprima.parse(text, {loc: true});
+		var error="";
 
-		var calleeNames = getCalleeNames(ast);
+		if(microtaskForm.$invalid)
+			error= 'Choose a function or select the button "No funtion does this"';
 
-		// Get the text for the function description, header, and code.
-		// Note esprima (the source of line numbers) starts numbering lines at 1, while
-	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-		var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+		if(error!=="")
+			$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+		else {
 
-		var linesDescription = fullDescription.split('\n');
-		var name = ast.body[0].id.name;
+			var text = codemirror.getValue();
+	 		var ast = esprima.parse(text, {loc: true});
 
-		var functionParsed = parseDescription(linesDescription,name);
+			var calleeNames = getCalleeNames(ast);
+
+			// Get the text for the function description, header, and code.
+			// Note esprima (the source of line numbers) starts numbering lines at 1, while
+		    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+			var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+
+			var linesDescription = fullDescription.split('\n');
+			var name = ast.body[0].id.name;
+
+			var functionParsed = parseDescription(linesDescription,name);
 
 
-		var body = codemirror.getRange(
-				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-			    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+			var body = codemirror.getRange(
+					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
 
-		formData =  { description: functionParsed.description,
-					 header:       functionParsed.header,
-					 name:         name,
-					 code:         body,
-					 returnType:   functionParsed.returnType,
-					 paramNames:   functionParsed.paramNames,
-					 paramTypes:   functionParsed.paramTypes,
-					 paramDescriptions: functionParsed.paramDescriptions,
-					 calleeNames:  calleeNames};
-		$scope.$emit('submitMicrotask',formData);
+			formData =  { description: functionParsed.description,
+						 header:       functionParsed.header,
+						 name:         name,
+						 code:         body,
+						 returnType:   functionParsed.returnType,
+						 paramNames:   functionParsed.paramNames,
+						 paramTypes:   functionParsed.paramTypes,
+						 paramDescriptions: functionParsed.paramDescriptions,
+						 calleeNames:  calleeNames};
+			$scope.$emit('submitMicrotask',formData);
+		}
 	});
 
 }]);
@@ -531,40 +541,48 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 	};
 
 
-	$scope.$on('collectFormData',function(){
+	$scope.$on('collectFormData',function(event,microtaskForm){
+
+		var error="";
+
+		if(microtaskForm.$invalid)
+			error= 'Fix all errors before submit, if you don\'t know how use the pseudocode';
+
+		if(error!=="")
+			$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+		else {
+			var text = codemirror.getValue();
+	 		var ast = esprima.parse(text, {loc: true});
+
+			var calleeNames = functionsService.getCalleeNames(ast);
+
+			// Get the text for the function description, header, and code.
+			// Note esprima (the source of line numbers) starts numbering lines at 1, while
+		    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+			var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+
+			var linesDescription = fullDescription.split('\n');
+			var name = ast.body[0].id.name;
+
+			var functionParsed = functionsService.parseDescription(linesDescription,name);
 
 
-		var text = codemirror.getValue();
- 		var ast = esprima.parse(text, {loc: true});
+			var body = codemirror.getRange(
+					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
 
-		var calleeNames = functionsService.getCalleeNames(ast);
+			formData =  { description: functionParsed.description,
+						 header:       functionParsed.header,
+						 name:         name,
+						 code:         body,
+						 returnType:   functionParsed.returnType,
+						 paramNames:   functionParsed.paramNames,
+						 paramTypes:   functionParsed.paramTypes,
+						 paramDescriptions: functionParsed.paramDescriptions,
+						 calleeNames:  calleeNames};
 
-		// Get the text for the function description, header, and code.
-		// Note esprima (the source of line numbers) starts numbering lines at 1, while
-	    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-		var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
-
-		var linesDescription = fullDescription.split('\n');
-		var name = ast.body[0].id.name;
-
-		var functionParsed = functionsService.parseDescription(linesDescription,name);
-
-
-		var body = codemirror.getRange(
-				{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-			    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-
-		formData =  { description: functionParsed.description,
-					 header:       functionParsed.header,
-					 name:         name,
-					 code:         body,
-					 returnType:   functionParsed.returnType,
-					 paramNames:   functionParsed.paramNames,
-					 paramTypes:   functionParsed.paramTypes,
-					 paramDescriptions: functionParsed.paramDescriptions,
-					 calleeNames:  calleeNames};
-
-		$scope.$emit('submitMicrotask',formData);
+			$scope.$emit('submitMicrotask',formData);
+		}
 	});
 
 }]);
