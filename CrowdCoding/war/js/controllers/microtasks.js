@@ -12,6 +12,7 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 
 	$scope.newTestCase = "";
 
+	var alert=null;
 	$scope.testCases = [];
 
 	// retrieve the tests for the functionID
@@ -49,7 +50,7 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 	$scope.$on('collectFormData',function(event,microtaskForm){
 
 		var error="";
-		// if the new test case field is not empty, 
+		// if the new test case field is not empty,
 		// add as a new test case
 		if( $scope.newTestCase !== "" ) $scope.addTestCase();
 
@@ -57,9 +58,13 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 			error= "Add at least 1 test case";
 		if(microtaskForm.$invalid)
 			error= "Fix all the errors before submit";
-
+		
 		if(error!=="")
-			$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+		{
+			if (alert!==null) alert.destroy();
+
+			alert=$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+		}
 		else {
 			// prepare form data for submission
 			formData = { testCases: $scope.testCases, functionVersion: $scope.funct.version};
