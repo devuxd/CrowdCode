@@ -63,8 +63,8 @@
 			FUNCTION SIGNATURE
 		</div>
 		<div class="section-content no-padding" >
-			<code-mirror-readonly ng-if="microtask.promptType!='FUNCTION_CHANGED'" code="code"></code-mirror-readonly>
-			<code-mirror-readonly ng-if="microtask.promptType=='FUNCTION_CHANGED'" code="diffCode" ></code-mirror-readonly>
+			<code-mirror-readonly ng-if="microtask.promptType != 'FUNCTION_CHANGED'" code="code"></code-mirror-readonly>
+			<code-mirror-readonly ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" ></code-mirror-readonly>
 		</div>
 	</div>
 
@@ -97,7 +97,7 @@
 					         >
 							<span for="input">{{paramName}} ({{funct.paramTypes[index]}}): </span>
 							<a href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index])" >Paste Example </a>
-							<ace-edit-json ng-model="testData.inputs[index]"></ace-editor-test>
+							<ace-edit-json ng-model="testData.inputs[index]" focus-ace=" index == 0" ></ace-editor-json>
 							<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json1="{{funct.paramTypes[index]}}" ng-show="false"></textarea>
 							{{inputForm.input.$dirty}}
 							<ul class="help-block" ng-show="inputForm.input.$invalid ">
@@ -115,7 +115,7 @@
 							<label for="output">expected Return value ({{funct.returnType}}):</label>
 							<a href="#" ng-click="testData.output=loadExample(funct.returnType)" >Paste Example </a>
 
-							<ace-edit-json ng-model="testData.output"></ace-editor-test>
+							<ace-edit-json ng-model="testData.output" focus-ace></ace-editor-json>
 
 							<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json1="{{funct.returnType}}" ></textarea>
 							<ul class="help-block" ng-show="form.output.$invalid">

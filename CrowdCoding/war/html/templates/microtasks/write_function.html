@@ -40,7 +40,7 @@
 	<div class="section section-description" ng-if="microtask.promptType=='DESCRIPTION_CHANGE'">
 		<div class="section-title" > FUNCTION signature different </div>
 		<div class="section-content no-padding" >
-			<div ng-bind-html="microtask.oldFullDescription | diff:microtask.newFullDescription | newline" ></div>
+			<code-mirror-readonly code="diffCode" ></code-mirror-readonly>
 	 	</div>
 	</div>
 

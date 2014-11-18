@@ -213,6 +213,7 @@ public class WriteTest extends Microtask
 			json.put("promptType",this.getPromptType());
 			json.put("issueDescription",this.getIssueDescription());
 			json.put("oldTestCase",this.getOldTestCase());
+			json.put("functionVersion", this.functionVersion);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -25,13 +25,19 @@ myApp.directive('aceEditJson', function() {
         template:'<div class="ace_editor" ui-ace="{ onLoad : aceLoaded, mode: \'json\', theme:\'xcode\', showGutter: false }" ng-model="ngModel"></div>',
 
         scope: {
-            ngModel: "="
+            ngModel: "=",
+            focusAce: "="
         },
         controller: function($scope,$element){
         	$scope.aceLoaded = function(_editor) {
         		_editor.setOptions({
 		    	   maxLines: Infinity
 		    	});
+                
+                if( $scope.hasOwnProperty('focusAce') && $scope.focusAce ){
+                    _editor.focus();
+                }
+
 
 			 };
         }

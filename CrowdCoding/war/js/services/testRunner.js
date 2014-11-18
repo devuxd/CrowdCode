@@ -68,14 +68,14 @@ myApp.factory('testRunnerService', [
 		this.loadStubs();
 
 
-		console.log("LOADED CALLEE MAP");
-		console.log(JSON.stringify(stubs));
+		// console.log("LOADED CALLEE MAP");
+		// console.log(JSON.stringify(stubs));
 
 		if( passedStubs != undefined )
 			this.mergeStubs(passedStubs);
 
-		console.log("MERGED CALLEE MAP");
-		console.log(JSON.stringify(stubs));
+		// console.log("MERGED CALLEE MAP");
+		// console.log(JSON.stringify(stubs));
 
 		// Run the tests
 		this.runTest();
@@ -239,9 +239,9 @@ myApp.factory('testRunnerService', [
 		var testResult;
 
 
-		console.log("======= CODE TO LINT ");
-		console.log(codeToLint);
-		console.log(errors);
+		// console.log("======= CODE TO LINT ");
+		// console.log(codeToLint);
+		// console.log(errors);
 		
 		// If there aren't LINT errors, run the test
 		if(errors == ""){

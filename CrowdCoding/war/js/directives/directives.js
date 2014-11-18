@@ -75,10 +75,10 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
             functionId = scope.microtask.functionID;
             valid = true;
             allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
-            allFunctionCode = functionsService.getAllDescribedFunctionCode(functionId);
+            allFunctionCode = functionsService.getAllDescribedFunctionCode(functionId)+ "function printDebugStatement(){}" ;
 
             ctrl.$formatters.unshift(function(viewValue) {
-
+                console.log("FUNCTION VALIDATOR");
                 code = viewValue;
                 validate(code);
 
@@ -124,9 +124,7 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
 
         // 3. Trys to build the Est if not displays the error and return
         try {
-            ast = esprima.parse(code, {
-                loc: true
-            });
+            ast = esprima.parse(code, {loc: true});
         } catch (e) {
             console.log("Error in running Esprima. " + e.name + " " + e.message);
             errors.push("Error " + e.message);
@@ -334,28 +332,19 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
 myApp.directive('functionConvections', function(){
     // Runs during compile
     return {
-        // name: '',
-        // priority: 1,
-        // terminal: true,
         scope: true, // {} = isolate, true = child, false/undefined = no change
         controller: function($scope, $element, $attrs, $transclude) {
             $scope.pseudocall='function foo() { \n'+
-                            'var value1 = 0;\n'+
-                            'var value2 = 0;\n'+
-                            '//# Create an object, set its key, and set the value for that key to an undefined object.\n'+
-                            'var avg;\n'+
-                            '//! avg=average(value1,value2) create a function that given two values returns the average \n'+
-                            '}';
+                        '\tvar values = [ 128, 309 ];\n'+
+                        '\t//# calc the least common multiple of values\n'+
+                        '\tvar avg;\n'+
+                        '\t//! avg=average(values) \n'+
+                        '\treturn { average: avg, lcm: lcm }; \n' +
+                        '}';
 
-            },
-        // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
-        restrict: 'EA', // E = Element, A = Attribute, C = Class, M = Comment
-        // template: '',
-        templateUrl: '/html/templates/function_conventions.html',
-        // replace: true,
-        // transclude: true,
-        // compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
-       link: function($scope, iElm, iAttrs, controller) { }
+        },
+        restrict: 'EA', 
+        templateUrl: '/html/templates/function_conventions.html'
     };
 });
 
@@ -379,9 +368,8 @@ myApp.directive('submitHotKey', function() {
 
             if (event.which === 13 && event.ctrlKey) {
                 scope.$apply(function() {
-                    console.log("fired");
-                    //TODO
-                   // scope.$eval(attrs.pressEnter);
+                    console.log("HOTKEY");
+                    scope.$eval(attrs.submitHotKey);
                 });
 
                 event.preventDefault();

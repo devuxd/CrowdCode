@@ -28,7 +28,7 @@ self.onmessage = function(e)
 	}
 	else
 	{
-		console.log("WORKER RECEIVED MESSAGE");
+		// console.log("WORKER RECEIVED MESSAGE");
 		// Execute the tests for a function
 		try
 		{
@@ -51,7 +51,7 @@ self.onmessage = function(e)
 			finalCode = replaceAll("printDebugStatement","logDebug",finalCode);
 
 		
-			//SHOW IN THE CONSOLE THE FINAL CODE 	
+			// SHOW IN THE CONSOLE THE FINAL CODE 	
 			// console.log("+++++ FINAL CODE IN WORKER +++++");
 			// console.log(finalCode);		
 			// console.log("++++++++++++++++++++++");
@@ -74,20 +74,19 @@ self.onmessage = function(e)
 			}
 
 		} catch (err) {
-			console.log("+++++ THERE WAS AN ERROR IN THE TEST RUNNER WORKER ");
-			console.log(err);
+
 			testCasedPassed = false;
 			// Check if the tests cases failed because code was discovered that was not yet implemented.
 			// (as observed by the special NotImplementedException). If so, set the approrpriate flag.			
 			if (err instanceof NotImplementedException)
 				codeUnimplemented = true;
 		}
-		 console.log("WORKER IS SENDING BACK STUBS");
-		 console.log(stubs);
+
 		self.postMessage({
 			result     : {
+				realOutput        : JSON.stringify(results[0].actual),
 				testResult        : testCasedPassed,
-				debugStatements   : debugStatements.join('\n'),
+				debugStatements   : debugStatements.length > 0 ? debugStatements.join('\n') : 'NO DEBUG STATEMENTS',
 				codeUnimplemented : codeUnimplemented,
 			},
 			testNumber : data.testNumber,

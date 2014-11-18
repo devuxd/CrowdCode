@@ -22,11 +22,13 @@
 		FUNCTION EDITOR
 		</div>
 		<div class="section-content" >
-			<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+			<function-convections></function-convections>
+	 	
+			<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
 			<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-			<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
+			<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">
 				<span>There are some errors. Please fix them before submit:</span>
-				<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
+				<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
 					<li>{{error}}</li>
 				</ul>
 			</ul>
@@ -35,16 +37,15 @@
 		</div>
 	</div>
 
-
-	<div class="section section-form" ng-if=" (stubs | keylengh ) > 0">
+	<div class="section section-form" ng-if=" !dispute && ( stubs | keylength )">
 		<div class="section-title" >
-		CALLEE STUBS
+		CALLEE STUBS 
 		</div>
 		<div class="section-content" >
-			<ul class="mock-collapsable-list">
+			<ul class="collapsable-list ">
 				<li ng-repeat="(callee,inputMap) in stubs" > 
 					the function <b>{{callee}}</b> has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
-					<ul>
+					<ul class="collapsable-list ">
 						<li ng-repeat="(stubKey,stub) in inputMap track by $index">
 							<b>Input set {{$index+1}} </b><br />
 							<table style="width:100%">
@@ -75,7 +76,7 @@
 	</div>
 	
 
-	<div class="section section-form">
+	<div class="section section-form" ng-if="!dispute">
 		<div class="section-title" >
 			TESTS RESULT
 		</div>
@@ -94,19 +95,19 @@
 		</div>
 	</div>
 
+	<div class="section section-form" ng-if="dispute">
+		<div class="section-title" >
+			DISPUTE TEST 
+		</div>
+		<div class="section-content" >
+ 			<span><b>Test description:</b> {{disputedTest.description}}</span><br/>
+			<span><b>Test code:</b> {{disputedTest.code}}</span><br/>
 
-	<div id="taskForm" ng-show="dispute">
-		<span><b>Test description:</b> {{disputedTest.description}}</span><br/>
-		<span><b>Test code:</b> {{disputedTest.code}}</span><br/>
-
-		<label for="disputeText">Dispute test:</b> what's wrong with this test? </label>
-		<textarea name="disputeText" class="form-control" ng-model="disputedTest.disputeText"></textarea><br>
-		<button class="btn " ng-click="dispute = !dispute" >Nothing is wrong with the test</button>
-		<button class="btn btn-primary" ng-if="dispute" ng-click="submit()" >Submit dispute</button>
+			<label for="disputeText">What's wrong with this test? </label>
+			<textarea name="disputeText" class="form-control" ng-model="disputedTest.disputeText"></textarea><br>
+			<button class="btn" ng-click="cancelDispute()" >Nothing is wrong with the test</button>
+		</div>
 	</div>
-
-
-	<br/>
 <!--
 	<div class="task-buttons pull-right">
 		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || passedTests.length != tests.length" >Submit</button>

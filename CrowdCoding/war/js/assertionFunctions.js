@@ -56,6 +56,7 @@ function throwsException(actual,expect,message)
 
 function getResults(actual,expected,message,succeeded)
 {
+	console.log("RESULT ACTUAL = "+actual);
 	results.push({ 'expected': expected, 'actual': actual, 'message': message, 'result':  succeeded});
 	
 	if (!succeeded)

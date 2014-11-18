@@ -29,9 +29,12 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
     // addTestCase and deleteTestCase actions
 	$scope.addTestCase = function(){
 		// push the new test case and set the flag added to TRUE
-		var testCase = { id: null, text: $scope.newTestCase , added: true, deleted: false };
-		$scope.testCases.push(testCase);
-		$scope.newTestCase="";
+		if( $scope.newTestCase != "" ){
+
+			var testCase = { id: null, text: $scope.newTestCase , added: true, deleted: false };
+			$scope.testCases.push(testCase);
+			$scope.newTestCase="";
+		}
 	};
 	$scope.removeTestCase = function(index){
 		// if the testcase was added during this microtask, remove it from the array
@@ -183,7 +186,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 
  	$scope.results = {};
- 	$scope.stubs   = { key1:"value" };
+ 	$scope.stubs   = {};
 	$scope.runTests = function(){
 		// set testsRunning flag
 		$scope.testsRunning = true;
@@ -199,14 +202,14 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		// ask the worker to run the tests
 		testRunnerService.runTestsForFunction($scope.microtask.functionID, functionBody, $scope.stubs).then(function(data){
 
-			console.log(" ----- RESULTS FROM THE TEST RUNNER ");
 
 			//$scope.results = 
-			$scope.results   = data.results;
-			$scope.stubs = data.stubs;
+			$scope.results = data.results;
+			$scope.stubs   = data.stubs;
 
-			console.log(data.results);
-			console.log(data.stubs);
+			// console.log(" ----- RESULTS FROM THE TEST RUNNER ");
+			// console.log(data.results);
+			// console.log(data.stubs);
 		
 			// reset testsRunning flag
 			$timeout(function(){
@@ -217,9 +220,12 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 	$scope.dispute      = false;
 	$scope.disputedTest = null;
-	$scope.disputeTest = function(testKey){
+	$scope.$on('disputeTest',function(event,testKey){
 		$scope.dispute = true;
 		$scope.disputedTest = $scope.tests[testKey];
+	});
+	$scope.cancelDispute = function(){
+		$scope.dispute = false;
 	}
 
 	// check if test is passed
@@ -438,6 +444,28 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 	var highlightPseudoCall =false;
 	var readOnlyDone=false;
 	var changeTimeout;
+
+
+	if( $scope.microtask.promptType == 'DESCRIPTION_CHANGE'){
+		var oldCode = $scope.microtask.oldFullDescription.split("\n");
+		var newCode = $scope.microtask.newFullDescription.split("\n");
+		var diffRes = diff( oldCode, newCode );
+		var diffCode = "";
+		angular.forEach(diffRes,function(diffRow){
+
+			if(diffRow[0]=="="){
+				diffCode += diffRow[1].join("\n");
+			} else {
+				diffCode += diffRow[0]+diffRow[1].join("\n");
+			}
+			diffCode += "\n";
+		})
+    	$scope.diffCode = diffCode;
+    	console.log($scope.diffCode);
+
+	}
+
+
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
@@ -586,7 +614,7 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 	// assign test inputs and output to testData, otherwise initialize an empty object
 	$scope.testData = ( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ) ?
 					   {inputs: $scope.test.simpleTestInputs , output: $scope.test.simpleTestOutput } :
-					   {inputs:[],output:''} ;
+					   {inputs:['asd'],output:''} ;
 
 	
 	//  $scope.testData.inputs[0]={};
@@ -615,18 +643,26 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 			diffCode += "\n";
 		})
     	$scope.diffCode = diffCode;
-    	console.log(diffRes);
 
 	}
 	// LOAD THE VERSION OF THE FUNCTION WHEN THE MICROTASK HAS BEEN SPAWNED
 	else {
+		$scope.code = "";
 		console.log("FIND FUN VERSION");
 		//load the version of the function with witch the test cases where made
-		var functionVersionSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.microtask.functionID
-				+ '/' + ($scope.microtask.functionVersion>0?$scope.microtask.functionVersion:1)));
+
+		var functionVersionSync = {};
+		if($scope.microtask.functionVersion == 0)
+			functionVersionSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.microtask.functionID + '/1'));
+		else 
+			functionVersionSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + $scope.microtask.functionID + '/' + $scope.microtask.functionVersion));
+
+
 		$scope.funct = functionVersionSync.$asObject();
 		$scope.funct.$loaded().then(function(){
+			console.log($scope.funct);
 			$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header;
+			console.log($scope.code);
 		});
 	}
 

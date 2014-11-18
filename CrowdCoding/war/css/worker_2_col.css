@@ -54,7 +54,7 @@ ul.clearlist:after { clear: both;}
 .list-group { margin: 0px;}
 
 /* --------- CODEMIRROR OVERWRITE ---------  */
-.CodeMirror { border: none; }
+.CodeMirror { border: none; font-size: 1em;}
 
 
 /* UTILS */
@@ -180,6 +180,7 @@ h1, h2, h3, h4 {
 .section.section-help { background-color:#BFC7CD; }
 .section.section-help .section-title { color:#5F5F5F; }
 
+.help-block { margin:0px; padding:0px;}
 
 
 .section.section-form { background-color:lightgray; }
@@ -474,7 +475,6 @@ ul.collapsable-list .element {
 
 .test-collapsable-list table { width: 100%;}
 .test-collapsable-list table td:first-child { width:20%; text-align: right; padding-right:5px;}
-
 
 .mock-collapsable-list table { width: 100%;}
 .mock-collapsable-list table td:first-child { width:20%; text-align: right; padding-right:5px;}

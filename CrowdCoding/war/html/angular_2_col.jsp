@@ -125,10 +125,8 @@
 
 	        <!-- CONTENT -->
 	        <div id="content" class="order-3" ng-controller="MicrotaskController">
-	         <hr>
-    <div id="alerts-container"></div>
-				<form name="microtaskForm" class="form-horizontal"
-						  novalidate submit-hot-key>
+	        	<form name="microtaskForm" class="form-horizontal"
+						  novalidate submit-hot-key="$broadcast('collectFormData', microtaskForm)">
 					<div id="task"  class="task" style="" microtask >
 						<ng-include src="templatePath"></ng-include>
 					</div>
