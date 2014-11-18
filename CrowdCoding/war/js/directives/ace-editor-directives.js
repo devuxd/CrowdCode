@@ -26,7 +26,8 @@ myApp.directive('aceEditJson', function() {
 
         scope: {
             ngModel: "=",
-            focusAce: "="
+            focusAce: "=",
+            minLines: "="
         },
         controller: function($scope,$element){
         	$scope.aceLoaded = function(_editor) {
@@ -38,8 +39,16 @@ myApp.directive('aceEditJson', function() {
                     _editor.focus();
                 }
 
+                if( $scope.hasOwnProperty('minLines') && $scope.minLines ){
+                    console.log("MIN LINES = "+$scope.minLines);
+                   _editor.setOptions({
+                       minLines: $scope.minLines
+                    });
+                
+                }
 
-			 };
+
+			};
         }
     }
 });

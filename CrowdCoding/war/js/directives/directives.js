@@ -4,6 +4,7 @@ myApp.directive('json1', ['ADTService', function(ADTService) {
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
+
             // instantiate a new JSONValidator
             var validator = new JSONValidator();
 
@@ -923,6 +924,7 @@ myApp.directive('tutorial', function($compile) {
     }
 });
 
+// USED FOR UPLOADING THE USER PICTURE
 myApp.directive('fileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
@@ -938,4 +940,37 @@ myApp.directive('fileModel', ['$parse', function ($parse) {
         }
     };
 }]);
+
+// VIEWS THE STATS
+myApp.directive('projectStats', function($rootScope,$firebase) {
+
+    return {
+        restrict: 'E',
+        scope: true,
+        template: '<b>Stats:</b><span class="stats"><span><span class="badge">{{microtaskCountObj.$value}}</span> microtasks</span><span><span class="badge">{{functionsCount}}</span> functions</span><span><span class="badge">{{testsCount}}</span> tests</span></span>',
+        link: function($scope, $element) {
+            console.log("STATS DIRECTIVE LINK EXECUTE");
+            $scope.microtaskCountObj  = $firebase(new Firebase($rootScope.firebaseURL+'/status/microtaskCount')).$asObject();
+
+
+            console.log("FIREBASE URL "+$rootScope.firebaseURL);
+            var functionsRef = new Firebase($rootScope.firebaseURL+'/artifacts/functions/');
+            $scope.functionsCount = 0;
+            functionsRef.on('child_added',function (snapshot){
+                $scope.functionsCount ++;
+            });
+        
+            
+
+
+            var testsRef = new Firebase($rootScope.firebaseURL+'/artifacts/tests');
+            $scope.testsCount = 0;
+            testsRef.on('child_added',function(snapshot){
+                $scope.testsCount ++;
+            });
+
+        }
+    };
+});
+
 

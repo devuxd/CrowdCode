@@ -183,7 +183,7 @@ h1, h2, h3, h4 {
 .section.section-help { background-color:#BFC7CD; }
 .section.section-help .section-title { color:#5F5F5F; }
 
-.help-block { margin:0px; padding:0px;}
+.help-block { margin:0px; padding:0px; list-style: none; color: red;}
 
 
 .section.section-form { background-color:lightgray; }
@@ -477,7 +477,10 @@ ul.collapsable-list .element {
 }
 
 table.test { width: 100%;}
+table.test td { vertical-align: top; }
 table.test td:first-child { width:20%; text-align: right; padding-right:5px;}
+
+table.test.spacing td { padding-bottom:5px;}
 
 .test-collapsable-list table { width: 100%;}
 .test-collapsable-list table td:first-child { width:20%; text-align: right; padding-right:5px;}
@@ -530,9 +533,9 @@ span.rating-star.full {
 
 
 /* Search results styles in reuseSearch */
-.result:hover {background:#dff0d8; cursor:pointer;}
-.result { margin-top:10px; padding-left:10px;}
-.selectedResult {background:rgb(229, 199, 179);color:black;}
+.list-element.result:hover {background:#dff0d8; cursor:pointer;}
+.list-element.result { padding:5px; border-bottom: 1px solid rgba(128, 128, 128, 0.32);}
+.list-element.result.selected { background:rgb(229, 199, 179); color:black;}
 
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
 ins {  background-color: #c6ffc6;  text-decoration: none; }
@@ -664,5 +667,9 @@ tutorial .btn-next { position: absolute; right: 0; }
    background: transparent;
 }
 .ace-editor .ace_hidden-cursors {opacity:0} 
-.ace-editor-test { height: 100px;
-			width: 100%; }
+.ace-editor-test { height: 100px; width: 100%; }
+
+.btn-mini { font-size:0.7em; text-transform: uppercase; padding: 3px 3px; border-radius: 0px; background-color: rgba(63, 129, 172, 0.8); }
+
+.stats { }
+.stats span {  padding-left:10px;}
