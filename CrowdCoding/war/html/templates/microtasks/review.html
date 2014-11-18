@@ -28,10 +28,11 @@
 				The worker was asked to write all possible testcases for the following function. <br /> Can you rate his work?
 			</div>
 			<div class="section-content" ng-if="review.microtask.promptType == 'CORRECT_TEST_CASE'" >
-				The worker was asked to rewrite the test case :
-				<span class="alert alert-info" >{{review.microtask.disputedTestCase }}</span>for the function below,
-				because hase been dispute for the motivation: <span class="alert alert-danger"> {{review.microtask.disputeDescription }} </span>
-				<br/> with the new testCase/s below. Can you review his work?
+				The worker was asked to rewrite the test case
+				<div class="alert alert-info" >{{review.microtask.disputedTestCase }}</div>
+				that the crowd put in dispute for the following reason:
+				 <div class="alert alert-info"> {{review.microtask.disputeDescription }} </div>
+				Can you review his work?
 			</div>
 	
 		</div>
@@ -47,8 +48,8 @@
 		<div class="section section-description-2">
 			<div class="section-title" >submitted test cases</div>
 			<div class="section-content" >
-				<ul>
-					<li class="" ng-repeat="testcase in review.testcases">{{testcase.text}}</li>
+				<ul style="list-style:none">
+					<li class="" ng-repeat="testcase in review.testcases"><strong>#{{$index+1}}</strong> {{testcase.text}}</li>
 				</ul>
 			</div>
 		</div>
@@ -63,13 +64,12 @@
 				Job description
 			</div>
 			<div ng-if="! review.microtask.submission.inDispute" class="section-content" >
-				The worker was asked to write a test for the following testCase:
+				The worker was asked to write a test for the following test case:
 				<div class="alert alert-info">{{review.microtask.owningArtifact}}</div>
-				of the function below.
-				<br /> Can you rate his work?
+				of the function below. Can you rate his work?
 			</div>
 			<div ng-if="review.microtask.submission.inDispute" class="section-content" >
-				The worker disputed the following testCase:
+				The worker disputed the test that the crowd has written for the following test case  :
 				<div class="alert alert-info">{{review.microtask.owningArtifact}}</div>
 				of the function below.
 				<br /> Can you rate his dispute?
@@ -85,25 +85,30 @@
 		</div>
 
 		<div ng-if="! review.microtask.submission.inDispute" class="section section-description-2">
-			<div  class="section-title" >test written</div>
-			<div class="section-content no-padding" >
-				<div>
-					<span>Test Written</span>
-					<span> Parameter </span>
-					<ul>
-						<li ng-repeat="testInput in review.microtask.submission.simpleTestInputs track by $index">Type:{{functionUnderTest.paramTypes[$index]}} ----- value: {{testInput}}</li>
-					</ul>
-					<span ng-if="functionUnderTest.returnType!=undefined">Returns:{{functionUnderTest.returnType}} ---- value {{review.microtask.submission.simpleTestOutput}}  </span>
-				</div>
+			<div  class="section-title" >Written TEST</div>
+			<div class="section-content" >
+				<table style="width:100%" class="test">
+					
+					<tr ng-repeat="(inputKey,input) in review.microtask.submission.simpleTestInputs track by $index">
+						<td>{{functionUnderTest.paramNames[$index]}}</td>
+						<td>
+							<div ace-read-json ng-model="input" ></div>
+						</td>
+					</tr>
+					<tr ng-if="functionUnderTest.returnType!=undefined">
+						<td>test output</td>
+						<td>
+							<div ace-read-json ng-model="review.microtask.submission.simpleTestOutput" ></div>
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 
 		<div ng-if="review.microtask.submission.inDispute" class="section section-description-2">
 			<div class="section-title" >dispute reason</div>
-			<div class="section-content no-padding" >
-				<span> The Test Case has been disputed because:</span>
-				<br />
-				<div class="alert alert-danger">{{review.microtask.submission.disputeText}}</div>
+			<div class="section-content" >
+				<div class="alert">{{review.microtask.submission.disputeText}}</div>
 			</div>
 		</div>
 		</div>
@@ -118,16 +123,16 @@
 				Job description
 			</div>
 			<div class="section-content" >
-				The worker was asked write the following function. <br /> Can you rate his work?
+				The worker was asked to implement/edit the following function. <br /> Can you rate his work?
 			</div>
 		</div>
 
-		<div class="section section-description">
+		<div class="section section-description-2">
 			<div class="section-title" >
 				submitted function code
 			</div>
-			<div class="section-content" >
-				<code-mirror-readonly code="review.functionCode"></code-mirror-readonly>
+			<div class="section-content no-padding" >
+				<code-mirror-readonly reverse="true" code="review.functionCode"></code-mirror-readonly>
 			</div>
 		</div>
 	</div>
@@ -211,10 +216,10 @@
 		<div class="container-flex-row">
 			<div class="section section-help" style="width:30%">
 				<div class="section-title" >
-					overview of what the star ratings mean
+					RATING SYSTEM
 				</div>
 				<div class="section-content" >
-					<ul class="clearlist">
+					<ul style="list-style:none;margin:0px;padding:0px;">
 						<li><b>1 Star</b>: Work incoherent or unfocussed, <b>microtask will be rejected</b></li>
 						<li><b>2 Star</b>: Work unconvincing or weak, <b>microtask will be rejected</b></li>
 						<li><b>3 Star</b>: Work with some weakness, <b>microtask will be accepted</b></li>
@@ -228,11 +233,11 @@
 			<div class="section section-form" style="width:70%;" >
 
 				<div class="section-title" >
-
+					YOUR RATING
 				</div>
 				<div class="section-content" >
 					<div id="ratingsDiv" >
-						<span class="pull-left"> Rating: </span>
+						<span class="pull-left"> Quality: </span>
 						<span ng-repeat="currentValue in [1,2,3,4,5] track by $index"
 							  ng-mouseenter="review.mouseOn=currentValue"
 							  ng-mouseleave="review.mouseOn=0"

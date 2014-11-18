@@ -45,6 +45,7 @@
 	<link rel="stylesheet" href="/include/codemirror/solarized.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/pastel-on-dark.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/custom.css" type="text/css" />
+	<link rel="stylesheet" href="/include/codemirror/custom-reverse.css" type="text/css" />
 
 	<link rel="stylesheet" href="/include/codemirror/custom-editor.css" type="text/css" />
 
@@ -87,7 +88,8 @@
 			          </a>
 			          <ul class="dropdown-menu" role="menu">
 			            <li>
-							<a href="#popUpChangePicture" data-toggle="modal" >change profile picture</a>
+							<a  data-animation="am-fade-and-scale" data-placement="center" 
+		           data-template="/html/templates/popups/popup_change_picture.html" bs-modal="modal" container="body">change profile picture</a>
 						</li>
 						<li>
 							<a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a>
@@ -120,7 +122,9 @@
 		        		</div>
 		        	</div>
 		        </div>
-		        <a href="#" class="linkclass send-feedback" data-animation="am-fade-and-scale" data-placement="center" data-template="/html/templates/popups/popup_feedback.html" bs-modal="modal">Send Us Feedback!</a>
+		        <a href="#" class="linkclass send-feedback" 
+		           data-animation="am-fade-and-scale" data-placement="center" 
+		           data-template="/html/templates/popups/popup_feedback.html" bs-modal="modal">Send Us Feedback!</a>
 			</div>
 
 	        <!-- CONTENT -->
@@ -272,6 +276,7 @@
 	<script src="/js/services/mocks.js"></script>
 	<script src="/js/services/user.js"></script>
 	<script src="/js/services/testRunner.js"></script>
+    <script src="/js/services/fileUpload.js"></script>
 
 
 	<script src="/js/services/testFactory.js"></script>

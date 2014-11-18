@@ -87,6 +87,19 @@ myApp.controller('AppController', ['$scope','$rootScope','$firebase','$http','$i
 }]);
 
 
+myApp.controller('UserProfileController',['$scope','$rootScope','$timeout','fileUpload',function($scope,$rootScope,$timeout,fileUpload){
+	$scope.imageUrl = '/user/picture?userId='+$rootScope.workerId+'&t='+(new Date().getTime());
+	$scope.uploadFile = function(){
+        var file = $scope.image;
+        var uploadUrl = "/user/pictureChange";
+
+        fileUpload.uploadFileToUrl(file, uploadUrl);
+
+        $timeout(function(){ $scope.imageUrl = '/user/picture?userId='+$rootScope.workerId+'&t='+ (new Date().getTime()); },500);
+    };
+		    
+}]);
+
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////

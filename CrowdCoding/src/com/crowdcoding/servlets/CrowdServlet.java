@@ -352,6 +352,8 @@ public class CrowdServlet extends HttpServlet
 		    // persist image
 		    ofy().save().entity(picture).now();
 
+		    System.out.println("SUCCESS UPLOAD");
+		    
 		    // print success
 		    res.setContentType("text/plain");
 		    res.getWriter().append("success");
