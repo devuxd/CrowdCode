@@ -68,6 +68,10 @@
 		</div>
 	</div>
 
+
+					<alertcontainer></alertcontainer>
+					<div class="clearfix"></div>
+
 	<div class="section-cols" >
 		<div class="container-flex-row">
 			<div class="section section-help" style="width:30%">
@@ -84,14 +88,14 @@
 				<div class="section-title" >
 					WRITE TEST 
 				</div>
-				<alertcontainer></alertcontainer>
-				<div class="clearfix"></div>
 				<div class="section-content" >
+
 					
 					<div id="simpleTest" ng-hide="dispute">
 						<p>Provide a JSON object literal of the specified type for each parameter and the expected
 					    return value. If you need help for the available data structures, check the box on the left. </p>
 
+<<<<<<< HEAD
 					    <div class="form-group"
 					    	 ng-form="inputForm" 
 					         ng-repeat="(index,paramName) in funct.paramNames" 
@@ -126,10 +130,52 @@
 									<span>There are JSON errors. Please fix them:</span>
 									<ul ng-repeat="error in form.output.$error.json_errors">
 										<li>{{error}}</li>
+=======
+					    <table style="width:100%" class="test spacing">
+					    	<!-- form for each input parameter of the function -->
+							<tr ng-form="inputForm" ng-repeat="(index,paramName) in funct.paramNames">
+								<td>
+									<b>{{paramName}}</b> ({{funct.paramTypes[index]}}) <br />
+								</td>
+								<td>
+									
+									<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" ng-show="false"></textarea>
+									<ace-edit-json ng-model="testData.inputs[index]" focus-ace=" index == 0" min-lines="2"></ace-edit-json>
+
+									
+
+									<ul class="help-block pull-left" ng-show="inputForm.$invalid && inputForm.$dirty">
+										<li ng-show="inputForm.input.$error.required" >This field is required!</li> 
+										<li ng-show="inputForm.input.$error.json" ng-repeat="error in inputForm.input.$error.json">{{error}}</li>
 									</ul>
-								</li>
-							</ul>
-						</div> <!-- /. FORM GROUP TEST OUTPUT -->
+
+									<a href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index])" class="btn btn-primary btn-mini pull-right">Paste Example </a>
+									
+									<span class="clearfix"></span>
+
+								</td>
+							</tr>
+							<!-- form for the output of the function -->
+							<tr ng-form="outputForm" ng-if="funct.returnType!=''" >
+								<td>
+									<b>return value</b> ({{funct.returnType}}) <br />
+								</td>
+								<td>
+									<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json-validator="{{funct.returnType}}" ></textarea>
+									<ace-edit-json ng-model="testData.output" min-lines="2"></ace-edit-json>
+
+									<a href="#" ng-click="testData.output=loadExample(funct.returnType)" class="btn btn-primary btn-mini pull-right">Paste Example </a>
+									<ul class="help-block pull-left" ng-show="outputForm.$invalid && outputForm.$dirty">
+										<li ng-show="outputForm.output.$error.required" >This field is required!</li> 
+										<li ng-show="outputForm.output.$error.json" ng-repeat="error in outputForm.output.$error.json" >{{error}}</li>
+>>>>>>> origin/arturo
+									</ul>
+
+									<span class="clearfix"></span>
+
+								</td>
+							</tr>
+						</table>
 
 					</div> <!-- /. WRITE TEST DIV -->
 

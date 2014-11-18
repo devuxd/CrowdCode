@@ -318,64 +318,56 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 ///////////////////////////////
 //  REUSE SEARCH CONTROLLER //
 ///////////////////////////////
-myApp.controller('ReuseSearchController', ['$scope','$rootScope','$firebase','$alert','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,$alert,testsService,functionsService, ADTService) {
+myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService', function( $scope, $alert, functionsService ) {
 
-	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
-	$scope.reuseSearch={};
-	$scope.reuseSearch.functions=[];
+	// INITIALIZATION OF FORM DATA MUST BE DONE HEREù
+
 
 	// set selected to -2 to initialize the default value
 	//-2 nothing selected (need an action to submit)
 	//-1 no function does this
 	// 0- n index of the function selected
+	$scope.selectedResult = -2;
+	$scope.results        = functionsService.findMatches('', $scope.funct.name);
+
 
 	var code = functionsService.renderDescription($scope.funct) + $scope.funct.header+ $scope.funct.code;
-	$scope.reuseSearch.selected=-2;
-	$scope.reuseSearch.functions= functionsService.findMatches('', $scope.funct.name);
+
 
 	// search for all the functions that have $scope.reuseSearch.text in theirs description or header
-
 	$scope.doSearch = function(){
-		$scope.reuseSearch.selected=-2;
-		$scope.reuseSearch.functions= functionsService.findMatches($scope.reuseSearch.text,$scope.funct.name);
+		$scope.selectedResult = -2 ;
+		$scope.results        = functionsService.findMatches( $scope.text, $scope.funct.name );
 	};
 
+	$scope.select = function(index){
+		$scope.selectedResult = index;
+	}
+
 	$scope.codemirrorLoaded = function(codeMirror){
-		//Retreves the code of the function that generated the pseudocall
 		codeMirror.setValue(code);
 		codeMirror.setOption("readOnly", "true");
 		codeMirror.setOption("theme", "custom");
 		codeMirror.setSize(null,'auto');
-
 		codeMirror.refresh();
 	};
 
 	$scope.$on('collectFormData',function(event,microtaskForm){
 
-		var error="";
+		if( $scope.selectedResult == -2 ){
 
-		if($scope.reuseSearch.selected===-2)
-			error= 'Choose a function or select the button "No funtion does this"';
-
-		if(error!=="")
-			$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
-		else {
-
-		//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
-		if($scope.reuseSearch.selected==-1)
-		{
-			formData = {  functionName: "",
-						  noFunction: true
-						};
+			var error = 'Choose a function or select the checkbox "No funtion does this"';
+			$alert({title: 'Error!', content: error, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+		
+		} else {
+			//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
+			if( $scope.selectedResult == -1 )
+				formData = {  functionName: "", noFunction: true };
+			else 
+				formData = { functionName: $scope.results[ $scope.selectedResult ].value.name, noFunction: false };
+			
+			$scope.$emit('submitMicrotask',formData);
 		}
-		else
-		{
-			formData = { functionName: $scope.reuseSearch.functions[$scope.reuseSearch.selected].value.name,
-						 noFunction: false
-					};
-		}
-		$scope.$emit('submitMicrotask',formData);
-	}
 	});
 
 }]);
@@ -737,48 +729,48 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 		return ADTService.getByName(ADTName).example;
 	};
 
+	var alertObj = null; // initialize alert obj
 
 	$scope.$on('collectFormData',function(event,microtaskForm){
 
-		var error="";
-
-		if(microtaskForm.$invalid)
-			error= 'Fix all errors before submit';
-
-		if(error!=="")
-			$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
-		else {
-
-		if($scope.dispute){
-			// return jSON object
-			formData = {functionVersion: $scope.funct.version,
-						code: '',
-						inDispute: true,
-						disputeText: $scope.testData.disputeText,
-						hasSimpleTest: true,
-						simpleTestInputs: [],
-						simpleTestOutput: '' };
+		if(microtaskForm.$invalid){
+			if( alertObj != null ) alertObj.destroy(); // avoid multiple alerts
+			var error= 'Fix all errors before submit';
+			alertObj = $alert({title: 'Error!', content: error, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
 		} else {
+			
+			if($scope.dispute){
+				// return jSON object
+				formData = {functionVersion: $scope.funct.version,
+							code: '',
+							inDispute: true,
+							disputeText: $scope.testData.disputeText,
+							hasSimpleTest: true,
+							simpleTestInputs: [],
+							simpleTestOutput: '' };
+			} else {
 
-			// build the test code
-			var testCode = 'equal('+$scope.funct.name+'(';
-			angular.forEach($scope.testData.inputs, function(value, key) {
-			  testCode +=  value ;
-			  testCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
-			});
-			testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\');' ;
+				// build the test code
+				var testCode = 'equal('+$scope.funct.name+'(';
+				angular.forEach($scope.testData.inputs, function(value, key) {
+				  testCode +=  value ;
+				  testCode +=  (key!=$scope.testData.inputs.length-1) ? ',' : '';
+				});
+				testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\');' ;
 
-			formData = { functionVersion: $scope.funct.version,
-						 code: testCode,
-						 hasSimpleTest: true,
-						 inDispute: false,
-						 disputeText: '',
-		     			 simpleTestInputs: $scope.testData.inputs,
-		     			 simpleTestOutput: $scope.testData.output };
+				formData = { functionVersion: $scope.funct.version,
+							 code: testCode,
+							 hasSimpleTest: true,
+							 inDispute: false,
+							 disputeText: '',
+			     			 simpleTestInputs: $scope.testData.inputs,
+			     			 simpleTestOutput: $scope.testData.output };
+
+
+			}
+			$scope.$emit('submitMicrotask',formData);
 		}
-	}
 
-		$scope.$emit('submitMicrotask',formData);
 	});
 
 }]);

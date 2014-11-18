@@ -10,6 +10,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 	var lastId = 0;
 	var objectsList = {};
+	var count = 0;
 
 	return $FirebaseArray.$extendFactory({
 
@@ -32,6 +33,8 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 				objectsList[ snap.name() ] = new Test( snap.val() ); 
 				if( parseInt(snap.name()) > lastId) 
 					lastId = parseInt(snap.name());
+
+				count++;
 			}
 		},
 
@@ -157,6 +160,9 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			});
 
 			return stubs;
+		},
+		getCount: function(){
+			return count;
 		}
 
 	});

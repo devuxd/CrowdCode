@@ -77,7 +77,8 @@
 			    </div>
 
 				<ul class="nav navbar-nav">
-			        <li><a href="#"><strong>Current Project:</strong>{{ projectId }}</a></li>
+			        <li><a href="#"><strong>project:</strong> {{ projectId }}</a></li>
+			        <li><a href="#"><project-stats></project-stats></a></li>
 			    </ul>
 			    <ul class="nav navbar-nav navbar-right">
 			        <li class="dropdown">
@@ -89,7 +90,8 @@
 			          <ul class="dropdown-menu" role="menu">
 			            <li>
 							<a  data-animation="am-fade-and-scale" data-placement="center" 
-		           data-template="/html/templates/popups/popup_change_picture.html" bs-modal="modal" container="body">change profile picture</a>
+							    data-template="/html/templates/popups/popup_change_picture.html" 
+							    bs-modal="modal" container="body">change profile picture</a>
 						</li>
 						<li>
 							<a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a>

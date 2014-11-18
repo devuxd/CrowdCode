@@ -35,6 +35,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
 		this.getParamNamesById = function (functionId) { return getParamNamesById(functionId);};
+		this.getCount = function(){ return (functions == undefined)?0:functions.length; };
 	 	
 	 	this.isLoaded = function() { return loaded; };
 		this.getAll = function(){ return functions;	};
