@@ -63,7 +63,7 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 		{
 			if (alert!==null) alert.destroy();
 
-			alert=$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+			alert=$alert({title: 'Error!', content: error, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
 		}
 		else {
 			// prepare form data for submission
@@ -589,35 +589,31 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 ////////////////////////////////////////////
 myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$firebase','$alert','testsService', 'functionsService', 'ADTService', function($scope,$rootScope,$firebase,$alert,testsService,functionsService, ADTService) {
 
-	//Set the form in line
-	$rootScope.inlineForm = true;
+	// initialization of models 
+	$scope.description  = "";
+	$scope.returnType   = "";
+	$scope.functionName = ""
+	$scope.parameters   = [];
 
-	$scope.writeFunctionDescription={};
-	//inizialize the empty array of the parameters
-	$scope.writeFunctionDescription.parameters=[];
 
-
-   // addParameter and deleteParameter utils function for microtask WRITE FUNCTION DESCRIPTION
+    // addParameter and deleteParameter 
 	$scope.addParameter = function(){
-
-		var parameter = { text: '', added: true, deleted: false, id: $scope.writeFunctionDescription.parameters.length };
-			$scope.writeFunctionDescription.parameters.push(parameter);
+		var parameter = { text: '', added: true, deleted: false, id: $scope.parameters.length };
+		$scope.parameters.push(parameter);
 	};
-
-
 	$scope.deleteParameter = function(index){
-		$scope.writeFunctionDescription.parameters.splice(index,1);
+		$scope.parameters.splice(index,1);
 	};
 
 	//prepare the codemirror Value
-	$scope.writeFunctionDescription.code=functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+	$scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
 
 	//Setup the codemirror box with the code of the function that created the pseudocall
 	$scope.codemirrorLoaded = function(codeMirror){
 		codeMirror.setOption("readOnly", "true");
 		codeMirror.setOption("theme", "custom");
 		codeMirror.setSize(null,'auto');
-		codeMirror.setValue($scope.writeFunctionDescription.code);
+		codeMirror.setValue($scope.code);
 		codeMirror.refresh();
 	};
 
@@ -626,33 +622,28 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 
 	$scope.$on('collectFormData',function(event,microtaskForm){
 
-		var error="";
-
-		if(microtaskForm.$invalid)
-			error= 'Fix all errors before submit';
-
-		if(error!=="")
-			$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
-		else {
+		if(microtaskForm.$invalid){
+			var error = 'Fix all errors before submit';
+			$alert({title: 'Error!', content: error, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+		} else {
 
 			var paramNames=[];
 			var paramTypes=[];
 			var paramDescriptions=[];
 
-			for(var i=0; i<$scope.writeFunctionDescription.parameters.length;i++)
-				{
-				paramNames.push($scope.writeFunctionDescription.parameters[i].paramName);
-				paramTypes.push($scope.writeFunctionDescription.parameters[i].paramType);
-				paramDescriptions.push($scope.writeFunctionDescription.parameters[i].paramDescritpion);
-				}
+			for(var i=0; i<$scope.parameters.length;i++){
+				paramNames.push($scope.parameters[i].paramName);
+				paramTypes.push($scope.parameters[i].paramType);
+				paramDescriptions.push($scope.parameters[i].paramDescription);
+			}
 
 			formData = { name: $scope.writeFunctionDescription.functionName,
-					    returnType: $scope.writeFunctionDescription.returnType===undefined ? '' : $scope.writeFunctionDescription.returnType ,
+					    returnType: $scope.returnType===undefined ? '' : $scope.returnType ,
 					    paramNames: paramNames,
 					    paramTypes: paramTypes,
 					    paramDescriptions: paramDescriptions,
-				     	description: $scope.writeFunctionDescription.description,
-						header: functionsService.renderHeader($scope.writeFunctionDescription.functionName, paramNames)
+				     	description: $scope.description,
+						header: functionsService.renderHeader($scope.functionName, paramNames)
 						};
 
 			$scope.$emit('submitMicrotask',formData);

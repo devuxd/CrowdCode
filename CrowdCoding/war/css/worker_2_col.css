@@ -20,6 +20,35 @@
 	 margin-bottom: 10px !important;
 }
 
+
+/* UTILS */
+.no-padding { padding:0px !important; }
+
+.reset-padding { padding:0px !important; margin:0px !important; }
+
+.fullwidth  { width:100%; }
+.fullheight { height:100%; }
+
+.container-flex-row, .container-flex-column {
+	display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+	display: -ms-flexbox;      /* TWEENER - IE 10 */
+	display: -webkit-flex;     /* NEW - Chrome */
+	display: flex;
+}
+.container-flex-row {
+	flex-direction: row;
+	align-items: stretch;
+	height:100%;
+	width:100%; !important
+}
+
+.container-flex-column {
+	align-items: stretch;
+	flex-direction: column;
+}
+
+
 /* --------- BOOTSTRAP OVERWRITE ---------  */
 .btn:focus {outline:none;}
 .btn { font-family: 'Lato' !important;font-style: normal; font-weight: 400;}
@@ -55,33 +84,10 @@
 .navbar img { width:20px; }
 
 .list-group { margin: 0px;}
+.control-label { padding-right:10px !important; }
 
 /* --------- CODEMIRROR OVERWRITE ---------  */
 .CodeMirror { border: none; font-size: 1.1em;}
-
-
-/* UTILS */
-.fullwidth  { width:100%; }
-.fullheight { height:100%; }
-
-.container-flex-row, .container-flex-column {
-	display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
-	display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
-	display: -ms-flexbox;      /* TWEENER - IE 10 */
-	display: -webkit-flex;     /* NEW - Chrome */
-	display: flex;
-}
-.container-flex-row {
-	flex-direction: row;
-	align-items: stretch;
-	height:100%;
-	width:100%; !important
-}
-
-.container-flex-column {
-	align-items: stretch;
-	flex-direction: column;
-}
 
 
 /* GENERAL STYLES AND LAYOUT */
@@ -169,12 +175,10 @@ h1, h2, h3, h4 {
 	font-weight: 600;
 	color: #3F81AC;
 }
-.section-title.no-padding { padding:0px; }
 .section-content {
 	padding:5px;
 }
 
-.section-content.no-padding { padding:0px; }
 
 
 .section.section-description-2 { background-color:rgba(63, 129, 172, 0.65); }
@@ -183,7 +187,7 @@ h1, h2, h3, h4 {
 .section.section-help { background-color:#BFC7CD; }
 .section.section-help .section-title { color:#5F5F5F; }
 
-.help-block { margin:0px; padding:0px; list-style: none; color: red;}
+.help-block { margin:0px; padding:0px; list-style: none; color: rgb(159, 17, 17);}
 
 
 .section.section-form { background-color:lightgray; }
@@ -669,7 +673,7 @@ tutorial .btn-next { position: absolute; right: 0; }
 .ace-editor .ace_hidden-cursors {opacity:0} 
 .ace-editor-test { height: 100px; width: 100%; }
 
-.btn-mini { font-size:0.7em; text-transform: uppercase; padding: 3px 3px; border-radius: 0px; background-color: rgba(63, 129, 172, 0.8); }
+.btn-mini { font-size:0.8em; text-transform: uppercase; padding: 3px 3px; border-radius: 0px; background-color: rgba(63, 129, 172, 0.8); }
 
 .stats { }
 .stats span {  padding-left:10px;}

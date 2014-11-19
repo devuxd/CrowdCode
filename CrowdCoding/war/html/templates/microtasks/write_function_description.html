@@ -20,9 +20,8 @@
 
 		</div>
 		<div class="section-content" >
-			The crowd found that there is not any function yet to solve the pseudocall: <BR>
-			<span class="pseudoCall">{{ microtask.callDescription}}</span><BR>
-			Looking at the context, can you implement a function to substitute the pseudocall?
+			Can you write the description of the function that will replace the pseudocall in the following function code?
+			<!--<span class="pseudoCall">{{ microtask.callDescription}}</span>-->
 		</div>
 	</div>
 
@@ -32,9 +31,14 @@
 		</div>
 		<div class="section-content no-padding" >
 			<!--<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>-->
-			<code-mirror-readonly code="writeFunctionDescription.code"></code-mirror-readonly>
+			<code-mirror-readonly code="code"></code-mirror-readonly>
 		</div>
 	</div>
+
+
+	<alertcontainer></alertcontainer>
+
+
 	<div class="section-cols" >
 		<div class="container-flex-row">
 			<div class="section section-help" style="width:30%">
@@ -47,98 +51,83 @@
 			</div>
 
 			<div class="section section-form" style="width:70%;" >
-				<alertcontainer></alertcontainer>
-				<div class="clearfix"></div>
-				<span ng-class="{ 'has-error': microtaskForm.description.$dirty && microtaskForm.description.$invalid , 'has-success': microtaskForm.description.$valid}">
-					<span>Description:</span>
-					<textarea
-					id="functionDescription" class="col-md-8 form-control input-sm" draggable="false" name="description"
-					placeholder="Can you briefly describe the purpose and behavior of the function?" ng-model="writeFunctionDescription.description" required focus>
-					</textarea>
+				<div class="section-title" >
+					DESCRIPTION EDITOR
+				</div>
+				<div class="section-content">
+					<div class="form-horizontal" role="form">
+					  	<div class="form-group">
+						    <label for="description" class="col-sm-2 control-label reset-padding">description</label>
+						    <div class="col-sm-10 reset-padding">
+						      	<textarea class="form-control" name="description" placeholder="briefly describe the purpose and the behavior of the function" ng-model="description" required></textarea>
+								<span class="help-block" ng-show="microtaskForm.description.$dirty && microtaskForm.description.$invalid && microtaskForm.description.$error.required">
+									This field is required!
+								</span>
+						    </div>
 
-					<span class="help-block" ng-show="microtaskForm.description.$dirty && microtaskForm.description.$invalid && microtaskForm.description.$error.required">
-						This field is required!
-					</span>
-				</span>
+					  	</div>
+					  	<div class="form-group">
+						    <label for="returnType" class="col-sm-2 control-label reset-padding">return data type</label>
+						    <div class="col-sm-10 reset-padding">
+						      	<input type="text" class="form-control" name="returnType" ng-model="returnType" ng-model-options="{ updateOn: 'blur' }"  adt-validator required placeholder="insert the return data type" >
+						      	<ul class="help-block" ng-show="microtaskForm.returnType.$dirty && microtaskForm.returnType.$invalid">
+									<li ng-show="microtaskForm.returnType.$error.required">This field is required!</li>
+									<li ng-show="microtaskForm.returnType.$error.adt"> {{microtaskForm.returnType.$error.adt}}</li>
+								</ul>
+						    </div>
 
-				<span class="col-md-12" ng-class="{ 'has-error': microtaskForm.returnType.$dirty && microtaskForm.returnType.$invalid , 'has-success': microtaskForm.returnType.$valid}">
-					<span class="col-md-2">returns</span>
-					<span class="col-md-3">
-						<input class="form-control input-sm" type="text" id="returnType"
-						placeholder="return type" name="returnType" ng-model="writeFunctionDescription.returnType" ng-model-options="{ updateOn: 'blur' }"  adt-validator required>
- 					</span>
- 					<ul class="help-block" ng-show="microtaskForm.returnType.$dirty && microtaskForm.returnType.$invalid">
-						<li ng-show="microtaskForm.returnType.$error.required">This field is required!</li>
-						<li ng-show="microtaskForm.returnType.$error.adt"> {{microtaskForm.returnType.$error.adt}}</li>
-					</ul>
-				</span>
-
-				<span class="col-md-12" ng-class="{ 'has-error': microtaskForm.functionName.$dirty && microtaskForm.functionName.$invalid , 'has-success': microtaskForm.functionName.$valid}">
-					<span class="col-md-2">function</span>
-					<span class="col-md-3">
-						<input class="form-control input-sm" type="text" id="name"
-						placeholder="functionName" name="functionName" ng-model="writeFunctionDescription.functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" name-validator>
-
-						<ul class="help-block" ng-show="microtaskForm.functionName.$dirty && microtaskForm.functionName.$invalid">
-							<li ng-show="microtaskForm.functionName.$error.required">This field is required!</li>
-							<li ng-show="microtaskForm.functionName.$error.pattern">Is not a valid function name!</li>
-							<li ng-show="microtaskForm.functionName.$error.name"> {{microtaskForm.functionName.$error.name}}</li>
+						    
 						</ul>
-					</span>
-
-					<span class="col-md-1">(</span>
-				</span>
-
-
-				<ng-form name="parametermicrotaskForm" ng-repeat="(index,test) in writeFunctionDescription.parameters">
-					<div class="col-md-9">
-						<div class="col-md-3 form-group"
-						ng-class="{ 'has-error': parametermicrotaskForm.paramName.$dirty && parametermicrotaskForm.paramName.$invalid , 'has-success': parametermicrotaskForm.paramName.$valid}">
-
-							<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramName" name="paramName"
-								placeholder="Parameter Name" required ng-pattern="/^[a-zA-Z0-9_]+$/"/>
-
-							<ul class="help-block" ng-show="parametermicrotaskForm.paramName.$dirty && parametermicrotaskForm.paramName.$invalid">
-								<li ng-show="parametermicrotaskForm.paramName.$error.required">This field is required!</li>
-								<li ng-show="parametermicrotaskForm.paramName.$error.pattern">Is not a valid parameter name!</li>
-							</ul>
-
+					  	</div>
+					  	<div class="form-group">
+						    <label for="functionName" class="col-sm-2 control-label reset-padding">function name</label>
+						    <div class="col-sm-10 reset-padding">
+						      	<input type="text" class="form-control" name="functionName" ng-model="functioName" required ng-pattern="/^[a-zA-Z0-9_]+$/" name-validator placeholder="insert the function name">
+						    	<ul class="help-block" ng-show="microtaskForm.functionName.$dirty && microtaskForm.functionName.$invalid">
+									<li ng-show="microtaskForm.functionName.$error.required">This field is required!</li>
+									<li ng-show="microtaskForm.functionName.$error.pattern">Is not a valid function name!</li>
+									<li ng-show="microtaskForm.functionName.$error.name"> {{microtaskForm.functionName.$error.name}}</li>
+								</ul>
+						    </div>
+					  	</div>
+					  	<div class="form-group">
+						    <label class=" control-label col-sm-2 reset-padding">parameters</label>
+							<div class="form-group col-sm-10 reset-padding" >
+								<div ng-form="parameter" class="form-horizontal" ng-repeat="(index,parameter) in parameters">
+								    <div class="col-sm-3 reset-padding">
+								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name"/>
+								      	<ul class="help-block" ng-show="parametermicrotaskForm.paramName.$dirty && parametermicrotaskForm.paramName.$invalid">
+											<li ng-show="parametermicrotaskForm.paramName.$error.required">This field is required!</li>
+											<li ng-show="parametermicrotaskForm.paramName.$error.pattern">Is not a valid parameter name!</li>
+										</ul>
+									</div>
+									<div class="col-sm-3 reset-padding">
+								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramType" ng-model-options="{ updateOn: 'blur' }" required adt-validator placeholder="type"/>
+								      	<ul class="help-block" ng-show="parametermicrotaskForm.paramType.$dirty && parametermicrotaskForm.paramType.$invalid">
+											<li ng-show="parametermicrotaskForm.paramType.$error.required">This field is required!</li>
+											<li ng-show="parametermicrotaskForm.paramType.$error.adt">{{parametermicrotaskForm.paramType.$error.adt}}</li>
+										</ul>
+									</div>
+									<div class="col-sm-5 reset-padding">
+								      	<input type="text" class="form-control pull-left" placeholder="description"/>
+								      	<ul class="help-block" ng-show="parametermicrotaskForm.paramDescritpion.$dirty && parametermicrotaskForm.paramDescritpion.$invalid">
+											<li ng-show="parametermicrotaskForm.paramDescritpion.$error.required">This field is required!</li>
+										</ul>
+									</div>
+									<div class="col-sm-1 reset-padding">
+								      	<button ng-click="deleteParameter(index)" class="btn  pull-right">X</button>
+								    </div>
+								</div>
+						  	</div>
 						</div>
-
-						<span class="col-md-1"> , //
-						</span>
-
-						<div class="col-md-3 form-group"
-							ng-class="{ 'has-error': parametermicrotaskForm.paramType.$dirty && parametermicrotaskForm.paramType.$invalid , 'has-success': parametermicrotaskForm.paramType.$valid}">
-
-							<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramType" ng-model-options="{ updateOn: 'blur' }" name="paramType"
-								placeholder="Parameter Type" adt-validator required/>
-
-							<ul class="help-block" ng-show="parametermicrotaskForm.paramType.$dirty && parametermicrotaskForm.paramType.$invalid">
-								<li ng-show="parametermicrotaskForm.paramType.$error.required">This field is required!</li>
-								<li ng-show="parametermicrotaskForm.paramType.$error.adt">{{parametermicrotaskForm.paramType.$error.adt}}</li>
-							</ul>
-
-						</div>
-						<span class="col-md-1"> - </span>
-
-						<div class="col-md-3 form-group"
-							ng-class="{ 'has-error': parametermicrotaskForm.paramDescritpion.$dirty && parametermicrotaskForm.paramDescritpion.$invalid , 'has-success': parametermicrotaskForm.paramDescritpion.$valid}">
-							<input class="form-control input-sm" type="text" ng-model="writeFunctionDescription.parameters[index].paramDescritpion" name="paramDescritpion"
-								placeholder="Parameter Description" required press-enter="addParameter()"/>
-
-							<ul class="help-block" ng-show="parametermicrotaskForm.paramDescritpion.$dirty && parametermicrotaskForm.paramDescritpion.$invalid">
-								<li ng-show="parametermicrotaskForm.paramDescritpion.$error.required">This field is required!</li>
-							</ul>
-
-						</div>
-						<div class="col-md-1">
-							<button ng-click="deleteParameter(index)" class="btn btn-sm">X</button>
-						</div>
+					  	<div class="form-group">
+					  		<div class="col-sm-12 reset-padding">
+					  			<button ng-click="addParameter()" class="btn btn-mini pull-right">Add Parameter</button>
+					  		</div>
+					  	</div>
 					</div>
-				</ng-form>
-				<button ng-click="addParameter()" class="btn btn-sm">Add Parameter</button>
-				<javascrpit-helper></javascrpit-helper>
+
+				</div>
 			</div>
 
 		</div>
