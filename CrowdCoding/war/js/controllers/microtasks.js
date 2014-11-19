@@ -151,10 +151,10 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','$alert'
 				error= "Select at least 1 star to evaluate the work";
 
 			if(microtaskForm.$invalid)
-				error= "The review form can't be empty";
+				error= "Please write an explanation for your review";
 		//	console.log("here");
 			if(error!=="")
-				$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+				$alert({title: 'Error!', content: error, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
 			else {
 
 				formData = {
@@ -425,7 +425,7 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','$ale
  	};
 
 
-$scope.$on('collectFormData',function(event,microtaskForm){
+	$scope.$on('collectFormData',function(event,microtaskForm){
 
 		var error="";
 
@@ -697,7 +697,6 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 	// LOAD THE VERSION OF THE FUNCTION WHEN THE MICROTASK HAS BEEN SPAWNED
 	else {
 		$scope.code = "";
-		console.log("FIND FUN VERSION");
 		//load the version of the function with witch the test cases where made
 
 		var functionVersionSync = {};
@@ -709,9 +708,7 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 
 		$scope.funct = functionVersionSync.$asObject();
 		$scope.funct.$loaded().then(function(){
-			console.log($scope.funct);
 			$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header;
-			console.log($scope.code);
 		});
 	}
 

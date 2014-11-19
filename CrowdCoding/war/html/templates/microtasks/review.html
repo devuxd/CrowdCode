@@ -144,7 +144,7 @@
 			</div>
 			<div class="section-content" >
 				After the change of the following callee function the user was asked if necessary to change the code of the caller function <br />
-				<div ng-bind-html="review.microtask.oldFullDescription |diff:review.microtask.newFullDescription | newline" ></div>
+				<div ng-bind-html="review.microtask.oldFullDescription" ></div>
 				<br>
 				Can you rate his work?
 
@@ -212,6 +212,8 @@
 		</div>
 	</div>
 
+	<alertcontainer></alertcontainer>
+
 	<div class="section-cols" >
 		<div class="container-flex-row">
 			<div class="section section-help" style="width:30%">
@@ -257,8 +259,6 @@
 						class="help-block" ng-show="microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
 					</span>
 				</div>
-				<alertcontainer></alertcontainer>
-				<div class="clearfix"></div>
 			</div>
 
 		</div>

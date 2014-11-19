@@ -10,7 +10,9 @@ myApp.directive('json1', ['ADTService', function(ADTService) {
 
             ctrl.$formatters.unshift(function(viewValue) {
                 // initialize JSONValidator and execute errorCheck
-                validator.initialize(ADTService.getNameToADT, viewValue, attrs.json1);
+
+                validator.initialize(ADTService.getNameToADT, viewValue, attrs.jsonValidator);
+
                 validator.errorCheck();
                 if (!validator.isValid() && viewValue !== undefined) {
                     ctrl.$setValidity('json1', false);
@@ -39,7 +41,40 @@ myApp.directive('adtValidator', ['ADTService', function(ADTService) {
 
             ctrl.$parsers.unshift(function(viewValue) {
 
-                var valid = ADTService.isValidTypeName(viewValue) || viewValue === "";
+                var valid =  viewValue === ""|| viewValue === undefined || ADTService.isValidTypeName(viewValue) ;
+                if (!valid) {
+
+                    ctrl.$setValidity('adt', false);
+                    ctrl.$error.adt = "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
+                    return viewValue;
+                } else {
+                    ctrl.$setValidity('adt', true);
+
+                    return viewValue;
+                }
+
+            });
+
+        }
+    };
+}]);
+
+//<div name-validator ng-model="somevar"></div>
+myApp.directive('functionNameValidator', ['functionsService', function(functionsService) {
+
+
+    var errors = [];
+    var valid;
+
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attrs, ctrl) {
+
+            ctrl.$parsers.unshift(function(viewValue) {
+                var functionsName=functionsService.getAllDescribedFunctionNames();
+                var valid =  viewValue === ""|| viewValue === undefined || (functionsName.indexOf(viewValue) == -1);
+>>>>>>> origin/arturo
 
                 if (!valid) {
 
@@ -79,7 +114,7 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
             allFunctionCode = functionsService.getAllDescribedFunctionCode(functionId)+ "function printDebugStatement(){}" ;
 
             ctrl.$formatters.unshift(function(viewValue) {
-                console.log("FUNCTION VALIDATOR");
+
                 code = viewValue;
                 validate(code);
 
@@ -127,7 +162,7 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
         try {
             ast = esprima.parse(code, {loc: true});
         } catch (e) {
-            console.log("Error in running Esprima. " + e.name + " " + e.message);
+
             errors.push("Error " + e.message);
             return false;
         }
@@ -424,13 +459,6 @@ myApp.directive('collapsableList', ['$compile', '$timeout', function($compile, $
             var $toggler = $(toCompile);
             $element.append($toggler);
             $compile($element.contents())($scope);
-
-            console.log($element.find('.toggler'));
-            /*
-                        $scope.activeElement = 0;
-                        $scope.doToggle = function(key){
-                            $scope.activeElement = key;
-                        }*/
         },
         controller: function($scope, $element) {
 
@@ -620,7 +648,6 @@ myApp.directive('resizer', function($document) {
                 else
                     console.log("DONT MATCH");
 
-                console.log([totalSizePx, topHeightPx + resizerHeightPx + bottomHeightPx, topHeightPx, resizerHeightPx, bottomHeightPx]);
 
                 $($attrs.resizerTop).css({
                     height: topHeightPx + 'px'
@@ -661,36 +688,34 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
         controller: function($scope, $element) {
             var loadData = {
                 'WriteFunction': function(news) {
-                    console.log('WriteFunction');
+
                     news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
                 },
 
                 'WriteTestCases': function(news) {
-                    console.log('WriteTestCase');
+
                     news.testcases = news.microtask.submission.testCases;
                 },
 
                 'ReuseSearch': function(news) {
-                    console.log('ReuseSearch');
+
                 },
                 'WriteTest': function(news) {
-                    console.log('WriteTest');
+
                     news.test = news.microtask.submission;
                     //news.test=
                 },
                 'WriteFunctionDescription': function(news) {
 
-                    console.log('WriteFunctionDescription');
-
                     news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
                 },
                 'WriteCall': function(news) {
-                    console.log('WriteCall');
+
                     news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
 
                 },
                 'Review': function(news) {
-                    console.log('Review');
+
                     news.microtask = microtasksService.get(news.microtask.microtaskIDUnderReview);
                     news.microtask.$loaded().then(function() {
 
@@ -719,7 +744,7 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
                         news.qualityScore = news.microtask.submission.qualityScore;
                         news.reviewText = news.microtask.submission.reviewText;
                     } else if (angular.isDefined(news.microtask.review)) {
-                        console.log("qualityScore" + news.microtask.review.qualityScore);
+
                         news.qualityScore = news.microtask.review.qualityScore;
                         news.reviewText = news.microtask.review.reviewText;
                     }
@@ -740,7 +765,7 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase) {
             //focusValue: "=syncFocusWith"
         },
         link: function($scope, $element, attrs) {
-            console.log("CHAT DIRECTIVE INITIALIZED");
+
             $rootScope.chatActive = false;
             $rootScope.$on('toggleChat', function() {
                 $element.find('.chat').toggleClass('active');
@@ -949,20 +974,15 @@ myApp.directive('projectStats', function($rootScope,$firebase) {
         scope: true,
         template: '<b>Stats:</b><span class="stats"><span><span class="badge">{{microtaskCountObj.$value}}</span> microtasks</span><span><span class="badge">{{functionsCount}}</span> functions</span><span><span class="badge">{{testsCount}}</span> tests</span></span>',
         link: function($scope, $element) {
-            console.log("STATS DIRECTIVE LINK EXECUTE");
+
             $scope.microtaskCountObj  = $firebase(new Firebase($rootScope.firebaseURL+'/status/microtaskCount')).$asObject();
 
-
-            console.log("FIREBASE URL "+$rootScope.firebaseURL);
             var functionsRef = new Firebase($rootScope.firebaseURL+'/artifacts/functions/');
             $scope.functionsCount = 0;
             functionsRef.on('child_added',function (snapshot){
                 $scope.functionsCount ++;
             });
         
-            
-
-
             var testsRef = new Firebase($rootScope.firebaseURL+'/artifacts/tests');
             $scope.testsCount = 0;
             testsRef.on('child_added',function(snapshot){

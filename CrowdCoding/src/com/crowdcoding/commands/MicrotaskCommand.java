@@ -70,8 +70,8 @@ public abstract class MicrotaskCommand extends Command
 		
 		public void execute(Microtask microtask, Project project)
 		{
-			System.out.println("-- SUBMITTING MICROTASK -- ");
-			System.out.println(jsonDTOData);
+			//System.out.println("-- SUBMITTING MICROTASK -- ");
+			//System.out.println(jsonDTOData);
 			microtask.submit(jsonDTOData, workerID, project);
 		}		
 	}
@@ -136,6 +136,9 @@ public abstract class MicrotaskCommand extends Command
 		public void execute(Microtask microtask, Project project)
 		{
 			Microtask newMicrotask = microtask.copy(project);
+			System.out.println("REISSUING MICROTASK");
+			System.out.println(microtask.toJSON());
+			System.out.println(newMicrotask.toJSON());
 			ProjectCommand.queueMicrotask(newMicrotask.getID(), excludedWorkerID);
 		}	
 	}

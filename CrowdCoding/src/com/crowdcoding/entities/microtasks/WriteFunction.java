@@ -10,6 +10,7 @@ import com.crowdcoding.dto.firebase.WriteFunctionInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.microtasks.WriteTestCases.PromptType;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
@@ -58,7 +59,10 @@ public class WriteFunction extends Microtask
 
     public Microtask copy(Project project)
     {
-    	return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
+    	if(this.promptType==PromptType.SKETCH)
+    		return new WriteFunction(this.function.getValue(),project);
+    	else
+    		return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
     }
 
 	private void WriteFunction(Function function, Project project)
