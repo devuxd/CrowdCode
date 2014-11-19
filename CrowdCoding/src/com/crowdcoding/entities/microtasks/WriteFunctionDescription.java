@@ -48,8 +48,7 @@ public class WriteFunctionDescription extends Microtask
 
     public Microtask copy(Project project)
     {
-    	return new WriteFunctionDescription(this.function.getValue(),this.callDescription,
-    			this.caller.getValue(), project);
+    	return new WriteFunctionDescription(this.function.getValue(),this.callDescription,this.caller.getValue(), project);
     }
 
 	protected void doSubmitWork(DTO dto, String workerID, Project project)

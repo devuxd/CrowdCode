@@ -20,7 +20,6 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
 
         		codeMirror.setOption("tabindex", "-1");
         		codeMirror.setSize(null,'auto');
-                console.log("entro");
                 codeMirror.refresh();
                // functionsService.highlightPseudoSegments(codeMirror,[],false);
 

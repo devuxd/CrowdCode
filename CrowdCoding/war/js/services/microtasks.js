@@ -20,7 +20,7 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase', function
 		{
 			var microtaskSync = $firebase(new Firebase($rootScope.firebaseURL+'/microtasks/'+id));
 			var microtask = microtaskSync.$asObject();
-			console.log(microtask);
+			
 			return microtask;
 		}
 

@@ -82,7 +82,7 @@
 					  	<div class="form-group">
 						    <label for="functionName" class="col-sm-2 control-label reset-padding">function name</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<input type="text" class="form-control" name="functionName" ng-model="functioName" required ng-pattern="/^[a-zA-Z0-9_]+$/" name-validator placeholder="insert the function name">
+						      	<input type="text" class="form-control" name="functionName" ng-model="functioName" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator placeholder="insert the function name">
 						    	<ul class="help-block" ng-show="microtaskForm.functionName.$dirty && microtaskForm.functionName.$invalid">
 									<li ng-show="microtaskForm.functionName.$error.required">This field is required!</li>
 									<li ng-show="microtaskForm.functionName.$error.pattern">Is not a valid function name!</li>

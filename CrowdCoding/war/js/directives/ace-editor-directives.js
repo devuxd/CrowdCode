@@ -40,7 +40,6 @@ myApp.directive('aceEditJson', function() {
                 }
 
                 if( $scope.hasOwnProperty('minLines') && $scope.minLines ){
-                    console.log("MIN LINES = "+$scope.minLines);
                    _editor.setOptions({
                        minLines: $scope.minLines
                     });
