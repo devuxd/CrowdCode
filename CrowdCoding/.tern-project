@@ -1,0 +1,1 @@
+{"ide":{"scriptPaths":[{"type":"FOLDER","path":"war/js/controllers"},{"type":"FILE","path":"war/js/app.js"},{"type":"FILE","path":"war/html/client_request.html"},{"type":"FOLDER","path":"war/js/clientRequest"}]},"libs":["browser","ecma5"],"plugins":{"angular":{}}}

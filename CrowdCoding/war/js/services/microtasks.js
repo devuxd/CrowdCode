@@ -10,9 +10,6 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase', function
 
 
 
-
-
-
 		// Public functions
 		this.get = function(id) { return get(id); };
 		this.submit = function(id, formData){return submit(id, formData);};

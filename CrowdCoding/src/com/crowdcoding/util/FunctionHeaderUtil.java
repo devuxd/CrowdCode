@@ -2,7 +2,6 @@ package com.crowdcoding.util;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-
 import java.util.HashMap;
 import java.util.List;
 

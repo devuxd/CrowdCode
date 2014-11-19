@@ -95,42 +95,6 @@
 						<p>Provide a JSON object literal of the specified type for each parameter and the expected
 					    return value. If you need help for the available data structures, check the box on the left. </p>
 
-<<<<<<< HEAD
-					    <div class="form-group"
-					    	 ng-form="inputForm" 
-					         ng-repeat="(index,paramName) in funct.paramNames" 
-					         ng-class="{ 'has-error': inputForm.input.$dirty && inputForm.input.$invalid , 'has-success': inputForm.input.$valid}" 
-					         >
-							<span for="input">{{paramName}} ({{funct.paramTypes[index]}}): </span>
-							<a href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index])" >Paste Example </a>
-							<ace-edit-json ng-model="testData.inputs[index]" focus-ace=" index == 0" ></ace-editor-json>
-							<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json1="{{funct.paramTypes[index]}}" ng-show="false"></textarea>
-							{{inputForm.input.$dirty}}
-							<ul class="help-block" ng-show="inputForm.input.$invalid ">
-								<li ng-show="inputForm.input.$error.required" >This field is required!</li> 
-								<li ng-show="inputForm.input.$error.json1" >
-									<!--<span>There are JSON errors. Please fix them:</span>-->
-									<ul ng-repeat="error in inputForm.input.$error.json_errors">
-										<li>{{error}}</li>
-									</ul>
-								</li>
-							</ul>
-						</div> <!-- /. FORM GROUP TEST INPUT -->
-
-						<div ng-if="funct.returnType!=''" class="form-group" ng-class="{ 'has-error': form.output.$dirty && form.output.$invalid , 'has-success': form.output.$valid}" >
-							<label for="output">expected Return value ({{funct.returnType}}):</label>
-							<a href="#" ng-click="testData.output=loadExample(funct.returnType)" >Paste Example </a>
-
-							<ace-edit-json ng-model="testData.output" focus-ace></ace-editor-json>
-
-							<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json1="{{funct.returnType}}" ></textarea>
-							<ul class="help-block" ng-show="form.output.$invalid">
-								<!--<li ng-show="form.output.$error.required" >This field is required!</li> -->
-								<li ng-show="form.output.$error.json1" >
-									<span>There are JSON errors. Please fix them:</span>
-									<ul ng-repeat="error in form.output.$error.json_errors">
-										<li>{{error}}</li>
-=======
 					    <table style="width:100%" class="test spacing">
 					    	<!-- form for each input parameter of the function -->
 							<tr ng-form="inputForm" ng-repeat="(index,paramName) in funct.paramNames">
@@ -168,7 +132,6 @@
 									<ul class="help-block pull-left" ng-show="outputForm.$invalid && outputForm.$dirty">
 										<li ng-show="outputForm.output.$error.required" >This field is required!</li> 
 										<li ng-show="outputForm.output.$error.json" ng-repeat="error in outputForm.output.$error.json" >{{error}}</li>
->>>>>>> origin/arturo
 									</ul>
 
 									<span class="clearfix"></span>

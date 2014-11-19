@@ -1,5 +1,5 @@
 // directive for json field validation
-myApp.directive('json1', ['ADTService', function(ADTService) {
+myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -10,16 +10,14 @@ myApp.directive('json1', ['ADTService', function(ADTService) {
 
             ctrl.$formatters.unshift(function(viewValue) {
                 // initialize JSONValidator and execute errorCheck
-
                 validator.initialize(ADTService.getNameToADT, viewValue, attrs.jsonValidator);
-
                 validator.errorCheck();
                 if (!validator.isValid() && viewValue !== undefined) {
-                    ctrl.$setValidity('json1', false);
-                    ctrl.$error.json_errors = validator.getErrors();
+                    ctrl.$setValidity('json', false);
+                    ctrl.$error.json = validator.getErrors();
                     return viewValue;
                 } else {
-                    ctrl.$setValidity('json1', true);
+                    ctrl.$setValidity('json', true);
                     return viewValue;
                 }
             });
@@ -40,7 +38,6 @@ myApp.directive('adtValidator', ['ADTService', function(ADTService) {
         link: function(scope, elm, attrs, ctrl) {
 
             ctrl.$parsers.unshift(function(viewValue) {
-
                 var valid =  viewValue === ""|| viewValue === undefined || ADTService.isValidTypeName(viewValue) ;
                 if (!valid) {
 
@@ -74,15 +71,14 @@ myApp.directive('functionNameValidator', ['functionsService', function(functions
             ctrl.$parsers.unshift(function(viewValue) {
                 var functionsName=functionsService.getAllDescribedFunctionNames();
                 var valid =  viewValue === ""|| viewValue === undefined || (functionsName.indexOf(viewValue) == -1);
->>>>>>> origin/arturo
 
                 if (!valid) {
 
-                    ctrl.$setValidity('adt', false);
-                    ctrl.$error.adt_errors = "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
+                    ctrl.$setValidity('name', false);
+                    ctrl.$error.name = "The function name: "+viewValue+" is already taken, please change it";
                     return viewValue;
                 } else {
-                    ctrl.$setValidity('adt', true);
+                    ctrl.$setValidity('name', true);
                     return viewValue;
                 }
 

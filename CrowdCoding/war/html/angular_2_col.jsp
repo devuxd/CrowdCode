@@ -211,15 +211,10 @@
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script src='/include/esprima.js'></script>
 	<script src='/include/escodegen.browser.js'></script>
-	<!--<script src="/include/diff/diff_match_patch.js"></script>
-	<script src="/include/diff/jquery.pretty-text-diff.js"></script>-->
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
-<!--	<script src="/include/angular/ui-bootstrap-tpls-0.11.2.min.js"></script> <!-- bootstrap ui for AngularJS -->
-    <!--<script src="/include/angular-diff/angular-diff.js"></script><!-- Angular substitute of PrettyTextDiff -->
-    <script src="/include/angular-animate/angular-animate.min.js"></script><!-- Angular animate -->
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
-
+	<script src="/include/angular/angular-animate.min.js"></script><!-- Angular animate -->
+	<script src="/include/angular/angular-sanitize.min.js"></script><!-- Angular sanitize -->
 
     <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> <!-- codemirror ui for Angularjs-->
