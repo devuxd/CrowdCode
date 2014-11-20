@@ -59,10 +59,11 @@
 					  	<div class="form-group">
 						    <label for="description" class="col-sm-2 control-label reset-padding">description</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<textarea class="form-control" name="description" placeholder="briefly describe the purpose and the behavior of the function" ng-model="description" required></textarea>
-								<span class="help-block" ng-show="microtaskForm.description.$dirty && microtaskForm.description.$invalid && microtaskForm.description.$error.required">
-									This field is required!
-								</span>
+						      	<textarea class="form-control" name="description" placeholder="briefly describe the purpose and the behavior of the function" ng-model="description" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/"></textarea>
+								<ul class="help-block" ng-show="microtaskForm.description.$dirty && microtaskForm.description.$invalid">
+									<li ng-show="microtaskForm.description.$error.required">This field is required!</li>
+									<li ng-show="microtaskForm.description.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>
+								</ul>
 						    </div>
 
 					  	</div>
@@ -75,17 +76,14 @@
 									<li ng-show="microtaskForm.returnType.$error.adt"> {{microtaskForm.returnType.$error.adt}}</li>
 								</ul>
 						    </div>
-
-						    
-						</ul>
 					  	</div>
 					  	<div class="form-group">
 						    <label for="functionName" class="col-sm-2 control-label reset-padding">function name</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<input type="text" class="form-control" name="functionName" ng-model="functioName" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator placeholder="insert the function name">
+						      	<input type="text" class="form-control" name="functionName" ng-model="functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator placeholder="insert the function name">
 						    	<ul class="help-block" ng-show="microtaskForm.functionName.$dirty && microtaskForm.functionName.$invalid">
 									<li ng-show="microtaskForm.functionName.$error.required">This field is required!</li>
-									<li ng-show="microtaskForm.functionName.$error.pattern">Is not a valid function name!</li>
+									<li ng-show="microtaskForm.functionName.$error.pattern">Is not a valid function name! Please use only alphanumerical characters and the _ symbol</li>
 									<li ng-show="microtaskForm.functionName.$error.name"> {{microtaskForm.functionName.$error.name}}</li>
 								</ul>
 						    </div>
@@ -93,25 +91,26 @@
 					  	<div class="form-group">
 						    <label class=" control-label col-sm-2 reset-padding">parameters</label>
 							<div class="form-group col-sm-10 reset-padding" >
-								<div ng-form="parameter" class="form-horizontal" ng-repeat="(index,parameter) in parameters">
+								<div ng-form="param" class="form-horizontal" ng-repeat="(index,parameter) in parameters">
 								    <div class="col-sm-3 reset-padding">
-								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name"/>
-								      	<ul class="help-block" ng-show="parametermicrotaskForm.paramName.$dirty && parametermicrotaskForm.paramName.$invalid">
-											<li ng-show="parametermicrotaskForm.paramName.$error.required">This field is required!</li>
-											<li ng-show="parametermicrotaskForm.paramName.$error.pattern">Is not a valid parameter name!</li>
+								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName"/>
+								      	<ul class="help-block" ng-show="param.parameterName.$dirty && param.parameterName.$invalid">
+											<li ng-show="param.parameterName.$error.required">This field is required!</li>
+											<li ng-show="param.parameterName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
 										</ul>
 									</div>
 									<div class="col-sm-3 reset-padding">
-								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramType" ng-model-options="{ updateOn: 'blur' }" required adt-validator placeholder="type"/>
-								      	<ul class="help-block" ng-show="parametermicrotaskForm.paramType.$dirty && parametermicrotaskForm.paramType.$invalid">
-											<li ng-show="parametermicrotaskForm.paramType.$error.required">This field is required!</li>
-											<li ng-show="parametermicrotaskForm.paramType.$error.adt">{{parametermicrotaskForm.paramType.$error.adt}}</li>
+								      	<input type="text" class="form-control pull-left" name="parameterType" ng-model="parameter.paramType" ng-model-options="{ updateOn: 'blur' }" required adt-validator placeholder="type"/>
+								      	<ul class="help-block" ng-show="param.parameterType.$dirty && param.parameterType.$invalid">
+											<li ng-show="param.parameterType.$error.required">This field is required!</li>
+											<li ng-show="param.parameterType.$error.adt">{{parameter.parameterType.$error.adt}}</li>
 										</ul>
 									</div>
 									<div class="col-sm-5 reset-padding">
-								      	<input type="text" class="form-control pull-left" placeholder="description"/>
-								      	<ul class="help-block" ng-show="parametermicrotaskForm.paramDescritpion.$dirty && parametermicrotaskForm.paramDescritpion.$invalid">
-											<li ng-show="parametermicrotaskForm.paramDescritpion.$error.required">This field is required!</li>
+								      	<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="parameter.paramDescription" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/"/>
+								      	<ul class="help-block" ng-show="param.parameterDescritpion.$dirty && param.parameterDescritpion.$invalid">
+											<li ng-show="param.parameterDescritpion.$error.required">This field is required!</li>
+											<li ng-show="param.parameterDescritpion.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>
 										</ul>
 									</div>
 									<div class="col-sm-1 reset-padding">

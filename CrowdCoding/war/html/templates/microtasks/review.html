@@ -64,12 +64,12 @@
 				Job description
 			</div>
 			<div ng-if="! review.microtask.submission.inDispute" class="section-content" >
-				The worker was asked to write a test for the following test case:
+				The worker was asked to write a test for the following case:
 				<div class="alert alert-info">{{review.microtask.owningArtifact}}</div>
 				of the function below. Can you rate his work?
 			</div>
 			<div ng-if="review.microtask.submission.inDispute" class="section-content" >
-				The worker disputed the test that the crowd has written for the following test case  :
+				The worker disputed the test that the crowd has written for the following case:
 				<div class="alert alert-info">{{review.microtask.owningArtifact}}</div>
 				of the function below.
 				<br /> Can you rate his dispute?
@@ -171,7 +171,7 @@
 				Job description
 			</div>
 			<div class="section-content" >
-				The worker was asked to write the above function, in order to solve the following pseudoCall :
+				The worker was asked to write the above signature of the function, in order to solve the following pseudoCall :
 				<span class="pseudoCall">{{review.microtask.callDescription}}</span>?
 
 			</div>

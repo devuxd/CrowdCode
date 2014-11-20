@@ -320,18 +320,16 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 ///////////////////////////////
 myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService', function( $scope, $alert, functionsService ) {
 
-	// INITIALIZATION OF FORM DATA MUST BE DONE HEREù
-
-
 	// set selected to -2 to initialize the default value
 	//-2 nothing selected (need an action to submit)
 	//-1 no function does this
 	// 0- n index of the function selected
 	$scope.selectedResult = -2;
+	//display all the available function at the beginning
 	$scope.results        = functionsService.findMatches('', $scope.funct.name);
 
 
-	var code = functionsService.renderDescription($scope.funct) + $scope.funct.header+ $scope.funct.code;
+	$scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header+ $scope.funct.code;
 
 
 	// search for all the functions that have $scope.reuseSearch.text in theirs description or header
@@ -342,14 +340,6 @@ myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService',
 
 	$scope.select = function(index){
 		$scope.selectedResult = index;
-	}
-
-	$scope.codemirrorLoaded = function(codeMirror){
-		codeMirror.setValue(code);
-		codeMirror.setOption("readOnly", "true");
-		codeMirror.setOption("theme", "custom");
-		codeMirror.setSize(null,'auto');
-		codeMirror.refresh();
 	};
 
 	$scope.$on('collectFormData',function(event,microtaskForm){
@@ -358,15 +348,13 @@ myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService',
 
 			var error = 'Choose a function or select the checkbox "No funtion does this"';
 			$alert({title: 'Error!', content: error, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
-		
 		} else {
 			//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
 			if( $scope.selectedResult == -1 )
 				formData = {  functionName: "", noFunction: true };
 			else 
 				formData = { functionName: $scope.results[ $scope.selectedResult ].value.name, noFunction: false };
-			
-			$scope.$emit('submitMicrotask',formData);
+						$scope.$emit('submitMicrotask',formData);
 		}
 	});
 
@@ -637,7 +625,8 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 				paramDescriptions.push($scope.parameters[i].paramDescription);
 			}
 
-			formData = { name: $scope.writeFunctionDescription.functionName,
+			formData = { 
+						name: $scope.functionName,
 					    returnType: $scope.returnType===undefined ? '' : $scope.returnType ,
 					    paramNames: paramNames,
 					    paramTypes: paramTypes,

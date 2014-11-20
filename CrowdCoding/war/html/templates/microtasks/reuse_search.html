@@ -9,11 +9,11 @@
 				</li>
 				<li>
 					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
 				</li>
 			</ul>
 		</div>
 	</div>
-
 	<div class="section section-description">
 		<div class="section-title" >
 		JOB DESCRIPTION
@@ -28,7 +28,7 @@
 			FUNCTION WITH THE PSEUDOCALL
 		</div>
 		<div class="section-content no-padding" >
-			<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+			<code-mirror-readonly code="code"></code-mirror-readonly>
 		</div>
 	</div>
 
@@ -74,7 +74,6 @@
 						<div ng-repeat= "function in results | orderBy:'-score'" 
 						     class="list-element animate-repeat result {{ selectedResult == $index ? 'selected' : '' }}" 
 						     ng-click="select($index)">
-		
 							 	{{function.value.description}}<br/>
 								<b>{{function.value.header}}</b>
 						</div>

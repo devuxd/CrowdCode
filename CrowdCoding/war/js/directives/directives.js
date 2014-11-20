@@ -691,6 +691,15 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
                 'WriteTestCases': function(news) {
 
                     news.testcases = news.microtask.submission.testCases;
+
+                    var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + news.microtask.functionID + '/'
+                    + news.microtask.submission.functionVersion));
+                    var functionUnderTest = functionUnderTestSync.$asObject();
+
+                    functionUnderTest.$loaded().then(function(){
+
+                        news.editorCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
+                    });
                 },
 
                 'ReuseSearch': function(news) {
@@ -698,8 +707,22 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
                 },
                 'WriteTest': function(news) {
 
+                    //function
+                    var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + news.microtask.functionID + '/'
+                    + news.microtask.submission.functionVersion));
+                    news.functionUnderTest = functionUnderTestSync.$asObject();
+
+                    news.functionUnderTest.$loaded().then(function(){
+
+                        news.editorCode = functionsService.renderDescription(news.functionUnderTest)+news.functionUnderTest.header;
+                    });
+
+                    //test case
+                    news.testcases=[{}];
+                    news.testcases[0].text=news.microtask.owningArtifact;
+                    //test
                     news.test = news.microtask.submission;
-                    //news.test=
+                    
                 },
                 'WriteFunctionDescription': function(news) {
 
@@ -720,7 +743,6 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
                     });
                 }
             };
-
 
 
             // create the reference and the sync
