@@ -1,21 +1,20 @@
 <div class="popover popover-news" tabindex="-1">
-     <div ng-if="n.isReview">  
-        <h3 class="popover-title ">You reviewed in the following way:</h3>
+
+    <!-- REVIEW -->
+    <div ng-if="n.isReview">  
+        <h3 class="popover-title ">You wrote the following review: </h3>
         <div class="popover-content">
             <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
-            <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  ng-if="currentValue <= n.qualityScore" ></span>
-            <br>
-            <br>
-            <span>
-                <b>{{n.reviewText}}</b>
-            </span>
+            <span class="clearfix"></span><br />
+            <span> <b>Review description: </b>{{n.reviewText}}</span>
         </div>
-        <h3 class="popover-title">The above work: <b>{{n.microtask.title}}</b></h3>
+        <h3 class="popover-title">for <b>{{n.microtask.title}}</b> </h3>
     </div>
     <div ng-if="! n.isReview" >
-        <h3 class="popover-title">Your work above for: <b class="microtask-details">{{n.microtask.title}}</b></h3>
+        <h3 class="popover-title">Your work on <b>{{n.microtask.title}}</b></h3>
     </div>
     <div class="popover-content">
+        <!-- WRITE TEST -->
         <div ng-if="n.test">
             <table ng-if="! n.test.inDispute" style="width:100%" class="test">
                 <tr ng-repeat="(inputKey,input) in n.test.simpleTestInputs track by $index">
@@ -35,31 +34,34 @@
             <br>
             <span>For the test case:</span>
         </div>
+
+        <!-- WRITE TEST CASES -->
         <div ng-if="n.testcases">
-            <ul >
-                <li ng-repeat="testcase in n.testcases">{{testcase.text}}</li>
+            <span> Submitted test cases: </span>
+            <ul style="padding:0px;margin:0px;" >
+                <li ng-repeat="testcase in n.testcases">#{{ $index +1 }} : {{testcase.text}}</li>
             </ul>
             <br>
-            <span>Of the following Function:</span>
+            <span>For the following function:</span>
         </div>
+
+        <!-- WRITE CALL -->
         <div ng-if="n.microtask.pseudoCall">
             <span>the pseudocall
                 <b>{{n.microtask.pseudoCall}}</b>
                 has been edited in function below:
             </span>
         </div>
+
+        <!-- FUNCTION CODE -->
         <code-mirror-readonly ng-if="n.editorCode" code="n.editorCode"></code-mirror-readonly>
     </div>
     <div ng-if="! n.isReview">
-        <h3 class="popover-title">Has been reviewed with score:</h3>
+        <h3 class="popover-title">has been reviewed with score:</h3>
         <div class="popover-content">
             <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
-            <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  ng-if="currentValue <= n.qualityScore" ></span>
-
-            <br>
-            <br>
-            <span> <b>{{n.reviewText}}</b>
-            </span>
+            <span class="clearfix"></span><br />
+            <span> <b>Review description: </b>{{n.reviewText}}</span>
         </div>
     </div>
 </div>

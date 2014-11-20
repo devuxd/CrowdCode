@@ -8,8 +8,7 @@ myApp.directive('aceReadJson', function() {
         },
         controller: function($scope,$element){
         	$scope.aceLoaded = function(_editor) {
-            console.log("ACE GETS");
-            console.log($scope.ngModel);
+                
         		_editor.setOptions({
 		    	     maxLines: Infinity
 		    	});
