@@ -482,8 +482,7 @@ public class CrowdServlet extends HttpServlet
 	    }
 
     	// If there are no microtasks available, send an empty response.
-	    //Otherwise, redirect
-    	// to microtask UI.
+	    // Otherwise, send the json with microtask info.
 		if (microtask == null) {
 			resp.sendError(404);
 		}

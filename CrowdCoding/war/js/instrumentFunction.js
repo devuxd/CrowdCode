@@ -46,8 +46,8 @@ function logCall( functionName, parameters, stubReturnValue, realReturnValue )
 	// create the stub entry
 	inputsMap[inputsKey] = { 
 		inputs     : parameterFormatter(parameters),
-		stubOutput : stubReturnValue.toString(),
-		realOutput : realReturnValue.toString(),
+		stubOutput : (typeof stubReturnValue === 'object')?JSON.stringify(stubReturnValue):stubReturnValue,
+		realOutput : (typeof realReturnValue === 'object')?JSON.stringify(realReturnValue):realReturnValue,
 	};
 
 	// update the callee map inputs map for the function

@@ -608,28 +608,31 @@ del {  background-color: #ffc6c6; }
 	height: 200px;
 }
 
-
-tutorial .overlay, tutorial .content {
+tutorial  { display:none; }
+tutorial-container .overlay, tutorial-container .content {
 	position: absolute;
 	top:0px;
 	left:0px;
 	width: 0;
 	height: 0px;
 }
-tutorial .overlay {
+tutorial-container .overlay {
 	z-index: 10000;
 	box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 0px 10000px;
 	opacity:0.5;
 }
 
-tutorial .content {
+tutorial-container .content {
 	z-index: 10001;
-	opacity:0;
-	background-color:lightgray;
-	color:black;
+	opacity: 0;
+	background-color: #6095B8;
+	color: black;
+	border: 2px solid #3F81AC;
+	border-radius: 10px;
+	padding: 5px;
 }
 
-tutorial .button-bar {
+tutorial-container .button-bar {
 	position:absolute;
 	z-index: 10002;
 	width:100%;
@@ -639,8 +642,8 @@ tutorial .button-bar {
 	background-color:lightgray;
 }
 
-tutorial .circles { position: absolute;left: 50%;}
-tutorial .circle
+tutorial-container .circles { position: absolute;left: 50%;}
+tutorial-container .circle
 {
     background: transparent;
     margin:5px;
@@ -651,16 +654,16 @@ tutorial .circle
     display:inline-block;
     position:relative;
 }
-tutorial .circle div {
+tutorial-container .circle div {
     position:absolute;
     top:1px; left:1px;
     width:13px; height:13px;
     border-radius: 100%;
 }
-tutorial .circle div.completed { background-color:green; }
+tutorial-container .circle div.completed { background-color:green; }
 
-tutorial .title { position: absolute; left: 0; }
-tutorial .btn-next { position: absolute; right: 0; }
+tutorial-container .title { position: absolute; left: 0; }
+tutorial-container .btn-next { position: absolute; right: 0; }
 
 
 .ace-editor { 

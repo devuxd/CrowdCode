@@ -26,5 +26,5 @@
 	</tr>
 </table>
 <br />
-<button class="btn btn-primary btn-sm pull-right" ng-click="$emit('disputeTest',key);"> Dispute this test</button>
+<button ng-if="!data.testResult" class="btn btn-primary btn-sm pull-right" ng-click="$emit('disputeTest',key);"> Dispute this test</button>
 <div class="clearfix"></div>
