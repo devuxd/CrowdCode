@@ -32,11 +32,13 @@
             </table>
             <span ng-if="n.test.inDispute">There is been a dispute: {{n.test.disputeText}}</span>
             <br>
-            <span>For the test case:</span>
+            <span>For the test case: <b>{{n.testcases[0].text}}</b></span>
+            <br>
+            <span>For the following function:</span>
         </div>
 
         <!-- WRITE TEST CASES -->
-        <div ng-if="n.testcases">
+        <div ng-if="n.microtask.type=='WriteTestCases'">
             <span> Submitted test cases: </span>
             <ul style="padding:0px;margin:0px;" >
                 <li ng-repeat="testcase in n.testcases">#{{ $index +1 }} : {{testcase.text}}</li>
