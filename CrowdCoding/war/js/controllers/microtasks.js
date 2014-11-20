@@ -120,8 +120,8 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','$alert'
 		else if ($scope.review.microtask.type == 'WriteCall')
 		{
 
-			$scope.functionChanged=functionsService.get($scope.review.microtask.functionID);
-			$scope.review.functionCode=functionsService.renderDescription($scope.functionChanged)+$scope.functionChanged.header+$scope.functionChanged.code;
+			//$scope.functionChanged=functionsService.get($scope.review.microtask.functionID);
+			$scope.review.functionCode=functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header+$scope.review.microtask.submission.code;
 
 		}
 		else if ($scope.review.microtask.type == 'WriteFunctionDescription')
@@ -611,7 +611,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope','$rootScope','$
 	// initialization of models 
 	$scope.description  = "";
 	$scope.returnType   = "";
-	$scope.functionName = ""
+	$scope.functionName = "";
 	$scope.parameters   = [];
 
 

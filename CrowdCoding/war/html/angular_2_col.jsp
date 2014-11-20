@@ -83,7 +83,7 @@
 			    <ul class="nav navbar-nav navbar-right">
 			        <li class="dropdown">
 			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-		          		<img src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
+		          		<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
 						{{workerHandle}}
 						<span class="caret"></span>
 			          </a>
@@ -141,11 +141,11 @@
 							<button ng-click="$broadcast('collectFormData', microtaskForm)"
 								tabindex="99"
 								class="btn btn-sm btn-primary">
-									Submit
+									Submit <span style="font-size: 0.7em;">(ctrl+enter)</span>
 							</button>
 							<button ng-click="$emit('skipMicrotask')" tabindex="100" class="btn btn-sm">Skip</button>
 						</span>
-						<span class="pull-right">
+						<span class="pull-right"><span ng-show="unreadedMessages>0" class="unreded-messages">{{unreadedMessages}}</span>
 							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn {{chatActive?'btn-chat-active':''}} btn-sm"  >
 
 								<span class="glyphicon glyphicon-comment"></span>

@@ -394,6 +394,53 @@ h1, h2, h3, h4 {
 .chat .message .text{ font-style:italic; margin:0px; }
 .chat .message .time { font-weight:bold; font-size:0.7em; text-align: right}
 
+.alert-chat{
+	background-color:rgba(255, 255, 255, 0.80);
+	width: 310px;
+	padding: 3px;
+	border-radius: 0px;
+	margin-bottom: 40px ! important;
+}
+.alert-chat .avatar { float:left; padding-top:2px;}
+.alert-chat .avatar img { width:30px; }
+
+.alert-chat .message{ float:left; width:240px;margin-left:5px; word-wrap: break-word;}
+.alert-chat .message .nickname { font-weight:bold; font-size:0.9em;}
+.alert-chat .message .text{ font-style:italic; margin:0px; text-align: right;}
+.alert-chat .output {
+	margin:0px;
+	padding:0px;
+}
+
+.alert-chat .output{
+	margin-top:2px;
+	background-color:rgba(255, 255, 255, 0.42);
+	display:block;
+	padding:2px;
+}
+
+
+.unreded-messages{
+background-color: #dc0d17;
+background-image: -webkit-gradient(linear, center top, center bottom, from(#fa3c45), to(#dc0d17));
+background-image: -webkit-linear-gradient(#fa3c45, #dc0d17);
+color: #fff;
+min-height: 13px;
+padding: 1px 3px;
+text-shadow: 0 -1px 0 rgba(0, 0, 0, .4);
+position: absolute;
+right: -1px;
+top: 0;
+}
+
+.chat-icon{
+	._1z4y a.jewelButton {
+	background-image: url(http://fbstatic-a.akamaihd.net/rsrc.php/v2/yg/r/XYoTa_7lVnN.png);
+	background-repeat: no-repeat;
+	background-size: auto;
+	background-position: 0 -481px;
+	}
+}
 
 /* MICROTASK */
 .microtask-details {
@@ -436,8 +483,8 @@ h1, h2, h3, h4 {
 	color: #575757;
 	margin-top: 10px;
 	margin-bottom: 2px;
-	text-transform: uppercase;
-	font-size: 0.9em;
+	/*text-transform: uppercase;*/
+	font-size: 1em;
 }
 .toggler-adt.active {color:black;}
 .element-adt {

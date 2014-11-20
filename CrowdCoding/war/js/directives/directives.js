@@ -382,7 +382,7 @@ myApp.directive('functionConvections', function(){
 
 myApp.directive('pressEnter', function() {
     return function(scope, element, attrs) {
-        /*
+        
         element.bind("keydown keypress", function(event) {
             if (event.which === 13 && !event.shiftKey) {
                 scope.$apply(function() {
@@ -391,7 +391,7 @@ myApp.directive('pressEnter', function() {
 
                 event.preventDefault();
             }
-        });*/
+        });
     };
 });
 
@@ -775,7 +775,7 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
 });
 
 
-myApp.directive('chat', function($timeout, $rootScope, $firebase) {
+myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert) {
     return {
         restrict: 'E',
         templateUrl: '/html/templates/panels/chat_panel.html',
@@ -785,26 +785,55 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase) {
         link: function($scope, $element, attrs) {
 
             $rootScope.chatActive = false;
+            $rootScope.unreadedMessages=0;
             $rootScope.$on('toggleChat', function() {
                 $element.find('.chat').toggleClass('active');
-                $element.find('.output').scrollTop($element.find('.output').height())
+                $element.find('.output').scrollTop($element.find('.output').height());
+                $rootScope.chatActive= ! $rootScope.chatActive;
+                $rootScope.unreadedMessages=0;
             });
         },
-        controller: function($scope, $element) {
+        controller: function($scope, $element, $rootScope) {
             var $output = $element.find('.output');
-
+            var initializationTime=0;
+            var workerHandle='';
+            var text='';
+            var myAlert;
+            var chatLoaded=false;
             // create the reference and the sync
             var chatRef = new Firebase($rootScope.firebaseURL + '/chat').limit(10);
             var sync = $firebase(chatRef);
 
             // bind the array to scope.leaders
             $scope.messages = sync.$asArray();
+            $scope.messages.$loaded().then(function(){chatLoaded=true;});
             $scope.messages.$watch(function(event) {
                 if (event.event == 'child_added') {
-                    console.log($element.find('.output'))
+
+                    //if the chat is not visible
+                    if(! $rootScope.chatActive&&chatLoaded){
+                        $rootScope.unreadedMessages++;
+                        //if the worker is the same of the previous message and are trascorred less than 3 seconds hides the active alert and add the new text to the new one
+                        if((new Date().getTime())-initializationTime<3000 && workerHandle==$scope.messages[$scope.messages.length - 1 ].workerHandle){
+
+                            text+='<br> '+$scope.messages[$scope.messages.length - 1 ].text;
+                        }
+                        else{
+                            workerHandle=$scope.messages[$scope.messages.length - 1 ].workerHandle;
+                            text=$scope.messages[$scope.messages.length - 1 ].text;
+                        }
+                        if(myAlert!==undefined) myAlert.hide();
+                        //creates the new alert
+                        myAlert = $alert({title: workerHandle, content: text , placement: 'bottom-right', duration:3 ,template : '/html/templates/alert/alert_chat.html', keyboard: true, show: true});
+                        //saves time of cration of the new alert
+                        initializationTime=new Date().getTime();
+
+                    }
+                   // console.log($element.find('.output'));
                     $element.find('.output-wrapper').animate({
                         scrollTop: 650 //$element.find('.output').height()
                     }, 100);
+
                 }
             });
 
@@ -822,7 +851,7 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase) {
                 return true;
             };
         }
-    }
+    };
 });
 
 

@@ -21,17 +21,18 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 
 		function init()
 		{
-			typeNames=[];
-			nameToADT=[];
-			ADTs=[];
-			addDefaultADT();
-
+			
 
 			// hook from firebase all the functions declarations of the project
 			var ADTSync = $firebase(new Firebase($rootScope.firebaseURL+'/ADTs/ADTs'));
 			var firebaseADTs=[];
 			firebaseADTs = ADTSync.$asArray();
 			firebaseADTs.$loaded().then(function(){
+				typeNames=[];
+				nameToADT=[];
+				ADTs=[];
+				addDefaultADT();
+
 				if(firebaseADTs.length>0){
 					for(var i=0; i<firebaseADTs.length;i++ ){
 						typeNames.push(firebaseADTs[i].name);
