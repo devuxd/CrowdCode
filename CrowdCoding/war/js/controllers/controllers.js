@@ -212,7 +212,10 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		  });
 	});
 
-
+	$scope.startTutorial = function(tutorialName){
+		console.log("START TUTORIAL CALLED");
+		$scope.$broadcast('tutorial-'+tutorialName);
+	};
 
 }]);
 

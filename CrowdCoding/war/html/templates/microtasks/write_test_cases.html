@@ -8,7 +8,7 @@
 					<span>{{datas.submitValue}} points</span>
 				</li>
 				<li>
-					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+					<div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
 				</li>
 			</ul>
 		</div>
@@ -36,7 +36,7 @@
 		</div>
 	</div>
 
-	<div class="section section-description">
+	<div class="section section-description" id="functionSignature">
 		<div class="section-title" >
 			FUNCTION SIGNATURE
 		</div>
@@ -50,7 +50,7 @@
 			
 	<div class="section-cols" >
 		<div class="container-flex-row">
-			<div class="section section-help" style="width:30%">
+			<div class="section section-help" style="width:30%" id="example">
 				<div class="section-title" >
 					EXAMPLE
 				</div>
@@ -70,7 +70,7 @@
 			</div>
 
 
-			<div class="section section-form" style="width:70%;" >
+			<div class="section section-form" style="width:70%;" id="form">
 
 				<div class="section-title no-padding" >
 
@@ -134,3 +134,13 @@
 	<div class="clearfix"></div>
 -->
 </div>
+
+
+
+<tutorial title="WriteTestCases">
+	<step>
+		<tag>#functionSignature</tag>
+		<content>bla bla bla</content>
+		<content-position>bottom</content-position>
+	</step>
+</tutorial>

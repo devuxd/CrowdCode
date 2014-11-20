@@ -34,6 +34,8 @@
 		</div>
 	</div>
 
+	<alertcontainer></alertcontainer>
+
 	<div class="section-cols" >
 		<div class="container-flex-row">
 			<div class="section section-help" style="width:30%">
@@ -48,8 +50,7 @@
 			</div>
 			<div class="section section-form" style="width:70%;" >
 				<div id="taskForm" >
-					<alertcontainer></alertcontainer>
-					<div class="clearfix"></div>
+					
 					<div class="codemirrorBox" ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" ></div>
 					<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
 					<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">

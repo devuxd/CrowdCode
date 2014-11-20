@@ -67,7 +67,7 @@
 
 <body ng-controller="AppController"  ng-cloak >
 
-	<header tutorial="1" class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
+	<header class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
 
 		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<div class="container-fluid">
@@ -176,30 +176,6 @@
 
 	<chat></chat>
 
-<!--
-	<tutorial title="main tutorial">
-		<step>
-			<tag>.task</tag>
-			<content>task suggestions</content>
-			<content-position>left</content-position>
-		</step>
-		<step>
-			<tag>#sidebarLeft</tag>
-			<content>sidebar suggestions</content>
-			<content-position>right</content-position>
-		</step>
-		<step>
-			<tag>.button-bar</tag>
-			<content>button suggestions</content>
-			<content-position>top</content-position>
-		</step>
-		<step>
-			<tag>header</tag>
-			<content>header suggestions</content>
-			<content-position>bottom</content-position>
-		</step>
-	</tutorial>
--->
 	<ng-include src="'/html/templates/popups/popup_template.html'"></ng-include>
 
 	<!-- Javascript 3rd part libraries -->

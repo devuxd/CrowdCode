@@ -82,17 +82,25 @@ self.onmessage = function(e)
 				codeUnimplemented = true;
 		}
 
-		self.postMessage({
+		var returnMessage = {
 			result     : {
-				realOutput        : JSON.stringify(results[0].actual),
+				realOutput        : null,
 				testResult        : testCasedPassed,
 				debugStatements   : debugStatements.length > 0 ? debugStatements.join('\n') : 'NO DEBUG STATEMENTS',
 				codeUnimplemented : codeUnimplemented,
 			},
 			testNumber : data.testNumber,
 			stubs  : stubs,
-		});
-		//self.close();
+		};
+		console.log("RESULTS");
+		console.log(results);
+		if( results != undefined && results.length > 0)
+			returnMessage.result.realOutput = (typeof results[0].actual === 'object')?JSON.stringify(results[0].actual):results[0].actual;
+
+		self.postMessage( returnMessage );
+
+		self.close();
+
 	}
 };
 

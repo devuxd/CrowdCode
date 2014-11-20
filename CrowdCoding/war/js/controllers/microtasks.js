@@ -198,9 +198,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	var functionCodeMirror  = null;
 	var highlightPseudoCall = false;
 	$scope.codemirrorLoaded = function(codemirror){
-    	functionCodeMirror = codemirror;
-
-		codemirror.doc.setValue($scope.code);
+    	functionCodeMirror = codemirror
 		codemirror.setOption('autofocus', true);
 		codemirror.setOption('indentUnit', 4);
 		codemirror.setOption('indentWithTabs', true);
@@ -230,7 +228,10 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 			//$scope.results = 
 			$scope.results = data.results;
+
 			$scope.stubs   = data.stubs;
+			console.log("RESULTS");
+			console.log($scope.stubs);
 
 			// console.log(" ----- RESULTS FROM THE TEST RUNNER ");
 			// console.log(data.results);
@@ -244,6 +245,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	};
 
 	$scope.dispute      = false;
+	$scope.disputeText  = "";
 	$scope.disputedTest = null;
 	$scope.$on('disputeTest',function(event,testKey){
 		$scope.dispute = true;
@@ -262,52 +264,81 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	}
 
 	$scope.$on('collectFormData',function(){
-		formData = {};/*
-		if($scope.dispute){
-			// return jSON object
-			console.log($scope.disputedTest);
+		formData = {};
 
-			formData = {
-				name:        $scope.disputedTest.description,
-				description: $scope.disputedTest.disputeText,
-				testId:      $scope.disputedTest.$id
-			};
+		var errors = "";
+		// IF DISPUTING A TEST 
+		if( $scope.dispute ){
 
-		} else {
-
-			var text = codemirror.getValue();
-	 		var ast = esprima.parse(text, {loc: true});
-
-			var calleeNames = functionsService.getCalleeNames(ast);
-
-			// Get the text for the function description, header, and code.
-			// Note esprima (the source of line numbers) starts numbering lines at 1, while
-		    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-			var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
-
-			var linesDescription = fullDescription.split('\n');
-			var name = ast.body[0].id.name;
-
-			var functionParsed = functionsService.parseDescription(linesDescription,name);
-			console.log(functionParsed);
-
-			var body = codemirror.getRange(
-					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-
-			formData =  { description: functionParsed.description,
-						 header:       functionParsed.header,
-						 name:         name,
-						 code:         body,
-						 returnType:   functionParsed.returnType,
-						 paramNames:   functionParsed.paramNames,
-						 paramTypes:   functionParsed.paramTypes,
-						 paramDescriptions: functionParsed.paramDescriptions,
-						 calleeNames:  calleeNames};
-
+			if( $scope.disputeText.length == 0 ) // IF THE DISPUTED TEXT IS EMPTY, SHOW THE ERROR
+				errors = "Please, insert the description of the dispute!";	
 		}
+		else {
+			var oneTestFailed = false;
+			console.log($scope.results);
+			angular.forEach($scope.results,function(data,index){
+				console.log("checking "+index+" = "+data.testResult);
+				if( !oneTestFailed && !data.testResult )
+					oneTestFailed = true;
+			});
 
-		$scope.$emit('submitMicrotask',formData);*/
+			if( oneTestFailed )
+				errors = "Please fix all the failing tests before submit!";
+		}
+		console.log("ERRORS ="+errors+ "- "+$scope.dispute);
+
+		if( errors == ""){
+			if($scope.dispute){
+				// return jSON object
+				console.log($scope.disputedTest);
+
+				formData = {
+					name:        $scope.disputedTest.description,
+					description: $scope.disputedTest.disputeText,
+					testId:      $scope.disputedTest.$id
+				};
+
+			} else {
+
+				var text = functionCodeMirror.getValue();
+		 		var ast = esprima.parse(text, {loc: true});
+				var body = functionCodeMirror.getRange(
+						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+				var mocks = [];
+				angular.forEach($scope.stubs,function(stubsForFunction,functionName){
+					angular.forEach(stubsForFunction,function(stub,index){
+						var mockCode = 'equal('+functionName+'(';
+						angular.forEach(stub.inputs, function(value, key) {
+						  mockCode +=  value ;
+						  mockCode +=  (key!=stub.inputs.length-1) ? ',' : '';
+						});
+						mockCode += '),' + stub.stubOutput + ',\' test generated for debug purposes \');' ;
+
+
+						mocks.push({
+							functionName   : functionName,
+							inputs         : stub.inputs,
+							expectedOutput : stub.stubOutput,
+							code           : mockCode
+						});
+					});
+				});
+
+				formData =  { 
+							 code:  body,
+							 mocks: mocks
+				};
+
+			}
+
+			$scope.$emit('submitMicrotask',formData);
+		} else{
+			
+			$alert({title: 'Error!', content: errors, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
+		}
+		
 	});
 
 	// run the tests
@@ -720,7 +751,7 @@ myApp.controller('WriteTestController', ['$scope','$rootScope','$firebase','$fil
 	var alertObj = null; // initialize alert obj
 
 	$scope.$on('collectFormData',function(event,microtaskForm){
-
+		console.log(microtaskForm);
 		if(microtaskForm.$invalid){
 			if( alertObj != null ) alertObj.destroy(); // avoid multiple alerts
 			var error= 'Fix all errors before submit';
