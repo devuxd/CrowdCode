@@ -15,7 +15,8 @@ clienRequestApp.directive('jsonValidator', function()  {
             	angular.forEach(scope.ADTs, function(value,key){
             		nameToADT[value.name]=value;
             	});
-
+                console.log("nametoadt");
+                console.log(nameToADT);
                  // initialize JSONValidator and execute errorCheck
                 validator.initialize(nameToADT,viewValue,attrs.jsonValidator)
                 validator.errorCheck();
