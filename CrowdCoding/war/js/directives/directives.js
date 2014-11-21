@@ -10,8 +10,9 @@ myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
 
             ctrl.$formatters.unshift(function(viewValue) {
                 // initialize JSONValidator and execute errorCheck
-                validator.initialize(ADTService.getNameToADT, viewValue, attrs.jsonValidator);
+                validator.initialize(ADTService.getNameToADT(), viewValue, attrs.jsonValidator);
                 validator.errorCheck();
+               
                 if (!validator.isValid() && viewValue !== undefined) {
                     ctrl.$setValidity('json', false);
                     ctrl.$error.json = validator.getErrors();

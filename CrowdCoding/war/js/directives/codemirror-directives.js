@@ -18,6 +18,7 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
                 else 
         		  codeMirror.setOption("theme", "custom");
 
+                codeMirror.setOption("lineWrapping" , true);
         		codeMirror.setOption("tabindex", "-1");
         		codeMirror.setSize(null,'auto');
                 codeMirror.refresh();
