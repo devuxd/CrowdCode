@@ -17,7 +17,6 @@ myApp.controller('WriteTestCasesController', ['$scope','$rootScope','$firebase',
 
 	// retrieve the tests for the functionID
 	var tests = TestList.getByFunctionId($scope.microtask.functionID);
-	console.log(tests);
 	// for each test push the test case entry in the test cases list
 	angular.forEach(tests,function(test,index){
 		$scope.testCases.push( { id: test.getId(), text: test.getDescription() , added: false, deleted: false } );
@@ -245,7 +244,8 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	};
 
 	$scope.dispute      = false;
-	$scope.disputeText  = "";
+	$scope.disp = {};
+	$scope.disp.disputeText  = "";
 	$scope.disputedTest = null;
 	$scope.$on('disputeTest',function(event,testKey){
 		$scope.dispute = true;
@@ -270,14 +270,14 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		// IF DISPUTING A TEST 
 		if( $scope.dispute ){
 
-			if( $scope.disputeText.length == 0 ) // IF THE DISPUTED TEXT IS EMPTY, SHOW THE ERROR
+			if( $scope.disp.disputeText.length == 0 ) // IF THE DISPUTED TEXT IS EMPTY, SHOW THE ERROR
 				errors = "Please, insert the description of the dispute!";	
 		}
 		else {
 			var oneTestFailed = false;
-			console.log($scope.results);
+
 			angular.forEach($scope.results,function(data,index){
-				console.log("checking "+index+" = "+data.testResult);
+
 				if( !oneTestFailed && !data.testResult )
 					oneTestFailed = true;
 			});
@@ -285,17 +285,16 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 			if( oneTestFailed )
 				errors = "Please fix all the failing tests before submit!";
 		}
-		console.log("ERRORS ="+errors+ "- "+$scope.dispute);
+		console.log("ERRORS ="+errors+ "- ");console.log($scope.disp);
 
 		if( errors == ""){
 			if($scope.dispute){
-				// return jSON object
-				console.log($scope.disputedTest);
+
 
 				formData = {
 					name:        $scope.disputedTest.description,
-					description: $scope.disputedTest.disputeText,
-					testId:      $scope.disputedTest.$id
+					testId:      $scope.disputedTest.$id,
+					description: $scope.disp.disputeText
 				};
 
 			} else {
