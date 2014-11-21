@@ -815,7 +815,7 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert) {
                     if(! $rootScope.chatActive&&chatLoaded){
                         $rootScope.unreadedMessages++;
                         //if the worker is the same of the previous message and are trascorred less than 3 seconds hides the active alert and add the new text to the new one
-                        if((new Date().getTime())-initializationTime<3000 && workerHandle==$scope.messages[$scope.messages.length - 1 ].workerHandle){
+                        if((new Date().getTime())-initializationTime<4000 && workerHandle==$scope.messages[$scope.messages.length - 1 ].workerHandle){
 
                             text+='<br> '+$scope.messages[$scope.messages.length - 1 ].text;
                         }
@@ -825,7 +825,7 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert) {
                         }
                         if(myAlert!==undefined) myAlert.hide();
                         //creates the new alert
-                        myAlert = $alert({title: workerHandle, content: text , placement: 'bottom-right', duration:3 ,template : '/html/templates/alert/alert_chat.html', keyboard: true, show: true});
+                        myAlert = $alert({title: workerHandle, content: text , placement: 'bottom-right', duration:4 ,template : '/html/templates/alert/alert_chat.html', keyboard: true, show: true});
                         //saves time of cration of the new alert
                         initializationTime=new Date().getTime();
 
