@@ -8,12 +8,13 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 
  	// retrieve connection status and userRef
 	var isConnected = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-	var userRef     = new Firebase(firebaseURL + '/status/presences/' + workerId);
+	var userRef     = new Firebase(firebaseURL + '/status/loggedInWorkers/' + workerId);
 
 
 	var updateUserReference = function(){
+		/*
 		userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
-		$timeout(updateUserReference,1000*60*2); // re-do every 2 minutes
+		$timeout(updateUserReference,1000*60*2); // re-do every 2 minutes*/
 	}
 
 	user.statusEnum = {
@@ -25,16 +26,18 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 	user.status = 0;
 
 	user.init = function(){
+		
 		user.status = user.statusEnum.WAITING;
 		// when firebase is connected
 		isConnected.on('value', function(snapshot) {
 		  if (snapshot.val()) {
 		  	// update user reference
-		    updateUserReference();
+		    //updateUserReference();
 		    // on disconnect, set false to connection status
-		    userRef.onDisconnect().remove();//setWithPriority({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
+		    userRef.onDisconnect().remove(); //set({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP});
 		  }
 		});
+		
 	}
 
 	// logout the worker

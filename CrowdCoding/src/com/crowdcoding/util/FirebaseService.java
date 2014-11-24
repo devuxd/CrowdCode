@@ -41,7 +41,6 @@ public class FirebaseService
 	{
 		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskID + "/assigned.json", HTTPMethod.PUT, project); 
 		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskID + ".json", HTTPMethod.PATCH, project);
-		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.PUT, project); 
 	}
 	
 
@@ -50,6 +49,21 @@ public class FirebaseService
 		Date date = new Date();
 		System.out.println("appending test job for function "+functionID);
 		writeData("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+date.getTime()+".json", HTTPMethod.PUT, project); 
+	}
+
+	public static boolean isWorkerLoggedIn(String workerID,Project project){
+		String absoluteUrl = getBaseURL(project) + "/status/loggedInWorkers/" + workerID + ".json";
+		String result = readDataAbsolute( absoluteUrl );
+		
+		if (result == null || result.equals("null"))
+			return false;
+		
+		return true;
+	}
+	
+	public static void writeWorkerLoggedIn(String workerID, String workerDisplayName, Project project)
+	{
+		writeData("{\"workerHandle\": \"" + workerDisplayName + "\"}", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.PUT, project); 
 	}
 	
 	public static void writeWorkerLoggedOut(String workerID, Project project)
@@ -158,12 +172,6 @@ public class FirebaseService
 		setStat(workerID,label,value.toString(),project);
 	}
 	
-	
-	public static void writeWorker(String workerID, String workerDisplayName, Project project)
-	{
-		writeData(workerID, "/workers/" + workerID + "/workerID.json", HTTPMethod.PUT, project);
-		writeData(workerDisplayName, "/workers/" + workerID + "/displayName.json", HTTPMethod.PUT, project);
-	}
 	
 	// Posts the specified JSON message to the specified workers newsfeed
 	public static void postToNewsfeed(String workerID, String message, Project project)

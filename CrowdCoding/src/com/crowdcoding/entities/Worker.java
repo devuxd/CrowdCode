@@ -44,7 +44,6 @@ public class Worker
 		this.nickname = nickname;
 		this.score = 0;
 		ofy().save().entity(this).now();	
-		FirebaseService.writeWorker(userid, nickname, project);
 	}
 	
 	// Finds, or if it does not exist creates, a CrowdUser corresponding to user
@@ -56,6 +55,8 @@ public class Worker
 		if (crowdWorker == null)		
 			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);							
 			
+
+		FirebaseService.writeWorkerLoggedIn( user.getUserId(), user.getNickname(), project);
 		return crowdWorker;
 	}
 	
