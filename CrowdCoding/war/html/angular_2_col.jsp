@@ -62,6 +62,9 @@
     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
 
+    <!-- loadingbar -->
+    <link rel="stylesheet" href="/include/angular-loading-bar/src/loading-bar.css"/>
+
 
 </head>
 
@@ -145,7 +148,8 @@
 							</button>
 							<button ng-click="$emit('skipMicrotask')" tabindex="100" class="btn btn-sm">Skip</button>
 						</span>
-						<span class="pull-right"><span ng-show="unreadedMessages>0" class="unreded-messages">{{unreadedMessages}}</span>
+						<span class="pull-right">
+							<span ng-if="unreadedMessages>0" class="unreded-messages">{{unreadedMessages}}</span>
 							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn {{chatActive?'btn-chat-active':''}} btn-sm"  >
 
 								<span class="glyphicon glyphicon-comment"></span>
@@ -192,10 +196,15 @@
 	<script src="/include/angular/angular-animate.min.js"></script><!-- Angular animate -->
 	<script src="/include/angular/angular-sanitize.min.js"></script><!-- Angular sanitize -->
 
+	<!-- loadingbar -->
+	<script src="/include/angular-loading-bar/src/loading-bar.js"></script>
+
     <script src="/include/codemirror/codemirror.js"></script> <!-- codemirror -->
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> <!-- codemirror ui for Angularjs-->
  	<script src="/include/codemirror/javascript.js"></script><!-- Codemirror Javascript Style -->
-
+ 	<script src="/include/codemirror/diff.js"></script><!-- Codemirror Javascript Style -->
+ 	
+ 	
 
 
  	<script src="/include/ui-ace-editor/src/ui-ace.js"> </script> <!-- UI Ace Editor-->

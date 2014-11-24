@@ -161,7 +161,7 @@ public class Function extends Artifact
 			}
 
 
-		fullDescription += "\n  @return " + returnType + " \n**/\n\n";
+		fullDescription += "\n  @return " + returnType + " \n**/\n";
 
 		return fullDescription;
 	}

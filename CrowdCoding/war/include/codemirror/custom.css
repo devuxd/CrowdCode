@@ -29,7 +29,7 @@
 .cm-s-custom span.cm-link { color: #ae81ff; }
 .cm-s-custom span.cm-qualifier,.cm-s-custom span.cm-builtin { color: #C1C144; }
 .cm-s-custom span.cm-error {
-  background: #757aD8;
+  <!--background: #757aD8;-->
   color: #f8f8f0;
 }
 .cm-s-custom .CodeMirror-activeline-background { background: rgba(255, 255, 255, 0.031) !important; }

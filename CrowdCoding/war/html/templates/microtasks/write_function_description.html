@@ -103,7 +103,7 @@
 								      	<input type="text" class="form-control pull-left" name="parameterType" ng-model="parameter.paramType" ng-model-options="{ updateOn: 'blur' }" required adt-validator placeholder="type"/>
 								      	<ul class="help-block" ng-show="param.parameterType.$dirty && param.parameterType.$invalid">
 											<li ng-show="param.parameterType.$error.required">This field is required!</li>
-											<li ng-show="param.parameterType.$error.adt">{{parameter.parameterType.$error.adt}}</li>
+											<li ng-show="param.parameterType.$error.adt">{{param.parameterType.$error.adt}}</li>
 										</ul>
 									</div>
 									<div class="col-sm-5 reset-padding">

@@ -6,10 +6,13 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
         template:'<div ui-codemirror="{ onLoad : codemirrorLoaded }" ng-model="code" ></div>',
         scope: {
             code: '=',
-            reverse: '='
+            reverse: '=',
+            mode:'@'
         },
         controller: function($scope,$element){
         	$scope.codemirrorLoaded = function(codeMirror){
+
+               
 
         		codeMirror.setOption("readOnly", "true");
 
@@ -20,6 +23,13 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
 
                 codeMirror.setOption("lineWrapping" , true);
         		codeMirror.setOption("tabindex", "-1");
+                //if a mode is defined
+                if($scope.mode)
+                    codeMirror.setOption("mode", $scope.mode);
+                else
+                    codeMirror.setOption("mode", "javascript");
+
+
         		codeMirror.setSize(null,'auto');
                 codeMirror.refresh();
                // functionsService.highlightPseudoSegments(codeMirror,[],false);
