@@ -8,6 +8,11 @@
 #969696 - medium gray - headers of the sidebar, scores,
 
 */
+
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
 .popover-news{
 	max-width: 700px !important;
 	width: 500px !important;

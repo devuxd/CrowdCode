@@ -64,7 +64,7 @@
 		</div>
 		<div class="section-content no-padding" >
 			<code-mirror-readonly ng-if="microtask.promptType != 'FUNCTION_CHANGED'" code="code"></code-mirror-readonly>
-			<code-mirror-readonly ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" ></code-mirror-readonly>
+			<code-mirror-readonly ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></code-mirror-readonly>
 		</div>
 	</div>
 
@@ -154,7 +154,7 @@
 				<div class="section-content" >
 
 					<div id="disputeDiv" ng-show="dispute" class="form-group">
-						<label for="disputeText">Dispute test case:</b> what's wrong with this test case? </label>
+						<label for="disputeText"><b>Dispute test case:</b> what's wrong with this test case? </label>
 						<textarea name="disputeText" class="form-control" class="resize:none" ng-model="testData.disputeText"></textarea><br>
 						<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
 					</div> <!-- /. DISPUTE DIV -->

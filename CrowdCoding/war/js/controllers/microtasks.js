@@ -105,6 +105,24 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','$alert'
 
 			$scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header+$scope.review.microtask.submission.code;
 
+			if($scope.review.microtask.promptType=='DESCRIPTION_CHANGE'){
+				var oldCode = $scope.review.microtask.oldFullDescription.split("\n");
+				var newCode = $scope.review.microtask.newFullDescription.split("\n");
+				var diffRes = diff( oldCode, newCode );
+				var diffCode = "";
+				angular.forEach(diffRes,function(diffRow){
+
+					if(diffRow[0]=="="){
+						diffCode += diffRow[1].join("\n");
+					} else {
+						diffCode += diffRow[0]+diffRow[1].join("\n");
+					}
+					diffCode += "\n";
+				})
+		    	$scope.diffCode = diffCode;
+			}
+
+
 		}
 		else if ($scope.review.microtask.type == 'WriteTest') {
 
@@ -120,7 +138,6 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','$alert'
 		else if ($scope.review.microtask.type == 'WriteCall')
 		{
 
-			//$scope.functionChanged=functionsService.get($scope.review.microtask.functionID);
 			$scope.review.functionCode=functionsService.renderDescription($scope.review.microtask.submission)+$scope.review.microtask.submission.header+$scope.review.microtask.submission.code;
 
 		}
