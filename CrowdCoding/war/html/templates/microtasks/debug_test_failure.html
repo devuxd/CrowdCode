@@ -25,97 +25,141 @@
 		</div>
 	</div>
 
-	<alertcontainer></alertcontainer>
 
-	<div class="section section-form" ng-if="!dispute">
+	<div class="section section-description" id="functionSignature">
 		<div class="section-title" >
-		FUNCTION EDITOR
+			FUNCTION SIGNATURE
 		</div>
-		<div class="section-content" >
-	 		<p>
-	 			If you need to print a debug statement, you can use the function <strong>printDebugStatement(statement)</strong> that works exactly like the Javascript <strong>console.log()</strong>. 
-	 			The results of the debug statements are printed below each <strong>test result</strong> after you click on the button "Run the tests".
-	 		</p>
-			<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
-			<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-			<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">
-				<span>There are some errors. Please fix them before submit:</span>
-				<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
-					<li>{{error}}</li>
-				</ul>
-			</ul>
-			<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
-			<span class="clearfix"></span>
+		<div class="section-content no-padding" >
+			<code-mirror-readonly code="functionDescription"></code-mirror-readonly>
 		</div>
 	</div>
 
-	<div class="section section-form" ng-if=" !dispute && ( stubs | keylength )">
-		<div class="section-title" >
-		CALLEE STUBS 
+	<alertcontainer></alertcontainer>
+
+	<div class="section-cols" ng-if="!dispute && !testsRunning" >
+		<div class="container-flex-row">
+
+			<div class="section section-help" style="width:30%">
+				<div class="section-title" >
+					TESTS RESULT
+				</div>
+				<div class="section-content" >
+				
+					
+					Each box shows the result of each test for the current function, if a test is passed the box has a green background otherwise the background is red.
+					You can <strong> dispute </strong> the failing tests. <br /> <strong>Important:</strong> you can dispute only one test!
+					
+					<button ng-click="runTests()" class="btn btn-primary"  >Run the tests!</button>
+				</div>
+			</div>
+
+			
+			<div class="section section-form" style="width:70%;">
+				<div class="section-content no-padding" >
+
+					<collapsable-list
+					    data="testsData" 
+					    add-data="{ 'paramNames' : paramNames }"
+					    class="test-collapsable-list"
+					    list-element-class-condition="'success': data.result , 'failed': ! data.result "
+						toggler-template="/html/templates/collapsable_toggler_test.html"
+						element-template="/html/templates/collapsable_element_test.html">
+					</collapsable-list>
+
+				</div>
+			</div>
 		</div>
-		<div class="section-content" >
-			<p>
-				Here are listed all the functions invoked by <strong>{{funct.name}}</strong> with all the inputs sets derived from the tests execution.<br />
-				In the field <strong>"stub output"</strong> you can insert the expected result of the function execution with the given inputs.
-				This result is used as a <strong>STUB</strong> for the tests execution. It means that the tests runner will use it as the return value of the function
-				instead of re-executing it. This is a crucial behavior in <strong>CrowdCode</strong> that lets the tests to run in a lower time.
-			</p>
-			<ul style="list-style:none;margin:0px;padding:0px;">
-				<li ng-repeat="(callee,inputMap) in stubs" > 
-					The function <b>{{callee}}</b> has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
-					<ul class="collapsable-list mock-collapsable-list ">
-						<li ng-repeat="(stubKey,stub) in inputMap track by $index">
-							<b>#{{$index+1}} input set </b><br />
-							<table style="width:100%">
-								
-								<tr ng-repeat="(inputKey,input) in stub.inputs">
-									<td>input {{inputKey}}</td>
-									<td>
-										<div ace-read-json ng-model="input" ></div>
-									</td>
-								</tr>
-								<tr>
-									<td>stub output</td>
-									<td>
-										<div ace-edit-json ng-model="stub.stubOutput" ></div>
-									</td>
-								</tr>
-								<tr ng-if="stub.stubOutput != stub.realOutput">
-									<td>real output</td>
-									<td><div ace-read-json ng-model="stub.realOutput" ></div></td>
-								</tr>
-							</table>
+	</div>
+
+	<div class="section-cols" ng-if=" !dispute ">
+		<div class="container-flex-row">
+
+			<div class="section section-help" style="width:30%">
+				<div class="section-title" >
+				FUNCTION EDITOR  
+				</div>
+				<div class="section-content" >
+			 		<p>
+			 			For monitoring statements, use <strong>Debug.log(statement)</strong>. The results of the Debug.log() are printed below each <strong>test result</strong>.
+			 		</p>
+				</div>
+
+				<div class="section-title" > AVAILABLE DATA STRUCTURES </div>
+				<div class="section-content" >
+						<adt-bar></adt-bar>
+				</div>
+			</div>
+
+			<div class="section section-form" style="width:70%">
+				<div class="section-content" >
+					<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
+					<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+					<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">
+						<span>There are some errors. Please fix them before submit:</span>
+						<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
+							<li>{{error}}</li>
+						</ul>
+					</ul>
+					<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
+					<span class="clearfix"></span>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="section-cols" ng-if=" !dispute && !testsRunning">
+		<div class="container-flex-row">
+
+			<div class="section section-help" style="width:30%">
+				<div class="section-title" >
+				CALLEE STUBS 
+				</div>
+				<div class="section-content" >
+					<p>
+						For each function called by <strong>{{funct.name}}</strong> you can choose the behavior of that
+						callee will have for each different input parameters with which is called. 
+						It means that the <strong>Test Runner</strong> will use the behavior you choose
+						instead of running the real code.
+					</p>
+				</div>
+			</div>
+
+			<div class="section section-form"  style="width:70%" >
+				<div class="section-title" >
+				
+				</div>
+				<div class="section-content" >
+					
+					<ul style="list-style:none;margin:0px;padding:0px;">
+						<li ng-repeat="(callee,inputMap) in stubs" > 
+							The function <b>{{callee}}</b> has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
+							<ul class="collapsable-list mock-collapsable-list ">
+								<li ng-repeat="(stubKey,stub) in inputMap track by $index">
+									<b>#{{$index+1}} input set </b><br />
+									<table style="width:100%">
+										<tr ng-repeat="(key,input) in stub.inputs ">
+											<td>input</td>
+											<td><div ace-read-json ng-model="input" ></div></td>
+										</tr>
+										<tr>
+											<td>output</td>
+											<td><div ace-edit-json ng-model="stub.output" ></div></td>
+										</tr>
+									</table>
+								</li>
+							</ul>
 						</li>
 					</ul>
-				</li>
-			</ul>
+				</div>
+			</div>
+
 		</div>
 	</div>
 	
 
-	<div class="section section-form" ng-if="!dispute">
-		<div class="section-title" >
-			TESTS RESULT
-		</div>
-		<div class="section-content" >
-
-			<p>
-				Each box shows the result of each test for the current function, if a test is passed the box has a green background otherwise the background is red.
-				You can <strong> dispute </strong> the failing tests. <br /> <strong>Important:</strong> you can dispute only one test!
-			</p>
-
-			<collapsable-list
-			    data="results" 
-			    class="test-collapsable-list"
-			    list-element-class-condition="'success': data.testResult , 'failed': ! data.testResult "
-				toggler-template="/html/templates/collapsable_toggler_test.html"
-				element-template="/html/templates/collapsable_element_test.html">
-			</collapsable-list>
-
-			<button ng-click="runTests()" class="btn btn-primary"  >Run the tests!</button>
-			<br/>
-		</div>
-	</div>
+	
 
 	<div class="section section-form" ng-if="dispute">
 		<div class="section-title" >

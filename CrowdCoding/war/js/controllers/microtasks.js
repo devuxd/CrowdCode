@@ -177,25 +177,18 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 	$scope.tests        = testsService.validTestsforFunction($scope.microtask.functionID);
 	$scope.passedTests  = [];
 	$scope.testsRunning = false; // for cheching if tests are running
+ 	$scope.testsData    = {};
+ 	$scope.stubs        = {};
+	$scope.paramNames   = $scope.funct.paramNames
 
-
-	// INITIALIZE THE CONSOLE CODEMIRROR
-	$scope.consoleOutput  = "";
-	var consoleCodeMirror = null;
-	$scope.consoleLoaded  = function(codemirror){
-		consoleCodeMirror = codemirror;
-		codemirror.setOption("readOnly", "true");
-		codemirror.setOption("theme", "console");
-		codemirror.setOption("tabindex", "-1");
-		codemirror.setSize(null,'200px');
-		codemirror.refresh();
-	}
 
 	// INITIALIZE THE FUNCTION EDITOR CODEMIRROR
+	$scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
 
 	var functionCodeMirror  = null;
 	var highlightPseudoCall = false;
+
 	$scope.codemirrorLoaded = function(codemirror){
     	functionCodeMirror = codemirror
 		codemirror.setOption('autofocus', true);
@@ -207,8 +200,6 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
  	};
 
 
- 	$scope.results = {};
- 	$scope.stubs   = {};
 	$scope.runTests = function(){
 		// set testsRunning flag
 		$scope.testsRunning = true;
@@ -221,15 +212,27 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		}
 
 
+			console.log("PASSING STUBS ");
+			console.log($scope.stubs);
+			
 		// ask the worker to run the tests
-		testRunnerService.runTestsForFunction($scope.microtask.functionID, functionBody, $scope.stubs).then(function(data){
+		testRunnerService.runTestsForFunction( $scope.microtask.functionID, functionBody, $scope.stubs ).then(function(data){
 
 
 			//$scope.results = 
-			$scope.results = data.results;
+			$scope.testsData = data.testsData;
+			$scope.stubs     = data.stubs;
 
-			$scope.stubs   = data.stubs;
-			console.log("RESULTS");
+/*
+			angular.forEach($scope.stubs,function(stubs,functionName){
+				angular.forEach(stubs,function(data,inputKey){
+					angular.forEach(data,function(value,key){
+						data[key] = JSON.parse(value);
+					});
+				});
+			});*/
+
+			console.log("STUBS");
 			console.log($scope.stubs);
 
 			// console.log(" ----- RESULTS FROM THE TEST RUNNER ");

@@ -124,8 +124,7 @@
 									<b>return value</b> ({{funct.returnType}}) <br />
 								</td>
 								<td>
-									<textarea ng-show="false" class="form-control" name="output" ng-model="testData.output"  ng-attr-required="dispute" json-validator="{{funct.returnType}}" ></textarea>
-									<ace-edit-json ng-model="testData.output" min-lines="2"></ace-edit-json>
+									<ace-edit-json ng-model="testData.output" json-validator="{{funct.returnType}}" min-lines="2"></ace-edit-json>
 
 									<a href="#" ng-click="testData.output=loadExample(funct.returnType)" class="btn btn-primary btn-mini pull-right">Paste Example </a>
 									<ul class="help-block pull-left" ng-show="outputForm.$invalid && outputForm.$dirty">

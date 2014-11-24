@@ -1,5 +1,7 @@
-<span class="pull-left">
-{{data.test.rec.description}}
+<span>
+	
+	<span class="result-PASSED" ng-if=" data.testResult ">PASSED</span>
+	<span class="result-FAILED" ng-if=" !data.testResult ">FAILED</span>
+
+	{{data.test.rec.description}}
 </span>
-<span class="pull-right glyphicon {{ data.testResult ? 'glyphicon-ok-sign' : 'glyphicon-remove-sign' }}"></span>
-<div class="clearfix">

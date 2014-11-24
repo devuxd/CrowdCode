@@ -1,30 +1,26 @@
 
-<table>
+<table ng-if=" data.output != undefined " >
 	<tr ng-repeat="(key,input) in data.test.rec.simpleTestInputs track by $index">
-		<td>{{data.paramNames[key]}}</td>
+		<td>{{ addData.paramNames[key] }}</td>
 		<td>
 			<div ace-read-json ng-model="input" ></div>
 		</td>
 	</tr>
 	<tr>
+		<td>actual output</td>
+		<td><div ace-read-json ng-model="data.output.actual" ></div></td>
+	</tr>
+	<tr>
 		<td>expected output</td>
-		<td><div ace-read-json ng-model="data.test.rec.simpleTestOutput" ></div></td>
-	</tr>
-	<tr>
-		<td>real output</td>
-		<td><div ace-read-json ng-model="data.realOutput" ></div></td>
-	</tr>
-	<tr>
-		<td>test code</td>
-		<td><div ace-read-json ng-model="data.test.rec.code" ></div></td>
+		<td><div ace-read-json ng-model="data.output.expected" ></div></td>
 	</tr>
 	<tr>
 		<td>debug console</td>
 		<td>
-			<div ace-read-json ng-model="data.debugStatements" ></div>
+			<div ace-read-json ng-model="data.debug" ></div>
 		</td>
 	</tr>
 </table>
 <br />
-<button ng-if="!data.testResult" class="btn btn-primary btn-sm pull-right" ng-click="$emit('disputeTest',key);"> Dispute this test</button>
+<button ng-if="!data.output.result" class="btn btn-primary btn-sm pull-right" ng-click="$emit('disputeTest',key);"> Dispute this test</button>
 <div class="clearfix"></div>

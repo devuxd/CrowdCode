@@ -15,7 +15,7 @@ myApp.factory('testRunnerService', [
 	var timeOutTime = 1000;
 	var validTests;
 	var allTheFunctionCode;
-	var worker;
+	var w;
 	var testRunTimeout;
 	var currentTextIndex;
 	var functionId;
@@ -25,6 +25,7 @@ myApp.factory('testRunnerService', [
 	var worker;
 	var stubs = {}
 	var callee = [];
+	var calleeMap = {};
 	
 	var testRunner = {};
 
@@ -39,7 +40,8 @@ myApp.factory('testRunnerService', [
 
 		// initialize globals
 		returnData         = {}; 
-		stubs          = {};
+		stubs              = {};
+		calleeMap          = {};
 		functionId         = passedFunctionId;
 		functionBody       = passedFunctionBody;
 		allPassedTestCases = new Array();
@@ -48,7 +50,9 @@ myApp.factory('testRunnerService', [
 
 		// Load the tests for the specified function
 		validTests = TestList.getByFunctionId(functionId);
+		console.log("valid tests");
 		console.log(validTests);
+
 
 		// build the tested function code with the header
 		functionCode = functionsService.renderHeaderById(functionId);
@@ -74,6 +78,7 @@ myApp.factory('testRunnerService', [
 		if( passedStubs != undefined )
 			this.mergeStubs(passedStubs);
 
+
 		// console.log("MERGED CALLEE MAP");
 		// console.log(JSON.stringify(stubs));
 
@@ -85,25 +90,27 @@ myApp.factory('testRunnerService', [
 
 	testRunner.mergeStubs = function(passedStubs){
 
-		angular.forEach(passedStubs,function(functionStubs,functionName){
+		angular.forEach(passedStubs,function( functionStubs, functionName ){
 			
-			if( ! stubs.hasOwnProperty(functionName) )
-				stubs[functionName] = {};
+			// create new entry in the stubs with function name
+			// if doesn't exists
+			if( ! stubs.hasOwnProperty( functionName ) )
+				stubs[ functionName ] = {};
 			
-
-			angular.forEach(functionStubs,function(inputSet,inputSetKey){
-				stubs[functionName][inputSetKey] = inputSet;
+			// for each passed stub for functionName
+			// add it or update the stub list
+			angular.forEach( functionStubs, function( inputSet, inputSetKey ){
+				stubs[ functionName ][ inputSetKey ] = inputSet;
 			}); 
 		});
-
 	}
 
 	testRunner.getCalleeStubs = function(){
 		var calleeStubs = {};
-		angular.forEach(stubs,function(functionStubs,functionName){
+		angular.forEach( stubs , function( functionStubs, functionName ){
 			
-			if( callee.indexOf(functionName) != -1  )
-				calleeStubs[functionName] = functionStubs;
+			if( callee.indexOf( functionName ) != -1  )
+				calleeStubs[ functionName ] = functionStubs;
 		});
 		return calleeStubs;
 	}
@@ -148,11 +155,10 @@ myApp.factory('testRunnerService', [
 			if( allFunctionIDs[i] != functionId ){
 				functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
 
-
-				console.log( callee.indexOf(functionsService.getNameById(allFunctionIDs[i])) );
-				if( callee.indexOf(functionsService.getNameById(allFunctionIDs[i])) != -1 )
+				var isCallee = ( callee.indexOf(functionsService.getNameById(allFunctionIDs[i])) != -1 );
+				if(  isCallee ) // write mock body with logCall
 					functionsWithMockBodies  += functionsService.getMockCodeFor(allFunctionIDs[i],true);
-				else 
+				else // write normal mock body
 					functionsWithMockBodies  += functionsService.getMockCodeFor(allFunctionIDs[i]);
 			}
 		}	
@@ -172,11 +178,11 @@ myApp.factory('testRunnerService', [
 		var allFunctionNames = functionsService.getAllDescribedFunctionNames()
 
 		// for each described function
-		angular.forEach(allFunctionNames,function(functionName){
-			if( functionName != functionsService.getNameById(functionId) )
+		angular.forEach( allFunctionNames, function( functionName ){
+			if( functionName != functionsService.getNameById( functionId ) )
 				try{
-					var stubsForFunction = TestList.buildStubsByFunctionName(functionName);
-					stubs[functionName]  = stubsForFunction;
+					var stubsForFunction = TestList.buildStubsByFunctionName( functionName );
+					stubs[ functionName ]  = stubsForFunction;
 
 				}
 				catch (e)
@@ -188,119 +194,110 @@ myApp.factory('testRunnerService', [
 	}
 
 
-	testRunner.processTestFinished = function(testStopped, testResult)
+	testRunner.processTestFinished = function( testResult )
 	{
 		// If the code is unimplemented, the test neither failed nor passed. If the test
 		// did not pass or timed out, it failed. Otherwise, it passed.
-		if (testStopped) allFailedTestCases.push(currentTextIndex);
-		else if(!testResult.codeUnimplemented){
-			if (!testResult.passed)
-				allFailedTestCases.push(currentTextIndex);
-			else
-				allPassedTestCases.push(currentTextIndex);
-		}
-	
+		if ( !testResult ) 
+			allFailedTestCases.push(currentTextIndex);
+		else
+			allPassedTestCases.push(currentTextIndex);
+
 		// Increment the test and run the next one.
 		currentTextIndex++;
+
+		// IF ALL THE TESTS HAD RUNNED
+		if (currentTextIndex >= validTests.length)
+		{
+			deferred.resolve({
+				stubs     : calleeMap,
+				testsData : returnData
+			});
+			return;
+		}
+
+		
 		this.runTest();		
 	}
 
 
 	testRunner.stopTest = function()
 	{
-		console.log("Hit timeout in TestRunner running the test " + currentTextIndex);
-		worker.terminate();
-		testRunner.processTestFinished(true, null);
+		console.log("TERMINATING TEST!");
+		this.processTestFinished(false);
 		
 	}
 		
 	testRunner.runTest = function()
 	{
-		// IF ALL THE TESTS HAD RUNNED
-		if (currentTextIndex >= validTests.length)
-		{
-			// console.log("SENDING BACK STUBS");
-			// console.log(stubs);
-			deferred.resolve({
-				stubs   : this.getCalleeStubs(),
-				results : returnData
-			});
-			return;
-		}
-		
 		var testCode = validTests[currentTextIndex].getCode();  //.replace(/\n/g,"");
-		
+		console.log("TEST CODE: "+testCode);
 		// Check the code for syntax errors using JSHint. Since only the user defined code will be checked,
 		// add extra defs for references to the instrumentation code.
-		var extraDefs  = "var workingStubs = {}; function logCall(){} function logDebug(){} function hasStubFor(){} function printDebugStatement(statement){} ";		
-		var codeToLint = extraDefs + allTheFunctionCode + testCode;
-		var lintResult = JSHINT(getUnitTestGlobals() + codeToLint, getJSHintGlobals());
-		var errors     = checkForErrors(JSHINT.errors);
-		var testResult;
+		var code = "";
 
+		// add stubs 
+		code += "var stubs = " + JSON.stringify(stubs) + "; \n"; 
 
-		// console.log("======= CODE TO LINT ");
-		// console.log(codeToLint);
-		// console.log(errors);
+		// add calleeMap 
+		code += "var calleeMap = " + JSON.stringify(calleeMap) + "; \n"; 
+
+		// add all the functions code
+		code += allTheFunctionCode;
+
+		// add the test code
+		code += testCode;
 		
-		// If there aren't LINT errors, run the test
-		if(errors == ""){
 
-			// set the max execution time
-			var timeoutPromise = $timeout( function(){
-				worker.terminate();
-				testRunner.stopTest();
-			} , timeOutTime);
+		// set the max execution time
+		var timeoutPromise = $timeout( function(){
+			testRunner.stopTest();
+		} , timeOutTime);
 
-			// build the code to be executed by the worker
-			var codeToExecute = allTheFunctionCode + testCode;
+		// the worker is still running, 
+	    // kill it before starting again
+	    if ( w != undefined ) {
+	      console.log("KILLING THE WORKER FOR TEST "+currentTextIndex );
+	      w.terminate();
+	    }
 
-			//console.log("======= CODE TO EXECUTE ");
-			//console.log(codeToExecute);
+	    // instantiate the worker
+	    // and attach the on-message listener
+	    w = new Worker('/js/workers/test-runner.js');
 
+	    // initialize the worker
+	    w.postMessage( { 'cmd' : 'initialize', 'baseUrl' : document.location.origin } );
 
-		    // INSTANTIATE THE WORKER
-		    worker = new Worker('/js/workers/testRunnerWorker.js');
+	    // start the execution posting the exec message with the code
+		w.postMessage( { 'cmd' : 'exec', 'code' : code } );
 
-		    // Add a callback for receiving and processing messages from the worker. 
-		    worker.onmessage = function(e) {
-		    	// cancel the test execution timeout
-			    $timeout.cancel(timeoutPromise);
+		w.onmessage = function(e){
+			var data = e.data;
+			$timeout.cancel( timeoutPromise );
+			if( e.data.errors != undefined ){
 
+				// if there are errors, show to the console and 
+				// set the test result to false
+				console.log( e.data.errors );
+		  		testRunner.processTestFinished( false );
 
-			// console.log("STUBS FROM WORKER "+e.data.testNumber);
-			// console.log(stubs);
+			} else {
 
-			    // add the returned data
-			    stubs                                       = e.data.stubs;
-			    returnData[e.data.testNumber]               = e.data.result;	
-			    returnData[e.data.testNumber]['test']       = validTests[e.data.testNumber];	
-			    returnData[e.data.testNumber]['paramNames'] = functionsService.getParamNamesById(functionId);	
+				// attach output for the returnData
+				returnData[ currentTextIndex ] = {};
+				returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
+				returnData[ currentTextIndex ].output = data.output ;
+				returnData[ currentTextIndex ].debug  = data.debug ;
 
-			    // process test finished	    	
-				testRunner.processTestFinished(false, e.data);
-		    }
-		    
-		    // initialize the worker 
-			worker.postMessage({ url: document.location.origin, });
+				// update the callee map
+				calleeMap = data.calleeMap ;
 
-		    // pass necessary data to the worker
-			worker.postMessage({    
-				test       : validTests[currentTextIndex], 
-				testNumber : currentTextIndex,             
-				code       : codeToExecute,    
-				stubs      : stubs           
-			});	
+				console.log(data);
+				// process test finished
+		  		testRunner.processTestFinished( data.output.result );
+			}
+		};
 
-		} else { // if the lint found errors
-
-			// add the failed test index to the failed test cases
-			allFailedTestCases.push(currentTextIndex);
-			
-			// Increment the test and run the next one.
-			currentTextIndex++;
-			this.runTest();		
-		}
 	}
 
 	testRunner.submitResultsToServer = function()

@@ -24,7 +24,7 @@ self.onmessage = function(e)
 		     url = url.substring(0, index);
 	     }
 		 importScripts(url + '/js/assertionFunctions.js');
-		 importScripts(url + '/js/instrumentFunction.js'); //ALL UTILITY FUNCTIONS ARE BOTTOM
+		 importScripts(url + '/js/instrumentFunction.js'); 
 	}
 	else
 	{

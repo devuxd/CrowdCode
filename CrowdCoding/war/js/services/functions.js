@@ -143,22 +143,26 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			// First, add the normal header for the function
 			mockCode += functionObj.header + '\n';
 
-			// Next, add the mock implementation body
-			mockCode += '{\n';
-			mockCode += '  var returnValue;\n';
-			mockCode += '  var stubFor = hasStubFor(\'' + functionObj.name + '\', arguments, workingStubs); \n';
-			mockCode += '  if (stubFor.hasStub) \n';
-			mockCode += '    returnValue = stubFor.stubOutput; \n';
-			mockCode += '  else \n';
-			mockCode += '    returnValue = ' + functionObj.name + 'ActualIMP.apply(null, arguments); \n';
+			mockCode += '{'+'\n';
+			mockCode += '	// make JAVASCRIPT able to pass by value'+'\n';
+			mockCode += '   var argsCopy = [];' + '\n' ;
+			mockCode += '	for( var a = 0 ; a < arguments.length ; a++ )'+'\n';
+			mockCode += '		argsCopy[a] = JSON.parse(JSON.stringify(arguments[a]));'+'\n';
+			mockCode += '	var returnValue = null;'+'\n';
+			mockCode += '	var stubFor = hasStubFor( "' + functionObj.name + '", argsCopy, stubs );'+'\n';
+			mockCode += '	if ( stubFor.hasStub ) {'+'\n';
+			mockCode += '		returnValue = stubFor.output;'+'\n';
+			mockCode += '	} else {'+'\n';
+			mockCode += '		returnValue = ' + functionObj.name + 'ActualIMP.apply( null, argsCopy );'+'\n';
+			mockCode += '	}'+'\n';
 
-			// TODO: WRITE A BETTER LOG CALL, now can call two times the actual implementation
 			if( logEnabled != undefined && logEnabled ){
-				mockCode += '  logCall(\'' + functionObj.name + '\',arguments,stubFor.stubOutput,' + functionObj.name + 'ActualIMP.apply(null, arguments) ); \n ';
+				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, returnValue, calleeMap ) ;'+'\n';
 			} 
 
-			mockCode += '  return returnValue;';
-			mockCode += '\n}\n\n';
+			mockCode += '	return returnValue;'+'\n';
+			mockCode += '}'+'\n';
+
 
 			// Third, add the special header for the actual implementation
 			mockCode += getMockHeader(id);

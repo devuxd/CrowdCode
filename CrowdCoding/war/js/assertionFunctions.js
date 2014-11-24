@@ -1,27 +1,27 @@
-var results = new Array();
+var assertionResults = new Array();
 var details = { 'failed' : 0 };
 
 
-function equal(actual, expected, message)
-{
+function equal(actual, expected, message){
+	
 	var succeeded = deepCompare(actual, expected);
 	getResults(actual,expected,message,succeeded);
 }
 
-function deepEqual(actual, expected, message)
-{
-	var succeeded = (actual === expected);
+function deepEqual(actual, expected, message){
+
+	var succeeded = ( actual === expected );
 	getResults(actual,expected,message,succeeded);
 }
 
-function notEqual(actual, expected, message)
-{
+function notEqual(actual, expected, message){
+
 	var succeeded = !deepCompare(actual, expected)
 	getResults(actual,expected,message,succeeded);
 }
 
-function notDeepEqual(actual, expected, message)
-{
+function notDeepEqual(actual, expected, message){
+
 	var succeeded = (actual !== expected);
 	getResults(actual,expected,message,succeeded);
 }
@@ -57,7 +57,7 @@ function throwsException(actual,expect,message)
 function getResults(actual,expected,message,succeeded)
 {
 	console.log("RESULT ACTUAL = "+actual);
-	results.push({ 'expected': expected, 'actual': actual, 'message': message, 'result':  succeeded});
+	assertionResults.push({ 'expected': expected, 'actual': actual, 'message': message, 'result':  succeeded});
 	
 	if (!succeeded)
 		details.failed++;
@@ -65,7 +65,7 @@ function getResults(actual,expected,message,succeeded)
 
 function resetAssertions()
 {
-	results = new Array();
+	assertionResults = new Array();
 	details.failed = 0;
 }
 

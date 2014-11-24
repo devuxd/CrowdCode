@@ -89,6 +89,27 @@
 /* --------- CODEMIRROR OVERWRITE ---------  */
 .CodeMirror { border: none; font-size: 1.1em;}
 
+/* --------- ACE JSON OVERWRITE ---------  */
+.json-editor .ace_scroller,
+.json-reader .ace_scroller {
+	left:17px !important;
+}
+
+.json-editor .ace_folding-enabled > .ace_gutter-cell {
+	padding:0px;
+	color:transparent;
+}
+
+.json-editor .ace_gutter-layer  {
+	width:20px !important;
+}
+
+
+.json-reader.ace-editor {
+	background-color:transparent !important;
+}
+
+
 
 /* GENERAL STYLES AND LAYOUT */
 
@@ -243,7 +264,6 @@ h1, h2, h3, h4 {
 .sidebar .toggler {
 	cursor: pointer;
 	color: #969696;
-	margin-top: 10px;
 	margin-bottom: 2px;
 	padding-left: 10px;
 	text-transform: uppercase;
@@ -504,40 +524,51 @@ top: 0;
 
 /** COLLAPSABLE LIST **/
 ul.collapsable-list { margin:0px; padding:0px; list-style:none; }
-ul.collapsable-list li { margin-bottom:5px; }
-ul.collapsable-list li.success { background-color:rgba(0,255,0,0.2);}
-ul.collapsable-list li.failed  { background-color:rgba(255,0,0,0.2);}
-ul.collapsable-list li.active .toggler { color:black; }
-ul.collapsable-list li.active .element { height:auto; }
 ul.collapsable-list .toggler {
 	cursor: pointer;
 	color: #575757;
-	margin-top: 10px;
-	margin-bottom: 2px;
 	text-transform: uppercase;
 	font-size: 0.9em;
+	padding: 3px;
 }
+ul.collapsable-list .toggler span.closed { display:inline; }
+ul.collapsable-list .toggler span.open   { display:none; }
+ul.collapsable-list .toggler.active {  }
+ul.collapsable-list .toggler.active span.closed { display:none; }
+ul.collapsable-list .toggler.active span.open   { display:inline; }
+
 ul.collapsable-list .element {
-	padding:5px;
-	border-bottom:1px solid black;
-	/*height:0px;*/
+	height:0px;
 	overflow:hidden;
 	-webkit-transition: height 0.5s;
 	-moz-transition: height 0.5s;
 	transition: height 0.5s;
 }
 
+ul.collapsable-list .element-body { padding: 5px; }
+
 table.test { width: 100%;}
 table.test td { vertical-align: top; }
-table.test td:first-child { width:20%; text-align: right; padding-right:5px;}
+table.test td:first-child { width:20%; text-align: right; padding-right:5px; }
 
 table.test.spacing td { padding-bottom:5px;}
 
+
+
+
+.test-collapsable-list .toggler.success { }
+.test-collapsable-list .toggler.failed  { }
+.test-collapsable-list .toggler  { background-color: #3F81AC; color:white !important; border-bottom: 2px solid #4F5457;}
+
+
+.test-collapsable-list .element {
+	color:black;
+}
 .test-collapsable-list table { width: 100%;}
-.test-collapsable-list table td:first-child { width:20%; text-align: right; padding-right:5px;}
+.test-collapsable-list table td:first-child { width:20%; text-align: left; padding-left:5px; font-weight:700;}
 
 .mock-collapsable-list table { width: 100%;}
-.mock-collapsable-list table td:first-child { width:20%; text-align: right; padding-right:5px;}
+.mock-collapsable-list table td:first-child { width:20%; text-align: left; }
 
 /*table.debugTests tr.passed { background-color:green;}
 table.debugTests tr.failed { background-color:red;}

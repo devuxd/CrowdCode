@@ -1,0 +1,94 @@
+<html>
+
+
+<body>
+
+<button onclick="startWorker()">StartWorker</button>
+<button onclick="stopWorker()">Stop worker</button>
+<button onclick="executeTest()">Execute</button>
+<br />
+<textarea id="code" style="width:400px;height:400px;">debug.log("sciao");</textarea><br />
+<output id="results"></output>
+
+
+
+<script>
+  var w           = undefined;
+  var results     = null;
+  var error       = false;
+  var execTimeout = null;
+
+  function executeTest( maxMillis ) {
+    // if a maxMillis is undefined
+    // set the timeout of execution
+    if( maxMillis != undefined){
+
+      execTimeout = setTimeout( function(){
+
+        // worker is stuck, stop it 
+        stopWorker();
+        //error = true;
+
+      }, maxMillis );
+
+    }
+
+    // start the execution posting the message
+    var execMsg  = {};
+    execMsg.cmd  = 'exec';
+    execMsg.code = document.getElementById("code").value;
+    w.postMessage( execMsg );
+
+    w.onmessage = function(e){
+
+      // manage results
+      console.log("MESSAGE: ");
+      if( e.data.errors != undefined ){
+        document.getElementById("results").innerHTML = e.data.errors.join("<br />") ;
+      }
+      
+      // clear the timeout
+      if ( execTimeout != null ){
+        clearTimeout(execTimeout);
+        execTimeout = null ; 
+      }
+
+    };
+  }
+
+
+  function stopWorker() {
+    // terminate the worker
+    //w.sendMessage({ 'cmd' : 'stop' });
+    w.terminate();
+    w = undefined;
+  }
+
+  function startWorker() {
+    // the worker is still running, 
+    // kill it before starting again
+    if ( w != undefined ) {
+      stopWorker();
+    }
+
+    // instantiate the worker
+    // and attach the on-message listener
+    w = new Worker('test-runner.js');
+
+    // build initialization message
+    var message     = {};
+    message.cmd     = 'initialize';
+    message.baseUrl = document.location.origin;
+
+    // initialize the worker
+    w.postMessage(message);
+  }
+
+
+  startWorker();
+  
+
+</script>
+
+</body>
+</html>

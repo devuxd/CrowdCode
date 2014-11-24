@@ -81,6 +81,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 				if( test.getFunctionId() == functionId )
 					returnList.push(test);	
 			});
+
 			return returnList;
 		},
 		// retrieve all the tests belonging to 
@@ -153,8 +154,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 					stubs[JSON.stringify(inputsKey)] = { 
 						  inputs: test.rec.simpleTestInputs, 
-					      stubOutput: JSON.parse(test.rec.simpleTestOutput),
-					      realOutput : ""
+					      output: JSON.parse(test.rec.simpleTestOutput)
 					};
 				}
 			});
@@ -184,7 +184,7 @@ myApp.factory("Test", function ($FirebaseArray) {
 			this.rec.id  = id;
 		},
 		update: function(rec){
-			this.test = rec;
+			this.rec = rec;
 		},
 		toJSON: function(){
 			return this.rec;

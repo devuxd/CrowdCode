@@ -108,7 +108,7 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
             functionId = scope.microtask.functionID;
             valid = true;
             allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
-            allFunctionCode = functionsService.getAllDescribedFunctionCode(functionId)+ "function printDebugStatement(){}" ;
+            allFunctionCode = functionsService.getAllDescribedFunctionCode(functionId)+ " var debug = null; " ;
 
             ctrl.$formatters.unshift(function(viewValue) {
 
@@ -437,31 +437,6 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
     };
 });
 
-myApp.directive('collapsableList', ['$compile', '$timeout', function($compile, $timeout) {
-
-    return {
-        restrict: "E",
-        scope: {
-            dataObjects: "=data",
-            togglerTemplate: "@togglerTemplate",
-            elementTemplate: "@elementTemplate",
-            classCondition: "@listElementClassCondition"
-        },
-        link: function($scope, $element, $attributes) {
-            var classCondition = '';
-            if ($attributes.listElementClassCondition)
-                classCondition = 'ng-class="{' + $scope.classCondition + '}"';
-            var toCompile = '<ul class="collapsable-list">' + '    <li ng-repeat="(key,data) in dataObjects" class="{{ key == activeElement ? \'active\':\'\' }}" ' + classCondition + '>' + '        <div class="toggler" ng-include="togglerTemplate"></div>' + '        <div class="element"><div class="element-body" ng-include="elementTemplate"></div></div>' + '    </li>' + '</ul>';
-
-            var $toggler = $(toCompile);
-            $element.append($toggler);
-            $compile($element.contents())($scope);
-        },
-        controller: function($scope, $element) {
-
-        }
-    };
-}]);
 
 
 //////////////////////
@@ -498,6 +473,70 @@ myApp.directive('javascriptHelper', ['$compile', '$timeout', '$http', 'ADTServic
 }]);
 
 
+myApp.directive('collapsableList', ['$compile', '$timeout', function($compile, $timeout) {
+
+    return {
+        restrict: "E",
+        scope: {
+            dataObjects     : "=data",
+            addData         : "=",
+            togglerTemplate : "@togglerTemplate",
+            elementTemplate : "@elementTemplate",
+            classCondition  : "@listElementClassCondition"
+        },
+        link: function($scope, $element, $attributes) {
+
+            var classCondition = '';
+            if ($attributes.listElementClassCondition)
+                classCondition = 'ng-class="{' + $scope.classCondition + '}"';
+            var toCompile = '<ul class="collapsable-list">' + 
+                                '    <li ng-repeat="(key,data) in dataObjects" >' + 
+                                '        <div class="toggler" ng-click="activate( key )" class="" ' + classCondition + '>' + 
+                                '           <span class="closed glyphicon glyphicon-chevron-right"></span>' +
+                                '           <span class="open   glyphicon glyphicon-chevron-down"></span>' +
+                                '           <ng-include src="togglerTemplate"></ng-include>' +
+                                '        </div>' + 
+                                '        <div class="element">' + 
+                                '           <div class="element-body" ng-include="elementTemplate"></div>' + 
+                                '       </div>' + 
+                                '    </li>' + 
+                                '</ul>';
+
+
+            $scope.activeElement = 0;
+            $scope.activate = function(key) {
+                activeElement = key;
+                
+                var $listElement = $element.find('.collapsable-list li:nth-child('+(parseInt(key)+1)+')') ;
+
+                // remove class active for all togglers
+                $element.find('.toggler').removeClass('active');
+                // reset height for all elements
+                $element.find('.element').height(0);
+
+                // add class active to the toggler
+                $listElement.find('.toggler').addClass('active');
+                // set max height for current element
+                var $toToggle = $listElement.find('.element');
+                $toToggle.height( $toToggle.find('.element-body').outerHeight() );
+            }
+
+
+            var $list = $(toCompile);
+            $element.append($list);
+            $compile($element.contents())($scope);
+
+            
+            $timeout(function(){
+                $scope.activate(0);
+            },300);
+
+        },
+        controller: function($scope, $element) {
+
+        }
+    };
+}]);
 
 myApp.directive('adtBar', ['$compile', '$timeout', 'ADTService', function($compile, $timeout, ADTService) {
 
