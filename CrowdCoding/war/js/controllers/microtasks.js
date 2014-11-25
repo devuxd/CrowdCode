@@ -243,21 +243,8 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 			$scope.testsData = data.testsData;
 			$scope.stubs     = data.stubs;
 
-/*
-			angular.forEach($scope.stubs,function(stubs,functionName){
-				angular.forEach(stubs,function(data,inputKey){
-					angular.forEach(data,function(value,key){
-						data[key] = JSON.parse(value);
-					});
-				});
-			});*/
-
 			console.log("STUBS");
 			console.log($scope.stubs);
-
-			// console.log(" ----- RESULTS FROM THE TEST RUNNER ");
-			// console.log(data.results);
-			// console.log(data.stubs);
 		
 			// reset testsRunning flag
 			$timeout(function(){
@@ -299,7 +286,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		else {
 			var oneTestFailed = false;
 
-			angular.forEach($scope.results,function(data,index){
+			angular.forEach($scope.testsData,function(data,index){
 
 				if( !oneTestFailed && !data.output.result )
 					oneTestFailed = true;
@@ -322,13 +309,9 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 			} else {
 
-				var text = functionCodeMirror.getValue();
-		 		var ast = esprima.parse(text, {loc: true});
-				var body = functionCodeMirror.getRange(
-						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-
+				// BUILD MOCKS 
 				var mocks = [];
+
 				angular.forEach($scope.stubs,function(stubsForFunction,functionName){
 					angular.forEach(stubsForFunction,function(stub,index){
 						var mockCode = 'equal('+functionName+'(';
@@ -348,10 +331,39 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 					});
 				});
 
-				formData =  { 
-							 code:  body,
-							 mocks: mocks
-				};
+
+				// BUILD FUNCTION CODE
+				var text = functionCodeMirror.getValue();
+				var ast  = esprima.parse(text, {loc: true});
+				var calleeNames = functionsService.getCalleeNames(ast);
+
+				// Get the text for the function description, header, and code.
+				// Note esprima (the source of line numbers) starts numbering lines at 1, while
+			    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+				var fullDescription = functionCodeMirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+
+				var linesDescription = fullDescription.split('\n');
+				var name = ast.body[0].id.name;
+
+				var functionParsed = functionsService.parseDescription(linesDescription,name);
+
+				//if pseudosegment are present the body is already istanziated
+				body = functionCodeMirror.getRange(
+						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+
+				formData =  { description: functionParsed.description,
+							 header:       functionParsed.header,
+							 name:         name,
+							 code:         body,
+							 returnType:   functionParsed.returnType,
+							 paramNames:   functionParsed.paramNames,
+							 paramTypes:   functionParsed.paramTypes,
+							 paramDescriptions: functionParsed.paramDescriptions,
+							 calleeNames:  calleeNames,
+							 mocks:        mocks
+							};
 
 			}
 

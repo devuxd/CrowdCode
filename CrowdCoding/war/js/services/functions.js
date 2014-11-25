@@ -3,7 +3,7 @@
 ////////////////////
 //FUNCTIONS SERVICE   //
 ////////////////////
-myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksService', function($window,$rootScope,$firebase,mocks) {
+myApp.factory('functionsService', ['$window','$rootScope','$firebase', function( $window, $rootScope, $firebase) {
 
 	var service = new  function(){
 		// Private variables
@@ -183,21 +183,21 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			mockCode += '		} else {'+'\n';
 			mockCode += '			returnValue = ' + functionObj.name + 'ActualIMP.apply( null, argsCopy );'+'\n';
 			mockCode += '		}'+'\n';
-
-			if( logEnabled != undefined && logEnabled ){
-				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, returnValue, calleeMap ) ;'+'\n';
-			} 
-
 			mockCode += '   } catch (e) { \n';
-			mockCode += '       debug.log("There was an error in the callee ' + functionObj.name + '");';
-			mockCode += '       debug.log("Use the CALLEE STUBS panel to stub this function.");';
+			mockCode += '       debug.log("There was an error in the callee ' + functionObj.name + '");\n';
 
+			// if log enabled signal that the function can be STUBBED
+			if( logEnabled != undefined && logEnabled ){
+				mockCode += '       debug.log("Use the CALLEE STUBS panel to stub this function.");\n';
+			}
 
+			mockCode += '   } \n';
+
+			// if log enabled log this call
 			if( logEnabled != undefined && logEnabled ){
 				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, null, calleeMap ) ;'+'\n';
 			} 
 
-			mockCode += '   } \n';
 			mockCode += '	return returnValue;'+'\n';
 			mockCode += '}'+'\n';
 
@@ -206,7 +206,11 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			mockCode += getMockHeader(id);
 
 			// Fourth, add the actual code body of the function
-			mockCode += '\n' + functionObj.code + '\n';
+
+			if( functionObj.written )
+				mockCode += '\n' + functionObj.code + '\n';
+			else
+				mockCode += '\n{}\n';
 
 			return mockCode;
 		}
@@ -219,7 +223,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			var functionObj = get(id);
 			if (functionObj == null)
 				return '';
-
 			return functionObj.header + '{}\n'+ getMockHeader(id) + '{}\n';
 		}
 

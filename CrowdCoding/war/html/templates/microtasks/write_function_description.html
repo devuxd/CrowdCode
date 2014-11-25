@@ -91,7 +91,7 @@
 					  	<div class="form-group">
 						    <label class=" control-label col-sm-2 reset-padding">parameters</label>
 							<div class="form-group col-sm-10 reset-padding" >
-								<div ng-form="param" class="form-horizontal" ng-repeat="(index,parameter) in parameters">
+								<div ng-form="param" class="form-horizontal" style="display:inline-block" ng-repeat="(index,parameter) in parameters">
 								    <div class="col-sm-3 reset-padding">
 								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName"/>
 								      	<ul class="help-block" ng-show="param.parameterName.$dirty && param.parameterName.$invalid">

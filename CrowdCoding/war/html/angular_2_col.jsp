@@ -254,7 +254,6 @@
 	<script src="/js/services/microtasks.js"></script>
 	<script src="/js/services/tests.js"></script>
 	<script src="/js/services/functions.js"></script>
-	<script src="/js/services/mocks.js"></script>
 	<script src="/js/services/user.js"></script>
 	<script src="/js/services/testRunner.js"></script>
     <script src="/js/services/fileUpload.js"></script>
