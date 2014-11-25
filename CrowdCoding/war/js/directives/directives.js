@@ -505,6 +505,7 @@ myApp.directive('collapsableList', ['$compile', '$timeout', function($compile, $
 
             $scope.activeElement = 0;
             $scope.activate = function(key) {
+                /*
                 activeElement = key;
                 
                 var $listElement = $element.find('.collapsable-list li:nth-child('+(parseInt(key)+1)+')') ;
@@ -518,7 +519,7 @@ myApp.directive('collapsableList', ['$compile', '$timeout', function($compile, $
                 $listElement.find('.toggler').addClass('active');
                 // set max height for current element
                 var $toToggle = $listElement.find('.element');
-                $toToggle.height( $toToggle.find('.element-body').outerHeight() );
+                $toToggle.height( $toToggle.find('.element-body').outerHeight() );*/
             }
 
 

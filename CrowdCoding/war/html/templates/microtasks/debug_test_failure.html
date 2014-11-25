@@ -50,7 +50,7 @@
 					Each box shows the result of each test for the current function, if a test is passed the box has a green background otherwise the background is red.
 					You can <strong> dispute </strong> the failing tests. <br /> <strong>Important:</strong> you can dispute only one test!
 					
-					<button ng-click="runTests()" class="btn btn-primary"  >Run the tests!</button>
+					<button ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.$invalid">Run the tests!</button>
 				</div>
 			</div>
 
@@ -85,7 +85,7 @@
 			 		</p>
 				</div>
 
-				<div class="section-title" > AVAILABLE DATA STRUCTURES </div>
+				<div class="section-title" > AVAILABLE DATA TYPES </div>
 				<div class="section-content" >
 						<adt-bar></adt-bar>
 				</div>
@@ -101,7 +101,7 @@
 							<li>{{error}}</li>
 						</ul>
 					</ul>
-					<ng-include src="'/html/templates/java_tutorial.html'"></ng-include>
+					<javascript-helper class="pull-right"></javascript-helper>
 					<span class="clearfix"></span>
 				</div>
 			</div>

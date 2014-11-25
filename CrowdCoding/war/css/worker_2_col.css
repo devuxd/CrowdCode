@@ -543,7 +543,7 @@ ul.collapsable-list .toggler.active span.closed { display:none; }
 ul.collapsable-list .toggler.active span.open   { display:inline; }
 
 ul.collapsable-list .element {
-	height:0px;
+	/*height:0px;*/
 	overflow:hidden;
 	-webkit-transition: height 0.5s;
 	-moz-transition: height 0.5s;

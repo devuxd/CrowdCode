@@ -290,6 +290,13 @@ myApp.factory('testRunnerService', [
 				// if there are errors, show to the console and 
 				// set the test result to false
 				console.log( e.data.errors );
+
+
+				returnData[ currentTextIndex ] = {};
+				returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
+				returnData[ currentTextIndex ].output = {} ;
+				returnData[ currentTextIndex ].debug  = e.data.errors;
+
 		  		testRunner.processTestFinished( false );
 
 			} else {

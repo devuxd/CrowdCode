@@ -94,7 +94,7 @@ self.addEventListener('message', function(e){
 						var JError = JSHINT.errors[i];
 						errors.push( "Line: " + JError.line + " - " + JError.reason );
 					}
-					self.postMessage( { errors: errors } );
+					self.postMessage( { errors: "JSHINT ERRORS: " + errors.join("\n") } );
 
 				} else {
 					// executes the tests

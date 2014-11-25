@@ -150,16 +150,27 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			mockCode += '		argsCopy[a] = JSON.parse(JSON.stringify(arguments[a]));'+'\n';
 			mockCode += '	var returnValue = null;'+'\n';
 			mockCode += '	var stubFor = hasStubFor( "' + functionObj.name + '", argsCopy, stubs );'+'\n';
-			mockCode += '	if ( stubFor.hasStub ) {'+'\n';
-			mockCode += '		returnValue = stubFor.output;'+'\n';
-			mockCode += '	} else {'+'\n';
-			mockCode += '		returnValue = ' + functionObj.name + 'ActualIMP.apply( null, argsCopy );'+'\n';
-			mockCode += '	}'+'\n';
+			mockCode += '   try { \n';
+			mockCode += '		if ( stubFor.hasStub ) {'+'\n';
+			mockCode += '			returnValue = stubFor.output;'+'\n';
+			mockCode += '		} else {'+'\n';
+			mockCode += '			returnValue = ' + functionObj.name + 'ActualIMP.apply( null, argsCopy );'+'\n';
+			mockCode += '		}'+'\n';
 
 			if( logEnabled != undefined && logEnabled ){
 				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, returnValue, calleeMap ) ;'+'\n';
 			} 
 
+			mockCode += '   } catch (e) { \n';
+			mockCode += '       debug.log("There was an error in the callee ' + functionObj.name + '");';
+			mockCode += '       debug.log("Use the CALLEE STUBS panel to stub this function.");';
+
+
+			if( logEnabled != undefined && logEnabled ){
+				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, null, calleeMap ) ;'+'\n';
+			} 
+
+			mockCode += '   } \n';
 			mockCode += '	return returnValue;'+'\n';
 			mockCode += '}'+'\n';
 
