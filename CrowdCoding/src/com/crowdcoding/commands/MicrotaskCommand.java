@@ -54,6 +54,7 @@ public abstract class MicrotaskCommand extends Command
 	// Finds the specified microtask. Returns null if no such microtask exists.
 	protected Microtask find(Key<Microtask> microtaskKey)
 	{
+		System.out.println("FIND MICROTASK "+microtaskKey);
 		return ofy().load().key(microtaskKey).get();
 	}
 

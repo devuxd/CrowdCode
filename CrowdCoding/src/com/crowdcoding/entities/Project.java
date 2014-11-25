@@ -382,13 +382,13 @@ public class Project
 	// excluded workers to give workers another chance.
 	private void resetIfAllSkipped(Key<Microtask> microtaskKey, Project project)
 	{
-		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get(microtaskKey);
+		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get( Project.MicrotaskKeyToString(microtaskKey) );
 		if (excludedWorkersForMicrotask.containsAll(loggedInWorkers))
 		{
 			excludedWorkersForMicrotask.clear();
 
 			// Add back the permanently excluded workers
-			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get(microtaskKey);
+			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get( Project.MicrotaskKeyToString(microtaskKey) );
 			if (permanentlyExcludedWorkersForMicrotask != null)
 				excludedWorkersForMicrotask.addAll(permanentlyExcludedWorkersForMicrotask);
 

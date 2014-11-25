@@ -208,7 +208,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask',function(event,data){
 		console.log("skip fired");
-		$http.get('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id + '&skip=true').
+		$http.get('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id + '&skip=true').
 		  success(function(data, status, headers, config) {
 			  $scope.$emit('load');
 		  });
