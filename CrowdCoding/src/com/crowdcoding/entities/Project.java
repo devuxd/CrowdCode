@@ -14,6 +14,7 @@ import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionDescriptionsDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
+import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
@@ -335,10 +336,10 @@ public class Project
 		microtaskAssignments.put(workerID, null);
 		ofy().save().entity(this).now();
 
-		// If reviewing is enabled and there is not a review microtask
-		// for the current non-review microtask,
+		// If reviewing is enabled and the microtask is not a Review, 
+		// a ReuseSearch or a DebugTestFailure,
 		// spawn a new review microtask to let the crowd review the work
-		if (reviewingEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class)) )
+		if (reviewingEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class) || microtaskType.equals(DebugTestFailure.class) ) )
 		{
 			MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 		}

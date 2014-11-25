@@ -1,7 +1,9 @@
 /* Taken from the popular Visual Studio Vibrant Ink Schema */
 
 .cm-s-custom-editor.CodeMirror { background: #1d1e1c; color: white; }
-.cm-s-custom-editor .CodeMirror-selected { background: #35493c !important; }
+.cm-s-custom-editor .CodeMirror-selected {
+	background: white; /*#35493c !important; */
+}
 
 .cm-s-custom-editor .CodeMirror-gutters { background: #1d1e1c; border-right: 1px solid #aaa; }
 .cm-s-custom-editor .CodeMirror-linenumber { color: #d0d0d0; }

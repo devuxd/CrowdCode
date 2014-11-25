@@ -346,13 +346,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 		var numParams = 0;
 
-		console.log("parse description after regex");
-
 		for(var i=0; i<lineDescription.length;i++){
 
 			lineDescription[i] = lineDescription[i].replace(/\s{2,}/g,' ');
-
-			console.log(lineDescription[i]);
 
 			// check if the current line is a parameter or return line
 			var paramLine  = lineDescription[i].search('@param ');
@@ -530,11 +526,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			if (highlightPseudoCall != false)
 			{
 				var pseudoCallCol = line.indexOf(highlightPseudoCall);
-				if (pseudoCallCol != -1)
+				if (pseudoCallCol != -1){
 				 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol},
 				 			     {line: i, ch: line.length},
 				 			     {className: 'highlightPseudoCall', inclusiveRight: true }));
+				}
 			}
+			
 		});
 	}
 
@@ -549,10 +547,8 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		console.log("text "+text);
 		//console.log(codemirror);
 		var readOnlyLines = indexesOfTheReadOnlyLines(text);
-		console.log(readOnlyLines);
 		for(var i=0; i<readOnlyLines.length; i++)
 		{
 			codemirror.getDoc().markText({line: readOnlyLines[i], ch: 0},
