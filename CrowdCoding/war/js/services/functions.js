@@ -5,7 +5,7 @@
 ////////////////////
 myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksService', function($window,$rootScope,$firebase,mocks) {
 
-	var service = new function(){
+	var service = new  function(){
 		// Private variables
 		var functions;
 		var functionsHistory;
@@ -28,6 +28,8 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.findMatches = function(searchText, functionSourceName) { return findMatches(searchText, functionSourceName); };
 		this.makeHeaderAndParameterReadOnly = function(codemirror){return makeHeaderAndParameterReadOnly(codemirror);};
 		this.highlightPseudoSegments =function(codemirror,marks,highlightPseudoCall){ return highlightPseudoSegments(codemirror,marks,highlightPseudoCall);};
+		//this.hasPseudoSegments =function(functionCode){ return hasPseudoSegments(functionCode);};
+	//	this.replaceFunctionCodeBlock = function (text) {return replaceFunctionCodeBlock(text); };
 		this.findNextWord = function (text, start){ return findNextWord(text, start);};
 		this.getCalleeNames = function (ast){ return getCalleeNames(ast);};
 		this.getCalleeNamesById = function (functionId){ return getCalleeNamesById(functionId);};
@@ -35,7 +37,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
 		this.getParamNamesById = function (functionId) { return getParamNamesById(functionId);};
-		this.getCount = function(){ return (functions == undefined)?0:functions.length; };
+		this.getCount = function(){ return (functions === undefined)?0:functions.length; };
 	 	
 	 	this.isLoaded = function() { return loaded; };
 		this.getAll = function(){ return functions;	};
@@ -53,6 +55,31 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			/*var functionsArraySync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functionsHistory = functionsSync.$asArray();
 			functionsHistory.$loaded().then(function(){ $rootScope.loaded.functions=true; });*/
+		}
+
+		// Replaces function code block with empty code. Function code blocks must start on the line
+		// after a function statement.
+		// Returns a block of text with the code block replaced or '' if no code block can be found
+		function replaceFunctionCodeBlock(text) {
+		    var lines = text.split('\n');
+		    for (var i = 0; i < lines.length; i++) {
+		        if (lines[i].startsWith('function')) {
+		            // If there is not any more lines after this one, return an error
+		            if (i + 1 >= lines.length - 1)
+		                return '';
+
+		            // Return a string replacing everything from the start of the next line to the end
+		            // Concatenate all of the lines together
+		            var newText = '';
+		            for (var j = 0; j <= i; j++)
+		                newText += lines[j] + '\n';
+
+		            newText += '{}';
+		            return newText;
+		        }
+		    }
+
+		    return '';
 		}
 
 		// Returns an array with every current function ID
@@ -467,7 +494,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 		if(typeof text === 'undefined')
 		{
 			return;
-		};
+		}
 
 			var lines = text.split('\n');
 		$.each(lines, function(i, line)
