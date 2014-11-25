@@ -23,6 +23,9 @@ public abstract class ProjectCommand extends Command
 	public static ProjectCommand logoutWorker(String workerID) 
 		{ return new LogoutWorker(workerID); }
 	
+	public static ProjectCommand logoutInactiveWorkers() 
+	{ return new LogoutInactiveWorkers(); }
+	
 	private ProjectCommand()
 	{
 		queueCommand(this);
@@ -139,6 +142,22 @@ public abstract class ProjectCommand extends Command
 		public void execute(Project project)
 		{
 			project.logoutWorker(workerID);
+		}		
+	}
+	
+
+	protected static class LogoutInactiveWorkers extends ProjectCommand
+	{
+		private String workerID;
+		
+		public LogoutInactiveWorkers()
+		{
+			super();
+		}
+		
+		public void execute(Project project)
+		{
+			project.logoutInactiveWorkers();
 		}		
 	}
 }

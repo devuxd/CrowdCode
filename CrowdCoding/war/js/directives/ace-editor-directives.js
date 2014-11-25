@@ -11,7 +11,7 @@ myApp.directive('aceReadJson', function() {
         link: function ( scope, iElement, iAttrs, ngModel ) {
 
             if( ngModel.$isEmpty( scope.ngModel ) ) {
-                scope.ngModel = "empty";
+                scope.ngModel = "";
             } else if ( typeof scope.ngModel !== 'string' ){
                 scope.ngModel = JSON.stringify( scope.ngModel );
             } 
@@ -47,7 +47,7 @@ myApp.directive('aceEditJson', function() {
         link: function ( scope, iElement, iAttrs, ngModel ) {
 
             if( ngModel.$isEmpty( scope.ngModel ) ) {
-                scope.ngModel = "empty";
+                scope.ngModel = "";
             } else if ( typeof scope.ngModel !== 'string' ){
                 scope.ngModel = JSON.stringify( scope.ngModel , null, "\t");
             } 

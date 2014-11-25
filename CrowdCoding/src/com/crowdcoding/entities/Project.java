@@ -182,7 +182,16 @@ public class Project
 	{
 		return microtaskAssignments.get(workerID);
 	}
-
+	
+	public void logoutInactiveWorkers(){
+		for ( String workerId : loggedInWorkers){
+			if( ! FirebaseService.isWorkerLoggedIn( workerId, this) ){
+				System.out.println("LOGGING OUT "+workerId);
+				this.logoutWorker( workerId );
+			}
+		}
+	}
+	
 	// Logs out the specified worker, clearing all of their current assigned work
 	public void logoutWorker(String workerID)
 	{

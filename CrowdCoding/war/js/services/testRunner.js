@@ -134,6 +134,7 @@ myApp.factory('testRunnerService', [
 
 		allTheFunctionCode = ""; // reset the all functions code
 
+		// retrieve callees
 		var functionName = functionsService.getNameById(functionId);
 		callee = [];
 		var ast = esprima.parse( functionCode , {loc: true})
@@ -149,19 +150,29 @@ myApp.factory('testRunnerService', [
 
 		// for each function in the system
 		var allFunctionIDs = functionsService.allFunctionIDs();
+		console.log("ALL FUNCTIONS ID",allFunctionIDs);
 		for (var i=0; i < allFunctionIDs.length; i++)
 		{
+			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
+			
 			// IF IS THE FUNCTION UNDER TEST DON'T GENERATE MOCK BODY
 			if( allFunctionIDs[i] != functionId ){
-				functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
+				console.log("RETRIEVING MOCK FOR "+allFunctionIDs[i] );
+
+				
 
 				var isCallee = ( callee.indexOf(functionsService.getNameById(allFunctionIDs[i])) != -1 );
+
 				if(  isCallee ) // write mock body with logCall
 					functionsWithMockBodies  += functionsService.getMockCodeFor(allFunctionIDs[i],true);
 				else // write normal mock body
 					functionsWithMockBodies  += functionsService.getMockCodeFor(allFunctionIDs[i]);
 			}
 		}	
+
+
+		console.log("FUNCTIONS WITH EMPTY BODIES", functionsWithEmptyBodies );
+		console.log("FUNCTIONS WITH MOCK BODIES", functionsWithMockBodies );
 
 		// generate all the function code
 		allTheFunctionCode = functionsWithEmptyBodies + '\n'  // functions with empty bodies

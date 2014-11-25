@@ -117,12 +117,9 @@ public class CrowdServlet extends HttpServlet
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
         
-
-
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
-		System.out.println(path);
 		try {
 			// -- PATHS WITHOUT USER AUTHENTICATION
 			 if(Pattern.matches("/welcome",path)){
@@ -166,7 +163,11 @@ public class CrowdServlet extends HttpServlet
 							System.out.println("Project not found ("+projectId+")!");
 							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 						}
-					} else if ( pathSeg.length <= 2 ){
+					}	
+					
+					
+						
+					if ( pathSeg.length <= 2 ){
 						req.getRequestDispatcher("/html/angular_2_col.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
 						doAdmin(req, resp, projectId, pathSeg);
@@ -226,7 +227,7 @@ public class CrowdServlet extends HttpServlet
 	private void doAdmin(HttpServletRequest req, HttpServletResponse resp,
 			final String projectID, final String[] pathSeg) throws IOException, ServletException
 	{
-		System.out.println("doing admin");
+		//System.out.println("doing admin");
 		if(pathSeg.length <=3 ){
 			req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
 		} else {
@@ -234,7 +235,7 @@ public class CrowdServlet extends HttpServlet
 			// use "" as the command.
 			String command = pathSeg[3].toUpperCase();
 
-			System.out.println("command="+command);
+			//System.out.println("command="+command);
 		    final StringBuilder output = new StringBuilder();
 		    final Date currentTime = new Date();
 
@@ -352,7 +353,7 @@ public class CrowdServlet extends HttpServlet
 		    // persist image
 		    ofy().save().entity(picture).now();
 
-		    System.out.println("SUCCESS UPLOAD");
+		    //System.out.println("SUCCESS UPLOAD");
 		    
 		    // print success
 		    res.setContentType("text/plain");
@@ -450,17 +451,20 @@ public class CrowdServlet extends HttpServlet
             	Project project = Project.Create(projectID);
             	String workerID = user.getUserId();
             	String workerHandle = user.getNickname();
+            	
+            	// logout inactive workers
+            	project.logoutInactiveWorkers();
 
             	// If the user does not have a microtask assigned, get them a microtask.
             	Long microtaskID = project.lookupMicrotaskAssignment(workerID);
             	if (microtaskID == null)
             	{
-            		System.out.println("Assigning worker " + workerHandle + " a microtask");
+            		//System.out.println("Assigning worker " + workerHandle + " a microtask");
             		microtaskID = project.assignMicrotask(workerID, workerHandle);
             	}
             	else
             	{
-            		System.out.println("Worker " + workerHandle + " already has a microtask");
+            		//System.out.println("Worker " + workerHandle + " already has a microtask");
             	}
 
             	return microtaskID;
@@ -494,7 +498,6 @@ public class CrowdServlet extends HttpServlet
 	}
 
 	private void renderJson(final HttpServletResponse resp,String json) throws IOException{
-		System.out.println("json="+json);
 		resp.setContentType("json;charset=utf-8");
 		PrintWriter out = resp.getWriter();
 		out.print(json);
