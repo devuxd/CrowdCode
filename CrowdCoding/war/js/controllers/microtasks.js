@@ -85,8 +85,11 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','$alert'
 	$scope.review.functionCode = "";
 
 	//load the microtask to review
-	$scope.review.microtask = microtasksService.get($scope.microtask.microtaskIDUnderReview);
+	console.log("MICROTASK ID UNDER REVIEW ",$scope.microtask.microtaskKeyUnderReview);
+	$scope.review.microtask = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
 	$scope.review.microtask.$loaded().then(function(){
+
+		console.log($scope.review.microtask);
 
 		if ($scope.review.microtask.type == 'WriteTestCases'){
 			//retrievs the reference of the existing test cases to see if the are differents
@@ -174,7 +177,7 @@ myApp.controller('ReviewController', ['$scope','$rootScope','$firebase','$alert'
 			else {
 
 				formData = {
-					microtaskIDReviewed: $scope.microtask.microtaskIDUnderReview,
+					microtaskIDReviewed: $scope.microtask.microtaskKeyUnderReview,
 					reviewText:          $scope.review.reviewText,
 					qualityScore:        $scope.review.rating
 				};
@@ -298,7 +301,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 			angular.forEach($scope.results,function(data,index){
 
-				if( !oneTestFailed && !data.testResult )
+				if( !oneTestFailed && !data.output.result )
 					oneTestFailed = true;
 			});
 

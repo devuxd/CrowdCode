@@ -10,15 +10,21 @@ import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
 import com.crowdcoding.dto.firebase.ReviewInFirebase;
 import com.crowdcoding.entities.Artifact;
+import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.annotation.Parent;
 
 @EntitySubclass(index=true)
 public class Review extends Microtask
 {
-	private long microtaskIDUnderReview;
+	@Parent @Load private Ref<Artifact> artifact;
+	private Key<Microtask> microtaskKeyUnderReview;
 	private String workerOfReviewedWork;
 	private String initiallySubmittedDTO;	// initially submitted DTO in string format
 
@@ -28,33 +34,40 @@ public class Review extends Microtask
 	}
 
 	// Constructor for initial construction
-	public Review(long microtaskIDUnderReview, String initiallySubmittedDTO, String workerOfReviewedWork,
+	public Review(Key<Microtask> microtaskKeyUnderReview, String initiallySubmittedDTO, String workerOfReviewedWork,
 			Project project)
 	{
 		super(project);
 		this.submitValue = 4;
-		this.microtaskIDUnderReview = microtaskIDUnderReview;
+		this.microtaskKeyUnderReview = microtaskKeyUnderReview;
 		this.initiallySubmittedDTO = initiallySubmittedDTO;
 		this.workerOfReviewedWork = workerOfReviewedWork;
+		
+		Microtask microtaskUnderReview = ofy().load().key(microtaskKeyUnderReview).get();
+		this.artifact = (Ref<Artifact>) Ref.create( microtaskUnderReview.getOwningArtifact().getKey() );
+		
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new ReviewInFirebase(id,this.microtaskTitle(), this.microtaskName(), "",
-				false, submitValue, microtaskIDUnderReview), id, project);
+				false, submitValue, microtaskKeyUnderReview), 
+				Project.MicrotaskKeyToString(this.getKey()),
+				project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
 		project.historyLog().endEvent();
-		System.out.println("instantiating new review for microtask: "+microtaskIDUnderReview);
+		System.out.println("instantiating new review for microtask: "+microtaskKeyUnderReview);
 	}
 
     public Microtask copy(Project project)
     {
-    	return new Review(microtaskIDUnderReview, this.initiallySubmittedDTO, this.workerOfReviewedWork, project);
+    	return new Review(microtaskKeyUnderReview, this.initiallySubmittedDTO, this.workerOfReviewedWork, project);
     }
 
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 
 		ReviewDTO reviewDTO = (ReviewDTO) dto;
-		Microtask submittedMicrotask = Microtask.find(microtaskIDUnderReview, project).getValue();
+		System.out.println("REVIEW DTO "+reviewDTO.toString());
+		Microtask submittedMicrotask = Microtask.find(microtaskKeyUnderReview,project).getValue();
 
 		// Write the review to firebase
 		FirebaseService.writeReview(reviewDTO, submittedMicrotask.getID(), project);
@@ -65,12 +78,12 @@ public class Review extends Microtask
 		// If above thereshold, submit the original microtask, award worker with submitValue
 		if (reviewDTO.qualityScore > 2)
 		{
-			MicrotaskCommand.submit(microtaskIDUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
+			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
 			//FirebaseService.setPoints(workerID, workerOfReviewedWork, submittedMicrotask.submitValue, project);
 		}
 		// Otherwise, reisuse a new microtask to do the original work again.
 		else
-			MicrotaskCommand.reissueMicrotask(microtaskIDUnderReview, workerOfReviewedWork);
+			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
 
 		// send feedback
     	FirebaseService.postToNewsfeed(workerOfReviewedWork, (
@@ -103,14 +116,19 @@ public class Review extends Microtask
 
 	}
 
+    public Key<Microtask> getKey()
+	{
+		return Key.create( artifact.getKey(), Microtask.class, this.id );
+	}
+    
 	protected Class getDTOClass()
 	{
 		return ReviewDTO.class;
 	}
 
-	public long getMicrotaskIDUnderReview()
+	public Key<Microtask> getMicrotaskIDUnderReview()
 	{
-		return microtaskIDUnderReview;
+		return microtaskKeyUnderReview;
 	}
 
 	public String getUIURL()
@@ -120,7 +138,7 @@ public class Review extends Microtask
 
 	public Artifact getOwningArtifact()
 	{
-		return null;
+		return artifact.get();
 	}
 
 	public String microtaskTitle()

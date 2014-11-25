@@ -12,14 +12,16 @@ import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.annotation.Parent;
 
 @EntitySubclass(index=true)
 public class ReuseSearch extends Microtask
 {
-	@Load private Ref<Function> function;
+	@Parent @Load private Ref<Function> function;
 	private String callDescription;
 
 	// Default constructor for deserialization
@@ -36,7 +38,9 @@ public class ReuseSearch extends Microtask
 		this.callDescription = callDescription;
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new ReuseSearchInFirebase(id,this.microtaskTitle(), this.microtaskName(), function.getName(),
-				false, submitValue, callDescription, function.getID()), id, project);
+				false, submitValue, callDescription, function.getID()), 
+				Project.MicrotaskKeyToString(this.getKey()),
+				project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
@@ -47,6 +51,11 @@ public class ReuseSearch extends Microtask
     	return new ReuseSearch(this.function.getValue(), this.callDescription, project);
     }
 
+    public Key<Microtask> getKey()
+	{
+		return Key.create( function.getKey(), Microtask.class, this.id );
+	}
+    
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);

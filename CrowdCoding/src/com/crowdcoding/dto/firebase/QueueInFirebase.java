@@ -1,23 +1,26 @@
 package com.crowdcoding.dto.firebase;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.entities.microtasks.Microtask;
+import com.googlecode.objectify.Key;
 
 public class QueueInFirebase extends DTO 
 {
 	public String messageType = "QueueInFirebase";
 	
-	public List<Long> queue;	
+	public List< String> queue;	
 	
 	// Default constructor (required by Jackson JSON library)
 	public QueueInFirebase()
 	{		
 	}
 
-	public QueueInFirebase(List<Long> queue)
+	public QueueInFirebase(LinkedList< String> microtaskQueue)
 	{
-		this.queue = queue;
+		this.queue = microtaskQueue;
 	}
 	
 	public String toString()

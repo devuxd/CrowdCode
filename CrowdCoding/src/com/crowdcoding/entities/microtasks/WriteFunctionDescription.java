@@ -14,14 +14,16 @@ import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.annotation.Parent;
 
 @EntitySubclass(index=true)
 public class WriteFunctionDescription extends Microtask
 {
-	@Load private Ref<Function> function;
+	@Parent @Load private Ref<Function> function;
 	@Load private Ref<Function> caller;
 	private String callDescription;
 
@@ -40,16 +42,23 @@ public class WriteFunctionDescription extends Microtask
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteFunctionDescriptionInFirebase(id,this.microtaskTitle(), this.microtaskName(), function.getName(),
-				false, submitValue,callDescription, caller.getID()), id, project);
+				false, submitValue,callDescription, caller.getID()), 
+				Project.MicrotaskKeyToString(this.getKey()),
+				project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
 		project.historyLog().endEvent();
 	}
 
-    public Microtask copy(Project project)
-    {
-    	return new WriteFunctionDescription(this.function.getValue(),this.callDescription,this.caller.getValue(), project);
-    }
+	public Microtask copy(Project project)
+	{
+		return new WriteFunctionDescription(this.function.getValue(),this.callDescription,this.caller.getValue(), project);
+	}
+
+	public Key<Microtask> getKey()
+	{
+		return Key.create( function.getKey(), Microtask.class, this.id );
+	}
 
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{

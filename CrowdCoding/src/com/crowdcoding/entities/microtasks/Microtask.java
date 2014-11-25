@@ -26,7 +26,7 @@ public /*abstract*/ class Microtask
 {
 	static protected int DEFAULT_SUBMIT_VALUE = 10;
 
-	@Parent private Key<Project> project;
+	private Key<Project> project;
 	@Id protected long id;
 	protected boolean completed = false;
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
@@ -69,6 +69,7 @@ public /*abstract*/ class Microtask
 		System.out.println("PRINTING JSON DTO DATA");
 		System.out.println(jsonDTOData);
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
+		
 		project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
 
 		doSubmitWork(dto, workerID, project);
@@ -98,7 +99,7 @@ public /*abstract*/ class Microtask
 
 	public Key<Microtask> getKey()
 	{
-		return Key.create(project, Microtask.class, id);
+		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
 	public long getID()
@@ -112,7 +113,7 @@ public /*abstract*/ class Microtask
 	// This method MUST be overridden in the subclass to do submit work.
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
-		throw new RuntimeException("Error - must implement doSubmitWork!");
+		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
 	// This method MUST be overridden in the subclass
@@ -158,9 +159,9 @@ public /*abstract*/ class Microtask
 	}
 
 	// Should only be called from within the entity group of the owning artifact
-	public static Ref<Microtask> find(long id, Project project)
+	public static Ref<Microtask> find(Key<Microtask> microtaskKey, Project project)
 	{
-		return (Ref<Microtask>) ofy().load().key(Key.create(project.getKey(), Microtask.class, id));
+		return (Ref<Microtask>) ofy().load().key(microtaskKey);
 	}
 
 	public String toString()
@@ -175,6 +176,7 @@ public /*abstract*/ class Microtask
 
 	public String toJSON(JSONObject json){
 		try {
+			json.put("key", Project.MicrotaskKeyToString(this.getKey()));
 			json.put("id", this.id);
 			json.put("type", this.microtaskName());
 			json.put("description", this.microtaskDescription());

@@ -1,9 +1,13 @@
 package com.crowdcoding.dto.firebase;
 
+import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.microtasks.Microtask;
+import com.googlecode.objectify.Key;
+
 
 public class ReviewInFirebase extends MicrotaskInFirebase
 {
-	public long microtaskIDUnderReview;
+	public String microtaskKeyUnderReview;
 
 
 	public ReviewInFirebase()
@@ -11,10 +15,10 @@ public class ReviewInFirebase extends MicrotaskInFirebase
 	}
 
 	public ReviewInFirebase(long id, String title, String type, String owningArtifact, boolean completed, int points,
-			long microtaskIDUnderReview)
+			Key<Microtask> microtaskKeyUnderReview)
 	{
 		super(id,title, type, owningArtifact, completed, points);
-		this.microtaskIDUnderReview = microtaskIDUnderReview;
+		this.microtaskKeyUnderReview = Project.MicrotaskKeyToString( microtaskKeyUnderReview );
 
 	}
 }

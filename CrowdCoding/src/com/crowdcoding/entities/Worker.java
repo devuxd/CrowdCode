@@ -26,7 +26,8 @@ import com.googlecode.objectify.cmd.Query;
 @Entity
 public class Worker 
 {
-	@Parent Key<Project> project;
+	
+	Key<Project> project;
 	private String nickname;
 	@Id private String userid;
 	private int score;

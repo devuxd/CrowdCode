@@ -438,7 +438,7 @@ public class Function extends Artifact
 					newPseudoCalls.add(callDescription);
 					// Spawn microtask immediately, as it does not require access to the function itself
 					Microtask microtask = new ReuseSearch(this, callDescription, project);
-					ProjectCommand.queueMicrotask(microtask.getID(), null);
+					ProjectCommand.queueMicrotask(microtask.getKey(), null);
 				}
 			}
 		}
@@ -533,7 +533,7 @@ public class Function extends Artifact
 		//Spawn off microtask to write test cases. As it does not impact the artifact itself,
 		// the microtask can be directly started rather than queued.
 		WriteTestCases writeTestCases = new WriteTestCases(this, project);
-		ProjectCommand.queueMicrotask(writeTestCases.getID(), null);
+		ProjectCommand.queueMicrotask(writeTestCases.getKey(), null);
 
 		// Spawn off microtask to sketch the method
 		queueMicrotask(new WriteFunction(this, project), project);

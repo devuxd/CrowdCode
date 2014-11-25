@@ -12,7 +12,7 @@ myApp.factory('testRunnerService', [
 	'TestList', 
 	function($window,$rootScope,$http,$q,$timeout,testsService,functionsService,TestList) {
 
-	var timeOutTime = 1000;
+	var timeOutTime = 2000;
 	var validTests;
 	var allTheFunctionCode;
 	var w;
@@ -154,7 +154,7 @@ myApp.factory('testRunnerService', [
 		for (var i=0; i < allFunctionIDs.length; i++)
 		{
 			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
-			
+
 			// IF IS THE FUNCTION UNDER TEST DON'T GENERATE MOCK BODY
 			if( allFunctionIDs[i] != functionId ){
 				console.log("RETRIEVING MOCK FOR "+allFunctionIDs[i] );

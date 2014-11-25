@@ -142,7 +142,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 		$http.get('/'+projectId+'/ajax/fetch').
 		  success(function(data, status, headers, config) {
 		  	console.log(data);
-		  	$scope.microtask= microtasksService.get(data.id);
+		  	$scope.microtask= microtasksService.get(data.key);
 		  	$scope.microtask.$loaded().then(function(){
 
 		  		console.log("MICROTASK LOADED");
@@ -162,8 +162,8 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				}
 
 				// debug stuff
-				 // console.log("data: ");console.log(data);
-				 // console.log("microtask: ");console.log($scope.microtask);
+				  console.log("data: ");console.log(data);
+				  console.log("microtask: ",$scope.microtask);
 				 // console.log("function: ");console.log($scope.funct);
 				 // console.log("test: ");console.log($scope.test);
 
@@ -188,7 +188,9 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask',function(event,formData){
-		$http.post('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&id=' + $scope.microtask.id , formData).
+		console.log($scope.microtask);
+		
+		$http.post('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id , formData).
 			success(function(data, status, headers, config) {
 
 				 //Push the microtask submit data onto the Firebase history stream

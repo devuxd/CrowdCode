@@ -14,11 +14,13 @@ import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.microtasks.Microtask;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
+import com.googlecode.objectify.Key;
 
 /* Wrapper service that handles all interactions with Firebase, providing an API
  * for interacting with Firebase that hides all its implementation details.
@@ -26,21 +28,21 @@ import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 public class FirebaseService 
 {
 	// Writes the specified microtask to firebase
-	public static void writeMicrotaskCreated(MicrotaskInFirebase dto, long microtaskID, Project project)
+	public static void writeMicrotaskCreated(MicrotaskInFirebase dto, String microtaskKey, Project project)
 	{
-		writeData(dto.json(), "/microtasks/" + microtaskID + ".json", HTTPMethod.PUT, project);
+		writeData(dto.json(), "/microtasks/" + microtaskKey + ".json", HTTPMethod.PUT, project);
 		
 		// Since microtaskIDs increase consequentively and start at 1, we can update the total number of microtasks
 		// to be microtaskID.		
-		writeData(Long.toString(microtaskID), "/status/microtaskCount.json", HTTPMethod.PUT, project);
+		writeData( microtaskKey, "/status/microtaskCount.json", HTTPMethod.PUT, project);
 	}	
 	
 	// Writes information about microtask assignment to Firebase
-	public static void writeMicrotaskAssigned(long microtaskID, String workerID, 
+	public static void writeMicrotaskAssigned( String microtaskKey, String workerID, 
 			String workerHandle, Project project, boolean assigned)
 	{
-		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskID + "/assigned.json", HTTPMethod.PUT, project); 
-		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskID + ".json", HTTPMethod.PATCH, project);
+		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskKey + "/assigned.json", HTTPMethod.PUT, project); 
+		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, project);
 	}
 	
 
@@ -262,4 +264,5 @@ public class FirebaseService
 	{
 		return "https://crowdcode.firebaseio.com/projects/" + project.getID();
 	}
+
 }

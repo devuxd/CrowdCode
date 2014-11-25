@@ -15,15 +15,17 @@ import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.annotation.Parent;
 
 @EntitySubclass(index=true)
 public class WriteFunction extends Microtask
 {
 	public enum PromptType { SKETCH, DESCRIPTION_CHANGE };
-	@Load private Ref<Function> function;
+	@Parent @Load private Ref<Function> function;
 	private PromptType promptType;
 
 	private String oldFullDescription;		// Only defined for DESCRIPTION_CHANGE
@@ -57,13 +59,19 @@ public class WriteFunction extends Microtask
 		WriteFunction(function, project);
 	}
 
-    public Microtask copy(Project project)
-    {
-    	if(this.promptType==PromptType.SKETCH)
-    		return new WriteFunction(this.function.getValue(),project);
-    	else
-    		return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
-    }
+	public Microtask copy(Project project)
+	{
+		if(this.promptType==PromptType.SKETCH)
+			return new WriteFunction(this.function.getValue(),project);
+		else
+			return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
+	}
+
+	public Key<Microtask> getKey()
+	{
+		return Key.create( function.getKey(), Microtask.class, this.id );
+	}
+
 
 	private void WriteFunction(Function function, Project project)
 	{
@@ -79,7 +87,9 @@ public class WriteFunction extends Microtask
 				function.getID(),
 				this.promptType.name(),
 				this.oldFullDescription,
-				this.newFullDescription), id, project);
+				this.newFullDescription),
+				Project.MicrotaskKeyToString(this.getKey()),
+				project);
 
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));

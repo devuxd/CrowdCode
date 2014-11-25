@@ -12,6 +12,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
 /*
@@ -22,7 +23,7 @@ import com.googlecode.objectify.annotation.Parent;
 @Entity
 public /*abstract*/ class Artifact
 {
-	@Parent Key<Project> project;
+	@Load Key<Project> project;
 	@Id protected long id;
 	protected int version;		// version of the artifact
 
@@ -45,13 +46,13 @@ public /*abstract*/ class Artifact
 
 	public Key<? extends Artifact> getKey()
 	{
-		return Key.create(project, Artifact.class, id);
+		return Key.create( null, Artifact.class, id);
 	}
 
 	// Gets the corresponding key for an artifact based on its id
 	public static Key<? extends Artifact> getKey(long id, Project project)
 	{
-		return Key.create(project.getKey(), Artifact.class, id);
+		return Key.create( null, Artifact.class, id);
 	}
 
 	public long getID()
@@ -85,7 +86,7 @@ public /*abstract*/ class Artifact
 	// Makes the specified microtask out for work
 	protected void makeMicrotaskOut(Microtask microtask, Project project)
 	{
-		ProjectCommand.queueMicrotask(microtask.getID(), null);
+		ProjectCommand.queueMicrotask(microtask.getKey(), null);
 		microtaskOut = true;
 		ofy().save().entity(this).now();
 	}
