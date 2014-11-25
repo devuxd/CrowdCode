@@ -21,7 +21,7 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
                 else 
         		  codeMirror.setOption("theme", "custom");
 
-                codeMirror.setOption("lineWrapping" , true);
+               // codeMirror.setOption("lineWrapping" , true);
         		codeMirror.setOption("tabindex", "-1");
                 //if a mode is defined
                 if($scope.mode)
@@ -36,7 +36,7 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
 
                 codeMirror.on("change", function(){
                     functionsService.highlightPseudoSegments(codeMirror,[],false);
-
+                    codeMirror.refresh();
                 });
 
                 // $scope.$watch( 'code' ,function(newValue, oldValue) {

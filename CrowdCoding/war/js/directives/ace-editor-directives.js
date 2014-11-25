@@ -13,7 +13,7 @@ myApp.directive('aceReadJson', function() {
             if( ngModel.$isEmpty( scope.ngModel ) ) {
                 scope.ngModel = "";
             } else if ( typeof scope.ngModel !== 'string' ){
-                scope.ngModel = JSON.stringify( scope.ngModel );
+                scope.ngModel = angular.toJson( scope.ngModel );
             } 
         },
         controller: function($scope,$element){
@@ -24,7 +24,7 @@ myApp.directive('aceReadJson', function() {
 		    	});
 			 };
         }
-    }
+    };
 });
 
 
@@ -91,6 +91,6 @@ myApp.directive('aceEditJson', function() {
 
 			};
         }
-    }
+    };
 });
 
