@@ -26,6 +26,38 @@ myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
     };
 }]);
 
+
+myApp.directive('unicName', function(){
+    return {
+          scope: {
+            parameters : "=",
+
+        }, // {} = isolate, true = child, false/undefined = no change
+        require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
+        restrict: 'AE', // E = Element, A = Attribute, C = Class, M = Comment
+        link: function($scope, iElm, iAttrs, ctrl) {
+
+            ctrl.$parsers.unshift(function(viewValue) {
+
+                var occurrence=0;
+                angular.forEach($scope.parameters, function(value, key) {
+                    if(value.paramName==viewValue)
+                        occurrence++;
+                });
+                if (occurrence!==0) {
+                    ctrl.$setValidity('unic', false);
+                    ctrl.$error.unic = "More occurence of the same parameter name have been found, plese fix them";
+                    return viewValue;
+                } else {
+                    ctrl.$setValidity('unic', true);
+                    return viewValue;
+                }
+
+            });
+        }
+    };
+});
+
 //<div function-validator ng-model="somevar"></div>
 myApp.directive('adtValidator', ['ADTService', function(ADTService) {
 
@@ -468,7 +500,7 @@ myApp.directive('javascriptHelper', ['$compile', '$timeout', '$http', 'ADTServic
 
             };
         }
-    }
+    };
 
 }]);
 

@@ -93,9 +93,10 @@
 							<div class="form-group col-sm-10 reset-padding" >
 								<div ng-form="param" class="form-horizontal" ng-repeat="(index,parameter) in parameters">
 								    <div class="col-sm-3 reset-padding">
-								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName"/>
+								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName" unic-name parameters="parameters"/>
 								      	<ul class="help-block" ng-show="param.parameterName.$dirty && param.parameterName.$invalid">
 											<li ng-show="param.parameterName.$error.required">This field is required!</li>
+											<li ng-show="param.parameterName.$error.unic">{{param.parameterName.$error.unic}}</li>
 											<li ng-show="param.parameterName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
 										</ul>
 									</div>
