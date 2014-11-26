@@ -491,7 +491,8 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','$ale
 
 		var error="";
 
-		var text = codemirror.getValue();
+		var textToParse, text;
+		textToParse = text = codemirror.getValue();
 		var body = "";
 
 		var  hasPseudosegment=text.search('//!')!==-1 || text.search('//#')!==-1 ;
