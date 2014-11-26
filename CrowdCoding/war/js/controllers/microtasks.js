@@ -421,16 +421,13 @@ myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService',
 					noFunction: true 
 				};
 			else 
-
-				formData = { functionName  : $scope.results[ $scope.selectedResult ].value.name,
-		
-							 noFunction    : false };
-		console.log("------------------------------------------------------------");
-		
-			console.log(formData);
-			console.log("------------------------------------------------------------");
+				formData = { 
+					functionId  : $scope.results[ $scope.selectedResult ].value.id,
+					functionName: $scope.results[ $scope.selectedResult ].value.name, 
+					noFunction: false 
+				};
+			
 			$scope.$emit('submitMicrotask',formData);
-
 		}
 	});
 

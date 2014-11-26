@@ -2,6 +2,7 @@ package com.crowdcoding.dto;
 
 public class ReusedFunctionDTO extends DTO
 {
-	public Integer functionName;
+	public Integer functionId;
+	public String functionName;
 	public boolean noFunction;
 }
