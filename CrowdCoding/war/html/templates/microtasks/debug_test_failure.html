@@ -133,13 +133,13 @@
 				<div class="section-content" >
 					
 					<ul style="list-style:none;margin:0px;padding:0px;">
-						<li ng-repeat="(callee,inputMap) in stubs" > 
+						<li ng-repeat="(callee,inputMap) in stubs track by $index" > 
 							The function <b>{{callee}}</b> has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
 							<ul class="collapsable-list mock-collapsable-list ">
 								<li ng-repeat="(stubKey,stub) in inputMap track by $index">
 									<b>#{{$index+1}} input set </b><br />
 									<table style="width:100%">
-										<tr ng-repeat="(key,input) in stub.inputs ">
+										<tr ng-repeat="(key,input) in stub.inputs track by $index">
 											<td>input</td>
 											<td><div ace-read-json ng-model="input" ></div></td>
 										</tr>

@@ -27,7 +27,7 @@ public abstract class MicrotaskCommand extends Command
 	public static MicrotaskCommand reissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID) 
 		{ return new ReissueMicrotask(microtaskKey, excludedWorkerID); }
 
-	private MicrotaskCommand(Key<Microtask> microtaskKey)
+	private MicrotaskCommand( Key<Microtask> microtaskKey )
 	{
 		this.microtaskKey = microtaskKey;
 		queueCommand(this);
@@ -54,7 +54,6 @@ public abstract class MicrotaskCommand extends Command
 	// Finds the specified microtask. Returns null if no such microtask exists.
 	protected Microtask find(Key<Microtask> microtaskKey)
 	{
-		System.out.println("FIND MICROTASK "+microtaskKey);
 		return ofy().load().key(microtaskKey).get();
 	}
 

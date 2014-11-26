@@ -306,7 +306,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			if(value.name!=functionSourceName){
 			var score = computeMatchScore(value, re);
 			if (score > 0)
-				results.push({ 'score': score, 'value': value});
+				results.push({ 'score': score, 'value': value });
 			}
 		});
 

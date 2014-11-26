@@ -137,6 +137,7 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	// inizialize template and microtask-related values
 	$scope.$on('load', function (){
 		// set the loading template
+		$scope.microtask = undefined;
 		$scope.templatePath = templatesURL + "loading.html";
 		$rootScope.inlineForm = false; // reset form as non-inline
 		$http.get('/'+projectId+'/ajax/fetch').
@@ -190,6 +191,9 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 	$scope.$on('submitMicrotask',function(event,formData){
 		console.log($scope.microtask);
 		
+		if( $scope.microtask == undefined )
+			return ;
+
 		$http.post('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id , formData).
 			success(function(data, status, headers, config) {
 
@@ -197,21 +201,33 @@ myApp.controller('MicrotaskController', ['$scope','$rootScope','$firebase','$htt
 				$scope.microtask.submission = formData;
 				$scope.microtask.$save();
 				console.log("submit success");
+			    $scope.microtask = undefined;
 			  	$scope.$emit('load');
 		  	})
 		  	.error(function(data, status, headers, config) {
 		  		console.log("submit error");
 		  		console.log(data);
+			    $scope.microtask = undefined;
   		 	});
 	});
 
 	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask',function(event,data){
+		
+		if( $scope.microtask == undefined )
+			return ;
+		
 		console.log("skip fired");
 		$http.get('/'+$rootScope.projectId+'/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id + '&skip=true').
 		  success(function(data, status, headers, config) {
+			  $scope.microtask = undefined;
 			  $scope.$emit('load');
-		  });
+		  })
+		  	.error(function(data, status, headers, config) {
+		  		console.log("skip error");
+		  		console.log(data);
+			    $scope.microtask = undefined;
+  		 	});
 	});
 
 	$scope.startTutorial = function(tutorialName){

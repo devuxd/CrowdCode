@@ -74,8 +74,7 @@ public class FirebaseService
 	}
 	
 	public static void writeMicrotaskQueue(QueueInFirebase dto, Project project)
-	{
-		System.out.println("Current microtask queue: " + dto.json());		
+	{	
 		writeData(dto.json(), "/status/microtaskQueue.json", HTTPMethod.PUT, project); 
 	}
 	

@@ -416,10 +416,17 @@ myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService',
 		} else {
 			//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
 			if( $scope.selectedResult == -1 )
-				formData = {  functionName: "", noFunction: true };
+				formData = {  
+					functionName: "", 
+					noFunction: true 
+				};
 			else 
-				formData = { functionName: $scope.results[ $scope.selectedResult ].value.name, noFunction: false };
-						$scope.$emit('submitMicrotask',formData);
+				formData = { 
+					functionName: $scope.results[ $scope.selectedResult ].value.name, 
+					noFunction: false 
+				};
+			
+			$scope.$emit('submitMicrotask',formData);
 		}
 	});
 
