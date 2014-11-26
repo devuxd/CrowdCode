@@ -91,7 +91,7 @@ public class Review extends Microtask
     			(reviewDTO.qualityScore > 2) ? submittedMicrotask.submitValue : 0,
     			"Your work on " + submittedMicrotask.microtaskName() + " has been " + ( (reviewDTO.qualityScore>2) ? "approved" : "rejected") ,
 				"WorkReviewed",
-				submittedMicrotask.getID(),
+    			Project.MicrotaskKeyToString(  submittedMicrotask.getKey() ) ,
 				(reviewDTO.qualityScore > 2) ? true : false )
 	    	).json(),
 	    	project
@@ -104,7 +104,7 @@ public class Review extends Microtask
     			this.submitValue,
     			"You reviewed a microtask",
     			"SubmittedReview",
-    			this.id
+    			Project.MicrotaskKeyToString(  this.getKey() ) 
     	).json()), project);
 
     	System.out.println("reviewer id="+workerID);
@@ -150,4 +150,5 @@ public class Review extends Microtask
 	{
 		return "review a submitted microtask";
 	}
+
 }
