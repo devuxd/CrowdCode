@@ -422,6 +422,7 @@ myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService',
 				};
 			else 
 				formData = { 
+					functionId  : $scope.results[ $scope.selectedResult ].value.id,
 					functionName: $scope.results[ $scope.selectedResult ].value.name, 
 					noFunction: false 
 				};

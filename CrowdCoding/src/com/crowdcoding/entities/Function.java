@@ -517,7 +517,7 @@ public class Function extends Artifact
 		System.out.println("project "+project);
 		System.out.println("callee "+callee);
 		
-		FunctionCommand.addDependency(callee.getID(), this.getID(), callDescription);
+		FunctionCommand.addDependency(dto.functionId, this.getID(), callDescription);
 	}
 
 	public void writeDescriptionCompleted(String name, String returnType, List<String> paramNames, List<String> paramTypes,
