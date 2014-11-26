@@ -418,6 +418,7 @@ myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService',
 			if( $scope.selectedResult == -1 )
 				formData = {  
 					functionName: "", 
+					functionId  : 0,
 					noFunction: true 
 				};
 			else 
