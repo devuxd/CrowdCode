@@ -241,7 +241,15 @@ public class CrowdServlet extends HttpServlet
 				output.append("RESET executed at " + currentTime.toString() + "\n");
 				Project.Clear(projectID);
 				output.append("Project successfully reset to default state.\n");
-
+				
+//				System.out.println(" PROJECTS BEFORE CREATION ");
+//				List<Project> projects = ofy().load().type(Project.class).list();
+//				for(Project project: projects){
+//					System.out.println("PROJECT = "+project.getID());
+//
+//					ofy().transactionless().delete().key(project.getKey());
+//				}
+				
 				List<Command> commands = new ArrayList<Command>();
 				commands.addAll(ofy().transact(new Work<List<Command>>() {
 			        public List<Command> run()
@@ -255,6 +263,12 @@ public class CrowdServlet extends HttpServlet
 			    }));
 
 				executeCommands(commands, projectID);
+
+//				System.out.println(" PROJECTS AFTER CREATION ");
+//				projects = ofy().load().type(Project.class).list();
+//				for(Project project: projects){
+//					System.out.println("PROJECT = "+project.getID());
+//				}
 			}
 			else if (command.equals("REVIEWSON"))
 			{
@@ -406,26 +420,30 @@ public class CrowdServlet extends HttpServlet
 		// And anything inside the transaction MUST not mutate the values produced.
     	try
     	{
-    		final String projectID = (String) req.getAttribute("project");
-			final String workerID = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+    		final String projectID    = (String) req.getAttribute("project");
+			final String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 			final String microtaskKey = req.getParameter("key") ;
+			final String type         = req.getParameter("type");
+			final String payload      = Util.convertStreamToString(req.getInputStream());
 			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));
-			final String type = req.getParameter("type");
-			final String payload = Util.convertStreamToString(req.getInputStream());
-
-			Class microtaskType = microtaskTypes.get(type);
-			if (microtaskType == null)
-				throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
-
+			
+			System.out.println("SKIPPED MTASK KEY = "+microtaskKey);
+			
 			// Create an initial context, then build a command to skip or submit
 			CommandContext context = new CommandContext();
 
 			// Create the skip or submit commands
 			if (skip)
 				ProjectCommand.skipMicrotask( microtaskKey, workerID);
-			else
+			else{
+				Class microtaskType = microtaskTypes.get(type);
+				if (microtaskType == null)
+					throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
+				
 				ProjectCommand.submitMicrotask( microtaskKey, microtaskType, payload, workerID);
-
+				
+			}
+				
 			// Copy the command back out the context to initially populate the command queue.
 			executeCommands(context.commands(), projectID);
     	}
@@ -438,8 +456,6 @@ public class CrowdServlet extends HttpServlet
 
 	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException
 	{
-		System.out.println("FETCHING ");
-		
 		// Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
@@ -451,6 +467,7 @@ public class CrowdServlet extends HttpServlet
             	String workerID = user.getUserId();
             	String workerHandle = user.getNickname();
             	
+            	
             	// logout inactive workers
             	//project.logoutInactiveWorkers();
 
@@ -458,12 +475,12 @@ public class CrowdServlet extends HttpServlet
             	Key<Microtask> microtaskKey = project.lookupMicrotaskAssignment(workerID);
             	if (microtaskKey == null)
             	{
-            		System.out.println("Assigning worker " + workerHandle + " a microtask");
             		microtaskKey = project.assignMicrotask(workerID, workerHandle);
+            		//System.out.println("Worker " + workerHandle + " assign micro "+microtaskKey);
             	}
             	else
             	{
-            		System.out.println("Worker " + workerHandle + " already has a microtask");
+            		//System.out.println("Worker " + workerHandle + " has micro "+microtaskKey);
             	}
             	return microtaskKey;
             }
@@ -501,7 +518,6 @@ public class CrowdServlet extends HttpServlet
 			resp.sendError(404);
 		}
 		else{
-			System.out.println("assigning: "+microtask.toJSON());
 			renderJson(resp,microtask.toJSON());
 		}
 

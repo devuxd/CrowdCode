@@ -118,7 +118,6 @@ public class WriteTestCases extends Microtask
 
 	public Artifact getOwningArtifact()
 	{
-		System.out.println("WRITE TEST CASES ARTIFACT "+function);
 		return function.get();
 	}
 

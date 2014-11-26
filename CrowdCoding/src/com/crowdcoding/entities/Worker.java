@@ -27,7 +27,7 @@ import com.googlecode.objectify.cmd.Query;
 public class Worker 
 {
 	
-	Key<Project> project;
+	@Parent Key<Project> project;
 	private String nickname;
 	@Id private String userid;
 	private int score;

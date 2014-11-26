@@ -8,7 +8,7 @@ public class NewsItemInFirebase extends DTO
 	public int points;
 	public String description;
 	public String type;			// May be WorkReviewed or SubmittedReview
-	public long microtaskID;	// Corresponding microtask for the new item.
+	public String microtaskKey;	// Corresponding microtask for the new item.
 	public boolean reviewPassed;
 
 	// Default constructor (required by Jackson JSON library)
@@ -17,21 +17,21 @@ public class NewsItemInFirebase extends DTO
 		reviewPassed = true;
 	}
 	
-	public NewsItemInFirebase(int points, String description, String type, long microtaskID)
+	public NewsItemInFirebase(int points, String description, String type, String microtaskKey)
 	{
 		this.points = points;
 		this.description = description;
 		this.type = type;
-		this.microtaskID = microtaskID;
+		this.microtaskKey = microtaskKey;
 	}	
 	
 
-	public NewsItemInFirebase(int points, String description, String type, long microtaskID, boolean reviewPassed )
+	public NewsItemInFirebase(int points, String description, String type, String microtaskKey, boolean reviewPassed )
 	{
 		this.points = points;
 		this.description = description;
 		this.type = type;
-		this.microtaskID = microtaskID;
+		this.microtaskKey = microtaskKey;
 		this.reviewPassed = reviewPassed;
 	}
 

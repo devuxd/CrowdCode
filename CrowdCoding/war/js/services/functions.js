@@ -3,7 +3,7 @@
 ////////////////////
 //FUNCTIONS SERVICE   //
 ////////////////////
-myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksService', function($window,$rootScope,$firebase,mocks) {
+myApp.factory('functionsService', ['$window','$rootScope','$firebase', function( $window, $rootScope, $firebase) {
 
 	var service = new  function(){
 		// Private variables
@@ -183,21 +183,21 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			mockCode += '		} else {'+'\n';
 			mockCode += '			returnValue = ' + functionObj.name + 'ActualIMP.apply( null, argsCopy );'+'\n';
 			mockCode += '		}'+'\n';
-
-			if( logEnabled != undefined && logEnabled ){
-				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, returnValue, calleeMap ) ;'+'\n';
-			} 
-
 			mockCode += '   } catch (e) { \n';
-			mockCode += '       debug.log("There was an error in the callee ' + functionObj.name + '");';
-			mockCode += '       debug.log("Use the CALLEE STUBS panel to stub this function.");';
+			mockCode += '       debug.log("There was an error in the callee ' + functionObj.name + '");\n';
 
+			// if log enabled signal that the function can be STUBBED
+			if( logEnabled != undefined && logEnabled ){
+				mockCode += '       debug.log("Use the CALLEE STUBS panel to stub this function.");\n';
+			}
 
+			mockCode += '   } \n';
+
+			// if log enabled log this call
 			if( logEnabled != undefined && logEnabled ){
 				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, null, calleeMap ) ;'+'\n';
 			} 
 
-			mockCode += '   } \n';
 			mockCode += '	return returnValue;'+'\n';
 			mockCode += '}'+'\n';
 
@@ -206,7 +206,11 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			mockCode += getMockHeader(id);
 
 			// Fourth, add the actual code body of the function
-			mockCode += '\n' + functionObj.code + '\n';
+
+			if( functionObj.written )
+				mockCode += '\n' + functionObj.code + '\n';
+			else
+				mockCode += '\n{}\n';
 
 			return mockCode;
 		}
@@ -219,7 +223,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			var functionObj = get(id);
 			if (functionObj == null)
 				return '';
-
 			return functionObj.header + '{}\n'+ getMockHeader(id) + '{}\n';
 		}
 
@@ -303,7 +306,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			if(value.name!=functionSourceName){
 			var score = computeMatchScore(value, re);
 			if (score > 0)
-				results.push({ 'score': score, 'value': value});
+				results.push({ 'score': score, 'value': value });
 			}
 		});
 
@@ -343,13 +346,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 
 		var numParams = 0;
 
-		console.log("parse description after regex");
-
 		for(var i=0; i<lineDescription.length;i++){
 
 			lineDescription[i] = lineDescription[i].replace(/\s{2,}/g,' ');
-
-			console.log(lineDescription[i]);
 
 			// check if the current line is a parameter or return line
 			var paramLine  = lineDescription[i].search('@param ');
@@ -527,11 +526,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 			if (highlightPseudoCall != false)
 			{
 				var pseudoCallCol = line.indexOf(highlightPseudoCall);
-				if (pseudoCallCol != -1)
+				if (pseudoCallCol != -1){
 				 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol},
 				 			     {line: i, ch: line.length},
 				 			     {className: 'highlightPseudoCall', inclusiveRight: true }));
+				}
 			}
+			
 		});
 	}
 
@@ -546,10 +547,8 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','mocksServ
 
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		console.log("text "+text);
 		//console.log(codemirror);
 		var readOnlyLines = indexesOfTheReadOnlyLines(text);
-		console.log(readOnlyLines);
 		for(var i=0; i<readOnlyLines.length; i++)
 		{
 			codemirror.getDoc().markText({line: readOnlyLines[i], ch: 0},

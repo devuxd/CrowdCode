@@ -827,7 +827,7 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
             $scope.loadMicrotask = function(news) {
 
 
-                news.microtask = microtasksService.get(news.microtaskID);
+                news.microtask = microtasksService.get(news.microtaskKey);
                 news.microtask.$loaded().then(function() {
                     //if the microtask is a review
                     if (news.microtask.type == "Review") {

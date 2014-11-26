@@ -243,21 +243,8 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 			$scope.testsData = data.testsData;
 			$scope.stubs     = data.stubs;
 
-/*
-			angular.forEach($scope.stubs,function(stubs,functionName){
-				angular.forEach(stubs,function(data,inputKey){
-					angular.forEach(data,function(value,key){
-						data[key] = JSON.parse(value);
-					});
-				});
-			});*/
-
 			console.log("STUBS");
 			console.log($scope.stubs);
-
-			// console.log(" ----- RESULTS FROM THE TEST RUNNER ");
-			// console.log(data.results);
-			// console.log(data.stubs);
 		
 			// reset testsRunning flag
 			$timeout(function(){
@@ -299,7 +286,7 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 		else {
 			var oneTestFailed = false;
 
-			angular.forEach($scope.results,function(data,index){
+			angular.forEach($scope.testsData,function(data,index){
 
 				if( !oneTestFailed && !data.output.result )
 					oneTestFailed = true;
@@ -322,13 +309,9 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 
 			} else {
 
-				var text = functionCodeMirror.getValue();
-		 		var ast = esprima.parse(text, {loc: true});
-				var body = functionCodeMirror.getRange(
-						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
-
+				// BUILD MOCKS 
 				var mocks = [];
+
 				angular.forEach($scope.stubs,function(stubsForFunction,functionName){
 					angular.forEach(stubsForFunction,function(stub,index){
 						var mockCode = 'equal('+functionName+'(';
@@ -348,10 +331,39 @@ myApp.controller('DebugTestFailureController', ['$scope','$rootScope','$firebase
 					});
 				});
 
-				formData =  { 
-							 code:  body,
-							 mocks: mocks
-				};
+
+				// BUILD FUNCTION CODE
+				var text = functionCodeMirror.getValue();
+				var ast  = esprima.parse(text, {loc: true});
+				var calleeNames = functionsService.getCalleeNames(ast);
+
+				// Get the text for the function description, header, and code.
+				// Note esprima (the source of line numbers) starts numbering lines at 1, while
+			    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
+				var fullDescription = functionCodeMirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+
+				var linesDescription = fullDescription.split('\n');
+				var name = ast.body[0].id.name;
+
+				var functionParsed = functionsService.parseDescription(linesDescription,name);
+
+				//if pseudosegment are present the body is already istanziated
+				body = functionCodeMirror.getRange(
+						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+
+				formData =  { description: functionParsed.description,
+							 header:       functionParsed.header,
+							 name:         name,
+							 code:         body,
+							 returnType:   functionParsed.returnType,
+							 paramNames:   functionParsed.paramNames,
+							 paramTypes:   functionParsed.paramTypes,
+							 paramDescriptions: functionParsed.paramDescriptions,
+							 calleeNames:  calleeNames,
+							 mocks:        mocks
+							};
 
 			}
 
@@ -404,12 +416,21 @@ myApp.controller('ReuseSearchController', ['$scope','$alert','functionsService',
 		} else {
 			//if no function selected the value of selected is ==-1 else is the index of the arrayList of function
 			if( $scope.selectedResult == -1 )
-				formData = {  functionName: "", noFunction: true };
+				formData = {  
+					functionName: "", 
+					noFunction: true 
+				};
 			else 
+
 				formData = { functionName  : $scope.results[ $scope.selectedResult ].value.name,
+		
 							 noFunction    : false };
-							 console.log(formData);
-			//$scope.$emit('submitMicrotask',formData);
+		console.log("------------------------------------------------------------");
+		
+			console.log(formData);
+			console.log("------------------------------------------------------------");
+			$scope.$emit('submitMicrotask',formData);
+
 		}
 	});
 
@@ -423,11 +444,9 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','$ale
 	// INITIALIZATION OF FORM DATA MUST BE DONE HERE
 
 	var marks=[];
-	var highlightPseudoCall = false;
+	var highlightPseudoCall = "//!" + $scope.microtask.pseudoCall;
 	var changeTimeout;
 	var readOnlyDone=false;
-
-
 
 
 	$scope.code = functionsService.renderDescription($scope.funct)+$scope.funct.header+$scope.funct.code;
@@ -470,75 +489,74 @@ myApp.controller('WriteCallController', ['$scope','$rootScope','$firebase','$ale
 
 	$scope.$on('collectFormData',function(event,microtaskForm){
 
-			var error="";
+		var error="";
 
-			var text = codemirror.getValue();
-			var body = "";
+		var text = codemirror.getValue();
+		var body = "";
 
-			var  hasPseudosegment=text.search('//!')!==-1 || text.search('//#')!==-1 ;
+		var  hasPseudosegment=text.search('//!')!==-1 || text.search('//#')!==-1 ;
 
-			//if there are error
-			if(microtaskForm.$invalid){
-				//if there are pseudoSegment substitues the body with an empty one an manually extract the code from the text
-				if(hasPseudosegment){
-					//find if exist more header structure and in case gives an error
-					var headersNumber=text.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
+		//if there are error
+		if( microtaskForm.$invalid )
+			if( !hasPseudosegment ){
+				error = 'Fix all errors before submit, if you don\'t know how use the pseudocode';
+			} else {
+				// IF NO PSEUDO CALLS OR PSEUDOSEGMENTS 
+				// CALCULATE THE BODY AND THE TEXT TO PARSE FOR ESPRIMA
 
-					if(headersNumber.length>1)
-					{
-						error= 'Only one header is allowed in the code, please fix it';
-					}
-					//search for the beginning position of the header
-					var startHeaderPosition= text.indexOf(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
-					//the end position of the header will be the first occurence of "{" after the beginning
-					var endHeaderPosition=text.indexOf("{",startHeaderPosition);
+				//find if exist more header structure and in case gives an error
+				var headersNumber=text.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
 
-					//the body is the part of the text between the end of the header and the end of the text
-					body=text.substring(endHeaderPosition, text.length);
-					//subsitutes the old body with an empty one so that esprima can parse it
-					text=text.substring(0,endHeaderPosition)+"{}";
+				if(headersNumber.length>1)
+				{
+					error = 'Only one header is allowed in the code, please fix it';
 				}
-				// if there are error and not pseudosegment just give error
-				else{
-					error= 'Fix all errors before submit, if you don\'t know how use the pseudocode';
-				}
+				//search for the beginning position of the header
+				var startHeaderPosition= text.indexOf( /\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g );
+				//the end position of the header will be the first occurence of "{" after the beginning
+				var endHeaderPosition=text.indexOf( "{" ,startHeaderPosition );
+
+				//the body is the part of the text between the end of the header and the end of the text
+				body = text.substring(endHeaderPosition, text.length);
+				//subsitutes the old body with an empty one so that esprima can parse it
+				textToParse = text.substring(0,endHeaderPosition)+"{}";
 			}
 
-			//if errors has been found
-			if(error!=="")
-				$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
-			else{
 
-		 		var ast = esprima.parse(text, {loc: true});
+		//if errors has been found
+		if(error!==""){
 
-				var calleeNames = functionsService.getCalleeNames(ast);
+			$alert({title: 'Error!', content: error, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});	
+		} else {
 
-				// Get the text for the function description, header, and code.
-				// Note esprima (the source of line numbers) starts numbering lines at 1, while
-			    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-				var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+	 		var ast = esprima.parse( textToParse, {loc: true} );
 
-				var linesDescription = fullDescription.split('\n');
-				var name = ast.body[0].id.name;
+			var calleeNames = functionsService.getCalleeNames(ast);
 
-				var functionParsed = functionsService.parseDescription(linesDescription,name);
+			var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
 
-				//if pseudosegment are present the body is already istanziated
-				if(! hasPseudosegment)
-					body = codemirror.getRange(
-						{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-					    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+			var descriptionLines = fullDescription.split('\n');
+			var functionName     = ast.body[0].id.name;
 
-				formData =  { description: functionParsed.description,
-							 header:       functionParsed.header,
-							 name:         name,
-							 code:         body,
-							 returnType:   functionParsed.returnType,
-							 paramNames:   functionParsed.paramNames,
-							 paramTypes:   functionParsed.paramTypes,
-							 paramDescriptions: functionParsed.paramDescriptions,
-							 calleeNames:  calleeNames};
-				$scope.$emit('submitMicrotask',formData);
+			var functionParsed = functionsService.parseDescription( descriptionLines, functionName );
+
+			//if pseudosegment are present the body is already istantiated
+			if( text == textToParse )
+				body = codemirror.getRange(
+					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
+
+			formData =  { description: functionParsed.description,
+						 header            : functionParsed.header,
+						 name              : functionName,
+						 code              : body,
+						 returnType        : functionParsed.returnType,
+						 paramNames        : functionParsed.paramNames,
+						 paramTypes        : functionParsed.paramTypes,
+						 paramDescriptions : functionParsed.paramDescriptions,
+						 calleeNames:  calleeNames};
+
+			$scope.$emit('submitMicrotask',formData);
 		}
 	});
 
@@ -552,7 +570,7 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
  
 
 	var marks = [];
-	var highlightPseudoCall =false;
+	var highlightPseudoCall = false;
 	var readOnlyDone=false;
 	var changeTimeout;
 
@@ -615,72 +633,70 @@ myApp.controller('WriteFunctionController', ['$scope','$rootScope','$firebase','
 
 		var error="";
 
-		var text = codemirror.getValue();
-		var body = "";
+		var text, textToParse, body = "";
+		text = textToParse = codemirror.getValue();
+
  		
-		var  hasPseudosegment=text.search('//!')!==-1 || text.search('//#')!==-1 ;
+		var  hasPseudosegment = text.search('//!')!==-1 || text.search('//#')!==-1 ;
 
 		//if there are error
-		if(microtaskForm.$invalid){
-			//if there are pseudoSegment substitues the body with an empty one an manually extract the code from the text
-			if(hasPseudosegment){
+		if( microtaskForm.$invalid )
+			if( !hasPseudosegment ){
+				error = 'Fix all errors before submit, if you don\'t know how use the pseudocode';
+			} else {
+				// IF NO PSEUDO CALLS OR PSEUDOSEGMENTS 
+				// CALCULATE THE BODY AND THE TEXT TO PARSE FOR ESPRIMA
+
 				//find if exist more header structure and in case gives an error
 				var headersNumber=text.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
 
 				if(headersNumber.length>1)
 				{
-					error= 'Only one header is allowed in the code, please fix it';
+					error = 'Only one header is allowed in the code, please fix it';
 				}
 				//search for the beginning position of the header
-				var startHeaderPosition= text.indexOf(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
+				var startHeaderPosition= text.indexOf( /\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g );
 				//the end position of the header will be the first occurence of "{" after the beginning
-				var endHeaderPosition=text.indexOf("{",startHeaderPosition);
+				var endHeaderPosition=text.indexOf( "{" ,startHeaderPosition );
 
 				//the body is the part of the text between the end of the header and the end of the text
-				body=text.substring(endHeaderPosition, text.length);
+				body = text.substring(endHeaderPosition, text.length);
 				//subsitutes the old body with an empty one so that esprima can parse it
-				text=text.substring(0,endHeaderPosition)+"{}";
+				textToParse = text.substring(0,endHeaderPosition)+"{}";
 			}
-			// if there are error and not pseudosegment just give error
-			else{
-				error= 'Fix all errors before submit, if you don\'t know how use the pseudocode';
-			}
-		}
+
 
 		//if errors has been found
-		if(error!=="")
-			$alert({title: 'Error!', content: error, placement: 'top', type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});
-		else{
+		if(error!==""){
 
-	 		var ast = esprima.parse(text, {loc: true});
+			$alert({title: 'Error!', content: error, type: 'danger', show: true, duration : 3, template : '/html/templates/alert/alert_submit.html', container: 'alertcontainer'});	
+		} else {
+
+	 		var ast = esprima.parse( textToParse, {loc: true} );
 
 			var calleeNames = functionsService.getCalleeNames(ast);
 
-			// Get the text for the function description, header, and code.
-			// Note esprima (the source of line numbers) starts numbering lines at 1, while
-		    // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
 			var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
 
-			var linesDescription = fullDescription.split('\n');
-			var name = ast.body[0].id.name;
+			var descriptionLines = fullDescription.split('\n');
+			var functionName     = ast.body[0].id.name;
 
-			var functionParsed = functionsService.parseDescription(linesDescription,name);
+			var functionParsed = functionsService.parseDescription( descriptionLines, functionName );
 
-			//if pseudosegment are present the body is already istanziated
-			if(! hasPseudosegment)
+			//if pseudosegment are present the body is already istantiated
+			if( text == textToParse )
 				body = codemirror.getRange(
 					{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
 				    { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column });
 
-
 			formData =  { description: functionParsed.description,
-						 header:       functionParsed.header,
-						 name:         name,
-						 code:         body,
-						 returnType:   functionParsed.returnType,
-						 paramNames:   functionParsed.paramNames,
-						 paramTypes:   functionParsed.paramTypes,
-						 paramDescriptions: functionParsed.paramDescriptions,
+						 header            : functionParsed.header,
+						 name              : functionName,
+						 code              : body,
+						 returnType        : functionParsed.returnType,
+						 paramNames        : functionParsed.paramNames,
+						 paramTypes        : functionParsed.paramTypes,
+						 paramDescriptions : functionParsed.paramDescriptions,
 						 calleeNames:  calleeNames};
 
 

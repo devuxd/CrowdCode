@@ -150,7 +150,7 @@ myApp.factory('testRunnerService', [
 
 		// for each function in the system
 		var allFunctionIDs = functionsService.allFunctionIDs();
-		console.log("ALL FUNCTIONS ID",allFunctionIDs);
+		
 		for (var i=0; i < allFunctionIDs.length; i++)
 		{
 			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
@@ -169,10 +169,6 @@ myApp.factory('testRunnerService', [
 					functionsWithMockBodies  += functionsService.getMockCodeFor(allFunctionIDs[i]);
 			}
 		}	
-
-
-		console.log("FUNCTIONS WITH EMPTY BODIES", functionsWithEmptyBodies );
-		console.log("FUNCTIONS WITH MOCK BODIES", functionsWithMockBodies );
 
 		// generate all the function code
 		allTheFunctionCode = functionsWithEmptyBodies + '\n'  // functions with empty bodies
@@ -234,7 +230,12 @@ myApp.factory('testRunnerService', [
 
 	testRunner.stopTest = function()
 	{
-		console.log("TERMINATING TEST!");
+
+		returnData[ currentTextIndex ] = {};
+		returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
+		returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': "", 'result':  false} ;
+		returnData[ currentTextIndex ].debug  = "ERROR: execution terminated due to timeout";
+
 		this.processTestFinished(false);
 		
 	}
@@ -294,7 +295,7 @@ myApp.factory('testRunnerService', [
 
 				returnData[ currentTextIndex ] = {};
 				returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
-				returnData[ currentTextIndex ].output = {} ;
+				returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': "", 'result':  false} ;
 				returnData[ currentTextIndex ].debug  = e.data.errors;
 
 		  		testRunner.processTestFinished( false );
@@ -321,7 +322,6 @@ myApp.factory('testRunnerService', [
 	testRunner.submitResultsToServer = function()
 	{		
 
-		console.log("SUBMITTING DATA TO SERVER");
 		// Determine if the function passed or failed its tests. 
 		// If at least one test failed, the function failed its tests.
 		// If at least one test succeeded and no tests failed, the function passed its tests.

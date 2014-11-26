@@ -74,8 +74,7 @@ public class FirebaseService
 	}
 	
 	public static void writeMicrotaskQueue(QueueInFirebase dto, Project project)
-	{
-		System.out.println("Current microtask queue: " + dto.json());		
+	{	
 		writeData(dto.json(), "/status/microtaskQueue.json", HTTPMethod.PUT, project); 
 	}
 	
@@ -106,9 +105,9 @@ public class FirebaseService
 	}
 	
 	// Stores the specified review to firebase
-	public static void writeReview(ReviewDTO dto, long microtaskID, Project project)
+	public static void writeReview(ReviewDTO dto, String microtaskKey , Project project)
 	{
-		writeData(dto.json(), "/microtasks/" + microtaskID + "/review.json", HTTPMethod.PUT, project);
+		writeData(dto.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, project);
 	}
 		
 	// Reads the ADTs for the specified project. If there are no ADTs, returns an empty string.
@@ -145,6 +144,7 @@ public class FirebaseService
 	
 	public static void setPoints(String workerID, String workerDisplayName, int points, Project project)
 	{
+		System.out.println("SETTING POINTS TO "+workerID);
 		writeData(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, project);
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		writeData(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, project);
