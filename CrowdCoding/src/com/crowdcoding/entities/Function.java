@@ -500,6 +500,7 @@ public class Function extends Artifact
 		{
 			// Create a new function for this call, spawning microtasks to create it.
 			callee = new Function(callDescription, this, project);
+			dto.functionId = callee.getID();
 		}
 		else
 		{
@@ -512,10 +513,12 @@ public class Function extends Artifact
 		// Have the callee let us know when it's tested (which may already be true;
 		// signal sent immediately in that case)
 
-		System.out.println("dto "+dto);
+		System.out.println("dto fid "+dto.functionId);
 		System.out.println("callDescri "+callDescription);
 		System.out.println("project "+project);
 		System.out.println("callee "+callee);
+		
+		
 		
 		FunctionCommand.addDependency(dto.functionId, this.getID(), callDescription);
 	}
