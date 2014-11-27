@@ -59,7 +59,7 @@
 					  	<div class="form-group">
 						    <label for="description" class="col-sm-2 control-label reset-padding">description</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<textarea class="form-control" name="description" placeholder="briefly describe the purpose and the behavior of the function" ng-model="description" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/" focus></textarea>
+						      	<textarea class="form-control" name="description" placeholder="briefly describe the purpose and the behavior of the function" ng-model="description" required ng-pattern="/[^/*\\]+$/" focus></textarea>
 								<ul class="help-block" ng-show="microtaskForm.description.$dirty && microtaskForm.description.$invalid">
 									<li ng-show="microtaskForm.description.$error.required">This field is required!</li>
 									<li ng-show="microtaskForm.description.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>
