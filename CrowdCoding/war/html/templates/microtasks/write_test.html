@@ -102,7 +102,7 @@
 								</td>
 								<td>
 									
-									<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" ng-show="false"></textarea>
+									<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" allow-null="true" ng-show="false"></textarea>
 									<ace-edit-json ng-model="testData.inputs[index]" focus-ace=" index == 0" min-lines="2"></ace-edit-json>
 
 									
@@ -124,7 +124,8 @@
 									<b>return value</b> ({{funct.returnType}}) <br />
 								</td>
 								<td>
-									<ace-edit-json ng-model="testData.output" json-validator="{{funct.returnType}}" min-lines="2"></ace-edit-json>
+									<textarea class="form-control" name="output" ng-model="testData.output" ng-attr-required="dispute" json-validator="{{funct.returnType}}" allow-null="true" ng-show="false" allow-null="true"></textarea>
+									<ace-edit-json ng-model="testData.output" min-lines="2"></ace-edit-json>
 
 									<a href="#" ng-click="testData.output=loadExample(funct.returnType)" class="btn btn-primary btn-mini pull-right">Paste Example </a>
 									<ul class="help-block pull-left" ng-show="outputForm.$invalid && outputForm.$dirty">

@@ -35,8 +35,10 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
                // functionsService.highlightPseudoSegments(codeMirror,[],false);
 
                 codeMirror.on("change", function(){
-                    functionsService.highlightPseudoSegments(codeMirror,[],false);
-                    codeMirror.refresh();
+                    if( $scope.mode!=="diff") {
+                        functionsService.highlightPseudoSegments(codeMirror,[],false);
+                        codeMirror.refresh();
+                    }
                 });
 
                 // $scope.$watch( 'code' ,function(newValue, oldValue) {

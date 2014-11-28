@@ -25,14 +25,14 @@
 				Job description
 			</div>
 			<div class="section-content" ng-if="review.microtask.promptType == 'FUNCTION_SIGNATURE'" >
-				The worker was asked to write all possible testcases for the following function. <br /> Can you rate his work?
+				The worker was asked to write all possible testcases for the following function. <br /> Can you rate this work?
 			</div>
 			<div class="section-content" ng-if="review.microtask.promptType == 'CORRECT_TEST_CASE'" >
 				The worker was asked to rewrite the test case
 				<div class="alert alert-info" >{{review.microtask.disputedTestCase }}</div>
 				that the crowd put in dispute for the following reason:
 				 <div class="alert alert-info"> {{review.microtask.disputeDescription }} </div>
-				Can you review his work?
+				Can you review this work?
 			</div>
 	
 		</div>
@@ -66,13 +66,13 @@
 			<div ng-if="! review.microtask.submission.inDispute" class="section-content" >
 				The worker was asked to write a test for the following case:
 				<div class="alert alert-info">{{review.microtask.owningArtifact}}</div>
-				of the function below. Can you rate his work?
+				of the function below. Can you rate this work?
 			</div>
 			<div ng-if="review.microtask.submission.inDispute" class="section-content" >
 				The worker disputed the test that the crowd has written for the following case:
 				<div class="alert alert-info">{{review.microtask.owningArtifact}}</div>
 				of the function below.
-				<br /> Can you rate his dispute?
+				<br /> Can you rate this dispute?
 			</div>
 		</div>
 		<div class="section section-description">
@@ -123,7 +123,7 @@
 				Job description
 			</div>
 			<div class="section-content" >
-				The worker was asked to implement/edit the following function. <br /> Can you rate his work?
+				The worker was asked to implement/edit the following function. <br /> Can you rate this work?
 			</div>
 		</div>
 
@@ -132,7 +132,7 @@
 				submitted function code
 			</div>
 			<div class="section-content no-padding" >
-				<code-mirror-readonly code="review.functionCode"></code-mirror-readonly>
+				<code-mirror-readonly code="review.functionCode" mode="diff"></code-mirror-readonly>
 			</div>
 		</div>
 	</div>
@@ -146,7 +146,7 @@
 				After the change of the following callee function the user was asked if necessary to change the code of the caller function <br />
 				<code-mirror-readonly code="diffCode" mode="diff"></code-mirror-readonly>
 				<br>
-				Can you rate his work?
+				Can you rate this work?
 
 			</div>
 		</div>
@@ -156,7 +156,7 @@
 				submitted function code
 			</div>
 			<div class="section-content" >
-				<code-mirror-readonly code="review.functionCode"></code-mirror-readonly>
+				<code-mirror-readonly code="review.functionCode" mode="diff"></code-mirror-readonly>
 			</div>
 		</div>
 	</div>
@@ -196,9 +196,9 @@
 				Job description
 			</div>
 			<div class="section-content" >
-				The worker replaced the following pseudocall:
+				The worker replaced the pseudocall:
 				<span class="pseudoCall">{{review.microtask.pseudoCall}}</span>
-				in the above way. Can you rate his work?
+				in the folowing way. Can you rate this work?
 			</div>
 		</div>
 
@@ -207,7 +207,7 @@
 				submitted function code
 			</div>
 			<div class="section-content" >
-				<code-mirror-readonly code="review.functionCode"></code-mirror-readonly>
+				<code-mirror-readonly code="review.functionCode" mode="diff"></code-mirror-readonly>
 			</div>
 		</div>
 	</div>
@@ -252,11 +252,11 @@
 
 					<span >Please briefly explain your rating:</span>
 					<span
-						ng-class="{ 'has-error': microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid , 'has-success': microtaskForm.reviewText.$valid}">
+						ng-class="{ 'has-error': microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid, 'has-success': microtaskForm.reviewText.$valid}">
 						<textarea
-							id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" required focus></textarea>
+							id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 3" focus></textarea>
 						<span
-						class="help-block" ng-show="microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
+						class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 3&& microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
 					</span>
 				</div>
 			</div>
