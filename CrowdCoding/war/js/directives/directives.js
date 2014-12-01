@@ -420,7 +420,7 @@ myApp.directive('pressEnter', function() {
     return function(scope, element, attrs) {
         
         element.bind("keydown keypress", function(event) {
-            if (event.which === 13 && !event.shiftKey) {
+            if (event.which === 13 && !event.shiftKey && !event.ctrlKey) {
                 scope.$apply(function() {
                     scope.$eval(attrs.pressEnter);
                 });
