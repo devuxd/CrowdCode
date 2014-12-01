@@ -2,19 +2,25 @@
 myApp.directive('aceReadJson', function() {
     return {
         restrict: 'EA',
-        template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="ngModel"></div>',
-        scope: {
-
-            ngModel: "="
-        },
-        require: "?ngModel",
+        template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="stringValue"></div>',
+        require: "ngModel",
         link: function ( scope, iElement, iAttrs, ngModel ) {
 
-            if( ngModel.$isEmpty( scope.ngModel ) ) {
-                scope.ngModel = "";
-            } else if ( typeof scope.ngModel !== 'string' ){
-                scope.ngModel = angular.toJson( scope.ngModel );
-            } 
+           // convert the json object into a string
+            ngModel.$formatters.push(function( modelValue ) {
+                if( modelValue == undefined ) modelValue = "";
+
+                var stringValue = "";
+                if ( typeof modelValue !== 'string' )
+                    return stringValue = angular.toJson( modelValue );
+
+                return modelValue;
+            });
+
+            // update the UI to reflect the ngModel.$viewValue changes
+            ngModel.$render = function (){
+                scope.stringValue = ngModel.$viewValue;
+            };
         },
         controller: function($scope,$element){
 
@@ -49,18 +55,15 @@ myApp.directive('aceEditJson', function() {
 
             // convert the json object into a string
             ngModel.$formatters.push(function( modelValue ) {
-                console.log("FORMATTER",modelValue);
-
                 if( modelValue == undefined ) modelValue = "";
 
                 var stringValue = "";
                 if ( typeof modelValue !== 'string' ){
-                    console.log("insn't a string");
-                    scope.ngModel = angular.toJson( modelValue );
+
+                    stringValue = angular.toJson( modelValue );
                     stringified = true;
                 } 
                 else{
-                    console.log("is a string");
                     stringValue = modelValue;
                 }
 
@@ -83,13 +86,11 @@ myApp.directive('aceEditJson', function() {
                     try {
                         jsonValue = angular.fromJson(viewValue) ;
                     } catch (e) {
-                        console.log("JSON NOT WELL FORMATTED");
+                        jsonValue = ngModel.$viewValue ;
                     }
                 else
                     jsonValue = viewValue;
 
-
-                console.log("PARSER",viewValue,jsonValue);
                 return jsonValue;
             });
 
@@ -117,26 +118,6 @@ myApp.directive('aceEditJson', function() {
                        minLines: $scope.minLines
                     });
                 }
-
-                // if the passed ngModel is not a string, 
-                // on each value change, update back the model
-                // if( stringified ){
-                //     _editor.getSession().on("change", function(){
-                //         console.log("CHANGED");
-                //         try {
-                //             var annot = _editor.getSession().getAnnotations();
-                //             if( annot.length == 0 && _editor.getValue() != "" ){
-                //                 var value = _editor.getValue();
-                //                 parsed = true;
-                //                 $scope.ngModel = JSON.parse( value );
-                //             }
-                //         } catch (e) {
-                //             console.log("ERROR ACE JSON EDITOR "+e.message);
-                //         }
-
-                //     });
-                // }
-
 			};
         }
     };
