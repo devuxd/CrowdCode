@@ -1,9 +1,17 @@
 <ul tabindex="-1" class="dropdown-menu" role="menu">
-    <a href="#" class="linkclass send-feedback" data-animation="am-fade-and-scale" data-placement="center" data-template="/html/templates/popups/popup_feedback.html" bs-modal="modal">Send Us Feedback!</a>
 
-		<a href="#" data-animation="am-fade-and-scale" data-placement="center" data-template="/html/templates/popups/popup_feedback.html" bs-modal="modal" >!!change profile picture</a>
-  <li role="presentation" ng-class="{divider: item.divider}" ng-repeat="item in content" >
-    <a role="menuitem" tabindex="-1" ng-href="{{item.href}}" ng-if="!item.divider && item.href" target="{{item.target || ''}}" ng-bind="item.text"></a>
-    <a role="menuitem" tabindex="-1" href="javascript:void(0)" ng-if="!item.divider && item.click" ng-click="$eval(item.click);$hide()" ng-bind="item.text"></a>
+  <li role="presentation" class="divider" >
+  
   </li>
+<li>ciao</li>
+  <li role="presentation" class="divider" >
+  
+  </li>
+<li><a  data-animation="am-fade-and-scale" data-placement="center" 
+							    data-template="/html/templates/popups/popup_change_picture.html" 
+							    bs-modal="modal" container="body">change profile picture</a></li>
+  <li role="presentation" class="divider" >
+  
+  </li>
+<li>ciao</li>
 </ul>

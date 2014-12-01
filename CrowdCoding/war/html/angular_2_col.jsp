@@ -85,11 +85,12 @@
 			    </ul>
 			    <ul class="nav navbar-nav navbar-right">
 			        <li class="dropdown">
-			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-		          		<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
-						{{workerHandle}}
-						<span class="caret"></span>
-			          </a>
+			          	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+		          			<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
+							{{workerHandle}}
+							<span class="caret"></span>
+				        </a>
+
 			          <ul class="dropdown-menu" role="menu">
 			            <li>
 							<a  data-animation="am-fade-and-scale" data-placement="center" 
@@ -97,7 +98,7 @@
 							    bs-modal="modal" container="body">change profile picture</a>
 						</li>
 						<li>
-							<a id="logoutLink" href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a>
+							<a id="logoutLink" ng-href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a>
 						</li>
 			          </ul>
 			        </li>
@@ -141,7 +142,7 @@
 					<div class="button-bar">
 					<!-- You can use a custom html template with the `data-template` attr -->
   						<span class="pull-left">
-							<button ng-click="$broadcast('collectFormData', microtaskForm)"
+							<button ng-click="$broadcast('collectFormData', microtaskForm) "
 								tabindex="99"
 								class="btn btn-sm btn-primary">
 									Submit <span style="font-size: 0.7em;">(ctrl+enter)</span>

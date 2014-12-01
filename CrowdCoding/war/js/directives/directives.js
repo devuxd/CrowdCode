@@ -1,25 +1,28 @@
 // directive for json field validation
 myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
     return {
+       
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
 
             // instantiate a new JSONValidator
             var validator = new JSONValidator();
-
             ctrl.$formatters.unshift(function(viewValue) {
                 // initialize JSONValidator and execute errorCheck
                 validator.initialize(ADTService.getNameToADT(), viewValue, attrs.jsonValidator);
                 validator.errorCheck();
-               
-                if (!validator.isValid() && viewValue !== undefined) {
-                    ctrl.$setValidity('json', false);
-                    ctrl.$error.json = validator.getErrors();
-                    return viewValue;
-                } else {
+                var nullInput=false;
+                if(attrs.allowNull &&  viewValue === "null")
+                    nullInput=true;
+                console.log(nullInput);
+                if(viewValue === undefined || nullInput || validator.isValid() ){
                     ctrl.$setValidity('json', true);
                     return viewValue;
+                }else{
+                   ctrl.$setValidity('json', false);
+                   ctrl.$error.json = validator.getErrors();
+                   return viewValue;
                 }
             });
         }
@@ -417,7 +420,7 @@ myApp.directive('pressEnter', function() {
     return function(scope, element, attrs) {
         
         element.bind("keydown keypress", function(event) {
-            if (event.which === 13 && !event.shiftKey) {
+            if (event.which === 13 && !event.shiftKey && !event.ctrlKey) {
                 scope.$apply(function() {
                     scope.$eval(attrs.pressEnter);
                 });
@@ -1108,7 +1111,7 @@ myApp.directive('tutorial', function($compile) {
             });
         }
 
-    }
+    };
 });
 
 // USED FOR UPLOADING THE USER PICTURE
