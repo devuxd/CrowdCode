@@ -553,7 +553,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		var ast = esprima.parse(text, {loc: true});
 
 		codemirror.getDoc().markText({line: 0, ch: 0},
-			{ line: ast.loc.start.line, ch: 1},
+			{ line: ast.loc.start.line, ch: 0},
 			{ readOnly: true });
 
 	}
