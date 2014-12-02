@@ -2,24 +2,25 @@
 myApp.directive('aceReadJson', function() {
     return {
         restrict: 'EA',
-        template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="stringValue"></div>',
+        template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="aceModel"></div>',
         require: "ngModel",
+        scope: true,
         link: function ( scope, iElement, iAttrs, ngModel ) {
-
-           // convert the json object into a string
+            if( !ngModel ) return;
+        
+            // convert the json object into a string
             ngModel.$formatters.push(function( modelValue ) {
-                if( modelValue == undefined ) modelValue = "";
-
-                var stringValue = "";
+                
                 if ( typeof modelValue !== 'string' )
-                    return stringValue = angular.toJson( modelValue );
+                    return  angular.toJson( modelValue );
 
                 return modelValue;
             });
+            
 
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-                scope.stringValue = ngModel.$viewValue;
+                scope.aceModel = ngModel.$viewValue;
             };
         },
         controller: function($scope,$element){
@@ -28,7 +29,9 @@ myApp.directive('aceReadJson', function() {
         		_editor.setOptions({
 		    	     maxLines: Infinity
 		    	});
-			 };
+
+                console.log("value of ace",$scope.aceModel);
+			};
         }
     };
 });

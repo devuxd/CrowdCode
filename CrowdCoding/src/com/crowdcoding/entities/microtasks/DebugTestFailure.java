@@ -26,6 +26,7 @@ public class DebugTestFailure extends Microtask
 {
 	@Parent @Load private Ref<Function> function;
 	@Load private Ref<Test> failedTest;
+	boolean automatic = false;
 
 	// Default constructor for deserialization
 	private DebugTestFailure()
@@ -88,12 +89,17 @@ public class DebugTestFailure extends Microtask
 		return Key.create( function.getKey(), Microtask.class, this.id );
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork( DTO dto, String workerID, Project project)
 	{
 		function.get().debugTestFailureCompleted((FunctionDTO) dto, project);
-		WorkerCommand.awardPoints(workerID, this.submitValue);
-		// increase the stats counter
-		WorkerCommand.increaseStat(workerID, "debugs",1);
+		
+		FunctionDTO fDTO = (FunctionDTO) dto;
+		if( fDTO.autoSubmit != true ){
+
+			WorkerCommand.awardPoints(workerID, this.submitValue);
+			// increase the stats counter
+			WorkerCommand.increaseStat(workerID, "debugs",1);
+		}
 	}
 
 	protected Class getDTOClass()
