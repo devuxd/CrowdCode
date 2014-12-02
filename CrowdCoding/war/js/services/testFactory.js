@@ -147,15 +147,22 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 			angular.forEach(tests,function(test){
 				if( test.hasSimpleTest() ){
-					var inputsKey = {};
-					angular.forEach(test.rec.simpleTestInputs, function(value,key){
-						inputsKey[JSON.stringify(key)] = value;				
-					});
 
-					stubs[JSON.stringify(inputsKey)] = { 
+					var inputsKey = {};
+					// angular.forEach(test.rec.simpleTestInputs, function(value,key){
+					// 	inputsKey[JSON.stringify(key)] = value;				
+					// });
+
+					inputsKey = JSON.stringify(test.rec.simpleTestInputs);
+					inputsKey = inputsKey.replace(/"/g, '');
+
+					//console.error("LOADING STUB FOR "+inputsKey,test.rec.simpleTestInputs);
+
+					stubs[inputsKey] = { 
 						  inputs: test.rec.simpleTestInputs, 
 					      output: JSON.parse(test.rec.simpleTestOutput)
 					};
+
 				}
 			});
 

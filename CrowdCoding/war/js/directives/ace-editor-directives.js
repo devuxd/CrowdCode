@@ -13,7 +13,7 @@ myApp.directive('aceReadJson', function() {
                 
                 if ( typeof modelValue !== 'string' )
                     return  angular.toJson( modelValue );
-
+                
                 return modelValue;
             });
             
@@ -29,8 +29,6 @@ myApp.directive('aceReadJson', function() {
         		_editor.setOptions({
 		    	     maxLines: Infinity
 		    	});
-
-                console.log("value of ace",$scope.aceModel);
 			};
         }
     };

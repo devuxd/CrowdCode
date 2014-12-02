@@ -7,6 +7,7 @@
 // and the debug statements counter
 var debugStatements = [] ;
 var numDebugStatements = 0;
+var debug = {};
 
 
 //Inserts the inputs and outputs to a map datastructure that will be used 
@@ -48,6 +49,7 @@ function hasStubFor(functionName, parameters, stubs)
 		var inputOutputMap = stubs[functionName];
 		
 		var argsKey = JSON.stringify(parameters);
+		
 		if (inputOutputMap.hasOwnProperty(argsKey))
 		{
 			hasStub = true;

@@ -47,7 +47,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
     };
     // collect form data
     $scope.$on('collectFormData', function(event, microtaskForm) {
-    	angular.forEach(microtaskForm, function(formElement, fieldName) {
+        angular.forEach(microtaskForm, function(formElement, fieldName) {
             // If the fieldname doesn't start with a '$' sign, it means it's form
             if (fieldName[0] !== '$') {
                 formElement.$dirty = true;
@@ -90,6 +90,10 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             $scope.$emit('submitMicrotask', formData);
         }
     });
+
+    $scope.$on('$destroy', function() {
+        console.error("DESTROYING MICROTASK");
+    });
 }]);
 ///////////////////////////////
 //  Review CONTROLLER //
@@ -118,24 +122,24 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             });
         } else if ($scope.review.microtask.type == 'WriteFunction') {
 
-        	var funct=functionsService.get($scope.review.microtask.functionID);
-        	oldCode = (functionsService.renderDescription(funct) + funct.header + funct.code).split("\n");
-         	
-        	newCode = (functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code).split("\n");
-        
+            var funct = functionsService.get($scope.review.microtask.functionID);
+            oldCode = (functionsService.renderDescription(funct) + funct.header + funct.code).split("\n");
 
-        	diffRes = diff(oldCode, newCode);
-        	diffCode = "";
-        	console.log(diffRes);
-        	angular.forEach(diffRes, function(diffRow) {
-        	    if (diffRow[0] == "=") {
-        	        diffCode += diffRow[1].join("\n");
-        	    } else {
-        	        for(var i=0; i<diffRow[1].length;i++)
-        	            diffCode += diffRow[0] + diffRow[1][i] + "\n";
-        	    }
-        	    diffCode += "\n";
-        	});
+            newCode = (functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code).split("\n");
+
+
+            diffRes = diff(oldCode, newCode);
+            diffCode = "";
+            console.log(diffRes);
+            angular.forEach(diffRes, function(diffRow) {
+                if (diffRow[0] == "=") {
+                    diffCode += diffRow[1].join("\n");
+                } else {
+                    for (var i = 0; i < diffRow[1].length; i++)
+                        diffCode += diffRow[0] + diffRow[1][i] + "\n";
+                }
+                diffCode += "\n";
+            });
 
             $scope.review.functionCode = diffCode;
 
@@ -148,7 +152,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                     if (diffRow[0] == "=") {
                         diffCode += diffRow[1].join("\n");
                     } else {
-                        for(var i=0; i<diffRow[1].length;i++)
+                        for (var i = 0; i < diffRow[1].length; i++)
                             diffCode += diffRow[0] + diffRow[1][i] + "\n";
                     }
                     diffCode += "\n";
@@ -163,26 +167,26 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                 $scope.review.functionCode = functionsService.renderDescription($scope.functionUnderTest) + $scope.functionUnderTest.header;
             });
         } else if ($scope.review.microtask.type == 'WriteCall') {
-    		var funct=functionsService.get($scope.review.microtask.functionID);
-    		oldCode = (functionsService.renderDescription(funct) + funct.header + funct.code).split("\n");
-    			
-    		newCode = (functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code).split("\n");
-    		
+            var funct = functionsService.get($scope.review.microtask.functionID);
+            oldCode = (functionsService.renderDescription(funct) + funct.header + funct.code).split("\n");
 
-    		diffRes = diff(oldCode, newCode);
-    		diffCode = "";
-    		angular.forEach(diffRes, function(diffRow) {
-    		    if (diffRow[0] == "=") {
-    		        diffCode += diffRow[1].join("\n");
-    		    } else {
-    		    	for(var i=0; i<diffRow[1].length;i++)
-    		        	diffCode += diffRow[0] + diffRow[1][i] + "\n";
-    		    }
-    		    diffCode += "\n";
-    		});
+            newCode = (functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code).split("\n");
 
-    	    $scope.review.functionCode = diffCode;
-      //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;
+
+            diffRes = diff(oldCode, newCode);
+            diffCode = "";
+            angular.forEach(diffRes, function(diffRow) {
+                if (diffRow[0] == "=") {
+                    diffCode += diffRow[1].join("\n");
+                } else {
+                    for (var i = 0; i < diffRow[1].length; i++)
+                        diffCode += diffRow[0] + diffRow[1][i] + "\n";
+                }
+                diffCode += "\n";
+            });
+
+            $scope.review.functionCode = diffCode;
+            //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;
         } else if ($scope.review.microtask.type == 'WriteFunctionDescription') {
             $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header;
         }
@@ -197,19 +201,19 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
         }
     };
     $scope.$on('collectFormData', function(event, microtaskForm) {
-    	if( $scope.review.rating < 3){
-    		microtaskForm.$dirty = true;
-			angular.forEach(microtaskForm, function(formElement, fieldName) {
-		        // If the fieldname doesn't start with a '$' sign, it means it's form
-		        if (fieldName[0] !== '$') {
-		            formElement.$dirty = true;
-		        }
-			});
-		}
+        if ($scope.review.rating < 3) {
+            microtaskForm.$dirty = true;
+            angular.forEach(microtaskForm, function(formElement, fieldName) {
+                // If the fieldname doesn't start with a '$' sign, it means it's form
+                if (fieldName[0] !== '$') {
+                    formElement.$dirty = true;
+                }
+            });
+        }
         var error = "";
         if ($scope.review.rating === 0) error = "Select at least 1 star to evaluate the work";
-        else if (microtaskForm.$invalid && $scope.review.rating < 3 ) error = "Please write an explanation for your negative review";
-        //	console.log("here");
+        else if (microtaskForm.$invalid && $scope.review.rating < 3) error = "Please write an explanation for your negative review";
+        //  console.log("here");
         if (error !== "") $alert({
             title: 'Error!',
             content: error,
@@ -265,7 +269,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         });
     };
 
-    $scope.runTests = function( firstRun ) {
+    $scope.runTests = function(firstRun) {
 
         // set testsRunning flag
         $scope.testsRunning = true;
@@ -283,21 +287,21 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 ch: ast.body[0].body.loc.end.column
             });
         }
-        console.log("PASSING STUBS ",$scope.stubs);
+        console.log("PASSING STUBS ", $scope.stubs);
 
         // ask the worker to run the tests
         testRunnerService.runTestsForFunction($scope.microtask.functionID, functionBody, $scope.stubs).then(function(data) {
             //$scope.results = 
             $scope.testsData = data.testsData;
-            $scope.stubs     = data.stubs;
+            $scope.stubs = data.stubs;
 
-            console.log("RECEIVED STUBS",$scope.stubs);
+            console.log("RECEIVED STUBS", $scope.stubs);
 
             // if on the first run all the tests pass, 
             // load a new microtask 
-            if( firstRun != undefined && firstRun && data.overallResult ){
-            	console.log("---- AUTO LOADING A NEW MICROTASK");
-            	$scope.$emit('collectFormData',true);
+            if (firstRun != undefined && firstRun && data.overallResult) {
+                console.log("---- AUTO LOADING A NEW MICROTASK");
+                $scope.$emit('collectFormData', true);
             }
 
             // reset testsRunning flag
@@ -327,7 +331,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     };
 
 
-    $scope.$on('collectFormData', function(event,data) {
+    $scope.$on('collectFormData', function(event, data) {
         formData = {};
         var errors = "";
         // IF DISPUTING A TEST 
@@ -409,7 +413,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 };
 
                 // if first run is true
-                if( data != undefined && data) formData['autoSubmit'] = true;
+                if (data != undefined && data) formData['autoSubmit'] = true;
             }
             $scope.$emit('submitMicrotask', formData);
         } else {
@@ -575,7 +579,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
                 ch: ast.body[0].body.loc.end.column
             });
             formData = {
-            	//functionVersion: $scope.funct.version,
+                //functionVersion: $scope.funct.version,
                 description: functionParsed.description,
                 header: functionParsed.header,
                 name: functionName,
@@ -607,7 +611,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
             if (diffRow[0] == "=") {
                 diffCode += diffRow[1].join("\n");
             } else {
-                for(var i=0; i<diffRow[1].length;i++)
+                for (var i = 0; i < diffRow[1].length; i++)
                     diffCode += diffRow[0] + diffRow[1][i] + "\n";
             }
             diffCode += "\n";
@@ -704,7 +708,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
                 ch: ast.body[0].body.loc.end.column
             });
             formData = {
-            	//functionVersion: $scope.funct.version,
+                //functionVersion: $scope.funct.version,
                 description: functionParsed.description,
                 header: functionParsed.header,
                 name: functionName,
@@ -754,7 +758,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
     //Add the first parameter
     $scope.addParameter();
     $scope.$on('collectFormData', function(event, microtaskForm) {
-     
+
         angular.forEach(microtaskForm, function(formElement, fieldName) {
             // If the fieldname doesn't start with a '$' sign, it means it's form
             if (fieldName[0] !== '$') {
@@ -810,7 +814,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
                 description: $scope.description,
                 header: functionsService.renderHeader($scope.functionName, paramNames)
             };
-            	$scope.$emit('submitMicrotask',formData);
+            $scope.$emit('submitMicrotask', formData);
         }
     });
 }]);
@@ -846,7 +850,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
             if (diffRow[0] == "=") {
                 diffCode += diffRow[1].join("\n");
             } else {
-                for(var i=0; i<diffRow[1].length;i++)
+                for (var i = 0; i < diffRow[1].length; i++)
                     diffCode += diffRow[0] + diffRow[1][i] + "\n";
             }
             diffCode += "\n";
@@ -870,22 +874,22 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
     };
     var alertObj = null; // initialize alert obj
     $scope.$on('collectFormData', function(event, microtaskForm) {
-    	angular.forEach(microtaskForm, function(formElement, fieldName) {
-    	    // If the fieldname doesn't start with a '$' sign, it means it's form
-    	    if (fieldName[0] !== '$') {
-    	        formElement.$dirty = true;
-    	    }
-    	    //if formElement as the proprety $addControl means that have other form inside him
-    	    if (formElement !== undefined && formElement.$addControl) {
-    	        angular.forEach(formElement, function(formElement, fieldName) {
-    	            // If the fieldname starts with a '$' sign, it means it's an Angular
-    	            // property or function. Skip those items.
-    	            if (fieldName[0] !== '$') {
-    	                formElement.$dirty = true;
-    	            }
-    	        });
-    	    }
-    	});
+        angular.forEach(microtaskForm, function(formElement, fieldName) {
+            // If the fieldname doesn't start with a '$' sign, it means it's form
+            if (fieldName[0] !== '$') {
+                formElement.$dirty = true;
+            }
+            //if formElement as the proprety $addControl means that have other form inside him
+            if (formElement !== undefined && formElement.$addControl) {
+                angular.forEach(formElement, function(formElement, fieldName) {
+                    // If the fieldname starts with a '$' sign, it means it's an Angular
+                    // property or function. Skip those items.
+                    if (fieldName[0] !== '$') {
+                        formElement.$dirty = true;
+                    }
+                });
+            }
+        });
         console.log(microtaskForm);
         if (microtaskForm.$invalid) {
             if (alertObj !== null) alertObj.destroy(); // avoid multiple alerts
