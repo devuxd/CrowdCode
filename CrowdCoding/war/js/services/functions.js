@@ -184,7 +184,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			mockCode += '			returnValue = ' + functionObj.name + 'ActualIMP.apply( null, argsCopy );'+'\n';
 			mockCode += '		}'+'\n';
 			mockCode += '   } catch (e) { \n';
-			mockCode += '       debug.log("There was an error in the callee ' + functionObj.name + '");\n';
+			mockCode += '       debug.log("There was an exception in the callee ' + functionObj.name + ': "+e.message);\n';
 
 			// if log enabled signal that the function can be STUBBED
 			if( logEnabled != undefined && logEnabled ){

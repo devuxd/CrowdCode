@@ -198,6 +198,8 @@ myApp.factory('testRunnerService', [
 					console.log(e);			
 				}	
 		})
+
+		console.log("LOADED STUBS ",stubs);
 	}
 
 
@@ -270,7 +272,7 @@ myApp.factory('testRunnerService', [
 		// the worker is still running, 
 	    // kill it before starting again
 	    if ( w != undefined ) {
-	      console.log("KILLING THE WORKER FOR TEST "+currentTextIndex );
+	      //console.log("KILLING THE WORKER FOR TEST "+currentTextIndex );
 	      w.terminate();
 	    }
 

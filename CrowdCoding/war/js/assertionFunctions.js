@@ -1,9 +1,18 @@
 var assertionResults = new Array();
 var details = { 'failed' : 0 };
 
+function nullStringFix(stringToCheck){
+	if( typeof stringToCheck == 'string' && stringToCheck == 'null')
+		return null;
+	return stringToCheck;
+}
+
 
 function equal(actual, expected, message){
-	
+	// in cases of comparision between null and 'null'
+	// actual   = nullStringFix(actual);
+	// expected = nullStringFix(expected);
+
 	var succeeded = deepCompare(actual, expected);
 	getResults(actual,expected,message,succeeded);
 }
@@ -173,6 +182,8 @@ function deepCompare()
 	    return true; //Die silently? Don't know how to handle such case, please help...
 	    // throw "Need two or more arguments to compare";
 	  }
+
+
 
 	  for (var i = 1, l = arguments.length; i < l; i++) {
 
