@@ -36,5 +36,6 @@ public class DebugTestFailureInFirebase extends MicrotaskInFirebase
 		super(id,title, type, owningArtifact, completed, points);
 		this.testID = testID;
 		this.functionID = testedFunctionID;
+		
 	}
 }

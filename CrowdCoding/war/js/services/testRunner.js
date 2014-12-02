@@ -217,8 +217,9 @@ myApp.factory('testRunnerService', [
 		if (currentTextIndex >= validTests.length)
 		{
 			deferred.resolve({
-				stubs     : calleeMap,
-				testsData : returnData
+				stubs         : calleeMap,
+				testsData     : returnData,
+				overallResult : allFailedTestCases.length > 0 ? false : true // if one of the tests failed, return false otherwise true
 			});
 			return;
 		}

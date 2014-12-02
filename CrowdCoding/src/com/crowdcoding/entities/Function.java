@@ -55,6 +55,9 @@ public class Function extends Artifact
 	private String header;
 	private String description;
 	private List<Long> tests = new ArrayList<Long>();
+	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
+	
+	
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<String> callees = new ArrayList<String>();
 	// current callers with a fully implemented callsite to this function:
@@ -256,6 +259,7 @@ public class Function extends Artifact
 		if (position != -1)
 		{
 			tests.remove(position);
+			testsImplemented.remove(position);
 			ofy().save().entity(this).now();
 		}
 	}
@@ -264,6 +268,8 @@ public class Function extends Artifact
 	public void addTest(long testID)
 	{
 		tests.add(testID);
+		testsImplemented.add(false);
+		
 		ofy().save().entity(this).now();
 	}
 
@@ -349,15 +355,14 @@ public class Function extends Artifact
 	}
 
 	// Determines if all unit tests are implemented (e.g., not merely described or currently disputed)
-	private boolean allUnitTestsImplemented(Project project)
+	private boolean allUnitTestsImplemented()
 	{
 		System.out.println("checking if all test implemented");
 
 		if(tests.size()==0) return false;
-		for (Long testId : tests)
+		for (Boolean implemented:testsImplemented)
 		{
-			Ref<Test> testRef = Test.find(testId, project);
-		    if (!testRef.get().isImplemented())
+			if( !implemented )
 				return false;
 		}
 
@@ -372,7 +377,7 @@ public class Function extends Artifact
 
 	private void runTestsIfReady(Project project)
 	{
-		if(isWritten && allUnitTestsImplemented(project)){
+		if(isWritten && allUnitTestsImplemented()){
 			// enqueue test job in firebase
 			System.out.println("write test job queue");
 			FirebaseService.writeTestJobQueue(this.getID(),project);
@@ -689,6 +694,9 @@ public class Function extends Artifact
 	// Provides notification that a test has transitioned to being implemented
 	public void testBecameImplemented(Test test, Project project)
 	{
+		int position = tests.indexOf(test.getID());
+		testsImplemented.set(position, true);
+		
 		runTestsIfReady(project);
 	}
 

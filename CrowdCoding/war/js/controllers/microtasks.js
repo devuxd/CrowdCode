@@ -240,11 +240,13 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.testsData = {};
     $scope.stubs = {};
     $scope.paramNames = $scope.funct.paramNames;
-        // INITIALIZE THE FUNCTION EDITOR CODEMIRROR
+
+    // INITIALIZE THE FUNCTION EDITOR CODEMIRROR
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
     var functionCodeMirror = null;
     var highlightPseudoCall = false;
+
     $scope.codemirrorLoaded = function(codemirror) {
         functionCodeMirror = codemirror;
         codemirror.setOption('autofocus', true);
@@ -254,9 +256,12 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         codemirror.setOption("theme", "custom-editor");
         codemirror.refresh();
     };
-    $scope.runTests = function() {
+
+    $scope.runTests = function( firstRun ) {
+
         // set testsRunning flag
         $scope.testsRunning = true;
+
         var functionBody;
         if (functionCodeMirror !== null) {
             var ast = esprima.parse(functionCodeMirror.doc.getValue(), {
@@ -270,21 +275,30 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 ch: ast.body[0].body.loc.end.column
             });
         }
-        console.log("PASSING STUBS ");
-        console.log($scope.stubs);
+        console.log("PASSING STUBS ",$scope.stubs);
+
         // ask the worker to run the tests
         testRunnerService.runTestsForFunction($scope.microtask.functionID, functionBody, $scope.stubs).then(function(data) {
             //$scope.results = 
             $scope.testsData = data.testsData;
-            $scope.stubs = data.stubs;
-            console.log("STUBS");
-            console.log($scope.stubs);
+            $scope.stubs     = data.stubs;
+
+            console.log("RECEIVED STUBS",$scope.stubs);
+
+            // if on the first run all the tests pass, 
+            // load a new microtask 
+            if( firstRun != undefined && firstRun && data.overallResult ){
+            	console.log("---- AUTO LOADING A NEW MICROTASK");
+            	$scope.$emit('collectFormData',true);
+            }
+
             // reset testsRunning flag
             $timeout(function() {
                 $scope.testsRunning = false;
             }, 200);
         });
     };
+
     $scope.dispute = false;
     $scope.disp = {};
     $scope.disp.disputeText = "";
@@ -293,16 +307,19 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         $scope.dispute = true;
         $scope.disputedTest = $scope.tests[testKey];
     });
+
     $scope.cancelDispute = function() {
-            $scope.dispute = false;
-        };
-        // check if test is passed
-        // testKey is the key of the test in $scope.tests
+        $scope.dispute = false;
+    };
+    // check if test is passed
+    // testKey is the key of the test in $scope.tests
     $scope.isTestPassed = function(testKey) {
         if ($scope.passedTests != 'undefined' && $scope.passedTests.indexOf(testKey) != -1) return true;
         return false;
     };
-    $scope.$on('collectFormData', function() {
+
+
+    $scope.$on('collectFormData', function(event,data) {
         formData = {};
         var errors = "";
         // IF DISPUTING A TEST 
@@ -316,8 +333,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
             });
             if (oneTestFailed) errors = "Please fix all the failing tests before submit!";
         }
-        console.log("ERRORS =" + errors + "- ");
-        console.log($scope.disp);
+
         if (errors === "") {
             if ($scope.dispute) {
                 formData = {
@@ -383,6 +399,9 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                     calleeNames: calleeNames,
                     mocks: mocks
                 };
+
+                // if first run is true
+                if( data != undefined && data) formData['autoSubmit'] = true;
             }
             $scope.$emit('submitMicrotask', formData);
         } else {
@@ -397,8 +416,10 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
             });
         }
     });
-    // run the tests
-    $scope.runTests();
+
+
+    // FIRST run of the tests
+    $scope.runTests(true);
 }]);
 ///////////////////////////////
 //  REUSE SEARCH CONTROLLER //
