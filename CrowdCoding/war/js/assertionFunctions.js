@@ -1,17 +1,22 @@
 var assertionResults = new Array();
 var details = { 'failed' : 0 };
 
-function nullStringFix(stringToCheck){
-	if( typeof stringToCheck == 'string' && stringToCheck == 'null')
+
+// this functions is for avoiding to have 
+// Infinity, Nan or undefined values 
+// they all becomes null values
+function normalizeGlobalValues ( dirtyValue ){
+	if( dirtyValue == Infinity || dirtyValue == NaN || dirtyValue == undefined )
 		return null;
-	return stringToCheck;
+
+	return dirtyValue;
 }
 
 
 function equal(actual, expected, message){
 	// in cases of comparision between null and 'null'
-	// actual   = nullStringFix(actual);
-	// expected = nullStringFix(expected);
+	actual   = normalizeGlobalValues(actual);
+	expected = normalizeGlobalValues(expected);
 
 	var succeeded = deepCompare(actual, expected);
 	getResults(actual,expected,message,succeeded);
@@ -64,8 +69,7 @@ function throwsException(actual,expect,message)
 }
 
 function getResults(actual,expected,message,succeeded)
-{
-	console.log("RESULT ACTUAL = "+actual);
+{	
 	assertionResults.push({ 'expected': expected, 'actual': actual, 'message': message, 'result':  succeeded});
 	
 	if (!succeeded)

@@ -627,15 +627,17 @@ public class Function extends Artifact
 		// Update or create tests for any mocks
 		for (MockDTO mockDTO : dto.mocks)
 		{
+			System.out.println("MOCK: "+mockDTO);
+			
 			// Is there already a simple test / mock for this function with these inputs?
 			Test test = Test.findSimpleTestFor(mockDTO.functionName, mockDTO.inputs, project);
 
 			// If so, update it.
 			// Otherwise, create a new test
 			if (test != null)
-				test.setSimpleTestOutput(mockDTO.expectedOutput, project);
+				test.setSimpleTestOutput(mockDTO.output, project);
 			else
-				TestCommand.create(this.id, this.name, mockDTO.inputs, mockDTO.expectedOutput, mockDTO.code, version);
+				TestCommand.create(this.id, this.name, mockDTO.inputs, mockDTO.output, mockDTO.code, version);
 		}
 
 		lookForWork(project);

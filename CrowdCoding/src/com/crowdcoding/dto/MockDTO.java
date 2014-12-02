@@ -8,7 +8,7 @@ public class MockDTO extends DTO
 	
 	public String functionName;
 	public List<String> inputs;
-	public String expectedOutput;
+	public String output;
 	public String code;
 	
 	// Default constructor (required by Jackson JSON library)
@@ -20,11 +20,11 @@ public class MockDTO extends DTO
 	{
 		this.functionName = functionName;
 		this.inputs = inputs;
-		this.expectedOutput = expectedOutput;
+		this.output = expectedOutput;
 	}
 
 	public String toString()
 	{
-		return "Mock for " + functionName + "(" + inputs.toString() + ")->" + expectedOutput;
+		return "Mock for " + functionName + "(" + inputs.toString() + ")->" + output;
 	}
 }

@@ -206,7 +206,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 			checkQueueTimeout = $timeout(function() {
 				console.log("CALLING LOAD");
 				$scope.$emit('load');
-			}, 2000);
+			}, 30*1000);
 		});
 	});
 

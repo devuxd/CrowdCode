@@ -236,7 +236,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
 ///////////////////////////////
-myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout', 'testsService', 'testRunnerService', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert, $timeout, testsService, testRunnerService, functionsService, ADTService) {
+myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout', 'testsService', 'testRunnerService', 'functionsService', 'ADTService', 'TestList', function($scope, $rootScope, $firebase, $alert, $timeout, testsService, testRunnerService, functionsService, ADTService, TestList) {
     //retrieve tests for the current function
     $scope.tests = testsService.validTestsforFunction($scope.microtask.functionID);
     $scope.passedTests = [];
@@ -285,7 +285,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         testRunnerService.runTestsForFunction($scope.microtask.functionID, functionBody, $scope.stubs).then(function(data) {
             //$scope.results = 
             $scope.testsData = data.testsData;
-            $scope.stubs = data.stubs;
+            $scope.stubs     = Object.keys(data.stubs).length > 0 ? data.stubs : null;
 
             console.log("RECEIVED STUBS", $scope.stubs);
 
@@ -346,22 +346,22 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                     description: $scope.disp.disputeText
                 };
             } else {
-                // BUILD MOCKS 
-                var mocks = [];
+                // INSERT STUBS AS NEW TESTS IF THEY ARE NOT FOUND 
+                var stubs = [];
                 angular.forEach($scope.stubs, function(stubsForFunction, functionName) {
+
+                    var stubFunction = functionsService.getByName( functionName );
+
                     angular.forEach(stubsForFunction, function(stub, index) {
-                        var mockCode = 'equal(' + functionName + '(';
-                        angular.forEach(stub.inputs, function(value, key) {
-                            mockCode += value;
-                            mockCode += (key != stub.inputs.length - 1) ? ',' : '';
-                        });
-                        mockCode += '),' + stub.stubOutput + ',\' test generated for debug purposes \');';
-                        mocks.push({
-                            functionName: functionName,
-                            inputs: stub.inputs,
-                            expectedOutput: stub.stubOutput,
-                            code: mockCode
-                        });
+
+                        TestList.searchAndAdd( stubFunction.id, functionName, stub.inputs, stub.output );
+
+                        // mocks.push({
+                        //     functionName: functionName,
+                        //     inputs: stub.inputs,
+                        //     expectedOutput: stub.output,
+                        //     code: mockCode
+                        // });
                     });
                 });
                 // BUILD FUNCTION CODE
@@ -400,13 +400,13 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                     paramNames: functionParsed.paramNames,
                     paramTypes: functionParsed.paramTypes,
                     paramDescriptions: functionParsed.paramDescriptions,
-                    calleeNames: calleeNames,
-                    mocks: mocks
+                    calleeNames: calleeNames
                 };
 
                 // if first run is true
                 if (data != undefined && data) formData['autoSubmit'] = true;
             }
+            // console.log("submitting",formData);
             $scope.$emit('submitMicrotask', formData);
         } else {
             $alert({
