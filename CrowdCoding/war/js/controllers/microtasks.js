@@ -246,6 +246,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
     var functionCodeMirror = null;
     var highlightPseudoCall = false;
+    var readOnlyDone=false;
 
     $scope.codemirrorLoaded = function(codemirror) {
         functionCodeMirror = codemirror;
@@ -255,6 +256,13 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         codemirror.setOption('lineNumbers', true);
         codemirror.setOption("theme", "custom-editor");
         codemirror.refresh();
+
+        codemirror.on("change", function() {
+            //set the descprtion and header as readonly
+            functionsService.makeHeaderAndDescriptionReadOnly(codemirror);
+            readOnlyDone = true;
+
+        });
     };
 
     $scope.runTests = function( firstRun ) {

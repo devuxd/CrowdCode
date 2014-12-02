@@ -48,7 +48,7 @@ public class DebugTestFailure extends Microtask
 						false,
 						submitValue,
 						function.getID()),
-				Project.MicrotaskKeyToString(this.getKey()), 
+				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
@@ -71,7 +71,7 @@ public class DebugTestFailure extends Microtask
 				submitValue,
 				test.getID(),
 				function.getID()),
-				Project.MicrotaskKeyToString(this.getKey()), 
+				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
@@ -92,9 +92,9 @@ public class DebugTestFailure extends Microtask
 	protected void doSubmitWork( DTO dto, String workerID, Project project)
 	{
 		function.get().debugTestFailureCompleted((FunctionDTO) dto, project);
-		
+
 		FunctionDTO fDTO = (FunctionDTO) dto;
-		if( fDTO.autoSubmit != true ){
+		if( fDTO.autoSubmit != null && fDTO.autoSubmit != true ){
 
 			WorkerCommand.awardPoints(workerID, this.submitValue);
 			// increase the stats counter
