@@ -373,7 +373,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 				returnType=type;
 			}
 			else if( lineDescription[i].length > 4 ) // otherwise is a description line
-				description+=lineDescription[i].trim()+"\n"
+				description+=lineDescription[i].trim()+"\n";
 		}
 
 
