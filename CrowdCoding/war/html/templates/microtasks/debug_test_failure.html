@@ -37,6 +37,10 @@
 
 	<alertcontainer></alertcontainer>
 
+	<div class="section section-description" ng-if="!dispute && testsRunning" >
+		Tests are running... please wait.
+	</div>
+
 	<div class="section-cols" ng-if="!dispute && !testsRunning" >
 		<div class="container-flex-row">
 
@@ -72,44 +76,7 @@
 		</div>
 	</div>
 
-	<div class="section-cols" ng-if=" !dispute ">
-		<div class="container-flex-row">
-
-			<div class="section section-help" style="width:30%">
-				<div class="section-title" >
-				FUNCTION EDITOR  
-				</div>
-				<div class="section-content" >
-			 		<p>
-			 			For monitoring statements, use <strong>debug.log(statement)</strong>. The results of the Debug.log() are printed below each <strong>test result</strong>.
-			 		</p>
-				</div>
-
-				<div class="section-title" > AVAILABLE DATA TYPES </div>
-				<div class="section-content" >
-						<adt-bar></adt-bar>
-				</div>
-			</div>
-
-			<div class="section section-form" style="width:70%">
-				<div class="section-content" >
-					<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
-					<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-					<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">
-						<span>There are some errors. Please fix them before submit:</span>
-						<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
-							<li>{{error}}</li>
-						</ul>
-					</ul>
-					<javascript-helper class="pull-right"></javascript-helper>
-					<span class="clearfix"></span>
-				</div>
-			</div>
-
-		</div>
-	</div>
-
-	<div class="section-cols" ng-if=" !dispute && !testsRunning">
+	<div class="section-cols" ng-if=" stubs && !dispute && !testsRunning">
 		<div class="container-flex-row">
 
 			<div class="section section-help" style="width:30%">
@@ -157,6 +124,45 @@
 
 		</div>
 	</div>
+	
+
+	<div class="section-cols" ng-if=" !dispute ">
+		<div class="container-flex-row">
+
+			<div class="section section-help" style="width:30%">
+				<div class="section-title" >
+				FUNCTION EDITOR  
+				</div>
+				<div class="section-content" >
+			 		<p>
+			 			For monitoring statements, use <strong>debug.log(statement)</strong>. The results of the Debug.log() are printed below each <strong>test result</strong>.
+			 		</p>
+				</div>
+
+				<div class="section-title" > AVAILABLE DATA TYPES </div>
+				<div class="section-content" >
+						<adt-bar></adt-bar>
+				</div>
+			</div>
+
+			<div class="section section-form" style="width:70%">
+				<div class="section-content" >
+					<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
+					<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+					<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">
+						<span>There are some errors. Please fix them before submit:</span>
+						<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
+							<li>{{error}}</li>
+						</ul>
+					</ul>
+					<javascript-helper class="pull-right"></javascript-helper>
+					<span class="clearfix"></span>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
 	
 
 	

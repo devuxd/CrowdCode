@@ -18,7 +18,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.allFunctionIDs = function() { return allFunctionIDs(); };
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
+		this.getByName = function(name) { return getByName(name); };
 		this.getNameById  = function(id) { return getNameById(id); };
+
 		this.getMockCodeFor = function(id,logEnabled) { return getMockCodeFor(id,logEnabled); };
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
 		this.getMockHeader = function(id) { return getMockHeader(id); };
@@ -149,12 +151,25 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			return funct;
 		}
 
+		// Get the function object, in FunctionInFirebase format, for the specified function name
+		function getByName(name)
+		{
+			var funct = null;
+			angular.forEach(functions, function(value, key) {
+				if( funct==null && value.name == name ) {
+			  		funct = value;
+			  	}
+			});
+			return funct;
+		}
+
 		function getNameById(id)
 		{
 			var funct = get(id);
 			if( funct != null) return funct.name;
 			return "";
 		}
+
 
 		// Get the function declaration and mock implementation for the function with the specified id.
 		// Rather than the actual implementation, the implementation is replace with an implementation

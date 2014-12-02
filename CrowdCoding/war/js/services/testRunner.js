@@ -157,9 +157,6 @@ myApp.factory('testRunnerService', [
 
 			// IF IS THE FUNCTION UNDER TEST DON'T GENERATE MOCK BODY
 			if( allFunctionIDs[i] != functionId ){
-				console.log("RETRIEVING MOCK FOR "+allFunctionIDs[i] );
-
-				
 
 				var isCallee = ( callee.indexOf(functionsService.getNameById(allFunctionIDs[i])) != -1 );
 
@@ -199,7 +196,6 @@ myApp.factory('testRunnerService', [
 				}	
 		})
 
-		console.log("LOADED STUBS ",stubs);
 	}
 
 
@@ -226,7 +222,6 @@ myApp.factory('testRunnerService', [
 			return;
 		}
 
-		
 		this.runTest();		
 	}
 
@@ -236,7 +231,7 @@ myApp.factory('testRunnerService', [
 
 		returnData[ currentTextIndex ] = {};
 		returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
-		returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': "", 'result':  false} ;
+		returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
 		returnData[ currentTextIndex ].debug  = "ERROR: execution terminated due to timeout";
 
 		this.processTestFinished(false);
@@ -246,7 +241,7 @@ myApp.factory('testRunnerService', [
 	testRunner.runTest = function()
 	{
 		var testCode = validTests[currentTextIndex].getCode();  //.replace(/\n/g,"");
-		console.log("TEST CODE: "+testCode);
+
 		// Check the code for syntax errors using JSHint. Since only the user defined code will be checked,
 		// add extra defs for references to the instrumentation code.
 		var code = "";
