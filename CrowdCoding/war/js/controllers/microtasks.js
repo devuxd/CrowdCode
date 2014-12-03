@@ -275,7 +275,9 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             });
         else {
 
-
+            if( $scope.review.reviewText == undefined )
+                $scope.review.reviewText = "";
+            
             formData = {
                 microtaskIDReviewed: $scope.microtask.microtaskKeyUnderReview,
                 reviewText: $scope.review.reviewText,

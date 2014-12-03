@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import com.crowdcoding.dto.ReviewDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
@@ -232,10 +233,14 @@ public class FirebaseService
 			URLFetchService fetchService = URLFetchServiceFactory.getURLFetchService();
 			HTTPRequest request = new HTTPRequest(new URL(absoluteURL), operation);
 			request.setPayload(data.getBytes());
-			fetchService.fetchAsync(request);
+			Future<HTTPResponse> fetchAsync = fetchService.fetchAsync(request);
+			
+			// wait while fetchAsync is done 
+			//while( ! fetchAsync.isDone() );
+			
 		}
 		catch (MalformedURLException e) {
-		    // ...
+			System.out.println("Malformed url: "+e);
 		}
 	}
 
