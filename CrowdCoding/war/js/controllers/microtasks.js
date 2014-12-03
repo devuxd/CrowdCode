@@ -263,9 +263,10 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
         codemirror.on("change", function() {
             //set the descprtion and header as readonly
-            functionsService.makeHeaderAndDescriptionReadOnly(codemirror);
-            readOnlyDone = true;
-
+            if(!readOnlyDone) {
+                functionsService.makeHeaderAndDescriptionReadOnly(codemirror);
+                readOnlyDone = true;
+            }
         });
     };
 
