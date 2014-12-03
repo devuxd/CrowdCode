@@ -259,8 +259,8 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
         }
 
         var error = "";
-        if ($scope.review.rating === 0) error = "plese, select one of the three option";
-        else if (microtaskForm.$invalid && $scope.review.rating < 3) error = "please, write an explanation for your createTreeWalker(root, whatToShow, filter, entityReferenceExpansion)";
+        if ($scope.review.rating === -1) error = "plese, select one of the three option";
+        else if (microtaskForm.$invalid && $scope.review.rating <= 3) error = "please, write an explanation for your createTreeWalker(root, whatToShow, filter, entityReferenceExpansion)";
         
 
         if (error !== "") 
