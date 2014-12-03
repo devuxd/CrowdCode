@@ -29,6 +29,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.getAllDescribedFunctionNames = function(idFunction) { return getAllDescribedFunctionNames(idFunction); };
 		this.findMatches = function(searchText, functionSourceName) { return findMatches(searchText, functionSourceName); };
 		this.makeHeaderAndParameterReadOnly = function(codemirror){return makeHeaderAndParameterReadOnly(codemirror);};
+		this.makeHeaderAndDescriptionReadOnly = function(codemirror){return makeHeaderAndDescriptionReadOnly(codemirror);};
 		this.highlightPseudoSegments =function(codemirror,marks,highlightPseudoCall){ return highlightPseudoSegments(codemirror,marks,highlightPseudoCall);};
 		//this.hasPseudoSegments =function(functionCode){ return hasPseudoSegments(functionCode);};
 	//	this.replaceFunctionCodeBlock = function (text) {return replaceFunctionCodeBlock(text); };
@@ -40,7 +41,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
 		this.getParamNamesById = function (functionId) { return getParamNamesById(functionId);};
 		this.getCount = function(){ return (functions === undefined)?0:functions.length; };
-	 	
 	 	this.isLoaded = function() { return loaded; };
 		this.getAll = function(){ return functions;	};
 		// Function bodies
@@ -388,7 +388,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 				returnType=type;
 			}
 			else if( lineDescription[i].length > 4 ) // otherwise is a description line
-				description+=lineDescription[i].trim()+"\n"
+				description+=lineDescription[i].trim()+"\n";
 		}
 
 
@@ -460,21 +460,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 	function getParamNamesById(functionId){
 		return get(functionId).paramNames;
-	}
-
-
-
-
-	// checks that the name is vith alphanumerical characters or underscore
-	function isValidName(name)
-	{
-		var regexp = /^[a-zA-Z0-9_]+$/;
-
-		if (name.search(regexp)==-1)
-		 	return false;
-		else
-			return true;
-
 	}
 
 
@@ -570,6 +555,21 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 				{ line: readOnlyLines[i] + 1, ch: 1},
 				{ readOnly: true });
 		}
+
+	}
+
+
+
+	
+
+	function makeHeaderAndDescriptionReadOnly(codemirror)
+	{
+		var text = codemirror.getValue();
+		var ast = esprima.parse(text, {loc: true});
+
+		codemirror.getDoc().markText({line: 0, ch: 0},
+			{ line: ast.loc.start.line, ch: 0},
+			{ readOnly: true });
 
 	}
 

@@ -302,6 +302,10 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     // INITIALIZE THE FUNCTION EDITOR CODEMIRROR
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+
+
+    var functionCodeMirror = null;
+    var readOnlyDone=false;
     $scope.codemirrorLoaded = function(codemirror) {
         functionCodeMirror = codemirror;
         codemirror.setOption('autofocus', true);
@@ -310,6 +314,14 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         codemirror.setOption('lineNumbers', true);
         codemirror.setOption("theme", "custom-editor");
         codemirror.refresh();
+
+        codemirror.on("change", function() {
+            //set the descprtion and header as readonly
+            if(!readOnlyDone) {
+                functionsService.makeHeaderAndDescriptionReadOnly(codemirror);
+                readOnlyDone = true;
+            }
+        });
     };
 
     $scope.runTests = function(firstRun) {
