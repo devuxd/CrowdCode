@@ -24,7 +24,7 @@ import com.googlecode.objectify.annotation.Parent;
 @EntitySubclass(index=true)
 public class WriteFunction extends Microtask
 {
-	public enum PromptType { SKETCH, DESCRIPTION_CHANGE };
+	public enum PromptType { SKETCH, DESCRIPTION_CHANGE, RE_EDIT };
 	@Parent @Load private Ref<Function> function;
 	private PromptType promptType;
 
@@ -58,6 +58,19 @@ public class WriteFunction extends Microtask
 
 		WriteFunction(function, project);
 	}
+
+	// Initialization constructor for a RE_EDIT write function. Microtask is not ready.
+//	public WriteFunction(Function function, String oldFullDescription,
+//			String newFullDescription Project project)
+//	{
+//		this.promptType = PromptType.RE_EDIT;
+//
+//		// First replace \n with BR to format for display. Then, escape chars as necessary.
+//		this.oldFullDescription = oldFullDescription;
+//		this.newFullDescription = newFullDescription;
+//
+//		WriteFunction(function, project);
+//	}
 
 	public Microtask copy(Project project)
 	{

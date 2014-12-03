@@ -624,6 +624,7 @@ public class Function extends Artifact
 		// Save the entity again to the datastore
 		ofy().save().entity(this).now();
 
+		/* NOW THIS IS DONE CLIENT SIDE
 		// Update or create tests for any mocks
 		for (MockDTO mockDTO : dto.mocks)
 		{
@@ -638,7 +639,7 @@ public class Function extends Artifact
 				test.setSimpleTestOutput(mockDTO.output, project);
 			else
 				TestCommand.create(this.id, this.name, mockDTO.inputs, mockDTO.output, mockDTO.code, version);
-		}
+		}*/
 
 		lookForWork(project);
 	}

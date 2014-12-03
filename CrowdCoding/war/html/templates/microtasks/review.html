@@ -239,7 +239,8 @@
 				</div>
 				<div class="section-content" >
 					<div id="ratingsDiv" >
-						<span class="pull-left"> Quality: </span>
+						<span class="pull-left"></span>
+						<!--
 						<span ng-repeat="currentValue in [1,2,3,4,5] track by $index"
 							  ng-mouseenter="review.mouseOn=currentValue"
 							  ng-mouseleave="review.mouseOn=0"
@@ -247,16 +248,30 @@
 							<span class="rating-star {{ ( review.mouseOn > $index || review.rating > $index ) ? 'full' : '' }}"></span>
 							<span ng-if="$index == 1" class="rating-separator" ></span>
 						</span>
+						-->
+						<div class="btn-group" role="group" aria-label="...">
+						  <button type="button" class="btn btn-default" ng-click="accept($event)" >Accept</button>
+						  <button type="button" disabled="disabled" class="btn btn-default" ng-click="reissue($event)" >Reissue</button>
+						  <button type="button" class="btn btn-default" ng-click="reject($event)" >Reject</button>
+						</div>
+
 						<span class="clearfix"></span>
 					</div>
+					<br />
 
-					<span >Please briefly explain your rating:</span>
-					<span
-						ng-class="{ 'has-error': microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid, 'has-success': microtaskForm.reviewText.$valid}">
-						<textarea
-							id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 3" focus></textarea>
+					<label ng-if="review.rating != -1"> Choice </label>
+					<span ng-if="review.rating == 1">Rejected</span>
+					<span ng-if="review.rating == 5">Accepted</span>
+					<br />
+					<span ng-if="review.rating != -1 && review.rating <= 3">
+						<label for="reviewText" >Motivation:</label>
 						<span
-						class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 3&& microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
+							ng-class="{ 'has-error': microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid, 'has-success': microtaskForm.reviewText.$valid}">
+							<textarea
+								id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 3" focus></textarea>
+							<span
+							class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 3&& microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
+						</span>
 					</span>
 				</div>
 			</div>

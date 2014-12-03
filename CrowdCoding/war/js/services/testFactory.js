@@ -171,6 +171,20 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 			return stubs;
 		},
+
+		getTestCasesByFunctionId: function( functionId ){
+
+		    var tests = this.getByFunctionId(functionId);
+		    var testCases = [];
+
+		    // for each test push the test case entry in the test cases list
+		    angular.forEach(tests, function(test, index) {
+		        testCases.push( test.getTestCase() );
+		    });
+
+		    return testCases;
+		},
+
 		getCount: function(){
 			return count;
 		}
@@ -237,6 +251,15 @@ myApp.factory("Test", function ($FirebaseArray) {
 				output: this.rec.simpleTestOutput 
 			}
 		},
+		getTestCase: function(){
+			return {
+	            id:   test.getId(),
+	            text: test.getDescription(),
+	            added: false,
+	            deleted: false
+	        };
+		},
+
 		setSimpleTest: function(inputs,output){
 			this.rec.simpleTestInputs = inputs;
 			this.rec.simpleTestOutput = output;

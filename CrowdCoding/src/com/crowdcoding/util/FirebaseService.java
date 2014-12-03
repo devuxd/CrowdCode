@@ -153,27 +153,28 @@ public class FirebaseService
 	}
 
 	public static String readStat(String workerID, String label, Project project){
-		String result = readDataAbsolute(getBaseURL(project)  + "/workers/" + workerID + "/stats/"+label+".json");
-
-		System.out.println("Stat absolute url="+getBaseURL(project) + "/workers/" + workerID + "/stats/"+label+".json");
-		if (result == null || result.equals("null")){
-			System.out.println("result of read stat is null ");
-			result = "0";
-		}
-		return result;
+//		String result = readDataAbsolute(getBaseURL(project)  + "/workers/" + workerID + "/stats/"+label+".json");
+//
+//		System.out.println("Stat absolute url="+getBaseURL(project) + "/workers/" + workerID + "/stats/"+label+".json");
+//		if (result == null || result.equals("null")){
+//			System.out.println("result of read stat is null ");
+//			result = "0";
+//		}
+//		return result;
+		return "0";
 	}
 
 	public static void setStat(String workerID, String label, String value, Project project)
 	{
-		writeData(value, "/workers/" + workerID + "/stats/"+label+".json", HTTPMethod.PUT, project);
+//		writeData(value, "/workers/" + workerID + "/stats/"+label+".json", HTTPMethod.PUT, project);
 	}
 
 	public static void increaseStatBy(String workerID, String label, int increaseAmount, Project project){
-		String stringValue = readStat(workerID,label,project);
-		Integer actualValue = Integer.parseInt(stringValue);
-		Integer value = actualValue + increaseAmount ;
-		System.out.println("Increase stat '"+label+"' from "+actualValue+" to "+value+" for "+workerID);
-		setStat(workerID,label,value.toString(),project);
+//		String stringValue = readStat(workerID,label,project);
+//		Integer actualValue = Integer.parseInt(stringValue);
+//		Integer value = actualValue + increaseAmount ;
+//		System.out.println("Increase stat '"+label+"' from "+actualValue+" to "+value+" for "+workerID);
+//		setStat(workerID,label,value.toString(),project);
 	}
 
 

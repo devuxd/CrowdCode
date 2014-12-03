@@ -4,49 +4,54 @@
 myApp.controller('NoMicrotaskController', ['$scope', '$rootScope', '$firebase', 'testsService', 'functionsService', 'ADTService', '$interval', function($scope, $rootScope, $firebase, testsService, functionsService, ADTService, $interval) {
     //$interval(function(){ $scope.$emit('load')}, 2000);
 }]);
+
 ///////////////////////////////
 //  WRITE TEST CASES CONTROLLER //
 ///////////////////////////////
 myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'TestList', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert, testsService, TestList, functionsService, ADTService) {
-    $scope.newTestCase = "";
+    
+    // private variables
     var alert = null;
-    $scope.testCases = [];
-    // retrieve the tests for the functionID
-    var tests = TestList.getByFunctionId($scope.microtask.functionID);
-    // for each test push the test case entry in the test cases list
-    angular.forEach(tests, function(test, index) {
-        $scope.testCases.push({
-            id: test.getId(),
-            text: test.getDescription(),
-            added: false,
-            deleted: false
-        });
-        console.log($scope.testCases);
-    });
+
+    // scope variables 
+    $scope.newTestCase         = "";
+    $scope.testCases           = TestList.getTestCasesByFunctionId($scope.funct.id);
+    console.log("TEST CASES",$scope.testCases);
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
-    // addTestCase and deleteTestCase actions
+
+
+
+    // addTestCase action 
     $scope.addTestCase = function() {
         // push the new test case and set the flag added to TRUE
         if ($scope.newTestCase !== "") {
-            var testCase = {
-                id: null,
-                text: $scope.newTestCase,
-                added: true,
-                deleted: false
-            };
-            $scope.testCases.push(testCase);
+            // push the new test cases
+            $scope.testCases.push({
+                id      : null,
+                text    : $scope.newTestCase,
+                added   : true,
+                deleted : false
+            });
+            // reset the new test case field
             $scope.newTestCase = "";
         }
     };
+
+    //deleteTestCase actions
     $scope.removeTestCase = function(index) {
         // if the testcase was added during this microtask, remove it from the array
-        if ($scope.testCases[index].added === true) $scope.testCases.splice(index, 1);
+        if ($scope.testCases[index].added === true) 
+            $scope.testCases.splice(index, 1);
+        
         // else set the flag DELETED to true
         else $scope.testCases[index].deleted = true;
-        console.log($scope.testCases);
     };
+
+
     // collect form data
     $scope.$on('collectFormData', function(event, microtaskForm) {
+
+        // do validation
         angular.forEach(microtaskForm, function(formElement, fieldName) {
             // If the fieldname doesn't start with a '$' sign, it means it's form
             if (fieldName[0] !== '$') {
@@ -63,14 +68,22 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
                 });
             }
         });
-        var error = "";
+
         // if the new test case field is not empty,
         // add as a new test case
-        if ($scope.newTestCase !== "") $scope.addTestCase();
+        if ($scope.newTestCase !== "") 
+            $scope.addTestCase();
+
+        // initialize the error
+        var error = "";
         if (microtaskForm.$pristine) error = "Add at least 1 test case";
-        if (microtaskForm.$invalid) error = "Fix all the errors before submit";
+        if (microtaskForm.$invalid)  error = "Fix all the errors before submit";
+
+        // if there is an error 
         if (error !== "") {
+            // destroy the previous alert
             if (alert !== null) alert.destroy();
+            // build the new alert
             alert = $alert({
                 title: 'Error!',
                 content: error,
@@ -80,57 +93,65 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
                 template: '/html/templates/alert/alert_submit.html',
                 container: 'alertcontainer'
             });
-        } else {
+        } 
+
+
+        // if there isn't an error submit the form
+        else {
+
             // prepare form data for submission
             formData = {
-                testCases: $scope.testCases,
-                functionVersion: $scope.funct.version
+                testCases       : $scope.testCases,
+                functionVersion : $scope.funct.version
             };
+            console.log(formData);
             // call microtask submission
-            $scope.$emit('submitMicrotask', formData);
+             $scope.$emit('submitMicrotask', formData);
         }
     });
 
-    $scope.$on('$destroy', function() {
-        console.error("DESTROYING MICROTASK");
-    });
 }]);
+
+
 ///////////////////////////////
-//  Review CONTROLLER //
+//      Review CONTROLLER    //
 ///////////////////////////////
 myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'functionsService', 'ADTService', 'microtasksService', function($scope, $rootScope, $firebase, $alert, testsService, functionsService, ADTService, microtasksService) {
+    // scope variables
     $scope.review = {};
     $scope.review.reviewText = "";
     $scope.review.functionCode = "";
+
+    // private variables 
     var oldCode;
     var newCode;
     var diffRes;
     var diffCode;
+
     //load the microtask to review
-    console.log("MICROTASK ID UNDER REVIEW ", $scope.microtask.microtaskKeyUnderReview);
     $scope.review.microtask = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
     $scope.review.microtask.$loaded().then(function() {
-        console.log($scope.review.microtask);
+
         if ($scope.review.microtask.type == 'WriteTestCases') {
+
             //retrievs the reference of the existing test cases to see if the are differents
             $scope.review.testcases = $scope.review.microtask.submission.testCases;
             //load the version of the function with witch the test cases where made
             var functionUnderTestSync = $firebase(new Firebase($rootScope.firebaseURL + '/history/artifacts/functions/' + $scope.review.microtask.functionID + '/' + $scope.review.microtask.submission.functionVersion));
-            var functionUnderTest = functionUnderTestSync.$asObject();
+            var functionUnderTest     = functionUnderTestSync.$asObject();
             functionUnderTest.$loaded().then(function() {
                 $scope.review.functionCode = functionsService.renderDescription(functionUnderTest) + functionUnderTest.header;
             });
+
         } else if ($scope.review.microtask.type == 'WriteFunction') {
 
             var funct = functionsService.get($scope.review.microtask.functionID);
             oldCode = (functionsService.renderDescription(funct) + funct.header + funct.code).split("\n");
-
             newCode = (functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code).split("\n");
 
 
             diffRes = diff(oldCode, newCode);
             diffCode = "";
-            console.log(diffRes);
             angular.forEach(diffRes, function(diffRow) {
                 if (diffRow[0] == "=") {
                     diffCode += diffRow[1].join("\n");
@@ -159,17 +180,20 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                 });
                 $scope.diffCode = diffCode;
             }
+
         } else if ($scope.review.microtask.type == 'WriteTest') {
+
             //load the version of the function with witch the test cases where made
             var functionUnderTestSync = $firebase(new Firebase($rootScope.firebaseURL + '/history/artifacts/functions/' + $scope.review.microtask.functionID + '/' + ($scope.review.microtask.functionVersion > 0 ? $scope.review.microtask.functionVersion : 1)));
             $scope.functionUnderTest = functionUnderTestSync.$asObject();
             $scope.functionUnderTest.$loaded().then(function() {
                 $scope.review.functionCode = functionsService.renderDescription($scope.functionUnderTest) + $scope.functionUnderTest.header;
             });
+
         } else if ($scope.review.microtask.type == 'WriteCall') {
+
             var funct = functionsService.get($scope.review.microtask.functionID);
             oldCode = (functionsService.renderDescription(funct) + funct.header + funct.code).split("\n");
-
             newCode = (functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code).split("\n");
 
 
@@ -186,21 +210,44 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             });
 
             $scope.review.functionCode = diffCode;
+
             //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;
         } else if ($scope.review.microtask.type == 'WriteFunctionDescription') {
+
             $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header;
+       
         }
     });
+
+
+    $scope.accept = function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        $scope.rate(5);
+    };
+    $scope.reject = function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        $scope.rate(1);
+    };
+    $scope.reissue = function(event){
+        event.preventDefault();
+        event.stopPropagation();
+        $scope.rate(3);
+    };
+
     //Star rating manager
-    $scope.review.mouseOn = 0;
+    // $scope.review.mouseOn = 0;
     $scope.review.maxRating = 5;
-    $scope.review.rating = 0;
+    $scope.review.rating    = -1;
     $scope.rate = function(value) {
+        console.log("RATE",value, value >= 0, value <= $scope.review.maxRating);
         if (value >= 0 && value <= $scope.review.maxRating) {
             $scope.review.rating = value;
         }
     };
     $scope.$on('collectFormData', function(event, microtaskForm) {
+
         if ($scope.review.rating < 3) {
             microtaskForm.$dirty = true;
             angular.forEach(microtaskForm, function(formElement, fieldName) {
@@ -210,20 +257,25 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                 }
             });
         }
+
         var error = "";
-        if ($scope.review.rating === 0) error = "Select at least 1 star to evaluate the work";
-        else if (microtaskForm.$invalid && $scope.review.rating < 3) error = "Please write an explanation for your negative review";
-        //  console.log("here");
-        if (error !== "") $alert({
-            title: 'Error!',
-            content: error,
-            type: 'danger',
-            show: true,
-            duration: 3,
-            template: '/html/templates/alert/alert_submit.html',
-            container: 'alertcontainer'
-        });
+        if ($scope.review.rating === 0) error = "plese, select one of the three option";
+        else if (microtaskForm.$invalid && $scope.review.rating < 3) error = "please, write an explanation for your createTreeWalker(root, whatToShow, filter, entityReferenceExpansion)";
+        
+
+        if (error !== "") 
+            $alert({
+                title: 'Error!',
+                content: error,
+                type: 'danger',
+                show: true,
+                duration: 3,
+                template: '/html/templates/alert/alert_submit.html',
+                container: 'alertcontainer'
+            });
         else {
+
+
             formData = {
                 microtaskIDReviewed: $scope.microtask.microtaskKeyUnderReview,
                 reviewText: $scope.review.reviewText,
@@ -232,25 +284,24 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             $scope.$emit('submitMicrotask', formData);
         }
     });
+
 }]);
+
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
 ///////////////////////////////
 myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout', 'testsService', 'testRunnerService', 'functionsService', 'ADTService', 'TestList', function($scope, $rootScope, $firebase, $alert, $timeout, testsService, testRunnerService, functionsService, ADTService, TestList) {
-    //retrieve tests for the current function
-    $scope.tests = testsService.validTestsforFunction($scope.microtask.functionID);
-    $scope.passedTests = [];
+    // scope variables
+    $scope.tests        = testsService.validTestsforFunction($scope.microtask.functionID);
+    $scope.passedTests  = [];
     $scope.testsRunning = false; // for cheching if tests are running
-    $scope.testsData = {};
-    $scope.stubs = {};
-    $scope.paramNames = $scope.funct.paramNames;
+    $scope.testsData    = {};
+    $scope.stubs        = {};
+    $scope.paramNames   = $scope.funct.paramNames;
 
     // INITIALIZE THE FUNCTION EDITOR CODEMIRROR
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
-    var functionCodeMirror = null;
-    var highlightPseudoCall = false;
-
     $scope.codemirrorLoaded = function(codemirror) {
         functionCodeMirror = codemirror;
         codemirror.setOption('autofocus', true);
@@ -271,15 +322,17 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
             var ast = esprima.parse(functionCodeMirror.doc.getValue(), {
                 loc: true
             });
-            functionBody = functionCodeMirror.getRange({
-                line: ast.body[0].body.loc.start.line - 1,
-                ch: ast.body[0].body.loc.start.column
-            }, {
-                line: ast.body[0].body.loc.end.line - 1,
-                ch: ast.body[0].body.loc.end.column
-            });
+            functionBody = functionCodeMirror.getRange(
+                {
+                    line : ast.body[0].body.loc.start.line - 1,
+                    ch   : ast.body[0].body.loc.start.column
+                }, 
+                {
+                    line: ast.body[0].body.loc.end.line - 1,
+                    ch: ast.body[0].body.loc.end.column
+                }
+            );
         }
-        console.log("PASSING STUBS ", $scope.stubs);
 
         // ask the worker to run the tests
         testRunnerService.runTestsForFunction($scope.microtask.functionID, functionBody, $scope.stubs).then(function(data) {
@@ -315,6 +368,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.cancelDispute = function() {
         $scope.dispute = false;
     };
+
     // check if test is passed
     // testKey is the key of the test in $scope.tests
     $scope.isTestPassed = function(testKey) {
@@ -425,6 +479,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     // FIRST run of the tests
     $scope.runTests(true);
 }]);
+
 ///////////////////////////////
 //  REUSE SEARCH CONTROLLER //
 ///////////////////////////////
