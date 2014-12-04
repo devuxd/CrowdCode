@@ -47,7 +47,13 @@ public class FirebaseService
 		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskKey + "/assigned.json", HTTPMethod.PUT, project);
 		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, project);
 	}
-
+	
+	// Writes information about microtask completition to Firebase
+	public static void writeMicrotaskCompleted( String microtaskKey, String workerID,
+			Project project, boolean completed)
+	{
+		writeData(Boolean.toString(completed), "/microtasks/" + microtaskKey + "/completed.json", HTTPMethod.PUT, project);
+	}
 
 	public static void writeTestJobQueue(long functionID, Project project)
 	{

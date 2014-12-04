@@ -8,6 +8,7 @@ import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.MicrotaskSkipped;
 import com.crowdcoding.history.MicrotaskSubmitted;
+import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
@@ -82,6 +83,8 @@ public /*abstract*/ class Microtask
 		if (owningArtifact != null)
 			owningArtifact.storeToFirebase(project);
 
+		// write completed on firebase
+		FirebaseService.writeMicrotaskCompleted(Project.MicrotaskKeyToString(this.getKey()), workerID, project, this.completed);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "microtasks",1);
 

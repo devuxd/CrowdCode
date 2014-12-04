@@ -37,8 +37,15 @@ public class ReuseSearch extends Microtask
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.callDescription = callDescription;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new ReuseSearchInFirebase(id,this.microtaskTitle(), this.microtaskName(), function.getName(),
-				false, submitValue, callDescription, function.getID()), 
+		FirebaseService.writeMicrotaskCreated(new ReuseSearchInFirebase(
+				id,this.microtaskTitle(), 
+				this.microtaskName(), 
+				function.getName(),
+				function.getID(),
+				false, 
+				submitValue, 
+				callDescription, 
+				function.getID()), 
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 

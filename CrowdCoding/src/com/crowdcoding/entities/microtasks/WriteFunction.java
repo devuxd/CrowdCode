@@ -95,6 +95,7 @@ public class WriteFunction extends Microtask
 				this.microtaskTitle(),
 				this.microtaskName(),
 				function.getName(),
+				function.getID(),
 				false,
 				submitValue,
 				function.getID(),

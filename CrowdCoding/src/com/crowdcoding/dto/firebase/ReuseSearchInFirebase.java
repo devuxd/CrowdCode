@@ -10,10 +10,10 @@ public class ReuseSearchInFirebase extends MicrotaskInFirebase
 	}
 
 	public ReuseSearchInFirebase(long id,String title, String type,
-			String owningArtifact, boolean completed, int points,
+			String owningArtifact, Long owningArtifactId, boolean completed, int points,
 			 String callDescription, long callerID)
 	{
-		super(id, title, type, owningArtifact, completed, points);
+		super(id, title, type, owningArtifact, owningArtifactId, completed, points);
 
 		this.callDescription = callDescription;
 		this.functionID=callerID;

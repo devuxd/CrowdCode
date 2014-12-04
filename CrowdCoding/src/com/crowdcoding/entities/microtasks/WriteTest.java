@@ -47,7 +47,9 @@ public class WriteTest extends Microtask
 		this.promptType = PromptType.WRITE;
 		this.test = (Ref<Test>) Ref.create(test.getKey());
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), test.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+				test.getName(),
+				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(), functionVersion, promptType.name(), "", "", "", ""), 
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
@@ -64,7 +66,9 @@ public class WriteTest extends Microtask
 		this.test = (Ref<Test>) Ref.create(test2.getKey());
 		this.issueDescription = issueDescription;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), test2.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+				test2.getName(),
+				test2.getID(),
 				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), issueDescription, "", "", ""), 
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
@@ -82,7 +86,9 @@ public class WriteTest extends Microtask
 		this.oldFunctionDescription = oldFullDescription;
 		this.newFunctionDescription = newFullDescription;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), test2.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+				test2.getName(),
+				test2.getID(),
 				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), "", oldFullDescription, newFullDescription, ""),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
@@ -100,7 +106,9 @@ public class WriteTest extends Microtask
 		this.oldTestCase = oldTestCase;
 
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id,this.microtaskTitle(), this.microtaskName(), test.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id,this.microtaskTitle(), this.microtaskName(), 
+				test.getName(),
+				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), "", "", "", oldTestCase), 
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
@@ -123,7 +131,9 @@ public class WriteTest extends Microtask
 		this.functionVersion= functionVersion;
 
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id,this.microtaskTitle(), this.microtaskName(), test.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id,this.microtaskTitle(), this.microtaskName(),
+				test.getName(),
+				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), issueDescription,
 				oldFunctionDescription, newFunctionDescription, oldTestCase), 
 				Project.MicrotaskKeyToString(this.getKey()),

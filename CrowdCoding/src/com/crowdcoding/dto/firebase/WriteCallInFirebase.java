@@ -11,10 +11,10 @@ public class WriteCallInFirebase extends MicrotaskInFirebase
 	}
 
 	public WriteCallInFirebase(long id,String title, String type,
-			String owningArtifact, boolean completed, int points,
+			String owningArtifact, Long owningArtifactId, boolean completed, int points,
 			long functionID, String calleeFullDescription, String pseudoCall)
 	{
-		super(id,title, type, owningArtifact, completed, points);
+		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
 
 		this.functionID=functionID;
 

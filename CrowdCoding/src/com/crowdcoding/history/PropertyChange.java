@@ -4,7 +4,7 @@ import com.crowdcoding.entities.Artifact;
 
 public class PropertyChange extends HistoryEvent 
 {
-	public String eventType = "PropertyChange";
+	public String eventType = "artifact.property.change";
 
 	public String propertyName;
 	public String propertyValue;

@@ -14,10 +14,10 @@ public class ReviewInFirebase extends MicrotaskInFirebase
 	{
 	}
 
-	public ReviewInFirebase(long id, String title, String type, String owningArtifact, boolean completed, int points,
-			Key<Microtask> microtaskKeyUnderReview)
+	public ReviewInFirebase(long id, String title, String type, String owningArtifact, Long owningArtifactId, boolean completed, int points,
+			 Key<Microtask> microtaskKeyUnderReview)
 	{
-		super(id,title, type, owningArtifact, completed, points);
+		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
 		this.microtaskKeyUnderReview = Project.MicrotaskKeyToString( microtaskKeyUnderReview );
 
 	}

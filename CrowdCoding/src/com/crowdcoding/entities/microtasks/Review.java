@@ -44,11 +44,20 @@ public class Review extends Microtask
 		this.workerOfReviewedWork = workerOfReviewedWork;
 		
 		Microtask microtaskUnderReview = ofy().load().key(microtaskKeyUnderReview).get();
-		this.artifact = (Ref<Artifact>) Ref.create( microtaskUnderReview.getOwningArtifact().getKey() );
+		System.out.println( "OWN ART ID " +microtaskUnderReview.getOwningArtifact().getKey() );
+		this.artifact = (Ref<Artifact>) Ref.create( (Key<Artifact>) microtaskUnderReview.getOwningArtifact().getKey(),  microtaskUnderReview.getOwningArtifact() );
 		
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new ReviewInFirebase(id,this.microtaskTitle(), this.microtaskName(), "",
-				false, submitValue, microtaskKeyUnderReview), 
+		FirebaseService.writeMicrotaskCreated(new ReviewInFirebase(
+				id,
+				this.microtaskTitle(), 
+				this.microtaskName(), 
+				this.artifact.get().getName(),
+				this.artifact.get().getID(),
+				false, 
+				submitValue, 
+				microtaskKeyUnderReview
+				), 
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 

@@ -44,7 +44,9 @@ public class WriteTestCases extends Microtask
 		this.promptType = PromptType.FUNCTION_SIGNATURE;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), function.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+				function.getName(),
+				function.getID(),
 				false, submitValue, function.getID(), promptType.name(), "", ""),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
@@ -63,7 +65,9 @@ public class WriteTestCases extends Microtask
 		this.disputeDescription = disputeDescription;
 		this.disputedTestCase = disputedTestCase;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), function.getName(),
+		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+				function.getName(),
+				function.getID(),
 				false, submitValue, function.getID(), promptType.name(), disputeDescription, disputedTestCase),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
