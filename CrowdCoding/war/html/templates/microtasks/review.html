@@ -277,7 +277,7 @@
 						<span
 							ng-class="{ 'has-error': microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid, 'has-success': microtaskForm.reviewText.$valid}">
 							<textarea
-								id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 3" focus></textarea>
+								id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 4" focus></textarea>
 							<span
 							class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 3&& microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
 						</span>

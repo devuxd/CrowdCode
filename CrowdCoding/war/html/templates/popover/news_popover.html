@@ -6,7 +6,7 @@
         <div class="popover-content">
             <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
             <span class="clearfix"></span><br />
-            <span> <b>Review description: </b>{{n.reviewText}}</span>
+            <span ng-if="n.reviewText"> <b>Review description: </b>{{n.reviewText}}</span>
         </div>
         <h3 class="popover-title">for <b>{{n.microtask.title}}</b> </h3>
     </div>
@@ -63,7 +63,7 @@
         <div class="popover-content">
             <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
             <span class="clearfix"></span><br />
-            <span> <b>Review description: </b>{{n.reviewText}}</span>
+            <span ng-if="n.reviewText"> <b>Review description: </b>{{n.reviewText}}</span>
         </div>
     </div>
 </div>

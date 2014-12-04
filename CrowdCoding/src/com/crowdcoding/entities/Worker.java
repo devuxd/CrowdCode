@@ -52,10 +52,17 @@ public class Worker
 	//                user != null
 	public static Worker Create(User user, Project project)
 	{
+		project.logoutInactiveWorkers();
+		//System.out.println("actual logged  worker");
+		//loggedInWorkers
+		//project.logg
+		//System.out.println(allWorkers((project)));
 		Worker crowdWorker = ofy().load().key(getKey(project.getKey(), user.getUserId())).get();
 		if (crowdWorker == null)
 			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);
 
+		//System.out.println("after the search or creation");
+		//System.out.println(allWorkers((project)));
 		FirebaseService.setPoints(user.getUserId(), user.getNickname(), crowdWorker.score, project);
 
 		FirebaseService.writeWorkerLoggedIn( user.getUserId(), user.getNickname(), project);

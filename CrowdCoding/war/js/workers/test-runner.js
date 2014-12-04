@@ -81,8 +81,8 @@ self.addEventListener('message', function(e){
 				//add the received code
 				finalCode += data.code;
 
-				// console.log("--- FINAL CODE : ");
-				// console.log(finalCode);
+				 console.log("--- FINAL CODE : ");
+				 console.log(finalCode);
 
 				// if Lint fails
 				if ( !JSHINT( finalCode, JSHINT_CONF ) ) {
