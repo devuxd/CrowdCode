@@ -113,7 +113,7 @@ public class CrowdServlet extends HttpServlet
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
-        
+
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
@@ -143,11 +143,11 @@ public class CrowdServlet extends HttpServlet
 				// PROJECT URLS match /word/ or /word/(word)*
 				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
 					String projectId = pathSeg[1];
-	
+
 					req.setAttribute("project", projectId);
 					Key<Project> projectKey = Key.create(Project.class, projectId);
 					boolean projectExists =  (ofy().load().filterKey(projectKey).count() != 0 );
-					
+
 					if(!projectExists){
 						System.out.println("project doesn't exists in appengine");
 						System.out.println("projects: "+FirebaseService.existsProject(projectId));
@@ -160,10 +160,10 @@ public class CrowdServlet extends HttpServlet
 							System.out.println("Project not found ("+projectId+")!");
 							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 						}
-					}	
-					
-					
-						
+					}
+
+
+
 					if ( pathSeg.length <= 2 ){
 						req.getRequestDispatcher("/html/angular_2_col.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
@@ -240,8 +240,9 @@ public class CrowdServlet extends HttpServlet
 			{
 				output.append("RESET executed at " + currentTime.toString() + "\n");
 				Project.Clear(projectID);
+
 				output.append("Project successfully reset to default state.\n");
-				
+
 //				System.out.println(" PROJECTS BEFORE CREATION ");
 //				List<Project> projects = ofy().load().type(Project.class).list();
 //				for(Project project: projects){
@@ -249,7 +250,7 @@ public class CrowdServlet extends HttpServlet
 //
 //					ofy().transactionless().delete().key(project.getKey());
 //				}
-				
+
 				List<Command> commands = new ArrayList<Command>();
 				commands.addAll(ofy().transact(new Work<List<Command>>() {
 			        public List<Command> run()
@@ -365,7 +366,7 @@ public class CrowdServlet extends HttpServlet
 		    ofy().save().entity(picture).now();
 
 		    //System.out.println("SUCCESS UPLOAD");
-		    
+
 		    // print success
 		    res.setContentType("text/plain");
 		    res.getWriter().append("success");
@@ -426,9 +427,9 @@ public class CrowdServlet extends HttpServlet
 			final String type         = req.getParameter("type");
 			final String payload      = Util.convertStreamToString(req.getInputStream());
 			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));
-			
+
 			System.out.println("SKIPPED MTASK KEY = "+microtaskKey);
-			
+
 			// Create an initial context, then build a command to skip or submit
 			CommandContext context = new CommandContext();
 
@@ -439,11 +440,11 @@ public class CrowdServlet extends HttpServlet
 				Class microtaskType = microtaskTypes.get(type);
 				if (microtaskType == null)
 					throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
-				
+
 				ProjectCommand.submitMicrotask( microtaskKey, microtaskType, payload, workerID);
-				
+
 			}
-				
+
 			// Copy the command back out the context to initially populate the command queue.
 			executeCommands(context.commands(), projectID);
     	}
@@ -466,8 +467,8 @@ public class CrowdServlet extends HttpServlet
             	Project project = Project.Create(projectID);
             	String workerID = user.getUserId();
             	String workerHandle = user.getNickname();
-            	
-            	
+
+
             	// logout inactive workers
             	//project.logoutInactiveWorkers();
 
@@ -485,7 +486,7 @@ public class CrowdServlet extends HttpServlet
             	return microtaskKey;
             }
         });
-    	
+
 /*
 	    try{
 //	    	List<Key<Microtask>> keys = ofy().load().type(Microtask.class).keys().list();
@@ -494,11 +495,11 @@ public class CrowdServlet extends HttpServlet
 		    for(Microtask task: list){
 		    	System.out.println("Microtask key is: "+task.getKey());
 		    }
-		    
+
 	    } catch(Exception e ){
-	    	
+
 	    }*/
-	    
+
     	// Load the microtask
 	    Microtask microtask = null;
 	    if (microtaskKey != null)
@@ -510,7 +511,7 @@ public class CrowdServlet extends HttpServlet
 	            }
 		    });
 	    }
-	    
+
 
     	// If there are no microtasks available, send an empty response.
 	    // Otherwise, send the json with microtask info.

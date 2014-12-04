@@ -38,6 +38,7 @@ public class FirebaseService
 		// the microtask key is in the format "artifactNumber-microtask count"
 		String microtakCount = microtaskKey.split("-")[1];
 		writeData( microtakCount, "/status/microtaskCount.json", HTTPMethod.PUT, project);
+		System.out.println("write microtask");
 	}
 
 	// Writes information about microtask assignment to Firebase
@@ -47,7 +48,13 @@ public class FirebaseService
 		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskKey + "/assigned.json", HTTPMethod.PUT, project);
 		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, project);
 	}
+	// Writes information about an old microtask to retrieve the information to Firebase
+	public static void writeMicrotaskReissuedFrom( String microtaskKey, Project project, String reissuedFromMicrotaskKey)
+	{
 
+		writeData("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, project);
+
+	}
 
 	public static void writeTestJobQueue(long functionID, Project project)
 	{
@@ -234,10 +241,10 @@ public class FirebaseService
 			HTTPRequest request = new HTTPRequest(new URL(absoluteURL), operation);
 			request.setPayload(data.getBytes());
 			Future<HTTPResponse> fetchAsync = fetchService.fetchAsync(request);
-			
-			// wait while fetchAsync is done 
+
+			// wait while fetchAsync is done
 			//while( ! fetchAsync.isDone() );
-			
+
 		}
 		catch (MalformedURLException e) {
 			System.out.println("Malformed url: "+e);

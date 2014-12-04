@@ -16,6 +16,13 @@
 	<div class="section section-description">
 		<div class="section-title" > JOB DESCRIPTION </div>
 		<div class="section-content" >
+			<div ng-show="microtask.reissuedFrom!='undefined'" >
+				This microtask has been reviewed with a low score because has been found that:<br>
+				<b>{{reissuedMicrotask.review.reviewText}}</b>
+				Please correct the work to resolve the issue.<br>
+				
+			</div>
+
 			<div ng-if="microtask.promptType=='SKETCH'">
 				Can you implement the function below?
 			</div>

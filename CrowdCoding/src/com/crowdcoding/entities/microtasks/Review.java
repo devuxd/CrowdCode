@@ -42,13 +42,13 @@ public class Review extends Microtask
 		this.microtaskKeyUnderReview = microtaskKeyUnderReview;
 		this.initiallySubmittedDTO = initiallySubmittedDTO;
 		this.workerOfReviewedWork = workerOfReviewedWork;
-		
+
 		Microtask microtaskUnderReview = ofy().load().key(microtaskKeyUnderReview).get();
 		this.artifact = (Ref<Artifact>) Ref.create( microtaskUnderReview.getOwningArtifact().getKey() );
-		
+
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new ReviewInFirebase(id,this.microtaskTitle(), this.microtaskName(), "",
-				false, submitValue, microtaskKeyUnderReview), 
+				false, submitValue, microtaskKeyUnderReview),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
@@ -76,24 +76,23 @@ public class Review extends Microtask
 		int points = 0;
 
 
-    	
+
         if( reviewDTO.qualityScore < 3 ) {
 			// reissue microtask
         	System.out.println("rejected");
-			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
+			MicrotaskCommand.rejectAndReissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
 		} else if ( reviewDTO.qualityScore == 3) {
 			// reissue microtask
-			// TODO: this will be the case of reissuing the microtask "disputing it"
+	    	System.out.println("reissued");
 
-        	System.out.println("reissued - TODO");
-        	MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
+			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
 		} else {
 			// accept microtask
 
         	System.out.println("accepted");
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
 		}
-			
+
 
 		// send feedback
     	FirebaseService.postToNewsfeed(workerOfReviewedWork, (
@@ -114,7 +113,7 @@ public class Review extends Microtask
     			this.submitValue,
     			"You reviewed a microtask",
     			"SubmittedReview",
-    			Project.MicrotaskKeyToString(  this.getKey() ) 
+    			Project.MicrotaskKeyToString(  this.getKey() )
     	).json()), project);
 
     	System.out.println("reviewer id="+workerID);
@@ -130,7 +129,7 @@ public class Review extends Microtask
 	{
 		return Key.create( artifact.getKey(), Microtask.class, this.id );
 	}
-    
+
 	protected Class getDTOClass()
 	{
 		return ReviewDTO.class;

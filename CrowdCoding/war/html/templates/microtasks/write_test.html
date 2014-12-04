@@ -19,6 +19,12 @@
 			JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
+			<div ng-show="microtask.reissuedFrom!='undefined'" >
+				This microtask has been reviewed with a low score because has been found that:<br>
+				<b>{{reissuedMicrotask.review.reviewText}}</b>
+				Please correct the work to resolve the issue.<br>
+				
+			</div>
 
 			<div ng-show="microtask.promptType=='WRITE'">
 				Please, write a test for the following test case: 
@@ -124,7 +130,7 @@
 									<b>return value</b> ({{funct.returnType}}) <br />
 								</td>
 								<td>
-									<textarea class="form-control" name="output" ng-model="testData.output" ng-attr-required="dispute" json-validator="{{funct.returnType}}" allow-null="true" ng-show="false" allow-null="true"></textarea>
+									<textarea class="form-control" name="output" ng-model="testData.output" ng-attr-required="dispute" json-validator="{{funct.returnType}}" allow-null="true" ng-show="false" ></textarea>
 									<ace-edit-json ng-model="testData.output" min-lines="2"></ace-edit-json>
 
 									<a href="#" ng-click="testData.output=loadExample(funct.returnType)" class="btn btn-primary btn-mini pull-right">Paste Example </a>

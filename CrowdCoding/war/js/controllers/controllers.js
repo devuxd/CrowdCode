@@ -191,12 +191,27 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 				// console.log("test:", $scope.test);
 
 
-				//choose the right template
-				if ($scope.microtask.type != undefined && templates[$scope.microtask.type] != undefined)
-					$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-				else
-					$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
-
+				// retrieve the related issued microtask if present
+				if (angular.isDefined($scope.microtask.reissuedFrom)) {
+					$scope.reissuedMicrotask = microtasksService.get($scope.microtask.reissuedFrom);
+   					$scope.reissuedMicrotask.$loaded().then(function() {
+   						console.log($scope.reissuedMicrotask);
+   						console.log($scope.microtask.reissuedFrom);
+						//choose the right template
+						if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
+							$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+						else
+							$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+					});
+				}
+				else{
+					
+					//choose the right template
+					if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
+						$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+					else
+						$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+					}
 			});
 		}).
 		error(function(data, status, headers, config) {

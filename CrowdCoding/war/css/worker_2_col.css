@@ -309,6 +309,7 @@ h1, h2, h3, h4 {
 
 /* SIDEBAR NEWS PANEL */
 .news-list .text  { }
+.news-element :hover { background-color:#E0E0E0 !important; }
 
 /* SIDEBAR LEADERBOARD PANEL */
 .user-list .avatar img { width:20px;}

@@ -16,6 +16,15 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
     // scope variables 
     $scope.newTestCase         = "";
     $scope.testCases           = TestList.getTestCasesByFunctionId($scope.funct.id);
+
+
+    if(angular.isDefined($scope.microtask.reissuedFrom)){
+        if($scope.microtask.promptType=='FUNCTION_SIGNATURE')
+            $scope.testCases=$scope.reissuedMicrotask.submission.testCases;
+    }
+
+
+
     console.log("TEST CASES",$scope.testCases);
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
 
@@ -248,7 +257,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
     };
     $scope.$on('collectFormData', function(event, microtaskForm) {
 
-        if ($scope.review.rating < 3) {
+        if ($scope.review.rating <= 3) {
             microtaskForm.$dirty = true;
             angular.forEach(microtaskForm, function(formElement, fieldName) {
                 // If the fieldname doesn't start with a '$' sign, it means it's form
@@ -259,7 +268,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
         }
 
         var error = "";
-        if ($scope.review.rating === -1) error = "plese, select one of the three option";
+        if ($scope.review.rating === -1) error = "plese, scores the review";
         else if (microtaskForm.$invalid && $scope.review.rating <= 3) error = "please, write an explanation for your createTreeWalker(root, whatToShow, filter, entityReferenceExpansion)";
         
 
@@ -551,7 +560,11 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
     var highlightPseudoCall = "//!" + $scope.microtask.pseudoCall;
     var changeTimeout;
     var readOnlyDone = false;
-    $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+    if(angular.isDefined($scope.microtask.reissuedFrom))
+        $scope.code = functionsService.renderDescription($scope.reissuedMicrotask.submission) + $scope.reissuedMicrotask.submission.header + $scope.reissuedMicrotask.submission.code;
+    else
+        $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+
     $scope.codemirrorLoaded = function(myCodeMirror) {
         codemirror = myCodeMirror;
         codemirror.setOption('autofocus', true);
@@ -621,6 +634,8 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
                 loc: true
             });
             var calleeNames = functionsService.getCalleeNames(ast);
+            console.log("calleeNames");
+            console.log(calleeNames);
             var fullDescription = codemirror.getRange({
                 line: 0,
                 ch: 0
@@ -651,6 +666,8 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
                 paramDescriptions: functionParsed.paramDescriptions,
                 calleeNames: calleeNames
             };
+            console.log("formData");
+            console.log(formData);
             $scope.$emit('submitMicrotask', formData);
         }
     });
@@ -680,8 +697,17 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
         $scope.diffCode = diffCode;
         console.log($scope.diffCode);
     }
+
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
-    $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+    if(angular.isDefined($scope.microtask.reissuedFrom))
+        $scope.code = functionsService.renderDescription($scope.reissuedMicrotask.submission) + $scope.reissuedMicrotask.submission.header + 
+
+    $scope.reissuedMicrotask.submission.code;
+    else
+        $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+
+
+
     $scope.codemirrorLoaded = function(myCodeMirror) {
         codemirror = myCodeMirror;
         codemirror.setOption('autofocus', true);
@@ -803,6 +829,25 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         };
         $scope.parameters.push(parameter);
     };
+
+    if(angular.isDefined($scope.microtask.reissuedFrom)){
+        $scope.functionName=$scope.reissuedMicrotask.submission.name;
+        $scope.description=$scope.reissuedMicrotask.submission.description;
+        $scope.returnType=$scope.reissuedMicrotask.submission.returnType;
+        for (var i = 0; i < $scope.reissuedMicrotask.submission.paramNames.length; i++) {
+
+            $scope.parameters[i]={
+                paramName: $scope.reissuedMicrotask.submission.paramNames[i],
+                paramType: $scope.reissuedMicrotask.submission.paramTypes[i],
+                paramDescription:$scope.reissuedMicrotask.submission.paramDescriptions[i]
+            };
+        }
+    }
+    else{
+        //Add the first parameter
+        $scope.addParameter();
+    }
+
     $scope.deleteParameter = function(index) {
         $scope.parameters.splice(index, 1);
     };
@@ -816,8 +861,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         codeMirror.setValue($scope.code);
         codeMirror.refresh();
     };
-    //Add the first parameter
-    $scope.addParameter();
+   
     $scope.$on('collectFormData', function(event, microtaskForm) {
 
         angular.forEach(microtaskForm, function(formElement, fieldName) {
@@ -879,6 +923,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         }
     });
 }]);
+
 ///////////////////////////////
 //  WRITE TEST CONTROLLER //
 ///////////////////////////////
@@ -897,6 +942,22 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
     // Configures the microtask to show information for disputing the test, hiding
     // other irrelevant portions of the microtask.
     $scope.dispute = false;
+
+    if(angular.isDefined($scope.microtask.reissuedFrom)){
+        if($scope.reissuedMicrotask.submission.inDispute){
+            // Configures the microtask to show information for disputing the test.
+            $scope.dispute = true;
+            $scope.testData.disputeText = $scope.reissuedMicrotask.submission.disputeText;
+        }
+        else{
+            $scope.testData.inputs=$scope.reissuedMicrotask.submission.simpleTestInputs;
+            $scope.testData.output=$scope.reissuedMicrotask.submission.simpleTestOutput;
+        }
+    }
+
+
+
+
     $scope.toggleDispute = function() {
         $scope.dispute = !$scope.dispute;
         if (!$scope.dispute) $scope.testData.disputeText = "";
