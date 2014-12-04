@@ -89,13 +89,12 @@ public class Review extends Microtask
         if( reviewDTO.qualityScore < 3 ) {
 			// reissue microtask
         	System.out.println("rejected");
-			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
+			MicrotaskCommand.rejectAndReissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
 		} else if ( reviewDTO.qualityScore == 3) {
 			// reissue microtask
 			// TODO: this will be the case of reissuing the microtask "disputing it"
-
         	System.out.println("reissued - TODO");
-        	MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
+        	MicrotaskCommand.reissueMicrotask( microtaskKeyUnderReview, workerOfReviewedWork);
 		} else {
 			// accept microtask
 
@@ -117,7 +116,7 @@ public class Review extends Microtask
 	    );
 
 		// Award points to the reviewer for the review task
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+//		WorkerCommand.awardPoints(workerID, this.submitValue);
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
     	FirebaseService.postToNewsfeed(workerID, (new NewsItemInFirebase(
     			this.submitValue,

@@ -159,7 +159,7 @@ public class WriteTest extends Microtask
 		test.get().writeTestCompleted((TestDTO) dto, project);
 
 
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+//		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 
 		WorkerCommand.increaseStat(workerID, "tests",1);

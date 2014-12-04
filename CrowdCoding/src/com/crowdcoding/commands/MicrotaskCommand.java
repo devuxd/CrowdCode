@@ -79,8 +79,8 @@ public abstract class MicrotaskCommand extends Command
 
 		public void execute(Microtask microtask, Project project)
 		{
-			System.out.println("-- SUBMITTING MICROTASK -- ");
-			System.out.println(jsonDTOData);
+			WorkerCommand.awardPoints(workerID, microtask.getSubmitValue() );
+			
 			microtask.submit(jsonDTOData, workerID, project);
 		}
 	}
@@ -145,9 +145,7 @@ public abstract class MicrotaskCommand extends Command
 		public void execute(Microtask microtask, Project project)
 		{
 			Microtask newMicrotask = microtask.copy(project);
-			System.out.println("REJECTING AND REISSUING MICROTASK");
-			//System.out.println(microtask.toJSON());
-			//System.out.println(newMicrotask.toJSON());
+
 			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
 		}
 	}
@@ -170,9 +168,8 @@ public abstract class MicrotaskCommand extends Command
 
 			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, project, reissuedFromMicrotaskKey);
 
-			System.out.println("REISSUING MICROTASK");
-			//System.out.println(microtask.toJSON());
-			//System.out.println(newMicrotask.toJSON());
+			WorkerCommand.awardPoints( excludedWorkerID , microtask.getSubmitValue() / 2 );
+
 			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
 		}
 	}

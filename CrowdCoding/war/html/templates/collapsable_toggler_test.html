@@ -1,7 +1,7 @@
 <span>
 	
-	<span class="result-PASSED" ng-if=" data.output.result ">PASSED</span>
-	<span class="result-FAILED" ng-if=" !data.output.result ">FAILED</span>
+	<span class="success" ng-if=" data.output.result ">PASSED</span>
+	<span class="failed" ng-if=" !data.output.result ">FAILED</span>
 
 	{{data.test.rec.description}}
 </span>

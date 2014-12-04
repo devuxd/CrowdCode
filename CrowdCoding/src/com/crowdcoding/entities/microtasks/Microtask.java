@@ -100,6 +100,7 @@ public /*abstract*/ class Microtask
 		ofy().save().entity(this).now();
 		project.historyLog().endEvent();
 	}
+	
 
 	public Key<Microtask> getKey()
 	{

@@ -95,7 +95,7 @@ public class WriteTestCases extends Microtask
 	{
 		this.function.get().writeTestCasesCompleted((TestCasesDTO) dto, project);
 
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+//		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "test_cases",1);
 	}

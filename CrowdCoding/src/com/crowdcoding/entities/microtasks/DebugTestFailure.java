@@ -98,7 +98,7 @@ public class DebugTestFailure extends Microtask
 		FunctionDTO fDTO = (FunctionDTO) dto;
 		if( fDTO.autoSubmit != null && fDTO.autoSubmit != true ){
 
-			WorkerCommand.awardPoints(workerID, this.submitValue);
+			//WorkerCommand.awardPoints(workerID, this.submitValue);
 			// increase the stats counter
 			WorkerCommand.increaseStat(workerID, "debugs",1);
 		}

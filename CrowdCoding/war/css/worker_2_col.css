@@ -533,8 +533,7 @@ ul.collapsable-list { margin:0px; padding:0px; list-style:none; }
 ul.collapsable-list .toggler {
 	cursor: pointer;
 	color: #575757;
-	text-transform: uppercase;
-	font-size: 0.9em;
+	font-size: 1em;
 	padding: 3px;
 }
 ul.collapsable-list .toggler span.closed { display:inline; }
@@ -562,9 +561,9 @@ table.test.spacing td { padding-bottom:5px;}
 
 
 
-.test-collapsable-list .toggler.success { }
-.test-collapsable-list .toggler.failed  { }
-.test-collapsable-list .toggler  { background-color: #3F81AC; color:white !important; border-bottom: 2px solid #4F5457;}
+.test-collapsable-list .toggler .success { font-family: 'Lato' !important; font-weight: bold; color:green;}
+.test-collapsable-list .toggler .failed  { font-family: 'Lato' !important; font-weight: bold; color:red;}
+.test-collapsable-list .toggler  { background-color: #ECECEC; color:black !important; /*border-bottom: 2px solid #4F5457;*/}
 
 
 .test-collapsable-list .element {

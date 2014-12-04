@@ -47,6 +47,10 @@ import com.crowdcoding.entities.microtasks.WriteTestCases;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.datastore.Blob;
+import com.google.appengine.api.images.Image;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.Transform;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -350,8 +354,15 @@ public class CrowdServlet extends HttpServlet
 	    InputStream imgStream = imageItem.openStream();
 
 
-	    Blob imageBlob = new Blob(IOUtils.toByteArray(imgStream));
+	    ImagesService imagesService = ImagesServiceFactory.getImagesService();
+        Image oldImage = ImagesServiceFactory.makeImage(IOUtils.toByteArray(imgStream));
+        Transform resize = ImagesServiceFactory.makeResize(200,200);
+        Image newImage = imagesService.applyTransform(resize, oldImage);
 
+        Blob imageBlob = new Blob( newImage.getImageData() );
+        
+
+	    
 	    // if image size > 0 bytes
 	    if(imageBlob.getBytes().length>0){
 

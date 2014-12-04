@@ -14,8 +14,8 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
     var alert = null;
 
     // scope variables 
-    $scope.newTestCase         = "";
-    $scope.testCases           = TestList.getTestCasesByFunctionId($scope.funct.id);
+    $scope.newTestCase = "";
+    $scope.testCases   = TestList.getTestCasesByFunctionId($scope.funct.id);
 
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
@@ -23,12 +23,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             $scope.testCases=$scope.reissuedMicrotask.submission.testCases;
     }
 
-
-
-    console.log("TEST CASES",$scope.testCases);
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
-
-
 
     // addTestCase action 
     $scope.addTestCase = function() {

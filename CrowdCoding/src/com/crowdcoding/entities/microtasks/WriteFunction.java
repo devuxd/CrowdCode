@@ -113,7 +113,7 @@ public class WriteFunction extends Microtask
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().sketchCompleted((FunctionDTO) dto, project);
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+//		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "functions",1);
 
