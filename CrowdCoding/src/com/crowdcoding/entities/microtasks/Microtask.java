@@ -30,6 +30,7 @@ public /*abstract*/ class Microtask
 	private Key<Project> project;
 	@Id protected long id;
 	protected boolean completed = false;
+	protected String reissuedFrom = "";
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
 	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
 
@@ -70,7 +71,7 @@ public /*abstract*/ class Microtask
 		System.out.println("PRINTING JSON DTO DATA");
 		System.out.println(jsonDTOData);
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
-		
+
 		project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
 
 		doSubmitWork(dto, workerID, project);
@@ -155,7 +156,10 @@ public /*abstract*/ class Microtask
 	{
 		return assignmentTimeInMillis;
 	}
-
+	public void setReissuedFrom(String microtaskKey)
+	{
+		this.reissuedFrom=microtaskKey;
+	}
 	public int getSubmitValue()
 	{
 		return submitValue;

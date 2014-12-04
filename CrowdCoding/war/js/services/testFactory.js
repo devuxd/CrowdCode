@@ -253,8 +253,8 @@ myApp.factory("Test", function ($FirebaseArray) {
 		},
 		getTestCase: function(){
 			return {
-	            id:   test.getId(),
-	            text: test.getDescription(),
+	            id:   this.getId(),
+	            text: this.getDescription(),
 	            added: false,
 	            deleted: false
 	        };

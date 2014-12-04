@@ -19,6 +19,13 @@
 		JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
+			<div ng-show="microtask.reissuedFrom!='undefined'" >
+				This microtask has been reviewed with a low score because has been found that:<br>
+				<b>{{reissuedMicrotask.review.reviewText}}</b>
+				Please correct the work to resolve the issue.<br>
+				
+			</div>
+
 			The crowd found that the pseudocall:<span class="pseudoCall">{{microtask.pseudoCall}}</span>
 			can be solved using the function below.
 			Can you replace the pseudocall with a call to this function, or find another way to do it?
