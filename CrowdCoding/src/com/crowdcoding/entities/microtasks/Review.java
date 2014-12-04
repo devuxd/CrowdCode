@@ -128,11 +128,13 @@ public class Review extends Microtask
 		// Award points to the reviewer for the review task
 		WorkerCommand.awardPoints(workerID, this.submitValue);
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
-    	FirebaseService.postToNewsfeed(workerID, (new NewsItemInFirebase(
+    	FirebaseService.postToNewsfeed(workerID, (
+    		new NewsItemInFirebase(
     			this.submitValue,
     			"You reviewed a microtask",
     			"SubmittedReview",
-    			Project.MicrotaskKeyToString(  this.getKey() )
+    			Project.MicrotaskKeyToString(  this.getKey() ),
+    			-1 // differentiate the reviews from the 0 score tasks
     	).json()), project);
 
     	System.out.println("reviewer id="+workerID);

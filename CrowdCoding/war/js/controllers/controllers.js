@@ -162,67 +162,61 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		$scope.templatePath = templatesURL + "loading.html";
 		$rootScope.inlineForm = false; // reset form as non-inline
 		$http.get('/' + projectId + '/ajax/fetch').
-		success(function(data, status, headers, config) {
+			success(function(data, status, headers, config) {
 
+				$scope.microtask = microtasksService.get(data.key);
+				$scope.microtask.$loaded().then(function() {
+					// assign title
+					$scope.datas = data;
 
-			$scope.microtask = microtasksService.get(data.key);
-			$scope.microtask.$loaded().then(function() {
+					// retrieve the related function
+					if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) {
+						$scope.funct = functionsService.get($scope.microtask.functionID);
+					}
+					// retrieve the related test
+					var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : 0;
+					if (angular.isDefined(testId)) {
+						$scope.test = testsService.get(testId);
+					}
 
-				// console.log("MICROTASK LOADED");
-				// console.log($scope.microtask);
+					// debug stuff
+					// console.log("data:", data);
+					// console.log("microtask:", $scope.microtask);
+					// console.log("function:", $scope.funct);
+					// console.log("test:", $scope.test);
 
-				// assign title
-				$scope.datas = data;
+					// retrieve the related issued microtask if present
+	   						console.log("IS REISSUED FROM", $scope.microtask.id, $scope.microtask.reissuedFrom);
 
-				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) {
-					$scope.funct = functionsService.get($scope.microtask.functionID);
-				}
-				// retrieve the related test
-				var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : 0;
-				if (angular.isDefined(testId)) {
-					$scope.test = testsService.get(testId);
-				}
+					if ( angular.isDefined( $scope.microtask.reissuedFrom ) ) {
 
-				// debug stuff
-				// console.log("data:", data);
-				// console.log("microtask:", $scope.microtask);
-				// console.log("function:", $scope.funct);
-				// console.log("test:", $scope.test);
+						$scope.reissuedMicrotask = microtasksService.get($scope.microtask.reissuedFrom);
+	   					$scope.reissuedMicrotask.$loaded().then(function() {
+							//choose the right template
+							if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
+								$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+							else
+								$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+						});
 
-
-				// retrieve the related issued microtask if present
-				if (angular.isDefined($scope.microtask.reissuedFrom)) {
-					$scope.reissuedMicrotask = microtasksService.get($scope.microtask.reissuedFrom);
-   					$scope.reissuedMicrotask.$loaded().then(function() {
-   						console.log($scope.reissuedMicrotask);
-   						console.log($scope.microtask.reissuedFrom);
+					} else {
+						
 						//choose the right template
 						if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
 							$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 						else
 							$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
-					});
-				}
-				else{
-					
-					//choose the right template
-					if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
-						$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-					else
-						$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 					}
+				});
+			}).
+			error(function(data, status, headers, config) {
+
+				$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+
+				checkQueueTimeout = $timeout(function() {
+					$scope.$emit('load');
+				}, 30*1000); // check the queue every 30 seconds
 			});
-		}).
-		error(function(data, status, headers, config) {
-
-			$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
-
-			checkQueueTimeout = $timeout(function() {
-				console.log("CALLING LOAD");
-				$scope.$emit('load');
-			}, 30*1000);
-		});
 	});
 
 

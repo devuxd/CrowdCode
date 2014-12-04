@@ -675,6 +675,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
     var highlightPseudoCall = false;
     var readOnlyDone = false;
     var changeTimeout;
+
     if ($scope.microtask.promptType == 'DESCRIPTION_CHANGE') {
         var oldCode = $scope.microtask.oldFullDescription.split("\n");
         var newCode = $scope.microtask.newFullDescription.split("\n");
@@ -694,10 +695,9 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
     }
 
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
-    if(angular.isDefined($scope.microtask.reissuedFrom))
-        $scope.code = functionsService.renderDescription($scope.reissuedMicrotask.submission) + $scope.reissuedMicrotask.submission.header + 
-
-    $scope.reissuedMicrotask.submission.code;
+    if( angular.isDefined($scope.microtask.reissuedFrom) )
+        $scope.code = functionsService.renderDescription( $scope.reissuedMicrotask.submission ) +
+                      $scope.reissuedMicrotask.submission.header + $scope.reissuedMicrotask.submission.code;
     else
         $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
 
