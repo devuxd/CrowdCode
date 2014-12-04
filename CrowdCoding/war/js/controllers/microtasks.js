@@ -816,6 +816,8 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
     $scope.parameters = [];
     // addParameter and deleteParameter 
     $scope.addParameter = function() {
+        event.preventDefault();
+        event.stopPropagation();
         var parameter = {
             text: '',
             added: true,
@@ -823,6 +825,13 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
             id: $scope.parameters.length
         };
         $scope.parameters.push(parameter);
+    };
+    $scope.deleteParameter = function(index) {
+        console.log("delete try");
+        event.preventDefault();
+        event.stopPropagation();
+        if( $scope.parameters.length>1 )
+            $scope.parameters.splice(index, 1);
     };
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
@@ -843,9 +852,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         $scope.addParameter();
     }
 
-    $scope.deleteParameter = function(index) {
-        $scope.parameters.splice(index, 1);
-    };
+  
     //prepare the codemirror Value
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
     //Setup the codemirror box with the code of the function that created the pseudocall

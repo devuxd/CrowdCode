@@ -166,6 +166,8 @@ public abstract class MicrotaskCommand extends Command
 			String microtaskKey =Project.MicrotaskKeyToString(newMicrotask.getKey());
 			String reissuedFromMicrotaskKey = Project.MicrotaskKeyToString(microtask.getKey());
 
+			//FirebaseService.
+
 			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, project, reissuedFromMicrotaskKey);
 
 			WorkerCommand.awardPoints( excludedWorkerID , microtask.getSubmitValue() / 2 );
