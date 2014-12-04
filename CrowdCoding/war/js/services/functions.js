@@ -3,11 +3,12 @@
 ////////////////////
 //FUNCTIONS SERVICE   //
 ////////////////////
-myApp.factory('functionsService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
+myApp.factory('functionsService', ['$window','$rootScope','$firebase', function( $window, $rootScope, $firebase) {
 
-	var service = new function(){
+	var service = new  function(){
 		// Private variables
 		var functions;
+		var functionsHistory;
 		var loaded = false;
 
 		// Public functions
@@ -15,33 +16,72 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.functionAdded = function(addedFunction) { return functionAdded(addedFunction); };
 		this.functionChanged = function(changedFunction) { return functionChanged(changedFunction); };
 		this.allFunctionIDs = function() { return allFunctionIDs(); };
+		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
-		this.getMockCodeFor = function(id,code) { return getMockCodeFor(id,code); };
+		this.getByName = function(name) { return getByName(name); };
+		this.getNameById  = function(id) { return getNameById(id); };
+
+		this.getMockCodeFor = function(id,logEnabled) { return getMockCodeFor(id,logEnabled); };
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
 		this.getMockHeader = function(id) { return getMockHeader(id); };
 		this.renderDescription= function(functionCalled) { return renderDescription(functionCalled); };
 		this.getAllDescribedFunctionCode = function(idFunction) { return getAllDescribedFunctionCode(idFunction); };
 		this.getAllDescribedFunctionNames = function(idFunction) { return getAllDescribedFunctionNames(idFunction); };
-	 	this.isValidParamDescription = function(line) { return isValidParamDescription(line); };
-		this.findMatches = function(searchText) { return findMatches(searchText); };
+		this.findMatches = function(searchText, functionSourceName) { return findMatches(searchText, functionSourceName); };
 		this.makeHeaderAndParameterReadOnly = function(codemirror){return makeHeaderAndParameterReadOnly(codemirror);};
+		this.makeHeaderAndDescriptionReadOnly = function(codemirror){return makeHeaderAndDescriptionReadOnly(codemirror);};
 		this.highlightPseudoSegments =function(codemirror,marks,highlightPseudoCall){ return highlightPseudoSegments(codemirror,marks,highlightPseudoCall);};
+		//this.hasPseudoSegments =function(functionCode){ return hasPseudoSegments(functionCode);};
+	//	this.replaceFunctionCodeBlock = function (text) {return replaceFunctionCodeBlock(text); };
 		this.findNextWord = function (text, start){ return findNextWord(text, start);};
 		this.getCalleeNames = function (ast){ return getCalleeNames(ast);};
+		this.getCalleeNamesById = function (functionId){ return getCalleeNamesById(functionId);};
 		this.parseDescription = function (lineDescription,functionName) { return parseDescription(lineDescription,functionName);};
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
-
-	 	this.isLoaded = function() { return loaded };
-		this.getAll = function(){
-			return functions;
-		}
+		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
+		this.getParamNamesById = function (functionId) { return getParamNamesById(functionId);};
+		this.getCount = function(){ return (functions === undefined)?0:functions.length; };
+	 	this.isLoaded = function() { return loaded; };
+		this.getAll = function(){ return functions;	};
 		// Function bodies
 		function init()
 		{
 		    // hook from firebase all the functions declarations of the project
 			var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functions = functionsSync.$asArray();
-			functions.$loaded().then(function(){ $rootScope.loaded.functions=true; });
+			functions.$loaded().then(function(){
+				$rootScope.loaded.functions=true;  
+				console.log("FUNCTION INITIALIZED");
+			});
+
+			/*var functionsArraySync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
+			functionsHistory = functionsSync.$asArray();
+			functionsHistory.$loaded().then(function(){ $rootScope.loaded.functions=true; });*/
+		}
+
+		// Replaces function code block with empty code. Function code blocks must start on the line
+		// after a function statement.
+		// Returns a block of text with the code block replaced or '' if no code block can be found
+		function replaceFunctionCodeBlock(text) {
+		    var lines = text.split('\n');
+		    for (var i = 0; i < lines.length; i++) {
+		        if (lines[i].startsWith('function')) {
+		            // If there is not any more lines after this one, return an error
+		            if (i + 1 >= lines.length - 1)
+		                return '';
+
+		            // Return a string replacing everything from the start of the next line to the end
+		            // Concatenate all of the lines together
+		            var newText = '';
+		            for (var j = 0; j <= i; j++)
+		                newText += lines[j] + '\n';
+
+		            newText += '{}';
+		            return newText;
+		        }
+		    }
+
+		    return '';
 		}
 
 		// Returns an array with every current function ID
@@ -56,6 +96,17 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			return functionIDs;
 		}
 
+		function allFunctionNames()
+		{
+			var functionsNames = [];
+			$.each(functions, function(i, value)
+			{
+				functionName.push(value.nameget);
+			});
+
+			return functionNames;
+		}
+
 		// Returns all the described function Names except the one with the passed ID
 		function getAllDescribedFunctionNames(idFunction)
 		{
@@ -63,7 +114,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			$.each(functions, function(i, value)
 			{
 				if(value.described && value.id!=idFunction)
+					{
 					functionNames.push(value.name);
+					}
 
 			});
 
@@ -98,12 +151,32 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			return funct;
 		}
 
+		// Get the function object, in FunctionInFirebase format, for the specified function name
+		function getByName(name)
+		{
+			var funct = null;
+			angular.forEach(functions, function(value, key) {
+				if( funct==null && value.name == name ) {
+			  		funct = value;
+			  	}
+			});
+			return funct;
+		}
+
+		function getNameById(id)
+		{
+			var funct = get(id);
+			if( funct != null) return funct.name;
+			return "";
+		}
+
+
 		// Get the function declaration and mock implementation for the function with the specified id.
 		// Rather than the actual implementation, the implementation is replace with an implementation
 		// that checks for a corresponding mock and only calls the corresponding actual implementation
 		// if the mock is not present.
 		// Returns an empty string if the specified function cannot be found.
-		function getMockCodeFor(id,code){
+		function getMockCodeFor(id,logEnabled){
 			var mockCode = '';
 			var functionObj = get(id);
 			if (functionObj == null)
@@ -112,24 +185,47 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			// First, add the normal header for the function
 			mockCode += functionObj.header + '\n';
 
-			// Next, add the mock implementation body
-			mockCode += '{ var returnValue; \n';
-			mockCode += 'var params = arguments; \n';
-			mockCode += 'var mockFor = hasMockFor(\'' + functionObj.name + '\', arguments, mocks); \n';
-			mockCode += 'if (mockFor.hasMock) \n';
-			mockCode += '     returnValue = mockFor.mockOutput; \n';
-			mockCode += 'else \n';
-			mockCode += '     returnValue = ' + functionObj.name + 'aaaActualIMP.apply(null, params); \n';
-			mockCode += 'return returnValue; \n}\n\n';
+			mockCode += '{'+'\n';
+			mockCode += '	// make JAVASCRIPT able to pass by value'+'\n';
+			mockCode += '   var argsCopy = [];' + '\n' ;
+			mockCode += '	for( var a = 0 ; a < arguments.length ; a++ )'+'\n';
+			mockCode += '		argsCopy[a] = JSON.parse(JSON.stringify(arguments[a]));'+'\n';
+			mockCode += '	var returnValue = null;'+'\n';
+			mockCode += '	var stubFor = hasStubFor( "' + functionObj.name + '", argsCopy, stubs );'+'\n';
+			mockCode += '   try { \n';
+			mockCode += '		if ( stubFor.hasStub ) {'+'\n';
+			mockCode += '			returnValue = stubFor.output;'+'\n';
+			mockCode += '		} else {'+'\n';
+			mockCode += '			returnValue = ' + functionObj.name + 'ActualIMP.apply( null, argsCopy );'+'\n';
+			mockCode += '		}'+'\n';
+			mockCode += '   } catch (e) { \n';
+			mockCode += '       debug.log("There was an exception in the callee ' + functionObj.name + ': "+e.message);\n';
+
+			// if log enabled signal that the function can be STUBBED
+			if( logEnabled != undefined && logEnabled ){
+				mockCode += '       debug.log("Use the CALLEE STUBS panel to stub this function.");\n';
+			}
+
+			mockCode += '   } \n';
+
+			// if log enabled log this call
+			if( logEnabled != undefined && logEnabled ){
+				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, returnValue, calleeMap ) ;'+'\n';
+			} 
+
+			mockCode += '	return returnValue;'+'\n';
+			mockCode += '}'+'\n';
+
 
 			// Third, add the special header for the actual implementation
 			mockCode += getMockHeader(id);
 
 			// Fourth, add the actual code body of the function
-			if(code!=undefined)
-				mockCode += code + '\n';
+
+			if( functionObj.written )
+				mockCode += '\n' + functionObj.code + '\n';
 			else
-				mockCode += functionObj.code + '\n';
+				mockCode += '\n{}\n';
 
 			return mockCode;
 		}
@@ -142,8 +238,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			var functionObj = get(id);
 			if (functionObj == null)
 				return '';
-
-			return functionObj.header + '\n { } \n' + getMockHeader(id) + '\n { } \n';
+			return functionObj.header + '{}\n'+ getMockHeader(id) + '{}\n';
 		}
 
 		// For the function with the specified function id,
@@ -158,7 +253,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			// Generate the mock header.
 			// Get the params string out of the header by looking for the first instance of a paren (which
 			// must be the start of the functions params)
-			var mockHeader = ' function ' + functionObj.name + 'aaaActualIMP'
+			var mockHeader = 'function ' + functionObj.name + 'ActualIMP'
 				+ functionObj.header.substring(functionObj.header.indexOf('('));
 			return mockHeader;
 		}
@@ -181,7 +276,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	    	for(var i=0; i<functionObj.paramNames.length; i++)
 				{
 				if(functionObj.paramDescriptions!=undefined && functionObj.paramDescriptions.length>i)
-					fullDescription += '  @param ' + functionObj.paramTypes[i] + ' ' + functionObj.paramNames[i] + ' - ' + functionCalled.paramDescriptions[i] + '\n';
+					fullDescription += '  @param ' + functionObj.paramTypes[i] + ' ' + functionObj.paramNames[i] + ' , ' + functionCalled.paramDescriptions[i] + '\n';
 
 				}
 			}
@@ -197,17 +292,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			var functionObj = get(id);
 			return functionObj.header;
 		}
-
-		//Checks that exists a description of the parameter
-		function isValidParamDescription(line)
-		{
-			var beginDescription = line.indexOf(' - ');
-			if(beginDescription==-1||line.substring(beginDescription).lenght<5)
-				return false;
-			else
-				return true;
-		}
-
 
 
 		// checks that the name is vith alphanumerical characters or underscore
@@ -227,16 +311,18 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 
 	// Given a String return all the functions that have either or in the description or in the header that String
-	function findMatches(searchText)
+	function findMatches(searchText, functionSourceName)
 	{
 		var re = new RegExp(searchText);
 		var results = [];
 
 		$.each(functions, function(index, value)
 		{
+			if(value.name!=functionSourceName){
 			var score = computeMatchScore(value, re);
 			if (score > 0)
-				results.push({ 'score': score, 'value': value});
+				results.push({ 'score': score, 'value': value });
+			}
 		});
 
 		return results;
@@ -275,13 +361,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 		var numParams = 0;
 
-		console.log("parse description after regex");
-
 		for(var i=0; i<lineDescription.length;i++){
 
 			lineDescription[i] = lineDescription[i].replace(/\s{2,}/g,' ');
-
-			console.log(lineDescription[i]);
 
 			// check if the current line is a parameter or return line
 			var paramLine  = lineDescription[i].search('@param ');
@@ -306,12 +388,12 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 				returnType=type;
 			}
 			else if( lineDescription[i].length > 4 ) // otherwise is a description line
-				description+=lineDescription[i].trim()+"\n"
+				description+=lineDescription[i].trim()+"\n";
 		}
 
 
 		// build header
-	header=renderHeader(functionName,paramNames);
+		header=renderHeader(functionName,paramNames);
 
 		// return all the infos
 		return { 'header'           : header,
@@ -337,7 +419,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	    		for(var i=0; i<functionCalled.paramNames.length; i++)
 				{
 					if(functionCalled.paramDescriptions!=undefined && functionCalled.paramDescriptions.length>i)
-						fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' - ' + functionCalled.paramDescriptions[i] + '\n';
+						fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' , ' + functionCalled.paramDescriptions[i] + '\n';
 
 				}
 			}
@@ -369,28 +451,15 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		return header;
 	}
 
-	//Checks that exists a description of the parameter
-	function isValidParamDescription(line)
+
+	function renderHeaderById(functionId)
 	{
-		var beginDescription = line.indexOf(' - ');
-		if(beginDescription==-1||line.substring(beginDescription).lenght<5)
-			return false;
-		else
-			return true;
+		var funct = get(functionId);
+		return renderHeader(funct.name,funct.paramNames);
 	}
 
-
-
-	// checks that the name is vith alphanumerical characters or underscore
-	function isValidName(name)
-	{
-		var regexp = /^[a-zA-Z0-9_]+$/;
-
-		if (name.search(regexp)==-1)
-		 	return false;
-		else
-			return true;
-
+	function getParamNamesById(functionId){
+		return get(functionId).paramNames;
 	}
 
 
@@ -420,6 +489,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 		// Highlight regions of code that  pseudocalls or pseudocode
 	function highlightPseudoSegments(codemirror,marks,highlightPseudoCall){
+
 		var text = codemirror.getValue();
 
 		// Clear the old marks (if any)
@@ -434,7 +504,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		if(typeof text === 'undefined')
 		{
 			return;
-		};
+		}
 
 			var lines = text.split('\n');
 		$.each(lines, function(i, line)
@@ -456,11 +526,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			if (highlightPseudoCall != false)
 			{
 				var pseudoCallCol = line.indexOf(highlightPseudoCall);
-				if (pseudoCallCol != -1)
+				if (pseudoCallCol != -1){
 				 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol},
 				 			     {line: i, ch: line.length},
 				 			     {className: 'highlightPseudoCall', inclusiveRight: true }));
+				}
 			}
+			
 		});
 	}
 
@@ -472,18 +544,32 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	function makeHeaderAndParameterReadOnly(codemirror)
 	{
 		var text = codemirror.getValue();
+
 		// Take the range beginning at the start of the code and ending with the first character of the body
 		// (the opening {})
-		console.log("text");
 		//console.log(codemirror);
 		var readOnlyLines = indexesOfTheReadOnlyLines(text);
-
 		for(var i=0; i<readOnlyLines.length; i++)
 		{
 			codemirror.getDoc().markText({line: readOnlyLines[i], ch: 0},
 				{ line: readOnlyLines[i] + 1, ch: 1},
 				{ readOnly: true });
 		}
+
+	}
+
+
+
+	
+
+	function makeHeaderAndDescriptionReadOnly(codemirror)
+	{
+		var text = codemirror.getValue();
+		var ast = esprima.parse(text, {loc: true});
+
+		codemirror.getDoc().markText({line: 0, ch: 0},
+			{ line: ast.loc.start.line, ch: 0},
+			{ readOnly: true });
 
 	}
 
@@ -500,6 +586,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			}
 		});
 		return calleeNames;
+	}
+
+	function getCalleeNamesById(functionId)
+	{
+
+		var ast = esprima.parse(renderHeaderById(functionId)+get(functionId).code, {loc: true})
+		return getCalleeNames(ast);
 	}
 
 	// Based on esprima example at http://sevinf.github.io/blog/2012/09/29/esprima-tutorial/

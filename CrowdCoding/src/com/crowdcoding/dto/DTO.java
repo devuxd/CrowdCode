@@ -9,14 +9,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * classes is intended to match the JSON format that a client expects. These objects may be used
  * for the client to submit data to the server or for the server to send data to the client.
  */
-public abstract class DTO 
+public abstract class DTO
 {
 	// Gets the JSON for this DTO
 	public String json()
 	{
 		return json(this);
 	}
-	
+
 	// Gets JSON for the specified object
 	protected static String json(Object obj)
 	{
@@ -25,22 +25,23 @@ public abstract class DTO
 	    	return mapper.writeValueAsString(obj);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	    
-	    return "";	
-	}	
-	
+		}
+	    return "";
+	}
+
 	// Reads a DTO of type dtoClass from the specified string
 	public static DTO read(String jsonDTOData, Class dtoClass)
 	{
 		ObjectMapper mapper = new ObjectMapper();
-		
+		System.out.println("dto "+jsonDTOData);
+		System.out.println("class "+dtoClass);
 		DTO dto = null;
 		try {
-			dto = mapper.readValue(jsonDTOData, dtoClass);
+			dto = (DTO) mapper.readValue(jsonDTOData, dtoClass);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		return dto;		
+
+		return dto;
 	}
 }

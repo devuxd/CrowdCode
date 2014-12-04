@@ -16,14 +16,16 @@ import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
+import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.EntitySubclass;
 import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.annotation.Parent;
 
 @EntitySubclass(index=true)
 public class WriteCall extends Microtask
 {
-	@Load private Ref<Function> caller;
+	@Parent @Load private Ref<Function> caller;
 	private String pseudoCall;
 	private String calleeFullDescription;
 
@@ -41,21 +43,38 @@ public class WriteCall extends Microtask
 		this.calleeFullDescription = calleeFullDescription;
 		this.pseudoCall = pseudoCall;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteCallInFirebase(id, this.microtaskName(), caller.getName(),
-				false, submitValue, caller.getID(), calleeFullDescription ), id, project);
+		FirebaseService.writeMicrotaskCreated(new WriteCallInFirebase(
+				id,
+				this.microtaskTitle(), 
+				this.microtaskName(), 
+				caller.getName(),
+				caller.getID(),
+				false, submitValue, 
+				caller.getID(), 
+				calleeFullDescription, 
+				pseudoCall ),
+				Project.MicrotaskKeyToString(this.getKey()),
+				project);
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));
 		project.historyLog().endEvent();
 	}
 
-    public Microtask copy(Project project)
-    {
-    	return new WriteCall(this.caller.getValue(), this.calleeFullDescription, this.pseudoCall, project);
-    }
+	public Microtask copy(Project project)
+	{
+		return new WriteCall(this.caller.getValue(), this.calleeFullDescription, this.pseudoCall, project);
+	}
+
+	public Key<Microtask> getKey()
+	{
+		return Key.create( caller.getKey(), Microtask.class, this.id );
+	}
+
 
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		caller.get().writeCallCompleted((FunctionDTO) dto, project);
+//		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "function_calls",1);
 

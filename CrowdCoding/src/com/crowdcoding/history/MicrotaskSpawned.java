@@ -5,7 +5,7 @@ import com.crowdcoding.entities.microtasks.Microtask;
 
 public class MicrotaskSpawned extends HistoryEvent 
 {
-	public String eventType = "MicrotaskSpawned";
+	public String eventType = "microtask.spawned";
 	
 	public String microtaskType;
 	public String microtaskID;

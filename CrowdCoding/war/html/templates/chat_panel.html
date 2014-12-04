@@ -1,4 +1,4 @@
-<div id="chatPanel" class="panel panel-default" ng-controller="ChatController">
+<div id="chat" class="panel panel-default"  ng-controller="ChatController">
 	<div class="panel-heading"><span class="glyphicon glyphicon-comment"></span> Ask The Crowd</div>
 	<div class="panel-body">
 		<ul class="panel-list user-list" id="chatOutput">
@@ -7,7 +7,7 @@
 	      		<div class="message">
 	      			<div class="nickname">{{m.workerHandle}}</div>
 	      			<div class="text">{{ m.text }}</div>
-	      			<div class="time">{{ m.createdAt }}</div>
+	      			<div class="time">{{ m.text }}</div>
 	      		</div>
 	      	</li>
 		</ul>

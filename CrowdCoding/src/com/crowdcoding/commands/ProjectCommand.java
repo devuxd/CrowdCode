@@ -1,27 +1,34 @@
 package com.crowdcoding.commands;
 
+import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.CommandContext;
+import com.googlecode.objectify.Key;
 
 public abstract class ProjectCommand extends Command 
 {
+	
 	public static ProjectCommand enableReviews(boolean reviewsEnabled) 
 		{ return new EnableReviews(reviewsEnabled); }
 	
 	// Queues the specified microtask onto the global microtask queue. Provides an optional
 	// excludedWorkerID, which will permanently exlucde the worker from doing the microtask.
 	// This parameter may be left null.
-	public static ProjectCommand queueMicrotask(long microtaskID, String excludedWorkerID) 
-		{ return new QueueMicrotask(microtaskID, excludedWorkerID); }
-	public static ProjectCommand queueReviewMicrotask(long microtaskID, String excludedWorkerID) 
-		{ return new QueueReviewMicrotask(microtaskID, excludedWorkerID); }
-	public static ProjectCommand skipMicrotask(long microtaskID, String workerID) 
-		{ return new SkipMicrotask(microtaskID, workerID); }
-	public static ProjectCommand submitMicrotask(long microtaskID, Class microtaskType, String jsonDTOData, 
+	public static ProjectCommand queueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID) 
+		{ return new QueueMicrotask(microtaskKey, excludedWorkerID); }
+	public static ProjectCommand queueReviewMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID) 
+		{ return new QueueReviewMicrotask(microtaskKey, excludedWorkerID); }
+	public static ProjectCommand skipMicrotask( String microtaskKey, String workerID) 
+		{ return new SkipMicrotask(microtaskKey, workerID); }
+	public static ProjectCommand submitMicrotask(String microtaskKey, Class microtaskType, String jsonDTOData, 
 			String workerID) 
-		{ return new SubmitMicrotask(microtaskID, microtaskType, jsonDTOData, workerID); }
+		{ return new SubmitMicrotask(microtaskKey, microtaskType, jsonDTOData, workerID); }
 	public static ProjectCommand logoutWorker(String workerID) 
 		{ return new LogoutWorker(workerID); }
+	
+	public static ProjectCommand logoutInactiveWorkers() 
+	{ return new LogoutInactiveWorkers(); }
 	
 	private ProjectCommand()
 	{
@@ -52,69 +59,69 @@ public abstract class ProjectCommand extends Command
 			
 	protected static class QueueMicrotask extends ProjectCommand
 	{
-		private long microtaskID;
+		private Key<Microtask> microtaskKey;
 		private String excludedWorkerID;
 		
-		public QueueMicrotask(long microtaskID, String excludedWorkerID)
+		public QueueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
 		{
 			super();
-			this.microtaskID = microtaskID;
+			this.microtaskKey = microtaskKey;
 			this.excludedWorkerID = excludedWorkerID;
 		}
 		
 		public void execute(Project project)
 		{
-			project.queueMicrotask(microtaskID, excludedWorkerID);
+			project.queueMicrotask(microtaskKey, excludedWorkerID);
 		}		
 	}
 	
 	protected static class QueueReviewMicrotask extends ProjectCommand
 	{
-		private long microtaskID;
+		private Key<Microtask> microtaskKey;
 		private String excludedWorkerID;
 		
-		public QueueReviewMicrotask(long microtaskID, String excludedWorkerID)
+		public QueueReviewMicrotask( Key<Microtask> microtaskKey, String excludedWorkerID)
 		{
 			super();
-			this.microtaskID = microtaskID;
+			this.microtaskKey = microtaskKey;
 			this.excludedWorkerID = excludedWorkerID;
 		}
 		
 		public void execute(Project project)
 		{
-			project.queueReviewMicrotask(microtaskID, excludedWorkerID);
+			project.queueReviewMicrotask(microtaskKey, excludedWorkerID);
 		}		
 	}
 	
 	protected static class SkipMicrotask extends ProjectCommand
 	{
-		private long microtaskID;
+		private Key<Microtask> microtaskKey;
 		private String workerID;
 		
-		public SkipMicrotask(long microtaskID, String workerID)
+		public SkipMicrotask(String microtaskKey, String workerID)
 		{
 			super();
-			this.microtaskID = microtaskID;
+			this.microtaskKey = Project.StringToMicrotaskKey( microtaskKey );
 			this.workerID = workerID;
 		}
 		
 		public void execute(Project project)
 		{
-			project.skipMicrotask(microtaskID, workerID, project);
+			project.skipMicrotask(microtaskKey, workerID, project);
 		}		
 	}
 	
 	protected static class SubmitMicrotask extends ProjectCommand
 	{
-		private long microtaskID;
+		private Key<Microtask> microtaskKey;
 		private Class microtaskType;
 		private String jsonDTOData;
 		private String workerID;
 		
-		public SubmitMicrotask(long microtaskID, Class microtaskType, String jsonDTOData, String workerID)
+		public SubmitMicrotask(String microtaskKey, Class microtaskType, String jsonDTOData, String workerID)
 		{
 			super();
-			this.microtaskID = microtaskID;
+			this.microtaskKey = Project.StringToMicrotaskKey( microtaskKey );
 			this.microtaskType = microtaskType;
 			this.jsonDTOData = jsonDTOData;
 			this.workerID = workerID;
@@ -122,7 +129,7 @@ public abstract class ProjectCommand extends Command
 		
 		public void execute(Project project)
 		{
-			project.submitMicrotask(microtaskID, microtaskType, jsonDTOData, workerID, project);
+			project.submitMicrotask(microtaskKey, microtaskType, jsonDTOData, workerID, project);
 		}		
 	}
 	
@@ -139,6 +146,22 @@ public abstract class ProjectCommand extends Command
 		public void execute(Project project)
 		{
 			project.logoutWorker(workerID);
+		}		
+	}
+	
+
+	protected static class LogoutInactiveWorkers extends ProjectCommand
+	{
+		private String workerID;
+		
+		public LogoutInactiveWorkers()
+		{
+			super();
+		}
+		
+		public void execute(Project project)
+		{
+			project.logoutInactiveWorkers();
 		}		
 	}
 }

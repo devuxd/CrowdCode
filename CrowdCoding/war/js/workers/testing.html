@@ -1,0 +1,40 @@
+<html>
+
+<body>
+
+
+<script src="../instrumentFunction.js"></script>
+<script src="../assertionFunctions.js"></script>
+
+<script type="text/javascript">
+
+var stubs = {"sum":{"{\"0\":\"1\",\"1\":\"3\"}":{"inputs":["1","3"],"stubOutput":5,"realOutput":""},"{\"0\":\"1\",\"1\":\"2\"}":{"inputs":["1","2"],"stubOutput":3,"realOutput":""}},"doCommand":{}}; 
+function doCommand(command){}
+function doCommandActualIMP(command){}
+
+function doCommand(command)
+{
+  var returnValue;
+  var stubFor = hasStubFor('doCommand', arguments, stubs); 
+  if (stubFor.hasStub) 
+    returnValue = stubFor.stubOutput; 
+  else 
+    returnValue = doCommandActualIMP.apply(null, arguments); 
+  logCall('doCommand',arguments,stubFor.stubOutput,doCommandActualIMP.apply(null, arguments) ); 
+   return returnValue;
+}
+
+function doCommandActualIMP(command)
+{
+  //Mark this function as implemented by removing this line.
+  return command; 
+}
+
+function sum(first, second){
+  doCommand(first);
+  return first+second; 
+}
+equal(sum(1,2),3,'passing test case'); 
+</script>
+</body>
+</html>

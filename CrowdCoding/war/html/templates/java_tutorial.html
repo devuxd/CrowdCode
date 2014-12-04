@@ -1,26 +1,23 @@
-<div ng-controller="JavaTutorialController">
 
- 
-
-<a href="#javascriptTutorial"  role="button"  data-toggle="modal" ng-click="show = !show" class="muted pull-left minorNote">
-	<small>Help, I don't know Javascript!</small>
+<!-- Button trigger modal -->
+<a href="#"  data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-mini"  >
+JAVASCRIPT TUTORIAL 
 </a>
 
-
-<!-- ==================================================================================== -->
-<!-- Modal for showing Javascript tutorial -->
-<!-- ==================================================================================== -->
-<div id="javascriptTutorial" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" ng-show="show" >
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<strong>Javascript in 2 minutes!</strong>
-				<button type="button" class="close" data-dismiss="modal" ng-click="show = !show">X</button>
-			</div>
-			<div class="modal-footer">
-			  <div ui-codemirror="{ onLoad : codemirrorLoaded }" ></div>
-			</div>	
-		</div>
-	</div>
-</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Javascript in 2 minutes!</h4>
+      </div>
+      <div class="modal-body">
+		<div ui-ace="{showGutter: false, theme:'xcode',  mode: 'javascript', onLoad : aceLoaded }"  readonly="true" ng-model="javaTutorial"> </div>  <br>
+   	</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>

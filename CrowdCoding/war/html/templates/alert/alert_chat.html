@@ -1,0 +1,17 @@
+<div class="alert alert-chat">
+	<button type="button" class="close" ng-if="dismissable" ng-click="$hide()">&times;</button>
+	<div class="output-wrapper">
+		<div class="output">
+			<div class="avatar">
+				<img src="/user/picture?userId={{ title }}" alt="" />
+			</div>
+
+			<div class="message">
+				<span class="nickname">{{title}}:</span>
+				<span ng-if="content" class="text" ng-bind-html="content"></span>
+
+			</div>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+</div>

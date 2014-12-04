@@ -10,8 +10,6 @@
  */
 function DistributedWorker(workerID, queueRef, processingCallback) {
 	
-	console.log("WORK QUEUE STARTED");
-
 	this.workerID = workerID;
 	
 	// retrieve callback

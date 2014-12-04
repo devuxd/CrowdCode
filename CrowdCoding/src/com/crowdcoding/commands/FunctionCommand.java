@@ -101,6 +101,7 @@ public abstract class FunctionCommand extends Command
 		// Override the default execute behavior, as there is no function yet to be loaded.
 		public void execute(Project project)
 		{
+			System.out.println("PROJECT ID = "+project.getID());
 			Function newFunction = new Function(name, returnType, paramNames, paramTypes, paramDescriptions, header, description,
 					code, project);
 			newFunction.storeToFirebase(project);

@@ -1,50 +1,103 @@
 <div ng-controller="ReuseSearchController">
 
-	<h2 id="taskHeader">
-		<span id="taskTitle" >{{datas.title}}</span>
-		<span id="taskPoints" class="label label-default">{{datas.submitValue}} points</span>
-	</h2>
-
-	<br/>
-
-	<div id="taskDescription" class="bg-success">
-		Is there a function that does<BR>
-		<strong>{{microtask.callDescription}}</strong>
-		<BR><BR>
-		Use the search box to see if a function exists to do this. Otherwise, select "No function does this".
-		<BR><BR>
+	<div class="section section-description " >
+		<div class="section-content no-padding" >
+			<ul class="microtask-details clearfix">
+				<li>{{datas.title}}</li>
+				<li>
+					<span>{{datas.submitValue}} points</span>
+				</li>
+				<li>
+					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+				</li>
+			</ul>
+		</div>
 		
-		<a ng-init="showContext=false" ng-click="showContext = !showContext">Show context</a> 
-		<div id="callContext" ng-show="showContext">
-			<div class="codemirrorBox">
-				<div ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
+	</div>
+	<div class="section section-description">
+		<div class="section-title" >
+		JOB DESCRIPTION
+		</div>
+		<div class="section-content" >
+			Is there any function that could substitute the pseudocall: <span class="pseudoCall">{{microtask.callDescription}}</span> ?
+		</div>
+	</div>
+
+	<div class="section section-description">
+		<div class="section-title" >
+			FUNCTION WITH THE PSEUDOCALL
+		</div>
+		<div class="section-content no-padding" >
+			<code-mirror-readonly code="code"></code-mirror-readonly>
+		</div>
+	</div>
+
+
+	<alertcontainer></alertcontainer>
+
+
+	<div class="section-cols" >
+		<div class="container-flex-row">
+			<div class="section section-help" style="width:30%">
+				<div class="section-title" >
+					HINT
+				</div>
+				<div class="section-content" >
+					Choose a function that does what the pseudocall
+					asks ( you can filter the list of functions typing some characters in the input box).
+					<strong>If in the list there isn't the right function, click check "no function does this"</strong>
+
+				</div>
 			</div>
+			<div class="section section-form" style="width:70%;" >
+				<div class="section-title no-padding" >
+
+					<div class="input-group">
+						<input
+							class="form-control"
+							tabindex="1"
+							type="text"
+							name="newtestcase"
+							ng-model="text"
+							ng-change="doSearch()"
+							placeholder="filter functions"
+							focus/>
+						<span class="input-group-btn">
+							<button class="btn btn-default" ng-click="doSearch()" type="button" tabindex="2">Filter</button>
+						</span>
+					</div>
+
+				</div>
+				<div class="section-content no-padding">
+
+					<div ng-if="results.length > 0" class="list-group">
+						<div ng-repeat= "function in results | orderBy:'-score'" 
+						     class="list-element animate-repeat result {{ selectedResult == $index ? 'selected' : '' }}" 
+						     ng-click="select($index)">
+							 	{{function.value.description}}<br/>
+								<b>{{function.value.header}}</b>
+						</div>
+					</div>
+					<span ng-if="results.length == 0" >No function found</span>
+					<BR>
+					<b>If you can't find any, click this: 
+					<input type="checkbox" ng-model="selectedResult" ng-true-value="-1" ng-false-value="-2"> No function does this </b>
+
+
+				</div>
+
+
+			</div>
+
+
 		</div>
-		<BR>
 	</div>
-	<div class=" bg-warning">
-		<input type="text" id="SearchText" class="input-large" ng-model="reuseSearch.text" ng-change="doSearch()">
-		<div id="results"></div>
-		<BR>	
-		If you can't find any, click this:<br>
-		<button id="noFunction" type="button" class="btn btn-primary" ng-click= "reuseSearch.selected = -1" >No function does this</button>
-	</div>
-
-	<br/>
-			
-	<div ng-repeat= "function in reuseSearch.functions | orderBy:'-score'">
-		<div id="result" ng-class="{ 'result' : reuseSearch.selected != $index , 'selectedResult' : reuseSearch.selected == $index } " ng-click="reuseSearch.selected = $index">
-		 	{{function.value.description}}<br/>
-			<b>{{function.value.header}}</b>
-		</div>
-	</div>
-
-	<br/>
-
+<!--
 	<div class="task-buttons pull-right">
-		<button ng-click="submit()" class="btn btn-primary" ng-disabled= "reuseSearch.selected == -2" >Submit</button>
+		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || testCases.length==0" >Submit</button>
 		<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
 	</div>
 	<div class="clearfix"></div>
-
+-->
 </div>

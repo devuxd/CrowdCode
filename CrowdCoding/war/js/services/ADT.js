@@ -3,7 +3,7 @@
 ////////////////////
 myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
 
-	var service = new function(){
+	var service = new  function(){
 
 		var typeNames=[];
 		var nameToADT=[];
@@ -15,26 +15,34 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 		this.validateParamName      = function(inputText, ignoreEmpty) { return validateParamName(inputText, ignoreEmpty); };
 		this.validateParamTypeName  = function(inputText, paramName, ignoreEmpty) { return validateParamTypeName(inputText, paramName, ignoreEmpty); };
 		this.validateReturnTypeName = function(inputText, ignoreEmpty) { return validateReturnTypeName(inputText, ignoreEmpty); };
-		this.getAllADTs = function() { return getAllADTs(); };
-
+		this.getAllADTs				= function() { return getAllADTs(); };
+		this.getByName				= function(name){return getByName(name);};
+		this.getNameToADT			= function() { return nameToADT; };
 
 		function init()
 		{
-
-			addDefaultADT();
-
+			
 
 			// hook from firebase all the functions declarations of the project
 			var ADTSync = $firebase(new Firebase($rootScope.firebaseURL+'/ADTs/ADTs'));
+			var firebaseADTs=[];
+			firebaseADTs = ADTSync.$asArray();
+			firebaseADTs.$loaded().then(function(){
+				typeNames=[];
+				nameToADT=[];
+				ADTs=[];
+				addDefaultADT();
 
-			ADTs = ADTSync.$asArray();
-			ADTs.$loaded().then(function(){
-				if(ADTs.length>0){
-					for(var i; i<ADTs.length;i++ ){
-						typeNames.push(ADTs[i].name);
-						nameToADT[ADTs[i].name] = ADTs[i];
+				if(firebaseADTs.length>0){
+					for(var i=0; i<firebaseADTs.length;i++ ){
+						typeNames.push(firebaseADTs[i].name);
+						nameToADT[firebaseADTs[i].name] = firebaseADTs[i];
+						ADTs.push(firebaseADTs[i]);
 					}
 				}
+
+				console.log("ADT INITIALIZED");
+				
 				$rootScope.loaded.ADTs=true;
 
 			});
@@ -42,12 +50,53 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 
 		}
 
+		function getByName(name)
+		{
+
+			var adt=[];
+
+			for(var i=0; i<ADTs.length; i++)
+				{
+				if(ADTs[i].name===name)
+					{
+
+					return ADTs[i];
+					}
+				}
+
+			return [];
+		}
+
 		// Adds type names for primitives
 		function addDefaultADT()
 		{
 			typeNames.push('String');
+			ADTs.push( { name:'String',
+									description:'A String simply stores a series of characters like \"John Doe\".'+
+												'A string can be any text inside double quotes',
+									example:'\"John Doe\"',
+									fullExample:'var x = \"John Doe\";',
+									structure:[]
+									});
+
 			typeNames.push('Number');
+			ADTs.push( { name:'Number',
+									description:'Number is the only type of number.'+
+												'Numbers can be written with, or without, decimals.',
+
+									example:'14.00',
+									fullExample:'var x = 14.00;',
+									structure:[]
+									});
+
 			typeNames.push('Boolean');
+			ADTs.push({ name:'Boolean',
+									description:'A Boolean represents one of two values: true or false.',
+									example:'true',
+									fullExample:'var x = true;',
+									structure:[]
+									});
+
 		}
 
 		function getAllADTs()

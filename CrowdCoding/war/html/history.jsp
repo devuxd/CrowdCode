@@ -1,6 +1,4 @@
-<%
-	String projectID = (String) request.getAttribute("project");
-%>
+<% String projectID = (String) request.getAttribute("project"); %>
 
 
 

@@ -7,6 +7,7 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 	var service = new function(){
 
 		// Private variables
+		var ref = null;
 		var tests = [];  				// map from testID to a TestInFirebase format object
 		var functionIDToTests;		// map from a functionID to an array of testIDs that are tests for the function
 
@@ -36,10 +37,11 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 			functionIDToTests = {};
 
 			// get the list of all tests from firebase
-			console.log($rootScope.firebaseURL+'/artifacts/tests');
-			var testsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/tests'));
-			var testsInFirebase = testsSync.$asArray();
-			testsInFirebase.$loaded().then(function(){ $rootScope.loaded.tests=true;  });
+			var ref = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/tests'));
+			var testsInFirebase = ref.$asArray();
+			testsInFirebase.$loaded().then(function(){ 
+				console.log("TESTS INITIALIZED");
+				$rootScope.loaded.tests=true;  });
 
 			// watch for changes in the tests data
 			testsInFirebase.$watch(function(obj){
@@ -153,6 +155,7 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 
 			return testCasesFor;
 		}
+
 
 		// Gets the tests for the specified function as a string, replacing any calls to the specified function
 		// with calls to a mock.

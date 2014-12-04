@@ -34,6 +34,9 @@ CrowdCoding/.idea/workspace.xml
 CrowdCoding/war/.idea/workspace.xml
 
 CrowdCoding/war/.idea/workspace.xml
+.classpath
+.project
+.settings
 
 *.jar
 
@@ -52,3 +55,4 @@ CrowdCoding/.project
 CrowdCoding/.project
 
 CrowdCoding/.project
+/bin/

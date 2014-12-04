@@ -1,33 +1,68 @@
-
 // directive for json field validation
-myApp.directive('json', function () {
+myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
     return {
+       
         restrict: 'A',
         require: 'ngModel',
-        link: function (scope, elm, attrs, ctrl) {
+        link: function(scope, elm, attrs, ctrl) {
+
             // instantiate a new JSONValidator
             var validator = new JSONValidator();
-            var paramType = attrs['json'];
-            ctrl.$parsers.unshift(function (viewValue) {
+            ctrl.$formatters.unshift(function(viewValue) {
                 // initialize JSONValidator and execute errorCheck
-                validator.initialize(viewValue,paramType)
+                validator.initialize(ADTService.getNameToADT(), viewValue, attrs.jsonValidator);
                 validator.errorCheck();
-
-                if (!validator.isValid()) {
-                    ctrl.$setValidity('json', false);
-                    ctrl.$error.json_errors = validator.getErrors();
-                    return undefined;
-                } else {
+                var nullInput=false;
+                if(attrs.allowNull &&  viewValue === "null")
+                    nullInput=true;
+                console.log(nullInput);
+                if(viewValue === undefined || nullInput || validator.isValid() ){
                     ctrl.$setValidity('json', true);
                     return viewValue;
+                }else{
+                   ctrl.$setValidity('json', false);
+                   ctrl.$error.json = validator.getErrors();
+                   return viewValue;
                 }
+            });
+        }
+    };
+}]);
+
+
+myApp.directive('unicName', function(){
+    return {
+          scope: {
+            parameters : "=",
+
+        }, // {} = isolate, true = child, false/undefined = no change
+        require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
+        restrict: 'AE', // E = Element, A = Attribute, C = Class, M = Comment
+        link: function($scope, iElm, iAttrs, ctrl) {
+
+            ctrl.$parsers.unshift(function(viewValue) {
+
+                var occurrence=0;
+                angular.forEach($scope.parameters, function(value, key) {
+                    if(value.paramName==viewValue)
+                        occurrence++;
+                });
+                if (occurrence!==0) {
+                    ctrl.$setValidity('unic', false);
+                    ctrl.$error.unic = "More occurence of the same parameter name have been found, plese fix them";
+                    return viewValue;
+                } else {
+                    ctrl.$setValidity('unic', true);
+                    return viewValue;
+                }
+
             });
         }
     };
 });
 
 //<div function-validator ng-model="somevar"></div>
-myApp.directive('adtValidator',['ADTService',function(ADTService) {
+myApp.directive('adtValidator', ['ADTService', function(ADTService) {
 
 
     var errors = [];
@@ -36,20 +71,50 @@ myApp.directive('adtValidator',['ADTService',function(ADTService) {
     return {
         restrict: 'A',
         require: 'ngModel',
-        link: function (scope, elm, attrs, ctrl) {
+        link: function(scope, elm, attrs, ctrl) {
 
-            ctrl.$parsers.unshift(function (viewValue) {
+            ctrl.$parsers.unshift(function(viewValue) {
+                var valid =  viewValue === ""|| viewValue === undefined || ADTService.isValidTypeName(viewValue) ;
+                if (!valid) {
 
-            	var valid=ADTService.isValidTypeName(viewValue)||viewValue=="";
-            	console.log("vie "+viewValue);
-            	console.log(valid)
-
-                if(!valid){
                     ctrl.$setValidity('adt', false);
-                    ctrl.$error.adt_errors =  "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
+                    ctrl.$error.adt = "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
                     return viewValue;
                 } else {
                     ctrl.$setValidity('adt', true);
+
+                    return viewValue;
+                }
+
+            });
+
+        }
+    };
+}]);
+
+//<div name-validator ng-model="somevar"></div>
+myApp.directive('functionNameValidator', ['functionsService', function(functionsService) {
+
+
+    var errors = [];
+    var valid;
+
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attrs, ctrl) {
+
+            ctrl.$parsers.unshift(function(viewValue) {
+                var functionsName=functionsService.getAllDescribedFunctionNames();
+                var valid =  viewValue === ""|| viewValue === undefined || (functionsName.indexOf(viewValue) == -1);
+
+                if (!valid) {
+
+                    ctrl.$setValidity('name', false);
+                    ctrl.$error.name = "The function name: "+viewValue+" is already taken, please change it";
+                    return viewValue;
+                } else {
+                    ctrl.$setValidity('name', true);
                     return viewValue;
                 }
 
@@ -60,7 +125,7 @@ myApp.directive('adtValidator',['ADTService',function(ADTService) {
 }]);
 
 // <div function-validator ng-model="somevar"></div>
-myApp.directive('functionValidator',['ADTService','functionsService',function(ADTService, functionsService) {
+myApp.directive('functionValidator', ['ADTService', 'functionsService', function(ADTService, functionsService) {
 
     var functionId;
     var funct;
@@ -73,19 +138,19 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     return {
         restrict: 'A',
         require: 'ngModel',
-        link: function (scope, elm, attrs, ctrl) {
+        link: function(scope, elm, attrs, ctrl) {
 
             functionId = scope.microtask.functionID;
             valid = true;
             allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
-            allFunctionCode  = functionsService.getAllDescribedFunctionCode(functionId);
+            allFunctionCode = functionsService.getAllDescribedFunctionCode(functionId)+ " var debug = null; " ;
 
-            ctrl.$formatters.unshift(function (viewValue) {
+            ctrl.$formatters.unshift(function(viewValue) {
 
                 code = viewValue;
                 validate(code);
 
-                if(errors.length>0){
+                if (errors.length > 0) {
                     ctrl.$setValidity('function', false);
                     ctrl.$error.function_errors = errors;
                     return undefined;
@@ -101,58 +166,63 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     };
 
 
-    function getDescription(ast){
-        var codeLines     = code.split("\n");
+    function getDescription(ast) {
+        var codeLines = code.split("\n");
         var descStartLine = 0;
-        var descEndLine   = ast.loc.start.line ;
-        var descLines     = codeLines.slice(descStartLine, descEndLine);
+        var descEndLine = ast.loc.start.line;
+        var descLines = codeLines.slice(descStartLine, descEndLine);
         return descLines;
     }
 
     // Check the code for errors. If there are errors present, write an error message. Returns true
     // iff there are no errors.
-    function validate(code){
+    function validate(code) {
         errors = [];
         var ast;
 
         // 1. If the text does not contain a function block, display an error and return.
-        if (replaceFunctionCodeBlock(code) == ''){
+        if (replaceFunctionCodeBlock(code) === '') {
             errors.push('No function block could be found. Make sure that there is a line that starts with "function".');
             return false;
         }
-         // 2. If the are syntactical errors displays the error and returns
-        if(hasSyntacticalErrors(code))
-        	return false;
+
+        // 2. If the are syntactical errors displays the error and returns
+        if (hasSyntacticalErrors(code))
+            return false;
+
         // 3. Trys to build the Est if not displays the error and return
         try {
-        	ast = esprima.parse(code, {loc: true});
-        	}
-        catch (e) {
-        	console.log("Error in running Esprima. " + e.name + " " + e.message);
-        	errors.push("Error "+e.message);
-        	return false;
-        }
-        // 4. checks if the are ast Errors and displays it
-    	hasASTErrors(code, ast);
-    	// 5. checks if the are errors in the descriptions structure
-    	hasDescriptionError(ast);
+            ast = esprima.parse(code, {loc: true});
+        } catch (e) {
 
-    	return false;
+            errors.push("Error " + e.message);
+            return false;
+        }
+
+        // 4. checks if the are ast Errors and displays it
+        hasASTErrors(code, ast);
+        // 5. checks if the are errors in the descriptions structure
+        hasDescriptionError(ast);
+
+        return false;
 
     }
 
     // Returns true iff there are syntactical errors
-    function hasSyntacticalErrors()
-    {
+    function hasSyntacticalErrors() {
         var functionCode = allFunctionCode + " " + code;
         var lintResult = -1;
         // try to run JSHINT or catch and print error to the console
-        try       { lintResult = JSHINT(functionCode,getJSHintGlobals()); }
-        catch (e) { console.log("Error in running JSHHint. " + e.name + " " + e.message); }
+        try {
+            lintResult = JSHINT(functionCode, getJSHintGlobals());
+        } catch (e) {
+            console.log("Error in running JSHHint. " + e.name + " " + e.message);
+        }
 
-        if(!lintResult){
+        if (!lintResult) {
+
             errors = errors.concat(checkForErrors(JSHINT.errors));
-            if(errors.length > 0) {
+            if (errors.length > 0) {
                 return true;
             }
         }
@@ -161,14 +231,12 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     }
 
     // returns true iff there are AST errors
-    function hasASTErrors(text, ast)
-    {
-       // console.log(ast);
-    	console.log("hasASTErrors");
+    function hasASTErrors(text, ast) {
         var errorMessages = [];
 
+
         // Check for AST errors
-        if (ast.body.length == 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
+        if (ast.body.length === 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
             errorMessages.push("All code should be in a single function");
         else if (allFunctionNames.indexOf(ast.body[0].id.name) != -1)
             errorMessages.push("The function name '" + ast.body[0].id.name + "' is already taken. Please use another.");
@@ -177,16 +245,10 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
         /*
         if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)
             errorMessages.push("Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.");   */
-
-
-
-        if (errorMessages.length != 0)
-        {
+        if (errorMessages.length !== 0) {
             errors = errors.concat(errorMessages);
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -198,18 +260,15 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
     // A valid type name is any type name in allADTs and the type names String, Number, Boolean followed
     // by zero or more sets of array brackets (e.g., Number[][]).
     // Returns an error message(s) if there is an error
-    function hasDescriptionError(ast)
-    {
-    	console.log("hasDescriptionError");
-        var errorMessages =  [];
+    function hasDescriptionError(ast) {
+        var errorMessages = [];
         var paramKeyword = '@param ';
         var returnKeyword = '@return ';
-        var paramDescriptionNames=[];
+        var paramDescriptionNames = [];
         // Loop over every line of the function description, checking for lines that have @param or @return
         var descriptionLines = getDescription(ast);
 
-        for (var i = 0; i < descriptionLines.length; i++)
-        {
+        for (var i = 0; i < descriptionLines.length; i++) {
             var line = descriptionLines[i];
             errorMessages = errorMessages.concat(checkForValidTypeNameDescription(paramKeyword, line, paramDescriptionNames));
             errorMessages = errorMessages.concat(checkForValidTypeNameDescription(returnKeyword, line));
@@ -217,77 +276,79 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
         //if the description doesn't contain error checks the consistency between the parameter in the descriptions and the
         // ones in the header
-        if(!(ast.body[0].params === undefined) ){
+        if (!(ast.body[0].params === undefined)) {
 
-            var paramHeaderNames=[];
-            $.each(ast.body[0].params, function(index, value)
-            {
+            var paramHeaderNames = [];
+            $.each(ast.body[0].params, function(index, value) {
                 paramHeaderNames.push(ast.body[0].params[index].name);
             });
 
-            errorMessages = errorMessages.concat(checkNameConsistency(paramDescriptionNames,paramHeaderNames));
+            errorMessages = errorMessages.concat(checkNameConsistency(paramDescriptionNames, paramHeaderNames));
         }
-        if (errorMessages.length != 0)
-        {
+        if (errorMessages.length !== 0) {
             errors = errors.concat(errorMessages);
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
     // Checks that, if the specified keyword occurs in line, it is followed by a valid type name. If so,
     // it returns an empty string. If not, an error message is returned.
-    function checkForValidTypeNameDescription(keyword, line, paramDescriptionNames)
-    {
-         var errorMessage = [];
+    function checkForValidTypeNameDescription(keyword, line, paramDescriptionNames) {
+        var errorMessage = [];
         //subtitues multiple spaces with a single space
-        line = line.replace(/\s{2,}/g,' ');
+        line = line.replace(/\s{2,}/g, ' ');
 
         var loc = line.search(keyword);
 
-        if (loc != -1)
-        {
+        if (loc != -1) {
             var type = findNextWord(line, loc + keyword.length);
-            var name = findNextWord(line, loc + keyword.length+type.length+1);
+            var name = findNextWord(line, loc + keyword.length + type.length + 1);
 
 
-            if(paramDescriptionNames!=undefined)
+            if (paramDescriptionNames !== undefined)
                 paramDescriptionNames.push(name);
 
             if (type == -1)
                 errorMessage.push("The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.");
             else if (!ADTService.isValidTypeName(type))
-                errorMessage.push(type + ' is not a valid type name. Valid type names are '
-                  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).');
-            else if (keyword==='@param '&& !isValidName(name))
-                errorMessage.push(name+ ' is not a valid name. Use upper and lowercase letters, numbers, and underscores.');
-            else if (keyword==='@param '&& !functionsService.isValidParamDescription(line))
-                errorMessage.push(line+' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] - [description]".');
-            else if (keyword==='@return ' && name!=-1)
+                errorMessage.push(type + ' is not a valid type name. Valid type names are ' + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).');
+            else if (keyword === '@param ' && !isValidName(name))
+                errorMessage.push(name + ' is not a valid name. Use upper and lowercase letters, numbers, and underscores.');
+            else if (keyword === '@param ' && !isValidParamDescription(line))
+                errorMessage.push(line + ' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] , [description]".');
+            else if (keyword === '@return ' && name != -1)
                 errorMessage.push('The return value must be in the form  " @return [Type]".');
         }
 
         return errorMessage;
     }
 
+
+    //Checks that exists a description of the parameter
+    function isValidParamDescription(line) {
+        var beginDescription = line.indexOf(' , ');
+        if (beginDescription == -1 || line.substring(beginDescription).lenght < 5)
+            return false;
+        else
+            return true;
+    }
+
     // checks that the two vectors have the same value, if not return the errors (array of strings)
-    function checkNameConsistency(paramDescriptionNames,paramHeaderNames)
-    {
+    function checkNameConsistency(paramDescriptionNames, paramHeaderNames) {
 
         var errors = [];
 
-        for( var i=0 ; i<paramHeaderNames.length ; i++){
-            if ( paramDescriptionNames.indexOf(paramHeaderNames[i]) == -1 )
-                errors.push('Write a desciption for the parameter '+paramHeaderNames[i]+'.');
+        for (var i = 0; i < paramHeaderNames.length; i++) {
+            if (paramDescriptionNames.indexOf(paramHeaderNames[i]) == -1)
+                errors.push('Write a desciption for the parameter ' + paramHeaderNames[i] + '.');
         }
 
-        if(errors.length == 0)
-            for( var i=0;i<paramDescriptionNames.length;i++){
-                if (paramHeaderNames.indexOf(paramDescriptionNames[i])==-1){
-                    errors.push('The parameter '+paramDescriptionNames[i] +' does not exist in the header of the function');
+        if (errors.length == 0)
+            for (var i = 0; i < paramDescriptionNames.length; i++) {
+                if (paramHeaderNames.indexOf(paramDescriptionNames[i]) == -1) {
+                    errors.push('The parameter ' + paramDescriptionNames[i] + ' does not exist in the header of the function');
                 }
             }
 
@@ -296,28 +357,24 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
 
     // checks that the name is vith alphanumerical characters or underscore
-    function isValidName(name){
+    function isValidName(name) {
         var regexp = /^[a-zA-Z0-9_]+$/;
-        if (name.search(regexp)==-1) return false;
+        if (name.search(regexp) == -1) return false;
         return true;
     }
 
     // Returns true iff the text contains at least one pseudocall or pseudocode
-    function hasPseudocallsOrPseudocode(text)
-    {
+    function hasPseudocallsOrPseudocode(text) {
         return (text.indexOf('//!') != -1) || (text.indexOf('//#') != -1);
     }
 
     // Replaces function code block with empty code. Function code blocks must start on the line
     // after a function statement.
     // Returns a block of text with the code block replaced or '' if no code block can be found
-    function replaceFunctionCodeBlock(text)
-    {
+    function replaceFunctionCodeBlock(text) {
         var lines = text.split('\n');
-        for (var i = 0; i < lines.length; i++)
-        {
-            if (lines[i].startsWith('function'))
-            {
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith('function')) {
                 // If there is not any more lines after this one, return an error
                 if (i + 1 >= lines.length - 1)
                     return '';
@@ -338,11 +395,33 @@ myApp.directive('functionValidator',['ADTService','functionsService',function(AD
 
 }]);
 
-myApp.directive('pressEnter', function () {
-    return function (scope, element, attrs) {
-        element.bind("keydown keypress", function (event) {
-            if(event.which === 13) {
-                scope.$apply(function (){
+
+
+myApp.directive('functionConvections', function(){
+    // Runs during compile
+    return {
+        scope: true, // {} = isolate, true = child, false/undefined = no change
+        controller: function($scope, $element, $attrs, $transclude) {
+            $scope.pseudocall='function foo() { \n'+
+                        '\tvar values = [ 128, 309 ];\n'+
+                        '\t//# calc the least common multiple of values\n'+
+                        '\tvar avg;\n'+
+                        '\t//! avg=average(values) \n'+
+                        '\treturn { average: avg, lcm: lcm }; \n' +
+                        '}';
+
+        },
+        restrict: 'EA', 
+        templateUrl: '/html/templates/function_conventions.html'
+    };
+});
+
+myApp.directive('pressEnter', function() {
+    return function(scope, element, attrs) {
+        
+        element.bind("keydown keypress", function(event) {
+            if (event.which === 13 && !event.shiftKey && !event.ctrlKey) {
+                scope.$apply(function() {
                     scope.$eval(attrs.pressEnter);
                 });
 
@@ -351,6 +430,29 @@ myApp.directive('pressEnter', function () {
         });
     };
 });
+
+myApp.directive('submitHotKey', function() {
+    return function(scope, element, attrs) {
+        element.bind("keydown keypress", function(event) {
+            if (event.which === 13 && event.ctrlKey) {
+                console.log("CTRL + ENTER")
+                scope.$apply(function() {
+                    scope.$eval(attrs.submitHotKey);
+                });
+
+                event.preventDefault();
+            }
+        });
+    };
+});
+myApp.directive('focus', function(){
+  return {
+    link: function(scope, element) {
+      element[0].focus();
+    }
+  };
+});
+
 
 myApp.directive('syncFocusWith', function($timeout, $rootScope) {
     return {
@@ -365,20 +467,179 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
                 } else if (currentValue === false && previousValue) {
                     $element[0].blur();
                 }
-            })
+            });
         }
-    }
+    };
 });
 
-myApp.directive('resizer', function($document) {
 
-    
-    
+
+//////////////////////
+//  JAVA HELPER     //
+//////////////////////
+
+
+myApp.directive('javascriptHelper', ['$compile', '$timeout', '$http', 'ADTService', function($compile, $timeout, $http, ADTService) {
+
+    return {
+        restrict: "EA",
+        templateUrl: "/html/templates/java_tutorial.html",
+
+        link: function($scope, $element, $attributes) {
+
+            $http.get('/js/javascriptTutorial.txt').success(function(code) {
+                $scope.javaTutorial = code;
+            });
+
+        },
+        controller: function($scope, $element) {
+
+
+
+            $scope.aceLoaded = function(_editor) {
+                _editor.setOptions({
+                    maxLines: Infinity
+                });
+
+            };
+        }
+    };
+
+}]);
+
+
+myApp.directive('collapsableList', ['$compile', '$timeout', function($compile, $timeout) {
+
+    return {
+        restrict: "E",
+        scope: {
+            dataObjects     : "=data",
+            addData         : "=",
+            togglerTemplate : "@togglerTemplate",
+            elementTemplate : "@elementTemplate",
+            classCondition  : "@listElementClassCondition"
+        },
+        link: function($scope, $element, $attributes) {
+
+            var classCondition = '';
+            if ($attributes.listElementClassCondition)
+                classCondition = 'ng-class="{' + $scope.classCondition + '}"';
+            var toCompile = '<ul class="collapsable-list">' + 
+                                '    <li ng-repeat="(key,data) in dataObjects" >' + 
+                                '        <div class="toggler" ng-click="activate( key )" class="" ' + classCondition + '>' + 
+                                '           <span class="closed glyphicon glyphicon-chevron-right"></span>' +
+                                '           <span class="open   glyphicon glyphicon-chevron-down"></span>' +
+                                '           <ng-include src="togglerTemplate"></ng-include>' +
+                                '        </div>' + 
+                                '        <div class="element">' + 
+                                '           <div class="element-body" ng-include="elementTemplate"></div>' + 
+                                '       </div>' + 
+                                '    </li>' + 
+                                '</ul>';
+
+
+            $scope.activeElement = 0;
+            $scope.activate = function(key) {
+                /*
+                activeElement = key;
+                
+                var $listElement = $element.find('.collapsable-list li:nth-child('+(parseInt(key)+1)+')') ;
+
+                // remove class active for all togglers
+                $element.find('.toggler').removeClass('active');
+                // reset height for all elements
+                $element.find('.element').height(0);
+
+                // add class active to the toggler
+                $listElement.find('.toggler').addClass('active');
+                // set max height for current element
+                var $toToggle = $listElement.find('.element');
+                $toToggle.height( $toToggle.find('.element-body').outerHeight() );*/
+            }
+
+
+            var $list = $(toCompile);
+            $element.append($list);
+            $compile($element.contents())($scope);
+
+            
+            $timeout(function(){
+                $scope.activate(0);
+            },300);
+
+        },
+        controller: function($scope, $element) {
+
+        }
+    };
+}]);
+
+myApp.directive('adtBar', ['$compile', '$timeout', 'ADTService', function($compile, $timeout, ADTService) {
+
+    return {
+        restrict: "EA",
+
+        link: function($scope, $element, $attributes) {
+
+            $scope.ADTs = ADTService.getAllADTs();
+
+
+            angular.forEach($scope.ADTs, function(value, key) {
+
+                var childScope = $scope.$new();
+                childScope.ADT = value;
+                var toggler = $("<h3></h3>");
+                //  toggler.attr('id',value.name+'Toggler');
+                toggler.addClass('toggler-adt');
+                toggler.html(value.name);
+
+                var elementBody = "<ng-include src=\"'/html/templates/adt_detail.html'\"></ng-include>";
+                elementBody = $('<div class="element-body-adt">' + elementBody + '</div>');
+
+                var element = $("<div></div>");
+                element.attr('id', value.name + 'Element');
+                element.addClass('element-adt');
+
+                element.append(elementBody);
+
+
+                $element.append(toggler);
+                $element.append(element);
+                $compile($element.contents())(childScope);
+            });
+
+            function activateElement(el) {
+                // remove class active for all togglers
+                $element.find('.toggler-adt').removeClass('active');
+                // reset height for all elements
+                $element.find('.element-adt').height(0);
+
+                // add class active to the toggler
+                el.addClass('active');
+                // set max height for current element
+                var successor = el.next();
+                successor.height(successor.find('.element-body-adt').outerHeight());
+            }
+
+            $element.find('.toggler-adt').on('click', function() {
+                activateElement($(this));
+            })
+
+            $timeout(function(){
+                $element.find('.toggler-adt:first-child').addClass('active');
+            },100);
+
+        }
+    }
+}]);
+
+
+myApp.directive('resizer', function($document) {
 
     return function($scope, $element, $attrs) {
         // calculate the sum of the 2 element's dimensions in percentage
         // respect to the parent element dimension
-        // - height: if vertical resizer 
+        // - height: if vertical resizer
         // - width:  if horizontal resizer
         // and position the resize bar in between the elements
 
@@ -393,68 +654,80 @@ myApp.directive('resizer', function($document) {
 
             if ($attrs.resizer == 'vertical') {
                 var datas = {
-                    leftX:  $($attrs.resizerLeft).offset().left,
-                    rightX: $($attrs.resizerRight).offset().left,
-                    mouseX: event.pageX
-                }
-                //$element.css({ left: $($attrs.resizerRight).position().left + 'px' });
+                        leftX: $($attrs.resizerLeft).offset().left,
+                        rightX: $($attrs.resizerRight).offset().left,
+                        mouseX: event.pageX
+                    }
+                    //$element.css({ left: $($attrs.resizerRight).position().left + 'px' });
 
-                var totalSizePx  = $($attrs.resizerLeft).width()+$($attrs.resizerRight).width();
-                var totalSizePer = Math.round(totalSizePx / $element.parent().width() * 100);
+                var totalSizePx = $($attrs.resizerLeft).outerWidth() + $element.outerWidth() + $($attrs.resizerRight).outerWidth();
+                var totalSizePer = Math.round(totalSizePx / $element.parent().outerWidth() * 100);
 
-                var leftWidthPer  = Math.round( (datas.mouseX-datas.leftX) / $element.parent().width() * 100 );
+                var leftWidthPer = Math.round((datas.mouseX - datas.leftX) / $element.parent().outerWidth() * 100);
 
-                if( $attrs.resizerMain == "left" ){
-                    
-                    
-                    if(leftWidthPer < 0)            leftWidthPer = 0;
-                    if(leftWidthPer > totalSizePer) leftWidthPer = totalSizePer;
-                    if($attrs.resizerMin && leftWidthPer < $attrs.resizerMin) leftWidthPer = $attrs.resizerMin;
-                    if($attrs.resizerMax && leftWidthPer > $attrs.resizerMax) leftWidthPer = $attrs.resizerMax;
+                if ($attrs.resizerMain == "left") {
+
+
+                    if (leftWidthPer < 0) leftWidthPer = 0;
+                    if (leftWidthPer > totalSizePer) leftWidthPer = totalSizePer;
+                    if ($attrs.resizerMin && leftWidthPer < $attrs.resizerMin) leftWidthPer = $attrs.resizerMin;
+                    if ($attrs.resizerMax && leftWidthPer > $attrs.resizerMax) leftWidthPer = $attrs.resizerMax;
 
                     var rightWidthPer = totalSizePer - leftWidthPer;
 
-                } else if( $attrs.resizerMain == "right" ){
+                } else if ($attrs.resizerMain == "right") {
 
-                    var rightWidthPer  = totalSizePer - leftWidthPer ;
+                    var rightWidthPer = totalSizePer - leftWidthPer;
 
-                    if(rightWidthPer < 0)            rightWidthPer = 0;
-                    if(rightWidthPer > totalSizePer) rightWidthPer = totalSizePer;
-                    if($attrs.resizerMin && rightWidthPer < $attrs.resizerMin) rightWidthPer = $attrs.resizerMin;
-                    if($attrs.resizerMax && rightWidthPer > $attrs.resizerMax) rightWidthPer = $attrs.resizerMax;
+                    if (rightWidthPer < 0) rightWidthPer = 0;
+                    if (rightWidthPer > totalSizePer) rightWidthPer = totalSizePer;
+                    if ($attrs.resizerMin && rightWidthPer < $attrs.resizerMin) rightWidthPer = $attrs.resizerMin;
+                    if ($attrs.resizerMax && rightWidthPer > $attrs.resizerMax) rightWidthPer = $attrs.resizerMax;
 
                     //var leftWidthPer = totalSizePer - rightWidthPer;
                 }
 
-                $($attrs.resizerLeft).css({ width: leftWidthPer + '%' });
-                $($attrs.resizerRight).css({ width: rightWidthPer + '%' });
-            
+                $($attrs.resizerLeft).css({
+                    width: leftWidthPer + '%'
+                });
+                $($attrs.resizerRight).css({
+                    width: rightWidthPer + '%'
+                });
+
             } else {
                 var datas = {
-                    topY:  $($attrs.resizerTop).offset().top ,
-                    bottomY: $($attrs.resizerBottom).position().top ,
+                    topY: $($attrs.resizerTop).offset().top,
+                    bottomY: $($attrs.resizerBottom).position().top,
                     mouseY: event.pageY
                 }
 
-                var totalSizePx  = $($attrs.resizerTop).height()+$($attrs.resizerBottom).height();
-                var totalSizePer = Math.round(totalSizePx / $element.parent().height() * 100);
+                var totalSizePx = $($attrs.resizerTop).outerHeight() + $element.outerHeight() + $($attrs.resizerBottom).outerHeight();
+                var resizerHeightPx = $element.outerHeight();
+                var topHeightPx = (datas.mouseY - datas.topY);
+                var bottomHeightPx = totalSizePx - resizerHeightPx - topHeightPx;
 
-                var topHeightPer   = Math.round( (datas.mouseY-datas.topY) / $element.parent().height() * 100 );
-                
-                if( $attrs.resizerMain == "top" ){
+                if ($attrs.resizerMain == "top") {
 
-                    var bottomHeightPer = totalSizePer - topHeightPer;
+
 
                 } else {
 
-                    var bottomHeightPer = totalSizePer - topHeightPer;
+
                 }
 
-                $($attrs.resizerTop).css({ height: topHeightPer + '%' });
-                $($attrs.resizerBottom).css({ height: bottomHeightPer + '%' });
+                if (topHeightPx + resizerHeightPx + bottomHeightPx == totalSizePx)
+                    console.log("MATCH");
+                else
+                    console.log("DONT MATCH");
 
-                console.log( [datas.mouseY,datas.topY,topHeightPer] );
-                console.log($($attrs.resizerTop).position());
+
+                $($attrs.resizerTop).css({
+                    height: topHeightPx + 'px'
+                });
+                $($attrs.resizerBottom).css({
+                    height: bottomHeightPx + 'px'
+                });
+
             }
 
 
@@ -467,3 +740,422 @@ myApp.directive('resizer', function($document) {
         }
     };
 });
+
+
+
+/////////////////////
+//  NEWS DIRECTIVE //
+/////////////////////
+
+myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtasksService, functionsService) {
+    return {
+        restrict: 'E',
+        templateUrl: '/html/templates/panels/news_panel.html',
+        scope: {
+            //focusValue: "=syncFocusWith"
+        },
+        link: function($scope, $element, attrs) {
+            console.log("NEWS DIRECTIVE INITIALIZED");
+        },
+        controller: function($scope, $element) {
+            var loadData = {
+                'WriteFunction': function(news) {
+
+                    news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
+                },
+
+                'WriteTestCases': function(news) {
+
+                    news.testcases = news.microtask.submission.testCases;
+
+                    var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + news.microtask.functionID + '/'
+                    + news.microtask.submission.functionVersion));
+                    var functionUnderTest = functionUnderTestSync.$asObject();
+
+                    functionUnderTest.$loaded().then(function(){
+
+                        news.editorCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
+                    });
+                },
+
+                'ReuseSearch': function(news) {
+
+                },
+                'WriteTest': function(news) {
+
+                    //function
+                    var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + news.microtask.functionID + '/'
+                    + news.microtask.submission.functionVersion));
+                    news.functionUnderTest = functionUnderTestSync.$asObject();
+
+                    news.functionUnderTest.$loaded().then(function(){
+
+                        news.editorCode = functionsService.renderDescription(news.functionUnderTest)+news.functionUnderTest.header;
+                    });
+
+                    //test case
+                    news.testcases=[{}];
+                    news.testcases[0].text=news.microtask.owningArtifact;
+                    //test
+                    news.test = news.microtask.submission;
+                    
+                },
+                'WriteFunctionDescription': function(news) {
+
+                    news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
+                },
+                'WriteCall': function(news) {
+
+                    news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
+
+                },
+                'Review': function(news) {
+
+                    news.microtask = microtasksService.get(news.microtask.microtaskKeyUnderReview);
+                    news.microtask.$loaded().then(function() {
+
+                        loadData[news.microtask.type](news);
+
+                    });
+                }
+            };
+
+
+            // create the reference and the sync
+            var ref = new Firebase($rootScope.firebaseURL + '/workers/' + $rootScope.workerId + '/newsfeed');
+            var sync = $firebase(ref);
+
+            // bind the array to scope.leaders
+            $scope.news = sync.$asArray();
+            $scope.loadMicrotask = function(news) {
+
+
+                news.microtask = microtasksService.get(news.microtaskKey);
+                news.microtask.$loaded().then(function() {
+                    //if the microtask is a review
+                    if (news.microtask.type == "Review") {
+                        news.isReview = true;
+                        news.qualityScore = news.microtask.submission.qualityScore;
+                        news.reviewText = news.microtask.submission.reviewText;
+                    } else if (angular.isDefined(news.microtask.review)) {
+
+                        news.qualityScore = news.microtask.review.qualityScore;
+                        news.reviewText = news.microtask.review.reviewText;
+                    }
+                    loadData[news.microtask.type](news);
+                });
+
+            };
+        }
+    };
+});
+
+
+myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert) {
+    return {
+        restrict: 'E',
+        templateUrl: '/html/templates/panels/chat_panel.html',
+        scope: {
+            //focusValue: "=syncFocusWith"
+        },
+        link: function($scope, $element, attrs) {
+
+            $rootScope.chatActive = false;
+            $rootScope.unreadedMessages=0;
+            $rootScope.$on('toggleChat', function() {
+                $element.find('.chat').toggleClass('active');
+                $element.find('.output').scrollTop($element.find('.output').height());
+                $rootScope.chatActive= ! $rootScope.chatActive;
+                $rootScope.unreadedMessages=0;
+            });
+        },
+        controller: function($scope, $element, $rootScope) {
+            var $output = $element.find('.output');
+            var initializationTime=0;
+            var workerHandle='';
+            var text='';
+            var myAlert;
+            var chatLoaded=false;
+            // create the reference and the sync
+            var chatRef = new Firebase($rootScope.firebaseURL + '/chat').limit(10);
+            var sync = $firebase(chatRef);
+
+            // bind the array to scope.leaders
+            $scope.messages = sync.$asArray();
+            $scope.messages.$loaded().then(function(){chatLoaded=true;});
+            $scope.messages.$watch(function(event) {
+                if (event.event == 'child_added') {
+
+                    //if the chat is not visible
+                    if(! $rootScope.chatActive&&chatLoaded){
+                        $rootScope.unreadedMessages++;
+                        //if the worker is the same of the previous message and are trascorred less than 3 seconds hides the active alert and add the new text to the new one
+                        if((new Date().getTime())-initializationTime<4000 && workerHandle==$scope.messages[$scope.messages.length - 1 ].workerHandle){
+
+                            text+='<br> '+$scope.messages[$scope.messages.length - 1 ].text;
+                        }
+                        else{
+                            workerHandle=$scope.messages[$scope.messages.length - 1 ].workerHandle;
+                            text=$scope.messages[$scope.messages.length - 1 ].text;
+                        }
+                        if(myAlert!==undefined) myAlert.hide();
+                        //creates the new alert
+                        myAlert = $alert({title: workerHandle, content: text , placement: 'bottom-right', duration:4 ,template : '/html/templates/alert/alert_chat.html', keyboard: true, show: true});
+                        //saves time of cration of the new alert
+                        initializationTime=new Date().getTime();
+
+                    }
+                   // console.log($element.find('.output'));
+                    $element.find('.output-wrapper').animate({
+                        scrollTop: 650 //$element.find('.output').height()
+                    }, 100);
+
+                }
+            });
+
+            $scope.asd = "";
+            // key press function
+            $scope.addMessage = function() {
+                $scope.messages.$add({
+                    text: $scope.asd,
+                    createdAt: Date.now(),
+                    workerHandle: $rootScope.workerHandle
+                }).then(function(ref) {
+
+                });
+                $scope.asd = "";
+                return true;
+            };
+        }
+    };
+});
+
+
+myApp.directive('tutorial', function($compile) {
+    return {
+        restrict: 'E',
+
+        scope: {
+            title: "@"
+        },
+        link: function($scope, $element, attrs) {
+            // $element.prepend('<div style="position:absolute;width:100%;height:100%;background-color:black;opacity:0.7"></div>')
+        },
+        controller: function($scope, $element) {
+            $scope.currentStep = 0;
+            $scope.totSteps = $element.find('step').length;
+
+            var $tutorialContainer;
+            var $overlay;
+            var $content;
+            var $buttonBar;
+            var circlesHtml;
+            var $circles;
+            
+
+            $scope.init = function() {
+
+                console.log("STARTING THE TUTORIAL");
+                console.log($tutorialContainer);
+
+
+                $tutorialContainer = $('<tutorial-container></tutorial-container>');
+
+                // create overlay and append to the $element
+                $overlay = $('<div class="overlay"></div>');
+                $content = $('<div class="content"></div>');
+                $buttonBar = $('<div class="button-bar"><div class="title">CrowdCode Tutorial: {{title}} </div><button class="btn btn-primary btn-next" ng-click="nextStep()">next step</button></div>');
+
+                circlesHtml = '<div class="circles">' +
+                    '<div ng-repeat="n in [] | range:totSteps" class="circle"><div class="{{ n >= currentStep ? \'\' : \'completed\'}}"></div></div>' +
+                    '</div>';
+                $circles = $(circlesHtml);
+
+                // append the circles to the button bar
+                $buttonBar.append($circles);
+
+                // append overlay, content and button bar to the element
+                $tutorialContainer.append($overlay);
+                $tutorialContainer.append($content);
+                $tutorialContainer.append($buttonBar);
+
+                // compile the element
+                $compile($tutorialContainer.contents())($scope);
+
+                // append the element to the body
+                $('body').append($tutorialContainer);
+
+                // resize the main wrapper
+                $(document).find('.main-wrapper').css('bottom', $buttonBar.outerHeight());
+
+                // show the overlay 
+                $overlay.animate({
+                    top: 0,
+                    left: 0,
+                    width: 0,
+                    height: 0,
+                    opacity: 1
+                }, 50);
+
+                // set the currentStep to 0 - will be incremented to 1 in nextStep()
+                currentStep = 0;
+
+                // visualize the first step
+                this.nextStep();
+            }
+
+            $scope.destroy = function() {
+
+                // remove the tutorial from the document
+                $overlay = $content = $circles = $buttonBar = null;
+                $tutorialContainer.remove();
+                $tutorialContainer = null;
+
+                $(document).find('.main-wrapper').css('bottom', 0);
+            }
+
+            $scope.nextStep = function() {
+                // increment current Step (first step is = 1)
+                $scope.currentStep += 1;
+                
+                // if the tutorial is finished, destroy it
+                if ($scope.currentStep > $scope.totSteps) {
+                    $scope.currentStep = 0;
+                    $scope.destroy();
+                    return;
+                }
+
+                // retrieve what is needed for the current step
+                var $step           = $element.find('step:nth-child(' + $scope.currentStep + ')');
+                var $stepTag        = $(document).find($step.find('tag').html());
+                var stepContent     = $step.find('content').html();
+                var contentPosition = $step.find('content-position').html();
+
+                
+
+                // HIDE THE CONTENT
+                $content.animate({ opacity: 0 }, 500, function() {
+
+                    // DARKEN THE OVERLAY
+                    $overlay.animate({ backgroundColor: "black"}, 500, function() {
+
+                        
+                        // MOVE AND RESIZE THE OVERLAY TO THE CURRENT STEP TAG
+                        $overlay.animate({
+                            top    : $stepTag.offset().top   ,
+                            left   : $stepTag.offset().left  ,
+                            width  : $stepTag.outerWidth()   ,
+                            height : $stepTag.outerHeight()
+
+                            //backgroundColor: "white"
+                        }, 500, function() {
+
+
+                            // initialize offset with the tag offset
+                            var offsetTop    = 0;
+                            var offsetLeft   = 0;
+                            var width  = 200;
+                            var height = 200;
+                            var margin = 20;
+                            // adjust the content size and position
+                            switch(contentPosition){
+                                case 'left':
+                                    offsetLeft = -width -margin ; 
+                                    offsetTop  = 0 ;
+                                break;
+
+                                case 'right':
+                                    offsetLeft = $overlay.outerWidth() +margin ; 
+                                    offsetTop  = 0 ;
+                                break;
+
+                                case 'top':
+                                    offsetLeft = 0  ; 
+                                    offsetTop  = -height -margin ;
+                                break;
+
+                                case 'bottom':
+                                    offsetLeft = 0  ; 
+                                    offsetTop  = $overlay.outerHeight() +margin ;
+                                break;
+
+                                default: 
+
+                            }
+
+                            // INJECT CONTENT HTML, MOVE, RESIZE and SHOW IT 
+                            $content.html(stepContent);
+                            
+                            $content.css('top'   , $stepTag.offset().top  + offsetTop   )
+                                    .css('left'  , $stepTag.offset().left + offsetLeft  )
+                                    .css('width' , width)
+                                    .css('height', height);
+                                                      
+                            $content.animate({
+                                // top     : $stepTag.offset().top  + offsetTop  ,
+                                // left    : $stepTag.offset().left + offsetLeft ,
+                                // width   : width ,
+                                // height  : height ,
+                                opacity : 1
+                            }, 500);
+                        });
+                    });
+                });
+
+            };
+
+            
+            $scope.$on('tutorial-'+$scope.title,function(){
+                console.log("INITIALIZING THE TUTORIAL ");
+                $scope.init();
+            });
+        }
+
+    };
+});
+
+// USED FOR UPLOADING THE USER PICTURE
+myApp.directive('fileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+            
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+
+// VIEWS THE STATS
+myApp.directive('projectStats', function($rootScope,$firebase) {
+
+    return {
+        restrict: 'E',
+        scope: true,
+        template: '<b>Stats:</b><span class="stats"><span><span class="badge">{{microtaskCountObj.$value}}</span> microtasks</span><span><span class="badge">{{functionsCount}}</span> functions</span><span><span class="badge">{{testsCount}}</span> tests</span></span>',
+        link: function($scope, $element) {
+
+            $scope.microtaskCountObj  = $firebase(new Firebase($rootScope.firebaseURL+'/status/microtaskCount')).$asObject();
+
+            var functionsRef = new Firebase($rootScope.firebaseURL+'/artifacts/functions/');
+            $scope.functionsCount = 0;
+            functionsRef.on('child_added',function (snapshot){
+                $scope.functionsCount ++;
+            });
+        
+            var testsRef = new Firebase($rootScope.firebaseURL+'/artifacts/tests');
+            $scope.testsCount = 0;
+            testsRef.on('child_added',function(snapshot){
+                $scope.testsCount ++;
+            });
+
+        }
+    };
+});
+
+

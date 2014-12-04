@@ -1,0 +1,18 @@
+
+<div>
+	<span>{{ADT.description}} </span><br>
+	<div ng-if="ADT.structure.length>0">
+		<b>Data Structure</b><br>
+		<span>Name: {{ADT.name}}</span><br>
+		<span>{</span><br>
+		<div ng-repeat="field in ADT.structure" >
+			<span>{{field.type}} : {{field.name}};</span><br>
+		</div>
+		<span>}</span>
+	</div>
+
+	Example:
+	<div ace-read-json ng-model="ADT.fullExample" ></div>
+</div>
+
+

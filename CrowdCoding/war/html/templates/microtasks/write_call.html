@@ -1,43 +1,82 @@
 <div ng-controller="WriteCallController">
 
-	 <h2 id="taskHeader">
-	 	<span id="taskTitle" >{{ microtask.type }}</span>
-	 	<span id="taskPoints" class="label label-default">{{ microtask.points}} points</span>
-	 </h2>
-
-
-	 <br />
-	<div id="taskDescription" class="bg-success">
-		<p>
-		The crowd found the following function
-		<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : readonlyFunctionCodemirrorLoaded }"></div>
-
-
-		for the <span class="highlightPseudoCall">pseudocall below</span>:<BR>
-
-			<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : readonlyCodemirrorLoaded }"></div>
-			Can you replace the pseudocall with a call to this function, or find another way to do it?
-		</p>
-
-	 	<ng-include src="'/html/templates/type_browser.html'"></ng-include>
-	</div>
-
-
-	<div id="taskForm" >
-		<div class="codemirrorBox" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>
-		<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-		<ul class="help-block" ng-show="form.code.$error.function_errors.length > 0">
-			<span>There are some errors. Please fix them before submit:</span>
-			<ul ng-repeat="error in form.code.$error.function_errors track by $id($index)">
-				<li>{{error}}</li>
+	 <div class="section section-description " >
+		<div class="section-content no-padding" >
+			<ul class="microtask-details clearfix">
+				<li>{{datas.title}}</li>
+				<li>
+					<span>{{datas.submitValue}} points</span>
+				</li>
+				<li>
+					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+				</li>
 			</ul>
-		</ul>
+		</div>
 	</div>
 
+	<div class="section section-description">
+		<div class="section-title" >
+		JOB DESCRIPTION
+		</div>
+		<div class="section-content" >
+
+
+			<div ng-show="microtask.reissuedFrom !== undefined" >
+				This microtask has been reissued after a low score review for the following reason: <br />
+				<b>{{reissuedMicrotask.review.reviewText}}</b> <br />
+				Can you fix the problem that the reviewer found?<br>
+			</div>
+
+			The crowd found that the pseudocall:<span class="pseudoCall">{{microtask.pseudoCall}}</span>
+			can be solved using the function below.
+			Can you replace the pseudocall with a call to this function, or find another way to do it?
+
+		</div>
+	</div>
+	<div class="section section-description">
+		<div class="section-title" >
+			FUNCTION SIGNATURE
+		</div>
+		<div class="section-content no-padding" >
+			<code-mirror-readonly code="microtask.calleeFullDescription"></code-mirror-readonly>
+		</div>
+	</div>
+
+	<alertcontainer></alertcontainer>
+
+	<div class="section-cols" >
+		<div class="container-flex-row">
+			<div class="section section-help" style="width:30%">
+				<div class="section-title" >
+					EXAMPLE
+				</div>
+				<div class="section-content" >
+					<div class="accordion-inner">
+						<adt-bar></adt-bar>
+					</div>
+				</div>
+			</div>
+			<div class="section section-form" style="width:70%;" >
+				<div id="taskForm" >
+					
+					<div class="codemirrorBox" ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" ></div>
+					<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+					<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">
+						<span>There are some errors. Please fix them before submit:</span>
+						<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
+							<li>{{error}}</li>
+						</ul>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!--
 	<div class="task-buttons pull-right">
-		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid" >Submit</button>
+		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || testCases.length==0" >Submit</button>
 		<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
 	</div>
 	<div class="clearfix"></div>
-
+-->
 </div>

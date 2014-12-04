@@ -1,0 +1,21 @@
+<div class="modal" tabindex="-1" role="dialog" ng-controller="UserProfileController">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" ng-click="$hide()">&times;</button>
+				<h4 class="modal-title">Profile picture</h4>
+			</div>
+			<div class="modal-body">
+				<img ng-src="{{imageUrl}}" alt="{{workerHandle}}" style="width:150px" class="pull-left" />
+				<span class="pull-left">
+					<input type="file" file-model="image"/>
+	    			<button ng-click="uploadFile()">Change Profile Picture</button>
+    			</span>
+    			<span class="clearfix"></span>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

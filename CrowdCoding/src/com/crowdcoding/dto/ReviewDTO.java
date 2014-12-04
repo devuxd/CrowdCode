@@ -5,7 +5,8 @@ public class ReviewDTO extends DTO
 {
 	public String messageType = "ReviewDTO";
 	
-	public long microtaskIDReviewed;
+	public String microtaskIDReviewed;
 	public String reviewText;
+	public String microtaskSubmission;
 	public int qualityScore;
 }
