@@ -231,8 +231,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask', function(event, formData) {
 		console.log($scope.microtask);
-
-		if ($scope.microtask == undefined)
+		console.log(formData);
+		if ($scope.microtask === undefined)
 			return;
 
 		$http.post('/' + $rootScope.projectId + '/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id, formData).

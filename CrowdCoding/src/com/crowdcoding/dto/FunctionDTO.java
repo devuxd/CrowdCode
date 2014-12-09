@@ -7,7 +7,7 @@ import java.util.List;
 public class FunctionDTO extends DTO
 {
 	public String messageType = "FunctionDTO";
-	
+
 	public Long testId;
 	public String description;
 	public String returnType;
@@ -15,12 +15,12 @@ public class FunctionDTO extends DTO
 	public List<String> paramTypes = new ArrayList<String>();
 	public List<String> paramDescriptions = new ArrayList<String>();
 	public String header;
-	public String name;	
+	public String name;
 	public String code = "";
-	public List<String> calleeNames = new ArrayList<String>();
+	public List<Long> calleeIds = new ArrayList<Long>();
 	public List<MockDTO> mocks = new ArrayList<MockDTO>();
 	public Boolean autoSubmit;
-	
+
 	public String toString()
 	{
 		if(testId == null)
@@ -29,25 +29,25 @@ public class FunctionDTO extends DTO
 		}
 		return description + "\n" + " function " + name + "test case number of function disputed: " + testId;
 	}
-	
-	
+
+
 	public String getCompleteDescription()
 	{
 		String fullDescription="/**\n" + description + "\n\n";
-		
-					
-    	
-	
+
+
+
+
     	for(int i=0; i<paramNames.size(); i++)
 			{
 			if(paramDescriptions.size()>i)
-				fullDescription += "  @param " + paramTypes.get(i) + ' ' + paramNames.get(i) + " - " + paramDescriptions.get(i) + "\n"; 
-			
+				fullDescription += "  @param " + paramTypes.get(i) + ' ' + paramNames.get(i) + " - " + paramDescriptions.get(i) + "\n";
+
 			}
-		
-		
+
+
 		fullDescription += "\n  @return " + returnType + " \n**/\n\n";
-		
+
 		return fullDescription;
 	}
 }

@@ -470,7 +470,7 @@ public class CrowdServlet extends HttpServlet
 
 
             	// logout inactive workers
-            	//project.logoutInactiveWorkers();
+            	project.logoutInactiveWorkers();
 
             	// If the user does not have a microtask assigned, get them a microtask.
             	Key<Microtask> microtaskKey = project.lookupMicrotaskAssignment(workerID);
