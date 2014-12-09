@@ -19,14 +19,13 @@
 		JOB DESCRIPTION
 
 		</div>
-			<div ng-show="microtask.reissuedFrom !== undefined" >
-				This microtask has been reissued after a low score review for the following reason: <br />
-				<b>{{reissuedMicrotask.review.reviewText}}</b> <br />
-				Can you fix the problem that the reviewer found?<br>
-			</div>
-			Can you write the description of the function that will replace the pseudocall in the following function code?<br>
-			<span class="pseudoCall">{{ microtask.callDescription}}</span>
+		<div ng-show="microtask.reissuedFrom !== undefined" >
+			This microtask has been reissued after a low score review for the following reason: <br />
+			<b>{{reissuedMicrotask.review.reviewText}}</b> <br />
+			Can you fix the problem that the reviewer found?<br>
 		</div>
+		Can you write the description of the function that will replace the pseudocall in the following function code?<br>
+		<span class="pseudoCall">{{ microtask.callDescription}}</span>
 	</div>
 
 	<div class="section section-description">
@@ -34,7 +33,6 @@
 			FUNCTION WITH PSEUDOCALL
 		</div>
 		<div class="section-content no-padding" >
-			<!--<div class="readOnlyCodemirror" ui-codemirror="{ onLoad : codemirrorLoaded }"></div>-->
 			<code-mirror-readonly code="code"></code-mirror-readonly>
 		</div>
 	</div>

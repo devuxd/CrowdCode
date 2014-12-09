@@ -29,9 +29,25 @@
 			</div>
 			<div class="section-content" ng-if="review.microtask.promptType == 'CORRECT_TEST_CASE'" >
 				The worker was asked to rewrite the test case
-				<div class="alert alert-info" >{{review.microtask.disputedTestCase }}</div>
-				that the crowd put in dispute for the following reason:
-				 <div class="alert alert-info"> {{review.microtask.disputeDescription }} </div>
+				<div class="form-group">
+					<input type="text"
+					class="form-control"
+					disabled="true"
+					name="disputedTestCase"
+					ng-model="review.microtask.disputedTestCase"
+					>
+				</div>
+				<br>
+				that the crowd put in dispute for the following reason:<br>
+				<div class="form-grou has-error">
+					<input type="text"
+					class="form-control"
+					disabled="true"
+					name="disputedTestCase"
+					ng-model="review.microtask.disputeDescription"
+					>
+				</div>
+				<br>
 				Can you review this work?
 			</div>
 	
@@ -65,14 +81,27 @@
 			</div>
 			<div ng-if="! review.microtask.submission.inDispute" class="section-content" >
 				The worker was asked to write a test for the following case:
-				<div class="alert alert-info">{{review.microtask.owningArtifact}}</div>
+				<div class="form-group">
+					<input type="text"
+					class="form-control"
+					disabled="true"
+					name="disputedTestCase"
+					ng-model="review.microtask.owningArtifact"
+					>
+				</div><br/>
 				of the function below. Can you rate this work?
 			</div>
 			<div ng-if="review.microtask.submission.inDispute" class="section-content" >
 				The worker disputed the test that the crowd has written for the following case:
-				<div class="alert alert-info">{{review.microtask.owningArtifact}}</div>
-				of the function below.
-				<br /> Can you rate this dispute?
+				<div class="form-group">
+					<input type="text"
+					class="form-control"
+					disabled="true"
+					name="disputedTestCase"
+					ng-model="review.microtask.owningArtifact"
+					>
+				</div>
+				<br/> Can you rate this dispute?
 			</div>
 		</div>
 		<div class="section section-description">
@@ -108,7 +137,14 @@
 		<div ng-if="review.microtask.submission.inDispute" class="section section-description-2">
 			<div class="section-title" >dispute reason</div>
 			<div class="section-content" >
-				<div class="alert">{{review.microtask.submission.disputeText}}</div>
+				<div class="form-group has-error">
+					<input type="text"
+					class="form-control"
+					disabled="true"
+					name="disputedTestCase"
+					ng-model="review.microtask.submission.disputeText"
+					>
+				</div>
 			</div>
 		</div>
 		</div>

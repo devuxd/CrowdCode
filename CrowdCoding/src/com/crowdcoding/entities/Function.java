@@ -332,7 +332,7 @@ public class Function extends Artifact
 			this.hasBeenDescribed = true;
 			ofy().save().entity(this).now();
 			notifyBecameDescribed(project);
-			
+
 			project.historyLog().beginEvent(new PropertyChange("hasBeenDescribed", "true", this));
 			project.historyLog().endEvent();
 		}
@@ -551,11 +551,11 @@ public class Function extends Artifact
 		// the microtask can be directly started rather than queued.
 		WriteTestCases writeTestCases = new WriteTestCases(this, project);
 		ProjectCommand.queueMicrotask(writeTestCases.getKey(), null);
-		
+
 //		project.historyLog().beginEvent(new MicrotaskSpawned(writeTestCases));
 //		project.historyLog().endEvent();
 //		project.publishHistoryLog();
-		
+
 
 		// Spawn off microtask to sketch the method
 		queueMicrotask(new WriteFunction(this, project), project);
@@ -584,6 +584,7 @@ public class Function extends Artifact
 			{
 				// Check if it was edited
 				Ref<Test> testRef = Test.find(testCase.id, project);
+				System.out.println(testRef.get());
 				Test test = testRef.get();
 				if (!test.getDescription().equals(testCase.text))
 				{

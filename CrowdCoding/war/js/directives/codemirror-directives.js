@@ -12,7 +12,6 @@ myApp.directive('codeMirrorReadonly',function($compile,functionsService) {
         controller: function($scope,$element){
         	$scope.codemirrorLoaded = function(codeMirror){
 
-               
 
         		codeMirror.setOption("readOnly", "true");
 

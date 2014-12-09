@@ -736,18 +736,9 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         $scope.addParameter();
     }
 
-  
     //prepare the codemirror Value
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
-    //Setup the codemirror box with the code of the function that created the pseudocall
-    $scope.codemirrorLoaded = function(codeMirror) {
-        codeMirror.setOption("readOnly", "true");
-        codeMirror.setOption("theme", "custom");
-        codeMirror.setSize(null, 'auto');
-        codeMirror.setValue($scope.code);
-        codeMirror.refresh();
-    };
-   
+
     $scope.$on('collectFormData', function(event, microtaskForm) {
 
         angular.forEach(microtaskForm, function(formElement, fieldName) {

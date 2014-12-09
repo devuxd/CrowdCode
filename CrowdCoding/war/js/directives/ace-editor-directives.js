@@ -56,7 +56,7 @@ myApp.directive('aceEditJson', function() {
 
             // convert the json object into a string
             ngModel.$formatters.push(function( modelValue ) {
-                if( modelValue == undefined ) modelValue = "";
+                if( modelValue === undefined ) modelValue = "";
 
                 var stringValue = "";
                 if ( typeof modelValue !== 'string' ){

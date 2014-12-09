@@ -32,12 +32,26 @@
 			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
-			    The following test case:
-				<div class="alert alert-info">{{microtask.disputedTestCase}}</div>
-			    Has been reported to have this issues:
-			    <div class="alert alert-info">{{microtask.disputeDescription}}</div>
-
-			    Can you rewrite the test case (and others if necessary) to address the issue?<BR>
+			    Has been reported this issue:
+			    <div class="form-group has-error">
+			    	<input type="text"
+			    	class="form-control"
+			    	disabled="true"
+			    	name="disputeDescription"
+			    	ng-model="microtask.disputeDescription"
+			    	>
+			    </div>
+			    <br>
+			    For the following test case:
+			    <div class="form-group">
+			    	<input type="text"
+			    	class="form-control"
+			    	disabled="true"
+			    	name="disputedTestCase"
+			    	ng-model="microtask.disputedTestCase"
+			    	>
+			    </div>
+				Can you rewrite the test case (and others if necessary) to address the issue?<BR>
 			</div>
 		</div>
 	</div>
