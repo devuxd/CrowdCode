@@ -49,13 +49,13 @@ public class ReuseSearch extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
     public Microtask copy(Project project)
     {
-    	return new ReuseSearch(this.function.getValue(), this.callDescription, project);
+    	return new ReuseSearch(  (Function) getOwningArtifact(), this.callDescription, project);
     }
 
     public Key<Microtask> getKey()
@@ -66,7 +66,7 @@ public class ReuseSearch extends Microtask
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+//		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "searches",1);
 	}
@@ -91,9 +91,16 @@ public class ReuseSearch extends Microtask
 		return function.get();
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return function.get();
+		Artifact owning;
+		try {
+			return function.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.function);
+			return function.get();
+		}
 	}
 
 	public String microtaskTitle()

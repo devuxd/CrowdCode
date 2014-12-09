@@ -14,8 +14,8 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
     var alert = null;
 
     // scope variables 
-    $scope.newTestCase         = "";
-    $scope.testCases           = TestList.getTestCasesByFunctionId($scope.funct.id);
+    $scope.newTestCase = "";
+    $scope.testCases   = TestList.getTestCasesByFunctionId($scope.funct.id);
 
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
@@ -23,12 +23,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             $scope.testCases=$scope.reissuedMicrotask.submission.testCases;
     }
 
-
-
-    console.log("TEST CASES",$scope.testCases);
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
-
-
 
     // addTestCase action 
     $scope.addTestCase = function() {
@@ -609,6 +604,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
     var highlightPseudoCall = false;
     var readOnlyDone = false;
     var changeTimeout;
+
     if ($scope.microtask.promptType == 'DESCRIPTION_CHANGE') {
         var oldCode = $scope.microtask.oldFullDescription.split("\n");
         var newCode = $scope.microtask.newFullDescription.split("\n");
@@ -628,10 +624,9 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
     }
 
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
-    if(angular.isDefined($scope.microtask.reissuedFrom))
-        $scope.code = functionsService.renderDescription($scope.reissuedMicrotask.submission) + $scope.reissuedMicrotask.submission.header + 
-
-    $scope.reissuedMicrotask.submission.code;
+    if( angular.isDefined($scope.microtask.reissuedFrom) )
+        $scope.code = functionsService.renderDescription( $scope.reissuedMicrotask.submission ) +
+                      $scope.reissuedMicrotask.submission.header + $scope.reissuedMicrotask.submission.code;
     else
         $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
 
@@ -707,8 +702,6 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
     $scope.parameters = [];
     // addParameter and deleteParameter 
     $scope.addParameter = function() {
-        event.preventDefault();
-        event.stopPropagation();
         var parameter = {
             text: '',
             added: true,

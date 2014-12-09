@@ -61,7 +61,7 @@ public class Review extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 		System.out.println("instantiating new review for microtask: "+microtaskKeyUnderReview);
 	}
@@ -88,24 +88,28 @@ public class Review extends Microtask
 		int awardedPoint;
 		String reviewResult;
         if( reviewDTO.qualityScore < 3 ) {
+        	
 			// reissue microtask
         	System.out.println("rejected");
-			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
-			awardedPoint=0;
-			reviewResult="rejected";
+			MicrotaskCommand.rejectAndReissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
+			awardedPoint = 0;
+			reviewResult = "rejected";
+			
 		} else if ( reviewDTO.qualityScore == 3) {
+			
 			// reissue microtask
         	System.out.println("reissued - TODO");
-        	MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
-			awardedPoint=submittedMicrotask.submitValue/2;
-			reviewResult="reissued";
+        	MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
+			awardedPoint = submittedMicrotask.submitValue/2;
+			reviewResult = "reissued";
+			
 		} else {
+			
 			// accept microtask
-
         	System.out.println("accepted");
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
-			awardedPoint=submittedMicrotask.submitValue;
-			reviewResult="approved";
+			awardedPoint = submittedMicrotask.submitValue;
+			reviewResult ="approved";
 		}
 
 
@@ -113,7 +117,7 @@ public class Review extends Microtask
     	FirebaseService.postToNewsfeed(workerOfReviewedWork, (
     		new NewsItemInFirebase(
     			awardedPoint,
-    			"Your work on " + submittedMicrotask.microtaskName() + " has been " + reviewResult ,
+    			submittedMicrotask.microtaskName(),
 				"WorkReviewed",
     			Project.MicrotaskKeyToString(submittedMicrotask.getKey() ) ,
 				reviewDTO.qualityScore)
@@ -121,14 +125,15 @@ public class Review extends Microtask
 	    	project
 	    );
 
-		// Award points to the reviewer for the review task
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
-    	FirebaseService.postToNewsfeed(workerID, (new NewsItemInFirebase(
+    	FirebaseService.postToNewsfeed(workerID, (
+    		new NewsItemInFirebase(
     			this.submitValue,
-    			"You reviewed a microtask",
+    			this.microtaskName(),
     			"SubmittedReview",
-    			Project.MicrotaskKeyToString(  this.getKey() )
+    			Project.MicrotaskKeyToString(  this.getKey() ),
+    			-1 // differentiate the reviews from the 0 score tasks
     	).json()), project);
 
     	System.out.println("reviewer id="+workerID);
@@ -160,9 +165,16 @@ public class Review extends Microtask
 		return "/html/microtasks/review.jsp";
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return artifact.get();
+		Artifact owning;
+		try {
+			return artifact.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.artifact);
+			return artifact.get();
+		}
 	}
 
 	public String microtaskTitle()

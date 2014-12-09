@@ -75,9 +75,9 @@ public class WriteFunction extends Microtask
 	public Microtask copy(Project project)
 	{
 		if(this.promptType==PromptType.SKETCH)
-			return new WriteFunction(this.function.getValue(),project);
+			return new WriteFunction( (Function) getOwningArtifact() ,project);
 		else
-			return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
+			return new WriteFunction( (Function) getOwningArtifact() , this.oldFullDescription, this.newFullDescription, project);
 	}
 
 	public Key<Microtask> getKey()
@@ -89,6 +89,7 @@ public class WriteFunction extends Microtask
 	private void WriteFunction(Function function, Project project)
 	{
 		this.function = (Ref<Function>) Ref.create(function.getKey());
+		ofy().load().ref(this.function);
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteFunctionInFirebase(
 				id,
@@ -106,14 +107,14 @@ public class WriteFunction extends Microtask
 				project);
 
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().sketchCompleted((FunctionDTO) dto, project);
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+//		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "functions",1);
 
@@ -149,9 +150,16 @@ public class WriteFunction extends Microtask
 		return function.getValue();
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return getFunction();
+		Artifact owning;
+		try {
+			return function.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.function);
+			return function.get();
+		}
 	}
 
 	public String microtaskTitle()

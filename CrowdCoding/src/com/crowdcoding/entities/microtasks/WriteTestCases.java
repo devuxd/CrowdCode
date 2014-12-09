@@ -25,7 +25,7 @@ public class WriteTestCases extends Microtask
 {
 	public enum PromptType { FUNCTION_SIGNATURE, CORRECT_TEST_CASE };
 
-	@Parent @Load private Ref<Function> function;
+	@Parent Ref<Function> function;
 	private PromptType promptType;
 
 	// Data for edit test cases microtask
@@ -42,7 +42,8 @@ public class WriteTestCases extends Microtask
 	{
 		super(project);
 		this.promptType = PromptType.FUNCTION_SIGNATURE;
-		this.function = (Ref<Function>) Ref.create(function.getKey());
+		this.function = (Ref<Function>) Ref.create( Key.create( Function.class,function.getID()) );
+
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
 				function.getName(),
@@ -50,8 +51,10 @@ public class WriteTestCases extends Microtask
 				false, submitValue, function.getID(), promptType.name(), "", ""),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
-
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		
+		System.out.println("------ OWNING "+this.getOwningArtifact());
+		
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
@@ -64,6 +67,7 @@ public class WriteTestCases extends Microtask
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.disputeDescription = disputeDescription;
 		this.disputedTestCase = disputedTestCase;
+		
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
 				function.getName(),
@@ -72,16 +76,16 @@ public class WriteTestCases extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
 	public Microtask copy(Project project)
 	{
 		if(this.promptType==PromptType.FUNCTION_SIGNATURE)
-			return new WriteTestCases(this.function.getValue(),project);
+			return new WriteTestCases( (Function) getOwningArtifact() , project);
 		else
-			return new WriteTestCases(this.function.getValue(), this.disputeDescription, this.disputedTestCase,
+			return new WriteTestCases( (Function) getOwningArtifact(), this.disputeDescription, this.disputedTestCase,
 					project);
 	}
 
@@ -95,7 +99,7 @@ public class WriteTestCases extends Microtask
 	{
 		this.function.get().writeTestCasesCompleted((TestCasesDTO) dto, project);
 
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+//		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "test_cases",1);
 	}
@@ -122,7 +126,13 @@ public class WriteTestCases extends Microtask
 
 	public Artifact getOwningArtifact()
 	{
-		return function.get();
+		Artifact owning;
+		try {
+			return function.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.function);
+			return function.get();
+		}
 	}
 
 	public String getDisputeDescription()

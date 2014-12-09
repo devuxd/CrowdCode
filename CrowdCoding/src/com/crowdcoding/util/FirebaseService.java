@@ -41,7 +41,6 @@ public class FirebaseService
 		// the microtask key is in the format "artifactNumber-microtask count"
 		String microtakCount = microtaskKey.split("-")[1];
 		writeData( microtakCount, "/status/microtaskCount.json", HTTPMethod.PUT, project);
-		System.out.println("write microtask");
 	}
 
 	// Writes information about microtask assignment to Firebase
@@ -222,9 +221,13 @@ public class FirebaseService
 	// Publishes the history log
 	public static void publishHistoryLog(List<Pair<String, String>> list, Project project)
 	{
-		for (Pair<String, String> idAndMessage : list)
+		
+		for (Pair<String, String> idAndMessage : list){
+			//System.out.println("Writing log: "+idAndMessage.b);
 			writeData(idAndMessage.b, "/history/events/" + idAndMessage.a + ".json", HTTPMethod.PUT, project);
+		}
 	}
+			
 
 	// Clears all data in the current project, reseting it to an empty, initial state
 	public static void clear(String projectID)

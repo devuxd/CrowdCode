@@ -1,5 +1,5 @@
 
-<div ng-controller="DebugTestFailureController" class="task-container container-flex-column">
+<div ng-controller="DebugTestFailureController"  >
 
 	<div class="section section-description " >
 		<div class="section-content no-padding" >
@@ -21,7 +21,7 @@
 		JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
-			One (or more) of the tests for the function <strong>{{funct.name}}</strong> had failed. Can you find and resolve the bug? 
+			One (or more) of the tests for the function <strong>{{funct.name}}</strong>  have failed. Can you find and fix the bug(s)?
 		</div>
 	</div>
 
@@ -46,13 +46,12 @@
 
 			<div class="section section-help" style="width:30%">
 				<div class="section-title" >
-					TESTS RESULT
+					TEST RESULTS
 				</div>
 				<div class="section-content" >
 				
 					
-					Each box shows the result of each test for the current function, if a test is passed the box has a green background otherwise the background is red.
-					You can <strong> dispute </strong> the failing tests. <br /> <strong>Important:</strong> you can dispute only one test!
+					List of the results of running each test for the current function; passing tests are green and failing tests are red. If you think a failing test is wrong (i.e., the test improperly specifies the expected output), you can <strong>report an issue</strong> with the test (but you can report an issue with only one test).
 					
 					<button ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.$invalid">Run the tests!</button>
 				</div>
@@ -81,14 +80,11 @@
 
 			<div class="section section-help" style="width:30%">
 				<div class="section-title" >
-				CALLEE STUBS 
+				FUNCTION CALL STUBS
 				</div>
 				<div class="section-content" >
 					<p>
-						For each function called by <strong>{{funct.name}}</strong> you can choose the behavior of that
-						callee will have for each different input parameters with which is called. 
-						It means that the <strong>Test Runner</strong> will use the behavior you choose
-						instead of running the real code.
+						For each function called by operation, you can choose the output that the function will produce for each set of inputs with which is called. When you change the output of a function, the test runner will automatically create a <strong>stub</strong>, using the output you specify instead of executing the actual function call.
 					</p>
 				</div>
 			</div>
@@ -107,7 +103,7 @@
 									<b>#{{$index+1}} input set </b><br />
 									<table style="width:100%">
 										<tr ng-repeat="(key,input) in stub.inputs track by $index">
-											<td>input</td>
+											<td>{{paramNames[$index]}}</td>
 											<td><div ace-read-json ng-model="input" ></div></td>
 										</tr>
 										<tr>
@@ -135,7 +131,7 @@
 				</div>
 				<div class="section-content" >
 			 		<p>
-			 			For monitoring statements, use <strong>debug.log(statement)</strong>. The results of the Debug.log() are printed below each <strong>test result</strong>.
+			 			For monitoring statements, use <strong>debug.log(statement)</strong>. The results of the debug.log() are printed below each <strong>test result</strong>.
 			 		</p>
 				</div>
 
@@ -146,7 +142,7 @@
 			</div>
 
 			<div class="section section-form" style="width:70%">
-				<div class="section-content" >
+				<div class="section-content no-padding" >
 					<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
 					<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
 					<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">

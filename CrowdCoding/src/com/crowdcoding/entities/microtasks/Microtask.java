@@ -68,8 +68,8 @@ public /*abstract*/ class Microtask
 					+ jsonDTOData);
 			return;
 		}
-		System.out.println("PRINTING JSON DTO DATA");
-		System.out.println(jsonDTOData);
+//		System.out.println("PRINTING JSON DTO DATA");
+//		System.out.println(jsonDTOData);
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
 
 		project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
@@ -100,6 +100,7 @@ public /*abstract*/ class Microtask
 		ofy().save().entity(this).now();
 		project.historyLog().endEvent();
 	}
+	
 
 	public Key<Microtask> getKey()
 	{

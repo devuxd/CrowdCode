@@ -28,6 +28,7 @@ import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
 import com.crowdcoding.history.MessageReceived;
+import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -328,12 +329,11 @@ public class Function extends Artifact
 	{
 		if (!this.hasBeenDescribed)
 		{
-			project.historyLog().beginEvent(new PropertyChange("hasBeenDescribed", "true", this));
-
 			this.hasBeenDescribed = true;
 			ofy().save().entity(this).now();
 			notifyBecameDescribed(project);
-
+			
+			project.historyLog().beginEvent(new PropertyChange("hasBeenDescribed", "true", this));
 			project.historyLog().endEvent();
 		}
 	}
@@ -551,6 +551,11 @@ public class Function extends Artifact
 		// the microtask can be directly started rather than queued.
 		WriteTestCases writeTestCases = new WriteTestCases(this, project);
 		ProjectCommand.queueMicrotask(writeTestCases.getKey(), null);
+		
+//		project.historyLog().beginEvent(new MicrotaskSpawned(writeTestCases));
+//		project.historyLog().endEvent();
+//		project.publishHistoryLog();
+		
 
 		// Spawn off microtask to sketch the method
 		queueMicrotask(new WriteFunction(this, project), project);

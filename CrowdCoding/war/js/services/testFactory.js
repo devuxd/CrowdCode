@@ -137,6 +137,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			    test.setFunctionName( functionName );
 			 	test.setSimpleTest(inputsValue,outputValue);
 				test.setDescription("auto generated for test purposes");
+				test.buildCode();
 				this.set(test);
 
 				console.log("new test = ",test);
@@ -266,6 +267,20 @@ myApp.factory("Test", function ($FirebaseArray) {
 		},
 		getCode: function(){
 			return this.rec.code;
+		},
+		buildCode: function(){
+
+
+			var testCode = 'equal(' + this.rec.functionName + '(';
+			var length   = this.rec.simpleTestInputs.length;
+
+            angular.forEach(this.rec.simpleTestInputs, function(value, key) {
+                testCode += value;
+                testCode += (key != length - 1) ? ',' : '';
+            });
+            testCode += '),' + this.rec.simpleTestOutput + ',\'' + this.rec.description + '\');';
+
+			this.rec.code = testCode;
 		}
 	};
 

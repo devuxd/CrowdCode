@@ -52,7 +52,7 @@ public class DebugTestFailure extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
@@ -76,13 +76,13 @@ public class DebugTestFailure extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
 	public Microtask copy(Project project)
 	{
-		return new DebugTestFailure(this.function.getValue(), project);
+		return new DebugTestFailure(  (Function) getOwningArtifact(), project);
 	}
 
 
@@ -98,7 +98,7 @@ public class DebugTestFailure extends Microtask
 		FunctionDTO fDTO = (FunctionDTO) dto;
 		if( fDTO.autoSubmit != null && fDTO.autoSubmit != true ){
 
-			WorkerCommand.awardPoints(workerID, this.submitValue);
+			//WorkerCommand.awardPoints(workerID, this.submitValue);
 			// increase the stats counter
 			WorkerCommand.increaseStat(workerID, "debugs",1);
 		}
@@ -108,10 +108,16 @@ public class DebugTestFailure extends Microtask
 	{
 		return FunctionDTO.class;
 	}
-
+	
 	public Artifact getOwningArtifact()
 	{
-		return function.get();
+		Artifact owning;
+		try {
+			return function.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.function);
+			return function.get();
+		}
 	}
 
 	public String getUIURL()

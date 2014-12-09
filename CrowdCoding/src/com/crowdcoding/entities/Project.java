@@ -19,6 +19,9 @@ import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.history.HistoryLog;
+import com.crowdcoding.history.MicrotaskAssigned;
+import com.crowdcoding.history.MicrotaskSpawned;
+import com.crowdcoding.history.ProjectCreated;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
 import com.googlecode.objectify.Key;
@@ -105,6 +108,7 @@ public class Project
 
 		this.historyLog = new HistoryLog();
 		this.id = id;
+		
 
 		// Setup the project to be ready
 		idgenerator = new IDGenerator(false);
@@ -124,6 +128,9 @@ public class Project
 		}
 
 		ofy().save().entity(this).now();
+		
+		this.historyLog.beginEvent(new ProjectCreated(this));
+		this.historyLog.endEvent();
 	}
 
 	// Loads a project instance from the datastore.
@@ -179,7 +186,7 @@ public class Project
 	// who, if provided, will be permanently excluded from doing the microtask.
 	public void queueMicrotask( Key<Microtask> microtaskKey, String excludedWorkerID)
 	{
-		System.out.println("QUEUING mtask "+Project.MicrotaskKeyToString(microtaskKey)+" ");
+		//System.out.println("QUEUING mtask "+Project.MicrotaskKeyToString(microtaskKey)+" ");
 
 		// add the microtask to the queue
 		if( ! microtaskQueue.contains(microtaskQueue) ){
@@ -194,7 +201,7 @@ public class Project
 
 		// save the queue in Objectify and Firebase
 		ofy().save().entity(this).now();
-		System.out.println("CQ = "+microtaskQueue);
+		//System.out.println("CQ = "+microtaskQueue);
 		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project);
 	}
 
@@ -370,11 +377,15 @@ public class Project
 		}
 		else
 		{
+			
 			// assign the found microtask to the worker and set
 			// the microtask to assigned in firebase
 			microtaskAssignments.put( workerID,  Project.MicrotaskKeyToString(microtaskKey) );
 			FirebaseService.writeMicrotaskAssigned( Project.MicrotaskKeyToString(microtaskKey), workerID, workerHandle, this, true);
 
+//			project.historyLog().beginEvent(new MicrotaskAssigned(this,workerID));
+//			project.historyLog().endEvent();
+			
 			ofy().save().entity(this).now();
 			return microtaskKey;
 		}

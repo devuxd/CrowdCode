@@ -7,8 +7,11 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 
 
  	// retrieve connection status and userRef
-	var isConnected = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-	var userRef     = new Firebase(firebaseURL + '/status/loggedInWorkers/' + workerId);
+
+	var userProfile = new Firebase( firebaseURL + '/workers/' + workerId );
+	var sync = $firebase(userProfile);
+	var isConnected = new Firebase( 'https://crowdcode.firebaseio.com/.info/connected' );
+	var userRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + workerId );
 
 
 	var updateUserReference = function(){
@@ -18,8 +21,14 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 	
 	};
 
+	user.data = sync.$asObject();
+	user.data.$loaded().then(function(){
+		console.log("user data loaded ",user.data);
+	});
 
 	user.init = function(){
+
+		
 		
 		// when firebase is connected
 		isConnected.on('value', function(snapshot) {

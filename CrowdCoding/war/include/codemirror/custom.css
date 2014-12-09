@@ -1,6 +1,6 @@
 
 .cm-s-custom.CodeMirror {
-  background: #E0E0E0;
+  background: #EEEEEE;
   color: #8F938F;
 }
 .cm-s-custom div.CodeMirror-selected { background: rgba(221,240,255,0.2) !important; }

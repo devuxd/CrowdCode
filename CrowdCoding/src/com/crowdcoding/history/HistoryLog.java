@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Stack;
 
 import com.crowdcoding.util.Pair;
+import com.google.appengine.api.urlfetch.HTTPMethod;
 
 /* HistoryLogs capture the events that occur during a session. As they only persist for the life
  * of a session, they are not stored in the DataStore. A HistoryLog consists of a tree of events.
@@ -16,6 +17,11 @@ public class HistoryLog
 {
 	private EventNode root;
 	private Stack<EventNode> eventStack = new Stack<EventNode>();
+	
+	
+	public HistoryLog(){
+		System.out.println("== NEW HISTORY LOG");
+	}
 	
 	public class EventNode
 	{
@@ -31,9 +37,14 @@ public class HistoryLog
 	public void beginEvent(HistoryEvent event)
 	{
 		EventNode node = new EventNode(event);
-		if (root == null)
+		if (root == null){
 			root = node;
-
+			//System.out.println("-- SETTING ROOT TO "+root.event);
+		}else{
+			//System.out.println("-- ROOT IS "+root.event);
+		}
+		
+		
 		// If we are not at the bottom of the stack, add this node as a child of the top of the stack 
 		if (!eventStack.isEmpty())		
 		{
@@ -43,11 +54,14 @@ public class HistoryLog
 		}
 		
 		eventStack.push(node);
+		System.out.println("---OPEN "+event.generateID());
 	}
 		
 	public void endEvent()
 	{
-		eventStack.pop();		
+		EventNode pop = eventStack.pop();	
+
+		System.out.println("---CLOSE "+pop.event.generateID());
 	}	
 	
 	// Gets a representation as a list of pairs - a string event ID and a JSON string - capturing each 
@@ -71,6 +85,18 @@ public class HistoryLog
 			}
 		}
 		
+//		for (Pair<String, String> idAndMessage : json){
+//			System.out.println("--- LOG JSON STRING : ");
+//			System.out.println(idAndMessage.b);
+//			
+//		}
+//		if( json.size() == 0)
+//
+//			System.out.println("--- LOG JSON EMPTY ");
+		
+
+		System.out.println("== PRINTING HISTORY LOG "+json.size()+ " rows");
+			
 		return json;
 	}
 }

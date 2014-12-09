@@ -18,11 +18,12 @@ myApp.controller('AppController', [
 	function($scope, $rootScope, $firebase, $http, $interval, userService, testsService, functionsService, testRunnerService, ADTService, microtasksService, TestList) {
 
 		// current session variables
-		$rootScope.loaded = {};
-		$rootScope.projectId = projectId;
-		$rootScope.workerId = workerId;
+		$rootScope.loaded       = {};
+		$rootScope.projectId    = projectId;
+		$rootScope.workerId     = workerId;
 		$rootScope.workerHandle = workerHandle;
-		$rootScope.firebaseURL = firebaseURL;
+		$rootScope.firebaseURL  = firebaseURL;
+		$rootScope.userData     = userService.data;
 
 		// flags for knowing if service is loaded
 
@@ -33,6 +34,10 @@ myApp.controller('AppController', [
 		$rootScope.workerLogout = function() {
 			userService.logout();
 		};
+
+
+
+
 		$scope.promise = $interval(
 			function() {
 				$rootScope.loaded.functions = false;
@@ -89,8 +94,6 @@ myApp.controller('AppController', [
 				//		$rootScope.feedback.sent=true;
 			});
 
-
-
 		});
 
 
@@ -116,7 +119,7 @@ myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', '
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', 'testsService', 'functionsService', 'userService', 'microtasksService', function($scope, $rootScope, $firebase, $http, $timeout, testsService, functionsService, userService, microtasksService) {
+myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', '$timeout', 'testsService', 'functionsService', 'userService', 'microtasksService', function($scope, $rootScope, $firebase, $http, $interval, $timeout, testsService, functionsService, userService, microtasksService) {
 
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -144,7 +147,10 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	//Whait for the inizializations of all service
 	//when the microtask array is syncronize with firebase load the first microtask
 
+	var waitTimeInSeconds   = 30;
 	var checkQueueTimeout = null;
+	var timerInterval     = null;
+	$scope.checkQueueIn   = waitTimeInSeconds;
 
 	// load microtask:
 	// request a new microtask from the backend and if success
@@ -158,71 +164,72 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		}
 
 		// set the loading template
-		$scope.microtask = undefined;
-		$scope.templatePath = templatesURL + "loading.html";
+		$scope.microtask      = undefined;
+		$scope.templatePath   = templatesURL + "loading.html";
 		$rootScope.inlineForm = false; // reset form as non-inline
+
 		$http.get('/' + projectId + '/ajax/fetch').
-		success(function(data, status, headers, config) {
+			success(function(data, status, headers, config) {
 
+				$scope.microtask = microtasksService.get(data.key);
+				$scope.microtask.$loaded().then(function() {
+					// assign title
+					$scope.datas = data;
 
-			$scope.microtask = microtasksService.get(data.key);
-			$scope.microtask.$loaded().then(function() {
+					// retrieve the related function
+					if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) {
+						$scope.funct = functionsService.get($scope.microtask.functionID);
+					}
+					// retrieve the related test
+					var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : 0;
+					if (angular.isDefined(testId)) {
+						$scope.test = testsService.get(testId);
+					}
 
-				// console.log("MICROTASK LOADED");
-				// console.log($scope.microtask);
+					// debug stuff
+					// console.log("data:", data);
+					// console.log("microtask:", $scope.microtask);
+					// console.log("function:", $scope.funct);
+					// console.log("test:", $scope.test);
 
-				// assign title
-				$scope.datas = data;
+					// retrieve the related issued microtask if present
+	   						console.log("IS REISSUED FROM", $scope.microtask.id, $scope.microtask.reissuedFrom);
 
-				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) {
-					$scope.funct = functionsService.get($scope.microtask.functionID);
-				}
-				// retrieve the related test
-				var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : 0;
-				if (angular.isDefined(testId)) {
-					$scope.test = testsService.get(testId);
-				}
+					if ( angular.isDefined( $scope.microtask.reissuedFrom ) ) {
 
-				// debug stuff
-				// console.log("data:", data);
-				// console.log("microtask:", $scope.microtask);
-				// console.log("function:", $scope.funct);
-				// console.log("test:", $scope.test);
+						$scope.reissuedMicrotask = microtasksService.get($scope.microtask.reissuedFrom);
+	   					$scope.reissuedMicrotask.$loaded().then(function() {
+							//choose the right template
+							if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
+								$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+							else
+								$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+						});
 
-
-				// retrieve the related issued microtask if present
-				if (angular.isDefined($scope.microtask.reissuedFrom)) {
-					$scope.reissuedMicrotask = microtasksService.get($scope.microtask.reissuedFrom);
-   					$scope.reissuedMicrotask.$loaded().then(function() {
-   						console.log($scope.reissuedMicrotask);
-   						console.log($scope.microtask.reissuedFrom);
+					} else {
+						
 						//choose the right template
 						if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
 							$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 						else
 							$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
-					});
-				}
-				else{
-					
-					//choose the right template
-					if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
-						$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-					else
-						$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 					}
+				});
+			}).
+			error(function(data, status, headers, config) {
+
+				$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+
+				$scope.checkQueueIn = waitTimeInSeconds; 
+				var timerInterval = $interval(function(){
+					$scope.checkQueueIn -- ;
+				}, 1000);
+
+				checkQueueTimeout = $timeout(function() {
+					$interval.cancel(timerInterval);
+					$scope.$emit('load');
+				}, 30*1000); // check the queue every 30 seconds
 			});
-		}).
-		error(function(data, status, headers, config) {
-
-			$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
-
-			checkQueueTimeout = $timeout(function() {
-				console.log("CALLING LOAD");
-				$scope.$emit('load');
-			}, 30*1000);
-		});
 	});
 
 

@@ -1,4 +1,4 @@
-<div ng-controller="WriteTestController" class="task-container container-flex-column">
+<div ng-controller="WriteTestController" >
 
 	<div class="section section-description " >
 		<div class="section-content no-padding" >
@@ -19,11 +19,10 @@
 			JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
-			<div ng-show="microtask.reissuedFrom!=undefined" >
-				This microtask has been reviewed with a low score because has been found that:<br>
-				<b>{{reissuedMicrotask.review.reviewText}}</b>
-				Please correct the work to resolve the issue.<br>
-				
+			<div ng-show="microtask.reissuedFrom !== undefined" >
+				This microtask has been reissued after a low score review for the following reason: <br />
+				<b>{{reissuedMicrotask.review.reviewText}}</b> <br />
+				Can you fix the problem that the reviewer found?<br>
 			</div>
 
 			<div ng-show="microtask.promptType=='WRITE'">
