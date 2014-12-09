@@ -432,6 +432,7 @@ public class CrowdServlet extends HttpServlet
             public Key<Microtask> run()
             {
             	Project project = Project.Create(projectID);
+            	
             	String workerID = user.getUserId();
             	String workerHandle = user.getNickname();
 
@@ -444,28 +445,12 @@ public class CrowdServlet extends HttpServlet
             	if (microtaskKey == null)
             	{
             		microtaskKey = project.assignMicrotask(workerID, workerHandle);
-            		//System.out.println("Worker " + workerHandle + " assign micro "+microtaskKey);
             	}
-            	else
-            	{
-            		//System.out.println("Worker " + workerHandle + " has micro "+microtaskKey);
-            	}
+            	
+            	project.publishHistoryLog();
             	return microtaskKey;
             }
         });
-
-/*
-	    try{
-//	    	List<Key<Microtask>> keys = ofy().load().type(Microtask.class).keys().list();
-//	    	ofy().delete().keys(keys).now();
-	    	List<Microtask> list = ofy().load().type(Microtask.class).list();
-		    for(Microtask task: list){
-		    	System.out.println("Microtask key is: "+task.getKey());
-		    }
-
-	    } catch(Exception e ){
-
-	    }*/
 
     	// Load the microtask
 	    Microtask microtask = null;
@@ -478,7 +463,6 @@ public class CrowdServlet extends HttpServlet
 	            }
 		    });
 	    }
-
 
     	// If there are no microtasks available, send an empty response.
 	    // Otherwise, send the json with microtask info.

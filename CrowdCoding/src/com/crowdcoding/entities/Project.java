@@ -379,8 +379,9 @@ public class Project
 			microtaskAssignments.put( workerID,  Project.MicrotaskKeyToString(microtaskKey) );
 			FirebaseService.writeMicrotaskAssigned( Project.MicrotaskKeyToString(microtaskKey), workerID, workerHandle, this, true);
 
-//			project.historyLog().beginEvent(new MicrotaskAssigned(this,workerID));
-//			project.historyLog().endEvent();
+			Microtask mtask = ofy().load().key(microtaskKey).get();
+			project.historyLog().beginEvent(new MicrotaskAssigned(mtask,workerID));
+			project.historyLog().endEvent();
 			
 			ofy().save().entity(this).now();
 			return microtaskKey;
