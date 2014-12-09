@@ -5,9 +5,9 @@ myApp.controller('NoMicrotaskController', ['$scope', '$rootScope', '$firebase', 
     //$interval(function(){ $scope.$emit('load')}, 2000);
 }]);
 
-///////////////////////////////
+//////////////////////////////////
 //  WRITE TEST CASES CONTROLLER //
-///////////////////////////////
+//////////////////////////////////
 myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'TestList', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert, testsService, TestList, functionsService, ADTService) {
     
     // private variables
@@ -408,6 +408,9 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 if (!oneTestFailed && !data.output.result) oneTestFailed = true;
             });
             if (oneTestFailed) errors = "Please fix all the failing tests before submit!";
+
+            if ( data.$invalid ) errors = "Please fix the function code before submit!";
+
         }
 
         if (errors === "") {
@@ -418,7 +421,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                     description: $scope.disp.disputeText
                 };
             } else {
-                // INSERT STUBS AS NEW TESTS IF THEY ARE NOT FOUND 
+                // INSERT STUBS AS NEW TESTS IF THEY ARE NOT FOUND
                 var stubs = [];
                 angular.forEach($scope.stubs, function(stubsForFunction, functionName) {
 
@@ -436,48 +439,22 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                         // });
                     });
                 });
-                // BUILD FUNCTION CODE
                 var text = functionCodeMirror.getValue();
-                var ast = esprima.parse(text, {
-                    loc: true
-                });
-                var calleeNames = functionsService.getCalleeNames(ast);
-                // Get the text for the function description, header, and code.
-                // Note esprima (the source of line numbers) starts numbering lines at 1, while
-                // CodeMirror begins numbering lines at 0. So subtract 1 from every line number.
-                var fullDescription = functionCodeMirror.getRange({
-                    line: 0,
-                    ch: 0
-                }, {
-                    line: ast.loc.start.line - 1,
-                    ch: 0
-                });
-                var linesDescription = fullDescription.split('\n');
-                var name = ast.body[0].id.name;
-                var functionParsed = functionsService.parseDescription(linesDescription, name);
-                //if pseudosegment are present the body is already istanziated
-                body = functionCodeMirror.getRange({
-                    line: ast.body[0].body.loc.start.line - 1,
-                    ch: ast.body[0].body.loc.start.column
-                }, {
-                    line: ast.body[0].body.loc.end.line - 1,
-                    ch: ast.body[0].body.loc.end.column
-                });
-                formData = {
-                    description: functionParsed.description,
-                    header: functionParsed.header,
-                    name: name,
-                    code: body,
-                    returnType: functionParsed.returnType,
-                    paramNames: functionParsed.paramNames,
-                    paramTypes: functionParsed.paramTypes,
-                    paramDescriptions: functionParsed.paramDescriptions,
-                    calleeNames: calleeNames
-                };
 
-                // if first run is true
-                if (data != undefined && data) formData['autoSubmit'] = true;
+                //     description: functionParsed.description,
+                //     header: functionParsed.header,
+                //     name: functionName,
+                //     code: body,
+                //     returnType: functionParsed.returnType,
+                //     paramNames: functionParsed.paramNames,
+                //     paramTypes: functionParsed.paramTypes,
+                //     paramDescriptions: functionParsed.paramDescriptions,
+                //     calleeIds: calleeIds
+                formData = functionsService.parseFunction(text);
             }
+
+            // if first run is true
+            if (data !== undefined && data) formData['autoSubmit'] = true;
             // console.log("submitting",formData);
             $scope.$emit('submitMicrotask', formData);
         } else {
@@ -588,81 +565,33 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
     };
     $scope.$on('collectFormData', function(event, microtaskForm) {
         var error = "";
-        var textToParse, text;
-        textToParse = text = codemirror.getValue();
-        var body = "";
+        var  text = codemirror.getValue();
         var hasPseudosegment = text.search('//!') !== -1 || text.search('//#') !== -1;
-        //if there are error
-        if (microtaskForm.$invalid)
-            if (!hasPseudosegment) {
-                error = 'Fix all errors before submit, if you don\'t know how use the pseudocode';
-            } else {
-                // IF NO PSEUDO CALLS OR PSEUDOSEGMENTS 
-                // CALCULATE THE BODY AND THE TEXT TO PARSE FOR ESPRIMA
-                //find if exist more header structure and in case gives an error
-                var headersNumber = text.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
-                if (headersNumber.length > 1) {
-                    error = 'Only one header is allowed in the code, please fix it';
-                }
-                //search for the beginning position of the header
-                var startHeaderPosition = text.indexOf(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
-                //the end position of the header will be the first occurence of "{" after the beginning
-                var endHeaderPosition = text.indexOf("{", startHeaderPosition);
-                //the body is the part of the text between the end of the header and the end of the text
-                body = text.substring(endHeaderPosition, text.length);
-                //subsitutes the old body with an empty one so that esprima can parse it
-                textToParse = text.substring(0, endHeaderPosition) + "{}";
-            }
-            //if errors has been found
-        if (error !== "") {
+
+        //if there are error and pseudosegments
+        if ( microtaskForm.$invalid && !hasPseudosegment ){
             $alert({
-                title: 'Error!',
-                content: error,
-                type: 'danger',
-                show: true,
-                duration: 3,
-                template: '/html/templates/alert/alert_submit.html',
-                container: 'alertcontainer'
+               title: 'Error!',
+               content: 'Fix all errors before submit, if you don\'t know how use the pseudocode',
+               type: 'danger',
+               show: true,
+               duration: 3,
+               template: '/html/templates/alert/alert_submit.html',
+               container: 'alertcontainer'
             });
-        } else {
-            var ast = esprima.parse(textToParse, {
-                loc: true
-            });
-            var calleeNames = functionsService.getCalleeNames(ast);
-            console.log("calleeNames");
-            console.log(calleeNames);
-            var fullDescription = codemirror.getRange({
-                line: 0,
-                ch: 0
-            }, {
-                line: ast.loc.start.line - 1,
-                ch: 0
-            });
-            var descriptionLines = fullDescription.split('\n');
-            var functionName = ast.body[0].id.name;
-            var functionParsed = functionsService.parseDescription(descriptionLines, functionName);
-            //if pseudosegment are present the body is already istantiated
-            if (text == textToParse) body = codemirror.getRange({
-                line: ast.body[0].body.loc.start.line - 1,
-                ch: ast.body[0].body.loc.start.column
-            }, {
-                line: ast.body[0].body.loc.end.line - 1,
-                ch: ast.body[0].body.loc.end.column
-            });
-            formData = {
-                //functionVersion: $scope.funct.version,
-                description: functionParsed.description,
-                header: functionParsed.header,
-                name: functionName,
-                code: body,
-                returnType: functionParsed.returnType,
-                paramNames: functionParsed.paramNames,
-                paramTypes: functionParsed.paramTypes,
-                paramDescriptions: functionParsed.paramDescriptions,
-                calleeNames: calleeNames
-            };
-            console.log("formData");
-            console.log(formData);
+        }
+        else {
+            //     description: functionParsed.description,
+            //     header: functionParsed.header,
+            //     name: functionName,
+            //     code: body,
+            //     returnType: functionParsed.returnType,
+            //     paramNames: functionParsed.paramNames,
+            //     paramTypes: functionParsed.paramTypes,
+            //     paramDescriptions: functionParsed.paramDescriptions,
+            //     calleeIds: calleeIds
+
+            formData = functionsService.parseFunction(text);
             $scope.$emit('submitMicrotask', formData);
         }
     });
@@ -731,76 +660,33 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
     };
     $scope.$on('collectFormData', function(event, microtaskForm) {
         var error = "";
-        var text, textToParse, body = "";
-        text = textToParse = codemirror.getValue();
+        var text= codemirror.getValue();
         var hasPseudosegment = text.search('//!') !== -1 || text.search('//#') !== -1;
-        //if there are error
-        if (microtaskForm.$invalid)
-            if (!hasPseudosegment) {
-                error = 'Fix all errors before submit, if you don\'t know how use the pseudocode';
-            } else {
-                // IF NO PSEUDO CALLS OR PSEUDOSEGMENTS 
-                // CALCULATE THE BODY AND THE TEXT TO PARSE FOR ESPRIMA
-                //find if exist more header structure and in case gives an error
-                var headersNumber = text.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
-                if (headersNumber.length > 1) {
-                    error = 'Only one header is allowed in the code, please fix it';
-                }
-                //search for the beginning position of the header
-                var startHeaderPosition = text.indexOf(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g);
-                //the end position of the header will be the first occurence of "{" after the beginning
-                var endHeaderPosition = text.indexOf("{", startHeaderPosition);
-                //the body is the part of the text between the end of the header and the end of the text
-                body = text.substring(endHeaderPosition, text.length);
-                //subsitutes the old body with an empty one so that esprima can parse it
-                textToParse = text.substring(0, endHeaderPosition) + "{}";
-            }
-            //if errors has been found
-        if (error !== "") {
+
+        //if there are error and pseudosegments
+        if ( microtaskForm.$invalid && !hasPseudosegment ){
             $alert({
-                title: 'Error!',
-                content: error,
-                type: 'danger',
-                show: true,
-                duration: 3,
-                template: '/html/templates/alert/alert_submit.html',
-                container: 'alertcontainer'
+               title: 'Error!',
+               content: 'Fix all errors before submit, if you don\'t know how use the pseudocode',
+               type: 'danger',
+               show: true,
+               duration: 3,
+               template: '/html/templates/alert/alert_submit.html',
+               container: 'alertcontainer'
             });
-        } else {
-            var ast = esprima.parse(textToParse, {
-                loc: true
-            });
-            var calleeNames = functionsService.getCalleeNames(ast);
-            var fullDescription = codemirror.getRange({
-                line: 0,
-                ch: 0
-            }, {
-                line: ast.loc.start.line - 1,
-                ch: 0
-            });
-            var descriptionLines = fullDescription.split('\n');
-            var functionName = ast.body[0].id.name;
-            var functionParsed = functionsService.parseDescription(descriptionLines, functionName);
-            //if pseudosegment are present the body is already istantiated
-            if (text == textToParse) body = codemirror.getRange({
-                line: ast.body[0].body.loc.start.line - 1,
-                ch: ast.body[0].body.loc.start.column
-            }, {
-                line: ast.body[0].body.loc.end.line - 1,
-                ch: ast.body[0].body.loc.end.column
-            });
-            formData = {
-                //functionVersion: $scope.funct.version,
-                description: functionParsed.description,
-                header: functionParsed.header,
-                name: functionName,
-                code: body,
-                returnType: functionParsed.returnType,
-                paramNames: functionParsed.paramNames,
-                paramTypes: functionParsed.paramTypes,
-                paramDescriptions: functionParsed.paramDescriptions,
-                calleeNames: calleeNames
-            };
+        }
+        else {
+            //     description: functionParsed.description,
+            //     header: functionParsed.header,
+            //     name: functionName,
+            //     code: body,
+            //     returnType: functionParsed.returnType,
+            //     paramNames: functionParsed.paramNames,
+            //     paramTypes: functionParsed.paramTypes,
+            //     paramDescriptions: functionParsed.paramDescriptions,
+            //     calleeIds: calleeIds
+
+            formData = functionsService.parseFunction(text);
             $scope.$emit('submitMicrotask', formData);
         }
     });
@@ -850,18 +736,9 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         $scope.addParameter();
     }
 
-  
     //prepare the codemirror Value
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
-    //Setup the codemirror box with the code of the function that created the pseudocall
-    $scope.codemirrorLoaded = function(codeMirror) {
-        codeMirror.setOption("readOnly", "true");
-        codeMirror.setOption("theme", "custom");
-        codeMirror.setSize(null, 'auto');
-        codeMirror.setValue($scope.code);
-        codeMirror.refresh();
-    };
-   
+
     $scope.$on('collectFormData', function(event, microtaskForm) {
 
         angular.forEach(microtaskForm, function(formElement, fieldName) {

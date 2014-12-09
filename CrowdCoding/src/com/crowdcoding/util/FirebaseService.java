@@ -21,6 +21,9 @@ import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
+//import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.googlecode.objectify.Key;
 
 /* Wrapper service that handles all interactions with Firebase, providing an API
@@ -48,7 +51,7 @@ public class FirebaseService
 		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, project);
 	}
 
-	
+
 	// Writes information about microtask completition to Firebase
 	public static void writeMicrotaskCompleted( String microtaskKey, String workerID,
 			Project project, boolean completed)
@@ -72,12 +75,29 @@ public class FirebaseService
 	public static boolean isWorkerLoggedIn(String workerID,Project project){
 		String absoluteUrl = getBaseURL(project) + "/status/loggedInWorkers/" + workerID + ".json";
 		String result = readDataAbsolute( absoluteUrl );
-
-		if (result == null || result.equals("null"))
+		// check if exist the reference on firebase, if not returns false
+		if (result == null || result.equals("null"))//|| System.currentTimeMillis() - 10 > (1000*60*0.5) )
 			return false;
 
-		return true;
+		//try to convert the object into json format
+		try {
+			JSONObject user  = new JSONObject(result);
+			long lastUpdateLogin = user.getLong("time");
+			// the user on client side will update the login time every 2 minutes,
+			//so if has passed more than 30 seconds since the last update means that the user is logged out
+			if( System.currentTimeMillis() - lastUpdateLogin < 60*0.5*1000)
+				return true;
+			else
+				return false;
+
+		} catch (JSONException e) {
+
+			e.printStackTrace();
+		}
+
+		return false;
 	}
+
 
 	public static void writeWorkerLoggedIn(String workerID, String workerDisplayName, Project project)
 	{

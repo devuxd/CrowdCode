@@ -15,10 +15,11 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 
 
 	var updateUserReference = function(){
-		/*
+		
 		userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
-		$timeout(updateUserReference,1000*60*2); // re-do every 2 minutes*/
-	}
+		$timeout(updateUserReference,1000*0.3*60); // re-do every 2 minutes*/
+	
+	};
 
 	user.data = sync.$asObject();
 	user.data.$loaded().then(function(){
@@ -33,13 +34,13 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 		isConnected.on('value', function(snapshot) {
 		  if (snapshot.val()) {
 		  	// update user reference
-		    //updateUserReference();
+		    updateUserReference();
 		    // on disconnect, set false to connection status
-		    userRef.onDisconnect().remove(); //set({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP});
+		//    userRef.onDisconnect().remove(); //set({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP});
 		  }
 		});
 		
-	}
+	};
 
 	// logout the worker
     user.login = function(){

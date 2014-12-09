@@ -20,7 +20,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.get = function(id) { return get(id); };
 		this.getByName = function(name) { return getByName(name); };
 		this.getNameById  = function(id) { return getNameById(id); };
-
 		this.getMockCodeFor = function(id,logEnabled) { return getMockCodeFor(id,logEnabled); };
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
 		this.getMockHeader = function(id) { return getMockHeader(id); };
@@ -37,6 +36,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.getCalleeNames = function (ast){ return getCalleeNames(ast);};
 		this.getCalleeNamesById = function (functionId){ return getCalleeNamesById(functionId);};
 		this.parseDescription = function (lineDescription,functionName) { return parseDescription(lineDescription,functionName);};
+		this.parseFunction = function (text){ return parseFunction(text);};
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
 		this.getParamNamesById = function (functionId) { return getParamNamesById(functionId);};
@@ -170,6 +170,18 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			return "";
 		}
 
+		function getIdByName(name)
+		{
+			console.log(name);
+			var functionId = -1;
+			angular.forEach(functions, function(value, key) {
+				console.log(value);
+				if( functionId==-1 && value.name === name ) {
+			  		functionId = value.id;
+			  	}
+			});
+			return functionId;
+		}
 
 		// Get the function declaration and mock implementation for the function with the specified id.
 		// Rather than the actual implementation, the implementation is replace with an implementation
@@ -179,7 +191,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		function getMockCodeFor(id,logEnabled){
 			var mockCode = '';
 			var functionObj = get(id);
-			if (functionObj == null)
+			if (functionObj === null)
 				return '';
 
 			// First, add the normal header for the function
@@ -357,7 +369,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		var paramDescriptions = [];
 		var description = "";
 		var header      = "";
-		var returnType  = ""
+		var returnType  = "";
 
 		var numParams = 0;
 
@@ -396,7 +408,8 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		header=renderHeader(functionName,paramNames);
 
 		// return all the infos
-		return { 'header'           : header,
+		return { 'name'				: functionName,
+				 'header'           : header,
 				 'description'      : description,
 				 'paramTypes'       : paramTypes,
 				 'paramNames'       : paramNames,
@@ -404,6 +417,58 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 				 'returnType'       : returnType
 				};
 	}
+
+	function parseFunction(text)
+	{
+		var functionParsed={};
+
+
+		//retrieves the header from the code (in position  0 because mache retruns an array)
+		var header = text.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g)[0];
+		//retrieves the beginning position of the header
+		var startHeaderPosition = text.indexOf(header);
+
+		//retrieves the end position of the header loofing for the first occurence of "{" after the beginning
+		var endHeaderPosition = text.indexOf("{", startHeaderPosition);
+
+		// retrieves the complete description and splits it in line
+		var fullSplittedDescription=text.substring(0, startHeaderPosition).split('\n');
+
+		//retrieves the name of the function looking for the word before the "("
+		var functionName = header.match(/\b\w+(?=\s*\()/g)[0];
+
+		//retrieves the name, header, description , paramNames, paramTypes, paramDescriptions, returnType
+		functionParsed=parseDescription(fullSplittedDescription, functionName);
+
+		//retrieves the code of the function
+		functionParsed.code= text.substring(endHeaderPosition, text.length);
+
+		//creates an empty vector to put the callee
+		functionParsed.calleeIds=[];
+		//look for all the possible name in the function code of type name followed by a "("
+		var calleeNames= functionParsed.code.match(/\b\w+(?=\s*\()/g);
+
+		if(calleeNames!==null){
+			
+			//remove the duplicates
+			for(var i=0; i<calleeNames.length; i++) {
+			  for(var j=i+1; j<calleeNames.length; j++) {
+			    // If this[i] is found later in the array
+			    if (calleeNames[i] === calleeNames[j])
+			      j = ++i;
+			  }
+
+			  //search if exists a function with that name and returns the id if exist
+			  var functionId=getIdByName(calleeNames[i]);
+			  if(functionId!=-1)
+			  	functionParsed.calleeIds.push(functionId);
+			}
+		}
+
+		return functionParsed;
+	}
+
+
 
 
 	function renderDescription(functionCalled)
@@ -450,6 +515,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 		return header;
 	}
+
+
+
 
 
 	function renderHeaderById(functionId)
@@ -636,5 +704,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 
 	}
+
+
 	return service;
 }]);

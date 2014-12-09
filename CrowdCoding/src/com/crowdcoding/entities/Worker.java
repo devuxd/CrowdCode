@@ -52,7 +52,6 @@ public class Worker
 	//                user != null
 	public static Worker Create(User user, Project project)
 	{
-		project.logoutInactiveWorkers();
 		//System.out.println("actual logged  worker");
 		//loggedInWorkers
 		//project.logg
@@ -65,7 +64,7 @@ public class Worker
 		//System.out.println(allWorkers((project)));
 		FirebaseService.setPoints(user.getUserId(), user.getNickname(), crowdWorker.score, project);
 
-		FirebaseService.writeWorkerLoggedIn( user.getUserId(), user.getNickname(), project);
+		//FirebaseService.writeWorkerLoggedIn( user.getUserId(), user.getNickname(), project);
 
 		return crowdWorker;
 	}

@@ -1,186 +1,165 @@
-
 <div ng-controller="DebugTestFailureController"  >
+    <div class="section section-description " >
+        <div class="section-content no-padding" >
+            <ul class="microtask-details clearfix">
+                <li>{{datas.title}}</li>
+                <li>
+                    <span>{{datas.submitValue}} points</span>
+                </li>
+                <li>
+                    <div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="section section-description">
+        <div class="section-title" >
+            JOB DESCRIPTION
+        </div>
+        <div class="section-content" >
+            One (or more) of the tests for the function <strong>{{funct.name}}</strong>  have failed. Can you find and fix the bug(s)?
+        </div>
+    </div>
+    <div class="section section-description" id="functionSignature">
+        <div class="section-title" >
+            FUNCTION SIGNATURE
+        </div>
+        <div class="section-content no-padding" >
+            <code-mirror-readonly code="functionDescription"></code-mirror-readonly>
+        </div>
+    </div>
+    <alertcontainer></alertcontainer>
+    <div class="section section-description" ng-if="!dispute && testsRunning" >
+        Tests are running... please wait.
+    </div>
+    <div class="section-cols" ng-if="!dispute && !testsRunning" >
+        <div class="container-flex-row">
+            <div class="section section-help" style="width:30%">
+                <div class="section-title" >
+                    TEST RESULTS
+                </div>
+                <div class="section-content" >
 
-	<div class="section section-description " >
-		<div class="section-content no-padding" >
-			<ul class="microtask-details clearfix">
-				<li>{{datas.title}}</li>
-				<li>
-					<span>{{datas.submitValue}} points</span>
-				</li>
-				<li>
-					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
-				</li>
-			</ul>
-		</div>
-	</div>
+
+                    List of the results of running each test for the current function; passing tests are green and failing tests are red. If you think a failing test is wrong (i.e., the test improperly specifies the expected output), you can <strong>report an issue</strong> with the test (but you can report an issue with only one test).
+
+                    <button ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.$invalid">Run the tests!</button>
+                </div>
+            </div>
+
+            <div class="section section-form" style="width:70%;">
+                <div class="section-content no-padding" >
+                    <collapsable-list
+                    data="testsData"
+                    add-data="{ 'paramNames' : paramNames }"
+                    class="test-collapsable-list"
+                    list-element-class-condition="'success': data.result , 'failed': ! data.result "
+                    toggler-template="/html/templates/collapsable_toggler_test.html"
+                    element-template="/html/templates/collapsable_element_test.html">
+                    </collapsable-list>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section-cols" ng-if=" stubs && !dispute && !testsRunning">
+        <div class="container-flex-row">
+            <div class="section section-help" style="width:30%">
+                <div class="section-title" >
+                    FUNCTION CALL STUBS
+                </div>
+                <div class="section-content" >
+                    <p>
+                    For each function called by operation, you can choose the output that the function will produce for each set of inputs with which is called. When you change the output of a function, the test runner will automatically create a <strong>stub</strong>, using the output you specify instead of executing the actual function call.
+                    </p>
+                </div>
+            </div>
+            <div class="section section-form"  style="width:70%" >
+                <div class="section-title" >
+
+                </div>
+                <div class="section-content" >
+
+                    <ul style="list-style:none;margin:0px;padding:0px;">
+                        <li ng-repeat="(callee,inputMap) in stubs track by $index" >
+                            The function <b>{{callee}}</b> has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
+                            <ul class="collapsable-list mock-collapsable-list ">
+                                <li ng-repeat="(stubKey,stub) in inputMap track by $index">
+                                    <b>#{{$index+1}} input set </b><br />
+                                    <table style="width:100%">
+                                        <tr ng-repeat="(key,input) in stub.inputs track by $index">
+                                            <td>{{paramNames[$index]}}</td>
+                                            <td><div ace-read-json ng-model="input" ></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>output</td>
+                                            <td><div ace-edit-json ng-model="stub.output" ></div></td>
+                                        </tr>
+                                    </table>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-cols" ng-if=" !dispute ">
+        <div class="container-flex-row">
+            <div class="section section-help" style="width:30%">
+                <div class="section-title" >
+                    FUNCTION EDITOR
+                </div>
+                <div class="section-content" >
+                    <p>
+                    For monitoring statements, use <strong>debug.log(statement)</strong>. The results of the debug.log() are printed below each <strong>test result</strong>.
+                    </p>
+                </div>
+                <div class="section-title" > AVAILABLE DATA TYPES </div>
+                <div class="section-content" >
+                    <adt-bar></adt-bar>
+                </div>
+            </div>
+            <div class="section section-form" style="width:70%">
+                <div class="section-content no-padding" >
+                    <div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
+                    <textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+                    <ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">
+                        <span>There are some errors. Please fix them before submit:</span>
+                        <ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
+                            <li>{{error}}</li>
+                        </ul>
+                    </ul>
+                    <javascript-helper class="pull-right"></javascript-helper>
+                    <span class="clearfix"></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
-	<div class="section section-description">
-		<div class="section-title" >
-		JOB DESCRIPTION
-		</div>
-		<div class="section-content" >
-			One (or more) of the tests for the function <strong>{{funct.name}}</strong>  have failed. Can you find and fix the bug(s)?
-		</div>
-	</div>
-
-
-	<div class="section section-description" id="functionSignature">
-		<div class="section-title" >
-			FUNCTION SIGNATURE
-		</div>
-		<div class="section-content no-padding" >
-			<code-mirror-readonly code="functionDescription"></code-mirror-readonly>
-		</div>
-	</div>
-
-	<alertcontainer></alertcontainer>
-
-	<div class="section section-description" ng-if="!dispute && testsRunning" >
-		Tests are running... please wait.
-	</div>
-
-	<div class="section-cols" ng-if="!dispute && !testsRunning" >
-		<div class="container-flex-row">
-
-			<div class="section section-help" style="width:30%">
-				<div class="section-title" >
-					TEST RESULTS
-				</div>
-				<div class="section-content" >
-				
-					
-					List of the results of running each test for the current function; passing tests are green and failing tests are red. If you think a failing test is wrong (i.e., the test improperly specifies the expected output), you can <strong>report an issue</strong> with the test (but you can report an issue with only one test).
-					
-					<button ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.$invalid">Run the tests!</button>
-				</div>
-			</div>
-
-			
-			<div class="section section-form" style="width:70%;">
-				<div class="section-content no-padding" >
-
-					<collapsable-list
-					    data="testsData" 
-					    add-data="{ 'paramNames' : paramNames }"
-					    class="test-collapsable-list"
-					    list-element-class-condition="'success': data.result , 'failed': ! data.result "
-						toggler-template="/html/templates/collapsable_toggler_test.html"
-						element-template="/html/templates/collapsable_element_test.html">
-					</collapsable-list>
-
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="section-cols" ng-if=" stubs && !dispute && !testsRunning">
-		<div class="container-flex-row">
-
-			<div class="section section-help" style="width:30%">
-				<div class="section-title" >
-				FUNCTION CALL STUBS
-				</div>
-				<div class="section-content" >
-					<p>
-						For each function called by operation, you can choose the output that the function will produce for each set of inputs with which is called. When you change the output of a function, the test runner will automatically create a <strong>stub</strong>, using the output you specify instead of executing the actual function call.
-					</p>
-				</div>
-			</div>
-
-			<div class="section section-form"  style="width:70%" >
-				<div class="section-title" >
-				
-				</div>
-				<div class="section-content" >
-					
-					<ul style="list-style:none;margin:0px;padding:0px;">
-						<li ng-repeat="(callee,inputMap) in stubs track by $index" > 
-							The function <b>{{callee}}</b> has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
-							<ul class="collapsable-list mock-collapsable-list ">
-								<li ng-repeat="(stubKey,stub) in inputMap track by $index">
-									<b>#{{$index+1}} input set </b><br />
-									<table style="width:100%">
-										<tr ng-repeat="(key,input) in stub.inputs track by $index">
-											<td>{{paramNames[$index]}}</td>
-											<td><div ace-read-json ng-model="input" ></div></td>
-										</tr>
-										<tr>
-											<td>output</td>
-											<td><div ace-edit-json ng-model="stub.output" ></div></td>
-										</tr>
-									</table>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</div>
-
-		</div>
-	</div>
-	
-
-	<div class="section-cols" ng-if=" !dispute ">
-		<div class="container-flex-row">
-
-			<div class="section section-help" style="width:30%">
-				<div class="section-title" >
-				FUNCTION EDITOR  
-				</div>
-				<div class="section-content" >
-			 		<p>
-			 			For monitoring statements, use <strong>debug.log(statement)</strong>. The results of the debug.log() are printed below each <strong>test result</strong>.
-			 		</p>
-				</div>
-
-				<div class="section-title" > AVAILABLE DATA TYPES </div>
-				<div class="section-content" >
-						<adt-bar></adt-bar>
-				</div>
-			</div>
-
-			<div class="section section-form" style="width:70%">
-				<div class="section-content no-padding" >
-					<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
-					<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-					<ul class="help-block" ng-show="microtaskForm.code.$error.function_errors.length > 0">
-						<span>There are some errors. Please fix them before submit:</span>
-						<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
-							<li>{{error}}</li>
-						</ul>
-					</ul>
-					<javascript-helper class="pull-right"></javascript-helper>
-					<span class="clearfix"></span>
-				</div>
-			</div>
-
-		</div>
-	</div>
-
-	
-
-	
-
-	<div class="section section-form" ng-if="dispute">
-		<div class="section-title" >
-			DISPUTE TEST 
-		</div>
-		<div class="section-content" >
- 			<span><b>Test description:</b> {{disputedTest.description}}</span><br/>
-			<span><b>Test code:</b> {{disputedTest.code}}</span><br/>
-
-			<label for="disputeDescription">What's wrong with this test? </label>
-			<textarea name="disputeDescription" class="form-control" ng-model="disp.disputeText"></textarea><br>
-			<button class="btn" ng-click="cancelDispute()" >Nothing is wrong with the test</button>
-		</div>
-	</div>
-<!--
-	<div class="task-buttons pull-right">
-		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || passedTests.length != tests.length" >Submit</button>
-		<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
-	</div>
-	<div class="clearfix"></div>
--->
+    <div class="section section-form" ng-if="dispute">
+        <div class="section-title" >
+            DISPUTE TEST
+        </div>
+        <div class="section-content" >
+            <span><b>Test description:</b> {{disputedTest.description}}</span><br/>
+            <span><b>Test code:</b> {{disputedTest.code}}</span><br/>
+            <label for="disputeDescription">What's wrong with this test? </label>
+            <textarea name="disputeDescription" class="form-control" ng-model="disp.disputeText" ng-required="dispute" ng-pattern="/^[^/\\\'\&quot;]+$/"></textarea>
+            <ul class="help-block" ng-show="microtaskForm.disputeDescription.$dirty && microtaskForm.disputeDescription.$invalid">
+                <li ng-show="microtaskForm.disputeDescription.$error.required">This field is required!</li>
+                <li ng-show="microtaskForm.disputeDescription.$error.pattern">The symbols \ / " 'are not allowed</li>
+            </ul>
+            <br>
+            <button class="btn" ng-click="cancelDispute()" >Nothing is wrong with the test</button>
+        </div>
+    </div>
+    <!--
+    <div class="task-buttons pull-right">
+        <button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || passedTests.length != tests.length" >Submit</button>
+        <button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
+    </div>
+    <div class="clearfix"></div>
+    -->
 </div>

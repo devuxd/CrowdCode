@@ -57,10 +57,10 @@ public class Function extends Artifact
 	private String description;
 	private List<Long> tests = new ArrayList<Long>();
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
-	
-	
+
+
 	// fully implemented (i.e., not psuedo) calls made by this function
-	private List<String> callees = new ArrayList<String>();
+	private List<Long> callees = new ArrayList<Long>();
 	// current callers with a fully implemented callsite to this function:
 	private List<Long> callers = new ArrayList<Long>();
 	// pseudocalls made by this function:
@@ -270,7 +270,7 @@ public class Function extends Artifact
 	{
 		tests.add(testID);
 		testsImplemented.add(false);
-		
+
 		ofy().save().entity(this).now();
 	}
 
@@ -332,7 +332,7 @@ public class Function extends Artifact
 			this.hasBeenDescribed = true;
 			ofy().save().entity(this).now();
 			notifyBecameDescribed(project);
-			
+
 			project.historyLog().beginEvent(new PropertyChange("hasBeenDescribed", "true", this));
 			project.historyLog().endEvent();
 		}
@@ -411,7 +411,7 @@ public class Function extends Artifact
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
 
 		// Looper over all of the callers, rebuilding our list of callers
-		rebuildCalleeList(dto.calleeNames, project);
+		rebuildCalleeList(dto.calleeIds, project);
 
 		// Look for pseudocode and psuedocalls
 		List<String> currentPseudoCalls = findPseudocalls(code);
@@ -457,30 +457,31 @@ public class Function extends Artifact
 
 	// Diffs the new and old callee list, sending notifications to callees about who their
 	// callers are as appropriate. Updates the callee list when done
-	private void rebuildCalleeList(List<String> calleeNames, Project project)
+	private void rebuildCalleeList(List<Long> calleeIds, Project project)
 	{
 		// First, find new callees added, if any
-		List<String> newCallees = new ArrayList<String>(calleeNames);
+		List<Long> newCallees = new ArrayList<Long>(calleeIds);
 		newCallees.removeAll(this.callees);
 
 		// If there are any, send notifications to these functions that they have a new caller
-		for (String newCalleeName : newCallees)
+		for (Long newCalleeId : newCallees)
 		{
-			Function callee = lookupFunction(newCalleeName, project);
-			if (callee != null)
-				FunctionCommand.addCaller(callee.id, this.id);
+			//Function callee = lookupFunction(newCalleeId, project);
+
+	//		if (callee != null)
+			FunctionCommand.addCaller(newCalleeId, this.id);
 		}
 
 		// Next, find any callees removed, if any
-		List<String> removedCallees = new ArrayList<String>(this.callees);
-		removedCallees.remove(calleeNames);
+		List<Long> removedCallees = new ArrayList<Long>(this.callees);
+		removedCallees.remove(calleeIds);
 
 		// Send notifications to these functions that they no longer have this caller
-		for (String removedCalleeName : removedCallees)
+		for (Long removedCalleeIds : removedCallees)
 		{
-			Function callee = lookupFunction(removedCalleeName, project);
-			if (callee != null)
-				FunctionCommand.removeCaller(callee.id, this.id);
+			//Function callee = lookupFunction(removedCalleeName, project);
+			//if (callee != null)
+				FunctionCommand.removeCaller(removedCalleeIds, this.id);
 		}
 
 		this.callees = newCallees;
@@ -522,9 +523,9 @@ public class Function extends Artifact
 		System.out.println("callDescri "+callDescription);
 		System.out.println("project "+project);
 		System.out.println("callee "+callee);
-		
-		
-		
+
+
+
 		FunctionCommand.addDependency(dto.functionId, this.getID(), callDescription);
 	}
 
@@ -550,11 +551,11 @@ public class Function extends Artifact
 		// the microtask can be directly started rather than queued.
 		WriteTestCases writeTestCases = new WriteTestCases(this, project);
 		ProjectCommand.queueMicrotask(writeTestCases.getKey(), null);
-		
+
 //		project.historyLog().beginEvent(new MicrotaskSpawned(writeTestCases));
 //		project.historyLog().endEvent();
 //		project.publishHistoryLog();
-		
+
 
 		// Spawn off microtask to sketch the method
 		queueMicrotask(new WriteFunction(this, project), project);
@@ -583,6 +584,7 @@ public class Function extends Artifact
 			{
 				// Check if it was edited
 				Ref<Test> testRef = Test.find(testCase.id, project);
+				System.out.println(testRef.get());
 				Test test = testRef.get();
 				if (!test.getDescription().equals(testCase.text))
 				{
@@ -634,7 +636,7 @@ public class Function extends Artifact
 		for (MockDTO mockDTO : dto.mocks)
 		{
 			System.out.println("MOCK: "+mockDTO);
-			
+
 			// Is there already a simple test / mock for this function with these inputs?
 			Test test = Test.findSimpleTestFor(mockDTO.functionName, mockDTO.inputs, project);
 
@@ -704,7 +706,7 @@ public class Function extends Artifact
 	{
 		int position = tests.indexOf(test.getID());
 		testsImplemented.set(position, true);
-		
+
 		runTestsIfReady(project);
 	}
 
@@ -774,6 +776,9 @@ public class Function extends Artifact
 	// function has changed
 	private void notifyDescriptionChanged(FunctionDTO dto, Project project)
 	{
+		System.out.println("callerID "+ callers);
+		System.out.println("testID "+ tests);
+
 		for (long callerID : callers)
 			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 
@@ -801,7 +806,10 @@ public class Function extends Artifact
 	// Looks up a Function object by name. Returns the function or null if no such function exists
 	public static Function lookupFunction(String name, Project project)
 	{
+		//TO FIX NOT WORKING
 		Ref<Function> ref = ofy().load().type(Function.class).ancestor(project.getKey()).filter("name", name).first();
+		System.out.println("lookup function       ------->>>>>"+ref);
+
 		if (ref == null)
 			return null;
 		else

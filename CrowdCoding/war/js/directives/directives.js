@@ -186,11 +186,16 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
             return false;
         }
 
-        // 2. If the are syntactical errors displays the error and returns
+        // 2. If the are more header displays the error and returns
+        if (code.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g).length > 1){
+            errors.push('Only one header is allowed in the code, please fix it');
+            return false;
+        }
+        // 3. If the are syntactical errors displays the error and returns
         if (hasSyntacticalErrors(code))
             return false;
 
-        // 3. Trys to build the Est if not displays the error and return
+        // 4. Trys to build the Est if not displays the error and return
         try {
             ast = esprima.parse(code, {loc: true});
         } catch (e) {
@@ -199,9 +204,9 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
             return false;
         }
 
-        // 4. checks if the are ast Errors and displays it
+        // 5. checks if the are ast Errors and displays it
         hasASTErrors(code, ast);
-        // 5. checks if the are errors in the descriptions structure
+        // 6. checks if the are errors in the descriptions structure
         hasDescriptionError(ast);
 
         return false;

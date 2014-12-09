@@ -158,7 +158,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	$scope.$on('load', function() {
 
 		// if is != null, stop the queue checking interval
-		if (checkQueueTimeout != null) {
+		if (checkQueueTimeout !== null) {
 
 			$timeout.cancel(checkQueueTimeout);
 		}
@@ -189,11 +189,11 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 					// debug stuff
 					// console.log("data:", data);
 					// console.log("microtask:", $scope.microtask);
-					// console.log("function:", $scope.funct);
+					console.log("function:", $scope.funct);
 					// console.log("test:", $scope.test);
 
 					// retrieve the related issued microtask if present
-	   						console.log("IS REISSUED FROM", $scope.microtask.id, $scope.microtask.reissuedFrom);
+	   				//console.log("IS REISSUED FROM", $scope.microtask.id, $scope.microtask.reissuedFrom);
 
 					if ( angular.isDefined( $scope.microtask.reissuedFrom ) ) {
 
@@ -238,8 +238,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask', function(event, formData) {
 		console.log($scope.microtask);
-
-		if ($scope.microtask == undefined)
+		console.log(formData);
+		if ($scope.microtask === undefined)
 			return;
 
 		$http.post('/' + $rootScope.projectId + '/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id, formData).
