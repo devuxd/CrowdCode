@@ -18,11 +18,12 @@ myApp.controller('AppController', [
 	function($scope, $rootScope, $firebase, $http, $interval, userService, testsService, functionsService, testRunnerService, ADTService, microtasksService, TestList) {
 
 		// current session variables
-		$rootScope.loaded = {};
-		$rootScope.projectId = projectId;
-		$rootScope.workerId = workerId;
+		$rootScope.loaded       = {};
+		$rootScope.projectId    = projectId;
+		$rootScope.workerId     = workerId;
 		$rootScope.workerHandle = workerHandle;
-		$rootScope.firebaseURL = firebaseURL;
+		$rootScope.firebaseURL  = firebaseURL;
+		$rootScope.userData     = userService.data;
 
 		// flags for knowing if service is loaded
 
@@ -33,6 +34,10 @@ myApp.controller('AppController', [
 		$rootScope.workerLogout = function() {
 			userService.logout();
 		};
+
+
+
+
 		$scope.promise = $interval(
 			function() {
 				$rootScope.loaded.functions = false;
@@ -89,8 +94,6 @@ myApp.controller('AppController', [
 				//		$rootScope.feedback.sent=true;
 			});
 
-
-
 		});
 
 
@@ -116,7 +119,7 @@ myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', '
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', 'testsService', 'functionsService', 'userService', 'microtasksService', function($scope, $rootScope, $firebase, $http, $timeout, testsService, functionsService, userService, microtasksService) {
+myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', '$timeout', 'testsService', 'functionsService', 'userService', 'microtasksService', function($scope, $rootScope, $firebase, $http, $interval, $timeout, testsService, functionsService, userService, microtasksService) {
 
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -144,7 +147,10 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	//Whait for the inizializations of all service
 	//when the microtask array is syncronize with firebase load the first microtask
 
+	var waitTimeInSeconds   = 30;
 	var checkQueueTimeout = null;
+	var timerInterval     = null;
+	$scope.checkQueueIn   = waitTimeInSeconds;
 
 	// load microtask:
 	// request a new microtask from the backend and if success
@@ -158,9 +164,10 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		}
 
 		// set the loading template
-		$scope.microtask = undefined;
-		$scope.templatePath = templatesURL + "loading.html";
+		$scope.microtask      = undefined;
+		$scope.templatePath   = templatesURL + "loading.html";
 		$rootScope.inlineForm = false; // reset form as non-inline
+
 		$http.get('/' + projectId + '/ajax/fetch').
 			success(function(data, status, headers, config) {
 
@@ -213,7 +220,13 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 				$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 
+				$scope.checkQueueIn = waitTimeInSeconds; 
+				var timerInterval = $interval(function(){
+					$scope.checkQueueIn -- ;
+				}, 1000);
+
 				checkQueueTimeout = $timeout(function() {
+					$interval.cancel(timerInterval);
 					$scope.$emit('load');
 				}, 30*1000); // check the queue every 30 seconds
 			});

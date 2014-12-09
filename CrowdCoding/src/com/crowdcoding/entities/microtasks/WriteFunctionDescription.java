@@ -48,13 +48,13 @@ public class WriteFunctionDescription extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
 	public Microtask copy(Project project)
 	{
-		return new WriteFunctionDescription(this.function.getValue(),this.callDescription,this.caller.getValue(), project);
+		return new WriteFunctionDescription( (Function) getOwningArtifact(),this.callDescription,this.caller.getValue(), project);
 	}
 
 	public Key<Microtask> getKey()
@@ -96,9 +96,16 @@ public class WriteFunctionDescription extends Microtask
 		return "/html/microtasks/writeFunctionDescription.jsp";
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return function.get();
+		Artifact owning;
+		try {
+			return function.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.function);
+			return function.get();
+		}
 	}
 
 	public Function getCaller()

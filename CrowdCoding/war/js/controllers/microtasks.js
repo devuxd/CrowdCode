@@ -816,8 +816,6 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
     $scope.parameters = [];
     // addParameter and deleteParameter 
     $scope.addParameter = function() {
-        event.preventDefault();
-        event.stopPropagation();
         var parameter = {
             text: '',
             added: true,

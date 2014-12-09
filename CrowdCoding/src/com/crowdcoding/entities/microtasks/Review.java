@@ -61,7 +61,7 @@ public class Review extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, null));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 		System.out.println("instantiating new review for microtask: "+microtaskKeyUnderReview);
 	}
@@ -104,8 +104,8 @@ public class Review extends Microtask
 			reviewResult = "reissued";
 			
 		} else {
+			
 			// accept microtask
-
         	System.out.println("accepted");
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
 			awardedPoint = submittedMicrotask.submitValue;
@@ -117,7 +117,7 @@ public class Review extends Microtask
     	FirebaseService.postToNewsfeed(workerOfReviewedWork, (
     		new NewsItemInFirebase(
     			awardedPoint,
-    			"Your work on " + submittedMicrotask.microtaskName() + " has been " + reviewResult ,
+    			submittedMicrotask.microtaskName(),
 				"WorkReviewed",
     			Project.MicrotaskKeyToString(submittedMicrotask.getKey() ) ,
 				reviewDTO.qualityScore)
@@ -125,13 +125,12 @@ public class Review extends Microtask
 	    	project
 	    );
 
-		// Award points to the reviewer for the review task
-		WorkerCommand.awardPoints(workerID, this.submitValue);
+
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
     	FirebaseService.postToNewsfeed(workerID, (
     		new NewsItemInFirebase(
     			this.submitValue,
-    			"You reviewed a microtask",
+    			this.microtaskName(),
     			"SubmittedReview",
     			Project.MicrotaskKeyToString(  this.getKey() ),
     			-1 // differentiate the reviews from the 0 score tasks
@@ -166,9 +165,16 @@ public class Review extends Microtask
 		return "/html/microtasks/review.jsp";
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return artifact.get();
+		Artifact owning;
+		try {
+			return artifact.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.artifact);
+			return artifact.get();
+		}
 	}
 
 	public String microtaskTitle()

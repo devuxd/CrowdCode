@@ -56,13 +56,13 @@ public class WriteCall extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
 	public Microtask copy(Project project)
 	{
-		return new WriteCall(this.caller.getValue(), this.calleeFullDescription, this.pseudoCall, project);
+		return new WriteCall(  (Function) getOwningArtifact(), this.calleeFullDescription, this.pseudoCall, project);
 	}
 
 	public Key<Microtask> getKey()
@@ -112,9 +112,16 @@ public class WriteCall extends Microtask
 		return StringEscapeUtils.escapeEcmaScript(pseudoCall);
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return getCaller();
+		Artifact owning;
+		try {
+			return caller.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.caller);
+			return caller.get();
+		}
 	}
 
 	public String microtaskTitle()

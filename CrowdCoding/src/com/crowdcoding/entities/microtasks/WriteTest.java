@@ -46,6 +46,8 @@ public class WriteTest extends Microtask
 		super(project);
 		this.promptType = PromptType.WRITE;
 		this.test = (Ref<Test>) Ref.create(test.getKey());
+
+		ofy().load().ref(this.test);
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
 				test.getName(),
@@ -54,7 +56,7 @@ public class WriteTest extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
@@ -73,7 +75,7 @@ public class WriteTest extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, test2));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
@@ -93,7 +95,7 @@ public class WriteTest extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, test2));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
@@ -113,7 +115,7 @@ public class WriteTest extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
@@ -139,13 +141,13 @@ public class WriteTest extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, test));
+		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
 
 	public Microtask copy(Project project)
 	{
-		return new WriteTest(this.test.getValue(), this.promptType, this.issueDescription,
+		return new WriteTest( (Test) getOwningArtifact() , this.promptType, this.issueDescription,
 				this.oldFunctionDescription, this.newFunctionDescription, this.oldTestCase, project, functionVersion);
 	}
 
@@ -183,7 +185,13 @@ public class WriteTest extends Microtask
 
 	public Artifact getOwningArtifact()
 	{
-		return test.get();
+		Artifact owning;
+		try {
+			return test.safeGet();
+		} catch ( Exception e ){
+			ofy().load().ref(this.test);
+			return test.get();
+		}
 	}
 
 	public Test getTest()

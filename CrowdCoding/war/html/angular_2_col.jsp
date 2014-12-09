@@ -39,6 +39,8 @@
 
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="../include/bootstrap/css/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="//rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
+	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
 	<link rel="stylesheet" href="/include/codemirror/vibrant-ink.css" type="text/css" />
@@ -70,7 +72,7 @@
 
 <body ng-controller="AppController"  ng-cloak >
 
-	<header class="navbar navbar-default navbar-fixed-top bg-blue-dark" role="navigation">
+	<header>
 
 		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
 			<div class="container-fluid">
@@ -87,7 +89,7 @@
 			        <li class="dropdown">
 			          	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 		          			<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
-							{{workerHandle}}
+							{{ userData.score }} points 
 							<span class="caret"></span>
 				        </a>
 
@@ -128,30 +130,39 @@
 		        		</div>
 		        	</div>
 		        </div>
-		        <a href="#" class="linkclass send-feedback" 
-		           data-animation="am-fade-and-scale" data-placement="center" 
-		           data-template="/html/templates/popups/popup_feedback.html" bs-modal="modal">Send Us Feedback!</a>
+
+		        <div class="sidebar-buttons">
+			        <button href="#" class="" 
+			           data-animation="am-fade-and-scale" 
+			           data-placement="center" 
+			           data-template="/html/templates/popups/popup_shortcuts.html" 
+			           bs-modal="modal"
+			           data-container="body"
+			           >shortcuts</button>
+			        <button href="#" class="" 
+			           data-animation="am-fade-and-scale" 
+			           data-placement="center" 
+			           data-container="body"
+			           data-template="/html/templates/popups/popup_feedback.html" bs-modal="modal">Send Us Feedback!</button>
+		        </div>
 			</div>
 
 	        <!-- CONTENT -->
 	        <div id="content" class="order-3" ng-controller="MicrotaskController">
 	        	<form name="microtaskForm" class="form-horizontal" novalidate submit-hot-key="$broadcast('collectFormData', microtaskForm)">
 					<div id="task"  class="task" style="" microtask >
-						<ng-include src="templatePath"></ng-include>
+						<ng-include class="task-{{ microtask.type | lowercase }}" src="templatePath"></ng-include>
 					</div>
 					<div class="button-bar">
-					<!-- You can use a custom html template with the `data-template` attr -->
-  						<span class="pull-left">
-							<button ng-click="$broadcast('collectFormData', microtaskForm) "
-								tabindex="99"
-								class="btn btn-sm btn-primary">
-									Submit <span style="font-size: 0.7em;">(ctrl+enter)</span>
-							</button>
-							<button ng-click="$emit('skipMicrotask')" tabindex="100" class="btn btn-sm">Skip</button>
-						</span>
+						<div class="btn-group pull-left" role="group"  >
+						  <button type="button" ng-click="$emit('skipMicrotask')" tabindex="100" class="btn btn-default btn-sm">Skip</button>
+						  <button type="button" ng-click="$broadcast('collectFormData', microtaskForm) " tabindex="99" class="btn btn-primary btn-sm">Submit</button>
+						</div>
+
+						
 						<span class="pull-right">
 							<span ng-if="unreadedMessages>0" class="unreded-messages">{{unreadedMessages}}</span>
-							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn {{chatActive?'btn-chat-active':''}} btn-sm"  >
+							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn btn-chat-toggle {{chatActive?'opened':''}} btn-sm"  >
 
 								<span class="glyphicon glyphicon-comment"></span>
 							</button>

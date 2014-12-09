@@ -239,82 +239,38 @@ public class CrowdServlet extends HttpServlet
 			//System.out.println("command="+command);
 		    final StringBuilder output = new StringBuilder();
 		    final Date currentTime = new Date();
+		    
+
+			CommandContext context = new CommandContext();
 
 			if (command.equals("RESET"))
 			{
-				output.append("RESET executed at " + currentTime.toString() + "\n");
+				output.append("PROJECT RESET executed at " + currentTime.toString() + "\n");
+				
 				Project.Clear(projectID);
-
-				output.append("Project successfully reset to default state.\n");
-
-//				System.out.println(" PROJECTS BEFORE CREATION ");
-//				List<Project> projects = ofy().load().type(Project.class).list();
-//				for(Project project: projects){
-//					System.out.println("PROJECT = "+project.getID());
-//
-//					ofy().transactionless().delete().key(project.getKey());
-//				}
-
-				List<Command> commands = new ArrayList<Command>();
-				commands.addAll(ofy().transact(new Work<List<Command>>() {
-			        public List<Command> run()
-			        {
-		    			CommandContext context = new CommandContext();
-		    			Project.Construct(projectID);
-		    			output.append("New project successfully constructed.\n");
-
-						return context.commands();
-			        }
-			    }));
-
-				executeCommands(commands, projectID);
-
-//				System.out.println(" PROJECTS AFTER CREATION ");
-//				projects = ofy().load().type(Project.class).list();
-//				for(Project project: projects){
-//					System.out.println("PROJECT = "+project.getID());
-//				}
+				Project.Construct(projectID);
 			}
 			else if (command.equals("REVIEWSON"))
 			{
 				output.append("REVIEWS ON executed at " + currentTime.toString() + "\n");
 
-				List<Command> commands = new ArrayList<Command>();
-				commands.addAll(ofy().transact(new Work<List<Command>>() {
-			        public List<Command> run()
-			        {
-		    			CommandContext context = new CommandContext();
-		    			ProjectCommand.enableReviews(true);
-		    			output.append("Reviews successfully set to on.\n");
-
-						return context.commands();
-			        }
-			    }));
-
-				executeCommands(commands, projectID);
+		    	ProjectCommand.enableReviews(true);
+		    
 			}
 			else if (command.equals("REVIEWSOFF"))
 			{
 				output.append("REVIEWS OFF executed at " + currentTime.toString() + "\n");
 
-				List<Command> commands = new ArrayList<Command>();
-				commands.addAll(ofy().transact(new Work<List<Command>>() {
-			        public List<Command> run()
-			        {
-		    			CommandContext context = new CommandContext();
-		    			ProjectCommand.enableReviews(false);
-		    			output.append("Reviews successfully set to off.\n");
-
-						return context.commands();
-			        }
-			    }));
-
-				executeCommands(commands, projectID);
+				ProjectCommand.enableReviews(false);
+		  
 			}
 			else
 			{
 				output.append("Unrecognized command " + command);
 			}
+			
+
+			executeCommands(context.commands(), projectID);
 
 			output.append("\n");
 

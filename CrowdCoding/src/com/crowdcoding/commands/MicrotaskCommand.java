@@ -163,7 +163,7 @@ public abstract class MicrotaskCommand extends Command
 		public void execute(Microtask microtask, Project project)
 		{
 			Microtask newMicrotask = microtask.copy(project);
-			String microtaskKey =Project.MicrotaskKeyToString(newMicrotask.getKey());
+			String microtaskKey = Project.MicrotaskKeyToString(newMicrotask.getKey());
 			String reissuedFromMicrotaskKey = Project.MicrotaskKeyToString(microtask.getKey());
 
 			//FirebaseService.

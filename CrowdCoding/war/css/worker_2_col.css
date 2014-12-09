@@ -55,6 +55,7 @@
 
 
 /* --------- BOOTSTRAP OVERWRITE ---------  */
+@grid-float-breakpoint {  }
 .btn:focus {outline:none;}
 .btn { font-family: 'Lato' !important;font-style: normal; font-weight: 400;}
 .btn:hover, .btn:focus { background-color: rgb(163, 163, 163); }
@@ -75,18 +76,22 @@
 .glyphicon { font-size:1em; }
 
 
+.navbar { min-height:35px;   }
+.navbar .navbar-brand { padding: 0 12px;font-size: 16px;line-height: 35px;height: 35px; }
+.navbar .navbar-brand:hover { color:white; }
+.navbar .navbar-nav > li > a {  padding-top: 0px; padding-bottom: 0px; line-height: 35px; }
+.navbar .navbar-toggle {  margin-top: 3px; margin-bottom: 0px; padding: 8px 9px; }
+.navbar .navbar-form { margin-top: 2px; margin-bottom: 0px }
 
 .navbar {
 	font-family: 'Lato' !important;
-	border-radius:0px;
-	border:none;
-	background-color:#3F81AC;
-	box-shadow: black 0px 1px 4px;
+	background-color:#555;
 }
 .navbar .navbar-brand { color:white; }
 .navbar .navbar-nav > li > a { color:white; background-color:transparent; }
+.navbar .navbar-nav > li > a:visited { color:white; }
 .navbar .navbar-nav > li > a:hover{ color:white; opacity:0.8; }
-.navbar img { width:20px; }
+.navbar img { width:30px; }
 
 .list-group { margin: 0px;}
 .control-label { padding-right:10px !important; }
@@ -137,7 +142,7 @@ h1, h2, h3, h4 {
 .main-wrapper {
 	width:100%;
 	position:absolute;
-    top:52px;
+    top:35px;
     left:0px;
     right:0px;
     bottom:0px;
@@ -145,7 +150,7 @@ h1, h2, h3, h4 {
 
 
 
-#sidebarLeft { width:20%; height:100%; background-color: #E0E0E0; padding-top:10px; position: relative;}
+#sidebarLeft { width:20%; height:100%; background-color: #EEEEEE; padding-top:10px; position: relative;}
 
 #content {
 	width:80%;
@@ -162,15 +167,18 @@ h1, h2, h3, h4 {
 	bottom:40px;
 	top:0px;
 	width:100%;
-	padding:5px;
-	padding-top:10px;
+	padding:10px;
+	padding-top:7px;
     overflow-x:hidden;
     overflow-y:auto;
 }
 .button-bar {
-	padding:5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	height: 40px;
-	background-color: gray;
+	background-color: #AFAFAF;
 	position: absolute;
 	width: 100%;
 	bottom: 0px;
@@ -181,58 +189,6 @@ h1, h2, h3, h4 {
 .task-container > div { flex-shrink: 0; }
 
 
-
-/* MICROTASK CONTAINER SECTIONS */
-.section {
-	position:relative;
-	margin-bottom:5px;
-
-
- 	background-color:#E0E0E0;
- 	color: #303030;
-}
-.section-title {
-	text-align: left;
-	padding:5px;
-	text-transform:uppercase;
-	font-size:0.8em;
-	font-family: 'Lato' !important;
-	font-style: normal;
-	font-weight: 600;
-	color: #3F81AC;
-}
-.section-content {
-	padding:5px;
-}
-
-
-
-.section.section-description-2 { background-color:rgba(63, 129, 172, 0.65); }
-.section.section-description-2 .section-title { color:white; }
-
-.section.section-help { background-color:#BFC7CD; }
-.section.section-help .section-title { color:#5F5F5F; }
-
-.help-block { margin:0px; padding:0px; list-style: none; color: rgb(159, 17, 17);}
-
-
-.section.section-form { background-color:lightgray; }
-/*.section.section-form .section-title { padding: 0px; }*/
-
-
-.section.section-form .section-title .input-group { background-color: rgba(63, 129, 172, 0.8); padding:5px;}
-.section.section-form .section-title .input-group input  { background-color:white; border-radius:0px; border: none; }
-.section.section-form .section-title .input-group input::-webkit-input-placeholder {  color: gray; font-style:italic;}
-.section.section-form .section-title .input-group button { border:none; font-weight: bold; border-radius:0px; background-color:transparent; }
-.section.section-form .section-title .input-group button:hover,
-.section.section-form .section-title .input-group button:focus
- { background-color:rgba(130, 169, 195, 1); }
-
-
-.section.section-form .section-content .input-group { cursor:pointer;}
-.section.section-form .section-content .input-group input { background-color: transparent !important; border:none; outline:none; box-shadow:none;}
-.section.section-form .section-content .input-group input:focus { background-color: white !important; }
-.section.section-form .section-content .input-group .btn { background-color:transparent; }
 
 
 .animate-repeat.ng-move,
@@ -255,15 +211,39 @@ h1, h2, h3, h4 {
 }
 
 
+/* SIDEBAR BUTTONS */
+.sidebar .sidebar-buttons{
+	position: absolute;
+	width:100%;
+	width: 100%;
+	height: 100%;
+	bottom: 0px;
+	height: 50px;
+}
 
+.sidebar-buttons button {
+	color: #969696;
+	border:0px;
+	cursor:pointer;
+	background-color:transparent;
+	margin-bottom: 2px;
+	padding-left: 10px;
+	text-align:left;
+	text-transform: uppercase;
+	font-size: 0.9em;
+	width:100%;
+	font-family: 'Lato' !important;
+	font-style: normal;
+	font-weight: 800;
+}
 
 /* SIDEBAR PANELS */
 .sidebar .sidebar-panels{
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	bottom: 20px;
-	top: 1px;
+	bottom: 50px;
+	top: 0px;
 }
 
 .sidebar .toggler {
@@ -273,6 +253,7 @@ h1, h2, h3, h4 {
 	padding-left: 10px;
 	text-transform: uppercase;
 	font-size: 0.9em;
+	margin-top:10px;
 }
 .sidebar .element {
 	border-bottom:1px solid #D0D0D0;
@@ -308,24 +289,37 @@ h1, h2, h3, h4 {
 }
 
 /* SIDEBAR NEWS PANEL */
-.news-list .text  { }
-.news-element :hover { background-color:#E0E0E0 !important; }
+.news-list li:hover { background-color:#E0E0E0 !important; }
+.news-element .accepted { color: #5cb85c; font-weight: bold;}
+.news-element .reissued { color: #f0ad4e; font-weight: bold;}
+.news-element .rejected { color: #555; font-weight: bold;}
+
+
+
+/*
+rgba(17,112,190,1) Wode - blue - writefunction
+rgba(252,223,63,1) Aerial yellow - yellow - writetestcases
+rgba(23,163,125,1) Celadon - green - writetest
+rgba(186,105,66,1) Heliotrope - brown - writefunctiondescription
+rgba(195,35,58,1)  Kermes - magenta - reusesearch
+rgba(131,90,161,1) Atmosphere - purple - writecall
+rgb(186,156,59,1)  Chimayo - brown - debugtestfailure
+rgba(237,90,48,1)  Valencia - orange - review
+
+*/
+.news-element.writefunction            { border-left: 5px solid rgba(17,112,190,1);}
+.news-element.writetestcases           { border-left: 5px solid rgba(252,223,63,1);}
+.news-element.writetest                { border-left: 5px solid rgba(23,163,125,1);}
+.news-element.writefunctiondescription { border-left: 5px solid rgba(186,105,66,1);}
+.news-element.reusesearch              { border-left: 5px solid rgba(195,35,58,1);}
+.news-element.writecall                { border-left: 5px solid rgba(131,90,161,1);}
+.news-element.debugtestfailure         { border-left: 5px solid rgb(186,156,59,1);}
+.news-element.review                   { border-left: 5px solid rgba(237,90,48,1);}
 
 /* SIDEBAR LEADERBOARD PANEL */
 .user-list .avatar img { width:20px;}
 .user-list .avatar { float:left; margin-right:5px;}
 .user-list .name   { float:left; }
-
-.send-feedback{
-	position: absolute; 
-    bottom: 0px;
-    margin-top: 10px;
-	margin-bottom: 2px;
-	padding-left: 10px;
-    width: 100%;
-    text-align: left;
-
-}
 
 .modal.center .modal-dialog{
     position:absolute !important;
@@ -338,12 +332,17 @@ h1, h2, h3, h4 {
 } 
 
 /* CHAT */
+
+.btn-chat-toggle, .btn-chat-toggle:focus{ background-color:transparent; cursor:pointer; }
+.btn-chat-toggle.opened { background-color:gray;}
+
+
 .chat {
 	position:absolute;
 	right:5px;
 	bottom:45px;
 	width:300px;
-	background-color:#E0E0E0;
+	background-color:white;
 	opacity:0;
 	border: 1px solid #969696;
 
@@ -373,7 +372,7 @@ h1, h2, h3, h4 {
 }
 .chat .header {
 	padding:5px;
-	background-color:#3F81AC;
+	background-color:#555;
 	color:white;
 	font-family: 'Lato' !important;
 	font-style: normal;
@@ -407,7 +406,7 @@ h1, h2, h3, h4 {
 
 .chat .output li {
 	margin-top:2px;
-	background-color:rgba(255, 255, 255, 0.42);
+	background-color:white;
 	display:block;
 	padding:2px;
 }
@@ -467,40 +466,6 @@ top: 0;
 	background-position: 0 -481px;
 	}
 }
-
-/* MICROTASK */
-.microtask-details {
-	list-style: none;
-	padding:0px;
-	margin:0px;
-
-	font-family: 'Lato' !important;
-	font-style: normal;
-	font-weight: 500;
-	font-size: 1.2em;
-	text-transform: uppercase;
-
-	color:#3F81AC;
-}
-
-.microtask-details li {
-	float:left;
-	padding-left:20px;
-	padding-right:20px;
-}
-
-.microtask-details li:nth-child(1) {
-	background-color:rgba(63, 129, 172, 0.8);
-	color:white;
-}
-
-.microtask-details li:nth-child(3) {
-	float:right;
-	padding:0px;
-	cursor:pointer;
-}
-
-
 
 /* ADT PANEL */
 
@@ -763,3 +728,174 @@ tutorial-container .btn-next { position: absolute; right: 0; }
 
 .stats { }
 .stats span {  padding-left:10px;}
+
+/* microtask types color */
+
+
+/* MICROTASK CONTAINER SECTIONS */
+.section {
+	position:relative;
+	margin-bottom:10px;
+ 	background-color:#EEEEEE;
+ 	color: #303030;
+}
+.section-title {
+	text-align: left;
+	padding:5px;
+	text-transform:uppercase;
+	font-size:0.8em;
+	font-family: 'Lato' !important;
+	font-style: normal;
+	font-weight: 600;
+	color: #3F81AC;
+}
+.section-content { padding:5px; }
+
+
+.section.section-help { background-color:#BFC7CD; }
+.section.section-help .section-title { color:#5F5F5F; }
+
+.help-block { margin:0px; padding:0px; list-style: none; color: rgb(159, 17, 17);}
+
+
+.section.section-form {  } 
+
+.section.section-form .section-title .input-group { background-color: rgba(63, 129, 172, 0.8); padding:5px;}
+.section.section-form .section-title .input-group input  { background-color:white; border-radius:0px; border: none; }
+.section.section-form .section-title .input-group input::-webkit-input-placeholder {  color: gray; font-style:italic;}
+.section.section-form .section-title .input-group button { border:none; font-weight: bold; border-radius:0px; background-color:transparent; }
+.section.section-form .section-title .input-group button:hover,
+.section.section-form .section-title .input-group button:focus
+ { background-color:rgba(130, 169, 195, 1); }
+
+
+.section.section-form .section-content .input-group             { cursor:pointer;}
+.section.section-form .section-content .input-group input       { background-color: transparent !important; border:none; outline:none; box-shadow:none;}
+.section.section-form .section-content .input-group input:focus { background-color: white !important; }
+.section.section-form .section-content .input-group .btn        { background-color:transparent; }
+
+
+/* MICROTASK */
+.microtask-details {
+	list-style: none; padding:0px; margin:0px;
+
+	font-family: 'Lato' !important;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.2em;
+	text-transform: uppercase;
+}
+.microtask-details li              { float:left; padding-left:20px; padding-right:20px; }
+.microtask-details li:nth-child(1) { color:white; }
+.microtask-details li:nth-child(3) { float:right; padding:0px; cursor:pointer; }
+
+/* NO MORE MICROTASKS */
+.no-microtask {
+	text-align: center;
+	color: gray;
+	margin-top: 25%;
+	font-family: 'Lato' !important;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.2em;
+	text-transform: uppercase;
+}
+
+
+
+/* rgba(17,112,190,1) Wode - blue - writefunction */
+.task-writefunction .microtask-details,
+.task-writefunction .section-title
+{ color:  rgba(17,112,190,1); }
+
+.task-writefunction .microtask-details li:nth-child(1),
+.task-writefunction .section.section-form .section-title .input-group 
+{ background-color:  rgba(17,112,190,1); }
+
+.task-writefunction .section.section-help 
+{ background-color:  rgba(17,112,190,0.4); }
+
+/* rgba(254, 195, 36,1) yellow - yellow - writetestcases */
+.task-writetestcases .microtask-details,
+.task-writetestcases .section-title
+{ color:  rgba(254, 195, 36,1); }
+
+.task-writetestcases .microtask-details li:nth-child(1),
+.task-writetestcases .section.section-form .section-title .input-group 
+{ background-color:  rgba(254, 195, 36,1); }
+
+.task-writetestcases .section.section-help 
+{ background-color:  rgba(254, 195, 36,0.4); }
+
+/* rgba(23,163,125,1) Celadon - green - writetest */
+.task-writetest .microtask-details,
+.task-writetest .section-title
+{ color:   rgba(23,163,125,1) ; }
+
+.task-writetest .microtask-details li:nth-child(1),
+.task-writetest .section.section-form .section-title .input-group 
+{ background-color:   rgba(23,163,125,1) ; }
+
+.task-writetest .section.section-help 
+{ background-color:   rgba(23,163,125,0.4) ; }
+
+/* rgba(186,105,66,1) Heliotrope - brown - writefunctiondescription */
+
+.task-writefunctiondescription .microtask-details,
+.task-writefunctiondescription .section-title
+{ color:  rgba(186,105,66,1); }
+
+.task-writefunctiondescription .microtask-details li:nth-child(1),
+.task-writefunctiondescription .section.section-form .section-title .input-group 
+{ background-color:  rgba(186,105,66,1); }
+
+.task-writefunctiondescription .section.section-help 
+{ background-color:  rgba(186,105,66,0.4); }
+
+/* rgba(195,35,58,1)  Kermes - magenta - reusesearch */
+.task-reusesearch .microtask-details,
+.task-reusesearch .section-title
+{ color:  rgba(195,35,58,1); }
+
+.task-reusesearch .microtask-details li:nth-child(1),
+.task-reusesearch .section.section-form .section-title .input-group 
+{ background-color:  rgba(195,35,58,1); }
+
+.task-reusesearch .section.section-help 
+{ background-color:  rgba(195,35,58,0.4); }
+
+/* rgba(131,90,161,1) Atmosphere - purple - writecall */
+.task-writecall .microtask-details,
+.task-writecall .section-title
+{ color:  rgba(131,90,161,1); }
+
+.task-writecall .microtask-details li:nth-child(1),
+.task-writecall .section.section-form .section-title .input-group 
+{ background-color:  rgba(131,90,161,1); }
+
+.task-writecall .section.section-help 
+{ background-color:  rgba(131,90,161,0.4); }
+
+/* rgb(186,156,59,1)  Chimayo - brown - debugtestfailure */
+.task-debugtestfailure .microtask-details,
+.task-debugtestfailure .section-title
+{ color:  rgba(186,156,59,1)  ; }
+
+.task-debugtestfailure .microtask-details li:nth-child(1),
+.task-debugtestfailure .section.section-form .section-title .input-group 
+{ background-color:  rgba(186,156,59,1)  ; }
+
+.task-debugtestfailure .section.section-help 
+{ background-color:  rgba(186,156,59,0.4);   }
+
+/* rgba(237,90,48,1)  Valencia - orange - review */
+.task-review .microtask-details,
+.task-review .section-title
+{ color:  rgba(237,90,48,1) ; }
+
+.task-review .microtask-details li:nth-child(1),
+.task-review .section.section-form .section-title .input-group 
+{ background-color:  rgba(237,90,48,1) ; }
+
+.task-review .section.section-help 
+{ background-color:  rgba(237,90,48,0.4) ; }
