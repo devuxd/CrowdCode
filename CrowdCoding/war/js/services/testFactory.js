@@ -149,6 +149,22 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			ref.set(rec);
 		},
 
+
+		searchOrBuild: function(functionId, functionName, inputsValue, outputValue){
+			if( this.search(functionName, inputsValue) == null ) {
+				test = new Test();
+
+				//test.setFunctionId( functionId );
+			    test.setFunctionName( functionName );
+				test.setDescription("auto generated for debug purposes");
+			 	test.setSimpleTest(inputsValue,outputValue);
+				test.buildCode();
+
+				return test.rec;
+			}
+			return true;
+		},
+
 		searchAndAdd: function(functionId, functionName, inputsValue, outputValue){
 			var test = this.search(functionName, inputsValue);
 			console.log("TEST SEARCH RESULT",arguments,test);
@@ -156,6 +172,9 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			if( test == null ){
 				test = new Test();
 				test.setId(++lastId);
+
+				test.setImplemented(true);
+				test.setMessageType("Test in firebase");
 				test.setFunctionId( functionId );
 			    test.setFunctionName( functionName );
 			 	test.setSimpleTest(inputsValue,outputValue);
@@ -228,44 +247,69 @@ myApp.factory("Test", function ($FirebaseArray) {
 		getId: function(){
 			return this.rec.id;
 		},
+
 		setId: function(id){
 			this.rec.id  = id;
 		},
+
 		update: function(rec){
 			this.rec = rec;
 		},
+
+		isImplemented: function(){
+			return this.rec.isImplemented;
+		},
+
+		setImplemented: function(value){
+			this.rec.isImplemented = value;
+		},
+
+		setMessageType: function(messageType){
+			this.rec.messageType = messageType;
+		},
+
 		toJSON: function(){
 			return this.rec;
 		},
+
 		getFunctionId: function(){
 			return this.rec.functionID;
 		},
+
 		setFunctionId: function(functionId){
 			this.rec.functionID = functionId;
 		},
+
 		getFunctionName: function(){
 			return this.rec.functionName;
 		},
+
 		setFunctionName: function(functionName){
 			this.rec.functionName = functionName;
 		},
+
 		getDescription: function(){
 			return this.rec.description;
 		},
+
 		setDescription: function(description){
 			this.rec.description = description;
 		},
+
 		getCode: function(){
 			return this.rec.code;
 		},
+
 		setCode: function(code){
 			this.rec.code = code;
 		},
+
 		hasSimpleTest: function(){
 			if( this.rec.hasOwnProperty('simpleTestInputs') && this.rec.hasOwnProperty('simpleTestOutput') )
 				return true;
 			return false;
 		},
+
 		getSimpleTest: function(){
 			if( !this.hasSimpleTest() )
 				return {};
@@ -275,6 +319,7 @@ myApp.factory("Test", function ($FirebaseArray) {
 				output: this.rec.simpleTestOutput 
 			}
 		},
+
 		getTestCase: function(){
 			return {
 	            id:   this.getId(),
@@ -287,10 +332,13 @@ myApp.factory("Test", function ($FirebaseArray) {
 		setSimpleTest: function(inputs,output){
 			this.rec.simpleTestInputs = inputs;
 			this.rec.simpleTestOutput = output;
+			this.rec.hasSimpleTest = true;
 		},
+
 		getCode: function(){
 			return this.rec.code;
 		},
+
 		buildCode: function(){
 
 

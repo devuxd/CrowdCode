@@ -18,6 +18,7 @@ import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
+import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -192,36 +193,36 @@ public class Function extends Artifact
 	{
 		return code;
 	}
-
-	// Gets a mock implementation that checks to see if there are any mocks
-	// for the specified function.
-	public String getMockCode()
-	{
-		StringBuilder mockCode = new StringBuilder();
-		mockCode.append("{ var returnValue; ");
-		mockCode.append("var params = arguments; ");
-		mockCode.append("var mockFor = hasMockFor('" + name + "', arguments, mocks); ");
-		mockCode.append("if (mockFor.hasMock) ");
-		mockCode.append("     returnValue = mockFor.mockOutput; ");
-		mockCode.append("else ");
-		mockCode.append("     returnValue = " + name + "aaaActualIMP.apply(null, params); "); // JSON.parse(JSON.stringify(
-	//	mockCode.append("alert( JSON.stringify(JSON.parse(JSON.stringify(params)))); ");
-		mockCode.append("return returnValue; }");
-		return mockCode.toString();
-	}
-
-	// Gets the special header used for the actual implementation when running with mocks
-	public String getMockHeader()
-	{
-		StringBuilder b = new StringBuilder();
-		b.append(" function " + name + "aaaActualIMP");
-
-		// Gets the params string out of the header by looking for the first instance of a paren (which
-		// must be the start of the functions params)
-		b.append(header.substring(header.indexOf("(")));
-
-		return b.toString();
-	}
+//
+//	// Gets a mock implementation that checks to see if there are any mocks
+//	// for the specified function.
+//	public String getMockCode()
+//	{
+//		StringBuilder mockCode = new StringBuilder();
+//		mockCode.append("{ var returnValue; ");
+//		mockCode.append("var params = arguments; ");
+//		mockCode.append("var mockFor = hasMockFor('" + name + "', arguments, mocks); ");
+//		mockCode.append("if (mockFor.hasMock) ");
+//		mockCode.append("     returnValue = mockFor.mockOutput; ");
+//		mockCode.append("else ");
+//		mockCode.append("     returnValue = " + name + "aaaActualIMP.apply(null, params); "); // JSON.parse(JSON.stringify(
+//	//	mockCode.append("alert( JSON.stringify(JSON.parse(JSON.stringify(params)))); ");
+//		mockCode.append("return returnValue; }");
+//		return mockCode.toString();
+//	}
+//
+//	// Gets the special header used for the actual implementation when running with mocks
+//	public String getMockHeader()
+//	{
+//		StringBuilder b = new StringBuilder();
+//		b.append(" function " + name + "aaaActualIMP");
+//
+//		// Gets the params string out of the header by looking for the first instance of a paren (which
+//		// must be the start of the functions params)
+//		b.append(header.substring(header.indexOf("(")));
+//
+//		return b.toString();
+//	}
 
 	// gets the body of the function (including braces)
 	public String getEscapedCode()
@@ -631,22 +632,12 @@ public class Function extends Artifact
 		// Save the entity again to the datastore
 		ofy().save().entity(this).now();
 
-		/* NOW THIS IS DONE CLIENT SIDE
-		// Update or create tests for any mocks
-		for (MockDTO mockDTO : dto.mocks)
-		{
-			System.out.println("MOCK: "+mockDTO);
 
-			// Is there already a simple test / mock for this function with these inputs?
-			Test test = Test.findSimpleTestFor(mockDTO.functionName, mockDTO.inputs, project);
-
-			// If so, update it.
-			// Otherwise, create a new test
-			if (test != null)
-				test.setSimpleTestOutput(mockDTO.output, project);
-			else
-				TestCommand.create(this.id, this.name, mockDTO.inputs, mockDTO.output, mockDTO.code, version);
-		}*/
+		// Update or create tests for any stub
+		for (TestDTO testDTO : dto.stubs)
+		{	
+			TestCommand.create(this.id,this.name,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version);
+		}
 
 		lookForWork(project);
 	}

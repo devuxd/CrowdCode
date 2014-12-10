@@ -429,14 +429,11 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
                     angular.forEach(stubsForFunction, function(stub, index) {
 
-                        TestList.searchAndAdd( stubFunction.id, functionName, stub.inputs, stub.output );
+                        var test = TestList.searchOrBuild( stubFunction.id, functionName, stub.inputs, stub.output );
 
-                        // mocks.push({
-                        //     functionName: functionName,
-                        //     inputs: stub.inputs,
-                        //     expectedOutput: stub.output,
-                        //     code: mockCode
-                        // });
+                        if( test != true ){
+                            stubs.push(test);
+                        }
                     });
                 });
                 var text = functionCodeMirror.getValue();
@@ -451,6 +448,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 //     paramDescriptions: functionParsed.paramDescriptions,
                 //     calleeIds: calleeIds
                 formData = functionsService.parseFunction(text);
+                formData.stubs = stubs;
             }
 
             // if first run is true
