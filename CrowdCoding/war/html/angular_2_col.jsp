@@ -242,7 +242,7 @@
 	var firebaseURL  = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var logoutURL    = '<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>';
 
-
+	console.log("<%=worker.score%>");
 
 	</script>
 

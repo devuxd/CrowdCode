@@ -30,7 +30,7 @@ public class Worker
 	@Parent Key<Project> project;
 	private String nickname;
 	@Id private String userid;
-	private int score;
+	public int score;
 
 	// Default constructor for deserialization
 	private Worker()
