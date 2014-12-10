@@ -30,6 +30,7 @@ public class WriteFunction extends Microtask
 
 	private String oldFullDescription;		// Only defined for DESCRIPTION_CHANGE
 	private String newFullDescription;		// Only defined for DESCRIPTION_CHANGE
+	private String disputeText;				// Only defined for RE_EDIT
 
 
 	// Default constructor for deserialization
@@ -60,17 +61,14 @@ public class WriteFunction extends Microtask
 	}
 
 	// Initialization constructor for a RE_EDIT write function. Microtask is not ready.
-//	public WriteFunction(Function function, String oldFullDescription,
-//			String newFullDescription Project project)
-//	{
-//		this.promptType = PromptType.RE_EDIT;
-//
-//		// First replace \n with BR to format for display. Then, escape chars as necessary.
-//		this.oldFullDescription = oldFullDescription;
-//		this.newFullDescription = newFullDescription;
-//
-//		WriteFunction(function, project);
-//	}
+	public WriteFunction(Function function, String disputeText, Project project)
+	{
+		this.promptType = PromptType.RE_EDIT;
+
+		// First replace \n with BR to format for display. Then, escape chars as necessary.
+		this.disputeText = disputeText;
+		WriteFunction(function, project);
+	}
 
 	public Microtask copy(Project project)
 	{
@@ -102,7 +100,8 @@ public class WriteFunction extends Microtask
 				function.getID(),
 				this.promptType.name(),
 				this.oldFullDescription,
-				this.newFullDescription),
+				this.newFullDescription,
+				this.disputeText),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
