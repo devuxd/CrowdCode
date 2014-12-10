@@ -66,14 +66,37 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 		getAll: function(){
 			return objectsList;
 		},
+		getImplementedByFunction: function(funct){
+			this.getImplementedByFunctionId(funct.id);
+		},
+		// retrieve all the tests belonging to
+		// the function with id = functionId
+		getImplementedByFunctionId: function(functionId){
+			var returnList = [];
+			angular.forEach( objectsList, function( test, key){
+				if( test.getFunctionId() == functionId && test.isImplemented)
+					returnList.push(test);	
+			});
 
+			return returnList;
+		},
+		// retrieve all the tests belonging to 
+		// the function with name = functionName
+		getImplementedByFunctionName: function(functionName){
+			var returnList = [];
+			angular.forEach( objectsList, function( test, key){
+				if( test.getFunctionName() == functionName  && test.isImplemented)
+					returnList.push(test);	
+			});
+			return returnList;
+		},
 		// retrieve all the tests belonging to 
 		// the function funct
 		getByFunction: function(funct){
 			this.getByFunctionId(funct.id);
 		},
 
-		// retrieve all the tests belonging to 
+		// retrieve all the tests belonging to
 		// the function with id = functionId
 		getByFunctionId: function(functionId){
 			var returnList = [];
@@ -99,7 +122,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 		// and inputsValue
 		search: function(functionName,inputsValue){
 			// if one of the parameters is undefined, return null 
-			if(inputsValue == undefined || functionName == undefined) 
+			if(inputsValue === undefined || functionName === undefined) 
 				return null;
 
 			// filter objectsList
