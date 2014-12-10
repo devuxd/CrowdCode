@@ -353,14 +353,6 @@ public class CrowdServlet extends HttpServlet
 		final String projectID = (String) req.getAttribute("project");
 		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
-		//final long testID     = Long.parseLong(req.getParameter("testID"));
-
-		/*
-		// SEND 503 error if some of the parameter are null
-		if( ){
-			resp.sendError(503);
-		}
-		*/
 
 		List<Command> commands = new ArrayList<Command>();
 		commands.addAll(ofy().transact(new Work<List<Command>>() {

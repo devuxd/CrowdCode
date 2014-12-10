@@ -38,8 +38,8 @@
 	<link href='http://fonts.googleapis.com/css?family=Merriweather:300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic|Lato:100normal,100italic,300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic' rel='stylesheet' type='text/css'>
 
 	<!-- Stylesheets -->
-	<link rel="stylesheet" href="../include/bootstrap/css/bootstrap.min.css" type="text/css" />
-	<link rel="stylesheet" href="//rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
+	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="http://rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
 	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
 
 	<link rel="stylesheet" href="/include/codemirror/codemirror.css" type="text/css" />
@@ -51,20 +51,14 @@
 
 	<link rel="stylesheet" href="/include/codemirror/custom-editor.css" type="text/css" />
 
-
 	<link rel="stylesheet" href="/include/codemirror/console.css" type="text/css" />
-
 
 	<link rel="stylesheet" href="/css/worker_2_col.css" type="text/css" />
 	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
 
-
- <!--    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/angular-motion.min.css">
-    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/bootstrap-additions.min.css"> -->
     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
 
-    <!-- loadingbar -->
     <link rel="stylesheet" href="/include/angular-loading-bar/src/loading-bar.css"/>
 
 
@@ -86,23 +80,18 @@
 			        <li><a href="#"><project-stats></project-stats></a></li>
 			    </ul>
 			    <ul class="nav navbar-nav navbar-right">
-			        <li class="dropdown">
-			          	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-		          			<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
-							{{ userData.score }} points 
-							<span class="caret"></span>
-				        </a>
 
-			          <ul class="dropdown-menu" role="menu">
-			            <li>
-							<a  data-animation="am-fade-and-scale" data-placement="center" 
-							    data-template="/html/templates/popups/popup_change_picture.html" 
-							    bs-modal="modal" container="body">change profile picture</a>
-						</li>
-						<li>
-							<a id="logoutLink" ng-href="<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>">logout</a>
-						</li>
-			          </ul>
+			    <ul class="nav navbar-nav navbar-right">
+			        <li>
+			        	<a href="#"  
+			        	style="margin-right:20px"
+			        	data-placement="bottom-right" 
+			        	data-container="body" 
+			        	bs-dropdown="dropdown" />
+		          		<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
+						{{ userData.score }} points 
+						<span class="caret"></span>
+			        	</a>
 			        </li>
 			    </ul>
 
@@ -251,6 +240,7 @@
 	var workerId     = '<%=workerID%>';
 	var workerHandle = '<%=workerHandle%>';
 	var firebaseURL  = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
+	var logoutURL    = '<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>';
 
 
 

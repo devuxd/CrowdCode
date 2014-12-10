@@ -8,6 +8,8 @@ myApp.controller('AppController', [
 	'$firebase',
 	'$http',
 	'$interval',
+	'$modal',
+	'logoutUrl',
 	'userService',
 	'testsService',
 	'functionsService',
@@ -15,7 +17,7 @@ myApp.controller('AppController', [
 	'ADTService',
 	'microtasksService',
 	'TestList',
-	function($scope, $rootScope, $firebase, $http, $interval, userService, testsService, functionsService, testRunnerService, ADTService, microtasksService, TestList) {
+	function($scope, $rootScope, $firebase, $http, $interval, $modal, logoutUrl, userService, testsService, functionsService, testRunnerService, ADTService, microtasksService, TestList) {
 
 		// current session variables
 		$rootScope.loaded       = {};
@@ -35,8 +37,26 @@ myApp.controller('AppController', [
 			userService.logout();
 		};
 
+		$scope.dropdown = [
+		  {
+		    "text": "change profile picture",
+		    "click": "showProfileModal()"
+		  },
+		  {
+		    "divider": true
+		  },
+		  {
+		    "text": "logout",
+		    "href": logoutUrl
+		  }
+		];	
 
-
+		 // Pre-fetch an external template populated with a custom scope
+		var profileModal = $modal({scope: $scope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/html/templates/popups/popup_change_picture.html', show: false});
+		// Show when some event occurs (use $promise property to ensure the template has been loaded)
+		$scope.showProfileModal = function() {
+			profileModal.$promise.then(profileModal.show);
+		};
 
 		$scope.promise = $interval(
 			function() {

@@ -130,7 +130,8 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			var foundTest = null;
 			var found     = false;
 			angular.forEach( objectsList, function( test, key){
-				if( !found && test.getFunctionName() == functionName &&  
+				if( !found && test.getFunctionName() == functionName && 
+				    test.hasSimpleTest() && 
 					angular.toJson(test.getSimpleTest().inputs.toString()) == angular.toJson(inputsValue.toString()) ){
 					found = true;
 					foundTest = test;
@@ -154,7 +155,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			if( this.search(functionName, inputsValue) == null ) {
 				test = new Test();
 
-				//test.setFunctionId( functionId );
+				test.setFunctionId( functionId );
 			    test.setFunctionName( functionName );
 				test.setDescription("auto generated for debug purposes");
 			 	test.setSimpleTest(inputsValue,outputValue);
