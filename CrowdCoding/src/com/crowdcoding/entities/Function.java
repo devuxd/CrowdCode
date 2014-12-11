@@ -18,6 +18,7 @@ import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
+import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -192,36 +193,36 @@ public class Function extends Artifact
 	{
 		return code;
 	}
-
-	// Gets a mock implementation that checks to see if there are any mocks
-	// for the specified function.
-	public String getMockCode()
-	{
-		StringBuilder mockCode = new StringBuilder();
-		mockCode.append("{ var returnValue; ");
-		mockCode.append("var params = arguments; ");
-		mockCode.append("var mockFor = hasMockFor('" + name + "', arguments, mocks); ");
-		mockCode.append("if (mockFor.hasMock) ");
-		mockCode.append("     returnValue = mockFor.mockOutput; ");
-		mockCode.append("else ");
-		mockCode.append("     returnValue = " + name + "aaaActualIMP.apply(null, params); "); // JSON.parse(JSON.stringify(
-	//	mockCode.append("alert( JSON.stringify(JSON.parse(JSON.stringify(params)))); ");
-		mockCode.append("return returnValue; }");
-		return mockCode.toString();
-	}
-
-	// Gets the special header used for the actual implementation when running with mocks
-	public String getMockHeader()
-	{
-		StringBuilder b = new StringBuilder();
-		b.append(" function " + name + "aaaActualIMP");
-
-		// Gets the params string out of the header by looking for the first instance of a paren (which
-		// must be the start of the functions params)
-		b.append(header.substring(header.indexOf("(")));
-
-		return b.toString();
-	}
+//
+//	// Gets a mock implementation that checks to see if there are any mocks
+//	// for the specified function.
+//	public String getMockCode()
+//	{
+//		StringBuilder mockCode = new StringBuilder();
+//		mockCode.append("{ var returnValue; ");
+//		mockCode.append("var params = arguments; ");
+//		mockCode.append("var mockFor = hasMockFor('" + name + "', arguments, mocks); ");
+//		mockCode.append("if (mockFor.hasMock) ");
+//		mockCode.append("     returnValue = mockFor.mockOutput; ");
+//		mockCode.append("else ");
+//		mockCode.append("     returnValue = " + name + "aaaActualIMP.apply(null, params); "); // JSON.parse(JSON.stringify(
+//	//	mockCode.append("alert( JSON.stringify(JSON.parse(JSON.stringify(params)))); ");
+//		mockCode.append("return returnValue; }");
+//		return mockCode.toString();
+//	}
+//
+//	// Gets the special header used for the actual implementation when running with mocks
+//	public String getMockHeader()
+//	{
+//		StringBuilder b = new StringBuilder();
+//		b.append(" function " + name + "aaaActualIMP");
+//
+//		// Gets the params string out of the header by looking for the first instance of a paren (which
+//		// must be the start of the functions params)
+//		b.append(header.substring(header.indexOf("(")));
+//
+//		return b.toString();
+//	}
 
 	// gets the body of the function (including braces)
 	public String getEscapedCode()
@@ -565,38 +566,48 @@ public class Function extends Artifact
 	{
 		microtaskOutCompleted();
 
-		for (TestCaseDTO testCase : dto.testCases)
-		{
-			// Note: the id in the testCase is *only* valid for testcases where added is false.
+		if(dto.isFunctionDispute){
+			System.out.println("======dovrei fare la disputa con====="+dto.disputeText);
+			ofy().save().entity(this).now();
+			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeText);
+			lookForWork(project);
+		}
+		else{
 
-			// If it's an add, create a test
-			if (testCase.added)
+			for (TestCaseDTO testCase : dto.testCases)
 			{
-				TestCommand.create(testCase.text, this.id, this.name, testCase.functionVersion);
-			}
-			// else if is a delete, remove the test
-			else if (testCase.deleted)
-			{
-				TestCommand.delete(testCase.id);
-				deleteTest(testCase.id);
-			}
-			else
-			{
-				// Check if it was edited
-				Ref<Test> testRef = Test.find(testCase.id, project);
-				System.out.println(testRef.get());
-				Test test = testRef.get();
-				if (!test.getDescription().equals(testCase.text))
+				// Note: the id in the testCase is *only* valid for testcases where added is false.
+
+				// If it's an add, create a test
+				if (testCase.added)
 				{
-					String oldDescription = test.getDescription();
-					test.setDescription(testCase.text);
-					test.queueMicrotask(new WriteTest(project, test, oldDescription, testCase.functionVersion), project);
+					TestCommand.create(testCase.text, this.id, this.name, testCase.functionVersion);
+				}
+				// else if is a delete, remove the test
+				else if (testCase.deleted)
+				{
+					TestCommand.delete(testCase.id);
+					deleteTest(testCase.id);
+				}
+				else
+				{
+					// Check if it was edited
+					Ref<Test> testRef = Test.find(testCase.id, project);
+					System.out.println(testRef.get());
+					Test test = testRef.get();
+					if (!test.getDescription().equals(testCase.text))
+					{
+						String oldDescription = test.getDescription();
+						test.setDescription(testCase.text);
+						test.queueMicrotask(new WriteTest(project, test, oldDescription, testCase.functionVersion), project);
+					}
 				}
 			}
+			ofy().save().entity(this).now();
+			lookForWork(project);
 		}
 
-		ofy().save().entity(this).now();
-		lookForWork(project);
+
 	}
 
 	public void writeCallCompleted(FunctionDTO dto, Project project)
@@ -631,22 +642,12 @@ public class Function extends Artifact
 		// Save the entity again to the datastore
 		ofy().save().entity(this).now();
 
-		/* NOW THIS IS DONE CLIENT SIDE
-		// Update or create tests for any mocks
-		for (MockDTO mockDTO : dto.mocks)
+
+		// Update or create tests for any stub
+		for (TestDTO testDTO : dto.stubs)
 		{
-			System.out.println("MOCK: "+mockDTO);
-
-			// Is there already a simple test / mock for this function with these inputs?
-			Test test = Test.findSimpleTestFor(mockDTO.functionName, mockDTO.inputs, project);
-
-			// If so, update it.
-			// Otherwise, create a new test
-			if (test != null)
-				test.setSimpleTestOutput(mockDTO.output, project);
-			else
-				TestCommand.create(this.id, this.name, mockDTO.inputs, mockDTO.output, mockDTO.code, version);
-		}*/
+			TestCommand.create(testDTO.functionId,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version);
+		}
 
 		lookForWork(project);
 	}
@@ -753,9 +754,9 @@ public class Function extends Artifact
 	{
 		queueMicrotask(new WriteTestCases(this, issueDescription, testDescription, project), project);
 	}
-	public void DisputeFunctionSignature(String issueDescription, Project project)
+	public void disputeFunctionSignature(String issueDescription, Project project)
 	{
-		//queueMicrotask(new WriteTestCases(this, issueDescription, project), project);
+		queueMicrotask(new WriteFunction(this, issueDescription, project), project);
 	}
 
 

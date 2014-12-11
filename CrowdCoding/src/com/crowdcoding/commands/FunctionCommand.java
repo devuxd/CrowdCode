@@ -326,7 +326,7 @@ public abstract class FunctionCommand extends Command
 
 		public void execute(Function function, Project project)
 		{
-			function.DisputeFunctionSignature(issueDescription, project);
+			function.disputeFunctionSignature(issueDescription, project);
 		}
 	}
 }

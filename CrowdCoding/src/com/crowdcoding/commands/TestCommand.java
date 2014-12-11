@@ -15,6 +15,9 @@ public abstract class TestCommand extends Command
 		{ return new Create1(description, functionID, functionName, functionVersion); }
 	public static TestCommand create(long functionID, String functionName, List<String> inputs, String output, String code, int functionVersion)
 		{ return new Create2(functionID, functionName, inputs, output, code , functionVersion); }
+	public static TestCommand create(long functionID, String functionName, String description, List<String> inputs, String output, String code, int functionVersion)
+	{ return new Create2(functionID, functionName, inputs, output, code , functionVersion); }
+
 	public static TestCommand dispute(long testID, String issueDescription, int functionVersion)
 		{ return new Dispute(testID, issueDescription, functionVersion); }
 	public static TestCommand delete(long testID) { return new Delete(testID); }
@@ -101,6 +104,45 @@ public abstract class TestCommand extends Command
 		public void execute(Project project)
 		{
 			Test test = new Test(functionID, functionName, inputs, output, code, project, functionVersion);
+			test.storeToFirebase(project);
+		}
+
+		public void execute(Test test, Project project)
+		{
+			throw new RuntimeException("Error - this method should never be called!");
+		}
+	}
+
+	protected static class Create3 extends TestCommand
+	{
+		private long functionID;
+		private String functionName;
+		private List<String> inputs;
+		private String output;
+		private String code;
+		private int functionVersion;
+		private String description;
+		
+		public Create3(long functionID, String functionName, String description, List<String> inputs, String output, String code, int functionVersion)
+		{
+			this.testID = 0L;
+			this.description = description;
+			this.functionID = functionID;
+			this.functionName = functionName;
+			this.inputs = inputs;
+			this.output = output;
+			this.code = code;
+			this.functionVersion = functionVersion;
+			
+			queueCommand(this);
+		}
+
+		// Need to override the default execute, as there is no test to load!
+		public void execute(Project project)
+		{
+			Test test = new Test(functionID, functionName, inputs, output, code, project, functionVersion);
+			test.setDescription(description);
+		
 			test.storeToFirebase(project);
 		}
 

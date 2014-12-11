@@ -26,6 +26,21 @@
 				Can you implement the function below?
 			</div>
 
+			<div ng-if="microtask.promptType=='RE_EDIT'">
+				The description of this function has been disputed, can you edit the function to solve the following issue:
+
+				<div class="form-group has-error">
+					<textarea type="text"
+					class="resize:none"
+					style="width:100%"
+					class="form-control"
+					disabled="true"
+					name="newTestCase"
+					ng-model="microtask.disputeText"
+					></textarea>
+				</div>
+			</div>
+
 			<div ng-if="microtask.promptType=='DESCRIPTION_CHANGE'">
 				The description of a function called in the code below has changed. Can you update the code
 				(if necessary)?
@@ -34,14 +49,12 @@
 	</div>
 
 
-	<div class="section section-description" ng-if="microtask.promptType=='SKETCH'">
+	<div class="section section-description" ng-if="microtask.promptType=='SKETCH' || microtask.promptType=='RE_EDIT'">
 		<div class="section-title"> FUNCTION CONVENTIONS </div>
 		<div  class="section-content" >
 			<function-convections ></function-convections>
 	 	</div>
 	</div>
-
-
 
 	<div class="section section-description" ng-if="microtask.promptType=='DESCRIPTION_CHANGE'">
 		<div class="section-title" > FUNCTION signature different </div>

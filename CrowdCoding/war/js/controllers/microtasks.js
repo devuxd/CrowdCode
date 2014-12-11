@@ -10,13 +10,15 @@ myApp.controller('NoMicrotaskController', ['$scope', '$rootScope', '$firebase', 
 //////////////////////////////////
 myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'TestList', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert, testsService, TestList, functionsService, ADTService) {
     
+
     // private variables
     var alert = null;
 
     // scope variables 
     $scope.newTestCase = "";
     $scope.testCases   = TestList.getTestCasesByFunctionId($scope.funct.id);
-
+    $scope.dispute = false;
+    $scope.disputeText = "";
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
         if($scope.microtask.promptType=='FUNCTION_SIGNATURE')
@@ -51,6 +53,10 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
         else $scope.testCases[index].deleted = true;
     };
 
+    $scope.toggleDispute = function() {
+        $scope.dispute = !$scope.dispute;
+        if (!$scope.dispute) $scope.disputeText = "";
+    };
 
     // collect form data
     $scope.$on('collectFormData', function(event, microtaskForm) {
@@ -102,15 +108,25 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 
         // if there isn't an error submit the form
         else {
-
-            // prepare form data for submission
-            formData = {
-                testCases       : $scope.testCases,
-                functionVersion : $scope.funct.version
-            };
+            if($scope.dispute){
+                // prepare form data for submission
+                formData = {
+                    isFunctionDispute : $scope.dispute,
+                    disputeText :       $scope.disputeText,
+                    functionVersion : $scope.funct.version
+                    
+                    };
+            }
+            else{
+                // prepare form data for submission
+                formData = {
+                        testCases       : $scope.testCases,
+                        functionVersion : $scope.funct.version,
+                };
+            }
             console.log(formData);
             // call microtask submission
-             $scope.$emit('submitMicrotask', formData);
+               $scope.$emit('submitMicrotask', formData);
         }
     });
 
@@ -145,6 +161,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             var functionUnderTest     = functionUnderTestSync.$asObject();
             functionUnderTest.$loaded().then(function() {
                 $scope.review.functionCode = functionsService.renderDescription(functionUnderTest) + functionUnderTest.header;
+                console.log("fatto con "+$scope.review.functionCode);
             });
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
@@ -429,14 +446,11 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
                     angular.forEach(stubsForFunction, function(stub, index) {
 
-                        TestList.searchAndAdd( stubFunction.id, functionName, stub.inputs, stub.output );
+                        var test = TestList.searchOrBuild( stubFunction.id, functionName, stub.inputs, stub.output );
 
-                        // mocks.push({
-                        //     functionName: functionName,
-                        //     inputs: stub.inputs,
-                        //     expectedOutput: stub.output,
-                        //     code: mockCode
-                        // });
+                        if( test !== true ){
+                            stubs.push(test);
+                        }
                     });
                 });
                 var text = functionCodeMirror.getValue();
@@ -451,6 +465,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 //     paramDescriptions: functionParsed.paramDescriptions,
                 //     calleeIds: calleeIds
                 formData = functionsService.parseFunction(text);
+                formData.stubs = stubs;
             }
 
             // if first run is true
@@ -819,6 +834,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
     // Configures the microtask to show information for disputing the test, hiding
     // other irrelevant portions of the microtask.
     $scope.dispute = false;
+    $scope.functionDispute = false;
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
         if($scope.reissuedMicrotask.submission.inDispute){
@@ -838,6 +854,10 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
     $scope.toggleDispute = function() {
         $scope.dispute = !$scope.dispute;
         if (!$scope.dispute) $scope.testData.disputeText = "";
+    };
+    $scope.toggleFunctionDispute = function() {
+        $scope.functionDispute = !$scope.functionDispute;
+        if (!$scope.functionDispute) $scope.testData.functionDisputeText = "";
     };
     // IF THE PROMPT TYPE IS FUNCTION CHANGED, CALC THE DIFF TO SHOW WITH CODEMIRROR
     if ($scope.microtask.promptType == 'FUNCTION_CHANGED') {
@@ -910,6 +930,18 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
                     code: '',
                     inDispute: true,
                     disputeText: $scope.testData.disputeText,
+                    hasSimpleTest: true,
+                    simpleTestInputs: [],
+                    simpleTestOutput: ''
+                };
+            } else if ($scope.functionDispute) {
+                // return jSON object
+                formData = {
+                    functionVersion: $scope.funct.version,
+                    code: '',
+                    inDispute: false,
+                    isFunctionDispute : true,
+                    disputeText : $scope.testData.functionDisputeText,
                     hasSimpleTest: true,
                     simpleTestInputs: [],
                     simpleTestOutput: ''

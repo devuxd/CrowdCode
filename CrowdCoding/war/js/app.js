@@ -4,6 +4,7 @@ var myApp = angular.module('crowdCodeWorker',["ngAnimate","firebase","ui.codemir
 
 //,"ui.bootstrap" removed
 myApp.constant('firebaseUrl',firebaseURL);
+myApp.constant('logoutUrl',logoutURL);
 
 myApp.run();
 

@@ -60,9 +60,13 @@
 		<div class="section-title" >
 			FUNCTION SIGNATURE
 		</div>
-		<div class="section-content no-padding" >
-			<code-mirror-readonly code="functionDescription"></code-mirror-readonly>
+		<div class="section-content no-padding">
+			<code-mirror-readonly code="functionDescription" ></code-mirror-readonly>
 		</div>
+		<div class="clearfix"></div>	
+		<span class="input-group-btn">
+			<button class="btn btn-primary" ng-disabled="dispute" ng-click="toggleDispute()">Dispute function signature</button>
+		</span>
 	</div>
 
 
@@ -90,7 +94,7 @@
 			</div>
 
 
-			<div class="section section-form" style="width:70%;" id="form">
+			<div class="section section-form" style="width:70%;" id="form" ng-show="!dispute">
 
 				<div class="section-title no-padding" >
 
@@ -140,9 +144,19 @@
 					<span ng-if="testCases.length == 0" >write at least one test case</span>
 					
 				</div>
-
-
 			</div>
+			<div class="section section-form" style="width:70%;" ng-show="dispute">
+				<div class="section-title" >
+					DISPUTE FUNCTION SIGNATURE
+				</div>
+				<div class="section-content" >
+					<div id="disputeDiv" class="form-group">
+						<label for="disputeTextInput"><b>Dispute Function Signature:</b> what's wrong with this function signtaure? </label>
+						<textarea name="disputeTextInput" class="form-control" class="resize:none" ng-model="disputeText" ng-required"dispute"></textarea><br>
+						<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the function signtaure</button>
+					</div>
+				</div> <!-- /. WRITE TEST DIV -->
+			</div> <!-- ./ SECTION CONTENT -->
 
 		</div>
 	</div>

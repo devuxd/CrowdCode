@@ -6,13 +6,15 @@ import java.util.List;
 public class TestDTO extends DTO
 {
 	public String messageType = "TestDTO";
-
+	public Long functionId ;
+	public String functionName  = "";
 	public int functionVersion;		// version of the function under test that the worker saw when authoring this test.
 	public String code = "";
+	public String description = "";
 	public boolean hasSimpleTest;	// is there a simple test defined for this test?
 	public boolean inDispute;	    // is the test being disputed?
+	public boolean isFunctionDispute;	    // is the FUNCTION being disputed?
 	public String disputeText;      // only available if the test is in dispute.
-	public boolean functionInDispute;  // is the function being disputed?
 
 	public List<String> simpleTestInputs = new ArrayList<String>();
 	public String simpleTestOutput;
@@ -30,5 +32,6 @@ public class TestDTO extends DTO
 		this.simpleTestInputs = simpleTestInputs;
 		this.simpleTestOutput = simpleTestOutput;
 		this.inDispute = false;
+		this.isFunctionDispute = false;
 	}
 }

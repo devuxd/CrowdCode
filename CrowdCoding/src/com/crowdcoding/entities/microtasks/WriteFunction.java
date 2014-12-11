@@ -63,6 +63,7 @@ public class WriteFunction extends Microtask
 	// Initialization constructor for a RE_EDIT write function. Microtask is not ready.
 	public WriteFunction(Function function, String disputeText, Project project)
 	{
+		super(project);
 		this.promptType = PromptType.RE_EDIT;
 
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
@@ -74,8 +75,11 @@ public class WriteFunction extends Microtask
 	{
 		if(this.promptType==PromptType.SKETCH)
 			return new WriteFunction( (Function) getOwningArtifact() ,project);
-		else
+		else if(this.promptType==PromptType.DESCRIPTION_CHANGE)
 			return new WriteFunction( (Function) getOwningArtifact() , this.oldFullDescription, this.newFullDescription, project);
+		else
+			return new WriteFunction( (Function) getOwningArtifact() , this.disputeText, project);
+
 	}
 
 	public Key<Microtask> getKey()

@@ -190,7 +190,7 @@ public class Test extends Artifact
 
 	public void writeTestCompleted(TestDTO dto, Project project)
 	{
-		if (dto.FunctioninDispute)
+		if (dto.isFunctionDispute)
 		{
 			project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
 

@@ -168,6 +168,11 @@ public class Project
 		Iterable<Key<Artifact>>  artifacts  = ofy().transactionless().load().type(Artifact.class).ancestor(project).keys();
 		Iterable<Key<Microtask>> microtasks = ofy().transactionless().load().type(Microtask.class).ancestor(project).keys();
 
+		
+		System.out.println("workers = ");
+		for(Key<Worker> wo:workers){
+			System.out.println("key = "+wo);
+		}
 		// Delete each
 		ofy().transactionless().delete().keys(workers);
 		ofy().transactionless().delete().keys(artifacts);
@@ -175,6 +180,13 @@ public class Project
 
 		// delete project
 		ofy().transactionless().delete().key(project);
+		
+
+		workers    = ofy().transactionless().load().type(Worker.class).ancestor(project).keys();
+		System.out.println("workers = ");
+		for(Key<Worker> wo:workers){
+			System.out.println("key = "+wo);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -383,8 +395,9 @@ public class Project
 			microtaskAssignments.put( workerID,  Project.MicrotaskKeyToString(microtaskKey) );
 			FirebaseService.writeMicrotaskAssigned( Project.MicrotaskKeyToString(microtaskKey), workerID, workerHandle, this, true);
 
-//			project.historyLog().beginEvent(new MicrotaskAssigned(this,workerID));
-//			project.historyLog().endEvent();
+			Microtask mtask = ofy().load().key(microtaskKey).get();
+			project.historyLog().beginEvent(new MicrotaskAssigned(mtask,workerID));
+			project.historyLog().endEvent();
 			
 			ofy().save().entity(this).now();
 			return microtaskKey;

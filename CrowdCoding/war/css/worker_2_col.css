@@ -59,6 +59,11 @@
 
 
 /* --------- BOOTSTRAP OVERWRITE ---------  */
+.dropdown-menu > li > a {
+	padding:5px;
+	font-size:0.8em;
+}
+
 @grid-float-breakpoint {  }
 .btn:focus {outline:none;}
 .btn { font-family: 'Lato' !important;font-style: normal; font-weight: 400;}
