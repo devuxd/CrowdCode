@@ -321,7 +321,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.testsData    = {};
     $scope.stubs        = {};
     $scope.paramNames   = $scope.funct.paramNames;
-
+    $scope.calleDescription={};
     // INITIALIZE THE FUNCTION EDITOR CODEMIRROR
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
@@ -374,12 +374,16 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
             //$scope.results = 
             $scope.testsData = data.testsData;
             $scope.stubs     = Object.keys(data.stubs).length > 0 ? data.stubs : null;
-
             console.log("RECEIVED STUBS", $scope.stubs);
+            angular.forEach($scope.stubs, function(data, index) {
+                calleeFunction=functionsService.getByName(index);
+                $scope.calleDescription[index]={};
+                $scope.calleDescription[index].code=functionsService.renderDescription(calleeFunction) + calleeFunction.header;
+            });
 
             // if on the first run all the tests pass, 
             // load a new microtask 
-            if (firstRun != undefined && firstRun && data.overallResult) {
+            if (firstRun !== undefined && firstRun && data.overallResult) {
                 console.log("---- AUTO LOADING A NEW MICROTASK");
                 $scope.$emit('collectFormData', true);
             }
