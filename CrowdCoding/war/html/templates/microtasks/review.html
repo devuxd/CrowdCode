@@ -332,7 +332,7 @@
 					<ul style="list-style:none;margin:0px;padding:0px;">
 						<li><b>1 Star</b>: Work incoherent or unfocussed, <b>microtask will be rejected</b></li>
 						<li><b>2 Star</b>: Work unconvincing or weak, <b>microtask will be rejected</b></li>
-						<li><b>3 Star</b>: Work with some weakness, <b>microtask will be reissued with the actual information</b></li>
+						<li><b>3 Star</b>: Work with some weakness, <b>microtask will be reissued with submitted work as partial completion</b></li>
 						<li><b>4 Star</b>: Work with few weaknesses, <b>microtask will be accepted</b></li>
 						<li><b>5 Star</b>: Excellent work with no significant weaknesses, <b>microtask will be accepted</b></li>
 					</ul>
@@ -372,16 +372,11 @@
 					<span ng-if="review.rating == 3">Reissued</span>
 					<span ng-if="review.rating == 4||review.rating == 5">Accepted</span>
 					<br />
-					<span ng-if="review.rating != -1">
-						<label for="reviewText" >Motivation:</label>
-						<span
-							ng-class="{ 'has-error': microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid, 'has-success': microtaskForm.reviewText.$valid}">
-							<textarea
-								id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 4" focus></textarea>
-							<span
-							class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 3&& microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
-						</span>
-					</span>
+					<label for="reviewText" >Motivation:</label>
+					<textarea
+						id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 4" focus></textarea>
+					<span
+					class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 4 && microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
 				</div>
 			</div>
 

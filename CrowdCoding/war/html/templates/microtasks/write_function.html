@@ -16,11 +16,8 @@
 	<div class="section section-description">
 		<div class="section-title" > JOB DESCRIPTION </div>
 		<div class="section-content" >
-			<div ng-show="microtask.reissuedFrom !== undefined" >
-				This microtask has been reissued after a low score review for the following reason: <br />
-				<b>{{reissuedMicrotask.review.reviewText}}</b> <br />
-				Can you fix the problem that the reviewer found?<br>
-			</div>
+			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+
 
 			<div ng-if="microtask.promptType=='SKETCH'">
 				Can you implement the function below?
@@ -31,8 +28,7 @@
 
 				<div class="form-group has-error">
 					<textarea type="text"
-					class="resize:none"
-					style="width:100%"
+					style="width:100% resize:none"
 					class="form-control"
 					disabled="true"
 					name="newTestCase"

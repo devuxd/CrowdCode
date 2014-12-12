@@ -57,8 +57,8 @@
 	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
 
     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
-    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
-
+<!--     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
+ -->
     <link rel="stylesheet" href="/include/angular-loading-bar/src/loading-bar.css"/>
 
 

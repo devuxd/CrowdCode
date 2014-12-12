@@ -19,11 +19,7 @@
 		JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
-			<div ng-show="microtask.reissuedFrom !== undefined" >
-				This microtask has been reissued after a low score review for the following reason: <br />
-				<b>{{reissuedMicrotask.review.reviewText}}</b> <br />
-				Can you fix the problem that the reviewer found?<br>
-			</div>
+			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
 
 			<div ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
 
@@ -64,7 +60,7 @@
 			<code-mirror-readonly code="functionDescription" ></code-mirror-readonly>
 		</div>
 		<div class="clearfix"></div>	
-		<span class="input-group-btn">
+		<span class="input-group-btn pull-top-right">
 			<button class="btn btn-primary" ng-disabled="dispute" ng-click="toggleDispute()">Dispute function signature</button>
 		</span>
 	</div>
@@ -152,7 +148,10 @@
 				<div class="section-content" >
 					<div id="disputeDiv" class="form-group">
 						<label for="disputeTextInput"><b>Dispute Function Signature:</b> what's wrong with this function signtaure? </label>
-						<textarea name="disputeTextInput" class="form-control" class="resize:none" ng-model="disputeText" ng-required"dispute"></textarea><br>
+						<textarea name="disputeTextInput" class="form-control required" style="resize:none" ng-model="disputeText" ng-required="dispute"></textarea>
+						<span
+						class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
+						<br>
 						<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the function signtaure</button>
 					</div>
 				</div> <!-- /. WRITE TEST DIV -->
