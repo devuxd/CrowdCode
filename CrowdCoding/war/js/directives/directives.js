@@ -1162,5 +1162,3 @@ myApp.directive('projectStats', function($rootScope,$firebase) {
         }
     };
 });
-
-

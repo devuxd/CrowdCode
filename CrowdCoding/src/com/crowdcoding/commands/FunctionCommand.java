@@ -44,6 +44,8 @@ public abstract class FunctionCommand extends Command
 	public static FunctionCommand disputeTestCases(long functionID, String issueDescription,
 			String testDescription)
 		{ return new DisputeTestCases(functionID, issueDescription, testDescription); }
+	public static FunctionCommand disputeFunctionSignature(long functionID, String issueDescription)
+		{ return new DisputeFunctionSignature(functionID, issueDescription); }
 
 	private FunctionCommand(long functionID)
 	{
@@ -309,6 +311,22 @@ public abstract class FunctionCommand extends Command
 		public void execute(Function function, Project project)
 		{
 			function.disputeTestCases(issueDescription, testDescription, project);
+		}
+	}
+
+	protected static class DisputeFunctionSignature extends FunctionCommand
+	{
+		private String issueDescription;
+
+		public DisputeFunctionSignature(long functionID, String issueDescription)
+		{
+			super(functionID);
+			this.issueDescription = issueDescription;
+		}
+
+		public void execute(Function function, Project project)
+		{
+			function.disputeFunctionSignature(issueDescription, project);
 		}
 	}
 }

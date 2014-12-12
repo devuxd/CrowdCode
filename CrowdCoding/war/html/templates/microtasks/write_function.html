@@ -16,14 +16,25 @@
 	<div class="section section-description">
 		<div class="section-title" > JOB DESCRIPTION </div>
 		<div class="section-content" >
-			<div ng-show="microtask.reissuedFrom !== undefined" >
-				This microtask has been reissued after a low score review for the following reason: <br />
-				<b>{{reissuedMicrotask.review.reviewText}}</b> <br />
-				Can you fix the problem that the reviewer found?<br>
-			</div>
+			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+
 
 			<div ng-if="microtask.promptType=='SKETCH'">
 				Can you implement the function below?
+			</div>
+
+			<div ng-if="microtask.promptType=='RE_EDIT'">
+				The description of this function has been disputed, can you edit the function to solve the following issue:
+
+				<div class="form-group has-error">
+					<textarea type="text"
+					style="width:100% resize:none"
+					class="form-control"
+					disabled="true"
+					name="newTestCase"
+					ng-model="microtask.disputeText"
+					></textarea>
+				</div>
 			</div>
 
 			<div ng-if="microtask.promptType=='DESCRIPTION_CHANGE'">
@@ -34,14 +45,12 @@
 	</div>
 
 
-	<div class="section section-description" ng-if="microtask.promptType=='SKETCH'">
+	<div class="section section-description" ng-if="microtask.promptType=='SKETCH' || microtask.promptType=='RE_EDIT'">
 		<div class="section-title"> FUNCTION CONVENTIONS </div>
 		<div  class="section-content" >
 			<function-convections ></function-convections>
 	 	</div>
 	</div>
-
-
 
 	<div class="section section-description" ng-if="microtask.promptType=='DESCRIPTION_CHANGE'">
 		<div class="section-title" > FUNCTION signature different </div>

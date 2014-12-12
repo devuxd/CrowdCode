@@ -20,6 +20,7 @@ public class FunctionDTO extends DTO
 	public List<Long> calleeIds = new ArrayList<Long>();
 	public List<TestDTO> stubs = new ArrayList<TestDTO>();
 	public Boolean autoSubmit;
+	public String disputeText;
 
 	public String toString()
 	{

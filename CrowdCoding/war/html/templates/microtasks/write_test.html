@@ -17,11 +17,8 @@
 			JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
-			<div ng-show="microtask.reissuedFrom !== undefined" >
-				This microtask has been reissued after a low score review for the following reason: <br />
-				<b>{{reissuedMicrotask.review.reviewText}}</b> <br />
-				Can you fix the problem that the reviewer found?<br>
-			</div>
+			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+
 			<div ng-show="microtask.promptType=='WRITE'">
 				Please, write a test for the following test case:
 			</div>
@@ -29,14 +26,13 @@
 				<!-- The following issue was reported with this test: -->
 				Has been reported this issue:
 				<div class="form-group has-error">
-					<input type="text"
+					<textarea type="text"
 					class="form-control"
 					disabled="true"
 					name="newTestCase"
 					ng-model="microtask.issueDescription"
-					>
+					></textarea>
 				</div>
-				<br>
 				For the following test.<br>
 				Can you fix the test to address this issue?<BR>
 			</div>
@@ -74,7 +70,7 @@
 				ng-model="test.description"
 				>
 				<span class="input-group-btn">
-				<button class="btn btn-primary" ng-disabled="dispute" ng-click="toggleDispute()">Dispute test case</button>
+					<button class="btn btn-primary" ng-disabled="dispute || functionDispute" ng-click="toggleDispute()">Dispute test case</button>
 				</span>
 			</div>
 		</div>
@@ -86,6 +82,9 @@
 		<div class="section-content no-padding" >
 			<code-mirror-readonly ng-if="microtask.promptType != 'FUNCTION_CHANGED'" code="code"></code-mirror-readonly>
 			<code-mirror-readonly ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></code-mirror-readonly>
+			<span class="input-group-btn pull-top-right">
+				<button class="btn btn-primary" ng-disabled="dispute || functionDispute" ng-click="toggleFunctionDispute()">Dispute function signature</button>
+			</span>
 		</div>
 	</div>
 	<alertcontainer></alertcontainer>
@@ -99,7 +98,7 @@
 				<adt-bar></adt-bar>
 			</div>
 			</div>
-			<div class="section section-form" style="width:70%;" ng-if="!dispute">
+			<div class="section section-form" style="width:70%;" ng-if="!dispute && !functionDispute">
 				<div class="section-title" >
 					WRITE TEST
 				</div>
@@ -144,14 +143,32 @@
 					</div> <!-- /. WRITE TEST DIV -->
 				</div> <!-- ./ SECTION CONTENT -->
 			</div>
+			<div class="section section-form" style="width:70%;" ng-if="functionDispute">
+				<div class="section-title" >
+					DISPUTE THE FUNCTION SIGNATURE
+				</div>
+				<div class="section-content" >
+					<div id="disputeDiv" ng-show="functionDispute" class="form-group">
+						<label for="disputeText"><b>Dispute function signature:</b> what's wrong with this function signature? </label>
+						<textarea name="disputeText" class="form-control" style="resize:none" ng-model="testData.functionDisputeText" ng-required="functionDispute"></textarea>
+						<span
+						class="help-block" ng-show="microtaskForm.disputeText.$dirty && microtaskForm.disputeText.$invalid && microtaskForm.disputeText.$error.required">This field is required!</span>
+						<br>
+						<button class="btn " ng-click="toggleFunctionDispute()" >Nothing is wrong with the function signature</button>
+					</div>
+				</div> <!-- /. WRITE TEST DIV -->
+			</div> <!-- ./ SECTION CONTENT -->
 			<div class="section section-form" style="width:70%;" ng-if="dispute">
 				<div class="section-title" >
 					DISPUTE THE TEST CASE
 				</div>
 				<div class="section-content" >
 					<div id="disputeDiv" ng-show="dispute" class="form-group">
-						<label for="disputeText"><b>Dispute test case:</b> what's wrong with this test case? </label>
-						<textarea name="disputeText" class="form-control" class="resize:none" ng-model="testData.disputeText"></textarea><br>
+						<label for="disputeTextInput"><b>Dispute test case:</b> what's wrong with this test case? </label>
+						<textarea name="disputeTextInput" class="form-control" class="resize:none" ng-model="testData.disputeText"  ng-required="dispute"></textarea>
+						<span
+						class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
+						<br>
 						<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the test case</button>
 					</div>
 				</div> <!-- /. WRITE TEST DIV -->

@@ -6,6 +6,7 @@ public class WriteFunctionInFirebase extends MicrotaskInFirebase
 	public String promptType;
 	public String oldFullDescription;
 	public String newFullDescription;
+	public String disputeText;
 
 
 	public WriteFunctionInFirebase()
@@ -14,7 +15,7 @@ public class WriteFunctionInFirebase extends MicrotaskInFirebase
 
 	public WriteFunctionInFirebase(long id,String title, String type,
 			String owningArtifact, Long owningArtifactId, boolean completed, int points,
-			long functionID, String promptType,String oldFullDescription,String newFullDescription)
+			long functionID, String promptType,String oldFullDescription,String newFullDescription, String disputeText)
 	{
 		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
 
@@ -22,6 +23,7 @@ public class WriteFunctionInFirebase extends MicrotaskInFirebase
 		this.promptType = promptType;
 		this.oldFullDescription = oldFullDescription;
 		this.newFullDescription = newFullDescription;
+		this.disputeText=disputeText;
 
 	}
 }

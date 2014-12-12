@@ -81,7 +81,9 @@
 
                     <ul style="list-style:none;margin:0px;padding:0px;">
                         <li ng-repeat="(callee,inputMap) in stubs track by $index" >
-                            The function <b>{{callee}}</b> has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
+                            The function <b>{{callee}}</b> 
+                            <code-mirror-readonly code="calleDescription[callee].code"></code-mirror-readonly>
+                            Has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
                             <ul class="collapsable-list mock-collapsable-list ">
                                 <li ng-repeat="(stubKey,stub) in inputMap track by $index">
                                     <b>#{{$index+1}} input set </b><br />

@@ -14,6 +14,7 @@ public class TestCaseDTO extends DTO
 	public long id;				// id of the corresponding test. Only valid if added is false.
 	public int functionVersion;
 
+
 	// Default constructor
 	public TestCaseDTO()
 	{
@@ -27,6 +28,7 @@ public class TestCaseDTO extends DTO
 		this.added = false;
 		this.deleted = false;
 		this.id = test.getID();
+
 	}
 
 	public String toString()

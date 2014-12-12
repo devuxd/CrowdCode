@@ -190,7 +190,22 @@ public class Test extends Artifact
 
 	public void writeTestCompleted(TestDTO dto, Project project)
 	{
-		if (dto.inDispute)
+		if (dto.isFunctionDispute)
+		{
+			project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
+
+			// Ignore any of the content for the test, if available. Set the test to unimplemented.
+			this.isImplemented = false;
+			ofy().save().entity(this).now();
+			microtaskOutCompleted();
+
+			FunctionCommand.disputeFunctionSignature(functionID, dto.disputeText);
+
+			project.historyLog().endEvent();
+			lookForWork(project);
+		}
+
+		else if (dto.inDispute)
 		{
 			project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
 

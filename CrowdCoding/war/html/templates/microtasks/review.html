@@ -24,10 +24,14 @@
 			<div class="section-title" >
 				Job description
 			</div>
-			<div class="section-content" ng-if="review.microtask.promptType == 'FUNCTION_SIGNATURE'" >
+			<div class="section-content" ng-if="review.microtask.submission.isFunctionDispute" >
+				The worker was asked to write all possible testcases but he disputed the function. <br /> Can you rate this work?
+			</div>
+
+			<div class="section-content" ng-if="review.microtask.promptType == 'FUNCTION_SIGNATURE' && !review.microtask.submission.isFunctionDispute" >
 				The worker was asked to write all possible testcases for the following function. <br /> Can you rate this work?
 			</div>
-			<div class="section-content" ng-if="review.microtask.promptType == 'CORRECT_TEST_CASE'" >
+			<div class="section-content" ng-if="review.microtask.promptType == 'CORRECT_TEST_CASE'&& !review.microtask.submission.isFunctionDispute" >
 				The worker was asked to rewrite the test case
 				<div class="form-group">
 					<input type="text"
@@ -40,12 +44,12 @@
 				<br>
 				that the crowd put in dispute for the following reason:<br>
 				<div class="form-grou has-error">
-					<input type="text"
-					class="form-control"
+					<textarea type="text"
+					class="form-control resize:none"
 					disabled="true"
 					name="disputedTestCase"
 					ng-model="review.microtask.disputeDescription"
-					>
+					></textarea>
 				</div>
 				<br>
 				Can you review this work?
@@ -56,12 +60,25 @@
 			<div class="section-title" >
 			function description
 			</div>
-			<div class="section-content no-padding" >			
+			<div class="section-content no-padding" >
 				<code-mirror-readonly code="review.functionCode"></code-mirror-readonly>
 			</div>
 		</div>
-
-		<div class="section section-description-2">
+		<div class="section section-description-2" ng-if="review.microtask.submission.isFunctionDispute">
+			<div class="section-title" >dispute reaseon</div>
+			<div class="section-content" >
+				<div class="form-grou has-error">
+					<textarea type="text"
+					class="form-control resize:none"
+					disabled="true"
+					name="disputedTestCase"
+					ng-model="review.microtask.submission.disputeText"
+					></textarea>
+				</div>
+			</div>
+		</div>
+		
+		<div class="section section-description-2" ng-if="!review.microtask.submission.isFunctionDispute">
 			<div class="section-title" >submitted test cases</div>
 			<div class="section-content" >
 				<ul style="list-style:none">
@@ -79,7 +96,7 @@
 			<div class="section-title" >
 				Job description
 			</div>
-			<div ng-if="! review.microtask.submission.inDispute" class="section-content" >
+			<div ng-if="! review.microtask.submission.inDispute && ! review.microtask.submission.isFunctionDispute" class="section-content" >
 				The worker was asked to write a test for the following case:
 				<div class="form-group">
 					<input type="text"
@@ -91,8 +108,20 @@
 				</div><br/>
 				of the function below. Can you rate this work?
 			</div>
+			<div ng-if="review.microtask.submission.isFunctionDispute" class="section-content" >
+				The worker disputed the test that the crowd has written for the following function:
+				<div class="form-group">
+					<input type="text"
+					class="form-control"
+					disabled="true"
+					name="disputedTestCase"
+					ng-model="review.microtask.owningArtifact"
+					>
+				</div>
+				<br/> Can you rate this dispute?
+			</div>
 			<div ng-if="review.microtask.submission.inDispute" class="section-content" >
-				The worker disputed the test that the crowd has written for the following case:
+				The worker disputed the function signature that the crowd has written for the following case:
 				<div class="form-group">
 					<input type="text"
 					class="form-control"
@@ -105,15 +134,18 @@
 			</div>
 		</div>
 		<div class="section section-description">
-			<div class="section-title" >
+			<div class="section-title" ng-if="!review.microtask.submission.isFunctionDispute">
 			function description
+			</div>
+			<div class="section-title" ng-if="review.microtask.submission.isFunctionDispute">
+			function signature disputed
 			</div>
 			<div class="section-content no-padding" >
 				<code-mirror-readonly code="review.functionCode"></code-mirror-readonly>
 			</div>
 		</div>
 
-		<div ng-if="! review.microtask.submission.inDispute" class="section section-description-2">
+		<div ng-if="! review.microtask.submission.inDispute && !review.microtask.submission.isFunctionDispute" class="section section-description-2">
 			<div  class="section-title" >Written TEST</div>
 			<div class="section-content" >
 				<table style="width:100%" class="test">
@@ -134,16 +166,18 @@
 			</div>
 		</div>
 
-		<div ng-if="review.microtask.submission.inDispute" class="section section-description-2">
+		<div ng-if="review.microtask.submission.inDispute || review.microtask.submission.isFunctionDispute" class="section section-description-2">
 			<div class="section-title" >dispute reason</div>
 			<div class="section-content" >
 				<div class="form-group has-error">
-					<input type="text"
+					<textarea type="text"
 					class="form-control"
+					style ="resize:none"
+					style="width:100%"
 					disabled="true"
 					name="disputedTestCase"
 					ng-model="review.microtask.submission.disputeText"
-					>
+					></textarea>
 				</div>
 			</div>
 		</div>
@@ -153,6 +187,36 @@
 	<!--//////////////////////////////////////////-->
 	<!--//        WRITE FUNCTION MICROTASK      //-->
 	<!--//////////////////////////////////////////-->
+
+	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'RE_EDIT'">
+		<div class="section section-description">
+			<div class="section-title" >
+				Job description
+			</div>
+			<div class="section-content" >
+				The worker was asked to edit the following function to solve this issue:
+				<textarea type="text"
+				class="resize:none"
+				style="width:100%"
+				class="form-control"
+				disabled="true"
+				name="newTestCase"
+				ng-model="review.microtask.disputeText"
+				></textarea>
+				<br /> Can you rate this work?
+			</div>
+		</div>
+
+		<div class="section section-description-2">
+			<div class="section-title" >
+				submitted function code
+			</div>
+			<div class="section-content no-padding" >
+				<code-mirror-readonly code="review.functionCode" mode="diff"></code-mirror-readonly>
+			</div>
+		</div>
+	</div>
+
 	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'SKETCH'">
 		<div class="section section-description">
 			<div class="section-title" >
@@ -268,7 +332,7 @@
 					<ul style="list-style:none;margin:0px;padding:0px;">
 						<li><b>1 Star</b>: Work incoherent or unfocussed, <b>microtask will be rejected</b></li>
 						<li><b>2 Star</b>: Work unconvincing or weak, <b>microtask will be rejected</b></li>
-						<li><b>3 Star</b>: Work with some weakness, <b>microtask will be reissued with the actual information</b></li>
+						<li><b>3 Star</b>: Work with some weakness, <b>microtask will be reissued with submitted work as partial completion</b></li>
 						<li><b>4 Star</b>: Work with few weaknesses, <b>microtask will be accepted</b></li>
 						<li><b>5 Star</b>: Excellent work with no significant weaknesses, <b>microtask will be accepted</b></li>
 					</ul>
@@ -308,16 +372,11 @@
 					<span ng-if="review.rating == 3">Reissued</span>
 					<span ng-if="review.rating == 4||review.rating == 5">Accepted</span>
 					<br />
-					<span ng-if="review.rating != -1">
-						<label for="reviewText" >Motivation:</label>
-						<span
-							ng-class="{ 'has-error': microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid, 'has-success': microtaskForm.reviewText.$valid}">
-							<textarea
-								id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 4" focus></textarea>
-							<span
-							class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 3&& microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
-						</span>
-					</span>
+					<label for="reviewText" >Motivation:</label>
+					<textarea
+						id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 4" focus></textarea>
+					<span
+					class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 4 && microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
 				</div>
 			</div>
 

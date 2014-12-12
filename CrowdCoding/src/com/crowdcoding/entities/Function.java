@@ -566,38 +566,48 @@ public class Function extends Artifact
 	{
 		microtaskOutCompleted();
 
-		for (TestCaseDTO testCase : dto.testCases)
-		{
-			// Note: the id in the testCase is *only* valid for testcases where added is false.
+		if(dto.isFunctionDispute){
+			System.out.println("======dovrei fare la disputa con====="+dto.disputeText);
+			ofy().save().entity(this).now();
+			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeText);
+			lookForWork(project);
+		}
+		else{
 
-			// If it's an add, create a test
-			if (testCase.added)
+			for (TestCaseDTO testCase : dto.testCases)
 			{
-				TestCommand.create(testCase.text, this.id, this.name, testCase.functionVersion);
-			}
-			// else if is a delete, remove the test
-			else if (testCase.deleted)
-			{
-				TestCommand.delete(testCase.id);
-				deleteTest(testCase.id);
-			}
-			else
-			{
-				// Check if it was edited
-				Ref<Test> testRef = Test.find(testCase.id, project);
-				System.out.println(testRef.get());
-				Test test = testRef.get();
-				if (!test.getDescription().equals(testCase.text))
+				// Note: the id in the testCase is *only* valid for testcases where added is false.
+
+				// If it's an add, create a test
+				if (testCase.added)
 				{
-					String oldDescription = test.getDescription();
-					test.setDescription(testCase.text);
-					test.queueMicrotask(new WriteTest(project, test, oldDescription, testCase.functionVersion), project);
+					TestCommand.create(testCase.text, this.id, this.name, testCase.functionVersion);
+				}
+				// else if is a delete, remove the test
+				else if (testCase.deleted)
+				{
+					TestCommand.delete(testCase.id);
+					deleteTest(testCase.id);
+				}
+				else
+				{
+					// Check if it was edited
+					Ref<Test> testRef = Test.find(testCase.id, project);
+					System.out.println(testRef.get());
+					Test test = testRef.get();
+					if (!test.getDescription().equals(testCase.text))
+					{
+						String oldDescription = test.getDescription();
+						test.setDescription(testCase.text);
+						test.queueMicrotask(new WriteTest(project, test, oldDescription, testCase.functionVersion), project);
+					}
 				}
 			}
+			ofy().save().entity(this).now();
+			lookForWork(project);
 		}
 
-		ofy().save().entity(this).now();
-		lookForWork(project);
+
 	}
 
 	public void writeCallCompleted(FunctionDTO dto, Project project)
@@ -743,6 +753,10 @@ public class Function extends Artifact
 	public void disputeTestCases(String issueDescription, String testDescription, Project project)
 	{
 		queueMicrotask(new WriteTestCases(this, issueDescription, testDescription, project), project);
+	}
+	public void disputeFunctionSignature(String issueDescription, Project project)
+	{
+		queueMicrotask(new WriteFunction(this, issueDescription, project), project);
 	}
 
 
