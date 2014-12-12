@@ -5,6 +5,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.Review;
+import com.crowdcoding.history.MicrotaskReissued;
+import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.servlets.CommandContext;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
@@ -126,6 +128,7 @@ public abstract class MicrotaskCommand extends Command
 
 		public void execute(Microtask microtask, Project project)
 		{
+			
 			throw new RuntimeException("This method is not applicable for this class");
 
 		}
@@ -145,7 +148,7 @@ public abstract class MicrotaskCommand extends Command
 		public void execute(Microtask microtask, Project project)
 		{
 			Microtask newMicrotask = microtask.copy(project);
-
+			
 			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
 		}
 	}

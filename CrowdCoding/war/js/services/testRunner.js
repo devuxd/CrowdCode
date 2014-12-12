@@ -10,7 +10,8 @@ myApp.factory('testRunnerService', [
 	'testsService',
 	'functionsService',
 	'TestList', 
-	function($window,$rootScope,$http,$q,$timeout,testsService,functionsService,TestList) {
+	'TestNotificationChannel',
+	function($window,$rootScope,$http,$q,$timeout,testsService,functionsService,TestList,NotificationChannel) {
 
 	var timeOutTime = 2000;
 	var validTests;
@@ -33,10 +34,9 @@ myApp.factory('testRunnerService', [
 	var deferred = $q.defer();
 
 	//Runs all of the tests for the specified function, sending the results to the server
-	testRunner.runTestsForFunction = function(passedFunctionId,passedFunctionBody,passedStubs)
-	{
+	this.runTestsForFunction = function(){
 
-		deferred = $q.defer();
+		/* passedFunctionId,passedFunctionBody,passedStubs */
 
 		// initialize globals
 		returnData         = {}; 
@@ -84,8 +84,6 @@ myApp.factory('testRunnerService', [
 
 		// Run the tests
 		this.runTest();
-
-		return deferred.promise;
 	}
 
 	testRunner.mergeStubs = function(passedStubs){
@@ -214,29 +212,25 @@ myApp.factory('testRunnerService', [
 		// IF ALL THE TESTS HAD RUNNED
 		if (currentTextIndex >= validTests.length)
 		{
-			deferred.resolve({
-				stubs         : calleeMap,
-				testsData     : returnData,
-				overallResult : allFailedTestCases.length > 0 ? false : true // if one of the tests failed, return false otherwise true
-			});
+			// deferred.resolve({
+			// 	stubs         : calleeMap,
+			// 	testsData     : returnData,
+			// 	overallResult : allFailedTestCases.length > 0 ? false : true // if one of the tests failed, return false otherwise true
+			// });
+
+			// publish a message on run tests finished
+			var item = {};
+			item.stubs         = calleeMap,
+			item.testsData     = returnData,
+			item.overallResult = allFailedTestCases.length > 0 ? false : true;
+			NotificationChannel.runTestsFinished(item);
+
 			return;
 		}
 
 		this.runTest();		
 	}
 
-
-	testRunner.stopTest = function()
-	{
-
-		returnData[ currentTextIndex ] = {};
-		returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
-		returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
-		returnData[ currentTextIndex ].debug  = "ERROR: execution terminated due to timeout";
-
-		this.processTestFinished(false);
-		
-	}
 		
 	testRunner.runTest = function()
 	{
@@ -261,7 +255,19 @@ myApp.factory('testRunnerService', [
 
 		// set the max execution time
 		var timeoutPromise = $timeout( function(){
-			testRunner.stopTest();
+		// 	returnData[ currentTextIndex ] = {};
+		// 	returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
+		// 	returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
+		// 	returnData[ currentTextIndex ].debug  = "ERROR: execution terminated due to timeout";
+
+			var item = {};
+			item.test   = validTests[ currentTextIndex ] ; 
+			item.output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
+			item.debug  = "ERROR: execution terminated due to timeout";
+
+			NotificationChannel.testReady(item);
+
+			this.processTestFinished(false);
 		} , timeOutTime);
 
 		// the worker is still running, 
@@ -291,25 +297,42 @@ myApp.factory('testRunnerService', [
 				console.log( e.data.errors );
 
 
-				returnData[ currentTextIndex ] = {};
-				returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
-				returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': "", 'result':  false} ;
-				returnData[ currentTextIndex ].debug  = e.data.errors;
+				// returnData[ currentTextIndex ] = {};
+				// returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
+				// returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': "", 'result':  false} ;
+				// returnData[ currentTextIndex ].debug  = e.data.errors;
+
+		  // 		testRunner.processTestFinished( false );
+
+		  		// send the message to the TestNotificationChannel
+		  		var item = {};
+				item.test   = validTests[ currentTextIndex ] ; 
+				item.output = { 'expected': undefined, 'actual': undefined, 'message': "", 'result':  false} ;
+				item.debug  = e.data.errors;
+
+				NotificationChannel.testReady(item);
 
 		  		testRunner.processTestFinished( false );
 
 			} else {
 
-				// attach output for the returnData
-				returnData[ currentTextIndex ] = {};
-				returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
-				returnData[ currentTextIndex ].output = data.output ;
-				returnData[ currentTextIndex ].debug  = data.debug ;
+				// // attach output for the returnData
+				// returnData[ currentTextIndex ] = {};
+				// returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
+				// returnData[ currentTextIndex ].output = data.output ;
+				// returnData[ currentTextIndex ].debug  = data.debug ;
+
+				// send the message to the TestNotificationChannel
+		  		var item = {};
+				item.test   = validTests[ currentTextIndex ]; 
+				item.output = data.output;
+				item.debug  = data.debug;
+
+				NotificationChannel.testReady(item);
 
 				// update the callee map
 				calleeMap = data.calleeMap ;
 
-				console.log(data);
 				// process test finished
 		  		testRunner.processTestFinished( data.output.result );
 			}

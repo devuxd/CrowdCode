@@ -97,7 +97,8 @@ public class WriteTestCases extends Microtask
 
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
-		this.function.get().writeTestCasesCompleted((TestCasesDTO) dto, project);
+		Function fun = (Function) this.getOwningArtifact();
+		fun.writeTestCasesCompleted((TestCasesDTO) dto, project);
 
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter

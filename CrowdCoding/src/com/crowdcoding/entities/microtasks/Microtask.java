@@ -68,12 +68,12 @@ public /*abstract*/ class Microtask
 					+ jsonDTOData);
 			return;
 		}
-//		System.out.println("PRINTING JSON DTO DATA");
-//		System.out.println(jsonDTOData);
+
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
 
-		project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
-
+		//project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
+		//project.historyLog().endEvent();
+		
 		doSubmitWork(dto, workerID, project);
 		this.completed = true;
 
@@ -89,7 +89,6 @@ public /*abstract*/ class Microtask
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "microtasks",1);
 
-		project.historyLog().endEvent();
 	}
 
 	public void skip(String workerID, Project project)

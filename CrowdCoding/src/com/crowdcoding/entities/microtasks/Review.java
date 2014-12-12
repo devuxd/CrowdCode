@@ -12,6 +12,9 @@ import com.crowdcoding.dto.firebase.ReviewInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.history.MicrotaskAccepted;
+import com.crowdcoding.history.MicrotaskReissued;
+import com.crowdcoding.history.MicrotaskRejected;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
@@ -95,6 +98,10 @@ public class Review extends Microtask
 			awardedPoint = 0;
 			reviewResult = "rejected";
 			
+
+			project.historyLog().beginEvent(new MicrotaskRejected(submittedMicrotask,workerID));
+			project.historyLog().endEvent();
+			
 		} else if ( reviewDTO.qualityScore == 3) {
 			
 			// reissue microtask
@@ -102,6 +109,9 @@ public class Review extends Microtask
         	MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
 			awardedPoint = submittedMicrotask.submitValue/2;
 			reviewResult = "reissued";
+
+			project.historyLog().beginEvent(new MicrotaskReissued(submittedMicrotask,workerID));
+			project.historyLog().endEvent();
 			
 		} else {
 			
@@ -109,7 +119,12 @@ public class Review extends Microtask
         	System.out.println("accepted");
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
 			awardedPoint = submittedMicrotask.submitValue;
-			reviewResult ="approved";
+			reviewResult ="accepted";
+			
+
+			project.historyLog().beginEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
+			project.historyLog().endEvent();
+			
 		}
 
 

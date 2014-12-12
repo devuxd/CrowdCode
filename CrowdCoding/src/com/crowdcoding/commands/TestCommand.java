@@ -13,10 +13,12 @@ public abstract class TestCommand extends Command
 
 	public static TestCommand create(String description, long functionID, String functionName, int functionVersion)
 		{ return new Create1(description, functionID, functionName, functionVersion); }
+	
 	public static TestCommand create(long functionID, String functionName, List<String> inputs, String output, String code, int functionVersion)
 		{ return new Create2(functionID, functionName, inputs, output, code , functionVersion); }
+	
 	public static TestCommand create(long functionID, String functionName, String description, List<String> inputs, String output, String code, int functionVersion)
-	{ return new Create2(functionID, functionName, inputs, output, code , functionVersion); }
+		{ return new Create3(functionID, functionName, description, inputs, output, code , functionVersion); }
 
 	public static TestCommand dispute(long testID, String issueDescription, int functionVersion)
 		{ return new Dispute(testID, issueDescription, functionVersion); }
@@ -142,8 +144,9 @@ public abstract class TestCommand extends Command
 		{
 			Test test = new Test(functionID, functionName, inputs, output, code, project, functionVersion);
 			test.setDescription(description);
-		
 			test.storeToFirebase(project);
+			
+			FunctionCommand.testBecameImplemented(functionID, test.getID());		
 		}
 
 		public void execute(Test test, Project project)

@@ -21,6 +21,7 @@ import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAssigned;
 import com.crowdcoding.history.MicrotaskSpawned;
+import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.history.ProjectCreated;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
@@ -422,6 +423,10 @@ public class Project
 		// Unassign the microtask from the worker
 		microtaskAssignments.put( workerID, null );
 		ofy().save().entity(this).now();
+		
+		Microtask microtask = ofy().load().key( microtaskKey ).get();
+		project.historyLog().beginEvent(new MicrotaskSubmitted(microtask, workerID));
+		project.historyLog().endEvent();
 
 		// If reviewing is enabled and the microtask is not a Review,
 		// a ReuseSearch or a DebugTestFailure,

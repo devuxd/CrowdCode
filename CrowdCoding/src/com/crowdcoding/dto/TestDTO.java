@@ -6,7 +6,7 @@ import java.util.List;
 public class TestDTO extends DTO 
 {
 	public String messageType = "TestDTO";
-	public Long functionId ;
+	public Long functionID ;
 	public String functionName  = "";
 	public int functionVersion;		// version of the function under test that the worker saw when authoring this test.
 	public String code = "";

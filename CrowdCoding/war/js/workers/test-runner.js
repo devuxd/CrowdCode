@@ -35,19 +35,15 @@ self.addEventListener('message', function(e){
 	switch ( data.cmd ) {
 		// initialize the worker
 		case 'initialize': 
+			// retrieve the baseUrl
 			if( data.baseUrl == undefined ){
 				self.postMessage("ERROR: you should define a baseUrl");
 				break;
 			}
-/*
-			if( data.mocks == undefined ){
-				self.postMessage("ERROR: you should define a baseUrl");
-				break;
-			}*/
-
-			// import test run libraries
 			baseUrl = data.baseUrl;
-			console.log("base url: "+baseUrl);
+
+
+			// import test helper libraries
 			importScripts(baseUrl + '/include/jshint.js');
 			importScripts(baseUrl + '/js/assertionFunctions.js');
 			importScripts(baseUrl + '/js/instrumentFunction.js');

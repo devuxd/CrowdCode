@@ -636,7 +636,7 @@ public class Function extends Artifact
 		// Update or create tests for any stub
 		for (TestDTO testDTO : dto.stubs)
 		{	
-			TestCommand.create(testDTO.functionId,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version);
+			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version);
 		}
 
 		lookForWork(project);

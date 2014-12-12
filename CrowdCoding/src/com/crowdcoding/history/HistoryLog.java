@@ -20,7 +20,7 @@ public class HistoryLog
 	
 	
 	public HistoryLog(){
-		System.out.println("== NEW HISTORY LOG");
+		//System.out.println("== NEW HISTORY LOG");
 	}
 	
 	public class EventNode
@@ -39,29 +39,30 @@ public class HistoryLog
 		EventNode node = new EventNode(event);
 		if (root == null){
 			root = node;
-			//System.out.println("-- SETTING ROOT TO "+root.event);
 		}else{
-			//System.out.println("-- ROOT IS "+root.event);
+			EventNode parent = root;
+			node.event.parentID = root.event.generateID();
+			root.children.add(node);
 		}
 		
 		
-		// If we are not at the bottom of the stack, add this node as a child of the top of the stack 
-		if (!eventStack.isEmpty())		
-		{
-			EventNode parent = eventStack.peek();
-			node.event.parentID = parent.event.generateID();
-			parent.children.add(node);
-		}
+//		// If we are not at the bottom of the stack, add this node as a child of the top of the stack 
+//		if (!eventStack.isEmpty())		
+//		{
+//			EventNode parent = eventStack.peek();
+//			node.event.parentID = parent.event.generateID();
+//			parent.children.add(node);
+//		}
 		
 		eventStack.push(node);
-		System.out.println("---OPEN "+event.generateID());
+		//System.out.println("---OPEN "+event.generateID());
 	}
 		
 	public void endEvent()
 	{
 		EventNode pop = eventStack.pop();	
 
-		System.out.println("---CLOSE "+pop.event.generateID());
+		//System.out.println("---CLOSE "+pop.event.generateID());
 	}	
 	
 	// Gets a representation as a list of pairs - a string event ID and a JSON string - capturing each 
@@ -93,10 +94,10 @@ public class HistoryLog
 //		if( json.size() == 0)
 //
 //			System.out.println("--- LOG JSON EMPTY ");
-		
-
-		System.out.println("== PRINTING HISTORY LOG "+json.size()+ " rows");
-			
+//		
+//
+		System.out.println("== HL: "+json.size()+ " rows");
+//			
 		return json;
 	}
 }
