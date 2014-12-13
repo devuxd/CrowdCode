@@ -495,15 +495,12 @@ public class Function extends Artifact
 
 	public void sketchCompleted(FunctionDTO dto, Project project)
 	{
-
-		System.out.println("dispute text  "+dto.disputeText);
-
 		microtaskOutCompleted();
-
 		onWorkerEdited(dto, project);
-		System.out.println("numero di test: "+tests.size());
-
-		queueMicrotask(new WriteTestCases(this, project),project);
+		//if don't exists test and the submit is from a dispute
+		//respawn the write test case microtask
+		if(dto.disputeText!=null && tests.size()==0);
+			queueMicrotask(new WriteTestCases(this, project),project);
 	}
 
 	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, Project project)

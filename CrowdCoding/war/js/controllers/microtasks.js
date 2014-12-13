@@ -739,6 +739,10 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
             //     calleeIds: calleeIds
 
             formData = functionsService.parseFunction(text);
+            //add the dispute text to the submit
+            if($scope.microtask.promptType==='RE_EDIT')
+                formData.disputeText=$scope.microtask.disputeText;
+            
             $scope.$emit('submitMicrotask', formData);
         }
     });
