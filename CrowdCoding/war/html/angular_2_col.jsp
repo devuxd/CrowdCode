@@ -83,13 +83,13 @@
 
 			    <ul class="nav navbar-nav navbar-right">
 			        <li>
-			        	<a href="#"  
+			        	<a href="#"
 			        	style="margin-right:20px"
-			        	data-placement="bottom-right" 
-			        	data-container="body" 
+			        	data-placement="bottom-right"
+			        	data-container="body"
 			        	bs-dropdown="dropdown" />
 		          		<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
-						{{ userData.score }} points 
+						{{ userData.score }} points
 						<span class="caret"></span>
 			        	</a>
 			        </li>
@@ -121,16 +121,16 @@
 		        </div>
 
 		        <div class="sidebar-buttons">
-			        <button href="#" class="" 
-			           data-animation="am-fade-and-scale" 
-			           data-placement="center" 
-			           data-template="/html/templates/popups/popup_shortcuts.html" 
+			        <button href="#" class=""
+			           data-animation="am-fade-and-scale"
+			           data-placement="center"
+			           data-template="/html/templates/popups/popup_shortcuts.html"
 			           bs-modal="modal"
 			           data-container="body"
 			           >shortcuts</button>
-			        <button href="#" class="" 
-			           data-animation="am-fade-and-scale" 
-			           data-placement="center" 
+			        <button href="#" class=""
+			           data-animation="am-fade-and-scale"
+			           data-placement="center"
 			           data-container="body"
 			           data-template="/html/templates/popups/popup_feedback.html" bs-modal="modal">Send Us Feedback!</button>
 		        </div>
@@ -148,7 +148,7 @@
 						  <button type="button" ng-click="$broadcast('collectFormData', microtaskForm) " tabindex="99" class="btn btn-primary btn-sm">Submit</button>
 						</div>
 
-						
+
 						<span class="pull-right">
 							<span ng-if="unreadedMessages>0" class="unreded-messages">{{unreadedMessages}}</span>
 							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn btn-chat-toggle {{chatActive?'opened':''}} btn-sm"  >
@@ -204,8 +204,8 @@
     <script src="/include/ui-codemirror-0.1.6/ui-codemirror.min.js"></script> <!-- codemirror ui for Angularjs-->
  	<script src="/include/codemirror/javascript.js"></script><!-- Codemirror Javascript Style -->
  	<script src="/include/codemirror/diff.js"></script><!-- Codemirror Javascript Style -->
- 	
- 	
+
+
 
 
  	<script src="/include/ui-ace-editor/src/ui-ace.js"> </script> <!-- UI Ace Editor-->
@@ -242,7 +242,6 @@
 	var firebaseURL  = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
 	var logoutURL    = '<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>';
 
-	console.log("<%=worker.score%>");
 
 	</script>
 

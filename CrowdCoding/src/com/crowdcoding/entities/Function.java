@@ -495,8 +495,15 @@ public class Function extends Artifact
 
 	public void sketchCompleted(FunctionDTO dto, Project project)
 	{
+
+		System.out.println("dispute text  "+dto.disputeText);
+
 		microtaskOutCompleted();
+
 		onWorkerEdited(dto, project);
+		System.out.println("numero di test: "+tests.size());
+
+		queueMicrotask(new WriteTestCases(this, project),project);
 	}
 
 	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, Project project)
@@ -570,6 +577,8 @@ public class Function extends Artifact
 			System.out.println("======dovrei fare la disputa con====="+dto.disputeText);
 			ofy().save().entity(this).now();
 			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeText);
+
+
 			lookForWork(project);
 		}
 		else{
@@ -645,7 +654,7 @@ public class Function extends Artifact
 
 		// Update or create tests for any stub
 		for (TestDTO testDTO : dto.stubs)
-		{	
+		{
 			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version);
 		}
 
