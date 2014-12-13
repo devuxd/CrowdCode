@@ -46,16 +46,16 @@
                     <button ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.$invalid">Run the tests!</button>
                 </div>
             </div>
-
+            {{testData}}
             <div class="section section-form" style="width:70%;">
                 <div class="section-content no-padding" >
                     <collapsable-list
-                    data="testsData"
-                    add-data="{ 'paramNames' : paramNames }"
-                    class="test-collapsable-list"
-                    list-element-class-condition="'success': data.result , 'failed': ! data.result "
-                    toggler-template="/html/templates/collapsable_toggler_test.html"
-                    element-template="/html/templates/collapsable_element_test.html">
+                        data="testsData"
+                        add-data="{ 'paramNames' : paramNames }"
+                        class="test-collapsable-list"
+                        list-element-class-condition="'success': data.result , 'failed': ! data.result "
+                        toggler-template="/html/templates/collapsable_toggler_test.html"
+                        element-template="/html/templates/collapsable_element_test.html">
                     </collapsable-list>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                                     <b>#{{$index+1}} input set </b><br />
                                     <table style="width:100%">
                                         <tr ng-repeat="(key,input) in stub.inputs track by $index">
-                                            <td>{{paramNames[$index]}}</td>
+                                            <td>{{stubsParamNames[callee][$index]}}</td>
                                             <td><div ace-read-json ng-model="input" ></div></td>
                                         </tr>
                                         <tr>

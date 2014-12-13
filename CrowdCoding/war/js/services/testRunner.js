@@ -5,13 +5,12 @@ myApp.factory('testRunnerService', [
 	'$window',
 	'$rootScope',
 	'$http',
-	'$q',
 	'$timeout',
 	'testsService',
 	'functionsService',
 	'TestList', 
 	'TestNotificationChannel',
-	function($window,$rootScope,$http,$q,$timeout,testsService,functionsService,TestList,NotificationChannel) {
+	function($window,$rootScope,$http,$timeout,testsService,functionsService,TestList,NotificationChannel) {
 
 	var timeOutTime = 2000;
 	var validTests;
@@ -30,60 +29,67 @@ myApp.factory('testRunnerService', [
 	
 	var testRunner = {};
 
+
 	
-	var deferred = $q.defer();
+	// var deferred = $q.defer();
+
+	//NotificationChannel.onRunTests()
 
 	//Runs all of the tests for the specified function, sending the results to the server
-	this.runTestsForFunction = function(){
+	testRunner.runTestsForFunction = function(passedFunctionId,passedFunctionBody,passedStubs){
+		
+		//try {
 
-		/* passedFunctionId,passedFunctionBody,passedStubs */
+			// initialize globals
+			returnData         = {}; 
+			stubs              = {};
+			calleeMap          = {};
+			functionId         = passedFunctionId;
+			functionBody       = passedFunctionBody;
+			allPassedTestCases = new Array();
+			allFailedTestCases = new Array();
+			currentTextIndex   = 0;
 
-		// initialize globals
-		returnData         = {}; 
-		stubs              = {};
-		calleeMap          = {};
-		functionId         = passedFunctionId;
-		functionBody       = passedFunctionBody;
-		allPassedTestCases = new Array();
-		allFailedTestCases = new Array();
-		currentTextIndex   = 0;
-
-		// Load the tests for the specified function
-		validTests = TestList.getByFunctionId(functionId);
-		console.log("valid tests");
-		console.log(validTests);
-
-
-		// build the tested function code with the header
-		functionCode = functionsService.renderHeaderById(functionId);
-		if( functionBody != undefined ) functionCode += functionBody;
-		else                            functionCode += functionsService.get(functionId).code;
-
-		// prepare instruments function 
-		//var instrumentedCaller  = instrumentCallerForLogging( completeFunctionCode );
-
-		// load all the function code
-		this.loadAllTheFunctionCode();
-
-		//console.log("LOADED FUNCTION CODE");
-		//console.log(allTheFunctionCode);
-
-		// load all the stubs in the system
-		this.loadStubs();
+			// Load the tests for the specified function
+			validTests = TestList.getByFunctionId(functionId);
+			console.log("valid tests");
+			console.log(validTests);
 
 
-		// console.log("LOADED CALLEE MAP");
-		// console.log(JSON.stringify(stubs));
 
-		if( passedStubs != undefined )
-			this.mergeStubs(passedStubs);
+				// build the tested function code with the header
+			functionCode = functionsService.renderHeaderById(functionId);
+			if( functionBody != undefined ) functionCode += functionBody;
+			else                            functionCode += functionsService.get(functionId).code;
+
+			// prepare instruments function 
+			//var instrumentedCaller  = instrumentCallerForLogging( completeFunctionCode );
+
+			// load all the function code
+			this.loadAllTheFunctionCode();
 
 
-		// console.log("MERGED CALLEE MAP");
-		// console.log(JSON.stringify(stubs));
+			//console.log("LOADED FUNCTION CODE");
+			//console.log(allTheFunctionCode);
 
-		// Run the tests
-		this.runTest();
+			// load all the stubs in the system
+			this.loadStubs();
+
+			// console.log("LOADED CALLEE MAP");
+			// console.log(JSON.stringify(stubs));
+
+			if( passedStubs != undefined )
+				this.mergeStubs(passedStubs);
+
+			// console.log("MERGED CALLEE MAP");
+			// console.log(JSON.stringify(stubs));
+
+			// Run the tests
+			this.runTest();
+		// } catch(e) {
+		// 	console.error("PROBLEM LOADING THE TESTS ",e);
+		// }
+		
 	}
 
 	testRunner.mergeStubs = function(passedStubs){
@@ -199,6 +205,8 @@ myApp.factory('testRunnerService', [
 
 	testRunner.processTestFinished = function( testResult )
 	{
+		console.log("process test finished",currentTextIndex >= validTests.length);
+
 		// If the code is unimplemented, the test neither failed nor passed. If the test
 		// did not pass or timed out, it failed. Otherwise, it passed.
 		if ( !testResult ) 
@@ -212,6 +220,7 @@ myApp.factory('testRunnerService', [
 		// IF ALL THE TESTS HAD RUNNED
 		if (currentTextIndex >= validTests.length)
 		{
+			console.log("ALL TEST RUNNED");
 			// deferred.resolve({
 			// 	stubs         : calleeMap,
 			// 	testsData     : returnData,
@@ -224,11 +233,10 @@ myApp.factory('testRunnerService', [
 			item.testsData     = returnData,
 			item.overallResult = allFailedTestCases.length > 0 ? false : true;
 			NotificationChannel.runTestsFinished(item);
-
-			return;
+			w.terminate();
 		}
-
-		this.runTest();		
+		else
+			this.runTest();		
 	}
 
 		
@@ -244,7 +252,8 @@ myApp.factory('testRunnerService', [
 		code += "var stubs = " + JSON.stringify(stubs) + "; \n"; 
 
 		// add calleeMap 
-		code += "var calleeMap = " + JSON.stringify(calleeMap) + "; \n"; 
+		code += "var calleeMap = " + JSON.stringify(calleeMap) + "; \n";
+		console.log("==> running test with callee map ", calleeMap); 
 
 		// add all the functions code
 		code += allTheFunctionCode;
@@ -268,6 +277,8 @@ myApp.factory('testRunnerService', [
 			NotificationChannel.testReady(item);
 
 			this.processTestFinished(false);
+
+			console.log("TestRunner: test "+currentTextIndex+" timeout");
 		} , timeOutTime);
 
 		// the worker is still running, 
@@ -294,7 +305,7 @@ myApp.factory('testRunnerService', [
 
 				// if there are errors, show to the console and 
 				// set the test result to false
-				console.log( e.data.errors );
+				//console.log( e.data.errors );
 
 
 				// returnData[ currentTextIndex ] = {};
@@ -312,9 +323,14 @@ myApp.factory('testRunnerService', [
 
 				NotificationChannel.testReady(item);
 
+				console.log("TestRunner: test "+currentTextIndex+" error");
+
 		  		testRunner.processTestFinished( false );
 
+
 			} else {
+
+				//console.log("---> TEST "+currentTextIndex+" FINISHED");
 
 				// // attach output for the returnData
 				// returnData[ currentTextIndex ] = {};
@@ -329,12 +345,15 @@ myApp.factory('testRunnerService', [
 				item.debug  = data.debug;
 
 				NotificationChannel.testReady(item);
-
-				// update the callee map
+				NotificationChannel.stubReady(data.calleeMap);
 				calleeMap = data.calleeMap ;
+
+				console.log("TestRunner: test "+currentTextIndex+" processed",item);
 
 				// process test finished
 		  		testRunner.processTestFinished( data.output.result );
+
+
 			}
 		};
 
@@ -342,6 +361,7 @@ myApp.factory('testRunnerService', [
 
 	testRunner.submitResultsToServer = function()
 	{		
+		console.log("allFailedTestCases",allFailedTestCases);
 
 		// Determine if the function passed or failed its tests. 
 		// If at least one test failed, the function failed its tests.
@@ -372,6 +392,11 @@ myApp.factory('testRunnerService', [
 		}
 			
 	}
+
+
+	NotificationChannel.onRunTests($rootScope,function(item){
+		testRunner.runTestsForFunction( item.passedFunctionId, item.passedFunctionBody, item.passedStubs );
+	})
 	
 	return testRunner;
 	

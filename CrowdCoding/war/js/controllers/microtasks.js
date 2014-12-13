@@ -313,7 +313,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
 ///////////////////////////////
-myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout', 'testsService', 'testRunnerService', 'functionsService', 'ADTService', 'TestList', function($scope, $rootScope, $firebase, $alert, $timeout, testsService, testRunnerService, functionsService, ADTService, TestList) {
+myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout', 'testsService', 'functionsService', 'ADTService', 'TestList', 'TestNotificationChannel', function($scope, $rootScope, $firebase, $alert, $timeout, testsService, functionsService, ADTService, TestList, NotificationChannel) {
     // scope variables
     $scope.tests        = testsService.validTestsforFunction($scope.microtask.functionID);
     $scope.passedTests  = [];
@@ -347,10 +347,56 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         });
     };
 
-    $scope.runTests = function(firstRun) {
+    $scope.firstRun = false;
+
+
+    NotificationChannel.onTestReady($scope,function(data){
+
+        console.log('--> task received tests ready',data);
+        $scope.testsData.push( data );
+    });
+
+    NotificationChannel.onStubReady($scope,function(data){
+
+        console.log('--> task received stub ready',data);
+
+
+        $scope.stubs = Object.keys(data).length > 0 ? data : null;
+
+
+        $scope.stubs = Object.keys(data).length > 0 ? data : null;
+        angular.forEach($scope.stubs, function(data, index) {
+            calleeFunction=functionsService.getByName(index);
+            if( $scope.stubsParamNames == undefined)
+                $scope.stubsParamNames = {};
+            $scope.stubsParamNames[index] = calleeFunction.paramNames;
+            $scope.calleDescription[index]={};
+            $scope.calleDescription[index].code=functionsService.renderDescription(calleeFunction) + calleeFunction.header;
+        });
+
+    });
+
+    NotificationChannel.onRunTestsFinished($scope,function(data){
+
+        console.log('--> task received run tests finished');
+
+        $scope.testsRunning = false;
+        $scope.$apply();
+
+
+        // if on the first run all the tests pass, 
+        // load a new microtask 
+        if ($scope.firstRun !== undefined && $scope.firstRun && data.overallResult) {
+            console.log("---- AUTO LOADING A NEW MICROTASK");
+            $scope.$emit('collectFormData', true);
+        }
+    });
+
+    $scope.runTests = function() {
 
         // set testsRunning flag
         $scope.testsRunning = true;
+        $scope.testsData = [];
 
         var functionBody;
         if (functionCodeMirror !== null) {
@@ -369,31 +415,18 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
             );
         }
 
-        // ask the worker to run the tests
-        testRunnerService.runTestsForFunction($scope.microtask.functionID, functionBody, $scope.stubs).then(function(data) {
-            //$scope.results = 
-            $scope.testsData = data.testsData;
-            $scope.stubs     = Object.keys(data.stubs).length > 0 ? data.stubs : null;
-            console.log("RECEIVED STUBS", $scope.stubs);
-            angular.forEach($scope.stubs, function(data, index) {
-                calleeFunction=functionsService.getByName(index);
-                $scope.calleDescription[index]={};
-                $scope.calleDescription[index].code=functionsService.renderDescription(calleeFunction) + calleeFunction.header;
-            });
 
-            // if on the first run all the tests pass, 
-            // load a new microtask 
-            if (firstRun !== undefined && firstRun && data.overallResult) {
-                console.log("---- AUTO LOADING A NEW MICROTASK");
-                $scope.$emit('collectFormData', true);
-            }
+        console.log('<-- task sending run test ',new Date());
 
-            // reset testsRunning flag
-            $timeout(function() {
-                $scope.testsRunning = false;
-            }, 200);
+        // push a message for for running the tests
+        NotificationChannel.runTests({ 
+            passedFunctionId   : $scope.microtask.functionID,
+            passedFunctionBody : functionBody,
+            passedStubs        : $scope.stubs
         });
+
     };
+
 
     $scope.dispute = false;
     $scope.disp = {};
