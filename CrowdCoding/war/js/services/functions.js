@@ -40,6 +40,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		this.renderHeader = function (functionName, paramNames) { return renderHeader(functionName, paramNames);};
 		this.renderHeaderById = function (functionId) { return renderHeaderById(functionId);};
 		this.getParamNamesById = function (functionId) { return getParamNamesById(functionId);};
+		this.getParamNamesByName = function (functionName) { return getParamNamesByName(functionName);};
 		this.getCount = function(){ return (functions === undefined)?0:functions.length; };
 	 	this.isLoaded = function() { return loaded; };
 		this.getAll = function(){ return functions;	};
@@ -528,6 +529,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 	function getParamNamesById(functionId){
 		return get(functionId).paramNames;
+	}
+	function getParamNamesByName(functionName){
+		return getByName(functionName).paramNames;
 	}
 
 

@@ -1,7 +1,7 @@
 ////////////////////
 // USER SERVICE   //
 ////////////////////
-myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','testRunnerService', function($window,$rootScope,$firebase,$timeout,testRunnerService) {
+myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','TestNotificationChannel', function($window,$rootScope,$firebase,$timeout,TestNotificationChannel) {
     var user = {};
 
 
@@ -106,16 +106,18 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','tes
 	var executeWorkCallback = function(jobData, whenFinished) {
 	  //This is where we actually process the data. We need to call "whenFinished" when we're done
 	  //to let the queue know we're ready to handle a new job.
-		console.log("Trying to run tests for function "+jobData.functionId);
-		testRunnerService.runTestsForFunction(jobData.functionId).then(function(data){
-		   console.log("tests executed!");
-		   testRunnerService.submitResultsToServer();
-		}, function(error) {
-		   console.log("Error running the tests for functionId="+jobData.functionId);
-	    });
 
+		TestNotificationChannel.onRunTestsFinished($rootScope,function(){
+			console.log('------- tests finished received');
+			testRunnerService.submitResultsToServer();
+		    whenFinished();
+		});
 
-		whenFinished();
+		console.log('------- running tests from work callback',jobData);
+		TestNotificationChannel.runTests({ 
+            passedFunctionId   : jobData.functionId
+        });
+
 	}
 
 	// distributed test work

@@ -96,7 +96,7 @@ self.addEventListener('message', function(e){
 					// executes the tests
 					eval(finalCode);
 
-					console.log(assertionResults);
+					// console.log(assertionResults);
 
 					self.postMessage( { 
 						output    : assertionResults[0], 

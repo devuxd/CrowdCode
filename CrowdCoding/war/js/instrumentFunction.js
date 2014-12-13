@@ -35,6 +35,8 @@ function logCall( functionName, parameters, returnValue, calleeMap )
 
 	// update the callee map inputs map for the function
 	calleeMap[functionName] = inputsMap;
+
+	console.log("===> LOGGING CALLEE ",inputsMap);
 }
 
 // Checks if there is a mock for the function and parameters. Returns values in form
