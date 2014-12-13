@@ -499,7 +499,8 @@ public class Function extends Artifact
 		onWorkerEdited(dto, project);
 		//if don't exists test and the submit is from a dispute
 		//respawn the write test case microtask
-		if(dto.disputeText!=null && tests.size()==0);
+		System.out.println("dispute text "+dto.disputeText);
+		if(dto.disputeText!=null && tests.size()==0)
 			queueMicrotask(new WriteTestCases(this, project),project);
 	}
 
