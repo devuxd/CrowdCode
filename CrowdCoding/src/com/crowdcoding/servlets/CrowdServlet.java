@@ -131,7 +131,7 @@ public class CrowdServlet extends HttpServlet
 
 			// PATHS WITH USER AUTHENTICATION
 			 else if ( user != null ) { // if the user is authenticated
-
+				 
 				// PAGES URLS
 				if(Pattern.matches("/clientRequest",path)){
 					req.getRequestDispatcher("/html/client_request.html").forward(req, resp);
@@ -157,6 +157,7 @@ public class CrowdServlet extends HttpServlet
 						System.out.println("projects: "+FirebaseService.existsProject(projectId));
 						System.out.println("clientRequest: "+FirebaseService.existsClientRequest(projectId));
 						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
+
 							Project.Construct(projectId);
 						} else {
 							//
@@ -424,9 +425,10 @@ public class CrowdServlet extends HttpServlet
             public Key<Microtask> run()
             {
             	Project project = Project.Create(projectID);
+				Worker worker   = Worker.Create(user, project);
             	
-            	String workerID = user.getUserId();
-            	String workerHandle = user.getNickname();
+            	String workerID     = worker.getUserid();
+            	String workerHandle = worker.getNickname();
 
 
             	// logout inactive workers

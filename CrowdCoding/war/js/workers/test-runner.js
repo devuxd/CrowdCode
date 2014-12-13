@@ -100,7 +100,7 @@ self.addEventListener('message', function(e){
 
 					self.postMessage( { 
 						output    : assertionResults[0], 
-						calleeMap : calleeMap,
+						stubs     : stubs,
 						debug     : debug.messages.join( "\n" ) + ""
 					} );
 				}

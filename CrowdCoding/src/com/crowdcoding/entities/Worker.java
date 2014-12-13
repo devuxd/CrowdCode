@@ -30,6 +30,7 @@ public class Worker
 	@Parent Key<Project> project;
 	private String nickname;
 	@Id private String userid;
+
 	public int score;
 
 	// Default constructor for deserialization
@@ -67,6 +68,14 @@ public class Worker
 		//FirebaseService.writeWorkerLoggedIn( user.getUserId(), user.getNickname(), project);
 
 		return crowdWorker;
+	}
+
+	public String getUserid() {
+		return userid;
+	}
+
+	public String getNickname() {
+		return nickname;
 	}
 
 	// returns all workers in the specified project

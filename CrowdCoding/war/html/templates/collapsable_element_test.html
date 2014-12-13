@@ -15,11 +15,11 @@
 			<td>actual output</td>
 			<td><div ace-read-json ng-model="data.output.actual" ></div></td>
 		</tr>
-		<tr>
+		<tr ng-if="data.output.actual != data.output.expected">
 			<td>expected output</td>
 			<td><div ace-read-json ng-model="data.output.expected" ></div></td>
 		</tr>
-		<tr>
+		<tr ng-if="data.output.actual != data.output.expected">
 			<td>debug console</td>
 			<td>
 				<div ace-read-json ng-model="data.debug" ></div>
@@ -27,6 +27,6 @@
 		</tr>
 	</table>
 	<br />
-	<button ng-if="!data.output.result" class="btn btn-primary btn-sm pull-right" ng-click="$emit('disputeTest',key);"> Dispute this test {{key}}</button>
+	<button ng-if="!data.output.result" class="btn btn-primary btn-sm pull-right" ng-click="$emit('disputeTest',key);"> Report an issue</button>
 	<div class="clearfix"></div>
 </div>

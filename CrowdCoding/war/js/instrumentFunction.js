@@ -12,17 +12,17 @@ var debug = {};
 
 //Inserts the inputs and outputs to a map datastructure that will be used 
 //later to displays these values in the debug fields.
-function logCall( functionName, parameters, returnValue, calleeMap )
+function logCall( functionName, parameters, returnValue, stubs )
 {
 	
 	// if the callee map doesn't have entries for the functionName, 
 	// generate a new input map
 	var inputsMap;
-	if(!calleeMap.hasOwnProperty(functionName)){ 
+	if(!stubs.hasOwnProperty(functionName)){ 
 		inputsMap = {};
-		calleeMap[functionName]=inputsMap;
+		stubs[functionName]=inputsMap;
 	} else
-		inputsMap = calleeMap[functionName];
+		inputsMap = stubs[functionName];
 
 	// generate the inputsKey for inputsMap 
 	var inputsKey = JSON.stringify(parameters);
@@ -34,13 +34,11 @@ function logCall( functionName, parameters, returnValue, calleeMap )
 	};
 
 	// update the callee map inputs map for the function
-	calleeMap[functionName] = inputsMap;
-
-	console.log("===> LOGGING CALLEE ",inputsMap);
+	stubs[functionName] = inputsMap;
 }
 
 // Checks if there is a mock for the function and parameters. Returns values in form
-// { hasMock: BOOLEAN, mockOutput: VALUE }
+// { hasStub: BOOLEAN, stubOutput: VALUE }
 function hasStubFor(functionName, parameters, stubs)
 {
 	var hasStub = false;

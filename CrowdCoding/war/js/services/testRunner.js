@@ -205,7 +205,6 @@ myApp.factory('testRunnerService', [
 
 	testRunner.processTestFinished = function( testResult )
 	{
-		console.log("process test finished",currentTextIndex >= validTests.length);
 
 		// If the code is unimplemented, the test neither failed nor passed. If the test
 		// did not pass or timed out, it failed. Otherwise, it passed.
@@ -248,12 +247,9 @@ myApp.factory('testRunnerService', [
 		// add extra defs for references to the instrumentation code.
 		var code = "";
 
-		// add stubs 
-		code += "var stubs = " + JSON.stringify(stubs) + "; \n"; 
-
-		// add calleeMap 
-		code += "var calleeMap = " + JSON.stringify(calleeMap) + "; \n";
-		console.log("==> running test with callee map ", calleeMap); 
+		
+		//code += "var stubs = " + JSON.stringify(stubs) + "; \n";         // add stubs 
+		code += "var stubs = " + JSON.stringify(stubs) + "; \n"; // add calleeMap 
 
 		// add all the functions code
 		code += allTheFunctionCode;
@@ -278,7 +274,6 @@ myApp.factory('testRunnerService', [
 
 			this.processTestFinished(false);
 
-			console.log("TestRunner: test "+currentTextIndex+" timeout");
 		} , timeOutTime);
 
 		// the worker is still running, 
@@ -323,8 +318,6 @@ myApp.factory('testRunnerService', [
 
 				NotificationChannel.testReady(item);
 
-				console.log("TestRunner: test "+currentTextIndex+" error");
-
 		  		testRunner.processTestFinished( false );
 
 
@@ -345,13 +338,11 @@ myApp.factory('testRunnerService', [
 				item.debug  = data.debug;
 
 				NotificationChannel.testReady(item);
-				NotificationChannel.stubReady(data.calleeMap);
-				calleeMap = data.calleeMap ;
-
-				console.log("TestRunner: test "+currentTextIndex+" processed",item);
+				NotificationChannel.stubReady(data.stubs);
+				stubs = data.stubs ;
 
 				// process test finished
-		  		testRunner.processTestFinished( data.output.result );
+		  		testRunner.processTestFinished( data.output.result == undefined ? false : data.output.result );
 
 
 			}
@@ -396,6 +387,11 @@ myApp.factory('testRunnerService', [
 
 	NotificationChannel.onRunTests($rootScope,function(item){
 		testRunner.runTestsForFunction( item.passedFunctionId, item.passedFunctionBody, item.passedStubs );
+	})
+
+
+	NotificationChannel.onSubmitResults($rootScope,function(){
+		testRunner.submitResultsToServer();
 	})
 	
 	return testRunner;

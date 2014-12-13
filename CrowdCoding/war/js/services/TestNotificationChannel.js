@@ -5,6 +5,7 @@ myApp.factory('TestNotificationChannel', [ '$rootScope', function($rootScope) {
 	var _RUN_TESTS_FINISHED_ = '_RUN_TESTS_FINISHED_';
 	var _TEST_READY_ = '_TEST_READY_';
 	var _STUB_READY_ = '_STUB_READY_';
+	var _SUBMIT_RESULTS_ = '_SUBMIT_RESULTS_';
 
 
 	// publish a run tests notification 
@@ -55,6 +56,19 @@ myApp.factory('TestNotificationChannel', [ '$rootScope', function($rootScope) {
 		});
 	};
 
+
+	// publish a submit results notification
+	var submitResults = function(){
+		$rootScope.$broadcast(_SUBMIT_RESULTS_);
+	};
+
+	// subscribe to submit results notification
+	var onSubmitResults = function($scope,handler){
+		$scope.$on(_SUBMIT_RESULTS_,function(event,args){
+			handler();
+		});
+	};
+
 	// return the public accessible methods
 	return {
 		runTests           : runTests,
@@ -64,6 +78,8 @@ myApp.factory('TestNotificationChannel', [ '$rootScope', function($rootScope) {
 		testReady          : testReady,
 		onTestReady        : onTestReady,
 		stubReady          : stubReady,
-		onStubReady        : onStubReady
+		onStubReady        : onStubReady,
+		submitResults      : submitResults,
+		onSubmitResults    : onStubReady
 	};
 }]);
