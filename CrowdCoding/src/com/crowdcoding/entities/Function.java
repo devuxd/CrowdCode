@@ -409,6 +409,7 @@ public class Function extends Artifact
 		this.paramNames = dto.paramNames;
 		this.paramTypes=dto.paramTypes;
 		this.paramDescriptions=dto.paramDescriptions;
+		this.returnType=dto.returnType;
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
 
 		// Looper over all of the callers, rebuilding our list of callers
