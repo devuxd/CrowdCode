@@ -77,8 +77,9 @@ self.addEventListener('message', function(e){
 				//add the received code
 				finalCode += data.code;
 
-				 console.log("--- FINAL CODE : ");
-				 console.log(finalCode);
+				// console.log("--- FINAL CODE : ");
+				// console.log(finalCode);
+
 
 				// if Lint fails
 				if ( !JSHINT( finalCode, JSHINT_CONF ) ) {
@@ -96,11 +97,10 @@ self.addEventListener('message', function(e){
 					// executes the tests
 					eval(finalCode);
 
-					console.log("TEST PASSED = ",assertionResults[0]);
-
 					self.postMessage( { 
 						output    : assertionResults[0], 
-						stubs     : usedStubs,
+						stubs     : stubs,
+						usedStubs : usedStubs,
 						debug     : debug.messages.join( "\n" ) + ""
 					} );
 				}

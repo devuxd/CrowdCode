@@ -37,7 +37,7 @@ myApp.factory('testRunnerService', [
 	//NotificationChannel.onRunTests()
 
 	//Runs all of the tests for the specified function, sending the results to the server
-	testRunner.runTestsForFunction = function(passedFunctionId,passedFunctionBody,usedStubs){
+	testRunner.runTestsForFunction = function(passedFunctionId,passedFunctionBody,passedStubs){
 		
 		// initialize globals
 		returnData         = {}; 
@@ -61,8 +61,8 @@ myApp.factory('testRunnerService', [
 
 		this.loadStubs();
 
-		if( usedStubs != undefined )
-			this.mergeStubs(usedStubs);
+		if( passedStubs != undefined )
+			this.mergeStubs(passedStubs);
 
 		this.runTest();
 
@@ -200,11 +200,9 @@ myApp.factory('testRunnerService', [
 			item.testsData     = returnData,
 			item.overallResult = allFailedTestCases.length > 0 ? false : true;
 
-			console.log("NEL PROCESS",allFailedTestCases,allPassedTestCases);
-
 			if( this.submitToServer )
 				this.submitResultsToServer();
-			
+
 			NotificationChannel.runTestsFinished(item);
 			w.terminate();
 		}
@@ -292,8 +290,11 @@ myApp.factory('testRunnerService', [
 				item.debug  = data.debug;
 
 				NotificationChannel.testReady(item);
-				NotificationChannel.stubReady(data.stubs);
-				usedStubs = data.stubs ;
+				NotificationChannel.stubReady(data.usedStubs);
+				usedStubs = data.usedStubs ;
+
+				console.log("RECEIVED STUBS = ",data.stubs);
+				console.log("RECEIVED USED STUBS = ",data.usedStubs);
 
 				console.log("RECEIVED RESULT = ",data.output.result == undefined ? false : data.output.result);
 				// process test finished
@@ -306,9 +307,6 @@ myApp.factory('testRunnerService', [
 
 	testRunner.submitResultsToServer = function()
 	{		
-
-		console.log("NEL SUBMIT",allFailedTestCases,allPassedTestCases);
-
 		// Determine if the function passed or failed its tests. 
 		// If at least one test failed, the function failed its tests.
 		// If at least one test succeeded and no tests failed, the function passed its tests.
@@ -345,6 +343,8 @@ myApp.factory('testRunnerService', [
 			testRunner.submitToServer = true;
 		else 
 			testRunner.submitToServer = false;
+
+		console.log("--> ==> PASSED STUBS  ",item.passedStubs);
 
 		testRunner.runTestsForFunction( item.passedFunctionId, item.passedFunctionBody, item.passedStubs );
 	});
