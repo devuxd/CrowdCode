@@ -109,13 +109,13 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 
 		TestNotificationChannel.onRunTestsFinished($rootScope,function(){
 			console.log('------- tests finished received');
-			TestNotificationChannel.submitResults();
-		    whenFinished();
+			whenFinished();
 		});
 
 		console.log('------- running tests from work callback',jobData);
 		TestNotificationChannel.runTests({ 
-            passedFunctionId   : jobData.functionId
+            passedFunctionId   : jobData.functionId,
+            submitToServer     : true
         });
 
 	}

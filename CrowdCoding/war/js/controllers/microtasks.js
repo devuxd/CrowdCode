@@ -281,7 +281,8 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 
         var error = "";
         if ($scope.review.rating === -1) error = "plese, scores the review";
-        else if (microtaskForm.$invalid && $scope.review.rating <= 3) error = "please, write an explanation for your createTreeWalker(root, whatToShow, filter, entityReferenceExpansion)";
+        else if (microtaskForm.$invalid && $scope.review.rating <= 3) 
+            error = "please, write an explanation for your choice";
         
 
         if (error !== "") 

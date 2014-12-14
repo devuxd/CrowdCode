@@ -96,11 +96,11 @@ self.addEventListener('message', function(e){
 					// executes the tests
 					eval(finalCode);
 
-					// console.log(assertionResults);
+					console.log("TEST PASSED = ",assertionResults[0]);
 
 					self.postMessage( { 
 						output    : assertionResults[0], 
-						stubs     : stubs,
+						stubs     : usedStubs,
 						debug     : debug.messages.join( "\n" ) + ""
 					} );
 				}

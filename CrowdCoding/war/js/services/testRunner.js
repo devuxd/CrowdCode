@@ -25,10 +25,11 @@ myApp.factory('testRunnerService', [
 	var worker;
 	var stubs = {}
 	var callee = [];
-	var calleeMap = {};
+	var usedStubs = {};
 	
 	var testRunner = {};
 
+	testRunner.submitToServer = false;
 
 	
 	// var deferred = $q.defer();
@@ -36,88 +37,63 @@ myApp.factory('testRunnerService', [
 	//NotificationChannel.onRunTests()
 
 	//Runs all of the tests for the specified function, sending the results to the server
-	testRunner.runTestsForFunction = function(passedFunctionId,passedFunctionBody,passedStubs){
+	testRunner.runTestsForFunction = function(passedFunctionId,passedFunctionBody,usedStubs){
 		
-		//try {
+		// initialize globals
+		returnData         = {}; 
+		stubs              = {};
+		usedStubs          = {};
+		functionId         = passedFunctionId;
+		functionBody       = passedFunctionBody;
+		allPassedTestCases = new Array();
+		allFailedTestCases = new Array();
+		currentTextIndex   = 0;
 
-			// initialize globals
-			returnData         = {}; 
-			stubs              = {};
-			calleeMap          = {};
-			functionId         = passedFunctionId;
-			functionBody       = passedFunctionBody;
-			allPassedTestCases = new Array();
-			allFailedTestCases = new Array();
-			currentTextIndex   = 0;
+		// Load the tests for the specified function
+		validTests = TestList.getByFunctionId(functionId);
 
-			// Load the tests for the specified function
-			validTests = TestList.getByFunctionId(functionId);
-			console.log("valid tests");
-			console.log(validTests);
+		// build the tested function code with the header
+		functionCode = functionsService.renderHeaderById(functionId);
+		if( functionBody != undefined ) functionCode += functionBody;
+		else                            functionCode += functionsService.get(functionId).code;
 
+		this.loadAllTheFunctionCode();
 
+		this.loadStubs();
 
-				// build the tested function code with the header
-			functionCode = functionsService.renderHeaderById(functionId);
-			if( functionBody != undefined ) functionCode += functionBody;
-			else                            functionCode += functionsService.get(functionId).code;
+		if( usedStubs != undefined )
+			this.mergeStubs(usedStubs);
 
-			// prepare instruments function 
-			//var instrumentedCaller  = instrumentCallerForLogging( completeFunctionCode );
+		this.runTest();
 
-			// load all the function code
-			this.loadAllTheFunctionCode();
+	};
 
+	testRunner.mergeStubs = function(usedStubs){
 
-			//console.log("LOADED FUNCTION CODE");
-			//console.log(allTheFunctionCode);
-
-			// load all the stubs in the system
-			this.loadStubs();
-
-			// console.log("LOADED CALLEE MAP");
-			// console.log(JSON.stringify(stubs));
-
-			if( passedStubs != undefined )
-				this.mergeStubs(passedStubs);
-
-			// console.log("MERGED CALLEE MAP");
-			// console.log(JSON.stringify(stubs));
-
-			// Run the tests
-			this.runTest();
-		// } catch(e) {
-		// 	console.error("PROBLEM LOADING THE TESTS ",e);
-		// }
-		
-	}
-
-	testRunner.mergeStubs = function(passedStubs){
-
-		angular.forEach(passedStubs,function( functionStubs, functionName ){
+		angular.forEach(usedStubs,function( functionStubs, functionName ){
 			
 			// create new entry in the stubs with function name
 			// if doesn't exists
 			if( ! stubs.hasOwnProperty( functionName ) )
 				stubs[ functionName ] = {};
 			
-			// for each passed stub for functionName
+			// for each used stub for functionName
 			// add it or update the stub list
 			angular.forEach( functionStubs, function( inputSet, inputSetKey ){
 				stubs[ functionName ][ inputSetKey ] = inputSet;
 			}); 
 		});
-	}
+	};
 
-	testRunner.getCalleeStubs = function(){
-		var calleeStubs = {};
-		angular.forEach( stubs , function( functionStubs, functionName ){
+	// testRunner.getCalleeStubs = function(){
+	// 	var calleeStubs = {};
+	// 	angular.forEach( stubs , function( functionStubs, functionName ){
 			
-			if( callee.indexOf( functionName ) != -1  )
-				calleeStubs[ functionName ] = functionStubs;
-		});
-		return calleeStubs;
-	}
+	// 		if( callee.indexOf( functionName ) != -1  )
+	// 			calleeStubs[ functionName ] = functionStubs;
+	// 	});
+	// 	return calleeStubs;
+	// };
 
 
 	// Load the functions. 
@@ -175,7 +151,7 @@ myApp.factory('testRunnerService', [
 		allTheFunctionCode = functionsWithEmptyBodies + '\n'  // functions with empty bodies
 		                   + functionsWithMockBodies  + '\n'  // functions with mock bodies	
 		                   + functionCode + '\n'; // tested function body
-	}
+	};
 	
 	
 	// Loads the stubs datastructure using the data found in the mockData - an object in MocksDTO format
@@ -200,11 +176,10 @@ myApp.factory('testRunnerService', [
 				}	
 		})
 
-	}
+	};
 
 
-	testRunner.processTestFinished = function( testResult )
-	{
+	testRunner.processTestFinished = function( testResult ){
 
 		// If the code is unimplemented, the test neither failed nor passed. If the test
 		// did not pass or timed out, it failed. Otherwise, it passed.
@@ -219,24 +194,23 @@ myApp.factory('testRunnerService', [
 		// IF ALL THE TESTS HAD RUNNED
 		if (currentTextIndex >= validTests.length)
 		{
-			console.log("ALL TEST RUNNED");
-			// deferred.resolve({
-			// 	stubs         : calleeMap,
-			// 	testsData     : returnData,
-			// 	overallResult : allFailedTestCases.length > 0 ? false : true // if one of the tests failed, return false otherwise true
-			// });
-
 			// publish a message on run tests finished
 			var item = {};
-			item.stubs         = calleeMap,
+			item.stubs         = usedStubs,
 			item.testsData     = returnData,
 			item.overallResult = allFailedTestCases.length > 0 ? false : true;
+
+			console.log("NEL PROCESS",allFailedTestCases,allPassedTestCases);
+
+			if( this.submitToServer )
+				this.submitResultsToServer();
+			
 			NotificationChannel.runTestsFinished(item);
 			w.terminate();
 		}
 		else
 			this.runTest();		
-	}
+	};
 
 		
 	testRunner.runTest = function()
@@ -247,9 +221,10 @@ myApp.factory('testRunnerService', [
 		// add extra defs for references to the instrumentation code.
 		var code = "";
 
-		
-		//code += "var stubs = " + JSON.stringify(stubs) + "; \n";         // add stubs 
-		code += "var stubs = " + JSON.stringify(stubs) + "; \n"; // add calleeMap 
+		// stubs are used by hasStubFor
+		code += "var stubs     = " + JSON.stringify(stubs) + "; \n";     
+		// the usedStubs is used for 
+		code += "var usedStubs = " + JSON.stringify(usedStubs) + "; \n";  
 
 		// add all the functions code
 		code += allTheFunctionCode;
@@ -298,18 +273,6 @@ myApp.factory('testRunnerService', [
 			$timeout.cancel( timeoutPromise );
 			if( e.data.errors != undefined ){
 
-				// if there are errors, show to the console and 
-				// set the test result to false
-				//console.log( e.data.errors );
-
-
-				// returnData[ currentTextIndex ] = {};
-				// returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
-				// returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': "", 'result':  false} ;
-				// returnData[ currentTextIndex ].debug  = e.data.errors;
-
-		  // 		testRunner.processTestFinished( false );
-
 		  		// send the message to the TestNotificationChannel
 		  		var item = {};
 				item.test   = validTests[ currentTextIndex ] ; 
@@ -320,16 +283,7 @@ myApp.factory('testRunnerService', [
 
 		  		testRunner.processTestFinished( false );
 
-
 			} else {
-
-				//console.log("---> TEST "+currentTextIndex+" FINISHED");
-
-				// // attach output for the returnData
-				// returnData[ currentTextIndex ] = {};
-				// returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
-				// returnData[ currentTextIndex ].output = data.output ;
-				// returnData[ currentTextIndex ].debug  = data.debug ;
 
 				// send the message to the TestNotificationChannel
 		  		var item = {};
@@ -339,20 +293,21 @@ myApp.factory('testRunnerService', [
 
 				NotificationChannel.testReady(item);
 				NotificationChannel.stubReady(data.stubs);
-				stubs = data.stubs ;
+				usedStubs = data.stubs ;
 
+				console.log("RECEIVED RESULT = ",data.output.result == undefined ? false : data.output.result);
 				// process test finished
 		  		testRunner.processTestFinished( data.output.result == undefined ? false : data.output.result );
-
 
 			}
 		};
 
-	}
+	};
 
 	testRunner.submitResultsToServer = function()
 	{		
-		console.log("allFailedTestCases",allFailedTestCases);
+
+		console.log("NEL SUBMIT",allFailedTestCases,allPassedTestCases);
 
 		// Determine if the function passed or failed its tests. 
 		// If at least one test failed, the function failed its tests.
@@ -382,17 +337,22 @@ myApp.factory('testRunnerService', [
 			  });
 		}
 			
-	}
+	};
 
 
 	NotificationChannel.onRunTests($rootScope,function(item){
+		if( item.submitToServer )
+			testRunner.submitToServer = true;
+		else 
+			testRunner.submitToServer = false;
+
 		testRunner.runTestsForFunction( item.passedFunctionId, item.passedFunctionBody, item.passedStubs );
-	})
+	});
 
 
-	NotificationChannel.onSubmitResults($rootScope,function(){
+	NotificationChannel.onSubmitResults($rootScope,function(tem){
 		testRunner.submitResultsToServer();
-	})
+	});
 	
 	return testRunner;
 	

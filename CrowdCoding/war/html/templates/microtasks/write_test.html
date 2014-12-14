@@ -22,6 +22,7 @@
 			<div ng-show="microtask.promptType=='WRITE'">
 				Please, write a test for the following test case:
 			</div>
+
 			<div ng-show="microtask.promptType=='CORRECT'">
 				<!-- The following issue was reported with this test: -->
 				Has been reported this issue:
@@ -33,11 +34,14 @@
 					ng-model="microtask.issueDescription"
 					></textarea>
 				</div>
-				For the following test.<br>
-				Can you fix the test to address this issue?<BR>
+				Can you fix the following test to address this issue?
 			</div>
+
 			<div ng-show="microtask.promptType=='TESTCASE_CHANGED'">
-				The description for this testcase has changed from:
+				The description for this testcase has changed. 
+				Can you update the test, if necessary?</br>
+				<strong>Description before: </strong>
+				<br />
 				<div class="form-group has-error">
 					<input type="text"
 					class="form-control"
@@ -46,22 +50,19 @@
 					ng-model="microtask.oldTestCase"
 					>
 				</div>
-				<br>
-				<div class="form-group has-error">
-					<input type="text"
-					class="form-control"
-					disabled="true"
-					name="newTestCase"
-					ng-model="microtask.owningArtifact"
-					>
-				</div>
-				<br>
-				Can you update the test below, if necessary?<BR>
+				<br> 
+				<strong>Description now: <strong>
 			</div>
+
 			<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
 				The description of the function being tested has changed<BR>
 				Can you update the test relative to the following description, or if necessary dispute the test case?<BR>
+
 			</div>
+
+			</br>
+
+			
 			<div class="input-group">
 				<input type="text"
 				class="form-control"

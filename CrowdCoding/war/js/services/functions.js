@@ -223,7 +223,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 			// if log enabled log this call
 			if( logEnabled != undefined && logEnabled ){
-				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, returnValue, stubs ) ;'+'\n';
+				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, returnValue, usedStubs ) ;'+'\n';
 			} 
 
 			mockCode += '	return returnValue;'+'\n';

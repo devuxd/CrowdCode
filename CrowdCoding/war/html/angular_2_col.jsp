@@ -89,7 +89,7 @@
 			        	data-container="body"
 			        	bs-dropdown="dropdown" />
 		          		<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
-						{{ userData.score }} points
+						<%=workerHandle %> {{ userData.score }} points
 						<span class="caret"></span>
 			        	</a>
 			        </li>
