@@ -12,20 +12,20 @@ var debug = {};
 
 //Inserts the inputs and outputs to a map datastructure that will be used 
 //later to displays these values in the debug fields.
-function logCall( functionName, parameters, returnValue, stubs )
+function logCall( functionName, parameters, returnValue, usedStubs , debug)
 {
-	
 	// if the callee map doesn't have entries for the functionName, 
 	// generate a new input map
 	var inputsMap;
-	if(!stubs.hasOwnProperty(functionName)){ 
+	if(!usedStubs.hasOwnProperty(functionName)){ 
 		inputsMap = {};
-		stubs[functionName]=inputsMap;
+		usedStubs[functionName]=inputsMap;
 	} else
-		inputsMap = stubs[functionName];
+		inputsMap = usedStubs[functionName];
 
 	// generate the inputsKey for inputsMap 
 	var inputsKey = JSON.stringify(parameters);
+	// debug.log('logCall '+inputsKey);
 
 	// create the stub entry
 	inputsMap[inputsKey] = { 
@@ -34,26 +34,34 @@ function logCall( functionName, parameters, returnValue, stubs )
 	};
 
 	// update the callee map inputs map for the function
-	stubs[functionName] = inputsMap;
+	usedStubs[functionName] = inputsMap;
 }
 
 // Checks if there is a mock for the function and parameters. Returns values in form
 // { hasStub: BOOLEAN, stubOutput: VALUE }
-function hasStubFor(functionName, parameters, stubs)
+function hasStubFor(functionName, parameters, stubs, debug)
 {
 	var hasStub = false;
 	var output = null;
 	
+	// debug.log("Stub for "+functionName);
+	// debug.log(JSON.stringify(parameters));
+
 	if(stubs.hasOwnProperty(functionName))
 	{
-		var inputOutputMap = stubs[functionName];
+		var inputMap  = stubs[functionName];
+		var inputsKey =  JSON.stringify(parameters)  ;
+
+		// debug.log('hasStub '+inputsKey);
+		// debug.log("found function");
+		// debug.log(JSON.stringify(stubs[functionName]));
+		// debug.log(inputMap.hasOwnProperty(inputsKey));
 		
-		var argsKey = JSON.stringify(parameters);
-		
-		if (inputOutputMap.hasOwnProperty(argsKey))
+		if (inputMap.hasOwnProperty(inputsKey))
 		{
 			hasStub = true;
-			output = inputOutputMap[argsKey].output;
+			// debug.log("STUB FOUND");
+			output = inputMap[inputsKey].output;
 		}			
 	}
 
@@ -66,6 +74,21 @@ function hasStubFor(functionName, parameters, stubs)
 // and returns the replaced string
 function replaceAll(find, replace, str) {
   return str.replace(new RegExp(find, 'g'), replace);
+}
+
+function deepCopy(obj) {
+    var ret = {}, key, val;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            val = obj[key];
+            if (typeof val === 'object' && val !== null) {
+                ret[key] = deepCopy(val);
+            } else {
+                ret[key] = val;
+            }
+        }
+    }
+    return ret;
 }
 
 function Debug() {

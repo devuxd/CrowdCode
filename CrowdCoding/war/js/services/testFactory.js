@@ -194,20 +194,22 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 			angular.forEach(tests,function(test){
 				if( test.hasSimpleTest() ){
+					
+					var outputs = JSON.parse(test.rec.simpleTestOutput);
 
-					var inputsKey = {};
+					var inputsKey = "["+test.rec.simpleTestInputs+"]";
+					//inputsKey = inputsKey.replace(/"/g, '');
 					// angular.forEach(test.rec.simpleTestInputs, function(value,key){
 					// 	inputsKey[JSON.stringify(key)] = value;				
 					// });
 
-					inputsKey = JSON.stringify(test.rec.simpleTestInputs);
-					inputsKey = inputsKey.replace(/"/g, '');
+					//inputsKey = JSON.stringify(test.rec.simpleTestInputs);
 
 					//console.error("LOADING STUB FOR "+inputsKey,test.rec.simpleTestInputs);
 
-					stubs[inputsKey] = { 
+					stubs[ inputsKey ] = { 
 						  inputs: test.rec.simpleTestInputs, 
-					      output: JSON.parse(test.rec.simpleTestOutput)
+					      output: outputs
 					};
 
 				}
@@ -331,6 +333,10 @@ myApp.factory("Test", function ($FirebaseArray) {
 		},
 
 		setSimpleTest: function(inputs,output){
+			console.log("---> simple test inputs",inputs);
+			angular.forEach(inputs,function(input){
+				input = '"'+JSON.stringify(input).replace(/"/g, '\"')+'"';
+			})
 			this.rec.simpleTestInputs = inputs;
 			this.rec.simpleTestOutput = output;
 			this.rec.hasSimpleTest = true;
@@ -342,12 +348,11 @@ myApp.factory("Test", function ($FirebaseArray) {
 
 		buildCode: function(){
 
-
 			var testCode = 'equal(' + this.rec.functionName + '(';
 			var length   = this.rec.simpleTestInputs.length;
 
             angular.forEach(this.rec.simpleTestInputs, function(value, key) {
-                testCode += value;
+                testCode += JSON.stringify(value).replace(/"/g, '');
                 testCode += (key != length - 1) ? ',' : '';
             });
             testCode += '),' + this.rec.simpleTestOutput + ',\'' + this.rec.description + '\');';

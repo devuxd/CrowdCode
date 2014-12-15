@@ -22,7 +22,6 @@ myApp.factory('testRunnerService', [
 	var functionBody;
 	var functionCode;
 	var returnData;
-	var worker;
 	var stubs = {}
 	var callee = [];
 	var usedStubs = {};
@@ -63,6 +62,17 @@ myApp.factory('testRunnerService', [
 
 		if( passedStubs != undefined )
 			this.mergeStubs(passedStubs);
+
+
+
+		console.log("worker",w);
+	    // instantiate the worker
+	    // and attach the on-message listener
+	    w = new Worker('/js/workers/test-runner.js');
+
+	    // initialize the worker
+	    w.postMessage( { 'cmd' : 'initialize', 'baseUrl' : document.location.origin } );
+
 
 		this.runTest();
 
@@ -204,7 +214,11 @@ myApp.factory('testRunnerService', [
 				this.submitResultsToServer();
 
 			NotificationChannel.runTestsFinished(item);
+
 			w.terminate();
+			w = undefined;
+
+			console.log("WORKER TERMINATE",w);
 		}
 		else
 			this.runTest();		
@@ -233,10 +247,6 @@ myApp.factory('testRunnerService', [
 
 		// set the max execution time
 		var timeoutPromise = $timeout( function(){
-		// 	returnData[ currentTextIndex ] = {};
-		// 	returnData[ currentTextIndex ].test   = validTests[ currentTextIndex ] ; 
-		// 	returnData[ currentTextIndex ].output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
-		// 	returnData[ currentTextIndex ].debug  = "ERROR: execution terminated due to timeout";
 
 			var item = {};
 			item.test   = validTests[ currentTextIndex ] ; 
@@ -244,24 +254,9 @@ myApp.factory('testRunnerService', [
 			item.debug  = "ERROR: execution terminated due to timeout";
 
 			NotificationChannel.testReady(item);
-
-			this.processTestFinished(false);
+			testRunner.processTestFinished(false);
 
 		} , timeOutTime);
-
-		// the worker is still running, 
-	    // kill it before starting again
-	    if ( w != undefined ) {
-	      //console.log("KILLING THE WORKER FOR TEST "+currentTextIndex );
-	      w.terminate();
-	    }
-
-	    // instantiate the worker
-	    // and attach the on-message listener
-	    w = new Worker('/js/workers/test-runner.js');
-
-	    // initialize the worker
-	    w.postMessage( { 'cmd' : 'initialize', 'baseUrl' : document.location.origin } );
 
 	    // start the execution posting the exec message with the code
 		w.postMessage( { 'cmd' : 'exec', 'code' : code } );
@@ -301,6 +296,7 @@ myApp.factory('testRunnerService', [
 		  		testRunner.processTestFinished( data.output.result == undefined ? false : data.output.result );
 
 			}
+			//w.terminate();
 		};
 
 	};
@@ -344,7 +340,7 @@ myApp.factory('testRunnerService', [
 		else 
 			testRunner.submitToServer = false;
 
-		console.log("--> ==> PASSED STUBS  ",item.passedStubs);
+		//console.log("--> ==> PASSED STUBS  ",item.passedStubs);
 
 		testRunner.runTestsForFunction( item.passedFunctionId, item.passedFunctionBody, item.passedStubs );
 	});
@@ -355,20 +351,5 @@ myApp.factory('testRunnerService', [
 	});
 	
 	return testRunner;
-	
-	/*
-	var defer;
-	worker.addEventListener('message', function(e) {
-	  console.log('Worker said: ', e.data);
-	  defer.resolve(e.data);
-	}, false);
-	
-	return {
-	    doWork : function(myData){
-	        defer = $q.defer();
-	        worker.postMessage(myData); // Send data to our worker. 
-	        return defer.promise;
-	    }
-	};*/
 	
 }]); 

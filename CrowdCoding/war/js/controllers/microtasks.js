@@ -29,12 +29,15 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 
     // addTestCase action 
     $scope.addTestCase = function() {
+
         // push the new test case and set the flag added to TRUE
+        var testCase = $scope.newTestCase.replace(/["']/g, "");
         if ($scope.newTestCase !== "") {
+            
             // push the new test cases
             $scope.testCases.push({
                 id      : null,
-                text    : $scope.newTestCase,
+                text    : testCase,
                 added   : true,
                 deleted : false
             });
@@ -353,13 +356,13 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
     NotificationChannel.onTestReady($scope,function(data){
 
-        console.log('--> task received tests ready',data);
+        //console.log('--> task received tests ready',data);
         $scope.testsData.push( data );
     });
 
     NotificationChannel.onStubReady($scope,function(data){
 
-        console.log('--> task received stub ready',data);
+        //console.log('--> task received stub ready',data);
 
 
         $scope.stubs = Object.keys(data).length > 0 ? data : null;
@@ -379,7 +382,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
     NotificationChannel.onRunTestsFinished($scope,function(data){
 
-        console.log('--> task received run tests finished');
+        //console.log('--> task received run tests finished');
 
         $scope.testsRunning = false;
         $scope.$apply();
@@ -417,7 +420,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         }
 
 
-        console.log('<-- task sending run test ',new Date());
+        //console.log('<-- task sending run test ',new Date());
 
         // push a message for for running the tests
         NotificationChannel.runTests({ 
@@ -484,13 +487,37 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
                     angular.forEach(stubsForFunction, function(stub, index) {
 
-                        var test = TestList.searchOrBuild( stubFunction.id, functionName, stub.inputs, stub.output );
+                        var test = TestList.search( functionName, stub.inputs );
 
-                        if( test !== true ){
+                        if( test == null ){
+
+                            var testCode = 'equal(' + stubFunction.name + '(';
+                            var inputs = [];
+                            angular.forEach( stub.inputs, function(value, key) {
+                                testCode += value;
+                                testCode += (key != stub.inputs.length - 1) ? ',' : '';
+                                inputs.push( JSON.stringify(value) );
+                            });
+                            testCode += '),' + stub.output + ',\'' + 'auto generated 3' + '\');';
+
+                            test = {
+                                functionVersion: stubFunction.version,
+                                code: testCode,
+                                hasSimpleTest: true,
+                                inDispute: false,
+                                disputeText: '',
+                                functionID: stubFunction.id,
+                                functionName: stubFunction.name,
+                                simpleTestInputs: inputs,
+                                simpleTestOutput: stub.output
+                            };
+
                             stubs.push(test);
                         }
+                        // build the test code
                     });
                 });
+                console.log("SUBMITTING STUBS",stubs);
                 var text = functionCodeMirror.getValue();
 
                 //     description: functionParsed.description,
@@ -504,6 +531,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 //     calleeIds: calleeIds
                 formData = functionsService.parseFunction(text);
                 formData.stubs = stubs;
+                console.log(formData.stubs);
             }
 
             // if first run is true

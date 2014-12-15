@@ -21,7 +21,8 @@ var JSHINT_GLOBALS = [
 	"Debug: true",
 	"equal: true",
 	"hasStubFor: true",
-	"logCall: true"
+	"logCall: true",
+	"deepCopy: true"
 ]; 
 
 self.addEventListener('message', function(e){
@@ -52,7 +53,6 @@ self.addEventListener('message', function(e){
 
 		// start to evaluate the code
 		case 'exec': 
-			console.log("running execute");
 
 			// if in the execute message there isn't 
 			// the code to execute, return error
@@ -77,8 +77,8 @@ self.addEventListener('message', function(e){
 				//add the received code
 				finalCode += data.code;
 
-				// console.log("--- FINAL CODE : ");
-				// console.log(finalCode);
+				console.log("--- FINAL CODE : ");
+				console.log(finalCode);
 
 
 				// if Lint fails

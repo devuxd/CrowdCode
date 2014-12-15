@@ -200,11 +200,14 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 			mockCode += '{'+'\n';
 			mockCode += '	// make JAVASCRIPT able to pass by value'+'\n';
+			mockCode += '   var args = Array.prototype.slice.call(arguments);\n';
 			mockCode += '   var argsCopy = [];' + '\n' ;
-			mockCode += '	for( var a = 0 ; a < arguments.length ; a++ )'+'\n';
-			mockCode += '		argsCopy[a] = JSON.parse(JSON.stringify(arguments[a]));'+'\n';
+			mockCode += '	for( var a = 0 ; a < args.length ; a++ )'+'\n';
+			mockCode += '		argsCopy[a] = JSON.parse(JSON.stringify(args[a]));'+'\n';
+			// mockCode += '   debug.log("fromFunction' + functionObj.name + '");debug.log(JSON.stringify(args));debug.log(JSON.stringify(argsCopy));\n';
 			mockCode += '	var returnValue = null;'+'\n';
-			mockCode += '	var stubFor = hasStubFor( "' + functionObj.name + '", argsCopy, stubs );'+'\n';
+			mockCode += '	var stubFor = hasStubFor( "' + functionObj.name + '", argsCopy, stubs, debug);'+'\n';
+			// mockCode += '   debug.log(JSON.stringify(stubFor));\n';
 			mockCode += '   try { \n';
 			mockCode += '		if ( stubFor.hasStub ) {'+'\n';
 			mockCode += '			returnValue = stubFor.output;'+'\n';
@@ -223,7 +226,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 			// if log enabled log this call
 			if( logEnabled != undefined && logEnabled ){
-				mockCode += '	logCall( "' + functionObj.name + '", argsCopy, returnValue, usedStubs ) ;'+'\n';
+				mockCode += '	logCall( "' + functionObj.name + '", args, returnValue, usedStubs , debug) ;'+'\n';
 			} 
 
 			mockCode += '	return returnValue;'+'\n';

@@ -68,7 +68,7 @@ public /*abstract*/ class Microtask
 					+ jsonDTOData);
 			return;
 		}
-
+		System.out.println("JSON DATA "+jsonDTOData);
 		DTO dto = DTO.read(jsonDTOData, getDTOClass());
 
 		//project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
