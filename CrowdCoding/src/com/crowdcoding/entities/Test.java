@@ -85,7 +85,7 @@ public class Test extends Artifact
 		project.historyLog().endEvent();
 	}
 
-	public Test(long functionID, String functionName, List<String> inputs, String output, String code, Project project, int functionVersion)
+	public Test(long functionID, String functionName, String description, List<String> inputs, String output, String code, Project project, int functionVersion)
 	{
 		super(project);
 
@@ -95,7 +95,7 @@ public class Test extends Artifact
 		this.isDeleted = false;
 		this.functionID = functionID;
 		this.functionName = functionName;
-		this.description = "";
+		this.description = description;
 		this.hasSimpleTest = true;
 		this.code = code;
 		this.simpleTestInputs = inputs;
@@ -107,7 +107,8 @@ public class Test extends Artifact
 		FunctionCommand.addTest(functionID, this.id);
 
 		// The test is already fully implemented. It just needs to be run.
-		project.requestTestRun();
+		//project.requestTestRun();
+		FunctionCommand.testBecameImplemented(functionID, this.getID());	
 
 		project.historyLog().endEvent();
 	}
@@ -168,7 +169,7 @@ public class Test extends Artifact
 		this.simpleTestOutput = simpleTestOutput;
 		ofy().save().entity(this).now();
 
-		project.requestTestRun();
+		//project.requestTestRun();
 	}
 
 	// Checks the status of the test, marking it as implemented if appropriate

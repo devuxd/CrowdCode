@@ -358,6 +358,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
         //console.log('--> task received tests ready',data);
         $scope.testsData.push( data );
+        $scope.$apply();
     });
 
     NotificationChannel.onStubReady($scope,function(data){
@@ -384,7 +385,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
         //console.log('--> task received run tests finished');
 
-        $scope.testsRunning = false;
+        //$scope.testsRunning = false;
         $scope.$apply();
 
 
@@ -399,7 +400,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.runTests = function() {
 
         // set testsRunning flag
-        $scope.testsRunning = true;
+        //$scope.testsRunning = true;
         $scope.testsData = [];
 
         var functionBody;

@@ -64,16 +64,6 @@ myApp.factory('testRunnerService', [
 			this.mergeStubs(passedStubs);
 
 
-
-		console.log("worker",w);
-	    // instantiate the worker
-	    // and attach the on-message listener
-	    w = new Worker('/js/workers/test-runner.js');
-
-	    // initialize the worker
-	    w.postMessage( { 'cmd' : 'initialize', 'baseUrl' : document.location.origin } );
-
-
 		this.runTest();
 
 	};
@@ -201,6 +191,11 @@ myApp.factory('testRunnerService', [
 		// Increment the test and run the next one.
 		currentTextIndex++;
 
+		if( w != undefined ){	
+			w.terminate();
+			w = undefined;
+		}
+
 		// IF ALL THE TESTS HAD RUNNED
 		if (currentTextIndex >= validTests.length)
 		{
@@ -215,13 +210,11 @@ myApp.factory('testRunnerService', [
 
 			NotificationChannel.runTestsFinished(item);
 
-			w.terminate();
-			w = undefined;
-
-			console.log("WORKER TERMINATE",w);
 		}
 		else
 			this.runTest();		
+
+
 	};
 
 		
@@ -244,6 +237,12 @@ myApp.factory('testRunnerService', [
 		// add the test code
 		code += testCode;
 		
+
+	    // instantiate the worker
+	    // and attach the on-message listener
+	    w = new Worker('/js/workers/test-runner.js');
+	    // initialize the worker
+	    w.postMessage( { 'cmd' : 'initialize', 'baseUrl' : document.location.origin } );
 
 		// set the max execution time
 		var timeoutPromise = $timeout( function(){
