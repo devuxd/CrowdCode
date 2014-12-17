@@ -928,3 +928,17 @@ tutorial-container .btn-next { position: absolute; right: 0; }
 
 .task-review .section.section-help 
 { background-color:  rgba(237,90,48,0.4) ; }
+
+
+pre.jsonRead {
+	padding: 5px; margin: 5px; 
+	border: none;
+	border-radius: 0px;
+	font-size:1em;
+}
+.jsonRead .jsonString { color: #DF0002; }
+.jsonRead .jsonNumber { color: blue; }
+.jsonRead .jsonBoolean { color: purple; }
+.jsonRead .jsonNull { color: black; }
+.jsonRead .jsonKey { color: black; }
+

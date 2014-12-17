@@ -375,15 +375,20 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     });
 
     testRunner.onStubsReady(function(data){
+        console.log('--> task received stubs ready',data);
         $scope.stubs = Object.keys(data).length > 0 ? data : null;
         angular.forEach($scope.stubs, function(data, index) {
-            calleeFunction=functionsService.getByName(index);
+
+            calleeFunction = functionsService.getByName(index);
             if( $scope.stubsParamNames == undefined)
                 $scope.stubsParamNames = {};
+
             $scope.stubsParamNames[index] = calleeFunction.paramNames;
+
             $scope.calleDescription[index]={};
             $scope.calleDescription[index].code=functionsService.renderDescription(calleeFunction) + calleeFunction.header;
         });
+        console.log('--> scope stubs',$scope.stubs)
         $scope.$apply();
     });
 
@@ -406,6 +411,10 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         //set testsRunning flag
         $scope.testsRunning = true;
         $scope.testsData = [];
+        $scope.stubs = [];
+        
+        $scope.completed = 0;
+        $scope.total     = 0;
 
         var functionBody;
         if (functionCodeMirror !== null) {

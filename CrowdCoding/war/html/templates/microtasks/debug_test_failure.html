@@ -48,7 +48,7 @@
 
             <div class="section section-form" style="width:70%;">
                 <div class="section-content no-padding" >
-                    <b ng-if="testsRunning"> Tests are running ({{completed}}/{{total}})... please wait. </b>
+                    <b ng-if="testsRunning"> Tests are running <div ng-if="total!=0">({{completed}}/{{total}})</div>... please wait. </b>
                     <collapsable-list
                         data="testsData"
                         add-data="{ 'paramNames' : paramNames }"
@@ -87,9 +87,10 @@
                             <ul class="collapsable-list mock-collapsable-list ">
                                 <li ng-repeat="(stubKey,stub) in inputMap track by $index">
                                     <b>#{{$index+1}} input set </b><br />
+                                    
                                     <table style="width:100%">
                                         <tr ng-repeat="(key,input) in stub.inputs track by $index">
-                                            <td>{{stubsParamNames[callee][$index]}}<br /><span>{{input}}</span></td>
+                                            <td>{{stubsParamNames[callee][$index]}}<br /></td>
                                             <td><div ace-read-json ng-model="input" ></div></td>
                                         </tr>
                                         <tr>

@@ -30,29 +30,52 @@ myApp.directive('aceReadString', function() {
 });
 
 myApp.directive('aceReadJson', function() {
+
+    function syntaxHighlight(json) {
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+               function (match) {
+            var cls = 'jsonNumber';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'jsonKey';
+                } else {
+                    cls = 'jsonString';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'jsonBoolean';
+            } else if (/null/.test(match)) {
+                cls = 'jsonNull';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
     return {
         restrict: 'EA',
-        template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="stringValue"></div>',
+        //template:<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="stringValue"></div>',
         require: "ngModel",
         scope: true,
         link: function ( scope, iElement, iAttrs, ngModel ) {
             if( !ngModel ) return;
+            scope.json = "";
         
             // convert the json object into a string
             // ngModel.$formatters.push(function( modelValue ) {
             //     return  modelValue );
             // });
             
-
+            
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-                console.log("typeof ngModel view v",typeof ngModel.$viewValue);
-                console.log("ngModel view v",ngModel.$viewValue);
-
+                var prettyJson = "";
                 if( ngModel.$viewValue == "") 
-                    scope.stringValue = "";
+                    prettyJson = "";
                 else
-                    scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);;
+                    prettyJson = syntaxHighlight( angular.toJson(angular.fromJson (ngModel.$viewValue),true) );
+                scope.json = prettyJson;
+                var el = $('<pre class="jsonRead"></pre>').html(prettyJson);
+                iElement.html(el);
             };
         },
         controller: function($scope,$element){

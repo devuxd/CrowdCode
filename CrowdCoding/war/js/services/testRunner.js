@@ -364,7 +364,7 @@ myApp.factory('TestRunnerFactory', [
 				item.number = _this.currentTestIndex + 1; 
 				item.total  = _this.validTests.length ; 
 				item.test   = _this.validTests[ _this.currentTestIndex ] ; 
-				item.output = { 'expected': undefined, 'actual': undefined, 'message': "", 'result':  false} ;
+				item.output = { 'expected': "", 'actual': "", 'message': "", 'result':  false} ;
 				item.debug  = e.data.errors;
 				_this.testReady(item);
 				
