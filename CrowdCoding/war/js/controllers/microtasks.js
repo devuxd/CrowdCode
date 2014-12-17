@@ -408,13 +408,6 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
     $scope.runTests = function() {
 
-        //set testsRunning flag
-        $scope.testsRunning = true;
-        $scope.testsData = [];
-        $scope.stubs = [];
-        
-        $scope.completed = 0;
-        $scope.total     = 0;
 
         var functionBody;
         if (functionCodeMirror !== null) {
@@ -438,6 +431,14 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
         // push a message for for running the tests
         testRunner.runTests($scope.microtask.functionID,functionBody,$scope.stubs);
+        
+        //set testsRunning flag
+        $scope.testsRunning = true;
+        $scope.testsData = [];
+        
+        $scope.completed = 0;
+        $scope.total     = 0;
+        $scope.stubs = [];
 
     };
 
