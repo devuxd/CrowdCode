@@ -114,8 +114,9 @@
 									<b>{{paramName}}</b> ({{funct.paramTypes[index]}}) <br />
 								</td>
 								<td>
-									<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" allow-null="true" ng-show="false"></textarea>
-									<ace-edit-json ng-model="testData.inputs[index]" focus-ace=" index == 0" min-lines="2"></ace-edit-json>
+									
+									<textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" ng-show="false" ></textarea>
+									<ace-edit-json ng-model="testData.inputs[index]"focus-ace=" index == 0" min-lines="2"></ace-edit-json>
 									<ul class="help-block pull-left" ng-show="inputForm.$invalid && inputForm.$dirty">
 										<li ng-show="inputForm.input.$error.required" >This field is required!</li>
 										<li ng-show="inputForm.input.$error.json" ng-repeat="error in inputForm.input.$error.json">{{error}}</li>

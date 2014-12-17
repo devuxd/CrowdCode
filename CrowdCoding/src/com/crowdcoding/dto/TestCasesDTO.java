@@ -26,7 +26,7 @@ public class TestCasesDTO extends DTO
 	// simply mocks.
 	public TestCasesDTO(Function function, Project project)
 	{
-		System.out.println("===================================DTO testCases constructor================================");
+
 		this.isFunctionDispute=false;
 		//this.disputeText="";
 		for (Ref<Test> testRef : function.getTestCases(project))

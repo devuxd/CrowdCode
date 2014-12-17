@@ -85,19 +85,7 @@ public class HistoryLog
 					traversalStack.push(node.children.get(i));
 			}
 		}
-		
-//		for (Pair<String, String> idAndMessage : json){
-//			System.out.println("--- LOG JSON STRING : ");
-//			System.out.println(idAndMessage.b);
-//			
-//		}
-//		if( json.size() == 0)
-//
-//			System.out.println("--- LOG JSON EMPTY ");
-//		
-//
-		System.out.println("== HL: "+json.size()+ " rows");
-//			
+
 		return json;
 	}
 }

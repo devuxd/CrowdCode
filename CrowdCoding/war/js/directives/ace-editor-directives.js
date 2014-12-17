@@ -1,26 +1,58 @@
-
-myApp.directive('aceReadJson', function() {
+myApp.directive('aceReadString', function() {
     return {
         restrict: 'EA',
-        template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="aceModel"></div>',
+        template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="stringValue"></div>',
         require: "ngModel",
         scope: true,
         link: function ( scope, iElement, iAttrs, ngModel ) {
             if( !ngModel ) return;
         
             // convert the json object into a string
-            ngModel.$formatters.push(function( modelValue ) {
-                
-                if ( typeof modelValue !== 'string' )
-                    return  angular.toJson( modelValue );
-                
-                return modelValue;
-            });
+            // ngModel.$formatters.push(function( modelValue ) {
+            //     return  modelValue );
+            // });
             
 
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-                scope.aceModel = ngModel.$viewValue;
+                scope.stringValue = ngModel.$viewValue;
+            };
+        },
+        controller: function($scope,$element){
+
+            $scope.aceLoaded = function(_editor) {
+                _editor.setOptions({
+                     maxLines: Infinity
+                });
+            };
+        }
+    };
+});
+
+myApp.directive('aceReadJson', function() {
+    return {
+        restrict: 'EA',
+        template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="stringValue"></div>',
+        require: "ngModel",
+        scope: true,
+        link: function ( scope, iElement, iAttrs, ngModel ) {
+            if( !ngModel ) return;
+        
+            // convert the json object into a string
+            // ngModel.$formatters.push(function( modelValue ) {
+            //     return  modelValue );
+            // });
+            
+
+            // update the UI to reflect the ngModel.$viewValue changes
+            ngModel.$render = function (){
+                console.log("typeof ngModel view v",typeof ngModel.$viewValue);
+                console.log("ngModel view v",ngModel.$viewValue);
+
+                if( ngModel.$viewValue == "") 
+                    scope.stringValue = "";
+                else
+                    scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);;
             };
         },
         controller: function($scope,$element){
@@ -41,59 +73,60 @@ myApp.directive('aceEditJson', function() {
     return {
         restrict: 'EA',
 
-        template:'<div class="ace_editor json-editor" ui-ace="{ onLoad : aceLoaded, mode: \'json\', theme:\'xcode\', showGutter: true, useWrapMode : true, showLineNumbers : false }" ng-model="stringValue"></div>',
-
+        template:'<div class="ace_editor json-editor" ui-ace="{ onLoad : aceLoaded, mode: \'json\', theme:\'xcode\', showGutter: true, useWrapMode : true, showLineNumbers : false }" ng-model="stringValue"></div> ',
         scope: {
-            focusAce : "=",
-            minLines : "="
+            focusAce  : "=",
+            minLines  : "=",
+            paramType : "@"
         },
         require: "ngModel",
 
         link: function ( scope, iElement, iAttrs, ngModel ) {
-            if( !ngModel ) console.log("NG MODEL NOT DEFINED");
+            if( ngModel == undefined ) 
+                console.log("NG MODEL NOT DEFINED");
 
             // JSON -> formatter -> string
+            var toJson = false;
 
+            // STRING    "\"string\""
+            // OBJECT    "{\"key\": \"value\"}"
+            // NUMBER    "4"
+            // UNDEFINED "undefined"
             // convert the json object into a string
-            ngModel.$formatters.push(function( modelValue ) {
-                if( modelValue === undefined ) modelValue = "";
+            // ngModel.$formatters.push(function( modelValue ) {
+            //     if( typeof modelValue != string ){
+            //         return "error: should be a string!"
+            //     } 
 
-                var stringValue = "";
-                if ( typeof modelValue !== 'string' ){
+            // });
 
-                    stringValue = angular.toJson( modelValue );
-                    stringified = true;
-                } 
-                else{
-                    stringValue = modelValue;
-                }
 
-                return stringValue;
-            });
+            // // string -> parser -> JSON
+
+            // // convert the string into a JSON
+            // ngModel.$parsers.push(function( viewValue ) {
+
+            //     var jsonValue = "";
+
+            //     try {
+            //         jsonValue = angular.fromJson(viewValue) ;
+            //     } catch(e){
+            //         jsonValue = viewValue;
+            //     }
+               
+            //     console.log("to JSON %o",jsonValue);
+            //     return jsonValue;
+            // });
+
 
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-                scope.stringValue = ngModel.$viewValue;
-            };
 
-            // string -> parser -> JSON
-
-            // convert the string into a JSON
-            ngModel.$parsers.push(function( viewValue ) {
-
-                var jsonValue = "";
-
-                if( stringified )
-                    try {
-                        jsonValue = angular.fromJson(viewValue) ;
-                    } catch (e) {
-                        jsonValue = ngModel.$viewValue ;
-                    }
+                if( ngModel.$viewValue == "") 
+                    scope.stringValue = "";
                 else
-                    jsonValue = viewValue;
-
-                return jsonValue;
-            });
+                    scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
+            };
 
             // update the ngModel.$viewValue when the UI changes 
             scope.$watch('stringValue', function() {

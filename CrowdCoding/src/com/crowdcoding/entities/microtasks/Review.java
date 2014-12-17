@@ -47,7 +47,6 @@ public class Review extends Microtask
 		this.workerOfReviewedWork = workerOfReviewedWork;
 
 		Microtask microtaskUnderReview = ofy().load().key(microtaskKeyUnderReview).get();
-		System.out.println( "OWN ART ID " +microtaskUnderReview.getOwningArtifact().getKey() );
 		this.artifact = (Ref<Artifact>) Ref.create( (Key<Artifact>) microtaskUnderReview.getOwningArtifact().getKey(),  microtaskUnderReview.getOwningArtifact() );
 
 		ofy().save().entity(this).now();
@@ -66,7 +65,6 @@ public class Review extends Microtask
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
-		System.out.println("instantiating new review for microtask: "+microtaskKeyUnderReview);
 	}
 
     public Microtask copy(Project project)
@@ -78,7 +76,7 @@ public class Review extends Microtask
 	{
 
 		ReviewDTO reviewDTO = (ReviewDTO) dto;
-		System.out.println("REVIEW DTO "+reviewDTO.toString());
+
 		Microtask submittedMicrotask = Microtask.find(microtaskKeyUnderReview,project).getValue();
 
 		// Write the review to firebase
@@ -93,7 +91,7 @@ public class Review extends Microtask
         if( reviewDTO.qualityScore < 3 ) {
         	
 			// reissue microtask
-        	System.out.println("rejected");
+        	System.out.println("--> REVIEW mtask "+Project.MicrotaskKeyToString( submittedMicrotask.getKey() )+" rejected");
 			MicrotaskCommand.rejectAndReissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
 			awardedPoint = 0;
 			reviewResult = "rejected";
@@ -105,8 +103,8 @@ public class Review extends Microtask
 		} else if ( reviewDTO.qualityScore == 3) {
 			
 			// reissue microtask
-        	System.out.println("reissued - TODO");
-        	MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
+			System.out.println("--> REVIEW mtask "+Project.MicrotaskKeyToString( submittedMicrotask.getKey() )+" reissued");
+			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
 			awardedPoint = submittedMicrotask.submitValue/2;
 			reviewResult = "reissued";
 
@@ -116,7 +114,7 @@ public class Review extends Microtask
 		} else {
 			
 			// accept microtask
-        	System.out.println("accepted");
+        	System.out.println("--> REVIEW mtask "+Project.MicrotaskKeyToString( submittedMicrotask.getKey() )+" accepted");
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
 			awardedPoint = submittedMicrotask.submitValue;
 			reviewResult ="accepted";
@@ -150,10 +148,6 @@ public class Review extends Microtask
     			Project.MicrotaskKeyToString(  this.getKey() ),
     			-1 // differentiate the reviews from the 0 score tasks
     	).json()), project);
-
-    	System.out.println("reviewer id="+workerID);
-    	System.out.println("reviewed  id="+workerOfReviewedWork);
-
 
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "reviews",1);

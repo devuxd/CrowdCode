@@ -1,9 +1,13 @@
 ////////////////////
 // USER SERVICE   //
 ////////////////////
-myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','TestNotificationChannel', function($window,$rootScope,$firebase,$timeout,TestNotificationChannel) {
+myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,TestRunnerFactory) {
     var user = {};
+    var testRunner = new TestRunnerFactory.instance({
+    	submitToServer: true
+    });
 
+    console.log("USER TEST RUNNER",testRunner.id);
 
 
  	// retrieve connection status and userRef
@@ -17,7 +21,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 	var updateUserReference = function(){
 		
 		userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
-		$timeout(updateUserReference,1000*0.3*60); // re-do every 2 minutes*/
+		$timeout(updateUserReference,1000*20); // re-do every 20 secs
 	
 	};
 
@@ -28,8 +32,6 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 
 	user.init = function(){
 
-		
-		
 		// when firebase is connected
 		isConnected.on('value', function(snapshot) {
 		  if (snapshot.val()) {
@@ -104,20 +106,15 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 
 
 	var executeWorkCallback = function(jobData, whenFinished) {
-	  //This is where we actually process the data. We need to call "whenFinished" when we're done
-	  //to let the queue know we're ready to handle a new job.
+		//This is where we actually process the data. We need to call "whenFinished" when we're done
+		//to let the queue know we're ready to handle a new job.
 
-		TestNotificationChannel.onRunTestsFinished($rootScope,function(){
+		testRunner.onTestsFinish(function(){
 			console.log('------- tests finished received');
 			whenFinished();
 		});
 
-		console.log('------- running tests from work callback',jobData);
-		TestNotificationChannel.runTests({ 
-            passedFunctionId   : jobData.functionId,
-            submitToServer     : true
-        });
-
+		testRunner.runTests(jobData.functionId);
 	}
 
 	// distributed test work

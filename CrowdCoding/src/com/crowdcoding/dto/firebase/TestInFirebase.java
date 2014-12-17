@@ -32,8 +32,6 @@ public class TestInFirebase extends DTO
 			List<String> simpleTestInputs, String simpleTestOutput, String description, 
 			String functionName, long functionID, boolean isImplemented) 
 	{
-
-		System.out.println("TEST INPUTS "+simpleTestInputs);
 		this.id = id;
 		this.version = version;
 		this.code = code;

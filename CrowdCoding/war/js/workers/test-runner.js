@@ -1,5 +1,5 @@
 
-console.log("worker included!");
+// console.log("worker included!");
 
 var JSHINT_CONF =  {
 	latedef   : true,  // proibite use of vars before being declared
@@ -77,8 +77,8 @@ self.addEventListener('message', function(e){
 				//add the received code
 				finalCode += data.code;
 
-				console.log("--- FINAL CODE : ");
-				console.log(finalCode);
+				// console.log("--- FINAL CODE : ");
+				//console.log('Test worker: final code ', finalCode );
 
 
 				// if Lint fails

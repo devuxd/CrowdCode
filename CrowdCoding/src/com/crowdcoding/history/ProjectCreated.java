@@ -12,9 +12,6 @@ public class ProjectCreated extends HistoryEvent
 	public ProjectCreated(Project project)
 	{
 		super();
-		//this.setArtifact(artifact);
-		this.projectID = project.getID();	
-
-		System.out.println("-- LOGGING PROJECT CREATED ");
+		this.projectID = project.getID();
 	}
 }

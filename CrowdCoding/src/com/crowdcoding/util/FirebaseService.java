@@ -76,16 +76,16 @@ public class FirebaseService
 		String absoluteUrl = getBaseURL(project) + "/status/loggedInWorkers/" + workerID + ".json";
 		String result = readDataAbsolute( absoluteUrl );
 		// check if exist the reference on firebase, if not returns false
-		if (result == null || result.equals("null"))//|| System.currentTimeMillis() - 10 > (1000*60*0.5) )
+		if ( result == null || result.equals("null") )
 			return false;
 
 		//try to convert the object into json format
 		try {
 			JSONObject user  = new JSONObject(result);
 			long lastUpdateLogin = user.getLong("time");
-			// the user on client side will update the login time every 2 minutes,
-			//so if has passed more than 30 seconds since the last update means that the user is logged out
-			if( System.currentTimeMillis() - lastUpdateLogin < 60*0.5*1000)
+			// the user on client side will update the login time every 30 seconds,
+			// so if has passed more than 30 seconds since the last update means that the user is logged out
+			if( ( System.currentTimeMillis() - lastUpdateLogin ) < 30*1000)
 				return true;
 			else
 				return false;
@@ -180,7 +180,7 @@ public class FirebaseService
 
 	public static void setPoints(String workerID, String workerDisplayName, int points, Project project)
 	{
-		System.out.println("SETTING POINTS TO "+workerID);
+		//System.out.println("SETTING POINTS TO "+workerID);
 		writeData(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, project);
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		writeData(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, project);

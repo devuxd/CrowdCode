@@ -52,8 +52,6 @@ public class WriteTestCases extends Microtask
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 		
-		System.out.println("------ OWNING "+this.getOwningArtifact());
-		
 		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}

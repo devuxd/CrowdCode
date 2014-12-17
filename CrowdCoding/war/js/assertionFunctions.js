@@ -15,8 +15,8 @@ function normalizeGlobalValues ( dirtyValue ){
 
 function equal(actual, expected, message){
 	// in cases of comparision between null and 'null'
-	actual   = normalizeGlobalValues(actual);
-	expected = normalizeGlobalValues(expected);
+	actual   = JSON.stringify(normalizeGlobalValues(actual));
+	expected = JSON.stringify(normalizeGlobalValues(expected));
 
 	var succeeded = deepCompare(actual, expected);
 	getResults(actual,expected,message,succeeded);

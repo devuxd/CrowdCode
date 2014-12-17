@@ -153,16 +153,16 @@ public class CrowdServlet extends HttpServlet
 					boolean projectExists =  (ofy().load().filterKey(projectKey).count() != 0 );
 
 					if(!projectExists){
-						System.out.println("project doesn't exists in appengine");
-						System.out.println("projects: "+FirebaseService.existsProject(projectId));
-						System.out.println("clientRequest: "+FirebaseService.existsClientRequest(projectId));
+						System.out.println("--> SERVLET: project doesn't exists in appengine");
+//						System.out.println("--> SERVLET projects: "+FirebaseService.existsProject(projectId));
+//						System.out.println("--> SERVLET in client request: "+FirebaseService.existsClientRequest(projectId));
 						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
 
 							Project.Construct(projectId);
 						} else {
 							//
-							System.out.println("project doesn't exists in firebase");
-							System.out.println("Project not found ("+projectId+")!");
+							System.out.println("--> SERVLET: project doesn't exists in firebase");
+							//System.out.println("Project not found ("+projectId+")!");
 							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 						}
 					}
@@ -355,6 +355,8 @@ public class CrowdServlet extends HttpServlet
 		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
 
+		System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
+		
 		List<Command> commands = new ArrayList<Command>();
 		commands.addAll(ofy().transact(new Work<List<Command>>() {
 	        public List<Command> run()
@@ -388,7 +390,7 @@ public class CrowdServlet extends HttpServlet
 			final String payload      = Util.convertStreamToString(req.getInputStream());
 			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));
 
-			System.out.println("SKIPPED MTASK KEY = "+microtaskKey);
+			System.out.println("--> SERVLET: submitted mtask key = "+microtaskKey);
 
 			// Create an initial context, then build a command to skip or submit
 			CommandContext context = new CommandContext();
@@ -429,11 +431,7 @@ public class CrowdServlet extends HttpServlet
             	
             	String workerID     = worker.getUserid();
             	String workerHandle = worker.getNickname();
-
-
-            	// logout inactive workers
-            	project.logoutInactiveWorkers();
-
+            	
             	// If the user does not have a microtask assigned, get them a microtask.
             	Key<Microtask> microtaskKey = project.lookupMicrotaskAssignment(workerID);
             	if (microtaskKey == null)
@@ -442,6 +440,9 @@ public class CrowdServlet extends HttpServlet
             	}
             	
             	project.publishHistoryLog();
+            	
+            	//project.logoutInactiveWorkers();
+            	
             	return microtaskKey;
             }
         });
@@ -457,6 +458,8 @@ public class CrowdServlet extends HttpServlet
 	            }
 		    });
 	    }
+	    
+	    //ProjectCommand.logoutInactiveWorkers();
 
     	// If there are no microtasks available, send an empty response.
 	    // Otherwise, send the json with microtask info.

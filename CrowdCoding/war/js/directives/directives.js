@@ -591,8 +591,10 @@ myApp.directive('adtBar', ['$compile', '$timeout', 'ADTService', function($compi
 
             angular.forEach($scope.ADTs, function(value, key) {
 
+
                 var childScope = $scope.$new();
                 childScope.ADT = value;
+                childScope.ADT.prettyValue = angular.toJson( value.example , true);
                 var toggler = $("<h3></h3>");
                 //  toggler.attr('id',value.name+'Toggler');
                 toggler.addClass('toggler-adt');

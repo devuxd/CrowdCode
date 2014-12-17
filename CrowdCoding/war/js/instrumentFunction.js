@@ -25,12 +25,17 @@ function logCall( functionName, parameters, returnValue, usedStubs , debug)
 
 	// generate the inputsKey for inputsMap 
 	var inputsKey = JSON.stringify(parameters);
-	// debug.log('logCall '+inputsKey);
+	// debug.log('logCall: '+inputsKey);
+	// debug.log('returnValue: '+returnValue);
+
+	var stringifiedInputs = [];
+	for( var i=0;i<parameters.length;i++)
+		stringifiedInputs[i] = JSON.stringify(parameters[i]);
 
 	// create the stub entry
 	inputsMap[inputsKey] = { 
-		inputs : parameters,
-		output : returnValue,
+		inputs : stringifiedInputs,
+		output : JSON.stringify(returnValue)
 	};
 
 	// update the callee map inputs map for the function
@@ -94,6 +99,8 @@ function deepCopy(obj) {
 function Debug() {
 	this.messages = [],
 	this.log = function(statement){
+		if( typeof statement == 'object')
+			statement = JSON.stringify(statement);
 		this.messages.push( "> " + statement );
 	}
 }

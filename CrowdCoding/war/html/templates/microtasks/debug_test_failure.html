@@ -29,10 +29,8 @@
         </div>
     </div>
     <alertcontainer></alertcontainer>
-    <div class="section section-description" ng-if="!dispute && testsRunning" >
-        Tests are running... please wait.
-    </div>
-    <div class="section-cols" ng-if="!dispute && !testsRunning" >
+
+    <div class="section-cols" ng-if="!dispute" >
         <div class="container-flex-row">
             <div class="section section-help" style="width:30%">
                 <div class="section-title" >
@@ -46,9 +44,11 @@
                     <button ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.$invalid">Run the tests!</button>
                 </div>
             </div>
-            {{testData}}
+            
+
             <div class="section section-form" style="width:70%;">
                 <div class="section-content no-padding" >
+                    <b ng-if="testsRunning"> Tests are running ({{completed}}/{{total}})... please wait. </b>
                     <collapsable-list
                         data="testsData"
                         add-data="{ 'paramNames' : paramNames }"
@@ -61,7 +61,7 @@
             </div>
         </div>
     </div>
-    <div class="section-cols" ng-if=" stubs && !dispute && !testsRunning">
+    <div class="section-cols" ng-if=" stubs && !dispute">
         <div class="container-flex-row">
             <div class="section section-help" style="width:30%">
                 <div class="section-title" >
@@ -89,7 +89,7 @@
                                     <b>#{{$index+1}} input set </b><br />
                                     <table style="width:100%">
                                         <tr ng-repeat="(key,input) in stub.inputs track by $index">
-                                            <td>{{stubsParamNames[callee][$index]}}</td>
+                                            <td>{{stubsParamNames[callee][$index]}}<br /><span>{{input}}</span></td>
                                             <td><div ace-read-json ng-model="input" ></div></td>
                                         </tr>
                                         <tr>

@@ -13,11 +13,11 @@ myApp.controller('AppController', [
 	'userService',
 	'testsService',
 	'functionsService',
-	'testRunnerService',
 	'ADTService',
 	'microtasksService',
 	'TestList',
-	function($scope, $rootScope, $firebase, $http, $interval, $modal, logoutUrl, userService, testsService, functionsService, testRunnerService, ADTService, microtasksService, TestList) {
+	'TestRunnerFactory',
+	function($scope, $rootScope, $firebase, $http, $interval, $modal, logoutUrl, userService, testsService, functionsService, ADTService, microtasksService, TestList,TestRunnerFactory) {
 
 		// current session variables
 		$rootScope.loaded       = {};

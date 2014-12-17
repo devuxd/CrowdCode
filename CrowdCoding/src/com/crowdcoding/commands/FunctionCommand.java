@@ -148,7 +148,7 @@ public abstract class FunctionCommand extends Command
 		public void execute(Function function, Project project)
 		{
 			Ref<Function> callerFunction = Function.find(callerFunctionID, project);
-			System.out.println("=============addddddding caller======="+callerFunction.get().getName());
+			System.out.println("--> FUNCTION COMMAND: adding caller "+callerFunction.get().getName());
 
 			if (callerFunction == null)
 				System.out.println("Cannot execute FunctionCommand. Could not find the caller function "

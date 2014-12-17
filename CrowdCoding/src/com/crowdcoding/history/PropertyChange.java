@@ -15,7 +15,5 @@ public class PropertyChange extends HistoryEvent
 		this.setArtifact(artifact);
 		this.propertyName = propertyName;
 		this.propertyValue = propertyValue;		
-
-		System.out.println("-- LOGGING PROPERTY CHANGE ");
 	}
 }

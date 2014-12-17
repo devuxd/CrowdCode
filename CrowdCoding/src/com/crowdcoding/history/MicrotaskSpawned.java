@@ -10,6 +10,5 @@ public class MicrotaskSpawned extends MicrotaskEvent
 	public MicrotaskSpawned(Microtask microtask)
 	{
 		super("spawned",microtask);
-		System.out.println("-- LOGGING MICROTASK SPAWN "+microtask.getID());
 	}
 }

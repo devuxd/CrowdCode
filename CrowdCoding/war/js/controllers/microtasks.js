@@ -164,7 +164,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             var functionUnderTest     = functionUnderTestSync.$asObject();
             functionUnderTest.$loaded().then(function() {
                 $scope.review.functionCode = functionsService.renderDescription(functionUnderTest) + functionUnderTest.header;
-                console.log("fatto con "+$scope.review.functionCode);
+                //console.log("fatto con "+$scope.review.functionCode);
             });
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
@@ -317,7 +317,10 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
 ///////////////////////////////
-myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout', 'testsService', 'functionsService', 'ADTService', 'TestList', 'TestNotificationChannel', function($scope, $rootScope, $firebase, $alert, $timeout, testsService, functionsService, ADTService, TestList, NotificationChannel) {
+myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout', 'testsService', 'functionsService', 'ADTService', 'TestList', 'TestRunnerFactory', function($scope, $rootScope, $firebase, $alert, $timeout, testsService, functionsService, ADTService, TestList, TestRunnerFactory) {
+    
+    var testRunner = new TestRunnerFactory.instance();
+
     // scope variables
     $scope.tests        = testsService.validTestsforFunction($scope.microtask.functionID);
     $scope.passedTests  = [];
@@ -326,6 +329,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.stubs        = {};
     $scope.paramNames   = $scope.funct.paramNames;
     $scope.calleDescription={};
+    $scope.completed = 0;
+    $scope.total = 0;
     // INITIALIZE THE FUNCTION EDITOR CODEMIRROR
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
@@ -354,21 +359,15 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.firstRun = false;
 
 
-    NotificationChannel.onTestReady($scope,function(data){
-
-        //console.log('--> task received tests ready',data);
+    testRunner.onTestReady(function(data){
+        console.log('--> task received tests ready',data);
+        $scope.completed = data.number;
+        $scope.total     = data.total;
         $scope.testsData.push( data );
         $scope.$apply();
     });
 
-    NotificationChannel.onStubReady($scope,function(data){
-
-        //console.log('--> task received stub ready',data);
-
-
-        $scope.stubs = Object.keys(data).length > 0 ? data : null;
-
-
+    testRunner.onStubsReady(function(data){
         $scope.stubs = Object.keys(data).length > 0 ? data : null;
         angular.forEach($scope.stubs, function(data, index) {
             calleeFunction=functionsService.getByName(index);
@@ -378,19 +377,17 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
             $scope.calleDescription[index]={};
             $scope.calleDescription[index].code=functionsService.renderDescription(calleeFunction) + calleeFunction.header;
         });
-
+        $scope.$apply();
     });
 
-    NotificationChannel.onRunTestsFinished($scope,function(data){
-
+    testRunner.onTestsFinish(function(data){
         //console.log('--> task received run tests finished');
-
-        //$scope.testsRunning = false;
-        $scope.$apply();
-
-
+        // $scope.$apply();
         // if on the first run all the tests pass, 
         // load a new microtask 
+        $timeout(function(){
+            $scope.testsRunning = false;
+        },400);
         if ($scope.firstRun !== undefined && $scope.firstRun && data.overallResult) {
             console.log("---- AUTO LOADING A NEW MICROTASK");
             $scope.$emit('collectFormData', true);
@@ -399,8 +396,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
     $scope.runTests = function() {
 
-        // set testsRunning flag
-        //$scope.testsRunning = true;
+        //set testsRunning flag
+        $scope.testsRunning = true;
         $scope.testsData = [];
 
         var functionBody;
@@ -424,11 +421,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         //console.log('<-- task sending run test ',new Date());
 
         // push a message for for running the tests
-        NotificationChannel.runTests({ 
-            passedFunctionId   : $scope.microtask.functionID,
-            passedFunctionBody : functionBody,
-            passedStubs        : $scope.stubs
-        });
+        testRunner.runTests($scope.microtask.functionID,functionBody,$scope.stubs);
 
     };
 
@@ -497,7 +490,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                             angular.forEach( stub.inputs, function(value, key) {
                                 testCode += value;
                                 testCode += (key != stub.inputs.length - 1) ? ',' : '';
-                                inputs.push( JSON.stringify(value) );
+                                
                             });
                             testCode += '),' + stub.output + ',\'' + 'auto generated 3' + '\');';
 
@@ -509,7 +502,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                                 disputeText: '',
                                 functionID: stubFunction.id,
                                 functionName: stubFunction.name,
-                                simpleTestInputs: inputs,
+                                simpleTestInputs: stub.inputs,
                                 simpleTestOutput: stub.output
                             };
 
@@ -894,13 +887,20 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
     // initialize testData
     // if microtask.submission and microtask.submission.simpleTestInputs are defined
     // assign test inputs and output to testData, otherwise initialize an empty object
-    $scope.testData = (angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput)) ? {
-        inputs: $scope.test.simpleTestInputs,
-        output: $scope.test.simpleTestOutput
-    } : {
-        inputs: [],
-        output: ''
-    };
+    if( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ){
+
+        $scope.testData = {
+            inputs: $scope.test.simpleTestInputs,
+            output: $scope.test.simpleTestOutput 
+        } ;
+        console.log("TUTTO REGOLARE");
+    } else {
+        $scope.testData = {
+            inputs: [],
+            output: ''
+        };
+        console.log("VUOTO",$scope.testData);
+    }
     //  $scope.testData.inputs[0]={};
     // Configures the microtask to show information for disputing the test, hiding
     // other irrelevant portions of the microtask.

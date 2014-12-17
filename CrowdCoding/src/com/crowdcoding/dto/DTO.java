@@ -33,8 +33,7 @@ public abstract class DTO
 	public static DTO read(String jsonDTOData, Class dtoClass)
 	{
 		ObjectMapper mapper = new ObjectMapper();
-		System.out.println("dto "+jsonDTOData);
-		System.out.println("class "+dtoClass);
+		System.out.println("--> DTO for class "+dtoClass+" : "+jsonDTOData);
 		DTO dto = null;
 		try {
 			dto = (DTO) mapper.readValue(jsonDTOData, dtoClass);

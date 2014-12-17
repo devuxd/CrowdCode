@@ -207,7 +207,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			// mockCode += '   debug.log("fromFunction' + functionObj.name + '");debug.log(JSON.stringify(args));debug.log(JSON.stringify(argsCopy));\n';
 			mockCode += '	var returnValue = null;'+'\n';
 			mockCode += '	var stubFor = hasStubFor( "' + functionObj.name + '", argsCopy, stubs, debug);'+'\n';
-			// mockCode += '   debug.log(JSON.stringify(stubFor));\n';
+		    // mockCode += '   debug.log(JSON.stringify(stubFor));\n';
 			mockCode += '   try { \n';
 			mockCode += '		if ( stubFor.hasStub ) {'+'\n';
 			mockCode += '			returnValue = stubFor.output;'+'\n';
@@ -226,6 +226,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 			// if log enabled log this call
 			if( logEnabled != undefined && logEnabled ){
+			    mockCode += '   debug.log("logging call. return value = ");debug.log(returnValue);\n';
 				mockCode += '	logCall( "' + functionObj.name + '", args, returnValue, usedStubs , debug) ;'+'\n';
 			} 
 
@@ -241,7 +242,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			if( functionObj.written )
 				mockCode += '\n' + functionObj.code + '\n';
 			else
-				mockCode += '\n{}\n';
+				mockCode += '\n{ return null; }\n';
 
 			return mockCode;
 		}

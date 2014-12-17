@@ -9,38 +9,49 @@ import com.googlecode.objectify.Key;
 public abstract class ProjectCommand extends Command
 {
 
-	public static ProjectCommand enableReviews(boolean reviewsEnabled)
-		{ return new EnableReviews(reviewsEnabled); }
-
-	// Queues the specified microtask onto the global microtask queue. Provides an optional
-	// excludedWorkerID, which will permanently exlucde the worker from doing the microtask.
-	// This parameter may be left null.
-	public static ProjectCommand queueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
-		{ return new QueueMicrotask(microtaskKey, excludedWorkerID); }
-	public static ProjectCommand queueReviewMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
-		{ return new QueueReviewMicrotask(microtaskKey, excludedWorkerID); }
-	public static ProjectCommand skipMicrotask( String microtaskKey, String workerID)
-		{ return new SkipMicrotask(microtaskKey, workerID); }
-	public static ProjectCommand submitMicrotask(String microtaskKey, Class microtaskType, String jsonDTOData,
-			String workerID)
-		{ return new SubmitMicrotask(microtaskKey, microtaskType, jsonDTOData, workerID); }
-	public static ProjectCommand logoutWorker(String workerID)
-		{ return new LogoutWorker(workerID); }
-
-	public static ProjectCommand logoutInactiveWorkers()
-	{ return new LogoutInactiveWorkers(); }
-
-	private ProjectCommand()
-	{
+	/* PUBLIC METHODS */ 
+	public static ProjectCommand enableReviews(boolean reviewsEnabled){ 
+		return new EnableReviews(reviewsEnabled); 
+	}
+	
+	public static ProjectCommand queueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID) { 
+		return new QueueMicrotask(microtaskKey, excludedWorkerID); 
+	}
+	
+	public static ProjectCommand queueReviewMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID) { 
+		return new QueueReviewMicrotask(microtaskKey, excludedWorkerID); 
+	}
+	
+	public static ProjectCommand skipMicrotask( String microtaskKey, String workerID) { 
+		return new SkipMicrotask(microtaskKey, workerID); 
+	}
+	
+	public static ProjectCommand submitMicrotask(String microtaskKey, Class microtaskType, String jsonDTOData, String workerID){ 
+		return new SubmitMicrotask(microtaskKey, microtaskType, jsonDTOData, workerID); 
+	}
+	
+	public static ProjectCommand logoutWorker(String workerID){ 
+		return new LogoutWorker(workerID); 
+	}
+	
+	public static ProjectCommand logoutInactiveWorkers(){ 
+		return new LogoutInactiveWorkers(); 
+	}
+	
+	
+	/* PROTECTED METHODS */
+	
+	// create and queue the command
+	private ProjectCommand(){
 		queueCommand(this);
 	}
 
-	// All constructors for ProjectCommand MUST call queueCommand by calling the super constructor
-	private static void queueCommand(Command command)
-	{
+	// all commands MUST call queueCommand
+	private static void queueCommand(Command command){
 		CommandContext.ctx.addCommand(command);
 	}
 
+	// enable the reviews 
 	protected static class EnableReviews extends ProjectCommand
 	{
 		private boolean reviewsEnabled;
@@ -57,6 +68,7 @@ public abstract class ProjectCommand extends Command
 		}
 	}
 
+	// queue a microtask in the project
 	protected static class QueueMicrotask extends ProjectCommand
 	{
 		private Key<Microtask> microtaskKey;
@@ -71,10 +83,12 @@ public abstract class ProjectCommand extends Command
 
 		public void execute(Project project)
 		{
+			System.out.println("--> MICROTASK COMMAND: queuing microtask "+Project.MicrotaskKeyToString(microtaskKey));
 			project.queueMicrotask(microtaskKey, excludedWorkerID);
 		}
 	}
 
+	// queue a review microtask in the project
 	protected static class QueueReviewMicrotask extends ProjectCommand
 	{
 		private Key<Microtask> microtaskKey;
@@ -93,6 +107,7 @@ public abstract class ProjectCommand extends Command
 		}
 	}
 
+	// skip a microtask
 	protected static class SkipMicrotask extends ProjectCommand
 	{
 		private Key<Microtask> microtaskKey;
@@ -111,6 +126,7 @@ public abstract class ProjectCommand extends Command
 		}
 	}
 
+	// submit a microtask
 	protected static class SubmitMicrotask extends ProjectCommand
 	{
 		private Key<Microtask> microtaskKey;
@@ -133,6 +149,7 @@ public abstract class ProjectCommand extends Command
 		}
 	}
 
+	// logout a worker
 	protected static class LogoutWorker extends ProjectCommand
 	{
 		private String workerID;
@@ -149,7 +166,7 @@ public abstract class ProjectCommand extends Command
 		}
 	}
 
-
+	// logout all inactive workers
 	protected static class LogoutInactiveWorkers extends ProjectCommand
 	{
 		private String workerID;

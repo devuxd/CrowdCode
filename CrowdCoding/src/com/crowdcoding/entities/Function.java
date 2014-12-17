@@ -48,18 +48,23 @@ import com.googlecode.objectify.cmd.Query;
 @EntitySubclass(index=true)
 public class Function extends Artifact
 {
-	private String code;
+	private String        code;
 	@Index private String name;
-	private String returnType;
-	private List<String> paramNames = new ArrayList<String>();
-	private List<String> paramTypes = new ArrayList<String>();
-	private List<String> paramDescriptions = new ArrayList<String>();
-	private String header;
-	private String description;
-	private List<Long> tests = new ArrayList<Long>();
+	private String        returnType;
+	private List<String>  paramNames = new ArrayList<String>();
+	private List<String>  paramTypes = new ArrayList<String>();
+	private List<String>  paramDescriptions = new ArrayList<String>();
+	private String        header;
+	private String        description;
+	private List<Long>    tests = new ArrayList<Long>();
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
+	private int           linesOfCode;
 
-
+	// flags about the status of the function
+	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
+	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
+	private boolean needsDebugging;	         // true iff Function is failing the (implemented) unit tests
+	
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> callees = new ArrayList<Long>();
 	// current callers with a fully implemented callsite to this function:
@@ -68,23 +73,14 @@ public class Function extends Artifact
 	private List<String> pseudoCalls = new ArrayList<String>();
 	// pseudocall callsites calling this function (these two lists must be in sync)
 	private List<String> pseudoCallsites = new ArrayList<String>();
-	private List<Long> pseudoCallers = new ArrayList<Long>();
-	private int linesOfCode;
-
-	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
-	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
-	private boolean needsDebugging;		     // true iff the function is failing its unit tests.
-
-	//private Test failedTest;
+	private List<Long>   pseudoCallers = new ArrayList<Long>();
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
 	//////////////////////////////////////////////////////////////////////////////
 
 	// Constructor for deserialization
-	protected Function()
-	{
-	}
+	protected Function(){}
 
 	// Constructor for a function that has a full description and code
 	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, List<String> paramDescriptions, String header,
@@ -108,7 +104,7 @@ public class Function extends Artifact
 	//  ACCESSORS
 	//////////////////////////////////////////////////////////////////////////////
 
-	// Is the fucntion written and all pseudocode no replaced with code?
+	// Is the fucntion written and all the pseudocode replaced?
 	// NOTE: Being written does not imply that all tests pass.
 	public boolean isWritten()
 	{
@@ -155,16 +151,12 @@ public class Function extends Artifact
 	{
 		String fullDescription="/**\n" + description + "\n\n";
 
-
-
-
     	for(int i=0; i<paramNames.size(); i++)
 			{
 			if(paramDescriptions.size()>i)
 				fullDescription += "  @param " + paramTypes.get(i) + ' ' + paramNames.get(i) + " - " + paramDescriptions.get(i) + "\n";
 
 			}
-
 
 		fullDescription += "\n  @return " + returnType + " \n**/\n";
 
@@ -193,36 +185,6 @@ public class Function extends Artifact
 	{
 		return code;
 	}
-//
-//	// Gets a mock implementation that checks to see if there are any mocks
-//	// for the specified function.
-//	public String getMockCode()
-//	{
-//		StringBuilder mockCode = new StringBuilder();
-//		mockCode.append("{ var returnValue; ");
-//		mockCode.append("var params = arguments; ");
-//		mockCode.append("var mockFor = hasMockFor('" + name + "', arguments, mocks); ");
-//		mockCode.append("if (mockFor.hasMock) ");
-//		mockCode.append("     returnValue = mockFor.mockOutput; ");
-//		mockCode.append("else ");
-//		mockCode.append("     returnValue = " + name + "aaaActualIMP.apply(null, params); "); // JSON.parse(JSON.stringify(
-//	//	mockCode.append("alert( JSON.stringify(JSON.parse(JSON.stringify(params)))); ");
-//		mockCode.append("return returnValue; }");
-//		return mockCode.toString();
-//	}
-//
-//	// Gets the special header used for the actual implementation when running with mocks
-//	public String getMockHeader()
-//	{
-//		StringBuilder b = new StringBuilder();
-//		b.append(" function " + name + "aaaActualIMP");
-//
-//		// Gets the params string out of the header by looking for the first instance of a paren (which
-//		// must be the start of the functions params)
-//		b.append(header.substring(header.indexOf("(")));
-//
-//		return b.toString();
-//	}
 
 	// gets the body of the function (including braces)
 	public String getEscapedCode()
@@ -249,7 +211,7 @@ public class Function extends Artifact
 		// Build refs for each test case
 		ArrayList<Ref<Test>> testRefs = new ArrayList<Ref<Test>>();
 		for (long testID : tests)
-			testRefs.add((Ref<Test>)Ref.create(Artifact.getKey(testID, project)));
+			testRefs.add( (Ref<Test>) Ref.create(Artifact.getKey(testID, project)) );
 
 		return testRefs;
 	}
@@ -315,12 +277,10 @@ public class Function extends Artifact
 	{
 		if (this.isWritten != isWritten)
 		{
-			project.historyLog().beginEvent(new PropertyChange("implemented",
-					Boolean.toString(isWritten), this));
-
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();
 
+			project.historyLog().beginEvent(new PropertyChange("implemented",Boolean.toString(isWritten), this));
 			project.historyLog().endEvent();
 		}
 	}
@@ -348,8 +308,11 @@ public class Function extends Artifact
 		if (!microtaskOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
-			if (isWritten && needsDebugging)
-				makeMicrotaskOut(new DebugTestFailure(this,project), project);
+			if (isWritten && needsDebugging){
+				DebugTestFailure debug = new DebugTestFailure(this,project);
+				makeMicrotaskOut( debug, project);
+				System.out.println("--> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));	
+			}
 			else if (!queuedMicrotasks.isEmpty())
 				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
 		}
@@ -358,13 +321,17 @@ public class Function extends Artifact
 	// Determines if all unit tests are implemented (e.g., not merely described or currently disputed)
 	private boolean allUnitTestsImplemented()
 	{
-		System.out.println("checking if all test implemented");
 
-		if(tests.size()==0) return false;
-		for (Boolean implemented:testsImplemented)
-		{
-			if( !implemented )
-				return false;
+		System.out.println("--> FUNCTION ("+this.id+") "+this.name+" :checking if all test implemented - ");
+		
+		if(tests.size()==0) 
+			return false;
+		else{
+			for (Boolean implemented:testsImplemented)
+			{
+				if( !implemented )
+					return false;
+			}
 		}
 
 		// Assume all unit tests are implemented, and run tests whenever anyone requests them to be run.
@@ -378,9 +345,11 @@ public class Function extends Artifact
 
 	private void runTestsIfReady(Project project)
 	{
-		if(isWritten && allUnitTestsImplemented()){
+		Boolean allImplemented = allUnitTestsImplemented();
+		System.out.println("------> "+allImplemented);
+		if(isWritten && allImplemented){
 			// enqueue test job in firebase
-			System.out.println("write test job queue");
+			System.out.println("--> FUNCTION ("+this.id+") "+this.name+" : write entry in test job queue");
 			FirebaseService.writeTestJobQueue(this.getID(),project);
 
 			//project.requestTestRun();
@@ -389,10 +358,6 @@ public class Function extends Artifact
 
 	private void onWorkerEdited(FunctionDTO dto, Project project)
 	{
-
-//		System.out.println("old: "+(this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", ""));
-//		System.out.println("new: "+(dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", ""));
-
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.
 		String strippedOldFullDescrip = (this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", "");
@@ -500,7 +465,7 @@ public class Function extends Artifact
 		onWorkerEdited(dto, project);
 		//if don't exists test and the submit is from a dispute
 		//respawn the write test case microtask
-		System.out.println("dispute text "+dto.disputeText);
+		System.out.println("--> FUNCTION ("+this.id+") "+this.name+" : dispute text "+dto.disputeText);
 		if(dto.disputeText!=null && tests.size()==0)
 			queueMicrotask(new WriteTestCases(this, project),project);
 	}
@@ -525,14 +490,6 @@ public class Function extends Artifact
 
 		// Have the callee let us know when it's tested (which may already be true;
 		// signal sent immediately in that case)
-
-		System.out.println("dto fid "+dto.functionId);
-		System.out.println("callDescri "+callDescription);
-		System.out.println("project "+project);
-		System.out.println("callee "+callee);
-
-
-
 		FunctionCommand.addDependency(dto.functionId, this.getID(), callDescription);
 	}
 
@@ -573,7 +530,6 @@ public class Function extends Artifact
 		microtaskOutCompleted();
 
 		if(dto.isFunctionDispute){
-			System.out.println("======dovrei fare la disputa con====="+dto.disputeText);
 			ofy().save().entity(this).now();
 			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeText);
 
@@ -601,7 +557,6 @@ public class Function extends Artifact
 				{
 					// Check if it was edited
 					Ref<Test> testRef = Test.find(testCase.id, project);
-					System.out.println(testRef.get());
 					Test test = testRef.get();
 					if (!test.getDescription().equals(testCase.text))
 					{
@@ -706,10 +661,6 @@ public class Function extends Artifact
 		}
 	}
 
-	public void failedTest(Project project,Long testID){
-
-	}
-
 	// Provides notification that a test has transitioned to being implemented
 	public void testBecameImplemented(Test test, Project project)
 	{
@@ -789,9 +740,6 @@ public class Function extends Artifact
 	// function has changed
 	private void notifyDescriptionChanged(FunctionDTO dto, Project project)
 	{
-		System.out.println("callerID "+ callers);
-		System.out.println("testID "+ tests);
-
 		for (long callerID : callers)
 			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 
@@ -807,7 +755,6 @@ public class Function extends Artifact
 	{
 		if (hasBeenDescribed)
 		{
-
 			incrementVersion();
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
 					paramTypes, paramDescriptions, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging,
@@ -821,7 +768,7 @@ public class Function extends Artifact
 	{
 		//TO FIX NOT WORKING
 		Ref<Function> ref = ofy().load().type(Function.class).ancestor(project.getKey()).filter("name", name).first();
-		System.out.println("lookup function       ------->>>>>"+ref);
+		System.out.println("--> FUNCTION "+name+": lookup "+ref);
 
 		if (ref == null)
 			return null;
@@ -905,8 +852,11 @@ public class Function extends Artifact
 
 	public String toString()
 	{
-		return name + " described: " + hasBeenDescribed + " written: " + isWritten + " needsDebugging: "
-				+ needsDebugging + " queuedMicrotasks: " + queuedMicrotasks.size();
+		return "\n FUNCTION " + name + 
+			"\n described: " + hasBeenDescribed + 
+			"\n written: " + isWritten + 
+			"\n needsDebugging: " + needsDebugging + 
+			"\n queuedMicrotasks: " + queuedMicrotasks.size();
 	}
 
 	public String fullToString()
