@@ -82,15 +82,18 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             }
         });
 
-        // if the new test case field is not empty,
-        // add as a new test case
-        if ($scope.newTestCase !== "") 
-            $scope.addTestCase();
 
         // initialize the error
         var error = "";
-        if (microtaskForm.$pristine) error = "Add at least 1 test case";
-        if (microtaskForm.$invalid)  error = "Fix all the errors before submit";
+        // if the new test case field is not empty,
+        // add as a new test case
+     
+        if (microtaskForm.$invalid)  
+            error = "Fix all the errors before submit";
+
+        console.log($scope.testCases,$scope.newTestCase );
+        if (!$scope.dispute && $scope.testCases.length == 0 && $scope.newTestCase == "") 
+            error = "Add at least 1 test case";
 
         // if there is an error 
         if (error !== "") {
@@ -121,6 +124,10 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
                     };
             }
             else{
+
+                if($scope.newTestCase != "")
+                    $scope.addTestCase();
+
                 // prepare form data for submission
                 formData = {
                         testCases       : $scope.testCases,
