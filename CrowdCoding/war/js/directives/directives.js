@@ -436,6 +436,38 @@ myApp.directive('pressEnter', function() {
     };
 });
 
+myApp.directive('disableBackspace', function() {
+    return function(scope, element, attrs) {
+        element.unbind('keydown').bind('keydown', function (event) {
+            var doPrevent = false;
+            if (event.keyCode === 8) {
+                console.log("chiamata");
+                var d = event.srcElement || event.target;
+                if ((d.tagName.toUpperCase() === 'INPUT' && 
+                     (
+                         d.type.toUpperCase() === 'TEXT' ||
+                         d.type.toUpperCase() === 'PASSWORD' || 
+                         d.type.toUpperCase() === 'FILE' || 
+                         d.type.toUpperCase() === 'EMAIL' || 
+                         d.type.toUpperCase() === 'SEARCH' || 
+                         d.type.toUpperCase() === 'DATE' )
+                     ) || 
+                     d.tagName.toUpperCase() === 'TEXTAREA') {
+                    doPrevent = d.readOnly || d.disabled;
+                }
+                else {
+                    doPrevent = true;
+                }
+            }
+
+            if (doPrevent) {
+                event.preventDefault();
+            }
+        });
+    };
+});
+
+
 myApp.directive('submitHotKey', function() {
     return function(scope, element, attrs) {
         element.bind("keydown keypress", function(event) {
@@ -749,26 +781,18 @@ myApp.directive('resizer', function($document) {
 });
 
 
-
-/////////////////////
-//  NEWS DIRECTIVE //
-/////////////////////
-
-myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtasksService, functionsService) {
+myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService){
     return {
-        restrict: 'E',
-        templateUrl: '/html/templates/panels/news_panel.html',
-        scope: {
-            //focusValue: "=syncFocusWith"
-        },
-        link: function($scope, $element, attrs) {
-            console.log("NEWS DIRECTIVE INITIALIZED");
-        },
-        controller: function($scope, $element) {
+        
+        scope: true,
+        controller: function($scope, $element, $attrs, $transclude) {
+
             var loadData = {
                 'WriteFunction': function(news) {
 
                     news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
+
+
                 },
 
                 'WriteTestCases': function(news) {
@@ -786,7 +810,9 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
                 },
 
                 'ReuseSearch': function(news) {
-
+                    news.microtask.pseudoCall= news.microtask.callDescription;
+                    if(news.microtask.submission.noFunction === false)
+                        news.editorHeader = functionsService.renderHeaderById(news.microtask.submission.functionId);
                 },
                 'WriteTest': function(news) {
 
@@ -805,7 +831,7 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
                     news.testcases[0].text=news.microtask.owningArtifact;
                     //test
                     news.test = news.microtask.submission;
-                    
+
                 },
                 'WriteFunctionDescription': function(news) {
 
@@ -814,6 +840,11 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
                 'WriteCall': function(news) {
 
                     news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
+
+                },
+                'DebugTestFailure': function(news) {
+
+                    //news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
 
                 },
                 'Review': function(news) {
@@ -825,8 +856,90 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
 
                     });
                 }
+
             };
 
+            //Utility to show and hode the popover
+            var showPopover = function(popover) {
+              popover.$promise.then(popover.show);
+            };
+            var hidePopover = function(popover) {
+                console.log("nascondo invocata");
+              popover.$promise.then(popover.hide);
+            };
+
+            //
+            $scope.showMicrotaskPopover = function(news) {
+
+                //se undefined creala mostrala e nascondi le altre
+                //se defined se mi arriva la mia non fare niente
+                // se defined e non è la mia nascondi le altre e visualizza la mia
+                if($scope.$parent.popover[news.microtaskKey]===undefined){
+
+                    //Hide all the popover if any is visualized
+                    for(var key in $scope.$parent.popover)
+                    {
+                        hidePopover( $scope.$parent.popover[key]);
+                    }
+                    $scope.$parent.popover[news.microtaskKey] = $popover($element, {template : "/html/templates/popover/news_popover.html", placement:"right-bottom", trigger : "manual", autoClose: "false", container: "body"   });
+                    $scope.$parent.popover[news.microtaskKey].$scope.n=news;
+                    showPopover($scope.$parent.popover[news.microtaskKey]);
+                    //load the data
+                    news.microtask = microtasksService.get(news.microtaskKey);
+                    news.microtask.$loaded().then(function() {
+                        //if the microtask is a review
+                        if (news.microtask.type == "Review") {
+                            news.isReview = true;
+                            news.qualityScore = news.microtask.submission.qualityScore;
+                            news.reviewText = news.microtask.submission.reviewText;
+                        } else if (angular.isDefined(news.microtask.review)) {
+
+                            news.qualityScore = news.microtask.review.qualityScore;
+                            news.reviewText = news.microtask.review.reviewText;
+                        }
+                        loadData[news.microtask.type](news);
+
+                       
+                    });
+
+                } else if($scope.$parent.popover[news.microtaskKey].$isShown === false){
+
+                    //Hide all the popover if any is visualized
+                    for(var key in $scope.$parent.popover)
+                    {
+                        hidePopover( $scope.$parent.popover[key]);
+                    }
+                    showPopover($scope.$parent.popover[news.microtaskKey]);
+                }
+
+
+            };
+        },
+          link: function($scope, iElm, iAttrs, controller) {
+
+        }
+    };
+});
+
+
+/////////////////////
+//  NEWS DIRECTIVE //
+/////////////////////
+
+myApp.directive('newsPanel', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService) {
+    return {
+        restrict: 'E',
+        templateUrl: '/html/templates/panels/news_panel.html',
+        scope: {
+            //focusValue: "=syncFocusWith"
+        },
+        link: function($scope, $element, attrs) {
+            console.log("NEWS DIRECTIVE INITIALIZED");
+        },
+        controller: function($scope, $element) {
+            $scope.popover=[];
+           
+            
 
             // create the reference and the sync
             var ref = new Firebase($rootScope.firebaseURL + '/workers/' + $rootScope.workerId + '/newsfeed');
@@ -834,25 +947,18 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase, microtask
 
             // bind the array to scope.leaders
             $scope.news = sync.$asArray();
-            $scope.loadMicrotask = function(news) {
+          //  console.log($element);
+          //  trigger="manual"  
+             
+            //data-animation="" 
+            //data-auto-close="false" 
+        //    data-placement="right-bottom" 
+       //     bs-popover
+
+          
 
 
-                news.microtask = microtasksService.get(news.microtaskKey);
-                news.microtask.$loaded().then(function() {
-                    //if the microtask is a review
-                    if (news.microtask.type == "Review") {
-                        news.isReview = true;
-                        news.qualityScore = news.microtask.submission.qualityScore;
-                        news.reviewText = news.microtask.submission.reviewText;
-                    } else if (angular.isDefined(news.microtask.review)) {
 
-                        news.qualityScore = news.microtask.review.qualityScore;
-                        news.reviewText = news.microtask.review.reviewText;
-                    }
-                    loadData[news.microtask.type](news);
-                });
-
-            };
         }
     };
 });

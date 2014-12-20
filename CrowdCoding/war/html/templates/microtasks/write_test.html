@@ -39,7 +39,7 @@
 
 			<div ng-show="microtask.promptType=='TESTCASE_CHANGED'">
 				The description for this testcase has changed. 
-				Can you update the test, if necessary?</br>
+				Can you update the test, if necessary?<br>
 				<strong>Description before: </strong>
 				<br />
 				<div class="form-group has-error">
@@ -50,8 +50,8 @@
 					ng-model="microtask.oldTestCase"
 					>
 				</div>
-				<br> 
-				<strong>Description now: <strong>
+				<br>
+				<strong>Description now: </strong>
 			</div>
 
 			<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
@@ -60,7 +60,7 @@
 
 			</div>
 
-			</br>
+			<br/>
 
 			
 			<div class="input-group">
@@ -83,7 +83,7 @@
 		<div class="section-content no-padding" >
 			<code-mirror-readonly ng-if="microtask.promptType != 'FUNCTION_CHANGED'" code="code"></code-mirror-readonly>
 			<code-mirror-readonly ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></code-mirror-readonly>
-			<span class="input-group-btn pull-top-right">
+			<span ng-show="canBeDisputed" class="input-group-btn pull-top-right">
 				<button class="btn btn-primary" ng-disabled="dispute || functionDispute" ng-click="toggleFunctionDispute()">Dispute function signature</button>
 			</span>
 		</div>

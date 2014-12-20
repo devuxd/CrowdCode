@@ -60,7 +60,7 @@
 			<code-mirror-readonly code="functionDescription" ></code-mirror-readonly>
 		</div>
 		<div class="clearfix"></div>	
-		<span class="input-group-btn pull-top-right">
+		<span ng-show="canBeDisputed" class="input-group-btn pull-top-right">
 			<button class="btn btn-primary" ng-disabled="dispute" ng-click="toggleDispute()">Dispute function signature</button>
 		</span>
 	</div>

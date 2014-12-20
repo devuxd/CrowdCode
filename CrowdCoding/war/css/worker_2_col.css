@@ -30,7 +30,45 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 	max-width: 700px !important;
 	width: 500px !important;
 	margin-top: -35px;
+	max-height: 400px;
+	overflow-y:auto;
+	border-radius: 0px;
+	margin-left: 7px;
+
 }
+
+.popover-close{ font-size: 2em;
+padding: 7px !important; }
+
+/*
+rgba(17,112,190,1) Wode - blue - writefunction
+rgba(252,223,63,1) Aerial yellow - yellow - writetestcases
+rgba(23,163,125,1) Celadon - green - writetest
+rgba(186,105,66,1) Heliotrope - brown - writefunctiondescription
+rgba(195,35,58,1)  Kermes - magenta - reusesearch
+rgba(131,90,161,1) Atmosphere - purple - writecall
+rgb(186,156,59,1)  Chimayo - brown - debugtestfailure
+rgba(237,90,48,1)  Valencia - orange - review
+
+*/
+
+.microtask-title{
+	color: white; text-transform: uppercase;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 2px;
+	padding-top: 2px;}
+
+.task-writefunction .microtask-title    { background-color: rgba(17,112,190,1);}
+.task-writetestcases .microtask-title          { background-color: rgba(252,223,63,1);}
+.task-writetest .microtask-title              { background-color: rgba(23,163,125,1);}
+.task-writefunctiondescription .microtask-title{ background-color: rgba(186,105,66,1);}
+.task-reusesearch .microtask-title              { background-color: rgba(195,35,58,1);}
+.task-writecall .microtask-title             { background-color: rgba(131,90,161,1);}
+.task-debugtestfailure .microtask-title       { background-color: rgba(186,156,59,1);}
+.task-review .microtask-title         { background-color: rgba(237,90,48,1);}
+
+
 
 
 .submit-alert {
@@ -337,7 +375,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 .news-element.writefunctiondescription { border-left: 5px solid rgba(186,105,66,1);}
 .news-element.reusesearch              { border-left: 5px solid rgba(195,35,58,1);}
 .news-element.writecall                { border-left: 5px solid rgba(131,90,161,1);}
-.news-element.debugtestfailure         { border-left: 5px solid rgb(186,156,59,1);}
+.news-element.debugtestfailure         { border-left: 5px solid rgba(186,156,59,1);}
 .news-element.review                   { border-left: 5px solid rgba(237,90,48,1);}
 
 /* SIDEBAR LEADERBOARD PANEL */

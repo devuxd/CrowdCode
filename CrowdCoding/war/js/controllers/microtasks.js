@@ -14,6 +14,11 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
     // private variables
     var alert = null;
 
+    //if a function starts with CR cannot be disputed
+    $scope.canBeDisputed=true;
+    if( $scope.funct.name.startsWith('CR'))
+        $scope.canBeDisputed=false;
+
     // scope variables 
     $scope.newTestCase = "";
     $scope.testCases   = TestList.getTestCasesByFunctionId($scope.funct.id);
@@ -902,6 +907,12 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
 ///////////////////////////////
 myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert', 'testsService', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert, testsService, functionsService, ADTService) {
     // initialize testData
+
+    //if a function starts with CR cannot be disputed
+    $scope.canBeDisputed=true;
+    if( $scope.funct.name.startsWith('CR'))
+        $scope.canBeDisputed=false;
+
     // if microtask.submission and microtask.submission.simpleTestInputs are defined
     // assign test inputs and output to testData, otherwise initialize an empty object
     if( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ){

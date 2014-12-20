@@ -131,7 +131,7 @@ public class CrowdServlet extends HttpServlet
 
 			// PATHS WITH USER AUTHENTICATION
 			 else if ( user != null ) { // if the user is authenticated
-				 
+
 				// PAGES URLS
 				if(Pattern.matches("/clientRequest",path)){
 					req.getRequestDispatcher("/html/client_request.html").forward(req, resp);
@@ -240,14 +240,14 @@ public class CrowdServlet extends HttpServlet
 			//System.out.println("command="+command);
 		    final StringBuilder output = new StringBuilder();
 		    final Date currentTime = new Date();
-		    
+
 
 			CommandContext context = new CommandContext();
 
 			if (command.equals("RESET"))
 			{
 				output.append("PROJECT RESET executed at " + currentTime.toString() + "\n");
-				
+
 				Project.Clear(projectID);
 				Project.Construct(projectID);
 			}
@@ -256,20 +256,20 @@ public class CrowdServlet extends HttpServlet
 				output.append("REVIEWS ON executed at " + currentTime.toString() + "\n");
 
 		    	ProjectCommand.enableReviews(true);
-		    
+
 			}
 			else if (command.equals("REVIEWSOFF"))
 			{
 				output.append("REVIEWS OFF executed at " + currentTime.toString() + "\n");
 
 				ProjectCommand.enableReviews(false);
-		  
+
 			}
 			else
 			{
 				output.append("Unrecognized command " + command);
 			}
-			
+
 
 			executeCommands(context.commands(), projectID);
 
@@ -317,9 +317,9 @@ public class CrowdServlet extends HttpServlet
         Image newImage = imagesService.applyTransform(resize, oldImage);
 
         Blob imageBlob = new Blob( newImage.getImageData() );
-        
 
-	    
+
+
 	    // if image size > 0 bytes
 	    if(imageBlob.getBytes().length>0){
 
@@ -356,7 +356,7 @@ public class CrowdServlet extends HttpServlet
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
 
 		System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
-		
+
 		List<Command> commands = new ArrayList<Command>();
 		commands.addAll(ofy().transact(new Work<List<Command>>() {
 	        public List<Command> run()
@@ -428,21 +428,21 @@ public class CrowdServlet extends HttpServlet
             {
             	Project project = Project.Create(projectID);
 				Worker worker   = Worker.Create(user, project);
-            	
+
             	String workerID     = worker.getUserid();
             	String workerHandle = worker.getNickname();
-            	
+
             	// If the user does not have a microtask assigned, get them a microtask.
             	Key<Microtask> microtaskKey = project.lookupMicrotaskAssignment(workerID);
             	if (microtaskKey == null)
             	{
             		microtaskKey = project.assignMicrotask(workerID, workerHandle);
             	}
-            	
+
             	project.publishHistoryLog();
-            	
+
             	//project.logoutInactiveWorkers();
-            	
+
             	return microtaskKey;
             }
         });
@@ -458,7 +458,7 @@ public class CrowdServlet extends HttpServlet
 	            }
 		    });
 	    }
-	    
+
 	    //ProjectCommand.logoutInactiveWorkers();
 
     	// If there are no microtasks available, send an empty response.
