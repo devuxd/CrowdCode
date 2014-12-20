@@ -1,11 +1,12 @@
-// directive for json field validation
+/* -------- FIELD VALIDATORS --------- */
+
+
 myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
     return {
        
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
-
             // instantiate a new JSONValidator
             var validator = new JSONValidator();
             ctrl.$formatters.unshift(function(viewValue) {
@@ -15,7 +16,7 @@ myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
                 var nullInput=false;
                 if(attrs.allowNull &&  viewValue === "null")
                     nullInput=true;
-                console.log(nullInput);
+                
                 if(viewValue === undefined || nullInput || validator.isValid() ){
                     ctrl.$setValidity('json', true);
                     return viewValue;
@@ -29,19 +30,15 @@ myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
     };
 }]);
 
-
 myApp.directive('unicName', function(){
     return {
-          scope: {
-            parameters : "=",
-
-        }, // {} = isolate, true = child, false/undefined = no change
+        scope: { parameters : "=" }, // {} = isolate, true = child, false/undefined = no change
         require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
         restrict: 'AE', // E = Element, A = Attribute, C = Class, M = Comment
         link: function($scope, iElm, iAttrs, ctrl) {
 
             ctrl.$parsers.unshift(function(viewValue) {
-
+                // calc occurrences 
                 var occurrence=0;
                 angular.forEach($scope.parameters, function(value, key) {
                     if(value.paramName==viewValue)
@@ -61,13 +58,8 @@ myApp.directive('unicName', function(){
     };
 });
 
-//<div function-validator ng-model="somevar"></div>
+// check if a variable type is a valid ADT
 myApp.directive('adtValidator', ['ADTService', function(ADTService) {
-
-
-    var errors = [];
-    var valid;
-
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -76,13 +68,11 @@ myApp.directive('adtValidator', ['ADTService', function(ADTService) {
             ctrl.$parsers.unshift(function(viewValue) {
                 var valid =  viewValue === ""|| viewValue === undefined || ADTService.isValidTypeName(viewValue) ;
                 if (!valid) {
-
                     ctrl.$setValidity('adt', false);
                     ctrl.$error.adt = "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
                     return viewValue;
                 } else {
                     ctrl.$setValidity('adt', true);
-
                     return viewValue;
                 }
 
@@ -92,13 +82,8 @@ myApp.directive('adtValidator', ['ADTService', function(ADTService) {
     };
 }]);
 
-//<div name-validator ng-model="somevar"></div>
+// check if a functionName is already taken
 myApp.directive('functionNameValidator', ['functionsService', function(functionsService) {
-
-
-    var errors = [];
-    var valid;
-
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -124,7 +109,7 @@ myApp.directive('functionNameValidator', ['functionsService', function(functions
     };
 }]);
 
-// <div function-validator ng-model="somevar"></div>
+// check if a function code has errors
 myApp.directive('functionValidator', ['ADTService', 'functionsService', function(ADTService, functionsService) {
 
     var functionId;
@@ -179,7 +164,7 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
     function validate(code) {
         errors = [];
         var ast;
-
+        
         // 1. If the text does not contain a function block, display an error and return.
         if (replaceFunctionCodeBlock(code) === '') {
             errors.push('No function block could be found. Make sure that there is a line that starts with "function".');
@@ -401,12 +386,13 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
 }]);
 
 
-
+// helper for the function editing convenctions
 myApp.directive('functionConvections', function(){
-    // Runs during compile
     return {
         scope: true, // {} = isolate, true = child, false/undefined = no change
-        controller: function($scope, $element, $attrs, $transclude) {
+        restrict: 'EA', 
+        templateUrl: '/html/templates/function_conventions.html',
+        controller: function($scope, $element, $attrs) {
             $scope.pseudocall='function foo() { \n'+
                         '\tvar values = [ 128, 309 ];\n'+
                         '\t//# calc the least common multiple of values\n'+
@@ -415,21 +401,18 @@ myApp.directive('functionConvections', function(){
                         '\treturn { average: avg, lcm: lcm }; \n' +
                         '}';
 
-        },
-        restrict: 'EA', 
-        templateUrl: '/html/templates/function_conventions.html'
+        }
     };
 });
 
+/* ---------- KEY LISTENERS ----------- */
 myApp.directive('pressEnter', function() {
     return function(scope, element, attrs) {
-        
         element.bind("keydown keypress", function(event) {
             if (event.which === 13 && !event.shiftKey && !event.ctrlKey) {
                 scope.$apply(function() {
                     scope.$eval(attrs.pressEnter);
                 });
-
                 event.preventDefault();
             }
         });
@@ -440,7 +423,7 @@ myApp.directive('submitHotKey', function() {
     return function(scope, element, attrs) {
         element.bind("keydown keypress", function(event) {
             if (event.which === 13 && event.ctrlKey) {
-                console.log("CTRL + ENTER")
+
                 scope.$apply(function() {
                     scope.$eval(attrs.submitHotKey);
                 });
@@ -450,6 +433,8 @@ myApp.directive('submitHotKey', function() {
         });
     };
 });
+
+/* --------- FORM FOCUS MANAGEMENT HELPERS ------------ */
 myApp.directive('focus', function(){
   return {
     link: function(scope, element) {
@@ -513,133 +498,15 @@ myApp.directive('javascriptHelper', ['$compile', '$timeout', '$http', 'ADTServic
 }]);
 
 
-myApp.directive('collapsableList', ['$compile', '$timeout', function($compile, $timeout) {
-
-    return {
-        restrict: "E",
-        scope: {
-            dataObjects     : "=data",
-            addData         : "=",
-            togglerTemplate : "@togglerTemplate",
-            elementTemplate : "@elementTemplate",
-            classCondition  : "@listElementClassCondition"
-        },
-        link: function($scope, $element, $attributes) {
-
-            var classCondition = '';
-            if ($attributes.listElementClassCondition)
-                classCondition = 'ng-class="{' + $scope.classCondition + '}"';
-            var toCompile = '<ul class="collapsable-list">' + 
-                                '    <li ng-repeat="(key,data) in dataObjects" >' + 
-                                '        <div class="toggler" ng-click="activate( key )" class="" ' + classCondition + '>' + 
-                                '           <span class="closed glyphicon glyphicon-chevron-right"></span>' +
-                                '           <span class="open   glyphicon glyphicon-chevron-down"></span>' +
-                                '           <ng-include src="togglerTemplate"></ng-include>' +
-                                '        </div>' + 
-                                '        <div class="element">' + 
-                                '           <div class="element-body" ng-include="elementTemplate"></div>' + 
-                                '       </div>' + 
-                                '    </li>' + 
-                                '</ul>';
-
-
-            $scope.activeElement = 0;
-            $scope.activate = function(key) {
-                /*
-                activeElement = key;
-                
-                var $listElement = $element.find('.collapsable-list li:nth-child('+(parseInt(key)+1)+')') ;
-
-                // remove class active for all togglers
-                $element.find('.toggler').removeClass('active');
-                // reset height for all elements
-                $element.find('.element').height(0);
-
-                // add class active to the toggler
-                $listElement.find('.toggler').addClass('active');
-                // set max height for current element
-                var $toToggle = $listElement.find('.element');
-                $toToggle.height( $toToggle.find('.element-body').outerHeight() );*/
-            }
-
-
-            var $list = $(toCompile);
-            $element.append($list);
-            $compile($element.contents())($scope);
-
-            
-            $timeout(function(){
-                $scope.activate(0);
-            },300);
-
-        },
-        controller: function($scope, $element) {
-
-        }
-    };
-}]);
-
-myApp.directive('adtBar', ['$compile', '$timeout', 'ADTService', function($compile, $timeout, ADTService) {
-
+myApp.directive('adtList', ['$compile', '$timeout', 'ADTService', function($compile, $timeout, ADTService) {
     return {
         restrict: "EA",
-
+        templateUrl: '/html/templates/adt_list.html',
         link: function($scope, $element, $attributes) {
-
             $scope.ADTs = ADTService.getAllADTs();
-
-
-            angular.forEach($scope.ADTs, function(value, key) {
-
-
-                var childScope = $scope.$new();
-                childScope.ADT = value;
-                childScope.ADT.prettyValue = angular.toJson( value.example , true);
-                var toggler = $("<h3></h3>");
-                //  toggler.attr('id',value.name+'Toggler');
-                toggler.addClass('toggler-adt');
-                toggler.html(value.name);
-
-                var elementBody = "<ng-include src=\"'/html/templates/adt_detail.html'\"></ng-include>";
-                elementBody = $('<div class="element-body-adt">' + elementBody + '</div>');
-
-                var element = $("<div></div>");
-                element.attr('id', value.name + 'Element');
-                element.addClass('element-adt');
-
-                element.append(elementBody);
-
-
-                $element.append(toggler);
-                $element.append(element);
-                $compile($element.contents())(childScope);
-            });
-
-            function activateElement(el) {
-                // remove class active for all togglers
-                $element.find('.toggler-adt').removeClass('active');
-                // reset height for all elements
-                $element.find('.element-adt').height(0);
-
-                // add class active to the toggler
-                el.addClass('active');
-                // set max height for current element
-                var successor = el.next();
-                successor.height(successor.find('.element-body-adt').outerHeight());
-            }
-
-            $element.find('.toggler-adt').on('click', function() {
-                activateElement($(this));
-            })
-
-            $timeout(function(){
-                $element.find('.toggler-adt:first-child').addClass('active');
-            },100);
-
         }
     }
 }]);
-
 
 myApp.directive('resizer', function($document) {
 

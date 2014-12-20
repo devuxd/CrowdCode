@@ -14,6 +14,21 @@ myApp.factory('TestRunnerFactory', [
 
 	var instances = 0;
 
+	var defaultTestItem = {
+			stubMap : {},
+			debug   : "",
+			number : -1,
+			output : {},
+			executionTime : 0
+	};
+	defaultTestItem.ready = function(){
+		if( this.output.result !== undefined ){
+			return true;
+		}
+		return false;
+	};
+
+
 	function TestRunner( config ){
 		this.id = ++instances;
 
@@ -47,11 +62,13 @@ myApp.factory('TestRunnerFactory', [
 
 		this.timestamp = 0;
 
+		this.running = false;
+
 		this.testReadyListener   = undefined;
 		this.stubsReadyListener   = undefined;
 		this.testsFinishListener = undefined;
 
-		console.log('%cTest Runner: initialized','color:blue;',this);
+		//console.log('%cTest Runner: initialized','color:blue;',this);
 
 		// // set listeners on the notification channel
 		// NotificationChannel.onRunTests($rootScope,function(item){
@@ -60,7 +77,7 @@ myApp.factory('TestRunnerFactory', [
 		// 	else 
 		// 		this.submitToServer = false;
 
-		// 	//console.log("--> ==> PASSED STUBS  ",item.passedStubs);
+		// 	////console.log("--> ==> PASSED STUBS  ",item.passedStubs);
 
 		// 	this.runTests( item.passedFunctionId, item.passedFunctionBody, item.passedStubs );
 		// });
@@ -76,7 +93,7 @@ myApp.factory('TestRunnerFactory', [
 	};
 
 	TestRunner.prototype.testReady = function(data){
-		// console.log('%cTest Runner: test ready %o, output %o','color:blue;font-style:bold;',data,data.output);
+		// //console.log('%cTest Runner: test ready %o, output %o','color:blue;font-style:bold;',data,data.output);
 		// console.assert(data.output != undefined,"Data output is not defined!");
 
 		if( this.testReadyListener != undefined)
@@ -88,7 +105,7 @@ myApp.factory('TestRunnerFactory', [
 	};
 
 	TestRunner.prototype.stubsReady = function(data){
-		// console.log('%cTest Runner: stubs ready %o','color:blue;',data);
+		// //console.log('%cTest Runner: stubs ready %o','color:blue;',data);
 		if( this.stubsReadyListener != undefined)
 			this.stubsReadyListener.call( null, data);
 	};
@@ -98,41 +115,53 @@ myApp.factory('TestRunnerFactory', [
 	};
 
 	TestRunner.prototype.testsFinish = function(data){
-		// console.log('%cTest Runner: finished %o','color:blue;',data);
+
+		this.running = false;
+		
+		// //console.log('%cTest Runner: finished %o','color:blue;',data);
 		if( this.testsFinishListener != undefined)
 			this.testsFinishListener.call( null, data);
 	};
 
+	// TestRunner.prototype.getDefaultTestItem(){
+	// 	return {
+
+	// 	}
+	// }
+
 
 	//Runs all of the tests for the specified function, sending the results to the server
-	TestRunner.prototype.runTests = function(testedFunctionId,testedFunctionBody,actualStubs){
+	TestRunner.prototype.runTests = function(testedFunctionId,testedFunctionCode,actualStubs){
 		
+		// prevent multiple concurrent runs
+		if(this.running) return;
+
+		this.running = true;
+
 		// set global variables
 		this.testedFunctionId   = testedFunctionId;
 		this.validTests         = TestList.getImplementedByFunctionId(testedFunctionId);
 		this.testedFunctionName = functionsService.getNameById(testedFunctionId);
 
-
-
-		console.log('%cTest Runner: valid tests %o','color:blue;',this.validTests);
+		//console.log('%cTest Runner: valid tests %o','color:blue;',this.validTests);
 
 		// reset tests results variables
 		this.returnData = {};
 		this.usedStubs  = {};
 		this.stubs      = {};
-		this.allPassedTestCases = new Array();
-		this.allFailedTestCases = new Array();
+		this.allPassedTestCases.length = 0;
+		this.allFailedTestCases.length = 0;
 		this.testedFunctionBody = "";
 		this.currentTestIndex = 0; 
 
 		// build the tested function code with the header
-		this.testedFunctionCode = functionsService.renderHeaderById(testedFunctionId);
-		if( testedFunctionBody != undefined ) {
-			this.testedFunctionBody = testedFunctionBody;
-			this.testedFunctionCode += testedFunctionBody;
-		} else                            
-			this.testedFunctionCode  += functionsService.get(testedFunctionId).code;
-
+		if( testedFunctionCode != undefined )
+			this.testedFunctionCode = testedFunctionCode;
+		else {
+			this.testedFunctionCode = functionsService.renderHeaderById(testedFunctionId);
+			this.testedFunctionCode += functionsService.get(testedFunctionId).code;
+		}
+		
 		this.loadAllTheFunctionCode();
 
 		this.loadStubs();
@@ -140,7 +169,7 @@ myApp.factory('TestRunnerFactory', [
 		if( actualStubs != undefined )
 			this.mergeStubs(actualStubs);
 
-		console.log('%cTest Runner: start run tests','color:blue;');
+		//console.log('%cTest Runner: start run tests','color:blue;');
 		this.runCurrentTest();
 	};
 
@@ -163,22 +192,22 @@ myApp.factory('TestRunnerFactory', [
 		this.allTheFunctionCode = ""; // reset the all functions code
 
 		// retrieve callees
-		this.calleeFunctions = [];
-		var _this = this;
+		this.calleeFunctions.length = 0; 
+		var self = this;
 		var ast = esprima.parse( this.testedFunctionCode , {loc: true})
 		traverse(ast, function (node)
 		{
 			if((node!=null) && (node.type === 'CallExpression'))
 			{
 				// Add it to the list of callee names if we have not seen it before
-				if (_this.calleeFunctions.indexOf(node.callee.name) == -1)
-					_this.calleeFunctions.push(node.callee.name);
+				if (self.calleeFunctions.indexOf(node.callee.name) == -1)
+					self.calleeFunctions.push(node.callee.name);
 			}
 		});
+		for(var prop in ast) { delete ast[prop]; };
 
 		// for each function in the system
 		var allFunctionIDs = functionsService.allFunctionIDs();
-		
 		for (var i=0; i < allFunctionIDs.length; i++)
 		{
 			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
@@ -200,7 +229,8 @@ myApp.factory('TestRunnerFactory', [
 			                    + functionsWithMockBodies  + '\n'  // functions with mock bodies	
 			                    + this.testedFunctionCode + '\n'; // tested function code
 
-		console.log('%cTest Runner: function code initialized','color:blue;');
+		//console.log('%cTest Runner: function code initialized','color:blue;');
+		return;
 	};
 	
 	
@@ -208,53 +238,53 @@ myApp.factory('TestRunnerFactory', [
 	TestRunner.prototype.loadStubs = function()
 	{
 		this.stubs = {}	;
-		var _this = this;
+		var self = this;
 		
 		var allFunctionNames = functionsService.getAllDescribedFunctionNames();
 		// for each described function
 		angular.forEach( allFunctionNames, function( functionName ){
-			if( functionName != _this.testedFunctionName )
+			if( functionName != self.testedFunctionName )
 				try{
 					var stubsForFunction = TestList.buildStubsByFunctionName( functionName );
-					_this.stubs[ functionName ]  = stubsForFunction;
+					self.stubs[ functionName ]  = stubsForFunction;
 
 				}
 				catch (e)
 				{
-					console.log("Error loading stubs for the function " + functionName);	
-					console.log(e);			
+					//console.log("Error loading stubs for the function " + functionName);	
+					//console.log(e);			
 				}	
 		})
 
-		console.log('%cTest Runner: stubs loaded','color:blue;',this.stubs);
-
+		//console.log('%cTest Runner: stubs loaded','color:blue;',this.stubs);
+		return;
 	};
 
 
 
 	TestRunner.prototype.mergeStubs = function(actualStubs){
 
-		var _this = this;
+		var self = this;
 		angular.forEach(actualStubs,function( functionStubs, functionName ){
 			
-			console.log("---->STUBS",_this.stubs);
+			//console.log("---->STUBS",self.stubs);
 			// create new entry in the stubs with function name
 			// if doesn't exists
-			if( ! _this.stubs.hasOwnProperty( functionName ) )
-				_this.stubs[ functionName ] = {};
+			if( ! self.stubs.hasOwnProperty( functionName ) )
+				self.stubs[ functionName ] = {};
 			
 			// for each used stub for functionName
 			// add it or update the stub list
 			angular.forEach( functionStubs, function( inputSet, inputSetKey ){
 
-				_this.stubs[ functionName ][ inputSetKey ] = {
+				self.stubs[ functionName ][ inputSetKey ] = {
 					inputs: angular.fromJson( inputSet.input ),
 					output: angular.fromJson( inputSet.output )
 				};
 			}); 
 		});
 
-		console.log('%cTest Runner: stubs merged','color:blue;',this.stubs);
+		//console.log('%cTest Runner: stubs merged','color:blue;',this.stubs);
 	};
 
 
@@ -263,7 +293,7 @@ myApp.factory('TestRunnerFactory', [
 		var d = new Date();
 		var actualTimestamp = d.getTime();
 
-		console.log('%cTest Runner: test %d finished, duration %.4f sec','color:blue;',this.currentTestIndex, (actualTimestamp-this.timestamp)/1000 ) ;
+		//console.log('%cTest Runner: test %d finished, duration %.4f sec','color:blue;',this.currentTestIndex, (actualTimestamp-this.timestamp)/1000 ) ;
 		
 
 		// If the code is unimplemented, the test neither failed nor passed. If the test
@@ -294,7 +324,6 @@ myApp.factory('TestRunnerFactory', [
 				this.submitResultsToServer();
 
 			this.testsFinish(item);
-
 		}
 		else
 			this.runCurrentTest();		
@@ -306,11 +335,11 @@ myApp.factory('TestRunnerFactory', [
 	TestRunner.prototype.runCurrentTest = function()
 	{
 
-		console.log('%cTest Runner: test %d started','color:blue;',this.currentTestIndex);
+		//console.log('%cTest Runner: test %d started','color:blue;',this.currentTestIndex);
 		var d = new Date();
 		this.timestamp = d.getTime();
 
-	    var _this = this;
+	    var self = this;
 
 		var testCode = this.validTests[this.currentTestIndex].getCode();  //.replace(/\n/g,"");
 
@@ -339,14 +368,13 @@ myApp.factory('TestRunnerFactory', [
 		var timeoutPromise = $timeout( function(){
 
 			var item = {};
-			item.number = _this.currentTestIndex + 1; 
-			item.total  = _this.validTests.length ; 
-			item.test   = _this.validTests[ _this.currentTestIndex ] ; 
+			item.number = self.currentTestIndex + 1; 
+			item.total  = self.validTests.length ; 
 			item.output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
 			item.debug  = "ERROR: execution terminated due to timeout";
-			_this.testReady(item);
+			self.testReady(item);
 			
-			_this.processTestFinished(false);
+			self.processTestFinished(false);
 
 		} , this.maxExecutionTime);
 
@@ -357,40 +385,29 @@ myApp.factory('TestRunnerFactory', [
 			var data = e.data;
 			$timeout.cancel( timeoutPromise );
 
-			if( e.data.errors != undefined ){
+			var item = {};
 
-		  		// send the message to the TestNotificationChannel
-		  		var item = {};
-				item.number = _this.currentTestIndex + 1; 
-				item.total  = _this.validTests.length ; 
-				item.test   = _this.validTests[ _this.currentTestIndex ] ; 
-				item.output = { 'expected': "", 'actual': "", 'message': "", 'result':  false} ;
-				item.debug  = e.data.errors;
-				_this.testReady(item);
-				
-
-		  		_this.processTestFinished( false );
-
-			} else {
-
-				// send the message to the TestNotificationChannel
-		  		var item = {};
-				item.number = _this.currentTestIndex + 1; 
-				item.total  = _this.validTests.length ; 
-				item.test   = _this.validTests[ _this.currentTestIndex ]; 
-				item.output = data.output;
-				item.debug  = data.debug;
-
-				_this.testReady(item);
-				_this.stubsReady(data.usedStubs);
-				_this.usedStubs = data.usedStubs ;
-				// console.log("RECEIVED STUBS = ",data.stubs);
-				// console.log("RECEIVED USED STUBS = ",data.usedStubs);
-				// console.log("RECEIVED RESULT = ",data.output.result == undefined ? false : data.output.result);
-				// process test finished
-		  		_this.processTestFinished( ( item.output != undefined && item.output.result == undefined ) ? item.output.result : false );
-
+			// if no exceptions has been catched during the
+			// test execution, retrieve the stubMap and debug
+			// data for the test, notify stubs ready
+			// and update the usedStubs
+			if( e.data.errors ) {
+				item.stubMap = data.stubMap.length > 0 ? data.stubMap : undefined;
+				item.debug   = data.debug;
 			}
+
+			item.number = self.currentTestIndex; 
+
+			item.output = data.output;
+			item.executionTime = data.executionTime;
+			item.stubMap = data.stubMap ;
+			// console.log("final test item: %o",item);
+
+			self.stubsReady(data.usedStubs);
+			self.usedStubs = data.usedStubs ;
+
+			self.testReady(item);
+		  	self.processTestFinished( ( item.output != undefined && item.output.result == undefined ) ? item.output.result : false );
 			//w.terminate();
 		};
 
@@ -419,10 +436,10 @@ myApp.factory('TestRunnerFactory', [
 
 			$http.get('/' + $rootScope.projectId + '/ajax/testResult?'+getData.join("&")).
 			  success(function(data, status, headers, config) {
-			    console.log("test result submitted GET");
+			    //console.log("test result submitted GET");
 			  }).
 			  error(function(data, status, headers, config) {
-			    console.log("test result submit error");
+			    //console.log("test result submit error");
 			  });
 		}
 			
@@ -430,6 +447,7 @@ myApp.factory('TestRunnerFactory', [
 
 	
 	return {
-		instance : TestRunner
+		instance : TestRunner,
+		defaultTestItem : defaultTestItem,
 	};
 }]); 

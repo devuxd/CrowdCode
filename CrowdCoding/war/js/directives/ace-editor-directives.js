@@ -1,3 +1,24 @@
+
+myApp.directive('aceReadJs',function($compile,functionsService) {
+
+    return {
+        restrict: 'EA',
+        template: '<div class="ace-editor js-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="code"></div>',
+        scope: {
+            code: '='
+        },
+        controller: function($scope,$element){ 
+            
+            $scope.aceLoaded = function(_editor) {
+                _editor.setOptions({
+                     maxLines: Infinity
+                });
+            };
+        }
+    };
+});
+
+
 myApp.directive('aceReadString', function() {
     return {
         restrict: 'EA',
@@ -104,43 +125,9 @@ myApp.directive('aceEditJson', function() {
         },
         require: "ngModel",
 
-        link: function ( scope, iElement, iAttrs, ngModel ) {
+        link: function ( scope, element, attrs, ngModel ) {
             if( ngModel == undefined ) 
                 console.log("NG MODEL NOT DEFINED");
-
-            // JSON -> formatter -> string
-            var toJson = false;
-
-            // STRING    "\"string\""
-            // OBJECT    "{\"key\": \"value\"}"
-            // NUMBER    "4"
-            // UNDEFINED "undefined"
-            // convert the json object into a string
-            // ngModel.$formatters.push(function( modelValue ) {
-            //     if( typeof modelValue != string ){
-            //         return "error: should be a string!"
-            //     } 
-
-            // });
-
-
-            // // string -> parser -> JSON
-
-            // // convert the string into a JSON
-            // ngModel.$parsers.push(function( viewValue ) {
-
-            //     var jsonValue = "";
-
-            //     try {
-            //         jsonValue = angular.fromJson(viewValue) ;
-            //     } catch(e){
-            //         jsonValue = viewValue;
-            //     }
-               
-            //     console.log("to JSON %o",jsonValue);
-            //     return jsonValue;
-            // });
-
 
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
@@ -162,19 +149,19 @@ myApp.directive('aceEditJson', function() {
 
 
         	$scope.aceLoaded = function(_editor) {
-        		_editor.setOptions({
+        		var options = {
 		    	   maxLines: Infinity
-		    	});
+		    	};
                 
                 if( $scope.hasOwnProperty('focusAce') && $scope.focusAce ){
                     _editor.focus();
                 }
 
                 if( $scope.hasOwnProperty('minLines') && $scope.minLines ){
-                   _editor.setOptions({
-                       minLines: $scope.minLines
-                    });
+                   options.minLines = $scope.minLines;
                 }
+
+                _editor.setOptions(options);
 			};
         }
     };

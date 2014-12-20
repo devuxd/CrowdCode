@@ -12,34 +12,35 @@ var debug = {};
 
 //Inserts the inputs and outputs to a map datastructure that will be used 
 //later to displays these values in the debug fields.
-function logCall( functionName, parameters, returnValue, usedStubs , debug)
+function logCall( functionName, parameters, returnValue, usedStubs , stubMap, debug)
 {
 	// if the callee map doesn't have entries for the functionName, 
 	// generate a new input map
 	var inputsMap;
-	if(!usedStubs.hasOwnProperty(functionName)){ 
+	if(  usedStubs[functionName] === undefined ){ 
 		inputsMap = {};
 		usedStubs[functionName]=inputsMap;
 	} else
 		inputsMap = usedStubs[functionName];
 
-	// generate the inputsKey for inputsMap 
-	var inputsKey = JSON.stringify(parameters);
-	// debug.log('logCall: '+inputsKey);
-	// debug.log('returnValue: '+returnValue);
+	var stubKey = JSON.stringify(parameters);
 
 	var stringifiedInputs = [];
 	for( var i=0;i<parameters.length;i++)
 		stringifiedInputs[i] = JSON.stringify(parameters[i]);
 
 	// create the stub entry
-	inputsMap[inputsKey] = { 
+	inputsMap[stubKey] = { 
 		inputs : stringifiedInputs,
 		output : JSON.stringify(returnValue)
 	};
 
 	// update the callee map inputs map for the function
 	usedStubs[functionName] = inputsMap;
+
+	if( stubMap[functionName] === undefined )
+		stubMap[functionName] = {};
+	stubMap[functionName][stubKey] = true;
 }
 
 // Checks if there is a mock for the function and parameters. Returns values in form
@@ -52,21 +53,15 @@ function hasStubFor(functionName, parameters, stubs, debug)
 	// debug.log("Stub for "+functionName);
 	// debug.log(JSON.stringify(parameters));
 
-	if(stubs.hasOwnProperty(functionName))
+	if( stubs[ functionName ] !== undefined )
 	{
 		var inputMap  = stubs[functionName];
 		var inputsKey =  JSON.stringify(parameters)  ;
 
-		// debug.log('hasStub '+inputsKey);
-		// debug.log("found function");
-		// debug.log(JSON.stringify(stubs[functionName]));
-		// debug.log(inputMap.hasOwnProperty(inputsKey));
-		
-		if (inputMap.hasOwnProperty(inputsKey))
+		if ( stubs[ functionName ][ inputsKey ] !== undefined )
 		{
 			hasStub = true;
-			// debug.log("STUB FOUND");
-			output = inputMap[inputsKey].output;
+			output  = stubs[ functionName ][inputsKey].output;
 		}			
 	}
 

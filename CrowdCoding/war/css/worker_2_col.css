@@ -124,24 +124,30 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 .CodeMirror { border: none; font-size: 1.1em;}
 
 /* --------- ACE JSON OVERWRITE ---------  */
+
+
+.ace-editor { 
+    height: 200px;
+    background:transparent;
+}
+.ace-editor .ace_marker-layer .ace_selection { background: transparent; }
+.ace-editor .ace_hidden-cursors {opacity:0} 
+
+.js-reader { 
+	background-color:transparent !important; 
+}
+.js-reader .ace_active-line { background-color: transparent !important;}
+
 .json-editor .ace_scroller,
 .json-reader .ace_scroller {
 	left:17px !important;
 }
-
 .json-editor .ace_folding-enabled > .ace_gutter-cell {
 	padding:0px;
 	color:transparent;
 }
-
-.json-editor .ace_gutter-layer  {
-	width:20px !important;
-}
-
-
-.json-reader.ace-editor {
-	background-color:transparent !important;
-}
+.json-editor .ace_gutter-layer  { width:20px !important; }
+.json-reader.ace-editor { background-color:transparent !important; }
 
 
 
@@ -517,29 +523,6 @@ top: 0;
 }
 
 
-/** COLLAPSABLE LIST **/
-ul.collapsable-list { margin:0px; padding:0px; list-style:none; }
-ul.collapsable-list .toggler {
-	cursor: pointer;
-	color: #575757;
-	font-size: 1em;
-	padding: 3px;
-}
-ul.collapsable-list .toggler span.closed { display:inline; }
-ul.collapsable-list .toggler span.open   { display:none; }
-ul.collapsable-list .toggler.active {  }
-ul.collapsable-list .toggler.active span.closed { display:none; }
-ul.collapsable-list .toggler.active span.open   { display:inline; }
-
-ul.collapsable-list .element {
-	/*height:0px;*/
-	overflow:hidden;
-	-webkit-transition: height 0.5s;
-	-moz-transition: height 0.5s;
-	transition: height 0.5s;
-}
-
-ul.collapsable-list .element-body { padding: 5px; }
 
 table.test { width: 100%;}
 table.test td { vertical-align: top; }
@@ -550,19 +533,15 @@ table.test.spacing td { padding-bottom:5px;}
 
 
 
-.test-collapsable-list .toggler .success { font-family: 'Lato' !important; font-weight: bold; color:green;}
-.test-collapsable-list .toggler .failed  { font-family: 'Lato' !important; font-weight: bold; color:red;}
-.test-collapsable-list .toggler  { background-color: #ECECEC; color:black !important; /*border-bottom: 2px solid #4F5457;*/}
+.test-collapsable-list .toggle .passed { font-family: 'Lato' !important; font-weight: bold; color:green;}
+.test-collapsable-list .toggle .failed  { font-family: 'Lato' !important; font-weight: bold; color:red;}
+.test-collapsable-list .toggle  { background-color: #ECECEC; color:black !important; /*border-bottom: 2px solid #4F5457;*/}
 
 
 .test-collapsable-list .element {
 	color:black;
 }
-.test-collapsable-list table { width: 100%;}
-.test-collapsable-list table td:first-child { width:20%; text-align: left; padding-left:5px; font-weight:700;}
-
-.mock-collapsable-list table { width: 100%;}
-.mock-collapsable-list table td:first-child { width:20%; text-align: left; }
+.test-collapsable-list 
 
 /*table.debugTests tr.passed { background-color:green;}
 table.debugTests tr.failed { background-color:red;}
@@ -738,15 +717,6 @@ tutorial-container .title { position: absolute; left: 0; }
 tutorial-container .btn-next { position: absolute; right: 0; }
 
 
-.ace-editor { 
-    height: 200px;
-    /*width: 100%;*/
-}
-.ace-editor .ace_marker-layer .ace_selection {
-   background: transparent;
-}
-.ace-editor .ace_hidden-cursors {opacity:0} 
-.ace-editor-test { height: 100px; width: 100%; }
 
 .btn-mini { font-size:0.8em; text-transform: uppercase; padding: 3px 3px; border-radius: 0px; background-color: rgba(63, 129, 172, 0.8); }
 
@@ -908,14 +878,14 @@ tutorial-container .btn-next { position: absolute; right: 0; }
 /* rgb(186,156,59,1)  Chimayo - brown - debugtestfailure */
 .task-debugtestfailure .microtask-details,
 .task-debugtestfailure .section-title
-{ color:  rgba(186,156,59,1)  ; }
+{ color:  rgba(60, 146, 203, 1)  ; }
 
 .task-debugtestfailure .microtask-details li:nth-child(1),
 .task-debugtestfailure .section.section-form .section-title .input-group 
-{ background-color:  rgba(186,156,59,1)  ; }
+{ background-color:  rgba(60, 146, 203, 1)  ; }
 
 .task-debugtestfailure .section.section-help 
-{ background-color:  rgba(186,156,59,0.4);   }
+{ background-color:  rgba(60, 146, 203, 0.4);   }
 
 /* rgba(237,90,48,1)  Valencia - orange - review */
 .task-review .microtask-details,
@@ -942,3 +912,42 @@ pre.jsonRead {
 .jsonRead .jsonNull { color: black; }
 .jsonRead .jsonKey { color: black; }
 
+.panel-group .panel+.panel {
+	margin:0px;
+	border:none;
+	height:100%;
+	margin-bottom:2px;
+}
+
+.panel {
+	background-color:transparent;
+	border-radius:0px;
+	border:none;
+}
+
+.panel-heading {
+	cursor:pointer;
+	border-radius:0px;
+	padding: 3px 3px;
+	margin: 0px;
+}
+
+
+.panel table { width: 100%;}
+.panel table td:first-child { width:20%; text-align: left; vertical-align: top; padding:5px; font-weight:700;}
+
+.panel-collapse.am-collapse {
+  animation-duration: .3s;
+  animation-timing-function: linear;
+  animation-fill-mode: backwards;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-fill-mode: ;
+  overflow: hidden;
+  &.in-remove {
+    animation-name: collapse;
+    display: block;
+  }
+  &.in-add {
+    animation-name: expand;
+  }
+}

@@ -73,7 +73,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 		// the function with id = functionId
 		getImplementedByFunctionId: function(functionId){
 			var returnList = [];
-			console.log("%cTestList: impl by fun %d list %o",'color:purple;',functionId,objectsList);
+			// console.log("%cTestList: impl by fun %d list %o",'color:purple;',functionId,objectsList);
 			angular.forEach( objectsList, function( test, key){
 				if( test.getFunctionId() == functionId && test.isImplemented())
 					returnList.push(test);	

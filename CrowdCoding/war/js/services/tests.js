@@ -11,9 +11,6 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 		var tests = [];  				// map from testID to a TestInFirebase format object
 		var functionIDToTests;		// map from a functionID to an array of testIDs that are tests for the function
 
-		// Constructor
-		this.initialize = function()  {
-		};
 
 		// Public functions
 		this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); }
@@ -29,10 +26,9 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 		this.getAllTestsToRun = function() { return getAllTestsToRun(); };
 
 
-		// Function bodies
-
-		function init(newStatsChangeCallback)
-		{
+		// init the service
+		// ==> load the tests from firebase
+		function init(){
 
 			functionIDToTests = {};
 
@@ -40,16 +36,17 @@ myApp.factory('testsService', ['$window','$rootScope','$firebase', function($win
 			var ref = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/tests'));
 			var testsInFirebase = ref.$asArray();
 			testsInFirebase.$loaded().then(function(){ 
-				console.log("TESTS INITIALIZED");
-				$rootScope.loaded.tests=true;  });
+				// tell the others that the tests services is loaded
+				$rootScope.$broadcast('serviceLoaded','tests');
 
-			// watch for changes in the tests data
-			testsInFirebase.$watch(function(obj){
-				switch(obj.event){
-					case 'child_added':   testAdded(testsInFirebase.$getRecord(obj.key));   break;
-					case 'child_changed': testChanged(testsInFirebase.$getRecord(obj.key)); break;
-					case 'child_deleted': testDeleted(testsInFirebase.$getRecord(obj.key)); break;
-				}
+				// watch for changes in the tests data
+				testsInFirebase.$watch(function(obj){
+					switch(obj.event){
+						case 'child_added':   testAdded(testsInFirebase.$getRecord(obj.key));   break;
+						case 'child_changed': testChanged(testsInFirebase.$getRecord(obj.key)); break;
+						case 'child_deleted': testDeleted(testsInFirebase.$getRecord(obj.key)); break;
+					}
+				});
 			});
 		}
 

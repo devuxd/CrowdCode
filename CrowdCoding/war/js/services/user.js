@@ -7,9 +7,6 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
     	submitToServer: true
     });
 
-    console.log("USER TEST RUNNER",testRunner.id);
-
-
  	// retrieve connection status and userRef
 
 	var userProfile = new Firebase( firebaseURL + '/workers/' + workerId );
@@ -27,7 +24,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 
 	user.data = sync.$asObject();
 	user.data.$loaded().then(function(){
-		console.log("user data loaded ",user.data);
+		// console.log("user data loaded ",user.data);
 	});
 
 	user.init = function(){

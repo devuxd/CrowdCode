@@ -25,6 +25,12 @@ var JSHINT_GLOBALS = [
 	"deepCopy: true"
 ]; 
 
+function getNowTime(){
+	var now = new Date();
+	return now.getTime();
+}
+
+
 self.addEventListener('message', function(e){
 	// gets the data
 	// data is json object { cmd : 'cmd', payload: 'payload'}
@@ -54,6 +60,9 @@ self.addEventListener('message', function(e){
 		// start to evaluate the code
 		case 'exec': 
 
+			var startTime = getNowTime()
+
+
 			// if in the execute message there isn't 
 			// the code to execute, return error
 			if ( data.code == undefined ) {
@@ -61,27 +70,29 @@ self.addEventListener('message', function(e){
 				break;
 			}
 
+			// initialize the result message
+			var resultMessage = {};
+
+			/* BUILD THE FINAL CODE */
+			var finalCode = "";
+			finalCode += "/* global " + JSHINT_GLOBALS.join( ", " ) + " */\n"; //add JSHint globals		
+			finalCode += "var debug = new Debug();\n"; //instantiate the Debug Object
+			finalCode += "var stubMap = {};\n";        //instantiate the test stub map
+
+			//add the received code
+			finalCode += data.code;
+
+
+
+			// 1) try to LINT the code
+			// 2) try to execute the code
 			try{
 
-				var finalCode = "";
+				// // set the initial start time 
+				// // before LINTING the code
+				// startTime = getNowTime();
 
-				//add JSHint globals
-				finalCode += "/* global " + JSHINT_GLOBALS.join( ", " ) + " */\n";
-
-				//instantiate the Debug Object
-				finalCode += "var debug = new Debug();\n";
-
-				// add the stubs 
-				//finalCode += "var workingStubs = " + JSON.stringify(data.stubs) + "; \n";
-
-				//add the received code
-				finalCode += data.code;
-
-				// console.log("--- FINAL CODE : ");
-				//console.log('Test worker: final code ', finalCode );
-
-
-				// if Lint fails
+				// // if Lint fails
 				if ( !JSHINT( finalCode, JSHINT_CONF ) ) {
 
 					// create array of Strings for the 
@@ -91,22 +102,49 @@ self.addEventListener('message', function(e){
 						var JError = JSHINT.errors[i];
 						errors.push( "Line: " + JError.line + " - " + JError.reason );
 					}
-					self.postMessage( { errors: "JSHINT ERRORS: " + errors.join("\n") } );
 
-				} else {
-					// executes the tests
-					eval(finalCode);
+					throw "JSHINT ERRORS: " + errors.join("\n");
 
-					self.postMessage( { 
-						output    : assertionResults[0], 
-						stubs     : stubs,
-						usedStubs : usedStubs,
-						debug     : debug.messages.join( "\n" ) + ""
-					} );
-				}
+				} 
 
-			} catch (e) {
-				self.postMessage( { errors: "EXCEPTION: " + e.message } );
+				// if the execution arrives here, 
+				// it means that there weren't throw LINT 
+				// exception, so set again the startTime 
+				// for measuring the eval() execution time
+				startTime = getNowTime();
+
+				// executes the tests
+				eval(finalCode);
+
+
+				// console.log("end ok!",getNowTime()-startTime);
+
+				resultMessage = { 
+					errrors       : false,
+					output        : assertionResults[0], 
+					stubMap       : stubMap,
+					debug         : debug.messages.join( "\n" ) + ""
+				} ;
+
+			}
+
+			catch (e) {
+				resultMessage = { 
+					errors     : true,
+					output     : { 'expected': "", 'actual': "", 'message': "", 'result':  false},
+					debug      : "EXCEPTION: " + e.message
+				};
+			}
+
+			finally{
+
+				// console.log("FINALLY!",getNowTime(),startTime);
+
+				resultMessage.stubs         = stubs,
+				resultMessage.usedStubs     = usedStubs,
+				resultMessage.executionTime = getNowTime()-startTime;
+
+				self.postMessage( resultMessage );
 			}
 			
 			break;
