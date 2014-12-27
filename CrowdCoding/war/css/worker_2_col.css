@@ -499,14 +499,41 @@ top: 0;
 
 /* ADT PANEL */
 
-.toggler-adt {
+.adt-list .panel-group .panel+.panel {
+	margin:0px;
+	border:none;
+	height:100%;
+	margin-bottom:2px;
+	border:none;
+}
+
+.adt-list .panel {
+	background-color:transparent;
+	border-radius:0px;
+	border:none;
+}
+
+.adt-list .panel-heading {
+	background-color: transparent;
+	cursor:pointer;
+	padding:0px;
+	border:none;
+}
+.adt-list .panel-heading+.panel-collapse>.panel-body {
+	border:none;
+}
+
+.adt-list .panel-body { padding:5px; }
+
+.adt-list h4 {
+
 	cursor: pointer;
 	color: #575757;
 	margin-top: 10px;
 	margin-bottom: 2px;
-	/*text-transform: uppercase;*/
 	font-size: 1em;
 }
+
 .toggler-adt.active {color:black;}
 .element-adt {
 	border-bottom:1px solid #D0D0D0;
@@ -950,4 +977,9 @@ pre.jsonRead {
   &.in-add {
     animation-name: expand;
   }
+}
+
+.table-separator {
+	border-top:1px solid gray;
+	height:1px;
 }

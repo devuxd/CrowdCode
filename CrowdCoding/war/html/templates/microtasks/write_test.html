@@ -51,7 +51,7 @@
 					>
 				</div>
 				<br> 
-				<strong>Description now: <strong>
+				<strong>Description now: </strong>
 			</div>
 
 			<div ng-show="microtask.promptType=='FUNCTION_CHANGED'">
@@ -95,8 +95,8 @@
 					AVAILABLE DATA TYPES
 				</div>
 				<div class="section-content" >
-				<adt-list></adt-list>
-			</div>
+					<adt-list></adt-list>
+				</div>
 			</div>
 			<div class="section section-form" style="width:70%;" ng-if="!dispute && !functionDispute">
 				<div class="section-title" >
@@ -105,7 +105,7 @@
 				<div class="section-content" >
 					<div id="simpleTest" ng-hide="dispute">
 						<p>Provide a JSON object literal of the specified type for each parameter and the expected
-						return value. If you need help for the available data structures, check the box on the left. </p>
+						return value. <br />If you need help for the available data structures, check the box on the left. </p>
 						<table style="width:100%" class="test spacing">
 							<!-- form for each input parameter of the function -->
 							<tr ng-form="inputForm" ng-repeat="(index,paramName) in funct.paramNames">
@@ -124,6 +124,7 @@
 									<span class="clearfix"></span>
 								</td>
 							</tr>
+							<tr class="table-separator"><td colspan="2"></td></tr>
 							<!-- form for the output of the function -->
 							<tr ng-form="outputForm" ng-if="funct.returnType!=''" >
 								<td>

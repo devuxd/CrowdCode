@@ -564,6 +564,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
     $scope.$on('$destroy',function(){
         collectOff();
+        functionCodeMirror = undefined;
     });
 }]);
 
@@ -733,9 +734,26 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
         $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
 
 
+    var codemirror = undefined;
+
+    var codemirrorChangeListener = function() {
+        // If we are editing a function that is a client request and starts with CR, make the header
+        // readonly.
+        if (!readOnlyDone && $scope.funct.name.startsWith('CR')) {
+            functionsService.makeHeaderAndParameterReadOnly(codemirror);
+            readOnlyDone = true;
+        }
+        // Mangage code change timeout
+        clearTimeout(changeTimeout);
+        changeTimeout = setTimeout(function() {
+            functionsService.highlightPseudoSegments(codemirror, marks, highlightPseudoCall);
+        }, 500);
+    };
 
     $scope.codemirrorLoaded = function(myCodeMirror) {
+        console.warn("codemirror before assign %o",codemirror);
         codemirror = myCodeMirror;
+        console.warn("codemirror after assign %o",codemirror);
         codemirror.setOption('autofocus', true);
         codemirror.setOption('indentUnit', 4);
         codemirror.setOption('indentWithTabs', true);
@@ -746,19 +764,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
         // Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
         // changes. Only process this event if there's been a 500 msec delay (wait for the user to stop
         // typing).
-        codemirror.on("change", function() {
-            // If we are editing a function that is a client request and starts with CR, make the header
-            // readonly.
-            if (!readOnlyDone && $scope.funct.name.startsWith('CR')) {
-                functionsService.makeHeaderAndParameterReadOnly(codemirror);
-                readOnlyDone = true;
-            }
-            // Mangage code change timeout
-            clearTimeout(changeTimeout);
-            changeTimeout = setTimeout(function() {
-                functionsService.highlightPseudoSegments(codemirror, marks, highlightPseudoCall);
-            }, 500);
-        });
+        codemirror.on("change", codemirrorChangeListener);
     };
     
 
@@ -802,6 +808,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
 
     $scope.$on('$destroy',function(){
         collectOff();
+        codemirror.off("change", codemirrorChangeListener);
     });
 }]);
 ////////////////////////////////////////////
@@ -938,7 +945,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
             inputs: [],
             output: ''
         };
-        
+
     }
     //  $scope.testData.inputs[0]={};
     // Configures the microtask to show information for disputing the test, hiding

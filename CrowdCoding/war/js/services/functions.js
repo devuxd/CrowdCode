@@ -646,6 +646,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			{ line: ast.loc.start.line, ch: 0},
 			{ readOnly: true });
 
+		ast = undefined;
 	}
 
 	function getCalleeNames(ast)
@@ -667,7 +668,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	{
 
 		var ast = esprima.parse(renderHeaderById(functionId)+get(functionId).code, {loc: true})
-		return getCalleeNames(ast);
+		var calleeNames = getCalleeNames(ast);
+		ast = undefined
+		return calleeNames;
 	}
 
 	// Based on esprima example at http://sevinf.github.io/blog/2012/09/29/esprima-tutorial/

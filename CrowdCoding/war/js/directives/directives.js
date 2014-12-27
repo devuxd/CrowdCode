@@ -407,29 +407,44 @@ myApp.directive('functionConvections', function(){
 
 /* ---------- KEY LISTENERS ----------- */
 myApp.directive('pressEnter', function() {
+
+
     return function(scope, element, attrs) {
-        element.bind("keydown keypress", function(event) {
+
+        var keyPressListener = function(event){
             if (event.which === 13 && !event.shiftKey && !event.ctrlKey) {
                 scope.$apply(function() {
                     scope.$eval(attrs.pressEnter);
                 });
                 event.preventDefault();
             }
+        };
+
+        element.on('keydown keypress', keyPressListener);
+
+
+        element.on('$destroy',function(){
+            console.log('destroying pressEnter listener');
+            element.off('keydown keypress',null,keyPressListener);
         });
     };
 });
 
 myApp.directive('submitHotKey', function() {
     return function(scope, element, attrs) {
-        element.bind("keydown keypress", function(event) {
-            if (event.which === 13 && event.ctrlKey) {
-
+        var keyPressListener = function(event){
+             if (event.which === 13 && event.ctrlKey) {
                 scope.$apply(function() {
                     scope.$eval(attrs.submitHotKey);
                 });
-
                 event.preventDefault();
             }
+        };
+
+        element.on('keydown keypress', keyPressListener);
+
+        element.on('$destroy',function(){
+            element.off('keydown keypress',null,keyPressListener);
         });
     };
 });
@@ -450,13 +465,17 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
         scope: {
             focusValue: "=syncFocusWith"
         },
-        link: function($scope, $element, attrs) {
-            $scope.$watch("focusValue", function(currentValue, previousValue) {
+        link: function(scope, element, attrs) {
+            var unwatch = $scope.watch("focusValue", function(currentValue, previousValue) {
                 if (currentValue === true && !previousValue) {
-                    $element[0].focus();
+                    element[0].focus();
                 } else if (currentValue === false && previousValue) {
-                    $element[0].blur();
+                    element[0].blur();
                 }
+            });
+
+            element.on('$destroy',function(){
+                unwatch();
             });
         }
     };
@@ -501,9 +520,11 @@ myApp.directive('javascriptHelper', ['$compile', '$timeout', '$http', 'ADTServic
 myApp.directive('adtList', ['$compile', '$timeout', 'ADTService', function($compile, $timeout, ADTService) {
     return {
         restrict: "EA",
+        scope: true,
         templateUrl: '/html/templates/adt_list.html',
         link: function($scope, $element, $attributes) {
             $scope.ADTs = ADTService.getAllADTs();
+            $scope.ADTs.selectedADT = -1;
         }
     }
 }]);
@@ -518,11 +539,12 @@ myApp.directive('resizer', function($document) {
         // and position the resize bar in between the elements
 
         // on mouse down attach mousemove and mouseup callbacks
-        $element.on('mousedown', function(event) {
+        var mouseDownListener = function(event) {
             event.preventDefault();
             $document.on('mousemove', mousemove);
             $document.on('mouseup', mouseup);
-        });
+        };
+        $element.on('mousedown', mouseDownListener);
 
         function mousemove(event) {
 
@@ -609,9 +631,13 @@ myApp.directive('resizer', function($document) {
 
         // when mouse up detach the callbacks
         function mouseup() {
-            $document.unbind('mousemove', mousemove);
-            $document.unbind('mouseup', mouseup);
+            $document.off('mousemove', mousemove);
+            $document.off('mouseup', mouseup);
         }
+
+        $element.on('$destroy',function(){
+            $element.off('mousedown', mouseDownListener);
+        });
     };
 });
 
