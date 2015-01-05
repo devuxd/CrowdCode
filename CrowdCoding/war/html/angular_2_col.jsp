@@ -53,13 +53,15 @@
 
 	<link rel="stylesheet" href="/include/codemirror/console.css" type="text/css" />
 
-	<link rel="stylesheet" href="/css/worker_2_col.css" type="text/css" />
-	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
 
     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
-<!--     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
- -->
+	<link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
+ 
     <link rel="stylesheet" href="/include/angular-loading-bar/src/loading-bar.css"/>
+
+    
+	<link rel="stylesheet" href="/css/worker_2_col.css" type="text/css" />
+	<link rel="stylesheet" href="/css/animations.css" type="text/css" />
 
 
 </head>
@@ -84,10 +86,10 @@
 			    <ul class="nav navbar-nav navbar-right">
 			        <li>
 			        	<a href="#"
-			        	style="margin-right:20px"
-			        	data-placement="bottom-right"
-			        	data-container="body"
-			        	bs-dropdown="dropdown" />
+				        	style="margin-right:20px"
+				        	data-placement="bottom-right"
+				        	data-container="body"
+				        	bs-dropdown="dropdown" />
 		          		<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
 						<%=workerHandle %> {{ userData.score }} points
 						<span class="caret"></span>
@@ -128,6 +130,7 @@
 			           bs-modal="modal"
 			           data-container="body"
 			           >shortcuts</button>
+			           
 			        <button href="#" class=""
 			           data-animation="am-fade-and-scale"
 			           data-placement="center"

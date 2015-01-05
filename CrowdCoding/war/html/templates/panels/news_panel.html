@@ -7,18 +7,14 @@
 			ng-mouseenter="showMicrotaskPopover(n)" 
 			>
 			<span class="left">
-				<div class="text">{{n.microtaskType}}
+				<div class="text">{{::n.microtaskType}}</div>
+				<div ng-if="::(n.score != -1)">
+					<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>
+					<span ng-if="::(n.score == 3)" class="reissued">REISSUED</span>
+					<span ng-if="::(n.score > 3)" class="accepted">ACCEPTED</span>
 				</div>
 			</span>
-			<span class="right">
-
-				<span ng-if="n.score != -1 && n.score < 3" class="rejected" >REJECTED</span>
-				<span ng-if="n.score != -1 && n.score == 3" class="reissued">REISSUED</span>
-				<span ng-if="n.score != -1 && n.score > 3" class="accepted">ACCEPTED</span>
-				<br ng-if="n.score != -1" />
-
-				{{n.points}} points
-			</span>
+			<span class="right">{{::n.points}} points</span>
 	  		<div class="clearfix"></div>
 		</li>
 	</ul>

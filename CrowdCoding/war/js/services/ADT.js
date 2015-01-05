@@ -41,9 +41,8 @@ myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($windo
 					}
 				}
 
-				console.log("ADT INITIALIZED");
-				
-				$rootScope.loaded.ADTs=true;
+				// tell the others that the adts services is loaded
+				$rootScope.$broadcast('serviceLoaded','adts');
 
 			});
 

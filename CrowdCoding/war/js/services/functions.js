@@ -51,8 +51,8 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functions = functionsSync.$asArray();
 			functions.$loaded().then(function(){
-				$rootScope.loaded.functions=true;  
-				console.log("FUNCTION INITIALIZED");
+				// tell the others that the functions services is loaded
+				$rootScope.$broadcast('serviceLoaded','functions');
 			});
 
 			/*var functionsArraySync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
@@ -173,10 +173,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 		function getIdByName(name)
 		{
-			console.log(name);
+			// console.log(name);
 			var functionId = -1;
 			angular.forEach(functions, function(value, key) {
-				console.log(value);
 				if( functionId==-1 && value.name === name ) {
 			  		functionId = value.id;
 			  	}
@@ -227,7 +226,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			// if log enabled log this call
 			if( logEnabled != undefined && logEnabled ){
 			    // mockCode += '   debug.log("logging call. return value = ");debug.log(returnValue);\n';
-				mockCode += '	logCall( "' + functionObj.name + '", args, returnValue, usedStubs , debug) ;'+'\n';
+				mockCode += '	logCall( "' + functionObj.name + '", args, returnValue, usedStubs, stubMap, debug) ;'+'\n';
 			} 
 
 			mockCode += '	return returnValue;'+'\n';
@@ -647,6 +646,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			{ line: ast.loc.start.line, ch: 0},
 			{ readOnly: true });
 
+		ast = undefined;
 	}
 
 	function getCalleeNames(ast)
@@ -668,7 +668,9 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	{
 
 		var ast = esprima.parse(renderHeaderById(functionId)+get(functionId).code, {loc: true})
-		return getCalleeNames(ast);
+		var calleeNames = getCalleeNames(ast);
+		ast = undefined
+		return calleeNames;
 	}
 
 	// Based on esprima example at http://sevinf.github.io/blog/2012/09/29/esprima-tutorial/

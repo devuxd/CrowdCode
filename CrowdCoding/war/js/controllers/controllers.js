@@ -6,7 +6,6 @@ myApp.controller('AppController', [
 	'$scope',
 	'$rootScope',
 	'$firebase',
-	'$http',
 	'$interval',
 	'$modal',
 	'logoutUrl',
@@ -16,27 +15,22 @@ myApp.controller('AppController', [
 	'ADTService',
 	'microtasksService',
 	'TestList',
-	'TestRunnerFactory',
-	function($scope, $rootScope, $firebase, $http, $interval, $modal, logoutUrl, userService, testsService, functionsService, ADTService, microtasksService, TestList,TestRunnerFactory) {
+	function($scope, $rootScope, $firebase, $interval, $modal, logoutUrl, userService, testsService, functionsService, ADTService, microtasksService, TestList) {
 
 		// current session variables
-		$rootScope.loaded       = {};
 		$rootScope.projectId    = projectId;
 		$rootScope.workerId     = workerId;
 		$rootScope.workerHandle = workerHandle;
 		$rootScope.firebaseURL  = firebaseURL;
 		$rootScope.userData     = userService.data;
 
-		// flags for knowing if service is loaded
+
 
 		// wrapper for user login and logout
-		$rootScope.workerLogin = function() {
-			userService.login();
-		};
-		$rootScope.workerLogout = function() {
-			userService.logout();
-		};
+		$rootScope.workerLogin = function()  { userService.login();  };
+		$rootScope.workerLogout = function() { userService.logout(); };
 
+		// user profile dropdown
 		$scope.dropdown = [
 		  {
 		    "text": "change profile picture",
@@ -58,41 +52,44 @@ myApp.controller('AppController', [
 			profileModal.$promise.then(profileModal.show);
 		};
 
-		$scope.promise = $interval(
-			function() {
-				$rootScope.loaded.functions = false;
-				$rootScope.loaded.tests = false;
-				$rootScope.loaded.ADTs = false;
-				userService.init();
-				userService.listenForJobs();
-				testsService.init();
-				functionsService.init();
-				ADTService.init();
-			}, 1000);
 
+		// ---- SERVICES SYNC ----
+		$scope.servicesLoadingStatus = {};
 
+		//  services loading function
+		var loadServices = function(){
+			console.log('ASKING TO LOAD SERVICES');
+			$scope.servicesLoadingStatus = {};
 
-		$scope.$on('popup_show', function() {
-			console.log('show popup');
-			$('#popUp').modal('show');
+			testsService.init();
+			functionsService.init();
+			ADTService.init();
+
+			userService.init();
+			userService.listenForJobs();
+		};
+		// set an interval that will be called
+		// every 200 msec
+		var loadingServicesInterval = $interval(loadServices(), 200);
+
+		$scope.$on('serviceLoaded',function(event,nameOfTheService){
+			$scope.servicesLoadingStatus[nameOfTheService] = true;
 		});
-		$scope.$on('popup_hide', function() {
-			$('#popUp').modal('hide');
-		});
-		$scope.popupContent = '';
-		$scope.popupTitle = 'popup title';
 
-		$scope.$watch(function() {
-			return $rootScope.loaded;
-		}, function(newVal) {
+		// watch for the loaded services and if all are loaded
+		// cancel the loading interval and stop the watch
+		var stopWatchingLoadedServices = $scope.$watch( 'servicesLoadingStatus', function(newVal,oldVal) {
+			if ( newVal.hasOwnProperty('functions') &&
+				 newVal.hasOwnProperty('adts') &&
+				 newVal.hasOwnProperty('tests') ) {
+				console.log("ALL SERVICES LOADED");
+				$interval.cancel(loadingServicesInterval);
+				loadingServicesInterval = undefined;
+				stopWatchingLoadedServices();
 
-			if ($rootScope.loaded.functions && $rootScope.loaded.tests && $rootScope.loaded.ADTs) {
-				$interval.cancel($scope.promise);
-				$rootScope.$broadcast('load');
+				$rootScope.$broadcast('loadMicrotask');
 			}
-
-		}, true);
-
+		},true);
 
 
 		$rootScope.$on('sendFeedback', function(event, message) {
@@ -139,7 +136,7 @@ myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', '
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', '$timeout', 'testsService', 'functionsService', 'userService', 'microtasksService', function($scope, $rootScope, $firebase, $http, $interval, $timeout, testsService, functionsService, userService, microtasksService) {
+myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', '$timeout', 'testsService', 'functionsService', 'userService', 'microtasksService','TestList', function($scope, $rootScope, $firebase, $http, $interval, $timeout, testsService, functionsService, userService, microtasksService, TestList) {
 
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -153,9 +150,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		'WriteTestCases': 'write_test_cases',
 		'WriteCall': 'write_call',
 	};
-	var formData = {};
-
-	var codemirrorr;
+	
 	$rootScope.inlineForm = false;
 
 	// initialize microtask and templatePath
@@ -175,24 +170,28 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	// load microtask:
 	// request a new microtask from the backend and if success
 	// inizialize template and microtask-related values
-	$scope.$on('load', function() {
+	$scope.$on('loadMicrotask', function() {
 
 		// if is != null, stop the queue checking interval
 		if (checkQueueTimeout !== null) {
-
 			$timeout.cancel(checkQueueTimeout);
 		}
 
 		// set the loading template
-		$scope.microtask      = undefined;
 		$scope.templatePath   = templatesURL + "loading.html";
-		$rootScope.inlineForm = false; // reset form as non-inline
 
-		$http.get('/' + projectId + '/ajax/fetch').
-			success(function(data, status, headers, config) {
+		$scope.microtask      = undefined;
+
+		$http.get('/' + projectId + '/ajax/fetch')
+			.success(function(data, status, headers, config) {
 
 				$scope.microtask = microtasksService.get(data.key);
 				$scope.microtask.$loaded().then(function() {
+
+					// debug stuff
+					// console.warn('data: %o', data);
+					//console.warn('microtask: %o', $scope.microtask);
+
 					// assign title
 					$scope.datas = data;
 
@@ -201,20 +200,15 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 						$scope.funct = functionsService.get($scope.microtask.functionID);
 					}
 					// retrieve the related test
-					var testId = angular.isDefined($scope.microtask.testID) ? $scope.microtask.testID : 0;
-					if (angular.isDefined(testId)) {
-						$scope.test = testsService.get(testId);
+					var testId = angular.isDefined($scope.microtask.testID) && $scope.microtask.testID!=0 ? $scope.microtask.testID : null;
+					if ( testId != null ) {
+						var TestObj = TestList.get(testId);
+						//console.log('Loaded test %o of id %d',TestObj,testId);	
+						$scope.test = TestObj.rec;
 					}
 
-					// debug stuff
-					// console.log("data:", data);
-					// console.log("microtask:", $scope.microtask);
-					console.log("function:", $scope.funct);
-					// console.log("test:", $scope.test);
-
-					// retrieve the related issued microtask if present
-	   				//console.log("IS REISSUED FROM", $scope.microtask.id, $scope.microtask.reissuedFrom);
-
+					// if is a reissued microtask
+					// retrieve the initial microtask
 					if ( angular.isDefined( $scope.microtask.reissuedFrom ) ) {
 
 						$scope.reissuedMicrotask = microtasksService.get($scope.microtask.reissuedFrom);
@@ -226,7 +220,9 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 								$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 						});
 
-					} else {
+					} 
+					// otherwise
+					else {
 						
 						//choose the right template
 						if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
@@ -235,8 +231,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 							$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 					}
 				});
-			}).
-			error(function(data, status, headers, config) {
+			})
+			.error(function(data, status, headers, config) {
 
 				$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 
@@ -257,25 +253,24 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask', function(event, formData) {
-		console.log($scope.microtask);
-		console.log(formData);
+
 		if ($scope.microtask === undefined)
 			return;
 
-		$http.post('/' + $rootScope.projectId + '/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id, formData).
-		success(function(data, status, headers, config) {
+		$http.post('/' + $rootScope.projectId + '/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id, formData)
+			.success(function(data, status, headers, config) {
 
 				//Push the microtask submit data onto the Firebase history stream
 				$scope.microtask.submission = formData;
 				$scope.microtask.$save();
-				console.log("submit success");
 				$scope.microtask = undefined;
-				$scope.$emit('load');
+				$scope.$emit('loadMicrotask');
+				console.log("submit success");
 			})
 			.error(function(data, status, headers, config) {
-				console.log("submit error");
 				console.log(data);
 				$scope.microtask = undefined;
+				console.log("submit error");
 			});
 	});
 
@@ -286,10 +281,10 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 			return;
 
 		console.log("skip fired");
-		$http.get('/' + $rootScope.projectId + '/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id + '&skip=true').
-		success(function(data, status, headers, config) {
+		$http.get('/' + $rootScope.projectId + '/ajax/submit?type=' + $scope.microtask.type + '&key=' + $scope.microtask.$id + '&skip=true')
+			.success(function(data, status, headers, config) {
 				$scope.microtask = undefined;
-				$scope.$emit('load');
+				$scope.$emit('loadMicrotask');
 			})
 			.error(function(data, status, headers, config) {
 				console.log("skip error");
@@ -299,26 +294,9 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	});
 
 	$scope.startTutorial = function(tutorialName) {
-		console.log("START TUTORIAL CALLED");
 		$scope.$broadcast('tutorial-' + tutorialName);
 	};
 
-}]);
-
-
-//////////////////////
-// SCORE CONTROLLER //
-//////////////////////
-myApp.controller('ScoreController', ['$scope', '$rootScope', '$firebase', function($scope, $rootScope, $firebase) {
-	// create the reference and the sync
-	var ref = new Firebase($rootScope.firebaseURL + '/workers/' + $rootScope.workerId + '/score');
-	var sync = $firebase(ref);
-	// create the object and bind the firebase ref to the scope.score var
-	$scope.score = sync.$asObject();
-	$scope.score.$loaded().then(function() {
-		if ($scope.score.$value === null)
-			$scope.score.$value = 0;
-	});
 }]);
 
 
@@ -361,86 +339,11 @@ myApp.controller('OnlineWorkersController', ['$scope', '$rootScope', '$firebase'
 	$scope.onlineWorkers.$loaded().then(function() {});
 }]);
 
-//////////////////////
-// STATS CONTROLLER //
-//////////////////////
-myApp.controller('StatsController', ['$scope', '$rootScope', '$firebase', '$filter', 'functionsService', 'testsService', function($scope, $rootScope, $firebase, $filter, functionsService, testsService) {
 
-	var ref = new Firebase($rootScope.firebaseURL + '/workers/' + $rootScope.workerId + '/stats');
-	var sync = $firebase(ref);
-	$scope.stats = sync.$asObject();
-	$scope.total = 0;
-
-	$scope.stats.$watch(function(event) {
-		/*
-		if($scope.stats.$value == null){
-			$scope.stats.$value = {
-				functions:0,
-				tests:0,
-				testcases:0,
-				reviews:0,
-				function_descriptions:0,
-				function_calls:0,
-				debugs:0,
-				searches:0
-			};
-			$scope.total = 0;
-			$scope.stats.$save();
-
-		} else {
-			updateTotal();
-		}
-
-		*/
-
-	});
-
-	function updateTotal() {
-		$scope.total = 0;
-		angular.forEach($scope.stats, function(value, key) {
-			$scope.total += value;
-		});
-	}
-}]);
 
 ///////////////////////////////////
 //TYPE BROWSER    CONTROLLER     //
 ///////////////////////////////////
 myApp.controller('typeBrowserController', ['$scope', '$rootScope', '$firebase', '$filter', 'ADTService', function($scope, $rootScope, $firebase, $filter, ADTService) {
-
 	$scope.ADTs = ADTService.getAllADTs();
-}]);
-
-
-
-myApp.config(function($dropdownProvider) {
-	angular.extend($dropdownProvider.defaults, {
-		html: true
-	});
-
-});
-
-myApp.controller('dropdownController', ['$scope', function($scope) {
-	$scope.dropdown = [{
-		"text": '<i >change profile picture</i>',
-		"href": "#",
-		"data-animation": "am-fade-and-scale",
-		"data-placement": "center",
-		"data-template": "/html/templates/popups/popup_feedback.html",
-		"bs-modal": "modal"
-	}, {
-		"text": "<i class=\"fa fa-globe\"></i>&nbsp;Display an alert",
-		"click": "$alert(\"Holy guacamole!\")"
-	}, {
-		"text": "<i class=\"fa fa-external-link\"></i>&nbsp;External link",
-		"href": "/auth/facebook",
-		"target": "_self"
-	}, {
-		"divider": true
-	}, {
-		"text": "Separated link",
-		"href": "#separatedLink"
-	}];
-
-
 }]);

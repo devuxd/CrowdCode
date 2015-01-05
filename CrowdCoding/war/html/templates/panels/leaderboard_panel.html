@@ -5,8 +5,8 @@
 	  	  class="{{ (onlineWorkers.$indexFor(leaders.$keyAt(leader))>-1) && 'loggedIn' || '' }}">
 	  	
 		<span class="left">
-			<div class="avatar"><img src="/user/picture?userId={{leaders.$keyAt(leader) }}" alt="{{ leader.name }}" /></div>
-	  		<div class="name">{{ leader.name }}</div>
+			<div class="avatar"><img src="/user/picture?userId={{ ::leaders.$keyAt(leader) }}" alt="{{ ::leader.name }}" /></div>
+	  		<div class="name">{{::(leader.name) }}</div>
 	  		<div class="clearfix"></div>
 		</span>
 	  	<span class="right">{{ leader.score }} points</span>
