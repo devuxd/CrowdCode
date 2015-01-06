@@ -74,29 +74,23 @@ myApp.directive('aceReadJson', function() {
 
     return {
         restrict: 'EA',
-        //template:<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="stringValue"></div>',
+        template: '<pre class="json" ng-bind-html="prettyJson"></pre>\n<span ng-if="::copyAllowed" class="clip-copy" clip-copy="json">\n',
         require: "ngModel",
         scope: true,
         link: function ( scope, iElement, iAttrs, ngModel ) {
             if( !ngModel ) return;
-            scope.json = "";
-        
-            // convert the json object into a string
-            // ngModel.$formatters.push(function( modelValue ) {
-            //     return  modelValue );
-            // });
-            
+
+            scope.copyAllowed = iAttrs.hasOwnProperty('copyAllowed') ? true : false;
+            scope.json = scope.prettyJson = "";
             
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-                var prettyJson = "";
+
+                scope.json = angular.toJson(angular.fromJson (ngModel.$viewValue),true) ;
                 if( ngModel.$viewValue == "") 
-                    prettyJson = "";
+                    scope.prettyJson = "";
                 else
-                    prettyJson = syntaxHighlight( angular.toJson(angular.fromJson (ngModel.$viewValue),true) );
-                scope.json = prettyJson;
-                var el = $('<pre class="jsonRead"></pre>').html(prettyJson);
-                iElement.html(el);
+                    scope.prettyJson = syntaxHighlight( scope.json );
             };
         },
         controller: function($scope,$element){

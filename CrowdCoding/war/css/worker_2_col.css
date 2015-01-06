@@ -927,17 +927,38 @@ tutorial-container .btn-next { position: absolute; right: 0; }
 { background-color:  rgba(237,90,48,0.4) ; }
 
 
-pre.jsonRead {
-	padding: 5px; margin: 5px; 
+.clip-copy {
+	background:url('/img/copy.png') no-repeat;
+	min-width:16px;
+	min-height:16px;
+	display:inline-block;
+}
+
+
+.adt-detail {
+	position:relative;
+}
+
+.adt-detail > .clip-copy {
+	position:absolute;
+	top:3px;
+	right:3px;
+	z-index:10;
+}
+
+
+pre.json {
+	padding: 5px; 
+	margin: 0px; 
 	border: none;
 	border-radius: 0px;
 	font-size:1em;
 }
-.jsonRead .jsonString { color: #DF0002; }
-.jsonRead .jsonNumber { color: blue; }
-.jsonRead .jsonBoolean { color: purple; }
-.jsonRead .jsonNull { color: black; }
-.jsonRead .jsonKey { color: black; }
+pre.json .jsonString { color: #DF0002; }
+pre.json .jsonNumber { color: blue; }
+pre.json .jsonBoolean { color: purple; }
+pre.json .jsonNull { color: black; }
+pre.json .jsonKey { color: black; }
 
 .panel-group .panel+.panel {
 	margin:0px;
@@ -983,3 +1004,6 @@ pre.jsonRead {
 	border-top:1px solid gray;
 	height:1px;
 }
+
+
+

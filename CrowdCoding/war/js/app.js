@@ -1,16 +1,33 @@
 // create the AngularJS app, load modules and start
 
-var myApp = angular.module('crowdCodeWorker',["ngAnimate","firebase","ui.codemirror", "ngSanitize","ui.ace","mgcrea.ngStrap",'angular-loading-bar']);
+// create CrowdCodeWorker App and load modules
+var myApp = angular.module('crowdCodeWorker',[ 
+	'ngAnimate', 
+	'firebase', 
+	'ui.codemirror', 
+	'ngSanitize', 
+	'ui.ace', 
+	'mgcrea.ngStrap', 
+	'angular-loading-bar', 
+	'ngClipboard'
+]);
 
-//,"ui.bootstrap" removed
-myApp.constant('firebaseUrl',firebaseURL);
-myApp.constant('logoutUrl',logoutURL);
+// configure app modules
+myApp.config(function($dropdownProvider, ngClipProvider) {
 
-myApp.run();
-
-
-myApp.config(function($dropdownProvider) {
+  ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
+  
   angular.extend($dropdownProvider.defaults, {
     html: true
   });
+
 });
+
+// define app constants
+myApp.constant('firebaseUrl',firebaseURL);
+myApp.constant('logoutUrl',logoutURL);
+
+// run the app
+myApp.run();
+
+

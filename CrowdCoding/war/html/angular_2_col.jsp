@@ -220,6 +220,9 @@
 	<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
 
 
+	<script src="/include/zeroclipboard-2.2.0/dist/ZeroClipboard.min.js"></script>
+	<script src="/include/ng-clip/dest/ng-clip.min.js"></script>
+
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
