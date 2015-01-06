@@ -6,6 +6,7 @@ import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.NewsItemInFirebase;
 import com.crowdcoding.dto.firebase.ReuseSearchInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
@@ -38,14 +39,14 @@ public class ReuseSearch extends Microtask
 		this.callDescription = callDescription;
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new ReuseSearchInFirebase(
-				id,this.microtaskTitle(), 
-				this.microtaskName(), 
+				id,this.microtaskTitle(),
+				this.microtaskName(),
 				function.getName(),
 				function.getID(),
-				false, 
-				submitValue, 
-				callDescription, 
-				function.getID()), 
+				false,
+				submitValue,
+				callDescription,
+				function.getID()),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
@@ -62,11 +63,22 @@ public class ReuseSearch extends Microtask
 	{
 		return Key.create( function.getKey(), Microtask.class, this.id );
 	}
-    
+
 	protected void doSubmitWork(DTO dto, String workerID, Project project)
 	{
 		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
+
+		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
+    	FirebaseService.postToNewsfeed(workerID, (
+    		new NewsItemInFirebase(
+    			this.submitValue,
+    			this.microtaskName(),
+    			"SubmittedReuseSearch",
+    			Project.MicrotaskKeyToString(  this.getKey() ),
+    			-1 // differentiate the reviews from the 0 score tasks
+    	).json()), project);
+
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "searches",1);
 	}

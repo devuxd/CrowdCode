@@ -9,6 +9,7 @@ import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.firebase.DebugTestFailureInFirebase;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.NewsItemInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
@@ -94,6 +95,14 @@ public class DebugTestFailure extends Microtask
 	protected void doSubmitWork( DTO dto, String workerID, Project project)
 	{
 		function.get().debugTestFailureCompleted((FunctionDTO) dto, project);
+		FirebaseService.postToNewsfeed(workerID, (
+	    		new NewsItemInFirebase(
+	    			this.submitValue,
+	    			this.microtaskName(),
+	    			"SubmittedDebugTestFailure",
+	    			Project.MicrotaskKeyToString(  this.getKey() ),
+	    			-1 // differentiate the reviews from the 0 score tasks
+	    	).json()), project);
 
 		FunctionDTO fDTO = (FunctionDTO) dto;
 		if( fDTO.autoSubmit != null && fDTO.autoSubmit != true ){
@@ -108,7 +117,7 @@ public class DebugTestFailure extends Microtask
 	{
 		return FunctionDTO.class;
 	}
-	
+
 	public Artifact getOwningArtifact()
 	{
 		Artifact owning;

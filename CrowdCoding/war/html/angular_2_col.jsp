@@ -66,7 +66,7 @@
 
 </head>
 
-<body ng-controller="AppController"  ng-cloak >
+<body disable-backspace ng-controller="AppController"  ng-cloak >
 
 	<header>
 
