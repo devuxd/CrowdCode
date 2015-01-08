@@ -4,15 +4,6 @@
 		<welcome-file>crowdcoding</welcome-file>
 	</welcome-file-list>
 	
-	<!-- SERVLETS MAPPING -->
-	<servlet-mapping>
-		<servlet-name>SystemServiceServlet</servlet-name>
-		<url-pattern>/_ah/spi/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>CrowdCoding</servlet-name>
-		<url-pattern>/servlet/*</url-pattern>
-	</servlet-mapping>
 	<!-- SERVLETS -->
 	<servlet>
 		<servlet-name>SystemServiceServlet</servlet-name>
@@ -23,13 +14,22 @@
 			<param-value/>
 		</init-param>
 	</servlet>
+	<servlet-mapping>
+		<servlet-name>SystemServiceServlet</servlet-name>
+		<url-pattern>/_ah/spi/*</url-pattern>
+	</servlet-mapping>
+	
+	
 	<servlet>
 		<servlet-name>CrowdCoding</servlet-name>
-		<servlet-class>com.crowdcoding.servlets.CrowdServlet
-	</servlet-class>
-	
-	
+		<servlet-class>com.crowdcoding.servlets.CrowdServlet</servlet-class>
 	</servlet> 
+	<servlet-mapping>
+		<servlet-name>CrowdCoding</servlet-name>
+		<url-pattern>/servlet/*</url-pattern>
+	</servlet-mapping>
+	
+	
 	
 	<!-- FILTERS -->
 

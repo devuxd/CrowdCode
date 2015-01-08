@@ -13,13 +13,11 @@ var myApp = angular.module('crowdCodeWorker',[
 ]);
 
 // configure app modules
-myApp.config(function($dropdownProvider, ngClipProvider) {
+myApp.config(function($dropdownProvider, ngClipProvider ) {
 
-  ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
-  
-  angular.extend($dropdownProvider.defaults, {
-    html: true
-  });
+	ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
+
+	angular.extend($dropdownProvider.defaults, { html: true });
 
 });
 

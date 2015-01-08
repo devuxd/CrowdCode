@@ -1,18 +1,19 @@
 <div ng-controller="ReviewController" >
 
-	<div class="section section-description " >
-		<div class="section-content no-padding" >
-			<ul class="microtask-details clearfix">
-				<li>{{datas.title}}</li>
-				<li>
-					<span>{{datas.submitValue}} points</span>
-				</li>
-				<li>
-					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
-				</li>
-			</ul>
-		</div>
-	</div>
+	
+    <div class="section section-description " >
+        <div class="section-content no-padding" >
+            <ul class="microtask-details clearfix">
+                <li class="bg-color">{{::datas.title}}</li>
+                <li >
+                    <span>{{::datas.submitValue}} points</span>
+                </li>
+                <li class="color">
+                    <div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
+                </li>
+            </ul>
+        </div>
+    </div>
 
 	<!--///////////////////////////////////////////-->
 	<!--//        WRITE TEST CASES MICROTASK     //-->
@@ -22,7 +23,7 @@
 	<div ng-if="review.microtask.type == 'WriteTestCases'"> 
 		<div class="section section-description">
 			<div class="section-title" >
-				Job description
+				<div class="dot bg-color"></div>Job description
 			</div>
 			<div class="section-content" ng-if="review.microtask.submission.isFunctionDispute" >
 				The worker was asked to write all possible testcases but he disputed the function. <br /> Can you rate this work?
@@ -58,14 +59,14 @@
 		</div>
 		<div class="section section-description">
 			<div class="section-title" >
-			function description
+				<div class="dot bg-color"></div>function description
 			</div>
 			<div class="section-content no-padding" >
 				<ace-read-js code="review.functionCode"></ace-read-js>
 			</div>
 		</div>
 		<div class="section section-description-2" ng-if="review.microtask.submission.isFunctionDispute">
-			<div class="section-title" >dispute reaseon</div>
+			<div class="section-title" ><div class="dot bg-color"></div>dispute reaseon</div>
 			<div class="section-content" >
 				<div class="form-grou has-error">
 					<textarea type="text"
@@ -79,7 +80,7 @@
 		</div>
 		
 		<div class="section section-description-2" ng-if="!review.microtask.submission.isFunctionDispute">
-			<div class="section-title" >submitted test cases</div>
+			<div class="section-title" ><div class="dot bg-color"></div>submitted test cases</div>
 			<div class="section-content" >
 				<ul style="list-style:none">
 					<li class="" ng-repeat="testcase in review.testcases"><strong>#{{$index+1}}</strong> {{testcase.text}}</li>
@@ -94,7 +95,7 @@
 	<div ng-if="review.microtask.type == 'WriteTest'">
 		<div class="section section-description">
 			<div class="section-title" >
-				Job description
+				<div class="dot bg-color"></div>Job description
 			</div>
 			<div ng-if="! review.microtask.submission.inDispute && ! review.microtask.submission.isFunctionDispute" class="section-content" >
 				The worker was asked to write a test for the following case:
@@ -135,10 +136,10 @@
 		</div>
 		<div class="section section-description">
 			<div class="section-title" ng-if="!review.microtask.submission.isFunctionDispute">
-			function description
+				<div class="dot bg-color"></div>function description
 			</div>
 			<div class="section-title" ng-if="review.microtask.submission.isFunctionDispute">
-			function signature disputed
+				<div class="dot bg-color"></div>function signature disputed
 			</div>
 			<div class="section-content no-padding" >
 				<ace-read-js code="review.functionCode"></ace-read-js>
@@ -146,7 +147,7 @@
 		</div>
 
 		<div ng-if="! review.microtask.submission.inDispute && !review.microtask.submission.isFunctionDispute" class="section section-description-2">
-			<div  class="section-title" >submitted TEST</div>
+			<div  class="section-title" ><div class="dot bg-color"></div>submitted TEST</div>
 			<div class="section-content" >
 				<table style="width:100%" class="test">
 					
@@ -167,7 +168,7 @@
 		</div>
 
 		<div ng-if="review.microtask.submission.inDispute || review.microtask.submission.isFunctionDispute" class="section section-description-2">
-			<div class="section-title" >dispute reason</div>
+			<div class="section-title" ><div class="dot bg-color"></div>dispute reason</div>
 			<div class="section-content" >
 				<div class="form-group has-error">
 					<textarea type="text"
@@ -191,7 +192,7 @@
 	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'RE_EDIT'">
 		<div class="section section-description">
 			<div class="section-title" >
-				Job description
+				<div class="dot bg-color"></div>Job description
 			</div>
 			<div class="section-content" >
 				The worker was asked to edit the following function to solve this issue:
@@ -212,7 +213,7 @@
 
 		<div class="section section-description-2">
 			<div class="section-title" >
-				submitted function code
+				<div class="dot bg-color"></div>submitted function code
 			</div>
 			<div class="section-content no-padding" >
 				<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
@@ -223,7 +224,7 @@
 	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'SKETCH'">
 		<div class="section section-description">
 			<div class="section-title" >
-				Job description
+				<div class="dot bg-color"></div>Job description
 			</div>
 			<div class="section-content" >
 				The worker was asked to implement/edit the following function. <br /> Can you rate this work?
@@ -232,7 +233,7 @@
 
 		<div class="section section-description-2">
 			<div class="section-title" >
-				submitted function code
+				<div class="dot bg-color"></div>submitted function code
 			</div>
 			<div class="section-content no-padding" >
 				<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
@@ -243,7 +244,7 @@
 	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'DESCRIPTION_CHANGE'">
 		<div class="section section-description">
 			<div class="section-title" >
-				submitted work description
+				<div class="dot bg-color"></div>submitted work description
 			</div>
 			<div class="section-content" >
 				After the change of the following callee function the user was asked if necessary to change the code of the caller function <br />
@@ -256,7 +257,7 @@
 
 		<div class="section section-description-2">
 			<div class="section-title" >
-				submitted function code
+				<div class="dot bg-color"></div>submitted function code
 			</div>
 			<div class="section-content" >
 				<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
@@ -271,7 +272,7 @@
 
 		<div class="section section-description">
 			<div class="section-title" >
-				Job description
+				<div class="dot bg-color"></div>Job description
 			</div>
 			<div class="section-content" >
 				The worker was asked to write the above signature of the function, in order to solve the following pseudoCall :
@@ -282,7 +283,7 @@
 
 		<div class="section section-description-2">
 			<div class="section-title" >
-				submitted function code
+				<div class="dot bg-color"></div>submitted function code
 			</div>
 			<div class="section-content" >
 				<ace-read-js code="review.functionCode"></ace-read-js>
@@ -296,7 +297,7 @@
 	<div ng-if="review.microtask.type == 'WriteCall'">
 		<div class="section section-description">
 			<div class="section-title" >
-				Job description
+				<div class="dot bg-color"></div>Job description
 			</div>
 			<div class="section-content" >
 				The worker replaced the pseudocall:
@@ -307,7 +308,7 @@
 		
 		<div class="section section-description-2">
 			<div class="section-title" >
-				Description of Pseudocall function
+				<div class="dot bg-color"></div>Description of Pseudocall function
 			</div>
 			<div class="section-content" >
 				<ace-read-js code="review.microtask.calleeFullDescription"></ace-read-js>
@@ -315,7 +316,7 @@
 		</div>
 		<div class="section section-description-2">
 			<div class="section-title" >
-				submitted function code
+				<div class="dot bg-color"></div>submitted function code
 			</div>
 			<div class="section-content" >
 				<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
@@ -327,9 +328,9 @@
 
 	<div class="section-cols" >
 		<div class="container-flex-row">
-			<div class="section section-help" style="width:30%">
+			<div class="section section-help bg-color-alpha" style="width:30%">
 				<div class="section-title" >
-					RATING SYSTEM
+					<div class="dot"></div>RATING SYSTEM
 				</div>
 				<div class="section-content" >
 					<ul style="list-style:none;margin:0px;padding:0px;">
@@ -345,9 +346,6 @@
 
 			<div class="section section-form" style="width:70%;" >
 
-				<div class="section-title" >
-					YOUR RATING
-				</div>
 				<div class="section-content" >
 					<div id="ratingsDiv" >
 						<span class="pull-left"></span>

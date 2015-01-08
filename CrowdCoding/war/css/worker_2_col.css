@@ -590,10 +590,41 @@ top: 0;
 
 
 table.test { width: 100%;}
-table.test td { vertical-align: top; }
+
+table.test tr.separator td{
+	text-align: center;
+	background-color: #555;
+	color: white;
+	padding: 2px;
+}
+table.test { }
+table.test td { vertical-align: top; padding-top:2px; padding-bottom:2px;}
 table.test td:first-child { width:20%; text-align: right; padding-right:5px; }
 
-table.test.spacing td { padding-bottom:5px;}
+.section-form .heading,
+.panel-test-result .heading {
+	text-align: left;
+	background-color: rgba(85,85,85,0.5);
+	color: white;
+	padding: 2px;
+}
+
+.section-form .heading-1,
+.panel-test-result .heading-1{
+	text-align: center;
+	background-color: rgba(85,85,85,0.25);
+	color: #555;
+	padding: 2px;
+}
+
+.panel-test-result table td {
+	padding-top:2px;
+}
+.panel-test-result table td:first-child{
+	text-align: right;
+	padding-right:5px;
+	width:20%;
+}
 
 
 
@@ -653,9 +684,8 @@ span.rating-star.full {
 
 
 /* Search results styles in reuseSearch */
-.list-element.result:hover {background:#dff0d8; cursor:pointer;}
-.list-element.result { padding:5px; border-bottom: 1px solid rgba(128, 128, 128, 0.32);}
-.list-element.result.selected { background:rgb(229, 199, 179); color:black;}
+.list-element { background-color: rgba(85,85,85,0.15); border-bottom:1px solid rgba(85,85,85,0.5); cursor:pointer;}
+.list-element.selected { background-color:rgba(85,85,85,0.30); }
 
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
 ins {  background-color: #c6ffc6;  text-decoration: none; }
@@ -806,32 +836,38 @@ tutorial-container .btn-next { position: absolute; right: 0; }
 	font-family: 'Lato' !important;
 	font-style: normal;
 	font-weight: 600;
-	color: #3F81AC;
+	color: #555;
+}
+.section-title .dot {
+	width: 0.5em;
+    height: 0.5em;
+    margin: 0.13em;
+    display: inline-block;
+    background-color: #555;
 }
 .section-content { padding:5px; }
-
-
-.section.section-help { background-color:#BFC7CD; }
-.section.section-help .section-title { color:#5F5F5F; }
+.section-link { position:absolute; top:2px; right:2px; }
 
 .help-block { margin:0px; padding:0px; list-style: none; color: rgb(159, 17, 17);}
 
 
 .section.section-form {  } 
 
-.section.section-form .section-title .input-group { background-color: rgba(63, 129, 172, 0.8); padding:5px;}
+.section.section-form .section-title .input-group { background-color: rgba(85,85,85,0.5); padding:5px; }
 .section.section-form .section-title .input-group input  { background-color:white; border-radius:0px; border: none; }
 .section.section-form .section-title .input-group input::-webkit-input-placeholder {  color: gray; font-style:italic;}
-.section.section-form .section-title .input-group button { border:none; font-weight: bold; border-radius:0px; background-color:transparent; }
+.section.section-form .section-title .input-group button { border:none; font-weight: bold; color:white; border-radius:0px; background-color:transparent; }
 .section.section-form .section-title .input-group button:hover,
 .section.section-form .section-title .input-group button:focus
- { background-color:rgba(130, 169, 195, 1); }
+ { background-color:#555; opacity:0.7; }
 
 
-.section.section-form .section-content .input-group             { cursor:pointer;}
-.section.section-form .section-content .input-group input       { background-color: transparent !important; border:none; outline:none; box-shadow:none;}
-.section.section-form .section-content .input-group input:focus { background-color: white !important; }
-.section.section-form .section-content .input-group .btn        { background-color:transparent; }
+.section.section-form .section-content .input-group             { background-color: rgba(85,85,85,0.15); cursor:pointer; border-bottom:1px solid rgba(85,85,85,0.5);}
+.section.section-form .section-content .input-group input       { border-radius:0px; background-color: transparent !important; color:#555; border:none; outline:none; box-shadow:none; border-radius:0px;}
+.section.section-form .section-content .input-group input:focus { background-color: rgba(255,255,255,0.7) !important; color:black; width:100%;}
+.section.section-form .section-content .input-group .btn        { background-color:transparent; color:#555; border-radius:0px;}
+.section.section-form .section-content .input-group input:focus+ span > .btn { background-color: rgba(255,255,255,0.7) ; }
+
 
 
 /* MICROTASK */
@@ -845,8 +881,8 @@ tutorial-container .btn-next { position: absolute; right: 0; }
 	text-transform: uppercase;
 }
 .microtask-details li              { float:left; padding-left:20px; padding-right:20px; }
-.microtask-details li:nth-child(1) { color:white; }
-.microtask-details li:nth-child(3) { float:right; padding:0px; cursor:pointer; }
+.microtask-details li:nth-child(1) { color:white;}
+.microtask-details li:nth-child(3) { float:right; font-size:0.8em; padding:2px; cursor:pointer; }
 
 /* NO MORE MICROTASKS */
 .no-microtask {
@@ -863,106 +899,52 @@ tutorial-container .btn-next { position: absolute; right: 0; }
 
 
 /* rgba(17,112,190,1) Wode - blue - writefunction */
-.task-writefunction .microtask-details,
-.task-writefunction .section-title
-{ color:  rgba(17,112,190,1); }
-
-.task-writefunction .microtask-details li:nth-child(1),
-.task-writefunction .section.section-form .section-title .input-group 
-{ background-color:  rgba(17,112,190,1); }
-
-.task-writefunction .section.section-help 
-{ background-color:  rgba(17,112,190,0.4); }
+.task-writefunction .color          { color:  rgba(17,112,190,1); }
+.task-writefunction .color-alpha    { color:  rgba(17,112,190,0.4); }
+.task-writefunction .bg-color       { background-color:  rgba(17,112,190,1); }
+.task-writefunction .bg-color-alpha { background-color:  rgba(17,112,190,0.4); }
 
 /* rgba(254, 195, 36,1) yellow - yellow - writetestcases */
-.task-writetestcases .microtask-details,
-.task-writetestcases .section-title
-{ color:  rgba(254, 195, 36,1); }
-
-.task-writetestcases .microtask-details li:nth-child(1),
-.task-writetestcases .section.section-form .section-title .input-group 
-{ background-color:  rgba(254, 195, 36,1); }
-
-.task-writetestcases .section.section-help 
-{ background-color:  rgba(254, 195, 36,0.4); }
-
-.section.section-form .section-title .input-group button:hover,
-.section.section-form .section-title .input-group button:focus
- { background-color:rgba(254, 230, 166, 1); }
-
+.task-writetestcases .color          { color:  rgba(254, 195, 36,1); }
+.task-writetestcases .color-alpha    { color:  rgba(254, 195, 36, 0.4); }
+.task-writetestcases .bg-color       { background-color:  rgba(254, 195, 36,1); }
+.task-writetestcases .bg-color-alpha { background-color:  rgba(254, 195, 36,0.4); }
 
 /* rgba(23,163,125,1) Celadon - green - writetest */
-.task-writetest .microtask-details,
-.task-writetest .section-title
-{ color:   rgba(23,163,125,1) ; }
-
-.task-writetest .microtask-details li:nth-child(1),
-.task-writetest .section.section-form .section-title .input-group 
-{ background-color:   rgba(23,163,125,1) ; }
-
-.task-writetest .section.section-help 
-{ background-color:   rgba(23,163,125,0.4) ; }
+.task-writetest .color          { color:  rgba(23,163,125,1); }
+.task-writetest .color-alpha    { color:  rgba(23,163,125,0.4); }
+.task-writetest .bg-color       { background-color:  rgba(23,163,125,1); }
+.task-writetest .bg-color-alpha { background-color:  rgba(23,163,125,0.4); }
 
 /* rgba(186,105,66,1) Heliotrope - brown - writefunctiondescription */
-
-.task-writefunctiondescription .microtask-details,
-.task-writefunctiondescription .section-title
-{ color:  rgba(186,105,66,1); }
-
-.task-writefunctiondescription .microtask-details li:nth-child(1),
-.task-writefunctiondescription .section.section-form .section-title .input-group 
-{ background-color:  rgba(186,105,66,1); }
-
-.task-writefunctiondescription .section.section-help 
-{ background-color:  rgba(186,105,66,0.4); }
+.task-writefunctiondescription .color          { color:  rgba(186,105,66,1); }
+.task-writefunctiondescription .color-alpha    { color:  rgba(186,105,66,0.4); }
+.task-writefunctiondescription .bg-color       { background-color:  rgba(186,105,66,1); }
+.task-writefunctiondescription .bg-color-alpha { background-color:  rgba(186,105,66,0.4); }
 
 /* rgba(195,35,58,1)  Kermes - magenta - reusesearch */
-.task-reusesearch .microtask-details,
-.task-reusesearch .section-title
-{ color:  rgba(195,35,58,1); }
-
-.task-reusesearch .microtask-details li:nth-child(1),
-.task-reusesearch .section.section-form .section-title .input-group 
-{ background-color:  rgba(195,35,58,1); }
-
-.task-reusesearch .section.section-help 
-{ background-color:  rgba(195,35,58,0.4); }
+.task-reusesearch .color          { color:  rgba(195,35,58,1); }
+.task-reusesearch .color-alpha    { color:  rgba(195,35,58,0.4); }
+.task-reusesearch .bg-color       { background-color:  rgba(195,35,58,1); }
+.task-reusesearch .bg-color-alpha { background-color:  rgba(195,35,58,0.4); }
 
 /* rgba(131,90,161,1) Atmosphere - purple - writecall */
-.task-writecall .microtask-details,
-.task-writecall .section-title
-{ color:  rgba(131,90,161,1); }
+.task-writecall .color          { color:  rgba(131,90,161,1); }
+.task-writecall .color-alpha    { color:  rgba(131,90,161,0.4); }
+.task-writecall .bg-color       { background-color:  rgba(131,90,161,1); }
+.task-writecall .bg-color-alpha { background-color:  rgba(131,90,161,0.4); }
 
-.task-writecall .microtask-details li:nth-child(1),
-.task-writecall .section.section-form .section-title .input-group 
-{ background-color:  rgba(131,90,161,1); }
-
-.task-writecall .section.section-help 
-{ background-color:  rgba(131,90,161,0.4); }
-
-/* rgb(186,156,59,1)  Chimayo - brown - debugtestfailure */
-.task-debugtestfailure .microtask-details,
-.task-debugtestfailure .section-title
-{ color:  rgba(60, 146, 203, 1)  ; }
-
-.task-debugtestfailure .microtask-details li:nth-child(1),
-.task-debugtestfailure .section.section-form .section-title .input-group 
-{ background-color:  rgba(60, 146, 203, 1)  ; }
-
-.task-debugtestfailure .section.section-help 
-{ background-color:  rgba(60, 146, 203, 0.4);   }
+/* rgb(60, 146, 203,)  Chimayo - green - debugtestfailure */
+.task-debugtestfailure .color          { color:  rgba(60, 146, 203,1); }
+.task-debugtestfailure .color-alpha    { color:  rgba(60, 146, 203,0.4); }
+.task-debugtestfailure .bg-color       { background-color:  rgba(60, 146, 203,1); }
+.task-debugtestfailure .bg-color-alpha { background-color:  rgba(60, 146, 203,0.4); }
 
 /* rgba(237,90,48,1)  Valencia - orange - review */
-.task-review .microtask-details,
-.task-review .section-title
-{ color:  rgba(237,90,48,1) ; }
-
-.task-review .microtask-details li:nth-child(1),
-.task-review .section.section-form .section-title .input-group 
-{ background-color:  rgba(237,90,48,1) ; }
-
-.task-review .section.section-help 
-{ background-color:  rgba(237,90,48,0.4) ; }
+.task-review .color          { color:  rgba(237,90,48,1); }
+.task-review .color-alpha    { color:  rgba(237,90,48,0.4); }
+.task-review .bg-color       { background-color:  rgba(237,90,48,1); }
+.task-review .bg-color-alpha { background-color:  rgba(237,90,48,0.4); }
 
 
 .clip-copy {
@@ -1020,7 +1002,7 @@ pre.json .jsonKey { color: black; }
 
 
 .panel table { width: 100%;}
-.panel table td:first-child { width:20%; text-align: left; vertical-align: top; padding:5px; font-weight:700;}
+
 
 .panel-collapse.am-collapse {
   animation-duration: .3s;
@@ -1042,6 +1024,7 @@ pre.json .jsonKey { color: black; }
 	border-top:1px solid gray;
 	height:1px;
 }
+
 
 
 

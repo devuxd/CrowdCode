@@ -3,11 +3,11 @@
 	<div class="section section-description " >
 		<div class="section-content no-padding" >
 			<ul class="microtask-details clearfix">
-				<li>{{::datas.title}}</li>
-				<li>
+				<li class="bg-color">{{::datas.title}}</li>
+				<li >
 					<span>{{::datas.submitValue}} points</span>
 				</li>
-				<li>
+				<li class="color">
 					<div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
 				</li>
 			</ul>
@@ -16,7 +16,8 @@
 
 	<div class="section section-description">
 		<div class="section-title" >
-		JOB DESCRIPTION
+			<div class="dot bg-color"></div>
+			JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
@@ -53,25 +54,31 @@
 	</div>
 
 	<div class="section section-description" id="functionSignature">
+
 		<div class="section-title" >
+			<div class="dot bg-color"></div>
 			FUNCTION SIGNATURE
 		</div>
+
+		<div class="section-link" ng-show="canBeDisputed && !dispute" >
+			<a ng-click="toggleDispute(); $event.preventDefault(); $event.stopPropagation();">Dispute function signature <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		</div>
+
 		<div class="section-content no-padding">
 			<ace-read-js code="::functionDescription" mode="diff" ></ace-read-js>
 		</div>
-		<div class="clearfix"></div>	
-		<span ng-show="canBeDisputed" class="input-group-btn pull-top-right">
-			<button class="btn btn-primary" ng-disabled="dispute" ng-click="toggleDispute()">Dispute function signature</button>
-		</span>
+		
 	</div>
 
 
 	<alertcontainer></alertcontainer>
 			
-	<div class="section-cols" >
+	<div class="section-cols" ng-if="!dispute" >
+
 		<div class="container-flex-row">
-			<div class="section section-help" style="width:30%" id="example">
+			<div class="section section-help bg-color-alpha" style="width:30%" id="example">
 				<div class="section-title" >
+					<div class="dot"></div>
 					EXAMPLE
 				</div>
 				<div class="section-content" >
@@ -88,6 +95,7 @@
 					</div>
 				</div>
 				<div class="section-title" >
+					<div class="dot"></div>
 					AVAILABLE DATA TYPES
 				</div>
 				<div class="section-content" >
@@ -96,7 +104,7 @@
 			</div>
 
 
-			<div class="section section-form" style="width:70%;" id="form" ng-show="!dispute">
+			<div class="section section-form" style="width:70%;" id="form" >
 
 				<div class="section-title no-padding" >
 
@@ -105,22 +113,24 @@
 				      		tabindex="1"
 				      		name="newTestCase"
 				      		
-							ng-model="newTestCase"
+							ng-model="model.newTestcase"
 							press-enter="addTestCase()"
 							placeholder="Describe a test case"
 				      		class="form-control"
 				      		focus
 				      	>
 						<span class="input-group-btn">
-							<button class="btn btn-default" ng-click="addTestCase()" type="button" tabindex="2">Add</button>
+							<button class="btn btn-default" ng-click="addTestCase()" type="button" tabindex="2">
+								<span class="glyphicon glyphicon-plus"></span>
+							</button>
 						</span>
 				    </div>
 
 				</div>
-				<div class="section-content" >
+				<div class="section-content no-padding" >
 
 					<div class="list-group" >
-						<div ng-form="testCase" ng-repeat="(index,test) in testCases | filter: { deleted:false }" class="list-item input-group input-group-sm animate-repeat">
+						<div ng-form="testCase" ng-repeat="(index,test) in model.testcases | filter: { deleted:false }" class="list-item input-group input-group-sm animate-repeat">
 						  	<input type="text" class="form-control" 
 							    placeholder="Describe a test case"
 							  	name="testcase"
@@ -132,46 +142,44 @@
 							    tabindex="{{2*index+2}}"
 							    required
 							>
-							<span class="help-block" ng-show="testCase.testcase.$dirty && testCase.testcase.$invalid && testCase.testcase.$error.required">
-								a test case name can't be empty!
-							</span>
 					  		<span class="input-group-btn" >
 					  			<button class="btn"  tabindex="{{2*index+3}}" ng-click="removeTestCase($index)" type="button">
 					  				<span class="glyphicon glyphicon-remove"></span>
 					  			</button>
 							</span>
+							<span class="help-block" ng-show="testCase.testcase.$dirty && testCase.testcase.$invalid && testCase.testcase.$error.required">
+								a test case name can't be empty!
+							</span>
 						</div>
 					</div>
 
-					<span ng-if="testCases.length == 0" >write at least one test case</span>
+					<span ng-if="model.testcases.length == 0" >write at least one test case</span>
 					
 				</div>
 			</div>
-			<div class="section section-form" style="width:70%;" ng-show="dispute">
-				<div class="section-title" >
-					DISPUTE FUNCTION SIGNATURE
-				</div>
-				<div class="section-content" >
-					<div id="disputeDiv" class="form-group">
-						<label for="disputeTextInput"><b>Dispute Function Signature:</b> what's wrong with this function signtaure? </label>
-						<textarea name="disputeTextInput" class="form-control required" style="resize:none" ng-model="disputeText" ng-required="dispute"></textarea>
-						<span
-						class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
-						<br>
-						<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the function signtaure</button>
-					</div>
-				</div> <!-- /. WRITE TEST DIV -->
-			</div> <!-- ./ SECTION CONTENT -->
 
 		</div>
 	</div>
-<!--
-	<div class="task-buttons pull-right">
-		<button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || testCases.length==0" >Submit</button>
-		<button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
-	</div>
-	<div class="clearfix"></div>
--->
+
+	<div class="section section-form" ng-if="dispute">
+		<div class="section-title" >
+			
+			<div class="dot bg-color"></div> DISPUTE THE FUNCTION SIGNATURE
+		</div>
+
+		<div class="section-content" >
+			<div id="disputeDiv" class="form-group">
+				<label for="disputeTextInput">what's wrong with this function signtaure? </label>
+				<textarea name="disputeTextInput" class="form-control required" style="resize:none" ng-model="disputeText" ng-required="dispute"></textarea>
+				<span
+				class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
+				<br>
+				<button class="btn " ng-click="toggleDispute()" >Nothing is wrong with the function signtaure</button>
+			</div>
+		</div> 
+
+	</div> 
+
 </div>
 
 

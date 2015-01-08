@@ -3,20 +3,21 @@
 	<div class="section section-description " >
 		<div class="section-content no-padding" >
 			<ul class="microtask-details clearfix">
-				<li>{{datas.title}}</li>
-				<li>
-					<span>{{datas.submitValue}} points</span>
+				<li class="bg-color">{{::datas.title}}</li>
+				<li >
+					<span>{{::datas.submitValue}} points</span>
 				</li>
-				<li>
-					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+				<li class="color">
+					<div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
 				</li>
 			</ul>
 		</div>
-		
 	</div>
+
 	<div class="section section-description">
 		<div class="section-title" >
-		JOB DESCRIPTION
+			<div class="dot bg-color"></div>
+			JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
 			Is there any function that could substitute the pseudocall: <span class="pseudoCall">{{microtask.callDescription}}</span> ?
@@ -25,7 +26,7 @@
 
 	<div class="section section-description">
 		<div class="section-title" >
-			FUNCTION WITH THE PSEUDOCALL
+			<div class="dot bg-color"></div> FUNCTION WITH THE PSEUDOCALL
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="code"></ace-read-js>
@@ -38,9 +39,9 @@
 
 	<div class="section-cols" >
 		<div class="container-flex-row">
-			<div class="section section-help" style="width:30%">
+			<div class="section section-help bg-color-alpha" style="width:30%">
 				<div class="section-title" >
-					HINT
+					<div class="dot"></div> HINT
 				</div>
 				<div class="section-content" >
 					Choose a function that does what the pseudocall
@@ -63,26 +64,30 @@
 							placeholder="filter functions"
 							focus/>
 						<span class="input-group-btn">
-							<button class="btn btn-default" ng-click="doSearch()" type="button" tabindex="2">Filter</button>
+							<button class="btn btn-default" ng-click="doSearch()" type="button" tabindex="2">
+								<span class="glyphicon glyphicon-filter"
+							</button>
 						</span>
-					</div>
 
+					</div>
+					<div class="input-group" style="width:100%">
+
+						<b>If you can't find any, select: 
+						<input type="checkbox" ng-model="selectedResult" ng-true-value="-1" ng-false-value="-2"> No function does this </b>
+					</div>
 				</div>
 				<div class="section-content no-padding">
 
 					<div ng-if="results.length > 0" class="list-group">
 						<div ng-repeat= "function in results | orderBy:'-score'" 
-						     class="list-element animate-repeat result {{ selectedResult == $index ? 'selected' : '' }}" 
+						     class="list-element animate-repeat {{ selectedResult == $index ? 'selected' : '' }}" 
 						     ng-click="select($index)">
 							 	{{function.value.description}}<br/>
 								<b>{{function.value.header}}</b>
 						</div>
 					</div>
 					<span ng-if="results.length == 0" >No function found</span>
-					<BR>
-					<b>If you can't find any, click this: 
-					<input type="checkbox" ng-model="selectedResult" ng-true-value="-1" ng-false-value="-2"> No function does this </b>
-
+					
 
 				</div>
 

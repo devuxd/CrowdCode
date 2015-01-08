@@ -81,7 +81,6 @@
 			        <li><a href="#"><strong>project:</strong> {{ projectId }}</a></li>
 			        <li><a href="#"><project-stats></project-stats></a></li>
 			    </ul>
-			    <ul class="nav navbar-nav navbar-right">
 
 			    <ul class="nav navbar-nav navbar-right">
 			        <li>
@@ -140,9 +139,9 @@
 			</div>
 
 	        <!-- CONTENT -->
-	        <div id="content" class="order-3" ng-controller="MicrotaskController">
-	        	<form name="microtaskForm" class="form-horizontal" novalidate submit-hot-key="$broadcast('collectFormData', microtaskForm)">
-					<div id="task"  class="task" style="" microtask >
+	        <div id="content" class="order-3" ng-controller="MicrotaskController" >
+	        	<form name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
+					<div id="task" class="task" microtask >
 						<ng-include class="task-{{ microtask.type | lowercase }}" src="templatePath"></ng-include>
 					</div>
 					<div class="button-bar">
