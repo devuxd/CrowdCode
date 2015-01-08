@@ -13,9 +13,9 @@ public abstract class TestCommand extends Command
 
 	public static TestCommand create(String description, long functionID, String functionName, int functionVersion)
 		{ return new Create1(description, functionID, functionName, functionVersion); }
-	
-	public static TestCommand create(long functionID, String functionName, String description, List<String> inputs, String output, String code, int functionVersion)
-		{ return new Create2(functionID, functionName, description, inputs, output, code , functionVersion); }
+
+	public static TestCommand create(long functionID, String functionName, String description, List<String> inputs, String output, String code, int functionVersion, boolean readOnly)
+		{ return new Create2(functionID, functionName, description, inputs, output, code , functionVersion, readOnly); }
 
 	public static TestCommand dispute(long testID, String issueDescription, int functionVersion)
 		{ return new Dispute(testID, issueDescription, functionVersion); }
@@ -88,8 +88,9 @@ public abstract class TestCommand extends Command
 		private String code;
 		private int functionVersion;
 		private String description;
-		
-		public Create2(long functionID, String functionName, String description, List<String> inputs, String output, String code, int functionVersion)
+		private boolean readOnly;
+
+		public Create2(long functionID, String functionName, String description, List<String> inputs, String output, String code, int functionVersion, boolean readOnly)
 		{
 			this.testID = 0L;
 			this.description = description;
@@ -99,15 +100,16 @@ public abstract class TestCommand extends Command
 			this.output = output;
 			this.code = code;
 			this.functionVersion = functionVersion;
-			
+			this.readOnly=readOnly;
+
 			queueCommand(this);
 		}
 
 		// Need to override the default execute, as there is no test to load!
 		public void execute(Project project)
 		{
-			Test test = new Test(functionID, functionName, description, inputs, output, code, project, functionVersion);
-			test.storeToFirebase(project);	
+			Test test = new Test(functionID, functionName, description, inputs, output, code, project, functionVersion, readOnly);
+			test.storeToFirebase(project);
 		}
 
 		public void execute(Test test, Project project)

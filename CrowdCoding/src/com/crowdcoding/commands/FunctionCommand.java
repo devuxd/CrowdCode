@@ -4,6 +4,7 @@ import java.util.List;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
@@ -15,8 +16,8 @@ public abstract class FunctionCommand extends Command
 	protected long functionID;
 
 	public static FunctionCommand create(String name, String returnType, List<String> paramNames,
-			List<String> paramTypes, List<String> paramDescriptions, String header, String description, String code)
-		{ return new Create(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code); }
+			List<String> paramTypes, List<String> paramDescriptions, String header, String description, String code, List<TestDescriptionDTO> tests, boolean readOnly)
+		{ return new Create(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, tests, readOnly); }
 
 	public static FunctionCommand removeCaller(long functionID, long callerFunctionID)
 		{ return new RemoveCaller(functionID, callerFunctionID); }
@@ -85,9 +86,11 @@ public abstract class FunctionCommand extends Command
 		private String header;
 		private String description;
 		private String code;
+		private boolean readOnly;
+		private List<TestDescriptionDTO> tests;
 
 		public Create(String name, String returnType, List<String> paramNames,
-				List<String> paramTypes,List<String> paramDescriptions,  String header, String description, String code)
+				List<String> paramTypes,List<String> paramDescriptions,  String header, String description, String code, List<TestDescriptionDTO> tests, boolean readOnly)
 		{
 			super(0);
 			this.name = name;
@@ -98,14 +101,17 @@ public abstract class FunctionCommand extends Command
 			this.header = header;
 			this.description = description;
 			this.code = code;
+			this.tests=tests;
+			this.readOnly= readOnly;
 		}
 
 		// Override the default execute behavior, as there is no function yet to be loaded.
 		public void execute(Project project)
 		{
 			Function newFunction = new Function(name, returnType, paramNames, paramTypes, paramDescriptions, header, description,
-					code, project);
+					code,readOnly , project);
 			newFunction.storeToFirebase(project);
+			newFunction.createTest(tests);
 		}
 
 		public void execute(Function function, Project project)

@@ -50,11 +50,8 @@
 					ng-model="microtask.oldTestCase"
 					>
 				</div>
-<<<<<<< HEAD
 				<br>
-=======
-				<br> 
->>>>>>> origin/arturo
+
 				<strong>Description now: </strong>
 			</div>
 
@@ -84,15 +81,11 @@
 			FUNCTION SIGNATURE
 		</div>
 		<div class="section-content no-padding" >
-<<<<<<< HEAD
-			<code-mirror-readonly ng-if="microtask.promptType != 'FUNCTION_CHANGED'" code="code"></code-mirror-readonly>
-			<code-mirror-readonly ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></code-mirror-readonly>
-			<span ng-show="canBeDisputed" class="input-group-btn pull-top-right">
-=======
+
 			<ace-read-js ng-if="microtask.promptType != 'FUNCTION_CHANGED'" code="code"></ace-read-js>
 			<ace-read-js ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></ace-read-js>
 			<span class="input-group-btn pull-top-right">
->>>>>>> origin/arturo
+
 				<button class="btn btn-primary" ng-disabled="dispute || functionDispute" ng-click="toggleFunctionDispute()">Dispute function signature</button>
 			</span>
 		</div>
