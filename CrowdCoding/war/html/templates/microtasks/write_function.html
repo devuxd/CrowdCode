@@ -4,17 +4,19 @@
 	<div class="section section-description " >
 		<div class="section-content no-padding" >
 			<ul class="microtask-details clearfix">
-				<li>{{ ::datas.title }}</li>
-				<li><span>{{ ::microtask.points}} points</span></li>
-				<li>
-					<div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+				<li class="bg-color">{{::datas.title}}</li>
+				<li >
+					<span>{{::datas.submitValue}} points</span>
+				</li>
+				<li class="color">
+					<div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
 				</li>
 			</ul>
 		</div>
 	</div>
 
 	<div class="section section-description">
-		<div class="section-title" > JOB DESCRIPTION </div>
+		<div class="section-title" > <div class="dot bg-color"></div> JOB DESCRIPTION </div>
 		<div class="section-content" >
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
 
@@ -25,7 +27,7 @@
 
 			<div ng-if="::microtask.promptType=='RE_EDIT'">
 				The description of this function has been disputed, can you edit the function to solve the following issue:
-
+				{{microtask}}
 				<div class="form-group has-error">
 					<textarea type="text"
 					style="width:100% resize:none"
@@ -45,14 +47,14 @@
 
 
 	<div class="section section-description" ng-if="::(microtask.promptType=='SKETCH' || microtask.promptType=='RE_EDIT')">
-		<div class="section-title"> FUNCTION CONVENTIONS </div>
+		<div class="section-title"> <div class="dot bg-color"></div> FUNCTION CONVENTIONS </div>
 		<div  class="section-content" >
 			<function-convections ></function-convections>
 	 	</div>
 	</div>
 
 	<div class="section section-description" ng-if="::microtask.promptType=='DESCRIPTION_CHANGE'">
-		<div class="section-title" > FUNCTION signature different </div>
+		<div class="section-title" > <div class="dot bg-color"></div> FUNCTION signature different </div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="::diffCode" mode="diff" ></ace-read-js>
 	 	</div>
@@ -64,23 +66,22 @@
 	<div class="section-cols" >
 		<div class="container-flex-row">
 
-			<div class="section section-help" style="width:30%">
-				<div class="section-title" > AVAILABLE DATA TYPES </div>
+			<div class="section section-help bg-color-alpha" style="width:30%;">
+				<div class="section-title" > <div class="dot"></div> AVAILABLE DATA TYPES </div>
 				<div class="section-content" >
 					<adt-list></adt-list>
 				</div>
+				<div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
 			</div>
 
 			<div class="section section-form" style="width:70%;" >
 				<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
 				<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-				<ul class="help-block pull-left" ng-if="microtaskForm.code.$error.function_errors.length > 0">
+				<ul class="help-block" style="height:50px;overflow:auto">
 					<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
 						<li>{{error}}</li>
 					</ul>
 				</ul>
-				<javascript-helper class="pull-right"></javascript-helper>
-				<div class="clearfix"></div>
 				
 			</div>
 

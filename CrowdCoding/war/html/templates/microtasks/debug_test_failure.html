@@ -1,19 +1,23 @@
 <div ng-controller="DebugTestFailureController"  >
+    
+
     <div class="section section-description " >
         <div class="section-content no-padding" >
             <ul class="microtask-details clearfix">
-                <li>{{datas.title}}</li>
-                <li>
-                    <span>{{datas.submitValue}} points</span>
+                <li class="bg-color">{{::datas.title}}</li>
+                <li >
+                    <span>{{::datas.submitValue}} points</span>
                 </li>
-                <li>
-                    <div class="help-btn"><span class="glyphicon glyphicon-question-sign"></span></div>
+                <li class="color">
+                    <div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
                 </li>
             </ul>
         </div>
     </div>
+
     <div class="section section-description">
         <div class="section-title" >
+            <div class="dot bg-color"></div>
             JOB DESCRIPTION
         </div>
         <div class="section-content" >
@@ -22,6 +26,7 @@
     </div>
     <div class="section section-description" id="functionSignature">
         <div class="section-title" >
+            <div class="dot bg-color"></div>
             FUNCTION SIGNATURE
         </div>
         <div class="section-content no-padding" >
@@ -33,9 +38,9 @@
 
     <div class="section-cols" ng-if="!dispute" >
         <div class="container-flex-row">
-            <div class="section section-help" style="width:30%">
+            <div class="section section-help bg-color-alpha" style="width:30%">
                 <div class="section-title" >
-                    TEST RESULTS
+                    <div class="dot"></div> TEST RESULTS
                 </div>
                 <div class="section-content" >
 
@@ -66,15 +71,15 @@
                                 <span class="clearfix"></span>
                             </div>
                         </div>
-                        <div class="panel panel-default {{ ! test.ready() ? '' : ( test.output.result?'panel-success':'panel-danger' ) }}" 
+                        <div class="panel panel-default panel-test-result {{ ! test.ready() ? '' : ( test.output.result?'panel-success':'panel-danger' ) }}" 
                             ng-repeat="(testIndex,test) in tests track by $index"
                             ng-show="!test.output.result || !hidePassedTests">
                             <div class="panel-heading" bs-collapse-toggle>
                                 <strong class="pull-left">    
-                                    #{{::(testIndex+1)}}
-                                    {{data.test.rec.description}}  - {{testIndex}}
+                                    Test case #{{::(testIndex+1)}} :
+                                    {{data.test.rec.description}} 
                                 </strong>
-                                <span class="pull-right">{{test.executionTime}} ms</span>
+                                <span class="pull-right">executed in {{test.executionTime}} ms</span>
                                 <span class="clearfix"></span>
                             </div>
                             <div class="panel-collapse" bs-collapse-target>
@@ -85,82 +90,85 @@
                                         <strong>{{test.errors}}</strong>
                                     </div>
 
-                                   
-                                    <table ng-if="test.output != undefined">
-                                        <tr ng-repeat="(key,input) in test.rec.simpleTestInputs track by $index">
-                                            <td>{{ paramNames[key] }}</td>
-                                            <td>
-                                                <div ace-read-json ng-model="input" ></div>
-                                            </td>
-                                        </tr>
+                                    <div class="heading">Test Data</div>
+                                    <div>
+                                        <div class="heading-1" >Input Parameters</div>
+                                        <table>
+                                            <tr ng-repeat="(key,input) in test.rec.simpleTestInputs track by $index">
+                                                <td>{{ paramNames[key] }}</td>
+                                                <td>
+                                                    <div ace-read-json ng-model="input" ></div>
+                                                </td>
+                                            </tr>
+                                        </table>
 
-                                        <tr ng-if="test.output.result">
-                                            <td>output</td>
-                                            <td><div ace-read-json ng-model="test.output.actual" ></div></td>
-                                        </tr>
-                                        <tr ng-if="!test.output.result">
-                                            <td>expected output</td>
-                                            <td><div ace-read-json ng-model="test.output.expected" ></div></td>
-                                        </tr>
-                                        <tr ng-if="!test.output.result">
-                                            <td>actual output</td>
-                                            <td><div ace-read-json ng-model="test.output.actual" ></div></td>
-                                        </tr>
-                                        <tr ng-if="test.debug != ''">
-                                            <td>debug console</td>
-                                            <td>
-                                                <div ace-read-string ng-model="test.debug" ></div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td>
-                                                <a ng-if="!test.output.result" class="pull-right" 
+                                        <div class="heading-1" >Output</div>
+
+                                        <div ng-if="test.output.result" ace-read-json ng-model="test.output.actual" ></div>
+                                        
+
+
+                                        <div ng-if="!test.output.result">
+                                            <table>
+                                                <tr>
+                                                    <td>expected</td>
+                                                    <td>
+                                                        <div ace-read-json ng-model="test.output.expected" ></div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>actual</td>
+                                                    <td>
+                                                        <div ace-read-json ng-model="test.output.actual" ></div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+                                        <div ng-if="test.debug != ''">
+                                            <div class="heading-1">Debug Console</div>
+                                            <div ace-read-string ng-model="test.debug" ></div>
+                                        </div>
+<!--
+                                        <div class="heading-1">
+                                            <span class="pull-right">
+                                                <a ng-if="!test.output.result" 
                                                     ng-click="$emit('disputeTest',testIndex);"> Report an issue with the data of this test</a>
-                                                <span class="clearfix"></span>
-                                            </td>
-                                        </tr>
+                                            </span>
+                                            <span class="clearfix"></span>
 
+                                        </div>
+-->
 
-                                        <tr >
+                                    </div>
+                                    <br />
+                                   
+                                    <div  ng-if=" test.stubMap != {} " >
+                                        <div class="heading" >Stubs</div>
+                                        <div class="panel panel-default" ng-repeat="(fName,fStubs) in test.stubMap">
+                                            <div class="panel-heading">
+                                                The function 
+                                                <ace-read-js code="calleDescription[fName].code"></ace-read-js>
+                                                has been called with {{ ::fStubs | keylength }}  {{ ::(fStubs | keylength) > 1 ? 'different sets':'set' }} of inputs.
+                                                <br />
+                                                For each set of inputs, you can choose what return value to use ( you can <b>stub</b> the function for the given input values ).
+                                            </div>
+                                            <div class="heading-1" ng-repeat-start="(inputKey,stub) in fStubs track by $index">Input set {{$index}}</div>
+                                            <table ng-repeat-end>
+                                                <tr ng-repeat="(key,input) in stubs[fName][inputKey].inputs track by $index" >
+                                                    <td>{{stubsParamNames[fName][$index]}}<br /></td>
+                                                    <td><div ace-read-json ng-model="input" ></div></td>
+                                                </tr>
 
-                                            <td>Stubs </td>
-                                            <td></td>
-                                        </tr>
-                                        <tr ng-if=" test.stubMap != {} ">
-                                            <td colspan="2" style="width:100%">
-
-
-                                                <div class="panel panel-default" ng-repeat="(fName,fStubs) in test.stubMap">
-                                                    <div class="panel-heading">
-                                                        The function 
-                                                        <ace-read-js code="calleDescription[fName].code"></ace-read-js>
-                                                        has been called with {{ ::fStubs | keylength }}  {{ ::(fStubs | keylength) > 1 ? 'different sets':'set' }} of inputs
-                                                    </div>
-                                                    <table style="width:100%">
-                                                        <tr ng-repeat-start="(inputKey,stub) in fStubs track by $index">
-                                                            <td>
-                                                                Input set {{$index}}
-                                                            </td>
-                                                            <td></td>
-                                                        </tr>
-                                                        <tr ng-repeat="(key,input) in stubs[fName][inputKey].inputs track by $index" >
-                                                            <td>{{stubsParamNames[fName][$index]}}<br /></td>
-                                                            <td><div ace-read-json ng-model="input" ></div></td>
-                                                        </tr>
-                                                        <tr >
-                                                            <td>output</td>
-                                                            <td><div ace-edit-json ng-model="stubs[fName][inputKey].output" ></div></td>
-                                                        </tr>
-                                                        <tr ng-repeat-end><td style="width:100%" colspan="2">____</td></tr>
-                                                    </table>
-
-                                                </div>
-
-                                            </td>
-                                        </tr>
-
-                                    </table>
+                                                <tr>
+                                                    <td>return value</td>
+                                                    <td><div ace-edit-json ng-model="stubs[fName][inputKey].output" ></div></td>
+                                                </tr>
+                                            </table>
+                                
+                                        </div>
+                                    </div>
+                                       
                                 </div>
                             </div>
                         </div>
@@ -220,9 +228,9 @@
 -->
     <div class="section-cols" ng-if=" !dispute ">
         <div class="container-flex-row">
-            <div class="section section-help" style="width:30%">
+            <div class="section section-help bg-color-alpha " style="width:30%">
                 <div class="section-title" >
-                    FUNCTION EDITOR
+                    <div class="dot"></div> FUNCTION EDITOR
                 </div>
                 <div class="section-content" >
                     <p>

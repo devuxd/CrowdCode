@@ -81,7 +81,6 @@
 			        <li><a href="#"><strong>project:</strong> {{ projectId }}</a></li>
 			        <li><a href="#"><project-stats></project-stats></a></li>
 			    </ul>
-			    <ul class="nav navbar-nav navbar-right">
 
 			    <ul class="nav navbar-nav navbar-right">
 			        <li>
@@ -140,9 +139,9 @@
 			</div>
 
 	        <!-- CONTENT -->
-	        <div id="content" class="order-3" ng-controller="MicrotaskController">
-	        	<form name="microtaskForm" class="form-horizontal" novalidate submit-hot-key="$broadcast('collectFormData', microtaskForm)">
-					<div id="task"  class="task" style="" microtask >
+	        <div id="content" class="order-3" ng-controller="MicrotaskController" >
+	        	<form name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
+					<div id="task" class="task" microtask >
 						<ng-include class="task-{{ microtask.type | lowercase }}" src="templatePath"></ng-include>
 					</div>
 					<div class="button-bar">
@@ -219,6 +218,9 @@
 	<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
 	<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
 
+
+	<script src="/include/zeroclipboard-2.2.0/dist/ZeroClipboard.min.js"></script>
+	<script src="/include/ng-clip/dest/ng-clip.min.js"></script>
 
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 

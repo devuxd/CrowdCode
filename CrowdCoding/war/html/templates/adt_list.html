@@ -1,4 +1,4 @@
-<div class="panel-group adt-list" bs-collapse>
+<div class="panel-group adt-list" bs-collapse ng-model="ADTs.selectedADT">
   <div class="panel panel-default" ng-repeat="ADT in ADTs">
     <div class="panel-heading">
       <h4 class="panel-title">
@@ -10,18 +10,19 @@
     <div class="panel-collapse" bs-collapse-target>
       <div class="panel-body">
         <span>{{ADT.description}} </span><br>
-		<div ng-if="::(ADT.structure.length>0)">
-			<b>Data Structure</b><br>
-			<span>Name: {{::ADT.name}}</span><br>
-			<span>{</span><br>
-			<div ng-repeat="field in ADT.structure" >
-				<span>{{::field.type}} : {{::field.name}};</span><br>
-			</div>
-			<span>}</span>
-		</div>
+    		<div ng-if="::(ADT.structure.length>0)">
+    			<b>Data Structure</b><br>
+    			<span>Name: {{::ADT.name}}</span><br>
+    			<span>{</span><br>
+    			<div ng-repeat="field in ADT.structure" >
+    				<span>{{::field.type}} : {{::field.name}};</span><br>
+    			</div>
+    			<span>}</span>
+    		</div>
 
-		<b>Example:</b>
-		<div ace-read-json ng-model="::ADT.example" ></div>
+		    <b>Example:</b>
+
+		    <div ace-read-json ng-model="::ADT.example" class="adt-detail" copy-allowed></div>
       </div>
     </div>
   </div>

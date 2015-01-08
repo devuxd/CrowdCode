@@ -9,8 +9,7 @@ myApp.factory('TestRunnerFactory', [
 	'testsService',
 	'functionsService',
 	'TestList', 
-	'TestNotificationChannel',
-	function($window,$rootScope,$http,$timeout,testsService,functionsService,TestList,NotificationChannel) {
+	function($window,$rootScope,$http,$timeout,testsService,functionsService,TestList) {
 
 	var instances = 0;
 

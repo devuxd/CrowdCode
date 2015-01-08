@@ -248,7 +248,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 			});
 	});
 
-
 	// ------- MESSAGE LISTENERS ------- //
 
 	// listen for message 'submit microtask'
@@ -293,9 +292,11 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 			});
 	});
 
+		
 	$scope.startTutorial = function(tutorialName) {
 		$scope.$broadcast('tutorial-' + tutorialName);
 	};
+
 
 }]);
 

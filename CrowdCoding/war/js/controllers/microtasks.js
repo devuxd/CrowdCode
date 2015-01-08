@@ -20,8 +20,9 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
         $scope.canBeDisputed=false;
 
     // scope variables 
-    $scope.newTestCase = "";
-    $scope.testCases   = TestList.getTestCasesByFunctionId($scope.funct.id);
+    $scope.model = {};
+    $scope.model.newTestcase = "";
+    $scope.model.testcases   = TestList.getTestCasesByFunctionId($scope.funct.id);
     $scope.dispute = false;
     $scope.disputeText = "";
 
@@ -34,31 +35,39 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 
     // addTestCase action 
     $scope.addTestCase = function() {
-
         // push the new test case and set the flag added to TRUE
-        var testCase = $scope.newTestCase.replace(/["']/g, "");
-        if ($scope.newTestCase !== "") {
-            
-            // push the new test cases
-            $scope.testCases.push({
-                id      : null,
-                text    : testCase,
-                added   : true,
-                deleted : false
-            });
+        var testCase = $scope.model.newTestcase.replace(/["']/g, "");
+
+        if ( testCase !== "") {
+            var exists = false;
+            angular.forEach($scope.model.testcases,function(value,index){
+                if( !exists && value.text == testCase )
+                    exists = true;
+            })
+
+            if( !exists ){
+                 // push the new test cases
+                $scope.model.testcases.push({
+                    id      : null,
+                    text    : testCase,
+                    added   : true,
+                    deleted : false
+                });
+            }
+           
             // reset the new test case field
-            $scope.newTestCase = "";
+            $scope.model.newTestcase = "";
         }
     };
 
     //deleteTestCase actions
     $scope.removeTestCase = function(index) {
         // if the testcase was added during this microtask, remove it from the array
-        if ($scope.testCases[index].added === true) 
-            $scope.testCases.splice(index, 1);
+        if ($scope.model.testcases[index].added === true) 
+            $scope.model.testcases.splice(index, 1);
         
         // else set the flag DELETED to true
-        else $scope.testCases[index].deleted = true;
+        else $scope.model.testcases[index].deleted = true;
     };
 
     $scope.toggleDispute = function() {
@@ -96,7 +105,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
         if (microtaskForm.$invalid)  
             error = "Fix all the errors before submit";
 
-        if (!$scope.dispute && $scope.testCases.length == 0 && $scope.newTestCase == "") 
+        if (!$scope.dispute && $scope.model.testcases.length == 0 && $scope.model.newTestcase == "") 
             error = "Add at least 1 test case";
 
         // if there is an error 
@@ -129,12 +138,12 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             }
             else{
 
-                if($scope.newTestCase != "")
+                if($scope.model.newTestcase != "")
                     $scope.addTestCase();
 
                 // prepare form data for submission
                 formData = {
-                        testCases       : $scope.testCases,
+                        testCases       : $scope.model.testcases,
                         functionVersion : $scope.funct.version,
                 };
             }
@@ -982,10 +991,12 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
     $scope.toggleDispute = function() {
         $scope.dispute = !$scope.dispute;
         if (!$scope.dispute) $scope.testData.disputeText = "";
+        if ( $scope.functionDispute ) $scope.functionDispute = false;
     };
     $scope.toggleFunctionDispute = function() {
         $scope.functionDispute = !$scope.functionDispute;
         if (!$scope.functionDispute) $scope.testData.functionDisputeText = "";
+        if ( $scope.dispute ) $scope.dispute = false;
     };
     // IF THE PROMPT TYPE IS FUNCTION CHANGED, CALC THE DIFF TO SHOW WITH CODEMIRROR
     if ($scope.microtask.promptType == 'FUNCTION_CHANGED') {

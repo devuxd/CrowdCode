@@ -1,29 +1,90 @@
+<%@page contentType="text/html;charset=UTF-8" language="java"%>
+<%@page import="com.googlecode.objectify.Work"%>
+<%@page import="com.googlecode.objectify.Key"%>
+<%@page import="com.googlecode.objectify.ObjectifyService"%>
+<%@page import="com.google.appengine.api.users.UserServiceFactory"%>
+<%@page import="com.google.appengine.api.users.UserService" %>
+<%@page import="com.google.appengine.api.users.User"%>
+<%@page import="com.crowdcoding.entities.Project"%>
+<%@page import="com.crowdcoding.entities.Worker"%>
+<%@page import="java.util.logging.Logger"%>
+
 <%
+/*
 	String projectID = (String) request.getAttribute("project");
 	if (projectID == null || projectID.equals(""))
-		projectID = "publicDemo";
+		projectID = "publicDemo";*/
+		
 %>
-
 
 <html>
 <head>
 	<title>CrowdCode</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Merriweather:300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic|Lato:100normal,100italic,300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/html/welcomeStyles.css">
+
+
 	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 	
+
+<style type="text/css">
+
+
+.navbar {
+	font-family: 'Lato' !important;
+	background-color:#555;
+}
+.navbar .navbar-brand { color:white; }
+
+.container-fluid {
+
+}
+</style>
 </head>
 <body>
-	<div class="container">	
-		 <div class="masthead">
-		   <h3 class="muted">CrowdCode</h3>  
-		 </div>
-	</div>
 
-	<div class="jumbotron jumbotronCentered">
-        <h1><BR>Build software with a crowd!<BR><BR></h1>
-	</div>
+	<!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Crowd Code</a>
+        </div>
+      </div>
+    </nav>
 
+
+    <div class="container-fluid">
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+      	<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<img src="/img/welcome_first.png" />
+					<img src="/img/welcome_second.png" />
+					<img src="/img/welcome_third.png" />
+				</div>
+			</div>
+      	</div>
+      </div>
+
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <div class="container">
+        	<h2>Join a project!</h2>
+	        <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
+	        <p>To see the difference between static and fixed top navbars, just scroll.</p>
+	        <p>
+	          <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+	        </p>
+    	</div>
+      </div>
+
+    </div> 
+
+<!--
 	<div class="row">
 		<div class="col-md-1"></div>
 	  	<div class="col-md-5">
@@ -45,7 +106,7 @@
 	</div>
 	
 	<div class="jumbotron jumbotronCentered">
-		  <a class="btn btn-large btn-success bigButton" href="/<%= projectID %>">Let's get started!</a>
-	</div>
+		  <a class="btn btn-large btn-success bigButton" >Let's get started!</a>
+	</div>-->
 </body>
 </html>

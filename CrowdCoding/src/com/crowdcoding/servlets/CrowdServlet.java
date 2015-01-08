@@ -121,9 +121,12 @@ public class CrowdServlet extends HttpServlet
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
+		
+		//System.out.println("Path Requested: "+path);
+		
 		try {
 			// -- PATHS WITHOUT USER AUTHENTICATION
-			 if(Pattern.matches("/welcome",path)){
+			 if( Pattern.matches("/",path) || Pattern.matches("/welcome",path)){
 				req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
 			 } else if(Pattern.matches("/user/info",path)){
 				req.getRequestDispatcher("/html/userInfo.jsp").forward(req, resp);
