@@ -60,7 +60,7 @@
 			FUNCTION SIGNATURE
 		</div>
 
-		<div class="section-link" ng-show="canBeDisputed && !dispute" >
+		<div class="section-link" ng-show="!funct.readOnly && canBeDisputed && !dispute" >
 			<a ng-click="toggleDispute(); $event.preventDefault(); $event.stopPropagation();">Dispute function signature <span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 
@@ -107,12 +107,10 @@
 			<div class="section section-form" style="width:70%;" id="form" >
 
 				<div class="section-title no-padding" >
-
 					<div class="input-group" ng-form="newForm">
 				    	<input type="text"
 				      		tabindex="1"
 				      		name="newTestCase"
-				      		
 							ng-model="model.newTestcase"
 							press-enter="addTestCase()"
 							placeholder="Describe a test case"
@@ -138,13 +136,14 @@
 								press-enter=" editMode = testCaseForm.testcase.$invalid ? true : false "
 							    ng-focus="editMode=true"
 							    ng-blur="editMode=false"
+							    ng-readonly="test.readOnly"
 
 							    tabindex="{{2*index+2}}"
 							    required
 							>
 					  		<span class="input-group-btn" >
 					  			<button class="btn"  tabindex="{{2*index+3}}" ng-click="removeTestCase($index)" type="button">
-					  				<span class="glyphicon glyphicon-remove"></span>
+					  				<span class="glyphicon glyphicon-remove" ng-hide="test.readOnly" ></span>
 					  			</button>
 							</span>
 							<span class="help-block" ng-show="testCase.testcase.$dirty && testCase.testcase.$invalid && testCase.testcase.$error.required">
@@ -163,7 +162,6 @@
 
 	<div class="section section-form" ng-if="dispute">
 		<div class="section-title" >
-			
 			<div class="dot bg-color"></div> DISPUTE THE FUNCTION SIGNATURE
 		</div>
 

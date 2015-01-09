@@ -11,6 +11,7 @@ public class TestCaseDTO extends DTO
 	public String text;
 	public boolean added;
 	public boolean deleted;
+	public boolean readOnly=false;
 	public long id;				// id of the corresponding test. Only valid if added is false.
 	public int functionVersion;
 
@@ -28,6 +29,7 @@ public class TestCaseDTO extends DTO
 		this.added = false;
 		this.deleted = false;
 		this.id = test.getID();
+		this.readOnly=false;
 
 	}
 

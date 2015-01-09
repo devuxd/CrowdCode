@@ -84,7 +84,7 @@
 			<div class="dot bg-color"></div>
 			FUNCTION SIGNATURE
 		</div>
-		<div class="section-link" ng-show="!functionDispute" >
+		<div class="section-link" ng-hide="funct.readOnly || functionDispute" >
 			<a ng-click="toggleFunctionDispute(); $event.preventDefault(); $event.stopPropagation();">Dispute function signature <span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content no-padding" >

@@ -30,8 +30,8 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 				this._process('child_added', rec, prevChild);
 
 				// add the object to our list
-				objectsList[ snap.name() ] = new Test( snap.val() ); 
-				if( parseInt(snap.name()) > lastId) 
+				objectsList[ snap.name() ] = new Test( snap.val() );
+				if( parseInt(snap.name()) > lastId)
 					lastId = parseInt(snap.name());
 
 				count++;
@@ -49,7 +49,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 					this._process('child_changed', rec);
 
 					// UPDATE THE OBJECT IN OUR LIST
-					objectsList[ snap.name() ].update( snap.val() ); 
+					objectsList[ snap.name() ].update( snap.val() );
 				}
 			}
 		},
@@ -81,17 +81,17 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 			return returnList;
 		},
-		// retrieve all the tests belonging to 
+		// retrieve all the tests belonging to
 		// the function with name = functionName
 		getImplementedByFunctionName: function(functionName){
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
 				if( test.getFunctionName() == functionName  && test.isImplemented())
-					returnList.push(test);	
+					returnList.push(test);
 			});
 			return returnList;
 		},
-		// retrieve all the tests belonging to 
+		// retrieve all the tests belonging to
 		// the function funct
 		getByFunction: function(funct){
 			this.getByFunctionId(funct.id);
@@ -103,18 +103,18 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
 				if( test.getFunctionId() == functionId )
-					returnList.push(test);	
+					returnList.push(test);
 			});
 
 			return returnList;
 		},
-		// retrieve all the tests belonging to 
+		// retrieve all the tests belonging to
 		// the function with name = functionName
 		getByFunctionName: function(functionName){
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
 				if( test.getFunctionName() == functionName )
-					returnList.push(test);	
+					returnList.push(test);
 			});
 			return returnList;
 		},
@@ -122,8 +122,8 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 		// search a test belonging for the function functionName
 		// and inputsValue
 		search: function(functionName,inputsValue){
-			// if one of the parameters is undefined, return null 
-			if(inputsValue === undefined || functionName === undefined) 
+			// if one of the parameters is undefined, return null
+			if(inputsValue === undefined || functionName === undefined)
 				return null;
 
 			// filter objectsList
@@ -153,7 +153,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 
 		searchOrBuild: function(functionId, functionName, inputsValue, outputValue){
-			if( this.search(functionName, inputsValue) == null ) {
+			if( this.search(functionName, inputsValue) === null ) {
 				test = new Test();
 
 				test.setFunctionId( functionId );
@@ -171,7 +171,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 			var test = this.search(functionName, inputsValue);
 			console.log("TEST SEARCH RESULT",arguments,test);
 
-			if( test == null ){
+			if( test === null ){
 				test = new Test();
 				test.setId(++lastId);
 
@@ -308,6 +308,14 @@ myApp.factory("Test", function ($FirebaseArray) {
 			this.rec.code = code;
 		},
 
+		getReadOnly: function(){
+			return this.rec.readOnly;
+		},
+
+		setReadOnly: function(readOnly){
+			this.rec.readOnly = readOnly;
+		},
+
 		hasSimpleTest: function(){
 			if( this.rec.hasOwnProperty('simpleTestInputs') && this.rec.hasOwnProperty('simpleTestOutput') )
 				return true;
@@ -328,8 +336,9 @@ myApp.factory("Test", function ($FirebaseArray) {
 			return {
 	            id:   this.getId(),
 	            text: this.getDescription(),
+	            readOnly: this.getReadOnly(),
 	            added: false,
-	            deleted: false
+	            deleted: false,
 	        };
 		},
 

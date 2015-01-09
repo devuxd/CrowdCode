@@ -43,7 +43,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             angular.forEach($scope.model.testcases,function(value,index){
                 if( !exists && value.text == testCase )
                     exists = true;
-            })
+            });
 
             if( !exists ){
                  // push the new test cases
