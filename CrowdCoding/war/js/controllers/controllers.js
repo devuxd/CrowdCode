@@ -15,7 +15,8 @@ myApp.controller('AppController', [
 	'ADTService',
 	'microtasksService',
 	'TestList',
-	function($scope, $rootScope, $firebase, $interval, $modal, logoutUrl, userService, testsService, functionsService, ADTService, microtasksService, TestList) {
+	'avatarFactory',
+	function($scope, $rootScope, $firebase, $interval, $modal, logoutUrl, userService, testsService, functionsService, ADTService, microtasksService, TestList, avatarFactory) {
 
 		// current session variables
 		$rootScope.projectId    = projectId;
@@ -26,6 +27,9 @@ myApp.controller('AppController', [
 		$rootScope.logoutUrl = logoutUrl;
 
 
+		console.log('MC: '+workerId);
+		$scope.avatar = avatarFactory.get;
+		console.log('MC: '+$scope.avatar(workerId));
 
 		// wrapper for user login and logout
 		$rootScope.workerLogin = function()  { userService.login();  };
@@ -311,13 +315,13 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 ////////////////////////////
 // LEADERBOARD CONTROLLER //
 ////////////////////////////
-myApp.controller('LeaderboardController', ['$scope', '$rootScope', '$firebase', function($scope, $rootScope, $firebase) {
+myApp.controller('LeaderboardController', ['$scope', '$rootScope', '$firebase','avatarFactory','workerId', function($scope, $rootScope, $firebase, avatarFactory, workerId) {
 	// create the reference and the sync
-	var upSync = $firebase(new Firebase($rootScope.firebaseURL + '/workers'));
+	
 	var lbSync = $firebase(new Firebase($rootScope.firebaseURL + '/leaderboard/leaders'));
-	// bind the array to scope.leaders
-	$scope.profiles = upSync.$asArray();
-	$scope.leaders  = lbSync.$asArray();
+	
+	$scope.avatar = avatarFactory.get;
+	$scope.leaders       = lbSync.$asArray();
 	$scope.leaders.$loaded().then(function() {});
 }]);
 

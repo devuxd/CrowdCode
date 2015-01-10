@@ -391,7 +391,7 @@ myApp.factory('TestRunnerFactory', [
 			// data for the test, notify stubs ready
 			// and update the usedStubs
 			if( e.data.errors ) {
-				item.stubMap = data.stubMap.length > 0 ? data.stubMap : undefined;
+				item.stubMap = data.stubMap !== undefined && data.stubMap.length > 0 ? data.stubMap : undefined;
 				item.debug   = data.debug;
 			}
 

@@ -85,16 +85,17 @@
 			    <ul class="nav navbar-nav navbar-right">
 			    	<li>
 			        	<a user-menu href="#" />
-							<%=workerHandle %> 
-							<img ng-src="{{ userData.avatarUrl }}" class="profile-picture" alt="{{workerHandle}}" />
+							
+							{{ workerHandle}}
+							<img ng-src="{{ avatar(workerId).$value }}" class="profile-picture" />
 							<span class="caret"></span>
 			        	</a>
 			        </li>
 			    </ul>
 
 
-			</div><!-- /.container-fluid -->
-		</div><!-- /. navbar -->
+			</div>
+		</div>
 	</header>
 
 	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;">
@@ -254,6 +255,7 @@
 
 	<!-- Angular Services -->
 	<script src="/js/services/services.js"></script>
+	<script src="/js/services/avatarFactory.js"></script>
 	<script src="/js/services/ADT.js"></script>
 	<script src="/js/services/microtasks.js"></script>
 	<script src="/js/services/tests.js"></script>

@@ -23,6 +23,8 @@ myApp.config(function($dropdownProvider, ngClipProvider ) {
 });
 
 // define app constants
+myApp.constant('workerId',workerId);
+console.log(workerId);
 myApp.constant('firebaseUrl',firebaseURL);
 myApp.constant('logoutUrl',logoutURL);
 
