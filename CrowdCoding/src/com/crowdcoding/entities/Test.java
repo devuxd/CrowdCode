@@ -25,6 +25,7 @@ public class Test extends Artifact
 	private long functionID;
 	private int functionVersion;
 	private String functionName;
+	private boolean readOnly;
 
 	private String code;
 	@Index private boolean hasSimpleTest;
@@ -85,7 +86,7 @@ public class Test extends Artifact
 		project.historyLog().endEvent();
 	}
 
-	public Test(long functionID, String functionName, String description, List<String> inputs, String output, String code, Project project, int functionVersion)
+	public Test(long functionID, String functionName, String description, List<String> inputs, String output, String code, Project project, int functionVersion, boolean readOnly)
 	{
 		super(project);
 
@@ -102,13 +103,14 @@ public class Test extends Artifact
 		this.simpleTestOutput = output;
 		this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, inputs);
 		this.functionVersion = functionVersion;
+		this.readOnly=readOnly;
 
 		ofy().save().entity(this).now();
 		FunctionCommand.addTest(functionID, this.id);
 
 		// The test is already fully implemented. It just needs to be run.
 		//project.requestTestRun();
-		FunctionCommand.testBecameImplemented(functionID, this.getID());	
+		FunctionCommand.testBecameImplemented(functionID, this.getID());
 
 		project.historyLog().endEvent();
 	}
@@ -244,7 +246,7 @@ public class Test extends Artifact
 			FirebaseService.deleteTest(this.id, project);
 		else
 			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs,
-				simpleTestOutput, description, functionName, functionID, isImplemented), this.id, version, project);
+				simpleTestOutput, description, functionName, functionID, isImplemented, readOnly), this.id, version, project);
 	}
 
 	/******************************************************************************************

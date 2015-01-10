@@ -10,9 +10,11 @@ import java.util.Map;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
+import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionDescriptionsDTO;
+import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -43,10 +45,10 @@ public class Project
 	public static Project project;
 
 	private IDGenerator idgenerator;
-	
+
 	@Id private String id;
-	@Ignore private HistoryLog historyLog;	
-	
+	@Ignore private HistoryLog historyLog;
+
 	private boolean reviewingEnabled = true;			// Disabling this flag stops new review microtasks from being generated
 	private boolean waitingForTestRun = false;								// is the project currently waiting for tests to be run?
 
@@ -54,10 +56,10 @@ public class Project
 	@Serialize private HashSet<String> loggedInWorkers = new HashSet<String>();
 
 	// Global queue of microtasks waiting to be done
-	private LinkedList< String > microtaskQueue = new LinkedList< String >();	
-	
+	private LinkedList< String > microtaskQueue = new LinkedList< String >();
+
 	// Global queue of review microtasks waiting to be done
-	private LinkedList< String > reviewQueue    = new LinkedList< String >();			
+	private LinkedList< String > reviewQueue    = new LinkedList< String >();
 
 	// Map from  < workerId, microtaskKey >; workers with no microtask have a null entry
 	@Serialize private Map< String, String > microtaskAssignments = new HashMap<String, String >();
@@ -82,7 +84,7 @@ public class Project
 		String keyString = null;
 		if( key != null )
 			keyString = key.getParent().getId()+"-"+key.getId();
-		
+
 		return keyString;
 	}
 
@@ -103,28 +105,28 @@ public class Project
 	//////////////////////////////////////////////////////////////////////////////
 
 	public Key<Project> getKey(){ return Key.create(Project.class, id); }
-	
+
 	public String getID(){ return id; }
-	
+
 	// Default constructor for deserialization only
 	private Project(){}
-	
+
 	// Constructor for initial creation (flag is ignored)
 	// this is called ONCE per project by Construct
 	private Project(String id)
 	{
-		// set the id 
+		// set the id
 		this.id = id;
-		
+
 		// instantiate the history log
 		this.historyLog = new HistoryLog();
-		
+
 		// instantiate the id generator
 		idgenerator = new IDGenerator(false);
 
 		// save the project
 		ofy().save().entity(this).now();
-		
+
 		// create log entry for the project created
 		this.historyLog.beginEvent(new ProjectCreated(this));
 		this.historyLog.endEvent();
@@ -139,13 +141,14 @@ public class Project
 		for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
 		{
 			FunctionCommand.create(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
-					functionDTO.paramTypes,functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, functionDTO.code);
+					functionDTO.paramTypes,functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, functionDTO.code, functionDTO.tests, functionDTO.readOnly);
+
 		}
 
 		// save again the entity with the created functions
 		ofy().save().entity(this).now();
 	}
-	
+
 
 	// Creates a new project instance. This can only be called for a project that does not yet exist
 	// (or that has been reset using Clear).
@@ -153,13 +156,13 @@ public class Project
 	{
 		return new Project(id);
 	}
-	
+
 
 	// Loads a project instance from the datastore.
 	// this is called every time a project is instantiated
 	public static Project Create(String id)
 	{
-		// Need to use an ancestor query to do this inside a transaction. 
+		// Need to use an ancestor query to do this inside a transaction.
 		// But the ancestor of project is project.
 		// So we just create a normal key with only the type and id
 		project = ofy().load().key(Key.create(Project.class, id)).get();
@@ -182,26 +185,26 @@ public class Project
 		Key<Project> projectKey = Key.create(Project.class, projectID);
 
 		// DELETE THE WORKERS
-		// workers are parented under project 
-		// so ancestor query is ok 
+		// workers are parented under project
+		// so ancestor query is ok
 		Iterable<Key<Worker>>    workers    = ofy().transactionless().load().type(Worker.class).ancestor(projectKey).keys();
 		ofy().transactionless().delete().keys(workers);
-		
+
 		// DELETE THE MICROTASKS
 		// microtasks are parented under artifacts
 		// ??? is good the ancestor query ???
 		Iterable<Key<Microtask>> microtasks = ofy().transactionless().load().type(Microtask.class).ancestor(projectKey).keys();
 		ofy().transactionless().delete().keys(microtasks);
-		
+
 		// DELETE THE ARTIFACTS
-		// artifacts are parented under project 
+		// artifacts are parented under project
 		// so ancestor query is ok
 		Iterable<Key<Artifact>>  artifacts  = ofy().transactionless().load().type(Artifact.class).ancestor(projectKey).keys();
 		ofy().transactionless().delete().keys(artifacts);
-		
+
 		// finally delete the project
 		ofy().transactionless().delete().key(projectKey);
-	
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -304,7 +307,7 @@ public class Project
 		// Look for a microtask, checking constraints on it along the way
 		Key<Microtask> microtaskKey = null;
 
-		// First, check if there any review microtasks queued. 
+		// First, check if there any review microtasks queued.
 		// Review microtasks get priority, as they need to be done quickly.
 		for ( String potentialMicrotaskKey : reviewQueue ){
 			if ( microtaskKey == null && assignmentIsValid( potentialMicrotaskKey, workerID ) ){
@@ -318,7 +321,7 @@ public class Project
 			reviewQueue.remove( Project.MicrotaskKeyToString( microtaskKey ) );
 			FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project);
 		}
-		
+
 		// else continue looking in the global microtask queue
 		else {
 			for ( String potentialMicrotaskKey : microtaskQueue ){
@@ -327,7 +330,7 @@ public class Project
 				}
 			}
 
-			// if a microtask has been found remove it from the queue 
+			// if a microtask has been found remove it from the queue
 			// and update the Firebase microtask queue
 			if ( microtaskKey != null ){
 				microtaskQueue.remove( Project.MicrotaskKeyToString( microtaskKey ) );
@@ -349,7 +352,7 @@ public class Project
 			ofy().save().entity(this).now();
 			return null;
 		}
-		
+
 		// else if a microtask was found
 		else{
 			// assign it to the worker
@@ -360,10 +363,10 @@ public class Project
 			Microtask mtask = ofy().load().key(microtaskKey).get();
 			project.historyLog().beginEvent(new MicrotaskAssigned(mtask,workerID));
 			project.historyLog().endEvent();
-			
+
 			// save the project
 			ofy().save().entity(this).now();
-			
+
 			// return the assigned microtask key
 			return microtaskKey;
 		}
@@ -393,22 +396,22 @@ public class Project
 	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID, Project project){
 		// Unassign the microtask from the worker
 		microtaskAssignments.put( workerID, null );
-		
+
 		// save the project
 		ofy().save().entity(this).now();
-		
+
 		// write the history log entry about the microtask submission
 		Microtask microtask = ofy().load().key( microtaskKey ).get();
 		project.historyLog().beginEvent(new MicrotaskSubmitted(microtask, workerID));
 		project.historyLog().endEvent();
 
-		// If reviewing is enabled and the microtask 
+		// If reviewing is enabled and the microtask
 		// is not in [Review, ReuseSearch,DebugTestFailure],
 		// spawn a new review microtask
 		if (reviewingEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class) || microtaskType.equals(DebugTestFailure.class) ) ){
 			MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 		}
-		
+
 		// else submit the microtask
 		else {
 			MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID);
@@ -477,7 +480,7 @@ public class Project
 	public void logoutWorker(String workerID)
 	{
 		System.out.println("--> PROJECT: logging out "+workerID);
-		
+
 		// retrieve the assigned microtask for the workerId
 		String microtaskKeyString        = microtaskAssignments.get(workerID);
 		Key<Microtask> currentAssignment = Project.StringToMicrotaskKey(microtaskKeyString);
@@ -529,21 +532,21 @@ public class Project
 //		waitingForTestRun = false;
 //		ofy().save().entity(this).now();
 //	}
-	
-	
+
+
 	//////////////////////////////////////////////////////////////////////////////
 	//  History Log Management
 	//////////////////////////////////////////////////////////////////////////////
-	
+
 	// getter for the historyLog
 	public HistoryLog historyLog(){ return historyLog; }
-	
+
 	// Publishes the history log to Firebase
 	public void publishHistoryLog()
 	{
 		FirebaseService.publishHistoryLog(historyLog.json(), this);
 	}
-	
+
 
 
 	//////////////////////////////////////////////////////////////////////////////

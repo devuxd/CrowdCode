@@ -43,7 +43,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             angular.forEach($scope.model.testcases,function(value,index){
                 if( !exists && value.text == testCase )
                     exists = true;
-            })
+            });
 
             if( !exists ){
                  // push the new test cases
@@ -82,7 +82,8 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
         angular.forEach(microtaskForm, function(formElement, fieldName) {
             // If the fieldname doesn't start with a '$' sign, it means it's form
             if (fieldName[0] !== '$') {
-                formElement.$dirty = true;
+                    if(angular.isFunction(formElement.$setDirty))
+                        formElement.$setDirty();
             }
             //if formElement as the proprety $addControl means that have other form inside him
             if (formElement !== undefined && formElement.$addControl) {
@@ -90,7 +91,8 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
                     // If the fieldname starts with a '$' sign, it means it's an Angular
                     // property or function. Skip those items.
                     if (fieldName[0] !== '$') {
-                        formElement.$dirty = true;
+                        if(angular.isFunction(formElement.$setDirty))
+                            formElement.$setDirty();
                     }
                 });
             }
@@ -298,11 +300,13 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
 
         if ($scope.review.rating <= 3) {
-            microtaskForm.$dirty = true;
+            if(angular.isFunction(microtaskForm.$setDirty))
+                microtaskForm.$setDirty();
             angular.forEach(microtaskForm, function(formElement, fieldName) {
                 // If the fieldname doesn't start with a '$' sign, it means it's form
                 if (fieldName[0] !== '$') {
-                    formElement.$dirty = true;
+                    if(angular.isFunction(formElement.$setDirty))
+                        formElement.$setDirty();
                 }
             });
         }
@@ -878,7 +882,8 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         angular.forEach(microtaskForm, function(formElement, fieldName) {
             // If the fieldname doesn't start with a '$' sign, it means it's form
             if (fieldName[0] !== '$') {
-                formElement.$dirty = true;
+                if(angular.isFunction(formElement.$setDirty))
+                    formElement.$setDirty();
             }
             //if formElement as the proprety $addControl means that have other form inside him
             if (formElement !== undefined && formElement.$addControl) {
@@ -886,7 +891,8 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
                     // If the fieldname starts with a '$' sign, it means it's an Angular
                     // property or function. Skip those items.
                     if (fieldName[0] !== '$') {
-                        formElement.$dirty = true;
+                       if(angular.isFunction(formElement.$setDirty))
+                            formElement.$setDirty();
                     }
                     //if formElement as the proprety $addControl means that have other form inside him
                     if (formElement !== undefined && formElement.$addControl) {
@@ -894,7 +900,8 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
                             // If the fieldname starts with a '$' sign, it means it's an Angular
                             // property or function. Skip those items.
                             if (fieldName[0] !== '$') {
-                                formElement.$dirty = true;
+                                if(angular.isFunction(formElement.$setDirty))
+                                    formElement.$setDirty();
                             }
                         });
                     }
@@ -1036,7 +1043,8 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
         angular.forEach(microtaskForm, function(formElement, fieldName) {
             // If the fieldname doesn't start with a '$' sign, it means it's form
             if (fieldName[0] !== '$') {
-                formElement.$dirty = true;
+                if(angular.isFunction(formElement.$setDirty))
+                    formElement.$setDirty();
             }
             //if formElement as the proprety $addControl means that have other form inside him
             if (formElement !== undefined && formElement.$addControl) {
@@ -1044,7 +1052,8 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
                     // If the fieldname starts with a '$' sign, it means it's an Angular
                     // property or function. Skip those items.
                     if (fieldName[0] !== '$') {
-                        formElement.$dirty = true;
+                        if(angular.isFunction(formElement.$setDirty))
+                            formElement.$setDirty();
                     }
                 });
             }

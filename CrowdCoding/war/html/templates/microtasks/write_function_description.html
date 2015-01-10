@@ -90,33 +90,35 @@
 					  	<div class="form-group col-sm-12">
 						    <label class=" control-label col-sm-2 reset-padding">parameters</label>
 							<div class="form-group col-sm-10 reset-padding" >
-								<div ng-form="param" class="form-horizontal" style="display:inline-block" ng-repeat="(index,parameter) in parameters">
-								    <div class="col-sm-3 reset-padding">
-								      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName" unic-name parameters="parameters" press-enter="addParameter()"/>
-								      	<ul class="help-block" ng-show="param.parameterName.$dirty && param.parameterName.$invalid">
-											<li ng-show="param.parameterName.$error.required">This field is required!</li>
-											<li ng-show="param.parameterName.$error.unic">{{param.parameterName.$error.unic}}</li>
-											<li ng-show="param.parameterName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
-										</ul>
+								<div ng-repeat="(index,parameter) in parameters">
+									<div ng-form="param{{$index}}" class="form-horizontal" style="display:inline-block" >
+									    <div class="col-sm-3 reset-padding">
+									      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName" unic-name parameters="parameters" press-enter="addParameter()"/>
+									      	<ul class="help-block" ng-show="param{{$index}}.parameterName.$dirty && param{{$index}}.parameterName.$invalid">
+												<li ng-show="param{{$index}}.parameterName.$error.required">This field is required!</li>
+												<li ng-show="param{{$index}}.parameterName.$error.unic">More occurence of the same parameter name have been found, plese fix them</li>
+												<li ng-show="param{{$index}}.parameterName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
+											</ul>
+										</div>
+										<div class="col-sm-3 reset-padding">
+									      	<input type="text" class="form-control pull-left" name="parameterType" ng-model="parameter.paramType" ng-model-options="{ updateOn: 'blur' }" required adt-validator placeholder="type" press-enter="addParameter()"/>
+									      	<ul class="help-block" ng-show="param{{$index}}.parameterType.$dirty && param{{$index}}.parameterType.$invalid">
+												<li ng-show="param{{$index}}.parameterType.$error.required">This field is required!</li>
+												<li ng-show="param{{$index}}.parameterType.$error.adt">Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).</li>
+											</ul>
+										</div>
+										<div class="col-sm-5 reset-padding">
+									      	<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="parameter.paramDescription" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/" press-enter="addParameter()"/>
+									      	<ul class="help-block" ng-show="param{{$index}}.parameterDescritpion.$dirty && param{{$index}}.parameterDescritpion.$invalid">
+												<li ng-show="param{{$index}}.parameterDescritpion.$error.required">This field is required!</li>
+												<li ng-show="param{{$index}}.parameterDescritpion.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>
+											</ul>
+										</div>
+										<div class="col-sm-1 reset-padding">
+									      	<button ng-click="deleteParameter(index)" class="btn  pull-right">X</button>
+									    </div>
 									</div>
-									<div class="col-sm-3 reset-padding">
-								      	<input type="text" class="form-control pull-left" name="parameterType" ng-model="parameter.paramType" ng-model-options="{ updateOn: 'blur' }" required adt-validator placeholder="type" press-enter="addParameter()"/>
-								      	<ul class="help-block" ng-show="param.parameterType.$dirty && param.parameterType.$invalid">
-											<li ng-show="param.parameterType.$error.required">This field is required!</li>
-											<li ng-show="param.parameterType.$error.adt">{{param.parameterType.$error.adt}}</li>
-										</ul>
-									</div>
-									<div class="col-sm-5 reset-padding">
-								      	<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="parameter.paramDescription" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/" press-enter="addParameter()"/>
-								      	<ul class="help-block" ng-show="param.parameterDescritpion.$dirty && param.parameterDescritpion.$invalid">
-											<li ng-show="param.parameterDescritpion.$error.required">This field is required!</li>
-											<li ng-show="param.parameterDescritpion.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>
-										</ul>
-									</div>
-									<div class="col-sm-1 reset-padding">
-								      	<button ng-click="deleteParameter(index)" class="btn  pull-right">X</button>
-								    </div>
-								</div>
+							  	</div>
 						  	</div>
 						</div>
 					  	<div class="form-group">

@@ -19,6 +19,7 @@ import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.TestDTO;
+import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -59,12 +60,13 @@ public class Function extends Artifact
 	private List<Long>    tests = new ArrayList<Long>();
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private int           linesOfCode;
+	private boolean 	  readOnly= false;
 
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	private boolean needsDebugging;	         // true iff Function is failing the (implemented) unit tests
-	
+
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> callees = new ArrayList<Long>();
 	// current callers with a fully implemented callsite to this function:
@@ -84,9 +86,10 @@ public class Function extends Artifact
 
 	// Constructor for a function that has a full description and code
 	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, List<String> paramDescriptions, String header,
-			String description, String code, Project project)
+			String description, String code, boolean readOnly, Project project)
 	{
 		super(project);
+		this.readOnly=readOnly;
 		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, project);
 	}
 
@@ -238,7 +241,7 @@ public class Function extends Artifact
 	}
 
 	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
-	public static String getFunctionDescriptions(Project project)
+	/*public static String getFunctionDescriptions(Project project)
 	{
 		List<FunctionDescriptionDTO> dtos = new ArrayList<FunctionDescriptionDTO>();
 		Query<Function> q = ofy().load().type(Function.class)
@@ -255,13 +258,13 @@ public class Function extends Artifact
 		}
 
 	    return "";
-	}
-
+	}*/
+ /*
 	public FunctionDescriptionDTO getDescriptionDTO()
 	{
 		return new FunctionDescriptionDTO(name, returnType, paramNames, paramTypes, paramDescriptions, header, description);
 	}
-
+*/
 	// Returns true iff the specified pseudocall is currently in the code
 	public boolean containsPseudoCall(String pseudoCall)
 	{
@@ -311,7 +314,7 @@ public class Function extends Artifact
 			if (isWritten && needsDebugging){
 				DebugTestFailure debug = new DebugTestFailure(this,project);
 				makeMicrotaskOut( debug, project);
-				System.out.println("--> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));	
+				System.out.println("--> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));
 			}
 			else if (!queuedMicrotasks.isEmpty())
 				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
@@ -323,8 +326,8 @@ public class Function extends Artifact
 	{
 
 		System.out.println("--> FUNCTION ("+this.id+") "+this.name+" :checking if all test implemented - ");
-		
-		if(tests.size()==0) 
+
+		if(tests.size()==0)
 			return false;
 		else{
 			for (Boolean implemented:testsImplemented)
@@ -609,7 +612,7 @@ public class Function extends Artifact
 		// Update or create tests for any stub
 		for (TestDTO testDTO : dto.stubs)
 		{
-			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version);
+			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
 		}
 
 		lookForWork(project);
@@ -750,6 +753,14 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 	//  UTILITY METHODS
 	//////////////////////////////////////////////////////////////////////////////
+	public void createTest(List<TestDescriptionDTO> tests)
+	{
+		if(tests!=null)
+			for(TestDescriptionDTO test : tests)
+			{
+				TestCommand.create(this.id, this.name, test.description, test.simpleTestInputs, test.simpleTestOutput, test.code, 1, test.readOnly);
+			}
+	}
 
 	public void storeToFirebase(Project project)
 	{
@@ -757,7 +768,7 @@ public class Function extends Artifact
 		{
 			incrementVersion();
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
-					paramTypes, paramDescriptions, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging,
+					paramTypes, paramDescriptions, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging, readOnly,
 					queuedMicrotasks.size()),
 					this.id, version, project);
 		}
@@ -852,10 +863,10 @@ public class Function extends Artifact
 
 	public String toString()
 	{
-		return "\n FUNCTION " + name + 
-			"\n described: " + hasBeenDescribed + 
-			"\n written: " + isWritten + 
-			"\n needsDebugging: " + needsDebugging + 
+		return "\n FUNCTION " + name +
+			"\n described: " + hasBeenDescribed +
+			"\n written: " + isWritten +
+			"\n needsDebugging: " + needsDebugging +
 			"\n queuedMicrotasks: " + queuedMicrotasks.size();
 	}
 
