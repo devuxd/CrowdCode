@@ -755,10 +755,11 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 	public void createTest(List<TestDescriptionDTO> tests)
 	{
-		for(TestDescriptionDTO test : tests)
-		{
-			TestCommand.create(this.id, this.name, test.description, test.simpleTestInputs, test.simpleTestOutput, test.code, 1, test.readOnly);
-		}
+		if(tests!=null)
+			for(TestDescriptionDTO test : tests)
+			{
+				TestCommand.create(this.id, this.name, test.description, test.simpleTestInputs, test.simpleTestOutput, test.code, 1, test.readOnly);
+			}
 	}
 
 	public void storeToFirebase(Project project)

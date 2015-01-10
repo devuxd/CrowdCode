@@ -1,14 +1,23 @@
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
-//prepare variables and execute inizialization stuff
 clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$firebase','$alert', function($scope,$rootScope,$firebase,$alert) {
-
-	console.log("sono chiamato");
 
 
 	var firebaseURL = 'https://crowdcode.firebaseio.com';
 	var firebaseRef;
+	$scope.projectsName=[];
+	$scope.names = ["john", "bill", "charlie", "robert", "alban", "oscar", "marie", "celine", "brad", "drew", "rebecca", "michel", "francis", "jean", "paul", "pierre", "nicolas", "alfred", "gerard", "louis", "albert", "edouard", "benoit", "guillaume", "nicolas", "joseph"];
+
+	//load all the projects name
+	var projectSync = $firebase(new Firebase(firebaseURL+'/clientRequests'));
+	var projectNames = projectSync.$asArray();
+	projectNames.$loaded().then(function(){
+		angular.forEach(projectNames, function(value,key){
+			$scope.projectsName.push(value.$id);
+		});
+		console.log($scope.projectsName);
+	});
 
 
 	// User stories are numbered from 0 to userStoryCount - 1 (as are ADTs).
@@ -44,6 +53,9 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 	$scope.addExample=function(ADTindex)
 	{
+		if($scope.ADTs[ADTindex].examples===undefined)
+			$scope.ADTs[ADTindex].examples=[];
+		
 		$scope.ADTs[ADTindex].examples.push({name:"",value:""});
 	};
 
@@ -93,6 +105,9 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 	$scope.addTest = function(index){
 
+			if($scope.functions[index].tests===undefined)
+				$scope.functions[index].tests=[];
+
 			$scope.functions[index].tests.push({	readOnly: true,
 													description: "",
 													simpleTestInputs:      [""],
@@ -106,79 +121,113 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 
 	$scope.submit=function(form){
+
+		//set all the field to dirty
 		angular.forEach(form, function(formElement, fieldName) {
-		           // If the fieldname doesn't start with a '$' sign, it means it's form
-		           if (fieldName[0] !== '$') {
-		               formElement.$dirty = true;
-		           }
-		           //if formElement as the proprety $addControl means that have other form inside him
-		           if (formElement !== undefined && formElement.$addControl) {
-		               angular.forEach(formElement, function(formElement, fieldName) {
-		                   // If the fieldname starts with a '$' sign, it means it's an Angular
-		                   // property or function. Skip those items.
-		                   if (fieldName[0] !== '$') {
-		                       formElement.$dirty = true;
-		                   }
-		                   //if formElement as the proprety $addControl means that have other form inside him
-		                   if (formElement !== undefined && formElement.$addControl) {
-		                       angular.forEach(formElement, function(formElement, fieldName) {
-		                           // If the fieldname starts with a '$' sign, it means it's an Angular
-		                           // property or function. Skip those items.
-		                           if (fieldName[0] !== '$') {
-		                               formElement.$dirty = true;
-		                           }
-		                       });
-		                   }
-		               });
-		           }
-		       });
-		       if (form.$invalid) {
-		           var error = 'Fix all errors before submit';
-		           $alert({
-		               title: 'Error!',
-		               content: error,
-		               type: 'danger',
-		               show: true,
-		               duration: 3,
-		               template: '/html/templates/alert/alert_submit.html',
-		               container: 'alertcontainer'
-		           });
-		       } else {
-					var projectSync = $firebase(new Firebase(firebaseURL+'/clientRequests/'+$scope.projectName));
-					project = projectSync.$asObject();
-					project.$loaded().then(function(){
+           // If the fieldname doesn't start with a '$' sign, it means it's form
+           if (fieldName[0] !== '$') {
+               formElement.$dirty = true;
+           }
+           //if formElement as the proprety $addControl means that have other form inside him
+           if (formElement !== undefined && formElement.$addControl) {
+               angular.forEach(formElement, function(formElement, fieldName) {
+                   // If the fieldname starts with a '$' sign, it means it's an Angular
+                   // property or function. Skip those items.
+                   if (fieldName[0] !== '$') {
+                   	if(angular.isFunction(formElement.$setDirty))
+                   		formElement.$setDirty();
+                   }
+                   //if formElement as the proprety $addControl means that have other form inside him
+                   if (formElement !== undefined && formElement.$addControl) {
+                       angular.forEach(formElement, function(formElement, fieldName) {
+                           // If the fieldname starts with a '$' sign, it means it's an Angular
+                           // property or function. Skip those items.
+                           if (fieldName[0] !== '$') {
+                               if(angular.isFunction(formElement.$setDirty))
+                               	formElement.$setDirty();
+                           }
+                           if (formElement !== undefined && formElement.$addControl) {
+                               angular.forEach(formElement, function(formElement, fieldName) {
+                                   // If the fieldname starts with a '$' sign, it means it's an Angular
+                                   // property or function. Skip those items.
+                                   if (fieldName[0] !== '$') {
+                                       if(angular.isFunction(formElement.$setDirty))
+                                       	formElement.$setDirty();
+                                   }
+                                   if (formElement !== undefined && formElement.$addControl) {
+                                       angular.forEach(formElement, function(formElement, fieldName) {
+                                           // If the fieldname starts with a '$' sign, it means it's an Angular
+                                           // property or function. Skip those items.
+                                           if (fieldName[0] !== '$') {
+                                               if(angular.isFunction(formElement.$setDirty))
+                                               	formElement.$setDirty();
+                                           }
+                                       });
+                                   }
+                               });
+                           }
+                       });
+                   }
+               });
+           }
+       });
+	console.log(form);
+		//$scope.$apply();
+       if (form.$invalid) {
+           var error = 'Fix all errors before submit';
+           $alert({
+               title: 'Error!',
+               content: error,
+               type: 'danger',
+               show: true,
+               duration: 3,
+               template: '/html/templates/alert/alert_submit.html',
+               container: 'alertcontainer'
+           });
+       } else {
+			var projectSync = $firebase(new Firebase(firebaseURL+'/clientRequests/'+$scope.projectName));
+			project = projectSync.$asObject();
+			project.$loaded().then(function(){
 
-						angular.forEach($scope.functions,function(funct,key){
+				angular.forEach($scope.functions,function(funct,key){
 
-							funct.header='function '+funct.name+'('+funct.paramNames.join(", ")+')';
+					funct.header='function '+funct.name+'('+funct.paramNames.join(", ")+')';
 
-							angular.forEach(funct.tests,function(test,key){
-								var testCode = 'equal(' + funct.name + '(';
-								angular.forEach(test.simpleTestInputs, function(input, key) {
-								    testCode += input;
-								    testCode += (key != test.simpleTestInputs.length - 1) ? ',' : '';
-								});
-								testCode += '),' + test.simpleTestOutput + ',\'' + test.description + '\');';
-								test.code=testCode;
-							});
+					angular.forEach(funct.tests,function(test,key){
+						var testCode = 'equal(' + funct.name + '(';
+						angular.forEach(test.simpleTestInputs, function(input, key) {
+						    testCode += input;
+						    testCode += (key != test.simpleTestInputs.length - 1) ? ',' : '';
 						});
-
-						project.functions={};
-						project.functions.functions=$scope.functions;
-
-						angular.forEach($scope.ADTs,function(value,key){
-
-							value.fullExample='var x = '+value.example+';';
-						});
-
-						project.ADTs= {};
-						project.ADTs.ADTs=$scope.ADTs;
-
-
-						project.$save();
-						console.log("salvato");
+						testCode += '),' + test.simpleTestOutput + ',\'' + test.description + '\');';
+						test.code=testCode;
 					});
-				}
+				});
+
+				project.functions={};
+				project.functions.functions=$scope.functions;
+
+				angular.forEach($scope.ADTs,function(value,key){
+
+					value.fullExample='var x = '+value.example+';';
+				});
+
+				project.ADTs= {};
+				project.ADTs.ADTs=$scope.ADTs;
+
+
+				project.$save();
+				$alert({
+				    title: 'Success!',
+				    content: 'Submit successful',
+				    type: 'success',
+				    show: true,
+				    duration: 3,
+				    template: '/html/templates/alert/alert_submit.html',
+				    container: 'alertcontainer'
+				});
+			});
+		}
 
 	};
 
