@@ -9,7 +9,8 @@ var myApp = angular.module('crowdCodeWorker',[
 	'ui.ace', 
 	'mgcrea.ngStrap', 
 	'angular-loading-bar', 
-	'ngClipboard'
+	'ngClipboard',
+    'luegg.directives'
 ]);
 
 // configure app modules

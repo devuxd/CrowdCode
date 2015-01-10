@@ -1,20 +1,18 @@
 <div>
-	<ul class="sidebar-list news-list ">
+	<ul class="sidebar-list news">
 		<li microtask-popover
 			class="news-element {{ n.microtaskType | lowercase }}"
 			ng-if="news.length > 0" 
 			ng-repeat="n in news.slice().reverse()" 
 			ng-mouseenter="showMicrotaskPopover(n)" 
 			>
-			<span class="left">
-				<div class="text">{{::n.microtaskType}}</div>
-				<div ng-if="::(n.score != -1)">
-					<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>
-					<span ng-if="::(n.score == 3)" class="reissued">REISSUED</span>
-					<span ng-if="::(n.score > 3)" class="accepted">ACCEPTED</span>
-				</div>
-			</span>
-			<span class="right">{{::n.points}} points</span>
+			<div class="type">{{::n.microtaskType}}</div>
+			<div class="result" ng-if="::(n.score != -1)">
+				<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>
+				<span ng-if="::(n.score == 3)" class="reissued">REISSUED</span>
+				<span ng-if="::(n.score > 3)" class="accepted">ACCEPTED</span>
+			</div>
+			<span class="points">+{{::n.points}} pts</span>
 	  		<div class="clearfix"></div>
 		</li>
 	</ul>
