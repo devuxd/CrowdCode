@@ -1,5 +1,6 @@
 <div class="popover user-menu-popover">
 	{{userData.score }} points <br />
-	<a href="#" ng-click="showProfileModal(); ">change profile picture</a><br />
-	<a href="{{logoutUrl}}">logout</a>
+	{{ popover }}
+	<a href="#" ng-click=" showProfileModal(); close() ">change profile picture</a><br />
+	<a href="{{logoutUrl}}" ng-click="close()">logout</a>
 </div>

@@ -789,7 +789,6 @@ myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$po
               popover.$promise.then(popover.show);
             };
             var hidePopover = function(popover) {
-                console.log("nascondo invocata");
               popover.$promise.then(popover.hide);
             };
 
@@ -852,13 +851,21 @@ myApp.directive('userMenu',function($popover){
         restrict: 'A',
         link: function(scope, element){
             var popoverSettings = {
+                trigger: 'manual',
                 placement: 'bottom',
                 template:  '/html/templates/popover/user_popover.html'
             };
-            scope.popover = $popover(element,popoverSettings);
-            element.on('click',function(){
-                scope.popover.toggle;
+            popover= $popover(element,popoverSettings);
+            popover.$scope.close = function(){
+                popover.$promise.then(popover.hide);
+            };
+
+            element.on('click',function(){  
+                popover.$promise.then(popover.toggle);
             });
+
+            
+           
         }
     }
 });
