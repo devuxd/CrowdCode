@@ -2,9 +2,9 @@
 <div ng-controller="LeaderboardController">
 	<ul class="sidebar-list leaderboard" >
 	  <li ng-repeat="leader in leaders | orderBy:'-score'" ng-if="leaders.length > 0" 
-	  	  class="{{ (onlineWorkers.$indexFor(leaders.$keyAt(leader))>-1) && 'loggedIn' || '' }}" ng-init="profile = profiles.$getRecord(leader.$id)">
+	  	  class="{{ leaders.$keyAt(leader) == workerId ? 'self' : '' }}" >
 	  	
-	  		<div class="avatar"><img style="width:25px" src="{{ profile.avatarUrl }}" alt="{{ ::leader.name }}" /></div>
+	  		<div class="avatar"><img style="width:25px" ng-src="{{ avatar(leaders.$keyAt(leader)).$value }}" alt="{{ ::leader.name }}" /></div>
 	  		<div class="score">{{ leader.score }} pts</div>
 	  		<div class="name">{{::(leader.name) }}</div>
 

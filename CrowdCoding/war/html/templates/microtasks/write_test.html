@@ -115,6 +115,7 @@
                         <tr ng-form="inputForm" ng-repeat="(index,paramName) in funct.paramNames">
                             <td>
                             	<b>{{paramName}}</b> ({{funct.paramTypes[index]}})
+                            	<br />
                             	<a href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index]); $event.preventDefault()">Paste Example </a>
                             </td>
                             <td>

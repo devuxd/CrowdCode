@@ -89,6 +89,8 @@ myApp.directive('aceReadJson', function() {
                 scope.json = angular.toJson(angular.fromJson (ngModel.$viewValue),true) ;
                 if( ngModel.$viewValue == "") 
                     scope.prettyJson = "";
+                else if ( ngModel.$viewValue === undefined )
+                    scope.prettyJson = "undefined";
                 else
                     scope.prettyJson = syntaxHighlight( scope.json );
             };

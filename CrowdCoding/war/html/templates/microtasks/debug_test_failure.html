@@ -39,7 +39,7 @@
     <div class="section-cols" ng-if="!dispute" >
         <div class="container-flex-row">
             <div class="section section-help bg-color-alpha" style="width:30%">
-                <div class="section-title" >
+                <div class="section-title no-padding" >
                     <div class="dot"></div> TEST RESULTS
                 </div>
                 <div class="section-content" >
@@ -54,30 +54,32 @@
             <div class="section section-form" style="width:70%;">
                 <div class="section-content no-padding" >
 
+                    <div class="section-title">
+                        
+                            <strong ng-if="testsRunning"> 
+                                Tests are running... please wait. 
+                                <span ng-if="total!=0">({{completed}}/{{tests.length}})</span>
+                            </strong>
+                            <strong ng-if="!testsRunning"> 
+                                {{numPassed}}/{{tests.length}} passed tests 
+                            </strong>  
+                            <span class="pull-right">
+                                <input type="checkbox" ng-model="hidePassedTests" /> hide passed tests
+                            </span>
+                            <span class="clearfix"></span>
+                    </div>
                     <div class="panel-group" ng-model="activePanel" bs-collapse>
 
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <strong ng-if="testsRunning"> 
-                                    Tests are running... please wait. 
-                                    <span ng-if="total!=0">({{completed}}/{{total}})</span>
-                                </strong>
-                                <strong ng-if="!testsRunning"> 
-                                    {{numPassed}}/{{total}} passed tests 
-                                </strong>  
-                                <span class="pull-right">
-                                    <input type="checkbox" ng-model="hidePassedTests" /> hide passed tests
-                                </span>
-                                <span class="clearfix"></span>
-                            </div>
-                        </div>
+                        
+
                         <div class="panel panel-default panel-test-result {{ ! test.ready() ? '' : ( test.output.result?'panel-success':'panel-danger' ) }}" 
                             ng-repeat="(testIndex,test) in tests track by $index"
                             ng-show="!test.output.result || !hidePassedTests">
                             <div class="panel-heading" bs-collapse-toggle>
                                 <strong class="pull-left">    
+                                    <span class="glyphicon glyphicon-chevron-{{ activePanel == testIndex ? 'down' : 'right' }}"></span>
                                     Test case #{{::(testIndex+1)}} :
-                                    {{data.test.rec.description}} 
+                                    {{test.rec.description}} 
                                 </strong>
                                 <span class="pull-right">executed in {{test.executionTime}} ms</span>
                                 <span class="clearfix"></span>
@@ -86,11 +88,10 @@
                                 <div ng-if="activePanel != NaN && (activePanel%tests.length)==$index">
 
                                     <div class="panel-body" ng-if="test.errors != undefined ">
-                                        Some errors has been found while running this test: <br />
-                                        <strong>{{test.errors}}</strong>
+                                        <div class="heading-1" >Execution errors</div>
+                                        <div>{{test.errors}}</div>
                                     </div>
 
-                                    <div class="heading">Test Data</div>
                                     <div>
                                         <div class="heading-1" >Input Parameters</div>
                                         <table>
@@ -144,8 +145,9 @@
                                     <br />
                                    
                                     <div  ng-if=" test.stubMap != {} " >
-                                        <div class="heading" >Stubs</div>
+                                        
                                         <div class="panel panel-default" ng-repeat="(fName,fStubs) in test.stubMap">
+                                            <div class="heading-1 " >Stubs function: {{fName}}</div>
                                             <div class="panel-heading">
                                                 The function 
                                                 <ace-read-js code="calleDescription[fName].code"></ace-read-js>
@@ -153,7 +155,7 @@
                                                 <br />
                                                 For each set of inputs, you can choose what return value to use ( you can <b>stub</b> the function for the given input values ).
                                             </div>
-                                            <div class="heading-1" ng-repeat-start="(inputKey,stub) in fStubs track by $index">Input set {{$index}}</div>
+                                            <div class="heading-1 heading-2" ng-repeat-start="(inputKey,stub) in fStubs track by $index">Input set {{$index}}</div>
                                             <table ng-repeat-end>
                                                 <tr ng-repeat="(key,input) in stubs[fName][inputKey].inputs track by $index" >
                                                     <td>{{stubsParamNames[fName][$index]}}<br /></td>
@@ -237,7 +239,7 @@
                     For monitoring statements, use <strong>debug.log(statement)</strong>. The results of the debug.log() are printed below each <strong>test result</strong>.
                     </p>
                 </div>
-                <div class="section-title" > AVAILABLE DATA TYPES </div>
+                <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
                 <div class="section-content" >
                     <adt-list></adt-list>
                 </div>
@@ -260,7 +262,7 @@
 
     <div class="section section-form" ng-if="dispute">
         <div class="section-title" >
-            DISPUTE TEST
+             <div class="dot"></div> DISPUTE TEST
         </div>
         <div class="section-content" >
             <span><b>Test description:</b> {{disputedTest.rec.description}}</span><br/>

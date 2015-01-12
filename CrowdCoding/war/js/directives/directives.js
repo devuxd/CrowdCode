@@ -898,7 +898,7 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase,$popover, 
 });
 
 
-myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert) {
+myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory) {
     return {
         restrict: 'E',
         templateUrl: '/html/templates/panels/chat_panel.html',
@@ -918,8 +918,7 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert) {
         controller: function($scope, $element, $rootScope) {
             // syncs and references to firebase 
             var chatRef = new Firebase($rootScope.firebaseURL + '/chat');
-            var upSync = $firebase(new Firebase($rootScope.firebaseURL + '/workers'));
-
+            
             // data about the 'new message' alert
             var alertData = {
                 duration : 4, // in seconds
@@ -933,8 +932,8 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert) {
             var startLoadingTime = new Date().getTime();
 
             // set scope variables
+            $scope.avatar = avatarFactory.get;
             $rootScope.unreadMessages=0;
-            $scope.profiles = upSync.$asArray();
             $scope.messages = [];
 
             // for each added message 

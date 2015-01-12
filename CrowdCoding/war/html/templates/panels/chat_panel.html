@@ -8,7 +8,7 @@
 	<div class="output" scroll-glue>
 		<ul class="messages">
 			<li ng-repeat="m in messages">
-	      		<div class="avatar"><img src="{{profiles.$getRecord(m.workerId).avatarUrl}}" alt="" /></div>
+	      		<div class="avatar"><img ng-src="{{ avatar(m.workerId).$value }}"  alt="" /></div>
 	      		<div class="message">
 	      			<span class="nickname">
 						{{m.workerHandle}}:</span>

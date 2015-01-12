@@ -15,7 +15,8 @@ myApp.controller('AppController', [
 	'ADTService',
 	'microtasksService',
 	'TestList',
-	function($scope, $rootScope, $firebase, $interval, $modal, logoutUrl, userService, testsService, functionsService, ADTService, microtasksService, TestList) {
+	'avatarFactory',
+	function($scope, $rootScope, $firebase, $interval, $modal, logoutUrl, userService, testsService, functionsService, ADTService, microtasksService, TestList, avatarFactory) {
 
 		// current session variables
 		$rootScope.projectId    = projectId;
@@ -26,6 +27,9 @@ myApp.controller('AppController', [
 		$rootScope.logoutUrl = logoutUrl;
 
 
+		console.log('MC: '+workerId);
+		$scope.avatar = avatarFactory.get;
+		console.log('MC: '+$scope.avatar(workerId));
 
 		// wrapper for user login and logout
 		$rootScope.workerLogin = function()  { userService.login();  };
@@ -166,6 +170,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	$scope.microtask = {};
 	$scope.templatePath = ""; //"/html/templates/microtasks/";
 	$scope.validatorCondition = false;
+	$scope.loadingMicrotask = true;
 	//Whait for the inizializations of all service
 	//when the microtask array is syncronize with firebase load the first microtask
 
@@ -186,7 +191,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 		// set the loading template
 		$scope.templatePath   = templatesURL + "loading.html";
-
 		$scope.microtask      = undefined;
 
 		$http.get('/' + projectId + '/ajax/fetch')
@@ -238,6 +242,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 							$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 					}
 				});
+
+				$scope.loadingMicrotask = false;
 			})
 			.error(function(data, status, headers, config) {
 
@@ -250,8 +256,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 				checkQueueTimeout = $timeout(function() {
 					$interval.cancel(timerInterval);
-					$scope.$emit('load');
-				}, 30*1000); // check the queue every 30 seconds
+					$scope.$emit('loadMicrotask');
+				}, waitTimeInSeconds*1000); // check the queue every 30 seconds
 			});
 	});
 
@@ -259,6 +265,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask', function(event, formData) {
+
 
 		if ($scope.microtask === undefined)
 			return;
@@ -311,13 +318,13 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 ////////////////////////////
 // LEADERBOARD CONTROLLER //
 ////////////////////////////
-myApp.controller('LeaderboardController', ['$scope', '$rootScope', '$firebase', function($scope, $rootScope, $firebase) {
+myApp.controller('LeaderboardController', ['$scope', '$rootScope', '$firebase','avatarFactory','workerId', function($scope, $rootScope, $firebase, avatarFactory, workerId) {
 	// create the reference and the sync
-	var upSync = $firebase(new Firebase($rootScope.firebaseURL + '/workers'));
+	
 	var lbSync = $firebase(new Firebase($rootScope.firebaseURL + '/leaderboard/leaders'));
-	// bind the array to scope.leaders
-	$scope.profiles = upSync.$asArray();
-	$scope.leaders  = lbSync.$asArray();
+	
+	$scope.avatar = avatarFactory.get;
+	$scope.leaders       = lbSync.$asArray();
 	$scope.leaders.$loaded().then(function() {});
 }]);
 
