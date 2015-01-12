@@ -7,7 +7,6 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 	var firebaseURL = 'https://crowdcode.firebaseio.com';
 	var firebaseRef;
 	$scope.projectsName=[];
-	$scope.names = ["john", "bill", "charlie", "robert", "alban", "oscar", "marie", "celine", "brad", "drew", "rebecca", "michel", "francis", "jean", "paul", "pierre", "nicolas", "alfred", "gerard", "louis", "albert", "edouard", "benoit", "guillaume", "nicolas", "joseph"];
 
 	//load all the projects name
 	var projectSync = $firebase(new Firebase(firebaseURL+'/clientRequests'));
@@ -16,7 +15,6 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		angular.forEach(projectNames, function(value,key){
 			$scope.projectsName.push(value.$id);
 		});
-		console.log($scope.projectsName);
 	});
 
 
@@ -55,12 +53,12 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 	{
 		if($scope.ADTs[ADTindex].examples===undefined)
 			$scope.ADTs[ADTindex].examples=[];
-		
+
 		$scope.ADTs[ADTindex].examples.push({name:"",value:""});
 	};
 
 	$scope.deleteExample=function(ADTindex,exampleIndex)
-	{	
+	{
 		if($scope.ADTs[ADTindex].examples.length>1)
 			$scope.ADTs[ADTindex].examples.splice(exampleIndex,1);
 	};
@@ -119,60 +117,25 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		$scope.functions[functionIndex].tests.splice(testIndex,1);
 	};
 
-
-	$scope.submit=function(form){
-
-		//set all the field to dirty
+	function makeDirty(form)
+	{
 		angular.forEach(form, function(formElement, fieldName) {
-           // If the fieldname doesn't start with a '$' sign, it means it's form
-           if (fieldName[0] !== '$') {
-               formElement.$dirty = true;
-           }
-           //if formElement as the proprety $addControl means that have other form inside him
-           if (formElement !== undefined && formElement.$addControl) {
-               angular.forEach(formElement, function(formElement, fieldName) {
-                   // If the fieldname starts with a '$' sign, it means it's an Angular
-                   // property or function. Skip those items.
-                   if (fieldName[0] !== '$') {
-                   	if(angular.isFunction(formElement.$setDirty))
-                   		formElement.$setDirty();
-                   }
-                   //if formElement as the proprety $addControl means that have other form inside him
-                   if (formElement !== undefined && formElement.$addControl) {
-                       angular.forEach(formElement, function(formElement, fieldName) {
-                           // If the fieldname starts with a '$' sign, it means it's an Angular
-                           // property or function. Skip those items.
-                           if (fieldName[0] !== '$') {
-                               if(angular.isFunction(formElement.$setDirty))
-                               	formElement.$setDirty();
-                           }
-                           if (formElement !== undefined && formElement.$addControl) {
-                               angular.forEach(formElement, function(formElement, fieldName) {
-                                   // If the fieldname starts with a '$' sign, it means it's an Angular
-                                   // property or function. Skip those items.
-                                   if (fieldName[0] !== '$') {
-                                       if(angular.isFunction(formElement.$setDirty))
-                                       	formElement.$setDirty();
-                                   }
-                                   if (formElement !== undefined && formElement.$addControl) {
-                                       angular.forEach(formElement, function(formElement, fieldName) {
-                                           // If the fieldname starts with a '$' sign, it means it's an Angular
-                                           // property or function. Skip those items.
-                                           if (fieldName[0] !== '$') {
-                                               if(angular.isFunction(formElement.$setDirty))
-                                               	formElement.$setDirty();
-                                           }
-                                       });
-                                   }
-                               });
-                           }
-                       });
-                   }
-               });
-           }
-       });
-	console.log(form);
-		//$scope.$apply();
+			// If the fieldname doesn't start with a '$' sign, it means it's form
+			if (fieldName[0] !== '$'){
+				if(angular.isFunction(formElement.$setDirty))
+	                formElement.$setDirty();
+
+				//if formElement as the proprety $addControl means that have other form inside him
+				if (formElement !== undefined && formElement.$addControl) 
+					makeDirty(formElement);
+			}
+		});
+	}
+	
+	$scope.submit=function(form){
+		
+		makeDirty(form);
+
        if (form.$invalid) {
            var error = 'Fix all errors before submit';
            $alert({

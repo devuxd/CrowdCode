@@ -16,7 +16,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 
     //if a function starts with CR cannot be disputed
     $scope.canBeDisputed=true;
-    if( $scope.funct.name.startsWith('CR'))
+    if( $scope.funct.readOnly)
         $scope.canBeDisputed=false;
 
     // scope variables 
@@ -668,7 +668,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
         codemirror.on("change", function() {
             // If we are editing a function that is a client request and starts with CR, make the header
             // readonly.
-            if (!readOnlyDone && $scope.funct.name.startsWith('CR')) {
+            if (!readOnlyDone && $scope.funct.readOnly) {
                 functionsService.makeHeaderAndParameterReadOnly(codemirror);
                 readOnlyDone = true;
             }
@@ -757,7 +757,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
     var codemirrorChangeListener = function() {
         // If we are editing a function that is a client request and starts with CR, make the header
         // readonly.
-        if (!readOnlyDone && $scope.funct.name.startsWith('CR')) {
+        if (!readOnlyDone && $scope.funct.readOnly) {
             functionsService.makeHeaderAndParameterReadOnly(codemirror);
             readOnlyDone = true;
         }
@@ -955,7 +955,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
 
     //if a function starts with CR cannot be disputed
     $scope.canBeDisputed=true;
-    if( $scope.funct.name.startsWith('CR'))
+    if( $scope.funct.readOnly)
         $scope.canBeDisputed=false;
 
     // if microtask.submission and microtask.submission.simpleTestInputs are defined
