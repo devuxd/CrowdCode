@@ -24,6 +24,14 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 
 	user.data = sync.$asObject();
 	user.data.$loaded().then(function(){
+		if( user.data.avatarUrl == null ){
+
+			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
+			user.data.$save().then(function(){
+				console.log('set avatar url: '+user.data.avatarUrl);
+			});
+		}
+
 		// console.log("user data loaded ",user.data);
 	});
 
@@ -40,6 +48,17 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 		});
 		
 	};
+
+	user.setAvatarUrl = function(url){
+		user.data.avatarUrl = url;
+		user.data.$save().then(function(){
+			console.log('set avatar url: '+url);
+		});
+	};
+
+	user.getAvatarUrl = function(){
+		return user.data.pictureUrl || '';
+	}
 
 	// logout the worker
     user.login = function(){

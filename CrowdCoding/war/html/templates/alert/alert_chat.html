@@ -1,17 +1,10 @@
-<div class="alert alert-chat">
-	<button type="button" class="close" ng-if="dismissable" ng-click="$hide()">&times;</button>
-	<div class="output-wrapper">
-		<div class="output">
-			<div class="avatar">
-				<img src="/user/picture?userId={{ title }}" alt="" />
-			</div>
-
-			<div class="message">
-				<span class="nickname">{{title}}:</span>
-				<span ng-if="content" class="text" ng-bind-html="content"></span>
-
-			</div>
-			<div class="clearfix"></div>
-		</div>
+<div class="alert chat-alert">
+	
+	<div class="header">
+		<span class="avatar pull-left"><img src="/user/picture?userId={{ title }}" alt="" /></span>
+		<span class="pull-left">{{title}} says: </span>
+		<span class="pull-right btn-close glyphicon glyphicon-remove" ng-if="dismissable" ng-click="$hide()"></span>
+		<span class="clearfix"></span>
 	</div>
+	<div class="message" ng-bind-html="content"></div>
 </div>

@@ -1,25 +1,29 @@
 <div class="chat {{chatActive?'active':''}}">
+
 	<div class="header"> 
 		<span>Project chat</span>
 		<span class="pull-right btn-close glyphicon glyphicon-remove" ng-click="$emit('toggleChat')"></span>
 	</div>
-	<div class="output-wrapper">
-		<ul class="output">
-			<li ng-repeat="m in messages" >
-	      		<div class="avatar"><img src="/user/picture?userId={{ m.workerHandle }}" alt="" /></div>
-	      		
+
+	<div class="output" scroll-glue>
+		<ul class="messages">
+			<li ng-repeat="m in messages">
+	      		<div class="avatar"><img src="{{profiles.$getRecord(m.workerId).avatarUrl}}" alt="" /></div>
 	      		<div class="message">
-	      			<span class="nickname">{{m.workerHandle}}:</span>
-	      			<span class="text" ng-bind-html="m.text | newline"></span>
-	      			<div class="time">{{ m.createdAt | date : 'medium'}}</div>
-	      			
+	      			<span class="nickname">
+						{{m.workerHandle}}:</span>
+	      			<span class="text">{{m.text}}</span>
 	      		</div>
+	      		<!--<div class="timestamp">{{ m.createdAt | date : 'medium'}}</div>-->
+	      			
 	      		<div class="clearfix"></div>
 	      	</li>
+	      	<li class="clearfix"></li>
 		</ul>
 	</div>
+
 	<div class="input">
-		<textarea ng-model="asd" class="input-sm" press-enter="addMessage()"></textarea>
+		<textarea ng-model="data.newMessage" ng-model-option="{ updateOn: 'blur'}"class="input-sm" press-enter="addMessage()" ></textarea>
 	</div>
 	
 </div>

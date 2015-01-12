@@ -412,11 +412,12 @@ myApp.directive('pressEnter', function() {
     return function(scope, element, attrs) {
 
         var keyPressListener = function(event){
-            if (event.which === 13 && !event.shiftKey && !event.ctrlKey) {
+            if (!event.shiftKey && !event.ctrlKey && event.which === 13 ) {
                 scope.$apply(function() {
                     scope.$eval(attrs.pressEnter);
                 });
                 event.preventDefault();
+                
             }
         };
 
@@ -788,7 +789,6 @@ myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$po
               popover.$promise.then(popover.show);
             };
             var hidePopover = function(popover) {
-                console.log("nascondo invocata");
               popover.$promise.then(popover.hide);
             };
 
@@ -846,6 +846,30 @@ myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$po
 });
 
 
+myApp.directive('userMenu',function($popover){
+    return {
+        restrict: 'A',
+        link: function(scope, element){
+            var popoverSettings = {
+                trigger: 'manual',
+                placement: 'bottom',
+                template:  '/html/templates/popover/user_popover.html'
+            };
+            popover= $popover(element,popoverSettings);
+            popover.$scope.close = function(){
+                popover.$promise.then(popover.hide);
+            };
+
+            element.on('click',function(){  
+                popover.$promise.then(popover.toggle);
+            });
+
+            
+           
+        }
+    }
+});
+
 /////////////////////
 //  NEWS DIRECTIVE //
 /////////////////////
@@ -863,26 +887,12 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase,$popover, 
         controller: function($scope, $element) {
             $scope.popover=[];
            
-            
-
             // create the reference and the sync
             var ref = new Firebase($rootScope.firebaseURL + '/workers/' + $rootScope.workerId + '/newsfeed');
             var sync = $firebase(ref);
 
             // bind the array to scope.leaders
             $scope.news = sync.$asArray();
-          //  console.log($element);
-          //  trigger="manual"  
-             
-            //data-animation="" 
-            //data-auto-close="false" 
-        //    data-placement="right-bottom" 
-       //     bs-popover
-
-          
-
-
-
         }
     };
 });
@@ -901,67 +911,96 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert) {
             $rootScope.unreadedMessages=0;
             $rootScope.$on('toggleChat', function() {
                 $element.find('.chat').toggleClass('active');
-                $element.find('.output').scrollTop($element.find('.output').height());
-                $rootScope.chatActive= ! $rootScope.chatActive;
-                $rootScope.unreadedMessages=0;
+                $rootScope.chatActive = ! $rootScope.chatActive;
+                $rootScope.unreadMessages =0;
             });
         },
         controller: function($scope, $element, $rootScope) {
-            var $output = $element.find('.output');
-            var initializationTime=0;
-            var workerHandle='';
-            var text='';
-            var myAlert;
-            var chatLoaded=false;
-            // create the reference and the sync
-            var chatRef = new Firebase($rootScope.firebaseURL + '/chat').limit(10);
-            var sync = $firebase(chatRef);
+            // syncs and references to firebase 
+            var chatRef = new Firebase($rootScope.firebaseURL + '/chat');
+            var upSync = $firebase(new Firebase($rootScope.firebaseURL + '/workers'));
 
-            // bind the array to scope.leaders
-            $scope.messages = sync.$asArray();
-            $scope.messages.$loaded().then(function(){chatLoaded=true;});
-            $scope.messages.$watch(function(event) {
-                if (event.event == 'child_added') {
+            // data about the 'new message' alert
+            var alertData = {
+                duration : 4, // in seconds
+                object : null,
+                text   : '',
+                worker : '',
+                createdAt : 0
+            };
 
-                    //if the chat is not visible
-                    if(! $rootScope.chatActive&&chatLoaded){
-                        $rootScope.unreadedMessages++;
-                        //if the worker is the same of the previous message and are trascorred less than 3 seconds hides the active alert and add the new text to the new one
-                        if((new Date().getTime())-initializationTime<4000 && workerHandle==$scope.messages[$scope.messages.length - 1 ].workerHandle){
+            // track the page load time
+            var startLoadingTime = new Date().getTime();
 
-                            text+='<br> '+$scope.messages[$scope.messages.length - 1 ].text;
-                        }
-                        else{
-                            workerHandle=$scope.messages[$scope.messages.length - 1 ].workerHandle;
-                            text=$scope.messages[$scope.messages.length - 1 ].text;
-                        }
-                        if(myAlert!==undefined) myAlert.hide();
-                        //creates the new alert
-                        myAlert = $alert({title: workerHandle, content: text , placement: 'bottom-right', duration:4 ,template : '/html/templates/alert/alert_chat.html', keyboard: true, show: true});
-                        //saves time of cration of the new alert
-                        initializationTime=new Date().getTime();
+            // set scope variables
+            $rootScope.unreadMessages=0;
+            $scope.profiles = upSync.$asArray();
+            $scope.messages = [];
 
-                    }
-                   // console.log($element.find('.output'));
-                    $element.find('.output-wrapper').animate({
-                        scrollTop: 650 //$element.find('.output').height()
-                    }, 100);
+            // for each added message 
+            chatRef.on('child_added',function(childSnap, prevChildName){
 
-                }
+                    // get the message data and add it to the list
+                    var message = childSnap.val();
+                    $scope.messages.push(message);
+
+                    // if the chat is hidden and the timestamp is 
+                    // after the timestamp of the page load
+                    if( message.createdAt > startLoadingTime ) 
+                        if( !$rootScope.chatActive ){
+
+                             // increase the number of unread messages
+                            $rootScope.unreadMessages++;
+                            
+                            // if the current message has been sent
+                            // from the same worker of the previous one
+                            // and the alert is still on
+                            if( alertData.worker == message.workerHandle && ( message.createdAt - alertData.createdAt) < alertData.duration*1000 ) {
+                                // append the new text to the current alert
+                                alertData.text += '<br/>'+message.text;
+                                alertData.object.hide();
+                            } else { 
+                                // set data for the new alert
+                                alertData.text   = message.text;
+                                alertData.worker = message.workerHandle;
+                            }
+                           
+                            // record the creation time of the alert
+                            // and show it 
+                            alertData.createdAt = new Date().getTime();
+                            alertData.object    = $alert({
+                                title    : alertData.worker, 
+                                content  : alertData.text , 
+                                duration : alertData.duration ,
+                                template : '/html/templates/alert/alert_chat.html', 
+                                keyboard : true, 
+                                show: true
+                            });
+                        } 
+                    
+                    $timeout( function(){ $scope.$apply() }, 100);
             });
 
-            $scope.asd = "";
-            // key press function
-            $scope.addMessage = function() {
-                $scope.messages.$add({
-                    text: $scope.asd,
-                    createdAt: Date.now(),
-                    workerHandle: $rootScope.workerHandle
-                }).then(function(ref) {
+            // hide the alert if the chat becomes active
+            $rootScope.$watch('chatActive',function(newVal,oldVal){
+                if( newVal && alertData.object != null )
+                    alertData.object.hide();
+            });
 
-                });
-                $scope.asd = "";
-                return true;
+            // add new message to the conversation
+            $scope.data = {};
+            $scope.data.newMessage = "";
+            $scope.addMessage = function() {
+                if( $scope.data.newMessage.length > 0){
+                    var newMessageRef = chatRef.push();
+                    newMessageRef.set({
+                        text:         $scope.data.newMessage,
+                        createdAt:    Date.now(),
+                        workerHandle: $rootScope.workerHandle,
+                        workerId:     $rootScope.workerId
+                    });
+                    $scope.data.newMessage = "";
+                }
             };
         }
     };

@@ -23,6 +23,7 @@ myApp.controller('AppController', [
 		$rootScope.workerHandle = workerHandle;
 		$rootScope.firebaseURL  = firebaseURL;
 		$rootScope.userData     = userService.data;
+		$rootScope.logoutUrl = logoutUrl;
 
 
 
@@ -30,25 +31,12 @@ myApp.controller('AppController', [
 		$rootScope.workerLogin = function()  { userService.login();  };
 		$rootScope.workerLogout = function() { userService.logout(); };
 
-		// user profile dropdown
-		$scope.dropdown = [
-		  {
-		    "text": "change profile picture",
-		    "click": "showProfileModal()"
-		  },
-		  {
-		    "divider": true
-		  },
-		  {
-		    "text": "logout",
-		    "href": logoutUrl
-		  }
-		];	
+		
 
 		 // Pre-fetch an external template populated with a custom scope
-		var profileModal = $modal({scope: $scope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/html/templates/popups/popup_change_picture.html', show: false});
+		var profileModal = $modal({scope: $scope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/html/templates/popups/popup_user_profile.html', show: false});
 		// Show when some event occurs (use $promise property to ensure the template has been loaded)
-		$scope.showProfileModal = function() {
+		$rootScope.showProfileModal = function() {
 			profileModal.$promise.then(profileModal.show);
 		};
 
@@ -118,18 +106,37 @@ myApp.controller('AppController', [
 ]);
 
 
-myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', 'fileUpload', function($scope, $rootScope, $timeout, fileUpload) {
-	$scope.imageUrl = '/user/picture?userId=' + $rootScope.workerId + '&t=' + (new Date().getTime());
-	$scope.uploadFile = function() {
-		var file = $scope.image;
-		var uploadUrl = "/user/pictureChange";
+myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', 'fileUpload','userService', function($scope, $rootScope, $timeout, fileUpload, userService) {
 
-		fileUpload.uploadFileToUrl(file, uploadUrl);
+	$scope.userData = userService.data;
 
-		$timeout(function() {
-			$scope.imageUrl = '/user/picture?userId=' + $rootScope.workerId + '&t=' + (new Date().getTime());
-		}, 500);
+	$scope.galleryPath = '/img/avatar_gallery/'
+
+	$scope.uploadedAvatar  = null;
+	$scope.selectedAvatar = -1;
+
+	$scope.selectAvatar = function(number){
+		console.log('selecting avatar '+number);
+		$scope.selectedAvatar = number;
 	};
+
+	$scope.saveAvatar = function() {
+		console.log('uploadedImage',$scope.uploadedAvatar);
+		if( $scope.uploadedAvatar !== null){
+			var file = $scope.uploadedAvatar;
+			var uploadUrl = "/user/pictureChange";
+
+			fileUpload.uploadFileToUrl(file, uploadUrl);
+
+			$timeout(function() {
+				userService.setAvatarUrl('/user/picture?userId=' + $rootScope.workerId + '&t=' + (new Date().getTime()));
+			}, 500);
+		} else if( $scope.selectedAvatar != -1 ){
+			userService.setAvatarUrl($scope.galleryPath+'avatar'+$scope.selectedAvatar+'.png');
+		}
+			
+	};
+
 
 }]);
 
@@ -306,10 +313,11 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 ////////////////////////////
 myApp.controller('LeaderboardController', ['$scope', '$rootScope', '$firebase', function($scope, $rootScope, $firebase) {
 	// create the reference and the sync
-	var ref = new Firebase($rootScope.firebaseURL + '/leaderboard/leaders');
-	var sync = $firebase(ref);
+	var upSync = $firebase(new Firebase($rootScope.firebaseURL + '/workers'));
+	var lbSync = $firebase(new Firebase($rootScope.firebaseURL + '/leaderboard/leaders'));
 	// bind the array to scope.leaders
-	$scope.leaders = sync.$asArray();
+	$scope.profiles = upSync.$asArray();
+	$scope.leaders  = lbSync.$asArray();
 	$scope.leaders.$loaded().then(function() {});
 }]);
 

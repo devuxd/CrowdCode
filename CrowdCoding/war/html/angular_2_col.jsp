@@ -83,15 +83,11 @@
 			    </ul>
 
 			    <ul class="nav navbar-nav navbar-right">
-			        <li>
-			        	<a href="#"
-				        	style="margin-right:20px"
-				        	data-placement="bottom-right"
-				        	data-container="body"
-				        	bs-dropdown="dropdown" />
-		          		<img ng-src="/user/picture?userId={{workerId}}" class="profile-picture" alt="{{workerHandle}}" />
-						<%=workerHandle %> {{ userData.score }} points
-						<span class="caret"></span>
+			    	<li>
+			        	<a user-menu href="#" />
+							<%=workerHandle %> 
+							<img ng-src="{{ userData.avatarUrl }}" class="profile-picture" alt="{{workerHandle}}" />
+							<span class="caret"></span>
 			        	</a>
 			        </li>
 			    </ul>
@@ -152,7 +148,7 @@
 
 
 						<span class="pull-right">
-							<span ng-if="unreadedMessages>0" class="unreded-messages">{{unreadedMessages}}</span>
+							<span ng-if="unreadMessages > 0" class="unread-messages">{{unreadMessages}}</span>
 							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn btn-chat-toggle {{chatActive?'opened':''}} btn-sm"  >
 
 								<span class="glyphicon glyphicon-comment"></span>
@@ -198,6 +194,8 @@
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/angular-animate.min.js"></script><!-- Angular animate -->
 	<script src="/include/angular/angular-sanitize.min.js"></script><!-- Angular sanitize -->
+
+	<script src="/include/angularjs-scroll-glue/src/scrollglue.js"></script><!-- scroll glue -->
 
 	<!-- loadingbar -->
 	<script src="/include/angular-loading-bar/src/loading-bar.js"></script>
