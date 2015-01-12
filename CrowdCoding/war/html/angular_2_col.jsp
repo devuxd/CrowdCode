@@ -139,8 +139,10 @@
 	        <div id="content" class="order-3" ng-controller="MicrotaskController" >
 	        	<form name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
 					<div id="task" class="task" microtask >
-						<ng-include class="task-{{ microtask.type | lowercase }}" src="templatePath"></ng-include>
+						<ng-include class="task-{{ microtask.type | lowercase }}" src="templatePath || '/html/templates/microtasks/loading.html'"></ng-include>
+						
 					</div>
+
 					<div class="button-bar">
 						<div class="btn-group pull-left" role="group"  >
 						  <button type="button" ng-click="$emit('skipMicrotask')" tabindex="100" class="btn btn-default btn-sm">Skip</button>
@@ -158,6 +160,7 @@
 						<span class="clearfix"></span>
 					</div>
 				</form>
+
 	        </div>
 
 

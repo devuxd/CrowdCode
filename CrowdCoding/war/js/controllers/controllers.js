@@ -170,6 +170,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	$scope.microtask = {};
 	$scope.templatePath = ""; //"/html/templates/microtasks/";
 	$scope.validatorCondition = false;
+	$scope.loadingMicrotask = true;
 	//Whait for the inizializations of all service
 	//when the microtask array is syncronize with firebase load the first microtask
 
@@ -190,7 +191,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 		// set the loading template
 		$scope.templatePath   = templatesURL + "loading.html";
-
 		$scope.microtask      = undefined;
 
 		$http.get('/' + projectId + '/ajax/fetch')
@@ -242,6 +242,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 							$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 					}
 				});
+
+				$scope.loadingMicrotask = false;
 			})
 			.error(function(data, status, headers, config) {
 
@@ -254,8 +256,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 				checkQueueTimeout = $timeout(function() {
 					$interval.cancel(timerInterval);
-					$scope.$emit('load');
-				}, 30*1000); // check the queue every 30 seconds
+					$scope.$emit('loadMicrotask');
+				}, waitTimeInSeconds*1000); // check the queue every 30 seconds
 			});
 	});
 
@@ -263,6 +265,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask', function(event, formData) {
+
 
 		if ($scope.microtask === undefined)
 			return;

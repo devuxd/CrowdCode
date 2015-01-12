@@ -944,15 +944,45 @@ tutorial-container .btn-next { position: absolute; right: 0; }
 
 /* NO MORE MICROTASKS */
 .no-microtask {
-	text-align: center;
+	min-height:10%;
 	color: gray;
-	margin-top: 25%;
+	vertical-align: center;
+	text-align: center;
 	font-family: 'Lato' !important;
 	font-style: normal;
 	font-weight: 500;
 	font-size: 1.2em;
 	text-transform: uppercase;
 }
+
+.loading-microtask {
+	min-height:10%;
+	color: gray;
+	margin-top:25%;
+	vertical-align: center;
+	text-align: center;
+	font-family: 'Lato' !important;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 1.2em;
+	text-transform: uppercase;
+
+}
+
+.stats ul {
+	margin:0px;
+	padding:0px;
+	list-style: none;
+}
+
+.stats li { background-color: rgba(205, 205, 205, 0.13);
+ padding:2px; font-family: 'Lato'; }
+.stats .self { background-color: rgba(205, 205, 205, 0.35);}
+.stats .position { float:left;line-height:40px; font-weight: bold;padding:10px;}
+.stats .avatar { float:left;width:60px;height:60px; }
+.stats .avatar img { width:60px; height:60px; }
+.stats .score  { float:right;line-height:60px; font-weight: bold;}
+.stats .name { overflow: hidden; line-height:60px; padding-left: 4px; text-overflow: ellipsis; white-space: nowrap; font-size: 1.5em;}
 
 
 
