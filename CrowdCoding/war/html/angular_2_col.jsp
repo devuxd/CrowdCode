@@ -266,7 +266,6 @@
 	<script src="/js/services/user.js"></script>
 	<script src="/js/services/testRunner.js"></script>
     <script src="/js/services/fileUpload.js"></script>
-    <script src="/js/services/TestNotificationChannel.js"></script>
 
 
 	<script src="/js/services/testFactory.js"></script>
