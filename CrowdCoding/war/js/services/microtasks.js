@@ -1,35 +1,55 @@
 /////////////////////////
 // MICROTASKS SERVICE  //
 /////////////////////////
-myApp.factory('microtasksService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
+myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','$q', function($window,$rootScope,$firebase,$http,$q) {
 
 	// Private variables
 	var microtasks;
 
-	var service = new function(){
-
-
+	var service = {
 
 		// Public functions
-		this.get = function(id) { return get(id); };
-		this.submit = function(id, formData){return submit(id, formData);};
-
-
-
-		function get(id)
-		{
+		get : function(id){
 			var microtaskSync = $firebase(new Firebase($rootScope.firebaseURL+'/microtasks/'+id));
 			var microtask = microtaskSync.$asObject();
 			
 			return microtask;
-		}
+		},
 
-		function submit(microtask, formData)
-		{
-			//var microtask=microtasks[id-1];
-			microtask.submission=formData;
+		submit : function(microtask, formData){	
+			var deferred = $q.defer();
 
-			microtasks.$save(microtask);
+			if( microtask == undefined )
+				deferred.reject();
+			
+			var skip = formData == null;
+			// submit to the server
+			$http.post('/' + $rootScope.projectId + '/ajax/submit?type=' + microtask.type + '&key=' + microtask.$id+(skip? '&skip=true' : ''), formData)
+				.success(function(data, status, headers, config) {
+					// submit to Firebase
+					microtask.submission = formData;
+					microtask.$save();
+					deferred.resolve();
+				})
+				.error(function(data, status, headers, config) {
+					deferred.reject();
+				});
+			return deferred.promise;
+		},
+
+		fetch : function(){
+			var deferred = $q.defer();
+
+			// ask the microtask id
+			$http.get('/' + projectId + '/ajax/fetch')
+			.success(function(data, status, headers, config) {
+				deferred.resolve(data);	
+			})
+			.error(function(data, status, headers, config) {
+				deferred.reject();
+			});
+
+			return deferred.promise;
 		}
 	}
 	return service;
