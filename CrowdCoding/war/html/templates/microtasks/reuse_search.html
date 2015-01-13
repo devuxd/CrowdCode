@@ -20,7 +20,8 @@
 			JOB DESCRIPTION
 		</div>
 		<div class="section-content" >
-			Is there any function that could substitute the pseudocall: <span class="pseudoCall">{{microtask.callDescription}}</span> ?
+			A function to: <span class="pseudoCall">{{microtask.callDescription}}</span> has been requested.<br/>
+			Is there a function to do this, or should a new function be created?
 		</div>
 	</div>
 
@@ -44,9 +45,8 @@
 					<div class="dot"></div> HINT
 				</div>
 				<div class="section-content" >
-					Choose a function that does what the pseudocall
-					asks ( you can filter the list of functions typing some characters in the input box).
-					<strong>If in the list there isn't the right function, click check "no function does this"</strong>
+					Choose a function that provides the requested behavior ( you can filter the list of functions by entering text in the input box).
+					<strong>If there isn't the right function, click check "no function does this".</strong>
 
 				</div>
 			</div>
@@ -61,11 +61,11 @@
 							name="newtestcase"
 							ng-model="text"
 							ng-change="doSearch()"
-							placeholder="filter functions"
+							placeholder="Search for functions"
 							focus/>
 						<span class="input-group-btn">
 							<button class="btn btn-default" ng-click="doSearch()" type="button" tabindex="2">
-								<span class="glyphicon glyphicon-filter"
+								<span class="glyphicon glyphicon-filter"></span>
 							</button>
 						</span>
 
@@ -73,7 +73,7 @@
 					<div class="input-group" style="width:100%">
 
 						<b>If you can't find any, select: 
-						<input type="checkbox" ng-model="selectedResult" ng-true-value="-1" ng-false-value="-2"> No function does this </b>
+						<input type="checkbox" ng-model="selectedResult" ng-true-value="-1" ng-false-value="-2"> No function found</b>
 					</div>
 				</div>
 				<div class="section-content no-padding">

@@ -397,7 +397,7 @@ myApp.directive('functionConvections', function(){
                         '\tvar values = [ 128, 309 ];\n'+
                         '\t//# calc the least common multiple of values\n'+
                         '\tvar avg;\n'+
-                        '\t//! avg=average(values) \n'+
+                        '\t//!avg = Compute the average of (values) \n'+
                         '\treturn { average: avg, lcm: lcm }; \n' +
                         '}';
 

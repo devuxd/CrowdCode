@@ -24,12 +24,22 @@
 
 			<div ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
 
-				What are some cases in which this function might be used? Are there any unexpected corner
-				cases that might not work?
+				Can you describe some test cases in which this function might be used? Are there any unexpected corner
+				cases that might not work?, <br/>
+				You don't need a fully specifed test, just a description of the type of test to be performed
 			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
-			    Has been reported this issue:
+				The test case:
+				<div class="form-group">
+					<input type="text"
+					class="form-control"
+					disabled="true"
+					name="disputedTestCase"
+					ng-model="microtask.disputedTestCase"
+					>
+				</div>
+			    has been reported to:
 			    <div class="form-group has-error">
 			    	<input type="text"
 			    	class="form-control"
@@ -39,16 +49,8 @@
 			    	>
 			    </div>
 			    <br>
-			    For the following test case:
-			    <div class="form-group">
-			    	<input type="text"
-			    	class="form-control"
-			    	disabled="true"
-			    	name="disputedTestCase"
-			    	ng-model="microtask.disputedTestCase"
-			    	>
-			    </div>
-				Can you rewrite the test case (and others if necessary) to address the issue?<BR>
+			    
+				Can you fix the test case (and others if necessary)?<BR>
 			</div>
 		</div>
 	</div>

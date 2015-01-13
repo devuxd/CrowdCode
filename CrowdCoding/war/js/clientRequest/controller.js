@@ -117,8 +117,8 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		$scope.functions[functionIndex].tests.splice(testIndex,1);
 	};
 
-	function makeDirty(form)
-	{
+	function makeDirty(form){
+		
 		angular.forEach(form, function(formElement, fieldName) {
 			// If the fieldname doesn't start with a '$' sign, it means it's form
 			if (fieldName[0] !== '$'){

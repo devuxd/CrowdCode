@@ -21,8 +21,9 @@
 		</div>
 		<div class="section-content">
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
-
-			Can you write the description of the function that will replace the pseudocall <strong>{{ microtask.callDescription}}</strong> in the following function code?<br>
+			A function to do the following has been requested: <br/>
+			<strong>{{ microtask.callDescription}}</strong> <br/>
+			Can you write a description for this function?<br>
 			
 		</div>
 		
@@ -69,7 +70,7 @@
 					  	<div class="form-group">
 						    <label for="returnType" class="col-sm-2 control-label reset-padding">return data type</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<input type="text" class="form-control" name="returnType" ng-model="returnType" ng-model-options="{ updateOn: 'blur' }"  adt-validator required placeholder="insert the return data type" press-enter="addParameter()" >
+						      	<input type="text" class="form-control" name="returnType" ng-model="returnType" ng-model-options="{ updateOn: 'blur' }"  adt-validator required placeholder="return data type" press-enter="addParameter()" >
 						      	<ul class="help-block" ng-show="microtaskForm.returnType.$dirty && microtaskForm.returnType.$invalid">
 									<li ng-show="microtaskForm.returnType.$error.required">This field is required!</li>
 									<li ng-show="microtaskForm.returnType.$error.adt"> {{microtaskForm.returnType.$error.adt}}</li>
@@ -79,7 +80,7 @@
 					  	<div class="form-group">
 						    <label for="functionName" class="col-sm-2 control-label reset-padding">function name</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<input type="text" class="form-control" name="functionName" ng-model="functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator placeholder="insert the function name" press-enter="addParameter()">
+						      	<input type="text" class="form-control" name="functionName" ng-model="functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator placeholder="function name" press-enter="addParameter()">
 						    	<ul class="help-block" ng-show="microtaskForm.functionName.$dirty && microtaskForm.functionName.$invalid">
 									<li ng-show="microtaskForm.functionName.$error.required">This field is required!</li>
 									<li ng-show="microtaskForm.functionName.$error.pattern">Is not a valid function name! Please use only alphanumerical characters and the _ symbol</li>

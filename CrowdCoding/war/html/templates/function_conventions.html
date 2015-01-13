@@ -1,7 +1,6 @@
 <div>
-	<p> <strong>Not sure how to do something?</strong>
-		Indicate a line as <strong>pseudocode</strong>
-		by beginning it with
+	<p> <strong>Want to sketch something?</strong>
+		Write a line of <strong>pseudocode</strong> with
 		<span class="pseudoCode">'//#'</span>
 	</p>
 
@@ -10,16 +9,16 @@
 		Write a
 		<strong>pseudocall</strong>
 		beginning it with
-		<span class="pseudoCall">'//! functionName'</span>
+		<span class="pseudoCall">'//! breef description of what the function should do'</span>
 	</p>
 	
 	<b>Example:</b>
-	<code-mirror-readonly code="pseudocall"></code-mirror-readonly>
+	<ace-read-string ng-model="pseudocall"></ace-read-string>
 
 	<br />
 	<p>
-		Note that all function calls are passed by value (i.e., if you pass an
-		object to a function and the function changes the object you will not
+		Note that all function calls are pass by value (i.e., if you pass an
+		object, to a function and the function changes the object you will not
 		see the change).
 	</p>
 

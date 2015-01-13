@@ -26,11 +26,11 @@
 				<div class="dot bg-color"></div>Job description
 			</div>
 			<div class="section-content" ng-if="review.microtask.submission.isFunctionDispute" >
-				The worker was asked to write all possible testcases but he disputed the function. <br /> Can you rate this work?
+				The worker was asked to write testcases but he disputed the function. <br /> Can you rate this work?
 			</div>
 
 			<div class="section-content" ng-if="review.microtask.promptType == 'FUNCTION_SIGNATURE' && !review.microtask.submission.isFunctionDispute" >
-				The worker was asked to write all possible testcases for the following function. <br /> Can you rate this work?
+				The worker was asked to write testcases for the following function. <br /> Can you rate this work?
 			</div>
 			<div class="section-content" ng-if="review.microtask.promptType == 'CORRECT_TEST_CASE'&& !review.microtask.submission.isFunctionDispute" >
 				The worker was asked to rewrite the test case
@@ -107,7 +107,7 @@
 					ng-model="review.microtask.owningArtifact"
 					>
 				</div><br/>
-				of the function below. Can you rate this work?
+				for the function below. Can you rate this work?
 			</div>
 			<div ng-if="review.microtask.submission.isFunctionDispute" class="section-content" >
 				The worker disputed the test that the crowd has written for the following function:
@@ -122,7 +122,7 @@
 				<br/> Can you rate this dispute?
 			</div>
 			<div ng-if="review.microtask.submission.inDispute" class="section-content" >
-				The worker disputed the function signature that the crowd has written for the following case:
+				The worker disputed the function signature that the crowd has written for the following test case:
 				<div class="form-group">
 					<input type="text"
 					class="form-control"
@@ -227,7 +227,7 @@
 				<div class="dot bg-color"></div>Job description
 			</div>
 			<div class="section-content" >
-				The worker was asked to implement/edit the following function. <br /> Can you rate this work?
+				The worker was asked to write some code in the following function. <br /> Can you rate this work?
 			</div>
 		</div>
 
@@ -275,8 +275,9 @@
 				<div class="dot bg-color"></div>Job description
 			</div>
 			<div class="section-content" >
-				The worker was asked to write the above signature of the function, in order to solve the following pseudoCall :
-				<span class="pseudoCall">{{review.microtask.callDescription}}</span>?
+				The worker was given the psudocall:
+				<span class="pseudoCall">{{review.microtask.callDescription}}</span> and asked to write a description for this function. <br/>
+				Can you rate this work?
 
 			</div>
 		</div>
@@ -334,11 +335,11 @@
 				</div>
 				<div class="section-content" >
 					<ul style="list-style:none;margin:0px;padding:0px;">
-						<li><b>1 Star</b>: Work incoherent or unfocussed, <b>microtask will be rejected</b></li>
-						<li><b>2 Star</b>: Work unconvincing or weak, <b>microtask will be rejected</b></li>
-						<li><b>3 Star</b>: Work with some weakness, <b>microtask will be reissued with submitted work as partial completion</b></li>
-						<li><b>4 Star</b>: Work with few weaknesses, <b>microtask will be accepted</b></li>
-						<li><b>5 Star</b>: Excellent work with no significant weaknesses, <b>microtask will be accepted</b></li>
+						<li><b>1 Star</b>: Work incoherent or unfocussed. <b>Work will be rejected</b></li>
+						<li><b>2 Star</b>: Work unconvincing or weak. <b>Work will be rejected</b></li>
+						<li><b>3 Star</b>: Work with some weakness. <b>A microtask will be created to fix this work</b></li>
+						<li><b>4 Star</b>: Work with some minor issues. <b>Work will be accepted</b></li>
+						<li><b>5 Star</b>: Excellent work with no significant weaknesses. <b>Work will be accepted</b></li>
 					</ul>
 
 				</div>
@@ -370,7 +371,7 @@
 
 					<label ng-if="review.rating != -1"> Choice </label>
 					<span ng-if="review.rating == 1||review.rating == 2">Rejected</span>
-					<span ng-if="review.rating == 3">Reissued</span>
+					<span ng-if="review.rating == 3">Revise work</span>
 					<span ng-if="review.rating == 4||review.rating == 5">Accepted</span>
 					<br />
 					<label for="reviewText" >Motivation:</label>

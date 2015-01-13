@@ -25,7 +25,20 @@ myApp.controller('AppController', [
 		$rootScope.firebaseURL  = firebaseURL;
 		$rootScope.userData     = userService.data;
 		$rootScope.logoutUrl = logoutUrl;
+		$scope.makeDirty = function (form)
+		{
+			angular.forEach(form, function(formElement, fieldName) {
+				// If the fieldname doesn't start with a '$' sign, it means it's form
+				if (fieldName[0] !== '$'){
+					if(angular.isFunction(formElement.$setDirty))
+		                formElement.$setDirty();
 
+					//if formElement as the proprety $addControl means that have other form inside him
+					if (formElement !== undefined && formElement.$addControl) 
+						$scope.makeDirty(formElement);
+				}
+			});
+		};
 
 		console.log('MC: '+workerId);
 		$scope.avatar = avatarFactory.get;
