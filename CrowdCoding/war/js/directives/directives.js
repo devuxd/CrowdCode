@@ -1138,6 +1138,7 @@ myApp.directive('tutorial', function($compile) {
             $scope.totSteps = $element.find('step').length;
 
             var btnNextHtml  = '<a href="#" class="btn-next" ng-click="showNext()">next</a>';
+            var btnCloseHtml  = '<a href="#" class="btn-close" ng-click="destroy()">close</a>';
 
             var $tutorialContainer;
             var $overlay;
@@ -1170,7 +1171,7 @@ myApp.directive('tutorial', function($compile) {
                 $overlay.animate({opacity: 1}, 50);
 
                 // reset the current step
-                currentStep = 0;
+                $scope.currentStep = 0;
 
                 // visualize the first step
                 $scope.showNext();
@@ -1242,7 +1243,7 @@ myApp.directive('tutorial', function($compile) {
                     $content.fadeOut(400,function(){
 
 
-                        $content.html(contentHtml + '<br/>' +btnNextHtml);
+                        $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
                         $compile($content.contents())($scope);
 
                         $content.attr('style',contentStyle);
@@ -1293,7 +1294,7 @@ myApp.directive('tutorial', function($compile) {
                         $scope.$eval(onShow);
 
                     $content.fadeOut(300,function(){
-                        $content.html(contentHtml + '<br/>' +btnNextHtml);
+                        $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
                         $compile($content.contents())($scope);
 
                         $content.css(contentCss);
@@ -1318,9 +1319,12 @@ myApp.directive('tutorial', function($compile) {
             $scope.destroy = function() {
 
                 // remove the tutorial from the document
-                $overlay = $content = $circles = $buttonBar = null;
+                $overlay.remove();
+                $content.remove();
                 $tutorialContainer.remove();
                 $tutorialContainer = null;
+                $scope.currentStep = 0;
+
 
                 $(document).find('.main-wrapper').css('bottom', 0);
             };

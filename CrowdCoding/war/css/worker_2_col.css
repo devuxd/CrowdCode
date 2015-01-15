@@ -885,6 +885,9 @@ tutorial  { display:none; }
 	background-color: darkgrey;
 }
 
+.tutorial-container .btn-close { color: rgba(85, 85, 85, 0.72); float:left; margin:5px; font-family: 'Lato'; font-weight: bold; text-transform: uppercase; font-size:0.8em; };
+
+
 .btn-mini { font-size:0.8em; text-transform: uppercase; padding: 3px 3px; border-radius: 0px; background-color: rgba(63, 129, 172, 0.8); }
 
 .stats { }
