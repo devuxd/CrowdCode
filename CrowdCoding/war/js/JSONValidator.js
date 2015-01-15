@@ -11,12 +11,12 @@ function JSONValidator() {
 	var errors = [];
 	var nameToADT=[];
 
-	this.initialize = function(myNameToAdt, JSONtext, newParamType)
-	{
-		text         = JSONtext
-		paramType    = newParamType;
+	this.initialize = function(myNameToAdt, myText, myParamType){
+		text         = myText
+		nameToADT    = myNameToAdt; // 
+		paramType    = myParamType;
+
 		isValidParam = false;
-		nameToADT    = myNameToAdt;
 	};
 
 	this.isValid    = function() { return isValid(); };
@@ -56,17 +56,30 @@ function JSONValidator() {
 			}
 		}
 
-		isValidParam = (errors.length===0) ? true : false ;
+		isValidParam = (errors.length==0) ? true : false ;
 	}
 
 	// Checks that the provided struct is correctly formatted as the type in typeName.
 	// Returns an empty string if no errors and an html formatted error string if there are.
-	function checkStructure(struct, typeName)
+	function checkStructure(struct, typeName, level)
 	{
-		var errors = [];
-
+		if ( struct === null ){
+			// null is an accepted value for any field
+		}
+		else if (typeName == 'String'){
+			if (typeof struct != 'string')
+				errors.push("'" + JSON.stringify(struct) + "' should be a String, but is not");
+		}
+		else if (typeName == "Number"){
+			if (typeof struct != 'number')
+				errors.push("'" + JSON.stringify(struct) + "' should be a Number, but is not");
+		}
+		else if (typeName == "Boolean"){
+			if (typeof struct != 'boolean')
+				errors.push("'" + JSON.stringify(struct) + "' should be a Boolean, but is not");
+		}
 		// Recursive case: check for typeNames that are arrays
-		if (typeName.endsWith("[]"))
+		else if (typeName.endsWith("[]"))
 		{
 			// Check that struct is an array.
 			if (Array.prototype.isPrototypeOf(struct))
@@ -74,47 +87,34 @@ function JSONValidator() {
 				// Recurse on each array element, passing the typename minus the last []
 				for (var i = 0; i < struct.length; i++)
 				{
-					errors.concat(checkStructure(struct[i], typeName.substring(0, typeName.length - 2)));
+					errors.concat(checkStructure(struct[i], typeName.substring(0, typeName.length - 2), level+1));
 				}
-			}
-			else
+			} else
 			{
 				errors.push("'" + JSON.stringify(struct) + "' should be an array, but is not. Try enclosing the value in array bracks ([]).");
 			}
 		}
-		// Base case: check for typeNames that are simple types
-		else if (typeName == 'String')
-		{
-			if (typeof struct != 'string')
-				errors.push("'" + JSON.stringify(struct) + "' should be a String, but is not");
-		}
-		else if (typeName == "Number")
-		{
-			if (typeof struct != 'number')
-				errors.push("'" + JSON.stringify(struct) + "' should be a Number, but is not");
-		}
-		else if (typeName == "Boolean")
-		{
-			if (typeof struct != 'boolean')
-				errors.push("'" + JSON.stringify(struct) + "' should be a Boolean, but is not");
-		}
 		// Recursive case: typeName is an ADT name. Recursively check that
 		else if (nameToADT.hasOwnProperty(typeName))
 		{
+			if( typeof struct == 'object' ){
+				console.log('Is a structure with type: ',nameToADT[typeName].structure);
+				var typeDescrip = nameToADT[typeName].structure;
 
-			var typeDescrip = nameToADT[typeName].structure;
+				// Loop over all the fields defined in typeName, checking that each is present in struct
+				// and (recursively) that they are of the correct type.
+				for (var i = 0; i < typeDescrip.length; i++)
+				{
+					var fieldName = typeDescrip[i].name;
+					var fieldType = typeDescrip[i].type;
 
-			// Loop over all the fields defined in typeName, checking that each is present in struct
-			// and (recursively) that they are of the correct type.
-			for (var i = 0; i < typeDescrip.length; i++)
-			{
-				var fieldName = typeDescrip[i].name;
-				var fieldType = typeDescrip[i].type;
-
-				if (struct.hasOwnProperty(fieldName))
-					errors.concat(checkStructure(struct[fieldName], fieldType));
-				else
-					errors.push("'" + JSON.stringify(struct) + "' is missing the required property " + fieldName );
+					if (struct.hasOwnProperty(fieldName))
+						errors.concat(checkStructure(struct[fieldName], fieldType, level+1));
+					else
+						errors.push("'" + JSON.stringify(struct) + "' is missing the required property " + fieldName );
+				}
+			} else {
+				errors.push("'" + JSON.stringify(struct) + "' is not an " + typeName );
 			}
 		}
 		else

@@ -291,8 +291,9 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	});
 
 		
-	$scope.startTutorial = function(tutorialName) {
-		$scope.$broadcast('tutorial-' + tutorialName);
+	$rootScope.startTutorial = function(tutorialName) {
+		console.log('broadcasting start tutorial '+tutorialName);
+		$rootScope.$broadcast('tutorial-' + tutorialName);
 	};
 
 
