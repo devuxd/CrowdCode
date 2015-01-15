@@ -30,12 +30,17 @@
 			</div>
 
 			<div ng-if="microtask.promptType=='CORRECT'">
-
-				<p>
-					An issue has been reported for the following test case.<br />
-					Can you fix the test data to address the issue?
-				</p>
-
+				The corwd found that:<br />
+				<div class="form-group has-error">
+					<textarea type="text"
+					class="form-control"
+					style="width:100%;resize:none"
+					disabled="true"
+					name="newTestCase"
+					ng-model="microtask.issueDescription"
+					></textarea>
+				</div>
+				Can you fix the test data to address the issue?
 			</div>
 
 			<div ng-if="microtask.promptType=='TESTCASE_CHANGED'">
@@ -60,12 +65,8 @@
 			<a ng-click="toggleDispute(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the test case<span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content" >
-			<span ng-if="microtask.promptType=='WRITE' || microtask.promptType=='FUNCTION_CHANGED'" ng-bind="::test.description"></span>
+			<span ng-if="microtask.promptType=='WRITE' || microtask.promptType=='FUNCTION_CHANGED' || microtask.promptType=='CORRECT'" ng-bind="::test.description"></span>
 
-			<span ng-if="microtask.promptType=='CORRECT'">
-				<strong>Reported issue: </strong>
-				<span ng-bind="::microtask.issueDescription"></span>
-			</span>
 
 			<span ng-if="microtask.promptType=='TESTCASE_CHANGED'">
 				<strong>Old description: </strong><span ng-bind="microtask.oldTestCase"></span><br />
