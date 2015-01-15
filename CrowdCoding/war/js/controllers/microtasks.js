@@ -501,7 +501,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                     angular.forEach(stubsForFunction, function(stub, index) {
 
                         var test = TestList.search( functionName, stub.inputs );
-                        if( test == null ){
+                        if( test === null ){
 
                             var testCode = 'equal(' + stubFunction.name + '(';
                             var inputs = [];
@@ -510,9 +510,10 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                                 testCode += (key != stub.inputs.length - 1) ? ',' : '';
                                 
                             });
-                            testCode += '),' + stub.output + ',\'' + 'auto generated 3' + '\');';
+                            testCode += '),' + stub.output + ',\'' + 'auto generated' + '\');';
 
                             test = {
+                                description : 'auto generated test',
                                 functionVersion: stubFunction.version,
                                 code: testCode,
                                 hasSimpleTest: true,
@@ -535,6 +536,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 formData = functionsService.parseFunction(text);
                 // add the stubs to the form data
                 formData.stubs = stubs;
+                $scope.$emit('submitMicrotask', formData);
+
             }
         } else {
             $alert({
