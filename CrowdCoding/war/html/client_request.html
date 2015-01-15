@@ -150,7 +150,7 @@
 										</div>
 										<div ng-form="exampleForm" class="col-sm-5 reset-padding">
 											<textarea class="form-control" type="text" ng-model="example.value" name="exampleValue"
-											placeholder="Insert the value of the example" json-validator="{{ADT.name}}" required press-enter="addStructure(ADTindex)"></textarea>
+											placeholder="Insert the value of the example" json-validator="{{ADT.name}}" required press-enter="addExample(ADTindex)"></textarea>
 											<ul class="help-block" ng-show="exampleForm.exampleValue.$dirty && exampleForm.exampleValue.$invalid">
 												<li ng-show="exampleForm.exampleValue.$error.required">This field is required!</li>
 												<li ng-show="exampleForm.exampleValue.$error.json" ng-repeat="error in exampleForm.exampleValue.$error.json">{{error}}</li>

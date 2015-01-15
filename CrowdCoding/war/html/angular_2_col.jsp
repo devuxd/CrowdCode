@@ -104,7 +104,7 @@
 	        <!-- LEFT SIDEBAR -->
 	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
 				<div class="sidebar-panels">
-		        	<h3 class="toggler">News</h3>
+		        	<h3 class="toggler">Your activities</h3>
 		        	<div class="element active"  style="height:40%">
 		        		<div class="element-body scrollable">
 							<news-panel></news-panel>

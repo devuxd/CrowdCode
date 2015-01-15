@@ -19,13 +19,13 @@
                     </div>
                     <span>}</span>
                 </div>
-                <b>Example:</b>
-                <!-- old way -->
-                <div ng-if="::ADT.example" ace-read-json ng-model="::ADT.example" class="adt-detail" copy-allowed></div>
-                <!-- new way -->
-                <div ng-if="::ADT.examples" ng-repeat="example in ADT.examples">
-                    <span>{{::example.name}}:</span>
-                    <div ace-read-json ng-model="::example.value" class="adt-detail" copy-allowed></div>
+
+                <div  ng-if="::ADT.examples" >
+                    <label for="test"><b>Examples:</b></label>
+                    <button name= "test"ng-init="selectedExample=ADT.examples[0]" type="button" class="btn btn-default" ng-model="selectedExample" data-html="1" ng-options="example.name for example in ADT.examples" bs-select style="margin-bottom: 5px;">
+                    </button>
+
+                    <div ace-read-json ng-model="::selectedExample.value" class="adt-detail" copy-allowed></div>
                 </div>
             </div>
         </div>

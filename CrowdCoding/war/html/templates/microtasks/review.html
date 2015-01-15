@@ -343,6 +343,13 @@
 					</ul>
 
 				</div>
+				<div class="section-title" >
+					<div class="dot"></div>
+					AVAILABLE DATA TYPES
+				</div>
+				<div class="section-content" >
+					<adt-list></adt-list>
+				</div>
 			</div>
 
 			<div class="section section-form" style="width:70%;" >
@@ -370,9 +377,9 @@
 					<br />
 
 					<label ng-if="review.rating != -1"> Choice </label>
-					<span ng-if="review.rating == 1||review.rating == 2">Rejected</span>
+					<span ng-if="review.rating == 1||review.rating == 2">Reject</span>
 					<span ng-if="review.rating == 3">Revise work</span>
-					<span ng-if="review.rating == 4||review.rating == 5">Accepted</span>
+					<span ng-if="review.rating == 4||review.rating == 5">Accept</span>
 					<br />
 					<label for="reviewText" >Motivation:</label>
 					<textarea

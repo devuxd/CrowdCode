@@ -980,9 +980,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
             $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header;
         });
     }
-    $scope.loadExample = function(ADTName) {
-        return ADTService.getByName(ADTName).example;
-    };
+
     var alertObj = null; // initialize alert obj
     
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {

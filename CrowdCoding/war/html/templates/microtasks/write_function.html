@@ -4,9 +4,9 @@
 	<div class="section section-description " >
 		<div class="section-content no-padding" >
 			<ul class="microtask-details clearfix">
-				<li class="bg-color">{{::datas.title}}</li>
+				<li class="bg-color">{{::data.title}}</li>
 				<li >
-					<span>{{::datas.submitValue}} points</span>
+					<span>{{::data.submitValue}} points</span>
 				</li>
 				<li class="color">
 					<div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
@@ -22,7 +22,7 @@
 
 
 			<div ng-if="::microtask.promptType=='SKETCH'">
-				Can you implement the function below?
+				Can you write some code in the function below? but don't be a hog, if ther's much to do be sure to use pseudocalls or pseudocode to leave some work for others.
 			</div>
 
 			<div ng-if="::microtask.promptType=='RE_EDIT'">

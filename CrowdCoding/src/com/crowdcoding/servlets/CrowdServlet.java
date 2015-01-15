@@ -121,9 +121,9 @@ public class CrowdServlet extends HttpServlet
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
-		
+
 		//System.out.println("Path Requested: "+path);
-		
+
 		try {
 			// -- PATHS WITHOUT USER AUTHENTICATION
 			 if( Pattern.matches("/",path) || Pattern.matches("/welcome",path)){
@@ -178,7 +178,10 @@ public class CrowdServlet extends HttpServlet
 						doAdmin(req, resp, projectId, pathSeg);
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
+					}else if (pathSeg[2].equals("code")){
+						req.getRequestDispatcher("/html/code.jsp").forward(req, resp);
 					}
+
 				// NOT FOUND 404 PAGE
 				} else {
 					req.getRequestDispatcher("/html/404.jsp").forward(req, resp);

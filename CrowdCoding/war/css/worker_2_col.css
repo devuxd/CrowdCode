@@ -47,7 +47,18 @@ padding: 7px !important; }
 	padding: 5px ;
 
 }
+.examples-list-popover {
+	width: 140px !important;
+	border-radius: 0px;
+	margin-top: 0px !important;
+	padding: 5px ;
+	margin-left: -20px !important
 
+}
+
+.description-popover{
+	min-width: 500px !important;
+}
 
 /*
 rgba(17,112,190,1) Wode - blue - writefunction

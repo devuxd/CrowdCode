@@ -56,7 +56,7 @@ function JSONValidator() {
 			}
 		}
 
-		isValidParam = (errors.length==0) ? true : false ;
+		isValidParam = (errors.length===0) ? true : false ;
 	}
 
 	// Checks that the provided struct is correctly formatted as the type in typeName.
