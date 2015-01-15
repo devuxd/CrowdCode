@@ -82,6 +82,7 @@ img { width:100%;}
 		  <div class="row">
 		  	<div class="col-md-offset-1 col-md-10 col-sm-12">
 		  		<h1>Programming, re-envisioned</h1>
+				<img src="/img/welcome_first.png" />
 				<img src="/img/welcome_second.png" />
 		  	</div>
 		  </div>
