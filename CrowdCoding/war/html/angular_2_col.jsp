@@ -85,7 +85,6 @@
 			    <ul class="nav navbar-nav navbar-right">
 			    	<li>
 			        	<a user-menu href="#" />
-							
 							{{ workerHandle}}
 							<img ng-src="{{ avatar(workerId).$value }}" class="profile-picture" />
 							<span class="caret"></span>
@@ -103,15 +102,15 @@
 
 	        <!-- LEFT SIDEBAR -->
 	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
-				<div class="sidebar-panels">
+				<div class="sidebar-panels" >
 		        	<h3 class="toggler">Your activities</h3>
-		        	<div class="element active"  style="height:40%">
+		        	<div id="activityPanel"  class="element active"  style="height:40%">
 		        		<div class="element-body scrollable">
 							<news-panel></news-panel>
 		        		</div>
 		        	</div>
 		        	<h3 class="toggler">Leaderboard</h3>
-		        	<div class="element active" style="height:40%">
+		        	<div id="leaderboardPanel"  class="element active" style="height:40%">
 		        		<div class="element-body scrollable">
 							<ng-include src="'/html/templates/panels/leaderboard_panel.html'"></ng-include>
 		        		</div>
@@ -120,6 +119,7 @@
 
 		        <div class="sidebar-buttons">
 			        <button href="#" class=""
+			           id="shortcutsBtn"
 			           data-animation="am-fade-and-scale"
 			           data-placement="center"
 			           data-template="/html/templates/popups/popup_shortcuts.html"
@@ -128,6 +128,7 @@
 			           >shortcuts</button>
 			           
 			        <button href="#" class=""
+			           id="feedbackBtn"
 			           data-animation="am-fade-and-scale"
 			           data-placement="center"
 			           data-container="body"
@@ -137,6 +138,9 @@
 
 	        <!-- CONTENT -->
 	        <div id="content" class="order-3" ng-controller="MicrotaskController" >
+
+				<chat></chat>
+
 	        	<form name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
 					<div id="task" class="task" microtask >
 						<ng-include class="task-{{ microtask.type | lowercase }}" src="templatePath || '/html/templates/microtasks/loading.html'"></ng-include>
@@ -145,8 +149,21 @@
 
 					<div class="button-bar">
 						<div class="btn-group pull-left" role="group"  >
-						  <button type="button" ng-click="$emit('skipMicrotask')" tabindex="100" class="btn btn-default btn-sm">Skip</button>
-						  <button type="button" ng-click="$broadcast('collectFormData', microtaskForm) " tabindex="99" class="btn btn-primary btn-sm">Submit</button>
+							<button type="button" 
+			           	 		id="skipBtn"
+			           			ng-click="$emit('skipMicrotask')" 
+			           			tabindex="100" 
+			           			class="btn btn-default btn-sm">
+			           			Skip
+			           		</button>
+						  	
+						  	<button type="button" 
+			          			id="submitBtn"
+						  		ng-click="$broadcast('collectFormData', microtaskForm) " 
+						  		tabindex="99" 
+						  		class="btn btn-primary btn-sm">
+						  		Submit
+						  	</button>
 						</div>
 
 
@@ -181,9 +198,9 @@
 	</div>
 
 
-	<chat></chat>
 
 	<ng-include src="'/html/templates/popups/popup_template.html'"></ng-include>
+	<ng-include src="'/html/templates/tutorial/main.html'"></ng-include>
 
 	<!-- Javascript 3rd part libraries -->
 	<script src="/include/jquery-2.1.0.min.js"></script>
