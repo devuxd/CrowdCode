@@ -273,7 +273,6 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
     $scope.review.maxRating = 5;
     $scope.review.rating    = -1;
     $scope.rate = function(value) {
-        console.log("RATE",value, value >= 0, value <= $scope.review.maxRating);
         if (value >= 0 && value <= $scope.review.maxRating) {
             $scope.review.rating = value;
         }
@@ -714,7 +713,6 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
             diffCode += "\n";
         });
         $scope.diffCode = diffCode;
-        console.log($scope.diffCode);
     }
 
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
@@ -742,9 +740,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
     };
 
     $scope.codemirrorLoaded = function(myCodeMirror) {
-        console.warn("codemirror before assign %o",codemirror);
         codemirror = myCodeMirror;
-        console.warn("codemirror after assign %o",codemirror);
         codemirror.setOption('autofocus', true);
         codemirror.setOption('indentUnit', 4);
         codemirror.setOption('indentWithTabs', true);
@@ -822,7 +818,6 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         $scope.parameters.push(parameter);
     };
     $scope.deleteParameter = function(index) {
-        console.log("delete try");
         event.preventDefault();
         event.stopPropagation();
         if( $scope.parameters.length>1 )
@@ -987,7 +982,6 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
         
         $scope.makeDirty(microtaskForm);
 
-        console.log(microtaskForm);
         if (microtaskForm.$invalid) {
             if (alertObj !== null) alertObj.destroy(); // avoid multiple alerts
             var error = 'Fix all errors before submit';
