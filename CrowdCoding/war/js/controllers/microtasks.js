@@ -392,7 +392,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         angular.forEach($scope.stubs, function(data, index) {
 
             calleeFunction = functionsService.getByName(index);
-            if( $scope.stubsParamNames == undefined)
+            if( $scope.stubsParamNames === undefined)
                 $scope.stubsParamNames = {};
 
             $scope.stubsParamNames[index] = calleeFunction.paramNames;
@@ -452,9 +452,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.disp.disputeText = "";
     $scope.disputedTest = null;
     $scope.$on('disputeTest', function(event, testKey) {
-        //console.log('dispute for test ',testKey);
         $scope.dispute = true;
-        $scope.disputedTest = $scope.testsData[testKey].test;
+        $scope.disputedTest = $scope.tests[testKey];
     });
 
     $scope.cancelDispute = function() {
@@ -475,7 +474,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         // all tests are passed 
         else {
             var oneTestFailed = false;
-            angular.forEach($scope.testsData, function(data, index) {
+            angular.forEach($scope.tests, function(data, index) {
                 if (!oneTestFailed && !data.output.result) 
                     oneTestFailed = true;
             });
@@ -489,8 +488,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         if (errors === "") {
             if ($scope.dispute) {
                 formData = {
-                    name: $scope.disputedTest.description,
-                    testId: $scope.disputedTest.$id,
+                    name: $scope.disputedTest.rec.description,
+                    testId: $scope.disputedTest.rec.id,
                     description: $scope.disp.disputeText
                 };
             } else {
@@ -536,9 +535,10 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 formData = functionsService.parseFunction(text);
                 // add the stubs to the form data
                 formData.stubs = stubs;
-                $scope.$emit('submitMicrotask', formData);
 
             }
+            $scope.$emit('submitMicrotask', formData);
+
         } else {
             $alert({
                 title: 'Error!',

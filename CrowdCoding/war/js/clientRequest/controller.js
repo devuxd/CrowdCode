@@ -3,7 +3,6 @@
 ////////////////////
 clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$firebase','$alert', function($scope,$rootScope,$firebase,$alert) {
 
-console.log(calculator('2+2'));
 	var firebaseURL = 'https://crowdcode.firebaseio.com';
 	var firebaseRef;
 	$scope.projectsName=[];

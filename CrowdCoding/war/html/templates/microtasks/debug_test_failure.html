@@ -36,7 +36,7 @@
 
     <alertcontainer></alertcontainer>
 
-    <div class="section-cols" ng-if="!dispute" >
+    <div class="section-cols" ng-show="!dispute" >
         <div class="container-flex-row">
             <div class="section section-help bg-color-alpha" style="width:30%">
                 <div class="section-title no-padding" >
@@ -80,6 +80,9 @@
                                     <span class="glyphicon glyphicon-chevron-{{ activePanel == testIndex ? 'down' : 'right' }}"></span>
                                     Test case #{{::(testIndex+1)}} :
                                     {{test.rec.description}} 
+                                    <a ng-if="!test.rec.readOnly" 
+                                        ng-click="$emit('disputeTest',testIndex);"> Report an issue with the data of this test</a>
+                                    
                                 </strong>
                                 <span class="pull-right">executed in {{test.executionTime}} ms</span>
                                 <span class="clearfix"></span>
@@ -228,7 +231,7 @@
     </div>
 
 -->
-    <div class="section-cols" ng-if=" !dispute ">
+    <div class="section-cols" ng-show=" !dispute ">
         <div class="container-flex-row">
             <div class="section section-help bg-color-alpha " style="width:30%">
                 <div class="section-title" >
@@ -260,7 +263,7 @@
         </div>
     </div>
 
-    <div class="section section-form" ng-if="dispute">
+    <div class="section section-form" ng-show="dispute">
         <div class="section-title" >
              <div class="dot"></div> DISPUTE TEST
         </div>

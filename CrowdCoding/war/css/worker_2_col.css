@@ -176,7 +176,10 @@ rgba(237,90,48,1)  Valencia - orange - review
 .navbar img { width:25px; }
 
 .list-group { margin: 0px;}
-.control-label { padding-right:10px !important; }
+.control-label { 
+	padding-right:10px !important; 
+	line-height: 32px;
+}
 
 .dropdown-menu {
 	margin:0px;
