@@ -80,7 +80,7 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 	text-transform: uppercase;
 }
 .microtask-details li              { float:left; padding-left:20px; padding-right:20px; }
-.microtask-details li:nth-child(1) { color:white; }
+/*.microtask-details li:nth-child(1) { color:white; }*/
 .microtask-details li:nth-child(3) { float:right; padding:0px; cursor:pointer; }
 
 .task {
@@ -112,7 +112,10 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 .reset-padding { padding:0px !important; margin:0px !important; }
 
 .list-group { margin: 0px;}
-.control-label { padding-right:10px !important; }
+.control-label { 
+	line-height: 32px;
+	padding-right:10px !important; 
+}
 
 .line-separator {
 	height: 1px;

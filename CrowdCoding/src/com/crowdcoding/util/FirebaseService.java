@@ -71,7 +71,23 @@ public class FirebaseService
 		System.out.println("appending test job for function "+functionID);
 		writeData("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+date.getTime()+".json", HTTPMethod.PUT, project);
 	}
+	public static String getAllCode(Project project)
+	{
+		String absoluteUrl = getBaseURL(project) + "/code.json";
+		String result = readDataAbsolute( absoluteUrl );
 
+		// check if exist the reference on firebase, if not returns false
+		if ( result == null || result.equals("null") )
+			return "";
+		else{
+			result= result.substring(1, result.length()-1);
+			result= result.replaceAll("\\\\\"", "\"");
+			result= result.replaceAll("debug\\.log", "console.log");
+			result= result.replaceAll("\\\\n", "\n");
+			result= result.replaceAll("\\\\t", "\t");
+			return result;
+		}
+	}
 	public static boolean isWorkerLoggedIn(String workerID,Project project){
 		String absoluteUrl = getBaseURL(project) + "/status/loggedInWorkers/" + workerID + ".json";
 		String result = readDataAbsolute( absoluteUrl );
@@ -221,13 +237,13 @@ public class FirebaseService
 	// Publishes the history log
 	public static void publishHistoryLog(List<Pair<String, String>> list, Project project)
 	{
-		
+
 		for (Pair<String, String> idAndMessage : list){
 			//System.out.println("Writing log: "+idAndMessage.b);
 			writeData(idAndMessage.b, "/history/events/" + idAndMessage.a + ".json", HTTPMethod.PUT, project);
 		}
 	}
-			
+
 
 	// Clears all data in the current project, reseting it to an empty, initial state
 	public static void clear(String projectID)

@@ -3,7 +3,6 @@
 ////////////////////
 clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$firebase','$alert', function($scope,$rootScope,$firebase,$alert) {
 
-
 	var firebaseURL = 'https://crowdcode.firebaseio.com';
 	var firebaseRef;
 	$scope.projectsName=[];

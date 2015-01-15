@@ -3,15 +3,22 @@ myApp.directive('aceReadJs',function($compile,functionsService) {
 
     return {
         restrict: 'EA',
-        template: '<div class="ace-editor js-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="code"></div>',
+        template: '<div class="ace-editor js-reader" ui-ace="{ onLoad : aceLoaded, mode : mode, theme: theme, showGutter: false, useWrapMode : true }" readonly="true" ng-model="code"></div>',
         scope: {
-            code: '='
+            code: '=',
+            mode: '@'
         },
         controller: function($scope,$element){ 
-            
+            if($scope.mode===undefined){
+                $scope.mode='javascript';
+                $scope.theme='xcode';
+            }
+            else
+             $scope.theme='github';   
+
             $scope.aceLoaded = function(_editor) {
                 _editor.setOptions({
-                     maxLines: Infinity
+                    maxLines: Infinity
                 });
             };
         }

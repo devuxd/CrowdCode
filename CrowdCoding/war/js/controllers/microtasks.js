@@ -392,7 +392,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         angular.forEach($scope.stubs, function(data, index) {
 
             calleeFunction = functionsService.getByName(index);
-            if( $scope.stubsParamNames == undefined)
+            if( $scope.stubsParamNames === undefined)
                 $scope.stubsParamNames = {};
 
             $scope.stubsParamNames[index] = calleeFunction.paramNames;
@@ -452,9 +452,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.disp.disputeText = "";
     $scope.disputedTest = null;
     $scope.$on('disputeTest', function(event, testKey) {
-        //console.log('dispute for test ',testKey);
         $scope.dispute = true;
-        $scope.disputedTest = $scope.testsData[testKey].test;
+        $scope.disputedTest = $scope.tests[testKey];
     });
 
     $scope.cancelDispute = function() {
@@ -475,7 +474,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         // all tests are passed 
         else {
             var oneTestFailed = false;
-            angular.forEach($scope.testsData, function(data, index) {
+            angular.forEach($scope.tests, function(data, index) {
                 if (!oneTestFailed && !data.output.result) 
                     oneTestFailed = true;
             });
@@ -489,8 +488,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         if (errors === "") {
             if ($scope.dispute) {
                 formData = {
-                    name: $scope.disputedTest.description,
-                    testId: $scope.disputedTest.$id,
+                    name: $scope.disputedTest.rec.description,
+                    testId: $scope.disputedTest.rec.id,
                     description: $scope.disp.disputeText
                 };
             } else {
@@ -501,7 +500,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                     angular.forEach(stubsForFunction, function(stub, index) {
 
                         var test = TestList.search( functionName, stub.inputs );
-                        if( test == null ){
+                        if( test === null ){
 
                             var testCode = 'equal(' + stubFunction.name + '(';
                             var inputs = [];
@@ -510,9 +509,10 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                                 testCode += (key != stub.inputs.length - 1) ? ',' : '';
                                 
                             });
-                            testCode += '),' + stub.output + ',\'' + 'auto generated 3' + '\');';
+                            testCode += '),' + stub.output + ',\'' + 'auto generated' + '\');';
 
                             test = {
+                                description : 'auto generated test',
                                 functionVersion: stubFunction.version,
                                 code: testCode,
                                 hasSimpleTest: true,
@@ -535,7 +535,10 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                 formData = functionsService.parseFunction(text);
                 // add the stubs to the form data
                 formData.stubs = stubs;
+
             }
+            $scope.$emit('submitMicrotask', formData);
+
         } else {
             $alert({
                 title: 'Error!',
@@ -631,7 +634,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
         codemirror.setOption('indentUnit', 4);
         codemirror.setOption('indentWithTabs', true);
         codemirror.setOption('lineNumbers', true);
-        codemirror.setSize(null, 500);
+        codemirror.setSize(null, 600);
         codemirror.setOption("theme", "custom-editor");
         functionsService.highlightPseudoSegments(codemirror, marks, highlightPseudoCall);
         // Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
@@ -745,7 +748,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
         codemirror.setOption('indentUnit', 4);
         codemirror.setOption('indentWithTabs', true);
         codemirror.setOption('lineNumbers', true);
-        codemirror.setSize(null, 500);
+        codemirror.setSize(null, 600);
         codemirror.setOption("theme", "custom-editor");
         functionsService.highlightPseudoSegments(codemirror, marks, highlightPseudoCall);
         // Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
