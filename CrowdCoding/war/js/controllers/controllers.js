@@ -231,7 +231,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 				// retrieve the initial microtask
 				if ( angular.isDefined( $scope.microtask.reissuedFrom ) ) {
 
-					$scope.reissuedMicrotask = microtasksService.get($scope.microtask.reissuedFrom);
+					$scope.reissuedMicrotask = microtasks.get($scope.microtask.reissuedFrom);
 						$scope.reissuedMicrotask.$loaded().then(function() {
 						//choose the right template
 						if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)

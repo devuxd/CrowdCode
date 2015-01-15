@@ -204,7 +204,22 @@ rgba(237,90,48,1)  Valencia - orange - review
     background:transparent;
 }
 .ace-editor .ace_marker-layer .ace_selection { background: transparent; }
-.ace-editor .ace_hidden-cursors {opacity:0} 
+.ace-editor .ace_hidden-cursors {opacity:0}
+
+.ace-github {
+color: green !important;
+}
+
+.ace-github .ace_support.ace_function, 
+.ace-github .ace_support.ace_function {
+color: #FF0000 !important;
+}
+
+.ace-github .ace_invisible {
+color: #525151 !important;
+}
+
+
 
 .js-reader { 
 	background-color:transparent !important; 

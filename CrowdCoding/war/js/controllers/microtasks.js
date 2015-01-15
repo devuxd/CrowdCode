@@ -632,7 +632,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
         codemirror.setOption('indentUnit', 4);
         codemirror.setOption('indentWithTabs', true);
         codemirror.setOption('lineNumbers', true);
-        codemirror.setSize(null, 500);
+        codemirror.setSize(null, 600);
         codemirror.setOption("theme", "custom-editor");
         functionsService.highlightPseudoSegments(codemirror, marks, highlightPseudoCall);
         // Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code
@@ -749,7 +749,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
         codemirror.setOption('indentUnit', 4);
         codemirror.setOption('indentWithTabs', true);
         codemirror.setOption('lineNumbers', true);
-        codemirror.setSize(null, 500);
+        codemirror.setSize(null, 600);
         codemirror.setOption("theme", "custom-editor");
         functionsService.highlightPseudoSegments(codemirror, marks, highlightPseudoCall);
         // Setup an onchange event with a delay. CodeMirror gives us an event that fires whenever code

@@ -60,7 +60,7 @@
 			<a ng-click="toggleDispute(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the test case<span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content" >
-			<span ng-if="microtask.promptType=='WRITE'" ng-bind="::test.description"></span>
+			<span ng-if="microtask.promptType=='WRITE' || microtask.promptType=='FUNCTION_CHANGED'" ng-bind="::test.description"></span>
 
 			<span ng-if="microtask.promptType=='CORRECT'">
 				<strong>Reported issue: </strong>
@@ -152,7 +152,7 @@
 		</div>
 	</div>
 	
-	<div class="section section-form" ng-if="functionDispute && !dispute">
+	<div class="section section-form" ng-show="functionDispute && !dispute">
 		<div class="section-title" >
 			<div class="dot bg-color"></div>Report an issue in the function
 		</div>
@@ -168,7 +168,7 @@
 		</div> 
 	</div> 
 
-	<div class="section section-form" ng-if="dispute && !functionDispute">
+	<div class="section section-form" ng-show="dispute && !functionDispute">
 		<div class="section-title" >
 			<div class="dot bg-color"></div> Report an issue in THE TEST CASE
 		</div>

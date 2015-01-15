@@ -179,7 +179,9 @@ public class CrowdServlet extends HttpServlet
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
 					}else if (pathSeg[2].equals("code")){
-						req.getRequestDispatcher("/html/code.jsp").forward(req, resp);
+						//req.getRequestDispatcher("/html/code.jsp").forward(req, resp);
+						renderCode(resp, projectId);
+
 					}
 
 				// NOT FOUND 404 PAGE
@@ -483,6 +485,14 @@ public class CrowdServlet extends HttpServlet
 		resp.setContentType("json;charset=utf-8");
 		PrintWriter out = resp.getWriter();
 		out.print(json);
+		out.flush();
+	}
+	private void renderCode(final HttpServletResponse resp, String projectId) throws IOException{
+		resp.setContentType("text/javascript;charset=utf-8");
+		Project project=  Project.Create(projectId);
+		String allCode= FirebaseService.getAllCode(project);
+		PrintWriter out = resp.getWriter();
+		out.print(allCode);
 		out.flush();
 	}
 

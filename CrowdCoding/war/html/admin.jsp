@@ -10,6 +10,7 @@
 	<script src="/include/jquery-2.1.0.min.js"></script> 
 	<script src="/include/bootstrap/js/bootstrap.min.js"></script> 	
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+	
 	<script>
 
 		
@@ -50,6 +51,29 @@
 				$('#output').html('');
 			});
 
+			$('#code').click(function()
+			{
+				var functionsRef = new Firebase(firebaseURL + '/artifacts/functions');
+				functionsRef.on('value', function (snapshot) {
+					var allCode="";
+					for (var index in snapshot.val()){
+				  		var functionRef=snapshot.val()[index];
+				  		var code='';
+
+				  		if(functionRef.written)
+				  			code=snapshot.val()[index].code;
+				  		else
+				  			code='{ return null; }';
+
+
+						allCode+= snapshot.val()[index].header +' '+ code +' ';
+
+					}
+					new Firebase(firebaseURL + '/code').set(allCode);
+
+				});
+
+			});
 
 			$('#command').keypress(function (e) 
 			{
@@ -231,7 +255,8 @@
 				   	<button id="reset"      class="execute btn btn-small">Reset</button>
 					<button id="reviewsOff" class="execute btn btn-small">ReviewsOff</button>
 				   	<button id="reviewsOn"  class="execute btn btn-small">ReviewsOn</button>
-				   	<button id="clear" class="btn btn-small btn-reset">Clear Output</button> <br />
+				   	<button id="clear" class="btn btn-small btn-reset">Clear Output</button>
+				   	<button id="code" class="btn btn-small btn-reset">Generate Code</button> <br />
 					<div id="output"></div>
 				
 				  </div>
