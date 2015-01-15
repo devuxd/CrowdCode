@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" ng-click="$hide()">&times;</button>
-				<h4 class="modal-title">{{workerHandle}} profile</h4>
+				<h4 class="modal-title">Change avatar!</h4>
 			</div>
 			<div class="modal-body" style="">
 
@@ -17,9 +17,11 @@
 
 				<img ng-src="{{galleryPath}}avatar{{num}}.png" alt="{{workerHandle}}" ng-click="selectAvatar(num)" class="avatar {{selectedAvatar==num ? 'selected' : '' }} pull-left" ng-repeat="num in [1,2,3,4,5,6,7,8,9]"/>
 				<span class="clearfix"></span>
+
+<!--
 				<hr />
 				<h3>Or upload a picture</h3>
-				<input type="file" file-model="uploadedAvatar"/>
+				<input type="file" file-model="uploadedAvatar"/>-->
     			
 			</div>
 			<div class="modal-footer">

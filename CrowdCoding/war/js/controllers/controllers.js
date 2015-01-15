@@ -51,9 +51,10 @@ myApp.controller('AppController', [
 		 // Pre-fetch an external template populated with a custom scope
 		var profileModal = $modal({scope: $scope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/html/templates/popups/popup_user_profile.html', show: false});
 		// Show when some event occurs (use $promise property to ensure the template has been loaded)
-		$rootScope.showProfileModal = function() {
+		$rootScope.$on('showProfileModal', function() {
+			console.log('open profile modal');
 			profileModal.$promise.then(profileModal.show);
-		};
+		});
 
 
 		// ---- SERVICES SYNC ----
@@ -115,9 +116,29 @@ myApp.controller('AppController', [
 
 		});
 
+		
+		$rootScope.startTutorial = function(tutorialName) {
+			console.log('broadcasting start tutorial '+tutorialName);
+			$rootScope.$broadcast('tutorial-' + tutorialName);
+		};
 
-	}
-]);
+		userService.data.$loaded().then(function(){
+			if( userService.data['tutorialDone'] == undefined ||  userService.data['tutorialDone'] == false ){
+
+				$rootScope.startTutorial('Main');	
+
+				var cancelListen = $rootScope.$on('tutorial-finished',function(){
+					userService.data.tutorialDone = true;
+					userService.data.$save();
+
+					$rootScope.$broadcast('showProfileModal');
+					cancelListen();
+				})
+				
+			}
+		});
+	
+}]);
 
 
 myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', 'fileUpload','userService', function($scope, $rootScope, $timeout, fileUpload, userService) {
@@ -289,12 +310,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 			console.error('Error during microtask skip!');
 		});
 	});
-
-		
-	$rootScope.startTutorial = function(tutorialName) {
-		console.log('broadcasting start tutorial '+tutorialName);
-		$rootScope.$broadcast('tutorial-' + tutorialName);
-	};
 
 
 }]);

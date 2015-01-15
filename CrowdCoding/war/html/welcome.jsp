@@ -30,7 +30,11 @@
 
 <style type="text/css">
 
-
+body {
+	font-size:14px;
+	text-align: center;
+	font-family: 'Lato' !important;
+}
 .navbar {
 	font-family: 'Lato' !important;
 	background-color:#555;
@@ -40,73 +44,115 @@
 .container-fluid {
 
 }
+h1 {
+	font-size:2.3em;
+	font-weight:800;
+	line-height:2.5em;
+}
+h2 {
+	font-size:1.2em;
+	font-weight:800;
+}
+img { width:100%;}
 </style>
 </head>
 <body>
 
-	<!-- Static navbar -->
-    <nav class="navbar navbar-default navbar-static-top">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">Crowd Code</a>
-        </div>
-      </div>
-    </nav>
-
 
     <div class="container-fluid">
 
-      <!-- Main component for a primary marketing message or call to action -->
-      <div class="jumbotron">
-      	<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<img src="/img/welcome_first.png" />
-					<img src="/img/welcome_second.png" />
-					<img src="/img/welcome_third.png" />
-				</div>
-			</div>
+
+    <div class="row">
+      	<div class="col-md-12 col-sm-12">
+
+		  <div class="row">
+		  	<div class="col-md-offset-1 col-md-10 col-sm-12">
+		  		<h1>Write code, with the crowd. </h1>
+				<img src="/img/screenshot.png" style="box-shadow: 0px 0px 5px 5px #CBCBCB;"/>
+		  	</div>
+		  </div>
       	</div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+      	<div class="col-md-12 col-sm-12">
+
+		  <div class="row">
+		  	<div class="col-md-offset-1 col-md-10 col-sm-12">
+		  		<h1>Programming, re-envisioned</h1>
+				<img src="/img/welcome_second.png" />
+		  	</div>
+		  </div>
+		  <div class="row">
+		  	<div class="col-md-offset-1 col-md-5 col-sm-12">
+		  		<h2>Microtasks</h2>
+				<p>
+					CrowdCode organizes programming into microtasks, small units you can pick and do like writing a few lines of code or brain- storming test cases. 
+				</p>
+		  	</div>
+		  	<div class="col-md-5 col-sm-12">
+				<h2>Start it, or finish it!</h2>
+				<p>
+					Write some pseudocode, leave it for the crowd. Look at a test case written by the crowd, implement a test. See a request for a function, find the right one.
+				</p>
+		  	</div>
+		  </div>
+		  <div class="row">
+		  	<div class="col-md-offset-1 col-md-5 col-sm-12">
+		  		<h2>Automatic task generation</h2>
+				<p>
+					CrowdCode tracks what needs to be done, generating and managing microtasks.
+				</p>
+		  	</div>
+		  	<div class="col-md-5 col-sm-12">
+				<h2>Code, Tested</h2>
+				<p>
+					All code is unit tested. <br />When the tests pass, it’s ready to go.
+				</p>
+		  	</div>
+		  </div>
+
+      	</div>
+    </div>
+
+    <hr />
+
+	<div class="row">
+		<div class="col-md-12 col-sm-12">
+			<div class="row">
+		      	<div class="col-md-offset-1 col-md-10 col-sm-12">
+		      		<h1>Your work, your credit</h1>
+					<img src="/img/welcome_third.png" />
+		      	</div>
+		   	</div>
+	      	<div class="row">
+		      	<div class="col-md-offset-1 col-md-5 col-sm-12">
+		      		<h2>Points</h2>
+					<p>
+						CrowdCode tracks what needs to be done, generating and managing microtasks.
+					</p>
+		      	</div>
+		      	<div class="col-md-5 col-sm-12">
+					<h2>Reviews</h2>
+					<p>
+						Microtasks you submit are reviewed by the crowd. If accepted, you get the points; if rejected, you get nothing. If the crowd decides to revise, you get some points.
+					</p>
+		      	</div>
+	      	</div>
+		</div>
+	</div>
+
+
+	<div class="row">
+      <div class="jumbotron" style="text-align:center;">
+        	<a class="btn btn-lg btn-primary" href="/allTogetherDraw" role="button">Get Started!</a>
       </div>
-
-
-      <!-- Main component for a primary marketing message or call to action -->
-      <div class="jumbotron">
-        <div class="container">
-        	<h2>Join a project!</h2>
-	        <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
-	        <p>To see the difference between static and fixed top navbars, just scroll.</p>
-	        <p>
-	          <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
-	        </p>
-    	</div>
-      </div>
-
+	</div>
+      
     </div> 
 
-<!--
-	<div class="row">
-		<div class="col-md-1"></div>
-	  	<div class="col-md-5">
-	      <div class="jumbotron">
-	        <p class="lead">	        
-	        	CrowdCode organizes work into <b>microtasks</b>,
-				small, self-describing bits like writing psuedocode or brainstorming 
-				test cases. After you finish a microtask, CrowdCode figures out what to do next,
-				generating and distributing microtasks to the <b>crowd</b>.
-	 			So you might write a description for function one, debug a test failure for another, and then 
-	 			edit the pseudocode the crowd wrote for function one to add a call.
-				As you complete microtasks, you earn <b>points</b>, and can see how you're doing on the leaderboard.
-	        	        
-	        </p>
-	      </div>
-		</div>
-		<div class="col-md-5"><BR><img src="/html/workflow.png"></img></div>
-		<div class="col-md-1"></div>
-	</div>
-	
-	<div class="jumbotron jumbotronCentered">
-		  <a class="btn btn-large btn-success bigButton" >Let's get started!</a>
-	</div>-->
+
 </body>
 </html>

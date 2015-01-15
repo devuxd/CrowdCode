@@ -1165,6 +1165,7 @@ myApp.directive('tutorial', function($compile) {
             };
 
             var prevOnHide = undefined;
+
             $scope.showNext = function() {
                
 
@@ -1173,6 +1174,8 @@ myApp.directive('tutorial', function($compile) {
                 
                 // if the tutorial is finished, destroy it
                 if ($scope.currentStep > $scope.totSteps) {
+
+                    $scope.$emit('tutorial-finished');
                     $scope.currentStep = 0;
                     $scope.destroy();
                     return;

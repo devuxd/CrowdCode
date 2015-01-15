@@ -264,7 +264,7 @@
 	var workerId     = '<%=workerID%>';
 	var workerHandle = '<%=workerHandle%>';
 	var firebaseURL  = 'https://crowdcode.firebaseio.com/projects/<%=projectID%>';
-	var logoutURL    = '<%=UserServiceFactory.getUserService().createLogoutURL("/"+projectID)%>';
+	var logoutURL    = '<%=UserServiceFactory.getUserService().createLogoutURL("/")%>';
 
 
 	</script>
