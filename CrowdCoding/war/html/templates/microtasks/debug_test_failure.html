@@ -94,11 +94,11 @@
                                         <div>{{test.errors}}</div>
                                     </div>
 
-                                    <div>
-                                        <div class="heading-1" >Input Parameters</div>
                                         <a ng-if="!test.rec.readOnly" class="pull-right"
                                         ng-click="$emit('disputeTest',testIndex);"> Report an issue with the data of this test</a>
-                                        <table class="clearfix">
+                                    <div class="clearfix">
+                                        <div class="heading-1" >Input Parameters</div>
+                                        <table >
                                             <tr ng-repeat="(key,input) in test.rec.simpleTestInputs track by $index">
                                                 <td>{{ paramNames[key] }}</td>
                                                 <td>
@@ -264,9 +264,9 @@
         </div>
     </div>
 
-    <div class="section section-form" ng-show="dispute">
-        <div class="section-title" >
-             <div class="dot"></div> DISPUTE TEST
+    <div class="section section-description" ng-show="dispute">
+        <div class="section-title " >
+             <div class="dot bg-color"></div> DISPUTE TEST
         </div>
         <div class="section-content" >
             <span><b>Test description:</b> {{disputedTest.rec.description}}</span><br/>

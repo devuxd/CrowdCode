@@ -470,6 +470,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         if ($scope.dispute){
             if($scope.disp.disputeText.length === 0) {
                 errors = "Please, insert the description of the dispute!";
+            }
         } 
         // if there are no dispute in action check if 
         // all tests are passed 

@@ -3,6 +3,6 @@ filesCopiedToWebInfLib=appengine-api-1.0-sdk-1.9.11.jar|appengine-api-labs.jar|a
 gaeDatanucleusVersion=v1
 gaeDeployDialogSettings=
 gaeHrdEnabled=true
-gaeLaunchAppInBrowser=false
+gaeLaunchAppInBrowser=true
 googleCloudSqlEnabled=false
 localDevMySqlEnabled=true
