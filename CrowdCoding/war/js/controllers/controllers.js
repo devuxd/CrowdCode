@@ -40,9 +40,7 @@ myApp.controller('AppController', [
 			});
 		};
 
-		console.log('MC: '+workerId);
 		$scope.avatar = avatarFactory.get;
-		console.log('MC: '+$scope.avatar(workerId));
 
 		// wrapper for user login and logout
 		$rootScope.workerLogin = function()  { userService.login();  };
@@ -63,7 +61,6 @@ myApp.controller('AppController', [
 
 		//  services loading function
 		var loadServices = function(){
-			console.log('ASKING TO LOAD SERVICES');
 			$scope.servicesLoadingStatus = {};
 
 			testsService.init();
@@ -212,7 +209,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 			$scope.microtask.$loaded().then(function() {
 
-				console.log('mtask loaded ',$scope.microtask);
 
 				// retrieve the related function
 				if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) {

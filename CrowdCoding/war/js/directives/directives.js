@@ -423,9 +423,7 @@ myApp.directive('pressEnter', function() {
 
         element.on('keydown keypress', keyPressListener);
 
-
         element.on('$destroy',function(){
-            console.log('destroying pressEnter listener');
             element.off('keydown keypress',null,keyPressListener);
         });
     };
@@ -436,7 +434,6 @@ myApp.directive('disableBackspace', function() {
         element.unbind('keydown').bind('keydown', function (event) {
             var doPrevent = false;
             if (event.keyCode === 8) {
-                console.log("chiamata");
                 var d = event.srcElement || event.target;
                 if ((d.tagName.toUpperCase() === 'INPUT' && 
                      (

@@ -27,9 +27,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 		if( user.data.avatarUrl == null ){
 
 			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
-			user.data.$save().then(function(){
-				console.log('set avatar url: '+user.data.avatarUrl);
-			});
+			user.data.$save().then(function(){});
 		}
 
 		// console.log("user data loaded ",user.data);
@@ -121,15 +119,14 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 	}
 
 
+	//This is where we actually process the data. We need to call "whenFinished" when we're done
+	//to let the queue know we're ready to handle a new job.
 	var executeWorkCallback = function(jobData, whenFinished) {
-		//This is where we actually process the data. We need to call "whenFinished" when we're done
-		//to let the queue know we're ready to handle a new job.
 
 		testRunner.onTestsFinish(function(){
 			console.log('------- tests finished received');
 			whenFinished();
 		});
-
 		testRunner.runTests(jobData.functionId);
 	}
 
