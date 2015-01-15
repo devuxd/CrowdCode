@@ -28,7 +28,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
         if($scope.microtask.promptType=='FUNCTION_SIGNATURE')
-            $scope.testCases=$scope.reissuedMicrotask.submission.testCases;
+            $scope.model.testCases=$scope.reissuedMicrotask.submission.testCases;
     }
 
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
@@ -467,7 +467,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
         // if a test is in dispute and the disputeText length is 0, 
         // create the error for the dispute
-        if ($scope.dispute && $scope.disp.disputeText.length === 0) {
+        if ($scope.dispute){
+            if($scope.disp.disputeText.length === 0) {
                 errors = "Please, insert the description of the dispute!";
         } 
         // if there are no dispute in action check if 
