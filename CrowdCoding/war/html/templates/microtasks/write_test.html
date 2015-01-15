@@ -110,9 +110,10 @@
                         <tr ng-form="inputForm" ng-repeat="(index,paramName) in funct.paramNames">
                             <td>
                             	<b>{{paramName}}</b> ({{funct.paramTypes[index]}})<br />
-                            	<a  href="#" examples-list param-type="funct.paramTypes[index]" key = "index" value="testData.inputs[index]">Paste Example</a>
-                            	<br />
-                            	<!--<a href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index]); $event.preventDefault()">Paste Example </a><br/>-->
+                            	<a href="#" examples-list param-type="funct.paramTypes[index]" key = "index" value="testData.inputs[index]">Paste Example</a>
+<!--                             	<a ng-show="isSingleExample(funct.paramTypes[index])" href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index]); $event.preventDefault()">Paste Example </a><br/>
+ -->                            	<br />
+                            	
                             </td>
                             <td>
                                 <textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" ng-show="false" ></textarea>

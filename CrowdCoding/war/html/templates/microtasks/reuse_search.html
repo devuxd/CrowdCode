@@ -81,7 +81,7 @@
 					<div ng-if="results.length > 0" class="list-group">
 						<div ng-repeat= "function in results | orderBy:'-score'" 
 						     class="list-element animate-repeat {{ selectedResult == $index ? 'selected' : '' }}"
-						     ng-click="select($index)" description-popover="function.value.description">
+						     ng-click="select($index)" description-popover="function.value">
 								<b>{{function.value.header}}</b>
 						</div>
 					</div>

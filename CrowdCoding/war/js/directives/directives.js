@@ -949,20 +949,31 @@ myApp.directive('examplesList',function($rootScope,$popover,ADTService){
             };
 
             element.on('click',function(){
-
-                //if doesn't exist yet the list of popovers inizialize it
                 if($rootScope.examplesListPopover===undefined)
                     $rootScope.examplesListPopover=[];
+                var exampleNumber= loadExamples($scope.paramType);
+                if(exampleNumber.length==1){
+                   $scope.value=exampleNumber[0].value;
+                   $scope.$apply();
+                   if($rootScope.examplesListPopoverKey!==undefined){
+                       $rootScope.examplesListPopover[ $rootScope.examplesListPopoverKey].$promise.then($rootScope.examplesListPopover[ $rootScope.examplesListPopoverKey].hide);
+                       $rootScope.examplesListPopover[ $rootScope.examplesListPopoverKey]=undefined;
+                       $rootScope.examplesListPopoverKey=undefined;
+                   }
+                }else{
 
-                togglePopover($scope.key);
+                    //if doesn't exist yet the list of popovers inizialize it
+                   
 
+                    togglePopover($scope.key);
+                }
             });
         }
     };
 });
 
 
-myApp.directive('descriptionPopover',function($rootScope,$popover,ADTService){
+myApp.directive('descriptionPopover',function($rootScope,$popover,functionsService){
     return {
         restrict: 'EA',
         scope:{
@@ -977,7 +988,8 @@ myApp.directive('descriptionPopover',function($rootScope,$popover,ADTService){
             };
 
             var popover=$popover(element, popoverSettings);
-            popover.$scope.code='/** \n'+$scope.descriptionPopover+'\n**/';
+            popover.$scope.code=functionsService.renderDescription($scope.descriptionPopover) + $scope.descriptionPopover.header;
+
         }
     };
 });
