@@ -400,6 +400,7 @@ myApp.factory('TestRunnerFactory', [
 			item.output = data.output;
 			item.executionTime = data.executionTime;
 			item.stubMap = data.stubMap ;
+			item.debug = data.debug;
 			// console.log("final test item: %o",item);
 
 			self.stubsReady(data.usedStubs);

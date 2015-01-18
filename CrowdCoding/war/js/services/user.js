@@ -41,7 +41,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','Tes
 		  	// update user reference
 		    updateUserReference();
 		    // on disconnect, set false to connection status
-		//    userRef.onDisconnect().remove(); //set({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP});
+			userRef.onDisconnect().remove(); //set({connected:false,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP});
 		  }
 		});
 		

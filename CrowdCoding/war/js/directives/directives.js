@@ -1138,7 +1138,7 @@ myApp.directive('tutorial', function($compile) {
             $scope.totSteps = $element.find('step').length;
 
             var btnNextHtml  = '<a href="#" class="btn-next" ng-click="showNext()">next</a>';
-            var btnCloseHtml  = '<a href="#" class="btn-close" ng-click="destroy()">close</a>';
+            var btnCloseHtml  = '<a href="#" class="btn-close" ng-click="close()">close</a>';
 
             var $tutorialContainer;
             var $overlay;
@@ -1179,6 +1179,11 @@ myApp.directive('tutorial', function($compile) {
 
             var prevOnHide = undefined;
 
+            $scope.close = function(){
+
+                $scope.$emit('tutorial-finished');
+                $scope.destroy();
+            }
             $scope.showNext = function() {
                
 

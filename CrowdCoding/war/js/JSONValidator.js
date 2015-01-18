@@ -98,7 +98,6 @@ function JSONValidator() {
 		else if (nameToADT.hasOwnProperty(typeName))
 		{
 			if( typeof struct == 'object' ){
-				console.log('Is a structure with type: ',nameToADT[typeName].structure);
 				var typeDescrip = nameToADT[typeName].structure;
 
 				// Loop over all the fields defined in typeName, checking that each is present in struct

@@ -1,0 +1,65 @@
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Commands</h3> 
+	</div>
+	<div class="panel-body" >
+		
+
+		<button class="btn btn-sm" ng-click="executeCommand('Reset')">Reset</button>
+		<button class="btn btn-sm" ng-click="executeCommand('ReviewsOff')">ReviewsOff</button>
+		<button class="btn btn-sm" ng-click="executeCommand('ReviewsOn')">ReviewsOn</button>
+		<button class="btn btn-sm" ng-click="clearOutput()">Clear Output</button>
+		<hr />
+		<pre ng-bind="output"></pre>
+	</div>
+	
+	
+</div>
+
+<div ng-if="stats!={}"class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Overall statistics</h3> 
+	</div>
+	<div class="panel-body" ng-if="!loading">
+		
+
+		<div style="width:40%;" class="pull-left">
+			<nvd3 id="pie1" options="numCompletedPie" data="numCompletedData" config="pieConfig"></nvd3>
+			<nvd3 id="pie2" options="totalTimePie"    data="totalTimeData"    config="pieConfig"></nvd3>
+		</div>
+
+		<div style="width:60%;" class="pull-left">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Finished</th>
+						<th>Average Finish Time</th>
+						<th>Total Work Time</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr>
+						<td>all</td>
+						<td>{{stats.numFinished}}</td>
+						<td>{{stats.avgFinishTime | date : 'm:ss'}}</td>
+						<td>{{stats.totalTime | amountOfTime }}</td>
+					</tr>
+					<tr ng-repeat="(type,stats) in stats.finishByType">
+						<td>{{type}}</td>
+						<td>{{stats.numFinished}}</td>
+						<td>{{stats.avgFinishTime | date : 'm:ss'}}</td>
+						<td>{{stats.totalTime | amountOfTime }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+	<div class="panel-body" ng-if="loading">
+		loading
+	</div>
+	
+</div>

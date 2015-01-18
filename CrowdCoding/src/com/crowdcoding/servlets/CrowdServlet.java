@@ -239,7 +239,7 @@ public class CrowdServlet extends HttpServlet
 	{
 		//System.out.println("doing admin");
 		if(pathSeg.length <=3 ){
-			req.getRequestDispatcher("/html/admin.jsp").forward(req, resp);
+			req.getRequestDispatcher("/dist/index.jsp").forward(req, resp);
 		} else {
 			// The command should be in the fourth position. If nothing exists there,
 			// use "" as the command.

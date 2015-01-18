@@ -80,7 +80,9 @@ public class Test extends Artifact
 		this.functionVersion= functionVersion;
 
 		ofy().save().entity(this).now();
+		
 		FunctionCommand.addTest(functionID, this.id);
+		
 		queueMicrotask(new WriteTest(this, project,functionVersion), project);
 
 		project.historyLog().endEvent();
