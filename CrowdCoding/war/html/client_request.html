@@ -193,7 +193,9 @@
 							<div class="form-group">
 								<label for="functionDescription" class="col-sm-2 control-label reset-padding">description</label>
 								<div class="col-sm-8 reset-padding">
-									<textarea class="form-control" name="functionDescription" placeholder="briefly describe the purpose and the behavior of the function" ng-model="function.description" required ng-pattern="/^[^/\\]+$/" focus></textarea>
+									<textarea class="form-control" name="functionDescription" placeholder="briefly describe the purpose and the behavior of the function" ng-model="function.description" required ng-pattern="/^[^/\\]+$/"  focus max-length="70" ></textarea>
+									
+
 									<ul class="help-block" ng-show="functionForm{{$index}}.functionDescription.$dirty && functionForm{{$index}}.functionDescription.$invalid">
 										<li ng-show="functionForm{{$index}}.functionDescription.$error.required">This field is required!</li>
 										<li ng-show="functionForm{{$index}}.functionDescription.$error.pattern">The "\" and "/" are not allowed</li>

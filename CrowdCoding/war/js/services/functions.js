@@ -285,7 +285,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			var fullDescription = '/**\n' + functionObj.description + '\n';
 
 	    	// Format description into 66 column max lines, with two spaces as starting character
-			fullDescription = wordwrap(fullDescription, 66, '\n  ') + '\n';
+		//	fullDescription = wordwrap(fullDescription, 50, '\n  ') + '\n';
 
 			if(functionObj.paramNames!=undefined && functionObj.paramNames.length>0)
 			{
@@ -379,32 +379,40 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 		for(var i=0; i<lineDescription.length;i++){
 
-			lineDescription[i] = lineDescription[i].replace(/\s{2,}/g,' ');
-
 			// check if the current line is a parameter or return line
 			var paramLine  = lineDescription[i].search('@param ');
 			var returnLine = lineDescription[i].search('@return ');
 
-			if(paramLine!=-1){	// if a param has been found in the current line
-				// find the parameter type, name and description
-				var paramType = findNextWord(lineDescription[i], paramLine + 7);
-				var paramName = findNextWord(lineDescription[i], paramLine + paramType.length+ 8);
-				var paramDescription = lineDescription[i].substring( paramLine + paramType.length+ paramName.length +11);
+			if(paramLine!=-1 || returnLine!=-1){
 
-				// push them into the relative arrays
-				paramTypes.push(paramType);
-				paramNames.push(paramName);
-				paramDescriptions.push(paramDescription.trim());
+				lineDescription[i] = lineDescription[i].replace(/\s{2,}/g,' ');
 
-				// increment the number of parameterss
-				numParams++;
+				if(paramLine!=-1){	// if a param has been found in the current line
+					// find the parameter type, name and description
+					var paramType = findNextWord(lineDescription[i], paramLine + 6	);
+					var paramName = findNextWord(lineDescription[i], paramLine + paramType.length+ 7);
+					var paramDescription = lineDescription[i].substring( paramLine + paramType.length+ paramName.length +10);
+
+					// push them into the relative arrays
+					paramTypes.push(paramType);
+					paramNames.push(paramName);
+					paramDescriptions.push(paramDescription.trim());
+
+					// increment the number of parameterss
+					numParams++;
+				}
+				else if(returnLine!=-1) { // if is a return line
+					var type = findNextWord(lineDescription[i], returnLine + 7);
+					returnType=type;
+				}
 			}
-			else if(returnLine!=-1) { // if is a return line
-				var type = findNextWord(lineDescription[i], returnLine + 8);
-				returnType=type;
+			else if( lineDescription[i].length > 4 ){ // otherwise is a description line
+				if(lineDescription[i].length>74)
+				{
+				    lineDescription[i]=lineDescription[i].match(/.{1,74}(\s|$)|\S+?(\s|$)/g).join('\n  ');
+				}
+				description+=lineDescription[i]+"\n";
 			}
-			else if( lineDescription[i].length > 4 ) // otherwise is a description line
-				description+=lineDescription[i].trim()+"\n";
 		}
 
 
@@ -473,27 +481,23 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	}
 
 
-
-
 	function renderDescription(functionCalled)
 	{
 			var numParams = 0;
+
 			var fullDescription = '/**\n' + functionCalled.description + '\n';
 
-	    	// Format description into 66 column max lines, with two spaces as starting character
-			fullDescription = wordwrap(fullDescription, 66, '  ')+'\n';
-
-			if(functionCalled.paramNames!=undefined && functionCalled.paramNames.length>0)
+			if(functionCalled.paramNames!==undefined && functionCalled.paramNames.length>0)
 			{
 	    		for(var i=0; i<functionCalled.paramNames.length; i++)
 				{
-					if(functionCalled.paramDescriptions!=undefined && functionCalled.paramDescriptions.length>i)
+					if(functionCalled.paramDescriptions!==undefined && functionCalled.paramDescriptions.length>i)
 						fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' , ' + functionCalled.paramDescriptions[i] + '\n';
 
 				}
 			}
 
-			if(functionCalled.returnType!='')
+			if(functionCalled.returnType!=='')
 				fullDescription += '\n  @return ' + functionCalled.returnType + ' \n';
 
 			fullDescription+='**/\n';

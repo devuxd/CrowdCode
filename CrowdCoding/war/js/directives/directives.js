@@ -1386,3 +1386,32 @@ myApp.directive('projectStats', function($rootScope,$firebase) {
         }
     };
 });
+myApp.directive('maxLength',function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, elm, attrs, ctrl) {
+
+ 
+          ctrl.$parsers.push(function (viewValue) {
+              var maxLength=attrs.maxLength || 70 ;
+              var splittedDescription= viewValue.split('\n');
+              var regex = '.{1,'+maxLength+'}(\\s|$)|\\S+?(\\s|$)';
+
+              for(var i=0;i<splittedDescription.length;i++ )
+              {
+                  if(splittedDescription[i].length>maxLength)
+                  {
+                      splittedDescription[i]=splittedDescription[i].match(RegExp(regex, 'g')).join('\n  ');
+                  }
+              }
+
+              return '  '+splittedDescription.join('\n  ')+'\n';
+         });
+          ctrl.$formatters.push(function (viewValue) {
+               return  viewValue.substring(2,viewValue.length-1).replace(/\n  /g,'\n');
+          });
+
+        }
+    };
+});
