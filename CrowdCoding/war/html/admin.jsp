@@ -60,13 +60,13 @@
 				  		var functionRef=snapshot.val()[index];
 				  		var code='';
 
-				  		if(functionRef.written)
+				  	//	if(functionRef.written)
 				  			code=snapshot.val()[index].code;
-				  		else
-				  			code='{ return null; }';
+				  	//	else
+				  	//		code='{ return null; }';
 
 
-						allCode+= snapshot.val()[index].header +' '+ code +' ';
+						allCode+= snapshot.val()[index].header +' '+ code +' \n';
 
 					}
 					new Firebase(firebaseURL + '/code').set(allCode);

@@ -95,7 +95,7 @@ myApp.controller('AppController', [
 
 
 		$rootScope.$on('sendFeedback', function(event, message) {
-			console.log("message " + message);
+			console.log("message " + message.toString());
 			var feedback = {
 				// 'microtaskType': $scope.microtask.type,
 				// 'microtaskID': $scope.microtask.id,

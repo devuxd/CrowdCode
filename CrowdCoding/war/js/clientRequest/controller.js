@@ -132,7 +132,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 	}
 	
 	$scope.submit=function(form){
-		
+		console.log($scope.functions[0].description);
 		makeDirty(form);
 
        if (form.$invalid) {

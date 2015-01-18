@@ -1,6 +1,4 @@
- <div ng-controller="WriteFunctionController" >
-
-
+<div ng-controller="WriteFunctionController" >
 	<div class="section section-description " >
 		<div class="section-content no-padding" >
 			<ul class="microtask-details clearfix">
@@ -14,17 +12,13 @@
 			</ul>
 		</div>
 	</div>
-
 	<div class="section section-description">
 		<div class="section-title" > <div class="dot bg-color"></div> JOB DESCRIPTION </div>
 		<div class="section-content" >
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
-
-
 			<div ng-if="::microtask.promptType=='SKETCH'">
-				Can you write some code in the function below? but don't be a hog, if ther's much to do be sure to use pseudocalls or pseudocode to leave some work for others.
+				Can you write some code in the function below? but don't be a hog, if there's much to do be sure to use pseudocalls or pseudocode to leave some work for others.
 			</div>
-
 			<div ng-if="::microtask.promptType=='RE_EDIT'">
 				The description of this function has been disputed, can you edit the function to solve the following issue:
 				<div class="form-group has-error">
@@ -36,54 +30,45 @@
 					></textarea>
 				</div>
 			</div>
-
 			<div ng-if="::microtask.promptType=='DESCRIPTION_CHANGE'">
 				The description of a function called in the code below has changed. Can you update the code
 				(if necessary)?
-	 		</div>
+			</div>
 		</div>
 	</div>
-
-
 	<div class="section section-description" ng-if="::(microtask.promptType=='SKETCH' || microtask.promptType=='RE_EDIT')">
 		<div class="section-title"> <div class="dot bg-color"></div> FUNCTION CONVENTIONS </div>
 		<div  class="section-content" >
 			<function-convections ></function-convections>
-	 	</div>
+		</div>
 	</div>
-
 	<div class="section section-description" ng-if="::microtask.promptType=='DESCRIPTION_CHANGE'">
 		<div class="section-title" > <div class="dot bg-color"></div> FUNCTION signature different </div>
 		<div class="section-content no-padding" >
-			<ace-read-js code="::diffCode" mode="diff" ></ace-read-js>
-	 	</div>
+		<ace-read-js code="::diffCode" mode="diff" ></ace-read-js>
 	</div>
+</div>
+<alertcontainer></alertcontainer>
 
-
-	<alertcontainer></alertcontainer>
+<div class="section-cols" >
+<div class="container-flex-row">
+	<div class="section section-help bg-color-alpha" style="width:30%;">
+		<div class="section-title" > <div class="dot"></div> AVAILABLE DATA TYPES </div>
+		<div class="section-content" >
+		<adt-list></adt-list>
+	</div>
+	<div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
+</div>
+<div class="section section-form" style="width:70%;" >
+	<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
+	<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
+	<ul class="help-block" style="height:50px;overflow:auto">
+		<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
+			<li>{{error}}</li>
+		</ul>
+	</ul>
 	
-	<div class="section-cols" >
-		<div class="container-flex-row">
-
-			<div class="section section-help bg-color-alpha" style="width:30%;">
-				<div class="section-title" > <div class="dot"></div> AVAILABLE DATA TYPES </div>
-				<div class="section-content" >
-					<adt-list></adt-list>
-				</div>
-				<div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
-			</div>
-
-			<div class="section section-form" style="width:70%;" >
-				<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
-				<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-				<ul class="help-block" style="height:50px;overflow:auto">
-					<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
-						<li>{{error}}</li>
-					</ul>
-				</ul>
-				
-			</div>
-
-		</div>
-	</div>
+</div>
+</div>
+</div>
 </div>

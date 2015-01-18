@@ -18,5 +18,5 @@ myApp.filter('keylength', function(){
       throw Error("Usage of non-objects with keylength filter!!")
     }
     return Object.keys(input).length;
-  }
+  };
 });
