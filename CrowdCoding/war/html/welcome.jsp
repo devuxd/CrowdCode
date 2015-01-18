@@ -31,7 +31,7 @@
 <style type="text/css">
 
 body {
-	font-size:14px;
+	font-size:18px;
 	text-align: center;
 	font-family: 'Lato' !important;
 }
@@ -45,13 +45,14 @@ body {
 
 }
 h1 {
-	font-size:2.3em;
+	font-size:2.0em;
 	font-weight:800;
 	line-height:2.5em;
 }
 h2 {
-	font-size:1.2em;
+	font-size:1.4em;
 	font-weight:800;
+	text-transform: uppercase;
 }
 img { width:100%;}
 </style>
@@ -132,7 +133,7 @@ img { width:100%;}
 		      	<div class="col-md-offset-1 col-md-5 col-sm-12">
 		      		<h2>Points</h2>
 					<p>
-						CrowdCode tracks what needs to be done, generating and managing microtasks.
+						Microtasks are worth points; the harder the work, the more points it’s worth.
 					</p>
 		      	</div>
 		      	<div class="col-md-5 col-sm-12">
