@@ -9,7 +9,7 @@ myApp.directive('aceReadJs',function($compile,functionsService) {
             mode: '@'
         },
         controller: function($scope,$element){ 
-            console.log($scope.code);
+            //console.log($scope.code);
             if($scope.mode===undefined){
                 $scope.mode='javascript';
                 $scope.theme='xcode';

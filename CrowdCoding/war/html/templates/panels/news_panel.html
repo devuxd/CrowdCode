@@ -8,8 +8,8 @@
 			>
 			<div class="type">{{::n.microtaskType}}</div>
 			<div class="result" ng-if="::(n.score != -1)">
-				<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>
-				<span ng-if="::(n.score == 3)" class="reissued">REISSUED</span>
+				<!--<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>-->
+				<span ng-if="::(n.score <= 3)" class="reissued">REISSUED</span>
 				<span ng-if="::(n.score > 3)" class="accepted">ACCEPTED</span>
 			</div>
 			<span class="points">+{{::n.points}} pts</span>

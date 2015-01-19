@@ -38,20 +38,20 @@ public class WriteCall extends Microtask
 	public WriteCall(Function caller, String calleeFullDescription, String pseudoCall, Project project)
 	{
 		super(project);
-		this.submitValue = 7;
+		this.submitValue = 5;
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());
 		this.calleeFullDescription = calleeFullDescription;
 		this.pseudoCall = pseudoCall;
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteCallInFirebase(
 				id,
-				this.microtaskTitle(), 
-				this.microtaskName(), 
+				this.microtaskTitle(),
+				this.microtaskName(),
 				caller.getName(),
 				caller.getID(),
-				false, submitValue, 
-				caller.getID(), 
-				calleeFullDescription, 
+				false, submitValue,
+				caller.getID(),
+				calleeFullDescription,
 				pseudoCall ),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);

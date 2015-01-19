@@ -414,7 +414,7 @@ public class Project
 
 		// else submit the microtask
 		else {
-			MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID);
+			MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
 		}
 	}
 

@@ -15,8 +15,8 @@ public abstract class MicrotaskCommand extends Command
 {
 	private Key<Microtask> microtaskKey;
 
-	public static MicrotaskCommand submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID)
-		{ return new Submit(microtaskKey, jsonDTOData, workerID); }
+	public static MicrotaskCommand submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, int awardedPoint)
+		{ return new Submit(microtaskKey, jsonDTOData, workerID, awardedPoint); }
 
 	public static MicrotaskCommand skip(Key<Microtask> microtaskKey, String workerID)
 		{ return new Skip(microtaskKey, workerID); }
@@ -27,8 +27,8 @@ public abstract class MicrotaskCommand extends Command
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it and save the reference to the reissued microtask.
-	public static MicrotaskCommand reissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
-		{ return new ReissueMicrotask(microtaskKey, excludedWorkerID); }
+	public static MicrotaskCommand reissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
+		{ return new ReissueMicrotask(microtaskKey, excludedWorkerID, awardedPoint); }
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it.
@@ -71,18 +71,21 @@ public abstract class MicrotaskCommand extends Command
 	{
 		private String jsonDTOData;
 		private String workerID;
+		private int awardedPoint;
 
-		public Submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID)
+
+		public Submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, int awardedPoint)
 		{
 			super(microtaskKey);
 			this.jsonDTOData = jsonDTOData;
 			this.workerID = workerID;
+			this.awardedPoint= awardedPoint;
 		}
 
 		public void execute(Microtask microtask, Project project)
 		{
-			WorkerCommand.awardPoints(workerID, microtask.getSubmitValue() );
-			
+			WorkerCommand.awardPoints(workerID, awardedPoint);
+
 			microtask.submit(jsonDTOData, workerID, project);
 		}
 	}
@@ -128,7 +131,7 @@ public abstract class MicrotaskCommand extends Command
 
 		public void execute(Microtask microtask, Project project)
 		{
-			
+
 			throw new RuntimeException("This method is not applicable for this class");
 
 		}
@@ -148,18 +151,20 @@ public abstract class MicrotaskCommand extends Command
 		public void execute(Microtask microtask, Project project)
 		{
 			Microtask newMicrotask = microtask.copy(project);
-			
+
 			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
 		}
 	}
 	protected static class ReissueMicrotask extends MicrotaskCommand
 	{
 		private String excludedWorkerID;
+		private int awardedPoint;
 
-		public ReissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
+		public ReissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
 		{
 			super(microtaskKey);
 			this.excludedWorkerID = excludedWorkerID;
+			this.awardedPoint = awardedPoint;
 		}
 
 		// Overrides the default execute as no microtask is to be loaded.
@@ -173,7 +178,7 @@ public abstract class MicrotaskCommand extends Command
 
 			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, project, reissuedFromMicrotaskKey);
 
-			WorkerCommand.awardPoints( excludedWorkerID , microtask.getSubmitValue() / 2 );
+			WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
 
 			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
 		}
