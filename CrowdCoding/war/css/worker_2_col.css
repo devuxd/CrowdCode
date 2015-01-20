@@ -427,13 +427,11 @@ h1, h2, h3, h4 {
 	font-weight: bold; 
 	font-size: 0.8em;
 	padding: 2px;
-	color: white;
-
 }
 
-.news-element .accepted { background-color: #5cb85c;  }
-.news-element .reissued { background-color: #f0ad4e;  }
-.news-element .rejected { background-color: #555; }
+.news-element .accepted { color: #5cb85c;  }
+.news-element .reissued { color: #f0ad4e;  }
+.news-element .rejected { color: #555; }
 
 
 
@@ -767,7 +765,29 @@ span.rating-star.full {
 	 background-position: 0px 0px;
 }
 
-.rating-separator { float:left; content:'s'; width:1px; height:25px; background-color: black;}
+
+.stars-container { margin:10px; }
+.stars-separator { float:left; content:'s'; width:1px; height:25px; background-color: black;}
+.star {
+	background-image: url('/img/stars.png');
+	background-position: 25px 0px;
+
+	width:25px;
+	height:25px;
+	display:block;
+	float:left;
+}
+.star.full {
+	background-position: 0px 0px;
+}
+
+.rating-result {
+	font-weight: bold;
+	font-family: 'Lato';
+	margin:10px;
+	line-height:25px;
+	text-transform: uppercase;
+}
 
 
 /* Search results styles in reuseSearch */
@@ -943,21 +963,30 @@ tutorial  { display:none; }
 .section.section-form .section-content .input-group .btn        { background-color:transparent; color:#555; border-radius:0px;}
 .section.section-form .section-content .input-group input:focus+ span > .btn { background-color: rgba(255,255,255,0.7) ; }
 
+.section.section-review {
+	background-color:white;
+	border:3px solid rgba(237,90,48,0.4);
 
+}
+.section.section-description ul,
+.section.section-review ul {
+	margin:0px;
+	padding:0px;
+}
 
 /* MICROTASK */
 .microtask-details {
-	list-style: none; padding:0px; margin:0px;
-
 	font-family: 'Lato' !important;
 	font-style: normal;
 	font-weight: 500;
 	font-size: 1.2em;
-	text-transform: uppercase;
+	width:100%;
 }
-.microtask-details li              { float:left; padding-left:20px; padding-right:20px; }
-.microtask-details li:nth-child(1) { color:white;}
-.microtask-details li:nth-child(3) { float:right; font-size:0.8em; padding:2px; cursor:pointer; }
+.microtask-details .type   { 
+	text-transform: uppercase; float:left; padding-left:20px; padding-right:20px; color:white;}
+.microtask-details .points { float:left; padding-left:20px; padding-right:20px; }
+.microtask-details .tutorial-btn { float:right; font-size:0.8em; cursor:pointer; padding:2px; }
+.microtask-details .tutorial-btn:hover { color:#555;}
 
 /* NO MORE MICROTASKS */
 .no-microtask {
@@ -1002,54 +1031,64 @@ tutorial  { display:none; }
 .stats .name { overflow: hidden; line-height:60px; padding-left: 4px; text-overflow: ellipsis; white-space: nowrap; font-size: 1.5em;}
 
 
+.job-description { padding:10px; color:#555; font-weight: bold; font-family: 'Lato'; font-size:1.1em;}
+.job-description strong { color:black ; };
 
 /* rgba(17,112,190,1) Wode - blue - writefunction */
 .task-writefunction .color          { color:  rgba(17,112,190,1); }
 .task-writefunction .color-alpha    { color:  rgba(17,112,190,0.4); }
 .task-writefunction .bg-color       { background-color:  rgba(17,112,190,1); }
 .task-writefunction .bg-color-alpha { background-color:  rgba(17,112,190,0.4); }
+.task-writefunction .job-description { background-color:  rgba(17,112,190,0.4); }
 
 /* rgba(254, 195, 36,1) yellow - yellow - writetestcases */
 .task-writetestcases .color          { color:  rgba(254, 195, 36,1); }
 .task-writetestcases .color-alpha    { color:  rgba(254, 195, 36, 0.4); }
 .task-writetestcases .bg-color       { background-color:  rgba(254, 195, 36,1); }
 .task-writetestcases .bg-color-alpha { background-color:  rgba(254, 195, 36,0.4); }
+.task-writetestcases .job-description { background-color:  rgba(254, 195, 36,0.4); }
 
 /* rgba(23,163,125,1) Celadon - green - writetest */
 .task-writetest .color          { color:  rgba(23,163,125,1); }
 .task-writetest .color-alpha    { color:  rgba(23,163,125,0.4); }
 .task-writetest .bg-color       { background-color:  rgba(23,163,125,1); }
 .task-writetest .bg-color-alpha { background-color:  rgba(23,163,125,0.4); }
+.task-writetest .job-description { background-color:  rgba(23,163,125,0.4); }
 
 /* rgba(186,105,66,1) Heliotrope - brown - writefunctiondescription */
 .task-writefunctiondescription .color          { color:  rgba(186,105,66,1); }
 .task-writefunctiondescription .color-alpha    { color:  rgba(186,105,66,0.4); }
 .task-writefunctiondescription .bg-color       { background-color:  rgba(186,105,66,1); }
 .task-writefunctiondescription .bg-color-alpha { background-color:  rgba(186,105,66,0.4); }
+.task-writefunctiondescription .job-description { background-color:  rgba(186,105,66,0.4); }
 
 /* rgba(195,35,58,1)  Kermes - magenta - reusesearch */
 .task-reusesearch .color          { color:  rgba(195,35,58,1); }
 .task-reusesearch .color-alpha    { color:  rgba(195,35,58,0.4); }
 .task-reusesearch .bg-color       { background-color:  rgba(195,35,58,1); }
 .task-reusesearch .bg-color-alpha { background-color:  rgba(195,35,58,0.4); }
+.task-reusesearch .job-description { background-color:  rgba(195,35,58,0.4); }
 
 /* rgba(131,90,161,1) Atmosphere - purple - writecall */
 .task-writecall .color          { color:  rgba(131,90,161,1); }
 .task-writecall .color-alpha    { color:  rgba(131,90,161,0.4); }
 .task-writecall .bg-color       { background-color:  rgba(131,90,161,1); }
 .task-writecall .bg-color-alpha { background-color:  rgba(131,90,161,0.4); }
+.task-writecall .job-description { background-color:  rgba(131,90,161,0.4); }
 
 /* rgb(60, 146, 203,)  Chimayo - green - debugtestfailure */
 .task-debugtestfailure .color          { color:  rgba(60, 146, 203,1); }
 .task-debugtestfailure .color-alpha    { color:  rgba(60, 146, 203,0.4); }
 .task-debugtestfailure .bg-color       { background-color:  rgba(60, 146, 203,1); }
 .task-debugtestfailure .bg-color-alpha { background-color:  rgba(60, 146, 203,0.4); }
+.task-debugtestfailure .job-description { background-color:  rgba(60, 146, 203,0.4); }
 
 /* rgba(237,90,48,1)  Valencia - orange - review */
 .task-review .color          { color:  rgba(237,90,48,1); }
 .task-review .color-alpha    { color:  rgba(237,90,48,0.4); }
 .task-review .bg-color       { background-color:  rgba(237,90,48,1); }
 .task-review .bg-color-alpha { background-color:  rgba(237,90,48,0.4); }
+.task-review .job-description { background-color:  rgba(237,90,48,0.4); }
 
 
 .clip-copy {

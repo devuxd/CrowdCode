@@ -1,59 +1,55 @@
 <div ng-controller="WriteTestCasesController" >
 
 	<div class="section section-description " >
-		<div class="section-content no-padding" >
-			<ul class="microtask-details clearfix">
-				<li class="bg-color">{{::data.title}}</li>
-				<li >
-					<span>{{::data.submitValue}} points</span>
-				</li>
-				<li class="color">
-					<div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
-				</li>
-			</ul>
+		<div class="section-content no-padding microtask-details" >
+				<span class="bg-color type">{{::data.title}}</span>
+				<span class="points">{{::data.submitValue}} pts</span>
+				<span class="tutorial-btn glyphicon glyphicon-question-sign color" ng-click="startTutorial(microtask.type);"></span>
+				<span class="clearfix"></span>
 		</div>
-	</div>
-
-	<div class="section section-description">
-		<div class="section-title" >
-			<div class="dot bg-color"></div>
-			JOB DESCRIPTION
-		</div>
-		<div class="section-content" >
+		<div class="section-content job-description" >
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
 
 			<div ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
 
-				Can you describe some test cases in which this function might be used? Are there any unexpected corner
-				cases that might not work?, <br/>
-				You don't need a fully specifed test, just a description of the type of test to be performed
+				Can you describe some test cases in which this function might be used? <br />
+				Are there any unexpected corner cases that might not work? <br/>
+				<strong>TIP:</strong> you don't need a fully specifed test, just a description of the type of test to be performed
 			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
-				The test case:
-				<div class="form-group">
-					<input type="text"
-					class="form-control"
-					disabled="true"
-					name="disputedTestCase"
-					ng-model="microtask.disputedTestCase"
-					>
-				</div>
-			    has been reported to:
-			    <div class="form-group has-error">
-			    	<input type="text"
-			    	class="form-control"
-			    	disabled="true"
-			    	name="disputeDescription"
-			    	ng-model="microtask.disputeDescription"
-			    	>
-			    </div>
+				A test case has been reported by the crowd.
 			    <br>
-			    
-				Can you fix the test case (and others if necessary)?<BR>
+			    According to the report explanation, can you fix 
+			    the reported test case (and others if necessary) for the function <strong>{{microtask.owningArtifact}}</strong> ?	
 			</div>
 		</div>
 	</div>
+
+ 	<div ng-if="microtask.inDispute">
+		<div class="section section-description"  >
+			<div class="section-title" >
+				<div class="dot bg-color"></div>
+				REPORTED TESTCASE 
+			</div>
+
+			<div class="section-content">
+				{{microtask.disputedTestCase}}
+			</div>
+		</div>
+
+		<div class="section section-description" >
+			<div class="section-title" >
+				<div class="dot bg-color"></div>
+				REPORT EXPLANATION 
+			</div>
+			<div class="section-content">
+				{{microtask.disputeDescription}}
+			</div>
+		</div>
+ 	</div>
+	
+
 
 	<div class="section section-description" id="functionSignature">
 
@@ -163,19 +159,13 @@
 	</div>
 
 	<div class="section section-form" ng-show="dispute">
-		<div class="section-title" >
-			<div class="dot bg-color"></div> Report an issue in THE FUNCTION SIGNATURE
-		</div>
-
 		<div class="section-content" >
-			<div id="disputeDiv" class="form-group">
-				<label for="disputeTextInput">what's wrong with this function signtaure? </label>
-				<textarea name="disputeTextInput" class="form-control required" style="resize:none" ng-model="disputeText" ng-required="dispute"></textarea>
-				<span
-				class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
-				<br>
-				<button class="btn " ng-click="toggleDispute()" >Nothing is wrong!</button>
-			</div>
+			<div class="heading-1" >what's wrong with this function signature?</div>
+			<textarea name="disputeTextInput" class="form-control required" style="resize:none" ng-model="disputeText" ng-required="dispute"></textarea>
+			<span
+			class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
+			<br>
+			<a href="#" class=" " ng-click="toggleDispute()" > Nothing is wrong!</a>
 		</div> 
 
 	</div> 

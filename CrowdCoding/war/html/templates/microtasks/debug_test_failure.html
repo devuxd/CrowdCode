@@ -2,25 +2,13 @@
     
 
     <div class="section section-description " >
-        <div class="section-content no-padding" >
-            <ul class="microtask-details clearfix">
-                <li class="bg-color">{{::data.title}}</li>
-                <li >
-                    <span>{{::data.submitValue}} points</span>
-                </li>
-                <li class="color">
-                    <div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
-                </li>
-            </ul>
+        <div class="section-content no-padding microtask-details" >
+                <span class="bg-color type">{{::data.title}}</span>
+                <span class="points">{{::data.submitValue}} pts</span>
+                <span class="tutorial-btn glyphicon glyphicon-question-sign color" ng-click="startTutorial(microtask.type);"></span>
+                <span class="clearfix"></span>
         </div>
-    </div>
-
-    <div class="section section-description">
-        <div class="section-title" >
-            <div class="dot bg-color"></div>
-            JOB DESCRIPTION
-        </div>
-        <div class="section-content" >
+        <div class="section-content  job-description" >
             One (or more) of the tests for the function <strong>{{funct.name}}</strong>  have failed. Can you find and fix the bug(s)?
         </div>
     </div>

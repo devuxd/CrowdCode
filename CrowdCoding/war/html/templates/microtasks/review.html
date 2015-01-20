@@ -1,19 +1,93 @@
-<div ng-controller="ReviewController" >
+<div ng-controller="ReviewController" ng-init="reviewed = review.microtask ">
 
 	
-    <div class="section section-description " >
-        <div class="section-content no-padding" >
-            <ul class="microtask-details clearfix">
-                <li class="bg-color">{{::data.title}}</li>
-                <li >
-                    <span>{{::data.submitValue}} points</span>
-                </li>
-                <li class="color">
-                    <div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
-                </li>
-            </ul>
-        </div>
-    </div>
+    
+	<div class="section section-description " >
+		<div class="section-content no-padding microtask-details" >
+				<span class="bg-color type">{{::data.title}}</span>
+				<span class="points">{{::data.submitValue}} pts</span>
+				<span class="tutorial-btn glyphicon glyphicon-question-sign color" ng-click="startTutorial(microtask.type);"></span>
+				<span class="clearfix"></span>
+		</div>
+
+		<div class="section-content job-description" >
+			<!-- WRITE TEST CASES -->
+			<div ng-if="reviewed.type == 'WriteTestCases'">
+				<!-- if function description disputed -->
+				<div ng-if="reviewed.submission.isFunctionDispute" >
+					The worker was asked to write testcases for the function <strong>{{ reviewed.owningArtifact }}</strong> 
+					but he disputed the function description.
+				</div>
+
+				<!-- if no function description dispute  AND the prompt type is FUNCTION_SIGNATURE   --> 
+				<div ng-if="reviewed.promptType == 'FUNCTION_SIGNATURE' && !reviewed.submission.isFunctionDispute" >
+					The worker was asked to write the testcases for the function <strong>{{ reviewed.owningArtifact }}</strong>.
+				</div>
+
+				<!-- if no function description dispute  AND the prompt type is CORRECT_TEST_CASES   --> 
+				<div ng-if="reviewed.promptType == 'CORRECT_TEST_CASE' && !reviewed.submission.isFunctionDispute" >
+					The worker was asked to rewrite the test case
+					<strong ng-bind="reviewed.disputedTestCase"></strong>
+					that the crowd put in dispute. 
+				</div>
+			</div>
+
+			<!-- WRITE FUNCTION -->
+
+			<div ng-if="reviewed.type == 'WriteFunction'">
+				<div ng-if="reviewed.promptType == 'SKETCH'">
+					The worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong>.
+				</div>
+
+				<div ng-if="reviewed.promptType == 'RE_EDIT'">
+					The worker was asked to edit the signature of the function <strong>{{ reviewed.owningArtifact }}</strong> to address the issue reported by the crowd.
+				</div>
+
+				<div ng-if="reviewed.promptType == 'DESCRIPTION_CHANGE'">
+					The worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong> after the  signature change of called function .
+				</div>
+
+			</div>
+
+			<!-- WRITE TEST -->
+			<div ng-if="review.microtask.type == 'WriteTest'">
+				
+				<div ng-if="! review.microtask.submission.inDispute && ! review.microtask.submission.isFunctionDispute">
+					The worker was asked to write a test for the following test case relative 
+					to the function <strong>{{functionUnderTest.name}}</strong>
+				</div>
+				<div ng-if="review.microtask.submission.isFunctionDispute" >
+					The worker was asked to write a test for the function
+					<strong>{{functionUnderTest.name}}</strong>
+					and he reported the function description.
+				</div>
+				<div ng-if="review.microtask.submission.inDispute" >
+					The worker was asked to write a test the following test case relative to the function
+					<strong>{{functionUnderTest.name}}</strong>
+					but he reported the test case.
+				</div>
+
+			</div>
+
+			<!-- WRITE FUNCTION DESCRIPTION -->
+			<div ng-if="reviewed.type == 'WriteFunctionDescription'">
+				The worker was asked to write a description for the function 
+				<strong>{{review.microtask.callDescription}}</strong>. 
+			</div>
+
+
+			<!-- WRITE CALL -->
+			<div ng-if="reviewed.type == 'WriteCall'">
+				The worker was asked to replace the pseudocall
+				<strong>{{review.microtask.pseudoCall}}</strong> in the function
+				<strong>{{functName}}</strong>
+				with the function 
+				<strong>{{reviewed.calleeName}}</strong>.
+			</div>
+
+			<span>Can you rate his work?</span>
+		</div>
+	</div>
 
 	<!--///////////////////////////////////////////-->
 	<!--//        WRITE TEST CASES MICROTASK     //-->
@@ -21,42 +95,8 @@
 
 	<!-- prompt type = FUNCTION_SIGNATURE -->
 	<div ng-if="review.microtask.type == 'WriteTestCases'"> 
-		<div class="section section-description">
-			<div class="section-title" >
-				<div class="dot bg-color"></div>Job description
-			</div>
-			<div class="section-content" ng-if="review.microtask.submission.isFunctionDispute" >
-				The worker was asked to write testcases but he disputed the function. <br /> Can you rate this work?
-			</div>
 
-			<div class="section-content" ng-if="review.microtask.promptType == 'FUNCTION_SIGNATURE' && !review.microtask.submission.isFunctionDispute" >
-				The worker was asked to write testcases for the following function. <br /> Can you rate this work?
-			</div>
-			<div class="section-content" ng-if="review.microtask.promptType == 'CORRECT_TEST_CASE'&& !review.microtask.submission.isFunctionDispute" >
-				The worker was asked to rewrite the test case
-				<div class="form-group">
-					<input type="text"
-					class="form-control"
-					disabled="true"
-					name="disputedTestCase"
-					ng-model="review.microtask.disputedTestCase"
-					>
-				</div>
-				<br>
-				that the crowd put in dispute for the following reason:<br>
-				<div class="form-group has-error">
-					<textarea type="text"
-					class="form-control resize:none"
-					disabled="true"
-					name="disputedTestCase"
-					ng-model="review.microtask.disputeDescription"
-					></textarea>
-				</div>
-				<br>
-				Can you review this work?
-			</div>
-	
-		</div>
+		<!-- always show the function description --> 
 		<div class="section section-description">
 			<div class="section-title" >
 				<div class="dot bg-color"></div>function description
@@ -65,21 +105,57 @@
 				<ace-read-js code="review.functionCode"></ace-read-js>
 			</div>
 		</div>
-		<div class="section section-description-2" ng-if="review.microtask.submission.isFunctionDispute">
-			<div class="section-title" ><div class="dot bg-color"></div>dispute reaseon</div>
+
+		<!-- if the function description has been disputed -->
+		<div class="section section-review" ng-if="review.microtask.submission.isFunctionDispute">
+			<div class="section-title" ><div class="dot bg-color"></div>dispute reason</div>
 			<div class="section-content" >
-				<div class="form-grou has-error">
-					<textarea type="text"
-					class="form-control resize:none"
-					disabled="true"
-					name="disputedTestCase"
-					ng-model="review.microtask.submission.disputeText"
-					></textarea>
+				{{review.microtask.submission.disputeText}}
+			</div>
+		</div>
+
+
+		<!-- if the function description has not been disputed -->
+		
+		<!-- show report data if is a CORRECT_TEST_CASE -->
+		<div ng-if="reviewed.promptType == 'CORRECT_TEST_CASE' && !reviewed.submission.isFunctionDispute">
+			<div class="section section-description" >
+				<div class="section-title" >
+					<div class="dot bg-color"></div>
+					REPORTED TESTCASE 
+				</div>
+
+				<div class="section-content">
+					{{reviewed.disputedTestCase}}
+				</div>
+			</div>
+
+			<div class="section section-description" >
+
+				<div class="section-title" >
+					<div class="dot bg-color"></div>
+					REPORT EXPLANATION 
+				</div>
+
+				<div class="section-content">
+					{{reviewed.disputeDescription}}
+				</div>	
+			</div>
+
+			<div class="section section-description" >
+				<div class="section-title" >
+					<div class="dot bg-color"></div>
+					old test cases
+				</div>
+				<div class="section-content" >
+					<ul style="list-style:none">
+						<li class="" ng-repeat="testcase in oldTestCases"><strong>#{{$index+1}}</strong> {{testcase.text}}</li>
+					</ul>
 				</div>
 			</div>
 		</div>
-		
-		<div class="section section-description-2" ng-if="!review.microtask.submission.isFunctionDispute">
+
+		<div class="section section-review" ng-if="!review.microtask.submission.isFunctionDispute">
 			<div class="section-title" ><div class="dot bg-color"></div>submitted test cases</div>
 			<div class="section-content" >
 				<ul style="list-style:none">
@@ -89,129 +165,35 @@
 		</div>
 	</div>
 
-	<!--//////////////////////////////////////////-->
-	<!--//           WRITE TEST MICROTASK       //-->
-	<!--//////////////////////////////////////////-->
-	<div ng-if="review.microtask.type == 'WriteTest'">
-		<div class="section section-description">
-			<div class="section-title" >
-				<div class="dot bg-color"></div>Job description
-			</div>
-			<div ng-if="! review.microtask.submission.inDispute && ! review.microtask.submission.isFunctionDispute" class="section-content" >
-				The worker was asked to write a test for the following case:
-				<div class="form-group">
-					<input type="text"
-					class="form-control"
-					disabled="true"
-					name="disputedTestCase"
-					ng-model="review.microtask.owningArtifact"
-					>
-				</div><br/>
-				for the function below. Can you rate this work?
-			</div>
-			<div ng-if="review.microtask.submission.isFunctionDispute" class="section-content" >
-				The worker disputed the test that the crowd has written for the following function:
-				<div class="form-group">
-					<input type="text"
-					class="form-control"
-					disabled="true"
-					name="disputedTestCase"
-					ng-model="review.microtask.owningArtifact"
-					>
-				</div>
-				<br/> Can you rate this dispute?
-			</div>
-			<div ng-if="review.microtask.submission.inDispute" class="section-content" >
-				The worker disputed the function signature that the crowd has written for the following test case:
-				<div class="form-group">
-					<input type="text"
-					class="form-control"
-					disabled="true"
-					name="disputedTestCase"
-					ng-model="review.microtask.owningArtifact"
-					>
-				</div>
-				<br/> Can you rate this dispute?
-			</div>
-		</div>
-		<div class="section section-description">
-			<div class="section-title" ng-if="!review.microtask.submission.isFunctionDispute">
-				<div class="dot bg-color"></div>function description
-			</div>
-			<div class="section-title" ng-if="review.microtask.submission.isFunctionDispute">
-				<div class="dot bg-color"></div>function signature disputed
-			</div>
-			<div class="section-content no-padding" >
-				<ace-read-js code="review.functionCode"></ace-read-js>
-			</div>
-		</div>
-
-		<div ng-if="! review.microtask.submission.inDispute && !review.microtask.submission.isFunctionDispute" class="section section-description-2">
-			<div  class="section-title" ><div class="dot bg-color"></div>submitted TEST</div>
-			<div class="section-content" >
-				<table style="width:100%" class="test">
-					
-					<tr ng-repeat="(inputKey,input) in review.microtask.submission.simpleTestInputs track by $index">
-						<td>{{functionUnderTest.paramNames[$index]}}</td>
-						<td>
-							<div ace-read-json ng-model="input" ></div>
-						</td>
-					</tr>
-					<tr ng-if="functionUnderTest.returnType!=undefined">
-						<td>test output</td>
-						<td>
-							<div ace-read-json ng-model="review.microtask.submission.simpleTestOutput" ></div>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-
-		<div ng-if="review.microtask.submission.inDispute || review.microtask.submission.isFunctionDispute" class="section section-description-2">
-			<div class="section-title" ><div class="dot bg-color"></div>dispute reason</div>
-			<div class="section-content" >
-				<div class="form-group has-error">
-					<textarea type="text"
-					class="form-control"
-					style ="resize:none"
-					style="width:100%"
-					disabled="true"
-					name="disputedTestCase"
-					ng-model="review.microtask.submission.disputeText"
-					></textarea>
-				</div>
-			</div>
-		</div>
-		</div>
-
 
 	<!--//////////////////////////////////////////-->
 	<!--//        WRITE FUNCTION MICROTASK      //-->
 	<!--//////////////////////////////////////////-->
 
-	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'RE_EDIT'">
-		<div class="section section-description">
+	<div class="section section-description-2" ng-if="reviewed.disputeText.length > 0">
+		<div class="section-title" >
+			<div class="dot bg-color"></div>REPORT DESCRIPTION
+		</div>
+		<div class="section-content" >
+			{{reviewed.disputeText}}
+		</div>
+	</div>
+
+
+	<div ng-if="reviewed.type == 'WriteFunction' && reviewed.promptType == 'DESCRIPTION_CHANGE'">
+		<div class="section section-description-2">
 			<div class="section-title" >
-				<div class="dot bg-color"></div>Job description
+				<div class="dot bg-color"></div>different callee function signature
 			</div>
-			<div class="section-content" >
-				The worker was asked to edit the following function to solve this issue:
-				<div class="form-group  has-error">
-					<textarea type="text"
-					class="resize:none"
-					style="width:100%"
-					class="form-control"
-					disabled="true"
-					name="newTestCase"
-					ng-model="review.microtask.disputeText"
-					></textarea>
-				</div><br/>
-				
-				<br /> Can you rate this work?
+			<div class="section-content no-padding" >
+				<ace-read-js code="calledDiffCode" mode="diff" ></ace-read-js>
 			</div>
 		</div>
+	</div>
 
-		<div class="section section-description-2">
+
+	<div ng-if="review.microtask.type == 'WriteFunction' && (reviewed.promptType == 'RE_EDIT'  || reviewed.promptType == 'DESCRIPTION_CHANGE') ">
+		<div class="section section-review">
 			<div class="section-title" >
 				<div class="dot bg-color"></div>submitted function code
 			</div>
@@ -222,16 +204,7 @@
 	</div>
 
 	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'SKETCH'">
-		<div class="section section-description">
-			<div class="section-title" >
-				<div class="dot bg-color"></div>Job description
-			</div>
-			<div class="section-content" >
-				The worker was asked to write some code in the following function. <br /> Can you rate this work?
-			</div>
-		</div>
-
-		<div class="section section-description-2">
+		<div class="section section-review">
 			<div class="section-title" >
 				<div class="dot bg-color"></div>submitted function code
 			</div>
@@ -241,29 +214,69 @@
 		</div>
 	</div>
 
-	<div ng-if="review.microtask.type == 'WriteFunction' && review.microtask.promptType == 'DESCRIPTION_CHANGE'">
-		<div class="section section-description">
-			<div class="section-title" >
-				<div class="dot bg-color"></div>submitted work description
-			</div>
-			<div class="section-content" >
-				After the change of the following callee function the user was asked if necessary to change the code of the caller function <br />
-				<ace-read-js code="diffCode" mode="diff"></ace-read-js>
-				<br>
-				Can you rate this work?
+	<!--//////////////////////////////////////////-->
+	<!--//           WRITE TEST MICROTASK       //-->
+	<!--//////////////////////////////////////////-->
+	<div ng-if="review.microtask.type == 'WriteTest'">
+		
 
+		
+
+		<div class="section section-description">
+			<div class="section-title" ng-if="!reviewed.submission.isFunctionDispute">
+				<div class="dot bg-color"></div>function description
+			</div>
+			<div class="section-title" ng-if="reviewed.submission.isFunctionDispute">
+				<div class="dot bg-color"></div>reported function signature
+			</div>
+			<div class="section-content no-padding" >
+				<ace-read-js code="review.functionCode"></ace-read-js>
 			</div>
 		</div>
 
-		<div class="section section-description-2">
-			<div class="section-title" >
-				<div class="dot bg-color"></div>submitted function code
-			</div>
+
+		<div class="section section-description" ng-if="! reviewed.submission.isFunctionDispute">
+			<div ng-if="!review.microtask.submission.inDispute" class="section-title" ><div class="dot bg-color"></div>test case</div>
+			<div ng-if="review.microtask.submission.inDispute" class="section-title" ><div class="dot bg-color"></div>reported test case</div>
 			<div class="section-content" >
-				<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
+				{{reviewed.owningArtifact}}
+			</div>
+		</div>
+
+		<div ng-if="! reviewed.submission.inDispute && !reviewed.submission.isFunctionDispute" >
+
+			<div class="section section-review">
+				<div  class="section-title" ><div class="dot bg-color"></div>submitted TEST</div>
+				<div class="section-content" >
+					<table style="width:100%" class="test">
+						
+						<tr ng-repeat="(inputKey,input) in review.microtask.submission.simpleTestInputs track by $index">
+							<td>{{functionUnderTest.paramNames[$index]}}</td>
+							<td>
+								<div ace-read-json ng-model="input" ></div>
+							</td>
+						</tr>
+						<tr ng-if="functionUnderTest.returnType!=undefined">
+							<td>test output</td>
+							<td>
+								<div ace-read-json ng-model="review.microtask.submission.simpleTestOutput" ></div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div ng-if="review.microtask.submission.inDispute || review.microtask.submission.isFunctionDispute" class="section section-description-2">
+			<div class="section-title" ><div class="dot bg-color"></div>report explanation</div>
+			<div class="section-content" >
+				{{reviewed.submission.disputeText}}
 			</div>
 		</div>
 	</div>
+
+
+
 
 	<!--//////////////////////////////////////////-->
 	<!--// WRITE FUNCTION DESCRIPTION MICROTASK //-->
@@ -271,9 +284,7 @@
 	<div ng-if="review.microtask.type == 'WriteFunctionDescription'">
 
 		<div class="section section-description">
-			<div class="section-title" >
-				<div class="dot bg-color"></div>Job description
-			</div>
+
 			<div class="section-content" >
 				The worker was given the psudocall:
 				<span class="pseudoCall">{{review.microtask.callDescription}}</span> and asked to write a description for this function. <br/>
@@ -296,20 +307,10 @@
 	<!--//          WRITE CALL MICROTASK        //-->
 	<!--//////////////////////////////////////////-->
 	<div ng-if="review.microtask.type == 'WriteCall'">
-		<div class="section section-description">
-			<div class="section-title" >
-				<div class="dot bg-color"></div>Job description
-			</div>
-			<div class="section-content" >
-				The worker replaced the pseudocall:
-				<span class="pseudoCall">{{review.microtask.pseudoCall}}</span>
-				in the following way. Can you rate this work?
-			</div>
-		</div>
 		
 		<div class="section section-description-2">
 			<div class="section-title" >
-				<div class="dot bg-color"></div>Description of Pseudocall function
+				<div class="dot bg-color"></div>{{reviewed.calleeName}} function signature
 			</div>
 			<div class="section-content" >
 				<ace-read-js code="review.microtask.calleeFullDescription"></ace-read-js>
@@ -335,11 +336,11 @@
 				</div>
 				<div class="section-content" >
 					<ul style="list-style:none;margin:0px;padding:0px;">
-						<li><b>1 Star</b>: Work incoherent or unfocussed. <b>Work will be rejected</b></li>
-						<li><b>2 Star</b>: Work unconvincing or weak. <b>Work will be rejected</b></li>
-						<li><b>3 Star</b>: Work with some weakness. <b>A microtask will be created to fix this work</b></li>
-						<li><b>4 Star</b>: Work with some minor issues. <b>Work will be accepted</b></li>
-						<li><b>5 Star</b>: Excellent work with no significant weaknesses. <b>Work will be accepted</b></li>
+						<li><b>1 Star</b>: incoherent or unfocussed</li>
+						<li><b>2 Star</b>: unconvincing or weak</li>
+						<li><b>3 Star</b>: there are some weakness</li>
+						<li><b>4 Star</b>: good quality, without weakness</li>
+						<li><b>5 Star</b>: excellent without weakness</b></li>
 					</ul>
 
 				</div>
@@ -353,37 +354,31 @@
 			</div>
 
 			<div class="section section-form" style="width:70%;" >
+				<div class="section-content no-padding" >
 
-				<div class="section-content" >
-					<div id="ratingsDiv" >
-						<span class="pull-left"></span>
-						
+					<div class="heading-1" >express a vote</div>
+					<div id="ratingsDiv" class="stars-container pull-left" >
 						<span ng-repeat="currentValue in [1,2,3,4,5] track by $index"
 							  ng-mouseenter="review.mouseOn=currentValue"
 							  ng-mouseleave="review.mouseOn=0"
 							  ng-click="rate(currentValue)">
-							<span class="rating-star {{ ( review.mouseOn > $index || review.rating > $index ) ? 'full' : '' }}"></span>
-							<span ng-if="$index == 1||$index == 2" class="rating-separator" ></span>
+							<span class="star {{ ( review.mouseOn > $index || review.rating > $index ) ? 'full' : '' }}"></span>
+							<span ng-if="$index == 2" class="stars-separator" ></span>
 						</span>
-						
-					<!--	<div class="btn-group" role="group" aria-label="...">
-						  <button type="button" class="btn btn-default" ng-click="accept($event)" >Accept</button>
-						  <button type="button" class="btn btn-default" ng-click="reissue($event)" >Reissue</button>
-						  <button type="button" class="btn btn-default" ng-click="reject($event)" >Reject</button>
-						</div>-->
-
-						<span class="clearfix"></span>
 					</div>
-					<br />
 
-					<label ng-if="review.rating != -1"> Choice </label>
-					<span ng-if="review.rating == 1||review.rating == 2">Reject</span>
-					<span ng-if="review.rating == 3">Revise work</span>
-					<span ng-if="review.rating == 4||review.rating == 5">Accept</span>
-					<br />
-					<label for="reviewText" >Motivation:</label>
+
+
+					<span class="rating-result pull-left" ng-if="review.rating != -1">
+						<strong ng-if="review.rating <= 3"><span class="glyphicon glyphicon-refresh"></span> work REVISED</strong>  
+						<strong ng-if="review.rating > 3"><span class="glyphicon glyphicon-ok"></span> work ACCEPTED</strong>  
+					</span>
+
+					<span class="clearfix"></div>
+
+					<div class="heading-1" >write an explanation</div>
 					<textarea
-						id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 4" focus></textarea>
+						id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 4" focus style="resize:none;height:100px;"></textarea>
 					<span
 					class="help-block" ng-show="microtaskForm.reviewText.$dirty && review.rating < 4 && microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
 				</div>

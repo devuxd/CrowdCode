@@ -15,7 +15,8 @@ public class WriteFunctionInFirebase extends MicrotaskInFirebase
 
 	public WriteFunctionInFirebase(long id,String title, String type,
 			String owningArtifact, Long owningArtifactId, boolean completed, int points,
-			long functionID, String promptType,String oldFullDescription,String newFullDescription, String disputeText)
+			long functionID, String promptType,
+			String oldFullDescription,String newFullDescription, String disputeText)
 	{
 		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
 

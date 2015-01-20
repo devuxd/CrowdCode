@@ -64,7 +64,7 @@ public class WriteTestCases extends Microtask
 		this.promptType = PromptType.CORRECT_TEST_CASE;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.disputeDescription = disputeDescription;
-		this.disputedTestCase = disputedTestCase;
+		this.disputedTestCase   = disputedTestCase;
 		
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), 

@@ -27,15 +27,17 @@ public class WriteCall extends Microtask
 {
 	@Parent @Load private Ref<Function> caller;
 	private String pseudoCall;
+	private String calleeName;
 	private String calleeFullDescription;
 
+	
 	// Default constructor for deserialization
 	private WriteCall()
 	{
 	}
 
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, String calleeFullDescription, String pseudoCall, Project project)
+	public WriteCall(Function caller, String calleeName, String calleeFullDescription, String pseudoCall, Project project)
 	{
 		super(project);
 		this.submitValue = 7;
@@ -51,6 +53,7 @@ public class WriteCall extends Microtask
 				caller.getID(),
 				false, submitValue, 
 				caller.getID(), 
+				calleeName,
 				calleeFullDescription, 
 				pseudoCall ),
 				Project.MicrotaskKeyToString(this.getKey()),
@@ -62,7 +65,7 @@ public class WriteCall extends Microtask
 
 	public Microtask copy(Project project)
 	{
-		return new WriteCall(  (Function) getOwningArtifact(), this.calleeFullDescription, this.pseudoCall, project);
+		return new WriteCall(  (Function) getOwningArtifact(), this.calleeName, this.calleeFullDescription, this.pseudoCall, project);
 	}
 
 	public Key<Microtask> getKey()

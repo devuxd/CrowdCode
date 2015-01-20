@@ -102,7 +102,10 @@ public class DebugTestFailure extends Microtask
 	    			"SubmittedDebugTestFailure",
 	    			Project.MicrotaskKeyToString(  this.getKey() ),
 	    			-1 // differentiate the reviews from the 0 score tasks
-	    	).json()), project);
+				).json()),
+				Project.MicrotaskKeyToString(  this.getKey() ),
+				project
+	    );
 
 		FunctionDTO fDTO = (FunctionDTO) dto;
 		if( fDTO.autoSubmit != null && fDTO.autoSubmit != true ){

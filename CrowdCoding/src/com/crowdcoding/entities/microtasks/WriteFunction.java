@@ -30,6 +30,7 @@ public class WriteFunction extends Microtask
 
 	private String oldFullDescription;		// Only defined for DESCRIPTION_CHANGE
 	private String newFullDescription;		// Only defined for DESCRIPTION_CHANGE
+	
 	private String disputeText;				// Only defined for RE_EDIT
 
 

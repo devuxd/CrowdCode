@@ -77,7 +77,10 @@ public class ReuseSearch extends Microtask
     			"SubmittedReuseSearch",
     			Project.MicrotaskKeyToString(  this.getKey() ),
     			-1 // differentiate the reviews from the 0 score tasks
-    	).json()), project);
+	    	).json()),
+			Project.MicrotaskKeyToString(  this.getKey() ),
+			project
+		);
 
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "searches",1);
