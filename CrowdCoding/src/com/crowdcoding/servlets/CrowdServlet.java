@@ -179,9 +179,9 @@ public class CrowdServlet extends HttpServlet
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
 					}else if (pathSeg[2].equals("code")){
-						//req.getRequestDispatcher("/html/code.jsp").forward(req, resp);
 						renderCode(resp, projectId);
-
+					}else if (pathSeg[2].equals("logout")){
+						doLogout(req,resp, projectId);
 					}
 
 				// NOT FOUND 404 PAGE
@@ -495,6 +495,17 @@ public class CrowdServlet extends HttpServlet
 		out.print(allCode);
 		out.flush();
 	}
+
+
+	// Notify the server that a microtask has been completed.
+		public void doLogout(final HttpServletRequest req, final HttpServletResponse resp, final String projectID) throws IOException
+		{
+			final String logoutWorkerID     = req.getParameter("workerid");
+			doUserLogout(projectID,logoutWorkerID);
+		}
+
+
+
 
 	// Logs out the specified user from the service
 	public void doUserLogout(final String projectID, final String userID)

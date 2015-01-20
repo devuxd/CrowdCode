@@ -41,7 +41,7 @@ public class Review extends Microtask
 			Project project)
 	{
 		super(project);
-		this.submitValue = 4;
+		this.submitValue = 5;
 		this.microtaskKeyUnderReview = microtaskKeyUnderReview;
 		this.initiallySubmittedDTO = initiallySubmittedDTO;
 		this.workerOfReviewedWork = workerOfReviewedWork;
@@ -88,41 +88,46 @@ public class Review extends Microtask
 
 		int awardedPoint;
 		String reviewResult;
-        if( reviewDTO.qualityScore < 3 ) {
-        	
+
+		//reject not used any more for now...
+        /*if( reviewDTO.qualityScore < 3 ) {
+
 			// reissue microtask
         	System.out.println("--> REVIEW mtask "+Project.MicrotaskKeyToString( submittedMicrotask.getKey() )+" rejected");
 			MicrotaskCommand.rejectAndReissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
 			awardedPoint = 0;
 			reviewResult = "rejected";
-			
+
 
 			project.historyLog().beginEvent(new MicrotaskRejected(submittedMicrotask,workerID));
 			project.historyLog().endEvent();
-			
-		} else if ( reviewDTO.qualityScore == 3) {
-			
+
+		} else*/
+
+
+		if ( reviewDTO.qualityScore < 4) {
+
 			// reissue microtask
 			System.out.println("--> REVIEW mtask "+Project.MicrotaskKeyToString( submittedMicrotask.getKey() )+" reissued");
-			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork);
-			awardedPoint = submittedMicrotask.submitValue/2;
+			awardedPoint = submittedMicrotask.submitValue * reviewDTO.qualityScore /5;
 			reviewResult = "reissued";
+			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
 
 			project.historyLog().beginEvent(new MicrotaskReissued(submittedMicrotask,workerID));
 			project.historyLog().endEvent();
-			
+
 		} else {
-			
+
 			// accept microtask
         	System.out.println("--> REVIEW mtask "+Project.MicrotaskKeyToString( submittedMicrotask.getKey() )+" accepted");
-			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork);
-			awardedPoint = submittedMicrotask.submitValue;
+			awardedPoint = submittedMicrotask.submitValue * reviewDTO.qualityScore /5;
 			reviewResult ="accepted";
-			
+			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork, awardedPoint);
+
 
 			project.historyLog().beginEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
 			project.historyLog().endEvent();
-			
+
 		}
 
 

@@ -28,7 +28,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
         if($scope.microtask.promptType=='FUNCTION_SIGNATURE')
-            $scope.model.testCases=$scope.reissuedMicrotask.submission.testCases;
+            $scope.model.testcases=$scope.reissuedMicrotask.submission.testCases;
     }
 
     $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;

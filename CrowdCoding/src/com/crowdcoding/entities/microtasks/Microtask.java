@@ -73,7 +73,7 @@ public /*abstract*/ class Microtask
 
 		//project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
 		//project.historyLog().endEvent();
-		
+
 		doSubmitWork(dto, workerID, project);
 		this.completed = true;
 
@@ -95,11 +95,11 @@ public /*abstract*/ class Microtask
 	{
 		project.historyLog().beginEvent(new MicrotaskSkipped(this, workerID));
 		// Increment the point value by 10
-		this.submitValue += 10;
+		this.submitValue *= 1.5;
 		ofy().save().entity(this).now();
 		project.historyLog().endEvent();
 	}
-	
+
 
 	public Key<Microtask> getKey()
 	{

@@ -38,6 +38,8 @@ public class DebugTestFailure extends Microtask
 	public DebugTestFailure(Function function, Project project)
 	{
 		super(project);
+		this.submitValue = 15;
+
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(
@@ -60,7 +62,10 @@ public class DebugTestFailure extends Microtask
 	// Constructor for initial construction.
 	public DebugTestFailure(Function function, Test test, Project project)
 	{
+
 		super(project);
+		this.submitValue = 15;
+
 		this.function   = (Ref<Function>) Ref.create(function.getKey());
 		this.failedTest = (Ref<Test>) Ref.create(test.getKey());
 		ofy().save().entity(this).now();

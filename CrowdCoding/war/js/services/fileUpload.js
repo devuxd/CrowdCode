@@ -7,9 +7,8 @@ myApp.service('fileUpload', ['$http', function ($http) {
             headers: {'Content-Type': undefined}
         })
         .success(function(){
-            
         })
         .error(function(){
         });
-    }
+    };
 }]);

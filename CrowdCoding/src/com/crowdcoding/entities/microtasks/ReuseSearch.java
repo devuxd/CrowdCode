@@ -34,7 +34,7 @@ public class ReuseSearch extends Microtask
 	public ReuseSearch(Function function, String callDescription, Project project)
 	{
 		super(project);
-		this.submitValue = 4;
+		this.submitValue = 5;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.callDescription = callDescription;
 		ofy().save().entity(this).now();

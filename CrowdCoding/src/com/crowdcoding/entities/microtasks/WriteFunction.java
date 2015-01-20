@@ -43,6 +43,7 @@ public class WriteFunction extends Microtask
 	public WriteFunction(Function function, Project project)
 	{
 		super(project);
+
 		this.promptType = PromptType.SKETCH;
 		WriteFunction(function, project);
 	}
