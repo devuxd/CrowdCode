@@ -147,7 +147,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 ///////////////////////////////
 //      Review CONTROLLER    //
 ///////////////////////////////
-myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'functionsService', 'ADTService', 'microtasksService', function($scope, $rootScope, $firebase, $alert, testsService, functionsService, ADTService, microtasksService) {
+myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'functionsService', 'ADTService', 'microtasksService', 'TestList', function($scope, $rootScope, $firebase, $alert, testsService, functionsService, ADTService, microtasksService, TestList) {
     // scope variables
     $scope.review = {};
     $scope.review.reviewText = "";
@@ -172,7 +172,8 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             var functionUnderTest     = functionUnderTestSync.$asObject();
             functionUnderTest.$loaded().then(function() {
                 $scope.review.functionCode = functionsService.renderDescription(functionUnderTest) + functionUnderTest.header;
-                //console.log("fatto con "+$scope.review.functionCode);
+                $scope.oldTestCases = TestList.getTestCasesByFunctionId(functionUnderTest.id);
+                console.log('OLD TC',$scope.oldTestCases);
             });
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
@@ -210,7 +211,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                     }
                     diffCode += "\n";
                 });
-                $scope.diffCode = diffCode;
+                $scope.calledDiffCode = diffCode;
             }
 
         } else if ($scope.review.microtask.type == 'WriteTest') {
@@ -241,6 +242,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                 diffCode += "\n";
             });
 
+            $scope.functName = funct.name;
             $scope.review.functionCode = diffCode;
 
             //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;

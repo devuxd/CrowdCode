@@ -5,4 +5,4 @@
     }
     console.log('PAGE LOADED');</script> <!--[if lt IE 9]>
     <script src="/dist/scripts/oldieshim.76f279db.js"></script>
-    <![endif]--> <script src="/dist/scripts/vendor.228d0024.js"></script> <script src="/dist/scripts/scripts.a629dd52.js"></script>  
+    <![endif]--> <script src="/dist/scripts/vendor.228d0024.js"></script> <script src="/dist/scripts/scripts.bf879cd8.js"></script>  

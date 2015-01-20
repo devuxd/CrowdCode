@@ -3,6 +3,7 @@ package com.crowdcoding.dto.firebase;
 public class WriteCallInFirebase extends MicrotaskInFirebase
 {
 	public long functionID;
+	public String calleeName;
 	public String calleeFullDescription;
  	public String pseudoCall;
 
@@ -12,12 +13,13 @@ public class WriteCallInFirebase extends MicrotaskInFirebase
 
 	public WriteCallInFirebase(long id,String title, String type,
 			String owningArtifact, Long owningArtifactId, boolean completed, int points,
-			long functionID, String calleeFullDescription, String pseudoCall)
+			long functionID, String calleeName, String calleeFullDescription, String pseudoCall)
 	{
 		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
 
 		this.functionID=functionID;
 
+		this.calleeName=calleeName;
 		this.calleeFullDescription=calleeFullDescription;
 		this.pseudoCall=pseudoCall;
 

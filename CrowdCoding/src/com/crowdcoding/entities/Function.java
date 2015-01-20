@@ -700,10 +700,10 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 
-	public void calleeBecameDescribed(String calleeFullDescription, String pseudoCall, Project project)
+	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, String pseudoCall, Project project)
 	{
 		project.historyLog().beginEvent(new MessageReceived("AddCall", this));
-		queueMicrotask(new WriteCall(this, calleeFullDescription, pseudoCall, project), project);
+		queueMicrotask(new WriteCall(this, calleeName, calleeFullDescription, pseudoCall, project), project);
 		project.historyLog().endEvent();
 	}
 
@@ -736,7 +736,7 @@ public class Function extends Artifact
 
 	private void sendDescribedNotification(long subscriberID, String pseudoCall, Project project)
 	{
-		FunctionCommand.calleeBecameDescribed(subscriberID, this.getFullDescription(), pseudoCall);
+		FunctionCommand.calleeBecameDescribed(subscriberID, this.getName(), this.getFullDescription(), pseudoCall);
 	}
 
 	// Send out notifications, as appropriate, that the description or header of this

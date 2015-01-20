@@ -39,9 +39,9 @@ public abstract class FunctionCommand extends Command
 	public static FunctionCommand calleeChangedInterface(long functionID, String oldFullDescription,
 			String newFullDescription)
 		{ return new CalleeChangedInterface(functionID, oldFullDescription, newFullDescription); }
-	public static FunctionCommand calleeBecameDescribed(long functionID, String calleeFullDescription,
+	public static FunctionCommand calleeBecameDescribed(long functionID, String calleeName, String calleeFullDescription,
 			String pseudoCall)
-		{ return new CalleeBecameDescribed(functionID, calleeFullDescription, pseudoCall); }
+		{ return new CalleeBecameDescribed(functionID, calleeName, calleeFullDescription, pseudoCall); }
 	public static FunctionCommand disputeTestCases(long functionID, String issueDescription,
 			String testDescription)
 		{ return new DisputeTestCases(functionID, issueDescription, testDescription); }
@@ -286,19 +286,21 @@ public abstract class FunctionCommand extends Command
 
 	protected static class CalleeBecameDescribed extends FunctionCommand
 	{
+		private String calleeName;
 		private String calleeFullDescription;
 		private String pseudoCall;
 
-		public CalleeBecameDescribed(long functionID, String calleeFullDescription, String pseudoCall)
+		public CalleeBecameDescribed(long functionID, String calleeName, String calleeFullDescription, String pseudoCall)
 		{
 			super(functionID);
 			this.calleeFullDescription = calleeFullDescription;
+			this.calleeName = calleeName;
 			this.pseudoCall = pseudoCall;
 		}
 
 		public void execute(Function function, Project project)
 		{
-			function.calleeBecameDescribed(calleeFullDescription, pseudoCall, project);
+			function.calleeBecameDescribed(calleeName, calleeFullDescription, pseudoCall, project);
 		}
 	}
 

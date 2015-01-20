@@ -1,27 +1,11 @@
 <div ng-controller="ReuseSearchController" >
 
 	<div class="section section-description " >
-		<div class="section-content no-padding" >
-			<ul class="microtask-details clearfix">
-				<li class="bg-color">{{::data.title}}</li>
-				<li >
-					<span>{{::data.submitValue}} points</span>
-				</li>
-				<li class="color">
-					<div class="help-btn" ng-click="startTutorial('WriteTestCases');"><span class="glyphicon glyphicon-question-sign"></span></div>
-				</li>
-			</ul>
-		</div>
-	</div>
-
-	<div class="section section-description">
-		<div class="section-title" >
-			<div class="dot bg-color"></div>
-			JOB DESCRIPTION
-		</div>
-		<div class="section-content" >
-			A function to: <span class="pseudoCall">{{microtask.callDescription}}</span> has been requested.<br/>
-			Is there a function to do this, or should a new function be created?
+		<div class="section-content no-padding microtask-details" >
+				<span class="bg-color type">{{::data.title}}</span>
+				<span class="points">{{::data.submitValue}} pts</span>
+				<span class="tutorial-btn glyphicon glyphicon-question-sign color" ng-click="startTutorial(microtask.type);"></span>
+				<span class="clearfix"></span>
 		</div>
 	</div>
 

@@ -3,7 +3,7 @@
 		<li microtask-popover
 			class="news-element {{ n.microtaskType | lowercase }}"
 			ng-if="news.length > 0" 
-			ng-repeat="n in news.slice().reverse()" 
+			ng-repeat="n in news | orderBy:'-timeInMillis'" 
 			ng-mouseenter="showMicrotaskPopover(n)" 
 			>
 			<div class="type">{{::n.microtaskType}}</div>

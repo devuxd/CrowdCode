@@ -140,6 +140,7 @@ public class Review extends Microtask
     			Project.MicrotaskKeyToString(submittedMicrotask.getKey() ) ,
 				reviewDTO.qualityScore)
 	    	).json(),
+    		Project.MicrotaskKeyToString(submittedMicrotask.getKey() ),
 	    	project
 	    );
 
@@ -152,7 +153,10 @@ public class Review extends Microtask
     			"SubmittedReview",
     			Project.MicrotaskKeyToString(  this.getKey() ),
     			-1 // differentiate the reviews from the 0 score tasks
-    	).json()), project);
+	    	).json()), 
+			Project.MicrotaskKeyToString( this.getKey() ),
+			project
+		);
 
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "reviews",1);
