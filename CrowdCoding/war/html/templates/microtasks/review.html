@@ -283,19 +283,9 @@
 	<!--//////////////////////////////////////////-->
 	<div ng-if="review.microtask.type == 'WriteFunctionDescription'">
 
-		<div class="section section-description">
-
-			<div class="section-content" >
-				The worker was given the psudocall:
-				<span class="pseudoCall">{{review.microtask.callDescription}}</span> and asked to write a description for this function. <br/>
-				Can you rate this work?
-
-			</div>
-		</div>
-
-		<div class="section section-description-2">
+		<div class="section section-review">
 			<div class="section-title" >
-				<div class="dot bg-color"></div>submitted function code
+				<div class="dot bg-color"></div>submitted function description
 			</div>
 			<div class="section-content" >
 				<ace-read-js code="review.functionCode"></ace-read-js>
@@ -316,7 +306,7 @@
 				<ace-read-js code="review.microtask.calleeFullDescription"></ace-read-js>
 			</div>
 		</div>
-		<div class="section section-description-2">
+		<div class="section section-review">
 			<div class="section-title" >
 				<div class="dot bg-color"></div>submitted function code
 			</div>
