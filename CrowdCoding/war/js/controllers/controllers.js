@@ -237,10 +237,10 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 				}
 
 				// retrieve the related test
-				var testId = angular.isDefined($scope.microtask.testID) && $scope.microtask.testID!=0 ? $scope.microtask.testID : null;
-				if ( testId != null ) {
+				var testId = angular.isDefined($scope.microtask.testID) && $scope.microtask.testID!==0 ? $scope.microtask.testID : null;
+				if ( testId !== null ) {
 					var TestObj = TestList.get(testId);
-					//console.log('Loaded test %o of id %d',TestObj,testId);	
+					//console.log('Loaded test %o of id %d',TestObj,testId);
 					$scope.test = TestObj.rec;
 				}
 

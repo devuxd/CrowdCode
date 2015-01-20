@@ -31,46 +31,46 @@ function DistributedWorker(workerID, queueRef, processingCallback) {
 DistributedWorker.prototype.readyToProcess = function() {
 	this.busy = false;
 	this.tryToProcess();
-}
+};
 
 // executes the transaction to pop() an
 // object from the firebase queue
 DistributedWorker.prototype.tryToProcess = function() {
-	
+
 	if(!this.busy && this.currentItem) {
-		
+
 		//local vars
 		var dataToProcess = null,
 		    self = this,
 		    toProcess = this.currentItem;
-		
+
 		// set busy to true and initialize current item
 		this.busy = true;
 		this.currentItem = null;
-		
+
 		// start the firebase transaction
 		toProcess.transaction(function(theItem) {
-			
+
 			// copy the retrieved item to dataToProcess
 			dataToProcess = theItem;
-			
+
 			if(theItem) return null;
 			else        return;
-			
+
 		}, function(error, committed, snapshot) { // on transaction complete
-			
+
 			if (error) throw error;
-			
+
 			if(committed) { // if transaction committed 
 				//execute callback and after again ready to process
 				self.processingCallback(dataToProcess, function() {
 					self.readyToProcess();
 				});
-				
+
 			} else {
 				self.readyToProcess();
 			}
-			
+
 		});
 	}
-}
+};
