@@ -292,8 +292,8 @@ myApp.factory('TestRunnerFactory', [
 		var d = new Date();
 		var actualTimestamp = d.getTime();
 
-		//console.log('%cTest Runner: test %d finished, duration %.4f sec','color:blue;',this.currentTestIndex, (actualTimestamp-this.timestamp)/1000 ) ;
-		
+		console.log('%cTest Runner: test %d finished, duration %.4f sec','color:blue;',this.currentTestIndex, (actualTimestamp-this.timestamp)/1000 ) ;
+		console.log('result :'+testResult);
 
 		// If the code is unimplemented, the test neither failed nor passed. If the test
 		// did not pass or timed out, it failed. Otherwise, it passed.
@@ -407,7 +407,10 @@ myApp.factory('TestRunnerFactory', [
 			self.usedStubs = data.usedStubs ;
 
 			self.testReady(item);
-		  	self.processTestFinished( ( item.output != undefined && item.output.result == undefined ) ? item.output.result : false );
+			console.log(item);
+		  	//self.processTestFinished( ( item.output != undefined && item.output.result == undefined ) ? item.output.result : false );
+		  	self.processTestFinished( ( item.output !== undefined && item.output.result !== undefined ) ? item.output.result : false );
+
 			//w.terminate();
 		};
 
@@ -420,7 +423,8 @@ myApp.factory('TestRunnerFactory', [
 		// If at least one test succeeded and no tests failed, the function passed its tests.
 		// If no tests succeeded or failed, none of the tests could be successfully run - don't submit anything to the server.
 		var passedTests;
-
+		console.log(this.allFailedTestCases);
+		console.log(this.allPassedTestCases);
 		if (this.allFailedTestCases.length > 0)
 			passedTests = false;
 		else if (this.allPassedTestCases.length > 0 && this.allFailedTestCases.length == 0)

@@ -61,6 +61,7 @@ public class Function extends Artifact
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private int           linesOfCode;
 	private boolean 	  readOnly= false;
+	private boolean 	  testsFailed=false;
 
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
@@ -318,7 +319,8 @@ public class Function extends Artifact
 		if (!microtaskOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
-			if (isWritten && needsDebugging){
+			if (isWritten && this.testsFailed){
+				this.testsFailed=false;
 				DebugTestFailure debug = new DebugTestFailure(this,project);
 				makeMicrotaskOut( debug, project);
 				System.out.println("--> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));
@@ -605,7 +607,7 @@ public class Function extends Artifact
 
 			// Since there was an issue, ignore any code changes they may have submitted.
 		} else { //at present, reaching here means all tests passed.
-			this.needsDebugging = false;
+			//this.needsDebugging = false;
 			if(!this.code.trim().equals(dto.code.trim()))
 			{ //integrate the new changes
 				onWorkerEdited(dto, project);
@@ -633,15 +635,16 @@ public class Function extends Artifact
 	// This method notifies the function that it has just passed all of its tests.
 	public void passedTests(Project project)
 	{
-		if (this.needsDebugging)
-		{
+		//if (this.needsDebugging)
+		//{
 			project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
 			this.needsDebugging = false;
+			this.testsFailed=false;
 			ofy().save().entity(this).now();
 
 			lookForWork(project);
 			project.historyLog().endEvent();
-		}
+		//}
 	}
 
 	// This method notifies the function that it has failed at least one of its tests
@@ -651,6 +654,7 @@ public class Function extends Artifact
 		{
 			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
 			this.needsDebugging = true;
+			this.testsFailed=true;
 			ofy().save().entity(this).now();
 
 			lookForWork(project);
@@ -664,6 +668,7 @@ public class Function extends Artifact
 		{
 			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
 			this.needsDebugging = true;
+			this.testsFailed=true;
 			//this.failedTest     = test;
 			ofy().save().entity(this).now();
 
