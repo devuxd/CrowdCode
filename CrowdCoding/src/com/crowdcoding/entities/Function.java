@@ -352,7 +352,7 @@ public class Function extends Artifact
 		System.out.println("------> "+allImplemented);
 		if(isWritten && allImplemented){
 			// enqueue test job in firebase
-			System.out.println("--> FUNCTION ("+this.id+") "+this.name+" : write entry in test job queue");
+			System.out.println("--> FUNCTION ("+this.getID()+") "+this.name+" : write entry in test job queue");
 			FirebaseService.writeTestJobQueue(this.getID(),project);
 
 			//project.requestTestRun();
@@ -612,6 +612,7 @@ public class Function extends Artifact
 		// Update or create tests for any stub
 		for (TestDTO testDTO : dto.stubs)
 		{
+			System.out.println("--> FUNCTION: creating test "+testDTO.code);
 			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
 		}
 

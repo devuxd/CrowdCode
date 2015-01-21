@@ -69,7 +69,6 @@ myApp.controller('AppController', [
 			ADTService.init();
 
 			userService.init();
-			userService.listenForJobs();
 		};
 		// set an interval that will be called
 		// every 200 msec
@@ -89,6 +88,7 @@ myApp.controller('AppController', [
 				$interval.cancel(loadingServicesInterval);
 				loadingServicesInterval = undefined;
 				stopWatchingLoadedServices();
+				userService.listenForJobs();
 
 				$rootScope.$broadcast('loadMicrotask');
 			}

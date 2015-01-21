@@ -98,7 +98,7 @@ public class DebugTestFailure extends Microtask
 	}
 
 	protected void doSubmitWork( DTO dto, String workerID, Project project)
-	{
+	{	System.out.println("--> DEBUG TEST FAILURE: submitting microtask");
 		function.get().debugTestFailureCompleted((FunctionDTO) dto, project);
 		FirebaseService.postToNewsfeed(workerID, (
 	    		new NewsItemInFirebase(

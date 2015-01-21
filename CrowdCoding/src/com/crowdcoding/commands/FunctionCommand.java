@@ -176,6 +176,8 @@ public abstract class FunctionCommand extends Command
 
 		public void execute(Function function, Project project)
 		{
+			System.out.println("--> FUNCTION COMMAND : test implemented");
+
 			Ref<Test> test = Test.find(testID, project);
 			if (test == null)
 				System.out.println("Cannot execute FunctionCommand. Could not find the test "
@@ -280,6 +282,7 @@ public abstract class FunctionCommand extends Command
 
 		public void execute(Function function, Project project)
 		{
+			System.out.println("--> FUNCTION COMMAND : adding test id"+ testID);
 			function.addTest(testID);
 		}
 	}

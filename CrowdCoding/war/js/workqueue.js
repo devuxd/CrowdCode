@@ -22,7 +22,7 @@ function DistributedWorker(workerID, queueRef, processingCallback) {
 	// retrieve the item and try to process it
 	queueRef.startAt().limit(1).on("child_added", function(snapshot) {
 		this.currentItem = snapshot.ref();
-		this.readyToProcess();
+		this.tryToProcess();
 	}, this);
 	
 }
