@@ -433,17 +433,17 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
             code = functionCodeMirror.getValue();
 
         // push a message for for running the tests
-        testRunner.runTests($scope.microtask.functionID,code,$scope.stubs);
-        
-        //set testsRunning flag
-        $scope.testsRunning = true;
+        if( testRunner.runTests($scope.microtask.functionID,code,$scope.stubs) != -1 ) {
+            //set testsRunning flag
+            $scope.testsRunning = true;
 
-        var numTests = $scope.tests.length;
-        
-        for(var t in $scope.tests){
-            $scope.tests[t] = angular.extend($scope.tests[t],TestRunnerFactory.defaultTestItem);
+            var numTests = $scope.tests.length;
+            
+            for(var t in $scope.tests){
+                $scope.tests[t] = angular.extend($scope.tests[t],TestRunnerFactory.defaultTestItem);
+            }
         }
-        
+
         $scope.completed = 0;
         $scope.total     = 0;
         $scope.numPassed = 0;

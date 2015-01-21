@@ -132,17 +132,17 @@ myApp.factory('TestRunnerFactory', [
 	//Runs all of the tests for the specified function, sending the results to the server
 	TestRunner.prototype.runTests = function(testedFunctionId,testedFunctionCode,actualStubs){
 		
-		// prevent multiple concurrent runs
-		if(this.running) return;
+		// set global variables
+		this.validTests         = TestList.getImplementedByFunctionId(testedFunctionId);
+
+		if( this.running || this.validTests.length == 0 ) return -1;
+
 
 		this.running = true;
-
-		// set global variables
 		this.testedFunctionId   = testedFunctionId;
-		this.validTests         = TestList.getImplementedByFunctionId(testedFunctionId);
 		this.testedFunctionName = functionsService.getNameById(testedFunctionId);
 
-		//console.log('%cTest Runner: valid tests %o','color:blue;',this.validTests);
+		console.log('%cTest Runner: valid tests %o','color:blue;',this.validTests);
 
 		// reset tests results variables
 		this.returnData = {};
@@ -323,8 +323,9 @@ myApp.factory('TestRunnerFactory', [
 				this.submitResultsToServer();
 
 			this.testsFinish(item);
+			return;
 		}
-		else
+		else 
 			this.runCurrentTest();		
 
 
@@ -333,6 +334,7 @@ myApp.factory('TestRunnerFactory', [
 		
 	TestRunner.prototype.runCurrentTest = function()
 	{
+		
 
 		//console.log('%cTest Runner: test %d started','color:blue;',this.currentTestIndex);
 		var d = new Date();
@@ -423,8 +425,8 @@ myApp.factory('TestRunnerFactory', [
 		// If at least one test succeeded and no tests failed, the function passed its tests.
 		// If no tests succeeded or failed, none of the tests could be successfully run - don't submit anything to the server.
 		var passedTests;
-		console.log(this.allFailedTestCases);
-		console.log(this.allPassedTestCases);
+		// console.log(this.allFailedTestCases);
+		// console.log(this.allPassedTestCases);
 		if (this.allFailedTestCases.length > 0)
 			passedTests = false;
 		else if (this.allPassedTestCases.length > 0 && this.allFailedTestCases.length == 0)
