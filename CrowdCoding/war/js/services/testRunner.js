@@ -35,11 +35,11 @@ myApp.factory('TestRunnerFactory', [
 		this.maxExecutionTime = 10*1000;
 		this.submitToServer   = false;
 
-		if( config != undefined && config.maxExecutionTime != undefined ){
+		if( config !== undefined && config.maxExecutionTime !== undefined ){
 			this.maxExecutionTime = config.maxExecutionTime;
 		}
 
-		if( config != undefined && config.submitToServer != undefined ){
+		if( config !== undefined && config.submitToServer !== undefined ){
 			this.submitToServer = config.submitToServer;
 		}
 
@@ -49,7 +49,7 @@ myApp.factory('TestRunnerFactory', [
 		this.testedFunctionId   = undefined;
 		this.testedFunctionName = "";
 		this.testedFunctionBody = "";
-		this.testedFunctionCode = ""
+		this.testedFunctionCode = "";
 		this.allTheFunctionCode = "";
 		this.allFailedTestCases = new Array();
 		this.allPassedTestCases = new Array();
@@ -228,7 +228,8 @@ myApp.factory('TestRunnerFactory', [
 			                    + functionsWithMockBodies  + '\n'  // functions with mock bodies	
 			                    + this.testedFunctionCode + '\n'; // tested function code
 
-		//console.log('%cTest Runner: function code initialized','color:blue;');
+		console.log('%cTest Runner: function code initialized','color:blue;');
+		console.log(this.allTheFunctionCode);
 		return;
 	};
 	
@@ -253,7 +254,7 @@ myApp.factory('TestRunnerFactory', [
 					//console.log("Error loading stubs for the function " + functionName);	
 					//console.log(e);			
 				}	
-		})
+		});
 
 		//console.log('%cTest Runner: stubs loaded','color:blue;',this.stubs);
 		return;
@@ -305,7 +306,7 @@ myApp.factory('TestRunnerFactory', [
 		// Increment the test and run the next one.
 		this.currentTestIndex++;
 
-		if( this.worker != undefined ){	
+		if( this.worker !== undefined ){	
 			this.worker.terminate();
 			this.worker = undefined;
 		}
@@ -339,7 +340,8 @@ myApp.factory('TestRunnerFactory', [
 		this.timestamp = d.getTime();
 
 	    var self = this;
-
+	    console.log(this.validTests);
+	  
 		var testCode = this.validTests[this.currentTestIndex].getCode();  //.replace(/\n/g,"");
 
 		// Check the code for syntax errors using JSHint. Since only the user defined code will be checked,
@@ -427,12 +429,12 @@ myApp.factory('TestRunnerFactory', [
 		console.log(this.allPassedTestCases);
 		if (this.allFailedTestCases.length > 0)
 			passedTests = false;
-		else if (this.allPassedTestCases.length > 0 && this.allFailedTestCases.length == 0)
+		else if (this.allPassedTestCases.length > 0 && this.allFailedTestCases.length === 0)
 			passedTests = true;
 		else 
 			passedTests = null;
 		
-		if (passedTests != null)
+		if (passedTests !== null)
 		{ 
 			var getData = [];
 			getData.push('functionID='+this.testedFunctionId);

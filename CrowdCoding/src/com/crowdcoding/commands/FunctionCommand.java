@@ -9,6 +9,7 @@ import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 
 public abstract class FunctionCommand extends Command
@@ -27,6 +28,8 @@ public abstract class FunctionCommand extends Command
 		{ return new AddDependency(functionID, newDependency, pseudoCall); }
 	public static FunctionCommand addTest(long functionID, long testID)
 		{ return new AddTest(functionID, testID); }
+	public static FunctionCommand writeTestJobQueue(long functionID)
+	{ return new WriteTestJobQueue(functionID); }
 
 	public static FunctionCommand testBecameImplemented(long functionID, long testID)
 		{ return new TestBecameImplemented(functionID, testID); }
@@ -284,6 +287,23 @@ public abstract class FunctionCommand extends Command
 		{
 			System.out.println("--> FUNCTION COMMAND : adding test id"+ testID);
 			function.addTest(testID);
+		}
+	}
+
+	protected static class WriteTestJobQueue extends FunctionCommand
+	{
+		private long functionID;
+
+		public WriteTestJobQueue(long functionID)
+		{
+			super(functionID);
+			this.functionID = functionID;
+		}
+
+		public void execute(Function function, Project project)
+		{
+			System.out.println("--> FUNCTION COMMAND : "+functionID+" Writing on JobQue");
+			FirebaseService.writeTestJobQueue(functionID, project);
 		}
 	}
 
