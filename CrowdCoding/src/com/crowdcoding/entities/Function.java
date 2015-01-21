@@ -61,6 +61,7 @@ public class Function extends Artifact
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private int           linesOfCode;
 	private boolean 	  readOnly= false;
+	private boolean 	  testsFailed=false;
 
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
@@ -89,7 +90,9 @@ public class Function extends Artifact
 			String description, String code, boolean readOnly, Project project)
 	{
 		super(project);
+		this.needsDebugging=true;
 		this.readOnly=readOnly;
+		isWritten = false;
 		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, project);
 	}
 
@@ -97,6 +100,8 @@ public class Function extends Artifact
 	public Function(String callDescription, Function caller, Project project)
 	{
 		super(project);
+		this.needsDebugging=true;
+
 		isWritten = false;
 
 		// Spawn off a microtask to write the function description
@@ -234,6 +239,8 @@ public class Function extends Artifact
 	// Adds the specified test for this function
 	public void addTest(long testID)
 	{
+		System.out.println("function add test");
+		this.needsDebugging=true;
 		tests.add(testID);
 		testsImplemented.add(false);
 
@@ -308,10 +315,12 @@ public class Function extends Artifact
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
+		System.out.println("-->FUNCTION ("+this.getID()+"): trying debug with microtaskOut "+microtaskOut+" isWritten "+ isWritten +  "needsDebug "+this.needsDebugging);
 		if (!microtaskOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
-			if (isWritten && needsDebugging){
+			if (isWritten && this.testsFailed){
+				this.testsFailed=false;
 				DebugTestFailure debug = new DebugTestFailure(this,project);
 				makeMicrotaskOut( debug, project);
 				System.out.println("--> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));
@@ -350,9 +359,9 @@ public class Function extends Artifact
 	{
 		Boolean allImplemented = allUnitTestsImplemented();
 		System.out.println("------> "+allImplemented);
-		if(isWritten && allImplemented){
+		if(isWritten && allImplemented && this.needsDebugging){
 			// enqueue test job in firebase
-			System.out.println("--> FUNCTION ("+this.id+") "+this.name+" : write entry in test job queue");
+			System.out.println("--> FUNCTION ("+this.getID()+") "+this.name+" : write entry in test job queue");
 			FirebaseService.writeTestJobQueue(this.getID(),project);
 
 			//project.requestTestRun();
@@ -585,7 +594,7 @@ public class Function extends Artifact
 	public void debugTestFailureCompleted(FunctionDTO dto, Project project)
 	{
 		microtaskOutCompleted();
-		this.needsDebugging = false;
+		//this.needsDebugging = false;
 
 		// Check to see if there any disputed tests
 		//Current: If it doesn't have a test case number indicating a dispute, all passed.
@@ -598,7 +607,7 @@ public class Function extends Artifact
 
 			// Since there was an issue, ignore any code changes they may have submitted.
 		} else { //at present, reaching here means all tests passed.
-			this.needsDebugging = false;
+			//this.needsDebugging = false;
 			if(!this.code.trim().equals(dto.code.trim()))
 			{ //integrate the new changes
 				onWorkerEdited(dto, project);
@@ -612,6 +621,7 @@ public class Function extends Artifact
 		// Update or create tests for any stub
 		for (TestDTO testDTO : dto.stubs)
 		{
+			System.out.println("--> FUNCTION: creating test "+testDTO.code);
 			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
 		}
 
@@ -625,24 +635,26 @@ public class Function extends Artifact
 	// This method notifies the function that it has just passed all of its tests.
 	public void passedTests(Project project)
 	{
-		if (this.needsDebugging)
-		{
+		//if (this.needsDebugging)
+		//{
 			project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
 			this.needsDebugging = false;
+			this.testsFailed=false;
 			ofy().save().entity(this).now();
 
 			lookForWork(project);
 			project.historyLog().endEvent();
-		}
+		//}
 	}
 
 	// This method notifies the function that it has failed at least one of its tests
 	public void failedTests(Project project)
 	{
-		if (isWritten && !needsDebugging)
+		if (isWritten)// && !needsDebugging)
 		{
 			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
 			this.needsDebugging = true;
+			this.testsFailed=true;
 			ofy().save().entity(this).now();
 
 			lookForWork(project);
@@ -652,10 +664,11 @@ public class Function extends Artifact
 
 	public void failedTest(Test test,Project project)
 	{
-		if (isWritten && !needsDebugging)
+		if (isWritten)// && !needsDebugging)
 		{
 			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
 			this.needsDebugging = true;
+			this.testsFailed=true;
 			//this.failedTest     = test;
 			ofy().save().entity(this).now();
 
