@@ -52,7 +52,6 @@ h1 {
 h2 {
 	font-size:1.4em;
 	font-weight:800;
-	text-transform: uppercase;
 }
 img { width:100%;}
 </style>

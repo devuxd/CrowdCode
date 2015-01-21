@@ -426,6 +426,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
     $scope.runTests = function(firstTime) {
         if($scope.testsRunning) return false;
 
+        $scope.activePanel = -1;
+
         var code = undefined;
         if( functionCodeMirror !== undefined )
             code = functionCodeMirror.getValue();

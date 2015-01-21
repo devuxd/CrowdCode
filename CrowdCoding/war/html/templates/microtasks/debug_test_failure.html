@@ -12,22 +12,14 @@
             One (or more) of the tests for the function <strong>{{funct.name}}</strong>  have failed. Can you find and fix the bug(s)?
         </div>
     </div>
-    <div class="section section-description" id="functionSignature">
-        <div class="section-title" >
-            <div class="dot bg-color"></div>
-            FUNCTION SIGNATURE
-        </div>
-        <div class="section-content no-padding" >
-            <ace-read-js code="functionDescription"></ace-read-js>
-        </div>
-    </div>
+
 
     <alertcontainer></alertcontainer>
 
     <div class="section-cols" ng-show="!dispute" >
         <div class="container-flex-row">
             <div class="section section-help bg-color-alpha" style="width:30%">
-                <div class="section-title no-padding" >
+                <div class="section-title" >
                     <div class="dot"></div> TEST RESULTS
                 </div>
                 <div class="section-content" >
@@ -56,6 +48,7 @@
                             </span>
                             <span class="clearfix"></span>
                     </div>
+                    
                     <div class="panel-group" ng-model="activePanel" bs-collapse>
 
                         
@@ -235,6 +228,7 @@
                 <div class="section-content" >
                     <adt-list></adt-list>
                 </div>
+                <div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
             </div>
             <div class="section section-form" style="width:70%">
                 <div class="section-content no-padding" >
@@ -245,7 +239,6 @@
                             <li>{{error}}</li>
                         </ul>
                     </ul>
-                    <javascript-helper class="pull-right"></javascript-helper>
                     <div class="clearfix"></div>
                 </div>
             </div>

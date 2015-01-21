@@ -58,6 +58,7 @@ public class WriteCall extends Microtask
 				pseudoCall ),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
+				
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();

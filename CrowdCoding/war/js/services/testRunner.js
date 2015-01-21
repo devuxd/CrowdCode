@@ -367,7 +367,7 @@ myApp.factory('TestRunnerFactory', [
 		var timeoutPromise = $timeout( function(){
 
 			var item = {};
-			item.number = self.currentTestIndex + 1; 
+			item.number = self.currentTestIndex ; 
 			item.total  = self.validTests.length ; 
 			item.output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
 			item.debug  = "ERROR: execution terminated due to timeout";

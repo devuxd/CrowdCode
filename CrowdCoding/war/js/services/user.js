@@ -3,9 +3,6 @@
 ////////////////////
 myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$http','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$http,TestRunnerFactory) {
     var user = {};
-    var testRunner = new TestRunnerFactory.instance({
-    	submitToServer: true
-    });
 
  	// retrieve connection status and userRef
 
@@ -23,7 +20,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 
 	user.data = sync.$asObject();
 	user.data.$loaded().then(function(){
-		if( user.data.avatarUrl === null ){
+		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
 
 			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
 			user.data.$save().then(function(){});
@@ -85,6 +82,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 	user.getAvatarUrl = function(){
 		return user.data.pictureUrl || '';
 	};
+
 
 
 
