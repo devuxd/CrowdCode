@@ -61,7 +61,6 @@ public class Function extends Artifact
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private int           linesOfCode;
 	private boolean 	  readOnly= false;
-	private boolean 	  testsFailed=false;
 
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
@@ -319,8 +318,7 @@ public class Function extends Artifact
 		if (!microtaskOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
-			if (isWritten && this.testsFailed){
-				this.testsFailed=false;
+			if (isWritten && this.needsDebugging){
 				DebugTestFailure debug = new DebugTestFailure(this,project);
 				makeMicrotaskOut( debug, project);
 				System.out.println("--> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));
@@ -361,6 +359,7 @@ public class Function extends Artifact
 		System.out.println("------> "+allImplemented);
 		if(isWritten && allImplemented && this.needsDebugging){
 			// enqueue test job in firebase
+			setMicrotaskOut();
 			System.out.println("--> FUNCTION ("+this.getID()+") "+this.name+" : write entry in test job queue");
 			FirebaseService.writeTestJobQueue(this.getID(),project);
 
@@ -625,7 +624,7 @@ public class Function extends Artifact
 			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
 		}
 
-		lookForWork(project);
+		//lookForWork(project);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -635,46 +634,36 @@ public class Function extends Artifact
 	// This method notifies the function that it has just passed all of its tests.
 	public void passedTests(Project project)
 	{
-		//if (this.needsDebugging)
-		//{
-			project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
-			this.needsDebugging = false;
-			this.testsFailed=false;
-			ofy().save().entity(this).now();
+		microtaskOutCompleted();
+		project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
+		this.needsDebugging = false;
+		ofy().save().entity(this).now();
 
-			lookForWork(project);
-			project.historyLog().endEvent();
-		//}
+		lookForWork(project);
+		project.historyLog().endEvent();
 	}
 
 	// This method notifies the function that it has failed at least one of its tests
 	public void failedTests(Project project)
 	{
-		if (isWritten)// && !needsDebugging)
-		{
-			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
-			this.needsDebugging = true;
-			this.testsFailed=true;
-			ofy().save().entity(this).now();
+		microtaskOutCompleted();
+		project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
+		this.needsDebugging = true;
+		ofy().save().entity(this).now();
 
-			lookForWork(project);
-			project.historyLog().endEvent();
-		}
+		lookForWork(project);
+		project.historyLog().endEvent();
 	}
 
 	public void failedTest(Test test,Project project)
 	{
-		if (isWritten)// && !needsDebugging)
-		{
-			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
-			this.needsDebugging = true;
-			this.testsFailed=true;
-			//this.failedTest     = test;
-			ofy().save().entity(this).now();
+		microtaskOutCompleted();
+		project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
+		this.needsDebugging = true;
+		ofy().save().entity(this).now();
 
-			lookForWork(project);
-			project.historyLog().endEvent();
-		}
+		lookForWork(project);
+		project.historyLog().endEvent();
 	}
 
 	// Provides notification that a test has transitioned to being implemented

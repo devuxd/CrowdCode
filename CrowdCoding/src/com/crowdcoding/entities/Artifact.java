@@ -90,6 +90,12 @@ public /*abstract*/ class Artifact
 		microtaskOut = true;
 		ofy().save().entity(this).now();
 	}
+	// Makes the specified microtask out for work
+	protected void setMicrotaskOut()
+	{
+		microtaskOut = true;
+		ofy().save().entity(this).now();
+	}
 
 	protected void microtaskOutCompleted()
 	{
