@@ -64,7 +64,12 @@
                                     
                                     
                                 </strong>
-                                <span class="pull-right">executed in {{test.executionTime}} ms</span>
+                                <span class="pull-right">
+                                    <span >executed in {{test.executionTime}} ms</span>
+                                    <span ng-if="test.output.result"  class="glyphicon glyphicon-ok"></span>
+                                    <span ng-if="!test.output.result" class="glyphicon glyphicon-remove"></span>
+                                </span>
+                                
                                 <span class="clearfix"></span>
                             </div>
                             <div class="panel-collapse" bs-collapse-target>
@@ -76,7 +81,7 @@
                                     </div>
 
                                         <a ng-if="!test.rec.readOnly" class="pull-right"
-                                        ng-click="$emit('disputeTest',testIndex);"> Report an issue with the data of this test</a>
+                                        ng-click="$emit('disputeTest',testIndex);"> Report an issue with the data of this test<span class="glyphicon glyphicon-exclamation-sign"></span> </a>
                                     <div class="clearfix">
                                         <div class="heading-1" >Input Parameters</div>
                                         <table >

@@ -84,6 +84,9 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 	};
 
 
+	var testRunner = new TestRunnerFactory.instance({
+    	submitToServer: true
+    });
 
 
 	//This is where we actually process the data. We need to call "whenFinished" when we're done
