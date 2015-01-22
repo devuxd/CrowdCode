@@ -61,12 +61,12 @@ public class Function extends Artifact
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private int           linesOfCode;
 	private boolean 	  readOnly= false;
-	private boolean testFailedOnce= false;
+	private boolean 	  waitForTestResult=true;
 
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
-	private boolean needsDebugging=false;	         // true iff Function is failing the (implemented) unit tests
+	private boolean needsDebugging=true;	         // true iff Function is failing the (implemented) unit tests
 
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> callees = new ArrayList<Long>();
@@ -319,7 +319,7 @@ public class Function extends Artifact
 		if (!microtaskOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
-			if (isWritten && this.needsDebugging && this.testFailedOnce){
+			if (isWritten && this.needsDebugging && this.waitForTestResult==false){
 				DebugTestFailure debug = new DebugTestFailure(this,project);
 				makeMicrotaskOut( debug, project);
 				System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));
@@ -360,7 +360,7 @@ public class Function extends Artifact
 		System.out.println("------> "+allImplemented);
 		if(isWritten && allImplemented && this.needsDebugging){
 			// enqueue test job in firebase
-			setMicrotaskOut();
+			this.waitForTestResult=true;
 			System.out.println("-->>>> FUNCTION ("+this.getID()+") "+this.name+" : write entry in test job queue");
 			FunctionCommand.writeTestJobQueue(this.getID());
 
@@ -370,6 +370,7 @@ public class Function extends Artifact
 
 	private void onWorkerEdited(FunctionDTO dto, Project project)
 	{
+		this.needsDebugging=true;
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.
 		String strippedOldFullDescrip = (this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", "");
@@ -566,15 +567,16 @@ public class Function extends Artifact
 				}
 				else
 				{
+					TestCommand.checkEdited(testCase.id, testCase.text, testCase.functionVersion);
 					// Check if it was edited
-					Ref<Test> testRef = Test.find(testCase.id, project);
+				/*	Ref<Test> testRef = Test.find(testCase.id, project);
 					Test test = testRef.get();
 					if (!test.getDescription().equals(testCase.text))
 					{
 						String oldDescription = test.getDescription();
 						test.setDescription(testCase.text);
 						test.queueMicrotask(new WriteTest(project, test, oldDescription, testCase.functionVersion), project);
-					}
+					}*/
 				}
 			}
 			ofy().save().entity(this).now();
@@ -634,7 +636,8 @@ public class Function extends Artifact
 	// This method notifies the function that it has just passed all of its tests.
 	public void passedTests(Project project)
 	{
-		microtaskOutCompleted();
+		waitForTestResult=false;
+		//microtaskOutCompleted();
 		project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
 		System.out.println("FUNCTION ID: "+ this.getID()+" ALL TEST PASSED");
 		this.needsDebugging = false;
@@ -648,8 +651,9 @@ public class Function extends Artifact
 	public void failedTests(Project project)
 	{
 
-		microtaskOutCompleted();
-		this.testFailedOnce=true;
+		//microtaskOutCompleted();
+		waitForTestResult=false;
+
 		System.out.println("FUNCTION ID: "+ this.getID()+" TEST FAILED");
 
 		project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
@@ -662,8 +666,7 @@ public class Function extends Artifact
 
 	public void failedTest(Test test,Project project)
 	{
-		microtaskOutCompleted();
-		this.testFailedOnce=true;
+		waitForTestResult=false;
 		System.out.println("FUNCTION ID: "+ this.getID()+" TEST FAILED");
 
 		project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
