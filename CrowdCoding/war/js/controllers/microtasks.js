@@ -1,14 +1,14 @@
 ///////////////////////////////
 //  NO MICROTASK CONTROLLER //
 ///////////////////////////////
-myApp.controller('NoMicrotaskController', ['$scope', '$rootScope', '$firebase', 'testsService', 'functionsService', 'ADTService', '$interval', function($scope, $rootScope, $firebase, testsService, functionsService, ADTService, $interval) {
+myApp.controller('NoMicrotaskController', ['$scope', '$rootScope', '$firebase',  'functionsService', 'ADTService', '$interval', function($scope, $rootScope, $firebase,  functionsService, ADTService, $interval) {
     //$interval(function(){ $scope.$emit('load')}, 2000);
 }]);
 
 //////////////////////////////////
 //  WRITE TEST CASES CONTROLLER //
 //////////////////////////////////
-myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'TestList', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert, testsService, TestList, functionsService, ADTService) {
+myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase', '$alert',  'TestList', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert,  TestList, functionsService, ADTService) {
     
 
     // private variables
@@ -147,7 +147,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 ///////////////////////////////
 //      Review CONTROLLER    //
 ///////////////////////////////
-myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'functionsService', 'ADTService', 'microtasksService', 'TestList', function($scope, $rootScope, $firebase, $alert, testsService, functionsService, ADTService, microtasksService, TestList) {
+myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService', 'ADTService', 'microtasksService', 'TestList', function($scope, $rootScope, $firebase, $alert,  functionsService, ADTService, microtasksService, TestList) {
     // scope variables
     $scope.review = {};
     $scope.review.reviewText = "";
@@ -324,7 +324,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
 ///////////////////////////////
-myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout', 'testsService', 'functionsService', 'ADTService', 'TestList', 'TestRunnerFactory', function($scope, $rootScope, $firebase, $alert, $timeout, testsService, functionsService, ADTService, TestList, TestRunnerFactory) {
+myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout',  'functionsService', 'ADTService', 'TestList', 'TestRunnerFactory', function($scope, $rootScope, $firebase, $alert, $timeout,  functionsService, ADTService, TestList, TestRunnerFactory) {
     
     var testRunner = new TestRunnerFactory.instance();
 
@@ -623,7 +623,7 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
 ///////////////////////////////
 //  WRITE CALL CONTROLLER //
 ///////////////////////////////
-myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert, testsService, functionsService, ADTService) {
+myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     var marks = [];
     var highlightPseudoCall = "//!" + $scope.microtask.pseudoCall;
@@ -701,7 +701,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
 ///////////////////////////////
 //  WRITE FUNCTION CONTROLLER //
 ///////////////////////////////
-myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase', 'testsService', 'functionsService', 'ADTService', '$alert', function($scope, $rootScope, $firebase, testsService, functionsService, ADTService, $alert) {
+myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase',  'functionsService', 'ADTService', '$alert', function($scope, $rootScope, $firebase,  functionsService, ADTService, $alert) {
     var marks = [];
     var highlightPseudoCall = false;
     var readOnlyDone = false;
@@ -810,7 +810,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
 ////////////////////////////////////////////
 //  WRITE FUNCTION DESCRIPTION CONTROLLER //
 ////////////////////////////////////////////
-myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', '$firebase', '$alert', 'testsService', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert, testsService, functionsService, ADTService) {
+myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, ADTService) {
     // initialization of models 
     $scope.description = "";
     $scope.returnType = "";
@@ -900,7 +900,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
 ///////////////////////////////
 //  WRITE TEST CONTROLLER //
 ///////////////////////////////
-myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert', 'testsService', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert, testsService, functionsService, ADTService) {
+myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert',  'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert,  functionsService, ADTService) {
     // initialize testData
 
     //if a function starts with CR cannot be disputed

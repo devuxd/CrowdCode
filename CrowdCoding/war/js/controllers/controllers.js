@@ -10,13 +10,13 @@ myApp.controller('AppController', [
 	'$modal',
 	'logoutUrl',
 	'userService',
-	'testsService',
+	
 	'functionsService',
 	'ADTService',
 	'microtasksService',
 	'TestList',
 	'avatarFactory',
-	function($scope, $rootScope, $firebase, $interval, $modal, logoutUrl, userService, testsService, functionsService, ADTService, microtasksService, TestList, avatarFactory) {
+	function($scope, $rootScope, $firebase, $interval, $modal, logoutUrl, userService,  functionsService, ADTService, microtasksService, TestList, avatarFactory) {
 
 		// current session variables
 		$rootScope.projectId    = projectId;
@@ -58,8 +58,6 @@ myApp.controller('AppController', [
 		//  services loading function
 		var loadServices = function(){
 			$scope.servicesLoadingStatus = {};
-
-			testsService.init();
 			functionsService.init();
 			ADTService.init();
 		};
@@ -75,8 +73,7 @@ myApp.controller('AppController', [
 		// cancel the loading interval and stop the watch
 		var stopWatchingLoadedServices = $scope.$watch( 'servicesLoadingStatus', function(newVal,oldVal) {
 			if ( newVal.hasOwnProperty('functions') &&
-				 newVal.hasOwnProperty('adts') &&
-				 newVal.hasOwnProperty('tests') ) {
+				 newVal.hasOwnProperty('adts') ) {
 				$interval.cancel(loadingServicesInterval);
 				loadingServicesInterval = undefined;
 				stopWatchingLoadedServices();
@@ -157,7 +154,7 @@ myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', '
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', '$timeout', 'testsService', 'functionsService', 'userService', 'microtasksService','TestList', function($scope, $rootScope, $firebase, $http, $interval, $timeout, testsService, functionsService, userService, microtasks, TestList) {
+myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', '$timeout',  'functionsService', 'userService', 'microtasksService','TestList', function($scope, $rootScope, $firebase, $http, $interval, $timeout,  functionsService, userService, microtasks, TestList) {
 
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";

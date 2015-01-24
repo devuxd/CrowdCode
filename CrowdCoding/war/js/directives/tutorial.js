@@ -255,10 +255,8 @@ myApp.directive('tutorial', function($rootScope,$compile) {
                     
                 } else {
 
-                    var contentCss = {};
-                    contentCss.top   = '20%';
-                    contentCss.left  = '30%';
-                    contentCss.width = '40%';
+                    
+                    // contentCss.width = '40%';
 
                     if( onShow !== undefined && onShow.length > 0 ) 
                         $scope.$eval(onShow);
@@ -266,6 +264,10 @@ myApp.directive('tutorial', function($rootScope,$compile) {
                     $content.fadeOut(300,function(){
                         $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
                         $compile($content.contents())($scope);
+
+                        var contentCss = {};
+                        contentCss.top   = ($('body').outerHeight()-$content.outerHeight())/2;
+                        contentCss.left  = ($('body').outerWidth()-$content.outerWidth())/2;
 
                         $content.css(contentCss);
                         $overlay.animate({
