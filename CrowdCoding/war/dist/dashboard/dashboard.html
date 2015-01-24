@@ -7,8 +7,8 @@
 		
 
 		<button class="btn btn-sm" ng-click="executeCommand('Reset')">Reset</button>
-		<button class="btn btn-sm" ng-click="executeCommand('ReviewsOff')">ReviewsOff</button>
-		<button class="btn btn-sm" ng-click="executeCommand('ReviewsOn')">ReviewsOn</button>
+		<button class="btn btn-sm" ng-click="toggleSettings('reviews')"   ng-class="{on: settings.reviews}">Reviews</button>
+		<button class="btn btn-sm" ng-click="toggleSettings('tutorials')" ng-class="{on: settings.tutorials}">Tutorials</button>
 		<button class="btn btn-sm" ng-click="clearOutput()">Clear Output</button>
 		<hr />
 		<pre ng-bind="output"></pre>

@@ -97,7 +97,7 @@
 		</div>
 	</header>
 
-	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;">
+	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;" >
 	    <div class="container-flex-row">
 
 	        <!-- LEFT SIDEBAR -->
@@ -200,7 +200,8 @@
 
 
 	<ng-include src="'/html/templates/popups/popup_template.html'"></ng-include>
-	<ng-include src="'/html/templates/tutorial/main.html'"></ng-include>
+	
+	<tutorial-manager></tutorial-manager>
 
 	<!-- Javascript 3rd part libraries -->
 	<script src="/include/jquery-2.1.0.min.js"></script>
@@ -289,6 +290,7 @@
 
 	<!-- Angular Directives -->
 	<script src="/js/directives/directives.js"></script>
+	<script src="/js/directives/tutorial.js"></script>
 	<script src="/js/directives/codemirror-directives.js"></script>
 
 	<script src="/js/directives/ace-editor-directives.js"></script>

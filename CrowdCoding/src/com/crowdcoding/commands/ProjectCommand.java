@@ -13,6 +13,10 @@ public abstract class ProjectCommand extends Command
 	public static ProjectCommand enableReviews(boolean reviewsEnabled){ 
 		return new EnableReviews(reviewsEnabled); 
 	}
+
+	public static ProjectCommand enableTutorials(boolean tutorialsEnabled){ 
+		return new EnableTutorials(tutorialsEnabled); 
+	}
 	
 	public static ProjectCommand queueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID) { 
 		return new QueueMicrotask(microtaskKey, excludedWorkerID); 
@@ -65,6 +69,23 @@ public abstract class ProjectCommand extends Command
 		public void execute(Project project)
 		{
 			project.enableReviews(reviewsEnabled);
+		}
+	}
+	
+	// enable the reviews 
+	protected static class EnableTutorials extends ProjectCommand
+	{
+		private boolean tutorialsEnabled;
+
+		public EnableTutorials(boolean tutorialsEnabled)
+		{
+			super();
+			this.tutorialsEnabled = tutorialsEnabled;
+		}
+
+		public void execute(Project project)
+		{
+			project.enableTutorials(tutorialsEnabled);
 		}
 	}
 

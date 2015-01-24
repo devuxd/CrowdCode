@@ -24,7 +24,9 @@ myApp.controller('AppController', [
 		$rootScope.workerHandle = workerHandle;
 		$rootScope.firebaseURL  = firebaseURL;
 		$rootScope.userData     = userService.data;
-		$rootScope.logoutUrl = logoutUrl;
+		$rootScope.logoutUrl    = logoutUrl;
+
+
 		$scope.makeDirty = function (form)
 		{
 			angular.forEach(form, function(formElement, fieldName) {
@@ -42,17 +44,10 @@ myApp.controller('AppController', [
 
 		$scope.avatar = avatarFactory.get;
 
-		// wrapper for user login and logout
-		$rootScope.workerLogin = function()  { userService.login();  };
-		$rootScope.workerLogout = function() { userService.logout(); };
-
-		
-
 		 // Pre-fetch an external template populated with a custom scope
 		var profileModal = $modal({scope: $scope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/html/templates/popups/popup_user_profile.html', show: false});
 		// Show when some event occurs (use $promise property to ensure the template has been loaded)
 		$rootScope.$on('showProfileModal', function() {
-			console.log('open profile modal');
 			profileModal.$promise.then(profileModal.show);
 		});
 
@@ -67,8 +62,6 @@ myApp.controller('AppController', [
 			testsService.init();
 			functionsService.init();
 			ADTService.init();
-
-			userService.init();
 		};
 		// set an interval that will be called
 		// every 200 msec
@@ -84,13 +77,17 @@ myApp.controller('AppController', [
 			if ( newVal.hasOwnProperty('functions') &&
 				 newVal.hasOwnProperty('adts') &&
 				 newVal.hasOwnProperty('tests') ) {
-				console.log("ALL SERVICES LOADED");
 				$interval.cancel(loadingServicesInterval);
 				loadingServicesInterval = undefined;
 				stopWatchingLoadedServices();
 				userService.listenForJobs();
+				userService.listenForLogoutWorker();
+
 
 				$rootScope.$broadcast('loadMicrotask');
+
+				console.log('asdad');
+				$rootScope.$broadcast('run-tutorial','main');
 			}
 		},true);
 
@@ -111,32 +108,14 @@ myApp.controller('AppController', [
 			feedbacks = feedbackRef.$asArray();
 			feedbacks.$loaded().then(function() {
 				feedbacks.$add(feedback);
-				//		$rootScope.feedback.sent=true;
 			});
 
 		});
 
-		
-		$rootScope.startTutorial = function(tutorialName) {
-			console.log('broadcasting start tutorial '+tutorialName);
-			$rootScope.$broadcast('tutorial-' + tutorialName);
-		};
 
-		userService.data.$loaded().then(function(){
-			if( userService.data['tutorialDone'] == undefined ||  userService.data['tutorialDone'] == false ){
-
-				$rootScope.startTutorial('Main');	
-
-				var cancelListen = $rootScope.$on('tutorial-finished',function(){
-					userService.data.tutorialDone = true;
-					userService.data.$save();
-
-					$rootScope.$broadcast('showProfileModal');
-					cancelListen();
-				})
-				
-			}
-		});
+		// userService.startTutorial( 'Main' , false, function(){
+		// 	console.log('printed after Main tutorial!');
+		// });
 	
 }]);
 
@@ -205,6 +184,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	//Whait for the inizializations of all service
 	//when the microtask array is syncronize with firebase load the first microtask
 
+	$scope.userService = userService;
+
 	var waitTimeInSeconds   = 30;
 	var checkQueueTimeout = null;
 	var timerInterval     = null;
@@ -251,8 +232,10 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 					$scope.reissuedMicrotask = microtasks.get($scope.microtask.reissuedFrom);
 						$scope.reissuedMicrotask.$loaded().then(function() {
 						//choose the right template
-						if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
+						if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined){
+							$rootScope.$broadcast('run-tutorial', $scope.microtask.type );
 							$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+						}
 						else
 							$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 					});
@@ -262,11 +245,14 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 				else {
 					
 					//choose the right template
-					if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined)
+					if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined){
+						$rootScope.$broadcast('run-tutorial', $scope.microtask.type );
 						$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+					}
 					else
 						$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
 				}
+
 			});
 
 		}, function(){
@@ -328,38 +314,3 @@ myApp.controller('LeaderboardController', ['$scope', '$rootScope', '$firebase','
 	$scope.leaders.$loaded().then(function() {});
 }]);
 
-
-///////////////////////////////
-// ONLINE WORKERS CONTROLLER //
-///////////////////////////////
-myApp.controller('OnlineWorkersController', ['$scope', '$rootScope', '$firebase', function($scope, $rootScope, $firebase) {
-	/*
-	var diffInSec = 60+60*5; // how wide is the timewindow
-	var currDate  = new Date();
-	var endTimestamp   = currDate.getTime()+1*60*1000; // +1 to see also the current worker
-	var startTimestamp = endTimestamp - diffInSec*1000;
-
-	var startDate = new Date();
-	startDate.setTime(startTimestamp);
-	var endDate   = new Date();
-	endDate.setTime(endTimestamp);
-	console.log(startDate);
-	console.log(endDate);
-	console.log("diff: "+(endTimestamp-startTimestamp)/60000);
-*/
-	var ref = new Firebase($rootScope.firebaseURL + '/status/presences/');
-	var sync = $firebase(ref);
-	// bind the array to scope.onlineWorkers
-
-	$scope.onlineWorkers = sync.$asArray();
-	$scope.onlineWorkers.$loaded().then(function() {});
-}]);
-
-
-
-///////////////////////////////////
-//TYPE BROWSER    CONTROLLER     //
-///////////////////////////////////
-myApp.controller('typeBrowserController', ['$scope', '$rootScope', '$firebase', '$filter', 'ADTService', function($scope, $rootScope, $firebase, $filter, ADTService) {
-	$scope.ADTs = ADTService.getAllADTs();
-}]);
