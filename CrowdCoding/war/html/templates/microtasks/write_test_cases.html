@@ -127,7 +127,7 @@
 
 					<div class="list-group" >
 						<div ng-form="testCase" ng-repeat="(index,test) in model.testcases | filter: { deleted:false }" class="list-item input-group input-group-sm animate-repeat">
-						  	<input type="text" class="form-control" 
+						  	<input ng-if="!test.readOnly" type="text" class="form-control" 
 							    placeholder="Describe a test case"
 							  	name="testcase"
 								ng-model="test.text"
@@ -138,6 +138,15 @@
 
 							    tabindex="{{2*index+2}}"
 							    required
+							>
+							<input ng-if="test.readOnly" type="text" class="form-control" 
+							  	name="testcase"
+								ng-model="test.text"
+							    readonly 
+							    data-placement="left"
+							    data-trigger="hover" 
+							    data-title="this test case cannot be edited or removed" 
+							    bs-tooltip
 							>
 					  		<span class="input-group-btn" >
 					  			<button class="btn"  tabindex="{{2*index+3}}" ng-click="removeTestCase($index)" type="button">

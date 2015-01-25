@@ -73,13 +73,9 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 		// the function with id = functionId
 		getImplementedByFunctionId: function(functionId){
 			var returnList = [];
-			console.log('searching tests for function '+functionId);
 			// console.log("%cTestList: impl by fun %d list %o",'color:purple;',functionId,objectsList);
 			angular.forEach( objectsList, function( test, key){
-				console.log('scanning test %o',test);
-				console.log( test.getFunctionId(), functionId, test.isImplemented());
 				if( test.getFunctionId() == functionId && test.isImplemented()){
-					console.log('pushing the test');
 					returnList.push(test);
 				}	
 			});
@@ -151,7 +147,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
         // add to the list of FirebaseArray
 		set: function(test){ 
 			var rec = test.toJSON();
-				console.log(rec);
+				// console.log(rec);
 			var ref = new Firebase(firebaseUrl+'/artifacts/tests/'+test.getId());
 			ref.set(rec);
 		},
@@ -174,7 +170,6 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 		searchAndAdd: function(functionId, functionName, inputsValue, outputValue){
 			var test = this.search(functionName, inputsValue);
-			console.log("TEST SEARCH RESULT",arguments,test);
 
 			if( test === null ){
 				test = new Test();
@@ -188,8 +183,6 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 				test.setDescription("auto generated for test purposes");
 				test.buildCode();
 				this.set(test);
-
-				console.log("new test = ",test);
 			}
 			else console.log("TEST FOUND");
 		},
@@ -348,7 +341,6 @@ myApp.factory("Test", function ($FirebaseArray) {
 		},
 
 		setSimpleTest: function(inputs,output){
-			console.log("---> simple test inputs",inputs);
 			angular.forEach(inputs,function(input){
 				input = '"'+JSON.stringify(input).replace(/"/g, '\"')+'"';
 			})

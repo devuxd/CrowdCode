@@ -84,7 +84,9 @@ myApp.controller('AppController', [
 				$rootScope.$broadcast('loadMicrotask');
 
 				console.log('asdad');
-				$rootScope.$broadcast('run-tutorial','main');
+				$rootScope.$broadcast('run-tutorial','main',function(){
+					$rootScope.$broadcast('showProfileModal');
+				});
 			}
 		},true);
 
