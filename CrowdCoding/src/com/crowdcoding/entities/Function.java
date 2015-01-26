@@ -395,7 +395,10 @@ public class Function extends Artifact
 
 		// Look for pseudocode and psuedocalls
 		List<String> currentPseudoCalls = findPseudocalls(code);
+		System.out.println("FUNCTION ("+this.id+"): ONWORKEDIT submitted pseudocalls: "+currentPseudoCalls);
 		List<String> newPseudoCalls = new ArrayList<String>();
+		System.out.println("FUNCTION ("+this.id+"): ONWORKEDIT pseudocalls: "+pseudoCalls);
+
 
 		if(currentPseudoCalls.isEmpty())
 		{
@@ -429,7 +432,7 @@ public class Function extends Artifact
 		}
 
 		// Update the list of pseudocalls to match the current (distinct) pseudocalls now in the code
-		this.pseudoCalls = newPseudoCalls;
+		this.pseudoCalls = currentPseudoCalls;
 
 		ofy().save().entity(this).now();
 		lookForWork(project);
@@ -493,13 +496,13 @@ public class Function extends Artifact
 			callee = new Function(callDescription, this, project);
 			dto.functionId = callee.getID();
 		}
-		else
+	/*	else
 		{
 			// lookup the function by name
 			Key<Function> key = Key.create(Function.class,dto.functionName);
 			//Key<Artifact> key = Key.create(Artifact.class, dto.functionId);
 			callee = (Function) ofy().load().key( key ).get();//ancestor(project.getKey()).filter("name", dto.functionName).first().get();
-		}
+		}*/
 
 		// Have the callee let us know when it's tested (which may already be true;
 		// signal sent immediately in that case)
@@ -836,8 +839,9 @@ public class Function extends Artifact
 			else
 				segment = searchCode.substring(index + starterLength, nextLineStart);
 
-			// add to collection
-			results.add(segment);
+			// if not contains already add to collection
+			if (!results.contains(segment))
+				results.add(segment);
 
 			// If we hit the end of the string (no more new lines), we're done. Otherwise update to the next line.
 			if (nextLineStart == -1)

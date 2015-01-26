@@ -855,20 +855,20 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
     $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
 
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
-       
+        //set all forms dirty to make them red if empty
         $scope.makeDirty(microtaskForm);
+        //set the variables
         var error ="";
         var header="";
         var paramNames = [];
         var paramTypes = [];
         var paramDescriptions = [];
+        //if the form is invalid throw an error
         if (microtaskForm.$invalid) {
             error = 'Fix all errors before submit';
         }
+        //else retrieves the data and pass them to jshint to check that all are valid
         else {
-
-
-           
             for (var i = 0; i < $scope.parameters.length; i++) {
                 paramNames.push($scope.parameters[i].paramName);
                 paramTypes.push($scope.parameters[i].paramType);
@@ -879,27 +879,23 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
 
             allFunctionCode = functionsService.getAllDescribedFunctionCode()+ " var debug = null; " ;
 
-                var functionCode = allFunctionCode + " " + header + "{}";
-                var lintResult = -1;
-                // try to run JSHINT or catch and print error to the console
-                try {
-                    lintResult = JSHINT(functionCode, getJSHintGlobals());
-                } catch (e) {
-                    console.log("Error in running JSHHint. " + e.name + " " + e.message);
-                }
-
-                if (!lintResult) {
-                    error="figlio di puttana";
-                }
-
+            var functionCode = allFunctionCode + " " + header + "{}";
+            var lintResult = -1;
+            // try to run JSHINT or catch and print error to the console
+            try {
+                lintResult = JSHINT(functionCode, getJSHintGlobals());
+            } catch (e) {
+                console.log("Error in running JSHHint. " + e.name + " " + e.message);
             }
-            if(error!=="")
-            {
 
+            if (!lintResult) {
+                error="You are using Javascript redserved word, please change them";
+            }
 
+        }
 
-        
-
+        //if all went well submit the result
+        if(error!=="") {
 
             $alert({
                 title: 'Error!',
@@ -911,10 +907,8 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
                 container: 'alertcontainer'
             });
 
-            
-
         } else {
-           
+
             formData = {
                 name: $scope.functionName,
                 returnType: $scope.returnType === undefined ? '' : $scope.returnType,
@@ -924,8 +918,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
                 description: $scope.description,
                 header: header
             };
-            console.log(formData);
-          //  $scope.$emit('submitMicrotask', formData);
+            $scope.$emit('submitMicrotask', formData);
         }
     });
 
