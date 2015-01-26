@@ -112,7 +112,9 @@
                             </td>
                             <td>
                                 <textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" ng-show="false" ></textarea>
+
 								<ace-edit-json tabindex="{{index*5+1}}" focus-if=" index == 0 " ng-model="testData.inputs[index]" min-lines="2"></ace-edit-json>
+
 								<ul class="help-block pull-left" ng-show="inputForm.$invalid && inputForm.$dirty">
 									<li ng-show="inputForm.input.$error.required" >This field is required!</li>
 									<li ng-show="inputForm.input.$error.json" ng-repeat="error in inputForm.input.$error.json">{{error}}</li>

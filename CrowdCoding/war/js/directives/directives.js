@@ -1,3 +1,4 @@
+
 /* -------- FIELD VALIDATORS --------- */
 
 myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
@@ -25,6 +26,32 @@ myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
         }
     };
 }]);
+
+myApp.directive('reservedWord', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attrs, ngModelCtrl) {
+            var reservedWord= ["abstract","boolean","break","byte","case","catch","char","class","const","continue",
+            "debugger","default","delete","do","double","else","enum","export","extends","false","final","finally",
+            "float","for","function","goto","if","implements","import","in","instanceof","int","interface","long","native",
+            "new","null","package","private","protected","public","return","short","static","super","switch","synchronized",
+            "this","throw","throws","transient","true","try","typeof","var","void","volatile","while","with"];
+
+            ngModelCtrl.$parsers.unshift(function(viewValue) {
+                console.log("entro");
+                if(reservedWord.indexOf(viewValue)===-1){
+                    ngModelCtrl.$setValidity('reservedWord', true);
+                    return viewValue;
+                }else{
+                   ngModelCtrl.$setValidity('reservedWord', false);
+                   ngModelCtrl.$error.reservedWord = "You are using a reserved word of JavaScript, please Change it";
+                   return viewValue;
+                }
+            });
+        }
+    };
+});
 
 myApp.directive('unicName', function(){
     return {
@@ -417,10 +444,10 @@ myApp.directive('pressEnter', function() {
             }
         };
 
-        element.on('keydown keypress', keyPressListener);
+        element.on('keydown', keyPressListener);
 
         element.on('$destroy',function(){
-            element.off('keydown keypress',null,keyPressListener);
+            element.off('keydown',null,keyPressListener);
         });
     };
 });

@@ -68,11 +68,12 @@
 					  	<div class="form-group">
 						    <label for="functionName" class="col-sm-2 control-label reset-padding">function name</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<input type="text" class="form-control" name="functionName" ng-model="functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator placeholder="function name" press-enter="addParameter()">
+						      	<input type="text" class="form-control" name="functionName" ng-model="functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator reserved-word placeholder="function name" press-enter="addParameter()" >
 						    	<ul class="help-block" ng-show="microtaskForm.functionName.$dirty && microtaskForm.functionName.$invalid">
 									<li ng-show="microtaskForm.functionName.$error.required">This field is required!</li>
 									<li ng-show="microtaskForm.functionName.$error.pattern">Is not a valid function name! Please use only alphanumerical characters and the _ symbol</li>
 									<li ng-show="microtaskForm.functionName.$error.name"> {{microtaskForm.functionName.$error.name}}</li>
+									<li ng-show="microtaskForm.functionName.$error.reservedWord">{{functionName}} is a reserved word of JavaScript, please change it!</li>
 								</ul>
 						    </div>
 					  	</div>
@@ -82,11 +83,12 @@
 								<div ng-repeat="(index,parameter) in parameters">
 									<div ng-form="param{{$index}}" class="form-horizontal" style="display:inline-block" >
 									    <div class="col-sm-3 reset-padding">
-									      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName" unic-name parameters="parameters" press-enter="addParameter()"/>
+									      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" reserved-word placeholder="name" name="parameterName" unic-name parameters="parameters" press-enter="addParameter()"/>
 									      	<ul class="help-block" ng-show="param{{$index}}.parameterName.$dirty && param{{$index}}.parameterName.$invalid">
 												<li ng-show="param{{$index}}.parameterName.$error.required">This field is required!</li>
 												<li ng-show="param{{$index}}.parameterName.$error.unic">More occurence of the same parameter name have been found, plese fix them</li>
 												<li ng-show="param{{$index}}.parameterName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
+												<li ng-show="param{{$index}}.parameterName.$error.reservedWord">{{parameter.paramName}} is a reserved word of JavaScript, please change it!</li>
 											</ul>
 										</div>
 										<div class="col-sm-3 reset-padding">

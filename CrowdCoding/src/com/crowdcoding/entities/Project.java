@@ -149,9 +149,7 @@ public class Project
 			{
 				FunctionCommand.create(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
 						functionDTO.paramTypes,functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, functionDTO.code, functionDTO.tests, functionDTO.readOnly);
-
 			}
-				
 			// save project settings into firebase
 			System.out.println("WRITING SETTINGS");
 			FirebaseService.writeSetting("reviews", this.reviewsEnabled.toString() , this);
@@ -479,6 +477,8 @@ public class Project
 	{
 		// retrieve the excluded workers for the microtask
 		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get( Project.MicrotaskKeyToString(microtaskKey) );
+		System.out.println("PROJECT: EXCLUDED WORKER "+excludedWorkersForMicrotask);
+		System.out.println("PROJECT: loggedInWorkers WORKER "+loggedInWorkers);
 
 		// if all the logged in workers are excluded
 		if (excludedWorkersForMicrotask.containsAll(loggedInWorkers))
@@ -490,6 +490,7 @@ public class Project
 			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get( Project.MicrotaskKeyToString(microtaskKey) );
 			if (permanentlyExcludedWorkersForMicrotask != null)
 				excludedWorkersForMicrotask.addAll(permanentlyExcludedWorkersForMicrotask);
+			System.out.println("PROJECT: permanentlyExcludedWorkersForMicrotask WORKER "+permanentlyExcludedWorkersForMicrotask);
 
 
 			ofy().save().entity(this).now();

@@ -152,6 +152,18 @@ myApp.directive('aceEditJson', function() {
         controller: function($scope,$element){
 
 
+            var keyPressListener = function(event){
+                console.log("successo");
+            if (event.keyCode == 9 ) {
+                console.log("successo tab");
+             //   scope.$apply(function() {
+               //     scope.$eval(attrs.pressEnter);
+                //});
+                event.preventDefault();
+                
+            }};
+
+            $element.on('keydown keypress', keyPressListener);
 
         	$scope.aceLoaded = function(_editor) {
 
