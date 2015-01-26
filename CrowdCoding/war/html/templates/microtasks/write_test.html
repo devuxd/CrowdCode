@@ -104,40 +104,46 @@
 
 					<div class="heading-1" >Input Parameters</div>
                     <table style="width:100%" class="test" >
-                        <tr ng-form="inputForm" ng-repeat="(index,paramName) in funct.paramNames">
+                        <tr ng-form="inputForm" ng-repeat-start="(index,paramName) in funct.paramNames">
                             <td>
                             	<b>{{paramName}}</b> ({{funct.paramTypes[index]}})<br />
-                            	<a href="#" examples-list param-type="funct.paramTypes[index]" key = "index" value="testData.inputs[index]">Paste Example</a>
-<!--                             	<a ng-show="isSingleExample(funct.paramTypes[index])" href="#" ng-click="testData.inputs[index]=loadExample(funct.paramTypes[index]); $event.preventDefault()">Paste Example </a><br/>
- -->                            	<br />
                             	
+                      
                             </td>
                             <td>
                                 <textarea class="form-control" name="input" ng-model="testData.inputs[index]" ng-attr-required="dispute" json-validator="{{funct.paramTypes[index]}}" ng-show="false" ></textarea>
-								<ace-edit-json ng-model="testData.inputs[index]"focus-ace=" index == 0" min-lines="2"></ace-edit-json>
+								<ace-edit-json tabindex="{{index*5+1}}" focus-if=" index == 0 " ng-model="testData.inputs[index]" min-lines="2"></ace-edit-json>
 								<ul class="help-block pull-left" ng-show="inputForm.$invalid && inputForm.$dirty">
 									<li ng-show="inputForm.input.$error.required" >This field is required!</li>
 									<li ng-show="inputForm.input.$error.json" ng-repeat="error in inputForm.input.$error.json">{{error}}</li>
 								</ul>
                             </td>
                         </tr>
+                        <tr ng-repeat-end>
+                        	<td colspan="2">
+                            	<a href="#" tabindex="{{index*5+2}}" examples-list param-type="funct.paramTypes[index]" key = "index" value="testData.inputs[index]">Paste Example</a>
+                            </td>
+                        </tr>
                     </table>
 
                     <div class="heading-1" >Return Value </div>
-                    <table style="width:100%" class="test" >
-                        <tr ng-form="outputForm" >
+                    <table style="width:100%" class="test" ng-form="outputForm"  >
+                        <tr>
                             <td>
-                            	({{funct.returnType}})<br />
-                            	<a  href="#" examples-list param-type="funct.returnType" key = "'-1'" value='testData.output' >Paste Example</a>
-
+                            	({{funct.returnType}})
                             </td>
                             <td>
                                 <textarea class="form-control" name="output" ng-model="testData.output" ng-attr-required="dispute" json-validator="{{funct.returnType}}" allow-null="true" ng-show="false" ></textarea>
-								<ace-edit-json ng-model="testData.output" min-lines="2"></ace-edit-json>
+								<ace-edit-json ng-model="testData.output"  tabindex="96" min-lines="2"></ace-edit-json>
 								<ul class="help-block pull-left" ng-show="outputForm.$invalid && outputForm.$dirty">
 									<li ng-show="outputForm.output.$error.required" >This field is required!</li>
 									<li ng-show="outputForm.output.$error.json" ng-repeat="error in outputForm.output.$error.json" >{{error}}</li>
 								</ul>
+                            </td>
+                        </tr>
+                        <tr>
+                        	<td colspan="2">
+                            	<a href="#" tabindex="97" ng-blur="focusSubmit($event)" examples-list param-type="funct.returnType" key = "'-1'" value='testData.output' >Paste Example</a>
                             </td>
                         </tr>
                     </table>

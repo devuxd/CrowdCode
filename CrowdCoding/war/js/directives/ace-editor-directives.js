@@ -123,8 +123,9 @@ myApp.directive('aceEditJson', function() {
 
         template:'<div class="ace_editor json-editor" ui-ace="{ onLoad : aceLoaded, mode: \'json\', theme:\'xcode\', showGutter: true, useWrapMode : true, showLineNumbers : false }" ng-model="stringValue"></div> ',
         scope: {
-            focusAce  : "=",
+            focusIf   : "=",
             minLines  : "=",
+            tabindex  : "@",
             paramType : "@"
         },
         require: "ngModel",
@@ -153,11 +154,21 @@ myApp.directive('aceEditJson', function() {
 
 
         	$scope.aceLoaded = function(_editor) {
+
         		var options = {
 		    	   maxLines: Infinity
 		    	};
                 
-                if( $scope.hasOwnProperty('focusAce') && $scope.focusAce ){
+                $element.on('focus',function(){
+                    _editor.focus();
+                });
+
+                if( $scope.hasOwnProperty('tabindex') && $scope.tabindex ){
+                    $element.find('.ace_text-input').attr('tabindex', $scope.tabindex);
+                }
+
+                if( $scope.hasOwnProperty('focusIf') && $scope.focusIf ){
+                    console.log('focus if')
                     _editor.focus();
                 }
 
@@ -165,7 +176,13 @@ myApp.directive('aceEditJson', function() {
                    options.minLines = $scope.minLines;
                 }
 
+                // _editor.getSession().on('change', function(e) {
+                //     console.log('event change:', e.data);
+                    
+                // });
+
                 _editor.setOptions(options);
+                _editor.commands.removeCommand('indent');
 			};
         }
     };

@@ -281,20 +281,15 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	// ------- MESSAGE LISTENERS ------- //
 
-	// $scope.$on('collectFormData', function(event, microtaskForm) {
- //    	$scope.$broadcast('collectFormData',microtaskForm);
- //    	console.log('collect form data from task loader controller');
- //    });
+
 
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask', function(event, formData) {
-		console.log('submitting microtask');/*
 		microtasks.submit($scope.microtask,formData).then(function(){
 			$scope.$broadcast('loadMicrotask');
 		},function(){
 			console.error('Error during microtask submit!');
-		});*/
-		
+		});
 	});
 
 	// listen for message 'skip microtask'
@@ -307,6 +302,9 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		});
 	});
 
+    $scope.focusSubmit = function(element){
+        console.log($('#submitBtn').focus());
+    };
 
 }]);
 

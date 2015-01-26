@@ -9,7 +9,9 @@
             var ace = window.ace = window.ace || { };
             ace.initialize = function(editor) {
                 ace.require("ace/config").set("workerPath","/dist/scripts/ace");
-                console.log("WorkerPath",ace.require("ace/config").get("workerPath"));
+                ace.require("ace/config").set("themePath", "/dist/scripts/ace");
+                ace.require("ace/config").set("modePath", "/dist/scripts/ace");
+                
                 ace.require("ace/ext/language_tools");
 
                 editor.setTheme("ace/theme/chrome");

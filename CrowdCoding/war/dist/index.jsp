@@ -4,12 +4,14 @@
         var projectId = 'calculatorTRY';
     }
     console.log('PAGE LOADED');</script> <!--[if lt IE 9]>
-    <script src="/dist/scripts/oldieshim.76f279db.js"></script>
-    <![endif]--> <script src="/dist/scripts/vendor.6b4e371c.js"></script> <script src="/dist/scripts/scripts.dcc77d68.js"></script> <script type="text/javascript">(function () {
+    <script charset="utf-8" src="/dist/scripts/oldieshim.76f279db.js"></script>
+    <![endif]--> <script charset="utf-8" src="/dist/scripts/vendor.6b4e371c.js"></script> <script charset="utf-8" src="/dist/scripts/scripts.dcc77d68.js"></script> <script type="text/javascript">(function () {
             var ace = window.ace = window.ace || { };
             ace.initialize = function(editor) {
                 ace.require("ace/config").set("workerPath","/dist/scripts/ace");
-                console.log("WorkerPath",ace.require("ace/config").get("workerPath"));
+                ace.require("ace/config").set("themePath", "/dist/scripts/ace");
+                ace.require("ace/config").set("modePath", "/dist/scripts/ace");
+                
                 ace.require("ace/ext/language_tools");
 
                 editor.setTheme("ace/theme/chrome");
