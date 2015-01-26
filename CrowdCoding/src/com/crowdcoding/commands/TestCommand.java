@@ -154,7 +154,7 @@ public abstract class TestCommand extends Command
 
 		public void execute(Test test, Project project)
 		{
-			if (!test.getDescription().equals(newDescription))
+			if (!test.getDescription().equals((newDescription)))
 			{
 				String oldDescription = test.getDescription();
 				test.setDescription(newDescription);
