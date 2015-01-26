@@ -2,6 +2,8 @@ package com.crowdcoding.entities.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.io.IOException;
+
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.entities.Artifact;
@@ -9,6 +11,8 @@ import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.MicrotaskSkipped;
 import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.util.FirebaseService;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
@@ -67,27 +71,40 @@ public /*abstract*/ class Microtask
 			System.out.println("For microtask " + this.toString() + " JSON submitted for already completed work: "
 					+ jsonDTOData);
 			return;
+		} else {
+			try {
+				DTO dto = DTO.read(jsonDTOData, getDTOClass());
+				
+
+				System.out.println("--> MICROTASK: submitted json "+jsonDTOData);
+
+				//project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
+				//project.historyLog().endEvent();
+
+				doSubmitWork(dto, workerID, project);
+				this.completed = true;
+
+				ofy().save().entity(this).now();
+
+				// Save the associated artifact to Firebase if there is one
+				Artifact owningArtifact = this.getOwningArtifact();
+				if (owningArtifact != null)
+					owningArtifact.storeToFirebase(project);
+
+				// write completed on firebase
+				FirebaseService.writeMicrotaskCompleted(Project.MicrotaskKeyToString(this.getKey()), workerID, project, this.completed);
+				// increase the stats counter
+				WorkerCommand.increaseStat(workerID, "microtasks",1);
+				
+			} catch( JsonParseException e) {
+				e.printStackTrace();
+			} catch( JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}		
 		}
-		System.out.println("--> MICROTASK: submitted json "+jsonDTOData);
-		DTO dto = DTO.read(jsonDTOData, getDTOClass());
-
-		//project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
-		//project.historyLog().endEvent();
-
-		doSubmitWork(dto, workerID, project);
-		this.completed = true;
-
-		ofy().save().entity(this).now();
-
-		// Save the associated artifact to Firebase if there is one
-		Artifact owningArtifact = this.getOwningArtifact();
-		if (owningArtifact != null)
-			owningArtifact.storeToFirebase(project);
-
-		// write completed on firebase
-		FirebaseService.writeMicrotaskCompleted(Project.MicrotaskKeyToString(this.getKey()), workerID, project, this.completed);
-		// increase the stats counter
-		WorkerCommand.increaseStat(workerID, "microtasks",1);
+		
 
 	}
 

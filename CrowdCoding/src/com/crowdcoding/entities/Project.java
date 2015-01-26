@@ -2,6 +2,7 @@ package com.crowdcoding.entities;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,6 +28,8 @@ import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.history.ProjectCreated;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -138,21 +141,37 @@ public class Project
 		// Load functions from Firebase and
 		// for each function queue a function create command
 		String functions = FirebaseService.readClientRequestFunctions(this);
-		FunctionDescriptionsDTO functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
-		for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
-		{
-			FunctionCommand.create(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
-					functionDTO.paramTypes,functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, functionDTO.code, functionDTO.tests, functionDTO.readOnly);
+		FunctionDescriptionsDTO functionsDTO;
+		try {
+			functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
+		
+			for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
+			{
+				FunctionCommand.create(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
+						functionDTO.paramTypes,functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, functionDTO.code, functionDTO.tests, functionDTO.readOnly);
 
+			}
+				
+			// save project settings into firebase
+			System.out.println("WRITING SETTINGS");
+			FirebaseService.writeSetting("reviews", this.reviewsEnabled.toString() , this);
+			FirebaseService.writeSetting("tutorials", this.tutorialsEnabled.toString() , this);
+
+			// save again the entity with the created functions
+			ofy().save().entity(this).now();
+		
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-			
-		// save project settings into firebase
-		System.out.println("WRITING SETTINGS");
-		FirebaseService.writeSetting("reviews", this.reviewsEnabled.toString() , this);
-		FirebaseService.writeSetting("tutorials", this.tutorialsEnabled.toString() , this);
-
-		// save again the entity with the created functions
-		ofy().save().entity(this).now();
+		
+		
 	}
 
 
@@ -400,27 +419,35 @@ public class Project
 	// If the microtask has previously been submitted or is no longer open, the submission is
 	// dropped, ensuring workers cannot submit against already completed microtasks.
 	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID, Project project){
-		// Unassign the microtask from the worker
-		microtaskAssignments.put( workerID, null );
+		
+		// submit only if the request come from
+		// the current worker of the microtask
+		String assignedMicrotask =  microtaskAssignments.get( workerID );
+		if( assignedMicrotask.equals( Project.MicrotaskKeyToString(microtaskKey) )){
+			
+			// Unassign the microtask from the worker
+			microtaskAssignments.put( workerID, null );
 
-		// save the project
-		ofy().save().entity(this).now();
+			// save the project
+			ofy().save().entity(this).now();
 
-		// write the history log entry about the microtask submission
-		Microtask microtask = ofy().load().key( microtaskKey ).get();
-		project.historyLog().beginEvent(new MicrotaskSubmitted(microtask, workerID));
-		project.historyLog().endEvent();
+			// write the history log entry about the microtask submission
+			Microtask microtask = ofy().load().key( microtaskKey ).get();
+			project.historyLog().beginEvent(new MicrotaskSubmitted(microtask, workerID));
+			project.historyLog().endEvent();
 
-		// If reviewing is enabled and the microtask
-		// is not in [Review, ReuseSearch,DebugTestFailure],
-		// spawn a new review microtask
-		if (reviewsEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class) || microtaskType.equals(DebugTestFailure.class) ) ){
-			MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-		}
+			// If reviewing is enabled and the microtask
+			// is not in [Review, ReuseSearch,DebugTestFailure],
+			// spawn a new review microtask
+			if (reviewsEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class) || microtaskType.equals(DebugTestFailure.class) ) ){
+				MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+			}
 
-		// else submit the microtask
-		else {
-			MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+			// else submit the microtask
+			else {
+				MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+			}
+			
 		}
 	}
 

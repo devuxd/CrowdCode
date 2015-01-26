@@ -159,7 +159,7 @@ public class CrowdServlet extends HttpServlet
 					boolean projectExists =  (ofy().load().filterKey(projectKey).count() != 0 );
 
 					if(!projectExists){
-						System.out.println("--> SERVLET: project doesn't exists in appengine");
+//						System.out.println("--> SERVLET: project doesn't exists in appengine");
 //						System.out.println("--> SERVLET projects: "+FirebaseService.existsProject(projectId));
 //						System.out.println("--> SERVLET in client request: "+FirebaseService.existsClientRequest(projectId));
 						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
@@ -167,7 +167,7 @@ public class CrowdServlet extends HttpServlet
 							Project.Construct(projectId);
 						} else {
 							//
-							System.out.println("--> SERVLET: project doesn't exists in firebase");
+							//System.out.println("--> SERVLET: project doesn't exists in firebase");
 							//System.out.println("Project not found ("+projectId+")!");
 							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 						}
@@ -182,6 +182,8 @@ public class CrowdServlet extends HttpServlet
 							doAdmin(req, resp, projectId, pathSeg);
 						} else 
 							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+					} else if( pathSeg[2].equals("stressBot")){
+						req.getRequestDispatcher("/stressBot/index.jsp").forward(req, resp);
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
 					}else if (pathSeg[2].equals("code")){
@@ -258,7 +260,7 @@ public class CrowdServlet extends HttpServlet
 
 			CommandContext context = new CommandContext();
 
-			System.out.println("EXECUTING COMMAND : "+command);
+			//System.out.println("EXECUTING COMMAND : "+command);
 			if (command.equals("RESET"))
 			{
 				output.append("PROJECT RESET executed at " + currentTime.toString() + "\n");
@@ -382,7 +384,7 @@ public class CrowdServlet extends HttpServlet
 		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
 
-		System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
+		//System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
 
 		List<Command> commands = new ArrayList<Command>();
 		commands.addAll(ofy().transact(new Work<List<Command>>() {
@@ -408,7 +410,9 @@ public class CrowdServlet extends HttpServlet
 		// Collect information from the request parameter. Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
-    	try
+    	
+		
+		try
     	{
     		final String projectID    = (String) req.getAttribute("project");
 			final String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
@@ -536,7 +540,7 @@ public class CrowdServlet extends HttpServlet
 		ProjectCommand.logoutWorker(userID);
 		executeCommands(context.commands(), projectID);
 
-		System.out.println("Logged out " + userID);
+		//System.out.println("Logged out " + userID);
 	}
 
 	// Executes all of the specified commands and any commands that may subsequently be generated

@@ -34,6 +34,8 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
 			user.data.$save().then(function(){});
 		}
+		user.data.workerHandle = workerHandle;
+		user.data.$save();
 	});
 
 

@@ -1,8 +1,18 @@
 <!doctype html> <html class="no-js"> <head> <meta charset="utf-8"> <title></title> <meta name="description" content=""> <meta name="viewport" content="width=device-width"> <!-- Place favicon.ico and apple-touch-icon.png in the root directory --> <link rel="stylesheet" href="styles/vendor.412e7e63.css"> <link rel="stylesheet" href="styles/main.73282ec8.css">  <body ng-app="crowdAdminApp"> <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]--> <!-- Add your site or application content here --> <div class="navbar navbar-inverse" role="navigation" bs-navbar> <div class="navbar-header"> <a class="navbar-brand" href="#">CrowdCoding Admin</a> </div> <ul class="nav navbar-nav"> <li data-match-route="/dashboard"><a href="#/dashboard">Dashboard</a></li> <li data-match-route="/microtasks"><a href="#/microtasks">Microtasks</a></li> <li data-match-route="/feedback"><a href="#/feedback">Feedback</a></li> <li data-match-route="/chat"><a href="#/chat">Chat</a></li> <li data-match-route="/code"><a href="#/code">Code</a></li> </ul> </div> <div class="container-fluid"> <div ng-view=""></div> <div class="footer">{{time}} </div> </div> <script>if(projectId===undefined){
+    <![endif]--> <!-- Add your site or application content here --> <div class="navbar navbar-inverse" role="navigation" bs-navbar> <div class="navbar-header"> <a class="navbar-brand" href="#">CrowdCoding Admin</a> </div> <ul class="nav navbar-nav"> <li data-match-route="/dashboard"><a href="#/dashboard">Dashboard</a></li> <li data-match-route="/microtasks"><a href="#/microtasks">Microtasks</a></li> <li data-match-route="/feedback"><a href="#/feedback">Feedback</a></li> <li data-match-route="/chat"><a href="#/chat">Chat</a></li> <li data-match-route="/code"><a href="#/code">Code</a></li> <li data-match-route="/users"><a href="#/users">Workers</a></li> </ul> </div> <div class="container-fluid"> <div ng-view=""></div> <div class="footer">{{time}} </div> </div> <script>if(projectId===undefined){
         var projectId = 'calculatorTRY';
     }
     console.log('PAGE LOADED');</script> <!--[if lt IE 9]>
     <script src="scripts/oldieshim.76f279db.js"></script>
-    <![endif]--> <script src="scripts/vendor.2a9ac940.js"></script> <script src="scripts/scripts.8ff17cd4.js"></script>  
+    <![endif]--> <script src="scripts/vendor.6b4e371c.js"></script> <script src="scripts/scripts.dcc77d68.js"></script> <script type="text/javascript">(function () {
+            var ace = window.ace = window.ace || { };
+            ace.initialize = function(editor) {
+                ace.require("ace/config").set("workerPath","/dist/scripts/ace");
+                console.log("WorkerPath",ace.require("ace/config").get("workerPath"));
+                ace.require("ace/ext/language_tools");
+
+                editor.setTheme("ace/theme/chrome");
+                editor.getSession().setMode("ace/mode/javascript");
+            };
+        })();</script>  

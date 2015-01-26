@@ -231,12 +231,15 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 					$scope.reissuedMicrotask = microtasks.get($scope.microtask.reissuedFrom);
 						$scope.reissuedMicrotask.$loaded().then(function() {
 						//choose the right template
-						if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined){
-							$rootScope.$broadcast('run-tutorial', $scope.microtask.type );
+						if ( $scope.microtask !== undefined && $scope.reissuedMicrotask !== undefined ){
+							// $rootScope.$broadcast('run-tutorial', $scope.microtask.type );
 							$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+							$scope.noMicrotask = false;
 						}
-						else
-							$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+						else {
+							$scope.templatePath = templatesURL + "no_microtask.html";
+							$scope.noMicrotask = true;
+						}
 					});
 
 				} 
@@ -244,19 +247,22 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 				else {
 					
 					//choose the right template
-					if ($scope.microtask.type !== undefined && templates[$scope.microtask.type] !== undefined){
-						$rootScope.$broadcast('run-tutorial', $scope.microtask.type );
+					if ( $scope.microtask !== undefined ){
+						// $rootScope.$broadcast('run-tutorial', $scope.microtask.type );
 						$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+						$scope.noMicrotask = false;
 					}
-					else
-						$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+					else {
+						$scope.templatePath = templatesURL + "no_microtask.html";
+						$scope.noMicrotask = true;
+					}
 				}
 
 			});
 
 		}, function(){
 			
-			$scope.templatePath = "/html/templates/microtasks/no_microtask.html";
+			$scope.templatePath = templatesURL + "no_microtask.html";
 			$scope.noMicrotask = true;
 
 			$scope.checkQueueIn = waitTimeInSeconds; 
@@ -275,14 +281,19 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	// ------- MESSAGE LISTENERS ------- //
 
+	// $scope.$on('collectFormData', function(event, microtaskForm) {
+ //    	$scope.$broadcast('collectFormData',microtaskForm);
+ //    	console.log('collect form data from task loader controller');
+ //    });
+
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask', function(event, formData) {
-
+		console.log('submitting microtask');/*
 		microtasks.submit($scope.microtask,formData).then(function(){
 			$scope.$broadcast('loadMicrotask');
 		},function(){
 			console.error('Error during microtask submit!');
-		});
+		});*/
 		
 	});
 

@@ -1,6 +1,8 @@
-<div  
+<div ng-if="false"  
 	class="ace-editor" 
-	ui-ace="{ onLoad : aceLoaded }" 
+	ui-ace="{ onLoad : aceLoaded , mode: 'javascript', theme:'chrome', useWrapMode : true }" 
 	readonly="readonly" 
 	ng-model="allCode">
 </div>
+
+<pre ng-model="allCode"></pre>

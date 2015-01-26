@@ -1,0 +1,12 @@
+
+<table class="table table-hover">
+	<tbody>
+		<tr ng-repeat="(key,u) in users " row-details data="f">
+			<td>
+				<img style="width:50px" src="{{u.avatarUrl}}" />
+				<span ng-bind="u.workerHandle"></span>
+				<strong ng-bind="u.score"></strong>
+			</td>
+		</tr>
+	</tbody>
+</table>

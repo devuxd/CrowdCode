@@ -77,8 +77,8 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 
     // collect form data
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
+        console.log('collect form data from the microtask');/*
 
-      
         $scope.makeDirty(microtaskForm);
 
         // initialize the error
@@ -134,7 +134,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
         
             // call microtask submission
             $scope.$emit('submitMicrotask', formData);
-        }
+        }*/
     });
 
     $scope.$on('$destroy',function(){

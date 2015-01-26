@@ -8,7 +8,6 @@ var myApp = angular.module('crowdCodeWorker',[
 	'ngSanitize', 
 	'ui.ace', 
 	'mgcrea.ngStrap', 
-	'angular-loading-bar', 
 	'ngClipboard',
     'luegg.directives'
 ]);
