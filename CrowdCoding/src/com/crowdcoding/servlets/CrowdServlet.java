@@ -117,7 +117,7 @@ public class CrowdServlet extends HttpServlet
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
-
+        
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
@@ -145,7 +145,10 @@ public class CrowdServlet extends HttpServlet
 				}
 				// SUPERADMIN URLS
 				else if(Pattern.matches("/_admin/[\\w]*",path)){
-					req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);
+					if( userService.isUserAdmin() ){
+						req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);
+					} else 
+						req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 				}
 				// PROJECT URLS match /word/ or /word/(word)*
 				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
@@ -175,7 +178,10 @@ public class CrowdServlet extends HttpServlet
 					if ( pathSeg.length <= 2 ){
 						req.getRequestDispatcher("/html/angular_2_col.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
-						doAdmin(req, resp, projectId, pathSeg);
+						if( userService.isUserAdmin() ){
+							doAdmin(req, resp, projectId, pathSeg);
+						} else 
+							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
 					}else if (pathSeg[2].equals("code")){
@@ -252,6 +258,7 @@ public class CrowdServlet extends HttpServlet
 
 			CommandContext context = new CommandContext();
 
+			System.out.println("EXECUTING COMMAND : "+command);
 			if (command.equals("RESET"))
 			{
 				output.append("PROJECT RESET executed at " + currentTime.toString() + "\n");
@@ -271,6 +278,18 @@ public class CrowdServlet extends HttpServlet
 				output.append("REVIEWS OFF executed at " + currentTime.toString() + "\n");
 
 				ProjectCommand.enableReviews(false);
+
+			}
+			else if (command.equals("TUTORIALSON"))
+			{
+				output.append("TUTORIALS ON executed at " + currentTime.toString() + "\n");
+		    	ProjectCommand.enableTutorials(true);
+
+			}
+			else if (command.equals("TUTORIALSOFF"))
+			{
+				output.append("TUTORIALS OFF executed at " + currentTime.toString() + "\n");
+		    	ProjectCommand.enableTutorials(false);
 
 			}
 			else

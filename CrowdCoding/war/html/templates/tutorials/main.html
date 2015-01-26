@@ -1,0 +1,77 @@
+
+<step>
+	<div class="title">Main UI - Tutorial</div>
+	<div class="text">
+		Welcome to the CrowdCode tutorial. Here, we’ll help get you up to speed.
+	</div>
+</step>
+
+<step highlight="task" placement="left" style="width:100px;">
+	<div class="title">Microtask</div>
+	<div class="text">
+		Here’s the work. Can you do it?
+
+	</div>
+</step>
+
+<step highlight="submitBtn" placement="top-center" style="width:100px;" >
+	<div class="title">Submit</div>
+	<div class="text">
+		All done? Submit your work for review.
+	</div>
+</step>
+
+<step highlight="skipBtn" placement="top-center" style="width:150px;" >
+	<div class="title">Skip</div>
+	<div class="text">
+		Not the right microtask for you? Skip it. But be careful - skipping makes it more valuable for others.
+
+	</div>
+</step>
+
+
+<step highlight="shortcutsBtn" placement="top-center" style="width:100px;">
+	<div class="title">Shortcuts</div>
+	<div class="text">
+		Wanna be a power coder? Here’s your keyboard shortcuts.
+	</div>
+</step>
+
+<step highlight="chatPanel" placement="left" style="width:100px;" 
+	  on-show="$emit('toggleChat');" on-hide="$emit('toggleChat');">
+	<div class="title">Chat</div>
+	<div class="text">
+		Questions? Ask the crowd.
+	</div>
+</step>
+
+<step highlight="activityPanel" placement="right-center" style="width:100px;">
+	<div class="title">Your Activity</div>
+	<div class="text">
+		See what you’ve done, see how the crowd rated it.
+	</div>
+</step>
+
+<step highlight="leaderboardPanel" placement="right-center" style="width:100px;">
+	<div class="title">Leaderboard</div>
+	<div class="text">
+		Don’t worry. You’re still cool, even if someone has 400 points more than you.
+
+	</div>
+</step>
+
+<step highlight="feedbackBtn" placement="top-center" style="width:100px;">
+	<div class="title">Send us feedback</div>
+	<div class="text">
+		See something wrong with CrowdCode? Let us know!
+	</div>
+</step>
+
+
+<step on-hide="showProfileModal(); ">
+	<div class="title">Congratulations! </div>
+	<div class="text">
+		You completed the Main UI tutorial: 
+		On the way to be a master!
+	</div>
+</step>

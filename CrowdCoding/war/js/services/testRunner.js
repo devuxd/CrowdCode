@@ -6,10 +6,10 @@ myApp.factory('TestRunnerFactory', [
 	'$rootScope',
 	'$http',
 	'$timeout',
-	'testsService',
+	
 	'functionsService',
 	'TestList', 
-	function($window,$rootScope,$http,$timeout,testsService,functionsService,TestList) {
+	function($window,$rootScope,$http,$timeout,functionsService,TestList) {
 
 	var instances = 0;
 

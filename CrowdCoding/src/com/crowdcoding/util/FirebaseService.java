@@ -161,6 +161,11 @@ public class FirebaseService
 	{
 		writeData(dto.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, project);
 	}
+	
+	public static void writeSetting(String name, String value, Project project){
+		System.out.println("WRITING SETTING "+name+" WITH VALUE "+value);
+		writeData(value, "/status/settings/"+name+".json", HTTPMethod.PUT, project);
+	}
 
 	// Reads the ADTs for the specified project. If there are no ADTs, returns an empty string.
 	public static String readADTs(Project project)

@@ -4,73 +4,38 @@
 myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$http','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$http,TestRunnerFactory) {
     var user = {};
 
- 	// retrieve connection status and userRef
+ 	// retrieve the firebase references
 
-	var userProfile = new Firebase( firebaseURL + '/workers/' + workerId );
-	var sync = $firebase(userProfile);
-	var isConnected = new Firebase( 'https://crowdcode.firebaseio.com/.info/connected' );
-	var userRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + workerId );
-	var logoutRef     = new Firebase( firebaseURL + '/status/loggedOutWorkers/'+ workerId);
+ 	var fbRef = new Firebase(firebaseURL);
 
-	var updateUserReference = function(){
+	var userProfile    = fbRef.child('/workers/' + workerId);
+	var isConnected    = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
+	var userRef        = fbRef.child('/status/loggedInWorkers/' + workerId);
+	var logoutRef      = fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
-		userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
 
-	};
+	// when firebase is connected
+	isConnected.on('value', function(snapshot) {
+	  if (snapshot.val()) {
+	  	// update user reference
+	  	userRef.onDisconnect().remove();
 
-	user.data = sync.$asObject();
+	    userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
+
+	    // on disconnect, set false to connection status
+	    logoutRef.onDisconnect().set({workerId: workerId, timeStamp:Firebase.ServerValue.TIMESTAMP});
+	    logoutRef.set(null);
+	  }
+	});
+
+	user.data = $firebase(userProfile).$asObject();
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
-
 			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
 			user.data.$save().then(function(){});
 		}
 	});
 
-	//This is where we actually process the data. We need to call "whenFinished" when we're done
-	//to let the queue know we're ready to handle a new job.
-	//due to sincronization problem wait 5 seconds, after check that the user is not logged any more
-	//checking that is null the value i the loggedIn worker
-	// and then send the logout command to the server
-	var executeLogoutCallback = function(jobData, whenFinished) {
-
-		var timoutCallBack=function(){
-			var userLogInRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
-
-			userLogInRef.once("value", function(snapshot) {
-			  	if(snapshot.val()===null){
-			  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
-				  		.success(function(data, status, headers, config) { whenFinished(); });
-				}
-			});
-
-		};
-		$timeout(timoutCallBack,10000);
-	};
-
-	// distributed logout work
-    var listenForLogoutWorker = function(){
-    	var logoutQueue     = new Firebase( firebaseURL + '/status/loggedOutWorkers/');
-		new DistributedWorker($rootScope.workerId,logoutQueue,executeLogoutCallback);
-	};
-
-	user.init = function(){
-
-		// when firebase is connected
-		isConnected.on('value', function(snapshot) {
-		  if (snapshot.val()) {
-		  	// update user reference
-		  	userRef.onDisconnect().remove();
-		    updateUserReference();
-
-		    // on disconnect, set false to connection status
-		    logoutRef.onDisconnect().set({workerId: workerId, timeStamp:Firebase.ServerValue.TIMESTAMP});
-		    logoutRef.set(null);
-		    //start listen the logoutQueue
-		    listenForLogoutWorker();
-		  }
-		});
-	};
 
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;
@@ -83,28 +48,41 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 		return user.data.pictureUrl || '';
 	};
 
-
-	var testRunner = new TestRunnerFactory.instance({
-    	submitToServer: true
-    });
-
-
-	//This is where we actually process the data. We need to call "whenFinished" when we're done
-	//to let the queue know we're ready to handle a new job.
-	var executeWorkCallback = function(jobData, whenFinished) {
-
-		testRunner.onTestsFinish(function(){
-			console.log('------- tests finished received');
-			whenFinished();
-		});
-		testRunner.runTests(jobData.functionId);
-	};
-
 	// distributed test work
     user.listenForJobs = function(){
 		// worker
 		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
-		new DistributedWorker($rootScope.workerId,queueRef,executeWorkCallback);
+		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
+			var testRunner = new TestRunnerFactory.instance({submitToServer: true});
+			testRunner.onTestsFinish(function(){
+				console.log('------- tests finished received');
+				whenFinished();
+			});
+			testRunner.runTests(jobData.functionId);
+		});
+	}
+
+	// distributed worker logout 
+	// due to sincronization problem wait 5 seconds, after check that the user is not logged any more
+	// checking that is null the value i the loggedIn worker
+	// and then send the logout command to the server
+	// distributed logout work
+    user.listenForLogoutWorker = function(){
+    	var logoutQueue     = new Firebase( firebaseURL + '/status/loggedOutWorkers/');
+		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
+
+			var timoutCallBack=function(){
+				var userLogInRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
+				userLogInRef.once("value", function(snapshot) {
+				  	if(snapshot.val()===null){
+				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
+					  		.success(function(data, status, headers, config) { whenFinished(); });
+					}
+				});
+
+			};
+			$timeout(timoutCallBack,10000);
+		});
 	};
 
     return user;

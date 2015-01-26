@@ -2,7 +2,7 @@
 ////////////////////
 // TESTS SERVICE   //
 ////////////////////
-myApp.factory('testsService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
+myApp.factory( 'testsService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
 
 	var service = new function(){
 

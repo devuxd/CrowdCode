@@ -26,7 +26,7 @@
 
 
                     Here are the test results. Passing tests are green and failing tests are red. If you think a failing test is itself incorrect (i.e., the test improperly specifies the expected output), you can <strong>report an issue</strong> with the test (but you can report an issue with only one test).
-
+                    <br />
                     <button ng-click="runTests()" class="btn btn-primary"  ng-disabled="testsRunning || microtaskForm.$invalid ">Run the tests!</button>
                 </div>
             </div>
@@ -170,54 +170,7 @@
             </div>
         </div>
     </div>
-<!--
-    <div class="section-cols" ng-if=" stubs && !dispute">
-        <div class="container-flex-row">
-            <div class="section section-help" style="width:30%">
-                <div class="section-title" >
-                    FUNCTION CALL STUBS
-                </div>
-                <div class="section-content" >
-                    <p>
-                    For each function called by operation, you can choose the output that the function will produce for each set of inputs with which is called. When you change the output of a function, the test runner will automatically create a <strong>stub</strong>, using the output you specify instead of executing the actual function call.
-                    </p>
-                </div>
-            </div>
-            <div class="section section-form"  style="width:70%" >
-                <div class="section-title" >
 
-                </div>
-                <div class="section-content" >
-
-                    <ul style="list-style:none;margin:0px;padding:0px;">
-                        <li ng-repeat="(callee,inputMap) in stubs track by $index" >
-                            The function <b>{{callee}}</b> 
-                            <ace-read-js code="calleDescription[callee].code"></ace-read-js>
-                            Has been called with {{ inputMap | keylength }}  {{ (inputMap | keylength) > 1 ? 'different sets':'set' }} of inputs
-                            <ul class="collapsable-list mock-collapsable-list ">
-                                <li ng-repeat="(stubKey,stub) in inputMap track by $index">
-                                    <b>#{{$index+1}} input set </b><br />
-                                    
-                                    <table style="width:100%">
-                                        <tr ng-repeat="(key,input) in stub.inputs track by $index">
-                                            <td>{{stubsParamNames[callee][$index]}}<br /></td>
-                                            <td><div ace-read-json ng-model="input" ></div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>output</td>
-                                            <td><div ace-edit-json ng-model="stub.output" ></div></td>
-                                        </tr>
-                                    </table>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
--->
     <div class="section-cols" ng-show=" !dispute ">
         <div class="container-flex-row">
             <div class="section section-help bg-color-alpha " style="width:30%">
@@ -267,11 +220,6 @@
             <button class="btn" ng-click="cancelDispute()" >Nothing is wrong with the test</button>
         </div>
     </div>
-    <!--
-    <div class="task-buttons pull-right">
-        <button ng-click="submit()" class="btn btn-primary" ng-disabled="form.$invalid || passedTests.length != tests.length" >Submit</button>
-        <button ng-click="$emit('skipMicrotask')"   class="btn btn-link"   >Skip</button>
-    </div>
-    <div class="clearfix"></div>
-    -->
+
 </div>
+

@@ -868,6 +868,7 @@ tutorial  { display:none; }
 	top:0px;
 	left:0px;
 }
+
 .tutorial-container .overlay {
 	z-index: 10000;
 	width:0px;
@@ -882,6 +883,8 @@ tutorial  { display:none; }
 	background-color: white;
 	border: 2px solid #white;
 	border-radius: 0px;
+	text-align:center;
+	box-shadow: rgb(43, 43, 43) 0px 0px 6px 1px;
 }
 
 .tutorial-container .content .title {
@@ -891,10 +894,20 @@ tutorial  { display:none; }
 	color:#555;
 	font-family: 'Lato';
 	font-weight:bold;
+	text-align:left;
+}
+
+.tutorial-container .content p,
+.tutorial-container .content li {
+	text-align:left;
+}
+
+.tutorial-container .text img {
+	margin-bottom:10px;
 }
 
 .tutorial-container .content .text {
-	padding:5px;
+	padding:10px;
 	font-size:1em;
 	margin-bottom:20px;
 }

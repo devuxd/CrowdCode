@@ -49,7 +49,8 @@ public class Project
 	@Id private String id;
 	@Ignore private HistoryLog historyLog;
 
-	private boolean reviewingEnabled = true;			// Disabling this flag stops new review microtasks from being generated
+	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
+	private Boolean tutorialsEnabled = true;
 	private boolean waitingForTestRun = false;								// is the project currently waiting for tests to be run?
 
 	// logged in workers
@@ -144,6 +145,11 @@ public class Project
 					functionDTO.paramTypes,functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, functionDTO.code, functionDTO.tests, functionDTO.readOnly);
 
 		}
+			
+		// save project settings into firebase
+		System.out.println("WRITING SETTINGS");
+		FirebaseService.writeSetting("reviews", this.reviewsEnabled.toString() , this);
+		FirebaseService.writeSetting("tutorials", this.tutorialsEnabled.toString() , this);
 
 		// save again the entity with the created functions
 		ofy().save().entity(this).now();
@@ -408,7 +414,7 @@ public class Project
 		// If reviewing is enabled and the microtask
 		// is not in [Review, ReuseSearch,DebugTestFailure],
 		// spawn a new review microtask
-		if (reviewingEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class) || microtaskType.equals(DebugTestFailure.class) ) ){
+		if (reviewsEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class) || microtaskType.equals(DebugTestFailure.class) ) ){
 			MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 		}
 
@@ -553,9 +559,10 @@ public class Project
 	//  Other Stuff
 	//////////////////////////////////////////////////////////////////////////////
 
-	public void enableReviews(boolean reviewsEnabled)
+	public void enableReviews(Boolean reviewsEnabled)
 	{
-		this.reviewingEnabled = reviewsEnabled;
+		this.reviewsEnabled = reviewsEnabled;
+		FirebaseService.writeSetting("reviews", reviewsEnabled.toString() , project);
 		ofy().save().entity(this).now();
 	}
 
@@ -567,6 +574,13 @@ public class Project
 		ofy().save().entity(this).now();
 
 		return id;
+	}
+
+	public void enableTutorials(Boolean tutorialsEnabled) {
+		// TODO Auto-generated method stub
+		this.tutorialsEnabled = tutorialsEnabled;
+		FirebaseService.writeSetting("tutorials", tutorialsEnabled.toString() , project);
+		ofy().save().entity(this).now();
 	}
 
 }
