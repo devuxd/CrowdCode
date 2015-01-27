@@ -53,7 +53,7 @@ public class Worker
 	//                user != null
 	public static Worker Create(User user, Project project)
 	{
-		Worker crowdWorker = ofy().load().key(getKey(project.getKey(), user.getUserId())).get();
+		Worker crowdWorker = ofy().load().key(getKey(project.getKey(), user.getUserId())).now();
 		if (crowdWorker == null)
 			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);
 

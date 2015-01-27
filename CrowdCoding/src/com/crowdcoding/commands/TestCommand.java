@@ -6,6 +6,7 @@ import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.servlets.CommandContext;
+import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
 
 public abstract class TestCommand extends Command
@@ -37,15 +38,15 @@ public abstract class TestCommand extends Command
 
 	public void execute(Project project)
 	{
-		Ref<Test> test = Test.find(testID, project);
+		LoadResult<Test> test = Test.find(testID, project);
 		if (test == null)
 			System.out.println("Cannot execute TestCommand. Could not find test for TestID " + testID);
 		else
 		{
-			execute(test.get(), project);
+			execute(test.now(), project);
 
 			// Save the associated artifact to Firebase
-			test.get().storeToFirebase(project);
+			test.now().storeToFirebase(project);
 		}
 	}
 

@@ -19,11 +19,11 @@ import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class Review extends Microtask
 {
 	@Parent @Load private Ref<Artifact> artifact;
@@ -46,8 +46,8 @@ public class Review extends Microtask
 		this.initiallySubmittedDTO = initiallySubmittedDTO;
 		this.workerOfReviewedWork = workerOfReviewedWork;
 
-		Microtask microtaskUnderReview = ofy().load().key(microtaskKeyUnderReview).get();
-		this.artifact = (Ref<Artifact>) Ref.create( (Key<Artifact>) microtaskUnderReview.getOwningArtifact().getKey(),  microtaskUnderReview.getOwningArtifact() );
+		Microtask microtaskUnderReview = ofy().load().key(microtaskKeyUnderReview).now();
+		this.artifact = (Ref<Artifact>) Ref.create((Key<Artifact>) microtaskUnderReview.getOwningArtifact().getKey());
 
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new ReviewInFirebase(
@@ -77,7 +77,7 @@ public class Review extends Microtask
 
 		ReviewDTO reviewDTO = (ReviewDTO) dto;
 
-		Microtask submittedMicrotask = Microtask.find(microtaskKeyUnderReview,project).getValue();
+		Microtask submittedMicrotask = Microtask.find(microtaskKeyUnderReview,project).now();
 
 		// Write the review to firebase
 		FirebaseService.writeReview(reviewDTO, Project.MicrotaskKeyToString( submittedMicrotask.getKey() ), project);
@@ -153,7 +153,7 @@ public class Review extends Microtask
     			"SubmittedReview",
     			Project.MicrotaskKeyToString(  this.getKey() ),
     			-1 // differentiate the reviews from the 0 score tasks
-	    	).json()), 
+	    	).json()),
 			Project.MicrotaskKeyToString( this.getKey() ),
 			project
 		);
@@ -188,7 +188,7 @@ public class Review extends Microtask
 	{
 		Artifact owning;
 		try {
-			return artifact.safeGet();
+			return artifact.safe();
 		} catch ( Exception e ){
 			ofy().load().ref(this.artifact);
 			return artifact.get();

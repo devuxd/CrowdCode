@@ -18,11 +18,11 @@ import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class WriteCall extends Microtask
 {
 	@Parent @Load private Ref<Function> caller;
@@ -30,7 +30,7 @@ public class WriteCall extends Microtask
 	private String calleeName;
 	private String calleeFullDescription;
 
-	
+
 	// Default constructor for deserialization
 	private WriteCall()
 	{
@@ -47,18 +47,18 @@ public class WriteCall extends Microtask
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteCallInFirebase(
 				id,
-				this.microtaskTitle(), 
-				this.microtaskName(), 
+				this.microtaskTitle(),
+				this.microtaskName(),
 				caller.getName(),
 				caller.getID(),
-				false, submitValue, 
-				caller.getID(), 
+				false, submitValue,
+				caller.getID(),
 				calleeName,
-				calleeFullDescription, 
+				calleeFullDescription,
 				pseudoCall ),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
-				
+
 
 		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
@@ -121,7 +121,7 @@ public class WriteCall extends Microtask
 	{
 		Artifact owning;
 		try {
-			return caller.safeGet();
+			return caller.safe();
 		} catch ( Exception e ){
 			ofy().load().ref(this.caller);
 			return caller.get();

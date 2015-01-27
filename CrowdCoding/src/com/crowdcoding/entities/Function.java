@@ -36,8 +36,9 @@ import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.api.search.query.QueryParser.function_return;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.cmd.Query;
 
@@ -46,7 +47,7 @@ import com.googlecode.objectify.cmd.Query;
  * which, upon completion, transition the state. Some of these microtasks may create other artifacts,
  * which also transition through states; these transitions may in turn be signaled back to a function.
  */
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class Function extends Artifact
 {
 	private String        code;
@@ -325,7 +326,7 @@ public class Function extends Artifact
 				System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));
 			}
 			else if (!queuedMicrotasks.isEmpty())
-				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
+				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).now(), project);
 		}
 	}
 
@@ -791,7 +792,7 @@ public class Function extends Artifact
 	}
 
 	// Looks up a Function object by name. Returns the function or null if no such function exists
-	public static Function lookupFunction(String name, Project project)
+	/* public static Function lookupFunction(String name, Project project)
 	{
 		//TO FIX NOT WORKING
 		Ref<Function> ref = ofy().load().type(Function.class).ancestor(project.getKey()).filter("name", name).first();
@@ -801,7 +802,7 @@ public class Function extends Artifact
 			return null;
 		else
 			return ref.get();
-	}
+	}*/
 
 	// Looks through a string of a function's implementation and returns a list
 	// of lines (may be empty) which are the pseudocode for the function call
@@ -857,13 +858,13 @@ public class Function extends Artifact
 	// load it and get the object
 	public static Function load(Ref<Function> ref)
 	{
-		return ofy().load().ref(ref).get();
+		return ofy().load().ref(ref).now();
 	}
 
 	// Given an id for a functon, finds the corresponding function. Returns null if no such function exists.
-	public static Ref<Function> find(long id, Project project)
+	public static LoadResult<Function> find(long id, Project project)
 	{
-		return (Ref<Function>) ofy().load().key(Artifact.getKey(id, project));
+		return (LoadResult<Function>) ofy().load().key(Artifact.getKey(id, project));
 	}
 
 	public boolean equals(Object function)

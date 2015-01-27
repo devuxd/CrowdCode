@@ -41,6 +41,7 @@ public /*abstract*/ class Artifact
 	{
 		this.project = project.getKey();
 		id = project.generateID("Artifact");
+		System.out.println("Artifact ID: "+id);
 		version = 0;
 	}
 
@@ -118,7 +119,7 @@ public /*abstract*/ class Artifact
 		// determine if there is work to be done
 		if (!microtaskOut && !queuedMicrotasks.isEmpty())
 		{
-			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
+			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).now(), project);
 		}
 	}
 

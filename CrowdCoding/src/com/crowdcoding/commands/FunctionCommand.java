@@ -10,6 +10,7 @@ import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.servlets.CommandContext;
 import com.crowdcoding.util.FirebaseService;
+import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
 
 public abstract class FunctionCommand extends Command
@@ -65,15 +66,15 @@ public abstract class FunctionCommand extends Command
 
 	public void execute(Project project)
 	{
-		Ref<Function> function = Function.find(functionID, project);
+		LoadResult<Function> function = Function.find(functionID, project);
 		if (function == null)
 			System.out.println("Cannot execute FunctionCommand. Could not find the function for FunctionID " + functionID);
 		else
 		{
-			execute(function.get(), project);
+			execute(function.now(), project);
 
 			// Save the associated artifact to Firebase
-			function.get().storeToFirebase(project);
+			function.now().storeToFirebase(project);
 		}
 	}
 
@@ -135,12 +136,12 @@ public abstract class FunctionCommand extends Command
 
 		public void execute(Function function, Project project)
 		{
-			Ref<Function> callerFunction = Function.find(callerFunctionID, project);
+			LoadResult<Function> callerFunction = Function.find(callerFunctionID, project);
 			if (callerFunction == null)
 				System.out.println("Cannot execute FunctionCommand. Could not find the caller function "
 						+ "for FunctionID " + callerFunctionID);
 			else
-				function.removeCaller(callerFunction.get());
+				function.removeCaller(callerFunction.now());
 		}
 	}
 
@@ -156,14 +157,14 @@ public abstract class FunctionCommand extends Command
 
 		public void execute(Function function, Project project)
 		{
-			Ref<Function> callerFunction = Function.find(callerFunctionID, project);
-			System.out.println("--> FUNCTION COMMAND: adding caller "+callerFunction.get().getName());
+			LoadResult<Function> callerFunction = Function.find(callerFunctionID, project);
+			System.out.println("--> FUNCTION COMMAND: adding caller "+callerFunction.now().getName());
 
 			if (callerFunction == null)
 				System.out.println("Cannot execute FunctionCommand. Could not find the caller function "
 						+ "for FunctionID " + callerFunctionID);
 			else
-				function.addCaller(callerFunction.get());
+				function.addCaller(callerFunction.now());
 		}
 	}
 
@@ -181,12 +182,12 @@ public abstract class FunctionCommand extends Command
 		{
 			System.out.println("--> FUNCTION COMMAND : test implemented");
 
-			Ref<Test> test = Test.find(testID, project);
+			LoadResult<Test> test = Test.find(testID, project);
 			if (test == null)
 				System.out.println("Cannot execute FunctionCommand. Could not find the test "
 						+ "for TestID " + testID);
 			else
-				function.testBecameImplemented(test.get(), project);
+				function.testBecameImplemented(test.now(), project);
 		}
 	}
 
@@ -227,12 +228,12 @@ public abstract class FunctionCommand extends Command
 
 		public void execute(Function function, Project project)
 		{
-			Ref<Test> test = Test.find(testID, project);
+			LoadResult<Test> test = Test.find(testID, project);
 			if (test == null)
 				System.out.println("Cannot execute FunctionCommand. Could not find the test "
 						+ "for TestID " + testID);
 			else
-				function.failedTest(test.get(),project);
+				function.failedTest(test.now(),project);
 		}
 	}
 

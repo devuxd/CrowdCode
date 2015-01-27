@@ -17,6 +17,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -47,7 +48,10 @@ public /*abstract*/ class Microtask
 	protected Microtask(Project project)
 	{
 		this.project = project.getKey();
+
 		id = project.generateID("Microtask");
+		System.out.println("Microtask ID: "+id);
+
 	}
 
 	// Creates a copy of this microtask, identical in all respects except with a new microtaskID
@@ -74,7 +78,7 @@ public /*abstract*/ class Microtask
 		} else {
 			try {
 				DTO dto = DTO.read(jsonDTOData, getDTOClass());
-				
+
 
 				System.out.println("--> MICROTASK: submitted json "+jsonDTOData);
 
@@ -95,16 +99,16 @@ public /*abstract*/ class Microtask
 				FirebaseService.writeMicrotaskCompleted(Project.MicrotaskKeyToString(this.getKey()), workerID, project, this.completed);
 				// increase the stats counter
 				WorkerCommand.increaseStat(workerID, "microtasks",1);
-				
+
 			} catch( JsonParseException e) {
 				e.printStackTrace();
 			} catch( JsonMappingException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}		
+			}
 		}
-		
+
 
 	}
 
@@ -183,9 +187,9 @@ public /*abstract*/ class Microtask
 	}
 
 	// Should only be called from within the entity group of the owning artifact
-	public static Ref<Microtask> find(Key<Microtask> microtaskKey, Project project)
+	public static LoadResult<Microtask> find(Key<Microtask> microtaskKey, Project project)
 	{
-		return (Ref<Microtask>) ofy().load().key(microtaskKey);
+		return (LoadResult<Microtask>) ofy().load().key(microtaskKey);
 	}
 
 	public String toString()

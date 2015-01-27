@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.regex.Pattern;
 
-import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +44,7 @@ import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
 import com.crowdcoding.util.FirebaseService;
+import com.crowdcoding.util.IDGenerator;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.images.Image;
@@ -84,10 +84,11 @@ public class CrowdServlet extends HttpServlet
 
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
+	//	ObjectifyService.register(IDGenerator.class);
+		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Worker.class);
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Function.class);
-		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Test.class);
 		ObjectifyService.register(UserPicture.class);
 
@@ -117,7 +118,7 @@ public class CrowdServlet extends HttpServlet
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
-        
+
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
@@ -147,7 +148,7 @@ public class CrowdServlet extends HttpServlet
 				else if(Pattern.matches("/_admin/[\\w]*",path)){
 					if( userService.isUserAdmin() ){
 						req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);
-					} else 
+					} else
 						req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 				}
 				// PROJECT URLS match /word/ or /word/(word)*
@@ -156,7 +157,7 @@ public class CrowdServlet extends HttpServlet
 
 					req.setAttribute("project", projectId);
 					Key<Project> projectKey = Key.create(Project.class, projectId);
-					boolean projectExists =  (ofy().load().filterKey(projectKey).count() != 0 );
+					boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
 
 					if(!projectExists){
 //						System.out.println("--> SERVLET: project doesn't exists in appengine");
@@ -180,7 +181,7 @@ public class CrowdServlet extends HttpServlet
 					} else if( pathSeg[2].equals("admin")){
 						if( userService.isUserAdmin() ){
 							doAdmin(req, resp, projectId, pathSeg);
-						} else 
+						} else
 							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("stressBot")){
 						req.getRequestDispatcher("/stressBot/index.jsp").forward(req, resp);
@@ -321,7 +322,7 @@ public class CrowdServlet extends HttpServlet
 	private void getUserPicture(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		//retrieve request GET parameter userId and retrieve picture
 		String userId = req.getParameter("userId");
-		UserPicture picture = (userId==null)?null:ofy().load().key(Key.create(UserPicture.class, userId)).get();
+		UserPicture picture = (userId==null)?null:ofy().load().key(Key.create(UserPicture.class, userId)).now();
 
 		if(userId==null || picture ==null){
 			req.getRequestDispatcher("/img/40x40.gif").forward(req, res);
@@ -353,7 +354,7 @@ public class CrowdServlet extends HttpServlet
 	    if(imageBlob.getBytes().length>0){
 
 		    //retrieve picture object if exists or instantiate a new one
-		    UserPicture picture = ofy().load().key(Key.create(UserPicture.class, user.getUserId())).get();
+		    UserPicture picture = ofy().load().key(Key.create(UserPicture.class, user.getUserId())).now();
 		    if(picture == null)
 		    	picture = new UserPicture(user.getUserId());
 
@@ -410,8 +411,8 @@ public class CrowdServlet extends HttpServlet
 		// Collect information from the request parameter. Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
-    	
-		
+
+
 		try
     	{
     		final String projectID    = (String) req.getAttribute("project");
@@ -485,7 +486,7 @@ public class CrowdServlet extends HttpServlet
 		    microtask = ofy().transact(new Work<Microtask>() {
 	            public Microtask run()
 	            {
-	        		return ofy().load().key(microtaskKey).get();
+	        		return ofy().load().key(microtaskKey).now();
 	            }
 		    });
 	    }

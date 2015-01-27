@@ -11,11 +11,13 @@ import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
+import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Load;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class Test extends Artifact
 {
 	// initial one line description give of the test. Null if hasDescription is false.
@@ -80,9 +82,9 @@ public class Test extends Artifact
 		this.functionVersion= functionVersion;
 
 		ofy().save().entity(this).now();
-		
+
 		FunctionCommand.addTest(functionID, this.id);
-		
+
 		queueMicrotask(new WriteTest(this, project,functionVersion), project);
 
 		project.historyLog().endEvent();
@@ -288,13 +290,13 @@ public class Test extends Artifact
 	// load it and get the object
 	public static Test load(Ref<Test> ref)
 	{
-		return ofy().load().ref(ref).get();
+		return ofy().load().ref(ref).now();
 	}
 
 	// Given an id for a test, finds the corresponding test. Returns null if no such test exists.
-	public static Ref<Test> find(long id, Project project)
+	public static LoadResult<Test> find(long id, Project project)
 	{
-		return (Ref<Test>) ofy().load().key(Artifact.getKey(id, project));
+		return (LoadResult<Test>) ofy().load().key(Artifact.getKey(id, project));
 	}
 
 	// Generates a simple test key for the specified function and list of inputs

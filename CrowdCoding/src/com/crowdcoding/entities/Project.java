@@ -10,12 +10,9 @@ import java.util.Map;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
-import com.crowdcoding.commands.ProjectCommand;
-import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionDescriptionsDTO;
-import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -23,7 +20,6 @@ import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAssigned;
-import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.history.ProjectCreated;
 import com.crowdcoding.util.FirebaseService;
@@ -54,7 +50,6 @@ public class Project
 
 	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
 	private Boolean tutorialsEnabled = true;
-	private boolean waitingForTestRun = false;								// is the project currently waiting for tests to be run?
 
 	// logged in workers
 	@Serialize private HashSet<String> loggedInWorkers = new HashSet<String>();
@@ -144,7 +139,7 @@ public class Project
 		FunctionDescriptionsDTO functionsDTO;
 		try {
 			functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
-		
+
 			for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
 			{
 				FunctionCommand.create(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
@@ -157,7 +152,7 @@ public class Project
 
 			// save again the entity with the created functions
 			ofy().save().entity(this).now();
-		
+
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -168,8 +163,8 @@ public class Project
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 
 
@@ -188,7 +183,7 @@ public class Project
 		// Need to use an ancestor query to do this inside a transaction.
 		// But the ancestor of project is project.
 		// So we just create a normal key with only the type and id
-		project = ofy().load().key(Key.create(Project.class, id)).get();
+		project = ofy().load().key(Key.create(Project.class, id)).now();
 
 		// When a project is intialized (above), the history log is created inside the project constructor.
 		// It has to be created there because it must be created before the project can be initialized.
@@ -383,7 +378,7 @@ public class Project
 			FirebaseService.writeMicrotaskAssigned( Project.MicrotaskKeyToString(microtaskKey), workerID, workerHandle, this, true);
 
 			// write the history log entry about the microtask assignment
-			Microtask mtask = ofy().load().key(microtaskKey).get();
+			Microtask mtask = ofy().load().key(microtaskKey).now();
 			project.historyLog().beginEvent(new MicrotaskAssigned(mtask,workerID));
 			project.historyLog().endEvent();
 
@@ -417,12 +412,12 @@ public class Project
 	// If the microtask has previously been submitted or is no longer open, the submission is
 	// dropped, ensuring workers cannot submit against already completed microtasks.
 	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID, Project project){
-		
+
 		// submit only if the request come from
 		// the current worker of the microtask
 		String assignedMicrotask =  microtaskAssignments.get( workerID );
 		if( assignedMicrotask.equals( Project.MicrotaskKeyToString(microtaskKey) )){
-			
+
 			// Unassign the microtask from the worker
 			microtaskAssignments.put( workerID, null );
 
@@ -430,7 +425,7 @@ public class Project
 			ofy().save().entity(this).now();
 
 			// write the history log entry about the microtask submission
-			Microtask microtask = ofy().load().key( microtaskKey ).get();
+			Microtask microtask = ofy().load().key( microtaskKey ).now();
 			project.historyLog().beginEvent(new MicrotaskSubmitted(microtask, workerID));
 			project.historyLog().endEvent();
 
@@ -445,7 +440,7 @@ public class Project
 			else {
 				MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
 			}
-			
+
 		}
 	}
 
@@ -458,7 +453,7 @@ public class Project
 		addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
 		// Add the work back to the appropriate queue
-		Microtask microtask= ofy().load().key(microtaskKey).get();
+		Microtask microtask= ofy().load().key(microtaskKey).now();
 		if(microtask.microtaskName()!="Review")
 			queueMicrotask( microtaskKey, workerID);
 		else
@@ -522,7 +517,7 @@ public class Project
 		// TODO: if the current assignment is a review, this should go in the review queue!
 		// if a current assignment exists requeue it
 		if (currentAssignment != null){
-			Microtask microtask= ofy().load().key(currentAssignment).get();
+			Microtask microtask= ofy().load().key(currentAssignment).now();
 			if(microtask.microtaskName()!="Review")
 				queueMicrotask( currentAssignment, workerID);
 			else

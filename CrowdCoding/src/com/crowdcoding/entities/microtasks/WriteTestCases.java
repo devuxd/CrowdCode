@@ -16,11 +16,11 @@ import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class WriteTestCases extends Microtask
 {
 	public enum PromptType { FUNCTION_SIGNATURE, CORRECT_TEST_CASE };
@@ -45,13 +45,13 @@ public class WriteTestCases extends Microtask
 		this.function = (Ref<Function>) Ref.create( Key.create( Function.class,function.getID()) );
 
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				function.getName(),
 				function.getID(),
 				false, submitValue, function.getID(), promptType.name(), "", ""),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
-		
+
 		project.historyLog().beginEvent(new MicrotaskSpawned(this));
 		project.historyLog().endEvent();
 	}
@@ -65,9 +65,9 @@ public class WriteTestCases extends Microtask
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.disputeDescription = disputeDescription;
 		this.disputedTestCase   = disputedTestCase;
-		
+
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				function.getName(),
 				function.getID(),
 				false, submitValue, function.getID(), promptType.name(), disputeDescription, disputedTestCase),
@@ -127,7 +127,7 @@ public class WriteTestCases extends Microtask
 	{
 		Artifact owning;
 		try {
-			return function.safeGet();
+			return function.safe();
 		} catch ( Exception e ){
 			ofy().load().ref(this.function);
 			return function.get();

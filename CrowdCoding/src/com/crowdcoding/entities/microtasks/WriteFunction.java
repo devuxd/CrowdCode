@@ -17,11 +17,11 @@ import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class WriteFunction extends Microtask
 {
 	public enum PromptType { SKETCH, DESCRIPTION_CHANGE, RE_EDIT };
@@ -30,7 +30,7 @@ public class WriteFunction extends Microtask
 
 	private String oldFullDescription;		// Only defined for DESCRIPTION_CHANGE
 	private String newFullDescription;		// Only defined for DESCRIPTION_CHANGE
-	
+
 	private String disputeText;				// Only defined for RE_EDIT
 
 
@@ -160,7 +160,7 @@ public class WriteFunction extends Microtask
 	{
 		Artifact owning;
 		try {
-			return function.safeGet();
+			return function.safe();
 		} catch ( Exception e ){
 			ofy().load().ref(this.function);
 			return function.get();

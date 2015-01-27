@@ -16,11 +16,11 @@ import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class WriteTest extends Microtask
 {
 	public enum PromptType { WRITE, CORRECT, FUNCTION_CHANGED, TESTCASE_CHANGED };
@@ -49,10 +49,10 @@ public class WriteTest extends Microtask
 
 		ofy().load().ref(this.test);
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				test.getName(),
 				test.getID(),
-				false, submitValue, test.getID(), test.getFunctionID(), functionVersion, promptType.name(), "", "", "", ""), 
+				false, submitValue, test.getID(), test.getFunctionID(), functionVersion, promptType.name(), "", "", "", ""),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
@@ -68,10 +68,10 @@ public class WriteTest extends Microtask
 		this.test = (Ref<Test>) Ref.create(test2.getKey());
 		this.issueDescription = issueDescription;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				test2.getName(),
 				test2.getID(),
-				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), issueDescription, "", "", ""), 
+				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), issueDescription, "", "", ""),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
@@ -88,7 +88,7 @@ public class WriteTest extends Microtask
 		this.oldFunctionDescription = oldFullDescription;
 		this.newFunctionDescription = newFullDescription;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(), 
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				test2.getName(),
 				test2.getID(),
 				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), "", oldFullDescription, newFullDescription, ""),
@@ -108,10 +108,10 @@ public class WriteTest extends Microtask
 		this.oldTestCase = oldTestCase;
 
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id,this.microtaskTitle(), this.microtaskName(), 
+		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id,this.microtaskTitle(), this.microtaskName(),
 				test.getName(),
 				test.getID(),
-				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), "", "", "", oldTestCase), 
+				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), "", "", "", oldTestCase),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
@@ -137,7 +137,7 @@ public class WriteTest extends Microtask
 				test.getName(),
 				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), issueDescription,
-				oldFunctionDescription, newFunctionDescription, oldTestCase), 
+				oldFunctionDescription, newFunctionDescription, oldTestCase),
 				Project.MicrotaskKeyToString(this.getKey()),
 				project);
 
@@ -180,14 +180,14 @@ public class WriteTest extends Microtask
 
 	public Function getFunction(Project project)
 	{
-		return Function.find(test.getValue().getFunctionID(), project).get();
+		return Function.find(test.getValue().getFunctionID(), project).now();
 	}
 
 	public Artifact getOwningArtifact()
 	{
 		Artifact owning;
 		try {
-			return test.safeGet();
+			return test.safe();
 		} catch ( Exception e ){
 			ofy().load().ref(this.test);
 			return test.get();
