@@ -29,6 +29,9 @@ myApp.factory('TestRunnerFactory', [
 
 
 	function TestRunner( config ){
+
+		console.log('TEST RUNNER INITIALIZED WITH CONF ',config);
+
 		this.id = ++instances;
 
 		// set default config
@@ -131,9 +134,10 @@ myApp.factory('TestRunnerFactory', [
 
 	//Runs all of the tests for the specified function, sending the results to the server
 	TestRunner.prototype.runTests = function(testedFunctionId,testedFunctionCode,actualStubs){
-		
-		// set global variables
-		this.validTests         = TestList.getImplementedByFunctionId(testedFunctionId);
+		console.log('RUN TESTS FROM INSIDE');
+		// get valid tests for the function
+		this.validTests = TestList.getImplementedByFunctionId(testedFunctionId);
+		console.log('Valid tests: ',this.validTests);
 
 		if( this.running || this.validTests.length == 0 ) return -1;
 
@@ -142,7 +146,6 @@ myApp.factory('TestRunnerFactory', [
 		this.testedFunctionId   = testedFunctionId;
 		this.testedFunctionName = functionsService.getNameById(testedFunctionId);
 
-		console.log('%cTest Runner: valid tests %o','color:blue;',this.validTests);
 
 		// reset tests results variables
 		this.returnData = {};
@@ -160,6 +163,7 @@ myApp.factory('TestRunnerFactory', [
 			this.testedFunctionCode = functionsService.renderHeaderById(testedFunctionId);
 			this.testedFunctionCode += functionsService.get(testedFunctionId).code;
 		}
+
 		
 		this.loadAllTheFunctionCode();
 
@@ -228,8 +232,8 @@ myApp.factory('TestRunnerFactory', [
 			                    + functionsWithMockBodies  + '\n'  // functions with mock bodies	
 			                    + this.testedFunctionCode + '\n'; // tested function code
 
-		console.log('%cTest Runner: function code initialized','color:blue;');
-		console.log(this.allTheFunctionCode);
+		// console.log('%cTest Runner: function code initialized','color:blue;');
+		// console.log(this.allTheFunctionCode);
 		return;
 	};
 	
@@ -258,6 +262,7 @@ myApp.factory('TestRunnerFactory', [
 
 		//console.log('%cTest Runner: stubs loaded','color:blue;',this.stubs);
 		return;
+
 	};
 
 
@@ -293,8 +298,6 @@ myApp.factory('TestRunnerFactory', [
 		var d = new Date();
 		var actualTimestamp = d.getTime();
 
-		console.log('%cTest Runner: test %d finished, duration %.4f sec','color:blue;',this.currentTestIndex, (actualTimestamp-this.timestamp)/1000 ) ;
-		console.log('result :'+testResult);
 
 		// If the code is unimplemented, the test neither failed nor passed. If the test
 		// did not pass or timed out, it failed. Otherwise, it passed.
@@ -314,6 +317,9 @@ myApp.factory('TestRunnerFactory', [
 		// IF ALL THE TESTS HAD RUNNED
 		if ( this.currentTestIndex >= this.validTests.length )
 		{
+
+			console.log('%cAll tests runned. Submit to server? ','color:blue;',this.submitToServer) ;
+
 			// publish a message on run tests finished
 			var item = {};
 			item.stubs         = this.usedStubs,
@@ -342,7 +348,6 @@ myApp.factory('TestRunnerFactory', [
 		this.timestamp = d.getTime();
 
 	    var self = this;
-	    console.log(this.validTests);
 	  
 		var testCode = this.validTests[this.currentTestIndex].getCode();  //.replace(/\n/g,"");
 
@@ -383,6 +388,7 @@ myApp.factory('TestRunnerFactory', [
 
 	    // start the execution posting the exec message with the code
 		this.worker.postMessage( { 'cmd' : 'exec', 'code' : code } );
+		console.log('Running test '+this.currentTestIndex);
 
 		this.worker.onmessage = function(e){
 			var data = e.data;
@@ -422,6 +428,8 @@ myApp.factory('TestRunnerFactory', [
 
 	TestRunner.prototype.submitResultsToServer = function()
 	{		
+
+		console.log('SUBMITTING TESTS RESULT TO THE SERVER ');
 		// Determine if the function passed or failed its tests. 
 		// If at least one test failed, the function failed its tests.
 		// If at least one test succeeded and no tests failed, the function passed its tests.
@@ -444,7 +452,7 @@ myApp.factory('TestRunnerFactory', [
 
 			$http.get('/' + $rootScope.projectId + '/ajax/testResult?'+getData.join("&")).
 			  success(function(data, status, headers, config) {
-			    //console.log("test result submitted GET");
+			    console.log("test result submitted: "+passedTests);
 			  }).
 			  error(function(data, status, headers, config) {
 			    //console.log("test result submit error");

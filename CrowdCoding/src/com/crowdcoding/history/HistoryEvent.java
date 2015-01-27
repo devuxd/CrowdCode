@@ -46,4 +46,8 @@ public abstract class HistoryEvent extends DTO
 		// multiple changes to the same artifact within a single millisecond, this is true.
 		return timeInMillis + "-" + artifactType + artifactID;		
 	}
+	
+	public String getEventType(){
+		return "";
+	}
 }

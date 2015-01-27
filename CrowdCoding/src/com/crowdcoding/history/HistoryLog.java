@@ -1,9 +1,11 @@
 package com.crowdcoding.history;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.Pair;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 
@@ -15,14 +17,39 @@ import com.google.appengine.api.urlfetch.HTTPMethod;
  */
 public class HistoryLog 
 {
+	private static HistoryLog historyLog = null;
 	private EventNode root;
-	private Stack<EventNode> eventStack = new Stack<EventNode>();
-	
+	private LinkedList<EventNode> eventList = new LinkedList<EventNode>();
+	private String projectId = "";
 	
 	public HistoryLog(){
 		//System.out.println("== NEW HISTORY LOG");
 	}
 	
+	public static HistoryLog Init(String projectId){
+		if( historyLog == null ){
+			historyLog = new HistoryLog(projectId);
+		}
+		return historyLog;
+	}
+	
+	public HistoryLog(String projectId) {
+		this.projectId = projectId;
+	}
+	
+	public void addEvent(HistoryEvent event){
+		EventNode node = new EventNode(event);
+		eventList.add(node);
+	}
+	
+	public void publish(){
+		
+		while(!eventList.isEmpty()){
+			EventNode node = eventList.pop();
+			FirebaseService.publishHistoryLogEvent(node.event, projectId);
+		}
+	}
+
 	public class EventNode
 	{
 		public List<EventNode> children = new ArrayList<EventNode>();
@@ -33,7 +60,7 @@ public class HistoryLog
 			this.event = event;
 		}
 	}
-	
+	/*
 	public void beginEvent(HistoryEvent event)
 	{
 		EventNode node = new EventNode(event);
@@ -64,7 +91,7 @@ public class HistoryLog
 
 		//System.out.println("---CLOSE "+pop.event.generateID());
 	}	
-	
+	*/
 	// Gets a representation as a list of pairs - a string event ID and a JSON string - capturing each 
 	// event in the log.
 	public List<Pair<String, String>> json()

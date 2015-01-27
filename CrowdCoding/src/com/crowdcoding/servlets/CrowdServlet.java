@@ -44,6 +44,7 @@ import com.crowdcoding.entities.microtasks.WriteFunction;
 import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.datastore.Blob;
@@ -470,13 +471,13 @@ public class CrowdServlet extends HttpServlet
             		microtaskKey = project.assignMicrotask(workerID, workerHandle);
             	}
 
-            	project.publishHistoryLog();
-
-            	//project.logoutInactiveWorkers();
-
             	return microtaskKey;
             }
         });
+    	
+
+        HistoryLog.Init(projectID).publish();
+        FirebaseService.publish();
 
     	// Load the microtask
 	    Microtask microtask = null;
@@ -513,7 +514,7 @@ public class CrowdServlet extends HttpServlet
 	private void renderCode(final HttpServletResponse resp, String projectId) throws IOException{
 		resp.setContentType("text/javascript;charset=utf-8");
 		Project project=  Project.Create(projectId);
-		String allCode= FirebaseService.getAllCode(project);
+		String allCode= FirebaseService.getAllCode(project.getID());
 		PrintWriter out = resp.getWriter();
 		out.print(allCode);
 		out.flush();
@@ -544,10 +545,9 @@ public class CrowdServlet extends HttpServlet
 	}
 
 	// Executes all of the specified commands and any commands that may subsequently be generated
-	private void executeCommands(List<Command> commands, final String projectID)
+	private void executeCommands(List<Command> commands, final String projectId)
 	{
 		Queue<Command> commandQueue = new LinkedList<Command>(commands);
-
 		// Execute commands until done, adding commands as created.
         while(!commandQueue.isEmpty())
         {
@@ -555,15 +555,18 @@ public class CrowdServlet extends HttpServlet
         	commandQueue.addAll(ofy().transact(new Work<List<Command>>() {
 	            public List<Command> run()
 	            {
-            	    Project project = Project.Create(projectID);
+            	    Project project = Project.Create(projectId);
 					CommandContext context = new CommandContext();
 					command.execute(project);
-
-					project.publishHistoryLog();
 					return context.commands();
 	            }
 	        }));
         }
+        // history log writes and the other 
+        // firebase writes are done
+        // outside of the transactions
+        HistoryLog.Init(projectId).publish();
+        FirebaseService.publish();
 	}
 
 	// Writes the specified html message to resp, wrapping it in an html page

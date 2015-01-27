@@ -202,6 +202,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 		// set the loading template
 		$scope.templatePath   = templatesURL + "loading.html";
+
 		var fetchPromise = microtasks.fetch();
 		fetchPromise.then(function(data){
 			$scope.data      = data;
@@ -286,6 +287,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	$scope.$on('submitMicrotask', function(event, formData) {
 
 		if($scope.canSubmit){
+
+			$scope.templatePath   = templatesURL + "loading.html";
 			$scope.canSubmit=false;
 			microtasks.submit($scope.microtask,formData).then(function(){
 				$scope.$broadcast('loadMicrotask');
@@ -299,6 +302,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	$scope.$on('skipMicrotask', function(event) {
 		//console.log("skip with value: "+$scope.canSubmit);
 		if($scope.canSubmit){
+
+			$scope.templatePath   = templatesURL + "loading.html";
 			$scope.canSubmit=false;
 			microtasks.submit($scope.microtask,null).then(function(){
 				$scope.$broadcast('loadMicrotask');

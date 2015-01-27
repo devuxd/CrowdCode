@@ -9,6 +9,7 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.entities.microtasks.WriteTest;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
@@ -68,7 +69,6 @@ public class Test extends Artifact
 	{
 		super(project);
 
-		project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
 
 		this.isImplemented = false;
 		this.isDeleted = false;
@@ -80,19 +80,19 @@ public class Test extends Artifact
 		this.functionVersion= functionVersion;
 
 		ofy().save().entity(this).now();
+		HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "false", this));
 		
 		FunctionCommand.addTest(functionID, this.id);
 		
 		queueMicrotask(new WriteTest(this, project,functionVersion), project);
 
-		project.historyLog().endEvent();
 	}
 
 	public Test(long functionID, String functionName, String description, List<String> inputs, String output, String code, Project project, int functionVersion, boolean readOnly)
 	{
 		super(project);
 
-		project.historyLog().beginEvent(new PropertyChange("implemented", "true", this));
+		HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "true", this));
 
 		this.isImplemented = true;
 		this.isDeleted = false;
@@ -114,7 +114,7 @@ public class Test extends Artifact
 		//project.requestTestRun();
 		FunctionCommand.testBecameImplemented(functionID, this.getID());
 
-		project.historyLog().endEvent();
+		
 	}
 
 	public String getTestCode()
@@ -182,14 +182,13 @@ public class Test extends Artifact
 		if (!isImplemented && !workToBeDone())
 		{
 			// A test becomes implemented when it has no more work to do
-			project.historyLog().beginEvent(new PropertyChange("implemented", "true", this));
+			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "true", this));
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
 
 			System.out.println("--> TEST "+this.id+": implemented for function "+functionID+ " - tID:" +this.id);
 			FunctionCommand.testBecameImplemented(functionID, this.id);
 
-			project.historyLog().endEvent();
 		}
 	}
 
@@ -197,7 +196,7 @@ public class Test extends Artifact
 	{
 		if (dto.isFunctionDispute)
 		{
-			project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
+			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "false", this));
 
 			// Ignore any of the content for the test, if available. Set the test to unimplemented.
 			this.isImplemented = false;
@@ -206,13 +205,13 @@ public class Test extends Artifact
 
 			FunctionCommand.disputeFunctionSignature(functionID, dto.disputeText);
 
-			project.historyLog().endEvent();
+			
 			lookForWork(project);
 		}
 
 		else if (dto.inDispute)
 		{
-			project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
+			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "false", this));
 
 			// Ignore any of the content for the test, if available. Set the test to unimplemented.
 			this.isImplemented = false;
@@ -221,7 +220,7 @@ public class Test extends Artifact
 
 			FunctionCommand.disputeTestCases(functionID, dto.disputeText, this.description);
 
-			project.historyLog().endEvent();
+			
 			lookForWork(project);
 		}
 		else
@@ -241,14 +240,14 @@ public class Test extends Artifact
 		}
 	}
 
-	public void storeToFirebase(Project project)
+	public void storeToFirebase(String projectId)
 	{
 		incrementVersion();
 		if (this.isDeleted)
-			FirebaseService.deleteTest(this.id, project);
+			FirebaseService.deleteTest(this.id, projectId);
 		else
 			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs,
-				simpleTestOutput, description, functionName, functionID, isImplemented, readOnly), this.id, version, project);
+				simpleTestOutput, description, functionName, functionID, isImplemented, readOnly), this.id, version, projectId);
 	}
 
 	/******************************************************************************************
@@ -257,11 +256,10 @@ public class Test extends Artifact
 
 	public void dispute(String issueDescription, Project project, int functionVersion)
 	{
-		project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
+		HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "false", this));
 		this.isImplemented = false;
 		ofy().save().entity(this).now();
 		queueMicrotask(new WriteTest(this, issueDescription, project, functionVersion), project);
-		project.historyLog().endEvent();
 	}
 
 	// Marks this test as deleted, removing it from the list of tests on its owning function.

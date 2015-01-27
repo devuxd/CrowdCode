@@ -14,6 +14,7 @@ import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
@@ -53,10 +54,9 @@ public class DebugTestFailure extends Microtask
 						submitValue,
 						function.getID()),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Constructor for initial construction.
@@ -80,10 +80,9 @@ public class DebugTestFailure extends Microtask
 				test.getID(),
 				function.getID()),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
 	public Microtask copy(Project project)
@@ -109,7 +108,7 @@ public class DebugTestFailure extends Microtask
 	    			-1 // differentiate the reviews from the 0 score tasks
 				).json()),
 				Project.MicrotaskKeyToString(  this.getKey() ),
-				project
+				project.getID()
 	    );
 
 		FunctionDTO fDTO = (FunctionDTO) dto;

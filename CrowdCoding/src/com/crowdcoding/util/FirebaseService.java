@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.dto.ReviewDTO;
+import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
@@ -16,6 +19,7 @@ import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
+import com.crowdcoding.history.HistoryEvent;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -32,48 +36,48 @@ import com.googlecode.objectify.Key;
 public class FirebaseService
 {
 	// Writes the specified microtask to firebase
-	public static void writeMicrotaskCreated(MicrotaskInFirebase dto, String microtaskKey, Project project)
+	public static void writeMicrotaskCreated(MicrotaskInFirebase dto, String microtaskKey, String projectId)
 	{
-		writeData(dto.json(), "/microtasks/" + microtaskKey + ".json", HTTPMethod.PUT, project);
+		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + ".json", HTTPMethod.PUT, projectId);
 
 		// Since microtaskIDs increase consequentively and start at 1, we can update the total number of microtasks
 		// to be microtaskID.
 		// the microtask key is in the format "artifactNumber-microtask count"
 		String microtakCount = microtaskKey.split("-")[1];
-		writeData( microtakCount, "/status/microtaskCount.json", HTTPMethod.PUT, project);
+		enqueueWrite( microtakCount, "/status/microtaskCount.json", HTTPMethod.PUT, projectId);
 	}
 
 	// Writes information about microtask assignment to Firebase
 	public static void writeMicrotaskAssigned( String microtaskKey, String workerID,
-			String workerHandle, Project project, boolean assigned)
+			String workerHandle, String projectId, boolean assigned)
 	{
-		writeData(Boolean.toString(assigned), "/microtasks/" + microtaskKey + "/assigned.json", HTTPMethod.PUT, project);
-		writeData("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, project);
+		enqueueWrite(Boolean.toString(assigned), "/microtasks/" + microtaskKey + "/assigned.json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
 
 	// Writes information about microtask completition to Firebase
 	public static void writeMicrotaskCompleted( String microtaskKey, String workerID,
-			Project project, boolean completed)
+			String projectId, boolean completed)
 	{
-		writeData(Boolean.toString(completed), "/microtasks/" + microtaskKey + "/completed.json", HTTPMethod.PUT, project);
+		enqueueWrite(Boolean.toString(completed), "/microtasks/" + microtaskKey + "/completed.json", HTTPMethod.PUT, projectId);
 	}
 
 	// Writes information about an old microtask to retrieve the information to Firebase
-	public static void writeMicrotaskReissuedFrom( String microtaskKey, Project project, String reissuedFromMicrotaskKey)
+	public static void writeMicrotaskReissuedFrom( String microtaskKey, String projectId, String reissuedFromMicrotaskKey)
 	{
-		writeData("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, project);
+		enqueueWrite("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
-	public static void writeTestJobQueue(long functionID, Project project)
+	public static void writeTestJobQueue(long functionID, String projectId)
 	{
 		Date date = new Date();
 		System.out.println("appending test job for function "+functionID);
-		writeData("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+date.getTime()+".json", HTTPMethod.PUT, project);
+		enqueueWrite("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+date.getTime()+".json", HTTPMethod.PUT, projectId);
 	}
-	public static String getAllCode(Project project)
+	public static String getAllCode(String projectId)
 	{
-		String absoluteUrl = getBaseURL(project) + "/code.json";
+		String absoluteUrl = getBaseURL( projectId ) + "/code.json";
 		String result = readDataAbsolute( absoluteUrl );
 
 		// check if exist the reference on firebase, if not returns false
@@ -88,8 +92,8 @@ public class FirebaseService
 			return result;
 		}
 	}
-	public static boolean isWorkerLoggedIn(String workerID,Project project){
-		String absoluteUrl = getBaseURL(project) + "/status/loggedInWorkers/" + workerID + ".json";
+	public static boolean isWorkerLoggedIn(String workerID,String projectId){
+		String absoluteUrl = getBaseURL(projectId) + "/status/loggedInWorkers/" + workerID + ".json";
 		String result = readDataAbsolute( absoluteUrl );
 		// check if exist the reference on firebase, if not returns false
 		if ( result == null || result.equals("null") )
@@ -115,62 +119,61 @@ public class FirebaseService
 	}
 
 
-	public static void writeWorkerLoggedIn(String workerID, String workerDisplayName, Project project)
+	public static void writeWorkerLoggedIn(String workerID, String workerDisplayName, String projectId)
 	{
-		writeData("{\"workerHandle\": \"" + workerDisplayName + "\"}", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.PUT, project);
+		enqueueWrite("{\"workerHandle\": \"" + workerDisplayName + "\"}", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.PUT, projectId);
 	}
 
-	public static void writeWorkerLoggedOut(String workerID, Project project)
+	public static void writeWorkerLoggedOut(String workerID, String projectId)
 	{
-		writeData("", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.DELETE, project);
+		enqueueWrite("", "/status/loggedInWorkers/" + workerID + ".json", HTTPMethod.DELETE, projectId);
 	}
 
-	public static void writeMicrotaskQueue(QueueInFirebase dto, Project project)
+	public static void writeMicrotaskQueue(QueueInFirebase dto, String projectId)
 	{
-		writeData(dto.json(), "/status/microtaskQueue.json", HTTPMethod.PUT, project);
+		enqueueWrite(dto.json(), "/status/microtaskQueue.json", HTTPMethod.PUT, projectId);
 	}
 
-	public static void writeReviewQueue(QueueInFirebase dto, Project project)
+	public static void writeReviewQueue(QueueInFirebase dto, String projectId)
 	{
 		System.out.println("Current review queue: " + dto.json());
-		writeData(dto.json(), "/status/reviewQueue.json", HTTPMethod.PUT, project);
+		enqueueWrite(dto.json(), "/status/reviewQueue.json", HTTPMethod.PUT, projectId);
 	}
 
 	// Stores the specified function to Firebase
-	public static void writeFunction(FunctionInFirebase dto, long functionID, int version, Project project)
+	public static void writeFunction(FunctionInFirebase dto, long functionID, int version, String projectId)
 	{
-		writeData(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PUT, project);
-		writeData(dto.json(), "/history/artifacts/functions/" + functionID + "/" + version + ".json", HTTPMethod.PUT, project);
+		enqueueWrite(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite(dto.json(), "/history/artifacts/functions/" + functionID + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}
 
 	// Stores the specified test to Firebase
-	public static void writeTest(TestInFirebase dto, long testID, int version, Project project)
+	public static void writeTest(TestInFirebase dto, long testID, int version, String projectId)
 	{
-		writeData(dto.json(), "/artifacts/tests/" + testID + ".json", HTTPMethod.PUT, project);
-		writeData(dto.json(), "/history/artifacts/tests/" + testID + "/" + version + ".json", HTTPMethod.PUT, project);
+		enqueueWrite(dto.json(), "/artifacts/tests/" + testID + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite(dto.json(), "/history/artifacts/tests/" + testID + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}
 
 	// Deletes the specified test in Firebase
-	public static void deleteTest(long testID, Project project)
+	public static void deleteTest(long testID, String projectId)
 	{
-		writeData("", "/artifacts/tests/" + testID + ".json", HTTPMethod.DELETE, project);
+		enqueueWrite("", "/artifacts/tests/" + testID + ".json", HTTPMethod.DELETE, projectId);
 	}
 
 	// Stores the specified review to firebase
-	public static void writeReview(ReviewDTO dto, String microtaskKey , Project project)
+	public static void writeReview(ReviewDTO dto, String microtaskKey , String projectId)
 	{
-		writeData(dto.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, project);
+		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, projectId);
 	}
 	
-	public static void writeSetting(String name, String value, Project project){
-		System.out.println("WRITING SETTING "+name+" WITH VALUE "+value);
-		writeData(value, "/status/settings/"+name+".json", HTTPMethod.PUT, project);
+	public static void writeSetting(String name, String value, String projectId){
+		enqueueWrite(value, "/status/settings/"+name+".json", HTTPMethod.PUT, projectId);
 	}
 
 	// Reads the ADTs for the specified project. If there are no ADTs, returns an empty string.
-	public static String readADTs(Project project)
+	public static String readADTs(String projectId)
 	{
-		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID()
+		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectId
 				+ "/ADTs.json");
 		if (result == null || result.equals("null"))
 			result = "";
@@ -178,77 +181,56 @@ public class FirebaseService
 	}
 
 	// Copies the specified ADTs from the client request into the project
-	public static void copyADTs(Project project)
+	public static void copyADTs(String projectId)
 	{
-		String adts = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID()
+		String adts = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectId
 				+ "/ADTs.json");
 		if (adts == null || adts.equals("null"))
 			adts = "";
 
 		System.out.println("ADTs for copy:" + adts);
-		writeData(adts, "/ADTs.json", HTTPMethod.PUT, project);
+		enqueueWrite(adts, "/ADTs.json", HTTPMethod.PUT, projectId);
 	}
 
 	// Reads the functions for the specified project. If there are no functions, returns an empty string.
-	public static String readClientRequestFunctions(Project project)
+	public static String readClientRequestFunctions(String projectId)
 	{
-		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + project.getID()
+		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectId
 				+ "/functions.json");
 		if (result == null || result.equals("null"))
 			result = "";
 		return result;
 	}
 
-	public static void setPoints(String workerID, String workerDisplayName, int points, Project project)
+	public static void setPoints(String workerID, String workerDisplayName, int points, String projectId)
 	{
 		//System.out.println("SETTING POINTS TO "+workerID);
-		writeData(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, project);
+		enqueueWrite(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, projectId);
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
-		writeData(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, project);
+		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
 	}
-
-	public static String readStat(String workerID, String label, Project project){
-//		String result = readDataAbsolute(getBaseURL(project)  + "/workers/" + workerID + "/stats/"+label+".json");
-//
-//		System.out.println("Stat absolute url="+getBaseURL(project) + "/workers/" + workerID + "/stats/"+label+".json");
-//		if (result == null || result.equals("null")){
-//			System.out.println("result of read stat is null ");
-//			result = "0";
-//		}
-//		return result;
-		return "0";
-	}
-
-	public static void setStat(String workerID, String label, String value, Project project)
-	{
-//		writeData(value, "/workers/" + workerID + "/stats/"+label+".json", HTTPMethod.PUT, project);
-	}
-
-	public static void increaseStatBy(String workerID, String label, int increaseAmount, Project project){
-//		String stringValue = readStat(workerID,label,project);
-//		Integer actualValue = Integer.parseInt(stringValue);
-//		Integer value = actualValue + increaseAmount ;
-//		System.out.println("Increase stat '"+label+"' from "+actualValue+" to "+value+" for "+workerID);
-//		setStat(workerID,label,value.toString(),project);
-	}
-
 
 	// Posts the specified JSON message to the specified workers newsfeed
-	public static void postToNewsfeed(String workerID,  String message, String microtaskKey, Project project)
+	public static void postToNewsfeed(String workerID,  String message, String microtaskKey, String projectId)
 	{
-		writeData(message, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, project);
+		enqueueWrite(message, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
 	}
 
 	// Publishes the history log
-	public static void publishHistoryLog(List<Pair<String, String>> list, Project project)
+	public static void publishHistoryLog(List<Pair<String, String>> list, String projectId)
 	{
-
+		
 		for (Pair<String, String> idAndMessage : list){
 			//System.out.println("Writing log: "+idAndMessage.b);
-			writeData(idAndMessage.b, "/history/events/" + idAndMessage.a + ".json", HTTPMethod.PUT, project);
+			enqueueWrite(idAndMessage.b, "/history/events/" + idAndMessage.a + ".json", HTTPMethod.PUT, projectId);
 		}
 	}
-
+	
+	// Publishes the history log
+	public static void publishHistoryLogEvent(HistoryEvent event, String projectId)
+	{
+		enqueueWrite( event.json() , "/history/events/" + event.generateID() + ".json", HTTPMethod.PUT, projectId);
+	}
 
 	// Clears all data in the current project, reseting it to an empty, initial state
 	public static void clear(String projectID)
@@ -275,11 +257,12 @@ public class FirebaseService
 		return !payload.equals("null");
 	}
 
+	
 	// Writes the specified data using the URL, relative to the BaseURL.
 	// Operation specifies the type of http request to make (e.g., PUT, POST, DELETE)
-	private static void writeData(String data, String relativeURL, HTTPMethod operation, Project project)
+	private static void writeData(String data, String relativeURL, HTTPMethod operation, String projectId)
 	{
-		writeDataAbsolute(data, getBaseURL(project) + relativeURL, operation);
+		writeDataAbsolute(data, getBaseURL(projectId) + relativeURL, operation);
 	}
 
 	// Writes the specified data using specified absolute URL asyncrhonously (does not block waiting on write).
@@ -326,9 +309,48 @@ public class FirebaseService
 	}
 
 	// Gets the base URL for the current deployment project
-	private static String getBaseURL(Project project)
+	private static String getBaseURL(String projectId)
 	{
-		return "https://crowdcode.firebaseio.com/projects/" + project.getID();
+		return "https://crowdcode.firebaseio.com/projects/" + projectId;
 	}
 
+	
+
+	protected static class FirebaseWrite 
+	{
+		private String data;
+		private String relativeURL;
+		private HTTPMethod operation;
+		private String projectId;
+
+		public FirebaseWrite(String data, String relativeURL, HTTPMethod operation, String projectId)
+		{
+			
+			this.data = data;
+			this.relativeURL = relativeURL;
+			this.operation = operation;
+			this.projectId = projectId;
+		}
+
+		// Override the default execute behavior, as there is no function yet to be loaded.
+		public void publish()
+		{
+			FirebaseService.writeData(data, relativeURL, operation, projectId);
+		}
+	}
+	
+	private static LinkedList<FirebaseWrite> writeList = new LinkedList<FirebaseWrite>();
+	
+	public static void enqueueWrite(String data, String relativeURL, HTTPMethod operation, String projectId){
+//		System.out.println("Firebase: enqueuing "+relativeURL);
+		writeList.addLast(new FirebaseWrite(data,relativeURL,operation,projectId));
+	}
+	
+	public static void publish(){
+		while(!writeList.isEmpty()){
+			FirebaseWrite write = writeList.pop();
+			write.publish();
+//			System.out.println("Firebase: writing "+write.relativeURL);
+		}
+	}
 }

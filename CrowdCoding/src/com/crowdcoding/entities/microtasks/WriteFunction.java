@@ -11,6 +11,7 @@ import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.WriteTestCases.PromptType;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
@@ -109,11 +110,10 @@ public class WriteFunction extends Microtask
 				this.newFullDescription,
 				this.disputeText),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
 	protected void doSubmitWork(DTO dto, String workerID, Project project)

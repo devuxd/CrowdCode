@@ -16,4 +16,8 @@ public class PropertyChange extends HistoryEvent
 		this.propertyName = propertyName;
 		this.propertyValue = propertyValue;		
 	}
+
+	public String getEventType(){
+		return eventType;
+	}
 }

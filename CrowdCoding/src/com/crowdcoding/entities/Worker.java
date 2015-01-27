@@ -57,7 +57,7 @@ public class Worker
 		if (crowdWorker == null)
 			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);
 
-		FirebaseService.setPoints(user.getUserId(), user.getNickname(), crowdWorker.score, project);
+		FirebaseService.setPoints(user.getUserId(), user.getNickname(), crowdWorker.score, project.getID());
 
 		//FirebaseService.writeWorkerLoggedIn( user.getUserId(), user.getNickname(), project);
 
@@ -79,18 +79,18 @@ public class Worker
 	}
 
 	// Adds the specified number of points to the score.
-	public void awardPoints(int points, Project project)
+	public void awardPoints(int points, String projectId)
 	{
 		score += points;
 		ofy().save().entity(this).now();
 
-		FirebaseService.setPoints(userid, nickname, score, project);
+		FirebaseService.setPoints(userid, nickname, score, projectId);
 	}
 
 	// Update the stat label to the stat value.
-	public void increaseStat(String label,int amount, Project project)
+	public void increaseStat(String label,int amount, String projectId)
 	{
-		FirebaseService.increaseStatBy(userid, label, amount, project);
+//		FirebaseService.increaseStatBy(userid, label, amount, projectId);
 	}
 
 	public Key<Worker> getKey()

@@ -176,7 +176,7 @@ public abstract class MicrotaskCommand extends Command
 
 			//FirebaseService.
 
-			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, project, reissuedFromMicrotaskKey);
+			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, project.getID(), reissuedFromMicrotaskKey);
 
 			WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
 

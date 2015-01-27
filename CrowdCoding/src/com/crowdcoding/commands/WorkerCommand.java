@@ -67,7 +67,7 @@ public abstract class WorkerCommand extends Command
 		
 		public void execute(Worker worker, Project project)
 		{
-			worker.awardPoints(points, project);
+			worker.awardPoints(points, project.getID());
 		}		
 	}
 	
@@ -85,7 +85,7 @@ public abstract class WorkerCommand extends Command
 		
 		public void execute(Worker worker, Project project)
 		{
-			worker.increaseStat(label,increaseAmount, project);
+//			worker.increaseStat(label,increaseAmount, project.getID());
 		}		
 	}
 }

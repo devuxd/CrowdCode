@@ -104,7 +104,7 @@ public abstract class ProjectCommand extends Command
 
 		public void execute(Project project)
 		{
-			System.out.println("--> MICROTASK COMMAND: queuing microtask "+Project.MicrotaskKeyToString(microtaskKey));
+//			System.out.println("--> MICROTASK COMMAND: queuing microtask "+Project.MicrotaskKeyToString(microtaskKey));
 			project.queueMicrotask(microtaskKey, excludedWorkerID);
 		}
 	}

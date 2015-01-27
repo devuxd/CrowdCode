@@ -12,6 +12,7 @@ import com.crowdcoding.dto.firebase.ReviewInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAccepted;
 import com.crowdcoding.history.MicrotaskReissued;
 import com.crowdcoding.history.MicrotaskRejected;
@@ -61,10 +62,9 @@ public class Review extends Microtask
 				microtaskKeyUnderReview
 				),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
     public Microtask copy(Project project)
@@ -80,7 +80,7 @@ public class Review extends Microtask
 		Microtask submittedMicrotask = Microtask.find(microtaskKeyUnderReview,project).getValue();
 
 		// Write the review to firebase
-		FirebaseService.writeReview(reviewDTO, Project.MicrotaskKeyToString( submittedMicrotask.getKey() ), project);
+		FirebaseService.writeReview(reviewDTO, Project.MicrotaskKeyToString( submittedMicrotask.getKey() ), project.getID());
 
 		// set default award points to 0
 		int points = 0;
@@ -113,8 +113,8 @@ public class Review extends Microtask
 			reviewResult = "reissued";
 			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
 
-			project.historyLog().beginEvent(new MicrotaskReissued(submittedMicrotask,workerID));
-			project.historyLog().endEvent();
+			HistoryLog.Init(project.getID()).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
+			
 
 		} else {
 
@@ -125,9 +125,8 @@ public class Review extends Microtask
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork, awardedPoint);
 
 
-			project.historyLog().beginEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
-			project.historyLog().endEvent();
-
+			HistoryLog.Init(project.getID()).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
+			
 		}
 
 
@@ -141,7 +140,7 @@ public class Review extends Microtask
 				reviewDTO.qualityScore)
 	    	).json(),
     		Project.MicrotaskKeyToString(submittedMicrotask.getKey() ),
-	    	project
+	    	project.getID()
 	    );
 
 
@@ -155,7 +154,7 @@ public class Review extends Microtask
     			-1 // differentiate the reviews from the 0 score tasks
 	    	).json()), 
 			Project.MicrotaskKeyToString( this.getKey() ),
-			project
+			project.getID()
 		);
 
 		// increase the stats counter

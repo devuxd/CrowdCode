@@ -132,15 +132,14 @@ public class Project
 		ofy().save().entity(this).now();
 
 		// create log entry for the project created
-		this.historyLog.beginEvent(new ProjectCreated(this));
-		this.historyLog.endEvent();
+		HistoryLog.Init(this.getID()).addEvent(new ProjectCreated(this));
 
 		// Load ADTs from Firebase
-		FirebaseService.copyADTs(this);
+		FirebaseService.copyADTs(this.getID());
 
 		// Load functions from Firebase and
 		// for each function queue a function create command
-		String functions = FirebaseService.readClientRequestFunctions(this);
+		String functions = FirebaseService.readClientRequestFunctions(this.getID());
 		FunctionDescriptionsDTO functionsDTO;
 		try {
 			functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
@@ -151,9 +150,9 @@ public class Project
 						functionDTO.paramTypes,functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, functionDTO.code, functionDTO.tests, functionDTO.readOnly);
 			}
 			// save project settings into firebase
-			System.out.println("WRITING SETTINGS");
-			FirebaseService.writeSetting("reviews", this.reviewsEnabled.toString() , this);
-			FirebaseService.writeSetting("tutorials", this.tutorialsEnabled.toString() , this);
+			
+			FirebaseService.writeSetting("reviews", this.reviewsEnabled.toString() , this.getID());
+			FirebaseService.writeSetting("tutorials", this.tutorialsEnabled.toString() , this.getID());
 
 			// save again the entity with the created functions
 			ofy().save().entity(this).now();
@@ -239,7 +238,7 @@ public class Project
 	// who, if provided, will be permanently excluded from doing the microtask.
 	public void queueMicrotask( Key<Microtask> microtaskKey, String excludedWorkerID)
 	{
-		System.out.println("--> PROJECT: ADDING TO QUEUE mtask "+Project.MicrotaskKeyToString(microtaskKey)+" ");
+//		System.out.println("--> PROJECT: ADDING TO QUEUE mtask "+Project.MicrotaskKeyToString(microtaskKey)+" ");
 
 		// if the microtask is not in the queue, add it
 		if( ! microtaskQueue.contains( Project.MicrotaskKeyToString(microtaskKey) ) ){
@@ -254,7 +253,7 @@ public class Project
 
 		// save the queue in Objectify and Firebase
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project);
+		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
 	}
 
 	// Queues the microtask onto the project's review microtask queue
@@ -269,7 +268,7 @@ public class Project
 
 		// save the review queue in Objectify and Firebase
 		ofy().save().entity(this).now();
-		FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project);
+		FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), this.getID());
 	}
 
 	// adds a workerId to the permanent excluded workers for the microtask with microtaskKey
@@ -342,7 +341,7 @@ public class Project
 		// and update the Firebase review queue
 		if ( microtaskKey != null ) {
 			reviewQueue.remove( Project.MicrotaskKeyToString( microtaskKey ) );
-			FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project);
+			FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), this.getID());
 		}
 
 		// else continue looking in the global microtask queue
@@ -357,7 +356,7 @@ public class Project
 			// and update the Firebase microtask queue
 			if ( microtaskKey != null ){
 				microtaskQueue.remove( Project.MicrotaskKeyToString( microtaskKey ) );
-				FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project);
+				FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
 			}
 		}
 
@@ -380,12 +379,11 @@ public class Project
 		else{
 			// assign it to the worker
 			microtaskAssignments.put( workerID,  Project.MicrotaskKeyToString(microtaskKey) );
-			FirebaseService.writeMicrotaskAssigned( Project.MicrotaskKeyToString(microtaskKey), workerID, workerHandle, this, true);
+			FirebaseService.writeMicrotaskAssigned( Project.MicrotaskKeyToString(microtaskKey), workerID, workerHandle, this.getID(), true);
 
 			// write the history log entry about the microtask assignment
 			Microtask mtask = ofy().load().key(microtaskKey).get();
-			project.historyLog().beginEvent(new MicrotaskAssigned(mtask,workerID));
-			project.historyLog().endEvent();
+			HistoryLog.Init(this.getID()).addEvent(new MicrotaskAssigned(mtask,workerID));
 
 			// save the project
 			ofy().save().entity(this).now();
@@ -431,8 +429,7 @@ public class Project
 
 			// write the history log entry about the microtask submission
 			Microtask microtask = ofy().load().key( microtaskKey ).get();
-			project.historyLog().beginEvent(new MicrotaskSubmitted(microtask, workerID));
-			project.historyLog().endEvent();
+			HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
 
 			// If reviewing is enabled and the microtask
 			// is not in [Review, ReuseSearch,DebugTestFailure],
@@ -504,7 +501,7 @@ public class Project
 
 	public void logoutInactiveWorkers(){
 		for ( String workerId : loggedInWorkers){
-			if( ! FirebaseService.isWorkerLoggedIn( workerId, this) ){
+			if( ! FirebaseService.isWorkerLoggedIn( workerId, this.getID()) ){
 				this.logoutWorker( workerId );
 			}
 		}
@@ -533,10 +530,10 @@ public class Project
 
 		// save the queue and the assignments
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project);
+		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
 
 		// write to firebase that the worker logged out
-		FirebaseService.writeWorkerLoggedOut( workerID, this);
+		FirebaseService.writeWorkerLoggedOut( workerID, this.getID());
 	}
 
 
@@ -578,7 +575,7 @@ public class Project
 	// Publishes the history log to Firebase
 	public void publishHistoryLog()
 	{
-		FirebaseService.publishHistoryLog(historyLog.json(), this);
+		FirebaseService.publishHistoryLog(historyLog.json(), this.getID());
 	}
 
 
@@ -590,7 +587,7 @@ public class Project
 	public void enableReviews(Boolean reviewsEnabled)
 	{
 		this.reviewsEnabled = reviewsEnabled;
-		FirebaseService.writeSetting("reviews", reviewsEnabled.toString() , project);
+		FirebaseService.writeSetting("reviews", reviewsEnabled.toString() , this.getID());
 		ofy().save().entity(this).now();
 	}
 
@@ -607,7 +604,7 @@ public class Project
 	public void enableTutorials(Boolean tutorialsEnabled) {
 		// TODO Auto-generated method stub
 		this.tutorialsEnabled = tutorialsEnabled;
-		FirebaseService.writeSetting("tutorials", tutorialsEnabled.toString() , project);
+		FirebaseService.writeSetting("tutorials", tutorialsEnabled.toString() , project.getID());
 		ofy().save().entity(this).now();
 	}
 
