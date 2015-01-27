@@ -19,4 +19,8 @@ public class MicrotaskEvent extends HistoryEvent
 		this.microtaskType = microtask.microtaskName();
 		this.microtaskID   = Long.toString(microtask.getID());
 	}
+	
+	public String getEventType(){
+		return eventType;
+	}
 }

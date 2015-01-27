@@ -10,6 +10,7 @@ import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
@@ -54,10 +55,9 @@ public class WriteTest extends Microtask
 				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(), functionVersion, promptType.name(), "", "", "", ""),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Constructor for CORRECT prompt
@@ -73,10 +73,9 @@ public class WriteTest extends Microtask
 				test2.getID(),
 				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), issueDescription, "", "", ""),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Constructor for FUNCTION_CHANGED prompt
@@ -93,10 +92,9 @@ public class WriteTest extends Microtask
 				test2.getID(),
 				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), "", oldFullDescription, newFullDescription, ""),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Constructor for TESTCASE_CHANGED prompt
@@ -113,10 +111,9 @@ public class WriteTest extends Microtask
 				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), "", "", "", oldTestCase),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Private copy constructor initialize all data elements
@@ -139,10 +136,9 @@ public class WriteTest extends Microtask
 				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), issueDescription,
 				oldFunctionDescription, newFunctionDescription, oldTestCase),
 				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				project.getID());
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this));
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
 	}
 
 	public Microtask copy(Project project)

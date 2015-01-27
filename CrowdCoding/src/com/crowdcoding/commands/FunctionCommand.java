@@ -38,8 +38,7 @@ public abstract class FunctionCommand extends Command
 		{ return new PassedTests(functionID); }
 	public static FunctionCommand failedTests(long functionID)
 		{ return new FailedTests(functionID); }
-	public static FunctionCommand failedTest(long functionID,long testID)
-	{ return new FailedTest(functionID,testID); }
+
 	public static FunctionCommand calleeChangedInterface(long functionID, String oldFullDescription,
 			String newFullDescription)
 		{ return new CalleeChangedInterface(functionID, oldFullDescription, newFullDescription); }
@@ -74,7 +73,7 @@ public abstract class FunctionCommand extends Command
 			execute(function.now(), project);
 
 			// Save the associated artifact to Firebase
-			function.now().storeToFirebase(project);
+			function.now().storeToFirebase(project.getID());
 		}
 	}
 
@@ -114,7 +113,7 @@ public abstract class FunctionCommand extends Command
 		{
 			Function newFunction = new Function(name, returnType, paramNames, paramTypes, paramDescriptions, header, description,
 					code,readOnly , project);
-			newFunction.storeToFirebase(project);
+			newFunction.storeToFirebase(project.getID());
 			newFunction.createTest(tests);
 		}
 
@@ -217,26 +216,6 @@ public abstract class FunctionCommand extends Command
 		}
 	}
 
-	protected static class FailedTest extends FunctionCommand
-	{
-		private long testID;
-		public FailedTest(long functionID,long testID)
-		{
-			super(functionID);
-			this.testID = testID;
-		}
-
-		public void execute(Function function, Project project)
-		{
-			LoadResult<Test> test = Test.find(testID, project);
-			if (test == null)
-				System.out.println("Cannot execute FunctionCommand. Could not find the test "
-						+ "for TestID " + testID);
-			else
-				function.failedTest(test.now(),project);
-		}
-	}
-
 	protected static class CalleeChangedInterface extends FunctionCommand
 	{
 		private String oldFullDescription;
@@ -304,7 +283,7 @@ public abstract class FunctionCommand extends Command
 		public void execute(Function function, Project project)
 		{
 			System.out.println("--> FUNCTION COMMAND : "+functionID+" Writing on JobQue");
-			FirebaseService.writeTestJobQueue(functionID, project);
+			FirebaseService.writeTestJobQueue(functionID, project.getID());
 		}
 	}
 

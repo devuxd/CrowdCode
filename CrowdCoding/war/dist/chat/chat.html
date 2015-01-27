@@ -1,5 +1,6 @@
 <ul class="list-group">
 	<li class="list-group-item" ng-repeat="m in chat">
+		<i>{{m.createdAt | date : 'mediumTime' }}</i>
 		<strong>{{m.workerHandle}}</strong> - {{m.text}}
 	</li>
 </ul>

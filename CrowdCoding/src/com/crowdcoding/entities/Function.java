@@ -29,6 +29,7 @@ import com.crowdcoding.entities.microtasks.WriteFunction;
 import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MessageReceived;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.history.PropertyChange;
@@ -291,8 +292,7 @@ public class Function extends Artifact
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();
 
-			project.historyLog().beginEvent(new PropertyChange("implemented",Boolean.toString(isWritten), this));
-			project.historyLog().endEvent();
+			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented",Boolean.toString(isWritten), this));
 		}
 	}
 
@@ -305,8 +305,7 @@ public class Function extends Artifact
 			ofy().save().entity(this).now();
 			notifyBecameDescribed(project);
 
-			project.historyLog().beginEvent(new PropertyChange("hasBeenDescribed", "true", this));
-			project.historyLog().endEvent();
+			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("hasBeenDescribed", "true", this));
 		}
 	}
 
@@ -316,7 +315,6 @@ public class Function extends Artifact
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
-		System.out.println("<<<<<-->FUNCTION ("+this.getID()+"): trying debug with microtaskOut "+microtaskOut+" isWritten "+ isWritten +  "needsDebug "+this.needsDebugging);
 		if (!microtaskOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
@@ -358,7 +356,6 @@ public class Function extends Artifact
 	private void runTestsIfReady(Project project)
 	{
 		Boolean allImplemented = allUnitTestsImplemented();
-		System.out.println("------> "+allImplemented);
 		if(isWritten && allImplemented && this.needsDebugging){
 			// enqueue test job in firebase
 			this.waitForTestResult=true;
@@ -533,9 +530,6 @@ public class Function extends Artifact
 		WriteTestCases writeTestCases = new WriteTestCases(this, project);
 		ProjectCommand.queueMicrotask(writeTestCases.getKey(), null);
 
-//		project.historyLog().beginEvent(new MicrotaskSpawned(writeTestCases));
-//		project.historyLog().endEvent();
-//		project.publishHistoryLog();
 
 
 		// Spawn off microtask to sketch the method
@@ -626,7 +620,6 @@ public class Function extends Artifact
 		// Update or create tests for any stub
 		for (TestDTO testDTO : dto.stubs)
 		{
-			System.out.println("--> FUNCTION: creating test "+testDTO.code);
 			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
 		}
 
@@ -642,13 +635,12 @@ public class Function extends Artifact
 	{
 		waitForTestResult=false;
 		//microtaskOutCompleted();
-		project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
+		HistoryLog.Init(project.getID()).addEvent(new MessageReceived("PassedTests", this));
 		System.out.println("FUNCTION ID: "+ this.getID()+" ALL TEST PASSED");
 		this.needsDebugging = false;
 		ofy().save().entity(this).now();
 
 		lookForWork(project);
-		project.historyLog().endEvent();
 	}
 
 	// This method notifies the function that it has failed at least one of its tests
@@ -660,26 +652,14 @@ public class Function extends Artifact
 
 		System.out.println("FUNCTION ID: "+ this.getID()+" TEST FAILED");
 
-		project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
+		HistoryLog.Init(project.getID()).addEvent(new MessageReceived("FailedTests", this));
 		this.needsDebugging = true;
 		ofy().save().entity(this).now();
 
 		lookForWork(project);
-		project.historyLog().endEvent();
 	}
 
-	public void failedTest(Test test,Project project)
-	{
-		waitForTestResult=false;
-		System.out.println("FUNCTION ID: "+ this.getID()+" TEST FAILED");
 
-		project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
-		this.needsDebugging = true;
-		ofy().save().entity(this).now();
-
-		lookForWork(project);
-		project.historyLog().endEvent();
-	}
 
 	// Provides notification that a test has transitioned to being implemented
 	public void testBecameImplemented(Test test, Project project)
@@ -719,9 +699,8 @@ public class Function extends Artifact
 
 	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, String pseudoCall, Project project)
 	{
-		project.historyLog().beginEvent(new MessageReceived("AddCall", this));
+		HistoryLog.Init(project.getID()).addEvent(new MessageReceived("AddCall", this));
 		queueMicrotask(new WriteCall(this, calleeName, calleeFullDescription, pseudoCall, project), project);
-		project.historyLog().endEvent();
 	}
 
 	public void calleeChangedInterface(String oldFullDescription, String newFullDescription, Project project)
@@ -779,7 +758,7 @@ public class Function extends Artifact
 			}
 	}
 
-	public void storeToFirebase(Project project)
+	public void storeToFirebase(String projectId)
 	{
 		if (hasBeenDescribed)
 		{
@@ -787,7 +766,7 @@ public class Function extends Artifact
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
 					paramTypes, paramDescriptions, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging, readOnly,
 					queuedMicrotasks.size()),
-					this.id, version, project);
+					this.id, version, projectId);
 		}
 	}
 

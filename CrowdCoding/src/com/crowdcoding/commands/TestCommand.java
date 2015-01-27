@@ -46,7 +46,9 @@ public abstract class TestCommand extends Command
 			execute(test.now(), project);
 
 			// Save the associated artifact to Firebase
-			test.now().storeToFirebase(project);
+
+			test.now().storeToFirebase(project.getID());
+
 		}
 	}
 
@@ -74,7 +76,7 @@ public abstract class TestCommand extends Command
 		public void execute(Project project)
 		{
 			Test test = new Test(description, functionID, functionName, project, functionVersion);
-			test.storeToFirebase(project);
+			test.storeToFirebase(project.getID());
 		}
 
 		public void execute(Test test, Project project)
@@ -113,7 +115,7 @@ public abstract class TestCommand extends Command
 		public void execute(Project project)
 		{
 			Test test = new Test(functionID, functionName, description, inputs, output, code, project, functionVersion, readOnly);
-			test.storeToFirebase(project);
+			test.storeToFirebase(project.getID());
 		}
 
 		public void execute(Test test, Project project)

@@ -8,6 +8,7 @@ import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSkipped;
 import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.util.FirebaseService;
@@ -82,9 +83,6 @@ public /*abstract*/ class Microtask
 
 				System.out.println("--> MICROTASK: submitted json "+jsonDTOData);
 
-				//project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
-				//project.historyLog().endEvent();
-
 				doSubmitWork(dto, workerID, project);
 				this.completed = true;
 
@@ -93,10 +91,10 @@ public /*abstract*/ class Microtask
 				// Save the associated artifact to Firebase if there is one
 				Artifact owningArtifact = this.getOwningArtifact();
 				if (owningArtifact != null)
-					owningArtifact.storeToFirebase(project);
+					owningArtifact.storeToFirebase(project.getID());
 
 				// write completed on firebase
-				FirebaseService.writeMicrotaskCompleted(Project.MicrotaskKeyToString(this.getKey()), workerID, project, this.completed);
+				FirebaseService.writeMicrotaskCompleted(Project.MicrotaskKeyToString(this.getKey()), workerID, project.getID(), this.completed);
 				// increase the stats counter
 				WorkerCommand.increaseStat(workerID, "microtasks",1);
 
@@ -114,11 +112,10 @@ public /*abstract*/ class Microtask
 
 	public void skip(String workerID, Project project)
 	{
-		project.historyLog().beginEvent(new MicrotaskSkipped(this, workerID));
 		// Increment the point value by 10
 		this.submitValue *= 1.5;
 		ofy().save().entity(this).now();
-		project.historyLog().endEvent();
+		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSkipped(this, workerID));
 	}
 
 

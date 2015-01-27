@@ -53,9 +53,10 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 	// distributed test work
     user.listenForJobs = function(){
 		// worker
+
+		var testRunner = new TestRunnerFactory.instance({submitToServer: true});
 		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
-			var testRunner = new TestRunnerFactory.instance({submitToServer: true});
 			testRunner.onTestsFinish(function(){
 				console.log('------- tests finished received');
 				whenFinished();

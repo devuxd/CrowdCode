@@ -973,7 +973,7 @@ myApp.directive('examplesList',function($rootScope,$popover,ADTService){
                     $rootScope.examplesListPopover=[];
                 var exampleNumber= loadExamples($scope.paramType);
                 if(exampleNumber.length==1){
-                   $scope.value=exampleNumber[0].value;
+                   $scope.value = exampleNumber[0].value;
                    $scope.$apply();
                    if($rootScope.examplesListPopoverKey!==undefined){
                        $rootScope.examplesListPopover[ $rootScope.examplesListPopoverKey].$promise.then($rootScope.examplesListPopover[ $rootScope.examplesListPopoverKey].hide);
