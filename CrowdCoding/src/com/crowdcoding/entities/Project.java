@@ -416,7 +416,7 @@ public class Project
 		// submit only if the request come from
 		// the current worker of the microtask
 		String assignedMicrotask =  microtaskAssignments.get( workerID );
-		if( assignedMicrotask.equals( Project.MicrotaskKeyToString(microtaskKey) )){
+		if( assignedMicrotask!=null && assignedMicrotask.equals( Project.MicrotaskKeyToString(microtaskKey) )){
 
 			// Unassign the microtask from the worker
 			microtaskAssignments.put( workerID, null );
@@ -448,21 +448,28 @@ public class Project
 	// Precondition - the worker must be assigned to this microtask
 	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Project project)
 	{
-		// Unassign the microtask from the worker and exclude the worker
-		microtaskAssignments.put( workerID, null);
-		addExcludedWorkerForMicrotask( microtaskKey, workerID);
+		// submit only if the request come from
+		// the current worker of the microtask
+		String assignedMicrotask =  microtaskAssignments.get( workerID );
+		if( assignedMicrotask!=null && assignedMicrotask.equals( Project.MicrotaskKeyToString(microtaskKey) )){
 
-		// Add the work back to the appropriate queue
-		Microtask microtask= ofy().load().key(microtaskKey).now();
-		if(microtask.microtaskName()!="Review")
-			queueMicrotask( microtaskKey, workerID);
-		else
-			queueReviewMicrotask(microtaskKey, workerID);
+			// Unassign the microtask from the worker and exclude the worker
+			microtaskAssignments.put( workerID, null);
+			addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
-		resetIfAllSkipped( microtaskKey );
+			// Add the work back to the appropriate queue
+			Microtask microtask= ofy().load().key(microtaskKey).now();
+			if(microtask.microtaskName()!="Review")
+				queueMicrotask( microtaskKey, workerID);
+			else
+				queueReviewMicrotask(microtaskKey, workerID);
 
-		ofy().save().entity(this).now();
-		MicrotaskCommand.skip( microtaskKey, workerID);
+			resetIfAllSkipped( microtaskKey );
+
+			ofy().save().entity(this).now();
+			MicrotaskCommand.skip( microtaskKey, workerID);
+
+		}
 	}
 
 

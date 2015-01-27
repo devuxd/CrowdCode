@@ -10,30 +10,30 @@ import com.google.appengine.api.urlfetch.HTTPMethod;
 /* HistoryLogs capture the events that occur during a session. As they only persist for the life
  * of a session, they are not stored in the DataStore. A HistoryLog consists of a tree of events.
  * Calling beginEvent begins a list of entries that are the child of the previously active entry.
- * 
+ *
  * Note: there must be a single root event. All events may have multiple children.
  */
-public class HistoryLog 
+public class HistoryLog
 {
 	private EventNode root;
 	private Stack<EventNode> eventStack = new Stack<EventNode>();
-	
-	
+
+
 	public HistoryLog(){
 		//System.out.println("== NEW HISTORY LOG");
 	}
-	
+
 	public class EventNode
 	{
 		public List<EventNode> children = new ArrayList<EventNode>();
 		public HistoryEvent event;
-		
+
 		public EventNode(HistoryEvent event)
 		{
 			this.event = event;
 		}
 	}
-	
+
 	public void beginEvent(HistoryEvent event)
 	{
 		EventNode node = new EventNode(event);
@@ -44,38 +44,40 @@ public class HistoryLog
 			node.event.parentID = root.event.generateID();
 			root.children.add(node);
 		}
-		
-		
-//		// If we are not at the bottom of the stack, add this node as a child of the top of the stack 
-//		if (!eventStack.isEmpty())		
+
+
+//		// If we are not at the bottom of the stack, add this node as a child of the top of the stack
+//		if (!eventStack.isEmpty())
 //		{
 //			EventNode parent = eventStack.peek();
 //			node.event.parentID = parent.event.generateID();
 //			parent.children.add(node);
 //		}
-		
+
 		eventStack.push(node);
 		//System.out.println("---OPEN "+event.generateID());
 	}
-		
+
 	public void endEvent()
 	{
-		EventNode pop = eventStack.pop();	
+		EventNode pop;
+		if(eventStack!=null && !eventStack.isEmpty() )
+			pop = eventStack.pop();
 
 		//System.out.println("---CLOSE "+pop.event.generateID());
-	}	
-	
-	// Gets a representation as a list of pairs - a string event ID and a JSON string - capturing each 
+	}
+
+	// Gets a representation as a list of pairs - a string event ID and a JSON string - capturing each
 	// event in the log.
 	public List<Pair<String, String>> json()
 	{
 		List<Pair<String, String>> json = new ArrayList<Pair<String, String>>();
-		
+
 		// Do an in-order traversal of the tree - first visit the parent, then each child (recursively).
 		if (root != null)
 		{
 			Stack<EventNode> traversalStack = new Stack<EventNode>();
-			traversalStack.push(root);			
+			traversalStack.push(root);
 			while(!traversalStack.isEmpty())
 			{
 				// Visit the top of the stack. Then add any children in reverse order, to preserve ordering.
