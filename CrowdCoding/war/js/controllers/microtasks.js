@@ -122,11 +122,12 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             }
             else{
 
-                if($scope.model.newTestcase != "")
+                if($scope.model.newTestcase !== "")
                     $scope.addTestCase();
 
                 // prepare form data for submission
                 formData = {
+                        isFunctionDispute : false,
                         testCases       : $scope.model.testcases,
                         functionVersion : $scope.funct.version,
                 };
@@ -968,8 +969,10 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
             $scope.testData.disputeText = $scope.reissuedMicrotask.submission.disputeText;
         }
         else{
-            $scope.testData.inputs=$scope.reissuedMicrotask.submission.simpleTestInputs;
-            $scope.testData.output=$scope.reissuedMicrotask.submission.simpleTestOutput;
+            if(angular.isDefined($scope.reissuedMicrotask.submission.simpleTestInputs)&&angular.isDefined($scope.reissuedMicrotask.submission.simpleTestOutput)){
+                $scope.testData.inputs=$scope.reissuedMicrotask.submission.simpleTestInputs;
+                $scope.testData.output=$scope.reissuedMicrotask.submission.simpleTestOutput;
+            }
         }
     }
 
@@ -1041,6 +1044,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
                     functionVersion: $scope.funct.version,
                     code: '',
                     inDispute: true,
+                    isFunctionDispute: false,
                     disputeText: $scope.testData.disputeText,
                     hasSimpleTest: true,
                     simpleTestInputs: [],
@@ -1070,6 +1074,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
                     functionVersion: $scope.funct.version,
                     code: testCode,
                     hasSimpleTest: true,
+                    isFunctionDispute: false,
                     inDispute: false,
                     disputeText: '',
                     simpleTestInputs: $scope.testData.inputs,
