@@ -83,7 +83,6 @@ myApp.controller('AppController', [
 
 				$rootScope.$broadcast('loadMicrotask');
 
-				console.log('asdad');
 				$rootScope.$broadcast('run-tutorial','main',function(){
 					$rootScope.$broadcast('showProfileModal');
 				});
@@ -92,7 +91,7 @@ myApp.controller('AppController', [
 
 
 		$rootScope.$on('sendFeedback', function(event, message) {
-			console.log("message " + message.toString());
+			////console.log("message " + message.toString());
 			var feedback = {
 				// 'microtaskType': $scope.microtask.type,
 				// 'microtaskID': $scope.microtask.id,
@@ -113,7 +112,7 @@ myApp.controller('AppController', [
 
 
 		// userService.startTutorial( 'Main' , false, function(){
-		// 	console.log('printed after Main tutorial!');
+		// 	////console.log('printed after Main tutorial!');
 		// });
 	
 }]);
@@ -129,12 +128,12 @@ myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', '
 	$scope.selectedAvatar = -1;
 
 	$scope.selectAvatar = function(number){
-		console.log('selecting avatar '+number);
+		////console.log('selecting avatar '+number);
 		$scope.selectedAvatar = number;
 	};
 
 	$scope.saveAvatar = function() {
-		console.log('uploadedImage',$scope.uploadedAvatar);
+		////console.log('uploadedImage',$scope.uploadedAvatar);
 		if( $scope.uploadedAvatar !== null){
 			var file = $scope.uploadedAvatar;
 			var uploadUrl = "/user/pictureChange";
@@ -194,7 +193,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	// request a new microtask from the backend and if success
 	// inizialize template and microtask-related values
 	$scope.$on('loadMicrotask', function() {
-
+			$scope.canSubmit=true;
 		// if is != null, stop the queue checking interval
 		if (checkQueueTimeout !== null) {
 			$timeout.cancel(checkQueueTimeout);
@@ -220,7 +219,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 				var testId = angular.isDefined($scope.microtask.testID) && $scope.microtask.testID!==0 ? $scope.microtask.testID : null;
 				if ( testId !== null ) {
 					var TestObj = TestList.get(testId);
-					//console.log('Loaded test %o of id %d',TestObj,testId);
+					////console.log('Loaded test %o of id %d',TestObj,testId);
 					$scope.test = TestObj.rec;
 				}
 
@@ -285,25 +284,32 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	// listen for message 'submit microtask'
 	$scope.$on('submitMicrotask', function(event, formData) {
-		microtasks.submit($scope.microtask,formData).then(function(){
-			$scope.$broadcast('loadMicrotask');
-		},function(){
-			console.error('Error during microtask submit!');
-		});
+
+		if($scope.canSubmit){
+			$scope.canSubmit=false;
+			microtasks.submit($scope.microtask,formData).then(function(){
+				$scope.$broadcast('loadMicrotask');
+			},function(){
+				console.error('Error during microtask submit!');
+			});
+		}
 	});
 
 	// listen for message 'skip microtask'
 	$scope.$on('skipMicrotask', function(event) {
-
-		microtasks.submit($scope.microtask,null).then(function(){
-			$scope.$broadcast('loadMicrotask');
-		},function(){
-			console.error('Error during microtask skip!');
-		});
+		//console.log("skip with value: "+$scope.canSubmit);
+		if($scope.canSubmit){
+			$scope.canSubmit=false;
+			microtasks.submit($scope.microtask,null).then(function(){
+				$scope.$broadcast('loadMicrotask');
+			},function(){
+				console.error('Error during microtask skip!');
+			});
+		}
 	});
 
     $scope.focusSubmit = function(element){
-        console.log($('#submitBtn').focus());
+        //console.log($('#submitBtn').focus());
     };
 
 }]);
