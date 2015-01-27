@@ -148,12 +148,23 @@ img { width:100%;}
 
 	<div class="row">
       <div class="jumbotron" style="text-align:center;">
-        	<a class="btn btn-lg btn-primary" href="/allTogetherDrawV3" role="button">Get Started!</a>
+        	<a class="btn btn-lg btn-primary" href="/allTogetherDrawV3" id="btnStart" role="button">Get Started!</a>
       </div>
 	</div>
       
     </div> 
 
 
+<script>
+var isChromium = window.chrome,
+vendorName = window.navigator.vendor;
+
+if ( !(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.")  ) {
+   $('#btnStart').on('click',function(event){
+   		event.preventDefault();
+   		alert('Please, use Google Chrome!');
+   });
+}
+</script>
 </body>
 </html>
