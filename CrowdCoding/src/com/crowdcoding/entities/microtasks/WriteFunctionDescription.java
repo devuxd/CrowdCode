@@ -34,9 +34,9 @@ public class WriteFunctionDescription extends Microtask
 	}
 
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, String callDescription, Function caller, Project project)
+	public WriteFunctionDescription(Function function, String callDescription, Function caller, String projectId)
 	{
-		super(project);
+		super(projectId);
 		this.submitValue = 8;
 		this.callDescription = callDescription;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
@@ -46,15 +46,15 @@ public class WriteFunctionDescription extends Microtask
 				function.getName(),
 				function.getID(),
 				false, submitValue,callDescription, caller.getID()),
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	public Microtask copy(Project project)
+	public Microtask copy(String projectId)
 	{
-		return new WriteFunctionDescription( (Function) getOwningArtifact(),this.callDescription,this.caller.getValue(), project);
+		return new WriteFunctionDescription( (Function) getOwningArtifact(),this.callDescription,this.caller.getValue(), projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -62,7 +62,7 @@ public class WriteFunctionDescription extends Microtask
 		return Key.create( function.getKey(), Microtask.class, this.id );
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
 		FunctionDescriptionDTO functionDTO = (FunctionDescriptionDTO) dto;
 
@@ -73,7 +73,7 @@ public class WriteFunctionDescription extends Microtask
 		String code = "{\n\t//#Mark this function as implemented by removing this line.\n}";
 
 		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
-				functionDTO.paramTypes, functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, code, project);
+				functionDTO.paramTypes, functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, code, projectId);
 
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter

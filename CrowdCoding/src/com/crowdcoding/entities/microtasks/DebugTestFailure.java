@@ -36,9 +36,9 @@ public class DebugTestFailure extends Microtask
 	}
 
 	// Constructor for initial construction.
-	public DebugTestFailure(Function function, Project project)
+	public DebugTestFailure(Function function, String projectId)
 	{
-		super(project);
+		super(projectId);
 		this.submitValue = 15;
 
 		this.function = (Ref<Function>) Ref.create(function.getKey());
@@ -53,17 +53,17 @@ public class DebugTestFailure extends Microtask
 						false,
 						submitValue,
 						function.getID()),
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Constructor for initial construction.
-	public DebugTestFailure(Function function, Test test, Project project)
+	public DebugTestFailure(Function function, Test test, String projectId)
 	{
 
-		super(project);
+		super(projectId);
 		this.submitValue = 15;
 
 		this.function   = (Ref<Function>) Ref.create(function.getKey());
@@ -79,15 +79,15 @@ public class DebugTestFailure extends Microtask
 				submitValue,
 				test.getID(),
 				function.getID()),
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	public Microtask copy(Project project)
+	public Microtask copy(String projectId)
 	{
-		return new DebugTestFailure(  (Function) getOwningArtifact(), project);
+		return new DebugTestFailure(  (Function) getOwningArtifact(), projectId);
 	}
 
 
@@ -96,19 +96,19 @@ public class DebugTestFailure extends Microtask
 		return Key.create( function.getKey(), Microtask.class, this.id );
 	}
 
-	protected void doSubmitWork( DTO dto, String workerID, Project project)
+	protected void doSubmitWork( DTO dto, String workerID, String projectId)
 	{	System.out.println("--> DEBUG TEST FAILURE: submitting microtask");
-		function.get().debugTestFailureCompleted((FunctionDTO) dto, project);
+		function.get().debugTestFailureCompleted((FunctionDTO) dto, projectId);
 		FirebaseService.postToNewsfeed(workerID, (
 	    		new NewsItemInFirebase(
 	    			this.submitValue,
 	    			this.microtaskName(),
 	    			"SubmittedDebugTestFailure",
-	    			Project.MicrotaskKeyToString(  this.getKey() ),
+	    			Microtask.keyToString(this.getKey()),
 	    			-1 // differentiate the reviews from the 0 score tasks
 				).json()),
-				Project.MicrotaskKeyToString(  this.getKey() ),
-				project.getID()
+				Microtask.keyToString(this.getKey()),
+				projectId
 	    );
 
 		FunctionDTO fDTO = (FunctionDTO) dto;
@@ -146,9 +146,9 @@ public class DebugTestFailure extends Microtask
 		return function.getValue().getEscapedCode();
 	}
 
-	public String[] getTestCases(Project project)
+	public String[] getTestCases(String projectId)
 	{
-		List<Ref<Test>> tempCases = function.getValue().getTestCases(project);
+		List<Ref<Test>> tempCases = function.getValue().getTestCases(projectId);
 		String [] stringVersion = new String[tempCases.size()];
 		int i = 0;
 		for(Ref<Test>  testRef : tempCases)
@@ -169,9 +169,9 @@ public class DebugTestFailure extends Microtask
 		return stringVersion;
 	}
 
-	public String[] getTestDescriptions(Project project)
+	public String[] getTestDescriptions(String projectId)
 	{
-		List<Ref<Test>> tempCases = function.getValue().getTestCases(project);
+		List<Ref<Test>> tempCases = function.getValue().getTestCases(projectId);
 		String [] stringVersion = new String[tempCases.size()];
 		int i = 0;
 		for(Ref<Test>  testRef : tempCases)

@@ -12,6 +12,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
@@ -23,8 +24,8 @@ import com.googlecode.objectify.annotation.Parent;
 @Entity
 public /*abstract*/ class Artifact
 {
-	@Load Key<Project> project;
-	@Id protected long id;
+	@Id protected Long id;
+	@Index String projectId;
 	protected int version;		// version of the artifact
 
 	// Queued microtasks waiting to be done (not yet in the ready state)
@@ -37,22 +38,20 @@ public /*abstract*/ class Artifact
 	}
 
 	// Constructor for initialization.
-	protected Artifact(Project project)
+	protected Artifact(String projectId)
 	{
-		this.project = project.getKey();
-		id = project.generateID("Artifact");
-		version = 0;
+		this.projectId = projectId;
 	}
 
 	public Key<? extends Artifact> getKey()
 	{
-		return Key.create( null, Artifact.class, id);
+		return Key.create(Artifact.class,id);
 	}
 
 	// Gets the corresponding key for an artifact based on its id
-	public static Key<? extends Artifact> getKey(long id, Project project)
+	public static Key<? extends Artifact> getKey(Long id)
 	{
-		return Key.create( null, Artifact.class, id);
+		return Key.create( Artifact.class, id );
 	}
 
 	public long getID()
@@ -76,15 +75,15 @@ public /*abstract*/ class Artifact
 	//////////////////////////////////////////////////////////////////////////////
 
 	// Queues the specified microtask and looks for work
-	public void queueMicrotask(Microtask microtask, Project project)
+	public void queueMicrotask(Microtask microtask, String projectId)
 	{
 		queuedMicrotasks.add(Ref.create(microtask.getKey()));
 		ofy().save().entity(this).now();
-		lookForWork(project);
+		lookForWork();
 	}
 
 	// Makes the specified microtask out for work
-	protected void makeMicrotaskOut(Microtask microtask, Project project)
+	protected void makeMicrotaskOut(Microtask microtask)
 	{
 		ProjectCommand.queueMicrotask(microtask.getKey(), null);
 		microtaskOut = true;
@@ -112,13 +111,13 @@ public /*abstract*/ class Artifact
 
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	protected void lookForWork(Project project)
+	protected void lookForWork()
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
 		if (!microtaskOut && !queuedMicrotasks.isEmpty())
 		{
-			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
+			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get());
 		}
 	}
 

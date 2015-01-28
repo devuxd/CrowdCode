@@ -269,6 +269,12 @@ public class CrowdServlet extends HttpServlet
 				Project.Clear(projectID);
 				Project.Construct(projectID);
 			}
+			else if (command.equals("CLEAR"))
+			{
+				output.append("PROJECT CLEAR executed at " + currentTime.toString() + "\n");
+
+				Project.Clear(projectID);
+			}
 			else if (command.equals("REVIEWSON"))
 			{
 				output.append("REVIEWS ON executed at " + currentTime.toString() + "\n");
@@ -468,14 +474,13 @@ public class CrowdServlet extends HttpServlet
             	Key<Microtask> microtaskKey = project.lookupMicrotaskAssignment(workerID);
             	if (microtaskKey == null)
             	{
-            		microtaskKey = project.assignMicrotask(workerID, workerHandle);
+            		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
             	}
 
             	return microtaskKey;
             }
         });
     	
-
         HistoryLog.Init(projectID).publish();
         FirebaseService.publish();
 
@@ -547,6 +552,8 @@ public class CrowdServlet extends HttpServlet
 	// Executes all of the specified commands and any commands that may subsequently be generated
 	private void executeCommands(List<Command> commands, final String projectId)
 	{
+
+		System.out.println("----> PROJECT ID IS "+projectId);
 		Queue<Command> commandQueue = new LinkedList<Command>(commands);
 		// Execute commands until done, adding commands as created.
         while(!commandQueue.isEmpty())
@@ -555,18 +562,18 @@ public class CrowdServlet extends HttpServlet
         	commandQueue.addAll(ofy().transact(new Work<List<Command>>() {
 	            public List<Command> run()
 	            {
-            	    Project project = Project.Create(projectId);
 					CommandContext context = new CommandContext();
-					command.execute(project);
+					command.execute(projectId);
 					return context.commands();
 	            }
 	        }));
+
+            // history log writes and the other 
+            // firebase writes are done
+            // outside of the transactions
+            HistoryLog.Init(projectId).publish();
+            FirebaseService.publish();
         }
-        // history log writes and the other 
-        // firebase writes are done
-        // outside of the transactions
-        HistoryLog.Init(projectId).publish();
-        FirebaseService.publish();
 	}
 
 	// Writes the specified html message to resp, wrapping it in an html page

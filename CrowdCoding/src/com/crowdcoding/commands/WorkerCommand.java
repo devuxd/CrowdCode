@@ -33,8 +33,9 @@ public abstract class WorkerCommand extends Command
 		CommandContext.ctx.addCommand(command);
 	}
 	
-	public void execute(Project project)
+	public void execute(String projectId)
 	{
+		Project project = Project.Create(projectId);
 		Worker worker = find(workerID, project);
 		if (worker == null)		
 			System.out.println("Cannot execute WorkerCommand. Could not find the worker for WorkerID " 
@@ -44,6 +45,8 @@ public abstract class WorkerCommand extends Command
 			execute(worker, project);
 		}
 	}
+
+	public abstract void execute(Worker worker, Project project);
 	
 	// Finds the specified worker. Returns null if no such worker exists.
 	// Preconditions: 
@@ -53,8 +56,6 @@ public abstract class WorkerCommand extends Command
 		return ofy().load().key(Worker.getKey(project.getKey(), userid)).get();
 	}
 
-	public abstract void execute(Worker worker, Project project);
-		
 	protected static class AwardPoints extends WorkerCommand
 	{
 		private int points;

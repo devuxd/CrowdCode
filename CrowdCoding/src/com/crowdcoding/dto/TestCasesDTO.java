@@ -24,12 +24,12 @@ public class TestCasesDTO extends DTO
 	// Builds a corresponding TestCasesDTO from the specified function.
 	// Only includes the functions tests that are actual test cases (with a description) and not
 	// simply mocks.
-	public TestCasesDTO(Function function, Project project)
+	public TestCasesDTO(Function function, String projectId)
 	{
 
 		this.isFunctionDispute=false;
 		//this.disputeText="";
-		for (Ref<Test> testRef : function.getTestCases(project))
+		for (Ref<Test> testRef : function.getTestCases(projectId))
 		{
 			Test test = Test.load(testRef);
 			if (test.hasDescription())

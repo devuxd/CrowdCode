@@ -42,9 +42,9 @@ public class WriteTest extends Microtask
 	}
 
 	// Constructor for WRITE prompt
-	public WriteTest(Test test, Project project, int functionVersion)
+	public WriteTest(Test test, String projectId, int functionVersion)
 	{
-		super(project);
+		super(projectId);
 		this.promptType = PromptType.WRITE;
 		this.test = (Ref<Test>) Ref.create(test.getKey());
 
@@ -54,16 +54,16 @@ public class WriteTest extends Microtask
 				test.getName(),
 				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(), functionVersion, promptType.name(), "", "", "", ""), 
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Constructor for CORRECT prompt
-	public WriteTest(Test test2, String issueDescription, Project project, int functionVersion)
+	public WriteTest(Test test2, String issueDescription, String projectId, int functionVersion)
 	{
-		super(project);
+		super(projectId);
 		this.promptType = PromptType.CORRECT;
 		this.test = (Ref<Test>) Ref.create(test2.getKey());
 		this.issueDescription = issueDescription;
@@ -72,16 +72,16 @@ public class WriteTest extends Microtask
 				test2.getName(),
 				test2.getID(),
 				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), issueDescription, "", "", ""), 
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Constructor for FUNCTION_CHANGED prompt
-	public WriteTest(Test test2, String oldFullDescription, String newFullDescription, Project project, int functionVersion)
+	public WriteTest(Test test2, String oldFullDescription, String newFullDescription, String projectId, int functionVersion)
 	{
-		super(project);
+		super(projectId);
 		this.promptType = PromptType.FUNCTION_CHANGED;
 		this.test = (Ref<Test>) Ref.create(test2.getKey());
 		this.oldFunctionDescription = oldFullDescription;
@@ -91,16 +91,16 @@ public class WriteTest extends Microtask
 				test2.getName(),
 				test2.getID(),
 				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), "", oldFullDescription, newFullDescription, ""),
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Constructor for TESTCASE_CHANGED prompt
-	public WriteTest(Project project, Test test, String oldTestCase, int functionVersion)
+	public WriteTest(String projectId, Test test, String oldTestCase, int functionVersion)
 	{
-		super(project);
+		super(projectId);
 		this.promptType = PromptType.TESTCASE_CHANGED;
 		this.test = (Ref<Test>) Ref.create(test.getKey());
 		this.oldTestCase = oldTestCase;
@@ -110,17 +110,17 @@ public class WriteTest extends Microtask
 				test.getName(),
 				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), "", "", "", oldTestCase), 
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
 	// Private copy constructor initialize all data elements
 	private WriteTest(Test test, PromptType promptType, String issueDescription, String oldFunctionDescription,
-			String newFunctionDescription, String oldTestCase, Project project, int functionVersion)
+			String newFunctionDescription, String oldTestCase, String projectId, int functionVersion)
 	{
-		super(project);
+		super(projectId);
 		this.test = (Ref<Test>) Ref.create(test.getKey());
 		this.promptType = promptType;
 		this.issueDescription = issueDescription;
@@ -135,16 +135,16 @@ public class WriteTest extends Microtask
 				test.getID(),
 				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), issueDescription,
 				oldFunctionDescription, newFunctionDescription, oldTestCase), 
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	public Microtask copy(Project project)
+	public Microtask copy(String projectId)
 	{
 		return new WriteTest( (Test) getOwningArtifact() , this.promptType, this.issueDescription,
-				this.oldFunctionDescription, this.newFunctionDescription, this.oldTestCase, project, functionVersion);
+				this.oldFunctionDescription, this.newFunctionDescription, this.oldTestCase, projectId, functionVersion);
 	}
 
 	public Key<Microtask> getKey()
@@ -152,9 +152,9 @@ public class WriteTest extends Microtask
 		return Key.create( test.getKey(), Microtask.class, this.id );
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID,String projectId)
 	{
-		test.get().writeTestCompleted((TestDTO) dto, project);
+		test.get().writeTestCompleted((TestDTO) dto, projectId);
 
 
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
@@ -174,9 +174,9 @@ public class WriteTest extends Microtask
 		return "/html/microtasks/writeTest.jsp";
 	}
 
-	public Function getFunction(Project project)
+	public Function getFunction(String projectId)
 	{
-		return Function.find(test.getValue().getFunctionID(), project).get();
+		return Function.find(test.getValue().getFunctionID()).get();
 	}
 
 	public Artifact getOwningArtifact()

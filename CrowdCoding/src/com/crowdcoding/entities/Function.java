@@ -88,25 +88,25 @@ public class Function extends Artifact
 
 	// Constructor for a function that has a full description and code
 	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, List<String> paramDescriptions, String header,
-			String description, String code, boolean readOnly, Project project)
+			String description, String code, boolean readOnly, String projectId)
 	{
-		super(project);
+		super(projectId);
 		//this.needsDebugging=true;
 		this.readOnly=readOnly;
 		isWritten = false;
-		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, project);
+		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, projectId);
 	}
 
 	// Constructor for a function that only has a short call description and still needs a full description
-	public Function(String callDescription, Function caller, Project project)
+	public Function(String callDescription, Function caller, String projectId)
 	{
-		super(project);
+		super(projectId);
 		//this.needsDebugging=true;
 
 		isWritten = false;
 
 		// Spawn off a microtask to write the function description
-		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, project), project);
+		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, projectId));
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -215,12 +215,12 @@ public class Function extends Artifact
 
 	// ------- TEST CASES
 
-	public List<Ref<Test>> getTestCases(Project project)
+	public List<Ref<Test>> getTestCases(String projectId)
 	{
 		// Build refs for each test case
 		ArrayList<Ref<Test>> testRefs = new ArrayList<Ref<Test>>();
 		for (long testID : tests)
-			testRefs.add( (Ref<Test>) Ref.create(Artifact.getKey(testID, project)) );
+			testRefs.add( (Ref<Test>) Ref.create( Artifact.getKey(testID) ) );
 
 		return testRefs;
 	}
@@ -284,33 +284,33 @@ public class Function extends Artifact
 	//  PRIVATE CORE FUNCTIONALITY
 	//////////////////////////////////////////////////////////////////////////////
 
-	private void setWritten(boolean isWritten, Project project)
+	private void setWritten(boolean isWritten, String projectId)
 	{
 		if (this.isWritten != isWritten)
 		{
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();
 
-			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented",Boolean.toString(isWritten), this));
+			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented",Boolean.toString(isWritten), this));
 		}
 	}
 
 	// Sets the function as being described
-	private void setDescribed(Project project)
+	private void setDescribed(String projectId)
 	{
 		if (!this.hasBeenDescribed)
 		{
 			this.hasBeenDescribed = true;
 			ofy().save().entity(this).now();
-			notifyBecameDescribed(project);
+			notifyBecameDescribed(projectId);
 
-			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("hasBeenDescribed", "true", this));
+			HistoryLog.Init(projectId).addEvent(new PropertyChange("hasBeenDescribed", "true", this));
 		}
 	}
 
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	protected void lookForWork(Project project)
+	protected void lookForWork(String projectId)
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
@@ -318,12 +318,12 @@ public class Function extends Artifact
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && this.needsDebugging && this.waitForTestResult==false){
-				DebugTestFailure debug = new DebugTestFailure(this,project);
-				makeMicrotaskOut( debug, project);
-				System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+Project.MicrotaskKeyToString(debug.getKey()));
+				DebugTestFailure debug = new DebugTestFailure(this,projectId);
+				makeMicrotaskOut( debug );
+				System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+ Microtask.keyToString(debug.getKey()));
 			}
 			else if (!queuedMicrotasks.isEmpty())
-				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
+				makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).get() );
 		}
 	}
 
@@ -352,7 +352,7 @@ public class Function extends Artifact
 		return true;
 	}
 
-	private void runTestsIfReady(Project project)
+	private void runTestsIfReady()
 	{
 		Boolean allImplemented = allUnitTestsImplemented();
 		if(isWritten && allImplemented && this.needsDebugging){
@@ -365,7 +365,7 @@ public class Function extends Artifact
 		}
 	}
 
-	private void onWorkerEdited(FunctionDTO dto, Project project)
+	private void onWorkerEdited(FunctionDTO dto, String projectId)
 	{
 		this.needsDebugging=true;
 		// Check if the description or header changed (ignoring whitespace changes).
@@ -374,7 +374,7 @@ public class Function extends Artifact
 		String strippedNewFullDescrip = (dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", "");
 
 		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))
-			notifyDescriptionChanged(dto, project);
+			notifyDescriptionChanged(dto);
 
 		// Update the function data
 		this.code = dto.code;
@@ -388,7 +388,7 @@ public class Function extends Artifact
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
 
 		// Looper over all of the callers, rebuilding our list of callers
-		rebuildCalleeList(dto.calleeIds, project);
+		rebuildCalleeList(dto.calleeIds);
 
 		// Look for pseudocode and psuedocalls
 		List<String> currentPseudoCalls = findPseudocalls(code);
@@ -402,13 +402,13 @@ public class Function extends Artifact
 			List<String> pseudoCode = findPseudocode(code);
 			if(pseudoCode.isEmpty())
 			{
-				setWritten(true, project);
-				runTestsIfReady(project);
+				setWritten(true,projectId);
+				runTestsIfReady();
 			}
 			else
 			{
-				setWritten(false, project);
-				queueMicrotask(new WriteFunction(this, project), project);
+				setWritten(false,projectId);
+				queueMicrotask(new WriteFunction(this,projectId), projectId);
 			}
 		}
 		else
@@ -417,12 +417,12 @@ public class Function extends Artifact
 			{
 				if (!pseudoCalls.contains(callDescription))
 				{
-					setWritten(false, project);
+					setWritten(false, projectId);
 
 					//for any currentPseudoCall not in pseudoCalls, add it
 					newPseudoCalls.add(callDescription);
 					// Spawn microtask immediately, as it does not require access to the function itself
-					Microtask microtask = new ReuseSearch(this, callDescription, project);
+					Microtask microtask = new ReuseSearch(this, callDescription, projectId);
 					ProjectCommand.queueMicrotask(microtask.getKey(), null);
 				}
 			}
@@ -432,12 +432,12 @@ public class Function extends Artifact
 		this.pseudoCalls = currentPseudoCalls;
 
 		ofy().save().entity(this).now();
-		lookForWork(project);
+		lookForWork();
 	}
 
 	// Diffs the new and old callee list, sending notifications to callees about who their
 	// callers are as appropriate. Updates the callee list when done
-	private void rebuildCalleeList(List<Long> calleeIds, Project project)
+	private void rebuildCalleeList(List<Long> calleeIds)
 	{
 		// First, find new callees added, if any
 		List<Long> newCallees = new ArrayList<Long>(calleeIds);
@@ -472,25 +472,25 @@ public class Function extends Artifact
 	//  MICROTASK COMPLETION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
 
-	public void sketchCompleted(FunctionDTO dto, Project project)
+	public void sketchCompleted(FunctionDTO dto, String projectId)
 	{
 		microtaskOutCompleted();
-		onWorkerEdited(dto, project);
+		onWorkerEdited(dto, projectId);
 		//if don't exists test and the submit is from a dispute
 		//respawn the write test case microtask
 		System.out.println("--> FUNCTION ("+this.id+") "+this.name+" : dispute text "+dto.disputeText);
 		if(dto.disputeText!=null && tests.size()==0)
-			queueMicrotask(new WriteTestCases(this, project),project);
+			queueMicrotask(new WriteTestCases(this, projectId),projectId);
 	}
 
-	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, Project project)
+	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, String projectId)
 	{
 		Function callee;
 
 		if (dto.noFunction)
 		{
 			// Create a new function for this call, spawning microtasks to create it.
-			callee = new Function(callDescription, this, project);
+			callee = new Function(callDescription, this, projectId);
 			dto.functionId = callee.getID();
 		}
 	/*	else
@@ -507,7 +507,7 @@ public class Function extends Artifact
 	}
 
 	public void writeDescriptionCompleted(String name, String returnType, List<String> paramNames, List<String> paramTypes,
-			List<String> paramDescriptions, String header, String description, String code, Project project)
+			List<String> paramDescriptions, String header, String description, String code, String projectId)
 	{
 		microtaskOutCompleted();
 		this.name = name;
@@ -521,21 +521,22 @@ public class Function extends Artifact
 		this.linesOfCode = StringUtils.countMatches(this.code, "\n") + 2;
 
 		ofy().save().entity(this).now();
+		System.out.println("Entity function saved with id "+this.id);
 
-		setDescribed(project);
+		setDescribed(projectId);
 
 		//Spawn off microtask to write test cases. As it does not impact the artifact itself,
 		// the microtask can be directly started rather than queued.
-		WriteTestCases writeTestCases = new WriteTestCases(this, project);
+		WriteTestCases writeTestCases = new WriteTestCases(this, projectId);
 		ProjectCommand.queueMicrotask(writeTestCases.getKey(), null);
 
 
 
 		// Spawn off microtask to sketch the method
-		queueMicrotask(new WriteFunction(this, project), project);
+		queueMicrotask(new WriteFunction(this, projectId), projectId);
 	}
 
-	public void writeTestCasesCompleted(TestCasesDTO dto, Project project)
+	public void writeTestCasesCompleted(TestCasesDTO dto, String projectId)
 	{
 		microtaskOutCompleted();
 
@@ -544,7 +545,7 @@ public class Function extends Artifact
 			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeText);
 
 
-			lookForWork(project);
+			lookForWork();
 		}
 		else{
 			for (TestCaseDTO testCase : dto.testCases)
@@ -577,19 +578,19 @@ public class Function extends Artifact
 				}
 			}
 			ofy().save().entity(this).now();
-			lookForWork(project);
+			lookForWork();
 		}
 
 
 	}
 
-	public void writeCallCompleted(FunctionDTO dto, Project project)
+	public void writeCallCompleted(FunctionDTO dto, String projectId)
 	{
 		microtaskOutCompleted();
-		onWorkerEdited(dto, project);
+		onWorkerEdited(dto, projectId);
 	}
 
-	public void debugTestFailureCompleted(FunctionDTO dto, Project project)
+	public void debugTestFailureCompleted(FunctionDTO dto, String projectId)
 	{
 		microtaskOutCompleted();
 		//this.needsDebugging = false;
@@ -608,7 +609,7 @@ public class Function extends Artifact
 			//this.needsDebugging = false;
 			if(!this.code.trim().equals(dto.code.trim()))
 			{ //integrate the new changes
-				onWorkerEdited(dto, project);
+				onWorkerEdited(dto, projectId);
 			}
 		}
 
@@ -630,20 +631,20 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 
 	// This method notifies the function that it has just passed all of its tests.
-	public void passedTests(Project project)
+	public void passedTests(String projectId)
 	{
 		waitForTestResult=false;
 		//microtaskOutCompleted();
-		HistoryLog.Init(project.getID()).addEvent(new MessageReceived("PassedTests", this));
+		HistoryLog.Init(projectId).addEvent(new MessageReceived("PassedTests", this));
 		System.out.println("FUNCTION ID: "+ this.getID()+" ALL TEST PASSED");
 		this.needsDebugging = false;
 		ofy().save().entity(this).now();
 
-		lookForWork(project);
+		lookForWork();
 	}
 
 	// This method notifies the function that it has failed at least one of its tests
-	public void failedTests(Project project)
+	public void failedTests(String projectId)
 	{
 
 		//microtaskOutCompleted();
@@ -651,22 +652,22 @@ public class Function extends Artifact
 
 		System.out.println("FUNCTION ID: "+ this.getID()+" TEST FAILED");
 
-		HistoryLog.Init(project.getID()).addEvent(new MessageReceived("FailedTests", this));
+		HistoryLog.Init(projectId).addEvent(new MessageReceived("FailedTests", this));
 		this.needsDebugging = true;
 		ofy().save().entity(this).now();
 
-		lookForWork(project);
+		lookForWork();
 	}
 
 
 
 	// Provides notification that a test has transitioned to being implemented
-	public void testBecameImplemented(Test test, Project project)
+	public void testBecameImplemented(Test test)
 	{
 		int position = tests.indexOf(test.getID());
 		testsImplemented.set(position, true);
 
-		runTestsIfReady(project);
+		runTestsIfReady();
 	}
 
 	// Notifies the function that it has a new caller function
@@ -683,7 +684,7 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 
-	public void addDependency(long newSubscriber, String pseudoCall, Project project)
+	public void addDependency(long newSubscriber, String pseudoCall)
 	{
 		//add it to the lists
 		pseudoCallers.add(newSubscriber);
@@ -691,29 +692,29 @@ public class Function extends Artifact
 
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed())
-			sendDescribedNotification(newSubscriber, pseudoCall, project);
+			sendDescribedNotification(newSubscriber, pseudoCall);
 
 		ofy().save().entity(this).now();
 	}
 
-	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, String pseudoCall, Project project)
+	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, String pseudoCall, String projectId)
 	{
-		HistoryLog.Init(project.getID()).addEvent(new MessageReceived("AddCall", this));
-		queueMicrotask(new WriteCall(this, calleeName, calleeFullDescription, pseudoCall, project), project);
+		HistoryLog.Init(projectId).addEvent(new MessageReceived("AddCall", this));
+		queueMicrotask(new WriteCall(this, calleeName, calleeFullDescription, pseudoCall, projectId), projectId);
 	}
 
-	public void calleeChangedInterface(String oldFullDescription, String newFullDescription, Project project)
+	public void calleeChangedInterface(String oldFullDescription, String newFullDescription, String projectId)
 	{
-		queueMicrotask(new WriteFunction(this, oldFullDescription, newFullDescription, project), project);
+		queueMicrotask(new WriteFunction(this, oldFullDescription, newFullDescription, projectId), projectId);
 	}
 
-	public void disputeTestCases(String issueDescription, String testDescription, Project project)
+	public void disputeTestCases(String issueDescription, String testDescription, String projectId)
 	{
-		queueMicrotask(new WriteTestCases(this, issueDescription, testDescription, project), project);
+		queueMicrotask(new WriteTestCases(this, issueDescription, testDescription, projectId), projectId);
 	}
-	public void disputeFunctionSignature(String issueDescription, Project project)
+	public void disputeFunctionSignature(String issueDescription, String projectId)
 	{
-		queueMicrotask(new WriteFunction(this, issueDescription, project), project);
+		queueMicrotask(new WriteFunction(this, issueDescription, projectId), projectId);
 	}
 
 
@@ -722,21 +723,21 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 
 	// Notify all subscribers that this function has become described.
-	private void notifyBecameDescribed(Project project)
+	private void notifyBecameDescribed(String projectId)
 	{
 		// Loop over the psuedocallsites and pseudocallers in parallel
 		for (int i = 0; i < pseudoCallsites.size(); i++)
-			sendDescribedNotification(pseudoCallers.get(i), pseudoCallsites.get(i), project);
+			sendDescribedNotification(pseudoCallers.get(i), pseudoCallsites.get(i));
 	}
 
-	private void sendDescribedNotification(long subscriberID, String pseudoCall, Project project)
+	private void sendDescribedNotification(long subscriberID, String pseudoCall)
 	{
 		FunctionCommand.calleeBecameDescribed(subscriberID, this.getName(), this.getFullDescription(), pseudoCall);
 	}
 
 	// Send out notifications, as appropriate, that the description or header of this
 	// function has changed
-	private void notifyDescriptionChanged(FunctionDTO dto, Project project)
+	private void notifyDescriptionChanged(FunctionDTO dto)
 	{
 		for (long callerID : callers)
 			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
@@ -840,9 +841,9 @@ public class Function extends Artifact
 	}
 
 	// Given an id for a functon, finds the corresponding function. Returns null if no such function exists.
-	public static Ref<Function> find(long id, Project project)
+	public static Ref<Function> find(long id)
 	{
-		return (Ref<Function>) ofy().load().key(Artifact.getKey(id, project));
+		return (Ref<Function>) ofy().load().key(Artifact.getKey(id));
 	}
 
 	public boolean equals(Object function)

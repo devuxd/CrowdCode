@@ -18,7 +18,7 @@ public class ReviewInFirebase extends MicrotaskInFirebase
 			 Key<Microtask> microtaskKeyUnderReview)
 	{
 		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
-		this.microtaskKeyUnderReview = Project.MicrotaskKeyToString( microtaskKeyUnderReview );
+		this.microtaskKeyUnderReview = Microtask.keyToString(microtaskKeyUnderReview);
 
 	}
 }
