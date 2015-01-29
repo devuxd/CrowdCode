@@ -383,7 +383,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			// check if the current line is a parameter or return line
 			var paramLine  = lineDescription[i].search('@param ');
 			var returnLine = lineDescription[i].search('@return ');
-
 			if(paramLine!=-1 || returnLine!=-1){
 
 				lineDescription[i] = lineDescription[i].replace(/\s{2,}/g,' ');
@@ -438,11 +437,11 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		var ast = esprima.parse(codemirror.getValue(), {
 		    loc: true
 		});
-		var calleeNames = this.getCalleeNames(ast);
+		var calleeNames = getCalleeNames(ast);
 		var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
 		var descriptionLines = fullDescription.split('\n');
 		var functionName = ast.body[0].id.name;
-		var functionParsed = this.parseDescription(descriptionLines, functionName);
+		var functionParsed = parseDescription(descriptionLines, functionName);
 
 		functionParsed.code = codemirror.getRange( { line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
 												   { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column	});
@@ -636,11 +635,11 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			var lines = text.split('\n');
 		$.each(lines, function(i, line)
 		{
-			var pseudoCallCol = line.indexOf('//!');
+			/*var pseudoCallCol = line.indexOf('//!');
 			if (pseudoCallCol != -1)
 			 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol},
 			 			     {line: i, ch: line.length},
-			 			     {className: 'pseudoCall', inclusiveRight: true }));
+			 			     {className: 'pseudoCall', inclusiveRight: true }));*/
 
 			var pseudoCodeCol = line.indexOf('//#');
 			if (pseudoCodeCol != -1)
@@ -650,7 +649,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 			// If there is currently a pseudocall that is being replaced, highlight that in a special
 			// color
-			if (highlightPseudoCall != false)
+			if (highlightPseudoCall !== false)
 			{
 				var pseudoCallCol = line.indexOf(highlightPseudoCall);
 				if (pseudoCallCol != -1){
@@ -755,13 +754,17 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 	    for (var i = 0; i < lines.length; i++)
 	    {
-			if (lines[i].startsWith('function')||lines[i].search('@param')!=-1||lines[i].search('@return')!=-1)
+			if (lines[i].search(/(@param)|(@return)/g)!=-1)
 				{
 					indexesLines.push(i);
 				}
+			if(lines[i].search(/(function\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{)/g)!=-1)
+				{
+					indexesLines.push(i);
+					return indexesLines;
+				}
 	    }
 
-	    return indexesLines;
 	}
 
 

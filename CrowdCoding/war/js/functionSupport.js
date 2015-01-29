@@ -7,7 +7,7 @@
 	functionName is the name of the function
 */
 
-function parseDescription(lineDescription,functionName)
+function parseDescription2(lineDescription,functionName)
 {
 	// initialize vars
 	var paramTypes = [];
@@ -67,7 +67,7 @@ function parseDescription(lineDescription,functionName)
 }
 
 
-function renderDescription(functionCalled)
+function renderDescription2(functionCalled)
 {
 		var numParams = 0;
 		var fullDescription = '/**\n' + functionCalled.description + '\n';
@@ -92,7 +92,7 @@ function renderDescription(functionCalled)
 }
 
 
-function renderHeader(functionName, paramNames)
+function renderHeader2(functionName, paramNames)
 {
 	var header = 'function ' + functionName + '(';
 	var numParams = 0;

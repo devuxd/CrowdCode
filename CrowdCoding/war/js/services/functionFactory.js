@@ -6,7 +6,9 @@ myApp.factory("FunctionFactory", function () {
 		if( rec === undefined )
 			this.rec = {};
 		else{
+
 			this.rec = rec;
+			this.name 			    = this.rec.name;
 			this.code               = this.rec.code;
 			this.description 		= this.rec.description;
 			this.header 			= this.rec.header;
@@ -35,7 +37,7 @@ myApp.factory("FunctionFactory", function () {
 	FunctionFactory.prototype = {
 		//Compatibility Mode
 		
-		
+		getName             : function(){ return this.rec.name; } , 
 		getCode 			: function(){ return this.rec.code; } ,
 		getDescription 		: function(){ return this.rec.description; },
 		getHeader 			: function(){ return this.rec.header; },
