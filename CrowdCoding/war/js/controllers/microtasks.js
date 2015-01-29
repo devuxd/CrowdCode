@@ -539,10 +539,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
                     });
                 });
 
-                var text = functionCodeMirror.getValue();
-
-                // create form data to send
-                formData = functionsService.parseFunction(text);
+                 // create form data to send
+                formData = functionsService.parseFunction(functionCodeMirror);
                 // add the stubs to the form data
                 formData.stubs = stubs;
 
