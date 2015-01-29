@@ -1,4 +1,4 @@
-////////////////////
+	////////////////////
 // APP CONTROLLER //
 ////////////////////
 //prepare variables and execute inizialization stuff
@@ -205,15 +205,23 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 		// if a fetchData is provided
 		if( fetchData !== undefined ){
+			console.log('defined!',fetchData);
 			$scope.data = fetchData;
-			loadMicrotask(fetchData.key);
+			if( $scope.data.success!== undefined && !$scope.data.success )
+				noMicrotask();
+			else
+				loadMicrotask(fetchData.key);
 		}
 		// otherwise do a fetch request
 		else {
+			console.log('undefined!',fetchData);
 			var fetchPromise = microtasks.fetch();
 			fetchPromise.then(function(data){
 				$scope.data = data;
-				loadMicrotask(data.key);
+				if( $scope.data.success!== undefined && !$scope.data.success )
+					noMicrotask();
+				else
+					loadMicrotask(data.key);
 			}, function(){
 				// if the request gives an error
 				// show the no microtask page
@@ -223,6 +231,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	});
 
 	function loadMicrotask(microtaskKey){
+
 		$scope.microtask = microtasks.get(microtaskKey);
 		$scope.microtask.$loaded().then(function() {
 
@@ -303,7 +312,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 			$scope.templatePath   = templatesURL + "loading.html";
 			$scope.canSubmit=false;
 			microtasks.submit($scope.microtask,formData).then(function(data){
-				console.log('after submit data',data);
 				$scope.$broadcast('loadMicrotask',data);
 			},function(){
 				console.error('Error during microtask submit!');
@@ -318,8 +326,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 			$scope.templatePath   = templatesURL + "loading.html";
 			$scope.canSubmit=false;
-			microtasks.submit($scope.microtask,null).then(function(){
-				$scope.$broadcast('loadMicrotask');
+			microtasks.submit($scope.microtask,null).then(function(data){
+				$scope.$broadcast('loadMicrotask',data);
 			},function(){
 				console.error('Error during microtask skip!');
 			});
