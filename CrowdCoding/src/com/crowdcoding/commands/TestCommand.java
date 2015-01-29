@@ -2,12 +2,10 @@ package com.crowdcoding.commands;
 
 import java.util.List;
 
-import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.servlets.CommandContext;
 import com.googlecode.objectify.LoadResult;
-import com.googlecode.objectify.Ref;
 
 public abstract class TestCommand extends Command
 {

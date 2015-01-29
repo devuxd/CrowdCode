@@ -2,7 +2,6 @@ package com.crowdcoding.entities;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +12,6 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.MockDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
@@ -27,16 +24,11 @@ import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.WriteCall;
 import com.crowdcoding.entities.microtasks.WriteFunction;
 import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
-import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MessageReceived;
-import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.api.search.query.QueryParser.function_return;
-import com.googlecode.objectify.Key;
 import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
@@ -313,11 +305,6 @@ public class Function extends Artifact
 	// If there is a microtasks available, marks it as ready to be done.
 	protected void lookForWork()
 	{
-		System.out.println("Look for work function "+this.name);
-		System.out.println("IsWritten "+this.isWritten);
-		System.out.println("needsDebugging"+this.needsDebugging);
-		System.out.println("wait for test "+this.waitForTestResult);
-		
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
 		if (!microtaskOut)

@@ -2,16 +2,12 @@ package com.crowdcoding.commands;
 
 import java.util.List;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.entities.Function;
-import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.servlets.CommandContext;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.LoadResult;
-import com.googlecode.objectify.Ref;
 
 public abstract class FunctionCommand extends Command {
 	protected long functionID;
