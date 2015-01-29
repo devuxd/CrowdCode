@@ -2,11 +2,8 @@ package com.crowdcoding.commands;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.Review;
-import com.crowdcoding.history.MicrotaskReissued;
-import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.servlets.CommandContext;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
@@ -49,7 +46,6 @@ public abstract class MicrotaskCommand extends Command
 
 	public void execute(String projectId)
 	{
-		Project project = Project.Create(projectId);
 		Microtask microtask = find(microtaskKey);
 		if (microtask == null)
 			System.out.println("Cannot execute MicrotaskCommand. Could not find the microtask for microtaskID "
@@ -61,7 +57,7 @@ public abstract class MicrotaskCommand extends Command
 	}
 
 	public abstract void execute(Microtask microtask, String projectId);
-	
+
 	// Finds the specified microtask. Returns null if no such microtask exists.
 	protected Microtask find(Key<Microtask> microtaskKey)
 	{

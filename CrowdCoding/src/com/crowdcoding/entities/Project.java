@@ -29,9 +29,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Ignore;
 import com.googlecode.objectify.annotation.Serialize;
-import com.googlecode.objectify.cmd.QueryKeys;
 
 /*
  * Projects are the root of the artifact and microtask graphs. A project instance MUST be created before
@@ -434,17 +432,20 @@ public class Project
 //		microtaskAssignments.put( workerID, null);
 		addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
-			// Unassign the microtask from the worker and exclude the worker
-//			microtaskAssignments.put( workerID, null);
-			addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
-			// Add the work back to the appropriate queue
-			Microtask microtask= ofy().load().key(microtaskKey).now();
-			if(microtask.microtaskName()!="Review")
+		// Add the work back to the appropriate queue
+		Microtask microtask= ofy().load().key(microtaskKey).now();
+		if(microtask.microtaskName()!="Review")
+		{
+			if(this.reviewsEnabled)
 				queueMicrotask( microtaskKey, workerID);
 			else
-				queueReviewMicrotask(microtaskKey, workerID);
+				queueMicrotask( microtaskKey, null);
+		}
+		else
+			queueReviewMicrotask(microtaskKey, workerID);
 
+		resetIfAllSkipped( microtaskKey );
 		ofy().save().entity(this).now();
 
 		MicrotaskCommand.skip( microtaskKey, workerID);

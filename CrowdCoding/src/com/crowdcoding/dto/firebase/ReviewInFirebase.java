@@ -1,6 +1,5 @@
 package com.crowdcoding.dto.firebase;
 
-import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.googlecode.objectify.Key;
 
