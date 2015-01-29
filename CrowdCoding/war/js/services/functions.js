@@ -5,6 +5,7 @@
 ////////////////////
 myApp.factory('functionsService', ['$window','$rootScope','$firebase', function( $window, $rootScope, $firebase) {
 
+
 	var service = new  function(){
 		// Private variables
 		var functions;
@@ -430,7 +431,55 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 				};
 	}
 
-	function parseFunction(text)
+
+	function parseFunction(codemirror)
+	{
+
+		var ast = esprima.parse(codemirror.getValue(), {
+		    loc: true
+		});
+		var calleeNames = this.getCalleeNames(ast);
+		var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+		var descriptionLines = fullDescription.split('\n');
+		var functionName = ast.body[0].id.name;
+		var functionParsed = this.parseDescription(descriptionLines, functionName);
+
+		functionParsed.code = codemirror.getRange( { line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+												   { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column	});
+
+		functionParsed.pseudoFunctions=[];
+		var pseudoFunctionsName=[];
+		for (var i=1; i<ast.body.length; i++ ){
+			var pseudoFunction = codemirror.getRange({
+				    line: ast.body[i-1].body.loc.end.line - 1,
+				    ch: ast.body[i-1].body.loc.end.column
+				}, {
+				    line: ast.body[i].body.loc.end.line - 1,
+				    ch: ast.body[i].body.loc.end.column
+				});
+			functionParsed.pseudoFunctions.push(pseudoFunction.match(/.+/g).join("\n"));
+			pseudoFunctionsName.push(ast.body[i].id.name);
+		}
+		functionParsed.calleeIds=[];
+		for(i =0; i< calleeNames.length; i++)
+		{
+			if(pseudoFunctionsName.indexOf(calleeNames[i])!==-1){
+				calleeNames.slice(i,1);
+			}
+			else{
+				var functionId=getIdByName(calleeNames[i]);
+				if(functionId!=-1)
+					functionParsed.calleeIds.push(functionId);
+			}
+		}
+
+		return functionParsed;
+
+
+
+
+	}
+	function parseFunctionRegex(text)
 	{
 		var functionParsed={};
 
@@ -722,3 +771,4 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 
 	return service;
 }]);
+

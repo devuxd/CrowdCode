@@ -10,7 +10,6 @@ myApp.controller('AppController', [
 	'$modal',
 	'logoutUrl',
 	'userService',
-	
 	'functionsService',
 	'ADTService',
 	'microtasksService',
@@ -155,7 +154,7 @@ myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', '
 //////////////////////////
 // MICROTASK CONTROLLER //
 //////////////////////////
-myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', '$timeout',  'functionsService', 'userService', 'microtasksService','TestList', function($scope, $rootScope, $firebase, $http, $interval, $timeout,  functionsService, userService, microtasks, TestList) {
+myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$http', '$interval', '$timeout',  'functionsService','FunctionFactory', 'userService', 'microtasksService','TestList', function($scope, $rootScope, $firebase, $http, $interval, $timeout,  functionsService, FunctionFactory, userService, microtasks, TestList) {
 
 	// private vars
 	var templatesURL = "/html/templates/microtasks/";
@@ -212,8 +211,8 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) {
-					$scope.funct = functionsService.get($scope.microtask.functionID);
+				if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { console.log(functionsService.get($scope.microtask.functionID));
+					$scope.funct = new FunctionFactory (functionsService.get($scope.microtask.functionID));
 				}
 
 				// retrieve the related test

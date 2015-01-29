@@ -195,12 +195,12 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
         }
 
         // 2. If the are more header displays the error and returns
-        if (code.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g).length > 1){
+  /*      if (code.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*{/g).length > 100){
             errors.push('Only one header is allowed in the code, please fix it');
             return false;
-        }
+        }*/
         // 3. If the are syntactical errors displays the error and returns
-        if (hasSyntacticalErrors(code))
+        if (hasSyntacticalErrors(code,getJSHintForPseudocalls()))
             return false;
 
         // 4. Trys to build the Est if not displays the error and return
@@ -211,23 +211,52 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
             errors.push("Error " + e.message);
             return false;
         }
-
         // 5. checks if the are ast Errors and displays it
-        hasASTErrors(code, ast);
+            // returns true iff there are AST errors
+                // Check for AST errors
+             //   if (ast.body.length === 0 || ast.body[0].type != "FunctionDeclaration")// || ast.body.length > 1)
+      //      errorMessages.push("All code should be in a single function");
+        if (allFunctionNames.indexOf(ast.body[0].id.name) != -1)
+            errors.push("The function name '" + ast.body[0].id.name + "' is already taken. Please use another.");
+        var functonsName=[ast.body[0].id.name];
+        var calleeNames = functionsService.getCalleeNames(ast);
+        for(i=1; i< ast.body.length; i++){ 
+
+
+            if(ast.body[i].body===undefined)
+                errors.push("there are errors in the code, fix them!");
+            else if(calleeNames.indexOf(ast.body[i].id.name)===-1)
+                errors.push("If you don't need use the pseudo function: "+ast.body[i].id.name+" remove it.");
+            else if(ast.body[i].loc.start.line!==ast.body[i].loc.end.line || ast.body[i].body.loc.end.column - ast.body[i].body.loc.start.column!==2 )
+                errors.push("Use body format of the form: function [name] \"{}\" for the pseudo function: "+ast.body[i].id.name);
+            else if(functonsName.indexOf(ast.body[i].id.name)!==-1)
+                errors.push("The function name: "+ast.body[i].id.name +" has more accourencies");
+            functonsName.push(ast.body[i].id.name);
+        }
+        if(errors.length>0)
+            return false;
+
+
+        var textSplitted=code.split("\n");
+        var codeToTest=textSplitted.slice(ast.body[0].loc.end.line).concat(textSplitted.slice(0,ast.body[0].loc.end.line)).join("\n");
+            if (hasSyntacticalErrors(codeToTest,getJSHintGlobals()))
+                return false;
+
+
         // 6. checks if the are errors in the descriptions structure
         hasDescriptionError(ast);
-
+        
         return false;
 
     }
 
     // Returns true iff there are syntactical errors
-    function hasSyntacticalErrors() {
-        var functionCode = allFunctionCode + " " + code;
+    function hasSyntacticalErrors(codeToValidate, JSHINTSettings) {
+        var functionCode = allFunctionCode + " " + codeToValidate;
         var lintResult = -1;
         // try to run JSHINT or catch and print error to the console
         try {
-            lintResult = JSHINT(functionCode, getJSHintGlobals());
+            lintResult = JSHINT(functionCode, JSHINTSettings);
         } catch (e) {
             console.log("Error in running JSHHint. " + e.name + " " + e.message);
         }
@@ -243,28 +272,6 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
         return false;
     }
 
-    // returns true iff there are AST errors
-    function hasASTErrors(text, ast) {
-        var errorMessages = [];
-
-
-        // Check for AST errors
-        if (ast.body.length === 0 || ast.body[0].type != "FunctionDeclaration" || ast.body.length > 1)
-            errorMessages.push("All code should be in a single function");
-        else if (allFunctionNames.indexOf(ast.body[0].id.name) != -1)
-            errorMessages.push("The function name '" + ast.body[0].id.name + "' is already taken. Please use another.");
-        // Also check for purely textual errors
-        // 1. If there is a pseudocall to replace, make sure it is gone
-        /*
-        if (highlightPseudoCall != false && text.indexOf(highlightPseudoCall) != -1)
-            errorMessages.push("Replace the pseudocall '" + highlightPseudoCall + "' with a call to a function.");   */
-        if (errorMessages.length !== 0) {
-            errors = errors.concat(errorMessages);
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     // Checks if the function description is in he form " @param [Type] [name] - [description]"
     // and if has undefined type names.
@@ -289,7 +296,7 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
 
         //if the description doesn't contain error checks the consistency between the parameter in the descriptions and the
         // ones in the header
-        if (!(ast.body[0].params === undefined)) {
+        if (ast.body[0].params !== undefined) {
 
             var paramHeaderNames = [];
             $.each(ast.body[0].params, function(index, value) {
@@ -358,7 +365,7 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
                 errors.push('Write a desciption for the parameter ' + paramHeaderNames[i] + '.');
         }
 
-        if (errors.length == 0)
+        if (errors.length === 0)
             for (var i = 0; i < paramDescriptionNames.length; i++) {
                 if (paramHeaderNames.indexOf(paramDescriptionNames[i]) == -1) {
                     errors.push('The parameter ' + paramDescriptionNames[i] + ' does not exist in the header of the function');

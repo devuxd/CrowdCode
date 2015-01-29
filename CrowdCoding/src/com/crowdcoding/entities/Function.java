@@ -392,7 +392,7 @@ public class Function extends Artifact
 		rebuildCalleeList(dto.calleeIds, project);
 
 		// Look for pseudocode and psuedocalls
-		List<String> currentPseudoCalls = findPseudocalls(code);
+		List<String> currentPseudoCalls = dto.pseudoFunctions;
 		System.out.println("FUNCTION ("+this.id+"): ONWORKEDIT submitted pseudocalls: "+currentPseudoCalls);
 		List<String> newPseudoCalls = new ArrayList<String>();
 		System.out.println("FUNCTION ("+this.id+"): ONWORKEDIT pseudocalls: "+pseudoCalls);
@@ -764,7 +764,7 @@ public class Function extends Artifact
 		{
 			incrementVersion();
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
-					paramTypes, paramDescriptions, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging, readOnly,
+					paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoCalls , hasBeenDescribed, isWritten, needsDebugging, readOnly,
 					queuedMicrotasks.size()),
 					this.id, version, projectId);
 		}

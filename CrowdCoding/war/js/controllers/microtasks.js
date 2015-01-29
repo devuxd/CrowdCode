@@ -1,14 +1,14 @@
 ///////////////////////////////
 //  NO MICROTASK CONTROLLER //
 ///////////////////////////////
-myApp.controller('NoMicrotaskController', ['$scope', '$rootScope', '$firebase',  'functionsService', 'ADTService', '$interval', function($scope, $rootScope, $firebase,  functionsService, ADTService, $interval) {
+myApp.controller('NoMicrotaskController', ['$scope', '$rootScope', '$firebase',  'functionsService','FunctionFactory', 'ADTService', '$interval', function($scope, $rootScope, $firebase,  functionsService, FunctionFactory, ADTService, $interval) {
     //$interval(function(){ $scope.$emit('load')}, 2000);
 }]);
 
 //////////////////////////////////
 //  WRITE TEST CASES CONTROLLER //
 //////////////////////////////////
-myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase', '$alert',  'TestList', 'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert,  TestList, functionsService, ADTService) {
+myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase', '$alert',  'TestList', 'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  TestList, functionsService, FunctionFactory, ADTService) {
     
 
     // private variables
@@ -31,7 +31,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
             $scope.model.testcases=$scope.reissuedMicrotask.submission.testCases;
     }
 
-    $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
+    //$scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
 
     // addTestCase action 
     $scope.addTestCase = function() {
@@ -89,7 +89,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
         if (microtaskForm.$invalid)  
             error = "Fix all the errors before submit";
 
-        if (!$scope.dispute && $scope.model.testcases.length == 0 && $scope.model.newTestcase == "") 
+        if (!$scope.dispute && $scope.model.testcases.length === 0 && $scope.model.newTestcase === "") 
             error = "Add at least 1 test case";
 
         // if there is an error 
@@ -148,7 +148,7 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
 ///////////////////////////////
 //      Review CONTROLLER    //
 ///////////////////////////////
-myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService', 'ADTService', 'microtasksService', 'TestList', function($scope, $rootScope, $firebase, $alert,  functionsService, ADTService, microtasksService, TestList) {
+myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', 'microtasksService', 'TestList', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService, microtasksService, TestList) {
     // scope variables
     $scope.review = {};
     $scope.review.reviewText = "";
@@ -179,9 +179,11 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
 
-            var funct = functionsService.get($scope.review.microtask.functionID);
-            oldCode = (functionsService.renderDescription(funct) + funct.header + funct.code).split("\n");
-            newCode = (functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code).split("\n");
+            var oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
+            var newFunction = new FunctionFactory ( $scope.review.microtask.submission);
+            oldCode = oldFunction.gatFullCode().split("\n");
+
+            newCode = newFunction.getFullCode.split("\n");
 
 
             diffRes = diff(oldCode, newCode);
@@ -226,9 +228,11 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 
         } else if ($scope.review.microtask.type == 'WriteCall') {
 
-            var funct = functionsService.get($scope.review.microtask.functionID);
-            oldCode = (functionsService.renderDescription(funct) + funct.header + funct.code).split("\n");
-            newCode = (functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code).split("\n");
+            var oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
+            var newFunction = new FunctionFactory ($scope.review.microtask.submission);
+            oldCode = oldFunction.gatFullCode().split("\n");
+
+            newCode = newFunction.getFullCode.split("\n");
 
 
             diffRes = diff(oldCode, newCode);
@@ -325,13 +329,13 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
 ///////////////////////////////
-myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout',  'functionsService', 'ADTService', 'TestList', 'TestRunnerFactory', function($scope, $rootScope, $firebase, $alert, $timeout,  functionsService, ADTService, TestList, TestRunnerFactory) {
+myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$firebase', '$alert', '$timeout',  'functionsService','FunctionFactory', 'ADTService', 'TestList', 'TestRunnerFactory', function($scope, $rootScope, $firebase, $alert, $timeout,  functionsService, FunctionFactory, ADTService, TestList, TestRunnerFactory) {
     
     var testRunner = new TestRunnerFactory.instance();
 
     // scope variables
 
-    $scope.tabs = ['Tests Result', 'Function Editor'];
+    $scope.tabs = ['Tests Result', 'FunctionFactory Editor'];
     $scope.active = 0;
 
     $scope.tests        = TestList.getImplementedByFunctionId($scope.microtask.functionID);
@@ -354,8 +358,8 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 
 
     // INITIALIZE THE FUNCTION EDITOR CODEMIRROR
-    $scope.functionDescription = functionsService.renderDescription($scope.funct) + $scope.funct.header;
-    $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+    $scope.functionDescription = $scope.funct.getSignature();
+    $scope.code = $scope.funct.getFunctionCode();
     
     var functionCodeMirror = undefined;
     var readOnlyDone=false;
@@ -571,7 +575,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
 ///////////////////////////////
 //  REUSE SEARCH CONTROLLER //
 ///////////////////////////////
-myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService', function($scope, $alert, functionsService) {
+myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService','FunctionFactory', function($scope, $alert, functionsService) {
     // set selected to -2 to initialize the default value
     //-2 nothing selected (need an action to submit)
     //-1 no function does this
@@ -579,7 +583,7 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
     $scope.selectedResult = -2;
     //display all the available function at the beginning
     $scope.results = functionsService.findMatches('', $scope.funct.name);
-    $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+    $scope.code = $scope.funct.getFunctionCode();
     // search for all the functions that have $scope.reuseSearch.text in theirs description or header
     $scope.doSearch = function() {
         $scope.selectedResult = -2;
@@ -624,16 +628,16 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
 ///////////////////////////////
 //  WRITE CALL CONTROLLER //
 ///////////////////////////////
-myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, ADTService) {
+myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     var marks = [];
     var highlightPseudoCall = "//!" + $scope.microtask.pseudoCall;
     var changeTimeout;
     var readOnlyDone = false;
     if(angular.isDefined($scope.microtask.reissuedFrom))
-        $scope.code = functionsService.renderDescription($scope.reissuedMicrotask.submission) + $scope.reissuedMicrotask.submission.header + $scope.reissuedMicrotask.submission.code;
+        $scope.code = (new FunctionFactory ($scope.reissuedMicrotask.submission)).getFullCode();
     else
-        $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+        $scope.code = $scope.funct.getFullCode();
 
     $scope.codemirrorLoaded = function(myCodeMirror) {
         codemirror = myCodeMirror;
@@ -668,7 +672,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
         var hasPseudosegment = text.search('//!') !== -1 || text.search('//#') !== -1;
 
         //if there are error and pseudosegments
-        if ( microtaskForm.$invalid && !hasPseudosegment ){
+        if ( microtaskForm.$invalid){
             $alert({
                title: 'Error!',
                content: 'Fix all errors before submit, if you don\'t know how use the pseudocode',
@@ -690,7 +694,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
             //     paramDescriptions: functionParsed.paramDescriptions,
             //     calleeIds: calleeIds
 
-            formData = functionsService.parseFunction(text);
+            formData = functionsService.parseFunction(codemirror);
             $scope.$emit('submitMicrotask', formData);
         }
     });
@@ -702,7 +706,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
 ///////////////////////////////
 //  WRITE FUNCTION CONTROLLER //
 ///////////////////////////////
-myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase',  'functionsService', 'ADTService', '$alert', function($scope, $rootScope, $firebase,  functionsService, ADTService, $alert) {
+myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase',  'functionsService','FunctionFactory', 'ADTService', '$alert', function($scope, $rootScope, $firebase,  functionsService, FunctionFactory, ADTService, $alert) {
     var marks = [];
     var highlightPseudoCall = false;
     var readOnlyDone = false;
@@ -727,13 +731,11 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
 
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     if( angular.isDefined($scope.microtask.reissuedFrom) )
-        $scope.code = functionsService.renderDescription( $scope.reissuedMicrotask.submission ) +
-                      $scope.reissuedMicrotask.submission.header + $scope.reissuedMicrotask.submission.code;
-    else
-        $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+            $scope.code = (new FunctionFactory($scope.reissuedMicrotask.submission)).getFullCode();
+        else
+            $scope.code = $scope.funct.getFullCode();
 
-
-    var codemirror = undefined;
+    var codemirror;
 
     var codemirrorChangeListener = function() {
         // If we are editing a function that is a client request and starts with CR, make the header
@@ -771,7 +773,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
         var hasPseudosegment = text.search('//!') !== -1 || text.search('//#') !== -1;
 
         //if there are error and pseudosegments
-        if ( microtaskForm.$invalid && !hasPseudosegment ){
+        if ( microtaskForm.$invalid){
             $alert({
                title: 'Error!',
                content: 'Fix all errors before submit, if you don\'t know how use the pseudocode',
@@ -793,12 +795,12 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
             //     paramDescriptions: functionParsed.paramDescriptions,
             //     calleeIds: calleeIds
 
-            formData = functionsService.parseFunction(text);
+            formData = functionsService.parseFunction(codemirror);
             //add the dispute text to the submit
             if($scope.microtask.promptType==='RE_EDIT')
                 formData.disputeText=$scope.microtask.disputeText;
-            
-            $scope.$emit('submitMicrotask', formData);
+            console.log(formData);
+           $scope.$emit('submitMicrotask', formData);
         }
     });
 
@@ -811,7 +813,7 @@ myApp.controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase'
 ////////////////////////////////////////////
 //  WRITE FUNCTION DESCRIPTION CONTROLLER //
 ////////////////////////////////////////////
-myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, ADTService) {
+myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // initialization of models 
     $scope.description = "";
     $scope.returnType = "";
@@ -853,7 +855,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
     }
 
     //prepare the codemirror Value
-    $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header + $scope.funct.code;
+    $scope.code = $scope.funct.getFunctionCode();
 
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
         //set all forms dirty to make them red if empty
@@ -932,7 +934,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
 ///////////////////////////////
 //  WRITE TEST CONTROLLER //
 ///////////////////////////////
-myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert',  'functionsService', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert,  functionsService, ADTService) {
+myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert,  functionsService, FunctionFactory, ADTService) {
     // initialize testData
 
     //if a function starts with CR cannot be disputed
@@ -1015,7 +1017,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
         else functionVersionSync = $firebase(new Firebase($rootScope.firebaseURL + '/history/artifacts/functions/' + $scope.microtask.functionID + '/' + $scope.microtask.functionVersion));
         $scope.funct = functionVersionSync.$asObject();
         $scope.funct.$loaded().then(function() {
-            $scope.code = functionsService.renderDescription($scope.funct) + $scope.funct.header;
+            $scope.code = (new FunctionFactory($scope.funct)).getSignature();
         });
     }
 

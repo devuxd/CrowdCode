@@ -239,7 +239,7 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 
 myApp.factory("Test", function ($FirebaseArray) {
 	function Test(rec){
-		if( rec == undefined )
+		if( rec === undefined )
 			this.rec = {};
 		else
 			this.rec = rec;
