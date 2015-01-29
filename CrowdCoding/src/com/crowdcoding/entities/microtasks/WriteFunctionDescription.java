@@ -39,9 +39,10 @@ public class WriteFunctionDescription extends Microtask
 		super(projectId);
 		this.submitValue = 8;
 		this.callDescription = callDescription;
+		ofy().save().entity(this).now();
+
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());
-		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteFunctionDescriptionInFirebase(id,this.microtaskTitle(), this.microtaskName(),
 				function.getName(),
 				function.getID(),

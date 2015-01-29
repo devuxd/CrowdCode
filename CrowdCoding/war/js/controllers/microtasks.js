@@ -182,8 +182,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             var oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
             var newFunction = new FunctionFactory ( $scope.review.microtask.submission);
             oldCode = oldFunction.getFullCode().split("\n");
-
-            newCode = newFunction.getFullCode.split("\n");
+            newCode = newFunction.getFullCode().split("\n");
 
 
             diffRes = diff(oldCode, newCode);
@@ -232,7 +231,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             var newFunction = new FunctionFactory ($scope.review.microtask.submission);
             oldCode = oldFunction.getFullCode().split("\n");
 
-            newCode = newFunction.getFullCode.split("\n");
+            newCode = newFunction.getFullCode().split("\n");
 
 
             diffRes = diff(oldCode, newCode);
