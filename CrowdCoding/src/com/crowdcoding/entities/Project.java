@@ -292,6 +292,11 @@ public class Project
 
 		return Microtask.stringToKey(microtaskKeyString);
 	}
+	
+	public void unassignMicrotask( String workerID ){
+		microtaskAssignments.put( workerID, null);
+		ofy().save().entity(this).now();
+	}
 
 	// Assigns a microtask to worker and returns its microtaskKey.
 	// Returns null if no microtasks are available.
@@ -359,6 +364,7 @@ public class Project
 
 			// write the history log entry about the microtask assignment
 			Microtask mtask = ofy().transactionless().load().key(microtaskKey).get();
+			mtask.setWorkerId(workerID);
 		
 			// save the project
 			ofy().save().entity(this).now();
@@ -393,10 +399,14 @@ public class Project
 	// dropped, ensuring workers cannot submit against already completed microtasks.
 	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID, Project project){
 		
+
+		Microtask microtask = ofy().load().key( microtaskKey ).get();
+		
+//		String assignedMicrotask =  microtaskAssignments.get( workerID );
+
 		// submit only if the request come from
 		// the current worker of the microtask
-		String assignedMicrotask =  microtaskAssignments.get( workerID );
-		if( assignedMicrotask.equals( Microtask.keyToString(microtaskKey) )){
+		if( microtask.getWorkerId().equals( workerID )){
 			
 			// Unassign the microtask from the worker
 			microtaskAssignments.put( workerID, null );
@@ -405,7 +415,6 @@ public class Project
 			ofy().save().entity(this).now();
 
 			// write the history log entry about the microtask submission
-			Microtask microtask = ofy().load().key( microtaskKey ).get();
 			HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
 
 			// If reviewing is enabled and the microtask
@@ -428,7 +437,7 @@ public class Project
 	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Project project)
 	{
 		// Unassign the microtask from the worker and exclude the worker
-		microtaskAssignments.put( workerID, null);
+//		microtaskAssignments.put( workerID, null);
 		addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
 		// Add the work back to the appropriate queue
@@ -441,6 +450,7 @@ public class Project
 		resetIfAllSkipped( microtaskKey );
 
 		ofy().save().entity(this).now();
+		
 		MicrotaskCommand.skip( microtaskKey, workerID);
 	}
 
@@ -491,7 +501,7 @@ public class Project
 
 		// retrieve the assigned microtask for the workerId
 		String microtaskKeyString        = microtaskAssignments.get(workerID);
-		Key<Microtask> currentAssignment = Key.create(microtaskKeyString);
+		Key<Microtask> currentAssignment = Microtask.stringToKey(microtaskKeyString);
 
 		// TODO: if the current assignment is a review, this should go in the review queue!
 		// if a current assignment exists requeue it

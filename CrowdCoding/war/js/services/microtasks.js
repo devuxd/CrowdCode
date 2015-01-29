@@ -24,12 +24,12 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','
 			
 			var skip = formData == null;
 			// submit to the server
-			$http.post('/' + $rootScope.projectId + '/ajax/submit?type=' + microtask.type + '&key=' + microtask.$id+(skip? '&skip=true' : ''), formData)
+			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip='+(skip? 'true' : 'false'), formData)
 				.success(function(data, status, headers, config) {
 					// submit to Firebase
 					microtask.submission = formData;
 					microtask.$save();
-					deferred.resolve();
+					deferred.resolve(data);
 				})
 				.error(function(data, status, headers, config) {
 					deferred.reject();

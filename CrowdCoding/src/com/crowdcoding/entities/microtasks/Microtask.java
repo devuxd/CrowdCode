@@ -59,6 +59,16 @@ public /*abstract*/ class Microtask
 	protected String reissuedFrom = "";
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
 	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
+	protected String workerId;
+
+	public String getWorkerId() {
+		return workerId;
+	}
+
+	public void setWorkerId(String workerId) {
+		this.workerId = workerId;
+		ofy().save().entity(this);
+	}
 
 	// Default constructor for deserialization
 	protected Microtask()
@@ -229,4 +239,5 @@ public /*abstract*/ class Microtask
 		}
 		return json.toString();
 	}
+
 }

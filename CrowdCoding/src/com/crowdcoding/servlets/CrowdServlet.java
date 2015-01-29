@@ -11,7 +11,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.regex.Pattern;
 
 import javax.jdo.PersistenceManager;
@@ -63,6 +62,11 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.Query;
 import com.googlecode.objectify.cmd.QueryKeys;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 
 @SuppressWarnings("serial")
 public class CrowdServlet extends HttpServlet
@@ -131,6 +135,8 @@ public class CrowdServlet extends HttpServlet
 				req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
 			 } else if(Pattern.matches("/user/info",path)){
 				req.getRequestDispatcher("/html/userInfo.jsp").forward(req, resp);
+			 } if(Pattern.matches("/worker",path)){
+				doExecuteSubmit(req,resp);
 			 }
 
 			// PATHS WITH USER AUTHENTICATION
@@ -240,6 +246,8 @@ public class CrowdServlet extends HttpServlet
 			doSubmitMicrotask(req, resp);
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
+		} else if (pathSeg[3].equals("enqueue")){
+			doEnqueueSubmit(req, resp,user);
 		}
 	}
 
@@ -454,8 +462,11 @@ public class CrowdServlet extends HttpServlet
     	}
 	}
 
-
-	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException
+	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException{
+		doFetchMicrotask(req,resp,user,false);
+	}
+	
+	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean unassign) throws IOException
 	{
 		// Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
@@ -470,8 +481,21 @@ public class CrowdServlet extends HttpServlet
             	String workerID     = worker.getUserid();
             	String workerHandle = worker.getNickname();
 
-            	// If the user does not have a microtask assigned, get them a microtask.
-            	Key<Microtask> microtaskKey = project.lookupMicrotaskAssignment(workerID);
+            	Key<Microtask> microtaskKey ;
+            	
+            	// if it's forced the unassignment do it
+            	// and set the mtask key to null
+            	if( unassign ){
+            		project.unassignMicrotask(workerID);
+            		microtaskKey = null;
+            	} 
+            	// otherwise check if the user already has 
+            	// an assigned microtask
+            	else {
+            		microtaskKey = project.lookupMicrotaskAssignment(workerID);
+            	}
+            	
+            	
             	if (microtaskKey == null)
             	{
             		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
@@ -508,6 +532,71 @@ public class CrowdServlet extends HttpServlet
 		}
 
 
+	}
+	
+	/**
+	 * Enqueue a submit task into the default task queue
+	 * and fetch a queued microtask for the user
+	 * 
+	 * @param req
+	 * @param resp
+	 * @throws IOException 
+	 */
+	public void doEnqueueSubmit(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException{
+		
+		// restrieve the submit data 
+		final String projectId     = (String) req.getAttribute("project");
+		final String workerId      = user.getUserId();
+		final String microtaskKey  = req.getParameter("key") ;
+		final String microtaskType = req.getParameter("type");
+		final String JsonDTO       = Util.convertStreamToString(req.getInputStream());
+		final String skip          = req.getParameter("skip");
+		
+		
+		// fetch the new microtask
+        doFetchMicrotask(req,resp,user,true);
+        
+		// create the submit task
+		TaskOptions task = withUrl("/worker");
+		task.param("projectId", projectId);
+		task.param("workerId", workerId);
+		task.param("microtaskKey", microtaskKey);
+		task.param("microtaskType", microtaskType);
+		task.param("JsonDTO", JsonDTO);
+		task.param("skip", skip.toString());
+        
+		// add the task to the default task queue
+        Queue queue = QueueFactory.getDefaultQueue();
+        queue.add(task);
+	}
+	
+	public void doExecuteSubmit(final HttpServletRequest req, final HttpServletResponse resp){
+		
+		final String projectID    = req.getParameter("projectId") ;
+		final String workerID     = req.getParameter("workerId") ;
+		final String microtaskKey = req.getParameter("microtaskKey") ;
+		final String type         = req.getParameter("microtaskType");
+		final String JsonDTO      = req.getParameter("JsonDTO");
+		final Boolean skip        = Boolean.parseBoolean(req.getParameter("skip"));
+		
+		// Create an initial context, then build a command to skip or submit
+		CommandContext context = new CommandContext();
+
+		// Create the skip or submit commands
+		if (skip)
+			ProjectCommand.skipMicrotask( microtaskKey, workerID);
+		else{
+			Class microtaskType = microtaskTypes.get(type);
+			if (microtaskType == null)
+				throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
+			else 
+				ProjectCommand.submitMicrotask( microtaskKey, microtaskType, JsonDTO, workerID);
+		}
+
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectID);
+		
+		System.out.println("EXECUTE: "+projectID+" submit "+microtaskKey+" by "+workerID); 
 	}
 
 	private void renderJson(final HttpServletResponse resp,String json) throws IOException{
@@ -554,7 +643,7 @@ public class CrowdServlet extends HttpServlet
 	{
 
 		System.out.println("----> PROJECT ID IS "+projectId);
-		Queue<Command> commandQueue = new LinkedList<Command>(commands);
+		LinkedList<Command> commandQueue = new LinkedList<Command>(commands);
 		// Execute commands until done, adding commands as created.
         while(!commandQueue.isEmpty())
         {
