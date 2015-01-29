@@ -205,6 +205,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 		// if a fetchData is provided
 		if( fetchData !== undefined ){
+			console.log('pre-fetched');
 			$scope.data = fetchData;
 			if( $scope.data.success!== undefined && !$scope.data.success )
 				noMicrotask();
@@ -213,6 +214,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		}
 		// otherwise do a fetch request
 		else {
+			console.log('undefined fetch data');
 			var fetchPromise = microtasks.fetch();
 			fetchPromise.then(function(data){
 				$scope.data = data;
@@ -229,7 +231,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	});
 
 	function loadMicrotask(microtaskKey){
-
+		console.log('Loading microtask '+microtaskKey);
 		$scope.microtask = microtasks.get(microtaskKey);
 		$scope.microtask.$loaded().then(function() {
 

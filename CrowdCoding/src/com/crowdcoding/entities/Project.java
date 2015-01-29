@@ -402,8 +402,8 @@ public class Project
 		// the current worker of the microtask
 		if( microtask.getWorkerId().equals( workerID )){
 
-			// Unassign the microtask from the worker
-			microtaskAssignments.put( workerID, null );
+//			// Unassign the microtask from the worker
+//			microtaskAssignments.put( workerID, null );
 
 			// save the project
 			ofy().save().entity(this).now();
@@ -435,7 +435,7 @@ public class Project
 		addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
 			// Unassign the microtask from the worker and exclude the worker
-			microtaskAssignments.put( workerID, null);
+//			microtaskAssignments.put( workerID, null);
 			addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
 			// Add the work back to the appropriate queue
