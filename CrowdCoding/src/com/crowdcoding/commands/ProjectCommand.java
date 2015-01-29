@@ -174,7 +174,6 @@ public abstract class ProjectCommand extends Command
 
 		public void execute(Project project)
 		{
-			System.out.println("Executing submit with key "+microtaskKey);
 			project.submitMicrotask(microtaskKey, microtaskType, jsonDTOData, workerID, project);
 		}
 	}

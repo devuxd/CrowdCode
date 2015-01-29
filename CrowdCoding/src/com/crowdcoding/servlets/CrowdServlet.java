@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -166,16 +167,10 @@ public class CrowdServlet extends HttpServlet
 					boolean projectExists =  (ofy().load().filterKey(projectKey).count() != 0 );
 
 					if(!projectExists){
-//						System.out.println("--> SERVLET: project doesn't exists in appengine");
-//						System.out.println("--> SERVLET projects: "+FirebaseService.existsProject(projectId));
-//						System.out.println("--> SERVLET in client request: "+FirebaseService.existsClientRequest(projectId));
 						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
 
 							Project.Construct(projectId);
 						} else {
-							//
-							//System.out.println("--> SERVLET: project doesn't exists in firebase");
-							//System.out.println("Project not found ("+projectId+")!");
 							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 						}
 					}
@@ -568,6 +563,9 @@ public class CrowdServlet extends HttpServlet
 		// add the task to the default task queue
         Queue queue = QueueFactory.getDefaultQueue();
         queue.add(task);
+
+        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+		System.out.println(time + " - ADD: "+microtaskKey+" by "+workerId); 
 	}
 	
 	public void doExecuteSubmit(final HttpServletRequest req, final HttpServletResponse resp){
@@ -578,6 +576,11 @@ public class CrowdServlet extends HttpServlet
 		final String type         = req.getParameter("microtaskType");
 		final String JsonDTO      = req.getParameter("JsonDTO");
 		final Boolean skip        = Boolean.parseBoolean(req.getParameter("skip"));
+		
+
+
+		String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+		System.out.println(time + " - EXE: "+microtaskKey+" by "+workerID); 
 		
 		// Create an initial context, then build a command to skip or submit
 		CommandContext context = new CommandContext();
@@ -595,8 +598,13 @@ public class CrowdServlet extends HttpServlet
 
 		// Copy the command back out the context to initially populate the command queue.
 		executeCommands(context.commands(), projectID);
+		resp.setStatus(resp.SC_OK);
 		
-		System.out.println("EXECUTE: "+projectID+" submit "+microtaskKey+" by "+workerID); 
+		time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+		System.out.println(time + " - END: "+microtaskKey+" by "+workerID);
+		
+		
+		
 	}
 
 	private void renderJson(final HttpServletResponse resp,String json) throws IOException{

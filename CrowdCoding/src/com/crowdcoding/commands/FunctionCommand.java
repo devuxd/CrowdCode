@@ -183,9 +183,7 @@ public abstract class FunctionCommand extends Command {
 
 		public void execute(Function function, String projectId) {
 			Ref<Function> callerFunction = Function.find(callerFunctionID);
-			System.out.println("--> FUNCTION COMMAND: adding caller "
-					+ callerFunction.get().getName());
-
+			
 			if (callerFunction == null)
 				System.out
 						.println("Cannot execute FunctionCommand. Could not find the caller function "
@@ -204,7 +202,6 @@ public abstract class FunctionCommand extends Command {
 		}
 
 		public void execute(Function function, String projectId) {
-			System.out.println("--> FUNCTION COMMAND : test implemented");
 
 			Ref<Test> test = Test.find(testID);
 			if (test == null)
@@ -278,8 +275,6 @@ public abstract class FunctionCommand extends Command {
 		}
 
 		public void execute(Function function, String projectId) {
-			System.out
-					.println("--> FUNCTION COMMAND : adding test id" + testID);
 			function.addTest(testID);
 		}
 	}
@@ -293,8 +288,6 @@ public abstract class FunctionCommand extends Command {
 		}
 
 		public void execute(Function function, String projectId) {
-			System.out.println("--> FUNCTION COMMAND : " + functionID
-					+ " Writing on JobQue");
 			FirebaseService.writeTestJobQueue(functionID, projectId);
 		}
 	}

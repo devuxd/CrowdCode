@@ -240,7 +240,6 @@ public class Function extends Artifact
 	// Adds the specified test for this function
 	public void addTest(long testID)
 	{
-		System.out.println("function add test");
 		this.needsDebugging=true;
 		tests.add(testID);
 		testsImplemented.add(false);
@@ -331,7 +330,7 @@ public class Function extends Artifact
 	private boolean allUnitTestsImplemented()
 	{
 
-		System.out.println("--> FUNCTION ("+this.id+") "+this.name+" :checking if all test implemented - ");
+//		System.out.println("--> FUNCTION ("+this.id+") "+this.name+" :checking if all test implemented - ");
 
 		if(tests.size()==0)
 			return false;
@@ -392,9 +391,7 @@ public class Function extends Artifact
 
 		// Look for pseudocode and psuedocalls
 		List<String> currentPseudoCalls = findPseudocalls(code);
-		System.out.println("FUNCTION ("+this.id+"): ONWORKEDIT submitted pseudocalls: "+currentPseudoCalls);
 		List<String> newPseudoCalls = new ArrayList<String>();
-		System.out.println("FUNCTION ("+this.id+"): ONWORKEDIT pseudocalls: "+pseudoCalls);
 
 
 		if(currentPseudoCalls.isEmpty())
