@@ -105,6 +105,7 @@ public class Function extends Artifact
 		//this.needsDebugging=true;
 
 		isWritten = false;
+		ofy().save().entity(this).now();
 
 		// Spawn off a microtask to write the function description
 		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, projectId));
@@ -489,16 +490,9 @@ public class Function extends Artifact
 		{
 			// Create a new function for this call, spawning microtasks to create it.
 			callee = new Function(callDescription, this, projectId);
+
 			dto.functionId = callee.getID();
 		}
-	/*	else
-		{
-			// lookup the function by name
-			Key<Function> key = Key.create(Function.class,dto.functionName);
-			//Key<Artifact> key = Key.create(Artifact.class, dto.functionId);
-			callee = (Function) ofy().load().key( key ).get();//ancestor(project.getKey()).filter("name", dto.functionName).first().get();
-		}*/
-
 		// Have the callee let us know when it's tested (which may already be true;
 		// signal sent immediately in that case)
 		FunctionCommand.addDependency(dto.functionId, this.getID(), callDescription);
