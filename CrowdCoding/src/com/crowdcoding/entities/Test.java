@@ -67,9 +67,9 @@ public class Test extends Artifact
 	{
 	}
 
-	public Test(String description, long functionID, String functionName, Project project, int functionVersion)
+	public Test(String description, long functionID, String functionName, String projectId, int functionVersion)
 	{
-		super(project);
+		super(projectId);
 
 
 		this.isImplemented = false;
@@ -82,20 +82,18 @@ public class Test extends Artifact
 		this.functionVersion= functionVersion;
 
 		ofy().save().entity(this).now();
-
-		HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "false", this));
+		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
 		FunctionCommand.addTest(functionID, this.id);
 
-		queueMicrotask(new WriteTest(this, project,functionVersion), project);
+		queueMicrotask(new WriteTest(this, projectId,functionVersion), projectId);
 
 	}
 
-	public Test(long functionID, String functionName, String description, List<String> inputs, String output, String code, Project project, int functionVersion, boolean readOnly)
+	public Test(long functionID, String functionName, String description, List<String> inputs, String output, String code, String projectId, int functionVersion, boolean readOnly)
 	{
-		super(project);
+		super(projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "true", this));
 
 		this.isImplemented = true;
 		this.isDeleted = false;
@@ -117,7 +115,7 @@ public class Test extends Artifact
 		//project.requestTestRun();
 		FunctionCommand.testBecameImplemented(functionID, this.getID());
 
-
+		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "true", this));
 	}
 
 	public String getTestCode()
@@ -180,12 +178,12 @@ public class Test extends Artifact
 	}
 
 	// Checks the status of the test, marking it as implemented if appropriate
-	private void checkIfBecameImplemented(Project project)
+	private void checkIfBecameImplemented(String projectId)
 	{
 		if (!isImplemented && !workToBeDone())
 		{
 			// A test becomes implemented when it has no more work to do
-			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "true", this));
+			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "true", this));
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
 
@@ -195,11 +193,11 @@ public class Test extends Artifact
 		}
 	}
 
-	public void writeTestCompleted(TestDTO dto, Project project)
+	public void writeTestCompleted(TestDTO dto, String projectId)
 	{
 		if (dto.isFunctionDispute)
 		{
-			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "false", this));
+			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
 			// Ignore any of the content for the test, if available. Set the test to unimplemented.
 			this.isImplemented = false;
@@ -208,13 +206,12 @@ public class Test extends Artifact
 
 			FunctionCommand.disputeFunctionSignature(functionID, dto.disputeText);
 
-
-			lookForWork(project);
+			lookForWork();
 		}
 
 		else if (dto.inDispute)
 		{
-			HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "false", this));
+			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
 			// Ignore any of the content for the test, if available. Set the test to unimplemented.
 			this.isImplemented = false;
@@ -223,8 +220,7 @@ public class Test extends Artifact
 
 			FunctionCommand.disputeTestCases(functionID, dto.disputeText, this.description);
 
-
-			lookForWork(project);
+			lookForWork();
 		}
 		else
 		{
@@ -238,8 +234,8 @@ public class Test extends Artifact
 			ofy().save().entity(this).now();
 
 			microtaskOutCompleted();
-			lookForWork(project);
-			checkIfBecameImplemented(project);
+			lookForWork();
+			checkIfBecameImplemented(projectId);
 		}
 	}
 
@@ -257,12 +253,12 @@ public class Test extends Artifact
 	 * Commands
 	 *****************************************************************************************/
 
-	public void dispute(String issueDescription, Project project, int functionVersion)
+	public void dispute(String issueDescription, String projectId, int functionVersion)
 	{
-		HistoryLog.Init(project.getID()).addEvent(new PropertyChange("implemented", "false", this));
+		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 		this.isImplemented = false;
 		ofy().save().entity(this).now();
-		queueMicrotask(new WriteTest(this, issueDescription, project, functionVersion), project);
+		queueMicrotask(new WriteTest(this, issueDescription, projectId, functionVersion), projectId);
 	}
 
 	// Marks this test as deleted, removing it from the list of tests on its owning function.
@@ -273,11 +269,11 @@ public class Test extends Artifact
 	}
 
 	// Notify this test that the function under test has changed its interface.
-	public void functionChangedInterface(String oldFullDescription, String newFullDescription, Project project, int functionVersion)
+	public void functionChangedInterface(String oldFullDescription, String newFullDescription, String projectId, int functionVersion)
 	{
 		// TODO: should we resave the function name here??
 
-		queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, project, functionVersion), project);
+		queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, projectId, functionVersion), projectId);
 	}
 
 
@@ -293,9 +289,9 @@ public class Test extends Artifact
 	}
 
 	// Given an id for a test, finds the corresponding test. Returns null if no such test exists.
-	public static LoadResult<Test> find(long id, Project project)
+	public static LoadResult<Test> find(long id)
 	{
-		return (LoadResult<Test>) ofy().load().key(Artifact.getKey(id, project));
+		return (LoadResult<Test>) ofy().load().key(Artifact.getKey(id));
 	}
 
 	// Generates a simple test key for the specified function and list of inputs

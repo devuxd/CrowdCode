@@ -1,6 +1,7 @@
 package com.crowdcoding.commands;
 
 import com.crowdcoding.entities.Artifact;
+import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.CommandContext;
@@ -49,7 +50,15 @@ public abstract class ProjectCommand extends Command
 	private ProjectCommand(){
 		queueCommand(this);
 	}
-
+	
+	public void execute(String  projectId)
+	{
+		Project project = Project.Create(projectId);
+		execute(project);
+	}
+	
+	public abstract void execute(Project project);
+	
 	// all commands MUST call queueCommand
 	private static void queueCommand(Command command){
 		CommandContext.ctx.addCommand(command);
@@ -104,7 +113,6 @@ public abstract class ProjectCommand extends Command
 
 		public void execute(Project project)
 		{
-//			System.out.println("--> MICROTASK COMMAND: queuing microtask "+Project.MicrotaskKeyToString(microtaskKey));
 			project.queueMicrotask(microtaskKey, excludedWorkerID);
 		}
 	}
@@ -137,7 +145,7 @@ public abstract class ProjectCommand extends Command
 		public SkipMicrotask(String microtaskKey, String workerID)
 		{
 			super();
-			this.microtaskKey = Project.StringToMicrotaskKey( microtaskKey );
+			this.microtaskKey = Microtask.stringToKey(microtaskKey) ;
 			this.workerID = workerID;
 		}
 
@@ -158,7 +166,7 @@ public abstract class ProjectCommand extends Command
 		public SubmitMicrotask(String microtaskKey, Class microtaskType, String jsonDTOData, String workerID)
 		{
 			super();
-			this.microtaskKey = Project.StringToMicrotaskKey( microtaskKey );
+			this.microtaskKey = Microtask.stringToKey( microtaskKey );
 			this.microtaskType = microtaskType;
 			this.jsonDTOData = jsonDTOData;
 			this.workerID = workerID;

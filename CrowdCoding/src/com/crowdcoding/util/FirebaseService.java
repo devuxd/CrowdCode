@@ -40,11 +40,8 @@ public class FirebaseService
 	{
 		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + ".json", HTTPMethod.PUT, projectId);
 
-		// Since microtaskIDs increase consequentively and start at 1, we can update the total number of microtasks
-		// to be microtaskID.
-		// the microtask key is in the format "artifactNumber-microtask count"
-		String microtakCount = microtaskKey.split("-")[1];
-		enqueueWrite( microtakCount, "/status/microtaskCount.json", HTTPMethod.PUT, projectId);
+//		String microtakCount = ofy().load().type(Microtask.class).filter("projectId",projectId).count();
+//		enqueueWrite( microtakCount, "/status/microtaskCount.json", HTTPMethod.PUT, projectId);
 	}
 
 	// Writes information about microtask assignment to Firebase
@@ -188,7 +185,6 @@ public class FirebaseService
 		if (adts == null || adts.equals("null"))
 			adts = "";
 
-		System.out.println("ADTs for copy:" + adts);
 		enqueueWrite(adts, "/ADTs.json", HTTPMethod.PUT, projectId);
 	}
 

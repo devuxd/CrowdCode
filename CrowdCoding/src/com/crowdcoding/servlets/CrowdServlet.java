@@ -5,13 +5,13 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
@@ -63,6 +63,11 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.Query;
 import com.googlecode.objectify.cmd.QueryKeys;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 
 @SuppressWarnings("serial")
 public class CrowdServlet extends HttpServlet
@@ -132,6 +137,8 @@ public class CrowdServlet extends HttpServlet
 				req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
 			 } else if(Pattern.matches("/user/info",path)){
 				req.getRequestDispatcher("/html/userInfo.jsp").forward(req, resp);
+			 } if(Pattern.matches("/worker",path)){
+				doExecuteSubmit(req,resp);
 			 }
 
 			// PATHS WITH USER AUTHENTICATION
@@ -161,16 +168,10 @@ public class CrowdServlet extends HttpServlet
 					boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
 
 					if(!projectExists){
-//						System.out.println("--> SERVLET: project doesn't exists in appengine");
-//						System.out.println("--> SERVLET projects: "+FirebaseService.existsProject(projectId));
-//						System.out.println("--> SERVLET in client request: "+FirebaseService.existsClientRequest(projectId));
 						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
 
 							Project.Construct(projectId);
 						} else {
-							//
-							//System.out.println("--> SERVLET: project doesn't exists in firebase");
-							//System.out.println("Project not found ("+projectId+")!");
 							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
 						}
 					}
@@ -241,6 +242,8 @@ public class CrowdServlet extends HttpServlet
 			doSubmitMicrotask(req, resp);
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
+		} else if (pathSeg[3].equals("enqueue")){
+			doEnqueueSubmit(req, resp,user);
 		}
 	}
 
@@ -269,6 +272,12 @@ public class CrowdServlet extends HttpServlet
 
 				Project.Clear(projectID);
 				Project.Construct(projectID);
+			}
+			else if (command.equals("CLEAR"))
+			{
+				output.append("PROJECT CLEAR executed at " + currentTime.toString() + "\n");
+
+				Project.Clear(projectID);
 			}
 			else if (command.equals("REVIEWSON"))
 			{
@@ -449,8 +458,11 @@ public class CrowdServlet extends HttpServlet
     	}
 	}
 
+	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException{
+		doFetchMicrotask(req,resp,user,false);
+	}
 
-	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException
+	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean unassign) throws IOException
 	{
 		// Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
@@ -465,18 +477,29 @@ public class CrowdServlet extends HttpServlet
             	String workerID     = worker.getUserid();
             	String workerHandle = worker.getNickname();
 
-            	// If the user does not have a microtask assigned, get them a microtask.
-            	Key<Microtask> microtaskKey = project.lookupMicrotaskAssignment(workerID);
+            	Key<Microtask> microtaskKey ;
+
+            	// if it's forced the unassignment do it
+            	// and set the mtask key to null
+            	if( unassign ){
+            		project.unassignMicrotask(workerID);
+            		microtaskKey = null;
+            	}
+            	// otherwise check if the user already has
+            	// an assigned microtask
+            	else {
+            		microtaskKey = project.lookupMicrotaskAssignment(workerID);
+            	}
+
+
             	if (microtaskKey == null)
             	{
-            		microtaskKey = project.assignMicrotask(workerID, workerHandle);
+            		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
             	}
 
             	return microtaskKey;
             }
         });
-
-
         HistoryLog.Init(projectID).publish();
         FirebaseService.publish();
 
@@ -502,6 +525,84 @@ public class CrowdServlet extends HttpServlet
 		else{
 			renderJson(resp,microtask.toJSON());
 		}
+
+
+	}
+
+	/**
+	 * Enqueue a submit task into the default task queue
+	 * and fetch a queued microtask for the user
+	 *
+	 * @param req
+	 * @param resp
+	 * @throws IOException
+	 */
+	public void doEnqueueSubmit(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException{
+
+		// restrieve the submit data
+		final String projectId     = (String) req.getAttribute("project");
+		final String workerId      = user.getUserId();
+		final String microtaskKey  = req.getParameter("key") ;
+		final String microtaskType = req.getParameter("type");
+		final String JsonDTO       = Util.convertStreamToString(req.getInputStream());
+		final String skip          = req.getParameter("skip");
+
+
+		// fetch the new microtask
+        doFetchMicrotask(req,resp,user,true);
+
+		// create the submit task
+		TaskOptions task = withUrl("/worker");
+		task.param("projectId", projectId);
+		task.param("workerId", workerId);
+		task.param("microtaskKey", microtaskKey);
+		task.param("microtaskType", microtaskType);
+		task.param("JsonDTO", JsonDTO);
+		task.param("skip", skip.toString());
+
+		// add the task to the default task queue
+        Queue queue = QueueFactory.getDefaultQueue();
+        queue.add(task);
+
+        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+		System.out.println(time + " - ADD: "+microtaskKey+" by "+workerId);
+	}
+
+	public void doExecuteSubmit(final HttpServletRequest req, final HttpServletResponse resp){
+
+		final String projectID    = req.getParameter("projectId") ;
+		final String workerID     = req.getParameter("workerId") ;
+		final String microtaskKey = req.getParameter("microtaskKey") ;
+		final String type         = req.getParameter("microtaskType");
+		final String JsonDTO      = req.getParameter("JsonDTO");
+		final Boolean skip        = Boolean.parseBoolean(req.getParameter("skip"));
+
+
+
+		String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+		System.out.println(time + " - EXE: "+microtaskKey+" by "+workerID);
+
+		// Create an initial context, then build a command to skip or submit
+		CommandContext context = new CommandContext();
+
+		// Create the skip or submit commands
+		if (skip)
+			ProjectCommand.skipMicrotask( microtaskKey, workerID);
+		else{
+			Class microtaskType = microtaskTypes.get(type);
+			if (microtaskType == null)
+				throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
+			else
+				ProjectCommand.submitMicrotask( microtaskKey, microtaskType, JsonDTO, workerID);
+		}
+
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectID);
+		resp.setStatus(resp.SC_OK);
+
+		time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+		System.out.println(time + " - END: "+microtaskKey+" by "+workerID);
+
 
 
 	}
@@ -548,7 +649,9 @@ public class CrowdServlet extends HttpServlet
 	// Executes all of the specified commands and any commands that may subsequently be generated
 	private void executeCommands(List<Command> commands, final String projectId)
 	{
-		Queue<Command> commandQueue = new LinkedList<Command>(commands);
+
+		System.out.println("----> PROJECT ID IS "+projectId);
+		LinkedList<Command> commandQueue = new LinkedList<Command>(commands);
 		// Execute commands until done, adding commands as created.
         while(!commandQueue.isEmpty())
         {
@@ -556,19 +659,17 @@ public class CrowdServlet extends HttpServlet
         	commandQueue.addAll(ofy().transact(new Work<List<Command>>() {
 	            public List<Command> run()
 	            {
-            	    Project project = Project.Create(projectId);
 					CommandContext context = new CommandContext();
-					command.execute(project);
+					command.execute(projectId);
 					return context.commands();
 	            }
 	        }));
-        	 HistoryLog.Init(projectId).publish();
-             FirebaseService.publish();
+            // history log writes and the other
+            // firebase writes are done
+            // outside of the transactions
+            HistoryLog.Init(projectId).publish();
+            FirebaseService.publish();
         }
-        // history log writes and the other
-        // firebase writes are done
-        // outside of the transactions
-
 	}
 
 	// Writes the specified html message to resp, wrapping it in an html page

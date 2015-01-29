@@ -38,9 +38,9 @@ public class WriteCall extends Microtask
 	}
 
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, String calleeName, String calleeFullDescription, String pseudoCall, Project project)
+	public WriteCall(Function caller, String calleeName, String calleeFullDescription, String pseudoCall, String projectId)
 	{
-		super(project);
+		super( projectId);
 		this.submitValue = 7;
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());
 		this.calleeFullDescription = calleeFullDescription;
@@ -57,17 +57,16 @@ public class WriteCall extends Microtask
 				calleeName,
 				calleeFullDescription,
 				pseudoCall ),
-				Project.MicrotaskKeyToString(this.getKey()),
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-				project.getID());
 
-
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	public Microtask copy(Project project)
+	public Microtask copy(String projectId)
 	{
-		return new WriteCall(  (Function) getOwningArtifact(), this.calleeName, this.calleeFullDescription, this.pseudoCall, project);
+		return new WriteCall(  (Function) getOwningArtifact(), this.calleeName, this.calleeFullDescription, this.pseudoCall, projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -76,9 +75,9 @@ public class WriteCall extends Microtask
 	}
 
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
-		caller.get().writeCallCompleted((FunctionDTO) dto, project);
+		caller.get().writeCallCompleted((FunctionDTO) dto, projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "function_calls",1);
@@ -86,7 +85,7 @@ public class WriteCall extends Microtask
 	}
 
 	// Returns true iff the microtask still needs to be done
-	protected boolean isStillNeeded(Project project)
+	protected boolean isStillNeeded()
 	{
 		// AddCall is still needed iff the pseudocall is still in the code
 		return caller.get().containsPseudoCall(pseudoCall);

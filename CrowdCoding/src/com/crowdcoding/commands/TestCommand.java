@@ -36,23 +36,26 @@ public abstract class TestCommand extends Command
 		CommandContext.ctx.addCommand(command);
 	}
 
-	public void execute(Project project)
+	public void execute(String projectId)
 	{
-		LoadResult<Test> test = Test.find(testID, project);
-		if (test == null)
-			System.out.println("Cannot execute TestCommand. Could not find test for TestID " + testID);
-		else
-		{
-			execute(test.now(), project);
+		if( testID != 0 ){
+			LoadResult<Test> testRef = Test.find(testID);
 
-			// Save the associated artifact to Firebase
+			if (testRef == null)
+				System.out.println("Cannot execute TestCommand. Could not find test for TestID " + testID);
+			else
+			{
+				Test test =testRef.now();
+				execute(test, projectId);
 
-			test.now().storeToFirebase(project.getID());
-
+				// Save the associated artifact to Firebase
+				test.storeToFirebase(projectId);
+			}
 		}
+		else execute(null, projectId);
 	}
 
-	public abstract void execute(Test test, Project project);
+	public abstract void execute(Test test, String projectId);
 
 
 	protected static class Create1 extends TestCommand
@@ -72,16 +75,10 @@ public abstract class TestCommand extends Command
 			queueCommand(this);
 		}
 
-		// Need to override the default execute, as there is no test to load!
-		public void execute(Project project)
+		public void execute(Test test, String projectId)
 		{
-			Test test = new Test(description, functionID, functionName, project, functionVersion);
-			test.storeToFirebase(project.getID());
-		}
-
-		public void execute(Test test, Project project)
-		{
-			throw new RuntimeException("Error - this method should never be called!");
+			Test newTest = new Test(description, functionID, functionName, projectId, functionVersion);
+			newTest.storeToFirebase(projectId);
 		}
 	}
 
@@ -111,16 +108,10 @@ public abstract class TestCommand extends Command
 			queueCommand(this);
 		}
 
-		// Need to override the default execute, as there is no test to load!
-		public void execute(Project project)
+		public void execute(Test test, String projectId)
 		{
-			Test test = new Test(functionID, functionName, description, inputs, output, code, project, functionVersion, readOnly);
-			test.storeToFirebase(project.getID());
-		}
-
-		public void execute(Test test, Project project)
-		{
-			throw new RuntimeException("Error - this method should never be called!");
+			Test newTest = new Test(functionID, functionName, description, inputs, output, code, projectId, functionVersion, readOnly);
+			newTest.storeToFirebase(projectId);
 		}
 	}
 
@@ -138,9 +129,9 @@ public abstract class TestCommand extends Command
 			queueCommand(this);
 		}
 
-		public void execute(Test test, Project project)
+		public void execute(Test test, String projectId)
 		{
-			test.dispute(issueDescription, project,functionVersion);
+			test.dispute(issueDescription, projectId,functionVersion);
 		}
 	}
 	protected static class CheckEdited extends TestCommand
@@ -155,13 +146,13 @@ public abstract class TestCommand extends Command
 			queueCommand(this);
 		}
 
-		public void execute(Test test, Project project)
+		public void execute(Test test, String projectId)
 		{
 			if (!test.getDescription().equals((newDescription)))
 			{
 				String oldDescription = test.getDescription();
 				test.setDescription(newDescription);
-				test.queueMicrotask(new WriteTest(project, test, oldDescription, functionVersion), project);
+				test.queueMicrotask(new WriteTest(projectId, test, oldDescription, functionVersion), projectId);
 			}
 		}
 	}
@@ -173,7 +164,7 @@ public abstract class TestCommand extends Command
 			queueCommand(this);
 		}
 
-		public void execute(Test test, Project project)
+		public void execute(Test test, String projectId)
 		{
 			test.delete();
 		}
@@ -195,9 +186,9 @@ public abstract class TestCommand extends Command
 			queueCommand(this);
 		}
 
-		public void execute(Test test, Project project)
+		public void execute(Test test, String projectId)
 		{
-			test.functionChangedInterface(oldFullDescription, newFullDescription, project, functionVersion);
+			test.functionChangedInterface(oldFullDescription, newFullDescription, projectId, functionVersion);
 		}
 	}
 }

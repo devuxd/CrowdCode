@@ -41,47 +41,47 @@ public class WriteFunction extends Microtask
 	}
 
 	// Initialization constructor for a SKETCH write function. Microtask is not ready.
-	public WriteFunction(Function function, Project project)
+	public WriteFunction(Function function, String projectId)
 	{
-		super(project);
+		super(projectId);
 
 		this.promptType = PromptType.SKETCH;
-		WriteFunction(function, project);
+		WriteFunction(function, projectId);
 	}
 
 	// Initialization constructor for a DESCRIPTION_CHANGE write function. Microtask is not ready.
 	public WriteFunction(Function function, String oldFullDescription,
-			String newFullDescription, Project project)
+			String newFullDescription, String projectId)
 	{
-		super(project);
+		super(projectId);
 		this.promptType = PromptType.DESCRIPTION_CHANGE;
 
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
 		this.oldFullDescription = oldFullDescription;
 		this.newFullDescription = newFullDescription;
 
-		WriteFunction(function, project);
+		WriteFunction(function, projectId);
 	}
 
 	// Initialization constructor for a RE_EDIT write function. Microtask is not ready.
-	public WriteFunction(Function function, String disputeText, Project project)
+	public WriteFunction(Function function, String disputeText, String projectId)
 	{
-		super(project);
+		super(projectId);
 		this.promptType = PromptType.RE_EDIT;
 
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
 		this.disputeText = disputeText;
-		WriteFunction(function, project);
+		WriteFunction(function, projectId);
 	}
 
-	public Microtask copy(Project project)
+	public Microtask copy(String projectId)
 	{
 		if(this.promptType==PromptType.SKETCH)
-			return new WriteFunction( (Function) getOwningArtifact() ,project);
+			return new WriteFunction( (Function) getOwningArtifact() ,projectId);
 		else if(this.promptType==PromptType.DESCRIPTION_CHANGE)
-			return new WriteFunction( (Function) getOwningArtifact() , this.oldFullDescription, this.newFullDescription, project);
+			return new WriteFunction( (Function) getOwningArtifact() , this.oldFullDescription, this.newFullDescription, projectId);
 		else
-			return new WriteFunction( (Function) getOwningArtifact() , this.disputeText, project);
+			return new WriteFunction( (Function) getOwningArtifact() , this.disputeText, projectId);
 
 	}
 
@@ -91,7 +91,7 @@ public class WriteFunction extends Microtask
 	}
 
 
-	private void WriteFunction(Function function, Project project)
+	private void WriteFunction(Function function, String projectId)
 	{
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		ofy().load().ref(this.function);
@@ -109,16 +109,16 @@ public class WriteFunction extends Microtask
 				this.oldFullDescription,
 				this.newFullDescription,
 				this.disputeText),
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
-		function.get().sketchCompleted((FunctionDTO) dto, project);
+		function.get().sketchCompleted((FunctionDTO) dto, projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "functions",1);

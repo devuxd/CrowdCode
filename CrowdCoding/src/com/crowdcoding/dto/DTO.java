@@ -35,7 +35,6 @@ public abstract class DTO
 	public static DTO read(String jsonDTOData, Class dtoClass) throws JsonParseException, JsonMappingException, IOException
 	{
 		ObjectMapper mapper = new ObjectMapper();
-		System.out.println("--> DTO for class "+dtoClass+" : "+jsonDTOData);
 		DTO dto = null;
 		dto = (DTO) mapper.readValue(jsonDTOData, dtoClass);
 //		try {

@@ -32,9 +32,9 @@ public class ReuseSearch extends Microtask
 	}
 
 	// Constructor for initial construction
-	public ReuseSearch(Function function, String callDescription, Project project)
+	public ReuseSearch(Function function, String callDescription, String projectId)
 	{
-		super(project);
+		super(projectId);
 		this.submitValue = 5;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.callDescription = callDescription;
@@ -48,15 +48,15 @@ public class ReuseSearch extends Microtask
 				submitValue,
 				callDescription,
 				function.getID()),
-				Project.MicrotaskKeyToString(this.getKey()),
-				project.getID());
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		HistoryLog.Init(project.getID()).addEvent(new MicrotaskSpawned(this));
+		HistoryLog.Init( projectId ).addEvent(new MicrotaskSpawned(this));
 	}
 
-    public Microtask copy(Project project)
+    public Microtask copy(String projectId)
     {
-    	return new ReuseSearch(  (Function) getOwningArtifact(), this.callDescription, project);
+    	return new ReuseSearch(  (Function) getOwningArtifact(), this.callDescription, projectId);
     }
 
     public Key<Microtask> getKey()
@@ -64,9 +64,9 @@ public class ReuseSearch extends Microtask
 		return Key.create( function.getKey(), Microtask.class, this.id );
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
-		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);
+		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
@@ -75,11 +75,11 @@ public class ReuseSearch extends Microtask
     			this.submitValue,
     			this.microtaskName(),
     			"SubmittedReuseSearch",
-    			Project.MicrotaskKeyToString(  this.getKey() ),
+    			Microtask.keyToString(this.getKey()),
     			-1 // differentiate the reviews from the 0 score tasks
 	    	).json()),
-			Project.MicrotaskKeyToString(  this.getKey() ),
-			project.getID()
+			Microtask.keyToString(this.getKey()),
+			projectId
 		);
 
 		// increase the stats counter

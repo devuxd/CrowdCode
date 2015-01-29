@@ -35,7 +35,7 @@ myApp.controller('AppController', [
 		                formElement.$setDirty();
 
 					//if formElement as the proprety $addControl means that have other form inside him
-					if (formElement !== undefined && formElement.$addControl) 
+					if (formElement !== undefined && formElement.$addControl)
 						$scope.makeDirty(formElement);
 				}
 			});
@@ -113,7 +113,7 @@ myApp.controller('AppController', [
 		// userService.startTutorial( 'Main' , false, function(){
 		// 	////console.log('printed after Main tutorial!');
 		// });
-	
+
 }]);
 
 
@@ -121,7 +121,7 @@ myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', '
 
 	$scope.userData = userService.data;
 
-	$scope.galleryPath = '/img/avatar_gallery/'
+	$scope.galleryPath = '/img/avatar_gallery/';
 
 	$scope.uploadedAvatar  = null;
 	$scope.selectedAvatar = -1;
@@ -145,7 +145,7 @@ myApp.controller('UserProfileController', ['$scope', '$rootScope', '$timeout', '
 		} else if( $scope.selectedAvatar != -1 ){
 			userService.setAvatarUrl($scope.galleryPath+'avatar'+$scope.selectedAvatar+'.png');
 		}
-			
+
 	};
 
 
@@ -168,7 +168,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		'WriteTestCases': 'write_test_cases',
 		'WriteCall': 'write_call',
 	};
-	
+
 	$rootScope.inlineForm = false;
 
 	// initialize microtask and templatePath
@@ -191,62 +191,61 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 	// load microtask:
 	// request a new microtask from the backend and if success
 	// inizialize template and microtask-related values
-	$scope.$on('loadMicrotask', function() {
-			$scope.canSubmit=true;
-		// if is != null, stop the queue checking interval
+	$scope.$on('loadMicrotask', function($event, fetchData) {
+		$scope.canSubmit=true;
+
+		// if the check queue timeout
+		// is active, cancel it
 		if (checkQueueTimeout !== null) {
 			$timeout.cancel(checkQueueTimeout);
 		}
 
+		// show the loading screen
+		$scope.templatePath  = templatesURL + "loading.html";
 
-		// set the loading template
-		$scope.templatePath   = templatesURL + "loading.html";
+		// if a fetchData is provided
+		if( fetchData !== undefined ){
+			$scope.data = fetchData;
+			loadMicrotask(fetchData.key);
+		}
+		// otherwise do a fetch request
+		else {
+			var fetchPromise = microtasks.fetch();
+			fetchPromise.then(function(data){
+				$scope.data = data;
+				loadMicrotask(data.key);
+			}, function(){
+				// if the request gives an error
+				// show the no microtask page
+				noMicrotask();
+			});
+		}
+	});
 
-		var fetchPromise = microtasks.fetch();
-		fetchPromise.then(function(data){
-			$scope.data      = data;
-			$scope.microtask = microtasks.get(data.key);
-
-			$scope.microtask.$loaded().then(function() {
-
+	function loadMicrotask(microtaskKey){
+		$scope.microtask = microtasks.get(microtaskKey);
+		$scope.microtask.$loaded().then(function() {
 
 				// retrieve the related function
 				if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { console.log(functionsService.get($scope.microtask.functionID));
 					$scope.funct = new FunctionFactory (functionsService.get($scope.microtask.functionID));
 				}
+			// retrieve the related test
+			var testId = angular.isDefined($scope.microtask.testID) && $scope.microtask.testID!==0 ? $scope.microtask.testID : null;
+			if ( testId !== null ) {
+				var TestObj = TestList.get(testId);
+				////console.log('Loaded test %o of id %d',TestObj,testId);
+				$scope.test = TestObj.rec;
+			}
 
-				// retrieve the related test
-				var testId = angular.isDefined($scope.microtask.testID) && $scope.microtask.testID!==0 ? $scope.microtask.testID : null;
-				if ( testId !== null ) {
-					var TestObj = TestList.get(testId);
-					////console.log('Loaded test %o of id %d',TestObj,testId);
-					$scope.test = TestObj.rec;
-				}
+			// if is a reissued microtask
+			// retrieve the initial microtask
+			if ( angular.isDefined( $scope.microtask.reissuedFrom ) ) {
 
-				// if is a reissued microtask
-				// retrieve the initial microtask
-				if ( angular.isDefined( $scope.microtask.reissuedFrom ) ) {
-
-					$scope.reissuedMicrotask = microtasks.get($scope.microtask.reissuedFrom);
-						$scope.reissuedMicrotask.$loaded().then(function() {
-						//choose the right template
-						if ( $scope.microtask !== undefined && $scope.reissuedMicrotask !== undefined ){
-							// $rootScope.$broadcast('run-tutorial', $scope.microtask.type );
-							$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-							$scope.noMicrotask = false;
-						}
-						else {
-							$scope.templatePath = templatesURL + "no_microtask.html";
-							$scope.noMicrotask = true;
-						}
-					});
-
-				} 
-				// otherwise
-				else {
-					
+				$scope.reissuedMicrotask = microtasks.get($scope.microtask.reissuedFrom);
+					$scope.reissuedMicrotask.$loaded().then(function() {
 					//choose the right template
-					if ( $scope.microtask !== undefined ){
+					if ( $scope.microtask !== undefined && $scope.reissuedMicrotask !== undefined ){
 						// $rootScope.$broadcast('run-tutorial', $scope.microtask.type );
 						$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 						$scope.noMicrotask = false;
@@ -255,28 +254,42 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 						$scope.templatePath = templatesURL + "no_microtask.html";
 						$scope.noMicrotask = true;
 					}
+				});
+
+			}
+			// otherwise
+			else {
+
+				//choose the right template
+				if ( $scope.microtask !== undefined ){
+					// $rootScope.$broadcast('run-tutorial', $scope.microtask.type );
+					$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+					$scope.noMicrotask = false;
 				}
+				else {
+					$scope.templatePath = templatesURL + "no_microtask.html";
+					$scope.noMicrotask = true;
+				}
+			}
 
-			});
-
-		}, function(){
-			
-			$scope.templatePath = templatesURL + "no_microtask.html";
-			$scope.noMicrotask = true;
-
-			$scope.checkQueueIn = waitTimeInSeconds; 
-			var timerInterval = $interval(function(){
-				$scope.checkQueueIn -- ;
-			}, 1000);
-
-			checkQueueTimeout = $timeout(function() {
-				$interval.cancel(timerInterval);
-				$scope.$emit('loadMicrotask');
-			}, waitTimeInSeconds*1000); // check the queue every 30 seconds
 		});
-		
+	}
 
-	});
+	// in case of no microtasks available
+	function noMicrotask(){
+		$scope.templatePath = templatesURL + "no_microtask.html";
+		$scope.noMicrotask = true;
+
+		$scope.checkQueueIn = waitTimeInSeconds;
+		var timerInterval = $interval(function(){
+			$scope.checkQueueIn -- ;
+		}, 1000);
+
+		checkQueueTimeout = $timeout(function() {
+			$interval.cancel(timerInterval);
+			$scope.$emit('loadMicrotask');
+		}, waitTimeInSeconds*1000); // check the queue every 30 seconds
+	}
 
 	// ------- MESSAGE LISTENERS ------- //
 
@@ -289,8 +302,9 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 			$scope.templatePath   = templatesURL + "loading.html";
 			$scope.canSubmit=false;
-			microtasks.submit($scope.microtask,formData).then(function(){
-				$scope.$broadcast('loadMicrotask');
+			microtasks.submit($scope.microtask,formData).then(function(data){
+				console.log('after submit data',data);
+				$scope.$broadcast('loadMicrotask',data);
 			},function(){
 				console.error('Error during microtask submit!');
 			});
@@ -312,10 +326,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		}
 	});
 
-    $scope.focusSubmit = function(element){
-        //console.log($('#submitBtn').focus());
-    };
-
 }]);
 
 
@@ -324,9 +334,9 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 ////////////////////////////
 myApp.controller('LeaderboardController', ['$scope', '$rootScope', '$firebase','avatarFactory','workerId', function($scope, $rootScope, $firebase, avatarFactory, workerId) {
 	// create the reference and the sync
-	
+
 	var lbSync = $firebase(new Firebase($rootScope.firebaseURL + '/leaderboard/leaders'));
-	
+
 	$scope.avatar = avatarFactory.get;
 	$scope.leaders       = lbSync.$asArray();
 	$scope.leaders.$loaded().then(function() {});
