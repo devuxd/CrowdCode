@@ -205,7 +205,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 		// if a fetchData is provided
 		if( fetchData !== undefined ){
-			console.log('defined!',fetchData);
 			$scope.data = fetchData;
 			if( $scope.data.success!== undefined && !$scope.data.success )
 				noMicrotask();
@@ -214,7 +213,6 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		}
 		// otherwise do a fetch request
 		else {
-			console.log('undefined!',fetchData);
 			var fetchPromise = microtasks.fetch();
 			fetchPromise.then(function(data){
 				$scope.data = data;
@@ -236,7 +234,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 		$scope.microtask.$loaded().then(function() {
 
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { console.log(functionsService.get($scope.microtask.functionID));
+				if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { 
 					$scope.funct = new FunctionFactory (functionsService.get($scope.microtask.functionID));
 				}
 			// retrieve the related test

@@ -82,8 +82,6 @@ self.addEventListener('message', function(e){
 			//add the received code
 			finalCode += data.code;
 
-
-
 			// 1) try to LINT the code
 			// 2) try to execute the code
 			try{
@@ -129,6 +127,7 @@ self.addEventListener('message', function(e){
 			}
 
 			catch (e) {
+				console.log(e);
 				resultMessage = { 
 					errors     : true,
 					output     : { 'expected': "", 'actual': "", 'message': "", 'result':  false},
@@ -138,7 +137,7 @@ self.addEventListener('message', function(e){
 
 			finally{
 
-				// console.log("FINALLY!",getNowTime(),startTime);
+				console.log("FINALLY!",getNowTime(),startTime);
 
 				resultMessage.stubs         = stubs,
 				resultMessage.usedStubs     = usedStubs,

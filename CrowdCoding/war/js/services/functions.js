@@ -568,7 +568,6 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 	  		numParams++;
 		}
 	    header += ')';
-
 		return header;
 	}
 

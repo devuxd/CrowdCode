@@ -311,14 +311,19 @@ public class Function extends Artifact
 
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	protected void lookForWork(String projectId)
+	protected void lookForWork()
 	{
+		System.out.println("Look for work function "+this.name);
+		System.out.println("IsWritten "+this.isWritten);
+		System.out.println("needsDebugging"+this.needsDebugging);
+		System.out.println("wait for test "+this.waitForTestResult);
+		
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
 		if (!microtaskOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
-			if (isWritten && this.needsDebugging && this.waitForTestResult==false){
+			if (isWritten && this.needsDebugging && !this.waitForTestResult){
 				DebugTestFailure debug = new DebugTestFailure(this,projectId);
 				makeMicrotaskOut( debug );
 				System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+ Microtask.keyToString(debug.getKey()));
