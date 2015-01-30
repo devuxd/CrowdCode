@@ -29,12 +29,11 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','
 					// submit to Firebase
 					microtask.submission = formData;
 					microtask.$save();
-					userService.assignedMicrotaskKey = data.key;
+
 					deferred.resolve(data);
 				})
 				.error(function(data, status, headers, config) {
-					userService.assignedMicrotaskKey = null;
-					deferred.reject();
+					deferred.reject(data);
 				});
 			return deferred.promise;
 		},
@@ -44,14 +43,12 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','
 
 			// ask the microtask id
 			$http.get('/' + projectId + '/ajax/fetch')
-			.success(function(data, status, headers, config) {
-				userService.assignedMicrotaskKey = data.key;
-				deferred.resolve(data);	
-			})
-			.error(function(data, status, headers, config) {
-				userService.assignedMicrotaskKey = null;
-				deferred.reject();
-			});
+				.success(function(data, status, headers, config) {
+					deferred.resolve(data);	
+				})
+				.error(function(data, status, headers, config) {
+					deferred.reject(data);
+				});
 
 			return deferred.promise;
 		}

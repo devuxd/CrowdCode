@@ -30,8 +30,6 @@ myApp.factory('TestRunnerFactory', [
 
 	function TestRunner( config ){
 
-		console.log('TEST RUNNER INITIALIZED WITH CONF ',config);
-
 		this.id = ++instances;
 
 		// set default config
