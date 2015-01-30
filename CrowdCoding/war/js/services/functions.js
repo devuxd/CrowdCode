@@ -16,7 +16,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','FunctionF
 		this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); };
 		this.functionAdded = function(addedFunction) { return functionAdded(addedFunction); };
 		this.functionChanged = function(changedFunction) { return functionChanged(changedFunction); };
-		this.allFunctionIDs = function() { return allFunctionIDs(); };
+		this.allDescribedFunctionIDs = function() { return allDescribedFunctionIDs(); };
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
 		this.getByName = function(name) { return getByName(name); };
@@ -87,12 +87,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','FunctionF
 		}
 
 		// Returns an array with every current function ID
-		function allFunctionIDs()
+		function allDescribedFunctionIDs()
 		{
 			var functionIDs = [];
 			$.each(functions, function(i, value)
 			{
-				functionIDs.push(value.id);
+				if(value.described)
+					functionIDs.push(value.id);
 			});
 
 			return functionIDs;
@@ -656,7 +657,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','FunctionF
 			// color
 			if (highlightPseudoCall !== false)
 			{
-				
+
 				var pseudoCallCol =  line.indexOf(highlightPseudoCall+"(") ==-1 ? line.indexOf(highlightPseudoCall+" ") : line.indexOf(highlightPseudoCall+"(");
 
 				if (pseudoCallCol != -1){

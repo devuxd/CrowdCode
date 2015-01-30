@@ -208,7 +208,7 @@ myApp.factory('TestRunnerFactory', [
 		for(var prop in ast) { delete ast[prop]; };
 
 		// for each function in the system
-		var allFunctionIDs = functionsService.allFunctionIDs();
+		var allFunctionIDs = functionsService.allDescribedFunctionIDs();
 		for (var i=0; i < allFunctionIDs.length; i++)
 		{
 			functionsWithEmptyBodies += functionsService.getMockEmptyBodiesFor(allFunctionIDs[i]);
@@ -230,8 +230,8 @@ myApp.factory('TestRunnerFactory', [
 			                    + functionsWithMockBodies  + '\n'  // functions with mock bodies	
 			                    + this.testedFunctionCode + '\n'; // tested function code
 
-		// console.log('%cTest Runner: function code initialized','color:blue;');
-		// console.log(this.allTheFunctionCode);
+		 console.log('%cTest Runner: function code initialized','color:blue;');
+		 console.log(this.allTheFunctionCode);
 		return;
 	};
 	

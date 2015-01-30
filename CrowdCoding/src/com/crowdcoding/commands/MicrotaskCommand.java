@@ -24,8 +24,8 @@ public abstract class MicrotaskCommand extends Command
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it and save the reference to the reissued microtask.
-	public static MicrotaskCommand reissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
-		{ return new ReissueMicrotask(microtaskKey, excludedWorkerID, awardedPoint); }
+	public static MicrotaskCommand reviseMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
+		{ return new ReviseMicrotask(microtaskKey, excludedWorkerID, awardedPoint); }
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it.
@@ -146,12 +146,12 @@ public abstract class MicrotaskCommand extends Command
 			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
 		}
 	}
-	protected static class ReissueMicrotask extends MicrotaskCommand
+	protected static class ReviseMicrotask extends MicrotaskCommand
 	{
 		private String excludedWorkerID;
 		private int awardedPoint;
 
-		public ReissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
+		public ReviseMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
 		{
 			super(microtaskKey);
 			this.excludedWorkerID = excludedWorkerID;
@@ -162,8 +162,8 @@ public abstract class MicrotaskCommand extends Command
 		public void execute(Microtask microtask, String projectId)
 		{
 			Microtask newMicrotask = microtask.copy(projectId);
-			String microtaskKey = newMicrotask.getKey().toString();
-			String reissuedFromMicrotaskKey = microtask.getKey().toString();
+			String microtaskKey = Microtask.keyToString(newMicrotask.getKey());
+			String reissuedFromMicrotaskKey = Microtask.keyToString(microtask.getKey());
 
 			//FirebaseService.
 

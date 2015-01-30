@@ -80,7 +80,7 @@ public class Review extends Microtask
 		Microtask submittedMicrotask = Microtask.find(microtaskKeyUnderReview).now();
 
 		// Write the review to firebase
-		FirebaseService.writeReview(reviewDTO, submittedMicrotask.getKey().toString() , projectId);
+		FirebaseService.writeReview(reviewDTO, Microtask.keyToString(submittedMicrotask.getKey()) , projectId);
 
 		// set default award points to 0
 		int points = 0;
@@ -111,7 +111,7 @@ public class Review extends Microtask
 			System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" reissued");
 			awardedPoint = submittedMicrotask.submitValue * reviewDTO.qualityScore /5;
 			reviewResult = "reissued";
-			MicrotaskCommand.reissueMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
+			MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
 

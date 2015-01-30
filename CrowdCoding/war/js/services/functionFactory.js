@@ -42,7 +42,6 @@ myApp.factory("FunctionFactory", function () {
 		getParamDescription : function(){ return this.rec.paramDescription; },
 		getParamNames 		: function(){ return this.rec.paramNames; },
 		getParamTypes 		: function(){ return this.rec.paramTypes; },
-		getPseudoFunctions 	: function(){ return this.rec.pseudoFunctions; },
 		getReturnType 		: function(){ return this.rec.returnType; },
 		isDescribed			: function(){ return this.rec.described; },
 		getId 				: function(){ return this.rec.id; },
@@ -54,19 +53,19 @@ myApp.factory("FunctionFactory", function () {
 		getVersion 			: function(){ return this.rec.version; },
 		isWritten 			: function(){ return this.rec.written; },
 		getHeader 			: function(){ 
-			if(this.rec.described)
+			if(this.rec.described!==false)
 				return this.rec.header;
 			else
 				return  this.rec.description.split("\n").pop();
 		},
 		getDescription 		: function(){ 
-			if(this.rec.described)
+			if(this.rec.described!==false)
 				return this.rec.description;
 			else
 			{
 				var splitteDescription=this.rec.description.replace("//", "").split("\n");
 				splitteDescription.pop();
-				return splitteDescription;
+				return splitteDescription.join("\n");
 			}
 		},
 		getFullDescription	: function(){
@@ -99,12 +98,25 @@ myApp.factory("FunctionFactory", function () {
 		getFunctionCode: function(){
 			return this.getSignature() + this.rec.code;
 		},
-		getFullCode: function(pseudocall){
-			if(pseudocall!==undefined && this.pseudoFunctions.indexOf(pseudocall)!==-1)
-				this.pseudoFunctions.splice(this.pseudoFunctions.indexOf(pseudocall),1);
-			return this.getFunctionCode() + (this.pseudoFunctions!==undefined ? "\n\n" + this.pseudoFunctions.join("{}\n\n")+"{}":"");
+		getPseudoFunctions 	: function(){
+			if(this.rec.pseudoFunctions===undefined)
+				return "";
+			else if(typeof this.rec.pseudoFunctions[0]==="string")
+			 	return "\n\n" + this.rec.pseudoFunctions.join("{}\n\n")+"{}";
+			else if(typeof this.rec.pseudoFunctions[0]==="object") {
+				var pseudoFunctionsStringified="\n\n";
+				for(var i=0; i<this.rec.pseudoFunctions.length; i++ )
+					pseudoFunctionsStringified+=this.rec.pseudoFunctions[i].description+"{}\n\n";
+				return pseudoFunctionsStringified;
+			}
+			return "";
 		},
-
+		getFullCode: function(pseudocall){
+			if(pseudocall!==undefined && this.getPseudoFunctions().indexOf(pseudocall)!==-1)
+				this.pseudoFunctions.splice(this.pseudoFunctions.indexOf(pseudocall),1);
+			return this.getFunctionCode() + this.getPseudoFunctions();
+		},
+		
 
 	};
 

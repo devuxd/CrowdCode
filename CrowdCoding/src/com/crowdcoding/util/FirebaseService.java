@@ -63,6 +63,7 @@ public class FirebaseService
 	// Writes information about an old microtask to retrieve the information to Firebase
 	public static void writeMicrotaskReissuedFrom( String microtaskKey, String projectId, String reissuedFromMicrotaskKey)
 	{
+		System.out.println("writing: in "+microtaskKey+ " from "+reissuedFromMicrotaskKey);
 		enqueueWrite("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
@@ -162,7 +163,7 @@ public class FirebaseService
 	{
 		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, projectId);
 	}
-	
+
 	public static void writeSetting(String name, String value, String projectId){
 		enqueueWrite(value, "/status/settings/"+name+".json", HTTPMethod.PUT, projectId);
 	}
@@ -212,7 +213,7 @@ public class FirebaseService
 		enqueueWrite(message, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
 	}
 
-	
+
 	// Publishes the history log
 	public static void publishHistoryLogEvent(HistoryEvent event, String projectId)
 	{
@@ -244,7 +245,7 @@ public class FirebaseService
 		return !payload.equals("null");
 	}
 
-	
+
 	// Writes the specified data using the URL, relative to the BaseURL.
 	// Operation specifies the type of http request to make (e.g., PUT, POST, DELETE)
 	private static void writeData(String data, String relativeURL, HTTPMethod operation, String projectId)
@@ -301,9 +302,9 @@ public class FirebaseService
 		return "https://crowdcode.firebaseio.com/projects/" + projectId;
 	}
 
-	
 
-	protected static class FirebaseWrite 
+
+	protected static class FirebaseWrite
 	{
 		private String data;
 		private String relativeURL;
@@ -312,7 +313,7 @@ public class FirebaseService
 
 		public FirebaseWrite(String data, String relativeURL, HTTPMethod operation, String projectId)
 		{
-			
+
 			this.data = data;
 			this.relativeURL = relativeURL;
 			this.operation = operation;
@@ -325,14 +326,14 @@ public class FirebaseService
 			FirebaseService.writeData(data, relativeURL, operation, projectId);
 		}
 	}
-	
+
 	private static LinkedList<FirebaseWrite> writeList = new LinkedList<FirebaseWrite>();
-	
+
 	public static void enqueueWrite(String data, String relativeURL, HTTPMethod operation, String projectId){
 //		System.out.println("Firebase: enqueuing "+relativeURL);
 		writeList.addLast(new FirebaseWrite(data,relativeURL,operation,projectId));
 	}
-	
+
 	public static void publish(){
 		while(!writeList.isEmpty()){
 			FirebaseWrite write = writeList.pop();
