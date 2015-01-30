@@ -48,7 +48,6 @@ myApp.controller('AppController', [
 		// Show when some event occurs (use $promise property to ensure the template has been loaded)
 		$rootScope.$on('showProfileModal', function() {
 			profileModal.$promise.then(profileModal.show);
-			console.log(profileModal);
 		});
 
 
@@ -179,55 +178,23 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	$scope.userService = userService;
 
-	var waitTimeInSeconds   = 15;
+	var waitTimeInSeconds = 15;
 	var checkQueueTimeout = null;
 	var timerInterval     = null;
 	$scope.checkQueueIn   = waitTimeInSeconds;
 
-	// load microtask:
-	// request a new microtask from the backend and if success
-	// inizialize template and microtask-related values
-	$scope.$on('loadMicrotask', function($event, fetchData) {
-		$scope.canSubmit=true;
 
-		// if the check queue timeout
-		// is active, cancel it
-		if (checkQueueTimeout !== null) {
-			$timeout.cancel(checkQueueTimeout);
-		}
-
-		// show the loading screen
-		$scope.templatePath  = templatesURL + "loading.html";
-
-		// if a fetchData is provided
-		if( fetchData !== undefined ){
-			console.log('pre-fetched');
-			$scope.data = fetchData;
-			if( $scope.data.success!== undefined && !$scope.data.success )
-				noMicrotask();
-			else
-				loadMicrotask(fetchData.key);
-		}
-		// otherwise do a fetch request
-		else {
-			console.log('undefined fetch data');
-			var fetchPromise = microtasks.fetch();
-			fetchPromise.then(function(data){
-				$scope.data = data;
-				if( $scope.data.success!== undefined && !$scope.data.success )
-					noMicrotask();
-				else
-					loadMicrotask(data.key);
-			}, function(){
-				// if the request gives an error
-				// show the no microtask page
-				noMicrotask();
-			});
-		}
-	});
 
 	function loadMicrotask(microtaskKey){
-		console.log('Loading microtask '+microtaskKey);
+		console.log('Loading microtask ',microtaskKey);
+
+		if( microtaskKey === undefined || microtaskKey == "null" ){
+			noMicrotask();
+			return;
+		}
+
+		userService.assignedMicrotaskKey = microtaskKey;
+
 		$scope.microtask = microtasks.get(microtaskKey);
 		$scope.microtask.$loaded().then(function() {
 
@@ -301,6 +268,35 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	// ------- MESSAGE LISTENERS ------- //
 
+	// load microtask:
+	// request a new microtask from the backend and if success
+	// inizialize template and microtask-related values
+	$scope.$on('loadMicrotask', function($event, fetchData) {
+		$scope.canSubmit=true;
+
+		// if the check queue timeout
+		// is active, cancel it
+		if (checkQueueTimeout !== null) {
+			$timeout.cancel(checkQueueTimeout);
+		}
+
+		// show the loading screen
+		$scope.templatePath  = templatesURL + "loading.html";
+
+		// if a fetchData is provided
+		if( fetchData !== undefined ){
+			loadMicrotask(fetchData.microtaskKey);
+		}
+		// otherwise do a fetch request
+		else {
+			var fetchPromise = microtasks.fetch();
+			fetchPromise.then(function(fetchData){
+				loadMicrotask(fetchData.microtaskKey);	
+			}, function(){
+				noMicrotask();
+			});
+		}
+	});
 
 
 	// listen for message 'submit microtask'

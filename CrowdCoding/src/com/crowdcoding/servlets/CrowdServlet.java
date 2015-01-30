@@ -477,25 +477,23 @@ public class CrowdServlet extends HttpServlet
             	String workerID     = worker.getUserid();
             	String workerHandle = worker.getNickname();
 
-            	Key<Microtask> microtaskKey ;
+            	Key<Microtask> microtaskKey = null;
 
-            	microtaskKey = project.lookupMicrotaskAssignment(workerID);
-//            	System.out.println("-->FETCH : The lookup returned: "+microtaskKey);
             	
-            	// if it's forced the unassignment do it
-            	// and set the mtask key to null
-            	if( unassign && microtaskKey != null ){
-//            		System.out.println("-->FETCH : Unassign is TRUE");
-            		project.unassignMicrotask(workerID);
-            		microtaskKey = null;
-            	}
 
-            	// if the user has no microtask, assign a new one
+            	// if the unassignment is forced
+            	if( unassign ){
+            		project.unassignMicrotask(workerID);
+            	}
+            	// otherwise search for the current assignment
+            	else 
+            		microtaskKey = project.lookupMicrotaskAssignment(workerID);
+
+            	// if the user hasn't an assigned microtask
+            	// search for a queued one
             	if (microtaskKey == null)
             	{
             		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
-
-//            		System.out.println("-->FETCH : assigned "+microtaskKey);
             	}
 
             	return microtaskKey;
@@ -504,28 +502,15 @@ public class CrowdServlet extends HttpServlet
     	
         HistoryLog.Init(projectID).publish();
         FirebaseService.publish();
-
-    	// Load the microtask
-	    Microtask microtask = null;
-	    if (microtaskKey != null)
-	    {
-		    microtask = ofy().transact(new Work<Microtask>() {
-	            public Microtask run()
-	            {
-	        		return ofy().load().key(microtaskKey).now();
-	            }
-		    });
-	    }
-
 	    //ProjectCommand.logoutInactiveWorkers();
 
     	// If there are no microtasks available, send an empty response.
 	    // Otherwise, send the json with microtask info.
-		if (microtask == null) {
-			renderJson(resp,"{\"success\":false}");
+		if (microtaskKey == null) {
+			renderJson(resp,"{}");
 		}
 		else{
-			renderJson(resp,microtask.toJSON());
+			renderJson(resp,"{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\"}");
 		}
 
 
