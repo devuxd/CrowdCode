@@ -216,6 +216,7 @@
 	<script src='/include/escodegen.browser.js'></script>
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
+	<script src="/include/angular-messages/angular-messages.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/angular-animate.min.js"></script><!-- Angular animate -->
 	<script src="/include/angular/angular-sanitize.min.js"></script><!-- Angular sanitize -->
 

@@ -399,10 +399,13 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         angular.forEach($scope.stubs, function(data, index) {
 
             calleeFunction = functionsService.getByName(index);
-            if( $scope.stubsParamNames === undefined)
+            if( $scope.stubsParamNames === undefined){
                 $scope.stubsParamNames = {};
+                $scope.stubsReturnType = {};
+            }
 
             $scope.stubsParamNames[index] = calleeFunction.paramNames;
+            $scope.stubsReturnType[index] = calleeFunction.returnType;
 
             $scope.calleDescription[index]={};
             $scope.calleDescription[index].code=functionsService.renderDescription(calleeFunction) + calleeFunction.header;

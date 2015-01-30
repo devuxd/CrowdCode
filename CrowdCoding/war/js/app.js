@@ -2,7 +2,8 @@
 
 // create CrowdCodeWorker App and load modules
 var myApp = angular.module('crowdCodeWorker',[ 
-	'ngAnimate', 
+	'ngAnimate',
+	'ngMessages', 
 	'firebase', 
 	'ui.codemirror', 
 	'ngSanitize', 
