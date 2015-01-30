@@ -19,7 +19,7 @@ public class FunctionDTO extends DTO
 	public String code = "";
 	public List<Long> calleeIds = new ArrayList<Long>();
 	public List<TestDTO> stubs = new ArrayList<TestDTO>();
-	public List<String> pseudoFunctions = new ArrayList<String>();
+	public List<PseudoFunctionDTO> pseudoFunctions = new ArrayList<PseudoFunctionDTO>();
 	public Boolean autoSubmit;
 	public String disputeText;
 

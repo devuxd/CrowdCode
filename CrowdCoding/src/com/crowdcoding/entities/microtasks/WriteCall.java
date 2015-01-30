@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.WriteCallInFirebase;
 import com.crowdcoding.entities.Artifact;
@@ -27,7 +28,7 @@ import com.googlecode.objectify.annotation.Parent;
 public class WriteCall extends Microtask
 {
 	@Parent @Load private Ref<Function> caller;
-	private String pseudoCall;
+	private PseudoFunctionDTO pseudoCall;
 	private String calleeName;
 	private String calleeFullDescription;
 
@@ -38,7 +39,7 @@ public class WriteCall extends Microtask
 	}
 
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, String calleeName, String calleeFullDescription, String pseudoCall, String projectId)
+	public WriteCall(Function caller, String calleeName, String calleeFullDescription, PseudoFunctionDTO pseudoCall, String projectId)
 	{
 		super( projectId);
 		this.submitValue = 7;
@@ -88,7 +89,7 @@ public class WriteCall extends Microtask
 	protected boolean isStillNeeded()
 	{
 		// AddCall is still needed iff the pseudocall is still in the code
-		return caller.get().containsPseudoCall(pseudoCall);
+		return false; //caller.get().containsPseudoCall(pseudoCall);
 	}
 
 	protected Class getDTOClass()
@@ -113,7 +114,7 @@ public class WriteCall extends Microtask
 
 	public String getEscapedPseudoCall()
 	{
-		return StringEscapeUtils.escapeEcmaScript(pseudoCall);
+		return StringEscapeUtils.escapeEcmaScript(pseudoCall.description+pseudoCall.header);
 	}
 
 

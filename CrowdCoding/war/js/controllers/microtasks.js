@@ -159,6 +159,8 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
     var newCode;
     var diffRes;
     var diffCode;
+    var oldFunction;
+    var newFunction;
 
     //load the microtask to review
     $scope.review.microtask = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
@@ -179,8 +181,8 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
 
-            var oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
-            var newFunction = new FunctionFactory ( $scope.review.microtask.submission);
+            oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
+            newFunction = new FunctionFactory ( $scope.review.microtask.submission);
             oldCode = oldFunction.getFullCode().split("\n");
             newCode = newFunction.getFullCode().split("\n");
 
@@ -227,8 +229,8 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 
         } else if ($scope.review.microtask.type == 'WriteCall') {
 
-            var oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
-            var newFunction = new FunctionFactory ($scope.review.microtask.submission);
+            oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
+            newFunction = new FunctionFactory ($scope.review.microtask.submission);
             oldCode = oldFunction.getFullCode().split("\n");
 
             newCode = newFunction.getFullCode().split("\n");

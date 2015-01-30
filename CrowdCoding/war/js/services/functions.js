@@ -449,14 +449,22 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 		functionParsed.pseudoFunctions=[];
 		var pseudoFunctionsName=[];
 		for (var i=1; i<ast.body.length; i++ ){
-			var pseudoFunction = codemirror.getRange({
+			var pseudoFunction={};
+			pseudoFunction.description= codemirror.getRange({
 				    line: ast.body[i-1].body.loc.end.line - 1,
 				    ch: ast.body[i-1].body.loc.end.column
 				}, {
+				    line: ast.body[i].loc.start.line - 1,
+				    ch: ast.body[i].loc.start.column
+				}).match(/.+/g).join("\n");
+			pseudoFunction.header=codemirror.getRange({
+				   	line: ast.body[i].loc.start.line - 1,
+				  	ch: ast.body[i].loc.start.column
+				}, {
 				    line: ast.body[i].body.loc.end.line - 1,
-				    ch: ast.body[i].body.loc.end.column
+				    ch: ast.body[i].body.loc.end.column-2
 				});
-			functionParsed.pseudoFunctions.push(pseudoFunction.match(/.+/g).join("\n"));
+			functionParsed.pseudoFunctions.push(pseudoFunction);
 			pseudoFunctionsName.push(ast.body[i].id.name);
 		}
 		functionParsed.calleeIds=[];

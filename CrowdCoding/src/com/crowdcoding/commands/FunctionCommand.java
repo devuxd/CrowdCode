@@ -2,6 +2,7 @@ package com.crowdcoding.commands;
 
 import java.util.List;
 
+import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Test;
@@ -31,7 +32,7 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	public static FunctionCommand addDependency(long functionID,
-			long newDependency, String pseudoCall) {
+			long newDependency, PseudoFunctionDTO pseudoCall) {
 		return new AddDependency(functionID, newDependency, pseudoCall);
 	}
 
@@ -63,7 +64,7 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	public static FunctionCommand calleeBecameDescribed(long functionID,
-			String calleeName, String calleeFullDescription, String pseudoCall) {
+			String calleeName, String calleeFullDescription, PseudoFunctionDTO pseudoCall) {
 		return new CalleeBecameDescribed(functionID, calleeName,
 				calleeFullDescription, pseudoCall);
 	}
@@ -250,11 +251,11 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	protected static class AddDependency extends FunctionCommand {
-		private String pseudoCall;
+		private PseudoFunctionDTO pseudoCall;
 		private long newDependency;
 
 		public AddDependency(long functionID, long newDependency,
-				String pseudoCall) {
+				PseudoFunctionDTO pseudoCall) {
 			super(functionID);
 			this.pseudoCall = pseudoCall;
 			this.newDependency = newDependency;
@@ -294,10 +295,10 @@ public abstract class FunctionCommand extends Command {
 	protected static class CalleeBecameDescribed extends FunctionCommand {
 		private String calleeName;
 		private String calleeFullDescription;
-		private String pseudoCall;
+		private PseudoFunctionDTO pseudoCall;
 
 		public CalleeBecameDescribed(long functionID, String calleeName,
-				String calleeFullDescription, String pseudoCall) {
+				String calleeFullDescription, PseudoFunctionDTO pseudoCall) {
 			super(functionID);
 			this.calleeFullDescription = calleeFullDescription;
 			this.calleeName = calleeName;

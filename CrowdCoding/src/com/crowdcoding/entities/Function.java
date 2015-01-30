@@ -12,6 +12,7 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
@@ -34,6 +35,7 @@ import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.cmd.Query;
+import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
 
 
 /* A function represents a function of code. Functions transition through states, spawning microtasks,
@@ -67,9 +69,10 @@ public class Function extends Artifact
 	// current callers with a fully implemented callsite to this function:
 	private List<Long> callers = new ArrayList<Long>();
 	// pseudocalls made by this function:
-	private List<String> pseudoCalls = new ArrayList<String>();
+	private List<PseudoFunctionDTO> pseudoCalls = new ArrayList<PseudoFunctionDTO>();
+	private List<String> pseudoFunctionsHeader = new ArrayList<String>();
 	// pseudocall callsites calling this function (these two lists must be in sync)
-	private List<String> pseudoCallsites = new ArrayList<String>();
+	private List<PseudoFunctionDTO> pseudoCallsites = new ArrayList<PseudoFunctionDTO>();
 	private List<Long>   pseudoCallers = new ArrayList<Long>();
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -91,7 +94,7 @@ public class Function extends Artifact
 	}
 
 	// Constructor for a function that only has a short call description and still needs a full description
-	public Function(String callDescription, Function caller, String projectId)
+	public Function(PseudoFunctionDTO callDescription, Function caller, String projectId)
 	{
 		super(projectId);
 		//this.needsDebugging=true;
@@ -267,11 +270,11 @@ public class Function extends Artifact
 	}
 */
 	// Returns true iff the specified pseudocall is currently in the code
-	public boolean containsPseudoCall(String pseudoCall)
+	/*public boolean containsPseudoCall(String pseudoCall)
 	{
 		return pseudoCalls.contains(pseudoCall);
 	}
-
+*/
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  PRIVATE CORE FUNCTIONALITY
@@ -384,11 +387,9 @@ public class Function extends Artifact
 		rebuildCalleeList(dto.calleeIds);
 
 		// Look for pseudocode and psuedocalls
-		List<String> currentPseudoCalls = dto.pseudoFunctions;
-		List<String> newPseudoCalls = new ArrayList<String>();
+		List<PseudoFunctionDTO> currentPseudoFunctions = dto.pseudoFunctions;
 
-
-		if(currentPseudoCalls.isEmpty())
+		if(currentPseudoFunctions.isEmpty())
 		{
 			List<String> pseudoCode = findPseudocode(code);
 			if(pseudoCode.isEmpty())
@@ -404,23 +405,21 @@ public class Function extends Artifact
 		}
 		else
 		{
-			for (String callDescription : currentPseudoCalls)
+			for (PseudoFunctionDTO currentPseudoFunction : currentPseudoFunctions)
 			{
-				if (!pseudoCalls.contains(callDescription))
+				if (!pseudoFunctionsHeader.contains(currentPseudoFunction.header))
 				{
 					setWritten(false, projectId);
 
-					//for any currentPseudoCall not in pseudoCalls, add it
-					newPseudoCalls.add(callDescription);
 					// Spawn microtask immediately, as it does not require access to the function itself
-					Microtask microtask = new ReuseSearch(this, callDescription, projectId);
+					Microtask microtask = new ReuseSearch(this, currentPseudoFunction, projectId);
 					ProjectCommand.queueMicrotask(microtask.getKey(), null);
 				}
 			}
 		}
 
 		// Update the list of pseudocalls to match the current (distinct) pseudocalls now in the code
-		this.pseudoCalls = currentPseudoCalls;
+		this.pseudoCalls = currentPseudoFunctions;
 
 		ofy().save().entity(this).now();
 		lookForWork();
@@ -469,12 +468,12 @@ public class Function extends Artifact
 		onWorkerEdited(dto, projectId);
 		//if don't exists test and the submit is from a dispute
 		//respawn the write test case microtask
-		System.out.println("--> FUNCTION ("+this.id+") "+this.name+" : dispute text "+dto.disputeText);
+
 		if(dto.disputeText!=null && tests.size()==0)
 			queueMicrotask(new WriteTestCases(this, projectId),projectId);
 	}
 
-	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, String projectId)
+	public void reuseSearchCompleted(ReusedFunctionDTO dto, PseudoFunctionDTO callDescription, String projectId)
 	{
 		Function callee;
 
@@ -668,7 +667,7 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 
-	public void addDependency(long newSubscriber, String pseudoCall)
+	public void addDependency(long newSubscriber, PseudoFunctionDTO pseudoCall)
 	{
 		//add it to the lists
 		pseudoCallers.add(newSubscriber);
@@ -681,7 +680,7 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 
-	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, String pseudoCall, String projectId)
+	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, PseudoFunctionDTO pseudoCall, String projectId)
 	{
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("AddCall", this));
 		queueMicrotask(new WriteCall(this, calleeName, calleeFullDescription, pseudoCall, projectId), projectId);
@@ -714,7 +713,7 @@ public class Function extends Artifact
 			sendDescribedNotification(pseudoCallers.get(i), pseudoCallsites.get(i));
 	}
 
-	private void sendDescribedNotification(long subscriberID, String pseudoCall)
+	private void sendDescribedNotification(long subscriberID, PseudoFunctionDTO pseudoCall)
 	{
 		FunctionCommand.calleeBecameDescribed(subscriberID, this.getName(), this.getFullDescription(), pseudoCall);
 	}

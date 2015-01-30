@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.WriteFunctionDescriptionInFirebase;
 import com.crowdcoding.entities.Artifact;
@@ -26,7 +27,7 @@ public class WriteFunctionDescription extends Microtask
 {
 	@Parent @Load private Ref<Function> function;
 	@Load private Ref<Function> caller;
-	private String callDescription;
+	private PseudoFunctionDTO callDescription;
 
 	// Default constructor for deserialization
 	private WriteFunctionDescription()
@@ -34,7 +35,7 @@ public class WriteFunctionDescription extends Microtask
 	}
 
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, String callDescription, Function caller, String projectId)
+	public WriteFunctionDescription(Function function, PseudoFunctionDTO callDescription, Function caller, String projectId)
 	{
 		super(projectId);
 		this.submitValue = 8;
@@ -88,7 +89,7 @@ public class WriteFunctionDescription extends Microtask
 		return FunctionDescriptionDTO.class;
 	}
 
-	public String getCallDescription()
+	public PseudoFunctionDTO getCallDescription()
 	{
 		return callDescription;
 	}
