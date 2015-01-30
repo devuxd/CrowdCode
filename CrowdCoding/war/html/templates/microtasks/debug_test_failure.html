@@ -148,9 +148,30 @@
                                                     <td><div ace-read-json ng-model="input" ></div></td>
                                                 </tr>
 
-                                                <tr>
+                                                <tr ng-form="returnForm">
                                                     <td>return value</td>
-                                                    <td><div ace-edit-json ng-model="stubs[fName][inputKey].output" ></div></td>
+                                                    <td >
+
+                                                        <ace-edit-json ng-model="stubs[fName][inputKey].output">
+                                                        </ace-edit-json>
+
+                                                     <!--   <textarea type="text" 
+                                                            ng-model="stubs[fName][inputKey].output"
+                                                            name="output"
+                                                            ng-show="false"
+                                                            required
+                                                            json-data-type="{{stubsReturnType[fName]}}" />
+                                                        {{returnForm[output]}}
+                                                        <div class="help-block pull-left" 
+                                                             ng-messages="returnForm[output].$error">
+                                                            <div ng-message="required">Please, fill this field</div>
+                                                            <div ng-message="jsonDataType">
+                                                                <span ng-repeat="e in returnForm[output].$error.jsonErrors" ng-bind="e"></span>
+                                                            </div>
+                                                        </div>-->
+
+
+                                                    </td>
                                                 </tr>
                                             </table>
                                 

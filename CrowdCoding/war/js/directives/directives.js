@@ -27,6 +27,24 @@ myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
     };
 }]);
 
+myApp.directive('jsonDataType', ['ADTService', function(ADTService) {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attrs, ngModel) {
+            console.log('DATA TYPE VAL INIT'+attrs.jsonDataType);
+            ngModel.$validators.jsonDataType = function(modelValue,viewValue){
+                var value = modelValue || viewValue;
+                var validator = new JSONValidator();
+                validator.initialize(ADTService.getNameToADT(), value, attrs.jsonDataType);
+                validator.errorCheck();
+                ngModel.$error.jsonErrors = validator.getErrors();
+                return validator.isValid();
+            };
+        }
+    };
+}]);
+
 myApp.directive('reservedWord', function() {
     return {
         restrict: 'A',
