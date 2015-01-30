@@ -149,6 +149,7 @@ public abstract class ProjectCommand extends Command
 
 		public void execute(Project project)
 		{
+			System.out.println("-->SKIP "+Microtask.keyToString(this.microtaskKey));
 			project.skipMicrotask(microtaskKey, workerID, project);
 		}
 	}
@@ -172,6 +173,7 @@ public abstract class ProjectCommand extends Command
 
 		public void execute(Project project)
 		{
+			System.out.println("-->SUBMIT "+Microtask.keyToString(this.microtaskKey));
 			project.submitMicrotask(microtaskKey, microtaskType, jsonDTOData, workerID, project);
 		}
 	}

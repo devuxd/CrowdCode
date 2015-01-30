@@ -1046,7 +1046,7 @@ myApp.directive('newsPanel', function($timeout, $rootScope, $firebase,$popover, 
 });
 
 
-myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory) {
+myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory, userService) {
     return {
         restrict: 'E',
         templateUrl: '/html/templates/panels/chat_panel.html',
@@ -1144,7 +1144,8 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert, avatar
                         text:         $scope.data.newMessage,
                         createdAt:    Date.now(),
                         workerHandle: $rootScope.workerHandle,
-                        workerId:     $rootScope.workerId
+                        workerId:     $rootScope.workerId,
+                        microtaskKey: (userService.assignedMicrotaskKey==null)?'no-microtask':userService.assignedMicrotaskKey
                     });
                     $scope.data.newMessage = "";
                 }

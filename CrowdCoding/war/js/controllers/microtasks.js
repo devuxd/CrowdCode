@@ -371,6 +371,7 @@ myApp.controller('DebugTestFailureController', ['$scope', '$rootScope', '$fireba
         codemirror.setOption('indentWithTabs', true);
         codemirror.setOption('lineNumbers', true);
         codemirror.setOption("theme", "custom-editor");
+        codemirror.setSize(null, 600);
         codemirror.refresh();
 
         codemirror.on("change", function() {

@@ -479,27 +479,29 @@ public class CrowdServlet extends HttpServlet
 
             	Key<Microtask> microtaskKey ;
 
+            	microtaskKey = project.lookupMicrotaskAssignment(workerID);
+//            	System.out.println("-->FETCH : The lookup returned: "+microtaskKey);
+            	
             	// if it's forced the unassignment do it
             	// and set the mtask key to null
-            	if( unassign ){
+            	if( unassign && microtaskKey != null ){
+//            		System.out.println("-->FETCH : Unassign is TRUE");
             		project.unassignMicrotask(workerID);
             		microtaskKey = null;
             	}
-            	// otherwise check if the user already has
-            	// an assigned microtask
-            	else {
-            		microtaskKey = project.lookupMicrotaskAssignment(workerID);
-            	}
 
-
+            	// if the user has no microtask, assign a new one
             	if (microtaskKey == null)
             	{
             		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
+
+//            		System.out.println("-->FETCH : assigned "+microtaskKey);
             	}
 
             	return microtaskKey;
             }
         });
+    	
         HistoryLog.Init(projectID).publish();
         FirebaseService.publish();
 
@@ -650,7 +652,7 @@ public class CrowdServlet extends HttpServlet
 	private void executeCommands(List<Command> commands, final String projectId)
 	{
 
-		System.out.println("----> PROJECT ID IS "+projectId);
+//		System.out.println("----> PROJECT ID IS "+projectId);
 		LinkedList<Command> commandQueue = new LinkedList<Command>(commands);
 		// Execute commands until done, adding commands as created.
         while(!commandQueue.isEmpty())

@@ -28,6 +28,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 	  }
 	});
 
+
 	user.data = $firebase(userProfile).$asObject();
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
@@ -38,7 +39,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 		user.data.$save();
 	});
 
-
+	user.assignedMicrotaskKey = null;
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;
 		user.data.$save().then(function(){

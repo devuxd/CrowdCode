@@ -212,15 +212,6 @@ public class FirebaseService
 		enqueueWrite(message, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
 	}
 
-	// Publishes the history log
-	public static void publishHistoryLog(List<Pair<String, String>> list, String projectId)
-	{
-		
-		for (Pair<String, String> idAndMessage : list){
-			//System.out.println("Writing log: "+idAndMessage.b);
-			enqueueWrite(idAndMessage.b, "/history/events/" + idAndMessage.a + ".json", HTTPMethod.PUT, projectId);
-		}
-	}
 	
 	// Publishes the history log
 	public static void publishHistoryLogEvent(HistoryEvent event, String projectId)

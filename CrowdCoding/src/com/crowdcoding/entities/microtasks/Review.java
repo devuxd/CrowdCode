@@ -136,10 +136,10 @@ public class Review extends Microtask
     			awardedPoint,
     			submittedMicrotask.microtaskName(),
 				"WorkReviewed",
-    			submittedMicrotask.getKey().toString() ,
+				Microtask.keyToString(submittedMicrotask.getKey()),
 				reviewDTO.qualityScore)
 	    	).json(),
-    		submittedMicrotask.getKey().toString(),
+	    	Microtask.keyToString(submittedMicrotask.getKey()),
     		projectId
 	    );
 

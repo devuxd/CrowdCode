@@ -1,12 +1,8 @@
 <div ng-controller="WriteFunctionDescriptionController" >
 
 	<div class="section section-description " >
-		<div class="section-content no-padding microtask-details" >
-				<span class="bg-color type">{{::data.title}}</span>
-				<span class="points">{{::data.submitValue}} pts</span>
-				<span class="tutorial-btn glyphicon glyphicon-question-sign color" ng-click="startTutorial(microtask.type);"></span>
-				<span class="clearfix"></span>
-		</div>
+		
+		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 		<div class="section-content job-description">
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
 			A function to do the following has been requested: <br/>

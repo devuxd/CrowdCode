@@ -205,8 +205,6 @@ public class Project
 	// who, if provided, will be permanently excluded from doing the microtask.
 	public void queueMicrotask( Key<Microtask> microtaskKey, String excludedWorkerID)
 	{
-//		System.out.println("--> PROJECT: ADDING TO QUEUE mtask "+microtaskKey.toString()+" ");
-
 		// if the microtask is not in the queue, add it
 		if( ! microtaskQueue.contains( Microtask.keyToString(microtaskKey) )  ){
 			microtaskQueue.addLast( Microtask.keyToString(microtaskKey) ) ;
@@ -227,8 +225,9 @@ public class Project
 	public void queueReviewMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
 	{
 		// add the review microtask to the reviews queue
-		reviewQueue.addLast(  Microtask.keyToString(microtaskKey) );
-
+		if( ! reviewQueue.contains( Microtask.keyToString(microtaskKey) )  ){
+			reviewQueue.addLast( Microtask.keyToString(microtaskKey) ) ;
+		}
 		// exclude the worker who submitted the microtask that spawned the review
 		// from the workers that can reach this review
 		addPermExcludedWorkerForMicrotask(microtaskKey, excludedWorkerID);
@@ -351,17 +350,17 @@ public class Project
 
 		// else if a microtask was found
 		else{
-			// assign it to the worker
-			microtaskAssignments.put( workerID,  Microtask.keyToString(microtaskKey) );
-			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey), workerID, workerHandle, this.getID(), true);
-
-			// write the history log entry about the microtask assignment
+			// load it from the datastore
 			Microtask mtask = ofy().transactionless().load().key(microtaskKey).now();
+			
+			// assign it to the worker
 			mtask.setWorkerId(workerID);
+			microtaskAssignments.put( workerID,  Microtask.keyToString(microtaskKey) );
 
 			// save the project
 			ofy().save().entity(this).now();
 
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey), workerID, workerHandle, this.getID(), true);
 			HistoryLog.Init(this.getID()).addEvent(new MicrotaskAssigned(mtask,workerID));
 
 			// return the assigned microtask key
@@ -393,15 +392,10 @@ public class Project
 	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID, Project project){
 
 		Microtask microtask = ofy().load().key( microtaskKey ).now();
-
-//		String assignedMicrotask =  microtaskAssignments.get( workerID );
-
+		
 		// submit only if the request come from
-		// the current worker of the microtask
-		if( microtask.getWorkerId().equals( workerID )){
-
-			// Unassign the microtask from the worker
-			microtaskAssignments.put( workerID, null );
+		// the current assigned worker of the microtask
+		if( microtask.isAssignedTo(workerID) ){
 
 			// save the project
 			ofy().save().entity(this).now();
@@ -420,7 +414,6 @@ public class Project
 			else {
 				MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
 			}
-
 		}
 	}
 
@@ -428,30 +421,27 @@ public class Project
 	// Precondition - the worker must be assigned to this microtask
 	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Project project)
 	{
-		// Unassign the microtask from the worker and exclude the worker
-//		microtaskAssignments.put( workerID, null);
-		addExcludedWorkerForMicrotask( microtaskKey, workerID);
+		Microtask microtask = ofy().load().key(microtaskKey).now();
+		if( microtask.isAssignedTo(workerID) ){
+			microtask.setWorkerId(null);
+			addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
-		// Unassign the microtask from the worker and exclude the worker
-		microtaskAssignments.put( workerID, null);
-		addExcludedWorkerForMicrotask( microtaskKey, workerID);
-
-		// Add the work back to the appropriate queue
-		Microtask microtask= ofy().load().key(microtaskKey).now();
-		if(microtask.microtaskName()!="Review")
-		{
-			if(this.reviewsEnabled)
-				queueMicrotask( microtaskKey, workerID);
+			// Add the work back to the appropriate queue
+			if(microtask.microtaskName()!="Review")
+			{
+				if(this.reviewsEnabled)
+					queueMicrotask( microtaskKey, workerID);
+				else
+					queueMicrotask( microtaskKey, null);
+			}
 			else
-				queueMicrotask( microtaskKey, null);
+				queueReviewMicrotask(microtaskKey, workerID);
+	
+			resetIfAllSkipped( microtaskKey );
+			ofy().save().entity(this).now();
+	
+			MicrotaskCommand.skip( microtaskKey, workerID);
 		}
-		else
-			queueReviewMicrotask(microtaskKey, workerID);
-
-		resetIfAllSkipped( microtaskKey );
-		ofy().save().entity(this).now();
-
-		MicrotaskCommand.skip( microtaskKey, workerID);
 	}
 
 

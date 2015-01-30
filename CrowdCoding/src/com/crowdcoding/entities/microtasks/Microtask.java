@@ -241,4 +241,7 @@ public /*abstract*/ class Microtask
 		return json.toString();
 	}
 
+	public boolean isAssignedTo(String workerId){
+		return this.getWorkerId() != null && this.getWorkerId().equals( workerId );
+	}
 }
