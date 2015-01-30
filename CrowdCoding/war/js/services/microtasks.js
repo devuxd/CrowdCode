@@ -1,7 +1,7 @@
 /////////////////////////
 // MICROTASKS SERVICE  //
 /////////////////////////
-myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','$q', function($window,$rootScope,$firebase,$http,$q) {
+myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','$q', 'userService', function($window,$rootScope,$firebase,$http,$q, userService) {
 
 	// Private variables
 	var microtasks;
@@ -29,9 +29,11 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','
 					// submit to Firebase
 					microtask.submission = formData;
 					microtask.$save();
+					userService.assignedMicrotaskKey = data.key;
 					deferred.resolve(data);
 				})
 				.error(function(data, status, headers, config) {
+					userService.assignedMicrotaskKey = null;
 					deferred.reject();
 				});
 			return deferred.promise;
@@ -43,9 +45,11 @@ myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','
 			// ask the microtask id
 			$http.get('/' + projectId + '/ajax/fetch')
 			.success(function(data, status, headers, config) {
+				userService.assignedMicrotaskKey = data.key;
 				deferred.resolve(data);	
 			})
 			.error(function(data, status, headers, config) {
+				userService.assignedMicrotaskKey = null;
 				deferred.reject();
 			});
 
