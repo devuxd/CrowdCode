@@ -48,6 +48,7 @@ myApp.controller('AppController', [
 		// Show when some event occurs (use $promise property to ensure the template has been loaded)
 		$rootScope.$on('showProfileModal', function() {
 			profileModal.$promise.then(profileModal.show);
+			console.log(profileModal);
 		});
 
 
@@ -82,7 +83,7 @@ myApp.controller('AppController', [
 
 				$rootScope.$broadcast('loadMicrotask');
 
-				$rootScope.$broadcast('run-tutorial','main',function(){
+				$rootScope.$broadcast('run-tutorial','main', false, function(){
 					$rootScope.$broadcast('showProfileModal');
 				});
 			}
@@ -108,11 +109,6 @@ myApp.controller('AppController', [
 			});
 
 		});
-
-
-		// userService.startTutorial( 'Main' , false, function(){
-		// 	////console.log('printed after Main tutorial!');
-		// });
 
 }]);
 
@@ -183,7 +179,7 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 	$scope.userService = userService;
 
-	var waitTimeInSeconds   = 30;
+	var waitTimeInSeconds   = 15;
 	var checkQueueTimeout = null;
 	var timerInterval     = null;
 	$scope.checkQueueIn   = waitTimeInSeconds;
@@ -255,9 +251,11 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 					$scope.reissuedMicrotask.$loaded().then(function() {
 					//choose the right template
 					if ( $scope.microtask !== undefined && $scope.reissuedMicrotask !== undefined ){
-						// $rootScope.$broadcast('run-tutorial', $scope.microtask.type );
+
 						$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 						$scope.noMicrotask = false;
+
+						$rootScope.$broadcast('run-tutorial', $scope.microtask.type , false, function(){});
 					}
 					else {
 						$scope.templatePath = templatesURL + "no_microtask.html";
@@ -271,9 +269,10 @@ myApp.controller('MicrotaskController', ['$scope', '$rootScope', '$firebase', '$
 
 				//choose the right template
 				if ( $scope.microtask !== undefined ){
-					// $rootScope.$broadcast('run-tutorial', $scope.microtask.type );
 					$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 					$scope.noMicrotask = false;
+
+					$rootScope.$broadcast('run-tutorial', $scope.microtask.type , false, function(){});
 				}
 				else {
 					$scope.templatePath = templatesURL + "no_microtask.html";

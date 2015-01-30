@@ -398,7 +398,7 @@ public class Project
 
 		// submit only if the request come from
 		// the current worker of the microtask
-		if( microtask.getWorkerId().equals( workerID )){
+		if( microtask.getWorkerId() != null && microtask.getWorkerId().equals( workerID )){
 
 //			// Unassign the microtask from the worker
 //			microtaskAssignments.put( workerID, null );

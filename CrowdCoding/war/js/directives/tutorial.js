@@ -1,5 +1,5 @@
 
-myApp.directive('tutorialManager', [ '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($compile, $timeout, $firebase,firebaseUrl,workerId) {
+myApp.directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId) {
     var fbRef = new Firebase(firebaseURL);
     var tutorialsOnRef = fbRef.child('/status/settings/tutorials');
     var userTutorials  = $firebase( fbRef.child('/workers/' + workerId + '/completedTutorials' ) ).$asObject();
@@ -26,9 +26,9 @@ myApp.directive('tutorialManager', [ '$compile', '$timeout', '$firebase', 'fireb
 
                         // listen on the event 'run-tutorial'
                         // and start the tutorial with tutorialId
-                        $scope.$on('run-tutorial',function( event, tutorialId, onFinish ){
+                        $rootScope.$on('run-tutorial',function( event, tutorialId, force, onFinish ){
                             console.log('tutorial: '+tutorialId);
-                            if( userTutorials[tutorialId] === undefined ){
+                            if( force || userTutorials[tutorialId] === undefined ){
                                 // if another tutorial is running
                                 // enqueue the new one
                                 if( running ){
