@@ -3,7 +3,7 @@
 ////////////////////
 //FUNCTIONS SERVICE   //
 ////////////////////
-myApp.factory('functionsService', ['$window','$rootScope','$firebase', function( $window, $rootScope, $firebase) {
+myApp.factory('functionsService', ['$window','$rootScope','$firebase','FunctionFactory', function( $window, $rootScope, $firebase,FunctionFactory) {
 
 
 	var service = new  function(){
@@ -338,7 +338,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			if(value.name!=functionSourceName){
 			var score = computeMatchScore(value, re);
 			if (score > 0)
-				results.push({ 'score': score, 'value': value });
+				results.push({ 'score': score, 'value': new FunctionFactory( value) });
 			}
 		});
 
@@ -453,17 +453,14 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			pseudoFunction.description= codemirror.getRange({
 				    line: ast.body[i-1].body.loc.end.line - 1,
 				    ch: ast.body[i-1].body.loc.end.column
-				}, {
-				    line: ast.body[i].loc.start.line - 1,
-				    ch: ast.body[i].loc.start.column
-				}).match(/.+/g).join("\n");
-			pseudoFunction.header=codemirror.getRange({
-				   	line: ast.body[i].loc.start.line - 1,
-				  	ch: ast.body[i].loc.start.column
-				}, {
+				},{
 				    line: ast.body[i].body.loc.end.line - 1,
 				    ch: ast.body[i].body.loc.end.column-2
-				});
+				}).match(/.+/g).join("\n");
+
+
+			pseudoFunction.name=ast.body[i].id.name;
+			
 			functionParsed.pseudoFunctions.push(pseudoFunction);
 			pseudoFunctionsName.push(ast.body[i].id.name);
 		}
@@ -659,11 +656,13 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase', function(
 			// color
 			if (highlightPseudoCall !== false)
 			{
-				var pseudoCallCol = line.indexOf(highlightPseudoCall);
+				
+				var pseudoCallCol =  line.indexOf(highlightPseudoCall+"(") ==-1 ? line.indexOf(highlightPseudoCall+" ") : line.indexOf(highlightPseudoCall+"(");
+
 				if (pseudoCallCol != -1){
 				 	marks.push(codemirror.markText({line: i, ch: pseudoCallCol},
 				 			     {line: i, ch: line.length},
-				 			     {className: 'highlightPseudoCall', inclusiveRight: true }));
+				 			     {className: 'pseudoCall', inclusiveRight: true }));
 				}
 			}
 			

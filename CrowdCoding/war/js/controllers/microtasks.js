@@ -54,7 +54,6 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
                     deleted : false
                 });
             }
-           
             // reset the new test case field
             $scope.model.newTestcase = "";
         }
@@ -65,7 +64,6 @@ myApp.controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase
         // if the testcase was added during this microtask, remove it from the array
         if ($scope.model.testcases[index].added === true) 
             $scope.model.testcases.splice(index, 1);
-        
         // else set the flag DELETED to true
         else $scope.model.testcases[index].deleted = true;
     };
@@ -583,6 +581,7 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
     $scope.selectedResult = -2;
     //display all the available function at the beginning
     $scope.results = functionsService.findMatches('', $scope.funct.name);
+    console.log($scope.results);
     $scope.code = $scope.funct.getFunctionCode();
     // search for all the functions that have $scope.reuseSearch.text in theirs description or header
     $scope.doSearch = function() {
@@ -631,13 +630,13 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
 myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     var marks = [];
-    var highlightPseudoCall = "//!" + $scope.microtask.pseudoCall;
+    var highlightPseudoCall =($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(\)\@)/g).toString();
     var changeTimeout;
     var readOnlyDone = false;
     if(angular.isDefined($scope.microtask.reissuedFrom))
-        $scope.code = (new FunctionFactory ($scope.reissuedMicrotask.submission)).getFullCode();
+        $scope.code = (new FunctionFactory ($scope.reissuedMicrotask.submission)).getFullCode($scope.microtask.pseudoCall);
     else
-        $scope.code = $scope.funct.getFullCode();
+        $scope.code = $scope.funct.getFullCode($scope.microtask.pseudoCall);
 
     $scope.codemirrorLoaded = function(myCodeMirror) {
         codemirror = myCodeMirror;

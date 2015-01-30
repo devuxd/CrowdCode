@@ -32,7 +32,7 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	public static FunctionCommand addDependency(long functionID,
-			long newDependency, PseudoFunctionDTO pseudoCall) {
+			long newDependency, String pseudoCall) {
 		return new AddDependency(functionID, newDependency, pseudoCall);
 	}
 
@@ -64,7 +64,7 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	public static FunctionCommand calleeBecameDescribed(long functionID,
-			String calleeName, String calleeFullDescription, PseudoFunctionDTO pseudoCall) {
+			String calleeName, String calleeFullDescription, String pseudoCall) {
 		return new CalleeBecameDescribed(functionID, calleeName,
 				calleeFullDescription, pseudoCall);
 	}
@@ -251,11 +251,11 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	protected static class AddDependency extends FunctionCommand {
-		private PseudoFunctionDTO pseudoCall;
+		private String pseudoCall;
 		private long newDependency;
 
 		public AddDependency(long functionID, long newDependency,
-				PseudoFunctionDTO pseudoCall) {
+				String pseudoCall) {
 			super(functionID);
 			this.pseudoCall = pseudoCall;
 			this.newDependency = newDependency;
@@ -295,10 +295,10 @@ public abstract class FunctionCommand extends Command {
 	protected static class CalleeBecameDescribed extends FunctionCommand {
 		private String calleeName;
 		private String calleeFullDescription;
-		private PseudoFunctionDTO pseudoCall;
+		private String pseudoCall;
 
 		public CalleeBecameDescribed(long functionID, String calleeName,
-				String calleeFullDescription, PseudoFunctionDTO pseudoCall) {
+				String calleeFullDescription, String pseudoCall) {
 			super(functionID);
 			this.calleeFullDescription = calleeFullDescription;
 			this.calleeName = calleeName;

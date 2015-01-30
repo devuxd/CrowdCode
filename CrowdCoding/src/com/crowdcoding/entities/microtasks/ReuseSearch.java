@@ -25,7 +25,7 @@ import com.googlecode.objectify.annotation.Parent;
 public class ReuseSearch extends Microtask
 {
 	@Parent @Load private Ref<Function> function;
-	private PseudoFunctionDTO callFunction;
+	private String callFunction;
 
 	// Default constructor for deserialization
 	private ReuseSearch()
@@ -33,7 +33,7 @@ public class ReuseSearch extends Microtask
 	}
 
 	// Constructor for initial construction
-	public ReuseSearch(Function function, PseudoFunctionDTO callFunction, String projectId)
+	public ReuseSearch(Function function, String callFunction, String projectId)
 	{
 		super(projectId);
 		this.submitValue = 5;
@@ -97,7 +97,7 @@ public class ReuseSearch extends Microtask
 		return "/html/microtasks/reuseSearch.jsp";
 	}
 
-	public PseudoFunctionDTO getCallDescription()
+	public String getCallDescription()
 	{
 		return callFunction;
 	}

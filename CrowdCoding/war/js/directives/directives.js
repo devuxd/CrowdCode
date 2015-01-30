@@ -1015,7 +1015,7 @@ myApp.directive('descriptionPopover',function($rootScope,$popover,functionsServi
             };
 
             var popover=$popover(element, popoverSettings);
-            popover.$scope.code=functionsService.renderDescription($scope.descriptionPopover) + $scope.descriptionPopover.header;
+            popover.$scope.code=$scope.descriptionPopover;
 
         }
     };

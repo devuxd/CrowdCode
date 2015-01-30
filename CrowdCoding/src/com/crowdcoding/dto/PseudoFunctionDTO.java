@@ -5,6 +5,6 @@ public class PseudoFunctionDTO extends DTO
 {
 	public String messageType = "PseudoFunctionDTO";
 
-	public String header="";
+	public String name="";
 	public String description="";
 }

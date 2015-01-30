@@ -28,7 +28,7 @@ import com.googlecode.objectify.annotation.Parent;
 public class WriteCall extends Microtask
 {
 	@Parent @Load private Ref<Function> caller;
-	private PseudoFunctionDTO pseudoCall;
+	private String pseudoCall;
 	private String calleeName;
 	private String calleeFullDescription;
 
@@ -39,7 +39,7 @@ public class WriteCall extends Microtask
 	}
 
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, String calleeName, String calleeFullDescription, PseudoFunctionDTO pseudoCall, String projectId)
+	public WriteCall(Function caller, String calleeName, String calleeFullDescription, String pseudoCall, String projectId)
 	{
 		super( projectId);
 		this.submitValue = 7;
@@ -114,7 +114,7 @@ public class WriteCall extends Microtask
 
 	public String getEscapedPseudoCall()
 	{
-		return StringEscapeUtils.escapeEcmaScript(pseudoCall.description+pseudoCall.header);
+		return StringEscapeUtils.escapeEcmaScript(pseudoCall);
 	}
 
 

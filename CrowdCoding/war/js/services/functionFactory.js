@@ -39,26 +39,42 @@ myApp.factory("FunctionFactory", function () {
 		
 		getName             : function(){ return this.rec.name; } , 
 		getCode 			: function(){ return this.rec.code; } ,
-		getDescription 		: function(){ return this.rec.description; },
-		getHeader 			: function(){ return this.rec.header; },
 		getParamDescription : function(){ return this.rec.paramDescription; },
 		getParamNames 		: function(){ return this.rec.paramNames; },
 		getParamTypes 		: function(){ return this.rec.paramTypes; },
 		getPseudoFunctions 	: function(){ return this.rec.pseudoFunctions; },
 		getReturnType 		: function(){ return this.rec.returnType; },
-		getDescribed		: function(){ return this.rec.described; },
+		isDescribed			: function(){ return this.rec.described; },
 		getId 				: function(){ return this.rec.id; },
 		getLinesOfCode 		: function(){ return this.rec.linesOfCode; },
 		getMessageType 		: function(){ return this.rec.messageType; },
 		getNeedsDebugging  	: function(){ return this.rec.needsDebugging; },
 		getQueuedMicrotasks : function(){ return this.rec.queuedMicrotasks; },
-		getReadOnly 		: function(){ return this.rec.readOnly; },
+		isReadOnly 			: function(){ return this.rec.readOnly; },
 		getVersion 			: function(){ return this.rec.version; },
-		getWritten 			: function(){ return this.rec.written; },
-		getFullDescription: function(){
+		isWritten 			: function(){ return this.rec.written; },
+		getHeader 			: function(){ 
+			if(this.rec.described)
+				return this.rec.header;
+			else
+				return  this.rec.description.split("\n").pop();
+		},
+		getDescription 		: function(){ 
+			if(this.rec.described)
+				return this.rec.description;
+			else
+			{
+				var splitteDescription=this.rec.description.replace("//", "").split("\n");
+				splitteDescription.pop();
+				return splitteDescription;
+			}
+		},
+		getFullDescription	: function(){
+			if(this.getDescription()===undefined||this.getDescription()==="")
+				return "";
 			var numParams = 0;
 
-			var fullDescription = '/**\n' + this.rec.description + '\n';
+			var fullDescription = '/**\n' + this.getDescription() + '\n';
 
 			if(this.rec.paramNames!==undefined && this.rec.paramNames.length>0)
 			{
@@ -77,14 +93,16 @@ myApp.factory("FunctionFactory", function () {
 			return fullDescription;
 		},
 		getSignature: function(){
-			return this.getFullDescription() + this.rec.header;
+			return this.getFullDescription() + this.getHeader();
 		},
 
 		getFunctionCode: function(){
 			return this.getSignature() + this.rec.code;
 		},
-		getFullCode: function(){
-			return this.getFunctionCode() + (this.pseudoFunctions!==undefined ? "\n" + this.pseudoFunctions.join("\n"):"");
+		getFullCode: function(pseudocall){
+			if(pseudocall!==undefined && this.pseudoFunctions.indexOf(pseudocall)!==-1)
+				this.pseudoFunctions.splice(this.pseudoFunctions.indexOf(pseudocall),1);
+			return this.getFunctionCode() + (this.pseudoFunctions!==undefined ? "\n\n" + this.pseudoFunctions.join("{}\n\n")+"{}":"");
 		},
 
 

@@ -69,10 +69,11 @@ public class Function extends Artifact
 	// current callers with a fully implemented callsite to this function:
 	private List<Long> callers = new ArrayList<Long>();
 	// pseudocalls made by this function:
-	private List<PseudoFunctionDTO> pseudoCalls = new ArrayList<PseudoFunctionDTO>();
-	private List<String> pseudoFunctionsHeader = new ArrayList<String>();
+	private List<String> pseudoFunctionsDescription = new ArrayList<String>();
+	private List<String> pseudoFunctionsName = new ArrayList<String>();
+
 	// pseudocall callsites calling this function (these two lists must be in sync)
-	private List<PseudoFunctionDTO> pseudoCallsites = new ArrayList<PseudoFunctionDTO>();
+	private List<String> pseudoCallsites = new ArrayList<String>();
 	private List<Long>   pseudoCallers = new ArrayList<Long>();
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -94,12 +95,14 @@ public class Function extends Artifact
 	}
 
 	// Constructor for a function that only has a short call description and still needs a full description
-	public Function(PseudoFunctionDTO callDescription, Function caller, String projectId)
+	public Function(String callDescription, Function caller, String projectId)
 	{
 		super(projectId);
 		//this.needsDebugging=true;
 
 		isWritten = false;
+		hasBeenDescribed=false;
+		this.description=callDescription;
 		ofy().save().entity(this).now();
 
 		// Spawn off a microtask to write the function description
@@ -387,9 +390,10 @@ public class Function extends Artifact
 		rebuildCalleeList(dto.calleeIds);
 
 		// Look for pseudocode and psuedocalls
-		List<PseudoFunctionDTO> currentPseudoFunctions = dto.pseudoFunctions;
-
-		if(currentPseudoFunctions.isEmpty())
+		List<PseudoFunctionDTO> submittedPseudoFunctions = dto.pseudoFunctions;
+		List<String> newPseudoFunctionsName = new ArrayList<String>();
+		List<String> newpseudoFunctionsDescription = new ArrayList<String>();
+		if(submittedPseudoFunctions.isEmpty())
 		{
 			List<String> pseudoCode = findPseudocode(code);
 			if(pseudoCode.isEmpty())
@@ -405,21 +409,25 @@ public class Function extends Artifact
 		}
 		else
 		{
-			for (PseudoFunctionDTO currentPseudoFunction : currentPseudoFunctions)
+			for (PseudoFunctionDTO submittedPseudoFunction : submittedPseudoFunctions)
 			{
-				if (!pseudoFunctionsHeader.contains(currentPseudoFunction.header))
+				if (!pseudoFunctionsName.contains(submittedPseudoFunction.name))
 				{
 					setWritten(false, projectId);
 
 					// Spawn microtask immediately, as it does not require access to the function itself
-					Microtask microtask = new ReuseSearch(this, currentPseudoFunction, projectId);
+					Microtask microtask = new ReuseSearch(this, submittedPseudoFunction.description, projectId);
 					ProjectCommand.queueMicrotask(microtask.getKey(), null);
 				}
+				newpseudoFunctionsDescription.add(submittedPseudoFunction.description);
+				newPseudoFunctionsName.add(submittedPseudoFunction.name);
 			}
+			this.pseudoFunctionsName=newPseudoFunctionsName;
+			this.pseudoFunctionsDescription= newpseudoFunctionsDescription;
+
 		}
 
 		// Update the list of pseudocalls to match the current (distinct) pseudocalls now in the code
-		this.pseudoCalls = currentPseudoFunctions;
 
 		ofy().save().entity(this).now();
 		lookForWork();
@@ -473,7 +481,7 @@ public class Function extends Artifact
 			queueMicrotask(new WriteTestCases(this, projectId),projectId);
 	}
 
-	public void reuseSearchCompleted(ReusedFunctionDTO dto, PseudoFunctionDTO callDescription, String projectId)
+	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, String projectId)
 	{
 		Function callee;
 
@@ -481,7 +489,7 @@ public class Function extends Artifact
 		{
 			// Create a new function for this call, spawning microtasks to create it.
 			callee = new Function(callDescription, this, projectId);
-
+			callee.storeToFirebase(projectId);
 			dto.functionId = callee.getID();
 		}
 		// Have the callee let us know when it's tested (which may already be true;
@@ -667,7 +675,7 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 
-	public void addDependency(long newSubscriber, PseudoFunctionDTO pseudoCall)
+	public void addDependency(long newSubscriber, String pseudoCall)
 	{
 		//add it to the lists
 		pseudoCallers.add(newSubscriber);
@@ -680,7 +688,7 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 
-	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, PseudoFunctionDTO pseudoCall, String projectId)
+	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, String pseudoCall, String projectId)
 	{
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("AddCall", this));
 		queueMicrotask(new WriteCall(this, calleeName, calleeFullDescription, pseudoCall, projectId), projectId);
@@ -713,7 +721,7 @@ public class Function extends Artifact
 			sendDescribedNotification(pseudoCallers.get(i), pseudoCallsites.get(i));
 	}
 
-	private void sendDescribedNotification(long subscriberID, PseudoFunctionDTO pseudoCall)
+	private void sendDescribedNotification(long subscriberID, String pseudoCall)
 	{
 		FunctionCommand.calleeBecameDescribed(subscriberID, this.getName(), this.getFullDescription(), pseudoCall);
 	}
@@ -747,9 +755,17 @@ public class Function extends Artifact
 		{
 			incrementVersion();
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
-					paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoCalls , hasBeenDescribed, isWritten, needsDebugging, readOnly,
+					paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, readOnly,
 					queuedMicrotasks.size()),
 					this.id, version, projectId);
+		}
+		else
+		{
+			FirebaseService.writeFunction(new FunctionInFirebase("", this.id, version, "", paramNames,
+					paramTypes, paramDescriptions, "", description, "", linesOfCode, this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, readOnly,
+					queuedMicrotasks.size()),
+					this.id, version, projectId);
+
 		}
 	}
 

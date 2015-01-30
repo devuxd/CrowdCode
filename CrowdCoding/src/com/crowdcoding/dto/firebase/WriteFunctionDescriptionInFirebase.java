@@ -4,7 +4,7 @@ import com.crowdcoding.dto.PseudoFunctionDTO;
 
 public class WriteFunctionDescriptionInFirebase extends MicrotaskInFirebase
 {
-	public PseudoFunctionDTO callDescription;
+	public String callDescription;
 	public long functionID;
 
 	public WriteFunctionDescriptionInFirebase()
@@ -13,7 +13,7 @@ public class WriteFunctionDescriptionInFirebase extends MicrotaskInFirebase
 
 	public WriteFunctionDescriptionInFirebase(long id,String title, String type,
 			String owningArtifact, Long owningArtifactId, boolean completed, int points,
-			PseudoFunctionDTO callDescription, long callerID)
+			String callDescription, long callerID)
 	{
 		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
 
