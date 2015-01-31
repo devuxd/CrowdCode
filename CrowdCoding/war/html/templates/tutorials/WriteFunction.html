@@ -1,57 +1,48 @@
 <step>
-	<div class="title">Write function tutorial</div>
+	<div class="title">Edit a function</div>
 	<div class="text">
 		<img src="/img/tutorial/writefunction/microtask.png" />
-		<p>In this microtask you are asked to edit the code of a function.</p>
-	</div>
-</step>
-<step>
-	<div class="title">Pseudocall & pseudocode</div>
-	<div class="text">
-		<p style="width:500px">
-			When you implement a function from scratch (or editing a pre-written function), <b>don’t do all the work alone! </b>
+		<p  style="width:500px">
+			In Edit a Function, your goal is to improve the implementation of a function.
 		</p>
-		<p style="width:500px">
-			You can sketch out part of the work without worrying about every detail by using <b>pseudocode</b> and <b>pseudocalls</b>.
+		<p  style="width:500px">
+			In CrowdCode, functions may contain code, <strong>pseudocode</strong>, and other <strong>function calls</strong>. 
+			In Edit a Function, your goal is not necessarily to finish a complete implementation of a function. Rather, you may decide to <strong>sketch</strong> some of the behavior using psuedocode and describe some operation that’s best done in another function using a <strong>function call</strong>. 
 		</p>
 	</div>
 </step>
 <step>
-	<div class="title">Pseudocode</div>
 	<div class="text">
 		<img src="/img/tutorial/writefunction/code.png" />
 		<p style="width:550px">
-			The pseudocode <b>( //# syntax)</b> allows you to sketch algorithms or partial solutions and let the other workers know that there is some more work to do on this function.
+			<strong>Pseudocode</strong> (sections of a line beginning with //#) allows you to sketch algorithms or partial solutions, enabling the crowd to determine how best the algorithm or solution should be accomplished. 
+
 		</p>
 	</div>
 </step>
 <step>
-	<div class="title">Pseudocall</div>
 	<div class="text">
 		<img src="/img/tutorial/writefunction/code.png" />
 		<p style="width:550px">
-			As a difference from the way you usually write code, in CrowdCode you don’t know which other functions are already implemented in the system. 
-So if you want to call a function, you have to use the pseudocalls <b>(//! syntax)</b>.
+			In CrowdCode, you edit code with a local view of the codebase, seeing only the current function on which you are working.  When you call another function, you have to add a sketch of the called function header with an empty body at the bottom of the code editor window (eventually providing an one-line description of what the function is supposed to do). 
 		</p>
 		<p style="width:550px">
-			Pseudocalls are extremely useful when the code you have to write is complex and can’t be written in just a few minutes. They allow you to split the function editing with the other crowd-coders (and reuse existing functions).
+			When implementing a function, you may discover that a function description needs revision, that an additional parameter is required, or even that the function itself is poorly named. In this case, you may edit the header of the function; the crowd will then update any callers of the function to match its new specification.
 		</p>
 	</div>
 </step>
 <step>
-	<div class="title">Remember:</div>
 	<div class="text">
 		<p style="width:300px">
-			try to keep it simple and delegate the work if there is too much to do!
+			<strong>Remember</strong>: Using psuedocode and function calls provides an opportunity for the crowd to contribute. For a function with large and complex behavior, sketching some of the behavior provides opportunities for the crowd to consider how it best be done. Rather than build a single monolithic function, function calls provides an opportunity for code to be decomposed into cohesive functions that can be reused. And - most importantly - function calls provides an opportunity for many to work on each requested function in parallel.
 		</p>
 	</div>
 </step>
 <step>
-	<div class="title">Data types:</div>
 	<div class="text">
-		<p style="width:280px">
-			If you need to explore the available data types, take a look at the data types box!
-		</p>
 		<img src="/img/tutorial/writefunction/data_types.png" />
+		<p style="width:280px">
+			In CrowdCode, all parameters are specified with a data type. CrowdCode provides an Available Data Types panel enabling you to browse the description of data types and see examples.
+		</p>
 	</div>
 </step>
