@@ -633,7 +633,8 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
 myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     var marks = [];
-    var highlightPseudoCall =($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(\)\@)/g).toString();
+    var pseudocall = ($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+    var highlightPseudoCall = (pseudocall!==null ? pseudocall.toString(): undefined);
     var changeTimeout;
     var readOnlyDone = false;
     if(angular.isDefined($scope.microtask.reissuedFrom))

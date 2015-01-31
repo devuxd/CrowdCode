@@ -111,8 +111,21 @@ myApp.factory("FunctionFactory", function () {
 			}
 			return "";
 		},
+		getPseudoFunctionsList 	: function(){
+			if(this.rec.pseudoFunctions===undefined)
+				return [];
+			else if(typeof this.rec.pseudoFunctions[0]==="string")
+			 	return this.rec.pseudoFunctions;
+			else if(typeof this.rec.pseudoFunctions[0]==="object") {
+				var pseudoFunctionsDescription;
+				for(var i=0; i<this.rec.pseudoFunctions.length; i++ )
+					pseudoFunctionsStringified.push(this.rec.pseudoFunctions[i].description);
+				return pseudoFunctionsDescription;
+			}
+			return "";
+		},
 		getFullCode: function(pseudocall){
-			if(pseudocall!==undefined && this.getPseudoFunctions().indexOf(pseudocall)!==-1)
+			if(pseudocall!==undefined && this.getPseudoFunctionsList().indexOf(pseudocall)!==-1)
 				this.pseudoFunctions.splice(this.pseudoFunctions.indexOf(pseudocall),1);
 			return this.getFunctionCode() + this.getPseudoFunctions();
 		},
