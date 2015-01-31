@@ -5,7 +5,7 @@
 		readonly="readonly" 
 		ng-model="code">
 	</div>
-
+	<button class="btn btn-sm" ng-click="requestTestRun(f.id)">Request Test Run</button>
 	<div>
 		<div bs-collapse ng-model="testsPanel[f.id]" ng-init="testPanel[f.id] = -1">
 			<div ng-repeat="t in tests | filter : { functionID: f.id }" >

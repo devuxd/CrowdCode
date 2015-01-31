@@ -148,7 +148,7 @@ img { width:100%;}
 
 	<div class="row">
       <div class="jumbotron" style="text-align:center;">
-        	<a class="btn btn-lg btn-primary" href="/allTogetherDrawV3" id="btnStart" role="button">Get Started!</a>
+        	<a class="btn btn-lg btn-primary" href="/allTogetherDrawV6" id="btnStart" role="button">Get Started!</a>
       </div>
 	</div>
       

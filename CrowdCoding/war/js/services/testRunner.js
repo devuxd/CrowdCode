@@ -133,14 +133,20 @@ myApp.factory('TestRunnerFactory', [
 	//Runs all of the tests for the specified function, sending the results to the server
 	TestRunner.prototype.runTests = function(testedFunctionId,testedFunctionCode,actualStubs){
 		console.log('RUN TESTS FROM INSIDE');
+		
 		// get valid tests for the function
 		this.validTests = TestList.getImplementedByFunctionId(testedFunctionId);
+		
 		console.log('Valid tests: ',this.validTests);
 
-		if( this.running || this.validTests.length == 0 ) return -1;
+		if( this.running || this.validTests.length == 0 ){
+			return -1;
+			this.running = false;
+		}
 
 
 		this.running = true;
+
 		this.testedFunctionId   = testedFunctionId;
 		this.testedFunctionName = functionsService.getNameById(testedFunctionId);
 

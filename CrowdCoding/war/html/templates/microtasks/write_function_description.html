@@ -5,17 +5,24 @@
 		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 		<div class="section-content job-description">
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
-			A function to do the following has been requested: <br/>
-			<strong>{{ microtask.callDescription}}</strong> <br/>
-			Can you write a description for this function?<br>
-			
+			In the code of the function <strong ng-bind="funct.name"></strong>, has been used the function <strong>{{ pseudoName }}</strong> that is not yet implemented. <br/>
+			According to the context in which this function has been used, can you write its description?	
 		</div>
 		
 	</div>
 
 	<div class="section section-description">
 		<div class="section-title" >
-			<div class="dot bg-color"></div> FUNCTION WITH PSEUDOCALL
+			<div class="dot bg-color"></div> CALLED FUNCTION
+		</div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="microtask.callDescription"></ace-read-js>
+		</div>
+	</div>
+
+	<div class="section section-description">
+		<div class="section-title" >
+			<div class="dot bg-color"></div> CALLER CODE
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="code"></ace-read-js>
