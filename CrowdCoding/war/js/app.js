@@ -26,7 +26,7 @@ myApp.config(function($dropdownProvider, ngClipProvider ) {
 myApp.constant('workerId',workerId);
 myApp.constant('projectId',projectId);
 
-console.log(workerId);
+console.log('logoutUrl '+logoutURL);
 myApp.constant('firebaseUrl',firebaseURL);
 myApp.constant('logoutUrl',logoutURL);
 

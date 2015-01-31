@@ -392,7 +392,7 @@ public class Function extends Artifact
 		// Look for pseudocode and psuedocalls
 		List<PseudoFunctionDTO> submittedPseudoFunctions = dto.pseudoFunctions;
 		List<String> newPseudoFunctionsName = new ArrayList<String>();
-		List<String> newpseudoFunctionsDescription = new ArrayList<String>();
+		List<String> newPseudoFunctionsDescription = new ArrayList<String>();
 		if(submittedPseudoFunctions.isEmpty())
 		{
 			List<String> pseudoCode = findPseudocode(code);
@@ -419,11 +419,11 @@ public class Function extends Artifact
 					Microtask microtask = new ReuseSearch(this, submittedPseudoFunction.description, projectId);
 					ProjectCommand.queueMicrotask(microtask.getKey(), null);
 				}
-				newpseudoFunctionsDescription.add(submittedPseudoFunction.description);
+				newPseudoFunctionsDescription.add(submittedPseudoFunction.description);
 				newPseudoFunctionsName.add(submittedPseudoFunction.name);
 			}
 			this.pseudoFunctionsName=newPseudoFunctionsName;
-			this.pseudoFunctionsDescription= newpseudoFunctionsDescription;
+			this.pseudoFunctionsDescription= newPseudoFunctionsDescription;
 
 		}
 

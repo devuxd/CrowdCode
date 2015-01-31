@@ -6,10 +6,15 @@
 		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 		<div class="section-content job-description" >
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
-
-			<!--The crowd found that the pseudocall <strong>{{microtask.pseudoCall}}</strong>
-			can be solved using the function <strong>{{microtask.calleeName}}</strong>. <br />-->
-			Can you revise the highlated function by adapting it with the follow function, or find another way to do it?
+			<div ng-if="pseudoName!=microtask.calleeName">
+				The crowd found that the calls to the function
+				<strong>{{ pseudoName }}</strong>
+				can be solved using the function <strong>{{microtask.calleeName}}</strong>. <br />
+				According to the signature of <strong>{{microtask.calleeName}}</strong>, can you revise the occurrences of <strong>{{pseudoName}}</strong> in the following function code?
+			</div>
+			<div ng-if="pseudoName==microtask.calleeName">
+				According to the signature of <strong>{{microtask.calleeName}}</strong>, can you revise its occurrences in the following function code?
+			</div>
 
 		</div>
 	</div>

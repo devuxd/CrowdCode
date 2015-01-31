@@ -594,6 +594,9 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
     $scope.select = function(index) {
         $scope.selectedResult = index;
     };
+
+    var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+    $scope.pseudoName = foundNames[0];
     
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
         if ($scope.selectedResult == -2) {
@@ -634,6 +637,7 @@ myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     var marks = [];
     var pseudocall = ($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+    $scope.pseudoName = pseudocall[0];
     var highlightPseudoCall = (pseudocall!==null ? pseudocall.toString(): undefined);
     var changeTimeout;
     var readOnlyDone = false;
@@ -822,6 +826,11 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
     $scope.returnType = "";
     $scope.functionName = "";
     $scope.parameters = [];
+
+    var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+    $scope.pseudoName   = foundNames[0];
+
+
     // addParameter and deleteParameter 
     $scope.addParameter = function() {
         var parameter = {
@@ -838,6 +847,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
         if( $scope.parameters.length>1 )
             $scope.parameters.splice(index, 1);
     };
+
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
         $scope.functionName=$scope.reissuedMicrotask.submission.name;

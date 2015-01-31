@@ -3,71 +3,70 @@
 	<div class="text">
 		<img src="/img/tutorial/debugtestfailure/microtask.png" />
 		<p style="width:500px">
-			In this microtask, you’re asked to find and correct the bug in a function that didn’t pass the tests.
+			In Debug a Test Failure, your goal is to find and correct any bug(s) that caused a function to fail its unit tests.
 		</p>
 	</div>
 </step>
 <step>
 	<div class="text">
 
-		<p style="width:500px">
-			You have access to all the function’s test results
-		</p>
-		
 		<img src="/img/tutorial/debugtestfailure/testresults.png" />
 	
 		<p style="width:500px">
-			A test result is green and marked with a checkmark in the upper right corner of the test if the test has passed, and red with an x in the upper right corner if it failed. 
+			CrowdCode provides a test runner listing the results of executing each of the function’s tests. Passing tests are shown in green; failing tests in red. 
 		</p>
 	</div>
 </step>
 <step>
 	<div class="text">
 
-		<p style="width:500px">
-			A test result shows you the inputs and output used for that particular test, information about the errors (if any) and also the list of all the functions called by this one, with their input/output values.
-		</p>
 		
 		<img src="/img/tutorial/debugtestfailure/testdetail.png" />
 	
+		<p style="width:500px">
+			Each test result lists the inputs and outputs for the test, as well as information about errors (if any). 
+		</p>
 	</div>
 </step>
+
+<step>
+	<div class="text">
+
+		
+		<img src="/img/tutorial/debugtestfailure/code.png" />
+	
+		<p style="width:500px">
+			Debug Test Failure provides an editor for the function, enabling you to find bugs, implement a fix, and rerun the tests to check if it works.
+
+		</p>
+	</div>
+</step>
+
 <step>
 	<div class="text">
 
 		<p style="width:500px">
-			These are called <b>stubs</b> and allows you to change the behavior of a called function for a specified set of inputs. In this way you can focus only on debugging a single function without worrying about the code of the other functions.
-
+			What happens if the bug is not in the function itself but is in a function that it calls? For each test, CrowdCode lists all of the functions directly invoked by the function under test, describing each distinct set of inputs and the output value produced. 
 		</p>
 		
 		<img src="/img/tutorial/debugtestfailure/stubs.png" />
 	
+		<p style="width:500px">For example, here a function sum is being called with the parameters 1 and 2 and is returning the output of 4. This does not seem to match its specified behavior. To solve this problem, you can edit the return value, replacing 4 with 3. This creates a stub. When you rerun the tests, CrowdCode will use the return value specified by the stub rather than the actual return value, executing the function call as if it had returned 3. After submitting the Debug microtask, each stub will be translated into a test for the called function, expressing the desired behavior</p>
+
 	</div>
 </step>
 <step>
 	<div class="text">
 
 		<p style="width:500px">
-			Finally, you can fix code in the function directly. 
-
-
-		</p>
-		
-		<img src="/img/tutorial/debugtestfailure/code.png" />
-	
-	</div>
-</step>
-<step>
-	<div class="text">
-
-		<p style="width:500px">
-			If you need to monitor a statement, use the function <b>debug.log(statement)</b>.
+			If you need additional information about the behavior of a function, you can use the debug.log(String) function.
 		</p>
 		
 		<img src="/img/tutorial/debugtestfailure/debuglog.png" />
 	
 		<p style="width:500px">
-			If you re-run the tests, the log will be printed in the test result.
+			Results from debug.log() are shown for each test. 
+
 		</p>
 		
 		<img src="/img/tutorial/debugtestfailure/debugconsole.png" />
@@ -88,8 +87,7 @@
 	<div class="text">
 
 		<p style="width:300px">
-			Finally, if you notice an issue with a test case, please report it
-
+			It might also be that the function itself is correct and it is the test which is incorrect. In this case, you should report an issue with the test.
 		</p>
 		
 		<img src="/img/tutorial/debugtestfailure/report.png" />

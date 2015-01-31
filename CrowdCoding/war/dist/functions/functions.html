@@ -1,8 +1,32 @@
+<div ng-repeat="f in functions" ng-init="code = f.header+f.code; ">
+	<div  
+		class="ace-editor" 
+		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
+		readonly="readonly" 
+		ng-model="code">
+	</div>
+	<button class="btn btn-sm" ng-click="requestTestRun(f.id)">Request Test Run</button>
+	<div>
+		<div bs-collapse ng-model="testsPanel[f.id]" ng-init="testPanel[f.id] = -1">
+			<div ng-repeat="t in tests | filter : { functionID: f.id }" >
+				<a bs-collapse-toggle>
+					{{t.description}}
+				     - 
+				     <i ng-if="t.isImplemented">implemented</i>
+				     <i ng-if="!t.isImplemented">not implemented yet</i>
+				</a>
+				<div bs-collapse-target>
+				  	<div  
+				  		ng-if="t.isImplemented"
+						class="ace-editor" 
+						ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
+						readonly="readonly" 
+						ng-model="t.code">
+					</div>
+				</div>
+			</div>
+		</div>
+  	</div>
 
-<table class="table table-hover">
-	<tbody>
-		<tr ng-repeat="f in functions " row-details data="f">
-			<td><span ng-bind="f.name"></span></td>
-		</tr>
-	</tbody>
-</table>
+  	<hr />
+</div>

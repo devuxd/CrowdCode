@@ -60,11 +60,15 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$in
 		var testRunner = new TestRunnerFactory.instance({submitToServer: true});
 		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
-			testRunner.onTestsFinish(function(){
-				console.log('------- tests finished received');
+			
+			if( testRunner.runTests(jobData.functionId) == -1){
 				whenFinished();
-			});
-			testRunner.runTests(jobData.functionId);
+			} else {
+				testRunner.onTestsFinish(function(){
+					console.log('------- tests finished received');
+					whenFinished();
+				});
+			}
 		});
 	};
 

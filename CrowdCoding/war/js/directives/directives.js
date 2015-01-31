@@ -443,11 +443,13 @@ myApp.directive('functionConvections', function(){
         controller: function($scope, $element, $attrs) {
             $scope.pseudocall='function foo() { \n'+
                         '\tvar values = [ 128, 309 ];\n'+
+                        '\tvar lcm = null;\n'+
                         '\t//# calc the least common multiple of values\n'+
-                        '\tvar avg;\n'+
-                        '\t//!avg = Compute the average of (values) \n'+
+                        '\tvar avg = calcAverage(values); \n'+
                         '\treturn { average: avg, lcm: lcm }; \n' +
-                        '}';
+                        '}\n'+
+                        '// return the average of the values\n'+
+                        'function calcAverage(values){};';
 
         }
     };
