@@ -67,21 +67,28 @@
 
 			<!-- WRITE FUNCTION DESCRIPTION -->
 			<div ng-if="reviewed.type == 'WriteFunctionDescription'">
-				The worker was asked to write a description for the function 
-				<strong>{{review.microtask.callDescription}}</strong>. 
+				The worker was asked to write a description of the following sketch of function:
 			</div>
 
 
 			<!-- WRITE CALL -->
 			<div ng-if="reviewed.type == 'WriteCall'">
-				The worker was asked to replace the pseudocall
-				<strong>{{review.microtask.pseudoCall}}</strong> in the function
+				The worker was asked to revise the calls to
+				<strong>{{pseudoName}}</strong> in the function
 				<strong>{{functName}}</strong>
-				with the function 
-				<strong>{{reviewed.calleeName}}</strong>.
+				<span ng-if="pseudoName!==reviewed.calleeName">with the new implemented function <strong>{{reviewed.calleeName}}</strong>.</span>
 			</div>
 
 			<span>Can you rate this work?</span>
+		</div>
+	</div>
+
+	<div ng-if="reviewed.type == 'WriteFunctionDescription'" class="section section-description">
+		<div class="section-title" >
+			<div class="dot bg-color"></div>function sketch
+		</div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="review.microtask.callDescription"></ace-read-js>
 		</div>
 	</div>
 

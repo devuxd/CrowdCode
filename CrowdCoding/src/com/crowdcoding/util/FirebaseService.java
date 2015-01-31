@@ -71,7 +71,7 @@ public class FirebaseService
 	{
 		Date date = new Date();
 		System.out.println("appending test job for function "+functionID);
-		enqueueWrite("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+date.getTime()+".json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
 	}
 	public static String getAllCode(String projectId)
 	{

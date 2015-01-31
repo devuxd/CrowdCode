@@ -181,9 +181,9 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 
             oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
             newFunction = new FunctionFactory ( $scope.review.microtask.submission);
-            oldCode = oldFunction.getFullCode().split("\n");
-            newCode = newFunction.getFullCode().split("\n");
 
+            oldCode = oldFunction.getFunctionCode().split("\n");
+            newCode = newFunction.getFunctionCode().split("\n");
 
             diffRes = diff(oldCode, newCode);
             diffCode = "";
@@ -245,13 +245,15 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                 }
                 diffCode += "\n";
             });
-
+            var foundNames = ($scope.review.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+            $scope.pseudoName = foundNames[0];
+            
             $scope.functName =oldFunction.name;
             $scope.review.functionCode = diffCode;
 
             //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;
         } else if ($scope.review.microtask.type == 'WriteFunctionDescription') {
-
+            
             $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header;
        
         }

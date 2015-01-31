@@ -686,7 +686,7 @@ myApp.factory('functionsService', ['$window','$rootScope','$firebase','FunctionF
 		for(var i=0; i<readOnlyLines.length; i++)
 		{
 			codemirror.getDoc().markText({line: readOnlyLines[i], ch: 0},
-				{ line: readOnlyLines[i], ch: readOnlyLines[i].length},
+				{ line: readOnlyLines[i], ch: readOnlyLines[i].length-1},
 				{ readOnly: true });
 		}
 
