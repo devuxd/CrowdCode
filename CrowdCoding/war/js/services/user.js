@@ -60,12 +60,17 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$in
 		var testRunner = new TestRunnerFactory.instance({submitToServer: true});
 		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
-			
+		//console.log("started");
+		var jobRef = queueRef.child('/'+jobData.functionId);
+		//console.log(jobRef,jobData);
+		jobRef.onDisconnect().set(jobData);
 			if( testRunner.runTests(jobData.functionId) == -1){
+				jobRef.onDisconnect().cancel();
 				whenFinished();
 			} else {
 				testRunner.onTestsFinish(function(){
 					console.log('------- tests finished received');
+					jobRef.onDisconnect().cancel();
 					whenFinished();
 				});
 			}
@@ -86,7 +91,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$in
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 			var timoutCallBack=function(){
-				console.log("trying to logging out",jobData);
+				//console.log("trying to logging out",jobData);
 				//retrieves the information of the loGin field
 				var userLoginRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
 				userLoginRef.once("value", function(userLogin) {
@@ -94,7 +99,6 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$in
 				  	if(userLogin.val()===null || new Date().getTime() - userLogin.val().timeStamp > 30000){
 				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
 					  		.success(function(data, status, headers, config) {
-					  			console.log("log out success"+(new Date().getTime() - userLogin.val().timeStamp));
 					  			userLoginRef.remove();
 					  			$interval.cancel(interval);
 					  			logoutWorker.onDisconnect().cancel();
@@ -112,7 +116,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$in
 				});
 
 			};
-			var interval = $interval(timoutCallBack,10000);
+			var interval = $timeout(timoutCallBack,10000);
 		});
 	};
 
