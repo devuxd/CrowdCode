@@ -6,7 +6,7 @@
 		<div class="section-content job-description" >
 			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
 			<div ng-if="::microtask.promptType=='SKETCH'">
-				Can you write some code in the function below? <br />But don't be a hog: if there's much to do, be sure to use function calls and/or pseudocode to leave some work for others.
+				Can you write some code in the function below? <br />But don't be a hog: if there's a lot to do, be sure to use function calls and/or pseudocode to leave some work for others.
 			</div>
 			<div ng-if="::microtask.promptType=='RE_EDIT'">
 				The description of this function has been disputed, can you edit the function to solve the issue?

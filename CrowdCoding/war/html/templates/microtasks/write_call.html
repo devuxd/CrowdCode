@@ -9,11 +9,13 @@
 			<div ng-if="pseudoName!=microtask.calleeName">
 				The crowd found that the calls to the function
 				<strong>{{ pseudoName }}</strong>
-				can be solved using the function <strong>{{microtask.calleeName}}</strong>. <br />
-				According to the signature of <strong>{{microtask.calleeName}}</strong>, can you revise the occurrences of <strong>{{pseudoName}}</strong> in the following function code?
+				can be implemented by using the function <strong>{{microtask.calleeName}}</strong>. <br />
+				Using the signature of the function <strong>{{microtask.calleeName}}</strong>, can you revise the calls to <strong>{{pseudoName}}</strong> in the following function code?
+				<br />
+				<b>Tip:</b> if a call {{microtask.calleeName}} doesn't seem the right way to do this, you can also try a different implementation instead.
 			</div>
 			<div ng-if="pseudoName==microtask.calleeName">
-				According to the signature of <strong>{{microtask.calleeName}}</strong>, can you revise its occurrences in the following function code?
+				According to the signature of <strong>{{microtask.calleeName}}</strong>, can you check if the calls are correct and revise them if necessary?
 			</div>
 
 		</div>

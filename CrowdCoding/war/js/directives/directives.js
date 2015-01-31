@@ -449,7 +449,7 @@ myApp.directive('functionConvections', function(){
                         '\treturn { average: avg, lcm: lcm }; \n' +
                         '}\n'+
                         '// return the average of the values\n'+
-                        'function calcAverage(values){};';
+                        'function calcAverage(values){}';
 
         }
     };
