@@ -116,7 +116,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$in
 				});
 
 			};
-			var interval = $timeout(timoutCallBack,10000);
+			var interval = $interval(timoutCallBack,10000);
 		});
 	};
 
