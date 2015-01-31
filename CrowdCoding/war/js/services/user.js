@@ -1,7 +1,7 @@
 ////////////////////
 // USER SERVICE   //
 ////////////////////
-myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$http','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$http,TestRunnerFactory) {
+myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,TestRunnerFactory) {
     var user = {};
 
  	// retrieve the firebase references
@@ -13,14 +13,16 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 	var userRef        = fbRef.child('/status/loggedInWorkers/' + workerId);
 	var logoutRef      = fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
+	var updateLogInTime=function(){
+		userRef.setWithPriority({connected:true,name:workerHandle,timeStamp:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
+	};
 
 	// when firebase is connected
 	isConnected.on('value', function(snapshot) {
 	  if (snapshot.val()) {
 	  	// update user reference
-	  	userRef.onDisconnect().remove();
-
-	    userRef.setWithPriority({connected:true,name:workerHandle,time:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
+	  	updateLogInTime();
+	  	$interval(updateLogInTime,10000);
 
 	    // on disconnect, set false to connection status
 	    logoutRef.onDisconnect().set({workerId: workerId, timeStamp:Firebase.ServerValue.TIMESTAMP});
@@ -68,7 +70,7 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 				});
 			}
 		});
-	}
+	};
 
 	// distributed worker logout 
 	// due to sincronization problem wait 5 seconds, after check that the user is not logged any more
@@ -77,19 +79,40 @@ myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$ht
 	// distributed logout work
     user.listenForLogoutWorker = function(){
     	var logoutQueue     = new Firebase( firebaseURL + '/status/loggedOutWorkers/');
-		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 
+		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
+			//retrieves the reference to the worker to log out
+			var logoutWorker  =logoutQueue.child('/'+jobData.workerId);
+			//if a disconnection occures during the process reeset the element in the queue
+			logoutWorker.onDisconnect().set(jobData);
 			var timoutCallBack=function(){
-				var userLogInRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
-				userLogInRef.once("value", function(snapshot) {
-				  	if(snapshot.val()===null){
+				console.log("trying to logging out",jobData);
+				//retrieves the information of the loGin field
+				var userLoginRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
+				userLoginRef.once("value", function(userLogin) {
+					//if the user doesn't uddate the timer for more than 20 seconds than log it out
+				  	if(userLogin.val()===null || new Date().getTime() - userLogin.val().timeStamp > 30000){
 				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
-					  		.success(function(data, status, headers, config) { whenFinished(); });
+					  		.success(function(data, status, headers, config) {
+					  			console.log("log out success"+(new Date().getTime() - userLogin.val().timeStamp));
+					  			userLoginRef.remove();
+					  			$interval.cancel(interval);
+					  			logoutWorker.onDisconnect().cancel();
+					  			whenFinished();
+					  		});
+					 //if the timestamp of the login is more than the timesatmp of the logout means that the user logged in again
+					 //so cancel the work
+					}else if(userLogin.val()!==null && userLogin.val().timeStamp - jobData.timeStamp > 1000)
+					{
+						console.log("log out cancelled");
+						$interval.cancel(interval);
+						logoutWorker.onDisconnect().cancel();
+						whenFinished();
 					}
 				});
 
 			};
-			$timeout(timoutCallBack,10000);
+			var interval = $interval(timoutCallBack,10000);
 		});
 	};
 
