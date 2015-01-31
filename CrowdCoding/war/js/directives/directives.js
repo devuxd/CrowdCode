@@ -751,7 +751,7 @@ myApp.directive('resizer', function($document) {
 });
 
 
-myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService){
+myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService,FunctionFactory){
     return {
         
         scope: true,
@@ -813,8 +813,8 @@ myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$po
 
                 },
                 'DebugTestFailure': function(news) {
-
-                    //news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
+                    if(news.microtask.submission.testId===undefined)
+                        news.editorCode = new FunctionFactory(news.microtask.submission).getFunctionCode();
 
                 },
                 'Review': function(news) {
@@ -1163,7 +1163,7 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert, avatar
                         createdAt:    Date.now(),
                         workerHandle: $rootScope.workerHandle,
                         workerId:     $rootScope.workerId,
-                        microtaskKey: (userService.assignedMicrotaskKey==null)?'no-microtask':userService.assignedMicrotaskKey
+                        microtaskKey: (userService.assignedMicrotaskKey===null)?'no-microtask':userService.assignedMicrotaskKey
                     });
                     $scope.data.newMessage = "";
                 }
@@ -1197,10 +1197,10 @@ myApp.directive('projectStats', function($rootScope,$firebase) {
     return {
         restrict: 'E',
         scope: true,
-        template: '<b>Stats:</b><span class="stats"><span><span class="badge">{{microtaskCountObj.$value}}</span> microtasks</span><span><span class="badge">{{functionsCount}}</span> functions</span><span><span class="badge">{{testsCount}}</span> tests</span></span>',
+        template: '<b>Stats:</b><span class="stats"><!--<span><span class="badge">{{microtaskCountObj.$value}}</span> microtasks</span>--><span><span class="badge">{{functionsCount}}</span> functions</span><span><span class="badge">{{testsCount}}</span> tests</span></span>',
         link: function($scope, $element) {
 
-            $scope.microtaskCountObj  = $firebase(new Firebase($rootScope.firebaseURL+'/status/microtaskCount')).$asObject();
+            //$scope.microtaskCountObj  = $firebase(new Firebase($rootScope.firebaseURL+'/status/microtaskCount')).$asObject();
 
             var functionsRef = new Firebase($rootScope.firebaseURL+'/artifacts/functions/');
             $scope.functionsCount = 0;

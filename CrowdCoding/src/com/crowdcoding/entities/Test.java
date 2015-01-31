@@ -272,8 +272,8 @@ public class Test extends Artifact
 	public void functionChangedInterface(String oldFullDescription, String newFullDescription, String projectId, int functionVersion)
 	{
 		// TODO: should we resave the function name here??
-
-		queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, projectId, functionVersion), projectId);
+		if(!this.readOnly)
+			queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, projectId, functionVersion), projectId);
 	}
 
 

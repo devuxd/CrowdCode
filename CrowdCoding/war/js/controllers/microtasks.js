@@ -229,9 +229,9 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
 
             oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
             newFunction = new FunctionFactory ($scope.review.microtask.submission);
-            oldCode = oldFunction.getFullCode().split("\n");
+            oldCode = oldFunction.getFunctionCode().split("\n");
 
-            newCode = newFunction.getFullCode().split("\n");
+            newCode = newFunction.getFunctionCode().split("\n");
 
 
             diffRes = diff(oldCode, newCode);
@@ -246,7 +246,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                 diffCode += "\n";
             });
 
-            $scope.functName = funct.name;
+            $scope.functName =oldFunction.name;
             $scope.review.functionCode = diffCode;
 
             //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;
@@ -307,7 +307,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
             });
         else {
 
-            if( $scope.review.reviewText == undefined )
+            if( $scope.review.reviewText === undefined )
                 $scope.review.reviewText = "";
             
             formData = {
@@ -633,7 +633,8 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
 myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     var marks = [];
-    var highlightPseudoCall =($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(\)\@)/g).toString();
+    var pseudocall = ($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+    var highlightPseudoCall = (pseudocall!==null ? pseudocall.toString(): undefined);
     var changeTimeout;
     var readOnlyDone = false;
     if(angular.isDefined($scope.microtask.reissuedFrom))
@@ -950,7 +951,7 @@ myApp.controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$
 
         $scope.testData = {
             inputs: $scope.test.simpleTestInputs,
-            output: $scope.test.simpleTestOutput 
+            output: $scope.test.simpleTestOutput
         } ;
 
     } else {
