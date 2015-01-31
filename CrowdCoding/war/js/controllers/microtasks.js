@@ -245,7 +245,7 @@ myApp.controller('ReviewController', ['$scope', '$rootScope', '$firebase', '$ale
                 }
                 diffCode += "\n";
             });
-            var foundNames = ($scope.review.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+            var foundNames = ($scope.review.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
             $scope.pseudoName = foundNames[0];
             
             $scope.functName =oldFunction.name;
@@ -597,7 +597,7 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
         $scope.selectedResult = index;
     };
 
-    var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+    var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
     $scope.pseudoName = foundNames[0];
     
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
@@ -638,7 +638,7 @@ myApp.controller('ReuseSearchController', ['$scope', '$alert', 'functionsService
 myApp.controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     var marks = [];
-    var pseudocall = ($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+    var pseudocall = ($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
     $scope.pseudoName = pseudocall[0];
     var highlightPseudoCall = (pseudocall!==null ? pseudocall.toString(): undefined);
     var changeTimeout;
@@ -829,7 +829,7 @@ myApp.controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', 
     $scope.functionName = "";
     $scope.parameters = [];
 
-    var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\@)/g);
+    var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
     $scope.pseudoName   = foundNames[0];
 
 
