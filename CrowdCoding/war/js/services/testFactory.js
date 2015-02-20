@@ -337,11 +337,11 @@ angular
 
 		getTestCase: function(){
 			return {
-	            id:   this.getId(),
-	            text: this.getDescription(),
-	            readOnly: this.getReadOnly(),
-	            added: false,
-	            deleted: false,
+	            id       :   this.getId(),
+	            text     : this.getDescription(),
+	            readOnly : this.getReadOnly(),
+	            added    : false,
+	            deleted  : false,
 	        };
 		},
 

@@ -743,6 +743,7 @@ public class Function extends Artifact
 	{
 		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, projectId), projectId);
 	}
+	
 	public void disputeFunctionSignature(String issueDescription, String projectId)
 	{
 		queueMicrotask(new WriteFunction(this, issueDescription, projectId), projectId);
