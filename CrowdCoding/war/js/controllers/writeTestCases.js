@@ -4,42 +4,44 @@
 //////////////////////////////////
 angular
     .module('crowdCode')
-    .controller('WriteTestCasesController', ['$scope', '$rootScope', '$firebase', '$alert',  'TestList', 'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  TestList, functionsService, FunctionFactory, ADTService) {
+    .controller('WriteTestCasesController', ['$scope', '$rootScope', '$alert',  'TestList', 'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $alert,  TestList, functionsService, FunctionFactory, ADTService) {
     
 
     // private variables
     var alert = null;
 
-    // scope variables 
-    $scope.inDispute = false;
-
-    $scope.model = {};
-    $scope.model.newTestcase = "";
-    $scope.model.testcases   = [];
-    $scope.model.disputeText = "";
-
+    // scope data 
+    $scope.dispute = {
+        active : false,
+        text   : '',
+        toggle : function(){
+            $scope.dispute.active = ! $scope.dispute.active;
+            if( $scope.dispute.active )
+                $scope.dispute.text = '';
+        } 
+    };
 
     // if is not a reissued microtask, load the existent test cases
     // otherwise load the test cases from the reissued one
-    var reissued = angular.isDefined($scope.microtask.reissuedFrom);
+    var reissued = angular.isDefined($scope.microtask.reissuedFrom)
+    $scope.model = {
+        newTestCase : "",
+        testcases   : reissued ? $scope.reissuedMicrotask.submission.testCases 
+                               : TestList.getTestCasesByFunctionId($scope.funct.id)
+    };
 
-    if( ! reissued ) {
-        $scope.model.testcases = TestList.getTestCasesByFunctionId($scope.funct.id); 
-    } else {
-        $scope.model.testcases = $scope.reissuedMicrotask.submission.testCases;
-    }
-
+    // scope methods
     $scope.addTestCase    = addTestCase;
     $scope.removeTestCase = removeTestCase;
-    $scope.toggleDispute  = toggleDispute;
+
+    // event listeners
+    var collectOff = $scope.$on('collectFormData', collectFormData);
+    $scope.$on('$destroy',collectOff);
 
 
-    function addTestCase() {
-
-        // if is not empty string
-        var newTestCase = $scope.model.newTestcase.replace(/["']/g, "");
-        if ( newTestCase !== "" )  {
-
+    function addTestCase() {        
+        if ( $scope.model.newTestCase !== '' )  {
+            var newTestCase = $scope.model.newTestCase.replace(/["']/g, "");
             var found = false;
             angular.forEach($scope.model.testcases,function(testCase,index){
                 if( !found && testCase.text == newTestCase )
@@ -56,11 +58,11 @@ angular
                 });
 
                 // reset the new test case field
-                $scope.model.newTestcase = "";
-            }
+                $scope.model.newTestCase = "";
+            } 
         }
     }
-
+    
     function removeTestCase(index) {
         // if the testcase was added during this microtask, remove it from the array
         // else set the flag DELETED to true
@@ -69,15 +71,7 @@ angular
         else $scope.model.testcases[index].deleted = true;
     }
 
-    function toggleDispute() {
-        $scope.inDispute = !$scope.inDispute;
-        if (!$scope.inDispute) 
-            $scope.model.disputeText = "";
-    }
-
-
-    // collect form data
-    var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
+    function collectFormData(event, microtaskForm) {
 
         // insert the test case in the input box if there is one
         addTestCase();
@@ -85,11 +79,9 @@ angular
         // initialize the error
         var error = "";
 
-        if( !$scope.inDispute &&  // if not in dispute
-                $scope.model.testcases.length === 0 && // and there isn't a test case
-                $scope.model.newTestcase === "") 
+        if( !$scope.dispute.active && $scope.model.testcases.length === 0 ) 
             error = "Add at least 1 test case";
-        else if( $scope.inDispute && $scope.model.disputeText === undefined )
+        else if( $scope.dispute.active && $scope.dispute.text == "" )
             error = 'The report text cannot be empty!';
 
         // if there is an error 
@@ -112,21 +104,18 @@ angular
         // if there isn't an error submit the form
         else {
             formData = {
-                isFunctionDispute : $scope.inDispute,
+                isFunctionDispute : $scope.dispute.active,
                 functionVersion   : $scope.funct.version,
                 testCases         : $scope.model.testcases
             };
 
-            if($scope.inDispute){
-                formData.disputeText = $scope.model.disputeText;
+            if($scope.dispute.active){
+                formData.disputeText = $scope.dispute.text;
             } 
+
             // call microtask submission
             $scope.$emit('submitMicrotask', formData);
         }
-    });
-
-    $scope.$on('$destroy',function(){
-        collectOff();
-    });
+    }
 
 }]);

@@ -177,9 +177,11 @@ angular
 
         // if a test is in dispute and the disputeText length is 0, 
         // create the error for the dispute
-        if ($scope.dispute.active && $scope.dispute.description.length === 0) 
+        console.log($scope.dispute.active);
+        if ($scope.dispute.active){
+            if($scope.dispute.description.length === 0) 
                 errors = "Please, insert the description of the dispute!";
-        
+        }
         // if there are no dispute in action check if 
         // all tests are passed 
         else {
@@ -189,7 +191,7 @@ angular
                     oneTestFailed = true;
             });
 
-            if (oneTestFailed) errors = "Please fix all the failing tests before submit!";
+            if ( oneTestFailed ) errors = "Please fix all the failing tests before submit!";
             if ( data.$invalid ) errors = "Please fix the function code before submit!";
         }
 
