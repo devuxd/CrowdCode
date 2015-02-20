@@ -1,7 +1,9 @@
 /////////////////////////
 // MICROTASKS SERVICE  //
 /////////////////////////
-myApp.factory('microtasksService', ['$window','$rootScope','$firebase','$http','$q', 'userService', function($window,$rootScope,$firebase,$http,$q, userService) {
+angular
+    .module('crowdCode')
+    .factory('microtasksService', ['$window','$rootScope','$firebase','$http','$q', 'userService', function($window,$rootScope,$firebase,$http,$q, userService) {
 
 	// Private variables
 	var microtasks;

@@ -1,7 +1,9 @@
 
 /* -------- FIELD VALIDATORS --------- */
 
-myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
+angular
+    .module('crowdCode')
+    .directive('jsonValidator', ['ADTService', function(ADTService) {
     return {
        
         restrict: 'A',
@@ -27,7 +29,9 @@ myApp.directive('jsonValidator', ['ADTService', function(ADTService) {
     };
 }]);
 
-myApp.directive('jsonDataType', ['ADTService', function(ADTService) {
+angular
+    .module('crowdCode')
+    .directive('jsonDataType', ['ADTService', function(ADTService) {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -45,7 +49,9 @@ myApp.directive('jsonDataType', ['ADTService', function(ADTService) {
     };
 }]);
 
-myApp.directive('reservedWord', function() {
+angular
+    .module('crowdCode')
+    .directive('reservedWord', function() {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -71,7 +77,9 @@ myApp.directive('reservedWord', function() {
     };
 });
 
-myApp.directive('unicName', function(){
+angular
+    .module('crowdCode')
+    .directive('unicName', function(){
     return {
         scope: { parameters : "=" }, // {} = isolate, true = child, false/undefined = no change
         require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
@@ -100,7 +108,9 @@ myApp.directive('unicName', function(){
 });
 
 // check if a variable type is a valid ADT
-myApp.directive('adtValidator', ['ADTService', function(ADTService) {
+angular
+    .module('crowdCode')
+    .directive('adtValidator', ['ADTService', function(ADTService) {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -124,7 +134,9 @@ myApp.directive('adtValidator', ['ADTService', function(ADTService) {
 }]);
 
 // check if a functionName is already taken
-myApp.directive('functionNameValidator', ['functionsService', function(functionsService) {
+angular
+    .module('crowdCode')
+    .directive('functionNameValidator', ['functionsService', function(functionsService) {
     return {
         restrict: 'A',
         require: 'ngModel',
@@ -151,7 +163,9 @@ myApp.directive('functionNameValidator', ['functionsService', function(functions
 }]);
 
 // check if a function code has errors
-myApp.directive('functionValidator', ['ADTService', 'functionsService', function(ADTService, functionsService) {
+angular
+    .module('crowdCode')
+    .directive('functionValidator', ['ADTService', 'functionsService', function(ADTService, functionsService) {
 
     var functionId;
     var funct;
@@ -435,7 +449,9 @@ myApp.directive('functionValidator', ['ADTService', 'functionsService', function
 
 
 // helper for the function editing convenctions
-myApp.directive('functionConvections', function(){
+angular
+    .module('crowdCode')
+    .directive('functionConvections', function(){
     return {
         scope: true, // {} = isolate, true = child, false/undefined = no change
         restrict: 'EA', 
@@ -456,7 +472,9 @@ myApp.directive('functionConvections', function(){
 });
 
 /* ---------- KEY LISTENERS ----------- */
-myApp.directive('pressEnter', function() {
+angular
+    .module('crowdCode')
+    .directive('pressEnter', function() {
 
 
     return function(scope, element, attrs) {
@@ -479,7 +497,9 @@ myApp.directive('pressEnter', function() {
     };
 });
 
-myApp.directive('disableBackspace', function() {
+angular
+    .module('crowdCode')
+    .directive('disableBackspace', function() {
     return function(scope, element, attrs) {
         element.unbind('keydown').bind('keydown', function (event) {
             var doPrevent = false;
@@ -510,7 +530,9 @@ myApp.directive('disableBackspace', function() {
 });
 
 
-myApp.directive('microtaskShortcuts', function() {
+angular
+    .module('crowdCode')
+    .directive('microtaskShortcuts', function() {
     return function(scope, element, attrs) {
 
         // manage the key down
@@ -561,7 +583,9 @@ myApp.directive('microtaskShortcuts', function() {
 });
 
 /* --------- FORM FOCUS MANAGEMENT HELPERS ------------ */
-myApp.directive('focus', function(){
+angular
+    .module('crowdCode')
+    .directive('focus', function(){
   return {
     link: function(scope, element) {
       element[0].focus();
@@ -570,7 +594,9 @@ myApp.directive('focus', function(){
 });
 
 
-myApp.directive('syncFocusWith', function($timeout, $rootScope) {
+angular
+    .module('crowdCode')
+    .directive('syncFocusWith', function($timeout, $rootScope) {
     return {
         restrict: 'A',
         scope: {
@@ -599,7 +625,9 @@ myApp.directive('syncFocusWith', function($timeout, $rootScope) {
 //////////////////////
 
 
-myApp.directive('javascriptHelper', ['$compile', '$timeout', '$http', 'ADTService', function($compile, $timeout, $http, ADTService) {
+angular
+    .module('crowdCode')
+    .directive('javascriptHelper', ['$compile', '$timeout', '$http', 'ADTService', function($compile, $timeout, $http, ADTService) {
 
     return {
         restrict: "EA",
@@ -628,7 +656,9 @@ myApp.directive('javascriptHelper', ['$compile', '$timeout', '$http', 'ADTServic
 }]);
 
 
-myApp.directive('adtList', ['$compile', '$timeout', 'ADTService', function($compile, $timeout, ADTService) {
+angular
+    .module('crowdCode')
+    .directive('adtList', ['$compile', '$timeout', 'ADTService', function($compile, $timeout, ADTService) {
     return {
         restrict: "EA",
         scope: true,
@@ -640,7 +670,9 @@ myApp.directive('adtList', ['$compile', '$timeout', 'ADTService', function($comp
     }
 }]);
 
-myApp.directive('resizer', function($document) {
+angular
+    .module('crowdCode')
+    .directive('resizer', function($document) {
 
     return function($scope, $element, $attrs) {
         // calculate the sum of the 2 element's dimensions in percentage
@@ -753,7 +785,9 @@ myApp.directive('resizer', function($document) {
 });
 
 
-myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService,FunctionFactory){
+angular
+    .module('crowdCode')
+    .directive('microtaskPopover', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService,FunctionFactory){
     return {
         
         scope: true,
@@ -893,7 +927,9 @@ myApp.directive('microtaskPopover', function($timeout, $rootScope, $firebase,$po
 });
 
 
-myApp.directive('userMenu',function($popover){
+angular
+    .module('crowdCode')
+    .directive('userMenu',function($popover){
     return {
         restrict: 'A',
         link: function(scope, element){
@@ -918,7 +954,9 @@ myApp.directive('userMenu',function($popover){
 });
 
 
-myApp.directive('examplesList',function($rootScope,$popover,ADTService){
+angular
+    .module('crowdCode')
+    .directive('examplesList',function($rootScope,$popover,ADTService){
     return {
         restrict: 'EA',
         scope:{
@@ -1020,7 +1058,9 @@ myApp.directive('examplesList',function($rootScope,$popover,ADTService){
 });
 
 
-myApp.directive('descriptionPopover',function($rootScope,$popover,functionsService){
+angular
+    .module('crowdCode')
+    .directive('descriptionPopover',function($rootScope,$popover,functionsService){
     return {
         restrict: 'EA',
         scope:{
@@ -1041,32 +1081,10 @@ myApp.directive('descriptionPopover',function($rootScope,$popover,functionsServi
     };
 });
 
-/////////////////////
-//  NEWS DIRECTIVE //
-/////////////////////
 
-myApp.directive('newsPanel', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService) {
-    return {
-        restrict: 'E',
-        templateUrl: '/html/templates/panels/news_panel.html',
-        scope: {
-            //focusValue: "=syncFocusWith"
-        },
-        controller: function($scope, $element) {
-            $scope.popover=[];
-           
-            // create the reference and the sync
-            var ref = new Firebase($rootScope.firebaseURL + '/workers/' + $rootScope.workerId + '/newsfeed');
-            var sync = $firebase(ref);
-
-            // bind the array to scope.leaders
-            $scope.news = sync.$asArray();
-        }
-    };
-});
-
-
-myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory, userService) {
+angular
+    .module('crowdCode')
+    .directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory, userService) {
     return {
         restrict: 'E',
         templateUrl: '/html/templates/panels/chat_panel.html',
@@ -1177,7 +1195,9 @@ myApp.directive('chat', function($timeout, $rootScope, $firebase, $alert, avatar
 
 
 // USED FOR UPLOADING THE USER PICTURE
-myApp.directive('fileModel', ['$parse', function ($parse) {
+angular
+    .module('crowdCode')
+    .directive('fileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -1194,7 +1214,9 @@ myApp.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 // VIEWS THE STATS
-myApp.directive('projectStats', function($rootScope,$firebase) {
+angular
+    .module('crowdCode')
+    .directive('projectStats', function($rootScope,$firebase) {
 
     return {
         restrict: 'E',
@@ -1219,7 +1241,9 @@ myApp.directive('projectStats', function($rootScope,$firebase) {
         }
     };
 });
-myApp.directive('maxLength',function() {
+angular
+    .module('crowdCode')
+    .directive('maxLength',function() {
     return {
         restrict: 'A',
         require: 'ngModel',

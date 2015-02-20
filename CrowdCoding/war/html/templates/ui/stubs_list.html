@@ -1,0 +1,46 @@
+<div  ng-if=" test.stubMap != {} " >                                    
+    <div class="panel panel-default" ng-repeat="(fName,fStubs) in test.stubMap">
+        <div class="heading-1 " >Stubs function: {{fName}}</div>
+        <div class="panel-heading">
+            The function 
+            <ace-read-js code="calleDescription[fName].code"></ace-read-js>
+            has been called with {{ ::fStubs | keylength }}  {{ ::(fStubs | keylength) > 1 ? 'different sets':'set' }} of inputs.
+            <br />
+            For each set of inputs, you can choose what return value to use ( you can <b>stub</b> the function for the given input values ).
+        </div>
+        <div class="heading-1 heading-2" ng-repeat-start="(inputKey,stub) in fStubs track by $index">Input set {{$index}}</div>
+        <table ng-repeat-end ng-form="stubForm">
+            <tr ng-repeat="(key,input) in stubs[fName][inputKey].inputs track by $index" >
+                <td>{{stubsParamNames[fName][$index]}}<br /></td>
+                <td><div ace-read-json ng-model="input" ></div></td>
+            </tr>
+            <tr >
+                <td>return value </td>
+                <td >
+
+                    <ace-edit-json ng-model="stubs[fName][inputKey].output">
+                    </ace-edit-json>
+
+                    <textarea type="text" 
+                        ng-model="stubs[fName][inputKey].output"
+                        ng-show="false"
+                        required
+                        json-data-type="{{stubsReturnType[fName]}}" />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    
+                    <div class="" ng-messages="stubForm.$error">
+                        <div ng-message="required">Please, fill this field</div>
+                        <div ng-message="jsonDataType">
+                            <span ng-repeat="e in stubForm.$error.jsonDataType[0].$error.jsonErrors" ng-bind="e"></span>
+                        </div>
+                    </div>
+                </td>   
+            </tr>
+        </table>
+
+    </div>
+</div>

@@ -3,7 +3,9 @@
 ////////////////////
 //FUNCTIONS SERVICE   //
 ////////////////////
-myApp.factory('functionsService', ['$window','$rootScope','$firebase','FunctionFactory', function( $window, $rootScope, $firebase,FunctionFactory) {
+angular
+    .module('crowdCode')
+    .factory('functionsService', ['$window','$rootScope','$firebase','FunctionFactory', function( $window, $rootScope, $firebase,FunctionFactory) {
 
 
 	var service = new  function(){

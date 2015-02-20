@@ -12,7 +12,7 @@
 
     <alertcontainer></alertcontainer>
 
-    <div class="section-cols" ng-show="!dispute" >
+    <div class="section-cols" ng-if="!dispute.active" >
         <div class="container-flex-row">
             <div class="section section-help bg-color-alpha" style="width:30%">
                 <div class="section-title" >
@@ -76,97 +76,16 @@
                                         <div>{{test.errors}}</div>
                                     </div>
 
-                                        <a ng-if="!test.rec.readOnly" class="pull-right"
-                                        ng-click="$emit('disputeTest',testIndex);"> Report an issue with the data of this test<span class="glyphicon glyphicon-exclamation-sign"></span> </a>
-                                    <div class="clearfix">
-                                        <div class="heading-1" >Input Parameters</div>
-                                        <table >
-                                            <tr ng-repeat="(key,input) in test.rec.simpleTestInputs track by $index">
-                                                <td>{{ paramNames[key] }}</td>
-                                                <td>
-                                                    <div ace-read-json ng-model="input" ></div>
-                                                </td>
-                                            </tr>
-                                        </table>
-
-                                        <div class="heading-1" >Output</div>
-
-                                        <div ng-if="test.output.result" ace-read-json ng-model="test.output.actual" ></div>
+                                    <a ng-if="!test.rec.readOnly" class="pull-right"
+                                        ng-click="doDispute(test)"> 
+                                        Report an issue with the data of this test
+                                        <span class="glyphicon glyphicon-exclamation-sign"></span> 
+                                    </a>
                                         
-
-
-                                        <div ng-if="!test.output.result">
-                                            <table>
-                                                <tr>
-                                                    <td>expected</td>
-                                                    <td>
-                                                        <div ace-read-json ng-model="test.output.expected" ></div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>actual</td>
-                                                    <td>
-                                                        <div ace-read-json ng-model="test.output.actual" ></div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-
-                                        <div ng-if="test.debug != ''">
-                                            <div class="heading-1">Debug Console</div>
-                                            <div ace-read-string ng-model="test.debug" ></div>
-                                        </div>
-
-                                    </div>
-                                    <br />
-                                   
-                                    <div  ng-if=" test.stubMap != {} " >
+                                    <div class="clearfix"></div>
                                         
-                                        <div class="panel panel-default" ng-repeat="(fName,fStubs) in test.stubMap">
-                                            <div class="heading-1 " >Stubs function: {{fName}}</div>
-                                            <div class="panel-heading">
-                                                The function 
-                                                <ace-read-js code="calleDescription[fName].code"></ace-read-js>
-                                                has been called with {{ ::fStubs | keylength }}  {{ ::(fStubs | keylength) > 1 ? 'different sets':'set' }} of inputs.
-                                                <br />
-                                                For each set of inputs, you can choose what return value to use ( you can <b>stub</b> the function for the given input values ).
-                                            </div>
-                                            <div class="heading-1 heading-2" ng-repeat-start="(inputKey,stub) in fStubs track by $index">Input set {{$index}}</div>
-                                            <table ng-repeat-end ng-form="stubForm">
-                                                <tr ng-repeat="(key,input) in stubs[fName][inputKey].inputs track by $index" >
-                                                    <td>{{stubsParamNames[fName][$index]}}<br /></td>
-                                                    <td><div ace-read-json ng-model="input" ></div></td>
-                                                </tr>
-                                                <tr >
-                                                    <td>return value </td>
-                                                    <td >
-
-                                                        <ace-edit-json ng-model="stubs[fName][inputKey].output">
-                                                        </ace-edit-json>
-
-                                                        <textarea type="text" 
-                                                            ng-model="stubs[fName][inputKey].output"
-                                                            ng-show="false"
-                                                            required
-                                                            json-data-type="{{stubsReturnType[fName]}}" />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td></td>
-                                                    <td>
-                                                        
-                                                        <div class="" ng-messages="stubForm.$error">
-                                                            <div ng-message="required">Please, fill this field</div>
-                                                            <div ng-message="jsonDataType">
-                                                                <span ng-repeat="e in stubForm.$error.jsonDataType[0].$error.jsonErrors" ng-bind="e"></span>
-                                                            </div>
-                                                        </div>
-                                                    </td>   
-                                                </tr>
-                                            </table>
-
-                                        </div>
-                                    </div>
+                                    <test-result></test-result>
+                                    <stubs-list></stubs-list>
                                        
                                 </div>
                             </div>
@@ -178,7 +97,7 @@
         </div>
     </div>
 
-    <div class="section-cols" ng-show=" !dispute ">
+    <div class="section-cols" ng-if=" !dispute.active">
         <div class="container-flex-row">
             <div class="section section-help bg-color-alpha " style="width:30%">
                 <div class="section-title" >
@@ -197,34 +116,30 @@
             </div>
             <div class="section section-form" style="width:70%">
                 <div class="section-content no-padding" >
-                    <div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
-                    <textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-                    <ul class="help-block pull-left" ng-if="microtaskForm.code.$error.function_errors.length > 0">
-                        <ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
-                            <li>{{error}}</li>
-                        </ul>
-                    </ul>
-                    <div class="clearfix"></div>
+                    
+                    <function-editor></function-editor>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="section section-description" ng-show="dispute">
+    <div class="section section-description" ng-if="dispute.active">
         <div class="section-title " >
              <div class="dot bg-color"></div> DISPUTE TEST
         </div>
         <div class="section-content" >
-            <span><b>Test description:</b> {{disputedTest.rec.description}}</span><br/>
-            <span><b>Test code:</b> {{disputedTest.rec.code}}</span><br/>
+            <span><b>Test description:</b> {{dispute.test.rec.description}}</span><br/>
+            <span><b>Test code:</b> {{dispute.test.rec.code}}</span><br/>
             <label for="disputeDescription">What's wrong with this test? </label>
-            <textarea name="disputeDescription" class="form-control" ng-model="disp.disputeText" ng-required="dispute" ng-pattern="/^[^/\\\'\&quot;]+$/"></textarea>
+            <textarea name="disputeDescription" class="form-control" ng-model="dispute.description" ng-required="dispute" ng-pattern="/^[^/\\\'\&quot;]+$/"></textarea>
             <ul class="help-block" ng-show="microtaskForm.disputeDescription.$dirty && microtaskForm.disputeDescription.$invalid">
                 <li ng-show="microtaskForm.disputeDescription.$error.required">This field is required!</li>
                 <li ng-show="microtaskForm.disputeDescription.$error.pattern">The symbols \ / " 'are not allowed</li>
             </ul>
             <br>
-            <button class="btn btn-sm pull-right" ng-click="cancelDispute()" >Nothing is wrong with the test</button>
+            <button class="btn btn-sm pull-right" ng-click="undoDispute()" >Nothing is wrong with the test</button>
+            <span class="clearfix"></span>
         </div>
     </div>
 

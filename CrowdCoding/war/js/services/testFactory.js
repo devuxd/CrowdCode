@@ -1,12 +1,16 @@
 
 // create the test list
-myApp.factory("TestList", ['$firebase','firebaseUrl','TestFactory', function($firebase, firebaseUrl, TestFactory) {
+angular
+    .module('crowdCode')
+    .factory("TestList", ['$firebase','firebaseUrl','TestFactory', function($firebase, firebaseUrl, TestFactory) {
 	var ref = new Firebase(firebaseUrl+'/artifacts/tests');
 	return $firebase(ref, {arrayFactory: "TestFactory"}).$asArray();
 }]);
 
 
-myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'Test', 'firebaseUrl', function( $FirebaseArray, $firebaseUtils, $firebase, Test, firebaseUrl){
+angular
+    .module('crowdCode')
+    .factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'Test', 'firebaseUrl', function( $FirebaseArray, $firebaseUtils, $firebase, Test, firebaseUrl){
 
 	var lastId = 0;
 	var objectsList = {};
@@ -236,7 +240,9 @@ myApp.factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'T
 	});
 }]);
 
-myApp.factory("Test", function ($FirebaseArray) {
+angular
+    .module('crowdCode')
+    .factory("Test", function ($FirebaseArray) {
 	function Test(rec){
 		if( rec === undefined )
 			this.rec = {};

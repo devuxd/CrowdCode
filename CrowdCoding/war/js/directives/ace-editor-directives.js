@@ -1,5 +1,7 @@
 
-myApp.directive('aceReadJs',function($compile,functionsService) {
+angular
+    .module('crowdCode')
+    .directive('aceReadJs',function($compile,functionsService) {
 
     return {
         restrict: 'EA',
@@ -27,7 +29,9 @@ myApp.directive('aceReadJs',function($compile,functionsService) {
 });
 
 
-myApp.directive('aceReadString', function() {
+angular
+    .module('crowdCode')
+    .directive('aceReadString', function() {
     return {
         restrict: 'EA',
         template:'<div class="ace-editor json-reader" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'xcode\', showGutter: false, useWrapMode : true }" readonly="true" ng-model="stringValue"></div>',
@@ -58,7 +62,9 @@ myApp.directive('aceReadString', function() {
     };
 });
 
-myApp.directive('aceReadJson', function() {
+angular
+    .module('crowdCode')
+    .directive('aceReadJson', function() {
 
     function syntaxHighlight(json) {
         json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -115,7 +121,9 @@ myApp.directive('aceReadJson', function() {
 });
 
 
-myApp.directive('aceEditJson', function() {
+angular
+    .module('crowdCode')
+    .directive('aceEditJson', function() {
     var stringified = false;
 
     return {

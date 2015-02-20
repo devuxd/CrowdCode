@@ -1,33 +1,38 @@
 /////////////////////////
-// TEST RUNNER SERVICE //
+// TEST RUNNER FACTORY //
 /////////////////////////
-myApp.factory('TestRunnerFactory', [
+angular
+    .module('crowdCode')
+    .factory('TestRunnerFactory', [
 	'$window',
 	'$rootScope',
 	'$http',
 	'$timeout',
-	
 	'functionsService',
 	'TestList', 
 	function($window,$rootScope,$http,$timeout,functionsService,TestList) {
 
+
+	
+
+	function DefaultTestItem(){
+		return {
+			stubMap       : {},
+			debug         : "",
+			number        : -1,
+			output        : {},
+			executionTime : 0,
+			ready         : function(){
+				if( this.output.result !== undefined )
+					return true;
+		
+				return false;
+			}
+		};
+	};
+
+
 	var instances = 0;
-
-	var defaultTestItem = {
-			stubMap : {},
-			debug   : "",
-			number : -1,
-			output : {},
-			executionTime : 0
-	};
-	defaultTestItem.ready = function(){
-		if( this.output.result !== undefined ){
-			return true;
-		}
-		return false;
-	};
-
-
 	function TestRunner( config ){
 
 		this.id = ++instances;
@@ -67,25 +72,6 @@ myApp.factory('TestRunnerFactory', [
 		this.testReadyListener   = undefined;
 		this.stubsReadyListener   = undefined;
 		this.testsFinishListener = undefined;
-
-		//console.log('%cTest Runner: initialized','color:blue;',this);
-
-		// // set listeners on the notification channel
-		// NotificationChannel.onRunTests($rootScope,function(item){
-		// 	if( item.submitToServer )
-		// 		this.submitToServer = true;
-		// 	else 
-		// 		this.submitToServer = false;
-
-		// 	////console.log("--> ==> PASSED STUBS  ",item.passedStubs);
-
-		// 	this.runTests( item.passedFunctionId, item.passedFunctionBody, item.passedStubs );
-		// });
-
-
-		// NotificationChannel.onSubmitResults($rootScope,function(tem){
-		// 	this.submitResultsToServer();
-		// });
 	}
 
 	TestRunner.prototype.onTestReady = function(listener){
@@ -93,9 +79,6 @@ myApp.factory('TestRunnerFactory', [
 	};
 
 	TestRunner.prototype.testReady = function(data){
-		// //console.log('%cTest Runner: test ready %o, output %o','color:blue;font-style:bold;',data,data.output);
-		// console.assert(data.output != undefined,"Data output is not defined!");
-
 		if( this.testReadyListener != undefined)
 			this.testReadyListener.call( null, data);
 	};
@@ -123,11 +106,6 @@ myApp.factory('TestRunnerFactory', [
 			this.testsFinishListener.call( null, data);
 	};
 
-	// TestRunner.prototype.getDefaultTestItem(){
-	// 	return {
-
-	// 	}
-	// }
 
 
 	//Runs all of the tests for the specified function, sending the results to the server
@@ -421,7 +399,7 @@ myApp.factory('TestRunnerFactory', [
 			self.usedStubs = data.usedStubs ;
 
 			self.testReady(item);
-			console.log(item);
+
 		  	//self.processTestFinished( ( item.output != undefined && item.output.result == undefined ) ? item.output.result : false );
 		  	self.processTestFinished( ( item.output !== undefined && item.output.result !== undefined ) ? item.output.result : false );
 
@@ -432,8 +410,6 @@ myApp.factory('TestRunnerFactory', [
 
 	TestRunner.prototype.submitResultsToServer = function()
 	{		
-
-		console.log('SUBMITTING TESTS RESULT TO THE SERVER ');
 		// Determine if the function passed or failed its tests. 
 		// If at least one test failed, the function failed its tests.
 		// If at least one test succeeded and no tests failed, the function passed its tests.
@@ -465,9 +441,9 @@ myApp.factory('TestRunnerFactory', [
 			
 	};
 
-	
+
 	return {
 		instance : TestRunner,
-		defaultTestItem : defaultTestItem,
+		defaultTestItem : DefaultTestItem,
 	};
 }]); 

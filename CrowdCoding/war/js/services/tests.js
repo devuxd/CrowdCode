@@ -2,7 +2,9 @@
 ////////////////////
 // TESTS SERVICE   //
 ////////////////////
-myApp.factory( 'testsService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
+angular
+    .module('crowdCode')
+    .factory( 'testsService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
 
 	var service = new function(){
 

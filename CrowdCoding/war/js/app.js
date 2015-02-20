@@ -1,36 +1,29 @@
 // create the AngularJS app, load modules and start
 
 // create CrowdCodeWorker App and load modules
-var myApp = angular.module('crowdCodeWorker',[ 
-	'ngAnimate',
-	'ngMessages', 
-	'firebase', 
-	'ui.codemirror', 
-	'ngSanitize', 
-	'ui.ace', 
-	'mgcrea.ngStrap', 
-	'ngClipboard',
-    'luegg.directives'
-]);
+angular
+	.module('crowdCode',[ 
+		'ngAnimate',
+		'ngMessages', 
+		'firebase', 
+		'ui.codemirror', 
+		'ngSanitize', 
+		'ui.ace', 
+		'mgcrea.ngStrap', 
+		'ngClipboard',
+	    'luegg.directives'
+	])
+	.config(function($dropdownProvider, ngClipProvider ) {
 
-// configure app modules
-myApp.config(function($dropdownProvider, ngClipProvider ) {
+		ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
 
-	ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
+		angular.extend($dropdownProvider.defaults, { html: true });
 
-	angular.extend($dropdownProvider.defaults, { html: true });
-
-});
-
-// define app constants
-myApp.constant('workerId',workerId);
-myApp.constant('projectId',projectId);
-
-console.log('logoutUrl '+logoutURL);
-myApp.constant('firebaseUrl',firebaseURL);
-myApp.constant('logoutUrl',logoutURL);
-
-// run the app
-myApp.run();
+	})
+	.constant('workerId'   ,workerId)
+    .constant('projectId'  ,projectId)
+	.constant('firebaseUrl',firebaseURL)
+	.constant('logoutUrl'  ,logoutURL)
+	.run();
 
 

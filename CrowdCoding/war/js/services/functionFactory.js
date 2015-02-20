@@ -1,4 +1,6 @@
-myApp.factory("FunctionFactory", function () {
+angular
+    .module('crowdCode')
+    .factory("FunctionFactory", function () {
 
 
 	function FunctionFactory(rec){
