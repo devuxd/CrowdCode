@@ -37,8 +37,11 @@ public class FunctionDTO extends DTO
 	{
 		String fullDescription="/**\n" + description + "\n\n";
 
-
-
+		return fullDescription + getParametersAndReturn();
+	}
+	public String getParametersAndReturn()
+	{
+		String fullDescription="";
 
     	for(int i=0; i<paramNames.size(); i++)
 			{
