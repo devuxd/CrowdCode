@@ -1,0 +1,40 @@
+
+
+<div class="section section-description " >
+	
+	<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+
+	<div class="section-content job-description" >
+
+		<div>
+			The worker was asked to revise the calls to
+			<strong>{{pseudoName}}</strong> in the function
+			<strong>{{functName}}</strong>
+			<span ng-if="pseudoName!==reviewed.calleeName">with the new implemented function <strong>{{reviewed.calleeName}}</strong>.</span>
+		</div>
+
+		<span>Can you rate this work?</span>
+	</div>
+</div>
+
+
+
+
+
+<div class="section section-description-2">
+	<div class="section-title" >
+		<div class="dot bg-color"></div>{{reviewed.calleeName}} function signature
+	</div>
+	<div class="section-content" >
+		<ace-read-js code="review.microtask.calleeFullDescription"></ace-read-js>
+	</div>
+</div>
+
+<div class="section section-review">
+	<div class="section-title" >
+		<div class="dot bg-color"></div>submitted function code
+	</div>
+	<div class="section-content" >
+		<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
+	</div>
+</div>

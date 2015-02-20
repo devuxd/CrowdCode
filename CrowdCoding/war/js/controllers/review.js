@@ -23,17 +23,35 @@ angular
     $scope.review.microtask = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
     $scope.review.microtask.$loaded().then(function() {
 
-        if ($scope.review.microtask.type == 'WriteTestCases') {
 
-            //retrievs the reference of the existing test cases to see if the are differents
-            $scope.review.testcases = $scope.review.microtask.submission.testCases;
+        $scope.reviewed = $scope.review.microtask;
+
+        if ($scope.reviewed.type == 'WriteTestCases') {
             //load the version of the function with witch the test cases where made
             var functionUnderTestSync = $firebase(new Firebase($rootScope.firebaseURL + '/history/artifacts/functions/' + $scope.review.microtask.functionID + '/' + $scope.review.microtask.submission.functionVersion));
             var functionUnderTest     = functionUnderTestSync.$asObject();
             functionUnderTest.$loaded().then(function() {
+
+                var testcases    = $scope.review.microtask.submission.testCases;
+                var testcasesDiff = [];
+                angular.forEach(testcases,function(tc,index){
+                    if(tc.added)
+                        testcasesDiff.push({ class: 'add', text : tc.text });
+                    else if( tc.deleted )
+                        testcasesDiff.push({ class: 'del', text : tc.text });
+                    else {
+                        var oldTc = TestList.get(tc.id);
+                        if( tc.text != oldTc.getDescription() ) {
+                            testcasesDiff.push({ class: 'chg', old: oldTc.getDescription(), text : tc.text });
+                        }
+                        else
+                            testcasesDiff.push({ class: '', text : tc.text });
+                    }
+                });
+               
+
                 $scope.review.functionCode = functionsService.renderDescription(functionUnderTest) + functionUnderTest.header;
-                $scope.oldTestCases = TestList.getTestCasesByFunctionId(functionUnderTest.id);
-                console.log('OLD TC',$scope.oldTestCases);
+                $scope.review.testcases    = testcasesDiff;
             });
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
@@ -151,7 +169,8 @@ angular
             $scope.makeDirty(microtaskForm);
 
         var error = "";
-        if ($scope.review.rating === -1) error = "plese, scores the review";
+        if ($scope.review.rating === -1) 
+            error = "plese, select a score";
         else if (microtaskForm.$invalid && $scope.review.rating <= 3) 
             error = "please, write an explanation for your choice";
         

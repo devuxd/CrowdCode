@@ -1,0 +1,79 @@
+
+
+<div class="section section-description " >
+	
+	<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+
+	<div class="section-content job-description" >
+
+		<div ng-if="! review.microtask.submission.inDispute && ! review.microtask.submission.isFunctionDispute">
+			The worker was asked to write a test for the following test case relative 
+			to the function <strong>{{functionUnderTest.name}}</strong>
+		</div>
+		<div ng-if="review.microtask.submission.isFunctionDispute" >
+			The worker was asked to write a test for the function
+			<strong>{{functionUnderTest.name}}</strong>
+			and he reported the function description.
+		</div>
+		<div ng-if="review.microtask.submission.inDispute" >
+			The worker was asked to write a test the following test case relative to the function
+			<strong>{{functionUnderTest.name}}</strong>
+			but he reported the test case.
+		</div>
+
+		<span>Can you rate this work?</span>
+	</div>
+</div>
+
+
+<div class="section section-description">
+	<div class="section-title" ng-if="!reviewed.submission.isFunctionDispute">
+		<div class="dot bg-color"></div>function description
+	</div>
+	<div class="section-title" ng-if="reviewed.submission.isFunctionDispute">
+		<div class="dot bg-color"></div>reported function signature
+	</div>
+	<div class="section-content no-padding" >
+		<ace-read-js code="review.functionCode"></ace-read-js>
+	</div>
+</div>
+
+
+<div class="section section-description" ng-if="! reviewed.submission.isFunctionDispute">
+	<div ng-if="!review.microtask.submission.inDispute" class="section-title" ><div class="dot bg-color"></div>test case</div>
+	<div ng-if="review.microtask.submission.inDispute" class="section-title" ><div class="dot bg-color"></div>reported test case</div>
+	<div class="section-content" >
+		{{reviewed.owningArtifact}}
+	</div>
+</div>
+
+<div ng-if="! reviewed.submission.inDispute && !reviewed.submission.isFunctionDispute" >
+
+	<div class="section section-review">
+		<div  class="section-title" ><div class="dot bg-color"></div>submitted TEST</div>
+		<div class="section-content" >
+			<table style="width:100%" class="test">
+				
+				<tr ng-repeat="(inputKey,input) in review.microtask.submission.simpleTestInputs track by $index">
+					<td>{{functionUnderTest.paramNames[$index]}}</td>
+					<td>
+						<div ace-read-json ng-model="input" ></div>
+					</td>
+				</tr>
+				<tr ng-if="functionUnderTest.returnType!=undefined">
+					<td>test output</td>
+					<td>
+						<div ace-read-json ng-model="review.microtask.submission.simpleTestOutput" ></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<div ng-if="review.microtask.submission.inDispute || review.microtask.submission.isFunctionDispute" class="section section-description-2">
+	<div class="section-title" ><div class="dot bg-color"></div>report explanation</div>
+	<div class="section-content" >
+		{{reviewed.submission.disputeText}}
+	</div>
+</div>
