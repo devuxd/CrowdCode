@@ -1,9 +1,13 @@
-myApp.filter("newline", function(){
+angular
+    .module('crowdCode')
+    .filter("newline", function(){
 	  return function(text) {
 		  return text.replace(/\n/g, '<br>');
 	  };
 });
-myApp.filter('range', function() {
+angular
+    .module('crowdCode')
+    .filter('range', function() {
   return function(input, total) {
     total = parseInt(total);
     for (var i=0; i<total; i++)
@@ -12,7 +16,9 @@ myApp.filter('range', function() {
   };
 });
 
-myApp.filter('keylength', function(){
+angular
+    .module('crowdCode')
+    .filter('keylength', function(){
   return function(input){
     if(!angular.isObject(input)){
       throw Error("Usage of non-objects with keylength filter!!")

@@ -1,5 +1,7 @@
 
-myApp.directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId) {
+angular
+    .module('crowdCode')
+    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId) {
     var fbRef = new Firebase(firebaseURL);
     var tutorialsOnRef = fbRef.child('/status/settings/tutorials');
     var userTutorials  = $firebase( fbRef.child('/workers/' + workerId + '/completedTutorials' ) ).$asObject();
@@ -92,7 +94,9 @@ myApp.directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$fir
     }
 }]);
 
-myApp.directive('tutorial', function($rootScope,$compile) {
+angular
+    .module('crowdCode')
+    .directive('tutorial', function($rootScope,$compile) {
     return {
         restrict: 'E',
         scope: false,

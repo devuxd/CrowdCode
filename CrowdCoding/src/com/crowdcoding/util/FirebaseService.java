@@ -217,6 +217,7 @@ public class FirebaseService
 	// Publishes the history log
 	public static void publishHistoryLogEvent(HistoryEvent event, String projectId)
 	{
+		System.out.println("firebase history log : "+event.json());
 		enqueueWrite( event.json() , "/history/events/" + event.generateID() + ".json", HTTPMethod.PUT, projectId);
 	}
 

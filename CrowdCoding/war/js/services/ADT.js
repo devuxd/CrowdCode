@@ -1,7 +1,9 @@
 ////////////////////
 //ADT SERVICE   //
 ////////////////////
-myApp.factory('ADTService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
+angular
+    .module('crowdCode')
+    .factory('ADTService', ['$window','$rootScope','$firebase', function($window,$rootScope,$firebase) {
 
 	var service = new  function(){
 

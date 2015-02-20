@@ -1,0 +1,35 @@
+<div class="heading-1" >Input Parameters</div>
+<table >
+    <tr ng-repeat="(key,input) in test.rec.simpleTestInputs track by $index">
+        <td>{{ paramNames[key] }}</td>
+        <td>
+            <div ace-read-json ng-model="input" ></div>
+        </td>
+    </tr>
+</table>
+
+<div class="heading-1" >Output</div>
+
+<div ng-if="test.output.result" ace-read-json ng-model="test.output.actual" ></div>
+
+<div ng-if="!test.output.result">
+    <table>
+        <tr>
+            <td>expected</td>
+            <td>
+                <div ace-read-json ng-model="test.output.expected" ></div>
+            </td>
+        </tr>
+        <tr>
+            <td>actual</td>
+            <td>
+                <div ace-read-json ng-model="test.output.actual" ></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div ng-if="test.debug != ''">
+    <div class="heading-1">Debug Console</div>
+    <div ace-read-string ng-model="test.debug" ></div>
+</div>

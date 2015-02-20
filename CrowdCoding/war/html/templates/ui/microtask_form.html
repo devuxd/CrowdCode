@@ -1,0 +1,38 @@
+<form name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
+	<div id="task" class="task" microtask >
+		<ng-include class="{{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}" src="templatePath"></ng-include>
+	</div>
+
+	<div class="button-bar">
+		<div class="button-bar">
+		<div class="btn-group pull-left" role="group" ng-show="!noMicrotask" >
+			<button type="button"
+
+       	 		id="skipBtn"
+       			ng-click="$emit('skipMicrotask')" 
+       			tabindex="100" 
+       			class="btn btn-default btn-sm">
+       			Skip
+       		</button>
+		  	
+		  	<button type="button" 
+      			id="submitBtn"
+		  		ng-click="$broadcast('collectFormData', microtaskForm) " 
+		  		tabindex="99" 
+		  		class="btn btn-primary btn-sm">
+		  		Submit
+		  	</button>
+		</div>
+
+
+		<span class="pull-right">
+			<span ng-if="unreadMessages > 0" class="unread-messages">{{unreadMessages}}</span>
+			<button ng-click="$emit('toggleChat')" tabindex="101" class="btn btn-chat-toggle {{chatActive?'opened':''}} btn-sm"  >
+
+				<span class="glyphicon glyphicon-comment"></span>
+			</button>
+		</span>
+		<span class="clearfix"></span>
+	
+	</div>
+</form>

@@ -1,7 +1,9 @@
 ////////////////////
 // USER SERVICE   //
 ////////////////////
-myApp.factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,TestRunnerFactory) {
+angular
+    .module('crowdCode')
+    .factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,TestRunnerFactory) {
     var user = {};
 
  	// retrieve the firebase references

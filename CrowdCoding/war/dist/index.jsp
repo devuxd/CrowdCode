@@ -5,7 +5,7 @@
     }
     console.log('PAGE LOADED');</script> <!--[if lt IE 9]>
     <script charset="utf-8" src="/dist/scripts/oldieshim.76f279db.js"></script>
-    <![endif]--> <script charset="utf-8" src="/dist/scripts/vendor.6b4e371c.js"></script> <script charset="utf-8" src="/dist/scripts/scripts.d067392e.js"></script> <script type="text/javascript">(function () {
+    <![endif]--> <script charset="utf-8" src="/dist/scripts/vendor.6b4e371c.js"></script> <script charset="utf-8" src="/dist/scripts/scripts.43ed4e0c.js"></script> <script type="text/javascript">(function () {
             var ace = window.ace = window.ace || { };
             ace.initialize = function(editor) {
                 ace.require("ace/config").set("workerPath","/dist/scripts/ace");

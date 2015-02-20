@@ -1,23 +1,30 @@
-<div>
-	<ul class="sidebar-list news">
-		<li microtask-popover
-			class="news-element {{ n.microtaskType | lowercase }}"
-			ng-if="news.length > 0" 
-			ng-repeat="n in news | orderBy:'-timeInMillis'" 
-			ng-mouseenter="showMicrotaskPopover(n)" 
-			>
-			<div class="type">{{::n.microtaskType}}</div>
-			<div class="result" ng-if="::(n.score != -1)">
-				<!--<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>-->
-				<span ng-if="::(n.score <= 3)" class="reissued">REISSUED</span>
-				<span ng-if="::(n.score > 3)" class="accepted">ACCEPTED</span>
+<h3 class="toggler">Your activities</h3>
+<div id="activityPanel"  class="element active"  style="height:40%">
+	<div class="element-body scrollable">
+		<div>
+			<ul class="sidebar-list news">
+				<li microtask-popover
+					class="news-element {{ n.microtaskType | lowercase }}"
+					ng-if="news.length > 0" 
+					ng-repeat="n in news | orderBy:'-timeInMillis'" 
+					ng-mouseenter="showMicrotaskPopover(n)" 
+					>
+					<div class="type">{{::n.microtaskType}}</div>
+					<div class="result" ng-if="::(n.score != -1)">
+						<!--<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>-->
+						<span ng-if="::(n.score <= 3)" class="reissued">REISSUED</span>
+						<span ng-if="::(n.score > 3)" class="accepted">ACCEPTED</span>
+					</div>
+					<span class="points">+{{::n.points}} pts</span>
+					
+			  		<div class="clearfix"></div>
+				</li>
+			</ul>
+			<div ng-if="news.length == 0" >
+				no news yet!
 			</div>
-			<span class="points">+{{::n.points}} pts</span>
-			
-	  		<div class="clearfix"></div>
-		</li>
-	</ul>
-	<div ng-if="news.length == 0" >
-		no news yet!
+		</div>
 	</div>
 </div>
+
+		        	

@@ -31,7 +31,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="en" ng-app="crowdCodeWorker">
+<html lang="en" ng-app="crowdCode">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -66,35 +66,10 @@
 
 </head>
 
-<body disable-backspace ng-controller="AppController"  ng-cloak >
+<body disable-backspace ng-controller="MainController"  ng-cloak >
 
 	<header>
-
-		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-			<div class="container-fluid">
-
-				<div class="navbar-header">
-			      <a class="navbar-brand" href="#">CrowdCode</a>
-			    </div>
-
-				<ul class="nav navbar-nav">
-			        <li><a href="#"><strong>project:</strong> {{ projectId }}</a></li>
-			        <li><a href="#"><project-stats></project-stats></a></li>
-			    </ul>
-
-			    <ul class="nav navbar-nav navbar-right">
-			    	<li>
-			        	<a user-menu href="#" />
-							{{ workerHandle}}
-							<img ng-src="{{ avatar(workerId).$value }}" class="profile-picture" />
-							<span class="caret"></span>
-			        	</a>
-			        </li>
-			    </ul>
-
-
-			</div>
-		</div>
+		<navbar></navbar>
 	</header>
 
 	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;" >
@@ -103,18 +78,8 @@
 	        <!-- LEFT SIDEBAR -->
 	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
 				<div class="sidebar-panels" >
-		        	<h3 class="toggler">Your activities</h3>
-		        	<div id="activityPanel"  class="element active"  style="height:40%">
-		        		<div class="element-body scrollable">
-							<news-panel></news-panel>
-		        		</div>
-		        	</div>
-		        	<h3 class="toggler">Leaderboard</h3>
-		        	<div id="leaderboardPanel"  class="element active" style="height:40%">
-		        		<div class="element-body scrollable">
-							<ng-include src="'/html/templates/panels/leaderboard_panel.html'"></ng-include>
-		        		</div>
-		        	</div>
+		        	<news></news>
+		        	<leaderboard></leaderboard>
 		        </div>
 
 		        <div class="sidebar-buttons">
@@ -137,48 +102,11 @@
 			</div>
 
 	        <!-- CONTENT -->
-	        <div id="content" class="order-3" ng-controller="MicrotaskController" >
+	        <div id="content" class="order-3" >
 
 				<chat></chat>
 
-	        	<form name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
-					<div id="task" class="task" microtask >
-						<ng-include class="{{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}" src="templatePath"></ng-include>
-					</div>
-
-					<div class="button-bar">
-						<div class="button-bar">
-						<div class="btn-group pull-left" role="group" ng-show="!noMicrotask" >
-							<button type="button"
-
-			           	 		id="skipBtn"
-			           			ng-click="$emit('skipMicrotask')" 
-			           			tabindex="100" 
-			           			class="btn btn-default btn-sm">
-			           			Skip
-			           		</button>
-						  	
-						  	<button type="button" 
-			          			id="submitBtn"
-						  		ng-click="$broadcast('collectFormData', microtaskForm) " 
-						  		tabindex="99" 
-						  		class="btn btn-primary btn-sm">
-						  		Submit
-						  	</button>
-						</div>
-
-
-						<span class="pull-right">
-							<span ng-if="unreadMessages > 0" class="unread-messages">{{unreadMessages}}</span>
-							<button ng-click="$emit('toggleChat')" tabindex="101" class="btn btn-chat-toggle {{chatActive?'opened':''}} btn-sm"  >
-
-								<span class="glyphicon glyphicon-comment"></span>
-							</button>
-						</span>
-						<span class="clearfix"></span>
-					
-					</div>
-				</form>
+	        	<microtask-form></microtask-form>
 
 	        </div>
 
@@ -293,6 +221,13 @@
 	<script src="/js/services/testFactory.js"></script>
 
 	<!-- Angular Directives -->
+	<script src="/js/directives/navbar.js"></script>
+	<script src="/js/directives/leaderboard.js"></script>
+	<script src="/js/directives/news.js"></script>
+	<script src="/js/directives/microtaskForm.js"></script>
+	<script src="/js/directives/testResult.js"></script>
+	<script src="/js/directives/stubsList.js"></script>
+	<script src="/js/directives/functionEditor.js"></script>
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/directives/tutorial.js"></script>
 	<script src="/js/directives/codemirror-directives.js"></script>
@@ -303,8 +238,20 @@
 	<script src="/js/filters/filter.js"></script>
 
 	<!-- Angular Controllers -->
-	<script src="/js/controllers/controllers.js"></script>
-	<script src="/js/controllers/microtasks.js"></script>
+	<script src="/js/controllers/main.js"></script>
+	<script src="/js/controllers/userProfile.js"></script>
+	<script src="/js/controllers/leaderboard.js"></script>
+	<script src="/js/controllers/userProfile.js"></script>
+	<script src="/js/controllers/noMicrotask.js"></script>
+	<script src="/js/controllers/writeCall.js"></script>
+	<script src="/js/controllers/debugTestFailure.js"></script>
+	<script src="/js/controllers/reuseSearch.js"></script>
+	<script src="/js/controllers/review.js"></script>
+	<script src="/js/controllers/writeCall.js"></script>
+	<script src="/js/controllers/writeFunction.js"></script>
+	<script src="/js/controllers/writeFunctionDescription.js"></script>
+	<script src="/js/controllers/writeTest.js"></script>
+	<script src="/js/controllers/writeTestCases.js"></script>
 
 
 

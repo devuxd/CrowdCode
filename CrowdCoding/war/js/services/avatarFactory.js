@@ -1,6 +1,8 @@
 
 
-myApp.factory("avatarFactory",[ '$firebase','firebaseUrl', function( $firebase , firebaseUrl ){
+angular
+    .module('crowdCode')
+    .factory("avatarFactory",[ '$firebase','firebaseUrl', function( $firebase , firebaseUrl ){
 
 	var loaded = {};
 
