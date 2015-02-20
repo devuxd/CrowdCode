@@ -21,15 +21,14 @@ angular
 
     // if is not a reissued microtask, load the existent test cases
     // otherwise load the test cases from the reissued one
-    var reissued = angular.isDefined($scope.microtask.reissuedFrom)
+    var reissued = angular.isDefined($scope.microtask.reissuedFrom);
 
-    if( ! reissued ) { 
+    if( ! reissued ) {
         $scope.model.testcases = TestList.getTestCasesByFunctionId($scope.funct.id); 
     } else {
         $scope.model.testcases = $scope.reissuedMicrotask.submission.testCases;
     }
 
-    
     $scope.addTestCase    = addTestCase;
     $scope.removeTestCase = removeTestCase;
     $scope.toggleDispute  = toggleDispute;
@@ -40,7 +39,7 @@ angular
         // if is not empty string
         var newTestCase = $scope.model.newTestcase.replace(/["']/g, "");
         if ( newTestCase !== "" )  {
-            
+
             var found = false;
             angular.forEach($scope.model.testcases,function(testCase,index){
                 if( !found && testCase.text == newTestCase )
@@ -58,10 +57,10 @@ angular
 
                 // reset the new test case field
                 $scope.model.newTestcase = "";
-            } 
+            }
         }
     }
-    
+
     function removeTestCase(index) {
         // if the testcase was added during this microtask, remove it from the array
         // else set the flag DELETED to true

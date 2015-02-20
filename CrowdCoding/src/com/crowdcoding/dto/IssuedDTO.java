@@ -1,14 +1,14 @@
 package com.crowdcoding.dto;
 
-public class issuedDTO extends DTO
+public class IssuedDTO extends DTO
 {
 	public String reissuedFrom;
 
-	public issuedDTO()
+	public IssuedDTO()
 	{
 	}
 
-	public issuedDTO(String name, String type)
+	public IssuedDTO(String name, String type)
 	{
 		this.reissuedFrom = name;
 	}

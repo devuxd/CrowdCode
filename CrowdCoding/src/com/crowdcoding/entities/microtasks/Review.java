@@ -119,7 +119,10 @@ public class Review extends Microtask
 			// reissue microtask
 			System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" reissued");
 			reviewResult = "reissued";
-			MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
+			if(reviewDTO.fromDisputedMicrotask)
+				MicrotaskCommand.rejectMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
+			else
+				MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
 
