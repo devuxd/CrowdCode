@@ -337,11 +337,12 @@ public class Function extends Artifact
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
-		if ( ! microtaskOut && !queuedMicrotasks.isEmpty())
-				makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
-		else if (!testCaseOut && !queuedWriteTestCase.isEmpty())
-				makeTestCaseOut( ofy().load().ref(queuedWriteTestCase.remove()).now() );
-		else if ( !microtaskOut && !testCaseOut)
+		if ( !microtaskOut && !queuedMicrotasks.isEmpty())
+			makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
+		if (!testCaseOut && !queuedWriteTestCase.isEmpty())
+			makeTestCaseOut( ofy().load().ref(queuedWriteTestCase.remove()).now() );
+
+		if ( !microtaskOut && !testCaseOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && this.needsDebugging && !this.waitForTestResult){
@@ -521,7 +522,7 @@ public class Function extends Artifact
 		//respawn the write test case microtask
 
 		if(dto.disputeText!=null && tests.size()==0)
-			queueMicrotask(new WriteTestCases(this, projectId),projectId);
+			queueWriteTestCase(new WriteTestCases(this, projectId),projectId);
 	}
 
 	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, String projectId)
