@@ -3,16 +3,16 @@
 	<div class="section section-description " >
 		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 		<div class="section-content job-description" >
-			<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+			
 
-			<div ng-show="microtask.promptType=='FUNCTION_SIGNATURE'" >
+			<div ng-show="microtask.promptType=='WRITE'" >
 
 				Can you describe some test cases in which this function might be used? <br />
 				Are there any unexpected corner cases that might not work? <br/>
 				<strong>TIP:</strong> you don't need to provide a fully specifed test, just a description of the scenario to be tested.
 			</div>
 
-			<div ng-show="microtask.promptType=='CORRECT_TEST_CASE'" >
+			<div ng-show="microtask.promptType=='CORRECT'" >
 				A test case has been reported by the crowd.
 			    <br>
 			    According to the report explanation, can you fix 
@@ -21,6 +21,8 @@
 		</div>
 	</div>
 
+	<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+	
  	<div ng-if="microtask.inDispute">
 		<div class="section section-description"  >
 			<div class="section-title" >
@@ -53,8 +55,10 @@
 			FUNCTION SIGNATURE
 		</div>
 
-		<div class="section-link" ng-show="!funct.readOnly && canBeDisputed && !dispute" >
-			<a ng-click="toggleDispute(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function signature <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		<div class="section-link" ng-show="!funct.readOnly && !inDispute" >
+			<a ng-click="toggleDispute(); $event.preventDefault(); $event.stopPropagation();">
+				Report an issue in the function signature <span class="glyphicon glyphicon-exclamation-sign"></span>
+			</a>
 		</div>
 
 		<div class="section-content no-padding">
@@ -66,7 +70,7 @@
 
 	<alertcontainer></alertcontainer>
 			
-	<div class="section-cols" ng-if="!dispute" >
+	<div class="section-cols" ng-if="!inDispute" >
 
 		<div class="container-flex-row">
 			<div class="section section-help bg-color-alpha" style="width:30%" id="example">
@@ -162,15 +166,20 @@
 		</div>
 	</div>
 
-	<div class="section section-form" ng-show="dispute">
+	<div class="section section-form" ng-show="inDispute">
 		<div class="section-content" >
 			<div class="heading-1" >what's wrong with this function signature?</div>
-			<textarea name="disputeTextInput" class="form-control required" style="resize:none" ng-model="disputeText" ng-required="dispute"></textarea>
-			<span
-			class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
-			<br>
+			<textarea 
+				name="disputeTextInput" 
+				class="form-control required" 
+				style="resize:none" 
+				ng-model="model.disputeText" 
+				ng-required="inDispute">
+			</textarea>
 			<a href="#" class="btn btn-sm pull-right" ng-click="toggleDispute()" > Nothing is wrong</a>
 		</div> 
+
+		<span class="clearfix"></span>
 
 	</div> 
 

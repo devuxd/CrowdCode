@@ -932,18 +932,19 @@ angular
     .directive('userMenu',function($popover){
     return {
         restrict: 'A',
-        link: function(scope, element){
+        link: function(scope, element, attrs){
             var popoverSettings = {
                 trigger: 'manual',
                 placement: 'bottom',
                 template:  '/html/templates/popover/user_popover.html'
             };
-            popover= $popover(element,popoverSettings);
+            popover = $popover(element,popoverSettings);
             popover.$scope.close = function(){
                 popover.$promise.then(popover.hide);
             };
 
-            element.on('click',function(){  
+            element.on('click',function(event){  
+                console.log('clicking');
                 popover.$promise.then(popover.toggle);
             });
 

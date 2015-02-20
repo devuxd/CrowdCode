@@ -52,10 +52,12 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 				$scope.microtask = microtasks.get(microtaskKey);
 				$scope.microtask.$loaded().then(function() {
 
-						// retrieve the related function
-						if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { 
-							$scope.funct = new FunctionFactory (functionsService.get($scope.microtask.functionID));
-						}
+					console.log($scope.microtask);
+
+					// retrieve the related function
+					if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { 
+						$scope.funct = new FunctionFactory (functionsService.get($scope.microtask.functionID));
+					}
 					// retrieve the related test
 					var testId = angular.isDefined($scope.microtask.testID) && $scope.microtask.testID!==0 ? $scope.microtask.testID : null;
 					if ( testId !== null ) {
@@ -76,7 +78,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 								$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 								$scope.noMicrotask = false;
 
-								$rootScope.$broadcast('run-tutorial', $scope.microtask.type , false, function(){});
+								$scope.$broadcast('run-tutorial', $scope.microtask.type , false, function(){});
 							}
 							else {
 								$scope.templatePath = templatesURL + "no_microtask.html";
@@ -93,7 +95,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 							$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 							$scope.noMicrotask = false;
 
-							$rootScope.$broadcast('run-tutorial', $scope.microtask.type , false, function(){});
+							$scope.$broadcast('run-tutorial', $scope.microtask.type , false, function(){});
 						}
 						else {
 							$scope.templatePath = templatesURL + "no_microtask.html";
