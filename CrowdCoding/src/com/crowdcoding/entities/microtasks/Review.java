@@ -104,12 +104,20 @@ public class Review extends Microtask
 
 		} else*/
 
+		/*the awarded point is proportional to the square of the total points
+			points : 10
+			5 stars ->10
+			4 stars ->6
+			3 stars ->3
+			2 stars ->1
+			1 stars ->0
+		*/
+		awardedPoint = submittedMicrotask.submitValue * reviewDTO.qualityScore /5 * reviewDTO.qualityScore /5;
 
 		if ( reviewDTO.qualityScore < 4) {
 
 			// reissue microtask
 			System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" reissued");
-			awardedPoint = submittedMicrotask.submitValue * reviewDTO.qualityScore /5;
 			reviewResult = "reissued";
 			MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
 
@@ -120,7 +128,6 @@ public class Review extends Microtask
 
 			// accept microtask
         	System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" accepted");
-			awardedPoint = submittedMicrotask.submitValue * reviewDTO.qualityScore /5;
 			reviewResult ="accepted";
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork, awardedPoint);
 

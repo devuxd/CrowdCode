@@ -3,7 +3,9 @@ package com.crowdcoding.entities;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +27,7 @@ import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.WriteCall;
 import com.crowdcoding.entities.microtasks.WriteFunction;
 import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
+import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MessageReceived;
@@ -55,14 +58,17 @@ public class Function extends Artifact
 	private String        description;
 	private List<Long>    tests = new ArrayList<Long>();
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
+	private List<String>  testsDescription = new ArrayList<String>();
 	private int           linesOfCode;
 	private boolean 	  readOnly= false;
 	private boolean 	  waitForTestResult=true;
+	private Queue<Ref<Microtask>> queuedWriteTestCase = new LinkedList<Ref<Microtask>>();
 
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
 	private boolean needsDebugging=true;	         // true iff Function is failing the (implemented) unit tests
+	private boolean testCaseOut=false;
 
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> callees = new ArrayList<Long>();
@@ -160,18 +166,20 @@ public class Function extends Artifact
 	{
 		String fullDescription="/**\n" + description + "\n\n";
 
-    	for(int i=0; i<paramNames.size(); i++)
-			{
+		return fullDescription + getParametersAndReturn();
+	}
+	public String getParametersAndReturn()
+	{
+		String fullDescription="";
+		for(int i=0; i<paramNames.size(); i++)
+		{
 			if(paramDescriptions.size()>i)
 				fullDescription += "  @param " + paramTypes.get(i) + ' ' + paramNames.get(i) + " - " + paramDescriptions.get(i) + "\n";
 
-			}
+		}
 
-		fullDescription += "\n  @return " + returnType + " \n**/\n";
-
-		return fullDescription;
+	return fullDescription += "\n  @return " + returnType + " \n**/\n";
 	}
-
 	public String getEscapedDescription()
 	{
 		return StringEscapeUtils.escapeEcmaScript(description);
@@ -212,8 +220,23 @@ public class Function extends Artifact
 	{
 		return StringEscapeUtils.escapeEcmaScript(getFullCode());
 	}
+	public boolean isTestCaseOut()
+	{
+		return testCaseOut;
+	}
+
+	public boolean setTestCaseOut()
+	{
+		return testCaseOut;
+	}
+
 
 	// ------- TEST CASES
+
+	private void testCaseOutCompleted()
+	{
+		testCaseOut=false;
+	}
 
 	public List<Ref<Test>> getTestCases(String projectId)
 	{
@@ -233,6 +256,7 @@ public class Function extends Artifact
 		{
 			tests.remove(position);
 			testsImplemented.remove(position);
+			testsDescription.remove(position);
 			ofy().save().entity(this).now();
 		}
 	}
@@ -313,7 +337,11 @@ public class Function extends Artifact
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
-		if (!microtaskOut)
+		if ( ! microtaskOut && !queuedMicrotasks.isEmpty())
+				makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
+		else if (!testCaseOut && !queuedWriteTestCase.isEmpty())
+				makeTestCaseOut( ofy().load().ref(queuedWriteTestCase.remove()).now() );
+		else if ( !microtaskOut && !testCaseOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && this.needsDebugging && !this.waitForTestResult){
@@ -321,9 +349,24 @@ public class Function extends Artifact
 				makeMicrotaskOut( debug );
 				System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+ Microtask.keyToString(debug.getKey()));
 			}
-			else if (!queuedMicrotasks.isEmpty())
-				makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
 		}
+	}
+
+
+
+	// Makes the specified microtask out for work
+	protected void makeTestCaseOut(Microtask microtask)
+	{
+		ProjectCommand.queueMicrotask(microtask.getKey(), null);
+		testCaseOut = true;
+		ofy().save().entity(this).now();
+	}
+	// Queues the specified microtask and looks for work
+	public void queueMicrotask(Microtask microtask, String projectId)
+	{
+		queuedMicrotasks.add(Ref.create(microtask.getKey()));
+		ofy().save().entity(this).now();
+		lookForWork();
 	}
 
 	// Determines if all unit tests are implemented (e.g., not merely described or currently disputed)
@@ -369,8 +412,8 @@ public class Function extends Artifact
 		this.needsDebugging=true;
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.
-		String strippedOldFullDescrip = (this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", "");
-		String strippedNewFullDescrip = (dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", "");
+		String strippedOldFullDescrip = (this.getParametersAndReturn()).replace(" ", "").replace("\n", "");
+		String strippedNewFullDescrip = (dto.getParametersAndReturn()).replace(" ", "").replace("\n", "");
 
 		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))
 			notifyDescriptionChanged(dto);
@@ -529,7 +572,7 @@ public class Function extends Artifact
 
 	public void writeTestCasesCompleted(TestCasesDTO dto, String projectId)
 	{
-		microtaskOutCompleted();
+		testCaseOutCompleted();
 
 		if(dto.isFunctionDispute){
 			ofy().save().entity(this).now();
@@ -556,16 +599,13 @@ public class Function extends Artifact
 				}
 				else
 				{
-					TestCommand.checkEdited(testCase.id, testCase.text, testCase.functionVersion);
-					// Check if it was edited
-				/*	Ref<Test> testRef = Test.find(testCase.id, project);
-					Test test = testRef.get();
-					if (!test.getDescription().equals(testCase.text))
+					int position = tests.indexOf((long)testCase.id);
+
+					if (!testsDescription.get(position).equals(testCase.text))
 					{
-						String oldDescription = test.getDescription();
-						test.setDescription(testCase.text);
-						test.queueMicrotask(new WriteTest(project, test, oldDescription, testCase.functionVersion), project);
-					}*/
+						testsDescription.set(position, testCase.text);
+						TestCommand.testEdited(testCase.id, testCase.text, testCase.functionVersion);
+					}
 				}
 			}
 			ofy().save().entity(this).now();
@@ -701,13 +741,20 @@ public class Function extends Artifact
 
 	public void disputeTestCases(String issueDescription, String testDescription, String projectId)
 	{
-		queueMicrotask(new WriteTestCases(this, issueDescription, testDescription, projectId), projectId);
+		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, projectId), projectId);
 	}
 	public void disputeFunctionSignature(String issueDescription, String projectId)
 	{
 		queueMicrotask(new WriteFunction(this, issueDescription, projectId), projectId);
 	}
 
+	// Queues the specified microtask and looks for work
+	private void queueWriteTestCase(Microtask microtask, String projectId)
+	{
+		queuedWriteTestCase.add(Ref.create(microtask.getKey()));
+		ofy().save().entity(this).now();
+		lookForWork();
+	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	//   NOTIFICATION SENDERS

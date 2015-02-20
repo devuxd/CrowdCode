@@ -17,8 +17,8 @@ public abstract class TestCommand extends Command
 	public static TestCommand create(long functionID, String functionName, String description, List<String> inputs, String output, String code, int functionVersion, boolean readOnly)
 		{ return new Create2(functionID, functionName, description, inputs, output, code , functionVersion, readOnly); }
 
-	public static TestCommand checkEdited(long testID, String newDescription, int functionVersion)
-	{     return new CheckEdited(testID, newDescription, functionVersion);}
+	public static TestCommand testEdited(long testID, String newDescription, int functionVersion)
+	{     return new TestEdited(testID, newDescription, functionVersion);}
 	public static TestCommand dispute(long testID, String issueDescription, int functionVersion)
 		{ return new Dispute(testID, issueDescription, functionVersion); }
 	public static TestCommand delete(long testID) { return new Delete(testID); }
@@ -132,11 +132,11 @@ public abstract class TestCommand extends Command
 			test.dispute(issueDescription, projectId,functionVersion);
 		}
 	}
-	protected static class CheckEdited extends TestCommand
+	protected static class TestEdited extends TestCommand
 	{
 		private String newDescription;
 		private int functionVersion;
-		public CheckEdited(long testID, String newDescription, int functionVersion)
+		public TestEdited(long testID, String newDescription, int functionVersion)
 		{
 			this.newDescription = newDescription;
 			this.testID = testID;
@@ -146,12 +146,9 @@ public abstract class TestCommand extends Command
 
 		public void execute(Test test, String projectId)
 		{
-			if (!test.getDescription().equals((newDescription)))
-			{
 				String oldDescription = test.getDescription();
 				test.setDescription(newDescription);
 				test.queueMicrotask(new WriteTest(projectId, test, oldDescription, functionVersion), projectId);
-			}
 		}
 	}
 	protected static class Delete extends TestCommand
