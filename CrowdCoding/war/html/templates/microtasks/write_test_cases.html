@@ -23,25 +23,21 @@
 
 	<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
 
- 	<div ng-if="microtask.dispute.active">
+ 	<div ng-if="microtask.issuedTestCase != ''">
 		<div class="section section-description"  >
 			<div class="section-title" >
 				<div class="dot bg-color"></div>
-				REPORTED TESTCASE 
+				REPORT DETAILS
 			</div>
 
 			<div class="section-content">
-				{{microtask.disputedTestCase}}
-			</div>
-		</div>
 
-		<div class="section section-description" >
-			<div class="section-title" >
-				<div class="dot bg-color"></div>
-				REPORT EXPLANATION 
-			</div>
-			<div class="section-content">
-				{{microtask.disputeDescription}}
+				<strong> Testcase: </strong>
+				<span>{{microtask.issuedTestCase}}</span>
+				<br />
+				<strong> Issue: </strong>
+				<span>{{microtask.issueDescription}}</span>
+
 			</div>
 		</div>
  	</div>
@@ -152,10 +148,12 @@
 					  				<span class="glyphicon glyphicon-remove" ng-hide="test.readOnly" ></span>
 					  			</button>
 							</span>
-							<span class="help-block" ng-show="testCase.testcase.$dirty && testCase.testcase.$invalid && testCase.testcase.$error.required">
-								a test case name can't be empty!
-							</span>
 						</div>
+
+							
+							<div class="help-block" ng-if="microtaskForm.$invalid">
+								a test case name can't be empty!
+							</div>
 					</div>
 
 					<span ng-if="model.testcases.length == 0" >write at least one test case</span>
