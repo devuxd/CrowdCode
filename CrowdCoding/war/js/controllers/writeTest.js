@@ -142,9 +142,9 @@ angular
                     functionVersion: $scope.funct.version,
                     code: testCode,
                     hasSimpleTest: true,
-                    isFunctionDispute: false,
                     inDispute: false,
-                    disputeText: '',
+                    disputeFunctionText : '',
+                    disputeTestText     : '',
                     simpleTestInputs: $scope.testData.inputs,
                     simpleTestOutput: $scope.testData.output
                 };
