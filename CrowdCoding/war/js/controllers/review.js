@@ -56,24 +56,22 @@ angular
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
 
-            oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
-            newFunction = new FunctionFactory ( $scope.review.microtask.submission);
+            oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID) );
+            newFunction = new FunctionFactory ( $scope.review.microtask.submission );
 
             oldCode = oldFunction.getFunctionCode().split("\n");
             newCode = newFunction.getFunctionCode().split("\n");
 
-            diffRes = diff(oldCode, newCode);
             diffCode = "";
+            diffRes = diff(oldCode, newCode);
             angular.forEach(diffRes, function(diffRow) {
-                if (diffRow[0] == "=") {
+                if (diffRow[0] == "=")
                     diffCode += diffRow[1].join("\n");
-                } else {
+                else
                     for (var i = 0; i < diffRow[1].length; i++)
                         diffCode += diffRow[0] + diffRow[1][i] + "\n";
-                }
                 diffCode += "\n";
             });
-
             $scope.review.functionCode = diffCode;
 
             if ($scope.review.microtask.promptType == 'DESCRIPTION_CHANGE') {
