@@ -4,7 +4,7 @@
 //////////////////////////////////
 angular
     .module('crowdCode')
-    .controller('WriteTestCasesController', ['$scope', '$rootScope', '$alert',  'TestList', 'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $alert,  TestList, functionsService, FunctionFactory, ADTService) {
+    .controller('WriteTestCasesController', ['$scope', '$alert',  'TestList', 'functionsService','FunctionFactory', 'ADTService', function($scope, $alert,  TestList, functionsService, FunctionFactory, ADTService) {
     
 
     // private variables

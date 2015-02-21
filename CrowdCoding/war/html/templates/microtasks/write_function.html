@@ -50,14 +50,7 @@
 				<div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
 			</div>
 			<div class="section section-form" style="width:70%;" >
-				<div ui-codemirror="{ onLoad : codemirrorLoaded, autofocus : true }" ng-model="code" focus></div>
-				<textarea function-validator class="form-control" name="code" ng-model="code" ng-show="false"></textarea>
-				<ul class="help-block" style="height:50px;overflow:auto">
-					<ul ng-repeat="error in microtaskForm.code.$error.function_errors track by $id($index)">
-						<li>{{error}}</li>
-					</ul>
-				</ul>
-				
+				<function-editor></function-editor>
 			</div>
 		</div>
 	</div>

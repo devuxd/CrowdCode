@@ -183,7 +183,7 @@ angular
             functionId = scope.microtask.functionID;
             valid = true;
             allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
-            allFunctionCode = functionsService.getAllDescribedFunctionCode(functionId)+ " var debug = null; " ;
+            allFunctionCode  = functionsService.getAllDescribedFunctionCode(functionId)+ " var debug = null; " ;
 
             ctrl.$formatters.unshift(function(viewValue) {
 
@@ -244,30 +244,34 @@ angular
             return false;
         }
         // 5. checks if the are ast Errors and displays it
-            // returns true iff there are AST errors
-                // Check for AST errors
-             //   if (ast.body.length === 0 || ast.body[0].type != "FunctionDeclaration")// || ast.body.length > 1)
-      //      errorMessages.push("All code should be in a single function");
+        // returns true iff there are AST errors
+        // Check for AST errors
         if (allFunctionNames.indexOf(ast.body[0].id.name) != -1)
-            errors.push("The function name '" + ast.body[0].id.name + "' is already taken. Please use another.");
+            errors.push('The function name <strong>' + ast.body[0].id.name + '</strong> is already taken. Please use another.');
+        
+
+        // validate the order of the parameter between the description and the header
+
         var functonsName=[ast.body[0].id.name];
         var calleeNames = functionsService.getCalleeNames(ast);
         for(i=1; i< ast.body.length; i++){ 
 
-
             if(ast.body[i].body===undefined)
-                errors.push("there are errors in the code, fix them!");
-            else if(calleeNames.indexOf(ast.body[i].id.name)===-1)
-                errors.push("If you don't need use the pseudo function: "+ast.body[i].id.name+" remove it.");
+                errors.push('There are errors in the code, please fix them.');
+            else if(ast.body[1].id.name == ast.body[0].id.name)
+                errors.push('Invalid pseudo function name <strong>'+ast.body[1].id.name+'</strong>.');
+            else if( ast.body[i].params.length == 0 )
+                errors.push('The pseudo function <strong>'+ast.body[1].id.name+'</strong> must have at least one parameter.')
+            else if( functonsName.indexOf(ast.body[i].id.name)!==-1 )
+                errors.push('The pseudo function <strong>'+ast.body[i].id.name +'</strong> has been declared multiple times');
             else if(ast.body[i].loc.start.line!==ast.body[i].loc.end.line || ast.body[i].body.loc.end.column - ast.body[i].body.loc.start.column!==2 )
-                errors.push("Use body format of the form: function [name] \"{}\" for the pseudo function: "+ast.body[i].id.name);
-            else if(functonsName.indexOf(ast.body[i].id.name)!==-1)
-                errors.push("The function name: "+ast.body[i].id.name +" has more accourencies");
+                errors.push('Please, declare an empty body for the pseudo function <strong>'+ast.body[i].id.name+'</strong>. </br> <b>i.e. function functionName(parameters){}</b>');
+            else if(calleeNames.indexOf(ast.body[i].id.name)===-1)
+                errors.push('No occurrences of the pseudo function <strong>'+ast.body[i].id.name+'</strong>. Is it still needed?');
             functonsName.push(ast.body[i].id.name);
         }
-        if(errors.length>0)
-            return false;
 
+        if(errors.length>0) return false;
 
         var textSplitted=code.split("\n");
         var codeToTest=textSplitted.slice(ast.body[0].loc.end.line).concat(textSplitted.slice(0,ast.body[0].loc.end.line)).join("\n");
@@ -279,7 +283,6 @@ angular
         hasDescriptionError(ast);
         
         return false;
-
     }
 
     // Returns true iff there are syntactical errors
@@ -392,17 +395,32 @@ angular
 
         var errors = [];
 
-        for (var i = 0; i < paramHeaderNames.length; i++) {
-            if (paramDescriptionNames.indexOf(paramHeaderNames[i]) == -1)
-                errors.push('Write a desciption for the parameter ' + paramHeaderNames[i] + '.');
-        }
-
-        if (errors.length === 0)
+        if( paramDescriptionNames.length == 0 )
+            errors.push('Please, use at least one parameter');
+        else if( paramDescriptionNames.length !== paramHeaderNames.length )
+            errors.push('The number of the parameter in the description does not match the number of parameters in the function header');
+        else {
+            var orderError = "";
             for (var i = 0; i < paramDescriptionNames.length; i++) {
-                if (paramHeaderNames.indexOf(paramDescriptionNames[i]) == -1) {
-                    errors.push('The parameter ' + paramDescriptionNames[i] + ' does not exist in the header of the function');
+                if ( paramHeaderNames[i] != paramDescriptionNames[i]) {
+                    orderError = 'The order of the parameters in the description does not match the order of the parameters in the function header' ;
                 }
             }
+            if( orderError !== "" ) errors.push(orderError);
+        }
+
+        
+        for (var i = 0; i < paramDescriptionNames.length; i++) {
+            if (paramHeaderNames.indexOf(paramDescriptionNames[i]) == -1) {
+                errors.push('The parameter ' + paramDescriptionNames[i] + ' does not exist in the header of the function');
+            }
+        }
+
+        for (var i = 0; i < paramHeaderNames.length; i++) {
+            if (paramDescriptionNames.indexOf(paramHeaderNames[i]) == -1)
+                errors.push('Please, write a desciption for the parameter ' + paramHeaderNames[i] + '.');
+        }
+
 
         return errors;
     }
