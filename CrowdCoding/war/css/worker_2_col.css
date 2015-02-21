@@ -636,6 +636,27 @@ rgba(237,90,48,1)  Valencia - orange - review
 	font-size: 1em;
 }
 
+.adt-list h5 {
+	margin:0px;
+	display:block-inline;
+	font-size: 0.8em;
+	font-weight: bold;
+	font-family: 'Lato';
+	text-transform: uppercase;
+}
+.adt-list .btn-select{
+	line-height: 1em;
+	background-color: transparent;
+	border:none;
+}
+
+.adt-list pre {
+	border-radius:0px;
+	border:none;
+	padding:2px;
+}
+
+
 .toggler-adt.active {color:black;}
 .element-adt {
 	border-bottom:1px solid #D0D0D0;
