@@ -73,12 +73,17 @@
 <div class="section section-review" ng-if="!review.microtask.submission.isFunctionDispute">
 	<div class="section-title" ><div class="dot bg-color"></div>submitted test cases</div>
 	<div class="section-content" >
-		<ul style="list-style:none;">
+		<ul style="padding-left:20px">
 			<li ng-repeat="tc in review.testcases">
-				<strong>#{{$index+1}}</strong>
-				<span ng-if="tc.class != 'chg'" class="{{tc.class}}" >{{tc.text}}</span>
+				
+				<span ng-if="tc.class != 'chg'" class="{{tc.class}}" >
+					<span ng-if="tc.class == 'add'">+</span>
+					<span ng-if="tc.class == 'del'">-</span>
+					{{tc.text}}
+				</span>
 				<span ng-if="tc.class == 'chg'">
 					<span class="del">{{tc.old}}</span>
+					changed to 
 					<span class="add">{{tc.text}}</span>
 				</span>
 

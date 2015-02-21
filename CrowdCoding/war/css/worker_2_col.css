@@ -1190,7 +1190,7 @@ pre.json .jsonKey { color: black; }
 	border:1px solid black;
 }
 
-.section-review .del { text-decoration:line-through; color:red; }
+.section-review .del { color:red; }
 .section-review .add { color:green; }
 
 

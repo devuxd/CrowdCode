@@ -39,9 +39,25 @@ angular
     $scope.$on('$destroy',collectOff);
 
 
-    function addTestCase() {        
-        if ( $scope.model.newTestCase !== '' )  {
-            var newTestCase = $scope.model.newTestCase.replace(/["']/g, "");
+    function addTestCase() {   
+        var newTestCase = $scope.model.newTestCase !== undefined ? 
+                            $scope.model.newTestCase.replace(/["']/g, "") : '' ;
+
+        if( newTestCase.match(/(\{|\}|\[|\])/g) !== null ) {
+            if (alert !== null) 
+                alert.destroy();
+
+            alert = $alert({
+                title: 'Error!',
+                content: 'brackets are not allowed in the test case description!',
+                type: 'danger',
+                show: true,
+                duration: 3,
+                template: '/html/templates/alert/alert_submit.html',
+                container: 'alertcontainer'
+            });
+        } else if ( newTestCase !== '' )  {
+            
             var found = false;
             angular.forEach($scope.model.testcases,function(testCase,index){
                 if( !found && testCase.text == newTestCase )
@@ -59,7 +75,20 @@ angular
 
                 // reset the new test case field
                 $scope.model.newTestCase = "";
-            } 
+            } else {
+                if (alert !== null) 
+                alert.destroy();
+
+                alert = $alert({
+                    title: 'Error!',
+                    content: 'another test case with the same description exists!',
+                    type: 'danger',
+                    show: true,
+                    duration: 3,
+                    template: '/html/templates/alert/alert_submit.html',
+                    container: 'alertcontainer'
+                });
+            }
         }
     }
     
