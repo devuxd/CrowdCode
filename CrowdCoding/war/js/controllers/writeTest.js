@@ -6,11 +6,7 @@ angular
     .controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert,  functionsService, FunctionFactory, ADTService) {
     // initialize testData
 
-    //if a function starts with CR cannot be disputed
-    $scope.canBeDisputed=true;
-    if( $scope.funct.readOnly)
-        $scope.canBeDisputed=false;
-
+  
     // if microtask.submission and microtask.submission.simpleTestInputs are defined
     // assign test inputs and output to testData, otherwise initialize an empty object
     if( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ){
@@ -27,39 +23,41 @@ angular
         };
 
     }
-    //  $scope.testData.inputs[0]={};
-    // Configures the microtask to show information for disputing the test, hiding
-    // other irrelevant portions of the microtask.
-    $scope.dispute = false;
-    $scope.functionDispute = false;
 
-    if(angular.isDefined($scope.microtask.reissuedFrom)){
-        if($scope.reissuedMicrotask.submission.inDispute){
-            // Configures the microtask to show information for disputing the test.
-            $scope.dispute = true;
-            $scope.testData.disputeText = $scope.reissuedMicrotask.submission.disputeText;
-        }
-        else{
-            if(angular.isDefined($scope.reissuedMicrotask.submission.simpleTestInputs)&&angular.isDefined($scope.reissuedMicrotask.submission.simpleTestOutput)){
-                $scope.testData.inputs=$scope.reissuedMicrotask.submission.simpleTestInputs;
-                $scope.testData.output=$scope.reissuedMicrotask.submission.simpleTestOutput;
-            }
-        }
+
+    if( angular.isDefined($scope.microtask.reissuedFrom) && angular.isDefined($scope.reissuedMicrotask.submission.simpleTestInputs) ){
+        $scope.testData.inputs=$scope.reissuedMicrotask.submission.simpleTestInputs;
+        $scope.testData.output=$scope.reissuedMicrotask.submission.simpleTestOutput;
     }
 
+    // scope data 
+    $scope.disputeFunction = {
+        active : false,
+        text   : '',
+        toggle : function(){
+            if( $scope.disputeTest.active )
+                $scope.disputeTest.toggle();
 
+            $scope.disputeFunction.active = ! $scope.disputeFunction.active;
+            if( $scope.disputeFunction.active )
+                $scope.disputeFunction.text = '';
 
-
-    $scope.toggleDispute = function() {
-        $scope.dispute = !$scope.dispute;
-        if (!$scope.dispute) $scope.testData.disputeText = "";
-        if ( $scope.functionDispute ) $scope.functionDispute = false;
+        }
     };
-    $scope.toggleFunctionDispute = function() {
-        $scope.functionDispute = !$scope.functionDispute;
-        if (!$scope.functionDispute) $scope.testData.functionDisputeText = "";
-        if ( $scope.dispute ) $scope.dispute = false;
+    // scope data 
+    $scope.disputeTest = {
+        active : false,
+        text   : '',
+        toggle : function(){
+            if( $scope.disputeFunction.active )
+                $scope.disputeFunction.toggle();
+
+            $scope.disputeTest.active = ! $scope.disputeTest.active;
+            if( $scope.disputeTest.active )
+                $scope.disputeTest.text = '';
+        }
     };
+
     // IF THE PROMPT TYPE IS FUNCTION CHANGED, CALC THE DIFF TO SHOW WITH CODEMIRROR
     if ($scope.microtask.promptType == 'FUNCTION_CHANGED') {
         var oldCode = $scope.microtask.oldFunctionDescription.split("\n");
@@ -109,26 +107,14 @@ angular
                 container: 'alertcontainer'
             });
         } else {
-            if ($scope.dispute) {
+            if( $scope.disputeTest.active || $scope.disputeFunction.active ) {
                 // return jSON object
                 formData = {
                     functionVersion: $scope.funct.version,
                     code: '',
                     inDispute: true,
-                    isFunctionDispute: false,
-                    disputeText: $scope.testData.disputeText,
-                    hasSimpleTest: true,
-                    simpleTestInputs: [],
-                    simpleTestOutput: ''
-                };
-            } else if ($scope.functionDispute) {
-                // return jSON object
-                formData = {
-                    functionVersion: $scope.funct.version,
-                    code: '',
-                    inDispute: false,
-                    isFunctionDispute : true,
-                    disputeText : $scope.testData.functionDisputeText,
+                    disputeFunctionText : $scope.disputeFunction.text,
+                    disputeTestText     : $scope.disputeTest.text,
                     hasSimpleTest: true,
                     simpleTestInputs: [],
                     simpleTestOutput: ''

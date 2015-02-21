@@ -23,7 +23,7 @@ angular
 
     // if is not a reissued microtask, load the existent test cases
     // otherwise load the test cases from the reissued one
-    var reissued = angular.isDefined($scope.microtask.reissuedFrom)
+    var reissued = angular.isDefined($scope.microtask.reissuedFrom);
     $scope.model = {
         newTestCase : "",
         testcases   : reissued ? $scope.reissuedMicrotask.submission.testCases 
@@ -104,7 +104,7 @@ angular
         // if there isn't an error submit the form
         else {
             formData = {
-                isFunctionDispute : $scope.dispute.active,
+                inDispute : $scope.dispute.active,
                 functionVersion   : $scope.funct.version,
                 testCases         : $scope.model.testcases
             };
