@@ -12,8 +12,8 @@ public class TestCasesDTO extends DTO
 	public String messageType = "TestCasesDTO";
 	public List<TestCaseDTO> testCases = new ArrayList<TestCaseDTO>();
 	public int functionVersion;			// Version of the function under test that the worker saw when authoring these test cases.
-	public boolean isFunctionDispute;	    // is the FUNCTION being disputed?
-	public String disputeText;      // only available if the test is in dispute.
+	public boolean inDispute;	    // is the FUNCTION being disputed?
+	public String functionDisputeText;      // only available if the test is in dispute.
 
 	// Default constructor
 	public TestCasesDTO()
@@ -26,7 +26,7 @@ public class TestCasesDTO extends DTO
 	public TestCasesDTO(Function function, String projectId)
 	{
 
-		this.isFunctionDispute=false;
+		this.inDispute=false;
 		//this.disputeText="";
 		for (Ref<Test> testRef : function.getTestCases(projectId))
 		{

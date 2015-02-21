@@ -84,7 +84,7 @@ public class Test extends Artifact
 		ofy().save().entity(this).now();
 		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
-		FunctionCommand.addTest(functionID, this.id);
+		FunctionCommand.addTest(functionID, this.id, this.description);
 
 		queueMicrotask(new WriteTest(this, projectId,functionVersion), projectId);
 
@@ -109,7 +109,7 @@ public class Test extends Artifact
 		this.readOnly=readOnly;
 
 		ofy().save().entity(this).now();
-		FunctionCommand.addTest(functionID, this.id);
+		FunctionCommand.addTest(functionID, this.id, this.description);
 
 		// The test is already fully implemented. It just needs to be run.
 		//project.requestTestRun();
@@ -162,12 +162,6 @@ public class Test extends Artifact
 		return isImplemented;
 	}
 
-	// Gets a TestDTO (in String format) corresponding to the state of this test
-	public String getTestDTO()
-	{
-		TestDTO dto = new TestDTO(this.code, this.hasSimpleTest, this.simpleTestInputs, this.simpleTestOutput);
-		return dto.json();
-	}
 
 	public void setSimpleTestOutput(String simpleTestOutput, Project project)
 	{
@@ -195,32 +189,32 @@ public class Test extends Artifact
 
 	public void writeTestCompleted(TestDTO dto, String projectId)
 	{
-		if (dto.isFunctionDispute)
+		if (dto.inDispute)
 		{
-			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
+			if( dto.disputeFunctionText!="" ) {
+				HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
-			// Ignore any of the content for the test, if available. Set the test to unimplemented.
-			this.isImplemented = false;
-			ofy().save().entity(this).now();
-			microtaskOutCompleted();
+				// Ignore any of the content for the test, if available. Set the test to unimplemented.
+				this.isImplemented = false;
+				ofy().save().entity(this).now();
+				microtaskOutCompleted();
 
-			FunctionCommand.disputeFunctionSignature(functionID, dto.disputeText);
+				FunctionCommand.disputeFunctionSignature(functionID, dto.disputeFunctionText);
 
-			lookForWork();
-		}
+				lookForWork();
+			}
+			else if( dto.disputeTestText!="" ) {
+				HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
-		else if (dto.inDispute)
-		{
-			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
+				// Ignore any of the content for the test, if available. Set the test to unimplemented.
+				this.isImplemented = false;
+				ofy().save().entity(this).now();
+				microtaskOutCompleted();
 
-			// Ignore any of the content for the test, if available. Set the test to unimplemented.
-			this.isImplemented = false;
-			ofy().save().entity(this).now();
-			microtaskOutCompleted();
+				FunctionCommand.disputeTestCases(functionID, dto.disputeTestText, this.description);
 
-			FunctionCommand.disputeTestCases(functionID, dto.disputeText, this.description);
-
-			lookForWork();
+				lookForWork();
+			}
 		}
 		else
 		{

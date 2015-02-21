@@ -133,13 +133,13 @@ angular
         // if there isn't an error submit the form
         else {
             formData = {
-                inDispute : $scope.dispute.active,
+                inDispute         : $scope.dispute.active,
                 functionVersion   : $scope.funct.version,
                 testCases         : $scope.model.testcases
             };
 
             if($scope.dispute.active){
-                formData.disputeText = $scope.dispute.text;
+                formData.functionDisputeText = $scope.dispute.text;
             } 
 
             // call microtask submission

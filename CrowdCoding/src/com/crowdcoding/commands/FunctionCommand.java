@@ -36,8 +36,8 @@ public abstract class FunctionCommand extends Command {
 		return new AddDependency(functionID, newDependency, pseudoCall);
 	}
 
-	public static FunctionCommand addTest(long functionID, long testID) {
-		return new AddTest(functionID, testID);
+	public static FunctionCommand addTest(long functionID, long testID, String testDescription) {
+		return new AddTest(functionID, testID, testDescription);
 	}
 
 	public static FunctionCommand writeTestJobQueue(long functionID) {
@@ -268,14 +268,16 @@ public abstract class FunctionCommand extends Command {
 
 	protected static class AddTest extends FunctionCommand {
 		private long testID;
+		private String testDescripiton;
 
-		public AddTest(long functionID, long testID) {
+		public AddTest(long functionID, long testID, String testDescripiton) {
 			super(functionID);
 			this.testID = testID;
+			this.testDescripiton = testDescripiton;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.addTest(testID);
+			function.addTest(testID, testDescripiton);
 		}
 	}
 

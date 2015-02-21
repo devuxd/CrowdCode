@@ -262,12 +262,12 @@ public class Function extends Artifact
 	}
 
 	// Adds the specified test for this function
-	public void addTest(long testID)
+	public void addTest(long testID, String testDescription)
 	{
 		this.needsDebugging=true;
 		tests.add(testID);
 		testsImplemented.add(false);
-
+		testsDescription.add(testDescription);
 		ofy().save().entity(this).now();
 	}
 
@@ -575,11 +575,9 @@ public class Function extends Artifact
 	{
 		testCaseOutCompleted();
 
-		if(dto.isFunctionDispute){
+		if(dto.inDispute){
 			ofy().save().entity(this).now();
-			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeText);
-
-
+			FunctionCommand.disputeFunctionSignature(this.id, dto.functionDisputeText);
 			lookForWork();
 		}
 		else{
@@ -601,7 +599,6 @@ public class Function extends Artifact
 				else
 				{
 					int position = tests.indexOf((long)testCase.id);
-
 					if (!testsDescription.get(position).equals(testCase.text))
 					{
 						testsDescription.set(position, testCase.text);
@@ -744,7 +741,7 @@ public class Function extends Artifact
 	{
 		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, projectId), projectId);
 	}
-	
+
 	public void disputeFunctionSignature(String issueDescription, String projectId)
 	{
 		queueMicrotask(new WriteFunction(this, issueDescription, projectId), projectId);
