@@ -51,7 +51,7 @@
 			FUNCTION SIGNATURE
 		</div>
 
-		<div class="section-link" ng-show="!funct.readOnly && !dispute.active" >
+		<div class="section-link" ng-hide="funct.readOnly || dispute.active" >
 			<a ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
 				Report an issue in the function signature <span class="glyphicon glyphicon-exclamation-sign"></span>
 			</a>
@@ -172,7 +172,7 @@
 				class="form-control required" 
 				style="resize:none" 
 				ng-model="dispute.text" 
-				ng-required="inDispute">
+				ng-required="dispute.active">
 			</textarea>
 			<a href="#" class="btn btn-sm pull-right" ng-click="dispute.toggle()" > Nothing is wrong</a>
 		</div> 

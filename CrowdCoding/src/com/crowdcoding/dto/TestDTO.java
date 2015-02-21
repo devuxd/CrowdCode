@@ -12,9 +12,9 @@ public class TestDTO extends DTO
 	public String code = "";
 	public String description = "";
 	public boolean hasSimpleTest;	// is there a simple test defined for this test?
-	public boolean inDispute;	    // is the test being disputed?
-	public boolean isFunctionDispute;	    // is the FUNCTION being disputed?
-	public String disputeText;      // only available if the test is in dispute.
+	public boolean inDispute;	    // is something disputed?
+	public String disputeFunctionText ="";      // only available if the function is in dispute.
+	public String disputeTestText ="";      // only available if the test is in dispute.
 
 	public List<String> simpleTestInputs = new ArrayList<String>();
 	public String simpleTestOutput;
@@ -25,13 +25,16 @@ public class TestDTO extends DTO
 	}
 
 	public TestDTO(String code, boolean hasSimpleTest,
-			List<String> simpleTestInputs, String simpleTestOutput)
+			List<String> simpleTestInputs, String simpleTestOutput,
+			String disputeFunctionText, String disputeTestText)
 	{
 		this.code = code;
 		this.hasSimpleTest = hasSimpleTest;
 		this.simpleTestInputs = simpleTestInputs;
 		this.simpleTestOutput = simpleTestOutput;
 		this.inDispute = false;
-		this.isFunctionDispute = false;
+		this.disputeFunctionText=disputeFunctionText;
+		this.disputeTestText=disputeTestText;
+
 	}
 }

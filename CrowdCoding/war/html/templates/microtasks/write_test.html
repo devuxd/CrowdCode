@@ -1,7 +1,7 @@
 <div ng-controller="WriteTestController" >
 
 	<div class="section section-description " >
-		
+
 		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 		<div class="section-content  job-description" >
 
@@ -46,12 +46,11 @@
 			<div class="dot bg-color"></div>
 			TEST CASE DESCRIPTION
 		</div>
-		<div class="section-link" ng-show="!dispute" >
-			<a ng-click="toggleDispute(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the test case <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		<div class="section-link" ng-hide="test.readOnly || disputeTest.active" >
+			<a ng-click="disputeTest.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the test case <span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content" >
 			<span ng-if="microtask.promptType=='WRITE' || microtask.promptType=='FUNCTION_CHANGED' || microtask.promptType=='CORRECT'" ng-bind="::test.description"></span>
-
 
 			<span ng-if="microtask.promptType=='TESTCASE_CHANGED'">
 				<strong>Old description: </strong><span ng-bind="microtask.oldTestCase"></span><br />
@@ -62,8 +61,8 @@
 
 	<div class="section section-description" ng-if="microtask.promptType != 'FUNCTION_CHANGED'" >
 		<div class="section-title" ><div class="dot bg-color"></div>FUNCTION SIGNATURE</div>
-		<div class="section-link" ng-hide="funct.readOnly || functionDispute" >
-			<a ng-click="toggleFunctionDispute(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
+			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="code"></ace-read-js>
@@ -73,8 +72,8 @@
 
 	<div class="section section-description" ng-if="microtask.promptType == 'FUNCTION_CHANGED'" >
 		<div class="section-title" ><div class="dot bg-color"></div>DIFF OF THE FUNCTION SIGNATURE</div>
-		<div class="section-link" ng-hide="funct.readOnly || functionDispute" >
-			<a ng-click="toggleFunctionDispute(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
+			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="diffCode" mode="diff"></ace-read-js>
@@ -83,7 +82,7 @@
 
 	<alertcontainer></alertcontainer>
 
-	<div class="section-cols" ng-if="!dispute && !functionDispute">
+	<div class="section-cols" ng-if="! disputeTest.active && !disputeFunction.active">
 		<div class="container-flex-row">
 			<div class="section section-help bg-color-alpha" style="width:30%">
 				<div class="section-title" >
@@ -180,35 +179,35 @@
 			</div>
 		</div>
 	</div>
-	
-	<div class="section section-form" ng-show="functionDispute && !dispute">
+
+	<div class="section section-form" ng-show="disputeFunction.active">
 		<div class="section-title" >
 			<div class="dot bg-color"></div>Report an issue in the function
 		</div>
 		<div class="section-content" >
-			<div id="disputeDiv" ng-show="functionDispute" class="form-group">
+			<div id="disputeDiv" class="form-group">
 				<label for="disputeText"><b>Dispute function signature:</b> what's wrong with this function signature? </label>
-				<textarea name="disputeText" class="form-control" style="resize:none" ng-model="testData.functionDisputeText" ng-required="functionDispute"></textarea>
+				<textarea name="disputeText" class="form-control" style="resize:none" ng-model="disputeFunction.text" ng-required="disputeFunction.active"></textarea>
 				<span
 				class="help-block" ng-show="microtaskForm.disputeText.$dirty && microtaskForm.disputeText.$invalid && microtaskForm.disputeText.$error.required">This field is required!</span>
 				<br>
-				<button class="btn btn-sm pull-right" ng-click="toggleFunctionDispute()" >Nothing is wrong</button>
+				<button class="btn btn-sm pull-right" ng-click="disputeFunction.toggle()" >Nothing is wrong</button>
 			</div>
 		</div> 
 	</div> 
 
-	<div class="section section-form" ng-show="dispute && !functionDispute">
+	<div class="section section-form" ng-show="disputeTest.active">
 		<div class="section-title" >
 			<div class="dot bg-color"></div> Report an issue in THE TEST CASE
 		</div>
 		<div class="section-content" >
-			<div id="disputeDiv" ng-show="dispute" class="form-group">
+			<div id="disputeDiv" class="form-group">
 				<label for="disputeTextInput"><b>Dispute test case:</b> what's wrong with this test case? </label>
-				<textarea name="disputeTextInput" class="form-control" class="resize:none" ng-model="testData.disputeText"  ng-required="dispute"></textarea>
+				<textarea name="disputeTextInput" class="form-control" class="resize:none" ng-model="disputeTest.text"  ng-required="disputeTest.active"></textarea>
 				<span
 				class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
 				<br>
-				<button class="btn btn-sm pull-right " ng-click="toggleDispute()" >Nothing is wrong</button>
+				<button class="btn btn-sm pull-right " ng-click="disputeTest.toggle()" >Nothing is wrong</button>
 			</div>
 		</div> <!-- /. WRITE TEST DIV -->
 	</div> <!-- ./ SECTION CONTENT -->

@@ -29,8 +29,8 @@ public abstract class MicrotaskCommand extends Command
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it.
-	public static MicrotaskCommand rejectAndReissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
-		{ return new RejectAndReissueMicrotask(microtaskKey, excludedWorkerID); }
+	public static MicrotaskCommand rejectMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
+		{ return new RejectMicrotask(microtaskKey, excludedWorkerID, awardedPoint); }
 
 	private MicrotaskCommand( Key<Microtask> microtaskKey )
 	{
@@ -128,20 +128,25 @@ public abstract class MicrotaskCommand extends Command
 		}
 	}
 
-	protected static class RejectAndReissueMicrotask extends MicrotaskCommand
+	protected static class RejectMicrotask extends MicrotaskCommand
 	{
 		private String excludedWorkerID;
+		private int awardedPoint;
 
-		public RejectAndReissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
+		public RejectMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
 		{
 			super(microtaskKey);
 			this.excludedWorkerID = excludedWorkerID;
+			this.awardedPoint = awardedPoint;
+
 		}
 
 		// Overrides the default execute as no microtask is to be loaded.
 		public void execute(Microtask microtask, String projectId)
 		{
 			Microtask newMicrotask = microtask.copy(projectId);
+
+			WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
 
 			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
 		}

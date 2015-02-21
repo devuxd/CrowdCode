@@ -189,11 +189,13 @@ angular
 
             if( $scope.review.reviewText === undefined )
                 $scope.review.reviewText = "";
-            
+            if($scope.review.microtask.submission.inDispute===undefined)
+                $scope.review.microtask.submission.inDispute=false;
             formData = {
-                microtaskIDReviewed: $scope.microtask.microtaskKeyUnderReview,
-                reviewText: $scope.review.reviewText,
-                qualityScore: $scope.review.rating
+                microtaskIDReviewed     : $scope.microtask.microtaskKeyUnderReview,
+                reviewText              : $scope.review.reviewText,
+                qualityScore            : $scope.review.rating,
+                fromDisputedMicrotask   : $scope.review.microtask.submission.inDispute
             };
             $scope.$emit('submitMicrotask', formData);
         }

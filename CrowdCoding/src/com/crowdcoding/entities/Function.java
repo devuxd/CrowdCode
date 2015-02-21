@@ -67,8 +67,8 @@ public class Function extends Artifact
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
+	private boolean isNeeded;
 	private boolean needsDebugging=true;	         // true iff Function is failing the (implemented) unit tests
-	private boolean testCaseOut=false;
 
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> callees = new ArrayList<Long>();
@@ -81,6 +81,8 @@ public class Function extends Artifact
 	// pseudocall callsites calling this function (these two lists must be in sync)
 	private List<String> pseudoCallsites = new ArrayList<String>();
 	private List<Long>   pseudoCallers = new ArrayList<Long>();
+
+	private boolean testCaseOut=false;
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -109,6 +111,7 @@ public class Function extends Artifact
 		isWritten = false;
 		hasBeenDescribed=false;
 		this.description=callDescription;
+		this.isNeeded=false;
 		ofy().save().entity(this).now();
 
 		// Spawn off a microtask to write the function description
@@ -262,12 +265,12 @@ public class Function extends Artifact
 	}
 
 	// Adds the specified test for this function
-	public void addTest(long testID)
+	public void addTest(long testID, String testDescription)
 	{
 		this.needsDebugging=true;
 		tests.add(testID);
 		testsImplemented.add(false);
-
+		testsDescription.add(testDescription);
 		ofy().save().entity(this).now();
 	}
 
@@ -337,11 +340,12 @@ public class Function extends Artifact
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
-		if ( ! microtaskOut && !queuedMicrotasks.isEmpty())
-				makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
-		else if (!testCaseOut && !queuedWriteTestCase.isEmpty())
-				makeTestCaseOut( ofy().load().ref(queuedWriteTestCase.remove()).now() );
-		else if ( !microtaskOut && !testCaseOut)
+		if ( !microtaskOut && !queuedMicrotasks.isEmpty())
+			makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
+		if (!testCaseOut && !queuedWriteTestCase.isEmpty())
+			makeTestCaseOut( ofy().load().ref(queuedWriteTestCase.remove()).now() );
+
+		if ( !microtaskOut && !testCaseOut)
 		{
 			// Microtask must have been described, as there is no microtask out to describe it.
 			if (isWritten && this.needsDebugging && !this.waitForTestResult){
@@ -521,7 +525,7 @@ public class Function extends Artifact
 		//respawn the write test case microtask
 
 		if(dto.disputeText!=null && tests.size()==0)
-			queueMicrotask(new WriteTestCases(this, projectId),projectId);
+			queueWriteTestCase(new WriteTestCases(this, projectId),projectId);
 	}
 
 	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, String projectId)
@@ -574,11 +578,9 @@ public class Function extends Artifact
 	{
 		testCaseOutCompleted();
 
-		if(dto.isFunctionDispute){
+		if(dto.inDispute){
 			ofy().save().entity(this).now();
-			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeText);
-
-
+			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeFunctionText);
 			lookForWork();
 		}
 		else{
@@ -600,7 +602,6 @@ public class Function extends Artifact
 				else
 				{
 					int position = tests.indexOf((long)testCase.id);
-
 					if (!testsDescription.get(position).equals(testCase.text))
 					{
 						testsDescription.set(position, testCase.text);
@@ -743,7 +744,7 @@ public class Function extends Artifact
 	{
 		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, projectId), projectId);
 	}
-	
+
 	public void disputeFunctionSignature(String issueDescription, String projectId)
 	{
 		queueMicrotask(new WriteFunction(this, issueDescription, projectId), projectId);

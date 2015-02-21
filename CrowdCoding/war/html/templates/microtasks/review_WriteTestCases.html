@@ -4,19 +4,19 @@
 
 	<div class="section-content job-description" >
 		<!-- if function description disputed -->
-		<div ng-if="reviewed.submission.isFunctionDispute" >
+		<div ng-if="reviewed.submission.inDispute" >
 			A worker reported an issue with a test case for the function
 			<strong>{{ reviewed.owningArtifact }}</strong> .
 		</div>
 
 		<!-- if no function description dispute  AND the prompt type is WRITE   --> 
-		<div ng-if="reviewed.promptType == 'WRITE' && !reviewed.submission.isFunctionDispute" >
+		<div ng-if="reviewed.promptType == 'WRITE' && !reviewed.submission.inDispute" >
 			The worker was asked to write the testcases for the function 
 			<strong>{{ reviewed.owningArtifact }}</strong>.
 		</div>
 
 		<!-- if no function description dispute  AND the prompt type is CORRECTS   --> 
-		<div ng-if="reviewed.promptType == 'CORRECT' && !reviewed.submission.isFunctionDispute" >
+		<div ng-if="reviewed.promptType == 'CORRECT' && !reviewed.submission.inDispute" >
 			The worker was asked to edit the test cases of the function 
 			<strong>{{ reviewed.owningArtifact }}</strong> 
 			to address an issue that the crowd found.
@@ -41,10 +41,10 @@
 </div>
 
 <!-- if the function description has been disputed -->
-<div class="section section-review" ng-if="review.microtask.submission.isFunctionDispute">
+<div class="section section-review" ng-if="review.microtask.submission.inDispute">
 	<div class="section-title" ><div class="dot bg-color"></div>report reason</div>
 	<div class="section-content" >
-		{{review.microtask.submission.disputeText}}
+		{{review.microtask.submission.disputeFunctionText}}
 	</div>
 </div>
 
@@ -52,7 +52,7 @@
 <!-- if the function description has not been disputed -->
 
 <!-- show report data if is a CORRECT -->
-<div ng-if="reviewed.promptType == 'CORRECT' && !reviewed.submission.isFunctionDispute">
+<div ng-if="reviewed.promptType == 'CORRECT' && !reviewed.submission.inDispute">
 	<div class="section section-description" >
 		<div class="section-title" >
 			<div class="dot bg-color"></div>
@@ -70,7 +70,7 @@
 	</div>
 </div>
 
-<div class="section section-review" ng-if="!review.microtask.submission.isFunctionDispute">
+<div class="section section-review" ng-if="!review.microtask.submission.inDispute">
 	<div class="section-title" ><div class="dot bg-color"></div>submitted test cases</div>
 	<div class="section-content" >
 		<ul style="padding-left:20px">
