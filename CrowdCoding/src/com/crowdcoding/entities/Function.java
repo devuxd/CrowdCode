@@ -99,6 +99,7 @@ public class Function extends Artifact
 		//this.needsDebugging=true;
 		this.readOnly=readOnly;
 		isWritten = false;
+		this.isNeeded=true;
 		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, projectId);
 	}
 
@@ -338,20 +339,24 @@ public class Function extends Artifact
 	// If there is a microtasks available, marks it as ready to be done.
 	protected void lookForWork()
 	{
-		// If there is currently not already a microtask being done on this function,
-		// determine if there is work to be done
-		if ( !microtaskOut && !queuedMicrotasks.isEmpty())
-			makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
-		if (!testCaseOut && !queuedWriteTestCase.isEmpty())
-			makeTestCaseOut( ofy().load().ref(queuedWriteTestCase.remove()).now() );
+		//if the function is needed
+		if(this.isNeeded){
+			// If there is currently not already a microtask being done on this function,
+			// determine if there is work to be done
+			if ( !microtaskOut && !queuedMicrotasks.isEmpty())
+				makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
 
-		if ( !microtaskOut && !testCaseOut)
-		{
-			// Microtask must have been described, as there is no microtask out to describe it.
-			if (isWritten && this.needsDebugging && !this.waitForTestResult){
-				DebugTestFailure debug = new DebugTestFailure(this,projectId);
-				makeMicrotaskOut( debug );
-				System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+ Microtask.keyToString(debug.getKey()));
+			if (!testCaseOut && !queuedWriteTestCase.isEmpty())
+				makeTestCaseOut( ofy().load().ref(queuedWriteTestCase.remove()).now() );
+
+			if ( !microtaskOut && !testCaseOut)
+			{
+				// Microtask must have been described, as there is no microtask out to describe it.
+				if (isWritten && this.needsDebugging && !this.waitForTestResult){
+					DebugTestFailure debug = new DebugTestFailure(this,projectId);
+					makeMicrotaskOut( debug );
+					System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+ Microtask.keyToString(debug.getKey()));
+				}
 			}
 		}
 	}
@@ -406,8 +411,6 @@ public class Function extends Artifact
 			this.waitForTestResult=true;
 			System.out.println("-->>>> FUNCTION ("+this.getID()+") "+this.name+" : write entry in test job queue");
 			FunctionCommand.writeTestJobQueue(this.getID());
-
-			//project.requestTestRun();
 		}
 	}
 
@@ -491,9 +494,6 @@ public class Function extends Artifact
 		// If there are any, send notifications to these functions that they have a new caller
 		for (Long newCalleeId : newCallees)
 		{
-			//Function callee = lookupFunction(newCalleeId, project);
-
-	//		if (callee != null)
 			FunctionCommand.addCaller(newCalleeId, this.id);
 		}
 
@@ -504,9 +504,7 @@ public class Function extends Artifact
 		// Send notifications to these functions that they no longer have this caller
 		for (Long removedCalleeIds : removedCallees)
 		{
-			//Function callee = lookupFunction(removedCalleeName, project);
-			//if (callee != null)
-				FunctionCommand.removeCaller(removedCalleeIds, this.id);
+			FunctionCommand.removeCaller(removedCalleeIds, this.id);
 		}
 
 		this.callees = newCallees;
@@ -524,8 +522,8 @@ public class Function extends Artifact
 		//if don't exists test and the submit is from a dispute
 		//respawn the write test case microtask
 
-		if(dto.disputeText!=null && tests.size()==0)
-			queueWriteTestCase(new WriteTestCases(this, projectId),projectId);
+		if(dto.disputeText!=null)
+			queueWriteTestCase(new WriteTestCases(this, projectId));
 	}
 
 	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, String projectId)
@@ -566,7 +564,7 @@ public class Function extends Artifact
 		//Spawn off microtask to write test cases. As it does not impact the artifact itself,
 		// the microtask can be directly started rather than queued.
 		WriteTestCases writeTestCases = new WriteTestCases(this, projectId);
-		ProjectCommand.queueMicrotask(writeTestCases.getKey(), null);
+		queueWriteTestCase(writeTestCases);
 
 
 
@@ -579,9 +577,7 @@ public class Function extends Artifact
 		testCaseOutCompleted();
 
 		if(dto.inDispute){
-			ofy().save().entity(this).now();
-			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeFunctionText);
-			lookForWork();
+			disputeFunctionSignature(dto.disputeFunctionText, projectId);
 		}
 		else{
 			for (TestCaseDTO testCase : dto.testCases)
@@ -655,7 +651,6 @@ public class Function extends Artifact
 			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
 		}
 
-		//lookForWork(project);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -706,6 +701,7 @@ public class Function extends Artifact
 	public void addCaller(Function function)
 	{
 		callers.add(function.getID());
+		this.isNeeded=true;
 		ofy().save().entity(this).now();
 	}
 
@@ -713,6 +709,9 @@ public class Function extends Artifact
 	public void removeCaller(Function function)
 	{
 		callers.remove((Ref<Function>) Ref.create(function.getKey()));
+		//if is not a function of the API and is not animore called by anyone means that is not anymore needed
+		if( ! this.readOnly && this.callers.isEmpty())
+			this.isNeeded=false;
 		ofy().save().entity(this).now();
 	}
 
@@ -742,7 +741,7 @@ public class Function extends Artifact
 
 	public void disputeTestCases(String issueDescription, String testDescription, String projectId)
 	{
-		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, projectId), projectId);
+		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, projectId));
 	}
 
 	public void disputeFunctionSignature(String issueDescription, String projectId)
@@ -751,7 +750,7 @@ public class Function extends Artifact
 	}
 
 	// Queues the specified microtask and looks for work
-	private void queueWriteTestCase(Microtask microtask, String projectId)
+	private void queueWriteTestCase(Microtask microtask)
 	{
 		queuedWriteTestCase.add(Ref.create(microtask.getKey()));
 		ofy().save().entity(this).now();
