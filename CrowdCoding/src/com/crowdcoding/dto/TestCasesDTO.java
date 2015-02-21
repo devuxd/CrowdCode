@@ -13,7 +13,7 @@ public class TestCasesDTO extends DTO
 	public List<TestCaseDTO> testCases = new ArrayList<TestCaseDTO>();
 	public int functionVersion;			// Version of the function under test that the worker saw when authoring these test cases.
 	public boolean inDispute;	    // is the FUNCTION being disputed?
-	public String functionDisputeText;      // only available if the test is in dispute.
+	public String disputeFunctionText;      // only available if the test is in dispute.
 
 	// Default constructor
 	public TestCasesDTO()

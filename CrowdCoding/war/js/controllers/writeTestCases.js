@@ -139,7 +139,7 @@ angular
             };
 
             if($scope.dispute.active){
-                formData.functionDisputeText = $scope.dispute.text;
+                formData.disputeFunctionText = $scope.dispute.text;
             } 
 
             // call microtask submission

@@ -6,7 +6,7 @@ angular
     .controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert,  functionsService, FunctionFactory, ADTService) {
     // initialize testData
 
-  
+
     // if microtask.submission and microtask.submission.simpleTestInputs are defined
     // assign test inputs and output to testData, otherwise initialize an empty object
     if( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ){
@@ -35,23 +35,22 @@ angular
         active : false,
         text   : '',
         toggle : function(){
-            if( $scope.disputeTest.active )
-                $scope.disputeTest.toggle();
-
+            $scope.disputeTest.text = '';
+            $scope.disputeTest.active = false;
             $scope.disputeFunction.active = ! $scope.disputeFunction.active;
             if( $scope.disputeFunction.active )
                 $scope.disputeFunction.text = '';
 
         }
     };
-    // scope data 
+    // scope data
     $scope.disputeTest = {
         active : false,
         text   : '',
         toggle : function(){
-            if( $scope.disputeFunction.active )
-                $scope.disputeFunction.toggle();
 
+            $scope.disputeFunction.text='';
+            $scope.disputeFunction.active= false;
             $scope.disputeTest.active = ! $scope.disputeTest.active;
             if( $scope.disputeTest.active )
                 $scope.disputeTest.text = '';
@@ -107,14 +106,26 @@ angular
                 container: 'alertcontainer'
             });
         } else {
-            if( $scope.disputeTest.active || $scope.disputeFunction.active ) {
+            if( $scope.disputeTest.active ){
+                // return jSON object
+                formData = {
+                    functionVersion: $scope.funct.version,
+                    code: '',
+                    inDispute: true,
+                    disputeFunctionText : '',
+                    disputeTestText     : $scope.disputeTest.text,
+                    hasSimpleTest: true,
+                    simpleTestInputs: [],
+                    simpleTestOutput: ''
+                };
+            } else if( $scope.disputeFunction.active ) {
                 // return jSON object
                 formData = {
                     functionVersion: $scope.funct.version,
                     code: '',
                     inDispute: true,
                     disputeFunctionText : $scope.disputeFunction.text,
-                    disputeTestText     : $scope.disputeTest.text,
+                    disputeTestText     : '',
                     hasSimpleTest: true,
                     simpleTestInputs: [],
                     simpleTestOutput: ''

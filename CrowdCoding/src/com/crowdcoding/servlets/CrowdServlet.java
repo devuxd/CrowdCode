@@ -479,14 +479,14 @@ public class CrowdServlet extends HttpServlet
 
             	Key<Microtask> microtaskKey = null;
 
-            	
+
 
             	// if the unassignment is forced
             	if( unassign ){
             		project.unassignMicrotask(workerID);
             	}
             	// otherwise search for the current assignment
-            	else 
+            	else
             		microtaskKey = project.lookupMicrotaskAssignment(workerID);
 
             	// if the user hasn't an assigned microtask
@@ -499,7 +499,7 @@ public class CrowdServlet extends HttpServlet
             	return microtaskKey;
             }
         });
-    	
+
         HistoryLog.Init(projectID).publish();
         FirebaseService.publish();
 	    //ProjectCommand.logoutInactiveWorkers();
@@ -576,9 +576,10 @@ public class CrowdServlet extends HttpServlet
 		if (skip)
 			ProjectCommand.skipMicrotask( microtaskKey, workerID);
 		else{
+			System.out.println("microtask tyoe : "+type);
 			Class microtaskType = microtaskTypes.get(type);
 			if (microtaskType == null)
-				throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
+					throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
 			else
 				ProjectCommand.submitMicrotask( microtaskKey, microtaskType, JsonDTO, workerID);
 		}

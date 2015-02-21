@@ -67,8 +67,8 @@ public class Function extends Artifact
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
+	private boolean isNeeded;
 	private boolean needsDebugging=true;	         // true iff Function is failing the (implemented) unit tests
-	private boolean testCaseOut=false;
 
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> callees = new ArrayList<Long>();
@@ -81,6 +81,8 @@ public class Function extends Artifact
 	// pseudocall callsites calling this function (these two lists must be in sync)
 	private List<String> pseudoCallsites = new ArrayList<String>();
 	private List<Long>   pseudoCallers = new ArrayList<Long>();
+
+	private boolean testCaseOut=false;
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -109,6 +111,7 @@ public class Function extends Artifact
 		isWritten = false;
 		hasBeenDescribed=false;
 		this.description=callDescription;
+		this.isNeeded=false;
 		ofy().save().entity(this).now();
 
 		// Spawn off a microtask to write the function description
@@ -577,7 +580,7 @@ public class Function extends Artifact
 
 		if(dto.inDispute){
 			ofy().save().entity(this).now();
-			FunctionCommand.disputeFunctionSignature(this.id, dto.functionDisputeText);
+			FunctionCommand.disputeFunctionSignature(this.id, dto.disputeFunctionText);
 			lookForWork();
 		}
 		else{
