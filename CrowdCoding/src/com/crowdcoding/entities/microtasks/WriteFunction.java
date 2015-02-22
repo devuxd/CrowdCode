@@ -25,15 +25,17 @@ import com.googlecode.objectify.annotation.Parent;
 @Subclass(index=true)
 public class WriteFunction extends Microtask
 {
-	public enum PromptType { SKETCH, DESCRIPTION_CHANGE, RE_EDIT };
+	public enum PromptType { SKETCH, DESCRIPTION_CHANGE, RE_EDIT, REMOVE_CALLEE };
 	@Parent @Load private Ref<Function> function;
 	private PromptType promptType;
 
 	private String oldFullDescription;		// Only defined for DESCRIPTION_CHANGE
 	private String newFullDescription;		// Only defined for DESCRIPTION_CHANGE
 
-	private String disputeText;				// Only defined for RE_EDIT
+	private String disputeText;				// Only defined for RE_EDIT and REMOVE_CALLEE
+	private long calleeId;					// Only defined for REMOVE_CALLEE, id of the callee to remove
 
+	private long   disputeId = 0;			//id of the artifact that disputed this function
 
 	// Default constructor for deserialization
 	private WriteFunction()
@@ -64,15 +66,28 @@ public class WriteFunction extends Microtask
 	}
 
 	// Initialization constructor for a RE_EDIT write function. Microtask is not ready.
-	public WriteFunction(Function function, String disputeText, String projectId)
+	public WriteFunction(Function function, String disputeText, long disputeId, String projectId)
 	{
 		super(projectId);
 		this.promptType = PromptType.RE_EDIT;
 
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
+
 		this.disputeText = disputeText;
+		this.disputeId = disputeId;
 		WriteFunction(function, projectId);
 	}
+	public WriteFunction(Function function, long calleeId, String disputeText, String projectId)
+	{
+		super(projectId);
+		this.promptType = PromptType.REMOVE_CALLEE;
+
+		this.disputeText = disputeText;
+		this.calleeId = calleeId;
+
+		WriteFunction(function, projectId);
+	}
+
 
 	public Microtask copy(String projectId)
 	{
@@ -80,9 +95,10 @@ public class WriteFunction extends Microtask
 			return new WriteFunction( (Function) getOwningArtifact() ,projectId);
 		else if(this.promptType==PromptType.DESCRIPTION_CHANGE)
 			return new WriteFunction( (Function) getOwningArtifact() , this.oldFullDescription, this.newFullDescription, projectId);
+		else if (this.promptType==PromptType.RE_EDIT)
+			return new WriteFunction( (Function) getOwningArtifact() , this.disputeText, disputeId, projectId);
 		else
-			return new WriteFunction( (Function) getOwningArtifact() , this.disputeText, projectId);
-
+			return new WriteFunction((Function) getOwningArtifact() , this.calleeId, this.disputeText, projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -118,7 +134,7 @@ public class WriteFunction extends Microtask
 
 	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
-		function.get().sketchCompleted((FunctionDTO) dto, projectId);
+		function.get().sketchCompleted((FunctionDTO) dto, disputeId , projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "functions",1);

@@ -32,6 +32,7 @@ public class WriteTestCases extends Microtask
 	// Data for edit test cases microtask
 	private String issueDescription;    // Description of the problem with the test case
 	private String issuedTestCase;      // Text of the test case in dispute
+	private long disputeId=0;
 
 	// Default constructor for deserialization
 	private WriteTestCases()
@@ -58,13 +59,14 @@ public class WriteTestCases extends Microtask
 
 	// Constructor for initial construction for disputing a test case
 	public WriteTestCases(Function function, String issueDescription, String issuedTestCase,
-			String projectId)
+			long disputeId, String projectId)
 	{
 		super(projectId);
 		this.promptType = PromptType.CORRECT;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.issueDescription = issueDescription;
 		this.issuedTestCase   = issuedTestCase;
+		this.disputeId = disputeId;
 
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(),
@@ -82,7 +84,7 @@ public class WriteTestCases extends Microtask
 		if(this.promptType==PromptType.WRITE)
 			return new WriteTestCases( (Function) getOwningArtifact() , projectId);
 		else
-			return new WriteTestCases( (Function) getOwningArtifact(), this.issueDescription, this.issuedTestCase,
+			return new WriteTestCases( (Function) getOwningArtifact(), this.issueDescription, this.issuedTestCase, disputeId,
 					projectId);
 	}
 
@@ -95,7 +97,7 @@ public class WriteTestCases extends Microtask
 	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
 		Function fun = (Function) this.getOwningArtifact();
-		fun.writeTestCasesCompleted((TestCasesDTO) dto, projectId);
+		fun.writeTestCasesCompleted((TestCasesDTO) dto,disputeId, projectId);
 
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter

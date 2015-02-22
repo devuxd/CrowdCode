@@ -26,6 +26,15 @@ public abstract class TestCommand extends Command
 			String newFullDescription, int functionVersion)
 		{ return new FunctionChangedInterface(testID, oldFullDescription, newFullDescription, functionVersion); }
 
+	public static TestCommand disputeCompleted(long testID, int functionVersion)
+	{ return new DisputeCompleted(testID, functionVersion); }
+
+	public static TestCommand functionBecomeUseless(long testID)
+	{ return new FunctionBecomeUseless(testID); }
+
+	public static TestCommand functionReturnUsefull(long testID)
+	{ return new FunctionReturnUsefull(testID); }
+
 
 	// All constructors for TestCommand MUST call queueCommand and the end of the constructor to add the
 	// command to the queue.
@@ -113,7 +122,49 @@ public abstract class TestCommand extends Command
 		}
 	}
 
+	protected static class DisputeCompleted extends TestCommand
+	{
+		private int functionVersion;
+		public DisputeCompleted(long testID, int functionVersion)
+		{
+			this.functionVersion= functionVersion;
+			queueCommand(this);
 
+		}
+		public void execute(Test test, String projectId)
+		{
+			test.queueMicrotask(new WriteTest(test, projectId, functionVersion), projectId);
+		}
+
+	}
+
+	protected static class FunctionBecomeUseless extends TestCommand
+	{
+		public FunctionBecomeUseless(long testID)
+		{
+			queueCommand(this);
+
+		}
+		public void execute(Test test, String projectId)
+		{
+			test.setNeeded(false);
+		}
+
+	}
+
+	protected static class FunctionReturnUsefull extends TestCommand
+	{
+		public FunctionReturnUsefull(long testID)
+		{
+			queueCommand(this);
+
+		}
+		public void execute(Test test, String projectId)
+		{
+			test.setNeeded(true);
+		}
+
+	}
 	protected static class Dispute extends TestCommand
 	{
 		private String issueDescription;

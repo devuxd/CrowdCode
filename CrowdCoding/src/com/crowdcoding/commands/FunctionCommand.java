@@ -2,6 +2,8 @@ package com.crowdcoding.commands;
 
 import java.util.List;
 
+import javax.print.attribute.standard.Sides;
+
 import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.entities.Function;
@@ -32,8 +34,8 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	public static FunctionCommand addDependency(long functionID,
-			long newDependency, String pseudoCall) {
-		return new AddDependency(functionID, newDependency, pseudoCall);
+			long newDependency, String pseudoFunctionName, String pseudoFunctionDescription) {
+		return new AddDependency(functionID, newDependency, pseudoFunctionName, pseudoFunctionDescription);
 	}
 
 	public static FunctionCommand addTest(long functionID, long testID, String testDescription) {
@@ -64,20 +66,25 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	public static FunctionCommand calleeBecameDescribed(long functionID,
-			String calleeName, String calleeFullDescription, String pseudoCall) {
-		return new CalleeBecameDescribed(functionID, calleeName,
-				calleeFullDescription, pseudoCall);
+			long calleeId, String pseudoFunctionName) {
+		return new CalleeBecameDescribed(functionID, calleeId,
+				pseudoFunctionName);
+	}
+
+	public static FunctionCommand calleeBecomeUseless(long functionID,
+			long calleeId, String disputeText) {
+		return new CalleeBecomeUseless(functionID, calleeId, disputeText);
 	}
 
 	public static FunctionCommand disputeTestCases(long functionID,
-			String issueDescription, String testDescription) {
+			String issueDescription, String testDescription, long artifactId) {
 		return new DisputeTestCases(functionID, issueDescription,
-				testDescription);
+				testDescription, artifactId);
 	}
 
 	public static FunctionCommand disputeFunctionSignature(long functionID,
-			String issueDescription) {
-		return new DisputeFunctionSignature(functionID, issueDescription);
+			String issueDescription, long artifactId) {
+		return new DisputeFunctionSignature(functionID, issueDescription, artifactId);
 	}
 
 	private FunctionCommand(Long functionID) {
@@ -251,18 +258,21 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	protected static class AddDependency extends FunctionCommand {
-		private String pseudoCall;
+
+		private String pseudoFunctionName;
+		private String pseudoFunctionDescription;
 		private long newDependency;
 
 		public AddDependency(long functionID, long newDependency,
-				String pseudoCall) {
+				String pseudoFunctionName, String pseudoFunctionDescription) {
 			super(functionID);
-			this.pseudoCall = pseudoCall;
+			this.pseudoFunctionName = pseudoFunctionName;
+			this.pseudoFunctionDescription = pseudoFunctionDescription;
 			this.newDependency = newDependency;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.addDependency(newDependency, pseudoCall);
+			function.addDependency(newDependency, pseudoFunctionName, pseudoFunctionDescription);
 		}
 	}
 
@@ -295,51 +305,71 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	protected static class CalleeBecameDescribed extends FunctionCommand {
-		private String calleeName;
-		private String calleeFullDescription;
-		private String pseudoCall;
 
-		public CalleeBecameDescribed(long functionID, String calleeName,
-				String calleeFullDescription, String pseudoCall) {
+		private long calleeId;
+		private String pseudoFunctionName;
+
+		public CalleeBecameDescribed(long functionID, long calleeId,
+				String pseudoFunctionName) {
 			super(functionID);
-			this.calleeFullDescription = calleeFullDescription;
-			this.calleeName = calleeName;
-			this.pseudoCall = pseudoCall;
+			this.calleeId = calleeId;
+			this.pseudoFunctionName = pseudoFunctionName;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.calleeBecameDescribed(calleeName, calleeFullDescription,
-					pseudoCall, projectId);
+			function.calleeBecameDescribed(calleeId, pseudoFunctionName, projectId);
+		}
+	}
+
+	protected static class CalleeBecomeUseless extends FunctionCommand {
+		private long calleeId;
+		private String disputeText;
+
+		public CalleeBecomeUseless(long functionID, long calleeId,
+				String disputeText) {
+			super(functionID);
+			this.calleeId = calleeId;
+			this.disputeText = disputeText;
+		}
+
+		public void execute(Function function, String projectId) {
+			function.calleeBecomeUseless(calleeId, disputeText, projectId);
 		}
 	}
 
 	protected static class DisputeTestCases extends FunctionCommand {
 		private String issueDescription;
 		private String testDescription;
+		private long artifactId;
+
 
 		public DisputeTestCases(long functionID, String issueDescription,
-				String testDescription) {
+				String testDescription, long artifactId) {
 			super(functionID);
 			this.issueDescription = issueDescription;
 			this.testDescription = testDescription;
+			this.artifactId = artifactId;
+
 		}
 
 		public void execute(Function function, String projectId) {
-			function.disputeTestCases(issueDescription, testDescription,
+			function.disputeTestCases(issueDescription, testDescription, artifactId,
 					projectId);
 		}
 	}
 
 	protected static class DisputeFunctionSignature extends FunctionCommand {
 		private String issueDescription;
+		private long artifactId;
 
-		public DisputeFunctionSignature(long functionID, String issueDescription) {
+		public DisputeFunctionSignature(long functionID, String issueDescription, long artifactId) {
 			super(functionID);
 			this.issueDescription = issueDescription;
+			this.artifactId = artifactId;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.disputeFunctionSignature(issueDescription, projectId);
+			function.disputeFunctionSignature(issueDescription, artifactId, projectId);
 		}
 	}
 }

@@ -230,9 +230,9 @@ angular
                                 functionName     : stubFunction.name,
                                 simpleTestInputs : stub.inputs,
                                 simpleTestOutput : stub.output,
-
-                                inDispute: false,
-                                disputeText: '',
+                              //  readOnly         : true,
+                                inDispute        : false,
+                                disputeTestText  : '',
                             };
 
                             stubs.push(test);

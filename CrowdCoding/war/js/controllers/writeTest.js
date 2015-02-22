@@ -106,30 +106,27 @@ angular
                 container: 'alertcontainer'
             });
         } else {
+            // prepare the standerd jSON object
+            formData = {
+                functionVersion: $scope.funct.version,
+                code: '',
+                inDispute: false,
+                disputeFunctionText :'',
+                disputeTestText     : '',
+                hasSimpleTest: false,
+                simpleTestInputs: [],
+                simpleTestOutput: ''
+            };
             if( $scope.disputeTest.active ){
-                // return jSON object
-                formData = {
-                    functionVersion: $scope.funct.version,
-                    code: '',
-                    inDispute: true,
-                    disputeFunctionText : '',
-                    disputeTestText     : $scope.disputeTest.text,
-                    hasSimpleTest: true,
-                    simpleTestInputs: [],
-                    simpleTestOutput: ''
-                };
+
+                formData.inDispute = true;
+                formData.disputeTestText = $scope.disputeTest.text;
+
             } else if( $scope.disputeFunction.active ) {
-                // return jSON object
-                formData = {
-                    functionVersion: $scope.funct.version,
-                    code: '',
-                    inDispute: true,
-                    disputeFunctionText : $scope.disputeFunction.text,
-                    disputeTestText     : '',
-                    hasSimpleTest: true,
-                    simpleTestInputs: [],
-                    simpleTestOutput: ''
-                };
+
+                formData.inDispute = true;
+                formData.disputeFunctionText = $scope.disputeFunction.text;
+
             } else {
                 // build the test code
                 var testCode = 'equal(' + $scope.funct.name + '(';
@@ -138,16 +135,11 @@ angular
                     testCode += (key != $scope.testData.inputs.length - 1) ? ',' : '';
                 });
                 testCode += '),' + $scope.testData.output + ',\'' + $scope.test.description + '\');';
-                formData = {
-                    functionVersion: $scope.funct.version,
-                    code: testCode,
-                    hasSimpleTest: true,
-                    inDispute: false,
-                    disputeFunctionText : '',
-                    disputeTestText     : '',
-                    simpleTestInputs: $scope.testData.inputs,
-                    simpleTestOutput: $scope.testData.output
-                };
+
+                formData.code = testCode;
+                formData.simpleTestInputs = $scope.testData.inputs;
+                formData.simpleTestOutput = $scope.testData.output;
+
             }
             $scope.$emit('submitMicrotask', formData);
         }

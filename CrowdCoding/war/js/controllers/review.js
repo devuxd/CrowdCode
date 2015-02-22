@@ -122,8 +122,7 @@ angular
                 }
                 diffCode += "\n";
             });
-            var foundNames = ($scope.review.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
-            $scope.pseudoName = foundNames[0];
+            $scope.calleeFunction = new FunctionFactory(functionsService.get($scope.review.microtask.calleeID));
             
             $scope.functName =oldFunction.name;
             $scope.review.functionCode = diffCode;

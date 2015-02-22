@@ -7,15 +7,22 @@ angular
     .controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     var marks = [];
-    var pseudocall = ($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
-    $scope.pseudoName = pseudocall[0];
-    var highlightPseudoCall = (pseudocall!==null ? pseudocall.toString(): undefined);
+    var highlightPseudoCall = $scope.microtask.pseudoName;
     var changeTimeout;
     var readOnlyDone = false;
+
+    //load the callee function
+    $scope.calleeFunction = new FunctionFactory(functionsService.get($scope.microtask.calleeID));
+
+
     if(angular.isDefined($scope.microtask.reissuedFrom))
-        $scope.code = (new FunctionFactory ($scope.reissuedMicrotask.submission)).getFullCode($scope.microtask.pseudoCall);
-    else
-        $scope.code = $scope.funct.getFullCode($scope.microtask.pseudoCall);
+        $scope.funct = (new FunctionFactory ($scope.reissuedMicrotask.submission));
+
+    //remove the pseudofunction from the code of the function
+    $scope.funct.removePseudoFunction( $scope.microtask.pseudoName );
+
+
+    $scope.code = $scope.funct.getFullCode();
 
     $scope.codemirrorLoaded = function(myCodeMirror) {
         codemirror = myCodeMirror;

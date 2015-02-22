@@ -14,6 +14,7 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
@@ -48,26 +49,26 @@ import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
 @Subclass(index=true)
 public class Function extends Artifact
 {
-	private String        code;
-	@Index private String name;
-	private String        returnType;
+	private String        code = "";
+	@Index private String name = "";
+	private String        returnType = "";
 	private List<String>  paramNames = new ArrayList<String>();
 	private List<String>  paramTypes = new ArrayList<String>();
 	private List<String>  paramDescriptions = new ArrayList<String>();
-	private String        header;
-	private String        description;
+	private String        header = "";
+	private String        description = "";
 	private List<Long>    tests = new ArrayList<Long>();
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private List<String>  testsDescription = new ArrayList<String>();
-	private int           linesOfCode;
-	private boolean 	  readOnly= false;
+	private int           linesOfCode = 0;
+	private boolean 	  isReadOnly= false;
+	private boolean 	  isAPIFunction = false;
 	private boolean 	  waitForTestResult=true;
 	private Queue<Ref<Microtask>> queuedWriteTestCase = new LinkedList<Ref<Microtask>>();
 
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
-	private boolean isNeeded;
 	private boolean needsDebugging=true;	         // true iff Function is failing the (implemented) unit tests
 
 	// fully implemented (i.e., not psuedo) calls made by this function
@@ -79,7 +80,8 @@ public class Function extends Artifact
 	private List<String> pseudoFunctionsName = new ArrayList<String>();
 
 	// pseudocall callsites calling this function (these two lists must be in sync)
-	private List<String> pseudoCallsites = new ArrayList<String>();
+	private List<String> pseudoCallersDescription = new ArrayList<String>();
+	private List<String> pseudoCallersName = new ArrayList<String>();
 	private List<Long>   pseudoCallers = new ArrayList<Long>();
 
 	private boolean testCaseOut=false;
@@ -97,20 +99,20 @@ public class Function extends Artifact
 	{
 		super(projectId);
 		//this.needsDebugging=true;
-		this.readOnly=readOnly;
+		this.isReadOnly=readOnly;
+		this.isAPIFunction=true;
 		isWritten = false;
-		this.isNeeded=true;
-		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, projectId);
+		writeDescriptionCompleted(new FunctionDescriptionDTO( name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code), projectId);
 	}
 
 	// Constructor for a function that only has a short call description and still needs a full description
-	public Function(String callDescription, Function caller, String projectId)
+	public Function(String name, String callDescription, Function caller, String projectId)
 	{
 		super(projectId);
-		//this.needsDebugging=true;
 
 		isWritten = false;
 		hasBeenDescribed=false;
+		this.name = name;
 		this.description=callDescription;
 		this.isNeeded=false;
 		ofy().save().entity(this).now();
@@ -466,7 +468,7 @@ public class Function extends Artifact
 					setWritten(false, projectId);
 
 					// Spawn microtask immediately, as it does not require access to the function itself
-					Microtask microtask = new ReuseSearch(this, submittedPseudoFunction.description, projectId);
+					Microtask microtask = new ReuseSearch(this, submittedPseudoFunction.name, submittedPseudoFunction.description, projectId);
 					ProjectCommand.queueMicrotask(microtask.getKey(), null);
 				}
 				newPseudoFunctionsDescription.add(submittedPseudoFunction.description);
@@ -515,69 +517,77 @@ public class Function extends Artifact
 	//  MICROTASK COMPLETION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
 
-	public void sketchCompleted(FunctionDTO dto, String projectId)
+	public void sketchCompleted(FunctionDTO dto, long disputantId, String projectId)
 	{
 		microtaskOutCompleted();
-		onWorkerEdited(dto, projectId);
-		//if don't exists test and the submit is from a dispute
-		//respawn the write test case microtask
+		if( dto.inDispute ){
+			notifyFunctionUseless(dto.disputeText);
+		}
+		else{
+			onWorkerEdited(dto, projectId);
 
-		if(dto.disputeText!=null)
-			queueWriteTestCase(new WriteTestCases(this, projectId));
+			if(disputantId!=0)
+				if(disputantId==this.getID())
+					queueWriteTestCase(new WriteTestCases(this, projectId));
+				else
+					notifyDisputeCompleted(disputantId);
+		}
 	}
 
-	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, String projectId)
+	public void reuseSearchCompleted(ReusedFunctionDTO dto, String pseudoFunctionName, String pseudoFunctionDescription, String projectId)
 	{
 		Function callee;
 
 		if (dto.noFunction)
 		{
 			// Create a new function for this call, spawning microtasks to create it.
-			callee = new Function(callDescription, this, projectId);
+			callee = new Function(pseudoFunctionName, pseudoFunctionDescription, this, projectId);
 			callee.storeToFirebase(projectId);
 			dto.functionId = callee.getID();
 		}
 		// Have the callee let us know when it's tested (which may already be true;
 		// signal sent immediately in that case)
-		FunctionCommand.addDependency(dto.functionId, this.getID(), callDescription);
+		FunctionCommand.addDependency(dto.functionId, this.getID(),pseudoFunctionName, pseudoFunctionDescription);
 	}
 
-	public void writeDescriptionCompleted(String name, String returnType, List<String> paramNames, List<String> paramTypes,
-			List<String> paramDescriptions, String header, String description, String code, String projectId)
+	public void writeDescriptionCompleted(FunctionDescriptionDTO dto, String projectId)
 	{
 		microtaskOutCompleted();
-		this.name = name;
-		this.returnType = returnType;
-		this.paramNames = paramNames;
-		this.paramTypes = paramTypes;
-		this.paramDescriptions = paramDescriptions;
-		this.header = header;
-		this.description = description;
-		this.code = code;
-		this.linesOfCode = StringUtils.countMatches(this.code, "\n") + 2;
+		if(dto.inDispute){
+			notifyFunctionUseless(dto.disputeFunctionText);
+		}
+		else {
+			this.name = dto.name;
+			this.returnType = dto.returnType;
+			this.paramNames = dto.paramNames;
+			this.paramTypes = dto.paramTypes;
+			this.paramDescriptions = dto.paramDescriptions;
+			this.header = dto.header;
+			this.description = dto.description;
+			this.code = dto.code;
+			this.linesOfCode = StringUtils.countMatches(this.code, "\n") + 2;
 
-		ofy().save().entity(this).now();
-		System.out.println("Entity function saved with id "+this.id);
+			ofy().save().entity(this).now();
+			System.out.println("Entity function saved with id "+this.id);
 
-		setDescribed(projectId);
+			setDescribed(projectId);
 
-		//Spawn off microtask to write test cases. As it does not impact the artifact itself,
-		// the microtask can be directly started rather than queued.
-		WriteTestCases writeTestCases = new WriteTestCases(this, projectId);
-		queueWriteTestCase(writeTestCases);
+			//Spawn off microtask to write test cases. As it does not impact the artifact itself,
+			// the microtask can be directly started rather than queued.
+			WriteTestCases writeTestCases = new WriteTestCases(this, projectId);
+			queueWriteTestCase(writeTestCases);
 
-
-
-		// Spawn off microtask to sketch the method
-		queueMicrotask(new WriteFunction(this, projectId), projectId);
+			// Spawn off microtask to sketch the method
+			queueMicrotask(new WriteFunction(this, projectId), projectId);
+		}
 	}
 
-	public void writeTestCasesCompleted(TestCasesDTO dto, String projectId)
+	public void writeTestCasesCompleted(TestCasesDTO dto, long disputeId, String projectId)
 	{
 		testCaseOutCompleted();
 
 		if(dto.inDispute){
-			disputeFunctionSignature(dto.disputeFunctionText, projectId);
+			disputeFunctionSignature(dto.disputeFunctionText, this.getID(), projectId);
 		}
 		else{
 			for (TestCaseDTO testCase : dto.testCases)
@@ -603,6 +613,13 @@ public class Function extends Artifact
 						testsDescription.set(position, testCase.text);
 						TestCommand.testEdited(testCase.id, testCase.text, testCase.functionVersion);
 					}
+					//if the test that made the dispute was not edited generates again the write test microtask
+					else if(testCase.id == disputeId)
+					{
+						TestCommand.disputeCompleted(testCase.id, testCase.functionVersion);
+
+					}
+
 				}
 			}
 			ofy().save().entity(this).now();
@@ -701,7 +718,9 @@ public class Function extends Artifact
 	public void addCaller(Function function)
 	{
 		callers.add(function.getID());
-		this.isNeeded=true;
+		if( !isNeeded() )
+			reactiveFunction();
+
 		ofy().save().entity(this).now();
 	}
 
@@ -710,28 +729,35 @@ public class Function extends Artifact
 	{
 		callers.remove((Ref<Function>) Ref.create(function.getKey()));
 		//if is not a function of the API and is not animore called by anyone means that is not anymore needed
-		if( ! this.readOnly && this.callers.isEmpty())
+		if( ! this.isAPIFunction && this.callers.isEmpty())
 			this.isNeeded=false;
 		ofy().save().entity(this).now();
 	}
 
-	public void addDependency(long newSubscriber, String pseudoCall)
+	public void addDependency(long newPseudoCaller, String pseudoFunctionName, String pseudoFunctionDescription)
 	{
 		//add it to the lists
-		pseudoCallers.add(newSubscriber);
-		pseudoCallsites.add(pseudoCall);
+		pseudoCallers.add(newPseudoCaller);
+		pseudoCallersDescription.add(pseudoFunctionDescription);
+		pseudoCallersName.add(pseudoFunctionName);
 
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed())
-			sendDescribedNotification(newSubscriber, pseudoCall);
+			sendDescribedNotification(newPseudoCaller, pseudoFunctionName);
 
 		ofy().save().entity(this).now();
 	}
 
-	public void calleeBecameDescribed(String calleeName, String calleeFullDescription, String pseudoCall, String projectId)
+	public void calleeBecameDescribed(long calleeId, String pseudoFunctionName, String projectId)
 	{
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("AddCall", this));
-		queueMicrotask(new WriteCall(this, calleeName, calleeFullDescription, pseudoCall, projectId), projectId);
+		queueMicrotask(new WriteCall(this, calleeId, pseudoFunctionName, projectId), projectId);
+	}
+
+
+	public void calleeBecomeUseless(long calleeId, String disputeText, String projectId)
+	{
+		queueMicrotask(new WriteFunction(this, calleeId, disputeText, projectId), projectId);
 	}
 
 	public void calleeChangedInterface(String oldFullDescription, String newFullDescription, String projectId)
@@ -739,14 +765,14 @@ public class Function extends Artifact
 		queueMicrotask(new WriteFunction(this, oldFullDescription, newFullDescription, projectId), projectId);
 	}
 
-	public void disputeTestCases(String issueDescription, String testDescription, String projectId)
+	public void disputeTestCases(String issueDescription, String testDescription, long artifactId, String projectId)
 	{
-		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, projectId));
+		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, artifactId,projectId));
 	}
 
-	public void disputeFunctionSignature(String issueDescription, String projectId)
+	public void disputeFunctionSignature(String issueDescription, long disputeId,String projectId)
 	{
-		queueMicrotask(new WriteFunction(this, issueDescription, projectId), projectId);
+		queueMicrotask(new WriteFunction(this, issueDescription, disputeId, projectId), projectId);
 	}
 
 	// Queues the specified microtask and looks for work
@@ -761,17 +787,47 @@ public class Function extends Artifact
 	//   NOTIFICATION SENDERS
 	//////////////////////////////////////////////////////////////////////////////
 
+	//notify the test that the dispute is solved
+	private void notifyDisputeCompleted(long testId)
+	{
+		TestCommand.disputeCompleted(testId, this.version);
+	}
+
+	//Notify all the callers and all the test of this function that is not anymore active
+	private void notifyFunctionUseless(String disputeFunctionText)
+	{
+		setNeeded(false);
+
+		for (long callerID : callers)
+			FunctionCommand.calleeBecomeUseless(callerID, this.getID(), disputeFunctionText);
+
+
+		for (long testID : tests)
+			TestCommand.functionBecomeUseless(testID);
+
+	}
+
+	//Notify all tests that the function is active again
+	private void reactiveFunction()
+	{
+		setNeeded(true);
+
+		for (long testID : tests)
+			TestCommand.functionReturnUsefull(testID);
+		lookForWork();
+	}
+
 	// Notify all subscribers that this function has become described.
 	private void notifyBecameDescribed(String projectId)
 	{
 		// Loop over the psuedocallsites and pseudocallers in parallel
-		for (int i = 0; i < pseudoCallsites.size(); i++)
-			sendDescribedNotification(pseudoCallers.get(i), pseudoCallsites.get(i));
+		for (int i = 0; i < pseudoCallersName.size(); i++)
+			sendDescribedNotification(pseudoCallers.get(i) ,pseudoCallersName.get(i));
 	}
 
-	private void sendDescribedNotification(long subscriberID, String pseudoCall)
+	private void sendDescribedNotification(long subscriberID, String pseudoFunctionName)
 	{
-		FunctionCommand.calleeBecameDescribed(subscriberID, this.getName(), this.getFullDescription(), pseudoCall);
+		FunctionCommand.calleeBecameDescribed(subscriberID, this.getID(), pseudoFunctionName);
 	}
 
 	// Send out notifications, as appropriate, that the description or header of this
@@ -803,14 +859,14 @@ public class Function extends Artifact
 		{
 			incrementVersion();
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
-					paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, readOnly,
+					paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoFunctionsName,this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, isReadOnly,
 					queuedMicrotasks.size()),
 					this.id, version, projectId);
 		}
 		else
 		{
-			FirebaseService.writeFunction(new FunctionInFirebase("", this.id, version, "", paramNames,
-					paramTypes, paramDescriptions, "", description, "", linesOfCode, this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, readOnly,
+			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, "", paramNames,
+					paramTypes, paramDescriptions, "", description, "", linesOfCode, this.pseudoFunctionsName, this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, isReadOnly,
 					queuedMicrotasks.size()),
 					this.id, version, projectId);
 

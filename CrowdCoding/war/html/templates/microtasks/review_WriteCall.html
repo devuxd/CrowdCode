@@ -8,9 +8,9 @@
 
 		<div>
 			The worker was asked to revise the calls to
-			<strong>{{pseudoName}}</strong> in the function
+			<strong>{{reviewed.pseudoName}}</strong> in the function
 			<strong>{{functName}}</strong>
-			<span ng-if="pseudoName!==reviewed.calleeName">with the new implemented function <strong>{{reviewed.calleeName}}</strong>.</span>
+			<span ng-if="reviewed.pseudoName!==calleeFunction.getName()">with the new implemented function <strong>{{calleeFunction.getName()}}</strong>.</span>
 		</div>
 
 		<span>Can you rate this work?</span>
@@ -23,10 +23,10 @@
 
 <div class="section section-description-2">
 	<div class="section-title" >
-		<div class="dot bg-color"></div>{{reviewed.calleeName}} function signature
+		<div class="dot bg-color"></div>{{calleeFunction.getName()}} function signature
 	</div>
 	<div class="section-content" >
-		<ace-read-js code="review.microtask.calleeFullDescription"></ace-read-js>
+		<ace-read-js code="calleeFunction.getSignature()"></ace-read-js>
 	</div>
 </div>
 
