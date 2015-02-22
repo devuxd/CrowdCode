@@ -1,5 +1,3 @@
-
-
 <div class="section section-description " >
 	
 	<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
@@ -47,6 +45,15 @@
 	</div>
 </div>
 
+
+<div ng-if="review.microtask.submission.inDispute" class="section section-description-2">
+	<div class="section-title" ><div class="dot bg-color"></div>REPORT DETAILS</div>
+	<div class="section-content" >
+		{{reviewed.submission.disputeTestText}}
+		{{reviewed.submission.disputeFunctionText}}
+	</div>
+</div>
+
 <div ng-if="! reviewed.submission.inDispute" >
 
 	<div class="section section-review">
@@ -71,10 +78,3 @@
 	</div>
 </div>
 
-<div ng-if="review.microtask.submission.inDispute" class="section section-description-2">
-	<div class="section-title" ><div class="dot bg-color"></div>reported explanation</div>
-	<div class="section-content" >
-		{{reviewed.submission.disputeTestText}}
-		{{reviewed.submission.disputeFunctionText}}
-	</div>
-</div>

@@ -110,12 +110,11 @@ angular
 
 	//Runs all of the tests for the specified function, sending the results to the server
 	TestRunner.prototype.runTests = function(testedFunctionId,testedFunctionCode,actualStubs){
-		console.log('RUN TESTS FROM INSIDE');
 		
 		// get valid tests for the function
 		this.validTests = TestList.getImplementedByFunctionId(testedFunctionId);
 		
-		console.log('Valid tests: ',this.validTests);
+		// console.log('Valid tests: ',this.validTests);
 
 		if( this.running || this.validTests.length == 0 ){
 			return -1;
@@ -214,8 +213,8 @@ angular
 			                    + functionsWithMockBodies  + '\n'  // functions with mock bodies	
 			                    + this.testedFunctionCode + '\n'; // tested function code
 
-		 console.log('%cTest Runner: function code initialized','color:blue;');
-		 console.log(this.allTheFunctionCode);
+		 // console.log('%cTest Runner: function code initialized','color:blue;');
+		 // console.log(this.allTheFunctionCode);
 		return;
 	};
 	

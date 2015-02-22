@@ -5,7 +5,7 @@
 		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 		<div class="section-content  job-description" >
 
-			<div ng-if="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+			
 
 			<div ng-if="microtask.promptType=='WRITE'">
 				For the following test case, can you implement a test, providing a JSON object literal for each input parameter and for the expected return value?
@@ -40,6 +40,7 @@
 		</div>
 	</div>
 
+	<div ng-if="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
 
 	<div class="section section-description">
 		<div class="section-title" >

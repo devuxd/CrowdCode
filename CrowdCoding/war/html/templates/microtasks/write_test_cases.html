@@ -70,7 +70,7 @@
 
 		<div class="container-flex-row">
 			<div class="section section-help bg-color-alpha" style="width:30%" id="example">
-				<div class="section-title" >
+				<!--<div class="section-title" >
 					<div class="dot"></div>
 					EXAMPLE
 				</div>
@@ -86,7 +86,7 @@
 						a is negative, b is zero<BR>
 						a is positive, b is zero<BR>
 					</div>
-				</div>
+				</div>-->
 				<div class="section-title" >
 					<div class="dot"></div>
 					AVAILABLE DATA TYPES
@@ -164,7 +164,7 @@
 		</div>
 	</div>
 
-	<div class="section section-form" ng-show="dispute.active">
+	<div class="section section-form" ng-if="dispute.active">
 		<div class="section-content" >
 			<div class="heading-1" >what's wrong with this function signature?</div>
 			<textarea 

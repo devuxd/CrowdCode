@@ -148,11 +148,37 @@ angular
 
                 if (!valid) {
 
-                    ctrl.$setValidity('name', false);
-                    ctrl.$error.name = "The function name: "+viewValue+" is already taken, please change it";
+                    ctrl.$setValidity('function', false);
                     return viewValue;
                 } else {
-                    ctrl.$setValidity('name', true);
+                    ctrl.$setValidity('function', true);
+                    return viewValue;
+                }
+
+            });
+
+        }
+    };
+}]);
+
+
+// var name validator
+angular
+    .module('crowdCode')
+    .directive('varNameValidator', ['functionsService', function(functionsService) {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attrs, ctrl) {
+
+            ctrl.$parsers.unshift(function(viewValue) {
+                var match = viewValue.match(/[a-zA-Z][\w\_]*/g);
+                var valid = match != null && viewValue == match[0];
+                if (!valid) {
+                    ctrl.$setValidity('var', false);
+                    return viewValue;
+                } else {
+                    ctrl.$setValidity('var', true);
                     return viewValue;
                 }
 
@@ -180,16 +206,14 @@ angular
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
 
-            functionId = scope.microtask.functionID;
+            functionId = attrs['functionId'];
             valid = true;
             allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
             allFunctionCode  = functionsService.getAllDescribedFunctionCode(functionId)+ " var debug = null; " ;
 
             ctrl.$formatters.unshift(function(viewValue) {
-
-                code = viewValue;
+                code=viewValue;
                 validate(code);
-
                 if (errors.length > 0) {
                     ctrl.$setValidity('function', false);
                     ctrl.$error.function_errors = errors;
@@ -322,7 +346,6 @@ angular
         var paramDescriptionNames = [];
         // Loop over every line of the function description, checking for lines that have @param or @return
         var descriptionLines = getDescription(ast);
-
         for (var i = 0; i < descriptionLines.length; i++) {
             var line = descriptionLines[i];
             errorMessages = errorMessages.concat(checkForValidTypeNameDescription(paramKeyword, line, paramDescriptionNames));
@@ -469,21 +492,29 @@ angular
 // helper for the function editing convenctions
 angular
     .module('crowdCode')
-    .directive('functionConvections', function(){
+    .directive('functionConvections', function($sce){
     return {
         scope: true, // {} = isolate, true = child, false/undefined = no change
         restrict: 'EA', 
         templateUrl: '/html/templates/function_conventions.html',
         controller: function($scope, $element, $attrs) {
-            $scope.pseudocall='function foo() { \n'+
-                        '\tvar values = [ 128, 309 ];\n'+
-                        '\tvar lcm = null;\n'+
-                        '\t//# calc the least common multiple of values\n'+
-                        '\tvar avg = calcAverage(values); \n'+
-                        '\treturn { average: avg, lcm: lcm }; \n' +
+            $scope.examplePseudocode = $sce.trustAsHtml(
+                        '<strong>Example:</strong>\n'+
+                        'function foo() { \n'+
+                        '  var values = [ 128, 309 ];\n'+
+                        '  var avg;\n'+
+                        '  <span class="pseudoCode">//# calc the average of the values</span>\n'+
+                        '  return avg; \n' +
+                        '}\n');
+            $scope.examplePseudocall = $sce.trustAsHtml(
+                        '<strong>Example:</strong>\n'+
+                        'function foo() { \n'+
+                        '  var values = [ 128, 309 ];\n'+
+                        '  var avg = <span class="pseudoCall">calcAverage(values)</span>; \n'+
+                        '  return avg; \n' +
                         '}\n'+
                         '// return the average of the values\n'+
-                        'function calcAverage(values){}';
+                        'function calcAverage(values){}');
 
         }
     };
@@ -680,10 +711,18 @@ angular
     return {
         restrict: "EA",
         scope: true,
-        templateUrl: '/html/templates/adt_list.html',
+        templateUrl: '/html/templates/ui/adt_list.html',
         link: function($scope, $element, $attributes) {
             $scope.ADTs = ADTService.getAllADTs();
             $scope.ADTs.selectedADT = -1;
+            $scope.buildStructure = function(adt){
+                var struct = '{';
+                angular.forEach(adt.structure,function(field){
+                    struct += '\n  '+field.name+': '+field.type;
+                })
+                struct += '\n}';
+                return struct;
+            };
         }
     }
 }]);

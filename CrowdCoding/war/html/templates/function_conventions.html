@@ -1,29 +1,19 @@
-<div>
-	<p> <strong>Want to sketch something?</strong>
-		Write a line of <strong>pseudocode</strong> with
-		<span class="pseudoCode">'//#'</span>
+<div class="function-conventions">
+	<p> 
+		Use the <strong style="text-transform:uppercase">pseudocode</strong> to sketch something 
+		with the syntax <span class="pseudoCode">'//# pseudocode'</span>.
+		<pre ng-bind-html="examplePseudocode"></pre>
 	</p>
 
 	<p>
-		<strong>Want to call a function?</strong>
-		Add its header with a line of description after the body of the current function and call it without worring about its implementation (you can't implement it here).<br />
-		The crowd will look for a matching function or eventually create it if doesn't exist yet.
+		Use the <strong style="text-transform:uppercase">pseudocalls</strong> to request other functions
+		adding a line of description, the header and an empty body for the 
+		requested function at the bottom of the code editor.
+		<pre ng-bind-html="examplePseudocall"></pre>
 	</p>
-	
-	<b>Example:</b>
-	<ace-read-string ng-model="pseudocall"></ace-read-string>
-
-	<br />
 	<p>
-		Note that all function calls are pass by value (i.e., if you pass an
+		<b>Note:</b> all function calls are pass by value (i.e., if you pass an
 		object to a function, and the function changes the object, you will not
 		see the changes).
 	</p>
-
-	<!--<p>
-		<strong>IMPORTANT:</strong>
-		If you think the function may require more than a few minutes to write, 
-		please use pseudocode and psuedocalls to break up the function into smaller 
-		pieces that others can work on. If you've gotten two or more reminders to submit, YOU SHOULD SUBMIT NOW!
-	</p>-->
 </div>
