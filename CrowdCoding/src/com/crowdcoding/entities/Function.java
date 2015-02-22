@@ -419,12 +419,13 @@ public class Function extends Artifact
 		this.needsDebugging=true;
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.
-		String strippedOldFullDescrip = (this.getParametersAndReturn()).replace(" ", "").replace("\n", "");
-		String strippedNewFullDescrip = (dto.getParametersAndReturn()).replace(" ", "").replace("\n", "");
+		String strippedOldFullDescrip = (this.getParametersAndReturn()+this.name).replace(" ", "").replace("\n", "");
+		String strippedNewFullDescrip = (dto.getParametersAndReturn()+dto.name).replace(" ", "").replace("\n", "");
 
 		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))
 			notifyDescriptionChanged(dto);
 
+		
 		// Update the function data
 		this.code = dto.code;
 		this.name = dto.name;
@@ -782,7 +783,12 @@ public class Function extends Artifact
 			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 
 		for (long testID : tests)
-			TestCommand.functionChangedInterface(testID, this.getFullDescription(), dto.getCompleteDescription() + dto.header, version);
+			TestCommand.functionChangedInterface(
+					testID, 
+					this.getFullDescription(), 
+					(dto.getCompleteDescription() + dto.header), 
+					dto.name, 
+					version);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

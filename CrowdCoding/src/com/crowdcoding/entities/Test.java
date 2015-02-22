@@ -263,8 +263,15 @@ public class Test extends Artifact
 	}
 
 	// Notify this test that the function under test has changed its interface.
-	public void functionChangedInterface(String oldFullDescription, String newFullDescription, String projectId, int functionVersion)
+	public void functionChangedInterface(String oldFullDescription, String newFullDescription, String newName, String projectId, int functionVersion)
 	{
+		// if the name of the function has changed
+		System.out.println("----> Old name "+this.functionName+" New name "+newName);
+		if( ! newName.equals(this.functionName) ){
+			this.functionName = newName;
+			ofy().save().entity(this).now();
+		}
+		
 		// TODO: should we resave the function name here??
 		if(!this.readOnly)
 			queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, projectId, functionVersion), projectId);

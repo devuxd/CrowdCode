@@ -81,6 +81,7 @@ self.addEventListener('message', function(e){
 
 			//add the received code
 			finalCode += data.code;
+				console.log(finalCode);
 
 			// 1) try to LINT the code
 			// 2) try to execute the code
@@ -114,15 +115,16 @@ self.addEventListener('message', function(e){
 				// executes the tests
 				eval(finalCode);
 
-
 				// console.log("end ok!",getNowTime()-startTime);
 
 				resultMessage = { 
-					errrors       : false,
+					errors       : false,
 					output        : assertionResults[0], 
 					stubMap       : stubMap,
-					debug         : debug.messages.join( "\n" ) + ""
-				} ;
+					debug         : debug.messages.join( "\n" ) + "",
+					stubs         : stubs,
+					usedStubs     : usedStubs
+				};
 
 			}
 
@@ -137,10 +139,8 @@ self.addEventListener('message', function(e){
 
 			finally{
 
-				// console.log("FINALLY!",getNowTime(),startTime);
+				console.log("FINALLY!",getNowTime(),startTime);
 
-				resultMessage.stubs         = stubs,
-				resultMessage.usedStubs     = usedStubs,
 				resultMessage.executionTime = getNowTime()-startTime;
 
 				self.postMessage( resultMessage );

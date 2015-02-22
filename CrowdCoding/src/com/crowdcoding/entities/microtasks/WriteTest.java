@@ -154,6 +154,8 @@ public class WriteTest extends Microtask
 
 	protected void doSubmitWork(DTO dto, String workerID,String projectId)
 	{
+
+		System.out.println("SUBMITTING TEST "+dto);
 		test.get().writeTestCompleted((TestDTO) dto, projectId);
 
 

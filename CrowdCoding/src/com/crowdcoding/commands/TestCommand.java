@@ -22,9 +22,13 @@ public abstract class TestCommand extends Command
 	public static TestCommand dispute(long testID, String issueDescription, int functionVersion)
 		{ return new Dispute(testID, issueDescription, functionVersion); }
 	public static TestCommand delete(long testID) { return new Delete(testID); }
-	public static TestCommand functionChangedInterface(long testID, String oldFullDescription,
-			String newFullDescription, int functionVersion)
-		{ return new FunctionChangedInterface(testID, oldFullDescription, newFullDescription, functionVersion); }
+	public static TestCommand functionChangedInterface(
+			long testID, 
+			String oldFullDescription,
+			String newFullDescription, 
+			String newName, 
+			int functionVersion)
+		{ return new FunctionChangedInterface(testID, oldFullDescription, newFullDescription, newName, functionVersion); }
 
 
 	// All constructors for TestCommand MUST call queueCommand and the end of the constructor to add the
@@ -169,21 +173,23 @@ public abstract class TestCommand extends Command
 	{
 		private String oldFullDescription;
 		private String newFullDescription;
+		private String newName;
 		private int functionVersion;
 
 		public FunctionChangedInterface(long testID, String oldFullDescription,
-				String newFullDescription, int functionVersion)
+				String newFullDescription, String newName, int functionVersion)
 		{
 			this.testID = testID;
 			this.oldFullDescription = oldFullDescription;
 			this.newFullDescription = newFullDescription;
+			this.newName = newName;
 			this.functionVersion = functionVersion;
 			queueCommand(this);
 		}
 
 		public void execute(Test test, String projectId)
 		{
-			test.functionChangedInterface(oldFullDescription, newFullDescription, projectId, functionVersion);
+			test.functionChangedInterface(oldFullDescription, newFullDescription, newName, projectId, functionVersion);
 		}
 	}
 }
