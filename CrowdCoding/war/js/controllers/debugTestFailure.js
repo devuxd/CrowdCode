@@ -47,9 +47,7 @@ angular
         $scope.codemirror = data;
     });
 
-    var collectFormDataOff = $scope.$on('collectFormData', collectFormData );
-    $scope.$on('$destroy', destroy);
-
+    $scope.$on('collectFormData', collectFormData );
     $scope.runTests()
 
     function doDispute(test) {
@@ -240,11 +238,6 @@ angular
                 container: 'alertcontainer'
             });
         }
-    }
-
-    function destroy(){
-        collectFormDataOff();
-        $scope.codemirror = undefined;
     }
 
 }]);
