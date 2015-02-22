@@ -5,7 +5,7 @@ angular
 
 	function FunctionFactory(rec){
 		//console.log("asfasfasf"+rec);
-		if( rec === undefined )
+		if( rec === undefined || rec === null )
 			this.rec = {};
 		else{
 

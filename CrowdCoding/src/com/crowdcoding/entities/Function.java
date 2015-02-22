@@ -801,6 +801,9 @@ public class Function extends Artifact
 		for (long callerID : callers)
 			FunctionCommand.calleeBecomeUseless(callerID, this.getID(), disputeFunctionText);
 
+		for (long pseudoCallerID : pseudoCallers)
+			FunctionCommand.calleeBecomeUseless(pseudoCallerID, this.getID(), disputeFunctionText);
+
 
 		for (long testID : tests)
 			TestCommand.functionBecomeUseless(testID);

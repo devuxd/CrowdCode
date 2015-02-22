@@ -25,13 +25,17 @@ angular
         });
         $scope.diffCode = diffCode;
     }
+    if ($scope.microtask.promptType == 'REMOVE_CALLEE') {
+        $scope.callee= functionsService.get($scope.microtask.calleeId);
+    }
+    
 
     if( angular.isDefined($scope.microtask.reissuedFrom) )
-            $scope.code = (new FunctionFactory($scope.reissuedMicrotask.submission)).getFullCode();
-        else
-            $scope.code = $scope.funct.getFullCode();
+        $scope.code = (new FunctionFactory($scope.reissuedMicrotask.submission)).getFullCode();
+    else
+        $scope.code = $scope.funct.getFullCode();
 
-
+    
     function collectFormData(event, microtaskForm) {
         var error = "";
         var text= $scope.codemirror.getValue();

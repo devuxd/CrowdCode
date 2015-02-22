@@ -56,7 +56,7 @@ angular
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
 
-            oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID) );
+            oldFunction = functionsService.get($scope.review.microtask.functionID);
             newFunction = new FunctionFactory ( $scope.review.microtask.submission );
 
             oldCode = oldFunction.getFunctionCode().split("\n");
@@ -73,6 +73,9 @@ angular
                 diffCode += "\n";
             });
             $scope.review.functionCode = diffCode;
+            
+            if ($scope.review.microtask.promptType == 'REMOVE_CALLEE')
+                $scope.callee=functionsService.get($scope.review.microtask.calleeId);
 
             if ($scope.review.microtask.promptType == 'DESCRIPTION_CHANGE') {
                 oldCode = $scope.review.microtask.oldFullDescription.split("\n");
@@ -102,7 +105,7 @@ angular
 
         } else if ($scope.review.microtask.type == 'WriteCall') {
 
-            oldFunction = new FunctionFactory ( functionsService.get($scope.review.microtask.functionID));
+            oldFunction = functionsService.get($scope.review.microtask.functionID);
             newFunction = new FunctionFactory ($scope.review.microtask.submission);
             oldCode = oldFunction.getFunctionCode().split("\n");
 
@@ -120,7 +123,7 @@ angular
                 }
                 diffCode += "\n";
             });
-            $scope.calleeFunction = new FunctionFactory(functionsService.get($scope.review.microtask.calleeID));
+            $scope.calleeFunction = functionsService.get($scope.review.microtask.calleeID);
             
             $scope.functName =oldFunction.name;
             $scope.review.functionCode = diffCode;
