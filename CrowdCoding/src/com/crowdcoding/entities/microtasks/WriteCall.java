@@ -28,9 +28,8 @@ import com.googlecode.objectify.annotation.Parent;
 public class WriteCall extends Microtask
 {
 	@Parent @Load private Ref<Function> caller;
-	private String pseudoCall;
-	private String calleeName;
-	private String calleeFullDescription;
+	private String pseudoFunctionName;
+	private long calleeId;
 
 
 	// Default constructor for deserialization
@@ -39,13 +38,13 @@ public class WriteCall extends Microtask
 	}
 
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, String calleeName, String calleeFullDescription, String pseudoCall, String projectId)
+	public WriteCall(Function caller, long calleeId, String pseudoFunctionName, String projectId)
 	{
 		super( projectId);
 		this.submitValue = 7;
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());
-		this.calleeFullDescription = calleeFullDescription;
-		this.pseudoCall = pseudoCall;
+		this.calleeId = calleeId;
+		this.pseudoFunctionName = pseudoFunctionName;
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteCallInFirebase(
 				id,
@@ -55,9 +54,8 @@ public class WriteCall extends Microtask
 				caller.getID(),
 				false, submitValue,
 				caller.getID(),
-				calleeName,
-				calleeFullDescription,
-				pseudoCall ),
+				calleeId,
+				pseudoFunctionName ),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 
@@ -67,7 +65,7 @@ public class WriteCall extends Microtask
 
 	public Microtask copy(String projectId)
 	{
-		return new WriteCall(  (Function) getOwningArtifact(), this.calleeName, this.calleeFullDescription, this.pseudoCall, projectId);
+		return new WriteCall(  (Function) getOwningArtifact(), this.calleeId, this.pseudoFunctionName, projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -107,14 +105,9 @@ public class WriteCall extends Microtask
 		return caller.getValue();
 	}
 
-	public String getEscapedCalleeFullDescription()
-	{
-		return StringEscapeUtils.escapeEcmaScript(calleeFullDescription);
-	}
-
 	public String getEscapedPseudoCall()
 	{
-		return StringEscapeUtils.escapeEcmaScript(pseudoCall);
+		return StringEscapeUtils.escapeEcmaScript(pseudoFunctionName);
 	}
 
 
@@ -139,19 +132,19 @@ public class WriteCall extends Microtask
 		return "write a call";
 	}
 
-
+/*
 	public String toJSON(){
 		JSONObject json = new JSONObject();
 		try {
 			json.put("functionId",this.getCaller().getID());
 			json.put("pseudoCall",this.getEscapedPseudoCall());
 			json.put("caller",this.getCaller());
-			json.put("calleeFullDescription",this.getEscapedCalleeFullDescription());
+			json.put("calleeFullDescription",this.pseudoFunctionName);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return super.toJSON(json);
-	}
+	}*/
 
 }

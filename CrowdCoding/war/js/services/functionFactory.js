@@ -5,7 +5,7 @@ angular
 
 	function FunctionFactory(rec){
 		//console.log("asfasfasf"+rec);
-		if( rec === undefined )
+		if( rec === undefined || rec === null )
 			this.rec = {};
 		else{
 
@@ -101,38 +101,34 @@ angular
 			return this.getSignature() + this.rec.code;
 		},
 		getPseudoFunctions 	: function(){
-			if(this.rec.pseudoFunctions===undefined)
-				return "";
-			else if(typeof this.rec.pseudoFunctions[0]==="string")
-			 	return "\n\n" + this.rec.pseudoFunctions.join("{}\n\n")+"{}";
-			else if(typeof this.rec.pseudoFunctions[0]==="object") {
+			if(this.rec.pseudoFunctions){
 				var pseudoFunctionsStringified="\n\n";
 				for(var i=0; i<this.rec.pseudoFunctions.length; i++ )
 					pseudoFunctionsStringified+=this.rec.pseudoFunctions[i].description+"{}\n\n";
 				return pseudoFunctionsStringified;
-			}
-			return "";
+			} else
+				return "";
 		},
 		getPseudoFunctionsList 	: function(){
-			if(this.rec.pseudoFunctions===undefined)
-				return [];
-			else if(typeof this.rec.pseudoFunctions[0]==="string")
-			 	return this.rec.pseudoFunctions;
-			else if(typeof this.rec.pseudoFunctions[0]==="object") {
+			if(this.rec.pseudoFunctions){
 				var pseudoFunctionsDescription;
 				for(var i=0; i<this.rec.pseudoFunctions.length; i++ )
-					pseudoFunctionsStringified.push(this.rec.pseudoFunctions[i].description);
+					pseudoFunctionsDescription.push(this.rec.pseudoFunctions[i].description);
 				return pseudoFunctionsDescription;
-			}
-			return "";
+			} else
+				return [];
+
 		},
-		getFullCode: function(pseudocall){
-			if(pseudocall!==undefined && this.getPseudoFunctionsList().indexOf(pseudocall)!==-1)
-				this.pseudoFunctions.splice(this.pseudoFunctions.indexOf(pseudocall),1);
+		getFullCode: function(){
 			return this.getFunctionCode() + this.getPseudoFunctions();
 		},
-		
+		removePseudoFunction: function(pseudoFunctionName) {
+			for(var i=0; i<this.rec.pseudoFunctions.length; i++ ){
 
+				if(this.rec.pseudoFunctions[i].name===pseudoFunctionName)
+					this.rec.pseudoFunctions.splice(i,1);
+			}
+		}
 	};
 
 	return FunctionFactory;

@@ -28,6 +28,8 @@ public /*abstract*/ class Artifact
 	// Queued microtasks waiting to be done (not yet in the ready state)
 	protected Queue<Ref<Microtask>> queuedMicrotasks = new LinkedList<Ref<Microtask>>();
 	protected boolean microtaskOut;		// Is there an associated microtask currently in progress?
+	//true if the artifact is still needed false otherwise
+	protected boolean isNeeded;
 
 	// Default constructor for deserialization
 	protected Artifact()
@@ -37,6 +39,7 @@ public /*abstract*/ class Artifact
 	// Constructor for initialization.
 	protected Artifact(String projectId)
 	{
+		this.isNeeded=true;
 		version = 0;
 		this.projectId = projectId;
 	}
@@ -55,6 +58,20 @@ public /*abstract*/ class Artifact
 	public long getID()
 	{
 		return id;
+	}
+
+	public void setNeeded(boolean isNeeded)
+	{
+		this.isNeeded = isNeeded;
+		ofy().save().entity(this).now();
+
+		lookForWork();
+
+	}
+
+	public boolean isNeeded()
+	{
+		return isNeeded;
 	}
 
 	public String getArtifactType()
@@ -113,7 +130,7 @@ public /*abstract*/ class Artifact
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
-		if (!microtaskOut && !queuedMicrotasks.isEmpty())
+		if (isNeeded() && !microtaskOut && !queuedMicrotasks.isEmpty())
 		{
 			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).now());
 		}

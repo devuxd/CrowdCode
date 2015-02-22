@@ -149,11 +149,11 @@ angular
 		{
 			var funct = null;
 			angular.forEach(functions, function(value, key) {
-				if( funct==null && value.id == id ) {
+				if( funct===null && value.id == id ) {
 			  		funct = value;
 			  	}
 			});
-			return funct;
+			return new FunctionFactory(funct);
 		}
 
 		// Get the function object, in FunctionInFirebase format, for the specified function name
@@ -161,11 +161,11 @@ angular
 		{
 			var funct = null;
 			angular.forEach(functions, function(value, key) {
-				if( funct==null && value.name == name ) {
+				if( funct===null && value.name == name ) {
 			  		funct = value;
 			  	}
 			});
-			return funct;
+			return new FunctionFactory(funct);
 		}
 
 		function getNameById(id)

@@ -199,7 +199,7 @@ public class Test extends Artifact
 				ofy().save().entity(this).now();
 				microtaskOutCompleted();
 
-				FunctionCommand.disputeFunctionSignature(functionID, dto.disputeFunctionText);
+				FunctionCommand.disputeFunctionSignature(functionID, dto.disputeFunctionText, this.getID());
 
 				lookForWork();
 			}
@@ -211,7 +211,7 @@ public class Test extends Artifact
 				ofy().save().entity(this).now();
 				microtaskOutCompleted();
 
-				FunctionCommand.disputeTestCases(functionID, dto.disputeTestText, this.description);
+				FunctionCommand.disputeTestCases(functionID, dto.disputeTestText, this.description, this.getID());
 
 				lookForWork();
 			}

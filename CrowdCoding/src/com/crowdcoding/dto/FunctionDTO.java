@@ -16,12 +16,13 @@ public class FunctionDTO extends DTO
 	public List<String> paramDescriptions = new ArrayList<String>();
 	public String header;
 	public String name;
-	public String code = "";
+	public String code ;
 	public List<Long> calleeIds = new ArrayList<Long>();
 	public List<TestDTO> stubs = new ArrayList<TestDTO>();
 	public List<PseudoFunctionDTO> pseudoFunctions = new ArrayList<PseudoFunctionDTO>();
 	public Boolean autoSubmit;
-	public String disputeText;
+	public String disputeText ;
+	public boolean inDispute;
 
 	public String toString()
 	{

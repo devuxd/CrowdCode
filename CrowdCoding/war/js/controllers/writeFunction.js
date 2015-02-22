@@ -25,6 +25,10 @@ angular
         });
         $scope.diffCode = diffCode;
     }
+    if ($scope.microtask.promptType == 'REMOVE_CALLEE') {
+        $scope.callee= functionsService.get($scope.microtask.calleeId);
+    }
+    
 
     if( angular.isDefined($scope.microtask.reissuedFrom) )
         $scope.code = (new FunctionFactory($scope.reissuedMicrotask.submission)).getFullCode();

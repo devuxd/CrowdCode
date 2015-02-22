@@ -21,7 +21,7 @@ public class FunctionInFirebase extends DTO
 	public String description;
 	public String code;
 	public int linesOfCode;
-	public List<String> pseudoFunctions = new ArrayList<String>();
+	public List<PseudoFunctionDTO> pseudoFunctions = new ArrayList<PseudoFunctionDTO>();
 	public boolean described;
 	public boolean written;
 	public boolean needsDebugging;
@@ -41,7 +41,7 @@ public class FunctionInFirebase extends DTO
 
 	public FunctionInFirebase(String name, long id, int version, String returnType, List<String> paramNames,
 			List<String> paramTypes,List<String> paramDescriptions, String header, String description, String code, int linesOfCode,
-			List<String> pseudoFunctions, boolean described, boolean written, boolean needsDebugging, boolean readOnly, int queuedMicrotasks)
+			List<String> pseudoFunctionsName,List<String> pseudoFunctionsDescription, boolean described, boolean written, boolean needsDebugging, boolean readOnly, int queuedMicrotasks)
 	{
 		this.name = name;
 		this.id = id;
@@ -54,12 +54,17 @@ public class FunctionInFirebase extends DTO
 		this.description = description;
 		this.code = code;
 		this.linesOfCode = linesOfCode;
-		this.pseudoFunctions=pseudoFunctions;
 		this.described = described;
 		this.written = written;
 		this.needsDebugging = needsDebugging;
 		this.readOnly=readOnly;
 		this.queuedMicrotasks = queuedMicrotasks;
+		for(int i=0; i< pseudoFunctionsName.size(); i++){
+			this.pseudoFunctions.add(
+				new PseudoFunctionDTO(pseudoFunctionsName.get(i), pseudoFunctionsDescription.get(i)));
+		}
+
+
 	}
 
 	public String toString()

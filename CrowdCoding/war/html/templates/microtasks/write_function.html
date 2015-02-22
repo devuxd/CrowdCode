@@ -13,6 +13,11 @@
 				The crowd found an issue with this function. <br />
 				Can you edit the function to address the issue?
 			</div>
+			<div ng-if="::microtask.promptType=='REMOVE_CALLEE'">
+				The crowd found an issue with the following callee: <strong>{{callee.getName()}}</strong>. <br />
+				Can you substitute the calle with a different code?
+			</div>
+			
 			<div ng-if="::microtask.promptType=='DESCRIPTION_CHANGE'">
 				The description of a function called in the code below has changed. Can you update the code
 				(if necessary)?
@@ -20,7 +25,7 @@
 		</div>
 	</div>
 
-	<div class="section section-description" ng-if="::microtask.promptType=='RE_EDIT'" >
+	<div class="section section-description" ng-if="::microtask.promptType=='RE_EDIT' || microtask.promptType=='REMOVE_CALLEE'" >
 		<div class="section-title"> <div class="dot bg-color"></div> ISSUE DESCRIPTION </div>
 		<div  class="section-content" >
 			<span ng-bind="::microtask.disputeText"></span>
@@ -38,6 +43,12 @@
 		<div class="section-title" > <div class="dot bg-color"></div> FUNCTION signature different </div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="::diffCode" mode="diff" ></ace-read-js>
+		</div>
+	</div>
+	<div class="section section-description" ng-if="::microtask.promptType=='REMOVE_CALLEE'">
+		<div class="section-title" > <div class="dot bg-color"></div> FUNCTION TO REMOVE </div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="::callee.getSignature()"></ace-read-js>
 		</div>
 	</div>
 	<alertcontainer></alertcontainer>

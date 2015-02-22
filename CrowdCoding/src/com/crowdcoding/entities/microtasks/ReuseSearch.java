@@ -25,7 +25,8 @@ import com.googlecode.objectify.annotation.Parent;
 public class ReuseSearch extends Microtask
 {
 	@Parent @Load private Ref<Function> function;
-	private String callFunction;
+	private String pseudoFunctionDescription;
+	private String pseudoFunctionName;
 
 	// Default constructor for deserialization
 	private ReuseSearch()
@@ -33,12 +34,13 @@ public class ReuseSearch extends Microtask
 	}
 
 	// Constructor for initial construction
-	public ReuseSearch(Function function, String callFunction, String projectId)
+	public ReuseSearch(Function function, String pseudoFunctionName, String pseudoFunctionDescription, String projectId)
 	{
 		super(projectId);
 		this.submitValue = 5;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
-		this.callFunction = callFunction;
+		this.pseudoFunctionDescription = pseudoFunctionDescription;
+		this.pseudoFunctionName = pseudoFunctionName;
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new ReuseSearchInFirebase(
 				id,this.microtaskTitle(),
@@ -47,7 +49,8 @@ public class ReuseSearch extends Microtask
 				function.getID(),
 				false,
 				submitValue,
-				callFunction,
+				pseudoFunctionName,
+				pseudoFunctionDescription,
 				function.getID()),
 				Microtask.keyToString(this.getKey()),
 				projectId);
@@ -57,7 +60,7 @@ public class ReuseSearch extends Microtask
 
     public Microtask copy(String projectId)
     {
-    	return new ReuseSearch(  (Function) getOwningArtifact(), this.callFunction, projectId);
+    	return new ReuseSearch(  (Function) getOwningArtifact(), this.pseudoFunctionName, this.pseudoFunctionDescription, projectId);
     }
 
     public Key<Microtask> getKey()
@@ -67,7 +70,7 @@ public class ReuseSearch extends Microtask
 
 	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
-		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callFunction, projectId);
+		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto,pseudoFunctionName, pseudoFunctionDescription, projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
@@ -99,7 +102,7 @@ public class ReuseSearch extends Microtask
 
 	public String getCallDescription()
 	{
-		return callFunction;
+		return pseudoFunctionDescription;
 	}
 
 	public Function getCaller()

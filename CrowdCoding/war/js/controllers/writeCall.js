@@ -6,15 +6,22 @@ angular
     .module('crowdCode')
     .controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
-    
-    var pseudocall = ($scope.microtask.pseudoCall+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
-    $scope.pseudoName = pseudocall[0];
-    var highlightPseudoCall = (pseudocall!==null ? pseudocall.toString(): undefined);
+
+    //load the callee function
+    $scope.calleeFunction = functionsService.get($scope.microtask.calleeID);
+
 
     if(angular.isDefined($scope.microtask.reissuedFrom))
-        $scope.code = (new FunctionFactory ($scope.reissuedMicrotask.submission)).getFullCode($scope.microtask.pseudoCall);
-    else
-        $scope.code = $scope.funct.getFullCode($scope.microtask.pseudoCall);
+        $scope.funct = (new FunctionFactory ($scope.reissuedMicrotask.submission));
+
+    //function to highlith $scope.microtask.pseudoName
+
+
+    //remove the pseudofunction from the code of the function
+    $scope.funct.removePseudoFunction( $scope.microtask.pseudoName );
+
+
+    $scope.code = $scope.funct.getFullCode();
 
     $scope.codemirror = null;
     $scope.$on('collectFormData', collectFormData);

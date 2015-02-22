@@ -56,7 +56,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 
 					// retrieve the related function
 					if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { 
-						$scope.funct = new FunctionFactory (functionsService.get($scope.microtask.functionID));
+						$scope.funct = functionsService.get($scope.microtask.functionID);
 					}
 					// retrieve the related test
 					var testId = angular.isDefined($scope.microtask.testID) && $scope.microtask.testID!==0 ? $scope.microtask.testID : null;

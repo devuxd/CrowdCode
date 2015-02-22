@@ -73,10 +73,9 @@ public class WriteFunctionDescription extends Microtask
 		// the worker to only remove it when the function is done. This keeps regenerating
 		// new sketch tasks until the worker has marked it as done by removing the pseudocode
 		// line.
-		String code = "{\n\t//#Mark this function as implemented by removing this line.\n}";
+		functionDTO.code = "{\n\t//#Mark this function as implemented by removing this line.\n}";
 
-		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
-				functionDTO.paramTypes, functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, code, projectId);
+		function.get().writeDescriptionCompleted(functionDTO, projectId);
 
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter

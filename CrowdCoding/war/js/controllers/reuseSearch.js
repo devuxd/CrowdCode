@@ -11,7 +11,7 @@ angular
     $scope.selectedResult = -2;
     //display all the available function at the beginning
     $scope.results = functionsService.findMatches('', $scope.funct.name);
-    console.log($scope.results);
+
     $scope.code = $scope.funct.getFunctionCode();
     // search for all the functions that have $scope.reuseSearch.text in theirs description or header
     $scope.doSearch = function() {
@@ -22,9 +22,7 @@ angular
         $scope.selectedResult = index;
     };
 
-    var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
-    $scope.pseudoName = foundNames[0];
-    
+
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
         if ($scope.selectedResult == -2) {
             var error = 'Choose a function or select the checkbox "No funtion does this"';
