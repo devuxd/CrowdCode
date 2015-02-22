@@ -15,6 +15,13 @@
 		<div class="section-title" >
 			<div class="dot bg-color"></div> REQUESTED FUNCTION
 		</div>
+
+		<div class="section-link" ng-if="!dispute.active" >
+			<a ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
+				Report function as not implementable <span class="glyphicon glyphicon-exclamation-sign"></span>
+			</a>
+		</div>
+
 		<div class="section-content no-padding" >
 			<ace-read-js code="microtask.callDescription"></ace-read-js>
 		</div>
@@ -25,7 +32,7 @@
 			<div class="dot bg-color"></div> REQUESTING FUNCTION CODE
 		</div>
 		<div class="section-content no-padding" >
-			<ace-read-js code="code"></ace-read-js>
+			<ace-read-js code="code" highlight="[ { 'needle' : 'alfa\\([\\w,]*\\);' , regex: true } ]"></ace-read-js>
 		</div>
 	</div>
 
@@ -33,7 +40,7 @@
 	<alertcontainer></alertcontainer>
 
 
-	<div class="section-cols" >
+	<div class="section-cols" ng-if="!dispute.active">
 		<div class="container-flex-row">
 			<div class="section section-help bg-color-alpha" style="width:30%">
 				<div class="section-title" >
@@ -50,68 +57,149 @@
 					  	<div class="form-group">
 						    <label for="description" class="col-sm-2 control-label reset-padding">description</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<textarea class="form-control" name="description" placeholder="briefly describe the purpose and the behavior of the function" ng-model="description" required ng-pattern="/^[^/\\]+$/" max-length="70" focus></textarea>
-								<ul class="help-block" ng-show="microtaskForm.description.$dirty && microtaskForm.description.$invalid">
-									<li ng-show="microtaskForm.description.$error.required">This field is required!</li>
-									<li ng-show="microtaskForm.description.$error.pattern">The "\" and "/" are not allowed</li>
-								</ul>
+						      	<textarea class="form-control" name="description" 
+						      		placeholder="briefly describe the purpose and the behavior of the function" 
+						      		ng-model="model.description" 
+						      		ng-model-options="{ updateOn: 'blur' }"  
+						      		required 
+						      		ng-pattern="/^[^/\\]+$/" 
+						      		focus>
+						      	</textarea>
+								<div class="help-block" ng-messages="microtaskForm.description.$dirty &&microtaskForm.description.$error">
+									<span ng-message="required">
+										The description is required!
+									</span>
+									<span ng-message="pattern">
+										The special charachters "\" and "/" are not allowed!
+									</span>
+								</div>
 						    </div>
 
 					  	</div>
 					  	<div class="form-group">
 						    <label for="returnType" class="col-sm-2 control-label reset-padding">return data type</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<input type="text" class="form-control" name="returnType" ng-model="returnType" ng-model-options="{ updateOn: 'blur' }"  adt-validator required placeholder="return data type" press-enter="addParameter()" >
-						      	<ul class="help-block" ng-show="microtaskForm.returnType.$dirty && microtaskForm.returnType.$invalid">
-									<li ng-show="microtaskForm.returnType.$error.required">This field is required!</li>
-									<li ng-show="microtaskForm.returnType.$error.adt"> {{microtaskForm.returnType.$error.adt}}</li>
-								</ul>
+						      	<input type="text" class="form-control" name="returnType" 
+						      		ng-model="model.returnType" 
+						      		ng-model-options="{ updateOn: 'blur' }"  
+						      		adt-validator 
+						      		required 
+						      		placeholder="return data type" 
+						      		press-enter="addParameter()" >
+
+						    	<div class="help-block" ng-messages="microtaskForm.returnType.$dirty &&microtaskForm.returnType.$error">
+									<span ng-message="required">
+										The return type is required!
+									</span>
+									<span ng-message="adt">
+										{{microtaskForm.returnType.$error.adt}}
+									</span>
+								</div>
 						    </div>
 					  	</div>
 					  	<div class="form-group">
 						    <label for="functionName" class="col-sm-2 control-label reset-padding">function name</label>
 						    <div class="col-sm-10 reset-padding">
-						      	<input type="text" class="form-control" name="functionName" ng-model="functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator reserved-word placeholder="function name" press-enter="addParameter()" >
-						    	<ul class="help-block" ng-show="microtaskForm.functionName.$dirty && microtaskForm.functionName.$invalid">
-									<li ng-show="microtaskForm.functionName.$error.required">This field is required!</li>
-									<li ng-show="microtaskForm.functionName.$error.pattern">Is not a valid function name! Please use only alphanumerical characters and the _ symbol</li>
-									<li ng-show="microtaskForm.functionName.$error.name"> {{microtaskForm.functionName.$error.name}}</li>
-									<li ng-show="microtaskForm.functionName.$error.reservedWord">{{functionName}} is a reserved word of JavaScript, please change it!</li>
-								</ul>
+						      	<input type="text" 
+						      		class="form-control" 
+						      		name="functionName" 
+						      		ng-model="model.functionName" 
+						      		ng-model-options="{ updateOn: 'blur' }"  
+						      		required 
+						      		function-name-validator 
+						      		var-name-validator 
+						      		reserved-word 
+						      		placeholder="function name" 
+						      		press-enter="addParameter()" 
+						      	>
+						    	<div class="help-block" ng-messages="microtaskForm.functionName.$dirty &&microtaskForm.functionName.$error">
+									<span ng-message="required">
+										The function name is required!
+									</span>
+									<span ng-message="var">
+										The function name can't start with numbers or contain special characters (except the underscore _ )!
+									</span>
+									<span ng-message="function"> 
+										The function name is already taken!
+									</span>
+									<span ng-message="reservedWord">
+										The function name is a reserved word of JavaScript!
+									</span>
+								</div>
 						    </div>
 					  	</div>
 					  	<div class="form-group col-sm-12">
 						    <label class=" control-label col-sm-2 reset-padding">parameters</label>
 							<div class="form-group col-sm-10 reset-padding" >
-								<div ng-repeat="(index,parameter) in parameters">
-									<div ng-form="param{{$index}}" class="form-horizontal" style="display:inline-block" >
+								<div ng-repeat="(index,parameter) in model.parameters" ng-form="param" >
+									<div class="form-horizontal" style="display:inline-block" >
 									    <div class="col-sm-3 reset-padding">
-									      	<input type="text" class="form-control pull-left" ng-model="parameter.paramName" required ng-pattern="/^[a-zA-Z0-9_]+$/" reserved-word placeholder="name" name="parameterName" unic-name parameters="parameters" press-enter="addParameter()"/>
-									      	<ul class="help-block" ng-show="param{{$index}}.parameterName.$dirty && param{{$index}}.parameterName.$invalid">
-												<li ng-show="param{{$index}}.parameterName.$error.required">This field is required!</li>
-												<li ng-show="param{{$index}}.parameterName.$error.unic">More occurence of the same parameter name have been found, plese fix them</li>
-												<li ng-show="param{{$index}}.parameterName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
-												<li ng-show="param{{$index}}.parameterName.$error.reservedWord">{{parameter.paramName}} is a reserved word of JavaScript, please change it!</li>
-											</ul>
+									      	<input type="text" class="form-control pull-left" 
+									      		ng-model="parameter.paramName" 
+									      		required 
+									      		var-name-validator 
+									      		reserved-word 
+									      		placeholder="name" 
+									      		name="parameterName" 
+									      		unic-name parameters="parameters" 
+									      		press-enter="addParameter()"/>
 										</div>
+										<div
 										<div class="col-sm-3 reset-padding">
-									      	<input type="text" class="form-control pull-left" name="parameterType" ng-model="parameter.paramType" ng-model-options="{ updateOn: 'blur' }" required adt-validator placeholder="type" press-enter="addParameter()"/>
-									      	<ul class="help-block" ng-show="param{{$index}}.parameterType.$dirty && param{{$index}}.parameterType.$invalid">
-												<li ng-show="param{{$index}}.parameterType.$error.required">This field is required!</li>
-												<li ng-show="param{{$index}}.parameterType.$error.adt">Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).</li>
-											</ul>
+									      	<input type="text" class="form-control pull-left" 
+									      		name="parameterType" 
+									      		ng-model="parameter.paramType" 
+									      		ng-model-options="{ updateOn: 'blur' }" 
+									      		required 
+									      		adt-validator 
+									      		placeholder="type" 
+									      		press-enter="addParameter()"/>
+									   
 										</div>
 										<div class="col-sm-5 reset-padding">
-									      	<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="parameter.paramDescription" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/" press-enter="addParameter()"/>
-									      	<ul class="help-block" ng-show="param{{$index}}.parameterDescritpion.$dirty && param{{$index}}.parameterDescritpion.$invalid">
-												<li ng-show="param{{$index}}.parameterDescritpion.$error.required">This field is required!</li>
-												<li ng-show="param{{$index}}.parameterDescritpion.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>
-											</ul>
+									      	<input type="text" class="form-control pull-left" name="parameterDescription" placeholder="description" ng-model="parameter.paramDescription" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/" press-enter="addParameter()"/>
+								     
 										</div>
 										<div class="col-sm-1 reset-padding">
 									      	<button ng-click="deleteParameter(index)" class="btn  pull-right">X</button>
 									    </div>
 									</div>
+
+
+									<div class="help-block" 
+										ng-messages="param.parameterName.$dirty && param.parameterName.$error">
+										<span ng-message="required">
+											The parameter name is required!
+										</span>
+										<span ng-message="unic">
+											More occurence of the same parameter name have been found, plese fix them!
+										</span>
+										<span ng-message="var">
+											The parameter name can't start with numbers or contain special characters (except the underscore _ )!
+										</span>
+										<span ng-message="reservedWord">
+											The parameter name is a reserved JavaScript word!
+										</span>
+									</div>
+
+									<div class="help-block" ng-messages="param.parameterType.$dirty && param.parameterType.$error">
+										<span ng-message="required">
+											The type is required!
+										</span>
+										<span ng-message="adt" >
+											{{param.parameterType.$error.adt}}
+										</span>
+									</div>
+
+									<div class="help-block" ng-messages="param.parameterDescription.$dirty && param.parameterDescription.$error">
+										<span ng-message="required">
+											The description is required!
+										</span>
+										<span ng-message="pattern" >
+											Only the special characters _ and - are allowed!
+										</span>
+									</div>
+
 							  	</div>
 						  	</div>
 						</div>
@@ -127,6 +215,23 @@
 
 		</div>
 	</div>
+
+	<div class="section section-form" ng-if="dispute.active">
+		<div class="section-content" >
+			<div class="heading-1" >Why this function is not implementable?</div>
+			<textarea 
+				name="disputeFunctionText" 
+				class="form-control required" 
+				style="resize:none" 
+				ng-model="dispute.text" 
+				ng-required="dispute.active">
+			</textarea>
+			<a href="#" class="btn btn-sm pull-right" ng-click="dispute.toggle()" > Go back</a>
+		</div> 
+
+		<span class="clearfix"></span>
+
+	</div> 
 	
 </div>
 

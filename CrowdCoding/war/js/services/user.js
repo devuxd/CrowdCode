@@ -89,10 +89,10 @@ angular
 
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 			//retrieves the reference to the worker to log out
-			var logoutWorker  =logoutQueue.child('/'+jobData.workerId);
+			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
-			var timoutCallBack=function(){
+			var timeoutCallBack = function(){
 				//console.log("trying to logging out",jobData);
 				//retrieves the information of the loGin field
 				var userLoginRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
@@ -108,9 +108,8 @@ angular
 					  		});
 					 //if the timestamp of the login is more than the timesatmp of the logout means that the user logged in again
 					 //so cancel the work
-					}else if(userLogin.val()!==null && userLogin.val().timeStamp - jobData.timeStamp > 1000)
+					} else if(userLogin.val()!==null && userLogin.val().timeStamp - jobData.timeStamp > 1000)
 					{
-						console.log("log out cancelled");
 						$interval.cancel(interval);
 						logoutWorker.onDisconnect().cancel();
 						whenFinished();
@@ -118,7 +117,7 @@ angular
 				});
 
 			};
-			var interval = $interval(timoutCallBack,10000);
+			var interval = $interval(timeoutCallBack,10000);
 		});
 	};
 

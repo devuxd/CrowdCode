@@ -437,9 +437,7 @@ angular
 	function parseFunction(codemirror)
 	{
 
-		var ast = esprima.parse(codemirror.getValue(), {
-		    loc: true
-		});
+		var ast = esprima.parse(codemirror.getValue(), {loc: true});
 		var calleeNames = getCalleeNames(ast);
 		var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
 		var descriptionLines = fullDescription.split('\n');
@@ -468,6 +466,7 @@ angular
 			pseudoFunctionsName.push(ast.body[i].id.name);
 		}
 		functionParsed.calleeIds=[];
+
 		for(i =0; i< calleeNames.length; i++)
 		{
 			if(pseudoFunctionsName.indexOf(calleeNames[i])!==-1){

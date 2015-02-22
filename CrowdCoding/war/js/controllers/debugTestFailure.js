@@ -28,30 +28,29 @@ angular
     $scope.total            = $scope.tests.length;
     $scope.numPassed        = 0;
     $scope.hidePassedTests  = false;
-    $scope.codemirrorLoaded = codemirrorLoaded;
     $scope.runTests         = runTests;
-
-    $scope.functionDescription = $scope.funct.getSignature();
-    $scope.code = $scope.funct.getFunctionCode();
 
     $scope.dispute = {
         active      : false,
         description : '',
         test        : null
     };
+
     $scope.doDispute   = doDispute;
     $scope.undoDispute = undoDispute;
+
+    $scope.functionDescription = $scope.funct.getSignature();
+    $scope.code = $scope.funct.getFunctionCode();
+
+    $scope.codemirror = undefined;
+    $scope.$on('codemirror',function($event,data){
+        $scope.codemirror = data;
+    });
 
     var collectFormDataOff = $scope.$on('collectFormData', collectFormData );
     $scope.$on('$destroy', destroy);
 
-    $scope.runTests();
-
-
-    
-
-    var functionCodeMirror = undefined;
-    var readOnlyDone=false;
+    $scope.runTests()
 
     function doDispute(test) {
         $scope.dispute = {
@@ -68,26 +67,6 @@ angular
             test        : null
         }
     };
-
-    function codemirrorLoaded(codemirror) {
-        functionCodeMirror = codemirror;
-        codemirror.setOption('autofocus', true);
-        codemirror.setOption('indentUnit', 4);
-        codemirror.setOption('indentWithTabs', true);
-        codemirror.setOption('lineNumbers', true);
-        codemirror.setOption("theme", "custom-editor");
-        codemirror.setSize(null, 600);
-        codemirror.refresh();
-
-        codemirror.on("change", function() {
-            //set the descprtion and header as readonly
-            if(!readOnlyDone) {
-                functionsService.makeHeaderAndDescriptionReadOnly(codemirror);
-                readOnlyDone = true;
-            }
-        });
-    };
-
 
     function processTestReady(data){
 
@@ -144,8 +123,11 @@ angular
         $scope.activePanel = -1;
 
         var code = undefined;
-        if( functionCodeMirror !== undefined )
-            code = functionCodeMirror.getValue();
+        if( $scope.codemirror === undefined) 
+            console.log('CODEMIRROR UNDEFINED');
+
+        if( $scope.codemirror !== undefined )
+            code = $scope.codemirror.getValue();
 
         // push a message for for running the tests
         if( testRunner.runTests($scope.microtask.functionID,code,$scope.stubs) != -1 ) {
@@ -167,17 +149,17 @@ angular
 
 
 
-
     
 
     function collectFormData(event, data) {
+
+        console.log($scope.codemirror);
 
         // CHECK IF THERE ARE FORM ERRORS
         var errors = "";
 
         // if a test is in dispute and the disputeText length is 0, 
         // create the error for the dispute
-        console.log($scope.dispute.active);
         if ($scope.dispute.active){
             if($scope.dispute.description.length === 0) 
                 errors = "Please, insert the description of the dispute!";
@@ -241,7 +223,7 @@ angular
                 });
 
                  // create form data to send
-                formData       = functionsService.parseFunction(functionCodeMirror);
+                formData       = functionsService.parseFunction($scope.codemirror);
                 formData.stubs = stubs;
 
             }
@@ -262,7 +244,7 @@ angular
 
     function destroy(){
         collectFormDataOff();
-        functionCodeMirror = undefined;
+        $scope.codemirror = undefined;
     }
 
 }]);

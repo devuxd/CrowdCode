@@ -90,6 +90,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 
 
 
+.form-control { font-weight: normal;}
 
 .submit-alert {
 	 position:relative !important;
@@ -179,6 +180,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 .control-label { 
 	padding-right:10px !important; 
 	line-height: 32px;
+	line-height:1.1em;
 }
 
 .dropdown-menu {
@@ -225,6 +227,7 @@ color: #525151 !important;
 
 
 .js-reader { 
+	
 	background-color:transparent !important; 
 }
 .js-reader .ace_active-line { background-color: transparent !important;}
@@ -249,7 +252,6 @@ body, html { height: 100%; }
 body {
 	font-family: 'Merriweather' !important;
 	font-style: normal;
-	font-weight: 400;
 	font-size: 12px ;
 }
 
@@ -866,8 +868,8 @@ del {  background-color: #ffc6c6; }
 }
 
 /* Style for highlighted lines in CodeMirror */
-
-.pseudoCall { background-color: rgba(122, 61, 61, 0.7);     color: white !important; }
+.acePseudoCall{ background-color: rgba(122, 61, 61, 0.7); color: white !important; position:absolute;}
+.pseudoCall { background-color: rgba(122, 61, 61, 0.7); color: white !important; }
 .pseudoCode { background-color: rgba(74, 119, 69, 0.7); color: white !important; }
 
 .highlightPseudoCall { background-color: rgb(189, 94, 144,0.7); }
@@ -995,7 +997,7 @@ tutorial  { display:none; }
 .section.section-form .section-content .input-group input       { border-radius:0px; background-color: transparent !important; color:#555; border:none; outline:none; box-shadow:none; border-radius:0px;}
 .section.section-form .section-content .input-group input:focus { background-color: rgba(255,255,255,0.7) !important; color:black; width:100%;}
 .section.section-form .section-content .input-group .btn        { background-color:transparent; color:#555; border-radius:0px;}
-.section.section-form .section-content .input-group input:focus+ span > .btn { background-color: rgba(255,255,255,0.7) ; }
+.section.section-form .section-content .input-group input:focus + span > .btn { background-color: rgba(255,255,255,0.7) ; }
 
 .section.section-review {
 	background-color:white;
@@ -1016,8 +1018,7 @@ tutorial  { display:none; }
 	font-size: 1.2em;
 	width:100%;
 }
-.microtask-details .type   { 
-	text-transform: uppercase; float:left; padding-left:20px; padding-right:20px; color:white;}
+.microtask-details .type   { text-transform: uppercase; float:left; padding-left:20px; padding-right:20px; color:white;}
 .microtask-details .points { float:left; padding-left:20px; padding-right:20px; }
 .microtask-details .tutorial-btn { float:right; font-size:0.8em; cursor:pointer; padding:2px; }
 .microtask-details .tutorial-btn:hover { color:#555;}
@@ -1046,7 +1047,6 @@ tutorial  { display:none; }
 	font-weight: 500;
 	font-size: 1.2em;
 	text-transform: uppercase;
-
 }
 
 .stats ul {
@@ -1214,5 +1214,9 @@ pre.json .jsonKey { color: black; }
 .section-review .del { color:red; }
 .section-review .add { color:green; }
 
-
+.function-conventions pre {
+	font-size:0.9em;
+	border:0px;
+	
+}
 
