@@ -48,6 +48,7 @@ public class ReuseSearch extends Microtask
 				function.getName(),
 				function.getID(),
 				false,
+				false,
 				submitValue,
 				pseudoFunctionName,
 				pseudoFunctionDescription,

@@ -50,7 +50,8 @@ public class WriteTestCases extends Microtask
 		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				function.getName(),
 				function.getID(),
-				false, submitValue, function.getID(), promptType.name(), "", ""),
+				false, false,
+				submitValue, function.getID(), promptType.name(), "", ""),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 
@@ -72,7 +73,8 @@ public class WriteTestCases extends Microtask
 		FirebaseService.writeMicrotaskCreated(new WriteTestCasesInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				function.getName(),
 				function.getID(),
-				false, submitValue, function.getID(), promptType.name(), issueDescription, issuedTestCase),
+				false, false,
+				submitValue, function.getID(), promptType.name(), issueDescription, issuedTestCase),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 

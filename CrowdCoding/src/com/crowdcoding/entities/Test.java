@@ -3,11 +3,14 @@ package com.crowdcoding.entities;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.crowdcoding.commands.FunctionCommand;
+import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.TestInFirebase;
+import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
@@ -243,6 +246,34 @@ public class Test extends Artifact
 				simpleTestOutput, description, functionName, functionID, isImplemented, readOnly), this.id, version, projectId);
 	}
 
+	// Queues the specified microtask and looks for work
+	public void queueMicrotask(Microtask microtask, String projectId)
+	{
+		super.queueMicrotask(microtask, projectId);
+		
+		// merge the tasks in queue
+		if( microtask instanceof WriteTest ){
+			WriteTest newTask = (WriteTest) microtask;
+			
+			// if in queue there is another WriteTest 
+			// with the same prompt type,
+			// remove it from the queue
+			LinkedList<Ref<Microtask>> queueCopy = new LinkedList<Ref<Microtask>>(this.queuedMicrotasks);
+			for(Ref<Microtask> q:queueCopy){
+				WriteTest task = ((WriteTest) q.get());
+				if( task.getPromptType().equals(newTask.getPromptType()) ){
+					System.out.println("#### REMOVING FROM TEST QUEUE "+q);
+					this.queuedMicrotasks.remove(q);
+					MicrotaskCommand.cancelMicrotask(task.getKey());
+				}
+			}
+			
+
+		}
+		
+		
+	}
+		
 	/******************************************************************************************
 	 * Commands
 	 *****************************************************************************************/
@@ -265,11 +296,18 @@ public class Test extends Artifact
 	// Notify this test that the function under test has changed its interface.
 	public void functionChangedInterface(String oldFullDescription, String newFullDescription, String projectId, int functionVersion)
 	{
-		// TODO: should we resave the function name here??
 		if(!this.readOnly)
 			queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, projectId, functionVersion), projectId);
 	}
 
+
+	public void functionChangedName(String name, String projectId,
+			int functionVersion) {
+		if(!this.readOnly){
+			this.functionName = name;
+			ofy().save().entity(this).now();
+		}	
+	}
 
 	/******************************************************************************************
 	 * Objectify Datastore methods
@@ -309,4 +347,5 @@ public class Test extends Artifact
 				(isImplemented? " implemented" : " not implemented")
 				+ (isDeleted? " DELETED " : "");
 	}
+
 }

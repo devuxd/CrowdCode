@@ -18,13 +18,14 @@ public class WriteTestCasesInFirebase extends MicrotaskInFirebase
 			String owningArtifact, 
 			Long owningArtifactId, 
 			boolean completed, 
+			boolean canceled,
 			int points,
 			long testedFunctionID, 
 			String promptType, 
 			String issueDescription, 
 			String issuedTestCase)
 	{
-		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
+		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled, points);
 
 		this.functionID       = testedFunctionID;
 		this.promptType       = promptType;

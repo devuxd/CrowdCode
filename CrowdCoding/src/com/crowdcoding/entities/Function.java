@@ -325,13 +325,13 @@ public class Function extends Artifact
 		if(this.isNeeded){
 			// If there is currently not already a microtask being done on this function,
 			// determine if there is work to be done
-			if ( !microtaskOut && !queuedMicrotasks.isEmpty())
+			if ( microtaskOut == null && !queuedMicrotasks.isEmpty())
 				makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
 
 			if (!testCaseOut && !queuedWriteTestCase.isEmpty())
 				makeTestCaseOut( ofy().load().ref(queuedWriteTestCase.remove()).now() );
 
-			if ( !microtaskOut && !testCaseOut)
+			if ( microtaskOut == null && !testCaseOut)
 			{
 				// Microtask must have been described, as there is no microtask out to describe it.
 				if (isWritten && this.needsDebugging && !this.waitForTestResult){
@@ -406,8 +406,11 @@ public class Function extends Artifact
 		String strippedOldFullDescrip = (this.getParametersAndReturn()).replace(" ", "").replace("\n", "");
 		String strippedNewFullDescrip = (dto.getParametersAndReturn()).replace(" ", "").replace("\n", "");
 
-		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))
-			notifyDescriptionChanged(dto);
+		Boolean descChanged = !strippedOldFullDescrip.equals(strippedNewFullDescrip);
+		Boolean nameChanged = !this.name.equals(dto.name);
+		if ( descChanged || nameChanged )
+			notifyDescriptionChanged(dto,descChanged,nameChanged);
+
 
 		// Update the function data
 		this.code = dto.code;
@@ -466,6 +469,7 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 		lookForWork();
 	}
+
 
 	// Diffs the new and old callee list, sending notifications to callees about who their
 	// callers are as appropriate. Updates the callee list when done
@@ -851,13 +855,25 @@ public class Function extends Artifact
 
 	// Send out notifications, as appropriate, that the description or header of this
 	// function has changed
-	private void notifyDescriptionChanged(FunctionDTO dto)
+	private void notifyDescriptionChanged(FunctionDTO dto,Boolean descChanged,Boolean nameChanged)
 	{
+
 		for (long callerID : callersId)
 			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 
-		for (long testID : testsId)
-			TestCommand.functionChangedInterface(testID, this.getFullDescription(), dto.getCompleteDescription() + dto.header, version);
+		for (long testID : testsId){
+			if( nameChanged )
+				TestCommand.functionChangedName(testID,dto.name,version);
+
+			if( descChanged )
+				TestCommand.functionChangedInterface(
+						testID,
+						this.getFullDescription(),
+						(dto.getCompleteDescription() + dto.header),
+						version);
+		}
+
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

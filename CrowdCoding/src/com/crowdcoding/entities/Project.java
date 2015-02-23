@@ -451,8 +451,8 @@ public class Project
 	{
 		// retrieve the excluded workers for the microtask
 		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get( Microtask.keyToString(microtaskKey) );
-		System.out.println("PROJECT: EXCLUDED WORKER "+excludedWorkersForMicrotask);
-		System.out.println("PROJECT: loggedInWorkers WORKER "+loggedInWorkers);
+//		System.out.println("PROJECT: EXCLUDED WORKER "+excludedWorkersForMicrotask);
+//		System.out.println("PROJECT: loggedInWorkers WORKER "+loggedInWorkers);
 
 		// if all the logged in workers are excluded
 		if (excludedWorkersForMicrotask.containsAll(loggedInWorkers))
@@ -464,7 +464,7 @@ public class Project
 			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get( Microtask.keyToString(microtaskKey) );
 			if (permanentlyExcludedWorkersForMicrotask != null)
 				excludedWorkersForMicrotask.addAll(permanentlyExcludedWorkersForMicrotask);
-			System.out.println("PROJECT: permanentlyExcludedWorkersForMicrotask WORKER "+permanentlyExcludedWorkersForMicrotask);
+//			System.out.println("PROJECT: permanentlyExcludedWorkersForMicrotask WORKER "+permanentlyExcludedWorkersForMicrotask);
 
 
 			ofy().save().entity(this).now();
@@ -487,7 +487,7 @@ public class Project
 	// Logs out the specified worker, clearing all of their current assigned work
 	public void logoutWorker(String workerID)
 	{
-		System.out.println("--> PROJECT: logging out "+workerID);
+//		System.out.println("--> PROJECT: logging out "+workerID);
 
 		// retrieve the assigned microtask for the workerId
 		String microtaskKeyString        = microtaskAssignments.get(workerID);

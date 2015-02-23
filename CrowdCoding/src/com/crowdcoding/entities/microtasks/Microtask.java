@@ -56,6 +56,7 @@ public /*abstract*/ class Microtask
 	@Id protected Long id;
 	@Index String projectId;
 
+	protected boolean canceled = false;
 	protected boolean completed = false;
 	protected String reissuedFrom = "";
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
@@ -141,6 +142,7 @@ public /*abstract*/ class Microtask
 	{
 		// Increment the point value by 10
 		this.submitValue *= 1.5;
+		this.workerId = "";
 		ofy().save().entity(this).now();
 		HistoryLog.Init(projectId).addEvent(new MicrotaskSkipped(this, workerID));
 	}
@@ -243,5 +245,13 @@ public /*abstract*/ class Microtask
 
 	public boolean isAssignedTo(String workerId){
 		return this.getWorkerId() != null && this.getWorkerId().equals( workerId );
+	}
+	
+	public void setCanceled(Boolean value){
+		canceled = value;
+	}
+	
+	public Boolean isCanceled(){
+		return canceled;
 	}
 }

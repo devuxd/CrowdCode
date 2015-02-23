@@ -7,7 +7,7 @@ function functionEditor($sce,functionsService) {
     var marks = [];
     var highlightPseudoCall = false;
     var readOnlyDone = false;
-    var readOnly = false;
+    var readOnly = '';
     var changeTimeout;
 
 
@@ -17,11 +17,17 @@ function functionEditor($sce,functionsService) {
             codemirror : '=',
             code       : '=',
             funct      : '=',
+            readOnly   : '@'
         },
         templateUrl: '/html/templates/ui/function_editor.html',
         controller: function($scope,$element){
 
-            readOnly = $scope.funct.readOnly;
+            if( $scope.readOnly !== undefined )
+                readOnly = $scope.readOnly;
+            else if ( $scope.funct.readOnly )
+                readOnly = 'header+parameters';
+
+            console.log("RO",$scope.readOnly);
 
         	$scope.trustHtml = function (unsafeHtml){
         		return $sce.trustAsHtml(unsafeHtml);
@@ -36,7 +42,7 @@ function functionEditor($sce,functionsService) {
                 codemirror.setOption("theme", "custom-editor");
                 codemirror.on("change", changeListener);
                 $scope.codemirror = codemirror;
-                
+
                 $scope.$emit('codemirror',codemirror);
             };
 
@@ -49,12 +55,17 @@ function functionEditor($sce,functionsService) {
 
 
     function changeListener(codemirror) {
-        // If we are editing a function that is a client request and starts with CR, make the header
-        // readonly.
-        if ( readOnly && !readOnlyDone) {
-            functionsService.makeHeaderAndParameterReadOnly(codemirror);
-            readOnlyDone = true;
-        }
+
+        // manage readonly
+        if( !readOnlyDone )
+            if( readOnly == 'header+description'){
+                functionsService.makeHeaderAndDescriptionReadOnly(codemirror);
+                readOnlyDone = true;
+            } else if( readOnly == 'header+parameters'){
+                functionsService.makeHeaderAndParameterReadOnly(codemirror);
+                readOnlyDone = true;
+            }
+
         // Mangage code change timeout
         clearTimeout(changeTimeout);
         changeTimeout = setTimeout(function() {

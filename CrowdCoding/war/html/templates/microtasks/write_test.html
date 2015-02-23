@@ -15,16 +15,7 @@
 			</div>
 
 			<div ng-if="microtask.promptType=='CORRECT'">
-				The crowd found that:<br />
-				<div class="form-group has-error">
-					<textarea type="text"
-					class="form-control"
-					style="width:100%;resize:none"
-					disabled="true"
-					name="newTestCase"
-					ng-model="microtask.issueDescription"
-					></textarea>
-				</div>
+				The crowd reported an issue for this test.
 				Can you fix the test data to address the issue?
 			</div>
 
@@ -41,6 +32,18 @@
 	</div>
 
 	<div ng-if="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+
+	
+	<div class="section section-description" ng-if="microtask.promptType != 'FUNCTION_CHANGED'" >
+		<div class="section-title" ><div class="dot bg-color"></div>FUNCTION SIGNATURE</div>
+		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
+			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		</div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="code"></ace-read-js>
+			<ace-read-js ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></ace-read-js>
+		</div>
+	</div>
 
 	<div class="section section-description">
 		<div class="section-title" >
@@ -60,16 +63,15 @@
 		</div>
 	</div>
 
-	<div class="section section-description" ng-if="microtask.promptType != 'FUNCTION_CHANGED'" >
-		<div class="section-title" ><div class="dot bg-color"></div>FUNCTION SIGNATURE</div>
-		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
-			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
-		</div>
-		<div class="section-content no-padding" >
-			<ace-read-js code="code"></ace-read-js>
-			<ace-read-js ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></ace-read-js>
+	
+	<div class="section section-description" ng-if="::microtask.promptType=='CORRECT'" >
+		<div class="section-title"> <div class="dot bg-color"></div> ISSUE DESCRIPTION </div>
+		<div  class="section-content" >
+			<span ng-bind="::microtask.issueDescription"></span>
 		</div>
 	</div>
+
+
 
 	<div class="section section-description" ng-if="microtask.promptType == 'FUNCTION_CHANGED'" >
 		<div class="section-title" ><div class="dot bg-color"></div>DIFF OF THE FUNCTION SIGNATURE</div>

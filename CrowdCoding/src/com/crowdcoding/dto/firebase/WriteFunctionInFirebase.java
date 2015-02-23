@@ -15,11 +15,11 @@ public class WriteFunctionInFirebase extends MicrotaskInFirebase
 	}
 
 	public WriteFunctionInFirebase(long id,String title, String type,
-			String owningArtifact, Long owningArtifactId, boolean completed, int points,
+			String owningArtifact, Long owningArtifactId, boolean completed, boolean canceled, int points,
 			long functionID, String promptType,
 			String oldFullDescription,String newFullDescription, String disputeText, long calleeId)
 	{
-		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
+		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled, points);
 
 		this.functionID = functionID;
 		this.promptType = promptType;

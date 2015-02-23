@@ -13,10 +13,10 @@ public class ReviewInFirebase extends MicrotaskInFirebase
 	{
 	}
 
-	public ReviewInFirebase(long id, String title, String type, String owningArtifact, Long owningArtifactId, boolean completed, int points,
+	public ReviewInFirebase(long id, String title, String type, String owningArtifact, Long owningArtifactId, boolean completed, boolean canceled, int points,
 			 Key<Microtask> microtaskKeyUnderReview)
 	{
-		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
+		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled,  points);
 		this.microtaskKeyUnderReview = Microtask.keyToString(microtaskKeyUnderReview);
 
 	}

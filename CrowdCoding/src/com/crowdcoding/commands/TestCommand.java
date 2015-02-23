@@ -22,10 +22,18 @@ public abstract class TestCommand extends Command
 	public static TestCommand dispute(long testID, String issueDescription, int functionVersion)
 		{ return new Dispute(testID, issueDescription, functionVersion); }
 	public static TestCommand delete(long testID) { return new Delete(testID); }
-	public static TestCommand functionChangedInterface(long testID, String oldFullDescription,
-			String newFullDescription, int functionVersion)
+	public static TestCommand functionChangedInterface(
+			long testID, 
+			String oldFullDescription,
+			String newFullDescription, 
+			int functionVersion)
 		{ return new FunctionChangedInterface(testID, oldFullDescription, newFullDescription, functionVersion); }
 
+
+	public static TestCommand functionChangedName(long testID, String name,int version) {
+		return new FunctionChangedName(testID,name,version);
+	}
+	
 	public static TestCommand disputeCompleted(long testID, int functionVersion)
 	{ return new DisputeCompleted(testID, functionVersion); }
 
@@ -224,7 +232,7 @@ public abstract class TestCommand extends Command
 		private int functionVersion;
 
 		public FunctionChangedInterface(long testID, String oldFullDescription,
-				String newFullDescription, int functionVersion)
+				String newFullDescription,int functionVersion)
 		{
 			this.testID = testID;
 			this.oldFullDescription = oldFullDescription;
@@ -238,4 +246,24 @@ public abstract class TestCommand extends Command
 			test.functionChangedInterface(oldFullDescription, newFullDescription, projectId, functionVersion);
 		}
 	}
+	
+	protected static class FunctionChangedName extends TestCommand
+	{
+		private String name;
+		private int functionVersion;
+
+		public FunctionChangedName(long testID, String newName, int functionVersion)
+		{
+			this.testID = testID;
+			this.name = newName;
+			this.functionVersion = functionVersion;
+			queueCommand(this);
+		}
+
+		public void execute(Test test, String projectId)
+		{
+			test.functionChangedName( name, projectId, functionVersion);
+		}
+	}
+
 }

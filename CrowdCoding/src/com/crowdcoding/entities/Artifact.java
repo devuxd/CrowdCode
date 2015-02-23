@@ -27,7 +27,7 @@ public /*abstract*/ class Artifact
 
 	// Queued microtasks waiting to be done (not yet in the ready state)
 	protected Queue<Ref<Microtask>> queuedMicrotasks = new LinkedList<Ref<Microtask>>();
-	protected boolean microtaskOut;		// Is there an associated microtask currently in progress?
+	protected Ref<Microtask> microtaskOut;		// Is there an associated microtask currently in progress?
 	//true if the artifact is still needed false otherwise
 	protected boolean isNeeded;
 
@@ -101,19 +101,13 @@ public /*abstract*/ class Artifact
 	protected void makeMicrotaskOut(Microtask microtask)
 	{
 		ProjectCommand.queueMicrotask(microtask.getKey(), null);
-		microtaskOut = true;
-		ofy().save().entity(this).now();
-	}
-	// Makes the specified microtask out for work
-	protected void setMicrotaskOut()
-	{
-		microtaskOut = true;
+		microtaskOut = Ref.create(microtask.getKey());
 		ofy().save().entity(this).now();
 	}
 
 	protected void microtaskOutCompleted()
 	{
-		microtaskOut = false;
+		microtaskOut = null;
 		ofy().save().entity(this).now();
 	}
 
@@ -130,7 +124,7 @@ public /*abstract*/ class Artifact
 	{
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
-		if (isNeeded() && !microtaskOut && !queuedMicrotasks.isEmpty())
+		if (isNeeded() && microtaskOut == null && !queuedMicrotasks.isEmpty())
 		{
 			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).now());
 		}
@@ -139,6 +133,6 @@ public /*abstract*/ class Artifact
 	// Returns if there is work to be done (either a microtask out or queued work)
 	protected boolean workToBeDone()
 	{
-		return microtaskOut || !queuedMicrotasks.isEmpty();
+		return ( microtaskOut != null ) || !queuedMicrotasks.isEmpty();
 	}
 }
