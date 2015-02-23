@@ -20,7 +20,7 @@ public class FunctionDescriptionDTO extends DTO
 	public List<TestDescriptionDTO> tests;
 	public boolean inDispute;
 	public String disputeFunctionText;
-
+	public long callerId;
 
 	// Description includes all comments and the signature block itself. e.g.,
 	// // A description of foo, describing what it does and its parameters and return value.

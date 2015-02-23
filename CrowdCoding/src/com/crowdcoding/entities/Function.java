@@ -56,7 +56,7 @@ public class Function extends Artifact
 	private List<String>  paramDescriptions = new ArrayList<String>();
 	private String        header = "";
 	private String        description = "";
-	private List<Long>    tests = new ArrayList<Long>();
+	private List<Long>    testsId = new ArrayList<Long>();
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private List<String>  testsDescription = new ArrayList<String>();
 	private int           linesOfCode = 0;
@@ -73,12 +73,12 @@ public class Function extends Artifact
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> callees = new ArrayList<Long>();
 	// current callers with a fully implemented callsite to this function:
-	private List<Long> callers = new ArrayList<Long>();
+	private List<Long> callersId = new ArrayList<Long>();
 	// pseudocalls made by this function:
 	private List<String> pseudoFunctionsDescription = new ArrayList<String>();
 	private List<String> pseudoFunctionsName = new ArrayList<String>();
 
-	// pseudocall callsites calling this function (these two lists must be in sync)
+	// function that select this function in the reuse search microtask
 	private List<String> pseudoCallersDescription = new ArrayList<String>();
 	private List<String> pseudoCallersName = new ArrayList<String>();
 	private List<Long>   pseudoCallersId = new ArrayList<Long>();
@@ -247,7 +247,7 @@ public class Function extends Artifact
 	{
 		// Build refs for each test case
 		ArrayList<Ref<Test>> testRefs = new ArrayList<Ref<Test>>();
-		for (long testID : tests)
+		for (long testID : testsId)
 			testRefs.add( (Ref<Test>) Ref.create( Artifact.getKey(testID) ) );
 
 		return testRefs;
@@ -256,10 +256,10 @@ public class Function extends Artifact
 	// Deletes the specified test from the list of tests
 	public void deleteTest(long testToDeleteID)
 	{
-		int position = tests.indexOf(testToDeleteID);
+		int position = testsId.indexOf(testToDeleteID);
 		if (position != -1)
 		{
-			tests.remove(position);
+			testsId.remove(position);
 			testsImplemented.remove(position);
 			testsDescription.remove(position);
 			ofy().save().entity(this).now();
@@ -270,7 +270,7 @@ public class Function extends Artifact
 	public void addTest(long testID, String testDescription)
 	{
 		this.needsDebugging=true;
-		tests.add(testID);
+		testsId.add(testID);
 		testsImplemented.add(false);
 		testsDescription.add(testDescription);
 		ofy().save().entity(this).now();
@@ -366,7 +366,7 @@ public class Function extends Artifact
 
 //		System.out.println("--> FUNCTION ("+this.id+") "+this.name+" :checking if all test implemented - ");
 
-		if(tests.size()==0)
+		if(testsId.size()==0)
 			return false;
 		else{
 			for (Boolean implemented:testsImplemented)
@@ -503,6 +503,7 @@ public class Function extends Artifact
 	{
 		microtaskOutCompleted();
 		if( dto.inDispute ){
+			queueMicrotask(new WriteFunction(this, projectId), projectId);
 			notifyFunctionUseless(dto.disputeFunctionText);
 		}
 		else{
@@ -537,6 +538,8 @@ public class Function extends Artifact
 		microtaskOutCompleted();
 		if(dto.inDispute){
 			notifyFunctionUseless(dto.disputeFunctionText);
+			//remove the caller that generate the microtask from the pseudocaller of this function
+			removePseudocaller(dto.callerId);
 		}
 		else {
 			this.name = dto.name;
@@ -589,7 +592,7 @@ public class Function extends Artifact
 				}
 				else
 				{
-					int position = tests.indexOf((long)testCase.id);
+					int position = testsId.indexOf((long)testCase.id);
 					if (!testsDescription.get(position).equals(testCase.text))
 					{
 						testsDescription.set(position, testCase.text);
@@ -628,8 +631,8 @@ public class Function extends Artifact
 		if(dto.testId != null)
 		{
 			// creates a disputed test case
-			int position = tests.indexOf((long)dto.testId);
-			TestCommand.dispute(tests.get(position), dto.description, version);
+			int position = testsId.indexOf((long)dto.testId);
+			TestCommand.dispute(testsId.get(position), dto.description, version);
 
 			// Since there was an issue, ignore any code changes they may have submitted.
 		} else { //at present, reaching here means all tests passed.
@@ -690,7 +693,7 @@ public class Function extends Artifact
 	// Provides notification that a test has transitioned to being implemented
 	public void testBecameImplemented(Test test)
 	{
-		int position = tests.indexOf(test.getID());
+		int position = testsId.indexOf(test.getID());
 		testsImplemented.set(position, true);
 
 		runTestsIfReady();
@@ -701,7 +704,7 @@ public class Function extends Artifact
 	{
 		//remove the function from the pseudocaller list
 		removePseudocaller(functionId);
-		callers.add(functionId);
+		callersId.add(functionId);
 		if( !isNeeded() )
 			reactiveFunction();
 
@@ -711,15 +714,20 @@ public class Function extends Artifact
 	// Notifies the function that it is no longer called by function
 	public void removeCaller(long functionId)
 	{
-		//remove the function from the pseudocaller list
-		removePseudocaller(functionId);
-		callers.remove(functionId);
+		callersId.remove(functionId);
 
-		//if is not a function of the API and is not animore called by anyone means that is not anymore needed
-		if( ! this.isAPIFunction && this.callers.isEmpty())
-			setNeeded(false);
+		checkIfNeeded();
 
 		ofy().save().entity(this).now();
+	}
+
+	private void checkIfNeeded()
+	{
+		//if is not a function of the API and is not animore called by anyone means that is not anymore needed
+		if( ! this.isAPIFunction && this.callersId.isEmpty() && this.pseudoCallersId.isEmpty())
+			setNeeded(false);
+
+
 	}
 	public void removePseudocaller(long functionId)
 	{
@@ -728,6 +736,7 @@ public class Function extends Artifact
 			pseudoCallersId.remove(index);
 			pseudoCallersName.remove(index);
 			pseudoCallersDescription.remove(index);
+			checkIfNeeded();
 		}
 		ofy().save().entity(this).now();
 
@@ -803,15 +812,15 @@ public class Function extends Artifact
 	{
 		setNeeded(false);
 
-		for (long callerID : callers)
+		for (long callerID : callersId)
 			FunctionCommand.calleeBecomeUseless(callerID, this.getID(), disputeFunctionText);
 
 		for (long pseudoCallerID : pseudoCallersId)
 			FunctionCommand.calleeBecomeUseless(pseudoCallerID, this.getID(), disputeFunctionText);
 
 
-		for (long testID : tests)
-			TestCommand.functionBecomeUseless(testID);
+		for (long testId : testsId)
+			TestCommand.functionBecomeUseless(testId);
 
 	}
 
@@ -820,8 +829,8 @@ public class Function extends Artifact
 	{
 		setNeeded(true);
 		//for each test send a notification that the function has been reactivated
-		for (long testID : tests)
-			TestCommand.functionReturnUsefull(testID);
+		for (long testId : testsId)
+			TestCommand.functionReturnUsefull(testId);
 
 		runTestsIfReady();
 		lookForWork();
@@ -844,10 +853,10 @@ public class Function extends Artifact
 	// function has changed
 	private void notifyDescriptionChanged(FunctionDTO dto)
 	{
-		for (long callerID : callers)
+		for (long callerID : callersId)
 			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 
-		for (long testID : tests)
+		for (long testID : testsId)
 			TestCommand.functionChangedInterface(testID, this.getFullDescription(), dto.getCompleteDescription() + dto.header, version);
 	}
 
