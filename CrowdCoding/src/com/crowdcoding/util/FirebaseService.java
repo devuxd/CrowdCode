@@ -66,6 +66,11 @@ public class FirebaseService
 		System.out.println("writing: in "+microtaskKey+ " from "+reissuedFromMicrotaskKey);
 		enqueueWrite("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
+	
+	public static void writeMicrotaskCanceled( String microtaskKey, boolean canceled, String projectId)
+	{
+		enqueueWrite(Boolean.toString(canceled), "/microtasks/" + microtaskKey + "/canceled.json", HTTPMethod.PUT, projectId);
+	}
 
 	public static void writeTestJobQueue(long functionID, String projectId)
 	{

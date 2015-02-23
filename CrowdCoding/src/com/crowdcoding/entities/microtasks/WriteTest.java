@@ -53,7 +53,8 @@ public class WriteTest extends Microtask
 		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				test.getName(),
 				test.getID(),
-				false, submitValue, test.getID(), test.getFunctionID(), functionVersion, promptType.name(), "", "", "", ""),
+				false, false,
+				submitValue, test.getID(), test.getFunctionID(), functionVersion, promptType.name(), "", "", "", ""),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 
@@ -71,7 +72,8 @@ public class WriteTest extends Microtask
 		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				test2.getName(),
 				test2.getID(),
-				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), issueDescription, "", "", ""),
+				false, false,
+				submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), issueDescription, "", "", ""),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 
@@ -90,7 +92,8 @@ public class WriteTest extends Microtask
 		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				test2.getName(),
 				test2.getID(),
-				false, submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), "", oldFullDescription, newFullDescription, ""),
+				false, false,
+				submitValue, test2.getID(), test2.getFunctionID(),functionVersion, promptType.name(), "", oldFullDescription, newFullDescription, ""),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 
@@ -109,7 +112,8 @@ public class WriteTest extends Microtask
 		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id,this.microtaskTitle(), this.microtaskName(),
 				test.getName(),
 				test.getID(),
-				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), "", "", "", oldTestCase),
+				false, false,
+				submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), "", "", "", oldTestCase),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 
@@ -133,7 +137,8 @@ public class WriteTest extends Microtask
 		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id,this.microtaskTitle(), this.microtaskName(),
 				test.getName(),
 				test.getID(),
-				false, submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), issueDescription,
+				false, false,
+				submitValue, test.getID(), test.getFunctionID(),functionVersion, promptType.name(), issueDescription,
 				oldFunctionDescription, newFunctionDescription, oldTestCase),
 				Microtask.keyToString(this.getKey()),
 				projectId);

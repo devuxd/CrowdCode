@@ -26,10 +26,14 @@ public abstract class TestCommand extends Command
 			long testID, 
 			String oldFullDescription,
 			String newFullDescription, 
-			String newName, 
 			int functionVersion)
-		{ return new FunctionChangedInterface(testID, oldFullDescription, newFullDescription, newName, functionVersion); }
+		{ return new FunctionChangedInterface(testID, oldFullDescription, newFullDescription, functionVersion); }
 
+
+	public static TestCommand functionChangedName(long testID, String name,int version) {
+		return new FunctionChangedName(testID,name,version);
+	}
+	
 	public static TestCommand disputeCompleted(long testID, int functionVersion)
 	{ return new DisputeCompleted(testID, functionVersion); }
 
@@ -224,23 +228,41 @@ public abstract class TestCommand extends Command
 	{
 		private String oldFullDescription;
 		private String newFullDescription;
-		private String newName;
 		private int functionVersion;
 
 		public FunctionChangedInterface(long testID, String oldFullDescription,
-				String newFullDescription, String newName, int functionVersion)
+				String newFullDescription,int functionVersion)
 		{
 			this.testID = testID;
 			this.oldFullDescription = oldFullDescription;
 			this.newFullDescription = newFullDescription;
-			this.newName = newName;
 			this.functionVersion = functionVersion;
 			queueCommand(this);
 		}
 
 		public void execute(Test test, String projectId)
 		{
-			test.functionChangedInterface(oldFullDescription, newFullDescription, newName, projectId, functionVersion);
+			test.functionChangedInterface(oldFullDescription, newFullDescription, projectId, functionVersion);
 		}
 	}
+	
+	protected static class FunctionChangedName extends TestCommand
+	{
+		private String name;
+		private int functionVersion;
+
+		public FunctionChangedName(long testID, String newName, int functionVersion)
+		{
+			this.testID = testID;
+			this.name = newName;
+			this.functionVersion = functionVersion;
+			queueCommand(this);
+		}
+
+		public void execute(Test test, String projectId)
+		{
+			test.functionChangedName( name, projectId, functionVersion);
+		}
+	}
+
 }
