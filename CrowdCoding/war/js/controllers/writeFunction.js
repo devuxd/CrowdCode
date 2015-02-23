@@ -9,6 +9,17 @@ angular
     $scope.codemirror = undefined;
     $scope.$on('collectFormData', collectFormData);
 
+
+    $scope.dispute = {
+        active : false,
+        text   : '',
+        toggle : function(){
+            $scope.dispute.active = ! $scope.dispute.active;
+            if( $scope.dispute.active )
+                $scope.dispute.text = '';
+        } 
+    };
+
     if ($scope.microtask.promptType == 'DESCRIPTION_CHANGE') {
         var oldCode = $scope.microtask.oldFullDescription.split("\n");
         var newCode = $scope.microtask.newFullDescription.split("\n");
@@ -66,8 +77,12 @@ angular
 
             formData = functionsService.parseFunction($scope.codemirror);
             //add the dispute text to the submit
-            if($scope.microtask.promptType==='RE_EDIT')
-                formData.disputeText=$scope.microtask.disputeText;
+            if($scope.dispute.active)
+            {
+                formData.inDispute=true;
+                formData.disputeFunctionText=$scope.dispute.text;
+            }
+
             
             $scope.$emit('submitMicrotask', formData);
         }

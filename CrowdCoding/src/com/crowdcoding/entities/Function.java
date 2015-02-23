@@ -38,8 +38,7 @@ import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.cmd.Query;
-import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
+
 
 
 /* A function represents a function of code. Functions transition through states, spawning microtasks,
@@ -82,7 +81,7 @@ public class Function extends Artifact
 	// pseudocall callsites calling this function (these two lists must be in sync)
 	private List<String> pseudoCallersDescription = new ArrayList<String>();
 	private List<String> pseudoCallersName = new ArrayList<String>();
-	private List<Long>   pseudoCallers = new ArrayList<Long>();
+	private List<Long>   pseudoCallersId = new ArrayList<Long>();
 
 	private boolean testCaseOut=false;
 
@@ -106,7 +105,7 @@ public class Function extends Artifact
 	}
 
 	// Constructor for a function that only has a short call description and still needs a full description
-	public Function(String name, String callDescription, Function caller, String projectId)
+	public Function(String name, String callDescription, long callerId, String projectId)
 	{
 		super(projectId);
 
@@ -118,7 +117,7 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 
 		// Spawn off a microtask to write the function description
-		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, projectId));
+		// makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, callerId, projectId));
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -277,25 +276,6 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 	}
 
-	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
-	/*public static String getFunctionDescriptions(Project project)
-	{
-		List<FunctionDescriptionDTO> dtos = new ArrayList<FunctionDescriptionDTO>();
-		Query<Function> q = ofy().load().type(Function.class)
-				.ancestor(project.getKey()).filter("hasBeenDescribed", true);
-		for (Function function : q)
-			dtos.add(function.getDescriptionDTO());
-
-		ObjectMapper mapper = new ObjectMapper();
-		try
-		{
-		    return mapper.writeValueAsString(dtos);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	    return "";
-	}*/
  /*
 	public FunctionDescriptionDTO getDescriptionDTO()
 	{
@@ -414,6 +394,8 @@ public class Function extends Artifact
 			System.out.println("-->>>> FUNCTION ("+this.getID()+") "+this.name+" : write entry in test job queue");
 			FunctionCommand.writeTestJobQueue(this.getID());
 		}
+		ofy().save().entity(this).now();
+
 	}
 
 	private void onWorkerEdited(FunctionDTO dto, String projectId)
@@ -521,7 +503,7 @@ public class Function extends Artifact
 	{
 		microtaskOutCompleted();
 		if( dto.inDispute ){
-			notifyFunctionUseless(dto.disputeText);
+			notifyFunctionUseless(dto.disputeFunctionText);
 		}
 		else{
 			onWorkerEdited(dto, projectId);
@@ -541,13 +523,13 @@ public class Function extends Artifact
 		if (dto.noFunction)
 		{
 			// Create a new function for this call, spawning microtasks to create it.
-			callee = new Function(pseudoFunctionName, pseudoFunctionDescription, this, projectId);
+			callee = new Function(pseudoFunctionName, pseudoFunctionDescription, this.getID(), projectId);
 			callee.storeToFirebase(projectId);
 			dto.functionId = callee.getID();
 		}
 		// Have the callee let us know when it's tested (which may already be true;
 		// signal sent immediately in that case)
-		FunctionCommand.addDependency(dto.functionId, this.getID(),pseudoFunctionName, pseudoFunctionDescription);
+		FunctionCommand.addPseudocaller(dto.functionId, this.getID(),pseudoFunctionName, pseudoFunctionDescription);
 	}
 
 	public void writeDescriptionCompleted(FunctionDescriptionDTO dto, String projectId)
@@ -715,9 +697,11 @@ public class Function extends Artifact
 	}
 
 	// Notifies the function that it has a new caller function
-	public void addCaller(Function function)
+	public void addCaller(long functionId)
 	{
-		callers.add(function.getID());
+		//remove the function from the pseudocaller list
+		removePseudocaller(functionId);
+		callers.add(functionId);
 		if( !isNeeded() )
 			reactiveFunction();
 
@@ -725,26 +709,47 @@ public class Function extends Artifact
 	}
 
 	// Notifies the function that it is no longer called by function
-	public void removeCaller(Function function)
+	public void removeCaller(long functionId)
 	{
-		callers.remove((Ref<Function>) Ref.create(function.getKey()));
+		//remove the function from the pseudocaller list
+		removePseudocaller(functionId);
+		callers.remove(functionId);
+
 		//if is not a function of the API and is not animore called by anyone means that is not anymore needed
 		if( ! this.isAPIFunction && this.callers.isEmpty())
-			this.isNeeded=false;
+			setNeeded(false);
+
 		ofy().save().entity(this).now();
 	}
-
-	public void addDependency(long newPseudoCaller, String pseudoFunctionName, String pseudoFunctionDescription)
+	public void removePseudocaller(long functionId)
 	{
+		int index = pseudoCallersId.indexOf(functionId);
+		if(index!=-1){
+			pseudoCallersId.remove(index);
+			pseudoCallersName.remove(index);
+			pseudoCallersDescription.remove(index);
+		}
+		ofy().save().entity(this).now();
+
+
+	}
+	public void addPseudocaller(long pseudoCallerId, String pseudoCallerName, String pseudoCallerDescription)
+	{
+		//if the functon has not yet been described and is not needed creates a new write description microtask
+		//this is needed because the write function description microtask was disputed and so the function
+		//has never been described
+		if( (! hasBeenDescribed()) && (! isNeeded()) && pseudoCallersId.isEmpty() )
+			makeMicrotaskOut(new WriteFunctionDescription(this, pseudoCallerDescription, pseudoCallerId, projectId));
+
+
 		//add it to the lists
-		pseudoCallers.add(newPseudoCaller);
-		pseudoCallersDescription.add(pseudoFunctionDescription);
-		pseudoCallersName.add(pseudoFunctionName);
+		pseudoCallersId.add(pseudoCallerId);
+		pseudoCallersDescription.add(pseudoCallerDescription);
+		pseudoCallersName.add(pseudoCallerName);
 
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed())
-			sendDescribedNotification(newPseudoCaller, pseudoFunctionName);
-
+			sendDescribedNotification(pseudoCallerId, pseudoCallerName);
 		ofy().save().entity(this).now();
 	}
 
@@ -801,7 +806,7 @@ public class Function extends Artifact
 		for (long callerID : callers)
 			FunctionCommand.calleeBecomeUseless(callerID, this.getID(), disputeFunctionText);
 
-		for (long pseudoCallerID : pseudoCallers)
+		for (long pseudoCallerID : pseudoCallersId)
 			FunctionCommand.calleeBecomeUseless(pseudoCallerID, this.getID(), disputeFunctionText);
 
 
@@ -814,9 +819,11 @@ public class Function extends Artifact
 	private void reactiveFunction()
 	{
 		setNeeded(true);
-
+		//for each test send a notification that the function has been reactivated
 		for (long testID : tests)
 			TestCommand.functionReturnUsefull(testID);
+
+		runTestsIfReady();
 		lookForWork();
 	}
 
@@ -825,7 +832,7 @@ public class Function extends Artifact
 	{
 		// Loop over the psuedocallsites and pseudocallers in parallel
 		for (int i = 0; i < pseudoCallersName.size(); i++)
-			sendDescribedNotification(pseudoCallers.get(i) ,pseudoCallersName.get(i));
+			sendDescribedNotification(pseudoCallersId.get(i) ,pseudoCallersName.get(i));
 	}
 
 	private void sendDescribedNotification(long subscriberID, String pseudoFunctionName)

@@ -352,7 +352,7 @@ public class Project
 		else{
 			// load it from the datastore
 			Microtask mtask = ofy().transactionless().load().key(microtaskKey).now();
-			
+
 			// assign it to the worker
 			mtask.setWorkerId(workerID);
 			microtaskAssignments.put( workerID,  Microtask.keyToString(microtaskKey) );
@@ -392,7 +392,7 @@ public class Project
 	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID, Project project){
 
 		Microtask microtask = ofy().load().key( microtaskKey ).now();
-		
+
 		// submit only if the request come from
 		// the current assigned worker of the microtask
 		if( microtask.isAssignedTo(workerID) ){
@@ -436,10 +436,10 @@ public class Project
 			}
 			else
 				queueReviewMicrotask(microtaskKey, workerID);
-	
+
 			resetIfAllSkipped( microtaskKey );
 			ofy().save().entity(this).now();
-	
+
 			MicrotaskCommand.skip( microtaskKey, workerID);
 		}
 	}
@@ -491,24 +491,26 @@ public class Project
 
 		// retrieve the assigned microtask for the workerId
 		String microtaskKeyString        = microtaskAssignments.get(workerID);
-		Key<Microtask> currentAssignment = Microtask.stringToKey(microtaskKeyString);
+		if(microtaskKeyString!=null)
+		{
+			Key<Microtask> currentAssignment = Microtask.stringToKey(microtaskKeyString);
 
-		// TODO: if the current assignment is a review, this should go in the review queue!
-		// if a current assignment exists requeue it
-		if (currentAssignment != null){
-			Microtask microtask= ofy().load().key(currentAssignment).now();
-			if(microtask.microtaskName()!="Review")
-				queueMicrotask( currentAssignment, workerID);
-			else
-				queueReviewMicrotask(currentAssignment, workerID);
+			// TODO: if the current assignment is a review, this should go in the review queue!
+			// if a current assignment exists requeue it
+			if (currentAssignment != null){
+				Microtask microtask= ofy().load().key(currentAssignment).now();
+				if(microtask.microtaskName()!="Review")
+					queueMicrotask( currentAssignment, workerID);
+				else
+					queueReviewMicrotask(currentAssignment, workerID);
+			}
+			// set null to the assignments of the workerID
+			microtaskAssignments.put( workerID, null);
+
+			// save the queue and the assignments
+			ofy().save().entity(this).now();
+			FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
 		}
-		// set null to the assignments of the workerID
-		microtaskAssignments.put( workerID, null);
-
-		// save the queue and the assignments
-		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
-
 		// write to firebase that the worker logged out
 		FirebaseService.writeWorkerLoggedOut( workerID, this.getID());
 	}

@@ -147,7 +147,8 @@ public abstract class TestCommand extends Command
 		}
 		public void execute(Test test, String projectId)
 		{
-			test.setNeeded(false);
+			if(test!=null)
+				test.setNeeded(false);
 		}
 
 	}

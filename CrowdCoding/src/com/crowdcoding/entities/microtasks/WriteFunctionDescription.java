@@ -26,7 +26,7 @@ import com.googlecode.objectify.annotation.Parent;
 public class WriteFunctionDescription extends Microtask
 {
 	@Parent @Load private Ref<Function> function;
-	@Load private Ref<Function> caller;
+	private long callerId;
 	private String callDescription;
 
 	// Default constructor for deserialization
@@ -35,20 +35,20 @@ public class WriteFunctionDescription extends Microtask
 	}
 
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, String callDescription, Function caller, String projectId)
+	public WriteFunctionDescription(Function function, String callDescription, long callerId, String projectId)
 	{
 		super(projectId);
 		this.submitValue = 8;
 		this.callDescription = callDescription;
 
 		this.function = (Ref<Function>) Ref.create(function.getKey());
-		this.caller = (Ref<Function>) Ref.create(caller.getKey());
+		this.callerId = callerId;
 		ofy().save().entity(this).now();
 
 		FirebaseService.writeMicrotaskCreated(new WriteFunctionDescriptionInFirebase(id,this.microtaskTitle(), this.microtaskName(),
 				function.getName(),
 				function.getID(),
-				false, submitValue,callDescription, caller.getID()),
+				false, submitValue,callDescription, callerId),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 
@@ -57,7 +57,7 @@ public class WriteFunctionDescription extends Microtask
 
 	public Microtask copy(String projectId)
 	{
-		return new WriteFunctionDescription( (Function) getOwningArtifact(),this.callDescription,this.caller.getValue(), projectId);
+		return new WriteFunctionDescription( (Function) getOwningArtifact(),this.callDescription,this.callerId, projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -110,9 +110,9 @@ public class WriteFunctionDescription extends Microtask
 		}
 	}
 
-	public Function getCaller()
+	public long getCaller()
 	{
-		return caller.get();
+		return callerId;
 	}
 
 	public String microtaskTitle()

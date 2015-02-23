@@ -344,13 +344,29 @@ angular
         var paramKeyword = '@param ';
         var returnKeyword = '@return ';
         var paramDescriptionNames = [];
+        var paramNumber = 0;
+        var returnNumber=0;
         // Loop over every line of the function description, checking for lines that have @param or @return
         var descriptionLines = getDescription(ast);
         for (var i = 0; i < descriptionLines.length; i++) {
-            var line = descriptionLines[i];
-            errorMessages = errorMessages.concat(checkForValidTypeNameDescription(paramKeyword, line, paramDescriptionNames));
-            errorMessages = errorMessages.concat(checkForValidTypeNameDescription(returnKeyword, line));
+
+            var line = descriptionLines[i].replace(/\s{2,}/g, ' ');
+
+            if( line.search(paramKeyword)!==-1 ){
+                paramNumber++;
+                errorMessages = errorMessages.concat(checkForValidTypeNameDescription(paramKeyword, line, paramDescriptionNames));
+            } else if( line.search(returnKeyword)!==-1 ){
+                returnNumber++;
+                errorMessages = errorMessages.concat(checkForValidTypeNameDescription(returnKeyword, line));
+            }
+
         }
+
+        //check that the function has at least 1 parameter and exaclty 1 return
+        if(paramNumber===0)
+            errorMessages.push("The function must have at least one parameter");
+        if(returnNumber!==1)
+            errorMessages.push("The function must have 1 return type");
 
         //if the description doesn't contain error checks the consistency between the parameter in the descriptions and the
         // ones in the header
@@ -375,30 +391,24 @@ angular
     // it returns an empty string. If not, an error message is returned.
     function checkForValidTypeNameDescription(keyword, line, paramDescriptionNames) {
         var errorMessage = [];
-        //subtitues multiple spaces with a single space
-        line = line.replace(/\s{2,}/g, ' ');
-
-        var loc = line.search(keyword);
-
-        if (loc != -1) {
-            var type = findNextWord(line, loc + keyword.length);
-            var name = findNextWord(line, loc + keyword.length + type.length + 1);
+        var loc=line.search(keyword);
+        var type = findNextWord(line, loc + keyword.length);
+        var name = findNextWord(line, loc + keyword.length + type.length + 1);
 
 
-            if (paramDescriptionNames !== undefined)
-                paramDescriptionNames.push(name);
+        if (paramDescriptionNames !== undefined)
+            paramDescriptionNames.push(name);
 
-            if (type == -1)
-                errorMessage.push("The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.");
-            else if (!ADTService.isValidTypeName(type))
-                errorMessage.push(type + ' is not a valid type name. Valid type names are ' + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).');
-            else if (keyword === '@param ' && !isValidName(name))
-                errorMessage.push(name + ' is not a valid name. Use upper and lowercase letters, numbers, and underscores.');
-            else if (keyword === '@param ' && !isValidParamDescription(line))
-                errorMessage.push(line + ' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] , [description]".');
-            else if (keyword === '@return ' && name != -1)
-                errorMessage.push('The return value must be in the form  " @return [Type]".');
-        }
+        if (type == -1)
+            errorMessage.push("The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.");
+        else if (!ADTService.isValidTypeName(type))
+            errorMessage.push(type + ' is not a valid type name. Valid type names are ' + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).');
+        else if (keyword === '@param ' && !isValidName(name))
+            errorMessage.push(name + ' is not a valid name. Use upper and lowercase letters, numbers, and underscores.');
+        else if (keyword === '@param ' && !isValidParamDescription(line))
+            errorMessage.push(line + ' Is not a valid description line. The description line of each parameter should be in the following form: " @param [Type] [name] , [description]".');
+        else if (keyword === '@return ' && name != -1)
+            errorMessage.push('The return value must be in the form  " @return [Type]".');
 
         return errorMessage;
     }
@@ -418,9 +428,7 @@ angular
 
         var errors = [];
 
-        if( paramDescriptionNames.length == 0 )
-            errors.push('Please, use at least one parameter');
-        else if( paramDescriptionNames.length !== paramHeaderNames.length )
+        if( paramDescriptionNames.length !== paramHeaderNames.length )
             errors.push('The number of the parameter in the description does not match the number of parameters in the function header');
         else {
             var orderError = "";

@@ -4,66 +4,90 @@
 
 	<div class="section-content job-description" >
 
-		<div ng-if="reviewed.promptType == 'SKETCH'">
-			The worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong>.
+		<div ng-if="reviewed.submission.inDispute">
+			The worker reported the following sketch of function as not implementable
 		</div>
+		<div ng-if="! reviewed.submission.inDispute">
+			<div ng-if="reviewed.promptType == 'SKETCH'">
+				The worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong>.
+			</div>
 
-		<div ng-if="reviewed.promptType == 'RE_EDIT'">
-			The worker was asked to edit the function <strong>{{ reviewed.owningArtifact }}</strong> to address the issue reported by the crowd.
+			<div ng-if="reviewed.promptType == 'RE_EDIT'">
+				The worker was asked to edit the function <strong>{{ reviewed.owningArtifact }}</strong> to address the issue reported by the crowd.
+			</div>
+
+			<div ng-if="reviewed.promptType == 'DESCRIPTION_CHANGE'">
+				The worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong> after the  signature change of called function .
+			</div>
+
+			<div ng-if="reviewed.promptType=='REMOVE_CALLEE'">
+				The worker was asked to remove the calle <strong>{{callee.getName()}}</strong> from the function <strong>{{ reviewed.owningArtifact }}</strong> because the crowd reported the calle as not implementable.
+			</div>
 		</div>
-
-		<div ng-if="reviewed.promptType == 'DESCRIPTION_CHANGE'">
-			The worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong> after the  signature change of called function .
-		</div>
-
-		<div ng-if="reviewed.promptType=='REMOVE_CALLEE'">
-			The worker was asked to remove the calle <strong>{{callee.getName()}}</strong> from the function <strong>{{ reviewed.owningArtifact }}</strong> because the crowd reported the calle as not implementable.
-		</div>
-
 		<span>Can you rate this work?</span>
 	</div>
 
 </div>
 
-<div class="section section-description-2" ng-if="reviewed.disputeText.length > 0">
-	<div class="section-title" >
-		<div class="dot bg-color"></div>REPORT DESCRIPTION
-	</div>
-	<div class="section-content" >
-		{{reviewed.disputeText}}
-	</div>
-</div>
-
-<div ng-if="reviewed.promptType == 'REMOVE_CALLEE'">
-	<div class="section section-description-2">
+<div ng-if = "! reviewed.submission.inDispute">
+	<div class="section section-description-2" ng-if="reviewed.disputeText.length > 0">
 		<div class="section-title" >
-			<div class="dot bg-color"></div>callee to remove
+			<div class="dot bg-color"></div>REPORT DESCRIPTION
 		</div>
-		<div class="section-content no-padding" >
-			<ace-read-js code="callee.getSignature()" ></ace-read-js>
-		</div>
-	</div>
-</div>
-
-
-<div ng-if="reviewed.promptType == 'DESCRIPTION_CHANGE'">
-	<div class="section section-description-2">
-		<div class="section-title" >
-			<div class="dot bg-color"></div>different callee function signature
-		</div>
-		<div class="section-content no-padding" >
-			<ace-read-js code="calledDiffCode" mode="diff" ></ace-read-js>
+		<div class="section-content" ng-if="reviewed.disputeText.length > 0" >
+			{{reviewed.disputeText}}
 		</div>
 	</div>
-</div>
 
-<div >
-	<div class="section section-review">
+
+	<div ng-if="reviewed.promptType == 'REMOVE_CALLEE'">
+		<div class="section section-description-2">
+			<div class="section-title" >
+				<div class="dot bg-color"></div>callee to remove
+			</div>
+			<div class="section-content no-padding" >
+				<ace-read-js code="callee.getSignature()" ></ace-read-js>
+			</div>
+		</div>
+	</div>
+
+
+	<div ng-if="reviewed.promptType == 'DESCRIPTION_CHANGE'">
+		<div class="section section-description-2">
+			<div class="section-title" >
+				<div class="dot bg-color"></div>different callee function signature
+			</div>
+			<div class="section-content no-padding" >
+				<ace-read-js code="calledDiffCode" mode="diff" ></ace-read-js>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="section section-review" >
 		<div class="section-title" >
 			<div class="dot bg-color"></div>submitted function code
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
+		</div>
+	</div>
+</div>
+
+<div ng-if = "reviewed.submission.inDispute">
+	<div class="section section-description-2">
+		<div class="section-title" >
+			<div class="dot bg-color"></div>reported function
+		</div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="review.functionCode" mode="diff" ></ace-read-js>
+		</div>
+	</div>
+
+	<div class="section section-review">
+		<div class="section-title" ><div class="dot bg-color"></div>REPORT DETAILS</div>
+		<div class="section-content" >
+			{{reviewed.submission.disputeFunctionText}}
 		</div>
 	</div>
 </div>
