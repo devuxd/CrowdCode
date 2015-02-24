@@ -656,7 +656,7 @@ angular
 
 			// If there is currently a pseudocall that is being replaced, highlight that in a special
 			// color
-			if (highlightPseudoCall !== false)
+			if (highlightPseudoCall)
 			{
 
 				var pseudoCallCol =  line.indexOf(highlightPseudoCall+"(") ==-1 ? line.indexOf(highlightPseudoCall+" ") : line.indexOf(highlightPseudoCall+"(");

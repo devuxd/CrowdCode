@@ -28,7 +28,6 @@ import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.WriteCall;
 import com.crowdcoding.entities.microtasks.WriteFunction;
 import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
-import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MessageReceived;
@@ -61,7 +60,6 @@ public class Function extends Artifact
 	private List<String>  testsDescription = new ArrayList<String>();
 	private int           linesOfCode = 0;
 	private boolean 	  isReadOnly= false;
-	private boolean 	  isAPIFunction = false;
 	private boolean 	  waitForTestResult=true;
 	private Queue<Ref<Microtask>> queuedWriteTestCase = new LinkedList<Ref<Microtask>>();
 
@@ -99,7 +97,7 @@ public class Function extends Artifact
 		super(projectId);
 		//this.needsDebugging=true;
 		this.isReadOnly=readOnly;
-		this.isAPIFunction=true;
+		this.isAPIArtifact=true;
 		isWritten = false;
 		writeDescriptionCompleted(new FunctionDescriptionDTO( name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code), projectId);
 	}
@@ -230,17 +228,13 @@ public class Function extends Artifact
 		return testCaseOut;
 	}
 
-	public boolean setTestCaseOut()
-	{
-		return testCaseOut;
-	}
-
 
 	// ------- TEST CASES
 
 	private void testCaseOutCompleted()
 	{
 		testCaseOut=false;
+		ofy().save().entity(this).now();
 	}
 
 	public List<Ref<Test>> getTestCases(String projectId)
@@ -269,11 +263,15 @@ public class Function extends Artifact
 	// Adds the specified test for this function
 	public void addTest(long testID, String testDescription)
 	{
+
 		this.needsDebugging=true;
 		testsId.add(testID);
 		testsImplemented.add(false);
 		testsDescription.add(testDescription);
 		ofy().save().entity(this).now();
+		//if the function is not needed send the notification
+		if( ! isNeeded())
+			TestCommand.functionBecomeUseless(testID);
 	}
 
  /*
@@ -321,6 +319,7 @@ public class Function extends Artifact
 	// If there is a microtasks available, marks it as ready to be done.
 	protected void lookForWork()
 	{
+		System.out.println("needed"+this.isNeeded+"microtaskOut"+microtaskOut+"testCaseOut"+testCaseOut);
 		//if the function is needed
 		if(this.isNeeded){
 			// If there is currently not already a microtask being done on this function,
@@ -459,10 +458,10 @@ public class Function extends Artifact
 				newPseudoFunctionsDescription.add(submittedPseudoFunction.description);
 				newPseudoFunctionsName.add(submittedPseudoFunction.name);
 			}
-			this.pseudoFunctionsName=newPseudoFunctionsName;
-			this.pseudoFunctionsDescription= newPseudoFunctionsDescription;
 
 		}
+		this.pseudoFunctionsName=newPseudoFunctionsName;
+		this.pseudoFunctionsDescription= newPseudoFunctionsDescription;
 
 		// Update the list of pseudocalls to match the current (distinct) pseudocalls now in the code
 
@@ -507,8 +506,9 @@ public class Function extends Artifact
 	{
 		microtaskOutCompleted();
 		if( dto.inDispute ){
-			queueMicrotask(new WriteFunction(this, projectId), projectId);
 			notifyFunctionUseless(dto.disputeFunctionText);
+			queueMicrotask(new WriteFunction(this, projectId), projectId);
+
 		}
 		else{
 			onWorkerEdited(dto, projectId);
@@ -727,8 +727,8 @@ public class Function extends Artifact
 
 	private void checkIfNeeded()
 	{
-		//if is not a function of the API and is not animore called by anyone means that is not anymore needed
-		if( ! this.isAPIFunction && this.callersId.isEmpty() && this.pseudoCallersId.isEmpty())
+		//if is not animore called by anyone means that is not anymore needed
+		if( this.callersId.isEmpty() && this.pseudoCallersId.isEmpty())
 			setNeeded(false);
 
 
@@ -814,6 +814,8 @@ public class Function extends Artifact
 	//Notify all the callers and all the test of this function that is not anymore active
 	private void notifyFunctionUseless(String disputeFunctionText)
 	{
+		System.out.println("Function ("+this.name+"): is useless");
+
 		setNeeded(false);
 
 		for (long callerID : callersId)
@@ -832,6 +834,7 @@ public class Function extends Artifact
 	private void reactiveFunction()
 	{
 		setNeeded(true);
+		System.out.println("functrion "+this.getName()+" reactivated");
 		//for each test send a notification that the function has been reactivated
 		for (long testId : testsId)
 			TestCommand.functionReturnUsefull(testId);
@@ -907,19 +910,6 @@ public class Function extends Artifact
 
 		}
 	}
-
-	// Looks up a Function object by name. Returns the function or null if no such function exists
-	/* public static Function lookupFunction(String name, Project project)
-	{
-		//TO FIX NOT WORKING
-		Ref<Function> ref = ofy().load().type(Function.class).ancestor(project.getKey()).filter("name", name).first();
-		System.out.println("--> FUNCTION "+name+": lookup "+ref);
-
-		if (ref == null)
-			return null;
-		else
-			return ref.get();
-	}*/
 
 	// Looks through a string of a function's implementation and returns a list
 	// of lines (may be empty) which are the pseudocode for the function call

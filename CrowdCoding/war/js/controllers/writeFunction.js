@@ -17,8 +17,12 @@ angular
             $scope.dispute.active = ! $scope.dispute.active;
             if( $scope.dispute.active )
                 $scope.dispute.text = '';
-        } 
+        }
     };
+
+     if( angular.isDefined($scope.microtask.reissuedFrom) )
+         $scope.funct = (new FunctionFactory($scope.reissuedMicrotask.submission));
+
 
     if ($scope.microtask.promptType == 'DESCRIPTION_CHANGE') {
         var oldCode = $scope.microtask.oldFullDescription.split("\n");
@@ -38,14 +42,12 @@ angular
     }
     if ($scope.microtask.promptType == 'REMOVE_CALLEE') {
         $scope.callee= functionsService.get($scope.microtask.calleeId);
+        $scope.funct.removePseudoFunction( $scope.callee.getName());
     }
+
+    $scope.code=$scope.funct.getFullCode();
+ 
     
-
-    if( angular.isDefined($scope.microtask.reissuedFrom) )
-        $scope.code = (new FunctionFactory($scope.reissuedMicrotask.submission)).getFullCode();
-    else
-        $scope.code = $scope.funct.getFullCode();
-
     
     function collectFormData(event, microtaskForm) {
         var error = "";

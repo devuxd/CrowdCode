@@ -141,9 +141,10 @@ public /*abstract*/ class Microtask
 	public void skip(String workerID, String projectId)
 	{
 		// Increment the point value by 10
-		this.submitValue *= 1.5;
+		this.submitValue *= 1.2;
 		this.workerId = "";
 		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskPoints(Microtask.keyToString(this.getKey()), this.submitValue, projectId);
 		HistoryLog.Init(projectId).addEvent(new MicrotaskSkipped(this, workerID));
 	}
 
@@ -246,11 +247,11 @@ public /*abstract*/ class Microtask
 	public boolean isAssignedTo(String workerId){
 		return this.getWorkerId() != null && this.getWorkerId().equals( workerId );
 	}
-	
+
 	public void setCanceled(Boolean value){
 		canceled = value;
 	}
-	
+
 	public Boolean isCanceled(){
 		return canceled;
 	}

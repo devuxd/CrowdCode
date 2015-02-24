@@ -1,0 +1,56 @@
+<div class="section section-description " >
+	
+	<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+
+	<div class="section-content job-description" >
+
+		<div>
+			The worker reported the following test for the function <strong>{{funct.getName()}}</strong>
+		</div>
+		<span>Can you rate this work?</span>
+	</div>
+</div>
+
+
+<div class="section section-description">
+	<div class="section-title">
+		<div class="dot bg-color"></div>function signature
+	</div>
+	<div class="section-content no-padding" >
+		<ace-read-js code="funct.getSignature()"></ace-read-js>
+	</div>
+</div>
+
+<div class="section section-description">
+	<div class="section-title" ><div class="dot bg-color"></div>test case</div>
+	<div class="section-content" >
+		{{test.getDescription()}}
+	</div>
+</div>
+
+<div class="section section-description">
+	<div  class="section-title" ><div class="dot bg-color"></div>TEST</div>
+	<div class="section-content" >
+		<table style="width:100%" class="test">
+			<tr ng-repeat="(inputKey,input) in test.getSimpleTest().inputs track by $index">
+				<td>{{funct.paramNames[$index]}}</td>
+				<td>
+					<div ace-read-json ng-model="input" ></div>
+				</td>
+			</tr>
+			<tr >
+				<td>test output</td>
+				<td>
+					<div ace-read-json ng-model="test.getSimpleTest().output" ></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="section section-review">
+	<div class="section-title" ><div class="dot bg-color"></div>REPORT DETAILS</div>
+	<div class="section-content" >
+		{{reviewed.submission.description}}
+	</div>
+</div>

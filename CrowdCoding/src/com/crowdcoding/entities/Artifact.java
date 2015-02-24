@@ -30,6 +30,8 @@ public /*abstract*/ class Artifact
 	protected Ref<Microtask> microtaskOut;		// Is there an associated microtask currently in progress?
 	//true if the artifact is still needed false otherwise
 	protected boolean isNeeded;
+	protected boolean isAPIArtifact = false;
+
 
 	// Default constructor for deserialization
 	protected Artifact()
@@ -62,10 +64,12 @@ public /*abstract*/ class Artifact
 
 	public void setNeeded(boolean isNeeded)
 	{
-		this.isNeeded = isNeeded;
-		ofy().save().entity(this).now();
+		if(! isAPIArtifact){
+			this.isNeeded = isNeeded;
+			ofy().save().entity(this).now();
 
-		lookForWork();
+
+		}
 
 	}
 

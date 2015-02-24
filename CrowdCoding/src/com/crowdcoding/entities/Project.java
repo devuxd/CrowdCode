@@ -10,9 +10,12 @@ import java.util.Map;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionDescriptionsDTO;
+import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -230,8 +233,9 @@ public class Project
 		}
 		// exclude the worker who submitted the microtask that spawned the review
 		// from the workers that can reach this review
-		addPermExcludedWorkerForMicrotask(microtaskKey, excludedWorkerID);
-
+		if(excludedWorkerID!=null){
+			addPermExcludedWorkerForMicrotask(microtaskKey, excludedWorkerID);
+		}
 		// save the review queue in Objectify and Firebase
 		ofy().save().entity(this).now();
 		FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), this.getID());
@@ -406,13 +410,50 @@ public class Project
 			// If reviewing is enabled and the microtask
 			// is not in [Review, ReuseSearch,DebugTestFailure],
 			// spawn a new review microtask
-			if (reviewsEnabled && !( microtaskType.equals(Review.class) || microtaskType.equals(ReuseSearch.class) || microtaskType.equals(DebugTestFailure.class) ) ){
-				MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+			try {
+			if (reviewsEnabled && !( microtaskType.equals(Review.class)) ){
+				//temporary fix for the review
+				if(microtaskType.equals(ReuseSearch.class))
+				{
+
+					ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
+					System.out.println("projkectasdsdg  "+dto.noFunction);
+					if ( ! dto.noFunction)
+					{
+						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+					}
+					else{
+						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+					}
+
+				}
+				else if(microtaskType.equals(DebugTestFailure.class))
+				{
+
+					FunctionDTO dto = (FunctionDTO)DTO.read(jsonDTOData, FunctionDTO.class);
+					if ( dto.testId != null)
+					{
+						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+					}
+					else{
+						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+					}
+				}
+				else{
+					MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+				}
 			}
 
 			// else submit the microtask
 			else {
 				MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+			}
+			} catch( JsonParseException e) {
+				e.printStackTrace();
+			} catch( JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -429,10 +470,7 @@ public class Project
 			// Add the work back to the appropriate queue
 			if(microtask.microtaskName()!="Review")
 			{
-				if(this.reviewsEnabled)
-					queueMicrotask( microtaskKey, workerID);
-				else
-					queueMicrotask( microtaskKey, null);
+				queueMicrotask( microtaskKey, null);
 			}
 			else
 				queueReviewMicrotask(microtaskKey, workerID);
@@ -449,26 +487,23 @@ public class Project
 	// If so, resets the excluded workers to give workers another chance.
 	private void resetIfAllSkipped( Key<Microtask> microtaskKey )
 	{
+		String microtaskKeyStringified = Microtask.keyToString(microtaskKey);
 		// retrieve the excluded workers for the microtask
-		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get( Microtask.keyToString(microtaskKey) );
-//		System.out.println("PROJECT: EXCLUDED WORKER "+excludedWorkersForMicrotask);
-//		System.out.println("PROJECT: loggedInWorkers WORKER "+loggedInWorkers);
+		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get(microtaskKeyStringified);
 
 		// if all the logged in workers are excluded
-		if (excludedWorkersForMicrotask.containsAll(loggedInWorkers))
+		if (excludedWorkersForMicrotask!=null && excludedWorkersForMicrotask.containsAll(loggedInWorkers))
 		{
-			// clear the excluded
-			excludedWorkersForMicrotask.clear();
-
 			// Add back the permanently excluded workers
-			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get( Microtask.keyToString(microtaskKey) );
+			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get( microtaskKeyStringified );
+
+			excludedWorkers.remove(microtaskKeyStringified);
+
 			if (permanentlyExcludedWorkersForMicrotask != null)
-				excludedWorkersForMicrotask.addAll(permanentlyExcludedWorkersForMicrotask);
-//			System.out.println("PROJECT: permanentlyExcludedWorkersForMicrotask WORKER "+permanentlyExcludedWorkersForMicrotask);
-
-
+				excludedWorkers.put(microtaskKeyStringified, permanentlyExcludedWorkersForMicrotask);
 			ofy().save().entity(this).now();
 		}
+
 	}
 
 
@@ -500,9 +535,9 @@ public class Project
 			if (currentAssignment != null){
 				Microtask microtask= ofy().load().key(currentAssignment).now();
 				if(microtask.microtaskName()!="Review")
-					queueMicrotask( currentAssignment, workerID);
+					queueMicrotask( currentAssignment, null);
 				else
-					queueReviewMicrotask(currentAssignment, workerID);
+					queueReviewMicrotask(currentAssignment, null);
 			}
 			// set null to the assignments of the workerID
 			microtaskAssignments.put( workerID, null);

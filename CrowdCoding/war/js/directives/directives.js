@@ -881,7 +881,7 @@ angular
                 },
 
                 'ReuseSearch': function(news) {
-                    news.microtask.pseudoCall= news.microtask.callDescription;
+                    news.microtask.pseudoCall= news.microtask.pseudoFunctionDescription;
                     if(news.microtask.submission.noFunction === false)
                         news.editorHeader = functionsService.renderHeaderById(news.microtask.submission.functionId);
                 },
