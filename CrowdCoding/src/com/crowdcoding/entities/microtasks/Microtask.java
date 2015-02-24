@@ -140,7 +140,7 @@ public /*abstract*/ class Microtask
 
 	public void skip(String workerID, String projectId)
 	{
-		// Increment the point value by 10
+		// Increment the point value by *1.5
 		this.submitValue *= 1.5;
 		this.workerId = "";
 		ofy().save().entity(this).now();

@@ -81,7 +81,7 @@ public class Review extends Microtask
 		Microtask submittedMicrotask = Microtask.find(microtaskKeyUnderReview).now();
 
 		// Write the review to firebase
-		FirebaseService.writeReview(reviewDTO, Microtask.keyToString(submittedMicrotask.getKey()) , projectId);
+		FirebaseService.writeReview(reviewDTO, this.id, Microtask.keyToString(submittedMicrotask.getKey()) , projectId);
 
 		// set default award points to 0
 		int points = 0;

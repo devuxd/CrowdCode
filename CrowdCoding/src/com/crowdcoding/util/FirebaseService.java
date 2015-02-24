@@ -164,9 +164,10 @@ public class FirebaseService
 	}
 
 	// Stores the specified review to firebase
-	public static void writeReview(ReviewDTO dto, String microtaskKey , String projectId)
+	public static void writeReview(ReviewDTO dto, Long reviewId, String microtaskKey , String projectId)
 	{
 		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, projectId);
+		enqueueWrite(reviewId.toString(), "/microtasks/" + microtaskKey + "/review/reviewId.json", HTTPMethod.PUT, projectId);
 	}
 
 	public static void writeSetting(String name, String value, String projectId){
