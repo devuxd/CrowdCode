@@ -145,6 +145,7 @@
 			<span ng-if="sort.column == 'data.owningArtifact' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
 			<span ng-if="sort.column == 'data.owningArtifact' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
 		</th>
+		<!--
 		<th ng-click="changeSorting('status')">
 			Status
 			<span ng-if="sort.column == 'status' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
@@ -170,20 +171,32 @@
 			<span ng-if="sort.column == 'completedIn' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
 			<span ng-if="sort.column == 'completedIn' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
 		</th>
+		-->
+		<th>Review</th>
+		<th>Review Data</th>
 	</thead>
 	
 	<tbody>
 		<tr ng-repeat="(key,mtask) in filter ? filterMicrotasks : microtasks | orderBy:sort.column:sort.descending" microtask-details="mtask" ng-click="showDetails" >
 
-			<td><span ng-bind="mtask.data.id"></span></td>
+			<td><span ng-bind="mtask.$id"></span></td>
 			<td><span ng-bind="mtask.data.type"></span></td>
 			<td><span ng-bind="mtask.data.owningArtifact"></span></td>
+			<!--
 			<td><span ng-bind="mtask.status"></span></td>
-
 			<td ><span ng-bind="mtask.spawnedAt | date : 'short'"></span></td>
 			<td ><span ng-bind="mtask.assignedAt | date : 'short'"></span></td>
 			<td ><span ng-bind="mtask.completedAt | date : 'short'"></span></td>
 			<td ><span ng-bind="mtask.completedIn | date : 'm:ss'"></span></td>
+			-->
+			<td>
+				<div ng-if="mtask.data.review != undefined" ng-init="review = mtask.data.review">
+					<strong ng-if="review.qualityScore<3">reissued</strong>
+					<strong ng-if="review.qualityScore>3">approved</strong>
+
+					<span>{{review.qualityScore}}</span>
+				</div>
+			</td>
 		</tr>
 	</tbody>
 </table>

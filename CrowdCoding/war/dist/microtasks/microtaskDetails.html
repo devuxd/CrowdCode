@@ -1,4 +1,4 @@
-<div class="modal" tabindex="-1" role="dialog" >
+<div class="modal microtask-detail" tabindex="-1" role="dialog" >
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -52,6 +52,14 @@
 							ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
 							readonly="readonly" 
 							ng-model="submission.code">
+						</div>
+
+						<b>Pseudo Functions</b>
+						<div ng-repeat="f in submission.pseudoFunctions"
+							class="ace-editor" 
+							ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
+							readonly="readonly" 
+							ng-model="f.description">
 						</div>
 						
 					</li>
@@ -118,18 +126,54 @@
 
 					</li>
 
+					<li class="list-group-item" ng-if="data.type == 'WriteTestCases' && data.disputeDescription.length > 0">
+						Disputed test case 
+						<strong class="pull-right" ng-bind="data.disputedTestCase"></strong>
+						<span class="clearfix"></span>
+					</li>
+					<li class="list-group-item" ng-if="data.type == 'WriteTestCases' && data.disputeDescription.length > 0">
+						Dispute description
+						<strong class="pull-right" ng-bind="data.disputeDescription"></strong>
+						<span class="clearfix"></span>
+					</li>
 					<li class="list-group-item"  ng-if="data.type == 'WriteTestCases'">
 
-						<ul  if="submission.disputeText == undefined">
-							<li ng-repeat="testcase in submission.testCases" ng-bind="testcase.text"></li>
+						<ul  if="submission.isFunctionDispute">
+							<li ng-repeat="testcase in submission.testCases" class="testcase.added ? 'added' : testcase.removed? 'removed' : ''" ng-bind="testcase.text"></li>
 						</ul>
-						<div if="submission.disputeText != undefined" >
+						<div if="!submission.isFunctionDispute" >
 							Function signature disputed 
 							<pre ng-bind="submission.disputeText"></pre>
 						</div>
 					</li>
 
 					<li class="list-group-item"  ng-if="data.type == 'WriteTest'">
+
+						<div ng-if="data.promptType == 'FUNCTION_CHANGED'">
+							<span> Diff of the function signature </span>
+
+							<div class="ace-editor" 
+								ui-ace="{ onLoad : aceLoaded , mode: 'diff', theme:'xcode', showGutter: false }" 
+								readonly="readonly" 
+								ng-model="descriptionDiff"
+							></div>
+						</div>
+
+						<div ng-if="data.promptType == 'TESTCASE_CHANGED'">
+							<span> Diff of the testcase description </span>
+
+							<div class="ace-editor" 
+								ui-ace="{ onLoad : aceLoaded , mode: 'diff', theme:'xcode', showGutter: false }" 
+								readonly="readonly" 
+								ng-model="descriptionDiff"
+							></div>
+						</div>
+
+						<div ng-if=" data.promptType == 'WRITE' || data.promptType == 'CORRECT' ">
+							<pre>{{function.description}}</pre>
+						</div>
+
+
 						<table ng-if=" submission.disputeText.length == 0 " class="table">
 							<tr >
 								<th colspan="2">Inputs</th>
@@ -166,6 +210,8 @@
 							Function signature disputed 
 							<pre ng-bind="submission.disputeText"></pre>
 						</div>
+
+
 					</li>
 
 					</ng-if>

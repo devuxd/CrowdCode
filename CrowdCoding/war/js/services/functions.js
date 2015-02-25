@@ -547,7 +547,7 @@ angular
 	    		for(var i=0; i<functionCalled.paramNames.length; i++)
 				{
 					if(functionCalled.paramDescriptions!==undefined && functionCalled.paramDescriptions.length>i)
-						fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ' , ' + functionCalled.paramDescriptions[i] + '\n';
+						fullDescription += '  @param ' + functionCalled.paramTypes[i] + ' ' + functionCalled.paramNames[i] + ', ' + functionCalled.paramDescriptions[i] + '\n';
 
 				}
 			}

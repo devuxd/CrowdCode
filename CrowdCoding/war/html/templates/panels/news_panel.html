@@ -15,7 +15,7 @@
 						<span ng-if="::(n.score <= 3)" class="reissued">REISSUED</span>
 						<span ng-if="::(n.score > 3)" class="accepted">ACCEPTED</span>
 					</div>
-					<span class="points">+{{::n.points}} pts</span>
+					<span class="points">{{::n.awardedPoints}}/<small>{{::n.maxPoints}}</small> pts</span>
 					
 			  		<div class="clearfix"></div>
 				</li>

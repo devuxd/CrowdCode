@@ -1,32 +1,63 @@
-<div ng-repeat="f in functions" ng-init="code = f.header+f.code; ">
-	<div  
-		class="ace-editor" 
-		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
-		readonly="readonly" 
-		ng-model="code">
-	</div>
-	<button class="btn btn-sm" ng-click="requestTestRun(f.id)">Request Test Run</button>
-	<div>
-		<div bs-collapse ng-model="testsPanel[f.id]" ng-init="testPanel[f.id] = -1">
-			<div ng-repeat="t in tests | filter : { functionID: f.id }" >
-				<a bs-collapse-toggle>
-					{{t.description}}
-				     - 
-				     <i ng-if="t.isImplemented">implemented</i>
-				     <i ng-if="!t.isImplemented">not implemented yet</i>
-				</a>
-				<div bs-collapse-target>
-				  	<div  
-				  		ng-if="t.isImplemented"
-						class="ace-editor" 
-						ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
-						readonly="readonly" 
-						ng-model="t.code">
-					</div>
-				</div>
-			</div>
-		</div>
-  	</div>
-
-  	<hr />
+<div class="form-group form-inline pull-left">
+  <label for="sel1">Functions :</label>
+  <select class="form-control" id="sel1" 
+  	ng-model="vm.selectedFunctionId"
+  	ng-change="vm.loadFunctionData()"
+  	ng-options="f.id as vm.functionName(f) for f in vm.all | orderBy:readOnly:false ">
+  </select>
 </div>
+
+<div class="form-group pull-right">
+	<button ng-click="vm.toggleDiffView()" class="btn btn-mini {{ vm.diffView ? 'btn-primary' : '' }}">Diff Mode</button>
+</div>
+<div class="clearfix"></div>
+
+
+<div ng-if="vm.selectedFunctionId == undefined">
+	select a function
+</div>
+
+<div ng-if="vm.selectedFunctionId != undefined">
+	
+	<h1>Contributions</h1>
+	<ul><li ng-repeat="(worker,c) in vm.contributors">{{worker}}, {{c.added}}++, {{c.removed}}--</li></ul>
+	<div ng-repeat="diffHtml in vm.diffHtml track by $index">
+		<span>{{diffHtml.worker}}</span>
+		<pre ng-bind-html="vm.renderHtml(diffHtml.html)"></pre>
+	</div>
+	
+
+	<div ng-if=" ! vm.diffView ">
+		<div class="form-group form-inline">
+		  <label for="version">Version:</label>
+		  <select class="form-control" id="sel1"
+		    ng-model="vm.selectedVersion" 
+		  	ng-change="vm.loadVersion()" >
+		  	<option value="{{v+1}}" ng-repeat="v in vm.getVersions()" ng-selected="v+1 == vm.selectedVersion">{{v+1}}</option>
+		  </select>
+		  
+		</div>
+		<div  
+			class="ace-editor" 
+			ui-ace="{ onLoad : vm.aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
+			readonly="readonly" 
+			ng-model="vm.code">
+		</div>
+	</div>
+
+	<div ng-if=" vm.diffView ">
+		<div ng-repeat="d in vm.diff track by $index">
+			<span> versions <strong>{{d.from}}-{{d.to}}</strong></span>
+			(<span> +{{ d.added }}</span>, <span> -{{ d.removed }}</span>)
+			<div  
+				class="ace-editor" 
+				ui-ace="{ onLoad : vm.aceLoaded, mode: 'diff', useWrapMode : true  }" 
+				readonly="readonly" 
+				ng-model="d.code">
+			</div>
+			<hr />
+		</div>
+	</div>
+
+</div>
+

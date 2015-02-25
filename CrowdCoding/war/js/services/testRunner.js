@@ -383,19 +383,17 @@ angular
 			// and update the usedStubs
 			if( e.data.errors ) {
 				item.stubMap = data.stubMap !== undefined && data.stubMap.length > 0 ? data.stubMap : undefined;
-				item.debug   = data.debug;
+			} else {
+				item.stubMap = data.stubMap ;
+				self.usedStubs = data.usedStubs ;
+
+				self.stubsReady(data.usedStubs);
 			}
 
-			item.number = self.currentTestIndex; 
-
-			item.output = data.output;
+			item.debug         = data.debug;
+			item.output        = data.output;
 			item.executionTime = data.executionTime;
-			item.stubMap = data.stubMap ;
-			item.debug = data.debug;
-			// console.log("final test item: %o",item);
-
-			self.stubsReady(data.usedStubs);
-			self.usedStubs = data.usedStubs ;
+			item.number = self.currentTestIndex; 
 
 			self.testReady(item);
 

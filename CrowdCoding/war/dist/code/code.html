@@ -1,13 +1,13 @@
-<div  
-	class="ace-editor" 
-	ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
-	readonly="readonly" 
-	ng-model="functionsCode">
+<div class="form-group form-inline">
+  <label for="sel1">Select artifact:</label>
+  <select class="form-control" id="sel1" ng-model="artifactType">
+    <option>function</option>
+    <option>test</option>
+  </select>
 </div>
-
 <div  
 	class="ace-editor" 
 	ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'xcode', useWrapMode : true  }" 
 	readonly="readonly" 
-	ng-model="testsCode">
+	ng-model="code">
 </div>

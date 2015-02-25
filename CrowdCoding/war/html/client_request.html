@@ -246,7 +246,7 @@
 											</ul>
 										</div>
 										<div class="col-sm-5 reset-padding">
-											<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="function.paramDescriptions[$index]" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/" press-enter="addParameter()"/>
+											<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="function.paramDescriptions[$index]" required ng-pattern="/^[a-zA-Z0-9_-\s\(\),:]+$/" press-enter="addParameter()"/>
 											<ul class="help-block" ng-show="param{{$index}}.parameterDescritpion.$dirty && param{{$index}}.parameterDescritpion.$invalid">
 												<li ng-show="param{{$index}}.parameterDescritpion.$error.required">This field is required!</li>
 												<li ng-show="param{{$index}}.parameterDescritpion.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>

@@ -87,7 +87,7 @@ public class Review extends Microtask
 		int points = 0;
 
 
-		int awardedPoint;
+		int awardedPoints;
 		String reviewResult;
 
 		//reject not used any more for now...
@@ -113,7 +113,7 @@ public class Review extends Microtask
 			2 stars ->1
 			1 stars ->0
 		*/
-		awardedPoint = submittedMicrotask.submitValue * reviewDTO.qualityScore /5 * reviewDTO.qualityScore /5;
+		awardedPoints = submittedMicrotask.submitValue * reviewDTO.qualityScore /5 * reviewDTO.qualityScore /5;
 
 		if ( reviewDTO.qualityScore < 4) {
 
@@ -121,9 +121,9 @@ public class Review extends Microtask
 			System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" reissued");
 			reviewResult = "reissued";
 			if(reviewDTO.fromDisputedMicrotask)
-				MicrotaskCommand.rejectMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
+				MicrotaskCommand.rejectMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoints);
 			else
-				MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoint);
+				MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoints);
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
 
@@ -133,7 +133,7 @@ public class Review extends Microtask
 			// accept microtask
         	System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" accepted");
 			reviewResult ="accepted";
-			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork, awardedPoint);
+			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork, awardedPoints);
 
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
@@ -144,7 +144,8 @@ public class Review extends Microtask
 		// send feedback
     	FirebaseService.postToNewsfeed(workerOfReviewedWork, (
     		new NewsItemInFirebase(
-    			awardedPoint,
+    			awardedPoints,
+    			submittedMicrotask.submitValue,
     			submittedMicrotask.microtaskName(),
 				"WorkReviewed",
 				Microtask.keyToString(submittedMicrotask.getKey()),
@@ -158,6 +159,7 @@ public class Review extends Microtask
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
     	FirebaseService.postToNewsfeed(workerID, (
     		new NewsItemInFirebase(
+    			this.submitValue,
     			this.submitValue,
     			this.microtaskName(),
     			"SubmittedReview",

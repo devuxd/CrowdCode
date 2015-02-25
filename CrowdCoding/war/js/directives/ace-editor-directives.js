@@ -6,7 +6,7 @@ angular
     return {
         restrict: 'EA',
         replace: true,
-        template: '<div class="ace-editor js-reader" ui-ace="{ onLoad : aceLoaded, mode : mode, theme: theme, showGutter: false}" readonly="true" ng-model="code"></div>',
+        template: '<div class="ace-editor js-reader" ui-ace="{ onLoad : aceLoaded, mode : mode, theme: theme, showGutter: false, useWrapMode : true}" readonly="true" ng-model="code"></div>',
         scope: {
             code: '=',
             mode: '@',

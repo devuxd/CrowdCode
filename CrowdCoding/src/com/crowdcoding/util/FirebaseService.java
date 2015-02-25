@@ -222,7 +222,7 @@ public class FirebaseService
 
 
 	// Posts the specified JSON message to the specified workers newsfeed
-	public static void postToNewsfeed(String workerID,  String message, String microtaskKey, String projectId)
+	public static void postToNewsfeed(String workerID, String message, String microtaskKey, String projectId)
 	{
 		enqueueWrite(message, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
 	}

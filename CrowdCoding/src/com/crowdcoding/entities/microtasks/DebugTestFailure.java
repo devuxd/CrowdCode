@@ -104,6 +104,7 @@ public class DebugTestFailure extends Microtask
 		FirebaseService.postToNewsfeed(workerID, (
 	    		new NewsItemInFirebase(
 	    			this.submitValue,
+	    			this.submitValue,
 	    			this.microtaskName(),
 	    			"SubmittedDebugTestFailure",
 	    			Microtask.keyToString(this.getKey()),
