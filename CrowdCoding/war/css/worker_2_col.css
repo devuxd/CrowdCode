@@ -290,8 +290,10 @@ h1, h2, h3, h4 {
 	bottom:40px;
 	top:0px;
 	width:100%;
-	padding:10px;
 	padding-top:7px;
+	padding-left:20px;
+	padding-right:20px;
+	padding-bottom:10px;
     overflow-x:hidden;
     overflow-y:auto;
 }
@@ -955,7 +957,7 @@ tutorial  { display:none; }
 /* MICROTASK CONTAINER SECTIONS */
 .section {
 	position:relative;
-	margin-bottom:10px;
+	margin-bottom:15px;
  	background-color:#EEEEEE;
  	color: #303030;
 }
