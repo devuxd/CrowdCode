@@ -17,7 +17,8 @@ function functionEditor($sce,functionsService) {
             codemirror : '=',
             code       : '=',
             funct      : '=',
-            readOnly   : '@'
+            readOnly   : '@',
+            highlight  : '='
         },
         templateUrl: '/html/templates/ui/function_editor.html',
         controller: function($scope,$element){
@@ -27,8 +28,7 @@ function functionEditor($sce,functionsService) {
             else if ( $scope.funct.readOnly )
                 readOnly = 'header+parameters';
 
-            console.log("RO",$scope.readOnly);
-
+            highlightPseudoCall = $scope.highlight;
         	$scope.trustHtml = function (unsafeHtml){
         		return $sce.trustAsHtml(unsafeHtml);
         	};

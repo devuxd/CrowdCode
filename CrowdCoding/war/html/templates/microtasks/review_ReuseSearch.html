@@ -1,0 +1,34 @@
+<div class="section section-description " >
+	
+	<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+
+	<div class="section-content job-description" >
+
+		<div ng-if="calleeFunction.getName() == review.microtask.pseudoFunctionName">
+			The worker was asked to find a function <strong>{{review.microtask.pseudoFunctionName}}</strong> providing the following behavior.
+		</div>
+		<div ng-if="calleeFunction.getName() != review.microtask.pseudoFunctionName">
+			The worker was asked to find a function providing the behavior of the function <b>{{review.microtask.pseudoFunctionName}}</b>.
+		</div>
+
+		<span>Can you rate this work?</span>
+	</div>
+</div>
+
+<div class="section section-description-2">
+	<div class="section-title" >
+		<div class="dot bg-color"></div>REQUESTED BEHAVIOR
+	</div>
+	<div class="section-content" >
+		<ace-read-js code="review.microtask.pseudoFunctionDescription"></ace-read-js>
+	</div>
+</div>
+
+<div class="section section-review">
+	<div class="section-title" >
+		<div class="dot bg-color"></div>Function Found
+	</div>
+	<div class="section-content" >
+		<ace-read-js code="calleeFunction.getSignature()"></ace-read-js>
+	</div>
+</div>

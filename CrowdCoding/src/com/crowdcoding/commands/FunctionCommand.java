@@ -33,9 +33,13 @@ public abstract class FunctionCommand extends Command {
 		return new AddCaller(functionID, callerFunctionID);
 	}
 
-	public static FunctionCommand addDependency(long functionID,
-			long newDependency, String pseudoFunctionName, String pseudoFunctionDescription) {
-		return new AddDependency(functionID, newDependency, pseudoFunctionName, pseudoFunctionDescription);
+	public static FunctionCommand addPseudocaller(long functionID,
+			long pseudoCallerId, String pseudoCallerName, String pseudoCallerDescription) {
+		return new AddPseudocaller(functionID, pseudoCallerId, pseudoCallerName, pseudoCallerDescription);
+	}
+
+	public static FunctionCommand removePseudocaller(long functionID, long pseudoCallerId) {
+		return new RemovePseudocaller(functionID, pseudoCallerId);
 	}
 
 	public static FunctionCommand addTest(long functionID, long testID, String testDescription) {
@@ -170,13 +174,7 @@ public abstract class FunctionCommand extends Command {
 		}
 
 		public void execute(Function function, String projectId) {
-			LoadResult<Function> callerFunction = Function.find(callerFunctionID);
-			if (callerFunction == null)
-				System.out
-						.println("Cannot execute FunctionCommand. Could not find the caller function "
-								+ "for FunctionID " + callerFunctionID);
-			else
-				function.removeCaller(callerFunction.now());
+				function.removeCaller(callerFunctionID);
 		}
 	}
 
@@ -190,13 +188,7 @@ public abstract class FunctionCommand extends Command {
 
 		public void execute(Function function, String projectId)
 		{
-			LoadResult<Function> callerFunction = Function.find(callerFunctionID);
-			if (callerFunction == null)
-				System.out
-						.println("Cannot execute FunctionCommand. Could not find the caller function "
-								+ "for FunctionID " + callerFunctionID);
-			else
-				function.addCaller(callerFunction.now());
+				function.addCaller(callerFunctionID);
 		}
 	}
 
@@ -257,24 +249,40 @@ public abstract class FunctionCommand extends Command {
 		}
 	}
 
-	protected static class AddDependency extends FunctionCommand {
+	protected static class AddPseudocaller extends FunctionCommand {
 
-		private String pseudoFunctionName;
-		private String pseudoFunctionDescription;
-		private long newDependency;
+		private String pseudoCallerName;
+		private String pseudoCallerDescription;
+		private long pseudoCallerId;
 
-		public AddDependency(long functionID, long newDependency,
-				String pseudoFunctionName, String pseudoFunctionDescription) {
+		public AddPseudocaller(long functionID, long pseudoCallerId,
+				String pseudoCallerName, String pseudoCallerDescription) {
 			super(functionID);
-			this.pseudoFunctionName = pseudoFunctionName;
-			this.pseudoFunctionDescription = pseudoFunctionDescription;
-			this.newDependency = newDependency;
+			this.pseudoCallerName = pseudoCallerName;
+			this.pseudoCallerDescription = pseudoCallerDescription;
+			this.pseudoCallerId = pseudoCallerId;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.addDependency(newDependency, pseudoFunctionName, pseudoFunctionDescription);
+			function.addPseudocaller(pseudoCallerId, pseudoCallerName, pseudoCallerDescription);
 		}
 	}
+
+	protected static class RemovePseudocaller extends FunctionCommand {
+
+		private long pseudoCallerId;
+
+		public RemovePseudocaller(long functionID, long pseudoCallerId) {
+			super(functionID);
+
+			this.pseudoCallerId = pseudoCallerId;
+		}
+
+		public void execute(Function function, String projectId) {
+			function.removePseudocaller(pseudoCallerId);
+		}
+	}
+
 
 	protected static class AddTest extends FunctionCommand {
 		private long testID;

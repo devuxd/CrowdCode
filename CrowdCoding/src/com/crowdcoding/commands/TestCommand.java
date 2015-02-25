@@ -23,9 +23,9 @@ public abstract class TestCommand extends Command
 		{ return new Dispute(testID, issueDescription, functionVersion); }
 	public static TestCommand delete(long testID) { return new Delete(testID); }
 	public static TestCommand functionChangedInterface(
-			long testID, 
+			long testID,
 			String oldFullDescription,
-			String newFullDescription, 
+			String newFullDescription,
 			int functionVersion)
 		{ return new FunctionChangedInterface(testID, oldFullDescription, newFullDescription, functionVersion); }
 
@@ -33,7 +33,7 @@ public abstract class TestCommand extends Command
 	public static TestCommand functionChangedName(long testID, String name,int version) {
 		return new FunctionChangedName(testID,name,version);
 	}
-	
+
 	public static TestCommand disputeCompleted(long testID, int functionVersion)
 	{ return new DisputeCompleted(testID, functionVersion); }
 
@@ -155,7 +155,8 @@ public abstract class TestCommand extends Command
 		}
 		public void execute(Test test, String projectId)
 		{
-			test.setNeeded(false);
+			if(test!=null)
+				test.setNeeded(false);
 		}
 
 	}
@@ -169,7 +170,8 @@ public abstract class TestCommand extends Command
 		}
 		public void execute(Test test, String projectId)
 		{
-			test.setNeeded(true);
+			if(test!=null)
+				test.setNeeded(true);
 		}
 
 	}
@@ -245,7 +247,7 @@ public abstract class TestCommand extends Command
 			test.functionChangedInterface(oldFullDescription, newFullDescription, projectId, functionVersion);
 		}
 	}
-	
+
 	protected static class FunctionChangedName extends TestCommand
 	{
 		private String name;

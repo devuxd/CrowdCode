@@ -21,7 +21,7 @@ public class FunctionDTO extends DTO
 	public List<TestDTO> stubs = new ArrayList<TestDTO>();
 	public List<PseudoFunctionDTO> pseudoFunctions = new ArrayList<PseudoFunctionDTO>();
 	public Boolean autoSubmit;
-	public String disputeText ;
+	public String disputeFunctionText ;
 	public boolean inDispute;
 
 	public String toString()

@@ -123,11 +123,11 @@ angular
 			return this.getFunctionCode() + this.getPseudoFunctions();
 		},
 		removePseudoFunction: function(pseudoFunctionName) {
-			for(var i=0; i<this.rec.pseudoFunctions.length; i++ ){
-
-				if(this.rec.pseudoFunctions[i].name===pseudoFunctionName)
-					this.rec.pseudoFunctions.splice(i,1);
-			}
+			if(this.rec.pseudoFunctions!==undefined)
+				for(var i=0; i<this.rec.pseudoFunctions.length; i++ ){
+					if(this.rec.pseudoFunctions[i].name===pseudoFunctionName)
+						this.rec.pseudoFunctions.splice(i,1);
+				}
 		}
 	};
 

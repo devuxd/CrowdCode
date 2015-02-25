@@ -66,7 +66,7 @@ public class FirebaseService
 		System.out.println("writing: in "+microtaskKey+ " from "+reissuedFromMicrotaskKey);
 		enqueueWrite("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void writeMicrotaskCanceled( String microtaskKey, boolean canceled, String projectId)
 	{
 		enqueueWrite(Boolean.toString(canceled), "/microtasks/" + microtaskKey + "/canceled.json", HTTPMethod.PUT, projectId);
@@ -212,6 +212,14 @@ public class FirebaseService
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
 	}
+
+
+	// Writes information about microtask assignment to Firebase
+	public static void writeMicrotaskPoints( String microtaskKey, int points, String projectId)
+	{
+		enqueueWrite(Integer.toString(points), "/microtasks/" + microtaskKey + "/points.json", HTTPMethod.PUT, projectId);
+}
+
 
 	// Posts the specified JSON message to the specified workers newsfeed
 	public static void postToNewsfeed(String workerID,  String message, String microtaskKey, String projectId)
