@@ -59,8 +59,8 @@ angular
             oldFunction = functionsService.get($scope.review.microtask.functionID);
             newFunction = new FunctionFactory ( $scope.review.microtask.submission );
 
-            oldCode = oldFunction.getFunctionCode().split("\n");
-            newCode = newFunction.getFunctionCode().split("\n");
+            oldCode = oldFunction.getFullCode().split("\n");
+            newCode = newFunction.getFullCode().split("\n");
 
             diffCode = "";
             diffRes = diff(oldCode, newCode);
@@ -166,20 +166,19 @@ angular
             $scope.review.rating = value;
         }
     };
-    
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
 
-        if ($scope.review.rating <= 3) 
+        if ($scope.review.rating <= 3)
             $scope.makeDirty(microtaskForm);
 
         var error = "";
-        if ($scope.review.rating === -1) 
+        if ($scope.review.rating === -1)
             error = "plese, select a score";
-        else if (microtaskForm.$invalid && $scope.review.rating <= 3) 
+        else if (microtaskForm.$invalid && $scope.review.rating <= 3)
             error = "please, write an explanation for your choice";
-        
 
-        if (error !== "") 
+
+        if (error !== "")
             $alert({
                 title: 'Error!',
                 content: error,
@@ -191,21 +190,17 @@ angular
             });
         else {
 
-            if( $scope.review.reviewText === undefined )
-                $scope.review.reviewText = "";
-            if($scope.review.microtask.submission.inDispute===undefined)
-                $scope.review.microtask.submission.inDispute=false;
             formData = {
                 microtaskIDReviewed     : $scope.microtask.microtaskKeyUnderReview,
-                reviewText              : $scope.review.reviewText,
+                reviewText              :($scope.review.reviewText ===undefined ? "" : $scope.review.reviewText),
                 qualityScore            : $scope.review.rating,
-                fromDisputedMicrotask   : $scope.review.microtask.submission.inDispute
+                fromDisputedMicrotask   :($scope.review.microtask.submission.inDispute ===true ? true : false)
             };
             $scope.$emit('submitMicrotask', formData);
         }
     });
 
-    
+
     $scope.$on('$destroy',function(){
         collectOff();
     });

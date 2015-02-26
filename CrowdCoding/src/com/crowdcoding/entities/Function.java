@@ -59,7 +59,6 @@ public class Function extends Artifact
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private List<String>  testsDescription = new ArrayList<String>();
 	private int           linesOfCode = 0;
-	private boolean 	  isReadOnly= false;
 	private boolean 	  waitForTestResult=true;
 	private Queue<Ref<Microtask>> queuedWriteTestCase = new LinkedList<Ref<Microtask>>();
 
@@ -69,7 +68,7 @@ public class Function extends Artifact
 	private boolean needsDebugging=true;	         // true iff Function is failing the (implemented) unit tests
 
 	// fully implemented (i.e., not psuedo) calls made by this function
-	private List<Long> callees = new ArrayList<Long>();
+	private List<Long> calleesId = new ArrayList<Long>();
 	// current callers with a fully implemented callsite to this function:
 	private List<Long> callersId = new ArrayList<Long>();
 	// pseudocalls made by this function:
@@ -111,7 +110,7 @@ public class Function extends Artifact
 		hasBeenDescribed=false;
 		this.name = name;
 		this.description=callDescription;
-		this.isNeeded=false;
+		this.isActivated=false;
 		ofy().save().entity(this).now();
 
 		// Spawn off a microtask to write the function description
@@ -270,8 +269,8 @@ public class Function extends Artifact
 		testsDescription.add(testDescription);
 		ofy().save().entity(this).now();
 		//if the function is not needed send the notification
-		if( ! isNeeded())
-			TestCommand.functionBecomeUseless(testID);
+		if( ! isActivated())
+			TestCommand.functionBecomeDeactivated(testID);
 	}
 
  /*
@@ -317,11 +316,11 @@ public class Function extends Artifact
 
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	protected void lookForWork()
+	public void lookForWork()
 	{
-		System.out.println("needed"+this.isNeeded+"microtaskOut"+microtaskOut+"testCaseOut"+testCaseOut);
+		System.out.println("needed"+this.isActivated+"microtaskOut"+microtaskOut+"testCaseOut"+testCaseOut);
 		//if the function is needed
-		if(this.isNeeded){
+		if(this.isActivated){
 			// If there is currently not already a microtask being done on this function,
 			// determine if there is work to be done
 			if ( microtaskOut == null && !queuedMicrotasks.isEmpty())
@@ -440,7 +439,9 @@ public class Function extends Artifact
 			else
 			{
 				setWritten(false,projectId);
-				queueMicrotask(new WriteFunction(this,projectId), projectId);
+				//if there aren't any other micortask enqueu for the artifact
+				if(queuedMicrotasks.isEmpty())
+					queueMicrotask(new WriteFunction(this,projectId), projectId);
 			}
 		}
 		else
@@ -472,11 +473,11 @@ public class Function extends Artifact
 
 	// Diffs the new and old callee list, sending notifications to callees about who their
 	// callers are as appropriate. Updates the callee list when done
-	private void rebuildCalleeList(List<Long> calleeIds)
+	private void rebuildCalleeList(List<Long> submittedCalleeIds)
 	{
 		// First, find new callees added, if any
-		List<Long> newCallees = new ArrayList<Long>(calleeIds);
-		newCallees.removeAll(this.callees);
+		List<Long> newCallees = new ArrayList<Long>(submittedCalleeIds);
+		newCallees.removeAll(this.calleesId);
 
 		// If there are any, send notifications to these functions that they have a new caller
 		for (Long newCalleeId : newCallees)
@@ -485,8 +486,8 @@ public class Function extends Artifact
 		}
 
 		// Next, find any callees removed, if any
-		List<Long> removedCallees = new ArrayList<Long>(this.callees);
-		removedCallees.remove(calleeIds);
+		List<Long> removedCallees = new ArrayList<Long>(this.calleesId);
+		removedCallees.removeAll(submittedCalleeIds);
 
 		// Send notifications to these functions that they no longer have this caller
 		for (Long removedCalleeIds : removedCallees)
@@ -494,7 +495,7 @@ public class Function extends Artifact
 			FunctionCommand.removeCaller(removedCalleeIds, this.id);
 		}
 
-		this.callees = newCallees;
+		this.calleesId = submittedCalleeIds;
 		ofy().save().entity(this).now();
 	}
 
@@ -506,7 +507,7 @@ public class Function extends Artifact
 	{
 		microtaskOutCompleted();
 		if( dto.inDispute ){
-			notifyFunctionUseless(dto.disputeFunctionText);
+			deactivateFunction(dto.disputeFunctionText);
 			queueMicrotask(new WriteFunction(this, projectId), projectId);
 
 		}
@@ -541,7 +542,7 @@ public class Function extends Artifact
 	{
 		microtaskOutCompleted();
 		if(dto.inDispute){
-			notifyFunctionUseless(dto.disputeFunctionText);
+			deactivateFunction(dto.disputeFunctionText);
 			//remove the caller that generate the microtask from the pseudocaller of this function
 			removePseudocaller(dto.callerId);
 		}
@@ -706,10 +707,14 @@ public class Function extends Artifact
 	// Notifies the function that it has a new caller function
 	public void addCaller(long functionId)
 	{
+		System.out.println("Function: "+this.getName()+"adding caller ID "+functionId);
+
 		//remove the function from the pseudocaller list
-		removePseudocaller(functionId);
 		callersId.add(functionId);
-		if( !isNeeded() )
+
+		removePseudocaller(functionId);
+
+		if( !isActivated() )
 			reactiveFunction();
 
 		ofy().save().entity(this).now();
@@ -718,6 +723,7 @@ public class Function extends Artifact
 	// Notifies the function that it is no longer called by function
 	public void removeCaller(long functionId)
 	{
+		System.out.println("Function: "+this.getName()+"removing caller ID "+functionId);
 		callersId.remove(functionId);
 
 		checkIfNeeded();
@@ -728,8 +734,8 @@ public class Function extends Artifact
 	private void checkIfNeeded()
 	{
 		//if is not animore called by anyone means that is not anymore needed
-		if( this.callersId.isEmpty() && this.pseudoCallersId.isEmpty())
-			setNeeded(false);
+		if( this.callersId.isEmpty() && this.pseudoCallersId.isEmpty() )
+			deactivateFunction(null);
 
 
 	}
@@ -751,9 +757,8 @@ public class Function extends Artifact
 		//if the functon has not yet been described and is not needed creates a new write description microtask
 		//this is needed because the write function description microtask was disputed and so the function
 		//has never been described
-		if( (! hasBeenDescribed()) && (! isNeeded()) && pseudoCallersId.isEmpty() )
+		if( (! hasBeenDescribed()) && (! isActivated()) && pseudoCallersId.isEmpty() )
 			makeMicrotaskOut(new WriteFunctionDescription(this, pseudoCallerDescription, pseudoCallerId, projectId));
-
 
 		//add it to the lists
 		pseudoCallersId.add(pseudoCallerId);
@@ -773,8 +778,10 @@ public class Function extends Artifact
 	}
 
 
-	public void calleeBecomeUseless(long calleeId, String disputeText, String projectId)
+	public void calleeBecomeDeactivated(long calleeId, String disputeText, String projectId)
 	{
+		System.out.println("Fucntion: "+this.getName()+" recieved callee deactivated"+calleeId);
+		calleesId.remove(calleeId);
 		queueMicrotask(new WriteFunction(this, calleeId, disputeText, projectId), projectId);
 	}
 
@@ -808,36 +815,39 @@ public class Function extends Artifact
 	//notify the test that the dispute is solved
 	private void notifyDisputeCompleted(long testId)
 	{
-		TestCommand.disputeCompleted(testId, this.version);
+		if(testsId.contains(testId))
+			TestCommand.disputeCompleted(testId, this.version);
 	}
 
 	//Notify all the callers and all the test of this function that is not anymore active
-	private void notifyFunctionUseless(String disputeFunctionText)
+	private void deactivateFunction(String disputeFunctionText)
 	{
 		System.out.println("Function ("+this.name+"): is useless");
 
-		setNeeded(false);
+		setActivated(false);
+		if(!isAPIArtifact){
+			for (long testId : testsId){
+				System.out.println( "sending to "+testId);
+				TestCommand.functionBecomeDeactivated(testId);
+			}
+			if(disputeFunctionText!=null){
+				for (long callerID : callersId)
+					FunctionCommand.calleeBecomeDeactivated(callerID, this.getID(), disputeFunctionText);
 
-		for (long callerID : callersId)
-			FunctionCommand.calleeBecomeUseless(callerID, this.getID(), disputeFunctionText);
-
-		for (long pseudoCallerID : pseudoCallersId)
-			FunctionCommand.calleeBecomeUseless(pseudoCallerID, this.getID(), disputeFunctionText);
-
-
-		for (long testId : testsId)
-			TestCommand.functionBecomeUseless(testId);
-
+				for (long pseudoCallerID : pseudoCallersId)
+					FunctionCommand.calleeBecomeDeactivated(pseudoCallerID, this.getID(), disputeFunctionText);
+			}
+		}
 	}
 
 	//Notify all tests that the function is active again
 	private void reactiveFunction()
 	{
-		setNeeded(true);
+		setActivated(true);
 		System.out.println("functrion "+this.getName()+" reactivated");
 		//for each test send a notification that the function has been reactivated
 		for (long testId : testsId)
-			TestCommand.functionReturnUsefull(testId);
+			TestCommand.functionReturnActive(testId);
 
 		runTestsIfReady();
 		lookForWork();

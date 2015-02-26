@@ -4,10 +4,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import com.crowdcoding.commands.Command;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.dto.ReviewDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
@@ -20,6 +24,7 @@ import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.history.HistoryEvent;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -38,7 +43,7 @@ public class FirebaseService
 	// Writes the specified microtask to firebase
 	public static void writeMicrotaskCreated(MicrotaskInFirebase dto, String microtaskKey, String projectId)
 	{
-		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 
 //		String microtakCount = ofy().load().type(Microtask.class).filter("projectId",projectId).count();
 //		enqueueWrite( microtakCount, "/status/microtaskCount.json", HTTPMethod.PUT, projectId);
@@ -63,8 +68,7 @@ public class FirebaseService
 	// Writes information about an old microtask to retrieve the information to Firebase
 	public static void writeMicrotaskReissuedFrom( String microtaskKey, String projectId, String reissuedFromMicrotaskKey)
 	{
-		System.out.println("writing: in "+microtaskKey+ " from "+reissuedFromMicrotaskKey);
-		enqueueWrite("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void writeMicrotaskCanceled( String microtaskKey, boolean canceled, String projectId)
@@ -218,7 +222,8 @@ public class FirebaseService
 	public static void writeMicrotaskPoints( String microtaskKey, int points, String projectId)
 	{
 		enqueueWrite(Integer.toString(points), "/microtasks/" + microtaskKey + "/points.json", HTTPMethod.PUT, projectId);
-}
+
+	}
 
 
 	// Posts the specified JSON message to the specified workers newsfeed
@@ -231,7 +236,7 @@ public class FirebaseService
 	// Publishes the history log
 	public static void publishHistoryLogEvent(HistoryEvent event, String projectId)
 	{
-		System.out.println("firebase history log : "+event.json());
+		//System.out.println("firebase history log : "+event.json());
 		enqueueWrite( event.json() , "/history/events/" + event.generateID() + ".json", HTTPMethod.PUT, projectId);
 	}
 
@@ -350,9 +355,15 @@ public class FirebaseService
 	}
 
 	public static void publish(){
-		while(!writeList.isEmpty()){
-			FirebaseWrite write = writeList.pop();
-			write.publish();
+		Iterator<FirebaseWrite> writeListIterator = writeList.iterator();
+		// Execute commands until done, adding commands as created.
+	    while(writeListIterator.hasNext()) {
+			try{
+				FirebaseWrite write = writeList.pop();
+				write.publish();
+			} catch( NoSuchElementException e) {
+				e.printStackTrace();
+			}
 //			System.out.println("Firebase: writing "+write.relativeURL);
 		}
 	}

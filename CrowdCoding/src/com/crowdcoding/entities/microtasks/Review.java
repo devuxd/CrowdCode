@@ -113,8 +113,7 @@ public class Review extends Microtask
 			2 stars ->1
 			1 stars ->0
 		*/
-		awardedPoints = submittedMicrotask.submitValue * reviewDTO.qualityScore /5 * reviewDTO.qualityScore /5;
-
+		awardedPoints = (int) Math.round( submittedMicrotask.submitValue * Math.pow((reviewDTO.qualityScore /5.0), 2));
 		if ( reviewDTO.qualityScore < 4) {
 
 			// reissue microtask

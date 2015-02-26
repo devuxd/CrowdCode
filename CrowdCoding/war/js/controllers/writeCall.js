@@ -11,10 +11,9 @@ angular
     $scope.calleeFunction = functionsService.get($scope.microtask.calleeID);
 
 
-    if(angular.isDefined($scope.microtask.reissuedFrom))
-        $scope.funct = (new FunctionFactory ($scope.reissuedMicrotask.submission));
+    if( angular.isDefined($scope.microtask.reissuedFrom) )
+        $scope.funct.updateFunction($scope.reissuedMicrotask.submission);
 
-    //function to highlith $scope.microtask.pseudoName
 
 
     //remove the pseudofunction from the code of the function

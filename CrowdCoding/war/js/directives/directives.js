@@ -206,9 +206,11 @@ angular
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
 
-            functionId = attrs['functionId'];
+            functionId = attrs.functionId;
             valid = true;
+            console.log("id "+functionId);
             allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
+            console.log(allFunctionNames);
             allFunctionCode  = functionsService.getAllDescribedFunctionCode(functionId)+ " var debug = null; " ;
 
             ctrl.$formatters.unshift(function(viewValue) {

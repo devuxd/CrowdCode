@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -641,9 +642,9 @@ public class CrowdServlet extends HttpServlet
 
 //		System.out.println("----> PROJECT ID IS "+projectId);
 		LinkedList<Command> commandQueue = new LinkedList<Command>(commands);
+		Iterator<Command> commandIterator = commandQueue.iterator();
 		// Execute commands until done, adding commands as created.
-        while(!commandQueue.isEmpty())
-        {
+	    while(commandIterator.hasNext()) {
         	final Command command = commandQueue.remove();
         	commandQueue.addAll(ofy().transact(new Work<List<Command>>() {
 	            public List<Command> run()
