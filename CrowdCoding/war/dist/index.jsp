@@ -5,7 +5,7 @@
     }
     console.log('PAGE LOADED');</script> <!--[if lt IE 9]>
     <script charset="utf-8" src="/dist/scripts/oldieshim.76f279db.js"></script>
-    <![endif]--> <script charset="utf-8" src="/dist/scripts/vendor.f4eb07d9.js"></script> <script charset="utf-8" src="/dist/scripts/scripts.95222afc.js"></script> <script type="text/javascript">(function () {
+    <![endif]--> <script charset="utf-8" src="/dist/scripts/vendor.f4eb07d9.js"></script> <script charset="utf-8" src="/dist/scripts/scripts.8da61bca.js"></script> <script type="text/javascript">(function () {
             
             var ace = window.ace = window.ace || { };
             var prod = prod || false;

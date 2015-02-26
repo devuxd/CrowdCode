@@ -386,7 +386,6 @@ angular
 			} else {
 				item.stubMap = data.stubMap ;
 				self.usedStubs = data.usedStubs ;
-
 				self.stubsReady(data.usedStubs);
 			}
 

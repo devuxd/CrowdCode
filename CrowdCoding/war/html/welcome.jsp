@@ -26,7 +26,8 @@
 
 
 	<script src="/include/jquery-2.1.0.min.js"></script> 
-	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 	
+	<script src="/include/bootstrap/js/bootstrap.min.js"> </script> 
+	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->	
 
 <style type="text/css">
 
@@ -148,7 +149,7 @@ img { width:100%;}
 
 	<div class="row">
       <div class="jumbotron" style="text-align:center;">
-        	<a class="btn btn-lg btn-primary" href="/allTogetherDrawV6" id="btnStart" role="button">Get Started!</a>
+        	<a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
       </div>
 	</div>
       
@@ -165,6 +166,16 @@ if ( !(isChromium !== null && isChromium !== undefined && vendorName === "Google
    		alert('Please, use Google Chrome!');
    });
 }
+
+var ref = new Firebase('https://crowdcode.firebaseio.com/defaultProject');
+ref.once('value',function(snap){
+	console.log('default project is '+snap.val());
+	if( snap.val() != null)
+		$('#btnStart').attr('href','/'+snap.val());
+	else 
+		$('#btnStart').attr('href','/allTogetherDrawV6');
+
+});
 </script>
 </body>
 </html>

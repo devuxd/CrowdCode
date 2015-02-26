@@ -1222,3 +1222,7 @@ pre.json .jsonKey { color: black; }
 	
 }
 
+.diff { margin:0px; padding:0px; }
+.diff .line { width:100%; display:block; }
+.diff .line.added   { background-color:#eaffea;}
+.diff .line.removed { background-color:#ffecec;}

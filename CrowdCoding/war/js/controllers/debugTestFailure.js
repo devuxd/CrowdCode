@@ -71,9 +71,9 @@ angular
         $scope.completed = data.number+1;
         $scope.tests[data.number] = angular.extend($scope.tests[data.number],data);
 
-        if( data.output !== undefined && data.output.result ){
-            $scope.numPassed ++;
-        }
+        if( data.output !== undefined)
+            if( data.output.result )
+                $scope.numPassed ++;
 
         $scope.$apply();
     }

@@ -187,6 +187,8 @@
 	<script src="/js/JSONValidator.js"></script>
 
 	<script src="/js/workqueue.js"></script>
+	<script src="/js/assertionFunctions.js"></script>
+
 
 
 

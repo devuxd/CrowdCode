@@ -10,8 +10,12 @@ angular
 	factory.get = function(workerId){
 		if( workerId === undefined ){
 			console.warn('worker id not defined');
-
 			return -1;
+		}
+		if( workerId == 'admin' ){
+			return {
+				$value: '/img/avatar_gallery/admin.png'
+			};
 		}
 
 		if(loaded.hasOwnProperty(workerId)){

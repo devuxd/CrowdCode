@@ -134,6 +134,7 @@ public class CrowdServlet extends HttpServlet
 		try {
 			// -- PATHS WITHOUT USER AUTHENTICATION
 			 if( Pattern.matches("/",path) || Pattern.matches("/welcome",path)){
+				 System.out.println("DISPATCHING WELCOME PAGE");
 				req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
 			 } else if(Pattern.matches("/user/info",path)){
 				req.getRequestDispatcher("/html/userInfo.jsp").forward(req, resp);
