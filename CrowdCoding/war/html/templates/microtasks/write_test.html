@@ -6,10 +6,9 @@
 		<div class="section-content  job-description" >
 
 			<div ng-if="microtask.promptType=='WRITE'">
-				For the following test case, can you implement a test, providing a JSON object literal for each input parameter and for the expected return value?
+				Can you implement the following test case, providing a JSON object literal for each input parameter and for the expected return value?
 				<br />
-				<strong>Tip:</strong> Descriptions of the data types are on the left with examples you can copy and paste.
-
+				<strong>Tip:</strong> Descriptions of the data types are on the left, with examples you can copy and paste.
 			</div>
 
 			<div ng-if="microtask.promptType=='CORRECT'">
@@ -33,9 +32,9 @@
 
 	
 	<div class="section section-description" ng-if="microtask.promptType != 'FUNCTION_CHANGED'" >
-		<div class="section-title" ><div class="dot bg-color"></div>FUNCTION SIGNATURE</div>
+		<div class="section-title" ><div class="dot bg-color"></div>FUNCTION DESCRIPTION</div>
 		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
-			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="code"></ace-read-js>
@@ -72,7 +71,7 @@
 
 
 	<div class="section section-description" ng-if="microtask.promptType == 'FUNCTION_CHANGED'" >
-		<div class="section-title" ><div class="dot bg-color"></div>DIFF OF THE FUNCTION SIGNATURE</div>
+		<div class="section-title" ><div class="dot bg-color"></div>DIFF OF THE FUNCTION DESCRIPTION</div>
 		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
 			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
@@ -187,7 +186,7 @@
 		</div>
 		<div class="section-content" >
 			<div id="disputeDiv" class="form-group">
-				<label for="disputeText"><b>Dispute function signature:</b> what's wrong with this function signature? </label>
+				<label for="disputeText"><b>Dispute FUNCTION DESCRIPTION:</b> what's wrong with this FUNCTION DESCRIPTION? </label>
 				<textarea name="disputeText" class="form-control" style="resize:none" ng-model="disputeFunction.text" ng-required="disputeFunction.active"></textarea>
 				<span
 				class="help-block" ng-show="microtaskForm.disputeText.$dirty && microtaskForm.disputeText.$invalid && microtaskForm.disputeText.$error.required">This field is required!</span>

@@ -1334,7 +1334,10 @@ angular
               return '  '+splittedDescription.join('\n  ')+'\n';
          });
           ctrl.$formatters.push(function (viewValue) {
-               return  viewValue.substring(2,viewValue.length-1).replace(/\n  /g,'\n');
+                if( viewValue !== undefined )
+                    return  viewValue.substring(2,viewValue.length-1).replace(/\n  /g,'\n');
+                else
+                    return viewValue;
           });
 
         }
