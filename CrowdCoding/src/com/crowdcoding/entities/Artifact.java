@@ -29,8 +29,9 @@ public /*abstract*/ class Artifact
 	protected Queue<Ref<Microtask>> queuedMicrotasks = new LinkedList<Ref<Microtask>>();
 	protected Ref<Microtask> microtaskOut;		// Is there an associated microtask currently in progress?
 	//true if the artifact is still needed false otherwise
-	protected boolean isNeeded;
+	protected boolean isActivated;
 	protected boolean isAPIArtifact = false;
+	protected boolean isReadOnly= false;
 
 
 	// Default constructor for deserialization
@@ -41,7 +42,7 @@ public /*abstract*/ class Artifact
 	// Constructor for initialization.
 	protected Artifact(String projectId)
 	{
-		this.isNeeded=true;
+		this.isActivated=true;
 		version = 0;
 		this.projectId = projectId;
 	}
@@ -62,20 +63,20 @@ public /*abstract*/ class Artifact
 		return id;
 	}
 
-	public void setNeeded(boolean isNeeded)
+	public void setActivated(boolean isNeeded)
 	{
+		System.out.println("artifact id "+this.getID()+"received activated"+isNeeded+" is api "+isAPIArtifact);
 		if(! isAPIArtifact){
-			this.isNeeded = isNeeded;
+			this.isActivated = isNeeded;
 			ofy().save().entity(this).now();
-
 
 		}
 
 	}
 
-	public boolean isNeeded()
+	public boolean isActivated()
 	{
-		return isNeeded;
+		return isActivated;
 	}
 
 	public String getArtifactType()
@@ -124,12 +125,14 @@ public /*abstract*/ class Artifact
 
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	protected void lookForWork()
+	public void lookForWork()
 	{
+		System.out.println("looking for work for "+this.getID()+" status "+isActivated());
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
-		if (isNeeded() && microtaskOut == null && !queuedMicrotasks.isEmpty())
+		if (isActivated() && microtaskOut == null && !queuedMicrotasks.isEmpty())
 		{
+			System.out.println("makeing out");
 			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).now());
 		}
 	}

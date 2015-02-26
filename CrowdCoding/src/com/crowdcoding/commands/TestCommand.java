@@ -37,11 +37,11 @@ public abstract class TestCommand extends Command
 	public static TestCommand disputeCompleted(long testID, int functionVersion)
 	{ return new DisputeCompleted(testID, functionVersion); }
 
-	public static TestCommand functionBecomeUseless(long testID)
-	{ return new FunctionBecomeUseless(testID); }
+	public static TestCommand functionBecomeDeactivated(long testID)
+	{ return new FunctionBecomeDeactivated(testID); }
 
-	public static TestCommand functionReturnUsefull(long testID)
-	{ return new FunctionReturnUsefull(testID); }
+	public static TestCommand functionReturnActive(long testID)
+	{ return new FunctionReturnActive(testID); }
 
 
 	// All constructors for TestCommand MUST call queueCommand and the end of the constructor to add the
@@ -53,6 +53,7 @@ public abstract class TestCommand extends Command
 
 	public void execute(String projectId)
 	{
+		System.out.println("executing with "+testID);
 		if( testID != 0 ){
 			LoadResult<Test> testRef = Test.find(testID);
 
@@ -135,6 +136,8 @@ public abstract class TestCommand extends Command
 		private int functionVersion;
 		public DisputeCompleted(long testID, int functionVersion)
 		{
+			this.testID = testID;
+
 			this.functionVersion= functionVersion;
 			queueCommand(this);
 
@@ -146,32 +149,33 @@ public abstract class TestCommand extends Command
 
 	}
 
-	protected static class FunctionBecomeUseless extends TestCommand
+	protected static class FunctionBecomeDeactivated extends TestCommand
 	{
-		public FunctionBecomeUseless(long testID)
+		public FunctionBecomeDeactivated(long testID)
 		{
+			this.testID = testID;
 			queueCommand(this);
 
 		}
 		public void execute(Test test, String projectId)
 		{
-			if(test!=null)
-				test.setNeeded(false);
+			test.setActivated(false);
 		}
-
 	}
 
-	protected static class FunctionReturnUsefull extends TestCommand
+	protected static class FunctionReturnActive extends TestCommand
 	{
-		public FunctionReturnUsefull(long testID)
+		public FunctionReturnActive(long testID)
 		{
+			this.testID = testID;
+
 			queueCommand(this);
 
 		}
 		public void execute(Test test, String projectId)
 		{
-			if(test!=null)
-				test.setNeeded(true);
+				test.setActivated(true);
+				test.lookForWork();
 		}
 
 	}

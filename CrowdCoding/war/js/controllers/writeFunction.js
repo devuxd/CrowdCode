@@ -21,8 +21,7 @@ angular
     };
 
      if( angular.isDefined($scope.microtask.reissuedFrom) )
-         $scope.funct = (new FunctionFactory($scope.reissuedMicrotask.submission));
-
+         $scope.funct.updateFunction($scope.reissuedMicrotask.submission);
 
     if ($scope.microtask.promptType == 'DESCRIPTION_CHANGE') {
         var oldCode = $scope.microtask.oldFullDescription.split("\n");

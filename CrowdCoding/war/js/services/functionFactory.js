@@ -128,7 +128,15 @@ angular
 					if(this.rec.pseudoFunctions[i].name===pseudoFunctionName)
 						this.rec.pseudoFunctions.splice(i,1);
 				}
+		},
+		updateFunction : function(newFunction) {
+			this.rec.pseudoFunctions 	= [];
+			this.rec.description="";
+			angular.forEach(newFunction, function(value, key) {
+			 	this.rec[key]=value;
+			},this);
 		}
+
 	};
 
 	return FunctionFactory;

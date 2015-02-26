@@ -75,9 +75,9 @@ public abstract class FunctionCommand extends Command {
 				pseudoFunctionName);
 	}
 
-	public static FunctionCommand calleeBecomeUseless(long functionID,
+	public static FunctionCommand calleeBecomeDeactivated(long functionID,
 			long calleeId, String disputeText) {
-		return new CalleeBecomeUseless(functionID, calleeId, disputeText);
+		return new CalleeBecomeDeactivated(functionID, calleeId, disputeText);
 	}
 
 	public static FunctionCommand disputeTestCases(long functionID,
@@ -329,11 +329,11 @@ public abstract class FunctionCommand extends Command {
 		}
 	}
 
-	protected static class CalleeBecomeUseless extends FunctionCommand {
+	protected static class CalleeBecomeDeactivated extends FunctionCommand {
 		private long calleeId;
 		private String disputeText;
 
-		public CalleeBecomeUseless(long functionID, long calleeId,
+		public CalleeBecomeDeactivated(long functionID, long calleeId,
 				String disputeText) {
 			super(functionID);
 			this.calleeId = calleeId;
@@ -341,7 +341,7 @@ public abstract class FunctionCommand extends Command {
 		}
 
 		public void execute(Function function, String projectId) {
-			function.calleeBecomeUseless(calleeId, disputeText, projectId);
+			function.calleeBecomeDeactivated(calleeId, disputeText, projectId);
 		}
 	}
 

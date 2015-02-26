@@ -48,14 +48,14 @@ angular
     });
 
     $scope.$on('collectFormData', collectFormData );
-    $scope.runTests()
+    $scope.runTests();
 
     function doDispute(test) {
         $scope.dispute = {
             active      : true,
             description : '',
             test        : test
-        }
+        };
     }
 
     function undoDispute() {
@@ -63,8 +63,8 @@ angular
             active      : false,
             description : '',
             test        : null
-        }
-    };
+        };
+    }
 
     function processTestReady(data){
 
@@ -92,7 +92,7 @@ angular
             $scope.stubsReturnType[index] = calleeFunction.returnType;
 
             $scope.calleDescription[index]={};
-            $scope.calleDescription[index].code=functionsService.renderDescription(calleeFunction) + calleeFunction.header;
+            $scope.calleDescription[index].code=calleeFunction.getSignature();
         });
 
         $scope.$apply();
@@ -120,7 +120,7 @@ angular
 
         $scope.activePanel = -1;
 
-        var code = undefined;
+        var code;
         if( $scope.codemirror === undefined) 
             console.log('CODEMIRROR UNDEFINED');
 
@@ -143,7 +143,7 @@ angular
         $scope.total     = 0;
         $scope.numPassed = 0;
 
-    };
+    }
 
 
 

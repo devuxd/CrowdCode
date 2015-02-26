@@ -54,7 +54,7 @@
 	<alertcontainer></alertcontainer>
 	
 	<div class="section-cols" >
-		<div class="container-flex-row">
+		<div class="container-flex-row" ng-show="!dispute.active" >
 			<div class="section section-help bg-color-alpha" style="width:30%;">
 				<div class="section-title" > <div class="dot"></div> AVAILABLE DATA TYPES </div>
 				<div class="section-content" >
@@ -63,7 +63,7 @@
 				<div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
 			</div>
 			<div class="section section-form" style="width:70%;" >
-				<div class="pull-right" ng-if="!dispute.active" >
+				<div class="pull-right">
 					<a ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
 						Report function as not implementable <span class="glyphicon glyphicon-exclamation-sign"></span>
 					</a>
@@ -77,20 +77,22 @@
 					highlight ="callee.getName()"
 					>
 				</function-editor>
-				<div class="section section-form" ng-if="dispute.active">
-					<div class="section-content" >
-						<div class="heading-1" >Why this function is not implementable?</div>
-						<textarea 
-							name="disputeFunctionText" 
-							class="form-control required" 
-							style="resize:none" 
-							ng-model="dispute.text" 
-							ng-required="dispute.active">
-						</textarea>
-						<a href="#" class="btn btn-sm pull-right" ng-click="dispute.toggle()" > Go back</a>
-					</div>
-					<span class="clearfix"></span>
+			</div>
+		</div>
+		<div class="container-flex-row" ng-show="dispute.active">
+			<div class="section section-form" style="width:100%" >
+				<div class="section-content">
+					<div class="heading-1" >Why this function is not implementable?</div>
+					<textarea 
+						name="disputeFunctionText" 
+						class="form-control required" 
+						style="resize:none" 
+						ng-model="dispute.text" 
+						ng-required="dispute.active">
+					</textarea>
+					<a href="#" class="btn btn-sm pull-right" ng-click="dispute.toggle()" > Go back</a>
 				</div>
+				<span class="clearfix"></span>
 			</div>
 		</div>
 	</div>

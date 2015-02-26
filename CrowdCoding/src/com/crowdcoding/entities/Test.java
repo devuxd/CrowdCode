@@ -31,7 +31,6 @@ public class Test extends Artifact
 	private long functionID;
 	private int functionVersion;
 	private String functionName;
-	private boolean readOnly;
 
 	private String code;
 	@Index private boolean hasSimpleTest;
@@ -109,7 +108,7 @@ public class Test extends Artifact
 		this.simpleTestOutput = output;
 		this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, inputs);
 		this.functionVersion = functionVersion;
-		this.readOnly=readOnly;
+		this.isReadOnly=readOnly;
 
 		ofy().save().entity(this).now();
 		FunctionCommand.addTest(functionID, this.id, this.description);
@@ -243,19 +242,19 @@ public class Test extends Artifact
 			FirebaseService.deleteTest(this.id, projectId);
 		else
 			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs,
-				simpleTestOutput, description, functionName, functionID, isImplemented, readOnly), this.id, version, projectId);
+				simpleTestOutput, description, functionName, functionID, isImplemented, isReadOnly), this.id, version, projectId);
 	}
 
 	// Queues the specified microtask and looks for work
 	public void queueMicrotask(Microtask microtask, String projectId)
 	{
 		super.queueMicrotask(microtask, projectId);
-		
+
 		// merge the tasks in queue
 		if( microtask instanceof WriteTest ){
 			WriteTest newTask = (WriteTest) microtask;
-			
-			// if in queue there is another WriteTest 
+
+			// if in queue there is another WriteTest
 			// with the same prompt type,
 			// remove it from the queue
 			LinkedList<Ref<Microtask>> queueCopy = new LinkedList<Ref<Microtask>>(this.queuedMicrotasks);
@@ -267,13 +266,13 @@ public class Test extends Artifact
 					MicrotaskCommand.cancelMicrotask(task.getKey());
 				}
 			}
-			
+
 
 		}
-		
-		
+
+
 	}
-		
+
 	/******************************************************************************************
 	 * Commands
 	 *****************************************************************************************/
@@ -296,17 +295,17 @@ public class Test extends Artifact
 	// Notify this test that the function under test has changed its interface.
 	public void functionChangedInterface(String oldFullDescription, String newFullDescription, String projectId, int functionVersion)
 	{
-		if(!this.readOnly)
+		if(!this.isReadOnly)
 			queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, projectId, functionVersion), projectId);
 	}
 
 
 	public void functionChangedName(String name, String projectId,
 			int functionVersion) {
-		if(!this.readOnly){
+		if(!this.isReadOnly){
 			this.functionName = name;
 			ofy().save().entity(this).now();
-		}	
+		}
 	}
 
 	/******************************************************************************************
