@@ -19,8 +19,13 @@
 
 <div ng-if="vm.selectedFunctionId != undefined">
 	
-	<h1>Contributions</h1>
-	<ul><li ng-repeat="(worker,c) in vm.contributors">{{worker}}, {{c.added}}++, {{c.removed}}--</li></ul>
+	<strong>Contributions</strong>
+	<ul style="list-style:none;">
+		<li ng-repeat="(worker,c) in vm.contributors">
+			<img ng-init=" avatarUrl = vm.getAvatarUrl(worker) " src="{{ ::avatarUrl }}" style="width:25px;" />
+			{{worker}} [ {{c.added}}++, {{c.removed}}-- ]
+		</li>
+	</ul>
 	<div ng-repeat="diffHtml in vm.diffHtml track by $index">
 		<span>{{diffHtml.worker}}</span>
 		<pre ng-bind-html="vm.renderHtml(diffHtml.html)"></pre>

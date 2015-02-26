@@ -99,19 +99,31 @@ function JSONValidator() {
 		{
 			if( typeof struct == 'object' ){
 				var typeDescrip = nameToADT[typeName].structure;
+				var typeFieldNames = [];
 
 				// Loop over all the fields defined in typeName, checking that each is present in struct
 				// and (recursively) that they are of the correct type.
 				for (var i = 0; i < typeDescrip.length; i++)
 				{
+					typeFieldNames.push(typeDescrip[i].name);
+
 					var fieldName = typeDescrip[i].name;
 					var fieldType = typeDescrip[i].type;
+
 
 					if (struct.hasOwnProperty(fieldName))
 						errors.concat(checkStructure(struct[fieldName], fieldType, level+1));
 					else
 						errors.push("'" + JSON.stringify(struct) + "' is missing the required property " + fieldName );
 				}
+
+				// Loop over all the fields defined in the struct, checking that each
+				// is part of the data type
+				var structFieldNames = Object.keys(struct);
+				for(var f = 0; f <  structFieldNames.length; f++ )
+					if( typeFieldNames.indexOf(structFieldNames[f]) == -1 ) 
+						errors.push("'"+structFieldNames[f]+"' is not a field of the data type " + typeName);
+
 			} else {
 				errors.push("'" + JSON.stringify(struct) + "' is not an " + typeName );
 			}
