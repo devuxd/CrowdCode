@@ -82,7 +82,7 @@ angular
 	    		for(var i=0; i<this.rec.paramNames.length; i++)
 				{
 					if(this.rec.paramDescriptions!==undefined && this.rec.paramDescriptions.length>i)
-						fullDescription += '  @param ' + this.rec.paramTypes[i] + ' ' + this.rec.paramNames[i] + ' , ' + this.rec.paramDescriptions[i] + '\n';
+						fullDescription += '  @param ' + this.rec.paramTypes[i] + ' ' + this.rec.paramNames[i] + ', ' + this.rec.paramDescriptions[i] + '\n';
 
 				}
 			}

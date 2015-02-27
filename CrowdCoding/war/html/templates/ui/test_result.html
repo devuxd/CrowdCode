@@ -13,7 +13,7 @@
 
 <div ng-if="!test.output.result" class="heading-1" >Output diff ( expected vs. actual )</div>
 <div ng-if="!test.output.result" ace-read-json-diff old="test.output.expected" new="test.output.actual" mode="diff"></div>
-    <!--
+    
     <table>
         <tr>
             <td>expected</td>
@@ -28,7 +28,6 @@
             </td>
         </tr>
     </table>
--->
 
 <div ng-if="test.debug != ''">
     <div class="heading-1">Debug Console</div>

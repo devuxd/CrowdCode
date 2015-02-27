@@ -391,6 +391,7 @@ angular
 
 			item.debug         = data.debug;
 			item.output        = data.output;
+			
 			item.executionTime = data.executionTime;
 			item.number = self.currentTestIndex; 
 

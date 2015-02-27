@@ -6,19 +6,19 @@ var details = { 'failed' : 0 };
 // Infinity, Nan or undefined values 
 // they all becomes null values
 function normalizeGlobalValues ( dirtyValue ){
-	if( dirtyValue == Infinity || dirtyValue == NaN || dirtyValue == undefined )
-		return null;
-
-	return dirtyValue;
+	if( dirtyValue === Infinity || dirtyValue === undefined || (typeof dirtyValue == 'number' && isNaN(dirtyValue) ) ){
+		return dirtyValue + '';
+	} else{
+		return JSON.stringify(dirtyValue);
+	}
 }
 
 
 function equal(actual, expected, message){
-	// in cases of comparision between null and 'null'
-	actual   = JSON.stringify(normalizeGlobalValues(actual));
-	expected = JSON.stringify(normalizeGlobalValues(expected));
-
 	var succeeded = deepCompare(actual, expected);
+
+	actual   = normalizeGlobalValues(actual);
+	expected = normalizeGlobalValues(expected);
 	getResults(actual,expected,message,succeeded);
 }
 
