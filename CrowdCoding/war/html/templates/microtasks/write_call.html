@@ -10,11 +10,11 @@
 				<strong>{{ $scope.microtask.pseudoFunctionName }}</strong>
 				can be implemented by using the function <strong>{{calleeFunction.getName()}}</strong>.
 				Based on the description of <strong>{{calleeFunction.getName()}}</strong>
-				, can you revise the call(s) to <strong>{{ $scope.microtask.pseudoFunctionName }}</strong> ?
+				, can you revise the call(s) to <strong>{{ microtask.pseudoFunctionName }}</strong> ?
 				<br />
 			</div>
 			<div ng-if="microtask.pseudoFunctionName==calleeFunction.getName()">
-				The crowd has created a description for the function <strong>{{ $scope.microtask.pseudoFunctionName }}</strong>, called by the function below. Based on the description, can you check if the call(s) are correct, and revise them if necessary?
+				The crowd has created a description for the function <strong>{{ microtask.pseudoFunctionName }}</strong>, called by the function below. Based on the description, can you check if the call(s) are correct, and revise them if necessary?
 			</div>
 			<strong>Tip:</strong> If you know a better way to implement the function, you may revise the function as you see fit.
 		</div>
