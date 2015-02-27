@@ -9,14 +9,13 @@
 
 				Can you describe some test cases in which this function might be used? <br />
 				Are there any unexpected corner cases that might not work? <br/>
-				<strong>TIP:</strong> you don't need to provide a fully specifed test, just a description of the scenario to be tested.
+				<strong>TIP:</strong> You don’t need to specify concrete, executable tests, only high-level descriptions of scenarios to be tested.
 			</div>
 
 			<div ng-show="microtask.promptType=='CORRECT'" >
-				A test case has been reported by the crowd.
-			    <br>
-			    According to the report explanation, can you fix 
-			    the reported test case (and others if necessary) for the function <strong>{{microtask.owningArtifact}}</strong> ?	
+				The crowd has reported an issue with one of the test cases for the function 
+				<strong>{{microtask.owningArtifact}}</strong>.<br>
+				Can you fix the test case (and others if necessary)?
 			</div>
 		</div>
 	</div>
@@ -27,12 +26,12 @@
 		<div class="section section-description"  >
 			<div class="section-title" >
 				<div class="dot bg-color"></div>
-				REPORT DETAILS
+				Reported Issue
 			</div>
 
 			<div class="section-content">
 
-				<strong> Testcase: </strong>
+				<strong> Test case: </strong>
 				<span>{{microtask.issuedTestCase}}</span>
 				<br />
 				<strong> Issue: </strong>
@@ -48,12 +47,12 @@
 
 		<div class="section-title" >
 			<div class="dot bg-color"></div>
-			FUNCTION SIGNATURE
+			FUNCTION DESCRIPTION
 		</div>
 
 		<div class="section-link" ng-hide="funct.readOnly || dispute.active" >
 			<a ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
-				Report an issue in the function signature <span class="glyphicon glyphicon-exclamation-sign"></span>
+				Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
 			</a>
 		</div>
 
@@ -166,7 +165,7 @@
 
 	<div class="section section-form" ng-if="dispute.active">
 		<div class="section-content" >
-			<div class="heading-1" >what's wrong with this function signature?</div>
+			<div class="heading-1" >what's wrong with this FUNCTION DESCRIPTION?</div>
 			<textarea 
 				name="disputeTextInput" 
 				class="form-control required" 

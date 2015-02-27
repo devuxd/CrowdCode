@@ -5,26 +5,26 @@
 	<div class="section-content job-description" >
 
 		<div ng-if="reviewed.submission.inDispute">
-			The worker reported the following sketch of function as not implementable
+			A worker reported the following sketch of function as not implementable
 		</div>
 		<div ng-if="! reviewed.submission.inDispute">
 			<div ng-if="reviewed.promptType == 'SKETCH'">
-				The worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong>.
+				A worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong>.
 			</div>
 
 			<div ng-if="reviewed.promptType == 'RE_EDIT'">
-				The worker was asked to edit the function <strong>{{ reviewed.owningArtifact }}</strong> to address the issue reported by the crowd.
+				A worker was asked to edit the function <strong>{{ reviewed.owningArtifact }}</strong> to address the issue reported by the crowd.
 			</div>
 
 			<div ng-if="reviewed.promptType == 'DESCRIPTION_CHANGE'">
-				The worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong> after the  signature change of called function .
+				A worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong> after the  signature change of called function .
 			</div>
 
 			<div ng-if="reviewed.promptType=='REMOVE_CALLEE'">
-				The worker was asked to remove the calle <strong>{{callee.getName()}}</strong> from the function <strong>{{ reviewed.owningArtifact }}</strong> because the crowd reported the calle as not implementable.
+				A worker was asked to remove the calle <strong>{{callee.getName()}}</strong> from the function <strong>{{ reviewed.owningArtifact }}</strong> because the crowd reported the calle as not implementable.
 			</div>
 		</div>
-		<span>Can you rate this work?</span>
+		<span>Can you review this work?</span>
 	</div>
 
 </div>

@@ -22,7 +22,7 @@ angular
                 $scope.dispute.text = '';
         } 
     };
-    
+    //
     var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
     $scope.pseudoName   = foundNames[0];
 
@@ -62,10 +62,8 @@ angular
         //Add the first parameter
         $scope.addParameter();
     }
-
     //prepare the codemirror Value
     $scope.code = $scope.funct.getFunctionCode();
-
     var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
         //set all forms dirty to make them red if empty
         $scope.makeDirty(microtaskForm);

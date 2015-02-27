@@ -6,23 +6,24 @@
 		<!-- if function description disputed -->
 		<div ng-if="reviewed.submission.inDispute" >
 			A worker reported an issue with a test case for the function
-			<strong>{{ reviewed.owningArtifact }}</strong> .
+			<strong>{{ reviewed.owningArtifact }}</strong>.
+			<span>Can you review this issue?</span>
 		</div>
 
 		<!-- if no function description dispute  AND the prompt type is WRITE   --> 
 		<div ng-if="reviewed.promptType == 'WRITE' && !reviewed.submission.inDispute" >
-			The worker was asked to write the testcases for the function 
+			A worker was asked to write test cases for the function 
 			<strong>{{ reviewed.owningArtifact }}</strong>.
+			<span>Can you review this work?</span>
 		</div>
 
 		<!-- if no function description dispute  AND the prompt type is CORRECTS   --> 
 		<div ng-if="reviewed.promptType == 'CORRECT' && !reviewed.submission.inDispute" >
-			The worker was asked to edit the test cases of the function 
+			A worker was asked to edit test cases of the function 
 			<strong>{{ reviewed.owningArtifact }}</strong> 
-			to address an issue that the crowd found.
+			to address an issue found by the crowd.
+			<span>Can you review this work?</span>
 		</div>
-
-		<span>Can you rate this work?</span>
 	</div>
 
 </div>
@@ -42,7 +43,7 @@
 
 <!-- if the function description has been disputed -->
 <div class="section section-review" ng-if="review.microtask.submission.inDispute">
-	<div class="section-title" ><div class="dot bg-color"></div>report reason</div>
+	<div class="section-title" ><div class="dot bg-color"></div>Reported Issue</div>
 	<div class="section-content" >
 		{{review.microtask.submission.disputeFunctionText}}
 	</div>
@@ -56,11 +57,11 @@
 	<div class="section section-description" >
 		<div class="section-title" >
 			<div class="dot bg-color"></div>
-			REPORT DETAILS 
+			Reported Issue 
 		</div>
 
 		<div class="section-content">
-			<strong> Issued testcase: </strong>
+			<strong>Test case: </strong>
 			<span>{{reviewed.issuedTestCase}}</span>
 			<br />
 			<strong> Issue: </strong>
@@ -71,7 +72,11 @@
 </div>
 
 <div class="section section-review" ng-if="!review.microtask.submission.inDispute">
-	<div class="section-title" ><div class="dot bg-color"></div>submitted test cases</div>
+	<div class="section-title" >
+		<div class="dot bg-color"></div>
+		<span ng-if="reviewed.promptType == 'WRITE' && !reviewed.submission.inDispute" >submitted test cases</span> 
+		<span ng-if="reviewed.promptType == 'CORRECT' && !reviewed.submission.inDispute" >Revised test cases</span> 
+	</div>
 	<div class="section-content" >
 		<ul style="padding-left:20px">
 			<li ng-repeat="tc in review.testcases">
