@@ -107,14 +107,15 @@ angular
             
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-
-                scope.json = angular.toJson( angular.fromJson(ngModel.$viewValue), true) ;
-                if( ngModel.$viewValue == "") 
+                
+                if( ngModel.$viewValue === "") 
                     scope.prettyJson = "";
                 else if ( ngModel.$viewValue === undefined )
                     scope.prettyJson = "undefined";
-                else
+                else {
+                    scope.json = angular.toJson( angular.fromJson(ngModel.$viewValue), true) ;
                     scope.prettyJson = jsonSyntaxHighlight( scope.json );
+                }
             };
         },
         controller: function($scope,$element){
@@ -157,26 +158,31 @@ angular
                     // initialize the diff result
                     var diffHtml = '';
 
+                        console.log('old/new',oldObj,newObj);
+
                     // if the type is different
-                    if( oldObj == null || newObj == null || oldObj.constructor != newObj.constructor ){
+                    if( oldObj === null || newObj === null || oldObj.constructor != newObj.constructor || typeof oldObj == 'number' ){
 
                         if( typeof(oldObj) == 'object' )
                             diffHtml += joinLines( angular.toJson(oldObj, true) , 'line removed', 0);
-                        else 
-                            diffHtml += joinLines( oldObj.toString(), 'line removed', 0);
-
+                        else if ( typeof(oldObj) == 'string' )
+                            diffHtml += joinLines( '"'+oldObj+'"', 'line removed', 0);     
+                        else
+                            diffHtml += joinLines( oldObj + '', 'line removed', 0);           
 
                         if( typeof(newObj) == 'object' )
                             diffHtml += joinLines( angular.toJson(newObj, true) , 'line added', 0);
                         else if ( typeof(newObj) == 'string' )
                             diffHtml += joinLines( '"'+newObj+'"', 'line added', 0);     
                         else
-                            diffHtml += joinLines( newObj.toString(), 'line added', 0);                    
+                            diffHtml += joinLines( newObj + '', 'line added', 0);                    
 
                         scope.diffHtml = diffHtml;
+
                     }
                     // if the type of new is an object/array
                     else {
+                        console.log('compare obj');
 
                         var oldFields = Object.keys(oldObj);
                         var newFields = Object.keys(newObj);
@@ -197,15 +203,22 @@ angular
 
                         for( var f = 0 ; f < sharedFields.length ; f++ ){
                             var name = sharedFields[f];
+                            var equal = deepCompare(oldObj[name],newObj[name]);
 
-                            var text = angular.toJson( oldObj[name], true) + ',';
-                            if( !isArray ) text = '"'+name+'" : ' + text;
-                            diffHtml += joinLines( text, 'line removed', 2) ;
+                            if( equal ){
+                                var text = angular.toJson( oldObj[name], true) + ',';
+                                if( !isArray ) text = '"'+name+'" : ' + text;
+                                diffHtml += joinLines( text, 'line ', 2) ;
+                            } else {
+                                var text = angular.toJson( oldObj[name], true) + ',';
+                                if( !isArray ) text = '"'+name+'" : ' + text;
+                                diffHtml += joinLines( text, 'line removed', 2) ;
 
 
-                            var text = angular.toJson( newObj[name], true) + ',';
-                            if( !isArray ) text = '"'+name+'" : ' + text;
-                            diffHtml += joinLines( text, 'line added', 2) ;
+                                var text = angular.toJson( newObj[name], true) + ',';
+                                if( !isArray ) text = '"'+name+'" : ' + text;
+                                diffHtml += joinLines( text, 'line added', 2) ;
+                            }
 
                             diffHtml += '\n';
                         }
@@ -379,7 +392,7 @@ function safeJsonParse(json){
 **/
 function jsonSyntaxHighlight(json) {
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    var highlighted = json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
             function (match) {
                 var cls = 'jsonNumber';
                 if (/^"/.test(match)) {
@@ -395,6 +408,7 @@ function jsonSyntaxHighlight(json) {
                 }
                 return '<span class="' + cls + '">' + match + '</span>';
     });
+    return highlighted;
 }
 
 

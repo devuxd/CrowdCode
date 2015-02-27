@@ -366,10 +366,10 @@ angular
 
 
 	/**
-	lineDescription is the description lines array (split on \n)
+	descLines is the description lines array (split on \n)
 	functionName is the name of the function
 	 */
-	function parseDescription(lineDescription,functionName)
+	function parseDescription(descLines,functionName)
 	{
 		// initialize vars
 		var paramTypes = [];
@@ -381,20 +381,29 @@ angular
 
 		var numParams = 0;
 
-		for(var i=0; i<lineDescription.length;i++){
-
+		for(var i=0; i<descLines.length;i++){
+			var line = descLines[i];
 			// check if the current line is a parameter or return line
-			var paramLine  = lineDescription[i].search('@param ');
-			var returnLine = lineDescription[i].search('@return ');
-			if(paramLine!=-1 || returnLine!=-1){
+			var isParam  = line.search('@param ');
+			var isReturn = line.search('@return ');
+			if( isParam!=-1 || isReturn!=-1 ){
 
-				lineDescription[i] = lineDescription[i].replace(/\s{2,}/g,' ');
+				var matches = line.match(/\w+(\[\])*/g);
+		        if( matches == null )
+		            return [];
 
-				if(paramLine!=-1){	// if a param has been found in the current line
+		        console.log('matches',matches);
+
+		        var type = matches[1];
+		        var name = matches[2];
+
+
+				if(isParam!=-1){	// if a param has been found in the current line
 					// find the parameter type, name and description
-					var paramType = findNextWord(lineDescription[i], paramLine + 6	);
-					var paramName = findNextWord(lineDescription[i], paramLine + paramType.length+ 7);
-					var paramDescription = lineDescription[i].substring( paramLine + paramType.length+ paramName.length +10);
+					var paramType = matches[1];
+					var paramName = matches[2];
+					var descriptionStart = line.indexOf(', ');
+					var paramDescription = line.substring(descriptionStart+2);
 
 					// push them into the relative arrays
 					paramTypes.push(paramType);
@@ -404,23 +413,32 @@ angular
 					// increment the number of parameterss
 					numParams++;
 				}
-				else if(returnLine!=-1) { // if is a return line
-					var type = findNextWord(lineDescription[i], returnLine + 7);
-					returnType=type;
+				else{ // if is a return line
+					var type = matches[1];
+					returnType = type;
 				}
 			}
-			else if( lineDescription[i].length > 4 ){ // otherwise is a description line
-				if(lineDescription[i].length>74)
+			else if( line.length > 4 ){ // otherwise is a description line
+				if(line[i].length > 74)
 				{
-				    lineDescription[i]=lineDescription[i].match(/.{1,74}(\s|$)|\S+?(\s|$)/g).join('\n  ');
+				    descLines[i]=line.match(/.{1,74}(\s|$)|\S+?(\s|$)/g).join('\n  ');
 				}
-				description+=lineDescription[i]+"\n";
+				description+=descLines[i]+"\n";
 			}
 		}
 
 
 		// build header
 		header=renderHeader(functionName,paramNames);
+
+		console.log({ 'name'				: functionName,
+				 'header'           : header,
+				 'description'      : description,
+				 'paramTypes'       : paramTypes,
+				 'paramNames'       : paramNames,
+				 'paramDescriptions': paramDescriptions,
+				 'returnType'       : returnType
+				});
 
 		// return all the infos
 		return { 'name'				: functionName,
