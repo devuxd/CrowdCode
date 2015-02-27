@@ -1,29 +1,3 @@
-<div class="popover popover-news task-{{ n.microtaskType | lowercase }}" tabindex="-1">
-    <button type="button" class="close popover-close" ng-click="$hide()">&times;</button>
- 
-
-
-    <!-- REVIEW MICROTASK -->
-    <div ng-if="n.isReview">
-    <h3 class="popover-title ">You wrote the following   &emsp;<span class="microtask-title"> review</span> </h3>
-        <div ng-if="n.isReview" class="section section-description">
-            <div class="section-title" >
-                REVIEW SCORE:
-            </div>
-            <div class="section-content" >
-                <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
-                <span class="clearfix"></span><br />
-                <span ng-if="n.reviewText"> <b>Review description: </b>{{n.reviewText}}</span>
-            </div>
-        </div>
-         <h3 class="popover-title">Reviewed microtask: <b>{{n.microtask.title}}</b> </h3> 
-    </div>
-
-    <!-- MICROTASK TITLE -->
-    <div ng-if="! n.isReview" >
-        <h3 class="popover-title"><b>Your work on: &emsp; </b> <span class="microtask-title">{{n.microtask.title}} </span></h3>
-    </div>
-
     <!-- WRITE TEST -->
     <div ng-if="n.test" class="section section-description">
         <div class="section-title" >

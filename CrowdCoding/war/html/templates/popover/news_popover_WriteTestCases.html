@@ -1,120 +1,43 @@
-<div class="popover popover-news task-{{ n.microtaskType | lowercase }}" tabindex="-1">
-    <button type="button" class="close popover-close" ng-click="$hide()">&times;</button>
- 
-
-
-    <!-- REVIEW MICROTASK -->
-    <div ng-if="n.isReview">
-    <h3 class="popover-title ">You wrote the following   &emsp;<span class="microtask-title"> review</span> </h3>
-        <div ng-if="n.isReview" class="section section-description">
-            <div class="section-title" >
-                REVIEW SCORE:
-            </div>
-            <div class="section-content" >
-                <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
-                <span class="clearfix"></span><br />
-                <span ng-if="n.reviewText"> <b>Review description: </b>{{n.reviewText}}</span>
-            </div>
-        </div>
-         <h3 class="popover-title">Reviewed microtask: <b>{{n.microtask.title}}</b> </h3> 
+<div ng-if=" ! n.microtask.submission.inDispute">
+    <div ng-if="n.microtask.promptType=='WRITE'">
+        test cases for the function <strong>{{n.funct.getName()}}</strong>
     </div>
-
-    <!-- MICROTASK TITLE -->
-    <div ng-if="! n.isReview" >
-        <h3 class="popover-title"><b>Your work on: &emsp; </b> <span class="microtask-title">{{n.microtask.title}} </span></h3>
+    <div ng-if="n.microtask.promptType=='CORRECT'">
+       test cases for the function <strong>{{n.funct.getName()}}</strong>
     </div>
+</div>
 
-    <!-- WRITE TEST -->
-    <div ng-if="n.test" class="section section-description">
-        <div class="section-title" >
-            <span ng-if="! n.test.inDispute">SUBMITTED TEST:</span>
-            <span ng-if="n.test.inDispute">SUBMITTED DISPUTE:</span>
-        </div>
+<div ng-if="n.microtask.submission.inDispute">
+    You reported the following issue for the function <strong>{{n.funct.getName()}}</strong>
+</div>
 
-        <div class="section-content" >
-            <table ng-if="! n.test.inDispute" style="width:100%" class="test">
-                <tr ng-repeat="(inputKey,input) in n.test.simpleTestInputs track by $index">
-                    <td>{{n.functionUnderTest.paramNames[$index]}}</td>
-                    <td>
-                        <div ace-read-json ng-model="input" ></div>
-                    </td>
-                </tr>
-                <tr ng-if="n.functionUnderTest.returnType!=undefined">
-                    <td>return value:</td>
-                    <td>
-                        <div ace-read-json ng-model="n.test.simpleTestOutput" ></div>
-                    </td>
-                </tr>
-            </table>
-            <span ng-if="n.test.inDispute">{{n.test.disputeText}}</span>
-            <div class="section-title" >
-                TEST CASE:
-            </div>
-            <div class="section-content" >
-                <input type="text"
-                class="form-control"
-                disabled="true"
-                name="newTestCase"
-                ng-model="n.testcases[0].text"
-                >
-            </div>
-        </div>
+<!-- FUNCTION CODE -->
+<div class="section section-description">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>
+        FUNCTION DESCRIPTION:
     </div>
-
-    <!-- WRITE TEST CASES -->
-    <div  ng-if="n.microtask.type=='WriteTestCases'" class="section section-description">
-        <div class="section-title" >
-            SUBMITTED TEST CASES:
-        </div>
-        <div class="section-content" >
-            <ul style="list-style:none">
-                <li class="" ng-repeat="testcase in n.testcases"><strong>#{{$index+1}}</strong> {{testcase.text}}</li>
-            </ul>
-        </div>
+    <div class="section-content" >
+        <ace-read-js code="n.funct.getSignature()"></ace-read-js>
     </div>
-
-
-    <!-- PSEUDOCALL FOR WRITE CALL AND REUSE SEARCH-->
-    <div  ng-if="n.microtask.pseudoCall" class="section section-description">
-        <div class="section-title" >
-            PSEUDOCALL:
-        </div>
-        <div class="section-content" >
-            <b>{{n.microtask.pseudoCall}}</b>
-        </div>
+</div>
+<div class="section section-review" ng-if="! n.microtask.submission.inDispute">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>
+        SUBMITTED TEST CASES:
     </div>
-
-    <!-- SOLUTION FOR REUSE SEARCH-->
-    <div  ng-if="n.microtask.type=='ReuseSearch'" class="section section-description">
-        <div class="section-title" >
-            SOLUTION FOUND:
-        </div>
-        <div class="section-content" >
-            <code-mirror-readonly ng-if="n.editorHeader" code="n.editorHeader"></code-mirror-readonly>
-            <span ng-if="! n.editorHeader">A function that solve the pseudocall doesn't exist yet </span>
-        </div>
+    <div class="section-content" >
+        <ul style="list-style:none">
+            <li class="" ng-repeat="testcase in n.testcases"><strong>#{{$index+1}}</strong> {{testcase.text}}</li>
+        </ul>
     </div>
-
-
-    <!-- FUNCTION CODE -->
-    <div ng-if="n.editorCode" class="section section-description">
-        <div class="section-title" >
-            FUNCTION CODE:
-        </div>
-        <div class="section-content" >
-            <ace-read-js ng-if="n.editorCode" code="n.editorCode"></ace-read-js>
-        </div>
+</div>
+<div class="section section-review" ng-if="n.microtask.submission.inDispute">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>
+        Reported Issue:
     </div>
-
-    <!-- REVIEW SCORE -->
-    <div ng-if="! n.isReview && n.qualityScore" class="section section-description">
-        <div class="section-title" >
-            REVIEW RECEIVED:
-        </div>
-        <div class="section-content" >
-            <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
-            <span class="clearfix"></span><br />
-        <span ng-if="n.reviewText"> <b>Review description: </b>{{n.reviewText}}</span>        </div>
+    <div class="section-content" >
+        {{review.microtask.submission.disputeFunctionText}}
     </div>
-
 </div>

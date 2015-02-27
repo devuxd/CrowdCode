@@ -5,7 +5,7 @@
 angular
     .module('crowdCode')
     .controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
-    // initialization of models 
+    // initialization of models
     $scope.model = {};
     $scope.model.description = "";
     $scope.model.returnType = "";
@@ -20,10 +20,10 @@ angular
             $scope.dispute.active = ! $scope.dispute.active;
             if( $scope.dispute.active )
                 $scope.dispute.text = '';
-        } 
+        }
     };
 
-    // addParameter and deleteParameter 
+    // addParameter and deleteParameter
     $scope.addParameter = function() {
         var parameter = {
             text: '',
@@ -81,7 +81,7 @@ angular
                     paramNames.push($scope.model.parameters[i].paramName);
                     paramTypes.push($scope.model.parameters[i].paramType);
                     paramDescriptions.push($scope.model.parameters[i].paramDescription);
-                }   
+                }
 
                 header = functionsService.renderHeader($scope.model.functionName, paramNames);
                 allFunctionCode = functionsService.getAllDescribedFunctionCode()+ " var debug = null; " ;

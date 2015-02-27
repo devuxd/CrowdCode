@@ -5,7 +5,7 @@
 	<div class="section-content job-description" >
 
 		<div ng-if="reviewed.submission.inDispute">
-			A worker has requested that the following function not be implemented. Can you review this request?
+			A worker has reported the following function as not implementable.  Can you review this request?
 		</div>
 		<div ng-if="! reviewed.submission.inDispute">
 			<div ng-if="reviewed.promptType == 'SKETCH'">
@@ -85,7 +85,7 @@
 	</div>
 
 	<div class="section section-review">
-		<div class="section-title" ><div class="dot bg-color"></div>REPORT DETAILS</div>
+		<div class="section-title" ><div class="dot bg-color"></div>Reason for request</div>
 		<div class="section-content" >
 			{{reviewed.submission.disputeFunctionText}}
 		</div>
