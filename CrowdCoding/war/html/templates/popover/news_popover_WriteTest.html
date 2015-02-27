@@ -1,0 +1,94 @@
+    <!-- WRITE TEST -->
+    <div ng-if="n.test" class="section section-description">
+        <div class="section-title" >
+            <span ng-if="! n.test.inDispute">SUBMITTED TEST:</span>
+            <span ng-if="n.test.inDispute">SUBMITTED DISPUTE:</span>
+        </div>
+
+        <div class="section-content" >
+            <table ng-if="! n.test.inDispute" style="width:100%" class="test">
+                <tr ng-repeat="(inputKey,input) in n.test.simpleTestInputs track by $index">
+                    <td>{{n.functionUnderTest.paramNames[$index]}}</td>
+                    <td>
+                        <div ace-read-json ng-model="input" ></div>
+                    </td>
+                </tr>
+                <tr ng-if="n.functionUnderTest.returnType!=undefined">
+                    <td>return value:</td>
+                    <td>
+                        <div ace-read-json ng-model="n.test.simpleTestOutput" ></div>
+                    </td>
+                </tr>
+            </table>
+            <span ng-if="n.test.inDispute">{{n.test.disputeText}}</span>
+            <div class="section-title" >
+                TEST CASE:
+            </div>
+            <div class="section-content" >
+                <input type="text"
+                class="form-control"
+                disabled="true"
+                name="newTestCase"
+                ng-model="n.testcases[0].text"
+                >
+            </div>
+        </div>
+    </div>
+
+    <!-- WRITE TEST CASES -->
+    <div  ng-if="n.microtask.type=='WriteTestCases'" class="section section-description">
+        <div class="section-title" >
+            SUBMITTED TEST CASES:
+        </div>
+        <div class="section-content" >
+            <ul style="list-style:none">
+                <li class="" ng-repeat="testcase in n.testcases"><strong>#{{$index+1}}</strong> {{testcase.text}}</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- PSEUDOCALL FOR WRITE CALL AND REUSE SEARCH-->
+    <div  ng-if="n.microtask.pseudoCall" class="section section-description">
+        <div class="section-title" >
+            PSEUDOCALL:
+        </div>
+        <div class="section-content" >
+            <b>{{n.microtask.pseudoCall}}</b>
+        </div>
+    </div>
+
+    <!-- SOLUTION FOR REUSE SEARCH-->
+    <div  ng-if="n.microtask.type=='ReuseSearch'" class="section section-description">
+        <div class="section-title" >
+            SOLUTION FOUND:
+        </div>
+        <div class="section-content" >
+            <code-mirror-readonly ng-if="n.editorHeader" code="n.editorHeader"></code-mirror-readonly>
+            <span ng-if="! n.editorHeader">A function that solve the pseudocall doesn't exist yet </span>
+        </div>
+    </div>
+
+
+    <!-- FUNCTION CODE -->
+    <div ng-if="n.editorCode" class="section section-description">
+        <div class="section-title" >
+            FUNCTION CODE:
+        </div>
+        <div class="section-content" >
+            <ace-read-js ng-if="n.editorCode" code="n.editorCode"></ace-read-js>
+        </div>
+    </div>
+
+    <!-- REVIEW SCORE -->
+    <div ng-if="! n.isReview && n.qualityScore" class="section section-description">
+        <div class="section-title" >
+            REVIEW RECEIVED:
+        </div>
+        <div class="section-content" >
+            <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
+            <span class="clearfix"></span><br />
+        <span ng-if="n.reviewText"> <b>Review description: </b>{{n.reviewText}}</span>        </div>
+    </div>
+
+</div>

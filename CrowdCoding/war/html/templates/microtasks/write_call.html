@@ -5,18 +5,18 @@
 		
 		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 		<div class="section-content job-description" >
-			<div ng-if="microtask.pseudoName!=calleeFunction.getName()">
+			<div ng-if="microtask.pseudoFunctionName!=calleeFunction.getName()">
 				The crowd found that the calls to the function
-				<strong>{{ $scope.microtask.pseudoName }}</strong>
-				can be implemented by using the function <strong>{{calleeFunction.getName()}}</strong>. <br />
-				Using the signature of the function <strong>{{calleeFunction.getName()}}</strong>, can you revise the calls to <strong>{{microtask.pseudoName}}</strong> in the following function code?
+				<strong>{{ $scope.microtask.pseudoFunctionName }}</strong>
+				can be implemented by using the function <strong>{{calleeFunction.getName()}}</strong>.
+				Based on the description of <strong>{{calleeFunction.getName()}}</strong>
+				, can you revise the call(s) to <strong>{{ $scope.microtask.pseudoFunctionName }}</strong> ?
 				<br />
-				<b>Tip:</b> if a call {{calleeFunction.getName()}} doesn't seem the right way to do this, you can also try a different implementation instead.
 			</div>
-			<div ng-if="microtask.pseudoName==calleeFunction.getName()">
-				According to the signature of <strong>{{calleeFunction.getName()}}</strong>, can you check if the calls are correct and revise them if necessary?
+			<div ng-if="microtask.pseudoFunctionName==calleeFunction.getName()">
+				The crowd has created a description for the function <strong>{{ $scope.microtask.pseudoFunctionName }}</strong>, called by the function below. Based on the description, can you check if the call(s) are correct, and revise them if necessary?
 			</div>
-
+			<strong>Tip:</strong> If you know a better way to implement the function, you may revise the function as you see fit.
 		</div>
 	</div>
 
@@ -25,7 +25,7 @@
 	
 	<div class="section section-description">
 		<div class="section-title" >
-			<div class="dot bg-color"></div> FUNCTION SIGNATURE
+			<div class="dot bg-color"></div> FUNCTION DESCRIPTION
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="calleeFunction.getSignature()"></ace-read-js>
@@ -52,7 +52,7 @@
 						code="code"
 						codemirror="codemirror"
 						funct="funct"
-						highlight = "microtask.pseudoName"
+						highlight = "microtask.pseudoFunctionName"
 						>
 					</function-editor>
 				</div>

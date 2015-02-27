@@ -6,11 +6,11 @@
 	<div class="section-content job-description" >
 
 		<div ng-if="! review.microtask.submission.inDispute">
-			A worker was asked to write a description of the following sketch of function
+			A worker was asked to write a detailed description for the following requested function.
 		</div>
 
 		<div ng-if="review.microtask.submission.inDispute">
-			A worker reported the following sketch of function as not implementable
+			A worker has requested that the following function not be implemented.
 		</div>
 
 		<span>Can you review this work?</span>
@@ -18,24 +18,37 @@
 </div>
 <div class="section section-description">
 	<div class="section-title" >
-		<div class="dot bg-color"></div>FUNCTION SKETCH
+		<div class="dot bg-color"></div>
+		<span ng-if="! review.microtask.submission.inDispute">Requested Function</span>
+		<span ng-if="review.microtask.submission.inDispute">Function description</span>
+
 	</div>
 
 	<div class="section-content no-padding" >
-		<ace-read-js code="review.microtask.callDescription"></ace-read-js>
+		<ace-read-js code="review.microtask.pseudoFunctionDescription"></ace-read-js>
+	</div>
+</div>
+<div class="section section-description" ng-if="! review.microtask.submission.inDispute">
+	<div class="section-title" >
+		<div class="dot bg-color"></div>
+		<span >Requesting function</span>
+	</div>
+
+	<div class="section-content no-padding" >
+		<ace-read-js code="review.requestingFunction.getCode()"></ace-read-js>
 	</div>
 </div>
 <div class="section section-review" ng-if="! review.microtask.submission.inDispute">
 	<div class="section-title" >
-		<div class="dot bg-color"></div>submitted function description
+		<div class="dot bg-color"></div>Detailed Function Description
 	</div>
 	<div class="section-content" >
-		<ace-read-js code="review.functionCode"></ace-read-js>
+		<ace-read-js code="review.review.functionDescription"></ace-read-js>
 	</div>
 </div>
 
 <div class="section section-review" ng-if="review.microtask.submission.inDispute">
-	<div class="section-title" ><div class="dot bg-color"></div>report reason</div>
+	<div class="section-title" ><div class="dot bg-color"></div>Reason for request</div>
 	<div class="section-content" >
 		{{review.microtask.submission.disputeFunctionText}}
 	</div>

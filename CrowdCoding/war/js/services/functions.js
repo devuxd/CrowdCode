@@ -21,6 +21,7 @@ angular
 		this.allDescribedFunctionIDs = function() { return allDescribedFunctionIDs(); };
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
+		this.getVersion = function(id,version) { return getVersion(id, version); };
 		this.getByName = function(name) { return getByName(name); };
 		this.getNameById  = function(id) { return getNameById(id); };
 		this.getMockCodeFor = function(id,logEnabled) { return getMockCodeFor(id,logEnabled); };
@@ -156,6 +157,15 @@ angular
 			return new FunctionFactory(funct);
 		}
 
+		// Get the function object, in FunctionInFirebase format, for the specified function id
+		function getVersion(id, version)
+		{
+			var functionSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + id+ '/' + version));
+			var funct = functionSync.$asObject();
+
+			return funct;
+		}
+
 		// Get the function object, in FunctionInFirebase format, for the specified function name
 		function getByName(name)
 		{
@@ -171,7 +181,8 @@ angular
 		function getNameById(id)
 		{
 			var funct = get(id);
-			if( funct != null) return funct.name;
+			if( funct !== null)
+				return funct.name;
 			return "";
 		}
 

@@ -873,8 +873,26 @@ angular
             var loadData = {
                 'WriteFunction': function(news) {
 
-                    news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
+                    news.funct = new FunctionFactory(news.microtask.submission);
+                    if (news.microtask.promptType == 'REMOVE_CALLEE')
+                        news.callee=functionsService.get(news.microtask.calleeId);
 
+                    if (news.microtask.promptType == 'DESCRIPTION_CHANGE') {
+                        oldCode = news.microtask.oldFullDescription.split("\n");
+                        newCode = news.microtask.newFullDescription.split("\n");
+                        diffRes = diff(oldCode, newCode);
+                        diffCode = "";
+                        angular.forEach(diffRes, function(diffRow) {
+                            if (diffRow[0] == "=") {
+                                diffCode += diffRow[1].join("\n");
+                            } else {
+                                for (var i = 0; i < diffRow[1].length; i++)
+                                    diffCode += diffRow[0] + diffRow[1][i] + "\n";
+                            }
+                            diffCode += "\n";
+                        });
+                        news.calledDiffCode = diffCode;
+                    }
 
                 },
 
@@ -882,52 +900,45 @@ angular
 
                     news.testcases = news.microtask.submission.testCases;
 
-                    var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + news.microtask.functionID + '/'
-                    + news.microtask.submission.functionVersion));
-                    var functionUnderTest = functionUnderTestSync.$asObject();
+                    var functionUnderTest = functionsService.getVersion(news.microtask.functionID, news.microtask.submission.functionVersion);
 
                     functionUnderTest.$loaded().then(function(){
-
-                        news.editorCode = functionsService.renderDescription(functionUnderTest)+functionUnderTest.header;
+                        news.funct = new FunctionFactory(functionUnderTest);
                     });
                 },
 
                 'ReuseSearch': function(news) {
-                    news.microtask.pseudoCall= news.microtask.pseudoFunctionDescription;
-                    if(news.microtask.submission.noFunction === false)
-                        news.editorHeader = functionsService.renderHeaderById(news.microtask.submission.functionId);
+
+                    news.funct = functionsService.get(news.microtask.functionID);
+                    if(news.microtask.submission.noFunction===false)
+                    news.calleeFunction = functionsService.get(news.microtask.submission.functionId);
+
+
                 },
                 'WriteTest': function(news) {
 
-                    //function
-                    var functionUnderTestSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + news.microtask.functionID + '/'
-                    + news.microtask.submission.functionVersion));
-                    news.functionUnderTest = functionUnderTestSync.$asObject();
+                    news.testcases = news.microtask.submission.testCases;
 
-                    news.functionUnderTest.$loaded().then(function(){
+                    var functionUnderTest = functionsService.getVersion(news.microtask.functionID, news.microtask.submission.functionVersion);
 
-                        news.editorCode = functionsService.renderDescription(news.functionUnderTest)+news.functionUnderTest.header;
+                    functionUnderTest.$loaded().then(function(){
+                        news.funct = new FunctionFactory(functionUnderTest);
                     });
-
-                    //test case
-                    news.testcases=[{}];
-                    news.testcases[0].text=news.microtask.owningArtifact;
-                    //test
-                    news.test = news.microtask.submission;
-
                 },
                 'WriteFunctionDescription': function(news) {
-
-                    news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header;
+                    $scope.review.functionDescription = new FunctionFactory(news.microtask.submission).getSignature();
+                    $scope.review.requestingFunction  = functionsService.get(news.microtask.functionID);
                 },
                 'WriteCall': function(news) {
 
-                    news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
-
+                    news.funct = new FunctionFactory(news.microtask.submission);
+                    news.calleeFunction = functionsService.get(news.microtask.calleeID);
                 },
                 'DebugTestFailure': function(news) {
-                    if(news.microtask.submission.testId===undefined)
-                        news.editorCode = new FunctionFactory(news.microtask.submission).getFunctionCode();
+                   news.funct = functionsService.get($scope.review.microtask.functionID);
+
+                   if(news.microtask.submission.testId!==undefined)
+                        news.test= TestList.get($scope.review.microtask.submission.testId);
 
                 },
                 'Review': function(news) {
@@ -942,7 +953,7 @@ angular
 
             };
 
-            //Utility to show and hode the popover
+            //Utility to show and hide the popover
             var showPopover = function(popover) {
               popover.$promise.then(popover.show);
             };
@@ -953,9 +964,6 @@ angular
             //
             $scope.showMicrotaskPopover = function(news) {
 
-                //se undefined creala mostrala e nascondi le altre
-                //se defined se mi arriva la mia non fare niente
-                // se defined e non è la mia nascondi le altre e visualizza la mia
                 if($scope.$parent.popover[news.microtaskKey]===undefined){
 
                     //Hide all the popover if any is visualized
@@ -980,16 +988,14 @@ angular
                             news.reviewText = news.microtask.review.reviewText;
                         }
                         loadData[news.microtask.type](news);
-
-                       
                     });
 
                 } else if($scope.$parent.popover[news.microtaskKey].$isShown === false){
 
                     //Hide all the popover if any is visualized
-                    for(var key in $scope.$parent.popover)
+                    for(var index in $scope.$parent.popover)
                     {
-                        hidePopover( $scope.$parent.popover[key]);
+                        hidePopover( $scope.$parent.popover[index]);
                     }
                     showPopover($scope.$parent.popover[news.microtaskKey]);
                 }

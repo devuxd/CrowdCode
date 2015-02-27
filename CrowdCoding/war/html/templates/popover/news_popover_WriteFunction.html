@@ -1,0 +1,83 @@
+<div ng-if="n.microtask.submission.inDispute">
+   The function <strong>{{n.funct.getName()}}</strong> was not implementable.
+</div>
+<div ng-if="! n.microtask.submission.inDispute">
+    <div ng-if="n.microtask.promptType == 'SKETCH'">
+        Edit to the code of the function <strong>{{n.funct.getName()}}</strong>.
+    </div>
+
+    <div ng-if="n.microtask.promptType == 'RE_EDIT'">
+        Edit to the code of the function <strong>{{n.funct.getName()}}</strong> to address an issue reported by the crowd.
+    </div>
+
+    <div ng-if="n.microtask.promptType == 'DESCRIPTION_CHANGE'">
+        Edit to the code of the function <strong>{{n.funct.getName()}}</strong> based on a change to the signature of a function it calls.
+    </div>
+
+    <div ng-if="n.microtask.promptType=='REMOVE_CALLEE'">
+        Edit to the code of the function <strong>{{n.funct.getName()}}</strong> to replace the call(s) to <strong>{{n.callee.getName()}}</strong> with a new implementation.
+    </div>
+</div>
+
+<div ng-if = "! n.microtask.submission.inDispute">
+    <div class="section section-description-2" ng-if="n.microtask.disputeText.length > 0">
+        <div class="section-title" >
+            <div class="dot bg-color"></div>Reported Issue
+        </div>
+        <div class="section-content">
+            {{reviewed.disputeText}}
+        </div>
+    </div>
+
+
+    <div ng-if="n.microtask.promptType == 'REMOVE_CALLEE'">
+        <div class="section section-description-2">
+            <div class="section-title" >
+                <div class="dot bg-color"></div>Description of Function Call to Remove
+            </div>
+            <div class="section-content no-padding" >
+                <ace-read-js code="n.callee.getSignature()" ></ace-read-js>
+            </div>
+        </div>
+    </div>
+
+
+    <div ng-if="n.microtask.promptType == 'DESCRIPTION_CHANGE'">
+        <div class="section section-description-2">
+            <div class="section-title" >
+                <div class="dot bg-color"></div>Changes to Function Signature
+            </div>
+            <div class="section-content no-padding" >
+                <ace-read-js code="n.calledDiffCode" mode="diff" ></ace-read-js>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="section section-review" >
+        <div class="section-title" >
+            <div class="dot bg-color"></div>submitted function
+        </div>
+        <div class="section-content no-padding" >
+            <ace-read-js code="n.funct.getFullCode()"></ace-read-js>
+        </div>
+    </div>
+</div>
+
+<div ng-if = "n.microtask.submission.inDispute">
+    <div class="section section-description-2">
+        <div class="section-title" >
+            <div class="dot bg-color"></div>reported function
+        </div>
+        <div class="section-content no-padding" >
+            <ace-read-js code="review.functionCode" mode="diff" ></ace-read-js>
+        </div>
+    </div>
+
+    <div class="section section-review">
+        <div class="section-title" ><div class="dot bg-color"></div>Reason for request</div>
+        <div class="section-content" >
+            {{n.microtask.submission.disputeFunctionText}}
+        </div>
+    </div>
+</div>

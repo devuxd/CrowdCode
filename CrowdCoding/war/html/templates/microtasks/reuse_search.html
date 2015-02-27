@@ -5,8 +5,7 @@
 		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 
 		<div class="section-content job-description" >
-			While editing the function <strong>{{funct.name}}</strong>, a worker requested a function call to <strong>{{ microtask.pseudoFunctionName }}</strong>.<br/>
-			Can you find a function providing the requested behavior, or indicate that no such function exists?
+			A worker editing the function <strong>{{funct.getName()}}</strong> requested a call to a function providing the behavior of <strong>{{ microtask.pseudoFunctionName }}</strong>. Can you find a function providing such behavior (which might be named differently), or indicate that no such function exists?
 		</div>
 	</div>
 	
@@ -21,7 +20,7 @@
 
 	<div class="section section-description">
 		<div class="section-title" >
-			<div class="dot bg-color"></div> REQUESTING FUNCTION CODE
+			<div class="dot bg-color"></div> REQUESTING FUNCTION
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="code" highlight="[ { 'needle' : microtask.pseudoFunctionName+'\\([\\w,]*\\);' , regex: true } ]"></ace-read-js>

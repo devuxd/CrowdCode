@@ -1,0 +1,43 @@
+<div ng-if=" ! n.microtask.submission.inDispute">
+    <div ng-if="n.microtask.promptType=='WRITE'">
+        test cases for the function <strong>{{n.funct.getName()}}</strong>
+    </div>
+    <div ng-if="n.microtask.promptType=='CORRECT'">
+       test cases for the function <strong>{{n.funct.getName()}}</strong>
+    </div>
+</div>
+
+<div ng-if="n.microtask.submission.inDispute">
+    You reported the following issue for the function <strong>{{n.funct.getName()}}</strong>
+</div>
+
+<!-- FUNCTION CODE -->
+<div class="section section-description">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>
+        FUNCTION DESCRIPTION:
+    </div>
+    <div class="section-content" >
+        <ace-read-js code="n.funct.getSignature()"></ace-read-js>
+    </div>
+</div>
+<div class="section section-review" ng-if="! n.microtask.submission.inDispute">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>
+        SUBMITTED TEST CASES:
+    </div>
+    <div class="section-content" >
+        <ul style="list-style:none">
+            <li class="" ng-repeat="testcase in n.testcases"><strong>#{{$index+1}}</strong> {{testcase.text}}</li>
+        </ul>
+    </div>
+</div>
+<div class="section section-review" ng-if="n.microtask.submission.inDispute">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>
+        Reported Issue:
+    </div>
+    <div class="section-content" >
+        {{review.microtask.submission.disputeFunctionText}}
+    </div>
+</div>

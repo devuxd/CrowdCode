@@ -12,15 +12,15 @@
 
 		<!-- if no function description dispute  AND the prompt type is WRITE   --> 
 		<div ng-if="reviewed.promptType == 'WRITE' && !reviewed.submission.inDispute" >
-			A worker was asked to write test cases for the function 
+			A worker was asked to write test cases for the function
 			<strong>{{ reviewed.owningArtifact }}</strong>.
 			<span>Can you review this work?</span>
 		</div>
 
-		<!-- if no function description dispute  AND the prompt type is CORRECTS   --> 
+		<!-- if no function description dispute  AND the prompt type is CORRECTS   -->
 		<div ng-if="reviewed.promptType == 'CORRECT' && !reviewed.submission.inDispute" >
-			A worker was asked to edit test cases of the function 
-			<strong>{{ reviewed.owningArtifact }}</strong> 
+			A worker was asked to edit test cases of the function
+			<strong>{{ reviewed.owningArtifact }}</strong>
 			to address an issue found by the crowd.
 			<span>Can you review this work?</span>
 		</div>

@@ -5,7 +5,7 @@
 	<div class="section-content job-description" >
 
 		<div ng-if="reviewed.submission.inDispute">
-			A worker reported the following sketch of function as not implementable
+			A worker has reported the following function as not implementable.  Can you review this request?
 		</div>
 		<div ng-if="! reviewed.submission.inDispute">
 			<div ng-if="reviewed.promptType == 'SKETCH'">
@@ -13,18 +13,18 @@
 			</div>
 
 			<div ng-if="reviewed.promptType == 'RE_EDIT'">
-				A worker was asked to edit the function <strong>{{ reviewed.owningArtifact }}</strong> to address the issue reported by the crowd.
+				A worker was asked to revise the following function (if necessary) to address an issue reported by the crowd.
 			</div>
 
 			<div ng-if="reviewed.promptType == 'DESCRIPTION_CHANGE'">
-				A worker was asked to edit the code of the function <strong>{{ reviewed.owningArtifact }}</strong> after the  signature change of called function .
+				A worker was asked to revise the following function (if necessary) based on a change to the signature of a function it calls.
 			</div>
 
 			<div ng-if="reviewed.promptType=='REMOVE_CALLEE'">
-				A worker was asked to remove the calle <strong>{{callee.getName()}}</strong> from the function <strong>{{ reviewed.owningArtifact }}</strong> because the crowd reported the calle as not implementable.
+				The crowd determined that the function <strong>{{callee.getName()}}</strong>, which was called in the function below, could not be implemented as requested, for the reason below.  As a result, a worker was asked to replace the call(s) to <strong>{{callee.getName()}}</strong> with a new 	implementation.
 			</div>
+			<span>Can you review this work?</span>
 		</div>
-		<span>Can you review this work?</span>
 	</div>
 
 </div>
@@ -32,7 +32,7 @@
 <div ng-if = "! reviewed.submission.inDispute">
 	<div class="section section-description-2" ng-if="reviewed.disputeText.length > 0">
 		<div class="section-title" >
-			<div class="dot bg-color"></div>REPORT DESCRIPTION
+			<div class="dot bg-color"></div>Reported Issue
 		</div>
 		<div class="section-content" ng-if="reviewed.disputeText.length > 0" >
 			{{reviewed.disputeText}}
@@ -43,7 +43,7 @@
 	<div ng-if="reviewed.promptType == 'REMOVE_CALLEE'">
 		<div class="section section-description-2">
 			<div class="section-title" >
-				<div class="dot bg-color"></div>callee to remove
+				<div class="dot bg-color"></div>Description of Function Call to Remove
 			</div>
 			<div class="section-content no-padding" >
 				<ace-read-js code="callee.getSignature()" ></ace-read-js>
@@ -55,7 +55,7 @@
 	<div ng-if="reviewed.promptType == 'DESCRIPTION_CHANGE'">
 		<div class="section section-description-2">
 			<div class="section-title" >
-				<div class="dot bg-color"></div>different callee function signature
+				<div class="dot bg-color"></div>Changes to Function Signature
 			</div>
 			<div class="section-content no-padding" >
 				<ace-read-js code="calledDiffCode" mode="diff" ></ace-read-js>
@@ -66,7 +66,7 @@
 
 	<div class="section section-review" >
 		<div class="section-title" >
-			<div class="dot bg-color"></div>submitted function code
+			<div class="dot bg-color"></div>Diff of edits to function
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
@@ -85,7 +85,7 @@
 	</div>
 
 	<div class="section section-review">
-		<div class="section-title" ><div class="dot bg-color"></div>REPORT DETAILS</div>
+		<div class="section-title" ><div class="dot bg-color"></div>Reason for request</div>
 		<div class="section-content" >
 			{{reviewed.submission.disputeFunctionText}}
 		</div>

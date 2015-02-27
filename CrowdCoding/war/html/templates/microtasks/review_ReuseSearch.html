@@ -4,14 +4,7 @@
 
 	<div class="section-content job-description" >
 
-		<div ng-if="calleeFunction.getName() == review.microtask.pseudoFunctionName">
-			A worker was asked to find a function <strong>{{review.microtask.pseudoFunctionName}}</strong> providing the following behavior.
-		</div>
-		<div ng-if="calleeFunction.getName() != review.microtask.pseudoFunctionName">
-			A worker was asked to find a function providing the behavior of the function <b>{{review.microtask.pseudoFunctionName}}</b>.
-		</div>
-
-		<span>Can you review this work?</span>
+		A worker editing the function <strong>{{funct.getName()}}</strong> requested a call to a function providing the behavior of <strong>{{review.microtask.pseudoFunctionName}}</strong>. As a result, a worker was asked to find a function providing such behavior, if it existed. Can you review this work?
 	</div>
 </div>
 
@@ -21,6 +14,14 @@
 	</div>
 	<div class="section-content" >
 		<ace-read-js code="review.microtask.pseudoFunctionDescription"></ace-read-js>
+	</div>
+</div>
+<div class="section section-description-2">
+	<div class="section-title" >
+		<div class="dot bg-color"></div>requesting function
+	</div>
+	<div class="section-content" >
+		<ace-read-js code="funct.getCode()"></ace-read-js>
 	</div>
 </div>
 

@@ -27,7 +27,8 @@ public class WriteFunctionDescription extends Microtask
 {
 	@Parent @Load private Ref<Function> function;
 	private long callerId;
-	private String callDescription;
+	private String pseudoFunctionName;
+	private String pseudoFunctionDescription;
 
 	// Default constructor for deserialization
 	private WriteFunctionDescription()
@@ -35,11 +36,12 @@ public class WriteFunctionDescription extends Microtask
 	}
 
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, String callDescription, long callerId, String projectId)
+	public WriteFunctionDescription(Function function, String pseudoFunctionName, String pseudoFunctionDescription, long callerId, String projectId)
 	{
 		super(projectId);
 		this.submitValue = 8;
-		this.callDescription = callDescription;
+		this.pseudoFunctionName = pseudoFunctionName;
+		this.pseudoFunctionDescription = pseudoFunctionDescription;
 
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.callerId = callerId;
@@ -48,7 +50,7 @@ public class WriteFunctionDescription extends Microtask
 		FirebaseService.writeMicrotaskCreated(new WriteFunctionDescriptionInFirebase(id,this.microtaskTitle(), this.microtaskName(),
 				function.getName(),
 				function.getID(),
-				false, false, submitValue,callDescription, callerId),
+				false, false, submitValue,pseudoFunctionName, pseudoFunctionDescription, callerId),
 				Microtask.keyToString(this.getKey()),
 				projectId);
 
@@ -57,7 +59,7 @@ public class WriteFunctionDescription extends Microtask
 
 	public Microtask copy(String projectId)
 	{
-		return new WriteFunctionDescription( (Function) getOwningArtifact(),this.callDescription,this.callerId, projectId);
+		return new WriteFunctionDescription( (Function) getOwningArtifact(),this.pseudoFunctionName, this.pseudoFunctionDescription, this.callerId, projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -90,7 +92,7 @@ public class WriteFunctionDescription extends Microtask
 
 	public String getCallDescription()
 	{
-		return callDescription;
+		return pseudoFunctionName;
 	}
 
 	public String getUIURL()

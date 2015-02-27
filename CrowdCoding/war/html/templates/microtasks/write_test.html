@@ -6,23 +6,22 @@
 		<div class="section-content  job-description" >
 
 			<div ng-if="microtask.promptType=='WRITE'">
-				Can you implement the following test case, providing a JSON object literal for each input parameter and for the expected return value?
-				<br />
+				Can you implement the following test case, providing a JSON object literal for each input parameter and for the expected return value?<br />
 				<strong>Tip:</strong> Descriptions of the data types are on the left, with examples you can copy and paste.
 			</div>
 
 			<div ng-if="microtask.promptType=='CORRECT'">
-				The crowd reported an issue for this test.
-				Can you fix the test data to address the issue?
+				The crowd reported an issue with this test. 
+				Can you fix the test to address this issue (if necessary)?
 			</div>
 
 			<div ng-if="microtask.promptType=='TESTCASE_CHANGED'">
-				The description of the testCase has changed, as result, the test might be no longer correct<BR>
+				The description of the testCase has changed, as result, the test might be no longer correct.<BR>
 				Can you update the test, if necessary?<BR>
 			</div>
 
 			<div ng-if="microtask.promptType=='FUNCTION_CHANGED'">
-				The signature or description of the function being tested has changed, as result, the test might be no longer correct<BR>
+				The signature or description of the function being tested has changed, as result, the test might be no longer correct.<BR>
 				Can you update the test, if necessary?<BR>
 			</div>
 		</div>
@@ -45,7 +44,7 @@
 	<div class="section section-description">
 		<div class="section-title" >
 			<div class="dot bg-color"></div>
-			TEST CASE DESCRIPTION
+			TEST CASE
 		</div>
 		<div class="section-link" ng-hide="test.readOnly || disputeTest.active" >
 			<a ng-click="disputeTest.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the test case <span class="glyphicon glyphicon-exclamation-sign"></span></a>
@@ -73,7 +72,7 @@
 	<div class="section section-description" ng-if="microtask.promptType == 'FUNCTION_CHANGED'" >
 		<div class="section-title" ><div class="dot bg-color"></div>DIFF OF THE FUNCTION DESCRIPTION</div>
 		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
-			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function description<span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="diffCode" mode="diff"></ace-read-js>
@@ -186,7 +185,7 @@
 		</div>
 		<div class="section-content" >
 			<div id="disputeDiv" class="form-group">
-				<label for="disputeText"><b>Dispute FUNCTION DESCRIPTION:</b> what's wrong with this FUNCTION DESCRIPTION? </label>
+				<label for="disputeText">What's wrong with this function description? </label>
 				<textarea name="disputeText" class="form-control" style="resize:none" ng-model="disputeFunction.text" ng-required="disputeFunction.active"></textarea>
 				<span
 				class="help-block" ng-show="microtaskForm.disputeText.$dirty && microtaskForm.disputeText.$invalid && microtaskForm.disputeText.$error.required">This field is required!</span>
@@ -202,7 +201,7 @@
 		</div>
 		<div class="section-content" >
 			<div id="disputeDiv" class="form-group">
-				<label for="disputeTextInput"><b>Dispute test case:</b> what's wrong with this test case? </label>
+				<label for="disputeTextInput">What’s wrong with this test case? </label>
 				<textarea name="disputeTextInput" class="form-control" class="resize:none" ng-model="disputeTest.text"  ng-required="disputeTest.active"></textarea>
 				<span
 				class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
