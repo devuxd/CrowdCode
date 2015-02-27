@@ -24,6 +24,7 @@ import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.history.HistoryEvent;
+import com.crowdcoding.history.HistoryLog.EventNode;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
@@ -50,11 +51,11 @@ public class FirebaseService
 	}
 
 	// Writes information about microtask assignment to Firebase
-	public static void writeMicrotaskAssigned( String microtaskKey, String workerID,
-			String workerHandle, String projectId, boolean assigned)
+	public static void writeMicrotaskAssigned( String microtaskKey,
+			String workerId, String projectId, boolean assigned)
 	{
 		enqueueWrite(Boolean.toString(assigned), "/microtasks/" + microtaskKey + "/assigned.json", HTTPMethod.PUT, projectId);
-		enqueueWrite("{\"workerHandle\": \"" + workerHandle + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
 
@@ -234,10 +235,23 @@ public class FirebaseService
 
 
 	// Publishes the history log
-	public static void publishHistoryLogEvent(HistoryEvent event, String projectId)
+	public static void publishHistoryLog(LinkedList<EventNode> eventList, String projectId)
 	{
+		Integer i    = 1;
+		Integer size = eventList.size();
+		String ret = "";
+		while(!eventList.isEmpty()){
+			EventNode node = eventList.pop();
+			HistoryEvent event = node.event;
+			
+			ret += "\""+event.generateID()+"\":" + event.json() ;
+			if( i < size )
+				ret += ",";
+			i++;
+		}
+		System.out.println("Event List = {"+ret+"}");
 		//System.out.println("firebase history log : "+event.json());
-		enqueueWrite( event.json() , "/history/events/" + event.generateID() + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite( "{"+ret+"}" , "/history/events.json", HTTPMethod.PATCH, projectId);
 	}
 
 	// Clears all data in the current project, reseting it to an empty, initial state

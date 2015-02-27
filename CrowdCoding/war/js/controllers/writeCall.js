@@ -17,7 +17,7 @@ angular
 
 
     //remove the pseudofunction from the code of the function
-    $scope.funct.removePseudoFunction( $scope.microtask.pseudoName );
+    $scope.funct.removePseudoFunction( $scope.microtask.pseudoFunctionName );
 
 
     $scope.code = $scope.funct.getFullCode();

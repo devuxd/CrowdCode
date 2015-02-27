@@ -39,6 +39,7 @@ angular
                             var conf   = { regex: val.regex || false };
                             var needle = conf.regex ? new RegExp(val.needle) : val.needle;
                             var range = _editor.find(needle,conf);
+                            console.log('Needle',val.needle,range);
                             if( range !== undefined ){
                                 marker[val.needle] = _editor.getSession().addMarker(range,'acePseudoCall','text',true);
                                 // console.log('added marker for  '+val.needle, range, marker);

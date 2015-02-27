@@ -43,11 +43,8 @@ public class HistoryLog
 	}
 
 	public void publish(){
-
-		while(!eventList.isEmpty()){
-			EventNode node = eventList.pop();
-			FirebaseService.publishHistoryLogEvent(node.event, projectId);
-		}
+		
+		FirebaseService.publishHistoryLog(eventList, projectId);
 	}
 
 	public class EventNode
