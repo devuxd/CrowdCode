@@ -873,7 +873,11 @@ angular
             var loadData = {
                 'WriteFunction': function(news) {
 
-                    news.funct = new FunctionFactory(news.microtask.submission);
+                    if(news.microtask.submission.inDispute)
+                        news.funct=functionsService.get(news.microtask.functionID);
+                    else
+                        news.funct = new FunctionFactory(news.microtask.submission);
+                    console.log(news.funct);
                     if (news.microtask.promptType == 'REMOVE_CALLEE')
                         news.callee=functionsService.get(news.microtask.calleeId);
 
