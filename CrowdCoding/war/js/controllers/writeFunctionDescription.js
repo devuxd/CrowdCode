@@ -22,10 +22,6 @@ angular
                 $scope.dispute.text = '';
         } 
     };
-    //
-    var foundNames = ($scope.microtask.callDescription+"@").match(/\w+(?=\s*\(.*\)\s*\@)/g);
-    $scope.pseudoName   = foundNames[0];
-
 
     // addParameter and deleteParameter 
     $scope.addParameter = function() {

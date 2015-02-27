@@ -758,7 +758,7 @@ public class Function extends Artifact
 		//this is needed because the write function description microtask was disputed and so the function
 		//has never been described
 		if( (! hasBeenDescribed()) && (! isActivated()) && pseudoCallersId.isEmpty() )
-			makeMicrotaskOut(new WriteFunctionDescription(this, pseudoCallerDescription, pseudoCallerId, projectId));
+			makeMicrotaskOut(new WriteFunctionDescription(this, pseudoCallerName,pseudoCallerDescription, pseudoCallerId, projectId));
 
 		//add it to the lists
 		pseudoCallersId.add(pseudoCallerId);

@@ -1,26 +1,24 @@
 <div ng-controller="WriteFunctionController" >
 	<div class="section section-description " >
-		
-		
+
+
 		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 		<div class="section-content job-description" >
-			
+
 			<div ng-if="::microtask.promptType=='SKETCH'">
-				Can you write some code in the function below? 
-				<br />But don't be a hog: if there's a lot to do, be sure to use function calls and/or pseudocode to leave some work for others.
+				Can you write some code in the function below?<br />
+				<strong>TIP:</strong> If there’s a lot to do, be sure to use pseudocalls and / or pseudocode to leave some work for others
 			</div>
 			<div ng-if="::microtask.promptType=='RE_EDIT'">
-				The crowd found an issue with this function. <br />
-				Can you edit the function to address the issue?
+				The crowd reported an issue with this function. Can you fix the function to address this issue (if necessary)?
 			</div>
 			<div ng-if="::microtask.promptType=='REMOVE_CALLEE'">
-				The crowd found an issue with the callee <strong>{{callee.getName()}}</strong>. <br />
-				Can you substitute the calle with a different code?
+				The crowd has determined that the function <strong>{{callee.getName()}}</strong>, called in the function below, cannot be implemented as requested. Can you replace the call(s) to 
+				<strong>{{callee.getName()}}</strong> with a new implementation?
 			</div>
-			
+
 			<div ng-if="::microtask.promptType=='DESCRIPTION_CHANGE'">
-				The description of a function called in the code below has changed. Can you update the code
-				(if necessary)?
+				The signature of the following function has changed as follows. Can you updated the code, if necessary?
 			</div>
 		</div>
 	</div>
@@ -29,27 +27,27 @@
 	<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
 
 	<div class="section section-description" ng-if="::microtask.promptType=='RE_EDIT' || microtask.promptType=='REMOVE_CALLEE'" >
-		<div class="section-title"> <div class="dot bg-color"></div> ISSUE DESCRIPTION </div>
+		<div class="section-title"> <div class="dot bg-color"></div> Reported Issue </div>
 		<div  class="section-content" >
 			<span ng-bind="::microtask.disputeText"></span>
 		</div>
 	</div>
-				
+
 
 	<div class="section section-description" ng-if="::(microtask.promptType=='SKETCH' || microtask.promptType=='RE_EDIT')">
-		<div class="section-title"> <div class="dot bg-color"></div> FUNCTION CONVENTIONS </div>
+		<div class="section-title"> <div class="dot bg-color"></div> Conventions for writing functions </div>
 		<div  class="section-content" >
 			<function-convections ></function-convections>
 		</div>
 	</div>
 	<div class="section section-description" ng-if="::microtask.promptType=='DESCRIPTION_CHANGE'">
-		<div class="section-title" > <div class="dot bg-color"></div> FUNCTION signature different </div>
+		<div class="section-title" > <div class="dot bg-color"></div> Changes to Function Signature</div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="::diffCode" mode="diff" ></ace-read-js>
 		</div>
 	</div>
 	<div class="section section-description" ng-if="::microtask.promptType=='REMOVE_CALLEE'">
-		<div class="section-title" > <div class="dot bg-color"></div> CALLEE TO REMOVE </div>
+		<div class="section-title" > <div class="dot bg-color"></div> Description of Function Call to Remove </div>
 		<div class="section-content no-padding" >
 			<ace-read-js code="::callee.getSignature()"></ace-read-js>
 		</div>
@@ -69,7 +67,8 @@
 			<div class="section section-form" style="width:70%;" >
 				<div class="pull-right">
 					<a ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
-						Report function as not implementable <span class="glyphicon glyphicon-exclamation-sign"></span>
+						Report function as impossible (or inadvisable) to implement 
+						<span class="glyphicon glyphicon-exclamation-sign"></span>
 					</a>
 				</div>
 				<div class="clearfix"></div>
@@ -86,7 +85,7 @@
 		<div class="container-flex-row" ng-show="dispute.active">
 			<div class="section section-form" style="width:100%" >
 				<div class="section-content">
-					<div class="heading-1" >Why this function is not implementable?</div>
+					<div class="heading-1" >Why should this function not be implemented?</div>
 					<textarea 
 						name="disputeFunctionText" 
 						class="form-control required" 

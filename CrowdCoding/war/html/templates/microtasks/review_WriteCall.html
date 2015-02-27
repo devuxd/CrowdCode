@@ -4,20 +4,15 @@
 
 	<div class="section-content job-description" >
 
-		<div>
-			A worker was asked to revise the calls to
-			<strong>{{reviewed.pseudoName}}</strong> in the function
-			<strong>{{functName}}</strong>
-			<span ng-if="reviewed.pseudoName!==calleeFunction.getName()">with the new implemented function <strong>{{calleeFunction.getName()}}</strong>.</span>
-		</div>
-
-		<span>Can you review this work?</span>
+		The crowd created a description for the function
+		 <strong>{{calleeFunction.getName()}}</strong>, called by the function below.
+		 As a result, a worker was asked to check if the call(s) were correct, and revise them if necessary, or decide that an alternative implementation was better. Can you review this work?
 	</div>
 </div>
 
 <div class="section section-description-2">
 	<div class="section-title" >
-		<div class="dot bg-color"></div>{{calleeFunction.getName()}} function signature
+		<div class="dot bg-color"></div>FUNCTION DESCRIPTION
 	</div>
 	<div class="section-content" >
 		<ace-read-js code="calleeFunction.getSignature()"></ace-read-js>
@@ -26,7 +21,7 @@
 
 <div class="section section-review">
 	<div class="section-title" >
-		<div class="dot bg-color"></div>submitted function code
+		<div class="dot bg-color"></div>Diff of Edits to Function
 	</div>
 	<div class="section-content" >
 		<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
