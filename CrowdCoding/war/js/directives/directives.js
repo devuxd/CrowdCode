@@ -918,7 +918,7 @@ angular
                 },
                 'WriteFunctionDescription': function(news) {
 
-                    news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header + news.microtask.submission.code;
+                    news.editorCode = functionsService.renderDescription(news.microtask.submission) + news.microtask.submission.header;
                 },
                 'WriteCall': function(news) {
 

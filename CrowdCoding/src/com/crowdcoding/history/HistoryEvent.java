@@ -44,7 +44,7 @@ public abstract class HistoryEvent extends DTO
 		// Concatenate timeInMillis with the artifact type and ID. The goal is to have an id
 		// that is highly likely to be globally unique across the entire project. As long as there are not
 		// multiple changes to the same artifact within a single millisecond, this is true.
-		return timeInMillis + "-" + artifactType + artifactID;		
+		return timeInMillis + "-" + artifactType + "-"+ artifactID;		
 	}
 	
 	public String getEventType(){

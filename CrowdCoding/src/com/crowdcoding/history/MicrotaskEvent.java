@@ -8,7 +8,7 @@ public class MicrotaskEvent extends HistoryEvent
 	public String eventType = "microtask";
 	
 	public String microtaskType;
-	public String microtaskID;
+	public String microtaskKey;
 	
 	public MicrotaskEvent(String eventType, Microtask microtask)
 	{
@@ -17,7 +17,7 @@ public class MicrotaskEvent extends HistoryEvent
 		
 		this.eventType     += "." + eventType;
 		this.microtaskType = microtask.microtaskName();
-		this.microtaskID   = Long.toString(microtask.getID());
+		this.microtaskKey  = Microtask.keyToString(microtask.getKey());
 	}
 	
 	public String getEventType(){

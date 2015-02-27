@@ -23,7 +23,10 @@ import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAssigned;
+import com.crowdcoding.history.MicrotaskDequeued;
+import com.crowdcoding.history.MicrotaskQueued;
 import com.crowdcoding.history.MicrotaskSubmitted;
+import com.crowdcoding.history.MicrotaskUnassigned;
 import com.crowdcoding.history.ProjectCreated;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
@@ -211,6 +214,9 @@ public class Project
 		// if the microtask is not in the queue, add it
 		if( ! microtaskQueue.contains( Microtask.keyToString(microtaskKey) )  ){
 			microtaskQueue.addLast( Microtask.keyToString(microtaskKey) ) ;
+			HistoryLog
+				.Init(this.getID())
+				.addEvent( new MicrotaskQueued(  ofy().load().key(microtaskKey).now() ));
 		}
 
 		// if is there an excluded workerId,
@@ -230,6 +236,9 @@ public class Project
 		// add the review microtask to the reviews queue
 		if( ! reviewQueue.contains( Microtask.keyToString(microtaskKey) )  ){
 			reviewQueue.addLast( Microtask.keyToString(microtaskKey) ) ;
+			HistoryLog
+			.Init(this.getID())
+			.addEvent( new MicrotaskQueued(  ofy().load().key(microtaskKey).now() ));
 		}
 		// exclude the worker who submitted the microtask that spawned the review
 		// from the workers that can reach this review
@@ -290,8 +299,16 @@ public class Project
 	}
 
 	public void unassignMicrotask( String workerID ){
-		microtaskAssignments.put( workerID, null);
-		ofy().save().entity(this).now();
+		String assigned = microtaskAssignments.get(workerID);
+		if( assigned != null ){
+			microtaskAssignments.put( workerID, null);
+			Microtask assignedMtask = ofy().load().key( Microtask.stringToKey(assigned) ).now();
+			HistoryLog
+				.Init(this.getID())
+				.addEvent(new MicrotaskUnassigned( assignedMtask, workerID));
+			ofy().save().entity(this).now();
+		}
+		
 	}
 
 	// Assigns a microtask to worker and returns its microtaskKey.
@@ -364,8 +381,16 @@ public class Project
 			// save the project
 			ofy().save().entity(this).now();
 
-			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey), workerID, workerHandle, this.getID(), true);
-			HistoryLog.Init(this.getID()).addEvent(new MicrotaskAssigned(mtask,workerID));
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey), workerID, this.getID(), true);
+
+			HistoryLog
+				.Init(this.getID())
+				.addEvent( new MicrotaskDequeued(  ofy().load().key(microtaskKey).now() ));
+			
+			HistoryLog
+				.Init(this.getID())
+				.addEvent(new MicrotaskAssigned(mtask,workerID));
+			
 
 			// return the assigned microtask key
 			return microtaskKey;
@@ -537,13 +562,14 @@ public class Project
 				if(microtask.microtaskName()!="Review")
 					queueMicrotask( currentAssignment, null);
 				else
-					queueReviewMicrotask(currentAssignment, null);
+					queueReviewMicrotask( currentAssignment, null);
 			}
+			
 			// set null to the assignments of the workerID
 			microtaskAssignments.put( workerID, null);
-
 			// save the queue and the assignments
 			ofy().save().entity(this).now();
+			
 			FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
 		}
 		// write to firebase that the worker logged out
