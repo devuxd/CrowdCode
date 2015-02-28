@@ -330,7 +330,7 @@ angular
 
 	    var self = this;
 	  
-		var testCode = this.validTests[this.currentTestIndex].getCode();  //.replace(/\n/g,"");
+		var testCode = this.validTests[this.currentTestIndex].buildCode();  //.replace(/\n/g,"");
 
 		// Check the code for syntax errors using JSHint. Since only the user defined code will be checked,
 		// add extra defs for references to the instrumentation code.
