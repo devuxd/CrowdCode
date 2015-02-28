@@ -40,7 +40,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 
 
 			function loadMicrotask(microtaskKey){
-				console.log('Loading microtask ',microtaskKey);
+				//console.log('Loading microtask '+microtaskKey);
 
 				if( microtaskKey === undefined || microtaskKey == "null" ){
 					noMicrotask();
@@ -52,7 +52,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 				$scope.microtask = microtasks.get(microtaskKey);
 				$scope.microtask.$loaded().then(function() {
 
-					console.log($scope.microtask);
+					console.log("microtask loaded: "+$scope.microtask.$id);
 
 					// retrieve the related function
 					if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { 

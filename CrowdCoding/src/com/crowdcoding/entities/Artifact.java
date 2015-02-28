@@ -65,7 +65,7 @@ public /*abstract*/ class Artifact
 
 	public void setActivated(boolean isNeeded)
 	{
-		System.out.println("artifact id "+this.getID()+"received activated"+isNeeded+" is api "+isAPIArtifact);
+		//System.out.println("artifact id "+this.getID()+"received activated"+isNeeded+" is api "+isAPIArtifact);
 		if(! isAPIArtifact){
 			this.isActivated = isNeeded;
 			ofy().save().entity(this).now();
@@ -127,12 +127,12 @@ public /*abstract*/ class Artifact
 	// If there is a microtasks available, marks it as ready to be done.
 	public void lookForWork()
 	{
-		System.out.println("looking for work for "+this.getID()+" status "+isActivated());
+		//System.out.println("looking for work for "+this.getID()+" status "+isActivated());
 		// If there is currently not already a microtask being done on this function,
 		// determine if there is work to be done
 		if (isActivated() && microtaskOut == null && !queuedMicrotasks.isEmpty())
 		{
-			System.out.println("makeing out");
+			//System.out.println("makeing out");
 			makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).now());
 		}
 	}

@@ -85,7 +85,7 @@ angular
 
                 header = functionsService.renderHeader($scope.model.functionName, paramNames);
                 allFunctionCode = functionsService.getAllDescribedFunctionCode()+ " var debug = null; " ;
-                console.log('function name',$scope.model.functionName);
+               // console.log('function name',$scope.model.functionName);
 
                 var functionCode = allFunctionCode + " " + header + "{}";
                 var lintResult = -1;

@@ -53,7 +53,6 @@ public abstract class TestCommand extends Command
 
 	public void execute(String projectId)
 	{
-		System.out.println("executing with "+testID);
 		if( testID != 0 ){
 			LoadResult<Test> testRef = Test.find(testID);
 

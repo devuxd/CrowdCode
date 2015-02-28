@@ -940,7 +940,7 @@ angular
                    if(news.microtask.submission.testId!==undefined){
                         news.test= TestList.get(news.microtask.submission.testId);
                         news.funct=functionsService.get(news.microtask.functionID);
-                        console.log(news.funct);
+                       // console.log(news.funct);
                    }
 
                 },
