@@ -151,6 +151,9 @@
 			<span ng-if="sort.column == 'data.owningArtifact' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
 			<span ng-if="sort.column == 'data.owningArtifact' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
 		</th>
+		<th>
+			Status
+		</th>
 		<!--
 		<th ng-click="changeSorting('status')">
 			Status
@@ -190,6 +193,7 @@
 			</td>
 			<td><span ng-bind="mtask.data.type"></span></td>
 			<td><span ng-bind="mtask.data.owningArtifact"></span></td>
+			<td><span ng-bind="mtask.getStatus()"></span></td>
 			<!--
 			<td><span ng-bind="mtask.status"></span></td>
 			<td ><span ng-bind="mtask.spawnedAt | date : 'short'"></span></td>

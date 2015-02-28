@@ -151,8 +151,6 @@ angular
 
     function collectFormData(event, data) {
 
-        console.log($scope.codemirror);
-
         // CHECK IF THERE ARE FORM ERRORS
         var errors = "";
 
