@@ -163,8 +163,14 @@ angular
 
                         console.log('old/new',oldObj,newObj);
 
-                    // if the type is different
-                    if( oldObj === null || newObj === null || oldObj.constructor != newObj.constructor || typeof oldObj == 'number' ){
+                    // if one of the two obj is null or
+                    // if one of the two obj is undefined
+                    // if the constructor is different
+                    // if the oldObj is a number 
+                    if( oldObj === null || newObj === null || 
+                        oldObj === undefined || newObj === undefined || 
+                        oldObj.constructor != newObj.constructor || 
+                        typeof oldObj == 'number' ){
 
                         if( typeof(oldObj) == 'object' )
                             diffHtml += joinLines( angular.toJson(oldObj, true) , 'line removed', 0);

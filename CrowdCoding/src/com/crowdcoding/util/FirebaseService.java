@@ -55,7 +55,7 @@ public class FirebaseService
 			String workerId, String projectId, boolean assigned)
 	{
 		enqueueWrite(Boolean.toString(assigned), "/microtasks/" + microtaskKey + "/assigned.json", HTTPMethod.PUT, projectId);
-		enqueueWrite("{\"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"assigned\": "+Boolean.toString(assigned)+", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
 
