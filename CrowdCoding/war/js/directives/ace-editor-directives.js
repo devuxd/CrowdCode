@@ -39,11 +39,11 @@ angular
                             var conf   = { regex: val.regex || false };
                             var needle = conf.regex ? new RegExp(val.needle) : val.needle;
                             var range = _editor.find(needle,conf);
-                            console.log('Needle',val.needle,range);
+                           // console.log('Needle',val.needle,range);
                             if( range !== undefined ){
                                 marker[val.needle] = _editor.getSession().addMarker(range,'acePseudoCall','text',true);
                                 // console.log('added marker for  '+val.needle, range, marker);
-                                console.log(_editor.getSession().getMarkers());
+                               // console.log(_editor.getSession().getMarkers());
                             }
                             
                         });
@@ -108,7 +108,7 @@ angular
             
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-                console.log(typeof(ngModel.$viewValue));
+               // console.log(typeof(ngModel.$viewValue));
                 if( ngModel.$viewValue == "") 
                     scope.prettyJson = "";
                 else if ( ngModel.$viewValue == undefined || ngModel.$viewValue == "undefined" )
@@ -161,7 +161,7 @@ angular
                     // initialize the diff result
                     var diffHtml = '';
 
-                        console.log('old/new',oldObj,newObj);
+                       // console.log('old/new',oldObj,newObj);
 
                     // if the type is different
                     if( oldObj === null || newObj === null || oldObj.constructor != newObj.constructor || typeof oldObj == 'number' ){
@@ -185,7 +185,7 @@ angular
                     }
                     // if the type of new is an object/array
                     else {
-                        console.log('compare obj');
+                        //console.log('compare obj');
 
                         var oldFields = Object.keys(oldObj);
                         var newFields = Object.keys(newObj);

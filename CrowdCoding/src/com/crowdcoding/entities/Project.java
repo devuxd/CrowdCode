@@ -308,7 +308,7 @@ public class Project
 				.addEvent(new MicrotaskUnassigned( assignedMtask, workerID));
 			ofy().save().entity(this).now();
 		}
-		
+
 	}
 
 	// Assigns a microtask to worker and returns its microtaskKey.
@@ -386,11 +386,11 @@ public class Project
 			HistoryLog
 				.Init(this.getID())
 				.addEvent( new MicrotaskDequeued(  ofy().load().key(microtaskKey).now() ));
-			
+
 			HistoryLog
 				.Init(this.getID())
 				.addEvent(new MicrotaskAssigned(mtask,workerID));
-			
+
 
 			// return the assigned microtask key
 			return microtaskKey;
@@ -442,7 +442,6 @@ public class Project
 				{
 
 					ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
-					System.out.println("projkectasdsdg  "+dto.noFunction);
 					if ( ! dto.noFunction)
 					{
 						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
@@ -564,12 +563,12 @@ public class Project
 				else
 					queueReviewMicrotask( currentAssignment, null);
 			}
-			
+
 			// set null to the assignments of the workerID
 			microtaskAssignments.put( workerID, null);
 			// save the queue and the assignments
 			ofy().save().entity(this).now();
-			
+
 			FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
 		}
 		// write to firebase that the worker logged out

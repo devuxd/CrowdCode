@@ -403,7 +403,7 @@ angular
 		        if( matches == null )
 		            return [];
 
-		        console.log('matches',matches);
+		        //console.log('matches',matches);
 
 		        var type = matches[1];
 		        var name = matches[2];
@@ -441,15 +441,6 @@ angular
 
 		// build header
 		header=renderHeader(functionName,paramNames);
-
-		console.log({ 'name'				: functionName,
-				 'header'           : header,
-				 'description'      : description,
-				 'paramTypes'       : paramTypes,
-				 'paramNames'       : paramNames,
-				 'paramDescriptions': paramDescriptions,
-				 'returnType'       : returnType
-				});
 
 		// return all the infos
 		return { 'name'				: functionName,

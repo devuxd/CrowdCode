@@ -6,8 +6,8 @@ var keys = {};
 $(document).on("keydown", function (e) {
 	  if(!hasBeenIntialized)
 	  {
-		  console.log("I entered here");
-		  console.log($(":submit"));
+		  //console.log("I entered here");
+		  //console.log($(":submit"));
 		  $(":submit").each(function()
 					{
 						if($(this).attr("type") != null && $(this).attr("type").toUpperCase() == "submit".toUpperCase())
