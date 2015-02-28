@@ -299,7 +299,7 @@ angular
 		if ( this.currentTestIndex >= this.validTests.length )
 		{
 
-			console.log('%cAll tests runned. Submit to server? ','color:blue;',this.submitToServer) ;
+			// console.log('%cAll tests runned. Submit to server? ','color:blue;',this.submitToServer) ;
 
 			// publish a message on run tests finished
 			var item = {};
@@ -432,7 +432,7 @@ angular
 			    console.log("test result submitted: "+passedTests);
 			  }).
 			  error(function(data, status, headers, config) {
-			    //console.log("test result submit error");
+			    console.log("test result submit error");
 			  });
 		}
 			

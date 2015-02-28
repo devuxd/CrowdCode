@@ -121,8 +121,8 @@ angular
         $scope.activePanel = -1;
 
         var code;
-        if( $scope.codemirror === undefined) 
-            console.log('CODEMIRROR UNDEFINED');
+        // if( $scope.codemirror === undefined) 
+            // console.log('CODEMIRROR UNDEFINED');
 
         if( $scope.codemirror !== undefined )
             code = $scope.codemirror.getValue();

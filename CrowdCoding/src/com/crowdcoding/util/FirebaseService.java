@@ -79,7 +79,7 @@ public class FirebaseService
 	public static void writeTestJobQueue(long functionID, String projectId)
 	{
 		Date date = new Date();
-		System.out.println("appending test job for function "+functionID);
+//		System.out.println("appending test job for function "+functionID);
 		enqueueWrite("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
 	}
 	public static String getAllCode(String projectId)
@@ -248,7 +248,7 @@ public class FirebaseService
 				ret += ",";
 			i++;
 		}
-		System.out.println("Event List = {"+ret+"}");
+//		System.out.println("Event List = {"+ret+"}");
 		//System.out.println("firebase history log : "+event.json());
 		enqueueWrite( "{"+ret+"}" , "/history/events.json", HTTPMethod.PATCH, projectId);
 	}
