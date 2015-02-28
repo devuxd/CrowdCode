@@ -54,6 +54,10 @@ public abstract class FunctionCommand extends Command {
 			long testID) {
 		return new TestBecameImplemented(functionID, testID);
 	}
+	public static FunctionCommand testReturnUnimplemented(long functionID,
+			long testID) {
+		return new TestReturnUnimplemented(functionID, testID);
+	}
 
 	public static FunctionCommand passedTests(long functionID) {
 		return new PassedTests(functionID);
@@ -202,16 +206,23 @@ public abstract class FunctionCommand extends Command {
 
 		public void execute(Function function, String projectId) {
 
-			LoadResult<Test> test = Test.find(testID);
-			if (test == null)
-				System.out
-						.println("Cannot execute FunctionCommand. Could not find the test "
-								+ "for TestID " + testID);
-			else
-				function.testBecameImplemented(test.now());
+			function.testBecameImplemented(testID);
 		}
 	}
 
+	protected static class TestReturnUnimplemented extends FunctionCommand {
+		private long testID;
+
+		public TestReturnUnimplemented(long functionID, long testID) {
+			super(functionID);
+			this.testID = testID;
+		}
+
+		public void execute(Function function, String projectId) {
+
+			function.testReturnUnimplemented(testID);
+		}
+	}
 	protected static class PassedTests extends FunctionCommand {
 		public PassedTests(long functionID) {
 			super(functionID);

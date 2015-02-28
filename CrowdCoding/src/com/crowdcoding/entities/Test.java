@@ -198,11 +198,11 @@ public class Test extends Artifact
 
 				// Ignore any of the content for the test, if available. Set the test to unimplemented.
 				this.isImplemented = false;
+
 				ofy().save().entity(this).now();
 				microtaskOutCompleted();
 
 				FunctionCommand.disputeFunctionSignature(functionID, dto.disputeFunctionText, this.getID());
-
 				lookForWork();
 			}
 			else if( dto.disputeTestText!="" ) {
@@ -217,6 +217,8 @@ public class Test extends Artifact
 
 				lookForWork();
 			}
+			FunctionCommand.testReturnUnimplemented(functionID, this.getID());
+
 		}
 		else
 		{

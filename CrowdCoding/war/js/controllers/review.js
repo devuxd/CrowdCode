@@ -102,14 +102,15 @@ angular
             $scope.functionUnderTest.$loaded().then(function() {
                 $scope.review.functionCode = functionsService.renderDescription($scope.functionUnderTest) + $scope.functionUnderTest.header;
             });
+            
 
         } else if ($scope.review.microtask.type == 'WriteCall') {
 
             oldFunction = functionsService.get($scope.review.microtask.functionID);
             newFunction = new FunctionFactory ($scope.review.microtask.submission);
-            oldCode = oldFunction.getFunctionCode().split("\n");
+            oldCode = oldFunction.getFullCode().split("\n");
 
-            newCode = newFunction.getFunctionCode().split("\n");
+            newCode = newFunction.getFullCode().split("\n");
 
 
             diffRes = diff(oldCode, newCode);
@@ -129,8 +130,7 @@ angular
 
             //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;
         } else if ($scope.review.microtask.type == 'WriteFunctionDescription') {
-
-            $scope.review.functionDescription = new FunctionFactory($scope.review.microtask.submission).getSignature();
+            $scope.review.funct=new FunctionFactory($scope.review.microtask.submission);
             $scope.review.requestingFunction  = functionsService.get($scope.review.microtask.functionID);
 
         } else if ($scope.review.microtask.type == 'ReuseSearch') {

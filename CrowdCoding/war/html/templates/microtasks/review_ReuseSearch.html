@@ -4,7 +4,7 @@
 
 	<div class="section-content job-description" >
 
-		A worker editing the function <strong>{{funct.getName()}}</strong> requested a call to a function providing the behavior of <strong>{{review.microtask.pseudoFunctionName}}</strong>. As a result, a worker was asked to find a function providing such behavior, if it existed. Can you review this work?
+		A worker editing the function <strong>{{funct.getName()}}</strong> requested a call to a function providing the behavior of <strong>{{review.microtask.pseudoFunctionName}}</strong>. As a result, a worker was asked to find a function providing such behavior. Can you review this work?
 	</div>
 </div>
 
@@ -21,7 +21,7 @@
 		<div class="dot bg-color"></div>requesting function
 	</div>
 	<div class="section-content" >
-		<ace-read-js code="funct.getCode()"></ace-read-js>
+		<ace-read-js code="funct.getFunctionCode()" highlight="[ { 'needle' : review.microtask.pseudoFunctionName+'\\(.*\\)\\s*;' , regex: true } ]" ></ace-read-js>
 	</div>
 </div>
 

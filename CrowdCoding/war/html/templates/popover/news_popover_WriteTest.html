@@ -3,22 +3,22 @@
         <div ng-if="! n.microtask.submission.inDispute">
             <div ng-if="n.microtask.promptType=='WRITE'">
                 Implementation of the following test case for
-                the function <strong>{{n.functionUnderTest.name}}</strong>.
+                the function <strong>{{n.funct.getName()}}</strong>.
             </div>
 
             <div ng-if="n.microtask.promptType=='CORRECT'">
                 Revision of the following test for the function
-                <strong>{{n.functionUnderTest.name}}</strong>  to address the following issue.
+                <strong>{{n.funct.getName()}}</strong>  to address the following issue.
             </div>
 
             <div ng-if="n.microtask.promptType=='TESTCASE_CHANGED'">
                 Revision test for the function
-                <strong>{{n.functionUnderTest.name}}</strong> based on a change to the description of the test case.
+                <strong>{{n.funct.getName()}}</strong> based on a change to the description of the test case.
             </div>
 
             <div ng-if="n.microtask.promptType=='FUNCTION_CHANGED'">
                 Revision of the following test for the function
-                <strong>{{n.functionUnderTest.name}}</strong>
+                <strong>{{n.funct.getName()}}</strong>
                 based on the new function signature.
             </div>
         </div>
@@ -26,12 +26,12 @@
         <div ng-if="n.microtask.submission.inDispute">
             <div ng-if="n.microtask.submission.disputeFunctionText!=''" >
                 Reported issue with the function
-                <strong>{{n.functionUnderTest.name}}</strong>.
+                <strong>{{n.funct.getName()}}</strong>.
             </div>
 
             <div ng-if="n.microtask.submission.disputeTestText!=''" >
                 Reported issue with the following test case for the function
-                <strong>{{n.functionUnderTest.name}}</strong>.
+                <strong>{{n.funct.getName()}}</strong>.
             </div>
         </div>
     </div>
@@ -63,7 +63,7 @@
 
         <span ng-if="n.microtask.promptType=='TESTCASE_CHANGED' && ! n.microtask.submission.inDispute">
             <strong>Old description: </strong><span ng-bind="n.microtask.oldTestCase"></span><br />
-            <strong>New description: </strong><span ng-bind="n.microtask.newTestCase"></span>
+            <strong>New description: </strong><span ng-bind="n.microtask.owningArtifact"></span>
         </span>
     </div>
 </div>
@@ -84,12 +84,12 @@
         <div class="section-content" >
             <table style="width:100%" class="test">
                 <tr ng-repeat="(inputKey,input) in n.microtask.submission.simpleTestInputs track by $index">
-                    <td>{{n.functionUnderTest.paramNames[$index]}}</td>
+                    <td>{{n.funct.paramNames[$index]}}</td>
                     <td>
                         <div ace-read-json ng-model="input" ></div>
                     </td>
                 </tr>
-                <tr ng-if="n.functionUnderTest.returnType!=undefined">
+                <tr>
                     <td>test output</td>
                     <td>
                         <div ace-read-json ng-model="n.microtask.submission.simpleTestOutput" ></div>
