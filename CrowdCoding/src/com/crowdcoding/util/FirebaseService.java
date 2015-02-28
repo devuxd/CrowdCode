@@ -243,7 +243,7 @@ public class FirebaseService
 		while(!eventList.isEmpty()){
 			EventNode node = eventList.pop();
 			HistoryEvent event = node.event;
-			
+
 			ret += "\""+event.generateID()+"\":" + event.json() ;
 			if( i < size )
 				ret += ",";
@@ -369,15 +369,14 @@ public class FirebaseService
 	}
 
 	public static void publish(){
-		Iterator<FirebaseWrite> writeListIterator = writeList.iterator();
 		// Execute commands until done, adding commands as created.
-	    while(writeListIterator.hasNext()) {
-			try{
+	    while(! writeList.isEmpty()) {
+		//	try{
 				FirebaseWrite write = writeList.pop();
 				write.publish();
-			} catch( NoSuchElementException e) {
-				e.printStackTrace();
-			}
+	//		} catch( NoSuchElementException e) {
+	//			e.printStackTrace();
+	//		}
 //			System.out.println("Firebase: writing "+write.relativeURL);
 		}
 	}
