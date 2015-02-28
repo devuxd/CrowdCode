@@ -1,9 +1,9 @@
 <div class="section section-description " >
-	
+
 	<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 
 	<div class="section-content job-description" >
-		
+
 		<div ng-if="! review.microtask.submission.inDispute">
 			<div ng-if="review.microtask.promptType=='WRITE'">
 				A worker was asked to implement the following test case for
@@ -71,7 +71,7 @@
 
 		<span ng-if="review.microtask.promptType=='TESTCASE_CHANGED' && ! reviewed.submission.inDispute">
 			<strong>Old description: </strong><span ng-bind="review.microtask.oldTestCase"></span><br />
-			<strong>New description: </strong><span ng-bind="review.microtask.newTestCase"></span>
+			<strong>New description: </strong><span ng-bind="review.microtask.owningArtifact"></span>
 		</span>
 	</div>
 </div>

@@ -257,6 +257,7 @@ public class Function extends Artifact
 			testsDescription.remove(position);
 			ofy().save().entity(this).now();
 		}
+		runTestsIfReady();
 	}
 
 	// Adds the specified test for this function
@@ -638,7 +639,8 @@ public class Function extends Artifact
 			// creates a disputed test case
 			int position = testsId.indexOf((long)dto.testId);
 			TestCommand.dispute(testsId.get(position), dto.description, version);
-
+			testReturnUnimplemented(testsId.get(position));
+			this.needsDebugging=true;
 			// Since there was an issue, ignore any code changes they may have submitted.
 		} else { //at present, reaching here means all tests passed.
 			//this.needsDebugging = false;
@@ -696,13 +698,22 @@ public class Function extends Artifact
 
 
 	// Provides notification that a test has transitioned to being implemented
-	public void testBecameImplemented(Test test)
+	public void testBecameImplemented(long testId)
 	{
-		int position = testsId.indexOf(test.getID());
+		this.needsDebugging=true;
+		int position = testsId.indexOf(testId);
 		testsImplemented.set(position, true);
 
 		runTestsIfReady();
 	}
+
+	// Provides notification that a test has transitioned to not being implemented
+		public void testReturnUnimplemented(long testId)
+		{
+			this.needsDebugging=true;
+			int position = testsId.indexOf(testId);
+			testsImplemented.set(position, false);
+		}
 
 	// Notifies the function that it has a new caller function
 	public void addCaller(long functionId)

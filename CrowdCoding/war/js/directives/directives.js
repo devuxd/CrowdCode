@@ -63,7 +63,7 @@ angular
             "this","throw","throws","transient","true","try","typeof","var","void","volatile","while","with"];
 
             ngModelCtrl.$parsers.unshift(function(viewValue) {
-                console.log("entro");
+                
                 if(reservedWord.indexOf(viewValue)===-1){
                     ngModelCtrl.$setValidity('reservedWord', true);
                     return viewValue;
@@ -394,10 +394,8 @@ angular
         var errorMessage = [];
         var loc=line.search(keyword);
         var matches = line.match(/\w+(\[\])*/g);
-        if( matches == null )
+        if( matches === null )
             return [];
-
-        console.log('matches',matches);
 
         var type = matches[1];
         var name = matches[2];
@@ -437,8 +435,6 @@ angular
 
         var errors = [];
 
-        console.log('paramDescriptionNames',paramDescriptionNames);
-        console.log('paramDescriptionNames',paramHeaderNames);
 
         if( paramDescriptionNames.length !== paramHeaderNames.length )
             errors.push('The number of the parameter in the description does not match the number of parameters in the function header');
@@ -864,7 +860,7 @@ angular
 
 angular
     .module('crowdCode')
-    .directive('microtaskPopover', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService,FunctionFactory){
+    .directive('microtaskPopover', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService,FunctionFactory, TestList){
     return {
         
         scope: true,
@@ -877,7 +873,7 @@ angular
                         news.funct=functionsService.get(news.microtask.functionID);
                     else
                         news.funct = new FunctionFactory(news.microtask.submission);
-                    console.log(news.funct);
+                    
                     if (news.microtask.promptType == 'REMOVE_CALLEE')
                         news.callee=functionsService.get(news.microtask.calleeId);
 
@@ -930,8 +926,8 @@ angular
                     });
                 },
                 'WriteFunctionDescription': function(news) {
-                    $scope.review.functionDescription = new FunctionFactory(news.microtask.submission).getSignature();
-                    $scope.review.requestingFunction  = functionsService.get(news.microtask.functionID);
+                    news.functionDescription = new FunctionFactory(news.microtask.submission).getSignature();
+                    news.requestingFunction  = functionsService.get(news.microtask.functionID);
                 },
                 'WriteCall': function(news) {
 
@@ -939,10 +935,13 @@ angular
                     news.calleeFunction = functionsService.get(news.microtask.calleeID);
                 },
                 'DebugTestFailure': function(news) {
-                   news.funct = functionsService.get($scope.review.microtask.functionID);
+                   news.funct = new FunctionFactory(news.microtask.submission);
 
-                   if(news.microtask.submission.testId!==undefined)
-                        news.test= TestList.get($scope.review.microtask.submission.testId);
+                   if(news.microtask.submission.testId!==undefined){
+                        news.test= TestList.get(news.microtask.submission.testId);
+                        news.funct=functionsService.get(news.microtask.functionID);
+                        console.log(news.funct);
+                   }
 
                 },
                 'Review': function(news) {
@@ -964,13 +963,14 @@ angular
             var hidePopover = function(popover) {
               popover.$promise.then(popover.hide);
             };
+         
 
             //
             $scope.showMicrotaskPopover = function(news) {
 
                 if($scope.$parent.popover[news.microtaskKey]===undefined){
-
                     //Hide all the popover if any is visualized
+                    
                     for(var key in $scope.$parent.popover)
                     {
                         hidePopover( $scope.$parent.popover[key]);
@@ -1031,7 +1031,7 @@ angular
             };
 
             element.on('click',function(event){  
-                console.log('clicking');
+               
                 popover.$promise.then(popover.toggle);
             });
 
