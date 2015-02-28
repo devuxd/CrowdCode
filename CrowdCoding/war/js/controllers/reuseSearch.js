@@ -15,8 +15,10 @@ angular
     $scope.code = $scope.funct.getFunctionCode();
     // search for all the functions that have $scope.reuseSearch.text in theirs description or header
     $scope.doSearch = function() {
+
         $scope.selectedResult = -2;
         $scope.results = functionsService.findMatches($scope.text, $scope.funct.name);
+        console.log($scope.results);
     };
     $scope.select = function(index) {
         $scope.selectedResult = index;

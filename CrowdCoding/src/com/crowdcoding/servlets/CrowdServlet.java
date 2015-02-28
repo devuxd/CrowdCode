@@ -654,13 +654,14 @@ public class CrowdServlet extends HttpServlet
 					return context.commands();
 	            }
 	        }));
+
+            // history log writes and the other
+            // firebase writes are done
+            // outside of the transactions
+            HistoryLog.Init(projectId).publish();
+            FirebaseService.publish();
         }
 
-        // history log writes and the other
-        // firebase writes are done
-        // outside of the transactions
-        HistoryLog.Init(projectId).publish();
-        FirebaseService.publish();
 	}
 
 	// Writes the specified html message to resp, wrapping it in an html page

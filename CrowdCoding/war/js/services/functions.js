@@ -347,9 +347,8 @@ angular
 		var re = new RegExp(searchText);
 		var results = [];
 
-		$.each(functions, function(index, value)
-		{
-			if(value.name!=functionSourceName){
+		angular.forEach(functions, function(value, index){
+			if( value.name != functionSourceName ){
 			var score = computeMatchScore(value, re);
 			if (score > 0)
 				results.push({ 'score': score, 'value': new FunctionFactory( value) });
