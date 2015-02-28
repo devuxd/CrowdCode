@@ -1,3 +1,7 @@
+<div class="form-group">
+	<label for="filter" >Filter: </label>
+	<input ng-model="filterText" class="form-control" name="filter"></input>
+</div>
 <!--
 <div>
 	<div class="pull-left" style="width:70%;">
@@ -130,7 +134,7 @@
 	</table>
 </div>-->
 
-<table class="table table-hover">
+<table class="table table-hover" >
 	<thead>
 		<th ng-click="changeSorting('data.id')">
 			Id
@@ -175,13 +179,15 @@
 		</th>
 		-->
 		<th>Review</th>
-		<th>Review Data</th>
 	</thead>
 	
 	<tbody>
-		<tr ng-repeat="(key,mtask) in filter ? filterMicrotasks : microtasks | orderBy:sort.column:sort.descending" microtask-details="mtask" ng-click="showDetails" >
+		<tr ng-repeat="(key,mtask) in filter ? filterMicrotasks : microtasks | orderBy:sort.column:sort.descending" ng-click="go( '/microtasks/' + mtask.$id + '?scrollTo=top' )">
 
-			<td><span ng-bind="mtask.$id"></span></td>
+			<td>
+				<a id="{{mtask.$id}}"></a>
+				<span ng-bind="mtask.$id"></span>
+			</td>
 			<td><span ng-bind="mtask.data.type"></span></td>
 			<td><span ng-bind="mtask.data.owningArtifact"></span></td>
 			<!--

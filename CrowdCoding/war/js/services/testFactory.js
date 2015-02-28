@@ -303,13 +303,6 @@ angular
 			this.rec.description = description;
 		},
 
-		getCode: function(){
-			return this.rec.code;
-		},
-
-		setCode: function(code){
-			this.rec.code = code;
-		},
 
 		getReadOnly: function(){
 			return this.rec.readOnly;
@@ -357,9 +350,15 @@ angular
 		getCode: function(){
 			return this.rec.code;
 		},
+		setCode: function(code){
+			this.rec.code = code;
+		},
 
 		buildCode: function(){
 
+			if( ! this.rec.isImplemented )
+				return '';
+			
 			var testCode = 'equal(' + this.rec.functionName + '(';
 			var length   = this.rec.simpleTestInputs.length;
 
