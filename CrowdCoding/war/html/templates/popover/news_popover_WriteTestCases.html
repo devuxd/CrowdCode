@@ -1,15 +1,20 @@
+<div class="section section-description " >
+
+    <div class="section-content job-description" >
+
 <div ng-if=" ! n.microtask.submission.inDispute">
     <div ng-if="n.microtask.promptType=='WRITE'">
-        test cases for the function <strong>{{n.funct.getName()}}</strong>
+        Test cases for the function <strong>{{n.funct.getName()}}</strong>
     </div>
     <div ng-if="n.microtask.promptType=='CORRECT'">
-       test cases for the function <strong>{{n.funct.getName()}}</strong>
+       Test cases for the function <strong>{{n.funct.getName()}}</strong>
     </div>
 </div>
-
 <div ng-if="n.microtask.submission.inDispute">
-    You reported the following issue for the function <strong>{{n.funct.getName()}}</strong>
+    Reported the function <strong>{{n.funct.getName()}}</strong>
 </div>
+
+</div></div>
 
 <!-- FUNCTION CODE -->
 <div class="section section-description">
