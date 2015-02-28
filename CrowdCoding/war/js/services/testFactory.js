@@ -369,6 +369,7 @@ angular
             testCode += '),' + this.rec.simpleTestOutput + ',\'' + this.rec.description + '\');';
 
 			this.rec.code = testCode;
+			return testCode;
 		}
 	};
 

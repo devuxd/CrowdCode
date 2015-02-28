@@ -1236,3 +1236,5 @@ pre.json .jsonKey { color: black; }
 .diff .line { width:100%; display:block; }
 .diff .line.added   { background-color:#eaffea;}
 .diff .line.removed { background-color:#ffecec;}
+
+.legend {width:10px;height:10px;display:inline-block;margin-left:2px;margin-right:2px;border:1px solid gray;}
