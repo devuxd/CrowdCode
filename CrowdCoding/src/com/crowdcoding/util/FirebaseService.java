@@ -62,7 +62,7 @@ public class FirebaseService
 	public static void writeMicrotaskCompleted( String microtaskKey, String workerID,
 			String projectId, boolean completed)
 	{
-		enqueueWrite(Boolean.toString(completed), "/microtasks/" + microtaskKey + "/completed.json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{\"completed\": \"" + completed + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
 	// Writes information about an old microtask to retrieve the information to Firebase
@@ -73,14 +73,13 @@ public class FirebaseService
 
 	public static void writeMicrotaskCanceled( String microtaskKey, boolean canceled, String projectId)
 	{
-		enqueueWrite(Boolean.toString(canceled), "/microtasks/" + microtaskKey + "/canceled.json", HTTPMethod.PUT, projectId);
+		enqueueWrite( "{\"canceled\": \"" + canceled + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
-	public static void writeTestJobQueue(long functionID, String projectId)
+	public static void writeTestJobQueue(long functionID, int functionVersion, String projectId)
 	{
-		Date date = new Date();
 		System.out.println("appending test job for function "+functionID);
-		enqueueWrite("{\"functionId\": \"" + functionID + "\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{\"functionId\": \"" + functionID + ", \"functionVersion\" : \"" +functionVersion +"\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
 	}
 	public static String getAllCode(String projectId)
 	{
@@ -221,7 +220,7 @@ public class FirebaseService
 	// Writes information about microtask assignment to Firebase
 	public static void writeMicrotaskPoints( String microtaskKey, int points, String projectId)
 	{
-		enqueueWrite(Integer.toString(points), "/microtasks/" + microtaskKey + "/points.json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{\"points\": \"" + points + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 
 	}
 
