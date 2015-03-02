@@ -173,18 +173,18 @@ angular
                         typeof oldObj == 'number' ){
 
                         if( typeof(oldObj) == 'object' )
-                            diffHtml += joinLines( angular.toJson(oldObj, true) , 'line removed', 0);
+                            diffHtml += joinLines( angular.toJson(oldObj, true) , 'line added', 0);
                         else if ( typeof(oldObj) == 'string' )
-                            diffHtml += joinLines( '"'+oldObj+'"', 'line removed', 0);     
+                            diffHtml += joinLines( '"'+oldObj+'"', 'line added', 0);     
                         else
-                            diffHtml += joinLines( oldObj + '', 'line removed', 0);           
+                            diffHtml += joinLines( oldObj + '', 'line added', 0);           
 
                         if( typeof(newObj) == 'object' )
-                            diffHtml += joinLines( angular.toJson(newObj, true) , 'line added', 0);
+                            diffHtml += joinLines( angular.toJson(newObj, true) , 'line removed', 0);
                         else if ( typeof(newObj) == 'string' )
-                            diffHtml += joinLines( '"'+newObj+'"', 'line added', 0);     
+                            diffHtml += joinLines( '"'+newObj+'"', 'line removed', 0);     
                         else
-                            diffHtml += joinLines( newObj + '', 'line added', 0);                    
+                            diffHtml += joinLines( newObj + '', 'line removed', 0);                    
 
                         scope.diffHtml = diffHtml;
 
@@ -206,7 +206,7 @@ angular
                             var name = removedFields[f];
                             var text = angular.toJson( oldObj[name], true) + ',';
                             if( !isArray ) text = '"'+name+'" : ' + text;
-                            diffHtml += joinLines( text, 'line removed', 2) ;
+                            diffHtml += joinLines( text, 'line added', 2) ;
                             diffHtml += '\n';
                         }
 
@@ -221,12 +221,12 @@ angular
                             } else {
                                 var text = angular.toJson( oldObj[name], true) + ',';
                                 if( !isArray ) text = '"'+name+'" : ' + text;
-                                diffHtml += joinLines( text, 'line removed', 2) ;
+                                diffHtml += joinLines( text, 'line added', 2) ;
 
 
                                 var text = angular.toJson( newObj[name], true) + ',';
                                 if( !isArray ) text = '"'+name+'" : ' + text;
-                                diffHtml += joinLines( text, 'line added', 2) ;
+                                diffHtml += joinLines( text, 'line removed', 2) ;
                             }
 
                             diffHtml += '\n';
@@ -236,7 +236,7 @@ angular
                             var name = addedFields[f];
                             var text = angular.toJson( newObj[name], true) + ',';
                             if( !isArray ) text = '"'+name+'" : ' + text;
-                            diffHtml += joinLines( text, 'line added', 2) ;
+                            diffHtml += joinLines( text, 'line removed', 2) ;
 
                             diffHtml += '\n';
                         }

@@ -363,12 +363,13 @@ angular
 			var length   = this.rec.simpleTestInputs.length;
 
             angular.forEach(this.rec.simpleTestInputs, function(value, key) {
-                testCode += JSON.stringify(value).replace(/"/g, '');
+                testCode += value;
                 testCode += (key != length - 1) ? ',' : '';
             });
             testCode += '),' + this.rec.simpleTestOutput + ',\'' + this.rec.description + '\');';
-
+			// console.log('test code for '+this.rec.description+ ':'+testCode);
 			this.rec.code = testCode;
+			return testCode;
 		}
 	};
 

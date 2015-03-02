@@ -11,10 +11,29 @@
 <div ng-if="test.output.result" class="heading-1" >Output</div>
 <div ng-if="test.output.result" ace-read-json ng-model="test.output.actual" ></div>
 
-<div ng-if="!test.output.result" class="heading-1" >Output diff ( expected vs. actual )</div>
-<div ng-if="!test.output.result" ace-read-json-diff old="test.output.expected" new="test.output.actual" mode="diff"></div>
-    
-    <table>
+<div ng-if="!test.output.result && diffMode">
+    <div class="heading-1" >
+        Output diff ( expected vs. actual )
+    </div>
+    <span class="pull-left">
+        <span class="legend" style="background-color:#eaffea;"></span>expected
+        <span class="legend" style="background-color:#ffecec;"></span>actual
+    </span>
+    <a class="pull-right" ng-click="switchMode()">switch to normal mode</a>
+    <span class="clearfix"></span>
+    <div ace-read-json-diff old="test.output.expected" new="test.output.actual" mode="diff"></div>
+</div>
+
+
+<div ng-if="!test.output.result && !diffMode">
+    <div class="heading-1" >
+        Output
+    </div>
+
+
+    <a class="pull-right" ng-click="switchMode()">switch to diff mode</a>
+    <span class="clearfix"></span>
+    <table >
         <tr>
             <td>expected</td>
             <td>
@@ -28,6 +47,7 @@
             </td>
         </tr>
     </table>
+</div>
 
 <div ng-if="test.debug != ''">
     <div class="heading-1">Debug Console</div>

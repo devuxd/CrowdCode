@@ -6,8 +6,8 @@
 			In Edit a Function, your goal is to improve the implementation of a function.
 		</p>
 		<p  style="width:500px">
-			In CrowdCode, functions may contain code, <strong>pseudocode</strong>, and other <strong>function calls</strong>. 
-			In Edit a Function, your goal is not necessarily to finish a complete implementation of a function. Rather, you may decide to <strong>sketch</strong> some of the behavior using psuedocode and describe some operation that’s best done in another function using a <strong>function call</strong>. 
+			In CrowdCode, functions may contain code, <strong>pseudocode</strong>, and other <strong>function stubs</strong>. 
+			In Edit a Function, your goal is not necessarily to finish a complete implementation of a function. Rather, you may decide to <strong>sketch</strong> some of the behavior using psuedocode and describe some operation that’s best done in another function using a <strong>function stub</strong>. 
 		</p>
 	</div>
 </step>
@@ -27,14 +27,17 @@
 			In CrowdCode, you edit code with a local view of the codebase, seeing only the current function on which you are working.  When you call another function, you have to add a sketch of the called function header with an empty body at the bottom of the code editor window (eventually providing an one-line description of what the function is supposed to do). 
 		</p>
 		<p style="width:550px">
-			When implementing a function, you may discover that a function description needs revision, that an additional parameter is required, or even that the function itself is poorly named. In this case, you may edit the header of the function; the crowd will then update any callers of the function to match its new specification.
+			When implementing a function, you may discover that a function description needs revision, that an additional parameter is required, or even that the function itself is poorly named. In this case, you may edit the header of the function; the crowd will then update any callers of the function to match its new specification.<br />
+			<b>Note: </b> 
+			you are not allowed to change the description of the API functions (the functions requested by the client).
 		</p>
+
 	</div>
 </step>
 <step>
 	<div class="text">
 		<p style="width:300px">
-			<strong>Remember</strong>: Using psuedocode and function calls provides an opportunity for the crowd to contribute. For a function with large and complex behavior, sketching some of the behavior provides opportunities for the crowd to consider how it best be done. Rather than build a single monolithic function, function calls provides an opportunity for code to be decomposed into cohesive functions that can be reused. And - most importantly - function calls provides an opportunity for many to work on each requested function in parallel.
+			<strong>Remember</strong>: Using <strong>psuedocode</strong> and <strong>function stubs</strong> provides an opportunity for the crowd to contribute. For a function with large and complex behavior, sketching some of the behavior provides opportunities for the crowd to consider how it best be done. Rather than build a single monolithic function, function stubs provides an opportunity for code to be decomposed into cohesive functions that can be reused. And - most importantly - function stubs provides an opportunity for many to work on each requested function in parallel.
 		</p>
 	</div>
 </step>
@@ -44,5 +47,13 @@
 		<p style="width:280px">
 			In CrowdCode, all parameters are specified with a data type. CrowdCode provides an Available Data Types panel enabling you to browse the description of data types and see examples.
 		</p>
+	</div>
+</step>
+<step>
+	<div class="text">
+		<p style="width:500px">
+			In editing the function, you may discover that the function is impossible or inadvisable to implement (i.e. a function that need to use global variables). If you feel this to be the case, you should report the issue:
+		</p>
+		<img src="/img/tutorial/writefunction/report.png" />
 	</div>
 </step>

@@ -121,8 +121,8 @@ angular
         $scope.activePanel = -1;
 
         var code;
-        if( $scope.codemirror === undefined) 
-            console.log('CODEMIRROR UNDEFINED');
+        // if( $scope.codemirror === undefined) 
+            // console.log('CODEMIRROR UNDEFINED');
 
         if( $scope.codemirror !== undefined )
             code = $scope.codemirror.getValue();
@@ -150,8 +150,6 @@ angular
     
 
     function collectFormData(event, data) {
-
-        console.log($scope.codemirror);
 
         // CHECK IF THERE ARE FORM ERRORS
         var errors = "";
