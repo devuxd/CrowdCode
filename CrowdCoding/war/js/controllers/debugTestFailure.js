@@ -7,11 +7,10 @@ angular
     .controller('DebugTestFailureController', ['$scope', '$rootScope', '$alert', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $rootScope, $alert, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
     
     var testRunner = new TestRunnerFactory.instance();
-    testRunner.onTestReady(processTestReady);
-    testRunner.onStubsReady(processStubsReady);
+    testRunner.setTestedFunction($scope.microtask.functionID);
     testRunner.onTestsFinish(processTestsFinish);
     
-    $scope.tests = TestList.getImplementedByFunctionId($scope.microtask.functionID);
+    $scope.tests = [];
 
     for(var t in $scope.tests){
         $scope.tests[t] = angular.extend($scope.tests[t],new TestRunnerFactory.defaultTestItem());
@@ -20,10 +19,11 @@ angular
 
     $scope.passedTests      = [];
     $scope.firstTimeRun     = true; 
-    $scope.testsRunning     = false; 
-    $scope.stubs            = [];
-    $scope.paramNames       = $scope.funct.paramNames;
-    $scope.calleDescription = {};
+    $scope.testsRunning     = false;
+
+    $scope.stubs      = {}; // contains all the stubs used by all the tests
+    $scope.callees    = {}; // contains the info of all the callee
+
     $scope.completed        = 0;
     $scope.total            = $scope.tests.length;
     $scope.numPassed        = 0;
@@ -66,10 +66,65 @@ angular
         };
     }
 
-    function processTestReady(data){
+
+    function processTestsFinish(data){
+        // if on the first run all the tests pass, 
+        // load a new microtask 
+        $scope.testsRunning = false;
+
+        if ($scope.firstTimeRun){
+            // if all the tests passed
+            // auto submit this microtask
+            if( data.overallResult ){
+                $scope.$emit('collectFormData', true);
+            }
+            // otherwise remove the non passed tests
+            // but except the first 
+            else {
+                var firstFailedIn = false;
+                angular.forEach( data.tests, function( test, index){
+                    if( test.passed() || !firstFailedIn ){
+
+                        $scope.tests.push( test );
+                        processTestFinish(test);
+
+                        if( !test.passed() ) firstFailedIn = true;
+                    } 
+                });
+                testRunner.setTests($scope.tests);
+            }
+
+            $scope.firstTimeRun = false;
+        } 
+
+        $scope.$apply();
+    }
+
+
+    function processTestFinish(data){
 
         $scope.completed = data.number+1;
         $scope.tests[data.number] = angular.extend($scope.tests[data.number],data);
+
+        if( data.stubs !== undefined ){
+            angular.forEach( data.stubs, function( fStubs, fName ) {
+                // retrieve the callee info
+                if( $scope.callees[fName] == undefined ){
+                    var calleeFun = functionsService.getByName(fName);
+                    $scope.callees[fName] = {
+                        inputs      : calleeFun.paramNames,
+                        returnType  : calleeFun.returnType,
+                        signature   : calleeFun.getSignature()
+                    }
+                }
+                // merge this stubs into all the used stubs
+                if( $scope.stubs[fName] === undefined ) $scope.stubs[fName] = {};
+                angular.forEach( fStubs, function( stub, key ){
+                    $scope.stubs[fName][key] = stub;
+                });
+
+            });
+        }
 
         if( data.output !== undefined)
             if( data.output.result )
@@ -78,65 +133,21 @@ angular
         $scope.$apply();
     }
 
-    function processStubsReady(data){
-        $scope.stubs = Object.keys(data).length > 0 ? data : null;
-        angular.forEach($scope.stubs, function(data, index) {
-
-            calleeFunction = functionsService.getByName(index);
-            if( $scope.stubsParamNames === undefined){
-                $scope.stubsParamNames = {};
-                $scope.stubsReturnType = {};
-            }
-
-            $scope.stubsParamNames[index] = calleeFunction.paramNames;
-            $scope.stubsReturnType[index] = calleeFunction.returnType;
-
-            $scope.calleDescription[index]={};
-            $scope.calleDescription[index].code=calleeFunction.getSignature();
-        });
-
-        $scope.$apply();
-    }
-
-    function processTestsFinish(data){
-        // if on the first run all the tests pass, 
-        // load a new microtask 
-        $scope.testsRunning = false;
-        $scope.$apply();
-        
-
-        if ($scope.firstTimeRun){
-            if(data.overallResult){
-                //console.log("---- AUTO LOADING A NEW MICROTASK");
-                $scope.$emit('collectFormData', true);
-            }
-            $scope.firstTimeRun = false;
-        }
-    }
-
 
     function runTests(firstTime) {
         if($scope.testsRunning) return false;
 
         $scope.activePanel = -1;
 
-        var code;
-        // if( $scope.codemirror === undefined) 
-            // console.log('CODEMIRROR UNDEFINED');
+        if( $scope.codemirror !== undefined ){
+            testRunner.setTestedFunctionCode( $scope.codemirror.getValue() );
+        }
 
-        if( $scope.codemirror !== undefined )
-            code = $scope.codemirror.getValue();
+        testRunner.mergeStubs( $scope.stubs );
 
         // push a message for for running the tests
-        if( testRunner.runTests($scope.microtask.functionID,code,$scope.stubs) != -1 ) {
-            //set testsRunning flag
+        if( testRunner.runTests() != -1 ) {
             $scope.testsRunning = true;
-
-            var numTests = $scope.tests.length;
-            
-            for(var t in $scope.tests){
-                $scope.tests[t] = angular.extend($scope.tests[t],TestRunnerFactory.defaultTestItem);
-            }
         }
 
         $scope.completed = 0;

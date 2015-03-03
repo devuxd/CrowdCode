@@ -76,31 +76,33 @@ angular
         }
         //else retrieves the data and pass them to jshint to check that all are valid
         else {
-            if( ! $scope.dispute.active ){
-                for (var i = 0; i < $scope.model.parameters.length; i++) {
-                    paramNames.push($scope.model.parameters[i].paramName);
-                    paramTypes.push($scope.model.parameters[i].paramType);
-                    paramDescriptions.push($scope.model.parameters[i].paramDescription);
-                }
+            // NOT SURE THAT WE NEED TO LINT THE CODE OF THE DESCRIPTION
+            // 
+            // if( ! $scope.dispute.active ){
+            //     for (var i = 0; i < $scope.model.parameters.length; i++) {
+            //         paramNames.push($scope.model.parameters[i].paramName);
+            //         paramTypes.push($scope.model.parameters[i].paramType);
+            //         paramDescriptions.push($scope.model.parameters[i].paramDescription);
+            //     }
 
-                header = functionsService.renderHeader($scope.model.functionName, paramNames);
-                allFunctionCode = functionsService.getAllDescribedFunctionCode()+ " var debug = null; " ;
-               // console.log('function name',$scope.model.functionName);
+            //     header = functionsService.renderHeader($scope.model.functionName, paramNames);
+            //     allFunctionCode = functionsService.getAllDescribedFunctionCode()+ " var debug = null; " ;
+            //    // console.log('function name',$scope.model.functionName);
 
-                var functionCode = allFunctionCode + " " + header + "{}";
-                var lintResult = -1;
-                // try to run JSHINT or catch and print error to the console
-                try {
-                    lintResult = JSHINT(functionCode, getJSHintGlobals());
-                } catch (e) {
-                    console.log("Error in running JSHHint. " + e.name + " " + e.message);
-                }
+            //     var functionCode = allFunctionCode + " " + header + "{}";
+            //     var lintResult = -1;
+            //     // try to run JSHINT or catch and print error to the console
+            //     try {
+            //         lintResult = JSHINT(functionCode, getJSHintGlobals());
+            //     } catch (e) {
+            //         console.log("Error in running JSHHint. " + e.name + " " + e.message);
+            //     }
 
-                if (!lintResult) {
-                    console.log(lintResult);
-                    error="You are using Javascript redserved word, please change them";
-                }
-            }
+            //     if (!lintResult) {
+            //         console.log(lintResult);
+            //         error="You are using Javascript redserved word, please change them";
+            //     }
+            // }
                 
 
         }

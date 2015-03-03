@@ -36,7 +36,7 @@ angular
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attrs, ngModel) {
-            console.log('DATA TYPE VAL INIT'+attrs.jsonDataType);
+            
             ngModel.$validators.jsonDataType = function(modelValue,viewValue){
                 var value = modelValue || viewValue;
                 var validator = new JSONValidator();
@@ -143,7 +143,7 @@ angular
         link: function(scope, elm, attrs, ctrl) {
 
             ctrl.$parsers.unshift(function(viewValue) {
-                var functionsName=functionsService.getAllDescribedFunctionNames();
+                var functionsName=functionsService.getDescribedFunctionNames();
                 var valid =  viewValue === ""|| viewValue === undefined || (functionsName.indexOf(viewValue) == -1);
 
                 if (!valid) {
@@ -209,8 +209,9 @@ angular
             functionId = attrs.functionId;
             valid = true;
 
-            allFunctionNames = functionsService.getAllDescribedFunctionNames(functionId);
-            allFunctionCode  = functionsService.getAllDescribedFunctionCode(functionId)+ " var debug = null; " ;
+            var describedFunctions = functionsService.getDescribedFunctions();
+            allFunctionNames = functionsService.getDescribedFunctionsName(functionId);
+            allFunctionCode  = functionsService.getDescribedFunctionsCode(functionId) + " var debug = null; " ;
 
             ctrl.$formatters.unshift(function(viewValue) {
                 code=viewValue;

@@ -5,7 +5,7 @@
 ////////////////////
 angular
     .module('crowdCode')
-    .factory('functionsService', ['$window','$rootScope','$firebase','FunctionFactory', function( $window, $rootScope, $firebase,FunctionFactory) {
+    .factory('functionsService', ['$window','$rootScope','$firebase', '$filter','FunctionFactory', function( $window, $rootScope, $firebase, $filter, FunctionFactory) {
 
 
 	var service = new  function(){
@@ -18,7 +18,6 @@ angular
 		this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); };
 		this.functionAdded = function(addedFunction) { return functionAdded(addedFunction); };
 		this.functionChanged = function(changedFunction) { return functionChanged(changedFunction); };
-		this.allDescribedFunctionIDs = function() { return allDescribedFunctionIDs(); };
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
 		this.getVersion = function(id,version) { return getVersion(id, version); };
@@ -28,8 +27,12 @@ angular
 		this.getMockEmptyBodiesFor = function(id) { return getMockEmptyBodiesFor(id); };
 		this.getMockHeader = function(id) { return getMockHeader(id); };
 		this.renderDescription= function(functionCalled) { return renderDescription(functionCalled); };
-		this.getAllDescribedFunctionCode = function(idFunction) { return getAllDescribedFunctionCode(idFunction); };
-		this.getAllDescribedFunctionNames = function(idFunction) { return getAllDescribedFunctionNames(idFunction); };
+
+		this.getDescribedFunctionsCode = function(excludedFunctionId) { return getDescribedFunctionsCode(excludedFunctionId); };
+		this.getDescribedFunctionsName = function(excludedFunctionId) { return getDescribedFunctionsName(excludedFunctionId); };
+		this.getDescribedFunctionsId   = function(excludedFunctionId) { return getDescribedFunctionsId(excludedFunctionId); };
+		this.getDescribedFunctions     = function() { return getDescribedFunctions(); };
+
 		this.findMatches = function(searchText, functionSourceName) { return findMatches(searchText, functionSourceName); };
 		this.makeHeaderAndParameterReadOnly = function(codemirror){return makeHeaderAndParameterReadOnly(codemirror);};
 		this.makeHeaderAndDescriptionReadOnly = function(codemirror){return makeHeaderAndDescriptionReadOnly(codemirror);};
@@ -89,18 +92,6 @@ angular
 		    return '';
 		}
 
-		// Returns an array with every current function ID
-		function allDescribedFunctionIDs()
-		{
-			var functionIDs = [];
-			$.each(functions, function(i, value)
-			{
-				if(value.described)
-					functionIDs.push(value.id);
-			});
-
-			return functionIDs;
-		}
 
 		function allFunctionNames()
 		{
@@ -109,39 +100,46 @@ angular
 			{
 				functionName.push(value.nameget);
 			});
-
 			return functionNames;
+		}
+
+
+		// Returns an array with every current function ID
+		function getDescribedFunctions(){
+			return $filter('filter')(functions, { described: true });
+		}
+
+		// Returns an array with every current function ID
+		function getDescribedFunctionsId(excludedFunctionId){
+			var describedIds = [];
+			angular.forEach( getDescribedFunctions(), function(value, index){
+				if( value.id !== excludedFunctionId )
+					describedIds.push(value.id);
+			});
+			return describedIds;
 		}
 
 		// Returns all the described function Names except the one with the passed ID
-		function getAllDescribedFunctionNames(idFunction)
+		function getDescribedFunctionsName(excludedFunctionId)
 		{
-			var functionNames = [];
-			$.each(functions, function(i, value)
-			{
-				if(value.described && value.id!=idFunction)
-					{
-					functionNames.push(value.name);
-					}
-
+			var describedNames = [];
+			angular.forEach( getDescribedFunctions(), function(value, index){
+				if( value.id != excludedFunctionId ){
+					describedNames.push(value.name);
+				}
 			});
-
-			return functionNames;
+			return describedNames;
 		}
 
 		// Returns all the described function signature except the one with the passed ID
-		function getAllDescribedFunctionCode(idFunction)
+		function getDescribedFunctionsCode(excludedFunctionId)
 		{
-
-			var functionsCode = "";
-			$.each(functions, function(i, value)
-			{
-				if(value.described && value.id!=idFunction)
-					functionsCode+=value.header+"{ }";
-
+			var describedCode = "";
+			angular.forEach( getDescribedFunctions(), function(value, index){
+				if( value.id != excludedFunctionId )
+					describedCode += value.header+"{ }";
 			});
-
-			return functionsCode;
+			return describedCode;
 		}
 
 
@@ -154,7 +152,11 @@ angular
 			  		funct = value;
 			  	}
 			});
-			return new FunctionFactory(funct);
+
+			if( funct === null )
+				return -1;
+			else 
+				return new FunctionFactory(funct);
 		}
 
 		// Get the function object, in FunctionInFirebase format, for the specified function id

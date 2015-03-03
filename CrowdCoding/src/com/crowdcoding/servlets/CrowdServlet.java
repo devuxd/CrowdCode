@@ -496,7 +496,7 @@ public class CrowdServlet extends HttpServlet
             	if (microtaskKey == null)
             	{
             		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
-            	}
+            	} 
 
             	return microtaskKey;
             }

@@ -1,5 +1,6 @@
+
 <div  ng-if=" test.stubMap != {} " >                                    
-    <div class="panel panel-default" ng-repeat="(fName,fStubs) in test.stubMap">
+    <div class="panel panel-default" ng-repeat="(fName,fStubs) in test.stubs">
         <div class="heading-1 " >Stubs function: {{fName}}</div>
         <div class="panel-heading">
             The function 
@@ -8,24 +9,24 @@
             <br />
             For each set of inputs, you can choose what return value to use ( you can <b>stub</b> the function for the given input values ).
         </div>
-        <div class="heading-1 heading-2" ng-repeat-start="(inputKey,stub) in fStubs track by $index">Input set {{$index}}</div>
+        <div class="heading-1 heading-2" ng-repeat-start="(sKey,stub) in fStubs track by $index">Input set {{$index}}</div>
         <table ng-repeat-end ng-form="stubForm">
-            <tr ng-repeat="(key,input) in stubs[fName][inputKey].inputs track by $index" >
-                <td>{{stubsParamNames[fName][$index]}}<br /></td>
-                <td><div ace-read-json ng-model="input" ></div></td>
+            <tr ng-repeat="(iKey,iValue) in stub.inputs track by $index" >
+                <td>{{callees[fName][$index]}}<br /></td>
+                <td><div ace-read-json ng-model="iValue" ></div></td>
             </tr>
             <tr >
                 <td>return value </td>
                 <td >
 
-                    <ace-edit-json ng-model="stubs[fName][inputKey].output">
+                    <ace-edit-json ng-model="stub.output">
                     </ace-edit-json>
 
                     <textarea type="text" 
-                        ng-model="stubs[fName][inputKey].output"
+                        ng-model="stub.output"
                         ng-show="false"
                         required
-                        json-data-type="{{stubsReturnType[fName]}}" />
+                        json-data-type="{{ callees[fName].returnType }}" />
                 </td>
             </tr>
             <tr>
