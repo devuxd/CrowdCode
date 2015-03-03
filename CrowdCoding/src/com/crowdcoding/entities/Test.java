@@ -156,11 +156,8 @@ public class Test extends Artifact
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
 			System.out.println("--> TEST "+this.id+": implemented for function "+functionID+ " - tID:" +this.id);
-			storeToFirebase(projectId);
+//			storeToFirebase(projectId);
 			FunctionCommand.testBecameImplemented(functionID, this.id);
-
-
-
 		}
 	}
 
@@ -195,8 +192,8 @@ public class Test extends Artifact
 			this.simpleTestInputs = dto.simpleTestInputs;
 			this.simpleTestOutput = dto.simpleTestOutput;
 			ofy().save().entity(this).now();
-			storeToFirebase(projectId);
 			checkIfBecameImplemented(projectId);
+			storeToFirebase(projectId);
 		}
 		lookForWork();
 
@@ -204,12 +201,13 @@ public class Test extends Artifact
 
 	public void storeToFirebase(String projectId)
 	{
-		incrementVersion();
 		if (this.isDeleted)
 			FirebaseService.deleteTest(this.id, projectId);
 		else
 			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs,
 				simpleTestOutput, description, functionName, functionID, isImplemented, isReadOnly), this.id, version, projectId);
+
+		incrementVersion();
 	}
 
 	// Queues the specified microtask and looks for work

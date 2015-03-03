@@ -55,7 +55,7 @@ angular
 		getVersion 			: function(){ return this.rec.version; },
 		isWritten 			: function(){ return this.rec.written; },
 		getHeader 			: function(){ 
-			if(this.rec.described!==false)
+			if( this.rec.described !== false )
 				return this.rec.header;
 			else
 				return  this.rec.description.split("\n").pop();
@@ -122,6 +122,23 @@ angular
 		getFullCode: function(){
 			return this.getFunctionCode() + this.getPseudoFunctions();
 		},
+		getCalleeList: function(){
+			var self = this;
+			var esprimaCode = this.getHeader() + this.rec.code;
+			var ast = esprima.parse( esprimaCode , {loc: true});
+			var callees = [];
+			traverse(ast, function (node)
+			{
+				if((node!=null) && (node.type === 'CallExpression'))
+				{
+					// Add it to the list of callee names if we have not seen it before
+					if (callees.indexOf(node.callee.name) == -1)
+						callees.push(node.callee.name);
+				}
+			});
+			for(var prop in ast) { delete ast[prop]; };
+			return callees;
+		},
 		removePseudoFunction: function(pseudoFunctionName) {
 			if(this.rec.pseudoFunctions!==undefined)
 				for(var i=0; i<this.rec.pseudoFunctions.length; i++ ){
@@ -135,9 +152,67 @@ angular
 			angular.forEach(newFunction, function(value, key) {
 			 	this.rec[key]=value;
 			},this);
+		},
+		getMockCode: function(){
+			var returnCode = '';
+			var logEnabled = true;
+			var functionObj = this;
+			if (functionObj === null)
+				return '';
+
+			// create the instrumented function
+			var cutFrom = instrumentedFunction.toString().search('{');
+			var instrumentedBody = instrumentedFunction.toString().substr(cutFrom);
+			returnCode += functionObj.header;
+			returnCode += instrumentedBody
+						  .replace(/'%functionName%'/g, functionObj.name )
+						  .replace(/'%functionNameStr%'/g, "'" + functionObj.name + "'")
+						  .replace(/'%functionMockName%'/g, functionObj.name + 'ActualIMP');
+			returnCode += '\n';
+
+			// Third, create the ActualImplementation function
+			returnCode += functionObj.getMockHeader();
+			if( functionObj.written )
+				returnCode += '\n' + functionObj.code + '\n';
+			else
+				returnCode += '\n{ return null; }\n';
+
+			return returnCode;
+		},
+		getMockHeader: function(){
+			var mockHeader = 'function ' 
+			    + this.name + 'ActualIMP'
+				+ this.header.substring(this.header.indexOf('('));
+			return mockHeader;
 		}
 
 	};
 
 	return FunctionFactory;
 });
+
+function instrumentedFunction(){
+	var args        = Array.prototype.slice.call(arguments);
+	var stubFor     = Debugger.getStubOutput( '%functionNameStr%', args );
+	var returnValue = null;
+	var argsCopy    = [];
+	for( var a in args )
+		argsCopy[a] = JSON.parse(JSON.stringify(args[a]));
+	
+	if( stubFor != -1 ){
+		returnValue = stubFor.output;
+	} else {
+		try {
+			returnValue = '%functionMockName%'.apply( null, argsCopy );
+		} catch(e) {
+			Debugger.log('There was an exception in the callee \'' + '%functionNameStr%' + '\': '+e.message);
+			Debugger.log("Use the CALLEE STUBS panel to stub this function.");
+		}
+	}
+
+	if( calleeNames.search( '%functionNameStr%' ) > -1 ){
+		Debugger.logCall( '%functionNameStr%', args, returnValue ) ;
+	}
+
+	return returnValue;
+}

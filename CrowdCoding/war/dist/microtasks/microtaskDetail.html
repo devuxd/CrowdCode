@@ -25,6 +25,10 @@
 				  </div>
 				</div>
 
+				<div ng-if=" task.data.type == 'Review' " >
+					<a href="#/microtasks/{{task.data.microtaskKeyUnderReview}}?scrollTo=top" class="btn btn-link">go to the reviewed microtask</a>
+				</div>
+
 				<div class="panel panel-default" ng-if="task.data.submission != undefined">
 				  <div class="panel-heading">
 				    <h3 class="panel-title">Submission</h3>

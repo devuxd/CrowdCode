@@ -1,0 +1,6 @@
+<div ng-repeat="(functionName,tests) in vm.tests">
+    <h3>{{functionName}}</h3>
+    <ul>
+        <li ng-repeat="t in tests">{{t.description}}</li>
+    </ul>
+</div>

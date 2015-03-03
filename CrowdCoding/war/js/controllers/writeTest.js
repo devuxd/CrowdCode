@@ -80,6 +80,7 @@ angular
         var functionSync = functionsService.getVersion($scope.microtask.functionID,$scope.microtask.functionVersion);
             functionSync.$loaded().then(function() {
             $scope.funct = new FunctionFactory(functionSync);
+            console.log($scope.funct,$scope.microtask.functionVersion);
         });
     }
 

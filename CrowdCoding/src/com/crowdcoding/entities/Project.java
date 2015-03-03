@@ -53,7 +53,7 @@ public class Project
 	@Id private String id;
 
 	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
-	private Boolean tutorialsEnabled = true;
+	private Boolean tutorialsEnabled = false;
 
 	// logged in workers
 	@Serialize private HashSet<String> loggedInWorkers = new HashSet<String>();
