@@ -156,8 +156,9 @@ public class Test extends Artifact
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
 			System.out.println("--> TEST "+this.id+": implemented for function "+functionID+ " - tID:" +this.id);
-			FunctionCommand.testBecameImplemented(functionID, this.id);
 			storeToFirebase(projectId);
+			FunctionCommand.testBecameImplemented(functionID, this.id);
+
 
 
 		}
