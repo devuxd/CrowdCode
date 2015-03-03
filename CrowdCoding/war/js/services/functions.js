@@ -54,8 +54,9 @@ angular
 		// Function bodies
 		function init()
 		{
+			console.log($rootScope.firebaseURL);
 		    // hook from firebase all the functions declarations of the project
-			var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
+		    var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functions = functionsSync.$asArray();
 			functions.$loaded().then(function(){
 				// tell the others that the functions services is loaded

@@ -29,7 +29,7 @@ angular
                         // listen on the event 'run-tutorial'
                         // and start the tutorial with tutorialId
                         $rootScope.$on('run-tutorial',function( event, tutorialId, force, onFinish ){
-                            console.log('tutorial: '+tutorialId);
+                           // console.log('tutorial: '+tutorialId);
                             if( force || userTutorials[tutorialId] === undefined ){
                                 // if another tutorial is running
                                 // enqueue the new one
@@ -49,7 +49,7 @@ angular
 
                             // load the tutorial directive
                             var templateUrl = '/html/templates/tutorials/'+id+'.html';
-                            console.log('tutorial template: '+templateUrl);
+                            //console.log('tutorial template: '+templateUrl);
                             $scope.tutorialId = id;
                             $element.html( '<tutorial template-url="'+templateUrl+'"></tutorial>' );
                             $compile($element.contents())($scope);

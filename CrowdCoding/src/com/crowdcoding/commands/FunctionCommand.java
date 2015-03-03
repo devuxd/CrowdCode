@@ -46,8 +46,8 @@ public abstract class FunctionCommand extends Command {
 		return new AddTest(functionID, testID, testDescription);
 	}
 
-	public static FunctionCommand writeTestJobQueue(long functionID) {
-		return new WriteTestJobQueue(functionID);
+	public static FunctionCommand writeTestJobQueue(long functionID, int functionVersion) {
+		return new WriteTestJobQueue(functionID, functionVersion);
 	}
 
 	public static FunctionCommand testBecameImplemented(long functionID,
@@ -118,7 +118,7 @@ public abstract class FunctionCommand extends Command {
 				execute(function.now(), projectId);
 
 				// Save the associated artifact to Firebase
-				function.now().storeToFirebase(projectId);
+				//function.now().storeToFirebase(projectId);
 			}
 		} else
 			execute(null, projectId);
@@ -312,14 +312,16 @@ public abstract class FunctionCommand extends Command {
 
 	protected static class WriteTestJobQueue extends FunctionCommand {
 		private long functionID;
+		private int functionVersion;
 
-		public WriteTestJobQueue(long functionID) {
+		public WriteTestJobQueue(long functionID, int functionVersion) {
 			super(functionID);
 			this.functionID = functionID;
+			this.functionVersion=functionVersion;
 		}
 
 		public void execute(Function function, String projectId) {
-			FirebaseService.writeTestJobQueue(functionID, projectId);
+			FirebaseService.writeTestJobQueue(functionID,functionVersion, projectId);
 		}
 	}
 

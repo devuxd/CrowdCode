@@ -17,7 +17,6 @@ import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
 
@@ -34,35 +33,10 @@ public class Test extends Artifact
 
 	private String code;
 	@Index private boolean hasSimpleTest;
-	// string that uniquely describes what the simple test tests. Null for tests that don't have a simple test.
-	@Index private int simpleTestKeyHash;  // a hash of the key
 
 	private List<String> simpleTestInputs = new ArrayList<String>();
 	private String simpleTestOutput;
 
-	// Attempts to find a simple test for the specified function and inputs.
-	// Returns the test, if such a test exists, or null otherwise.
-	public static Test findSimpleTestFor(String functionName, List<String> inputs, Project project)
-	{
-		List<Test> tests = ofy().load().type(Test.class).ancestor(project.getKey())
-				.filter("simpleTestKeyHash", generateSimpleTestKeyHash(functionName, inputs))
-				.filter("isDeleted", false).list();
-
-		String simpleTestKey = generateSimpleTestKey(functionName, inputs);
-
-		// iterate over the matches to find the exact one, in case the hash matches multiple test cases
-		for (Test test : tests)
-		{
-			// TODO: this will not work whenever the function changes name. We should prob use the
-			// function ID here instead.
-			if (simpleTestKey.equals(generateSimpleTestKey(test.functionName, test.simpleTestInputs)))
-			{
-				return test;
-			}
-		}
-
-		return null;
-	}
 
 	// Constructor for deserialization
 	protected Test()
@@ -87,7 +61,7 @@ public class Test extends Artifact
 		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
 		FunctionCommand.addTest(functionID, this.id, this.description);
-
+		System.out.println("writing tesdt with version: "+functionVersion);
 		queueMicrotask(new WriteTest(this, projectId,functionVersion), projectId);
 
 	}
@@ -106,7 +80,6 @@ public class Test extends Artifact
 		this.code = code;
 		this.simpleTestInputs = inputs;
 		this.simpleTestOutput = output;
-		this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, inputs);
 		this.functionVersion = functionVersion;
 		this.isReadOnly=readOnly;
 
@@ -182,59 +155,50 @@ public class Test extends Artifact
 			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "true", this));
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
-
 			System.out.println("--> TEST "+this.id+": implemented for function "+functionID+ " - tID:" +this.id);
 			FunctionCommand.testBecameImplemented(functionID, this.id);
+			storeToFirebase(projectId);
+
 
 		}
 	}
 
+	private void setNotImplemented()
+	{
+		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
+		this.isImplemented = false;
+		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
+		FunctionCommand.testReturnUnimplemented(functionID, this.getID());
+	}
+
 	public void writeTestCompleted(TestDTO dto, String projectId)
 	{
+		microtaskOutCompleted();
+
 		if (dto.inDispute)
 		{
 			if( dto.disputeFunctionText!="" ) {
-				HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
-
-				// Ignore any of the content for the test, if available. Set the test to unimplemented.
-				this.isImplemented = false;
-
-				ofy().save().entity(this).now();
-				microtaskOutCompleted();
-
 				FunctionCommand.disputeFunctionSignature(functionID, dto.disputeFunctionText, this.getID());
-				lookForWork();
 			}
 			else if( dto.disputeTestText!="" ) {
-				HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
-
-				// Ignore any of the content for the test, if available. Set the test to unimplemented.
-				this.isImplemented = false;
-				ofy().save().entity(this).now();
-				microtaskOutCompleted();
-
 				FunctionCommand.disputeTestCases(functionID, dto.disputeTestText, this.description, this.getID());
-
-				lookForWork();
 			}
-			FunctionCommand.testReturnUnimplemented(functionID, this.getID());
-
+			setNotImplemented();
 		}
 		else
 		{
+			this.functionVersion = dto.functionVersion;
 			this.code = dto.code;
 			this.hasSimpleTest = dto.hasSimpleTest;
 			this.simpleTestInputs = dto.simpleTestInputs;
 			this.simpleTestOutput = dto.simpleTestOutput;
-			if (dto.hasSimpleTest)
-				this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, dto.simpleTestInputs);
-
 			ofy().save().entity(this).now();
-
-			microtaskOutCompleted();
-			lookForWork();
+			storeToFirebase(projectId);
 			checkIfBecameImplemented(projectId);
 		}
+		lookForWork();
+
 	}
 
 	public void storeToFirebase(String projectId)
@@ -281,9 +245,7 @@ public class Test extends Artifact
 
 	public void dispute(String issueDescription, String projectId, int functionVersion)
 	{
-		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
-		this.isImplemented = false;
-		ofy().save().entity(this).now();
+		setNotImplemented();
 		queueMicrotask(new WriteTest(this, issueDescription, projectId, functionVersion), projectId);
 	}
 
@@ -292,13 +254,18 @@ public class Test extends Artifact
 	{
 		this.isDeleted = true;
 		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
+
 	}
 
 	// Notify this test that the function under test has changed its interface.
 	public void functionChangedInterface(String oldFullDescription, String newFullDescription, String projectId, int functionVersion)
 	{
-		if(!this.isReadOnly)
+		if(!this.isReadOnly){
+			setNotImplemented();
 			queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, projectId, functionVersion), projectId);
+
+		}
 	}
 
 
@@ -306,6 +273,7 @@ public class Test extends Artifact
 			int functionVersion) {
 		if(!this.isReadOnly){
 			this.functionName = name;
+			storeToFirebase(projectId);
 			ofy().save().entity(this).now();
 		}
 	}
@@ -333,10 +301,6 @@ public class Test extends Artifact
 		return functionName + "**:" + inputs.toString();
 	}
 
-	private static int generateSimpleTestKeyHash(String functionName, List<String> inputs)
-	{
-		return generateSimpleTestKey(functionName, inputs).hashCode();
-	}
 
 	/******************************************************************************************
 	 * Logging methods

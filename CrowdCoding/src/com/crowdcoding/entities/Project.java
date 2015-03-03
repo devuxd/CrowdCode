@@ -373,24 +373,25 @@ public class Project
 		else{
 			// load it from the datastore
 			Microtask mtask = ofy().transactionless().load().key(microtaskKey).now();
+			if(mtask!=null){
+				// assign it to the worker
+				mtask.setWorkerId(workerID);
+				microtaskAssignments.put( workerID,  Microtask.keyToString(microtaskKey) );
 
-			// assign it to the worker
-			mtask.setWorkerId(workerID);
-			microtaskAssignments.put( workerID,  Microtask.keyToString(microtaskKey) );
+				// save the project
+				ofy().save().entity(this).now();
 
-			// save the project
-			ofy().save().entity(this).now();
+				FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey), workerID, this.getID(), true);
 
-			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey), workerID, this.getID(), true);
+				HistoryLog
+					.Init(this.getID())
+					.addEvent( new MicrotaskDequeued(  ofy().load().key(microtaskKey).now() ));
 
-			HistoryLog
-				.Init(this.getID())
-				.addEvent( new MicrotaskDequeued(  ofy().load().key(microtaskKey).now() ));
-
-			HistoryLog
-				.Init(this.getID())
-				.addEvent(new MicrotaskAssigned(mtask,workerID));
-
+				HistoryLog
+					.Init(this.getID())
+					.addEvent(new MicrotaskAssigned(mtask,workerID));
+			}else
+				System.out.println("ERROR MICROTASK NULL----> "+microtaskKey);
 
 			// return the assigned microtask key
 			return microtaskKey;

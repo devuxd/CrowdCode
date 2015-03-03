@@ -117,10 +117,11 @@ public /*abstract*/ class Microtask
 				ofy().save().entity(this).now();
 
 				// Save the associated artifact to Firebase if there is one
-				Artifact owningArtifact = this.getOwningArtifact();
+			/*	switched to the submit of the artifact
+			 	Artifact owningArtifact = this.getOwningArtifact();
 				if (owningArtifact != null)
 					owningArtifact.storeToFirebase(projectId);
-
+				*/
 				// write completed on firebase
 				FirebaseService.writeMicrotaskCompleted(Microtask.keyToString(this.getKey()), workerID, projectId, this.completed);
 				// increase the stats counter
