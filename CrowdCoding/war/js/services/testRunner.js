@@ -96,6 +96,7 @@ angular
 
 		// check if the function exists
 		var testedFunction = functionsService.get(id);
+		console.log('loaded fun v '+testedFunction.version);
 		if( testedFunction === -1 ){
 			throw new Error('no function with id ' + id + ' exists!');
 		}

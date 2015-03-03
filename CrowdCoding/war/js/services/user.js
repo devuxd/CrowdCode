@@ -61,11 +61,11 @@ angular
 
 		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
-			//console.log("started");
+			console.log('Receiving job ',jobData);
+			
 			var jobRef = queueRef.child('/'+jobData.functionId);
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
-			console.log(jobData);
 			var testRunner = new TestRunnerFactory.instance({submitToServer: true});
 			testRunner.setTestedFunction( jobData.functionId );
 			if( testRunner.runTests() == -1){
@@ -90,12 +90,12 @@ angular
     	var logoutQueue     = new Firebase( firebaseURL + '/status/loggedOutWorkers/');
 
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
+
 			//retrieves the reference to the worker to log out
 			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 			var timeoutCallBack = function(){
-				//console.log("trying to logging out",jobData);
 				//retrieves the information of the loGin field
 				var userLoginRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
 				userLoginRef.once("value", function(userLogin) {

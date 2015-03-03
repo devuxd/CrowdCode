@@ -203,12 +203,13 @@ public class Test extends Artifact
 
 	public void storeToFirebase(String projectId)
 	{
-		incrementVersion();
 		if (this.isDeleted)
 			FirebaseService.deleteTest(this.id, projectId);
 		else
 			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs,
 				simpleTestOutput, description, functionName, functionID, isImplemented, isReadOnly), this.id, version, projectId);
+
+		incrementVersion();
 	}
 
 	// Queues the specified microtask and looks for work

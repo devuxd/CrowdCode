@@ -83,6 +83,7 @@ angular
             else {
                 var firstFailedIn = false;
                 angular.forEach( data.tests, function( test, index){
+                    console.log('filtering: ',test,test.passed());
                     if( test.passed() || !firstFailedIn ){
 
                         $scope.tests.push( test );

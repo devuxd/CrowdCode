@@ -925,11 +925,11 @@ public class Function extends Artifact
 
 	public void storeToFirebase(String projectId)
 	{
-			incrementVersion();
 			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
 					paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoFunctionsName,this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, isReadOnly,
 					queuedMicrotasks.size()),
 					this.id, version, projectId);
+			incrementVersion();
 	}
 
 	// Looks through a string of a function's implementation and returns a list
