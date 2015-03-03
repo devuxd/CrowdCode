@@ -385,7 +385,7 @@ public class Function extends Artifact
 	//	Boolean allImplemented = allUnitTestsImplemented();
 		Boolean oneOmplemented = unitTestsImplemented();
 
-		if(isWritten && oneOmplemented && this.needsDebugging){
+		if(isWritten && oneOmplemented && this.needsDebugging && ! this.waitForTestResult && ! isTestAndDebugOut() ){
 			// enqueue test job in firebase
 			this.waitForTestResult=true;
 			FunctionCommand.writeTestJobQueue(this.getID(), this.version);
