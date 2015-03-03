@@ -266,7 +266,8 @@ public class Function extends Artifact
 		testsId.add(testID);
 		testsImplemented.add(false);
 		testsDescription.add(testDescription);
-		ofy().save().entity(this).now();
+
+		runTestsIfReady();
 		//if the function is not needed send the notification
 		if( ! isActivated())
 			TestCommand.functionBecomeDeactivated(testID);
@@ -275,13 +276,14 @@ public class Function extends Artifact
 	//  PRIVATE CORE FUNCTIONALITY
 	//////////////////////////////////////////////////////////////////////////////
 
-	private void setWritten(boolean isWritten, String projectId)
+	private void setWritten(boolean isWritten)
 	{
 		if (this.isWritten != isWritten)
 		{
+
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();
-
+			storeToFirebase(projectId);
 			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented",Boolean.toString(isWritten), this));
 		}
 	}
@@ -365,8 +367,6 @@ public class Function extends Artifact
 	// Determines if at least one unit tests is implemented
 	private boolean unitTestsImplemented()
 	{
-
-
 		if(testsId.size()==0)
 			return false;
 		else{
@@ -431,12 +431,12 @@ public class Function extends Artifact
 			List<String> pseudoCode = findPseudocode(code);
 			if(pseudoCode.isEmpty())
 			{
-				setWritten(true,projectId);
+				setWritten(true);
 				storeToFirebase(projectId);
 			}
 			else
 			{
-				setWritten(false,projectId);
+				setWritten(false);
 				//if there aren't any other micortask enqueu for the artifact
 				if(queuedMicrotasks.isEmpty())
 					queueMicrotask(new WriteFunction(this,projectId), projectId);
@@ -444,7 +444,7 @@ public class Function extends Artifact
 		}
 		else
 		{
-			setWritten(false,projectId);
+			setWritten(false);
 
 			for (PseudoFunctionDTO submittedPseudoFunction : submittedPseudoFunctions)
 			{
@@ -589,7 +589,8 @@ public class Function extends Artifact
 				// If it's an add, create a test
 				if (testCase.added)
 				{
-					TestCommand.create(testCase.text, this.id, this.name, testCase.functionVersion);
+					System.out.println("creating test with version: "+dto.functionVersion);
+					TestCommand.create(testCase.text, this.id, this.name, dto.functionVersion);
 				}
 				// else if is a delete, remove the test
 				else if (testCase.deleted)
@@ -606,12 +607,12 @@ public class Function extends Artifact
 						if (!testsDescription.get(position).equals(testCase.text))
 						{
 							testsDescription.set(position, testCase.text);
-							TestCommand.testEdited(testCase.id, testCase.text, testCase.functionVersion);
+							TestCommand.testEdited(testCase.id, testCase.text, dto.functionVersion);
 						}
 						//if the test that made the dispute was not edited generates again the write test microtask
 						else if(testCase.id == disputeId)
 						{
-							TestCommand.disputeCompleted(testCase.id, testCase.functionVersion);
+							TestCommand.disputeCompleted(testCase.id, dto.functionVersion);
 
 						}
 					}
@@ -792,6 +793,8 @@ public class Function extends Artifact
 	public void calleeBecameDescribed(long calleeId, String pseudoFunctionName, String projectId)
 	{
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("AddCall", this));
+		setWritten(false);
+
 		queueMicrotask(new WriteCall(this, calleeId, pseudoFunctionName, projectId), projectId);
 	}
 
@@ -799,11 +802,14 @@ public class Function extends Artifact
 	public void calleeBecomeDeactivated(long calleeId, String disputeText, String projectId)
 	{
 		calleesId.remove(calleeId);
+		setWritten(false);
+
 		queueMicrotask(new WriteFunction(this, calleeId, disputeText, projectId), projectId);
 	}
 
 	public void calleeChangedInterface(String oldFullDescription, String newFullDescription, String projectId)
 	{
+		setWritten(false);
 		queueMicrotask(new WriteFunction(this, oldFullDescription, newFullDescription, projectId), projectId);
 	}
 
@@ -814,6 +820,8 @@ public class Function extends Artifact
 
 	public void disputeFunctionSignature(String issueDescription, long disputeId,String projectId)
 	{
+		setWritten(false);
+
 		queueMicrotask(new WriteFunction(this, issueDescription, disputeId, projectId), projectId);
 	}
 

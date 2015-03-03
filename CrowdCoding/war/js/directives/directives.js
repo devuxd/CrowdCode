@@ -36,7 +36,6 @@ angular
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attrs, ngModel) {
-            console.log('DATA TYPE VAL INIT'+attrs.jsonDataType);
             ngModel.$validators.jsonDataType = function(modelValue,viewValue){
                 var value = modelValue || viewValue;
                 var validator = new JSONValidator();

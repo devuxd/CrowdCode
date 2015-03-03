@@ -62,10 +62,11 @@ angular
 		var testRunner = new TestRunnerFactory.instance({submitToServer: true});
 		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
-		//console.log("started");
+		console.log("jobData----------->>>",jobData);
 		var jobRef = queueRef.child('/'+jobData.functionId);
 		//console.log(jobRef,jobData);
 		jobRef.onDisconnect().set(jobData);
+
 			if( testRunner.runTests(jobData.functionId) == -1){
 				jobRef.onDisconnect().cancel();
 				whenFinished();

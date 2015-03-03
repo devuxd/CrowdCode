@@ -79,7 +79,7 @@ public class FirebaseService
 	public static void writeTestJobQueue(long functionID, int functionVersion, String projectId)
 	{
 		System.out.println("appending test job for function "+functionID);
-		enqueueWrite("{\"functionId\": \"" + functionID + ", \"functionVersion\" : \"" +functionVersion +"\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{\"functionId\": \"" + functionID + "\", \"functionVersion\" : \"" +functionVersion +"\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
 	}
 	public static String getAllCode(String projectId)
 	{

@@ -5,31 +5,6 @@ angular
     .module('crowdCode')
     .controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert,  functionsService, FunctionFactory, ADTService) {
     // initialize testData
-
-
-    // if microtask.submission and microtask.submission.simpleTestInputs are defined
-    // assign test inputs and output to testData, otherwise initialize an empty object
-    if( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ){
-
-        $scope.testData = {
-            inputs: $scope.test.simpleTestInputs,
-            output: $scope.test.simpleTestOutput
-        } ;
-
-    } else {
-        $scope.testData = {
-            inputs: [],
-            output: ''
-        };
-
-    }
-
-
-    if( angular.isDefined($scope.microtask.reissuedFrom) && angular.isDefined($scope.reissuedMicrotask.submission.simpleTestInputs) ){
-        $scope.testData.inputs=$scope.reissuedMicrotask.submission.simpleTestInputs;
-        $scope.testData.output=$scope.reissuedMicrotask.submission.simpleTestOutput;
-    }
-
     // scope data 
     $scope.disputeFunction = {
         active : false,
@@ -57,6 +32,31 @@ angular
         }
     };
 
+    // if microtask.submission and microtask.submission.simpleTestInputs are defined
+    // assign test inputs and output to testData, otherwise initialize an empty object
+    if( angular.isDefined($scope.test.simpleTestInputs) && angular.isDefined($scope.test.simpleTestOutput) ){
+
+        $scope.testData = {
+            inputs: $scope.test.simpleTestInputs,
+            output: $scope.test.simpleTestOutput
+        } ;
+
+    } else {
+        $scope.testData = {
+            inputs: [],
+            output: ''
+        };
+
+    }
+
+
+    if( angular.isDefined($scope.microtask.reissuedFrom) && angular.isDefined($scope.reissuedMicrotask.submission.simpleTestInputs) ){
+        $scope.testData.inputs=$scope.reissuedMicrotask.submission.simpleTestInputs;
+        $scope.testData.output=$scope.reissuedMicrotask.submission.simpleTestOutput;
+    }
+
+   
+
     // IF THE PROMPT TYPE IS FUNCTION CHANGED, CALC THE DIFF TO SHOW WITH CODEMIRROR
     if ($scope.microtask.promptType == 'FUNCTION_CHANGED') {
         var oldCode = $scope.microtask.oldFunctionDescription.split("\n");
@@ -76,14 +76,10 @@ angular
     }
     // LOAD THE VERSION OF THE FUNCTION WHEN THE MICROTASK HAS BEEN SPAWNED
     else {
-        $scope.code = "";
         //load the version of the function with witch the test cases where made
-        var functionVersionSync = {};
-        if ($scope.microtask.functionVersion === 0) functionVersionSync = $firebase(new Firebase($rootScope.firebaseURL + '/history/artifacts/functions/' + $scope.microtask.functionID + '/1'));
-        else functionVersionSync = $firebase(new Firebase($rootScope.firebaseURL + '/history/artifacts/functions/' + $scope.microtask.functionID + '/' + $scope.microtask.functionVersion));
-        $scope.funct = functionVersionSync.$asObject();
-        $scope.funct.$loaded().then(function() {
-            $scope.code = (new FunctionFactory($scope.funct)).getSignature();
+        var functionSync = functionsService.getVersion($scope.microtask.functionID,$scope.microtask.functionVersion);
+            functionSync.$loaded().then(function() {
+            $scope.funct = new FunctionFactory(functionSync);
         });
     }
 

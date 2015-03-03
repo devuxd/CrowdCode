@@ -61,7 +61,7 @@ public class Test extends Artifact
 		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
 		FunctionCommand.addTest(functionID, this.id, this.description);
-
+		System.out.println("writing tesdt with version: "+functionVersion);
 		queueMicrotask(new WriteTest(this, projectId,functionVersion), projectId);
 
 	}

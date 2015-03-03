@@ -36,7 +36,7 @@
 			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
 		</div>
 		<div class="section-content no-padding" >
-			<ace-read-js code="code"></ace-read-js>
+			<ace-read-js code="funct.getSignature()"></ace-read-js>
 			<ace-read-js ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></ace-read-js>
 		</div>
 	</div>
@@ -139,7 +139,7 @@
                     <table style="width:100%" class="test" ng-form="outputForm"  >
                         <tr>
                             <td>
-                            	({{funct.returnType}})
+                            	({{funct.getReturnType()}})
                             </td>
                             <td>
 								<ace-edit-json 
@@ -154,7 +154,7 @@
 									name="output"
 									ng-show="false"
 									required
-									json-data-type="{{funct.returnType}}" />
+									json-data-type="{{funct.getReturnType()}}" />
 
 								<div class="help-block pull-left" ng-show="outputForm.$dirty" ng-messages="outputForm.output.$error">
 								    <div ng-message="required">Please, fill this field</div>
