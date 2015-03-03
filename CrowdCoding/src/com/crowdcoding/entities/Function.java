@@ -59,7 +59,7 @@ public class Function extends Artifact
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
 	private List<String>  testsDescription = new ArrayList<String>();
 	private int           linesOfCode = 0;
-	private boolean 	  waitForTestResult=true;
+	private boolean 	  waitForTestResult=false;
 	private Queue<Ref<Microtask>> queuedTestAndDebugMicrotask = new LinkedList<Ref<Microtask>>();
 
 	// flags about the status of the function
@@ -651,10 +651,10 @@ public class Function extends Artifact
 
 		} else { //at present, reaching here means all tests passed.
 
-			if(!this.code.trim().equals(dto.code.trim()))
-			{ //integrate the new changes
+		//	if(!this.code.trim().equals(dto.code.trim()))
+			//{ //integrate the new changes
 				onWorkerEdited(dto, projectId);
-			}
+			//}
 		}
 
 		// Save the entity again to the datastore
