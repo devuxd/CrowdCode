@@ -247,9 +247,10 @@ public class FirebaseService
 				ret += ",";
 			i++;
 		}
-		System.out.println("Event List = {"+ret+"}");
-		//System.out.println("firebase history log : "+event.json());
-		enqueueWrite( "{"+ret+"}" , "/history/events.json", HTTPMethod.PATCH, projectId);
+		if( ret.length() > 0 ){
+			System.out.println("Event List = {"+ret+"}");
+			enqueueWrite( "{"+ret+"}" , "/history/events.json", HTTPMethod.PATCH, projectId);
+		}
 	}
 
 	// Clears all data in the current project, reseting it to an empty, initial state
@@ -375,7 +376,7 @@ public class FirebaseService
 	//		} catch( NoSuchElementException e) {
 	//			e.printStackTrace();
 	//		}
-//			System.out.println("Firebase: writing "+write.relativeURL);
+			System.out.println("Firebase: writing "+write.relativeURL+" - "+write.data);
 		}
 	}
 }

@@ -75,6 +75,7 @@ angular
         if ($scope.firstTimeRun){
             // if all the tests passed
             // auto submit this microtask
+            console.log(data);
             if( data.overallResult ){
                 $scope.$emit('collectFormData', true);
             }

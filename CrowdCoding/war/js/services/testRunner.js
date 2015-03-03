@@ -255,7 +255,10 @@ angular
 
 		// reset tests results variables
 		this.returnData = {};
-		this.passedTests = this.failedTests = [];
+
+		// data for the results
+		this.failedTests = new Array();
+		this.passedTests = new Array();
 
 		this.currentTestIndex = 0; 
 
@@ -283,6 +286,8 @@ angular
 			this.passedTests.push( test.number );
 		else
 			this.failedTests.push( test.number );
+
+		console.log(test.passed(),this.passedTests,this.failedTests);
 
 		// Increment the test and run the next one.
 		this.currentTestIndex++;
