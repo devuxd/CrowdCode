@@ -229,9 +229,9 @@
 							<div class="form-group col-sm-12">
 								<label class=" control-label col-sm-2 reset-padding">parameters</label>
 								<div class="form-group col-sm-10 reset-padding" >
-									<div ng-form="param{{$index}}" class="form-horizontal form-container" ng-repeat="name in function.paramNames track by $index ">
+									<div ng-form="param{{$index}}" class="form-horizontal form-container" ng-repeat="parameter in function.parameters track by $index ">
 										<div class="col-sm-3 reset-padding">
-											<input type="text" class="form-control pull-left" ng-model="function.paramNames[$index]" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName" unic-name parameters="parameters" press-enter="addParameter()"/>
+											<input type="text" class="form-control pull-left" ng-model="parameter.name" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName" unic-name parameters="parameters" press-enter="addParameter()"/>
 											<ul class="help-block" ng-show="param{{$index}}.parameterName.$dirty && param{{$index}}.parameterName.$invalid">
 												<li ng-show="param{{$index}}.parameterName.$error.required">This field is required!</li>
 												<li ng-show="param{{$index}}.parameterName.$error.unic">The parameter name is already taken, please change it</li>
@@ -239,14 +239,14 @@
 											</ul>
 										</div>
 										<div class="col-sm-3 reset-padding">
-											<input type="text" class="form-control pull-left" name="parameterType" ng-model="function.paramTypes[$index]" required adt-validator placeholder="type" press-enter="addParameter()"/>
+											<input type="text" class="form-control pull-left" name="parameterType" ng-model="parameter.type" required adt-validator placeholder="type" press-enter="addParameter()"/>
 											<ul class="help-block" ng-show="param{{$index}}.parameterType.$dirty && param{{$index}}.parameterType.$invalid">
 												<li ng-show="param{{$index}}.parameterType.$error.required">This field is required!</li>
 												<li ng-show="param{{$index}}.parameterType.$error.adt">Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).</li>
 											</ul>
 										</div>
 										<div class="col-sm-5 reset-padding">
-											<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="function.paramDescriptions[$index]" required ng-pattern="/^[a-zA-Z0-9_-\s\(\),:]+$/" press-enter="addParameter()"/>
+											<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="parameter.description" required ng-pattern="/^[a-zA-Z0-9_-\s\(\),:]+$/" press-enter="addParameter()"/>
 											<ul class="help-block" ng-show="param{{$index}}.parameterDescritpion.$dirty && param{{$index}}.parameterDescritpion.$invalid">
 												<li ng-show="param{{$index}}.parameterDescritpion.$error.required">This field is required!</li>
 												<li ng-show="param{{$index}}.parameterDescritpion.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>
@@ -288,10 +288,10 @@
 												</div>
 											</div>
 											<!-- form for each input parameter of the function -->
-											<div  class="form-group" ng-form="inputForm{{$index}}" ng-repeat="(index,paramName) in function.paramNames track by $index">
-												<label for="input" class="col-sm-2 control-label reset-padding"><b>{{paramName}}</b> ({{function.paramTypes[index]}}) </label>
+											<div  class="form-group" ng-form="inputForm{{$index}}" ng-repeat="(index,parameter) in function.parameters track by $index">
+												<label for="input" class="col-sm-2 control-label reset-padding"><b>{{parameter.name}}</b> ({{parameter.type}}) </label>
 												<div class="col-sm-10 reset-padding"  ng-form="singleInputForm"  >
-													<textarea class="form-control" name="input" ng-model="tests.simpleTestInputs[index]" required json-validator="{{function.paramTypes[index]}}"></textarea>
+													<textarea class="form-control" name="input" ng-model="tests.simpleTestInputs[index]" required json-validator="{{parameter.type}}"></textarea>
 													<ul class="help-block pull-left" ng-show="singleInputForm.$invalid && singleInputForm.$dirty">
 														<li ng-show="singleInputForm.input.$error.required" >This field is required!</li>
 														<li ng-show="singleInputForm.input.$error.json" ng-repeat="error in singleInputForm.input.$error.json">{{error}}</li>

@@ -14,9 +14,7 @@ angular
 			this.code               = this.rec.code;
 			this.description 		= this.rec.description;
 			this.header 			= this.rec.header;
-			this.paramDescription 	= this.rec.paramDescription;
-			this.paramNames 		= this.rec.paramNames;
-			this.paramTypes 		= this.rec.paramTypes;
+			this.parameters 		= this.rec.parameters;
 			this.pseudoFunctions 	= this.rec.pseudoFunctions;
 			this.returnType 		= this.rec.returnType;
 			this.described			= this.rec.described;
@@ -35,15 +33,13 @@ angular
 		}
 
 	}
-	
+
 	FunctionFactory.prototype = {
 		//Compatibility Mode
-		
-		getName             : function(){ return this.rec.name; } , 
+
+		getName             : function(){ return this.rec.name; } ,
 		getCode 			: function(){ return this.rec.code; } ,
-		getParamDescription : function(){ return this.rec.paramDescription; },
-		getParamNames 		: function(){ return this.rec.paramNames; },
-		getParamTypes 		: function(){ return this.rec.paramTypes; },
+		getParameters 	    : function(){ return this.rec.parameters; },
 		getReturnType 		: function(){ return this.rec.returnType; },
 		isDescribed			: function(){ return this.rec.described; },
 		getId 				: function(){ return this.rec.id; },
@@ -54,11 +50,36 @@ angular
 		isReadOnly 			: function(){ return this.rec.readOnly; },
 		getVersion 			: function(){ return this.rec.version; },
 		isWritten 			: function(){ return this.rec.written; },
+		getParamNames        : function(){
+			var paramNames=[];
+			for(var index in this.rec.parameters)
+			{
+				paramNames.push(this.rec.parameters[index].name);
+			}
+			return paramNames;
+		},
+		getParamNameAt      : function( index ){
+			if( this.rec.parameters && this.rec.parameters[index] )
+				return this.rec.parameters[index].name;
+			else
+				return '';
+		},
+		getParamTypes        : function(){
+			var paramTypes=[];
+			for(var index in this.rec.parameters)
+			{
+				paramTypes.push(this.rec.parameters[index].type);
+			}
+			return paramTypes;
+		},
 		getHeader 			: function(){ 
 			if( this.rec.described !== false )
 				return this.rec.header;
-			else
-				return  this.rec.description.split("\n").pop();
+			else{
+				var splittedDescription =this.rec.description.split("\n");
+				if(splittedDescription && splittedDescription.length>0)
+					return  splittedDescription.pop();
+			}
 		},
 		getDescription 		: function(){ 
 			if(this.rec.described!==false)
@@ -66,7 +87,8 @@ angular
 			else
 			{
 				var splitteDescription=this.rec.description.replace("//", "").split("\n");
-				splitteDescription.pop();
+				if( splitteDescription !== null )
+					splitteDescription.pop();
 				return splitteDescription.join("\n");
 			}
 		},
@@ -77,12 +99,11 @@ angular
 
 			var fullDescription = '/**\n' + this.getDescription() + '\n';
 
-			if(this.rec.paramNames!==undefined && this.rec.paramNames.length>0)
+			if(this.rec.parameters!==undefined && this.rec.parameters.length>0)
 			{
-	    		for(var i=0; i<this.rec.paramNames.length; i++)
+	    		for(var i=0; i<this.rec.parameters.length; i++)
 				{
-					if(this.rec.paramDescriptions!==undefined && this.rec.paramDescriptions.length>i)
-						fullDescription += '  @param ' + this.rec.paramTypes[i] + ' ' + this.rec.paramNames[i] + ', ' + this.rec.paramDescriptions[i] + '\n';
+					fullDescription += '  @param ' + this.rec.parameters[i].type + ' ' + this.rec.parameters[i].name + ', ' + this.rec.parameters[i].description + '\n';
 
 				}
 			}
@@ -136,7 +157,7 @@ angular
 						callees.push(node.callee.name);
 				}
 			});
-			for(var prop in ast) { delete ast[prop]; };
+			for(var prop in ast) { delete ast[prop]; }
 			return callees;
 		},
 		removePseudoFunction: function(pseudoFunctionName) {

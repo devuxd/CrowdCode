@@ -15,6 +15,7 @@ import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.FunctionParameterDTO;
 import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
@@ -90,15 +91,14 @@ public class Function extends Artifact
 	protected Function(){}
 
 	// Constructor for a function that has a full description and code
-	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, List<String> paramDescriptions, String header,
+	public Function(String name, String returnType, List<FunctionParameterDTO> parameters, String header,
 			String description, String code, boolean readOnly, String projectId)
 	{
 		super(projectId);
-		//this.needsDebugging=true;
 		this.isReadOnly=readOnly;
 		this.isAPIArtifact=true;
 		isWritten = false;
-		writeDescriptionCompleted(new FunctionDescriptionDTO( name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code), projectId);
+		writeDescriptionCompleted(new FunctionDescriptionDTO( name, returnType, parameters, header, description, code), projectId);
 	}
 
 	// Constructor for a function that only has a short call description and still needs a full description
@@ -413,9 +413,19 @@ public class Function extends Artifact
 		this.name = dto.name;
 		this.description = dto.description;
 		this.header = dto.header;
-		this.paramNames = dto.paramNames;
-		this.paramTypes=dto.paramTypes;
-		this.paramDescriptions=dto.paramDescriptions;
+
+		List<FunctionParameterDTO> parameters = dto.parameters;
+
+		this.paramNames.clear();
+		this.paramTypes.clear();
+		this.paramDescriptions.clear();
+		for(FunctionParameterDTO parameter : parameters)
+		{
+			this.paramNames.add(parameter.name);
+			this.paramTypes.add(parameter.type);
+			this.paramDescriptions.add(parameter.description);
+		}
+
 		this.returnType=dto.returnType;
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
 
@@ -429,10 +439,13 @@ public class Function extends Artifact
 		if(submittedPseudoFunctions.isEmpty())
 		{
 			List<String> pseudoCode = findPseudocode(code);
-			if(pseudoCode.isEmpty() && ! this.isWritten)
+			if(pseudoCode.isEmpty())
 			{
+				if(!isWritten())
+				{
 				setWritten(true);
 				storeToFirebase(projectId);
+				}
 			}
 			else
 			{
@@ -553,9 +566,19 @@ public class Function extends Artifact
 		else {
 			this.name = dto.name;
 			this.returnType = dto.returnType;
-			this.paramNames = dto.paramNames;
-			this.paramTypes = dto.paramTypes;
-			this.paramDescriptions = dto.paramDescriptions;
+
+			List<FunctionParameterDTO> parameters = dto.parameters;
+
+			this.paramNames.clear();
+			this.paramTypes.clear();
+			this.paramDescriptions.clear();
+			for(FunctionParameterDTO parameter : parameters)
+			{
+				this.paramNames.add(parameter.name);
+				this.paramTypes.add(parameter.type);
+				this.paramDescriptions.add(parameter.description);
+			}
+
 			this.header = dto.header;
 			this.description = dto.description;
 			this.code = dto.code;
@@ -925,11 +948,14 @@ public class Function extends Artifact
 
 	public void storeToFirebase(String projectId)
 	{
-			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
-					paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoFunctionsName,this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, isReadOnly,
-					queuedMicrotasks.size()),
-					this.id, version, projectId);
-			incrementVersion();
+		int firebaseVersion = version + 1;
+
+		FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, firebaseVersion, returnType, paramNames,
+				paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoFunctionsName,this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, isReadOnly,
+				queuedMicrotasks.size()),
+				this.id, firebaseVersion, projectId);
+		incrementVersion();
+
 	}
 
 	// Looks through a string of a function's implementation and returns a list

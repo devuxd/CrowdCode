@@ -1,8 +1,8 @@
 angular
     .module('crowdCode')
-    .directive('microtaskForm', [ '$firebase', '$http', '$interval', '$timeout',  'functionsService','FunctionFactory', 'userService', 'microtasksService','TestList', microtaskForm]); 
+    .directive('microtaskForm', [ '$firebase', '$http', '$interval', '$timeout','$modal',  'functionsService','FunctionFactory', 'userService', 'microtasksService','TestList', microtaskForm]); 
 
-function microtaskForm($firebase, $http, $interval, $timeout, functionsService, FunctionFactory, userService, microtasks, TestList) {
+function microtaskForm($firebase, $http, $interval, $timeout, $modal , functionsService, FunctionFactory, userService, microtasks, TestList) {
     return {
         restrict: 'E',
         templateUrl: '/html/templates/ui/microtask_form.html',
@@ -52,7 +52,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 				$scope.microtask = microtasks.get(microtaskKey);
 				$scope.microtask.$loaded().then(function() {
 
-					console.log("microtask loaded: "+$scope.microtask.$id);
+				console.log("microtask loaded: "+$scope.microtask.$id);
 
 					// retrieve the related function
 					if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { 
@@ -79,6 +79,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 								$scope.noMicrotask = false;
 
 								$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
+								//$scope.$emit('run-reminder', $scope.microtask.type);
 							}
 							else {
 								$scope.templatePath = templatesURL + "no_microtask.html";
@@ -96,6 +97,8 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 							$scope.noMicrotask = false;
 
 							$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
+							//$scope.$emit('run-reminder', $scope.microtask.type, function (){ scope.$emit('skipMicrotask'); } );
+
 						}
 						else {
 							$scope.templatePath = templatesURL + "no_microtask.html";
@@ -112,7 +115,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 				$scope.noMicrotask = true;
 
 				$scope.checkQueueIn = waitTimeInSeconds;
-				var timerInterval = $interval(function(){
+				timerInterval = $interval(function(){
 					$scope.checkQueueIn -- ;
 				}, 1000);
 
@@ -147,7 +150,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, functionsService, 
 				else {
 					var fetchPromise = microtasks.fetch();
 					fetchPromise.then(function(fetchData){
-						loadMicrotask(fetchData.microtaskKey);	
+						loadMicrotask(fetchData.microtaskKey);
 					}, function(){
 						noMicrotask();
 					});

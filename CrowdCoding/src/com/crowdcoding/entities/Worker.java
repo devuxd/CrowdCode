@@ -54,10 +54,10 @@ public class Worker
 	public static Worker Create(User user, Project project)
 	{
 		Worker crowdWorker = ofy().load().key(getKey(project.getKey(), user.getUserId())).now();
-		if (crowdWorker == null)
+		if (crowdWorker == null){
 			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);
-
-		FirebaseService.setPoints(user.getUserId(), user.getNickname(), crowdWorker.score, project.getID());
+			FirebaseService.setPoints(user.getUserId(), user.getNickname(), crowdWorker.score, project.getID());
+		}
 
 		//FirebaseService.writeWorkerLoggedIn( user.getUserId(), user.getNickname(), project);
 

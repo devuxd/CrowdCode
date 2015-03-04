@@ -95,14 +95,12 @@
 			<div class="section section-form" style="width:70%;" >
 				<div class="section-content no-padding" >
 
-
 					<div class="heading-1" >Input Parameters</div>
                     <table style="width:100%" class="test" ng-form="inputForm" 
-                    	   ng-repeat="(index,name) in funct.paramNames"
-                    	   ng-init="type = funct.paramTypes[index]">
+                    	   ng-repeat="(index,parameter) in funct.getParameters()">
                         <tr>
                             <td>
-                            	<b>{{name}}</b> ({{type}})
+                            	<b>{{parameter.name}}</b> ({{parameter.type}})
                             </td>
                             <td>
 								<ace-edit-json 
@@ -115,22 +113,22 @@
 
 								<textarea type="text" 
 									ng-model="testData.inputs[index]"
-									name="{{name}}"
+									name="{{parameter.name}}"
 									ng-show="false"
 									required
-									json-data-type="{{type}}" />
+									json-data-type="{{parameter.type}}" />
 
-								<div class="help-block pull-left" ng-show="inputForm.$dirty" ng-messages="inputForm[name].$error">
+								<div class="help-block pull-left" ng-show="inputForm.$dirty" ng-messages="inputForm[parameter.name].$error">
 								    <div ng-message="required">Please, fill this field</div>
 								    <div ng-message="jsonDataType">
-								    	<span ng-repeat="e in inputForm[name].$error.jsonErrors" ng-bind="e"></span>
+								    	<span ng-repeat="e in inputForm[parameter.name].$error.jsonErrors" ng-bind="e"></span>
 								    </div>
 							  	</div>
                             </td>
                         </tr>
                         <tr>
                         	<td colspan="2">
-                            	<a href="#" tabindex="{{index*5+2}}" examples-list param-type="funct.paramTypes[index]" key = "index" value="testData.inputs[index]">Paste Example</a>
+                            	<a href="#" tabindex="{{index*5+2}}" examples-list param-type="parameter.type" key = "index" value="testData.inputs[index]">Paste Example</a>
                             </td>
                         </tr>
                     </table>

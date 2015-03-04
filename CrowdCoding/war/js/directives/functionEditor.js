@@ -2,7 +2,7 @@ angular
     .module('crowdCode')
     .directive('functionEditor', functionEditor); 
 
-function functionEditor($sce,functionsService) {
+function functionEditor($sce) {
 
     var marks = [];
     var highlightPseudoCall = false;
@@ -59,17 +59,17 @@ function functionEditor($sce,functionsService) {
         // manage readonly
         if( !readOnlyDone )
             if( readOnly == 'header+description'){
-                functionsService.makeHeaderAndDescriptionReadOnly(codemirror);
+                makeHeaderAndDescriptionReadOnly(codemirror);
                 readOnlyDone = true;
             } else if( readOnly == 'header+parameters'){
-                functionsService.makeHeaderAndParameterReadOnly(codemirror);
+                makeHeaderAndParameterReadOnly(codemirror);
                 readOnlyDone = true;
             }
 
         // Mangage code change timeout
         clearTimeout(changeTimeout);
         changeTimeout = setTimeout(function() {
-            functionsService.highlightPseudoSegments(codemirror, marks, highlightPseudoCall);
+            highlightPseudoSegments(codemirror, marks, highlightPseudoCall);
         }, 500);
-    };
-};
+    }
+}

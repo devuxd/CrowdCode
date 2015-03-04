@@ -495,8 +495,11 @@ public class CrowdServlet extends HttpServlet
             	// search for a queued one
             	if (microtaskKey == null)
             	{
+            		System.out.println("first assignement");
+
             		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
-            	} 
+            		FirebaseService.microtaskAssigned(workerID, Microtask.keyToString(microtaskKey), projectID);
+            	}
 
             	return microtaskKey;
             }

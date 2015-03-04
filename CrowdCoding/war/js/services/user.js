@@ -44,6 +44,15 @@ angular
 	});
 
 	user.assignedMicrotaskKey = null;
+
+	user.getFetchTime = function(){
+		var fetchTime= user.data.status.fetchTime;
+		if(fetchTime)
+			return parseFloat(fetchTime);
+		else
+			return 0;
+	};
+
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;
 		user.data.$save().then(function(){
@@ -62,7 +71,7 @@ angular
 		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
 			console.log('Receiving job ',jobData);
-			
+
 			var jobRef = queueRef.child('/'+jobData.functionId);
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
@@ -81,7 +90,7 @@ angular
 		});
 	};
 
-	// distributed worker logout 
+	// distributed worker logout
 	// due to sincronization problem wait 5 seconds, after check that the user is not logged any more
 	// checking that is null the value i the loggedIn worker
 	// and then send the logout command to the server

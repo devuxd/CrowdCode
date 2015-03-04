@@ -11,9 +11,7 @@ public class FunctionDTO extends DTO
 	public Long testId;
 	public String description;
 	public String returnType;
-	public List<String> paramNames = new ArrayList<String>();
-	public List<String> paramTypes = new ArrayList<String>();
-	public List<String> paramDescriptions = new ArrayList<String>();
+	public List<FunctionParameterDTO> parameters = new ArrayList<FunctionParameterDTO>();
 	public String header;
 	public String name;
 	public String code ;
@@ -44,12 +42,9 @@ public class FunctionDTO extends DTO
 	{
 		String fullDescription="";
 
-    	for(int i=0; i<paramNames.size(); i++)
-			{
-			if(paramDescriptions.size()>i)
-				fullDescription += "  @param " + paramTypes.get(i) + ' ' + paramNames.get(i) + " - " + paramDescriptions.get(i) + "\n";
+    	for(FunctionParameterDTO parameter : parameters)
+			fullDescription += "  @param " + parameter.type + ' ' + parameter.name + " - " + parameter.description + "\n";
 
-			}
 
 
 		fullDescription += "\n  @return " + returnType + " \n**/\n\n";

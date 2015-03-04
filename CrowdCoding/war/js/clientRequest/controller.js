@@ -64,15 +64,16 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 	$scope.addFunction=function()
 	{
-		var emptyFunction={		code:  			"{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}",
-								description:    "",
-								readOnly: true,
-								name:           "",
-								paramDescriptions:[""],
-								paramNames:       [""],
-								paramTypes:       [""],
-								returnType:       "",
-								tests: 		  []
+		var emptyParameter={name : "", type: "", description : "" };
+
+		var emptyFunction={
+							    code          :	"{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}",
+								description   : "",
+								readOnly      : true,
+								name          : "",
+								parameters    : [emptyParameter],
+								returnType    : "",
+								tests         : []
 							};
 
 
@@ -87,17 +88,14 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 	$scope.addParameter = function(index){
 
-			$scope.functions[index].paramNames.push("");
-			$scope.functions[index].paramTypes.push("");
-			$scope.functions[index].paramDescriptions.push("");
+		var emptyParameter={name : "", type: "", description : "" };
+
+		$scope.functions[index].parameters.push(emptyParameter);
 	};
 
 
 	$scope.deleteParameter = function(functionIndex, parameterIndex){
-		$scope.functions[functionIndex].paramNames.splice(parameterIndex,1);
-		$scope.functions[functionIndex].paramTypes.splice(parameterIndex,1);
-		$scope.functions[functionIndex].paramDescriptions.splice(parameterIndex,1);
-
+		$scope.functions[functionIndex].parameters.splice(parameterIndex,1);
 	};
 
 	$scope.addTest = function(index){
@@ -153,7 +151,10 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 				angular.forEach($scope.functions,function(funct,key){
 
-					funct.header='function '+funct.name+'('+funct.paramNames.join(", ")+')';
+					funct.header='function '+funct.name+'(';
+						for(var index in funct.parameters)
+							funct.header += funct.parameters[index].name + (index==funct.parameters.length-1 ? "" :", ");
+						funct.header+=")";
 
 					angular.forEach(funct.tests,function(test,key){
 						var testCode = 'equal(' + funct.name + '(';
@@ -201,8 +202,27 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		project = projectSync.$asObject();
 		project.$loaded().then(function(){
 
-		if(angular.isDefined(project.functions))
+		if(angular.isDefined(project.functions)){
 			$scope.functions=project.functions.functions;
+			if(! angular.isDefined(project.functions.functions[0].parameters)){
+				for(var functionIndex in project.functions.functions)
+				{
+					$scope.functions[functionIndex].parameters=[];
+					for(var parameterIndex in $scope.functions[functionIndex].paramNames){
+						$scope.functions[functionIndex].parameters.push(
+											                {
+							                                  name        : $scope.functions[functionIndex].paramNames[parameterIndex],
+							                                  type        : $scope.functions[functionIndex].paramTypes[parameterIndex],
+							                                  description : $scope.functions[functionIndex].paramDescriptions[parameterIndex]
+								            	             });
+					}
+					delete $scope.functions[functionIndex].paramNames;
+					delete $scope.functions[functionIndex].paramTypes;
+					delete $scope.functions[functionIndex].paramDescriptions;
+				}
+
+			}
+		}
 		else
 			$scope.functions=[];
 

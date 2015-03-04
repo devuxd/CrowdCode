@@ -132,10 +132,11 @@ angular
                 if( $scope.callees[fName] == undefined ){
                     var calleeFun = functionsService.getByName(fName);
                     $scope.callees[fName] = {
-                        inputs      : calleeFun.paramNames,
+                        inputs      : calleeFun.getParamNames(),
                         returnType  : calleeFun.returnType,
                         signature   : calleeFun.getSignature()
-                    }
+                    };
+                    console.log( $scope.callees[fName]);
                 }
                 // merge this stubs into all the used stubs
                 if( $scope.stubs[fName] === undefined ) $scope.stubs[fName] = {};
@@ -223,7 +224,6 @@ angular
                             angular.forEach( stub.inputs, function(value, key) {
                                 testCode += value;
                                 testCode += (key != stub.inputs.length - 1) ? ',' : '';
-                                
                             });
                             testCode += '),' + stub.output + ',\'' + 'auto generated' + '\');';
 
