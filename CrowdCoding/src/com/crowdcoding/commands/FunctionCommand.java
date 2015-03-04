@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.print.attribute.standard.Sides;
 
+import com.crowdcoding.dto.FunctionParameterDTO;
 import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.entities.Function;
@@ -16,11 +17,9 @@ public abstract class FunctionCommand extends Command {
 	protected long functionID;
 
 	public static FunctionCommand create(String name, String returnType,
-			List<String> paramNames, List<String> paramTypes,
-			List<String> paramDescriptions, String header, String description,
+			List<FunctionParameterDTO> parameters, String header, String description,
 			String code, List<TestDescriptionDTO> tests, boolean readOnly) {
-		return new Create(name, returnType, paramNames, paramTypes,
-				paramDescriptions, header, description, code, tests, readOnly);
+		return new Create(name, returnType, parameters, header, description, code, tests, readOnly);
 	}
 
 	public static FunctionCommand removeCaller(long functionID,
@@ -130,25 +129,20 @@ public abstract class FunctionCommand extends Command {
 	protected static class Create extends FunctionCommand {
 		private String name;
 		private String returnType;
-		private List<String> paramNames;
-		private List<String> paramTypes;
-		private List<String> paramDescriptions;
+		private List<FunctionParameterDTO> parameters;
 		private String header;
 		private String description;
 		private String code;
 		private boolean readOnly;
 		private List<TestDescriptionDTO> tests;
 
-		public Create(String name, String returnType, List<String> paramNames,
-				List<String> paramTypes, List<String> paramDescriptions,
+		public Create(String name, String returnType, List<FunctionParameterDTO> parameters,
 				String header, String description, String code,
 				List<TestDescriptionDTO> tests, boolean readOnly) {
 			super(0L);
 			this.name = name;
 			this.returnType = returnType;
-			this.paramNames = paramNames;
-			this.paramTypes = paramTypes;
-			this.paramDescriptions = paramDescriptions;
+			this.parameters = parameters;
 			this.header = header;
 			this.description = description;
 			this.code = code;
@@ -161,8 +155,7 @@ public abstract class FunctionCommand extends Command {
 		public void execute(Function function, String projectId) {
 
 			System.out.println("Creating function  "+this.name);
-			Function newFunction = new Function(name, returnType, paramNames,
-					paramTypes, paramDescriptions, header, description, code,
+			Function newFunction = new Function(name, returnType, parameters, header, description, code,
 					readOnly, projectId);
 			newFunction.storeToFirebase(projectId);
 			newFunction.createTest(tests);

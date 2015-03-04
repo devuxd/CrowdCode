@@ -135,7 +135,7 @@
 									<div class="form-horizontal" style="display:inline-block" >
 									    <div class="col-sm-3 reset-padding">
 									      	<input type="text" class="form-control pull-left" 
-									      		ng-model="parameter.paramName" 
+									      		ng-model="parameter.name" 
 									      		required 
 									      		var-name-validator 
 									      		reserved-word 
@@ -148,17 +148,15 @@
 										<div class="col-sm-3 reset-padding">
 									      	<input type="text" class="form-control pull-left" 
 									      		name="parameterType" 
-									      		ng-model="parameter.paramType" 
+									      		ng-model="parameter.type" 
 									      		ng-model-options="{ updateOn: 'blur' }" 
 									      		required 
 									      		adt-validator 
 									      		placeholder="type" 
 									      		press-enter="addParameter()"/>
-									   
 										</div>
 										<div class="col-sm-5 reset-padding">
-									      	<input type="text" class="form-control pull-left" name="parameterDescription" placeholder="description" ng-model="parameter.paramDescription" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/" press-enter="addParameter()"/>
-								     
+									      	<input type="text" class="form-control pull-left" name="parameterDescription" placeholder="description" ng-model="parameter.description" required ng-pattern="/^[a-zA-Z0-9_-\s]+$/" press-enter="addParameter()"/>
 										</div>
 										<div class="col-sm-1 reset-padding">
 									      	<button ng-click="deleteParameter(index)" class="btn  pull-right">X</button>

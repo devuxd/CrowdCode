@@ -65,17 +65,7 @@ angular
             });
         }
         else {
-            //     description: functionParsed.description,
-            //     header: functionParsed.header,
-            //     name: functionName,
-            //     code: body,
-            //     returnType: functionParsed.returnType,
-            //     paramNames: functionParsed.paramNames,
-            //     paramTypes: functionParsed.paramTypes,
-            //     paramDescriptions: functionParsed.paramDescriptions,
-            //     calleeIds: calleeIds
-
-
+ 
             formData = functionsService.parseFunction($scope.codemirror);
             //add the dispute text to the submit
             if($scope.dispute.active)

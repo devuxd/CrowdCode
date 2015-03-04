@@ -26,10 +26,9 @@ angular
     // addParameter and deleteParameter
     $scope.addParameter = function() {
         var parameter = {
-            text: '',
-            added: true,
-            deleted: false,
-            id: $scope.model.parameters.length
+            name: '',
+            type: '',
+            description: '',
         };
         $scope.model.parameters.push(parameter);
     };
@@ -42,17 +41,10 @@ angular
 
 
     if(angular.isDefined($scope.microtask.reissuedFrom)){
-        $scope.model.functionName=$scope.reissuedMicrotask.submission.name;
-        $scope.model.description=$scope.reissuedMicrotask.submission.description;
-        $scope.model.returnType=$scope.reissuedMicrotask.submission.returnType;
-        for (var i = 0; i < $scope.reissuedMicrotask.submission.paramNames.length; i++) {
-
-            $scope.model.parameters[i]={
-                paramName: $scope.reissuedMicrotask.submission.paramNames[i],
-                paramType: $scope.reissuedMicrotask.submission.paramTypes[i],
-                paramDescription:$scope.reissuedMicrotask.submission.paramDescriptions[i]
-            };
-        }
+        $scope.model.functionName = $scope.reissuedMicrotask.submission.name;
+        $scope.model.description  = $scope.reissuedMicrotask.submission.description;
+        $scope.model.returnType   = $scope.reissuedMicrotask.submission.returnType;
+        $scope.model.parameters   = $scope.reissuedMicrotask.submission.parameters;
     }
     else{
         //Add the first parameter
@@ -67,27 +59,15 @@ angular
         var error ="";
         var header="";
 
-        var paramNames = [];
-        var paramTypes = [];
-        var paramDescriptions = [];
         //if the form is invalid throw an error
         if (microtaskForm.$invalid) {
             error = 'Fix all errors before submit';
         }
         //else retrieves the data and pass them to jshint to check that all are valid
-        else {
-            // NOT SURE THAT WE NEED TO LINT THE CODE OF THE DESCRIPTION
-            // 
-            // if( ! $scope.dispute.active ){
-            //     for (var i = 0; i < $scope.model.parameters.length; i++) {
-            //         paramNames.push($scope.model.parameters[i].paramName);
-            //         paramTypes.push($scope.model.parameters[i].paramType);
-            //         paramDescriptions.push($scope.model.parameters[i].paramDescription);
-            //     }
+             //   NOT SURE THAT WE NEED TO LINT THE CODE OF THE DESCRIPTION
 
-            //     header = functionsService.renderHeader($scope.model.functionName, paramNames);
-            //     allFunctionCode = functionsService.getAllDescribedFunctionCode()+ " var debug = null; " ;
-            //    // console.log('function name',$scope.model.functionName);
+               // allFunctionCode = functionsService.getAllDescribedFunctionCode()+ " var debug = null; " ;
+               // console.log('function name',$scope.model.functionName);
 
             //     var functionCode = allFunctionCode + " " + header + "{}";
             //     var lintResult = -1;
@@ -103,9 +83,6 @@ angular
             //         error="You are using Javascript redserved word, please change them";
             //     }
             // }
-                
-
-        }
 
         //if all went well submit the result
         if(error!=="") {
@@ -123,19 +100,17 @@ angular
         } else {
 
             formData = {
-                name: $scope.model.functionName,
-                returnType: $scope.model.returnType === undefined ? '' : $scope.model.returnType,
-                paramNames: paramNames,
-                paramTypes: paramTypes,
-                paramDescriptions: paramDescriptions,
-                description: $scope.model.description,
-                header: header
+                name        : $scope.model.functionName,
+                returnType  : $scope.model.returnType,
+                parameters  : $scope.model.parameters,
+                description : $scope.model.description,
+                header      : renderHeader($scope.model.functionName, $scope.model.parematers)
             };
 
             if($scope.dispute.active){
                 formData.inDispute = true;
                 formData.disputeFunctionText = $scope.dispute.text;
-            } 
+            }
 
             $scope.$emit('submitMicrotask', formData);
         }

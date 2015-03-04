@@ -122,9 +122,7 @@ public class Project
 				FunctionCommand.create(
 						functionDTO.name,
 						functionDTO.returnType,
-						functionDTO.paramNames,
-						functionDTO.paramTypes,
-						functionDTO.paramDescriptions,
+						functionDTO.parameters,
 						functionDTO.header,
 						functionDTO.description,
 						functionDTO.code,
@@ -425,7 +423,7 @@ public class Project
 
 		// submit only if the request come from
 		// the current assigned worker of the microtask
-		if( microtask.isAssignedTo(workerID) ){
+		if(microtask!=null &&  microtask.isAssignedTo(workerID) ){
 
 			// save the project
 			ofy().save().entity(this).now();

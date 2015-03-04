@@ -142,7 +142,7 @@ angular
         link: function(scope, elm, attrs, ctrl) {
 
             ctrl.$parsers.unshift(function(viewValue) {
-                var functionsName=functionsService.getDescribedFunctionNames();
+                var functionsName=functionsService.getDescribedFunctionsName();
                 var valid =  viewValue === ""|| viewValue === undefined || (functionsName.indexOf(viewValue) == -1);
 
                 if (!valid) {
@@ -278,7 +278,7 @@ angular
         // validate the order of the parameter between the description and the header
 
         var functonsName=[ast.body[0].id.name];
-        var calleeNames = functionsService.getCalleeNames(ast);
+        var calleeNames = getCalleeNames(ast);
         for(i=1; i< ast.body.length; i++){ 
 
             if(ast.body[i].body===undefined)

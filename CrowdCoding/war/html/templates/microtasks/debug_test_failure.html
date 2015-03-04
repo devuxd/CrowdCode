@@ -150,7 +150,7 @@
                         <td>{{test.description}}</td>
                     </tr>
                     <tr ng-repeat="(inputKey,input) in test.simpleTestInputs track by $index">
-                        <td>{{funct.paramNames[$index]}}</td>
+                        <td>{{funct.getParamNameAt($index)}}</td>
                         <td>
                             <div ace-read-json ng-model="input" ></div>
                         </td>

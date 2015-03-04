@@ -43,7 +43,7 @@ public /*abstract*/ class Artifact
 	protected Artifact(String projectId)
 	{
 		this.isActivated=true;
-		version = 1;
+		version = 0;
 		this.projectId = projectId;
 	}
 

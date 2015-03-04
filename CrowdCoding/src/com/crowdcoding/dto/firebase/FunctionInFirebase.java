@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.FunctionParameterDTO;
 import com.crowdcoding.dto.PseudoFunctionDTO;
 
 public class FunctionInFirebase extends DTO
@@ -14,9 +15,7 @@ public class FunctionInFirebase extends DTO
 	public long id;
 	public int version;
 	public String returnType;
-	public List<String> paramNames = new ArrayList<String>();
-	public List<String> paramTypes = new ArrayList<String>();
-	public List<String> paramDescriptions = new ArrayList<String>();
+	public List<FunctionParameterDTO> parameters = new ArrayList<FunctionParameterDTO>();
 	public String header;
 	public String description;
 	public String code;
@@ -47,9 +46,6 @@ public class FunctionInFirebase extends DTO
 		this.id = id;
 		this.version = version;
 		this.returnType = returnType;
-		this.paramNames = paramNames;
-		this.paramTypes = paramTypes;
-		this.paramDescriptions = paramDescriptions;
 		this.header = header;
 		this.description = description;
 		this.code = code;
@@ -59,6 +55,12 @@ public class FunctionInFirebase extends DTO
 		this.needsDebugging = needsDebugging;
 		this.readOnly=readOnly;
 		this.queuedMicrotasks = queuedMicrotasks;
+		// creates the parameters List
+		for(int i=0; i< paramNames.size(); i++){
+			this.parameters.add(
+				new FunctionParameterDTO(paramNames.get(i), paramTypes.get(i), paramDescriptions.get(i)));
+		}
+		//creates the the pseudoFunction List
 		for(int i=0; i< pseudoFunctionsName.size(); i++){
 			this.pseudoFunctions.add(
 				new PseudoFunctionDTO(pseudoFunctionsName.get(i), pseudoFunctionsDescription.get(i)));

@@ -31,7 +31,7 @@
 	<div class="section-content" >
 		<table style="width:100%" class="test">
 			<tr ng-repeat="(inputKey,input) in test.getSimpleTest().inputs track by $index">
-				<td>{{funct.paramNames[$index]}}</td>
+				<td>{{funct.getParamNameAt($index)}}</td>
 				<td>
 					<div ace-read-json ng-model="input" ></div>
 				</td>

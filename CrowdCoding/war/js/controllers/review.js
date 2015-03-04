@@ -18,6 +18,7 @@ angular
     var diffCode;
     var oldFunction;
     var newFunction;
+    var functionSync;
 
     //load the microtask to review
     $scope.review.microtask = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
@@ -28,31 +29,31 @@ angular
 
         if ($scope.reviewed.type == 'WriteTestCases') {
             //load the version of the function with witch the test cases where made
-            var functionUnderTestSync = $firebase(new Firebase($rootScope.firebaseURL + '/history/artifacts/functions/' + $scope.review.microtask.functionID + '/' + $scope.review.microtask.submission.functionVersion));
-            var functionUnderTest     = functionUnderTestSync.$asObject();
-            functionUnderTest.$loaded().then(function() {
-
-                var testcases    = $scope.review.microtask.submission.testCases;
-                var testcasesDiff = [];
-                angular.forEach(testcases,function(tc,index){
-                    if(tc.added)
-                        testcasesDiff.push({ class: 'add', text : tc.text });
-                    else if( tc.deleted )
-                        testcasesDiff.push({ class: 'del', text : tc.text });
-                    else {
-                        var oldTc = TestList.get(tc.id);
-                        if( tc.text != oldTc.getDescription() ) {
-                            testcasesDiff.push({ class: 'chg', old: oldTc.getDescription(), text : tc.text });
-                        }
-                        else
-                            testcasesDiff.push({ class: '', text : tc.text });
-                    }
-                });
-               
-
-                $scope.review.functionCode = functionsService.renderDescription(functionUnderTest) + functionUnderTest.header;
-                $scope.review.testcases    = testcasesDiff;
+            functionSync = functionsService.getVersion($scope.review.microtask.functionID,$scope.review.microtask.submission.functionVersion);
+            functionSync.$loaded().then(function() {
+            $scope.funct = new FunctionFactory(functionSync);
             });
+
+            var testcases    = $scope.review.microtask.submission.testCases;
+            var testcasesDiff = [];
+            angular.forEach(testcases,function(tc,index){
+                if(tc.added)
+                    testcasesDiff.push({ class: 'add', text : tc.text });
+                else if( tc.deleted )
+                    testcasesDiff.push({ class: 'del', text : tc.text });
+                else {
+                    var oldTc = TestList.get(tc.id);
+                    if( tc.text != oldTc.getDescription() ) {
+                        testcasesDiff.push({ class: 'chg', old: oldTc.getDescription(), text : tc.text });
+                    }
+                    else
+                        testcasesDiff.push({ class: '', text : tc.text });
+                }
+            });
+
+
+            $scope.review.testcases    = testcasesDiff;
+
 
         } else if ($scope.review.microtask.type == 'WriteFunction') {
 
@@ -95,14 +96,10 @@ angular
             }
 
         } else if ($scope.review.microtask.type == 'WriteTest') {
-
-            //load the version of the function with witch the test cases where made
-            var functionUnderTestSync = $firebase(new Firebase($rootScope.firebaseURL + '/history/artifacts/functions/' + $scope.review.microtask.functionID + '/' + ($scope.review.microtask.functionVersion > 0 ? $scope.review.microtask.functionVersion : 1)));
-            $scope.functionUnderTest = functionUnderTestSync.$asObject();
-            $scope.functionUnderTest.$loaded().then(function() {
-                $scope.review.functionCode = functionsService.renderDescription($scope.functionUnderTest) + $scope.functionUnderTest.header;
+            functionSync = functionsService.getVersion($scope.review.microtask.functionID,$scope.review.microtask.submission.functionVersion);
+            functionSync.$loaded().then(function() {
+            $scope.funct = new FunctionFactory(functionSync);
             });
-            
 
         } else if ($scope.review.microtask.type == 'WriteCall') {
 

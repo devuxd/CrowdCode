@@ -216,6 +216,12 @@ public class FirebaseService
 		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
 	}
 
+	public static void microtaskAssigned(String workerID, String microtaskKey, String projectId) {
+
+		enqueueWrite("{\"status\" : {\"microtaskKey\": \"" + microtaskKey + "\", \"fetchTime\" : \"" +System.currentTimeMillis() +"\"}}", "/workers/" + workerID + ".json", HTTPMethod.PATCH, projectId);
+
+	}
+
 
 	// Writes information about microtask assignment to Firebase
 	public static void writeMicrotaskPoints( String microtaskKey, int points, String projectId)
@@ -248,7 +254,7 @@ public class FirebaseService
 			i++;
 		}
 		if( ret.length() > 0 ){
-			System.out.println("Event List = {"+ret+"}");
+			//System.out.println("Event List = {"+ret+"}");
 			enqueueWrite( "{"+ret+"}" , "/history/events.json", HTTPMethod.PATCH, projectId);
 		}
 	}
@@ -376,7 +382,8 @@ public class FirebaseService
 	//		} catch( NoSuchElementException e) {
 	//			e.printStackTrace();
 	//		}
-			System.out.println("Firebase: writing "+write.relativeURL+" - "+write.data);
+		//	System.out.println("Firebase: writing "+write.relativeURL+" - "+write.data);
 		}
 	}
+
 }

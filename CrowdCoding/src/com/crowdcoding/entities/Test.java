@@ -201,11 +201,13 @@ public class Test extends Artifact
 
 	public void storeToFirebase(String projectId)
 	{
+		int firebaseVersion = version + 1;
+
 		if (this.isDeleted)
 			FirebaseService.deleteTest(this.id, projectId);
 		else
-			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs,
-				simpleTestOutput, description, functionName, functionID, isImplemented, isReadOnly), this.id, version, projectId);
+			FirebaseService.writeTest(new TestInFirebase(this.id, firebaseVersion , code, hasSimpleTest, simpleTestInputs,
+				simpleTestOutput, description, functionName, functionID, isImplemented, isReadOnly), this.id, firebaseVersion, projectId);
 
 		incrementVersion();
 	}

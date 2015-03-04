@@ -84,7 +84,7 @@
         <div class="section-content" >
             <table style="width:100%" class="test">
                 <tr ng-repeat="(inputKey,input) in n.microtask.submission.simpleTestInputs track by $index">
-                    <td>{{n.funct.paramNames[$index]}}</td>
+                    <td>{{n.funct.getParamNameAt($index)}}</td>
                     <td>
                         <div ace-read-json ng-model="input" ></div>
                     </td>

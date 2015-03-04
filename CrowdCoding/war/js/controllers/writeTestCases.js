@@ -43,6 +43,7 @@ angular
         var newTestCase = $scope.model.newTestCase !== undefined ? 
                             $scope.model.newTestCase.replace(/["']/g, "") : '' ;
 
+                            
         if( newTestCase.match(/(\{|\}|\[|\])/g) !== null ) {
             if (alert !== null) 
                 alert.destroy();

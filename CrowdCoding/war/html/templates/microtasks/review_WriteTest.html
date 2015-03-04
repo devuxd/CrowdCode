@@ -55,7 +55,7 @@
 		</span>
 	</div>
 	<div class="section-content no-padding" >
-		<ace-read-js code="review.functionCode"></ace-read-js>
+		<ace-read-js code="funct.getSignature()"></ace-read-js>
 	</div>
 </div>
 
@@ -92,7 +92,7 @@
 		<div class="section-content" >
 			<table style="width:100%" class="test">
 				<tr ng-repeat="(inputKey,input) in review.microtask.submission.simpleTestInputs track by $index">
-					<td>{{functionUnderTest.paramNames[$index]}}</td>
+					<td>{{functionUnderTest.getParamNameAt($index)}}</td>
 					<td>
 						<div ace-read-json ng-model="input" ></div>
 					</td>
