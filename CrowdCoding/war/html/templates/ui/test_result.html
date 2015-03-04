@@ -1,3 +1,4 @@
+<pre>{{test}}</pre>
 <div class="heading-1" >Input Parameters</div>
 <table >
     <tr ng-repeat="(key,input) in test.rec.simpleTestInputs track by $index">
@@ -47,9 +48,4 @@
             </td>
         </tr>
     </table>
-</div>
-
-<div ng-if="test.debug != ''">
-    <div class="heading-1">Debug Console</div>
-    <div ace-read-string ng-model="test.debug" ></div>
 </div>

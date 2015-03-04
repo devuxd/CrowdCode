@@ -19,9 +19,10 @@ angular
 		return {
 			number        : -1,
 			stubs         : {},
-			debug         : "",
+			debug         : [],
 			output        : {},
 			executionTime : 0,
+			execNum: 0,
 			ready         : function(){
 				if( this.output.result !== undefined )
 					return true;
@@ -32,6 +33,23 @@ angular
 				if( this.ready() && this.output.result )
 					return true;
 				return false;
+			},
+			getConsole    : function(){
+				var cons = '';
+				console.log(this.debug);
+				// this.debug.sort(function(a,b){
+				// 	if( a.timestamp == b.timestamp )    return 0;
+				// 	else if(a.timestamp < b.timestamp ) return -1;
+				// 	else return +1;
+				// });
+				var t = 0;
+				if( this.debug.length > 40  ) t = this.debug.length - 40;
+				for( ; t < this.debug.length ; t++ ){
+					cons += this.debug[t].statement + '\n';
+					console.log(cons);
+				}
+				console.log(cons);
+				return cons;
 			}
 		};
 	};
@@ -287,8 +305,6 @@ angular
 		else
 			this.failedTests.push( test.number );
 
-		console.log(test.passed(),this.passedTests,this.failedTests);
-
 		// Increment the test and run the next one.
 		this.currentTestIndex++;
 
@@ -328,23 +344,23 @@ angular
 		// set the max execution time
 		var timeoutPromise = $timeout( function(){
 
-			var item = {};
-			item.number = self.currentTestIndex ; 
-			item.total  = self.tests.length ; 
-			item.output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
-			item.debug  = "ERROR: execution terminated due to timeout";
-			self.testReady(item);
-			
-			self.processTestFinished(false);
+			test.number = self.currentTestIndex ; 
+			test.output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
+			test.debug[ Date.now() ] = "ERROR: execution terminated due to timeout";
+			test.executionTime = self.maxExecutionTime;
 
-		} , this.maxExecutionTime);
+			self.processTestFinished();
+
+		} , self.maxExecutionTime);
 
 	    // start the execution posting the exec message with the code
 		this.worker.postMessage( { 
 			'cmd'      : 'exec', 
+			'number'   : self.currentTestIndex,
 			'testCode' : test.buildCode(),
 			'stubs'    : JSON.stringify(self.stubs),
-	    	'calleeNames': self.calleeList.join(' ')
+	    	'calleeNames': self.calleeList.join(' '),
+	    	'execNum': test.execNum++
 		});
 
 
@@ -363,9 +379,13 @@ angular
 				test.stubs   = data.usedStubs ;
 			}
 
-			test.debug         = data.debug;
-			test.output        = data.output;
+			var logs = JSON.parse(data.debug);
+			console.log(logs);
+			for( var l in logs ){
+				test.debug[ test.debug.length ] = logs[l];
+			}
 			
+			test.output        = data.output;
 			test.executionTime = data.executionTime;
 			test.number        = self.currentTestIndex; 
 

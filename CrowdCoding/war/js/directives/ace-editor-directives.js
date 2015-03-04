@@ -55,6 +55,49 @@ angular
     };
 });
 
+var globalEditor;
+angular
+    .module('crowdCode')
+    .directive('aceConsole',function($timeout,$compile) {
+    var editor = null;
+    var timeoutPromise = null;
+    return {
+        restrict: 'EA',
+        scope: { logs: '=', update: '='},
+        template: '<div class="ace-editor js-editor" ui-ace="{ onLoad : aceLoaded, mode : \'json\', theme: \'twilight\', showGutter: false, useWrapMode : true}" readonly="false" ng-model="stringOutput"></div>',
+        link: function ( scope, iElement, iAttrs, ngModel ) {
+            
+        },
+        controller: function($scope,$element){ 
+            
+            $scope.aceLoaded = function(_editor) {
+                editor = globalEditor = _editor;
+                
+                $scope.$watch('logs',function( value ){
+                    _editor.getSession().setValue( value );
+                    _editor.resize();
+                    _editor.renderer.updateFull();
+                    _editor.scrollPageDown();
+                });
+
+                $scope.$watch('update',function( value ){
+                    if( value ){
+                        _editor.resize();
+                        _editor.renderer.updateFull();
+                        _editor.scrollPageDown();
+                    }
+                });
+
+                _editor.on('change',function(){
+                    
+                })
+            };
+
+
+            $scope.$on('destroy',function(){ timeoutPromise.cancel(); })
+        }
+    };
+});
 
 angular
     .module('crowdCode')
@@ -66,13 +109,6 @@ angular
         scope: true,
         link: function ( scope, iElement, iAttrs, ngModel ) {
             if( !ngModel ) return;
-        
-            // convert the json object into a string
-            // ngModel.$formatters.push(function( modelValue ) {
-            //     return  modelValue );
-            // });
-            
-
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
                 scope.stringValue = ngModel.$viewValue;

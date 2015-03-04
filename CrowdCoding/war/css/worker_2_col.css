@@ -243,7 +243,7 @@ color: #525151 !important;
 .json-editor .ace_gutter-layer  { width:20px !important; }
 .json-reader.ace-editor { background-color:transparent !important; }
 
-
+.js-editor { height: 400px;}
 
 /* GENERAL STYLES AND LAYOUT */
 
@@ -1238,3 +1238,23 @@ pre.json .jsonKey { color: black; }
 .diff .line.removed { background-color:#ffecec;}
 
 .legend {width:10px;height:10px;display:inline-block;margin-left:2px;margin-right:2px;border:1px solid gray;}
+
+.nav-tabs {
+	border-bottom: none !important;
+	background-color: rgb(166, 200, 223);
+}
+.nav-tabs > li > a {
+	background-color: rgb(166, 200, 223) !important;
+	margin: 0px;
+	border: 0px !important;
+	border-radius: 0px !important;
+	border-right: 1px solid rgb(147, 178, 198) !important;
+	text-transform: uppercase;
+	color: #555;
+	font-family: 'Lato';
+}
+
+.nav-tabs > li.active > a {
+	background-color: rgb(176, 210, 233) !important;
+	font-weight: 400;
+}

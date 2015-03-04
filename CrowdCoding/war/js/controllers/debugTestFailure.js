@@ -4,19 +4,25 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('DebugTestFailureController', ['$scope', '$rootScope', '$alert', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $rootScope, $alert, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
+    .controller('DebugTestFailureController', ['$scope', '$timeout', '$rootScope', '$alert', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $timeout, $rootScope, $alert, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
     
+
+    $scope.tabs = {
+        list: ['Test Data','Code','Console','Stubs'],
+        active : 2,
+        select : function(selectedIndex){
+            if( selectedIndex >= 0 && selectedIndex < this.list.length ){
+                this.active = selectedIndex;
+            }
+        }
+    };
+
     var testRunner = new TestRunnerFactory.instance();
     testRunner.setTestedFunction($scope.microtask.functionID);
     testRunner.onTestsFinish(processTestsFinish);
     
     $scope.tests = [];
-
-    for(var t in $scope.tests){
-        $scope.tests[t] = angular.extend($scope.tests[t],new TestRunnerFactory.defaultTestItem());
-    }
-
-
+    $scope.currentTest = null;
     $scope.passedTests      = [];
     $scope.firstTimeRun     = true; 
     $scope.testsRunning     = false;
@@ -40,7 +46,9 @@ angular
     $scope.undoDispute = undoDispute;
 
     $scope.functionDescription = $scope.funct.getSignature();
-    $scope.code = $scope.funct.getFunctionCode();
+    $scope.data = {};
+    $scope.data.code = $scope.funct.getFunctionCode();
+    $scope.data.console = {};
 
     $scope.codemirror = undefined;
     $scope.$on('codemirror',function($event,data){
@@ -68,45 +76,55 @@ angular
 
 
     function processTestsFinish(data){
-        // if on the first run all the tests pass, 
-        // load a new microtask 
-        $scope.testsRunning = false;
+        $timeout(function(){
 
-        if ($scope.firstTimeRun){
-            // if all the tests passed
-            // auto submit this microtask
-            console.log(data);
-            if( data.overallResult ){
-                $scope.$emit('collectFormData', true);
-            }
-            // otherwise remove the non passed tests
-            // but except the first 
-            else {
-                var firstFailedIn = false;
-                angular.forEach( data.tests, function( test, index){
-                    console.log('filtering: ',test,test.passed());
-                    if( test.passed() || !firstFailedIn ){
+            // if on the first run all the tests pass, 
+            // load a new microtask 
+            $scope.testsRunning = false;
 
-                        $scope.tests.push( test );
-                        processTestFinish(test);
+            if ($scope.firstTimeRun){
+                // if all the tests passed
+                // auto submit this microtask
+                console.log(data);
+                if( data.overallResult ){
+                    $scope.$emit('collectFormData', true);
+                }
+                // otherwise remove the non passed tests
+                // but except the first 
+                else {
+                    var firstFailedIn = false;
+                    angular.forEach( data.tests, function( test, index){
+                        if( test.passed() || $scope.currentTest == null ){
+                            $scope.tests.push( test );
 
-                        if( !test.passed() ) firstFailedIn = true;
-                    } 
-                });
-                testRunner.setTests($scope.tests);
-            }
+                            if( !test.passed() ) {
+                                $scope.currentTest = test;
+                                $scope.$watch( function(){ 
+                                    return Object.keys($scope.currentTest.debug).join('\n'); 
+                                },function(){
+                                    $scope.data.console = $scope.currentTest.getConsole();
+                                });
+                            }
+                        } 
+                    });
+                    testRunner.setTests($scope.tests);
+                }
 
-            $scope.firstTimeRun = false;
-        } 
+                $scope.firstTimeRun = false;
+            } 
 
-        $scope.$apply();
+            
+            angular.forEach($scope.tests, function( test, index){
+                processTestFinish(test);
+            });
+
+        },0);
     }
 
 
     function processTestFinish(data){
 
         $scope.completed = data.number+1;
-        $scope.tests[data.number] = angular.extend($scope.tests[data.number],data);
 
         if( data.stubs !== undefined ){
             angular.forEach( data.stubs, function( fStubs, fName ) {
@@ -131,8 +149,6 @@ angular
         if( data.output !== undefined)
             if( data.output.result )
                 $scope.numPassed ++;
-
-        $scope.$apply();
     }
 
 
@@ -141,9 +157,8 @@ angular
 
         $scope.activePanel = -1;
 
-        if( $scope.codemirror !== undefined ){
-            testRunner.setTestedFunctionCode( $scope.codemirror.getValue() );
-        }
+        testRunner.setTestedFunctionCode( $scope.data.code );
+
 
         testRunner.mergeStubs( $scope.stubs );
 

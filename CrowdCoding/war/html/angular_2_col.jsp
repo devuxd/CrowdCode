@@ -232,9 +232,10 @@
 	<script src="/js/directives/functionEditor.js"></script>
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/directives/tutorial.js"></script>
-	<script src="/js/directives/codemirror-directives.js"></script>
+
 
 	<script src="/js/directives/ace-editor-directives.js"></script>
+	<script src="/js/directives/aceEditJs.js"></script>
 
 	<!-- Angular Filter -->
 	<script src="/js/filters/filter.js"></script>

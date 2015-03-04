@@ -48,14 +48,17 @@ Debugger.getStubOutput = function( functionName, inputs ){
 
 Debugger.log = function(){
 	var logs = Debugger.logs;
+	var statement = '';
 	for( var v in arguments ){
 		var value = arguments[v];
+		console.log('('+v+','+value+')');
 		if( value === null || value === undefined )
-			logs.push( value + '' );
-		else if( typeof value == 'number' )
-			logs.push( value );
+			statement =  value + '' ;
+		else if( typeof value == 'number' || typeof value == 'string' )
+			statement =  value ;
 		else
-			logs.push( JSON.stringify(value,true) );
-
+			statement = JSON.stringify(value, "\t") ;
+		logs[ logs.length ] = { timestamp: Date.now(), statement: statement};
 	}	
+	console.log(statement);
 };
