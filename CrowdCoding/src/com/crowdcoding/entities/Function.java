@@ -429,7 +429,7 @@ public class Function extends Artifact
 		if(submittedPseudoFunctions.isEmpty())
 		{
 			List<String> pseudoCode = findPseudocode(code);
-			if(pseudoCode.isEmpty())
+			if(pseudoCode.isEmpty() && ! this.isWritten)
 			{
 				setWritten(true);
 				storeToFirebase(projectId);
@@ -734,7 +734,7 @@ public class Function extends Artifact
 		removePseudocaller(functionId);
 
 		if( !isActivated() )
-			reactiveFunction();
+			reactivateFunction();
 
 		ofy().save().entity(this).now();
 	}
@@ -864,7 +864,7 @@ public class Function extends Artifact
 	}
 
 	//Notify all tests that the function is active again
-	private void reactiveFunction()
+	private void reactivateFunction()
 	{
 		setActivated(true);
 		//for each test send a notification that the function has been reactivated
