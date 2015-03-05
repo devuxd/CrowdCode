@@ -66,13 +66,6 @@ angular
         scope: true,
         link: function ( scope, iElement, iAttrs, ngModel ) {
             if( !ngModel ) return;
-        
-            // convert the json object into a string
-            // ngModel.$formatters.push(function( modelValue ) {
-            //     return  modelValue );
-            // });
-            
-
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
                 scope.stringValue = ngModel.$viewValue;

@@ -105,9 +105,14 @@ self.addEventListener('message', function(e){
 				// finalCode += allDefs;
 				finalCode += testedCode;
 				finalCode += allCode;
-				finalCode += data.testCode + '//# sourceURL=test-runner.js';
+				finalCode += "Debugger.log('// -- TEST EXEC # " + data.execNum + " --'); \n";
+				finalCode += data.testCode ;
+				finalCode += '//# sourceURL=test-runner.js';
 
-				finalCode = finalCode.replace(/debug\.log/g,'Debugger.log');
+				finalCode = finalCode.replace(/console\.log/g,'Debugger.log');
+
+				// console.log(finalCode);
+
 				try{
 
 					// 1) try to LINT the code 
@@ -156,7 +161,6 @@ self.addEventListener('message', function(e){
 						errors        : false,
 						output        : assertionResults[ assertionResults.length -1 ], 
 						stubMap       : Debugger.callStubsMap,
-						debug         : Debugger.logs.join( "\n" ) + "",
 						stubs         : Debugger.stubs,
 						usedStubs     : Debugger.callLogs,
 					};
@@ -180,12 +184,11 @@ self.addEventListener('message', function(e){
 				    	col  = parseInt(split[2]) ;
 				    }
 
-					console.log(e.stack,line,col);
+					Debugger.log("EXCEPTION: " + e.message + " at line "+line);
 
 					resultMessage = { 
 						errors     : true,
-						output     : { 'expected': "", 'actual': "", 'message': "", 'result':  false},
-						debug      : "EXCEPTION: " + e.message + " at line "+line
+						output     : { 'expected': "", 'actual': "", 'message': "", 'result':  false}
 					};
 				}
 
@@ -194,6 +197,7 @@ self.addEventListener('message', function(e){
 					// console.log("FINALLY!",getNowTime(),startTime);
 
 					resultMessage.executionTime = getNowTime()-startTime;
+					resultMessage.debug = JSON.stringify(Debugger.logs);
 
 					self.postMessage( resultMessage );
 				}

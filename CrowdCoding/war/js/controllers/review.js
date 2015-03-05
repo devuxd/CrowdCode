@@ -98,8 +98,9 @@ angular
         } else if ($scope.review.microtask.type == 'WriteTest') {
             functionSync = functionsService.getVersion($scope.review.microtask.functionID,$scope.review.microtask.submission.functionVersion);
             functionSync.$loaded().then(function() {
-            $scope.funct = new FunctionFactory(functionSync);
+                $scope.funct = new FunctionFactory(functionSync);
             });
+
 
         } else if ($scope.review.microtask.type == 'WriteCall') {
 

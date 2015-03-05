@@ -54,5 +54,5 @@ function getJSHintForStatements()
 function getUnitTestGlobals()
 {
 	// if related to unittest for lint add here
-	return "/*global window: false, document: false, $: false, throws:false, log: false, bleep: false, equal: false,notEqual: false,deepEqual: false,notDeepEqual: false,raises: false*/";
+	return "/*global window: false, document: false, $: false, throws:false, log: false, bleep: false, equal: false, notEqual: false, deepEqual: false, notDeepEqual: false, raises: false*/";
 }

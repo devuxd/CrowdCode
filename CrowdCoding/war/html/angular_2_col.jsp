@@ -228,14 +228,16 @@
 	<script src="/js/directives/news.js"></script>
 	<script src="/js/directives/microtaskForm.js"></script>
 	<script src="/js/directives/testResult.js"></script>
-	<script src="/js/directives/stubsList.js"></script>
+	<script src="/js/directives/stubsPanel.js"></script>
 	<script src="/js/directives/functionEditor.js"></script>
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/directives/tutorial.js"></script>
 	<script src="/js/directives/reminder.js"></script>
-	<script src="/js/directives/codemirror-directives.js"></script>
 
 	<script src="/js/directives/ace-editor-directives.js"></script>
+	<script src="/js/directives/aceEditJs.js"></script>
+	<script src="/js/directives/aceConsole.js"></script>
+
 
 	<!-- Angular Filter -->
 	<script src="/js/filters/filter.js"></script>

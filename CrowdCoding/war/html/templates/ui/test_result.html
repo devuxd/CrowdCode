@@ -1,7 +1,47 @@
+
+
+
+<div ng-if="test.rec.inDispute">
+    <div class="heading-1" >
+        WHAT'S WRONG WITH THIS TEST ?
+        <a ng-if="test.rec.inDispute" class="pull-right"
+            ng-click="undoDispute(test)"> 
+            Nothing is wrong with this test
+        </a>
+        <span class="clearfix"></span>
+    </div>
+    <textarea name="disputeDescription" class="form-control" ng-model="test.rec.disputeText" ng-required="test.rec.inDispute" ng-pattern="/^[^/\\\'\&quot;]+$/"></textarea>
+    <ul class="help-block" ng-show="microtaskForm.disputeDescription.$dirty && microtaskForm.disputeDescription.$invalid">
+        <li ng-show="microtaskForm.disputeDescription.$error.required">This field is required!</li>
+        <li ng-show="microtaskForm.disputeDescription.$error.pattern">The symbols \ / " 'are not allowed</li>
+    </ul>
+    <br>
+
+</div>
+
+
+<div class="panel-body" ng-if="test.errors != undefined ">
+    <div class="heading-1" >Execution errors</div>
+    <div>{{test.errors}}</div>
+</div>
+
+<a ng-if="!test.rec.readOnly && !test.rec.inDispute" class="pull-right"
+    ng-click="doDispute(test)"> 
+    Report an issue with the data of this test
+    <span class="glyphicon glyphicon-exclamation-sign"></span> 
+</a>
+    
+<div class="clearfix"></div>
+
+
 <div class="heading-1" >Input Parameters</div>
-<table >
+<table class="test">
     <tr ng-repeat="(key,input) in test.rec.simpleTestInputs track by $index">
-        <td>{{ paramNames[key] }}</td>
+        <td>
+            {{ funct.parameters[$index].name }}
+            <br />
+            {{ funct.parameters[$index].type }}
+        </td>
         <td>
             <div ace-read-json ng-model="input" ></div>
         </td>
@@ -13,7 +53,7 @@
 
 <div ng-if="!test.output.result && diffMode">
     <div class="heading-1" >
-        Output diff ( expected vs. actual )
+        Output diff ( expected vs. actual ) - {{ funct.returnType }}
     </div>
     <span class="pull-left">
         <span class="legend" style="background-color:#eaffea;"></span>expected
@@ -27,13 +67,13 @@
 
 <div ng-if="!test.output.result && !diffMode">
     <div class="heading-1" >
-        Output
+        Output - {{ funct.returnType }}
     </div>
 
 
     <a class="pull-right" ng-click="switchMode()">switch to diff mode</a>
     <span class="clearfix"></span>
-    <table >
+    <table class="test" >
         <tr>
             <td>expected</td>
             <td>
@@ -47,9 +87,4 @@
             </td>
         </tr>
     </table>
-</div>
-
-<div ng-if="test.debug != ''">
-    <div class="heading-1">Debug Console</div>
-    <div ace-read-string ng-model="test.debug" ></div>
 </div>

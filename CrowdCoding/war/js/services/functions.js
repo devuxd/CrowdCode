@@ -30,6 +30,7 @@ angular
 	 	this.isLoaded = function() { return loaded; };
 		this.getAll = function(){ return functions;	};
 		this.parseFunction = function (codemirror) { return parseFunction(codemirror); };
+		this.parseFunctionFromAce = function (ace) { return parseFunctionFromAce(ace); };
 
 
 		// Function bodies
@@ -216,29 +217,33 @@ angular
 	{
 
 		var ast = esprima.parse(codemirror.getValue(), {loc: true});
-		var calleeNames = getCalleeNames(ast);
-		var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
+		var calleeNames      = getCalleeNames(ast);
+		var fullDescription  = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
 		var descriptionLines = fullDescription.split('\n');
-		var functionName = ast.body[0].id.name;
-		var functionParsed = parseDescription(descriptionLines, functionName);
+		var functionName     = ast.body[0].id.name;
+		var functionParsed   = parseDescription(descriptionLines, functionName);
 
-		functionParsed.code = codemirror.getRange( { line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
-												   { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column	});
+
+		functionParsed.code = codemirror.getRange( 
+			{ line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
+			{ line: ast.body[0].body.loc.end.line   - 1, ch: ast.body[0].body.loc.end.column	}
+		);
 
 		functionParsed.pseudoFunctions=[];
 		var pseudoFunctionsName=[];
-		for (var i=1; i<ast.body.length; i++ ){
+		for( var i=1; i < ast.body.length; i++ ){
+			var prevPseudoBody = ast.body[i-1];
+			var currPseudoBody = ast.body[i];
+
 			var pseudoFunction={};
-			pseudoFunction.description= codemirror.getRange({
-				    line: ast.body[i-1].body.loc.end.line - 1,
-				    ch: ast.body[i-1].body.loc.end.column
-				},{
-				    line: ast.body[i].body.loc.end.line - 1,
-				    ch: ast.body[i].body.loc.end.column-2
-				}).match(/.+/g).join("\n");
+			
+			pseudoFunction.description = codemirror.getRange(
+				{ line: prevPseudoBody.loc.end.line - 1, ch: prevPseudoBody.loc.end.column },
+				{ line: currPseudoBody.loc.end.line - 1, ch: currPseudoBody.loc.end.column - 2 }
+			).match(/.+/g).join("\n");
 
 
-			pseudoFunction.name=ast.body[i].id.name;
+			pseudoFunction.name = currPseudoBody.id.name;
 			
 			functionParsed.pseudoFunctions.push(pseudoFunction);
 			pseudoFunctionsName.push(ast.body[i].id.name);
@@ -259,6 +264,50 @@ angular
 
 		return functionParsed;
 	}
+
+	function parseFunctionFromAce( editor )
+	{
+		var Range   = (window.ace || {}).require('ace/range').Range;
+		var session = editor.getSession();
+
+		var ast = esprima.parse( session.getValue(), {loc: true});
+		var calleeNames      = getCalleeNames(ast);
+		var fullDescription  = session.getTextRange( new Range(0, 0, ast.loc.start.line - 1, 0) );
+		var descriptionLines = fullDescription.split('\n');
+		var functionName     = ast.body[0].id.name;
+		var functionParsed   = parseDescription(descriptionLines, functionName);
+
+		functionParsed.code = session.getTextRange( new Range(ast.body[0].body.loc.start.line - 1,ast.body[0].body.loc.start.column,ast.body[0].body.loc.end.line- 1,ast.body[0].body.loc.end.column) );
+
+		functionParsed.pseudoFunctions=[];
+		var pseudoFunctionsName=[];
+		for( var i=1; i < ast.body.length; i++ ){
+			var prevPseudoBody = ast.body[i-1];
+			var currPseudoBody = ast.body[i];
+
+			var pseudoFunction={};
+			
+			pseudoFunction.description = session.getTextRange( new Range( prevPseudoBody.loc.end.line - 1, prevPseudoBody.loc.end.column, currPseudoBody.loc.end.line - 1, currPseudoBody.loc.end.column - 2) ).match(/.+/g).join("\n");
+			pseudoFunction.name = currPseudoBody.id.name;
+			
+			functionParsed.pseudoFunctions.push(pseudoFunction);
+			pseudoFunctionsName.push(ast.body[i].id.name);
+		}
+		functionParsed.calleeIds=[];
+
+		for(i =0; i< calleeNames.length; i++){
+			if(pseudoFunctionsName.indexOf(calleeNames[i])!==-1){
+				calleeNames.slice(i,1);
+			} else {
+				var functionId=getIdByName(calleeNames[i]);
+				if(functionId!=-1)
+					functionParsed.calleeIds.push(functionId);
+			}
+		}
+
+		return functionParsed;
+	}
+
 }
 	return service;
 }]);

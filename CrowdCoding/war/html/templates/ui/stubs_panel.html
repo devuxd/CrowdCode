@@ -1,0 +1,53 @@
+
+
+<div class="container-flex-row stubs-panel" ng-init=" selected = 'getNextId' ">
+    <div class="section section-help bg-color-alpha " style="width:20%">
+        <div class="section-title" >
+            <div class="dot"></div> CALLEES
+        </div>
+        <div class="section-content" >
+            <ul class="callee-list">
+                <li class="{{ selected == cName ? 'active' : '' }}" ng-repeat="cName in callees track by $index" ng-click="selectCallee(cName)"> {{cName}}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="section section-form" style="width:80%">
+        <div class="section-content no-padding">
+
+            <ace-read-js code="info.signature"></ace-read-js>
+            
+            <div class="heading-1 heading-2" ng-repeat-start="(sKey,stub) in stubs track by $index">Input set {{$index+1}}</div>
+            <table ng-repeat-end ng-form="stubForm" class="test">
+                <tr ng-repeat="(iKey,iValue) in stub.inputs track by $index" >
+                    <td>{{ info.inputs[$index] }}<br /></td>
+                    <td><div ace-read-json ng-model="iValue" ></div></td>
+                </tr>
+                <tr >
+                    <td>return value </td>
+                    <td >
+
+                        <ace-edit-json ng-model="stub.output"></ace-edit-json>
+
+                        <textarea type="text" 
+                            ng-model="stub.output"
+                            ng-show="false"
+                            required
+                            json-data-type="{{ info.returnType }}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="" ng-messages="stubForm.$error">
+                            <div ng-message="required">Please, fill this field</div>
+                            <div ng-message="jsonDataType">
+                                <span ng-repeat="e in stubForm.$error.jsonDataType[0].$error.jsonErrors" ng-bind="e"></span>
+                            </div>
+                        </div>
+                    </td>   
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>
