@@ -210,7 +210,7 @@ angular
 
             var describedFunctions = functionsService.getDescribedFunctions();
             allFunctionNames = functionsService.getDescribedFunctionsName(functionId);
-            allFunctionCode  = functionsService.getDescribedFunctionsCode(functionId) + " var debug = null; " ;
+            allFunctionCode  = functionsService.getDescribedFunctionsCode(functionId) + " var console = null; " ;
 
             ctrl.$formatters.unshift(function(viewValue) {
                 code=viewValue;

@@ -51,14 +51,12 @@ Debugger.log = function(){
 	var statement = '';
 	for( var v in arguments ){
 		var value = arguments[v];
-		console.log('('+v+','+value+')');
 		if( value === null || value === undefined )
 			statement =  value + '' ;
 		else if( typeof value == 'number' || typeof value == 'string' )
 			statement =  value ;
 		else
 			statement = JSON.stringify(value, "\t") ;
-		logs[ logs.length ] = { timestamp: Date.now(), statement: statement};
+		logs.push({ timestamp: Date.now(), statement: statement});
 	}	
-	console.log(statement);
 };

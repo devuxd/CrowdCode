@@ -34,22 +34,11 @@ angular
 					return true;
 				return false;
 			},
-			getConsole    : function(){
-				var cons = '';
-				console.log(this.debug);
-				// this.debug.sort(function(a,b){
-				// 	if( a.timestamp == b.timestamp )    return 0;
-				// 	else if(a.timestamp < b.timestamp ) return -1;
-				// 	else return +1;
-				// });
-				var t = 0;
-				if( this.debug.length > 40  ) t = this.debug.length - 40;
-				for( ; t < this.debug.length ; t++ ){
-					cons += this.debug[t].statement + '\n';
-					console.log(cons);
-				}
-				console.log(cons);
-				return cons;
+			addToConsole : function( logs ){
+				var newLogs = [];
+			    for (var l in this.debug) { newLogs.push(this.debug[l]);  }
+			    for (var l in logs)       { newLogs.push(logs[l]); 	      }
+			 	this.debug = newLogs;
 			}
 		};
 	};
@@ -354,6 +343,15 @@ angular
 		} , self.maxExecutionTime);
 
 	    // start the execution posting the exec message with the code
+	    console.log({ 
+			'cmd'      : 'exec', 
+			'number'   : self.currentTestIndex,
+			'testCode' : test.buildCode(),
+			'stubs'    : JSON.stringify(self.stubs),
+	    	'calleeNames': self.calleeList.join(' '),
+	    	'execNum': test.execNum++
+		});
+
 		this.worker.postMessage( { 
 			'cmd'      : 'exec', 
 			'number'   : self.currentTestIndex,
@@ -374,17 +372,14 @@ angular
 			// data for the test, notify stubs ready
 			// and update the usedStubs
 			if( e.data.errors ) {
-				test.stubs   = data.usedStubs !== undefined && data.usedStubs.length > 0 ? data.usedStubs : undefined;
+				test.stubs   = data.usedStubs !== undefined && data.usedStubs.length > 0 ? data.usedStubs : {};
 			} else {
 				test.stubs   = data.usedStubs ;
 			}
 
 			var logs = JSON.parse(data.debug);
-			console.log(logs);
-			for( var l in logs ){
-				test.debug[ test.debug.length ] = logs[l];
-			}
-			
+			test.addToConsole( logs );
+
 			test.output        = data.output;
 			test.executionTime = data.executionTime;
 			test.number        = self.currentTestIndex; 

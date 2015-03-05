@@ -109,7 +109,7 @@ self.addEventListener('message', function(e){
 				finalCode += data.testCode ;
 				finalCode += '//# sourceURL=test-runner.js';
 
-				finalCode = finalCode.replace(/debug\.log/g,'Debugger.log');
+				finalCode = finalCode.replace(/console\.log/g,'Debugger.log');
 
 				// console.log(finalCode);
 

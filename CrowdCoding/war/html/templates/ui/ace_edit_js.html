@@ -4,20 +4,20 @@
 		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'twilight'  }" 
 		ng-model="stringValue" >
 	</div> 
-	<textarea 
-		class="form-control" 
-		name="code" 
-		function-validator 
-		function-id="{{funct.getId()}}"
-		ng-model="stringValue" 
-		ng-show="false">
-	</textarea>
-	<ul class="help-block pull-left" ng-if="functionForm.code.$error.function_errors.length > 0">
-	    <ul >
+	<div style=" " class="function-errors">
+		<textarea 
+			class="form-control" 
+			name="code" 
+			function-validator 
+			function-id="{{funct.getId()}}"
+			ng-model="stringValue" 
+			ng-show="false">
+		</textarea>
+		<span class="recap" ng-if="functionForm.code.$error.function_errors.length > 0" > {{ functionForm.code.$error.function_errors.length }} problem(s) found: </span>
+		<ul ng-if="functionForm.code.$error.function_errors.length > 0" >
 	        <li ng-repeat="error in functionForm.code.$error.function_errors track by $id($index)">
 	        	<span ng-bind-html="trustHtml(error)"></span>
 	        </li>
-	    </ul>
-	</ul>
-	<div class="clearfix"></div>
+		</ul>
+	</div>
 </ng-form>

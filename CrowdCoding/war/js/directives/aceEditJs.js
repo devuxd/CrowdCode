@@ -9,11 +9,9 @@ angular
 
         templateUrl: '/html/templates/ui/ace_edit_js.html',
         scope: {
-            focusIf   : "=",
-            minLines  : "=",
-            tabindex  : "@",
-            paramType : "@",
-            funct : '='
+            update : '=',
+            funct  : '=',
+            editor : '='
         },
         require: "ngModel",
 
@@ -30,15 +28,13 @@ angular
             scope.$watch('stringValue', function() {
                 ngModel.$setViewValue( scope.stringValue );
             });
-
-
-
         },
         controller: function($scope,$element){
             $scope.trustHtml = function (unsafeHtml){
                 return $sce.trustAsHtml(unsafeHtml);
             };
         	$scope.aceLoaded = function(_editor) {
+                $scope.editor = _editor;
 
         		var options = {
 		    	   // maxLines: Infinity
@@ -48,17 +44,13 @@ angular
                     _editor.focus();
                 });
 
-                if( $scope.hasOwnProperty('tabindex') && $scope.tabindex ){
-                    $element.find('.ace_text-input').attr('tabindex', $scope.tabindex);
-                }
-
-                if( $scope.hasOwnProperty('focusIf') && $scope.focusIf ){
-                    _editor.focus();
-                }
-
-                if( $scope.hasOwnProperty('minLines') && $scope.minLines ){
-                   options.minLines = $scope.minLines;
-                }
+                $scope.$watch('update',function( value ){
+                    if( value ){
+                        _editor.resize();
+                        _editor.renderer.updateFull();
+                        _editor.scrollPageDown();
+                    }
+                });
 
                 // _editor.getSession().on('change', function(e) {
                 //     console.log('event change:', e.data);
@@ -76,6 +68,7 @@ angular
                 });
                 // _editor.commands.removeCommand('indent');
 			};
+
         }
     };
 }]);
