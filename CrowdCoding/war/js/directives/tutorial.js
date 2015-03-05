@@ -56,7 +56,6 @@ angular
 
                             // once it's finished 
                             var removeFinishListener = $scope.$on('tutorial-finished',function(){
-
                                 // reset the element content
                                 $element.html('');
 

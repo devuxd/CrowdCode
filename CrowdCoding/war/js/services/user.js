@@ -11,9 +11,13 @@ angular
  	var fbRef = new Firebase(firebaseURL);
 
 	var userProfile    = fbRef.child('/workers/' + workerId);
+
 	var isConnected    = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
+
 	var userRef        = fbRef.child('/status/loggedInWorkers/' + workerId);
 	var logoutRef      = fbRef.child('/status/loggedOutWorkers/'+ workerId);
+
+	var userFetchTime  = $firebase( fbRef.child('/workers/' + workerId + '/fetch' ) );
 
 	var updateLogInTime=function(){
 		userRef.setWithPriority({connected:true,name:workerHandle,timeStamp:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
@@ -34,6 +38,9 @@ angular
 
 
 	user.data = $firebase(userProfile).$asObject();
+	user.fetch= userFetchTime.$asObject();
+	//user.fetchTime = $firebase(userProfile).$asObject();
+
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
 			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
@@ -42,17 +49,17 @@ angular
 		user.data.workerHandle = workerHandle;
 		user.data.$save();
 	});
-
 	user.assignedMicrotaskKey = null;
 
 	user.getFetchTime = function(){
-		var fetchTime= user.data.status.fetchTime;
-		if(fetchTime)
-			return parseFloat(fetchTime);
-		else
-			return 0;
+		return user.fetch;
 	};
 
+	user.setFirstFetchTime = function (){
+		user.fetch.time=new Date().getTime();
+		user.fetch.$save();
+
+	};
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;
 		user.data.$save().then(function(){

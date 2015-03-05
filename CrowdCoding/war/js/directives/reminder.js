@@ -1,52 +1,91 @@
 
 angular
     .module('crowdCode')
-    .directive('reminder', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId) {
+    .directive('reminder', [ '$rootScope', '$compile', '$interval', '$firebase', 'firebaseUrl','$modal','userService', function($rootScope, $compile, $interval, $firebase,firebaseUrl,$modal,userService) {
 
-
-    var microtaskTimeout  = 60;     //in second
-    var microtaskFirstWarning = 10;  //in second
+    var microtaskInterval;
+    var microtaskTimeout  = 10 * 60 * 1000;     //in second
+    var microtaskFirstWarning = 3 * 60 *1000;  //in second
     var fetchTime = 0;
-    var actualTime = 0;
+   // var startTime = 0;
     var popupWarning;
+    var microtaskType;
+    var callBackFunction;
 
     return {
         restrict: 'E',
+        templateUrl : '/html/templates/ui/reminder.html',
         scope: {},
         link: function($scope, $element, attrs) {
+            $scope.microtaskFirstWarning=microtaskFirstWarning;
 
+            console.log("reminder initialized");
+            $rootScope.$on('tutorial-finished',function(){
+                console.log("taken form reminder"); 
+                userService.setFirstFetchTime();
+            });
             // listen on the event 'run-tutorial'
             // and start the tutorial with tutorialId
-            $rootScope.$on('run-tutorial',function( event, microtaskType, onFinish ){
+            $rootScope.$on('run-reminder',function( event, microtask, onFinish ){
 
-                if( microtaskType!== undefined ){
-                        $scope.runReminder(microtaskType,onFinish);
+                if( microtask!== undefined ){
+                    initializeReminder(microtask, onFinish);
                 }
             });
+            var initializeReminder = function(microtask, onFinish){
 
-            $scope.runReminder = function(microtaskTyp,onFinish){
-
+                microtaskType=microtask;
+                callBackFunction=onFinish;
+                //cancel the interval if still active(when they press skip or submit)
+                if(microtaskInterval!==undefined)
+                    $interval.cancel(microtaskInterval);
+                if(popupWarning!==undefined)
+                {
+                    popupWarning.$promise.then(popupWarning.hide);
+                    popupWarning=undefined;
+                }
 
                 //time when user fetched the microtask for the first time in milliseonds
-                fetchTime = userService.getFetchTime()/1000;
+                fetchTime = userService.getFetchTime();
+
                 //actual time of the system in seconds
-                actualTime =  new Date().getTime()/1000;
+                startTime =  new Date().getTime();
 
-                //remaining time
-                $scope.skipMicrotaskIn = parseInt(fetchTime + microtaskTimeout - actualTime);
-
-
-                microtaskInterval = $interval(manageTimeout(microtaskTyp,onFinish), 1000);
+                fetchTime.$loaded().then(function(){
+                    if(typeof(fetchTime.time)=='number'){
+                        $scope.skipMicrotaskIn = fetchTime.time + microtaskTimeout - startTime ;
+                        microtaskInterval = $interval(doReminder, 1000); 
+                    }
+                    else
+                    {
+                        console.log("error reminder not started", fetchTime.time);
+                    }
+                });
 
 
             };
-            var manageTimeout = function(){
 
-                $scope.skipMicrotaskIn --;
 
-                if(popupWarning===undefined && $scope.skipMicrotaskIn < microtaskFirstWarning){
-                    popupWarning = $modal({title: 'My Title', content: 'My Content', show: true});
+            var doReminder = function(){
+
+                //remaining time
+                $scope.skipMicrotaskIn-=1000;
+
+                if($scope.skipMicrotaskIn < 0)
+                {
+                    endReminder();
                 }
+                else if(popupWarning===undefined && $scope.skipMicrotaskIn < microtaskFirstWarning){
+                    popupWarning = $modal({title: microtaskType, template : "/html/templates/popups/popup_reminder.html" , show: true});
+                }
+            };
+
+            var endReminder = function(){
+                console.log("skipping: "+microtaskType);
+                $interval.cancel(microtaskInterval);
+                microtaskInterval=undefined;
+                if(callBackFunction!==undefined)
+                    callBackFunction.apply();
             };
 
         }

@@ -15,57 +15,7 @@
  }
 
 
- function parseFunction(codemirror)
- {
-
- 	var ast = esprima.parse(codemirror.getValue(), {loc: true});
- 	var calleeNames = getCalleeNames(ast);
- 	var fullDescription = codemirror.getRange({ line: 0, ch: 0}, { line: ast.loc.start.line - 1, ch: 0 });
- 	var descriptionLines = fullDescription.split('\n');
- 	var functionName = ast.body[0].id.name;
- 	var functionParsed = parseDescription(descriptionLines, functionName);
-
- 	functionParsed.code = codemirror.getRange( { line: ast.body[0].body.loc.start.line - 1, ch: ast.body[0].body.loc.start.column },
- 											   { line: ast.body[0].body.loc.end.line - 1,   ch: ast.body[0].body.loc.end.column	});
-
- 	functionParsed.pseudoFunctions=[];
- 	var pseudoFunctionsName=[];
- 	for (var i=1; i<ast.body.length; i++ ){
- 		var pseudoFunction={};
- 		pseudoFunction.description= codemirror.getRange({
- 			    line: ast.body[i-1].body.loc.end.line - 1,
- 			    ch: ast.body[i-1].body.loc.end.column
- 			},{
- 			    line: ast.body[i].body.loc.end.line - 1,
- 			    ch: ast.body[i].body.loc.end.column-2
- 			}).match(/.+/g).join("\n");
-
-
- 		pseudoFunction.name=ast.body[i].id.name;
- 		
- 		functionParsed.pseudoFunctions.push(pseudoFunction);
- 		pseudoFunctionsName.push(ast.body[i].id.name);
- 	}
- 	functionParsed.calleeIds=[];
-
- 	for(i =0; i< calleeNames.length; i++)
- 	{
- 		if(pseudoFunctionsName.indexOf(calleeNames[i])!==-1){
- 			calleeNames.slice(i,1);
- 		}
- 		else{
- 			var functionId=getIdByName(calleeNames[i]);
- 			if(functionId!=-1)
- 				functionParsed.calleeIds.push(functionId);
- 		}
- 	}
-
- 	return functionParsed;
-
-
-
-
- }
+ 
 
  /**
  descLines is the description lines array (split on \n)

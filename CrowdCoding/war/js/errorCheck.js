@@ -34,14 +34,21 @@ function checkForErrors(e)
 
 function getJSHintGlobals()
 {
+	//latededf was  true, setted as false
 	// if releated to a parameter you can check box in JLINT website add here
-	return {latedef:true, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true};
+	return {latedef:false, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true};
 }
 
 function getJSHintForPseudocalls()
 {
 	// if releated to a parameter you can check box in JLINT website add here
 	return {latedef:false, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true};
+}
+
+function getJSHintForStatements()
+{
+	// if releated to a parameter you can check box in JLINT website add here
+	return {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true, maxstatements : 10};
 }
 
 function getUnitTestGlobals()

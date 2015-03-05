@@ -104,7 +104,7 @@ angular
                 returnType  : $scope.model.returnType,
                 parameters  : $scope.model.parameters,
                 description : $scope.model.description,
-                header      : renderHeader($scope.model.functionName, $scope.model.parematers)
+                header      : renderHeader($scope.model.functionName, $scope.model.paramaters)
             };
 
             if($scope.dispute.active){

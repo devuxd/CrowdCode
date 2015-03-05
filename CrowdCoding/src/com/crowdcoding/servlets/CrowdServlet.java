@@ -470,15 +470,17 @@ public class CrowdServlet extends HttpServlet
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
 		final String projectID = (String) req.getAttribute("project");
-    	final Key<Microtask> microtaskKey = ofy().transact(new Work<Key<Microtask>>() {
-            public Key<Microtask> run()
+
+    	final String jsonResponse = ofy().transact(new Work<String>() {
+            public String run()
             {
+
             	Project project = Project.Create(projectID);
 				Worker worker   = Worker.Create(user, project);
 
             	String workerID     = worker.getUserid();
             	String workerHandle = worker.getNickname();
-
+            	int firstFetch=0;
             	Key<Microtask> microtaskKey = null;
 
 
@@ -488,20 +490,26 @@ public class CrowdServlet extends HttpServlet
             		project.unassignMicrotask(workerID);
             	}
             	// otherwise search for the current assignment
-            	else
+            	else{
             		microtaskKey = project.lookupMicrotaskAssignment(workerID);
-
+            	}
             	// if the user hasn't an assigned microtask
             	// search for a queued one
             	if (microtaskKey == null)
             	{
             		System.out.println("first assignement");
+            		//FirebaseService.microtaskAssigned(workerID, projectID);
 
             		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
-            		FirebaseService.microtaskAssigned(workerID, Microtask.keyToString(microtaskKey), projectID);
+                	firstFetch=1;
             	}
 
-            	return microtaskKey;
+            	if (microtaskKey == null) {
+        			return ("{}");
+        		}
+        		else{
+        			return ("{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}");
+        		}
             }
         });
 
@@ -511,13 +519,7 @@ public class CrowdServlet extends HttpServlet
 
     	// If there are no microtasks available, send an empty response.
 	    // Otherwise, send the json with microtask info.
-		if (microtaskKey == null) {
-			renderJson(resp,"{}");
-		}
-		else{
-			renderJson(resp,"{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\"}");
-		}
-
+			renderJson(resp,jsonResponse);
 
 	}
 

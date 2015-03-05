@@ -1,20 +1,39 @@
-
-<!-- popup template -->
-<div id="popUp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-	<div class="modal-dialog">
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title">{{popupTitle}}</h4>
+				<button type="button" class="close" ng-click="$hide()">&times;</button>
+				<h4 class="modal-title">You've been working on this for a while now...</h4>
 			</div>
 			<div class="modal-body">
-				<ng-include src="popupContent">
-				 some raw popup content
-				</ng-include>
-	      	</div>
+				Maybe it's time to submit or	"skip and let the crowd take a look?
+				<div ng-if="title=='WriteTestCases'">
+					ciao ciao
+		      	</div>
+	  			<div ng-if="title=='WriteFunction'">
+	  				ciao  adesso sono write functionciao
+	  	      	</div>
+  				<div ng-if="title=='WriteTest'">
+  					ciao ciao
+  		      	</div>
+  	  			<div ng-if="title=='ReuseSearch'">
+  	  				ciao  adesso sono write functionciao
+  	  	      	</div>
+  				<div ng-if="title=='WriteCall'">
+  					ciao ciao
+  		      	</div>
+  	  			<div ng-if="title=='DebugTestFailure'">
+  	  				ciao  adesso sono write functionciao
+  	  	      	</div>
+  				<div ng-if="title=='Review'">
+  					ciao ciao
+  		      	</div>
+  	  			<div ng-if="title=='WriteFunctionDescription'">
+  	  				ciao  adesso sono write functionciao
+  	  	      	</div>
+  	    	</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">OK</button>
+				<button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
 			</div>	
 		</div>
 	</div>

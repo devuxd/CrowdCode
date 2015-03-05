@@ -216,9 +216,9 @@ public class FirebaseService
 		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
 	}
 
-	public static void microtaskAssigned(String workerID, String microtaskKey, String projectId) {
+	public static void microtaskAssigned(String workerID, String projectId) {
 
-		enqueueWrite("{\"status\" : {\"microtaskKey\": \"" + microtaskKey + "\", \"fetchTime\" : \"" +System.currentTimeMillis() +"\"}}", "/workers/" + workerID + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"fetchTime\" : \"" +System.currentTimeMillis() +"\"}", "/workers/" + workerID + ".json", HTTPMethod.PATCH, projectId);
 
 	}
 

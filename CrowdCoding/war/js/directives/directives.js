@@ -190,7 +190,7 @@ angular
 // check if a function code has errors
 angular
     .module('crowdCode')
-    .directive('functionValidator', ['ADTService', 'functionsService', function(ADTService, functionsService) {
+    .directive('functionValidator', ['$rootScope','ADTService', 'functionsService', function($rootScope,ADTService, functionsService) {
 
     var functionId;
     var funct;
@@ -199,6 +199,7 @@ angular
     var errors = [];
     var code = "";
     var valid;
+    var statements =0;
 
     return {
         restrict: 'A',
@@ -215,6 +216,7 @@ angular
             ctrl.$formatters.unshift(function(viewValue) {
                 code=viewValue;
                 validate(code);
+                $rootScope.$emit('statementsUpdated', statements);
                 if (errors.length > 0) {
                     ctrl.$setValidity('function', false);
                     ctrl.$error.function_errors = errors;
@@ -257,7 +259,7 @@ angular
             return false;
         }*/
         // 3. If the are syntactical errors displays the error and returns
-        if (hasSyntacticalErrors(code,getJSHintForPseudocalls()))
+        if (hasSyntacticalErrors(allFunctionCode + " "+code,getJSHintForPseudocalls()))
             return false;
 
         // 4. Trys to build the Est if not displays the error and return
@@ -298,29 +300,36 @@ angular
 
         if(errors.length>0) return false;
 
-        var textSplitted=code.split("\n");
-        var codeToTest=textSplitted.slice(ast.body[0].loc.end.line).concat(textSplitted.slice(0,ast.body[0].loc.end.line)).join("\n");
-            if (hasSyntacticalErrors(codeToTest,getJSHintGlobals()))
-                return false;
-
-
         // 6. checks if the are errors in the descriptions structure
         hasDescriptionError(ast);
-        
+        var textSplitted=code.split("\n");
+        var mainFunctionCode = textSplitted.slice(0,ast.body[0].loc.end.line).join("\n");
+        if (hasSyntacticalErrors(mainFunctionCode,getJSHintForStatements(),true))
+            return false;
+
         return false;
     }
 
     // Returns true iff there are syntactical errors
-    function hasSyntacticalErrors(codeToValidate, JSHINTSettings) {
-        var functionCode = allFunctionCode + " " + codeToValidate;
+    function hasSyntacticalErrors(codeToValidate, JSHINTSettings, analyzeBody) {
         var lintResult = -1;
         // try to run JSHINT or catch and print error to the console
         try {
-            lintResult = JSHINT(functionCode, JSHINTSettings);
+            lintResult = JSHINT(codeToValidate, JSHINTSettings);
+            //console.log(JSHINT(functionCode, getJSHintForStatements()).getData());
         } catch (e) {
-            console.log("Error in running JSHHint. " + e.name + " " + e.message);
+            console.log(e);
         }
+        if(analyzeBody)
+        {
+            var functionsData = JSHINT.data().functions;
+            if(functionsData.length>1)
+            {
+                errors.push("Only one function is allowed, if you need more use the function stubs");
+            }
+            statements = functionsData[0].metrics.statements;
 
+        }
         if (!lintResult) {
 
             errors = errors.concat(checkForErrors(JSHINT.errors));
@@ -1363,3 +1372,20 @@ angular
         }
     };
 });
+
+angular
+    .module('crowdCode')
+    .directive('statementsNumber',['$rootScope',function($rootScope) {
+    return {
+        template : '<div> Statements used: {{functionstatements}} / 10</div>',
+        restrict: 'AE',
+        link: function (scope, elm, attrs, ctrl) {
+
+            $rootScope.$on('statementsUpdated',function( event, functionstatements){
+                scope.functionstatements=functionstatements;
+
+            });
+
+        }
+    };
+}]);

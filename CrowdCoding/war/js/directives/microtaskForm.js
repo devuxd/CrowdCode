@@ -79,7 +79,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 								$scope.noMicrotask = false;
 
 								$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
-								//$scope.$emit('run-reminder', $scope.microtask.type);
+								$scope.$emit('run-reminder', $scope.microtask.type,function (){ $scope.$emit('skipMicrotask'); });
 							}
 							else {
 								$scope.templatePath = templatesURL + "no_microtask.html";
@@ -97,7 +97,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 							$scope.noMicrotask = false;
 
 							$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
-							//$scope.$emit('run-reminder', $scope.microtask.type, function (){ scope.$emit('skipMicrotask'); } );
+							$scope.$emit('run-reminder', $scope.microtask.type, function (){ $scope.$emit('skipMicrotask'); } );
 
 						}
 						else {
@@ -144,12 +144,22 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 				// if a fetchData is provided
 				if( fetchData !== undefined ){
+
+					console.log(fetchData);
+					if(  fetchData.firstFetch == '1')
+						userService.setFirstFetchTime();
+
 					loadMicrotask(fetchData.microtaskKey);
 				}
 				// otherwise do a fetch request
 				else {
 					var fetchPromise = microtasks.fetch();
 					fetchPromise.then(function(fetchData){
+						console.log(fetchData);
+
+						if(  fetchData.firstFetch == '1')
+							userService.setFirstFetchTime();
+						
 						loadMicrotask(fetchData.microtaskKey);
 					}, function(){
 						noMicrotask();

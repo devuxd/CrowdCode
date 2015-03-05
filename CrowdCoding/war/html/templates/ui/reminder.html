@@ -1,0 +1,3 @@
+<div ng-if = "skipMicrotaskIn < microtaskFirstWarning ">The microtask will be skipped in:
+	<span ng-class="{'text-warning': skipMicrotaskIn > microtaskFirstWarning / 2 , 'text-danger': skipMicrotaskIn < microtaskFirstWarning / 2 }">{{skipMicrotaskIn | date:'mm:ss'}}</span>
+</div>

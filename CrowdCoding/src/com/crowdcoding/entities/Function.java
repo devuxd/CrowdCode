@@ -441,11 +441,7 @@ public class Function extends Artifact
 			List<String> pseudoCode = findPseudocode(code);
 			if(pseudoCode.isEmpty())
 			{
-				if(!isWritten())
-				{
 				setWritten(true);
-				storeToFirebase(projectId);
-				}
 			}
 			else
 			{
