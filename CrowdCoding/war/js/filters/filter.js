@@ -26,3 +26,9 @@ angular
     return Object.keys(input).length;
   };
 });
+  angular.module('crowdCode')
+  .filter('percentage', ['$filter', function($filter) {
+      return function(input) {
+          return $filter('number')(input*100, decimals)+'%';
+      };
+  }]);

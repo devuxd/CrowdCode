@@ -104,14 +104,13 @@ angular
                 returnType  : $scope.model.returnType,
                 parameters  : $scope.model.parameters,
                 description : $scope.model.description,
-                header      : renderHeader($scope.model.functionName, $scope.model.paramaters)
+                header      : renderHeader($scope.model.functionName, $scope.model.parameters)
             };
 
             if($scope.dispute.active){
                 formData.inDispute = true;
                 formData.disputeFunctionText = $scope.dispute.text;
             }
-
             $scope.$emit('submitMicrotask', formData);
         }
     });

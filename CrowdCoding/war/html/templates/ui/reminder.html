@@ -1,3 +1,6 @@
-<div ng-if = "skipMicrotaskIn < microtaskFirstWarning ">The microtask will be skipped in:
-	<span ng-class="{'text-warning': skipMicrotaskIn > microtaskFirstWarning / 2 , 'text-danger': skipMicrotaskIn < microtaskFirstWarning / 2 }">{{skipMicrotaskIn | date:'mm:ss'}}</span>
+<div ng-init="show=false"  class=""  ng-if = "skipMicrotaskIn">
+    <div class="progress progress-bar-reminder">
+        <div ng-mouseenter="show=true" data-ng-mouseleave="show=false" class="pull-right progress-bar" ng-class="{'progress-bar-success':skipMicrotaskIn > microtaskFirstWarning,'progress-bar-warning':skipMicrotaskIn > microtaskFirstWarning / 2 && skipMicrotaskIn < microtaskFirstWarning,'progress-bar-danger':skipMicrotaskIn < microtaskFirstWarning / 2}" role="progressbar" style="width:{{(skipMicrotaskIn / microtaskTimeout) * 100| number :1}}%">
+        </div>
+    </div>
 </div>

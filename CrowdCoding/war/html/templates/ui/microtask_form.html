@@ -2,12 +2,13 @@
 	<div id="task" class="task" microtask >
 		<ng-include class="{{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}" src="templatePath"></ng-include>
 	</div>
+	<reminder></reminder>
 
 	<div class="button-bar">
 		<div class="btn-group pull-left" role="group" ng-show="!noMicrotask" >
 			<button type="button"
 
-       	 		id="skipBtn"
+       	 		id= "skipBtn"
        			ng-click="$emit('skipMicrotask')" 
        			tabindex="100" 
        			class="btn btn-default btn-sm">
@@ -23,7 +24,6 @@
 		  	</button>
 		 
 		</div>
-		<reminder ></reminder>
 
 		<span class="pull-right">
 			<span ng-if="unreadMessages > 0" class="unread-messages">{{unreadMessages}}</span>

@@ -52,7 +52,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 				$scope.microtask = microtasks.get(microtaskKey);
 				$scope.microtask.$loaded().then(function() {
 
-				console.log("microtask loaded: "+$scope.microtask.$id);
+				console.log("microtask loaded: "+$scope.microtask);
 
 					// retrieve the related function
 					if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { 
@@ -74,7 +74,6 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 							$scope.reissuedMicrotask.$loaded().then(function() {
 							//choose the right template
 							if ( $scope.microtask !== undefined && $scope.reissuedMicrotask !== undefined ){
-
 								$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 								$scope.noMicrotask = false;
 
@@ -82,6 +81,8 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 								$scope.$emit('run-reminder', $scope.microtask.type,function (){ $scope.$emit('skipMicrotask'); });
 							}
 							else {
+								console.log("end sent");
+								$scope.$emit('stop-reminder');
 								$scope.templatePath = templatesURL + "no_microtask.html";
 								$scope.noMicrotask = true;
 							}
@@ -101,6 +102,9 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 						}
 						else {
+							console.log("end sent");
+
+							$scope.$emit('stop-reminder');
 							$scope.templatePath = templatesURL + "no_microtask.html";
 							$scope.noMicrotask = true;
 						}
@@ -111,6 +115,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 			// in case of no microtasks available
 			function noMicrotask(){
+				$scope.$emit('stop-reminder');
 				$scope.templatePath = templatesURL + "no_microtask.html";
 				$scope.noMicrotask = true;
 

@@ -47,6 +47,7 @@ public class WriteTest extends Microtask
 		super(projectId);
 		this.promptType = PromptType.WRITE;
 		this.test = (Ref<Test>) Ref.create(test.getKey());
+		this.functionVersion=functionVersion;
 
 		ofy().load().ref(this.test);
 		ofy().save().entity(this).now();
@@ -68,6 +69,8 @@ public class WriteTest extends Microtask
 		this.promptType = PromptType.CORRECT;
 		this.test = (Ref<Test>) Ref.create(test2.getKey());
 		this.issueDescription = issueDescription;
+		this.functionVersion=functionVersion;
+
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(id, this.microtaskTitle(),this.microtaskName(),
 				test2.getName(),
@@ -85,6 +88,8 @@ public class WriteTest extends Microtask
 	{
 		super(projectId);
 		this.promptType = PromptType.FUNCTION_CHANGED;
+		this.functionVersion=functionVersion;
+
 		this.test = (Ref<Test>) Ref.create(test2.getKey());
 		this.oldFunctionDescription = oldFullDescription;
 		this.newFunctionDescription = newFullDescription;
@@ -105,6 +110,8 @@ public class WriteTest extends Microtask
 	{
 		super(projectId);
 		this.promptType = PromptType.TESTCASE_CHANGED;
+		this.functionVersion=functionVersion;
+
 		this.test = (Ref<Test>) Ref.create(test.getKey());
 		this.oldTestCase = oldTestCase;
 

@@ -734,7 +734,8 @@ public class Function extends Artifact
 	{
 		this.needsDebugging=true;
 		int position = testsId.indexOf(testId);
-		testsImplemented.set(position, true);
+		if(position!=-1)
+			testsImplemented.set(position, true);
 
 		runTestsIfReady();
 	}
@@ -744,7 +745,8 @@ public class Function extends Artifact
 	{
 		this.needsDebugging=true;
 		int position = testsId.indexOf(testId);
-		testsImplemented.set(position, false);
+		if(position!=-1)
+			testsImplemented.set(position, false);
 		ofy().save().entity(this).now();
 
 	}
@@ -828,6 +830,7 @@ public class Function extends Artifact
 	{
 		calleesId.remove(calleeId);
 		setWritten(false);
+		ofy().save().entity(this).now();
 
 		queueMicrotask(new WriteFunction(this, calleeId, disputeText, projectId), projectId);
 	}
