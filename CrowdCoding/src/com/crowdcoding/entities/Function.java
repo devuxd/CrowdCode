@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
+import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionParameterDTO;
@@ -22,6 +23,7 @@ import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
+import com.crowdcoding.dto.TestDisputedDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -652,39 +654,43 @@ public class Function extends Artifact
 		onWorkerEdited(dto, projectId);
 	}
 
-	public void debugTestFailureCompleted(FunctionDTO dto, String projectId)
+	public void debugTestFailureCompleted( DebugDTO dto, String projectId)
 	{
 		testAndDebugCompleted();
 
-		// Check to see if there any disputed tests
-		//Current: If it doesn't have a test case number indicating a dispute, all passed.
-		//That should change in the future, to indicate which ones passed
-		if(dto.testId != null)
+		// PUT TESTS IN DISPUTE
+		if( dto.disputedTests.size() > 0 )
 		{
-			// creates a disputed test case
-			int position = testsId.indexOf((long)dto.testId);
-			TestCommand.dispute(testsId.get(position), dto.description, version);
-			testReturnUnimplemented(testsId.get(position));
+			for( TestDisputedDTO disputedTest: dto.disputedTests){
+
+				TestCommand.dispute( disputedTest.testId, disputedTest.disputeText, version);
+				testReturnUnimplemented( disputedTest.testId );
+			}
+
 			this.needsDebugging=true;
-			// Since there was an issue, ignore any code changes they may have submitted.
 
-		} else { //at present, reaching here means all tests passed.
+		} 
 
-		//	if(!this.code.trim().equals(dto.code.trim()))
-			//{ //integrate the new changes
-				onWorkerEdited(dto, projectId);
-			//}
-		}
-
-		// Save the entity again to the datastore
-		ofy().save().entity(this).now();
-
-
+		// CREATE THE STUBS 
 		// Update or create tests for any stub
 		for (TestDTO testDTO : dto.stubs)
 		{
 			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
 		}
+		
+		
+		// UPDATE THE FUNCTION CODE IF CHANGED
+//		{
+//			onWorkerEdited(dto, projectId);
+//		}
+		
+		
+		
+		// Save the entity again to the datastore
+		ofy().save().entity(this).now();
+
+
+		
 
 	}
 

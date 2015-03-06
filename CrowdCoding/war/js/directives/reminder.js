@@ -4,8 +4,8 @@ angular
     .directive('reminder', [ '$rootScope', '$compile', '$interval', '$firebase', 'firebaseUrl','$modal','userService', function($rootScope, $compile, $interval, $firebase,firebaseUrl,$modal,userService) {
 
     var microtaskInterval;
-    var microtaskTimeout  = 10 * 60 * 1000;     //in second
-    var microtaskFirstWarning = 3 * 60 *1000;  //in second
+    var microtaskTimeout  = 67890 * 60 * 1000;     //in second
+    var microtaskFirstWarning = 89765 * 60 *1000;  //in second
     var fetchTime = 0;
    // var startTime = 0;
     var popupWarning;

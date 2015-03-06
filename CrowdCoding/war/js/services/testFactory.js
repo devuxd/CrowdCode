@@ -171,24 +171,24 @@ angular
 			return true;
 		},
 
-		searchAndAdd: function(functionId, functionName, inputsValue, outputValue){
-			var test = this.search(functionName, inputsValue);
+		// searchAndAdd: function(functionId, functionName, inputsValue, outputValue){
+		// 	var test = this.search(functionName, inputsValue);
 
-			if( test === null ){
-				test = new Test();
-				test.setId(++lastId);
+		// 	if( test === null ){
+		// 		test = new Test();
+		// 		test.setId(++lastId);
 
-				test.setImplemented(true);
-				test.setMessageType("Test in firebase");
-				test.setFunctionId( functionId );
-			    test.setFunctionName( functionName );
-			 	test.setSimpleTest(inputsValue,outputValue);
-				test.setDescription("auto generated for test purposes");
-				test.buildCode();
-				this.set(test);
-			}
-			else console.log("TEST FOUND");
-		},
+		// 		test.setImplemented(true);
+		// 		test.setMessageType("Test in firebase");
+		// 		test.setFunctionId( functionId );
+		// 	    test.setFunctionName( functionName );
+		// 	 	test.setSimpleTest(inputsValue,outputValue);
+		// 		test.setDescription("auto generated for test purposes");
+		// 		test.buildCode();
+		// 		this.set(test);
+		// 	}
+		// 	else console.log("TEST FOUND");
+		// },
 
 		buildStubsByFunctionName: function(functionName){
 			var tests = this.getByFunctionName(functionName);
@@ -252,11 +252,11 @@ angular
 
 	Test.prototype = {
 		getId: function(){
-			return this.rec.id;
+			return this.rec.$id;
 		},
 
 		setId: function(id){
-			this.rec.id  = id;
+			this.rec.$id  = id;
 		},
 
 		update: function(rec){
@@ -370,7 +370,20 @@ angular
 			// console.log('test code for '+this.rec.description+ ':'+testCode);
 			this.rec.code = testCode;
 			return testCode;
-		}
+		},
+
+		// getDto: function(){
+		// 	return {
+		// 		code: this.rec.code,
+		// 		hasSimpleTest: this.rec.hasSimpleTest,
+		// 		simpleTestInputs: this.rec.simpleTestInputs,
+		// 		simpleTestOutput: this.rec.simpleTestOutput,
+		// 		inDispute: this.rec.inDispute,
+		// 		disputeFunctionText: '',
+		// 		disputeTestText: this.rec.disputeTestText,
+		// 		messageType: this.rec.messageType
+		// 	};
+		// }
 	};
 
 	return Test;

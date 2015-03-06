@@ -21,7 +21,9 @@ angular
 			stubs         : {},
 			debug         : [],
 			output        : {},
+			errors        : undefined,
 			executionTime : 0,
+			inTimeout     : false,
 			execNum: 0,
 			ready         : function(){
 				if( this.output.result !== undefined )
@@ -39,6 +41,19 @@ angular
 			    for (var l in this.debug) { newLogs.push(this.debug[l]);  }
 			    for (var l in logs)       { newLogs.push(logs[l]); 	      }
 			 	this.debug = newLogs;
+			},
+			status : function(){
+				if( this.ready() ){
+					if( this.rec.inDispute )
+						return 'disputed';
+					else if( this.inTimeout )
+						return 'timeout';
+					else if( this.passed() )
+						return 'passed';
+					else
+						return 'failed'
+				}
+				else return 'running';
 			}
 		};
 	};
@@ -280,6 +295,9 @@ angular
 	    	'testedCode'  : this.testedFunctionCode
 	    });
 
+	    angular.forEach( this.tests, function(test){
+	    	test.output = {};
+	    });
 		this.runCurrentTest();
 	};
 
@@ -337,21 +355,13 @@ angular
 			test.output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
 			test.debug[ Date.now() ] = "ERROR: execution terminated due to timeout";
 			test.executionTime = self.maxExecutionTime;
+			test.inTimeout = true;
 
 			self.processTestFinished();
 
 		} , self.maxExecutionTime);
 
 	    // start the execution posting the exec message with the code
-	    console.log({ 
-			'cmd'      : 'exec', 
-			'number'   : self.currentTestIndex,
-			'testCode' : test.buildCode(),
-			'stubs'    : JSON.stringify(self.stubs),
-	    	'calleeNames': self.calleeList.join(' '),
-	    	'execNum': test.execNum++
-		});
-
 		this.worker.postMessage( { 
 			'cmd'      : 'exec', 
 			'number'   : self.currentTestIndex,
@@ -373,8 +383,10 @@ angular
 			// and update the usedStubs
 			if( e.data.errors ) {
 				test.stubs   = data.usedStubs !== undefined && data.usedStubs.length > 0 ? data.usedStubs : {};
+				test.errors  = e.data.errors;
 			} else {
 				test.stubs   = data.usedStubs ;
+				test.errors  = undefined;
 			}
 
 			var logs = JSON.parse(data.debug);
@@ -383,6 +395,7 @@ angular
 			test.output        = data.output;
 			test.executionTime = data.executionTime;
 			test.number        = self.currentTestIndex; 
+			test.inTimeout     = false;
 
 		  	self.processTestFinished();
 		};

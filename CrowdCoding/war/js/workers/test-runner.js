@@ -187,7 +187,7 @@ self.addEventListener('message', function(e){
 					Debugger.log("EXCEPTION: " + e.message + " at line "+line);
 
 					resultMessage = { 
-						errors     : true,
+						errors     : "EXCEPTION: " + e.message + " at line "+line,						
 						output     : { 'expected': "", 'actual': "", 'message': "", 'result':  false}
 					};
 				}

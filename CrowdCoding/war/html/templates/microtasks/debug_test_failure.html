@@ -5,29 +5,32 @@
         
         <div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
         <div class="section-content  job-description" >
-            One (or more) of the tests for the function <strong>{{funct.name}}</strong>  have failed. Can you find and fix the bug(s)?
+            One of the tests for the function <strong>{{funct.name}}</strong>  has failed. <br />
+            Can you find and fix the bug (or report an issue with the test)?
         </div>
     </div>
 
 
     <alertcontainer></alertcontainer>
 
-
-
     <div ng-if="!dispute.active" 
-         class="section section-description test-result 
-                {{ currentTest.rec.inDispute  ? 'disputed' : ( currentTest.passed() ? 'passed' : 'failed' ) }}"  >
+         class="section section-description test-result {{ currentTest.status() }}"  >
         <div class="section-title" >
-            <div class="dot bg-color"></div>
+            <div class="dot "></div>
             TEST CASE DESCRIPTION 
         </div>
         <div class="section-content" >
             {{currentTest.rec.description}} 
 
-            <span class="pull-right">
-                <span >executed in {{currentTest.executionTime}} ms</span>
-                <span ng-if="currentTest.passed()"  class="glyphicon glyphicon-ok"></span>
-                <span ng-if="!currentTest.passed()" class="glyphicon glyphicon-remove"></span>
+            <span class="pull-right" style="font-family:'Lato'; font-weight:bold;">
+                <span ng-if="!currentTest.ready()"> running ... </span>
+                <span ng-if="currentTest.ready()">
+                    <span ng-if="!currentTest.inTimeout">
+                        <span>executed in {{currentTest.executionTime}} ms - </span>
+                        <span>{{currentTest.status()}}</span>
+                    </span>
+                    <span ng-if="test.inTimeout">timeout</span>
+                </span>
             </span>
 
             <span class="clearfix"></span>
@@ -40,24 +43,24 @@
             <li class="pull-left {{ tabs.active == 0 ? 'active' : '' }}">
                 <a href="#" ng-click="tabs.select(0)">Test Result</a>
             </li>
-            <li class="pull-left {{ tabs.active == 1 ? 'active' : '' }}">
-                <a href="#" ng-click="tabs.select(1)">Code</a>
+            <li class="pull-left {{ tabs.active == 1 ? 'active' : '' }}" ng-if="previousTests.length > 0">
+                <a href="#" ng-click="tabs.select(1)">Previous tests</a>
             </li>
             <li class="pull-left {{ tabs.active == 2 ? 'active' : '' }}">
-                <a href="#" ng-click="tabs.select(2)">Console</a>
+                <a href="#" ng-click="tabs.select(2)">Code</a>
             </li>
             <li class="pull-left {{ tabs.active == 3 ? 'active' : '' }}">
                 <a href="#" ng-click="tabs.select(3)">Stubs</a>
             </li>
-            <li class="pull-left {{ tabs.active == 4 ? 'active' : '' }}" ng-if="previousTests.length > 0">
-                <a href="#" ng-click="tabs.select(4)">Previous tests</a>
+            <li class="pull-left {{ tabs.active == 4 ? 'active' : '' }}">
+                <a href="#" ng-click="tabs.select(4)">Console</a>
             </li>
             <li class="pull-right ">
 
                 <a ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.functionForm.$invalid">
                     <span class="glyphicon glyphicon-refresh"></span> 
-                    <span ng-if="!testRunning">Run</span> 
-                    <span ng-if="testRunning">tests running</span>
+                    <span ng-if="!data.running">Run</span> 
+                    <span ng-if="data.running">tests running</span>
                 </a>
             </li>
             <li class="clearfix"></li>
@@ -68,18 +71,76 @@
         <div class="tab-content" style="height:420px;">
 
             <!-- TEST DATA -->
-            <div class="section-cols" ng-show=" tabs.active == 0 " >
+            <div class="section-cols " ng-show=" tabs.active == 0 ">
                 <div class="container-flex-row">
-                    <div class="section section-form" style="width:100%">
-                        <div class="section-content" >   
+                    <div class="section section-help bg-color-alpha " style="width:30%">
+                        <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
+                        <div class="section-content" >
+                            <adt-list></adt-list>
+                        </div>
+                    </div>
+                    <div class="section section-form" style="width:70%">
+                        <div class="section-content" >
                             <test-result test="currentTest" funct="funct" ></test-result>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- CODE EDITOR -->
+            <!-- PREVIOUS TESTS  -->
             <div class="section-cols " ng-show=" tabs.active == 1 ">
+                <div class="container-flex-row">
+                    <div class="section section-help bg-color-alpha " style="width:30%">
+                        <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
+                        <div class="section-content" >
+                            <adt-list></adt-list>
+                        </div>
+                    </div>
+                    <div class="section section-form" style="width:70%">
+                        <div class="section-content no-padding" >
+
+                            <div class="panel-group" ng-model="activePanel" bs-collapse>
+            
+                                <div class="panel panel-default" 
+                                    ng-repeat="(testIndex,test) in previousTests track by $index"
+                                    ng-show="!test.output.result || !hidePassedTests">
+                                    
+                                    <div class="panel-heading test-result {{ test.status() }}" bs-collapse-toggle>
+                                        <strong class="pull-left">    
+                                            <span class="glyphicon glyphicon-chevron-{{ activePanel == testIndex ? 'down' : 'right' }}"></span>
+                                            {{test.rec.description}} 
+                                        </strong>
+                                        <span class="pull-right">
+                                            <span ng-if="!test.ready()"> running ... </span>
+                                            <span ng-if="test.ready()">
+                                                <span ng-if="!test.inTimeout">
+                                                    <span>executed in {{test.executionTime}} ms - </span>
+                                                    <span>{{test.status()}}</span>
+                                                </span>
+                                                <span ng-if="test.inTimeout">timeout</span>
+                                            </span>
+                                        </span>
+                                        
+                                        <span class="clearfix"></span>
+                                    </div>
+
+                                    <div class="panel-collapse" bs-collapse-target>
+                                        <div ng-if="activePanel != NaN && (activePanel%previousTests.length)==$index">    
+                                            <test-result test="test" funct="funct" ></test-result>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>  
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CODE EDITOR -->
+            <div class="section-cols " ng-show=" tabs.active == 2 ">
                 <div class="container-flex-row">
                     <div class="section section-help bg-color-alpha " style="width:30%">
                         <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
@@ -90,22 +151,12 @@
                     </div>
                     <div class="section section-form" style="width:70%">
                         <div class="section-content no-padding" >
-                            <ace-edit-js ng-model="data.code" update=" tabs.active == 1 " funct="funct" editor="data.editor" ></ace-edit-js>
+                            <ace-edit-js ng-model="data.code" update=" tabs.active == 2 " funct="funct" editor="data.editor" ></ace-edit-js>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- CONSOLE -->
-            <div ng-show="tabs.active == 2">
-                <div class="container-flex-row">
-                    <div class="section section-form" style="width:100%">
-                        <div class="section-content no-padding" >
-                            <ace-console logs="currentTest.debug" update=" tabs.active==2 "></ace-console>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- STUBS -->
             <div class="section-cols " ng-show=" tabs.active == 3 ">
@@ -113,42 +164,17 @@
             </div>
 
 
-
-            <!-- PREVIOUS TESTS  -->
-            <div class="section section-form" ng-show=" tabs.active == 4 ">
-                <div class="section-content no-padding" >   
-                    <div class="panel-group" ng-model="activePanel" bs-collapse>
-            
-                        <div class="panel panel-default" 
-                            ng-repeat="(testIndex,test) in previousTests track by $index"
-                            ng-show="!test.output.result || !hidePassedTests">
-
-                            <div class="panel-heading test-result {{ test.rec.inDispute  ? 'disputed' : ( test.passed() ? 'passed' : 'failed' ) }}" bs-collapse-toggle>
-                                <strong class="pull-left">    
-                                    <span class="glyphicon glyphicon-chevron-{{ activePanel == testIndex ? 'down' : 'right' }}"></span>
-                                    {{test.rec.description}} - {{ test.rec.inDispute  ? 'disputed' : ( test.passed() ? 'passed' : 'failed' ) }}
-                                </strong>
-                                <span class="pull-right">
-                                    <span >executed in {{test.executionTime}} ms</span>
-                                    <span ng-if="test.output.result"  class="glyphicon glyphicon-ok"></span>
-                                    <span ng-if="!test.output.result" class="glyphicon glyphicon-remove"></span>
-                                </span>
-                                
-                                <span class="clearfix"></span>
-                            </div>
-
-                            <div class="panel-collapse" bs-collapse-target>
-                                <div ng-if="activePanel != NaN && (activePanel%previousTests.length)==$index">    
-                                    <test-result test="test" funct="funct" ></test-result>
-                                </div>
-                            </div>
-
+            <!-- CONSOLE -->
+            <div ng-show="tabs.active == 4">
+                <div class="container-flex-row">
+                    <div class="section section-form" style="width:100%">
+                        <div class="section-content no-padding" >
+                            <ace-console logs="currentTest.debug" update=" tabs.active==4 "></ace-console>
                         </div>
-
-                    </div>  
-
+                    </div>
                 </div>
             </div>
+
         </div>
 
     </div>

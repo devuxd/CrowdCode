@@ -18,7 +18,7 @@ function testResult() {
             $scope.undoDispute = undoDispute;
 
             function switchMode(){
-                $scope.rec.diffMode = !$scope.diffMode;
+                $scope.diffMode = !$scope.diffMode;
             }
 
             function doDispute(test) {
@@ -29,7 +29,6 @@ function testResult() {
 
             function undoDispute(test) {
                 test.rec.inDispute = false;
-                console.log('undispute',test.rec);
             }
         }
     };
