@@ -5,7 +5,8 @@ angular
 
     var microtaskInterval;
     var microtaskTimeout  = 10 * 60 * 1000;     //in second
-    var microtaskFirstWarning = 3 * 60 *1000;  //in second
+    var microtaskFirstWarning = 4 * 60 *1000;  //in second
+    var timeInterval=500;//interval time in milliseconds
     var fetchTime = 0;
    // var startTime = 0;
     var popupWarning;
@@ -18,8 +19,7 @@ angular
         scope: {},
         link: function($scope, $element, attrs) {
             $scope.microtaskFirstWarning=microtaskFirstWarning;
-
-            console.log("reminder initialized");
+            $scope.microtaskTimeout=microtaskTimeout;
             $rootScope.$on('tutorial-finished',function(){
                 console.log("taken form reminder"); 
                 userService.setFirstFetchTime();
@@ -31,6 +31,18 @@ angular
                 if( microtask!== undefined ){
                     initializeReminder(microtask, onFinish);
                 }
+            });
+            $rootScope.$on('stop-reminder',function( event ){
+                $scope.skipMicrotaskIn=undefined;
+                console.log("reminer stopped");
+                if(microtaskInterval!==undefined)
+                    $interval.cancel(microtaskInterval);
+                if(popupWarning!==undefined)
+                {
+                    popupWarning.$promise.then(popupWarning.hide);
+                    popupWarning=undefined;
+                }
+
             });
             var initializeReminder = function(microtask, onFinish){
 
@@ -54,7 +66,9 @@ angular
                 fetchTime.$loaded().then(function(){
                     if(typeof(fetchTime.time)=='number'){
                         $scope.skipMicrotaskIn = fetchTime.time + microtaskTimeout - startTime ;
-                        microtaskInterval = $interval(doReminder, 1000); 
+                        console.log("reminder initialized, you have "+ $scope.skipMicrotaskIn + " millisecons more");
+
+                        microtaskInterval = $interval(doReminder, timeInterval); 
                     }
                     else
                     {
@@ -69,7 +83,7 @@ angular
             var doReminder = function(){
 
                 //remaining time
-                $scope.skipMicrotaskIn-=1000;
+                $scope.skipMicrotaskIn-=timeInterval;
 
                 if($scope.skipMicrotaskIn < 0)
                 {
@@ -82,7 +96,8 @@ angular
 
             var endReminder = function(){
                 console.log("skipping: "+microtaskType);
-                $interval.cancel(microtaskInterval);
+                if(microtaskInterval!==undefined)
+                    $interval.cancel(microtaskInterval);
                 microtaskInterval=undefined;
                 if(callBackFunction!==undefined)
                     callBackFunction.apply();

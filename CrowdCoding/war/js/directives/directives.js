@@ -628,7 +628,7 @@ angular
                 // if is CTRL + BACKSPACE skip microtask
                 else if ( charCode == 8 ) { 
                     // console.log('CTRL+BACKSPACE');
-                    scope.$emit('skipMicrotask');
+                    //scope.$emit('skipMicrotask');
                     preventDefault = true;
                 } 
 
@@ -993,6 +993,7 @@ angular
                         //if the microtask is a review
                         if (news.microtask.type == "Review") {
                             news.isReview = true;
+                            console.log(news.microtask);
                             news.qualityScore = news.microtask.submission.qualityScore;
                             news.reviewText = news.microtask.submission.reviewText;
                         } else if (angular.isDefined(news.microtask.review)) {

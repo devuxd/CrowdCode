@@ -662,9 +662,8 @@ public class Function extends Artifact
 		if(dto.testId != null)
 		{
 			// creates a disputed test case
-			int position = testsId.indexOf((long)dto.testId);
-			TestCommand.dispute(testsId.get(position), dto.description, version);
-			testReturnUnimplemented(testsId.get(position));
+			TestCommand.dispute(dto.testId, dto.description, version);
+			testReturnUnimplemented(dto.testId);
 			this.needsDebugging=true;
 			// Since there was an issue, ignore any code changes they may have submitted.
 
@@ -728,7 +727,8 @@ public class Function extends Artifact
 	{
 		this.needsDebugging=true;
 		int position = testsId.indexOf(testId);
-		testsImplemented.set(position, true);
+		if(position!=-1)
+			testsImplemented.set(position, true);
 
 		runTestsIfReady();
 	}
@@ -738,7 +738,8 @@ public class Function extends Artifact
 	{
 		this.needsDebugging=true;
 		int position = testsId.indexOf(testId);
-		testsImplemented.set(position, false);
+		if(position!=-1)
+			testsImplemented.set(position, false);
 		ofy().save().entity(this).now();
 
 	}
@@ -822,6 +823,7 @@ public class Function extends Artifact
 	{
 		calleesId.remove(calleeId);
 		setWritten(false);
+		ofy().save().entity(this).now();
 
 		queueMicrotask(new WriteFunction(this, calleeId, disputeText, projectId), projectId);
 	}

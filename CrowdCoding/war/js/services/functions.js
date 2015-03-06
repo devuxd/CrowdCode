@@ -152,7 +152,7 @@ angular
 		{
 			var funct = null;
 			angular.forEach(functions, function(value, key) {
-				if( funct===null && value.name == name ) {
+				if( funct===null && value.name == name && value.described) {
 			  		funct = value;
 			  	}
 			});

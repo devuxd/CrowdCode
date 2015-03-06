@@ -115,6 +115,9 @@ public class Test extends Artifact
 	public void setDescription(String description)
 	{
 		this.description = description;
+
+		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
 	}
 
 	public String getName()
