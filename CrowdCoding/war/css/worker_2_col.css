@@ -299,12 +299,16 @@ h1, h2, h3, h4 {
     overflow-x:hidden;
     overflow-y:auto;
 }
+.section-reminder{
+	position: absolute;
+	bottom: 20px;
+	z-index: 10;
+	width: 100%;
+}
 .progress-bar-reminder{
 	height: 7px;
-	position: absolute;
 	width: 100%;
 	bottom: 17px;
-	z-index: 10;
 	background-color: rgb(122, 122, 122);
 	border-radius: 0px;
 }

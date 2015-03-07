@@ -111,12 +111,15 @@ angular
 			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
+			
+
+
 			var timeoutCallBack = function(){
 				//retrieves the information of the loGin field
 				var userLoginRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
 				userLoginRef.once("value", function(userLogin) {
 					//if the user doesn't uddate the timer for more than 20 seconds than log it out
-				  	if(userLogin.val()===null || new Date().getTime() - userLogin.val().timeStamp > 30000){
+				  	if(userLogin.val()===null || Firebase.ServerValue.TIMESTAMP - userLogin.val().timeStamp > 30000){
 				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
 					  		.success(function(data, status, headers, config) {
 					  			userLoginRef.remove();
@@ -135,6 +138,8 @@ angular
 				});
 
 			};
+
+			
 			var interval = $interval(timeoutCallBack,10000);
 		});
 	};

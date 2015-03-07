@@ -78,7 +78,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 								$scope.noMicrotask = false;
 
 								$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
-								$scope.$emit('run-reminder', $scope.microtask.type,function (){ $scope.$emit('skipMicrotask'); });
+								$scope.$emit('run-reminder', $scope.microtask.type,function (){ $scope.$emit('skipMicrotask',true); });
 							}
 							else {
 								console.log("end sent");
@@ -98,7 +98,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 							$scope.noMicrotask = false;
 
 							$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
-							$scope.$emit('run-reminder', $scope.microtask.type, function (){ $scope.$emit('skipMicrotask'); } );
+							$scope.$emit('run-reminder', $scope.microtask.type, function (){ $scope.$emit('skipMicrotask',true); } );
 
 						}
 						else {
@@ -189,13 +189,14 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 			});
 
 			// listen for message 'skip microtask'
-			$scope.$on('skipMicrotask', function(event) {
-				//console.log("skip with value: "+$scope.canSubmit);
+			$scope.$on('skipMicrotask', function(event,autoSkip) {
+
+				console.log("skip with value: "+autoSkip);
 				if($scope.canSubmit){
 
 					$scope.templatePath   = templatesURL + "loading.html";
 					$scope.canSubmit=false;
-					microtasks.submit($scope.microtask,null).then(function(data){
+					microtasks.submit($scope.microtask,null,autoSkip).then(function(data){
 						$scope.$broadcast('loadMicrotask',data);
 					},function(){
 						console.error('Error during microtask skip!');

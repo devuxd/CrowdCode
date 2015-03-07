@@ -432,7 +432,9 @@ public class CrowdServlet extends HttpServlet
 			final String microtaskKey = req.getParameter("key") ;
 			final String type         = req.getParameter("type");
 			final String payload      = Util.convertStreamToString(req.getInputStream());
-			final boolean skip = Boolean.parseBoolean(req.getParameter("skip"));
+			final boolean skip		  = Boolean.parseBoolean(req.getParameter("skip"));
+			final boolean disablePoint = Boolean.parseBoolean( req.getParameter("disablepoint"));
+
 
 			System.out.println("--> SERVLET: submitted mtask key = "+microtaskKey);
 
@@ -441,7 +443,7 @@ public class CrowdServlet extends HttpServlet
 
 			// Create the skip or submit commands
 			if (skip)
-				ProjectCommand.skipMicrotask( microtaskKey, workerID);
+				ProjectCommand.skipMicrotask( microtaskKey, workerID, disablePoint);
 			else{
 				Class microtaskType = microtaskTypes.get(type);
 				if (microtaskType == null)
@@ -540,6 +542,7 @@ public class CrowdServlet extends HttpServlet
 		final String microtaskType = req.getParameter("type");
 		final String JsonDTO       = Util.convertStreamToString(req.getInputStream());
 		final String skip          = req.getParameter("skip");
+		final String disablePoint  = req.getParameter("disablepoint");
 
 
 		// fetch the new microtask
@@ -553,6 +556,7 @@ public class CrowdServlet extends HttpServlet
 		task.param("microtaskType", microtaskType);
 		task.param("JsonDTO", JsonDTO);
 		task.param("skip", skip.toString());
+		task.param("disablepoint", disablePoint.toString());
 
 		// add the task to the default task queue
         Queue queue = QueueFactory.getDefaultQueue();
@@ -570,6 +574,7 @@ public class CrowdServlet extends HttpServlet
 		final String type         = req.getParameter("microtaskType");
 		final String JsonDTO      = req.getParameter("JsonDTO");
 		final Boolean skip        = Boolean.parseBoolean(req.getParameter("skip"));
+		final Boolean disablePoint=Boolean.parseBoolean(req.getParameter("disablepoint"));
 
 
 
@@ -581,7 +586,7 @@ public class CrowdServlet extends HttpServlet
 
 		// Create the skip or submit commands
 		if (skip)
-			ProjectCommand.skipMicrotask( microtaskKey, workerID);
+			ProjectCommand.skipMicrotask( microtaskKey, workerID, disablePoint);
 		else{
 			System.out.println("microtask tyoe : "+type);
 			Class microtaskType = microtaskTypes.get(type);

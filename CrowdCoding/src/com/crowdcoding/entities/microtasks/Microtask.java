@@ -139,10 +139,12 @@ public /*abstract*/ class Microtask
 
 	}
 
-	public void skip(String workerID, String projectId)
+	public void skip(String workerID, boolean disablePoint, String projectId)
 	{
+		if(! disablePoint){
 		// Increment the point value by 10
-		this.submitValue *= 1.2;
+			this.submitValue *= 1.2;
+		}
 		this.workerId = "";
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskPoints(Microtask.keyToString(this.getKey()), this.submitValue, projectId);

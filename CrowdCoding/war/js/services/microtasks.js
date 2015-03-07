@@ -18,15 +18,16 @@ angular
 			return microtask;
 		},
 
-		submit : function(microtask, formData){	
+		submit : function(microtask, formData,autoSkip){
 			var deferred = $q.defer();
 
 			if( microtask == undefined )
 				deferred.reject();
-			
+
 			var skip = formData == null;
+			var disablePoint = autoSkip||false;
 			// submit to the server
-			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip='+(skip? 'true' : 'false'), formData)
+			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip='+(skip? 'true' : 'false') + '&disablepoint=' +(disablePoint ? 'true':'false'), formData)
 				.success(function(data, status, headers, config) {
 					// submit to Firebase
 					microtask.submission = formData;

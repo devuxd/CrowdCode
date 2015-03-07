@@ -483,10 +483,10 @@ public class Project
 
 	// Unassigns worker from this microtask
 	// Precondition - the worker must be assigned to this microtask
-	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Project project)
+	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Boolean disablePoint ,Project project)
 	{
 		Microtask microtask = ofy().load().key(microtaskKey).now();
-		if( microtask.isAssignedTo(workerID) ){
+		if( microtask!=null && microtask.isAssignedTo(workerID)){
 			microtask.setWorkerId(null);
 			addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
@@ -501,7 +501,7 @@ public class Project
 			resetIfAllSkipped( microtaskKey );
 			ofy().save().entity(this).now();
 
-			MicrotaskCommand.skip( microtaskKey, workerID);
+			MicrotaskCommand.skip( microtaskKey, workerID, disablePoint);
 		}
 	}
 

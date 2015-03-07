@@ -25,8 +25,8 @@ public abstract class ProjectCommand extends Command
 		return new QueueReviewMicrotask(microtaskKey, excludedWorkerID);
 	}
 
-	public static ProjectCommand skipMicrotask( String microtaskKey, String workerID) {
-		return new SkipMicrotask(microtaskKey, workerID);
+	public static ProjectCommand skipMicrotask( String microtaskKey, String workerID , Boolean disablePoint) {
+		return new SkipMicrotask(microtaskKey, workerID, disablePoint);
 	}
 
 	public static ProjectCommand submitMicrotask(String microtaskKey, Class<Microtask> microtaskType, String jsonDTOData, String workerID){
@@ -139,18 +139,20 @@ public abstract class ProjectCommand extends Command
 	{
 		private Key<Microtask> microtaskKey;
 		private String workerID;
+		private Boolean disablePoint;
 
-		public SkipMicrotask(String microtaskKey, String workerID)
+		public SkipMicrotask(String microtaskKey, String workerID, Boolean disablePoint)
 		{
 			super();
 			this.microtaskKey = Microtask.stringToKey(microtaskKey) ;
 			this.workerID = workerID;
+			this.disablePoint = disablePoint;
 		}
 
 		public void execute(Project project)
 		{
 			System.out.println("-->SKIP "+Microtask.keyToString(this.microtaskKey));
-			project.skipMicrotask(microtaskKey, workerID, project);
+			project.skipMicrotask(microtaskKey, workerID, disablePoint, project);
 		}
 	}
 

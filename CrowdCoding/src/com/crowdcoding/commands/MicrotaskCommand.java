@@ -15,8 +15,8 @@ public abstract class MicrotaskCommand extends Command
 	public static MicrotaskCommand submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, int awardedPoint)
 		{ return new Submit(microtaskKey, jsonDTOData, workerID, awardedPoint); }
 
-	public static MicrotaskCommand skip(Key<Microtask> microtaskKey, String workerID)
-		{ return new Skip(microtaskKey, workerID); }
+	public static MicrotaskCommand skip(Key<Microtask> microtaskKey, String workerID, boolean disablePoint)
+		{ return new Skip(microtaskKey, workerID, disablePoint); }
 
 	public static MicrotaskCommand createReview(Key<Microtask> microtaskKeyToReview, String excludedWorkerID,
 			String initiallySubmittedDTO, String workerOfReviewedWork)
@@ -35,9 +35,9 @@ public abstract class MicrotaskCommand extends Command
 
 	public static MicrotaskCommand cancelMicrotask(Key<Microtask> microtaskKey) {
 		return new CancelMicrotask(microtaskKey);
-		
+
 	}
-	
+
 	private MicrotaskCommand( Key<Microtask> microtaskKey )
 	{
 		this.microtaskKey = microtaskKey;
@@ -97,16 +97,19 @@ public abstract class MicrotaskCommand extends Command
 	protected static class Skip extends MicrotaskCommand
 	{
 		private String workerID;
+		private boolean disablePoint;
 
-		public Skip(Key<Microtask> microtaskKey, String workerID)
+		public Skip(Key<Microtask> microtaskKey, String workerID, boolean disablePoint)
 		{
 			super(microtaskKey);
 			this.workerID = workerID;
+			this.disablePoint=disablePoint;
+
 		}
 
 		public void execute(Microtask microtask, String projectId)
 		{
-			microtask.skip(workerID, projectId);
+			microtask.skip(workerID, disablePoint, projectId);
 		}
 	}
 
