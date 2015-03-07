@@ -26,6 +26,7 @@ angular
 			
 			var skip = formData == null;
 			// submit to the server
+			console.log('submitting with key '+microtask.$id);
 			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip='+(skip? 'true' : 'false'), formData)
 				.success(function(data, status, headers, config) {
 					// submit to Firebase

@@ -453,14 +453,14 @@ public class Project
 				else if(microtaskType.equals(DebugTestFailure.class))
 				{
 
-					FunctionDTO dto = (FunctionDTO)DTO.read(jsonDTOData, FunctionDTO.class);
-					if ( dto.testId != null)
-					{
-						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-					}
-					else{
+//					FunctionDTO dto = (FunctionDTO)DTO.read(jsonDTOData, FunctionDTO.class);
+//					if ( dto.testId != null)
+//					{
+//						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+//					}
+//					else{
 						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-					}
+//					}
 				}
 				else{
 					MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
@@ -486,6 +486,7 @@ public class Project
 	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Project project)
 	{
 		Microtask microtask = ofy().load().key(microtaskKey).now();
+		System.out.println("SKIPPING MICROTASK "+microtaskKey);
 		if( microtask.isAssignedTo(workerID) ){
 			microtask.setWorkerId(null);
 			addExcludedWorkerForMicrotask( microtaskKey, workerID);

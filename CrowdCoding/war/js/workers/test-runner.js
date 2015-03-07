@@ -111,6 +111,8 @@ self.addEventListener('message', function(e){
 
 				finalCode = finalCode.replace(/console\.log/g,'Debugger.log');
 
+				console.log('tested fun code', testedCode);
+				console.log('stubs',data.stubs)
 				// console.log(finalCode);
 
 				try{

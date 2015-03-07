@@ -17,6 +17,7 @@ angular
         }
     };
 
+    var autosubmit = false;
     var testRunner = new TestRunnerFactory.instance();
     testRunner.setTestedFunction($scope.microtask.functionID);
     testRunner.onTestsFinish(processTestsFinish);
@@ -62,6 +63,7 @@ angular
                 // if all the tests passed
                 // auto submit this microtask
                 if( data.overallResult ){
+                    autosubmit = true;
                     $scope.$emit('collectFormData', true);
                 }
                 // otherwise remove the non passed tests
@@ -136,6 +138,10 @@ angular
         var inDispute = false;
         var allTests = $scope.previousTests.concat($scope.currentTest);
         var disputed = [];
+
+        var parsedFunction = functionsService.parseFunctionFromAce($scope.data.editor);
+        var hasPseudo = ( $scope.data.code.indexOf('//#') > -1 || parsedFunction.pseudoFunctions.length > 0) ;
+
         // scan the list of tests and search
         // if there are failed tests non in dispute
         // or there are disputed tests with empty dispute description
@@ -146,14 +152,11 @@ angular
                 if( !disputeTextEmpty && (test.rec.disputeTestText === undefined || test.rec.disputeTestText.length == 0) ){
                     disputeTextEmpty = true;
                 } else {
-                    disputed.push(test.rec);
+                    disputed.push( test.getDisputeDTO() );
                 }
             }
         });
 
-        var parsedFunction = functionsService.parseFunctionFromAce($scope.data.editor);
-        var hasPseudo = ( $scope.data.code.indexOf('//#') > -1 || parsedFunction.pseudoFunctions.length > 0) ;
-        console.log( hasPseudo , $scope.data.code.indexOf('//#') > -1);
         if( /* dispute descriptions empty */ disputeTextEmpty )
             errors += "Please, fill the dispute texts!";
         else if ( /* if other form errors */ microtaskForm.$invalid )
@@ -169,8 +172,13 @@ angular
         
 
         if (errors === "") {
-            var formData = parsedFunction;
-
+            var formData = {
+                functionDTO   : parsedFunction,
+                stubs         : [],
+                disputedTests : [],
+                hasPseudo     : hasPseudo,
+                autoSubmit    : autosubmit
+            };
             
             if( !hasPseudo ){
                 // INSERT STUBS AS NEW TESTS IF THEY ARE NOT FOUND
@@ -215,7 +223,7 @@ angular
                     formData.disputedTests = disputed;
                 } 
             }
-            
+
             console.log(formData);
             $scope.$emit('submitMicrotask', formData);
 

@@ -142,6 +142,7 @@ public abstract class TestCommand extends Command {
 			Test newTest = new Test(functionID, functionName, description,
 					inputs, output, code, projectId, functionVersion, readOnly);
 			newTest.storeToFirebase(projectId);
+			System.out.println("@@@@@ STORING NEW TEST TO FIREBASE @@@@@@");
 		}
 	}
 

@@ -6,7 +6,7 @@ import java.util.List;
 public class TestDisputedDTO extends DTO
 {
 	public String messageType = "TestDisputedDTO";
-	public Long testId ;
+	public Long id ;
 	public String disputeText ="";      // only available if the test is in dispute.
 
 	// Default constructor (required by Jackson JSON library)
@@ -14,9 +14,9 @@ public class TestDisputedDTO extends DTO
 	{
 	}
 
-	public TestDisputedDTO(Long testId, String disputeText)
+	public TestDisputedDTO(Long id, String disputeText)
 	{
-		this.testId      = testId;
+		this.id      = id;
 		this.disputeText = disputeText;
 
 	}

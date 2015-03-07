@@ -129,7 +129,7 @@ public class DebugTestFailure extends Microtask
 
 	protected Class getDTOClass()
 	{
-		return FunctionDTO.class;
+		return DebugDTO.class;
 	}
 
 	public Artifact getOwningArtifact()

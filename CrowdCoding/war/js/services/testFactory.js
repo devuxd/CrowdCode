@@ -45,6 +45,7 @@ angular
 		// override $$updated method of AngularFire FirebaseArray factory
 		$$updated: function(snap) {
 			var rec = this.$getRecord( snap.name() );
+			console.log('updating test ',rec,(new Date()).getTime());
 			if( angular.isObject(rec) ) {
 				// apply changes to the record
 				var changed = $firebaseUtils.updateRec(rec, snap);
@@ -77,12 +78,22 @@ angular
 		// the function with id = functionId
 		getImplementedByFunctionId: function(functionId){
 			var returnList = [];
+			console.log('searching implemented for fun'+functionId);
 			angular.forEach( objectsList, function( test, key){
 				if( test.getFunctionId() == functionId && test.isImplemented()){
 					returnList.push(test);
 				}	
 			});
 
+			return returnList;
+		},
+		getImplementedIdsByFunctionId: function(functionId){
+			var returnList = [];
+			angular.forEach( objectsList, function( test, key){
+				if( test.getFunctionId() == functionId && test.isImplemented()){
+					returnList.push( test.getId() );
+				}	
+			});
 			return returnList;
 		},
 		// retrieve all the tests belonging to
@@ -227,9 +238,10 @@ angular
 
 		    // for each test push the test case entry in the test cases list
 		    angular.forEach(tests, function(test, index) {
+		    	console.log( 'id of the test is ', test.getId() )
 		        testCases.push( test.getTestCase() );
 		    });
-
+		    console.log(testCases);
 		    return testCases;
 		},
 
@@ -252,11 +264,11 @@ angular
 
 	Test.prototype = {
 		getId: function(){
-			return this.rec.$id;
+			return this.rec.id;
 		},
 
 		setId: function(id){
-			this.rec.$id  = id;
+			this.rec.id  = id;
 		},
 
 		update: function(rec){
@@ -330,7 +342,7 @@ angular
 
 		getTestCase: function(){
 			return {
-	            id       :   this.getId(),
+	            id       : this.getId(),
 	            text     : this.getDescription(),
 	            readOnly : this.getReadOnly(),
 	            added    : false,
@@ -372,18 +384,12 @@ angular
 			return testCode;
 		},
 
-		// getDto: function(){
-		// 	return {
-		// 		code: this.rec.code,
-		// 		hasSimpleTest: this.rec.hasSimpleTest,
-		// 		simpleTestInputs: this.rec.simpleTestInputs,
-		// 		simpleTestOutput: this.rec.simpleTestOutput,
-		// 		inDispute: this.rec.inDispute,
-		// 		disputeFunctionText: '',
-		// 		disputeTestText: this.rec.disputeTestText,
-		// 		messageType: this.rec.messageType
-		// 	};
-		// }
+		getDisputeDTO: function(){
+			return {
+				id: this.rec.id,
+				disputeText: this.rec.disputeTestText
+			};
+		}
 	};
 
 	return Test;

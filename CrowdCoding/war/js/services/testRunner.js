@@ -118,7 +118,7 @@ angular
 
 		// check if the function exists
 		var testedFunction = functionsService.get(id);
-		console.log('loaded fun v '+testedFunction.version);
+		// console.log('loaded fun v '+testedFunction.version);
 		if( testedFunction === -1 ){
 			throw new Error('no function with id ' + id + ' exists!');
 		}
@@ -261,13 +261,13 @@ angular
 
 		// check that the tests to run are specified 
 		if( this.testedFunctionId === undefined ){
-			throw new Error('no specified function id to test!');
+			throw new Error('Test Runner: no specified function id to test!');
 			return -1;
 		}
 
 		// check that the tests to run are specified 
 		if( this.tests === undefined || this.tests.length == 0 ){
-			throw new Error('no specified tests to run!');
+			throw new Error('Test Runner: no specified tests to run!');
 			return -1;
 		}
 

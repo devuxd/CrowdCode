@@ -17,7 +17,7 @@ Debugger.logCall = function( functionName, inputs, output ){
 
 	// create and populate the record
 	var record = {};
-	record.isUsed = true;
+	// record.isEdited
 	record.inputs = [];
 	for( var i in inputs )
 		record.inputs[i] = JSON.stringify( inputs[i] );

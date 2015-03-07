@@ -7,7 +7,6 @@
 
  function renderHeader(functionName, parameters)
  {
-    console.log(parameters);
  	var header='function '+functionName+'(';
 	for(var index in parameters)
 		header += parameters[index].name + (index==parameters.length-1 ? "" :", ");
