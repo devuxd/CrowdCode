@@ -45,6 +45,7 @@ angular
 		// override $$updated method of AngularFire FirebaseArray factory
 		$$updated: function(snap) {
 			var rec = this.$getRecord( snap.name() );
+			console.log('updating test ',rec,(new Date()).getTime());
 			if( angular.isObject(rec) ) {
 				// apply changes to the record
 				var changed = $firebaseUtils.updateRec(rec, snap);
@@ -77,12 +78,22 @@ angular
 		// the function with id = functionId
 		getImplementedByFunctionId: function(functionId){
 			var returnList = [];
+			console.log('searching implemented for fun'+functionId);
 			angular.forEach( objectsList, function( test, key){
 				if( test.getFunctionId() == functionId && test.isImplemented()){
 					returnList.push(test);
 				}	
 			});
 
+			return returnList;
+		},
+		getImplementedIdsByFunctionId: function(functionId){
+			var returnList = [];
+			angular.forEach( objectsList, function( test, key){
+				if( test.getFunctionId() == functionId && test.isImplemented()){
+					returnList.push( test.getId() );
+				}	
+			});
 			return returnList;
 		},
 		// retrieve all the tests belonging to
@@ -171,24 +182,24 @@ angular
 			return true;
 		},
 
-		searchAndAdd: function(functionId, functionName, inputsValue, outputValue){
-			var test = this.search(functionName, inputsValue);
+		// searchAndAdd: function(functionId, functionName, inputsValue, outputValue){
+		// 	var test = this.search(functionName, inputsValue);
 
-			if( test === null ){
-				test = new Test();
-				test.setId(++lastId);
+		// 	if( test === null ){
+		// 		test = new Test();
+		// 		test.setId(++lastId);
 
-				test.setImplemented(true);
-				test.setMessageType("Test in firebase");
-				test.setFunctionId( functionId );
-			    test.setFunctionName( functionName );
-			 	test.setSimpleTest(inputsValue,outputValue);
-				test.setDescription("auto generated for test purposes");
-				test.buildCode();
-				this.set(test);
-			}
-			else console.log("TEST FOUND");
-		},
+		// 		test.setImplemented(true);
+		// 		test.setMessageType("Test in firebase");
+		// 		test.setFunctionId( functionId );
+		// 	    test.setFunctionName( functionName );
+		// 	 	test.setSimpleTest(inputsValue,outputValue);
+		// 		test.setDescription("auto generated for test purposes");
+		// 		test.buildCode();
+		// 		this.set(test);
+		// 	}
+		// 	else console.log("TEST FOUND");
+		// },
 
 		buildStubsByFunctionName: function(functionName){
 			var tests = this.getByFunctionName(functionName);
@@ -227,9 +238,10 @@ angular
 
 		    // for each test push the test case entry in the test cases list
 		    angular.forEach(tests, function(test, index) {
+		    	console.log( 'id of the test is ', test.getId() )
 		        testCases.push( test.getTestCase() );
 		    });
-
+		    console.log(testCases);
 		    return testCases;
 		},
 
@@ -330,7 +342,7 @@ angular
 
 		getTestCase: function(){
 			return {
-	            id       :   this.getId(),
+	            id       : this.getId(),
 	            text     : this.getDescription(),
 	            readOnly : this.getReadOnly(),
 	            added    : false,
@@ -370,6 +382,13 @@ angular
 			// console.log('test code for '+this.rec.description+ ':'+testCode);
 			this.rec.code = testCode;
 			return testCode;
+		},
+
+		getDisputeDTO: function(){
+			return {
+				id: this.rec.id,
+				disputeText: this.rec.disputeTestText
+			};
 		}
 	};
 

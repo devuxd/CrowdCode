@@ -14,7 +14,7 @@ angular
 		get : function(id){
 			var microtaskSync = $firebase(new Firebase($rootScope.firebaseURL+'/microtasks/'+id));
 			var microtask = microtaskSync.$asObject();
-			
+
 			return microtask;
 		},
 
@@ -28,6 +28,7 @@ angular
 			var disablePoint = autoSkip||false;
 			// submit to the server
 			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip='+(skip? 'true' : 'false') + '&disablepoint=' +(disablePoint ? 'true':'false'), formData)
+
 				.success(function(data, status, headers, config) {
 					// submit to Firebase
 					microtask.submission = formData;
@@ -47,7 +48,7 @@ angular
 			// ask the microtask id
 			$http.get('/' + projectId + '/ajax/fetch')
 				.success(function(data, status, headers, config) {
-					deferred.resolve(data);	
+					deferred.resolve(data);
 				})
 				.error(function(data, status, headers, config) {
 					deferred.reject(data);

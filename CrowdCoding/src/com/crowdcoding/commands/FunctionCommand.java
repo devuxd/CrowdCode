@@ -45,8 +45,8 @@ public abstract class FunctionCommand extends Command {
 		return new AddTest(functionID, testID, testDescription);
 	}
 
-	public static FunctionCommand writeTestJobQueue(long functionID, int functionVersion) {
-		return new WriteTestJobQueue(functionID, functionVersion);
+	public static FunctionCommand writeTestJobQueue(long functionID, int functionVersion, String implementedIds) {
+		return new WriteTestJobQueue(functionID, functionVersion, implementedIds);
 	}
 
 	public static FunctionCommand testBecameImplemented(long functionID,
@@ -306,15 +306,18 @@ public abstract class FunctionCommand extends Command {
 	protected static class WriteTestJobQueue extends FunctionCommand {
 		private long functionID;
 		private int functionVersion;
-
-		public WriteTestJobQueue(long functionID, int functionVersion) {
+		private String implementedIds;
+		
+		public WriteTestJobQueue(long functionID, int functionVersion,String implementedIds) {
 			super(functionID);
 			this.functionID = functionID;
 			this.functionVersion=functionVersion;
+			this.implementedIds = implementedIds;
 		}
 
 		public void execute(Function function, String projectId) {
-			FirebaseService.writeTestJobQueue(functionID,functionVersion, projectId);
+			FirebaseService.writeTestJobQueue(functionID,functionVersion, implementedIds, projectId);
+			System.out.println("@@@@@ ASKING TEST JOB @@@@@@");
 		}
 	}
 

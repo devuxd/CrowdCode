@@ -3,7 +3,7 @@
 ////////////////////
 angular
     .module('crowdCode')
-    .factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,TestRunnerFactory) {
+    .factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','TestList','functionsService','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,TestList,functionsService,TestRunnerFactory) {
     var user = {};
 
  	// retrieve the firebase references
@@ -82,18 +82,57 @@ angular
 			var jobRef = queueRef.child('/'+jobData.functionId);
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
-			var testRunner = new TestRunnerFactory.instance({submitToServer: true});
-			testRunner.setTestedFunction( jobData.functionId );
-			if( testRunner.runTests() == -1){
-				jobRef.onDisconnect().cancel();
-				whenFinished();
+
+			var implementedIdsJob    = jobData.implementedIds.split(',');
+			var implementedIdsClient = TestList.getImplementedIdsByFunctionId( jobData.functionId );
+			var functionClient = functionsService.get( jobData.functionId );
+			var unsynced = false;
+
+			// CHECK THE SYNC OF THE IMPLEMENTED TESTS
+			if( implementedIdsJob.length != implementedIdsClient.length ){
+				unsynced = true;
 			} else {
-				testRunner.onTestsFinish(function(){
-					console.log('------- tests finished received');
+				for( var v in implementedIdsJob ){
+					if( implementedIdsClient.indexOf( parseFloat(implementedIdsJob[v]) ) == -1 ){
+						unsynced = true;
+					}
+				}
+			}
+
+			// CHECK THE SYNC OF THE FUNCTION VERSION
+			if( !unsynced && functionClient.version != jobData.functionVersion ){
+				unsynced = true;
+			}
+
+			// if some of the data is out of sync
+			// put back the job into the queue
+			if( unsynced ){
+				console.log('REBOUNCING');
+				$timeout(function(){
+					jobRef.set( jobData );
 					jobRef.onDisconnect().cancel();
 					whenFinished();
-				});
+				},500);
+			} else {
+				var testRunner = new TestRunnerFactory.instance({submitToServer: true});
+				testRunner.setTestedFunction( jobData.functionId );
+				try {
+					testRunner.runTests();
+					testRunner.onTestsFinish(function(){
+						console.log('------- tests finished received');
+						jobRef.onDisconnect().cancel();
+						whenFinished();
+					});
+				} catch(e){
+					console.log('Exception in the TestRunner',e.stack);
+					jobRef.set( jobData );
+					jobRef.onDisconnect().cancel();
+					whenFinished();
+				}
 			}
+
+
+			
 		});
 	};
 

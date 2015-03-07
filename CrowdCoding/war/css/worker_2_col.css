@@ -755,8 +755,8 @@ table.test td:first-child { width:20%; text-align: right; padding-right:5px; }
 
 
 .test-result.passed { background-color: #dff0d8; }
-.test-result.failed { background-color: #f2dede; }
-.test-result.disputed { background-color: #DAD2B7; }
+.test-result.failed { background-color: #F7B2B2; }
+.test-result.disputed { background-color: #FFB280; }
 
 .test-collapsable-list .toggle .passed { font-family: 'Lato' !important; font-weight: bold; color:green;}
 .test-collapsable-list .toggle .failed  { font-family: 'Lato' !important; font-weight: bold; color:red;}
@@ -1262,6 +1262,7 @@ pre.json .jsonKey { color: black; }
 	border-bottom: none !important;
 	background-color: rgb(166, 200, 223);
 }
+.nav-tabs > li { margin-bottom: -3px;}
 .nav-tabs > li > a {
 	background-color: rgb(166, 200, 223) !important;
 	margin: 0px;

@@ -111,6 +111,8 @@ self.addEventListener('message', function(e){
 
 				finalCode = finalCode.replace(/console\.log/g,'Debugger.log');
 
+				console.log('tested fun code', testedCode);
+				console.log('stubs',data.stubs)
 				// console.log(finalCode);
 
 				try{
@@ -187,7 +189,7 @@ self.addEventListener('message', function(e){
 					Debugger.log("EXCEPTION: " + e.message + " at line "+line);
 
 					resultMessage = { 
-						errors     : true,
+						errors     : "EXCEPTION: " + e.message + " at line "+line,						
 						output     : { 'expected': "", 'actual': "", 'message': "", 'result':  false}
 					};
 				}

@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
+import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionParameterDTO;
@@ -22,6 +23,7 @@ import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
+import com.crowdcoding.dto.TestDisputedDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -66,7 +68,7 @@ public class Function extends Artifact
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
-	private boolean needsDebugging=true;	         // true iff Function is failing the (implemented) unit tests
+	
 
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> calleesId = new ArrayList<Long>();
@@ -81,7 +83,10 @@ public class Function extends Artifact
 	private List<String> pseudoCallersName = new ArrayList<String>();
 	private List<Long>   pseudoCallersId = new ArrayList<Long>();
 
-	private boolean isTestAndDebugOut=false;
+	private boolean needsDebugging = false; // true iff Function is failing the (implemented) unit tests
+	private boolean isTestCasesOut = false;
+	private boolean isDebugOut     = false;
+	private boolean isDebugInQueue = false;
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
@@ -220,20 +225,10 @@ public class Function extends Artifact
 	{
 		return StringEscapeUtils.escapeEcmaScript(getFullCode());
 	}
-	public boolean isTestAndDebugOut()
-	{
-		return isTestAndDebugOut;
-	}
-
 
 	// ------- TEST CASES
 
-	private void testAndDebugCompleted()
-	{
-		isTestAndDebugOut=false;
-		ofy().save().entity(this).now();
-	}
-
+	
 	public List<Ref<Test>> getTestCases(String projectId)
 	{
 		// Build refs for each test case
@@ -260,9 +255,6 @@ public class Function extends Artifact
 	// Adds the specified test for this function
 	public void addTest(long testID, String testDescription)
 	{
-
-		this.needsDebugging=true;
-
 		testsId.add(testID);
 		testsImplemented.add(false);
 		testsDescription.add(testDescription);
@@ -280,7 +272,6 @@ public class Function extends Artifact
 	{
 		if (this.isWritten != isWritten)
 		{
-
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();
 			storeToFirebase(projectId);
@@ -309,32 +300,44 @@ public class Function extends Artifact
 		//System.out.println("needed"+this.isActivated+"microtaskOut"+microtaskOut+"testCaseOut"+testCaseOut);
 		//if the function is needed
 		if(this.isActivated){
-			// If there is currently not already a microtask being done on this function,
-			// determine if there is work to be done
-			if ( microtaskOut == null && !queuedMicrotasks.isEmpty())
-				makeMicrotaskOut( ofy().load().ref(queuedMicrotasks.remove()).now() );
-
-			if (!isTestAndDebugOut && !queuedTestAndDebugMicrotask.isEmpty())
-				makeTestAndDebugOut( ofy().load().ref(queuedTestAndDebugMicrotask.remove()).now() );
-
-			if ( microtaskOut == null && !isTestAndDebugOut)
-			{
-				// Microtask must have been described, as there is no microtask out to describe it.
-				if (isWritten && this.needsDebugging && !this.waitForTestResult){
-					DebugTestFailure debug = new DebugTestFailure(this,projectId);
-					makeTestAndDebugOut( debug );
-					System.out.println("-----> FUNCTION ("+this.id+") "+this.name+": debugTestFailure spawned with key "+ Microtask.keyToString(debug.getKey()));
-				}
+			// if there is no work in progress and there is work waiting
+			// make the first microtask in queue out
+			if ( microtaskOut == null && !queuedMicrotasks.isEmpty()){
+				Microtask mtask = ofy().load().ref(queuedMicrotasks.remove()).now();
+				
+				// if is a debug test failure
+				if( mtask instanceof DebugTestFailure ) {
+					// if no write test cases out
+					// make the microtask out
+					if( !isTestCasesOut ){
+						isDebugOut = true;
+						makeMicrotaskOut( mtask );
+					} 
+					
+					// otherwise enqueue again
+					// the debug test failure
+					else {
+						queueMicrotask( mtask, projectId );
+					}
+				} 
+				// otherwise put out the microtask
+				else 
+					makeMicrotaskOut( mtask );
 			}
+
+			// if there aren't write test cases or debugging microtask out and the
+			// queue is not empty, make the first out
+			if ( !isDebugOut && !isTestCasesOut && !queuedTestAndDebugMicrotask.isEmpty())
+				makeTestCasesOut( ofy().load().ref( queuedTestAndDebugMicrotask.remove()).now() );
 		}
 	}
 
 
 
 	// Makes the specified microtask out for work
-	protected void makeTestAndDebugOut(Microtask microtask)
+	protected void makeTestCasesOut(Microtask microtask)
 	{
-		isTestAndDebugOut = true;
+		isTestCasesOut = true;
 		ofy().save().entity(this).now();
 		ProjectCommand.queueMicrotask(microtask.getKey(), null);
 
@@ -367,28 +370,42 @@ public class Function extends Artifact
 	// Determines if at least one unit tests is implemented
 	private boolean unitTestsImplemented()
 	{
-		if(testsId.size()==0)
+		if(testsId.size()==0) 
 			return false;
 		else{
 			for (Boolean implemented : testsImplemented)
-			{
 				if( implemented )
 					return true;
-			}
+			
+			// if we're here, no tests were implemented
+			return false;
 		}
-		return false;
 	}
 
 
-	private void runTestsIfReady()
-	{
-	//	Boolean allImplemented = allUnitTestsImplemented();
-		Boolean oneOmplemented = unitTestsImplemented();
-
-		if(isWritten && oneOmplemented && this.needsDebugging && ! this.waitForTestResult && ! isTestAndDebugOut() ){
+	private void runTestsIfReady(){
+		Boolean oneImplemented = unitTestsImplemented();
+		// function written +
+		// not waiting for test result +
+		// at least one of the tests is implemented +
+		// the function needs debugging
+		if( isWritten && !this.waitForTestResult && oneImplemented && this.needsDebugging ){
 			// enqueue test job in firebase
+			
+			String implementedIds = "";
+			int index;
+			int size = this.testsId.size();
+			for( index = 0; index < size ; index++){
+				if( this.testsImplemented.get(index) ){
+
+					implementedIds += this.testsId.get(index) + ",";
+				}
+			}
+			if( implementedIds.length() > 0 )
+				implementedIds = implementedIds.substring(0, implementedIds.length()-1 );
+			
 			this.waitForTestResult=true;
-			FunctionCommand.writeTestJobQueue(this.getID(), this.version);
+			FunctionCommand.writeTestJobQueue(this.getID(), this.version, implementedIds);
 		}
 		ofy().save().entity(this).now();
 
@@ -396,17 +413,14 @@ public class Function extends Artifact
 
 	private void onWorkerEdited(FunctionDTO dto, String projectId)
 	{
-		this.needsDebugging=true;
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.
 		String strippedOldFullDescrip = (this.getParametersAndReturn()).replace(" ", "").replace("\n", "");
 		String strippedNewFullDescrip = (dto.getParametersAndReturn()).replace(" ", "").replace("\n", "");
-
 		Boolean descChanged = !strippedOldFullDescrip.equals(strippedNewFullDescrip);
 		Boolean nameChanged = !this.name.equals(dto.name);
 		if ( descChanged || nameChanged )
 			notifyDescriptionChanged(dto,descChanged,nameChanged);
-
 
 		// Update the function data
 		this.code = dto.code;
@@ -415,7 +429,6 @@ public class Function extends Artifact
 		this.header = dto.header;
 
 		List<FunctionParameterDTO> parameters = dto.parameters;
-
 		this.paramNames.clear();
 		this.paramTypes.clear();
 		this.paramDescriptions.clear();
@@ -425,7 +438,6 @@ public class Function extends Artifact
 			this.paramTypes.add(parameter.type);
 			this.paramDescriptions.add(parameter.description);
 		}
-
 		this.returnType=dto.returnType;
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
 
@@ -434,31 +446,18 @@ public class Function extends Artifact
 
 		// Look for pseudocode and psuedocalls
 		List<PseudoFunctionDTO> submittedPseudoFunctions = dto.pseudoFunctions;
-		List<String> newPseudoFunctionsName = new ArrayList<String>();
+		List<String> newPseudoFunctionsName        = new ArrayList<String>();
 		List<String> newPseudoFunctionsDescription = new ArrayList<String>();
-		if(submittedPseudoFunctions.isEmpty())
-		{
-			List<String> pseudoCode = findPseudocode(code);
-			if(pseudoCode.isEmpty())
-			{
-				setWritten(true);
-			}
-			else
-			{
-				setWritten(false);
-				//if there aren't any other micortask enqueu for the artifact
-				if(queuedMicrotasks.isEmpty())
-					queueMicrotask(new WriteFunction(this,projectId), projectId);
-			}
-		}
-		else
-		{
+		
+		// if pseudo functions were submitted 
+		if( ! submittedPseudoFunctions.isEmpty() ){
+			
 			setWritten(false);
-
-			for (PseudoFunctionDTO submittedPseudoFunction : submittedPseudoFunctions)
-			{
-				if (!pseudoFunctionsName.contains(submittedPseudoFunction.name))
-				{
+			// for each of them, 
+			for (PseudoFunctionDTO submittedPseudoFunction : submittedPseudoFunctions){
+				// if not already in the previously submitted pseudo functions,
+				// spawn a reuse search microtask
+				if (!pseudoFunctionsName.contains(submittedPseudoFunction.name)){
 					// Spawn microtask immediately, as it does not require access to the function itself
 					Microtask microtask = new ReuseSearch(this, submittedPseudoFunction.name, submittedPseudoFunction.description, projectId);
 					ProjectCommand.queueMicrotask(microtask.getKey(), null);
@@ -466,14 +465,28 @@ public class Function extends Artifact
 				newPseudoFunctionsDescription.add(submittedPseudoFunction.description);
 				newPseudoFunctionsName.add(submittedPseudoFunction.name);
 			}
+			
+		} 
+		// if there is pseudocode
+		else if( !findPseudocode(code).isEmpty() ){
+			setWritten(false);
+			// and if the artifact microtask queue is empty, spawn a 
+			// new write function microtask
+			if(queuedMicrotasks.isEmpty())
+				queueMicrotask(new WriteFunction(this,projectId), projectId);
 
+		} 
+		// otherwise the function is complete
+		else {
+			setWritten(true);
 		}
+		
 		// Update the list of psudoFunctions to match the current (distinct) pseudofunctons now in the code
-		this.pseudoFunctionsName=newPseudoFunctionsName;
-		this.pseudoFunctionsDescription= newPseudoFunctionsDescription;
+		this.pseudoFunctionsName        = newPseudoFunctionsName;
+		this.pseudoFunctionsDescription = newPseudoFunctionsDescription;
 
 		storeToFirebase(projectId);
-		//save inside run test
+		
 		runTestsIfReady();
 
 		lookForWork();
@@ -595,7 +608,7 @@ public class Function extends Artifact
 
 	public void writeTestCasesCompleted(TestCasesDTO dto, long disputeId, String projectId)
 	{
-		testAndDebugCompleted();
+		isTestCasesOut = false;
 
 		if(dto.inDispute){
 			disputeFunctionSignature(dto.disputeFunctionText, this.getID(), projectId);
@@ -652,39 +665,33 @@ public class Function extends Artifact
 		onWorkerEdited(dto, projectId);
 	}
 
-	public void debugTestFailureCompleted(FunctionDTO dto, String projectId)
+	public void debugTestFailureCompleted( DebugDTO dto, String projectId)
 	{
-		testAndDebugCompleted();
+		isDebugOut = false;
 
-		// Check to see if there any disputed tests
-		//Current: If it doesn't have a test case number indicating a dispute, all passed.
-		//That should change in the future, to indicate which ones passed
-		if(dto.testId != null)
-		{
-			// creates a disputed test case
-			TestCommand.dispute(dto.testId, dto.description, version);
-			testReturnUnimplemented(dto.testId);
-			this.needsDebugging=true;
-			// Since there was an issue, ignore any code changes they may have submitted.
+		if( !dto.hasPseudo ){
+			// PUT TESTS IN DISPUTE
+			if( dto.disputedTests.size() > 0 )
+			{
+				for( TestDisputedDTO disputedTest: dto.disputedTests){
 
-		} else { //at present, reaching here means all tests passed.
+					TestCommand.dispute( disputedTest.id, disputedTest.disputeText, version);
+					testReturnUnimplemented( disputedTest.id );
+				}
+			} 
 
-		//	if(!this.code.trim().equals(dto.code.trim()))
-			//{ //integrate the new changes
-				onWorkerEdited(dto, projectId);
-			//}
-		}
+			// CREATE THE STUBS 
+			// Update or create tests for any stub
+			for (TestDTO testDTO : dto.stubs)
+			{
+				TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
+			}
+			
+			
+		} 
 
-		// Save the entity again to the datastore
-		ofy().save().entity(this).now();
-
-
-		// Update or create tests for any stub
-		for (TestDTO testDTO : dto.stubs)
-		{
-			TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
-		}
-
+		microtaskOutCompleted();
+		onWorkerEdited( dto.functionDTO, projectId);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -694,9 +701,11 @@ public class Function extends Artifact
 	// This method notifies the function that it has just passed all of its tests.
 	public void passedTests(String projectId)
 	{
-		waitForTestResult=false;
+		waitForTestResult = false;
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("PassedTests", this));
+		
 		this.needsDebugging = false;
+		
 		ofy().save().entity(this).now();
 
 		lookForWork();
@@ -708,10 +717,14 @@ public class Function extends Artifact
 	public void failedTests(String projectId)
 	{
 
-		waitForTestResult=false;
+		waitForTestResult = false;
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("FailedTests", this));
 
-		this.needsDebugging = true;
+		
+		if ( isWritten && !this.waitForTestResult && microtaskOut == null && this.queuedMicrotasks.isEmpty() ){
+			DebugTestFailure debug = new DebugTestFailure(this,projectId);
+			this.queueMicrotask( debug, projectId);
+		}
 
 		ofy().save().entity(this).now();
 
@@ -725,7 +738,8 @@ public class Function extends Artifact
 	// Provides notification that a test has transitioned to being implemented
 	public void testBecameImplemented(long testId)
 	{
-		this.needsDebugging=true;
+		this.needsDebugging = true;
+		
 		int position = testsId.indexOf(testId);
 		if(position!=-1)
 			testsImplemented.set(position, true);
@@ -736,7 +750,6 @@ public class Function extends Artifact
 	// Provides notification that a test has transitioned to not being implemented
 	public void testReturnUnimplemented(long testId)
 	{
-		this.needsDebugging=true;
 		int position = testsId.indexOf(testId);
 		if(position!=-1)
 			testsImplemented.set(position, false);

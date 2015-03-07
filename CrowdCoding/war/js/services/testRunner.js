@@ -21,7 +21,9 @@ angular
 			stubs         : {},
 			debug         : [],
 			output        : {},
+			errors        : undefined,
 			executionTime : 0,
+			inTimeout     : false,
 			execNum: 0,
 			ready         : function(){
 				if( this.output.result !== undefined )
@@ -39,6 +41,19 @@ angular
 			    for (var l in this.debug) { newLogs.push(this.debug[l]);  }
 			    for (var l in logs)       { newLogs.push(logs[l]); 	      }
 			 	this.debug = newLogs;
+			},
+			status : function(){
+				if( this.ready() ){
+					if( this.rec.inDispute )
+						return 'disputed';
+					else if( this.inTimeout )
+						return 'timeout';
+					else if( this.passed() )
+						return 'passed';
+					else
+						return 'failed'
+				}
+				else return 'running';
 			}
 		};
 	};
@@ -103,7 +118,7 @@ angular
 
 		// check if the function exists
 		var testedFunction = functionsService.get(id);
-		console.log('loaded fun v '+testedFunction.version);
+		// console.log('loaded fun v '+testedFunction.version);
 		if( testedFunction === -1 ){
 			throw new Error('no function with id ' + id + ' exists!');
 		}
@@ -246,13 +261,13 @@ angular
 
 		// check that the tests to run are specified 
 		if( this.testedFunctionId === undefined ){
-			throw new Error('no specified function id to test!');
+			throw new Error('Test Runner: no specified function id to test!');
 			return -1;
 		}
 
 		// check that the tests to run are specified 
 		if( this.tests === undefined || this.tests.length == 0 ){
-			throw new Error('no specified tests to run!');
+			throw new Error('Test Runner: no specified tests to run!');
 			return -1;
 		}
 
@@ -280,6 +295,9 @@ angular
 	    	'testedCode'  : this.testedFunctionCode
 	    });
 
+	    angular.forEach( this.tests, function(test){
+	    	test.output = {};
+	    });
 		this.runCurrentTest();
 	};
 
@@ -337,21 +355,13 @@ angular
 			test.output = { 'expected': undefined, 'actual': undefined, 'message': undefined, 'result':  false} ;
 			test.debug[ Date.now() ] = "ERROR: execution terminated due to timeout";
 			test.executionTime = self.maxExecutionTime;
+			test.inTimeout = true;
 
 			self.processTestFinished();
 
 		} , self.maxExecutionTime);
 
 	    // start the execution posting the exec message with the code
-	    console.log({ 
-			'cmd'      : 'exec', 
-			'number'   : self.currentTestIndex,
-			'testCode' : test.buildCode(),
-			'stubs'    : JSON.stringify(self.stubs),
-	    	'calleeNames': self.calleeList.join(' '),
-	    	'execNum': test.execNum++
-		});
-
 		this.worker.postMessage( { 
 			'cmd'      : 'exec', 
 			'number'   : self.currentTestIndex,
@@ -373,8 +383,10 @@ angular
 			// and update the usedStubs
 			if( e.data.errors ) {
 				test.stubs   = data.usedStubs !== undefined && data.usedStubs.length > 0 ? data.usedStubs : {};
+				test.errors  = e.data.errors;
 			} else {
 				test.stubs   = data.usedStubs ;
+				test.errors  = undefined;
 			}
 
 			var logs = JSON.parse(data.debug);
@@ -383,6 +395,7 @@ angular
 			test.output        = data.output;
 			test.executionTime = data.executionTime;
 			test.number        = self.currentTestIndex; 
+			test.inTimeout     = false;
 
 		  	self.processTestFinished();
 		};

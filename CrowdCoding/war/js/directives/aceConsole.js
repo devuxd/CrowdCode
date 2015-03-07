@@ -21,10 +21,10 @@ function aceConsole($timeout,$compile,$filter) {
                 });
 
                 $scope.$watch('logs',function( logs ){
-                    console.log('logs updated ',logs);
+                    
                     if( logs !== undefined ){
                         var textLogs = '';
-                        logs = $filter('orderBy')(logs,'timestamp',false);
+                        // logs = $filter('orderBy')(logs,'timestamp',false);
                         for( var l in logs ){
                             textLogs += logs[l].statement + '\n';
                         }

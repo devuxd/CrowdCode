@@ -4,9 +4,11 @@ angular
     .directive('reminder', [ '$rootScope', '$compile', '$interval', '$firebase', 'firebaseUrl','$modal','userService', function($rootScope, $compile, $interval, $firebase,firebaseUrl,$modal,userService) {
 
     var microtaskInterval;
-    var microtaskTimeout  = 10 * 60 * 1000;     //in second
-    var microtaskFirstWarning = 4 * 60 *1000;  //in second
+
+    var microtaskTimeout  = 100* 10 * 60 * 1000;     //in second
+    var microtaskFirstWarning = 100* 4 * 60 *1000;  //in second
     var timeInterval=500;//interval time in milliseconds
+
     var fetchTime = 0;
    // var startTime = 0;
     var popupWarning;
@@ -21,7 +23,6 @@ angular
             $scope.microtaskFirstWarning=microtaskFirstWarning;
             $scope.microtaskTimeout=microtaskTimeout;
             $rootScope.$on('tutorial-finished',function(){
-                console.log("taken form reminder"); 
                 userService.setFirstFetchTime();
             });
             // listen on the event 'run-tutorial'
@@ -34,7 +35,6 @@ angular
             });
             $rootScope.$on('stop-reminder',function( event ){
                 $scope.skipMicrotaskIn=undefined;
-                console.log("reminer stopped");
                 if(microtaskInterval!==undefined)
                     $interval.cancel(microtaskInterval);
                 if(popupWarning!==undefined)
@@ -66,13 +66,13 @@ angular
                 fetchTime.$loaded().then(function(){
                     if(typeof(fetchTime.time)=='number'){
                         $scope.skipMicrotaskIn = fetchTime.time + microtaskTimeout - startTime ;
-                        console.log("reminder initialized, you have "+ $scope.skipMicrotaskIn + " millisecons more");
+                        // console.log("reminder initialized, you have "+ $scope.skipMicrotaskIn + " millisecons more");
 
                         microtaskInterval = $interval(doReminder, timeInterval); 
                     }
                     else
                     {
-                        console.log("error reminder not started", fetchTime.time);
+                        // console.log("error reminder not started", fetchTime.time);
                     }
                 });
 
@@ -95,7 +95,7 @@ angular
             };
 
             var endReminder = function(){
-                console.log("skipping: "+microtaskType);
+                // console.log("skipping: "+microtaskType);
                 if(microtaskInterval!==undefined)
                     $interval.cancel(microtaskInterval);
                 microtaskInterval=undefined;

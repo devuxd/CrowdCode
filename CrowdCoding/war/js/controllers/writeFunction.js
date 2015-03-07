@@ -49,10 +49,8 @@ angular
     
     
     function collectFormData(event, microtaskForm) {
-        var error = "";
-        var text= $scope.codemirror.getValue();
-
-        //if there are error and pseudosegments
+        
+        //if there are errors
         if ( microtaskForm.$invalid){
             $alert({
                title: 'Error!',

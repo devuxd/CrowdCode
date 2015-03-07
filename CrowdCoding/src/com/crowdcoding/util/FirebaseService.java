@@ -76,10 +76,10 @@ public class FirebaseService
 		enqueueWrite( "{\"canceled\": \"" + canceled + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
-	public static void writeTestJobQueue(long functionID, int functionVersion, String projectId)
+	public static void writeTestJobQueue(long functionID, int functionVersion, String implementedIds, String projectId)
 	{
 		System.out.println("appending test job for function "+functionID);
-		enqueueWrite("{\"functionId\": \"" + functionID + "\", \"functionVersion\" : \"" +functionVersion +"\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{\"functionId\": \"" + functionID + "\", \"functionVersion\" : \"" +functionVersion +"\", \"implementedIds\" : \"" +implementedIds +"\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
 	}
 	public static String getAllCode(String projectId)
 	{

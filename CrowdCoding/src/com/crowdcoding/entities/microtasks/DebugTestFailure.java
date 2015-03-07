@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.firebase.DebugTestFailureInFirebase;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
@@ -99,8 +100,14 @@ public class DebugTestFailure extends Microtask
 	}
 
 	protected void doSubmitWork( DTO dto, String workerID, String projectId)
-	{	System.out.println("--> DEBUG TEST FAILURE: submitting microtask");
-		function.get().debugTestFailureCompleted((FunctionDTO) dto, projectId);
+	{	
+		System.out.println("--> DEBUG TEST FAILURE: submitting microtask");
+		System.out.println(dto);
+		
+		DebugDTO debugDTO = (DebugDTO) dto;
+		
+		
+		function.get().debugTestFailureCompleted( debugDTO , projectId);
 		FirebaseService.postToNewsfeed(workerID, (
 	    		new NewsItemInFirebase(
 	    			this.submitValue,
@@ -114,18 +121,15 @@ public class DebugTestFailure extends Microtask
 				projectId
 	    );
 
-		FunctionDTO fDTO = (FunctionDTO) dto;
-		if( fDTO.autoSubmit != null && fDTO.autoSubmit != true ){
-
-			//WorkerCommand.awardPoints(workerID, this.submitValue);
-			// increase the stats counter
+		
+		if( debugDTO.autoSubmit != null && debugDTO.autoSubmit != true ){
 			WorkerCommand.increaseStat(workerID, "debugs",1);
 		}
 	}
 
 	protected Class getDTOClass()
 	{
-		return FunctionDTO.class;
+		return DebugDTO.class;
 	}
 
 	public Artifact getOwningArtifact()

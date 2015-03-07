@@ -17,15 +17,17 @@ angular
         }
     };
 
+    var autosubmit = false;
     var testRunner = new TestRunnerFactory.instance();
     testRunner.setTestedFunction($scope.microtask.functionID);
     testRunner.onTestsFinish(processTestsFinish);
     
+    var lastRunnedCode = '';
+
     $scope.previousTests = [];
     $scope.currentTest   = null;
     $scope.passedTests   = [];
     $scope.firstTimeRun  = true; 
-    $scope.testsRunning  = false;
 
 
     $scope.stubs      = {}; // contains all the stubs used by all the tests
@@ -38,6 +40,7 @@ angular
     $scope.data = {};
     $scope.data.code = $scope.funct.getFunctionCode();
     $scope.data.editor = null;
+    $scope.data.running = false;
 
     $scope.keepCode = false;
     $scope.toggleKeepCode = function(){ $scope.keepCode = !$scope.keepCode };
@@ -60,6 +63,7 @@ angular
                 // if all the tests passed
                 // auto submit this microtask
                 if( data.overallResult ){
+                    autosubmit = true;
                     $scope.$emit('collectFormData', true);
                 }
                 // otherwise remove the non passed tests
@@ -83,29 +87,31 @@ angular
                                 $scope.previousTests.push( test )
                         } 
                     });
-                    console.log( 'how many previous tests: ' + $scope.previousTests.length );
-                    testRunner.setTests( allTests );
+                    testRunner.setTests( [$scope.currentTest].concat( $scope.previousTests ) );
                 }
 
                 $scope.firstTimeRun = false;
             } 
         },0);
+
+        $scope.data.running = false;
     }
 
 
     function runTests(firstTime) {
-        if($scope.testsRunning) return false;
+        if( $scope.testsRunning ) return false;
 
-        $scope.activePanel = -1;
 
-        testRunner.setTestedFunctionCode( $scope.data.code );
+        lastRunnedCode = $scope.data.code;
+        testRunner.setTestedFunctionCode( lastRunnedCode );
 
         if( !$scope.firstTimeRun )
             testRunner.mergeStubs( $scope.currentTest.stubs );
 
         // push a message for for running the tests
         if( testRunner.runTests() != -1 ) {
-            $scope.testsRunning = true;
+            $scope.data.running = true;
+            console.log('running');
         }
 
         $scope.completed = 0;
@@ -118,59 +124,71 @@ angular
 
     
 
-    function collectFormData(event, data) {
+    function collectFormData(event, microtaskForm) {
 
         // CHECK IF THERE ARE FORM ERRORS
         var errors = "";
+        
+
 
 
         // TAKE THE FAILED TESTS THAT IS NOT IN DISPUTE
-        var failedNonInDispute = false;
+        var failedNonInDispute = 0;
         var disputeTextEmpty    = false;
         var inDispute = false;
         var allTests = $scope.previousTests.concat($scope.currentTest);
-       
+        var disputed = [];
 
+        var parsedFunction = functionsService.parseFunctionFromAce($scope.data.editor);
+        var hasPseudo = ( $scope.data.code.indexOf('//#') > -1 || parsedFunction.pseudoFunctions.length > 0) ;
+
+        // scan the list of tests and search
+        // if there are failed tests non in dispute
+        // or there are disputed tests with empty dispute description
         angular.forEach( allTests, function(test){
-            console.log(!test.passed(),test.rec.inDispute);
             if( !test.passed() && ( test.rec.inDispute === undefined || !test.rec.inDispute )  ){
-                console.log('failed non in disp');
-               failedNonInDispute = true;
+                failedNonInDispute++;
             } else if( test.rec.inDispute ){
-                console.log('indispute');
-                inDispute = true;
-                if( test.rec.disputeTestText === undefined || test.rec.disputeTestText.length == 0 ){
+                if( !disputeTextEmpty && (test.rec.disputeTestText === undefined || test.rec.disputeTestText.length == 0) ){
                     disputeTextEmpty = true;
+                } else {
+                    disputed.push( test.getDisputeDTO() );
                 }
             }
         });
 
-        if( failedNonInDispute )
-            errors += "Please fix all the failed tests or dispute them! \n";
-        else if( disputeTextEmpty )
+        if( /* dispute descriptions empty */ disputeTextEmpty )
             errors += "Please, fill the dispute texts!";
-        console.log(errors);
+        else if ( /* if other form errors */ microtaskForm.$invalid )
+            errors += "Please, fix all the errors before submit."
+        else if ( /* code doesn't have pseudocall or pseudocode */ !hasPseudo) {
+            console.log('no pseudo', failedNonInDispute )
+            if( /* at least one test failed and is not disputed */ failedNonInDispute > 0 )
+                errors += "Please fix all the failed tests or dispute them!";
+            else if( /* code is changed since last test run */ lastRunnedCode != $scope.data.code )
+                errors += "The code is changed since last tests run. \n Please, run again the tests before submit.";
+
+        } 
+        
 
         if (errors === "") {
-            if ( inDispute ) {
-                formData = {
-                    name         : $scope.dispute.test.rec.description,
-                    testId       : $scope.dispute.test.rec.id,
-                    description  : $scope.dispute.description
-                };
-            } else {
+            var formData = {
+                functionDTO   : parsedFunction,
+                stubs         : [],
+                disputedTests : [],
+                hasPseudo     : hasPseudo,
+                autoSubmit    : autosubmit
+            };
+            
+            if( !hasPseudo ){
                 // INSERT STUBS AS NEW TESTS IF THEY ARE NOT FOUND
                 var stubs = [];
-
-                console.log($scope.currentTest);
-
                 if( $scope.currentTest != null ){
                     angular.forEach( $scope.currentTest.stubs, function(stubsForFunction, functionName) {
                         var stubFunction = functionsService.getByName( functionName );
                         angular.forEach(stubsForFunction, function(stub, index) {
 
-                            var test = TestList.search( functionName, stub.inputs );
-                            if( test === null ){
+                            if( TestList.search( functionName, stub.inputs ) === null ){
 
                                 var testCode = 'equal(' + stubFunction.name + '(';
                                 var inputs = [];
@@ -199,12 +217,14 @@ angular
                         });
                     });
                 }
-                
-
-                 // create form data to send
-                formData       = functionsService.parseFunctionFromAce($scope.data.editor);
                 formData.stubs = stubs;
+
+                if ( disputed.length > 0 ) {
+                    formData.disputedTests = disputed;
+                } 
             }
+
+            console.log(formData);
             $scope.$emit('submitMicrotask', formData);
 
         } else {
@@ -213,7 +233,7 @@ angular
                 content: errors,
                 type: 'danger',
                 show: true,
-                duration: 3,
+                duration: 5,
                 template: '/html/templates/alert/alert_submit.html',
                 container: 'alertcontainer'
             });

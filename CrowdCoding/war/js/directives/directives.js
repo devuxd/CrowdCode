@@ -199,12 +199,17 @@ angular
     var errors = [];
     var code = "";
     var valid;
-    var statements =0;
+    var statements = 0;
+    var startStatements = undefined;
+    var maxNewStatements = undefined;
 
     return {
         restrict: 'A',
         require: 'ngModel',
+        scope: { maxNewStatements: '=' },
         link: function(scope, elm, attrs, ctrl) {
+            if( scope.maxNewStatements !== undefined ) 
+                maxNewStatements = scope.maxNewStatements;
 
             functionId = attrs.functionId;
             valid = true;
@@ -323,11 +328,16 @@ angular
         if(analyzeBody)
         {
             var functionsData = JSHINT.data().functions;
-            if(functionsData.length>1)
-            {
+            if(functionsData.length>1){
                 errors.push("Only one function is allowed, if you need more use the function stubs");
             }
+
             statements = functionsData[0].metrics.statements;
+            if( startStatements == undefined ) startStatements = functionsData[0].metrics.statements;
+
+            if( maxNewStatements != undefined && statements > ( startStatements + maxNewStatements) ){
+                errors.push("You are not allowed to insert more than "+maxNewStatements+" statements");
+            }
 
         }
         if (!lintResult) {

@@ -48,7 +48,7 @@ function getJSHintForPseudocalls()
 function getJSHintForStatements()
 {
 	// if releated to a parameter you can check box in JLINT website add here
-	return {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true, maxstatements : 10};
+	return {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true };
 }
 
 function getUnitTestGlobals()
