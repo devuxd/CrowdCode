@@ -13,7 +13,8 @@ angular
 	var userProfile    = fbRef.child('/workers/' + workerId);
 
 	var isConnected    = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-
+	var offsetRef 	   = new Firebase("https://crowdcode.firebaseio.com/.info/serverTimeOffset");
+	
 	var userRef        = fbRef.child('/status/loggedInWorkers/' + workerId);
 	var logoutRef      = fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
@@ -22,6 +23,11 @@ angular
 	var updateLogInTime=function(){
 		userRef.setWithPriority({connected:true,name:workerHandle,timeStamp:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
 	};
+	var offset;
+	offsetRef.on("value", function(snap) {
+	  offset = snap.val();
+	});
+
 
 	// when firebase is connected
 	isConnected.on('value', function(snapshot) {
@@ -153,17 +159,20 @@ angular
 			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
-			
-
 
 			var timeoutCallBack = function(){
-				//retrieves the information of the loGin field
+				//time of the client plus the timezone offset given by firebase
+				var clientTime = new Date().getTime() + offset;
+				//retrieves the information of the login field
 				var userLoginRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
+
 				userLoginRef.once("value", function(userLogin) {
-					//if the user doesn't uddate the timer for more than 20 seconds than log it out
-				  	if(userLogin.val()===null || Firebase.ServerValue.TIMESTAMP - userLogin.val().timeStamp > 30000){
+
+					//if the user doesn't uddate the timer for more than 30 seconds than log it out
+				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){
 				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
 					  		.success(function(data, status, headers, config) {
+					  			console.log("logged out seccessfully");
 					  			userLoginRef.remove();
 					  			$interval.cancel(interval);
 					  			logoutWorker.onDisconnect().cancel();
@@ -181,7 +190,6 @@ angular
 
 			};
 
-			
 			var interval = $interval(timeoutCallBack,10000);
 		});
 	};

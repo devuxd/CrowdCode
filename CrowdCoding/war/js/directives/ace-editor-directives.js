@@ -318,8 +318,10 @@ angular
 
                 if( ngModel.$viewValue == "") 
                     scope.stringValue = "";
-                else
+                else{
+                    console.log (typeof ngModel.$viewValue);
                     scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
+                }
             };
 
             // update the ngModel.$viewValue when the UI changes 

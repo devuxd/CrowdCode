@@ -200,17 +200,19 @@ angular
     var code = "";
     var valid;
     var statements = 0;
-    var startStatements = undefined;
-    var maxNewStatements = undefined;
+    var startStatements;
+    var maxNewStatements;
+    var defaultMaxNewStatements=10;
 
     return {
         restrict: 'A',
         require: 'ngModel',
         scope: { maxNewStatements: '=' },
         link: function(scope, elm, attrs, ctrl) {
-            if( scope.maxNewStatements !== undefined ) 
-                maxNewStatements = scope.maxNewStatements;
-
+            //initialize the max number of statements allowed to the scope value or the default value
+            maxNewStatements = scope.maxNewStatements || defaultMaxNewStatements;
+            //force  startStatements to undefined (necessary from the second time that the directive is used)
+            startStatements = undefined;
             functionId = attrs.functionId;
             valid = true;
 
@@ -221,7 +223,7 @@ angular
             ctrl.$formatters.unshift(function(viewValue) {
                 code=viewValue;
                 validate(code);
-                $rootScope.$emit('statementsUpdated', statements);
+                $rootScope.$emit('statementsUpdated', ( statements - startStatements ));
                 if (errors.length > 0) {
                     ctrl.$setValidity('function', false);
                     ctrl.$error.function_errors = errors;
@@ -333,9 +335,11 @@ angular
             }
 
             statements = functionsData[0].metrics.statements;
-            if( startStatements == undefined ) startStatements = functionsData[0].metrics.statements;
+            if( startStatements === undefined )
+                startStatements = functionsData[0].metrics.statements;
 
-            if( maxNewStatements != undefined && statements > ( startStatements + maxNewStatements) ){
+
+            if( statements > ( startStatements + maxNewStatements) ){
                 errors.push("You are not allowed to insert more than "+maxNewStatements+" statements");
             }
 

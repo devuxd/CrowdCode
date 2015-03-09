@@ -63,7 +63,7 @@ angular
                 $scope.$watch('annotations', updateAnnotations);
 
                 function onClick(e){
-                    if( $scope.callees != undefined ){ 
+                    if( $scope.callees !== undefined && $scope.callees !== null){ 
                         var editor = e.editor;
                         var pos = editor.getCursorPosition();
                         var token = editor.session.getTokenAt(pos.row, pos.column);
