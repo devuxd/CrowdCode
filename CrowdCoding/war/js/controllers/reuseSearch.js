@@ -18,7 +18,6 @@ angular
 
         $scope.selectedResult = -2;
         $scope.results = functionsService.findMatches($scope.text, $scope.funct.name);
-        console.log($scope.results);
     };
     $scope.select = function(index) {
         $scope.selectedResult = index;

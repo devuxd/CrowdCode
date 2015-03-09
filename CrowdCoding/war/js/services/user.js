@@ -103,12 +103,18 @@ angular
 			if( !unsynced && functionClient.version != jobData.functionVersion ){
 				unsynced = true;
 			}
+			//if this job has be done more than 20 times force unsync to false so that the test can be executed
+			if( parseInt(jobData.bounceCounter) > 20) {
+				unsynced = false;
+				console.log(parseInt(jobData.bounceCounter));
+			}
 
 			// if some of the data is out of sync
 			// put back the job into the queue
-			if( unsynced ){
+			if( unsynced){
 				console.log('REBOUNCING');
 				$timeout(function(){
+					jobData.bounceCounter = parseInt(jobData.bounceCounter) + 1;
 					jobRef.set( jobData );
 					jobRef.onDisconnect().cancel();
 					whenFinished();
@@ -130,9 +136,6 @@ angular
 					whenFinished();
 				}
 			}
-
-
-			
 		});
 	};
 

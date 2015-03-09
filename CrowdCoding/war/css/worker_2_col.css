@@ -313,6 +313,11 @@ h1, h2, h3, h4 {
 	border-radius: 0px;
 }
 
+.label-reminder { 
+	background: white;
+  	padding-right: 3px;
+  	padding-left: 3px;
+}
 
 .button-bar {
 	padding-left: 10px;
@@ -836,7 +841,7 @@ span.rating-star.full {
 
 /* Search results styles in reuseSearch */
 .list-element { background-color: rgba(85,85,85,0.15); border-bottom:1px solid rgba(85,85,85,0.5); cursor:pointer;}
-.list-element.selected { background-color:rgba(85,85,85,0.30); }
+.list-element.selected { background-color:rgba(85,85,85,0.40); }
 
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
 ins {  background-color: #c6ffc6;  text-decoration: none; }
