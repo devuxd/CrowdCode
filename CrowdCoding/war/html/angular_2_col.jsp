@@ -229,6 +229,7 @@
 	<script src="/js/directives/microtaskForm.js"></script>
 	<script src="/js/directives/testResult.js"></script>
 	<script src="/js/directives/stubsPanel.js"></script>
+	<script src="/js/directives/stubsModal.js"></script>
 	<script src="/js/directives/functionEditor.js"></script>
 	<script src="/js/directives/directives.js"></script>
 	<script src="/js/directives/tutorial.js"></script>

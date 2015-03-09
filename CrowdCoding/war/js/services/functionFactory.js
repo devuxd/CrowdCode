@@ -226,8 +226,8 @@ function instrumentedFunction(){
 		try {
 			returnValue = '%functionMockName%'.apply( null, argsCopy );
 		} catch(e) {
-			Debugger.log('There was an exception in the callee \'' + '%functionNameStr%' + '\': '+e.message);
-			Debugger.log("Use the CALLEE STUBS panel to stub this function.");
+			Debugger.log(-1,'There was an exception in the callee \'' + '%functionNameStr%' + '\': '+e.message);
+			Debugger.log(-1,"Use the CALLEE STUBS panel to stub this function.");
 		}
 	}
 

@@ -66,6 +66,13 @@ self.addEventListener('message', function(e){
 			testedCode = data.testedCode;
 
 
+			var lines = testedCode.split('\n');
+			for( var l = 0; l < lines.length ; l++ ){
+				lines[l] = lines[l].replace(/console\.log\(/g,'Debugger.log('+l+',');
+			}
+			testedCode = lines.join('\n');
+
+
 			// import test helper libraries
 			// importScripts(baseUrl + '/include/jshint.js');
 			importScripts(baseUrl + '/js/test-utils.js');
@@ -102,17 +109,18 @@ self.addEventListener('message', function(e){
 				//add the received code
 				var finalCode = '';
 				finalCode += globalDef;
-				// finalCode += allDefs;
 				finalCode += testedCode;
 				finalCode += allCode;
-				finalCode += "Debugger.log('// -- TEST EXEC # " + data.execNum + " --'); \n";
+				finalCode += "Debugger.log(-1,'// -- TEST EXEC # " + data.execNum + " --'); \n";
 				finalCode += data.testCode ;
 				finalCode += '//# sourceURL=test-runner.js';
 
-				finalCode = finalCode.replace(/console\.log/g,'Debugger.log');
 
-				console.log('tested fun code', testedCode);
-				console.log('stubs',data.stubs)
+				var firstLine = globalDef.split('\n').length - 1;
+
+
+				// console.log('tested code', finalCode);
+				// console.log('stubs',data.stubs)
 				// console.log(finalCode);
 
 				try{
@@ -160,7 +168,7 @@ self.addEventListener('message', function(e){
 
 					// console.log("end ok!",getNowTime()-startTime);
 					resultMessage = { 
-						errors        : false,
+						errors        : undefined,
 						output        : assertionResults[ assertionResults.length -1 ], 
 						stubMap       : Debugger.callStubsMap,
 						stubs         : Debugger.stubs,
@@ -171,7 +179,6 @@ self.addEventListener('message', function(e){
 
 				catch (e) {
 
-					var firstLine = (globalDef + allDefs).split('\n').length - 1;
 					// var pos = e.stack.search(/<anonymous>\:(\d+)/gm);
 				 //    var matches = e.stack.match(/<anonymous>\:(\d+)\:(\d+)/gm);
 				 //    var str = matches[0].substr("<anonymous>".length);
@@ -185,11 +192,9 @@ self.addEventListener('message', function(e){
 				    	line = parseInt(split[1]) - firstLine  ;
 				    	col  = parseInt(split[2]) ;
 				    }
-
-					Debugger.log("EXCEPTION: " + e.message + " at line "+line);
-
+				    console.log(firstLine,line,e.stack);
 					resultMessage = { 
-						errors     : "EXCEPTION: " + e.message + " at line "+line,						
+						errors     : { line: line-1, message: e.message }, // " + e.message + " at line "+line,						
 						output     : { 'expected': "", 'actual': "", 'message': "", 'result':  false}
 					};
 				}

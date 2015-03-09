@@ -4,12 +4,12 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('DebugTestFailureController', ['$scope', '$timeout', '$rootScope', '$alert', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $timeout, $rootScope, $alert, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
+    .controller('DebugTestFailureController', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $timeout, $rootScope, $alert, $modal, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
     
 
     $scope.tabs = {
         list: ['Test Result','Code','Console','Stubs','Previous Tests'],
-        active : 0,
+        active : 2,
         select : function(selectedIndex){
             if( selectedIndex >= 0 && selectedIndex < this.list.length ){
                 this.active = selectedIndex;
@@ -41,6 +41,11 @@ angular
     $scope.data.code = $scope.funct.getFunctionCode();
     $scope.data.editor = null;
     $scope.data.running = false;
+    $scope.data.annotations = [];
+    $scope.data.callees = [];
+    $scope.data.onCalleeClick = function(calleeName){
+        $scope.$broadcast('open-stubs-'+calleeName);
+    };
 
     $scope.keepCode = false;
     $scope.toggleKeepCode = function(){ $scope.keepCode = !$scope.keepCode };
@@ -50,6 +55,7 @@ angular
     $scope.runTests();
 
     
+
 
 
     function processTestsFinish(data){
@@ -77,12 +83,7 @@ angular
                             allTests.push( test );
 
                             if( !test.passed() ) {
-                                $scope.currentTest = test;
-                                // $scope.$watch( function(){ 
-                                //     return Object.keys($scope.currentTest.debug).join('\n'); 
-                                // },function(){
-                                //     $scope.data.console = $scope.currentTest.getConsole();
-                                // });
+                                $scope.currentTest = test; 
                             } else 
                                 $scope.previousTests.push( test )
                         } 
@@ -92,9 +93,46 @@ angular
 
                 $scope.firstTimeRun = false;
             } 
+
+            
+
+            var error = $scope.currentTest.errors;
+            if( error !== undefined ){
+                $scope.data.annotations = [];
+                $scope.data.annotations.push({
+                    row:  error.line,
+                    text: 'error: '+error.message + '',
+                    type: 'error'
+                });
+            } else {
+                var annotations = [];
+                var debug = $scope.currentTest.debug; 
+                if( debug !== undefined ){
+                    for( var l in debug ){
+                        if( debug[l].line != -1 ){
+                            var line = debug[l].line;
+                            annotations.push( {
+                                row:  debug[l].line,
+                                text: debug[l].position + ': ' +debug[l].statement + '',
+                                type: 'info'
+                            });
+                        }   
+                    }
+                }
+                $scope.data.annotations = annotations;
+            }
+
+            $scope.data.callees = Object.keys($scope.currentTest.stubs);
+            // var tokens = [];
+
+
+            $scope.data.running = false;
+
         },0);
 
-        $scope.data.running = false;
+        
+
+        
     }
 
 
@@ -136,7 +174,9 @@ angular
         var failedNonInDispute = 0;
         var disputeTextEmpty    = false;
         var inDispute = false;
-        var allTests = $scope.previousTests.concat($scope.currentTest);
+        var allTests = $scope.currentTest == null ? 
+                        $scope.previousTests      : 
+                        $scope.previousTests.concat($scope.currentTest);
         var disputed = [];
 
         var parsedFunction = functionsService.parseFunctionFromAce($scope.data.editor);

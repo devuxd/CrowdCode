@@ -708,6 +708,7 @@ public class Function extends Artifact
 
 		ofy().save().entity(this).now();
 
+		storeToFirebase(projectId);
 		lookForWork();
 		System.out.println("FUNCTION ID: "+ this.getID()+" ALL TEST PASSED");
 

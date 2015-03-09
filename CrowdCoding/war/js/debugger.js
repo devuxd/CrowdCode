@@ -51,13 +51,15 @@ Debugger.log = function(){
 	var logs = Debugger.logs;
 	var statement = '';
 	for( var v in arguments ){
-		var value = arguments[v];
-		if( value === null || value === undefined )
-			statement =  value + '' ;
-		else if( typeof value == 'number' || typeof value == 'string' )
-			statement =  value ;
-		else
-			statement = JSON.stringify(value, "\t") ;
-		logs.push({ timestamp: Date.now(), statement: statement});
+		if( v > 0 ){
+			var value = arguments[v];
+			if( value === null || value === undefined )
+				statement =  value + '' ;
+			else if( typeof value == 'number' || typeof value == 'string' )
+				statement =  value ;
+			else
+				statement = JSON.stringify(value, "\t") ;
+			logs.push({ timestamp: Date.now(), line: arguments[0], statement: statement, position: v});
+		}
 	}	
 };
