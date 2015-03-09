@@ -38,7 +38,7 @@ angular
 			},
 			addToConsole : function( logs ){
 				var newLogs = [];
-			    for (var l in this.debug) { newLogs.push(this.debug[l]);  }
+			    // for (var l in this.debug) { newLogs.push(this.debug[l]);  }
 			    for (var l in logs)       { newLogs.push(logs[l]); 	      }
 			 	this.debug = newLogs;
 			},

@@ -52,7 +52,6 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 				$scope.microtask = microtasks.get(microtaskKey);
 				$scope.microtask.$loaded().then(function() {
 
-				console.log("microtask loaded: "+$scope.microtask);
 
 					// retrieve the related function
 					if (angular.isDefined($scope.microtask.functionID) || angular.isDefined($scope.microtask.testedFunctionID)) { 
@@ -81,7 +80,6 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 								$scope.$emit('run-reminder', $scope.microtask.type,function (){ $scope.$emit('skipMicrotask',true); });
 							}
 							else {
-								console.log("end sent");
 								$scope.$emit('stop-reminder');
 								$scope.templatePath = templatesURL + "no_microtask.html";
 								$scope.noMicrotask = true;
@@ -102,7 +100,6 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 						}
 						else {
-							console.log("end sent");
 
 							$scope.$emit('stop-reminder');
 							$scope.templatePath = templatesURL + "no_microtask.html";
@@ -150,7 +147,6 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 				// if a fetchData is provided
 				if( fetchData !== undefined ){
 
-					console.log(fetchData);
 					if(  fetchData.firstFetch == '1')
 						userService.setFirstFetchTime();
 
@@ -160,7 +156,6 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 				else {
 					var fetchPromise = microtasks.fetch();
 					fetchPromise.then(function(fetchData){
-						console.log(fetchData);
 
 						if(  fetchData.firstFetch == '1')
 							userService.setFirstFetchTime();

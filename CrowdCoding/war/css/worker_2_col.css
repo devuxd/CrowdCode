@@ -1,4 +1,4 @@
-po/*
+/*
 
 #3F81AC - blue - header, primary buttons
 
@@ -567,7 +567,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 
 .chat .message { float:left; width:240px;margin-left:5px; word-wrap: break-word; line-height: 25px}
 .chat .message .nickname { font-weight:bold;}
-.chat .message .text{ font-style:italic; margin:0px; }
+.chat .message .text{ margin:0px; }
 .chat .message .time { font-weight:bold; font-size:0.7em; text-align: right}
 
 .chat-alert{
@@ -740,9 +740,6 @@ table.test td:first-child { width:20%; text-align: right; padding-right:5px; }
 	background-color: rgb(223, 223, 223);
 }
 
-.panel.test-result {
-	border-bottom: 1px solid rgba(85,85,85,0.5);
-}
 .panel.test-result table td {
 	padding-top:2px;
 }
@@ -754,9 +751,9 @@ table.test td:first-child { width:20%; text-align: right; padding-right:5px; }
 }
 
 
-.test-result.passed { background-color: #dff0d8; }
-.test-result.failed { background-color: #F7B2B2; }
-.test-result.disputed { background-color: #FFB280; }
+.test-result .passed { background-color: #dff0d8; }
+.test-result .failed { background-color: #F7B2B2; }
+.test-result .disputed { background-color: #FFB280; }
 
 .test-collapsable-list .toggle .passed { font-family: 'Lato' !important; font-weight: bold; color:green;}
 .test-collapsable-list .toggle .failed  { font-family: 'Lato' !important; font-weight: bold; color:red;}
@@ -889,6 +886,7 @@ del {  background-color: #ffc6c6; }
 }
 
 /* Style for highlighted lines in CodeMirror */
+.ace_call { position:absolute; cursor:pointer;  background-color: rgba(110,0,0,1);}
 .acePseudoCall{ background-color: rgba(131, 155, 120, 0.5); color: white !important; position:absolute;}
 .pseudoCall { background-color: rgba(122, 61, 61, 0.7); color: white !important; }
 .pseudoCode { background-color: rgba(74, 119, 69, 0.7); color: white !important; }
@@ -1189,6 +1187,9 @@ pre.json .jsonBoolean { color: purple; }
 pre.json .jsonNull { color: black; }
 pre.json .jsonKey { color: black; }
 
+.panel-group {
+	margin-bottom:0px;
+}
 .panel-group .panel+.panel {
 	margin:0px;
 	border:none;
@@ -1299,3 +1300,10 @@ pre.json .jsonKey { color: black; }
 
 .stubs-panel ul.callee-list > li.active {  background-color: rgb(142, 192, 225);  }
 .stubs-panel ul.callee-list > li:hover {  background-color: rgb(142, 192, 225);  }
+
+.ace_gutter-cell.ace-gutter-error { background-color:yellow; }
+
+.ace_gutter-cell.ace_breakpoint{ 
+    border-radius: 20px 0px 0px 20px; 
+    box-shadow: 0px 0px 1px 1px red inset; 
+} 

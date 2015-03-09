@@ -1329,7 +1329,14 @@ angular
     return {
         restrict: 'E',
         scope: true,
-        template: '<b>Stats:</b><span class="stats"><!--<span><span class="badge">{{microtaskCountObj.$value}}</span> microtasks</span>--><span><span class="badge">{{functionsCount}}</span> functions</span><span><span class="badge">{{testsCount}}</span> tests</span></span>',
+        template: '<b>Stats:</b>'
+                  +'<span class="stats">'
+                  +'<!--<span><span class="badge">{{microtaskCountObj.$value}}</span> microtasks</span>-->'
+                  +'<span><span class="badge">{{functionsCount}}</span> functions</span>'
+                  +'<span><span class="badge">{{testsCount}}</span> tests</span>'
+                  +'<span><span class="badge">{{loc}}</span> loc</span>'
+                  +'</span>',
+
         link: function($scope, $element) {
 
             //$scope.microtaskCountObj  = $firebase(new Firebase($rootScope.firebaseURL+'/status/microtaskCount')).$asObject();
@@ -1339,6 +1346,17 @@ angular
             functionsRef.on('child_added',function (snapshot){
                 $scope.functionsCount ++;
             });
+
+            $scope.loc = 0;
+            functionsRef.on('value',function(snap){
+                var functs = snap.val();
+                $scope.loc = 0;
+                angular.forEach(functs,function(val){
+                    $scope.loc += val.linesOfCode;
+                })
+            });
+
+
         
             var testsRef = new Firebase($rootScope.firebaseURL+'/artifacts/tests');
             $scope.testsCount = 0;
