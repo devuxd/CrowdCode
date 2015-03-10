@@ -962,12 +962,15 @@ angular
                     news.calleeFunction = functionsService.get(news.microtask.calleeID);
                 },
                 'DebugTestFailure': function(news) {
-                   news.funct = new FunctionFactory(news.microtask.submission);
-
-                   if(news.microtask.submission.testId!==undefined){
-                        news.test= TestList.get(news.microtask.submission.testId);
-                        news.funct=functionsService.get(news.microtask.functionID);
-                       // console.log(news.funct);
+                   news.funct = new FunctionFactory(news.microtask.submission.functionDTO);
+                   var reviewTest;
+                   news.tests=[];
+                   if(news.microtask.submission.disputedTests.length>0){
+                        for(var index in news.microtask.submission.disputedTests){
+                            reviewTest=TestList.get(news.microtask.submission.disputedTests[index].id);
+                            reviewTest.disputeText = news.microtask.submission.disputedTests[index].disputeText;
+                            news.tests.push(reviewTest);
+                        }
                    }
 
                 },
