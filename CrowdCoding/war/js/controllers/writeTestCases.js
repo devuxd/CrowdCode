@@ -143,7 +143,7 @@ angular
                 formData.disputeFunctionText = $scope.dispute.text;
             } 
 
-            console.log(formData);
+            //console.log(formData);
 
             // call microtask submission
             $scope.$emit('submitMicrotask', formData);
