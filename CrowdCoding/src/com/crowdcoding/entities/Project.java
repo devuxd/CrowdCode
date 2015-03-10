@@ -454,9 +454,9 @@ public class Project
 				else if(microtaskType.equals(DebugTestFailure.class))
 				{
 
-					DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, FunctionDTO.class);
+					DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, DebugDTO.class);
 					System.out.println(dto.disputedTests);
-					if ( dto.disputedTests != null)
+					if(dto.disputedTests.size() > 0 || dto.hasPseudo)
 					{
 						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 					}
