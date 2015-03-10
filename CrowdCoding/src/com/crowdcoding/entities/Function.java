@@ -68,7 +68,7 @@ public class Function extends Artifact
 	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
-	
+
 
 	// fully implemented (i.e., not psuedo) calls made by this function
 	private List<Long> calleesId = new ArrayList<Long>();
@@ -228,7 +228,7 @@ public class Function extends Artifact
 
 	// ------- TEST CASES
 
-	
+
 	public List<Ref<Test>> getTestCases(String projectId)
 	{
 		// Build refs for each test case
@@ -274,7 +274,6 @@ public class Function extends Artifact
 		{
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();
-			storeToFirebase(projectId);
 			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented",Boolean.toString(isWritten), this));
 		}
 	}
@@ -304,7 +303,7 @@ public class Function extends Artifact
 			// make the first microtask in queue out
 			if ( microtaskOut == null && !queuedMicrotasks.isEmpty()){
 				Microtask mtask = ofy().load().ref(queuedMicrotasks.remove()).now();
-				
+
 				// if is a debug test failure
 				if( mtask instanceof DebugTestFailure ) {
 					// if no write test cases out
@@ -312,16 +311,17 @@ public class Function extends Artifact
 					if( !isTestCasesOut ){
 						isDebugOut = true;
 						makeMicrotaskOut( mtask );
-					} 
-					
+					}
+
 					// otherwise enqueue again
 					// the debug test failure
 					else {
-						queueMicrotask( mtask, projectId );
+						queuedMicrotasks.add(Ref.create(mtask.getKey()));
+						ofy().save().entity(this).now();
 					}
-				} 
+				}
 				// otherwise put out the microtask
-				else 
+				else
 					makeMicrotaskOut( mtask );
 			}
 
@@ -370,13 +370,13 @@ public class Function extends Artifact
 	// Determines if at least one unit tests is implemented
 	private boolean unitTestsImplemented()
 	{
-		if(testsId.size()==0) 
+		if(testsId.size()==0)
 			return false;
 		else{
 			for (Boolean implemented : testsImplemented)
 				if( implemented )
 					return true;
-			
+
 			// if we're here, no tests were implemented
 			return false;
 		}
@@ -391,7 +391,7 @@ public class Function extends Artifact
 		// the function needs debugging
 		if( isWritten && !this.waitForTestResult && oneImplemented && this.needsDebugging ){
 			// enqueue test job in firebase
-			
+
 			String implementedIds = "";
 			int index;
 			int size = this.testsId.size();
@@ -403,7 +403,7 @@ public class Function extends Artifact
 			}
 			if( implementedIds.length() > 0 )
 				implementedIds = implementedIds.substring(0, implementedIds.length()-1 );
-			
+
 			this.waitForTestResult=true;
 			FunctionCommand.writeTestJobQueue(this.getID(), this.version, implementedIds);
 		}
@@ -448,12 +448,12 @@ public class Function extends Artifact
 		List<PseudoFunctionDTO> submittedPseudoFunctions = dto.pseudoFunctions;
 		List<String> newPseudoFunctionsName        = new ArrayList<String>();
 		List<String> newPseudoFunctionsDescription = new ArrayList<String>();
-		
-		// if pseudo functions were submitted 
+
+		// if pseudo functions were submitted
 		if( ! submittedPseudoFunctions.isEmpty() ){
-			
+
 			setWritten(false);
-			// for each of them, 
+			// for each of them,
 			for (PseudoFunctionDTO submittedPseudoFunction : submittedPseudoFunctions){
 				// if not already in the previously submitted pseudo functions,
 				// spawn a reuse search microtask
@@ -465,28 +465,28 @@ public class Function extends Artifact
 				newPseudoFunctionsDescription.add(submittedPseudoFunction.description);
 				newPseudoFunctionsName.add(submittedPseudoFunction.name);
 			}
-			
-		} 
+
+		}
 		// if there is pseudocode
 		else if( !findPseudocode(code).isEmpty() ){
 			setWritten(false);
-			// and if the artifact microtask queue is empty, spawn a 
+			// and if the artifact microtask queue is empty, spawn a
 			// new write function microtask
 			if(queuedMicrotasks.isEmpty())
 				queueMicrotask(new WriteFunction(this,projectId), projectId);
 
-		} 
+		}
 		// otherwise the function is complete
 		else {
 			setWritten(true);
 		}
-		
+
 		// Update the list of psudoFunctions to match the current (distinct) pseudofunctons now in the code
 		this.pseudoFunctionsName        = newPseudoFunctionsName;
 		this.pseudoFunctionsDescription = newPseudoFunctionsDescription;
 
 		storeToFirebase(projectId);
-		
+
 		runTestsIfReady();
 
 		lookForWork();
@@ -678,17 +678,17 @@ public class Function extends Artifact
 					TestCommand.dispute( disputedTest.id, disputedTest.disputeText, version);
 					testReturnUnimplemented( disputedTest.id );
 				}
-			} 
+			}
 
-			// CREATE THE STUBS 
+			// CREATE THE STUBS
 			// Update or create tests for any stub
 			for (TestDTO testDTO : dto.stubs)
 			{
 				TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
 			}
-			
-			
-		} 
+
+
+		}
 
 		microtaskOutCompleted();
 		onWorkerEdited( dto.functionDTO, projectId);
@@ -703,9 +703,9 @@ public class Function extends Artifact
 	{
 		waitForTestResult = false;
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("PassedTests", this));
-		
+
 		this.needsDebugging = false;
-		
+
 		ofy().save().entity(this).now();
 
 		storeToFirebase(projectId);
@@ -721,7 +721,7 @@ public class Function extends Artifact
 		waitForTestResult = false;
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("FailedTests", this));
 
-		
+
 		if ( isWritten && !this.waitForTestResult && microtaskOut == null && this.queuedMicrotasks.isEmpty() ){
 			DebugTestFailure debug = new DebugTestFailure(this,projectId);
 			this.queueMicrotask( debug, projectId);
@@ -740,7 +740,7 @@ public class Function extends Artifact
 	public void testBecameImplemented(long testId)
 	{
 		this.needsDebugging = true;
-		
+
 		int position = testsId.indexOf(testId);
 		if(position!=-1)
 			testsImplemented.set(position, true);
@@ -828,6 +828,7 @@ public class Function extends Artifact
 	{
 		HistoryLog.Init(projectId).addEvent(new MessageReceived("AddCall", this));
 		setWritten(false);
+		storeToFirebase(projectId);
 
 		queueMicrotask(new WriteCall(this, calleeId, pseudoFunctionName, projectId), projectId);
 	}
@@ -838,6 +839,7 @@ public class Function extends Artifact
 		calleesId.remove(calleeId);
 		setWritten(false);
 		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
 
 		queueMicrotask(new WriteFunction(this, calleeId, disputeText, projectId), projectId);
 	}
@@ -845,6 +847,8 @@ public class Function extends Artifact
 	public void calleeChangedInterface(String oldFullDescription, String newFullDescription, String projectId)
 	{
 		setWritten(false);
+		storeToFirebase(projectId);
+
 		queueMicrotask(new WriteFunction(this, oldFullDescription, newFullDescription, projectId), projectId);
 	}
 
@@ -856,6 +860,7 @@ public class Function extends Artifact
 	public void disputeFunctionSignature(String issueDescription, long disputeId,String projectId)
 	{
 		setWritten(false);
+		storeToFirebase(projectId);
 
 		queueMicrotask(new WriteFunction(this, issueDescription, disputeId, projectId), projectId);
 	}

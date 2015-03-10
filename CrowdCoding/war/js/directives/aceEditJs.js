@@ -51,7 +51,6 @@ angular
                 _editor.on('click',onClick);
 
                 // $scope.$watch('updateIf',updateIf);
-
                 $scope.$watch('annotations', updateAnnotations);
 
                 function onChange(e){

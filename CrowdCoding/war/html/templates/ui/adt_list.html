@@ -11,14 +11,12 @@
         </div>
         <div class="panel-collapse" bs-collapse-target>
             <div class="panel-body">
-                <div>{{ADT.description}}</div><br />
-                
-                
+                <div data-ng-bind-html="ADT.description | newline" ></div><br />
+
                 <div ng-if="::(ADT.structure.length>0)">
                     <h5 for="structure">DATA STRUCTURE</h5>
                     <pre ng-bind="::buildStructure(ADT)"></pre>
                 </div>
-
 
                 <div ng-if="::ADT.examples" ng-init="selectedExample=ADT.examples[0]" >
                     <h5 class="pull-left" for="exampleSelect">EXAMPLES:</h5>

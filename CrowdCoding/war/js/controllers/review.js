@@ -106,9 +106,9 @@ angular
 
             oldFunction = functionsService.get($scope.review.microtask.functionID);
             newFunction = new FunctionFactory ($scope.review.microtask.submission);
-            oldCode = oldFunction.getFullCode().split("\n");
+            oldCode = oldFunction.getFunctionCode().split("\n");
 
-            newCode = newFunction.getFullCode().split("\n");
+            newCode = newFunction.getFunctionCode().split("\n");
 
 
             diffRes = diff(oldCode, newCode);

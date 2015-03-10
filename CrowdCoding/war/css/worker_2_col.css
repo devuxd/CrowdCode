@@ -313,6 +313,11 @@ h1, h2, h3, h4 {
 	border-radius: 0px;
 }
 
+.label-reminder { 
+	background: white;
+  	padding-right: 3px;
+  	padding-left: 3px;
+}
 
 .button-bar {
 	padding-left: 10px;
@@ -750,7 +755,7 @@ table.test td:first-child { width:20%; text-align: right; padding-right:5px; }
 }
 
 
-.test-result .passed { background-color: #dff0d8; }
+.test-result .passed { background-color: #CFF5BF; }
 .test-result .failed { background-color: #F7B2B2; }
 .test-result .disputed { background-color: #FFB280; }
 
@@ -832,7 +837,7 @@ span.rating-star.full {
 
 /* Search results styles in reuseSearch */
 .list-element { background-color: rgba(85,85,85,0.15); border-bottom:1px solid rgba(85,85,85,0.5); cursor:pointer;}
-.list-element.selected { background-color:rgba(85,85,85,0.30); }
+.list-element.selected { background-color:rgba(85,85,85,0.40); }
 
 /* Styles for text diffs produced by PrettyTextDiff (e.g., as in WriteFunction) */
 ins {  background-color: #c6ffc6;  text-decoration: none; }
@@ -1253,8 +1258,8 @@ pre.json .jsonKey { color: black; }
 
 .diff { margin:0px; padding:0px; }
 .diff .line { width:100%; display:block; }
-.diff .line.added   { background-color:#eaffea;}
-.diff .line.removed { background-color:#ffecec;}
+.diff .line.added   { background-color:#CDFFCD;}
+.diff .line.removed { background-color:#FFD7D7;}
 
 .legend {width:10px;height:10px;display:inline-block;margin-left:2px;margin-right:2px;border:1px solid gray;}
 
