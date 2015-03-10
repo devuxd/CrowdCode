@@ -51,7 +51,6 @@ Debugger.getStubOutput = function( functionName, inputs ){
 Debugger.log = function(){
 	var logs = Debugger.logs;
 	var statement = '';
-	console.log(arguments);
 	for( var v in arguments ){
 		if( v > 0 ){
 			var value = arguments[v];

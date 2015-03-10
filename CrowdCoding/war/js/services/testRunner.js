@@ -209,8 +209,36 @@ angular
 			}	
 		});
 		this.stubs = stubs;
+		console.log('loaded stubs',stubs);
 	};
 
+
+
+	/*
+		merge the pre-loaded stubs with the passed
+		set of new stubs
+	*/
+	TestRunner.prototype.mergeStubs = function(newStubs){
+		var oldStubs = this.stubs;
+		angular.forEach( newStubs, function( fStubs, fName ){
+			// create new entry in the stubs with function name
+			// if doesn't exists
+			if( oldStubs[ fName ] === undefined )
+				oldStubs[ fName ] = {};
+			
+			// for each of the new stubs for the function,
+			// if the stub already exists, update the value 
+			// otherwise create add it
+			angular.forEach( fStubs, function( stub, key ){
+				// THE JSON IS OK FOR THE INPUTS, THE OUTPUT SHOULD BE PARSED
+				oldStubs[ fName ][ key ] = {};
+				oldStubs[ fName ][ key ].inputs = stub.inputs[i];
+				oldStubs[ fName ][ key ].output = JSON.parse( stub.output );
+
+			}); 
+		});
+		console.log('newStubs',newStubs);
+	};
 
 	/*
 		set the tested function code
@@ -226,31 +254,6 @@ angular
 	};
 
 	
-
-	/*
-		merge the pre-loaded stubs with the passed
-		set of new stubs
-	*/
-	TestRunner.prototype.mergeStubs = function(newStubs){
-		console.log('merging',newStubs);
-		var oldStubs = this.stubs;
-		angular.forEach( newStubs, function( fStubs, fName ){
-			// create new entry in the stubs with function name
-			// if doesn't exists
-			if( oldStubs[ fName ] === undefined )
-				oldStubs[ fName ] = {};
-			
-			// for each of the new stubs for the function,
-			// if the stub already exists, update the value 
-			// otherwise create add it
-			angular.forEach( fStubs, function( stub, key ){
-				oldStubs[ fName ][ key ] = {
-					inputs: angular.fromJson( stub.inputs ),
-					output: angular.fromJson( stub.output )
-				};
-			}); 
-		});
-	};
 	
 
 	TestRunner.prototype.runTests = function(){

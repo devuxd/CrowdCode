@@ -101,7 +101,6 @@ angular
             
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-                console.log(ngModel.$viewValue,typeof(ngModel.$viewValue));
                 if( ngModel.$viewValue == "") 
                     scope.prettyJson = "";
                 else if ( ngModel.$viewValue === undefined || ngModel.$viewValue == "undefined" )
@@ -151,7 +150,6 @@ angular
                     oldObj = safeJsonParse( scope.old );
                     newObj = safeJsonParse( scope.new );
 
-                    console.log(oldObj,newObj);
                     // initialize the diff result
                     var diffHtml = '';
 
@@ -182,12 +180,10 @@ angular
                             diffHtml += joinLines( newObj + '', 'line removed', 0);                    
 
                         scope.diffHtml = diffHtml;
-                        console.log('if branch')
-
                     }
                     // if the type of new is an object/array
                     else {
-                        console.log('else branch')
+
                         //console.log('compare obj');
 
                         var oldFields = Object.keys(oldObj);
@@ -328,13 +324,13 @@ angular
                     scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
                 }
 
-                console.log('ng-model',typeof ngModel.$viewValue,ngModel.$viewValue);
+
             };
 
             // update the ngModel.$viewValue when the UI changes 
             scope.$watch('stringValue', function() {
                 ngModel.$setViewValue( scope.stringValue );
-                console.log('stringValue',typeof scope.stringValue,scope.stringValue);
+                
             });
 
         },

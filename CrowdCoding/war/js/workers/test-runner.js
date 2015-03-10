@@ -68,6 +68,7 @@ self.addEventListener('message', function(e){
 
 			var lines = testedCode.split('\n');
 			for( var l = 0; l < lines.length ; l++ ){
+				lines[l] = lines[l].replace(/console\.log\(\)/g,'Debugger.log('+l+')');
 				lines[l] = lines[l].replace(/console\.log\(/g,'Debugger.log('+l+',');
 			}
 			testedCode = lines.join('\n');
@@ -119,8 +120,7 @@ self.addEventListener('message', function(e){
 
 
 				// console.log('tested code', finalCode);
-				// console.log('stubs',data.stubs)
-				console.log(data.testCode);
+				//console.log(finalCode);
 
 				try{
 

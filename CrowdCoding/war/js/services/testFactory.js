@@ -207,22 +207,15 @@ angular
 
 			angular.forEach(tests,function(test){
 				if( test.hasSimpleTest() ){
-					console.log('output',test.rec);
-					var outputs = test.rec.simpleTestOutput == "" ? "" : JSON.parse(test.rec.simpleTestOutput);
 
+					// the inputs in firebase are already stringified
+					// so the key is just a copy of the string value
+					// the output should be parsed instead!
 					var inputsKey = "["+test.rec.simpleTestInputs+"]";
-					//inputsKey = inputsKey.replace(/"/g, '');
-					// angular.forEach(test.rec.simpleTestInputs, function(value,key){
-					// 	inputsKey[JSON.stringify(key)] = value;				
-					// });
-
-					//inputsKey = JSON.stringify(test.rec.simpleTestInputs);
-
-					//console.error("LOADING STUB FOR "+inputsKey,test.rec.simpleTestInputs);
 
 					stubs[ inputsKey ] = { 
 						  inputs: test.rec.simpleTestInputs, 
-					      output: outputs
+					      output: test.rec.simpleTestOutput == "" ? "" : JSON.parse(test.rec.simpleTestOutput)
 					};
 
 				}
@@ -238,10 +231,10 @@ angular
 
 		    // for each test push the test case entry in the test cases list
 		    angular.forEach(tests, function(test, index) {
-		    	console.log( 'id of the test is ', test.getId() )
+
 		        testCases.push( test.getTestCase() );
 		    });
-		    console.log(testCases);
+
 		    return testCases;
 		},
 

@@ -96,47 +96,49 @@ angular
             } 
 
             
-
-            var error = $scope.currentTest.errors;
-            if( error !== undefined ){
-                $scope.data.annotations = [];
-                $scope.data.annotations.push({
-                    row:  error.line,
-                    text: 'error: '+error.message + '',
-                    type: 'error'
-                });
-            } else {
-                var annotations = [];
-                var debug = $scope.currentTest.debug; 
-                if( debug !== undefined ){
-                    for( var l in debug ){
-                        if( debug[l].line != -1 ){
-                            var line = debug[l].line;
-                            annotations.push( {
-                                row:  debug[l].line,
-                                text: debug[l].position + ': ' +debug[l].statement + '',
-                                type: 'info'
-                            });
-                        }   
+            if( $scope.currentTest != null ){
+                var error = $scope.currentTest.errors;
+                if( error !== undefined ){
+                    $scope.data.annotations = [];
+                    $scope.data.annotations.push({
+                        row:  error.line,
+                        text: 'error: '+error.message + '',
+                        type: 'error'
+                    });
+                } else {
+                    var annotations = [];
+                    var debug = $scope.currentTest.debug; 
+                    if( debug !== undefined ){
+                        for( var l in debug ){
+                            if( debug[l].line != -1 ){
+                                var line = debug[l].line;
+                                annotations.push( {
+                                    row:  debug[l].line,
+                                    text: debug[l].position + ': ' +debug[l].statement + '',
+                                    type: 'info'
+                                });
+                            }   
+                        }
                     }
+                    $scope.data.annotations = annotations;
                 }
-                $scope.data.annotations = annotations;
-            }
 
-            $scope.data.markers = [];
-            $scope.data.callees = Object.keys($scope.currentTest.stubs);
-            angular.forEach( $scope.data.callees,function(cName){
-                $scope.data.markers.push({ 
-                    regex: cName+'[\\s]*\\([\\s\\w\\[\\]\\+\\.\\,]*\\)', 
-                    token: 'ace_call' ,
-                    onClick: function(){
-                        $scope.$broadcast('open-stubs-'+cName);
-                    }
+                $scope.data.markers = [];
+                $scope.data.callees = Object.keys($scope.currentTest.stubs);
+                angular.forEach( $scope.data.callees,function(cName){
+                    $scope.data.markers.push({ 
+                        regex: cName+'[\\s]*\\([\\s\\w\\[\\]\\+\\.\\,]*\\)', 
+                        token: 'ace_call' ,
+                        onClick: function(){
+                            $scope.$broadcast('open-stubs-'+cName);
+                        }
+                    });
                 });
-            });
+            }
+            
             // var tokens = [];
 
-
+            console.log($scope.currentTest.stubs);
             $scope.data.running = false;
 
         },0);
