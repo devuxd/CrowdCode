@@ -2,7 +2,7 @@
 	<div 
 		class="ace_editor js-editor" 
 		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'twilight'  }" 
-		ng-model="stringValue" >
+		ng-model="code" >
 	</div> 
 	<div style=" " class="function-errors">
 		<textarea 
@@ -11,7 +11,7 @@
 			function-validator 
 			max-new-statements="10"
 			function-id="{{funct.getId()}}"
-			ng-model="stringValue" 
+			ng-model="code" 
 			ng-show="false">
 		</textarea>
 		<span class="recap" ng-if="functionForm.code.$error.function_errors.length > 0" > {{ functionForm.code.$error.function_errors.length }} problem(s) found: </span>

@@ -652,9 +652,8 @@ rgba(237,90,48,1)  Valencia - orange - review
 
 	cursor: pointer;
 	color: #575757;
-	margin-top: 10px;
-	margin-bottom: 2px;
 	font-size: 1em;
+	line-height: 1.5em;
 }
 
 .adt-list h5 {

@@ -6,7 +6,9 @@ angular
     .module('crowdCode')
     .controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase',  'functionsService','FunctionFactory', 'ADTService', '$alert', function($scope, $rootScope, $firebase,  functionsService, FunctionFactory, ADTService, $alert) {
     
-    $scope.codemirror = undefined;
+    $scope.data = {};
+    $scope.data.hasPseudo = false;
+    $scope.data.editor = null;
     $scope.$on('collectFormData', collectFormData);
 
 
@@ -44,7 +46,6 @@ angular
         $scope.funct.removePseudoFunction( $scope.callee.getName());
     }
 
-    $scope.code=$scope.funct.getFullCode();
  
     
     
@@ -63,11 +64,11 @@ angular
             });
         }
         else {
- 
-            formData = functionsService.parseFunction($scope.codemirror);
+    
+            formData = functionsService.parseFunctionFromAce($scope.data.editor);
+
             //add the dispute text to the submit
-            if($scope.dispute.active)
-            {
+            if($scope.dispute.active){
                 formData.inDispute=true;
                 formData.disputeFunctionText=$scope.dispute.text;
             }

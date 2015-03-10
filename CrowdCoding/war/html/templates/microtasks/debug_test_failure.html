@@ -105,242 +105,34 @@
     </div>
 
     <!-- CODE EDITOR -->
-            <div class="section-cols " ng-show=" tabs.active == 2 ">
-                <div class="container-flex-row">
-                    <div class="section section-help bg-color-alpha " style="width:30%">
-                        <a ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.functionForm.$invalid">
-                            <span class="glyphicon glyphicon-refresh"></span> 
-                            <span ng-if="!data.running">Run</span> 
-                            <span ng-if="data.running">tests running</span>
-                        </a>
-
-                        <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
-                        <div class="section-content" >
-                            <adt-list></adt-list>
-                        </div>
-                        <div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
-                    </div>
-                    <div class="section section-form" style="width:70%">
-                        <div class="section-content no-padding" >
-                            <ace-edit-js 
-                                ng-model="data.code" 
-                                update=" tabs.active == 2 " 
-                                funct="funct" 
-                                editor="data.editor" 
-                                annotations="data.annotations"
-                                callees="data.callees"
-                                on-callee-click="data.onCalleeClick"
-                                >
-                            </ace-edit-js>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-    <div ng-if="false" role="tabpanel">
-        <!-- TABS NAVIGATION -->
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="pull-left {{ tabs.active == 0 ? 'active' : '' }}">
-                <a href="#" ng-click="tabs.select(0)">Test Result</a>
-            </li>
-            <li class="pull-left {{ tabs.active == 1 ? 'active' : '' }}" ng-if="previousTests.length > 0">
-                <a href="#" ng-click="tabs.select(1)">Previous tests</a>
-            </li>
-            <li class="pull-left {{ tabs.active == 2 ? 'active' : '' }}">
-                <a href="#" ng-click="tabs.select(2)">Code</a>
-            </li>
-            <li class="pull-left {{ tabs.active == 3 ? 'active' : '' }}">
-                <a href="#" ng-click="tabs.select(3)">Stubs</a>
-            </li>
-            <li class="pull-left {{ tabs.active == 4 ? 'active' : '' }}">
-                <a href="#" ng-click="tabs.select(4)">Console</a>
-            </li>
-            <li class="pull-right ">
-
+    <div class="section-cols " ng-show=" tabs.active == 2 ">
+        <div class="container-flex-row">
+            <div class="section section-help bg-color-alpha " style="width:30%">
                 <a ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.functionForm.$invalid">
                     <span class="glyphicon glyphicon-refresh"></span> 
                     <span ng-if="!data.running">Run</span> 
                     <span ng-if="data.running">tests running</span>
                 </a>
-            </li>
-            <li class="clearfix"></li>
-        </ul>
-
-
-        <!-- TAB PANES -->
-        <div class="tab-content" style="height:420px;">
-
-            <!-- TEST DATA -->
-            <div class="section-cols " ng-show=" tabs.active == 0 ">
-                <div class="container-flex-row">
-                    <div class="section section-help bg-color-alpha " style="width:30%">
-                        <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
-                        <div class="section-content" >
-                            <adt-list></adt-list>
-                        </div>
-                    </div>
-                    <div class="section section-form" style="width:70%">
-                        <div class="section-content" >
-                            <test-result test="currentTest" funct="funct" ></test-result>
-                        </div>
-                    </div>
+                
+                <div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
+                <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
+                <div class="section-content" >
+                    <adt-list></adt-list>
                 </div>
             </div>
-
-            <!-- PREVIOUS TESTS  -->
-            <div class="section-cols " ng-show=" tabs.active == 1 ">
-                <div class="container-flex-row">
-                    <div class="section section-help bg-color-alpha " style="width:30%">
-                        <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
-                        <div class="section-content" >
-                            <adt-list></adt-list>
-                        </div>
-                    </div>
-                    <div class="section section-form" style="width:70%">
-                        <div class="section-content no-padding" >
-
-                            <div class="panel-group" ng-model="activePanel" bs-collapse>
-            
-                                <div class="panel panel-default" 
-                                    ng-repeat="(testIndex,test) in previousTests track by $index"
-                                    ng-show="!test.output.result || !hidePassedTests">
-                                    
-                                    <div class="panel-heading test-result {{ test.status() }}" bs-collapse-toggle>
-                                        <strong class="pull-left">    
-                                            <span class="glyphicon glyphicon-chevron-{{ activePanel == testIndex ? 'down' : 'right' }}"></span>
-                                            {{test.rec.description}} 
-                                        </strong>
-                                        <span class="pull-right">
-                                            <span ng-if="!test.ready()"> running ... </span>
-                                            <span ng-if="test.ready()">
-                                                <span ng-if="!test.inTimeout">
-                                                    <span>executed in {{test.executionTime}} ms - </span>
-                                                    <span>{{test.status()}}</span>
-                                                </span>
-                                                <span ng-if="test.inTimeout">timeout</span>
-                                            </span>
-                                        </span>
-                                        
-                                        <span class="clearfix"></span>
-                                    </div>
-
-                                    <div class="panel-collapse" bs-collapse-target>
-                                        <div ng-if="activePanel != NaN && (activePanel%previousTests.length)==$index">    
-                                            <test-result test="test" funct="funct" ></test-result>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>  
-
-                        </div>
-                    </div>
+            <div class="section section-form" style="width:70%">
+                <div class="section-content no-padding" >
+                    <ace-edit-js 
+                        ng-model="data.code" 
+                        funct="funct" 
+                        editor="data.editor" 
+                        annotations="data.annotations"
+                        callees="data.callees"
+                        on-callee-click="data.onCalleeClick"
+                        >
+                    </ace-edit-js>
                 </div>
-            </div>
-
-            <!-- CODE EDITOR -->
-            <div class="section-cols " ng-show=" tabs.active == 2 ">
-                <div class="container-flex-row">
-                    <div class="section section-help bg-color-alpha " style="width:30%">
-                        <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
-                        <div class="section-content" >
-                            <adt-list></adt-list>
-                        </div>
-                        <div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
-                    </div>
-                    <div class="section section-form" style="width:70%">
-                        <div class="section-content no-padding" >
-                            <ace-edit-js 
-                                ng-model="data.code" 
-                                update=" tabs.active == 2 " 
-                                funct="funct" 
-                                editor="data.editor" 
-                                annotations="data.annotations"
-                                callees="data.callees"
-                                on-callee-click="data.onCalleeClick"
-                                >
-                            </ace-edit-js>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- STUBS -->
-            <div class="section-cols " ng-show=" tabs.active == 3 ">
-                <stubs-panel stubs="currentTest.stubs"></stubs-panel>
-            </div>
-
-
-            <!-- CONSOLE -->
-            <div ng-show="tabs.active == 4">
-                <div class="container-flex-row">
-                    <div class="section section-form" style="width:100%">
-                        <div class="section-content no-padding" >
-                            <ace-console logs="currentTest.debug" update=" tabs.active==4 "></ace-console>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- DISPUTE STUFF --> 
-
-    <div ng-if=" dispute.active "  class="section section-description">
-        <div class="section-title" ><div class="dot bg-color"></div>FUNCTION DESCRIPTION</div>
-        <div class="section-content no-padding" >
-            <ace-read-js code="functionDescription"></ace-read-js>
-        </div>
-    </div>
-
-
-    <div ng-if=" dispute.active "  ng-init="test = dispute.test.rec">
-        <div class="section section-description">
-            <div  class="section-title" ><div class="dot bg-color"></div>TEST DATA</div>
-            <div class="section-content" >
-                <table style="width:100%" class="test">
-                    <tr>
-                        <td>description</td>
-                        <td>{{test.description}}</td>
-                    </tr>
-                    <tr ng-repeat="(inputKey,input) in test.simpleTestInputs track by $index">
-                        <td>{{funct.getParamNameAt($index)}}</td>
-                        <td>
-                            <div ace-read-json ng-model="input" ></div>
-                        </td>
-                    </tr>
-                    <tr ng-if="funct.returnType!=undefined">
-                        <td>return</td>
-                        <td>
-                            <div ace-read-json ng-model="test.simpleTestOutput" ></div>
-                        </td>
-                    </tr>
-                </table>
             </div>
         </div>
     </div>
-
-    <div ng-if="dispute.active" class="section section-description" >
-        <div class="section-title " >
-             <div class="dot bg-color"></div> DISPUTE TEST
-        </div>
-        <div class="section-content" >
-            <label for="disputeDescription">What's wrong with this test? </label>
-            <textarea name="disputeDescription" class="form-control" ng-model="dispute.description" ng-required="dispute" ng-pattern="/^[^/\\\'\&quot;]+$/"></textarea>
-            <ul class="help-block" ng-show="microtaskForm.disputeDescription.$dirty && microtaskForm.disputeDescription.$invalid">
-                <li ng-show="microtaskForm.disputeDescription.$error.required">This field is required!</li>
-                <li ng-show="microtaskForm.disputeDescription.$error.pattern">The symbols \ / " 'are not allowed</li>
-            </ul>
-            <br>
-            <button class="btn btn-sm pull-right" ng-click="undoDispute()" >Nothing is wrong with the test</button>
-            <span class="clearfix"></span>
-        </div>
-    </div>
-
 </div>

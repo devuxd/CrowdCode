@@ -221,7 +221,7 @@ angular
             ctrl.$formatters.unshift(function(viewValue) {
                 code=viewValue;
                 validate(code);
-                $rootScope.$emit('statementsUpdated', statements);
+                scope.$emit('statements-updated', statements);
                 if (errors.length > 0) {
                     ctrl.$setValidity('function', false);
                     ctrl.$error.function_errors = errors;
