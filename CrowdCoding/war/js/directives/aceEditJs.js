@@ -107,14 +107,14 @@ angular
                 }
 
                 function updateMarkers(value){
-                    if( value !== undefined ){
-                        value.push({
-                            regex: '//#(.*)',
-                            token: 'ace_pseudo_call'
-                        });
-                        $scope.markers = value;
-                        redrawMarkers($scope.markers);
-                    }
+                    if( value == undefined ) value = [];
+                    var pseudoMarker = {
+                        regex: '//#(.*)',
+                        token: 'ace_pseudo_call'
+                    };
+                    value.push(pseudoMarker);
+                    $scope.markers = value;
+                    redrawMarkers(value);
                 }
                 
 			};

@@ -190,7 +190,6 @@ angular
                         $scope.previousTests.concat($scope.currentTest);
         var disputed = [];
 
-        var parsedFunction = functionsService.parseFunctionFromAce($scope.data.editor);
         var hasPseudo = ( $scope.data.code.indexOf('//#') > -1 || parsedFunction.pseudoFunctions.length > 0) ;
 
         // scan the list of tests and search
