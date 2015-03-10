@@ -67,13 +67,13 @@
 				</div>
 			</div>
 			<div class="section section-form" style="width:70%;" >
-				<div class="pull-right">
-					<a ng-hide="funct.readOnly || dispute.active" ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
+				<div ng-if="!funct.readOnly && !dispute.active" >
+					<a class="pull-right" ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
 						Report function as impossible (or inadvisable) to implement 
 						<span class="glyphicon glyphicon-exclamation-sign"></span>
 					</a>
+					<div class="clearfix"></div>
 				</div>
-				<div class="clearfix"></div>
 				<ace-edit-js function="funct" editor="data.editor" ></ace-edit-js>
 			</div>
 		</div>
