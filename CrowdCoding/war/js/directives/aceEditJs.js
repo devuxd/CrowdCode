@@ -3,9 +3,8 @@ angular
     .module('crowdCode')
     .directive('aceEditJs', [ '$sce', 'functionsService', function($sce, functionsService) {
    
-    var markers = [ ];
     var editor = null;
-    
+    var markers = [];
     return {
         restrict: 'EA',
 
@@ -20,9 +19,10 @@ angular
         },
 
         controller: function($scope,$element){
-          
+            $scope.$on('statements-updated',function(event,numStatements){
+                console.log('received statements '+numStatements);
+            });
             $scope.code = $scope.functionData.getFunctionCode(); 
-            console.log('code ',$scope.code);
 
             $scope.trustHtml = function (unsafeHtml){
                 return $sce.trustAsHtml(unsafeHtml);
@@ -52,13 +52,15 @@ angular
                 // $scope.$watch('updateIf',updateIf);
                 $scope.$watch('annotations', updateAnnotations);
 
+                $scope.$watch('markers', updateMarkers);
+
                 function onChange(e){
                     var code = _editor.getValue();
                     var ast = null
                     try{
                         ast = esprima.parse( code, {loc: true}); 
                     } catch(e) { console.log(e.stack); ast = null };
-                    //console.log('AST IS ',ast);
+
                     if( ast !== null ){
                         if( $scope.hasPseudo !== undefined ) 
                             $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
@@ -66,7 +68,7 @@ angular
                             readOnlyFunctionDescription( ast);
                     }
                     
-                    redrawMarkers();
+                    redrawMarkers($scope.markers);
                 }
 
                 function onClick(e){
@@ -75,12 +77,15 @@ angular
                     // for each marker check if the click position
                     // is inside on one of the highlighted ranges
                     // and if defined, execute the on click action
-                    for( var m in markers ){
-                        var marker = markers[m];
+                    for( var m in $scope.markers ){
+                        var marker = $scope.markers[m];
+                        console.log('onclick',marker.onClick);
                         if( marker.onClick !== undefined ){
                             for( var r in marker.ranges ){
-                                if( marker.ranges[r].comparePoint(pos) == 0) 
-                                    marker.onClick.apply(null);
+                                if( marker.ranges[r].comparePoint(pos) == 0) {
+                                    console.log('click on a marker');
+                                    marker.onClick.call();
+                                }
                             }
                         } 
                     }
@@ -98,6 +103,17 @@ angular
                     if( value !== undefined ){
                         _editor.session.clearAnnotations( );
                         _editor.session.setAnnotations( value );
+                    }
+                }
+
+                function updateMarkers(value){
+                    if( value !== undefined ){
+                        value.push({
+                            regex: '//#(.*)',
+                            token: 'ace_pseudo_call'
+                        });
+                        $scope.markers = value;
+                        redrawMarkers($scope.markers);
                     }
                 }
                 
@@ -128,7 +144,8 @@ angular
         });
     }
 
-    function redrawMarkers(){
+    function redrawMarkers(markers){
+        console.log('DRAWING MARKERS',markers);
         var session = editor.session;
         var Range = ace.require("ace/range").Range;
         var Search = ace.require("ace/search").Search;
@@ -136,8 +153,9 @@ angular
         // remove all the previous markers
         var oldMarkers = session.getMarkers(false);
         for( var om in oldMarkers ){
-            session.removeMarker( oldMarkers[om] );
+            session.removeMarker( oldMarkers[om].id );
         }
+        console.log('REMOVED OLD MARKERS',session.getMarkers(false));
 
         // add the new markers
 
@@ -198,19 +216,3 @@ angular
 //     exports.DynamicHighlightRules = DynamicHighlightRules;
 // });
 
-angular
-    .module('crowdCode')
-    .directive('statementsProgressBar',['$rootScope',function($rootScope) {
-    return {
-        templateUrl : '/html/templates/ui/statements_progress_bar.html',
-        restrict: 'AE',
-        link: function (scope, elm, attrs, ctrl) {
-            scope.statements=0;
-            scope.max=10;
-            scope.$on('statements-updated',function(event,statements, max){
-                scope.statements=statements;
-                scope.max=max;
-            });
-        }
-    };
-}]);

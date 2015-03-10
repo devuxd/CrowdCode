@@ -13,11 +13,11 @@
             <div class="heading-1 heading-2" ng-repeat-start="(sKey,stub) in stubs track by $index">Input set {{$index+1}}</div>
             <table ng-repeat-end ng-form="stubForm" class="test">
                 <tr ng-repeat="(iKey,iValue) in stub.inputs track by $index" >
-                    <td>{{ info.inputs[$index] }}<br /></td>
+                    <td>{{ info.parameters[$index].name }}<br /><small>{{ info.parameters[$index].type }}</small></td>
                     <td><div ace-read-json ng-model="iValue" ></div></td>
                 </tr>
                 <tr >
-                    <td>return value </td>
+                    <td>return value <br/> <small>{{ info.returnType }}</small> </td>
                     <td >
 
                         <ace-edit-json ng-model="stub.output"></ace-edit-json>
