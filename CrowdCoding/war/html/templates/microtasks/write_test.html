@@ -100,7 +100,9 @@
                     	   ng-repeat="(index,parameter) in funct.getParameters()">
                         <tr>
                             <td>
-                            	<b>{{parameter.name}}</b> ({{parameter.type}})
+                            	{{parameter.name}}
+					            <br />
+					            <small>{{parameter.type}}</small>
                             </td>
                             <td>
 								<ace-edit-json 
@@ -137,7 +139,7 @@
                     <table style="width:100%" class="test" ng-form="outputForm"  >
                         <tr>
                             <td>
-                            	({{funct.getReturnType()}})
+                            	<small>{{funct.getReturnType()}}</small>
                             </td>
                             <td>
 								<ace-edit-json 

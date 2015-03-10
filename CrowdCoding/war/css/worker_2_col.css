@@ -715,7 +715,7 @@ table.test tr.separator td{
 }
 table.test { }
 table.test td { vertical-align: top; padding-top:2px; padding-bottom:2px;}
-table.test td:first-child { width:20%; text-align: right; padding-right:5px; }
+table.test td:first-child { width:20%; text-align: right; padding-right:5px; vertical-align: middle;}
 
 .section-form .section-title {
 	background-color: rgba(85,85,85,0.5);
