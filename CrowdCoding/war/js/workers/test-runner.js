@@ -104,7 +104,7 @@ self.addEventListener('message', function(e){
 				var globalDef = "";
 				// globalDef += "/* global " + JSHINT_GLOBALS.join( ", " ) + " */\n"; //add JSHint globals
 				globalDef += "var calleeNames    = '" + data.calleeNames + "'; \n";
-				globalDef += "Debugger.init(" + data.stubs + "); \n";    
+				globalDef += "Debugger.init(" + JSON.stringify(data.stubs) + "); \n";    
 
 				//add the received code
 				var finalCode = '';
@@ -121,7 +121,7 @@ self.addEventListener('message', function(e){
 
 				// console.log('tested code', finalCode);
 				// console.log('stubs',data.stubs)
-				// console.log(finalCode);
+				// console.log(globalDef);
 
 				try{
 

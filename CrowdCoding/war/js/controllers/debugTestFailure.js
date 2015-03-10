@@ -41,6 +41,7 @@ angular
     $scope.data.code = $scope.funct.getFunctionCode();
     $scope.data.editor = null;
     $scope.data.running = false;
+    $scope.data.hasPseudo = false;
     $scope.data.annotations = [];
     $scope.data.markers = [];
     $scope.data.onCalleeClick = function(calleeName){
@@ -150,12 +151,14 @@ angular
     function runTests(firstTime) {
         if( $scope.testsRunning ) return false;
 
-
         lastRunnedCode = $scope.data.editor === null ? $scope.data.code : $scope.data.editor.getValue();
         testRunner.setTestedFunctionCode( lastRunnedCode );
 
-        if( !$scope.firstTimeRun )
+
+        if( !$scope.firstTimeRun ){
+            console.log($scope.currentTest.stubs);
             testRunner.mergeStubs( $scope.currentTest.stubs );
+        }
 
         // push a message for for running the tests
         if( testRunner.runTests() != -1 ) {
@@ -190,7 +193,7 @@ angular
                         $scope.previousTests.concat($scope.currentTest);
         var disputed = [];
 
-        var hasPseudo = ( $scope.data.code.indexOf('//#') > -1 || parsedFunction.pseudoFunctions.length > 0) ;
+        var hasPseudo = $scope.data.hasPseudo ;
 
         // scan the list of tests and search
         // if there are failed tests non in dispute
@@ -207,6 +210,7 @@ angular
             }
         });
 
+        console.log('hasPseudo',hasPseudo);
         if( /* dispute descriptions empty */ disputeTextEmpty )
             errors += "Please, fill the dispute texts!";
         else if ( /* if other form errors */ microtaskForm.$invalid )
@@ -215,7 +219,7 @@ angular
             console.log('no pseudo', failedNonInDispute )
             if( /* at least one test failed and is not disputed */ failedNonInDispute > 0 )
                 errors += "Please fix all the failed tests or dispute them!";
-            else if( /* code is changed since last test run */ lastRunnedCode != $scope.data.code )
+            else if( /* code is changed since last test run */ lastRunnedCode != $scope.data.editor.getValue() )
                 errors += "The code is changed since last tests run. \n Please, run again the tests before submit.";
 
         } 
@@ -223,7 +227,7 @@ angular
 
         if (errors === "") {
             var formData = {
-                functionDTO   : parsedFunction,
+                functionDTO   : functionsService.parseFunctionFromAce($scope.data.editor),
                 stubs         : [],
                 disputedTests : [],
                 hasPseudo     : hasPseudo,
@@ -237,9 +241,9 @@ angular
                     angular.forEach( $scope.currentTest.stubs, function(stubsForFunction, functionName) {
                         var stubFunction = functionsService.getByName( functionName );
                         angular.forEach(stubsForFunction, function(stub, index) {
-
+                            console.log('searching for stub '+stub.inputs,stub.output);
                             if( TestList.search( functionName, stub.inputs ) === null ){
-
+                                console.log('not found!');
                                 var testCode = 'equal(' + stubFunction.name + '(';
                                 var inputs = [];
                                 angular.forEach( stub.inputs, function(value, key) {
@@ -263,7 +267,8 @@ angular
                                 };
 
                                 stubs.push(test);
-                            }
+                            } else 
+                                console.log('found!');
                         });
                     });
                 }

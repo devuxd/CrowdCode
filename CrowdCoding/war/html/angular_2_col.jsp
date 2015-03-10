@@ -83,14 +83,14 @@
 		        </div>
 
 		        <div class="sidebar-buttons">
-			        <button href="#" class=""
+			        <!--<button href="#" class=""
 			           id="shortcutsBtn"
 			           data-animation="am-fade-and-scale"
 			           data-placement="center"
 			           data-template="/html/templates/popups/popup_shortcuts.html"
 			           bs-modal="modal"
 			           data-container="body"
-			           >shortcuts</button>
+			           >shortcuts</button>-->
 			           
 			        <button href="#" class=""
 			           id="feedbackBtn"

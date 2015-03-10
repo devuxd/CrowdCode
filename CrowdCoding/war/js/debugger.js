@@ -6,6 +6,7 @@ Debugger.init = function(stubs){
 	if( stubs === undefined ) 
 		throw new Error('define stubs for the debugger!');
 
+
 	Debugger.stubs    = stubs;
 	Debugger.callLogs = {};
 	Debugger.logs     = [];
@@ -21,7 +22,7 @@ Debugger.logCall = function( functionName, inputs, output ){
 	record.inputs = [];
 	for( var i in inputs )
 		record.inputs[i] = JSON.stringify( inputs[i] );
-	record.output = JSON.stringify( output );
+	record.output = output;
 
 	// add the record to the calls log (or update the existing one)
 	var callLogs = Debugger.callLogs;
