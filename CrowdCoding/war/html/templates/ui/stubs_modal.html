@@ -5,9 +5,9 @@
         
         <h4 class="modal-title">Stubs for the function {{info.name}}</h4>
       </div>
-      <div class="modal-body" >
-   
-             <ace-read-js code="info.signature"></ace-read-js>
+      <div class="modal-body" ng-form="stubsForm" >
+
+            <ace-read-js code="info.signature"></ace-read-js>
 
             <div class="heading-1 heading-2" ng-repeat-start="(sKey,stub) in stubs track by $index">Input set {{$index+1}}</div>
             <table ng-repeat-end ng-form="stubForm" class="test">
@@ -49,7 +49,7 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" ng-click="close()">Save stubs</button>
+        <button type="button" class="btn btn-default" ng-disabled="stubsForm.$invalid" ng-click="close()">Save stubs</button>
       </div>
     </div>
   </div>

@@ -90,7 +90,7 @@ angular
             var doReminder = function(){
 
                 //remaining time
-                $scope.skipMicrotaskIn-=timeInterval;
+                $scope.skipMicrotaskIn -= timeInterval;
 
                 if($scope.skipMicrotaskIn < 0)
                 {
