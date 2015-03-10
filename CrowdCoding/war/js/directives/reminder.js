@@ -20,9 +20,16 @@ angular
         templateUrl : '/html/templates/ui/reminder.html',
         scope: {},
         link: function($scope, $element, attrs) {
-            $scope.microtaskFirstWarning=microtaskFirstWarning;
-            $scope.microtaskTimeout=microtaskTimeout;
+            $scope.microtaskFirstWarning = microtaskFirstWarning;
+            $scope.microtaskTimeout      = microtaskTimeout;
+
+            // TO FIX
+            // $rootScope.$on('run-tutorial',function(){
+            //     console.log('tutorial opened from reminder');
+            // });
+
             $rootScope.$on('tutorial-finished',function(){
+                // console.log('tutorial closed from reminder');
                 userService.setFirstFetchTime();
             });
             // listen on the event 'run-tutorial'
