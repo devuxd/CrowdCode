@@ -39,6 +39,8 @@ angular
                                 // otherwise run it
                                 else 
                                     $scope.runTutorial(tutorialId,onFinish);
+                            } else {
+                                $scope.$emit('tutorial-finished');
                             }
                         });
 

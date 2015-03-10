@@ -5,8 +5,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  0.2*10 * 60 * 1000;     //in second
-    var microtaskFirstWarning =  0.2* 4  * 60 * 1000;      //in second
+    var microtaskTimeout      =  10 * 60 * 1000;     //in second
+    var microtaskFirstWarning =  4  * 60 * 1000;      //in second
     var timeInterval=500;//interval time in milliseconds
 
     var fetchTime = 0;
@@ -27,12 +27,10 @@ angular
 
            // TO FIX
              $rootScope.$on('run-tutorial',function(){
-                 console.log('tutorial opened from reminder');
                  isTutorialOpen=true;
             });
 
             $rootScope.$on('tutorial-finished',function(){
-                console.log('tutorial closed from reminder');
                 isTutorialOpen=false;
             });
 
@@ -44,7 +42,6 @@ angular
                 if( microtask!== undefined ){
                     microtaskType=microtask;
                     callBackFunction=onFinish;
-                   // isTutorialOpen=false;
                     initializeReminder();
                 }
             });
