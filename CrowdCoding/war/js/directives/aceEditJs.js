@@ -64,11 +64,12 @@ angular
                     if( ast !== null ){
                         if( $scope.hasPseudo !== undefined ) 
                             $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
+                        console.log('internal pseudo',$scope.hasPseudo);
                         if( $scope.functionData.readOnly )
                             readOnlyFunctionDescription( ast);
                     }
                     
-                    redrawMarkers($scope.markers);
+                    redrawMarkers(markers);
                 }
 
                 function onClick(e){
@@ -79,11 +80,11 @@ angular
                     // and if defined, execute the on click action
                     for( var m in $scope.markers ){
                         var marker = $scope.markers[m];
-                        console.log('onclick',marker.onClick);
+
                         if( marker.onClick !== undefined ){
                             for( var r in marker.ranges ){
-                                if( marker.ranges[r].comparePoint(pos) === 0) {
-                                    console.log('click on a marker');
+                                if( marker.ranges[r].comparePoint(pos) == 0) {
+
                                     marker.onClick.call();
                                 }
                             }
@@ -112,9 +113,9 @@ angular
                         regex: '//#(.*)',
                         token: 'ace_pseudo_code'
                     };
-                    value.push(pseudoMarker);
-                    $scope.markers = value;
-                    redrawMarkers(value);
+                    markers = value;
+                    markers.push(pseudoMarker);
+                    redrawMarkers(markers);
                 }
                 
 			};
@@ -145,7 +146,7 @@ angular
     }
 
     function redrawMarkers(markers){
-        console.log('DRAWING MARKERS',markers);
+
         var session = editor.session;
         var Range = ace.require("ace/range").Range;
         var Search = ace.require("ace/search").Search;
@@ -155,7 +156,7 @@ angular
         for( var om in oldMarkers ){
             session.removeMarker( oldMarkers[om].id );
         }
-        console.log('REMOVED OLD MARKERS',session.getMarkers(false));
+
 
         // add the new markers
 

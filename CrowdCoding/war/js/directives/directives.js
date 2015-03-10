@@ -643,18 +643,18 @@ angular
                     preventDefault = true;
                 } 
 
-                // if is CTRL + BACKSPACE skip microtask
-                else if ( charCode == 8 ) { 
-                    // console.log('CTRL+BACKSPACE');
-                    //scope.$emit('skipMicrotask');
-                    preventDefault = true;
-                } 
+                // // if is CTRL + BACKSPACE skip microtask
+                // else if ( charCode == 8 ) { 
+                //     // console.log('CTRL+BACKSPACE');
+                //     //scope.$emit('skipMicrotask');
+                //     preventDefault = true;
+                // } 
 
-                // if is CTRL + H start the tutorial
-                else if ( charCode == 72 ) { // H
-                    // console.log('CTRL+H');
-                    // preventDefault = true;
-                }
+                // // if is CTRL + H start the tutorial
+                // else if ( charCode == 72 ) { // H
+                //     // console.log('CTRL+H');
+                //     // preventDefault = true;
+                // }
             }
 
             // if a combo has been managed

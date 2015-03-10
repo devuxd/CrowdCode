@@ -41,7 +41,7 @@ angular
                             var range = _editor.find(needle,conf);
                            // console.log('Needle',val.needle,range);
                             if( range !== undefined ){
-                                marker[val.needle] = _editor.getSession().addMarker(range,'acePseudoCall','text',true);
+                                marker[val.needle] = _editor.getSession().addMarker(range,'ace_pseudo_call','text',true);
                                 // console.log('added marker for  '+val.needle, range, marker);
                                // console.log(_editor.getSession().getMarkers());
                             }
@@ -312,18 +312,13 @@ angular
         link: function ( scope, element, attrs, ngModel ) {
             if( ngModel == undefined ) 
                 console.log("NG MODEL NOT DEFINED");
-
+            scope.stringValue = 4;
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-
                 if( ngModel.$viewValue == "") 
                     scope.stringValue = "";
                 else {
-                    // try catch because .fromJson throws errors if not valid object
-                    try{
-
-                        scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
-                    } catch(e){}
+                    scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
                 }
             };
 

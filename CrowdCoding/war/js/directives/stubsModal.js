@@ -10,6 +10,9 @@ function stubsList($modal,functionsService) {
             stubs: '='
         },
         controller: function($scope,$element){
+            $scope.$watch('stubs',function(){
+                console.log($scope.stubs);
+            });
 
             var callee = functionsService.getByName( $scope.functionName );
             $scope.info = {
@@ -20,7 +23,6 @@ function stubsList($modal,functionsService) {
             };
 
             $scope.$on('open-stubs-'+$scope.functionName,function(){
-                console.log('open stubs!',$scope.info,$scope.functionName);
                 var myModal = $modal({
                     template:'/html/templates/ui/stubs_modal.html',
                     scope: $scope 

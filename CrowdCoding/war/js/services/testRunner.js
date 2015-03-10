@@ -232,6 +232,7 @@ angular
 		set of new stubs
 	*/
 	TestRunner.prototype.mergeStubs = function(newStubs){
+		console.log('merging',newStubs);
 		var oldStubs = this.stubs;
 		angular.forEach( newStubs, function( fStubs, fName ){
 			// create new entry in the stubs with function name
@@ -366,7 +367,7 @@ angular
 			'cmd'      : 'exec', 
 			'number'   : self.currentTestIndex,
 			'testCode' : test.buildCode(),
-			'stubs'    : JSON.stringify(self.stubs),
+			'stubs'    : self.stubs,
 	    	'calleeNames': self.calleeList.join(' '),
 	    	'execNum': test.execNum++
 		});
