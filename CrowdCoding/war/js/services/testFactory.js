@@ -207,8 +207,8 @@ angular
 
 			angular.forEach(tests,function(test){
 				if( test.hasSimpleTest() ){
-					
-					var outputs = JSON.parse(test.rec.simpleTestOutput);
+					console.log('output',test.rec);
+					var outputs = test.rec.simpleTestOutput == "" ? "" : JSON.parse(test.rec.simpleTestOutput);
 
 					var inputsKey = "["+test.rec.simpleTestInputs+"]";
 					//inputsKey = inputsKey.replace(/"/g, '');

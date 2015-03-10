@@ -93,8 +93,9 @@ angular
 			}
 		},
 		getFullDescription	: function(){
-			if(this.getDescription()===undefined||this.getDescription()==="")
+			if(this.getDescription()===undefined)
 				return "";
+			
 			var numParams = 0;
 
 			var fullDescription = '/**\n' + this.getDescription() + '\n';

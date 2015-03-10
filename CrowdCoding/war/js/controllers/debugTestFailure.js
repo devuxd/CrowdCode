@@ -134,7 +134,6 @@ angular
                     }
                 });
             });
-            console.log('markers',$scope.data.callees,$scope.currentTest.stubs,$scope.data.markers);
             // var tokens = [];
 
 
@@ -156,14 +155,12 @@ angular
 
 
         if( !$scope.firstTimeRun ){
-            console.log($scope.currentTest.stubs);
             testRunner.mergeStubs( $scope.currentTest.stubs );
         }
 
         // push a message for for running the tests
         if( testRunner.runTests() != -1 ) {
             $scope.data.running = true;
-            console.log('running');
         }
 
         $scope.completed = 0;
@@ -210,13 +207,12 @@ angular
             }
         });
 
-        console.log('hasPseudo',hasPseudo);
         if( /* dispute descriptions empty */ disputeTextEmpty )
             errors += "Please, fill the dispute texts!";
         else if ( /* if other form errors */ microtaskForm.$invalid )
             errors += "Please, fix all the errors before submit."
         else if ( /* code doesn't have pseudocall or pseudocode */ !hasPseudo) {
-            console.log('no pseudo', failedNonInDispute )
+            
             if( /* at least one test failed and is not disputed */ failedNonInDispute > 0 )
                 errors += "Please fix all the failed tests or dispute them!";
             else if( /* code is changed since last test run */ lastRunnedCode != $scope.data.editor.getValue() )
@@ -241,9 +237,9 @@ angular
                     angular.forEach( $scope.currentTest.stubs, function(stubsForFunction, functionName) {
                         var stubFunction = functionsService.getByName( functionName );
                         angular.forEach(stubsForFunction, function(stub, index) {
-                            console.log('searching for stub '+stub.inputs,stub.output);
+
                             if( TestList.search( functionName, stub.inputs ) === null ){
-                                console.log('not found!');
+                                console.log('stub not found!');
                                 var testCode = 'equal(' + stubFunction.name + '(';
                                 var inputs = [];
                                 angular.forEach( stub.inputs, function(value, key) {
@@ -268,7 +264,7 @@ angular
 
                                 stubs.push(test);
                             } else 
-                                console.log('found!');
+                                console.log('stub found!');
                         });
                     });
                 }
@@ -279,7 +275,6 @@ angular
                 } 
             }
 
-            console.log(formData);
             $scope.$emit('submitMicrotask', formData);
 
         } else {

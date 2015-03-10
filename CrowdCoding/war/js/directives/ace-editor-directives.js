@@ -101,10 +101,10 @@ angular
             
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-               // console.log(typeof(ngModel.$viewValue));
+                console.log(ngModel.$viewValue,typeof(ngModel.$viewValue));
                 if( ngModel.$viewValue == "") 
                     scope.prettyJson = "";
-                else if ( ngModel.$viewValue == undefined || ngModel.$viewValue == "undefined" )
+                else if ( ngModel.$viewValue === undefined || ngModel.$viewValue == "undefined" )
                     scope.prettyJson = "undefined";
                 else if ((typeof(ngModel.$viewValue)=="number" && isNaN( ngModel.$viewValue)) || (typeof(ngModel.$viewValue)=="string") && ngModel.$viewValue=="NaN")
                     scope.prettyJson = "NaN";
@@ -151,6 +151,7 @@ angular
                     oldObj = safeJsonParse( scope.old );
                     newObj = safeJsonParse( scope.new );
 
+                    console.log(oldObj,newObj);
                     // initialize the diff result
                     var diffHtml = '';
 
@@ -163,7 +164,8 @@ angular
                     if( oldObj === null || newObj === null || 
                         oldObj === undefined || newObj === undefined || 
                         oldObj.constructor != newObj.constructor || 
-                        typeof oldObj == 'number' ){
+                        typeof oldObj == 'number' ||
+                        typeof oldObj == 'boolean'){
 
                         if( typeof(oldObj) == 'object' )
                             diffHtml += joinLines( angular.toJson(oldObj, true) , 'line added', 0);
@@ -180,10 +182,12 @@ angular
                             diffHtml += joinLines( newObj + '', 'line removed', 0);                    
 
                         scope.diffHtml = diffHtml;
+                        console.log('if branch')
 
                     }
                     // if the type of new is an object/array
                     else {
+                        console.log('else branch')
                         //console.log('compare obj');
 
                         var oldFields = Object.keys(oldObj);
@@ -313,18 +317,24 @@ angular
             if( ngModel == undefined ) 
                 console.log("NG MODEL NOT DEFINED");
             scope.stringValue = 4;
+
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
+
+
                 if( ngModel.$viewValue == "") 
                     scope.stringValue = "";
                 else {
                     scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
                 }
+
+                console.log('ng-model',typeof ngModel.$viewValue,ngModel.$viewValue);
             };
 
             // update the ngModel.$viewValue when the UI changes 
             scope.$watch('stringValue', function() {
                 ngModel.$setViewValue( scope.stringValue );
+                console.log('stringValue',typeof scope.stringValue,scope.stringValue);
             });
 
         },

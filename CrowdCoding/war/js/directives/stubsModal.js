@@ -9,25 +9,24 @@ function stubsList($modal,functionsService) {
             functionName: '=',
             stubs: '='
         },
+        replace:true,
+        templateUrl:'/html/templates/ui/stubs_modal.html',
         controller: function($scope,$element){
-            $scope.$watch('stubs',function(){
-                console.log($scope.stubs);
+            $scope.$watch('functionName',function(){
+                var callee = functionsService.getByName( $scope.functionName );
+                $scope.info = {
+                    name        : callee.name,
+                    signature   : callee.getSignature(),
+                    parameters  : callee.getParameters(),
+                    returnType  : callee.returnType
+                };
             });
-
-            var callee = functionsService.getByName( $scope.functionName );
-            $scope.info = {
-                name        : callee.name,
-                signature   : callee.getSignature(),
-                parameters  : callee.getParameters(),
-                returnType  : callee.returnType
+            $scope.close = function(){
+                $element.modal('hide');
             };
-
+            
             $scope.$on('open-stubs-'+$scope.functionName,function(){
-                var myModal = $modal({
-                    template:'/html/templates/ui/stubs_modal.html',
-                    scope: $scope 
-                });
-                myModal.$promise.then(myModal.show);
+                $element.modal('show');
             })
         	
         }

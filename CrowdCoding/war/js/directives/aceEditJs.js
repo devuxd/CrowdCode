@@ -59,12 +59,12 @@ angular
                     var ast = null
                     try{
                         ast = esprima.parse( code, {loc: true}); 
-                    } catch(e) { console.log(e.stack); ast = null };
+                    } catch(e) { /*console.log(e.stack); */ast = null };
 
                     if( ast !== null ){
                         if( $scope.hasPseudo !== undefined ) 
                             $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
-                        console.log('internal pseudo',$scope.hasPseudo);
+                        
                         if( $scope.functionData.readOnly )
                             readOnlyFunctionDescription( ast);
                     }

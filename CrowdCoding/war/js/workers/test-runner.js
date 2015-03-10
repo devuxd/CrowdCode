@@ -111,7 +111,6 @@ self.addEventListener('message', function(e){
 				finalCode += globalDef;
 				finalCode += testedCode;
 				finalCode += allCode;
-				finalCode += "Debugger.log(-1,'// -- TEST EXEC # " + data.execNum + " --'); \n";
 				finalCode += data.testCode ;
 				finalCode += '//# sourceURL=test-runner.js';
 
@@ -121,7 +120,7 @@ self.addEventListener('message', function(e){
 
 				// console.log('tested code', finalCode);
 				// console.log('stubs',data.stubs)
-				// console.log(globalDef);
+				console.log(data.testCode);
 
 				try{
 
