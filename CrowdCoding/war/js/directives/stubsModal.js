@@ -15,7 +15,7 @@ function stubsList($modal,functionsService) {
             $scope.info = {
                 name        : callee.name,
                 signature   : callee.getSignature(),
-                inputs      : callee.getParamNames(),
+                parameters  : callee.getParameters(),
                 returnType  : callee.returnType
             };
 

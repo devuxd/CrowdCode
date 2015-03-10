@@ -318,9 +318,12 @@ angular
 
                 if( ngModel.$viewValue == "") 
                     scope.stringValue = "";
-                else{
-                    console.log (typeof ngModel.$viewValue);
-                    scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
+                else {
+                    // try catch because .fromJson throws errors if not valid object
+                    try{
+
+                        scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
+                    } catch(e){}
                 }
             };
 

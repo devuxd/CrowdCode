@@ -42,7 +42,7 @@ angular
     $scope.data.editor = null;
     $scope.data.running = false;
     $scope.data.annotations = [];
-    $scope.data.callees = [];
+    $scope.data.markers = [];
     $scope.data.onCalleeClick = function(calleeName){
         $scope.$broadcast('open-stubs-'+calleeName);
     };
@@ -122,7 +122,18 @@ angular
                 $scope.data.annotations = annotations;
             }
 
+            $scope.data.markers = [];
             $scope.data.callees = Object.keys($scope.currentTest.stubs);
+            angular.forEach( $scope.data.callees,function(cName){
+                $scope.data.markers.push({ 
+                    regex: cName+'[\\s]*\\([\\s\\w\\[\\]\\+\\.\\,]*\\)', 
+                    token: 'ace_call' ,
+                    onClick: function(){
+                        $scope.$broadcast('open-stubs-'+cName);
+                    }
+                });
+            });
+            console.log('markers',$scope.data.callees,$scope.currentTest.stubs,$scope.data.markers);
             // var tokens = [];
 
 
@@ -140,7 +151,7 @@ angular
         if( $scope.testsRunning ) return false;
 
 
-        lastRunnedCode = $scope.data.code;
+        lastRunnedCode = $scope.data.editor === null ? $scope.data.code : $scope.data.editor.getValue();
         testRunner.setTestedFunctionCode( lastRunnedCode );
 
         if( !$scope.firstTimeRun )
