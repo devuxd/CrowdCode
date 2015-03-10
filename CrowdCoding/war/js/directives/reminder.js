@@ -5,8 +5,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      = 100* 10 * 60 * 1000;     //in second
-    var microtaskFirstWarning = 100* 4  * 60 * 1000;      //in second
+    var microtaskTimeout      = 1* 10 * 60 * 1000;     //in second
+    var microtaskFirstWarning = 1* 4  * 60 * 1000;      //in second
     var timeInterval=500;//interval time in milliseconds
 
     var fetchTime = 0;

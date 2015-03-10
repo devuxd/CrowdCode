@@ -1,9 +1,19 @@
 <div ng-init="show=false"  class="section-statements">
-	<div ng-show="show" style="width: {{((statements / max)) * 100| number :0}}%;
-	text-align: right;"><b class="label-reminder">{{max-statements}}</b>
+	<div ng-show="show" style="padding-left: {{ (statements / max) * 100 | number: 0 }}%;">
+		<b class="label-reminder">{{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}</b>
 	</div>
     <div class="progress progress-bar-reminder">
-        <div ng-mouseenter="show=true" data-ng-mouseleave="show=false" class="pull-right progress-bar" ng-class="{'progress-bar-success': max - statements >= max * 0.5 ,'progress-bar-warning': max - statements < max * 0.5 && max - statements > max * 0.25, 'progress-bar-danger': max - statements < max * 0.25}" role="progressbar" style="width:{{(1-statements / max) * 100| number :0}}%">
+        <div 
+        	ng-mouseenter="show=true" 
+        	data-ng-mouseleave="show=false" 
+        	class="pull-right progress-bar" 
+        	ng-class="{
+        		'progress-bar-success' : max - statements >= max * 0.5 ,
+        		'progress-bar-warning' : max - statements < max * 0.5 && max - statements > max * 0.25, 
+        		'progress-bar-danger'  : max - statements < max * 0.25
+        	}" 
+        	role="progressbar" 
+        	style="width:{{ ( 1-statements / max ) * 100 | number :0 }}%">
 
         </div>
 

@@ -318,10 +318,14 @@ angular
             ngModel.$render = function (){
 
 
-                if( ngModel.$viewValue == "") 
+                if( ngModel.$viewValue === "") 
                     scope.stringValue = "";
                 else {
-                    scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
+                    try{
+                        scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
+                    } catch(e){
+                        scope.stringValue = ngModel.$viewValue;
+                    }
                 }
 
 

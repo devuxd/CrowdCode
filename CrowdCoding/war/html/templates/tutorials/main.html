@@ -6,39 +6,47 @@
 	</div>
 </step>
 
-<step highlight="task" placement="left" style="width:100px;">
+<step highlight="task" placement="left" style="width:150px;">
 	<div class="title">Microtask</div>
 	<div class="text">
-		Here’s the work. Can you do it?
+		Here’s the workspace. <br />
+		Can you do it?
 
 	</div>
 </step>
 
-<step highlight="submitBtn" placement="top-center" style="width:100px;" >
+<step highlight="remainingTimeBar" placement="top" style="width:300px;">
+	<div class="title">Hurry up!</div>
+	<div class="text">
+		For each microtask, you have <strong>10 minutes</strong> to submit the work
+		or the microtask will be automatically skipped. <br /> 
+		The bar on the bottom represents the remaining time for submitting the current microtask.<br />
+	</div>
+</step>
+
+<step highlight="submitBtn" placement="top-center" style="width:150px;" >
 	<div class="title">Submit</div>
 	<div class="text">
 		All done? Submit your work for review.
 	</div>
 </step>
 
-<step highlight="skipBtn" placement="top-center" style="width:150px;" >
+<step highlight="skipBtn" placement="top-center" style="width:200px;" >
 	<div class="title">Skip</div>
 	<div class="text">
 		Not the right microtask for you? Skip it. <br />
-		But be careful - skipping makes it more valuable for others and <strong>you can't go back</strong>!
-
+		But be careful - skipping makes it more valuable for others and <strong>you can't go back!</strong>
 	</div>
 </step>
-
-
+<!--
 <step highlight="shortcutsBtn" placement="top-center" style="width:100px;">
 	<div class="title">Shortcuts</div>
 	<div class="text">
 		Wanna be a power coder? Here’s your keyboard shortcuts.
 	</div>
-</step>
+</step>-->
 
-<step highlight="chatPanel" placement="left" style="width:100px;" 
+<step highlight="chatPanel" placement="left" style="width:150px;" 
 	  on-show="$emit('toggleChat');" on-hide="$emit('toggleChat');">
 	<div class="title">Chat</div>
 	<div class="text">
@@ -46,14 +54,14 @@
 	</div>
 </step>
 
-<step highlight="activityPanel" placement="right-center" style="width:100px;">
+<step highlight="activityPanel" placement="right-center" style="width:200px;">
 	<div class="title">Your Activity</div>
 	<div class="text">
 		See what you’ve done, see how the crowd rated it.
 	</div>
 </step>
 
-<step highlight="leaderboardPanel" placement="right-center" style="width:100px;">
+<step highlight="leaderboardPanel" placement="right-center" style="width:200px;">
 	<div class="title">Leaderboard</div>
 	<div class="text">
 		Don’t worry. You’re still cool, even if someone has 400 points more than you.

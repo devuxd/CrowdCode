@@ -108,10 +108,10 @@
     <div class="section-cols " ng-show=" tabs.active == 2 ">
         <div class="container-flex-row">
             <div class="section section-help bg-color-alpha " style="width:30%">
-                <a ng-click="runTests()" class="btn btn-primary"  ng-disabled="microtaskForm.functionForm.$invalid">
+                <a ng-click="runTests()" class="btn btn-primary" style="margin:10px" ng-disabled="microtaskForm.functionForm.$invalid">
                     <span class="glyphicon glyphicon-refresh"></span> 
-                    <span ng-if="!data.running">Run</span> 
-                    <span ng-if="data.running">tests running</span>
+                    <span ng-if="!data.running">Run the tests</span> 
+                    <span ng-if="data.running">Tests running</span>
                 </a>
                 
                 <div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>

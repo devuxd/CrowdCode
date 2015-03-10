@@ -47,11 +47,13 @@ function JSONValidator() {
 			}
 			catch (e)
 			{
-				errors.push(e.message);
+				if( e.message != 'Unexpected token o' )
+					errors.push(e.message);
+
 				// We can get an error here if the 1) field names are not surrounded by double quotes, 2) there's a trailing ,
 				// Also need to check that strings are surrounded by double quotes, not single quotes....
 				// errors.push("1) property names are surrounded by double quotes");
-				// errors.push("2) strings are surounded by double quotes not by single quotes" );
+				// errors.push("2) strings are surrounded by double quotes not by single quotes" );
 				// errors.push("3) there are no trailing commas in the list of fields.");
 			}
 		}
