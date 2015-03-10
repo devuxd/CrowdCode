@@ -57,13 +57,16 @@ angular
                     var code = _editor.getValue();
                     var ast = null
                     try{
-                        var ast = esprima.parse( code, {loc: true});
+                        ast = esprima.parse( code, {loc: true}); 
+                    } catch(e) { console.log(e.stack) };
+
+                    if( ast !== null ){
                         if( $scope.hasPseudo !== undefined ) 
                             $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
                         if( $scope.functionData.readOnly )
                             readOnlyFunctionDescription( ast);
-                    } catch(e){ console.log(e.stack) };
-
+                    }
+                    
                     redrawMarkers();
                 }
 

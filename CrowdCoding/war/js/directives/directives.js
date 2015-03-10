@@ -224,6 +224,7 @@ angular
                 code=viewValue;
                 validate(code);
 
+                console.log('from sender statements '+statements);
                 scope.$emit('statements-updated', statements);
 
                 if (errors.length > 0) {
@@ -282,6 +283,7 @@ angular
         // 5. checks if the are ast Errors and displays it
         // returns true iff there are AST errors
         // Check for AST errors
+        console.log('all',allFunctionNames);
         if (allFunctionNames.indexOf(ast.body[0].id.name) != -1)
             errors.push('The function name <strong>' + ast.body[0].id.name + '</strong> is already taken. Please use another.');
         
