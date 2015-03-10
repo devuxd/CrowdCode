@@ -24,6 +24,7 @@ angular
                 console.log('received statements '+numStatements);
             });
             $scope.code = $scope.functionData.getFunctionCode(); 
+            console.log('code ',$scope.code);
 
             $scope.trustHtml = function (unsafeHtml){
                 return $sce.trustAsHtml(unsafeHtml);
@@ -58,8 +59,8 @@ angular
                     var ast = null
                     try{
                         ast = esprima.parse( code, {loc: true}); 
-                    } catch(e) { console.log(e.stack) };
-
+                    } catch(e) { console.log(e.stack); ast = null };
+                    console.log('AST IS ',ast);
                     if( ast !== null ){
                         if( $scope.hasPseudo !== undefined ) 
                             $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
@@ -108,6 +109,9 @@ angular
     };
 
     function readOnlyFunctionDescription(ast){
+        if( ast.body[0] === undefined )
+            return; 
+        
         var intersects = function(range){ return editor.getSelectionRange().intersects(range); };
         
         var start = ast.body[0].body.loc.start;

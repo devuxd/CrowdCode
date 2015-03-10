@@ -123,12 +123,10 @@
             <div class="section section-form" style="width:70%">
                 <div class="section-content no-padding" >
                     <ace-edit-js 
-                        ng-model="data.code" 
-                        funct="funct" 
+                        function="funct" 
                         editor="data.editor" 
                         annotations="data.annotations"
-                        callees="data.callees"
-                        on-callee-click="data.onCalleeClick"
+                        callees="data.markers"
                         >
                     </ace-edit-js>
                 </div>
