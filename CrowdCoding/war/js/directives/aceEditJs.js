@@ -22,7 +22,7 @@ angular
             $scope.$on('statements-updated',function(event,numStatements){
                 console.log('received statements '+numStatements);
             });
-            $scope.code = $scope.functionData.getFunctionCode(); 
+            $scope.code = $scope.functionData.getFullCode(); 
 
             $scope.trustHtml = function (unsafeHtml){
                 return $sce.trustAsHtml(unsafeHtml);
@@ -108,10 +108,10 @@ angular
                 }
 
                 function updateMarkers(value){
-                    if( value == undefined ) value = [];
+                    if( value === undefined ) value = [];
                     var pseudoMarker = {
                         regex: '//#(.*)',
-                        token: 'ace_pseudo_call'
+                        token: 'ace_pseudo_code'
                     };
                     markers = value;
                     markers.push(pseudoMarker);
@@ -131,7 +131,7 @@ angular
         
         var start = ast.body[0].body.loc.start;
         var Range = ace.require("ace/range").Range;
-        var range = new Range( 0, 0, start.line-1, start.column);
+        var range = new Range( 0, 0, start.line-1, start.column+1);
         editor.keyBinding.setKeyboardHandler({
             handleKeyboard : function(editor, hash, keyString, keyCode, event) {
                 // if in the readonly range, allow only arrow keys
@@ -217,3 +217,19 @@ angular
 //     exports.DynamicHighlightRules = DynamicHighlightRules;
 // });
 
+angular
+    .module('crowdCode')
+    .directive('statementsProgressBar',['$rootScope',function($rootScope) {
+    return {
+        templateUrl : '/html/templates/ui/statements_progress_bar.html',
+        restrict: 'AE',
+        link: function (scope, elm, attrs, ctrl) {
+            scope.statements=0;
+            scope.max=10;
+            scope.$on('statements-updated',function(event,statements, max){
+                scope.statements=statements;
+                scope.max=max;
+            });
+        }
+    };
+}]);

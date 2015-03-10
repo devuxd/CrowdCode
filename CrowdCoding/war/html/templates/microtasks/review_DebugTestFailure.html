@@ -1,54 +1,74 @@
-<div class="section section-description " >
-	
-	<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+<div ng-if="review.microtask.submission.hasPseudo">
+	<div class="section section-description " >
+		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+		<div class="section-content job-description" >
+			A worker was asked to edit the code of the function <strong>{{ funct.getName() }}</strong>.
+			Can you review this work?
+		</div>
 
-	<div class="section-content job-description" >
-
-		A worker reported an issue with the following test case for the function <strong>{{funct.getName()}}</strong>.
-		 Can you review this work?
+	</div>
+	<div class="section section-review" >
+		<div class="section-title" >
+			<div class="dot bg-color"></div>Diff of edits to function
+		</div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="review.functionCode" mode="diff"></ace-read-js>
+		</div>
 	</div>
 </div>
 
 
-<div class="section section-description">
-	<div class="section-title">
-		<div class="dot bg-color"></div>FUNCTION DESCRIPTION
-	</div>
-	<div class="section-content no-padding" >
-		<ace-read-js code="funct.getSignature()"></ace-read-js>
-	</div>
-</div>
+<div ng-if="! review.microtask.submission.hasPseudo">
+	<div class="section section-description " >
+		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
 
-<div class="section section-description">
-	<div class="section-title" ><div class="dot bg-color"></div>test case</div>
-	<div class="section-content" >
-		{{test.getDescription()}}
-	</div>
-</div>
+		<div class="section-content job-description" >
 
-<div class="section section-description">
-	<div  class="section-title" ><div class="dot bg-color"></div>TEST</div>
-	<div class="section-content" >
-		<table style="width:100%" class="test">
-			<tr ng-repeat="(inputKey,input) in test.getSimpleTest().inputs track by $index">
-				<td>{{funct.getParamNameAt($index)}}</td>
-				<td>
-					<div ace-read-json ng-model="input" ></div>
-				</td>
-			</tr>
-			<tr >
-				<td>test output</td>
-				<td>
-					<div ace-read-json ng-model="test.getSimpleTest().output" ></div>
-				</td>
-			</tr>
-		</table>
+			A worker reported an issue with the following test case<span ng-if="review.microtask.submission.disputedTests.length > 1">s</span> for the function <strong>{{funct.getName()}}</strong>.
+			Can you review this work?
+		</div>
 	</div>
-</div>
+	<div class="section section-description">
+		<div class="section-title">
+			<div class="dot bg-color"></div>FUNCTION DESCRIPTION
+		</div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="funct.getSignature()"></ace-read-js>
+		</div>
+	</div>
+	<div data-ng-repeat="(key, test) in tests">
+		<div class="section section-description">
+			<div class="section-title" ><div class="dot bg-color"></div>test case</div>
+			<div class="section-content" >
+				{{test.getDescription()}}
+			</div>
+		</div>
 
-<div class="section section-review">
-	<div class="section-title" ><div class="dot bg-color"></div>Reported Issue</div>
-	<div class="section-content" >
-		{{reviewed.submission.description}}
+		<div class="section section-description">
+			<div  class="section-title" ><div class="dot bg-color"></div>TEST</div>
+			<div class="section-content" >
+				<table style="width:100%" class="test">
+					<tr ng-repeat="(inputKey,input) in test.getSimpleTest().inputs track by $index">
+						<td>{{funct.getParamNameAt($index)}}</td>
+						<td>
+							<div ace-read-json ng-model="input" ></div>
+						</td>
+					</tr>
+					<tr >
+						<td>test output</td>
+						<td>
+							<div ace-read-json ng-model="test.getSimpleTest().output" ></div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<div class="section section-review">
+			<div class="section-title" ><div class="dot bg-color"></div>Reported Issue</div>
+			<div class="section-content" >
+				{{test.disputeText}}
+			</div>
+		</div>
 	</div>
 </div>

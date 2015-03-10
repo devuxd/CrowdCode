@@ -138,7 +138,35 @@ angular
 
         }else if ($scope.review.microtask.type == 'DebugTestFailure') {
             $scope.funct = functionsService.get($scope.review.microtask.functionID);
-            $scope.test= TestList.get($scope.review.microtask.submission.testId);
+
+            if( $scope.review.microtask.submission.hasPseudo){
+                oldFunction =  $scope.funct;
+                newFunction = new FunctionFactory ( $scope.review.microtask.submission.functionDTO );
+
+                oldCode = oldFunction.getFullCode().split("\n");
+                newCode = newFunction.getFullCode().split("\n");
+
+                diffCode = "";
+                diffRes = diff(oldCode, newCode);
+                angular.forEach(diffRes, function(diffRow) {
+                    if (diffRow[0] == "=")
+                        diffCode += diffRow[1].join("\n");
+                    else
+                        for (var i = 0; i < diffRow[1].length; i++)
+                            diffCode += diffRow[0] + diffRow[1][i] + "\n";
+                    diffCode += "\n";
+                });
+                $scope.review.functionCode = diffCode;
+            } else {
+                $scope.tests= [];
+                var reviewTest;
+                for( var index in $scope.review.microtask.submission.disputedTests){
+                    reviewTest=TestList.get($scope.review.microtask.submission.disputedTests[index].id);
+                    reviewTest.disputeText = $scope.review.microtask.submission.disputedTests[index].disputeText;
+                    $scope.tests.push(reviewTest);
+                }
+
+            }
         }
     });
 

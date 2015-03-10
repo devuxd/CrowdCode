@@ -12,6 +12,7 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
 import com.crowdcoding.dto.FunctionDescriptionsDTO;
@@ -453,14 +454,15 @@ public class Project
 				else if(microtaskType.equals(DebugTestFailure.class))
 				{
 
-//					FunctionDTO dto = (FunctionDTO)DTO.read(jsonDTOData, FunctionDTO.class);
-//					if ( dto.testId != null)
-//					{
-//						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-//					}
-//					else{
+					DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, DebugDTO.class);
+					System.out.println(dto.disputedTests);
+					if(dto.disputedTests.size() > 0 || dto.hasPseudo)
+					{
+						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+					}
+					else{
 						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-//					}
+					}
 				}
 				else{
 					MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);

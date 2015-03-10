@@ -224,7 +224,7 @@ angular
                 code=viewValue;
                 validate(code);
 
-                scope.$emit('statements-updated', statements);
+                scope.$emit('statements-updated', statements, maxNewStatements);
 
                 if (errors.length > 0) {
                     ctrl.$setValidity('function', false);
@@ -336,12 +336,13 @@ angular
                 errors.push("Only one function is allowed, if you need more use the function stubs");
             }
 
-            statements = functionsData[0].metrics.statements;
             if( startStatements === undefined )
                 startStatements = functionsData[0].metrics.statements;
+            
+            statements = functionsData[0].metrics.statements - startStatements;
+            
 
-
-            if( statements > ( startStatements + maxNewStatements) ){
+            if( statements > maxNewStatements){
                 errors.push("You are not allowed to insert more than "+maxNewStatements+" statements");
             }
 
@@ -1408,19 +1409,3 @@ angular
     };
 });
 
-angular
-    .module('crowdCode')
-    .directive('statementsNumber',['$rootScope',function($rootScope) {
-    return {
-        template : '<div> Statements used: {{functionstatements}} / 10</div>',
-        restrict: 'AE',
-        link: function (scope, elm, attrs, ctrl) {
-
-            $rootScope.$on('statementsUpdated',function( event, functionstatements){
-                scope.functionstatements=functionstatements;
-
-            });
-
-        }
-    };
-}]);
