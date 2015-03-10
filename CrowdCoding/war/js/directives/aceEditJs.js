@@ -131,7 +131,7 @@ angular
         
         var start = ast.body[0].body.loc.start;
         var Range = ace.require("ace/range").Range;
-        var range = new Range( 0, 0, start.line-1, start.column);
+        var range = new Range( 0, 0, start.line-1, start.column+1);
         editor.keyBinding.setKeyboardHandler({
             handleKeyboard : function(editor, hash, keyString, keyCode, event) {
                 // if in the readonly range, allow only arrow keys
