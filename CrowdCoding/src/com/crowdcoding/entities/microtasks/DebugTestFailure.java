@@ -66,7 +66,7 @@ public class DebugTestFailure extends Microtask
 	{
 
 		super(projectId);
-		this.submitValue = 15;
+		this.submitValue = 10;
 
 		this.function   = (Ref<Function>) Ref.create(function.getKey());
 		this.failedTest = (Ref<Test>) Ref.create(test.getKey());
@@ -100,13 +100,13 @@ public class DebugTestFailure extends Microtask
 	}
 
 	protected void doSubmitWork( DTO dto, String workerID, String projectId)
-	{	
+	{
 		System.out.println("--> DEBUG TEST FAILURE: submitting microtask");
 		System.out.println(dto);
-		
+
 		DebugDTO debugDTO = (DebugDTO) dto;
-		
-		
+
+
 		function.get().debugTestFailureCompleted( debugDTO , projectId);
 		FirebaseService.postToNewsfeed(workerID, (
 	    		new NewsItemInFirebase(
@@ -121,7 +121,7 @@ public class DebugTestFailure extends Microtask
 				projectId
 	    );
 
-		
+
 		if( debugDTO.autoSubmit != null && debugDTO.autoSubmit != true ){
 			WorkerCommand.increaseStat(workerID, "debugs",1);
 		}

@@ -6,9 +6,15 @@ angular
     .module('crowdCode')
     .controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
-
-    //load the callee function
+    $scope.data = {};
+    $scope.data.hasPseudo = false;
+    $scope.data.editor = null;    //load the callee function
+    $scope.data.markers=[];
     $scope.calleeFunction = functionsService.get($scope.microtask.calleeID);
+    $scope.data.markers.push({ 
+        regex: $scope.calleeFunction.getName()+'[\\s]*\\([\\s\\w\\[\\]\\+\\.\\,]*\\)', 
+        token: 'ace_pseudo_call'
+    });
 
 
     if( angular.isDefined($scope.microtask.reissuedFrom) )
@@ -27,9 +33,7 @@ angular
 
     function collectFormData(event, microtaskForm) {
         var error = "";
-        var text = $scope.codemirror.getValue();
-        var hasPseudosegment = text.search('//!') !== -1 || text.search('//#') !== -1;
-
+        
         //if there are error and pseudosegments
         if ( microtaskForm.$invalid){
             $alert({
@@ -44,7 +48,7 @@ angular
         }
         else {
 
-            formData = functionsService.parseFunction($scope.codemirror);
+            formData = functionsService.parseFunctionFromAce($scope.data.editor);
             $scope.$emit('submitMicrotask', formData);
         }
     }

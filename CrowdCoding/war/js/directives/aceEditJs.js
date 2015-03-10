@@ -22,7 +22,7 @@ angular
             $scope.$on('statements-updated',function(event,numStatements){
                 console.log('received statements '+numStatements);
             });
-            $scope.code = $scope.functionData.getFunctionCode(); 
+            $scope.code = $scope.functionData.getFullCode(); 
 
             $scope.trustHtml = function (unsafeHtml){
                 return $sce.trustAsHtml(unsafeHtml);
@@ -82,7 +82,7 @@ angular
                         console.log('onclick',marker.onClick);
                         if( marker.onClick !== undefined ){
                             for( var r in marker.ranges ){
-                                if( marker.ranges[r].comparePoint(pos) == 0) {
+                                if( marker.ranges[r].comparePoint(pos) === 0) {
                                     console.log('click on a marker');
                                     marker.onClick.call();
                                 }
@@ -107,10 +107,10 @@ angular
                 }
 
                 function updateMarkers(value){
-                    if( value == undefined ) value = [];
+                    if( value === undefined ) value = [];
                     var pseudoMarker = {
                         regex: '//#(.*)',
-                        token: 'ace_pseudo_call'
+                        token: 'ace_pseudo_code'
                     };
                     value.push(pseudoMarker);
                     $scope.markers = value;
@@ -216,3 +216,19 @@ angular
 //     exports.DynamicHighlightRules = DynamicHighlightRules;
 // });
 
+angular
+    .module('crowdCode')
+    .directive('statementsProgressBar',['$rootScope',function($rootScope) {
+    return {
+        templateUrl : '/html/templates/ui/statements_progress_bar.html',
+        restrict: 'AE',
+        link: function (scope, elm, attrs, ctrl) {
+            scope.statements=0;
+            scope.max=10;
+            scope.$on('statements-updated',function(event,statements, max){
+                scope.statements=statements;
+                scope.max=max;
+            });
+        }
+    };
+}]);
