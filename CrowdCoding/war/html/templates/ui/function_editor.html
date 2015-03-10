@@ -8,6 +8,7 @@
 		ng-model="code" 
 		ng-show="false">
 	</textarea>
+	<statements-progress-bar></statements-progress-bar>
 	<ul class="help-block pull-left" ng-if="functionForm.code.$error.function_errors.length > 0">
 	    <ul >
 	        <li ng-repeat="error in functionForm.code.$error.function_errors track by $id($index)">

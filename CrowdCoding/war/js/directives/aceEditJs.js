@@ -20,9 +20,7 @@ angular
         },
 
         controller: function($scope,$element){
-            $scope.$on('statements-updated',function(event,numStatements){
-                console.log('received statements '+numStatements);
-            });
+          
             $scope.code = $scope.functionData.getFunctionCode(); 
             console.log('code ',$scope.code);
 
@@ -60,7 +58,7 @@ angular
                     try{
                         ast = esprima.parse( code, {loc: true}); 
                     } catch(e) { console.log(e.stack); ast = null };
-                    console.log('AST IS ',ast);
+                    //console.log('AST IS ',ast);
                     if( ast !== null ){
                         if( $scope.hasPseudo !== undefined ) 
                             $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
@@ -200,3 +198,19 @@ angular
 //     exports.DynamicHighlightRules = DynamicHighlightRules;
 // });
 
+angular
+    .module('crowdCode')
+    .directive('statementsProgressBar',['$rootScope',function($rootScope) {
+    return {
+        templateUrl : '/html/templates/ui/statements_progress_bar.html',
+        restrict: 'AE',
+        link: function (scope, elm, attrs, ctrl) {
+            scope.statements=0;
+            scope.max=10;
+            scope.$on('statements-updated',function(event,statements, max){
+                scope.statements=statements;
+                scope.max=max;
+            });
+        }
+    };
+}]);

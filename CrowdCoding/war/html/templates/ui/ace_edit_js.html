@@ -1,9 +1,10 @@
 <ng-form name="functionForm">
-	<div 
-		class="ace_editor js-editor" 
+	<div
+		class="ace_editor js-editor"
 		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'twilight'  }" 
 		ng-model="code" >
-	</div> 
+	</div>
+	<statements-progress-bar></statements-progress-bar>
 	<div style=" " class="function-errors">
 		<textarea 
 			class="form-control" 

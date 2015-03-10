@@ -305,6 +305,12 @@ h1, h2, h3, h4 {
 	z-index: 10;
 	width: 100%;
 }
+.section-statements{
+	position: absolute;
+	bottom: 60px;
+	z-index: 10;
+	width: 100%;
+}
 .progress-bar-reminder{
 	height: 7px;
 	width: 100%;
