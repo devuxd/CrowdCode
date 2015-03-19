@@ -122,6 +122,7 @@ public class CrowdServlet extends HttpServlet
 
 	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
+		
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
@@ -136,9 +137,9 @@ public class CrowdServlet extends HttpServlet
 			// -- PATHS WITHOUT USER AUTHENTICATION
 			 if( Pattern.matches("/",path) || Pattern.matches("/welcome",path)){
 				 System.out.println("DISPATCHING WELCOME PAGE");
-				req.getRequestDispatcher("/html/welcome.jsp").forward(req, resp);
+				req.getRequestDispatcher("/welcome.jsp").forward(req, resp);
 			 } else if(Pattern.matches("/user/info",path)){
-				req.getRequestDispatcher("/html/userInfo.jsp").forward(req, resp);
+				req.getRequestDispatcher("/userInfo.jsp").forward(req, resp);
 			 } if(Pattern.matches("/worker",path)){
 				doExecuteSubmit(req,resp);
 			 }
@@ -148,7 +149,7 @@ public class CrowdServlet extends HttpServlet
 
 				// PAGES URLS
 				if(Pattern.matches("/clientRequest",path)){
-					req.getRequestDispatcher("/html/client_request.html").forward(req, resp);
+					req.getRequestDispatcher("/client_request.html").forward(req, resp);
 				}
 				// USERS URLS
 				else if(Pattern.matches("/user/[\\w]*",path)){
@@ -157,9 +158,9 @@ public class CrowdServlet extends HttpServlet
 				// SUPERADMIN URLS
 				else if(Pattern.matches("/_admin/[\\w]*",path)){
 					if( userService.isUserAdmin() ){
-						req.getRequestDispatcher("/html/SuperAdmin.jsp").forward(req, resp);
+						req.getRequestDispatcher("/SuperAdmin.jsp").forward(req, resp);
 					} else
-						req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+						req.getRequestDispatcher("/404.jsp").forward(req, resp);
 				}
 				// PROJECT URLS match /word/ or /word/(word)*
 				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
@@ -174,19 +175,19 @@ public class CrowdServlet extends HttpServlet
 
 							Project.Construct(projectId);
 						} else {
-							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+							req.getRequestDispatcher("/404.jsp").forward(req, resp);
 						}
 					}
 
 
 
 					if ( pathSeg.length <= 2 ){
-						req.getRequestDispatcher("/html/angular_2_col.jsp").forward(req, resp);
+						req.getRequestDispatcher("/client/client.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
 						if( userService.isUserAdmin() ){
 							doAdmin(req, resp, projectId, pathSeg);
 						} else
-							req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+							req.getRequestDispatcher("/404.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("stressBot")){
 						req.getRequestDispatcher("/stressBot/index.jsp").forward(req, resp);
 					} else if (pathSeg[2].equals("ajax")){
@@ -199,7 +200,7 @@ public class CrowdServlet extends HttpServlet
 
 				// NOT FOUND 404 PAGE
 				} else {
-					req.getRequestDispatcher("/html/404.jsp").forward(req, resp);
+					req.getRequestDispatcher("/404.jsp").forward(req, resp);
 				}
 			// LOGIN PAGE
 			} else {
@@ -424,10 +425,10 @@ public class CrowdServlet extends HttpServlet
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
 
-
 		try
     	{
     		final String projectID    = (String) req.getAttribute("project");
+    		
 			final String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 			final String microtaskKey = req.getParameter("key") ;
 			final String type         = req.getParameter("type");

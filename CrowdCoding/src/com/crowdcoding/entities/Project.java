@@ -34,6 +34,7 @@ import com.crowdcoding.util.IDGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Serialize;
@@ -49,12 +50,14 @@ public class Project
 	// when a servlet begins).
 	public static Project project;
 
+	Ref<Microtask> chiave = null;
+	
 	private IDGenerator idgenerator;
 
 	@Id private String id;
 
 	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
-	private Boolean tutorialsEnabled = false;
+	private Boolean tutorialsEnabled = true;
 
 	// logged in workers
 	@Serialize private HashSet<String> loggedInWorkers = new HashSet<String>();
@@ -95,6 +98,7 @@ public class Project
 	// this is called ONCE per project by Construct
 	private Project(String id)
 	{
+
 		// set the id
 		this.id = id;
 
