@@ -232,7 +232,7 @@ angular
 			angular.forEach( fStubs, function( stub, key ){
 				// THE JSON IS OK FOR THE INPUTS, THE OUTPUT SHOULD BE PARSED
 				oldStubs[ fName ][ key ] = {};
-				oldStubs[ fName ][ key ].inputs = stub.inputs[i];
+				oldStubs[ fName ][ key ].inputs = stub.inputs;
 				oldStubs[ fName ][ key ].output = JSON.parse( stub.output );
 
 			}); 
@@ -290,7 +290,7 @@ angular
 
 	    // instantiate the worker
 	    // and attach the on-message listener
-	    this.worker = new Worker('/js/workers/test-runner.js');
+	    this.worker = new Worker('/client/test_runner/worker.js');
 	    // initialize the worker
 	    this.worker.postMessage( { 
 	    	'cmd'         : 'init', 

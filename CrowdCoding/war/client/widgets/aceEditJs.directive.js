@@ -19,9 +19,7 @@ angular
         },
 
         controller: function($scope,$element){
-            $scope.$on('statements-updated',function(event,numStatements){
-                console.log('received statements '+numStatements);
-            });
+            
             $scope.code = $scope.functionData.getFullCode(); 
 
             $scope.trustHtml = function (unsafeHtml){

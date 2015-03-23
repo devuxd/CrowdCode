@@ -8,7 +8,7 @@ angular
     .factory('functionsService', ['$window','$rootScope','$firebase', '$filter','FunctionFactory', function( $window, $rootScope, $firebase, $filter, FunctionFactory) {
 
 
-	var service = new  function(){
+	var service = function(){
 		// Private variables
 		var functions;
 		var functionsHistory;
@@ -53,14 +53,16 @@ angular
 		    for (var i = 0; i < lines.length; i++) {
 		        if (lines[i].startsWith('function')) {
 		            // If there is not any more lines after this one, return an error
-		            if (i + 1 >= lines.length - 1)
+		            if (i + 1 >= lines.length - 1){
 		                return '';
+		            }
 
 		            // Return a string replacing everything from the start of the next line to the end
 		            // Concatenate all of the lines together
 		            var newText = '';
-		            for (var j = 0; j <= i; j++)
+		            for (var j = 0; j <= i; j++){
 		                newText += lines[j] + '\n';
+		            }
 
 		            newText += '{}';
 		            return newText;
@@ -76,7 +78,7 @@ angular
 			var functionsNames = [];
 			$.each(functions, function(i, value)
 			{
-				functionName.push(value.nameget);
+				functionsNames.push(value.nameget);
 			});
 			return functionNames;
 		}
@@ -90,9 +92,10 @@ angular
 		// Returns an array with every current function ID
 		function getDescribedFunctionsId(excludedFunctionId){
 			var describedIds = [];
-			angular.forEach( getDescribedFunctions(), function(value, index){
-				if( value.id !== excludedFunctionId )
+			angular.forEach( getDescribedFunctions(), function(value){
+				if( value.id !== excludedFunctionId ){
 					describedIds.push(value.id);
+				}
 			});
 			return describedIds;
 		}
@@ -101,8 +104,8 @@ angular
 		function getDescribedFunctionsName(excludedFunctionId)
 		{
 			var describedNames = [];
-			angular.forEach( getDescribedFunctions(), function(value, index){
-				if( value.id != excludedFunctionId ){
+			angular.forEach( getDescribedFunctions(), function(value){
+				if( value.id !== excludedFunctionId ){
 					describedNames.push(value.name);
 				}
 			});
@@ -112,10 +115,11 @@ angular
 		// Returns all the described function signature except the one with the passed ID
 		function getDescribedFunctionsCode(excludedFunctionId)
 		{
-			var describedCode = "";
-			angular.forEach( getDescribedFunctions(), function(value, index){
-				if( value.id != excludedFunctionId )
-					describedCode += value.header+"{ }";
+			var describedCode = '';
+			angular.forEach( getDescribedFunctions(), function(value){
+				if( value.id !== excludedFunctionId ){
+					describedCode += value.header+'{ }';
+				}
 			});
 			return describedCode;
 		}
@@ -125,16 +129,17 @@ angular
 		function get(id)
 		{
 			var funct = null;
-			angular.forEach(functions, function(value, key) {
-				if( funct===null && value.id == id ) {
+			angular.forEach(functions, function(value) {
+				if( funct===null && value.id === id ) {
 			  		funct = value;
 			  	}
 			});
 
-			if( funct === null )
+			if( funct === null ){
 				return -1;
-			else 
+			} else {
 				return new FunctionFactory(funct);
+			}
 		}
 
 		// Get the function object, in FunctionInFirebase format, for the specified function id
@@ -150,8 +155,8 @@ angular
 		function getByName(name)
 		{
 			var funct = null;
-			angular.forEach(functions, function(value, key) {
-				if( funct===null && value.name == name && value.described) {
+			angular.forEach(functions, function(value) {
+				if( funct === null && value.name === name && value.described) {
 			  		funct = value;
 			  	}
 			});
@@ -161,17 +166,18 @@ angular
 		function getNameById(id)
 		{
 			var funct = get(id);
-			if( funct !== null)
+			if( funct !== null){
 				return funct.name;
-			return "";
+			}
+			return '';
 		}
 
 		function getIdByName(name)
 		{
 			// console.log(name);
 			var functionId = -1;
-			angular.forEach(functions, function(value, key) {
-				if( functionId==-1 && value.name === name ) {
+			angular.forEach(functions, function(value) {
+				if( functionId === -1 && value.name === name ) {
 			  		functionId = value.id;
 			  	}
 			});
@@ -185,11 +191,12 @@ angular
 		var re = new RegExp(searchText);
 		var results = [];
 
-		angular.forEach(functions, function(value, index){
-			if( value.name != functionSourceName ){
-			var score = computeMatchScore(value, re);
-			if (score > 0)
-				results.push({ 'score': score, 'value': new FunctionFactory( value) });
+		angular.forEach(functions, function(value){
+			if( value.name !== functionSourceName ){
+				var score = computeMatchScore(value, re);
+				if (score > 0){
+					results.push({ 'score': score, 'value': new FunctionFactory( value) });
+				}
 			}
 		});
 

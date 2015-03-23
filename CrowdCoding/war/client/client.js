@@ -10,7 +10,7 @@ angular
 		'ui.ace', 
 		'mgcrea.ngStrap', 
 		'ngClipboard',
-	    'luegg.directives'
+		'luegg.directives'
 	])
 	.config(function($dropdownProvider, ngClipProvider ) {
 
