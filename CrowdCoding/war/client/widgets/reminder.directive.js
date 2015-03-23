@@ -5,8 +5,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  10 * 60 * 1000;     //in second
-    var microtaskFirstWarning =  4  * 60 * 1000;      //in second
+    var microtaskTimeout      =  10 * 60 * 1000*0.1;     //in second
+    var microtaskFirstWarning =  4  * 60 * 1000*0.1;      //in second
     var timeInterval=500;//interval time in milliseconds
 
     var fetchTime = 0;
@@ -14,7 +14,8 @@ angular
     var popupWarning;
     var microtaskType;
     var callBackFunction;
-    var isTutorialOpen;
+    var tutorialOpen=0;
+    var popupHasBeenClosed = false;
 
 
     return {
@@ -24,14 +25,15 @@ angular
         link: function($scope, $element, attrs) {
             $scope.microtaskFirstWarning = microtaskFirstWarning;
             $scope.microtaskTimeout      = microtaskTimeout;
+            //create the popup without showing it
+            popupWarning = $modal({template : "/client/widgets/popup_reminder.html" , show: false});
 
-           // TO FIX
              $rootScope.$on('run-tutorial',function(){
-                 isTutorialOpen=true;
+                tutorialOpen++;
             });
 
             $rootScope.$on('tutorial-finished',function(){
-                isTutorialOpen=false;
+                tutorialOpen--;
             });
 
 
@@ -39,40 +41,20 @@ angular
             // and start the tutorial with tutorialId
             $rootScope.$on('run-reminder',function( event, microtask, onFinish ){
 
-                if( microtask!== undefined ){
-                    microtaskType=microtask;
-                    callBackFunction=onFinish;
-                    initializeReminder();
-                }
+                microtaskType=microtask;
+                callBackFunction=onFinish;
+                popupHasBeenClosed=false;
+                $scope.$emit('reset-reminder');
+                initializeReminder();
             });
-            $rootScope.$on('stop-reminder',function( event ){
-                
-                $scope.skipMicrotaskIn=undefined;
 
+            $rootScope.$on('reset-reminder',function( event ){
 
-
-                if(microtaskInterval!==undefined)
-                    $interval.cancel(microtaskInterval);
-
-                if(popupWarning!==undefined)
-                {
-                    popupWarning.$promise.then(popupWarning.hide);
-                    popupWarning=undefined;
-                }
-
+               $interval.cancel(microtaskInterval);
+               popupWarning.$promise.then(popupWarning.hide);
             });
 
             var initializeReminder = function(){
-
-
-                //cancel the interval if still active(when they press skip or submit)
-                if(microtaskInterval!==undefined)
-                    $interval.cancel(microtaskInterval);
-                if(popupWarning!==undefined)
-                {
-                    popupWarning.$promise.then(popupWarning.hide);
-                    popupWarning=undefined;
-                }
 
                 //time when user fetched the microtask for the first time in milliseonds
                 fetchTime = userService.getFetchTime();
@@ -81,16 +63,8 @@ angular
                 startTime =  new Date().getTime();
 
                 fetchTime.$loaded().then(function(){
-                    if(typeof(fetchTime.time)=='number'){
-                        $scope.skipMicrotaskIn = fetchTime.time + microtaskTimeout - startTime ;
-                        // console.log("reminder initialized, you have "+ $scope.skipMicrotaskIn + " millisecons more");
-
+                        $scope.skipMicrotaskIn = fetchTime.$value + microtaskTimeout - startTime ;
                         microtaskInterval = $interval(doReminder, timeInterval); 
-                    }
-                    else
-                    {
-                        // console.log("error reminder not started", fetchTime.time);
-                    }
                 });
 
 
@@ -98,31 +72,27 @@ angular
 
 
             var doReminder = function(){
+                //if no tutorial are open 
+                if( tutorialOpen===0 ){
+                    //update the remaining time both in the popup and in the progress bar
+                    popupWarning.$scope.skipMicrotaskIn = $scope.skipMicrotaskIn -= timeInterval;
 
-                if( ! isTutorialOpen ){
-                //remaining time
-                    $scope.skipMicrotaskIn-=timeInterval;
+                    //if the popover is not open and the remaining time is less than first warning, show the popover
+                    if( ! popupHasBeenClosed && $scope.skipMicrotaskIn < microtaskFirstWarning){
+                        popupHasBeenClosed=true;
+                        popupWarning.$promise.then(popupWarning.show);
 
-                    if($scope.skipMicrotaskIn < 0)
-                    {
+                    }
+                    //if the time is negative end the reminder and skip the microtask
+                    else if($scope.skipMicrotaskIn < 0)
                         endReminder();
-                    }
-                    else if(popupWarning===undefined && $scope.skipMicrotaskIn < microtaskFirstWarning){
-                        popupWarning = $modal({title: microtaskType, template : "/client/widgets/popup_reminder.html" , show: true});
-                        popupWarning.$scope.skipMicrotaskIn=$scope.skipMicrotaskIn ;
-                    }else if(popupWarning!==undefined)
-                    {
-                        popupWarning.$scope.skipMicrotaskIn=$scope.skipMicrotaskIn ;
-
-                    }
                 }
             };
 
             var endReminder = function(){
-                // console.log("skipping: "+microtaskType);
-                if(microtaskInterval!==undefined)
-                    $interval.cancel(microtaskInterval);
-                microtaskInterval=undefined;
+
+                $scope.$emit('reset-reminder');
+
                 if(callBackFunction!==undefined)
                     callBackFunction.apply();
             };

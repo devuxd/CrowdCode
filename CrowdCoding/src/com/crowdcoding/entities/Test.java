@@ -152,7 +152,7 @@ public class Test extends Artifact
 	// Checks the status of the test, marking it as implemented if appropriate
 	private void checkIfBecameImplemented(String projectId)
 	{
-		if (!isImplemented && !workToBeDone())
+		if (!isImplemented && ! isDeleted && !workToBeDone())
 		{
 			// A test becomes implemented when it has no more work to do
 			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "true", this));
@@ -177,40 +177,37 @@ public class Test extends Artifact
 	{
 		microtaskOutCompleted();
 
-		if (dto.inDispute)
-		{
-			if( dto.disputeFunctionText!="" ) {
-				FunctionCommand.disputeFunctionSignature(functionID, dto.disputeFunctionText, this.getID());
+		if( !isDeleted ) {
+			if (dto.inDispute) {
+				if( dto.disputeFunctionText!="" ) {
+					FunctionCommand.disputeFunctionSignature(functionID, dto.disputeFunctionText, this.getID());
+				}
+				else if( dto.disputeTestText!="" ) {
+					FunctionCommand.disputeTestCases(functionID, dto.disputeTestText, this.description, this.getID());
+				}
+				setNotImplemented();
 			}
-			else if( dto.disputeTestText!="" ) {
-				FunctionCommand.disputeTestCases(functionID, dto.disputeTestText, this.description, this.getID());
-			}
-			setNotImplemented();
-		}
-		else
-		{
-			this.functionVersion = dto.functionVersion;
-			this.code = dto.code;
-			this.hasSimpleTest = dto.hasSimpleTest;
-			this.simpleTestInputs = dto.simpleTestInputs;
-			this.simpleTestOutput = dto.simpleTestOutput;
-			ofy().save().entity(this).now();
-			checkIfBecameImplemented(projectId);
-			storeToFirebase(projectId);
-		}
-		lookForWork();
+			else {
 
+				this.functionVersion = dto.functionVersion;
+				this.code = dto.code;
+				this.hasSimpleTest = dto.hasSimpleTest;
+				this.simpleTestInputs = dto.simpleTestInputs;
+				this.simpleTestOutput = dto.simpleTestOutput;
+				ofy().save().entity(this).now();
+				checkIfBecameImplemented(projectId);
+				storeToFirebase(projectId);
+			}
+			lookForWork();
+		}
 	}
 
 	public void storeToFirebase(String projectId)
 	{
 		int firebaseVersion = version + 1;
 
-		if (this.isDeleted)
-			FirebaseService.deleteTest(this.id, projectId);
-		else
-			FirebaseService.writeTest(new TestInFirebase(this.id, firebaseVersion , code, hasSimpleTest, simpleTestInputs,
-				simpleTestOutput, description, functionName, functionID, isImplemented, isReadOnly), this.id, firebaseVersion, projectId);
+		FirebaseService.writeTest(new TestInFirebase(this.id, firebaseVersion , code, hasSimpleTest, simpleTestInputs,
+			simpleTestOutput, description, functionName, functionID, isImplemented, isReadOnly, isDeleted), this.id, firebaseVersion, projectId);
 
 		incrementVersion();
 	}

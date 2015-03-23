@@ -23,7 +23,7 @@ public class TestInFirebase extends DTO
 	public String functionName;		// Name of the function being tested
 	public long functionID;		// ID of the function being tested
 	public boolean readOnly;
-
+	public boolean isDeleted;
 	// Default constructor (required by Jackson JSON library)
 	public TestInFirebase()
 	{
@@ -31,7 +31,7 @@ public class TestInFirebase extends DTO
 
 	public TestInFirebase(long id, int version, String code, boolean hasSimpleTest,
 			List<String> simpleTestInputs, String simpleTestOutput, String description,
-			String functionName, long functionID, boolean isImplemented, boolean readOnly)
+			String functionName, long functionID, boolean isImplemented, boolean readOnly, boolean isDeleted)
 	{
 		this.id = id;
 		this.version = version;
@@ -44,5 +44,6 @@ public class TestInFirebase extends DTO
 		this.functionID = functionID;
 		this.isImplemented = isImplemented;
 		this.readOnly=readOnly;
+		this.isDeleted=isDeleted;
 	}
 }

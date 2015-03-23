@@ -18,7 +18,7 @@ angular
 	var userRef        = fbRef.child('/status/loggedInWorkers/' + workerId);
 	var logoutRef      = fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
-	var userFetchTime  = $firebase( fbRef.child('/workers/' + workerId + '/fetch' ) );
+	var userFetchTime  =fbRef.child('/workers/' + workerId + '/fetchTime' );
 
 	var updateLogInTime=function(){
 		userRef.setWithPriority({connected:true,name:workerHandle,timeStamp:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
@@ -44,8 +44,8 @@ angular
 
 
 	user.data = $firebase(userProfile).$asObject();
-	user.fetch= userFetchTime.$asObject();
-	//user.fetchTime = $firebase(userProfile).$asObject();
+
+	user.fetchTime= $firebase( userFetchTime).$asObject();
 
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
@@ -58,12 +58,12 @@ angular
 	user.assignedMicrotaskKey = null;
 
 	user.getFetchTime = function(){
-		return user.fetch;
+		return user.fetchTime;
 	};
 
 	user.setFirstFetchTime = function (){
-		user.fetch.time=new Date().getTime();
-		user.fetch.$save();
+		user.fetchTime.$value=new Date().getTime();
+		user.fetchTime.$save();
 
 	};
 	user.setAvatarUrl = function(url){

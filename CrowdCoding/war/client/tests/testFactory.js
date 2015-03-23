@@ -80,7 +80,7 @@ angular
 			var returnList = [];
 			console.log('searching implemented for fun'+functionId);
 			angular.forEach( objectsList, function( test, key){
-				if( test.getFunctionId() == functionId && test.isImplemented()){
+				if( test.getFunctionId() == functionId && test.isImplemented() && ! test.isDeleted()){
 					returnList.push(test);
 				}	
 			});
@@ -90,7 +90,7 @@ angular
 		getImplementedIdsByFunctionId: function(functionId){
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
-				if( test.getFunctionId() == functionId && test.isImplemented()){
+				if( test.getFunctionId() == functionId && test.isImplemented() && ! test.isDeleted()){
 					returnList.push( test.getId() );
 				}	
 			});
@@ -101,7 +101,7 @@ angular
 		getImplementedByFunctionName: function(functionName){
 			var returnList = [];
 			angular.forEach( objectsList, function(test, key){
-				if( test.getFunctionName() == functionName  && test.isImplemented())
+				if( test.getFunctionName() == functionName  && test.isImplemented() && ! test.isDeleted())
 					returnList.push(test);
 			});
 			return returnList;
@@ -117,7 +117,7 @@ angular
 		getByFunctionId: function(functionId){
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
-				if( test.getFunctionId() == functionId )
+				if( test.getFunctionId() == functionId && ! test.isDeleted())
 					returnList.push(test);
 			});
 
@@ -128,7 +128,7 @@ angular
 		getByFunctionName: function(functionName){
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
-				if( test.getFunctionName() == functionName )
+				if( test.getFunctionName() == functionName  && ! test.isDeleted())
 					returnList.push(test);
 			});
 			return returnList;
@@ -147,8 +147,9 @@ angular
 			var found     = false;
 			angular.forEach( objectsList, function( test, key){
 				if( !found && test.getFunctionName() == functionName && 
-				    test.hasSimpleTest() && 
-					angular.toJson(test.getSimpleTest().inputs.toString()) == angular.toJson(inputsValue.toString()) ){
+				    test.hasSimpleTest() &&
+				     ! test.isDeleted() &&
+ 			        angular.toJson(test.getSimpleTest().inputs.toString()) == angular.toJson(inputsValue.toString()) ){
 					found = true;
 					foundTest = test;
 				}
@@ -274,6 +275,14 @@ angular
 
 		setImplemented: function(value){
 			this.rec.isImplemented = value;
+		},
+
+		isDeleted: function(){
+			return this.rec.isDeleted;
+		},
+
+		setDeleted: function(value){
+			this.rec.isDeleted = value;
 		},
 
 		setMessageType: function(messageType){
