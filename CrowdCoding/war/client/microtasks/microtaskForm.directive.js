@@ -10,6 +10,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 			// private vars
 			var templatesURL = "/client/microtasks/";
 			var templates = {
+				'NoMicrotask': 'no_microtask/no_microtask.html',
 				'Review': 'review/review',
 				'DebugTestFailure': 'debug_test_failure/debug_test_failure',
 				'ReuseSearch': 'reuse_search/reuse_search',
@@ -81,7 +82,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 							}
 							else {
 								$scope.$emit('stop-reminder');
-								$scope.templatePath = templatesURL + "no_microtask.html";
+								$scope.templatePath = templatesURL + templates['NoMicrotask'];
 								$scope.noMicrotask = true;
 							}
 						});
@@ -102,7 +103,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 						else {
 
 							$scope.$emit('stop-reminder');
-							$scope.templatePath = templatesURL + "no_microtask.html";
+							$scope.templatePath = templatesURL + templates['NoMicrotask'];
 							$scope.noMicrotask = true;
 						}
 					}
@@ -113,7 +114,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 			// in case of no microtasks available
 			function noMicrotask(){
 				$scope.$emit('stop-reminder');
-				$scope.templatePath = templatesURL + "no_microtask.html";
+				$scope.templatePath = templatesURL + templates['NoMicrotask'];
 				$scope.noMicrotask = true;
 
 				$scope.checkQueueIn = waitTimeInSeconds;

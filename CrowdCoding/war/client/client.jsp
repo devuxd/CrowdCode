@@ -219,6 +219,10 @@
 	<script src="/client/widgets/aceReadJsonDiff.directive.js"></script>
 	<script src="/client/widgets/statements_progress_bar.directive.js"></script>
 
+	<script src="/client/functions/functionConventions.directive.js"></script>
+	<script src="/client/functions/javascriptTutorial.directive.js"></script>
+	<script src="/client/data_types/examplesList.directive.js"></script>
+
 
 	<!-- Angular Filter -->
 	<script src="/client/common/filter.js"></script>
