@@ -1,7 +1,7 @@
 <div ng-controller="WriteTestCasesController" >
 
 	<div class="section section-description " >
-		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+		<div ng-include="'/client/microtasks/microtask_title.html'"></div>
 		<div class="section-content job-description" >
 			
 
@@ -20,7 +20,7 @@
 		</div>
 	</div>
 
-	<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+	<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/client/microtasks/reissue_microtask.html'"></div>
 	
  	<div ng-if="microtask.issuedTestCase != ''">
 		<div class="section section-description"  >

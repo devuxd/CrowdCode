@@ -165,6 +165,7 @@
 
 	<script src="/client/common/workqueue.js"></script>
 	<script src="/client/test_runner/utils.js"></script>
+	<script src="/client/common/json_utils.js"></script>
 
 
 
@@ -196,7 +197,7 @@
 	<script src="/client/users/user.service.js"></script>
 	<script src="/client/test_runner/testRunner.js"></script>
     <script src="/client/common/fileUpload.js"></script>
-
+   
 
 
 	<!-- Angular Directives -->
@@ -210,12 +211,13 @@
 	<script src="/client/directives/directives.js"></script>
 	<script src="/client/tutorials/tutorial.js"></script>
 	<script src="/client/widgets/reminder.directive.js"></script>
-
+	<script src="/client/data_types/adtList.directive.js"></script>
 	<script src="/client/widgets/aceEditJs.directive.js"></script>
 	<script src="/client/widgets/aceEditJson.directive.js"></script>
 	<script src="/client/widgets/aceReadJs.directive.js"></script>
 	<script src="/client/widgets/aceReadJson.directive.js"></script>
 	<script src="/client/widgets/aceReadJsonDiff.directive.js"></script>
+	<script src="/client/widgets/statements_progress_bar.directive.js"></script>
 
 
 	<!-- Angular Filter -->

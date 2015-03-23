@@ -74,7 +74,7 @@ angular
                                 title    : alertData.worker, 
                                 content  : alertData.text , 
                                 duration : alertData.duration ,
-                                template : '/html/templates/alert/alert_chat.html', 
+                                template : '/client/chat/alert_chat.html', 
                                 keyboard : true, 
                                 show: true
                             });

@@ -1,5 +1,3 @@
-
-
 angular
     .module('crowdCode')
     .directive('adtList', ['$compile', '$timeout', 'ADTService', function($compile, $timeout, ADTService) {

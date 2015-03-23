@@ -1,6 +1,6 @@
 <div ng-if="review.microtask.submission.hasPseudo">
 	<div class="section section-description " >
-		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+		<div ng-include="'/client/microtasks/microtask_title.html'"></div>
 		<div class="section-content job-description" >
 			A worker was asked to edit the code of the function <strong>{{ funct.getName() }}</strong>.
 			Can you review this work?
@@ -20,7 +20,7 @@
 
 <div ng-if="! review.microtask.submission.hasPseudo">
 	<div class="section section-description " >
-		<div ng-include="'/html/templates/microtasks/microtask_title.html'"></div>
+		<div ng-include="'/client/microtasks/microtask_title.html'"></div>
 
 		<div class="section-content job-description" >
 

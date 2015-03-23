@@ -361,7 +361,7 @@ angular
             var popoverSettings = {
                 trigger: 'manual',
                 placement: 'bottom',
-                template:  '/html/templates/popover/user_popover.html'
+                template:  '/client/users/user_popover.html'
             };
             popover = $popover(element,popoverSettings);
             popover.$scope.close = function(){
@@ -395,7 +395,7 @@ angular
             var popoverSettings = {
                 trigger: 'hover',
                 placement: 'top',
-                template:  '/html/templates/popover/description_popover.html',
+                template:  '/client/widgets/description_popover.html',
             };
 
             var popover=$popover(element, popoverSettings);

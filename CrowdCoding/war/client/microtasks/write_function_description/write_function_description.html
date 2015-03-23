@@ -1,7 +1,7 @@
 <div ng-controller="WriteFunctionDescriptionController" >
 
 	<div class="section section-description " >
-		<div ng-include="'/html/templates/microtasks/microtask_title.html'">
+		<div ng-include="'/client/microtasks/microtask_title.html'">
 		</div>
 		<div class="section-content job-description">
 			A worker editing the function <strong>{{ funct.getName() }}</strong> requested that a function <strong>{{ microtask.pseudoFunctionName }}</strong> be created. Can you write a detailed description for the function doSub?
@@ -9,7 +9,7 @@
 	</div>
 
 
-	<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/html/templates/reissue_microtask.html'"></div>
+	<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/client/microtasks/reissue_microtask.html'"></div>
 	
 	<div class="section section-description">
 		<div class="section-title" >

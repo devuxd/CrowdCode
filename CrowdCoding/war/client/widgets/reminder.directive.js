@@ -19,7 +19,7 @@ angular
 
     return {
         restrict: 'E',
-        templateUrl : '/html/templates/ui/reminder.html',
+        templateUrl : '/client/widgets/reminder.html',
         scope: {},
         link: function($scope, $element, attrs) {
             $scope.microtaskFirstWarning = microtaskFirstWarning;
@@ -108,7 +108,7 @@ angular
                         endReminder();
                     }
                     else if(popupWarning===undefined && $scope.skipMicrotaskIn < microtaskFirstWarning){
-                        popupWarning = $modal({title: microtaskType, template : "/html/templates/popups/popup_reminder.html" , show: true});
+                        popupWarning = $modal({title: microtaskType, template : "/client/widgets/popup_reminder.html" , show: true});
                         popupWarning.$scope.skipMicrotaskIn=$scope.skipMicrotaskIn ;
                     }else if(popupWarning!==undefined)
                     {

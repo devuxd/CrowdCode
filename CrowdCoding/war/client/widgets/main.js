@@ -46,7 +46,7 @@ angular
 		$scope.avatar = avatarFactory.get;
 
 		 // Pre-fetch an external template populated with a custom scope
-		var profileModal = $modal({scope: $scope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/html/templates/popups/popup_user_profile.html', show: false});
+		var profileModal = $modal({scope: $scope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/widgets/popup_user_profile.html', show: false});
 		// Show when some event occurs (use $promise property to ensure the template has been loaded)
 		$rootScope.$on('showProfileModal', function() {
 			profileModal.$promise.then(profileModal.show);
