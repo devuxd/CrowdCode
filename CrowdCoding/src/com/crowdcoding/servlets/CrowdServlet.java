@@ -140,20 +140,21 @@ public class CrowdServlet extends HttpServlet
 				req.getRequestDispatcher("/welcome.jsp").forward(req, resp);
 			 } else if(Pattern.matches("/user/info",path)){
 				req.getRequestDispatcher("/userInfo.jsp").forward(req, resp);
-			 } if(Pattern.matches("/worker",path)){
+			 } else if(Pattern.matches("/worker",path)){
 				doExecuteSubmit(req,resp);
-			 }
+			 } 
 
 			// PATHS WITH USER AUTHENTICATION
 			 else if ( user != null ) { // if the user is authenticated
 
-				// PAGES URLS
-				if(Pattern.matches("/clientRequest",path)){
-					req.getRequestDispatcher("/client_request.html").forward(req, resp);
-				}
+				
 				// USERS URLS
-				else if(Pattern.matches("/user/[\\w]*",path)){
+				if(Pattern.matches("/user/[\\w]*",path)){
 					doUser(req,resp,user,pathSeg);
+				}
+				// client request
+				else if(Pattern.matches("/clientRequest",path)){
+					req.getRequestDispatcher("/clientReq/client_request.html").forward(req, resp);
 				}
 				// SUPERADMIN URLS
 				else if(Pattern.matches("/_admin/[\\w]*",path)){

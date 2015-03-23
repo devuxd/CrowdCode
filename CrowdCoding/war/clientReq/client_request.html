@@ -3,25 +3,15 @@
 	<head>
 		<title>CrowdCode Client Request Editor</title>
 		<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/css/client_request.css">
+		<link rel="stylesheet" href="/clientReq/client_request.css">
 	  
 
 	</head>
 	<body ng-controller="ClientRequestController">
 		<script src="/include/jquery-2.1.0.min.js"></script>
 		<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
-		<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 		<script src="/include/polyfill.js"></script>
 		<script src="/include/jshint.js"></script>
-		<script src="/js/errorCheck.js"></script>
-		<script src="/js/functionSupport.js"></script>
-		<script src="/js/ADTandDataCheck.js"></script>
-		<!-- Javascript 3rd part libraries -->
-		<script src="/include/jquery-2.1.0.min.js"></script>
-		<script src="/include/polyfill.js"></script>
-		<script src="/include/jshint.js"></script>
-		<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
-		<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 		<script src='/include/esprima.js'></script>
 		<script src='/include/escodegen.browser.js'></script>
 		<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
@@ -31,14 +21,20 @@
 		<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 		<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
 		<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
-		<script src="/js/JSONValidator.js"></script>
+
+
+		<script src="/client/common/errorCheck.js"></script>
+		<script src="/client/common/functionSupport.js"></script>
+		<script src="/client/common/JSONValidator.js"></script>
 
 		<!-- Angular Application -->
-		<script src="/js/clientRequest/application.js"></script>
+		<script src="/clientReq/application.js"></script>
 		<!-- Angular Controllers -->
-		<script src="/js/clientRequest/controller.js"></script>
+		<script src="/clientReq/controller.js"></script>
 		<!-- Angular directives -->
-		<script src="/js/clientRequest/directives.js"></script>
+		<script src="/clientReq/directives.js"></script>
+
+
 		<div ng-form="form" class="task">
 			<div class="section section-description " >
 				<div class="section-content no-padding" >

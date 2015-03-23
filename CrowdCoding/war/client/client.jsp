@@ -161,8 +161,6 @@
 	<script src="/client/common/functionSupport.js"></script> <!-- to refactor -->
 
 
-	<script src="/client/common/JSONValidator.js"></script>
-
 	<script src="/client/common/workqueue.js"></script>
 	<script src="/client/test_runner/utils.js"></script>
 	<script src="/client/common/json_utils.js"></script>
@@ -182,6 +180,7 @@
 
 	</script>
 
+	<!-- build:js scripts.js -->
 
 	<!-- Angular Application -->
 	<script src="/client/client.js"></script>
@@ -190,7 +189,6 @@
 	<script src="/client/users/avatarFactory.js"></script>
 	<script src="/client/data_types/ADT.service.js"></script>
 	<script src="/client/microtasks/microtasks.service.js"></script>
-	<script src="/client/tests/tests.service.js"></script>
 	<script src="/client/tests/testFactory.js"></script>
 	<script src="/client/functions/functions.service.js"></script>
 	<script src="/client/functions/functionFactory.js"></script>
@@ -223,6 +221,12 @@
 	<script src="/client/functions/javascriptTutorial.directive.js"></script>
 	<script src="/client/data_types/examplesList.directive.js"></script>
 
+	<script src="/client/chat/chat.directive.js"></script>
+	<script src="/client/newsfeed/microtaskPopover.directive.js"></script>
+
+
+	<script src="/client/functions/function.validator.js"></script>
+	<script src="/client/functions/functionName.validator.js"></script>
 
 	<!-- Angular Filter -->
 	<script src="/client/common/filter.js"></script>
@@ -242,6 +246,7 @@
 	<script src="/client/microtasks/write_test_cases/writeTestCases.js"></script>
 
 
+    <!-- endbuild -->
 
 </body>
 </html>
