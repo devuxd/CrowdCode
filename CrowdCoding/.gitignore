@@ -61,3 +61,4 @@ CrowdCoding/.project
 *.prefs
 
 CrowdCoding/war/node_modules/*
+CrowdCoding/war/clientDist/*
