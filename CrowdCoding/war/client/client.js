@@ -3,6 +3,7 @@
 // create CrowdCodeWorker App and load modules
 angular
 	.module('crowdCode',[ 
+		'templates-main',
 		'ngAnimate',
 		'ngMessages', 
 		'firebase', 

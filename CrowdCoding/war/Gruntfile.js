@@ -3,7 +3,10 @@ module.exports = function (grunt) {
   // grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-usemin');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-text-replace');
 
   grunt.initConfig({
 	
@@ -14,27 +17,76 @@ module.exports = function (grunt) {
       'beforeconcat': ['client/**/*.js'],
     },
 
+	html2js: {
+	    options: {
+	      // custom options, see below
+	      base: 'client'
+	    },
+	    main: {
+	      src: ['./client/**/*.html'],
+	      dest: '.tmp/clientTemplates.js'
+	    },
+	  },
 
-    useminPrepare: {
-      html: 'client/client.jsp',
-      options: {
-      	dest: 'client_dist/'
-      }
+    concat: { 
+    	generated: { 
+    		files: [ 
+        		{ 
+          			src: [ 'client/client.js', 'client/**/*.js', '.tmp/clientTemplates.js', '!client/test_runner/*.js' ] ,
+        			dest: 'clientDist/client.js'
+          		} 
+          	] 
+        } 
     },
 
-    usemin: {
-      html: 'client_dist/client.jsp',
-    }
+    replace: {
+	  code: {
+	    src: ['clientDist/*.js'],             // source files array (supports minimatch)
+	    dest: 'clientDist/',             // destination directory or file
+	    replacements: [{
+	      from: '/client/',                   // string replacement
+	      to: ''
+	    }]
+	  },
+	  testRunner: {
+	    src: ['clientDist/test_runner/*.js'],             // source files array (supports minimatch)
+	    dest: 'clientDist/test_runner/',             // destination directory or file
+	    replacements: [{
+	      from: '/client/',                   // string replacement
+	      to: '/clientDist/'
+	    }]
+	  }
+	},
+
+    watch: {
+    	scripts: {
+    		files: [ 'client/client.js', 'client/**/*.js', 'client/**/*.html'],
+    		tasks: ['build'],
+    		options: {
+    			event: ['all']
+    		}
+    	}
+    },
+
+    copy: {
+	  main: {
+	    files: [
+	      {expand:true,flatten:true, src: ['client/client.jsp'], dest: 'clientDist/', filter: 'isFile'},
+	      {expand:true,flatten:true, src: ['client/client.css'], dest: 'clientDist/', filter: 'isFile'},
+	      {expand:true,flatten:true, src: ['client/test_runner/*.js'], dest: 'clientDist/test_runner', filter: 'isFile'},
+	    ],
+	  },
+	},
+
 
   });
 
   // grunt.registerTask('test', ['karma:development']);
   grunt.registerTask('build', [
-	  'useminPrepare',
+	  'html2js',
 	  'concat',
-	  // 'cssmin:generated',
-	  // 'uglify:generated',
-	  // 'filerev',
-	  'usemin'
+	  'copy',
+	  'replace',
+	  // 'usemin'
 	]);
 };

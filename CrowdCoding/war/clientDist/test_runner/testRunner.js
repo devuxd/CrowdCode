@@ -290,7 +290,7 @@ angular
 
 	    // instantiate the worker
 	    // and attach the on-message listener
-	    this.worker = new Worker('/client/test_runner/worker.js');
+	    this.worker = new Worker('/clientDist/test_runner/worker.js');
 	    // initialize the worker
 	    this.worker.postMessage( { 
 	    	'cmd'         : 'init', 

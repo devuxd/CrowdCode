@@ -8,7 +8,7 @@ angular
     .factory('functionsService', ['$window','$rootScope','$firebase', '$filter','FunctionFactory', function( $window, $rootScope, $firebase, $filter, FunctionFactory) {
 
 
-	var service = function(){
+	var service = new function(){
 		// Private variables
 		var functions;
 		var functionsHistory;
@@ -105,7 +105,7 @@ angular
 		{
 			var describedNames = [];
 			angular.forEach( getDescribedFunctions(), function(value){
-				if( value.id !== excludedFunctionId ){
+				if( value.id != excludedFunctionId ){
 					describedNames.push(value.name);
 				}
 			});
@@ -117,7 +117,7 @@ angular
 		{
 			var describedCode = '';
 			angular.forEach( getDescribedFunctions(), function(value){
-				if( value.id !== excludedFunctionId ){
+				if( value.id != excludedFunctionId ){
 					describedCode += value.header+'{ }';
 				}
 			});
@@ -130,7 +130,7 @@ angular
 		{
 			var funct = null;
 			angular.forEach(functions, function(value) {
-				if( funct===null && value.id === id ) {
+				if( funct === null && value.id == id ) {
 			  		funct = value;
 			  	}
 			});

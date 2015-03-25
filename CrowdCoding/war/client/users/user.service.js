@@ -126,6 +126,7 @@ angular
 					whenFinished();
 				},500);
 			} else {
+				console.log('running from user service');
 				var testRunner = new TestRunnerFactory.instance({submitToServer: true});
 				testRunner.setTestedFunction( jobData.functionId );
 				try {
