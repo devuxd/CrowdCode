@@ -54,6 +54,7 @@ angular
             $rootScope.$on('reset-reminder',function( event ){
 
                $interval.cancel(microtaskInterval);
+               $scope.skipMicrotaskIn=undefined;
                popupWarning.$promise.then(popupWarning.hide);
             });
 

@@ -79,7 +79,7 @@ angular
                    news.funct = new FunctionFactory(news.microtask.submission.functionDTO);
                    var reviewTest;
                    news.tests=[];
-                   if(news.microtask.submission.disputedTests.length>0){
+                   if(news.microtask.submission.disputedTests!==undefined && news.microtask.submission.disputedTests.length>0){
                         for(var index in news.microtask.submission.disputedTests){
                             reviewTest=TestList.get(news.microtask.submission.disputedTests[index].id);
                             reviewTest.disputeText = news.microtask.submission.disputedTests[index].disputeText;

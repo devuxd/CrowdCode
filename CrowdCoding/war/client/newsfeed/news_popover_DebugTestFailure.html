@@ -1,12 +1,14 @@
-<div ng-if="review.microtask.submission.hasPseudo">
+<div ng-if=" ! n.microtask.submission.disputedTests">
     <div class="section section-description " >
-        <div class="section-content job-description" >
+        <div class="section-content job-description" ng-if=" ! n.microtask.submission.hasPseudo">
             Debug of the function <strong>{{ n.funct.getName() }}</strong>.
-            Can you review this work?
+        </div>
+        <div class="section-content job-description" ng-if="n.microtask.submission.hasPseudo">
+            Edit of the function <strong>{{ n.funct.getName() }}</strong>.
         </div>
 
     </div>
-    <div class="section section-review" >
+    <div class="section section-n" >
         <div class="section-title" >
             <div class="dot bg-color"></div>Code of the function
         </div>
@@ -16,8 +18,7 @@
     </div>
 </div>
 
-<div ng-if="! review.microtask.submission.hasPseudo">
-
+<div ng-if="n.microtask.submission.disputedTests">
 
     <div class="section section-description " >
         <div class="section-content job-description" >
@@ -64,7 +65,7 @@
             </div>
         </div>
 
-        <div class="section section-review">
+        <div class="section section-n">
             <div class="section-title" ><div class="dot bg-color"></div>Reported Issue</div>
             <div class="section-content" >
                 {{test.disputeText}}

@@ -1763,7 +1763,6 @@ angular.module("microtasks/write_test_cases/write_test_cases.html", []).run(["$t
     "			\n" +
     "\n" +
     "			<div ng-show=\"microtask.promptType=='WRITE'\" >\n" +
-    "				{{skipMicrotaskIn}}\n" +
     "				Can you describe some test cases in which this function might be used? <br />\n" +
     "				Are there any unexpected corner cases that might not work? <br/>\n" +
     "				<strong>TIP:</strong> You don’t need to specify concrete, executable tests, only high-level descriptions of scenarios to be tested.\n" +
@@ -1877,43 +1876,42 @@ angular.module("microtasks/write_test_cases/write_test_cases.html", []).run(["$t
     "				<div class=\"section-content no-padding\" >\n" +
     "\n" +
     "					<div class=\"list-group\" >\n" +
-    "						<div ng-form=\"testCase\" ng-repeat=\"(index,test) in model.testcases | filter: { deleted:false }\" class=\"list-item input-group input-group-sm animate-repeat\">\n" +
-    "						  	<input ng-if=\"!test.readOnly\" type=\"text\" class=\"form-control\" \n" +
+    "						<div ng-form=\"testCase\" ng-repeat=\"(index,test) in model.testcases\" ng-if=\"test.deleted==false\" class=\"list-item input-group input-group-sm animate-repeat\" style=\"width:100%\" >\n" +
+    "\n" +
+    "						  	<input ng-if=\"!test.readOnly\" type=\"text\" class=\"form-control\"\n" +
     "							    placeholder=\"Describe a test case\"\n" +
     "							  	name=\"testcase\"\n" +
     "								ng-model=\"test.text\"\n" +
     "								press-enter=\" editMode = testCaseForm.testcase.$invalid ? true : false \"\n" +
     "							    ng-focus=\"editMode=true\"\n" +
     "							    ng-blur=\"editMode=false\"\n" +
-    "							    ng-readonly=\"test.readOnly\"\n" +
-    "\n" +
     "							    tabindex=\"{{2*index+2}}\"\n" +
     "							    required\n" +
     "							>\n" +
+    "\n" +
+    "					  		<span  ng-if=\"!test.readOnly\" class=\"input-group-btn\" >\n" +
+    "					  			<button class=\"btn\"  tabindex=\"{{2*index+3}}\" ng-click=\"removeTestCase($index)\" type=\"button\">\n" +
+    "					  				<span class=\"glyphicon glyphicon-remove\"></span>\n" +
+    "					  			</button>\n" +
+    "							</span>\n" +
+    "\n" +
     "							<input ng-if=\"test.readOnly\" type=\"text\" class=\"form-control\" \n" +
     "							  	name=\"testcase\"\n" +
     "								ng-model=\"test.text\"\n" +
-    "							    readonly \n" +
+    "							    readonly\n" +
     "							    data-placement=\"left\"\n" +
     "							    data-trigger=\"hover\" \n" +
     "							    data-title=\"this test case cannot be edited or removed\" \n" +
     "							    bs-tooltip\n" +
     "							>\n" +
-    "					  		<span class=\"input-group-btn\" >\n" +
-    "					  			<button class=\"btn\"  tabindex=\"{{2*index+3}}\" ng-click=\"removeTestCase($index)\" type=\"button\">\n" +
-    "					  				<span class=\"glyphicon glyphicon-remove\" ng-hide=\"test.readOnly\" ></span>\n" +
-    "					  			</button>\n" +
-    "							</span>\n" +
-    "						</div>\n" +
     "\n" +
-    "							\n" +
+    "						</div>\n" +
     "							<div class=\"help-block\" ng-if=\"microtaskForm.$invalid\">\n" +
     "								a test case name can't be empty!\n" +
     "							</div>\n" +
     "					</div>\n" +
     "\n" +
     "					<span ng-if=\"model.testcases.length == 0\" >write at least one test case</span>\n" +
-    "					\n" +
     "				</div>\n" +
     "			</div>\n" +
     "\n" +
@@ -2004,15 +2002,17 @@ angular.module("newsfeed/news_popover.html", []).run(["$templateCache", function
 
 angular.module("newsfeed/news_popover_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("newsfeed/news_popover_DebugTestFailure.html",
-    "<div ng-if=\"review.microtask.submission.hasPseudo\">\n" +
+    "<div ng-if=\" ! n.microtask.submission.disputedTests\">\n" +
     "    <div class=\"section section-description \" >\n" +
-    "        <div class=\"section-content job-description\" >\n" +
+    "        <div class=\"section-content job-description\" ng-if=\" ! n.microtask.submission.hasPseudo\">\n" +
     "            Debug of the function <strong>{{ n.funct.getName() }}</strong>.\n" +
-    "            Can you review this work?\n" +
+    "        </div>\n" +
+    "        <div class=\"section-content job-description\" ng-if=\"n.microtask.submission.hasPseudo\">\n" +
+    "            Edit of the function <strong>{{ n.funct.getName() }}</strong>.\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
-    "    <div class=\"section section-review\" >\n" +
+    "    <div class=\"section section-n\" >\n" +
     "        <div class=\"section-title\" >\n" +
     "            <div class=\"dot bg-color\"></div>Code of the function\n" +
     "        </div>\n" +
@@ -2022,8 +2022,7 @@ angular.module("newsfeed/news_popover_DebugTestFailure.html", []).run(["$templat
     "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div ng-if=\"! review.microtask.submission.hasPseudo\">\n" +
-    "\n" +
+    "<div ng-if=\"n.microtask.submission.disputedTests\">\n" +
     "\n" +
     "    <div class=\"section section-description \" >\n" +
     "        <div class=\"section-content job-description\" >\n" +
@@ -2070,7 +2069,7 @@ angular.module("newsfeed/news_popover_DebugTestFailure.html", []).run(["$templat
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"section section-review\">\n" +
+    "        <div class=\"section section-n\">\n" +
     "            <div class=\"section-title\" ><div class=\"dot bg-color\"></div>Reported Issue</div>\n" +
     "            <div class=\"section-content\" >\n" +
     "                {{test.disputeText}}\n" +

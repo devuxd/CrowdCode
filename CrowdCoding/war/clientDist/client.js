@@ -1764,14 +1764,13 @@ angular
             //initialize the max number of statements allowed to the scope value or the default value
             maxNewStatements = scope.maxNewStatements || defaultMaxNewStatements;
             //force  startStatements to undefined (necessary from the second time that the directive is used)
+           
             startStatements = undefined;
             functionId = attrs.functionId;
             valid = true;
-
             var describedFunctions = functionsService.getDescribedFunctions();
             allFunctionNames = functionsService.getDescribedFunctionsName(functionId);
             allFunctionCode  = functionsService.getDescribedFunctionsCode(functionId) + " var console = null; " ;
-
             ctrl.$formatters.unshift(function(viewValue) {
                 code=viewValue;
                 validate(code);
@@ -2367,7 +2366,6 @@ angular
             ctrl.$parsers.unshift(function(viewValue) {
                 var functionsName=functionsService.getDescribedFunctionsName();
                 var valid =  viewValue === ""|| viewValue === undefined || (functionsName.indexOf(viewValue) == -1);
-
                 if (!valid) {
 
                     ctrl.$setValidity('function', false);
@@ -2399,7 +2397,7 @@ angular
 		var loaded = false;
 
 		// Public functions
-		this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); };
+		this.init =  init ;
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
 		this.getVersion = function(id,version) { return getVersion(id, version); };
@@ -3097,13 +3095,15 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 
 
-			function loadMicrotask(microtaskKey){
+			function loadMicrotask(microtaskKey, firstFetch){
 				//console.log('Loading microtask '+microtaskKey);
 
 				if( microtaskKey === undefined || microtaskKey == "null" ){
 					noMicrotask();
 					return;
 				}
+				if( firstFetch == '1')
+					userService.setFirstFetchTime();
 
 				userService.assignedMicrotaskKey = microtaskKey;
 
@@ -3137,11 +3137,8 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 								$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
 								$scope.$emit('run-reminder', $scope.microtask.type,function (){ $scope.$emit('skipMicrotask',true); });
 							}
-							else {
-								$scope.$emit('stop-reminder');
-								$scope.templatePath = templatesURL + templates['NoMicrotask'];
-								$scope.noMicrotask = true;
-							}
+							else
+								noMicrotask();
 						});
 
 					}
@@ -3157,12 +3154,8 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 							$scope.$emit('run-reminder', $scope.microtask.type, function (){ $scope.$emit('skipMicrotask',true); } );
 
 						}
-						else {
-
-							$scope.$emit('stop-reminder');
-							$scope.templatePath = templatesURL + templates['NoMicrotask'];
-							$scope.noMicrotask = true;
-						}
+						else
+							noMicrotask();
 					}
 
 				});
@@ -3170,7 +3163,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 			// in case of no microtasks available
 			function noMicrotask(){
-				$scope.$emit('stop-reminder');
+				$scope.$emit('reset-reminder');
 				$scope.templatePath = templatesURL + templates['NoMicrotask'];
 				$scope.noMicrotask = true;
 
@@ -3205,20 +3198,14 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 				// if a fetchData is provided
 				if( fetchData !== undefined ){
 
-					if(  fetchData.firstFetch == '1')
-						userService.setFirstFetchTime();
-
-					loadMicrotask(fetchData.microtaskKey);
+					loadMicrotask(fetchData.microtaskKey,fetchData.firstFetch);
 				}
 				// otherwise do a fetch request
 				else {
 					var fetchPromise = microtasks.fetch();
 					fetchPromise.then(function(fetchData){
 
-						if(  fetchData.firstFetch == '1')
-							userService.setFirstFetchTime();
-						
-						loadMicrotask(fetchData.microtaskKey);
+						loadMicrotask(fetchData.microtaskKey,fetchData.firstFetch);
 					}, function(){
 						noMicrotask();
 					});
@@ -3244,7 +3231,6 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 			// listen for message 'skip microtask'
 			$scope.$on('skipMicrotask', function(event,autoSkip) {
 
-				console.log("skip with value: "+autoSkip);
 				if($scope.canSubmit){
 
 					$scope.templatePath   = templatesURL + "loading.html";
@@ -3704,7 +3690,6 @@ angular
         regex: $scope.calleeFunction.getName()+'[\\s]*\\([\\s\\w\\[\\]\\+\\.\\,]*\\)', 
         token: 'ace_pseudo_call'
     });
-
 
     if( angular.isDefined($scope.microtask.reissuedFrom) )
         $scope.funct.updateFunction($scope.reissuedMicrotask.submission);
@@ -4192,6 +4177,7 @@ angular
     }
     
     function removeTestCase(index) {
+        console.log("removing "+index+" from ",$scope.model.testcases);
         // if the testcase was added during this microtask, remove it from the array
         // else set the flag DELETED to true
         if ($scope.model.testcases[index].added === true) 
@@ -4209,7 +4195,7 @@ angular
 
         if( !$scope.dispute.active && $scope.model.testcases.length === 0 ) 
             error = "Add at least 1 test case";
-        else if( $scope.dispute.active && $scope.dispute.text == "" )
+        else if( $scope.dispute.active && $scope.dispute.text === "" )
             error = 'The report text cannot be empty!';
 
         // if there is an error 
@@ -4328,7 +4314,7 @@ angular
                    news.funct = new FunctionFactory(news.microtask.submission.functionDTO);
                    var reviewTest;
                    news.tests=[];
-                   if(news.microtask.submission.disputedTests.length>0){
+                   if(news.microtask.submission.disputedTests!==undefined && news.microtask.submission.disputedTests.length>0){
                         for(var index in news.microtask.submission.disputedTests){
                             reviewTest=TestList.get(news.microtask.submission.disputedTests[index].id);
                             reviewTest.disputeText = news.microtask.submission.disputedTests[index].disputeText;
@@ -4511,7 +4497,7 @@ angular
 			var returnList = [];
 			console.log('searching implemented for fun'+functionId);
 			angular.forEach( objectsList, function( test, key){
-				if( test.getFunctionId() == functionId && test.isImplemented()){
+				if( test.getFunctionId() == functionId && test.isImplemented() && ! test.isDeleted()){
 					returnList.push(test);
 				}	
 			});
@@ -4521,7 +4507,7 @@ angular
 		getImplementedIdsByFunctionId: function(functionId){
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
-				if( test.getFunctionId() == functionId && test.isImplemented()){
+				if( test.getFunctionId() == functionId && test.isImplemented() && ! test.isDeleted()){
 					returnList.push( test.getId() );
 				}	
 			});
@@ -4532,7 +4518,7 @@ angular
 		getImplementedByFunctionName: function(functionName){
 			var returnList = [];
 			angular.forEach( objectsList, function(test, key){
-				if( test.getFunctionName() == functionName  && test.isImplemented())
+				if( test.getFunctionName() == functionName  && test.isImplemented() && ! test.isDeleted())
 					returnList.push(test);
 			});
 			return returnList;
@@ -4548,7 +4534,7 @@ angular
 		getByFunctionId: function(functionId){
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
-				if( test.getFunctionId() == functionId )
+				if( test.getFunctionId() == functionId && ! test.isDeleted())
 					returnList.push(test);
 			});
 
@@ -4559,7 +4545,7 @@ angular
 		getByFunctionName: function(functionName){
 			var returnList = [];
 			angular.forEach( objectsList, function( test, key){
-				if( test.getFunctionName() == functionName )
+				if( test.getFunctionName() == functionName  && ! test.isDeleted())
 					returnList.push(test);
 			});
 			return returnList;
@@ -4578,8 +4564,9 @@ angular
 			var found     = false;
 			angular.forEach( objectsList, function( test, key){
 				if( !found && test.getFunctionName() == functionName && 
-				    test.hasSimpleTest() && 
-					angular.toJson(test.getSimpleTest().inputs.toString()) == angular.toJson(inputsValue.toString()) ){
+				    test.hasSimpleTest() &&
+				     ! test.isDeleted() &&
+ 			        angular.toJson(test.getSimpleTest().inputs.toString()) == angular.toJson(inputsValue.toString()) ){
 					found = true;
 					foundTest = test;
 				}
@@ -4705,6 +4692,14 @@ angular
 
 		setImplemented: function(value){
 			this.rec.isImplemented = value;
+		},
+
+		isDeleted: function(){
+			return this.rec.isDeleted;
+		},
+
+		setDeleted: function(value){
+			this.rec.isDeleted = value;
 		},
 
 		setMessageType: function(messageType){
@@ -4851,7 +4846,7 @@ angular
                         // listen on the event 'run-tutorial'
                         // and start the tutorial with tutorialId
                         $rootScope.$on('run-tutorial',function( event, tutorialId, force, onFinish ){
-                           // console.log('tutorial: '+tutorialId);
+                           console.log('tutorial: '+tutorialId);
                             if( force || userTutorials[tutorialId] === undefined ){
                                 // if another tutorial is running
                                 // enqueue the new one
@@ -4911,10 +4906,18 @@ angular
 
 
                 }
+                else
+                {
+
+                    // listen on the event 'run-tutorial'
+                    // and send the message tutorial finished when the tutorial is deactivate
+                    $rootScope.$on('run-tutorial',function( event, tutorialId, force, onFinish ){
+                        $scope.$emit('tutorial-finished');
+                    });
+                }
             });
-            
         }
-    }
+    };
 }]);
 
 angular
@@ -5189,7 +5192,7 @@ angular
 	var userRef        = fbRef.child('/status/loggedInWorkers/' + workerId);
 	var logoutRef      = fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
-	var userFetchTime  = $firebase( fbRef.child('/workers/' + workerId + '/fetch' ) );
+	var userFetchTime  =fbRef.child('/workers/' + workerId + '/fetchTime' );
 
 	var updateLogInTime=function(){
 		userRef.setWithPriority({connected:true,name:workerHandle,timeStamp:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
@@ -5215,8 +5218,8 @@ angular
 
 
 	user.data = $firebase(userProfile).$asObject();
-	user.fetch= userFetchTime.$asObject();
-	//user.fetchTime = $firebase(userProfile).$asObject();
+
+	user.fetchTime= $firebase( userFetchTime).$asObject();
 
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
@@ -5229,12 +5232,12 @@ angular
 	user.assignedMicrotaskKey = null;
 
 	user.getFetchTime = function(){
-		return user.fetch;
+		return user.fetchTime;
 	};
 
 	user.setFirstFetchTime = function (){
-		user.fetch.time=new Date().getTime();
-		user.fetch.$save();
+		user.fetchTime.$value=new Date().getTime();
+		user.fetchTime.$save();
 
 	};
 	user.setAvatarUrl = function(url){
@@ -6108,8 +6111,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  10 * 60 * 1000;     //in second
-    var microtaskFirstWarning =  4  * 60 * 1000;      //in second
+    var microtaskTimeout      =  10 * 60 * 1000*1;     //in second
+    var microtaskFirstWarning =  4  * 60 * 1000*1;      //in second
     var timeInterval=500;//interval time in milliseconds
 
     var fetchTime = 0;
@@ -6117,7 +6120,8 @@ angular
     var popupWarning;
     var microtaskType;
     var callBackFunction;
-    var isTutorialOpen;
+    var tutorialOpen=0;
+    var popupHasBeenClosed = false;
 
 
     return {
@@ -6127,14 +6131,18 @@ angular
         link: function($scope, $element, attrs) {
             $scope.microtaskFirstWarning = microtaskFirstWarning;
             $scope.microtaskTimeout      = microtaskTimeout;
+            //create the popup without showing it
+            popupWarning = $modal({template : "widgets/popup_reminder.html" , show: false});
 
-           // TO FIX
              $rootScope.$on('run-tutorial',function(){
-                 isTutorialOpen=true;
+                console.log("turorial run");
+                tutorialOpen++;
             });
 
             $rootScope.$on('tutorial-finished',function(){
-                isTutorialOpen=false;
+                tutorialOpen--;
+                console.log("turorial finished");
+
             });
 
 
@@ -6142,40 +6150,21 @@ angular
             // and start the tutorial with tutorialId
             $rootScope.$on('run-reminder',function( event, microtask, onFinish ){
 
-                if( microtask!== undefined ){
-                    microtaskType=microtask;
-                    callBackFunction=onFinish;
-                    initializeReminder();
-                }
+                microtaskType=microtask;
+                callBackFunction=onFinish;
+                popupHasBeenClosed=false;
+                $scope.$emit('reset-reminder');
+                initializeReminder();
             });
-            $rootScope.$on('stop-reminder',function( event ){
-                
-                $scope.skipMicrotaskIn=undefined;
 
+            $rootScope.$on('reset-reminder',function( event ){
 
-
-                if(microtaskInterval!==undefined)
-                    $interval.cancel(microtaskInterval);
-
-                if(popupWarning!==undefined)
-                {
-                    popupWarning.$promise.then(popupWarning.hide);
-                    popupWarning=undefined;
-                }
-
+               $interval.cancel(microtaskInterval);
+               $scope.skipMicrotaskIn=undefined;
+               popupWarning.$promise.then(popupWarning.hide);
             });
 
             var initializeReminder = function(){
-
-
-                //cancel the interval if still active(when they press skip or submit)
-                if(microtaskInterval!==undefined)
-                    $interval.cancel(microtaskInterval);
-                if(popupWarning!==undefined)
-                {
-                    popupWarning.$promise.then(popupWarning.hide);
-                    popupWarning=undefined;
-                }
 
                 //time when user fetched the microtask for the first time in milliseonds
                 fetchTime = userService.getFetchTime();
@@ -6184,16 +6173,8 @@ angular
                 startTime =  new Date().getTime();
 
                 fetchTime.$loaded().then(function(){
-                    if(typeof(fetchTime.time)=='number'){
-                        $scope.skipMicrotaskIn = fetchTime.time + microtaskTimeout - startTime ;
-                        // console.log("reminder initialized, you have "+ $scope.skipMicrotaskIn + " millisecons more");
-
+                        $scope.skipMicrotaskIn = fetchTime.$value + microtaskTimeout - startTime ;
                         microtaskInterval = $interval(doReminder, timeInterval); 
-                    }
-                    else
-                    {
-                        // console.log("error reminder not started", fetchTime.time);
-                    }
                 });
 
 
@@ -6201,31 +6182,27 @@ angular
 
 
             var doReminder = function(){
+                //if no tutorial are open 
+                if( tutorialOpen===0 ){
+                    //update the remaining time both in the popup and in the progress bar
+                    popupWarning.$scope.skipMicrotaskIn = $scope.skipMicrotaskIn -= timeInterval;
 
-                if( ! isTutorialOpen ){
-                //remaining time
-                    $scope.skipMicrotaskIn-=timeInterval;
+                    //if the popover is not open and the remaining time is less than first warning, show the popover
+                    if( ! popupHasBeenClosed && $scope.skipMicrotaskIn < microtaskFirstWarning){
+                        popupHasBeenClosed=true;
+                        popupWarning.$promise.then(popupWarning.show);
 
-                    if($scope.skipMicrotaskIn < 0)
-                    {
+                    }
+                    //if the time is negative end the reminder and skip the microtask
+                    else if($scope.skipMicrotaskIn < 0)
                         endReminder();
-                    }
-                    else if(popupWarning===undefined && $scope.skipMicrotaskIn < microtaskFirstWarning){
-                        popupWarning = $modal({title: microtaskType, template : "widgets/popup_reminder.html" , show: true});
-                        popupWarning.$scope.skipMicrotaskIn=$scope.skipMicrotaskIn ;
-                    }else if(popupWarning!==undefined)
-                    {
-                        popupWarning.$scope.skipMicrotaskIn=$scope.skipMicrotaskIn ;
-
-                    }
                 }
             };
 
             var endReminder = function(){
-                // console.log("skipping: "+microtaskType);
-                if(microtaskInterval!==undefined)
-                    $interval.cancel(microtaskInterval);
-                microtaskInterval=undefined;
+
+                $scope.$emit('reset-reminder');
+
                 if(callBackFunction!==undefined)
                     callBackFunction.apply();
             };
@@ -8086,7 +8063,6 @@ angular.module("microtasks/write_test_cases/write_test_cases.html", []).run(["$t
     "			\n" +
     "\n" +
     "			<div ng-show=\"microtask.promptType=='WRITE'\" >\n" +
-    "				{{skipMicrotaskIn}}\n" +
     "				Can you describe some test cases in which this function might be used? <br />\n" +
     "				Are there any unexpected corner cases that might not work? <br/>\n" +
     "				<strong>TIP:</strong> You don’t need to specify concrete, executable tests, only high-level descriptions of scenarios to be tested.\n" +
@@ -8200,43 +8176,42 @@ angular.module("microtasks/write_test_cases/write_test_cases.html", []).run(["$t
     "				<div class=\"section-content no-padding\" >\n" +
     "\n" +
     "					<div class=\"list-group\" >\n" +
-    "						<div ng-form=\"testCase\" ng-repeat=\"(index,test) in model.testcases | filter: { deleted:false }\" class=\"list-item input-group input-group-sm animate-repeat\">\n" +
-    "						  	<input ng-if=\"!test.readOnly\" type=\"text\" class=\"form-control\" \n" +
+    "						<div ng-form=\"testCase\" ng-repeat=\"(index,test) in model.testcases\" ng-if=\"test.deleted==false\" class=\"list-item input-group input-group-sm animate-repeat\" style=\"width:100%\" >\n" +
+    "\n" +
+    "						  	<input ng-if=\"!test.readOnly\" type=\"text\" class=\"form-control\"\n" +
     "							    placeholder=\"Describe a test case\"\n" +
     "							  	name=\"testcase\"\n" +
     "								ng-model=\"test.text\"\n" +
     "								press-enter=\" editMode = testCaseForm.testcase.$invalid ? true : false \"\n" +
     "							    ng-focus=\"editMode=true\"\n" +
     "							    ng-blur=\"editMode=false\"\n" +
-    "							    ng-readonly=\"test.readOnly\"\n" +
-    "\n" +
     "							    tabindex=\"{{2*index+2}}\"\n" +
     "							    required\n" +
     "							>\n" +
+    "\n" +
+    "					  		<span  ng-if=\"!test.readOnly\" class=\"input-group-btn\" >\n" +
+    "					  			<button class=\"btn\"  tabindex=\"{{2*index+3}}\" ng-click=\"removeTestCase($index)\" type=\"button\">\n" +
+    "					  				<span class=\"glyphicon glyphicon-remove\"></span>\n" +
+    "					  			</button>\n" +
+    "							</span>\n" +
+    "\n" +
     "							<input ng-if=\"test.readOnly\" type=\"text\" class=\"form-control\" \n" +
     "							  	name=\"testcase\"\n" +
     "								ng-model=\"test.text\"\n" +
-    "							    readonly \n" +
+    "							    readonly\n" +
     "							    data-placement=\"left\"\n" +
     "							    data-trigger=\"hover\" \n" +
     "							    data-title=\"this test case cannot be edited or removed\" \n" +
     "							    bs-tooltip\n" +
     "							>\n" +
-    "					  		<span class=\"input-group-btn\" >\n" +
-    "					  			<button class=\"btn\"  tabindex=\"{{2*index+3}}\" ng-click=\"removeTestCase($index)\" type=\"button\">\n" +
-    "					  				<span class=\"glyphicon glyphicon-remove\" ng-hide=\"test.readOnly\" ></span>\n" +
-    "					  			</button>\n" +
-    "							</span>\n" +
-    "						</div>\n" +
     "\n" +
-    "							\n" +
+    "						</div>\n" +
     "							<div class=\"help-block\" ng-if=\"microtaskForm.$invalid\">\n" +
     "								a test case name can't be empty!\n" +
     "							</div>\n" +
     "					</div>\n" +
     "\n" +
     "					<span ng-if=\"model.testcases.length == 0\" >write at least one test case</span>\n" +
-    "					\n" +
     "				</div>\n" +
     "			</div>\n" +
     "\n" +
@@ -8327,15 +8302,17 @@ angular.module("newsfeed/news_popover.html", []).run(["$templateCache", function
 
 angular.module("newsfeed/news_popover_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("newsfeed/news_popover_DebugTestFailure.html",
-    "<div ng-if=\"review.microtask.submission.hasPseudo\">\n" +
+    "<div ng-if=\" ! n.microtask.submission.disputedTests\">\n" +
     "    <div class=\"section section-description \" >\n" +
-    "        <div class=\"section-content job-description\" >\n" +
+    "        <div class=\"section-content job-description\" ng-if=\" ! n.microtask.submission.hasPseudo\">\n" +
     "            Debug of the function <strong>{{ n.funct.getName() }}</strong>.\n" +
-    "            Can you review this work?\n" +
+    "        </div>\n" +
+    "        <div class=\"section-content job-description\" ng-if=\"n.microtask.submission.hasPseudo\">\n" +
+    "            Edit of the function <strong>{{ n.funct.getName() }}</strong>.\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
-    "    <div class=\"section section-review\" >\n" +
+    "    <div class=\"section section-n\" >\n" +
     "        <div class=\"section-title\" >\n" +
     "            <div class=\"dot bg-color\"></div>Code of the function\n" +
     "        </div>\n" +
@@ -8345,8 +8322,7 @@ angular.module("newsfeed/news_popover_DebugTestFailure.html", []).run(["$templat
     "    </div>\n" +
     "</div>\n" +
     "\n" +
-    "<div ng-if=\"! review.microtask.submission.hasPseudo\">\n" +
-    "\n" +
+    "<div ng-if=\"n.microtask.submission.disputedTests\">\n" +
     "\n" +
     "    <div class=\"section section-description \" >\n" +
     "        <div class=\"section-content job-description\" >\n" +
@@ -8393,7 +8369,7 @@ angular.module("newsfeed/news_popover_DebugTestFailure.html", []).run(["$templat
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"section section-review\">\n" +
+    "        <div class=\"section section-n\">\n" +
     "            <div class=\"section-title\" ><div class=\"dot bg-color\"></div>Reported Issue</div>\n" +
     "            <div class=\"section-content\" >\n" +
     "                {{test.disputeText}}\n" +

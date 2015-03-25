@@ -24,10 +24,10 @@ angular
             //initialize the max number of statements allowed to the scope value or the default value
             maxNewStatements = scope.maxNewStatements || defaultMaxNewStatements;
             //force  startStatements to undefined (necessary from the second time that the directive is used)
+           
             startStatements = undefined;
             functionId = attrs.functionId;
             valid = true;
-
             var describedFunctions = functionsService.getDescribedFunctions();
             allFunctionNames = functionsService.getDescribedFunctionsName(functionId);
             allFunctionCode  = functionsService.getDescribedFunctionsCode(functionId) + " var console = null; " ;
