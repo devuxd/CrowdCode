@@ -183,7 +183,7 @@ public class CrowdServlet extends HttpServlet
 
 
 					if ( pathSeg.length <= 2 ){
-						req.getRequestDispatcher("/client/client.jsp").forward(req, resp);
+						req.getRequestDispatcher("/clientDist/client.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
 						if( userService.isUserAdmin() ){
 							doAdmin(req, resp, projectId, pathSeg);
@@ -256,7 +256,7 @@ public class CrowdServlet extends HttpServlet
 	{
 		//System.out.println("doing admin");
 		if(pathSeg.length <=3 ){
-			req.getRequestDispatcher("/dist/index.jsp").forward(req, resp);
+			req.getRequestDispatcher("/admin/index.jsp").forward(req, resp);
 		} else {
 			// The command should be in the fourth position. If nothing exists there,
 			// use "" as the command.

@@ -117,7 +117,7 @@ angular
 		{
 			var describedCode = '';
 			angular.forEach( getDescribedFunctions(), function(value){
-				if( value.id !== excludedFunctionId ){
+				if( value.id != excludedFunctionId ){
 					describedCode += value.header+'{ }';
 				}
 			});
@@ -130,7 +130,7 @@ angular
 		{
 			var funct = null;
 			angular.forEach(functions, function(value) {
-				if( funct===null && value.id === id ) {
+				if( funct === null && value.id == id ) {
 			  		funct = value;
 			  	}
 			});
