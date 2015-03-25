@@ -6,7 +6,6 @@
 			
 
 			<div ng-show="microtask.promptType=='WRITE'" >
-				{{skipMicrotaskIn}}
 				Can you describe some test cases in which this function might be used? <br />
 				Are there any unexpected corner cases that might not work? <br/>
 				<strong>TIP:</strong> You don’t need to specify concrete, executable tests, only high-level descriptions of scenarios to be tested.
@@ -120,43 +119,42 @@
 				<div class="section-content no-padding" >
 
 					<div class="list-group" >
-						<div ng-form="testCase" ng-repeat="(index,test) in model.testcases | filter: { deleted:false }" class="list-item input-group input-group-sm animate-repeat">
-						  	<input ng-if="!test.readOnly" type="text" class="form-control" 
+						<div ng-form="testCase" ng-repeat="(index,test) in model.testcases" ng-if="test.deleted==false" class="list-item input-group input-group-sm animate-repeat" style="width:100%" >
+
+						  	<input ng-if="!test.readOnly" type="text" class="form-control"
 							    placeholder="Describe a test case"
 							  	name="testcase"
 								ng-model="test.text"
 								press-enter=" editMode = testCaseForm.testcase.$invalid ? true : false "
 							    ng-focus="editMode=true"
 							    ng-blur="editMode=false"
-							    ng-readonly="test.readOnly"
-
 							    tabindex="{{2*index+2}}"
 							    required
 							>
+
+					  		<span  ng-if="!test.readOnly" class="input-group-btn" >
+					  			<button class="btn"  tabindex="{{2*index+3}}" ng-click="removeTestCase($index)" type="button">
+					  				<span class="glyphicon glyphicon-remove"></span>
+					  			</button>
+							</span>
+
 							<input ng-if="test.readOnly" type="text" class="form-control" 
 							  	name="testcase"
 								ng-model="test.text"
-							    readonly 
+							    readonly
 							    data-placement="left"
 							    data-trigger="hover" 
 							    data-title="this test case cannot be edited or removed" 
 							    bs-tooltip
 							>
-					  		<span class="input-group-btn" >
-					  			<button class="btn"  tabindex="{{2*index+3}}" ng-click="removeTestCase($index)" type="button">
-					  				<span class="glyphicon glyphicon-remove" ng-hide="test.readOnly" ></span>
-					  			</button>
-							</span>
-						</div>
 
-							
+						</div>
 							<div class="help-block" ng-if="microtaskForm.$invalid">
 								a test case name can't be empty!
 							</div>
 					</div>
 
 					<span ng-if="model.testcases.length == 0" >write at least one test case</span>
-					
 				</div>
 			</div>
 

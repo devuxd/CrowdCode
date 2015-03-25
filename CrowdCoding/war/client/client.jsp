@@ -164,6 +164,8 @@
 	<script src="/client/common/workqueue.js"></script>
 	<script src="/client/test_runner/utils.js"></script>
 	<script src="/client/common/json_utils.js"></script>
+	<script src="/client/common/JSONValidator.js"></script>
+	
 
 
 

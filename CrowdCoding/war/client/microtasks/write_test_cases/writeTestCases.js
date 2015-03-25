@@ -94,6 +94,7 @@ angular
     }
     
     function removeTestCase(index) {
+        console.log("removing "+index+" from ",$scope.model.testcases);
         // if the testcase was added during this microtask, remove it from the array
         // else set the flag DELETED to true
         if ($scope.model.testcases[index].added === true) 
@@ -111,7 +112,7 @@ angular
 
         if( !$scope.dispute.active && $scope.model.testcases.length === 0 ) 
             error = "Add at least 1 test case";
-        else if( $scope.dispute.active && $scope.dispute.text == "" )
+        else if( $scope.dispute.active && $scope.dispute.text === "" )
             error = 'The report text cannot be empty!';
 
         // if there is an error 

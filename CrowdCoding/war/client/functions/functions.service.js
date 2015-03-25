@@ -8,14 +8,14 @@ angular
     .factory('functionsService', ['$window','$rootScope','$firebase', '$filter','FunctionFactory', function( $window, $rootScope, $firebase, $filter, FunctionFactory) {
 
 
-	var service = function(){
+	var service = new function(){
 		// Private variables
 		var functions;
 		var functionsHistory;
 		var loaded = false;
 
 		// Public functions
-		this.init = function(newStatsChangeCallback) { return init(newStatsChangeCallback); };
+		this.init =  init ;
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
 		this.getVersion = function(id,version) { return getVersion(id, version); };
@@ -105,7 +105,7 @@ angular
 		{
 			var describedNames = [];
 			angular.forEach( getDescribedFunctions(), function(value){
-				if( value.id !== excludedFunctionId ){
+				if( value.id != excludedFunctionId ){
 					describedNames.push(value.name);
 				}
 			});

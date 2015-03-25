@@ -5,8 +5,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  10 * 60 * 1000*0.1;     //in second
-    var microtaskFirstWarning =  4  * 60 * 1000*0.1;      //in second
+    var microtaskTimeout      =  10 * 60 * 1000*1;     //in second
+    var microtaskFirstWarning =  4  * 60 * 1000*1;      //in second
     var timeInterval=500;//interval time in milliseconds
 
     var fetchTime = 0;
@@ -29,11 +29,14 @@ angular
             popupWarning = $modal({template : "/client/widgets/popup_reminder.html" , show: false});
 
              $rootScope.$on('run-tutorial',function(){
+                console.log("turorial run");
                 tutorialOpen++;
             });
 
             $rootScope.$on('tutorial-finished',function(){
                 tutorialOpen--;
+                console.log("turorial finished");
+
             });
 
 

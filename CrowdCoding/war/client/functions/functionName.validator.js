@@ -11,7 +11,6 @@ angular
             ctrl.$parsers.unshift(function(viewValue) {
                 var functionsName=functionsService.getDescribedFunctionsName();
                 var valid =  viewValue === ""|| viewValue === undefined || (functionsName.indexOf(viewValue) == -1);
-
                 if (!valid) {
 
                     ctrl.$setValidity('function', false);

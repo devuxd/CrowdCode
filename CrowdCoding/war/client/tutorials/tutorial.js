@@ -29,7 +29,7 @@ angular
                         // listen on the event 'run-tutorial'
                         // and start the tutorial with tutorialId
                         $rootScope.$on('run-tutorial',function( event, tutorialId, force, onFinish ){
-                           // console.log('tutorial: '+tutorialId);
+                           console.log('tutorial: '+tutorialId);
                             if( force || userTutorials[tutorialId] === undefined ){
                                 // if another tutorial is running
                                 // enqueue the new one
@@ -89,10 +89,18 @@ angular
 
 
                 }
+                else
+                {
+
+                    // listen on the event 'run-tutorial'
+                    // and send the message tutorial finished when the tutorial is deactivate
+                    $rootScope.$on('run-tutorial',function( event, tutorialId, force, onFinish ){
+                        $scope.$emit('tutorial-finished');
+                    });
+                }
             });
-            
         }
-    }
+    };
 }]);
 
 angular
