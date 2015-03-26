@@ -68,7 +68,7 @@ angular
 
 				$rootScope.$broadcast('loadMicrotask');
 
-				$rootScope.$broadcast('run-tutorial','main', false, function(){
+				$rootScope.$broadcast('queue-tutorial','main', false, function(){
 					$rootScope.$broadcast('showProfileModal');
 				});
 			}

@@ -28,14 +28,14 @@ angular
             // initialize the warning popup
             popupWarning = $modal({template : '/client/widgets/popup_reminder.html' , show: false});
 
-            $rootScope.$on('run-tutorial',function(){
-                console.log('turorial run');
+            $rootScope.$on('tutorial-started',function(){
+                // console.log('turorial run');
                 tutorialOpen++;
             });
 
             $rootScope.$on('tutorial-finished',function(){
                 tutorialOpen--;
-                console.log('turorial finished');
+                // console.log('turorial finished');
             });
 
 
