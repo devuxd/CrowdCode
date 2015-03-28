@@ -40,9 +40,9 @@
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="http://rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
-	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
 	<link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
+	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
 
     
 	<link rel="stylesheet" href="/clientDist/client.css" type="text/css" />
