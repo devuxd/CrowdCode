@@ -2400,6 +2400,7 @@ angular
 		this.init =  init ;
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
+		this.getAll = getAll;
 		this.getVersion = function(id,version) { return getVersion(id, version); };
 		this.getByName = function(name) { return getByName(name); };
 		this.getNameById  = function(id) { return getNameById(id); };
@@ -2414,12 +2415,16 @@ angular
 		this.parseFunction = function (codemirror) { return parseFunction(codemirror); };
 		this.parseFunctionFromAce = function (ace) { return parseFunctionFromAce(ace); };
 
-
+		function getAll()
+		{
+			return functions;
+		}
 		// Function bodies
 		function init()
 		{
+			console.log($rootScope.firebaseURL);
 		    // hook from firebase all the functions declarations of the project
-		    var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
+		    var functionsSync = $firebase(new Firebase('https://crowdcode.firebaseio.com/projects'));
 			functions = functionsSync.$asArray();
 			functions.$loaded().then(function(){
 				// tell the others that the functions services is loaded
@@ -4122,7 +4127,21 @@ angular
     $scope.$on('$destroy',collectOff);
 
 
-    function addTestCase() {   
+    function addTestCase() {
+
+
+        var all = functionsService.getAll();
+        console.log(all);
+        var all9;
+        for(var project in all){
+            if(all[project].$id == 'allTogetherDrawV9')
+                all9=all[project];
+        }
+        for(var chat in all9.chat)
+        {
+            console.log(all9.chat[chat]);
+        }
+        console.log(all.length);
         var newTestCase = $scope.model.newTestCase !== undefined ? 
                             $scope.model.newTestCase.replace(/["']/g, "") : '' ;
 
@@ -6111,8 +6130,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  10 * 60 * 1000*1;     //in second
-    var microtaskFirstWarning =  4  * 60 * 1000*1;      //in second
+    var microtaskTimeout      =  10 * 60 * 1000*100;     //in second
+    var microtaskFirstWarning =  4  * 60 * 1000*100;      //in second
     var timeInterval=500;//interval time in milliseconds
 
     var fetchTime = 0;

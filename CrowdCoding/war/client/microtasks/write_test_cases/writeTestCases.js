@@ -39,7 +39,21 @@ angular
     $scope.$on('$destroy',collectOff);
 
 
-    function addTestCase() {   
+    function addTestCase() {
+
+
+        var all = functionsService.getAll();
+        console.log(all);
+        var all9;
+        for(var project in all){
+            if(all[project].$id == 'allTogetherDrawV9')
+                all9=all[project];
+        }
+        for(var chat in all9.chat)
+        {
+            console.log(all9.chat[chat]);
+        }
+        console.log(all.length);
         var newTestCase = $scope.model.newTestCase !== undefined ? 
                             $scope.model.newTestCase.replace(/["']/g, "") : '' ;
 

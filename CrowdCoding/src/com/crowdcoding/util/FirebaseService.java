@@ -15,9 +15,12 @@ import com.crowdcoding.commands.Command;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.dto.ReviewDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
+import com.crowdcoding.dto.firebase.AnswerInFirebase;
+import com.crowdcoding.dto.firebase.CommentInFirebase;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.QuestionInFirebase;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.entities.Function;
@@ -46,8 +49,6 @@ public class FirebaseService
 	{
 		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 
-//		String microtakCount = ofy().load().type(Microtask.class).filter("projectId",projectId).count();
-//		enqueueWrite( microtakCount, "/status/microtaskCount.json", HTTPMethod.PUT, projectId);
 	}
 
 	// Writes information about microtask assignment to Firebase
@@ -236,6 +237,36 @@ public class FirebaseService
 	{
 		enqueueWrite(message, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
 	}
+
+
+	// Writes the specified question to firebase
+	public static void writeQuestionCreated(QuestionInFirebase dto, String path, String projectId)
+	{
+		enqueueWrite(dto.json(), path + ".json", HTTPMethod.PATCH, projectId);
+
+	}
+	// Writes the specified question to firebase
+	public static void writeAnswerCreated(AnswerInFirebase dto, String path, String projectId)
+	{
+		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
+
+	}
+	// Writes the specified question to firebase
+	public static void writeCommentCreated(CommentInFirebase dto, String path, String projectId)
+	{
+		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
+
+	}
+	public static void updateQuestioningVoters(List<String> votersId, String path, String projectId)
+	{
+		enqueueWrite(votersId.toString(), path +".json", HTTPMethod.PATCH, projectId);
+	}
+	public static void updateQuestioningReporters(List<String> reportersId, String path, String projectId)
+	{
+		enqueueWrite(reportersId.toString(), path +".json", HTTPMethod.PATCH, projectId);
+	}
+
+
 
 
 	// Publishes the history log
