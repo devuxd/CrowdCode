@@ -1,7 +1,37 @@
+<%@page contentType="text/html;charset=UTF-8" language="java"%>
+<%@page import="com.googlecode.objectify.Work"%>
+<%@page import="com.googlecode.objectify.Key"%>
+<%@page import="com.googlecode.objectify.ObjectifyService"%>
+<%@page import="com.google.appengine.api.users.UserServiceFactory"%>
+<%@page import="com.google.appengine.api.users.User"%>
+<%@page import="com.crowdcoding.entities.Project"%>
+<%@page import="com.crowdcoding.entities.Worker"%>
+<%@page import="java.util.logging.Logger"%>
 
+
+<%
+    // Create the project. This operation needs to be transactional to ensure one project is only
+    // created. Getting the leaderboard relies on the state of the project when it is created.
+    // But data in worker may be stale or even internally inconsistent, as other operations
+    // may be concurrently updating it.
+
+    final String projectID = (String) request.getAttribute("project");
+	final Logger log = Logger.getLogger(Project.class.getName());
+	User user = UserServiceFactory.getUserService().getCurrentUser();
+	Project project = ObjectifyService.ofy().transact(new Work<Project>()
+	{
+	    public Project run(){ return Project.Create(projectID); }
+	});
+
+	Worker worker = Worker.Create(user, project);
+
+	String workerID     = user.getUserId();
+	String workerHandle = user.getNickname();
+
+%>
 
 <!DOCTYPE html>
-<html lang="en" ng-app="stressBot">
+<html lang="en" ng-app="questions">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -11,53 +41,35 @@
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="http://rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
 
-    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
-	<link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
  
+ 	<style type="text/css">
+ 	body { font-size: 12px;}
+ 	.glyphicon { font-size: 1em;}
+ 	</style>
 </head>
 
-<body ng-controller="MainController">
-
-	<header>
-		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-			<div class="container-fluid">
-
-				<div class="navbar-header">
-			      <a class="navbar-brand" href="#">Stress Bot</a>
-			    </div>
-
-				<ul class="nav navbar-nav">
-			        <li><a href="#"><strong>project:</strong> {{ projectId }}</a></li>
-			        <li><a href="#"><project-stats></project-stats></a></li>
-			    </ul>
-			</div>
-		</div>
-	</header>
+<body >
 
 	<div class="main-wrapper">
 	    <div class="container-fluid">
-
-	        <!-- CONTENT -->
-	        <div id="content" class="col-md-12" >
-
-				stress bot
-	        </div>
-
+	    	<div class="row">
+	    		<div class="col-md-12" >
+					<questions-panel></questions-panel>
+		        </div>
+	    	</div>
 	    </div>
 	</div>
 
 
-
-	<ng-include src="'/html/templates/popups/popup_template.html'"></ng-include>
-	
-	<tutorial-manager></tutorial-manager>
-
-	<script>var projectId    = '<%=(String) request.getAttribute("project") %>';</script> 
+	<script>
+	var projectId    = '<%=(String) request.getAttribute("project") %>';
+	var workerId     = '<%=workerID%>';
+	</script> 
 
 	<!-- Javascript 3rd part libraries -->
 	<script src="/include/jquery-2.1.0.min.js"></script>
-	<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/0.3.3/lunr.min.js"></script>
 
 
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
@@ -78,7 +90,7 @@
 
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
-	<script src="/stressBot/app.js"></script>
+	<script src="/questions/app.js"></script>
 
 
 </body>

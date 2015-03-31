@@ -200,8 +200,9 @@ public class CrowdServlet extends HttpServlet
 							doAdmin(req, resp, projectId, pathSeg);
 						} else
 							req.getRequestDispatcher("/404.jsp").forward(req, resp);
-					} else if( pathSeg[2].equals("stressBot")){
-						req.getRequestDispatcher("/stressBot/index.jsp").forward(req, resp);
+					} else if( pathSeg[2].equals("questions")){
+						System.out.println("Questions");
+						req.getRequestDispatcher("/questions/index.jsp").forward(req, resp);
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
 					}  else if (pathSeg[3].equals("questioning")){

@@ -7,8 +7,11 @@
   </select>
 </div>
 
-<div class="form-group pull-right">
-	<button ng-click="vm.toggleDiffView()" class="btn btn-mini {{ vm.diffView ? 'btn-primary' : '' }}">Diff Mode</button>
+<div class="form-group pull-right" ng-if="vm.selectedFunctionId != undefined">
+	<button ng-click="vm.requestTestRun()" class="btn btn-mini">Request test run</button>
+	<button ng-click="vm.toggleDiffView()" class="btn btn-mini">
+		{{ vm.diffView ? 'Normal Mode' : 'Diff Mode' }}
+	</button>
 </div>
 <div class="clearfix"></div>
 
@@ -19,8 +22,8 @@
 
 <div ng-if="vm.selectedFunctionId != undefined">
 
-	<button ng-click="vm.requestTestRun()">Request test run</button>
 	
+	<!--
 	<strong>Contributions</strong>
 	<ul style="list-style:none;">
 		<li ng-repeat="(worker,c) in vm.contributors">
@@ -28,6 +31,7 @@
 			{{worker}} [ {{c.added}}++, {{c.removed}}-- ]
 		</li>
 	</ul>
+-->
 	<div ng-repeat="diffHtml in vm.diffHtml track by $index">
 		<span>{{diffHtml.worker}}</span>
 		<pre ng-bind-html="vm.renderHtml(diffHtml.html)"></pre>

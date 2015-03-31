@@ -1,6 +1,9 @@
 <div ng-repeat="(functionName,tests) in vm.tests">
-    <h3>{{functionName}}</h3>
+    <h4>{{functionName}}</h4>
     <ul>
-        <li ng-repeat="t in tests">{{t.description}}</li>
+        <li ng-repeat="t in tests">
+        	{{t.description}}
+        	- {{ t.isImplemented ? ( t.isDeleted ? 'deleted' : 'implemented' ) : 'not implemented' }}
+        </li>
     </ul>
 </div>

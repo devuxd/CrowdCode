@@ -79,7 +79,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 								$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 								$scope.noMicrotask = false;
 
-								$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
+								$scope.$emit('queue-tutorial', $scope.microtask.type , false, function(){});
 								$scope.$emit('run-reminder', $scope.microtask.type,function (){ $scope.$emit('skipMicrotask',true); });
 							}
 							else
@@ -95,7 +95,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 							$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 							$scope.noMicrotask = false;
 
-							$scope.$emit('run-tutorial', $scope.microtask.type , false, function(){});
+							$scope.$emit('queue-tutorial', $scope.microtask.type , false, function(){});
 							$scope.$emit('run-reminder', $scope.microtask.type, function (){ $scope.$emit('skipMicrotask',true); } );
 
 						}

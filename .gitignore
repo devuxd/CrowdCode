@@ -60,3 +60,6 @@ CrowdCoding/.project
 /bin/
 *.prefs
 CrowdCoding/war/WEB-INF/lib.zip
+CrowdCoding/war/.tmp
+CrowdCoding/war/clientDist
+CrowdCoding/war/node_modules

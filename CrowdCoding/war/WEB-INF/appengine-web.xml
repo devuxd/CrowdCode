@@ -13,7 +13,13 @@
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
   </system-properties>
 
-
+  <static-files>
+    <exclude path="node_modules/**" ></exclude>
+  </static-files>
+  
+  <resource-files>
+    <exclude path="node_modules/**" ></exclude>
+  </resource-files>
   <!--
     HTTP Sessions are disabled by default. To enable HTTP sessions specify:
 

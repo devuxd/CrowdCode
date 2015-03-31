@@ -40,9 +40,9 @@
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="http://rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
-	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
     <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
 	<link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
+	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
 
     
 	<link rel="stylesheet" href="/clientDist/client.css" type="text/css" />
@@ -50,7 +50,7 @@
 
 </head>
 
-<body disable-backspace ng-controller="MainController"  ng-cloak >
+<body disable-backspace ng-cloak >
 
 	<header>
 		<navbar></navbar>
@@ -126,32 +126,19 @@
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 	<script src='/include/esprima.js'></script>
 	<script src='/include/escodegen.browser.js'></script>
-
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular-messages/angular-messages.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular/angular-animate.min.js"></script><!-- Angular animate -->
 	<script src="/include/angular/angular-sanitize.min.js"></script><!-- Angular sanitize -->
-
 	<script src="/include/angularjs-scroll-glue/src/scrollglue.js"></script><!-- scroll glue -->
-
-	<!-- loadingbar -->
 	<script src="/include/angular-loading-bar/src/loading-bar.js"></script>
-
-
  	<script src="/include/ui-ace-editor/src/ui-ace.js"> </script> <!-- UI Ace Editor-->
 	<script src="/include/ace-editor/src-min-noconflict/ace.js"> </script> <!-- Ace Editor-->
-
-
-
 	<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
 	<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
-
-
 	<script src="/include/zeroclipboard-2.2.0/dist/ZeroClipboard.min.js"></script>
 	<script src="/include/ng-clip/dest/ng-clip.min.js"></script>
-
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
-
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
 
@@ -173,71 +160,6 @@
 	<!-- Angular Application -->
 	<script src="/clientDist/client.js"></script>
 	<script src="/clientDist/test_runner/testRunner.js"></script>
-
-	<!-- Angular Services -->
-	<!--
-	<script src="/client/users/avatarFactory.js"></script>
-	<script src="/client/data_types/ADT.service.js"></script>
-	<script src="/client/microtasks/microtasks.service.js"></script>
-	<script src="/client/tests/testFactory.js"></script>
-	<script src="/client/functions/functions.service.js"></script>
-	<script src="/client/functions/functionFactory.js"></script>
-	<script src="/client/users/user.service.js"></script>
-	<script src="/client/test_runner/testRunner.js"></script>
-    <script src="/client/common/fileUpload.js"></script>
-   -->
-
-
-	<!-- Angular Directives -->
-	<!--
-	<script src="/client/widgets/navbar.directive.js"></script>
-	<script src="/client/leaderboard/leaderboard.directive.js"></script>
-	<script src="/client/newsfeed/news.directive.js"></script>
-	<script src="/client/microtasks/microtaskForm.directive.js"></script>
-	<script src="/client/widgets/testResult.directive.js"></script>
-	<script src="/client/widgets/stubsPanel.directive.js"></script>
-	<script src="/client/widgets/stubsModal.directive.js"></script>
-	<script src="/client/directives/directives.js"></script>
-	<script src="/client/tutorials/tutorial.js"></script>
-	<script src="/client/widgets/reminder.directive.js"></script>
-	<script src="/client/data_types/adtList.directive.js"></script>
-	<script src="/client/widgets/aceEditJs.directive.js"></script>
-	<script src="/client/widgets/aceEditJson.directive.js"></script>
-	<script src="/client/widgets/aceReadJs.directive.js"></script>
-	<script src="/client/widgets/aceReadJson.directive.js"></script>
-	<script src="/client/widgets/aceReadJsonDiff.directive.js"></script>
-	<script src="/client/widgets/statements_progress_bar.directive.js"></script>
-
-	<script src="/client/functions/functionConventions.directive.js"></script>
-	<script src="/client/functions/javascriptTutorial.directive.js"></script>
-	<script src="/client/data_types/examplesList.directive.js"></script>
-
-	<script src="/client/chat/chat.directive.js"></script>
-	<script src="/client/newsfeed/microtaskPopover.directive.js"></script>
-
-
-	<script src="/client/functions/function.validator.js"></script>
-	<script src="/client/functions/functionName.validator.js"></script>
-    -->
-	<!-- Angular Filter -->
-	<!--
-	<script src="/client/common/filter.js"></script>-->
-
-	<!-- Angular Controllers -->
-	<!--
-	<script src="/client/widgets/main.js"></script>
-	<script src="/client/users/userProfile.js"></script>
-	<script src="/client/microtasks/no_microtask/noMicrotask.js"></script>
-	<script src="/client/microtasks/write_call/writeCall.js"></script>
-	<script src="/client/microtasks/debug_test_failure/debugTestFailure.js"></script>
-	<script src="/client/microtasks/reuse_search/reuseSearch.js"></script>
-	<script src="/client/microtasks/review/review.js"></script>
-	<script src="/client/microtasks/write_call/writeCall.js"></script>
-	<script src="/client/microtasks/write_function/writeFunction.js"></script>
-	<script src="/client/microtasks/write_function_description/writeFunctionDescription.js"></script>
-	<script src="/client/microtasks/write_test/writeTest.js"></script>
-	<script src="/client/microtasks/write_test_cases/writeTestCases.js"></script>-->
-
 
 
 </body>

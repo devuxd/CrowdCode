@@ -1,16 +1,15 @@
 
 angular
     .module('crowdCode')
-    .directive('reminder', [ '$rootScope', '$compile', '$interval', '$firebase', 'firebaseUrl','$modal','userService', function($rootScope, $compile, $interval, $firebase,firebaseUrl,$modal,userService) {
+    .directive('reminder', [ '$rootScope', '$compile', '$interval', '$modal','userService', function($rootScope, $compile, $interval, $modal, userService) {
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  10 * 60 * 1000*100;     //in second
-    var microtaskFirstWarning =  4  * 60 * 1000*100;      //in second
-    var timeInterval=500;//interval time in milliseconds
+    var microtaskTimeout      =  10 * 60 * 1000; //in second
+    var microtaskFirstWarning =  4  * 60 * 1000; //in second
+    var timeInterval          = 500; //interval time in milliseconds
 
     var fetchTime = 0;
-   // var startTime = 0;
     var popupWarning;
     var microtaskType;
     var callBackFunction;
@@ -25,30 +24,40 @@ angular
         link: function($scope, $element, attrs) {
             $scope.microtaskFirstWarning = microtaskFirstWarning;
             $scope.microtaskTimeout      = microtaskTimeout;
-            //create the popup without showing it
-            popupWarning = $modal({template : "/client/widgets/popup_reminder.html" , show: false});
 
-             $rootScope.$on('run-tutorial',function(){
-                console.log("turorial run");
+            // initialize the warning popup
+            popupWarning = $modal({template : '/client/widgets/popup_reminder.html' , show: false});
+
+            $rootScope.$on('tutorial-started',function(){
+                // console.log('turorial run');
                 tutorialOpen++;
             });
 
             $rootScope.$on('tutorial-finished',function(){
                 tutorialOpen--;
-                console.log("turorial finished");
-
+                // console.log('turorial finished');
             });
 
 
-            // listen on the event 'run-tutorial'
-            // and start the tutorial with tutorialId
-            $rootScope.$on('run-reminder',function( event, microtask, onFinish ){
+            // listen on the event 'run-reminder' 
+            $rootScope.$on('run-reminder',function( event, type, onFinish ){
 
-                microtaskType=microtask;
-                callBackFunction=onFinish;
+                microtaskType    = type;
+                callBackFunction = onFinish;
                 popupHasBeenClosed=false;
                 $scope.$emit('reset-reminder');
-                initializeReminder();
+                
+                //time when user fetched the microtask for the first time in milliseonds
+                fetchTime = userService.getFetchTime();
+
+                //actual time of the system in seconds
+                startTime =  new Date().getTime();
+
+                fetchTime.$loaded().then(function(){
+                    $scope.skipMicrotaskIn = fetchTime.$value + microtaskTimeout - startTime ;
+                    microtaskInterval = $interval(doReminder, timeInterval); 
+                });
+
             });
 
             $rootScope.$on('reset-reminder',function( event ){
@@ -58,24 +67,14 @@ angular
                popupWarning.$promise.then(popupWarning.hide);
             });
 
-            var initializeReminder = function(){
+            function initializeReminder(){
 
-                //time when user fetched the microtask for the first time in milliseonds
-                fetchTime = userService.getFetchTime();
+                
 
-                //actual time of the system in seconds
-                startTime =  new Date().getTime();
-
-                fetchTime.$loaded().then(function(){
-                        $scope.skipMicrotaskIn = fetchTime.$value + microtaskTimeout - startTime ;
-                        microtaskInterval = $interval(doReminder, timeInterval); 
-                });
+            }
 
 
-            };
-
-
-            var doReminder = function(){
+            function doReminder(){
                 //if no tutorial are open 
                 if( tutorialOpen===0 ){
                     //update the remaining time both in the popup and in the progress bar
@@ -91,15 +90,15 @@ angular
                     else if($scope.skipMicrotaskIn < 0)
                         endReminder();
                 }
-            };
+            }
 
-            var endReminder = function(){
+            function endReminder(){
 
                 $scope.$emit('reset-reminder');
 
                 if(callBackFunction!==undefined)
                     callBackFunction.apply();
-            };
+            }
 
         }
     };

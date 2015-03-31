@@ -1,108 +1,3 @@
-
-angular
-    .module('crowdCode')
-    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId) {
-    var fbRef = new Firebase(firebaseURL);
-    var tutorialsOnRef = fbRef.child('/status/settings/tutorials');
-    var userTutorials  = $firebase( fbRef.child('/workers/' + workerId + '/completedTutorials' ) ).$asObject();
-
-    var queue = [];
-    var running = false;
-
-    return {
-        restrict: 'E',
-        scope: {},
-        link: function($scope, $element, attrs) {
-            tutorialsOnRef.once('value',function( snap ){
-                if( snap.val() == true ){ // if tutorials enabled
-
-                    // load the tutorial user settings
-                    userTutorials.$loaded().then(function(){
-                        // if it's the first time the user
-                        // executes a tutorial, initialize 
-                        // the object of the completed tutorials
-                        if( userTutorials.$value == null ){
-                            userTutorials.$value = { 'a': true };
-                            userTutorials.$save();
-                        }
-
-                        // listen on the event 'run-tutorial'
-                        // and start the tutorial with tutorialId
-                        $rootScope.$on('run-tutorial',function( event, tutorialId, force, onFinish ){
-                           console.log('tutorial: '+tutorialId);
-                            if( force || userTutorials[tutorialId] === undefined ){
-                                // if another tutorial is running
-                                // enqueue the new one
-                                if( running ){
-                                    queue.push({ id: tutorialId, onFinish: onFinish });
-                                }
-                                // otherwise run it
-                                else 
-                                    $scope.runTutorial(tutorialId,onFinish);
-                            } else {
-                                $scope.$emit('tutorial-finished');
-                            }
-                        });
-
-                        $scope.runTutorial = function(id,onFinish){
-
-                            // set the running flag
-                            running = true;
-
-                            // load the tutorial directive
-                            var templateUrl = '/client/tutorials/'+id+'.html';
-                            //console.log('tutorial template: '+templateUrl);
-                            $scope.tutorialId = id;
-                            $element.html( '<tutorial template-url="'+templateUrl+'"></tutorial>' );
-                            $compile($element.contents())($scope);
-
-                            // once it's finished 
-                            var removeFinishListener = $scope.$on('tutorial-finished',function(){
-                                // reset the element content
-                                $element.html('');
-
-                                // reset the running flag
-                                running = false;
-
-                                // execute the onFinish callback if any
-                                if( onFinish != undefined ) 
-                                     onFinish.apply();
-
-                                userTutorials[id] = true;
-                                userTutorials.$save();
-
-                                if( queue.length > 0 ){
-                                    // load the tutorial
-                                    var tut = queue.pop();
-
-                                    $timeout(function(){
-                                        $scope.runTutorial(tut.id,tut.onFinish);
-                                    }, 300);
-                                }
-
-                                removeFinishListener();
-                            });
-                        };
-
-                    });
-
-
-
-                }
-                else
-                {
-
-                    // listen on the event 'run-tutorial'
-                    // and send the message tutorial finished when the tutorial is deactivate
-                    $rootScope.$on('run-tutorial',function( event, tutorialId, force, onFinish ){
-                        $scope.$emit('tutorial-finished');
-                    });
-                }
-            });
-        }
-    };
-}]);
-
 angular
     .module('crowdCode')
     .directive('tutorial', function($rootScope,$compile) {
@@ -118,6 +13,8 @@ angular
 
             $scope.currentStep = 0;
             $scope.totSteps = $element.find('step').length;
+            $scope.nextStep = nextStep;
+            $scope.close    = close;
 
             var btnNextHtml  = '<a href="#" class="btn-next" ng-click="showNext()">next</a>';
             var btnCloseHtml = '<a href="#" class="btn-close" ng-click="close()">close</a>';
@@ -130,7 +27,7 @@ angular
             var onHide = '';
 
         
-            $scope.start = function() {
+            function open() {
 
                 $tutorialContainer = $('<div class="tutorial-container"></div>');
 
@@ -156,17 +53,17 @@ angular
                 $scope.currentStep = 0;
 
                 // visualize the first step
-                $scope.showNext();
-            };
+                nextStep();
+            }
 
             var prevOnHide = undefined;
 
-            $scope.close = function(){
+            function close(){
                 $scope.destroy();
-                $scope.$emit('tutorial-finished');
+                $scope.endTutorial();
             }
 
-            $scope.showNext = function() {
+            function nextStep() {
                
 
                 // increment current Step (first step is = 1)
@@ -181,7 +78,7 @@ angular
                     return;
                 }
 
-                btnNextHtml  = '<a href="#" class="btn-next" ng-click="showNext()">'+( $scope.currentStep == $scope.totSteps ? 'finish' : 'next' )+'</a>';
+                btnNextHtml  = '<a href="#" class="btn-next" ng-click="nextStep()">'+( $scope.currentStep == $scope.totSteps ? 'finish' : 'next' )+'</a>';
 
                 // retrieve the current step DOM-element
                 // and the commands to apply on show/hide of the step content
@@ -257,8 +154,6 @@ angular
                         }  
 
                         $content.css(contentCss);
-                        console.log(contentCss);
-
                         $overlay.animate(highlightCss, 400, function(){
                             // $content.animate(contentCss, 200 ,function(){
                                 $content.fadeIn(300);
@@ -299,7 +194,9 @@ angular
 
                 prevOnHide = onHide;
 
-            };
+            }
+
+            open();
 
             $scope.destroy = function() {
 
@@ -313,9 +210,6 @@ angular
                 $scope.currentStep = 0;
 
             };
-
-            $scope.start();
-            
         }
     };
 });
