@@ -27,8 +27,7 @@ import com.googlecode.objectify.annotation.Index;
 public class Question extends Questioning
 {
 
-	private boolean isReported;
-	private List<String> reportersId = new ArrayList<String>();
+
 	private List<String> subsribersId = new ArrayList<String>();
 	private List<String> tags = new ArrayList<String>();
 	private String title;
@@ -52,6 +51,6 @@ public class Question extends Questioning
 	}
 
 	protected void storeToFirebase() {
-		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.title, this.text, this.tags), this.firebasePath, projectId);
+		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.title, this.text, this.tags, this.time, this.score), this.firebasePath, projectId);
 	}
 }

@@ -15,7 +15,13 @@ angular
     return input;
   };
 });
-
+angular
+    .module('crowdCode')
+    .filter('float', function() {
+  return function(input) {
+    return parseFloat(input);
+  };
+});
 angular
     .module('crowdCode')
     .filter('keylength', function(){

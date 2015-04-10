@@ -1,0 +1,5 @@
+<div bs-tabs data-template="/client/widgets/tab_template.html">
+      <div ng-repeat="tab in tabs" title="{{tab.title}}" bs-pane>
+      	<ng-include src="tab.template"></ng-include>
+      </div>
+ </div>

@@ -40,8 +40,7 @@
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="http://rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
-    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">
-	<link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">
+    <link rel="stylesheet" href="/include/angular-strap/libs.min.css">
 	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
 
     
@@ -58,34 +57,12 @@
 
 	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;" >
 	    <div class="container-flex-row">
+	    	<!-- LEFT BAR -->
+		    <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
 
-	        <!-- LEFT SIDEBAR -->
-	        <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
-				<div class="sidebar-panels" >
-		        	<news></news>
-		        	<leaderboard></leaderboard>
-		        </div>
-
-		        <div class="sidebar-buttons">
-			        <!--<button href="#" class=""
-			           id="shortcutsBtn"
-			           data-animation="am-fade-and-scale"
-			           data-placement="center"
-			           data-template="/html/templates/popups/popup_shortcuts.html"
-			           bs-modal="modal"
-			           data-container="body"
-			           >shortcuts</button>-->
-			           
-			        <button href="#" class=""
-			           id="feedbackBtn"
-			           data-animation="am-fade-and-scale"
-			           data-placement="center"
-			           data-container="body"
-			           data-template="widgets/popup_feedback.html" bs-modal="modal">Send Us Feedback!</button>
-		        </div>
-			</div>
-
-	        <!-- CONTENT -->
+		    	<left-bar></left-bar>
+		    </div>
+	        <!-- MAIN CONTENT -->
 	        <div id="content" class="order-3" >
 
 				<chat></chat>
@@ -103,8 +80,8 @@
 	    		resizer-left  = "#sidebarLeft"
 	    		resizer-right = "#content"
 	    		resizer-main="left"
-	    		resizer-max="20"
-	    		resizer-min="10"
+	    		resizer-max="40"
+	    		resizer-min="15"
 	    		>
 	    	</div>
 
@@ -138,6 +115,8 @@
 	<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
 	<script src="/include/zeroclipboard-2.2.0/dist/ZeroClipboard.min.js"></script>
 	<script src="/include/ng-clip/dest/ng-clip.min.js"></script>
+	<script src="/include/lunr.min.js"></script>
+	<script src="/include/timeAgo.js"></script>
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 

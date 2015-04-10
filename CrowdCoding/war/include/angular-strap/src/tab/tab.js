@@ -26,8 +26,8 @@ angular.module('mgcrea.ngStrap.tab', [])
 
       self.$panes = $scope.$panes = [];
 
-      // DEPRECATED: $viewChangeListeners, please use $activePaneChangeListeners
-      // Because we deprecated ngModel usage, we rename viewChangeListeners to 
+      // Please use $activePaneChangeListeners if you use `bsActivePane`
+      // Because we removed `ngModel` as default, we rename viewChangeListeners to
       // activePaneChangeListeners to make more sense.
       self.$activePaneChangeListeners = self.$viewChangeListeners = [];
 
@@ -43,7 +43,7 @@ angular.module('mgcrea.ngStrap.tab', [])
         self.$panes.splice(index, 1);
 
         if (index < activeIndex) {
-          // we removed a pane before the active pane, so we need to 
+          // we removed a pane before the active pane, so we need to
           // decrement the active pane index
           activeIndex--;
         }
@@ -84,18 +84,17 @@ angular.module('mgcrea.ngStrap.tab', [])
       scope: true,
       controller: ['$scope', '$element', '$attrs', $tab.controller],
       templateUrl: function(element, attr) {
+        console.log(attr.template + ' oppure ' + defaults.template);
         return attr.template || defaults.template;
       },
       link: function postLink(scope, element, attrs, controllers) {
-
+        console.log('dvjlkjhlkjh');
         var ngModelCtrl = controllers[0];
         var bsTabsCtrl = controllers[1];
 
-        // DEPRECATED: ngModel, please use bsActivePane
-        // 'ngModel' is deprecated bacause if interferes with form validation
-        // and status, so avoid using it here.
+        // 'ngModel' does interfere with form validation
+        // and status, use `bsActivePane` instead to avoid it
         if(ngModelCtrl) {
-          console.warn('Usage of ngModel is deprecated, please use bsActivePane instead!');
 
           // Update the modelValue following
           bsTabsCtrl.$activePaneChangeListeners.push(function() {
@@ -153,6 +152,10 @@ angular.module('mgcrea.ngStrap.tab', [])
         if(bsTabsCtrl.$options.animation) {
           element.addClass(bsTabsCtrl.$options.animation);
         }
+
+        attrs.$observe('disabled', function(newValue, oldValue) {
+          scope.disabled = scope.$eval(newValue);
+        });
 
         // Push pane to parent bsTabs controller
         bsTabsCtrl.$push(scope);

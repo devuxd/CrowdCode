@@ -45,7 +45,7 @@ public class Answer extends Questioning
 	}
 
 	protected void storeToFirebase() {
-		FirebaseService.writeAnswerCreated(new AnswerInFirebase(this.id, this.ownerId, this.text), this.firebasePath, projectId);
+		FirebaseService.writeAnswerCreated(new AnswerInFirebase(this.id, this.ownerId, this.text, this.time, this.score), this.firebasePath, projectId);
 	}
 
 }

@@ -94,12 +94,14 @@ public abstract class QuestioningCommand extends Command
 
 		public CreateQuestion(String jsonDTOData, String ownerId) {
 			super(0L, ownerId);
+			this.jsonDTOData= jsonDTOData;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
 
 			QuestionDTO dto=null;
 			try {
+				System.out.println(jsonDTOData);
 				dto = (QuestionDTO)DTO.read(jsonDTOData, QuestionDTO.class);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -114,6 +116,7 @@ public abstract class QuestioningCommand extends Command
 
 		public CreateAnswer(String jsonDTOData, String ownerId) {
 			super(0L, ownerId);
+			this.jsonDTOData=jsonDTOData;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
@@ -134,6 +137,8 @@ public abstract class QuestioningCommand extends Command
 
 		public CreateComment(String jsonDTOData, String ownerId) {
 			super(0L, ownerId);
+			this.jsonDTOData=jsonDTOData;
+
 		}
 
 		public void execute(Questioning questioning, String projectId) {
@@ -152,7 +157,7 @@ public abstract class QuestioningCommand extends Command
 	protected static class AddVote extends QuestioningCommand {
 
 		public AddVote(long questioningId, String workerId) {
-			super(0L, workerId);
+			super(questioningId, workerId);
 		}
 
 		public void execute(Questioning questioning, String projectId) {
@@ -164,7 +169,7 @@ public abstract class QuestioningCommand extends Command
 	protected static class RemoveVote extends QuestioningCommand {
 
 		public RemoveVote(long questioningId, String workerId) {
-			super(0L, workerId);
+			super(questioningId, workerId);
 		}
 
 		public void execute(Questioning questioning, String projectId) {

@@ -2,17 +2,18 @@
 
 describe('typeahead', function () {
 
-  var $compile, $templateCache, $typeahead, scope, sandboxEl;
+  var $compile, $templateCache, $typeahead, scope, sandboxEl, $q;
 
   beforeEach(module('ngSanitize'));
   beforeEach(module('mgcrea.ngStrap.typeahead'));
 
-  beforeEach(inject(function (_$rootScope_, _$compile_, _$templateCache_, _$typeahead_) {
+  beforeEach(inject(function (_$rootScope_, _$compile_, _$templateCache_, _$typeahead_, _$q_) {
     scope = _$rootScope_.$new();
     sandboxEl = $('<div>').attr('id', 'sandbox').appendTo($('body'));
     $compile = _$compile_;
     $templateCache = _$templateCache_;
     $typeahead = _$typeahead_;
+    $q = _$q_;
   }));
 
   afterEach(function() {
@@ -25,55 +26,73 @@ describe('typeahead', function () {
   var templates = {
     'default': {
       scope: {selectedState: '', states: ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']},
-      element: '<input type="text" ng-model="selectedState" ng-options="state for state in states" bs-typeahead>'
+      element: '<input type="text" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
+    },
+    'default-with-id': {
+      scope: {selectedState: '', states: ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']},
+      element: '<input id="typeahead1" type="text" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
     },
     'default-value': {
       scope: {selectedState: 'Alaska', states: ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']},
-      element: '<input type="text" ng-model="selectedState" ng-options="state for state in states" bs-typeahead>'
+      element: '<input type="text" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
     },
     'watch-options': {
-      element: '<input type="text" ng-model="selectedState" ng-options="state for state in states" data-watch-options="1" bs-typeahead>'
+      element: '<input type="text" ng-model="selectedState" bs-options="state for state in states" data-watch-options="1" bs-typeahead>'
     },
     'single-match': {
       scope: {selectedCode: '', codes: ['000000', '000001']},
-      element: '<input type="text" ng-model="selecteCode" ng-options="code for code in codes" bs-typeahead>'
+      element: '<input type="text" ng-model="selecteCode" bs-options="code for code in codes" bs-typeahead>'
     },
     'comparator': {
       scope: {selectedCode: '', codes: ['001000', '002001']},
-      element: '<input type="text" ng-model="selecteCode" ng-options="code for code in codes" bs-typeahead comparator="{{ comparator }}">'
+      element: '<input type="text" ng-model="selecteCode" bs-options="code for code in codes" bs-typeahead comparator="{{ comparator }}">'
     },
     'markup-ngRepeat': {
-      element: '<ul><li ng-repeat="i in [1, 2, 3]"><input type="text" ng-model="selectedState" ng-options="state for state in states" bs-typeahead></li></ul>'
+      element: '<ul><li ng-repeat="i in [1, 2, 3]"><input type="text" ng-model="selectedState" bs-options="state for state in states" bs-typeahead></li></ul>'
     },
     'markup-objectValue': {
       scope: {selectedIcon: '', icons: [{value: 'Gear', label: '<i class="fa fa-gear"></i> Gear'}, {value: 'Globe', label: '<i class="fa fa-globe"></i> Globe'}, {value: 'Heart', label: '<i class="fa fa-heart"></i> Heart'}, {value: 'Camera', label: '<i class="fa fa-camera"></i> Camera'}]},
-      element: '<input type="text" class="form-control" ng-model="selectedIcon" data-html="1" ng-options="icon as icon.label for icon in icons" bs-typeahead>'
+      element: '<input type="text" class="form-control" ng-model="selectedIcon" data-html="1" bs-options="icon as icon.label for icon in icons" bs-typeahead>'
     },
     'markup-objectValue-custom': {
       scope: {selectedIcon: {}, icons: [{val: 'gear', fr_FR: '<i class="fa fa-gear"></i> Gear'}, {val: 'globe', fr_FR: '<i class="fa fa-globe"></i> Globe'}, {val: 'heart', fr_FR: '<i class="fa fa-heart"></i> Heart'}, {val: 'camera', fr_FR: '<i class="fa fa-camera"></i> Camera'}]},
-      element: '<input type="text" class="form-control" ng-model="selectedIcon" data-html="1" ng-options="icon as icon[\'fr_FR\'] for icon in icons" bs-typeahead>'
+      element: '<input type="text" class="form-control" ng-model="selectedIcon" data-html="1" bs-options="icon as icon[\'fr_FR\'] for icon in icons" bs-typeahead>'
+    },
+    'markup-renew-items': {
+      scope: {selectedIcon: {}, icons: function(){return [{alt: 'Gear'}, {alt: 'Globe'}, {alt: 'Heart'}, {alt: 'Camera'}];}},
+      element: '<input type="text" class="form-control" ng-model="selectedIcon" bs-options="icon as icon.alt for icon in icons()" bs-typeahead>'
     },
     'options-animation': {
-      element: '<input type="text" data-animation="am-flip-x" ng-model="selectedState" ng-options="state for state in states" bs-typeahead>'
+      element: '<input type="text" data-animation="am-flip-x" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
     },
     'options-placement': {
-      element: '<input type="text" data-placement="bottom" ng-model="selectedState" ng-options="state for state in states" bs-typeahead>'
+      element: '<input type="text" data-placement="bottom" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
     },
     'options-placement-exotic': {
-      element: '<input type="text" data-placement="bottom-right" ng-model="selectedState" ng-options="state for state in states" bs-typeahead>'
+      element: '<input type="text" data-placement="bottom-right" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
     },
     'options-trigger': {
-      element: '<input type="text" data-trigger="hover" ng-model="selectedState" ng-options="state for state in states" bs-typeahead>'
+      element: '<input type="text" data-trigger="hover" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
     },
     'options-html': {
       scope: {selectedIcon: '', icons: [{value: 'Gear', label: '<i class="fa fa-gear"></i> Gear'}, {value: 'Globe', label: '<i class="fa fa-globe"></i> Globe'}, {value: 'Heart', label: '<i class="fa fa-heart"></i> Heart'}, {value: 'Camera', label: '<i class="fa fa-camera"></i> Camera'}]},
-      element: '<input type="text" class="form-control" ng-model="selectedIcon" data-html="1" ng-options="icon.value as icon.label for icon in icons" bs-typeahead>'
+      element: '<input type="text" class="form-control" ng-model="selectedIcon" data-html="{{html}}" bs-options="icon.value as icon.label for icon in icons" bs-typeahead>'
     },
     'options-template': {
-      element: '<input type="text" data-template="custom" ng-model="selectedState" ng-options="state for state in states" bs-typeahead>'
+      element: '<input type="text" data-template="custom" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
     },
     'options-minLength': {
-      element: '<input type="text" ng-model="selectedState" data-min-length="0" ng-options="state for state in states" bs-typeahead>'
+      element: '<input type="text" ng-model="selectedState" data-min-length="0" bs-options="state for state in states" bs-typeahead>'
+    },
+    'options-container': {
+      element: '<input type="text" data-container="{{container}}" ng-model="selectedState" bs-options="state for state in states" bs-typeahead>'
+    },
+    'options-autoSelect': {
+      element: '<input type="text" ng-model="selectedState" data-min-length="0" data-auto-select="1" bs-options="state for state in states" bs-typeahead>'
+    },
+    'options-trimValue': {
+      scope: {selectedState: '', states: [' Alabama ', ' Alaska', 'Arizona ']},
+      element: '<input type="text" ng-model="selectedState" data-trim-value="{{trimValue}}" bs-options="state for state in states" bs-typeahead>'
     }
   };
 
@@ -212,11 +231,31 @@ describe('typeahead', function () {
       expect(elm.val()).toBe(jQuery('<div></div>').html(scope.icons[1].fr_FR).text().trim());
       angular.element(elm[0]).triggerHandler('focus');
       expect(sandboxEl.find('.dropdown-menu li:eq(0) a').html()).toBe(scope.icons[1].fr_FR);
-      elm.val('')
+      elm.val('');
       angular.element(elm[0]).triggerHandler('change');
       angular.element(sandboxEl.find('.dropdown-menu li:eq(0) a').get(0)).triggerHandler('click');
       expect(scope.selectedIcon).toBe(scope.icons[0]);
       expect(elm.val()).toBe(jQuery('<div></div>').html(scope.icons[0].fr_FR).text().trim());
+    });
+
+    it('should support custom label with renewed source', function() {
+      var elem = compileDirective('markup-renew-items');
+      var target = scope.icons()[0];
+
+      elem.val('');
+      angular.element(elem[0]).triggerHandler('focus');
+      scope.$digest();
+      expect(sandboxEl.find('.dropdown-menu li a').length).toBe(4);
+
+      elem.val(target.alt);
+      angular.element(elem[0]).triggerHandler('change');
+      scope.$digest();
+      expect(elem.val()).toBe(target.alt);
+
+      angular.element(sandboxEl.find('.dropdown-menu li:eq(0) a').get(0)).triggerHandler('click');
+      scope.$digest();
+
+      expect(elem.val()).toBe(target.alt);
     });
 
     it('should support numeric values', function() {
@@ -230,7 +269,7 @@ describe('typeahead', function () {
 
   });
 
-  describe('ngOptions', function () {
+  describe('bsOptions', function () {
 
     it('should correctly watch for changes', function() {
       var elm = compileDirective('watch-options');
@@ -261,25 +300,70 @@ describe('typeahead', function () {
     });
 
     describe('placement', function () {
+      var $$rAF,
+          $timeout;
+
+      beforeEach(inject(function (_$$rAF_, _$timeout_) {
+        $$rAF = _$$rAF_;
+        $timeout = _$timeout_;
+      }));
 
       it('should default to `top` placement', function() {
         var elm = compileDirective('default');
         angular.element(elm[0]).triggerHandler('focus');
+        $$rAF.flush();
         expect(sandboxEl.children('.dropdown-menu').hasClass('bottom-left')).toBeTruthy();
       });
 
       it('should support placement', function() {
         var elm = compileDirective('options-placement');
         angular.element(elm[0]).triggerHandler('focus');
+        $$rAF.flush();
         expect(sandboxEl.children('.dropdown-menu').hasClass('bottom')).toBeTruthy();
       });
 
       it('should support exotic-placement', function() {
         var elm = compileDirective('options-placement-exotic');
         angular.element(elm[0]).triggerHandler('focus');
+        $$rAF.flush();
         expect(sandboxEl.children('.dropdown-menu').hasClass('bottom-right')).toBeTruthy();
       });
 
+      it('should re-apply placement when the results change', function () {
+        var typeahead = $typeahead($('<input>'), null, { placement: 'top' });
+        spyOn(typeahead, '$applyPlacement');
+        typeahead.update([]);
+
+        $timeout.flush();
+        expect(typeahead.$applyPlacement).toHaveBeenCalled();
+      });
+
+      it('should not re-apply placement when the results change if the placement is bottom', function () {
+        var typeahead = $typeahead($('<input>'), null, { placement: 'bottom' });
+        spyOn(typeahead, '$applyPlacement');
+        typeahead.update([]);
+
+        $timeout.flush();
+        expect(typeahead.$applyPlacement).not.toHaveBeenCalled();
+      });
+
+      it('should not re-apply placement when the results change if the placement is bottom-left', function () {
+        var typeahead = $typeahead($('<input>'), null, { placement: 'bottom-left' });
+        spyOn(typeahead, '$applyPlacement');
+        typeahead.update([]);
+
+        $timeout.flush();
+        expect(typeahead.$applyPlacement).not.toHaveBeenCalled();
+      });
+
+      it('should not re-apply placement when the results change if the placement is bottom-right', function () {
+        var typeahead = $typeahead($('<input>'), null, { placement: 'bottom-right' });
+        spyOn(typeahead, '$applyPlacement');
+        typeahead.update([]);
+
+        $timeout.flush();
+        expect(typeahead.$applyPlacement).not.toHaveBeenCalled();
+      });
     });
 
     describe('trigger', function () {
@@ -297,11 +381,36 @@ describe('typeahead', function () {
 
     describe('html', function () {
 
-      it('should correctly compile inner content', function() {
-        var elm = compileDirective('options-html');
+      it('should correctly compile inner content when truthy', function() {
+        var elm = compileDirective('options-html', {html: 'true'});
         angular.element(elm[0]).triggerHandler('focus');
         expect(sandboxEl.find('.dropdown-menu li').length).toBe(scope.icons.length);
         expect(sandboxEl.find('.dropdown-menu li:eq(0) a').html()).toBe(scope.icons[0].label);
+      });
+
+      it('should NOT compile inner content when falsy', function() {
+        var elm = compileDirective('options-html', {html: 'false'});
+        angular.element(elm[0]).triggerHandler('focus');
+        expect(sandboxEl.find('.dropdown-menu li').length).toBe(scope.icons.length);
+        expect(sandboxEl.find('.dropdown-menu li:eq(0) a').html()).not.toBe(scope.icons[0].label);
+      });
+
+    });
+
+    describe('container', function() {
+
+      it('should put typeahead in a container when specified', function() {
+        var testElm = $('<div id="testElm"></div>');
+        sandboxEl.append(testElm);
+        var elm = compileDirective('options-container', angular.extend({}, templates.default.scope, {container: '#testElm'}));
+        angular.element(elm[0]).triggerHandler('focus');
+        expect(testElm.find('ul.typeahead').length).toBe(1);
+      });
+
+      it('should put typeahead in sandbox when container is falsy', function() {
+        var elm = compileDirective('options-container', angular.extend({}, templates.default.scope, {container: 'false'}));
+        angular.element(elm[0]).triggerHandler('focus');
+        expect(sandboxEl.find('ul.typeahead').length).toBe(1);
       });
 
     });
@@ -342,6 +451,24 @@ describe('typeahead', function () {
 
     });
 
+    describe('trimValue', function () {
+
+      it('should correctly trim model value when truthy', function() {
+        var elm = compileDirective('options-trimValue', {trimValue: 'true'});
+        angular.element(elm[0]).triggerHandler('focus');
+        angular.element(sandboxEl.find('.dropdown-menu li:eq(0) a').get(0)).triggerHandler('click');
+        expect(elm.val()).toBe(scope.states[0].trim());
+      });
+
+      it('should NOT trim model value when falsy', function() {
+        var elm = compileDirective('options-trimValue', {trimValue: 'false'});
+        angular.element(elm[0]).triggerHandler('focus');
+        angular.element(sandboxEl.find('.dropdown-menu li:eq(0) a').get(0)).triggerHandler('click');
+        expect(elm.val()).toBe(scope.states[0]);
+      });
+
+    });
+
   });
 
   describe('minLength', function() {
@@ -360,6 +487,53 @@ describe('typeahead', function () {
       expect(scope.$$childHead.$isVisible()).toBeTruthy();
     });
 
+  });
+
+  describe('autoSelect', function() {
+
+    it('should not auto-select the first match upon meeting minLength', function() {
+      var elm = compileDirective('options-minLength', {});
+      angular.element(elm[0]).triggerHandler('focus');
+      expect(sandboxEl.find('.dropdown-menu li').hasClass('active')).not.toBeTruthy();
+    });
+
+    it('should auto-select the first match upon meeting minLength', function() {
+      var elm = compileDirective('options-autoSelect', {});
+      angular.element(elm[0]).triggerHandler('focus');
+      expect(sandboxEl.find('.dropdown-menu li').hasClass('active')).toBeTruthy();
+    });
+
+  });
+
+  describe('select event', function() {
+
+    it('should dispatch .select event when item is selected', function() {
+      var elm = compileDirective('default');
+
+      var selected = null;
+      scope.$on('$typeahead.select', function(evt, value, index, typeahead) {
+        selected = index;
+      });
+
+      angular.element(elm[0]).triggerHandler('focus');
+      angular.element(sandboxEl.find('.dropdown-menu li:eq(1) a').get(0)).triggerHandler('click');
+
+      expect(selected).toBe(1);
+    });
+
+    it('should call .select event with typeahead element instance id', function() {
+      var elm = compileDirective('default-with-id');
+
+      var id = '';
+      scope.$on('$typeahead.select', function(evt, value, index, typeahead) {
+        id = typeahead.$id;
+      });
+
+      angular.element(elm[0]).triggerHandler('focus');
+      angular.element(sandboxEl.find('.dropdown-menu li:eq(1) a').get(0)).triggerHandler('click');
+
+      expect(id).toBe('typeahead1');
+    });
   });
 
 });

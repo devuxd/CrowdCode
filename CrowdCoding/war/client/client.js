@@ -11,7 +11,8 @@ angular
 		'ui.ace', 
 		'mgcrea.ngStrap', 
 		'ngClipboard',
-		'luegg.directives'
+		'luegg.directives',
+		'yaru22.angular-timeago'
 	])
 	.config(function($dropdownProvider, ngClipProvider ) {
 
@@ -24,7 +25,7 @@ angular
     .constant('projectId'  ,projectId)
 	.constant('firebaseUrl',firebaseURL)
 	.constant('logoutUrl'  ,logoutURL)
-	.run(function($rootScope, $interval, $modal, $firebase, firebaseUrl, logoutUrl, userService,  functionsService, ADTService, avatarFactory){
+	.run(function($rootScope, $interval, $modal, $firebase, firebaseUrl, logoutUrl, userService,  functionsService, ADTService, avatarFactory, questionsService){
 
 		// current session variables
 		$rootScope.projectId    = projectId;
@@ -51,6 +52,7 @@ angular
 			servicesLoadingStatus = {};
 			functionsService.init();
 			ADTService.init();
+			questionsService.init();
 		}
 
 		function serviceLoaded(event,nameOfTheService){

@@ -19,6 +19,8 @@ import com.crowdcoding.dto.firebase.AnswerInFirebase;
 import com.crowdcoding.dto.firebase.CommentInFirebase;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
+import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
+import com.crowdcoding.dto.firebase.VotersIdInFirebase;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.QuestionInFirebase;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
@@ -254,16 +256,21 @@ public class FirebaseService
 	// Writes the specified question to firebase
 	public static void writeCommentCreated(CommentInFirebase dto, String path, String projectId)
 	{
+		System.out.println(path);
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
 
 	}
-	public static void updateQuestioningVoters(List<String> votersId, String path, String projectId)
+	public static void updateQuestioningVoters(VotersIdInFirebase votersId, String path, String projectId)
 	{
-		enqueueWrite(votersId.toString(), path +".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite(votersId.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	public static void updateQuestioningReporters(List<String> reportersId, String path, String projectId)
+	public static void updateQuestioningReporters(ReportersIdInFirebase reportersId, String path, String projectId)
 	{
-		enqueueWrite(reportersId.toString(), path +".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite(reportersId.json(), path +".json", HTTPMethod.PATCH, projectId);
+	}
+	public static void updateQuestioningScore(int score, String path, String projectId)
+	{
+		enqueueWrite("{\"score\": \"" + score + "\"}", path +".json", HTTPMethod.PATCH, projectId);
 	}
 
 

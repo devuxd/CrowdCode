@@ -31,7 +31,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="en" ng-app="questions">
+<html lang="en" ng-app="statistics">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -54,7 +54,7 @@
 	    <div class="container-fluid">
 	    	<div class="row">
 	    		<div class="col-md-12" >
-					<questions-panel></questions-panel>
+					<statistics-panel></statistics-panel>
 		        </div>
 	    	</div>
 	    </div>
@@ -90,7 +90,7 @@
 
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
-	<script src="/questions/app.js"></script>
+	<script src="/statistics/app.js"></script>
 
 
 </body>

@@ -41,15 +41,15 @@ public class Comment extends Questioning
 
 		this.questionId = questionId;
 		this.answerId = answerId;
-
+		System.out.println("comment crated with "+questionId + "answerId"+answerId+"text"+text );
 		ofy().save().entity(this).now();
-		this.firebasePath= "/questions/" + questionId + "/answers/"+ answerId +" /comments/" + this.id;
+		this.firebasePath= "/questions/" + questionId + "/answers/"+ answerId +"/comments/" + this.id;
 		ofy().save().entity(this).now();
 		storeToFirebase();
 
 	}
 
 	protected void storeToFirebase() {
-		FirebaseService.writeCommentCreated(new CommentInFirebase(this.id, this.ownerId, this.text), this.firebasePath, projectId);
+		FirebaseService.writeCommentCreated(new CommentInFirebase(this.id, this.ownerId, this.text, this.time, this.score), this.firebasePath, projectId);
 	}
 }

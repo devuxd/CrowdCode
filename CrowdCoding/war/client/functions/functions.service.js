@@ -18,7 +18,6 @@ angular
 		this.init =  init ;
 		this.allFunctionNames = function() { return allFunctionNames(); };
 		this.get = function(id) { return get(id); };
-		this.getAll = getAll;
 		this.getVersion = function(id,version) { return getVersion(id, version); };
 		this.getByName = function(name) { return getByName(name); };
 		this.getNameById  = function(id) { return getNameById(id); };
@@ -33,16 +32,14 @@ angular
 		this.parseFunction = function (codemirror) { return parseFunction(codemirror); };
 		this.parseFunctionFromAce = function (ace) { return parseFunctionFromAce(ace); };
 
-		function getAll()
-		{
-			return functions;
-		}
+
+
+
 		// Function bodies
 		function init()
 		{
-			console.log($rootScope.firebaseURL);
 		    // hook from firebase all the functions declarations of the project
-		    var functionsSync = $firebase(new Firebase('https://crowdcode.firebaseio.com/projects'));
+		    var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
 			functions = functionsSync.$asArray();
 			functions.$loaded().then(function(){
 				// tell the others that the functions services is loaded
@@ -319,7 +316,7 @@ angular
 		return functionParsed;
 	}
 
-}
+};
 	return service;
 }]);
 

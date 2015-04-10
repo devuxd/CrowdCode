@@ -200,12 +200,11 @@ public class CrowdServlet extends HttpServlet
 							doAdmin(req, resp, projectId, pathSeg);
 						} else
 							req.getRequestDispatcher("/404.jsp").forward(req, resp);
-					} else if( pathSeg[2].equals("questions")){
-						System.out.println("Questions");
-						req.getRequestDispatcher("/questions/index.jsp").forward(req, resp);
+					} else if( pathSeg[2].equals("statistics")){
+						req.getRequestDispatcher("/statistics/index.jsp").forward(req, resp);
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
-					}  else if (pathSeg[3].equals("questioning")){
+					}  else if (pathSeg[2].equals("questions")){
 						doQuestioning(req, resp, projectId, user, pathSeg);
 					}  else if (pathSeg[2].equals("code")){
 						renderCode(resp, projectId);
@@ -453,7 +452,7 @@ public class CrowdServlet extends HttpServlet
 		try
     	{
     		final String projectID    = (String) req.getAttribute("project");
-    		final String type    = (String) req.getAttribute("type");
+    		final String type    = (String) req.getParameter("type");
 			final String payload      = Util.convertStreamToString(req.getInputStream());
 
 			final String workerID     = user.getUserId();
@@ -461,11 +460,11 @@ public class CrowdServlet extends HttpServlet
 			// Create an initial context, then build a command to insert the value
 			CommandContext context = new CommandContext();
 
-			if(type == "question")
+			if(type.equals("question"))
 				QuestioningCommand.createQuestion(payload, workerID);
-			else if(type == "answer")
+			else if(type.equals("answer"))
 				QuestioningCommand.createAnswer(payload, workerID);
-			else if(type == "comment")
+			else if(type.equals("comment"))
 				QuestioningCommand.createComment(payload, workerID);
 			else
 				throw new RuntimeException("Error - " + type + " is not registered as a questioning type.");
@@ -486,8 +485,8 @@ public class CrowdServlet extends HttpServlet
 		// And anything inside the transaction MUST not mutate the values produced.
 
 		final String projectID    = (String) req.getAttribute("project");
-		final long questioningId    = Long.parseLong((String) req.getAttribute("id"));
-		final boolean removeReport    = Boolean.parseBoolean((String)req.getAttribute("removeReport"));
+		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
+		final boolean removeReport    = Boolean.parseBoolean((String)req.getParameter("removeReport"));
 
 
 		final String workerID     = user.getUserId();
@@ -511,8 +510,8 @@ public class CrowdServlet extends HttpServlet
 		// And anything inside the transaction MUST not mutate the values produced.
 
 		final String projectID    = (String) req.getAttribute("project");
-		final long questioningId    = Long.parseLong((String) req.getAttribute("id"));
-		final boolean removeVote    = Boolean.parseBoolean((String)req.getAttribute("removeVote"));
+		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
+		final boolean removeVote    = Boolean.parseBoolean((String)req.getParameter("removeVote"));
 
 
 		final String workerID     = user.getUserId();
