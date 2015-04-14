@@ -23,7 +23,6 @@ angular
 			this.field('comments',{ boost: 4});
 		});
 
-		
 
 		// Public functions
 		this.init = init;
@@ -32,9 +31,7 @@ angular
 		this.report = report;
 		this.sel  = undefined;
 		this.allTags = [];
-		this.addVote       = addVote;
 		this.searchResults = searchResults;
-		this.setSelected = setSelected;
 		this.getQuestions= function(){return questions;};
 		this.getAllTags= getAllTags;
 
@@ -44,7 +41,8 @@ angular
 				title   : question.title,
 				text    : question.text !== undefined ? question.text : '',
 				tags    : question.tags !== undefined ? question.tags.join(', ') : '',
-				answers : ''
+				answers : '',
+				comments: ''
 			};
 			if( question.answers !== undefined ){
 				for( var answerkey in question.answers){
@@ -60,14 +58,6 @@ angular
 		}
 
 		
-
-		function addVote(q){
-			if( q.votes === undefined )
-				q.votes = [];
-
-			q.votes.push(workerId);
-			questions.$save(q);
-		}
 
 		function searchResults( searchTxt ){
 			var res = idx.search( searchTxt );
@@ -94,10 +84,6 @@ angular
 		function getAllTags()
 		{
 			return allTags;
-		}
-		function setSelected(q){
-			console.log('selected',q);
-			$scope.sel = q;
 		}
 
 		function init(){

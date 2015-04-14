@@ -107,7 +107,7 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Question question = new Question(dto.title, dto.text, dto.tags, workerId, projectId);
+			Question question = new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, projectId);
 		}
 	}
 

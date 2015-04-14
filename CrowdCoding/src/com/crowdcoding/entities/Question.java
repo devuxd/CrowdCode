@@ -27,7 +27,7 @@ import com.googlecode.objectify.annotation.Index;
 public class Question extends Questioning
 {
 
-
+	private List<String> artifactsId = new ArrayList<String>();
 	private List<String> subsribersId = new ArrayList<String>();
 	private List<String> tags = new ArrayList<String>();
 	private String title;
@@ -38,12 +38,15 @@ public class Question extends Questioning
 
 	}
 
-	public Question(String title, String text, List<String> tags, String ownerId, String projectId)
+	public Question(String title, String text, List<String> tags, String artifactId, String ownerId, String projectId)
 	{
 		super(text, ownerId, projectId);
 		this.title = title;
 		this.tags= tags;
+		this.artifactsId.add(artifactId);
+		this.subsribersId.add(ownerId);
 		ofy().save().entity(this).now();
+
 		this.firebasePath="/questions/" + this.id;
 		ofy().save().entity(this).now();
 		storeToFirebase();
@@ -51,6 +54,6 @@ public class Question extends Questioning
 	}
 
 	protected void storeToFirebase() {
-		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.title, this.text, this.tags, this.time, this.score), this.firebasePath, projectId);
+		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId), this.firebasePath, projectId);
 	}
 }

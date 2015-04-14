@@ -16,6 +16,11 @@
 				<label for="exampleInputPassword2">Tag</label>
 				<input name="text" class="form-control" ng-model="newTag" placeholder="insert tag" data-min-length="1" bs-options="tag for tag in allTags" bs-typeahead press-enter="addTag()">
 			</div>
+			<div class="checkbox">
+			  <label>
+			    <input type="checkbox" ng-model="getArtifactId"> Related to function
+			  </label>
+			</div>
 			<!-- <button type="submit" ng-click="setView('question_list')" class="btn btn-sm btn-default">back to the questions</button> -->
 			<button type="submit" ng-click="postQuestion() ; setView('question_list')" class="btn btn-sm btn-primary">Ask</button>
 		</form>

@@ -7,18 +7,28 @@ angular
 
 	// Private variables
 	var microtasks;
+	var service = new function(){
+		var fetchedMicrotaskKey;
 
-	var service = {
+		//this.fetchedMicrotaskKey
+		this.getFetchedMicrotask = getFetchedMicrotask;
+		this.get = get;
+		this.submit = submit;
+		this.fetch = fetch;
 
+		function getFetchedMicrotask()
+		{
+			return fetchedMicrotaskKey;
+		}
 		// Public functions
-		get : function(id){
+		function get (id){
 			var microtaskSync = $firebase(new Firebase($rootScope.firebaseURL+'/microtasks/'+id));
 			var microtask = microtaskSync.$asObject();
 
 			return microtask;
-		},
+		}
 
-		submit : function(microtask, formData,autoSkip){
+		function submit (microtask, formData,autoSkip){
 			var deferred = $q.defer();
 
 			if( microtask == undefined )
@@ -40,14 +50,19 @@ angular
 					deferred.reject(data);
 				});
 			return deferred.promise;
-		},
+		}
 
-		fetch : function(){
+		function fetch (){
 			var deferred = $q.defer();
 
 			// ask the microtask id
 			$http.get('/' + projectId + '/ajax/fetch')
 				.success(function(data, status, headers, config) {
+					if(data!==undefined && data.microtaskKey!==undefined)
+					{
+						console.log(data.microtaskKey);
+						fetchedMicrotaskKey= data.microtaskKey;
+					}
 					deferred.resolve(data);
 				})
 				.error(function(data, status, headers, config) {
