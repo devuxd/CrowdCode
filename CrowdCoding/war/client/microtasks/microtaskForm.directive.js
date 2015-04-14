@@ -47,6 +47,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 					noMicrotask();
 					return;
 				}
+				$scope.$emit('fetchedMicrotaskKey', microtaskKey);
 				if( firstFetch == '1')
 					userService.setFirstFetchTime();
 

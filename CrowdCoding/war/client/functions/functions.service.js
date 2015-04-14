@@ -33,6 +33,8 @@ angular
 		this.parseFunctionFromAce = function (ace) { return parseFunctionFromAce(ace); };
 
 
+
+
 		// Function bodies
 		function init()
 		{
@@ -314,7 +316,7 @@ angular
 		return functionParsed;
 	}
 
-}
+};
 	return service;
 }]);
 

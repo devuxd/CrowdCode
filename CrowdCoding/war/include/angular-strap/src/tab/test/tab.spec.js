@@ -25,6 +25,9 @@ describe('tab', function () {
     'default': {
       element: '<div bs-tabs><div title="title-1" bs-pane>content-1</div><div title="title-2" bs-pane>content-2</div></div>'
     },
+    'defaultNested': {
+      element: '<div bs-tabs><div title="title-1" bs-pane><div bs-tabs><div title="title-nested-11" bs-pane>content-nested-11</div><div title="title-nested-12" bs-pane>content-nested-12</div></div></div><div title="title-2" bs-pane><div bs-tabs><div title="title-nested-21" bs-pane>content-nested-21</div><div title="title-nested-22" bs-pane>content-nested-22</div></div></div></div>'
+    },
     'template-ngRepeat': {
       scope: {tabs: [
         {title:'Home', content: 'Raw denim you probably haven\'t heard of...'},
@@ -72,6 +75,9 @@ describe('tab', function () {
     },
     'options-activeClass': {
       element: '<div data-active-class="in" bs-tabs><div title="title-1" bs-pane>content-1</div><div title="title-2" bs-pane>content-2</div></div>'
+    },
+    'pane-options-disabled': {
+      element: '<div bs-tabs><div title="title-1" bs-pane>content-1</div><div title="title-2" bs-pane disabled="true">content-2</div></div>'
     }
   };
 
@@ -106,6 +112,40 @@ describe('tab', function () {
       sandboxEl.find('.nav-tabs > li:eq(0) > a').triggerHandler('click');
       expect(sandboxEl.find('.nav-tabs > li.active').text()).toBe('title-1');
       expect(sandboxEl.find('.tab-content > .tab-pane.active').text()).toBe('content-1');
+    });
+
+  });
+
+  describe('with nested default template', function () {
+
+    it('should correctly compile inner content', function() {
+      var elm = compileDirective('defaultNested');
+      expect(sandboxEl.find('.nav-tabs:first > li').length).toBe(2);
+      expect(sandboxEl.find('.nav-tabs:first > li:eq(0)').text()).toBe('title-1');
+      expect(sandboxEl.find('.tab-content:first > .tab-pane').length).toBe(2);
+      expect(sandboxEl.find('.tab-content:first > .tab-pane:eq(0) .tab-content:first > .tab-pane:eq(0)').text()).toBe('content-nested-11');
+    });
+
+    it('should navigate between panes on click', function() {
+      var elm = compileDirective('defaultNested');
+      expect(sandboxEl.find('.nav-tabs:first > li.active').text()).toBe('title-1');
+      expect(sandboxEl.find('.tab-content:first > .tab-pane.active .tab-content:first > .tab-pane.active').text()).toBe('content-nested-11');
+      sandboxEl.find('.nav-tabs:first > li:eq(1) > a').triggerHandler('click');
+      expect(sandboxEl.find('.nav-tabs:first > li.active').text()).toBe('title-2');
+      expect(sandboxEl.find('.tab-content:first > .tab-pane.active .tab-content:first > .tab-pane.active').text()).toBe('content-nested-21');
+      sandboxEl.find('.nav-tabs:first > li:eq(0) > a').triggerHandler('click');
+      expect(sandboxEl.find('.nav-tabs:first > li.active').text()).toBe('title-1');
+      expect(sandboxEl.find('.tab-content:first > .tab-pane.active .tab-content:first > .tab-pane.active ').text()).toBe('content-nested-11');
+    });
+
+    it('should navigate between nested panes on click', function() {
+      var elm = compileDirective('defaultNested');
+      sandboxEl.find('.tab-content:first > .tab-pane.active .nav-tabs > li:eq(1) > a').triggerHandler('click');
+      expect(sandboxEl.find('.tab-content:first > .tab-pane.active .nav-tabs > li.active').text()).toBe('title-nested-12');
+      expect(sandboxEl.find('.tab-content:first > .tab-pane.active .tab-content:first > .tab-pane.active').text()).toBe('content-nested-12');
+      sandboxEl.find('.tab-content:first > .tab-pane.active .nav-tabs > li:eq(0) > a').triggerHandler('click');
+      expect(sandboxEl.find('.tab-content:first > .tab-pane.active .nav-tabs > li.active').text()).toBe('title-nested-11');
+      expect(sandboxEl.find('.tab-content:first > .tab-pane.active .tab-content:first > .tab-pane.active').text()).toBe('content-nested-11');
     });
 
   });
@@ -280,6 +320,18 @@ describe('tab', function () {
 
     });
 
+  });
+
+  describe('pane options', function() {
+
+    describe('disable', function () {
+
+      it('should disable pane', function() {
+        var elm = compileDirective('pane-options-disabled');
+        expect(sandboxEl.find('.nav-tabs > li:eq(1)').hasClass('disabled')).toBeTruthy();
+      });
+
+    });
 
   });
 

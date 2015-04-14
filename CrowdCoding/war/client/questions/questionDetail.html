@@ -1,0 +1,83 @@
+<a href="#" ng-click="setView('question_list'); setSelected(null)" class="glyphicon glyphicon-arrow-left">&#9;back</a>
+<ul class="list-group no-border">
+	<li class="list-group-item">
+		<h3 class="panel-title">{{sel.title}}</h3>
+	</li>
+	<li class="list-group-item">
+		{{sel.text}}
+		<div>
+			<span class="tag" ng-repeat="tag in sel.tags">{{tag}} </span>
+		</div>
+		<div>
+			<small time-ago from-time="{{sel.time | date : 'medium'}}"></small>
+		</div>
+	</li>
+	<li ng-init="showForm=false" class="list-group-item">
+		<div style="font-size: 1.1em;">
+			<span>{{sel.score}}</span>
+			<span ng-click="toggleVoteUp(sel)" class="glyphicon glyphicon-thumbs-up unselected" ng-class="{'selected':sel.votersId.indexOf(workerId)>-1}"></span>
+			<span ng-click="toggleVoteDown(sel)" class="glyphicon glyphicon-thumbs-down unselected" ng-class="{'selected':sel.reportersId.indexOf(workerId)>-1}"></span>
+			<span>|</span>
+			<span ng-click="showForm=!showForm" class="unselected" ng-class="{'selected':showForm}">Answer</span>
+		</div>
+		<form ng-show="showForm">
+			<div class="form-group">
+				<textarea required name="text" class="form-control" ng-model="answerText" placeholder="answer text"></textarea>
+			</div>
+			<button type="submit" ng-click="postAnswer(); showForm=false" class="btn btn-xs btn-primary pull-right">Answer</button>
+		</form>
+		<div class="clearfix"></div>
+	</li>
+	<li class="list-group-item">
+		<ul class="list-group">
+			<li class="list-group-item" ng-repeat="answer in sel.answers | orderObjectBy : 'time' : true">
+				{{answer.text}}
+				<div ng-init="showForm=false">
+					<div>
+						<small>{{ answer.timestamp | date : 'medium' }}</small>
+					</div>
+					<div>
+						<span>{{answer.score}}</span>
+						<span
+							ng-click="toggleVoteUp(answer)"
+							class="glyphicon glyphicon-thumbs-up unselected"
+							ng-class="{'selected':answer.votersId.indexOf(workerId)>-1}">
+						</span>
+						<span
+							ng-click="toggleVoteDown(answer)"
+							class="glyphicon glyphicon-thumbs-down unselected"
+							ng-class="{'selected':answer.reportersId.indexOf(workerId)>-1}">
+						</span>
+						<span>|</span>
+						<span ng-click="selectedAnswer.toggle(answer.id)" class="unselected" ng-class="{'selected':selectedAnswer.id==answer.id}">Comment</span>
+						<form ng-show='selectedAnswer.id==answer.id'>
+							<div class="form-group">
+								<textarea name="text" class="form-control" ng-model="selectedAnswer.text" placeholder="comment text"></textarea>
+							</div>
+							<button type="submit" ng-click="postComment() ; selectedAnswer.toggle(answer.id)" class="btn btn-xs btn-primary pull-right">Comment</button>
+						</form>
+						<div class="clearfix"></div>
+					</div>
+					<ul class="list-group">
+						<li class="list-group-item comment-element" ng-repeat="comment in answer.comments | orderObjectBy : 'time' : true">
+							{{comment.text}}
+							<div style="font-size: 0.9em;">
+								<span>{{comment.score}}</span>
+								<span
+									ng-click="toggleVoteUp(comment)"
+									class="glyphicon glyphicon-thumbs-up unselected"
+									ng-class="{'selected':comment.votersId.indexOf(workerId)>-1}">
+								</span>
+								<span
+									ng-click="toggleVoteDown(comment)"
+									class="glyphicon glyphicon-thumbs-down unselected"
+									ng-class="{'selected':comment.reportersId.indexOf(workerId)>-1}">
+								</span>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</li>
+		</ul>
+	</li>
+</ul>

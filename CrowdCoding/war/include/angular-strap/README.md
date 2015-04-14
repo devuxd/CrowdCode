@@ -1,4 +1,6 @@
-# [AngularStrap](http://mgcrea.github.io/angular-strap) [![Build Status](http://img.shields.io/travis/mgcrea/angular-strap/master.svg?style=flat)](http://travis-ci.org/mgcrea/angular-strap) [![devDependency Status](http://img.shields.io/david/dev/mgcrea/angular-strap.svg?style=flat)](https://david-dm.org/mgcrea/angular-strap#info=devDependencies) [![Coverage Status](http://img.shields.io/codeclimate/coverage/github/mgcrea/angular-strap.svg?style=flat)](https://codeclimate.com/github/mgcrea/angular-strap) [![Tips](http://img.shields.io/gratipay/mgcrea.svg?style=flat)](https://gratipay.com/mgcrea)
+# [AngularStrap](http://mgcrea.github.io/angular-strap)
+
+[![Build Status](http://img.shields.io/travis/mgcrea/angular-strap/master.svg?style=flat)](http://travis-ci.org/mgcrea/angular-strap) [![devDependency Status](http://img.shields.io/david/dev/mgcrea/angular-strap.svg?style=flat)](https://david-dm.org/mgcrea/angular-strap#info=devDependencies) [![Coverage Status](http://img.shields.io/codeclimate/coverage/github/mgcrea/angular-strap.svg?style=flat)](https://codeclimate.com/github/mgcrea/angular-strap) [![Climate Status](https://img.shields.io/codeclimate/github/mgcrea/angular-strap.svg?style=flat)](https://codeclimate.com/github/mgcrea/angular-strap) [![Tips](http://img.shields.io/gratipay/mgcrea.svg?style=flat)](https://gratipay.com/mgcrea)
 
 [![Banner](http://mgcrea.github.io/angular-strap/images/snippet.png)](http://mgcrea.github.io/angular-strap)
 
@@ -55,6 +57,7 @@ AngularStrap is tested with `karma` against the latest stable release of Angular
 
 >
 	$ npm install
+	$ bower install
 	$ gulp test
 
 You can build the latest version using `gulp`.
@@ -88,7 +91,7 @@ Please submit all pull requests the against master branch. If your pull request 
 
 	The MIT License
 
-	Copyright (c) 2012 - 2014 Olivier Louvignes
+	Copyright (c) 2012 – 2014 Olivier Louvignes
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal

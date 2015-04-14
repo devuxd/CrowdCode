@@ -29,9 +29,14 @@ import org.apache.commons.io.IOUtils;
 import com.crowdcoding.commands.Command;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.FunctionCommand;
+import com.crowdcoding.commands.QuestioningCommand;
+import com.crowdcoding.entities.Answer;
 import com.crowdcoding.entities.Artifact;
+import com.crowdcoding.entities.Comment;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.Question;
+import com.crowdcoding.entities.Questioning;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.UserPicture;
 import com.crowdcoding.entities.Worker;
@@ -91,7 +96,6 @@ public class CrowdServlet extends HttpServlet
 
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
-	//	ObjectifyService.register(IDGenerator.class);
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Worker.class);
 		ObjectifyService.register(Artifact.class);
@@ -108,6 +112,13 @@ public class CrowdServlet extends HttpServlet
 		ObjectifyService.register(WriteFunctionDescription.class);
 		ObjectifyService.register(WriteTest.class);
 		ObjectifyService.register(WriteTestCases.class);
+
+		ObjectifyService.register(Questioning.class);
+		ObjectifyService.register(Question.class);
+		ObjectifyService.register(Answer.class);
+		ObjectifyService.register(Comment.class);
+
+
 	}
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException
@@ -122,7 +133,7 @@ public class CrowdServlet extends HttpServlet
 
 	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-		
+
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
@@ -142,12 +153,12 @@ public class CrowdServlet extends HttpServlet
 				req.getRequestDispatcher("/userInfo.jsp").forward(req, resp);
 			 } else if(Pattern.matches("/worker",path)){
 				doExecuteSubmit(req,resp);
-			 } 
+			 }
 
 			// PATHS WITH USER AUTHENTICATION
 			 else if ( user != null ) { // if the user is authenticated
 
-				
+
 				// USERS URLS
 				if(Pattern.matches("/user/[\\w]*",path)){
 					doUser(req,resp,user,pathSeg);
@@ -189,12 +200,13 @@ public class CrowdServlet extends HttpServlet
 							doAdmin(req, resp, projectId, pathSeg);
 						} else
 							req.getRequestDispatcher("/404.jsp").forward(req, resp);
-					} else if( pathSeg[2].equals("questions")){
-						System.out.println("Questions");
-						req.getRequestDispatcher("/questions/index.jsp").forward(req, resp);
+					} else if( pathSeg[2].equals("statistics")){
+						req.getRequestDispatcher("/statistics/index.jsp").forward(req, resp);
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
-					}else if (pathSeg[2].equals("code")){
+					}  else if (pathSeg[2].equals("questions")){
+						doQuestioning(req, resp, projectId, user, pathSeg);
+					}  else if (pathSeg[2].equals("code")){
 						renderCode(resp, projectId);
 					}else if (pathSeg[2].equals("logout")){
 						doLogout(req,resp, projectId);
@@ -249,6 +261,18 @@ public class CrowdServlet extends HttpServlet
 			doSubmitTestResult(req, resp);
 		} else if (pathSeg[3].equals("enqueue")){
 			doEnqueueSubmit(req, resp,user);
+		}
+	}
+
+	private void doQuestioning(HttpServletRequest req, HttpServletResponse resp,
+			final String projectID, User user, final String[] pathSeg) throws IOException, FileUploadException
+	{
+		if (pathSeg[3].equals("insert")){
+			doInsertQuestioning(req, resp, user);
+		} else if (pathSeg[3].equals("vote")){
+			doVoteQuestioning(req, resp, user);
+		} else if (pathSeg[3].equals("report")){
+			doReportQuestioning(req, resp, user);
 		}
 	}
 
@@ -419,6 +443,91 @@ public class CrowdServlet extends HttpServlet
 		executeCommands(commands, projectID);
 	}
 
+	public void doInsertQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		// Collect information from the request parameter. Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+
+		try
+    	{
+    		final String projectID    = (String) req.getAttribute("project");
+    		final String type    = (String) req.getParameter("type");
+			final String payload      = Util.convertStreamToString(req.getInputStream());
+
+			final String workerID     = user.getUserId();
+
+			// Create an initial context, then build a command to insert the value
+			CommandContext context = new CommandContext();
+
+			if(type.equals("question"))
+				QuestioningCommand.createQuestion(payload, workerID);
+			else if(type.equals("answer"))
+				QuestioningCommand.createAnswer(payload, workerID);
+			else if(type.equals("comment"))
+				QuestioningCommand.createComment(payload, workerID);
+			else
+				throw new RuntimeException("Error - " + type + " is not registered as a questioning type.");
+
+
+			// Copy the command back out the context to initially populate the command queue.
+			executeCommands(context.commands(), projectID);
+    	}
+    	catch (IOException e)
+    	{
+    		e.printStackTrace();
+    	}
+	}
+	public void doReportQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		// Collect information from the request parameter. Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+
+		final String projectID    = (String) req.getAttribute("project");
+		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
+		final boolean removeReport    = Boolean.parseBoolean((String)req.getParameter("removeReport"));
+
+
+		final String workerID     = user.getUserId();
+
+		// Create an initial context, then build a command to insert the value
+		CommandContext context = new CommandContext();
+		if(removeReport)
+			QuestioningCommand.removeReport(questioningId, workerID);
+		else
+			QuestioningCommand.addReport(questioningId, workerID);
+
+
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectID);
+	}
+
+	public void doVoteQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		// Collect information from the request parameter. Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+
+		final String projectID    = (String) req.getAttribute("project");
+		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
+		final boolean removeVote    = Boolean.parseBoolean((String)req.getParameter("removeVote"));
+
+
+		final String workerID     = user.getUserId();
+
+		// Create an initial context, then build a command to insert the value
+		CommandContext context = new CommandContext();
+		if(removeVote)
+			QuestioningCommand.removeVote(questioningId, workerID);
+		else
+			QuestioningCommand.addVote(questioningId, workerID);
+
+
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectID);
+	}
+
 
 	// Notify the server that a microtask has been completed.
 	public void doSubmitMicrotask(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
@@ -430,7 +539,7 @@ public class CrowdServlet extends HttpServlet
 		try
     	{
     		final String projectID    = (String) req.getAttribute("project");
-    		
+
 			final String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 			final String microtaskKey = req.getParameter("key") ;
 			final String type         = req.getParameter("type");
