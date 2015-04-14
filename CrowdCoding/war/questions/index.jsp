@@ -45,6 +45,25 @@
  	<style type="text/css">
  	body { font-size: 12px;}
  	.glyphicon { font-size: 1em;}
+
+.pan-hide, .pan-show {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    -moz-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    -o-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+}
+.pan-hide {
+    opacity:1;
+}
+.pan-hide.pan-hide-active {
+    opacity:0;
+}
+.pan-show {
+    opacity:0;
+}
+.pan-show.pan-show-active {
+    opacity:1;
+}
  	</style>
 </head>
 
