@@ -3,15 +3,9 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		scope: false,
 		templateUrl: '/client/questions/questionsList.html',
 		link: function($scope,$element,$attrs){
-				$rootScope.$on('fetchedMicrotaskKey',function( event, microtaskKey ){
-					console.log("fetchedMicrotaskKey",microtaskKey);
-					//console.log(val);
-				 // delay 250 ms
-				});
+				
 
-			console.log(microtasksService.fetchedMicrotaskKey);
 			$scope.setSelected=setSelected;
-			console.log(microtasksService.getFetchedMicrotask());
 			function setSelected(q){
 				$scope.sel = q;
 			}

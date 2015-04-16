@@ -41,13 +41,14 @@ angular
                 });
             }
 
+
             // if the tutorials queue is not empty,
             // start the first tutorial in queue
             function checkQueue(){
                 if( !running && queue.length > 0 ){
+                    var tutorial= queue.pop();
                     currentId       = tutorial.id;
                     currentOnFinish = tutorial.onFinish;
-                    
                     startTutorial();
                 }
             }

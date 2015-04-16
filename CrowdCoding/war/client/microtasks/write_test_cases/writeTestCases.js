@@ -23,10 +23,10 @@ angular
 
     // if is not a reissued microtask, load the existent test cases
     // otherwise load the test cases from the reissued one
-    var reissued = angular.isDefined($scope.microtask.reissuedFrom);
+    var reissued = angular.isDefined($scope.microtask.reissuedSubmission);
     $scope.model = {
         newTestCase : "",
-        testcases   : reissued ? $scope.reissuedMicrotask.submission.testCases 
+        testcases   : reissued ? $scope.microtask.reissuedSubmission.testCases
                                : TestList.getTestCasesByFunctionId($scope.funct.id)
     };
 
@@ -41,23 +41,10 @@ angular
 
     function addTestCase() {
 
-
-        var all = functionsService.getAll();
-        console.log(all);
-        var all9;
-        for(var project in all){
-            if(all[project].$id == 'allTogetherDrawV9')
-                all9=all[project];
-        }
-        for(var chat in all9.chat)
-        {
-            console.log(all9.chat[chat]);
-        }
-        console.log(all.length);
-        var newTestCase = $scope.model.newTestCase !== undefined ? 
+        var newTestCase = $scope.model.newTestCase !== undefined ?
                             $scope.model.newTestCase.replace(/["']/g, "") : '' ;
 
-                            
+
         if( newTestCase.match(/(\{|\}|\[|\])/g) !== null ) {
             if (alert !== null) 
                 alert.destroy();

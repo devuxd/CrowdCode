@@ -16,10 +16,12 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.dto.ReviewDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.dto.firebase.AnswerInFirebase;
+import com.crowdcoding.dto.firebase.ArtifactsIdInFirebase;
 import com.crowdcoding.dto.firebase.CommentInFirebase;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
 import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
+import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.VotersIdInFirebase;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.QuestionInFirebase;
@@ -52,6 +54,13 @@ public class FirebaseService
 		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 
 	}
+	// Writes the specified microtask to firebase
+	public static void writeMicrotaskSubmission(String submissionDto, String microtaskKey, String projectId)
+	{
+		System.out.println(microtaskKey +" "+projectId + "  " +submissionDto);
+		enqueueWrite("{\"submission\": " + submissionDto + "}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+
+	}
 
 	// Writes information about microtask assignment to Firebase
 	public static void writeMicrotaskAssigned( String microtaskKey,
@@ -69,9 +78,12 @@ public class FirebaseService
 	}
 
 	// Writes information about an old microtask to retrieve the information to Firebase
-	public static void writeMicrotaskReissuedFrom( String microtaskKey, String projectId, String reissuedFromMicrotaskKey)
+	public static void writeMicrotaskReissuedFrom( String microtaskKey, String reissuedFromMicrotaskKey, String submissionDto, String reissueMotivation, String projectId)
 	{
-		enqueueWrite("{\"reissuedFrom\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"reissuedSubmission\": " + submissionDto + "}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"reissuedMicrotaskKey\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"reissueMotivation\": \"" + reissueMotivation + "\"}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
+
 	}
 
 	public static void writeMicrotaskCanceled( String microtaskKey, boolean canceled, String projectId)
@@ -272,6 +284,16 @@ public class FirebaseService
 	{
 		enqueueWrite("{\"score\": \"" + score + "\"}", path +".json", HTTPMethod.PATCH, projectId);
 	}
+	public static void updateQuestioningSubscribers(SubscribersInFirebase subscribersId, String path, String projectId)
+	{
+		enqueueWrite(subscribersId.json(), path +".json", HTTPMethod.PATCH, projectId);
+	}
+	public static void updateQuestioningLinkedArtifacts(ArtifactsIdInFirebase artifactsId, String path, String projectId)
+	{
+		enqueueWrite(artifactsId.json(), path +".json", HTTPMethod.PATCH, projectId);
+	}
+
+
 
 
 
@@ -414,12 +436,13 @@ public class FirebaseService
 	public static void publish(){
 		// Execute commands until done, adding commands as created.
 	    while(! writeList.isEmpty()) {
-		//	try{
+			try{
 				FirebaseWrite write = writeList.pop();
 				write.publish();
-	//		} catch( NoSuchElementException e) {
-	//			e.printStackTrace();
-	//		}
+			} catch( NoSuchElementException e) {
+				e.printStackTrace();
+				System.out.println("error" +writeList.toString() );
+		}
 		//	System.out.println("Firebase: writing "+write.relativeURL+" - "+write.data);
 		}
 	}

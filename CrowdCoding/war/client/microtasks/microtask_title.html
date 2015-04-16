@@ -1,6 +1,6 @@
 <div class="section-content no-padding microtask-details" >
 		<span class="bg-color type">{{::microtask.title}}</span>
-		<span class="reissued" ng-if="microtask.reissuedFrom !== undefined">REISSUED</span>
+		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
 		<span class="points">{{::microtask.points}} pts</span>
 		<span class="tutorial-btn glyphicon glyphicon-question-sign color" ng-click="$emit('queue-tutorial', microtask.type, true); "></span>
 		<span class="clearfix"></span>

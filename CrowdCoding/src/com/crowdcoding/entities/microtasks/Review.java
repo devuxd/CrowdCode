@@ -122,7 +122,7 @@ public class Review extends Microtask
 			if(reviewDTO.fromDisputedMicrotask)
 				MicrotaskCommand.rejectMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoints);
 			else
-				MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoints);
+				MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, initiallySubmittedDTO, reviewDTO.reviewText, workerOfReviewedWork, awardedPoints);
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
 

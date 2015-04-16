@@ -51,7 +51,7 @@ public class Project
 	public static Project project;
 
 	Ref<Microtask> chiave = null;
-	
+
 	private IDGenerator idgenerator;
 
 	@Id private String id;
@@ -422,16 +422,13 @@ public class Project
 	// Called to process a microtask submission based on form data (in json format)
 	// If the microtask has previously been submitted or is no longer open, the submission is
 	// dropped, ensuring workers cannot submit against already completed microtasks.
-	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID, Project project){
+	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID){
 
 		Microtask microtask = ofy().load().key( microtaskKey ).now();
 
 		// submit only if the request come from
 		// the current assigned worker of the microtask
-		if(microtask!=null &&  microtask.isAssignedTo(workerID) ){
-
-			// save the project
-			ofy().save().entity(this).now();
+		if(microtask.isAssignedTo(workerID) ){
 
 			// write the history log entry about the microtask submission
 			HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
@@ -439,6 +436,7 @@ public class Project
 			// If reviewing is enabled and the microtask
 			// is not in [Review, ReuseSearch,DebugTestFailure],
 			// spawn a new review microtask
+			FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
 			try {
 			if (reviewsEnabled && !( microtaskType.equals(Review.class)) ){
 				//temporary fix for the review
@@ -489,7 +487,7 @@ public class Project
 
 	// Unassigns worker from this microtask
 	// Precondition - the worker must be assigned to this microtask
-	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Boolean disablePoint ,Project project)
+	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Boolean disablePoint)
 	{
 		Microtask microtask = ofy().load().key(microtaskKey).now();
 		if( microtask!=null && microtask.isAssignedTo(workerID)){

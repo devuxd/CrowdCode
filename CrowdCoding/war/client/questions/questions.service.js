@@ -136,7 +136,7 @@ angular
 				});
 		}
 		function vote(id, removeVote){
-			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&removeVote='+removeVote)
+			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&remove='+removeVote)
 
 				.success(function(data, status, headers, config) {
 					console.log("success");
@@ -146,7 +146,7 @@ angular
 				});
 		}
 		function report(id, removeReport){
-			$http.post('/' + $rootScope.projectId + '/questions/report?id=' + id + '&removeReport='+removeReport)
+			$http.post('/' + $rootScope.projectId + '/questions/report?id=' + id + '&remove='+removeReport)
 
 				.success(function(data, status, headers, config) {
 					console.log("success");

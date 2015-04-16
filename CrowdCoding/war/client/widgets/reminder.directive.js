@@ -12,7 +12,6 @@ angular
     var fetchTime = 0;
     var popupWarning;
     var microtaskType;
-    var callBackFunction;
     var tutorialOpen=0;
     var popupHasBeenClosed = false;
 
@@ -39,14 +38,15 @@ angular
             });
 
 
-            // listen on the event 'run-reminder' 
-            $rootScope.$on('run-reminder',function( event, type, onFinish ){
+            // listen on the event 'loadMicrotask'
+            $rootScope.$on('loadMicrotask', function($event, microtask,firstFetch){
+                if( firstFetch == '1')
+                    userService.setFirstFetchTime();
 
-                microtaskType    = type;
-                callBackFunction = onFinish;
+                microtaskType    = microtask.type;
                 popupHasBeenClosed=false;
                 $scope.$emit('reset-reminder');
-                
+
                 //time when user fetched the microtask for the first time in milliseonds
                 fetchTime = userService.getFetchTime();
 
@@ -66,13 +66,6 @@ angular
                $scope.skipMicrotaskIn=undefined;
                popupWarning.$promise.then(popupWarning.hide);
             });
-
-            function initializeReminder(){
-
-                
-
-            }
-
 
             function doReminder(){
                 //if no tutorial are open 
@@ -96,8 +89,7 @@ angular
 
                 $scope.$emit('reset-reminder');
 
-                if(callBackFunction!==undefined)
-                    callBackFunction.apply();
+                $scope.$emit('submitMicrotask',undefined,true);
             }
 
         }

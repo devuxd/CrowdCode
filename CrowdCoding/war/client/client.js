@@ -68,7 +68,7 @@ angular
 				userService.listenForLogoutWorker();
 
 
-				$rootScope.$broadcast('loadMicrotask');
+				$rootScope.$broadcast('fecthMicrotask');
 
 				$rootScope.$broadcast('queue-tutorial','main', false, function(){
 					$rootScope.$broadcast('showProfileModal');
