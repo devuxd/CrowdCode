@@ -5,12 +5,13 @@
 ///////////////////////
 angular
     .module('crowdCode')
-    .factory('questionsService', ['$window','$rootScope','$http','$firebase', 'firebaseUrl', function( $window, $rootScope,$http, $firebase, firebaseUrl) {
+    .factory('questionsService', ['$window','$rootScope','$http','$firebase', 'firebaseUrl','workerId', function( $window, $rootScope,$http, $firebase, firebaseUrl,workerId) {
 
 
 	var service = new function(){
 		// Private variables
 		var questions;
+	
 		var allTags=[];
 		var loaded = false;
 		var questionsRef = $firebase(new Firebase(firebaseUrl+'/questions'));
@@ -32,8 +33,8 @@ angular
 		this.sel  = undefined;
 		this.allTags = [];
 		this.searchResults = searchResults;
-		this.getQuestions= function(){return questions;};
-		this.getAllTags= getAllTags;
+		this.getQuestions  = function(){return questions;};
+		this.getAllTags    = getAllTags;
 
 		function questionToDocument(question,key){
 			var doc = {
@@ -44,6 +45,7 @@ angular
 				answers : '',
 				comments: ''
 			};
+
 			if( question.answers !== undefined ){
 				for( var answerkey in question.answers){
 					doc.answers += ' '+question.answers[answerkey].text;
@@ -53,7 +55,7 @@ angular
 					}
 				}
 			}
-			console.log(doc);
+
 			return doc;
 		}
 
@@ -63,8 +65,7 @@ angular
 			var res = idx.search( searchTxt );
             var qs = [];
 			for( var r = 0; r < res.length ; r++ ){
-				console.log(res[r].ref);
-				console.log(questions);
+
 				qs.push(questions.$getRecord(res[r].ref));
 			}
 			console.log(idx);
@@ -81,6 +82,7 @@ angular
 					allTags.push(tags[t]);
 			}
 		}
+
 		function getAllTags()
 		{
 			return allTags;
@@ -91,27 +93,26 @@ angular
 			questions.$loaded().then(function(){
 				// tell the others that the functions services is loaded
 				$rootScope.$broadcast('serviceLoaded','questions');
-				for(var index in questions)
-				{
+				for(var index in questions){
 					if(questions[index].ownerId){
-						console.log("for ",questions[index]);
+
 						var doc = questionToDocument( questions[index], questions[index].id );
 						idx.add( doc );
 						addTags(questions[index].tags);
 					}
 				}
-				console.log(idx);
+
 				questions.$watch(function(event){
-					var q = questions.$getRecord( event.key );
+					var q   = questions.$getRecord( event.key );
 					var doc = questionToDocument( q, event.key );
-					console.log("event "+event.event);
+
 					switch( event.event ){
 						case 'child_added':
-							console.log(q);
 							idx.add( doc );
 							addTags(q.tags);
 							break;
 						case 'child_changed': 
+							console.log( 'Question updated. Subscribed?', q.subscribersId.indexOf( workerId ) > -1 );
 							idx.update( doc );
 							break;
 						case 'child_removed':
@@ -127,32 +128,29 @@ angular
 
 		function submitQuestion(type, formData){
 			$http.post('/' + $rootScope.projectId + '/questions/insert?type=' + type, formData)
-
 				.success(function(data, status, headers, config) {
-					console.log("success");
+					console.log("submit question success");
 				})
 				.error(function(data, status, headers, config) {
-					console.log("error");
+					console.log("submit question error");
 				});
 		}
 		function vote(id, removeVote){
 			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&removeVote='+removeVote)
-
 				.success(function(data, status, headers, config) {
-					console.log("success");
+					console.log("submit vote success");
 				})
 				.error(function(data, status, headers, config) {
-					console.log("error");
+					console.log("submit vote error");
 				});
 		}
 		function report(id, removeReport){
 			$http.post('/' + $rootScope.projectId + '/questions/report?id=' + id + '&removeReport='+removeReport)
-
 				.success(function(data, status, headers, config) {
-					console.log("success");
+					console.log("submit report success");
 				})
 				.error(function(data, status, headers, config) {
-					console.log("error");
+					console.log("submit report error");
 				});
 		}
 	};

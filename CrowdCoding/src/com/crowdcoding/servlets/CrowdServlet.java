@@ -451,27 +451,28 @@ public class CrowdServlet extends HttpServlet
 
 		try
     	{
-    		final String projectID    = (String) req.getAttribute("project");
+    		final String projectId    = (String) req.getAttribute("project");
     		final String type    = (String) req.getParameter("type");
 			final String payload      = Util.convertStreamToString(req.getInputStream());
 
-			final String workerID     = user.getUserId();
-
+			final String workerId     = user.getUserId();
+			final String workerHandle = user.getNickname();
+			
 			// Create an initial context, then build a command to insert the value
 			CommandContext context = new CommandContext();
 
 			if(type.equals("question"))
-				QuestioningCommand.createQuestion(payload, workerID);
+				QuestioningCommand.createQuestion(payload, workerId, workerHandle);
 			else if(type.equals("answer"))
-				QuestioningCommand.createAnswer(payload, workerID);
+				QuestioningCommand.createAnswer(payload, workerId, workerHandle);
 			else if(type.equals("comment"))
-				QuestioningCommand.createComment(payload, workerID);
+				QuestioningCommand.createComment(payload, workerId, workerHandle);
 			else
 				throw new RuntimeException("Error - " + type + " is not registered as a questioning type.");
 
 
 			// Copy the command back out the context to initially populate the command queue.
-			executeCommands(context.commands(), projectID);
+			executeCommands(context.commands(), projectId);
     	}
     	catch (IOException e)
     	{
@@ -596,8 +597,6 @@ public class CrowdServlet extends HttpServlet
             	String workerHandle = worker.getNickname();
             	int firstFetch=0;
             	Key<Microtask> microtaskKey = null;
-
-
 
             	// if the unassignment is forced
             	if( unassign ){

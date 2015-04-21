@@ -41,6 +41,7 @@
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="http://rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
     <link rel="stylesheet" href="/include/angular-strap/libs.min.css">
+	<link rel="stylesheet" href="/include/angular-toaster/toaster.min.css" type="text/css" />
 	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
 
     
@@ -55,23 +56,14 @@
 		<navbar></navbar>
 	</header>
 
-	<div class="main-wrapper" ng-init="leftBar=true;rightBar=true;" >
+	<div class="main-wrapper" >
 	    <div class="container-flex-row">
 	    	<!-- LEFT BAR -->
-		    <div ng-show="leftBar" id="sidebarLeft" class="sidebar order-1" >
-
-		    	<left-bar></left-bar>
-		    </div>
+		    <left-bar id="sidebarLeft" class="sidebar order-1" ></left-bar>
 	        <!-- MAIN CONTENT -->
 	        <div id="content" class="order-3" >
-
-				<chat></chat>
-
 	        	<microtask-form></microtask-form>
-
 	        </div>
-
-
 
 	        <div class="column-resizer order-2"
 	        	ng-show="leftBar"
@@ -93,6 +85,7 @@
 	<ng-include src="'widgets/popup_template.html'"></ng-include>
 	
 	<tutorial-manager></tutorial-manager>
+	<toaster-container></toaster-container>
 
 	<!-- Javascript 3rd part libraries -->
 	<script src="/include/jquery-2.1.0.min.js"></script>
@@ -117,6 +110,7 @@
 	<script src="/include/ng-clip/dest/ng-clip.min.js"></script>
 	<script src="/include/lunr.min.js"></script>
 	<script src="/include/timeAgo.js"></script>
+	<script src="/include/angular-toaster/toaster.min.js"></script>
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 

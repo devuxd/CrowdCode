@@ -1,24 +1,21 @@
-<h3 class="toggler">Leaderboard</h3>
-<div id="leaderboardPanel"  class="element active" style="height:40%">
-	<div class="element-body scrollable">
-		<div>
-			<ul class="sidebar-list leaderboard" >
-			  	<li ng-repeat="leader in leaders | orderBy:'-score'" ng-if="leaders.length > 0" 
-			  	  class="{{ leaders.$keyAt(leader) == workerId ? 'self' : '' }}" >
-			  	
-			  		<div class="avatar"><img style="width:25px" ng-src="{{ avatar(leaders.$keyAt(leader)).$value }}" alt="{{ ::leader.name }}" /></div>
-			  		<div class="score">{{ leader.score }} pts</div>
-			  		<div class="name">{{::(leader.name) }}</div>
+<div id="leaderboardPanel" class="padding">
+	<div>
+		<ul class="sidebar-list leaderboard" >
+		  	<li ng-repeat="leader in leaders | orderBy:'-score'" ng-if="leaders.length > 0" 
+		  	  class="{{ leaders.$keyAt(leader) == workerId ? 'self' : '' }}" >
+		  	
+		  		<div class="avatar"><img style="width:25px" ng-src="{{ avatar(leaders.$keyAt(leader)).$value }}" alt="{{ ::leader.name }}" /></div>
+		  		<div class="score">{{ leader.score }} pts</div>
+		  		<div class="name">{{::(leader.name) }}</div>
 
-			  		<div class="clearfix"></div>
+		  		<div class="clearfix"></div>
 
-				
-			  	</li>
-			</ul>
-			<span ng-if="leaders.length == 0" >
-				no leaders yet!
-			</span>
-		</div>
+			
+		  	</li>
+		</ul>
+		<span ng-if="leaders.length == 0" >
+			no leaders yet!
+		</span>
 	</div>
 </div>
 

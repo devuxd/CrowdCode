@@ -8,10 +8,7 @@ angular
 			$scope.setView = setView;
 			$scope.fetchedMicrotask;
 			$rootScope.$on('fetchedMicrotaskKey',function( event, microtaskKey ){
-				console.log("fetchedMicrotaskKey",microtaskKey);
 				$scope.fetchedMicrotask=microtasksService.get(microtaskKey);
-				//console.log(val);
-			 // delay 250 ms
 			});
 			$scope.view = 'question_list';
 			function setView(view){

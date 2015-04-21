@@ -18,7 +18,8 @@ angular
 	var userRef        = fbRef.child('/status/loggedInWorkers/' + workerId);
 	var logoutRef      = fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
-	var userFetchTime  =fbRef.child('/workers/' + workerId + '/fetchTime' );
+	var userFetchTime  = fbRef.child('/workers/' + workerId + '/fetchTime' );
+
 
 	var updateLogInTime=function(){
 		userRef.setWithPriority({connected:true,name:workerHandle,timeStamp:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);

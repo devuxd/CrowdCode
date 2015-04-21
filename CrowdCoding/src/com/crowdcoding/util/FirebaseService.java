@@ -19,6 +19,7 @@ import com.crowdcoding.dto.firebase.AnswerInFirebase;
 import com.crowdcoding.dto.firebase.CommentInFirebase;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
 import com.crowdcoding.dto.firebase.VotersIdInFirebase;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
@@ -217,6 +218,10 @@ public class FirebaseService
 		enqueueWrite(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, projectId);
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
+	}
+	
+	public static void writeNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/workers/" + workerID + "/notifications.json", HTTPMethod.POST, projectId);
 	}
 
 	public static void microtaskAssigned(String workerID, String projectId) {

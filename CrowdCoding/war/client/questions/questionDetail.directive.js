@@ -46,7 +46,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 
 				var answerForm={questionId : $scope.sel.id , text : $scope.answerText};
 				$scope.answerText='';
-				console.log(answerForm);
+				console.log('answer',answerForm);
 				questionsService.submitQuestion("answer",answerForm);
 			}
 		}

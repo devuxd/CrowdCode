@@ -28,28 +28,38 @@ public abstract class QuestioningCommand extends Command
 	protected String workerId;
 
 	/* PUBLIC METHODS */
-	public static QuestioningCommand createQuestion(String jsonDTOData, String workerId){
-		return new CreateQuestion(jsonDTOData, workerId);
+	public static QuestioningCommand createQuestion(String jsonDTOData, String workerId, String workerHandle){
+		return new CreateQuestion(jsonDTOData, workerId, workerHandle);
 	}
-	public static QuestioningCommand createAnswer(String jsonDTOData, String workerId){
-		return new CreateAnswer(jsonDTOData, workerId);
+	
+	public static QuestioningCommand createAnswer(String jsonDTOData, String workerId, String workerHandle){
+		return new CreateAnswer(jsonDTOData, workerId, workerHandle);
 	}
-	public static QuestioningCommand createComment(String jsonDTOData, String workerId){
-		return new CreateComment(jsonDTOData, workerId);
+	
+	public static QuestioningCommand createComment(String jsonDTOData, String workerId, String workerHandle){
+		return new CreateComment(jsonDTOData, workerId, workerHandle);
 	}
+	
 	public static QuestioningCommand addVote(long questioningId, String workerId){
 		return new AddVote(questioningId, workerId);
 	}
+	
 	public static QuestioningCommand removeVote(long questioningId, String workerId){
 		return new RemoveVote(questioningId, workerId);
 	}
+	
 	public static QuestioningCommand addReport(long questioningId, String workerId){
 		return new AddReport(questioningId, workerId);
 	}
+	
 	public static QuestioningCommand removeReport(long questioningId, String workerId){
 		return new RemoveReport(questioningId, workerId);
 	}
 
+	public static QuestioningCommand notifySubscribers(long questioningId, String message, String excludedWorkerId){
+		return new NotifySubscribers(questioningId,message,excludedWorkerId);
+	}
+	
 	private QuestioningCommand(long questioningId, String workerId) {
 		this.questioningId = questioningId;
 		this.workerId = workerId;
@@ -91,10 +101,12 @@ public abstract class QuestioningCommand extends Command
 
 	protected static class CreateQuestion extends QuestioningCommand {
 		private String jsonDTOData;
+		private String workerHandle;
 
-		public CreateQuestion(String jsonDTOData, String ownerId) {
+		public CreateQuestion(String jsonDTOData, String ownerId, String ownerHandle) {
 			super(0L, ownerId);
 			this.jsonDTOData= jsonDTOData;
+			this.workerHandle = ownerHandle;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
@@ -107,16 +119,18 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Question question = new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, projectId);
+			Question question = new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, workerHandle, projectId);
 		}
 	}
 
 	protected static class CreateAnswer extends QuestioningCommand {
 		private String jsonDTOData;
+		private String workerHandle;
 
-		public CreateAnswer(String jsonDTOData, String ownerId) {
+		public CreateAnswer(String jsonDTOData, String ownerId, String ownerHandle) {
 			super(0L, ownerId);
 			this.jsonDTOData=jsonDTOData;
+			this.workerHandle = ownerHandle;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
@@ -128,16 +142,18 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Answer answer = new Answer(dto.text, dto.questionId, workerId, projectId);
+			Answer answer = new Answer(dto.text, dto.questionId, workerId, workerHandle, projectId);
 		}
 	}
 
 	protected static class CreateComment extends QuestioningCommand {
 		private String jsonDTOData;
+		private String workerHandle;
 
-		public CreateComment(String jsonDTOData, String ownerId) {
+		public CreateComment(String jsonDTOData, String ownerId, String ownerHandle) {
 			super(0L, ownerId);
 			this.jsonDTOData=jsonDTOData;
+			this.workerHandle = ownerHandle;
 
 		}
 
@@ -150,7 +166,7 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, projectId);
+			Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
 		}
 	}
 
@@ -198,6 +214,23 @@ public abstract class QuestioningCommand extends Command
 		public void execute(Questioning questioning, String projectId) {
 
 			questioning.removeReport(workerId);
+		}
+	}
+	
+
+
+	protected static class NotifySubscribers extends QuestioningCommand {
+
+		private String message; 
+		
+		public NotifySubscribers(long questioningId, String message, String excludedWorkerId) {
+			super(questioningId, excludedWorkerId);
+			this.message = message;
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+
+			questioning.notifySubscribers(message, workerId);
 		}
 	}
 

@@ -6,12 +6,12 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 			$scope.question = {
 				title: '',
 				text: '',
-				tags: [],
+				tags: []
 			};
 
 			$scope.allTags=questionsService.getAllTags();
 			$scope.newTag = '';
-			$scope.getArtifactId=true;
+			$scope.getArtifactId=false;
 
 			$scope.postQuestion = postQuestion;
 			$scope.addTag       = addTag;
@@ -26,7 +26,7 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 				addTag();
 				if($scope.getArtifactId)
 					$scope.question.artifactId=$scope.fetchedMicrotask.owningArtifactId;
-				console.log($scope.question);
+
 				questionsService.submitQuestion('question',$scope.question);
 			}
 
