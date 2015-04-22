@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Worker;
 import com.crowdcoding.servlets.CommandContext;
+import com.googlecode.objectify.VoidWork;
 
 public abstract class WorkerCommand extends Command
 {
@@ -30,15 +31,19 @@ public abstract class WorkerCommand extends Command
 	}
 	public void execute(String projectId)
 	{
-		Project project = Project.Create(projectId);
-		Worker worker = find(workerID, project);
-		if (worker == null)
-			System.out.println("Cannot execute WorkerCommand. Could not find the worker for WorkerID "
-						+ workerID+" ("+this.getClass()+")");
-		else
-		{
-			execute(worker, project);
-		}
+		final Project project = Project.Create(projectId);
+		final Worker worker = find(workerID, project);
+		ofy().transact(new VoidWork() {
+	        public void vrun() {
+	        	if (worker == null)
+	    			System.out.println("Cannot execute WorkerCommand. Could not find the worker for WorkerID "
+	    						+ workerID+" ("+this.getClass()+")");
+	    		else
+	    		{
+	    			execute(worker, project);
+	    		}
+	        }
+		});	
 	}
 
 	public abstract void execute(Worker worker, Project project);

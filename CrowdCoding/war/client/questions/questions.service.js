@@ -11,7 +11,7 @@ angular
 	var service = new function(){
 		// Private variables
 		var questions;
-	
+
 		var allTags=[];
 		var loaded = false;
 		var questionsRef = $firebase(new Firebase(firebaseUrl+'/questions'));
@@ -135,6 +135,7 @@ angular
 					console.log("submit question error");
 				});
 		}
+		
 		function vote(id, removeVote){
 			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&removeVote='+removeVote)
 				.success(function(data, status, headers, config) {

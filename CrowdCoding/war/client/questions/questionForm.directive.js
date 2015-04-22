@@ -15,12 +15,22 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 
 			$scope.postQuestion = postQuestion;
 			$scope.addTag       = addTag;
+			$scope.removeTag    = removeTag;
+
 
 			function addTag(){
 				if( $scope.question.tags.indexOf($scope.newTag) == -1 && $scope.newTag !== '')
 					$scope.question.tags.push($scope.newTag);
 				$scope.newTag = '';
 			}
+
+			function removeTag(tag){
+				if( $scope.question.tags.indexOf(tag) > -1 ){
+					var index = $scope.question.tags.indexOf(tag) ;
+					$scope.question.tags.splice(index,1);
+				}
+			}
+
 
 			function postQuestion(){
 				addTag();

@@ -1,21 +1,8 @@
 <div class="top padding">
-	<!--<div class="form-group pull-left">
-		<input type="text" class="form-control" placeholder="filter" name="search" ng-model="search" id="searchBox">
-	</div>-->
-	<div class="pull-left">
-		<div class="form-group has-feedback">
-			<div class="input-group">
-				<input type="text" ng-model="search" class="form-control">
-			</div>
-			<span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
-		</div>
+	<div class="form-group has-feedback">
+		<input type="text" ng-model="search" class="form-control" placeholder="filter questions">
+		<span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
 	</div>
-	<div class="pull-right">
-		<button class="btn btn-sm btn-link"><span class="glyphicon glyphicon-cog"></span></button>
-	</div>
-
-	<span class="clearfix"></span>
-	
 </div>
 <div class="middle">
 
@@ -48,7 +35,9 @@
 			<span class="clearfix"></span>
 		</li>
 		<li class="list-group-item">
-			<button class="btn btn-sm btn-link" ng-click="setView('question_form'); "><span class="glyphicon glyphicon-plus"></span></button>
+			<a href="#" ng-click="setView('question_form'); ">
+				Ask a new question
+			</a>
 		</li>
 	</ul>
 </div>

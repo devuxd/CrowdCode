@@ -7,14 +7,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 			$scope.setSelected=setSelected;
 			$scope.resetFilter=resetFilter;
 
-			function resetFilter(){
-				$scope.search = '';
-			}
-
-			function setSelected(q){
-				$scope.sel = q;
-			}
-
 			$scope.search    = '';
 			$scope.questions = questionsService.getQuestions();
 
@@ -31,6 +23,16 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		        	}
 		        }, 250); // delay 250 ms
 			});
+
+			
+			function resetFilter(){
+				$scope.search = '';
+			}
+
+			function setSelected(q){
+				$scope.sel = q;
+			}
+
 		}
 	};
 });

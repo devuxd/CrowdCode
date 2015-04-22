@@ -1,11 +1,14 @@
 package com.crowdcoding.commands;
 
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import java.util.List;
 
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.servlets.CommandContext;
 import com.googlecode.objectify.LoadResult;
+import com.googlecode.objectify.VoidWork;
 
 public abstract class TestCommand extends Command {
 	protected long testID;
@@ -68,23 +71,28 @@ public abstract class TestCommand extends Command {
 		CommandContext.ctx.addCommand(command);
 	}
 
-	public void execute(String projectId) {
-		if (testID != 0) {
-			LoadResult<Test> testRef = Test.find(testID);
+	public void execute(final String projectId) {
+		ofy().transact(new VoidWork() {
+	        public void vrun() {
+	        	if (testID != 0) {
+	    			LoadResult<Test> testRef = Test.find(testID);
 
-			if (testRef == null)
-				System.out
-						.println("Cannot execute TestCommand. Could not find test for TestID "
-								+ testID);
-			else {
-				Test test = testRef.now();
-				execute(test, projectId);
+	    			if (testRef == null)
+	    				System.out
+	    						.println("Cannot execute TestCommand. Could not find test for TestID "
+	    								+ testID);
+	    			else {
+	    				Test test = testRef.now();
+	    				execute(test, projectId);
 
-				// Save the associated artifact to Firebase
-				//	test.storeToFirebase(projectId);
-			}
-		} else
-			execute(null, projectId);
+	    				// Save the associated artifact to Firebase
+	    				//	test.storeToFirebase(projectId);
+	    			}
+	    		} else
+	    			execute(null, projectId);
+	        }
+		});	
+		
 	}
 
 	public abstract void execute(Test test, String projectId);

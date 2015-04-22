@@ -7,6 +7,7 @@ import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.servlets.CommandContext;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.VoidWork;
 
 public abstract class MicrotaskCommand extends Command
 {
@@ -50,16 +51,21 @@ public abstract class MicrotaskCommand extends Command
 		CommandContext.ctx.addCommand(command);
 	}
 
-	public void execute(String projectId)
+	public void execute(final String projectId)
 	{
-		Microtask microtask = find(microtaskKey);
-		if (microtask == null)
-			System.out.println("Cannot execute MicrotaskCommand. Could not find the microtask for microtaskID "
-						+ microtaskKey);
-		else
-		{
-			execute(microtask, projectId);
-		}
+		final Microtask microtask = find(microtaskKey);
+		
+		ofy().transact(new VoidWork() {
+	        public void vrun() {
+	        	if (microtask == null)
+	    			System.out.println("Cannot execute MicrotaskCommand. Could not find the microtask for microtaskID "
+	    						+ microtaskKey);
+	    		else
+	    		{
+	    			execute(microtask, projectId);
+	    		}
+	        }
+		});	
 	}
 
 	public abstract void execute(Microtask microtask, String projectId);

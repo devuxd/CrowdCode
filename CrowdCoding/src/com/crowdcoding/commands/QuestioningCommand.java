@@ -21,6 +21,7 @@ import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.CommandContext;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.LoadResult;
+import com.googlecode.objectify.VoidWork;
 
 public abstract class QuestioningCommand extends Command
 {
@@ -72,20 +73,24 @@ public abstract class QuestioningCommand extends Command
 		CommandContext.ctx.addCommand(command);
 	}
 
-	public void execute(String projectId) {
-		if (questioningId != 0) {
-			LoadResult<Questioning> questioningRef = find(questioningId);
+	public void execute(final String projectId) {
+		ofy().transact(new VoidWork() {
+	        public void vrun() {
+	        	if (questioningId != 0) {
+	    			LoadResult<Questioning> questioningRef = find(questioningId);
 
-			if (questioningRef == null)
-				System.out
-						.println("Cannot execute QuestiongCommand. Could not Questioning test for questioningId "
-								+ questioningId);
-			else {
-				Questioning questioning = questioningRef.now();
-				execute(questioning, projectId);
-			}
-		} else
-			execute(null, projectId);
+	    			if (questioningRef == null)
+	    				System.out
+	    						.println("Cannot execute QuestiongCommand. Could not Questioning test for questioningId "
+	    								+ questioningId);
+	    			else {
+	    				Questioning questioning = questioningRef.now();
+	    				execute(questioning, projectId);
+	    			}
+	    		} else
+	    			execute(null, projectId);
+	        }
+		});	
 	}
 
 	public abstract void execute(Questioning questioning, String projectId);

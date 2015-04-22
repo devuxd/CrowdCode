@@ -15,13 +15,14 @@
 					<textarea name="text" class="form-control" ng-model="question.text" placeholder="insert text" required></textarea>
 				</div>
 				<div class="form-group">
-					<span ng-repeat="tag in question.tags" class="tag">{{tag}}</span>
 					<label for="exampleInputPassword2">Tag</label>
+					<div><span ng-repeat="tag in question.tags" class="tag">{{tag}} <span ng-click="removeTag(tag)">x</span></span></div>
+					
 					<input name="text" class="form-control" ng-model="newTag" placeholder="insert tag" data-min-length="1" bs-options="tag for tag in allTags" bs-typeahead press-enter="addTag()">
 				</div>
 				<div class="checkbox">
 				  <label>
-				    <input type="checkbox" ng-model="getArtifactId"> Related to function
+				    <input type="checkbox" ng-model="getArtifactId"> this question is related to the current artifact
 				  </label>
 				</div>
 				<!-- <button type="submit" ng-click="setView('question_list')" class="btn btn-sm btn-default">back to the questions</button> -->

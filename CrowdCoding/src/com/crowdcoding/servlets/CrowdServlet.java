@@ -66,6 +66,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.VoidWork;
 import com.googlecode.objectify.Work;
 import com.googlecode.objectify.cmd.Query;
 import com.googlecode.objectify.cmd.QueryKeys;
@@ -586,42 +587,43 @@ public class CrowdServlet extends HttpServlet
 		// And anything inside the transaction MUST not mutate the values produced.
 		final String projectID = (String) req.getAttribute("project");
 
-    	final String jsonResponse = ofy().transact(new Work<String>() {
-            public String run()
-            {
+    	final Project project = Project.Create(projectID);
+		final Worker worker   = Worker.Create(user, project);
 
-            	Project project = Project.Create(projectID);
-				Worker worker   = Worker.Create(user, project);
+    	String jsonResponse = ofy().transact(new Work<String>() {
+			public String run() {
+				// if the unassignment is forced
+				Key<Microtask> microtaskKey = null;
+				String jsonResponse;
+		    	int firstFetch=0;
+				
+		    	if( unassign ){
+		    		project.unassignMicrotask( worker.getUserid() );
+		    	}
+		    	// otherwise search for the current assignment
+		    	else{
+		    		microtaskKey = project.lookupMicrotaskAssignment( worker.getUserid() );
+		    	}
+		    	
+				// if the user hasn't an assigned microtask
+				// search for a queued one
+				if (microtaskKey == null){
+					microtaskKey = project.assignMicrotask( worker.getUserid() , worker.getNickname() ) ;			
+			    	firstFetch=1;
+				}
+				
 
-            	String workerID     = worker.getUserid();
-            	String workerHandle = worker.getNickname();
-            	int firstFetch=0;
-            	Key<Microtask> microtaskKey = null;
-
-            	// if the unassignment is forced
-            	if( unassign ){
-            		project.unassignMicrotask(workerID);
-            	}
-            	// otherwise search for the current assignment
-            	else{
-            		microtaskKey = project.lookupMicrotaskAssignment(workerID);
-            	}
-            	// if the user hasn't an assigned microtask
-            	// search for a queued one
-            	if (microtaskKey == null)
-            	{
-            		microtaskKey = project.assignMicrotask(workerID, workerHandle) ;
-                	firstFetch=1;
-            	}
-
-            	if (microtaskKey == null) {
-        			return ("{}");
-        		}
-        		else{
-        			return ("{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}");
-        		}
-            }
-        });
+				if (microtaskKey == null) {
+					jsonResponse =  "{}";
+				}
+				else{
+					jsonResponse =  "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}";
+				}
+				
+				return jsonResponse;
+			}
+		});
+    	
 
         HistoryLog.Init(projectID).publish();
         FirebaseService.publish();
@@ -629,8 +631,7 @@ public class CrowdServlet extends HttpServlet
 
     	// If there are no microtasks available, send an empty response.
 	    // Otherwise, send the json with microtask info.
-			renderJson(resp,jsonResponse);
-
+		renderJson(resp,jsonResponse);
 	}
 
 	/**
@@ -655,7 +656,7 @@ public class CrowdServlet extends HttpServlet
 
 		// fetch the new microtask
         doFetchMicrotask(req,resp,user,true);
-
+        
 		// create the submit task
 		TaskOptions task = withUrl("/worker");
 		task.param("projectId", projectId);
@@ -672,6 +673,7 @@ public class CrowdServlet extends HttpServlet
 
         String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
 		System.out.println(time + " - ADD: "+microtaskKey+" by "+workerId);
+		
 	}
 
 	public void doExecuteSubmit(final HttpServletRequest req, final HttpServletResponse resp){
@@ -758,20 +760,14 @@ public class CrowdServlet extends HttpServlet
 	private void executeCommands(List<Command> commands, final String projectId)
 	{
 
-//		System.out.println("----> PROJECT ID IS "+projectId);
 		LinkedList<Command> commandQueue = new LinkedList<Command>(commands);
-		Iterator<Command> commandIterator = commandQueue.iterator();
+		Iterator<Command>   commandIterator = commandQueue.iterator();
 		// Execute commands until done, adding commands as created.
 	    while(commandIterator.hasNext()) {
-        	final Command command = commandQueue.remove();
-        	commandQueue.addAll(ofy().transact(new Work<List<Command>>() {
-	            public List<Command> run()
-	            {
-					CommandContext context = new CommandContext();
-					command.execute(projectId);
-					return context.commands();
-	            }
-	        }));
+        	Command command = commandQueue.remove();
+        	CommandContext context = new CommandContext();
+        	command.execute(projectId);
+        	commandQueue.addAll(context.commands());
 
             // history log writes and the other
             // firebase writes are done

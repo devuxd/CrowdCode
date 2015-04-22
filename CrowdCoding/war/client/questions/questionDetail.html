@@ -1,13 +1,12 @@
 <div class="top padding">
-	<a href="#" ng-click="setView('question_list');">
+	<a href="#" ng-click="setView('question_list');showCommentForm =false; showAnswerForm = false;">
 		<span class="glyphicon glyphicon-arrow-left"></span>
 		back
 	</a>
 </div>
 
-<div class="middle padding">
+<div class="middle padding" ng-init="showCommentForm =false; showAnswerForm = false;">
 	
-
 	<ul class="list-group">
 
 		<li class="list-group-item question-item">
@@ -101,28 +100,42 @@
 				</li>
 				<li class="list-group-item comment-item">
 
-					<small ng-hide='selectedAnswer.id==answer.id' ng-click="selectedAnswer.toggle(answer.id)" ng-class="{'selected':selectedAnswer.id==answer.id}">Add Comment</small>
+					<a href="#" 
+						ng-show='!showCommentForm' 
+						ng-click="showCommentForm = true ; comment.answerId = answer.id" >
+						Add Comment
+					</a>
+					<form ng-show='showCommentForm && comment.answerId == answer.id'>
+						<div class="form-group">
+							<textarea name="text" 
+									  class="form-control" 
+									  ng-model="comment.text" 
+									  placeholder="comment text">
+							</textarea>
+						</div>
+						<button type="submit" 
+								ng-click="postComment() ; showCommentForm = false;" 
+								class="btn btn-xs btn-primary pull-right">
+								Post Comment
+						</button>
+					</form>
 				</li>
 			</ul>
 
-			<form ng-show='selectedAnswer.id==answer.id'>
-				<div class="form-group">
-					<textarea name="text" class="form-control" ng-model="selectedAnswer.text" placeholder="comment text"></textarea>
-				</div>
-				<button type="submit" ng-click="postComment() ; selectedAnswer.toggle(answer.id)" class="btn btn-xs btn-primary pull-right">Post Comment</button>
-			</form>
 				
 			<span class="clearfix"></span>
 
 		</li>
+		<li class="list-group-item answer-item" >
+			<a href="#" ng-show="!showAnswerForm" ng-click="showAnswerForm=true">Add Answer</a>
+			<form ng-show="showAnswerForm">
+				<div class="form-group">
+					<textarea required name="text" class="form-control" ng-model="answer.text" placeholder="answer text"></textarea>
+				</div>
+				<button type="submit" ng-click="postAnswer(); showAnswerForm = false;" class="btn btn-xs btn-primary pull-right">Post Answer</button>
+				<div class="clearfix"></div>
+			</form>
+		</li>
 	</ul>
-
-	<small ng-show="!showForm" ng-click="showForm=!showForm">Add Answer</small>
-	<form ng-show="showForm">
-		<div class="form-group">
-			<textarea required name="text" class="form-control" ng-model="answerText" placeholder="answer text"></textarea>
-		</div>
-		<button type="submit" ng-click="postAnswer(); showForm=false" class="btn btn-xs btn-primary pull-right">Post Answer</button>
-		<div class="clearfix"></div>
-	</form>
+	
 </div>
