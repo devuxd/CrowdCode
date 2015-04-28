@@ -40,6 +40,7 @@
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="http://rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
+	<link rel="stylesheet" href="/statistics/main.css">
 
  
  	<style type="text/css">
@@ -77,6 +78,8 @@
 
  	<script src="/include/ui-ace-editor/src/ui-ace.js"> </script> <!-- UI Ace Editor-->
 	<script src="/include/ace-editor/src-min-noconflict/ace.js"> </script> <!-- Ace Editor-->
+	<script src="/statistics/jsdiff.js"> </script> <!-- Ace Editor-->
+
 
     <script src="/statistics/history.js"></script>
 

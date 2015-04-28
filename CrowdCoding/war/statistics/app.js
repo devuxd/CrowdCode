@@ -3,6 +3,7 @@ var myApp = angular.module('statistics',[
 	'ngAnimate', 
 	'firebase', 
 	'ui.ace', 
+	'ngSanitize', 
 	'mgcrea.ngStrap'
 ]);
 
@@ -18,6 +19,30 @@ myApp.constant('workerId',workerId);
 myApp.constant('firebaseUrl','https://crowdcode.firebaseio.com/projects/allTogetherDrawV10');
 
 myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
+	var filteredEvents=[];
+	function doDiff(oldCodeString, newCodeString)
+	{
+		var oldCode = oldCodeString.split("\n");
+	    var newCode = newCodeString.split("\n");
+	    var diffRes = diff(oldCode, newCode);
+	    diffCode = "";
+	    angular.forEach(diffRes, function(diffRow) {
+	        if (diffRow[0] == "=") {
+	            diffCode += diffRow[1].join("\n");
+	        } else {
+	            for (var i = 0; i < diffRow[1].length; i++)
+	                diffCode += diffRow[0] + diffRow[1][i] + "\n";
+	        }
+	        diffCode += "\n";
+	    });
+	    var differents={};
+	    differents.code=diffCode;
+	    differents.lineAdded=diffCode.match(/\n\+\s*(\w||{||})/g);
+	    differents.lineRemoved=diffCode.match(/\n\-\s*(\w||{||})/g);
+
+	    return differents;
+
+	}
 	function timeDifferent(date1, date2){
 	var d1={hour : parseInt(date1[0]+date1[1]), minutes:  parseInt(date1[3]+date1[4]), secondes:  parseInt(date1[6]+date1[7])};
 	var d2={hour : parseInt(date2[0]+date2[1]), minutes:  parseInt(date2[3]+date2[4]), secondes:  parseInt(date2[6]+date2[7])};
@@ -40,7 +65,7 @@ myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
 	    // diff = 28800000 => hh = 8, mm = 0, ss = 0, msec = 0
 
 	    return (mm>9?mm:'0'+mm) + ":"+(ss>9?ss:'0'+ss);
-		//console.log(hh, mm, ss);
+		////console.log(hh, mm, ss);
 
 	}
 	function timeDifferentInSeconds(date1, date2){
@@ -63,10 +88,10 @@ myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
 	    var ss = Math.floor(msec / 1000);
 	    msec -= ss * 1000;
 	    // diff = 28800000 => hh = 8, mm = 0, ss = 0, msec = 0
-	    console.log(msec);
+	    ////console.log(msec);
 
 	    return ss+mm*60;
-		//console.log(hh, mm, ss);
+		////console.log(hh, mm, ss);
 
 	}
 	function timeToBucket(){}
@@ -74,6 +99,9 @@ myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
 		scope: {},
 		templateUrl: '/statistics/statisticsPanel.html',
 		link: function($scope,$element,$attrs){
+			$scope.test="ciao";
+			$scope.doDiff=doDiff;
+
 		    var microtaskSync = $firebase(new Firebase(firebaseUrl+'/microtasks'));
 			var microtask = microtaskSync.$asArray();
 
@@ -97,7 +125,6 @@ myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
 				}
 				history.push(eventObject);
 			}
-			var filteredEvents=[];
 			var workers=[];
 			for(var j=history.length-1; j>=0; j--)
 			{
@@ -117,29 +144,49 @@ myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
 
 			filteredEvents.reverse();
 			var microtaskTime=[];
+
 			for(var index in filteredEvents)
 			{
 				if(filteredEvents[index].microtaskKey!='none'){
 					for(var key in microtask){
-						//console.log(microtask[key].$id);
+						////console.log(microtask[key].$id);
 						if(microtask[key].$id==filteredEvents[index].microtaskKey)
 						{
-							//console.log('ownoing '+microtask[key].owningArtifact);
+							////console.log('ownoing '+microtask[key].owningArtifact);
 
 							filteredEvents[index].owningArtifact=microtask[key].owningArtifact;
 							if(microtask[key].review)
 							{
 								filteredEvents[index].qualityScore=microtask[key].review.qualityScore;
 								filteredEvents[index].reviewText=microtask[key].review.reviewText?microtask[key].review.reviewText:'empty';
-								//console.log(microtask[key].id +'    '+microtask[key].review.reviewText);
+								////console.log(microtask[key].id +'    '+microtask[key].review.reviewText);
 							}
 							else
 							{
+
 								filteredEvents[index].qualityScore='none';
 								filteredEvents[index].reviewText='none';
 							}
+							if(filteredEvents[index].microtaskType=="DebugTestFailure" || filteredEvents[index].microtaskType=="WriteFunction" ||filteredEvents[index].microtaskType=="WriteCall")
+							{
+								if(microtask[key].submission!=undefined){
+								if(filteredEvents[index].microtaskType=="DebugTestFailure")
+								{
+									filteredEvents[index].code = microtask[key].submission.functionDTO.header + microtask[key].submission.functionDTO.code;
+									for(var ps in  microtask[key].submission.functionDTO.pseudoFunctions)
+									{
+										filteredEvents[index].code= filteredEvents[index].code+ "\n"+microtask[key].submission.functionDTO.pseudoFunctions[ps].description;
+									}
+								}
+								else{
+								filteredEvents[index].code = microtask[key].submission.header + microtask[key].submission.code;
+								for(var ps in  microtask[key].submission.pseudoFunctions)
+								{
+									filteredEvents[index].code= filteredEvents[index].code+"\n"+ microtask[key].submission.pseudoFunctions[ps].description;
+								}}}
+							}
 							break;
-						//console.log('ownoing '+microtask[key].owningArtifact);
+						////console.log('ownoing '+microtask[key].owningArtifact);
 						}
 					}
 				}
@@ -151,24 +198,27 @@ myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
 				}
 				if(filteredEvents[index].skipped=='false')
 				{
-					//console.log(microtaskTime[filteredEvents[index].worker] +" submitted at "+filteredEvents[index].time);
+					////console.log(microtaskTime[filteredEvents[index].worker] +" submitted at "+filteredEvents[index].time);
 					filteredEvents[index].microtaskTime=timeDifferent(filteredEvents[index].time,microtaskTime[filteredEvents[index].worker]);
 					filteredEvents[index].microtaskTimeInSeconds=timeDifferentInSeconds(filteredEvents[index].time,microtaskTime[filteredEvents[index].worker]);
 
 				}
 				else{
-					//console.log(filteredEvents[index].skipped);
+					////console.log(filteredEvents[index].skipped);
 					filteredEvents[index].microtaskTime='none';
 					filteredEvents[index].microtaskTimeInSeconds='none';
 
 				}
+				//console.log(filteredEvents[index].microtaskType);
+				
 				microtaskTime[filteredEvents[index].worker]=filteredEvents[index].time;
 
 			}
-				//console.log(microtask);
+				////console.log(microtask);
 		
-			//console.log(filteredEvents.length);
+			////console.log(filteredEvents.length);
 			var csv="";
+			$scope.submission=[];
 			for(var k in filteredEvents){
 				
 				// csv+=filteredEvents[k].time;
@@ -199,22 +249,88 @@ myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
 				// csv+=',';
 				// csv+=filteredEvents[k].reviewText.replace(',',';').replace(',',';').replace(',',';').replace(',',';').replace(',',';').replace(',',';').replace('\n',';').replace('\n',';').replace('\n',';').replace('\n',';').replace('\n',';').replace('\n',';').replace('\n',';').replace('\n',';');
 		
-				csv+='\n';
+				// csv+='\n';
+
+				if((filteredEvents[k].microtaskType=="DebugTestFailure" || filteredEvents[k].microtaskType=="WriteFunction" ||filteredEvents[k].microtaskType=="WriteCall")&&filteredEvents[k].skipped=="false")
+				{
+					if($scope.submission[filteredEvents[k].owningArtifact]==undefined)
+					{
+						$scope.submission[filteredEvents[k].owningArtifact]=[];
+					}
+					$scope.submission[filteredEvents[k].owningArtifact].push(filteredEvents[k]);
 
 
-
-
-
-
-
-
-
+				}
 			}
-			console.log(csv);
-			$scope.events=csv;
+			console.log($scope.submission);
+$scope.code=[];
+
+			for(var funct in $scope.submission)
+			{
+				$scope.submission[funct].name=funct;
+				$scope.code.push($scope.submission[funct]);
+			}
+			//$scope.events=submission;
+			//$scope.test=doDiff($scope.code[0][0].code,$scope.code[0][1].code);
 			});
+
 		}
+
 	};
+});
+myApp
+    .directive('aceReadJs',function() {
+
+    return {
+        restrict: 'EA',
+        replace: true,
+        template: '<div class="ace-editor js-reader" ui-ace="{ onLoad : aceLoaded, mode : mode, theme: theme, showGutter: false, useWrapMode : true}" readonly="true" ng-model="code"></div>',
+        scope: {
+            code: '=',
+            mode: '@',
+            highlight: '=',
+        },
+        controller: function($scope,$element){ 
+            
+            if($scope.mode===undefined){
+                $scope.mode='javascript';
+                $scope.theme='xcode';
+            }
+            else
+                $scope.theme='github';   
+
+
+            $scope.aceLoaded = function(_editor) {
+                _editor.setOptions({
+                    maxLines: Infinity
+                });
+                var marker = [];
+                _editor.on('change',function(){
+                    if( $scope.highlight !== undefined ){
+                        angular.forEach($scope.highlight,function(val){
+                            if( marker[val.needle] !== undefined ){
+                                _editor.getSession().removeMarker(marker[val.needle]);
+                                marker[val.needle] == undefined;
+                            }
+                            var Range = ace.require("ace/range").Range;
+
+                            var conf   = { regex: val.regex || false };
+                            var needle = conf.regex ? new RegExp(val.needle) : val.needle;
+                            var range = _editor.find(needle,conf);
+                           // console.log('Needle',val.needle,range);
+                            if( range !== undefined ){
+                                marker[val.needle] = _editor.getSession().addMarker(range,'ace_pseudo_call','text',true);
+                                // console.log('added marker for  '+val.needle, range, marker);
+                               // console.log(_editor.getSession().getMarkers());
+                            }
+                            
+                        });
+                    }
+                });
+                
+            };
+        }
+    };
 });
 
 
