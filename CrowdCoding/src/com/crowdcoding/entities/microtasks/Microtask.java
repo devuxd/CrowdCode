@@ -3,6 +3,7 @@ package com.crowdcoding.entities.microtasks;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
@@ -99,41 +100,30 @@ public /*abstract*/ class Microtask
 	{
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
-		if (this.completed)
-		{
-			System.out.println("For microtask " + this.toString() + " JSON submitted for already completed work: "
-					+ jsonDTOData);
-			return;
-		} else {
-			try {
-				DTO dto = DTO.read(jsonDTOData, getDTOClass());
+		if (this.completed){
+			Logger.getLogger("LOGGER").severe("MIRCORTASK ALREADY COMPLETED: "+this.toString());
+			return; 
+		}
+		
+		try {
+			DTO dto = DTO.read(jsonDTOData, getDTOClass());
+			doSubmitWork(dto, workerID, projectId);
+			
+			this.completed = true;
+			ofy().save().entity(this).now();
 
+			// increase the stats counter
+			WorkerCommand.increaseStat(workerID, "microtasks",1);
+	
+			// write completed on firebase
+			FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), workerID, projectId, this.completed);
 
-				System.out.println("--> MICROTASK: submitted json "+jsonDTOData);
-
-				doSubmitWork(dto, workerID, projectId);
-				this.completed = true;
-
-				ofy().save().entity(this).now();
-
-				// Save the associated artifact to Firebase if there is one
-			/*	switched to the submit of the artifact
-			 	Artifact owningArtifact = this.getOwningArtifact();
-				if (owningArtifact != null)
-					owningArtifact.storeToFirebase(projectId);
-				*/
-				// write completed on firebase
-				FirebaseService.writeMicrotaskCompleted(Microtask.keyToString(this.getKey()), workerID, projectId, this.completed);
-				// increase the stats counter
-				WorkerCommand.increaseStat(workerID, "microtasks",1);
-
-			} catch( JsonParseException e) {
-				e.printStackTrace();
-			} catch( JsonMappingException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		} catch( JsonParseException e) {
+			e.printStackTrace();
+		} catch( JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 

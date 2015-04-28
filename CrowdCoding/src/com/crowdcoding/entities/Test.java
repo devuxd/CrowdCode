@@ -157,7 +157,6 @@ public class Test extends Artifact
 			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "true", this));
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
-			System.out.println("--> TEST "+this.id+": implemented for function "+functionID+ " - tID:" +this.id);
 //			storeToFirebase(projectId);
 			FunctionCommand.testBecameImplemented(functionID, this.id);
 		}
@@ -227,7 +226,6 @@ public class Test extends Artifact
 			for(Ref<Microtask> q:queueCopy){
 				WriteTest task = ((WriteTest) q.get());
 				if( task.getPromptType().equals(newTask.getPromptType()) ){
-					System.out.println("#### REMOVING FROM TEST QUEUE "+q);
 					this.queuedMicrotasks.remove(q);
 					MicrotaskCommand.cancelMicrotask(task.getKey());
 				}

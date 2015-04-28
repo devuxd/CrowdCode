@@ -351,14 +351,19 @@ public class Project
 						}
 					}
 				}
-				
+
 				// If there are no more microtasks currently available, return null
 				if ( microtaskKey != null) {	
 					Microtask mtask = ofy().load().key( Microtask.stringToKey(microtaskKey) ).now();
 					if( mtask!=null ){
 						
-						if( isReview ) reviewQueue.remove( microtaskKey );
-						else           microtaskQueue.remove( microtaskKey );
+						if( isReview ){
+							reviewQueue.remove( microtaskKey );
+							FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project.getID() );
+						} else {
+							microtaskQueue.remove( microtaskKey );
+							FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project.getID() );
+						}
 					
 	
 						// assign it to the worker
@@ -372,18 +377,14 @@ public class Project
 						return mtask;
 					}
 				} 
+				
 
 				return null;
 			}
 		});
 		
+    	
 		if( mtask != null ){
-
-			if( mtask.microtaskName().equals("Review") ){
-				FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project.getID() );
-			} else{
-				FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project.getID() );
-			}
 
 			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString( mtask.getKey() ), workerID, project.getID(), true);
 
@@ -426,14 +427,9 @@ public class Project
 		// submit only if the request come from
 		// the current assigned worker of the microtask
 		if(microtask.isAssignedTo(workerID) ){
-
-			// write the history log entry about the microtask submission
-			HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
-
 			// If reviewing is enabled and the microtask
 			// is not in [Review, ReuseSearch,DebugTestFailure],
 			// spawn a new review microtask
-			FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
 			try {
 				if (reviewsEnabled && !( microtask.getClass().equals(Review.class)) ){
 					//temporary fix for the review
@@ -441,11 +437,9 @@ public class Project
 					{
 	
 						ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
-						if ( ! dto.noFunction)
-						{
+						if ( ! dto.noFunction ){
 							MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-						}
-						else{
+						} else {
 							MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
 						}
 	
@@ -472,6 +466,11 @@ public class Project
 				else {
 					MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
 				}
+				
+
+				// write the history log entry about the microtask submission
+				HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
+				FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
 			} catch( JsonParseException e) {
 				e.printStackTrace();
 			} catch( JsonMappingException e) {

@@ -136,8 +136,8 @@ public class CrowdServlet extends HttpServlet
         }
         
 
-		Logger log =  Logger.getLogger("LOGGER");
-		log.warning("ACTION BLA BLA BLA "+user);
+//		Logger log =  Logger.getLogger("LOGGER");
+//		log.warning("ACTION BLA BLA BLA "+user);
         
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
@@ -622,43 +622,38 @@ public class CrowdServlet extends HttpServlet
     	final Project project = Project.Create(projectID);
 		final Worker worker   = Worker.Create(user, project);
 
-	
-		
+    	String jsonResponse = "{}";
+    	try {
+    		jsonResponse = ofy().transactNew( new Work<String>(){
 
-		System.out.println("FETCH");
-    	String jsonResponse = ofy().transactNew( new Work<String>(){
-
-			@Override
-			public String run() {
-				System.out.println("TRANSACTION");
-				Key<Microtask> microtaskKey = null;
-		    	int firstFetch=0;
-				if( unassign ){
-		    		project.unassignMicrotask( worker.getUserid() );
-		    	} else {
-		    		microtaskKey = project.lookupMicrotaskAssignment( worker.getUserid() );
-		    	}
-		    	
-		    	if( microtaskKey == null ){
-
-		    		microtaskKey = project.assignMicrotask( worker.getUserid() , worker.getNickname() ) ;	
-		    		firstFetch = 1;
-		    	}
-		    	String jsonResponse = "";
-		    	if (microtaskKey == null) {
-					jsonResponse =  "{}";
-				} else{
-					jsonResponse =  "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}";
-				}
-		    	return jsonResponse;
-				
-			}
-    		
-    	});
+    			public String run() {
+    				Key<Microtask> microtaskKey = null;
+    		    	int firstFetch=0;
+    				if( unassign ){
+    		    		project.unassignMicrotask( worker.getUserid() );
+    		    	} else {
+    		    		microtaskKey = project.lookupMicrotaskAssignment( worker.getUserid() );
+    		    	}
+    		    	
+    		    	if( microtaskKey == null ){
+    		    		microtaskKey = project.assignMicrotask( worker.getUserid() , worker.getNickname() ) ;	
+    		    		firstFetch = 1;
+    		    	}
+    		    	
+    		    	if (microtaskKey == null) {
+    					return "{}";
+    				} else{
+    					return "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}";
+    				}
+    			}
+        		
+        	});
+    	} catch ( IllegalArgumentException e ){
+    		e.printStackTrace();
+    		System.out.println("WORKER ID "+worker.getUserid()+" - nickname "+worker.getNickname());
+    	}
     	
     	
-    	
-
 		renderJson(resp,jsonResponse);
 		
 
@@ -712,10 +707,6 @@ public class CrowdServlet extends HttpServlet
 		final String JsonDTO      = req.getParameter("JsonDTO");
 		final Boolean skip        = Boolean.parseBoolean(req.getParameter("skip"));
 		final Boolean disablePoint=Boolean.parseBoolean(req.getParameter("disablepoint"));
-
-		System.out.println( "skip="+skip + "; json = "+JsonDTO );
-//		String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-//		System.out.println(time + " - EXE: "+microtaskKey+" by "+workerID);
 
 		// Create an initial context, then build a command to skip or submit
 		CommandContext context = new CommandContext();
@@ -781,7 +772,7 @@ public class CrowdServlet extends HttpServlet
 	private void executeCommands(List<Command> commands, final String projectId)
 	{
 
-		LinkedList<Command> commandQueue = new LinkedList<Command>(commands);
+		LinkedList<Command> commandQueue    = new LinkedList<Command>(commands);
 		Iterator<Command>   commandIterator = commandQueue.iterator();
 		// Execute commands until done, adding commands as created.
 	    while(commandIterator.hasNext()) {
