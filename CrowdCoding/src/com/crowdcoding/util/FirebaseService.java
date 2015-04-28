@@ -20,6 +20,7 @@ import com.crowdcoding.dto.firebase.ArtifactsIdInFirebase;
 import com.crowdcoding.dto.firebase.CommentInFirebase;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.dto.firebase.LeaderboardEntry;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
 import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.VotersIdInFirebase;
@@ -230,6 +231,10 @@ public class FirebaseService
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
 	}
+	
+	public static void writeNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/workers/" + workerID + "/notifications.json", HTTPMethod.POST, projectId);
+	}
 
 	public static void microtaskAssigned(String workerID, String projectId) {
 
@@ -361,14 +366,21 @@ public class FirebaseService
 			URLFetchService fetchService = URLFetchServiceFactory.getURLFetchService();
 			HTTPRequest request = new HTTPRequest(new URL(absoluteURL), operation);
 			request.setPayload(data.getBytes());
+			HTTPResponse response = fetchService.fetch(request);
 			Future<HTTPResponse> fetchAsync = fetchService.fetchAsync(request);
 
+			
+			if( response.getResponseCode() != 200){
+				System.out.println("FIREBASE WRITE FAILED: "+response.getResponseCode()+" - "+absoluteURL+" - "+data);
+			}
 			// wait while fetchAsync is done
 			//while( ! fetchAsync.isDone() );
 
 		}
 		catch (MalformedURLException e) {
 			System.out.println("Malformed url: "+e);
+		} catch (IOException e) {
+			System.out.println("IOException url: "+e);
 		}
 	}
 

@@ -60,7 +60,7 @@ module.exports = function (grunt) {
 
     watch: {
     	scripts: {
-    		files: [ 'client/client.js', 'client/**/*.js', 'client/**/*.html'],
+    		files: [ 'client/client.js', 'client/client.css','client/**/*.js', 'client/**/*.html', 'client/client.jsp'],
     		tasks: ['build'],
     		options: {
     			event: ['all']

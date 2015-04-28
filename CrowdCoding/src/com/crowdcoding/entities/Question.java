@@ -30,8 +30,8 @@ public class Question extends Questioning
 {
 
 	private List<String> artifactsId = new ArrayList<String>();
-	private List<String> subsribersId = new ArrayList<String>();
 	private List<String> tags = new ArrayList<String>();
+	
 	private String title;
 
 	// Constructor for deserialization
@@ -40,9 +40,9 @@ public class Question extends Questioning
 
 	}
 
-	public Question(String title, String text, List<String> tags, String artifactId, String ownerId, String projectId)
+	public Question(String title, String text, List<String> tags, String artifactId, String ownerId, String ownerHandle, String projectId)
 	{
-		super(text, ownerId, projectId);
+		super(text, ownerId, ownerHandle, projectId);
 		this.title = title;
 		this.tags= tags;
 		this.artifactsId.add(artifactId);
@@ -51,6 +51,7 @@ public class Question extends Questioning
 
 		this.firebasePath="/questions/" + this.id;
 		ofy().save().entity(this).now();
+		
 		storeToFirebase();
 
 	}
@@ -80,6 +81,6 @@ public class Question extends Questioning
 		}
 	}
 	protected void storeToFirebase() {
-		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId), this.firebasePath, projectId);
+		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId), this.firebasePath, projectId);
 	}
 }

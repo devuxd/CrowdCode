@@ -3,20 +3,21 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 		scope: false,
 		templateUrl: '/client/questions/questionDetail.html',
 		link: function($scope,$element,$attrs){
-			$scope.answerText='';
-			$scope.workerId= workerId;
+			$scope.answer  = {};
+			$scope.comment = {};
 
-			$scope.postAnswer = postAnswer;
+			$scope.answer.text      = '';
+			$scope.comment.text     = '';
+			$scope.comment.answerId = null;
+
+			$scope.workerId    = workerId;
+
+			$scope.postAnswer  = postAnswer;
 			$scope.postComment = postComment;
 
-			$scope.toggleVoteUp = toggleVoteUp;
+			$scope.toggleVoteUp   = toggleVoteUp;
 			$scope.toggleVoteDown = toggleVoteDown;
 
-			$scope.selectedAnswer={
-				toggle : function(id){ this.id!=id ? this.id=id: this.id=0 },
-				id:0,
-				text : ''
-			};
 
 			function toggleVoteUp(questioning)
 			{
@@ -25,6 +26,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 					remove= true;
 				questionsService.vote(questioning.id,remove);
 			}
+
 			function toggleVoteDown(questioning)
 			{
 				var remove = false;
@@ -33,21 +35,33 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 				questionsService.report(questioning.id,remove);
 			}
 
-
 			function postComment(){
-
-				var commentForm={questionId : $scope.sel.id , answerId : $scope.selectedAnswer.id, text : $scope.selectedAnswer.text};
-				$scope.selectedAnswer.text='';
-				console.log(commentForm);
-				questionsService.submitQuestion("comment",commentForm);
+				if( $scope.comment.text != ''){
+					var commentForm = { questionId : $scope.sel.id , answerId : $scope.comment.answerId, text : $scope.comment.text };
+					questionsService
+						.submitQuestion("comment",commentForm)
+						.then(function(){
+							$scope.comment.text ='';
+							$scope.comment.answerId = null;
+							$scope.showCommentForm = false;
+						},function(){
+							console.log('error posting the comment');
+						});
+				}
 			}
 
 			function postAnswer(){
-
-				var answerForm={questionId : $scope.sel.id , text : $scope.answerText};
-				$scope.answerText='';
-				console.log(answerForm);
-				questionsService.submitQuestion("answer",answerForm);
+				if( $scope.answer.text != ''){
+					var answerForm = { questionId : $scope.sel.id , text : $scope.answer.text };
+					questionsService
+						.submitQuestion("answer",answerForm)
+						.then(function(){
+							$scope.answer.text='';
+							$scope.showAnswerForm = false;
+						},function(){
+							console.log('error posting the answer');
+						});
+				}
 			}
 		}
 	};

@@ -21,6 +21,7 @@ import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.CommandContext;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.LoadResult;
+import com.googlecode.objectify.VoidWork;
 
 public abstract class QuestioningCommand extends Command
 {
@@ -28,15 +29,19 @@ public abstract class QuestioningCommand extends Command
 	protected String workerId;
 
 	/* PUBLIC METHODS */
-	public static QuestioningCommand createQuestion(String jsonDTOData, String workerId){
-		return new CreateQuestion(jsonDTOData, workerId);
+	public static QuestioningCommand createQuestion(String jsonDTOData, String workerId, String workerHandle){
+		return new CreateQuestion(jsonDTOData, workerId, workerHandle);
 	}
-	public static QuestioningCommand createAnswer(String jsonDTOData, String workerId){
-		return new CreateAnswer(jsonDTOData, workerId);
+	
+	public static QuestioningCommand createAnswer(String jsonDTOData, String workerId, String workerHandle){
+		return new CreateAnswer(jsonDTOData, workerId, workerHandle);
 	}
-	public static QuestioningCommand createComment(String jsonDTOData, String workerId){
-		return new CreateComment(jsonDTOData, workerId);
+	
+	public static QuestioningCommand createComment(String jsonDTOData, String workerId, String workerHandle){
+		return new CreateComment(jsonDTOData, workerId, workerHandle);
 	}
+
+
 	public static QuestioningCommand vote(long questioningId, String workerId, boolean remove){
 		return new Vote(questioningId, workerId, remove);
 	}
@@ -50,6 +55,10 @@ public abstract class QuestioningCommand extends Command
 		return new SubscribeWorker(questioningId, workerId, remove);
 	}
 
+	public static QuestioningCommand notifySubscribers(long questioningId, String message, String excludedWorkerId){
+		return new NotifySubscribers(questioningId,message,excludedWorkerId);
+	}
+	
 	private QuestioningCommand(long questioningId, String workerId) {
 		this.questioningId = questioningId;
 		this.workerId = workerId;
@@ -62,20 +71,24 @@ public abstract class QuestioningCommand extends Command
 		CommandContext.ctx.addCommand(command);
 	}
 
-	public void execute(String projectId) {
-		if (questioningId != 0) {
-			LoadResult<Questioning> questioningRef = find(questioningId);
+	public void execute(final String projectId) {
+		ofy().transact(new VoidWork() {
+	        public void vrun() {
+	        	if (questioningId != 0) {
+	    			LoadResult<Questioning> questioningRef = find(questioningId);
 
-			if (questioningRef == null)
-				System.out
-						.println("Cannot execute QuestiongCommand. Could not Questioning test for questioningId "
-								+ questioningId);
-			else {
-				Questioning questioning = questioningRef.now();
-				execute(questioning, projectId);
-			}
-		} else
-			execute(null, projectId);
+	    			if (questioningRef == null)
+	    				System.out
+	    						.println("Cannot execute QuestiongCommand. Could not Questioning test for questioningId "
+	    								+ questioningId);
+	    			else {
+	    				Questioning questioning = questioningRef.now();
+	    				execute(questioning, projectId);
+	    			}
+	    		} else
+	    			execute(null, projectId);
+	        }
+		});	
 	}
 
 	public abstract void execute(Questioning questioning, String projectId);
@@ -91,10 +104,12 @@ public abstract class QuestioningCommand extends Command
 
 	protected static class CreateQuestion extends QuestioningCommand {
 		private String jsonDTOData;
+		private String workerHandle;
 
-		public CreateQuestion(String jsonDTOData, String ownerId) {
+		public CreateQuestion(String jsonDTOData, String ownerId, String ownerHandle) {
 			super(0L, ownerId);
 			this.jsonDTOData= jsonDTOData;
+			this.workerHandle = ownerHandle;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
@@ -107,16 +122,18 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Question question = new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, projectId);
+			Question question = new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, workerHandle, projectId);
 		}
 	}
 
 	protected static class CreateAnswer extends QuestioningCommand {
 		private String jsonDTOData;
+		private String workerHandle;
 
-		public CreateAnswer(String jsonDTOData, String ownerId) {
+		public CreateAnswer(String jsonDTOData, String ownerId, String ownerHandle) {
 			super(0L, ownerId);
 			this.jsonDTOData=jsonDTOData;
+			this.workerHandle = ownerHandle;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
@@ -128,16 +145,18 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Answer answer = new Answer(dto.text, dto.questionId, workerId, projectId);
+			Answer answer = new Answer(dto.text, dto.questionId, workerId, workerHandle, projectId);
 		}
 	}
 
 	protected static class CreateComment extends QuestioningCommand {
 		private String jsonDTOData;
+		private String workerHandle;
 
-		public CreateComment(String jsonDTOData, String ownerId) {
+		public CreateComment(String jsonDTOData, String ownerId, String ownerHandle) {
 			super(0L, ownerId);
 			this.jsonDTOData=jsonDTOData;
+			this.workerHandle = ownerHandle;
 
 		}
 
@@ -150,7 +169,7 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, projectId);
+			Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
 		}
 	}
 
@@ -229,6 +248,23 @@ public abstract class QuestioningCommand extends Command
 			else
 				((Question)questioning).subscribeWorker(workerId);
 
+		}
+	}
+	
+
+
+	protected static class NotifySubscribers extends QuestioningCommand {
+
+		private String message; 
+		
+		public NotifySubscribers(long questioningId, String message, String excludedWorkerId) {
+			super(questioningId, excludedWorkerId);
+			this.message = message;
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+
+			questioning.notifySubscribers(message, workerId);
 		}
 	}
 

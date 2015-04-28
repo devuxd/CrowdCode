@@ -8,6 +8,7 @@ import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ReviewDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.ReviewInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
@@ -114,6 +115,7 @@ public class Review extends Microtask
 			1 stars ->0
 		*/
 		awardedPoints = (int) Math.round( submittedMicrotask.submitValue * Math.pow((reviewDTO.qualityScore /5.0), 1.5));
+		NotificationInFirebase notification = null;
 		if ( reviewDTO.qualityScore < 4) {
 
 			// reissue microtask
@@ -126,6 +128,11 @@ public class Review extends Microtask
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
 
+			notification = new NotificationInFirebase(
+					"Work reissued",
+					"your work on " + submittedMicrotask.microtaskName() + " has been reissued ",
+					System.currentTimeMillis()
+			);
 
 		} else {
 
@@ -136,6 +143,12 @@ public class Review extends Microtask
 
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
+			
+			notification = new NotificationInFirebase(
+					"Work accepted",
+					"your work on " + submittedMicrotask.microtaskName() + " has been accepted ",
+					System.currentTimeMillis()
+			);
 
 		}
 
@@ -153,6 +166,13 @@ public class Review extends Microtask
 	    	Microtask.keyToString(submittedMicrotask.getKey()),
     		projectId
 	    );
+    	// send notification
+		FirebaseService.writeNotification(
+				notification,
+				workerOfReviewedWork, 
+				projectId
+		);
+
 
 
 		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);

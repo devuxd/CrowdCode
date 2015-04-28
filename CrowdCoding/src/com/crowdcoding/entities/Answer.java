@@ -8,9 +8,11 @@ import java.util.List;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
+import com.crowdcoding.commands.QuestioningCommand;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.AnswerInFirebase;
 import com.crowdcoding.dto.firebase.CommentInFirebase;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.WriteTest;
@@ -32,20 +34,25 @@ public class Answer extends Questioning
 	{
 	}
 
-	public Answer(String text, long questionId, String ownerId,  String projectId)
+	public Answer(String text, long questionId, String ownerId, String ownerHandle, String projectId)
 	{
-		super(text, ownerId, projectId);
+		super(text, ownerId, ownerHandle, projectId);
 
 		this.questionId = questionId;
+		this.subsribersId.add(ownerId);
 		ofy().save().entity(this).now();
+		
 		this.firebasePath= "/questions/" + questionId + "/answers/"+ this.id;
 		ofy().save().entity(this).now();
+		
 		storeToFirebase();
-
+		
+		QuestioningCommand.notifySubscribers(this.questionId, "an answer was added to this question", ownerId);
+		
 	}
 
 	protected void storeToFirebase() {
-		FirebaseService.writeAnswerCreated(new AnswerInFirebase(this.id, this.ownerId, this.text, this.time, this.score), this.firebasePath, projectId);
+		FirebaseService.writeAnswerCreated(new AnswerInFirebase(this.id, this.ownerId, this.ownerHandle, this.text, this.time, this.score), this.firebasePath, projectId);
 	}
 
 }

@@ -3,12 +3,10 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		scope: false,
 		templateUrl: '/client/questions/questionsList.html',
 		link: function($scope,$element,$attrs){
-				
-
+			
 			$scope.setSelected=setSelected;
-			function setSelected(q){
-				$scope.sel = q;
-			}
+			$scope.resetFilter=resetFilter;
+
 			$scope.search    = '';
 			$scope.questions = questionsService.getQuestions();
 
@@ -21,10 +19,19 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		        		$scope.questions = questionsService.getQuestions();
 		        	else {
 		        		$scope.questions = questionsService.searchResults( val );
-		        		console.log($scope.questions);
 		        	}
 		        }, 250); // delay 250 ms
 			});
+
+			
+			function resetFilter(){
+				$scope.search = '';
+			}
+
+			function setSelected(q){
+				$scope.sel = q;
+			}
+
 		}
 	};
 });

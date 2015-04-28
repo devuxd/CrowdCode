@@ -1,7 +1,7 @@
 
 angular
     .module('crowdCode')
-    .directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory, userService) {
+    .directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory, userService, workerId) {
     return {
         restrict: 'E',
         templateUrl: '/client/chat/chat_panel.html',
@@ -44,8 +44,18 @@ angular
 
                     // get the message data and add it to the list
                     var message = childSnap.val();
-                    $scope.messages.push(message);
 
+                    if( message.workerId === workerId )
+                        message.workerHandle = 'You';
+
+                    var last = $scope.messages[ $scope.messages.length - 1 ];
+                    if( last !== undefined && last.workerId == message.workerId && ( message.createdAt - last.createdAt ) < 5 * 1000 ) {
+                        last.text += '<br />' + message.text;
+                        last.createdAt = message.createdAt;
+                    } else 
+                        $scope.messages.push(message);
+
+                    /*
                     // if the chat is hidden and the timestamp is 
                     // after the timestamp of the page load
                     if( message.createdAt > startLoadingTime ) 
@@ -79,6 +89,7 @@ angular
                                 show: true
                             });
                         } 
+                    */
                     
                     $timeout( function(){ $scope.$apply() }, 100);
             });

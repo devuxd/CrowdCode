@@ -1,9 +1,12 @@
 package com.crowdcoding.commands;
 
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.CommandContext;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.VoidWork;
 
 public abstract class ProjectCommand extends Command
 {
@@ -29,8 +32,8 @@ public abstract class ProjectCommand extends Command
 		return new SkipMicrotask(microtaskKey, workerID, disablePoint);
 	}
 
-	public static ProjectCommand submitMicrotask(String microtaskKey, Class<Microtask> microtaskType, String jsonDTOData, String workerID){
-		return new SubmitMicrotask(microtaskKey, microtaskType, jsonDTOData, workerID);
+	public static ProjectCommand submitMicrotask(String microtaskKey, String jsonDTOData, String workerID){
+		return new SubmitMicrotask(microtaskKey, jsonDTOData, workerID);
 	}
 
 	public static ProjectCommand logoutWorker(String workerID){
@@ -51,8 +54,12 @@ public abstract class ProjectCommand extends Command
 
 	public void execute(String  projectId)
 	{
-		Project project = Project.Create(projectId);
-		execute(project);
+		final Project project = Project.Create(projectId);
+		ofy().transact(new VoidWork() {
+	        public void vrun() {
+	        	execute(project);
+	        }
+		});	
 	}
 
 	public abstract void execute(Project project);
@@ -151,7 +158,6 @@ public abstract class ProjectCommand extends Command
 
 		public void execute(Project project)
 		{
-			System.out.println("-->SKIP "+Microtask.keyToString(this.microtaskKey));
 			project.skipMicrotask(microtaskKey, workerID, disablePoint);
 		}
 	}
@@ -160,23 +166,20 @@ public abstract class ProjectCommand extends Command
 	protected static class SubmitMicrotask extends ProjectCommand
 	{
 		private Key<Microtask> microtaskKey;
-		private Class<Microtask> microtaskType;
 		private String jsonDTOData;
 		private String workerID;
 
-		public SubmitMicrotask(String microtaskKey, Class<Microtask> microtaskType, String jsonDTOData, String workerID)
+		public SubmitMicrotask(String microtaskKey, String jsonDTOData, String workerID)
 		{
 			super();
 			this.microtaskKey = Microtask.stringToKey( microtaskKey );
-			this.microtaskType = microtaskType;
 			this.jsonDTOData = jsonDTOData;
 			this.workerID = workerID;
 		}
 
 		public void execute(Project project)
 		{
-			System.out.println("-->SUBMIT "+Microtask.keyToString(this.microtaskKey));
-			project.submitMicrotask(microtaskKey, microtaskType, jsonDTOData, workerID);
+			project.submitMicrotask(microtaskKey, jsonDTOData, workerID, project);
 		}
 	}
 

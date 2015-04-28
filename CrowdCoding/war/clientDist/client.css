@@ -138,7 +138,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 	font-size:0.8em;
 }
 
-@grid-float-breakpoint {  }
+
 .btn:focus {outline:none;}
 .btn { font-family: 'Lato' !important;font-style: normal; font-weight: 400;}
 .btn:hover, .btn:focus { background-color: rgb(163, 163, 163); }
@@ -159,7 +159,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 .glyphicon { font-size:1em; }
 
 
-.navbar { min-height:35px;   }
+.navbar { min-height:35px;  border:0px; }
 .navbar .navbar-brand { padding: 0 12px;font-size: 16px;line-height: 35px;height: 35px; }
 .navbar .navbar-brand:hover { color:white; }
 .navbar .navbar-nav > li > a {  padding-top: 0px; padding-bottom: 0px; line-height: 35px; }
@@ -275,10 +275,10 @@ h1, h2, h3, h4 {
 
 
 
-#sidebarLeft { width:20%; height:100%; background-color: #EEEEEE; padding-top:10px; position: relative;}
+#sidebarLeft { width: 30%; height:100%; background-color: #EEEEEE; position: relative;}
 
 #content {
-	width:80%;
+	width:70%;
     padding:0px;
     margin:0px;
     height:100%;
@@ -293,8 +293,8 @@ h1, h2, h3, h4 {
 	top:0px;
 	width:100%;
 	padding-top:7px;
-	padding-left:20px;
-	padding-right:20px;
+	padding-left:15px;
+	padding-right:15px;
 	padding-bottom:10px;
     overflow-x:hidden;
     overflow-y:auto;
@@ -365,68 +365,92 @@ h1, h2, h3, h4 {
 
 
 /* SIDEBAR BUTTONS */
-.sidebar .sidebar-buttons{
+
+
+
+
+.sidebar-nav {
+	width:100vh;    
+	height:21px;
+	position:fixed;
+	background:#AFAFAF;
+	color:white;
+	font-family:'Lato';
+	text-transform: uppercase;
+	-webkit-transform-origin: left top;
+	-webkit-transform:rotate(-90deg) translateX(-100%);
+	border-bottom: 1px solid #555;
+}
+.sidebar-nav ul li {
+	padding-right:10px;
+	padding-left:10px;
+	float:right;
+	line-height:20px;
+	cursor:default;
+	border-bottom: 1px solid transparent;
+}
+
+.sidebar-nav ul li:hover {
+	background-color: #EEEEEE;
+	border-bottom:1px solid #555;
+	color:#555;
+}
+
+.sidebar-nav ul li.active {
+	background-color: #EEEEEE;
+	font-weight: bold;
+	border-left:1px solid #555;
+	border-right:1px solid #555;
+	color:#555;
+}
+.sidebar-nav ul li.active {
+	border-bottom:1px solid #EEEEEE;
+}
+
+
+.sidebar-nav ul li.active.first {
+	border-right: 0px;
+}
+
+.sidebar .nav {
+	position:absolute;
+	height: 20px;
+	z-index: 100;
+	width:100%;
+}
+.sidebar .tab-content {
+	position:absolute;
+	z-index:99;
+	top:0px;
+	bottom:0px;
+	left:20px;
+	right:0px;
+	padding:0px;
+	margin-left:1px;
+	overflow:hidden;
+}
+.sidebar .padding {
+	padding:5px;
+}
+
+.sidebar .top, 
+.sidebar .bottom {
 	position: absolute;
 	width:100%;
-	width: 100%;
-	height: 100%;
+}
+
+.sidebar .top {
+	top:0px;
+	bottom:0px;
+	/*bottom:47px;*/
+}
+
+.sidebar .bottom {
 	bottom: 0px;
-	height: 50px;
+	height: 47px;
 }
 
-.sidebar-buttons button {
-	color: #969696;
-	border:0px;
-	cursor:pointer;
-	background-color:transparent;
-	margin-bottom: 2px;
-	padding-left: 10px;
-	text-align:left;
-	text-transform: uppercase;
-	font-size: 0.9em;
-	width:100%;
-	font-family: 'Lato' !important;
-	font-style: normal;
-	font-weight: 800;
-}
 
-/* SIDEBAR PANELS */
-.sidebar .sidebar-panels{
-	/*position: absolute;*/
-	width: 100%;
-	height: 100%;
-	bottom: 50px;
-	top: 0px;
-}
-
-.sidebar .toggler {
-	cursor: pointer;
-	color: #969696;
-	margin-bottom: 2px;
-	padding-left: 10px;
-	text-transform: uppercase;
-	font-size: 0.9em;
-	margin-top:10px;
-}
-.sidebar .element {
-	border-bottom:1px solid #D0D0D0;
-	height:0px;
-	overflow:hidden;
-	-webkit-transition: height 0.5s;
-	-moz-transition: height 0.5s;
-	transition: height 0.5s;
-}
-.sidebar .element:last-child{border:0px;}
-.sidebar .element-body {
-	padding-top:10px;
-	padding-left:10px;
-	padding-right:10px;
-}
-
-.sidebar .scrollable{
-	overflow-y: auto;
-    height: 100%;
-}
 /* SIDEBAR LIST */
 .sidebar-list { list-style:none; padding:0px; margin:0px; }
 .sidebar-list li { display:block; width:100%; margin-top:2px;}
@@ -465,8 +489,116 @@ h1, h2, h3, h4 {
 .news-element .reissued { color: #f0ad4e;  }
 .news-element .rejected { color: #555; }
 
+.questions {
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+}
+
+.questions .form-control {
+	border-radius:0px;
+	border:0px;
+	background-color: rgba(205, 205, 205, 0.35);
+}
+
+.questions .top {
+	height: 25px;
+}
 
 
+.questions .middle {
+	position:absolute;
+	top:25px;
+	bottom:0px;
+	width:100%;
+	overflow:auto;
+}
+
+
+.questions .form-control.ng-dirty.ng-valid,
+.questions .form-control.ng-dirty.ng-invalid{
+ 	border:none;
+ 	box-shadow: none;
+ 	-webkit-box-shadow: none;
+}
+
+.questions .questions-list {
+	margin:0px;
+	padding:0px;
+	height:100%;
+	padding:5px;
+	overflow:auto;
+}
+.questions .list-group .list-group-item {
+	padding:5px; 
+
+	margin-top:5px; 
+	background-color: transparent;
+	border-radius:0px;
+	border:none;
+}
+
+.questions .list-group .question-item,
+.questions .list-group .answer-item {
+	background-color:rgb(227, 227, 227);
+}
+
+.questions .list-group .comment-item { margin-left:10px; border-top:1px solid rgb(175, 175, 175); }
+
+.questions .list-group .list-group-item .content-panel { padding-right:3.2em; }
+.questions .list-group .list-group-item .vote-panel { font-size:1em; position:absolute; top:5px; right:5px; }
+
+
+.questions .has-feedback { font-size:10px; }
+.questions .has-feedback .form-control { padding-left:2em; padding-right:0px; font-size:1em; height:2.6em;}
+.questions .form-control-feedback { left:0; top:0; right:none; color:gray; line-height:2.6em; height:2.6em; width:2em; }
+
+
+.questions question-list,
+.questions question-detail ,
+.questions question-form {
+	display:block;
+	-webkit-transition: 0.5s ease-in-out;
+	-moz-transition: 0.5s ease-in-out;
+	-o-transition: 0.5s ease-in-out;
+	transition: 0.5s ease-in-out;
+}
+
+
+.questions question-list { margin-left:0%; }
+.questions question-list.ng-hide { margin-left:-100%; } 
+
+.questions question-list .question-item { cursor: pointer; }
+.questions question-list .question-item:hover { background-color:#E0E0E0; }
+
+.questions .question-item.ng-enter{
+  -webkit-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+  opacity: 0;
+}
+.questions .question-item.ng-enter.ng-enter-active{
+	opacity: 1;
+}
+
+
+.questions question-detail,
+.questions question-form {
+	margin-left:0px;
+}
+
+.questions question-detail.ng-hide,
+.questions question-form.ng-hide {
+	margin-left:100%;
+} 
+
+
+.sidebar .top button {
+	font-size:1em;
+	margin:0px;
+	padding:0px;
+}
 /*
 rgba(17,112,190,1) Wode - blue - writefunction
 rgba(252,223,63,1) Aerial yellow - yellow - writetestcases
@@ -509,74 +641,52 @@ rgba(237,90,48,1)  Valencia - orange - review
 
 
 .chat {
-	position:absolute;
-	right  : 5px;
-	bottom : 45px;
-
-	width:300px;
-	background-color:white;
-	
-	opacity:0;
-	border: 1px solid #969696;
-
-	height:0;
-	overflow:hidden;
-
-	-webkit-transition: height .35s, opacity .4s;
-	-moz-transition:    height    .35s, opacity .4s;
-	-ms-transition:     height     .35s, opacity .4s;
-	-o-transition:      height     .35s, opacity .4s;
-}
-.chat.active {
-	opacity:1;
-	z-index:999;
-	height:auto;
-}
-
-.chat .btn-close { cursor:pointer; }
-
-.chat .header {
-	padding:5px;
-	background-color:#555;
-	color:white;
-	font-family: 'Lato' !important;
-	font-style: normal;
-	font-weight: 800;
+	height:100%;
+	position:relative;
 }
 
 .chat .output {
-	width  : 100%;
-	height : 300px;
-
-	margin-bottom:10px;
+	position:absolute;
+	top:0px;
+	bottom:50px;
+	width:100%;
 	overflow-y:auto;
 	overflow-x:none;
 }
 
 .chat .input { 
-	width  :100%; 
-	min-height: 40px;
-	height    : 40px;
+	position:absolute;
+	height    : 47px;
+	bottom:0px;
+	width:100%;
 }
 
 .chat .input textarea {
 	width:100%;
-	height:40px;
-	background-color:#ECECEC;
+	height:47px;
+	background-color:#555;
+	color:white;
 	border-radius:0px; border:none;
 	resize:none;
 	position:absolute;
 }
+.chat .input textarea.ng-dirty.ng-valid,
+.chat .input textarea.ng-dirty.ng-invalid{
+ 	border:none;
+ 	box-shadow: none;
+ 	-webkit-box-shadow: none;
+}
+
 .chat .input textarea:focus { outline:0px solid black; }
 
 
-.chat .messages { margin:0px; padding:0px; list-style: none; }
-.chat .messages li { padding:2px; }
+.chat .messages { margin:0px; padding:5px; list-style: none; }
+.chat .messages li { padding:2px; margin-bottom:1px; background-color: rgba(205, 205, 205, 0.35); }
 
 .chat .avatar { float:left; width:25px;}
 .chat .avatar img { width:25px; }
 
-.chat .message { float:left; width:240px;margin-left:5px; word-wrap: break-word; line-height: 25px}
+.chat .message { padding-left:30px; word-wrap: break-word; }
 .chat .message .nickname { font-weight:bold;}
 .chat .message .text{ margin:0px; }
 .chat .message .time { font-weight:bold; font-size:0.7em; text-align: right}
@@ -1350,7 +1460,4 @@ pre.json .jsonKey { color: black; }
 	border: 0px solid #ddd;
 }
 
-.comment-element{
-	padding-top: 9px;
-	padding-bottom: 0px;
-}
+.not-allowed { cursor:not-allowed; }

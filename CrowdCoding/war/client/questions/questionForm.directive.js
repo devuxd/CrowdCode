@@ -6,15 +6,17 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 			$scope.question = {
 				title: '',
 				text: '',
-				tags: [],
+				tags: []
 			};
 
 			$scope.allTags=questionsService.getAllTags();
 			$scope.newTag = '';
-			$scope.getArtifactId=true;
+			$scope.getArtifactId=false;
 
 			$scope.postQuestion = postQuestion;
 			$scope.addTag       = addTag;
+			$scope.removeTag    = removeTag;
+
 
 			function addTag(){
 				if( $scope.question.tags.indexOf($scope.newTag) == -1 && $scope.newTag !== '')
@@ -22,12 +24,31 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 				$scope.newTag = '';
 			}
 
+			function removeTag(tag){
+				if( $scope.question.tags.indexOf(tag) > -1 ){
+					var index = $scope.question.tags.indexOf(tag) ;
+					$scope.question.tags.splice(index,1);
+				}
+			}
+
+
 			function postQuestion(){
 				addTag();
 				if($scope.getArtifactId)
-					$scope.question.artifactId=$scope.fetchedMicrotask.owningArtifactId;
-				console.log($scope.question);
-				questionsService.submitQuestion('question',$scope.question);
+					$scope.question.artifactId = $scope.fetchedMicrotask.owningArtifactId;
+
+				questionsService
+					.submitQuestion('question',$scope.question)
+					.then(function(){
+						$scope.question = {
+							title: '',
+							text: '',
+							tags: []
+						};
+						$scope.setView('question_list');
+					},function(){
+						console.log('error submitting the question')
+					});
 			}
 
 		}

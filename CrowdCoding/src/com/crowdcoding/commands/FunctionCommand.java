@@ -1,5 +1,7 @@
 package com.crowdcoding.commands;
 
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import java.util.List;
 
 import javax.print.attribute.standard.Sides;
@@ -12,6 +14,7 @@ import com.crowdcoding.entities.Test;
 import com.crowdcoding.servlets.CommandContext;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.LoadResult;
+import com.googlecode.objectify.VoidWork;
 
 public abstract class FunctionCommand extends Command {
 	protected long functionID;
@@ -106,22 +109,25 @@ public abstract class FunctionCommand extends Command {
 	}
 
 
-	public void execute(String projectId) {
-		if (functionID != 0) {
-			LoadResult<Function> function = Function.find(functionID);
-			if (function == null)
-				System.out
-						.println("Cannot execute FunctionCommand. Could not find the function for FunctionID "
-								+ functionID);
-			else {
-				execute(function.now(), projectId);
+	public void execute(final String projectId) {
+		ofy().transact(new VoidWork() {
+	        public void vrun() {
+	        	if (functionID != 0) {
+	    			LoadResult<Function> function = Function.find(functionID);
+	    			if (function == null)
+	    				System.out
+	    						.println("Cannot execute FunctionCommand. Could not find the function for FunctionID "
+	    								+ functionID);
+	    			else {
+	    				execute(function.now(), projectId);
 
-				// Save the associated artifact to Firebase
-				//function.now().storeToFirebase(projectId);
-			}
-		} else
-			execute(null, projectId);
-
+	    				// Save the associated artifact to Firebase
+	    				//function.now().storeToFirebase(projectId);
+	    			}
+	    		} else
+	    			execute(null, projectId);
+	        }
+		});	
 	}
 
 	public abstract void execute(Function function, String projectId);

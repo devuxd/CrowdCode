@@ -5,7 +5,7 @@
 	<reminder></reminder>
 
 	<div class="button-bar">
-		<div class="btn-group pull-left" role="group" ng-show="!noMicrotask" >
+		<div class="btn-group pull-right" role="group" ng-show="!noMicrotask" >
 			<button type="button"
 
        	 		id= "skipBtn"
@@ -24,14 +24,6 @@
 		  	</button>
 		 
 		</div>
-
-		<span class="pull-right">
-			<span ng-if="unreadMessages > 0" class="unread-messages">{{unreadMessages}}</span>
-			<button ng-click="$emit('toggleChat')" tabindex="101" class="btn btn-chat-toggle {{chatActive?'opened':''}} btn-sm"  >
-
-				<span class="glyphicon glyphicon-comment"></span>
-			</button>
-		</span>
 		<span class="clearfix"></span>
 	
 	</div>

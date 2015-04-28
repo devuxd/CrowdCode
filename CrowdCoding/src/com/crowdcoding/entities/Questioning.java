@@ -13,6 +13,7 @@ import sun.security.acl.OwnerImpl;
 
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.WorkerCommand;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
 import com.crowdcoding.dto.firebase.VotersIdInFirebase;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
@@ -36,11 +37,13 @@ public /*abstract*/ class Questioning
 	@Index String projectId;
 	protected String text;
 	protected String ownerId;
+	protected String ownerHandle;
 	protected List<String> votersId = new ArrayList<String>();
 	protected List<String> removedVotersId = new ArrayList<String>();
 	protected int points = 10;
 	protected boolean isReported;
 	protected List<String> reportersId = new ArrayList<String>();
+	protected List<String> subsribersId = new ArrayList<String>();
 	protected String firebasePath;
 	protected long time;
 	protected int score;
@@ -52,14 +55,15 @@ public /*abstract*/ class Questioning
 	}
 
 	// Constructor for initialization.
-	protected Questioning(String text, String ownerId, String projectId)
+	protected Questioning(String text, String ownerId, String ownerHandle, String projectId)
 	{
-		this.text	 =text;
-		this.ownerId = ownerId;
-		this.projectId = projectId;
-		this.isReported = false;
-		this.time = System.currentTimeMillis();
-		this.score= 0;
+		this.text	     = text;
+		this.ownerId     = ownerId;
+		this.ownerHandle = ownerHandle;
+		this.projectId   = projectId;
+		this.isReported  = false;
+		this.time  = System.currentTimeMillis();
+		this.score = 0;
 	}
 
 	public Key<? extends Questioning> getKey()
@@ -126,7 +130,7 @@ public /*abstract*/ class Questioning
 			reportersId.add(workerId);
 			updateScore();
 			ofy().save().entity(this).now();
-			WorkerCommand.awardPoints(ownerId, points);
+
 			System.out.println("addReport");
 			FirebaseService.updateQuestioningVoters(new VotersIdInFirebase(votersId), firebasePath, projectId);
 			FirebaseService.updateQuestioningReporters(new ReportersIdInFirebase(reportersId), firebasePath, projectId);
@@ -155,7 +159,25 @@ public /*abstract*/ class Questioning
 
 
 	// Writes the artifact out to Firebase, publishing the current state of the artifact to all clients.
-	public void storeToFirebase(String projectId) { throw new RuntimeException("Must implement storeToFirebase().");  };
+	public void storeToFirebase(String projectId) { throw new RuntimeException("Must implement storeToFirebase().");  }
+
+	public void notifySubscribers(String message, String excludedWorkerId) {
+		for(String subscriberId:this.subsribersId){
+			if( ! subscriberId.equals(excludedWorkerId) ){
+				NotificationInFirebase notification = new NotificationInFirebase(
+						"",
+						message,
+						System.currentTimeMillis()
+				);
+				// send notification
+				FirebaseService.writeNotification(
+						notification,
+						subscriberId, 
+						projectId
+				);
+			}
+		}
+	};
 
 
 

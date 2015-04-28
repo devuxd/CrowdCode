@@ -12,6 +12,7 @@ public class CommentInFirebase extends DTO
 	public long id;
 	public String text;
 	public String ownerId;
+	public String ownerHandle;
 	public int score;
 	public List < Long >votersId= new ArrayList<Long>();
 	public long time;
@@ -20,10 +21,11 @@ public class CommentInFirebase extends DTO
 	{
 	}
 
-	public CommentInFirebase(long id, String ownerId, String text, long time, int score)
+	public CommentInFirebase(long id, String ownerId, String ownerHandle, String text, long time, int score)
 	{
 		this.id= id;
 		this.ownerId=ownerId;
+		this.ownerHandle=ownerHandle;
 		this.text=text;
 		this.time= time;
 		this.score=score;

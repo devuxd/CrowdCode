@@ -1,28 +1,33 @@
-<a href="#" ng-click="setView('question_list'); setSelected(null)" class="glyphicon glyphicon-arrow-left">&#9;back</a>
-<h3 class="toggler"> Ask a question: </h3><br/>
-<div class="list-group">
-	<div class="list-group-item">
-		<form>
-			<div class="form-group">
-				<label for="exampleInputEmail1">Title</label>
-				<input type="text" class="form-control" name="title" ng-model="question.title" placeholder="insert title" required>
-			</div>
-			<div class="form-group">
-				<label for="exampleInputPassword1">Text</label>
-				<textarea name="text" class="form-control" ng-model="question.text" placeholder="insert text" required></textarea>
-			</div>
-			<div class="form-group">
-				<span ng-repeat="tag in question.tags" class="tag">{{tag}}</span>
-				<label for="exampleInputPassword2">Tag</label>
-				<input name="text" class="form-control" ng-model="newTag" placeholder="insert tag" data-min-length="1" bs-options="tag for tag in allTags" bs-typeahead press-enter="addTag()">
-			</div>
-			<div class="checkbox">
-			  <label>
-			    <input type="checkbox" ng-model="getArtifactId"> Related to the function
-			  </label>
-			</div>
-			<!-- <button type="submit" ng-click="setView('question_list')" class="btn btn-sm btn-default">back to the questions</button> -->
-			<button type="submit" ng-click="postQuestion() ; setView('question_list')" class="btn btn-sm btn-primary">Ask</button>
-		</form>
+<div class="top">
+	<a href="#" ng-click="setView('question_list'); setSelected(null)" class="glyphicon glyphicon-arrow-left">&#9;back</a>
+</div>
+<div class="middle">
+	<span> Ask a question: </span>
+	<div class="list-group">
+		<div class="list-group-item">
+			<form>
+				<div class="form-group">
+					<label for="exampleInputEmail1">Title</label>
+					<input type="text" class="form-control" name="title" ng-model="question.title" placeholder="insert title" required>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">Text</label>
+					<textarea name="text" class="form-control" ng-model="question.text" placeholder="insert text" required></textarea>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword2">Tag</label>
+					<div><span ng-repeat="tag in question.tags" class="tag">{{tag}} <span ng-click="removeTag(tag)">x</span></span></div>
+					
+					<input name="text" class="form-control" ng-model="newTag" placeholder="insert tag" data-min-length="1" bs-options="tag for tag in allTags" bs-typeahead press-enter="addTag()">
+				</div>
+				<div class="checkbox">
+				  <label>
+				    <input type="checkbox" ng-model="getArtifactId"> this question is related to the current artifact
+				  </label>
+				</div>
+				<!-- <button type="submit" ng-click="setView('question_list')" class="btn btn-sm btn-default">back to the questions</button> -->
+				<button type="submit" ng-click="postQuestion() ; " class="btn btn-sm btn-primary">Ask</button>
+			</form>
+		</div>
 	</div>
 </div>

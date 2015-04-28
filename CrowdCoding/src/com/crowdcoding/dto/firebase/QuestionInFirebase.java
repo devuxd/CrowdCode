@@ -13,6 +13,7 @@ public class QuestionInFirebase extends DTO
 	public String text;
 	public String title;
 	public String ownerId;
+	public String ownerHandle;
 	public long time;
 	public int score;
 	public List < String >tags= new ArrayList<String>();
@@ -26,10 +27,11 @@ public class QuestionInFirebase extends DTO
 	{
 	}
 
-	public QuestionInFirebase(long id, String ownerId, String title, String text, List <String> tags, long time, int score, List <String> subsribersId, List <String> artifactsId)
+	public QuestionInFirebase(long id, String ownerId, String ownerHandle, String title, String text, List <String> tags, long time, int score, List <String> subsribersId, List <String> artifactsId)
 	{
 		this.id= id;
-		this.ownerId=ownerId;
+		this.ownerId     = ownerId;
+		this.ownerHandle = ownerHandle;
 		this.title=title;
 		this.text=text;
 		this.tags=tags;
