@@ -25,8 +25,8 @@ public abstract class MicrotaskCommand extends Command
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it and save the reference to the reissued microtask.
-	public static MicrotaskCommand reviseMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
-		{ return new ReviseMicrotask(microtaskKey, excludedWorkerID, awardedPoint); }
+	public static MicrotaskCommand reviseMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String reissueMotivation, String excludedWorkerID, int awardedPoint)
+		{ return new ReviseMicrotask(microtaskKey, jsonDTOData, reissueMotivation, excludedWorkerID, awardedPoint); }
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it.
@@ -170,12 +170,16 @@ public abstract class MicrotaskCommand extends Command
 	{
 		private String excludedWorkerID;
 		private int awardedPoint;
+		private String jsonDTOData;
+		private String reissueMotivation;
 
-		public ReviseMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
+		public ReviseMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String reissueMotivation, String excludedWorkerID, int awardedPoint)
 		{
 			super(microtaskKey);
 			this.excludedWorkerID = excludedWorkerID;
 			this.awardedPoint = awardedPoint;
+			this.jsonDTOData = jsonDTOData;
+			this.reissueMotivation = reissueMotivation;
 		}
 
 		// Overrides the default execute as no microtask is to be loaded.
@@ -187,7 +191,7 @@ public abstract class MicrotaskCommand extends Command
 
 			//FirebaseService.
 
-			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, projectId, reissuedFromMicrotaskKey);
+			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, reissuedFromMicrotaskKey, jsonDTOData, reissueMotivation,  projectId );
 
 			WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
 

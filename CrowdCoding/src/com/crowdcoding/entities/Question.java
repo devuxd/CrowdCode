@@ -11,7 +11,9 @@ import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.TestDTO;
+import com.crowdcoding.dto.firebase.ArtifactsIdInFirebase;
 import com.crowdcoding.dto.firebase.QuestionInFirebase;
+import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.WriteTest;
@@ -53,7 +55,31 @@ public class Question extends Questioning
 		storeToFirebase();
 
 	}
+	public void removeArtifactLink(String artifactId)
+	{
+		if(artifactsId.remove(artifactId))
+			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
+	}
+	public void addArtifactLink(String artifactId)
+	{
+		if(! artifactsId.contains(artifactId)){
+			artifactsId.add(artifactId);
+			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
+		}
+	}
 
+	public void unsubscribeWorker(String workerId)
+	{
+		if(subsribersId.remove(workerId))
+			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
+	}
+	public void subscribeWorker(String workerId)
+	{
+		if(! artifactsId.contains(workerId)){
+			artifactsId.add(workerId);
+			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
+		}
+	}
 	protected void storeToFirebase() {
 		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId), this.firebasePath, projectId);
 	}

@@ -16,8 +16,8 @@ angular
         token: 'ace_pseudo_call'
     });
 
-    if( angular.isDefined($scope.microtask.reissuedFrom) )
-        $scope.funct.updateFunction($scope.reissuedMicrotask.submission);
+    if( angular.isDefined($scope.microtask.reissuedSubmission) )
+        $scope.funct.updateFunction($scope.microtask.reissuedSubmission);
 
 
 

@@ -272,6 +272,10 @@ public class CrowdServlet extends HttpServlet
 				doVoteQuestioning(req, resp, user);
 			} else if (pathSeg[3].equals("report")){
 				doReportQuestioning(req, resp, user);
+			} else if (pathSeg[3].equals("subscribe")){
+				doSubscribeQuestioning(req, resp, user);
+			} else if (pathSeg[3].equals("link")){
+				doLinkQuestioning(req, resp, user);
 			}
 		} catch( Exception e ) {
 			e.printStackTrace();
@@ -483,17 +487,58 @@ public class CrowdServlet extends HttpServlet
 
 		final String projectID    = (String) req.getAttribute("project");
 		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
-		final boolean removeReport    = Boolean.parseBoolean((String)req.getParameter("removeReport"));
+		final boolean remove    = Boolean.parseBoolean((String)req.getParameter("remove"));
 
 
 		final String workerID     = user.getUserId();
 
 		// Create an initial context, then build a command to insert the value
 		CommandContext context = new CommandContext();
-		if(removeReport)
-			QuestioningCommand.removeReport(questioningId, workerID);
-		else
-			QuestioningCommand.addReport(questioningId, workerID);
+		QuestioningCommand.report(questioningId, workerID, remove);
+
+
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectID);
+	}
+
+	public void doSubscribeQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		// Collect information from the request parameter. Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+
+		final String projectID  	= (String) req.getAttribute("project");
+		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
+		final boolean remove	    = Boolean.parseBoolean((String)req.getParameter("remove"));
+
+		final String workerID     = user.getUserId();
+
+		// Create an initial context, then build a command to insert the value
+		CommandContext context = new CommandContext();
+
+		QuestioningCommand.subscribeWorker(questioningId, workerID, remove);
+
+
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectID);
+	}
+
+	public void doLinkQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		// Collect information from the request parameter. Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+
+		final String projectID  	= (String) req.getAttribute("project");
+		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
+		final boolean remove	    = Boolean.parseBoolean((String)req.getParameter("remove"));
+
+		final String workerID     = user.getUserId();
+
+		// Create an initial context, then build a command to insert the value
+		CommandContext context = new CommandContext();
+
+		QuestioningCommand.linkArtifact(questioningId, workerID, remove);
 
 
 		// Copy the command back out the context to initially populate the command queue.
@@ -508,17 +553,14 @@ public class CrowdServlet extends HttpServlet
 
 		final String projectID    = (String) req.getAttribute("project");
 		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
-		final boolean removeVote    = Boolean.parseBoolean((String)req.getParameter("removeVote"));
+		final boolean remove    = Boolean.parseBoolean((String)req.getParameter("remove"));
 
 
 		final String workerID     = user.getUserId();
 
 		// Create an initial context, then build a command to insert the value
 		CommandContext context = new CommandContext();
-		if(removeVote)
-			QuestioningCommand.removeVote(questioningId, workerID);
-		else
-			QuestioningCommand.addVote(questioningId, workerID);
+		QuestioningCommand.vote(questioningId, workerID, remove);
 
 
 		// Copy the command back out the context to initially populate the command queue.
@@ -725,6 +767,8 @@ public class CrowdServlet extends HttpServlet
 	{
 		if (userID == null || userID.length() == 0)
 			return;
+		System.out.println(userID);
+		System.out.println(projectID);
 
 		CommandContext context = new CommandContext();
 		ProjectCommand.logoutWorker(userID);

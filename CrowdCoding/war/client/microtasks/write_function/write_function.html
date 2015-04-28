@@ -24,7 +24,7 @@
 	</div>
 
 
-	<div ng-show="microtask.reissuedFrom !== undefined" ng-include="'/client/microtasks/reissue_microtask.html'"></div>
+	<div ng-show="microtask.reissuedSubmission !== undefined" ng-include="'/client/microtasks/reissue_microtask.html'"></div>
 
 	<div class="section section-description" ng-if="::microtask.promptType=='RE_EDIT' || microtask.promptType=='REMOVE_CALLEE'" >
 		<div class="section-title"> <div class="dot bg-color"></div> Reported Issue </div>

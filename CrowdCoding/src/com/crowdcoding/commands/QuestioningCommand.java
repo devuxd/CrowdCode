@@ -40,21 +40,19 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand createComment(String jsonDTOData, String workerId, String workerHandle){
 		return new CreateComment(jsonDTOData, workerId, workerHandle);
 	}
-	
-	public static QuestioningCommand addVote(long questioningId, String workerId){
-		return new AddVote(questioningId, workerId);
+
+
+	public static QuestioningCommand vote(long questioningId, String workerId, boolean remove){
+		return new Vote(questioningId, workerId, remove);
 	}
-	
-	public static QuestioningCommand removeVote(long questioningId, String workerId){
-		return new RemoveVote(questioningId, workerId);
+	public static QuestioningCommand report(long questioningId, String workerId, boolean remove){
+		return new Report(questioningId, workerId, remove);
 	}
-	
-	public static QuestioningCommand addReport(long questioningId, String workerId){
-		return new AddReport(questioningId, workerId);
+	public static QuestioningCommand linkArtifact(long questioningId, String artifactId, boolean remove){
+		return new LinkArtifact(questioningId, artifactId, remove);
 	}
-	
-	public static QuestioningCommand removeReport(long questioningId, String workerId){
-		return new RemoveReport(questioningId, workerId);
+	public static QuestioningCommand subscribeWorker(long questioningId, String workerId, boolean remove){
+		return new SubscribeWorker(questioningId, workerId, remove);
 	}
 
 	public static QuestioningCommand notifySubscribers(long questioningId, String message, String excludedWorkerId){
@@ -175,50 +173,81 @@ public abstract class QuestioningCommand extends Command
 		}
 	}
 
-	protected static class AddVote extends QuestioningCommand {
+	protected static class Vote extends QuestioningCommand {
 
-		public AddVote(long questioningId, String workerId) {
+		private boolean remove;
+
+		public Vote(long questioningId, String workerId, boolean remove) {
 			super(questioningId, workerId);
+			this.remove=remove;
+
 		}
 
 		public void execute(Questioning questioning, String projectId) {
 
-			questioning.addVote(workerId);
+			if(this.remove)
+				questioning.removeVote(workerId);
+			else
+				questioning.addVote(workerId);
+
 		}
 	}
 
-	protected static class RemoveVote extends QuestioningCommand {
+	protected static class Report extends QuestioningCommand {
 
-		public RemoveVote(long questioningId, String workerId) {
+		private boolean remove;
+
+		public Report(long questioningId, String workerId, boolean remove) {
 			super(questioningId, workerId);
+			this.remove=remove;
+
 		}
 
 		public void execute(Questioning questioning, String projectId) {
 
-			questioning.removeVote(workerId);
-		}
-	}
-	protected static class AddReport extends QuestioningCommand {
+			if(this.remove)
+				questioning.removeReport(workerId);
+			else
+				questioning.addReport(workerId);
 
-		public AddReport(long questioningId, String workerId) {
-			super(questioningId, workerId);
-		}
-
-		public void execute(Questioning questioning, String projectId) {
-
-			questioning.addReport(workerId);
 		}
 	}
 
-	protected static class RemoveReport extends QuestioningCommand {
 
-		public RemoveReport(long questioningId, String workerId) {
-			super(questioningId, workerId);
+	protected static class LinkArtifact extends QuestioningCommand {
+
+		private boolean remove;
+		private String artifactId;
+
+		public LinkArtifact(long questioningId, String artifactId, boolean remove) {
+			super(questioningId, "");
+			this.artifactId = artifactId;
+			this.remove=remove;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
+			if(this.remove)
+				((Question)questioning).removeArtifactLink(artifactId);
+			else
+				((Question)questioning).addArtifactLink(artifactId);
 
-			questioning.removeReport(workerId);
+		}
+	}
+	protected static class SubscribeWorker extends QuestioningCommand {
+
+		private boolean remove;
+
+		public SubscribeWorker(long questioningId, String workerId, boolean remove) {
+			super(questioningId, workerId);
+			this.remove=remove;
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+			if(this.remove)
+				((Question)questioning).unsubscribeWorker(workerId);
+			else
+				((Question)questioning).subscribeWorker(workerId);
+
 		}
 	}
 	

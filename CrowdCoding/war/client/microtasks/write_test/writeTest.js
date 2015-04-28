@@ -50,9 +50,9 @@ angular
     }
 
 
-    if( angular.isDefined($scope.microtask.reissuedFrom) && angular.isDefined($scope.reissuedMicrotask.submission.simpleTestInputs) ){
-        $scope.testData.inputs=$scope.reissuedMicrotask.submission.simpleTestInputs;
-        $scope.testData.output=$scope.reissuedMicrotask.submission.simpleTestOutput;
+    if( angular.isDefined($scope.microtask.reissuedSubmission) && angular.isDefined($scope.microtask.reissuedSubmission.simpleTestInputs) ){
+        $scope.testData.inputs=$scope.microtask.reissuedSubmission.simpleTestInputs;
+        $scope.testData.output=$scope.microtask.reissuedSubmission.simpleTestOutput;
     }
 
    

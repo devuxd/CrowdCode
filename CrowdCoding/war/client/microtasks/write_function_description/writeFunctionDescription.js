@@ -40,11 +40,11 @@ angular
     };
 
 
-    if(angular.isDefined($scope.microtask.reissuedFrom)){
-        $scope.model.functionName = $scope.reissuedMicrotask.submission.name;
-        $scope.model.description  = $scope.reissuedMicrotask.submission.description;
-        $scope.model.returnType   = $scope.reissuedMicrotask.submission.returnType;
-        $scope.model.parameters   = $scope.reissuedMicrotask.submission.parameters;
+    if(angular.isDefined($scope.microtask.reissuedSubmission)){
+        $scope.model.functionName = $scope.microtask.reissuedSubmission.name;
+        $scope.model.description  = $scope.microtask.reissuedSubmission.description;
+        $scope.model.returnType   = $scope.microtask.reissuedSubmission.returnType;
+        $scope.model.parameters   = $scope.microtask.reissuedSubmission.parameters;
     }
     else{
         //Add the first parameter
