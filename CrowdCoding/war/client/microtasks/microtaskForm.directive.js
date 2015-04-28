@@ -7,6 +7,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
         restrict: 'E',
         templateUrl: '/client/microtasks/microtask_form.html',
         controller: function($scope,$element,$attrs){
+        	console.log('controller microtask form');
 			// private vars
 			var templatesURL = "/client/microtasks/";
 			var templates = {
@@ -45,7 +46,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 				// retrieve the related test
 				if ( angular.isDefined($scope.microtask.testID) )
-					$scope.test = TestList.get(testId).rec;
+					$scope.test = TestList.get($scope.microtask.testID).rec;
 
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
@@ -84,7 +85,6 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 				// show the loading screen
 				$scope.templatePath  = templatesURL + "loading.html";
-
 				microtasks.fetch();
 			});
 

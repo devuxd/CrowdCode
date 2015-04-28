@@ -60,7 +60,7 @@ angular
 		function serviceLoaded(event,nameOfTheService){
 			servicesLoadingStatus[nameOfTheService] = true;
 
-			if ( servicesLoadingStatus.hasOwnProperty('functions') && servicesLoadingStatus.hasOwnProperty('adts') ) {
+			if ( servicesLoadingStatus.hasOwnProperty('functions') && servicesLoadingStatus.hasOwnProperty('adts') && servicesLoadingStatus.hasOwnProperty('questions') ) {
 
 				$interval.cancel(loadingServicesInterval);
 				loadingServicesInterval = undefined;
@@ -68,7 +68,6 @@ angular
 
 				userService.listenForJobs();
 				userService.listenForLogoutWorker();
-
 
 				$rootScope.$broadcast('fecthMicrotask');
 

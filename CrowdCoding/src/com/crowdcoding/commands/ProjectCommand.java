@@ -52,11 +52,11 @@ public abstract class ProjectCommand extends Command
 		queueCommand(this);
 	}
 
-	public void execute(String  projectId)
+	public void execute(final String  projectId)
 	{
-		final Project project = Project.Create(projectId);
 		ofy().transact(new VoidWork() {
 	        public void vrun() {
+	        	Project project = Project.Create(projectId);
 	        	execute(project);
 	        }
 		});	

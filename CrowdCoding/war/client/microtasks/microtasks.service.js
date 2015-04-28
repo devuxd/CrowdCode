@@ -17,26 +17,20 @@ angular
 		function get (id){
 			var microtaskSync = $firebase(new Firebase($rootScope.firebaseURL+'/microtasks/'+id));
 			var microtask = microtaskSync.$asObject();
-
 			return microtask;
 		}
 
 		function submit (microtask, formData,autoSkip){
-
-
 			var skip = formData === undefined ? 'true' : 'false' ;
 			var disablePoint = autoSkip ? 'true':'false';
 			// submit to the server
 			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint, formData)
-
 				.success(function(data, status, headers, config) {
-
 					loadMicrotask(data);
 				})
 				.error(function(data, status, headers, config) {
 					$rootScope.$broadcast('noMicrotask');
 				});
-			return;
 		}
 
 		function fetch (){
@@ -48,16 +42,15 @@ angular
 				.error(function(data, status, headers, config) {
 					$rootScope.$broadcast('noMicrotask');
 				});
-			return;
 		}
+
 		function loadMicrotask (data){
-			if(data.microtaskKey===undefined)
-			{
+			if(data.microtaskKey===undefined) {
 				$rootScope.$broadcast('noMicrotask');
-			}
-			else{
+			} else {
 				var microtask = get(data.microtaskKey);
 				microtask.$loaded().then(function() {
+					console.log(microtask);
 					$rootScope.$broadcast('loadMicrotask',microtask, data.firstFetch);
 				});
 			}
