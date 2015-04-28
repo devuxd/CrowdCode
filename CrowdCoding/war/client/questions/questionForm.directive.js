@@ -35,9 +35,20 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 			function postQuestion(){
 				addTag();
 				if($scope.getArtifactId)
-					$scope.question.artifactId=$scope.fetchedMicrotask.owningArtifactId;
+					$scope.question.artifactId = $scope.fetchedMicrotask.owningArtifactId;
 
-				questionsService.submitQuestion('question',$scope.question);
+				questionsService
+					.submitQuestion('question',$scope.question)
+					.then(function(){
+						$scope.question = {
+							title: '',
+							text: '',
+							tags: []
+						};
+						$scope.setView('question_list');
+					},function(){
+						console.log('error submitting the question')
+					});
 			}
 
 		}

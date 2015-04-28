@@ -10,7 +10,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 			$scope.comment.text     = '';
 			$scope.comment.answerId = null;
 
-			$scope.workerId        = workerId;
+			$scope.workerId    = workerId;
 
 			$scope.postAnswer  = postAnswer;
 			$scope.postComment = postComment;
@@ -26,6 +26,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 					remove= true;
 				questionsService.vote(questioning.id,remove);
 			}
+
 			function toggleVoteDown(questioning)
 			{
 				var remove = false;
@@ -34,24 +35,32 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 				questionsService.report(questioning.id,remove);
 			}
 
-
 			function postComment(){
-
-				console.log('posting comment',$scope.comment);
 				if( $scope.comment.text != ''){
-					var commentForm={questionId : $scope.sel.id , answerId : $scope.comment.answerId, text : $scope.comment.text };
-					$scope.comment.text ='';
-					$scope.comment.answerId = null;
-					questionsService.submitQuestion("comment",commentForm);
+					var commentForm = { questionId : $scope.sel.id , answerId : $scope.comment.answerId, text : $scope.comment.text };
+					questionsService
+						.submitQuestion("comment",commentForm)
+						.then(function(){
+							$scope.comment.text ='';
+							$scope.comment.answerId = null;
+							$scope.showCommentForm = false;
+						},function(){
+							console.log('error posting the comment');
+						});
 				}
 			}
 
 			function postAnswer(){
-				console.log('posting answer',$scope.answer);
 				if( $scope.answer.text != ''){
-					var answerForm={questionId : $scope.sel.id , text : $scope.answer.text};
-					$scope.answer.text='';
-					questionsService.submitQuestion("answer",answerForm);
+					var answerForm = { questionId : $scope.sel.id , text : $scope.answer.text };
+					questionsService
+						.submitQuestion("answer",answerForm)
+						.then(function(){
+							$scope.answer.text='';
+							$scope.showAnswerForm = false;
+						},function(){
+							console.log('error posting the answer');
+						});
 				}
 			}
 		}

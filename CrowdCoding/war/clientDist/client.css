@@ -571,6 +571,16 @@ h1, h2, h3, h4 {
 .questions question-list.ng-hide { margin-left:-100%; } 
 
 .questions question-list .question-item { cursor: pointer; }
+.questions question-list .question-item:hover { background-color:#E0E0E0; }
+
+.questions .question-item.ng-enter{
+  -webkit-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+  opacity: 0;
+}
+.questions .question-item.ng-enter.ng-enter-active{
+	opacity: 1;
+}
 
 
 .questions question-detail,
@@ -1449,3 +1459,5 @@ pre.json .jsonKey { color: black; }
 .no-border li{
 	border: 0px solid #ddd;
 }
+
+.not-allowed { cursor:not-allowed; }

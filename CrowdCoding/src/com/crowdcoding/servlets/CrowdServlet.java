@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
@@ -58,6 +59,8 @@ import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
+import com.google.appengine.api.log.LogService;
+import com.google.appengine.api.log.LogServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -83,18 +86,6 @@ public class CrowdServlet extends HttpServlet
 
 	static
 	{
-		// Every microtask MUST be registered here, mapping its name to its class.
-		// Microtasks are listed in alphabetical order.
-		microtaskTypes.put("ReuseSearch", ReuseSearch.class);
-		microtaskTypes.put("Review", Review.class);
-		microtaskTypes.put("WriteFunction", WriteFunction.class);
-		microtaskTypes.put("DebugTestFailure", DebugTestFailure.class);
-		microtaskTypes.put("WriteCall", WriteCall.class);
-		microtaskTypes.put("WriteFunctionDescription", WriteFunctionDescription.class);
-		microtaskTypes.put("WriteTest", WriteTest.class);
-		microtaskTypes.put("WriteTestCases", WriteTestCases.class);
-		microtaskTypes.put("WriteFunction", WriteFunction.class);
-
 		// Must register ALL entities and entity subclasses here.
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Project.class);
@@ -134,11 +125,20 @@ public class CrowdServlet extends HttpServlet
 
 	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-
+		
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
+        
+        if( req.getParameter("workerId") != null ){
+			User dummyUser = new User(req.getParameter("workerId")+"@dummy.dm","dummy",req.getParameter("workerId"));
+			user = dummyUser;
+        }
+        
 
+		Logger log =  Logger.getLogger("LOGGER");
+		log.warning("ACTION BLA BLA BLA "+user);
+        
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
@@ -185,14 +185,11 @@ public class CrowdServlet extends HttpServlet
 
 					if(!projectExists){
 						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
-
 							Project.Construct(projectId);
 						} else {
 							req.getRequestDispatcher("/404.jsp").forward(req, resp);
 						}
 					}
-
-
 
 					if ( pathSeg.length <= 2 ){
 						req.getRequestDispatcher("/clientDist/client.jsp").forward(req, resp);
@@ -256,8 +253,8 @@ public class CrowdServlet extends HttpServlet
 		if (pathSeg[3].equals("fetch")){
 			doFetchMicrotask(req, resp, user);
 
-		} else if (pathSeg[3].equals("submit")){
-			doSubmitMicrotask(req, resp);
+//		} else if (pathSeg[3].equals("submit")){
+//			doSubmitMicrotask(req, resp);
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
 		} else if (pathSeg[3].equals("enqueue")){
@@ -268,12 +265,17 @@ public class CrowdServlet extends HttpServlet
 	private void doQuestioning(HttpServletRequest req, HttpServletResponse resp,
 			final String projectID, User user, final String[] pathSeg) throws IOException, FileUploadException
 	{
-		if (pathSeg[3].equals("insert")){
-			doInsertQuestioning(req, resp, user);
-		} else if (pathSeg[3].equals("vote")){
-			doVoteQuestioning(req, resp, user);
-		} else if (pathSeg[3].equals("report")){
-			doReportQuestioning(req, resp, user);
+		try {
+			if (pathSeg[3].equals("insert")){
+				doInsertQuestioning(req, resp, user);
+			} else if (pathSeg[3].equals("vote")){
+				doVoteQuestioning(req, resp, user);
+			} else if (pathSeg[3].equals("report")){
+				doReportQuestioning(req, resp, user);
+			}
+		} catch( Exception e ) {
+			e.printStackTrace();
+			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -449,37 +451,30 @@ public class CrowdServlet extends HttpServlet
 		// Collect information from the request parameter. Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
+		final String projectId    = (String) req.getAttribute("project");
+		final String type    = (String) req.getParameter("type");
+		final String payload      = Util.convertStreamToString(req.getInputStream());
 
-		try
-    	{
-    		final String projectId    = (String) req.getAttribute("project");
-    		final String type    = (String) req.getParameter("type");
-			final String payload      = Util.convertStreamToString(req.getInputStream());
+		final String workerId     = user.getUserId();
+		final String workerHandle = user.getNickname();
+		
+		// Create an initial context, then build a command to insert the value
+		CommandContext context = new CommandContext();
 
-			final String workerId     = user.getUserId();
-			final String workerHandle = user.getNickname();
-			
-			// Create an initial context, then build a command to insert the value
-			CommandContext context = new CommandContext();
-
-			if(type.equals("question"))
-				QuestioningCommand.createQuestion(payload, workerId, workerHandle);
-			else if(type.equals("answer"))
-				QuestioningCommand.createAnswer(payload, workerId, workerHandle);
-			else if(type.equals("comment"))
-				QuestioningCommand.createComment(payload, workerId, workerHandle);
-			else
-				throw new RuntimeException("Error - " + type + " is not registered as a questioning type.");
+		if(type.equals("question"))
+			QuestioningCommand.createQuestion(payload, workerId, workerHandle);
+		else if(type.equals("answer"))
+			QuestioningCommand.createAnswer(payload, workerId, workerHandle);
+		else if(type.equals("comment"))
+			QuestioningCommand.createComment(payload, workerId, workerHandle);
+		else
+			throw new RuntimeException("Error - " + type + " is not registered as a questioning type.");
 
 
-			// Copy the command back out the context to initially populate the command queue.
-			executeCommands(context.commands(), projectId);
-    	}
-    	catch (IOException e)
-    	{
-    		e.printStackTrace();
-    	}
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectId);
 	}
+	
 	public void doReportQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		// Collect information from the request parameter. Since the transaction may fail and retry,
@@ -532,49 +527,44 @@ public class CrowdServlet extends HttpServlet
 
 
 	// Notify the server that a microtask has been completed.
-	public void doSubmitMicrotask(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
-	{
-		// Collect information from the request parameter. Since the transaction may fail and retry,
-		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
-		// And anything inside the transaction MUST not mutate the values produced.
-
-		try
-    	{
-    		final String projectID    = (String) req.getAttribute("project");
-
-			final String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
-			final String microtaskKey = req.getParameter("key") ;
-			final String type         = req.getParameter("type");
-			final String payload      = Util.convertStreamToString(req.getInputStream());
-			final boolean skip		  = Boolean.parseBoolean(req.getParameter("skip"));
-			final boolean disablePoint = Boolean.parseBoolean( req.getParameter("disablepoint"));
-
-
-			System.out.println("--> SERVLET: submitted mtask key = "+microtaskKey);
-
-			// Create an initial context, then build a command to skip or submit
-			CommandContext context = new CommandContext();
-
-			// Create the skip or submit commands
-			if (skip)
-				ProjectCommand.skipMicrotask( microtaskKey, workerID, disablePoint);
-			else{
-				Class microtaskType = microtaskTypes.get(type);
-				if (microtaskType == null)
-					throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
-
-				ProjectCommand.submitMicrotask( microtaskKey, microtaskType, payload, workerID);
-
-			}
-
-			// Copy the command back out the context to initially populate the command queue.
-			executeCommands(context.commands(), projectID);
-    	}
-    	catch (IOException e)
-    	{
-    		e.printStackTrace();
-    	}
-	}
+//	public void doSubmitMicrotask(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
+//	{
+//		// Collect information from the request parameter. Since the transaction may fail and retry,
+//		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+//		// And anything inside the transaction MUST not mutate the values produced.
+//
+//		try
+//    	{
+//    		final String projectID    = (String) req.getAttribute("project");
+//
+//			final String workerID     = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+//			final String microtaskKey = req.getParameter("key") ;
+//			final String type         = req.getParameter("type");
+//			final String payload      = Util.convertStreamToString(req.getInputStream());
+//			final boolean skip		  = Boolean.parseBoolean(req.getParameter("skip"));
+//			final boolean disablePoint = Boolean.parseBoolean( req.getParameter("disablepoint"));
+//
+//
+//			System.out.println("--> SERVLET: submitted mtask key = "+microtaskKey);
+//
+//			// Create an initial context, then build a command to skip or submit
+//			CommandContext context = new CommandContext();
+//
+//			// Create the skip or submit commands
+//			if (skip)
+//				ProjectCommand.skipMicrotask( microtaskKey, workerID, disablePoint);
+//			else{
+//				ProjectCommand.submitMicrotask( microtaskKey, payload, workerID);
+//			}
+//
+//			// Copy the command back out the context to initially populate the command queue.
+//			executeCommands(context.commands(), projectID);
+//    	}
+//    	catch (IOException e)
+//    	{
+//    		e.printStackTrace();
+//    	}
+//	}
 
 	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException{
 		doFetchMicrotask(req,resp,user,false);
@@ -590,48 +580,48 @@ public class CrowdServlet extends HttpServlet
     	final Project project = Project.Create(projectID);
 		final Worker worker   = Worker.Create(user, project);
 
-    	String jsonResponse = ofy().transact(new Work<String>() {
+	
+		
+
+		System.out.println("FETCH");
+    	String jsonResponse = ofy().transactNew( new Work<String>(){
+
+			@Override
 			public String run() {
-				// if the unassignment is forced
+				System.out.println("TRANSACTION");
 				Key<Microtask> microtaskKey = null;
-				String jsonResponse;
 		    	int firstFetch=0;
-				
-		    	if( unassign ){
+				if( unassign ){
 		    		project.unassignMicrotask( worker.getUserid() );
-		    	}
-		    	// otherwise search for the current assignment
-		    	else{
+		    	} else {
 		    		microtaskKey = project.lookupMicrotaskAssignment( worker.getUserid() );
 		    	}
 		    	
-				// if the user hasn't an assigned microtask
-				// search for a queued one
-				if (microtaskKey == null){
-					microtaskKey = project.assignMicrotask( worker.getUserid() , worker.getNickname() ) ;			
-			    	firstFetch=1;
-				}
-				
+		    	if( microtaskKey == null ){
 
-				if (microtaskKey == null) {
+		    		microtaskKey = project.assignMicrotask( worker.getUserid() , worker.getNickname() ) ;	
+		    		firstFetch = 1;
+		    	}
+		    	String jsonResponse = "";
+		    	if (microtaskKey == null) {
 					jsonResponse =  "{}";
-				}
-				else{
+				} else{
 					jsonResponse =  "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}";
 				}
+		    	return jsonResponse;
 				
-				return jsonResponse;
 			}
-		});
+    		
+    	});
     	
+    	
+    	
+
+		renderJson(resp,jsonResponse);
+		
 
         HistoryLog.Init(projectID).publish();
         FirebaseService.publish();
-	    //ProjectCommand.logoutInactiveWorkers();
-
-    	// If there are no microtasks available, send an empty response.
-	    // Otherwise, send the json with microtask info.
-		renderJson(resp,jsonResponse);
 	}
 
 	/**
@@ -648,11 +638,9 @@ public class CrowdServlet extends HttpServlet
 		final String projectId     = (String) req.getAttribute("project");
 		final String workerId      = user.getUserId();
 		final String microtaskKey  = req.getParameter("key") ;
-		final String microtaskType = req.getParameter("type");
 		final String JsonDTO       = Util.convertStreamToString(req.getInputStream());
 		final String skip          = req.getParameter("skip");
 		final String disablePoint  = req.getParameter("disablepoint");
-
 
 		// fetch the new microtask
         doFetchMicrotask(req,resp,user,true);
@@ -662,7 +650,6 @@ public class CrowdServlet extends HttpServlet
 		task.param("projectId", projectId);
 		task.param("workerId", workerId);
 		task.param("microtaskKey", microtaskKey);
-		task.param("microtaskType", microtaskType);
 		task.param("JsonDTO", JsonDTO);
 		task.param("skip", skip.toString());
 		task.param("disablepoint", disablePoint.toString());
@@ -671,9 +658,8 @@ public class CrowdServlet extends HttpServlet
         Queue queue = QueueFactory.getDefaultQueue();
         queue.add(task);
 
-        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-		System.out.println(time + " - ADD: "+microtaskKey+" by "+workerId);
-		
+//        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+//		System.out.println(time + " - ADD: "+microtaskKey+" by "+workerId);
 	}
 
 	public void doExecuteSubmit(final HttpServletRequest req, final HttpServletResponse resp){
@@ -681,15 +667,13 @@ public class CrowdServlet extends HttpServlet
 		final String projectID    = req.getParameter("projectId") ;
 		final String workerID     = req.getParameter("workerId") ;
 		final String microtaskKey = req.getParameter("microtaskKey") ;
-		final String type         = req.getParameter("microtaskType");
 		final String JsonDTO      = req.getParameter("JsonDTO");
 		final Boolean skip        = Boolean.parseBoolean(req.getParameter("skip"));
 		final Boolean disablePoint=Boolean.parseBoolean(req.getParameter("disablepoint"));
 
-
-
-		String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-		System.out.println(time + " - EXE: "+microtaskKey+" by "+workerID);
+		System.out.println( "skip="+skip + "; json = "+JsonDTO );
+//		String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+//		System.out.println(time + " - EXE: "+microtaskKey+" by "+workerID);
 
 		// Create an initial context, then build a command to skip or submit
 		CommandContext context = new CommandContext();
@@ -698,23 +682,15 @@ public class CrowdServlet extends HttpServlet
 		if (skip)
 			ProjectCommand.skipMicrotask( microtaskKey, workerID, disablePoint);
 		else{
-			System.out.println("microtask tyoe : "+type);
-			Class microtaskType = microtaskTypes.get(type);
-			if (microtaskType == null)
-					throw new RuntimeException("Error - " + type + " is not registered as a microtask type.");
-			else
-				ProjectCommand.submitMicrotask( microtaskKey, microtaskType, JsonDTO, workerID);
+			ProjectCommand.submitMicrotask( microtaskKey, JsonDTO, workerID);
 		}
 
 		// Copy the command back out the context to initially populate the command queue.
 		executeCommands(context.commands(), projectID);
-		resp.setStatus(resp.SC_OK);
+		resp.setStatus(HttpServletResponse.SC_OK);
 
-		time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-		System.out.println(time + " - END: "+microtaskKey+" by "+workerID);
-
-
-
+//		time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+//		System.out.println(time + " - END: "+microtaskKey+" by "+workerID);
 	}
 
 	private void renderJson(final HttpServletResponse resp,String json) throws IOException{
@@ -723,6 +699,7 @@ public class CrowdServlet extends HttpServlet
 		out.print(json);
 		out.flush();
 	}
+	
 	private void renderCode(final HttpServletResponse resp, String projectId) throws IOException{
 		resp.setContentType("text/javascript;charset=utf-8");
 		Project project=  Project.Create(projectId);

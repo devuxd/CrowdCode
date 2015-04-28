@@ -19,7 +19,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		        		$scope.questions = questionsService.getQuestions();
 		        	else {
 		        		$scope.questions = questionsService.searchResults( val );
-		        		console.log($scope.questions);
 		        	}
 		        }, 250); // delay 250 ms
 			});

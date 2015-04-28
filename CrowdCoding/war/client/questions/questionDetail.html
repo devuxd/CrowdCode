@@ -23,12 +23,12 @@
 				<span 
 					ng-click="toggleVoteUp(sel)" 
 					class="glyphicon glyphicon-thumbs-up unselected" 
-					ng-class="{'selected':sel.votersId.indexOf(workerId)>-1}">
+					ng-class="{'selected':sel.votersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
 				</span>
 				<span 
 					ng-click="toggleVoteDown(sel)" 
 					class="glyphicon glyphicon-thumbs-down unselected" 
-					ng-class="{'selected':sel.reportersId.indexOf(workerId)>-1}">
+					ng-class="{'selected':sel.reportersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
 				</span>
 			</div>
 
@@ -41,7 +41,7 @@
 
 	<ul class="list-group">
 
-		<li class="list-group-item answer-item" ng-repeat="answer in sel.answers | orderObjectBy : 'time' : false">
+		<li class="list-group-item answer-item" ng-repeat="answer in sel.answers | orderObjectBy : 'time' : false" ng-animate-children>
 
 			<div class="content-panel">
 				<span>{{answer.text}}</span>
@@ -59,12 +59,12 @@
 				<span
 					ng-click="toggleVoteUp(answer)"
 					class="glyphicon glyphicon-thumbs-up unselected"
-					ng-class="{'selected':answer.votersId.indexOf(workerId)>-1}">
+					ng-class="{'selected':answer.votersId.indexOf(workerId)>-1, 'not-allowed': answer.ownerId == workerId}">
 				</span>
 				<span
 					ng-click="toggleVoteDown(answer)"
 					class="glyphicon glyphicon-thumbs-down unselected"
-					ng-class="{'selected':answer.reportersId.indexOf(workerId)>-1}">
+					ng-class="{'selected':answer.reportersId.indexOf(workerId)>-1, 'not-allowed': answer.ownerId == workerId}">
 				</span>
 			</div>
 
@@ -72,7 +72,7 @@
 			<span class="clearfix"></span>
 
 			<ul class="list-group">
-				<li class="list-group-item comment-item" ng-repeat="comment in answer.comments | orderObjectBy : 'time' : false">
+				<li class="list-group-item comment-item" ng-repeat="comment in answer.comments | orderObjectBy : 'time' : false" >
 					<div class="content-panel">
 						<span>{{comment.text}}</span>
 						<br />
@@ -88,12 +88,12 @@
 						<span 
 							ng-click="toggleVoteUp(comment)"
 							class="glyphicon glyphicon-thumbs-up unselected"
-							ng-class="{'selected':comment.votersId.indexOf(workerId)>-1}">
+							ng-class="{'selected':comment.votersId.indexOf(workerId)>-1, 'not-allowed': comment.ownerId == workerId}">
 						</span>
 						<span
 							ng-click="toggleVoteDown(comment)"
 							class="glyphicon glyphicon-thumbs-down unselected"
-							ng-class="{'selected':comment.reportersId.indexOf(workerId)>-1}">
+							ng-class="{'selected':comment.reportersId.indexOf(workerId)>-1, 'not-allowed': comment.ownerId == workerId}">
 						</span>
 					</div>
 
@@ -114,7 +114,7 @@
 							</textarea>
 						</div>
 						<button type="submit" 
-								ng-click="postComment() ; showCommentForm = false;" 
+								ng-click="postComment() ; " 
 								class="btn btn-xs btn-primary pull-right">
 								Post Comment
 						</button>

@@ -28,7 +28,7 @@ angular
 			return microtask;
 		}
 
-		function submit (microtask, formData,autoSkip){
+		function submit (microtask, formData, autoSkip){
 			var deferred = $q.defer();
 
 			if( microtask == undefined )
@@ -36,9 +36,11 @@ angular
 
 			var skip = formData == null;
 			var disablePoint = autoSkip||false;
-			// submit to the server
-			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip='+(skip? 'true' : 'false') + '&disablepoint=' +(disablePoint ? 'true':'false'), formData)
 
+			console.log(JSON.stringify(formData));
+			
+			// submit to the server
+			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?key=' + microtask.$id+ '&skip='+(skip? 'true' : 'false') + '&disablepoint=' +(disablePoint ? 'true':'false'), formData)
 				.success(function(data, status, headers, config) {
 					// submit to Firebase
 					microtask.submission = formData;
@@ -49,12 +51,13 @@ angular
 				.error(function(data, status, headers, config) {
 					deferred.reject(data);
 				});
+
 			return deferred.promise;
 		}
 
 		function fetch (){
 			var deferred = $q.defer();
-
+			console.log('FETCHING');
 			// ask the microtask id
 			$http.get('/' + projectId + '/ajax/fetch')
 				.success(function(data, status, headers, config) {

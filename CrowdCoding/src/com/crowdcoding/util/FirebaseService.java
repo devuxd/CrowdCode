@@ -344,14 +344,21 @@ public class FirebaseService
 			URLFetchService fetchService = URLFetchServiceFactory.getURLFetchService();
 			HTTPRequest request = new HTTPRequest(new URL(absoluteURL), operation);
 			request.setPayload(data.getBytes());
+			HTTPResponse response = fetchService.fetch(request);
 			Future<HTTPResponse> fetchAsync = fetchService.fetchAsync(request);
 
+			
+			if( response.getResponseCode() != 200){
+				System.out.println("FIREBASE WRITE FAILED: "+response.getResponseCode()+" - "+absoluteURL+" - "+data);
+			}
 			// wait while fetchAsync is done
 			//while( ! fetchAsync.isDone() );
 
 		}
 		catch (MalformedURLException e) {
 			System.out.println("Malformed url: "+e);
+		} catch (IOException e) {
+			System.out.println("IOException url: "+e);
 		}
 	}
 

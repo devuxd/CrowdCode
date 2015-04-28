@@ -35,6 +35,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
+import com.googlecode.objectify.VoidWork;
+import com.googlecode.objectify.Work;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Serialize;
@@ -98,7 +100,6 @@ public class Project
 	// this is called ONCE per project by Construct
 	private Project(String id)
 	{
-
 		// set the id
 		this.id = id;
 
@@ -279,11 +280,12 @@ public class Project
 	{
 		// retrieve the current permanently excluded workers for the microtask
 		// if is empty create one
-		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get( Microtask.keyToString(microtaskKey) );
+		String microtaskKeyString =  Microtask.keyToString(microtaskKey);
+		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get( microtaskKeyString );
 		if (excludedWorkersForMicrotask == null)
 		{
 			excludedWorkersForMicrotask = new HashSet<String>();
-			excludedWorkers.put(  Microtask.keyToString(microtaskKey) , excludedWorkersForMicrotask);
+			excludedWorkers.put( microtaskKeyString , excludedWorkersForMicrotask);
 		}
 
 		excludedWorkersForMicrotask.add(workerID);
@@ -294,114 +296,110 @@ public class Project
 	public Key<Microtask> lookupMicrotaskAssignment(String workerID)
 	{
 		String microtaskKeyString =  microtaskAssignments.get( workerID );
-
-		// if no microtask assignments for this worker, return null
-		if( microtaskKeyString == null ) return null;
+		if( microtaskKeyString == null ) 
+			return null;
 
 		return Microtask.stringToKey(microtaskKeyString);
 	}
 
-	public void unassignMicrotask( String workerID ){
-		String assigned = microtaskAssignments.get(workerID);
-		if( assigned != null ){
-			microtaskAssignments.put( workerID, null);
-			Microtask assignedMtask = ofy().load().key( Microtask.stringToKey(assigned) ).now();
+	public void unassignMicrotask( final String workerID ){
+		String assignedMicrotaskKey = microtaskAssignments.get(workerID);
+		final Project project = this;
+		if( assignedMicrotaskKey != null ){
+			ofy().transact(new VoidWork(){
+				public void vrun() {
+					microtaskAssignments.put( workerID, null);
+					ofy().save().entity(project).now();
+				}
+			});
+				
+			Microtask assignedMtask = ofy().load().key( Microtask.stringToKey(assignedMicrotaskKey) ).now();
 			HistoryLog
 				.Init(this.getID())
 				.addEvent(new MicrotaskUnassigned( assignedMtask, workerID));
-			ofy().save().entity(this).now();
 		}
 
 	}
 
 	// Assigns a microtask to worker and returns its microtaskKey.
 	// Returns null if no microtasks are available.
-	public Key<Microtask> assignMicrotask( String workerID, String workerHandle )
+	public Key<Microtask> assignMicrotask( final String workerID, String workerHandle )
 	{
 		// Ensure that the worker is marked as logged in
 		loggedInWorkers.add( workerID );
 
 		// Look for a microtask, checking constraints on it along the way
-		Key<Microtask> microtaskKey = null;
-
-		// First, check if there any review microtasks queued.
-		// Review microtasks get priority, as they need to be done quickly.
-		for ( String potentialMicrotaskKey : reviewQueue ){
-			if ( microtaskKey == null && assignmentIsValid( potentialMicrotaskKey, workerID ) ){
-				microtaskKey = Microtask.stringToKey( potentialMicrotaskKey );
-			}
-		}
-
-
-		// if there an available review has been found remove it from the queue
-		// and update the Firebase review queue
-		if ( microtaskKey != null ) {
-			reviewQueue.remove( Microtask.keyToString(microtaskKey) );
-			FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), this.getID());
-		}
-
-		// else continue looking in the global microtask queue
-		else {
-			for ( String potentialMicrotaskKey : microtaskQueue ){
-				if ( microtaskKey == null && assignmentIsValid( potentialMicrotaskKey, workerID) ){
-					microtaskKey =  Microtask.stringToKey(potentialMicrotaskKey) ;
+		final Project project = this;
+		Microtask mtask = ofy().transact(new Work<Microtask>(){
+			public Microtask run() {
+				String  microtaskKey = null;
+				Boolean isReview = false;
+				
+				// First, check if there any review microtasks queued.
+				// Review microtasks get priority, as they need to be done quickly.
+				for ( String potentialMicrotaskKey : reviewQueue ){
+					if ( microtaskKey == null && assignmentIsValid( potentialMicrotaskKey, workerID ) ){
+						microtaskKey = potentialMicrotaskKey;
+						isReview = true;
+					}
 				}
+				
+				if( microtaskKey == null ){
+					for ( String potentialMicrotaskKey : microtaskQueue ){
+						if ( microtaskKey == null && assignmentIsValid( potentialMicrotaskKey, workerID) ){
+							microtaskKey = potentialMicrotaskKey;
+						}
+					}
+				}
+				
+				// If there are no more microtasks currently available, return null
+				if ( microtaskKey != null) {	
+					Microtask mtask = ofy().load().key( Microtask.stringToKey(microtaskKey) ).now();
+					if( mtask!=null ){
+						
+						if( isReview ) reviewQueue.remove( microtaskKey );
+						else           microtaskQueue.remove( microtaskKey );
+					
+	
+						// assign it to the worker
+						mtask.setWorkerId( workerID );
+						microtaskAssignments.put( workerID,  Microtask.keyToString( mtask.getKey() ) );
+
+						// save the project
+						ofy().save().entity(project).now();
+						ofy().save().entity(mtask).now();
+						
+						return mtask;
+					}
+				} 
+
+				return null;
+			}
+		});
+		
+		if( mtask != null ){
+
+			if( mtask.microtaskName().equals("Review") ){
+				FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project.getID() );
+			} else{
+				FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project.getID() );
 			}
 
-			// if a microtask has been found remove it from the queue
-			// and update the Firebase microtask queue
-			if ( microtaskKey != null ){
-				microtaskQueue.remove( Microtask.keyToString(microtaskKey) );
-				FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
-			}
-		}
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString( mtask.getKey() ), workerID, project.getID(), true);
 
+			HistoryLog
+				.Init(project.getID())
+				.addEvent( new MicrotaskDequeued(mtask));
 
-		// TODO: we need to check if the microtask is no longer needed
-
-		// 2. If the microtask is no longer needed, keep looking
-//		if (!potentialMicrotask.isStillNeeded(project))
-//		{
-//			potentialMicrotask.markCompleted(project);
-//			continue microtaskSearch;
-//		}
-
-		// If there are no more microtasks currently available, return null
-		if ( microtaskKey == null) {
-			ofy().save().entity(this).now();
-			return null;
-		}
-
-		// else if a microtask was found
-		else{
-			// load it from the datastore
-			Microtask mtask = ofy().transactionless().load().key(microtaskKey).now();
-			if(mtask!=null){
-				// assign it to the worker
-				mtask.setWorkerId(workerID);
-				microtaskAssignments.put( workerID,  Microtask.keyToString(microtaskKey) );
-
-				// save the project
-				ofy().save().entity(this).now();
-
-				FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey), workerID, this.getID(), true);
-
-				HistoryLog
-					.Init(this.getID())
-					.addEvent( new MicrotaskDequeued(  ofy().load().key(microtaskKey).now() ));
-
-				HistoryLog
-					.Init(this.getID())
-					.addEvent(new MicrotaskAssigned(mtask,workerID));
-			}else
-				System.out.println("ERROR MICROTASK NULL----> "+microtaskKey);
+			HistoryLog
+				.Init(project.getID())
+				.addEvent(new MicrotaskAssigned(mtask,workerID));
 
 			// return the assigned microtask key
-			return microtaskKey;
+			return mtask.getKey();
 		}
-
-		// TODO: we should store this to firebase somewhere.
-		//microtask.assignmentTimeInMillis = System.currentTimeMillis();
+		
+		return null;
 	}
 
 	// Checks both the excludedWorkers and skippedWorkers to see if microtaskKey is a valid
@@ -409,11 +407,11 @@ public class Project
 	private boolean assignmentIsValid( String potentialMicrotaskKey, String workerID)
 	{
 		// retrieve the excluded workers
-		HashSet<String> microtaskExcludedWorkers = excludedWorkers.get( potentialMicrotaskKey );
+		HashSet<String> excludedWorkersForMicrotask = excludedWorkers.get( potentialMicrotaskKey );
 
 		// if the excluded workers is empty and
 		// contains the workerId
-		if (microtaskExcludedWorkers != null && microtaskExcludedWorkers.contains(workerID))
+		if ( excludedWorkersForMicrotask != null && excludedWorkersForMicrotask.contains(workerID))
 			return false;
 		else
 			return true;
@@ -422,10 +420,9 @@ public class Project
 	// Called to process a microtask submission based on form data (in json format)
 	// If the microtask has previously been submitted or is no longer open, the submission is
 	// dropped, ensuring workers cannot submit against already completed microtasks.
-	public void submitMicrotask(Key<Microtask> microtaskKey, Class microtaskType, String jsonDTOData, String workerID, Project project){
+	public void submitMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, Project project){
 
 		Microtask microtask = ofy().load().key( microtaskKey ).now();
-
 		// submit only if the request come from
 		// the current assigned worker of the microtask
 		if(microtask!=null &&  microtask.isAssignedTo(workerID) ){
@@ -440,43 +437,43 @@ public class Project
 			// is not in [Review, ReuseSearch,DebugTestFailure],
 			// spawn a new review microtask
 			try {
-			if (reviewsEnabled && !( microtaskType.equals(Review.class)) ){
-				//temporary fix for the review
-				if(microtaskType.equals(ReuseSearch.class))
-				{
-
-					ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
-					if ( ! dto.noFunction)
+				if (reviewsEnabled && !( microtask.getClass().equals(Review.class)) ){
+					//temporary fix for the review
+					if( microtask.getClass().equals(ReuseSearch.class) )
 					{
-						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+	
+						ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
+						if ( ! dto.noFunction)
+						{
+							MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+						}
+						else{
+							MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+						}
+	
+					}
+					else if( microtask.getClass().equals(DebugTestFailure.class))
+					{
+	
+						DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, DebugDTO.class);
+						System.out.println(dto.disputedTests);
+						if(dto.disputedTests.size() > 0 || dto.hasPseudo)
+						{
+							MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+						}
+						else{
+							MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+						}
 					}
 					else{
-						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-					}
-
-				}
-				else if(microtaskType.equals(DebugTestFailure.class))
-				{
-
-					DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, DebugDTO.class);
-					System.out.println(dto.disputedTests);
-					if(dto.disputedTests.size() > 0 || dto.hasPseudo)
-					{
 						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 					}
-					else{
-						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-					}
 				}
-				else{
-					MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+	
+				// else submit the microtask
+				else {
+					MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
 				}
-			}
-
-			// else submit the microtask
-			else {
-				MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-			}
 			} catch( JsonParseException e) {
 				e.printStackTrace();
 			} catch( JsonMappingException e) {
@@ -497,17 +494,20 @@ public class Project
 			microtask.setWorkerId(null);
 			addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
+
+			System.out.println("Skipping "+microtaskKey+" by "+workerID);
+			System.out.println("Microtask "+microtaskKey+" excluded workers "+excludedWorkers.get( Microtask.keyToString(microtaskKey) ));
+			
 			// Add the work back to the appropriate queue
-			if(microtask.microtaskName()!="Review")
-			{
+			if(microtask.microtaskName() != "Review")
 				queueMicrotask( microtaskKey, null);
-			}
 			else
 				queueReviewMicrotask(microtaskKey, workerID);
 
 			resetIfAllSkipped( microtaskKey );
 			ofy().save().entity(this).now();
 
+			
 			MicrotaskCommand.skip( microtaskKey, workerID, disablePoint);
 		}
 	}

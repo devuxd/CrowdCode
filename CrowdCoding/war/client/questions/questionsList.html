@@ -12,7 +12,7 @@
 	<div class="padding" ng-if="questions.length == 0 && search.length == 0">
 		no questions yet!
 	</div>
-	<ul class="list-group questions-list" ng-if="questions.length > 0">
+	<ul class="list-group questions-list">
 		<li class="list-group-item question-item" ng-click="setView('question_detail'); setSelected(q)" ng-repeat="q in questions | orderBy : 'numVotes' : 'desc' ">
 			
 			<span class="pull-left">
