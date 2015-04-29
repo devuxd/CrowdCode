@@ -53,10 +53,9 @@ public abstract class MicrotaskCommand extends Command
 
 	public void execute(final String projectId)
 	{
-		final Microtask microtask = find(microtaskKey);
-		
 		ofy().transact(new VoidWork() {
 	        public void vrun() {
+	        	Microtask microtask = find(microtaskKey);
 	        	if (microtask == null)
 	    			System.out.println("Cannot execute MicrotaskCommand. Could not find the microtask for microtaskID "
 	    						+ microtaskKey);

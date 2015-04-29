@@ -573,6 +573,8 @@ h1, h2, h3, h4 {
 .questions question-list .question-item { cursor: pointer; }
 .questions question-list .question-item:hover { background-color:#E0E0E0; }
 
+.questions question-list .question-item.highlight { background-color:rgb(181, 212, 239); }
+
 .questions .question-item.ng-enter{
   -webkit-transition:all linear 0.5s;
   transition:all linear 0.5s;

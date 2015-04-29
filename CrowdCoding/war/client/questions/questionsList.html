@@ -13,7 +13,7 @@
 		no questions yet!
 	</div>
 	<ul class="list-group questions-list">
-		<li class="list-group-item question-item" ng-click="setView('question_detail'); setSelected(q)" ng-repeat="q in questions | orderBy : 'numVotes' : 'desc' ">
+		<li class="list-group-item question-item {{ isHighlighted(q) ? 'highlight' : 'not' }}" ng-click="setView('question_detail'); setSelected(q)" ng-repeat="q in questions | orderBy : 'numVotes' : 'desc' ">
 			
 			<span class="pull-left">
 				<span>{{q.title}}</span>

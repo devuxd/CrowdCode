@@ -9,6 +9,9 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 
 			$scope.search    = '';
 			$scope.questions = questionsService.getQuestions();
+			$scope.isHighlighted = function(q){
+				return q.artifactsId != null && $scope.fetchedMicrotask != null && q.artifactsId.indexOf( ""+$scope.fetchedMicrotask.owningArtifactId ) > -1 ; 
+			};
 
 			var searchTimeout;
 			$scope.$watch('search',function( val ){

@@ -455,9 +455,9 @@ public class CrowdServlet extends HttpServlet
 		// Collect information from the request parameter. Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 		// And anything inside the transaction MUST not mutate the values produced.
-		final String projectId    = (String) req.getAttribute("project");
-		final String type    = (String) req.getParameter("type");
-		final String payload      = Util.convertStreamToString(req.getInputStream());
+		final String projectId = (String) req.getAttribute("project");
+		final String type      = (String) req.getParameter("type");
+		final String payload   = Util.convertStreamToString(req.getInputStream());
 
 		final String workerId     = user.getUserId();
 		final String workerHandle = user.getNickname();
@@ -466,7 +466,7 @@ public class CrowdServlet extends HttpServlet
 		CommandContext context = new CommandContext();
 
 		if(type.equals("question"))
-			QuestioningCommand.createQuestion(payload, workerId, workerHandle);
+			QuestioningCommand.createQuestion( payload, workerId, workerHandle);
 		else if(type.equals("answer"))
 			QuestioningCommand.createAnswer(payload, workerId, workerHandle);
 		else if(type.equals("comment"))

@@ -116,7 +116,6 @@ public abstract class QuestioningCommand extends Command
 
 			QuestionDTO dto=null;
 			try {
-				System.out.println(jsonDTOData);
 				dto = (QuestionDTO)DTO.read(jsonDTOData, QuestionDTO.class);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

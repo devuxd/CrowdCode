@@ -288,9 +288,9 @@ public class Test extends Artifact
 	}
 
 	// Given an id for a test, finds the corresponding test. Returns null if no such test exists.
-	public static LoadResult<Test> find(long id)
+	public static Test find(long id)
 	{
-		return (LoadResult<Test>) ofy().load().key(Artifact.getKey(id));
+		return (Test) ofy().load().key(Artifact.getKey(id)).now();
 	}
 
 	// Generates a simple test key for the specified function and list of inputs

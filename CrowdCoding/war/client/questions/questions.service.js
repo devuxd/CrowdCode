@@ -27,7 +27,7 @@ angular
 
 		// Public functions
 		this.init = init;
-		this.submitQuestion = submitQuestion;
+		this.submit = submit;
 		this.vote = vote;
 		this.report = report;
 		this.sel  = undefined;
@@ -127,7 +127,8 @@ angular
 
 		}
 
-		function submitQuestion(type, formData){
+		function submit(type, formData){
+			console.log(formData);
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/insert?type=' + type, formData)
 				.success(function(data, status, headers, config) {

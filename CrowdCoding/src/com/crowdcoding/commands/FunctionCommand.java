@@ -113,16 +113,13 @@ public abstract class FunctionCommand extends Command {
 		ofy().transact(new VoidWork() {
 	        public void vrun() {
 	        	if (functionID != 0) {
-	    			LoadResult<Function> function = Function.find(functionID);
+	    			Function function = Function.find(functionID);
 	    			if (function == null)
 	    				System.out
 	    						.println("Cannot execute FunctionCommand. Could not find the function for FunctionID "
 	    								+ functionID);
 	    			else {
-	    				execute(function.now(), projectId);
-
-	    				// Save the associated artifact to Firebase
-	    				//function.now().storeToFirebase(projectId);
+	    				execute(function, projectId);
 	    			}
 	    		} else
 	    			execute(null, projectId);

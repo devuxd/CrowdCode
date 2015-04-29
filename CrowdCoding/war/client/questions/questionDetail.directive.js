@@ -35,11 +35,11 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 				questionsService.report(questioning.id,remove);
 			}
 
-			function postComment(){
+			function postComment(answerId){
 				if( $scope.comment.text != ''){
-					var commentForm = { questionId : $scope.sel.id , answerId : $scope.comment.answerId, text : $scope.comment.text };
+					var commentForm = { questionId : $scope.sel.id , answerId : answerId, text : $scope.comment.text };
 					questionsService
-						.submitQuestion("comment",commentForm)
+						.submit("comment",commentForm)
 						.then(function(){
 							$scope.comment.text ='';
 							$scope.comment.answerId = null;
@@ -54,7 +54,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 				if( $scope.answer.text != ''){
 					var answerForm = { questionId : $scope.sel.id , text : $scope.answer.text };
 					questionsService
-						.submitQuestion("answer",answerForm)
+						.submit("answer",answerForm)
 						.then(function(){
 							$scope.answer.text='';
 							$scope.showAnswerForm = false;

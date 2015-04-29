@@ -75,18 +75,14 @@ public abstract class TestCommand extends Command {
 		ofy().transact(new VoidWork() {
 	        public void vrun() {
 	        	if (testID != 0) {
-	    			LoadResult<Test> testRef = Test.find(testID);
+	    			Test test = Test.find(testID);
 
-	    			if (testRef == null)
+	    			if (test == null)
 	    				System.out
 	    						.println("Cannot execute TestCommand. Could not find test for TestID "
 	    								+ testID);
 	    			else {
-	    				Test test = testRef.now();
 	    				execute(test, projectId);
-
-	    				// Save the associated artifact to Firebase
-	    				//	test.storeToFirebase(projectId);
 	    			}
 	    		} else
 	    			execute(null, projectId);
