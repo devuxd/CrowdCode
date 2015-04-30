@@ -276,6 +276,8 @@ public class CrowdServlet extends HttpServlet
 				doSubscribeQuestioning(req, resp, user);
 			} else if (pathSeg[3].equals("link")){
 				doLinkQuestioning(req, resp, user);
+			} else if (pathSeg[3].equals("close")){
+				doCloseQuestioning(req, resp, user);
 			}
 		} catch( Exception e ) {
 			e.printStackTrace();
@@ -487,7 +489,7 @@ public class CrowdServlet extends HttpServlet
 
 		final String projectID    = (String) req.getAttribute("project");
 		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
-		final boolean remove    = Boolean.parseBoolean((String)req.getParameter("remove"));
+		final boolean remove      = Boolean.parseBoolean((String)req.getParameter("remove"));
 
 
 		final String workerID     = user.getUserId();
@@ -531,20 +533,42 @@ public class CrowdServlet extends HttpServlet
 
 		final String projectID  	= (String) req.getAttribute("project");
 		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
+		final String artifactId	    = req.getParameter("artifactId");
 		final boolean remove	    = Boolean.parseBoolean((String)req.getParameter("remove"));
 
-		final String workerID     = user.getUserId();
+		final String workerId     = user.getUserId();
 
 		// Create an initial context, then build a command to insert the value
 		CommandContext context = new CommandContext();
-
-		QuestioningCommand.linkArtifact(questioningId, workerID, remove);
+		QuestioningCommand.linkArtifact(questioningId, artifactId, remove, workerId);
 
 
 		// Copy the command back out the context to initially populate the command queue.
 		executeCommands(context.commands(), projectID);
 	}
 
+	public void doCloseQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		// Collect information from the request parameter. Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+
+		final String projectID  	= (String) req.getAttribute("project");
+		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
+		final boolean closed 	    = Boolean.parseBoolean((String)req.getParameter("closed"));
+
+		final String workerId     = user.getUserId();
+
+		// Create an initial context, then build a command to insert the value
+		CommandContext context = new CommandContext();
+
+		QuestioningCommand.setClosed(questioningId, closed, workerId);
+
+
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(context.commands(), projectID);
+	}
+	
 	public void doVoteQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		// Collect information from the request parameter. Since the transaction may fail and retry,

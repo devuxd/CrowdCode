@@ -48,8 +48,8 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand report(long questioningId, String workerId, boolean remove){
 		return new Report(questioningId, workerId, remove);
 	}
-	public static QuestioningCommand linkArtifact(long questioningId, String artifactId, boolean remove){
-		return new LinkArtifact(questioningId, artifactId, remove);
+	public static QuestioningCommand linkArtifact(long questioningId, String artifactId, boolean remove, String workerId){
+		return new LinkArtifact(questioningId, artifactId, remove, workerId);
 	}
 	public static QuestioningCommand subscribeWorker(long questioningId, String workerId, boolean remove){
 		return new SubscribeWorker(questioningId, workerId, remove);
@@ -57,6 +57,10 @@ public abstract class QuestioningCommand extends Command
 
 	public static QuestioningCommand notifySubscribers(long questioningId, String message, String excludedWorkerId){
 		return new NotifySubscribers(questioningId,message,excludedWorkerId);
+	}
+	
+	public static QuestioningCommand setClosed(long questioningId, boolean closed, String workerId){
+		return new SetClosed(questioningId,closed,workerId);
 	}
 	
 	private QuestioningCommand(long questioningId, String workerId) {
@@ -218,10 +222,10 @@ public abstract class QuestioningCommand extends Command
 		private boolean remove;
 		private String artifactId;
 
-		public LinkArtifact(long questioningId, String artifactId, boolean remove) {
-			super(questioningId, "");
+		public LinkArtifact(long questioningId, String artifactId, boolean remove, String workerId) {
+			super(questioningId, workerId);
 			this.artifactId = artifactId;
-			this.remove=remove;
+			this.remove     = remove;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
@@ -267,4 +271,22 @@ public abstract class QuestioningCommand extends Command
 		}
 	}
 
+
+
+
+	protected static class SetClosed extends QuestioningCommand {
+
+		private boolean closed; 
+		
+		public SetClosed(long questioningId, boolean closed, String workerId) {
+			super(questioningId,workerId);
+			this.closed = closed;
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+			Question question = (Question) questioning;
+			question.setClosed(closed);
+		}
+
+	}
 }

@@ -358,6 +358,10 @@ public class FirebaseService
 	public static void updateQuestioningLinkedArtifacts(ArtifactsIdInFirebase artifactsId, String path, String projectId){
 		enqueueWrite(artifactsId.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
+	
+	public static void updateQuestioningClosed(boolean closed, String path, String projectId){
+		enqueueWrite("{ \"closed\": "+closed+" }", path +".json", HTTPMethod.PATCH, projectId);
+	}
 
 	public static void writeHistoryEvent(HistoryEvent event, String projectId){
 		enqueueWrite( event.json() , "/history/events/"+event.generateID()+".json", HTTPMethod.PATCH, projectId);

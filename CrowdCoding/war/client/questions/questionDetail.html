@@ -1,8 +1,14 @@
 <div class="top padding">
-	<a href="#" ng-click="setView('question_list');showCommentForm =false; showAnswerForm = false;">
+	<a href="#" class="pull-left" ng-click="setView('question_list');showCommentForm =false; showAnswerForm = false;">
 		<span class="glyphicon glyphicon-arrow-left"></span>
 		back
 	</a>
+
+	<a href="#" class="pull-right" ng-click="toggleClosed(sel)">
+		mark as {{ sel.closed ? 'open' : 'closed' }}
+	</a>
+
+	<span class="clearfix"></span>
 </div>
 
 <div class="middle padding" ng-init="showCommentForm =false; showAnswerForm = false;">
@@ -14,7 +20,6 @@
 			<div class="pull-left">
 				<h3 class="panel-title">{{sel.title}}</h3>
 				<span>{{sel.text}}</span>
-				<div><span class="tag" ng-repeat="tag in sel.tags">{{tag}} </span></div>
 
 			</div>
 
@@ -33,6 +38,8 @@
 			</div>
 
 			<span class="clearfix"></span>
+
+			<div><span class="tag" ng-repeat="tag in sel.tags">{{tag}} </span></div>
 
 		</li>
 	</ul>
@@ -116,7 +123,7 @@
 						</div>
 						<button type="submit" 
 								class="btn btn-xs btn-primary pull-right">
-								Post Comment
+								Comment
 						</button>
 					</form>
 				</li>
@@ -132,7 +139,7 @@
 				<div class="form-group">
 					<textarea required name="text" class="form-control" ng-model="answer.text" placeholder="answer text"></textarea>
 				</div>
-				<button type="submit" ng-click="showAnswerForm = false;" class="btn btn-xs btn-primary pull-right">Post Answer</button>
+				<button type="submit" ng-click="showAnswerForm = false;" class="btn btn-xs btn-primary pull-right">Answer</button>
 				<div class="clearfix"></div>
 			</form>
 		</li>

@@ -10,7 +10,6 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 			};
 			$scope.newTag    = '';
 			$scope.relatedTo = 'none';
-			$scope.allTags   = questionsService.getAllTags();
 
 			$scope.postQuestion = postQuestion;
 			$scope.addTag       = addTag;
@@ -52,6 +51,8 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 							text: '',
 							tags: []
 						};
+						$scope.relatedTo = 'none';
+
 						$scope.setView('question_list');
 						$scope.questionForm.$setPristine();
 					},function(){

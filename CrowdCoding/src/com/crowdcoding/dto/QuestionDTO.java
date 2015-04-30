@@ -9,6 +9,7 @@ public class QuestionDTO extends DTO
 	public String title;
 	public String text;
 	public String artifactId;
+	public boolean closed;
 	public List<String> tags = new ArrayList<String>();
 
 	// Default constructor (required by Jackson JSON library)

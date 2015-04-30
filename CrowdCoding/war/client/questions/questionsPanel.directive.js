@@ -1,5 +1,5 @@
 angular
-    .module('crowdCode').directive('questionsPanel',function($rootScope,$timeout,$firebase,firebaseUrl, microtasksService){
+    .module('crowdCode').directive('questionsPanel',function($rootScope,$timeout,$firebase,firebaseUrl, questionsService,microtasksService){
 
 	return {
 		scope: {},
@@ -7,6 +7,11 @@ angular
 		link: function($scope,$element,$attrs){
 			$scope.setView = setView;
 			$scope.fetchedMicrotask;
+
+			$scope.questions = questionsService.getQuestions();
+			$scope.questions.$loaded().then(function(){
+				$scope.allTags = questionsService.getAllTags();
+			});
 
 			$rootScope.$on('noMicrotask',function( event ){
 				$scope.fetchedMicrotask = null;

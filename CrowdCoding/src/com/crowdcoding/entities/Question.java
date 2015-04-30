@@ -31,7 +31,7 @@ public class Question extends Questioning
 
 	private List<String> artifactsId = new ArrayList<String>();
 	private List<String> tags = new ArrayList<String>();
-	
+	private boolean closed;
 	private String title;
 
 	// Constructor for deserialization
@@ -57,30 +57,46 @@ public class Question extends Questioning
 	}
 	public void removeArtifactLink(String artifactId)
 	{
-		if(artifactsId.remove(artifactId))
+		if(artifactsId.remove(artifactId)){
+			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
+		}
 	}
+	
 	public void addArtifactLink(String artifactId)
 	{
 		if(! artifactsId.contains(artifactId)){
 			artifactsId.add(artifactId);
+			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
 		}
 	}
 
 	public void unsubscribeWorker(String workerId)
 	{
-		if(subsribersId.remove(workerId))
+		if(subsribersId.remove(workerId)){
+			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
+		}
 	}
+	
 	public void subscribeWorker(String workerId)
 	{
 		if(! artifactsId.contains(workerId)){
 			artifactsId.add(workerId);
+			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
 		}
 	}
+	
+	public void setClosed(boolean closed){
+		this.closed = closed;
+		ofy().save().entity(this).now();
+		FirebaseService.updateQuestioningClosed(this.closed,this.firebasePath,projectId);
+	}
+	
+	
 	protected void storeToFirebase() {
-		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId), this.firebasePath, projectId);
+		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId, this.closed), this.firebasePath, projectId);
 	}
 }

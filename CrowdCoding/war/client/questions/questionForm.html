@@ -1,8 +1,8 @@
-<div class="top">
-	<span> Ask a question: </span>
+<div class="top padding">
+	<h4> New question: </h4>
 	
 </div>
-<div class="middle">
+<div class="middle padding">
 	
 	<div class="list-group">
 		<div class="list-group-item">
@@ -11,33 +11,30 @@
 					<label for="title">Title</label>
 					<input type="text" class="form-control" name="title" ng-model="question.title" placeholder="insert title" required>
 					<div ng-if="questionForm.title.$dirty" ng-messages="questionForm.title.$error" style="color:maroon" role="alert">
-						<div ng-message="required">You did not enter a field</div>
+						<div ng-message="required">the 'title' field is required!</div>
 					</div>
 				</div>
 				<div class="form-group">
 					<label for="text">Text</label>
-					<textarea name="text" class="form-control" ng-model="question.text" placeholder="insert text" required></textarea>
-					<div ng-if="questionForm.text.$dirty" ng-messages="questionForm.text.$error" style="color:maroon" role="alert">
-						<div ng-message="required">You did not enter a field</div>
-					</div>
+					<textarea name="text" class="form-control" style="resize:none;height:300px" ng-model="question.text" placeholder="insert text"></textarea>
 				</div>
 				<div class="form-group">
-					<label for="">Tag</label>
+					<label for="">Tags (separate tags with comma) </label>
 					<div><span ng-repeat="tag in question.tags" class="tag">{{tag}} <span ng-click="removeTag(tag)">x</span></span></div>
 					
 					<input name="tag" class="form-control" ng-model="newTag" placeholder="insert tag" data-min-length="1" bs-options="tag for tag in allTags" bs-typeahead press-enter="addTag()">
 				</div>
 				<div class="form-group">
-					<label for="relatedTo">Link to: </label>
+					<label for="relatedTo">The question is linked to: </label>
 					<select class="form-control" name="relatedTo" ng-model="relatedTo">
 						<option value="none"> - </option>
 						<option value="artifact">the current artifact</option>
-						<option value="microtask_type" disabled="true">the current microtask type</option>
+						<!--<option value="microtask_type" disabled="true">the current microtask type</option>-->
 					</select>
 				</div>
-				<div class="form-group">	
-					<button class="btn btn-sm" ng-click="setView('question_list'); questionForm.$setPristine(); setSelected(null)" >cancel</a>
-					<button type="submit" class="btn btn-sm btn-primary">Ask</button>
+				<div class="btn-group pull-right padding" role="group">	
+					<button class="btn btn-sm btn-default" ng-click="setView('question_list'); questionForm.$setPristine(); setSelected(null)" >cancel</a>
+					<button class="btn btn-sm btn-primary" type="submit" >Ask</button>
 				</div>
 			</form>
 		</div>

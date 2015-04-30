@@ -190,7 +190,7 @@ public class WriteTest extends Microtask
 
 	public Function getFunction(String projectId)
 	{
-		return Function.find(test.getValue().getFunctionID()).now();
+		return Function.find(test.getValue().getFunctionID());
 	}
 
 	public Artifact getOwningArtifact()

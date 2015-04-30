@@ -5,39 +5,95 @@
 	</div>
 </div>
 <div class="middle">
+	<div class="padding">
+		<button class="btn btn-sm btn-primary" ng-click="setView('question_form'); ">Ask a new question</button>
+		<div ng-if="questions.length == 0 && search.length > 0 ">no questions found matching the filter <strong>{{search}}</strong> (<a href="#" ng-click="resetFilter()">reset filter</a>)</div>
+		<div ng-if="questions.length == 0 && search.length == 0">no questions yet!</div>
+	</div>
 
-	<div class="padding" ng-if="questions.length == 0 && search.length > 0 ">
-		no questions found matching the filter <strong>{{search}}</strong> (<a href="#" ng-click="resetFilter()">reset filter</a>)
-	</div>
-	<div class="padding" ng-if="questions.length == 0 && search.length == 0">
-		no questions yet!
-	</div>
 	<ul class="list-group questions-list">
-		<li class="list-group-item question-item {{ isHighlighted(q) ? 'highlight' : 'not' }}" ng-click="setView('question_detail'); setSelected(q)" ng-repeat="q in questions | orderBy : 'numVotes' : 'desc' ">
-			
-			<span class="pull-left">
-				<span>{{q.title}}</span>
-				<br/>
-				<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{q.time | date : 'medium'}}"></time-ago>
-				<br />
-				<span ng-repeat="tag in q.tags" class="tag">{{tag}}</span>
-			</span> 
 
-			<span class="pull-right" >
-				{{ q.score }}
-				<span class="glyphicon glyphicon-thumbs-up"></span>
-
-
-				{{ q.answers | objectLength }}
-				<span class="glyphicon glyphicon-comment"></span>
-			</span>
-
-			<span class="clearfix"></span>
+		<li class="list-group-item list-header" ng-show=" ( questions | relatedToArtifact : fetchedMicrotask.owningArtifactId ).length > 0 ">
+			Related to artifact
 		</li>
-		<li class="list-group-item">
-			<a href="#" ng-click="setView('question_form'); ">
-				Ask a new question
-			</a>
+		<li class="list-group-item question-item {{ q.closed ? '' : 'open' }}" 
+			ng-click="setView('question_detail'); setSelected(q)" 
+			ng-repeat="q in questions | relatedToArtifact : fetchedMicrotask.owningArtifactId | orderBy : 'closed'  "
+			>
+			<div >
+				<span class="pull-left">
+					<span>{{q.title}}</span>
+					<br/>
+					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{q.time | date : 'medium'}}"></time-ago>
+					
+				</span> 
+
+				<span class="pull-right" >
+					{{ q.score }}
+					<span class="glyphicon glyphicon-thumbs-up"></span>
+
+
+					{{ q.answers | objectLength }}
+					<span class="glyphicon glyphicon-comment"></span>
+				</span>
+
+				<span class="clearfix"></span>
+			</div>
+			<div>
+
+				<span class="pull-left">
+					<span ng-repeat="tag in q.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>
+				</span> 
+
+				<span class="pull-right" >
+					<a href="#" ng-click="toggleRelation(q); $event.stopPropagation();" >unrelate</a>
+				</span>
+
+				<span class="clearfix"></span>
+				
+			</div>
+			
+		</li>
+
+		<li class="list-group-item list-header" ng-show=" ( questions | unrelatedToArtifact : fetchedMicrotask.owningArtifactId ).length > 0 ">
+			Other questions
+		</li>
+		<li class="list-group-item question-item {{ q.closed ? '' : 'open' }}" 
+			ng-click="setView('question_detail'); setSelected(q)" 
+			ng-repeat="q in questions | unrelatedToArtifact : fetchedMicrotask.owningArtifactId | orderBy : 'closed' ">
+			<div >
+				<span class="pull-left">
+					<span>{{q.title}}</span>
+					<br/>
+					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{q.time | date : 'medium'}}"></time-ago>
+					
+				</span> 
+
+				<span class="pull-right" >
+					{{ q.score }}
+					<span class="glyphicon glyphicon-thumbs-up"></span>
+
+
+					{{ q.answers | objectLength }}
+					<span class="glyphicon glyphicon-comment"></span>
+				</span>
+
+				<span class="clearfix"></span>
+			</div>
+			<div>
+				
+				<span class="pull-left">
+					<span ng-repeat="tag in q.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>
+				</span> 
+
+				<span class="pull-right" >
+					<a href="#" ng-click="toggleRelation(q); $event.stopPropagation();" >relate</a>
+				</span>
+
+				<span class="clearfix"></span>
+			</div>
+			
 		</li>
 	</ul>
+
 </div>

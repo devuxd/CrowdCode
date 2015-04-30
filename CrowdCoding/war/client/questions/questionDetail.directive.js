@@ -15,20 +15,26 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 			$scope.postAnswer  = postAnswer;
 			$scope.postComment = postComment;
 
+			$scope.toggleClosed = toggleClosed;
+
 			$scope.toggleVoteUp   = toggleVoteUp;
 			$scope.toggleVoteDown = toggleVoteDown;
 
 
-			function toggleVoteUp(questioning)
-			{
+			function toggleClosed(questioning){
+				if( questioning.closed !== undefined ){
+					questionsService.setStatus(questioning.id, ! questioning.closed );
+				}
+			}
+
+			function toggleVoteUp(questioning){
 				var remove = false;
 				if( questioning.votersId && questioning.votersId.indexOf(workerId) !==-1)
 					remove= true;
 				questionsService.vote(questioning.id,remove);
 			}
 
-			function toggleVoteDown(questioning)
-			{
+			function toggleVoteDown(questioning){
 				var remove = false;
 				if( questioning.reportersId && questioning.reportersId.indexOf(workerId) !==-1)
 					remove= true;
