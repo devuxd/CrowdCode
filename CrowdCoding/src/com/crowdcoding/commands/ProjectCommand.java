@@ -2,9 +2,14 @@ package com.crowdcoding.commands;
 
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
+
+import java.util.HashSet;
+
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.VoidWork;
 
@@ -31,6 +36,7 @@ public abstract class ProjectCommand extends Command
 	public static ProjectCommand skipMicrotask( String microtaskKey, String workerID , Boolean disablePoint) {
 		return new SkipMicrotask(microtaskKey, workerID, disablePoint);
 	}
+	
 
 	public static ProjectCommand submitMicrotask(String microtaskKey, String jsonDTOData, String workerID){
 		return new SubmitMicrotask(microtaskKey, jsonDTOData, workerID);
@@ -42,6 +48,11 @@ public abstract class ProjectCommand extends Command
 
 	public static ProjectCommand logoutInactiveWorkers(){
 		return new LogoutInactiveWorkers();
+	}
+	
+
+	public static ProjectCommand notifyLoggedInWorkers( NotificationInFirebase notification ) {
+		return new NotifyLoggedInWorkers( notification );
 	}
 
 
@@ -211,6 +222,25 @@ public abstract class ProjectCommand extends Command
 		public void execute(Project project)
 		{
 			project.logoutInactiveWorkers();
+		}
+	}
+	
+	// logout all inactive workers
+	protected static class NotifyLoggedInWorkers extends ProjectCommand
+	{
+		NotificationInFirebase notification;
+		public NotifyLoggedInWorkers(NotificationInFirebase notification)
+		{
+			super();
+			this.notification = notification;
+		}
+
+		public void execute(Project project)
+		{
+			HashSet<String> workersId = project.getLoggedInWorkers();
+			for( String workerId:workersId ){
+				FirebaseService.writeWorkerNotification(notification, workerId, project.getID());
+			}
 		}
 	}
 }

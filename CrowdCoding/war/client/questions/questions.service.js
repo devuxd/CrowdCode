@@ -64,8 +64,6 @@ angular
 			return doc;
 		}
 
-		
-
 		function searchResults( searchTxt ){
 			var searchTxtToLower = searchTxt;
 			console.log('searching for ',searchTxtToLower);

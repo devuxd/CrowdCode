@@ -11,6 +11,7 @@ import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.QuestioningCommand;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.CommentInFirebase;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.QuestionInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -27,8 +28,8 @@ import com.googlecode.objectify.annotation.Index;
 public class Comment extends Questioning
 {
 
-	private long questionId;
-	private long answerId;
+	private Long questionId;
+	private Long answerId;
 
 
 	// Constructor for deserialization
@@ -49,9 +50,8 @@ public class Comment extends Questioning
 		
 		storeToFirebase();
 		
-
-		QuestioningCommand.notifySubscribers(this.answerId, "a comment was added to this answer", ownerId);
-
+		NotificationInFirebase notification = new NotificationInFirebase( "comment.added", "{ \"questionId\": \""+this.questionId+"\", \"answerId\": \""+this.answerId+"\", \"workerHandle\": \""+this.ownerHandle+"\", \"text\": \""+this.text+"\"}"  );
+		QuestioningCommand.notifySubscribers(this.answerId, notification, ownerId);
 	}
 
 	protected void storeToFirebase() {

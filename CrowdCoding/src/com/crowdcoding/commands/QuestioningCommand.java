@@ -14,11 +14,15 @@ import com.crowdcoding.entities.Comment;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Question;
+import com.crowdcoding.entities.Worker;
 import com.crowdcoding.dto.QuestionDTO;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.entities.Questioning;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.util.FirebaseService;
+import com.google.appengine.api.datastore.QueryResultIterator;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.VoidWork;
@@ -55,8 +59,8 @@ public abstract class QuestioningCommand extends Command
 		return new SubscribeWorker(questioningId, workerId, remove);
 	}
 
-	public static QuestioningCommand notifySubscribers(long questioningId, String message, String excludedWorkerId){
-		return new NotifySubscribers(questioningId,message,excludedWorkerId);
+	public static QuestioningCommand notifySubscribers(long questioningId, NotificationInFirebase notification, String excludedWorkerId){
+		return new NotifySubscribers(questioningId,notification,excludedWorkerId);
 	}
 	
 	public static QuestioningCommand setClosed(long questioningId, boolean closed, String workerId){
@@ -120,7 +124,7 @@ public abstract class QuestioningCommand extends Command
 
 			QuestionDTO dto=null;
 			try {
-				dto = (QuestionDTO)DTO.read(jsonDTOData, QuestionDTO.class);
+				dto = (QuestionDTO) DTO.read(jsonDTOData, QuestionDTO.class);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -258,22 +262,18 @@ public abstract class QuestioningCommand extends Command
 
 	protected static class NotifySubscribers extends QuestioningCommand {
 
-		private String message; 
+		private NotificationInFirebase notification; 
 		
-		public NotifySubscribers(long questioningId, String message, String excludedWorkerId) {
-			super(questioningId, excludedWorkerId);
-			this.message = message;
+		public NotifySubscribers(long questioningId, NotificationInFirebase notification, String workerId) {
+			super(questioningId, workerId);
+			this.notification = notification;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
-
-			questioning.notifySubscribers(message, workerId);
+			questioning.notifySubscribers(notification, workerId);
 		}
 	}
-
-
-
-
+	
 	protected static class SetClosed extends QuestioningCommand {
 
 		private boolean closed; 

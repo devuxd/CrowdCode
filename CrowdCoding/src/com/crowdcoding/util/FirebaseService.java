@@ -305,8 +305,8 @@ public class FirebaseService
 		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
 	}
 
-	public static void writeNotification(NotificationInFirebase notification, String workerID, String projectId){
-		enqueueWrite(notification.json(), "/workers/" + workerID + "/notifications.json", HTTPMethod.POST, projectId);
+	public static void writeWorkerNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
 	}
 
 	public static void microtaskAssigned(String workerID, String projectId) {

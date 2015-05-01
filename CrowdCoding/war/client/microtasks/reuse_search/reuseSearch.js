@@ -17,7 +17,7 @@ angular
     $scope.doSearch = function() {
 
         $scope.selectedResult = -2;
-        $scope.results = functionsService.findMatches($scope.text, $scope.funct.name);
+        $scope.results = functionsService.findMatches( $scope.text.toLowerCase(), $scope.funct.name);
     };
     $scope.select = function(index) {
         $scope.selectedResult = index;

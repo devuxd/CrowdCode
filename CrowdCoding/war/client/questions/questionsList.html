@@ -29,12 +29,11 @@
 				</span> 
 
 				<span class="pull-right" >
-					{{ q.score }}
 					<span class="glyphicon glyphicon-thumbs-up"></span>
+					{{ q.score }}
 
-
-					{{ q.answers | objectLength }}
 					<span class="glyphicon glyphicon-comment"></span>
+					{{ q.answers | objectLength }}
 				</span>
 
 				<span class="clearfix"></span>
@@ -45,7 +44,7 @@
 					<span ng-repeat="tag in q.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>
 				</span> 
 
-				<span class="pull-right" >
+				<span class="pull-right" ng-if="fetchedMicrotask != null">
 					<a href="#" ng-click="toggleRelation(q); $event.stopPropagation();" >unrelate</a>
 				</span>
 
@@ -70,12 +69,11 @@
 				</span> 
 
 				<span class="pull-right" >
-					{{ q.score }}
 					<span class="glyphicon glyphicon-thumbs-up"></span>
+					{{ q.score }}
 
-
-					{{ q.answers | objectLength }}
 					<span class="glyphicon glyphicon-comment"></span>
+					{{ q.answers | objectLength }}
 				</span>
 
 				<span class="clearfix"></span>
@@ -86,7 +84,7 @@
 					<span ng-repeat="tag in q.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>
 				</span> 
 
-				<span class="pull-right" >
+				<span class="pull-right" ng-if="fetchedMicrotask != null">
 					<a href="#" ng-click="toggleRelation(q); $event.stopPropagation();" >relate</a>
 				</span>
 

@@ -12,6 +12,13 @@ angular
 			$scope.selectTab = function(index){
 				$scope.selectedTab = index;
 			};
+
+			$scope.$on('setLeftBarTab',function( event, tabName ){
+				console.log('switching to tab '+tabName);
+				var index = $scope.tabs.indexOf(tabName);
+				if( index > -1 )
+					$scope.selectTab( index );
+			});
 		}
 	};
 });

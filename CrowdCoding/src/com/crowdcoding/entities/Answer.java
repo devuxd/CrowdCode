@@ -27,7 +27,7 @@ import com.googlecode.objectify.annotation.Index;
 @Subclass(index=true)
 public class Answer extends Questioning
 {
-	private long questionId;
+	private Long questionId;
 
 	// Constructor for deserialization
 	protected Answer()
@@ -47,7 +47,9 @@ public class Answer extends Questioning
 		
 		storeToFirebase();
 		
-		QuestioningCommand.notifySubscribers(this.questionId, "an answer was added to this question", ownerId);
+		
+		NotificationInFirebase notification = new NotificationInFirebase( "answer.added", "{ \"questionId\": \""+this.questionId.toString()+"\",  \"workerHandle\": \""+this.ownerHandle+"\",  \"text\": \""+this.questionId.toString()+"\" }" );
+		QuestioningCommand.notifySubscribers(this.questionId, notification, ownerId);
 		
 	}
 

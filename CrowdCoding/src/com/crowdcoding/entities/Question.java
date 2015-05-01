@@ -8,10 +8,13 @@ import java.util.List;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
+import com.crowdcoding.commands.ProjectCommand;
+import com.crowdcoding.commands.QuestioningCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.ArtifactsIdInFirebase;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.QuestionInFirebase;
 import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
@@ -34,6 +37,10 @@ public class Question extends Questioning
 	private boolean closed;
 	private String title;
 
+	public String getTitle() {
+		return title;
+	}
+
 	// Constructor for deserialization
 	protected Question()
 	{
@@ -53,8 +60,11 @@ public class Question extends Questioning
 		ofy().save().entity(this).now();
 
 		storeToFirebase();
-
+		
+		NotificationInFirebase notification = new NotificationInFirebase( "question.added", "{ \"questionId\": \""+this.id+"\", \"title\": \""+this.title+"\" }" );
+		ProjectCommand.notifyLoggedInWorkers(notification);
 	}
+	
 	public void removeArtifactLink(String artifactId)
 	{
 		if(artifactsId.remove(artifactId)){

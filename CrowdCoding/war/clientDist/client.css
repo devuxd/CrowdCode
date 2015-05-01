@@ -559,11 +559,14 @@ h1, h2, h3, h4 {
 	background-color:rgb(227, 227, 227);
 }
 
+
+
 .questions .list-group .comment-item { margin-left:10px; border-top:1px solid rgb(175, 175, 175); }
 
 .questions .list-group .list-group-item .content-panel { padding-right:3.2em; }
 .questions .list-group .list-group-item .vote-panel { font-size:1em; position:absolute; top:5px; right:5px; }
 
+.questions .answer-item > .content-panel {  min-height: 6em; }
 
 .questions .has-feedback { font-size:10px; }
 .questions .has-feedback .form-control { padding-left:2em; padding-right:0px; font-size:1em; height:2.6em;}
@@ -1468,3 +1471,5 @@ pre.json .jsonKey { color: black; }
 }
 
 .not-allowed { cursor:not-allowed; }
+
+.toast-top-right { top: 40px; }

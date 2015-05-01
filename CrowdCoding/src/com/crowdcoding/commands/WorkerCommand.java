@@ -12,7 +12,7 @@ public abstract class WorkerCommand extends Command
 	protected String workerID;
 
 	public static WorkerCommand awardPoints(String workerID, int points)
-		{ return new AwardPoints(workerID, points); }
+	{ return new AwardPoints(workerID, points); }
 
 	public static WorkerCommand increaseStat(String workerID,String label, int increaseAmount)
 	{ return new IncreaseStat(workerID, label, increaseAmount); }

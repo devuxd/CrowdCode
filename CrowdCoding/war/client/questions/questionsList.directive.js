@@ -4,7 +4,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		templateUrl: '/client/questions/questionsList.html',
 		link: function($scope,$element,$attrs){
 
-			$scope.setSelected=setSelected;
 			$scope.resetFilter=resetFilter;
 			$scope.addToFilter=addToFilter;
 
@@ -51,9 +50,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 				$scope.search = text + ' ' + $scope.search ; 
 			}
 
-			function setSelected(q){
-				$scope.sel = q;
-			}
 
 		}
 	};
