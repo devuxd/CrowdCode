@@ -19,8 +19,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 
 			};
 
-
-
 			var searchTimeout;
 			$scope.$watch('search',function( val ){
 				if (searchTimeout) $timeout.cancel(searchTimeout);

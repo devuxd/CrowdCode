@@ -5,9 +5,9 @@
 ///////////////////////
 angular
     .module('crowdCode')
-    .factory('notificationsService', [ '$rootScope', '$firebase', 'firebaseUrl', 'workerId', 'toaster', function( $rootScope, $firebase, firebaseUrl, workerId, toaster ) {
+    .factory('notificationsService', [ '$rootScope', '$firebase', 'firebaseUrl', 'workerId', 'toaster', 'questionsService' , function( $rootScope, $firebase, firebaseUrl, workerId, toaster, questionsService) {
 
-	var ref = new Firebase(firebaseURL+'/notifications/' + workerId );
+	var ref = new Firebase( firebaseURL + '/notifications/' + workerId );
 	
 	var service = new function(){
 		this.init = function(){
@@ -20,7 +20,8 @@ angular
 					var toast = {
 						type: 'info',
 						body: 'body',
-						clickHandler: function(){ }
+						clickHandler: function(){ },
+						bodyOutputType = 'trustedHtml'
 					};
 
 					switch( type ){
@@ -31,6 +32,7 @@ angular
 								$rootScope.$broadcast('setLeftBarTab','questions');
 								$rootScope.$broadcast('showQuestion', json.questionId );
 							};
+							toaster.pop( toast ); 
 							break;
 
 						case 'answer.added':
@@ -39,31 +41,43 @@ angular
 								$rootScope.$broadcast('setLeftBarTab','questions');
 								$rootScope.$broadcast('showQuestion', json.questionId );
 							};
+							questionsService.get( json.questionId ).then(function(q){
+								if( q !== null ){
+									toast.body += ' <strong>'+q.title+'</strong>';
+								}
+								toaster.pop( toast ); 
+							});
 							break;
 
 						case 'comment.added':
-							toast.body = 'The worker '+json.workerHandle+' has commented your answer';
+							toast.body = 'The worker '+json.workerHandle+' has commented your answer on the question';
 							toast.clickHandler = function(){ 
 								$rootScope.$broadcast('setLeftBarTab','questions');
 								$rootScope.$broadcast('showQuestion', json.questionId );
 							};
+							questionsService.get( json.questionId ).then(function(q){
+								if( q !== null ){
+									toast.body += ' <strong>'+q.title+'</strong>';
+								}
+								toaster.pop( toast ); 
+							});
 							break;
 
 						case 'task.accepted':
 							toast.type = 'success';
 							toast.body = 'Your work of '+json.microtaskType+' on the artifact '+json.artifactName+' has been accepted';
+							toaster.pop( toast ); 
 							break;
 
 						case 'task.reissued':
 							toast.type = 'error';
 							toast.body = 'Your work of '+json.microtaskType+' on the artifact '+json.artifactName+' has been reissued';
+							toaster.pop( toast ); 
 							break;
 
 						default:
 					}
 
-
-					toaster.pop( toast ); 
 					snap.ref().update({'read':true});      
 				}
 					

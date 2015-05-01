@@ -36,6 +36,7 @@ angular
 		this.allTags = [];
 		this.searchResults = searchResults;
 		this.getQuestions  = function(){return questions;};
+		this.get 		   = getQuestion;
 		this.getAllTags    = getAllTags;
 
 		function questionToDocument(question,key){
@@ -127,8 +128,15 @@ angular
 
 		}
 
+		function getQuestion( questionId ){
+			var deferred = $q.defer();
+			questions.$loaded().then(function(){
+				deferred.resolve( questions.$getRecord( questionId ) );
+			});
+			return deferred.promise;
+		}
+
 		function submit(type, formData){
-			console.log(formData);
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/insert?type=' + type, formData)
 				.success(function(data, status, headers, config) {
