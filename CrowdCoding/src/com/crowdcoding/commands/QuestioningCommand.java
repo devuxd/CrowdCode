@@ -32,11 +32,11 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand createQuestion(String jsonDTOData, String workerId, String workerHandle){
 		return new CreateQuestion(jsonDTOData, workerId, workerHandle);
 	}
-	
+
 	public static QuestioningCommand createAnswer(String jsonDTOData, String workerId, String workerHandle){
 		return new CreateAnswer(jsonDTOData, workerId, workerHandle);
 	}
-	
+
 	public static QuestioningCommand createComment(String jsonDTOData, String workerId, String workerHandle){
 		return new CreateComment(jsonDTOData, workerId, workerHandle);
 	}
@@ -58,7 +58,7 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand notifySubscribers(long questioningId, String message, String excludedWorkerId){
 		return new NotifySubscribers(questioningId,message,excludedWorkerId);
 	}
-	
+
 	private QuestioningCommand(long questioningId, String workerId) {
 		this.questioningId = questioningId;
 		this.workerId = workerId;
@@ -72,14 +72,12 @@ public abstract class QuestioningCommand extends Command
 	}
 
 	public void execute(final String projectId) {
-		ofy().transact(new VoidWork() {
-	        public void vrun() {
 	        	if (questioningId != 0) {
 	    			LoadResult<Questioning> questioningRef = find(questioningId);
 
 	    			if (questioningRef == null)
 	    				System.out
-	    						.println("Cannot execute QuestiongCommand. Could not Questioning test for questioningId "
+	    						.println("errore Cannot execute QuestiongCommand. Could not Questioning test for questioningId "
 	    								+ questioningId);
 	    			else {
 	    				Questioning questioning = questioningRef.now();
@@ -87,8 +85,6 @@ public abstract class QuestioningCommand extends Command
 	    			}
 	    		} else
 	    			execute(null, projectId);
-	        }
-		});	
 	}
 
 	public abstract void execute(Questioning questioning, String projectId);
@@ -250,13 +246,13 @@ public abstract class QuestioningCommand extends Command
 
 		}
 	}
-	
+
 
 
 	protected static class NotifySubscribers extends QuestioningCommand {
 
-		private String message; 
-		
+		private String message;
+
 		public NotifySubscribers(long questioningId, String message, String excludedWorkerId) {
 			super(questioningId, excludedWorkerId);
 			this.message = message;

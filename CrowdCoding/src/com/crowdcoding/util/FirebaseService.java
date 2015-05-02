@@ -39,7 +39,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONObject;
  */
 public class FirebaseService
 {
-	
+
 
 	private static ConcurrentLinkedQueue<FirebaseWrite> writeList = new ConcurrentLinkedQueue<FirebaseWrite>();
 
@@ -64,6 +64,7 @@ public class FirebaseService
 			HTTPResponse    response     = fetchService.fetch(request);
 			if( response.getResponseCode() != 200){
 				Logger.getLogger("LOGGER").severe("FIREBASE WRITE FAILED: "+response.getResponseCode()+" - "+absoluteURL+" - "+data);
+				writeDataAbsolute(data, absoluteURL,  operation);
 			}
 		}
 		catch (MalformedURLException e) {
@@ -109,7 +110,7 @@ public class FirebaseService
 	}
 
 	public static void publish(){
-		
+
 		Iterator<FirebaseWrite> writeIterator = writeList.iterator();
 	    while(writeIterator.hasNext()) {
     		FirebaseWrite write = writeIterator.next();
@@ -171,10 +172,11 @@ public class FirebaseService
 	// Writes information about an old microtask to retrieve the information to Firebase
 	public static void writeMicrotaskReissuedFrom( String microtaskKey, String reissuedFromMicrotaskKey, String submissionDto, String reissueMotivation, String projectId)
 	{
-		enqueueWrite("{\"reissuedSubmission\": " + submissionDto + "}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
-		enqueueWrite("{\"reissuedMicrotaskKey\": \"" + reissuedFromMicrotaskKey + "\"}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
-		enqueueWrite("{\"reissueMotivation\": \"" + reissueMotivation + "\"}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
+		String reiussueData = "{\"reissuedSubmission\": " + submissionDto + ","
+								+ "\"reissuedMicrotaskKey\": \"" + reissuedFromMicrotaskKey + "\","
+								+ "\"reissueMotivation\": \"" + reissueMotivation + "\"}";
 
+		enqueueWrite(reiussueData, "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void writeMicrotaskCanceled( String microtaskKey, boolean canceled, String projectId)
@@ -328,33 +330,33 @@ public class FirebaseService
 	public static void writeQuestionCreated(QuestionInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path + ".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	// Writes the specified question to firebase
 	public static void writeAnswerCreated(AnswerInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	// Writes the specified question to firebase
 	public static void writeCommentCreated(CommentInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void updateQuestioningVoters(VotersIdInFirebase votersId, String path, String projectId)	{
 		enqueueWrite(votersId.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void updateQuestioningReporters(ReportersIdInFirebase reportersId, String path, String projectId){
 		enqueueWrite(reportersId.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void updateQuestioningScore(int score, String path, String projectId){
 		enqueueWrite("{\"score\": \"" + score + "\"}", path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void updateQuestioningSubscribers(SubscribersInFirebase subscribersId, String path, String projectId){
 		enqueueWrite(subscribersId.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void updateQuestioningLinkedArtifacts(ArtifactsIdInFirebase artifactsId, String path, String projectId){
 		enqueueWrite(artifactsId.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
@@ -362,12 +364,12 @@ public class FirebaseService
 	public static void writeHistoryEvent(HistoryEvent event, String projectId){
 		enqueueWrite( event.json() , "/history/events/"+event.generateID()+".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	// Clears all data in the current project, reseting it to an empty, initial state
 	public static void clear(String projectID){
 		writeDataAbsolute("{ \"" + projectID + "\" : null }","https://crowdcode.firebaseio.com/projects/" + projectID + ".json", HTTPMethod.PUT);
 	}
-	
+
 	// check if a project exists in firebase
 	public static boolean existsProject(String projectID){
 		String payload = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectID + ".json");

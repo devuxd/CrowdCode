@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -51,6 +53,8 @@ import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
 import com.crowdcoding.history.HistoryLog;
+import com.crowdcoding.history.MicrotaskDequeued;
+import com.crowdcoding.history.MicrotaskDequeuedFromWorkerQueue;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.IDGenerator;
 import com.crowdcoding.util.Util;
@@ -125,20 +129,20 @@ public class CrowdServlet extends HttpServlet
 
 	private void doAction(HttpServletRequest req, HttpServletResponse resp) throws IOException
 	{
-		
+
 		// retrieve the current user
 		UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
-        
+
         if( req.getParameter("workerId") != null ){
 			User dummyUser = new User(req.getParameter("workerId")+"@dummy.dm","dummy",req.getParameter("workerId"));
 			user = dummyUser;
         }
-        
+
 
 //		Logger log =  Logger.getLogger("LOGGER");
 //		log.warning("ACTION BLA BLA BLA "+user);
-        
+
 		// retrieve the path and split by separator '/'
 		String   path    = req.getPathInfo();
 		String[] pathSeg = path.split("/");
@@ -433,9 +437,9 @@ public class CrowdServlet extends HttpServlet
 
 		//System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
 
-		List<Command> commands = new ArrayList<Command>();
-		commands.addAll(ofy().transact(new Work<List<Command>>() {
-	        public List<Command> run()
+		java.util.Queue<Command> commands = new LinkedList<Command>();
+		commands.addAll(ofy().transact(new Work<java.util.Queue<Command>>() {
+	        public java.util.Queue<Command> run()
 	        {
     			CommandContext context = new CommandContext();
     			if(result)
@@ -461,7 +465,7 @@ public class CrowdServlet extends HttpServlet
 
 		final String workerId     = user.getUserId();
 		final String workerHandle = user.getNickname();
-		
+
 		// Create an initial context, then build a command to insert the value
 		CommandContext context = new CommandContext();
 
@@ -478,7 +482,7 @@ public class CrowdServlet extends HttpServlet
 		// Copy the command back out the context to initially populate the command queue.
 		executeCommands(context.commands(), projectId);
 	}
-	
+
 	public void doReportQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		// Collect information from the request parameter. Since the transaction may fail and retry,
@@ -619,43 +623,52 @@ public class CrowdServlet extends HttpServlet
 		// And anything inside the transaction MUST not mutate the values produced.
 		final String projectID = (String) req.getAttribute("project");
 
-    	final Project project = Project.Create(projectID);
+		final Project project = Project.Create(projectID);
+
 		final Worker worker   = Worker.Create(user, project);
 
     	String jsonResponse = "{}";
     	try {
-    		jsonResponse = ofy().transactNew( new Work<String>(){
+    		jsonResponse = ofy().transact( new Work<String>(){
 
     			public String run() {
+    				final Project project = Project.Create(projectID);
     				Key<Microtask> microtaskKey = null;
     		    	int firstFetch=0;
+    		    	//before to enqueue the submit
     				if( unassign ){
     		    		project.unassignMicrotask( worker.getUserid() );
-    		    	} else {
+    		    	}
+    				//at the fetch request
+    				else {
     		    		microtaskKey = project.lookupMicrotaskAssignment( worker.getUserid() );
     		    	}
-    		    	
+
     		    	if( microtaskKey == null ){
-    		    		microtaskKey = project.assignMicrotask( worker.getUserid() , worker.getNickname() ) ;	
+    		    		microtaskKey = project.assignMicrotask( worker.getUserid()) ;
     		    		firstFetch = 1;
     		    	}
-    		    	
+    				ofy().save().entity(project).now();
+
     		    	if (microtaskKey == null) {
     					return "{}";
     				} else{
-    					return "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}";
+
+    					return "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\", \"workerId\": \""+ worker.getUserid()+"\"}";
     				}
+
     			}
-        		
+
         	});
+
     	} catch ( IllegalArgumentException e ){
     		e.printStackTrace();
-    		System.out.println("WORKER ID "+worker.getUserid()+" - nickname "+worker.getNickname());
+    		//System.out.println("WORKER ID "+worker.getUserid()+" - nickname "+worker.getNickname());
     	}
-    	
-    	
+
+//    	System.out.println("%%%%%%transaction finish returning for worker "+worker.getUserid() +" json "+jsonResponse );
 		renderJson(resp,jsonResponse);
-		
+
 
         HistoryLog.Init(projectID).publish();
         FirebaseService.publish();
@@ -678,10 +691,11 @@ public class CrowdServlet extends HttpServlet
 		final String JsonDTO       = Util.convertStreamToString(req.getInputStream());
 		final String skip          = req.getParameter("skip");
 		final String disablePoint  = req.getParameter("disablepoint");
+		System.out.println("received microtask "+microtaskKey);
 
 		// fetch the new microtask
         doFetchMicrotask(req,resp,user,true);
-        
+
 		// create the submit task
 		TaskOptions task = withUrl("/worker");
 		task.param("projectId", projectId);
@@ -710,7 +724,6 @@ public class CrowdServlet extends HttpServlet
 
 		// Create an initial context, then build a command to skip or submit
 		CommandContext context = new CommandContext();
-
 		// Create the skip or submit commands
 		if (skip)
 			ProjectCommand.skipMicrotask( microtaskKey, workerID, disablePoint);
@@ -722,8 +735,6 @@ public class CrowdServlet extends HttpServlet
 		executeCommands(context.commands(), projectID);
 		resp.setStatus(HttpServletResponse.SC_OK);
 
-//		time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-//		System.out.println(time + " - END: "+microtaskKey+" by "+workerID);
 	}
 
 	private void renderJson(final HttpServletResponse resp,String json) throws IOException{
@@ -732,7 +743,7 @@ public class CrowdServlet extends HttpServlet
 		out.print(json);
 		out.flush();
 	}
-	
+
 	private void renderCode(final HttpServletResponse resp, String projectId) throws IOException{
 		resp.setContentType("text/javascript;charset=utf-8");
 		Project project=  Project.Create(projectId);
@@ -758,36 +769,40 @@ public class CrowdServlet extends HttpServlet
 	{
 		if (userID == null || userID.length() == 0)
 			return;
-		System.out.println(userID);
-		System.out.println(projectID);
 
 		CommandContext context = new CommandContext();
 		ProjectCommand.logoutWorker(userID);
 		executeCommands(context.commands(), projectID);
 
-		//System.out.println("Logged out " + userID);
 	}
 
 	// Executes all of the specified commands and any commands that may subsequently be generated
-	private void executeCommands(List<Command> commands, final String projectId)
+	private void executeCommands(java.util.Queue<Command> commands, final String projectId)
 	{
+		System.out.println("starting execution with size "+commands.size()+" form "+Thread.currentThread().getId() );
+		LinkedBlockingQueue<Command> commandQueue    = new LinkedBlockingQueue<Command>(commands);
 
-		LinkedList<Command> commandQueue    = new LinkedList<Command>(commands);
-		Iterator<Command>   commandIterator = commandQueue.iterator();
 		// Execute commands until done, adding commands as created.
-	    while(commandIterator.hasNext()) {
-        	Command command = commandQueue.remove();
-        	CommandContext context = new CommandContext();
-        	command.execute(projectId);
-        	commandQueue.addAll(context.commands());
+	    while(! commandQueue.isEmpty()) {
 
-            // history log writes and the other
+	    	final Command command = commandQueue.remove();
+	    	commandQueue.addAll(
+            ofy().transactNew(new Work<java.util.Queue<Command>>() {
+                public java.util.Queue<Command> run()
+                {
+                    CommandContext context = new CommandContext();
+                    //System.out.println("inside transaction commands size ="+context.commands().size());
+                    command.execute(projectId);
+                    return context.commands();
+                }
+            }));
+
+	    	// history log writes and the other
             // firebase writes are done
             // outside of the transactions
             HistoryLog.Init(projectId).publish();
             FirebaseService.publish();
         }
-
 	}
 
 	// Writes the specified html message to resp, wrapping it in an html page

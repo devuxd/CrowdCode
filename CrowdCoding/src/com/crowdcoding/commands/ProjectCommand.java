@@ -2,6 +2,7 @@ package com.crowdcoding.commands;
 
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.CommandContext;
@@ -54,12 +55,8 @@ public abstract class ProjectCommand extends Command
 
 	public void execute(final String  projectId)
 	{
-		ofy().transact(new VoidWork() {
-	        public void vrun() {
 	        	Project project = Project.Create(projectId);
 	        	execute(project);
-	        }
-		});	
 	}
 
 	public abstract void execute(Project project);

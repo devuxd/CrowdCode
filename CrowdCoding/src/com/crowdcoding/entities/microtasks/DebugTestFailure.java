@@ -80,7 +80,6 @@ public class DebugTestFailure extends Microtask
 				false,
 				false,
 				submitValue,
-				test.getID(),
 				function.getID()),
 				Microtask.keyToString(this.getKey()),
 				projectId);

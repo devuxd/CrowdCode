@@ -24,22 +24,4 @@ public class DebugTestFailureInFirebase extends MicrotaskInFirebase
 		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled, points);
 		this.functionID = testedFunctionID;
 	}
-
-	public DebugTestFailureInFirebase(
-			long id,
-			String title,
-			String type,
-			String owningArtifact,
-			Long owningArtifactId,
-			boolean completed,
-			boolean canceled,
-			int points,
-			long testID,
-			long testedFunctionID)
-	{
-		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled, points);
-		this.testID = testID;
-		this.functionID = testedFunctionID;
-		
-	}
 }

@@ -70,7 +70,7 @@ public /*abstract*/ class Microtask
 
 	public void setWorkerId(String workerId) {
 		this.workerId = workerId;
-		ofy().save().entity(this);
+		ofy().save().entity(this).now();
 	}
 
 	// Default constructor for deserialization
@@ -81,6 +81,7 @@ public /*abstract*/ class Microtask
 	// Constructor for initialization. Microtask is set as ready.
 	protected Microtask(String projectId)
 	{
+		this.workerId=null;
 		this.projectId = projectId;
 	}
 
@@ -96,25 +97,25 @@ public /*abstract*/ class Microtask
 	// if it is still needed
 	protected boolean isStillNeeded(Project project) { return true; }
 
-	public void submit(String jsonDTOData, String workerID, String projectId)
+	public void submit(String jsonDTOData, String workerID,int awardedPoint, String projectId)
 	{
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
 		if (this.completed){
-			Logger.getLogger("LOGGER").severe("MIRCORTASK ALREADY COMPLETED: "+this.toString());
-			return; 
+			return;
 		}
-		
+
 		try {
 			DTO dto = DTO.read(jsonDTOData, getDTOClass());
 			doSubmitWork(dto, workerID, projectId);
-			
+
 			this.completed = true;
 			ofy().save().entity(this).now();
 
 			// increase the stats counter
 			WorkerCommand.increaseStat(workerID, "microtasks",1);
-	
+			WorkerCommand.awardPoints(workerID, awardedPoint);
+
 			// write completed on firebase
 			FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), workerID, projectId, this.completed);
 
@@ -125,6 +126,35 @@ public /*abstract*/ class Microtask
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+
+	}
+
+	public void revise (String jsonDTOData, String excludedWorkerID,int awardedPoint, String reissueMotivation, String projectId)
+	{
+		// If this microtask has already been completed, drop it, and clear the worker from the microtask
+		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
+		if (this.completed){
+			Logger.getLogger("LOGGER").severe("MIRCORTASK ALREADY COMPLETED: "+this.toString());
+			return;
+		}
+		this.completed = true;
+		ofy().save().entity(this).now();
+
+		//copy the microtask
+		Microtask newMicrotask = this.copy(projectId);
+		Key<Microtask> a = ofy().save().entity(newMicrotask).now();
+		String microtaskKey = Microtask.keyToString(newMicrotask.getKey());
+
+		String reissuedFromMicrotaskKey = Microtask.keyToString(this.getKey());
+		//enqueu the microtask
+		ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
+		WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
+
+		//write the reissue field on the new microtask
+		FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, reissuedFromMicrotaskKey, jsonDTOData, reissueMotivation,  projectId );
+		// write completed on firebase
+		FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), excludedWorkerID, projectId, this.completed);
 
 
 	}
@@ -238,7 +268,12 @@ public /*abstract*/ class Microtask
 	}
 
 	public boolean isAssignedTo(String workerId){
-		return this.getWorkerId() != null && this.getWorkerId().equals( workerId );
+		if(this.getWorkerId()!=null && this.getWorkerId().isEmpty())
+			return true;
+
+		boolean isAssigned= this.getWorkerId() != null && this.getWorkerId().equals( workerId );
+
+		return isAssigned;
 	}
 
 	public void setCanceled(Boolean value){

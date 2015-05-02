@@ -561,6 +561,7 @@ public class Function extends Artifact
 		}
 		// Have the callee let us know when it's tested (which may already be true;
 		// signal sent immediately in that case)
+		System.out.println("from function id= "+dto.functionId);
 		FunctionCommand.addPseudocaller(dto.functionId, this.getID(),pseudoFunctionName, pseudoFunctionDescription);
 	}
 

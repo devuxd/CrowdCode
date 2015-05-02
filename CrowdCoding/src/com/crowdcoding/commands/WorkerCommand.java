@@ -33,17 +33,13 @@ public abstract class WorkerCommand extends Command
 	{
 		final Project project = Project.Create(projectId);
 		final Worker worker = find(workerID, project);
-		ofy().transact(new VoidWork() {
-	        public void vrun() {
-	        	if (worker == null)
-	    			System.out.println("Cannot execute WorkerCommand. Could not find the worker for WorkerID "
+	       	if (worker == null)
+	    			System.out.println("errore Cannot execute WorkerCommand. Could not find the worker for WorkerID "
 	    						+ workerID+" ("+this.getClass()+")");
 	    		else
 	    		{
 	    			execute(worker, project);
 	    		}
-	        }
-		});	
 	}
 
 	public abstract void execute(Worker worker, Project project);

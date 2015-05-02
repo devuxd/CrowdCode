@@ -52,6 +52,7 @@ public class Review extends Microtask
 		this.artifact = (Ref<Artifact>) Ref.create((Key<Artifact>) microtaskUnderReview.getOwningArtifact().getKey());
 
 		ofy().save().entity(this).now();
+
 		FirebaseService.writeMicrotaskCreated(new ReviewInFirebase(
 				id,
 				this.microtaskTitle(),
@@ -143,7 +144,7 @@ public class Review extends Microtask
 
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
-			
+
 			notification = new NotificationInFirebase(
 					"Work accepted",
 					"your work on " + submittedMicrotask.microtaskName() + " has been accepted ",
@@ -169,7 +170,7 @@ public class Review extends Microtask
     	// send notification
 		FirebaseService.writeNotification(
 				notification,
-				workerOfReviewedWork, 
+				workerOfReviewedWork,
 				projectId
 		);
 

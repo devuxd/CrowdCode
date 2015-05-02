@@ -23,14 +23,14 @@ function DummyWorker( assignedId ){
 
 	function init(){
 		id = assignedId;
-		console.log('DummyWorker '+id+' started')
+		console.log('DummyWorker '+id+' started');
 		self.scheduleNextOperation();
 	}
 
 
 	self.scheduleNextOperation = function(){
 		numOperations ++ ;
-		if( numOperations <= 50 ){
+		if( numOperations <= 5000 ){
 			if( microtaskKey == null ){
 				var opTime = randomTime(2000);
 				nextOperationTimer = setTimeout( self.fetch, opTime ) ;
@@ -118,7 +118,7 @@ function generateSubmitData( microtaskKey ){
 		.child('microtasks/'+microtaskKey)
 		.once('value',function( snap ){
 			var mtask = snap.val();
-			fbRootRef
+			//fbRootRef
 			var formData = null;
 
 			switch( mtask.type ){
@@ -130,7 +130,7 @@ function generateSubmitData( microtaskKey ){
 					};
 
 					// from 2 to 7 test cases description
-					var numTC = Math.ceil( Math.random() * 3  + 2 );
+					var numTC = Math.ceil( Math.random() * 10  + 2 );
 					for( var tc = 1; tc <= numTC ; tc++){
 						formData.testCases.push({
 							id   : null,
@@ -141,7 +141,18 @@ function generateSubmitData( microtaskKey ){
 					}
 
 					break;
-
+				case 'WriteTest':
+					formData = { 
+						code:"equal(createElement);",
+						disputeFunctionText:"",
+						disputeTestText:"",
+						functionVersion:2,
+						hasSimpleTest:false,
+						inDispute:false,
+						simpleTestInputs:["input"],
+						simpleTestOutput:"ouput"
+					};
+					break;
 				case 'WriteFunction':
 
 					var funName = mtask.owningArtifact;
@@ -152,7 +163,7 @@ function generateSubmitData( microtaskKey ){
 					  "name" : funName,
 					  "parameters" : [ { "description" : "par", "name" : "par", "type" : "Number" } ],
 					  "returnType" : "Number",
-					  "code" : "{ //# return par; \n}",
+					  "code" : "{ // return par; \n}",
 					  "pseudoFunctions" : []
 					};
 
@@ -160,7 +171,7 @@ function generateSubmitData( microtaskKey ){
 					// 	formData.code = "{ return par; \n}"
 					// }
 
-					var numPF = Math.ceil( Math.random() * 4);
+					var numPF = Math.random() >0.2 ? 1: 0;
 					for( var pf = 1; pf <= numPF ; pf++ ){
 						formData.pseudoFunctions.push({
 							"description" : "function "+funName+pf+"(par)",
@@ -208,11 +219,12 @@ function generateSubmitData( microtaskKey ){
 				case 'Review':
 					formData =  {
 						microtaskIDReviewed: mtask.microtaskKeyUnderReview,
-						reviewText:"",
-						qualityScore:4,
+						reviewText:"review text",
+						qualityScore:(parseInt(Math.random()*5)%5)+1,
 						fromDisputedMicrotask:false
 					};
 					break;
+				
 				
 				default: 
 

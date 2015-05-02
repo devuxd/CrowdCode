@@ -54,18 +54,14 @@ public abstract class MicrotaskCommand extends Command
 	public void execute(final String projectId)
 	{
 		final Microtask microtask = find(microtaskKey);
-		
-		ofy().transact(new VoidWork() {
-	        public void vrun() {
+
 	        	if (microtask == null)
-	    			System.out.println("Cannot execute MicrotaskCommand. Could not find the microtask for microtaskID "
+	    			System.out.println("ERROR erroreCannot execute MicrotaskCommand. Could not find the microtask for microtaskID "
 	    						+ microtaskKey);
 	    		else
 	    		{
 	    			execute(microtask, projectId);
 	    		}
-	        }
-		});	
 	}
 
 	public abstract void execute(Microtask microtask, String projectId);
@@ -94,9 +90,8 @@ public abstract class MicrotaskCommand extends Command
 
 		public void execute(Microtask microtask, String projectId)
 		{
-			WorkerCommand.awardPoints(workerID, awardedPoint);
 
-			microtask.submit(jsonDTOData, workerID, projectId);
+			microtask.submit(jsonDTOData, workerID, awardedPoint, projectId);
 		}
 	}
 
@@ -185,17 +180,7 @@ public abstract class MicrotaskCommand extends Command
 		// Overrides the default execute as no microtask is to be loaded.
 		public void execute(Microtask microtask, String projectId)
 		{
-			Microtask newMicrotask = microtask.copy(projectId);
-			String microtaskKey = Microtask.keyToString(newMicrotask.getKey());
-			String reissuedFromMicrotaskKey = Microtask.keyToString(microtask.getKey());
-
-			//FirebaseService.
-
-			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, reissuedFromMicrotaskKey, jsonDTOData, reissueMotivation,  projectId );
-
-			WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
-
-			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
+			microtask.revise(jsonDTOData, excludedWorkerID ,awardedPoint,reissueMotivation, projectId);
 		}
 	}
 	protected static class CancelMicrotask extends MicrotaskCommand
@@ -211,7 +196,7 @@ public abstract class MicrotaskCommand extends Command
 		{
 			microtask.setCanceled(true);
 			FirebaseService.writeMicrotaskCanceled( Microtask.keyToString(microtask.getKey()), true, projectId );
-			ofy().save().entity(microtask);
+			ofy().save().entity(microtask).now();
 		}
 	}
 }

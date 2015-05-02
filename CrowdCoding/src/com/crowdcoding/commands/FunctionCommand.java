@@ -110,24 +110,17 @@ public abstract class FunctionCommand extends Command {
 
 
 	public void execute(final String projectId) {
-		ofy().transact(new VoidWork() {
-	        public void vrun() {
 	        	if (functionID != 0) {
 	    			LoadResult<Function> function = Function.find(functionID);
 	    			if (function == null)
 	    				System.out
-	    						.println("Cannot execute FunctionCommand. Could not find the function for FunctionID "
+	    						.println("errore Cannot execute FunctionCommand. Could not find the function for FunctionID "
 	    								+ functionID);
 	    			else {
 	    				execute(function.now(), projectId);
-
-	    				// Save the associated artifact to Firebase
-	    				//function.now().storeToFirebase(projectId);
 	    			}
 	    		} else
 	    			execute(null, projectId);
-	        }
-		});	
 	}
 
 	public abstract void execute(Function function, String projectId);
@@ -268,13 +261,19 @@ public abstract class FunctionCommand extends Command {
 		public AddPseudocaller(long functionID, long pseudoCallerId,
 				String pseudoCallerName, String pseudoCallerDescription) {
 			super(functionID);
+
 			this.pseudoCallerName = pseudoCallerName;
 			this.pseudoCallerDescription = pseudoCallerDescription;
 			this.pseudoCallerId = pseudoCallerId;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.addPseudocaller(pseudoCallerId, pseudoCallerName, pseudoCallerDescription);
+			if(function!=null)
+				function.addPseudocaller(pseudoCallerId, pseudoCallerName, pseudoCallerDescription);
+			else
+			{
+				System.out.println("ERROR: function null in addPseudoccaller");
+			}
 		}
 	}
 
@@ -313,7 +312,7 @@ public abstract class FunctionCommand extends Command {
 		private long functionID;
 		private int functionVersion;
 		private String implementedIds;
-		
+
 		public WriteTestJobQueue(long functionID, int functionVersion,String implementedIds) {
 			super(functionID);
 			this.functionID = functionID;

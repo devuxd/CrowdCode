@@ -72,14 +72,12 @@ public abstract class TestCommand extends Command {
 	}
 
 	public void execute(final String projectId) {
-		ofy().transact(new VoidWork() {
-	        public void vrun() {
 	        	if (testID != 0) {
 	    			LoadResult<Test> testRef = Test.find(testID);
 
 	    			if (testRef == null)
 	    				System.out
-	    						.println("Cannot execute TestCommand. Could not find test for TestID "
+	    						.println("errore Cannot execute TestCommand. Could not find test for TestID "
 	    								+ testID);
 	    			else {
 	    				Test test = testRef.now();
@@ -90,9 +88,7 @@ public abstract class TestCommand extends Command {
 	    			}
 	    		} else
 	    			execute(null, projectId);
-	        }
-		});	
-		
+
 	}
 
 	public abstract void execute(Test test, String projectId);
