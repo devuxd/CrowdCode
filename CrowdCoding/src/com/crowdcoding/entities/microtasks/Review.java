@@ -130,9 +130,8 @@ public class Review extends Microtask
 			HistoryLog.Init(projectId).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
 
 			notification = new NotificationInFirebase(
-					"Work reissued",
-					"your work on " + submittedMicrotask.microtaskName() + " has been reissued ",
-					System.currentTimeMillis()
+					"task.reissued",
+					"{ \"microtaskId\": \""+submittedMicrotask.getID() + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"
 			);
 
 		} else {
@@ -146,9 +145,8 @@ public class Review extends Microtask
 			HistoryLog.Init(projectId).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
 
 			notification = new NotificationInFirebase(
-					"Work accepted",
-					"your work on " + submittedMicrotask.microtaskName() + " has been accepted ",
-					System.currentTimeMillis()
+					"task.accepted",
+					"{ \"microtaskId\": \""+submittedMicrotask.getID() + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"
 			);
 
 		}
@@ -168,7 +166,7 @@ public class Review extends Microtask
     		projectId
 	    );
     	// send notification
-		FirebaseService.writeNotification(
+		FirebaseService.writeWorkerNotification(
 				notification,
 				workerOfReviewedWork,
 				projectId

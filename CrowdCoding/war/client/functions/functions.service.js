@@ -211,11 +211,11 @@ angular
 		// add one to score. For matches to function name, add 5.
 		var score = 0;
 
-		if (re.test(functionDescription.name))
+		if (re.test(functionDescription.name.toLowerCase()))
 			score += 5;
-		if (re.test(functionDescription.description))
+		if (re.test(functionDescription.description.toLowerCase()))
 			score += 1;
-		if (re.test(functionDescription.header))
+		if (re.test(functionDescription.header.toLowerCase()))
 			score += 1;
 
 	    return score;

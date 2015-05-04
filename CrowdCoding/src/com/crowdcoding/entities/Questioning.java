@@ -161,20 +161,10 @@ public /*abstract*/ class Questioning
 	// Writes the artifact out to Firebase, publishing the current state of the artifact to all clients.
 	public void storeToFirebase(String projectId) { throw new RuntimeException("Must implement storeToFirebase().");  }
 
-	public void notifySubscribers(String message, String excludedWorkerId) {
+	public void notifySubscribers(NotificationInFirebase notification, String excludedWorkerId) {
 		for(String subscriberId:this.subsribersId){
 			if( ! subscriberId.equals(excludedWorkerId) ){
-				NotificationInFirebase notification = new NotificationInFirebase(
-						"",
-						message,
-						System.currentTimeMillis()
-				);
-				// send notification
-				FirebaseService.writeNotification(
-						notification,
-						subscriberId, 
-						projectId
-				);
+				FirebaseService.writeWorkerNotification( notification, subscriberId, projectId );
 			}
 		}
 	};

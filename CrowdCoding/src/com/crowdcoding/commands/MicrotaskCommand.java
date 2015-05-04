@@ -53,6 +53,7 @@ public abstract class MicrotaskCommand extends Command
 
 	public void execute(final String projectId)
 	{
+
 		final Microtask microtask = find(microtaskKey);
 
 	        	if (microtask == null)

@@ -3,16 +3,24 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		scope: false,
 		templateUrl: '/client/questions/questionsList.html',
 		link: function($scope,$element,$attrs){
-			
-			$scope.setSelected=setSelected;
+
 			$scope.resetFilter=resetFilter;
+			$scope.addToFilter=addToFilter;
 
 			$scope.search    = '';
-			$scope.questions = questionsService.getQuestions();
+			$scope.isRelated = isRelatedToArtifact;
+
+			$scope.toggleRelation = function(q){
+				if( isRelatedToArtifact(q) ){
+					questionsService.linkArtifact(q.id, $scope.fetchedMicrotask.owningArtifactId, true );
+				} else {
+					questionsService.linkArtifact(q.id, $scope.fetchedMicrotask.owningArtifactId, false );
+				}
+
+			};
 
 			var searchTimeout;
 			$scope.$watch('search',function( val ){
-
 				if (searchTimeout) $timeout.cancel(searchTimeout);
 		        searchTimeout = $timeout(function() {
 		        	if( val.length === 0)
@@ -24,13 +32,22 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 			});
 
 			
+			function isRelatedToArtifact(q){
+				return q.artifactsId != null && $scope.fetchedMicrotask != null && q.artifactsId.indexOf( ""+$scope.fetchedMicrotask.owningArtifactId ) > -1 ; 
+			}
+
+
 			function resetFilter(){
 				$scope.search = '';
 			}
 
-			function setSelected(q){
-				$scope.sel = q;
+			function addToFilter( text ){
+				if( $scope.search.indexOf(text) > -1 )
+					return; 
+				
+				$scope.search = text + ' ' + $scope.search ; 
 			}
+
 
 		}
 	};

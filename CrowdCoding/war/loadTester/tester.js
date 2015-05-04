@@ -216,6 +216,19 @@ function generateSubmitData( microtaskKey ){
 					};
 					break;
 
+				case 'WriteTest':
+					formData = {
+						"functionVersion":2,
+						"code":"equal(fun(14),14,'67');",
+						"inDispute":false,
+						"disputeFunctionText":"",
+						"disputeTestText":"",
+						"hasSimpleTest":false,
+						"simpleTestInputs":["14"],
+						"simpleTestOutput":"14"
+					};
+					break;
+
 				case 'Review':
 					formData =  {
 						microtaskIDReviewed: mtask.microtaskKeyUnderReview,

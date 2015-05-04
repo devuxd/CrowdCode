@@ -8,10 +8,8 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 				text: '',
 				tags: []
 			};
-
-			$scope.allTags=questionsService.getAllTags();
-			$scope.newTag = '';
-			$scope.getArtifactId=false;
+			$scope.newTag    = '';
+			$scope.relatedTo = 'none';
 
 			$scope.postQuestion = postQuestion;
 			$scope.addTag       = addTag;
@@ -19,8 +17,12 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 
 
 			function addTag(){
-				if( $scope.question.tags.indexOf($scope.newTag) == -1 && $scope.newTag !== '')
-					$scope.question.tags.push($scope.newTag);
+				var tags = $scope.newTag.split(',');
+				for( var t = 0; t < tags.length ; t++ ){
+					var tag = tags[t].trim();
+					if( $scope.question.tags.indexOf(tag) == -1 && tag !== '')
+						$scope.question.tags.push(tag);
+				}
 				$scope.newTag = '';
 			}
 
@@ -33,19 +35,26 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 
 
 			function postQuestion(){
-				addTag();
-				if($scope.getArtifactId)
-					$scope.question.artifactId = $scope.fetchedMicrotask.owningArtifactId;
 
+				addTag();
+
+				if( $scope.relatedTo == 'artifact' ){
+					console.log('relatedTo'+$scope.relatedTo, $scope.fetchedMicrotask);
+					$scope.question.artifactId = $scope.fetchedMicrotask.owningArtifactId;
+				}
+					
 				questionsService
-					.submitQuestion('question',$scope.question)
+					.submit('question',$scope.question)
 					.then(function(){
 						$scope.question = {
 							title: '',
 							text: '',
 							tags: []
 						};
+						$scope.relatedTo = 'none';
+
 						$scope.setView('question_list');
+						$scope.questionForm.$setPristine();
 					},function(){
 						console.log('error submitting the question')
 					});

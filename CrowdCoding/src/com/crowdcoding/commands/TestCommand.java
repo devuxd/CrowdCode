@@ -73,18 +73,14 @@ public abstract class TestCommand extends Command {
 
 	public void execute(final String projectId) {
 	        	if (testID != 0) {
-	    			LoadResult<Test> testRef = Test.find(testID);
+	    			Test test = Test.find(testID);
 
-	    			if (testRef == null)
+	    			if (test == null)
 	    				System.out
 	    						.println("errore Cannot execute TestCommand. Could not find test for TestID "
 	    								+ testID);
 	    			else {
-	    				Test test = testRef.now();
 	    				execute(test, projectId);
-
-	    				// Save the associated artifact to Firebase
-	    				//	test.storeToFirebase(projectId);
 	    			}
 	    		} else
 	    			execute(null, projectId);

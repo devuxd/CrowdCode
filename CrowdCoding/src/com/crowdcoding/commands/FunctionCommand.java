@@ -111,13 +111,13 @@ public abstract class FunctionCommand extends Command {
 
 	public void execute(final String projectId) {
 	        	if (functionID != 0) {
-	    			LoadResult<Function> function = Function.find(functionID);
+	    			Function function = Function.find(functionID);
 	    			if (function == null)
 	    				System.out
 	    						.println("errore Cannot execute FunctionCommand. Could not find the function for FunctionID "
 	    								+ functionID);
 	    			else {
-	    				execute(function.now(), projectId);
+	    				execute(function, projectId);
 	    			}
 	    		} else
 	    			execute(null, projectId);

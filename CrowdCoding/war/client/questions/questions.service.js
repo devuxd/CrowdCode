@@ -27,13 +27,16 @@ angular
 
 		// Public functions
 		this.init = init;
-		this.submitQuestion = submitQuestion;
+		this.submit = submit;
 		this.vote = vote;
 		this.report = report;
+		this.linkArtifact = linkArtifact;
+		this.setStatus    = setStatus;
 		this.sel  = undefined;
 		this.allTags = [];
 		this.searchResults = searchResults;
 		this.getQuestions  = function(){return questions;};
+		this.get 		   = getQuestion;
 		this.getAllTags    = getAllTags;
 
 		function questionToDocument(question,key){
@@ -61,8 +64,6 @@ angular
 
 			return doc;
 		}
-
-		
 
 		function searchResults( searchTxt ){
 			var searchTxtToLower = searchTxt;
@@ -127,7 +128,15 @@ angular
 
 		}
 
-		function submitQuestion(type, formData){
+		function getQuestion( questionId ){
+			var deferred = $q.defer();
+			questions.$loaded().then(function(){
+				deferred.resolve( questions.$getRecord( questionId ) );
+			});
+			return deferred.promise;
+		}
+
+		function submit(type, formData){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/insert?type=' + type, formData)
 				.success(function(data, status, headers, config) {
@@ -139,9 +148,9 @@ angular
 			return deferred.promise;
 		}
 		
-		function vote(id, removeVote){
+		function vote(id, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&removeVote='+removeVote)
+			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -151,9 +160,33 @@ angular
 			return deferred.promise;
 		}
 
-		function report(id, removeReport){
+		function report(id, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/report?id=' + id + '&removeReport='+removeReport)
+			$http.post('/' + $rootScope.projectId + '/questions/report?id=' + id + '&remove='+remove)
+				.success(function(data, status, headers, config) {
+					deferred.resolve();
+				})
+				.error(function(data, status, headers, config) {
+					deferred.reject();
+				});
+			return deferred.promise;
+		}
+
+		function linkArtifact(id, artifactId, remove){
+			var deferred = $q.defer();
+			$http.post('/' + $rootScope.projectId + '/questions/link?id=' + id + '&artifactId='+artifactId+'&remove='+remove)
+				.success(function(data, status, headers, config) {
+					deferred.resolve();
+				})
+				.error(function(data, status, headers, config) {
+					deferred.reject();
+				});
+			return deferred.promise;
+		}
+
+		function setStatus(id, closed){
+			var deferred = $q.defer();
+			$http.post('/' + $rootScope.projectId + '/questions/close?id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})

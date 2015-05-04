@@ -144,10 +144,10 @@ rgba(237,90,48,1)  Valencia - orange - review
 .btn:hover, .btn:focus { background-color: rgb(163, 163, 163); }
 
 
-.btn-primary { border:none; background-color:#3F81AC; }
+.btn-primary { background-color:#3F81AC; }
 .btn-primary:hover, .btn-primary:focus{ background-color:#7491A1; }
 
-.form-group,.form-horizontal .form-group { margin:0px ; padding:0px; }
+/*.form-group,.form-horizontal .form-group { margin:0px ; padding:0px; }*/
 
 .input-sm {
 	font-family: 'Merriweather' !important;
@@ -496,6 +496,21 @@ h1, h2, h3, h4 {
 	width:100%;
 	height:100%;
 }
+.questions .tag{
+	background: #f7fdff;
+	padding: 0.3em .3em;
+	text-align: center;
+	line-height: 1;
+	color: #3e6d8e;
+	background-color: #e4edf4;
+	margin: 2px 2px 2px 0;
+	text-decoration: none;
+	font-size: 0.8em;
+	white-space: nowrap;
+	display: inline-block;
+	border-radius: 0;
+	border: 1px solid #e4edf4;
+}
 
 .questions .form-control {
 	border-radius:0px;
@@ -504,13 +519,13 @@ h1, h2, h3, h4 {
 }
 
 .questions .top {
-	height: 25px;
+	height: 35px;
 }
 
 
 .questions .middle {
 	position:absolute;
-	top:25px;
+	top:35px;
 	bottom:0px;
 	width:100%;
 	overflow:auto;
@@ -533,8 +548,7 @@ h1, h2, h3, h4 {
 }
 .questions .list-group .list-group-item {
 	padding:5px; 
-
-	margin-top:5px; 
+	margin-bottom:5px; 
 	background-color: transparent;
 	border-radius:0px;
 	border:none;
@@ -545,11 +559,14 @@ h1, h2, h3, h4 {
 	background-color:rgb(227, 227, 227);
 }
 
+
+
 .questions .list-group .comment-item { margin-left:10px; border-top:1px solid rgb(175, 175, 175); }
 
 .questions .list-group .list-group-item .content-panel { padding-right:3.2em; }
 .questions .list-group .list-group-item .vote-panel { font-size:1em; position:absolute; top:5px; right:5px; }
 
+.questions .answer-item > .content-panel {  min-height: 6em; }
 
 .questions .has-feedback { font-size:10px; }
 .questions .has-feedback .form-control { padding-left:2em; padding-right:0px; font-size:1em; height:2.6em;}
@@ -570,8 +587,19 @@ h1, h2, h3, h4 {
 .questions question-list { margin-left:0%; }
 .questions question-list.ng-hide { margin-left:-100%; } 
 
+.questions question-list .list-header {   
+	text-align: right;
+	font-weight: bold;
+	font-family:'Lato';
+	border-bottom: 1px solid rgb(85, 85, 85) !important;
+	padding-bottom: 0px !important;
+}
+
 .questions question-list .question-item { cursor: pointer; }
 .questions question-list .question-item:hover { background-color:#E0E0E0; }
+
+.questions question-list .question-item.open { background-color:rgba(255, 236, 186, 0.73); }
+.questions question-list .question-item.open:hover { background-color:rgba(255, 236, 186, 1); }
 
 .questions .question-item.ng-enter{
   -webkit-transition:all linear 0.5s;
@@ -1436,28 +1464,12 @@ pre.json .jsonKey { color: black; }
 	color: #428bca;
 	cursor: pointer;
 }
-.tag{
-  /* color: #566e76; */
-  background: #f7fdff;
-  /* border: 1px solid #c0d4db; */
-  padding: 0.3em .3em;
-  /* border-radius: 15px; */
-  text-align: center;
-  /* font-size: 11px; */
-  line-height: 1;
-  color: #3e6d8e;
-  background-color: #e4edf4;
-  margin: 2px 2px 2px 0;
-  text-decoration: none;
-  font-size: 12px;
-  white-space: nowrap;
-  display: inline-block;
-  border-radius: 0;
-  border: 1px solid #e4edf4;
-}
+
 
 .no-border li{
 	border: 0px solid #ddd;
 }
 
 .not-allowed { cursor:not-allowed; }
+
+.toast-top-right { top: 40px; }

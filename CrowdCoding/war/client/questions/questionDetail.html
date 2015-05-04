@@ -1,8 +1,14 @@
 <div class="top padding">
-	<a href="#" ng-click="setView('question_list');showCommentForm =false; showAnswerForm = false;">
+	<a href="#" class="pull-left" ng-click="setView('question_list');showCommentForm =false; showAnswerForm = false;">
 		<span class="glyphicon glyphicon-arrow-left"></span>
 		back
 	</a>
+
+	<a href="#" class="pull-right" ng-click="toggleClosed(sel)">
+		mark as {{ sel.closed ? 'open' : 'closed' }}
+	</a>
+
+	<span class="clearfix"></span>
 </div>
 
 <div class="middle padding" ng-init="showCommentForm =false; showAnswerForm = false;">
@@ -14,17 +20,16 @@
 			<div class="pull-left">
 				<h3 class="panel-title">{{sel.title}}</h3>
 				<span>{{sel.text}}</span>
-				<div><span class="tag" ng-repeat="tag in sel.tags">{{tag}} </span></div>
 
 			</div>
 
 			<div style="font-size: 1.1em;" class="pull-right">
-				<span>{{sel.score}}</span>
 				<span 
 					ng-click="toggleVoteUp(sel)" 
 					class="glyphicon glyphicon-thumbs-up unselected" 
 					ng-class="{'selected':sel.votersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
 				</span>
+				<span>{{sel.score}}</span>
 				<span 
 					ng-click="toggleVoteDown(sel)" 
 					class="glyphicon glyphicon-thumbs-down unselected" 
@@ -34,6 +39,8 @@
 
 			<span class="clearfix"></span>
 
+			<div><span class="tag" ng-repeat="tag in sel.tags">{{tag}} </span></div>
+
 		</li>
 	</ul>
 
@@ -41,30 +48,30 @@
 
 	<ul class="list-group">
 
-		<li class="list-group-item answer-item" ng-repeat="answer in sel.answers | orderObjectBy : 'time' : false" ng-animate-children>
+		<li class="list-group-item answer-item" ng-repeat="a in sel.answers | orderObjectBy : 'time' : false" ng-animate-children>
 
 			<div class="content-panel">
-				<span>{{answer.text}}</span>
+				<span>{{a.text}}</span>
 				<br />
 				<small>
-					<span time-ago from-time="{{answer.time | date : 'medium'}}"></span>
+					<span time-ago from-time="{{a.time | date : 'medium'}}"></span>
 					-
-					<span ng-bind="answer.ownerHandle" ></span>
+					<span ng-bind="a.ownerHandle" ></span>
 				</small>
 			</div>
 
 
 			<div class="vote-panel">
-				<span>{{answer.score}}</span>
 				<span
-					ng-click="toggleVoteUp(answer)"
+					ng-click="toggleVoteUp(a)"
 					class="glyphicon glyphicon-thumbs-up unselected"
-					ng-class="{'selected':answer.votersId.indexOf(workerId)>-1, 'not-allowed': answer.ownerId == workerId}">
+					ng-class="{'selected':a.votersId.indexOf(workerId)>-1, 'not-allowed': a.ownerId == workerId}">
 				</span>
+				<span>{{a.score}}</span>
 				<span
-					ng-click="toggleVoteDown(answer)"
+					ng-click="toggleVoteDown(a)"
 					class="glyphicon glyphicon-thumbs-down unselected"
-					ng-class="{'selected':answer.reportersId.indexOf(workerId)>-1, 'not-allowed': answer.ownerId == workerId}">
+					ng-class="{'selected':a.reportersId.indexOf(workerId)>-1, 'not-allowed': a.ownerId == workerId}">
 				</span>
 			</div>
 
@@ -72,28 +79,28 @@
 			<span class="clearfix"></span>
 
 			<ul class="list-group">
-				<li class="list-group-item comment-item" ng-repeat="comment in answer.comments | orderObjectBy : 'time' : false" >
+				<li class="list-group-item comment-item" ng-repeat="c in a.comments | orderObjectBy : 'time' : false" >
 					<div class="content-panel">
-						<span>{{comment.text}}</span>
+						<span>{{c.text}}</span>
 						<br />
 						<small>
-							<span time-ago from-time="{{comment.time | date : 'medium'}}"></span>
+							<span time-ago from-time="{{c.time | date : 'medium'}}"></span>
 							-
-							<span ng-bind="comment.ownerHandle" ></span>
+							<span ng-bind="c.ownerHandle" ></span>
 						</small>
 					</div>
 
 					<div class="vote-panel">
-						<span>{{comment.score}}</span>
 						<span 
-							ng-click="toggleVoteUp(comment)"
+							ng-click="toggleVoteUp(c)"
 							class="glyphicon glyphicon-thumbs-up unselected"
-							ng-class="{'selected':comment.votersId.indexOf(workerId)>-1, 'not-allowed': comment.ownerId == workerId}">
+							ng-class="{'selected':c.votersId.indexOf(workerId)>-1, 'not-allowed': c.ownerId == workerId}">
 						</span>
+						<span>{{c.score}}</span>
 						<span
-							ng-click="toggleVoteDown(comment)"
+							ng-click="toggleVoteDown(c)"
 							class="glyphicon glyphicon-thumbs-down unselected"
-							ng-class="{'selected':comment.reportersId.indexOf(workerId)>-1, 'not-allowed': comment.ownerId == workerId}">
+							ng-class="{'selected':c.reportersId.indexOf(workerId)>-1, 'not-allowed': c.ownerId == workerId}">
 						</span>
 					</div>
 
@@ -102,21 +109,21 @@
 
 					<a href="#" 
 						ng-show='!showCommentForm' 
-						ng-click="showCommentForm = true ; comment.answerId = answer.id" >
+						ng-click="showCommentForm = true ; c.answerId = a.id" >
 						Add Comment
 					</a>
-					<form ng-show='showCommentForm && comment.answerId == answer.id'>
+					<form name="commentForm" novalidate ng-show='showCommentForm && c.answerId == a.id' ng-submit="commentForm.$valid && postComment(a.id)">
 						<div class="form-group">
 							<textarea name="text" 
 									  class="form-control" 
 									  ng-model="comment.text" 
-									  placeholder="comment text">
+									  placeholder="comment text"
+									  required>
 							</textarea>
 						</div>
 						<button type="submit" 
-								ng-click="postComment() ; " 
 								class="btn btn-xs btn-primary pull-right">
-								Post Comment
+								Comment
 						</button>
 					</form>
 				</li>
@@ -128,11 +135,11 @@
 		</li>
 		<li class="list-group-item answer-item" >
 			<a href="#" ng-show="!showAnswerForm" ng-click="showAnswerForm=true">Add Answer</a>
-			<form ng-show="showAnswerForm">
+			<form name="answerForm" novalidate  ng-show="showAnswerForm" ng-submit="answerForm.$valid && postAnswer()">
 				<div class="form-group">
 					<textarea required name="text" class="form-control" ng-model="answer.text" placeholder="answer text"></textarea>
 				</div>
-				<button type="submit" ng-click="postAnswer(); showAnswerForm = false;" class="btn btn-xs btn-primary pull-right">Post Answer</button>
+				<button type="submit" ng-click="showAnswerForm = false;" class="btn btn-xs btn-primary pull-right">Answer</button>
 				<div class="clearfix"></div>
 			</form>
 		</li>

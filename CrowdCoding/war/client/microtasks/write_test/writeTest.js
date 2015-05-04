@@ -137,6 +137,7 @@ angular
                 formData.simpleTestOutput = $scope.testData.output;
 
             }
+            console.log(JSON.stringify(formData));
             $scope.$emit('submitMicrotask', formData);
         }
     });

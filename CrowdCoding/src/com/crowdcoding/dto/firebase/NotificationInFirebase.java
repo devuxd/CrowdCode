@@ -8,8 +8,7 @@ import com.crowdcoding.dto.DTO;
 public class NotificationInFirebase extends DTO
 {
 	public String type;
-	public String text;
-	public String dataId;
+	public String data;
 	public long time;
 
 	// Default constructor (required by Jackson JSON library)
@@ -17,10 +16,10 @@ public class NotificationInFirebase extends DTO
 	{
 	}
 
-	public NotificationInFirebase(String type,String text,long time)
+	public NotificationInFirebase(String type,String data)
 	{
 		this.type = type;
-		this.text = text;
-		this.time = time;
+		this.data = data;
+		this.time = System.currentTimeMillis();
 	}
 }

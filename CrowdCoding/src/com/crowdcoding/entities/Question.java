@@ -8,10 +8,13 @@ import java.util.List;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
+import com.crowdcoding.commands.ProjectCommand;
+import com.crowdcoding.commands.QuestioningCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.ArtifactsIdInFirebase;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.QuestionInFirebase;
 import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
@@ -31,8 +34,12 @@ public class Question extends Questioning
 
 	private List<String> artifactsId = new ArrayList<String>();
 	private List<String> tags = new ArrayList<String>();
-	
+	private boolean closed;
 	private String title;
+
+	public String getTitle() {
+		return title;
+	}
 
 	// Constructor for deserialization
 	protected Question()
@@ -51,36 +58,55 @@ public class Question extends Questioning
 
 		this.firebasePath="/questions/" + this.id;
 		ofy().save().entity(this).now();
-		
-		storeToFirebase();
 
+		storeToFirebase();
+		
+		NotificationInFirebase notification = new NotificationInFirebase( "question.added", "{ \"questionId\": \""+this.id+"\", \"title\": \""+this.title+"\" }" );
+		ProjectCommand.notifyLoggedInWorkers(notification);
 	}
+	
 	public void removeArtifactLink(String artifactId)
 	{
-		if(artifactsId.remove(artifactId))
+		if(artifactsId.remove(artifactId)){
+			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
+		}
 	}
+	
 	public void addArtifactLink(String artifactId)
 	{
 		if(! artifactsId.contains(artifactId)){
 			artifactsId.add(artifactId);
+			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
 		}
 	}
 
 	public void unsubscribeWorker(String workerId)
 	{
-		if(subsribersId.remove(workerId))
+		if(subsribersId.remove(workerId)){
+			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
+		}
 	}
+	
 	public void subscribeWorker(String workerId)
 	{
 		if(! artifactsId.contains(workerId)){
 			artifactsId.add(workerId);
+			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
 		}
 	}
+	
+	public void setClosed(boolean closed){
+		this.closed = closed;
+		ofy().save().entity(this).now();
+		FirebaseService.updateQuestioningClosed(this.closed,this.firebasePath,projectId);
+	}
+	
+	
 	protected void storeToFirebase() {
-		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId), this.firebasePath, projectId);
+		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId, this.closed), this.firebasePath, projectId);
 	}
 }

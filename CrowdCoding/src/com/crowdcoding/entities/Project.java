@@ -612,6 +612,11 @@ public class Project
 
 		return id;
 	}
+	
+	public HashSet<String> getLoggedInWorkers() {
+		return loggedInWorkers;
+	}
+
 
 	public void enableTutorials(Boolean tutorialsEnabled) {
 		// TODO Auto-generated method stub

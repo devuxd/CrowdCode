@@ -306,8 +306,8 @@ public class FirebaseService
 		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
 	}
 
-	public static void writeNotification(NotificationInFirebase notification, String workerID, String projectId){
-		enqueueWrite(notification.json(), "/workers/" + workerID + "/notifications.json", HTTPMethod.POST, projectId);
+	public static void writeWorkerNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
 	}
 
 	public static void microtaskAssigned(String workerID, String projectId) {
@@ -358,6 +358,10 @@ public class FirebaseService
 
 	public static void updateQuestioningLinkedArtifacts(ArtifactsIdInFirebase artifactsId, String path, String projectId){
 		enqueueWrite(artifactsId.json(), path +".json", HTTPMethod.PATCH, projectId);
+	}
+	
+	public static void updateQuestioningClosed(boolean closed, String path, String projectId){
+		enqueueWrite("{ \"closed\": "+closed+" }", path +".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void writeHistoryEvent(HistoryEvent event, String projectId){
