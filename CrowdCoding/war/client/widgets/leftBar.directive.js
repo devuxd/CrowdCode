@@ -8,13 +8,13 @@ angular
 		replace: false,
 		link: function($scope, iElm, iAttrs, controller) {
 			$scope.tabs=[ 'newsfeed', 'questions', 'leaderboard']; //, 'chat'];
-			$scope.selectedTab = 1;
+			$scope.selectedTab = 0;
 			$scope.selectTab = function(index){
 				$scope.selectedTab = index;
 			};
 
-			$rootScope.$on('setLeftBarTab',function( event, tabName ){
-				console.log('switching to tab '+tabName);
+			$scope.$on('setLeftBarTab',function( event, tabName ){
+				console.log('switching to tab from scope '+tabName);
 				var index = $scope.tabs.indexOf(tabName);
 				if( index > -1 )
 					$scope.selectTab( index );

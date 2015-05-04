@@ -1,7 +1,7 @@
 <div>
   <div class="sidebar-nav">
     <ul class="nav" role="">
-    	<li class="{{ selectedTab == $index ? 'active': '' }} {{ $index == 0 ? 'first' : '' }}" ng-repeat="tab in tabs track by $index" ng-click="selectTab($index)">{{tab}}</li>
+    	<li id="{{tab}}Btn" class="{{ selectedTab == $index ? 'active': '' }} {{ $index == 0 ? 'first' : '' }}" ng-repeat="tab in tabs track by $index" ng-click="selectTab($index)">{{tab}}</li>
     </ul>
   </div>
 

@@ -801,7 +801,6 @@ public class CrowdServlet extends HttpServlet
 	// Executes all of the specified commands and any commands that may subsequently be generated
 	private void executeCommands(java.util.Queue<Command> commands, final String projectId)
 	{
-		System.out.println("starting execution with size "+commands.size()+" form "+Thread.currentThread().getId() );
 		LinkedBlockingQueue<Command> commandQueue    = new LinkedBlockingQueue<Command>(commands);
 
 		// Execute commands until done, adding commands as created.
