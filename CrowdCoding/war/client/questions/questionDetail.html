@@ -5,7 +5,7 @@
 	</a>
 
 	<a href="#" class="pull-right" ng-click="toggleClosed(sel)">
-		mark as {{ sel.closed ? 'open' : 'closed' }}
+		{{ sel.closed ? 'Reopen for discussion' : 'Mark as answered' }}
 	</a>
 
 	<span class="clearfix"></span>
@@ -15,27 +15,38 @@
 	
 	<ul class="list-group">
 
-		<li class="list-group-item question-item">
+		<li class="list-group-item question-item  {{ sel.closed ? '' : 'open' }}">
 
-			<div class="pull-left">
-				<h3 class="panel-title">{{sel.title}}</h3>
-				<span>{{sel.text}}</span>
+			<h3 class="panel-title">{{sel.title}}</h3>
+			<div>{{sel.text}}</div>
+			<span >
+				<span ng-repeat="tag in sel.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>
+			</span> 
 
+			<div>
+
+				<span class="pull-left">
+					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{sel.time | date : 'medium'}}"></time-ago>
+				</span> 
+
+				<div style="font-size: 1.1em;" class="pull-right">
+					<span 
+						ng-click="toggleVoteUp(sel)" 
+						class="glyphicon glyphicon-thumbs-up unselected" 
+						ng-class="{'selected':sel.votersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
+					</span>
+					<span>{{sel.score}}</span>
+					<span 
+						ng-click="toggleVoteDown(sel)" 
+						class="glyphicon glyphicon-thumbs-down unselected" 
+						ng-class="{'selected':sel.reportersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
+					</span>
+				</div>
+				<span class="clearfix"></span>
 			</div>
 
-			<div style="font-size: 1.1em;" class="pull-right">
-				<span 
-					ng-click="toggleVoteUp(sel)" 
-					class="glyphicon glyphicon-thumbs-up unselected" 
-					ng-class="{'selected':sel.votersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
-				</span>
-				<span>{{sel.score}}</span>
-				<span 
-					ng-click="toggleVoteDown(sel)" 
-					class="glyphicon glyphicon-thumbs-down unselected" 
-					ng-class="{'selected':sel.reportersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
-				</span>
-			</div>
+
+			
 
 			<span class="clearfix"></span>
 
@@ -49,63 +60,77 @@
 	<ul class="list-group">
 
 		<li class="list-group-item answer-item" ng-repeat="a in sel.answers | orderObjectBy : 'time' : false" ng-animate-children>
-
 			<div class="content-panel">
-				<span>{{a.text}}</span>
-				<br />
-				<small>
-					<span time-ago from-time="{{a.time | date : 'medium'}}"></span>
+				<div>
+					<span>{{a.text}}</span>
 					-
 					<span ng-bind="a.ownerHandle" ></span>
-				</small>
+				</div>
+
+
+				<div>
+
+					<span class="pull-left">
+						<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{a.time | date : 'medium'}}"></time-ago>
+					</span> 
+					<div class="pull-right">
+						<span
+							ng-click="toggleVoteUp(a)"
+							class="glyphicon glyphicon-thumbs-up unselected"
+							ng-class="{'selected':a.votersId.indexOf(workerId)>-1, 'not-allowed': a.ownerId == workerId}">
+						</span>
+						<span>{{a.score}}</span>
+						<span
+							ng-click="toggleVoteDown(a)"
+							class="glyphicon glyphicon-thumbs-down unselected"
+							ng-class="{'selected':a.reportersId.indexOf(workerId)>-1, 'not-allowed': a.ownerId == workerId}">
+						</span>
+					</div>
+					<span class="clearfix"></span>
+						
+				</div>
+
 			</div>
-
-
-			<div class="vote-panel">
-				<span
-					ng-click="toggleVoteUp(a)"
-					class="glyphicon glyphicon-thumbs-up unselected"
-					ng-class="{'selected':a.votersId.indexOf(workerId)>-1, 'not-allowed': a.ownerId == workerId}">
-				</span>
-				<span>{{a.score}}</span>
-				<span
-					ng-click="toggleVoteDown(a)"
-					class="glyphicon glyphicon-thumbs-down unselected"
-					ng-class="{'selected':a.reportersId.indexOf(workerId)>-1, 'not-allowed': a.ownerId == workerId}">
-				</span>
-			</div>
-
-
-			<span class="clearfix"></span>
+				
 
 			<ul class="list-group">
 				<li class="list-group-item comment-item" ng-repeat="c in a.comments | orderObjectBy : 'time' : false" >
+					
 					<div class="content-panel">
-						<span>{{c.text}}</span>
-						<br />
-						<small>
-							<span time-ago from-time="{{c.time | date : 'medium'}}"></span>
+						<div>
+							<span>{{c.text}}</span>
 							-
 							<span ng-bind="c.ownerHandle" ></span>
-						</small>
-					</div>
+						</div>
 
-					<div class="vote-panel">
-						<span 
-							ng-click="toggleVoteUp(c)"
-							class="glyphicon glyphicon-thumbs-up unselected"
-							ng-class="{'selected':c.votersId.indexOf(workerId)>-1, 'not-allowed': c.ownerId == workerId}">
-						</span>
-						<span>{{c.score}}</span>
-						<span
-							ng-click="toggleVoteDown(c)"
-							class="glyphicon glyphicon-thumbs-down unselected"
-							ng-class="{'selected':c.reportersId.indexOf(workerId)>-1, 'not-allowed': c.ownerId == workerId}">
-						</span>
+
+						<div>
+
+							<span class="pull-left">
+								<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{c.time | date : 'medium'}}"></time-ago>
+							</span> 
+							<div class="pull-right">
+								<span
+									ng-click="toggleVoteUp(c)"
+									class="glyphicon glyphicon-thumbs-up unselected"
+									ng-class="{'selected':c.votersId.indexOf(workerId)>-1, 'not-allowed': c.ownerId == workerId}">
+								</span>
+								<span>{{c.score}}</span>
+								<span
+									ng-click="toggleVoteDown(c)"
+									class="glyphicon glyphicon-thumbs-down unselected"
+									ng-class="{'selected':c.reportersId.indexOf(workerId)>-1, 'not-allowed': c.ownerId == workerId}">
+								</span>
+							</div>
+							<span class="clearfix"></span>
+								
+						</div>
+
 					</div>
+						
 
 				</li>
-				<li class="list-group-item comment-item">
+				<li class="list-group-item comment-item" ng-show="!sel.closed">
 
 					<a href="#" 
 						ng-show='!showCommentForm' 
@@ -133,8 +158,8 @@
 			<span class="clearfix"></span>
 
 		</li>
-		<li class="list-group-item answer-item" >
-			<a href="#" ng-show="!showAnswerForm" ng-click="showAnswerForm=true">Add Answer</a>
+		<li class="list-group-item answer-item" ng-show="!sel.closed">
+			<a href="#" ng-show="!showAnswerForm " ng-click="showAnswerForm=true">Add Answer</a>
 			<form name="answerForm" novalidate  ng-show="showAnswerForm" ng-submit="answerForm.$valid && postAnswer()">
 				<div class="form-group">
 					<textarea required name="text" class="form-control" ng-model="answer.text" placeholder="answer text"></textarea>

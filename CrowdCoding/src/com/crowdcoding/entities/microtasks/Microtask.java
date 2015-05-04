@@ -63,9 +63,14 @@ public /*abstract*/ class Microtask
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
 	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
 	protected String workerId;
+	protected Long functionId;
 
 	public String getWorkerId() {
 		return workerId;
+	}
+
+	public Long getFunctionId() {
+		return functionId;
 	}
 
 	public void setWorkerId(String workerId) {
@@ -79,9 +84,10 @@ public /*abstract*/ class Microtask
 	}
 
 	// Constructor for initialization. Microtask is set as ready.
-	protected Microtask(String projectId)
+	protected Microtask(String projectId, Long functionId)
 	{
-		this.projectId = projectId;
+		this.projectId  = projectId;
+		this.functionId = functionId;
 	}
 
 	// Creates a copy of this microtask, identical in all respects except with a new microtaskID

@@ -39,8 +39,7 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 				addTag();
 
 				if( $scope.relatedTo == 'artifact' ){
-					console.log('relatedTo'+$scope.relatedTo, $scope.fetchedMicrotask);
-					$scope.question.artifactId = $scope.fetchedMicrotask.owningArtifactId;
+					$scope.question.artifactId = $scope.loadedArtifact.id ;
 				}
 					
 				questionsService

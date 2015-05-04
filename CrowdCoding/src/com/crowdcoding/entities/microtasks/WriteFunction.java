@@ -45,7 +45,7 @@ public class WriteFunction extends Microtask
 	// Initialization constructor for a SKETCH write function. Microtask is not ready.
 	public WriteFunction(Function function, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 
 		this.promptType = PromptType.SKETCH;
 		WriteFunction(function, projectId);
@@ -55,7 +55,7 @@ public class WriteFunction extends Microtask
 	public WriteFunction(Function function, String oldFullDescription,
 			String newFullDescription, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 		this.promptType = PromptType.DESCRIPTION_CHANGE;
 
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
@@ -68,7 +68,7 @@ public class WriteFunction extends Microtask
 	// Initialization constructor for a RE_EDIT write function. Microtask is not ready.
 	public WriteFunction(Function function, String disputeText, long disputeId, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 		this.promptType = PromptType.RE_EDIT;
 
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
@@ -79,7 +79,7 @@ public class WriteFunction extends Microtask
 	}
 	public WriteFunction(Function function, long calleeId, String disputeText, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 		this.promptType = PromptType.REMOVE_CALLEE;
 
 		this.disputeText = disputeText;

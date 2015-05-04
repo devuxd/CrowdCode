@@ -39,7 +39,7 @@ public class DebugTestFailure extends Microtask
 	// Constructor for initial construction.
 	public DebugTestFailure(Function function, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 		this.submitValue = 15;
 
 		this.function = (Ref<Function>) Ref.create(function.getKey());
@@ -65,7 +65,7 @@ public class DebugTestFailure extends Microtask
 	public DebugTestFailure(Function function, Test test, String projectId)
 	{
 
-		super(projectId);
+		super(projectId,function.getID());
 		this.submitValue = 10;
 
 		this.function   = (Ref<Function>) Ref.create(function.getKey());

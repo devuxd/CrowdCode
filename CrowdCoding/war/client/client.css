@@ -27,13 +27,13 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 
 }
 .popover-news{
-	max-width: 700px !important;
-	width: 500px !important;
-	margin-top: -35px;
-	max-height: 400px;
+	width: 65%;
+	max-width: 65% !important;
+	max-height: 90%;
 	overflow-y:auto;
 	border-radius: 0px;
 	margin-left: 7px;
+	margin-top: -35px;
 
 }
 
@@ -505,7 +505,7 @@ h1, h2, h3, h4 {
 	background-color: #e4edf4;
 	margin: 2px 2px 2px 0;
 	text-decoration: none;
-	font-size: 0.8em;
+	font-size: 1em;
 	white-space: nowrap;
 	display: inline-block;
 	border-radius: 0;
@@ -531,6 +531,19 @@ h1, h2, h3, h4 {
 	overflow:auto;
 }
 
+.questions .btn-toggle {
+	background-color:transparent;
+	color:#9A4E32;
+	border-color:#9A4E32;
+	padding: 2px 5px;
+ 	font-size: 0.9em;
+}
+
+.questions .btn-toggle.btn-toggle-on {
+	background-color:#9A4E32;
+	color:white;
+	border-color:#9A4E32;
+}
 
 .questions .form-control.ng-dirty.ng-valid,
 .questions .form-control.ng-dirty.ng-invalid{
@@ -563,10 +576,10 @@ h1, h2, h3, h4 {
 
 .questions .list-group .comment-item { margin-left:10px; border-top:1px solid rgb(175, 175, 175); }
 
-.questions .list-group .list-group-item .content-panel { padding-right:3.2em; }
+.questions .list-group .list-group-item .content-panel {  }
 .questions .list-group .list-group-item .vote-panel { font-size:1em; position:absolute; top:5px; right:5px; }
 
-.questions .answer-item > .content-panel {  min-height: 6em; }
+.questions .answer-item > .content-panel {  padding-bottom:1em; }
 
 .questions .has-feedback { font-size:10px; }
 .questions .has-feedback .form-control { padding-left:2em; padding-right:0px; font-size:1em; height:2.6em;}
@@ -598,7 +611,7 @@ h1, h2, h3, h4 {
 .questions question-list .question-item { cursor: pointer; }
 .questions question-list .question-item:hover { background-color:#E0E0E0; }
 
-.questions question-list .question-item.open { background-color:rgba(255, 236, 186, 0.73); }
+.questions .question-item.open { background-color:rgba(255, 236, 186, 0.73); }
 .questions question-list .question-item.open:hover { background-color:rgba(255, 236, 186, 1); }
 
 .questions .question-item.ng-enter{
@@ -613,14 +626,15 @@ h1, h2, h3, h4 {
 
 .questions question-detail,
 .questions question-form {
-	margin-left:0px;
-}
+	margin-left:0px;}
 
 .questions question-detail.ng-hide,
 .questions question-form.ng-hide {
 	margin-left:100%;
 } 
 
+.questions question-detail .answer-item textarea  { min-height:10em; resize: none; }
+.questions question-detail .command-item textarea { min-height:3em; resize: none; }
 
 .sidebar .top button {
 	font-size:1em;

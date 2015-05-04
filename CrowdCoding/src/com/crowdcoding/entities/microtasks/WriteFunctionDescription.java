@@ -38,7 +38,7 @@ public class WriteFunctionDescription extends Microtask
 	// Constructor for initial construction
 	public WriteFunctionDescription(Function function, String pseudoFunctionName, String pseudoFunctionDescription, long callerId, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 		this.submitValue = 8;
 		this.pseudoFunctionName = pseudoFunctionName;
 		this.pseudoFunctionDescription = pseudoFunctionDescription;

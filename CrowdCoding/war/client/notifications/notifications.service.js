@@ -21,7 +21,7 @@ angular
 						type: 'info',
 						body: 'body',
 						clickHandler: function(){ },
-						bodyOutputType = 'trustedHtml'
+						bodyOutputType: 'trustedHtml'
 					};
 
 					switch( type ){

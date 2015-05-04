@@ -36,7 +36,7 @@ public class ReuseSearch extends Microtask
 	// Constructor for initial construction
 	public ReuseSearch(Function function, String pseudoFunctionName, String pseudoFunctionDescription, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 		this.submitValue = 5;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.pseudoFunctionDescription = pseudoFunctionDescription;

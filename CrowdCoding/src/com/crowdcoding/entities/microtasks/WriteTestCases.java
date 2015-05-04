@@ -42,7 +42,7 @@ public class WriteTestCases extends Microtask
 	// Constructor for initial construction for testing a function based on its signature
 	public WriteTestCases(Function function, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 		this.promptType = PromptType.WRITE;
 		this.function = (Ref<Function>) Ref.create( Key.create( Function.class,function.getID()) );
 
@@ -62,7 +62,7 @@ public class WriteTestCases extends Microtask
 	public WriteTestCases(Function function, String issueDescription, String issuedTestCase,
 			long disputeId, String projectId)
 	{
-		super(projectId);
+		super(projectId,function.getID());
 		this.promptType = PromptType.CORRECT;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
 		this.issueDescription = issueDescription;
