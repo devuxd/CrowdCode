@@ -38,14 +38,13 @@
 				<span class="pull-left" >
 					<span class="glyphicon glyphicon-thumbs-up"></span>
 					{{ q.score }}
-
-					<span class="glyphicon glyphicon-comment"></span>
+					<span class="glyphicon glyphicon-comment" style="margin-left: 10px;"></span>
 					{{ q.answers | objectLength }}
 				</span>
 				
 
 				<span class="pull-right" ng-if="loadedArtifact != null">
-					<a href="#" class="btn btn-toggle btn-toggle-on" ng-click="toggleRelation(q); $event.stopPropagation();" >{{loadedArtifact.name}}</a>
+					<a href="#" class="btn btn-toggle btn-toggle-on" ng-click="toggleRelation(q); $event.stopPropagation();" style="font-size: 0.9em;">{{loadedArtifact.name}}</a>
 				</span>
 
 				<span class="clearfix"></span>
@@ -77,13 +76,13 @@
 					<span class="glyphicon glyphicon-thumbs-up"></span>
 					{{ q.score }}
 
-					<span class="glyphicon glyphicon-comment"></span>
+					<span class="glyphicon glyphicon-comment" style="margin-left: 10px;"></span>
 					{{ q.answers | objectLength }}
 				</span>
 				
 
-				<span class="pull-right" ng-if="loadedArtifact != null">
-					<a href="#" class="btn btn-toggle" ng-click="toggleRelation(q); $event.stopPropagation();" >{{loadedArtifact.name}}</a>
+				<span class="pull-right" ng-if="loadedArtifact != null" >
+					<a href="#" class="btn btn-toggle" ng-click="toggleRelation(q); $event.stopPropagation();" style="font-size: 0.9em;">{{loadedArtifact.name}}</a>
 				</span>
 
 				<span class="clearfix"></span>

@@ -24,14 +24,14 @@
 	</div>
 </step>
 
-<step highlight="submitBtn" placement="top-center" style="width:150px;" >
+<step highlight="submitBtn" placement="top-left" style="width:150px;" >
 	<div class="title">Submit</div>
 	<div class="text">
-		All done? Submit your work for review.
+		Here is the current microtask.
 	</div>
 </step>
 
-<step highlight="skipBtn" placement="top-center" style="width:200px;" >
+<step highlight="skipBtn" placement="top-left" style="width:200px;" >
 	<div class="title">Skip</div>
 	<div class="text">
 		Not the right microtask for you? Skip it. <br />
@@ -46,22 +46,24 @@
 	</div>
 </step>-->
 
-<step highlight="chatPanel" placement="left" style="width:150px;" 
+<!-- <step highlight="chatPanel" placement="left" style="width:150px;" 
 	  on-show="$emit('toggleChat');" on-hide="$emit('toggleChat');">
 	<div class="title">Chat</div>
 	<div class="text">
 		Questions? Ask the crowd.
 	</div>
 </step>
-
-<step highlight="activityPanel" placement="right-center" style="width:200px;">
+'newsfeed', 'questions', 'leaderboard' -->
+<step highlight="leftTabNews" placement="right-center" style="width:200px;"
+	on-show="$emit('setLeftBarTab','newsfeed');">
 	<div class="title">Your Activity</div>
 	<div class="text">
 		See what you’ve done, see how the crowd rated it.
 	</div>
 </step>
 
-<step highlight="leaderboardPanel" placement="right-center" style="width:200px;">
+<step highlight="leftTab" placement="right-center" style="width:200px;"
+on-show="$emit('setLeftBarTab','leaderboard');">
 	<div class="title">Leaderboard</div>
 	<div class="text">
 		Don’t worry. You’re still cool, even if someone has 400 points more than you.
@@ -80,7 +82,6 @@
 <step on-hide="showProfileModal(); " style="width:300px">
 	<div class="title">Congratulations! </div>
 	<div class="text">
-		You completed the Main UI tutorial: 
-		On the way to be a master!
+		You have completed the CrowdCode getting started tutorial!
 	</div>
 </step>

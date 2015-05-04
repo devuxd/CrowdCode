@@ -1,6 +1,6 @@
 angular
     .module('crowdCode')
-    .directive('leftBar', function(){
+    .directive('leftBar', function($rootScope){
 
 	return {
 		scope: true, 
@@ -13,7 +13,7 @@ angular
 				$scope.selectedTab = index;
 			};
 
-			$scope.$on('setLeftBarTab',function( event, tabName ){
+			$rootScope.$on('setLeftBarTab',function( event, tabName ){
 				console.log('switching to tab '+tabName);
 				var index = $scope.tabs.indexOf(tabName);
 				if( index > -1 )
