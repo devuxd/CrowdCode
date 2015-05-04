@@ -140,6 +140,11 @@
 			Id
 			<span ng-if="sort.column == 'data.id' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
 			<span ng-if="sort.column == 'data.id' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
+		</th>		
+		<th ng-click="changeSorting('data.spawnedAt')">
+			SpawnedAt 
+			<span ng-if="sort.column == 'data.spawnedAt' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
+			<span ng-if="sort.column == 'data.spawnedAt' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
 		</th>
 		<th ng-click="changeSorting('data.type')">
 			Type
@@ -191,6 +196,7 @@
 				<a id="{{mtask.$id}}"></a>
 				<span ng-bind="mtask.$id"></span>
 			</td>
+			<td><span ng-bind="mtask.spawnedAt"></span></td>
 			<td><span ng-bind="mtask.data.type"></span></td>
 			<td><span ng-bind="mtask.data.owningArtifact"></span></td>
 			<td><span ng-bind="mtask.getStatus()"></span></td>

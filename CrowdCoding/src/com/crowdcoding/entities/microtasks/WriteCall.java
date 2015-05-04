@@ -40,7 +40,7 @@ public class WriteCall extends Microtask
 	// Constructor for initial construction. Microtask is set as not yet ready.
 	public WriteCall(Function caller, long calleeId, String pseudoFunctionName, String projectId)
 	{
-		super( projectId);
+		super( projectId,caller.getID());
 		this.submitValue = 7;
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());
 		this.calleeId = calleeId;

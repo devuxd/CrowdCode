@@ -11,10 +11,11 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 			$scope.isRelated = isRelatedToArtifact;
 
 			$scope.toggleRelation = function(q){
+				console.log( $scope.loadedArtifact.id );
 				if( isRelatedToArtifact(q) ){
-					questionsService.linkArtifact(q.id, $scope.fetchedMicrotask.owningArtifactId, true );
+					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , true );
 				} else {
-					questionsService.linkArtifact(q.id, $scope.fetchedMicrotask.owningArtifactId, false );
+					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , false );
 				}
 
 			};
@@ -33,7 +34,7 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 
 			
 			function isRelatedToArtifact(q){
-				return q.artifactsId != null && $scope.fetchedMicrotask != null && q.artifactsId.indexOf( ""+$scope.fetchedMicrotask.owningArtifactId ) > -1 ; 
+				return q.artifactsId != null && $scope.loadedArtifact != null && q.artifactsId.indexOf( ''+$scope.loadedArtifact.id ) > -1 ; 
 			}
 
 

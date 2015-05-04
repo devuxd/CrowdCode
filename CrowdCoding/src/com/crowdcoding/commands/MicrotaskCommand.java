@@ -133,7 +133,8 @@ public abstract class MicrotaskCommand extends Command
 
 		public void execute(Microtask microtask, String projectId)
 		{
-			Review review = new Review(microtaskKeyToReview, initiallySubmittedDTO, workerOfReviewedWork, projectId);
+			Microtask toReview = ofy().load().key( microtaskKeyToReview ).now();
+			Review review = new Review(microtaskKeyToReview, initiallySubmittedDTO, workerOfReviewedWork, toReview.getFunctionId(), projectId);
 			ProjectCommand.queueReviewMicrotask(review.getKey(), excludedWorkerID);
 
 		}

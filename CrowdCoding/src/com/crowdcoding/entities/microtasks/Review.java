@@ -40,9 +40,9 @@ public class Review extends Microtask
 
 	// Constructor for initial construction
 	public Review(Key<Microtask> microtaskKeyUnderReview, String initiallySubmittedDTO, String workerOfReviewedWork,
-			String projectId)
+			Long functionId, String projectId)
 	{
-		super(projectId);
+		super(projectId,functionId);
 		this.submitValue = 5;
 		this.microtaskKeyUnderReview = microtaskKeyUnderReview;
 		this.initiallySubmittedDTO = initiallySubmittedDTO;
@@ -59,6 +59,7 @@ public class Review extends Microtask
 				this.microtaskName(),
 				this.artifact.get().getName(),
 				this.artifact.get().getID(),
+				functionId,
 				false,
 				false,
 				submitValue,
@@ -70,9 +71,9 @@ public class Review extends Microtask
 		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-    public Microtask copy(String projectId)
+    public Microtask copy(String projectId,Long functionId)
     {
-    	return new Review(microtaskKeyUnderReview, this.initiallySubmittedDTO, this.workerOfReviewedWork, projectId);
+    	return new Review(microtaskKeyUnderReview, this.initiallySubmittedDTO, this.workerOfReviewedWork, functionId, projectId);
     }
 
 	protected void doSubmitWork(DTO dto, String workerID, String projectId)
