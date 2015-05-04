@@ -151,7 +151,6 @@ public class FirebaseService
 	// Writes the specified microtask to firebase
 	public static void writeMicrotaskSubmission(String submissionDto, String microtaskKey, String projectId)
 	{
-		System.out.println(microtaskKey +" "+projectId + "  " +submissionDto);
 		enqueueWrite("{\"submission\": " + submissionDto + "}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 
 	}

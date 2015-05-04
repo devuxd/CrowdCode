@@ -623,9 +623,6 @@ public class CrowdServlet extends HttpServlet
 		// And anything inside the transaction MUST not mutate the values produced.
 		final String projectID = (String) req.getAttribute("project");
 
-		final Project project = Project.Create(projectID);
-
-		final Worker worker   = Worker.Create(user, project);
 
     	String jsonResponse = "{}";
     	try {
@@ -633,6 +630,8 @@ public class CrowdServlet extends HttpServlet
 
     			public String run() {
     				final Project project = Project.Create(projectID);
+    				final Worker worker   = Worker.Create(user, project);
+
     				Key<Microtask> microtaskKey = null;
     		    	int firstFetch=0;
     		    	//before to enqueue the submit
@@ -666,7 +665,6 @@ public class CrowdServlet extends HttpServlet
     		//System.out.println("WORKER ID "+worker.getUserid()+" - nickname "+worker.getNickname());
     	}
 
-//    	System.out.println("%%%%%%transaction finish returning for worker "+worker.getUserid() +" json "+jsonResponse );
 		renderJson(resp,jsonResponse);
 
 

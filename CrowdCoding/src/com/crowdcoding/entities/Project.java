@@ -360,8 +360,6 @@ public class Project
 				mtask.setWorkerId( workerID );
 				microtaskAssignments.put( workerID,  Microtask.keyToString( mtask.getKey() ) );
 
-				// save the project
-				//ofy().save().entity(project).now();
 				//ofy().save().entity(mtask).now();
 				System.out.println("assigning "+ mtask.getKey() +" to worker "+workerID);
 				microtask=mtask;
