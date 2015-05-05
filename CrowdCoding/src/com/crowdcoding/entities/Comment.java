@@ -43,6 +43,7 @@ public class Comment extends Questioning
 
 		this.questionId = questionId;
 		this.answerId = answerId;
+		this.points = 1;
 		ofy().save().entity(this).now();
 		
 		this.firebasePath= "/questions/" + questionId + "/answers/"+ answerId +"/comments/" + this.id;

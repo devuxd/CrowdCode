@@ -101,7 +101,6 @@ angular
                         throw "a placement should be defined!";
 
                     if( onShow !== undefined && onShow.length > 0 ){
-                        console.log('evaluating '+onShow);
                         $rootScope.$eval(onShow);
                     } 
 
@@ -179,6 +178,8 @@ angular
                     $content.fadeOut(300,function(){
                         $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
                         $compile($content.contents())($scope);
+
+                        $content.attr('style',contentStyle);
 
                         var contentCss = {};
                         contentCss.top   = ($('body').outerHeight()-$content.outerHeight())/2;

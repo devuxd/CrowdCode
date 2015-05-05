@@ -23,7 +23,6 @@ angular
 			});
 
 			$scope.$on('showQuestion',function( event, questionId ){
-				console.log('showing question', questionId);
 				setSelected( $scope.questions.$getRecord(questionId) );
 				setView('question_detail');
 			});

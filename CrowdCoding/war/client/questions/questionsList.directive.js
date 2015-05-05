@@ -11,7 +11,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 			$scope.isRelated = isRelatedToArtifact;
 
 			$scope.toggleRelation = function(q){
-				console.log( $scope.loadedArtifact.id );
 				if( isRelatedToArtifact(q) ){
 					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , true );
 				} else {
