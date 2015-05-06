@@ -9,6 +9,7 @@ import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.firebase.ReissueInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.HistoryLog;
@@ -160,7 +161,7 @@ public /*abstract*/ class Microtask
 		WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
 
 		//write the reissue field on the new microtask
-		FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, reissuedFromMicrotaskKey, jsonDTOData, reissueMotivation,  projectId );
+		FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, new ReissueInFirebase(reissuedFromMicrotaskKey, reissueMotivation), jsonDTOData,  projectId );
 		// write completed on firebase
 		FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), excludedWorkerID, projectId, this.completed);
 

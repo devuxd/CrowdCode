@@ -22,6 +22,7 @@ import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.QuestionInFirebase;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
+import com.crowdcoding.dto.firebase.ReissueInFirebase;
 import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
 import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
@@ -172,13 +173,11 @@ public class FirebaseService
 	}
 
 	// Writes information about an old microtask to retrieve the information to Firebase
-	public static void writeMicrotaskReissuedFrom( String microtaskKey, String reissuedFromMicrotaskKey, String submissionDto, String reissueMotivation, String projectId)
+	public static void writeMicrotaskReissuedFrom( String microtaskKey, ReissueInFirebase reiussueInFirebase, String reissuedSubmission, String projectId)
 	{
-		String reiussueData = "{\"reissuedSubmission\": " + submissionDto + ","
-								+ "\"reissuedMicrotaskKey\": \"" + reissuedFromMicrotaskKey + "\","
-								+ "\"reissueMotivation\": \"" + reissueMotivation + "\"}";
 
-		enqueueWrite(reiussueData, "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"reissuedSubmission\": " + reissuedSubmission + "}", "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite(reiussueInFirebase.json(), "/microtasks/" + microtaskKey+ ".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void writeMicrotaskCanceled( String microtaskKey, boolean canceled, String projectId)
