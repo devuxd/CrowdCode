@@ -20,7 +20,7 @@ import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.entities.Questioning;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.microtasks.Microtask;
-import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.servlets.ThreadContext;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.googlecode.objectify.Key;
@@ -76,7 +76,9 @@ public abstract class QuestioningCommand extends Command
 	// the constructor to add the
 	// command to the queue.
 	private static void queueCommand(Command command) {
-		CommandContext.ctx.addCommand(command);
+		ThreadContext threadContext = ThreadContext.get();
+        threadContext.addCommand(command);
+	//	CommandContext.ctx.addCommand(command);
 	}
 
 	public void execute(final String projectId) {

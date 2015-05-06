@@ -3,10 +3,12 @@ package com.crowdcoding.util;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
 import com.crowdcoding.commands.Command;
@@ -25,6 +27,7 @@ import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.dto.firebase.VotersIdInFirebase;
 import com.crowdcoding.history.HistoryEvent;
+import com.crowdcoding.servlets.ThreadContext;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -39,9 +42,6 @@ import com.google.appengine.labs.repackaged.org.json.JSONObject;
  */
 public class FirebaseService
 {
-
-
-	private static ConcurrentLinkedQueue<FirebaseWrite> writeList = new ConcurrentLinkedQueue<FirebaseWrite>();
 
 	// Writes the specified data using the URL, relative to the BaseURL.
 	// Operation specifies the type of http request to make (e.g., PUT, POST, DELETE)
@@ -64,7 +64,6 @@ public class FirebaseService
 			HTTPResponse    response     = fetchService.fetch(request);
 			if( response.getResponseCode() != 200){
 				Logger.getLogger("LOGGER").severe("FIREBASE WRITE FAILED: "+response.getResponseCode()+" - "+absoluteURL+" - "+data);
-				writeDataAbsolute(data, absoluteURL,  operation);
 			}
 		}
 		catch (MalformedURLException e) {
@@ -106,14 +105,18 @@ public class FirebaseService
 
 
 	public static void enqueueWrite(String data, String relativeURL, HTTPMethod operation, String projectId){
-		writeList.add(new FirebaseWrite(data,relativeURL,operation,projectId));
+
+		ThreadContext threadContext = ThreadContext.get();
+        threadContext.addfirebaseWrite(new FirebaseWrite(data,relativeURL,operation,projectId));
 	}
 
 	public static void publish(){
 
-		Iterator<FirebaseWrite> writeIterator = writeList.iterator();
+		ConcurrentLinkedQueue<FirebaseWrite> firebaseWriteList = ThreadContext.get().getFirebaseWritesList();
+		Iterator<FirebaseWrite> writeIterator = firebaseWriteList.iterator();
 	    while(writeIterator.hasNext()) {
     		FirebaseWrite write = writeIterator.next();
+
     		if( write != null ){
     			write.publish();
     			writeIterator.remove();
@@ -121,7 +124,7 @@ public class FirebaseService
 	    }
 	}
 
-	protected static class FirebaseWrite
+	public static class FirebaseWrite
 	{
 		private String     data;
 		private String     relativeURL;
@@ -359,7 +362,7 @@ public class FirebaseService
 	public static void updateQuestioningLinkedArtifacts(ArtifactsIdInFirebase artifactsId, String path, String projectId){
 		enqueueWrite(artifactsId.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void updateQuestioningClosed(boolean closed, String path, String projectId){
 		enqueueWrite("{ \"closed\": "+closed+" }", path +".json", HTTPMethod.PATCH, projectId);
 	}
