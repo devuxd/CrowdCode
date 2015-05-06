@@ -1,41 +1,99 @@
 angular
-    .module('crowdCode').directive('questionsPanel',function($rootScope,$timeout,$firebase,firebaseUrl, questionsService, functionsService, microtasksService){
+    .module('crowdCode').directive('questionsPanel',function($rootScope,$timeout,$firebase,firebaseUrl, workerId, questionsService, functionsService, microtasksService){
 
 	return {
 		scope: {},
 		templateUrl: '/client/questions/questionsPanel.html',
 		link: function($scope,$element,$attrs){
-			$scope.setView      = setView;
-			$scope.setSelected  = setSelected;
+			
+			$scope.allTags        = [];
 			$scope.loadedArtifact = null;
+			$scope.view           = 'question_list';
 
 			$scope.questions = questionsService.getQuestions();
 			$scope.questions.$loaded().then(function(){
 				$scope.allTags = questionsService.getAllTags();
 			});
 
-			$rootScope.$on('noMicrotask',function( event ){
-				$scope.loadedArtifact = null;
-			});
+			$scope.setUiView       = setUiView;
+			$scope.setSelected     = setSelected;
+			$scope.updateView      = updateView;
+			$scope.isRelated       = isRelatedToArtifact;
+			$scope.toggleRelation  = toggleRelation;
+			$scope.isUpdated       = isUpdated;
+			$scope.getUpdateString = getUpdateString;
 
-			$rootScope.$on('loadMicrotask',function( event, microtask ){
-				$scope.loadedArtifact = functionsService.get(microtask.functionID);
-			});
+			$scope.$on('noMicrotask',   onMicrotaskLoaded ); 
+			$scope.$on('loadMicrotask', onMicrotaskLoaded );
+			$scope.$on('showQuestion',  onShowQuestion );
 
-			$scope.$on('showQuestion',function( event, questionId ){
+			function onMicrotaskLoaded( event, microtask ){
+				if( microtask === undefined )
+					$scope.loadedArtifact = null 
+				else				
+					$scope.loadedArtifact = functionsService.get(microtask.functionID);
+			}
+
+			function onShowQuestion( event, questionId ){
 				setSelected( $scope.questions.$getRecord(questionId) );
-				setView('question_detail');
-			});
-			
-			$scope.view = 'question_list';
+			}
 
-			function setView(view){
+			function setUiView(view){
 				$scope.view = view;
 			}
 
 			function setSelected(q){
 				$scope.sel = q;
+
+				updateView();
+				setUiView('question_detail');
 			}
+
+			function updateView(){
+				if( $scope.sel === undefined ) return;
+
+				var view = {
+					at            : Date.now(),
+					answersCount  : $scope.sel.answersCount,
+					commentsCount : $scope.sel.commentsCount
+				};
+				questionsService.setView( $scope.sel.id, view );
+			}
+
+			function isUpdated(q){
+				return q.views === undefined || q.views[ workerId ] === undefined || q.views[workerId].at < q.updatedAt; 
+			}
+
+			function getUpdateString(q){
+				if( q.views === undefined || q.views[ workerId ] === undefined  )
+					return '('+q.answersCount+' new questions, '+q.commentsCount+' new comments)';
+				
+				var view = q.views[ workerId ];
+
+				var updates  = [];
+
+				var diffAnswers  = q.answersCount  - view.answersCount; 
+				var diffComments = q.commentsCount - view.commentsCount; 
+				
+				if( diffAnswers > 0 )  updates.push( diffAnswers + ' new answers');
+				if( diffComments > 0 ) updates.push( diffComments + ' new comments');
+
+				return '('+updates.join(', ')+')';
+			}
+
+			function isRelatedToArtifact(q){
+				return q.artifactsId != null && $scope.loadedArtifact != null && q.artifactsId.indexOf( ''+$scope.loadedArtifact.id ) > -1 ; 
+			}
+
+			function toggleRelation(q){
+				if( isRelatedToArtifact(q) ){
+					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , true );
+				} else {
+					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , false );
+				}
+			}
+
+
 		}
 	};
 });

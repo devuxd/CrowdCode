@@ -44,17 +44,27 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand createComment(String jsonDTOData, String workerId, String workerHandle){
 		return new CreateComment(jsonDTOData, workerId, workerHandle);
 	}
-
-
+	
+	public static QuestioningCommand incrementQuestionAnswers(long questionId){
+		return new IncrementQuestionAnswers(questionId);
+	}
+	
+	public static QuestioningCommand incrementQuestionComments(long questionId){
+		return new IncrementQuestionComments(questionId);
+	}
+	
 	public static QuestioningCommand vote(long questioningId, String workerId, boolean remove){
 		return new Vote(questioningId, workerId, remove);
 	}
+	
 	public static QuestioningCommand report(long questioningId, String workerId, boolean remove){
 		return new Report(questioningId, workerId, remove);
 	}
-	public static QuestioningCommand linkArtifact(long questioningId, String artifactId, boolean remove, String workerId){
-		return new LinkArtifact(questioningId, artifactId, remove, workerId);
+	
+	public static QuestioningCommand linkArtifact(long questioningId, String artifactId, boolean remove ){
+		return new LinkArtifact(questioningId, artifactId, remove);
 	}
+	
 	public static QuestioningCommand subscribeWorker(long questioningId, String workerId, boolean remove){
 		return new SubscribeWorker(questioningId, workerId, remove);
 	}
@@ -66,6 +76,7 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand setClosed(long questioningId, boolean closed, String workerId){
 		return new SetClosed(questioningId,closed,workerId);
 	}
+	
 
 	private QuestioningCommand(long questioningId, String workerId) {
 		this.questioningId = questioningId;
@@ -175,6 +186,32 @@ public abstract class QuestioningCommand extends Command
 			Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
 		}
 	}
+	
+	protected static class IncrementQuestionAnswers extends QuestioningCommand {
+
+		public IncrementQuestionAnswers(long questionId) {
+			super(questionId, "");
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+
+			Question question = (Question) questioning;
+			question.incrementAnswers();
+		}
+	}
+	
+	protected static class IncrementQuestionComments extends QuestioningCommand {
+
+		public IncrementQuestionComments(long questionId) {
+			super(questionId, "");
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+
+			Question question = (Question) questioning;
+			question.incrementComments();
+		}
+	}
 
 	protected static class Vote extends QuestioningCommand {
 
@@ -222,8 +259,8 @@ public abstract class QuestioningCommand extends Command
 		private boolean remove;
 		private String artifactId;
 
-		public LinkArtifact(long questioningId, String artifactId, boolean remove, String workerId) {
-			super(questioningId, workerId);
+		public LinkArtifact(long questioningId, String artifactId, boolean remove) {
+			super(questioningId, "");
 			this.artifactId = artifactId;
 			this.remove     = remove;
 		}
@@ -236,6 +273,7 @@ public abstract class QuestioningCommand extends Command
 
 		}
 	}
+	
 	protected static class SubscribeWorker extends QuestioningCommand {
 
 		private boolean remove;

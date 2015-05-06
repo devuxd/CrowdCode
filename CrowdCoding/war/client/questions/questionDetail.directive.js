@@ -50,6 +50,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 							$scope.comment.text ='';
 							$scope.comment.answerId = null;
 							$scope.showCommentForm = false;
+							$scope.updateView();
 						},function(){
 							console.log('error posting the comment');
 						});
@@ -64,6 +65,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 						.then(function(){
 							$scope.answer.text='';
 							$scope.showAnswerForm = false;
+							$scope.updateView();
 						},function(){
 							console.log('error posting the answer');
 						});

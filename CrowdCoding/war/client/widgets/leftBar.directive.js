@@ -8,7 +8,7 @@ angular
 		replace: false,
 		link: function($scope, iElm, iAttrs, controller) {
 			$scope.tabs=[ 'newsfeed', 'questions', 'leaderboard']; //, 'chat'];
-			$scope.selectedTab = 0;
+			$scope.selectedTab = 1;
 			$scope.selectTab = function(index){
 				$scope.selectedTab = index;
 			};

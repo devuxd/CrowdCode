@@ -15,14 +15,14 @@ angular
 		'yaru22.angular-timeago',
 		'toaster'
 	])
-	.config(function($dropdownProvider, ngClipProvider ) {
+	.config(function($dropdownProvider, ngClipProvider ) { 
 
 		ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
 
 		angular.extend($dropdownProvider.defaults, { html: true });
 
 	})
-	.constant('workerId'   ,workerId)
+	.constant('workerId'   ,workerId) 
     .constant('projectId'  ,projectId)
 	.constant('firebaseUrl',firebaseURL)
 	.constant('logoutUrl'  ,logoutURL)

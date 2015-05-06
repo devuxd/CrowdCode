@@ -1,4 +1,4 @@
-angular.module('crowdCode').directive('questionList',function($rootScope,$timeout,$firebase,firebaseUrl, questionsService, microtasksService){
+angular.module('crowdCode').directive('questionList',function($rootScope,$timeout,$firebase,workerId,firebaseUrl, questionsService, microtasksService){
 	return {
 		scope: false,
 		templateUrl: '/client/questions/questionsList.html',
@@ -8,16 +8,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 			$scope.addToFilter=addToFilter;
 
 			$scope.search    = '';
-			$scope.isRelated = isRelatedToArtifact;
-
-			$scope.toggleRelation = function(q){
-				if( isRelatedToArtifact(q) ){
-					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , true );
-				} else {
-					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , false );
-				}
-
-			};
 
 			var searchTimeout;
 			$scope.$watch('search',function( val ){
@@ -30,11 +20,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		        	}
 		        }, 250); // delay 250 ms
 			});
-
-			
-			function isRelatedToArtifact(q){
-				return q.artifactsId != null && $scope.loadedArtifact != null && q.artifactsId.indexOf( ''+$scope.loadedArtifact.id ) > -1 ; 
-			}
 
 
 			function resetFilter(){

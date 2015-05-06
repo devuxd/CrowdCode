@@ -24,6 +24,7 @@ import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
 import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.dto.firebase.VotersIdInFirebase;
+import com.crowdcoding.entities.Question;
 import com.crowdcoding.history.HistoryEvent;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
@@ -59,9 +60,9 @@ public class FirebaseService
 			URLFetchService fetchService = URLFetchServiceFactory.getURLFetchService();
 			HTTPRequest     request      = new HTTPRequest(new URL(absoluteURL), operation);
 			request.setPayload(data.getBytes());
-
 //			Future<HTTPResponse> fetchAsync = fetchService.fetchAsync(request);
 			HTTPResponse    response     = fetchService.fetch(request);
+
 			if( response.getResponseCode() != 200){
 				Logger.getLogger("LOGGER").severe("FIREBASE WRITE FAILED: "+response.getResponseCode()+" - "+absoluteURL+" - "+data);
 				writeDataAbsolute(data, absoluteURL,  operation);
@@ -329,7 +330,7 @@ public class FirebaseService
 	public static void writeQuestionCreated(QuestionInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path + ".json", HTTPMethod.PATCH, projectId);
 	}
-
+	
 	// Writes the specified question to firebase
 	public static void writeAnswerCreated(AnswerInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
@@ -338,6 +339,11 @@ public class FirebaseService
 	// Writes the specified question to firebase
 	public static void writeCommentCreated(CommentInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
+	}
+	
+	public static void updateQuestion(Question question, String projectId){
+		System.out.println(question.getID() + " { \"updatedAt\": "+question.getUpdatedAt()+", \"answersCount\" : " + question.getAnswers() + ", \"commentsCount\" : " + question.getComments() + " } ");
+		enqueueWrite(" { \"updatedAt\": "+question.getUpdatedAt()+", \"answersCount\" : " + question.getAnswers() + ", \"commentsCount\" : " + question.getComments() + " } ", "/questions/"+question.getID()+".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void updateQuestioningVoters(VotersIdInFirebase votersId, String path, String projectId)	{

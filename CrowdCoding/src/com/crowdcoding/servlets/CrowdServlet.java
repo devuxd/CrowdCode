@@ -294,7 +294,7 @@ public class CrowdServlet extends HttpServlet
 	{
 		//System.out.println("doing admin");
 		if(pathSeg.length <=3 ){
-			req.getRequestDispatcher("/admin/index.jsp").forward(req, resp);
+			req.getRequestDispatcher("/adminDist/admin.jsp").forward(req, resp);
 		} else {
 			// The command should be in the fourth position. If nothing exists there,
 			// use "" as the command.
@@ -544,7 +544,7 @@ public class CrowdServlet extends HttpServlet
 
 		// Create an initial context, then build a command to insert the value
 		CommandContext context = new CommandContext();
-		QuestioningCommand.linkArtifact(questioningId, artifactId, remove, workerId);
+		QuestioningCommand.linkArtifact(questioningId, artifactId, remove);
 
 
 		// Copy the command back out the context to initially populate the command queue.

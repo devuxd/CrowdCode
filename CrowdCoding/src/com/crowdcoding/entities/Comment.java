@@ -31,11 +31,7 @@ public class Comment extends Questioning
 	private Long questionId;
 	private Long answerId;
 
-
-	// Constructor for deserialization
-	protected Comment()
-	{
-	}
+	protected Comment(){}
 
 	public Comment(String text, long questionId, long answerId, String ownerId, String ownerHandle, String projectId)
 	{
@@ -49,13 +45,12 @@ public class Comment extends Questioning
 		this.firebasePath= "/questions/" + questionId + "/answers/"+ answerId +"/comments/" + this.id;
 		ofy().save().entity(this).now();
 		
-		storeToFirebase();
+		FirebaseService.writeCommentCreated(new CommentInFirebase(this.id, this.ownerId, ownerHandle, this.text, this.createdAt, this.score), this.firebasePath, projectId);
+	
+		QuestioningCommand.incrementQuestionComments(this.questionId);
 		
 		NotificationInFirebase notification = new NotificationInFirebase( "comment.added", "{ \"questionId\": \""+this.questionId+"\", \"answerId\": \""+this.answerId+"\", \"workerHandle\": \""+this.ownerHandle+"\", \"text\": \""+this.text+"\"}"  );
 		QuestioningCommand.notifySubscribers(this.answerId, notification, ownerId);
 	}
 
-	protected void storeToFirebase() {
-		FirebaseService.writeCommentCreated(new CommentInFirebase(this.id, this.ownerId, ownerHandle, this.text, this.time, this.score), this.firebasePath, projectId);
-	}
 }
