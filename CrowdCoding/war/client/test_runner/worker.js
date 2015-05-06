@@ -76,6 +76,8 @@ self.addEventListener('message', function(e){
 
 			// import test helper libraries
 			// importScripts(baseUrl + '/include/jshint.js');
+			importScripts(baseUrl + '/client/test_runner/deepCompare.js');
+			importScripts(baseUrl + '/client/test_runner/utils.js');
 			importScripts(baseUrl + '/client/test_runner/assertions.js');
 			importScripts(baseUrl + '/client/test_runner/debugger.js');
 			importScripts(baseUrl + '/client/test_runner/utils.js');

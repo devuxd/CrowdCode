@@ -11,7 +11,7 @@
 		<div ng-if="questions.length == 0 && search.length == 0">no questions yet!</div>
 	</div>
 
-	<ul class="list-group questions-list">
+	<ul class="list-group questions-list" ng-if="questions.length > 0">
 
 		<li class="list-group-item list-header" ng-show=" loadedArtifact != null ">
 			Related to {{loadedArtifact.name}}

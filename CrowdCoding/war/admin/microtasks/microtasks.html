@@ -2,138 +2,6 @@
 	<label for="filter" >Filter: </label>
 	<input ng-model="filterText" class="form-control" name="filter"></input>
 </div>
-<!--
-<div>
-	<div class="pull-left" style="width:70%;">
-		<div class="panel-heading">
-	  		<h3 class="panel-title">Filter microtasks</h3> 
-	  		<br />
-		  	<form class="form-horizontal" role="form">
-			  <div class="form-group">
-			  	<label for="types" class="col-sm-2 control-label"> Types</label>
-			    <div class="col-sm-10">
-			      <button type="button" 
-						class="btn btn-default btn-sm form-control" 
-						name="types"
-						style="width: 100%";
-						ng-model="selectedTypes" 
-						data-html="1" 
-						data-multiple="1" 
-						data-animation="am-flip-x" 
-						ng-options="t.value as t.label for t in types" 
-						bs-select>
-					  Action <span class="caret"></span>
-					</button>
-			    </div>
-			  </div>
-			  <div ng-if="false" class="form-group">
-			  	<label for="artifacts" class="col-sm-2 control-label"> Artifacts</label>
-			    <div class="col-sm-10">
-			      	<button type="button" 
-			      		name="artifacts"
-			      		style="width: 100%";
-						class="btn btn-default btn-sm form-control" 
-						ng-model="selectedArtifacs" 
-						data-html="1" 
-						ng-options="a.value as a.label for a in artifacts" 
-						bs-select>
-					</button>
-			    </div>
-			  </div>
-			  <div class="form-group">
-			  	<label for="status" class="col-sm-2 control-label"> Status</label>
-			    <div class="col-sm-10">
-			      	<button type="button" 
-			      		name="status"
-			      		style="width: 100%";
-						class="btn btn-default btn-sm form-control" 
-						ng-model="selectedStatus" 
-						data-html="1" 
-						data-multiple="1"
-						ng-options="s.value as s.label for s in status" 
-						bs-select>
-					</button>  
-			    </div>
-			  </div>
-			</form>
-		</div>
-	</div>
-	<div ng-if="!filter" class="pull-left" style="width:30%;" >
-		<ul class="list-group">
-		  <li class="list-group-item">
-		    Spawned
-		    <span class="badge" ng-bind="stats.spawned"></span>
-		  </li>
-		  <li class="list-group-item">
-		    Completed
-		    <span class="badge" ng-bind="stats.numFinished"></span>
-		  </li>
-		  <li class="list-group-item">
-		    AVG Completition Time
-		    <span class="badge" ng-bind="stats.avgFinishTime | date : 'm:ss'"></span>
-		  </li>
-		  <li class="list-group-item">
-		    Assignments
-		    <span class="badge" ng-bind="stats.assigned"></span>
-		  </li>
-		  <li class="list-group-item">
-		    Skips
-		    <span class="badge" ng-bind="stats.skipped"></span>
-		  </li>
-		</ul>
-	</div>
-	<div ng-if="filter" class="pull-left" style="width:30%;" >
-		<ul class="list-group">
-		  <li class="list-group-item">
-		    Spawned
-		    <span class="badge" ng-bind="filterStats.spawned"></span>
-		  </li>
-		  <li class="list-group-item">
-		    Completed
-		    <span class="badge" ng-bind="filterStats.numFinished"></span>
-		  </li>
-		  <li class="list-group-item">
-		    AVG Completition Time
-		    <span class="badge" ng-bind="filterStats.avgFinishTime | date : 'm:ss'"></span>
-		  </li>
-		  <li class="list-group-item">
-		    Assignments
-		    <span class="badge" ng-bind="filterStats.assigned"></span>
-		  </li>
-		  <li class="list-group-item">
-		    Skips
-		    <span class="badge" ng-bind="filterStats.skipped"></span>
-		  </li>
-		</ul>
-	</div>
-	<div class="clearfix"></div>
-</div>
--->
-<!--
-<div class="panel panel-default">
-	
-	<table class="table" >
-		<thead>
-			<tr>
-				<th>Total</th>
-				<th>Completed</th>
-				<th>Average Completition Time</th>
-				<th>Assignments</th>
-				<th>Skips</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td></td>
-				<td>{{filterStats.completed}}</td>
-				<td>{{filterStats.avgCompletitionTime | date : 'm:ss'}}</td>
-				<td>{{filterStats.skipped}}</td>
-				<td>{{filterStats.assigned}}</td>
-			</tr>
-		</tbody>
-	</table>
-</div>-->
-
 <table class="table table-hover" >
 	<thead>
 		<th ng-click="changeSorting('data.id')">
@@ -141,10 +9,10 @@
 			<span ng-if="sort.column == 'data.id' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
 			<span ng-if="sort.column == 'data.id' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
 		</th>		
-		<th ng-click="changeSorting('data.spawnedAt')">
+		<th ng-click="changeSorting('spawnedAt')">
 			SpawnedAt 
-			<span ng-if="sort.column == 'data.spawnedAt' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
-			<span ng-if="sort.column == 'data.spawnedAt' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
+			<span ng-if="sort.column == 'spawnedAt' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
+			<span ng-if="sort.column == 'spawnedAt' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
 		</th>
 		<th ng-click="changeSorting('data.type')">
 			Type
@@ -156,65 +24,25 @@
 			<span ng-if="sort.column == 'data.owningArtifact' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
 			<span ng-if="sort.column == 'data.owningArtifact' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
 		</th>
-		<th>
-			Status
-		</th>
-		<!--
+		
 		<th ng-click="changeSorting('status')">
 			Status
 			<span ng-if="sort.column == 'status' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
 			<span ng-if="sort.column == 'status' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
 		</th>
-		<th ng-click="changeSorting('spawnedAt')">
-			Spawned At
-			<span ng-if="sort.column == 'spawnedAt' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
-			<span ng-if="sort.column == 'spawnedAt' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
-		</th>
-		<th ng-click="changeSorting('assignedAt')">
-			Assigned At
-			<span ng-if="sort.column == 'assignedAt' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
-			<span ng-if="sort.column == 'assignedAt' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
-		</th>
-		<th ng-click="changeSorting('completedAt')">
-			Completed At
-			<span ng-if="sort.column == 'completedAt' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
-			<span ng-if="sort.column == 'completedAt' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
-		</th>
-		<th ng-click="changeSorting('completedIn')">
-			Completition Time (s)
-			<span ng-if="sort.column == 'completedIn' && !sort.descending " class="glyphicon glyphicon-chevron-up"></span>
-			<span ng-if="sort.column == 'completedIn' && sort.descending " class="glyphicon glyphicon-chevron-down"></span>
-		</th>
-		-->
-		<th>Review</th>
 	</thead>
 	
 	<tbody>
-		<tr ng-repeat="(key,mtask) in filter ? filterMicrotasks : microtasks | orderBy:sort.column:sort.descending" ng-click="go( '/microtasks/' + mtask.$id + '?scrollTo=top' )">
+		<tr ng-repeat="(key,mtask) in filter ? filterMicrotasks : microtasks | orderBy:sort.column:sort.descending" ui-sref=" microtasksDetail({ microtaskKey: mtask.$id }) ">
 
 			<td>
 				<a id="{{mtask.$id}}"></a>
 				<span ng-bind="mtask.$id"></span>
 			</td>
-			<td><span ng-bind="mtask.spawnedAt"></span></td>
+			<td><span ng-bind="mtask.spawnedAt | date : 'medium' "></span></td>
 			<td><span ng-bind="mtask.data.type"></span></td>
 			<td><span ng-bind="mtask.data.owningArtifact"></span></td>
-			<td><span ng-bind="mtask.getStatus()"></span></td>
-			<!--
 			<td><span ng-bind="mtask.status"></span></td>
-			<td ><span ng-bind="mtask.spawnedAt | date : 'short'"></span></td>
-			<td ><span ng-bind="mtask.assignedAt | date : 'short'"></span></td>
-			<td ><span ng-bind="mtask.completedAt | date : 'short'"></span></td>
-			<td ><span ng-bind="mtask.completedIn | date : 'm:ss'"></span></td>
-			-->
-			<td>
-				<div ng-if="mtask.data.review != undefined" ng-init="review = mtask.data.review">
-					<strong ng-if="review.qualityScore<3">reissued</strong>
-					<strong ng-if="review.qualityScore>3">approved</strong>
-
-					<span>{{review.qualityScore}}</span>
-				</div>
-			</td>
 		</tr>
 	</tbody>
 </table>

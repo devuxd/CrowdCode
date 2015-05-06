@@ -299,6 +299,7 @@ angular
 	    	'testedCode'  : this.testedFunctionCode
 	    });
 
+	    console.log('base url ', document.location.origin);
 	    angular.forEach( this.tests, function(test){
 	    	test.output = {};
 	    });

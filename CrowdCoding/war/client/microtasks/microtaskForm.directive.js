@@ -11,7 +11,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 			// private vars
 			var templatesURL = "/client/microtasks/";
 			var templates = {
-				'NoMicrotask': 'no_microtask/no_microtask.html',
+				'NoMicrotask': 'no_microtask/no_microtask',
 				'Review': 'review/review',
 				'DebugTestFailure': 'debug_test_failure/debug_test_failure',
 				'ReuseSearch': 'reuse_search/reuse_search',
@@ -57,7 +57,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 			// in case of no microtasks available
 			$scope.$on('noMicrotask', function($event, fetchData) {
 				$scope.$emit('reset-reminder');
-				$scope.templatePath = templatesURL + templates.NoMicrotask;
+				$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
 				$scope.noMicrotask = true;
 
 				$scope.checkQueueIn = waitTimeInSeconds;

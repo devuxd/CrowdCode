@@ -62,4 +62,5 @@ CrowdCoding/.project
 CrowdCoding/war/WEB-INF/lib.zip
 CrowdCoding/war/.tmp
 CrowdCoding/war/clientDist
+CrowdCoding/war/client/.tmp
 CrowdCoding/war/node_modules

@@ -5,13 +5,14 @@
 	<reminder></reminder>
 
 	<div class="button-bar">
-		<div class="btn-group pull-right" role="group" ng-show="!noMicrotask" >
+		<div class="btn-group pull-right" role="group">
 			<button type="button"
 
        	 		id= "skipBtn"
        			ng-click="$emit('submitMicrotask')" 
        			tabindex="100" 
-       			class="btn btn-default btn-sm">
+       			class="btn btn-default btn-sm"
+       			ng-disabled="noMicrotask">
        			Skip
        		</button>
 		  	
@@ -19,7 +20,8 @@
       			id="submitBtn"
 		  		ng-click="$broadcast('collectFormData', microtaskForm) " 
 		  		tabindex="99" 
-		  		class="btn btn-primary btn-sm">
+		  		class="btn btn-primary btn-sm"
+		  		ng-disabled="noMicrotask">
 		  		Submit
 		  	</button>
 		 

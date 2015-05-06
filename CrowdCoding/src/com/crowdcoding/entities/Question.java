@@ -54,6 +54,7 @@ public class Question extends Questioning
 		this.tags= tags;
 		this.artifactsId.add(artifactId);
 		this.subsribersId.add(ownerId);
+		this.points = 3;
 		ofy().save().entity(this).now();
 
 		this.firebasePath="/questions/" + this.id;

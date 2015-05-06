@@ -2,8 +2,7 @@
   "name": "CrowdCode",
   "namelower": "crowdcode",
   "version": "1.0.0",
-  "description": "CrowdCode client app",
-  "readme": "README.md",
+  "description": "crowd coding client app",
   "devDependencies": {
     "grunt": "0.4.2",
     "grunt-angular-templates": "^0.5.7",

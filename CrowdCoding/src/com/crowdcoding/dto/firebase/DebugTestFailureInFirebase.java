@@ -3,7 +3,6 @@ package com.crowdcoding.dto.firebase;
 
 public class DebugTestFailureInFirebase extends MicrotaskInFirebase
 {
-	public long testID;
 	public long functionID;
 
 	public DebugTestFailureInFirebase()

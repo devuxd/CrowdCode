@@ -40,6 +40,7 @@ public class Answer extends Questioning
 
 		this.questionId = questionId;
 		this.subsribersId.add(ownerId);
+		this.points = 2;
 		ofy().save().entity(this).now();
 		
 		this.firebasePath= "/questions/" + questionId + "/answers/"+ this.id;

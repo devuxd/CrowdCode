@@ -100,8 +100,9 @@ angular
                     if( placement === undefined )
                         throw "a placement should be defined!";
 
-                    if( onShow !== undefined && onShow.length > 0 ) 
-                        $scope.$eval(onShow);
+                    if( onShow !== undefined && onShow.length > 0 ){
+                        $rootScope.$eval(onShow);
+                    } 
 
                     // calculate the hightlight css
                     var highlightCss = {
@@ -118,7 +119,7 @@ angular
                     };
 
                     if( prevOnHide !== undefined && prevOnHide.length > 0 ) 
-                        $scope.$eval(prevOnHide);
+                        $rootScope.$eval(prevOnHide);
 
                     $content.fadeOut(400,function(){
 
@@ -143,8 +144,11 @@ angular
                             else
                                 contentCss.left += -(width-$highlightTag.outerWidth())/2;
 
-                        }  
-                        else if( placement == 'right-center' )  {
+                        } else if( placement == 'top-left' )  {
+                            contentCss.top  += -height - margin;
+                            contentCss.left += -width;
+
+                        } else if( placement == 'right-center' )  {
                             contentCss.left += $highlightTag.outerWidth() +margin ;
                             if( $highlightTag.outerHeight() > height )
                                 contentCss.top += ($highlightTag.outerHeight()-height)/2;
@@ -166,12 +170,16 @@ angular
                     
                     // contentCss.width = '40%';
 
-                    if( onShow !== undefined && onShow.length > 0 ) 
-                        $scope.$eval(onShow);
+                    if( onShow !== undefined && onShow.length > 0 ) {
+                        console.log('evaluating '+onShow);
+                        $rootScope.$eval(onShow);
+                    } 
 
                     $content.fadeOut(300,function(){
                         $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
                         $compile($content.contents())($scope);
+
+                        $content.attr('style',contentStyle);
 
                         var contentCss = {};
                         contentCss.top   = ($('body').outerHeight()-$content.outerHeight())/2;
