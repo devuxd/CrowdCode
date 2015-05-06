@@ -4,12 +4,13 @@ package com.crowdcoding.commands;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 
+
 import java.util.HashSet;
 
 import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
-import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.servlets.ThreadContext;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
 
@@ -17,6 +18,16 @@ public abstract class ProjectCommand extends Command
 {
 
 	/* PUBLIC METHODS */
+	public static ProjectCommand reset(String projectId){
+		return new Reset(projectId);
+	}
+	public static ProjectCommand clear(String projectId){
+		return new Clear(projectId);
+	}
+	public static ProjectCommand construct(String projectId){
+		return new Construct(projectId);
+	}
+
 	public static ProjectCommand enableReviews(boolean reviewsEnabled){
 		return new EnableReviews(reviewsEnabled);
 	}
@@ -65,15 +76,67 @@ public abstract class ProjectCommand extends Command
 
 	public void execute(final String  projectId)
 	{
-	        	Project project = Project.Create(projectId);
-	        	execute(project);
+		Project project = Project.Create(projectId);
+	    execute(project);
 	}
 
 	public abstract void execute(Project project);
 
 	// all commands MUST call queueCommand
 	private static void queueCommand(Command command){
-		CommandContext.ctx.addCommand(command);
+		//ThreadContext threadContext = ThreadContext.get();
+
+       // System.out.println("---->"+threadContext.getUserId());
+		ThreadContext threadContext = ThreadContext.get();
+        threadContext.addCommand(command);
+		//CommandContext.ctx.addCommand(command);
+	}
+	//reset the project
+	protected static class Reset extends ProjectCommand
+	{
+		private String projectID;
+		public Reset(String projectID)
+		{
+			super();
+			this.projectID = projectID;
+		}
+
+		public void execute(Project project)
+		{
+			ProjectCommand.clear(projectID);
+			ProjectCommand.construct(projectID);
+
+		}
+	}
+	//reset the project
+	protected static class Clear extends ProjectCommand
+	{
+		private String projectID;
+		public Clear(String projectID)
+		{
+			super();
+			this.projectID = projectID;
+		}
+
+		public void execute(Project project)
+		{
+			Project.Clear(projectID);
+		}
+	}
+	//reset the project
+	protected static class Construct extends ProjectCommand
+	{
+		private String projectID;
+		public Construct(String projectID)
+		{
+			super();
+			this.projectID = projectID;
+		}
+
+		public void execute(Project project)
+		{
+			Project.Construct(projectID);
+		}
 	}
 
 	// enable the reviews

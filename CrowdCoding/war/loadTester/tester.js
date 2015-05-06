@@ -1,27 +1,28 @@
 var http = require('http');
-var request = require('request')
+var request = require('request');
 var concat = require('concat-stream');
 var Firebase = require('firebase');
 var q = require('q');
 
 var projectId = 'dummyProject';
-
+var actualId;
 
 var fbRootRef = new Firebase('https://crowdcode.firebaseio.com/projects/'+projectId);
-var apiPath  = 'http://localhost:8888/'+projectId+'/ajax/';
-
+var apiPath  = 'http://crowd-coding-dev.appspot.com/'+projectId+'/ajax/';
 
 
 function DummyWorker( assignedId ){
 	var self = this;
-	var id;
+	
 	var microtaskKey = null;
 
 	var nextOperationTimer;
 	var numOperations = 0;
+	var id;
 
 
 	function init(){
+		actualId = assignedId;
 		id = assignedId;
 		console.log('DummyWorker '+id+' started');
 		self.scheduleNextOperation();
@@ -63,7 +64,7 @@ function DummyWorker( assignedId ){
 		var formData = {};
 		var skip     = Math.random() <= 0.05 ? true : false;
 
-		generateSubmitData( microtaskKey )
+		generateSubmitData( microtaskKey , id)
 			.then(function( data ){
 
 				if( data.submission == null )
@@ -109,10 +110,10 @@ function CrowdCodeAutomator( numWorkers ){
 
 
 function randomTime(max){
-	return Math.random() * ( 5000 - 200 ) + 200 ;
+	return Math.random() * ( 5000 - 200 ) + 1200 ;
 }
 
-function generateSubmitData( microtaskKey ){
+function generateSubmitData( microtaskKey, id ){
 	var deferred = q.defer();
 	fbRootRef
 		.child('microtasks/'+microtaskKey)
@@ -120,7 +121,7 @@ function generateSubmitData( microtaskKey ){
 			var mtask = snap.val();
 			//fbRootRef
 			var formData = null;
-
+			console.log("mtask "+mtask +" from worker"+id);
 			switch( mtask.type ){
 				case 'WriteTestCases':
 					formData = { 
@@ -172,10 +173,11 @@ function generateSubmitData( microtaskKey ){
 					// }
 
 					var numPF = Math.random() >0.2 ? 1: 0;
+					var name=funName+Math.random();
 					for( var pf = 1; pf <= numPF ; pf++ ){
 						formData.pseudoFunctions.push({
-							"description" : "function "+funName+pf+"(par)",
-							"name" : funName+pf
+							"description" : "function "+name+"(par)",
+							"name" : name
 						});
 					}
 
@@ -191,8 +193,9 @@ function generateSubmitData( microtaskKey ){
 					  "name" : funName,
 					  "parameters" : [ { "description" : "par", "name" : "par", "type" : "Number" } ],
 					  "returnType" : "Number",
-					  "code" : "{ //# return par; \n}",
-					  "pseudoFunctions" : []
+					  "code" : mtask.calleeID,
+					  "pseudoFunctions" : [],
+					  "calleeIds" : [mtask.calleeID]
 					};
 
 					break;

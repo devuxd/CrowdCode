@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.JApplet;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -184,16 +185,16 @@ public class CrowdServlet extends HttpServlet
 					String projectId = pathSeg[1];
 
 					req.setAttribute("project", projectId);
-					Key<Project> projectKey = Key.create(Project.class, projectId);
-					boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
+	//				Key<Project> projectKey = Key.create(Project.class, projectId);
+	//				boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
 
-					if(!projectExists){
-						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
-							Project.Construct(projectId);
-						} else {
-							req.getRequestDispatcher("/404.jsp").forward(req, resp);
-						}
-					}
+//					if(!projectExists){
+//						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
+//							Project.Construct(projectId);
+//						} else {
+//							req.getRequestDispatcher("/404.jsp").forward(req, resp);
+//						}
+//					}
 
 					if ( pathSeg.length <= 2 ){
 						req.getRequestDispatcher("/clientDist/client.jsp").forward(req, resp);
@@ -294,26 +295,22 @@ public class CrowdServlet extends HttpServlet
 	{
 		//System.out.println("doing admin");
 		if(pathSeg.length <=3 ){
-			req.getRequestDispatcher("/adminDist/admin.jsp").forward(req, resp);
+			req.getRequestDispatcher("/admin/index.jsp").forward(req, resp);
 		} else {
 			// The command should be in the fourth position. If nothing exists there,
 			// use "" as the command.
 			String command = pathSeg[3].toUpperCase();
 
-			//System.out.println("command="+command);
 		    final StringBuilder output = new StringBuilder();
 		    final Date currentTime = new Date();
 
 
-			CommandContext context = new CommandContext();
+			ThreadContext.get().reset();
 
-			//System.out.println("EXECUTING COMMAND : "+command);
 			if (command.equals("RESET"))
 			{
 				output.append("PROJECT RESET executed at " + currentTime.toString() + "\n");
-
-				Project.Clear(projectID);
-				Project.Construct(projectID);
+				ProjectCommand.reset(projectID);
 			}
 			else if (command.equals("CLEAR"))
 			{
@@ -353,7 +350,7 @@ public class CrowdServlet extends HttpServlet
 			}
 
 
-			executeCommands(context.commands(), projectID);
+			executeCommands(projectID);
 
 			output.append("\n");
 
@@ -437,23 +434,16 @@ public class CrowdServlet extends HttpServlet
 		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
 		final long functionID = Long.parseLong(req.getParameter("functionID"));
 
-		//System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
+		System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
 
-		java.util.Queue<Command> commands = new LinkedList<Command>();
-		commands.addAll(ofy().transact(new Work<java.util.Queue<Command>>() {
-	        public java.util.Queue<Command> run()
-	        {
-    			CommandContext context = new CommandContext();
-    			if(result)
-    				FunctionCommand.passedTests(functionID);
-    			else
-    				FunctionCommand.failedTests(functionID);
+		ThreadContext.get().reset();
 
-				return context.commands();
-	        }
-	    }));
+		if(result)
+			FunctionCommand.passedTests(functionID);
+		else
+			FunctionCommand.failedTests(functionID);
 
-		executeCommands(commands, projectID);
+		executeCommands(projectID);
 	}
 
 	public void doInsertQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
@@ -468,8 +458,8 @@ public class CrowdServlet extends HttpServlet
 		final String workerId     = user.getUserId();
 		final String workerHandle = user.getNickname();
 
-		// Create an initial context, then build a command to insert the value
-		CommandContext context = new CommandContext();
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
 
 		if(type.equals("question"))
 			QuestioningCommand.createQuestion( payload, workerId, workerHandle);
@@ -482,7 +472,7 @@ public class CrowdServlet extends HttpServlet
 
 
 		// Copy the command back out the context to initially populate the command queue.
-		executeCommands(context.commands(), projectId);
+		executeCommands(projectId);
 	}
 
 	public void doReportQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
@@ -498,13 +488,15 @@ public class CrowdServlet extends HttpServlet
 
 		final String workerID     = user.getUserId();
 
-		// Create an initial context, then build a command to insert the value
-		CommandContext context = new CommandContext();
+
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
+
 		QuestioningCommand.report(questioningId, workerID, remove);
 
 
 		// Copy the command back out the context to initially populate the command queue.
-		executeCommands(context.commands(), projectID);
+		executeCommands(projectID);
 	}
 
 	public void doSubscribeQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
@@ -519,14 +511,15 @@ public class CrowdServlet extends HttpServlet
 
 		final String workerID     = user.getUserId();
 
-		// Create an initial context, then build a command to insert the value
-		CommandContext context = new CommandContext();
+
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
 
 		QuestioningCommand.subscribeWorker(questioningId, workerID, remove);
 
 
 		// Copy the command back out the context to initially populate the command queue.
-		executeCommands(context.commands(), projectID);
+		executeCommands(projectID);
 	}
 
 	public void doLinkQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
@@ -542,13 +535,14 @@ public class CrowdServlet extends HttpServlet
 
 		final String workerId     = user.getUserId();
 
-		// Create an initial context, then build a command to insert the value
-		CommandContext context = new CommandContext();
-		QuestioningCommand.linkArtifact(questioningId, artifactId, remove);
+
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
+		QuestioningCommand.linkArtifact(questioningId, artifactId, remove, workerId);
 
 
 		// Copy the command back out the context to initially populate the command queue.
-		executeCommands(context.commands(), projectID);
+		executeCommands(projectID);
 	}
 
 	public void doCloseQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
@@ -563,16 +557,17 @@ public class CrowdServlet extends HttpServlet
 
 		final String workerId     = user.getUserId();
 
-		// Create an initial context, then build a command to insert the value
-		CommandContext context = new CommandContext();
+
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
 
 		QuestioningCommand.setClosed(questioningId, closed, workerId);
 
 
 		// Copy the command back out the context to initially populate the command queue.
-		executeCommands(context.commands(), projectID);
+		executeCommands(projectID);
 	}
-	
+
 	public void doVoteQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		// Collect information from the request parameter. Since the transaction may fail and retry,
@@ -586,13 +581,14 @@ public class CrowdServlet extends HttpServlet
 
 		final String workerID     = user.getUserId();
 
-		// Create an initial context, then build a command to insert the value
-		CommandContext context = new CommandContext();
+
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
 		QuestioningCommand.vote(questioningId, workerID, remove);
 
 
 		// Copy the command back out the context to initially populate the command queue.
-		executeCommands(context.commands(), projectID);
+		executeCommands(projectID);
 	}
 
 
@@ -648,16 +644,18 @@ public class CrowdServlet extends HttpServlet
 		final String projectID = (String) req.getAttribute("project");
 
 
-    	String jsonResponse = "{}";
     	try {
-    		jsonResponse = ofy().transact( new Work<String>(){
+    		ofy().transact( new VoidWork(){
 
-    			public String run() {
-    				final Project project = Project.Create(projectID);
-    				final Worker worker   = Worker.Create(user, project);
+    			public void vrun() {
+    				ThreadContext threadContext = ThreadContext.get();
+    				threadContext.reset();
 
     				Key<Microtask> microtaskKey = null;
     		    	int firstFetch=0;
+    		    	final Project project = Project.Create(projectID);
+    				final Worker worker   = Worker.Create(user, project);
+
     		    	//before to enqueue the submit
     				if( unassign ){
     		    		project.unassignMicrotask( worker.getUserid() );
@@ -673,11 +671,11 @@ public class CrowdServlet extends HttpServlet
     		    	}
     				ofy().save().entity(project).now();
 
-    		    	if (microtaskKey == null) {
-    					return "{}";
+    				if (microtaskKey == null) {
+    					threadContext.setJsonResponse("{}");
     				} else{
 
-    					return "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\", \"workerId\": \""+ worker.getUserid()+"\"}";
+    					threadContext.setJsonResponse("{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}");
     				}
 
     			}
@@ -686,14 +684,14 @@ public class CrowdServlet extends HttpServlet
 
     	} catch ( IllegalArgumentException e ){
     		e.printStackTrace();
-    		//System.out.println("WORKER ID "+worker.getUserid()+" - nickname "+worker.getNickname());
     	}
-
-		renderJson(resp,jsonResponse);
-
-
         HistoryLog.Init(projectID).publish();
-        FirebaseService.publish();
+
+    	ThreadContext threadContext = ThreadContext.get();
+		renderJson(resp,threadContext.getJsonResponse());
+	    FirebaseService.publish();
+
+
 	}
 
 	/**
@@ -742,10 +740,8 @@ public class CrowdServlet extends HttpServlet
 		final String microtaskKey = req.getParameter("microtaskKey") ;
 		final String JsonDTO      = req.getParameter("JsonDTO");
 		final Boolean skip        = Boolean.parseBoolean(req.getParameter("skip"));
-		final Boolean disablePoint=Boolean.parseBoolean(req.getParameter("disablepoint"));
+		final Boolean disablePoint= Boolean.parseBoolean(req.getParameter("disablepoint"));
 
-		// Create an initial context, then build a command to skip or submit
-		CommandContext context = new CommandContext();
 		// Create the skip or submit commands
 		if (skip)
 			ProjectCommand.skipMicrotask( microtaskKey, workerID, disablePoint);
@@ -754,7 +750,7 @@ public class CrowdServlet extends HttpServlet
 		}
 
 		// Copy the command back out the context to initially populate the command queue.
-		executeCommands(context.commands(), projectID);
+		executeCommands(projectID);
 		resp.setStatus(HttpServletResponse.SC_OK);
 
 	}
@@ -792,38 +788,50 @@ public class CrowdServlet extends HttpServlet
 		if (userID == null || userID.length() == 0)
 			return;
 
-		CommandContext context = new CommandContext();
+
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
+
 		ProjectCommand.logoutWorker(userID);
-		executeCommands(context.commands(), projectID);
+		executeCommands(projectID);
 
 	}
 
 	// Executes all of the specified commands and any commands that may subsequently be generated
-	private void executeCommands(java.util.Queue<Command> commands, final String projectId)
+	private void executeCommands(final String projectId)
 	{
-		LinkedBlockingQueue<Command> commandQueue    = new LinkedBlockingQueue<Command>(commands);
+		ThreadContext starting = ThreadContext.get();
+		LinkedBlockingQueue<Command> commandQueue    = new LinkedBlockingQueue<Command>(starting.getCommands());
 
 		// Execute commands until done, adding commands as created.
 	    while(! commandQueue.isEmpty()) {
 
 	    	final Command command = commandQueue.remove();
-	    	commandQueue.addAll(
-            ofy().transactNew(new Work<java.util.Queue<Command>>() {
-                public java.util.Queue<Command> run()
+
+	    	ofy().transactNew(new VoidWork() {
+                public void vrun()
                 {
-                    CommandContext context = new CommandContext();
-                    //System.out.println("inside transaction commands size ="+context.commands().size());
+                	//get the context and reset it,
+                	//this is done to remove the changement in the rollback
+                    ThreadContext threadContext = ThreadContext.get();
+                    threadContext.reset();
+
+                    //execute the command
                     command.execute(projectId);
-                    return context.commands();
                 }
-            }));
+            });
+
+
+            ThreadContext threadContext = ThreadContext.get();
+	    	commandQueue.addAll(threadContext.getCommands());
+	    	HistoryLog.Init(projectId).publish();
 
 	    	// history log writes and the other
             // firebase writes are done
             // outside of the transactions
-            HistoryLog.Init(projectId).publish();
-            FirebaseService.publish();
-        }
+	    	FirebaseService.publish();
+
+          }
 	}
 
 	// Writes the specified html message to resp, wrapping it in an html page

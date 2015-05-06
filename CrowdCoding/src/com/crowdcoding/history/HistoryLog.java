@@ -8,6 +8,7 @@ import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
+import com.crowdcoding.servlets.ThreadContext;
 import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.Pair;
 
@@ -21,7 +22,7 @@ public class HistoryLog
 {
 	private static HistoryLog historyLog = null;
 	private EventNode root;
-	private ConcurrentLinkedQueue<EventNode> eventList = new ConcurrentLinkedQueue<EventNode>();
+	//private ConcurrentLinkedQueue<EventNode> eventList = new ConcurrentLinkedQueue<EventNode>();
 	private String projectId = "";
 
 	public HistoryLog(){
@@ -41,18 +42,17 @@ public class HistoryLog
 
 	public void addEvent(HistoryEvent event){
 		EventNode node = new EventNode(event);
-		eventList.add(node);
+		ThreadContext.get().addEventList(node);
 	}
 
 	public void publish(){
+		ConcurrentLinkedQueue<EventNode> eventList = ThreadContext.get().getEventList();
 		Iterator<EventNode> eventIterator = eventList.iterator();
 	    while(eventIterator.hasNext()) {
 	    	EventNode node = eventIterator.next();
-	    	if( node != null ){
-		    	HistoryEvent event = node.event;
-		    	FirebaseService.writeHistoryEvent(event,projectId);
-		    	eventIterator.remove();
-	    	}
+	    	HistoryEvent event = node.event;
+		    FirebaseService.writeHistoryEvent(event,projectId);
+		    eventIterator.remove();
 	    }
 	}
 

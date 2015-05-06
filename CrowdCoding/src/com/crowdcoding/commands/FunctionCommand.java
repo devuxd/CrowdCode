@@ -11,7 +11,7 @@ import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Test;
-import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.servlets.ThreadContext;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.VoidWork;
@@ -105,7 +105,9 @@ public abstract class FunctionCommand extends Command {
 	// All constructors for FunctionCommand MUST call queueCommand by calling
 	// the super constructor
 	private static void queueCommand(Command command) {
-		CommandContext.ctx.addCommand(command);
+		ThreadContext threadContext = ThreadContext.get();
+        threadContext.addCommand(command);
+		//CommandContext.ctx.addCommand(command);
 	}
 
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.microtasks.WriteTest;
-import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.servlets.ThreadContext;
 import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.VoidWork;
 
@@ -68,7 +68,9 @@ public abstract class TestCommand extends Command {
 	// the constructor to add the
 	// command to the queue.
 	private static void queueCommand(Command command) {
-		CommandContext.ctx.addCommand(command);
+		ThreadContext threadContext = ThreadContext.get();
+        threadContext.addCommand(command);
+		//CommandContext.ctx.addCommand(command);
 	}
 
 	public void execute(final String projectId) {

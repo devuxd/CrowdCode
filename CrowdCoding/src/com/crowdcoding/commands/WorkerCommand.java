@@ -4,7 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Worker;
-import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.servlets.ThreadContext;
 import com.googlecode.objectify.VoidWork;
 
 public abstract class WorkerCommand extends Command
@@ -27,7 +27,9 @@ public abstract class WorkerCommand extends Command
 	// All constructors for WorkerCommand MUST call queueCommand by calling the super constructor
 	private static void queueCommand(Command command)
 	{
-		CommandContext.ctx.addCommand(command);
+		ThreadContext threadContext = ThreadContext.get();
+        threadContext.addCommand(command);
+		// CommandContext.ctx.addCommand(command);
 	}
 	public void execute(String projectId)
 	{
