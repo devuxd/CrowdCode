@@ -14,7 +14,10 @@ public class QuestionInFirebase extends DTO
 	public String title;
 	public String ownerId;
 	public String ownerHandle;
-	public long time;
+	public long createdAt;
+	public long updatedAt;
+	public long answersCount;
+	public long commentsCount;
 	public int score;
 	public boolean closed;
 	public List < String > tags= new ArrayList<String>();
@@ -25,9 +28,7 @@ public class QuestionInFirebase extends DTO
 	public List < String > subscribersId= new ArrayList<String>();
 	
 	// Default constructor (required by Jackson JSON library)
-	public QuestionInFirebase()
-	{
-	}
+	public QuestionInFirebase(){}
 
 	public QuestionInFirebase(long id, String ownerId, String ownerHandle, String title, String text, List <String> tags, long time, int score, List <String> subsribersId, List <String> artifactsId, boolean closed)
 	{
@@ -37,7 +38,10 @@ public class QuestionInFirebase extends DTO
 		this.title=title;
 		this.text=text;
 		this.tags=tags;
-		this.time=time;
+		this.createdAt = time;
+		this.updatedAt = time;
+		this.answersCount  = 0;
+		this.commentsCount = 0;
 		this.score=score;
 		this.subscribersId =  subsribersId;
 		this.artifactsId   =  artifactsId;

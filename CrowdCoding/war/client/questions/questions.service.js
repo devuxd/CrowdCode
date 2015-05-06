@@ -11,10 +11,13 @@ angular
 	var service = new function(){
 		// Private variables
 		var questions;
+		var views;
 
 		var allTags=[];
 		var loaded = false;
 		var questionsRef = $firebase(new Firebase(firebaseUrl+'/questions'));
+		var viewsRef     = $firebase(new Firebase(firebaseUrl+'/questionsViews/'+workerId));
+
 		var idx = lunr(function(){
 			this.ref('id');
 			this.field('title'   ,{ boost: 10 });
@@ -26,18 +29,19 @@ angular
 
 
 		// Public functions
-		this.init = init;
-		this.submit = submit;
-		this.vote = vote;
-		this.report = report;
-		this.linkArtifact = linkArtifact;
-		this.setStatus    = setStatus;
-		this.sel  = undefined;
-		this.allTags = [];
+		this.init          = init;
+		this.submit        = submit;
+		this.vote          = vote;
+		this.report        = report;
+		this.linkArtifact  = linkArtifact;
+		this.setStatus     = setStatus;
+		this.sel           = undefined;
+		this.allTags       = [];
 		this.searchResults = searchResults;
 		this.getQuestions  = function(){return questions;};
 		this.get 		   = getQuestion;
 		this.getAllTags    = getAllTags;
+		this.setView       = setView;
 
 		function questionToDocument(question,key){
 			var doc = {
@@ -58,10 +62,6 @@ angular
 					}
 				}
 			}
-
-			// doc.answers  = doc.answers.toLowerCase();
-			// doc.comments = doc.comments.toLowerCase();
-
 			return doc;
 		}
 
@@ -93,10 +93,15 @@ angular
 
 		function init(){
 			questions = questionsRef.$asArray();
+			views     = viewsRef.$asArray();
+			views.$loaded().then(function(){
+				console.log('views loaded!',views);
+			});
 			questions.$loaded().then(function(){
 
 				// tell the others that the functions services is loaded
 				$rootScope.$broadcast('serviceLoaded','questions');
+
 				for(var index in questions){
 					if(questions[index].ownerId){
 						var doc = questionToDocument( questions[index], questions[index].id );
@@ -194,6 +199,10 @@ angular
 					deferred.reject();
 				});
 			return deferred.promise;
+		}
+
+		function setView(id,view){
+			questionsRef.$ref().child( id+'/views/'+workerId ).set( view );
 		}
 	};
 

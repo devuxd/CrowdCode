@@ -15,14 +15,14 @@ angular
 		'yaru22.angular-timeago',
 		'toaster'
 	])
-	.config(function($dropdownProvider, ngClipProvider ) {
+	.config(function($dropdownProvider, ngClipProvider ) { 
 
 		ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
 
 		angular.extend($dropdownProvider.defaults, { html: true });
 
 	})
-	.constant('workerId'   ,workerId)
+	.constant('workerId'   ,workerId) 
     .constant('projectId'  ,projectId)
 	.constant('firebaseUrl',firebaseURL)
 	.constant('logoutUrl'  ,logoutURL)
@@ -37,7 +37,7 @@ angular
 		$rootScope.logoutUrl    = logoutUrl;
 		$rootScope.avatar       = avatarFactory.get;
 		
-		var profileModal            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: 'clientDist/widgets/popup_user_profile.html', show: false});
+		var profileModal            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: 'widgets/popup_user_profile.html', show: false});
 		var servicesLoadingStatus   = {};
 		var loadingServicesInterval = $interval(loadServices(), 200);
 
@@ -125,7 +125,7 @@ angular
     .directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory, userService, workerId) {
     return {
         restrict: 'E',
-        templateUrl: 'clientDist/chat/chat_panel.html',
+        templateUrl: 'chat/chat_panel.html',
         scope: {
             //focusValue: "=syncFocusWith"
         },
@@ -205,7 +205,7 @@ angular
                                 title    : alertData.worker, 
                                 content  : alertData.text , 
                                 duration : alertData.duration ,
-                                template : 'clientDist/chat/alert_chat.html', 
+                                template : 'chat/alert_chat.html', 
                                 keyboard : true, 
                                 show: true
                             });
@@ -1217,7 +1217,7 @@ angular
     return {
         restrict: "EA",
         scope: true,
-        templateUrl: 'clientDist/data_types/adt_list.html',
+        templateUrl: 'data_types/adt_list.html',
         link: function($scope, $element, $attributes) {
             $scope.ADTs = ADTService.getAllADTs();
             $scope.ADTs.selectedADT = -1;
@@ -1253,7 +1253,7 @@ angular
             var popoverSettings = {
                 trigger: 'manual',
                 placement: 'bottom',
-                template:  'clientDist/data_types/examples_list_popover.html',
+                template:  'data_types/examples_list_popover.html',
             };
 
 
@@ -1698,7 +1698,7 @@ angular
             var popoverSettings = {
                 trigger: 'manual',
                 placement: 'bottom',
-                template:  'clientDist/users/user_popover.html'
+                template:  'users/user_popover.html'
             };
             popover = $popover(element,popoverSettings);
             popover.$scope.close = function(){
@@ -1732,7 +1732,7 @@ angular
             var popoverSettings = {
                 trigger: 'hover',
                 placement: 'top',
-                template:  'clientDist/widgets/description_popover.html',
+                template:  'widgets/description_popover.html',
             };
 
             var popover=$popover(element, popoverSettings);
@@ -2198,7 +2198,7 @@ angular
     return {
         scope: true, // {} = isolate, true = child, false/undefined = no change
         restrict: 'EA', 
-        templateUrl: 'clientDist/functions/function_conventions.html',
+        templateUrl: 'functions/function_conventions.html',
         controller: function($scope, $element, $attrs) {
             $scope.examplePseudocode = $sce.trustAsHtml(
                         '<strong>Example:</strong>\n'+
@@ -2825,7 +2825,7 @@ angular
     
     return {
         restrict: 'EA',
-        templateUrl: 'clientDist/functions/javascript_tutorial.html',
+        templateUrl: 'functions/javascript_tutorial.html',
 
         link: function($scope, $element, $attributes) {
 
@@ -2857,7 +2857,7 @@ angular
 function leaderboard($firebase, avatarFactory, firebaseUrl, workerId) {
     return {
         restrict: 'E',
-        templateUrl: 'clientDist/leaderboard/leaderboard_panel.html',
+        templateUrl: 'leaderboard/leaderboard_panel.html',
         controller: function($scope, $element) {
             var lbSync = $firebase(new Firebase(firebaseUrl + '/leaderboard/leaders'));
             $scope.avatar  = avatarFactory.get;
@@ -3156,7 +3156,7 @@ angular
                 type: 'danger',
                 show: true,
                 duration: 5,
-                template: 'clientDist/microtasks/alert_submit.html',
+                template: 'microtasks/alert_submit.html',
                 container: 'alertcontainer'
             });
         }
@@ -3170,11 +3170,11 @@ angular
 function microtaskForm($firebase, $http, $interval, $timeout, $modal , functionsService, FunctionFactory, userService, microtasks, TestList) {
     return {
         restrict: 'E',
-        templateUrl: 'clientDist/microtasks/microtask_form.html',
+        templateUrl: 'microtasks/microtask_form.html',
         controller: function($scope,$element,$attrs){
         	console.log('controller microtask form');
 			// private vars
-			var templatesURL = "clientDist/microtasks/";
+			var templatesURL = "microtasks/";
 			var templates = {
 				'NoMicrotask': 'no_microtask/no_microtask',
 				'Review': 'review/review',
@@ -3432,7 +3432,7 @@ angular
                 type: 'danger',
                 show: true,
                 duration: 3,
-                template: 'clientDist/microtasks/alert_submit.html',
+                template: 'microtasks/alert_submit.html',
                 container: 'alertcontainer'
             });
         } else {
@@ -3672,7 +3672,7 @@ angular
                 type: 'danger',
                 show: true,
                 duration: 3,
-                template: 'clientDist/microtasks/alert_submit.html',
+                template: 'microtasks/alert_submit.html',
                 container: 'alertcontainer'
             });
         else {
@@ -3736,7 +3736,7 @@ angular
                type: 'danger',
                show: true,
                duration: 3,
-               template: 'clientDist/microtasks/alert_submit.html',
+               template: 'microtasks/alert_submit.html',
                container: 'alertcontainer'
             });
         }
@@ -3808,7 +3808,7 @@ angular
                type: 'danger',
                show: true,
                duration: 3,
-               template: 'clientDist/microtasks/alert_submit.html',
+               template: 'microtasks/alert_submit.html',
                container: 'alertcontainer'
             });
         }
@@ -3924,7 +3924,7 @@ angular
                 type: 'danger',
                 show: true,
                 duration: 3,
-                template: 'clientDist/microtasks/alert_submit.html',
+                template: 'microtasks/alert_submit.html',
                 container: 'alertcontainer'
             });
 
@@ -4052,7 +4052,7 @@ angular
                 type: 'danger',
                 show: true,
                 duration: 3,
-                template: 'clientDist/microtasks/alert_submit.html',
+                template: 'microtasks/alert_submit.html',
                 container: 'alertcontainer'
             });
         } else {
@@ -4159,7 +4159,7 @@ angular
                 type: 'danger',
                 show: true,
                 duration: 3,
-                template: 'clientDist/microtasks/alert_submit.html',
+                template: 'microtasks/alert_submit.html',
                 container: 'alertcontainer'
             });
         } else if ( newTestCase !== '' )  {
@@ -4191,7 +4191,7 @@ angular
                     type: 'danger',
                     show: true,
                     duration: 3,
-                    template: 'clientDist/microtasks/alert_submit.html',
+                    template: 'microtasks/alert_submit.html',
                     container: 'alertcontainer'
                 });
             }
@@ -4233,7 +4233,7 @@ angular
                 type: 'danger',
                 show: true,
                 duration: 3,
-                template: 'clientDist/microtasks/alert_submit.html',
+                template: 'microtasks/alert_submit.html',
                 container: 'alertcontainer'
             });
         } 
@@ -4376,7 +4376,7 @@ angular
                     {
                         hidePopover( $scope.$parent.popover[key]);
                     }
-                    $scope.$parent.popover[news.microtaskKey] = $popover($element, {template : "clientDist/newsfeed/news_popover.html", placement:"right-bottom", trigger : "manual", autoClose: "false", container: "body"   });
+                    $scope.$parent.popover[news.microtaskKey] = $popover($element, {template : "newsfeed/news_popover.html", placement:"right-bottom", trigger : "manual", autoClose: "false", container: "body"   });
                     $scope.$parent.popover[news.microtaskKey].$scope.n=news;
                     showPopover($scope.$parent.popover[news.microtaskKey]);
                     //load the data
@@ -4421,7 +4421,7 @@ angular
 function news($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService) {
     return {
         restrict: 'E',
-        templateUrl: 'clientDist/newsfeed/news_panel.html',
+        templateUrl: 'newsfeed/news_panel.html',
         scope: {
             //focusValue: "=syncFocusWith"
         },
@@ -4532,7 +4532,7 @@ angular
 angular.module('crowdCode').directive('questionDetail',function($timeout,$firebase,firebaseUrl,workerId,questionsService){
 	return {
 		scope: false,
-		templateUrl: 'clientDist/questions/questionDetail.html',
+		templateUrl: 'questions/questionDetail.html',
 		link: function($scope,$element,$attrs){
 			$scope.answer  = {};
 			$scope.comment = {};
@@ -4581,6 +4581,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 							$scope.comment.text ='';
 							$scope.comment.answerId = null;
 							$scope.showCommentForm = false;
+							$scope.updateView();
 						},function(){
 							console.log('error posting the comment');
 						});
@@ -4595,6 +4596,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 						.then(function(){
 							$scope.answer.text='';
 							$scope.showAnswerForm = false;
+							$scope.updateView();
 						},function(){
 							console.log('error posting the answer');
 						});
@@ -4606,7 +4608,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 angular.module('crowdCode').directive('questionForm',function($firebase,firebaseUrl,workerId, questionsService){
 	return {
 		scope: false,
-		templateUrl: 'clientDist/questions/questionForm.html',
+		templateUrl: 'questions/questionForm.html',
 		link: function($scope,$element,$attrs){
 			$scope.question = {
 				title: '',
@@ -4657,7 +4659,7 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 						};
 						$scope.relatedTo = 'none';
 
-						$scope.setView('question_list');
+						$scope.setUiView('question_list');
 						$scope.questionForm.$setPristine();
 					},function(){
 						console.log('error submitting the question')
@@ -4751,10 +4753,13 @@ angular
 	var service = new function(){
 		// Private variables
 		var questions;
+		var views;
 
 		var allTags=[];
 		var loaded = false;
 		var questionsRef = $firebase(new Firebase(firebaseUrl+'/questions'));
+		var viewsRef     = $firebase(new Firebase(firebaseUrl+'/questionsViews/'+workerId));
+
 		var idx = lunr(function(){
 			this.ref('id');
 			this.field('title'   ,{ boost: 10 });
@@ -4766,18 +4771,19 @@ angular
 
 
 		// Public functions
-		this.init = init;
-		this.submit = submit;
-		this.vote = vote;
-		this.report = report;
-		this.linkArtifact = linkArtifact;
-		this.setStatus    = setStatus;
-		this.sel  = undefined;
-		this.allTags = [];
+		this.init          = init;
+		this.submit        = submit;
+		this.vote          = vote;
+		this.report        = report;
+		this.linkArtifact  = linkArtifact;
+		this.setStatus     = setStatus;
+		this.sel           = undefined;
+		this.allTags       = [];
 		this.searchResults = searchResults;
 		this.getQuestions  = function(){return questions;};
 		this.get 		   = getQuestion;
 		this.getAllTags    = getAllTags;
+		this.setView       = setView;
 
 		function questionToDocument(question,key){
 			var doc = {
@@ -4798,10 +4804,6 @@ angular
 					}
 				}
 			}
-
-			// doc.answers  = doc.answers.toLowerCase();
-			// doc.comments = doc.comments.toLowerCase();
-
 			return doc;
 		}
 
@@ -4833,10 +4835,15 @@ angular
 
 		function init(){
 			questions = questionsRef.$asArray();
+			views     = viewsRef.$asArray();
+			views.$loaded().then(function(){
+				console.log('views loaded!',views);
+			});
 			questions.$loaded().then(function(){
 
 				// tell the others that the functions services is loaded
 				$rootScope.$broadcast('serviceLoaded','questions');
+
 				for(var index in questions){
 					if(questions[index].ownerId){
 						var doc = questionToDocument( questions[index], questions[index].id );
@@ -4935,32 +4942,26 @@ angular
 				});
 			return deferred.promise;
 		}
+
+		function setView(id,view){
+			questionsRef.$ref().child( id+'/views/'+workerId ).set( view );
+		}
 	};
 
 	return service; 
 }]);
 
 
-angular.module('crowdCode').directive('questionList',function($rootScope,$timeout,$firebase,firebaseUrl, questionsService, microtasksService){
+angular.module('crowdCode').directive('questionList',function($rootScope,$timeout,$firebase,workerId,firebaseUrl, questionsService, microtasksService){
 	return {
 		scope: false,
-		templateUrl: 'clientDist/questions/questionsList.html',
+		templateUrl: 'questions/questionsList.html',
 		link: function($scope,$element,$attrs){
 
 			$scope.resetFilter=resetFilter;
 			$scope.addToFilter=addToFilter;
 
 			$scope.search    = '';
-			$scope.isRelated = isRelatedToArtifact;
-
-			$scope.toggleRelation = function(q){
-				if( isRelatedToArtifact(q) ){
-					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , true );
-				} else {
-					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , false );
-				}
-
-			};
 
 			var searchTimeout;
 			$scope.$watch('search',function( val ){
@@ -4973,11 +4974,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		        	}
 		        }, 250); // delay 250 ms
 			});
-
-			
-			function isRelatedToArtifact(q){
-				return q.artifactsId != null && $scope.loadedArtifact != null && q.artifactsId.indexOf( ''+$scope.loadedArtifact.id ) > -1 ; 
-			}
 
 
 			function resetFilter(){
@@ -4996,43 +4992,101 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 	};
 });
 angular
-    .module('crowdCode').directive('questionsPanel',function($rootScope,$timeout,$firebase,firebaseUrl, questionsService, functionsService, microtasksService){
+    .module('crowdCode').directive('questionsPanel',function($rootScope,$timeout,$firebase,firebaseUrl, workerId, questionsService, functionsService, microtasksService){
 
 	return {
 		scope: {},
-		templateUrl: 'clientDist/questions/questionsPanel.html',
+		templateUrl: 'questions/questionsPanel.html',
 		link: function($scope,$element,$attrs){
-			$scope.setView      = setView;
-			$scope.setSelected  = setSelected;
+			
+			$scope.allTags        = [];
 			$scope.loadedArtifact = null;
+			$scope.view           = 'question_list';
 
 			$scope.questions = questionsService.getQuestions();
 			$scope.questions.$loaded().then(function(){
 				$scope.allTags = questionsService.getAllTags();
 			});
 
-			$rootScope.$on('noMicrotask',function( event ){
-				$scope.loadedArtifact = null;
-			});
+			$scope.setUiView       = setUiView;
+			$scope.setSelected     = setSelected;
+			$scope.updateView      = updateView;
+			$scope.isRelated       = isRelatedToArtifact;
+			$scope.toggleRelation  = toggleRelation;
+			$scope.isUpdated       = isUpdated;
+			$scope.getUpdateString = getUpdateString;
 
-			$rootScope.$on('loadMicrotask',function( event, microtask ){
-				$scope.loadedArtifact = functionsService.get(microtask.functionID);
-			});
+			$scope.$on('noMicrotask',   onMicrotaskLoaded ); 
+			$scope.$on('loadMicrotask', onMicrotaskLoaded );
+			$scope.$on('showQuestion',  onShowQuestion );
 
-			$scope.$on('showQuestion',function( event, questionId ){
+			function onMicrotaskLoaded( event, microtask ){
+				if( microtask === undefined )
+					$scope.loadedArtifact = null 
+				else				
+					$scope.loadedArtifact = functionsService.get(microtask.functionID);
+			}
+
+			function onShowQuestion( event, questionId ){
 				setSelected( $scope.questions.$getRecord(questionId) );
-				setView('question_detail');
-			});
-			
-			$scope.view = 'question_list';
+			}
 
-			function setView(view){
+			function setUiView(view){
 				$scope.view = view;
 			}
 
 			function setSelected(q){
 				$scope.sel = q;
+
+				updateView();
+				setUiView('question_detail');
 			}
+
+			function updateView(){
+				if( $scope.sel === undefined ) return;
+
+				var view = {
+					at            : Date.now(),
+					answersCount  : $scope.sel.answersCount,
+					commentsCount : $scope.sel.commentsCount
+				};
+				questionsService.setView( $scope.sel.id, view );
+			}
+
+			function isUpdated(q){
+				return q.views === undefined || q.views[ workerId ] === undefined || q.views[workerId].at < q.updatedAt; 
+			}
+
+			function getUpdateString(q){
+				if( q.views === undefined || q.views[ workerId ] === undefined  )
+					return '('+q.answersCount+' new questions, '+q.commentsCount+' new comments)';
+				
+				var view = q.views[ workerId ];
+
+				var updates  = [];
+
+				var diffAnswers  = q.answersCount  - view.answersCount; 
+				var diffComments = q.commentsCount - view.commentsCount; 
+				
+				if( diffAnswers > 0 )  updates.push( diffAnswers + ' new answers');
+				if( diffComments > 0 ) updates.push( diffComments + ' new comments');
+
+				return '('+updates.join(', ')+')';
+			}
+
+			function isRelatedToArtifact(q){
+				return q.artifactsId != null && $scope.loadedArtifact != null && q.artifactsId.indexOf( ''+$scope.loadedArtifact.id ) > -1 ; 
+			}
+
+			function toggleRelation(q){
+				if( isRelatedToArtifact(q) ){
+					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , true );
+				} else {
+					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , false );
+				}
+			}
+
+
 		}
 	};
 });
@@ -5721,7 +5775,7 @@ angular
             function startTutorial(){
                 running = true;
                 
-                var templateUrl = 'clientDist/tutorials/'+currentId+'.html';
+                var templateUrl = 'tutorials/'+currentId+'.html';
                 $element.html( '<tutorial template-url="'+templateUrl+'"></tutorial>' );
                 $compile($element.contents())($scope);
 
@@ -5968,15 +6022,15 @@ angular
 			logoutWorker.onDisconnect().set(jobData);
 
 			var timeoutCallBack = function(){
-				//time of the clientDist plus the timezone offset given by firebase
-				var clientDistTime = new Date().getTime() + offset;
+				//time of the client plus the timezone offset given by firebase
+				var clientTime = new Date().getTime() + offset;
 				//retrieves the information of the login field
 				var userLoginRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
 
 				userLoginRef.once("value", function(userLogin) {
 
 					//if the user doesn't uddate the timer for more than 30 seconds than log it out
-				  	if(userLogin.val()===null || clientDistTime - userLogin.val().timeStamp > 30000){
+				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){
 				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
 					  		.success(function(data, status, headers, config) {
 					  			console.log("logged out seccessfully");
@@ -6050,7 +6104,7 @@ angular
     return {
         restrict: 'EA',
 
-        templateUrl: 'clientDist/widgets/ace_edit_js.html',
+        templateUrl: 'widgets/ace_edit_js.html',
         scope: {
             editor           : '=',
             functionData     : '=function', // the firebase function object extended in FunctionFactory
@@ -6615,11 +6669,11 @@ angular
 
 	return {
 		scope: true, 
-		templateUrl: 'clientDist/widgets/left_bar_template.html', 
+		templateUrl: 'widgets/left_bar_template.html', 
 		replace: false,
 		link: function($scope, iElm, iAttrs, controller) {
 			$scope.tabs=[ 'newsfeed', 'questions', 'leaderboard']; //, 'chat'];
-			$scope.selectedTab = 0;
+			$scope.selectedTab = 1;
 			$scope.selectTab = function(index){
 				$scope.selectedTab = index;
 			};
@@ -6641,7 +6695,7 @@ function navbar() {
     return {
     	replace: true,
         restrict: 'E',
-        templateUrl: 'clientDist/widgets/navbar.html'
+        templateUrl: 'widgets/navbar.html'
     };
 };
 
@@ -6664,14 +6718,14 @@ angular
 
     return {
         restrict: 'E',
-        templateUrl : 'clientDist/widgets/reminder.html',
+        templateUrl : 'widgets/reminder.html',
         scope: {},
         link: function($scope, $element, attrs) {
             $scope.microtaskFirstWarning = microtaskFirstWarning;
             $scope.microtaskTimeout      = microtaskTimeout;
 
             // initialize the warning popup
-            popupWarning = $modal({template : 'clientDist/widgets/popup_reminder.html' , show: false});
+            popupWarning = $modal({template : 'widgets/popup_reminder.html' , show: false});
 
             $rootScope.$on('tutorial-started',function(){
                 // console.log('turorial run');
@@ -6747,7 +6801,7 @@ angular
     .module('crowdCode')
     .directive('statementsProgressBar',['$rootScope',function($rootScope) {
     return {
-        templateUrl : 'clientDist/widgets/statements_progress_bar.html',
+        templateUrl : 'widgets/statements_progress_bar.html',
         restrict: 'AE',
         link: function (scope, elm, attrs, ctrl) {
             scope.statements=0;
@@ -6772,7 +6826,7 @@ function stubsList($modal,functionsService) {
             stubs: '='
         },
         replace:true,
-        templateUrl:'clientDist/widgets/stubs_modal.html',
+        templateUrl:'widgets/stubs_modal.html',
         controller: function($scope,$element){
             $scope.$watch('functionName',function(){
                 var callee = functionsService.getByName( $scope.functionName );
@@ -6805,7 +6859,7 @@ function testResult() {
             test  : '=',
             funct : '='
         },
-        templateUrl: 'clientDist/widgets/test_result.html',
+        templateUrl: 'widgets/test_result.html',
         controller: function($scope,$element){
 
         	$scope.diffMode = true;
@@ -6829,10 +6883,10 @@ function testResult() {
         }
     };
 };
-angular.module('templates-main', ['clientDist/chat/alert_chat.html', 'clientDist/chat/chat_panel.html', 'clientDist/data_types/adt_list.html', 'clientDist/data_types/examples_list_popover.html', 'clientDist/functions/function_conventions.html', 'clientDist/functions/javascript_tutorial.html', 'clientDist/leaderboard/leaderboard_panel.html', 'clientDist/microtasks/alert_submit.html', 'clientDist/microtasks/debug_test_failure/debug_test_failure.html', 'clientDist/microtasks/loading.html', 'clientDist/microtasks/microtask_form.html', 'clientDist/microtasks/microtask_title.html', 'clientDist/microtasks/no_microtask/no_microtask.html', 'clientDist/microtasks/reissue_microtask.html', 'clientDist/microtasks/reuse_search/reuse_search.html', 'clientDist/microtasks/review/review.html', 'clientDist/microtasks/review/review_DebugTestFailure.html', 'clientDist/microtasks/review/review_ReuseSearch.html', 'clientDist/microtasks/review/review_WriteCall.html', 'clientDist/microtasks/review/review_WriteFunction.html', 'clientDist/microtasks/review/review_WriteFunctionDescription.html', 'clientDist/microtasks/review/review_WriteTest.html', 'clientDist/microtasks/review/review_WriteTestCases.html', 'clientDist/microtasks/write_call/write_call.html', 'clientDist/microtasks/write_function/write_function.html', 'clientDist/microtasks/write_function_description/write_function_description.html', 'clientDist/microtasks/write_test/write_test.html', 'clientDist/microtasks/write_test_cases/write_test_cases.html', 'clientDist/newsfeed/news_panel.html', 'clientDist/newsfeed/news_popover.html', 'clientDist/newsfeed/news_popover_DebugTestFailure.html', 'clientDist/newsfeed/news_popover_ReuseSearch.html', 'clientDist/newsfeed/news_popover_WriteCall.html', 'clientDist/newsfeed/news_popover_WriteFunction.html', 'clientDist/newsfeed/news_popover_WriteFunctionDescription.html', 'clientDist/newsfeed/news_popover_WriteTest.html', 'clientDist/newsfeed/news_popover_WriteTestCases.html', 'clientDist/questions/questionDetail.html', 'clientDist/questions/questionForm.html', 'clientDist/questions/questionsList.html', 'clientDist/questions/questionsPanel.html', 'clientDist/questions/questions_template.html', 'clientDist/tutorials/DebugTestFailure.html', 'clientDist/tutorials/ReuseSearch.html', 'clientDist/tutorials/Review.html', 'clientDist/tutorials/WriteCall.html', 'clientDist/tutorials/WriteFunction.html', 'clientDist/tutorials/WriteFunctionDescription.html', 'clientDist/tutorials/WriteTest.html', 'clientDist/tutorials/WriteTestCases.html', 'clientDist/tutorials/main.html', 'clientDist/users/user_popover.html', 'clientDist/widgets/ace_edit_js.html', 'clientDist/widgets/description_popover.html', 'clientDist/widgets/dropdown_main.html', 'clientDist/widgets/left_bar_template.html', 'clientDist/widgets/navbar.html', 'clientDist/widgets/popup_feedback.html', 'clientDist/widgets/popup_reminder.html', 'clientDist/widgets/popup_shortcuts.html', 'clientDist/widgets/popup_template.html', 'clientDist/widgets/popup_user_profile.html', 'clientDist/widgets/reminder.html', 'clientDist/widgets/statements_progress_bar.html', 'clientDist/widgets/stubs_modal.html', 'clientDist/widgets/tab_template.html', 'clientDist/widgets/test_result.html']);
+angular.module('templates-main', ['chat/alert_chat.html', 'chat/chat_panel.html', 'data_types/adt_list.html', 'data_types/examples_list_popover.html', 'functions/function_conventions.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard_panel.html', 'microtasks/alert_submit.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/reuse_search/reuse_search.html', 'microtasks/review/review.html', 'microtasks/review/review_DebugTestFailure.html', 'microtasks/review/review_ReuseSearch.html', 'microtasks/review/review_WriteCall.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteFunctionDescription.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_WriteTestCases.html', 'microtasks/write_call/write_call.html', 'microtasks/write_function/write_function.html', 'microtasks/write_function_description/write_function_description.html', 'microtasks/write_test/write_test.html', 'microtasks/write_test_cases/write_test_cases.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'newsfeed/news_popover_DebugTestFailure.html', 'newsfeed/news_popover_ReuseSearch.html', 'newsfeed/news_popover_WriteCall.html', 'newsfeed/news_popover_WriteFunction.html', 'newsfeed/news_popover_WriteFunctionDescription.html', 'newsfeed/news_popover_WriteTest.html', 'newsfeed/news_popover_WriteTestCases.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'questions/questions_template.html', 'tutorials/DebugTestFailure.html', 'tutorials/ReuseSearch.html', 'tutorials/Review.html', 'tutorials/WriteCall.html', 'tutorials/WriteFunction.html', 'tutorials/WriteFunctionDescription.html', 'tutorials/WriteTest.html', 'tutorials/WriteTestCases.html', 'tutorials/main.html', 'users/user_popover.html', 'widgets/ace_edit_js.html', 'widgets/description_popover.html', 'widgets/dropdown_main.html', 'widgets/left_bar_template.html', 'widgets/navbar.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/stubs_modal.html', 'widgets/tab_template.html', 'widgets/test_result.html']);
 
-angular.module("clientDist/chat/alert_chat.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/chat/alert_chat.html",
+angular.module("chat/alert_chat.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("chat/alert_chat.html",
     "<div class=\"alert chat-alert\">\n" +
     "	\n" +
     "	<div class=\"header\">\n" +
@@ -6845,8 +6899,8 @@ angular.module("clientDist/chat/alert_chat.html", []).run(["$templateCache", fun
     "</div>");
 }]);
 
-angular.module("clientDist/chat/chat_panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/chat/chat_panel.html",
+angular.module("chat/chat_panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("chat/chat_panel.html",
     "<div id=\"chatPanel\" class=\"chat\">\n" +
     "\n" +
     "	<div class=\"output\" scroll-glue>\n" +
@@ -6870,8 +6924,8 @@ angular.module("clientDist/chat/chat_panel.html", []).run(["$templateCache", fun
     "</div>");
 }]);
 
-angular.module("clientDist/data_types/adt_list.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/data_types/adt_list.html",
+angular.module("data_types/adt_list.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("data_types/adt_list.html",
     "<div class=\"panel-group adt-list\" bs-collapse ng-model=\"ADTs.selectedADT\">\n" +
     "    <div class=\"panel panel-default\" ng-repeat=\"(index,ADT) in ADTs\">\n" +
     "        <div class=\"panel-heading\">\n" +
@@ -6911,15 +6965,15 @@ angular.module("clientDist/data_types/adt_list.html", []).run(["$templateCache",
     "</div>");
 }]);
 
-angular.module("clientDist/data_types/examples_list_popover.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/data_types/examples_list_popover.html",
+angular.module("data_types/examples_list_popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("data_types/examples_list_popover.html",
     "<div class=\"popover examples-list-popover\">\n" +
     "	<a href=\"#\" ng-repeat=\"example in examplesList\"  ng-click=\" togglePopover(key) ; loadExampleValue(example.value)\"> {{example.name}}<br/></a>\n" +
     "</div>");
 }]);
 
-angular.module("clientDist/functions/function_conventions.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/functions/function_conventions.html",
+angular.module("functions/function_conventions.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("functions/function_conventions.html",
     "<div class=\"function-conventions\">\n" +
     "	<p>\n" +
     "		Use <strong style=\"text-transform:uppercase\">pseudocode</strong> to sketch an implementation by using the syntax\n" +
@@ -6939,8 +6993,8 @@ angular.module("clientDist/functions/function_conventions.html", []).run(["$temp
     "</div>");
 }]);
 
-angular.module("clientDist/functions/javascript_tutorial.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/functions/javascript_tutorial.html",
+angular.module("functions/javascript_tutorial.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("functions/javascript_tutorial.html",
     "<!-- Button trigger modal -->\n" +
     "<a href=\"#\"  data-toggle=\"modal\" data-target=\"#javascriptTutorial\"  >\n" +
     "JAVASCRIPT TUTORIAL \n" +
@@ -6966,8 +7020,8 @@ angular.module("clientDist/functions/javascript_tutorial.html", []).run(["$templ
     "");
 }]);
 
-angular.module("clientDist/leaderboard/leaderboard_panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/leaderboard/leaderboard_panel.html",
+angular.module("leaderboard/leaderboard_panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("leaderboard/leaderboard_panel.html",
     "<div id=\"leaderboardPanel\" class=\"padding\">\n" +
     "	<div>\n" +
     "		<ul class=\"sidebar-list leaderboard\" >\n" +
@@ -6995,8 +7049,8 @@ angular.module("clientDist/leaderboard/leaderboard_panel.html", []).run(["$templ
     "");
 }]);
 
-angular.module("clientDist/microtasks/alert_submit.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/alert_submit.html",
+angular.module("microtasks/alert_submit.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/alert_submit.html",
     "<div class=\"alert submit-alert\" ng-class=\"[type ? 'alert-' + type : null]\">\n" +
     "  <button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
     "  <strong ng-bind=\"title\"></strong>&nbsp;<span ng-bind-html=\"content\"></span>\n" +
@@ -7004,14 +7058,14 @@ angular.module("clientDist/microtasks/alert_submit.html", []).run(["$templateCac
     "");
 }]);
 
-angular.module("clientDist/microtasks/debug_test_failure/debug_test_failure.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/debug_test_failure/debug_test_failure.html",
+angular.module("microtasks/debug_test_failure/debug_test_failure.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/debug_test_failure/debug_test_failure.html",
     "<div ng-controller=\"DebugTestFailureController\"  >\n" +
     "    \n" +
     "\n" +
     "    <div class=\"section section-description \" >\n" +
     "        \n" +
-    "        <div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "        <div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "        <div class=\"section-content  job-description\" >\n" +
     "            One of the tests for the function <strong>{{funct.name}}</strong> has failed. <br />\n" +
     "            Can you find and fix the bug (or report an issue with the test)?\n" +
@@ -7155,15 +7209,15 @@ angular.module("clientDist/microtasks/debug_test_failure/debug_test_failure.html
     "");
 }]);
 
-angular.module("clientDist/microtasks/loading.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/loading.html",
+angular.module("microtasks/loading.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/loading.html",
     "<div class=\"loading-microtask\" >\n" +
     "	<div class=\"glyphicon glyphicon-refresh glyphicon-refresh-animate\"></div> Loading microtask...\n" +
     "</div>");
 }]);
 
-angular.module("clientDist/microtasks/microtask_form.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/microtask_form.html",
+angular.module("microtasks/microtask_form.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/microtask_form.html",
     "<form name=\"microtaskForm\" class=\"form-horizontal\" novalidate microtask-shortcuts>\n" +
     "	<div id=\"task\" class=\"task\" microtask >\n" +
     "		<ng-include class=\"{{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}\" src=\"templatePath\"></ng-include>\n" +
@@ -7198,8 +7252,8 @@ angular.module("clientDist/microtasks/microtask_form.html", []).run(["$templateC
     "</form>");
 }]);
 
-angular.module("clientDist/microtasks/microtask_title.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/microtask_title.html",
+angular.module("microtasks/microtask_title.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/microtask_title.html",
     "<div class=\"section-content no-padding microtask-details\" >\n" +
     "		<span class=\"bg-color type\">{{::microtask.title}}</span>\n" +
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
@@ -7209,8 +7263,8 @@ angular.module("clientDist/microtasks/microtask_title.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("clientDist/microtasks/no_microtask/no_microtask.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/no_microtask/no_microtask.html",
+angular.module("microtasks/no_microtask/no_microtask.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/no_microtask/no_microtask.html",
     "<div ng-controller=\"NoMicrotaskController\" >\n" +
     "	<div class=\"alert alert-warning no-microtask\" role=\"alert\" >\n" +
     "		SORRY, there aren't available microtasks at the moment. <br />\n" +
@@ -7240,8 +7294,8 @@ angular.module("clientDist/microtasks/no_microtask/no_microtask.html", []).run([
     "</div>");
 }]);
 
-angular.module("clientDist/microtasks/reissue_microtask.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/reissue_microtask.html",
+angular.module("microtasks/reissue_microtask.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/reissue_microtask.html",
     "<div >\n" +
     "	<div class=\"section section-description\"  >\n" +
     "		<div class=\"section-title\" >\n" +
@@ -7255,13 +7309,13 @@ angular.module("clientDist/microtasks/reissue_microtask.html", []).run(["$templa
     "</div>");
 }]);
 
-angular.module("clientDist/microtasks/reuse_search/reuse_search.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/reuse_search/reuse_search.html",
+angular.module("microtasks/reuse_search/reuse_search.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/reuse_search/reuse_search.html",
     "<div ng-controller=\"ReuseSearchController\" >\n" +
     "\n" +
     "	<div class=\"section section-description \" >\n" +
     "		\n" +
-    "		<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "		<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
     "		<div class=\"section-content job-description\" >\n" +
     "			A worker editing the function <strong>{{funct.getName()}}</strong> requested a call to a function providing the behavior of <strong>{{ microtask.pseudoFunctionName }}</strong>. Can you find a function providing such behavior (which might be named differently), or indicate that no such function exists?\n" +
@@ -7354,11 +7408,11 @@ angular.module("clientDist/microtasks/reuse_search/reuse_search.html", []).run([
     "");
 }]);
 
-angular.module("clientDist/microtasks/review/review.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/review/review.html",
+angular.module("microtasks/review/review.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review.html",
     "<div ng-controller=\"ReviewController\">\n" +
     "\n" +
-    "	<div ng-if=\"reviewed !== undefined\" ng-include=\"'clientDist/microtasks/review/review_' + reviewed.type + '.html'\"></div>\n" +
+    "	<div ng-if=\"reviewed !== undefined\" ng-include=\"'microtasks/review/review_' + reviewed.type + '.html'\"></div>\n" +
     "\n" +
     "	<alertcontainer></alertcontainer>\n" +
     "\n" +
@@ -7424,11 +7478,11 @@ angular.module("clientDist/microtasks/review/review.html", []).run(["$templateCa
     "</div>");
 }]);
 
-angular.module("clientDist/microtasks/review/review_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/review/review_DebugTestFailure.html",
+angular.module("microtasks/review/review_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_DebugTestFailure.html",
     "<div ng-if=\"review.microtask.submission.hasPseudo\">\n" +
     "	<div class=\"section section-description \" >\n" +
-    "		<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "		<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "		<div class=\"section-content job-description\" >\n" +
     "			A worker was asked to edit the code of the function <strong>{{ funct.getName() }}</strong>.\n" +
     "			Can you review this work?\n" +
@@ -7448,7 +7502,7 @@ angular.module("clientDist/microtasks/review/review_DebugTestFailure.html", []).
     "\n" +
     "<div ng-if=\"! review.microtask.submission.hasPseudo\">\n" +
     "	<div class=\"section section-description \" >\n" +
-    "		<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "		<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
     "		<div class=\"section-content job-description\" >\n" +
     "\n" +
@@ -7502,11 +7556,11 @@ angular.module("clientDist/microtasks/review/review_DebugTestFailure.html", []).
     "</div>");
 }]);
 
-angular.module("clientDist/microtasks/review/review_ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/review/review_ReuseSearch.html",
+angular.module("microtasks/review/review_ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_ReuseSearch.html",
     "<div class=\"section section-description \" >\n" +
     "	\n" +
-    "	<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "	<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
     "	<div class=\"section-content job-description\" >\n" +
     "\n" +
@@ -7542,11 +7596,11 @@ angular.module("clientDist/microtasks/review/review_ReuseSearch.html", []).run([
     "");
 }]);
 
-angular.module("clientDist/microtasks/review/review_WriteCall.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/review/review_WriteCall.html",
+angular.module("microtasks/review/review_WriteCall.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteCall.html",
     "<div class=\"section section-description \" >\n" +
     "\n" +
-    "	<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "	<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
     "	<div class=\"section-content job-description\" >\n" +
     "\n" +
@@ -7576,11 +7630,11 @@ angular.module("clientDist/microtasks/review/review_WriteCall.html", []).run(["$
     "");
 }]);
 
-angular.module("clientDist/microtasks/review/review_WriteFunction.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/review/review_WriteFunction.html",
+angular.module("microtasks/review/review_WriteFunction.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteFunction.html",
     "<div class=\"section section-description \" >\n" +
     "		\n" +
-    "	<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "	<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
     "	<div class=\"section-content job-description\" >\n" +
     "\n" +
@@ -7674,10 +7728,10 @@ angular.module("clientDist/microtasks/review/review_WriteFunction.html", []).run
     "");
 }]);
 
-angular.module("clientDist/microtasks/review/review_WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/review/review_WriteFunctionDescription.html",
+angular.module("microtasks/review/review_WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteFunctionDescription.html",
     "<div class=\"section section-description \" >\n" +
-    "	<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "	<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
     "	<div class=\"section-content job-description\" >\n" +
     "\n" +
@@ -7732,11 +7786,11 @@ angular.module("clientDist/microtasks/review/review_WriteFunctionDescription.htm
     "");
 }]);
 
-angular.module("clientDist/microtasks/review/review_WriteTest.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/review/review_WriteTest.html",
+angular.module("microtasks/review/review_WriteTest.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteTest.html",
     "<div class=\"section section-description \" >\n" +
     "\n" +
-    "	<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "	<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
     "	<div class=\"section-content job-description\" >\n" +
     "\n" +
@@ -7846,11 +7900,11 @@ angular.module("clientDist/microtasks/review/review_WriteTest.html", []).run(["$
     "");
 }]);
 
-angular.module("clientDist/microtasks/review/review_WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/review/review_WriteTestCases.html",
+angular.module("microtasks/review/review_WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteTestCases.html",
     "<div class=\"section section-description \" >\n" +
     "		\n" +
-    "	<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "	<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
     "	<div class=\"section-content job-description\" >\n" +
     "		<!-- if function description disputed -->\n" +
@@ -7948,14 +8002,14 @@ angular.module("clientDist/microtasks/review/review_WriteTestCases.html", []).ru
     "</div>");
 }]);
 
-angular.module("clientDist/microtasks/write_call/write_call.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/write_call/write_call.html",
+angular.module("microtasks/write_call/write_call.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_call/write_call.html",
     "<div ng-controller=\"WriteCallController\" >\n" +
     "\n" +
     "	 \n" +
     "	<div class=\"section section-description \" >\n" +
     "		\n" +
-    "		<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "		<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "		<div class=\"section-content job-description\" >\n" +
     "			<div ng-if=\"microtask.pseudoFunctionName!=calleeFunction.getName()\">\n" +
     "				The crowd found that the calls to the function\n" +
@@ -7973,7 +8027,7 @@ angular.module("clientDist/microtasks/write_call/write_call.html", []).run(["$te
     "	</div>\n" +
     "\n" +
     "\n" +
-    "	<div ng-show=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'clientDist/microtasks/reissue_microtask.html'\"></div>\n" +
+    "	<div ng-show=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'microtasks/reissue_microtask.html'\"></div>\n" +
     "	\n" +
     "	<div class=\"section section-description\">\n" +
     "		<div class=\"section-title\" >\n" +
@@ -8009,13 +8063,13 @@ angular.module("clientDist/microtasks/write_call/write_call.html", []).run(["$te
     "");
 }]);
 
-angular.module("clientDist/microtasks/write_function/write_function.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/write_function/write_function.html",
+angular.module("microtasks/write_function/write_function.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_function/write_function.html",
     "<div ng-controller=\"WriteFunctionController\" >\n" +
     "	<div class=\"section section-description \" >\n" +
     "\n" +
     "\n" +
-    "		<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "		<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "		<div class=\"section-content job-description\" >\n" +
     "\n" +
     "			<div ng-if=\"::microtask.promptType=='SKETCH'\">\n" +
@@ -8037,7 +8091,7 @@ angular.module("clientDist/microtasks/write_function/write_function.html", []).r
     "	</div>\n" +
     "\n" +
     "\n" +
-    "	<div ng-show=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'clientDist/microtasks/reissue_microtask.html'\"></div>\n" +
+    "	<div ng-show=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'microtasks/reissue_microtask.html'\"></div>\n" +
     "\n" +
     "	<div class=\"section section-description\" ng-if=\"::microtask.promptType=='RE_EDIT' || microtask.promptType=='REMOVE_CALLEE'\" >\n" +
     "		<div class=\"section-title\"> <div class=\"dot bg-color\"></div> Reported Issue </div>\n" +
@@ -8112,12 +8166,12 @@ angular.module("clientDist/microtasks/write_function/write_function.html", []).r
     "");
 }]);
 
-angular.module("clientDist/microtasks/write_function_description/write_function_description.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/write_function_description/write_function_description.html",
+angular.module("microtasks/write_function_description/write_function_description.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_function_description/write_function_description.html",
     "<div ng-controller=\"WriteFunctionDescriptionController\" >\n" +
     "\n" +
     "	<div class=\"section section-description \" >\n" +
-    "		<div ng-include=\"'clientDist/microtasks/microtask_title.html'\">\n" +
+    "		<div ng-include=\"'microtasks/microtask_title.html'\">\n" +
     "		</div>\n" +
     "		<div class=\"section-content job-description\">\n" +
     "			A worker editing the function <strong>{{ funct.getName() }}</strong> requested that a function <strong>{{ microtask.pseudoFunctionName }}</strong> be created. Can you write a detailed description for the function doSub?\n" +
@@ -8125,7 +8179,7 @@ angular.module("clientDist/microtasks/write_function_description/write_function_
     "	</div>\n" +
     "\n" +
     "\n" +
-    "	<div ng-show=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'clientDist/microtasks/reissue_microtask.html'\"></div>\n" +
+    "	<div ng-show=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'microtasks/reissue_microtask.html'\"></div>\n" +
     "	\n" +
     "	<div class=\"section section-description\">\n" +
     "		<div class=\"section-title\" >\n" +
@@ -8347,13 +8401,13 @@ angular.module("clientDist/microtasks/write_function_description/write_function_
     "");
 }]);
 
-angular.module("clientDist/microtasks/write_test/write_test.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/write_test/write_test.html",
+angular.module("microtasks/write_test/write_test.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_test/write_test.html",
     "<div ng-controller=\"WriteTestController\" >\n" +
     "\n" +
     "	<div class=\"section section-description \" >\n" +
     "\n" +
-    "		<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "		<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "		<div class=\"section-content job-description\" >\n" +
     "\n" +
     "			<div ng-if=\"microtask.promptType=='WRITE'\">\n" +
@@ -8378,7 +8432,7 @@ angular.module("clientDist/microtasks/write_test/write_test.html", []).run(["$te
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div ng-if=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'clientDist/microtasks/reissue_microtask.html'\"></div>\n" +
+    "	<div ng-if=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'microtasks/reissue_microtask.html'\"></div>\n" +
     "\n" +
     "	\n" +
     "	<div class=\"section section-description\" ng-if=\"microtask.promptType != 'FUNCTION_CHANGED'\" >\n" +
@@ -8567,12 +8621,12 @@ angular.module("clientDist/microtasks/write_test/write_test.html", []).run(["$te
     "");
 }]);
 
-angular.module("clientDist/microtasks/write_test_cases/write_test_cases.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/microtasks/write_test_cases/write_test_cases.html",
+angular.module("microtasks/write_test_cases/write_test_cases.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_test_cases/write_test_cases.html",
     "<div ng-controller=\"WriteTestCasesController\" >\n" +
     "\n" +
     "	<div class=\"section section-description \" >\n" +
-    "		<div ng-include=\"'clientDist/microtasks/microtask_title.html'\"></div>\n" +
+    "		<div ng-include=\"'microtasks/microtask_title.html'\"></div>\n" +
     "		<div class=\"section-content job-description\" >\n" +
     "			\n" +
     "\n" +
@@ -8590,7 +8644,7 @@ angular.module("clientDist/microtasks/write_test_cases/write_test_cases.html", [
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div ng-show=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'clientDist/microtasks/reissue_microtask.html'\"></div>\n" +
+    "	<div ng-show=\"microtask.reissuedSubmission !== undefined\" ng-include=\"'microtasks/reissue_microtask.html'\"></div>\n" +
     "	\n" +
     " 	<div ng-if=\"microtask.issuedTestCase != ''\">\n" +
     "		<div class=\"section section-description\"  >\n" +
@@ -8755,8 +8809,8 @@ angular.module("clientDist/microtasks/write_test_cases/write_test_cases.html", [
     "");
 }]);
 
-angular.module("clientDist/newsfeed/news_panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_panel.html",
+angular.module("newsfeed/news_panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_panel.html",
     "<div id=\"activityPanel\" class=\"padding\">\n" +
     "	<div>\n" +
     "		<ul class=\"sidebar-list news\">\n" +
@@ -8787,8 +8841,8 @@ angular.module("clientDist/newsfeed/news_panel.html", []).run(["$templateCache",
     "");
 }]);
 
-angular.module("clientDist/newsfeed/news_popover.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_popover.html",
+angular.module("newsfeed/news_popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover.html",
     "<div class=\"popover popover-news task-{{ n.microtaskType | lowercase }}\" tabindex=\"-1\">\n" +
     "    <button type=\"button\" class=\"close popover-close\" ng-click=\"$hide()\">&times;</button>\n" +
     "    <h3 class=\"popover-title\"><b>Your work on: &emsp; </b> \n" +
@@ -8796,7 +8850,7 @@ angular.module("clientDist/newsfeed/news_popover.html", []).run(["$templateCache
     "        <span class=\"microtask-title\" ng-if=\"n.isReview\"> review</span>\n" +
     "    </h3>\n" +
     "    <!-- MICROTASK DATA -->\n" +
-    "    <div ng-if=\"n.microtask.type\" ng-include=\"'clientDist/newsfeed/news_popover_' + n.microtask.type + '.html'\"></div>\n" +
+    "    <div ng-if=\"n.microtask.type\" ng-include=\"'newsfeed/news_popover_' + n.microtask.type + '.html'\"></div>\n" +
     "    <!-- REVIEW SCORE -->\n" +
     "    <div ng-if=\"n.qualityScore\">\n" +
     "        <h3 class=\"popover-title \" ng-if=\"! n.isReview\"><b>Score received:</b> </h3>\n" +
@@ -8812,8 +8866,8 @@ angular.module("clientDist/newsfeed/news_popover.html", []).run(["$templateCache
     "</div>");
 }]);
 
-angular.module("clientDist/newsfeed/news_popover_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_popover_DebugTestFailure.html",
+angular.module("newsfeed/news_popover_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_DebugTestFailure.html",
     "<div ng-if=\" ! n.microtask.submission.disputedTests\">\n" +
     "    <div class=\"section section-description \" >\n" +
     "        <div class=\"section-content job-description\" ng-if=\" ! n.microtask.submission.hasPseudo\">\n" +
@@ -8891,8 +8945,8 @@ angular.module("clientDist/newsfeed/news_popover_DebugTestFailure.html", []).run
     "</div>");
 }]);
 
-angular.module("clientDist/newsfeed/news_popover_ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_popover_ReuseSearch.html",
+angular.module("newsfeed/news_popover_ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_ReuseSearch.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        Function providing the behavior \n" +
@@ -8931,8 +8985,8 @@ angular.module("clientDist/newsfeed/news_popover_ReuseSearch.html", []).run(["$t
     "");
 }]);
 
-angular.module("clientDist/newsfeed/news_popover_WriteCall.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_popover_WriteCall.html",
+angular.module("newsfeed/news_popover_WriteCall.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteCall.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        Edit of the function <strong>{{n.funct.getName()}}</strong> for revising the call to\n" +
@@ -8960,8 +9014,8 @@ angular.module("clientDist/newsfeed/news_popover_WriteCall.html", []).run(["$tem
     "");
 }]);
 
-angular.module("clientDist/newsfeed/news_popover_WriteFunction.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_popover_WriteFunction.html",
+angular.module("newsfeed/news_popover_WriteFunction.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteFunction.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "\n" +
@@ -9053,8 +9107,8 @@ angular.module("clientDist/newsfeed/news_popover_WriteFunction.html", []).run(["
     "");
 }]);
 
-angular.module("clientDist/newsfeed/news_popover_WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_popover_WriteFunctionDescription.html",
+angular.module("newsfeed/news_popover_WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteFunctionDescription.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        <div ng-if=\"! n.microtask.submission.inDispute\">\n" +
@@ -9106,8 +9160,8 @@ angular.module("clientDist/newsfeed/news_popover_WriteFunctionDescription.html",
     "");
 }]);
 
-angular.module("clientDist/newsfeed/news_popover_WriteTest.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_popover_WriteTest.html",
+angular.module("newsfeed/news_popover_WriteTest.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteTest.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        <div ng-if=\"! n.microtask.submission.inDispute\">\n" +
@@ -9211,8 +9265,8 @@ angular.module("clientDist/newsfeed/news_popover_WriteTest.html", []).run(["$tem
     "</div>");
 }]);
 
-angular.module("clientDist/newsfeed/news_popover_WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/newsfeed/news_popover_WriteTestCases.html",
+angular.module("newsfeed/news_popover_WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteTestCases.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        <div ng-if=\" ! n.microtask.submission.inDispute\">\n" +
@@ -9261,10 +9315,10 @@ angular.module("clientDist/newsfeed/news_popover_WriteTestCases.html", []).run([
     "</div>");
 }]);
 
-angular.module("clientDist/questions/questionDetail.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/questions/questionDetail.html",
+angular.module("questions/questionDetail.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questionDetail.html",
     "<div class=\"top padding\">\n" +
-    "	<a href=\"#\" class=\"pull-left\" ng-click=\"setView('question_list');showCommentForm =false; showAnswerForm = false;\">\n" +
+    "	<a href=\"#\" class=\"pull-left\" ng-click=\"setUiView('question_list');showCommentForm =false; showAnswerForm = false;\">\n" +
     "		<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
     "		back\n" +
     "	</a>\n" +
@@ -9436,8 +9490,8 @@ angular.module("clientDist/questions/questionDetail.html", []).run(["$templateCa
     "");
 }]);
 
-angular.module("clientDist/questions/questionForm.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/questions/questionForm.html",
+angular.module("questions/questionForm.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questionForm.html",
     "<div class=\"top padding\">\n" +
     "	<h4> New question: </h4>\n" +
     "	\n" +
@@ -9473,7 +9527,7 @@ angular.module("clientDist/questions/questionForm.html", []).run(["$templateCach
     "					</select>\n" +
     "				</div>\n" +
     "				<div class=\"btn-group pull-right padding\" role=\"group\">	\n" +
-    "					<button class=\"btn btn-sm btn-default\" ng-click=\"setView('question_list'); questionForm.$setPristine(); setSelected(null)\" >cancel</a>\n" +
+    "					<button class=\"btn btn-sm btn-default\" ng-click=\"setUiView('question_list'); questionForm.$setPristine(); setSelected(null)\" >cancel</a>\n" +
     "					<button class=\"btn btn-sm btn-primary\" type=\"submit\" >Ask</button>\n" +
     "				</div>\n" +
     "			</form>\n" +
@@ -9483,8 +9537,8 @@ angular.module("clientDist/questions/questionForm.html", []).run(["$templateCach
     "");
 }]);
 
-angular.module("clientDist/questions/questionsList.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/questions/questionsList.html",
+angular.module("questions/questionsList.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questionsList.html",
     "<div class=\"top padding\">\n" +
     "	<div class=\"form-group has-feedback\">\n" +
     "		<input type=\"text\" ng-model=\"search\" class=\"form-control\" placeholder=\"filter questions\">\n" +
@@ -9493,7 +9547,7 @@ angular.module("clientDist/questions/questionsList.html", []).run(["$templateCac
     "</div>\n" +
     "<div class=\"middle\">\n" +
     "	<div class=\"padding\">\n" +
-    "		<button class=\"btn btn-sm btn-primary\" ng-click=\"setView('question_form'); \">Ask a question</button>\n" +
+    "		<button class=\"btn btn-sm btn-primary\" ng-click=\"setUiView('question_form'); \">Ask a question</button>\n" +
     "		<div ng-if=\"questions.length == 0 && search.length > 0 \">no questions found matching the filter <strong>{{search}}</strong> (<a href=\"#\" ng-click=\"resetFilter()\">reset filter</a>)</div>\n" +
     "		<div ng-if=\"questions.length == 0 && search.length == 0\">no questions yet!</div>\n" +
     "	</div>\n" +
@@ -9506,13 +9560,19 @@ angular.module("clientDist/questions/questionsList.html", []).run(["$templateCac
     "		<li ng-show=\" loadedArtifact != null && ( questions | relatedToArtifact : loadedArtifact.id ).length == 0 \"> no questions related to the function {{ loadedArtifact.name }} </li>\n" +
     "		<li class=\"list-group-item question-item {{ q.closed ? '' : 'open' }}\"\n" +
     "			ng-show=\"loadedArtifact != null\" \n" +
-    "			ng-click=\"setView('question_detail'); setSelected(q)\" \n" +
+    "			ng-click=\"setSelected(q)\" \n" +
     "			ng-repeat=\"q in questions | relatedToArtifact : loadedArtifact.id  | orderBy : 'closed'  \"\n" +
     "			>\n" +
-    "			<div>{{q.title}}</div>\n" +
+    "			<div> \n" +
+    "				<span ng-if=\"!isUpdated(q)\">{{q.title}}</span>\n" +
+    "				<span ng-if=\"isUpdated(q)\">\n" +
+    "					<strong>{{q.title}}</strong>\n" +
+    "					<small><i>{{ getUpdateString(q) }}</i></small>\n" +
+    "				</span> \n" +
+    "			</div>\n" +
     "			<div >\n" +
     "				<span class=\"pull-left\">\n" +
-    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.time | date : 'medium'}}\"></time-ago>\n" +
+    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.updatedAt | date : 'medium'}}\"></time-ago>\n" +
     "				</span> \n" +
     "\n" +
     "				<span class=\"pull-right\" style=\"text-align:right;\">\n" +
@@ -9543,13 +9603,21 @@ angular.module("clientDist/questions/questionsList.html", []).run(["$templateCac
     "		<li class=\"list-group-item list-header\" ng-show=\" ( questions | unrelatedToArtifact : loadedArtifact.id ).length > 0 \">\n" +
     "			Other questions\n" +
     "		</li>\n" +
-    "		<li class=\"list-group-item question-item {{ q.closed ? '' : 'open' }}\" \n" +
-    "			ng-click=\"setView('question_detail'); setSelected(q)\" \n" +
-    "			ng-repeat=\"q in questions | unrelatedToArtifact : loadedArtifact.id | orderBy : 'closed' \">\n" +
-    "			<div>{{q.title}}</div>\n" +
+    "		<li class=\"list-group-item question-item {{ q.closed ? '' : 'open' }}\"\n" +
+    "			ng-show=\"loadedArtifact != null\" \n" +
+    "			ng-click=\"setSelected(q)\" \n" +
+    "			ng-repeat=\"q in questions | unrelatedToArtifact : loadedArtifact.id  | orderBy : 'closed'  \"\n" +
+    "			>\n" +
+    "			<div> \n" +
+    "				<span ng-if=\"!isUpdated(q)\">{{q.title}}</span>\n" +
+    "				<span ng-if=\"isUpdated(q)\">\n" +
+    "					<strong>{{q.title}}</strong>\n" +
+    "					<small><i>{{ getUpdateString(q) }}</i></small>\n" +
+    "				</span> \n" +
+    "			</div>\n" +
     "			<div >\n" +
     "				<span class=\"pull-left\">\n" +
-    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.time | date : 'medium'}}\"></time-ago>\n" +
+    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.updatedAt | date : 'medium'}}\"></time-ago>\n" +
     "				</span> \n" +
     "\n" +
     "				<span class=\"pull-right\" style=\"text-align:right;\">\n" +
@@ -9562,13 +9630,12 @@ angular.module("clientDist/questions/questionsList.html", []).run(["$templateCac
     "				<span class=\"pull-left\" >\n" +
     "					<span class=\"glyphicon glyphicon-thumbs-up\"></span>\n" +
     "					{{ q.score }}\n" +
-    "\n" +
     "					<span class=\"glyphicon glyphicon-comment\" style=\"margin-left: 10px;\"></span>\n" +
     "					{{ q.answers | objectLength }}\n" +
     "				</span>\n" +
     "				\n" +
     "\n" +
-    "				<span class=\"pull-right\" ng-if=\"loadedArtifact != null\" >\n" +
+    "				<span class=\"pull-right\" ng-if=\"loadedArtifact != null\">\n" +
     "					<a href=\"#\" class=\"btn btn-toggle\" ng-click=\"toggleRelation(q); $event.stopPropagation();\" style=\"font-size: 0.9em;\">{{loadedArtifact.name}}</a>\n" +
     "				</span>\n" +
     "\n" +
@@ -9582,8 +9649,8 @@ angular.module("clientDist/questions/questionsList.html", []).run(["$templateCac
     "</div>");
 }]);
 
-angular.module("clientDist/questions/questionsPanel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/questions/questionsPanel.html",
+angular.module("questions/questionsPanel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questionsPanel.html",
     "<div class=\"questions\">\n" +
     "	<question-list   ng-show=\"view == 'question_list'\"></question-list>\n" +
     "	<question-detail ng-show=\"view == 'question_detail'\"></question-detail>\n" +
@@ -9592,14 +9659,14 @@ angular.module("clientDist/questions/questionsPanel.html", []).run(["$templateCa
     "");
 }]);
 
-angular.module("clientDist/questions/questions_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/questions/questions_template.html",
+angular.module("questions/questions_template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questions_template.html",
     "<questions-panel></questions-panel>\n" +
     "");
 }]);
 
-angular.module("clientDist/tutorials/DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/DebugTestFailure.html",
+angular.module("tutorials/DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/DebugTestFailure.html",
     "<step>\n" +
     "	<div class=\"title\">Debug a test failure</div>\n" +
     "	<div class=\"text\">\n" +
@@ -9773,8 +9840,8 @@ angular.module("clientDist/tutorials/DebugTestFailure.html", []).run(["$template
     "</step>");
 }]);
 
-angular.module("clientDist/tutorials/ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/ReuseSearch.html",
+angular.module("tutorials/ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/ReuseSearch.html",
     "<step>\n" +
     "	<div class=\"title\">Reuse search</div>\n" +
     "	<div class=\"text\">\n" +
@@ -9802,8 +9869,8 @@ angular.module("clientDist/tutorials/ReuseSearch.html", []).run(["$templateCache
     "</step>");
 }]);
 
-angular.module("clientDist/tutorials/Review.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/Review.html",
+angular.module("tutorials/Review.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/Review.html",
     "<step>\n" +
     "	<div class=\"title\">Review </div>\n" +
     "	<div class=\"text\">\n" +
@@ -9839,8 +9906,8 @@ angular.module("clientDist/tutorials/Review.html", []).run(["$templateCache", fu
     "</step>");
 }]);
 
-angular.module("clientDist/tutorials/WriteCall.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/WriteCall.html",
+angular.module("tutorials/WriteCall.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteCall.html",
     "<step>\n" +
     "	<div class=\"title\">Add call</div>\n" +
     "	<div class=\"text\">\n" +
@@ -9875,8 +9942,8 @@ angular.module("clientDist/tutorials/WriteCall.html", []).run(["$templateCache",
     "</step>");
 }]);
 
-angular.module("clientDist/tutorials/WriteFunction.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/WriteFunction.html",
+angular.module("tutorials/WriteFunction.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteFunction.html",
     "<step>\n" +
     "	<div class=\"title\">Edit a function</div>\n" +
     "	<div class=\"text\">\n" +
@@ -9931,7 +9998,7 @@ angular.module("clientDist/tutorials/WriteFunction.html", []).run(["$templateCac
     "		<p style=\"width:550px\">\n" +
     "			If you think that the function signature have to be changed (i.e. an additional parameter is required, or the function itself is poorly written) you may edit the header of the function; the crowd will then update any callers of the function to match its new specification.<br />\n" +
     "			<b>Note: </b> \n" +
-    "			you are not allowed to change the description of the core API functions (the functions requested by the clientDist).\n" +
+    "			you are not allowed to change the description of the core API functions (the functions requested by the client).\n" +
     "		</p>\n" +
     "	</div>\n" +
     "</step>\n" +
@@ -9953,8 +10020,8 @@ angular.module("clientDist/tutorials/WriteFunction.html", []).run(["$templateCac
     "</step>");
 }]);
 
-angular.module("clientDist/tutorials/WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/WriteFunctionDescription.html",
+angular.module("tutorials/WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteFunctionDescription.html",
     "<step>\n" +
     "	<div class=\"title\">Write function description</div>\n" +
     "	<div class=\"text\">\n" +
@@ -9997,8 +10064,8 @@ angular.module("clientDist/tutorials/WriteFunctionDescription.html", []).run(["$
     "</step>");
 }]);
 
-angular.module("clientDist/tutorials/WriteTest.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/WriteTest.html",
+angular.module("tutorials/WriteTest.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteTest.html",
     "<step>\n" +
     "	<div class=\"title\">Write test</div>\n" +
     "	<div class=\"text\">\n" +
@@ -10042,8 +10109,8 @@ angular.module("clientDist/tutorials/WriteTest.html", []).run(["$templateCache",
     "</step>");
 }]);
 
-angular.module("clientDist/tutorials/WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/WriteTestCases.html",
+angular.module("tutorials/WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteTestCases.html",
     "<step>\n" +
     "	<div class=\"title\">Write test cases</div>\n" +
     "	<div class=\"text\">\n" +
@@ -10085,8 +10152,8 @@ angular.module("clientDist/tutorials/WriteTestCases.html", []).run(["$templateCa
     "</step>");
 }]);
 
-angular.module("clientDist/tutorials/main.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/tutorials/main.html",
+angular.module("tutorials/main.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/main.html",
     "<step>\n" +
     "	<div class=\"title\">CrowdCode Tutorial</div>\n" +
     "	<div class=\"text\">\n" +
@@ -10227,8 +10294,8 @@ angular.module("clientDist/tutorials/main.html", []).run(["$templateCache", func
     "</step>");
 }]);
 
-angular.module("clientDist/users/user_popover.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/users/user_popover.html",
+angular.module("users/user_popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("users/user_popover.html",
     "<div class=\"popover user-menu-popover\">\n" +
     "	{{userData.score }} points <br />\n" +
     "	{{ popover }}\n" +
@@ -10238,8 +10305,8 @@ angular.module("clientDist/users/user_popover.html", []).run(["$templateCache", 
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/ace_edit_js.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/ace_edit_js.html",
+angular.module("widgets/ace_edit_js.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/ace_edit_js.html",
     "<ng-form name=\"functionForm\">\n" +
     "	<div\n" +
     "		class=\"ace_editor js-editor\"\n" +
@@ -10267,8 +10334,8 @@ angular.module("clientDist/widgets/ace_edit_js.html", []).run(["$templateCache",
     "</ng-form>");
 }]);
 
-angular.module("clientDist/widgets/description_popover.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/description_popover.html",
+angular.module("widgets/description_popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/description_popover.html",
     "<div class=\"popover description-popover\">\n" +
     "    <div class=\"arrow\"></div>\n" +
     "    <h3 class=\"popover-title\">Description</h3>\n" +
@@ -10278,8 +10345,8 @@ angular.module("clientDist/widgets/description_popover.html", []).run(["$templat
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/dropdown_main.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/dropdown_main.html",
+angular.module("widgets/dropdown_main.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/dropdown_main.html",
     "<ul tabindex=\"-1\" class=\"dropdown-menu\" role=\"menu\">\n" +
     "\n" +
     "  <li role=\"presentation\" class=\"divider\" >\n" +
@@ -10300,8 +10367,8 @@ angular.module("clientDist/widgets/dropdown_main.html", []).run(["$templateCache
     "");
 }]);
 
-angular.module("clientDist/widgets/left_bar_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/left_bar_template.html",
+angular.module("widgets/left_bar_template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/left_bar_template.html",
     "<div>\n" +
     "  <div class=\"sidebar-nav\">\n" +
     "    <ul class=\"nav\" role=\"\">\n" +
@@ -10337,8 +10404,8 @@ angular.module("clientDist/widgets/left_bar_template.html", []).run(["$templateC
     "-->");
 }]);
 
-angular.module("clientDist/widgets/navbar.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/navbar.html",
+angular.module("widgets/navbar.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/navbar.html",
     "<div class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n" +
     "	<div class=\"container-fluid\">\n" +
     "\n" +
@@ -10366,8 +10433,8 @@ angular.module("clientDist/widgets/navbar.html", []).run(["$templateCache", func
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/popup_feedback.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/popup_feedback.html",
+angular.module("widgets/popup_feedback.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_feedback.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\">\n" +
     "    <div class=\"modal-dialog\">\n" +
     "        <div ng-init=\"sent=false; feedbackText=''\" class=\"modal-content\">\n" +
@@ -10394,8 +10461,8 @@ angular.module("clientDist/widgets/popup_feedback.html", []).run(["$templateCach
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/popup_reminder.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/popup_reminder.html",
+angular.module("widgets/popup_reminder.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_reminder.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\">\n" +
     "    <div class=\"modal-dialog\">\n" +
     "		<div class=\"modal-content\" >\n" +
@@ -10454,8 +10521,8 @@ angular.module("clientDist/widgets/popup_reminder.html", []).run(["$templateCach
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/popup_shortcuts.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/popup_shortcuts.html",
+angular.module("widgets/popup_shortcuts.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_shortcuts.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\">\n" +
     "    <div class=\"modal-dialog\">\n" +
     "        <div class=\"modal-content\">\n" +
@@ -10479,8 +10546,8 @@ angular.module("clientDist/widgets/popup_shortcuts.html", []).run(["$templateCac
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/popup_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/popup_template.html",
+angular.module("widgets/popup_template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_template.html",
     "<!-- popup template -->\n" +
     "<div id=\"popUp\" class=\"modal fade\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"\" aria-hidden=\"true\">\n" +
     "	<div class=\"modal-dialog\">\n" +
@@ -10502,8 +10569,8 @@ angular.module("clientDist/widgets/popup_template.html", []).run(["$templateCach
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/popup_user_profile.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/popup_user_profile.html",
+angular.module("widgets/popup_user_profile.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_user_profile.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\" ng-controller=\"UserProfileController\" >\n" +
     "	<div class=\"modal-dialog\">\n" +
     "		<div class=\"modal-content\">\n" +
@@ -10539,8 +10606,8 @@ angular.module("clientDist/widgets/popup_user_profile.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/reminder.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/reminder.html",
+angular.module("widgets/reminder.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/reminder.html",
     "<div  ng-init=\"show=false\"  class=\"section-reminder\"  ng-if = \"skipMicrotaskIn\">\n" +
     "	<div ng-show=\"show\" style=\"width: {{(1-(skipMicrotaskIn / microtaskTimeout)) * 100| number :1}}%;\n" +
     "	text-align: right;\"><b class=\"label-reminder\">{{skipMicrotaskIn | date:'mm:ss'}}</b>\n" +
@@ -10555,8 +10622,8 @@ angular.module("clientDist/widgets/reminder.html", []).run(["$templateCache", fu
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/statements_progress_bar.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/statements_progress_bar.html",
+angular.module("widgets/statements_progress_bar.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/statements_progress_bar.html",
     "<div ng-init=\"show=false\"  class=\"section-statements\">\n" +
     "	<div ng-show=\"show\" style=\"padding-left: {{ (statements / max) * 100 | number: 0 }}%;\">\n" +
     "		<b class=\"label-reminder\">{{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}</b>\n" +
@@ -10581,8 +10648,8 @@ angular.module("clientDist/widgets/statements_progress_bar.html", []).run(["$tem
     "</div>");
 }]);
 
-angular.module("clientDist/widgets/stubs_modal.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/stubs_modal.html",
+angular.module("widgets/stubs_modal.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/stubs_modal.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\" aria-hidden=\"true\">\n" +
     "  <div class=\"modal-dialog\">\n" +
     "    <div class=\"modal-content\">\n" +
@@ -10643,8 +10710,8 @@ angular.module("clientDist/widgets/stubs_modal.html", []).run(["$templateCache",
     "");
 }]);
 
-angular.module("clientDist/widgets/tab_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/tab_template.html",
+angular.module("widgets/tab_template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/tab_template.html",
     "<ul class=\"nav\" ng-class=\"$navClass \" role=\"tablist\">\n" +
     "  <li role=\"presentation\" ng-repeat=\"$pane in $panes track by $index\" ng-class=\"[ $index == $panes.$active ? $activeClass : '', $pane.disabled ? 'disabled' : '' ]\">\n" +
     "    <a role=\"tab\" data-toggle=\"tab\" ng-click=\"!$pane.disabled && $setActive($index)\" data-index=\"{{ $index }}\" ng-bind-html=\"$pane.title\" aria-controls=\"$pane.title\"></a>\n" +
@@ -10655,8 +10722,8 @@ angular.module("clientDist/widgets/tab_template.html", []).run(["$templateCache"
     "");
 }]);
 
-angular.module("clientDist/widgets/test_result.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("clientDist/widgets/test_result.html",
+angular.module("widgets/test_result.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/test_result.html",
     "<div ng-if=\"test.rec.inDispute\">\n" +
     "    <div class=\"heading-1\" >\n" +
     "        WHAT'S WRONG WITH THIS TEST ?\n" +

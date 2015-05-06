@@ -45,7 +45,8 @@ public /*abstract*/ class Questioning
 	protected List<String> reportersId = new ArrayList<String>();
 	protected List<String> subsribersId = new ArrayList<String>();
 	protected String firebasePath;
-	protected long time;
+	protected long createdAt;
+	protected long updatedAt;
 	protected int score;
 
 
@@ -62,7 +63,8 @@ public /*abstract*/ class Questioning
 		this.ownerHandle = ownerHandle;
 		this.projectId   = projectId;
 		this.isReported  = false;
-		this.time  = System.currentTimeMillis();
+		this.createdAt   = System.currentTimeMillis();
+		this.updatedAt   = this.createdAt;
 		this.score = 0;
 	}
 
@@ -150,16 +152,13 @@ public /*abstract*/ class Questioning
 
 		}
 	}
+	
 	private void updateScore()
 	{
 		System.out.println("updatre score");
 		this.score=votersId.size()-reportersId.size();
 		FirebaseService.updateQuestioningScore(score, firebasePath, projectId);
 	}
-
-
-	// Writes the artifact out to Firebase, publishing the current state of the artifact to all clients.
-	public void storeToFirebase(String projectId) { throw new RuntimeException("Must implement storeToFirebase().");  }
 
 	public void notifySubscribers(NotificationInFirebase notification, String excludedWorkerId) {
 		for(String subscriberId:this.subsribersId){

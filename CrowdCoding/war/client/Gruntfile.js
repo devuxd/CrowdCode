@@ -3,6 +3,7 @@ module.exports = function (grunt) {
 	var dir     = require('./bower.json').appPath || 'app';
 	var distDir = dir + 'Dist';
 
+console.log(dir,distDir);
 	process.chdir('../');
 	// grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -11,20 +12,19 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-html2js');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-text-replace');
+	process.chdir( dir );
 
 	grunt.initConfig({
 	
-    	pkg: grunt.file.readJSON( './package.json'),
+    	pkg: grunt.file.readJSON( '../package.json'),
 	
-    	// lint all the js files
-    	jshint: { 'beforeconcat': [ dir + '/**/*.js'] },
 
 		// converts all .html templates in js and write them in .tmp/templates.js
 		html2js: {
 			options: { base: '' },
 			main: {
-				src: [ dir + '/**/*.html'],
-				dest:  dir + '/.tmp/templates.js'
+				src: [ '**/*.html'],
+				dest:  '.tmp/templates.js'
 			},
 		},
 
@@ -34,14 +34,13 @@ module.exports = function (grunt) {
 				files: [ 
 					{ 
 						src: [ 
-							dir + '/client.js', 
-							dir + '/**/*.js', 
-							'!' + dir + '/Gruntfile.js',
-							'!' + dir + '/test_runner/*.js',
-							dir + '/.tmp/templates.js',
-							// dir + '/test_runner/testRunner.js',
+							'client.js', 
+							'**/*.js', 
+							'!Gruntfile.js',
+							'!test_runner/*.js',
+							'.tmp/templates.js',
 						],
-						dest: dir + '/.tmp/client.js'
+						dest: '.tmp/client.js'
 					} 
 				] 
 			} 
@@ -49,33 +48,33 @@ module.exports = function (grunt) {
 
 
 		replace: {
-			// replace the templates url
+			// replace the templates url in the client code
 			scripts: {
-				src: [ dir + '/.tmp/client.js'],             // source files array (supports minimatch)
-				dest: dir + '/.tmp/client.js',             // destination directory or file
+				src: [ '.tmp/client.js'],             // source files array (supports minimatch)
+				dest: '.tmp/client.js',             // destination directory or file
 				replacements: [
 					// replace all '/client' occurrences with 'client'
-					{ from: '/' + dir, to:  dir },
+					{ from: '/' + dir + '/' , to:  '' },
 
-					 // replace all 'client' occurrences with 'clientDist'
-					{ from: dir, to:  distDir }
+					//  // replace all 'client' occurrences with 'clientDist'
+					// { from: dir, to:  distDir }
 				]
 			},
 
-			// replace the templates url
+			// replace the urls in the jsp page
 			jsp: {
-				src: [ dir + '/client.jsp'],             // source files array (supports minimatch)
-				dest: dir + '/.tmp/client.jsp',             // destination directory or file
+				src: [ 'client.jsp'],             // source files array (supports minimatch)
+				dest: '.tmp/client.jsp',             // destination directory or file
 				replacements: [
 					// replace all '/client' occurrences with 'client'
 					{ from: 'src="/'+dir+'/', to: 'src="/'+distDir+'/' }
 				]
 			},
 
-
+			// replace the urls in the test runner files
 			testRunner: {
-				src: [ dir + '/test_runner/*.js'],       // source files array (supports minimatch)
-				dest:  dir + '/.tmp/test_runner/',   // destination directory or file
+				src: [ 'test_runner/*.js'],       // source files array (supports minimatch)
+				dest:  '.tmp/test_runner/',   // destination directory or file
 				replacements: [
 					{ from: '/' + dir + '/', to: '/' + distDir + '/' }
 				]
@@ -83,40 +82,39 @@ module.exports = function (grunt) {
 		},
 
 
-
+		// copy the files to the dist dir
 		copy: {
 			main: {
 				files: [
-					{expand:true,flatten:true, src: [ dir + '/.tmp/client.js'], dest: distDir + '/', filter: 'isFile'},
-					{expand:true,flatten:true, src: [ dir + '/.tmp/client.jsp'], dest: distDir + '/', filter: 'isFile'},
-					{expand:true,flatten:true, src: [ dir + '/client.css'], dest: distDir + '/', filter: 'isFile'},
-					{expand:true,flatten:true, src: [ dir + '/.tmp/test_runner/*.js'], dest: distDir + '/test_runner', filter: 'isFile'},
+					{expand:true,flatten:true, src: [ '.tmp/client.*'],         dest: '../' + distDir + '/', filter: 'isFile'},
+					{expand:true,flatten:true, src: [ 'client.css'],            dest: '../' + distDir + '/', filter: 'isFile'},
+					{expand:true,flatten:true, src: [ '.tmp/test_runner/*.js'], dest: '../' + distDir + '/test_runner', filter: 'isFile'},
 				],
 			},
 		},
 
- //    watch: {
- //    	scripts: {
- //    		files: [ 'client/client.js', 'client/client.css','client/**/*.js', 'client/**/*.html', 'client/client.jsp'],
- //    		tasks: ['build'],
- //    		options: {
- //    			event: ['all']
- //    		}
- //    	}
- //    },
+		// watch for any edit of the html, js, css or jsp and rebuild the project
+		watch: {
+			scripts: {
+				files: [ 'client.js', 'client.css', '**/*.js', '**/*.html', 'client.jsp'],
+				tasks: ['build'],
+				options: {
+					event: ['all']
+				}
+			}
+		},
 
 
 
-  });
+  	});
 
-  // grunt.registerTask('test', ['karma:development']);
-  grunt.registerTask('build', [
-	  'html2js',
-	  'concat',
-	  'replace:scripts',
-	  'replace:jsp',
-	  'replace:testRunner',
-	  'copy',
-	  // 'usemin'
+	// grunt.registerTask('test', ['karma:development']);
+	grunt.registerTask('build', [
+		'html2js',
+		'concat',
+		'replace:scripts',
+		'replace:jsp',
+		'replace:testRunner',
+		'copy',
 	]);
 };

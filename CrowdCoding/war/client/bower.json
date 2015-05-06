@@ -1,6 +1,6 @@
 {
 	"appPath": "client",
-    "name": "crowdcode",
+    "name": "crowdcode-client",
     "version": "1.0.0",
     "dependencies": {
 

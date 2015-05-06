@@ -29,11 +29,8 @@ public class Answer extends Questioning
 {
 	private Long questionId;
 
-	// Constructor for deserialization
-	protected Answer()
-	{
-	}
-
+	public Answer(){}
+	
 	public Answer(String text, long questionId, String ownerId, String ownerHandle, String projectId)
 	{
 		super(text, ownerId, ownerHandle, projectId);
@@ -46,16 +43,14 @@ public class Answer extends Questioning
 		this.firebasePath= "/questions/" + questionId + "/answers/"+ this.id;
 		ofy().save().entity(this).now();
 		
-		storeToFirebase();
+		FirebaseService.writeAnswerCreated(new AnswerInFirebase(this.id, this.ownerId, this.ownerHandle, this.text, this.createdAt, this.score), this.firebasePath, projectId);
 		
+
+		QuestioningCommand.incrementQuestionAnswers(this.questionId);
 		
 		NotificationInFirebase notification = new NotificationInFirebase( "answer.added", "{ \"questionId\": \""+this.questionId.toString()+"\",  \"workerHandle\": \""+this.ownerHandle+"\",  \"text\": \""+this.questionId.toString()+"\" }" );
 		QuestioningCommand.notifySubscribers(this.questionId, notification, ownerId);
-		
-	}
 
-	protected void storeToFirebase() {
-		FirebaseService.writeAnswerCreated(new AnswerInFirebase(this.id, this.ownerId, this.ownerHandle, this.text, this.time, this.score), this.firebasePath, projectId);
 	}
 
 }

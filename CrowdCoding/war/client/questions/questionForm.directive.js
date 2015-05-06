@@ -52,7 +52,7 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 						};
 						$scope.relatedTo = 'none';
 
-						$scope.setView('question_list');
+						$scope.setUiView('question_list');
 						$scope.questionForm.$setPristine();
 					},function(){
 						console.log('error submitting the question')

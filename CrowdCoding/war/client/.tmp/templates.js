@@ -1,7 +1,7 @@
-angular.module('templates-main', ['client/chat/alert_chat.html', 'client/chat/chat_panel.html', 'client/data_types/adt_list.html', 'client/data_types/examples_list_popover.html', 'client/functions/function_conventions.html', 'client/functions/javascript_tutorial.html', 'client/leaderboard/leaderboard_panel.html', 'client/microtasks/alert_submit.html', 'client/microtasks/debug_test_failure/debug_test_failure.html', 'client/microtasks/loading.html', 'client/microtasks/microtask_form.html', 'client/microtasks/microtask_title.html', 'client/microtasks/no_microtask/no_microtask.html', 'client/microtasks/reissue_microtask.html', 'client/microtasks/reuse_search/reuse_search.html', 'client/microtasks/review/review.html', 'client/microtasks/review/review_DebugTestFailure.html', 'client/microtasks/review/review_ReuseSearch.html', 'client/microtasks/review/review_WriteCall.html', 'client/microtasks/review/review_WriteFunction.html', 'client/microtasks/review/review_WriteFunctionDescription.html', 'client/microtasks/review/review_WriteTest.html', 'client/microtasks/review/review_WriteTestCases.html', 'client/microtasks/write_call/write_call.html', 'client/microtasks/write_function/write_function.html', 'client/microtasks/write_function_description/write_function_description.html', 'client/microtasks/write_test/write_test.html', 'client/microtasks/write_test_cases/write_test_cases.html', 'client/newsfeed/news_panel.html', 'client/newsfeed/news_popover.html', 'client/newsfeed/news_popover_DebugTestFailure.html', 'client/newsfeed/news_popover_ReuseSearch.html', 'client/newsfeed/news_popover_WriteCall.html', 'client/newsfeed/news_popover_WriteFunction.html', 'client/newsfeed/news_popover_WriteFunctionDescription.html', 'client/newsfeed/news_popover_WriteTest.html', 'client/newsfeed/news_popover_WriteTestCases.html', 'client/questions/questionDetail.html', 'client/questions/questionForm.html', 'client/questions/questionsList.html', 'client/questions/questionsPanel.html', 'client/questions/questions_template.html', 'client/tutorials/DebugTestFailure.html', 'client/tutorials/ReuseSearch.html', 'client/tutorials/Review.html', 'client/tutorials/WriteCall.html', 'client/tutorials/WriteFunction.html', 'client/tutorials/WriteFunctionDescription.html', 'client/tutorials/WriteTest.html', 'client/tutorials/WriteTestCases.html', 'client/tutorials/main.html', 'client/users/user_popover.html', 'client/widgets/ace_edit_js.html', 'client/widgets/description_popover.html', 'client/widgets/dropdown_main.html', 'client/widgets/left_bar_template.html', 'client/widgets/navbar.html', 'client/widgets/popup_feedback.html', 'client/widgets/popup_reminder.html', 'client/widgets/popup_shortcuts.html', 'client/widgets/popup_template.html', 'client/widgets/popup_user_profile.html', 'client/widgets/reminder.html', 'client/widgets/statements_progress_bar.html', 'client/widgets/stubs_modal.html', 'client/widgets/tab_template.html', 'client/widgets/test_result.html']);
+angular.module('templates-main', ['chat/alert_chat.html', 'chat/chat_panel.html', 'data_types/adt_list.html', 'data_types/examples_list_popover.html', 'functions/function_conventions.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard_panel.html', 'microtasks/alert_submit.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/reuse_search/reuse_search.html', 'microtasks/review/review.html', 'microtasks/review/review_DebugTestFailure.html', 'microtasks/review/review_ReuseSearch.html', 'microtasks/review/review_WriteCall.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteFunctionDescription.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_WriteTestCases.html', 'microtasks/write_call/write_call.html', 'microtasks/write_function/write_function.html', 'microtasks/write_function_description/write_function_description.html', 'microtasks/write_test/write_test.html', 'microtasks/write_test_cases/write_test_cases.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'newsfeed/news_popover_DebugTestFailure.html', 'newsfeed/news_popover_ReuseSearch.html', 'newsfeed/news_popover_WriteCall.html', 'newsfeed/news_popover_WriteFunction.html', 'newsfeed/news_popover_WriteFunctionDescription.html', 'newsfeed/news_popover_WriteTest.html', 'newsfeed/news_popover_WriteTestCases.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'questions/questions_template.html', 'tutorials/DebugTestFailure.html', 'tutorials/ReuseSearch.html', 'tutorials/Review.html', 'tutorials/WriteCall.html', 'tutorials/WriteFunction.html', 'tutorials/WriteFunctionDescription.html', 'tutorials/WriteTest.html', 'tutorials/WriteTestCases.html', 'tutorials/main.html', 'users/user_popover.html', 'widgets/ace_edit_js.html', 'widgets/description_popover.html', 'widgets/dropdown_main.html', 'widgets/left_bar_template.html', 'widgets/navbar.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/stubs_modal.html', 'widgets/tab_template.html', 'widgets/test_result.html']);
 
-angular.module("client/chat/alert_chat.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/chat/alert_chat.html",
+angular.module("chat/alert_chat.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("chat/alert_chat.html",
     "<div class=\"alert chat-alert\">\n" +
     "	\n" +
     "	<div class=\"header\">\n" +
@@ -14,8 +14,8 @@ angular.module("client/chat/alert_chat.html", []).run(["$templateCache", functio
     "</div>");
 }]);
 
-angular.module("client/chat/chat_panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/chat/chat_panel.html",
+angular.module("chat/chat_panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("chat/chat_panel.html",
     "<div id=\"chatPanel\" class=\"chat\">\n" +
     "\n" +
     "	<div class=\"output\" scroll-glue>\n" +
@@ -39,8 +39,8 @@ angular.module("client/chat/chat_panel.html", []).run(["$templateCache", functio
     "</div>");
 }]);
 
-angular.module("client/data_types/adt_list.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/data_types/adt_list.html",
+angular.module("data_types/adt_list.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("data_types/adt_list.html",
     "<div class=\"panel-group adt-list\" bs-collapse ng-model=\"ADTs.selectedADT\">\n" +
     "    <div class=\"panel panel-default\" ng-repeat=\"(index,ADT) in ADTs\">\n" +
     "        <div class=\"panel-heading\">\n" +
@@ -80,15 +80,15 @@ angular.module("client/data_types/adt_list.html", []).run(["$templateCache", fun
     "</div>");
 }]);
 
-angular.module("client/data_types/examples_list_popover.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/data_types/examples_list_popover.html",
+angular.module("data_types/examples_list_popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("data_types/examples_list_popover.html",
     "<div class=\"popover examples-list-popover\">\n" +
     "	<a href=\"#\" ng-repeat=\"example in examplesList\"  ng-click=\" togglePopover(key) ; loadExampleValue(example.value)\"> {{example.name}}<br/></a>\n" +
     "</div>");
 }]);
 
-angular.module("client/functions/function_conventions.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/functions/function_conventions.html",
+angular.module("functions/function_conventions.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("functions/function_conventions.html",
     "<div class=\"function-conventions\">\n" +
     "	<p>\n" +
     "		Use <strong style=\"text-transform:uppercase\">pseudocode</strong> to sketch an implementation by using the syntax\n" +
@@ -108,8 +108,8 @@ angular.module("client/functions/function_conventions.html", []).run(["$template
     "</div>");
 }]);
 
-angular.module("client/functions/javascript_tutorial.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/functions/javascript_tutorial.html",
+angular.module("functions/javascript_tutorial.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("functions/javascript_tutorial.html",
     "<!-- Button trigger modal -->\n" +
     "<a href=\"#\"  data-toggle=\"modal\" data-target=\"#javascriptTutorial\"  >\n" +
     "JAVASCRIPT TUTORIAL \n" +
@@ -135,8 +135,8 @@ angular.module("client/functions/javascript_tutorial.html", []).run(["$templateC
     "");
 }]);
 
-angular.module("client/leaderboard/leaderboard_panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/leaderboard/leaderboard_panel.html",
+angular.module("leaderboard/leaderboard_panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("leaderboard/leaderboard_panel.html",
     "<div id=\"leaderboardPanel\" class=\"padding\">\n" +
     "	<div>\n" +
     "		<ul class=\"sidebar-list leaderboard\" >\n" +
@@ -164,8 +164,8 @@ angular.module("client/leaderboard/leaderboard_panel.html", []).run(["$templateC
     "");
 }]);
 
-angular.module("client/microtasks/alert_submit.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/alert_submit.html",
+angular.module("microtasks/alert_submit.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/alert_submit.html",
     "<div class=\"alert submit-alert\" ng-class=\"[type ? 'alert-' + type : null]\">\n" +
     "  <button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
     "  <strong ng-bind=\"title\"></strong>&nbsp;<span ng-bind-html=\"content\"></span>\n" +
@@ -173,8 +173,8 @@ angular.module("client/microtasks/alert_submit.html", []).run(["$templateCache",
     "");
 }]);
 
-angular.module("client/microtasks/debug_test_failure/debug_test_failure.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/debug_test_failure/debug_test_failure.html",
+angular.module("microtasks/debug_test_failure/debug_test_failure.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/debug_test_failure/debug_test_failure.html",
     "<div ng-controller=\"DebugTestFailureController\"  >\n" +
     "    \n" +
     "\n" +
@@ -324,15 +324,15 @@ angular.module("client/microtasks/debug_test_failure/debug_test_failure.html", [
     "");
 }]);
 
-angular.module("client/microtasks/loading.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/loading.html",
+angular.module("microtasks/loading.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/loading.html",
     "<div class=\"loading-microtask\" >\n" +
     "	<div class=\"glyphicon glyphicon-refresh glyphicon-refresh-animate\"></div> Loading microtask...\n" +
     "</div>");
 }]);
 
-angular.module("client/microtasks/microtask_form.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/microtask_form.html",
+angular.module("microtasks/microtask_form.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/microtask_form.html",
     "<form name=\"microtaskForm\" class=\"form-horizontal\" novalidate microtask-shortcuts>\n" +
     "	<div id=\"task\" class=\"task\" microtask >\n" +
     "		<ng-include class=\"{{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}\" src=\"templatePath\"></ng-include>\n" +
@@ -367,8 +367,8 @@ angular.module("client/microtasks/microtask_form.html", []).run(["$templateCache
     "</form>");
 }]);
 
-angular.module("client/microtasks/microtask_title.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/microtask_title.html",
+angular.module("microtasks/microtask_title.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/microtask_title.html",
     "<div class=\"section-content no-padding microtask-details\" >\n" +
     "		<span class=\"bg-color type\">{{::microtask.title}}</span>\n" +
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
@@ -378,8 +378,8 @@ angular.module("client/microtasks/microtask_title.html", []).run(["$templateCach
     "</div>");
 }]);
 
-angular.module("client/microtasks/no_microtask/no_microtask.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/no_microtask/no_microtask.html",
+angular.module("microtasks/no_microtask/no_microtask.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/no_microtask/no_microtask.html",
     "<div ng-controller=\"NoMicrotaskController\" >\n" +
     "	<div class=\"alert alert-warning no-microtask\" role=\"alert\" >\n" +
     "		SORRY, there aren't available microtasks at the moment. <br />\n" +
@@ -409,8 +409,8 @@ angular.module("client/microtasks/no_microtask/no_microtask.html", []).run(["$te
     "</div>");
 }]);
 
-angular.module("client/microtasks/reissue_microtask.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/reissue_microtask.html",
+angular.module("microtasks/reissue_microtask.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/reissue_microtask.html",
     "<div >\n" +
     "	<div class=\"section section-description\"  >\n" +
     "		<div class=\"section-title\" >\n" +
@@ -424,8 +424,8 @@ angular.module("client/microtasks/reissue_microtask.html", []).run(["$templateCa
     "</div>");
 }]);
 
-angular.module("client/microtasks/reuse_search/reuse_search.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/reuse_search/reuse_search.html",
+angular.module("microtasks/reuse_search/reuse_search.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/reuse_search/reuse_search.html",
     "<div ng-controller=\"ReuseSearchController\" >\n" +
     "\n" +
     "	<div class=\"section section-description \" >\n" +
@@ -523,8 +523,8 @@ angular.module("client/microtasks/reuse_search/reuse_search.html", []).run(["$te
     "");
 }]);
 
-angular.module("client/microtasks/review/review.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/review/review.html",
+angular.module("microtasks/review/review.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review.html",
     "<div ng-controller=\"ReviewController\">\n" +
     "\n" +
     "	<div ng-if=\"reviewed !== undefined\" ng-include=\"'/client/microtasks/review/review_' + reviewed.type + '.html'\"></div>\n" +
@@ -593,8 +593,8 @@ angular.module("client/microtasks/review/review.html", []).run(["$templateCache"
     "</div>");
 }]);
 
-angular.module("client/microtasks/review/review_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/review/review_DebugTestFailure.html",
+angular.module("microtasks/review/review_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_DebugTestFailure.html",
     "<div ng-if=\"review.microtask.submission.hasPseudo\">\n" +
     "	<div class=\"section section-description \" >\n" +
     "		<div ng-include=\"'/client/microtasks/microtask_title.html'\"></div>\n" +
@@ -671,8 +671,8 @@ angular.module("client/microtasks/review/review_DebugTestFailure.html", []).run(
     "</div>");
 }]);
 
-angular.module("client/microtasks/review/review_ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/review/review_ReuseSearch.html",
+angular.module("microtasks/review/review_ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_ReuseSearch.html",
     "<div class=\"section section-description \" >\n" +
     "	\n" +
     "	<div ng-include=\"'/client/microtasks/microtask_title.html'\"></div>\n" +
@@ -711,8 +711,8 @@ angular.module("client/microtasks/review/review_ReuseSearch.html", []).run(["$te
     "");
 }]);
 
-angular.module("client/microtasks/review/review_WriteCall.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/review/review_WriteCall.html",
+angular.module("microtasks/review/review_WriteCall.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteCall.html",
     "<div class=\"section section-description \" >\n" +
     "\n" +
     "	<div ng-include=\"'/client/microtasks/microtask_title.html'\"></div>\n" +
@@ -745,8 +745,8 @@ angular.module("client/microtasks/review/review_WriteCall.html", []).run(["$temp
     "");
 }]);
 
-angular.module("client/microtasks/review/review_WriteFunction.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/review/review_WriteFunction.html",
+angular.module("microtasks/review/review_WriteFunction.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteFunction.html",
     "<div class=\"section section-description \" >\n" +
     "		\n" +
     "	<div ng-include=\"'/client/microtasks/microtask_title.html'\"></div>\n" +
@@ -843,8 +843,8 @@ angular.module("client/microtasks/review/review_WriteFunction.html", []).run(["$
     "");
 }]);
 
-angular.module("client/microtasks/review/review_WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/review/review_WriteFunctionDescription.html",
+angular.module("microtasks/review/review_WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteFunctionDescription.html",
     "<div class=\"section section-description \" >\n" +
     "	<div ng-include=\"'/client/microtasks/microtask_title.html'\"></div>\n" +
     "\n" +
@@ -901,8 +901,8 @@ angular.module("client/microtasks/review/review_WriteFunctionDescription.html", 
     "");
 }]);
 
-angular.module("client/microtasks/review/review_WriteTest.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/review/review_WriteTest.html",
+angular.module("microtasks/review/review_WriteTest.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteTest.html",
     "<div class=\"section section-description \" >\n" +
     "\n" +
     "	<div ng-include=\"'/client/microtasks/microtask_title.html'\"></div>\n" +
@@ -1015,8 +1015,8 @@ angular.module("client/microtasks/review/review_WriteTest.html", []).run(["$temp
     "");
 }]);
 
-angular.module("client/microtasks/review/review_WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/review/review_WriteTestCases.html",
+angular.module("microtasks/review/review_WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/review/review_WriteTestCases.html",
     "<div class=\"section section-description \" >\n" +
     "		\n" +
     "	<div ng-include=\"'/client/microtasks/microtask_title.html'\"></div>\n" +
@@ -1117,8 +1117,8 @@ angular.module("client/microtasks/review/review_WriteTestCases.html", []).run(["
     "</div>");
 }]);
 
-angular.module("client/microtasks/write_call/write_call.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/write_call/write_call.html",
+angular.module("microtasks/write_call/write_call.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_call/write_call.html",
     "<div ng-controller=\"WriteCallController\" >\n" +
     "\n" +
     "	 \n" +
@@ -1178,8 +1178,8 @@ angular.module("client/microtasks/write_call/write_call.html", []).run(["$templa
     "");
 }]);
 
-angular.module("client/microtasks/write_function/write_function.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/write_function/write_function.html",
+angular.module("microtasks/write_function/write_function.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_function/write_function.html",
     "<div ng-controller=\"WriteFunctionController\" >\n" +
     "	<div class=\"section section-description \" >\n" +
     "\n" +
@@ -1281,8 +1281,8 @@ angular.module("client/microtasks/write_function/write_function.html", []).run([
     "");
 }]);
 
-angular.module("client/microtasks/write_function_description/write_function_description.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/write_function_description/write_function_description.html",
+angular.module("microtasks/write_function_description/write_function_description.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_function_description/write_function_description.html",
     "<div ng-controller=\"WriteFunctionDescriptionController\" >\n" +
     "\n" +
     "	<div class=\"section section-description \" >\n" +
@@ -1516,8 +1516,8 @@ angular.module("client/microtasks/write_function_description/write_function_desc
     "");
 }]);
 
-angular.module("client/microtasks/write_test/write_test.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/write_test/write_test.html",
+angular.module("microtasks/write_test/write_test.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_test/write_test.html",
     "<div ng-controller=\"WriteTestController\" >\n" +
     "\n" +
     "	<div class=\"section section-description \" >\n" +
@@ -1736,8 +1736,8 @@ angular.module("client/microtasks/write_test/write_test.html", []).run(["$templa
     "");
 }]);
 
-angular.module("client/microtasks/write_test_cases/write_test_cases.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/microtasks/write_test_cases/write_test_cases.html",
+angular.module("microtasks/write_test_cases/write_test_cases.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("microtasks/write_test_cases/write_test_cases.html",
     "<div ng-controller=\"WriteTestCasesController\" >\n" +
     "\n" +
     "	<div class=\"section section-description \" >\n" +
@@ -1924,8 +1924,8 @@ angular.module("client/microtasks/write_test_cases/write_test_cases.html", []).r
     "");
 }]);
 
-angular.module("client/newsfeed/news_panel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_panel.html",
+angular.module("newsfeed/news_panel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_panel.html",
     "<div id=\"activityPanel\" class=\"padding\">\n" +
     "	<div>\n" +
     "		<ul class=\"sidebar-list news\">\n" +
@@ -1956,8 +1956,8 @@ angular.module("client/newsfeed/news_panel.html", []).run(["$templateCache", fun
     "");
 }]);
 
-angular.module("client/newsfeed/news_popover.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_popover.html",
+angular.module("newsfeed/news_popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover.html",
     "<div class=\"popover popover-news task-{{ n.microtaskType | lowercase }}\" tabindex=\"-1\">\n" +
     "    <button type=\"button\" class=\"close popover-close\" ng-click=\"$hide()\">&times;</button>\n" +
     "    <h3 class=\"popover-title\"><b>Your work on: &emsp; </b> \n" +
@@ -1981,8 +1981,8 @@ angular.module("client/newsfeed/news_popover.html", []).run(["$templateCache", f
     "</div>");
 }]);
 
-angular.module("client/newsfeed/news_popover_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_popover_DebugTestFailure.html",
+angular.module("newsfeed/news_popover_DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_DebugTestFailure.html",
     "<div ng-if=\" ! n.microtask.submission.disputedTests\">\n" +
     "    <div class=\"section section-description \" >\n" +
     "        <div class=\"section-content job-description\" ng-if=\" ! n.microtask.submission.hasPseudo\">\n" +
@@ -2060,8 +2060,8 @@ angular.module("client/newsfeed/news_popover_DebugTestFailure.html", []).run(["$
     "</div>");
 }]);
 
-angular.module("client/newsfeed/news_popover_ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_popover_ReuseSearch.html",
+angular.module("newsfeed/news_popover_ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_ReuseSearch.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        Function providing the behavior \n" +
@@ -2100,8 +2100,8 @@ angular.module("client/newsfeed/news_popover_ReuseSearch.html", []).run(["$templ
     "");
 }]);
 
-angular.module("client/newsfeed/news_popover_WriteCall.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_popover_WriteCall.html",
+angular.module("newsfeed/news_popover_WriteCall.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteCall.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        Edit of the function <strong>{{n.funct.getName()}}</strong> for revising the call to\n" +
@@ -2129,8 +2129,8 @@ angular.module("client/newsfeed/news_popover_WriteCall.html", []).run(["$templat
     "");
 }]);
 
-angular.module("client/newsfeed/news_popover_WriteFunction.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_popover_WriteFunction.html",
+angular.module("newsfeed/news_popover_WriteFunction.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteFunction.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "\n" +
@@ -2222,8 +2222,8 @@ angular.module("client/newsfeed/news_popover_WriteFunction.html", []).run(["$tem
     "");
 }]);
 
-angular.module("client/newsfeed/news_popover_WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_popover_WriteFunctionDescription.html",
+angular.module("newsfeed/news_popover_WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteFunctionDescription.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        <div ng-if=\"! n.microtask.submission.inDispute\">\n" +
@@ -2275,8 +2275,8 @@ angular.module("client/newsfeed/news_popover_WriteFunctionDescription.html", [])
     "");
 }]);
 
-angular.module("client/newsfeed/news_popover_WriteTest.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_popover_WriteTest.html",
+angular.module("newsfeed/news_popover_WriteTest.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteTest.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        <div ng-if=\"! n.microtask.submission.inDispute\">\n" +
@@ -2380,8 +2380,8 @@ angular.module("client/newsfeed/news_popover_WriteTest.html", []).run(["$templat
     "</div>");
 }]);
 
-angular.module("client/newsfeed/news_popover_WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/newsfeed/news_popover_WriteTestCases.html",
+angular.module("newsfeed/news_popover_WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("newsfeed/news_popover_WriteTestCases.html",
     "<div class=\"section section-description \" >\n" +
     "    <div class=\"section-content job-description\" >\n" +
     "        <div ng-if=\" ! n.microtask.submission.inDispute\">\n" +
@@ -2430,10 +2430,10 @@ angular.module("client/newsfeed/news_popover_WriteTestCases.html", []).run(["$te
     "</div>");
 }]);
 
-angular.module("client/questions/questionDetail.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/questions/questionDetail.html",
+angular.module("questions/questionDetail.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questionDetail.html",
     "<div class=\"top padding\">\n" +
-    "	<a href=\"#\" class=\"pull-left\" ng-click=\"setView('question_list');showCommentForm =false; showAnswerForm = false;\">\n" +
+    "	<a href=\"#\" class=\"pull-left\" ng-click=\"setUiView('question_list');showCommentForm =false; showAnswerForm = false;\">\n" +
     "		<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
     "		back\n" +
     "	</a>\n" +
@@ -2605,8 +2605,8 @@ angular.module("client/questions/questionDetail.html", []).run(["$templateCache"
     "");
 }]);
 
-angular.module("client/questions/questionForm.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/questions/questionForm.html",
+angular.module("questions/questionForm.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questionForm.html",
     "<div class=\"top padding\">\n" +
     "	<h4> New question: </h4>\n" +
     "	\n" +
@@ -2642,7 +2642,7 @@ angular.module("client/questions/questionForm.html", []).run(["$templateCache", 
     "					</select>\n" +
     "				</div>\n" +
     "				<div class=\"btn-group pull-right padding\" role=\"group\">	\n" +
-    "					<button class=\"btn btn-sm btn-default\" ng-click=\"setView('question_list'); questionForm.$setPristine(); setSelected(null)\" >cancel</a>\n" +
+    "					<button class=\"btn btn-sm btn-default\" ng-click=\"setUiView('question_list'); questionForm.$setPristine(); setSelected(null)\" >cancel</a>\n" +
     "					<button class=\"btn btn-sm btn-primary\" type=\"submit\" >Ask</button>\n" +
     "				</div>\n" +
     "			</form>\n" +
@@ -2652,8 +2652,8 @@ angular.module("client/questions/questionForm.html", []).run(["$templateCache", 
     "");
 }]);
 
-angular.module("client/questions/questionsList.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/questions/questionsList.html",
+angular.module("questions/questionsList.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questionsList.html",
     "<div class=\"top padding\">\n" +
     "	<div class=\"form-group has-feedback\">\n" +
     "		<input type=\"text\" ng-model=\"search\" class=\"form-control\" placeholder=\"filter questions\">\n" +
@@ -2662,7 +2662,7 @@ angular.module("client/questions/questionsList.html", []).run(["$templateCache",
     "</div>\n" +
     "<div class=\"middle\">\n" +
     "	<div class=\"padding\">\n" +
-    "		<button class=\"btn btn-sm btn-primary\" ng-click=\"setView('question_form'); \">Ask a question</button>\n" +
+    "		<button class=\"btn btn-sm btn-primary\" ng-click=\"setUiView('question_form'); \">Ask a question</button>\n" +
     "		<div ng-if=\"questions.length == 0 && search.length > 0 \">no questions found matching the filter <strong>{{search}}</strong> (<a href=\"#\" ng-click=\"resetFilter()\">reset filter</a>)</div>\n" +
     "		<div ng-if=\"questions.length == 0 && search.length == 0\">no questions yet!</div>\n" +
     "	</div>\n" +
@@ -2675,13 +2675,19 @@ angular.module("client/questions/questionsList.html", []).run(["$templateCache",
     "		<li ng-show=\" loadedArtifact != null && ( questions | relatedToArtifact : loadedArtifact.id ).length == 0 \"> no questions related to the function {{ loadedArtifact.name }} </li>\n" +
     "		<li class=\"list-group-item question-item {{ q.closed ? '' : 'open' }}\"\n" +
     "			ng-show=\"loadedArtifact != null\" \n" +
-    "			ng-click=\"setView('question_detail'); setSelected(q)\" \n" +
+    "			ng-click=\"setSelected(q)\" \n" +
     "			ng-repeat=\"q in questions | relatedToArtifact : loadedArtifact.id  | orderBy : 'closed'  \"\n" +
     "			>\n" +
-    "			<div>{{q.title}}</div>\n" +
+    "			<div> \n" +
+    "				<span ng-if=\"!isUpdated(q)\">{{q.title}}</span>\n" +
+    "				<span ng-if=\"isUpdated(q)\">\n" +
+    "					<strong>{{q.title}}</strong>\n" +
+    "					<small><i>{{ getUpdateString(q) }}</i></small>\n" +
+    "				</span> \n" +
+    "			</div>\n" +
     "			<div >\n" +
     "				<span class=\"pull-left\">\n" +
-    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.time | date : 'medium'}}\"></time-ago>\n" +
+    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.updatedAt | date : 'medium'}}\"></time-ago>\n" +
     "				</span> \n" +
     "\n" +
     "				<span class=\"pull-right\" style=\"text-align:right;\">\n" +
@@ -2712,13 +2718,21 @@ angular.module("client/questions/questionsList.html", []).run(["$templateCache",
     "		<li class=\"list-group-item list-header\" ng-show=\" ( questions | unrelatedToArtifact : loadedArtifact.id ).length > 0 \">\n" +
     "			Other questions\n" +
     "		</li>\n" +
-    "		<li class=\"list-group-item question-item {{ q.closed ? '' : 'open' }}\" \n" +
-    "			ng-click=\"setView('question_detail'); setSelected(q)\" \n" +
-    "			ng-repeat=\"q in questions | unrelatedToArtifact : loadedArtifact.id | orderBy : 'closed' \">\n" +
-    "			<div>{{q.title}}</div>\n" +
+    "		<li class=\"list-group-item question-item {{ q.closed ? '' : 'open' }}\"\n" +
+    "			ng-show=\"loadedArtifact != null\" \n" +
+    "			ng-click=\"setSelected(q)\" \n" +
+    "			ng-repeat=\"q in questions | unrelatedToArtifact : loadedArtifact.id  | orderBy : 'closed'  \"\n" +
+    "			>\n" +
+    "			<div> \n" +
+    "				<span ng-if=\"!isUpdated(q)\">{{q.title}}</span>\n" +
+    "				<span ng-if=\"isUpdated(q)\">\n" +
+    "					<strong>{{q.title}}</strong>\n" +
+    "					<small><i>{{ getUpdateString(q) }}</i></small>\n" +
+    "				</span> \n" +
+    "			</div>\n" +
     "			<div >\n" +
     "				<span class=\"pull-left\">\n" +
-    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.time | date : 'medium'}}\"></time-ago>\n" +
+    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.updatedAt | date : 'medium'}}\"></time-ago>\n" +
     "				</span> \n" +
     "\n" +
     "				<span class=\"pull-right\" style=\"text-align:right;\">\n" +
@@ -2731,13 +2745,12 @@ angular.module("client/questions/questionsList.html", []).run(["$templateCache",
     "				<span class=\"pull-left\" >\n" +
     "					<span class=\"glyphicon glyphicon-thumbs-up\"></span>\n" +
     "					{{ q.score }}\n" +
-    "\n" +
     "					<span class=\"glyphicon glyphicon-comment\" style=\"margin-left: 10px;\"></span>\n" +
     "					{{ q.answers | objectLength }}\n" +
     "				</span>\n" +
     "				\n" +
     "\n" +
-    "				<span class=\"pull-right\" ng-if=\"loadedArtifact != null\" >\n" +
+    "				<span class=\"pull-right\" ng-if=\"loadedArtifact != null\">\n" +
     "					<a href=\"#\" class=\"btn btn-toggle\" ng-click=\"toggleRelation(q); $event.stopPropagation();\" style=\"font-size: 0.9em;\">{{loadedArtifact.name}}</a>\n" +
     "				</span>\n" +
     "\n" +
@@ -2751,8 +2764,8 @@ angular.module("client/questions/questionsList.html", []).run(["$templateCache",
     "</div>");
 }]);
 
-angular.module("client/questions/questionsPanel.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/questions/questionsPanel.html",
+angular.module("questions/questionsPanel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questionsPanel.html",
     "<div class=\"questions\">\n" +
     "	<question-list   ng-show=\"view == 'question_list'\"></question-list>\n" +
     "	<question-detail ng-show=\"view == 'question_detail'\"></question-detail>\n" +
@@ -2761,14 +2774,14 @@ angular.module("client/questions/questionsPanel.html", []).run(["$templateCache"
     "");
 }]);
 
-angular.module("client/questions/questions_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/questions/questions_template.html",
+angular.module("questions/questions_template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("questions/questions_template.html",
     "<questions-panel></questions-panel>\n" +
     "");
 }]);
 
-angular.module("client/tutorials/DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/DebugTestFailure.html",
+angular.module("tutorials/DebugTestFailure.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/DebugTestFailure.html",
     "<step>\n" +
     "	<div class=\"title\">Debug a test failure</div>\n" +
     "	<div class=\"text\">\n" +
@@ -2942,8 +2955,8 @@ angular.module("client/tutorials/DebugTestFailure.html", []).run(["$templateCach
     "</step>");
 }]);
 
-angular.module("client/tutorials/ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/ReuseSearch.html",
+angular.module("tutorials/ReuseSearch.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/ReuseSearch.html",
     "<step>\n" +
     "	<div class=\"title\">Reuse search</div>\n" +
     "	<div class=\"text\">\n" +
@@ -2971,8 +2984,8 @@ angular.module("client/tutorials/ReuseSearch.html", []).run(["$templateCache", f
     "</step>");
 }]);
 
-angular.module("client/tutorials/Review.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/Review.html",
+angular.module("tutorials/Review.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/Review.html",
     "<step>\n" +
     "	<div class=\"title\">Review </div>\n" +
     "	<div class=\"text\">\n" +
@@ -3008,8 +3021,8 @@ angular.module("client/tutorials/Review.html", []).run(["$templateCache", functi
     "</step>");
 }]);
 
-angular.module("client/tutorials/WriteCall.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/WriteCall.html",
+angular.module("tutorials/WriteCall.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteCall.html",
     "<step>\n" +
     "	<div class=\"title\">Add call</div>\n" +
     "	<div class=\"text\">\n" +
@@ -3044,8 +3057,8 @@ angular.module("client/tutorials/WriteCall.html", []).run(["$templateCache", fun
     "</step>");
 }]);
 
-angular.module("client/tutorials/WriteFunction.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/WriteFunction.html",
+angular.module("tutorials/WriteFunction.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteFunction.html",
     "<step>\n" +
     "	<div class=\"title\">Edit a function</div>\n" +
     "	<div class=\"text\">\n" +
@@ -3122,8 +3135,8 @@ angular.module("client/tutorials/WriteFunction.html", []).run(["$templateCache",
     "</step>");
 }]);
 
-angular.module("client/tutorials/WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/WriteFunctionDescription.html",
+angular.module("tutorials/WriteFunctionDescription.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteFunctionDescription.html",
     "<step>\n" +
     "	<div class=\"title\">Write function description</div>\n" +
     "	<div class=\"text\">\n" +
@@ -3166,8 +3179,8 @@ angular.module("client/tutorials/WriteFunctionDescription.html", []).run(["$temp
     "</step>");
 }]);
 
-angular.module("client/tutorials/WriteTest.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/WriteTest.html",
+angular.module("tutorials/WriteTest.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteTest.html",
     "<step>\n" +
     "	<div class=\"title\">Write test</div>\n" +
     "	<div class=\"text\">\n" +
@@ -3211,8 +3224,8 @@ angular.module("client/tutorials/WriteTest.html", []).run(["$templateCache", fun
     "</step>");
 }]);
 
-angular.module("client/tutorials/WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/WriteTestCases.html",
+angular.module("tutorials/WriteTestCases.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/WriteTestCases.html",
     "<step>\n" +
     "	<div class=\"title\">Write test cases</div>\n" +
     "	<div class=\"text\">\n" +
@@ -3254,8 +3267,8 @@ angular.module("client/tutorials/WriteTestCases.html", []).run(["$templateCache"
     "</step>");
 }]);
 
-angular.module("client/tutorials/main.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/tutorials/main.html",
+angular.module("tutorials/main.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tutorials/main.html",
     "<step>\n" +
     "	<div class=\"title\">CrowdCode Tutorial</div>\n" +
     "	<div class=\"text\">\n" +
@@ -3396,8 +3409,8 @@ angular.module("client/tutorials/main.html", []).run(["$templateCache", function
     "</step>");
 }]);
 
-angular.module("client/users/user_popover.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/users/user_popover.html",
+angular.module("users/user_popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("users/user_popover.html",
     "<div class=\"popover user-menu-popover\">\n" +
     "	{{userData.score }} points <br />\n" +
     "	{{ popover }}\n" +
@@ -3407,8 +3420,8 @@ angular.module("client/users/user_popover.html", []).run(["$templateCache", func
     "</div>");
 }]);
 
-angular.module("client/widgets/ace_edit_js.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/ace_edit_js.html",
+angular.module("widgets/ace_edit_js.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/ace_edit_js.html",
     "<ng-form name=\"functionForm\">\n" +
     "	<div\n" +
     "		class=\"ace_editor js-editor\"\n" +
@@ -3436,8 +3449,8 @@ angular.module("client/widgets/ace_edit_js.html", []).run(["$templateCache", fun
     "</ng-form>");
 }]);
 
-angular.module("client/widgets/description_popover.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/description_popover.html",
+angular.module("widgets/description_popover.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/description_popover.html",
     "<div class=\"popover description-popover\">\n" +
     "    <div class=\"arrow\"></div>\n" +
     "    <h3 class=\"popover-title\">Description</h3>\n" +
@@ -3447,8 +3460,8 @@ angular.module("client/widgets/description_popover.html", []).run(["$templateCac
     "</div>");
 }]);
 
-angular.module("client/widgets/dropdown_main.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/dropdown_main.html",
+angular.module("widgets/dropdown_main.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/dropdown_main.html",
     "<ul tabindex=\"-1\" class=\"dropdown-menu\" role=\"menu\">\n" +
     "\n" +
     "  <li role=\"presentation\" class=\"divider\" >\n" +
@@ -3469,8 +3482,8 @@ angular.module("client/widgets/dropdown_main.html", []).run(["$templateCache", f
     "");
 }]);
 
-angular.module("client/widgets/left_bar_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/left_bar_template.html",
+angular.module("widgets/left_bar_template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/left_bar_template.html",
     "<div>\n" +
     "  <div class=\"sidebar-nav\">\n" +
     "    <ul class=\"nav\" role=\"\">\n" +
@@ -3506,8 +3519,8 @@ angular.module("client/widgets/left_bar_template.html", []).run(["$templateCache
     "-->");
 }]);
 
-angular.module("client/widgets/navbar.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/navbar.html",
+angular.module("widgets/navbar.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/navbar.html",
     "<div class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n" +
     "	<div class=\"container-fluid\">\n" +
     "\n" +
@@ -3535,8 +3548,8 @@ angular.module("client/widgets/navbar.html", []).run(["$templateCache", function
     "</div>");
 }]);
 
-angular.module("client/widgets/popup_feedback.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/popup_feedback.html",
+angular.module("widgets/popup_feedback.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_feedback.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\">\n" +
     "    <div class=\"modal-dialog\">\n" +
     "        <div ng-init=\"sent=false; feedbackText=''\" class=\"modal-content\">\n" +
@@ -3563,8 +3576,8 @@ angular.module("client/widgets/popup_feedback.html", []).run(["$templateCache", 
     "</div>");
 }]);
 
-angular.module("client/widgets/popup_reminder.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/popup_reminder.html",
+angular.module("widgets/popup_reminder.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_reminder.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\">\n" +
     "    <div class=\"modal-dialog\">\n" +
     "		<div class=\"modal-content\" >\n" +
@@ -3623,8 +3636,8 @@ angular.module("client/widgets/popup_reminder.html", []).run(["$templateCache", 
     "</div>");
 }]);
 
-angular.module("client/widgets/popup_shortcuts.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/popup_shortcuts.html",
+angular.module("widgets/popup_shortcuts.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_shortcuts.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\">\n" +
     "    <div class=\"modal-dialog\">\n" +
     "        <div class=\"modal-content\">\n" +
@@ -3648,8 +3661,8 @@ angular.module("client/widgets/popup_shortcuts.html", []).run(["$templateCache",
     "</div>");
 }]);
 
-angular.module("client/widgets/popup_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/popup_template.html",
+angular.module("widgets/popup_template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_template.html",
     "<!-- popup template -->\n" +
     "<div id=\"popUp\" class=\"modal fade\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"\" aria-hidden=\"true\">\n" +
     "	<div class=\"modal-dialog\">\n" +
@@ -3671,8 +3684,8 @@ angular.module("client/widgets/popup_template.html", []).run(["$templateCache", 
     "</div>");
 }]);
 
-angular.module("client/widgets/popup_user_profile.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/popup_user_profile.html",
+angular.module("widgets/popup_user_profile.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/popup_user_profile.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\" ng-controller=\"UserProfileController\" >\n" +
     "	<div class=\"modal-dialog\">\n" +
     "		<div class=\"modal-content\">\n" +
@@ -3708,8 +3721,8 @@ angular.module("client/widgets/popup_user_profile.html", []).run(["$templateCach
     "</div>");
 }]);
 
-angular.module("client/widgets/reminder.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/reminder.html",
+angular.module("widgets/reminder.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/reminder.html",
     "<div  ng-init=\"show=false\"  class=\"section-reminder\"  ng-if = \"skipMicrotaskIn\">\n" +
     "	<div ng-show=\"show\" style=\"width: {{(1-(skipMicrotaskIn / microtaskTimeout)) * 100| number :1}}%;\n" +
     "	text-align: right;\"><b class=\"label-reminder\">{{skipMicrotaskIn | date:'mm:ss'}}</b>\n" +
@@ -3724,8 +3737,8 @@ angular.module("client/widgets/reminder.html", []).run(["$templateCache", functi
     "</div>");
 }]);
 
-angular.module("client/widgets/statements_progress_bar.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/statements_progress_bar.html",
+angular.module("widgets/statements_progress_bar.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/statements_progress_bar.html",
     "<div ng-init=\"show=false\"  class=\"section-statements\">\n" +
     "	<div ng-show=\"show\" style=\"padding-left: {{ (statements / max) * 100 | number: 0 }}%;\">\n" +
     "		<b class=\"label-reminder\">{{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}</b>\n" +
@@ -3750,8 +3763,8 @@ angular.module("client/widgets/statements_progress_bar.html", []).run(["$templat
     "</div>");
 }]);
 
-angular.module("client/widgets/stubs_modal.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/stubs_modal.html",
+angular.module("widgets/stubs_modal.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/stubs_modal.html",
     "<div class=\"modal\" tabindex=\"-1\" role=\"dialog\" aria-hidden=\"true\">\n" +
     "  <div class=\"modal-dialog\">\n" +
     "    <div class=\"modal-content\">\n" +
@@ -3812,8 +3825,8 @@ angular.module("client/widgets/stubs_modal.html", []).run(["$templateCache", fun
     "");
 }]);
 
-angular.module("client/widgets/tab_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/tab_template.html",
+angular.module("widgets/tab_template.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/tab_template.html",
     "<ul class=\"nav\" ng-class=\"$navClass \" role=\"tablist\">\n" +
     "  <li role=\"presentation\" ng-repeat=\"$pane in $panes track by $index\" ng-class=\"[ $index == $panes.$active ? $activeClass : '', $pane.disabled ? 'disabled' : '' ]\">\n" +
     "    <a role=\"tab\" data-toggle=\"tab\" ng-click=\"!$pane.disabled && $setActive($index)\" data-index=\"{{ $index }}\" ng-bind-html=\"$pane.title\" aria-controls=\"$pane.title\"></a>\n" +
@@ -3824,8 +3837,8 @@ angular.module("client/widgets/tab_template.html", []).run(["$templateCache", fu
     "");
 }]);
 
-angular.module("client/widgets/test_result.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("client/widgets/test_result.html",
+angular.module("widgets/test_result.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("widgets/test_result.html",
     "<div ng-if=\"test.rec.inDispute\">\n" +
     "    <div class=\"heading-1\" >\n" +
     "        WHAT'S WRONG WITH THIS TEST ?\n" +

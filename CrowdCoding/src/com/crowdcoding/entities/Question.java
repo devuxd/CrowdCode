@@ -34,18 +34,12 @@ public class Question extends Questioning
 
 	private List<String> artifactsId = new ArrayList<String>();
 	private List<String> tags = new ArrayList<String>();
+	private long answers;
+	private long comments;
 	private boolean closed;
 	private String title;
 
-	public String getTitle() {
-		return title;
-	}
-
-	// Constructor for deserialization
-	protected Question()
-	{
-
-	}
+	public Question(){}
 
 	public Question(String title, String text, List<String> tags, String artifactId, String ownerId, String ownerHandle, String projectId)
 	{
@@ -55,15 +49,21 @@ public class Question extends Questioning
 		this.artifactsId.add(artifactId);
 		this.subsribersId.add(ownerId);
 		this.points = 3;
+		this.answers  = 0;
+		this.comments = 0;
 		ofy().save().entity(this).now();
 
 		this.firebasePath="/questions/" + this.id;
 		ofy().save().entity(this).now();
 
-		storeToFirebase();
+		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.createdAt, this.score, this.subsribersId, this.artifactsId, this.closed), this.firebasePath, projectId);
 		
 		NotificationInFirebase notification = new NotificationInFirebase( "question.added", "{ \"questionId\": \""+this.id+"\", \"title\": \""+this.title+"\" }" );
 		ProjectCommand.notifyLoggedInWorkers(notification);
+	}
+
+	public String getTitle() {
+		return title;
 	}
 	
 	public void removeArtifactLink(String artifactId)
@@ -105,9 +105,31 @@ public class Question extends Questioning
 		ofy().save().entity(this).now();
 		FirebaseService.updateQuestioningClosed(this.closed,this.firebasePath,projectId);
 	}
-	
-	
-	protected void storeToFirebase() {
-		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.time, this.score, this.subsribersId, this.artifactsId, this.closed), this.firebasePath, projectId);
+
+	public void incrementAnswers() {
+		this.answers ++;
+		this.updatedAt = System.currentTimeMillis();
+		ofy().save().entity(this).now();
+		FirebaseService.updateQuestion(this, projectId);
 	}
+	
+	public void incrementComments() {
+		this.comments ++;
+		this.updatedAt = System.currentTimeMillis();
+		ofy().save().entity(this).now();
+		FirebaseService.updateQuestion(this, projectId);
+	}
+
+	public long getUpdatedAt() {
+		return this.updatedAt;
+	}
+
+	public long getAnswers() {
+		return this.answers;
+	}
+	
+	public long getComments() {
+		return this.comments;
+	}
+	
 }
