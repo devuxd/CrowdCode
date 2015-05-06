@@ -341,6 +341,9 @@ angular.module("microtasks/microtask_form.html", []).run(["$templateCache", func
     "\n" +
     "	<div class=\"button-bar\">\n" +
     "		<div class=\"btn-group pull-right\" role=\"group\">\n" +
+    "			<a href=\"#\" class=\"btn btn-mini btn-sm\">Confused?</a>\n" +
+    "\n" +
+    "\n" +
     "			<button type=\"button\"\n" +
     "\n" +
     "       	 		id= \"skipBtn\"\n" +
@@ -2458,7 +2461,7 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "					<span ng-repeat=\"tag in sel.tags\" class=\"tag\" ng-click=\"addToFilter(tag); $event.stopPropagation();\">{{tag}}</span>\n" +
     "				</span> \n" +
     "				<span class=\"pull-left\">\n" +
-    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{sel.time | date : 'medium'}}\"></time-ago>\n" +
+    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{sel.createdAt | date : 'medium'}}\"></time-ago>\n" +
     "				</span> \n" +
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
@@ -2500,7 +2503,7 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "				<div>\n" +
     "\n" +
     "					<span class=\"pull-left\">\n" +
-    "						<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{a.time | date : 'medium'}}\"></time-ago>\n" +
+    "						<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{a.createdAt | date : 'medium'}}\"></time-ago>\n" +
     "						-\n" +
     "						<span ng-bind=\"a.ownerHandle\" ></span>\n" +
     "					</span> \n" +
@@ -2642,7 +2645,7 @@ angular.module("questions/questionForm.html", []).run(["$templateCache", functio
     "					</select>\n" +
     "				</div>\n" +
     "				<div class=\"btn-group pull-right padding\" role=\"group\">	\n" +
-    "					<button class=\"btn btn-sm btn-default\" ng-click=\"setUiView('question_list'); questionForm.$setPristine(); setSelected(null)\" >cancel</a>\n" +
+    "					<button class=\"btn btn-sm btn-default\" ng-click=\"setUiView('question_list'); questionForm.$setPristine();\" >cancel</a>\n" +
     "					<button class=\"btn btn-sm btn-primary\" type=\"submit\" >Ask</button>\n" +
     "				</div>\n" +
     "			</form>\n" +

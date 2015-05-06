@@ -5002,6 +5002,7 @@ angular
 			$scope.allTags        = [];
 			$scope.loadedArtifact = null;
 			$scope.view           = 'question_list';
+			$scope.sel            = null;
 
 			$scope.questions = questionsService.getQuestions();
 			$scope.questions.$loaded().then(function(){
@@ -5058,19 +5059,20 @@ angular
 			}
 
 			function getUpdateString(q){
-				if( q.views === undefined || q.views[ workerId ] === undefined  )
-					return '('+q.answersCount+' new questions, '+q.commentsCount+' new comments)';
-				
-				var view = q.views[ workerId ];
+				var diffAnswers, diffComments;
 
+				if( q.views === undefined || q.views[ workerId ] === undefined  ){
+					diffAnswers  = q.answersCount; 
+					diffComments = q.commentsCount; 
+				} else {
+					var view = q.views[ workerId ];
+					diffAnswers  = q.answersCount  - view.answersCount; 
+					diffComments = q.commentsCount - view.commentsCount; 
+				}
+				
 				var updates  = [];
-
-				var diffAnswers  = q.answersCount  - view.answersCount; 
-				var diffComments = q.commentsCount - view.commentsCount; 
-				
 				if( diffAnswers > 0 )  updates.push( diffAnswers + ' new answers');
 				if( diffComments > 0 ) updates.push( diffComments + ' new comments');
-
 				return '('+updates.join(', ')+')';
 			}
 
@@ -7226,6 +7228,9 @@ angular.module("microtasks/microtask_form.html", []).run(["$templateCache", func
     "\n" +
     "	<div class=\"button-bar\">\n" +
     "		<div class=\"btn-group pull-right\" role=\"group\">\n" +
+    "			<a href=\"#\" class=\"btn btn-mini btn-sm\">Confused?</a>\n" +
+    "\n" +
+    "\n" +
     "			<button type=\"button\"\n" +
     "\n" +
     "       	 		id= \"skipBtn\"\n" +
@@ -9343,7 +9348,7 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "					<span ng-repeat=\"tag in sel.tags\" class=\"tag\" ng-click=\"addToFilter(tag); $event.stopPropagation();\">{{tag}}</span>\n" +
     "				</span> \n" +
     "				<span class=\"pull-left\">\n" +
-    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{sel.time | date : 'medium'}}\"></time-ago>\n" +
+    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{sel.createdAt | date : 'medium'}}\"></time-ago>\n" +
     "				</span> \n" +
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
@@ -9385,7 +9390,7 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "				<div>\n" +
     "\n" +
     "					<span class=\"pull-left\">\n" +
-    "						<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{a.time | date : 'medium'}}\"></time-ago>\n" +
+    "						<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{a.createdAt | date : 'medium'}}\"></time-ago>\n" +
     "						-\n" +
     "						<span ng-bind=\"a.ownerHandle\" ></span>\n" +
     "					</span> \n" +
@@ -9527,7 +9532,7 @@ angular.module("questions/questionForm.html", []).run(["$templateCache", functio
     "					</select>\n" +
     "				</div>\n" +
     "				<div class=\"btn-group pull-right padding\" role=\"group\">	\n" +
-    "					<button class=\"btn btn-sm btn-default\" ng-click=\"setUiView('question_list'); questionForm.$setPristine(); setSelected(null)\" >cancel</a>\n" +
+    "					<button class=\"btn btn-sm btn-default\" ng-click=\"setUiView('question_list'); questionForm.$setPristine();\" >cancel</a>\n" +
     "					<button class=\"btn btn-sm btn-primary\" type=\"submit\" >Ask</button>\n" +
     "				</div>\n" +
     "			</form>\n" +

@@ -9,6 +9,7 @@ angular
 			$scope.allTags        = [];
 			$scope.loadedArtifact = null;
 			$scope.view           = 'question_list';
+			$scope.sel            = null;
 
 			$scope.questions = questionsService.getQuestions();
 			$scope.questions.$loaded().then(function(){
@@ -65,19 +66,20 @@ angular
 			}
 
 			function getUpdateString(q){
-				if( q.views === undefined || q.views[ workerId ] === undefined  )
-					return '('+q.answersCount+' new questions, '+q.commentsCount+' new comments)';
-				
-				var view = q.views[ workerId ];
+				var diffAnswers, diffComments;
 
+				if( q.views === undefined || q.views[ workerId ] === undefined  ){
+					diffAnswers  = q.answersCount; 
+					diffComments = q.commentsCount; 
+				} else {
+					var view = q.views[ workerId ];
+					diffAnswers  = q.answersCount  - view.answersCount; 
+					diffComments = q.commentsCount - view.commentsCount; 
+				}
+				
 				var updates  = [];
-
-				var diffAnswers  = q.answersCount  - view.answersCount; 
-				var diffComments = q.commentsCount - view.commentsCount; 
-				
 				if( diffAnswers > 0 )  updates.push( diffAnswers + ' new answers');
 				if( diffComments > 0 ) updates.push( diffComments + ' new comments');
-
 				return '('+updates.join(', ')+')';
 			}
 

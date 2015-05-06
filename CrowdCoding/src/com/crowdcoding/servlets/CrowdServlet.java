@@ -538,7 +538,7 @@ public class CrowdServlet extends HttpServlet
 
 		// Reset the actual Thread Context
 		ThreadContext.get().reset();
-		QuestioningCommand.linkArtifact(questioningId, artifactId, remove, workerId);
+		QuestioningCommand.linkArtifact(questioningId, artifactId, remove);
 
 
 		// Copy the command back out the context to initially populate the command queue.
