@@ -34,6 +34,7 @@ import com.crowdcoding.util.FirebaseService.FirebaseWrite;
 	    }
 
 	    public void reset() {
+	    	eventList = new ConcurrentLinkedQueue<EventNode>();
 	    	commandsList = new LinkedList<Command>();
 			firebaseWritesList =  new ConcurrentLinkedQueue<FirebaseWrite>();
 	    }

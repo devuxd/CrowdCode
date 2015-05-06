@@ -2,6 +2,8 @@ package com.crowdcoding.commands;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.logging.Logger;
+
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.servlets.ThreadContext;
@@ -136,9 +138,14 @@ public abstract class MicrotaskCommand extends Command
 		public void execute(Microtask microtask, String projectId)
 		{
 			Microtask toReview = ofy().load().key( microtaskKeyToReview ).now();
-			Review review = new Review(microtaskKeyToReview, initiallySubmittedDTO, workerOfReviewedWork, toReview.getFunctionId(), projectId);
-			ProjectCommand.queueReviewMicrotask(review.getKey(), excludedWorkerID);
-
+			if(toReview!=null){
+				Review review = new Review(microtaskKeyToReview, initiallySubmittedDTO, workerOfReviewedWork, toReview.getFunctionId(), projectId);
+				ProjectCommand.queueReviewMicrotask(review.getKey(), excludedWorkerID);
+			}
+			else
+			{
+				Logger.getLogger("LOGGER").severe("LOAD FAILED: MICROTASK "+microtaskKeyToReview);
+			}
 		}
 	}
 

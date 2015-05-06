@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
@@ -411,61 +412,68 @@ public class Project
 	public void submitMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, Project project){
 
 		Microtask microtask = ofy().load().key( microtaskKey ).now();
-		// submit only if the request come from
-		// the current assigned worker of the microtask
-		if(microtask.isAssignedTo(workerID) ){
-			// If reviewing is enabled and the microtask
-			// is not in [Review, ReuseSearch,DebugTestFailure],
-			// spawn a new review microtask
-			try {
-				if (reviewsEnabled && !( microtask.getClass().equals(Review.class)) ){
-					//temporary fix for the review
-					if( microtask.getClass().equals(ReuseSearch.class) )
-					{
-
-						ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
-						if ( ! dto.noFunction ){
-							MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-						} else {
-							MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-						}
-
-					}
-					else if( microtask.getClass().equals(DebugTestFailure.class))
-					{
-
-						DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, DebugDTO.class);
-						System.out.println(dto.disputedTests);
-						if(dto.disputedTests.size() > 0 || dto.hasPseudo)
+		if(microtask!=null){
+			// submit only if the request come from
+			// the current assigned worker of the microtask
+			if(microtask.isAssignedTo(workerID) ){
+				// If reviewing is enabled and the microtask
+				// is not in [Review, ReuseSearch,DebugTestFailure],
+				// spawn a new review microtask
+				try {
+					if (reviewsEnabled && !( microtask.getClass().equals(Review.class)) ){
+						//temporary fix for the review
+						if( microtask.getClass().equals(ReuseSearch.class) )
 						{
-							MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+
+							ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
+							if ( ! dto.noFunction ){
+								MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+							} else {
+								MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+							}
+
+						}
+						else if( microtask.getClass().equals(DebugTestFailure.class))
+						{
+
+							DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, DebugDTO.class);
+							System.out.println(dto.disputedTests);
+							if(dto.disputedTests.size() > 0 || dto.hasPseudo)
+							{
+								MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+							}
+							else{
+								MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+							}
 						}
 						else{
-							MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+							MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 						}
 					}
-					else{
-						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+
+					// else submit the microtask
+					else {
+						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
 					}
+
+
+					// write the history log entry about the microtask submission
+					HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
+					FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
+				} catch( JsonParseException e) {
+					e.printStackTrace();
+				} catch( JsonMappingException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-
-				// else submit the microtask
-				else {
-					MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-				}
-
-
-				// write the history log entry about the microtask submission
-				HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
-				FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
-			} catch( JsonParseException e) {
-				e.printStackTrace();
-			} catch( JsonMappingException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
+		else
+		{
+			Logger.getLogger("LOGGER").severe("LOAD FAILED: MICROTASK "+microtaskKey);
+		}
+
 
 	}
 
