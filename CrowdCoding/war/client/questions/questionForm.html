@@ -24,13 +24,19 @@
 					
 					<input name="tag" class="form-control" ng-model="newTag" placeholder="insert tag" data-min-length="1" bs-options="tag for tag in allTags" bs-typeahead press-enter="addTag()">
 				</div>
+				<!--
 				<div class="form-group">
 					<label for="relatedTo">The question is linked to: </label>
 					<select class="form-control" name="relatedTo" ng-model="relatedTo">
 						<option value="none"> - </option>
 						<option value="artifact">the current artifact</option>
-						<!--<option value="microtask_type" disabled="true">the current microtask type</option>-->
 					</select>
+				</div>
+				-->
+				<div class="checkbox" ng-if="loadedArtifact != null">
+					<label>
+						<input type="checkbox"> link this question to the function <strong>{{ loadedArtifact.name }}</strong>
+					</label>
 				</div>
 				<div class="btn-group pull-right padding" role="group">	
 					<button class="btn btn-sm btn-default" ng-click="setUiView('question_list'); questionForm.$setPristine();" >cancel</a>

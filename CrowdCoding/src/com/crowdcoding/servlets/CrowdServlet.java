@@ -271,6 +271,7 @@ public class CrowdServlet extends HttpServlet
 			final String projectID, User user, final String[] pathSeg) throws IOException, FileUploadException
 	{
 		try {
+			
 			if (pathSeg[3].equals("insert")){
 				doInsertQuestioning(req, resp, user);
 			} else if (pathSeg[3].equals("vote")){
@@ -282,7 +283,9 @@ public class CrowdServlet extends HttpServlet
 			} else if (pathSeg[3].equals("link")){
 				doLinkQuestioning(req, resp, user);
 			} else if (pathSeg[3].equals("close")){
-				doCloseQuestioning(req, resp, user);
+				doCloseQuestion(req, resp, user);
+			} else if (pathSeg[3].equals("tag")){
+				doTagQuestion(req, resp, user);
 			}
 		} catch( Exception e ) {
 			e.printStackTrace();
@@ -295,7 +298,7 @@ public class CrowdServlet extends HttpServlet
 	{
 		//System.out.println("doing admin");
 		if(pathSeg.length <=3 ){
-			req.getRequestDispatcher("/admin/index.jsp").forward(req, resp);
+			req.getRequestDispatcher("/adminDist/index.jsp").forward(req, resp);
 		} else {
 			// The command should be in the fourth position. If nothing exists there,
 			// use "" as the command.
@@ -545,26 +548,25 @@ public class CrowdServlet extends HttpServlet
 		executeCommands(projectID);
 	}
 
-	public void doCloseQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	public void doCloseQuestion (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
-		// Collect information from the request parameter. Since the transaction may fail and retry,
-		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
-		// And anything inside the transaction MUST not mutate the values produced.
-
-		final String projectID  	= (String) req.getAttribute("project");
-		final long questioningId    = Long.parseLong((String) req.getParameter("id"));
-		final boolean closed 	    = Boolean.parseBoolean((String)req.getParameter("closed"));
-
-		final String workerId     = user.getUserId();
-
-
-		// Reset the actual Thread Context
+		String projectID  	= (String) req.getAttribute("project");
+		long questionId    = Long.parseLong((String) req.getParameter("id"));
+		boolean closed 	    = Boolean.parseBoolean((String)req.getParameter("closed"));
 		ThreadContext.get().reset();
-
-		QuestioningCommand.setClosed(questioningId, closed, workerId);
-
-
-		// Copy the command back out the context to initially populate the command queue.
+		QuestioningCommand.setClosed(questionId, closed);
+		executeCommands(projectID);
+	}
+	
+	public void doTagQuestion (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		String projectID = (String) req.getAttribute("project");
+		long questionId  = Long.parseLong((String) req.getParameter("id"));
+		String tag 	     = (String)req.getParameter("tag");
+		boolean remove 	 = Boolean.parseBoolean((String)req.getParameter("remove"));
+		System.out.println("TAG" + questionId + " - "+tag+" - "+remove);
+		ThreadContext.get().reset();
+		QuestioningCommand.tagQuestion(questionId, tag, remove);
 		executeCommands(projectID);
 	}
 

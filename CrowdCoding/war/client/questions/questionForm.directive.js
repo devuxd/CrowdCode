@@ -1,6 +1,6 @@
 angular.module('crowdCode').directive('questionForm',function($firebase,firebaseUrl,workerId, questionsService){
 	return {
-		scope: false,
+		scope: true,
 		templateUrl: '/client/questions/questionForm.html',
 		link: function($scope,$element,$attrs){
 			$scope.question = {

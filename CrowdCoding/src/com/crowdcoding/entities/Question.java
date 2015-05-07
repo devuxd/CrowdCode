@@ -36,8 +36,10 @@ public class Question extends Questioning
 	private List<String> tags = new ArrayList<String>();
 	private long answers;
 	private long comments;
+	private long version;
 	private boolean closed;
 	private String title;
+	
 
 	public Question(){}
 
@@ -51,6 +53,7 @@ public class Question extends Questioning
 		this.points = 3;
 		this.answers  = 0;
 		this.comments = 0;
+		this.version = 1;
 		ofy().save().entity(this).now();
 
 		this.firebasePath="/questions/" + this.id;
@@ -101,25 +104,50 @@ public class Question extends Questioning
 	}
 	
 	public void setClosed(boolean closed){
-		this.closed = closed;
-		ofy().save().entity(this).now();
-		FirebaseService.updateQuestioningClosed(this.closed,this.firebasePath,projectId);
+		if( this.closed != closed ){
+			this.closed = closed;
+			ofy().save().entity(this).now();
+			FirebaseService.updateQuestioningClosed(this.closed,this.firebasePath,projectId);
+		}
 	}
 
 	public void incrementAnswers() {
 		this.answers ++;
+		this.incrementVersion();
+	}
+	
+	public void incrementComments() {
+		this.comments ++;
+		this.incrementVersion();
+	}
+
+	public void incrementVersion(){
+		this.version ++;
 		this.updatedAt = System.currentTimeMillis();
 		ofy().save().entity(this).now();
 		FirebaseService.updateQuestion(this, projectId);
 	}
 	
-	public void incrementComments() {
-		this.comments ++;
-		this.updatedAt = System.currentTimeMillis();
-		ofy().save().entity(this).now();
-		FirebaseService.updateQuestion(this, projectId);
-	}
 
+
+	public void addTag(String tag) {
+		if( ! this.tags.contains(tag) ){
+			this.tags.add( tag );
+			ofy().save().entity(this).now();
+			FirebaseService.updateQuestionTags(this, projectId);
+		}	
+	};
+	
+	
+	public void removeTag(String tag) {
+		System.out.println(" TAGS "+this.tags.toString() + " contains "+tag+ " ? "+this.tags.contains(tag) );
+		if( this.tags.contains(tag) ){
+			this.tags.remove( tag );
+			ofy().save().entity(this).now();
+			FirebaseService.updateQuestionTags(this, projectId);
+		}	
+	};
+	
 	public long getUpdatedAt() {
 		return this.updatedAt;
 	}
@@ -131,5 +159,12 @@ public class Question extends Questioning
 	public long getComments() {
 		return this.comments;
 	}
-	
+
+	public long getVersion() {
+		return this.version;
+	}
+
+	public List<String> getTags() {
+		return this.tags;
+	}
 }

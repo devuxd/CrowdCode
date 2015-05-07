@@ -25,6 +25,7 @@ import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.dto.firebase.ReissueInFirebase;
 import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
 import com.crowdcoding.dto.firebase.SubscribersInFirebase;
+import com.crowdcoding.dto.firebase.TagsInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.dto.firebase.VotersIdInFirebase;
 import com.crowdcoding.entities.Question;
@@ -344,8 +345,12 @@ public class FirebaseService
 	}
 	
 	public static void updateQuestion(Question question, String projectId){
-		System.out.println(question.getID() + " { \"updatedAt\": "+question.getUpdatedAt()+", \"answersCount\" : " + question.getAnswers() + ", \"commentsCount\" : " + question.getComments() + " } ");
-		enqueueWrite(" { \"updatedAt\": "+question.getUpdatedAt()+", \"answersCount\" : " + question.getAnswers() + ", \"commentsCount\" : " + question.getComments() + " } ", "/questions/"+question.getID()+".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite(" { \"updatedAt\": "+question.getUpdatedAt()+", \"answersCount\" : " + question.getAnswers() + ", \"commentsCount\" : " + question.getComments() + ", \"version\" : " + question.getVersion() + " } ", "/questions/"+question.getID()+".json", HTTPMethod.PATCH, projectId);
+	}
+
+	public static void updateQuestionTags(Question question, String projectId) {
+		System.out.println(new TagsInFirebase(question.getTags()).json());
+		enqueueWrite( new TagsInFirebase(question.getTags()).json(), "/questions/"+question.getID()+".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void updateQuestioningVoters(VotersIdInFirebase votersId, String path, String projectId)	{

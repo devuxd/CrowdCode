@@ -1,4 +1,4 @@
-angular.module('templates-main', ['chat/alert_chat.html', 'chat/chat_panel.html', 'data_types/adt_list.html', 'data_types/examples_list_popover.html', 'functions/function_conventions.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard_panel.html', 'microtasks/alert_submit.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/reuse_search/reuse_search.html', 'microtasks/review/review.html', 'microtasks/review/review_DebugTestFailure.html', 'microtasks/review/review_ReuseSearch.html', 'microtasks/review/review_WriteCall.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteFunctionDescription.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_WriteTestCases.html', 'microtasks/write_call/write_call.html', 'microtasks/write_function/write_function.html', 'microtasks/write_function_description/write_function_description.html', 'microtasks/write_test/write_test.html', 'microtasks/write_test_cases/write_test_cases.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'newsfeed/news_popover_DebugTestFailure.html', 'newsfeed/news_popover_ReuseSearch.html', 'newsfeed/news_popover_WriteCall.html', 'newsfeed/news_popover_WriteFunction.html', 'newsfeed/news_popover_WriteFunctionDescription.html', 'newsfeed/news_popover_WriteTest.html', 'newsfeed/news_popover_WriteTestCases.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'questions/questions_template.html', 'tutorials/DebugTestFailure.html', 'tutorials/ReuseSearch.html', 'tutorials/Review.html', 'tutorials/WriteCall.html', 'tutorials/WriteFunction.html', 'tutorials/WriteFunctionDescription.html', 'tutorials/WriteTest.html', 'tutorials/WriteTestCases.html', 'tutorials/main.html', 'users/user_popover.html', 'widgets/ace_edit_js.html', 'widgets/description_popover.html', 'widgets/dropdown_main.html', 'widgets/left_bar_template.html', 'widgets/navbar.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/stubs_modal.html', 'widgets/tab_template.html', 'widgets/test_result.html']);
+angular.module('templates-main', ['chat/alert_chat.html', 'chat/chat_panel.html', 'data_types/adt_list.html', 'data_types/examples_list_popover.html', 'functions/function_conventions.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard_panel.html', 'microtasks/alert_submit.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/reuse_search/reuse_search.html', 'microtasks/review/review.html', 'microtasks/review/review_DebugTestFailure.html', 'microtasks/review/review_ReuseSearch.html', 'microtasks/review/review_WriteCall.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteFunctionDescription.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_WriteTestCases.html', 'microtasks/write_call/write_call.html', 'microtasks/write_function/write_function.html', 'microtasks/write_function_description/write_function_description.html', 'microtasks/write_test/write_test.html', 'microtasks/write_test_cases/write_test_cases.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'newsfeed/news_popover_DebugTestFailure.html', 'newsfeed/news_popover_ReuseSearch.html', 'newsfeed/news_popover_WriteCall.html', 'newsfeed/news_popover_WriteFunction.html', 'newsfeed/news_popover_WriteFunctionDescription.html', 'newsfeed/news_popover_WriteTest.html', 'newsfeed/news_popover_WriteTestCases.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DebugTestFailure.html', 'tutorials/ReuseSearch.html', 'tutorials/Review.html', 'tutorials/WriteCall.html', 'tutorials/WriteFunction.html', 'tutorials/WriteFunctionDescription.html', 'tutorials/WriteTest.html', 'tutorials/WriteTestCases.html', 'tutorials/main.html', 'users/user_popover.html', 'widgets/ace_edit_js.html', 'widgets/description_popover.html', 'widgets/dropdown_main.html', 'widgets/left_bar_template.html', 'widgets/navbar.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/stubs_modal.html', 'widgets/tab_template.html', 'widgets/test_result.html']);
 
 angular.module("chat/alert_chat.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("chat/alert_chat.html",
@@ -343,9 +343,7 @@ angular.module("microtasks/microtask_form.html", []).run(["$templateCache", func
     "		<div class=\"btn-group pull-right\" role=\"group\">\n" +
     "			<a href=\"#\" class=\"btn btn-mini btn-sm\">Confused?</a>\n" +
     "\n" +
-    "\n" +
     "			<button type=\"button\"\n" +
-    "\n" +
     "       	 		id= \"skipBtn\"\n" +
     "       			ng-click=\"$emit('submitMicrotask')\" \n" +
     "       			tabindex=\"100\" \n" +
@@ -362,7 +360,6 @@ angular.module("microtasks/microtask_form.html", []).run(["$templateCache", func
     "		  		ng-disabled=\"noMicrotask\">\n" +
     "		  		Submit\n" +
     "		  	</button>\n" +
-    "		 \n" +
     "		</div>\n" +
     "		<span class=\"clearfix\"></span>\n" +
     "	\n" +
@@ -2436,29 +2433,49 @@ angular.module("newsfeed/news_popover_WriteTestCases.html", []).run(["$templateC
 angular.module("questions/questionDetail.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("questions/questionDetail.html",
     "<div class=\"top padding\">\n" +
-    "	<a href=\"#\" class=\"pull-left\" ng-click=\"setUiView('question_list');showCommentForm =false; showAnswerForm = false;\">\n" +
+    "	<a href=\"#\" class=\"pull-left\" ng-click=\"updateView(); setUiView('question_list'); \">\n" +
     "		<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
     "		back\n" +
     "	</a>\n" +
     "\n" +
     "	<a href=\"#\" class=\"pull-right\" ng-click=\"toggleClosed(sel)\">\n" +
-    "		{{ sel.closed ? 'Reopen for discussion' : 'Mark as answered' }}\n" +
+    "		{{ sel.closed ? 'Reopen for discussion' : 'Mark as closed' }}\n" +
     "	</a>\n" +
     "\n" +
     "	<span class=\"clearfix\"></span>\n" +
     "</div>\n" +
     "\n" +
-    "<div class=\"middle padding\" ng-init=\"showCommentForm =false; showAnswerForm = false;\">\n" +
-    "	\n" +
+    "<div class=\"middle padding\">\n" +
     "	<ul class=\"list-group\">\n" +
     "\n" +
     "		<li class=\"list-group-item question-item  {{ sel.closed ? '' : 'open' }}\">\n" +
     "\n" +
-    "			<h3 class=\"panel-title\">{{sel.title}}</h3>\n" +
+    "			<h3 class=\"panel-title\"  >{{sel.title}}</h3>\n" +
     "			<div>{{sel.text}}</div>\n" +
     "			<div>\n" +
     "				<span class=\"pull-right\">\n" +
-    "					<span ng-repeat=\"tag in sel.tags\" class=\"tag\" ng-click=\"addToFilter(tag); $event.stopPropagation();\">{{tag}}</span>\n" +
+    "					<span ng-repeat=\"tag in sel.tags\" class=\"tag\">{{tag}} <span ng-click=\"removeTag(tag)\">x</span></span>\n" +
+    "					<span ng-if=\"!form.tag.show\" ng-click=\"form.tag.show = true\" class=\"btn btn-xs btn-link\">Add Tag</span>\n" +
+    "					<form name=\"tagForm\" novalidate ng-show='form.tag.show' ng-submit=\"tagForm.$valid && addTag()\">\n" +
+    "						<div class=\"form-group\">\n" +
+    "							<input name=\"tag\" \n" +
+    "								class=\"form-control\" \n" +
+    "								ng-model=\"form.tag.text\" \n" +
+    "								placeholder=\"insert a tag\"\n" +
+    "								ng-pattern=\"/^(\\w|\\s)+$/\"\n" +
+    "								required\n" +
+    "								/>\n" +
+    "							<div class=\"help-block\" ng-messages=\"tagForm.tag.$dirty && tagForm.tag.$error\">\n" +
+    "	                          <div ng-message=\"required\">tag name can't be empty!</div>\n" +
+    "	                          <div ng-message=\"pattern\">tag name is composed only by letters and spaces!</div>\n" +
+    "	                        </div>\n" +
+    "						</div>\n" +
+    "						<span class=\"btn-group pull-right\">\n" +
+    "							<button type=\"button\" class=\"btn btn-xs btn-default\" ng-click=\"form.tag.show = false; \">Cancel</button>\n" +
+    "							<button type=\"submit\" class=\"btn btn-xs btn-primary\">Add tag</button>\n" +
+    "						</span>\n" +
+    "						<div class=\"clearfix\"></div>\n" +
+    "					</form>\n" +
     "				</span> \n" +
     "				<span class=\"pull-left\">\n" +
     "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{sel.createdAt | date : 'medium'}}\"></time-ago>\n" +
@@ -2492,7 +2509,7 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "\n" +
     "	<ul class=\"list-group\">\n" +
     "\n" +
-    "		<li class=\"list-group-item answer-item\" ng-repeat=\"a in sel.answers | orderObjectBy : 'time' : false\" ng-animate-children>\n" +
+    "		<li class=\"list-group-item answer-item\" ng-repeat=\"a in sel.answers | orderObjectBy : 'createdAt' : false\" ng-animate-children>\n" +
     "			<div class=\"content-panel\">\n" +
     "				<div>\n" +
     "					<span>{{a.text}}</span>\n" +
@@ -2504,8 +2521,8 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "\n" +
     "					<span class=\"pull-left\">\n" +
     "						<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{a.createdAt | date : 'medium'}}\"></time-ago>\n" +
-    "						-\n" +
-    "						<span ng-bind=\"a.ownerHandle\" ></span>\n" +
+    "						- \n" +
+    "						<span>{{ a.ownerId == workerId ? 'you' : a.ownerHandle }}</span>\n" +
     "					</span> \n" +
     "					<div class=\"pull-right\">\n" +
     "						<span\n" +
@@ -2528,7 +2545,7 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "				\n" +
     "\n" +
     "			<ul class=\"list-group\">\n" +
-    "				<li class=\"list-group-item comment-item\" ng-repeat=\"c in a.comments | orderObjectBy : 'time' : false\" >\n" +
+    "				<li class=\"list-group-item comment-item\" ng-repeat=\"c in a.comments | orderObjectBy : 'createdAt' : false\" >\n" +
     "					\n" +
     "					<div class=\"content-panel\">\n" +
     "						<div>\n" +
@@ -2539,9 +2556,9 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "						<div>\n" +
     "\n" +
     "							<span class=\"pull-left\">\n" +
-    "								<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{c.time | date : 'medium'}}\"></time-ago>\n" +
+    "								<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{c.createdAt | date : 'medium'}}\"></time-ago>\n" +
     "								-\n" +
-    "								<span ng-bind=\"c.ownerHandle\" ></span>\n" +
+    "								<span>{{ c.ownerId == workerId ? 'you' : c.ownerHandle }}</span>\n" +
     "							</span> \n" +
     "							<div class=\"pull-right\">\n" +
     "								<span\n" +
@@ -2564,26 +2581,26 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "						\n" +
     "\n" +
     "				</li>\n" +
-    "				<li class=\"list-group-item comment-item\" ng-show=\"!sel.closed\">\n" +
-    "\n" +
+    "				<li class=\"list-group-item comment-item\" >\n" +
     "					<a href=\"#\" \n" +
-    "						ng-show='!showCommentForm' \n" +
-    "						ng-click=\"showCommentForm = true ; c.answerId = a.id\" >\n" +
+    "						ng-show='!sel.closed && !form.comment.show' \n" +
+    "						ng-click=\"form.comment.show = true ; form.comment.answerId = a.id\" >\n" +
     "						Add Comment\n" +
     "					</a>\n" +
-    "					<form name=\"commentForm\" novalidate ng-show='showCommentForm && c.answerId == a.id' ng-submit=\"commentForm.$valid && postComment(a.id)\">\n" +
+    "					<form name=\"commentForm\" novalidate ng-show='form.comment.show && form.comment.answerId == a.id' ng-submit=\"commentForm.$valid && postComment(a.id)\">\n" +
     "						<div class=\"form-group\">\n" +
     "							<textarea name=\"text\" \n" +
     "									  class=\"form-control\" \n" +
-    "									  ng-model=\"comment.text\" \n" +
+    "									  ng-model=\"form.comment.text\" \n" +
     "									  placeholder=\"comment text\"\n" +
     "									  required>\n" +
     "							</textarea>\n" +
     "						</div>\n" +
-    "						<button type=\"submit\" \n" +
-    "								class=\"btn btn-xs btn-primary pull-right\">\n" +
-    "								Comment\n" +
-    "						</button>\n" +
+    "						<span class=\"btn-group pull-right\">\n" +
+    "							<button type=\"button\" class=\"btn btn-xs btn-default\" ng-click=\"form.comment.show = false; \">Cancel</button>\n" +
+    "							<button type=\"submit\" class=\"btn btn-xs btn-primary\">Comment</button>\n" +
+    "						</span>\n" +
+    "						<div class=\"clearfix\"></div>\n" +
     "					</form>\n" +
     "				</li>\n" +
     "			</ul>\n" +
@@ -2592,13 +2609,17 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "			<span class=\"clearfix\"></span>\n" +
     "\n" +
     "		</li>\n" +
-    "		<li class=\"list-group-item answer-item\" ng-show=\"!sel.closed\">\n" +
-    "			<a href=\"#\" ng-show=\"!showAnswerForm \" ng-click=\"showAnswerForm=true\">Add Answer</a>\n" +
-    "			<form name=\"answerForm\" novalidate  ng-show=\"showAnswerForm\" ng-submit=\"answerForm.$valid && postAnswer()\">\n" +
+    "		<li class=\"list-group-item answer-item\">\n" +
+    "			<a href=\"#\" ng-show=\"!sel.closed && !form.answer.show \" ng-click=\"form.answer.show=true\">Add Answer</a>\n" +
+    "			<form name=\"answerForm\" novalidate  ng-show=\"form.answer.show\" ng-submit=\"answerForm.$valid && postAnswer()\">\n" +
     "				<div class=\"form-group\">\n" +
-    "					<textarea required name=\"text\" class=\"form-control\" ng-model=\"answer.text\" placeholder=\"answer text\"></textarea>\n" +
+    "					<textarea required name=\"text\" class=\"form-control\" ng-model=\"form.answer.text\" placeholder=\"answer text\"></textarea>\n" +
     "				</div>\n" +
-    "				<button type=\"submit\" ng-click=\"showAnswerForm = false;\" class=\"btn btn-xs btn-primary pull-right\">Answer</button>\n" +
+    "				<span class=\"btn-group pull-right\">\n" +
+    "					<button type=\"button\" class=\"btn btn-xs btn-default\" ng-click=\"form.answer.show = false; \">Cancel</button>\n" +
+    "					<button type=\"submit\" class=\"btn btn-xs btn-primary\">Answer</button>\n" +
+    "				</span>\n" +
+    "					\n" +
     "				<div class=\"clearfix\"></div>\n" +
     "			</form>\n" +
     "		</li>\n" +
@@ -2636,13 +2657,19 @@ angular.module("questions/questionForm.html", []).run(["$templateCache", functio
     "					\n" +
     "					<input name=\"tag\" class=\"form-control\" ng-model=\"newTag\" placeholder=\"insert tag\" data-min-length=\"1\" bs-options=\"tag for tag in allTags\" bs-typeahead press-enter=\"addTag()\">\n" +
     "				</div>\n" +
+    "				<!--\n" +
     "				<div class=\"form-group\">\n" +
     "					<label for=\"relatedTo\">The question is linked to: </label>\n" +
     "					<select class=\"form-control\" name=\"relatedTo\" ng-model=\"relatedTo\">\n" +
     "						<option value=\"none\"> - </option>\n" +
     "						<option value=\"artifact\">the current artifact</option>\n" +
-    "						<!--<option value=\"microtask_type\" disabled=\"true\">the current microtask type</option>-->\n" +
     "					</select>\n" +
+    "				</div>\n" +
+    "				-->\n" +
+    "				<div class=\"checkbox\" ng-if=\"loadedArtifact != null\">\n" +
+    "					<label>\n" +
+    "						<input type=\"checkbox\"> link this question to the function <strong>{{ loadedArtifact.name }}</strong>\n" +
+    "					</label>\n" +
     "				</div>\n" +
     "				<div class=\"btn-group pull-right padding\" role=\"group\">	\n" +
     "					<button class=\"btn btn-sm btn-default\" ng-click=\"setUiView('question_list'); questionForm.$setPristine();\" >cancel</a>\n" +
@@ -2658,16 +2685,19 @@ angular.module("questions/questionForm.html", []).run(["$templateCache", functio
 angular.module("questions/questionsList.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("questions/questionsList.html",
     "<div class=\"top padding\">\n" +
-    "	<div class=\"form-group has-feedback\">\n" +
+    "	<span class=\"form-group has-feedback search-box\">\n" +
     "		<input type=\"text\" ng-model=\"search\" class=\"form-control\" placeholder=\"filter questions\">\n" +
     "		<span class=\"glyphicon glyphicon-search form-control-feedback\" aria-hidden=\"true\"></span>\n" +
-    "	</div>\n" +
+    "	</span>\n" +
+    "	<button class=\"btn btn-sm btn-primary new-question\" ng-click=\"setUiView('question_form'); \">Ask new</button>\n" +
     "</div>\n" +
     "<div class=\"middle\">\n" +
     "	<div class=\"padding\">\n" +
-    "		<button class=\"btn btn-sm btn-primary\" ng-click=\"setUiView('question_form'); \">Ask a question</button>\n" +
-    "		<div ng-if=\"questions.length == 0 && search.length > 0 \">no questions found matching the filter <strong>{{search}}</strong> (<a href=\"#\" ng-click=\"resetFilter()\">reset filter</a>)</div>\n" +
-    "		<div ng-if=\"questions.length == 0 && search.length == 0\">no questions yet!</div>\n" +
+    "		<div class=\"padding\" ng-if=\"questions.length == 0 && search.length > 0 \">\n" +
+    "			No questions found matching the filter <strong>{{search}}</strong> \n" +
+    "			(<a href=\"#\" ng-click=\"resetFilter()\">reset filter</a>)\n" +
+    "		</div>\n" +
+    "		<div class=\"padding\" ng-if=\"questions.length == 0 && search.length == 0\"> No questions yet! </div>\n" +
     "	</div>\n" +
     "\n" +
     "	<ul class=\"list-group questions-list\" ng-if=\"questions.length > 0\">\n" +
@@ -2675,7 +2705,9 @@ angular.module("questions/questionsList.html", []).run(["$templateCache", functi
     "		<li class=\"list-group-item list-header\" ng-show=\" loadedArtifact != null \">\n" +
     "			Related to {{loadedArtifact.name}}\n" +
     "		</li>\n" +
-    "		<li ng-show=\" loadedArtifact != null && ( questions | relatedToArtifact : loadedArtifact.id ).length == 0 \"> no questions related to the function {{ loadedArtifact.name }} </li>\n" +
+    "		<li ng-show=\" loadedArtifact != null && ( questions | relatedToArtifact : loadedArtifact.id ).length == 0 \"> \n" +
+    "			No questions related to the function {{ loadedArtifact.name }} \n" +
+    "		</li>\n" +
     "		<li class=\"list-group-item question-item {{ q.closed ? '' : 'open' }}\"\n" +
     "			ng-show=\"loadedArtifact != null\" \n" +
     "			ng-click=\"setSelected(q)\" \n" +
@@ -2700,11 +2732,19 @@ angular.module("questions/questionsList.html", []).run(["$templateCache", functi
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
     "			<div>\n" +
+    "				\n" +
     "				<span class=\"pull-left\" >\n" +
-    "					<span class=\"glyphicon glyphicon-thumbs-up\"></span>\n" +
-    "					{{ q.score }}\n" +
-    "					<span class=\"glyphicon glyphicon-comment\" style=\"margin-left: 10px;\"></span>\n" +
-    "					{{ q.answers | objectLength }}\n" +
+    "					<span>\n" +
+    "						<span class=\"glyphicon glyphicon-thumbs-up\"></span>\n" +
+    "						{{ q.score }}\n" +
+    "					</span>\n" +
+    "					<span style=\"margin-left: 10px;\">\n" +
+    "						<span class=\"glyphicon glyphicon-comment\"></span>\n" +
+    "						{{ q.answers | objectLength }}\n" +
+    "					</span>\n" +
+    "					<span style=\"margin-left: 10px; font-family: 'Lato'; font-weight: bold; font-size: 1em;\">\n" +
+    "						{{ q.closed ? 'CLOSED' : 'OPEN' }}\n" +
+    "					</span>				\n" +
     "				</span>\n" +
     "				\n" +
     "\n" +
@@ -2746,10 +2786,17 @@ angular.module("questions/questionsList.html", []).run(["$templateCache", functi
     "			</div>\n" +
     "			<div>\n" +
     "				<span class=\"pull-left\" >\n" +
-    "					<span class=\"glyphicon glyphicon-thumbs-up\"></span>\n" +
-    "					{{ q.score }}\n" +
-    "					<span class=\"glyphicon glyphicon-comment\" style=\"margin-left: 10px;\"></span>\n" +
-    "					{{ q.answers | objectLength }}\n" +
+    "					<span>\n" +
+    "						<span class=\"glyphicon glyphicon-thumbs-up\"></span>\n" +
+    "						{{ q.score }}\n" +
+    "					</span>\n" +
+    "					<span style=\"margin-left: 10px;\">\n" +
+    "						<span class=\"glyphicon glyphicon-comment\"></span>\n" +
+    "						{{ q.answers | objectLength }}\n" +
+    "					</span>\n" +
+    "					<span style=\"margin-left: 10px; font-family: 'Lato'; font-weight: bold; font-size: 1em;\">\n" +
+    "						{{ q.closed ? 'CLOSED' : 'OPEN' }}\n" +
+    "					</span>				\n" +
     "				</span>\n" +
     "				\n" +
     "\n" +
@@ -2774,12 +2821,6 @@ angular.module("questions/questionsPanel.html", []).run(["$templateCache", funct
     "	<question-detail ng-show=\"view == 'question_detail'\"></question-detail>\n" +
     "	<question-form   ng-show=\"view == 'question_form'\"></question-form>\n" +
     "</div>\n" +
-    "");
-}]);
-
-angular.module("questions/questions_template.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("questions/questions_template.html",
-    "<questions-panel></questions-panel>\n" +
     "");
 }]);
 

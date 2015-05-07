@@ -52,6 +52,10 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand incrementQuestionComments(long questionId){
 		return new IncrementQuestionComments(questionId);
 	}
+
+	public static QuestioningCommand tagQuestion(long questionId, String tag, boolean remove){
+		return new TagQuestion(questionId,tag,remove);
+	}
 	
 	public static QuestioningCommand vote(long questioningId, String workerId, boolean remove){
 		return new Vote(questioningId, workerId, remove);
@@ -73,9 +77,10 @@ public abstract class QuestioningCommand extends Command
 		return new NotifySubscribers(questioningId,notification,excludedWorkerId);
 	}
 
-	public static QuestioningCommand setClosed(long questioningId, boolean closed, String workerId){
-		return new SetClosed(questioningId,closed,workerId);
+	public static QuestioningCommand setClosed(long questioningId, boolean closed){
+		return new SetClosed(questioningId,closed);
 	}
+
 	
 
 	private QuestioningCommand(long questioningId, String workerId) {
@@ -214,6 +219,31 @@ public abstract class QuestioningCommand extends Command
 			question.incrementComments();
 		}
 	}
+	
+
+	protected static class TagQuestion extends QuestioningCommand {
+		
+		private boolean remove;
+		private String tag;
+		
+		public TagQuestion(long questionId,String tag,boolean remove) {
+			super(questionId, "");
+			this.tag    = tag;
+			this.remove = remove;
+			System.out.println("CREATING TAG COMMAND");
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+
+			System.out.println("EXECUTING TAG COMMAND");
+			Question question = (Question) questioning;
+			if(this.remove)
+				question.removeTag(tag);
+			else
+				question.addTag(tag);
+
+		}
+	}
 
 	protected static class Vote extends QuestioningCommand {
 
@@ -315,8 +345,8 @@ public abstract class QuestioningCommand extends Command
 
 		private boolean closed;
 
-		public SetClosed(long questioningId, boolean closed, String workerId) {
-			super(questioningId,workerId);
+		public SetClosed(long questioningId, boolean closed) {
+			super(questioningId,"");
 			this.closed = closed;
 		}
 

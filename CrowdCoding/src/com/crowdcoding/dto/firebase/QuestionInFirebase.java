@@ -20,6 +20,7 @@ public class QuestionInFirebase extends DTO
 	public long commentsCount;
 	public int score;
 	public boolean closed;
+	public long version;
 	public List < String > tags= new ArrayList<String>();
 	public List < String > votersId= new ArrayList<String>();
 	public List < String > reportersId= new ArrayList<String>();
@@ -46,5 +47,6 @@ public class QuestionInFirebase extends DTO
 		this.subscribersId =  subsribersId;
 		this.artifactsId   =  artifactsId;
 		this.closed   =  closed;
+		this.version = 1;
 	}
 }

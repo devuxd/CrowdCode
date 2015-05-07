@@ -166,7 +166,7 @@ public /*abstract*/ class Questioning
 				FirebaseService.writeWorkerNotification( notification, subscriberId, projectId );
 			}
 		}
-	};
+	}
 
 
 

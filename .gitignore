@@ -61,9 +61,9 @@ CrowdCoding/.project
 *.prefs
 CrowdCoding/war/WEB-INF/lib.zip
 CrowdCoding/war/.tmp
-CrowdCoding/war/clientDist
-CrowdCoding/war/adminDist
-CrowdCoding/war/client/.tmp
-CrowdCoding/war/admin/.tmp
+CrowdCoding/war/clientDist/
+CrowdCoding/war/adminDist/
+CrowdCoding/war/client/.tmp/
+CrowdCoding/war/admin/.tmp/
 CrowdCoding/war/node_modules
 CrowdCoding/war/bower_components

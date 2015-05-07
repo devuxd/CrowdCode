@@ -11,12 +11,10 @@ angular
 	var service = new function(){
 		// Private variables
 		var questions;
-		var views;
+		var allTags = [];
 
-		var allTags=[];
 		var loaded = false;
 		var questionsRef = $firebase(new Firebase(firebaseUrl+'/questions'));
-		var viewsRef     = $firebase(new Firebase(firebaseUrl+'/questionsViews/'+workerId));
 
 		var idx = lunr(function(){
 			this.ref('id');
@@ -33,15 +31,14 @@ angular
 		this.submit        = submit;
 		this.vote          = vote;
 		this.report        = report;
+		this.tag           = tag;
 		this.linkArtifact  = linkArtifact;
 		this.setStatus     = setStatus;
-		this.sel           = undefined;
-		this.allTags       = [];
+		this.allTags       = allTags;
 		this.searchResults = searchResults;
 		this.getQuestions  = function(){return questions;};
 		this.get 		   = getQuestion;
-		this.getAllTags    = getAllTags;
-		this.setView       = setView;
+		this.setWorkerView = setWorkerView;
 
 		function questionToDocument(question,key){
 			var doc = {
@@ -67,7 +64,6 @@ angular
 
 		function searchResults( searchTxt ){
 			var searchTxtToLower = searchTxt;
-			console.log('searching for ',searchTxtToLower);
 			var res = idx.search( searchTxtToLower );
             var qs = [];
 			for( var r = 0; r < res.length ; r++ ){
@@ -77,26 +73,18 @@ angular
 			return qs;
 		}
 
-		function addTags( tags ){
+		function addToAllTags( tags ){
 			if( tags === undefined )
 				return;
 
 			for( var t = 0; t < tags.length ; t++){
-				if( allTags.indexOf(tags[t]) == -1 )
-					allTags.push(tags[t]);
+				if( allTags.indexOf( tags[t]) == -1 )
+					allTags.push( tags[t]);
 			}
-		}
-
-		function getAllTags(){
-			return allTags;
 		}
 
 		function init(){
 			questions = questionsRef.$asArray();
-			views     = viewsRef.$asArray();
-			views.$loaded().then(function(){
-				console.log('views loaded!',views);
-			});
 			questions.$loaded().then(function(){
 
 				// tell the others that the functions services is loaded
@@ -106,7 +94,7 @@ angular
 					if(questions[index].ownerId){
 						var doc = questionToDocument( questions[index], questions[index].id );
 						idx.add( doc );
-						addTags(questions[index].tags);
+						addToAllTags(questions[index].tags);
 					}
 				}
 
@@ -117,7 +105,7 @@ angular
 					switch( event.event ){
 						case 'child_added':
 							idx.add( doc );
-							addTags(q.tags);
+							addToAllTags(q.tags);
 							break;
 						case 'child_changed': 
 							idx.update( doc );
@@ -153,6 +141,18 @@ angular
 			return deferred.promise;
 		}
 		
+		function tag(id, tag, remove){
+			var deferred = $q.defer();
+			$http.post('/' + $rootScope.projectId + '/questions/tag?id=' + id + '&tag='+tag+'&remove='+remove)
+				.success(function(data, status, headers, config) {
+					deferred.resolve();
+				})
+				.error(function(data, status, headers, config) {
+					deferred.reject();
+				});
+			return deferred.promise;
+		}
+
 		function vote(id, remove){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&remove='+remove)
@@ -201,7 +201,7 @@ angular
 			return deferred.promise;
 		}
 
-		function setView(id,view){
+		function setWorkerView(id,view){
 			questionsRef.$ref().child( id+'/views/'+workerId ).set( view );
 		}
 	};

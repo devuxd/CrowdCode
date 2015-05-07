@@ -498,12 +498,13 @@ h1, h2, h3, h4 {
 }
 .questions .tag{
 	background: #f7fdff;
-	padding: 0.3em .3em;
+	
 	text-align: center;
 	line-height: 1;
 	color: #3e6d8e;
 	background-color: #e4edf4;
-	margin: 2px 2px 2px 0;
+	padding: 0.3em;
+	margin: 2px 2px;
 	text-decoration: none;
 	font-size: 1em;
 	white-space: nowrap;
@@ -565,6 +566,7 @@ h1, h2, h3, h4 {
 	background-color: transparent;
 	border-radius:0px;
 	border:none;
+	word-break: break-all;
 }
 
 .questions .list-group .question-item,
@@ -581,10 +583,16 @@ h1, h2, h3, h4 {
 
 .questions .answer-item > .content-panel {  padding-bottom:1em; }
 
-.questions .has-feedback { font-size:10px; }
+.questions .top .search-box { position:relative; width: 70%; float: left;}
+.questions .top .search-box input { padding-left:2em; padding-right:5px; font-size:1em; line-height:2.6em; }
+.questions .top .search-box span {  left:0; top:0; right:none; color:gray; line-height:2.6em; height:2.6em; width:2em; }
+.questions .top .new-question { width: 30%; float:right; line-height:2.6em; padding:0px;}
+
+/*
+.questions .has-feedback { font-size:1em; }
 .questions .has-feedback .form-control { padding-left:2em; padding-right:0px; font-size:1em; height:2.6em;}
 .questions .form-control-feedback { left:0; top:0; right:none; color:gray; line-height:2.6em; height:2.6em; width:2em; }
-
+*/
 
 .questions question-list,
 .questions question-detail ,
@@ -636,11 +644,6 @@ h1, h2, h3, h4 {
 .questions question-detail .answer-item textarea  { min-height:10em; resize: none; }
 .questions question-detail .command-item textarea { min-height:3em; resize: none; }
 
-.sidebar .top button {
-	font-size:1em;
-	margin:0px;
-	padding:0px;
-}
 /*
 rgba(17,112,190,1) Wode - blue - writefunction
 rgba(252,223,63,1) Aerial yellow - yellow - writetestcases

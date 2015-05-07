@@ -45,7 +45,8 @@ public class Answer extends Questioning
 		
 		FirebaseService.writeAnswerCreated(new AnswerInFirebase(this.id, this.ownerId, this.ownerHandle, this.text, this.createdAt, this.score), this.firebasePath, projectId);
 		
-
+		QuestioningCommand.setClosed(this.questionId, false);
+		
 		QuestioningCommand.incrementQuestionAnswers(this.questionId);
 		
 		NotificationInFirebase notification = new NotificationInFirebase( "answer.added", "{ \"questionId\": \""+this.questionId.toString()+"\",  \"workerHandle\": \""+this.ownerHandle+"\",  \"text\": \""+this.questionId.toString()+"\" }" );

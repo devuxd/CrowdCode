@@ -15,19 +15,19 @@ public class CommentInFirebase extends DTO
 	public String ownerHandle;
 	public int score;
 	public List < Long >votersId= new ArrayList<Long>();
-	public long time;
+	public long createdAt;
 	// Default constructor (required by Jackson JSON library)
 	public CommentInFirebase()
 	{
 	}
 
-	public CommentInFirebase(long id, String ownerId, String ownerHandle, String text, long time, int score)
+	public CommentInFirebase(long id, String ownerId, String ownerHandle, String text, long createdAt, int score)
 	{
 		this.id= id;
 		this.ownerId=ownerId;
 		this.ownerHandle=ownerHandle;
 		this.text=text;
-		this.time= time;
+		this.createdAt= createdAt;
 		this.score=score;
 
 
