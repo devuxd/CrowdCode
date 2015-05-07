@@ -340,7 +340,11 @@ angular.module("microtasks/microtask_form.html", []).run(["$templateCache", func
     "	<reminder></reminder>\n" +
     "\n" +
     "	<div class=\"button-bar\">\n" +
+    "\n" +
     "		<div class=\"btn-group pull-right\" role=\"group\">\n" +
+    "\n" +
+    "			<button type=\"button\" class=\"btn btn-default\" ng-model=\"askABreak\" bs-checkbox>Ask a break</button>\n" +
+    "\n" +
     "			<a href=\"#\" class=\"btn btn-mini btn-sm\">Confused?</a>\n" +
     "\n" +
     "\n" +
@@ -3727,24 +3731,31 @@ angular.module("widgets/popup_user_profile.html", []).run(["$templateCache", fun
 angular.module("widgets/reminder.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("widgets/reminder.html",
     "<div  ng-init=\"show=false\"  class=\"section-reminder\"  ng-if = \"skipMicrotaskIn\">\n" +
-    "	<div ng-show=\"show\" style=\"width: {{(1-(skipMicrotaskIn / microtaskTimeout)) * 100| number :1}}%;\n" +
-    "	text-align: right;\"><b class=\"label-reminder\">{{skipMicrotaskIn | date:'mm:ss'}}</b>\n" +
+    "	<div ng-show=\"show || status=='danger'\"\n" +
+    "		 style=\"width: {{(1-(skipMicrotaskIn / microtaskTimeout)) * 100| number :1}}%;\n" +
+    "	text-align: right;\">\n" +
+    "		<b class=\"label-reminder text-{{status}}\">\n" +
+    "			{{skipMicrotaskIn | date:'mm:ss'}}\n" +
+    "		</b>\n" +
     "	</div>\n" +
     "    <div id=\"remainingTimeBar\" class=\"progress progress-bar-reminder\">\n" +
-    "        <div ng-mouseenter=\"show=true\" data-ng-mouseleave=\"show=false\" class=\"pull-right progress-bar\" ng-class=\"{'progress-bar-success':skipMicrotaskIn > microtaskFirstWarning,'progress-bar-warning':skipMicrotaskIn > microtaskFirstWarning / 2 && skipMicrotaskIn < microtaskFirstWarning,'progress-bar-danger':skipMicrotaskIn < microtaskFirstWarning / 2}\" role=\"progressbar\" style=\"width:{{(skipMicrotaskIn / microtaskTimeout) * 100| number :1}}%\">\n" +
-    "\n" +
+    "        <div ng-mouseenter=\"show=true\"\n" +
+    "        	 ng-mouseleave=\"show=false\"\n" +
+    "        	 role=\"progressbar\"\n" +
+    "        	 class=\"pull-right progress-bar progress-bar-{{status}}\"\n" +
+    "        	 style=\"width:{{(skipMicrotaskIn / microtaskTimeout) * 100| number :1}}%\">\n" +
     "        </div>\n" +
-    "\n" +
     "    </div>\n" +
-    "    \n" +
     "</div>");
 }]);
 
 angular.module("widgets/statements_progress_bar.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("widgets/statements_progress_bar.html",
     "<div ng-init=\"show=false\"  class=\"section-statements\">\n" +
-    "	<div ng-show=\"show\" style=\"padding-left: {{ (statements / max) * 100 | number: 0 }}%;\">\n" +
-    "		<b class=\"label-reminder\">{{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}</b>\n" +
+    "	<div ng-show=\"show\" style=\"position: absolute; padding-left: {{ (statements / max) * 100 | number: 0 }}%;\">\n" +
+    "		<b class=\"label-reminder\">\n" +
+    "            {{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}\n" +
+    "        </b>\n" +
     "	</div>\n" +
     "    <div class=\"progress progress-bar-reminder\">\n" +
     "        <div \n" +

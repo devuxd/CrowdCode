@@ -3197,7 +3197,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.checkQueueIn   = waitTimeInSeconds;
-
+			$scope.askABreak=false;
 
 			$scope.$on('loadMicrotask', function($event, microtask){
 
@@ -3260,7 +3260,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 					$scope.templatePath   = templatesURL + "loading.html";
 					$scope.canSubmit=false;
-					microtasks.submit($scope.microtask,formData,autoSkip);
+					microtasks.submit($scope.microtask,formData,autoSkip, ! $scope.askABreak);
 				}
 			});
         }
@@ -3341,11 +3341,13 @@ angular
 			return microtask;
 		}
 
-		function submit (microtask, formData,autoSkip){
+		function submit (microtask, formData, autoSkip, autoFetch){
 			var skip = formData === undefined ? 'true' : 'false' ;
+			autoFetch = (autoFetch ? 'true' : 'false');
+			console.log(autoFetch);
 			var disablePoint = autoSkip ? 'true':'false';
 			// submit to the server
-			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint, formData)
+			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
 				.success(function(data, status, headers, config) {
 					loadMicrotask(data);
 				})
@@ -6763,7 +6765,7 @@ angular
             });
 
             $rootScope.$on('reset-reminder',function( event ){
-
+               $scope.status='success';
                $interval.cancel(microtaskInterval);
                $scope.skipMicrotaskIn=undefined;
                popupWarning.$promise.then(popupWarning.hide);
@@ -6779,7 +6781,12 @@ angular
                     if( ! popupHasBeenClosed && $scope.skipMicrotaskIn < microtaskFirstWarning){
                         popupHasBeenClosed=true;
                         popupWarning.$promise.then(popupWarning.show);
+                        $scope.status='warning';
 
+                    }
+                    else if( $scope.skipMicrotaskIn < microtaskFirstWarning / 2 && 
+                             $scope.skipMicrotaskIn > 0 ){
+                        $scope.status='danger';
                     }
                     //if the time is negative end the reminder and skip the microtask
                     else if($scope.skipMicrotaskIn < 0)
@@ -7227,7 +7234,11 @@ angular.module("microtasks/microtask_form.html", []).run(["$templateCache", func
     "	<reminder></reminder>\n" +
     "\n" +
     "	<div class=\"button-bar\">\n" +
+    "\n" +
     "		<div class=\"btn-group pull-right\" role=\"group\">\n" +
+    "\n" +
+    "			<button type=\"button\" class=\"btn btn-default\" ng-model=\"askABreak\" bs-checkbox>Ask a break</button>\n" +
+    "\n" +
     "			<a href=\"#\" class=\"btn btn-mini btn-sm\">Confused?</a>\n" +
     "\n" +
     "\n" +
@@ -10614,24 +10625,31 @@ angular.module("widgets/popup_user_profile.html", []).run(["$templateCache", fun
 angular.module("widgets/reminder.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("widgets/reminder.html",
     "<div  ng-init=\"show=false\"  class=\"section-reminder\"  ng-if = \"skipMicrotaskIn\">\n" +
-    "	<div ng-show=\"show\" style=\"width: {{(1-(skipMicrotaskIn / microtaskTimeout)) * 100| number :1}}%;\n" +
-    "	text-align: right;\"><b class=\"label-reminder\">{{skipMicrotaskIn | date:'mm:ss'}}</b>\n" +
+    "	<div ng-show=\"show || status=='danger'\"\n" +
+    "		 style=\"width: {{(1-(skipMicrotaskIn / microtaskTimeout)) * 100| number :1}}%;\n" +
+    "	text-align: right;\">\n" +
+    "		<b class=\"label-reminder text-{{status}}\">\n" +
+    "			{{skipMicrotaskIn | date:'mm:ss'}}\n" +
+    "		</b>\n" +
     "	</div>\n" +
     "    <div id=\"remainingTimeBar\" class=\"progress progress-bar-reminder\">\n" +
-    "        <div ng-mouseenter=\"show=true\" data-ng-mouseleave=\"show=false\" class=\"pull-right progress-bar\" ng-class=\"{'progress-bar-success':skipMicrotaskIn > microtaskFirstWarning,'progress-bar-warning':skipMicrotaskIn > microtaskFirstWarning / 2 && skipMicrotaskIn < microtaskFirstWarning,'progress-bar-danger':skipMicrotaskIn < microtaskFirstWarning / 2}\" role=\"progressbar\" style=\"width:{{(skipMicrotaskIn / microtaskTimeout) * 100| number :1}}%\">\n" +
-    "\n" +
+    "        <div ng-mouseenter=\"show=true\"\n" +
+    "        	 ng-mouseleave=\"show=false\"\n" +
+    "        	 role=\"progressbar\"\n" +
+    "        	 class=\"pull-right progress-bar progress-bar-{{status}}\"\n" +
+    "        	 style=\"width:{{(skipMicrotaskIn / microtaskTimeout) * 100| number :1}}%\">\n" +
     "        </div>\n" +
-    "\n" +
     "    </div>\n" +
-    "    \n" +
     "</div>");
 }]);
 
 angular.module("widgets/statements_progress_bar.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("widgets/statements_progress_bar.html",
     "<div ng-init=\"show=false\"  class=\"section-statements\">\n" +
-    "	<div ng-show=\"show\" style=\"padding-left: {{ (statements / max) * 100 | number: 0 }}%;\">\n" +
-    "		<b class=\"label-reminder\">{{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}</b>\n" +
+    "	<div ng-show=\"show\" style=\"position: absolute; padding-left: {{ (statements / max) * 100 | number: 0 }}%;\">\n" +
+    "		<b class=\"label-reminder\">\n" +
+    "            {{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}\n" +
+    "        </b>\n" +
     "	</div>\n" +
     "    <div class=\"progress progress-bar-reminder\">\n" +
     "        <div \n" +

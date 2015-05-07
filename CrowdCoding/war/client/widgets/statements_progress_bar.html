@@ -1,6 +1,8 @@
 <div ng-init="show=false"  class="section-statements">
-	<div ng-show="show" style="padding-left: {{ (statements / max) * 100 | number: 0 }}%;">
-		<b class="label-reminder">{{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}</b>
+	<div ng-show="show" style="position: absolute; padding-left: {{ (statements / max) * 100 | number: 0 }}%;">
+		<b class="label-reminder">
+            {{max-statements}} {{ (max-statements) > 2 ? 'statements left' : ''}}
+        </b>
 	</div>
     <div class="progress progress-bar-reminder">
         <div 

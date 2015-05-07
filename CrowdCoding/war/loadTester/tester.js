@@ -131,7 +131,7 @@ function generateSubmitData( microtaskKey, id ){
 					};
 
 					// from 2 to 7 test cases description
-					var numTC = Math.ceil( Math.random() * 10  + 2 );
+					var numTC = Math.ceil( Math.random() * 10  + 5 );
 					for( var tc = 1; tc <= numTC ; tc++){
 						formData.testCases.push({
 							id   : null,
@@ -172,7 +172,7 @@ function generateSubmitData( microtaskKey, id ){
 					// 	formData.code = "{ return par; \n}"
 					// }
 
-					var numPF = Math.random() >0.2 ? 1: 0;
+					var numPF = Math.random() >0.1 ? 1: 0;
 					var name=funName+Math.random();
 					for( var pf = 1; pf <= numPF ; pf++ ){
 						formData.pseudoFunctions.push({
