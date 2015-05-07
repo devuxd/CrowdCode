@@ -1,26 +1,19 @@
 
 	package com.crowdcoding.servlets;
 
-	import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 	import com.crowdcoding.commands.Command;
-import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.HistoryLog.EventNode;
-import com.crowdcoding.util.FirebaseService;
 import com.crowdcoding.util.FirebaseService.FirebaseWrite;
 
 	public class ThreadContext {
 
 		private Queue<Command> commandsList							    = new LinkedList<Command>();
 		private ConcurrentLinkedQueue<FirebaseWrite> firebaseWritesList = new ConcurrentLinkedQueue<FirebaseWrite>();
-		private ConcurrentLinkedQueue<EventNode> eventList = new ConcurrentLinkedQueue<EventNode>();
-
-		private String jsonResponse;
+		private ConcurrentLinkedQueue<EventNode> eventList 				= new ConcurrentLinkedQueue<EventNode>();
 
 	    private static ThreadLocal<ThreadContext> threadLocal = new ThreadLocal<ThreadContext>(){
 	        @Override
@@ -34,9 +27,9 @@ import com.crowdcoding.util.FirebaseService.FirebaseWrite;
 	    }
 
 	    public void reset() {
-	    	eventList = new ConcurrentLinkedQueue<EventNode>();
-	    	commandsList = new LinkedList<Command>();
-			firebaseWritesList =  new ConcurrentLinkedQueue<FirebaseWrite>();
+	    	eventList 		  	= new ConcurrentLinkedQueue<EventNode>();
+	    	commandsList		= new LinkedList<Command>();
+			firebaseWritesList	= new ConcurrentLinkedQueue<FirebaseWrite>();
 	    }
 
 	    public void addCommand(Command command) {
@@ -60,14 +53,6 @@ import com.crowdcoding.util.FirebaseService.FirebaseWrite;
 
 	    public ConcurrentLinkedQueue<EventNode> getEventList() {
 			return eventList;
-		}
-
-	    public String getJsonResponse() {
-			return jsonResponse;
-		}
-
-		public void setJsonResponse(String jsonResponse) {
-			this.jsonResponse = jsonResponse;
 		}
 
 	}

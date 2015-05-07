@@ -637,8 +637,7 @@ public class CrowdServlet extends HttpServlet
 	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException{
 		doFetchMicrotask(req,resp,user,false);
 	}
-
-	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean unassign) throws IOException
+	public void unassignMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException
 	{
 		// Since the transaction may fail and retry,
 		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
@@ -652,18 +651,46 @@ public class CrowdServlet extends HttpServlet
     			public void vrun() {
     				ThreadContext threadContext = ThreadContext.get();
     				threadContext.reset();
+    				final Project project = Project.Create(projectID);
+    				final Worker worker   = Worker.Create(user, project);
+
+    		    	project.unassignMicrotask( worker.getUserid() );
+    				ofy().save().entity(project).now();
+
+    			}
+
+        	});
+
+    	} catch ( IllegalArgumentException e ){
+    		e.printStackTrace();
+    	}
+        HistoryLog.Init(projectID).publish();
+
+	    FirebaseService.publish();
+
+	}
+
+	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException
+	{
+		// Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+		final String projectID = (String) req.getAttribute("project");
+
+		String jsonResponse = "{}";
+    	try {
+    		jsonResponse=ofy().transact( new Work<String>(){
+
+    			public String run() {
+    				ThreadContext threadContext = ThreadContext.get();
+    				threadContext.reset();
 
     				Key<Microtask> microtaskKey = null;
     		    	int firstFetch=0;
     		    	final Project project = Project.Create(projectID);
     				final Worker worker   = Worker.Create(user, project);
 
-    		    	//before to enqueue the submit
-    				if( unassign ){
-    		    		project.unassignMicrotask( worker.getUserid() );
-    		    	}
-    				//at the fetch request
-    				else {
+    				if( ! isAlreadyUnassigned ){
     		    		microtaskKey = project.lookupMicrotaskAssignment( worker.getUserid() );
     		    	}
 
@@ -674,10 +701,10 @@ public class CrowdServlet extends HttpServlet
     				ofy().save().entity(project).now();
 
     				if (microtaskKey == null) {
-    					threadContext.setJsonResponse("{}");
+    					return "{}";
     				} else{
 
-    					threadContext.setJsonResponse("{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}");
+    					return "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}";
     				}
 
     			}
@@ -689,8 +716,7 @@ public class CrowdServlet extends HttpServlet
     	}
         HistoryLog.Init(projectID).publish();
 
-    	ThreadContext threadContext = ThreadContext.get();
-		renderJson(resp,threadContext.getJsonResponse());
+		renderJson(resp, jsonResponse);
 	    FirebaseService.publish();
 
 
@@ -713,10 +739,16 @@ public class CrowdServlet extends HttpServlet
 		final String JsonDTO       = Util.convertStreamToString(req.getInputStream());
 		final String skip          = req.getParameter("skip");
 		final String disablePoint  = req.getParameter("disablepoint");
+		final Boolean autoFetch	   = Boolean.parseBoolean(req.getParameter("autoFetch"));
 		System.out.println("received microtask "+microtaskKey);
 
-		// fetch the new microtask
-        doFetchMicrotask(req,resp,user,true);
+		unassignMicrotask(req, resp, user);
+
+		if(autoFetch)
+			doFetchMicrotask(req,resp,user,true);
+		else
+			renderJson(resp, "{}");
+
 
 		// create the submit task
 		TaskOptions task = withUrl("/worker");
@@ -724,8 +756,8 @@ public class CrowdServlet extends HttpServlet
 		task.param("workerId", workerId);
 		task.param("microtaskKey", microtaskKey);
 		task.param("JsonDTO", JsonDTO);
-		task.param("skip", skip.toString());
-		task.param("disablepoint", disablePoint.toString());
+		task.param("skip", skip);
+		task.param("disablepoint", disablePoint);
 
 		// add the task to the default task queue
         Queue queue = QueueFactory.getDefaultQueue();

@@ -32,7 +32,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.checkQueueIn   = waitTimeInSeconds;
-
+			$scope.askABreak=false;
 
 			$scope.$on('loadMicrotask', function($event, microtask){
 
@@ -95,7 +95,7 @@ function microtaskForm($firebase, $http, $interval, $timeout, $modal , functions
 
 					$scope.templatePath   = templatesURL + "loading.html";
 					$scope.canSubmit=false;
-					microtasks.submit($scope.microtask,formData,autoSkip);
+					microtasks.submit($scope.microtask,formData,autoSkip, ! $scope.askABreak);
 				}
 			});
         }

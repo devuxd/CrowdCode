@@ -20,11 +20,13 @@ angular
 			return microtask;
 		}
 
-		function submit (microtask, formData,autoSkip){
+		function submit (microtask, formData, autoSkip, autoFetch){
 			var skip = formData === undefined ? 'true' : 'false' ;
+			autoFetch = (autoFetch ? 'true' : 'false');
+			console.log(autoFetch);
 			var disablePoint = autoSkip ? 'true':'false';
 			// submit to the server
-			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint, formData)
+			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
 				.success(function(data, status, headers, config) {
 					loadMicrotask(data);
 				})

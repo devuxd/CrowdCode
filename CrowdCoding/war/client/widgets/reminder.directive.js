@@ -61,7 +61,7 @@ angular
             });
 
             $rootScope.$on('reset-reminder',function( event ){
-
+               $scope.status='success';
                $interval.cancel(microtaskInterval);
                $scope.skipMicrotaskIn=undefined;
                popupWarning.$promise.then(popupWarning.hide);
@@ -77,7 +77,12 @@ angular
                     if( ! popupHasBeenClosed && $scope.skipMicrotaskIn < microtaskFirstWarning){
                         popupHasBeenClosed=true;
                         popupWarning.$promise.then(popupWarning.show);
+                        $scope.status='warning';
 
+                    }
+                    else if( $scope.skipMicrotaskIn < microtaskFirstWarning / 2 && 
+                             $scope.skipMicrotaskIn > 0 ){
+                        $scope.status='danger';
                     }
                     //if the time is negative end the reminder and skip the microtask
                     else if($scope.skipMicrotaskIn < 0)
