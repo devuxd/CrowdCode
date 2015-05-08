@@ -1,8 +1,11 @@
 <div class="top padding">
-	<h4 class="padding"> {{ sel == null ? 'New' : 'Edit'}} question: </h4>
+	<a href="#" class="pull-left" ng-click="setUiView( sel == null ? 'list' : 'detail' );">
+		<span class="glyphicon glyphicon-arrow-left"></span>
+		back
+	</a>
 </div>
 <div class="middle padding">
-	
+	<h4 class="padding"> {{ sel == null ? 'New' : 'Edit'}} question: </h4>
 	<div class="list-group">
 		<div class="list-group-item">
 			<form name="questionForm" novalidate ng-submit="questionForm.$valid && postQuestion()">
@@ -32,7 +35,7 @@
 				</div>
 				<div class="btn-group pull-right padding" role="group">	
 					<button class="btn btn-sm btn-default" type="button" ng-click="setUiView( sel == null ? 'list' : 'detail' ); questionForm.$setPristine();" >cancel</a>
-					<button class="btn btn-sm btn-primary" type="submit" >Ask</button>
+					<button class="btn btn-sm btn-primary" type="submit" >Submit</button>
 				</div>
 			</form>
 		</div>

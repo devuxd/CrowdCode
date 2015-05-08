@@ -26,6 +26,12 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(169, 68, 66,.6);
 
 }
+.newsfeed-panel{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: scroll;
+}
 .popover-news{
 	width: 65%;
 	max-width: 65% !important;
@@ -145,7 +151,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 
 
 .btn-primary { background-color:#3F81AC; }
-.btn-primary:hover, .btn-primary:focus{ background-color:#7491A1; }
+.btn-primary:hover, .btn-primary:focus{ background-color:#4C99CB; }
 
 /*.form-group,.form-horizontal .form-group { margin:0px ; padding:0px; }*/
 
@@ -275,7 +281,7 @@ h1, h2, h3, h4 {
 
 
 
-#sidebarLeft { width: 30%; height:100%; background-color: #EEEEEE; position: relative;}
+#sidebarLeft { width: 30%; height:100%; background-color: #e9eaed; position: relative;}
 
 #content {
 	width:70%;
@@ -289,7 +295,7 @@ h1, h2, h3, h4 {
 
 .task {
 	position:absolute;
-	bottom:40px;
+	bottom:30px;
 	top:0px;
 	width:100%;
 	padding-top:7px;
@@ -301,7 +307,7 @@ h1, h2, h3, h4 {
 }
 .section-reminder{
 	position: absolute;
-	bottom: 20px;
+	bottom: 10px;
 	z-index: 10;
 	width: 100%;
 }
@@ -325,16 +331,29 @@ h1, h2, h3, h4 {
 }
 
 .button-bar {
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	height: 40px;
+	height: 30px;
 	background-color: #AFAFAF;
 	position: absolute;
 	width: 100%;
 	bottom: 0px;
 	z-index:10;
+}
+.button-bar .btn-group { height:100%; width:100%;}
+.button-bar .btn-group .btn {
+	height:100%;
+	padding:0px 10px;
+	line-height:30px;
+	border-radius:0px;
+	border:0px;
+}
+
+.button-bar .btn-link {
+	color:white;
+}
+
+.button-bar .btn-link:focus, 
+.button-bar .btn-link:hover {
+	background-color:transparent;
 }
 
 .task-container {	/*height:100%;*/}
@@ -372,7 +391,7 @@ h1, h2, h3, h4 {
 	width:100vh;    
 	height:21px;
 	position:fixed;
-	background:#AFAFAF;
+	background-color: rgb(103, 103, 103);
 	color:white;
 	font-family:'Lato';
 	text-transform: uppercase;
@@ -390,20 +409,20 @@ h1, h2, h3, h4 {
 }
 
 .sidebar-nav ul li:hover {
-	background-color: #EEEEEE;
+	background-color: #e9eaed;
 	border-bottom:1px solid #555;
 	color:#555;
 }
 
 .sidebar-nav ul li.active {
-	background-color: #EEEEEE;
+	background-color: #e9eaed;
 	font-weight: bold;
 	border-left:1px solid #555;
 	border-right:1px solid #555;
 	color:#555;
 }
 .sidebar-nav ul li.active {
-	border-bottom:1px solid #EEEEEE;
+	border-bottom:1px solid #e9eaed;
 }
 
 
@@ -463,7 +482,7 @@ h1, h2, h3, h4 {
 .leaderboard .name { overflow: hidden; line-height:25px; padding-left: 4px; text-overflow: ellipsis; white-space: nowrap; }
 
 /* SIDEBAR NEWS PANEL */
-.news li { 
+.news-element { 
 	position:relative; padding-left:2px; 
 	min-height:2.5em; 
 	background-color: rgba(205, 205, 205, 0.35);
@@ -473,9 +492,9 @@ h1, h2, h3, h4 {
 .news .result 
 { float:left; width:60%; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
 .news .points { position:absolute; top:2px; right:2px; font-weight: bold; }
-.news li:hover { background-color:#E0E0E0 !important; }
-.news-element {  }
-
+.news-element:hover { background-color:#E0E0E0 !important; }
+/*.news-element {  }
+*/
 .news-element .accepted,
 .news-element .reissued,
 .news-element .rejected {
@@ -495,21 +514,17 @@ h1, h2, h3, h4 {
 	width:100%;
 	height:100%;
 }
-.questions .tag{
-	background: #f7fdff;
-	
-	text-align: center;
-	line-height: 1;
-	color: #3e6d8e;
-	background-color: #e4edf4;
-	padding: 0.3em;
-	margin: 2px 2px;
-	text-decoration: none;
-	font-size: 1em;
-	white-space: nowrap;
-	display: inline-block;
-	border-radius: 0;
-	border: 1px solid #e4edf4;
+.questions .tag {
+  line-height: 1;
+  color: #FFFFFF;
+  background-color: #6EB1DC;
+  padding: 2px;
+  margin: 0px 0px 5px 5px;
+  font-size: 1em;
+  white-space: nowrap;
+  display: inline-block;
+  border-radius: 0;
+  font-family: 'Lato';
 }
 
 
@@ -570,17 +585,15 @@ h1, h2, h3, h4 {
 
 
 
-.questions .list-group .comment-item { margin-left:10px; border-top:1px solid rgb(175, 175, 175); }
+.questions .list-group .comment-item { margin-left:10px; border-top:1px solid rgb(175, 175, 175); padding-right:0px;}
 
 .questions .list-group .list-group-item .content-panel {  }
 .questions .list-group .list-group-item .vote-panel { font-size:1em; position:absolute; top:5px; right:5px; }
 
 .questions .answer-item > .content-panel {  padding-bottom:1em; }
 
-.questions .top .search-box { position:relative; width: 70%; float: left;}
-.questions .top .search-box input { padding-left:2em; padding-right:5px; font-size:1em; line-height:2.6em; }
-.questions .top .search-box span {  left:0; top:0; right:none; color:gray; line-height:2.6em; height:2.6em; width:2em; }
-.questions .top .new-question { width: 30%; float:right; line-height:2.6em; padding:0px;}
+.questions .top .search-box { position:relative; width: 75%; float: left;}
+.questions .top .new-question { width: 25%; float:right; line-height:2.4em; border-radius:0px; padding:0px;}
 
 .questions .question-item .btn-edit { 
 	display:none; 
@@ -597,12 +610,6 @@ h1, h2, h3, h4 {
 }
 
 .questions .question-item:hover .btn-edit { display:block; }
-
-/*
-.questions .has-feedback { font-size:1em; }
-.questions .has-feedback .form-control { padding-left:2em; padding-right:0px; font-size:1em; height:2.6em;}
-.questions .form-control-feedback { left:0; top:0; right:none; color:gray; line-height:2.6em; height:2.6em; width:2em; }
-*/
 
 .questions > div {
 	display:block;
@@ -637,6 +644,14 @@ h1, h2, h3, h4 {
 .questions .question-list { margin-left:0%; }
 .questions .question-list.ng-enter { margin-left:-100%; } 
 
+.questions .question-list .top {
+	height:70px;
+}
+
+.questions .question-list .middle {
+	top:70px;
+}
+
 .questions .question-list .list-header {   
 	text-align: right;
 	font-weight: bold;
@@ -663,6 +678,57 @@ h1, h2, h3, h4 {
 .questions .question-detail .answer-item textarea  { min-height:10em; resize: none; }
 .questions .question-detail .command-item textarea { min-height:3em; resize: none; }
 
+.questions .question-list .searchbox {
+ 	
+}
+.questions .question-list .searchbox .host {
+	margin:0px;
+	max-height:60px;
+}
+.questions .question-list .searchbox .tags {
+	padding-left:2.2em;
+	max-height:60px;
+	overflow: auto;
+}
+.questions .question-list .searchbox .tags.focused {
+	box-shadow:none;
+	-webkit-box-shadow:none;
+}
+.questions .question-list .searchbox  .remove-button {
+	color:white;
+	margin:0px;
+}
+.questions .question-list .searchbox li.tag-item {
+
+  line-height: 1;
+  color: #FFFFFF;
+  background:0px;
+  background-color: #6EB1DC;
+  border: none;
+  padding: 2px;
+  margin: 1px 5px 0px 0px;
+  line-height: 1.8em;
+  white-space: nowrap;
+  display: inline-block;
+  border-radius: 0;
+  font-family: 'Lato';
+  height: 1.8em;
+  font-size: 1em;
+}
+.questions .question-list .searchbox .input {
+	margin:0px;
+	padding:0px;
+	box-shadow:none;
+}
+
+.questions .question-list .form-control-feedback {
+	position:absolute;
+	top:0px;
+	left:0px;
+	line-height: 2.4em;
+	width: 2.0em;
+	height: 2.4em;
+}
 /*
 rgba(17,112,190,1) Wode - blue - writefunction
 rgba(252,223,63,1) Aerial yellow - yellow - writetestcases
@@ -1161,7 +1227,7 @@ tutorial  { display:none; }
 .section {
 	position:relative;
 	margin-bottom:15px;
- 	background-color:#EEEEEE;
+ 	background-color:#e9eaed;
  	color: #303030;
 }
 .section-title {

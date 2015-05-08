@@ -67,7 +67,8 @@ console.log(dir,distDir);
 				dest: '.tmp/client.jsp',             // destination directory or file
 				replacements: [
 					// replace all '/client' occurrences with 'client'
-					{ from: 'src="/'+dir+'/', to: 'src="/'+distDir+'/' }
+					{ from: 'src="/'+dir+'/', to: 'src="/'+distDir+'/' },
+					{ from: 'href="/'+dir+'/', to: 'href="/'+distDir+'/' }
 				]
 			},
 

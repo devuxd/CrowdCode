@@ -104,7 +104,7 @@ angular
     }
 
     function collectFormData(event, microtaskForm) {
-
+        console.log('collecting');
         // insert the test case in the input box if there is one
         addTestCase();
 

@@ -23,7 +23,6 @@ angular
 		function submit (microtask, formData, autoSkip, autoFetch){
 			var skip = formData === undefined ? 'true' : 'false' ;
 			autoFetch = (autoFetch ? 'true' : 'false');
-			console.log(autoFetch);
 			var disablePoint = autoSkip ? 'true':'false';
 			// submit to the server
 			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
@@ -52,8 +51,7 @@ angular
 			} else {
 				var microtask = get(data.microtaskKey);
 				microtask.$loaded().then(function() {
-					console.log(microtask);
-					$rootScope.$broadcast('loadMicrotask',microtask, data.firstFetch);
+					$rootScope.$broadcast('microtaskLoaded',microtask, data.firstFetch);
 				});
 			}
 		}

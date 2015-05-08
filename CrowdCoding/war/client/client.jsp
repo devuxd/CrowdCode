@@ -66,19 +66,6 @@
 	        <div id="content" class="order-3" >
 	        	<microtask-form></microtask-form>
 	        </div>
-
-	        <div class="column-resizer order-2"
-	        	ng-show="leftBar"
-	        	resizer="vertical"
-	    		resizer-width="5"
-	    		resizer-left  = "#sidebarLeft"
-	    		resizer-right = "#content"
-	    		resizer-main="left"
-	    		resizer-max="40"
-	    		resizer-min="15"
-	    		>
-	    	</div>
-
 	    </div>
 	</div>
 

@@ -130,10 +130,12 @@
 				</li>
 				<li class="list-group-item comment-item" ng-if="!sel.closed">
 					<a href="#" 
+						class="pull-right"
 						ng-show='!form.comment.show' 
 						ng-click="form.comment.show = true ; form.comment.answerId = a.id" >
-						Add Comment
+						write a comment
 					</a>
+					<span class="clearfix"></span>
 					<form name="commentForm" novalidate ng-show='form.comment.show && form.comment.answerId == a.id' ng-submit="commentForm.$valid && postComment(a.id)">
 						<div class="form-group">
 							<textarea name="text" 
@@ -157,7 +159,8 @@
 
 		</li>
 		<li class="list-group-item answer-item" ng-if="!sel.closed">
-			<a href="#" ng-show="!form.answer.show " ng-click="form.answer.show=true">Add Answer</a>
+			<a href="#" class="pull-right" ng-show="!form.answer.show " ng-click="form.answer.show=true">answer this question</a>
+			<span class="clearfix"></span>
 			<form name="answerForm" novalidate  ng-show="form.answer.show" ng-submit="answerForm.$valid && postAnswer()">
 				<div class="form-group">
 					<textarea required name="text" class="form-control" ng-model="form.answer.text" placeholder="answer text"></textarea>

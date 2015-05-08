@@ -39,7 +39,7 @@ angular
 
 
             // listen on the event 'loadMicrotask'
-            $rootScope.$on('loadMicrotask', function($event, microtask,firstFetch){
+            $rootScope.$on('microtaskLoaded', function($event, microtask,firstFetch){
                 if( firstFetch == '1')
                     userService.setFirstFetchTime();
 

@@ -4,39 +4,56 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 		restrict: 'AEC',
 		templateUrl: '/client/questions/questionsList.html',
 		link: function($scope,$element,$attrs){
+
+			var searchTimeout;
+
+			$scope.search = [];
+			$scope.sel = null;
 			
+			$scope.updateFilter = updateFilter;
+			$scope.getFilterStr = getFilterStr;
 			$scope.resetFilter = resetFilter;
 			$scope.addToFilter = addToFilter;
 
-			$scope.sel = null;
 
-			$scope.search    = '';
+			function getFilterStr(){
+				var text = '';
+				for( var i = 0; i < $scope.search.length; i++)
+					text += ' ' + $scope.search[i].text;
+				return text;
+			}
 
-			var searchTimeout;
-			$scope.$watch('search',function( val ){
-				if (searchTimeout) $timeout.cancel(searchTimeout);
+			function updateFilter(){
+				
+				console.log('updating...',text)
+				var text = getFilterStr();
 		        searchTimeout = $timeout(function() {
-		        	if( val.length === 0)
+		        	if( text == '' )
 		        		$scope.questions = questionsService.getQuestions();
 		        	else {
-		        		$scope.questions = questionsService.searchResults( val );
+		        		$scope.questions = questionsService.searchResults( text );
 		        	}
 		        }, 250); // delay 250 ms
-			});
-
+			}
 
 			function resetFilter(){
-				$scope.search = '';
+				$scope.search = [];
+				updateFilter();
 			}
 
 			function addToFilter( text ){
-				if( $scope.search.indexOf(text) > -1 )
-					return; 
-				
-				$scope.search = text + ' ' + $scope.search ; 
+				var found = false;
+				for( var i = 0; i < $scope.search.length; i++)
+					if( !found && $scope.search[i].text == text ) 
+						found = true;
+				if( !found )
+					$scope.search.push({ text: text }); 
 			}
 
 
+		}, 
+		controller: function($scope){
+			
 		}
 	};
 });
