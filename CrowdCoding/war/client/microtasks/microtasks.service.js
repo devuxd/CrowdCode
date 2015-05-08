@@ -51,7 +51,6 @@ angular
 			} else {
 				var microtask = get(data.microtaskKey);
 				microtask.$loaded().then(function() {
-					console.log(microtask);
 					$rootScope.$broadcast('microtaskLoaded',microtask, data.firstFetch);
 				});
 			}

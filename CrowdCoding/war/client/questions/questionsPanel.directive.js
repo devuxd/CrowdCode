@@ -28,6 +28,7 @@ angular
 			$scope.$on('noMicrotask',   onMicrotaskLoaded ); 
 			$scope.$on('microtaskLoaded', onMicrotaskLoaded );
 			$scope.$on('showQuestion',  onShowQuestion );
+			$scope.$on('askQuestion',   onAskQuestion );
 
 			function onMicrotaskLoaded( event, microtask ){
 				if( microtask === undefined )
@@ -38,6 +39,12 @@ angular
 
 			function onShowQuestion( event, questionId ){
 				setSelected( $scope.questions.$getRecord(questionId) );
+			}
+
+
+			function onAskQuestion( event, questionId ){
+				$scope.sel = null;
+				setUiView('form');
 			}
 
 			function setUiView(view){

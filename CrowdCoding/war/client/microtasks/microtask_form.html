@@ -5,52 +5,32 @@
 	<reminder></reminder>
 
 	<div class="button-bar">
-		
-		<div class="btn-group pull-left" role="group">
-			<a href="#" class="btn btn-mini btn-sm"
-			   id="feedbackBtn"
-			   data-animation="am-fade-and-scale"
-			   data-placement="center"
-			   data-container="body"
-			   data-template="widgets/popup_feedback.html" bs-modal="modal">Send Us Feedback!
-			</a>
+
+		<div class="btn-group pull-right" role="group">
+
+			<button type="button" class="btn btn-default" ng-model="askABreak" bs-checkbox>Ask a break</button>
+
 			<a href="#" class="btn btn-mini btn-sm">Confused?</a>
+
+			<button type="button"
+       	 		id= "skipBtn"
+       			ng-click="$emit('submitMicrotask')" 
+       			tabindex="100" 
+       			class="btn btn-default btn-sm"
+       			ng-disabled="noMicrotask">
+       			Skip
+       		</button>
+		  	
+		  	<button type="button" 
+      			id="submitBtn"
+		  		ng-click="$broadcast('collectFormData', microtaskForm) " 
+		  		tabindex="99" 
+		  		class="btn btn-primary btn-sm"
+		  		ng-disabled="noMicrotask">
+		  		Submit
+		  	</button>
 		</div>
-		<div ng-hide="isInBreakMode && noMicrotask">
-			<div class="btn-group pull-right" role="group">
-				<button type="button"
-	       	 		id= "skipBtn"
-	       			ng-click="$emit('submitMicrotask')" 
-	       			tabindex="100" 
-	       			class="btn btn-default btn-sm"
-	       			ng-disabled="noMicrotask">
-	       			Skip
-	       		</button>
-			  	<button type="button" 
-	      			id="submitBtn"
-			  		ng-click="$broadcast('collectFormData', microtaskForm) " 
-			  		tabindex="99" 
-			  		class="btn btn-primary btn-sm"
-			  		ng-disabled="noMicrotask">
-			  		Submit
-			  	</button>
-		    </div>
-		  	<div class="checkbox pull-right">
-		  	   	<label>
-		  	    	<input type="checkbox" ng-model="isInBreakMode">Take a break
-		  	   	</label>
-		  	</div>
-		</div>
-		<div ng-show="isInBreakMode && noMicrotask">
-			<div class="btn-group pull-right" role="group">
-				<button type="button"
-	       			ng-click="$emit('fecthMicrotask')" 
-	       			tabindex="100" 
-	       			class="btn btn-primary btn-sm">
-			       			Ask a new Mickrotask
-	       		</button>
-	    	</div>
-	    </div>
 		<span class="clearfix"></span>
+	
 	</div>
 </form>
