@@ -1,12 +1,11 @@
 
 angular
     .module('crowdCode')
-    .directive('microtaskCollapsable', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService,FunctionFactory, TestList){
+    .directive('newsDetail', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService,FunctionFactory, TestList){
     return {
-        templateUrl: "/client/newsfeed/news_collapsable.html",
-        scope: {
-            n: "="
-        },
+        templateUrl: "/client/newsfeed/news_detail.html",
+        restrict:"AEC",
+        scope: false,
         link: function($scope, iElm, iAttrs, controller) {
             var loadData = {
                 'WriteFunction': function(news) {
@@ -100,20 +99,21 @@ angular
                 }
 
             };
-            $scope.n.microtask = microtasksService.get($scope.n.microtaskKey);
-            $scope.n.microtask.$loaded().then(function() {
+            $scope.selectedNews.microtask = microtasksService.get($scope.selectedNews.microtaskKey);
+            $scope.selectedNews.microtask.$loaded().then(function() {
                 //if the microtask is a review
-                if ($scope.n.microtask.type == "Review") {
-                    $scope.n.isReview = true;
-                    console.log($scope.n.microtask);
-                    $scope.n.qualityScore = $scope.n.microtask.submission.qualityScore;
-                    $scope.n.reviewText = $scope.n.microtask.submission.reviewText;
-                } else if (angular.isDefined($scope.n.microtask.review)) {
+                if ($scope.selectedNews.microtask.type == "Review") {
+                    $scope.selectedNews.isReview = true;
+                    console.log($scope.selectedNews.microtask);
+                    $scope.selectedNews.qualityScore = $scope.selectedNews.microtask.submission.qualityScore;
+                    $scope.selectedNews.reviewText = $scope.selectedNews.microtask.submission.reviewText;
+                } else if (angular.isDefined($scope.selectedNews.microtask.review)) {
 
-                    $scope.n.qualityScore = $scope.n.microtask.review.qualityScore;
-                    $scope.n.reviewText = $scope.n.microtask.review.reviewText;
+                    $scope.selectedNews.qualityScore = $scope.selectedNews.microtask.review.qualityScore;
+                    $scope.selectedNews.reviewText = $scope.selectedNews.microtask.review.reviewText;
                 }
-                loadData[$scope.n.microtask.type]($scope.n);
+                
+                loadData[$scope.selectedNews.microtask.type]($scope.selectedNews);
             });
 
         }
