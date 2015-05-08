@@ -330,8 +330,8 @@ public class FirebaseService
 	}
 
 	// Writes the specified question to firebase
-	public static void writeQuestionCreated(QuestionInFirebase dto, String path, String projectId){
-		enqueueWrite(dto.json(), path + ".json", HTTPMethod.PATCH, projectId);
+	public static void writeQuestion(QuestionInFirebase dto, String projectId){
+		enqueueWrite(dto.json(), "/questions/"+dto.id+".json", HTTPMethod.PATCH, projectId);
 	}
 	
 	// Writes the specified question to firebase
@@ -344,14 +344,6 @@ public class FirebaseService
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
 	
-	public static void updateQuestion(Question question, String projectId){
-		enqueueWrite(" { \"updatedAt\": "+question.getUpdatedAt()+", \"answersCount\" : " + question.getAnswers() + ", \"commentsCount\" : " + question.getComments() + ", \"version\" : " + question.getVersion() + " } ", "/questions/"+question.getID()+".json", HTTPMethod.PATCH, projectId);
-	}
-
-	public static void updateQuestionTags(Question question, String projectId) {
-		System.out.println(new TagsInFirebase(question.getTags()).json());
-		enqueueWrite( new TagsInFirebase(question.getTags()).json(), "/questions/"+question.getID()+".json", HTTPMethod.PATCH, projectId);
-	}
 
 	public static void updateQuestioningVoters(VotersIdInFirebase votersId, String path, String projectId)	{
 		enqueueWrite(votersId.json(), path +".json", HTTPMethod.PATCH, projectId);

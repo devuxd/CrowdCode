@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.entities.Question;
 
 public class QuestionInFirebase extends DTO
 {
@@ -30,8 +31,8 @@ public class QuestionInFirebase extends DTO
 	
 	// Default constructor (required by Jackson JSON library)
 	public QuestionInFirebase(){}
-
-	public QuestionInFirebase(long id, String ownerId, String ownerHandle, String title, String text, List <String> tags, long time, int score, List <String> subsribersId, List <String> artifactsId, boolean closed)
+	
+	public QuestionInFirebase(long id, String ownerId, String ownerHandle, String title, String text, List <String> tags, long createdAt, long updatedAt, int score, int version, long answersCount, long commentsCount, List <String> subsribersId, List <String> artifactsId, boolean closed)
 	{
 		this.id= id;
 		this.ownerId     = ownerId;
@@ -39,14 +40,14 @@ public class QuestionInFirebase extends DTO
 		this.title=title;
 		this.text=text;
 		this.tags=tags;
-		this.createdAt = time;
-		this.updatedAt = time;
-		this.answersCount  = 0;
-		this.commentsCount = 0;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.answersCount  = answersCount;
+		this.commentsCount = commentsCount;
 		this.score=score;
 		this.subscribersId =  subsribersId;
 		this.artifactsId   =  artifactsId;
 		this.closed   =  closed;
-		this.version = 1;
+		this.version = version;
 	}
 }

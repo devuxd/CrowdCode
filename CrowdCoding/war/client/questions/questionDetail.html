@@ -1,12 +1,12 @@
 
 
 <div class="top padding">
-	<a href="#" class="pull-left" ng-click="updateView(); setUiView('question_list'); ">
+	<a href="#" class="pull-left" ng-click="updateView(); setUiView('list');">
 		<span class="glyphicon glyphicon-arrow-left"></span>
 		back
 	</a>
 
-	<a href="#" class="pull-right" ng-click="toggleClosed(sel)">
+	<a href="#" class="pull-right" ng-click="toggleClosed(sel)" ng-if="sel.answersCount != null && sel.answersCount > 0">
 		{{ sel.closed ? 'Reopen for discussion' : 'Mark as closed' }}
 	</a>
 
@@ -17,33 +17,12 @@
 	<ul class="list-group">
 
 		<li class="list-group-item question-item  {{ sel.closed ? '' : 'open' }}">
-
+			<span class="btn btn-edit" ng-click="setUiView('form'); " ng-if="!sel.closed">edit</span>
 			<h3 class="panel-title"  >{{sel.title}}</h3>
 			<div>{{sel.text}}</div>
 			<div>
 				<span class="pull-right">
-					<span ng-repeat="tag in sel.tags" class="tag">{{tag}} <span ng-click="removeTag(tag)">x</span></span>
-					<span ng-if="!form.tag.show" ng-click="form.tag.show = true" class="btn btn-xs btn-link">Add Tag</span>
-					<form name="tagForm" novalidate ng-show='form.tag.show' ng-submit="tagForm.$valid && addTag()">
-						<div class="form-group">
-							<input name="tag" 
-								class="form-control" 
-								ng-model="form.tag.text" 
-								placeholder="insert a tag"
-								ng-pattern="/^(\w|\s)+$/"
-								required
-								/>
-							<div class="help-block" ng-messages="tagForm.tag.$dirty && tagForm.tag.$error">
-	                          <div ng-message="required">tag name can't be empty!</div>
-	                          <div ng-message="pattern">tag name is composed only by letters and spaces!</div>
-	                        </div>
-						</div>
-						<span class="btn-group pull-right">
-							<button type="button" class="btn btn-xs btn-default" ng-click="form.tag.show = false; ">Cancel</button>
-							<button type="submit" class="btn btn-xs btn-primary">Add tag</button>
-						</span>
-						<div class="clearfix"></div>
-					</form>
+					<span ng-repeat="tag in sel.tags" class="tag">{{tag}}</span>
 				</span> 
 				<span class="pull-left">
 					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{sel.createdAt | date : 'medium'}}"></time-ago>
@@ -149,9 +128,9 @@
 						
 
 				</li>
-				<li class="list-group-item comment-item" >
+				<li class="list-group-item comment-item" ng-if="!sel.closed">
 					<a href="#" 
-						ng-show='!sel.closed && !form.comment.show' 
+						ng-show='!form.comment.show' 
 						ng-click="form.comment.show = true ; form.comment.answerId = a.id" >
 						Add Comment
 					</a>
@@ -177,8 +156,8 @@
 			<span class="clearfix"></span>
 
 		</li>
-		<li class="list-group-item answer-item">
-			<a href="#" ng-show="!sel.closed && !form.answer.show " ng-click="form.answer.show=true">Add Answer</a>
+		<li class="list-group-item answer-item" ng-if="!sel.closed">
+			<a href="#" ng-show="!form.answer.show " ng-click="form.answer.show=true">Add Answer</a>
 			<form name="answerForm" novalidate  ng-show="form.answer.show" ng-submit="answerForm.$valid && postAnswer()">
 				<div class="form-group">
 					<textarea required name="text" class="form-control" ng-model="form.answer.text" placeholder="answer text"></textarea>

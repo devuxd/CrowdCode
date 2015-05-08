@@ -1,6 +1,7 @@
 angular.module('crowdCode').directive('questionDetail',function($timeout,$firebase,firebaseUrl,workerId,questionsService){
 	return {
 		scope: true,
+		restrict: 'AEC',
 		templateUrl: '/client/questions/questionDetail.html',
 		link: function($scope,$element,$attrs){
 			$scope.form = {};
@@ -36,7 +37,7 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,$fireba
 
 			function toggleClosed(questioning){
 				if( questioning.closed !== undefined ){
-					questionsService.setStatus(questioning.id, ! questioning.closed );
+					questionsService.setClosed(questioning.id, ! questioning.closed );
 				}
 			}
 

@@ -39,13 +39,15 @@
 
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
-	<link rel="stylesheet" href="http://rawgithub.com/mgcrea/bootstrap-additions/master/dist/bootstrap-additions.min.css">
+	<link rel="stylesheet" href="/include/bootstrap-additions/dist/bootstrap-additions.min.css">
     <link rel="stylesheet" href="/include/angular-strap/libs.min.css">
 	<link rel="stylesheet" href="/include/angular-toaster/toaster.min.css" type="text/css" />
 	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
 
+	<link rel="stylesheet" href="/include/ng-tags-input/ng-tags-input.min.css" type="text/css" />
+
     
-	<link rel="stylesheet" href="/clientDist/client.css" type="text/css" />
+	<link rel="stylesheet" href="/client/client.css" type="text/css" />
 
 
 </head>
@@ -113,6 +115,9 @@
 	<script src="/include/angular-toaster/toaster.min.js"></script>
 	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
+
+
+	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>
 
 
 

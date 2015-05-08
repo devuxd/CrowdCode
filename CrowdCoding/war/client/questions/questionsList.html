@@ -3,7 +3,7 @@
 		<input type="text" ng-model="search" class="form-control" placeholder="filter questions">
 		<span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
 	</span>
-	<button class="btn btn-sm btn-primary new-question" ng-click="setUiView('question_form'); ">Ask new</button>
+	<button class="btn btn-sm btn-primary new-question" ng-click="setUiView('form'); ">Ask new</button>
 </div>
 <div class="middle">
 	<div class="padding">
@@ -75,8 +75,8 @@
 		<li class="list-group-item list-header" ng-show=" ( questions | unrelatedToArtifact : loadedArtifact.id ).length > 0 ">
 			Other questions
 		</li>
+
 		<li class="list-group-item question-item {{ q.closed ? '' : 'open' }}"
-			ng-show="loadedArtifact != null" 
 			ng-click="setSelected(q)" 
 			ng-repeat="q in questions | unrelatedToArtifact : loadedArtifact.id  | orderBy : 'closed'  "
 			>

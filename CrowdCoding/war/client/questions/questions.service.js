@@ -33,7 +33,7 @@ angular
 		this.report        = report;
 		this.tag           = tag;
 		this.linkArtifact  = linkArtifact;
-		this.setStatus     = setStatus;
+		this.setClosed     = setClosed;
 		this.allTags       = allTags;
 		this.searchResults = searchResults;
 		this.getQuestions  = function(){return questions;};
@@ -131,7 +131,12 @@ angular
 
 		function submit(type, formData){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/insert?type=' + type, formData)
+			var url = '';
+
+			if( type != 'question' || formData.id == 0 ) url = 'insert?type=' + type;
+			else                   url = 'update?id=' + formData.id;
+
+			$http.post('/' + $rootScope.projectId + '/questions/' + url , formData)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -189,13 +194,16 @@ angular
 			return deferred.promise;
 		}
 
-		function setStatus(id, closed){
+		function setClosed(id, closed){
 			var deferred = $q.defer();
+			console.log(closed);
 			$http.post('/' + $rootScope.projectId + '/questions/close?id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
+					console.log('OK');
 					deferred.resolve();
 				})
 				.error(function(data, status, headers, config) {
+					console.log('KO');
 					deferred.reject();
 				});
 			return deferred.promise;

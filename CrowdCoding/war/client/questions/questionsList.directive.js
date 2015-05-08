@@ -1,11 +1,14 @@
 angular.module('crowdCode').directive('questionList',function($rootScope,$timeout,$firebase,workerId,firebaseUrl, questionsService, microtasksService){
 	return {
 		scope: false,
+		restrict: 'AEC',
 		templateUrl: '/client/questions/questionsList.html',
 		link: function($scope,$element,$attrs){
+			
+			$scope.resetFilter = resetFilter;
+			$scope.addToFilter = addToFilter;
 
-			$scope.resetFilter=resetFilter;
-			$scope.addToFilter=addToFilter;
+			$scope.sel = null;
 
 			$scope.search    = '';
 

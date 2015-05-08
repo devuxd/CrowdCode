@@ -284,8 +284,8 @@ public class CrowdServlet extends HttpServlet
 				doLinkQuestioning(req, resp, user);
 			} else if (pathSeg[3].equals("close")){
 				doCloseQuestion(req, resp, user);
-			} else if (pathSeg[3].equals("tag")){
-				doTagQuestion(req, resp, user);
+			} else if (pathSeg[3].equals("update")){
+				doUpdateQuestion(req, resp, user);
 			}
 		} catch( Exception e ) {
 			e.printStackTrace();
@@ -477,6 +477,20 @@ public class CrowdServlet extends HttpServlet
 		// Copy the command back out the context to initially populate the command queue.
 		executeCommands(projectId);
 	}
+	
+	public void doUpdateQuestion(final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		final String projectId  = (String) req.getAttribute("project");
+		final long   questionId = Long.parseLong((String) req.getParameter("id"));
+		final String payload    = Util.convertStreamToString(req.getInputStream());
+		final String workerId     = user.getUserId();
+		final String workerHandle = user.getNickname();
+		
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
+		QuestioningCommand.updateQuestion(questionId, payload, workerId);
+		executeCommands(projectId);
+	}
 
 	public void doReportQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
@@ -558,18 +572,6 @@ public class CrowdServlet extends HttpServlet
 		executeCommands(projectID);
 	}
 	
-	public void doTagQuestion (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
-	{
-		String projectID = (String) req.getAttribute("project");
-		long questionId  = Long.parseLong((String) req.getParameter("id"));
-		String tag 	     = (String)req.getParameter("tag");
-		boolean remove 	 = Boolean.parseBoolean((String)req.getParameter("remove"));
-		System.out.println("TAG" + questionId + " - "+tag+" - "+remove);
-		ThreadContext.get().reset();
-		QuestioningCommand.tagQuestion(questionId, tag, remove);
-		executeCommands(projectID);
-	}
-
 	public void doVoteQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		// Collect information from the request parameter. Since the transaction may fail and retry,

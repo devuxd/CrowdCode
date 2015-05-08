@@ -34,9 +34,9 @@ public class Question extends Questioning
 
 	private List<String> artifactsId = new ArrayList<String>();
 	private List<String> tags = new ArrayList<String>();
-	private long answers;
-	private long comments;
-	private long version;
+	private long answersCount;
+	private long commentsCount;
+	private int version;
 	private boolean closed;
 	private String title;
 	
@@ -50,42 +50,52 @@ public class Question extends Questioning
 		this.tags= tags;
 		this.artifactsId.add(artifactId);
 		this.subsribersId.add(ownerId);
-		this.points = 3;
-		this.answers  = 0;
-		this.comments = 0;
-		this.version = 1;
+		this.points        = 3;
+		this.answersCount  = 0;
+		this.commentsCount = 0;
+		this.version       = 0;
+		
 		ofy().save().entity(this).now();
+		
+		this.firebasePath= "/questions/" + this.id ;
 
-		this.firebasePath="/questions/" + this.id;
-		ofy().save().entity(this).now();
-
-		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.createdAt, this.score, this.subsribersId, this.artifactsId, this.closed), this.firebasePath, projectId);
+		save();
 		
 		NotificationInFirebase notification = new NotificationInFirebase( "question.added", "{ \"questionId\": \""+this.id+"\", \"title\": \""+this.title+"\" }" );
 		ProjectCommand.notifyLoggedInWorkers(notification);
 	}
 
+
 	public String getTitle() {
 		return title;
 	}
 	
-	public void removeArtifactLink(String artifactId)
-	{
-		if(artifactsId.remove(artifactId)){
-			ofy().save().entity(this).now();
-			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
-		}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
-	public void addArtifactLink(String artifactId)
-	{
-		if(! artifactsId.contains(artifactId)){
-			artifactsId.add(artifactId);
-			ofy().save().entity(this).now();
-			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
-		}
+	public void setText(String text){
+		this.text = text;
+	}
+	
+	public void setTags(List<String> tags){
+		this.tags = tags;
 	}
 
+	public void addArtifactLink(String artifactId)
+	{
+		artifactsId.add(artifactId);
+		ofy().save().entity(this).now();
+		FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
+	}
+
+	public void removeArtifactLink(String artifactId)
+	{
+		artifactsId.remove(artifactId);
+		ofy().save().entity(this).now();
+		FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
+	}
+	
 	public void unsubscribeWorker(String workerId)
 	{
 		if(subsribersId.remove(workerId)){
@@ -104,60 +114,29 @@ public class Question extends Questioning
 	}
 	
 	public void setClosed(boolean closed){
-		if( this.closed != closed ){
-			this.closed = closed;
-			ofy().save().entity(this).now();
-			FirebaseService.updateQuestioningClosed(this.closed,this.firebasePath,projectId);
-		}
+		this.closed = closed;
+		ofy().save().entity(this).now();
+		storeToFirebase();
 	}
 
 	public void incrementAnswers() {
-		this.answers ++;
-		this.incrementVersion();
+		this.answersCount ++;
 	}
 	
 	public void incrementComments() {
-		this.comments ++;
-		this.incrementVersion();
+		this.commentsCount ++;
 	}
 
-	public void incrementVersion(){
-		this.version ++;
-		this.updatedAt = System.currentTimeMillis();
-		ofy().save().entity(this).now();
-		FirebaseService.updateQuestion(this, projectId);
-	}
-	
-
-
-	public void addTag(String tag) {
-		if( ! this.tags.contains(tag) ){
-			this.tags.add( tag );
-			ofy().save().entity(this).now();
-			FirebaseService.updateQuestionTags(this, projectId);
-		}	
-	};
-	
-	
-	public void removeTag(String tag) {
-		System.out.println(" TAGS "+this.tags.toString() + " contains "+tag+ " ? "+this.tags.contains(tag) );
-		if( this.tags.contains(tag) ){
-			this.tags.remove( tag );
-			ofy().save().entity(this).now();
-			FirebaseService.updateQuestionTags(this, projectId);
-		}	
-	};
-	
 	public long getUpdatedAt() {
 		return this.updatedAt;
 	}
 
 	public long getAnswers() {
-		return this.answers;
+		return this.answersCount;
 	}
 	
 	public long getComments() {
-		return this.comments;
+		return this.commentsCount;
 	}
 
 	public long getVersion() {
@@ -166,5 +145,35 @@ public class Question extends Questioning
 
 	public List<String> getTags() {
 		return this.tags;
+	}
+
+	public void save() {
+		this.version++;
+		this.updatedAt = System.currentTimeMillis();
+		ofy().save().entity(this).now();
+		storeToFirebase();
+	}
+	
+
+	private void storeToFirebase() {
+		FirebaseService.writeQuestion(new QuestionInFirebase(
+				this.id, 
+				this.ownerId, 
+				this.ownerHandle, 
+				this.title, 
+				this.text, 
+				this.tags, 
+				this.createdAt, 
+				this.updatedAt,
+				this.score, 
+				this.version,
+				this.answersCount,
+				this.commentsCount,
+				this.subsribersId, 
+				this.artifactsId, 
+				this.closed
+			),  
+			projectId
+		);
 	}
 }

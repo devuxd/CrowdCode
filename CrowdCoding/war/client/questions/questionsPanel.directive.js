@@ -7,9 +7,10 @@ angular
 		link: function($scope,$element,$attrs){
 			
 			$scope.allTags        = [];
-			$scope.loadedArtifact = null;
-			$scope.view           = 'question_list';
+			$scope.view           = 'list';
+			$scope.animation      = 'from-left';
 			$scope.sel            = null;
+			$scope.loadedArtifact = null;
 
 			$scope.questions = questionsService.getQuestions();
 			$scope.questions.$loaded().then(function(){
@@ -40,14 +41,25 @@ angular
 			}
 
 			function setUiView(view){
-				$scope.view = view;
+				var prev = $scope.view;
+				if( (prev == 'list' && view == 'detail') || (prev == 'detail' && view == 'list'))
+					$scope.animation = 'from-right';
+				else 
+					$scope.animation = 'from-left';
+
+				
+				$timeout(function(){ 
+					$scope.view = view; 
+					if( view == 'list' ) 
+						$scope.sel = null; 
+				},200);
 			}
 
 			function setSelected(q){
 				$scope.sel = q;
 
 				updateView();
-				setUiView('question_detail');
+				setUiView('detail');
 			}
 
 			function updateView(){
@@ -91,9 +103,21 @@ angular
 
 			function toggleRelation(q){
 				if( isRelatedToArtifact(q) ){
-					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , true );
+					questionsService
+						.linkArtifact(q.id, $scope.loadedArtifact.id , true )
+						.then(function(){
+							console.log('success');
+						},function(){
+							console.log('error');
+						});
 				} else {
-					questionsService.linkArtifact(q.id, $scope.loadedArtifact.id , false );
+					questionsService
+						.linkArtifact(q.id, $scope.loadedArtifact.id , false )
+						.then(function(){
+							console.log('success');
+						},function(){
+							console.log('error');
+						});
 				}
 			}
 
