@@ -25,7 +25,7 @@ angular
 			$scope.getUpdateString = getUpdateString;
 
 			$scope.$on('noMicrotask',   onMicrotaskLoaded ); 
-			$scope.$on('loadMicrotask', onMicrotaskLoaded );
+			$scope.$on('microtaskLoaded', onMicrotaskLoaded );
 			$scope.$on('showQuestion',  onShowQuestion );
 
 			function onMicrotaskLoaded( event, microtask ){

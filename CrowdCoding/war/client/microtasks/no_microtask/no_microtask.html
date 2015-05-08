@@ -1,5 +1,5 @@
 <div ng-controller="NoMicrotaskController" >
-	<div class="alert alert-warning no-microtask" role="alert" >
+	<div ng-hide="isInBreakMode" class="alert alert-warning no-microtask" role="alert" >
 		SORRY, there aren't available microtasks at the moment. <br />
 		The microtask queue will be checked again in <strong> {{checkQueueIn}} seconds </strong>.
 	</div>

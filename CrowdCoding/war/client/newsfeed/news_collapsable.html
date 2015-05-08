@@ -1,0 +1,20 @@
+<div class="task-{{ n.microtaskType | lowercase }}">
+    <h3 class="popover-title"><b>Your work on: &emsp; </b> 
+        <span class="microtask-title" ng-if="! n.isReview">{{n.microtask.title}} </span>
+        <span class="microtask-title" ng-if="n.isReview"> review</span>
+    </h3>
+    <!-- MICROTASK DATA -->
+    <div ng-if="n.microtask.type" ng-include="'/client/newsfeed/news_popover_' + n.microtask.type + '.html'"></div>
+    <!-- REVIEW SCORE -->
+    <div ng-if="n.qualityScore">
+        <h3 class="popover-title " ng-if="! n.isReview"><b>Score received:</b> </h3>
+        <h3 class="popover-title " ng-if="n.isReview"><b>Given score:</b> </h3>
+        <div  class="section section-description">
+            <div class="section-content" >
+                <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ n.qualityScore >= currentValue ? 'full' : '' }}"></span>
+                <span class="clearfix"></span><br />
+                <span ng-if="n.reviewText"> <b>Review: </b>{{n.reviewText}}</span>
+            </div>
+        </div>
+    </div>
+</div>

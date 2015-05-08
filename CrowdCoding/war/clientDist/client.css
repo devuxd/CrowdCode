@@ -26,6 +26,12 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(169, 68, 66,.6);
 
 }
+.newsfeed-panel{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: scroll;
+}
 .popover-news{
 	width: 65%;
 	max-width: 65% !important;
@@ -463,7 +469,7 @@ h1, h2, h3, h4 {
 .leaderboard .name { overflow: hidden; line-height:25px; padding-left: 4px; text-overflow: ellipsis; white-space: nowrap; }
 
 /* SIDEBAR NEWS PANEL */
-.news li { 
+.news-element { 
 	position:relative; padding-left:2px; 
 	min-height:2.5em; 
 	background-color: rgba(205, 205, 205, 0.35);
@@ -473,9 +479,9 @@ h1, h2, h3, h4 {
 .news .result 
 { float:left; width:60%; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
 .news .points { position:absolute; top:2px; right:2px; font-weight: bold; }
-.news li:hover { background-color:#E0E0E0 !important; }
-.news-element {  }
-
+.news-element:hover { background-color:#E0E0E0 !important; }
+/*.news-element {  }
+*/
 .news-element .accepted,
 .news-element .reissued,
 .news-element .rejected {
