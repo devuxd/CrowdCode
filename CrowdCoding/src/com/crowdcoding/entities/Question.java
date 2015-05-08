@@ -60,6 +60,7 @@ public class Question extends Questioning
 		this.firebasePath= "/questions/" + this.id ;
 
 		save();
+		storeVersionToFirebase();
 		
 		NotificationInFirebase notification = new NotificationInFirebase( "question.added", "{ \"questionId\": \""+this.id+"\", \"title\": \""+this.title+"\" }" );
 		ProjectCommand.notifyLoggedInWorkers(notification);
@@ -106,8 +107,8 @@ public class Question extends Questioning
 	
 	public void subscribeWorker(String workerId)
 	{
-		if(! artifactsId.contains(workerId)){
-			artifactsId.add(workerId);
+		if(! subsribersId.contains(workerId)){
+			subsribersId.add(workerId);
 			ofy().save().entity(this).now();
 			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
 		}
@@ -150,11 +151,32 @@ public class Question extends Questioning
 	public void save() {
 		this.version++;
 		this.updatedAt = System.currentTimeMillis();
-		ofy().save().entity(this).now();
 		storeToFirebase();
+		ofy().save().entity(this).now();
 	}
 	
 
+	public void storeVersionToFirebase(){
+		FirebaseService.writeQuestionVersion(new QuestionInFirebase(
+				this.id, 
+				this.ownerId, 
+				this.ownerHandle, 
+				this.title, 
+				this.text, 
+				this.tags, 
+				this.createdAt, 
+				this.updatedAt,
+				this.score, 
+				this.version,
+				this.answersCount,
+				this.commentsCount,
+				this.subsribersId, 
+				this.artifactsId, 
+				this.closed
+			),  
+			projectId
+		);
+	}
 	private void storeToFirebase() {
 		FirebaseService.writeQuestion(new QuestionInFirebase(
 				this.id, 
@@ -176,4 +198,5 @@ public class Question extends Questioning
 			projectId
 		);
 	}
+	
 }

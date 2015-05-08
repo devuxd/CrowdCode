@@ -16,15 +16,15 @@ module.exports = function (grunt) {
 
 	grunt.initConfig({
 	
-    	pkg: grunt.file.readJSON( './../package.json'),
+    	pkg: grunt.file.readJSON( '../package.json'),
 	
     	
 		// converts all .html templates in js and write them in .tmp/templates.js
 		html2js: {
 			options: { base: '' },
 			main: {
-				src: [ '/**/*.html'],
-				dest:  '/.tmp/templates.js'
+				src: [ '**/*.html'],
+				dest:  '.tmp/templates.js'
 			},
 		},
 
@@ -34,11 +34,12 @@ module.exports = function (grunt) {
 				files: [ 
 					{ 
 						src: [ 
-							dir + '/**/*.js',
-							dir + '/.tmp/templates.js',
-							'!' + dir + '/Gruntfile.js',
+							'admin.js', 
+							'**/*.js', 
+							'!Gruntfile.js',
+							'.tmp/templates.js',
 						],
-						dest: dir + '/.tmp/admin.js'
+						dest: '.tmp/admin.js'
 					} 
 				] 
 			} 
@@ -48,8 +49,8 @@ module.exports = function (grunt) {
 		replace: {
 			// replace the templates url in the client code
 			scripts: {
-				src: [ dir + '/.tmp/admin.js'],             // source files array (supports minimatch)
-				dest: dir + '/.tmp/admin.js',             // destination directory or file
+				src: [ '.tmp/admin.js'],             // source files array (supports minimatch)
+				dest: '.tmp/admin.js',             // destination directory or file
 				replacements: [
 					// replace all '/client' occurrences with 'client'
 					{ from: '/' + dir + '/', to:  '/' + distDir + '/' },
@@ -60,12 +61,12 @@ module.exports = function (grunt) {
 
 			// replace the urls in the jsp page
 			jsp: {
-				src: [ dir + '/admin.jsp'],             // source files array (supports minimatch)
-				dest: dir + '/.tmp/admin.jsp',             // destination directory or file
+				src: [ 'admin.jsp'],             // source files array (supports minimatch)
+				dest: '.tmp/admin.jsp',             // destination directory or file
 				replacements: [
 					// replace all '/client' occurrences with 'client'
-					{ from: 'src="/'+dir+'/', to: 'src="/'+distDir+'/' },
-					{ from: 'href="/'+dir+'/', to: 'href="/'+distDir+'/' }
+					{ from: 'src="/'+dir+'/', to: 'src="/'+distDir+'/' }, 
+					{ from: 'href="/'+dir+'/', to: 'href="/'+distDir+'/' },
 				]
 			},
 		},
@@ -75,21 +76,17 @@ module.exports = function (grunt) {
 		copy: {
 			main: {
 				files: [
-					{expand:true,flatten:true, src: [ dir + '/.tmp/admin.js'], dest: distDir + '/', filter: 'isFile'},
-					{expand:true,flatten:true, src: [ dir + '/.tmp/admin.jsp'], dest: distDir + '/', filter: 'isFile'},
-					{expand:true,flatten:true, src: [ dir + '/styles/*.css'], dest: distDir + '/styles/', filter: 'isFile'},
+					{expand:true,flatten:true, src: [ '.tmp/admin.*'],         dest: '../' + distDir + '/', filter: 'isFile'},
+					{expand:true,flatten:true, src: [ 'styles/*.css'],            dest: '../' + distDir + '/', filter: 'isFile'},
 				],
 			},
 		},
 
 		// watch for any edit of the html, js, css or jsp and rebuild the project
 		watch: {
-			options: {
-				cliArgs: ['--gruntfile', require('path').join( cwd, 'Gruntfile.js' ) ],
-			},
 			scripts: {
-				files: [ dir + '/admin.js', dir + '/styles/*.css', dir + '/**/*.js', dir + '/**/*.html', dir + '/admin.jsp'],
-				tasks: ['get-directory','build'],
+				files: [ 'admin.js', 'styles/*.css', '**/*.js', '/**/*.html', 'admin.jsp'],
+				tasks: ['build'],
 				options: {
 					event: ['all']
 				}
@@ -100,17 +97,12 @@ module.exports = function (grunt) {
 
   	});
 
-	grunt.registerTask('get-directory', 'get directory', function() {
-		console.log( require('path').join( cwd , 'Gruntfile.js' ) );
-	});
-	// grunt.registerTask('test', ['karma:development']);
 	grunt.registerTask('build', [
 		'html2js',
-		// 'concat',
-		// 'replace:scripts',
-		// 'replace:jsp',
-		// 'replace:testRunner',
-		// 'copy',
+		'concat',
+		'replace:scripts',
+		'replace:jsp',
+		'copy',
 		// 'usemin'
 	]);
 };

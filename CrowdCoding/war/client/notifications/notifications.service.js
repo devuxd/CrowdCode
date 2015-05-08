@@ -50,7 +50,8 @@ angular
 							break;
 
 						case 'comment.added':
-							toast.body = 'The worker '+json.workerHandle+' has commented your answer on the question';
+						console.log('comment addedd');
+							toast.body = 'The worker '+json.workerHandle+' has commented the question';
 							toast.clickHandler = function(){ 
 								$rootScope.$broadcast('setLeftBarTab','questions');
 								$rootScope.$broadcast('showQuestion', json.questionId );

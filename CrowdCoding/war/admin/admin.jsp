@@ -53,13 +53,12 @@
         
       </div>
     </div>
-
+    <%
+    String projectID    = (String) request.getAttribute("project");
+    %>
 
     <script>
-    if(projectId===undefined){
-        var projectId = 'drawTry';
-    }
-    console.log('PAGE LOADED');
+    var projectId = '<%=projectID%>';
     </script>
 
     <!-- build:js(.) scripts/oldieshim.js -->
@@ -98,7 +97,7 @@
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <script src="/admin/admin.js"></script>
+    <script src="/admin/admin.js"></script> 
     <!-- directives -->
 
     <!-- endbuild -->

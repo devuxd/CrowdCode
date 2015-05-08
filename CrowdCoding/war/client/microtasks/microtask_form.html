@@ -5,32 +5,64 @@
 	<reminder></reminder>
 
 	<div class="button-bar">
+		<div class="btn-group">
+		
+			<button
+			   type="button"
+			   class="btn btn-link btn-sm"
+			   data-placement="top" 
+			   data-container="body"
+			   data-animation="am-fade-and-scale"
+			   data-template="widgets/feedback.popover.html" 
+			   bs-popover>Send Us Feedback!
+			</button>
+			<button 
+			   ng-if="!breakMode && !noMicrotask" 
+			   type="button"
+			   class="btn btn-link btn-sm" 
+			   data-placement="top" 
+			   data-container="body"
+			   data-animation="am-fade-and-scale"
+			   data-animation="am-flip-x" 
+			   data-template="microtasks/help.popover.html"
+			   bs-popover>
+			   Confused?
+			</button>
+		
 
-		<div class="btn-group pull-right" role="group">
-
-			<button type="button" class="btn btn-default" ng-model="askABreak" bs-checkbox>Ask a break</button>
-
-			<a href="#" class="btn btn-mini btn-sm">Confused?</a>
-
-			<button type="button"
-       	 		id= "skipBtn"
-       			ng-click="$emit('submitMicrotask')" 
-       			tabindex="100" 
-       			class="btn btn-default btn-sm"
-       			ng-disabled="noMicrotask">
-       			Skip
-       		</button>
-		  	
 		  	<button type="button" 
       			id="submitBtn"
-		  		ng-click="$broadcast('collectFormData', microtaskForm) " 
-		  		tabindex="99" 
-		  		class="btn btn-primary btn-sm"
-		  		ng-disabled="noMicrotask">
+		  		class="btn btn-primary btn-sm pull-right"
+       			ng-if="!breakMode"
+		  		ng-click="$parent.$broadcast('collectFormData', microtaskForm) " 
+		  		ng-disabled="noMicrotask"
+		  		tabindex="99" >
 		  		Submit
 		  	</button>
+	  	   	<button type="button" 
+       	 		id= "skipBtn"
+       			class="btn btn-default btn-sm pull-right"
+       			ng-if="!breakMode"
+       			ng-click="$emit('submitMicrotask')" 
+       			ng-disabled="noMicrotask"
+       			tabindex="100" >
+       			Skip
+       		</button>
+		  	<label class="btn btn-sm pull-right" ng-hide="breakMode || noMicrotask">
+	  	    	<input type="checkbox" ng-model="startBreak" 
+	  	    	>
+	  	    	<span>Take a break</span>
+	  	   	</label>
+			
+			<button type="button"
+       			class="btn btn-primary btn-sm pull-right"
+       			ng-if="breakMode"
+       			ng-click="$emit('fecthMicrotask'); " 
+       			tabindex="100" >
+		       	Fetch a microtask
+       		</button>
+
+		    </div>
 		</div>
-		<span class="clearfix"></span>
-	
 	</div>
 </form>

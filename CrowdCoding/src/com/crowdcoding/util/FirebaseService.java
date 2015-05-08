@@ -305,6 +305,7 @@ public class FirebaseService
 	}
 
 	public static void setPoints(String workerID, String workerDisplayName, int points, String projectId){
+		System.out.println("SETTING POINTS TO WORKER " + workerDisplayName);
 		enqueueWrite(Integer.toString(points), "/workers/" + workerID + "/score.json", HTTPMethod.PUT, projectId);
 		LeaderboardEntry leader = new LeaderboardEntry(points, workerDisplayName);
 		enqueueWrite(leader.json(), "/leaderboard/leaders/" + workerID + ".json", HTTPMethod.PUT, projectId);
@@ -332,6 +333,10 @@ public class FirebaseService
 	// Writes the specified question to firebase
 	public static void writeQuestion(QuestionInFirebase dto, String projectId){
 		enqueueWrite(dto.json(), "/questions/"+dto.id+".json", HTTPMethod.PATCH, projectId);
+	}
+	
+	public static void writeQuestionVersion(QuestionInFirebase dto, String projectId){
+		enqueueWrite(dto.json(), "/history/questions/" + dto.id + "/" + dto.version + ".json", HTTPMethod.PUT, projectId);
 	}
 	
 	// Writes the specified question to firebase

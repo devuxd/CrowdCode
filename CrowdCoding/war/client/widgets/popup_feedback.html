@@ -1,24 +1,21 @@
-<div class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <div ng-init="sent=false; feedbackText=''" class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" ng-click="$hide()">&times;</button>
-                <h4 class="modal-title" ng-hide="sent">Send feedback</h4>
-            </div>
-            <div class="modal-body">
-             <h4 class="modal-title" ng-show="sent" style="text-align: center">Thank you for your feedback</h4>
-                <ng-form name="feedbackForm" ng-hide="sent">
-                    <span ng-class="{'has-success': feedbackForm.feedbackText.$valid}">
-                        <textarea type="text"
-                        class="col-md-8 form-control input-sm" draggable="false" name="feedbackText"
-                        placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?" ng-model="feedbackText" required></textarea>
-                    </span>
-                </ng-form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
-                <button type="button" class="btn btn-primary" ng-click="$emit('sendFeedback',[feedbackText]) ; sent=!sent" ng-hide="sent" ng-disabled="feedbackForm.$invalid">Send</button>
-            </div>
-        </div>
-    </div>
+<div class="popover">
+  <div class="arrow"></div>
+  <div class="popover-title">
+    Send feedback
+  </div>
+  <div class="popover-content">
+    
+    <ng-form name="feedbackForm" ng-hide="sent">
+        <span ng-class="{'has-success': feedbackForm.feedbackText.$valid}">
+            <textarea type="text"
+            class="col-md-8 form-control input-sm" draggable="false" name="feedbackText"
+            placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?" ng-model="feedbackText" required></textarea>
+        </span>
+    </ng-form>
+
+    <button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
+    <button type="button" class="btn btn-primary" 
+        ng-click="$emit('sendFeedback',[feedbackText]) ; $hide()" 
+        ng-disabled="feedbackForm.$invalid">Send</button>
+  </div>
 </div>

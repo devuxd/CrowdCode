@@ -31,6 +31,10 @@ angular
 
                 $tutorialContainer = $('<div class="tutorial-container"></div>');
 
+                // create no-click layer
+                $noclick = $('<div class="noclick"></div>');
+                $tutorialContainer.append($noclick);
+
                 // create highlight layer
                 $overlay = $('<div class="overlay"></div>');
                 $tutorialContainer.append($overlay);

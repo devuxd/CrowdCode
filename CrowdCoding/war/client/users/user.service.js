@@ -15,20 +15,23 @@ angular
 	var isConnected    = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
 	var offsetRef 	   = new Firebase("https://crowdcode.firebaseio.com/.info/serverTimeOffset");
 	
-	var userRef        = fbRef.child('/status/loggedInWorkers/' + workerId);
-	var logoutRef      = fbRef.child('/status/loggedOutWorkers/'+ workerId);
+	var loginRef  = fbRef.child('/status/loggedInWorkers/' + workerId);
+	var logoutRef = fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
-	var userFetchTime  = fbRef.child('/workers/' + workerId + '/fetchTime' );
-
-
-	var updateLogInTime=function(){
-		userRef.setWithPriority({connected:true,name:workerHandle,timeStamp:Firebase.ServerValue.TIMESTAMP},Firebase.ServerValue.TIMESTAMP);
+	var updateLogInTime = function(){
+		loginRef.setWithPriority({
+			connected:true,
+			name:workerHandle,
+			timeStamp:Firebase.ServerValue.TIMESTAMP
+		},Firebase.ServerValue.TIMESTAMP);
 	};
-	var offset;
-	offsetRef.on("value", function(snap) {
-	  offset = snap.val();
-	});
 
+	var timeZoneOffset;
+	offsetRef.on("value", function(snap) { timeZoneOffset = snap.val(); });
+
+
+
+	user.assignedMicrotaskKey = null;
 
 	// when firebase is connected
 	isConnected.on('value', function(snapshot) {
@@ -46,27 +49,21 @@ angular
 
 	user.data = $firebase(userProfile).$asObject();
 
-	user.fetchTime= $firebase( userFetchTime).$asObject();
-
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
 			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
-			user.data.$save().then(function(){});
 		}
 		user.data.workerHandle = workerHandle;
 		user.data.$save();
 	});
-	user.assignedMicrotaskKey = null;
 
-	user.getFetchTime = function(){
-		return user.fetchTime;
-	};
+	user.getFetchTime = function(){ return user.data.fetchTime; };
 
 	user.setFirstFetchTime = function (){
-		user.fetchTime.$value=new Date().getTime();
-		user.fetchTime.$save();
-
+		user.data.fetchTime.$value = new Date().getTime();
+		user.data.$save();
 	};
+
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;
 		user.data.$save().then(function(){
@@ -74,9 +71,6 @@ angular
 		});
 	};
 
-	user.getAvatarUrl = function(){
-		return user.data.pictureUrl || '';
-	};
 
 	// distributed test work
     user.listenForJobs = function(){
@@ -159,17 +153,17 @@ angular
 
 			//retrieves the reference to the worker to log out
 			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
+
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 
+			var interval = $interval( timeoutCallBack, 10000);
 			var timeoutCallBack = function(){
 				//time of the client plus the timezone offset given by firebase
-				var clientTime = new Date().getTime() + offset;
+				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field
-				var userLoginRef     = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
-
+				var userLoginRef  = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
 				userLoginRef.once("value", function(userLogin) {
-
 					//if the user doesn't uddate the timer for more than 30 seconds than log it out
 				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){
 				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
@@ -189,10 +183,7 @@ angular
 						whenFinished();
 					}
 				});
-
 			};
-
-			var interval = $interval(timeoutCallBack,10000);
 		});
 	};
 

@@ -161,9 +161,10 @@ public class CrowdServlet extends HttpServlet
 				doExecuteSubmit(req,resp);
 			 }
 
-			// PATHS WITH USER AUTHENTICATION
+			// -- PATHS WITHOUT USER AUTHENTICATION
 			 else if ( user != null ) { // if the user is authenticated
 
+				
 
 				// USERS URLS
 				if(Pattern.matches("/user/[\\w]*",path)){
@@ -183,7 +184,7 @@ public class CrowdServlet extends HttpServlet
 				// PROJECT URLS match /word/ or /word/(word)*
 				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
 					String projectId = pathSeg[1];
-
+					
 					req.setAttribute("project", projectId);
 	//				Key<Project> projectKey = Key.create(Project.class, projectId);
 	//				boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
@@ -197,6 +198,7 @@ public class CrowdServlet extends HttpServlet
 //					}
 
 					if ( pathSeg.length <= 2 ){
+						Worker.Create( user, Project.Create(projectId));
 						req.getRequestDispatcher("/clientDist/client.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
 						if( userService.isUserAdmin() ){
@@ -298,7 +300,7 @@ public class CrowdServlet extends HttpServlet
 	{
 		//System.out.println("doing admin");
 		if(pathSeg.length <=3 ){
-			req.getRequestDispatcher("/adminDist/index.jsp").forward(req, resp);
+			req.getRequestDispatcher("/adminDist/admin.jsp").forward(req, resp);
 		} else {
 			// The command should be in the fourth position. If nothing exists there,
 			// use "" as the command.
