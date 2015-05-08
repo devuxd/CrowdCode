@@ -51,8 +51,11 @@ public class Comment extends Questioning
 		
 		QuestioningCommand.setClosed(this.questionId, false);
 		
+
+		QuestioningCommand.subscribeWorker(this.questionId, ownerId, false);
+		
 		NotificationInFirebase notification = new NotificationInFirebase( "comment.added", "{ \"questionId\": \""+this.questionId+"\", \"answerId\": \""+this.answerId+"\", \"workerHandle\": \""+this.ownerHandle+"\", \"text\": \""+this.text+"\"}"  );
-		QuestioningCommand.notifySubscribers(this.answerId, notification, ownerId);
+		QuestioningCommand.notifySubscribers(this.questionId, notification, ownerId);
 	}
 
 }

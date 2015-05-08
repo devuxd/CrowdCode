@@ -98,23 +98,25 @@ angular
 		}
 
 		function sendFeedback(event, message) {
-			////console.log("message " + message.toString());
-			var feedback = {
-				// 'microtaskType': $scope.microtask.type,
-				// 'microtaskID': $scope.microtask.id,
-				'workerHandle': $rootScope.workerHandle,
-				'workerID': $rootScope.workerId,
-				'feedback': message.toString()
-			};
+
+			if( message.toString() != '' ){
+					////console.log("message " + message.toString());
+				var feedback = {
+					// 'microtaskType': $scope.microtask.type,
+					// 'microtaskID': $scope.microtask.id,
+					'workerHandle': $rootScope.workerHandle,
+					'workerID': $rootScope.workerId,
+					'feedback': message.toString()
+				};
 
 
-			var feedbackRef = $firebase(new Firebase(firebaseURL + '/feedback'));
+				var feedbackRef = $firebase(new Firebase(firebaseURL + '/feedback'));
 
-			feedbacks = feedbackRef.$asArray();
-			feedbacks.$loaded().then(function() {
-				feedbacks.$add(feedback);
-			});
-
+				feedbacks = feedbackRef.$asArray();
+				feedbacks.$loaded().then(function() {
+					feedbacks.$add(feedback);
+				});
+			}
 		}
 	});
 

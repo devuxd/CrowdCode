@@ -214,6 +214,7 @@ public abstract class QuestioningCommand extends Command
 				question.setText(dto.text);
 				question.setTags(dto.tags);
 				question.save();
+				question.storeVersionToFirebase();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

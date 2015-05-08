@@ -42,46 +42,46 @@ angular
         url: '/microtasks/:microtaskKey',
         templateUrl: 'microtasks/microtaskDetail.html',
         controller: 'MicrotaskDetailCtrl'
+      })
+
+      
+      .state('feedback',{
+        url: '/feedback',
+        templateUrl: 'feedback/feedback.html',
+        controller: 'FeedbackCtrl'
+      })
+    
+      .state('chat',{
+        url: '/chat',
+        templateUrl: 'chat/chat.html',
+        controller: 'ChatCtrl'
+      })
+
+      .state('code',{
+        url: '/code',
+        templateUrl: 'feedback/feedback.html',
+        controller: 'FeedbackCtrl'
+      })
+
+      .state('functions',{
+        url: '/functions',
+        templateUrl: 'functions/functions.html',
+        controller: 'FunctionsCtrl',
+        controllerAs: 'vm'
+      })
+
+      .state('tests',{
+        url: '/tests',
+        controller: 'TestsCtrl',
+        controllerAs: 'vm'
+      })
+
+      .state('users',{
+        url: '/users',
+        templateUrl: 'users/users.html',
+        controller: 'UsersCtrl'
       });
 
-    //   .when('/microtasks', {
-    //     templateUrl: 'microtasks/microtasks.html',
-    //     controller: 'MicrotasksCtrl'
-    //   })
-    //   .when('/microtasks/:microtaskKey', {
-    //     templateUrl: 'microtasks/microtaskDetail.html',
-    //     controller: 'MicrotaskDetailCtrl',
-    //     reloadOnSearch: false
-    //   })
-    //   .when('/feedback', {
-    //     templateUrl: 'feedback/feedback.html',
-    //     controller: 'FeedbackCtrl'
-    //   })
-    //   .when('/chat', {
-    //     templateUrl: 'chat/chat.html',
-    //     controller: 'ChatCtrl'
-    //   })
-    //   .when('/code', {
-    //     templateUrl: 'code/code.html',
-    //     controller: 'CodeCtrl'
-    //   })
-    //   .when('/functions', {
-    //     templateUrl: 'functions/functions.html',
-    //     controller: 'FunctionsCtrl',
-    //     controllerAs: 'vm'
-    //   })
-    //   .when('/tests', {
-    //     templateUrl: 'tests/tests.html',
-    //     controller: 'TestsCtrl',
-    //     controllerAs: 'vm'
-    //   })
-    //   .when('/users', {
-    //     templateUrl: 'users/users.html',
-    //     controller: 'UsersCtrl'
-    //   })
-    //   .otherwise({
-    //     redirectTo: '/dashboard'
-    //   });
   })
   .run(['$rootScope', '$location', '$anchorScroll', '$templateCache','Microtasks','eventsService',function($rootScope, $location, $anchorScroll, $templateCache, Microtasks, eventsService) {
     

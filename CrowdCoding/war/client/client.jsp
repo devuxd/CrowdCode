@@ -10,24 +10,10 @@
 
 
 <%
-    // Create the project. This operation needs to be transactional to ensure one project is only
-    // created. Getting the leaderboard relies on the state of the project when it is created.
-    // But data in worker may be stale or even internally inconsistent, as other operations
-    // may be concurrently updating it.
-
-    final String projectID = (String) request.getAttribute("project");
-	final Logger log = Logger.getLogger(Project.class.getName());
-	User user = UserServiceFactory.getUserService().getCurrentUser();
-	Project project = ObjectifyService.ofy().transact(new Work<Project>()
-	{
-	    public Project run(){ return Project.Create(projectID); }
-	});
-
-	Worker worker = Worker.Create(user, project);
-
+    String projectID    = (String) request.getAttribute("project");
+	User   user         = UserServiceFactory.getUserService().getCurrentUser();
 	String workerID     = user.getUserId();
 	String workerHandle = user.getNickname();
-
 %>
 
 <!DOCTYPE html>

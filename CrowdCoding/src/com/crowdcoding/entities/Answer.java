@@ -49,6 +49,8 @@ public class Answer extends Questioning
 		
 		QuestioningCommand.incrementQuestionAnswers(this.questionId);
 		
+		QuestioningCommand.subscribeWorker(this.questionId, ownerId, false);
+		
 		NotificationInFirebase notification = new NotificationInFirebase( "answer.added", "{ \"questionId\": \""+this.questionId.toString()+"\",  \"workerHandle\": \""+this.ownerHandle+"\",  \"text\": \""+this.questionId.toString()+"\" }" );
 		QuestioningCommand.notifySubscribers(this.questionId, notification, ownerId);
 

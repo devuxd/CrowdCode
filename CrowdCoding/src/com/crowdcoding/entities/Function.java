@@ -968,9 +968,26 @@ public class Function extends Artifact
 	{
 		int firebaseVersion = version + 1;
 
-		FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, firebaseVersion, returnType, paramNames,
-				paramTypes, paramDescriptions, header, description, code, linesOfCode, this.pseudoFunctionsName,this.pseudoFunctionsDescription , hasBeenDescribed, isWritten, needsDebugging, isReadOnly,
-				queuedMicrotasks.size()),
+		FirebaseService.writeFunction(new FunctionInFirebase(
+					name, 
+					this.id, 
+					firebaseVersion, 
+					returnType, 
+					paramNames,
+					paramTypes, 
+					paramDescriptions, 
+					header, 
+					description, 
+					code, 
+					linesOfCode, 
+					this.pseudoFunctionsName,
+					this.pseudoFunctionsDescription , 
+					hasBeenDescribed, 
+					isWritten, 
+					needsDebugging, 
+					isReadOnly,
+					queuedMicrotasks.size()
+				),
 				this.id, firebaseVersion, projectId);
 		incrementVersion();
 
