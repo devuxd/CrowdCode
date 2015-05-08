@@ -503,12 +503,13 @@ h1, h2, h3, h4 {
 }
 .questions .tag{
 	background: #f7fdff;
-	padding: 0.3em .3em;
+	
 	text-align: center;
 	line-height: 1;
 	color: #3e6d8e;
 	background-color: #e4edf4;
-	margin: 2px 2px 2px 0;
+	padding: 0.3em;
+	margin: 2px 2px;
 	text-decoration: none;
 	font-size: 1em;
 	white-space: nowrap;
@@ -517,11 +518,6 @@ h1, h2, h3, h4 {
 	border: 1px solid #e4edf4;
 }
 
-.questions .form-control {
-	border-radius:0px;
-	border:0px;
-	background-color: rgba(205, 205, 205, 0.35);
-}
 
 .questions .top {
 	height: 35px;
@@ -570,6 +566,7 @@ h1, h2, h3, h4 {
 	background-color: transparent;
 	border-radius:0px;
 	border:none;
+	word-break: break-all;
 }
 
 .questions .list-group .question-item,
@@ -586,26 +583,67 @@ h1, h2, h3, h4 {
 
 .questions .answer-item > .content-panel {  padding-bottom:1em; }
 
-.questions .has-feedback { font-size:10px; }
+.questions .top .search-box { position:relative; width: 70%; float: left;}
+.questions .top .search-box input { padding-left:2em; padding-right:5px; font-size:1em; line-height:2.6em; }
+.questions .top .search-box span {  left:0; top:0; right:none; color:gray; line-height:2.6em; height:2.6em; width:2em; }
+.questions .top .new-question { width: 30%; float:right; line-height:2.6em; padding:0px;}
+
+.questions .question-item .btn-edit { 
+	display:none; 
+	position:absolute;
+	top:5px;
+	right:5px; 
+	margin: 0px;
+  	padding: 0px 4px;
+  	background-color: rgb(63, 129, 172);
+  	color: white;
+  	border-radius: 0px;  
+  	text-transform: uppercase;
+    font-size: 0.8em;
+}
+
+.questions .question-item:hover .btn-edit { display:block; }
+
+/*
+.questions .has-feedback { font-size:1em; }
 .questions .has-feedback .form-control { padding-left:2em; padding-right:0px; font-size:1em; height:2.6em;}
 .questions .form-control-feedback { left:0; top:0; right:none; color:gray; line-height:2.6em; height:2.6em; width:2em; }
+*/
 
-
-.questions question-list,
-.questions question-detail ,
-.questions question-form {
+.questions > div {
 	display:block;
-	-webkit-transition: 0.5s ease-in-out;
-	-moz-transition: 0.5s ease-in-out;
-	-o-transition: 0.5s ease-in-out;
-	transition: 0.5s ease-in-out;
+}
+
+.questions > div.ng-enter, .questions > div.ng-leave {
+	transition:         all 0.5s ease;
+	-webkit-transition: all 0.5s ease;
+}
+
+.questions > div.from-left.ng-enter,
+.questions > div.from-left.ng-leave.ng-leave-active{
+	margin-left:-100%;
+}
+
+.questions > div.from-left.ng-leave,
+.questions > div.from-left.ng-enter.ng-enter-active {
+	margin-left:0%;
 }
 
 
-.questions question-list { margin-left:0%; }
-.questions question-list.ng-hide { margin-left:-100%; } 
+.questions > div.from-right.ng-enter,
+.questions > div.from-right.ng-leave.ng-leave-active {
+    margin-left: 100%;
+}
+.questions > div.from-right.ng-leave,
+.questions > div.from-right.ng-enter.ng-enter-active {
+	margin-left: 0%;
+}
 
-.questions question-list .list-header {   
+
+.questions .question-list { margin-left:0%; }
+.questions .question-list.ng-enter { margin-left:-100%; } 
+
+.questions .question-list .list-header {   
 	text-align: right;
 	font-weight: bold;
 	font-family:'Lato';
@@ -613,11 +651,11 @@ h1, h2, h3, h4 {
 	padding-bottom: 0px !important;
 }
 
-.questions question-list .question-item { cursor: pointer; }
-.questions question-list .question-item:hover { background-color:#E0E0E0; }
+.questions .question-list .question-item { cursor: pointer; }
+.questions .question-list .question-item:hover { background-color:#E0E0E0; }
 
 .questions .question-item.open { background-color:rgba(255, 236, 186, 0.73); }
-.questions question-list .question-item.open:hover { background-color:rgba(255, 236, 186, 1); }
+.questions .question-list .question-item.open:hover { background-color:rgba(255, 236, 186, 1); }
 
 .questions .question-item.ng-enter{
   -webkit-transition:all linear 0.5s;
@@ -628,24 +666,9 @@ h1, h2, h3, h4 {
 	opacity: 1;
 }
 
+.questions .question-detail .answer-item textarea  { min-height:10em; resize: none; }
+.questions .question-detail .command-item textarea { min-height:3em; resize: none; }
 
-.questions question-detail,
-.questions question-form {
-	margin-left:0px;}
-
-.questions question-detail.ng-hide,
-.questions question-form.ng-hide {
-	margin-left:100%;
-} 
-
-.questions question-detail .answer-item textarea  { min-height:10em; resize: none; }
-.questions question-detail .command-item textarea { min-height:3em; resize: none; }
-
-.sidebar .top button {
-	font-size:1em;
-	margin:0px;
-	padding:0px;
-}
 /*
 rgba(17,112,190,1) Wode - blue - writefunction
 rgba(252,223,63,1) Aerial yellow - yellow - writetestcases

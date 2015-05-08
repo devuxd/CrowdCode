@@ -1,27 +1,28 @@
+
+
 <div class="top padding">
-	<a href="#" class="pull-left" ng-click="setUiView('question_list');showCommentForm =false; showAnswerForm = false;">
+	<a href="#" class="pull-left" ng-click="updateView(); setUiView('list');">
 		<span class="glyphicon glyphicon-arrow-left"></span>
 		back
 	</a>
 
-	<a href="#" class="pull-right" ng-click="toggleClosed(sel)">
-		{{ sel.closed ? 'Reopen for discussion' : 'Mark as answered' }}
+	<a href="#" class="pull-right" ng-click="toggleClosed(sel)" ng-if="sel.answersCount != null && sel.answersCount > 0">
+		{{ sel.closed ? 'Reopen for discussion' : 'Mark as closed' }}
 	</a>
 
 	<span class="clearfix"></span>
 </div>
 
-<div class="middle padding" ng-init="showCommentForm =false; showAnswerForm = false;">
-	
+<div class="middle padding">
 	<ul class="list-group">
 
 		<li class="list-group-item question-item  {{ sel.closed ? '' : 'open' }}">
-
-			<h3 class="panel-title">{{sel.title}}</h3>
+			<span class="btn btn-edit" ng-click="setUiView('form'); " ng-if="!sel.closed">edit</span>
+			<h3 class="panel-title"  >{{sel.title}}</h3>
 			<div>{{sel.text}}</div>
 			<div>
 				<span class="pull-right">
-					<span ng-repeat="tag in sel.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>
+					<span ng-repeat="tag in sel.tags" class="tag">{{tag}}</span>
 				</span> 
 				<span class="pull-left">
 					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{sel.createdAt | date : 'medium'}}"></time-ago>
@@ -55,7 +56,7 @@
 
 	<ul class="list-group">
 
-		<li class="list-group-item answer-item" ng-repeat="a in sel.answers | orderObjectBy : 'time' : false" ng-animate-children>
+		<li class="list-group-item answer-item" ng-repeat="a in sel.answers | orderObjectBy : 'createdAt' : false" ng-animate-children>
 			<div class="content-panel">
 				<div>
 					<span>{{a.text}}</span>
@@ -67,8 +68,8 @@
 
 					<span class="pull-left">
 						<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{a.createdAt | date : 'medium'}}"></time-ago>
-						-
-						<span ng-bind="a.ownerHandle" ></span>
+						- 
+						<span>{{ a.ownerId == workerId ? 'you' : a.ownerHandle }}</span>
 					</span> 
 					<div class="pull-right">
 						<span
@@ -91,7 +92,7 @@
 				
 
 			<ul class="list-group">
-				<li class="list-group-item comment-item" ng-repeat="c in a.comments | orderObjectBy : 'time' : false" >
+				<li class="list-group-item comment-item" ng-repeat="c in a.comments | orderObjectBy : 'createdAt' : false" >
 					
 					<div class="content-panel">
 						<div>
@@ -102,9 +103,9 @@
 						<div>
 
 							<span class="pull-left">
-								<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{c.time | date : 'medium'}}"></time-ago>
+								<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{c.createdAt | date : 'medium'}}"></time-ago>
 								-
-								<span ng-bind="c.ownerHandle" ></span>
+								<span>{{ c.ownerId == workerId ? 'you' : c.ownerHandle }}</span>
 							</span> 
 							<div class="pull-right">
 								<span
@@ -127,26 +128,26 @@
 						
 
 				</li>
-				<li class="list-group-item comment-item" ng-show="!sel.closed">
-
+				<li class="list-group-item comment-item" ng-if="!sel.closed">
 					<a href="#" 
-						ng-show='!showCommentForm' 
-						ng-click="showCommentForm = true ; c.answerId = a.id" >
+						ng-show='!form.comment.show' 
+						ng-click="form.comment.show = true ; form.comment.answerId = a.id" >
 						Add Comment
 					</a>
-					<form name="commentForm" novalidate ng-show='showCommentForm && c.answerId == a.id' ng-submit="commentForm.$valid && postComment(a.id)">
+					<form name="commentForm" novalidate ng-show='form.comment.show && form.comment.answerId == a.id' ng-submit="commentForm.$valid && postComment(a.id)">
 						<div class="form-group">
 							<textarea name="text" 
 									  class="form-control" 
-									  ng-model="comment.text" 
+									  ng-model="form.comment.text" 
 									  placeholder="comment text"
 									  required>
 							</textarea>
 						</div>
-						<button type="submit" 
-								class="btn btn-xs btn-primary pull-right">
-								Comment
-						</button>
+						<span class="btn-group pull-right">
+							<button type="button" class="btn btn-xs btn-default" ng-click="form.comment.show = false; ">Cancel</button>
+							<button type="submit" class="btn btn-xs btn-primary">Comment</button>
+						</span>
+						<div class="clearfix"></div>
 					</form>
 				</li>
 			</ul>
@@ -155,13 +156,17 @@
 			<span class="clearfix"></span>
 
 		</li>
-		<li class="list-group-item answer-item" ng-show="!sel.closed">
-			<a href="#" ng-show="!showAnswerForm " ng-click="showAnswerForm=true">Add Answer</a>
-			<form name="answerForm" novalidate  ng-show="showAnswerForm" ng-submit="answerForm.$valid && postAnswer()">
+		<li class="list-group-item answer-item" ng-if="!sel.closed">
+			<a href="#" ng-show="!form.answer.show " ng-click="form.answer.show=true">Add Answer</a>
+			<form name="answerForm" novalidate  ng-show="form.answer.show" ng-submit="answerForm.$valid && postAnswer()">
 				<div class="form-group">
-					<textarea required name="text" class="form-control" ng-model="answer.text" placeholder="answer text"></textarea>
+					<textarea required name="text" class="form-control" ng-model="form.answer.text" placeholder="answer text"></textarea>
 				</div>
-				<button type="submit" ng-click="showAnswerForm = false;" class="btn btn-xs btn-primary pull-right">Answer</button>
+				<span class="btn-group pull-right">
+					<button type="button" class="btn btn-xs btn-default" ng-click="form.answer.show = false; ">Cancel</button>
+					<button type="submit" class="btn btn-xs btn-primary">Answer</button>
+				</span>
+					
 				<div class="clearfix"></div>
 			</form>
 		</li>

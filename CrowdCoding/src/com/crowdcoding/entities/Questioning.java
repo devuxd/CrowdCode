@@ -64,7 +64,7 @@ public /*abstract*/ class Questioning
 		this.projectId   = projectId;
 		this.isReported  = false;
 		this.createdAt   = System.currentTimeMillis();
-		this.updatedAt   = this.createdAt;
+		this.updatedAt   = System.currentTimeMillis();
 		this.score = 0;
 	}
 
@@ -91,7 +91,7 @@ public /*abstract*/ class Questioning
 		if( ! workerId.equals(ownerId) && ! votersId.contains(workerId))
 		{
 			votersId.add(workerId);
-			//if the worker is in the reporteres list remove from that list
+			//if the worker is in the reporters list remove from that list
 			//because a worker can't at the same time vote + and -
 			reportersId.remove(workerId);
 			updateScore();
@@ -103,8 +103,6 @@ public /*abstract*/ class Questioning
 
 			FirebaseService.updateQuestioningVoters(new VotersIdInFirebase(votersId), firebasePath, projectId);
 			FirebaseService.updateQuestioningReporters(new ReportersIdInFirebase(reportersId), firebasePath, projectId);
-
-
 		}
 
 	}
@@ -118,7 +116,6 @@ public /*abstract*/ class Questioning
 			votersId.remove(workerId);
 			updateScore();
 			ofy().save().entity(this).now();
-			System.out.println("removeVote");
 			FirebaseService.updateQuestioningVoters(new VotersIdInFirebase(votersId), firebasePath, projectId);
 		}
 	}
@@ -155,8 +152,7 @@ public /*abstract*/ class Questioning
 	
 	private void updateScore()
 	{
-		System.out.println("updatre score");
-		this.score=votersId.size()-reportersId.size();
+		this.score = votersId.size() - reportersId.size();
 		FirebaseService.updateQuestioningScore(score, firebasePath, projectId);
 	}
 
@@ -166,7 +162,7 @@ public /*abstract*/ class Questioning
 				FirebaseService.writeWorkerNotification( notification, subscriberId, projectId );
 			}
 		}
-	};
+	}
 
 
 

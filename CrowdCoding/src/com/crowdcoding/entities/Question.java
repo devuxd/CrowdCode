@@ -34,10 +34,12 @@ public class Question extends Questioning
 
 	private List<String> artifactsId = new ArrayList<String>();
 	private List<String> tags = new ArrayList<String>();
-	private long answers;
-	private long comments;
+	private long answersCount;
+	private long commentsCount;
+	private int version;
 	private boolean closed;
 	private String title;
+	
 
 	public Question(){}
 
@@ -48,41 +50,52 @@ public class Question extends Questioning
 		this.tags= tags;
 		this.artifactsId.add(artifactId);
 		this.subsribersId.add(ownerId);
-		this.points = 3;
-		this.answers  = 0;
-		this.comments = 0;
+		this.points        = 3;
+		this.answersCount  = 0;
+		this.commentsCount = 0;
+		this.version       = 0;
+		
 		ofy().save().entity(this).now();
+		
+		this.firebasePath= "/questions/" + this.id ;
 
-		this.firebasePath="/questions/" + this.id;
-		ofy().save().entity(this).now();
-
-		FirebaseService.writeQuestionCreated(new QuestionInFirebase(this.id, this.ownerId, this.ownerHandle, this.title, this.text, this.tags, this.createdAt, this.score, this.subsribersId, this.artifactsId, this.closed), this.firebasePath, projectId);
+		save();
 		
 		NotificationInFirebase notification = new NotificationInFirebase( "question.added", "{ \"questionId\": \""+this.id+"\", \"title\": \""+this.title+"\" }" );
 		ProjectCommand.notifyLoggedInWorkers(notification);
 	}
 
+
 	public String getTitle() {
 		return title;
 	}
 	
-	public void removeArtifactLink(String artifactId)
-	{
-		if(artifactsId.remove(artifactId)){
-			ofy().save().entity(this).now();
-			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
-		}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
-	public void addArtifactLink(String artifactId)
-	{
-		if(! artifactsId.contains(artifactId)){
-			artifactsId.add(artifactId);
-			ofy().save().entity(this).now();
-			FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
-		}
+	public void setText(String text){
+		this.text = text;
+	}
+	
+	public void setTags(List<String> tags){
+		this.tags = tags;
 	}
 
+	public void addArtifactLink(String artifactId)
+	{
+		artifactsId.add(artifactId);
+		ofy().save().entity(this).now();
+		FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
+	}
+
+	public void removeArtifactLink(String artifactId)
+	{
+		artifactsId.remove(artifactId);
+		ofy().save().entity(this).now();
+		FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
+	}
+	
 	public void unsubscribeWorker(String workerId)
 	{
 		if(subsribersId.remove(workerId)){
@@ -103,21 +116,15 @@ public class Question extends Questioning
 	public void setClosed(boolean closed){
 		this.closed = closed;
 		ofy().save().entity(this).now();
-		FirebaseService.updateQuestioningClosed(this.closed,this.firebasePath,projectId);
+		storeToFirebase();
 	}
 
 	public void incrementAnswers() {
-		this.answers ++;
-		this.updatedAt = System.currentTimeMillis();
-		ofy().save().entity(this).now();
-		FirebaseService.updateQuestion(this, projectId);
+		this.answersCount ++;
 	}
 	
 	public void incrementComments() {
-		this.comments ++;
-		this.updatedAt = System.currentTimeMillis();
-		ofy().save().entity(this).now();
-		FirebaseService.updateQuestion(this, projectId);
+		this.commentsCount ++;
 	}
 
 	public long getUpdatedAt() {
@@ -125,11 +132,48 @@ public class Question extends Questioning
 	}
 
 	public long getAnswers() {
-		return this.answers;
+		return this.answersCount;
 	}
 	
 	public long getComments() {
-		return this.comments;
+		return this.commentsCount;
+	}
+
+	public long getVersion() {
+		return this.version;
+	}
+
+	public List<String> getTags() {
+		return this.tags;
+	}
+
+	public void save() {
+		this.version++;
+		this.updatedAt = System.currentTimeMillis();
+		ofy().save().entity(this).now();
+		storeToFirebase();
 	}
 	
+
+	private void storeToFirebase() {
+		FirebaseService.writeQuestion(new QuestionInFirebase(
+				this.id, 
+				this.ownerId, 
+				this.ownerHandle, 
+				this.title, 
+				this.text, 
+				this.tags, 
+				this.createdAt, 
+				this.updatedAt,
+				this.score, 
+				this.version,
+				this.answersCount,
+				this.commentsCount,
+				this.subsribersId, 
+				this.artifactsId, 
+				this.closed
+			),  
+			projectId
+		);
+	}
 }

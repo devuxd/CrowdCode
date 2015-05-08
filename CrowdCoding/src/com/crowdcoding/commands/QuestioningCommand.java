@@ -53,6 +53,11 @@ public abstract class QuestioningCommand extends Command
 		return new IncrementQuestionComments(questionId);
 	}
 	
+
+	public static QuestioningCommand updateQuestion(long questionId, String jsonDTO, String workerId) {
+		return new UpdateQuestion(questionId,jsonDTO,workerId);
+	}
+	
 	public static QuestioningCommand vote(long questioningId, String workerId, boolean remove){
 		return new Vote(questioningId, workerId, remove);
 	}
@@ -73,9 +78,10 @@ public abstract class QuestioningCommand extends Command
 		return new NotifySubscribers(questioningId,notification,excludedWorkerId);
 	}
 
-	public static QuestioningCommand setClosed(long questioningId, boolean closed, String workerId){
-		return new SetClosed(questioningId,closed,workerId);
+	public static QuestioningCommand setClosed(long questioningId, boolean closed){
+		return new SetClosed(questioningId,closed);
 	}
+
 	
 
 	private QuestioningCommand(long questioningId, String workerId) {
@@ -138,6 +144,7 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			Question question = new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, workerHandle, projectId);
 		}
 	}
@@ -157,11 +164,11 @@ public abstract class QuestioningCommand extends Command
 			AnswerDTO dto = null;
 			try {
 				dto = (AnswerDTO)DTO.read(jsonDTOData, AnswerDTO.class);
+				Answer answer = new Answer(dto.text, dto.questionId, workerId, workerHandle, projectId);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Answer answer = new Answer(dto.text, dto.questionId, workerId, workerHandle, projectId);
 		}
 	}
 
@@ -181,13 +188,40 @@ public abstract class QuestioningCommand extends Command
 			CommentDTO dto = null;
 			try {
 				dto = (CommentDTO)DTO.read(jsonDTOData, CommentDTO.class);
+				Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
 		}
 	}
+	
+	protected static class UpdateQuestion extends QuestioningCommand {
+		private String jsonDTO;
+
+		public UpdateQuestion(long questionId, String dto, String workerId) {
+			super(questionId, workerId);
+			this.jsonDTO = dto;
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+
+			Question question = (Question) questioning;
+			QuestionDTO dto=null;
+			try {
+				dto = (QuestionDTO) DTO.read(jsonDTO, QuestionDTO.class);
+				question.setTitle(dto.title);
+				question.setText(dto.text);
+				question.setTags(dto.tags);
+				question.save();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	}
+
 	
 	protected static class IncrementQuestionAnswers extends QuestioningCommand {
 
@@ -199,6 +233,7 @@ public abstract class QuestioningCommand extends Command
 
 			Question question = (Question) questioning;
 			question.incrementAnswers();
+			question.save();
 		}
 	}
 	
@@ -212,8 +247,10 @@ public abstract class QuestioningCommand extends Command
 
 			Question question = (Question) questioning;
 			question.incrementComments();
+			question.save();
 		}
 	}
+	
 
 	protected static class Vote extends QuestioningCommand {
 
@@ -315,8 +352,8 @@ public abstract class QuestioningCommand extends Command
 
 		private boolean closed;
 
-		public SetClosed(long questioningId, boolean closed, String workerId) {
-			super(questioningId,workerId);
+		public SetClosed(long questioningId, boolean closed) {
+			super(questioningId,"");
 			this.closed = closed;
 		}
 
@@ -326,4 +363,5 @@ public abstract class QuestioningCommand extends Command
 		}
 
 	}
+
 }

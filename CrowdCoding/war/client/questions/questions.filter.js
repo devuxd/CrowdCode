@@ -55,7 +55,7 @@ angular
     .module('crowdCode')
     .filter('unrelatedToArtifact', function() {
   return function(items,artifactId) {
-
+    
     if( artifactId === undefined || artifactId === null )
       return items;
 

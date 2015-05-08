@@ -13,7 +13,8 @@ angular
 		'ngClipboard',
 		'luegg.directives',
 		'yaru22.angular-timeago',
-		'toaster'
+		'toaster',
+		'ngTagsInput'
 	])
 	.config(function($dropdownProvider, ngClipProvider ) { 
 

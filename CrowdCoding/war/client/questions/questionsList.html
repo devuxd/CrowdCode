@@ -1,14 +1,17 @@
 <div class="top padding">
-	<div class="form-group has-feedback">
+	<span class="form-group has-feedback search-box">
 		<input type="text" ng-model="search" class="form-control" placeholder="filter questions">
 		<span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
-	</div>
+	</span>
+	<button class="btn btn-sm btn-primary new-question" ng-click="setUiView('form'); ">Ask new</button>
 </div>
 <div class="middle">
 	<div class="padding">
-		<button class="btn btn-sm btn-primary" ng-click="setUiView('question_form'); ">Ask a question</button>
-		<div ng-if="questions.length == 0 && search.length > 0 ">no questions found matching the filter <strong>{{search}}</strong> (<a href="#" ng-click="resetFilter()">reset filter</a>)</div>
-		<div ng-if="questions.length == 0 && search.length == 0">no questions yet!</div>
+		<div class="padding" ng-if="questions.length == 0 && search.length > 0 ">
+			No questions found matching the filter <strong>{{search}}</strong> 
+			(<a href="#" ng-click="resetFilter()">reset filter</a>)
+		</div>
+		<div class="padding" ng-if="questions.length == 0 && search.length == 0"> No questions yet! </div>
 	</div>
 
 	<ul class="list-group questions-list" ng-if="questions.length > 0">
@@ -16,7 +19,9 @@
 		<li class="list-group-item list-header" ng-show=" loadedArtifact != null ">
 			Related to {{loadedArtifact.name}}
 		</li>
-		<li ng-show=" loadedArtifact != null && ( questions | relatedToArtifact : loadedArtifact.id ).length == 0 "> no questions related to the function {{ loadedArtifact.name }} </li>
+		<li ng-show=" loadedArtifact != null && ( questions | relatedToArtifact : loadedArtifact.id ).length == 0 "> 
+			No questions related to the function {{ loadedArtifact.name }} 
+		</li>
 		<li class="list-group-item question-item {{ q.closed ? '' : 'open' }}"
 			ng-show="loadedArtifact != null" 
 			ng-click="setSelected(q)" 
@@ -41,11 +46,19 @@
 				<span class="clearfix"></span>
 			</div>
 			<div>
+				
 				<span class="pull-left" >
-					<span class="glyphicon glyphicon-thumbs-up"></span>
-					{{ q.score }}
-					<span class="glyphicon glyphicon-comment" style="margin-left: 10px;"></span>
-					{{ q.answers | objectLength }}
+					<span>
+						<span class="glyphicon glyphicon-thumbs-up"></span>
+						{{ q.score }}
+					</span>
+					<span style="margin-left: 10px;">
+						<span class="glyphicon glyphicon-comment"></span>
+						{{ q.answers | objectLength }}
+					</span>
+					<span style="margin-left: 10px; font-family: 'Lato'; font-weight: bold; font-size: 1em;">
+						{{ q.closed ? 'CLOSED' : 'OPEN' }}
+					</span>				
 				</span>
 				
 
@@ -62,8 +75,8 @@
 		<li class="list-group-item list-header" ng-show=" ( questions | unrelatedToArtifact : loadedArtifact.id ).length > 0 ">
 			Other questions
 		</li>
+
 		<li class="list-group-item question-item {{ q.closed ? '' : 'open' }}"
-			ng-show="loadedArtifact != null" 
 			ng-click="setSelected(q)" 
 			ng-repeat="q in questions | unrelatedToArtifact : loadedArtifact.id  | orderBy : 'closed'  "
 			>
@@ -87,10 +100,17 @@
 			</div>
 			<div>
 				<span class="pull-left" >
-					<span class="glyphicon glyphicon-thumbs-up"></span>
-					{{ q.score }}
-					<span class="glyphicon glyphicon-comment" style="margin-left: 10px;"></span>
-					{{ q.answers | objectLength }}
+					<span>
+						<span class="glyphicon glyphicon-thumbs-up"></span>
+						{{ q.score }}
+					</span>
+					<span style="margin-left: 10px;">
+						<span class="glyphicon glyphicon-comment"></span>
+						{{ q.answers | objectLength }}
+					</span>
+					<span style="margin-left: 10px; font-family: 'Lato'; font-weight: bold; font-size: 1em;">
+						{{ q.closed ? 'CLOSED' : 'OPEN' }}
+					</span>				
 				</span>
 				
 
