@@ -1,5 +1,5 @@
 angular
-    .module('crowdCode').directive('newsPanel',function($rootScope,$timeout,$firebase,firebaseUrl, workerId, questionsService, functionsService, FunctionFactory, microtasksService){
+    .module('crowdCode').directive('newsPanel',function($rootScope,$timeout,$firebase,firebaseUrl, workerId, questionsService, functionsService, FunctionFactory, TestList,microtasksService){
 
 	return {
 		scope: {},

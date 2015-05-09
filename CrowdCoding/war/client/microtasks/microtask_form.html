@@ -49,11 +49,10 @@
        			Skip
        		</button>
 		  	<label class="btn btn-sm pull-right" ng-if="!breakMode && !noMicrotask" id="breakBtn">
-	  	    	<input type="checkbox" ng-model="startBreak" 
-	  	    	>
+	  	    	<input type="checkbox" ng-model="model.startBreak" >
 	  	    	<span>Take a break</span>
 	  	   	</label>
-			
+	  	   	
 			<button type="button"
        			class="btn btn-primary btn-sm pull-right"
        			ng-if="breakMode"

@@ -1,7 +1,7 @@
 
 angular
     .module('crowdCode')
-    .directive('chat', function($timeout, $rootScope, $firebase, $alert, avatarFactory, userService, workerId) {
+    .directive('chat', function($timeout, $rootScope, $firebase, $alert, firebaseUrl, avatarFactory, userService, workerId) {
     return {
         restrict: 'E',
         templateUrl: '/client/chat/chat_panel.html',
@@ -20,7 +20,7 @@ angular
         },
         controller: function($scope, $element, $rootScope) {
             // syncs and references to firebase 
-            var chatRef = new Firebase($rootScope.firebaseURL + '/chat');
+            var chatRef = new Firebase( firebaseUrl + '/chat');
             
             // data about the 'new message' alert
             var alertData = {

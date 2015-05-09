@@ -1,6 +1,6 @@
 angular
     .module('crowdCode')
-    .directive('leaderboard', leaderboard);
+    .directive('leaderboard', ['$firebase','avatarFactory','firebaseUrl','workerId', leaderboard]);
 
 function leaderboard($firebase, avatarFactory, firebaseUrl, workerId) {
     return {

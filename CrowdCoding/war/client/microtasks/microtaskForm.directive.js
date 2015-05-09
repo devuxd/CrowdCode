@@ -32,8 +32,10 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
-			$scope.noMicrotask = true;
-			$scope.startBreak    = false;
+			$scope.noMicrotask   = true;
+			$scope.model = {
+				startBreak :false
+			};
 			$scope.checkQueueIn  = waitTimeInSeconds;
 
 			$scope.askQuestion = function(){
@@ -120,10 +122,10 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 
 
 			function submitMicrotask(event, formData, autoSkip) {
-				console.log('submit');
+
 				// if the form is valid, submit the microtask
 				if($scope.canSubmit){
-					if( $scope.startBreak ) { $scope.breakMode = true; $scope.startBreak = false; }
+					if( $scope.model.startBreak ) { $scope.breakMode = true; $scope.model.startBreak = false; }
 					$scope.templatePath   = templatesURL + "loading.html";
 					$scope.canSubmit=false;
 					microtasks.submit($scope.microtask,formData,autoSkip, !$scope.breakMode);

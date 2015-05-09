@@ -3,12 +3,12 @@
 ////////////////////
 angular
     .module('crowdCode')
-    .factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','TestList','functionsService','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,TestList,functionsService,TestRunnerFactory) {
+    .factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','firebaseUrl','TestList','functionsService','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,firebaseUrl,TestList,functionsService,TestRunnerFactory) {
     var user = {};
 
  	// retrieve the firebase references
 
- 	var fbRef = new Firebase(firebaseURL);
+ 	var fbRef = new Firebase(firebaseUrl);
 
 	var userProfile    = fbRef.child('/workers/' + workerId);
 
@@ -60,7 +60,6 @@ angular
 	user.getFetchTime = function(){ return user.data.fetchTime; };
 
 	user.setFirstFetchTime = function (){
-		console.log(user.data);
 		user.data.fetchTime = new Date().getTime();
 		user.data.$save();
 	};
@@ -77,7 +76,7 @@ angular
     user.listenForJobs = function(){
 		// worker
 
-		var queueRef = new Firebase($rootScope.firebaseURL+ "/status/testJobQueue/");
+		var queueRef = new Firebase(firebaseUrl+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
 			console.log('Receiving job ',jobData);
 
@@ -148,7 +147,7 @@ angular
 	// and then send the logout command to the server
 	// distributed logout work
     user.listenForLogoutWorker = function(){
-    	var logoutQueue     = new Firebase( firebaseURL + '/status/loggedOutWorkers/');
+    	var logoutQueue     = new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
 
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 
@@ -163,7 +162,7 @@ angular
 				//time of the client plus the timezone offset given by firebase
 				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field
-				var userLoginRef  = new Firebase( firebaseURL + '/status/loggedInWorkers/' + jobData.workerId );
+				var userLoginRef  = new Firebase( firebaseUrl + '/status/loggedInWorkers/' + jobData.workerId );
 				userLoginRef.once("value", function(userLogin) {
 					//if the user doesn't uddate the timer for more than 30 seconds than log it out
 				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){

@@ -92,7 +92,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 
 
 .form-control { font-weight: normal;}
-
+.form-horizontal .form-group { margin: 0px;}
 .submit-alert {
 	 position:relative !important;
 	 margin-top: 0px !important;
@@ -722,7 +722,7 @@ h1, h2, h3, h4 {
 	opacity: 1;
 }
 
-.questions .question-detail .answer-item textarea  { min-height:10em; resize: none; }
+.questions .question-detail textarea  { min-height:10em; resize: none; }
 .questions .question-detail .command-item textarea { min-height:3em; resize: none; }
 
 .questions .question-list .searchbox {

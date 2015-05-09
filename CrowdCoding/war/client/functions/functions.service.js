@@ -5,7 +5,7 @@
 ////////////////////
 angular
     .module('crowdCode')
-    .factory('functionsService', ['$window','$rootScope','$firebase', '$filter','FunctionFactory', function( $window, $rootScope, $firebase, $filter, FunctionFactory) {
+    .factory('functionsService', ['$window','$rootScope','$firebase', '$filter','firebaseUrl','FunctionFactory', function( $window, $rootScope, $firebase, $filter, firebaseUrl,FunctionFactory) {
 
 
 	var service = new function(){
@@ -39,7 +39,7 @@ angular
 		function init()
 		{
 		    // hook from firebase all the functions declarations of the project
-		    var functionsSync = $firebase(new Firebase($rootScope.firebaseURL+'/artifacts/functions'));
+		    var functionsSync = $firebase(new Firebase(firebaseUrl+'/artifacts/functions'));
 			functions = functionsSync.$asArray();
 			functions.$loaded().then(function(){
 				// tell the others that the functions services is loaded
@@ -147,7 +147,7 @@ angular
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function getVersion(id, version)
 		{
-			var functionSync = $firebase( new Firebase($rootScope.firebaseURL+ '/history/artifacts/functions/' + id+ '/' + version));
+			var functionSync = $firebase( new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version));
 			var funct = functionSync.$asObject();
 
 			return funct;
