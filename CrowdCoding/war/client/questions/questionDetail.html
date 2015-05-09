@@ -50,6 +50,23 @@
 		</li>
 	</ul>
 
+
+	<div ng-if="!sel.closed">
+		<a href="#" class="btn btn-xs btn-primary pull-right" ng-show="!form.answer.show " ng-click="form.answer.show=true">Answer this question</a>
+		<span class="clearfix"></span>
+		<form name="answerForm" novalidate  ng-show="form.answer.show" ng-submit="answerForm.$valid && postAnswer()">
+			<div class="form-group">
+				<textarea required name="text" class="form-control" ng-model="form.answer.text" placeholder="answer text"></textarea>
+			</div>
+			<span class="btn-group pull-right">
+				<button type="button" class="btn btn-xs btn-default" ng-click="form.answer.show = false; ">Cancel</button>
+				<button type="submit" class="btn btn-xs btn-primary">Answer</button>
+			</span>
+				
+			<div class="clearfix"></div>
+		</form>
+	</div>
+
 	<strong> {{ sel.answers | objectLength }} answers: </strong>
 
 	<ul class="list-group">
@@ -155,21 +172,6 @@
 				
 			<span class="clearfix"></span>
 
-		</li>
-		<li class="list-group-item answer-item" ng-if="!sel.closed">
-			<a href="#" class="pull-right" ng-show="!form.answer.show " ng-click="form.answer.show=true">answer this question</a>
-			<span class="clearfix"></span>
-			<form name="answerForm" novalidate  ng-show="form.answer.show" ng-submit="answerForm.$valid && postAnswer()">
-				<div class="form-group">
-					<textarea required name="text" class="form-control" ng-model="form.answer.text" placeholder="answer text"></textarea>
-				</div>
-				<span class="btn-group pull-right">
-					<button type="button" class="btn btn-xs btn-default" ng-click="form.answer.show = false; ">Cancel</button>
-					<button type="submit" class="btn btn-xs btn-primary">Answer</button>
-				</span>
-					
-				<div class="clearfix"></div>
-			</form>
 		</li>
 	</ul>
 	

@@ -20,7 +20,7 @@ public abstract class HistoryEvent extends DTO
 	
 	public HistoryEvent()
 	{	
-		this.artifactID = "";
+		this.artifactID   = "";
 		this.artifactType = "";
 		this.artifactName = "";
 		
@@ -32,7 +32,7 @@ public abstract class HistoryEvent extends DTO
 	protected void setArtifact(Artifact artifact){
 		if (artifact != null)
 		{
-			this.artifactID = Long.toString(artifact.getID());
+			this.artifactID   = Long.toString(artifact.getID());
 			this.artifactType = artifact.getArtifactType();
 			this.artifactName = artifact.getName();
 		}

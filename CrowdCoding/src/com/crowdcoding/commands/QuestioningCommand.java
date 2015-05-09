@@ -20,6 +20,9 @@ import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.entities.Questioning;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.microtasks.Microtask;
+import com.crowdcoding.history.HistoryLog;
+import com.crowdcoding.history.PropertyChange;
+import com.crowdcoding.history.QuestionViewed;
 import com.crowdcoding.servlets.ThreadContext;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.api.datastore.QueryResultIterator;
@@ -52,7 +55,10 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand incrementQuestionComments(long questionId){
 		return new IncrementQuestionComments(questionId);
 	}
-	
+
+	public static QuestioningCommand addQuestionView(long questionId, String workerId) {
+		return new AddQuestionView(questionId,workerId);
+	}
 
 	public static QuestioningCommand updateQuestion(long questionId, String jsonDTO, String workerId) {
 		return new UpdateQuestion(questionId,jsonDTO,workerId);
@@ -145,7 +151,7 @@ public abstract class QuestioningCommand extends Command
 				e.printStackTrace();
 			}
 			
-			Question question = new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, workerHandle, projectId);
+			new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, workerHandle, projectId);
 		}
 	}
 
@@ -223,6 +229,18 @@ public abstract class QuestioningCommand extends Command
 		}
 	}
 
+	protected static class AddQuestionView extends QuestioningCommand {
+
+		private long questionId;
+		public AddQuestionView(long questionId, String workerId) {
+			super(0L,workerId);
+			this.questionId = questionId;
+		}
+
+		public void execute(Questioning questioning, String projectId) {
+			HistoryLog.Init(projectId).addEvent(new QuestionViewed(questionId,workerId,projectId));	
+		}
+	}
 	
 	protected static class IncrementQuestionAnswers extends QuestioningCommand {
 

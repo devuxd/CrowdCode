@@ -9,25 +9,33 @@
     <span class="clearfix"></span>
 </div>
 <div class="middle padding">
-    <span class="clearfix"></span>
     <div class="task-{{ selectedNews.microtaskType | lowercase }}">
-        <h3 class="popover-title"><b>Your work on: &emsp; </b>
-        <span class="microtask-title" ng-if="! selectedNews.isReview">{{selectedNews.microtask.title}} </span>
-        <span class="microtask-title" ng-if="selectedNews.isReview"> review</span>
+        <h3 >
+            <span>
+                Your work on 
+                <span ng-if="! selectedNews.isReview">{{selectedNews.microtask.title | lowercase}} </span>
+                <span ng-if="selectedNews.isReview"> review</span>
+            </span>
         </h3>
         <!-- MICROTASK DATA -->
-        <div ng-if="selectedNews.microtask.type" ng-include="'/client/newsfeed/news_detail_' + selectedNews.microtask.type + '.html'"></div>
+        <div ng-if="selectedNews.microtask.type" 
+             ng-include="'/client/newsfeed/news_detail_' + selectedNews.microtask.type + '.html'"></div>
         <!-- REVIEW SCORE -->
         <div ng-if="selectedNews.qualityScore">
-            <h3 class="popover-title " ng-if="! selectedNews.isReview"><b>Score received:</b> </h3>
-            <h3 class="popover-title " ng-if="selectedNews.isReview"><b>Given score:</b> </h3>
-            <div  class="section section-description">
-                <div class="section-content" >
-                    <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  class="rating-star {{ selectedNews.qualityScore >= currentValue ? 'full' : '' }}"></span>
+            <div style="line-height:25px">
+                <span class="pull-left" >
+                    <b ng-if="! selectedNews.isReview">Score received:</b> 
+                    <b ng-if="selectedNews.isReview">Given score:</b>
+                </span>
+                <span class="pull-left" style="padding-left:10px">
+                    <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  
+                          class="rating-star {{ selectedNews.qualityScore >= currentValue ? 'full' : '' }}">
+                    </span>
                     <span class="clearfix"></span><br />
-                    <span ng-if="selectedNews.reviewText"> <b>Review: </b>{{selectedNews.reviewText}}</span>
-                </div>
+                </span>
+                <span class="clearfix"></span>
             </div>
+            <span ng-if="selectedNews.reviewText"> <b>Review: </b>{{selectedNews.reviewText}}</span>
         </div>
     </div>
 </div>

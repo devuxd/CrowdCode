@@ -48,7 +48,7 @@
        			tabindex="100" >
        			Skip
        		</button>
-		  	<label class="btn btn-sm pull-right" ng-hide="breakMode || noMicrotask">
+		  	<label class="btn btn-sm pull-right" ng-if="!breakMode && !noMicrotask" id="breakBtn">
 	  	    	<input type="checkbox" ng-model="startBreak" 
 	  	    	>
 	  	    	<span>Take a break</span>
