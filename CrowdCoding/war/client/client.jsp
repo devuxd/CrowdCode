@@ -86,7 +86,6 @@
 	<script src="/include/lunr.min.js"></script>
 	<script src="/include/timeAgo.js"></script>
 	<script src="/include/angular-toaster/toaster.min.js"></script>
-	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
 

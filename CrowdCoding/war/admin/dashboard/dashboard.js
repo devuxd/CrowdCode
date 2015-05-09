@@ -108,6 +108,7 @@ angular.module('crowdAdminApp')
         if( (command=='Reset' && !window.confirm("Are you sure? Reset will clear all the project data!")) ) 
             console.log('Aborting reset');
         else {
+            console.log('/'+projectId+'/admin/' + command);
            $http.post('/'+projectId+'/admin/' + command)
             .success(function(data, status, headers, config) {
                 $scope.output += data.message;
