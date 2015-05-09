@@ -147,7 +147,7 @@ public class Review extends Microtask
 
 			notification = new NotificationInFirebase(
 					"task.accepted",
-					"{ \"microtaskId\": \""+submittedMicrotask.getID() + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"
+					"{ \"microtaskId\": \""+Microtask.keyToString(submittedMicrotask.getKey()) + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"
 			);
 
 		}

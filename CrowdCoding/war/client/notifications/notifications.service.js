@@ -67,12 +67,20 @@ angular
 						case 'task.accepted':
 							toast.type = 'success';
 							toast.body = 'Your work of '+json.microtaskType+' on the artifact '+json.artifactName+' has been accepted';
+							toast.clickHandler = function(){ 
+								$rootScope.$broadcast('setLeftBarTab','newsfeed');
+								$rootScope.$broadcast('showNews', json.microtaskId );
+							};
 							toaster.pop( toast ); 
 							break;
 
 						case 'task.reissued':
 							toast.type = 'error';
 							toast.body = 'Your work of '+json.microtaskType+' on the artifact '+json.artifactName+' has been reissued';
+							toast.clickHandler = function(){ 
+								$rootScope.$broadcast('setLeftBarTab','newsfeed');
+								$rootScope.$broadcast('showNews', json.microtaskId );
+							};
 							toaster.pop( toast ); 
 							break;
 
@@ -81,8 +89,6 @@ angular
 
 					snap.ref().update({'read':true});      
 				}
-					
-				    
 			});
 		};
 	};

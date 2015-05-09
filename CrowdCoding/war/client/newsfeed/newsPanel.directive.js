@@ -22,8 +22,8 @@ angular
 
 			// bind the array to scope.leaders
 			$scope.news = sync.$asArray();
-			function onShowNews( event, questionId ){
-				setSelected(questionId );
+			function onShowNews( event, microtaskId ){
+				setSelected($scope.news.$getRecord(microtaskId));
 			}
 
 			function setUiView(view){

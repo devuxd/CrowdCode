@@ -47,16 +47,13 @@ angular
                 popupHasBeenClosed=false;
                 $scope.$emit('reset-reminder');
 
+                //actual time of the system in seconds
+                startTime =  new Date().getTime();
                 //time when user fetched the microtask for the first time in milliseonds
                 fetchTime = userService.getFetchTime();
 
-                //actual time of the system in seconds
-                startTime =  new Date().getTime();
-
-                fetchTime.$loaded().then(function(){
-                    $scope.skipMicrotaskIn = fetchTime.$value + microtaskTimeout - startTime ;
-                    microtaskInterval = $interval(doReminder, timeInterval); 
-                });
+                $scope.skipMicrotaskIn = fetchTime + microtaskTimeout - startTime ;
+                microtaskInterval = $interval(doReminder, timeInterval); 
 
             });
 
