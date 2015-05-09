@@ -12,6 +12,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-html2js');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-text-replace');
+	grunt.loadNpmTasks('grunt-wiredep');
 	process.chdir( dir );
 
 	grunt.initConfig({
@@ -77,10 +78,11 @@ module.exports = function (grunt) {
 			main: {
 				files: [
 					{expand:true,flatten:true, src: [ '.tmp/admin.*'],         dest: '../' + distDir + '/', filter: 'isFile'},
-					{expand:true,flatten:true, src: [ 'styles/*.css'],            dest: '../' + distDir + '/', filter: 'isFile'},
+					{expand:true,flatten:true, src: [ 'styles/*.css'],            dest: '../' + distDir + '/styles/', filter: 'isFile'},
 				],
 			},
 		},
+
 
 		// watch for any edit of the html, js, css or jsp and rebuild the project
 		watch: {

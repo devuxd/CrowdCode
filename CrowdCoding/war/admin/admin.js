@@ -1,4 +1,3 @@
-'use strict';
 
 /**
  * @ngdoc overview
@@ -13,15 +12,11 @@ angular
   .module('crowdAdminApp', [
     'templates-main',
     'ngAnimate',
-    'ngCookies',
-    'ngResource',
     'ngSanitize',
-    'mgcrea.ngStrap',
-    'firebase',
-    'nvd3',
     'ui.router',
     'ui.ace',
-    'mgcrea.ngStrap' 
+    'firebase',
+    'mgcrea.ngStrap'
   ])
   .config(function ($stateProvider) {
 
@@ -80,15 +75,16 @@ angular
         url: '/users',
         templateUrl: 'users/users.html',
         controller: 'UsersCtrl'
+      })
+      .state('questions',{
+        url: '/questions',
+        templateUrl: 'questions/questions.html',
+        controller: 'QuestionsCtrl'
       });
 
   })
   .run(['$rootScope', '$location', '$anchorScroll', '$templateCache','Microtasks','eventsService',function($rootScope, $location, $anchorScroll, $templateCache, Microtasks, eventsService) {
     
-    // $rootScope.$on('$viewContentLoaded', function() {
-    //   $templateCache.removeAll();
-    // });
-
     $rootScope.go = function ( path ) {
       $location.url( path ); 
     };
@@ -108,8 +104,6 @@ angular
     });
 
     $rootScope.time = new Date().getTime();
-
-    // $cache = $templateCache;
     
   }])
 .constant('firebaseUrl','https://crowdcode.firebaseio.com/projects/'+projectId);

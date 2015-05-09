@@ -1,0 +1,24 @@
+<div class="section section-description " >
+    <div class="section-content job-description" >
+        Edit of the function <strong>{{selectedNews.funct.getName()}}</strong> for revising the call to
+        <strong>{{selectedNews.calleeFunctioselectedNews.getName()}}</strong>.
+    </div>
+</div>
+
+<div class="section section-description-2">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>FUNCTION DESCRIPTION
+    </div>
+    <div class="section-content" >
+        <ace-read-js code="selectedNews.calleeFunctioselectedNews.getSignature()"></ace-read-js>
+    </div>
+</div>
+
+<div class="section section-review">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>Edits to Function
+    </div>
+    <div class="section-content" >
+        <ace-read-js code="selectedNews.funct.getFullCode()" mode="diff"></ace-read-js>
+    </div>
+</div>

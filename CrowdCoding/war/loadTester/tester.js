@@ -8,7 +8,8 @@ var projectId = 'dummyProject';
 var actualId;
 
 var fbRootRef = new Firebase('https://crowdcode.firebaseio.com/projects/'+projectId);
-var apiPath  = 'http://crowd-coding-dev.appspot.com/'+projectId+'/ajax/';
+//var apiPath  = 'http://crowd-coding-dev.appspot.com/'+projectId+'/ajax/';
+var apiPath  = 'http://localhost:8888/'+projectId+'/ajax/';
 
 
 function DummyWorker( assignedId ){

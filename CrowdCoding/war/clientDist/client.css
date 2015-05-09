@@ -26,12 +26,7 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(169, 68, 66,.6);
 
 }
-.newsfeed-panel{
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	overflow: scroll;
-}
+
 .popover-news{
 	width: 65%;
 	max-width: 65% !important;
@@ -483,6 +478,7 @@ h1, h2, h3, h4 {
 
 /* SIDEBAR NEWS PANEL */
 .news-element { 
+	cursor: pointer;
 	position:relative; padding-left:2px; 
 	min-height:2.5em; 
 	background-color: rgba(205, 205, 205, 0.35);
@@ -507,13 +503,29 @@ h1, h2, h3, h4 {
 .news-element .reissued { color: #f0ad4e;  }
 .news-element .rejected { color: #555; }
 
-.questions {
+.questions,
+.news{
 	position:absolute;
 	top:0px;
 	left:0px;
 	width:100%;
 	height:100%;
 }
+
+
+.news .news-list{
+	position:absolute;
+	top:5px;
+	bottom:0px;
+	width:100%;
+	margin:0px;
+	padding:0px;
+	height:100%;
+	padding:5px;
+	overflow:auto;
+}
+
+
 .questions .tag {
   line-height: 1;
   color: #FFFFFF;
@@ -525,14 +537,15 @@ h1, h2, h3, h4 {
   display: inline-block;
   border-radius: 0;
   font-family: 'Lato';
+
 }
 
-
+.news .top,
 .questions .top {
 	height: 35px;
 }
 
-
+.news .middle,
 .questions .middle {
 	position:absolute;
 	top:35px;
@@ -561,6 +574,7 @@ h1, h2, h3, h4 {
  	box-shadow: none;
  	-webkit-box-shadow: none;
 }
+
 
 .questions .questions-list {
 	margin:0px;
@@ -611,37 +625,50 @@ h1, h2, h3, h4 {
 
 .questions .question-item:hover .btn-edit { display:block; }
 
+.news > div,
 .questions > div {
 	display:block;
 }
 
+.news > div.ng-enter, .news > div.ng-leave,
 .questions > div.ng-enter, .questions > div.ng-leave {
 	transition:         all 0.5s ease;
 	-webkit-transition: all 0.5s ease;
 }
 
+.news > div.from-left.ng-enter,
+.news > div.from-left.ng-leave.ng-leave-active,
 .questions > div.from-left.ng-enter,
 .questions > div.from-left.ng-leave.ng-leave-active{
 	margin-left:-100%;
 }
 
+.news > div.from-left.ng-leave,
+.news > div.from-left.ng-enter.ng-enter-active,
 .questions > div.from-left.ng-leave,
 .questions > div.from-left.ng-enter.ng-enter-active {
 	margin-left:0%;
 }
 
 
+.news > div.from-right.ng-enter,
+.news > div.from-right.ng-leave.ng-leave-active,
 .questions > div.from-right.ng-enter,
 .questions > div.from-right.ng-leave.ng-leave-active {
     margin-left: 100%;
 }
+.news > div.from-right.ng-leave,
+.news > div.from-right.ng-enter.ng-enter-active,
 .questions > div.from-right.ng-leave,
-.questions > div.from-right.ng-enter.ng-enter-active {
+.questions > div.from-right.ng-enter.ng-enter-active  {
 	margin-left: 0%;
 }
 
 
+.news .question-list,
 .questions .question-list { margin-left:0%; }
+
+.news .question-list.ng-enter,
 .questions .question-list.ng-enter { margin-left:-100%; } 
 
 .questions .question-list .top {

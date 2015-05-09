@@ -1,25 +1,4 @@
-<div id="newsfeedPanel" class="newsfeed-panel">
-	<div class="panel-group" ng-model="news.activeNews" role="tablist" aria-multiselectable="true" bs-collapse>
-		  <div class="panel panel-default" ng-repeat="n in news | orderBy:'-timeInMillis'">
-		    <div class="panel-heading news" role="tab">
-		        <div bs-collapse-toggle class="news-element {{ n.microtaskType | lowercase }}">
-		        	<span ng-if="news.activeNews !== $index " class="glyphicon glyphicon-chevron-right pull-left" ></span>
-		        	<span ng-if="news.activeNews === $index " class="glyphicon glyphicon-chevron-down pull-left" ></span>
-		          	<div class="type">{{::n.microtaskType}}</div>
-	  				<div class="result" ng-if="::(n.score != -1)">
-	  					<!--<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>-->
-	  					<span ng-if="::(n.score <= 3)" class="reissued">REISSUED</span>
-	  					<span ng-if="::(n.score > 3)" class="accepted">ACCEPTED</span>
-	  				</div>
-	  				<span class="points">{{::n.awardedPoints}}/<small>{{::n.maxPoints}}</small> pts</span>
-	  		  		<div class="clearfix"></div>
-		        </div>
-		    </div>
-		    <div class="panel-collapse" role="tabpanel" bs-collapse-target>
-		      <div class="panel-body">
-		        <microtask-collapsable n="n"></microtask-collapsable>
-		      </div>
-		    </div>
-		  </div>
-		</div>
-	</div>
+<div class="news">
+	<div class="news-list   from-left"       ng-if="view == 'list'"></div>
+	<div class="news-detail {{ animation }}" ng-if="view == 'detail'"></div>
+</div>
