@@ -30,7 +30,7 @@ public class HistoryLog
 	}
 
 	public static HistoryLog Init(String projectId){
-		if( historyLog == null ){
+		if( historyLog == null || historyLog.projectId!=projectId ){
 			historyLog = new HistoryLog(projectId);
 		}
 		return historyLog;
@@ -41,20 +41,22 @@ public class HistoryLog
 	}
 
 	public void addEvent(HistoryEvent event){
-		EventNode node = new EventNode(event);
-		ThreadContext.get().addEventList(node);
+	    FirebaseService.writeHistoryEvent(event,projectId);
+
+//		EventNode node = new EventNode(event);
+	//	ThreadContext.get().addEventList(node);
 	}
 
-	public void publish(){
-		ConcurrentLinkedQueue<EventNode> eventList = ThreadContext.get().getEventList();
-		Iterator<EventNode> eventIterator = eventList.iterator();
-	    while(eventIterator.hasNext()) {
-	    	EventNode node = eventIterator.next();
-	    	HistoryEvent event = node.event;
-		    FirebaseService.writeHistoryEvent(event,projectId);
-		    eventIterator.remove();
-	    }
-	}
+	public void publish(){}
+//		ConcurrentLinkedQueue<EventNode> eventList = ThreadContext.get().getEventList();
+//		Iterator<EventNode> eventIterator = eventList.iterator();
+//	    while(eventIterator.hasNext()) {
+//	    	EventNode node = eventIterator.next();
+//	    	HistoryEvent event = node.event;
+//		    FirebaseService.writeHistoryEvent(event,projectId);
+//		    eventIterator.remove();
+//	    }
+//	}
 
 	public class EventNode
 	{
