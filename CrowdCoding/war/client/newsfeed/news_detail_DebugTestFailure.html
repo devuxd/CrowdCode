@@ -1,9 +1,9 @@
 <div ng-if=" ! selectedNews.microtask.submission.disputedTests">
     <div class="section section-description " >
-        <div class="section-content job-description" ng-if=" ! selectedNews.microtask.submissioselectedNews.hasPseudo">
+        <div class="section-content job-description" ng-if=" ! selectedNews.microtask.submission.hasPseudo">
             Debug of the function <strong>{{ selectedNews.funct.getName() }}</strong>.
         </div>
-        <div class="section-content job-description" ng-if="selectedNews.microtask.submissioselectedNews.hasPseudo">
+        <div class="section-content job-description" ng-if="selectedNews.microtask.submission.hasPseudo">
             Edit of the function <strong>{{ selectedNews.funct.getName() }}</strong>.
         </div>
 
@@ -18,7 +18,7 @@
     </div>
 </div>
 
-<div ng-if="selectedNews.microtask.submissioselectedNews.disputedTests">
+<div ng-if="selectedNews.microtask.submission.disputedTests">
 
     <div class="section section-description " >
         <div class="section-content job-description" >

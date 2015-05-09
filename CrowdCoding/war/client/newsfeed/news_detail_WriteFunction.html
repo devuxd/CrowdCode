@@ -1,10 +1,10 @@
 <div class="section section-description " >
     <div class="section-content job-description" >
 
-        <div ng-if="selectedNews.microtask.submissioselectedNews.inDispute">
+        <div ng-if="selectedNews.microtask.submission.inDispute">
            The function <strong>{{selectedNews.funct.getName()}}</strong> was not implementable.
         </div>
-        <div ng-if="! selectedNews.microtask.submissioselectedNews.inDispute">
+        <div ng-if="! selectedNews.microtask.submission.inDispute">
             <div ng-if="selectedNews.microtask.promptType == 'SKETCH'">
                 Edit to the code of the function <strong>{{selectedNews.funct.getName()}}</strong>.
             </div>
@@ -24,7 +24,7 @@
     </div>
 </div>
 
-<div ng-if = "! selectedNews.microtask.submissioselectedNews.inDispute">
+<div ng-if = "! selectedNews.microtask.submission.inDispute">
     <div class="section section-description-2" ng-if="selectedNews.microtask.disputeText.length > 0">
         <div class="section-title" >
             <div class="dot bg-color"></div>Reported Issue

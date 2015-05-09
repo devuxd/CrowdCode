@@ -60,7 +60,8 @@ angular
 	user.getFetchTime = function(){ return user.data.fetchTime; };
 
 	user.setFirstFetchTime = function (){
-		user.data.fetchTime.$value = new Date().getTime();
+		console.log(user.data);
+		user.data.fetchTime = new Date().getTime();
 		user.data.$save();
 	};
 
