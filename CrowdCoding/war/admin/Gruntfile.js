@@ -54,7 +54,7 @@ module.exports = function (grunt) {
 				dest: '.tmp/admin.js',             // destination directory or file
 				replacements: [
 					// replace all '/client' occurrences with 'client'
-					{ from: '/' + dir + '/', to:  '/' + distDir + '/' },
+					// { from: '/' + dir + '/', to:  '/' + distDir + '/' },
 
 					// { from: 'templateUrl: \'', to: 'templateUrl: \'/'+distDir+'/' }
 				]
