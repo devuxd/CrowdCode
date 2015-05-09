@@ -132,7 +132,7 @@ public class Review extends Microtask
 
 			notification = new NotificationInFirebase(
 					"task.reissued",
-					"{ \"microtaskId\": \""+submittedMicrotask.getID() + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"
+					"{ \"microtaskId\": \""+Microtask.keyToString(submittedMicrotask.getKey()) + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"
 			);
 
 		} else {

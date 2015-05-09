@@ -164,7 +164,7 @@ public class CrowdServlet extends HttpServlet
 			// -- PATHS WITHOUT USER AUTHENTICATION
 			 else if ( user != null ) { // if the user is authenticated
 
-				
+
 
 				// USERS URLS
 				if(Pattern.matches("/user/[\\w]*",path)){
@@ -184,18 +184,14 @@ public class CrowdServlet extends HttpServlet
 				// PROJECT URLS match /word/ or /word/(word)*
 				else if(Pattern.matches("/[\\w]+(/[\\w]*)*",path)){
 					String projectId = pathSeg[1];
-					
-					req.setAttribute("project", projectId);
-	//				Key<Project> projectKey = Key.create(Project.class, projectId);
-	//				boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
 
-//					if(!projectExists){
-//						if( FirebaseService.existsClientRequest(projectId) || FirebaseService.existsProject(projectId) ){
-//							Project.Construct(projectId);
-//						} else {
-//							req.getRequestDispatcher("/404.jsp").forward(req, resp);
-//						}
-//					}
+					req.setAttribute("project", projectId);
+					Key<Project> projectKey = Key.create(Project.class, projectId);
+					boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
+
+					if(!projectExists){
+						req.getRequestDispatcher("/404.jsp").forward(req, resp);
+					}
 
 					if ( pathSeg.length <= 2 ){
 						Worker.Create( user, Project.Create(projectId));
@@ -273,7 +269,7 @@ public class CrowdServlet extends HttpServlet
 			final String projectID, User user, final String[] pathSeg) throws IOException, FileUploadException
 	{
 		try {
-			
+
 			if (pathSeg[3].equals("insert")){
 				doInsertQuestioning(req, resp, user);
 			} else if (pathSeg[3].equals("vote")){
@@ -481,7 +477,7 @@ public class CrowdServlet extends HttpServlet
 		// Copy the command back out the context to initially populate the command queue.
 		executeCommands(projectId);
 	}
-	
+
 	public void doUpdateQuestion(final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		final String projectId  = (String) req.getAttribute("project");
@@ -489,7 +485,7 @@ public class CrowdServlet extends HttpServlet
 		final String payload    = Util.convertStreamToString(req.getInputStream());
 		final String workerId     = user.getUserId();
 		final String workerHandle = user.getNickname();
-		
+
 		// Reset the actual Thread Context
 		ThreadContext.get().reset();
 		QuestioningCommand.updateQuestion(questionId, payload, workerId);
@@ -588,7 +584,7 @@ public class CrowdServlet extends HttpServlet
 		QuestioningCommand.setClosed(questionId, closed);
 		executeCommands(projectID);
 	}
-	
+
 	public void doVoteQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		// Collect information from the request parameter. Since the transaction may fail and retry,
@@ -683,7 +679,7 @@ public class CrowdServlet extends HttpServlet
     	} catch ( IllegalArgumentException e ){
     		e.printStackTrace();
     	}
-        HistoryLog.Init(projectID).publish();
+       // HistoryLog.Init(projectID).publish();
 
 	    FirebaseService.publish();
 
@@ -733,7 +729,7 @@ public class CrowdServlet extends HttpServlet
     	} catch ( IllegalArgumentException e ){
     		e.printStackTrace();
     	}
-        HistoryLog.Init(projectID).publish();
+       // HistoryLog.Init(projectID).publish();
 
 		renderJson(resp, jsonResponse);
 	    FirebaseService.publish();
@@ -877,7 +873,7 @@ public class CrowdServlet extends HttpServlet
 
             ThreadContext threadContext = ThreadContext.get();
 	    	commandQueue.addAll(threadContext.getCommands());
-	    	HistoryLog.Init(projectId).publish();
+	    	//HistoryLog.Init(projectId).publish();
 
 	    	// history log writes and the other
             // firebase writes are done

@@ -8,8 +8,8 @@ var projectId = 'dummyProject';
 var actualId;
 
 var fbRootRef = new Firebase('https://crowdcode.firebaseio.com/projects/'+projectId);
-//var apiPath  = 'http://crowd-coding-dev.appspot.com/'+projectId+'/ajax/';
-var apiPath  = 'http://localhost:8888/'+projectId+'/ajax/';
+var apiPath  = 'http://crowd-coding-dev.appspot.com/'+projectId+'/ajax/';
+//var apiPath  = 'http://localhost:8888/'+projectId+'/ajax/';
 
 
 function DummyWorker( assignedId ){
@@ -173,7 +173,7 @@ function generateSubmitData( microtaskKey, id ){
 					// 	formData.code = "{ return par; \n}"
 					// }
 
-					var numPF = Math.random() >0.1 ? 1: 0;
+					var numPF = Math.random() >0.05 ? 1: 0;
 					var name=funName+Math.random();
 					for( var pf = 1; pf <= numPF ; pf++ ){
 						formData.pseudoFunctions.push({

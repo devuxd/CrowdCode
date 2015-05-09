@@ -6,7 +6,6 @@ angular
 		restrict: "AEC",
 		templateUrl: '/client/newsfeed/news_list.html',
 		link: function($scope,$element,$attrs){
-			
 		}
 	};
 });
