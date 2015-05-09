@@ -79,6 +79,7 @@ angular
 							toast.body = 'Your work of '+json.microtaskType+' on the artifact '+json.artifactName+' has been reissued';
 							toast.clickHandler = function(){ 
 								$rootScope.$broadcast('setLeftBarTab','newsfeed');
+								console.log(json);
 								$rootScope.$broadcast('showNews', json.microtaskId );
 							};
 							toaster.pop( toast ); 
