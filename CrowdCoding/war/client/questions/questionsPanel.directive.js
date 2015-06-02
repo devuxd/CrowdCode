@@ -66,6 +66,7 @@ angular
 				$scope.sel = q;
 
 				updateView();
+				questionsService.addWorkerView(q.id);
 				setUiView('detail');
 			}
 

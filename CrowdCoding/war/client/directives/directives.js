@@ -430,7 +430,7 @@ angular
 // VIEWS THE STATS
 angular
     .module('crowdCode')
-    .directive('projectStats', function($rootScope,$firebase) {
+    .directive('projectStats', function($rootScope,$firebase,firebaseUrl) {
 
     return {
         restrict: 'E',
@@ -445,9 +445,7 @@ angular
 
         link: function($scope, $element) {
 
-            //$scope.microtaskCountObj  = $firebase(new Firebase($rootScope.firebaseURL+'/status/microtaskCount')).$asObject();
-
-            var functionsRef = new Firebase($rootScope.firebaseURL+'/artifacts/functions/');
+            var functionsRef = new Firebase(firebaseUrl+'/artifacts/functions/');
             $scope.functionsCount = 0;
             functionsRef.on('child_added',function (snapshot){
                 $scope.functionsCount ++;
@@ -464,7 +462,7 @@ angular
 
 
         
-            var testsRef = new Firebase($rootScope.firebaseURL+'/artifacts/tests');
+            var testsRef = new Firebase(firebaseUrl+'/artifacts/tests');
             $scope.testsCount = 0;
             testsRef.on('child_added',function(snapshot){
                 $scope.testsCount ++;

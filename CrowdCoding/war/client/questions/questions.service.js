@@ -38,6 +38,8 @@ angular
 		this.searchResults = searchResults;
 		this.getQuestions  = function(){return questions;};
 		this.get 		   = getQuestion;
+
+		this.addWorkerView = addWorkerView;
 		this.setWorkerView = setWorkerView;
 
 		function questionToDocument(question,key){
@@ -196,14 +198,11 @@ angular
 
 		function setClosed(id, closed){
 			var deferred = $q.defer();
-			console.log(closed);
 			$http.post('/' + $rootScope.projectId + '/questions/close?id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
-					console.log('OK');
 					deferred.resolve();
 				})
 				.error(function(data, status, headers, config) {
-					console.log('KO');
 					deferred.reject();
 				});
 			return deferred.promise;
@@ -211,6 +210,20 @@ angular
 
 		function setWorkerView(id,view){
 			questionsRef.$ref().child( id+'/views/'+workerId ).set( view );
+		}
+
+		function addWorkerView(id){
+			var deferred = $q.defer();
+			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
+				.success(function(data, status, headers, config) {
+					console.log('viewed');
+					deferred.resolve();
+				})
+				.error(function(data, status, headers, config) {
+					console.log('error');
+					deferred.reject();
+				});
+			return deferred.promise;
 		}
 	};
 

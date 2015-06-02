@@ -99,75 +99,85 @@ angular
                 if( highlight !== undefined ){
 
                     var $highlightTag = $(document).find('#'+highlight)
-                    var placement = $step.attr('placement');
 
-                    if( placement === undefined )
-                        throw "a placement should be defined!";
+                    if( $highlightTag.length == 0 ) {
+                        nextStep();
 
-                    if( onShow !== undefined && onShow.length > 0 ){
-                        $rootScope.$eval(onShow);
-                    } 
+                    } else {
+                        
+                        var placement = $step.attr('placement');
 
-                    // calculate the hightlight css
-                    var highlightCss = {
-                        top    : $highlightTag.offset().top   ,
-                        left   : $highlightTag.offset().left  ,
-                        width  : $highlightTag.outerWidth()   ,
-                        height : $highlightTag.outerHeight()
-                    };
+                        if( placement === undefined )
+                            throw "a placement should be defined!";
 
-                    // calculate the content css
-                    var contentCss = {
-                        top  : highlightCss.top,
-                        left : highlightCss.left
-                    };
+                        if( onShow !== undefined && onShow.length > 0 ){
+                            $rootScope.$eval(onShow);
+                        } 
 
-                    if( prevOnHide !== undefined && prevOnHide.length > 0 ) 
-                        $rootScope.$eval(prevOnHide);
+                        // calculate the hightlight css
+                        var highlightCss = {
+                            top    : $highlightTag.offset().top   ,
+                            left   : $highlightTag.offset().left  ,
+                            width  : $highlightTag.outerWidth()   ,
+                            height : $highlightTag.outerHeight()
+                        };
 
-                    $content.fadeOut(400,function(){
+                        // calculate the content css
+                        var contentCss = {
+                            top  : highlightCss.top,
+                            left : highlightCss.left
+                        };
+
+                        if( prevOnHide !== undefined && prevOnHide.length > 0 ) 
+                            $rootScope.$eval(prevOnHide);
+
+                        $content.fadeOut(400,function(){
 
 
-                        $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
-                        $compile($content.contents())($scope);
+                            $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
+                            $compile($content.contents())($scope);
 
-                        $content.attr('style',contentStyle);
+                            $content.attr('style',contentStyle);
 
-                        var width  = $content.outerWidth();
-                        var height = $content.outerHeight();
-                        var margin = 20;
+                            var width  = $content.outerWidth();
+                            var height = $content.outerHeight();
+                            var margin = 20;
 
-                        if( placement == 'left' )        contentCss.left += -width - margin; 
-                        else if( placement == 'right' )  contentCss.left += $highlightTag.outerWidth() +margin ; 
-                        else if( placement == 'top' )    contentCss.top  += -height -margin ;
-                        else if( placement == 'bottom' ) contentCss.top  += $highlightTag.outerHeight() +margin ;
-                        else if( placement == 'top-center' )  {
-                            contentCss.top  += -height -margin ;
-                            if( $highlightTag.outerWidth() > width )
-                                contentCss.left += ($highlightTag.outerWidth()-width)/2;
-                            else
-                                contentCss.left += -(width-$highlightTag.outerWidth())/2;
+                            if( placement == 'left' )        contentCss.left += -width - margin; 
+                            else if( placement == 'right' )  contentCss.left += $highlightTag.outerWidth() +margin ; 
+                            else if( placement == 'top' )    contentCss.top  += -height -margin ;
+                            else if( placement == 'bottom' ) contentCss.top  += $highlightTag.outerHeight() +margin ;
+                            else if( placement == 'top-center' )  {
+                                contentCss.top  += -height -margin ;
+                                if( $highlightTag.outerWidth() > width )
+                                    contentCss.left += ($highlightTag.outerWidth()-width)/2;
+                                else
+                                    contentCss.left += -(width-$highlightTag.outerWidth())/2;
 
-                        } else if( placement == 'top-left' )  {
-                            contentCss.top  += -height - margin;
-                            contentCss.left += -width;
+                            } else if( placement == 'top-left' )  {
+                                contentCss.top  += -height - margin;
+                                contentCss.left += -width;
 
-                        } else if( placement == 'right-center' )  {
-                            contentCss.left += $highlightTag.outerWidth() +margin ;
-                            if( $highlightTag.outerHeight() > height )
-                                contentCss.top += ($highlightTag.outerHeight()-height)/2;
-                            else
-                                contentCss.top += -(height-$highlightTag.outerHeight())/2;
+                            } else if( placement == 'right-center' )  {
+                                contentCss.left += $highlightTag.outerWidth() +margin ;
+                                if( $highlightTag.outerHeight() > height )
+                                    contentCss.top += ($highlightTag.outerHeight()-height)/2;
+                                else
+                                    contentCss.top += -(height-$highlightTag.outerHeight())/2;
 
-                        }  
+                            }  
 
-                        $content.css(contentCss);
-                        $overlay.animate(highlightCss, 400, function(){
-                            // $content.animate(contentCss, 200 ,function(){
-                                $content.fadeIn(300);
-                            // });
+                            $content.css(contentCss);
+                            $overlay.animate(highlightCss, 400, function(){
+                                // $content.animate(contentCss, 200 ,function(){
+                                    $content.fadeIn(300);
+                                // });
+                            });
                         });
-                    });
+
+                    }
+
+                        
                     
                 } else {
 
@@ -186,7 +196,7 @@ angular
                         $content.attr('style',contentStyle);
 
                         var contentCss = {};
-                        contentCss.top   = ($('body').outerHeight()-$content.outerHeight())/2;
+                        contentCss.top   = ($('body').outerHeight()-$content.outerHeight())/5;
                         contentCss.left  = ($('body').outerWidth()-$content.outerWidth())/2;
 
                         $content.css(contentCss);

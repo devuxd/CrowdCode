@@ -21,7 +21,7 @@ angular
 		if(loaded.hasOwnProperty(workerId)){
 			return loaded[workerId];
 		} else {
-			pictureSync = $firebase(new Firebase(firebaseURL + '/workers/'+workerId+'/avatarUrl'));
+			pictureSync = $firebase(new Firebase(firebaseUrl + '/workers/'+workerId+'/avatarUrl'));
 			loaded[workerId] = pictureSync.$asObject();
 			loaded[workerId].$loaded().then(function(){
 				return loaded[workerId];

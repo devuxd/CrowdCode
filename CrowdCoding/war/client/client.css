@@ -92,7 +92,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 
 
 .form-control { font-weight: normal;}
-
+.form-horizontal .form-group { margin: 0px;}
 .submit-alert {
 	 position:relative !important;
 	 margin-top: 0px !important;
@@ -477,40 +477,6 @@ h1, h2, h3, h4 {
 .leaderboard .name { overflow: hidden; line-height:25px; padding-left: 4px; text-overflow: ellipsis; white-space: nowrap; }
 
 /* SIDEBAR NEWS PANEL */
-.news-element { 
-	cursor: pointer;
-	position:relative; padding-left:2px; 
-	min-height:2.5em; 
-	background-color: rgba(205, 205, 205, 0.35);
-	font-family: 'Lato'; 
-}
-.news .type,
-.news .result 
-{ float:left; width:60%; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
-.news .points { position:absolute; top:2px; right:2px; font-weight: bold; }
-.news-element:hover { background-color:#E0E0E0 !important; }
-/*.news-element {  }
-*/
-.news-element .accepted,
-.news-element .reissued,
-.news-element .rejected {
-	font-weight: bold; 
-	font-size: 0.8em;
-	padding: 2px;
-}
-
-.news-element .accepted { color: #5cb85c;  }
-.news-element .reissued { color: #f0ad4e;  }
-.news-element .rejected { color: #555; }
-
-.questions,
-.news{
-	position:absolute;
-	top:0px;
-	left:0px;
-	width:100%;
-	height:100%;
-}
 
 
 .news .news-list{
@@ -524,6 +490,60 @@ h1, h2, h3, h4 {
 	padding:5px;
 	overflow:auto;
 }
+
+
+.news-list .questions-list {
+	margin:0px;
+	padding:0px;
+	height:100%;
+}
+.news-list .list-group .list-group-item {
+	height:2.8em;
+	margin-bottom:5px; 
+	border-radius:0px;
+	word-break: break-all;
+}
+
+.news-element { 
+	cursor: pointer;
+	padding:0px;
+	padding-left:2px;
+	border:none;
+	background-color: rgba(205, 205, 205, 0.35);
+	font-family: 'Lato'; 
+}
+.news-element:hover { background-color:#E0E0E0 !important; }
+.news .type,
+.news .result 
+{ float:left; width:60%; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+.news .points { position:absolute; top:2px; right:2px; font-weight: bold; }
+/*.news-element {  }
+*/
+.news-element .accepted,
+.news-element .reissued,
+.news-element .rejected {
+	font-weight: bold; 
+	font-size: 0.8em;
+	padding: 2px;
+	border-radius:0px;
+}
+
+.news-element .accepted { color: #5cb85c;  }
+.news-element .reissued { color: #f0ad4e;  }
+.news-element .rejected { color: #555; }
+
+
+.news-detail h3 { font-size:1.4em; margin: 5px 0px;}
+
+.questions,
+.news{
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+}
+
 
 
 .questions .tag {
@@ -702,7 +722,7 @@ h1, h2, h3, h4 {
 	opacity: 1;
 }
 
-.questions .question-detail .answer-item textarea  { min-height:10em; resize: none; }
+.questions .question-detail textarea  { min-height:10em; resize: none; }
 .questions .question-detail .command-item textarea { min-height:3em; resize: none; }
 
 .questions .question-list .searchbox {

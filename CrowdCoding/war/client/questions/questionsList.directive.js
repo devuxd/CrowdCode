@@ -25,7 +25,6 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 
 			function updateFilter(){
 				
-				console.log('updating...',text)
 				var text = getFilterStr();
 		        searchTimeout = $timeout(function() {
 		        	if( text == '' )
@@ -46,8 +45,10 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 				for( var i = 0; i < $scope.search.length; i++)
 					if( !found && $scope.search[i].text == text ) 
 						found = true;
-				if( !found )
+				if( !found ){
 					$scope.search.push({ text: text }); 
+					updateFilter();
+				}
 			}
 
 

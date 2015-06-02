@@ -25,7 +25,7 @@ angular
 	})
 	.constant('workerId'   ,workerId) 
     .constant('projectId'  ,projectId)
-	.constant('firebaseUrl',firebaseURL)
+	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
 	.constant('logoutUrl'  ,logoutURL)
 	.run(function($rootScope, $interval, $modal, $firebase, firebaseUrl, logoutUrl, userService,  functionsService, ADTService, avatarFactory, questionsService, notificationsService, newsfeedService ){
 
@@ -33,7 +33,7 @@ angular
 		$rootScope.projectId    = projectId;
 		$rootScope.workerId     = workerId;
 		$rootScope.workerHandle = workerHandle;
-		$rootScope.firebaseURL  = firebaseURL;
+		$rootScope.firebaseUrl  = firebaseUrl;
 		$rootScope.userData     = userService.data;
 		$rootScope.logoutUrl    = logoutUrl;
 		$rootScope.avatar       = avatarFactory.get;
@@ -114,7 +114,7 @@ angular
 				};
 
 
-				var feedbackRef = $firebase(new Firebase(firebaseURL + '/feedback'));
+				var feedbackRef = $firebase(new Firebase(firebaseUrl + '/feedback'));
 
 				feedbacks = feedbackRef.$asArray();
 				feedbacks.$loaded().then(function() {

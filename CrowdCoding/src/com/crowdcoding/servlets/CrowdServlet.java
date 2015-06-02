@@ -287,6 +287,8 @@ public class CrowdServlet extends HttpServlet
 				doCloseQuestion(req, resp, user);
 			} else if (pathSeg[3].equals("update")){
 				doUpdateQuestion(req, resp, user);
+			} else if (pathSeg[3].equals("view")){
+				doViewQuestion(req, resp, user);
 			}
 		} catch( Exception e ) {
 			e.printStackTrace();
@@ -492,6 +494,19 @@ public class CrowdServlet extends HttpServlet
 		QuestioningCommand.updateQuestion(questionId, payload, workerId);
 		executeCommands(projectId);
 	}
+	
+	public void doViewQuestion(final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
+	{
+		final String projectId  = (String) req.getAttribute("project");
+		final long   questionId = Long.parseLong((String) req.getParameter("id"));
+		final String workerId     = user.getUserId();
+		
+		// Reset the actual Thread Context
+		ThreadContext.get().reset();
+		QuestioningCommand.addQuestionView(questionId,workerId);
+		executeCommands(projectId);
+	}
+	
 
 	public void doReportQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
