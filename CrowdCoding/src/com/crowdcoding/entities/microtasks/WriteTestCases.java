@@ -4,9 +4,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.TestCasesDTO;
-import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
-import com.crowdcoding.dto.firebase.WriteTestCasesInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.TestCasesDTO;
+import com.crowdcoding.dto.firebase.microtask.WriteTestCasesInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;

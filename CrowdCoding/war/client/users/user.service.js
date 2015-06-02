@@ -73,6 +73,7 @@ angular
 	};
 
 
+
 	// distributed test work
     user.listenForJobs = function(){
 		// worker
@@ -148,18 +149,20 @@ angular
 	// and then send the logout command to the server
 	// distributed logout work
     user.listenForLogoutWorker = function(){
+    	console.log("message");
     	var logoutQueue     = new Firebase( firebaseURL + '/status/loggedOutWorkers/');
 
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 
 			//retrieves the reference to the worker to log out
 			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
-
+			console.log("sono qua");
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 
-			var interval = $interval( timeoutCallBack, 10000);
-			var timeoutCallBack = function(){
+			var interval = $interval( timeoutCallBack, 5000);
+			function timeoutCallBack(){
+				console.log("trying to log out "+  jobData.workerId);
 				//time of the client plus the timezone offset given by firebase
 				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field
@@ -184,7 +187,7 @@ angular
 						whenFinished();
 					}
 				});
-			};
+			}
 		});
 	};
 

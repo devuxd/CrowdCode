@@ -4,11 +4,10 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.PseudoFunctionDTO;
-import com.crowdcoding.dto.ReusedFunctionDTO;
-import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.PseudoFunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ReusedFunctionDTO;
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
-import com.crowdcoding.dto.firebase.ReuseSearchInFirebase;
+import com.crowdcoding.dto.firebase.microtask.ReuseSearchInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
@@ -82,7 +81,9 @@ public class ReuseSearch extends Microtask
     			this.microtaskName(),
     			"SubmittedReuseSearch",
     			Microtask.keyToString(this.getKey()),
-    			-1 // differentiate the reviews from the 0 score tasks
+    			-1, // differentiate the reviews from the 0 score tasks
+    			"none",
+    			false
 	    	).json()),
 			Microtask.keyToString(this.getKey()),
 			projectId

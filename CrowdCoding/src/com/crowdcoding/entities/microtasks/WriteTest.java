@@ -4,8 +4,8 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.TestDTO;
-import com.crowdcoding.dto.firebase.WriteTestInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
+import com.crowdcoding.dto.firebase.microtask.WriteTestInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
@@ -52,14 +52,14 @@ public class WriteTest extends Microtask
 		ofy().load().ref(this.test);
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteTestInFirebase(
-				id, 
+				id,
 				this.microtaskTitle(),
 				this.microtaskName(),
 				test.getName(),
 				test.getID(),
-				false, 
 				false,
-				submitValue, 
+				false,
+				submitValue,
 				test.getID(), test.getFunctionID(), functionVersion, promptType.name(), "", "", "", ""),
 				Microtask.keyToString(this.getKey()),
 				projectId);

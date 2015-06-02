@@ -2,25 +2,14 @@ package com.crowdcoding.entities;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
-import sun.security.acl.OwnerImpl;
-
-import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.WorkerCommand;
-import com.crowdcoding.dto.firebase.NotificationInFirebase;
-import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
-import com.crowdcoding.dto.firebase.VotersIdInFirebase;
-import com.crowdcoding.dto.firebase.QueueInFirebase;
-import com.crowdcoding.entities.microtasks.Microtask;
+import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
+import com.crowdcoding.dto.firebase.questions.*;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -149,7 +138,7 @@ public /*abstract*/ class Questioning
 
 		}
 	}
-	
+
 	private void updateScore()
 	{
 		this.score = votersId.size() - reportersId.size();

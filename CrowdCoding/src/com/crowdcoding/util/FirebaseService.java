@@ -12,22 +12,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
 import com.crowdcoding.commands.Command;
-import com.crowdcoding.dto.ReviewDTO;
-import com.crowdcoding.dto.firebase.AnswerInFirebase;
-import com.crowdcoding.dto.firebase.ArtifactsIdInFirebase;
-import com.crowdcoding.dto.firebase.CommentInFirebase;
-import com.crowdcoding.dto.firebase.FunctionInFirebase;
-import com.crowdcoding.dto.firebase.LeaderboardEntry;
-import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
-import com.crowdcoding.dto.firebase.NotificationInFirebase;
-import com.crowdcoding.dto.firebase.QuestionInFirebase;
-import com.crowdcoding.dto.firebase.QueueInFirebase;
-import com.crowdcoding.dto.firebase.ReissueInFirebase;
-import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
-import com.crowdcoding.dto.firebase.SubscribersInFirebase;
-import com.crowdcoding.dto.firebase.TagsInFirebase;
-import com.crowdcoding.dto.firebase.TestInFirebase;
-import com.crowdcoding.dto.firebase.VotersIdInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.ReviewDTO;
+import com.crowdcoding.dto.firebase.*;
+import com.crowdcoding.dto.firebase.artifact.*;
+import com.crowdcoding.dto.firebase.microtask.*;
+import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
+import com.crowdcoding.dto.firebase.questions.*;
 import com.crowdcoding.entities.Question;
 import com.crowdcoding.history.HistoryEvent;
 import com.crowdcoding.servlets.ThreadContext;
@@ -270,10 +260,10 @@ public class FirebaseService
 	}
 
 	// Stores the specified review to firebase
-	public static void writeReview(ReviewDTO dto, Long reviewId, String microtaskKey , String projectId){
-		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, projectId);
-		enqueueWrite(reviewId.toString(), "/microtasks/" + microtaskKey + "/review/reviewId.json", HTTPMethod.PUT, projectId);
-	}
+	public static void writeReview(ReviewSubmissionInFirebase reviewSubmission, String microtaskKey , String projectId){
+		System.out.println(reviewSubmission.json());
+		enqueueWrite(reviewSubmission.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, projectId);
+		}
 
 	public static void writeSetting(String name, String value, String projectId){
 		enqueueWrite(value, "/status/settings/"+name+".json", HTTPMethod.PUT, projectId);
@@ -329,16 +319,20 @@ public class FirebaseService
 	public static void postToNewsfeed(String workerID, String message, String microtaskKey, String projectId){
 		enqueueWrite(message, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
 	}
+	// change the status of a challenge to the specified workers newsfeed
+	public static void updateNewsfeed(String workerID, String data, String microtaskKey, String projectId){
+		enqueueWrite(data, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
+	}
 
 	// Writes the specified question to firebase
 	public static void writeQuestion(QuestionInFirebase dto, String projectId){
 		enqueueWrite(dto.json(), "/questions/"+dto.id+".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void writeQuestionVersion(QuestionInFirebase dto, String projectId){
 		enqueueWrite(dto.json(), "/history/questions/" + dto.id + "/" + dto.version + ".json", HTTPMethod.PUT, projectId);
 	}
-	
+
 	// Writes the specified question to firebase
 	public static void writeAnswerCreated(AnswerInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
@@ -348,7 +342,7 @@ public class FirebaseService
 	public static void writeCommentCreated(CommentInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 
 	public static void updateQuestioningVoters(VotersIdInFirebase votersId, String path, String projectId)	{
 		enqueueWrite(votersId.json(), path +".json", HTTPMethod.PATCH, projectId);

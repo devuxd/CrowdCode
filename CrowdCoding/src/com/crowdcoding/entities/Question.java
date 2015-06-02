@@ -11,13 +11,11 @@ import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.QuestioningCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.DebugDTO;
-import com.crowdcoding.dto.TestDTO;
-import com.crowdcoding.dto.firebase.ArtifactsIdInFirebase;
-import com.crowdcoding.dto.firebase.NotificationInFirebase;
-import com.crowdcoding.dto.firebase.QuestionInFirebase;
-import com.crowdcoding.dto.firebase.SubscribersInFirebase;
-import com.crowdcoding.dto.firebase.TestInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.DebugDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
+import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
+import com.crowdcoding.dto.firebase.notification.QuestionNotificationInFirebase;
+import com.crowdcoding.dto.firebase.questions.*;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.history.HistoryLog;
@@ -39,7 +37,7 @@ public class Question extends Questioning
 	private int version;
 	private boolean closed;
 	private String title;
-	
+
 
 	public Question(){}
 
@@ -54,15 +52,15 @@ public class Question extends Questioning
 		this.answersCount  = 0;
 		this.commentsCount = 0;
 		this.version       = 0;
-		
+
 		ofy().save().entity(this).now();
-		
+
 		this.firebasePath= "/questions/" + this.id ;
 
 		save();
 		storeVersionToFirebase();
-		
-		NotificationInFirebase notification = new NotificationInFirebase( "question.added", "{ \"questionId\": \""+this.id+"\", \"title\": \""+this.title+"\" }" );
+
+		QuestionNotificationInFirebase notification = new QuestionNotificationInFirebase( "question.added", this.id, this.title);
 		ProjectCommand.notifyLoggedInWorkers(notification);
 	}
 
@@ -70,15 +68,15 @@ public class Question extends Questioning
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
 	public void setText(String text){
 		this.text = text;
 	}
-	
+
 	public void setTags(List<String> tags){
 		this.tags = tags;
 	}
@@ -96,7 +94,7 @@ public class Question extends Questioning
 		ofy().save().entity(this).now();
 		FirebaseService.updateQuestioningLinkedArtifacts(new ArtifactsIdInFirebase(artifactsId), this.firebasePath, projectId);
 	}
-	
+
 	public void unsubscribeWorker(String workerId)
 	{
 		if(subsribersId.remove(workerId)){
@@ -104,7 +102,7 @@ public class Question extends Questioning
 			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
 		}
 	}
-	
+
 	public void subscribeWorker(String workerId)
 	{
 		if(! subsribersId.contains(workerId)){
@@ -113,7 +111,7 @@ public class Question extends Questioning
 			FirebaseService.updateQuestioningSubscribers(new SubscribersInFirebase(this.subsribersId), this.firebasePath, projectId);
 		}
 	}
-	
+
 	public void setClosed(boolean closed){
 		this.closed = closed;
 		ofy().save().entity(this).now();
@@ -123,7 +121,7 @@ public class Question extends Questioning
 	public void incrementAnswers() {
 		this.answersCount ++;
 	}
-	
+
 	public void incrementComments() {
 		this.commentsCount ++;
 	}
@@ -135,7 +133,7 @@ public class Question extends Questioning
 	public long getAnswers() {
 		return this.answersCount;
 	}
-	
+
 	public long getComments() {
 		return this.commentsCount;
 	}
@@ -154,49 +152,49 @@ public class Question extends Questioning
 		storeToFirebase();
 		ofy().save().entity(this).now();
 	}
-	
+
 
 	public void storeVersionToFirebase(){
 		FirebaseService.writeQuestionVersion(new QuestionInFirebase(
-				this.id, 
-				this.ownerId, 
-				this.ownerHandle, 
-				this.title, 
-				this.text, 
-				this.tags, 
-				this.createdAt, 
+				this.id,
+				this.ownerId,
+				this.ownerHandle,
+				this.title,
+				this.text,
+				this.tags,
+				this.createdAt,
 				this.updatedAt,
-				this.score, 
+				this.score,
 				this.version,
 				this.answersCount,
 				this.commentsCount,
-				this.subsribersId, 
-				this.artifactsId, 
+				this.subsribersId,
+				this.artifactsId,
 				this.closed
-			),  
+			),
 			projectId
 		);
 	}
 	private void storeToFirebase() {
 		FirebaseService.writeQuestion(new QuestionInFirebase(
-				this.id, 
-				this.ownerId, 
-				this.ownerHandle, 
-				this.title, 
-				this.text, 
-				this.tags, 
-				this.createdAt, 
+				this.id,
+				this.ownerId,
+				this.ownerHandle,
+				this.title,
+				this.text,
+				this.tags,
+				this.createdAt,
 				this.updatedAt,
-				this.score, 
+				this.score,
 				this.version,
 				this.answersCount,
 				this.commentsCount,
-				this.subsribersId, 
-				this.artifactsId, 
+				this.subsribersId,
+				this.artifactsId,
 				this.closed
-			),  
+			),
 			projectId
 		);
 	}
-	
+
 }

@@ -6,9 +6,9 @@ import java.util.List;
 
 import javax.print.attribute.standard.Sides;
 
-import com.crowdcoding.dto.FunctionParameterDTO;
-import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.PseudoFunctionDTO;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.servlets.ThreadContext;

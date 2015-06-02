@@ -6,18 +6,13 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.PseudoFunctionDTO;
-import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
-import com.crowdcoding.dto.firebase.WriteCallInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
+import com.crowdcoding.dto.firebase.microtask.WriteCallInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
-import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
-import com.google.appengine.labs.repackaged.org.json.JSONException;
-import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
@@ -52,7 +47,7 @@ public class WriteCall extends Microtask
 				this.microtaskName(),
 				caller.getName(),
 				caller.getID(),
-				false, 
+				false,
 				false,
 				submitValue,
 				caller.getID(),

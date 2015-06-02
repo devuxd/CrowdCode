@@ -8,14 +8,13 @@ import java.util.List;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
-import com.crowdcoding.dto.TestDTO;
-import com.crowdcoding.dto.firebase.TestInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
+import com.crowdcoding.dto.firebase.artifact.TestInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
-import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;

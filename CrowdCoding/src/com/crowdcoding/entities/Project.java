@@ -13,12 +13,13 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.DebugDTO;
-import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.FunctionDescriptionsDTO;
-import com.crowdcoding.dto.ReusedFunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.DebugDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDescriptionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDescriptionsDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ReusedFunctionDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
+import com.crowdcoding.entities.microtasks.ChallengeReview;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.ReuseSearch;
@@ -31,7 +32,6 @@ import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.history.MicrotaskUnassigned;
 import com.crowdcoding.history.ProjectCreated;
 import com.crowdcoding.util.FirebaseService;
-import com.crowdcoding.util.IDGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.googlecode.objectify.Key;
@@ -55,12 +55,11 @@ public class Project
 
 	Ref<Microtask> chiave = null;
 
-	private IDGenerator idgenerator;
 
 	@Id private String id;
 
 	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
-	private Boolean tutorialsEnabled = true;
+	private Boolean tutorialsEnabled = false;
 
 	// logged in workers
 	@Serialize private HashSet<String> loggedInWorkers = new HashSet<String>();
@@ -103,9 +102,6 @@ public class Project
 	{
 		// set the id
 		this.id = id;
-
-		// instantiate the id generator
-		idgenerator = new IDGenerator(false);
 
 		// save the project
 		ofy().save().entity(this).now();
@@ -254,6 +250,26 @@ public class Project
 		// save the review queue in Objectify and Firebase
 		ofy().save().entity(this).now();
 		FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), this.getID());
+	}
+	// Queues the microtask onto the project's microtask queue with 2 excluded workerID, the challenger and the challengee workers
+	public void queueChellengeReviewMicrotask( Key<Microtask> microtaskKey, String firstExcludedWorkerID, String secondExcludedWorkerID)
+	{
+		// if the microtask is not in the queue, add it
+		if( ! microtaskQueue.contains( Microtask.keyToString(microtaskKey) )  ){
+			microtaskQueue.addLast( Microtask.keyToString(microtaskKey) ) ;
+			HistoryLog
+				.Init(this.getID())
+				.addEvent( new MicrotaskQueued(  ofy().load().key(microtaskKey).now() ));
+		}
+
+		// add the workerId to the excluded workers for this microtask
+		addPermExcludedWorkerForMicrotask( microtaskKey, firstExcludedWorkerID );
+		addPermExcludedWorkerForMicrotask( microtaskKey, secondExcludedWorkerID );
+
+
+		// save the queue in Objectify and Firebase
+		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
 	}
 
 	// adds a workerId to the permanent excluded workers for the microtask with microtaskKey
@@ -420,7 +436,7 @@ public class Project
 				// is not in [Review, ReuseSearch,DebugTestFailure],
 				// spawn a new review microtask
 				try {
-					if (reviewsEnabled && !( microtask.getClass().equals(Review.class)) ){
+					if (reviewsEnabled && !( microtask.getClass().equals(Review.class) || microtask.getClass().equals(ChallengeReview.class)) ){
 						//temporary fix for the review
 						if( microtask.getClass().equals(ReuseSearch.class) )
 						{
@@ -611,15 +627,6 @@ public class Project
 		ofy().save().entity(this).now();
 	}
 
-	public long generateID(String tag)
-	{
-		long id = idgenerator.generateID(tag);
-
-		// State of embedded object (id generator) changed, so state must be saved.
-		ofy().save().entity(this).now();
-
-		return id;
-	}
 
 	public HashSet<String> getLoggedInWorkers() {
 		return loggedInWorkers;

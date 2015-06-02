@@ -16,7 +16,7 @@ myApp.config(function() {
 // define app constants
 myApp.constant('projectId',projectId);
 myApp.constant('workerId',workerId);
-myApp.constant('firebaseUrl','https://crowdcode.firebaseio.com/projects/allTogetherDrawV10');
+myApp.constant('firebaseUrl','https://crowdcode.firebaseio.com/projects/spreadsheetV5');
 
 myApp.directive('statisticsPanel',function($timeout,$firebase,firebaseUrl){
 	var filteredEvents=[];

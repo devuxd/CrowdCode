@@ -6,11 +6,10 @@ import java.util.List;
 
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.DebugDTO;
-import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.firebase.DebugTestFailureInFirebase;
-import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.DebugDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
+import com.crowdcoding.dto.firebase.microtask.DebugTestFailureInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
@@ -114,7 +113,9 @@ public class DebugTestFailure extends Microtask
 	    			this.microtaskName(),
 	    			"SubmittedDebugTestFailure",
 	    			Microtask.keyToString(this.getKey()),
-	    			-1 // differentiate the reviews from the 0 score tasks
+	    			-1, // differentiate the reviews from the 0 score tasks
+	    			"none",
+	    			false
 				).json()),
 				Microtask.keyToString(this.getKey()),
 				projectId

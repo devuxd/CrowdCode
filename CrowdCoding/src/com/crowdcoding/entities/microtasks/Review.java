@@ -5,18 +5,15 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.ReviewDTO;
-import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.ReviewDTO;
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
-import com.crowdcoding.dto.firebase.NotificationInFirebase;
-import com.crowdcoding.dto.firebase.ReviewInFirebase;
+import com.crowdcoding.dto.firebase.notification.MicrotaskNotificationInFirebase;
+import com.crowdcoding.dto.firebase.microtask.ReviewInFirebase;
+import com.crowdcoding.dto.firebase.microtask.ReviewSubmissionInFirebase;
 import com.crowdcoding.entities.Artifact;
-import com.crowdcoding.entities.Function;
-import com.crowdcoding.entities.Project;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAccepted;
 import com.crowdcoding.history.MicrotaskReissued;
-import com.crowdcoding.history.MicrotaskRejected;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
@@ -84,15 +81,15 @@ public class Review extends Microtask
 		Microtask submittedMicrotask = Microtask.find(microtaskKeyUnderReview).now();
 
 		// Write the review to firebase
-		FirebaseService.writeReview(reviewDTO, this.id, Microtask.keyToString(submittedMicrotask.getKey()) , projectId);
+		FirebaseService.writeReview(new ReviewSubmissionInFirebase(reviewDTO.qualityScore, reviewDTO.reviewText, this.getKey()), Microtask.keyToString(submittedMicrotask.getKey()) , projectId);
 
 		// set default award points to 0
 		int points = 0;
 
 
 		int awardedPoints;
-		String reviewResult;
-
+		boolean canBeChallenged = false;
+		String challengeStatus = "none";
 		//reject not used any more for now...
         /*if( reviewDTO.qualityScore < 3 ) {
 
@@ -117,12 +114,12 @@ public class Review extends Microtask
 			1 stars ->0
 		*/
 		awardedPoints = (int) Math.round( submittedMicrotask.submitValue * Math.pow((reviewDTO.qualityScore /5.0), 1.5));
-		NotificationInFirebase notification = null;
+		MicrotaskNotificationInFirebase notification = null;
 		if ( reviewDTO.qualityScore < 4) {
 
 			// reissue microtask
+			canBeChallenged=true;
 			System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" reissued");
-			reviewResult = "reissued";
 			if(reviewDTO.fromDisputedMicrotask)
 				MicrotaskCommand.rejectMicrotask(microtaskKeyUnderReview, workerOfReviewedWork, awardedPoints);
 			else
@@ -130,25 +127,25 @@ public class Review extends Microtask
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
 
-			notification = new NotificationInFirebase(
-					"task.reissued",
-					"{ \"microtaskId\": \""+Microtask.keyToString(submittedMicrotask.getKey()) + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"
-			);
+			notification = new MicrotaskNotificationInFirebase( "task.reissued",
+																Microtask.keyToString(submittedMicrotask.getKey()),
+																submittedMicrotask.microtaskName(),
+																submittedMicrotask.getOwningArtifact().getName());
 
 		} else {
 
 			// accept microtask
+			canBeChallenged=false;
         	System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" accepted");
-			reviewResult ="accepted";
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork, awardedPoints);
 
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
 
-			notification = new NotificationInFirebase(
-					"task.accepted",
-					"{ \"microtaskId\": \""+Microtask.keyToString(submittedMicrotask.getKey()) + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"
-			);
+			notification = new MicrotaskNotificationInFirebase( "task.accepted",
+																Microtask.keyToString(submittedMicrotask.getKey()),
+																submittedMicrotask.microtaskName(),
+																submittedMicrotask.getOwningArtifact().getName());
 
 		}
 
@@ -161,7 +158,9 @@ public class Review extends Microtask
     			submittedMicrotask.microtaskName(),
 				"WorkReviewed",
 				Microtask.keyToString(submittedMicrotask.getKey()),
-				reviewDTO.qualityScore)
+				reviewDTO.qualityScore,
+				challengeStatus,
+				canBeChallenged)
 	    	).json(),
 	    	Microtask.keyToString(submittedMicrotask.getKey()),
     		projectId
@@ -183,7 +182,9 @@ public class Review extends Microtask
     			this.microtaskName(),
     			"SubmittedReview",
     			Microtask.keyToString(this.getKey()),
-    			-1 // differentiate the reviews from the 0 score tasks
+    			-1, // differentiate the reviews from the 0 score tasks
+    			challengeStatus,
+    			false
 	    	).json()),
 	    	Microtask.keyToString(this.getKey()),
 			projectId
@@ -193,7 +194,9 @@ public class Review extends Microtask
 		WorkerCommand.increaseStat(workerID, "reviews",1);
 
 	}
-
+	public String getWorkerOfReviewedWork(){
+		return workerOfReviewedWork;
+	}
     public Key<Microtask> getKey()
 	{
 		return Key.create( artifact.getKey(), Microtask.class, this.id );
@@ -204,7 +207,7 @@ public class Review extends Microtask
 		return ReviewDTO.class;
 	}
 
-	public Key<Microtask> getMicrotaskIDUnderReview()
+	public Key<Microtask> getMicrotaskKeyUnderReview()
 	{
 		return microtaskKeyUnderReview;
 	}

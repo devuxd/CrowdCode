@@ -12,7 +12,8 @@
     <span class="clearfix"></span>
     <div class="task-{{ selectedNews.microtaskType | lowercase }}">
         <h3 class="popover-title"><b>Your work on: &emsp; </b>
-        <span class="microtask-title" ng-if="! selectedNews.isReview">{{selectedNews.microtask.title}} </span>
+        <span class="microtask-title" ng-if="! selectedNews.isReview">{{selectedNews.microtask.title}} 
+        </span>
         <span class="microtask-title" ng-if="selectedNews.isReview"> review</span>
         </h3>
         <!-- MICROTASK DATA -->
@@ -29,5 +30,18 @@
                 </div>
             </div>
         </div>
+        <a href="#" class="pull-right" ng-init="show=false" ng-show="!show && selectedNews.canBeChallenged" ng-click="show=true">challenge this review</a>
+        <span class="clearfix"></span>
+        <form name="challengeForm" novalidate ng-show="show" ng-submit="challengeForm.$valid && challengeReview()">
+            <div class="form-group">
+                <textarea required name="text" class="form-control" ng-model="challengeText" placeholder="Challenge text"></textarea>
+            </div>
+            <span class="btn-group pull-right">
+                <button type="button" class="btn btn-xs btn-default" ng-click="show = false">Cancel</button>
+                <button type="submit" class="btn btn-xs btn-primary">Challenge</button>
+            </span>
+                
+            <div class="clearfix"></div>
+        </form>
     </div>
 </div>

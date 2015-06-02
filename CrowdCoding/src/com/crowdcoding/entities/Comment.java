@@ -2,27 +2,12 @@ package com.crowdcoding.entities;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-import com.crowdcoding.commands.FunctionCommand;
-import com.crowdcoding.commands.MicrotaskCommand;
+
 import com.crowdcoding.commands.QuestioningCommand;
-import com.crowdcoding.dto.TestDTO;
-import com.crowdcoding.dto.firebase.CommentInFirebase;
-import com.crowdcoding.dto.firebase.NotificationInFirebase;
-import com.crowdcoding.dto.firebase.QuestionInFirebase;
-import com.crowdcoding.dto.firebase.TestInFirebase;
-import com.crowdcoding.entities.microtasks.Microtask;
-import com.crowdcoding.entities.microtasks.WriteTest;
-import com.crowdcoding.history.HistoryLog;
-import com.crowdcoding.history.PropertyChange;
+import com.crowdcoding.dto.firebase.notification.CommentNotificationInFirebase;
 import com.crowdcoding.util.FirebaseService;
-import com.googlecode.objectify.LoadResult;
-import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
-import com.googlecode.objectify.annotation.Index;
 
 @Subclass(index=true)
 public class Comment extends Questioning
@@ -41,20 +26,20 @@ public class Comment extends Questioning
 		this.answerId = answerId;
 		this.points = 1;
 		ofy().save().entity(this).now();
-		
+
 		this.firebasePath= "/questions/" + questionId + "/answers/"+ answerId +"/comments/" + this.id;
 		ofy().save().entity(this).now();
-		
-		FirebaseService.writeCommentCreated(new CommentInFirebase(this.id, this.ownerId, ownerHandle, this.text, this.createdAt, this.score), this.firebasePath, projectId);
-	
+
+		FirebaseService.writeCommentCreated(new com.crowdcoding.dto.firebase.questions.CommentInFirebase(this.id, this.ownerId, ownerHandle, this.text, this.createdAt, this.score), this.firebasePath, projectId);
+
 		QuestioningCommand.incrementQuestionComments(this.questionId);
-		
+
 		QuestioningCommand.setClosed(this.questionId, false);
-		
+
 
 		QuestioningCommand.subscribeWorker(this.questionId, ownerId, false);
-		
-		NotificationInFirebase notification = new NotificationInFirebase( "comment.added", "{ \"questionId\": \""+this.questionId+"\", \"answerId\": \""+this.answerId+"\", \"workerHandle\": \""+this.ownerHandle+"\", \"text\": \""+this.text+"\"}"  );
+
+		CommentNotificationInFirebase notification = new CommentNotificationInFirebase( "comment.added", this.questionId, this.answerId, this.ownerHandle, this.text );
 		QuestioningCommand.notifySubscribers(this.questionId, notification, ownerId);
 	}
 

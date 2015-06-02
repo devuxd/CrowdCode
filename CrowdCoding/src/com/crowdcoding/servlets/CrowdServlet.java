@@ -31,9 +31,11 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 
 import com.crowdcoding.commands.Command;
+import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.QuestioningCommand;
+import com.crowdcoding.dto.ajax.microtask.submission.ChallengeReviewDTO;
 import com.crowdcoding.entities.Answer;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Comment;
@@ -44,6 +46,7 @@ import com.crowdcoding.entities.Questioning;
 import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.UserPicture;
 import com.crowdcoding.entities.Worker;
+import com.crowdcoding.entities.microtasks.ChallengeReview;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.ReuseSearch;
@@ -57,7 +60,6 @@ import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskDequeued;
 import com.crowdcoding.history.MicrotaskDequeuedFromWorkerQueue;
 import com.crowdcoding.util.FirebaseService;
-import com.crowdcoding.util.IDGenerator;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.images.Image;
@@ -109,6 +111,7 @@ public class CrowdServlet extends HttpServlet
 		ObjectifyService.register(WriteFunctionDescription.class);
 		ObjectifyService.register(WriteTest.class);
 		ObjectifyService.register(WriteTestCases.class);
+		ObjectifyService.register(ChallengeReview.class);
 
 		ObjectifyService.register(Questioning.class);
 		ObjectifyService.register(Question.class);
@@ -256,8 +259,8 @@ public class CrowdServlet extends HttpServlet
 		if (pathSeg[3].equals("fetch")){
 			doFetchMicrotask(req, resp, user);
 
-//		} else if (pathSeg[3].equals("submit")){
-//			doSubmitMicrotask(req, resp);
+		} else if (pathSeg[3].equals("challengeReview")){
+			doChallengeReview(req, resp);
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
 		} else if (pathSeg[3].equals("enqueue")){
@@ -637,6 +640,8 @@ public class CrowdServlet extends HttpServlet
 	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException{
 		doFetchMicrotask(req,resp,user,false);
 	}
+
+
 	public void unassignMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException
 	{
 		// Since the transaction may fail and retry,
@@ -721,6 +726,20 @@ public class CrowdServlet extends HttpServlet
 
 
 	}
+
+	public void doChallengeReview(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
+	{
+		final String projectId = (String) req.getAttribute("project");
+		final String reviewKey    = req.getParameter("reviewKey");
+		final String challengeTextDTO      = Util.convertStreamToString(req.getInputStream());
+
+		System.out.println("doChallenge review");
+		MicrotaskCommand.createChallengeReview(Microtask.stringToKey(reviewKey),challengeTextDTO);
+		executeCommands(projectId);
+
+	}
+
+
 
 	/**
 	 * Enqueue a submit task into the default task queue
@@ -864,6 +883,7 @@ public class CrowdServlet extends HttpServlet
             // firebase writes are done
             // outside of the transactions
 	    	FirebaseService.publish();
+	    	threadContext.reset();
 
           }
 	}

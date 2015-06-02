@@ -13,18 +13,18 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
-import com.crowdcoding.dto.DebugDTO;
-import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.FunctionParameterDTO;
-import com.crowdcoding.dto.PseudoFunctionDTO;
-import com.crowdcoding.dto.ReusedFunctionDTO;
-import com.crowdcoding.dto.TestCaseDTO;
-import com.crowdcoding.dto.TestCasesDTO;
-import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.TestDescriptionDTO;
-import com.crowdcoding.dto.TestDisputedDTO;
-import com.crowdcoding.dto.firebase.FunctionInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.DebugDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDescriptionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.PseudoFunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ReusedFunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestCaseDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestCasesDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDisputedDTO;
+import com.crowdcoding.dto.firebase.artifact.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.ReuseSearch;
@@ -969,22 +969,22 @@ public class Function extends Artifact
 		int firebaseVersion = version + 1;
 
 		FirebaseService.writeFunction(new FunctionInFirebase(
-					name, 
-					this.id, 
-					firebaseVersion, 
-					returnType, 
+					name,
+					this.id,
+					firebaseVersion,
+					returnType,
 					paramNames,
-					paramTypes, 
-					paramDescriptions, 
-					header, 
-					description, 
-					code, 
-					linesOfCode, 
+					paramTypes,
+					paramDescriptions,
+					header,
+					description,
+					code,
+					linesOfCode,
 					this.pseudoFunctionsName,
-					this.pseudoFunctionsDescription , 
-					hasBeenDescribed, 
-					isWritten, 
-					needsDebugging, 
+					this.pseudoFunctionsDescription ,
+					hasBeenDescribed,
+					isWritten,
+					needsDebugging,
 					isReadOnly,
 					queuedMicrotasks.size()
 				),
