@@ -159,9 +159,8 @@ angular
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 
-			var interval = $interval( timeoutCallBack, 5000);
+			var interval = $interval( timeoutCallBack, 10000);
 			function timeoutCallBack(){
-				console.log("trying to log out "+  jobData.workerId);
 				//time of the client plus the timezone offset given by firebase
 				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field

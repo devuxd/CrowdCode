@@ -1,13 +1,15 @@
-
 angular
     .module('crowdCode')
     .directive('aceEditJs', [ '$sce', 'functionsService', function($sce, functionsService) {
    
-    var editor = null;
-    var markers = [];
+    var apiFunctions    = [];
+    var pseudoFunctions = [];
+
+    var editor    = null;
+    var markers   = [];
+
     return {
         restrict: 'EA',
-
         templateUrl: '/client/widgets/ace_edit_js.html',
         scope: {
             editor           : '=',
@@ -19,6 +21,8 @@ angular
         },
 
         controller: function($scope,$element){
+
+            
             
             $scope.code = $scope.functionData.getFullCode(); 
 
@@ -28,13 +32,24 @@ angular
 
         	$scope.aceLoaded = function(_editor) {
 
+                ace.require("ace/ext/language_tools");   
+                ace.require('ace/ext/crowdcode');    
 
                 $scope.editor = editor = _editor;
+                console.log($scope.editor);
 
-                $element.on('focus',function(){_editor.focus();});
 
-        		var options = {};
-                var sessionOptions = { useWorker: false };
+                var options = {
+                    // enableBasicAutocompletion: true
+                    // enableFunctionsList: true
+                    enableFunctionsList: true
+                };
+                
+
+                var sessionOptions  = { 
+                    useWorker: false 
+                };
+                
                 var rendererOptions = {
                     showGutter: true,
                     showFoldWidgets: false
@@ -44,84 +59,145 @@ angular
                 _editor.session.setOptions(sessionOptions);
                 _editor.renderer.setOptions(rendererOptions);
 
-                _editor.on('change',onChange);
-                _editor.on('click',onClick);
+                loadFunctionsList();
 
-                // $scope.$watch('updateIf',updateIf);
+                // event listeners
+                $element.on('focus', _editor.focus() );
+
+                _editor.on('change', onChange);
+                _editor.on('click' , onClick);
+
+                _editor.on('destroy',function(){ console.log('destroying');});
+
+                // watchers on the scope vars
                 $scope.$watch('annotations', updateAnnotations);
-
-                $scope.$watch('markers', updateMarkers);
-
-                function onChange(e){
-                    var code = _editor.getValue();
-                    var ast = null
-                    try{
-                        ast = esprima.parse( code, {loc: true}); 
-                    } catch(e) { /*console.log(e.stack); */ast = null };
-
-                    if( ast !== null ){
-                        if( $scope.hasPseudo !== undefined ) 
-                            $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
-                        
-                        if( $scope.functionData.readOnly )
-                            readOnlyFunctionDescription( ast);
-                    }
-                    
-                    redrawMarkers(markers);
-                }
-
-                function onClick(e){
-                    var pos = e.$pos;
-
-                    // for each marker check if the click position
-                    // is inside on one of the highlighted ranges
-                    // and if defined, execute the on click action
-                    for( var m in $scope.markers ){
-                        var marker = $scope.markers[m];
-
-                        if( marker.onClick !== undefined ){
-                            for( var r in marker.ranges ){
-                                if( marker.ranges[r].comparePoint(pos) == 0) {
-
-                                    marker.onClick.call();
-                                }
-                            }
-                        } 
-                    }
-                }
-
-                function updateIf(value){
-                    if( value ){
-                        _editor.resize();
-                        _editor.renderer.updateFull();
-                        _editor.scrollPageDown();
-                    }
-                }
-
-                function updateAnnotations(value){
-                    if( value !== undefined ){
-                        _editor.session.clearAnnotations( );
-                        _editor.session.setAnnotations( value );
-                    }
-                }
-
-                function updateMarkers(value){
-                    if( value === undefined ) value = [];
-                    var pseudoMarker = {
-                        regex: '//#(.*)',
-                        token: 'ace_pseudo_code'
-                    };
-                    markers = value;
-                    markers.push(pseudoMarker);
-                    redrawMarkers(markers);
-                }
+                $scope.$watch('markers'    , updateMarkers);
                 
 			};
 
+
+
+
+            function onChange(e){
+                var code = editor.getValue();
+                var ast = null
+                try{
+                    ast = esprima.parse( code, {loc: true}); 
+                } catch(e) { /*console.log(e.stack); */ast = null };
+
+                if( ast !== null ){
+                    if( $scope.hasPseudo !== undefined ) 
+                        $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
+                    
+                    if( $scope.functionData.readOnly )
+                        makeDescriptionReadOnly( ast);
+
+
+                    updateFunctionsList(ast);
+                }
+                
+                redrawMarkers(markers);
+            }
+
+            function onClick(e){
+                var pos = e.$pos;
+
+                // for each marker check if the click position
+                // is inside on one of the highlighted ranges
+                // and if defined, execute the on click action
+                for( var m in $scope.markers ){
+                    var marker = $scope.markers[m];
+
+                    if( marker.onClick !== undefined ){
+                        for( var r in marker.ranges ){
+                            if( marker.ranges[r].comparePoint(pos) == 0) {
+
+                                marker.onClick.call();
+                            }
+                        }
+                    } 
+                }
+            }
         }
     };
 
-    function readOnlyFunctionDescription(ast){
+
+    function loadFunctionsList(){
+        // load all the snippets
+        apiFunctions = [];
+        functionsService.getAll().$loaded().then(function(){
+            var functs = functionsService.getAll();
+            functs.map(function( fun ){
+                var paramsString = fun.parameters.map(function(par,idx){ return '${'+(idx+1)+':'+par.name+'}'; }).join(',');
+                apiFunctions.push({ 
+                    name        : fun.name, 
+                    meta        : 'API', 
+                    className   : 'functions_api',
+                    description : fun.description, 
+                    snippet     : fun.name + '(' + paramsString + ')'
+                });
+            });
+            editor.functions = apiFunctions.slice();
+        });
+    }
+
+
+    function updateFunctionsList(ast){
+        // build the pseudocalls list 
+        pseudoFunctions = [];
+        var firstLayer      = ast.body;
+        for( var f = 1; f < firstLayer.length ; f++){
+            if( firstLayer[f].type == 'FunctionDeclaration' ){
+                var name = firstLayer[f].id.name
+
+                // build the snippet parameter list in the format ${1:firstParName},${2:secondParName}
+                var parString = firstLayer[f].params
+                                .map(function(param,idx){ 
+                                    return '${'+(idx+1)+':'+param.name+'}'; 
+                                })
+                                .join(',');
+
+                // add the pseudo to the list
+                pseudoFunctions.push({
+                    name:    name,
+                    meta:    'pseudo',
+                    className: 'functions_pseudo',
+                    snippet: name + '('+ parString + ')'
+                });
+            }
+        }
+
+        // set the functions list as the apiFunctions + pseudoFunctions
+        editor.functions = apiFunctions.concat(pseudoFunctions);
+    }
+
+    function updateIf(value){
+        if( value ){
+            editor.resize();
+            editor.renderer.updateFull();
+            editor.scrollPageDown();
+        }
+    }
+
+    function updateAnnotations(value){
+        if( value !== undefined ){
+            editor.session.clearAnnotations( );
+            editor.session.setAnnotations( value );
+        }
+    }
+
+    function updateMarkers(value){
+        if( value === undefined ) value = [];
+        var pseudoMarker = {
+            regex: '//#(.*)',
+            token: 'ace_pseudo_code'
+        };
+        markers = value;
+        markers.push(pseudoMarker);
+        redrawMarkers(markers);
+    }
+
+    function makeDescriptionReadOnly(ast){
         if( ast.body[0] === undefined )
             return; 
         
@@ -133,7 +209,7 @@ angular
         editor.keyBinding.setKeyboardHandler({
             handleKeyboard : function(editor, hash, keyString, keyCode, event) {
                 // if in the readonly range, allow only arrow keys
-                if (intersects(range)) { 
+                if ( intersects(range) ) { 
                     if ( ['up','down','left','right'].indexOf(keyString) > -1 ){
                         return false;
                     }
@@ -146,8 +222,8 @@ angular
     function redrawMarkers(markers){
 
         var session = editor.session;
-        var Range = ace.require("ace/range").Range;
-        var Search = ace.require("ace/search").Search;
+        var Range   = ace.require("ace/range").Range;
+        var Search  = ace.require("ace/search").Search;
 
         // remove all the previous markers
         var oldMarkers = session.getMarkers(false);
@@ -155,9 +231,7 @@ angular
             session.removeMarker( oldMarkers[om].id );
         }
 
-
         // add the new markers
-
         var search = new Search();
         for( var m in markers ){
             var marker = markers[m];
@@ -172,19 +246,6 @@ angular
         }
     }
 
-    /** done in validation by jshint **/
-    function countStatements(ast){
-        // var count = 0;
-        // traverse(ast, function (node){
-        //     if( node.type !== undefined ){
-        //         console.log(node.type);
-        //         if( node.type.search('Statement') > -1 || ['VariableDeclaration'].indexOf(node.type) > -1 )
-        //             count ++;
-        //     }
-        // });
-
-        // return count;
-    }
 
 }]);
 
