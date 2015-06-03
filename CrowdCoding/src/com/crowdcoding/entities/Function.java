@@ -79,8 +79,8 @@ public class Function extends Artifact
 	private List<String> pseudoFunctionsName = new ArrayList<String>();
 
 	// function that select this function in the reuse search microtask
-	private List<String> pseudoCallersDescription = new ArrayList<String>();
-	private List<String> pseudoCallersName = new ArrayList<String>();
+	private List<String> pseudoCallersDescriptionReference = new ArrayList<String>();
+	private List<String> pseudoCallersNameReference = new ArrayList<String>();
 	private List<Long>   pseudoCallersId = new ArrayList<Long>();
 
 	private boolean needsDebugging = false; // true iff Function is failing the (implemented) unit tests
@@ -458,9 +458,16 @@ public class Function extends Artifact
 				// if not already in the previously submitted pseudo functions,
 				// spawn a reuse search microtask
 				if (!pseudoFunctionsName.contains(submittedPseudoFunction.name)){
-					// Spawn microtask immediately, as it does not require access to the function itself
-					Microtask microtask = new ReuseSearch(this, submittedPseudoFunction.name, submittedPseudoFunction.description, projectId);
-					ProjectCommand.queueMicrotask(microtask.getKey(), null);
+
+					// Create a new function for this call, spawning microtasks to create it.
+					Function callee = new Function(submittedPseudoFunction.name, submittedPseudoFunction.description, this.getID(), projectId);
+
+					// Have the callee let us know when it's tested (which may already be true;
+					// signal sent immediately in that case)
+
+					FunctionCommand.addPseudocaller( callee.getID(), this.getID(), submittedPseudoFunction.name, submittedPseudoFunction.description);
+
+				//	ProjectCommand.queueMicrotask(microtask.getKey(), null);
 				}
 				newPseudoFunctionsDescription.add(submittedPseudoFunction.description);
 				newPseudoFunctionsName.add(submittedPseudoFunction.name);
@@ -797,8 +804,8 @@ public class Function extends Artifact
 		int index = pseudoCallersId.indexOf(functionId);
 		if(index!=-1){
 			pseudoCallersId.remove(index);
-			pseudoCallersName.remove(index);
-			pseudoCallersDescription.remove(index);
+			pseudoCallersNameReference.remove(index);
+			pseudoCallersDescriptionReference.remove(index);
 			checkIfNeeded();
 		}
 		ofy().save().entity(this).now();
@@ -816,8 +823,8 @@ public class Function extends Artifact
 
 		//add it to the lists
 		pseudoCallersId.add(pseudoCallerId);
-		pseudoCallersDescription.add(pseudoCallerDescription);
-		pseudoCallersName.add(pseudoCallerName);
+		pseudoCallersDescriptionReference.add(pseudoCallerDescription);
+		pseudoCallersNameReference.add(pseudoCallerName);
 
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed())
@@ -920,8 +927,8 @@ public class Function extends Artifact
 	private void notifyBecameDescribed(String projectId)
 	{
 		// Loop over the psuedocallsites and pseudocallers in parallel
-		for (int i = 0; i < pseudoCallersName.size(); i++)
-			sendDescribedNotification(pseudoCallersId.get(i) ,pseudoCallersName.get(i));
+		for (int i = 0; i < pseudoCallersNameReference.size(); i++)
+			sendDescribedNotification(pseudoCallersId.get(i) ,pseudoCallersNameReference.get(i));
 	}
 
 	private void sendDescribedNotification(long subscriberID, String pseudoFunctionName)
