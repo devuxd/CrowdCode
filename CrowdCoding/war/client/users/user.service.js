@@ -158,7 +158,7 @@ angular
 			logoutWorker.onDisconnect().set(jobData);
 
 			var interval = $interval( timeoutCallBack, 10000);
-			var timeoutCallBack = function(){
+			function timeoutCallBack(){
 				//time of the client plus the timezone offset given by firebase
 				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field

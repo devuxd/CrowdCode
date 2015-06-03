@@ -79,6 +79,7 @@
 	<script src="/include/angular-loading-bar/src/loading-bar.js"></script>
  	<script src="/include/ui-ace-editor/src/ui-ace.js"> </script> <!-- UI Ace Editor-->
 	<script src="/include/ace-editor/src-min-noconflict/ace.js"> </script> <!-- Ace Editor-->
+	<script src="/include/ace-editor/src-min-noconflict/ext-language_tools.js"> </script> <!-- Ace Editor-->
 	<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
 	<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
 	<script src="/include/zeroclipboard-2.2.0/dist/ZeroClipboard.min.js"></script>
@@ -103,9 +104,12 @@
 	</script>
 
 
+	<script src="/developments/ace-list/aceExtensions.js"></script>
+
 	<!-- Angular Application -->
 	<script src="/client/client.js"></script>
 	<script src="/client/test_runner/testRunner.js"></script>
+	<script src="/client/test_runner/deepCompare.js"></script>
 
 
 </body>

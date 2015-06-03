@@ -7,7 +7,6 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
         restrict: 'E',
         templateUrl: '/client/microtasks/microtask_form.html',
         controller: function($scope,$element,$attrs){
-        	console.log('controller microtask form');
 			// private vars
 			var templatesURL = "/client/microtasks/";
 			var templates = {

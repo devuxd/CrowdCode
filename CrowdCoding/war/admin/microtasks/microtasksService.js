@@ -11,7 +11,7 @@
 angular.module('crowdAdminApp')
 .factory("Microtask", function($firebaseUtils) {
     function Microtask(snap) {
-        this.$id = snap.name();
+        this.$id = snap.key();
         this.update( snap.val() );
         this.events = [];
         this.setStatus('none');

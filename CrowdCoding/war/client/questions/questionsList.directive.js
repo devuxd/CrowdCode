@@ -1,4 +1,4 @@
-angular.module('crowdCode').directive('questionList',function($rootScope,$timeout,$firebase,workerId,firebaseUrl, questionsService, microtasksService){
+angular.module('crowdCode').directive('questionList',function($rootScope,$tooltip,$timeout,$firebase,workerId,firebaseUrl, questionsService, microtasksService){
 	return {
 		scope: false,
 		restrict: 'AEC',
@@ -15,6 +15,18 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 			$scope.resetFilter = resetFilter;
 			$scope.addToFilter = addToFilter;
 
+			var filterBox = $('.searchbox');
+			var tooltipTimeout = null;
+			$scope.filterTooltip = $tooltip(filterBox, {trigger:'manual',placement:'bottom',title: 'Press enter to search'});
+			$scope.showTooltip = function(){
+				console.log('showing');
+				$scope.filterTooltip.show();
+
+				tooltipTimeout = $timeout(function(){ 
+					$scope.filterTooltip.hide(); 
+					$timeout.cancel(tooltipTimeout)
+				},1000);
+			}
 
 			function getFilterStr(){
 				var text = '';
@@ -25,6 +37,7 @@ angular.module('crowdCode').directive('questionList',function($rootScope,$timeou
 
 			function updateFilter(){
 				
+				$scope.filterTooltip.hide();
 				var text = getFilterStr();
 		        searchTimeout = $timeout(function() {
 		        	if( text == '' )
