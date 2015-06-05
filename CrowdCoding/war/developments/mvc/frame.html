@@ -1,0 +1,103 @@
+<html>
+<head>
+	<title>Frame</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"></link>
+</head>
+<body>
+	<div id="sketch-app"></div>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../mocha-chai/mocha.js"></script>
+	<script type="text/javascript" src="../mocha-chai/chai.js"></script>
+	<!--<script type="text/javascript" src="watcher.js"></script>-->
+<script type="text/javascript">
+	
+
+var expect = chai.expect;
+
+
+function CustomReporter(runner) {
+
+  runner.on('start', function(){
+    // console.log('starting suite');
+  });
+
+  runner.on('test', function(test){
+    // console.log('Test '+test.title+' STARTED');
+  });
+
+  runner.on('test end', function(test){
+    // console.log('Test '+test.title+' ENDED');
+  });
+
+  runner.on('end', function(){
+    // console.log('end suite')
+  });
+}
+
+
+var appId = 'sketch-app';
+var global = {};
+
+function run(code,partials){
+	eval(code);
+
+	var $app = $('#'+appId);
+
+	// initialize main template
+	$app.html( '' );
+	$app.html( partials['main'].template );
+
+	for( var partialId in partials ){
+		if( partialId == 'main')
+			continue;
+
+		var partial = partials[partialId];
+
+		$app.find('#'+partialId).html( partials[partialId].template );
+		eval('function '+partialId+'Constructor(){ var $element = $("#'+appId+' #'+partialId+'"); \n'+partials[partialId].constructor+'\n}');
+		eval(partialId+'Constructor()');
+	}
+}
+
+function runTest(description,setupBlock,itBlocks,callback){
+
+	mocha.setup('bdd');
+	mocha.reporter(CustomReporter);
+
+	var testCode = '';
+
+	testCode += 'describe("'+description+'",function(){';
+	testCode += setupBlock;
+
+	itBlocks.forEach(function(itBlock){
+		testCode += 'it("'+itBlock.description+'",function(done){';
+		testCode += itBlock.code;
+		testCode += 'done();});';
+	});
+
+	testCode += '});';
+
+	eval('console.log(description)');
+	eval(testCode);
+
+	mocha.run(function(){
+		console.log(mocha.suite.suites[0]);
+		callback(mocha.suite.suites[0].tests);
+	});
+}
+
+
+
+function highlightPartial(partialId,remove){
+	var $partial = $('#'+appId+' #'+partialId);
+	if( remove ) 
+		$partial.css('outline','none');
+	else
+		$partial.css('outline','1px dotted red');
+
+}
+
+</script>
+</body>
+</html>
