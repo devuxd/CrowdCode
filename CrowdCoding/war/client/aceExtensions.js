@@ -9,6 +9,12 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 	var lang           = require("ace/lib/lang");
 	var dom            = require("ace/lib/dom");
 
+    var startCommandBindKey = "";
+    if( navigator.appVersion.indexOf("Mac")!=-1)
+        startCommandBindKey="Alt-Space";
+    else
+        startCommandBindKey="Ctrl-Space";
+
 	var FunctionsList = function() {
 		this.filtered = [];
 
@@ -29,7 +35,7 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 	    }.bind(this));
 
 	    this.updateList();
-	}
+	};
 
 	this.openPopup = function(){
 		
@@ -120,7 +126,7 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
     this.changeListener = function(){
     	this.updateList();
     	this.openPopup();
-    }
+    };
 
 
     this.updateList = function(){
@@ -148,7 +154,7 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 	   		snippet : '\n// ${1:description of the function}\nfunction ${2:function_name}(${3:argumentsList}){}'
 	   	});
 
-    }
+    };
 
     this.insertSelected = function(){
 
@@ -179,7 +185,7 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
         var descNode = this.descriptionNode;
         var item     = this.filtered[row];
 
-        if ( !item || !item.description || item.description.length == 0) 
+        if ( !item || !item.description || item.description.length === 0) 
         	return;
 
         descNode.innerHTML = this.filtered[row].description;
@@ -221,7 +227,6 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
         "Esc"               : function(editor) { editor.functionslist.detach(); },
         "Space"             : function(editor) { editor.functionslist.detach(); editor.insert(" ");},
         "Return"            : function(editor) { editor.functionslist.insertSelected(); editor.functionslist.detach(); },
-
     };
 
 	}).call(FunctionsList.prototype);
@@ -233,7 +238,7 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 	            editor.functionslist = new FunctionsList();
 	        editor.functionslist.attach(editor);
 	    },
-	    bindKey: "Alt-Space"
+	    bindKey: startCommandBindKey
 	};
 
 	exports.FunctionsList = FunctionsList;

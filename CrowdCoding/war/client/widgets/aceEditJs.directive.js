@@ -22,9 +22,8 @@ angular
 
         controller: function($scope,$element){
 
-            
-            
-            $scope.code = $scope.functionData.getFullCode(); 
+
+            $scope.code = $scope.functionData.getFullCode();
 
             $scope.trustHtml = function (unsafeHtml){
                 return $sce.trustAsHtml(unsafeHtml);
@@ -32,8 +31,8 @@ angular
 
         	$scope.aceLoaded = function(_editor) {
 
-                ace.require("ace/ext/language_tools");   
-                ace.require('ace/ext/crowdcode');    
+                ace.require("ace/ext/language_tools");
+                ace.require('ace/ext/crowdcode');
 
                 $scope.editor = editor = _editor;
                 console.log($scope.editor);
@@ -44,12 +43,11 @@ angular
                     // enableFunctionsList: true
                     enableFunctionsList: true
                 };
-                
 
-                var sessionOptions  = { 
-                    useWorker: false 
+                var sessionOptions  = {
+                    useWorker: false
                 };
-                
+
                 var rendererOptions = {
                     showGutter: true,
                     showFoldWidgets: false
@@ -72,7 +70,7 @@ angular
                 // watchers on the scope vars
                 $scope.$watch('annotations', updateAnnotations);
                 $scope.$watch('markers'    , updateMarkers);
-                
+
 			};
 
 
@@ -80,22 +78,22 @@ angular
 
             function onChange(e){
                 var code = editor.getValue();
-                var ast = null
+                var ast = null;
                 try{
-                    ast = esprima.parse( code, {loc: true}); 
-                } catch(e) { /*console.log(e.stack); */ast = null };
+                    ast = esprima.parse( code, {loc: true});
+                } catch(e) { /*console.log(e.stack); */ast = null; }
 
                 if( ast !== null ){
-                    if( $scope.hasPseudo !== undefined ) 
+                    if( $scope.hasPseudo !== undefined )
                         $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
-                    
+
                     if( $scope.functionData.readOnly )
                         makeDescriptionReadOnly( ast);
 
 
                     updateFunctionsList(ast);
                 }
-                
+
                 redrawMarkers(markers);
             }
 
@@ -110,12 +108,12 @@ angular
 
                     if( marker.onClick !== undefined ){
                         for( var r in marker.ranges ){
-                            if( marker.ranges[r].comparePoint(pos) == 0) {
+                            if( marker.ranges[r].comparePoint(pos) === 0) {
 
                                 marker.onClick.call();
                             }
                         }
-                    } 
+                    }
                 }
             }
         }
@@ -129,11 +127,11 @@ angular
             var functs = functionsService.getAll();
             functs.map(function( fun ){
                 var paramsString = fun.parameters.map(function(par,idx){ return '${'+(idx+1)+':'+par.name+'}'; }).join(',');
-                apiFunctions.push({ 
-                    name        : fun.name, 
-                    meta        : 'API', 
+                apiFunctions.push({
+                    name        : fun.name,
+                    meta        : 'API',
                     className   : 'functions_api',
-                    description : fun.description, 
+                    description : fun.description,
                     snippet     : fun.name + '(' + paramsString + ')'
                 });
             });
@@ -143,17 +141,17 @@ angular
 
 
     function updateFunctionsList(ast){
-        // build the pseudocalls list 
+        // build the pseudocalls list
         pseudoFunctions = [];
         var firstLayer      = ast.body;
         for( var f = 1; f < firstLayer.length ; f++){
             if( firstLayer[f].type == 'FunctionDeclaration' ){
-                var name = firstLayer[f].id.name
+                var name = firstLayer[f].id.name;
 
                 // build the snippet parameter list in the format ${1:firstParName},${2:secondParName}
                 var parString = firstLayer[f].params
-                                .map(function(param,idx){ 
-                                    return '${'+(idx+1)+':'+param.name+'}'; 
+                                .map(function(param,idx){
+                                    return '${'+(idx+1)+':'+param.name+'}';
                                 })
                                 .join(',');
 
@@ -199,10 +197,10 @@ angular
 
     function makeDescriptionReadOnly(ast){
         if( ast.body[0] === undefined )
-            return; 
-        
+            return;
+
         var intersects = function(range){ return editor.getSelectionRange().intersects(range); };
-        
+
         var start = ast.body[0].body.loc.start;
         var Range = ace.require("ace/range").Range;
         var range = new Range( 0, 0, start.line-1, start.column+1);
