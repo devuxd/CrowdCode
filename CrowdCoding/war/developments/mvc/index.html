@@ -1,0 +1,77 @@
+<html>
+<head>
+	<title>MVC Jquery</title>
+	<style type="text/css">
+		#jsEditor, #htmlEditor, #testSetupEditor, #testItEditor {
+			min-height : 300px;
+		}
+		#apiEditor {
+			min-height: 600px;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"></link>
+</head>
+<body>
+	<div class="pull-left" style="width:500px;">
+		<div role="tabpanel">
+			<!-- Nav tabs -->
+			<ul class="nav nav-tabs nav-justified" role="tablist">
+				<li role="presentation"><a href="#uiFunctions" role="tab" data-toggle="tab">UI functions</a></li>
+				<li role="presentation"><a href="#uiTests" role="tab" data-toggle="tab">UI Tests</a></li>
+				<li role="presentation"><a href="#apiFunctions" role="tab" data-toggle="tab">API functions</a></li>
+			</ul>
+
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="uiFunctions">
+					<h4>Html</h4>
+					<div id="htmlEditor"></div>
+					<h4>Javascript</h4>
+					<div id="jsEditor"></div>
+
+					<div class="btn-group">
+					  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					    Select partial to edit <span class="caret"></span>
+					  </button>
+					  <ul id="partialDropdown" class="dropdown-menu" role="menu"></ul>
+					</div>
+				</div>
+
+				<div role="tabpanel" class="tab-pane" id="uiTests">		
+					<h4>Test Setup</h4>			
+					<div id="testSetupEditor"></div>
+					<h4>Test Code</h4>
+					<div id="testItEditor"></div>
+				</div>
+
+				<div role="tabpanel" class="tab-pane" id="apiFunctions">
+					<div id="apiEditor"></div>
+				</div>
+
+			</div>
+
+			
+		</div>
+	</div>
+
+	<div class="pull-left" style="width:500px;">
+		<!-- Nav tabs -->
+		<ul class="nav nav-pills nav-justified">
+		  <li role="presentation"><a id="run" href="#">Run</a></li>
+		  <li role="presentation"><a id="runTest" href="#">Run Test</a></li>
+		</ul>
+
+		<iframe id="frame" src="frame.html" class="pull-left" style="width:500px;height:600px;border:1px solid black;" >
+		</iframe>
+	</div>
+
+	
+	<div class="clearfix"></div>
+		
+	
+	<script src="https://cdn.firebase.com/js/client/2.2.6/firebase.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<script src="/include/ace-editor/src/ace.js"> </script> 
+	<script type="text/javascript" src="app.js"></script>
+</body>
+</html>

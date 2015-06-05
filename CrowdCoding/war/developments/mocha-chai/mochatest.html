@@ -13,19 +13,19 @@
 function CustomReporter(runner) {
 
   runner.on('start', function(){
-    console.log('starting suite');
+    // console.log('starting suite');
   });
 
   runner.on('test', function(test){
-    console.log('Test '+test.title+' STARTED');
+    // console.log('Test '+test.title+' STARTED');
   });
 
   runner.on('test end', function(test){
-    console.log('Test '+test.title+' ENDED');
+    // console.log('Test '+test.title+' ENDED');
   });
 
   runner.on('end', function(){
-    console.log('end suite')
+    // console.log('end suite')
   });
 }
 
@@ -39,6 +39,7 @@ function runSuite(){
 	mocha.setup('bdd');
 	mocha.reporter(CustomReporter);
 
+	var testCode =
 	describe('first test',function(){
 
 		// var tOut = undefined;
