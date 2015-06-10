@@ -2,22 +2,24 @@ package com.crowdcoding.commands;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import com.crowdcoding.entities.Project;
+import java.util.logging.Logger;
+
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.Review;
-import com.crowdcoding.servlets.CommandContext;
+import com.crowdcoding.servlets.ThreadContext;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.VoidWork;
 
 public abstract class MicrotaskCommand extends Command
 {
 	private Key<Microtask> microtaskKey;
 
-	public static MicrotaskCommand submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID)
-		{ return new Submit(microtaskKey, jsonDTOData, workerID); }
+	public static MicrotaskCommand submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, int awardedPoint)
+		{ return new Submit(microtaskKey, jsonDTOData, workerID, awardedPoint); }
 
-	public static MicrotaskCommand skip(Key<Microtask> microtaskKey, String workerID)
-		{ return new Skip(microtaskKey, workerID); }
+	public static MicrotaskCommand skip(Key<Microtask> microtaskKey, String workerID, boolean disablePoint)
+		{ return new Skip(microtaskKey, workerID, disablePoint); }
 
 	public static MicrotaskCommand createReview(Key<Microtask> microtaskKeyToReview, String excludedWorkerID,
 			String initiallySubmittedDTO, String workerOfReviewedWork)
@@ -25,13 +27,19 @@ public abstract class MicrotaskCommand extends Command
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it and save the reference to the reissued microtask.
-	public static MicrotaskCommand reissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
-		{ return new ReissueMicrotask(microtaskKey, excludedWorkerID); }
+	public static MicrotaskCommand reviseMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String reissueMotivation, String excludedWorkerID, int awardedPoint)
+		{ return new ReviseMicrotask(microtaskKey, jsonDTOData, reissueMotivation, excludedWorkerID, awardedPoint); }
 
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it.
-	public static MicrotaskCommand rejectAndReissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
-		{ return new RejectAndReissueMicrotask(microtaskKey, excludedWorkerID); }
+	public static MicrotaskCommand rejectMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
+		{ return new RejectMicrotask(microtaskKey, excludedWorkerID, awardedPoint); }
+
+
+	public static MicrotaskCommand cancelMicrotask(Key<Microtask> microtaskKey) {
+		return new CancelMicrotask(microtaskKey);
+
+	}
 
 	private MicrotaskCommand( Key<Microtask> microtaskKey )
 	{
@@ -42,62 +50,72 @@ public abstract class MicrotaskCommand extends Command
 	// All constructors for WorkerCommand MUST call queueCommand by calling the super constructor
 	private static void queueCommand(Command command)
 	{
-		CommandContext.ctx.addCommand(command);
+		ThreadContext threadContext = ThreadContext.get();
+        threadContext.addCommand(command);
+		//CommandContext.ctx.addCommand(command);
 	}
 
-	public void execute(Project project)
+	public void execute(final String projectId)
 	{
-		Microtask microtask = find(microtaskKey);
-		if (microtask == null)
-			System.out.println("Cannot execute MicrotaskCommand. Could not find the microtask for microtaskID "
-						+ microtaskKey);
-		else
-		{
-			execute(microtask, project);
-		}
+
+		final Microtask microtask = find(microtaskKey);
+
+	        	if (microtask == null)
+	    			System.out.println("ERROR erroreCannot execute MicrotaskCommand. Could not find the microtask for microtaskID "
+	    						+ microtaskKey);
+	    		else
+	    		{
+	    			execute(microtask, projectId);
+	    		}
 	}
+
+	public abstract void execute(Microtask microtask, String projectId);
 
 	// Finds the specified microtask. Returns null if no such microtask exists.
 	protected Microtask find(Key<Microtask> microtaskKey)
 	{
-		return ofy().load().key(microtaskKey).get();
+		return ofy().load().key(microtaskKey).now();
 	}
 
-	public abstract void execute(Microtask microtask, Project project);
 
 	protected static class Submit extends MicrotaskCommand
 	{
 		private String jsonDTOData;
 		private String workerID;
+		private int awardedPoint;
 
-		public Submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID)
+
+		public Submit(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, int awardedPoint)
 		{
 			super(microtaskKey);
 			this.jsonDTOData = jsonDTOData;
 			this.workerID = workerID;
+			this.awardedPoint= awardedPoint;
 		}
 
-		public void execute(Microtask microtask, Project project)
+		public void execute(Microtask microtask, String projectId)
 		{
-			WorkerCommand.awardPoints(workerID, microtask.getSubmitValue() );
-			
-			microtask.submit(jsonDTOData, workerID, project);
+
+			microtask.submit(jsonDTOData, workerID, awardedPoint, projectId);
 		}
 	}
 
 	protected static class Skip extends MicrotaskCommand
 	{
 		private String workerID;
+		private boolean disablePoint;
 
-		public Skip(Key<Microtask> microtaskKey, String workerID)
+		public Skip(Key<Microtask> microtaskKey, String workerID, boolean disablePoint)
 		{
 			super(microtaskKey);
 			this.workerID = workerID;
+			this.disablePoint=disablePoint;
+
 		}
 
-		public void execute(Microtask microtask, Project project)
+		public void execute(Microtask microtask, String projectId)
 		{
-			microtask.skip(workerID, project);
+			microtask.skip(workerID, disablePoint, projectId);
 		}
 	}
 
@@ -117,62 +135,79 @@ public abstract class MicrotaskCommand extends Command
 			this.workerOfReviewedWork = workerOfReviewedWork;
 		}
 
-		// Overrides the default execute as no microtask is to be loaded.
-		public void execute(Project project)
+		public void execute(Microtask microtask, String projectId)
 		{
-			Review review = new Review(microtaskKeyToReview, initiallySubmittedDTO, workerOfReviewedWork, project);
-			ProjectCommand.queueReviewMicrotask(review.getKey(), excludedWorkerID);
-		}
-
-		public void execute(Microtask microtask, Project project)
-		{
-			throw new RuntimeException("This method is not applicable for this class");
-
+			Microtask toReview = ofy().load().key( microtaskKeyToReview ).now();
+			if(toReview!=null){
+				Review review = new Review(microtaskKeyToReview, initiallySubmittedDTO, workerOfReviewedWork, toReview.getFunctionId(), projectId);
+				ProjectCommand.queueReviewMicrotask(review.getKey(), excludedWorkerID);
+			}
+			else
+			{
+				Logger.getLogger("LOGGER").severe("LOAD FAILED: MICROTASK "+microtaskKeyToReview);
+			}
 		}
 	}
 
-	protected static class RejectAndReissueMicrotask extends MicrotaskCommand
+	protected static class RejectMicrotask extends MicrotaskCommand
 	{
 		private String excludedWorkerID;
+		private int awardedPoint;
 
-		public RejectAndReissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
+		public RejectMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
 		{
 			super(microtaskKey);
 			this.excludedWorkerID = excludedWorkerID;
+			this.awardedPoint = awardedPoint;
+
 		}
 
 		// Overrides the default execute as no microtask is to be loaded.
-		public void execute(Microtask microtask, Project project)
+		public void execute(Microtask microtask, String projectId)
 		{
-			Microtask newMicrotask = microtask.copy(project);
+			Microtask newMicrotask = microtask.copy(projectId);
+
+			WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
 
 			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
 		}
 	}
-	protected static class ReissueMicrotask extends MicrotaskCommand
+	protected static class ReviseMicrotask extends MicrotaskCommand
 	{
 		private String excludedWorkerID;
+		private int awardedPoint;
+		private String jsonDTOData;
+		private String reissueMotivation;
 
-		public ReissueMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID)
+		public ReviseMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String reissueMotivation, String excludedWorkerID, int awardedPoint)
 		{
 			super(microtaskKey);
 			this.excludedWorkerID = excludedWorkerID;
+			this.awardedPoint = awardedPoint;
+			this.jsonDTOData = jsonDTOData;
+			this.reissueMotivation = reissueMotivation;
 		}
 
 		// Overrides the default execute as no microtask is to be loaded.
-		public void execute(Microtask microtask, Project project)
+		public void execute(Microtask microtask, String projectId)
 		{
-			Microtask newMicrotask = microtask.copy(project);
-			String microtaskKey =Project.MicrotaskKeyToString(newMicrotask.getKey());
-			String reissuedFromMicrotaskKey = Project.MicrotaskKeyToString(microtask.getKey());
+			microtask.revise(jsonDTOData, excludedWorkerID ,awardedPoint,reissueMotivation, projectId);
+		}
+	}
+	protected static class CancelMicrotask extends MicrotaskCommand
+	{
 
-			//FirebaseService.
+		public CancelMicrotask(Key<Microtask> microtaskKey)
+		{
+			super(microtaskKey);
+		}
 
-			FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, project, reissuedFromMicrotaskKey);
-
-			WorkerCommand.awardPoints( excludedWorkerID , microtask.getSubmitValue() / 2 );
-
-			ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
+		// Overrides the default execute as no microtask is to be loaded.
+		public void execute(Microtask microtask, String projectId)
+		{
+			microtask.setCanceled(true);
+			FirebaseService.writeMicrotaskCanceled( Microtask.keyToString(microtask.getKey()), true, projectId );
+			ofy().save().entity(microtask).now();
 		}
 	}
 }

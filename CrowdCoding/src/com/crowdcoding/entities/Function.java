@@ -2,9 +2,10 @@ package com.crowdcoding.entities;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,12 +13,17 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
+import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.FunctionDTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.MockDTO;
+import com.crowdcoding.dto.FunctionParameterDTO;
+import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.TestCaseDTO;
 import com.crowdcoding.dto.TestCasesDTO;
+import com.crowdcoding.dto.TestDTO;
+import com.crowdcoding.dto.TestDescriptionDTO;
+import com.crowdcoding.dto.TestDisputedDTO;
 import com.crowdcoding.dto.firebase.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DebugTestFailure;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -25,88 +31,100 @@ import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.WriteCall;
 import com.crowdcoding.entities.microtasks.WriteFunction;
 import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
-import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.entities.microtasks.WriteTestCases;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MessageReceived;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.api.search.query.QueryParser.function_return;
-import com.googlecode.objectify.Key;
+import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.cmd.Query;
+
 
 
 /* A function represents a function of code. Functions transition through states, spawning microtasks,
  * which, upon completion, transition the state. Some of these microtasks may create other artifacts,
  * which also transition through states; these transitions may in turn be signaled back to a function.
  */
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class Function extends Artifact
 {
-	private String code;
-	@Index private String name;
-	private String returnType;
-	private List<String> paramNames = new ArrayList<String>();
-	private List<String> paramTypes = new ArrayList<String>();
-	private List<String> paramDescriptions = new ArrayList<String>();
-	private String header;
-	private String description;
-	private List<Long> tests = new ArrayList<Long>();
+	private String        code = "";
+	@Index private String name = "";
+	private String        returnType = "";
+	private List<String>  paramNames = new ArrayList<String>();
+	private List<String>  paramTypes = new ArrayList<String>();
+	private List<String>  paramDescriptions = new ArrayList<String>();
+	private String        header = "";
+	private String        description = "";
+	private List<Long>    testsId = new ArrayList<Long>();
 	private List<Boolean> testsImplemented = new ArrayList<Boolean>();
-	
-	
-	// fully implemented (i.e., not psuedo) calls made by this function
-	private List<String> callees = new ArrayList<String>();
-	// current callers with a fully implemented callsite to this function:
-	private List<Long> callers = new ArrayList<Long>();
-	// pseudocalls made by this function:
-	private List<String> pseudoCalls = new ArrayList<String>();
-	// pseudocall callsites calling this function (these two lists must be in sync)
-	private List<String> pseudoCallsites = new ArrayList<String>();
-	private List<Long> pseudoCallers = new ArrayList<Long>();
-	private int linesOfCode;
+	private List<String>  testsDescription = new ArrayList<String>();
+	private int           linesOfCode = 0;
+	private boolean 	  waitForTestResult=false;
+	private Queue<Ref<Microtask>> queuedTestAndDebugMicrotask = new LinkedList<Ref<Microtask>>();
 
+	// flags about the status of the function
 	@Index private boolean isWritten;	     // true iff Function has no pseudocode and has been fully implemented (but may still fail tests)
 	@Index private boolean hasBeenDescribed; // true iff Function is at least in the state described
-	private boolean needsDebugging;		     // true iff the function is failing its unit tests.
 
-	//private Test failedTest;
+
+	// fully implemented (i.e., not psuedo) calls made by this function
+	private List<Long> calleesId = new ArrayList<Long>();
+	// current callers with a fully implemented callsite to this function:
+	private List<Long> callersId = new ArrayList<Long>();
+	// pseudocalls made by this function:
+	private List<String> pseudoFunctionsDescription = new ArrayList<String>();
+	private List<String> pseudoFunctionsName = new ArrayList<String>();
+
+	// function that select this function in the reuse search microtask
+	private List<String> pseudoCallersDescription = new ArrayList<String>();
+	private List<String> pseudoCallersName = new ArrayList<String>();
+	private List<Long>   pseudoCallersId = new ArrayList<Long>();
+
+	private boolean needsDebugging = false; // true iff Function is failing the (implemented) unit tests
+	private boolean isTestCasesOut = false;
+	private boolean isDebugOut     = false;
+	private boolean isDebugInQueue = false;
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  CONSTRUCTORS
 	//////////////////////////////////////////////////////////////////////////////
 
 	// Constructor for deserialization
-	protected Function()
-	{
-	}
+	protected Function(){}
 
 	// Constructor for a function that has a full description and code
-	public Function(String name, String returnType, List<String> paramNames, List<String> paramTypes, List<String> paramDescriptions, String header,
-			String description, String code, Project project)
+	public Function(String name, String returnType, List<FunctionParameterDTO> parameters, String header,
+			String description, String code, boolean readOnly, String projectId)
 	{
-		super(project);
-		writeDescriptionCompleted(name, returnType, paramNames, paramTypes, paramDescriptions, header, description, code, project);
+		super(projectId);
+		this.isReadOnly=readOnly;
+		this.isAPIArtifact=true;
+		isWritten = false;
+		writeDescriptionCompleted(new FunctionDescriptionDTO( name, returnType, parameters, header, description, code), projectId);
 	}
 
 	// Constructor for a function that only has a short call description and still needs a full description
-	public Function(String callDescription, Function caller, Project project)
+	public Function(String name, String callDescription, long callerId, String projectId)
 	{
-		super(project);
-		isWritten = false;
+		super(projectId);
 
-		// Spawn off a microtask to write the function description
-		makeMicrotaskOut(new WriteFunctionDescription(this, callDescription, caller, project), project);
+		isWritten = false;
+		hasBeenDescribed=false;
+		this.name = name;
+		this.description=callDescription;
+		this.isActivated=false;
+		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  ACCESSORS
 	//////////////////////////////////////////////////////////////////////////////
 
-	// Is the fucntion written and all pseudocode no replaced with code?
+	// Is the fucntion written and all the pseudocode replaced?
 	// NOTE: Being written does not imply that all tests pass.
 	public boolean isWritten()
 	{
@@ -153,22 +171,20 @@ public class Function extends Artifact
 	{
 		String fullDescription="/**\n" + description + "\n\n";
 
-
-
-
-    	for(int i=0; i<paramNames.size(); i++)
-			{
+		return fullDescription + getParametersAndReturn();
+	}
+	public String getParametersAndReturn()
+	{
+		String fullDescription="";
+		for(int i=0; i<paramNames.size(); i++)
+		{
 			if(paramDescriptions.size()>i)
 				fullDescription += "  @param " + paramTypes.get(i) + ' ' + paramNames.get(i) + " - " + paramDescriptions.get(i) + "\n";
 
-			}
+		}
 
-
-		fullDescription += "\n  @return " + returnType + " \n**/\n";
-
-		return fullDescription;
+	return fullDescription += "\n  @return " + returnType + " \n**/\n";
 	}
-
 	public String getEscapedDescription()
 	{
 		return StringEscapeUtils.escapeEcmaScript(description);
@@ -192,36 +208,6 @@ public class Function extends Artifact
 		return code;
 	}
 
-	// Gets a mock implementation that checks to see if there are any mocks
-	// for the specified function.
-	public String getMockCode()
-	{
-		StringBuilder mockCode = new StringBuilder();
-		mockCode.append("{ var returnValue; ");
-		mockCode.append("var params = arguments; ");
-		mockCode.append("var mockFor = hasMockFor('" + name + "', arguments, mocks); ");
-		mockCode.append("if (mockFor.hasMock) ");
-		mockCode.append("     returnValue = mockFor.mockOutput; ");
-		mockCode.append("else ");
-		mockCode.append("     returnValue = " + name + "aaaActualIMP.apply(null, params); "); // JSON.parse(JSON.stringify(
-	//	mockCode.append("alert( JSON.stringify(JSON.parse(JSON.stringify(params)))); ");
-		mockCode.append("return returnValue; }");
-		return mockCode.toString();
-	}
-
-	// Gets the special header used for the actual implementation when running with mocks
-	public String getMockHeader()
-	{
-		StringBuilder b = new StringBuilder();
-		b.append(" function " + name + "aaaActualIMP");
-
-		// Gets the params string out of the header by looking for the first instance of a paren (which
-		// must be the start of the functions params)
-		b.append(header.substring(header.indexOf("(")));
-
-		return b.toString();
-	}
-
 	// gets the body of the function (including braces)
 	public String getEscapedCode()
 	{
@@ -242,12 +228,13 @@ public class Function extends Artifact
 
 	// ------- TEST CASES
 
-	public List<Ref<Test>> getTestCases(Project project)
+
+	public List<Ref<Test>> getTestCases(String projectId)
 	{
 		// Build refs for each test case
 		ArrayList<Ref<Test>> testRefs = new ArrayList<Ref<Test>>();
-		for (long testID : tests)
-			testRefs.add((Ref<Test>)Ref.create(Artifact.getKey(testID, project)));
+		for (long testID : testsId)
+			testRefs.add( (Ref<Test>) Ref.create( Artifact.getKey(testID) ) );
 
 		return testRefs;
 	}
@@ -255,235 +242,283 @@ public class Function extends Artifact
 	// Deletes the specified test from the list of tests
 	public void deleteTest(long testToDeleteID)
 	{
-		int position = tests.indexOf(testToDeleteID);
+		int position = testsId.indexOf(testToDeleteID);
 		if (position != -1)
 		{
-			tests.remove(position);
+			testsId.remove(position);
 			testsImplemented.remove(position);
-			ofy().save().entity(this).now();
+			testsDescription.remove(position);
 		}
+		runTestsIfReady();
 	}
 
 	// Adds the specified test for this function
-	public void addTest(long testID)
+	public void addTest(long testID, String testDescription)
 	{
-		tests.add(testID);
+		testsId.add(testID);
 		testsImplemented.add(false);
-		
-		ofy().save().entity(this).now();
+		testsDescription.add(testDescription);
+
+		runTestsIfReady();
+		//if the function is not needed send the notification
+		if( ! isActivated())
+			TestCommand.functionBecomeDeactivated(testID);
 	}
-
-	// Gets a list of FunctionDescriptionDTOs for every function, formatted as a JSON string
-	public static String getFunctionDescriptions(Project project)
-	{
-		List<FunctionDescriptionDTO> dtos = new ArrayList<FunctionDescriptionDTO>();
-		Query<Function> q = ofy().load().type(Function.class)
-				.ancestor(project.getKey()).filter("hasBeenDescribed", true);
-		for (Function function : q)
-			dtos.add(function.getDescriptionDTO());
-
-		ObjectMapper mapper = new ObjectMapper();
-		try
-		{
-		    return mapper.writeValueAsString(dtos);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	    return "";
-	}
-
-	public FunctionDescriptionDTO getDescriptionDTO()
-	{
-		return new FunctionDescriptionDTO(name, returnType, paramNames, paramTypes, paramDescriptions, header, description);
-	}
-
-	// Returns true iff the specified pseudocall is currently in the code
-	public boolean containsPseudoCall(String pseudoCall)
-	{
-		return pseudoCalls.contains(pseudoCall);
-	}
-
-
 	//////////////////////////////////////////////////////////////////////////////
 	//  PRIVATE CORE FUNCTIONALITY
 	//////////////////////////////////////////////////////////////////////////////
 
-	private void setWritten(boolean isWritten, Project project)
+	private void setWritten(boolean isWritten)
 	{
 		if (this.isWritten != isWritten)
 		{
-			project.historyLog().beginEvent(new PropertyChange("implemented",
-					Boolean.toString(isWritten), this));
-
 			this.isWritten = isWritten;
 			ofy().save().entity(this).now();
-
-			project.historyLog().endEvent();
+			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented",Boolean.toString(isWritten), this));
 		}
 	}
 
 	// Sets the function as being described
-	private void setDescribed(Project project)
+	private void setDescribed(String projectId)
 	{
 		if (!this.hasBeenDescribed)
 		{
-			project.historyLog().beginEvent(new PropertyChange("hasBeenDescribed", "true", this));
-
 			this.hasBeenDescribed = true;
 			ofy().save().entity(this).now();
-			notifyBecameDescribed(project);
+			notifyBecameDescribed(projectId);
 
-			project.historyLog().endEvent();
+			HistoryLog.Init(projectId).addEvent(new PropertyChange("hasBeenDescribed", "true", this));
 		}
+		storeToFirebase(projectId);
 	}
 
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	protected void lookForWork(Project project)
+	public void lookForWork()
 	{
-		// If there is currently not already a microtask being done on this function,
-		// determine if there is work to be done
-		if (!microtaskOut)
-		{
-			// Microtask must have been described, as there is no microtask out to describe it.
-			if (isWritten && needsDebugging)
-				makeMicrotaskOut(new DebugTestFailure(this,project), project);
-			else if (!queuedMicrotasks.isEmpty())
-				makeMicrotaskOut(ofy().load().ref(queuedMicrotasks.remove()).get(), project);
+		//System.out.println("needed"+this.isActivated+"microtaskOut"+microtaskOut+"testCaseOut"+testCaseOut);
+		//if the function is needed
+		if(this.isActivated){
+			// if there is no work in progress and there is work waiting
+			// make the first microtask in queue out
+			if ( microtaskOut == null && !queuedMicrotasks.isEmpty()){
+				Microtask mtask = ofy().load().ref(queuedMicrotasks.remove()).now();
+
+				// if is a debug test failure
+				if( mtask instanceof DebugTestFailure ) {
+					// if no write test cases out
+					// make the microtask out
+					if( !isTestCasesOut ){
+						isDebugOut = true;
+						makeMicrotaskOut( mtask );
+					}
+
+					// otherwise enqueue again
+					// the debug test failure
+					else {
+						queuedMicrotasks.add(Ref.create(mtask.getKey()));
+						ofy().save().entity(this).now();
+					}
+				}
+				// otherwise put out the microtask
+				else
+					makeMicrotaskOut( mtask );
+			}
+
+			// if there aren't write test cases or debugging microtask out and the
+			// queue is not empty, make the first out
+			if ( !isDebugOut && !isTestCasesOut && !queuedTestAndDebugMicrotask.isEmpty())
+				makeTestCasesOut( ofy().load().ref( queuedTestAndDebugMicrotask.remove()).now() );
 		}
+	}
+
+
+
+	// Makes the specified microtask out for work
+	protected void makeTestCasesOut(Microtask microtask)
+	{
+		isTestCasesOut = true;
+		ofy().save().entity(this).now();
+		ProjectCommand.queueMicrotask(microtask.getKey(), null);
+
+	}
+	// Queues the specified microtask and looks for work
+	public void queueMicrotask(Microtask microtask, String projectId)
+	{
+		queuedMicrotasks.add(Ref.create(microtask.getKey()));
+		ofy().save().entity(this).now();
+		lookForWork();
 	}
 
 	// Determines if all unit tests are implemented (e.g., not merely described or currently disputed)
 	private boolean allUnitTestsImplemented()
 	{
-		System.out.println("checking if all test implemented");
 
-		if(tests.size()==0) return false;
-		for (Boolean implemented:testsImplemented)
-		{
-			if( !implemented )
-				return false;
+
+		if(testsId.size()==0)
+			return false;
+		else{
+			for (Boolean implemented:testsImplemented)
+			{
+				if( !implemented )
+					return false;
+			}
 		}
-
-		// Assume all unit tests are implemented, and run tests whenever anyone requests them to be run.
-		// TODO: do we need to do this more intelligently?
-
-		//if there are no unit tests, the tests aren't all ready yet, so return false...
-		//otherwise, you've gotten here and all the unit tests are implemented
-
 		return true;
 	}
 
-	private void runTestsIfReady(Project project)
+	// Determines if at least one unit tests is implemented
+	private boolean unitTestsImplemented()
 	{
-		if(isWritten && allUnitTestsImplemented()){
-			// enqueue test job in firebase
-			System.out.println("write test job queue");
-			FirebaseService.writeTestJobQueue(this.getID(),project);
+		if(testsId.size()==0)
+			return false;
+		else{
+			for (Boolean implemented : testsImplemented)
+				if( implemented )
+					return true;
 
-			//project.requestTestRun();
+			// if we're here, no tests were implemented
+			return false;
 		}
 	}
 
-	private void onWorkerEdited(FunctionDTO dto, Project project)
+
+	private void runTestsIfReady(){
+		Boolean oneImplemented = unitTestsImplemented();
+		// function written +
+		// not waiting for test result +
+		// at least one of the tests is implemented +
+		// the function needs debugging
+		if( isWritten && !this.waitForTestResult && oneImplemented && this.needsDebugging ){
+			// enqueue test job in firebase
+
+			String implementedIds = "";
+			int index;
+			int size = this.testsId.size();
+			for( index = 0; index < size ; index++){
+				if( this.testsImplemented.get(index) ){
+
+					implementedIds += this.testsId.get(index) + ",";
+				}
+			}
+			if( implementedIds.length() > 0 )
+				implementedIds = implementedIds.substring(0, implementedIds.length()-1 );
+
+			this.waitForTestResult=true;
+			FunctionCommand.writeTestJobQueue(this.getID(), this.version, implementedIds);
+		}
+		ofy().save().entity(this).now();
+
+	}
+
+	private void onWorkerEdited(FunctionDTO dto, String projectId)
 	{
-
-//		System.out.println("old: "+(this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", ""));
-//		System.out.println("new: "+(dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", ""));
-
 		// Check if the description or header changed (ignoring whitespace changes).
 		// If so, generate DescriptionChange microtasks for callers and tests.
-		String strippedOldFullDescrip = (this.getCompleteDescription() + this.header).replace(" ", "").replace("\n", "");
-		String strippedNewFullDescrip = (dto.getCompleteDescription() + dto.header).replace(" ", "").replace("\n", "");
-
-		if (!strippedOldFullDescrip.equals(strippedNewFullDescrip))
-			notifyDescriptionChanged(dto, project);
+		String strippedOldFullDescrip = (this.getParametersAndReturn()).replace(" ", "").replace("\n", "");
+		String strippedNewFullDescrip = (dto.getParametersAndReturn()).replace(" ", "").replace("\n", "");
+		Boolean descChanged = !strippedOldFullDescrip.equals(strippedNewFullDescrip);
+		Boolean nameChanged = !this.name.equals(dto.name);
+		if ( descChanged || nameChanged )
+			notifyDescriptionChanged(dto,descChanged,nameChanged);
 
 		// Update the function data
 		this.code = dto.code;
 		this.name = dto.name;
 		this.description = dto.description;
 		this.header = dto.header;
-		this.paramNames = dto.paramNames;
-		this.paramTypes=dto.paramTypes;
-		this.paramDescriptions=dto.paramDescriptions;
+
+		List<FunctionParameterDTO> parameters = dto.parameters;
+		this.paramNames.clear();
+		this.paramTypes.clear();
+		this.paramDescriptions.clear();
+		for(FunctionParameterDTO parameter : parameters)
+		{
+			this.paramNames.add(parameter.name);
+			this.paramTypes.add(parameter.type);
+			this.paramDescriptions.add(parameter.description);
+		}
+		this.returnType=dto.returnType;
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
 
 		// Looper over all of the callers, rebuilding our list of callers
-		rebuildCalleeList(dto.calleeNames, project);
+		rebuildCalleeList(dto.calleeIds);
 
 		// Look for pseudocode and psuedocalls
-		List<String> currentPseudoCalls = findPseudocalls(code);
-		List<String> newPseudoCalls = new ArrayList<String>();
+		List<PseudoFunctionDTO> submittedPseudoFunctions = dto.pseudoFunctions;
+		List<String> newPseudoFunctionsName        = new ArrayList<String>();
+		List<String> newPseudoFunctionsDescription = new ArrayList<String>();
 
-		if(currentPseudoCalls.isEmpty())
-		{
-			List<String> pseudoCode = findPseudocode(code);
-			if(pseudoCode.isEmpty())
-			{
-				setWritten(true, project);
-				runTestsIfReady(project);
-			}
-			else
-			{
-				setWritten(false, project);
-				queueMicrotask(new WriteFunction(this, project), project);
-			}
-		}
-		else
-		{
-			for (String callDescription : currentPseudoCalls)
-			{
-				if (!pseudoCalls.contains(callDescription))
-				{
-					setWritten(false, project);
+		// if pseudo functions were submitted
+		if( ! submittedPseudoFunctions.isEmpty() ){
 
-					//for any currentPseudoCall not in pseudoCalls, add it
-					newPseudoCalls.add(callDescription);
+			setWritten(false);
+			// for each of them,
+			for (PseudoFunctionDTO submittedPseudoFunction : submittedPseudoFunctions){
+				// if not already in the previously submitted pseudo functions,
+				// spawn a reuse search microtask
+				if (!pseudoFunctionsName.contains(submittedPseudoFunction.name)){
 					// Spawn microtask immediately, as it does not require access to the function itself
-					Microtask microtask = new ReuseSearch(this, callDescription, project);
+					Microtask microtask = new ReuseSearch(this, submittedPseudoFunction.name, submittedPseudoFunction.description, projectId);
 					ProjectCommand.queueMicrotask(microtask.getKey(), null);
 				}
+				newPseudoFunctionsDescription.add(submittedPseudoFunction.description);
+				newPseudoFunctionsName.add(submittedPseudoFunction.name);
 			}
+
+		}
+		// if there is pseudocode
+		else if( !findPseudocode(code).isEmpty() ){
+			setWritten(false);
+			// and if the artifact microtask queue is empty, spawn a
+			// new write function microtask
+			if(queuedMicrotasks.isEmpty())
+				queueMicrotask(new WriteFunction(this,projectId), projectId);
+
+		}
+		// otherwise the function is complete
+		else {
+			setWritten(true);
 		}
 
-		// Update the list of pseudocalls to match the current (distinct) pseudocalls now in the code
-		this.pseudoCalls = newPseudoCalls;
+		// Update the list of psudoFunctions to match the current (distinct) pseudofunctons now in the code
+		this.pseudoFunctionsName        = newPseudoFunctionsName;
+		this.pseudoFunctionsDescription = newPseudoFunctionsDescription;
 
-		ofy().save().entity(this).now();
-		lookForWork(project);
+		storeToFirebase(projectId);
+
+		runTestsIfReady();
+
+		lookForWork();
+
 	}
+
 
 	// Diffs the new and old callee list, sending notifications to callees about who their
 	// callers are as appropriate. Updates the callee list when done
-	private void rebuildCalleeList(List<String> calleeNames, Project project)
+	private void rebuildCalleeList(List<Long> submittedCalleeIds)
 	{
 		// First, find new callees added, if any
-		List<String> newCallees = new ArrayList<String>(calleeNames);
-		newCallees.removeAll(this.callees);
+		List<Long> newCallees = new ArrayList<Long>(submittedCalleeIds);
+		newCallees.removeAll(this.calleesId);
 
 		// If there are any, send notifications to these functions that they have a new caller
-		for (String newCalleeName : newCallees)
+		for (Long newCalleeId : newCallees)
 		{
-			Function callee = lookupFunction(newCalleeName, project);
-			if (callee != null)
-				FunctionCommand.addCaller(callee.id, this.id);
+			FunctionCommand.addCaller(newCalleeId, this.id);
 		}
 
 		// Next, find any callees removed, if any
-		List<String> removedCallees = new ArrayList<String>(this.callees);
-		removedCallees.remove(calleeNames);
+		List<Long> removedCallees = new ArrayList<Long>(this.calleesId);
+		removedCallees.removeAll(submittedCalleeIds);
 
 		// Send notifications to these functions that they no longer have this caller
-		for (String removedCalleeName : removedCallees)
+		for (Long removedCalleeIds : removedCallees)
 		{
-			Function callee = lookupFunction(removedCalleeName, project);
-			if (callee != null)
-				FunctionCommand.removeCaller(callee.id, this.id);
+			FunctionCommand.removeCaller(removedCalleeIds, this.id);
 		}
 
-		this.callees = newCallees;
+		this.calleesId = submittedCalleeIds;
 		ofy().save().entity(this).now();
 	}
 
@@ -491,157 +526,173 @@ public class Function extends Artifact
 	//  MICROTASK COMPLETION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
 
-	public void sketchCompleted(FunctionDTO dto, Project project)
+	public void sketchCompleted(FunctionDTO dto, long disputantId, String projectId)
 	{
 		microtaskOutCompleted();
-		onWorkerEdited(dto, project);
+		if( dto.inDispute ){
+			deactivateFunction(dto.disputeFunctionText);
+			queueMicrotask(new WriteFunction(this, projectId), projectId);
+
+		}
+		else{
+			if(disputantId!=0){
+				// if the dispute was issued by this artifact means that was a write test case
+				if(disputantId==this.getID())
+					queueWriteTestCase(new WriteTestCases(this, projectId));
+				else{
+					//otherwise is a test
+					notifyTestDisputeCompleted(disputantId);
+				}
+			}
+			onWorkerEdited(dto, projectId);
+
+		}
 	}
 
-	public void reuseSearchCompleted(ReusedFunctionDTO dto, String callDescription, Project project)
+	public void reuseSearchCompleted(ReusedFunctionDTO dto, String pseudoFunctionName, String pseudoFunctionDescription, String projectId)
 	{
 		Function callee;
 
 		if (dto.noFunction)
 		{
 			// Create a new function for this call, spawning microtasks to create it.
-			callee = new Function(callDescription, this, project);
+			callee = new Function(pseudoFunctionName, pseudoFunctionDescription, this.getID(), projectId);
 			dto.functionId = callee.getID();
 		}
-		else
-		{
-			// lookup the function by name
-			Key<Function> key = Key.create(Function.class,dto.functionName);
-			//Key<Artifact> key = Key.create(Artifact.class, dto.functionId);
-			callee = (Function) ofy().load().key( key ).get();//ancestor(project.getKey()).filter("name", dto.functionName).first().get();
-		}
-
 		// Have the callee let us know when it's tested (which may already be true;
 		// signal sent immediately in that case)
 
-		System.out.println("dto fid "+dto.functionId);
-		System.out.println("callDescri "+callDescription);
-		System.out.println("project "+project);
-		System.out.println("callee "+callee);
-		
-		
-		
-		FunctionCommand.addDependency(dto.functionId, this.getID(), callDescription);
+		FunctionCommand.addPseudocaller( dto.functionId, this.getID(), pseudoFunctionName, pseudoFunctionDescription);
 	}
 
-	public void writeDescriptionCompleted(String name, String returnType, List<String> paramNames, List<String> paramTypes,
-			List<String> paramDescriptions, String header, String description, String code, Project project)
+	public void writeDescriptionCompleted(FunctionDescriptionDTO dto, String projectId)
 	{
 		microtaskOutCompleted();
-		this.name = name;
-		this.returnType = returnType;
-		this.paramNames = paramNames;
-		this.paramTypes = paramTypes;
-		this.paramDescriptions = paramDescriptions;
-		this.header = header;
-		this.description = description;
-		this.code = code;
-		this.linesOfCode = StringUtils.countMatches(this.code, "\n") + 2;
+		if(dto.inDispute){
+			deactivateFunction(dto.disputeFunctionText);
+			//remove the caller that generate the microtask from the pseudocaller of this function
+			removePseudocaller(dto.callerId);
+		}
+		else {
+			this.name = dto.name;
+			this.returnType = dto.returnType;
 
-		ofy().save().entity(this).now();
+			List<FunctionParameterDTO> parameters = dto.parameters;
 
-		setDescribed(project);
+			this.paramNames.clear();
+			this.paramTypes.clear();
+			this.paramDescriptions.clear();
+			for(FunctionParameterDTO parameter : parameters)
+			{
+				this.paramNames.add(parameter.name);
+				this.paramTypes.add(parameter.type);
+				this.paramDescriptions.add(parameter.description);
+			}
 
-		//Spawn off microtask to write test cases. As it does not impact the artifact itself,
-		// the microtask can be directly started rather than queued.
-		WriteTestCases writeTestCases = new WriteTestCases(this, project);
-		ProjectCommand.queueMicrotask(writeTestCases.getKey(), null);
+			this.header = dto.header;
+			this.description = dto.description;
+			this.code = dto.code;
+			this.linesOfCode = StringUtils.countMatches(this.code, "\n") + 2;
 
-		// Spawn off microtask to sketch the method
-		queueMicrotask(new WriteFunction(this, project), project);
+			ofy().save().entity(this).now();
+
+			setDescribed(projectId);
+
+			//Spawn off microtask to write test cases. As it does not impact the artifact itself,
+			// the microtask can be directly started rather than queued.
+			queueWriteTestCase(new WriteTestCases(this, projectId));
+
+			// Spawn off microtask to sketch the method
+			queueMicrotask(new WriteFunction(this, projectId), projectId);
+		}
 	}
 
-	public void writeTestCasesCompleted(TestCasesDTO dto, Project project)
+	public void writeTestCasesCompleted(TestCasesDTO dto, long disputeId, String projectId)
 	{
-		microtaskOutCompleted();
+		isTestCasesOut = false;
 
-		for (TestCaseDTO testCase : dto.testCases)
-		{
-			// Note: the id in the testCase is *only* valid for testcases where added is false.
+		if(dto.inDispute){
+			disputeFunctionSignature(dto.disputeFunctionText, this.getID(), projectId);
+		}
+		else{
+			for (TestCaseDTO testCase : dto.testCases)
+			{
+				// Note: the id in the testCase is *only* valid for testcases where added is false.
 
-			// If it's an add, create a test
-			if (testCase.added)
-			{
-				TestCommand.create(testCase.text, this.id, this.name, testCase.functionVersion);
-			}
-			// else if is a delete, remove the test
-			else if (testCase.deleted)
-			{
-				TestCommand.delete(testCase.id);
-				deleteTest(testCase.id);
-			}
-			else
-			{
-				// Check if it was edited
-				Ref<Test> testRef = Test.find(testCase.id, project);
-				Test test = testRef.get();
-				if (!test.getDescription().equals(testCase.text))
+				// If it's an add, create a test
+				if (testCase.added)
 				{
-					String oldDescription = test.getDescription();
-					test.setDescription(testCase.text);
-					test.queueMicrotask(new WriteTest(project, test, oldDescription, testCase.functionVersion), project);
+					System.out.println("creating test with version: "+dto.functionVersion);
+					TestCommand.create(testCase.text, this.id, this.name, dto.functionVersion);
+				}
+				// else if is a delete, remove the test
+				else if (testCase.deleted)
+				{
+					TestCommand.delete(testCase.id);
+					deleteTest(testCase.id);
+				}
+				else
+				{
+					int position = testsId.indexOf((long)testCase.id);
+					if(position !=-1 ){
+
+
+						if (!testsDescription.get(position).equals(testCase.text))
+						{
+							testsDescription.set(position, testCase.text);
+							TestCommand.testEdited(testCase.id, testCase.text, dto.functionVersion);
+						}
+						//if the test that made the dispute was not edited generates again the write test microtask
+						else if(testCase.id == disputeId)
+						{
+							TestCommand.disputeCompleted(testCase.id, dto.functionVersion);
+
+						}
+					}
+					else
+						System.out.println("ERROR : testsID: "+testCase.id +" not available for the function: "+ this.name);
 				}
 			}
+			ofy().save().entity(this).now();
+			lookForWork();
 		}
 
-		ofy().save().entity(this).now();
-		lookForWork(project);
+
 	}
 
-	public void writeCallCompleted(FunctionDTO dto, Project project)
+	public void writeCallCompleted(FunctionDTO dto, String projectId)
 	{
 		microtaskOutCompleted();
-		onWorkerEdited(dto, project);
+		onWorkerEdited(dto, projectId);
 	}
 
-	public void debugTestFailureCompleted(FunctionDTO dto, Project project)
+	public void debugTestFailureCompleted( DebugDTO dto, String projectId)
 	{
-		microtaskOutCompleted();
-		this.needsDebugging = false;
+		isDebugOut = false;
 
-		// Check to see if there any disputed tests
-		//Current: If it doesn't have a test case number indicating a dispute, all passed.
-		//That should change in the future, to indicate which ones passed
-		if(dto.testId != null)
-		{
-			// creates a disputed test case
-			int position = tests.indexOf((long)dto.testId);
-			TestCommand.dispute(tests.get(position), dto.description, version);
+		if( !dto.hasPseudo ){
+			// PUT TESTS IN DISPUTE
+			if( dto.disputedTests.size() > 0 )
+			{
+				for( TestDisputedDTO disputedTest: dto.disputedTests){
 
-			// Since there was an issue, ignore any code changes they may have submitted.
-		} else { //at present, reaching here means all tests passed.
-			this.needsDebugging = false;
-			if(!this.code.trim().equals(dto.code.trim()))
-			{ //integrate the new changes
-				onWorkerEdited(dto, project);
+					TestCommand.dispute( disputedTest.id, disputedTest.disputeText, version);
+					testReturnUnimplemented( disputedTest.id );
+				}
 			}
+
+			// CREATE THE STUBS
+			// Update or create tests for any stub
+			for (TestDTO testDTO : dto.stubs)
+			{
+				TestCommand.create(testDTO.functionID,testDTO.functionName,testDTO.description,testDTO.simpleTestInputs,testDTO.simpleTestOutput,testDTO.code,this.version, false);
+			}
+
+
 		}
 
-		// Save the entity again to the datastore
-		ofy().save().entity(this).now();
-
-		/* NOW THIS IS DONE CLIENT SIDE
-		// Update or create tests for any mocks
-		for (MockDTO mockDTO : dto.mocks)
-		{
-			System.out.println("MOCK: "+mockDTO);
-			
-			// Is there already a simple test / mock for this function with these inputs?
-			Test test = Test.findSimpleTestFor(mockDTO.functionName, mockDTO.inputs, project);
-
-			// If so, update it.
-			// Otherwise, create a new test
-			if (test != null)
-				test.setSimpleTestOutput(mockDTO.output, project);
-			else
-				TestCommand.create(this.id, this.name, mockDTO.inputs, mockDTO.output, mockDTO.code, version);
-		}*/
-
-		lookForWork(project);
+		microtaskOutCompleted();
+		onWorkerEdited( dto.functionDTO, projectId);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -649,167 +700,301 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 
 	// This method notifies the function that it has just passed all of its tests.
-	public void passedTests(Project project)
+	public void passedTests(String projectId)
 	{
-		if (this.needsDebugging)
-		{
-			project.historyLog().beginEvent(new MessageReceived("PassedTests", this));
-			this.needsDebugging = false;
-			ofy().save().entity(this).now();
+		waitForTestResult = false;
+		HistoryLog.Init(projectId).addEvent(new MessageReceived("PassedTests", this));
 
-			lookForWork(project);
-			project.historyLog().endEvent();
-		}
+		this.needsDebugging = false;
+
+		ofy().save().entity(this).now();
+
+		storeToFirebase(projectId);
+		lookForWork();
+		System.out.println("FUNCTION ID: "+ this.getID()+" ALL TEST PASSED");
+
 	}
 
 	// This method notifies the function that it has failed at least one of its tests
-	public void failedTests(Project project)
+	public void failedTests(String projectId)
 	{
-		if (isWritten && !needsDebugging)
-		{
-			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
-			this.needsDebugging = true;
-			ofy().save().entity(this).now();
 
-			lookForWork(project);
-			project.historyLog().endEvent();
+		waitForTestResult = false;
+		HistoryLog.Init(projectId).addEvent(new MessageReceived("FailedTests", this));
+
+
+		if ( isWritten && !this.waitForTestResult && microtaskOut == null && this.queuedMicrotasks.isEmpty() ){
+			DebugTestFailure debug = new DebugTestFailure(this,projectId);
+			this.queueMicrotask( debug, projectId);
 		}
-	}
 
-	public void failedTest(Test test,Project project)
-	{
-		if (isWritten && !needsDebugging)
-		{
-			project.historyLog().beginEvent(new MessageReceived("FailedTests", this));
-			this.needsDebugging = true;
-			//this.failedTest     = test;
-			ofy().save().entity(this).now();
+		ofy().save().entity(this).now();
 
-			lookForWork(project);
-			project.historyLog().endEvent();
-		}
-	}
-
-	public void failedTest(Project project,Long testID){
+		lookForWork();
+		System.out.println("FUNCTION ID: "+ this.getID()+" TEST FAILED");
 
 	}
+
+
 
 	// Provides notification that a test has transitioned to being implemented
-	public void testBecameImplemented(Test test, Project project)
+	public void testBecameImplemented(long testId)
 	{
-		int position = tests.indexOf(test.getID());
-		testsImplemented.set(position, true);
-		
-		runTestsIfReady(project);
+		this.needsDebugging = true;
+
+		int position = testsId.indexOf(testId);
+		if(position!=-1)
+			testsImplemented.set(position, true);
+
+		runTestsIfReady();
+	}
+
+	// Provides notification that a test has transitioned to not being implemented
+	public void testReturnUnimplemented(long testId)
+	{
+		int position = testsId.indexOf(testId);
+		if(position!=-1)
+			testsImplemented.set(position, false);
+		ofy().save().entity(this).now();
+
 	}
 
 	// Notifies the function that it has a new caller function
-	public void addCaller(Function function)
+	public void addCaller(long functionId)
 	{
-		callers.add(function.getID());
+
+		//remove the function from the pseudocaller list
+		callersId.add(functionId);
+
+		removePseudocaller(functionId);
+
+		if( !isActivated() )
+			reactivateFunction();
+
 		ofy().save().entity(this).now();
 	}
 
 	// Notifies the function that it is no longer called by function
-	public void removeCaller(Function function)
+	public void removeCaller(long functionId)
 	{
-		callers.remove((Ref<Function>) Ref.create(function.getKey()));
+		callersId.remove(functionId);
+
+		checkIfNeeded();
+
 		ofy().save().entity(this).now();
 	}
 
-	public void addDependency(long newSubscriber, String pseudoCall, Project project)
+	private void checkIfNeeded()
 	{
+		//if is not animore called by anyone means that is not anymore needed
+		if( this.callersId.isEmpty() && this.pseudoCallersId.isEmpty() )
+			deactivateFunction(null);
+
+
+	}
+	public void removePseudocaller(long functionId)
+	{
+		int index = pseudoCallersId.indexOf(functionId);
+		if(index!=-1){
+			pseudoCallersId.remove(index);
+			pseudoCallersName.remove(index);
+			pseudoCallersDescription.remove(index);
+			checkIfNeeded();
+		}
+		ofy().save().entity(this).now();
+
+
+
+	}
+	public void addPseudocaller(long pseudoCallerId, String pseudoCallerName, String pseudoCallerDescription)
+	{
+		//if the functon has not yet been described and is not needed creates a new write description microtask
+		//this is needed because the write function description microtask was disputed and so the function
+		//has never been described
+		if( (! hasBeenDescribed()) && (! isActivated()) && pseudoCallersId.isEmpty() )
+			makeMicrotaskOut(new WriteFunctionDescription(this, pseudoCallerName,pseudoCallerDescription, pseudoCallerId, projectId));
+
 		//add it to the lists
-		pseudoCallers.add(newSubscriber);
-		pseudoCallsites.add(pseudoCall);
+		pseudoCallersId.add(pseudoCallerId);
+		pseudoCallersDescription.add(pseudoCallerDescription);
+		pseudoCallersName.add(pseudoCallerName);
 
 		//if it's already been described, send the notification to the new subscriber (only) immediately.
 		if(hasBeenDescribed())
-			sendDescribedNotification(newSubscriber, pseudoCall, project);
-
+			sendDescribedNotification(pseudoCallerId, pseudoCallerName);
 		ofy().save().entity(this).now();
 	}
 
-	public void calleeBecameDescribed(String calleeFullDescription, String pseudoCall, Project project)
+	public void calleeBecameDescribed(long calleeId, String pseudoFunctionName, String projectId)
 	{
-		project.historyLog().beginEvent(new MessageReceived("AddCall", this));
-		queueMicrotask(new WriteCall(this, calleeFullDescription, pseudoCall, project), project);
-		project.historyLog().endEvent();
+		HistoryLog.Init(projectId).addEvent(new MessageReceived("AddCall", this));
+		setWritten(false);
+		storeToFirebase(projectId);
+
+		queueMicrotask(new WriteCall(this, calleeId, pseudoFunctionName, projectId), projectId);
 	}
 
-	public void calleeChangedInterface(String oldFullDescription, String newFullDescription, Project project)
+
+	public void calleeBecomeDeactivated(long calleeId, String disputeText, String projectId)
 	{
-		queueMicrotask(new WriteFunction(this, oldFullDescription, newFullDescription, project), project);
+		calleesId.remove(calleeId);
+		setWritten(false);
+		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
+
+		queueMicrotask(new WriteFunction(this, calleeId, disputeText, projectId), projectId);
 	}
 
-	public void disputeTestCases(String issueDescription, String testDescription, Project project)
+	public void calleeChangedInterface(String oldFullDescription, String newFullDescription, String projectId)
 	{
-		queueMicrotask(new WriteTestCases(this, issueDescription, testDescription, project), project);
+		setWritten(false);
+		storeToFirebase(projectId);
+
+		queueMicrotask(new WriteFunction(this, oldFullDescription, newFullDescription, projectId), projectId);
 	}
 
+	public void disputeTestCases(String issueDescription, String testDescription, long artifactId, String projectId)
+	{
+		queueWriteTestCase(new WriteTestCases(this, issueDescription, testDescription, artifactId,projectId));
+	}
+
+	public void disputeFunctionSignature(String issueDescription, long disputeId,String projectId)
+	{
+		setWritten(false);
+		storeToFirebase(projectId);
+
+		queueMicrotask(new WriteFunction(this, issueDescription, disputeId, projectId), projectId);
+	}
+
+	// Queues the specified microtask and looks for work
+	private void queueWriteTestCase(Microtask microtask)
+	{
+		queuedTestAndDebugMicrotask.add(Ref.create(microtask.getKey()));
+		ofy().save().entity(this).now();
+		lookForWork();
+	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	//   NOTIFICATION SENDERS
 	//////////////////////////////////////////////////////////////////////////////
 
-	// Notify all subscribers that this function has become described.
-	private void notifyBecameDescribed(Project project)
+	//notify the test that the dispute is solved
+	private void notifyTestDisputeCompleted(long testId)
 	{
-		// Loop over the psuedocallsites and pseudocallers in parallel
-		for (int i = 0; i < pseudoCallsites.size(); i++)
-			sendDescribedNotification(pseudoCallers.get(i), pseudoCallsites.get(i), project);
+		if(testsId.contains(testId))
+			TestCommand.disputeCompleted(testId, this.version);
 	}
 
-	private void sendDescribedNotification(long subscriberID, String pseudoCall, Project project)
+	//Notify all the callers and all the test of this function that is not anymore active
+	private void deactivateFunction(String disputeFunctionText)
 	{
-		FunctionCommand.calleeBecameDescribed(subscriberID, this.getFullDescription(), pseudoCall);
+
+		setActivated(false);
+		if(!isAPIArtifact){
+			for (long testId : testsId){
+				TestCommand.functionBecomeDeactivated(testId);
+			}
+			if(disputeFunctionText!=null){
+				for (long callerID : callersId)
+					FunctionCommand.calleeBecomeDeactivated(callerID, this.getID(), disputeFunctionText);
+
+				for (long pseudoCallerID : pseudoCallersId)
+					FunctionCommand.calleeBecomeDeactivated(pseudoCallerID, this.getID(), disputeFunctionText);
+			}
+		}
+	}
+
+	//Notify all tests that the function is active again
+	private void reactivateFunction()
+	{
+		setActivated(true);
+		//for each test send a notification that the function has been reactivated
+		for (long testId : testsId)
+			TestCommand.functionReturnActive(testId);
+
+		runTestsIfReady();
+		lookForWork();
+	}
+
+	// Notify all subscribers that this function has become described.
+	private void notifyBecameDescribed(String projectId)
+	{
+		// Loop over the psuedocallsites and pseudocallers in parallel
+		for (int i = 0; i < pseudoCallersName.size(); i++)
+			sendDescribedNotification(pseudoCallersId.get(i) ,pseudoCallersName.get(i));
+	}
+
+	private void sendDescribedNotification(long subscriberID, String pseudoFunctionName)
+	{
+		FunctionCommand.calleeBecameDescribed(subscriberID, this.getID(), pseudoFunctionName);
 	}
 
 	// Send out notifications, as appropriate, that the description or header of this
 	// function has changed
-	private void notifyDescriptionChanged(FunctionDTO dto, Project project)
+	private void notifyDescriptionChanged(FunctionDTO dto,Boolean descChanged,Boolean nameChanged)
 	{
-		for (long callerID : callers)
+
+		for (long callerID : callersId)
 			FunctionCommand.calleeChangedInterface(callerID, this.getFullDescription(), dto.getCompleteDescription() + dto.header);
 
-		for (long testID : tests)
-			TestCommand.functionChangedInterface(testID, this.getFullDescription(), dto.getCompleteDescription() + dto.header, version);
+		for (long testID : testsId){
+			if( nameChanged )
+				TestCommand.functionChangedName(testID,dto.name,version);
+
+			if( descChanged )
+				TestCommand.functionChangedInterface(
+						testID,
+						this.getFullDescription(),
+						(dto.getCompleteDescription() + dto.header),
+						version);
+		}
+
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  UTILITY METHODS
 	//////////////////////////////////////////////////////////////////////////////
-
-	public void storeToFirebase(Project project)
+	public void createTest(List<TestDescriptionDTO> tests)
 	{
-		if (hasBeenDescribed)
-		{
-
-			incrementVersion();
-			FirebaseService.writeFunction(new FunctionInFirebase(name, this.id, version, returnType, paramNames,
-					paramTypes, paramDescriptions, header, description, code, linesOfCode, hasBeenDescribed, isWritten, needsDebugging,
-					queuedMicrotasks.size()),
-					this.id, version, project);
-		}
+		if(tests!=null)
+			for(TestDescriptionDTO test : tests)
+			{
+				TestCommand.create(this.id, this.name, test.description, test.simpleTestInputs, test.simpleTestOutput, test.code, 1, test.readOnly);
+			}
 	}
 
-	// Looks up a Function object by name. Returns the function or null if no such function exists
-	public static Function lookupFunction(String name, Project project)
+	public void storeToFirebase(String projectId)
 	{
-		Ref<Function> ref = ofy().load().type(Function.class).ancestor(project.getKey()).filter("name", name).first();
-		if (ref == null)
-			return null;
-		else
-			return ref.get();
+		int firebaseVersion = version + 1;
+
+		FirebaseService.writeFunction(new FunctionInFirebase(
+					name, 
+					this.id, 
+					firebaseVersion, 
+					returnType, 
+					paramNames,
+					paramTypes, 
+					paramDescriptions, 
+					header, 
+					description, 
+					code, 
+					linesOfCode, 
+					this.pseudoFunctionsName,
+					this.pseudoFunctionsDescription , 
+					hasBeenDescribed, 
+					isWritten, 
+					needsDebugging, 
+					isReadOnly,
+					queuedMicrotasks.size()
+				),
+				this.id, firebaseVersion, projectId);
+		incrementVersion();
+
 	}
 
 	// Looks through a string of a function's implementation and returns a list
 	// of lines (may be empty) which are the pseudocode for the function call
-	private List<String> findPseudocalls(String code)
-	{
-		return findSpecialLines(code, "//!");
-	}
-
 	private List<String> findPseudocode(String code)
 	{
 		return findSpecialLines(code, "//#");
@@ -839,8 +1024,9 @@ public class Function extends Artifact
 			else
 				segment = searchCode.substring(index + starterLength, nextLineStart);
 
-			// add to collection
-			results.add(segment);
+			// if not contains already add to collection
+			if (!results.contains(segment))
+				results.add(segment);
 
 			// If we hit the end of the string (no more new lines), we're done. Otherwise update to the next line.
 			if (nextLineStart == -1)
@@ -856,13 +1042,13 @@ public class Function extends Artifact
 	// load it and get the object
 	public static Function load(Ref<Function> ref)
 	{
-		return ofy().load().ref(ref).get();
+		return ofy().load().ref(ref).now();
 	}
 
 	// Given an id for a functon, finds the corresponding function. Returns null if no such function exists.
-	public static Ref<Function> find(long id, Project project)
+	public static Function find(long id)
 	{
-		return (Ref<Function>) ofy().load().key(Artifact.getKey(id, project));
+		return (Function) ofy().load().key(Artifact.getKey(id)).now();
 	}
 
 	public boolean equals(Object function)
@@ -879,8 +1065,11 @@ public class Function extends Artifact
 
 	public String toString()
 	{
-		return name + " described: " + hasBeenDescribed + " written: " + isWritten + " needsDebugging: "
-				+ needsDebugging + " queuedMicrotasks: " + queuedMicrotasks.size();
+		return "\n FUNCTION " + name +
+			"\n described: " + hasBeenDescribed +
+			"\n written: " + isWritten +
+			"\n needsDebugging: " + needsDebugging +
+			"\n queuedMicrotasks: " + queuedMicrotasks.size();
 	}
 
 	public String fullToString()

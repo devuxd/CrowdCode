@@ -4,22 +4,32 @@ public class WriteTestCasesInFirebase extends MicrotaskInFirebase
 {
 	public long functionID;
 	public String promptType;
-	public String disputeDescription;
-	public String disputedTestCase;
+	public String issueDescription;
+	public String issuedTestCase;
 
 	public WriteTestCasesInFirebase()
 	{
 	}
 
-	public WriteTestCasesInFirebase(long id,String title, String type,
-			String owningArtifact, Long owningArtifactId, boolean completed, int points,
-			long testedFunctionID, String promptType, String disputeDescription, String disputedTestCase)
+	public WriteTestCasesInFirebase(
+			long id,
+			String title, 
+			String type,
+			String owningArtifact, 
+			Long owningArtifactId, 
+			boolean completed, 
+			boolean canceled,
+			int points,
+			long testedFunctionID, 
+			String promptType, 
+			String issueDescription, 
+			String issuedTestCase)
 	{
-		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
+		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled, points);
 
-		this.functionID = testedFunctionID;
-		this.promptType = promptType;
-		this.disputeDescription = disputeDescription;
-		this.disputedTestCase = disputedTestCase;
+		this.functionID       = testedFunctionID;
+		this.promptType       = promptType;
+		this.issueDescription = issueDescription;
+		this.issuedTestCase   = issuedTestCase;
 	}
 }

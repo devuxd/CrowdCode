@@ -30,7 +30,8 @@ public class Worker
 	@Parent Key<Project> project;
 	private String nickname;
 	@Id private String userid;
-	private int score;
+
+	public int score;
 
 	// Default constructor for deserialization
 	private Worker()
@@ -52,22 +53,22 @@ public class Worker
 	//                user != null
 	public static Worker Create(User user, Project project)
 	{
-		project.logoutInactiveWorkers();
-		//System.out.println("actual logged  worker");
-		//loggedInWorkers
-		//project.logg
-		//System.out.println(allWorkers((project)));
-		Worker crowdWorker = ofy().load().key(getKey(project.getKey(), user.getUserId())).get();
-		if (crowdWorker == null)
-			crowdWorker = new Worker(user.getUserId(), user.getNickname(), project);
+		Worker worker = ofy().load().key(getKey(project.getKey(), user.getUserId())).now();
+		if (worker == null){
+			worker = new Worker(user.getUserId(), user.getNickname(), project);
+			FirebaseService.setPoints( worker.userid, worker.nickname, worker.score, project.getID());
+			FirebaseService.publish();
+		}
 
-		//System.out.println("after the search or creation");
-		//System.out.println(allWorkers((project)));
-		FirebaseService.setPoints(user.getUserId(), user.getNickname(), crowdWorker.score, project);
+		return worker;
+	}
 
-		FirebaseService.writeWorkerLoggedIn( user.getUserId(), user.getNickname(), project);
+	public String getUserid() {
+		return userid;
+	}
 
-		return crowdWorker;
+	public String getNickname() {
+		return nickname;
 	}
 
 	// returns all workers in the specified project
@@ -77,18 +78,18 @@ public class Worker
 	}
 
 	// Adds the specified number of points to the score.
-	public void awardPoints(int points, Project project)
+	public void awardPoints(int points, String projectId)
 	{
 		score += points;
 		ofy().save().entity(this).now();
 
-		FirebaseService.setPoints(userid, nickname, score, project);
+		FirebaseService.setPoints(userid, nickname, score, projectId);
 	}
 
 	// Update the stat label to the stat value.
-	public void increaseStat(String label,int amount, Project project)
+	public void increaseStat(String label,int amount, String projectId)
 	{
-		FirebaseService.increaseStatBy(userid, label, amount, project);
+//		FirebaseService.increaseStatBy(userid, label, amount, projectId);
 	}
 
 	public Key<Worker> getKey()

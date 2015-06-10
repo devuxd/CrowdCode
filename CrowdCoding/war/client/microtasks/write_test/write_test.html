@@ -1,0 +1,215 @@
+<div ng-controller="WriteTestController" >
+
+	<div class="section section-description " >
+
+		<div ng-include="'/client/microtasks/microtask_title.html'"></div>
+		<div class="section-content job-description" >
+
+			<div ng-if="microtask.promptType=='WRITE'">
+				Can you implement the following test case, providing a JSON object literal for each input parameter and for the expected return value?<br />
+				<strong>Tip:</strong> Descriptions of the data types are on the left, with examples you can copy and paste.
+			</div>
+
+			<div ng-if="microtask.promptType=='CORRECT'">
+				The crowd reported an issue with this test. 
+				Can you fix the test to address this issue (if necessary)?
+			</div>
+
+			<div ng-if="microtask.promptType=='TESTCASE_CHANGED'">
+				The description of the testCase has changed, as result, the test might be no longer correct.<BR>
+				Can you update the test, if necessary?<BR>
+			</div>
+
+			<div ng-if="microtask.promptType=='FUNCTION_CHANGED'">
+				The signature or description of the function being tested has changed, as result, the test might be no longer correct.<BR>
+				Can you update the test, if necessary?<BR>
+			</div>
+		</div>
+	</div>
+
+	<div ng-if="microtask.reissuedSubmission !== undefined" ng-include="'/client/microtasks/reissue_microtask.html'"></div>
+
+	
+	<div class="section section-description" ng-if="microtask.promptType != 'FUNCTION_CHANGED'" >
+		<div class="section-title" ><div class="dot bg-color"></div>FUNCTION DESCRIPTION</div>
+		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
+			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		</div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="funct.getSignature()"></ace-read-js>
+			<ace-read-js ng-if="microtask.promptType == 'FUNCTION_CHANGED'" code="diffCode" mode="diff"></ace-read-js>
+		</div>
+	</div>
+
+	<div class="section section-description">
+		<div class="section-title" >
+			<div class="dot bg-color"></div>
+			TEST CASE
+		</div>
+		<div class="section-link" ng-hide="test.readOnly || disputeTest.active" >
+			<a ng-click="disputeTest.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the test case <span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		</div>
+		<div class="section-content" >
+			<span ng-if="microtask.promptType=='WRITE' || microtask.promptType=='FUNCTION_CHANGED' || microtask.promptType=='CORRECT'" ng-bind="::test.description"></span>
+
+			<span ng-if="microtask.promptType=='TESTCASE_CHANGED'">
+				<strong>Old description: </strong><span ng-bind="microtask.oldTestCase"></span><br />
+				<strong>New description: </strong><span ng-bind="::test.description"></span>
+			</span>
+		</div>
+	</div>
+
+	
+	<div class="section section-description" ng-if="::microtask.promptType=='CORRECT'" >
+		<div class="section-title"> <div class="dot bg-color"></div> ISSUE DESCRIPTION </div>
+		<div  class="section-content" >
+			<span ng-bind="::microtask.issueDescription"></span>
+		</div>
+	</div>
+
+
+
+	<div class="section section-description" ng-if="microtask.promptType == 'FUNCTION_CHANGED'" >
+		<div class="section-title" ><div class="dot bg-color"></div>DIFF OF THE FUNCTION DESCRIPTION</div>
+		<div class="section-link" ng-hide="funct.readOnly || disputeFunction.active" >
+			<a ng-click="disputeFunction.toggle(); $event.preventDefault(); $event.stopPropagation();">Report an issue in the function description<span class="glyphicon glyphicon-exclamation-sign"></span></a>
+		</div>
+		<div class="section-content no-padding" >
+			<ace-read-js code="diffCode" mode="diff"></ace-read-js>
+		</div>
+	</div>
+
+	<alertcontainer></alertcontainer>
+
+	<div class="section-cols" ng-if="! disputeTest.active && !disputeFunction.active">
+		<div class="container-flex-row">
+			<div class="section section-help bg-color-alpha" style="width:30%">
+				<div class="section-title" >
+					<div class="dot"></div>
+					AVAILABLE DATA TYPES
+				</div>
+				<div class="section-content" >
+					<adt-list></adt-list>
+				</div>
+			</div>
+			<div class="section section-form" style="width:70%;" >
+				<div class="section-content no-padding" >
+
+					<div class="heading-1" >Input Parameters</div>
+                    <table style="width:100%" class="test" ng-form="inputForm" 
+                    	   ng-repeat="(index,parameter) in funct.getParameters()">
+                        <tr>
+                            <td>
+                            	{{parameter.name}}
+					            <br />
+					            <small>{{parameter.type}}</small>
+                            </td>
+                            <td>
+								<ace-edit-json 
+									tabindex="{{index*5+1}}" 
+									focus-if=" index == 0 " 
+									ng-model="testData.inputs[index]" 
+									min-lines="2"
+									>
+								</ace-edit-json>
+
+								<textarea type="text" 
+									ng-model="testData.inputs[index]"
+									name="{{parameter.name}}"
+									ng-show="false"
+									required
+									json-data-type="{{parameter.type}}" />
+
+								<div class="help-block pull-left" ng-show="inputForm.$dirty" ng-messages="inputForm[parameter.name].$error">
+								    <div ng-message="required">Please, fill this field</div>
+								    <div ng-message="jsonDataType">
+								    	<span ng-repeat="e in inputForm[parameter.name].$error.jsonErrors" ng-bind="e"></span>
+								    </div>
+							  	</div>
+                            </td>
+                        </tr>
+                        <tr>
+                        	<td colspan="2">
+                            	<a href="#" tabindex="{{index*5+2}}" examples-list param-type="parameter.type" key = "index" value="testData.inputs[index]">Paste Example</a>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="heading-1" >Return Value </div>
+                    <table style="width:100%" class="test" ng-form="outputForm"  >
+                        <tr>
+                            <td>
+                            	<small>{{funct.getReturnType()}}</small>
+                            </td>
+                            <td>
+								<ace-edit-json 
+									tabindex="96" 
+									ng-model="testData.output" 
+									min-lines="2"
+									>
+								</ace-edit-json>
+
+								<textarea type="text" 
+									ng-model="testData.output"
+									name="output"
+									ng-show="false"
+									required
+									json-data-type="{{funct.getReturnType()}}" />
+
+								<div class="help-block pull-left" ng-show="outputForm.$dirty" ng-messages="outputForm.output.$error">
+								    <div ng-message="required">Please, fill this field</div>
+								    <div ng-message="jsonDataType">
+								    	<span ng-repeat="e in outputForm.output.$error.jsonErrors" ng-bind="e"></span>
+								    </div>
+							  	</div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                        	<td colspan="2">
+                            	<a href="#" tabindex="97" examples-list param-type="funct.returnType" key = "'-1'" value='testData.output' >Paste Example</a>
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+				</div> <!-- ./ SECTION CONTENT -->
+			</div>
+		</div>
+	</div>
+
+	<div class="section section-form" ng-show="disputeFunction.active">
+		<div class="section-title" >
+			<div class="dot bg-color"></div>Report an issue in the function
+		</div>
+		<div class="section-content" >
+			<div id="disputeDiv" class="form-group">
+				<label for="disputeText">What's wrong with this function description? </label>
+				<textarea name="disputeText" class="form-control" style="resize:none" ng-model="disputeFunction.text" ng-required="disputeFunction.active"></textarea>
+				<span
+				class="help-block" ng-show="microtaskForm.disputeText.$dirty && microtaskForm.disputeText.$invalid && microtaskForm.disputeText.$error.required">This field is required!</span>
+				<br>
+				<button class="btn btn-sm pull-right" ng-click="disputeFunction.toggle()" >Nothing is wrong</button>
+			</div>
+		</div> 
+	</div> 
+
+	<div class="section section-form" ng-show="disputeTest.active">
+		<div class="section-title" >
+			<div class="dot bg-color"></div> Report an issue in THE TEST CASE
+		</div>
+		<div class="section-content" >
+			<div id="disputeDiv" class="form-group">
+				<label for="disputeTextInput">What’s wrong with this test case? </label>
+				<textarea name="disputeTextInput" class="form-control" class="resize:none" ng-model="disputeTest.text"  ng-required="disputeTest.active"></textarea>
+				<span
+				class="help-block" ng-show="microtaskForm.disputeTextInput.$dirty && microtaskForm.disputeTextInput.$invalid && microtaskForm.disputeTextInput.$error.required">This field is required!</span>
+				<br>
+				<button class="btn btn-sm pull-right " ng-click="disputeTest.toggle()" >Nothing is wrong</button>
+			</div>
+		</div> <!-- /. WRITE TEST DIV -->
+	</div> <!-- ./ SECTION CONTENT -->
+
+</div>
+

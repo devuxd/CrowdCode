@@ -1,0 +1,178 @@
+<div class="top padding">
+	<a href="#" class="pull-left" ng-click="updateView(); setUiView('list');">
+		<span class="glyphicon glyphicon-arrow-left"></span>
+		back
+	</a>
+
+	<a href="#" class="pull-right" ng-click="toggleClosed(sel)" ng-if="sel.answersCount != null && sel.answersCount > 0">
+		{{ sel.closed ? 'Reopen for discussion' : 'Mark as closed' }}
+	</a>
+
+	<span class="clearfix"></span>
+</div>
+
+<div class="middle padding">
+	<ul class="list-group">
+
+		<li class="list-group-item question-item  {{ sel.closed ? '' : 'open' }}">
+			<span class="btn btn-edit" ng-click="setUiView('form'); " ng-if="!sel.closed">edit</span>
+			<h3 class="panel-title"  >{{sel.title}}</h3>
+			<div>{{sel.text}}</div>
+			<div>
+				<span class="pull-right">
+					<span ng-repeat="tag in sel.tags" class="tag">{{tag}}</span>
+				</span> 
+				<span class="pull-left">
+					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{sel.createdAt | date : 'medium'}}"></time-ago>
+				</span> 
+				<span class="clearfix"></span>
+			</div>
+			<div>
+				<div style="font-size: 1.1em;" class="pull-left">
+					<span 
+						ng-click="toggleVoteUp(sel)" 
+						class="glyphicon glyphicon-thumbs-up unselected" 
+						ng-class="{'selected':sel.votersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
+					</span>
+					<span>{{sel.score}}</span>
+					<span 
+						ng-click="toggleVoteDown(sel)" 
+						class="glyphicon glyphicon-thumbs-down unselected" 
+						ng-class="{'selected':sel.reportersId.indexOf(workerId)>-1,'not-allowed':sel.ownerId == workerId}">
+					</span>
+				</div>
+				<span class="clearfix"></span>
+			</div>
+
+			<span class="clearfix"></span>
+
+
+		</li>
+	</ul>
+
+
+	<div ng-if="!sel.closed">
+		<a href="#" class="btn btn-xs btn-primary pull-right" ng-show="!form.answer.show " ng-click="form.answer.show=true">Answer this question</a>
+		<span class="clearfix"></span>
+		<form name="answerForm" novalidate  ng-show="form.answer.show" ng-submit="answerForm.$valid && postAnswer()">
+			<div class="form-group">
+				<textarea required name="text" class="form-control" ng-model="form.answer.text" placeholder="answer text"></textarea>
+			</div>
+			<span class="btn-group pull-right">
+				<button type="button" class="btn btn-xs btn-default" ng-click="form.answer.show = false; ">Cancel</button>
+				<button type="submit" class="btn btn-xs btn-primary">Answer</button>
+			</span>
+				
+			<div class="clearfix"></div>
+		</form>
+	</div>
+
+	<strong> {{ sel.answers | objectLength }} answers: </strong>
+
+	<ul class="list-group">
+
+		<li class="list-group-item answer-item" ng-repeat="a in sel.answers | orderObjectBy : 'createdAt' : false" ng-animate-children>
+			<div class="content-panel">
+				<div>
+					<span>{{a.text}}</span>
+					
+				</div>
+
+
+				<div>
+
+					<span class="pull-left">
+						<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{a.createdAt | date : 'medium'}}"></time-ago>
+						- 
+						<span>{{ a.ownerId == workerId ? 'you' : a.ownerHandle }}</span>
+					</span> 
+					<div class="pull-right">
+						<span
+							ng-click="toggleVoteUp(a)"
+							class="glyphicon glyphicon-thumbs-up unselected"
+							ng-class="{'selected':a.votersId.indexOf(workerId)>-1, 'not-allowed': a.ownerId == workerId}">
+						</span>
+						<span>{{a.score}}</span>
+						<span
+							ng-click="toggleVoteDown(a)"
+							class="glyphicon glyphicon-thumbs-down unselected"
+							ng-class="{'selected':a.reportersId.indexOf(workerId)>-1, 'not-allowed': a.ownerId == workerId}">
+						</span>
+					</div>
+					<span class="clearfix"></span>
+						
+				</div>
+
+			</div>
+				
+
+			<ul class="list-group">
+				<li class="list-group-item comment-item" ng-repeat="c in a.comments | orderObjectBy : 'createdAt' : false" >
+					
+					<div class="content-panel">
+						<div>
+							<span>{{c.text}}</span>
+						</div>
+
+
+						<div>
+
+							<span class="pull-left">
+								<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{c.createdAt | date : 'medium'}}"></time-ago>
+								-
+								<span>{{ c.ownerId == workerId ? 'you' : c.ownerHandle }}</span>
+							</span> 
+							<div class="pull-right">
+								<span
+									ng-click="toggleVoteUp(c)"
+									class="glyphicon glyphicon-thumbs-up unselected"
+									ng-class="{'selected':c.votersId.indexOf(workerId)>-1, 'not-allowed': c.ownerId == workerId}">
+								</span>
+								<span>{{c.score}}</span>
+								<span
+									ng-click="toggleVoteDown(c)"
+									class="glyphicon glyphicon-thumbs-down unselected"
+									ng-class="{'selected':c.reportersId.indexOf(workerId)>-1, 'not-allowed': c.ownerId == workerId}">
+								</span>
+							</div>
+							<span class="clearfix"></span>
+								
+						</div>
+
+					</div>
+						
+
+				</li>
+				<li class="list-group-item comment-item" ng-if="!sel.closed">
+					<a href="#" 
+						class="pull-right"
+						ng-show='!form.comment.show' 
+						ng-click="form.comment.show = true ; form.comment.answerId = a.id" >
+						write a comment
+					</a>
+					<span class="clearfix"></span>
+					<form name="commentForm" novalidate ng-show='form.comment.show && form.comment.answerId == a.id' ng-submit="commentForm.$valid && postComment(a.id)">
+						<div class="form-group">
+							<textarea name="text" 
+									  class="form-control" 
+									  ng-model="form.comment.text" 
+									  placeholder="comment text"
+									  required>
+							</textarea>
+						</div>
+						<span class="btn-group pull-right">
+							<button type="button" class="btn btn-xs btn-default" ng-click="form.comment.show = false; ">Cancel</button>
+							<button type="submit" class="btn btn-xs btn-primary">Comment</button>
+						</span>
+						<div class="clearfix"></div>
+					</form>
+				</li>
+			</ul>
+
+				
+			<span class="clearfix"></span>
+
+		</li>
+	</ul>
+	
+</div>

@@ -3,19 +3,24 @@ package com.crowdcoding.entities;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.crowdcoding.commands.FunctionCommand;
+import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.TestInFirebase;
+import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.WriteTest;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
+import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class Test extends Artifact
 {
 	// initial one line description give of the test. Null if hasDescription is false.
@@ -28,46 +33,20 @@ public class Test extends Artifact
 
 	private String code;
 	@Index private boolean hasSimpleTest;
-	// string that uniquely describes what the simple test tests. Null for tests that don't have a simple test.
-	@Index private int simpleTestKeyHash;  // a hash of the key
 
 	private List<String> simpleTestInputs = new ArrayList<String>();
 	private String simpleTestOutput;
 
-	// Attempts to find a simple test for the specified function and inputs.
-	// Returns the test, if such a test exists, or null otherwise.
-	public static Test findSimpleTestFor(String functionName, List<String> inputs, Project project)
-	{
-		List<Test> tests = ofy().load().type(Test.class).ancestor(project.getKey())
-				.filter("simpleTestKeyHash", generateSimpleTestKeyHash(functionName, inputs))
-				.filter("isDeleted", false).list();
-
-		String simpleTestKey = generateSimpleTestKey(functionName, inputs);
-
-		// iterate over the matches to find the exact one, in case the hash matches multiple test cases
-		for (Test test : tests)
-		{
-			// TODO: this will not work whenever the function changes name. We should prob use the
-			// function ID here instead.
-			if (simpleTestKey.equals(generateSimpleTestKey(test.functionName, test.simpleTestInputs)))
-			{
-				return test;
-			}
-		}
-
-		return null;
-	}
 
 	// Constructor for deserialization
 	protected Test()
 	{
 	}
 
-	public Test(String description, long functionID, String functionName, Project project, int functionVersion)
+	public Test(String description, long functionID, String functionName, String projectId, int functionVersion)
 	{
-		super(project);
+		super(projectId);
 
-		project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
 
 		this.isImplemented = false;
 		this.isDeleted = false;
@@ -79,37 +58,38 @@ public class Test extends Artifact
 		this.functionVersion= functionVersion;
 
 		ofy().save().entity(this).now();
-		FunctionCommand.addTest(functionID, this.id);
-		queueMicrotask(new WriteTest(this, project,functionVersion), project);
+		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
-		project.historyLog().endEvent();
+		FunctionCommand.addTest(functionID, this.id, this.description);
+		queueMicrotask(new WriteTest(this, projectId,functionVersion), projectId);
+
 	}
 
-	public Test(long functionID, String functionName, List<String> inputs, String output, String code, Project project, int functionVersion)
+	public Test(long functionID, String functionName, String description, List<String> inputs, String output, String code, String projectId, int functionVersion, boolean readOnly)
 	{
-		super(project);
+		super(projectId);
 
-		project.historyLog().beginEvent(new PropertyChange("implemented", "true", this));
 
 		this.isImplemented = true;
 		this.isDeleted = false;
 		this.functionID = functionID;
 		this.functionName = functionName;
-		this.description = "";
+		this.description = description;
 		this.hasSimpleTest = true;
 		this.code = code;
 		this.simpleTestInputs = inputs;
 		this.simpleTestOutput = output;
-		this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, inputs);
 		this.functionVersion = functionVersion;
+		this.isReadOnly=readOnly;
 
 		ofy().save().entity(this).now();
-		FunctionCommand.addTest(functionID, this.id);
+		FunctionCommand.addTest(functionID, this.id, this.description);
 
 		// The test is already fully implemented. It just needs to be run.
-		project.requestTestRun();
+		//project.requestTestRun();
+		FunctionCommand.testBecameImplemented(functionID, this.getID());
 
-		project.historyLog().endEvent();
+		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "true", this));
 	}
 
 	public String getTestCode()
@@ -134,6 +114,9 @@ public class Test extends Artifact
 	public void setDescription(String description)
 	{
 		this.description = description;
+
+		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
 	}
 
 	public String getName()
@@ -156,92 +139,112 @@ public class Test extends Artifact
 		return isImplemented;
 	}
 
-	// Gets a TestDTO (in String format) corresponding to the state of this test
-	public String getTestDTO()
-	{
-		TestDTO dto = new TestDTO(this.code, this.hasSimpleTest, this.simpleTestInputs, this.simpleTestOutput);
-		return dto.json();
-	}
 
 	public void setSimpleTestOutput(String simpleTestOutput, Project project)
 	{
 		this.simpleTestOutput = simpleTestOutput;
 		ofy().save().entity(this).now();
 
-		project.requestTestRun();
+		//project.requestTestRun();
 	}
 
 	// Checks the status of the test, marking it as implemented if appropriate
-	private void checkIfBecameImplemented(Project project)
+	private void checkIfBecameImplemented(String projectId)
 	{
-		if (!isImplemented && !workToBeDone())
+		if (!isImplemented && ! isDeleted && !workToBeDone())
 		{
 			// A test becomes implemented when it has no more work to do
-			project.historyLog().beginEvent(new PropertyChange("implemented", "true", this));
+			HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "true", this));
 			this.isImplemented = true;
 			ofy().save().entity(this).now();
-
-			System.out.println("Test became implemented for functionID="+functionID);
+//			storeToFirebase(projectId);
 			FunctionCommand.testBecameImplemented(functionID, this.id);
-
-			project.historyLog().endEvent();
 		}
 	}
 
-	public void writeTestCompleted(TestDTO dto, Project project)
+	private void setNotImplemented()
 	{
-		if (dto.inDispute)
-		{
-			project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
+		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
+		this.isImplemented = false;
+		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
+		FunctionCommand.testReturnUnimplemented(functionID, this.getID());
+	}
 
-			// Ignore any of the content for the test, if available. Set the test to unimplemented.
-			this.isImplemented = false;
-			ofy().save().entity(this).now();
-			microtaskOutCompleted();
+	public void writeTestCompleted(TestDTO dto, String projectId)
+	{
+		microtaskOutCompleted();
 
-			FunctionCommand.disputeTestCases(functionID, dto.disputeText, this.description);
+		if( !isDeleted ) {
+			if (dto.inDispute) {
+				if( dto.disputeFunctionText!="" ) {
+					FunctionCommand.disputeFunctionSignature(functionID, dto.disputeFunctionText, this.getID());
+				}
+				else if( dto.disputeTestText!="" ) {
+					FunctionCommand.disputeTestCases(functionID, dto.disputeTestText, this.description, this.getID());
+				}
+				setNotImplemented();
+			}
+			else {
 
-			project.historyLog().endEvent();
-			lookForWork(project);
-		}
-		else
-		{
-			this.code = dto.code;
-			this.hasSimpleTest = dto.hasSimpleTest;
-			this.simpleTestInputs = dto.simpleTestInputs;
-			this.simpleTestOutput = dto.simpleTestOutput;
-			if (dto.hasSimpleTest)
-				this.simpleTestKeyHash = generateSimpleTestKeyHash(functionName, dto.simpleTestInputs);
-
-			ofy().save().entity(this).now();
-
-			microtaskOutCompleted();
-			lookForWork(project);
-			checkIfBecameImplemented(project);
+				this.functionVersion = dto.functionVersion;
+				this.code = dto.code;
+				this.hasSimpleTest = dto.hasSimpleTest;
+				this.simpleTestInputs = dto.simpleTestInputs;
+				this.simpleTestOutput = dto.simpleTestOutput;
+				ofy().save().entity(this).now();
+				checkIfBecameImplemented(projectId);
+				storeToFirebase(projectId);
+			}
+			lookForWork();
 		}
 	}
 
-	public void storeToFirebase(Project project)
+	public void storeToFirebase(String projectId)
 	{
+		int firebaseVersion = version + 1;
+
+		FirebaseService.writeTest(new TestInFirebase(this.id, firebaseVersion , code, hasSimpleTest, simpleTestInputs,
+			simpleTestOutput, description, functionName, functionID, isImplemented, isReadOnly, isDeleted), this.id, firebaseVersion, projectId);
+
 		incrementVersion();
-		if (this.isDeleted)
-			FirebaseService.deleteTest(this.id, project);
-		else
-			FirebaseService.writeTest(new TestInFirebase(this.id, version, code, hasSimpleTest, simpleTestInputs,
-				simpleTestOutput, description, functionName, functionID, isImplemented), this.id, version, project);
+	}
+
+	// Queues the specified microtask and looks for work
+	public void queueMicrotask(Microtask microtask, String projectId)
+	{
+		super.queueMicrotask(microtask, projectId);
+
+		// merge the tasks in queue
+		if( microtask instanceof WriteTest ){
+			WriteTest newTask = (WriteTest) microtask;
+
+			// if in queue there is another WriteTest
+			// with the same prompt type,
+			// remove it from the queue
+			LinkedList<Ref<Microtask>> queueCopy = new LinkedList<Ref<Microtask>>(this.queuedMicrotasks);
+			for(Ref<Microtask> q:queueCopy){
+				WriteTest task = ((WriteTest) q.get());
+				if( task.getPromptType().equals(newTask.getPromptType()) ){
+					this.queuedMicrotasks.remove(q);
+					MicrotaskCommand.cancelMicrotask(task.getKey());
+				}
+			}
+
+
+		}
+
+
 	}
 
 	/******************************************************************************************
 	 * Commands
 	 *****************************************************************************************/
 
-	public void dispute(String issueDescription, Project project, int functionVersion)
+	public void dispute(String issueDescription, String projectId, int functionVersion)
 	{
-		project.historyLog().beginEvent(new PropertyChange("implemented", "false", this));
-		this.isImplemented = false;
-		ofy().save().entity(this).now();
-		queueMicrotask(new WriteTest(this, issueDescription, project, functionVersion), project);
-		project.historyLog().endEvent();
+		setNotImplemented();
+		queueMicrotask(new WriteTest(this, issueDescription, projectId, functionVersion), projectId);
 	}
 
 	// Marks this test as deleted, removing it from the list of tests on its owning function.
@@ -249,16 +252,29 @@ public class Test extends Artifact
 	{
 		this.isDeleted = true;
 		ofy().save().entity(this).now();
+		storeToFirebase(projectId);
+
 	}
 
 	// Notify this test that the function under test has changed its interface.
-	public void functionChangedInterface(String oldFullDescription, String newFullDescription, Project project, int functionVersion)
+	public void functionChangedInterface(String oldFullDescription, String newFullDescription, String projectId, int functionVersion)
 	{
-		// TODO: should we resave the function name here??
+		if(!this.isReadOnly){
+			setNotImplemented();
+			queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, projectId, functionVersion), projectId);
 
-		queueMicrotask(new WriteTest(this, oldFullDescription, newFullDescription, project, functionVersion), project);
+		}
 	}
 
+
+	public void functionChangedName(String name, String projectId,
+			int functionVersion) {
+		if(!this.isReadOnly){
+			this.functionName = name;
+			storeToFirebase(projectId);
+			ofy().save().entity(this).now();
+		}
+	}
 
 	/******************************************************************************************
 	 * Objectify Datastore methods
@@ -268,13 +284,13 @@ public class Test extends Artifact
 	// load it and get the object
 	public static Test load(Ref<Test> ref)
 	{
-		return ofy().load().ref(ref).get();
+		return ofy().load().ref(ref).now();
 	}
 
 	// Given an id for a test, finds the corresponding test. Returns null if no such test exists.
-	public static Ref<Test> find(long id, Project project)
+	public static Test find(long id)
 	{
-		return (Ref<Test>) ofy().load().key(Artifact.getKey(id, project));
+		return (Test) ofy().load().key(Artifact.getKey(id)).now();
 	}
 
 	// Generates a simple test key for the specified function and list of inputs
@@ -283,10 +299,6 @@ public class Test extends Artifact
 		return functionName + "**:" + inputs.toString();
 	}
 
-	private static int generateSimpleTestKeyHash(String functionName, List<String> inputs)
-	{
-		return generateSimpleTestKey(functionName, inputs).hashCode();
-	}
 
 	/******************************************************************************************
 	 * Logging methods
@@ -298,4 +310,5 @@ public class Test extends Artifact
 				(isImplemented? " implemented" : " not implemented")
 				+ (isDeleted? " DELETED " : "");
 	}
+
 }

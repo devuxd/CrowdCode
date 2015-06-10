@@ -4,25 +4,29 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.ReusedFunctionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
+import com.crowdcoding.dto.firebase.NewsItemInFirebase;
 import com.crowdcoding.dto.firebase.ReuseSearchInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class ReuseSearch extends Microtask
 {
 	@Parent @Load private Ref<Function> function;
-	private String callDescription;
+	private String pseudoFunctionDescription;
+	private String pseudoFunctionName;
 
 	// Default constructor for deserialization
 	private ReuseSearch()
@@ -30,43 +34,60 @@ public class ReuseSearch extends Microtask
 	}
 
 	// Constructor for initial construction
-	public ReuseSearch(Function function, String callDescription, Project project)
+	public ReuseSearch(Function function, String pseudoFunctionName, String pseudoFunctionDescription, String projectId)
 	{
-		super(project);
-		this.submitValue = 4;
+		super(projectId,function.getID());
+		this.submitValue = 5;
 		this.function = (Ref<Function>) Ref.create(function.getKey());
-		this.callDescription = callDescription;
+		this.pseudoFunctionDescription = pseudoFunctionDescription;
+		this.pseudoFunctionName = pseudoFunctionName;
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new ReuseSearchInFirebase(
-				id,this.microtaskTitle(), 
-				this.microtaskName(), 
+				id,this.microtaskTitle(),
+				this.microtaskName(),
 				function.getName(),
 				function.getID(),
-				false, 
-				submitValue, 
-				callDescription, 
-				function.getID()), 
-				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				false,
+				false,
+				submitValue,
+				pseudoFunctionName,
+				pseudoFunctionDescription,
+				function.getID()),
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
-		project.historyLog().endEvent();
+		HistoryLog.Init( projectId ).addEvent(new MicrotaskSpawned(this));
 	}
 
-    public Microtask copy(Project project)
+    public Microtask copy(String projectId)
     {
-    	return new ReuseSearch(this.function.getValue(), this.callDescription, project);
+    	return new ReuseSearch(  (Function) getOwningArtifact(), this.pseudoFunctionName, this.pseudoFunctionDescription, projectId);
     }
 
     public Key<Microtask> getKey()
 	{
 		return Key.create( function.getKey(), Microtask.class, this.id );
 	}
-    
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
-		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto, callDescription, project);
+		function.get().reuseSearchCompleted((ReusedFunctionDTO) dto,pseudoFunctionName, pseudoFunctionDescription, projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
+
+		//FirebaseService.setPoints(workerID, workerOfReviewedWork,  this.submitValue, project);
+    	FirebaseService.postToNewsfeed(workerID, (
+    		new NewsItemInFirebase(
+    			this.submitValue,
+    			this.submitValue,
+    			this.microtaskName(),
+    			"SubmittedReuseSearch",
+    			Microtask.keyToString(this.getKey()),
+    			-1 // differentiate the reviews from the 0 score tasks
+	    	).json()),
+			Microtask.keyToString(this.getKey()),
+			projectId
+		);
+
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "searches",1);
 	}
@@ -83,7 +104,7 @@ public class ReuseSearch extends Microtask
 
 	public String getCallDescription()
 	{
-		return callDescription;
+		return pseudoFunctionDescription;
 	}
 
 	public Function getCaller()
@@ -91,9 +112,16 @@ public class ReuseSearch extends Microtask
 		return function.get();
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return function.get();
+		Artifact owning;
+		try {
+			return function.safe();
+		} catch ( Exception e ){
+			ofy().load().ref(this.function);
+			return function.get();
+		}
 	}
 
 	public String microtaskTitle()

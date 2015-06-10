@@ -11,8 +11,13 @@ public class PropertyChange extends HistoryEvent
 	
 	public PropertyChange(String propertyName, String propertyValue, Artifact artifact)
 	{
-		super(artifact);
+		super();
+		this.setArtifact(artifact);
 		this.propertyName = propertyName;
 		this.propertyValue = propertyValue;		
+	}
+
+	public String getEventType(){
+		return eventType;
 	}
 }

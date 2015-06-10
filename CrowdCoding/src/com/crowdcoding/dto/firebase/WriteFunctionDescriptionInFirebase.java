@@ -1,8 +1,11 @@
 package com.crowdcoding.dto.firebase;
 
+import com.crowdcoding.dto.PseudoFunctionDTO;
+
 public class WriteFunctionDescriptionInFirebase extends MicrotaskInFirebase
 {
-	public String callDescription;
+	public String pseudoFunctionName;
+	public String pseudoFunctionDescription;
 	public long functionID;
 
 	public WriteFunctionDescriptionInFirebase()
@@ -10,12 +13,13 @@ public class WriteFunctionDescriptionInFirebase extends MicrotaskInFirebase
 	}
 
 	public WriteFunctionDescriptionInFirebase(long id,String title, String type,
-			String owningArtifact, Long owningArtifactId, boolean completed, int points,
-			String callDescription, long callerID)
+			String owningArtifact, Long owningArtifactId, boolean completed, boolean canceled, int points,
+			String pseudoFunctionName,String pseudoFunctionDescription, long callerID)
 	{
-		super(id,title, type, owningArtifact, owningArtifactId, completed, points);
+		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled, points);
 
-		this.callDescription = callDescription;
+		this.pseudoFunctionName=pseudoFunctionName;
+		this.pseudoFunctionDescription = pseudoFunctionDescription;
 		this.functionID=callerID;
 
 

@@ -1,0 +1,171 @@
+<step>
+	<div class="title">Debug a test failure</div>
+	<div class="text">
+		<img src="/img/tutorial/debugtestfailure/microtask.png" />
+		<p style="width:500px">
+			In Debug a Test Failure, your goal is to find and correct any bug(s) that caused a function to fail <strong>one</strong> of its unit tests.
+		</p>
+	</div>
+</step>
+<step>
+	<div class="text">	
+		<p style="width:500px">
+			CrowdCode provides a test runner listing the result of the test to debug ( failing test panel ) 
+		</p>
+
+		<img src="/img/tutorial/debugtestfailure/failing.png" />
+
+		<p style="width: 500px"> 
+			and the results of the previous passing function’s tests, if any ( other tests panel ). <br />
+			Failing tests are marked with <strong style="background-color:#F7B2B2">red</strong> and passing tests with <strong style="background-color:#CFF5BF;">green</strong>
+		</p>
+
+		<img src="/img/tutorial/debugtestfailure/others.png" />
+
+		<p style="width: 500px"> 
+			<strong>Your goal</strong> is to use the provided tools to make the <strong>failing test</strong> pass without letting the other tests fail!
+		</p>
+
+
+	</div>
+</step>
+<step>
+	<div class="text">
+
+		
+		<img src="/img/tutorial/debugtestfailure/detail.png" />
+	
+		<p style="width:500px">
+			Each test result lists the inputs and outputs for the test, as well as information about errors (if any). 
+		</p>
+
+
+	</div>
+</step>
+
+<step>
+	<div class="text">
+
+	
+		<p style="width:500px">
+			For failed tests, the default view shows you the <strong>diff</strong> between the expected and the actual return value. <br />
+		</p>
+
+		
+		<img src="/img/tutorial/debugtestfailure/diff_mode.png" />
+
+		<p style="width:500px">
+			Green background is the the expected field value and red background is the actual field value. 
+			The fields without a background color, have the same value.
+		</p>
+		
+	</div>
+</step>
+<step>
+	<div class="text">
+		<p style="width:500px">
+			You can always switch to the <strong>normal</strong> mode. 
+		</p>
+
+		
+		<img src="/img/tutorial/debugtestfailure/normal_mode.png" />
+	</div>
+</step>
+<step>
+	<div class="text">
+		<img src="/img/tutorial/debugtestfailure/code.png" />
+	
+		<p style="width:500px">
+			The function code editor is the main tool of the CrowdCode debugger. 
+		</p>
+	</div>
+</step>
+
+<step>
+	<div class="text">
+		<p style="width:500px">
+			If during the execution of the current test, one exception is raised, 
+			you can see the details hovering the mouse on the <strong>x</strong> icon.
+		</p>
+		<img src="/img/tutorial/debugtestfailure/error.png" />
+
+	</div>
+</step>
+
+<step>
+	<div class="text">
+		<img src="/img/tutorial/debugtestfailure/console.png" />
+
+		<p style="width:500px">
+			You can monitor a value during the text execution using 
+			the <strong>console.log(...)</strong> function. 
+			When you use console.log(...) and re-run the tests, values are shown passing with the mouse by the <b>i</b> icon.
+		</p>
+	</div>
+</step>
+
+<step>
+	<div class="text">
+
+		<p style="width:500px">
+			What happens if the bug is not in the function itself but is in a function that it calls? 
+			All the functions called during the current test execution, are highlighted in the code editor window.
+		</p>
+		
+		<img src="/img/tutorial/debugtestfailure/highlight.png" />
+	
+		<p style="width:500px">By clicking on the highlighted functions, you can see the <strong>stubs</strong> popup for that callee. It shows you all the sets of input with whom the function has been called and, for each set of input, you are allowed to edit the return value. </p>
+	</div>
+</step>
+<step>
+	<div class="text">
+
+		<img src="/img/tutorial/debugtestfailure/stubs.png" />
+	
+		<p style="width:500px">
+		For example, here a function sum is being called with the parameters 100 and 40 and is returning the output of 142. This does not seem to match its specified behavior. To solve this problem, you can edit the return value, replacing 142 with 140. This creates a stub. <br /> When you re-run the tests, CrowdCode will use the return value specified by the stub rather than the actual return value, executing the function call as if it had returned 140. After submitting the Debug microtask, each stub will be translated into a test for the called function, expressing the desired behavior.</p>
+
+	</div>
+</step>
+
+<step>
+	<div class="text">
+
+		<p style="width:400px">
+			After doing changes to the function code or to the stubs, re-run the tests to see the changes
+		</p>
+		
+		<img src="/img/tutorial/debugtestfailure/run.png" />
+	
+	</div>
+</step>
+<step>
+	<div class="text">
+
+		<p style="width:500px">
+			It might also be that the function itself is correct and the test data is wrong. 
+			In this case, you should report an issue with the test.
+		</p>
+		
+		<img src="/img/tutorial/debugtestfailure/reported.png" />
+	
+		<p style="width:300px">
+			Reported tests are marked with <strong style="background-color:#FFB280">orange</strong>.
+		</p>
+	</div>
+</step>
+
+<step>
+	<div class="text">
+
+		<p style="width:300px">
+			<strong>Remember:</strong> you can submit the microtask only if all the tests are passing (or you disputed the failing tests).
+		</p>
+		
+		<p style="width:300px">
+			If you think that the function is far to be complete, sketch some behavior with <strong>pseudocode</strong> or 
+			<strong>function stubs</strong> and submit it ( In case of pseudocode or function stubs present in the function code, you can submit with failing tests too).
+		</p>
+	
+	</div>
+</step>

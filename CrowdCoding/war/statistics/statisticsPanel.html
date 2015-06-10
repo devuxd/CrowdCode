@@ -1,0 +1,22 @@
+<pre data-ng-bind-html="test"></pre>
+<div ng-repeat="(key, function) in code track by $index">
+<h2>{{function.name}}</h2>
+
+<ul class="list-group">
+	
+	<li class="list-group-item" ng-repeat="(key, value) in function track by $index"><h4> {{value.microtaskType}}</h4>{{value.time}},  Worker: {{value.worker}}, Score: {{value.qualityScore}}, Motivation : {{value.reviewText}}
+		<div ng-if="! function[$index-1].code" ng-init="diff = doDiff('', value.code)">
+			<!-- <pre > {{code}}</pre>	 -->
+			LINE ADDED: {{diff.lineAdded.length}} <br> LINE Removed: <div ng-if="diff.lineRemoved!=null">{{diff.lineRemoved.length}}</div>
+			<div ng-if="diff.lineRemoved==null">0</div>
+		<ace-read-js code="diff.code" mode="diff"></ace-read-js>
+	</div>
+	<div ng-if="function[$index-1].code" ng-init="diff = doDiff(function[$index-1].code, value.code)">
+		<!-- <pre > {{code}}</pre>	 -->
+		LINE ADDED: {{diff.lineAdded.length}} <br> LINE Removed: <div ng-if="diff.lineRemoved!=null">{{diff.lineRemoved.length}}</div>
+		<div ng-if="diff.lineRemoved==null">0</div>
+	<ace-read-js code="diff.code" mode="diff"></ace-read-js>
+</div>
+</li>
+</ul>
+</div>

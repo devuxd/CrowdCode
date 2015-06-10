@@ -4,7 +4,7 @@ angular.module('mgcrea.ngPlunkr', ['mgcrea.ngStrap.helpers.debounce'])
 
 .run(function($templateCache, version) {
 
-  var ngVersion = '1.3.1';
+  var ngVersion = '1.3.8';
 
   var templateHtml = '' +
     '<!DOCTYPE html>\n' +
@@ -18,8 +18,8 @@ angular.module('mgcrea.ngPlunkr', ['mgcrea.ngStrap.helpers.debounce'])
 
     '    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">\n' +
     '    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">\n' +
-    '    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/angular-motion.min.css">\n' +
-    '    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/bootstrap-additions.min.css">\n' +
+    '    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/static/styles/angular-motion.min.css">\n' +
+    '    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/static/styles/bootstrap-additions.min.css">\n' +
     '    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/libraries.min.css">\n' +
     '    <link rel="stylesheet" href="//mgcrea.github.io/angular-strap/styles/main.min.css">\n' +
 

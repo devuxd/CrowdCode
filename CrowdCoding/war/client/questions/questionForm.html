@@ -1,0 +1,43 @@
+<div class="top padding">
+	<a href="#" class="pull-left" ng-click="setUiView( sel == null ? 'list' : 'detail' );">
+		<span class="glyphicon glyphicon-arrow-left"></span>
+		back
+	</a>
+</div>
+<div class="middle padding">
+	<h4 class="padding"> {{ sel == null ? 'New' : 'Edit'}} question: </h4>
+	<div class="list-group">
+		<div class="list-group-item">
+			<form name="questionForm" novalidate ng-submit="questionForm.$valid && postQuestion()">
+				<div class="form-group">
+					<input type="text" 
+							class="form-control" 
+							name="title" 
+							placeholder="title" 
+							ng-model="question.title"
+							required>
+					<div ng-if="questionForm.$submitted && questionForm.title.$error" ng-messages="questionForm.title.$error" style="color:maroon" role="alert">
+						<div ng-message="required">the 'title' field is required!</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<textarea name="text" class="form-control" style="resize:none;height:300px" ng-model="question.text" placeholder="text"></textarea>
+				</div>
+				<div class="form-group">
+					<tags-input ng-model="tags"></tags-input>
+				</div>
+				<div class="checkbox" ng-if="sel == null && loadedArtifact != null">
+					<label>
+						<input type="checkbox" 
+							ng-model="question.artifactId"> 
+           					linked to the function <strong>{{ loadedArtifact.name }}</strong>
+					</label>
+				</div>
+				<div class="btn-group pull-right padding" role="group">	
+					<button class="btn btn-sm btn-default" type="button" ng-click="setUiView( sel == null ? 'list' : 'detail' ); questionForm.$setPristine();" >cancel</a>
+					<button class="btn btn-sm btn-primary" type="submit" >Submit</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

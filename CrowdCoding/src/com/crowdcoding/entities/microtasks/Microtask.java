@@ -2,20 +2,31 @@ package com.crowdcoding.entities.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import com.crowdcoding.commands.MicrotaskCommand;
+import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.firebase.ReissueInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSkipped;
 import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.util.FirebaseService;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.annotation.Parent;
 
 /*
@@ -25,14 +36,48 @@ import com.googlecode.objectify.annotation.Parent;
 @Entity
 public /*abstract*/ class Microtask
 {
+	static public String keyToString(Key<Microtask> key){
+		String keyString = null;
+		if( key != null )
+			keyString = key.getParent().getId()+"-"+key.getId();
+		return keyString;
+	}
+
+	static public Key<Microtask> stringToKey(String key){
+		Key<Microtask> keyObj = null;
+		if( !( key == null || key.length() == 0) ){
+			String[] ids = key.split("-");
+			Key<Artifact> parentKey = Key.create(Artifact.class, Long.parseLong(ids[0]) );
+			keyObj = Key.create(parentKey,Microtask.class, Long.parseLong(ids[1]));
+		}
+		return keyObj;
+	}
+
 	static protected int DEFAULT_SUBMIT_VALUE = 10;
 
-	private Key<Project> project;
-	@Id protected long id;
+	@Id protected Long id;
+	@Index String projectId;
+
+	protected boolean canceled = false;
 	protected boolean completed = false;
 	protected String reissuedFrom = "";
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
 	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
+	protected String workerId;
+	protected Long functionId;
+
+	public String getWorkerId() {
+		return workerId;
+	}
+
+	public Long getFunctionId() {
+		return functionId;
+	}
+
+	public void setWorkerId(String workerId) {
+		this.workerId = workerId;
+		ofy().save().entity(this).now();
+	}
 
 	// Default constructor for deserialization
 	protected Microtask()
@@ -40,16 +85,19 @@ public /*abstract*/ class Microtask
 	}
 
 	// Constructor for initialization. Microtask is set as ready.
-	protected Microtask(Project project)
+	protected Microtask(String projectId, Long functionId)
 	{
-		this.project = project.getKey();
-		id = project.generateID("Microtask");
+		this.workerId=null;
+		this.projectId = projectId;
+		this.projectId  = projectId;
+		this.functionId = functionId;
+
 	}
 
 	// Creates a copy of this microtask, identical in all respects except with a new microtaskID
 	// and with a reset completed and assignmentTime. The microtask is NOT queued onto the project work queue.
 	// This method MUST be overridden in the subclass
-	public Microtask copy(Project project)
+	public Microtask copy(String projectId)
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
@@ -58,49 +106,80 @@ public /*abstract*/ class Microtask
 	// if it is still needed
 	protected boolean isStillNeeded(Project project) { return true; }
 
-	public void submit(String jsonDTOData, String workerID, Project project)
+	public void submit(String jsonDTOData, String workerID,int awardedPoint, String projectId)
 	{
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
-		if (this.completed)
-		{
-			System.out.println("For microtask " + this.toString() + " JSON submitted for already completed work: "
-					+ jsonDTOData);
+		if (this.completed){
 			return;
 		}
-		System.out.println("PRINTING JSON DTO DATA");
-		System.out.println(jsonDTOData);
-		DTO dto = DTO.read(jsonDTOData, getDTOClass());
 
-		project.historyLog().beginEvent(new MicrotaskSubmitted(this, workerID));
+		try {
+			DTO dto = DTO.read(jsonDTOData, getDTOClass());
+			doSubmitWork(dto, workerID, projectId);
 
-		doSubmitWork(dto, workerID, project);
-		this.completed = true;
+			this.completed = true;
+			ofy().save().entity(this).now();
 
-		ofy().save().entity(this).now();
+			// increase the stats counter
+			WorkerCommand.increaseStat(workerID, "microtasks",1);
+			WorkerCommand.awardPoints(workerID, awardedPoint);
 
-		// Save the associated artifact to Firebase if there is one
-		Artifact owningArtifact = this.getOwningArtifact();
-		if (owningArtifact != null)
-			owningArtifact.storeToFirebase(project);
+			// write completed on firebase
+			FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), workerID, projectId, this.completed);
 
-		// write completed on firebase
-		FirebaseService.writeMicrotaskCompleted(Project.MicrotaskKeyToString(this.getKey()), workerID, project, this.completed);
-		// increase the stats counter
-		WorkerCommand.increaseStat(workerID, "microtasks",1);
+		} catch( JsonParseException e) {
+			e.printStackTrace();
+		} catch( JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		project.historyLog().endEvent();
+
 	}
 
-	public void skip(String workerID, Project project)
+	public void revise (String jsonDTOData, String excludedWorkerID,int awardedPoint, String reissueMotivation, String projectId)
 	{
-		project.historyLog().beginEvent(new MicrotaskSkipped(this, workerID));
-		// Increment the point value by 10
-		this.submitValue += 10;
+		// If this microtask has already been completed, drop it, and clear the worker from the microtask
+		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
+		if (this.completed){
+			Logger.getLogger("LOGGER").severe("MIRCORTASK ALREADY COMPLETED: "+this.toString());
+			return;
+		}
+		this.completed = true;
 		ofy().save().entity(this).now();
-		project.historyLog().endEvent();
+
+		//copy the microtask
+		Microtask newMicrotask = this.copy(projectId);
+		Key<Microtask> a = ofy().save().entity(newMicrotask).now();
+		String microtaskKey = Microtask.keyToString(newMicrotask.getKey());
+
+		String reissuedFromMicrotaskKey = Microtask.keyToString(this.getKey());
+		//enqueu the microtask
+		ProjectCommand.queueMicrotask(newMicrotask.getKey(), excludedWorkerID);
+		WorkerCommand.awardPoints( excludedWorkerID ,awardedPoint );
+
+		//write the reissue field on the new microtask
+		FirebaseService.writeMicrotaskReissuedFrom(microtaskKey, new ReissueInFirebase(reissuedFromMicrotaskKey, reissueMotivation), jsonDTOData,  projectId );
+		// write completed on firebase
+		FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), excludedWorkerID, projectId, this.completed);
+
+
 	}
-	
+
+	public void skip(String workerID, boolean disablePoint, String projectId)
+	{
+		if(! disablePoint){
+		// Increment the point value by 10
+			this.submitValue *= 1.2;
+		}
+		this.workerId = "";
+		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskPoints(Microtask.keyToString(this.getKey()), this.submitValue, projectId);
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSkipped(this, workerID));
+	}
+
 
 	public Key<Microtask> getKey()
 	{
@@ -116,7 +195,7 @@ public /*abstract*/ class Microtask
 	public String getUIURL() { return ""; }
 
 	// This method MUST be overridden in the subclass to do submit work.
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
@@ -167,9 +246,9 @@ public /*abstract*/ class Microtask
 	}
 
 	// Should only be called from within the entity group of the owning artifact
-	public static Ref<Microtask> find(Key<Microtask> microtaskKey, Project project)
+	public static LoadResult<Microtask> find(Key<Microtask> microtaskKey)
 	{
-		return (Ref<Microtask>) ofy().load().key(microtaskKey);
+		return (LoadResult<Microtask>) ofy().load().key(microtaskKey);
 	}
 
 	public String toString()
@@ -184,7 +263,7 @@ public /*abstract*/ class Microtask
 
 	public String toJSON(JSONObject json){
 		try {
-			json.put("key", Project.MicrotaskKeyToString(this.getKey()));
+			json.put("key", Microtask.keyToString(this.getKey()));
 			json.put("id", this.id);
 			json.put("type", this.microtaskName());
 			json.put("description", this.microtaskDescription());
@@ -195,5 +274,22 @@ public /*abstract*/ class Microtask
 			e.printStackTrace();
 		}
 		return json.toString();
+	}
+
+	public boolean isAssignedTo(String workerId){
+		if(this.getWorkerId()!=null && this.getWorkerId().isEmpty())
+			return true;
+
+		boolean isAssigned= this.getWorkerId() != null && this.getWorkerId().equals( workerId );
+
+		return isAssigned;
+	}
+
+	public void setCanceled(Boolean value){
+		canceled = value;
+	}
+
+	public Boolean isCanceled(){
+		return canceled;
 	}
 }

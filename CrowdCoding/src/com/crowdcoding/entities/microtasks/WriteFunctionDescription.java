@@ -5,27 +5,30 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDescriptionDTO;
+import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.WriteFunctionDescriptionInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class WriteFunctionDescription extends Microtask
 {
 	@Parent @Load private Ref<Function> function;
-	@Load private Ref<Function> caller;
-	private String callDescription;
+	private long callerId;
+	private String pseudoFunctionName;
+	private String pseudoFunctionDescription;
 
 	// Default constructor for deserialization
 	private WriteFunctionDescription()
@@ -33,28 +36,30 @@ public class WriteFunctionDescription extends Microtask
 	}
 
 	// Constructor for initial construction
-	public WriteFunctionDescription(Function function, String callDescription, Function caller, Project project)
+	public WriteFunctionDescription(Function function, String pseudoFunctionName, String pseudoFunctionDescription, long callerId, String projectId)
 	{
-		super(project);
+		super(projectId,function.getID());
 		this.submitValue = 8;
-		this.callDescription = callDescription;
+		this.pseudoFunctionName = pseudoFunctionName;
+		this.pseudoFunctionDescription = pseudoFunctionDescription;
+
 		this.function = (Ref<Function>) Ref.create(function.getKey());
-		this.caller = (Ref<Function>) Ref.create(caller.getKey());
+		this.callerId = callerId;
 		ofy().save().entity(this).now();
-		FirebaseService.writeMicrotaskCreated(new WriteFunctionDescriptionInFirebase(id,this.microtaskTitle(), this.microtaskName(), 
+
+		FirebaseService.writeMicrotaskCreated(new WriteFunctionDescriptionInFirebase(id,this.microtaskTitle(), this.microtaskName(),
 				function.getName(),
 				function.getID(),
-				false, submitValue,callDescription, caller.getID()), 
-				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				false, false, submitValue,pseudoFunctionName, pseudoFunctionDescription, callerId),
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
-		project.historyLog().endEvent();
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	public Microtask copy(Project project)
+	public Microtask copy(String projectId)
 	{
-		return new WriteFunctionDescription(this.function.getValue(),this.callDescription,this.caller.getValue(), project);
+		return new WriteFunctionDescription( (Function) getOwningArtifact(),this.pseudoFunctionName, this.pseudoFunctionDescription, this.callerId, projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -62,7 +67,7 @@ public class WriteFunctionDescription extends Microtask
 		return Key.create( function.getKey(), Microtask.class, this.id );
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
 		FunctionDescriptionDTO functionDTO = (FunctionDescriptionDTO) dto;
 
@@ -70,10 +75,9 @@ public class WriteFunctionDescription extends Microtask
 		// the worker to only remove it when the function is done. This keeps regenerating
 		// new sketch tasks until the worker has marked it as done by removing the pseudocode
 		// line.
-		String code = "{\n\t//#Mark this function as implemented by removing this line.\n}";
-
-		function.get().writeDescriptionCompleted(functionDTO.name, functionDTO.returnType, functionDTO.paramNames,
-				functionDTO.paramTypes, functionDTO.paramDescriptions, functionDTO.header, functionDTO.description, code, project);
+		functionDTO.code = "{\n\t//#Mark this function as implemented by removing this line.\n}";
+		functionDTO.callerId=this.callerId;
+		function.get().writeDescriptionCompleted(functionDTO, projectId);
 
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
@@ -88,7 +92,7 @@ public class WriteFunctionDescription extends Microtask
 
 	public String getCallDescription()
 	{
-		return callDescription;
+		return pseudoFunctionName;
 	}
 
 	public String getUIURL()
@@ -96,14 +100,21 @@ public class WriteFunctionDescription extends Microtask
 		return "/html/microtasks/writeFunctionDescription.jsp";
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return function.get();
+		Artifact owning;
+		try {
+			return function.safe();
+		} catch ( Exception e ){
+			ofy().load().ref(this.function);
+			return function.get();
+		}
 	}
 
-	public Function getCaller()
+	public long getCaller()
 	{
-		return caller.get();
+		return callerId;
 	}
 
 	public String microtaskTitle()

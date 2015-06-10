@@ -18,24 +18,24 @@ public abstract class HistoryEvent extends DTO
 	public String timestamp;		// timestamp of the event to the nearest second
 	public String timeInMillis;		// more accurate timestamp, formatted as milliseconds since Jan 1, 1970
 	
-	public HistoryEvent(Artifact artifact)
-	{
+	public HistoryEvent()
+	{	
+		this.artifactID   = "";
+		this.artifactType = "";
+		this.artifactName = "";
+		
+		Date currentTime = new Date();		
+		this.timestamp    = currentTime.toString();
+		this.timeInMillis = Long.toString(System.currentTimeMillis());		
+	}
+	
+	protected void setArtifact(Artifact artifact){
 		if (artifact != null)
 		{
-			this.artifactID = Long.toString(artifact.getID());
+			this.artifactID   = Long.toString(artifact.getID());
 			this.artifactType = artifact.getArtifactType();
 			this.artifactName = artifact.getName();
 		}
-		else
-		{
-			this.artifactID = "";
-			this.artifactType = "";
-			this.artifactName = "";
-		}
-		
-		Date currentTime = new Date();		
-		this.timestamp = currentTime.toString();
-		this.timeInMillis = Long.toString(System.currentTimeMillis());		
 	}
 	
 	// Generates the unique ID for this history event.
@@ -44,6 +44,10 @@ public abstract class HistoryEvent extends DTO
 		// Concatenate timeInMillis with the artifact type and ID. The goal is to have an id
 		// that is highly likely to be globally unique across the entire project. As long as there are not
 		// multiple changes to the same artifact within a single millisecond, this is true.
-		return timeInMillis + "-" + artifactType + artifactID;		
+		return timeInMillis + "-" + artifactType + "-"+ artifactID;		
+	}
+	
+	public String getEventType(){
+		return "";
 	}
 }

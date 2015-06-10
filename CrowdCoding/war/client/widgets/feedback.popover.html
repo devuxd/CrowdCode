@@ -1,0 +1,26 @@
+<div class="popover">
+  <div class="arrow"></div>
+  <h3 class="popover-title" >Send Us Feedback!</h3>
+  <div class="popover-content">
+    <div class="form-group">
+        <div class="input-group">
+            <textarea type="text"
+                class="col-md-8 form-control input-sm" 
+                style="  width: 240;height: 150px;resize: none; "
+                draggable="false" 
+                name="feedbackText"
+                placeholder="Give us feedback on CrowdCode! What do you like? What don't you like?" 
+                ng-model="feedbackText" required>
+            </textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
+        <button type="button" class="btn btn-primary" 
+            ng-click="$emit('sendFeedback',[feedbackText]) ; $hide()" 
+            ng-disabled="feedbackForm.$invalid">Send</button>
+      </div>
+    </div>
+
+  </div>
+</div>

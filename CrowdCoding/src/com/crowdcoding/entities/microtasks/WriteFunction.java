@@ -11,26 +11,31 @@ import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.WriteTestCases.PromptType;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class WriteFunction extends Microtask
 {
-	public enum PromptType { SKETCH, DESCRIPTION_CHANGE, RE_EDIT };
+	public enum PromptType { SKETCH, DESCRIPTION_CHANGE, RE_EDIT, REMOVE_CALLEE };
 	@Parent @Load private Ref<Function> function;
 	private PromptType promptType;
 
 	private String oldFullDescription;		// Only defined for DESCRIPTION_CHANGE
 	private String newFullDescription;		// Only defined for DESCRIPTION_CHANGE
 
+	private String disputeText;				// Only defined for RE_EDIT and REMOVE_CALLEE
+	private long calleeId;					// Only defined for REMOVE_CALLEE, id of the callee to remove
+
+	private long   disputeId = 0;			//id of the artifact that disputed this function
 
 	// Default constructor for deserialization
 	private WriteFunction()
@@ -38,46 +43,62 @@ public class WriteFunction extends Microtask
 	}
 
 	// Initialization constructor for a SKETCH write function. Microtask is not ready.
-	public WriteFunction(Function function, Project project)
+	public WriteFunction(Function function, String projectId)
 	{
-		super(project);
+		super(projectId,function.getID());
+
 		this.promptType = PromptType.SKETCH;
-		WriteFunction(function, project);
+		WriteFunction(function, projectId);
 	}
 
 	// Initialization constructor for a DESCRIPTION_CHANGE write function. Microtask is not ready.
 	public WriteFunction(Function function, String oldFullDescription,
-			String newFullDescription, Project project)
+			String newFullDescription, String projectId)
 	{
-		super(project);
+		super(projectId,function.getID());
 		this.promptType = PromptType.DESCRIPTION_CHANGE;
 
 		// First replace \n with BR to format for display. Then, escape chars as necessary.
 		this.oldFullDescription = oldFullDescription;
 		this.newFullDescription = newFullDescription;
 
-		WriteFunction(function, project);
+		WriteFunction(function, projectId);
 	}
 
 	// Initialization constructor for a RE_EDIT write function. Microtask is not ready.
-//	public WriteFunction(Function function, String oldFullDescription,
-//			String newFullDescription Project project)
-//	{
-//		this.promptType = PromptType.RE_EDIT;
-//
-//		// First replace \n with BR to format for display. Then, escape chars as necessary.
-//		this.oldFullDescription = oldFullDescription;
-//		this.newFullDescription = newFullDescription;
-//
-//		WriteFunction(function, project);
-//	}
+	public WriteFunction(Function function, String disputeText, long disputeId, String projectId)
+	{
+		super(projectId,function.getID());
+		this.promptType = PromptType.RE_EDIT;
 
-	public Microtask copy(Project project)
+		// First replace \n with BR to format for display. Then, escape chars as necessary.
+
+		this.disputeText = disputeText;
+		this.disputeId = disputeId;
+		WriteFunction(function, projectId);
+	}
+	public WriteFunction(Function function, long calleeId, String disputeText, String projectId)
+	{
+		super(projectId,function.getID());
+		this.promptType = PromptType.REMOVE_CALLEE;
+
+		this.disputeText = disputeText;
+		this.calleeId = calleeId;
+
+		WriteFunction(function, projectId);
+	}
+
+
+	public Microtask copy(String projectId)
 	{
 		if(this.promptType==PromptType.SKETCH)
-			return new WriteFunction(this.function.getValue(),project);
+			return new WriteFunction( (Function) getOwningArtifact() ,projectId);
+		else if(this.promptType==PromptType.DESCRIPTION_CHANGE)
+			return new WriteFunction( (Function) getOwningArtifact() , this.oldFullDescription, this.newFullDescription, projectId);
+		else if (this.promptType==PromptType.RE_EDIT)
+			return new WriteFunction( (Function) getOwningArtifact() , this.disputeText, disputeId, projectId);
 		else
-			return new WriteFunction(this.function.getValue(), this.oldFullDescription, this.newFullDescription, project);
+			return new WriteFunction((Function) getOwningArtifact() , this.calleeId, this.disputeText, projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -86,9 +107,10 @@ public class WriteFunction extends Microtask
 	}
 
 
-	private void WriteFunction(Function function, Project project)
+	private void WriteFunction(Function function, String projectId)
 	{
 		this.function = (Ref<Function>) Ref.create(function.getKey());
+		ofy().load().ref(this.function);
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteFunctionInFirebase(
 				id,
@@ -97,22 +119,24 @@ public class WriteFunction extends Microtask
 				function.getName(),
 				function.getID(),
 				false,
+				false,
 				submitValue,
 				function.getID(),
 				this.promptType.name(),
 				this.oldFullDescription,
-				this.newFullDescription),
-				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				this.newFullDescription,
+				this.disputeText,
+				this.calleeId),
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, function));
-		project.historyLog().endEvent();
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
-		function.get().sketchCompleted((FunctionDTO) dto, project);
+		function.get().sketchCompleted((FunctionDTO) dto, disputeId , projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "functions",1);
@@ -149,9 +173,16 @@ public class WriteFunction extends Microtask
 		return function.getValue();
 	}
 
+
 	public Artifact getOwningArtifact()
 	{
-		return getFunction();
+		Artifact owning;
+		try {
+			return function.safe();
+		} catch ( Exception e ){
+			ofy().load().ref(this.function);
+			return function.get();
+		}
 	}
 
 	public String microtaskTitle()

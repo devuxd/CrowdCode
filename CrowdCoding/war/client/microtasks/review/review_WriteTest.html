@@ -1,0 +1,112 @@
+<div class="section section-description " >
+
+	<div ng-include="'/client/microtasks/microtask_title.html'"></div>
+
+	<div class="section-content job-description" >
+
+		<div ng-if="! review.microtask.submission.inDispute">
+			<div ng-if="review.microtask.promptType=='WRITE'">
+				A worker was asked to implement the following test case for
+				the function <strong>{{funct.name}}</strong>.
+			</div>
+
+			<div ng-if="review.microtask.promptType=='CORRECT'">
+				A worker was asked to revise the following test for the function 
+				<strong>{{funct.name}}</strong>  to address the following issue.
+			</div>
+
+			<div ng-if="review.microtask.promptType=='TESTCASE_CHANGED'">
+				A worker was asked to revise the following test for the function 
+				<strong>{{funct.name}}</strong> (if necessary) based on a change to the description of the test case.
+			</div>
+
+			<div ng-if="review.microtask.promptType=='FUNCTION_CHANGED'">
+				A worker was asked to revise the following test for the function 
+				<strong>{{funct.name}}</strong> 
+				(if necessary) to work correctly with the new function signature specified below.
+			</div>
+			<span>Can you review this work?</span>
+		</div>
+
+		<div ng-if="review.microtask.submission.inDispute">
+			<div ng-if="review.microtask.submission.disputeFunctionText!=''" >
+				A worker reported the following issue with the function
+				<strong>{{funct.name}}</strong>.
+			</div>
+
+			<div ng-if="review.microtask.submission.disputeTestText!=''" >
+				A worker reported the following issue with the following test case for the function
+				<strong>{{funct.name}}</strong>.
+			</div>
+			<span>Can you review this issue?</span>
+			<span>
+				<strong>TIP:</strong>When you review an issue, rate high means agree on the issue.
+			</span>
+		</div>
+	</div>
+</div>
+
+
+<div class="section section-description">
+	<div class="section-title">
+		<div class="dot bg-color"></div>
+		<span ng-if="reviewed.submission.disputeFunctionText!=''">
+			REPORTED FUNCTION DESCRIPTION
+		</span>
+		<span ng-if="reviewed.submission.disputeFunctionText==''">
+			FUNCTION DESCRIPTION
+		</span>
+	</div>
+	<div class="section-content no-padding" >
+		<ace-read-js code="funct.getSignature()"></ace-read-js>
+	</div>
+</div>
+
+
+<div class="section section-description" ng-if="reviewed.submission.disputeFunctionText==''">
+	<div class="section-title" ><div class="dot bg-color"></div>Test case</div>
+
+
+	<div class="section-content" >
+		<span ng-if="review.microtask.promptType!='TESTCASE_CHANGED' || reviewed.submission.inDispute">
+			{{reviewed.owningArtifact}}
+		</span>
+
+		<span ng-if="review.microtask.promptType=='TESTCASE_CHANGED' && ! reviewed.submission.inDispute">
+			<strong>Old description: </strong><span ng-bind="review.microtask.oldTestCase"></span><br />
+			<strong>New description: </strong><span ng-bind="review.microtask.owningArtifact"></span>
+		</span>
+	</div>
+</div>
+
+
+<div ng-if="review.microtask.submission.inDispute" class="section section-review">
+	<div class="section-title" ><div class="dot bg-color"></div>Reported Issue</div>
+	<div class="section-content" >
+		{{reviewed.submission.disputeTestText}}
+		{{reviewed.submission.disputeFunctionText}}
+	</div>
+</div>
+
+<div ng-if="! reviewed.submission.inDispute" >
+	<div class="section section-review">
+		<div  class="section-title" ><div class="dot bg-color"></div>submitted TEST</div>
+		<div class="section-content" >
+			<table style="width:100%" class="test">
+				<tr ng-repeat="(inputKey,input) in review.microtask.submission.simpleTestInputs track by $index">
+					<td>{{funct.getParamNameAt($index)}}</td>
+					<td>
+						<div ace-read-json ng-model="input" ></div>
+					</td>
+				</tr>
+				<tr ng-if="funct.returnType!=undefined">
+					<td>test output</td>
+					<td>
+						<div ace-read-json ng-model="review.microtask.submission.simpleTestOutput" ></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+

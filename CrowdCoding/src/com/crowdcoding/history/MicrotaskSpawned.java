@@ -3,17 +3,12 @@ package com.crowdcoding.history;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.microtasks.Microtask;
 
-public class MicrotaskSpawned extends HistoryEvent 
+public class MicrotaskSpawned extends MicrotaskEvent 
 {
 	public String eventType = "microtask.spawned";
 	
-	public String microtaskType;
-	public String microtaskID;
-	
-	public MicrotaskSpawned(Microtask microtask, Artifact artifact)
+	public MicrotaskSpawned(Microtask microtask)
 	{
-		super(artifact);
-		this.microtaskType = microtask.microtaskName();
-		this.microtaskID = Long.toString(microtask.getID());
+		super("spawned",microtask);
 	}
 }

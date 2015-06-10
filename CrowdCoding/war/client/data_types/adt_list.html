@@ -1,0 +1,37 @@
+<div class="panel-group adt-list" bs-collapse ng-model="ADTs.selectedADT">
+    <div class="panel panel-default" ng-repeat="(index,ADT) in ADTs">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+            <a bs-collapse-toggle>
+                <span ng-if=" ADTs.selectedADT !== index " class="glyphicon glyphicon-chevron-right" ></span>
+                <span ng-if=" ADTs.selectedADT === index " class="glyphicon glyphicon-chevron-down" ></span>
+                {{ ADT.name }}
+            </a>
+            </h4>
+        </div>
+        <div class="panel-collapse" bs-collapse-target>
+            <div class="panel-body">
+                <div data-ng-bind-html="ADT.description | newline" ></div><br />
+
+                <div ng-if="::(ADT.structure.length>0)">
+                    <h5 for="structure">DATA STRUCTURE</h5>
+                    <pre ng-bind="::buildStructure(ADT)"></pre>
+                </div>
+
+                <div ng-if="::ADT.examples" ng-init="selectedExample=ADT.examples[0]" >
+                    <h5 class="pull-left" for="exampleSelect">EXAMPLES:</h5>
+                    <button name= "exampleSelect" 
+                            class="btn-select pull-right"
+                            bs-select  
+                            ng-model="selectedExample" 
+                            data-html="1" 
+                            data-placement="bottom-right"
+                            bs-options="example.name for example in ADT.examples" >
+                    </button>
+                    <span class="clearfix"></span>
+                    <div ace-read-json ng-model="::selectedExample.value" class="clearfix adt-detail" copy-allowed></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

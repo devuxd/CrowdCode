@@ -46,6 +46,43 @@ module.exports = function(config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
 
+    // For more browsers on Sauce Labs see:
+    // https://saucelabs.com/docs/platforms/webdriver
+    customLaunchers: {
+      'SL_Chrome': {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+      },
+      'SL_Firefox': {
+        base: 'SauceLabs',
+        browserName: 'firefox'
+      },
+      'SL_Safari': {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        platform: 'OS X 10.9',
+        version: '7'
+      },
+      'SL_IE_9': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 2008',
+        version: '9'
+      },
+      'SL_IE_10': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 2012',
+        version: '10'
+      },
+      'SL_IE_11': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 8.1',
+        version: '11'
+      }
+    },
+
     // Start these browsers, currently available:
     // - Chrome
     // - ChromeCanary
@@ -55,6 +92,11 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: ['Chrome'],
+
+    // Timeouts for SauceLabs
+    browserDisconnectTimeout: 10000, // default 2000
+    browserDisconnectTolerance: 2, // default 0
+    browserNoActivityTimeout: 30 * 1000, //default 10000
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
@@ -68,6 +110,7 @@ module.exports = function(config) {
       'karma-jasmine',
       'karma-phantomjs-launcher',
       'karma-chrome-launcher',
+      'karma-sauce-launcher',
       'karma-coverage'
     ],
 

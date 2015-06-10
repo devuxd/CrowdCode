@@ -2,6 +2,8 @@ package com.crowdcoding.dto;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /*
@@ -30,17 +32,20 @@ public abstract class DTO
 	}
 
 	// Reads a DTO of type dtoClass from the specified string
-	public static DTO read(String jsonDTOData, Class dtoClass)
+	public static DTO read(String jsonDTOData, Class dtoClass) throws JsonParseException, JsonMappingException, IOException
 	{
 		ObjectMapper mapper = new ObjectMapper();
-		System.out.println("dto "+jsonDTOData);
-		System.out.println("class "+dtoClass);
 		DTO dto = null;
-		try {
-			dto = (DTO) mapper.readValue(jsonDTOData, dtoClass);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		dto = (DTO) mapper.readValue(jsonDTOData, dtoClass);
+//		try {
+//
+//		} catch( JsonParseException e) {
+//			e.printStackTrace();
+//		} catch( JsonMappingException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
 		return dto;
 	}

@@ -11,8 +11,9 @@ public class TestCaseDTO extends DTO
 	public String text;
 	public boolean added;
 	public boolean deleted;
+	public boolean readOnly=false;
 	public long id;				// id of the corresponding test. Only valid if added is false.
-	public int functionVersion;
+
 
 	// Default constructor
 	public TestCaseDTO()
@@ -22,11 +23,12 @@ public class TestCaseDTO extends DTO
 	// Build a TestCaseDTO from a test, building escaped Strings
 	public TestCaseDTO(Test test, int functionVersion)
 	{
-		this.functionVersion=functionVersion;
 		this.text = StringEscapeUtils.escapeEcmaScript(test.getDescription());
 		this.added = false;
 		this.deleted = false;
 		this.id = test.getID();
+		this.readOnly=false;
+
 	}
 
 	public String toString()

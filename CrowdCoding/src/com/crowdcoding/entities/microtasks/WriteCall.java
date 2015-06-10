@@ -7,27 +7,30 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.FunctionDTO;
+import com.crowdcoding.dto.PseudoFunctionDTO;
 import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
 import com.crowdcoding.dto.firebase.WriteCallInFirebase;
 import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.annotation.EntitySubclass;
+import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
-@EntitySubclass(index=true)
+@Subclass(index=true)
 public class WriteCall extends Microtask
 {
 	@Parent @Load private Ref<Function> caller;
-	private String pseudoCall;
-	private String calleeFullDescription;
+	private String pseudoFunctionName;
+	private long calleeId;
+
 
 	// Default constructor for deserialization
 	private WriteCall()
@@ -35,34 +38,36 @@ public class WriteCall extends Microtask
 	}
 
 	// Constructor for initial construction. Microtask is set as not yet ready.
-	public WriteCall(Function caller, String calleeFullDescription, String pseudoCall, Project project)
+	public WriteCall(Function caller, long calleeId, String pseudoFunctionName, String projectId)
 	{
-		super(project);
+		super( projectId,caller.getID());
 		this.submitValue = 7;
 		this.caller = (Ref<Function>) Ref.create(caller.getKey());
-		this.calleeFullDescription = calleeFullDescription;
-		this.pseudoCall = pseudoCall;
+		this.calleeId = calleeId;
+		this.pseudoFunctionName = pseudoFunctionName;
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskCreated(new WriteCallInFirebase(
 				id,
-				this.microtaskTitle(), 
-				this.microtaskName(), 
+				this.microtaskTitle(),
+				this.microtaskName(),
 				caller.getName(),
 				caller.getID(),
-				false, submitValue, 
-				caller.getID(), 
-				calleeFullDescription, 
-				pseudoCall ),
-				Project.MicrotaskKeyToString(this.getKey()),
-				project);
+				false, 
+				false,
+				submitValue,
+				caller.getID(),
+				calleeId,
+				pseudoFunctionName ),
+				Microtask.keyToString(this.getKey()),
+				projectId);
 
-		project.historyLog().beginEvent(new MicrotaskSpawned(this, caller));
-		project.historyLog().endEvent();
+
+		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	public Microtask copy(Project project)
+	public Microtask copy(String projectId)
 	{
-		return new WriteCall(this.caller.getValue(), this.calleeFullDescription, this.pseudoCall, project);
+		return new WriteCall(  (Function) getOwningArtifact(), this.calleeId, this.pseudoFunctionName, projectId);
 	}
 
 	public Key<Microtask> getKey()
@@ -71,9 +76,9 @@ public class WriteCall extends Microtask
 	}
 
 
-	protected void doSubmitWork(DTO dto, String workerID, Project project)
+	protected void doSubmitWork(DTO dto, String workerID, String projectId)
 	{
-		caller.get().writeCallCompleted((FunctionDTO) dto, project);
+		caller.get().writeCallCompleted((FunctionDTO) dto, projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "function_calls",1);
@@ -81,10 +86,10 @@ public class WriteCall extends Microtask
 	}
 
 	// Returns true iff the microtask still needs to be done
-	protected boolean isStillNeeded(Project project)
+	protected boolean isStillNeeded()
 	{
 		// AddCall is still needed iff the pseudocall is still in the code
-		return caller.get().containsPseudoCall(pseudoCall);
+		return false; //caller.get().containsPseudoCall(pseudoCall);
 	}
 
 	protected Class getDTOClass()
@@ -102,19 +107,21 @@ public class WriteCall extends Microtask
 		return caller.getValue();
 	}
 
-	public String getEscapedCalleeFullDescription()
-	{
-		return StringEscapeUtils.escapeEcmaScript(calleeFullDescription);
-	}
-
 	public String getEscapedPseudoCall()
 	{
-		return StringEscapeUtils.escapeEcmaScript(pseudoCall);
+		return StringEscapeUtils.escapeEcmaScript(pseudoFunctionName);
 	}
+
 
 	public Artifact getOwningArtifact()
 	{
-		return getCaller();
+		Artifact owning;
+		try {
+			return caller.safe();
+		} catch ( Exception e ){
+			ofy().load().ref(this.caller);
+			return caller.get();
+		}
 	}
 
 	public String microtaskTitle()
@@ -127,19 +134,19 @@ public class WriteCall extends Microtask
 		return "write a call";
 	}
 
-
+/*
 	public String toJSON(){
 		JSONObject json = new JSONObject();
 		try {
 			json.put("functionId",this.getCaller().getID());
 			json.put("pseudoCall",this.getEscapedPseudoCall());
 			json.put("caller",this.getCaller());
-			json.put("calleeFullDescription",this.getEscapedCalleeFullDescription());
+			json.put("calleeFullDescription",this.pseudoFunctionName);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return super.toJSON(json);
-	}
+	}*/
 
 }

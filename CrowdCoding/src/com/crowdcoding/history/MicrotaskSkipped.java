@@ -2,12 +2,13 @@ package com.crowdcoding.history;
 
 import com.crowdcoding.entities.microtasks.Microtask;
 
-public class MicrotaskSkipped extends MicrotaskSubmitted
+public class MicrotaskSkipped extends MicrotaskEvent
 {
-	public String eventType = "microtask.skipped";
+	public String workerID;
 	
 	public MicrotaskSkipped(Microtask microtask, String workerID)
 	{
-		super(microtask, workerID);
+		super("skipped",microtask);
+		this.workerID = workerID;
 	}
 }

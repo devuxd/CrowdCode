@@ -1,0 +1,25 @@
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container-fluid">
+
+		<div class="navbar-header">
+	      <a class="navbar-brand" href="#">CrowdCode</a>
+	    </div>
+
+		<ul class="nav navbar-nav">
+	        <li><a href="#"><strong>project:</strong> {{ projectId }}</a></li>
+	        <li><a href="#"><project-stats></project-stats></a></li>
+	    </ul>
+
+	    <ul class="nav navbar-nav navbar-right">
+	    	<li>
+	        	<a user-menu href="#">
+					{{ workerHandle}}
+					<img ng-src="{{ avatar(workerId).$value }}" class="profile-picture" />
+					<span class="caret"></span>
+	        	</a>
+	        </li>
+	    </ul>
+
+
+	</div>
+</div>

@@ -1,0 +1,48 @@
+<div class="section section-description " >
+    <div class="section-content job-description" >
+        <div ng-if="! selectedNews.microtask.submission.inDispute">
+            Detailed description for the following requested functioselectedNews.
+        </div>
+
+        <div ng-if="selectedNews.microtask.submission.inDispute">
+            request that the following function not be implemented.
+        </div>
+    </div>
+</div>
+<div class="section section-description">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>
+        <span ng-if="! selectedNews.microtask.submission.inDispute">Requested Function</span>
+        <span ng-if="selectedNews.microtask.submission.inDispute">Function description</span>
+
+    </div>
+
+    <div class="section-content no-padding" >
+        <ace-read-js code="selectedNews.microtask.pseudoFunctionDescription"></ace-read-js>
+    </div>
+</div>
+<div class="section section-description" ng-if="! selectedNews.microtask.submission.inDispute">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>
+        <span >Requesting function</span>
+    </div>
+
+    <div class="section-content no-padding" >
+        <ace-read-js code="selectedNews.requestingFunction.getFunctionCode()"></ace-read-js>
+    </div>
+</div>
+<div class="section section-review" ng-if="! selectedNews.microtask.submission.inDispute">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>Detailed Function Description
+    </div>
+    <div class="section-content" >
+        <ace-read-js code="selectedNews.functionDescription"></ace-read-js>
+    </div>
+</div>
+
+<div class="section section-review" ng-if="selectedNews.microtask.submission.inDispute">
+    <div class="section-title" ><div class="dot bg-color"></div>Reason for request</div>
+    <div class="section-content" >
+        {{selectedNews.microtask.submission.disputeFunctionText}}
+    </div>
+</div>

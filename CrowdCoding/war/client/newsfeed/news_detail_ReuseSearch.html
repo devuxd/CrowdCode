@@ -1,0 +1,35 @@
+<div class="section section-description " >
+    <div class="section-content job-description" >
+        Function providing the behavior 
+        of <strong>{{selectedNews.microtask.pseudoFunctionName}}</strong> in <strong>{{selectedNews.funct.getName()}}</strong>
+    </div>
+</div>
+
+<div class="section section-description-2">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>REQUESTED BEHAVIOR
+    </div>
+    <div class="section-content" >
+        <ace-read-js code="selectedNews.microtask.pseudoFunctionDescription"></ace-read-js>
+    </div>
+</div>
+<div class="section section-description-2">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>requesting function
+    </div>
+    <div class="section-content" >
+        <ace-read-js code="selectedNews.funct.getFunctionCode()"></ace-read-js>
+    </div>
+</div>
+
+<div class="section section-review">
+    <div class="section-title" >
+        <div class="dot bg-color"></div>Function Found
+    </div>
+    <div class="section-content" ng-if"selectedNews.calleeFunction">
+        <ace-read-js code="selectedNews.calleeFunction.getSignature()"></ace-read-js>
+    </div>
+    <div class="section-content" ng-if" ! selectedNews.calleeFunction">
+        A new function will be created
+    </div>
+</div>
