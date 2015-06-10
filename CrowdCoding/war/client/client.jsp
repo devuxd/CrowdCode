@@ -95,6 +95,12 @@
 
 
 
+	
+	<script src="/include/doctrine-js-parser/doctrine.js"></script>
+	<script src="/include/doctrine-js-parser/utility.js"></script>
+	<script src="/include/doctrine-js-parser/typed.js"></script>
+
+
 
 	<script>
 	var projectId    = '<%=projectID%>';
@@ -104,7 +110,6 @@
 	</script>
 
 
-	<script src="/developments/ace-list/aceExtensions.js"></script>
 
 	<!-- Angular Application -->
 	<script src="/client/client.js"></script>

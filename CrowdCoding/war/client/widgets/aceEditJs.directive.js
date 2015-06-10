@@ -1,6 +1,6 @@
 angular
     .module('crowdCode')
-    .directive('aceEditJs', [ '$sce', 'functionsService', function($sce, functionsService) {
+    .directive('aceEditJs', [ '$sce', 'functionsService', 'FunctionFactory', function($sce, functionsService, FunctionFactory) {
    
     var apiFunctions    = [];
     var pseudoFunctions = [];
@@ -127,13 +127,20 @@ angular
         apiFunctions = [];
         functionsService.getAll().$loaded().then(function(){
             var functs = functionsService.getAll();
-            functs.map(function( fun ){
-                var paramsString = fun.parameters.map(function(par,idx){ return '${'+(idx+1)+':'+par.name+'}'; }).join(',');
+            functs.map(function( functionRecord ){
+                var fun = new FunctionFactory(functionRecord);
+                
+                var paramsString = fun.parameters
+                    .map(function(par,idx){ 
+                        return '${'+(idx+1)+':'+par.name+'}'; 
+                    })
+                    .join(',');
+
                 apiFunctions.push({ 
                     name        : fun.name, 
                     meta        : 'API', 
                     className   : 'functions_api',
-                    description : fun.description, 
+                    description : fun.getFullDescription(), 
                     snippet     : fun.name + '(' + paramsString + ')'
                 });
             });

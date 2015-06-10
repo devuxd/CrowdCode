@@ -145,7 +145,13 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 	   		name    : 'add new function',
 	   		meta    : 'command',
         	className: 'functions_command',
-	   		snippet : '\n// ${1:description of the function}\nfunction ${2:function_name}(${3:argumentsList}){}'
+	   		snippet : '\n'
+                    + '/**\n'
+                    + ' * ${1:description of the function}\n'
+                    + ' * @param {${2:parameterType}} ${3:parameter name} - ${4:parameter description}\n'
+                    + ' * @returns {${4:returnType}}\n'
+                    + ' */\n'
+                    + 'function ${5:functionName}(${6:argumentsList}){}\n'
 	   	});
 
     }

@@ -17,7 +17,7 @@
 		<li class="list-group-item question-item  {{ sel.closed ? '' : 'open' }}">
 			<span class="btn btn-edit" ng-click="setUiView('form'); " ng-if="!sel.closed">edit</span>
 			<h3 class="panel-title"  >{{sel.title}}</h3>
-			<div>{{sel.text}}</div>
+			<div ng-bind-html="sel.text"></div>
 			<div>
 				<span class="pull-right">
 					<span ng-repeat="tag in sel.tags" class="tag">{{tag}}</span>
@@ -74,7 +74,7 @@
 		<li class="list-group-item answer-item" ng-repeat="a in sel.answers | orderObjectBy : 'createdAt' : false" ng-animate-children>
 			<div class="content-panel">
 				<div>
-					<span>{{a.text}}</span>
+					<span ng-bind-html="a.text"></span>
 					
 				</div>
 
@@ -111,7 +111,7 @@
 					
 					<div class="content-panel">
 						<div>
-							<span>{{c.text}}</span>
+							<span ng-bind-html="c.text"></span>
 						</div>
 
 
