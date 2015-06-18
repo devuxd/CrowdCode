@@ -90,6 +90,8 @@ rgba(237,90,48,1)  Valencia - orange - review
 .task-review .microtask-title         { background-color: rgba(237,90,48,1);}
 
 
+.task-describebehavior .microtask-title   { background-color: rgba(252,223,63,1);}
+.task-implementbehavior .microtask-title  { background-color: rgba(17,112,190,1);}
 
 .form-control { font-weight: normal;}
 .form-horizontal .form-group { margin: 0px;}
@@ -1452,6 +1454,21 @@ tutorial  { display:none; }
 .task-review .bg-color-alpha { background-color:  rgba(237,90,48,0.4); }
 .task-review .job-description { background-color:  rgba(237,90,48,0.4); }
 
+
+/* rgba(17,112,190,1) Wode - blue - implementbehavior */
+.task-implementbehavior .color          { color:  rgba(17,112,190,1); }
+.task-implementbehavior .color-alpha    { color:  rgba(17,112,190,0.4); }
+.task-implementbehavior .bg-color       { background-color:  rgba(17,112,190,1); }
+.task-implementbehavior .bg-color-alpha { background-color:  rgba(17,112,190,0.4); }
+.task-implementbehavior .job-description { background-color:  rgba(17,112,190,0.4); }
+
+
+/* rgba(254, 195, 36,1) yellow - yellow - describebehavior */
+.task-describebehavior .color          { color:  rgba(254, 195, 36,1); }
+.task-describebehavior .color-alpha    { color:  rgba(254, 195, 36, 0.4); }
+.task-describebehavior .bg-color       { background-color:  rgba(254, 195, 36,1); }
+.task-describebehavior .bg-color-alpha { background-color:  rgba(254, 195, 36,0.4); }
+.task-describebehavior .job-description { background-color:  rgba(254, 195, 36,0.4); }
 
 .clip-copy {
 	background:url('/img/copy.png') no-repeat;

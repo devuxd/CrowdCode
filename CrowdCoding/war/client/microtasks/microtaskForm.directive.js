@@ -19,6 +19,8 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				'WriteTest': 'write_test/write_test',
 				'WriteTestCases': 'write_test_cases/write_test_cases',
 				'WriteCall': 'write_call/write_call',
+				'DescribeBehavior': 'describe_behavior/describe_behavior',
+				'ImplementBehavior': 'implement_behavior/implement_behavior'
 			};
 
 			// initialize microtask and templatePath
@@ -45,6 +47,31 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 			$scope.openTutorial = function(){
 				$scope.$emit('queue-tutorial', $scope.microtask.type , true, function(){});
 			};
+
+
+			$scope.loadDescribe = function(){
+				var task = {
+					type: 'DescribeBehavior',
+					functionId : '5896268542902272',
+					id: 'somerandomid',
+					title: 'Describe Function Behavior',
+					promptType: 'add' //'edit'
+				};
+				$scope.$broadcast('microtaskLoaded',task);
+			};
+			$scope.loadImplement = function(){
+				console.log('load Implement');
+				var task = {
+					type: 'ImplementBehavior',
+					functionId : '5896268542902272',
+					id: 'somerandomid',
+					title: 'Implement Function Behavior',
+					promptType: 'add' //'edit'
+				};
+				$scope.$broadcast('microtaskLoaded',task);
+			};
+
+			$scope.loadDescribe();
 
 
 			// ------- MESSAGE LISTENERS ------- //
@@ -125,7 +152,7 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				// if the form is valid, submit the microtask
 				if($scope.canSubmit){
 					if( $scope.model.startBreak ) { $scope.breakMode = true; $scope.model.startBreak = false; }
-					$scope.templatePath   = templatesURL + "loading.html";
+					$scope.templatePath = templatesURL + "loading.html";
 					$scope.canSubmit=false;
 					microtasks.submit($scope.microtask,formData,autoSkip, !$scope.breakMode);
 				}

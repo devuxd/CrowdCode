@@ -92,16 +92,6 @@
 
 	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>
 
-
-
-
-	
-	<script src="/include/doctrine-js-parser/doctrine.js"></script>
-	<script src="/include/doctrine-js-parser/utility.js"></script>
-	<script src="/include/doctrine-js-parser/typed.js"></script>
-
-
-
 	<script>
 	var projectId    = '<%=projectID%>';
 	var workerId     = '<%=workerID%>';

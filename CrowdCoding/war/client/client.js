@@ -9,6 +9,7 @@ angular
 		'firebase', 
 		'ngSanitize', 
 		'ui.ace', 
+		'ui.layout',
 		'mgcrea.ngStrap', 
 		'ngClipboard',
 		'luegg.directives',

@@ -1,0 +1,34 @@
+<div>
+
+  <div class="tab-content" id="rightTab">
+    <news-panel ng-show="selectedTab == 0"></news-panel>
+    <questions-panel ng-show="selectedTab == 1"></questions-panel>
+    <leaderboard ng-show="selectedTab == 2"></leaderboard>
+    <!--<chat ng-show="selectedTab == 3"></chat>-->
+  </div>
+
+  <div class="sidebar-nav">
+    <ul class="nav" role="">
+      <li id="{{tab}}Btn" class="{{ selectedTab == $index ? 'active': '' }} {{ $index == 0 ? 'first' : '' }}" ng-repeat="tab in tabs track by $index" ng-click="selectTab($index)">{{tab}}</li>
+    </ul>
+  </div>
+
+</div>
+<!--
+<div class="bottom">
+    <button href="#" class=""
+       id="shortcutsBtn"
+       data-animation="am-fade-and-scale"
+       data-placement="center"
+       data-template="/html/templates/popups/popup_shortcuts.html"
+       bs-modal="modal"
+       data-container="body"
+       >shortcuts</button>
+    <button href="#" class=""
+       id="feedbackBtn"
+       data-animation="am-fade-and-scale"
+       data-placement="center"
+       data-container="body"
+       data-template="widgets/popup_feedback.html" bs-modal="modal">Send Us Feedback!</button>
+</div>
+-->

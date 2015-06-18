@@ -1,0 +1,71 @@
+<div  ng-controller="DescribeBehavior">
+    
+
+    <div class="section section-description " >
+        <div ng-include="'/client/microtasks/microtask_title.html'"></div>
+        <div class="section-content  job-description" >
+            Describe the behavior of this function
+        </div>
+    </div>
+
+    <div class="section section-description" id="functionSignature">
+
+		<div class="section-title" >
+			<div class="dot bg-color"></div>
+			FUNCTION DESCRIPTION
+		</div>
+
+		<div class="section-link" ng-hide="funct.readOnly || dispute.active" >
+			<a ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
+				Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
+			</a>
+		</div>
+
+		<div class="section-content no-padding">
+			<ace-read-js code="::funct.getSignature()" ></ace-read-js>
+		</div>
+		
+	</div>
+
+	<div class="section section-description" bs-collapse ng-model="activeDescriptions" data-allow-multiple="true">
+		<div class="section-title" >
+			<div class="dot bg-color"></div>
+			Already described behaviors
+		</div>
+		<div class="section-content">
+			<div style="margin-bottom:2px" ng-repeat="b in behaviors track by $index">
+				<div style="width:100%" ng-if="currentIndex != $index">
+					<div class="bg-color-alpha" bs-collapse-toggle> 
+						<span ng-bind="b.description"></span>
+						<button class="btn btn-sm" ng-if="currentIndex != $index" ng-click="editBehavior($index)">Edit</button>
+					</div>
+					<div class="" ng-bind="b.code" bs-collapse-target></div>
+				</div>
+			</div>
+		</div>	
+	</div>
+
+	<div class="section section-form">
+
+		<div class="section-title" >
+			<div class="dot bg-color"></div>
+			Describe new behavior
+		</div>
+		<div class="section-content">
+			<div class="form-group">
+				<label>description</label>
+				<input class="form-control" ng-model="newBehavior.description"></input>
+			</div>
+			<div class="form-group">
+				<label>code</label>
+				<textarea class="form-control" ng-model="newBehavior.code"></textarea>
+			</div>
+
+			<div ng-if="microtask.promptType == 'add' ">
+				<label><input type="checkbox" ng-model="noMore">No more behavior to describe</label>
+			</div>
+		</div>
+
+	</div>
+    
+</div>

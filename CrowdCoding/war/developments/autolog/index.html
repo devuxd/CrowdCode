@@ -1,0 +1,79 @@
+<html>
+<head>
+	<title>Autolog try</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"></link>
+
+	<style type="text/css">
+		.ace_editor {
+			min-height: 400px;
+			width:50%;
+		}
+
+		.ace_inspected {
+			background-color: rgba(255, 18, 18, 0.3);
+			position:absolute;
+			z-index:6;
+			margin:0px 0px 0px 0px;
+		}
+
+		.ace_tooltip {
+			pointer-events:auto !important;
+		}
+
+		.half {
+			min-height: 400px;
+			width:50%;
+			float:left;
+		}
+		.btn-toggle.on {
+			background-color:rgb(148, 140, 189);
+		}
+		.btn-toggle {
+			background-color:gray;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div class="btn-group pull-right">
+		<button id="inspectBtn" class="btn btn-sm btn-toggle"><span class="glyphicon glyphicon-search"></span></button>
+		<button id="runBtn" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-play"></span></button>
+	</div>
+	<div class="clearfix"></div>
+
+	<div id="fCode" class="half">function loggingFunction(first, second, third) {
+    var c = {
+        node: first + second,
+        tree: second * seconda(third)
+    };
+    third++;
+    seconda(third + seconda(first, second));
+    while (third--) {
+    console.log(second,third);
+    }
+}
+
+
+
+</div>	
+<div id="tCode" class="half">
+loggingFunction(1,2,3);
+</div>
+	<pre id="instrumentedCode" class="half"></pre>
+	<div class="clearfix"></div>
+
+
+
+
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<script src="/include/ace-editor/src/ace.js"> </script> 
+	<script src='debugger.js'></script>
+	<script src='aceExtension.js'></script>
+
+	<script src='estools.browser.js'></script>
+
+	<script type="text/javascript" src="main.js"></script>
+</body>
+</html>

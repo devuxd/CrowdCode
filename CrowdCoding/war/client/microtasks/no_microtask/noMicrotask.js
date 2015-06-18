@@ -10,6 +10,8 @@ angular
 	var lbSync = $firebase(new Firebase(firebaseUrl + '/leaderboard/leaders'));
 
 	$scope.avatar = avatarFactory.get;
-	$scope.leaders       = lbSync.$asArray();
+	$scope.leaders = lbSync.$asArray();
 	$scope.leaders.$loaded().then(function() {});
+
+
 }]);
