@@ -90,8 +90,8 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				$scope.$emit('reset-reminder');
 
 				// set the no microtask template
-				$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
-
+				//$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
+				$scope.templatePath = '/client/dashboard/dashboard.html';
 				// if is not in break mode, start to check the queue
 				if(! $scope.breakMode){
 					// initialize the countdown
