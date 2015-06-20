@@ -4,9 +4,10 @@
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"></link>
 
 	<style type="text/css">
+
+
 		.ace_editor {
-			min-height: 400px;
-			width:50%;
+			min-height: 50px;
 		}
 
 		.ace_inspected {
@@ -18,13 +19,28 @@
 
 		.ace_tooltip {
 			pointer-events:auto !important;
+			padding-right: 20px !important;
+		}
+
+		.ace_tooltip .close-btn {
+			position:absolute;
+			right:2px;
+			top:2px;
+			cursor: pointer;
+		}
+
+		.ace_tooltip .loop-navigation {
+			text-align: right;
 		}
 
 		.half {
-			min-height: 400px;
 			width:50%;
 			float:left;
 		}
+		.full {
+			width:100%;
+		}
+
 		.btn-toggle.on {
 			background-color:rgb(148, 140, 189);
 		}
@@ -32,39 +48,87 @@
 			background-color:gray;
 		}
 
+		#editorContainer {
+			position:relative;
+			height:400px;
+			overflow:hidden;
+		}
+
+		#editorContainer > div {
+			position:absolute;
+			height:100%;
+			width:100%;
+			top:0px;
+			left:0px;
+		}
+
+		#fCode {
+			z-index:0;
+		}
+
+		#fCode.inspecting {
+			cursor: pointer;
+		}
+
+		#stub {
+			background-color:lightgreen;
+			height:0px !important;
+			z-index:1;
+			overflow:auto;
+			-webkit-transition:height 1s;
+    		transition:height 1s;
+		}
+
+		#stub.show {
+			height:100% !important;
+		}
+
+
+
+
 
 	</style>
 </head>
 <body>
-	<div class="btn-group pull-right">
-		<button id="inspectBtn" class="btn btn-sm btn-toggle"><span class="glyphicon glyphicon-search"></span></button>
-		<button id="runBtn" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-play"></span></button>
+	<div>
+		<div class="btn-group pull-right">
+			<button id="inspectBtn" class="btn btn-sm btn-toggle"><span class="glyphicon glyphicon-search"></span></button>
+			<button id="runBtn" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-play"></span></button>
+		</div>
+		<div class="clearfix"></div>
 	</div>
-	<div class="clearfix"></div>
+		
 
-	<div id="fCode" class="half">function loggingFunction(first, second, third) {
-    var c = {
-        node: first + second,
-        tree: second * seconda(third)
+	<div id="editorContainer">
+		
+		<div id="fCode">function loggingFunction(first, second, third) {
+    var a = { 
+        a : first, 
+        b : second * third 
     };
-    third++;
-    seconda(third + seconda(first, second));
-    while (third--) {
-    console.log(second,third);
-    }
+    a = first;
 }
+		
+		
+		
+		</div>
 
+		<div id="stub">
+			<div class="form">
 
+			</div>
+			<button id="closeStubBtn" class="btn btn-default">Close</button>
 
-</div>	
-<div id="tCode" class="half">
+		</div>	
+	</div>
+		
+<div id="tCode" class="full">
 loggingFunction(1,2,3);
 </div>
-	<pre id="instrumentedCode" class="half"></pre>
+	
+
+	
 	<div class="clearfix"></div>
-
-
-
 
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>

@@ -1,9 +1,10 @@
 var LogInfo = require("crowdcode/log_info").LogInfo;
-
+var $stubDiv = $('#stub');
 var $inspectBtn = $('#inspectBtn');
 var $runBtn = $('#runBtn');
-var $instrumentedCode = $('#instrumentedCode');
+var $closeStubBtn = $('#closeStubBtn');
 
+var $fEditor = $('#fCode')
 var fEditor = ace.edit('fCode');
 fEditor.getSession().setMode("ace/mode/javascript");
 fEditor.setTheme("ace/theme/twilight");
@@ -18,9 +19,13 @@ var ast;
 var variables = [];
 
 $runBtn.on('click',function(){
-    //formatCode(fEditor);
+    // formatCode(fEditor);
     run( fEditor.getValue(), tEditor.getValue() );
 });
+
+$closeStubBtn.on('click',function(){
+    $stubDiv.removeClass('show');
+})
 
 $inspectBtn.on('click',function(){
     var $this = $(this);
@@ -32,21 +37,36 @@ $inspectBtn.on('click',function(){
 });
 
 function isInspectOn(){
-    return fEditor.loggerTooltip !== undefined;
+    return fEditor.logInfo !== undefined;
 }
 
 function inspectOn(){
+    fEditor.logInfo = new LogInfo(fEditor,{
+        'editStub' : function(functionName,inputs){ 
+            var stub = Debugger.getStub(functionName,inputs);
+
+            var $stubForm = $stubDiv.find('.form')
+            $stubForm.html('');
+            for( var key in inputs)
+                $stubForm.append('<label>input'+key+'</label><pre>'+JSON.stringify(inputs[key])+'</pre>');
+
+            $stubForm.append('<label>output</label><textarea>'+JSON.stringify(stub.output)+'</textarea>');
+            $stubDiv.addClass('show');
+        }
+    });
+    fEditor.logInfo.logs = Debugger.logs.values['loggingFunction'];
+    fEditor.setOption('readOnly',true);
     $inspectBtn.addClass('on');
-    fEditor.logInfo = new LogInfo(fEditor);
-    fEditor.logInfo.statements = logs;
-    fEditor.on("change",inspectOff);
-    fEditor.focus();
+
+
 }
 function inspectOff(){
-    $inspectBtn.removeClass('on');
     fEditor.logInfo.destroy();
     delete fEditor.logInfo;
-    fEditor.off('change',inspectOff);
+    fEditor.setOption('readOnly',false);
+    $inspectBtn.removeClass('on');
+
+
 }
 
 function formatCode(editor){
@@ -56,13 +76,15 @@ function formatCode(editor){
         format: {
             indent: {
                 style: '    '
-            }
-        }
+            },
+            compact:false
+        },
     };
     syntax = esprima.parse( editor.getValue(), { raw: true, tokens: true, range: true, comment: true } );
     syntax = escodegen.attachComments(syntax, syntax.comments, syntax.tokens);
     var code = escodegen.generate( syntax, option );
     editor.setValue(code);
+    editor.selection.clearSelection();
 }
 
 function run(fCode,tCode){
@@ -70,8 +92,6 @@ function run(fCode,tCode){
 
     Debugger.setFunction('loggingFunction',{ code: fCode });
     var code = Debugger.runTest(tCode);
-
-    $instrumentedCode.html( code );   
 
     if( !isInspectOn() )
         inspectOn();
@@ -88,7 +108,8 @@ function run(fCode,tCode){
 
 var functions = {
     'seconda': {
-        code : 'function seconda(a,b,c){\n\treturn a;\n}'
+        code  : 'function seconda(a,b,c){\n\treturn { a: a, b: b };\n}',
+        stubs : {}
     }
 };
 

@@ -11,7 +11,7 @@ Debugger.init = function(data){
 Debugger.resetLogs = function(){
     Debugger.logs = {
         values: {},
-        calls: []
+        calls: {}
     };
 };
 
@@ -20,12 +20,14 @@ Debugger.runTest = function(testCode) {
     var functCode = '';
     for( var functionName in Debugger.functions ){
         functCode += Debugger.functions[functionName].compiled + '\n';
+        if( functionName == 'loggingFunction')
+            console.log(Debugger.functions[functionName].compiled );
     }
 
     var evalCode = functCode + '\n' 
                  + testCode;
 
-
+    
     try {
         eval( evalCode );
     } catch( e ){
@@ -36,6 +38,8 @@ Debugger.runTest = function(testCode) {
 
 
 Debugger.setFunctions = function(functions){
+    Debugger.functions = [];
+    Debugger.functionsName = [];
     // parse all the functions 
     for( var functionName in functions ){
         Debugger.setFunction(functionName, functions[functionName]);
@@ -44,6 +48,7 @@ Debugger.setFunctions = function(functions){
 
 Debugger.setFunction = function(functName, functObj) {
     Debugger.functions[functName] = functObj;
+    Debugger.functionsName.push(functName);
 
     // create the abstract syntax tree
     var bodyNode = esprima.parse( functObj.code, {loc:true} ).body[0];
@@ -81,21 +86,24 @@ Debugger.instrumentFunction = function(fNode){
                 node = Debugger.instrumentTreeNode(node,scope);
                 this.skip();
             }
-            else if( node.type === 'ObjectExpression' ){
-                node = Debugger.instrumentTreeNode(node,scope);
-                this.skip();
-            }
             else if( parent.type === 'AssignmentExpression' && node === parent.left ){
                 this.skip();
             }
             else if( ['WhileStatement','ForStatement'].indexOf( node.type ) > -1 ){
+
                 scope.loop ++ ;
+            } 
+            else if( ['WhileStatement','ForStatement'].indexOf( parent.type ) > -1 && node.type !== 'BlockStatement'){
+                this.skip();
             }
+            else if( node.type === 'FunctionExpression' ) {
+                this.skip();
+            } 
 
             return node;
         },
         leave: function(node,parent){
-
+            
             // in case of a variable declaration we should add 
             // the variable name to the current scope
             if( node.type === 'VariableDeclarator' ){
@@ -106,22 +114,32 @@ Debugger.instrumentFunction = function(fNode){
                 node = Debugger.instrumentTreeNode(node,scope);
             }
             else if( node.type === 'Identifier' && scope.variables.indexOf(node.name) > -1 ){
+                console.log('entering identifier');
                 if( parent.type !== 'AssignmentExpression' ) {
                     node = Debugger.instrumentTreeNode(node,scope);
                 }
                 else if ( node === parent.right ) {
                     node = Debugger.instrumentTreeNode(node,scope); 
                 }
+                
+                // if( parent.type !== 'Property' && node !== parent.key ){
+                //     console.log(2);
+                //     node = Debugger.instrumentTreeNode(node,scope);
+                // }
             } 
+            else if( node.type === 'ObjectExpression' ){
+                node = Debugger.instrumentTreeNode(node,scope);8
+            }
             else if( node.type === 'Identifier' && parent.type === 'AssignmentExpression' && scope.isDeclared(node.name) > -1 ){
-                node = Debugger.instrumentTreeNode(node,scope);
-            } 
-            else if( node.type === 'CallExpression' && !( node.callee.type === 'MemberExpression' && node.callee.object.name === 'Debugger' ) ) {
                 node = Debugger.instrumentTreeNode(node,scope);
             }
             else if( ['WhileStatement','ForStatement'].indexOf( node.type ) > -1 ){
                 scope.loop -- ;
             }
+            else if( node.type === 'CallExpression' && !( node.callee.type === 'MemberExpression' && node.callee.object.name === 'Debugger' ) ) {
+                node = Debugger.instrumentTreeNode(node,scope);
+            }
+            
 
             return node;
         }
@@ -132,13 +150,16 @@ Debugger.instrumentFunction = function(fNode){
 Debugger.mockFunction = function(fNode){
     var name = fNode.id.name;
     
+    var cutFrom = Debugger.mockBody.toString().search('{');
+    var mockBody = Debugger.mockBody.toString().substr(cutFrom);
+
     var mockBody = 'function '+name+'('
-                 + fNode.params.map(function(param){ return param.name; })
-                   .join(',')
-                 + '){\n'
-                 + '  Debugger.logCall("'+name+'",arguments,5);\n'
-                 + '  return '+name+'Implementation.apply(null,arguments);\n'
-                 + '}\n';
+                 + fNode.params.map(function(param){ return param.name; }).join(',')
+                 + ')'
+                 + mockBody
+                   .replace(/'%functionName%'/g, name )
+                   .replace(/'%functionNameStr%'/g, "'" + name + "'")
+                   .replace(/'%functionMockName%'/g, name + 'Implementation');
 
     var callBody = 'function '+name+'Implementation('
                  + fNode.params.map(function(param){ return param.name; })
@@ -150,64 +171,97 @@ Debugger.mockFunction = function(fNode){
 };
 
 
+
 Debugger.instrumentTreeNode = function(node,scope){
+    var logObject = {
+        type : node.type,
+        start: { row: node.loc.start.line-1, col: node.loc.start.column },
+        end: { row: node.loc.end.line-1, col: node.loc.end.column },
+    };
+
+    var isCallee = '';
+    if( node.type === 'CallExpression' && node.callee.type !== 'MemberExpression' && Debugger.functionsName.indexOf(node.callee.name) > -1 ){
+        logObject.callee = node.callee.name; 
+    }
+
     var innerCode = escodegen.generate(node,{indent:false});
-    var outerCode = 'Debugger.logValue('+innerCode+',\''+node.type+'\','+JSON.stringify(node.loc,null,'')+','+JSON.stringify(scope)+');';
+    var outerCode = 'Debugger.logValue('+innerCode+','+JSON.stringify(logObject)+',\''+scope.context+'\');';
     var newNode = esprima.parse(outerCode);
     return newNode.body[0].expression;
 };
 
-Debugger.logValue = function(value,type,pos,scope,code){
-    var logObject = {
-        value: JSON.stringify(value,null,'  '),
-        type : type,
-        start: { row: pos.start.line-1, col: pos.start.column },
-        end: { row: pos.end.line-1, col: pos.end.column },
-        loop: scope.loop,
-        code : code
-    };
+Debugger.logValue = function(value,logObject,context,isCallee){
 
-    if( !Debugger.logs.values[scope.context] )
-        Debugger.logs.values[scope.context] = [];
+    if( logObject.callee ){
+        logObject.inputs = value.inputs;
+        value  = value.output;
+    }
 
-    Debugger.logs.values[scope.context].push( logObject );
+    logObject.value = value;
+
+    // add the log object to the logs of the current context
+    if( !Debugger.logs.values[context] )
+        Debugger.logs.values[context] = [];
+    
+    Debugger.logs.values[context].push( logObject );
+
     return value;
 };
 
-Debugger.logCall = function(name,arguments,returnValue){
+Debugger.getStub = function(name,inputs) {
+    if( !this.functions[name].stubs )
+        this.functions[name].stubs = {};
+
+    var inputsKey = JSON.stringify(inputs);
+    if( this.functions[name].stubs.hasOwnProperty(inputsKey) ){
+
+        console.log('stub trovata!');
+        return this.functions[name].stubs[inputsKey];
+    }
+
+        console.log('stub non trovata!');
+    return -1;
+}
+
+Debugger.logCall = function(name,arguments,output){
     var logObject = {
-        name: name,
-        arguments: arguments,
-        returnValue : returnValue,
+        inputs : arguments,
+        output : output,
         time : Date.now()
     };
-    Debugger.logs.calls.push( logObject );
+    if( !Debugger.logs.calls[name] )
+        Debugger.logs.calls[name] = {};
+
+    var stubKey = JSON.stringify(arguments);
+    Debugger.functions[name].stubs[stubKey] = {
+        output: output
+    };
+
+    Debugger.logs.calls[name][stubKey] = logObject;
 };
 
 Debugger.mockBody = function(){
-    var args        = Array.prototype.slice.call(arguments);
-    var stubFor     = Debugger.getStubOutput( '%functionNameStr%', args );
-    var returnValue = null;
-    var argsCopy    = [];
-    for( var a in args )
-        argsCopy[a] = JSON.parse(JSON.stringify(args[a]));
-    
-    if( stubFor != -1 ){
-        returnValue = stubFor.output;
+    var inputs  =  arguments;
+    var output  = null;
+
+
+    var stub    = Debugger.getStub( '%functionNameStr%', inputs );
+    if( stub != -1 ){
+        output = stub.output;
     } else {
-        try {
-            returnValue = '%functionMockName%'.apply( null, argsCopy );
-        } catch(e) {
-            Debugger.log(-1,'There was an exception in the callee \'' + '%functionNameStr%' + '\': '+e.message);
-            Debugger.log(-1,"Use the CALLEE STUBS panel to stub this function.");
-        }
+        // try {
+            output = '%functionMockName%'.apply( null, arguments );
+        // } catch(e) {
+        //     Debugger.log(-1,'There was an exception in the callee \'' + '%functionNameStr%' + '\': '+e.message);
+        //     Debugger.log(-1,"Use the CALLEE STUBS panel to stub this function.");
+        // }
     }
 
-    if( calleeNames.search( '%functionNameStr%' ) > -1 ){
-        Debugger.logCall( '%functionNameStr%', args, returnValue ) ;
-    }
+    // if( calleeNames.search( '%functionNameStr%' ) > -1 ){
+        Debugger.logCall( '%functionNameStr%', inputs, output ) ;
+    // }
 
-    return returnValue;
+    return { inputs: inputs, output: output };
 }
 
 function Scope(context,parent){

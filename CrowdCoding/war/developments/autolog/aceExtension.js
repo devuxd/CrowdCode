@@ -1,29 +1,14 @@
-define("crowdcode/log_info",["require","exports","module","ace/lib/dom","ace/lib/oop","ace/lib/event","ace/range","ace/tooltip"], function(require, exports, module) {
+define("crowdcode/log_info",["require","exports","module","ace/lib/dom","ace/lib/oop","ace/lib/event","ace/range","crowdcode/log_tooltip"], function(require, exports, module) {
 "use strict";
 
 var dom = require("ace/lib/dom");
 var oop = require("ace/lib/oop");
 var event = require("ace/lib/event");
 var Range = require("ace/range").Range;
-var Tooltip = require("ace/tooltip").Tooltip;
+var LogTooltip = require("crowdcode/log_tooltip").LogTooltip;
 
-var nextLoopIterationCmd = {
-    name: "nextLoopIteration",
-    exec: function(editor) {
-        editor.logInfo.navigateLoopIteration('Left');
-    },
-    bindKey: "Left"
-};
 
-var prevLoopIterationCmd = {
-    name: "prevLoopIteration",
-    exec: function(editor) {
-        editor.logInfo.navigateLoopIteration('Right');
-    },
-    bindKey: "Right"
-};
-
-function LogInfo (editor) {
+function LogInfo (editor, callbacks) {
     if (editor.logInfo)
         return;
 
@@ -32,23 +17,16 @@ function LogInfo (editor) {
 
     this.logs     = [];
     this.currentLogs = [];
-    this.tooltip  = new Tooltip(editor.container);
-    this.tooltip.marker = null;
+    this.tooltip     = new LogTooltip(editor,callbacks);
 
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseOut  = this.onMouseOut.bind(this);
     this.onClick     = this.onClick.bind(this);
 
     event.addListener(editor.renderer.scroller, "mousemove", this.onMouseMove);
-    event.addListener(editor.renderer.content , "mouseout", this.onMouseOut);
-    event.addListener(editor.renderer.content , "click", this.onClick);
-    
-    // this.showTooltip = this.showTooltip.bind(this);
-    // this.editor.commands.addCommand(nextLoopIterationCmd);
-    // this.editor.commands.addCommand(prevLoopIterationCmd);
+    event.addListener(editor.renderer.scroller , "mouseout", this.onMouseOut);
+    event.addListener(editor.renderer.scroller , "click", this.onClick);
 }
-
-// oop.inherits(LogInfo, Tooltip);
 
 (function(){
 
@@ -64,16 +42,12 @@ function LogInfo (editor) {
             this.editor.session.removeMarker(this.marker);
             this.marker = this.editor.session.addMarker(this.range, "ace_inspected", "text");
 
-            if( ! this.tooltip.locked ) {
+            if( ! this.tooltip.locked ) { 
                 // set the tooltip logs
-                this.editor.session.removeMarker(this.tooltip.marker);
-                this.tooltip.logs = this.currentLogs.slice();
-                var firstLog = this.tooltip.logs[0];
-                this.tooltip.setHtml( 
-                    '<div>'+firstLog.value + '</div>' +
-                    '<div><strong>'+firstLog.type+'</strong></div>'
-                );
-                this.tooltip.show(null, coords.x + 10, coords.y + 10);
+                this.tooltip.range = this.range;
+                this.tooltip.setPosition( coords.x + 10, coords.y + 10);
+                this.tooltip.setLogs( this.currentLogs.slice() );
+                this.tooltip.show();
             }
                 
         } else {
@@ -81,7 +55,6 @@ function LogInfo (editor) {
             this.editor.session.removeMarker(this.marker);
 
             if( ! this.tooltip.locked ) {
-                // hide the tooltip
                 this.tooltip.hide();
             }
         }
@@ -91,29 +64,16 @@ function LogInfo (editor) {
         var coords   = { x : e.clientX, y: e.clientY};
 
         if( this.currentLogs.length > 0 ){
-            this.tooltip.logs = this.currentLogs.slice();
-            var firstLog = this.tooltip.logs[0];
-            this.tooltip.setHtml( 
-                '<div>'+firstLog.value + '</div>' +
-                '<div><strong>'+firstLog.type+'</strong></div>' + 
-                '<div><button class="closeTooltip">X</button></div>'
-            );
-            this.tooltip.show(null, coords.x + 10, coords.y + 10);
-            this.tooltip.locked = true;
-            this.editor.session.removeMarker(this.tooltip.marker);
-            this.tooltip.marker = this.editor.session.addMarker(this.range, "ace_inspected", "text");
-
-            var self = this;
-            var btn = this.tooltip.$element.getElementsByClassName('closeTooltip')[0];
-            btn.addEventListener('click', function(e){
-                self.tooltip.hide();
-                self.tooltip.locked = false;
-                self.editor.session.removeMarker(self.tooltip.marker);
-            });
+            this.tooltip.range = this.range;
+            this.tooltip.setPosition( coords.x + 10, coords.y + 10);
+            this.tooltip.setLogs( this.currentLogs.slice() );
+            this.tooltip.lock();
+            this.tooltip.show();
+        } else {
+            this.tooltip.unlock();
+            this.tooltip.hide();
         }
     }
-
-
 
     this.onMouseOut = function(e) {
         console.log('out');
@@ -124,16 +84,6 @@ function LogInfo (editor) {
         // this.editor.session.removeMarker(this.marker);
     };
 
-
-
-    this.navigateLoopIteration = function(direction) {
-        if( direction === 'Left' )
-            this.loopIndex = this.loopIndex > 0 ? this.loopIndex-1 : (this.filtered.length-1);
-        else if( direction === 'Right' )
-            this.loopIndex = this.loopIndex < this.filtered.length - 1 ? (this.loopIndex+1): 0;
-  
-        this.updateContent();
-    };
 
     this.setPosition = function(x, y) {
         if (x + 10 + this.width > this.maxWidth)
@@ -147,14 +97,14 @@ function LogInfo (editor) {
     this.destroy = function() {
         this.onMouseOut();
 
+
         event.removeListener(this.editor.renderer.scroller, "mousemove", this.onMouseMove);
         event.removeListener(this.editor.renderer.content, "mouseout", this.onMouseOut);
         event.removeListener(this.editor.renderer.content, "click", this.onClick);
+
+        this.tooltip.hide();
+        this.editor.session.removeMarker(this.marker);
         
-
-        this.editor.commands.removeCommand(nextLoopIterationCmd);
-        this.editor.commands.removeCommand(prevLoopIterationCmd);
-
         delete this.editor.logInfo;
     };
 
@@ -164,7 +114,7 @@ function LogInfo (editor) {
         var canvasPos = r.rect || (r.rect = r.scroller.getBoundingClientRect());
         var offset = (coords.x + r.scrollLeft - canvasPos.left - r.$padding) / r.characterWidth;
         var row = Math.floor((coords.y + r.scrollTop - canvasPos.top) / r.lineHeight);
-        var col = Math.round(offset);
+        var col = Math.round(offset) ;
         return { row: row, col: col };
     }
 
@@ -195,29 +145,192 @@ function LogInfo (editor) {
         var rangeA = new Range(a.start.row,a.start.col,a.end.row,a.end.col);
         var rangeB = new Range(b.start.row,b.start.col,b.end.row,b.end.col);
         
-        // A contains B
+        // if A contains B, B is before A
         if( rangeA.containsRange( rangeB ) )
-            // A before B
-            if( a.time < b.time )
+            // if A is antecedent to B, A is before B
+            if( a.time > b.time )
                 return 1;
-            // A after B
+            // else A is after B
             else 
                 return -1;
 
-        // A doesn't contain B
+        // else A is before B
         return -1;
     }
 
     function isBetweenPositions(pos,start,end){
-        var range = new Range(start.row,start.col,end.row,end.col);
-
+        var range = new Range(start.row,start.col,end.row,end.col-1);
+        var res = false;
         if( range.contains(pos.row,pos.col) )
-            return true;
-        return false;
+            res = true;
+
+        return res;
     }
 
 }).call(LogInfo.prototype);
 
 exports.LogInfo = LogInfo;
+
+});
+
+define("crowdcode/log_tooltip",["require","exports","module","ace/lib/dom","ace/lib/oop","ace/lib/event","ace/range","ace/tooltip"], function(require, exports, module) {
+"use strict";
+
+var dom = require("ace/lib/dom");
+var oop = require("ace/lib/oop");
+var event = require("ace/lib/event");
+var Range = require("ace/range").Range;
+var Tooltip = require("ace/tooltip").Tooltip;
+
+function LogTooltip (editor,callbacks) {
+
+    Tooltip.call(this,editor.container);
+    this.callbacks = callbacks || {};
+    this.editor = editor;
+    this.logs   = [];
+    this.range  = false;
+    this.marker = null;
+    this.locked = false;
+}
+
+oop.inherits(LogTooltip, Tooltip);
+
+(function(){
+
+
+    this.setLogs = function(logs){
+        this.currIt = 0;
+        this.totIt  = logs.length;
+        this.logs = logs;
+    }
+
+    this.buildTemplate = function(){
+        var log = this.logs[0];
+        console.log();
+        var tpl = '<div class="value">'+JSON.stringify(log.value,null,'  ') + '</div>';
+
+        if( !this.locked ) {
+            tpl += (this.logs.length > 1 ? '<div>(<i>'+(this.logs.length)+' times</i>)</div>' : '');
+        }
+        else {
+            tpl = '<strong>'+this.editor.session.getTextRange(this.range)+'</strong>' + tpl ; 
+            
+            if( log.callee ){
+                var inputsTpl = '';
+                for( var key in log.inputs )
+                    inputsTpl += '<div>'+JSON.stringify(log.inputs[key])+'</div>';
+                 
+                tpl = '<div class="inputs"></inputs>' + tpl;
+
+
+                tpl += '<a href="#" class="stub-btn">stub this function call</a>';
+            }
+
+            if( this.logs.length > 1 ){
+                tpl += '<div class="loop-navigation">' 
+                     +      '<button class="prev-btn">prev</button>'
+                     +      '<span><span class="iteration">'+(this.currIt+1)+'</span>/'+this.totIt+'</span>'
+                     +      '<button class="next-btn">next</button>'
+                     + '</div>';
+            }
+
+            tpl += '<span class="close-btn">X</span>';
+        }
+        this.setHtml( tpl );  
+        this.width = this.width + 20;      
+    }
+
+    this.show = function(){
+        var self = this;
+
+
+        self.editor.session.removeMarker(self.marker);
+
+        self.buildTemplate();
+
+        if( self.locked ){
+
+            var $inputsDiv = self.$element.getElementsByClassName('inputs')[0];
+            var $valueDiv = self.$element.getElementsByClassName('value')[0];
+            var $closeBtn = self.$element.getElementsByClassName('close-btn')[0];
+            var $stubBtn  = self.$element.getElementsByClassName('stub-btn')[0];
+            var $iterationDiv, $nextBtn, $prevBtn;
+            
+            $closeBtn.addEventListener('click', unlockAndHide);
+
+
+            if( $stubBtn ){
+                $stubBtn.addEventListener('click',editStub);
+            }
+
+            if( self.logs.length > 1 ){
+                $iterationDiv = self.$element.getElementsByClassName('iteration')[0];
+                $nextBtn  = self.$element.getElementsByClassName('next-btn')[0];
+                $prevBtn  = self.$element.getElementsByClassName('prev-btn')[0];
+                $nextBtn.addEventListener('click', next);
+                $prevBtn.addEventListener('click', prev);                
+            }
+
+            self.marker = self.editor.session.addMarker(self.range, "ace_inspected", "text");
+
+            function next(){
+                self.currIt = self.currIt < self.totIt-1 ? self.currIt + 1 : 0;
+                updateTemplate();
+            }
+
+            function prev(){
+                self.currIt = self.currIt > 0 ? self.currIt-1 : (self.totIt-1);
+                updateTemplate();
+            }
+
+            function updateTemplate(){
+                $valueDiv.innerHTML     = JSON.stringify(self.logs[self.currIt].value,null,'  ');
+                $iterationDiv.innerHTML = self.currIt + 1;
+            }
+
+            function unlockAndHide(){
+
+                if( $stubBtn )
+                    $stubBtn.removeEventListener('click',editStub);
+
+                if( self.logs.length > 1 ){
+                    $nextBtn.removeEventListener('click', next);
+                    $prevBtn.removeEventListener('click', prev);
+                }
+
+                $closeBtn.removeEventListener('click', unlockAndHide);
+                
+                self.editor.session.removeMarker(self.marker);
+                self.unlock();
+                self.hide();
+            }
+
+            function editStub(){
+                if( self.callbacks.hasOwnProperty('editStub') ){
+                    var log = self.logs[self.currIt];
+                    self.callbacks.editStub.call(null,log.callee,log.inputs);
+                }
+            }
+        }
+        
+        Tooltip.prototype.show.call(self);
+    };
+
+    this.lock = function(){
+        this.locked = true;
+    };
+
+    this.unlock = function(){
+        this.locked = false;
+    }
+
+    this.hide = function(){
+        this.editor.session.removeMarker(this.marker);
+        Tooltip.prototype.hide.call(this);
+    }
+
+}).call(LogTooltip.prototype);
+
+exports.LogTooltip = LogTooltip;
 
 });

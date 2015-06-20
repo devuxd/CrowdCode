@@ -314,6 +314,8 @@ public class Project
 			HistoryLog
 				.Init(this.getID())
 				.addEvent(new MicrotaskUnassigned( assignedMtask, workerID));
+			
+			FirebaseService.writeMicrotaskAssigned( assignedMicrotaskKey , workerID, project.getID(), false);
 		}
 
 	}
