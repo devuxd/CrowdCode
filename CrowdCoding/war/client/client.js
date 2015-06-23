@@ -4,17 +4,18 @@
 angular
 	.module('crowdCode',[ 
 		'templates-main',
+		'firebase',  
 		'ngAnimate',
 		'ngMessages', 
-		'firebase', 
 		'ngSanitize', 
-		'ui.ace', 
-		'mgcrea.ngStrap', 
 		'ngClipboard',
+		'ngTagsInput',
+		'mgcrea.ngStrap',
+		'ui.ace', 
+		'ui.layout',
 		'luegg.directives',
-		'yaru22.angular-timeago',
 		'toaster',
-		'ngTagsInput'
+		'yaru22.angular-timeago',
 	])
 	.config(function($dropdownProvider, ngClipProvider ) { 
 

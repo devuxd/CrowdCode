@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
-import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviourDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviorDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
@@ -308,11 +308,11 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 	//  MICROTASK COMPLETION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
-	public void describeFunctionBehaviorCompleted(DescribeFunctionBehaviourDTO dto)
+	public void describeFunctionBehaviorCompleted(DescribeFunctionBehaviorDTO dto)
 	{
+		System.out.println("DTO RECEIVED : "+dto.toString());
 		describeFunctionBehaviorOut = null;
-		for( TestDTO testDTO : dto.testSuite ){
-
+		for( TestDTO testDTO : dto.tests ){
 			if(testDTO.deleted)
 				TestCommand.delete(testDTO.id);
 
@@ -324,7 +324,7 @@ public class Function extends Artifact
 
 		}
 
-		if( dto.isFunctionComplete )
+		if( dto.isDescribeComplete )
 			this.isCompleted = true;
 
 		lookForWork();

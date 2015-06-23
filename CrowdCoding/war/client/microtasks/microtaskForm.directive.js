@@ -19,6 +19,8 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				'WriteTest': 'write_test/write_test',
 				'WriteTestCases': 'write_test_cases/write_test_cases',
 				'WriteCall': 'write_call/write_call',
+				'DescribeFunctionBehavior': 'describe_behavior/describe_behavior',
+				'ImplementBehavior': 'implement_behavior/implement_behavior',
 				'ChallengeReview': 'challenge_review/challenge_review'
 			};
 
@@ -48,6 +50,7 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 			};
 
 
+
 			// ------- MESSAGE LISTENERS ------- //
 
 			$scope.$on('fecthMicrotask' , fetchMicrotask);
@@ -70,12 +73,8 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				$scope.microtask = microtask;
 
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionID))
-					$scope.funct = functionsService.get($scope.microtask.functionID);
-
-				// retrieve the related test
-				if ( angular.isDefined($scope.microtask.testID) )
-					$scope.test = TestList.get($scope.microtask.testID).rec;
+				if (angular.isDefined($scope.microtask.functionId))
+					$scope.funct = functionsService.get($scope.microtask.functionId);
 
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
@@ -126,7 +125,7 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				// if the form is valid, submit the microtask
 				if($scope.canSubmit){
 					if( $scope.model.startBreak ) { $scope.breakMode = true; $scope.model.startBreak = false; }
-					$scope.templatePath   = templatesURL + "loading.html";
+					$scope.templatePath = templatesURL + "loading.html";
 					$scope.canSubmit=false;
 					microtasks.submit($scope.microtask,formData,autoSkip, !$scope.breakMode);
 				}

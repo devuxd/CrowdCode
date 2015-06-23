@@ -135,8 +135,15 @@ angular
 			var deferred = $q.defer();
 			var url = '';
 
-			if( type != 'question' || formData.id == 0 ) url = 'insert?type=' + type;
-			else                   url = 'update?id=' + formData.id;
+			if( type != 'question' || formData.id == 0 ) 
+				url = 'insert?type=' + type;
+			else                   
+				url = 'update?id=' + formData.id;
+
+			// replace all the occurrences of the newline '\n' with the html <br>
+			// TODO: check for other formatting syntax
+			formData.text = formData.text.replace(new RegExp('\n', 'g'),'<br />');
+			
 
 			$http.post('/' + $rootScope.projectId + '/questions/' + url , formData)
 				.success(function(data, status, headers, config) {

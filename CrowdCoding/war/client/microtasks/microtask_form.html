@@ -1,10 +1,10 @@
-<form name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
+<form id="microtaskForm" name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
 	<div id="task" class="task" microtask >
 		<ng-include class="{{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}" src="templatePath"></ng-include>
 	</div>
 	<reminder></reminder>
 
-	<div class="button-bar">
+	<div class="actions">
 		<div class="btn-group">
 		
 			<button
@@ -28,7 +28,7 @@
 			   bs-popover>
 			   Confused?
 			</button>
-		
+
 
 		  	<button type="button" 
       			id="submitBtn"

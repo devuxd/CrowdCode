@@ -26,6 +26,7 @@ angular
 			this.readOnly 			= this.rec.readOnly;
 			this.version 			= this.rec.version;
 			this.written 			= this.rec.written;
+			this.parameters         = this.rec.parameters;
 			this.fullDescription 	= this.getFullDescription();
 			this.signature			= this.getSignature();
 			this.functionCode 		= this.getFunctionCode();
@@ -81,7 +82,7 @@ angular
 					return  splittedDescription.pop();
 			}
 		},
-		getDescription 		: function(){ 
+		getDescription : function(){ 
 			if(this.rec.described!==false)
 				return this.rec.description;
 			else
@@ -96,25 +97,28 @@ angular
 			if(this.getDescription()===undefined)
 				return "";
 			
-			var numParams = 0;
+			var descriptionLines = this.getDescription().split('\n');
 
-			var fullDescription = '/**\n' + this.getDescription() + '\n';
-
-			if(this.rec.parameters!==undefined && this.rec.parameters.length>0)
-			{
-	    		for(var i=0; i<this.rec.parameters.length; i++)
-				{
-					fullDescription += '  @param ' + this.rec.parameters[i].type + ' ' + this.rec.parameters[i].name + ', ' + this.rec.parameters[i].description + '\n';
-
-				}
+			if(this.rec.parameters!==undefined && this.rec.parameters.length>0){
+				for(var i=0; i<this.rec.parameters.length; i++)
+					descriptionLines.push(
+						[ 
+							'@param',
+							'{' + this.rec.parameters[i].type + '}',
+							this.rec.parameters[i].name,
+							'- ' + this.rec.parameters[i].description
+						].join(' ')
+					);
 			}
 
 			if(this.rec.returnType!=='')
-				fullDescription += '\n  @return ' + this.rec.returnType + ' \n';
+				descriptionLines.push('@returns {' + this.rec.returnType + '}');
 
-			fullDescription+='**/\n';
-			return fullDescription;
+			return '/**\n'
+				 + ' * '+descriptionLines.join('\n * ') + '\n'
+				 + '*/\n';
 		},
+
 		getSignature: function(){
 			return this.getFullDescription() + this.getHeader();
 		},

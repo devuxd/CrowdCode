@@ -324,6 +324,8 @@ public class Project
 			HistoryLog
 				.Init(this.getID())
 				.addEvent(new MicrotaskUnassigned( assignedMtask, workerID));
+			
+			FirebaseService.writeMicrotaskAssigned( assignedMicrotaskKey , workerID, project.getID(), false);
 		}
 
 	}
@@ -429,18 +431,18 @@ public class Project
 				// If reviewing is enabled and the microtask
 				// is not in [Review, ReuseSearch,DebugTestFailure],
 				// spawn a new review microtask
-					if (reviewsEnabled && !( microtask.getClass().equals(Review.class) || microtask.getClass().equals(ChallengeReview.class)) ){
-						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-					}
-					// else submit the microtask
-					else {
-						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-					}
+				if (reviewsEnabled && !( microtask.getClass().equals(Review.class) || microtask.getClass().equals(ChallengeReview.class)) ){
+					MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
+				}
+				// else submit the microtask
+				else {
+					MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+				}
 
 
-					// write the history log entry about the microtask submission
-					HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
-					FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
+				// write the history log entry about the microtask submission
+				HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
+				FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
 			}
 		}
 		else

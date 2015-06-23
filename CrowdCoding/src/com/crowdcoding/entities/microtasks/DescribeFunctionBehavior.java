@@ -4,7 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviourDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviorDTO;
 import com.crowdcoding.dto.firebase.microtasks.DescribeFunctionBehaviourInFirebase;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.artifacts.Artifact;
@@ -161,7 +161,7 @@ public class DescribeFunctionBehavior extends Microtask
 	protected void doSubmitWork(DTO dto, String workerId)
 	{
 		Function function= functionRef.get();
-		function.describeFunctionBehaviorCompleted((DescribeFunctionBehaviourDTO)dto);
+		function.describeFunctionBehaviorCompleted((DescribeFunctionBehaviorDTO)dto);
 
 		WorkerCommand.awardPoints(workerId, this.submitValue);
 //		// increase the stats counter
@@ -180,7 +180,7 @@ public class DescribeFunctionBehavior extends Microtask
 
 	protected Class getDTOClass()
 	{
-		return DescribeFunctionBehavior.class;
+		return DescribeFunctionBehaviorDTO.class;
 	}
 
 	public PromptType getPromptType()
