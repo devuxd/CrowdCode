@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.entities.Artifacts.Test;
+import com.crowdcoding.entities.artifacts.Test;
 
 
 public class StubDTO extends DTO

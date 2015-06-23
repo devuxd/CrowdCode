@@ -3,7 +3,7 @@ package com.crowdcoding.history;
 import java.util.Date;
 
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.entities.Artifacts.Artifact;
+import com.crowdcoding.entities.artifacts.Artifact;
 
 /* A HistoryEvent captures a CrowdCoding event that is logged into the history stream.
  */

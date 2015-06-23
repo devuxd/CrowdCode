@@ -1,4 +1,4 @@
-package com.crowdcoding.entities.Artifacts;
+package com.crowdcoding.entities.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -19,7 +19,7 @@ import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.StubDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
-import com.crowdcoding.dto.firebase.artifact.FunctionInFirebase;
+import com.crowdcoding.dto.firebase.artifacts.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior;
 import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior.PromptType;
 import com.crowdcoding.entities.microtasks.ImplementBehavior;
@@ -258,8 +258,8 @@ public class Function extends Artifact
 
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
 
-
-		storeToFirebase(projectId);
+		lookForWork();
+		storeToFirebase();
 	}
 
 
@@ -342,7 +342,7 @@ public class Function extends Artifact
 			if(disputantId!=0){
 				notifyTestDisputeCompleted(disputantId);
 			}
-			createStub(dto.stubs);
+			createStub(dto.function.stubs);
 			onWorkEdit(dto.function, projectId);
 		}
 	}

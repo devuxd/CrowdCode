@@ -1,4 +1,4 @@
-package com.crowdcoding.dto.firebase.microtask;
+package com.crowdcoding.dto.firebase.microtasks;
 
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.microtask.submission.ReviewDTO;

@@ -1,4 +1,4 @@
-package com.crowdcoding.entities.Artifacts;
+package com.crowdcoding.entities.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 

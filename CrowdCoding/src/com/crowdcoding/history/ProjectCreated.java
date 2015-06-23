@@ -1,7 +1,7 @@
 package com.crowdcoding.history;
 
 import com.crowdcoding.entities.Project;
-import com.crowdcoding.entities.Artifacts.Artifact;
+import com.crowdcoding.entities.artifacts.Artifact;
 
 public class ProjectCreated extends HistoryEvent 
 {

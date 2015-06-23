@@ -1,4 +1,4 @@
-package com.crowdcoding.entities.Artifacts;
+package com.crowdcoding.entities.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -12,8 +12,8 @@ import sun.security.krb5.internal.crypto.DesCbcCrcEType;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
-import com.crowdcoding.dto.firebase.artifact.ADTInFirebase;
-import com.crowdcoding.dto.firebase.artifact.TestInFirebase;
+import com.crowdcoding.dto.firebase.artifacts.ADTInFirebase;
+import com.crowdcoding.dto.firebase.artifacts.TestInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;

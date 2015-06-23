@@ -17,5 +17,6 @@ public class FunctionDTO extends DTO
 	public String name;
 	public String code ;
 	public List<Long> calleeIds = new ArrayList<Long>();
-	public boolean isReadOnly = false;
+	public List<StubDTO> stubs = new ArrayList<StubDTO>();
+
 }

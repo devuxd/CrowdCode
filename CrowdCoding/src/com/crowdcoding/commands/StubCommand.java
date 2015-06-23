@@ -4,7 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.List;
 
-import com.crowdcoding.entities.Artifacts.Stub;
+import com.crowdcoding.entities.artifacts.Stub;
 import com.crowdcoding.servlets.ThreadContext;
 import com.googlecode.objectify.LoadResult;
 import com.googlecode.objectify.VoidWork;

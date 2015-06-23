@@ -19,64 +19,47 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 	});
 
 
-	$scope.ADTs = [];
 	$scope.functions = [];
 	$scope.projectName="";
 
 	function ADTs(){
-		this.rec= [ ];
+		this.rec= [];
+
 
 	}
+
 	ADTs.prototype.add = function (){
-		this.rec.push( new ADT());
+		this.rec.push( new ADT() );
 	};
+
+	ADTs.prototype.delete = function (index){
+		this.rec.splice(index,1);
+	};
+
 	function ADT(){
-		this.value;
+		this.description = "";
+		this.name        = "";
+		this.structure   = [{ name:"",	type:""	}];
+		this.examples    = [{ name:"",	value:"" }];
 	}
 
-	ADT.prototype.delete = function(){
-
-	};
-	$scope.addADT=function(){
-		var emptyAdt={	description:	"",
-						name: 			"",
-						structure:      [{ name:"",	type:""	}],
-						examples:      [{ name:"",	value:"" }]
-					 };
-
-		$scope.ADTs.push(emptyAdt);
+	ADT.prototype.addStructure = function(){
+		this.structure.push({name:"",type:""});
 	};
 
-	$scope.deleteADT=function(index)
-	{
-		$scope.ADTs.splice(index,1);
+	ADT.prototype.deleteStructure = function( structureIndex ){
+		this.structure.splice(structureIndex,1);
 	};
 
-
-	$scope.addStructure=function(ADTindex)
-	{
-		$scope.ADTs[ADTindex].structure.push({name:"",type:""});
+	ADT.prototype.addExample = function(){
+		this.examples.push({name:"",type:""});
 	};
 
-	$scope.deleteStructure=function(ADTindex,structureIndex)
-	{
-		if($scope.ADTs[ADTindex].structure.length>1)
-			$scope.ADTs[ADTindex].structure.splice(structureIndex,1);
+	ADT.prototype.deleteExample = function( exampleIndex ){
+		this.examples.splice(exampleIndex,1);
 	};
 
-	$scope.addExample=function(ADTindex)
-	{
-		if($scope.ADTs[ADTindex].examples===undefined)
-			$scope.ADTs[ADTindex].examples=[];
-
-		$scope.ADTs[ADTindex].examples.push({name:"",value:""});
-	};
-
-	$scope.deleteExample=function(ADTindex,exampleIndex)
-	{
-		if($scope.ADTs[ADTindex].examples.length>1)
-			$scope.ADTs[ADTindex].examples.splice(exampleIndex,1);
-	};
+	$scope.ADTs = new ADTs();
 
 	$scope.addFunction=function()
 	{

@@ -5,11 +5,11 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviourDTO;
-import com.crowdcoding.dto.firebase.microtask.DescribeFunctionBehaviourInFirebase;
+import com.crowdcoding.dto.firebase.microtasks.DescribeFunctionBehaviourInFirebase;
 import com.crowdcoding.entities.Project;
-import com.crowdcoding.entities.Artifacts.Artifact;
-import com.crowdcoding.entities.Artifacts.Function;
-import com.crowdcoding.entities.Artifacts.Test;
+import com.crowdcoding.entities.artifacts.Artifact;
+import com.crowdcoding.entities.artifacts.Function;
+import com.crowdcoding.entities.artifacts.Test;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSpawned;
 import com.crowdcoding.util.FirebaseService;
@@ -27,25 +27,25 @@ public class DescribeFunctionBehavior extends Microtask
 	public enum PromptType { WRITE, CORRECT, FUNCTION_CHANGED, CALLEE_CHANGED, ADT_CHANGED };
 
 	@Parent @Load Ref<Function> functionRef;
-	private long functionId;
+	private Long functionId;
 	private String functionName;
 
 	private PromptType promptType;
 
 	//Data for FUNCTION_CHANGED
-	private int oldFunctionVersion;
+	private Integer oldFunctionVersion;
 
 	//Data for ADT_CHANGED
-	private int oldADTVersion;
-	private long ADTId;
+	private Integer oldADTVersion;
+	private Long ADTId;
 
 	// Data for CORRECT
 	private String issueDescription;    // Description of the problem with the test case
-	private long issuedTestId;      // Text of the test case in dispute
+	private Long issuedTestId;      // Text of the test case in dispute
 
 	//Data for CALLEE_CHANGED
-	private int oldCalleeVersion;
-	private long calleeId;
+	private Integer oldCalleeVersion;
+	private Long calleeId;
 
 	// Default constructor for deserialization
 	private DescribeFunctionBehavior()

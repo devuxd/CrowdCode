@@ -79,8 +79,8 @@
 					n sets of brackets after the type name (e.g., 2 dimensional array - TypeName[][]). The description should describe
 					any rules about the ADT and include an example of a value of the ADT in JSON format.<BR><BR>
 					</span>
-					<div  ng-repeat="(ADTindex, ADT) in ADTs track by $index"   class="row">
-						<div ng-form="ADTForm{{$index}}" class="col-sm-10 form-horizontal" role="form">
+					<div  ng-repeat=" (ADTindex, ADT) in ADTs.rec track by $index"   class="row">
+						<div ng-form="ADTForm{{ADTindex}}" class="col-sm-10 form-horizontal" role="form">
 							<div class="form-group">
 								<label for="description" class="col-sm-2 control-label reset-padding">description</label>
 								<div class="col-sm-10 reset-padding">
@@ -116,14 +116,14 @@
 											</div>
 											<div class="col-sm-3 reset-padding">
 												<input class="form-control pull-left" type="text" ng-model="structure.type" name="fieldType"
-												placeholder="Field Type" adt-validator required press-enter="addStructure(ADTindex)"/>
+												placeholder="Field Type" adt-validator required press-enter="ADT.addStructure()"/>
 												<ul class="help-block" ng-show="ADTStructureForm{{$index}}.fieldType.$dirty && ADTStructureForm{{$index}}.fieldType.$invalid">
 													<li ng-show="ADTStructureForm{{$index}}.fieldType.$error.required">This field is required!</li>
 													<li ng-show="ADTStructureForm{{$index}}.fieldType.$error.adt">Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).</li>
 												</ul>
 											</div>
 											<div class="col-sm-1 reset-padding pull-left">
-												<button ng-click="deleteStructure(ADTindex,$index)" class="btn  pull-right">X</button>
+												<button ng-click="ADT.deleteStructure($index)" class="btn  pull-right">X</button>
 											</div>
 										</div>
 									</div>
@@ -131,7 +131,7 @@
 							</div>
 							<div class="form-group">
 								<div class="col-sm-12 reset-padding">
-									<button ng-click="addStructure(ADTindex)" class="btn btn-mini pull-right">Add Field</button>
+									<button ng-click="ADT.addStructure()" class="btn btn-mini pull-right">Add Field</button>
 								</div>
 							</div>
 							<div class="form-group col-sm-12">
@@ -147,32 +147,31 @@
 										</div>
 										<div ng-form="exampleForm" class="col-sm-5 reset-padding">
 											<textarea class="form-control" type="text" ng-model="example.value" name="exampleValue"
-											placeholder="Insert the value of the example" json-validator="{{ADT.name}}" required press-enter="addExample(ADTindex)"></textarea>
+											placeholder="Insert the value of the example" json-validator="{{ADT.name}}" required press-enter="ADT.addExample()"></textarea>
 											<ul class="help-block" ng-show="exampleForm.exampleValue.$dirty && exampleForm.exampleValue.$invalid">
 												<li ng-show="exampleForm.exampleValue.$error.required">This field is required!</li>
 												<li ng-show="exampleForm.exampleValue.$error.json" ng-repeat="error in exampleForm.exampleValue.$error.json">{{error}}</li>
 											</ul>
 										</div>
 										<div class="col-sm-1 reset-padding">
-											<button ng-click="deleteExample(ADTindex,$index)" class="btn  pull-right">X</button>
+											<button ng-click="ADT.deleteExample($index)" class="btn  pull-right">X</button>
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-sm-12 reset-padding">
-									<button ng-click="addExample(ADTindex)" class="btn btn-mini pull-right">Add Example</button>
+									<button ng-click="ADT.addExample()" class="btn btn-mini pull-right">Add Example</button>
 								</div>
 							</div>
 							<div ng-show="ADTindex!=ADTs.length-1" class="line-separator"></div>
 						</div>
 						<div class="col-sm-1">
-							<button ng-click="deleteADT(ADTindex)" class="btn  pull-right">X</button>
+							<button ng-click="ADTs.delete($index)" class="btn  pull-right">X</button>
 						</div>
 					</div>
-					<button ng-click="addADT()" class="btn btn-small">Add ADT</button>
+					<button ng-click="ADTs.add()" class="btn btn-small">Add ADT</button>
 				</div>
-				
 			</div>
 			<div class="section section-description">
 				<div class="section-title" >

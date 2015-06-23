@@ -1,4 +1,4 @@
-package com.crowdcoding.dto.firebase.artifact;
+package com.crowdcoding.dto.firebase.artifacts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
