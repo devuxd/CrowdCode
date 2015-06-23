@@ -6,7 +6,6 @@ import com.googlecode.objectify.Key;
 
 public class ChallengeReviewInFirebase extends MicrotaskInFirebase
 {
-	public long functionID;
 	public String challengeText;
 	public String microtaskKeyUnderChallenge;
 
@@ -14,12 +13,11 @@ public class ChallengeReviewInFirebase extends MicrotaskInFirebase
 	{
 	}
 
-	public ChallengeReviewInFirebase(long id, String title, String type, String owningArtifact, Long owningArtifactId, long functionId, boolean completed, boolean canceled, int points,
+	public ChallengeReviewInFirebase(long id, String title, String type, String owningArtifact, Long owningArtifactId, long functionId, int points,
 			 String challengeText, Key<Microtask> microtaskKeyUnderChallenge)
 	{
-		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled,  points);
+		super(id,title, type, owningArtifact, owningArtifactId, points, functionId);
 		this.microtaskKeyUnderChallenge = Microtask.keyToString(microtaskKeyUnderChallenge);
-		this.functionID = functionId;
 		this.challengeText = challengeText;
 
 	}

@@ -45,11 +45,6 @@ public abstract class MicrotaskCommand extends Command
 		{ return new RejectMicrotask(microtaskKey, excludedWorkerID, awardedPoint); }
 
 
-	public static MicrotaskCommand cancelMicrotask(Key<Microtask> microtaskKey) {
-		return new CancelMicrotask(microtaskKey);
-
-	}
-
 	private MicrotaskCommand( Key<Microtask> microtaskKey )
 	{
 		this.microtaskKey = microtaskKey;
@@ -228,20 +223,5 @@ public abstract class MicrotaskCommand extends Command
 			microtask.revise(jsonDTOData, excludedWorkerID ,awardedPoint,reissueMotivation, projectId);
 		}
 	}
-	protected static class CancelMicrotask extends MicrotaskCommand
-	{
 
-		public CancelMicrotask(Key<Microtask> microtaskKey)
-		{
-			super(microtaskKey);
-		}
-
-		// Overrides the default execute as no microtask is to be loaded.
-		public void execute(Microtask microtask, String projectId)
-		{
-			microtask.setCanceled(true);
-			FirebaseService.writeMicrotaskCanceled( Microtask.keyToString(microtask.getKey()), true, projectId );
-			ofy().save().entity(microtask).now();
-		}
-	}
 }

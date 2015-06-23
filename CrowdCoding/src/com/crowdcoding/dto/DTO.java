@@ -37,16 +37,6 @@ public abstract class DTO
 		ObjectMapper mapper = new ObjectMapper();
 		DTO dto = null;
 		dto = (DTO) mapper.readValue(jsonDTOData, dtoClass);
-//		try {
-//
-//		} catch( JsonParseException e) {
-//			e.printStackTrace();
-//		} catch( JsonMappingException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-
 		return dto;
 	}
 }

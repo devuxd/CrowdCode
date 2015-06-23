@@ -12,8 +12,9 @@ public class MicrotaskInFirebase extends DTO
 	public Long owningArtifactId;
 	public String owningArtifact;
 	public boolean completed;
-	public boolean canceled;
 	public int points;
+	public Long functionId;
+
 
 	// Default constructor (required by Jackson JSON library)
 	public MicrotaskInFirebase()
@@ -21,15 +22,15 @@ public class MicrotaskInFirebase extends DTO
 	}
 
 	public MicrotaskInFirebase(long id, String title, String type, String owningArtifact,
-			Long owningArtifactId, boolean completed, boolean canceled, int points) {
-		this.id = id;
-		this.title= title;
-		this.type = type;
-		this.owningArtifact = owningArtifact;
-		this.owningArtifactId = owningArtifactId;
-		this.completed = completed;
-		this.canceled = canceled;
-		this.points = points;
+			Long owningArtifactId, int points, Long functionId) {
+		this.id 				= id;
+		this.title				= title;
+		this.type 				= type;
+		this.owningArtifact 	= owningArtifact;
+		this.owningArtifactId	= owningArtifactId;
+		this.points 			= points;
+		this.functionId 		= functionId;
+		this.completed 			= false;
 
 	}
 }

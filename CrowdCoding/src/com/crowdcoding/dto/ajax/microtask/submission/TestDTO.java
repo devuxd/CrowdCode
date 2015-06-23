@@ -1,42 +1,23 @@
 package com.crowdcoding.dto.ajax.microtask.submission;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.entities.Artifacts.Test;
+
 
 public class TestDTO extends DTO
 {
-	public String messageType = "TestDTO";
-	public Long functionID ;
-	public String functionName  = "";
-	public int functionVersion;		// version of the function under test that the worker saw when authoring this test.
-	public String code = "";
-	public String description = "";
-	public boolean hasSimpleTest;	// is there a simple test defined for this test?
-	public boolean inDispute;	    // is something disputed?
-	public String disputeFunctionText ="";      // only available if the function is in dispute.
-	public String disputeTestText ="";      // only available if the test is in dispute.
+	public String description;
+	public String code;
+	public boolean deleted;
+	public boolean added;
+	public long id;				// id of the corresponding test. Only valid if added is false.
 
-	public List<String> simpleTestInputs = new ArrayList<String>();
-	public String simpleTestOutput;
 
-	// Default constructor (required by Jackson JSON library)
+	// Default constructor
 	public TestDTO()
 	{
 	}
 
-	public TestDTO(String code, boolean hasSimpleTest,
-			List<String> simpleTestInputs, String simpleTestOutput,
-			String disputeFunctionText, String disputeTestText)
-	{
-		this.code = code;
-		this.hasSimpleTest = hasSimpleTest;
-		this.simpleTestInputs = simpleTestInputs;
-		this.simpleTestOutput = simpleTestOutput;
-		this.inDispute = false;
-		this.disputeFunctionText=disputeFunctionText;
-		this.disputeTestText=disputeTestText;
-
-	}
 }

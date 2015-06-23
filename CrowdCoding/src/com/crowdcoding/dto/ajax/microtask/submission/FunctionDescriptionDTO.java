@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.TestDescriptionDTO;
+import com.crowdcoding.dto.ClientRequestDTO;
 
 
 public class FunctionDescriptionDTO extends DTO
@@ -18,7 +18,7 @@ public class FunctionDescriptionDTO extends DTO
 	public String header;
 	public String description;
 	public String code;
-	public List<TestDescriptionDTO> tests;
+	public List<ClientRequestDTO> tests;
 	public boolean inDispute;
 	public String disputeFunctionText;
 	public long callerId;

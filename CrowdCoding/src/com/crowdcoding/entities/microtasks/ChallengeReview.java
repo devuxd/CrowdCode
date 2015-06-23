@@ -14,9 +14,9 @@ import com.crowdcoding.dto.firebase.NewsItemInFirebase;
 import com.crowdcoding.dto.firebase.microtask.ChallengeReviewInFirebase;
 import com.crowdcoding.dto.firebase.notification.ChallengeNotificationInFirebase;
 import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
-import com.crowdcoding.entities.Artifact;
-import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.Artifacts.Artifact;
+import com.crowdcoding.entities.Artifacts.Function;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAccepted;
 import com.crowdcoding.history.MicrotaskReissued;
@@ -70,10 +70,8 @@ public class ChallengeReview extends Microtask
 				this.microtaskTitle(),
 				this.microtaskName(),
 				this.artifact.get().getName(),
-				this.artifact.get().getID(),
+				this.artifact.get().getId(),
 				functionId,
-				false,
-				false,
 				submitValue,
 				this.challengeText,
 				microtaskKeyUnderChallenge

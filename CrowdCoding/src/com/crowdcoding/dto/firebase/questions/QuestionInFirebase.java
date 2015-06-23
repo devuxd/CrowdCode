@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.entities.Question;
 
 public class QuestionInFirebase extends DTO
 {

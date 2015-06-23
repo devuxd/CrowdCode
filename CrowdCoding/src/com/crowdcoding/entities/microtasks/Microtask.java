@@ -10,8 +10,8 @@ import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.firebase.microtask.*;
-import com.crowdcoding.entities.Artifact;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.Artifacts.Artifact;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSkipped;
 import com.crowdcoding.history.MicrotaskSubmitted;
@@ -58,7 +58,7 @@ public /*abstract*/ class Microtask
 	@Id protected Long id;
 	@Index String projectId;
 
-	protected boolean canceled = false;
+	protected boolean assigned = false;
 	protected boolean completed = false;
 	protected String reissuedFrom = "";
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
@@ -251,12 +251,6 @@ public /*abstract*/ class Microtask
 		return (LoadResult<Microtask>) ofy().load().key(microtaskKey);
 	}
 
-	public String toString()
-	{
-		return "" + this.id + " " + this.getClass().getSimpleName() +
-				(this.getOwningArtifact() != null ? (" on " + this.getOwningArtifact().getName()) : "") +
-				(completed ? " completed " : " incomplete ") + "points: " + submitValue;
-	}
 	public String toJSON(){
 		return toJSON(new JSONObject());
 	}
@@ -283,13 +277,5 @@ public /*abstract*/ class Microtask
 		boolean isAssigned= this.getWorkerId() != null && this.getWorkerId().equals( workerId );
 
 		return isAssigned;
-	}
-
-	public void setCanceled(Boolean value){
-		canceled = value;
-	}
-
-	public Boolean isCanceled(){
-		return canceled;
 	}
 }

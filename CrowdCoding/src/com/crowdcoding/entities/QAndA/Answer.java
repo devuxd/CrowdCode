@@ -1,4 +1,4 @@
-package com.crowdcoding.entities;
+package com.crowdcoding.entities.QAndA;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 

@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JApplet;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -35,27 +34,20 @@ import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.QuestioningCommand;
-import com.crowdcoding.dto.ajax.microtask.submission.ChallengeReviewDTO;
-import com.crowdcoding.entities.Answer;
-import com.crowdcoding.entities.Artifact;
-import com.crowdcoding.entities.Comment;
-import com.crowdcoding.entities.Function;
+import com.crowdcoding.entities.Artifacts.ADT;
+import com.crowdcoding.entities.Artifacts.Artifact;
+import com.crowdcoding.entities.Artifacts.Function;
+import com.crowdcoding.entities.Artifacts.Stub;
+import com.crowdcoding.entities.Artifacts.Test;
+import com.crowdcoding.entities.QAndA.*;
 import com.crowdcoding.entities.Project;
-import com.crowdcoding.entities.Question;
-import com.crowdcoding.entities.Questioning;
-import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.UserPicture;
 import com.crowdcoding.entities.Worker;
 import com.crowdcoding.entities.microtasks.ChallengeReview;
-import com.crowdcoding.entities.microtasks.DebugTestFailure;
+import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior;
 import com.crowdcoding.entities.microtasks.Microtask;
-import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
-import com.crowdcoding.entities.microtasks.WriteCall;
-import com.crowdcoding.entities.microtasks.WriteFunction;
-import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
-import com.crowdcoding.entities.microtasks.WriteTest;
-import com.crowdcoding.entities.microtasks.WriteTestCases;
+import com.crowdcoding.entities.microtasks.ImplementBehavior;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskDequeued;
 import com.crowdcoding.history.MicrotaskDequeuedFromWorkerQueue;
@@ -71,6 +63,7 @@ import com.google.appengine.api.log.LogServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.labs.repackaged.com.google.common.collect.LinkedListMultimap;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
@@ -97,20 +90,19 @@ public class CrowdServlet extends HttpServlet
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Worker.class);
+
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Function.class);
 		ObjectifyService.register(Test.class);
+		ObjectifyService.register(Stub.class);
+		ObjectifyService.register(ADT.class);
+
 		ObjectifyService.register(UserPicture.class);
 
 		ObjectifyService.register(Microtask.class);
-		ObjectifyService.register(ReuseSearch.class);
 		ObjectifyService.register(Review.class);
-		ObjectifyService.register(WriteFunction.class);
-		ObjectifyService.register(DebugTestFailure.class);
-		ObjectifyService.register(WriteCall.class);
-		ObjectifyService.register(WriteFunctionDescription.class);
-		ObjectifyService.register(WriteTest.class);
-		ObjectifyService.register(WriteTestCases.class);
+		ObjectifyService.register(ImplementBehavior.class);
+		ObjectifyService.register(DescribeFunctionBehavior.class);
 		ObjectifyService.register(ChallengeReview.class);
 
 		ObjectifyService.register(Questioning.class);
@@ -437,17 +429,13 @@ public class CrowdServlet extends HttpServlet
 	private void doSubmitTestResult(final HttpServletRequest req, final HttpServletResponse resp) throws IOException, FileUploadException {
 
 		final String projectID = (String) req.getAttribute("project");
-		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
-		final long functionID = Long.parseLong(req.getParameter("functionID"));
+		final boolean areTestsPassed  = Boolean.parseBoolean(req.getParameter("areTestsPassed"));
+		final long testSuiteId = Long.parseLong(req.getParameter("testSuiteId"));
+		final long failedTestId = Long.parseLong(req.getParameter("failedTestId"));
 
-		System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
+	//	System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
 
-		ThreadContext.get().reset();
-
-		if(result)
-			FunctionCommand.passedTests(functionID);
-		else
-			FunctionCommand.failedTests(functionID);
+		FunctionCommand.submittedTestResult(testSuiteId, areTestsPassed, failedTestId);
 
 		executeCommands(projectID);
 	}
@@ -494,19 +482,19 @@ public class CrowdServlet extends HttpServlet
 		QuestioningCommand.updateQuestion(questionId, payload, workerId);
 		executeCommands(projectId);
 	}
-	
+
 	public void doViewQuestion(final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		final String projectId  = (String) req.getAttribute("project");
 		final long   questionId = Long.parseLong((String) req.getParameter("id"));
 		final String workerId     = user.getUserId();
-		
+
 		// Reset the actual Thread Context
 		ThreadContext.get().reset();
 		QuestioningCommand.addQuestionView(questionId,workerId);
 		executeCommands(projectId);
 	}
-	
+
 
 	public void doReportQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
@@ -869,7 +857,7 @@ public class CrowdServlet extends HttpServlet
 	private void executeCommands(final String projectId)
 	{
 		ThreadContext starting = ThreadContext.get();
-		LinkedBlockingQueue<Command> commandQueue    = new LinkedBlockingQueue<Command>(starting.getCommands());
+		LinkedList<Command> commandQueue    = new LinkedList<Command>(starting.getCommands());
 
 		// Execute commands until done, adding commands as created.
 	    while(! commandQueue.isEmpty()) {
@@ -891,7 +879,8 @@ public class CrowdServlet extends HttpServlet
 
 
             ThreadContext threadContext = ThreadContext.get();
-	    	commandQueue.addAll(threadContext.getCommands());
+            //adds the new commands generated at the beginning of the list
+	    	commandQueue.addAll(0,threadContext.getCommands());
 	    	//HistoryLog.Init(projectId).publish();
 
 	    	// history log writes and the other

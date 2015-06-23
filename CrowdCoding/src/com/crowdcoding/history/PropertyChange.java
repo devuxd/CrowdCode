@@ -1,6 +1,6 @@
 package com.crowdcoding.history;
 
-import com.crowdcoding.entities.Artifact;
+import com.crowdcoding.entities.Artifacts.Artifact;
 
 public class PropertyChange extends HistoryEvent 
 {

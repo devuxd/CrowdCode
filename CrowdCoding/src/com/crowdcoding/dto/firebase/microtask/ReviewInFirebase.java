@@ -7,19 +7,16 @@ import com.googlecode.objectify.Key;
 public class ReviewInFirebase extends MicrotaskInFirebase
 {
 	public String microtaskKeyUnderReview;
-	public long functionID;
-
 
 	public ReviewInFirebase()
 	{
 	}
 
-	public ReviewInFirebase(long id, String title, String type, String owningArtifact, Long owningArtifactId, long functionId, boolean completed, boolean canceled, int points,
+	public ReviewInFirebase(long id, String title, String type, String owningArtifact, Long owningArtifactId, long functionId, int points,
 			 Key<Microtask> microtaskKeyUnderReview)
 	{
-		super(id,title, type, owningArtifact, owningArtifactId, completed, canceled,  points);
+		super(id,title, type, owningArtifact, owningArtifactId,  points, functionId);
 		this.microtaskKeyUnderReview = Microtask.keyToString(microtaskKeyUnderReview);
-		this.functionID = functionId;
 
 	}
 }

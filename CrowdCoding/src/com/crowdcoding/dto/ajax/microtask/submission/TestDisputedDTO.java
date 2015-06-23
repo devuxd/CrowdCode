@@ -7,7 +7,6 @@ import com.crowdcoding.dto.DTO;
 
 public class TestDisputedDTO extends DTO
 {
-	public String messageType = "TestDisputedDTO";
 	public Long id ;
 	public String disputeText ="";      // only available if the test is in dispute.
 

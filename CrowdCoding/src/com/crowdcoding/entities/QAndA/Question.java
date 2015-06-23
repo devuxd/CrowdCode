@@ -1,4 +1,4 @@
-package com.crowdcoding.entities;
+package com.crowdcoding.entities.QAndA;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
@@ -11,13 +11,10 @@ import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.QuestioningCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.ajax.microtask.submission.DebugDTO;
-import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
 import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.notification.QuestionNotificationInFirebase;
 import com.crowdcoding.dto.firebase.questions.*;
 import com.crowdcoding.entities.microtasks.Microtask;
-import com.crowdcoding.entities.microtasks.WriteTest;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;

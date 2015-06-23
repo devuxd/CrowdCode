@@ -10,7 +10,7 @@ import com.crowdcoding.dto.firebase.NewsItemInFirebase;
 import com.crowdcoding.dto.firebase.notification.MicrotaskNotificationInFirebase;
 import com.crowdcoding.dto.firebase.microtask.ReviewInFirebase;
 import com.crowdcoding.dto.firebase.microtask.ReviewSubmissionInFirebase;
-import com.crowdcoding.entities.Artifact;
+import com.crowdcoding.entities.Artifacts.Artifact;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAccepted;
 import com.crowdcoding.history.MicrotaskReissued;
@@ -55,12 +55,10 @@ public class Review extends Microtask
 				this.microtaskTitle(),
 				this.microtaskName(),
 				this.artifact.get().getName(),
-				this.artifact.get().getID(),
+				this.artifact.get().getId(),
 				functionId,
-				false,
-				false,
 				submitValue,
-				 microtaskKeyUnderReview
+				microtaskKeyUnderReview
 				),
 				Microtask.keyToString(this.getKey()),
 				projectId);
