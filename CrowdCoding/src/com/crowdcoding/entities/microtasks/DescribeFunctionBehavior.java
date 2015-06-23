@@ -33,19 +33,19 @@ public class DescribeFunctionBehavior extends Microtask
 	private PromptType promptType;
 
 	//Data for FUNCTION_CHANGED
-	private Integer oldFunctionVersion;
+	private int oldFunctionVersion;
 
 	//Data for ADT_CHANGED
-	private Integer oldADTVersion;
-	private Long ADTId;
+	private int oldADTVersion;
+	private long ADTId;
 
 	// Data for CORRECT
 	private String issueDescription;    // Description of the problem with the test case
-	private Long issuedTestId;      // Text of the test case in dispute
+	private long issuedTestId;      // Text of the test case in dispute
 
 	//Data for CALLEE_CHANGED
-	private Integer oldCalleeVersion;
-	private Long calleeId;
+	private int oldCalleeVersion;
+	private long calleeId;
 
 	// Default constructor for deserialization
 	private DescribeFunctionBehavior()
