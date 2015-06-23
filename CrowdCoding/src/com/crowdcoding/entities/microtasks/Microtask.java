@@ -116,6 +116,7 @@ public /*abstract*/ class Microtask
 
 		try {
 			DTO dto = DTO.read(jsonDTOData, getDTOClass());
+
 			doSubmitWork(dto, workerID, projectId);
 
 			this.completed = true;
