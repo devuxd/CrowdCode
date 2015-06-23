@@ -72,6 +72,7 @@ angular
 	};
 
 
+
 	// distributed test work
     user.listenForJobs = function(){
 		// worker
@@ -149,11 +150,12 @@ angular
     user.listenForLogoutWorker = function(){
     	var logoutQueue     = new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
 
+
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 
 			//retrieves the reference to the worker to log out
 			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
-
+			console.log("sono qua");
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 
@@ -183,7 +185,7 @@ angular
 						whenFinished();
 					}
 				});
-			};
+			}
 		});
 	};
 

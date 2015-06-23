@@ -221,7 +221,6 @@ angular
         else {
 
             formData = {
-                microtaskIDReviewed     : $scope.microtask.microtaskKeyUnderReview,
                 reviewText              :($scope.review.reviewText ===undefined ? "" : $scope.review.reviewText),
                 qualityScore            : $scope.review.rating,
                 fromDisputedMicrotask   :($scope.review.microtask.submission.inDispute ===true ? true : false)

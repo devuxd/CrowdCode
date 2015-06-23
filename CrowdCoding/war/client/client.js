@@ -28,7 +28,7 @@ angular
     .constant('projectId'  ,projectId)
 	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
 	.constant('logoutUrl'  ,logoutURL)
-	.run(function($rootScope, $interval, $modal, $firebase, firebaseUrl, logoutUrl, userService,  functionsService, ADTService, avatarFactory, questionsService, notificationsService ){
+	.run(function($rootScope, $interval, $modal, $firebase, firebaseUrl, logoutUrl, userService,  functionsService, ADTService, avatarFactory, questionsService, notificationsService, newsfeedService ){
 
 		// current session variables
 		$rootScope.projectId    = projectId;
@@ -57,12 +57,16 @@ angular
 			ADTService.init();
 			questionsService.init();
 			notificationsService.init();
+			newsfeedService.init();
 		}
 
 		function serviceLoaded(event,nameOfTheService){
 			servicesLoadingStatus[nameOfTheService] = true;
 
-			if ( servicesLoadingStatus.hasOwnProperty('functions') && servicesLoadingStatus.hasOwnProperty('adts') && servicesLoadingStatus.hasOwnProperty('questions') ) {
+			if ( servicesLoadingStatus.hasOwnProperty('functions') &&
+				 servicesLoadingStatus.hasOwnProperty('adts') &&
+				 servicesLoadingStatus.hasOwnProperty('questions') &&
+				 servicesLoadingStatus.hasOwnProperty('newsfeed')) {
 
 				$interval.cancel(loadingServicesInterval);
 				loadingServicesInterval = undefined;

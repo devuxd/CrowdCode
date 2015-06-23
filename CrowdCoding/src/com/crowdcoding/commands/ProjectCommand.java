@@ -7,7 +7,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.HashSet;
 
-import com.crowdcoding.dto.firebase.NotificationInFirebase;
+import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.servlets.ThreadContext;
@@ -42,6 +42,9 @@ public abstract class ProjectCommand extends Command
 
 	public static ProjectCommand queueReviewMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID) {
 		return new QueueReviewMicrotask(microtaskKey, excludedWorkerID);
+	}
+	public static ProjectCommand queueChallengeReviewMicrotask(Key<Microtask> microtaskKey, String firstExcludedWorkerID, String secondExcludedWorkerID) {
+		return new QueueChallengeReviewMicrotask(microtaskKey, firstExcludedWorkerID, secondExcludedWorkerID);
 	}
 
 	public static ProjectCommand skipMicrotask( String microtaskKey, String workerID , Boolean disablePoint) {
@@ -191,7 +194,6 @@ public abstract class ProjectCommand extends Command
 			project.queueMicrotask(microtaskKey, excludedWorkerID);
 		}
 	}
-
 	// queue a review microtask in the project
 	protected static class QueueReviewMicrotask extends ProjectCommand
 	{
@@ -208,6 +210,29 @@ public abstract class ProjectCommand extends Command
 		public void execute(Project project)
 		{
 			project.queueReviewMicrotask(microtaskKey, excludedWorkerID);
+		}
+	}
+
+	// queue a challenge review microtask in the project
+	protected static class QueueChallengeReviewMicrotask extends ProjectCommand
+	{
+		private Key<Microtask> microtaskKey;
+		private String firstExcludedWorkerID;
+		private String secondExcludedWorkerID;
+
+
+		public QueueChallengeReviewMicrotask( Key<Microtask> microtaskKey, String firstExcludedWorkerID, String secondExcludedWorkerID)
+		{
+			super();
+			this.microtaskKey = microtaskKey;
+			this.firstExcludedWorkerID = firstExcludedWorkerID;
+			this.secondExcludedWorkerID = secondExcludedWorkerID;
+
+		}
+
+		public void execute(Project project)
+		{
+			project.queueChellengeReviewMicrotask(microtaskKey, firstExcludedWorkerID, secondExcludedWorkerID);
 		}
 	}
 

@@ -37,5 +37,18 @@
             </div>
             <span ng-if="selectedNews.reviewText"> <b>Review: </b>{{selectedNews.reviewText}}</span>
         </div>
+        <a href="#" class="pull-right" ng-init="show=false" ng-show="!show && selectedNews.canBeChallenged" ng-click="show=true">challenge this review</a>
+        <span class="clearfix"></span>
+        <form name="challengeForm" novalidate ng-show="show" ng-submit="challengeForm.$valid && challengeReview()">
+            <div class="form-group">
+                <textarea required name="text" class="form-control" ng-model="challengeText" placeholder="Challenge text"></textarea>
+            </div>
+            <span class="btn-group pull-right">
+                <button type="button" class="btn btn-xs btn-default" ng-click="show = false">Cancel</button>
+                <button type="submit" class="btn btn-xs btn-primary">Challenge</button>
+            </span>
+                
+            <div class="clearfix"></div>
+        </form>
     </div>
 </div>

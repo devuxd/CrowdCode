@@ -20,7 +20,8 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				'WriteTestCases': 'write_test_cases/write_test_cases',
 				'WriteCall': 'write_call/write_call',
 				'DescribeBehavior': 'describe_behavior/describe_behavior',
-				'ImplementBehavior': 'implement_behavior/implement_behavior'
+				'ImplementBehavior': 'implement_behavior/implement_behavior',
+				'ChallengeReview': 'challenge_review/challenge_review'
 			};
 
 			// initialize microtask and templatePath

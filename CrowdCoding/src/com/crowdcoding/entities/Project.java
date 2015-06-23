@@ -9,19 +9,23 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.crowdcoding.commands.ADTCommand;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
-import com.crowdcoding.commands.WorkerCommand;
+import com.crowdcoding.commands.StubCommand;
+import com.crowdcoding.dto.CRFunctionDTO;
+import com.crowdcoding.dto.ClientRequestDTO;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.DebugDTO;
-import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.FunctionDescriptionsDTO;
-import com.crowdcoding.dto.ReusedFunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ADTDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDescriptionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.StubDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
-import com.crowdcoding.entities.microtasks.DebugTestFailure;
+import com.crowdcoding.entities.artifacts.Artifact;
+import com.crowdcoding.entities.microtasks.ChallengeReview;
+import com.crowdcoding.entities.microtasks.ImplementBehavior;
 import com.crowdcoding.entities.microtasks.Microtask;
-import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAssigned;
@@ -31,13 +35,11 @@ import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.history.MicrotaskUnassigned;
 import com.crowdcoding.history.ProjectCreated;
 import com.crowdcoding.util.FirebaseService;
-import com.crowdcoding.util.IDGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext.Impl;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.VoidWork;
-import com.googlecode.objectify.Work;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Serialize;
@@ -55,7 +57,6 @@ public class Project
 
 	Ref<Microtask> chiave = null;
 
-	private IDGenerator idgenerator;
 
 	@Id private String id;
 
@@ -104,38 +105,27 @@ public class Project
 		// set the id
 		this.id = id;
 
-		// instantiate the id generator
-		idgenerator = new IDGenerator(false);
-
 		// save the project
 		ofy().save().entity(this).now();
 
 		// create log entry for the project created
 		HistoryLog.Init(this.getID()).addEvent(new ProjectCreated(this));
 
-		// Load ADTs from Firebase
-		FirebaseService.copyADTs(this.getID());
-
 		// Load functions from Firebase and
 		// for each function queue a function create command
-		String functions = FirebaseService.readClientRequestFunctions(this.getID());
-		FunctionDescriptionsDTO functionsDTO;
+		String functions = FirebaseService.readClientRequest(this.getID());
+		ClientRequestDTO dto;
 		try {
-			functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
+			dto = (ClientRequestDTO) DTO.read(functions, ClientRequestDTO.class);
 
-			for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
+			for (CRFunctionDTO CRfunctionDTO : dto.functions)
 			{
-				System.out.println("Creating function command "+functionDTO.name);
-				FunctionCommand.create(
-						functionDTO.name,
-						functionDTO.returnType,
-						functionDTO.parameters,
-						functionDTO.header,
-						functionDTO.description,
-						functionDTO.code,
-						functionDTO.tests,
-						functionDTO.readOnly);
+				FunctionCommand.addClientRequestsArtifacts(CRfunctionDTO);
 			}
+			for(ADTDTO ADT : dto.ADTs){
+				ADTCommand.create(ADT.description, ADT.name, ADT.getStructure(), true, ADT.isReadOnly);
+			}
+
 			// save project settings into firebase
 
 			FirebaseService.writeSetting("reviews", this.reviewsEnabled.toString() , this.getID());
@@ -254,6 +244,26 @@ public class Project
 		// save the review queue in Objectify and Firebase
 		ofy().save().entity(this).now();
 		FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), this.getID());
+	}
+	// Queues the microtask onto the project's microtask queue with 2 excluded workerID, the challenger and the challengee workers
+	public void queueChellengeReviewMicrotask( Key<Microtask> microtaskKey, String firstExcludedWorkerID, String secondExcludedWorkerID)
+	{
+		// if the microtask is not in the queue, add it
+		if( ! microtaskQueue.contains( Microtask.keyToString(microtaskKey) )  ){
+			microtaskQueue.addLast( Microtask.keyToString(microtaskKey) ) ;
+			HistoryLog
+				.Init(this.getID())
+				.addEvent( new MicrotaskQueued(  ofy().load().key(microtaskKey).now() ));
+		}
+
+		// add the workerId to the excluded workers for this microtask
+		addPermExcludedWorkerForMicrotask( microtaskKey, firstExcludedWorkerID );
+		addPermExcludedWorkerForMicrotask( microtaskKey, secondExcludedWorkerID );
+
+
+		// save the queue in Objectify and Firebase
+		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
 	}
 
 	// adds a workerId to the permanent excluded workers for the microtask with microtaskKey
@@ -421,38 +431,9 @@ public class Project
 				// If reviewing is enabled and the microtask
 				// is not in [Review, ReuseSearch,DebugTestFailure],
 				// spawn a new review microtask
-				try {
-					if (reviewsEnabled && !( microtask.getClass().equals(Review.class)) ){
-						//temporary fix for the review
-						if( microtask.getClass().equals(ReuseSearch.class) )
-						{
-
-							ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
-							if ( ! dto.noFunction ){
-								MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-							} else {
-								MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-							}
-
-						}
-						else if( microtask.getClass().equals(DebugTestFailure.class))
-						{
-
-							DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, DebugDTO.class);
-							System.out.println(dto.disputedTests);
-							if(dto.disputedTests.size() > 0 || dto.hasPseudo)
-							{
-								MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-							}
-							else{
-								MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-							}
-						}
-						else{
-							MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-						}
+					if (reviewsEnabled && !( microtask.getClass().equals(Review.class) || microtask.getClass().equals(ChallengeReview.class)) ){
+						MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 					}
-
 					// else submit the microtask
 					else {
 						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
@@ -462,13 +443,6 @@ public class Project
 					// write the history log entry about the microtask submission
 					HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
 					FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
-				} catch( JsonParseException e) {
-					e.printStackTrace();
-				} catch( JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 			}
 		}
 		else
@@ -613,15 +587,6 @@ public class Project
 		ofy().save().entity(this).now();
 	}
 
-	public long generateID(String tag)
-	{
-		long id = idgenerator.generateID(tag);
-
-		// State of embedded object (id generator) changed, so state must be saved.
-		ofy().save().entity(this).now();
-
-		return id;
-	}
 
 	public HashSet<String> getLoggedInWorkers() {
 		return loggedInWorkers;

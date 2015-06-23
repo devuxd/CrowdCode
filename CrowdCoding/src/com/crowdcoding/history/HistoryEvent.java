@@ -3,7 +3,7 @@ package com.crowdcoding.history;
 import java.util.Date;
 
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.entities.Artifact;
+import com.crowdcoding.entities.artifacts.Artifact;
 
 /* A HistoryEvent captures a CrowdCoding event that is logged into the history stream.
  */
@@ -32,7 +32,7 @@ public abstract class HistoryEvent extends DTO
 	protected void setArtifact(Artifact artifact){
 		if (artifact != null)
 		{
-			this.artifactID   = Long.toString(artifact.getID());
+			this.artifactID   = Long.toString(artifact.getId());
 			this.artifactType = artifact.getArtifactType();
 			this.artifactName = artifact.getName();
 		}

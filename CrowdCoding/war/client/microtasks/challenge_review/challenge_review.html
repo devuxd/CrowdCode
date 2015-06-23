@@ -1,0 +1,51 @@
+<div ng-controller="ChallengeReviewController">
+
+	<div ng-if="reviewed !== undefined" ng-include="'/client/microtasks/challenge_review/review_' + reviewed.type + '.html'"></div>
+
+	<alertcontainer></alertcontainer>
+
+	<div class="section-cols" >
+		<div class="container-flex-row">
+			<div class="section section-help bg-color-alpha" style="width:30%">
+				<div class="section-title" >
+					<div class="dot"></div>RATING SYSTEM
+				</div>
+				<div class="section-content" >
+					<ul style="list-style:none;margin:0px;padding:0px;">
+						<li><b>1 Star</b>: Incoherent or unfocussed</li>
+						<li><b>2 Stars</b>: Unconvincing or weak</li>
+						<li><b>3 Stars</b>: There are some weakness</li>
+						<li><b>4 Stars</b>: Good quality, without weakness</li>
+						<li><b>5 Stars</b>: Excellent without weakness</li>
+					</ul>
+
+				</div>
+				<div class="section-title" >
+					<div class="dot"></div>
+					AVAILABLE DATA TYPES
+				</div>
+				<div class="section-content" >
+					<adt-list></adt-list>
+				</div>
+			</div>
+
+			<div class="section section-form" style="width:70%;" >
+				<div class="section-content no-padding" >
+					<label>
+					    <input type="radio" ng-model="review.isChallengeWon" value="true">
+					    Challenger
+					 </label><br/>
+					 <span>{{review.microtask.review.reviewText}}</span><br/>
+					 <label>
+					     <input type="radio" ng-model="review.isChallengeWon" value="false">
+					     reviewer
+					  </label><br/>
+					  <span>{{microtask.challengeText}}</span><br/>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+</div>
