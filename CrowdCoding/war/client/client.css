@@ -1798,13 +1798,13 @@ pre.json .jsonKey { color: black; }
 	opacity: 1;
 	z-index:99;
 	cursor:pointer;
-    -webkit-animation: popout 1s 1;
+    -webkit-animation: popout 0.2s 1;
     -webkit-animation-delay: 0s;
     -webkit-animation-fill-mode: forwards;
 }
 .dashboard .pin:hover .accept {
-    -webkit-animation: unroll 0.5s 1;
-    -webkit-animation-delay: 0.5s;
+    -webkit-animation: unroll 0.3s 1;
+    -webkit-animation-delay: 0.3s;
     -webkit-animation-fill-mode: forwards;
 }
 

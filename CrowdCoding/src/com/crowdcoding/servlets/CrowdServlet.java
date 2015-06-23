@@ -260,11 +260,69 @@ public class CrowdServlet extends HttpServlet
 //			doSubmitMicrotask(req, resp);
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
+		} else if (pathSeg[3].equals("askMicrotask")){
+			doaskMicrotask(req, resp,user);
 		} else if (pathSeg[3].equals("enqueue")){
 			doEnqueueSubmit(req, resp,user);
 		}
 	}
+	
+	private void doaskMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user)throws IOException{
+		doaskMicrotask(req,resp,user,false);
+	}
+	private void doaskMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
+		// Since the transaction may fail and retry,
+				// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+//				// And anything inside the transaction MUST not mutate the values produced.
+				final String projectID = (String) req.getAttribute("project");
+				final String microtaskId = (String) req.getParameter("id");
+				System.out.print("proj: "+ projectID + "\n");
+				System.out.print("key: "+ microtaskId + "\n");
+				String jsonResponse = "{}";
+		    	try {
+		    		jsonResponse=ofy().transact( new Work<String>(){
 
+		    			public String run() {
+		    				ThreadContext threadContext = ThreadContext.get();
+		    				threadContext.reset();
+
+		    				Key<Microtask> microtaskKey = null;
+		    		    	int firstFetch=0;
+		    		    	final Project project = Project.Create(projectID);
+		    				final Worker worker   = Worker.Create(user, project);
+
+		    				if( ! isAlreadyUnassigned ){
+		    		    		microtaskKey = project.lookupMicrotaskAssignment( worker.getUserid() );
+		    		    	}
+
+		    		    	if( microtaskKey == null ){
+		    		    		microtaskKey = project.assignMicrotask( worker.getUserid()) ;
+		    		    		firstFetch = 1;
+		    		    	}
+		    				ofy().save().entity(project).now();
+
+		    				if (microtaskKey == null) {
+		    					return "{}";
+		    				} else{
+
+		    					return "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}";
+		    				}
+
+		    			}
+
+		        	});
+
+		    	} catch ( IllegalArgumentException e ){
+		    		e.printStackTrace();
+		    	}
+		       // HistoryLog.Init(projectID).publish();
+
+				renderJson(resp, jsonResponse);
+			    FirebaseService.publish();
+
+	
+	}
+	
 	private void doQuestioning(HttpServletRequest req, HttpServletResponse resp,
 			final String projectID, User user, final String[] pathSeg) throws IOException, FileUploadException
 	{

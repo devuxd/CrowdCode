@@ -52,10 +52,10 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 
 			$scope.$on('fecthMicrotask' , fetchMicrotask);
 			$scope.$on('submitMicrotask', submitMicrotask);
-
+			$scope.$on('fetchMicrotaskTest' , fetchMicrotaskTest);
 			$scope.$on('microtaskLoaded', onMicrotaskLoaded);
 			$scope.$on('noMicrotask'    , onNoMicrotask);
-
+			
 
 
 			function onMicrotaskLoaded($event, microtask){
@@ -119,6 +119,20 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				// ask for a microtask fetch
 				microtasks.fetch();
 			}
+			
+			function fetchMicrotaskTest($event, fetchData) {
+				// cancel checkQueuetimeout
+				console.log("part2: "+fetchData.microtaskID);
+				if (checkQueueTimeout !== null) {
+					$timeout.cancel(checkQueueTimeout);
+				}
+				$scope.breakMode = false;
+				// show the loading screen
+				$scope.templatePath  = templatesURL + "loading.html";
+				// ask for a microtask fetch
+				microtasks.loadSpecificMicrotask(fetchData.microtaskID)
+			}
+
 
 
 			function submitMicrotask(event, formData, autoSkip) {

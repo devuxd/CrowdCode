@@ -2,7 +2,7 @@ var boardApp = angular.module('crowdCode')//,["firebase","ui.bootstrap","ngAnima
 
 boardApp.run();
 
-boardApp.controller("dashBoard",['$scope','$firebase','$timeout',  function($scope,$firebase,$timeout){
+boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService',  function($scope,$rootScope,$firebase,$timeout,microtasksService){
 	console.log("controller loaded");
 	
 	var projectURL = 'https://crowdcode.firebaseio.com/projects/gabrielDemo';
@@ -38,7 +38,6 @@ boardApp.controller("dashBoard",['$scope','$firebase','$timeout',  function($sco
 	angular.forEach(types,function(value,index){
 		$scope.filterEnabled[value] = true;
 		$scope.typesCount[value] = 0;
-		console.log('here');
 	});		
 		
 	$scope.microtasks = [];
@@ -59,7 +58,6 @@ boardApp.controller("dashBoard",['$scope','$firebase','$timeout',  function($sco
 			default: 
 		}
 		console.log($scope.typesCount[task.type]);
-		console.log('here');
 	});
 
 	$scope.orderPredicate = '';
@@ -122,11 +120,15 @@ boardApp.controller("dashBoard",['$scope','$firebase','$timeout',  function($sco
 	}
 	
 	$scope.assignMicrotask = function(task){
-			if(task.assigned != true){
-				task.assigned = true;
-				console.log("task assigned: "+task.assigned);
-			}
-			$scope.microtasks.$save(task);
+		var microtaskID = task.owningArtifactId+"-"+task.id;
+		console.log("id: "+microtaskID);
+		//console.log("id: "+id);
+//			if(task.assigned != true){
+//				task.assigned = true;
+//				console.log("task assigned: "+task.assigned);
+//			}
+//			$scope.microtasks.$save(task);
+		$rootScope.$broadcast('fetchMicrotaskTest',{microtaskID});
 	}
 
 	$scope.assignRandom = function(){
