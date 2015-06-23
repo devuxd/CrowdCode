@@ -98,7 +98,6 @@ public abstract class MicrotaskCommand extends Command
 
 		public void execute(Microtask microtask, String projectId)
 		{
-
 			microtask.submit(jsonDTOData, workerID, awardedPoint, projectId);
 		}
 	}

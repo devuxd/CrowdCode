@@ -19,7 +19,7 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				'WriteTest': 'write_test/write_test',
 				'WriteTestCases': 'write_test_cases/write_test_cases',
 				'WriteCall': 'write_call/write_call',
-				'DescribeBehavior': 'describe_behavior/describe_behavior',
+				'DescribeFunctionBehavior': 'describe_behavior/describe_behavior',
 				'ImplementBehavior': 'implement_behavior/implement_behavior',
 				'ChallengeReview': 'challenge_review/challenge_review'
 			};
@@ -50,30 +50,6 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 			};
 
 
-			$scope.loadDescribe = function(){
-				var task = {
-					type: 'DescribeBehavior',
-					functionId : '5896268542902272',
-					id: 'somerandomid',
-					title: 'Describe Function Behavior',
-					promptType: 'add' //'edit'
-				};
-				$scope.$broadcast('microtaskLoaded',task);
-			};
-			$scope.loadImplement = function(){
-				console.log('load Implement');
-				var task = {
-					type: 'ImplementBehavior',
-					functionId : '5896268542902272',
-					id: 'somerandomid',
-					title: 'Implement Function Behavior',
-					promptType: 'add' //'edit'
-				};
-				$scope.$broadcast('microtaskLoaded',task);
-			};
-
-			$scope.loadDescribe();
-
 
 			// ------- MESSAGE LISTENERS ------- //
 
@@ -97,12 +73,8 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				$scope.microtask = microtask;
 
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionID))
-					$scope.funct = functionsService.get($scope.microtask.functionID);
-
-				// retrieve the related test
-				if ( angular.isDefined($scope.microtask.testID) )
-					$scope.test = TestList.get($scope.microtask.testID).rec;
+				if (angular.isDefined($scope.microtask.functionId))
+					$scope.funct = functionsService.get($scope.microtask.functionId);
 
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";

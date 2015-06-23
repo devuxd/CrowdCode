@@ -33,13 +33,13 @@
 			Already described behaviors
 		</div>
 		<div class="section-content">
-			<div style="margin-bottom:2px" ng-repeat="b in behaviors track by $index">
+			<div style="margin-bottom:2px" ng-repeat="t in tests track by $index">
 				<div style="width:100%" ng-if="currentIndex != $index">
 					<div class="bg-color-alpha" bs-collapse-toggle> 
-						<span ng-bind="b.description"></span>
-						<button class="btn btn-sm" ng-if="currentIndex != $index" ng-click="editBehavior($index)">Edit</button>
+						<span ng-bind="t.description"></span>
+						<button class="btn btn-sm" ng-if="currentIndex != $index" ng-click="editTest($index)">Edit</button>
 					</div>
-					<div class="" ng-bind="b.code" bs-collapse-target></div>
+					<div class="" ng-bind="t.code" bs-collapse-target></div>
 				</div>
 			</div>
 		</div>	
@@ -54,15 +54,15 @@
 		<div class="section-content">
 			<div class="form-group">
 				<label>description</label>
-				<input class="form-control" ng-model="newBehavior.description"></input>
+				<input class="form-control" ng-model="newTest.description"></input>
 			</div>
 			<div class="form-group">
 				<label>code</label>
-				<textarea class="form-control" ng-model="newBehavior.code"></textarea>
+				<textarea class="form-control" ng-model="newTest.code"></textarea>
 			</div>
 
 			<div ng-if="microtask.promptType == 'add' ">
-				<label><input type="checkbox" ng-model="noMore">No more behavior to describe</label>
+				<label><input type="checkbox" ng-model="isComplete">No more behavior to describe</label>
 			</div>
 		</div>
 
