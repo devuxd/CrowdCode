@@ -315,9 +315,9 @@ public class Project
 				.Init(this.getID())
 				.addEvent(new MicrotaskUnassigned( assignedMtask, workerID));
 			
-			FirebaseService.writeMicrotaskAssigned( assignedMicrotaskKey , workerID, project.getID(), false);
+			FirebaseService.writeMicrotaskAssigned( assignedMicrotaskKey , workerID, project.getID(), false);	
 		}
-
+		
 	}
 
 	// Assigns a microtask to worker and returns its microtaskKey.
@@ -393,6 +393,73 @@ public class Project
 		return null;
 	}
 
+	public Key<Microtask> assignSpecificMicrotask( final String workerID, final String currentKey)
+	{
+		// Ensure that the worker is marked as logged in
+		loggedInWorkers.add( workerID );
+
+		// Look for a microtask, checking constraints on it along the way
+		String  microtaskKey = currentKey;
+		Boolean isReview = false, canAssign = false;
+		
+		//Checks if microtask is in Review or Microtask Queue
+		if(reviewQueue.contains(microtaskKey)){
+			isReview = true;
+			canAssign = true;
+		}
+		else if(microtaskQueue.contains(microtaskKey)){
+			canAssign = true;			
+		}
+		
+		Microtask microtask=null;
+		// If there are no more microtasks currently available, return null
+		//&& assignmentIsValid( microtaskKey, workerID)
+		if ( microtaskKey != null  && canAssign ) {
+			Microtask mtask = ofy().load().key( Microtask.stringToKey(microtaskKey) ).now();
+			if( mtask!=null ){
+
+				if( isReview ){
+					reviewQueue.remove( microtaskKey );
+					FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project.getID() );
+				} else {
+					microtaskQueue.remove( microtaskKey );
+					FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project.getID() );
+				}
+				// assign it to the worker
+				mtask.setWorkerId( workerID );
+				microtaskAssignments.put( workerID,  Microtask.keyToString( mtask.getKey() ) );
+
+				//ofy().save().entity(mtask).now();
+				System.out.println("assigning "+ mtask.getKey() +" to worker "+workerID);
+				microtask=mtask;
+			}
+			else{
+				System.out.println("((((((((((((erroooor mtask null");
+			}
+		}
+
+
+
+		if( microtask != null ){
+
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString( microtask.getKey() ), workerID, project.getID(), true);
+
+			HistoryLog
+				.Init(project.getID())
+				.addEvent( new MicrotaskDequeued(microtask));
+
+			HistoryLog
+				.Init(project.getID())
+				.addEvent(new MicrotaskAssigned(microtask,workerID));
+
+			// return the assigned microtask key
+			return microtask.getKey();
+		}
+
+		return null;
+	}
+	
+	
 	// Checks both the excludedWorkers and skippedWorkers to see if microtaskKey is a valid
 	// microtask assignment for workerID. Returns true iff this is the case.
 	private boolean assignmentIsValid( String potentialMicrotaskKey, String workerID)
@@ -501,6 +568,7 @@ public class Project
 
 
 			MicrotaskCommand.skip( microtaskKey, workerID, disablePoint);
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey) , workerID, project.getID(), false);	
 		}
 
 	}

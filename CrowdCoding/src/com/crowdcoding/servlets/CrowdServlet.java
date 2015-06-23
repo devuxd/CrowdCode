@@ -261,16 +261,16 @@ public class CrowdServlet extends HttpServlet
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
 		} else if (pathSeg[3].equals("askMicrotask")){
-			doaskMicrotask(req, resp,user);
+			doAskMicrotask(req, resp,user);
 		} else if (pathSeg[3].equals("enqueue")){
 			doEnqueueSubmit(req, resp,user);
 		}
 	}
 	
-	private void doaskMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user)throws IOException{
-		doaskMicrotask(req,resp,user,false);
+	private void doAskMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user)throws IOException{
+		doAskMicrotask(req,resp,user,false);
 	}
-	private void doaskMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
+	private void doAskMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
 		// Since the transaction may fail and retry,
 				// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 //				// And anything inside the transaction MUST not mutate the values produced.
@@ -286,7 +286,7 @@ public class CrowdServlet extends HttpServlet
 		    				ThreadContext threadContext = ThreadContext.get();
 		    				threadContext.reset();
 
-		    				Key<Microtask> microtaskKey = null;
+		    				Key<Microtask> microtaskKey =  null;
 		    		    	int firstFetch=0;
 		    		    	final Project project = Project.Create(projectID);
 		    				final Worker worker   = Worker.Create(user, project);
@@ -296,7 +296,7 @@ public class CrowdServlet extends HttpServlet
 		    		    	}
 
 		    		    	if( microtaskKey == null ){
-		    		    		microtaskKey = project.assignMicrotask( worker.getUserid()) ;
+		    		    		microtaskKey = project.assignSpecificMicrotask( worker.getUserid(), microtaskId) ;
 		    		    		firstFetch = 1;
 		    		    	}
 		    				ofy().save().entity(project).now();
@@ -318,9 +318,7 @@ public class CrowdServlet extends HttpServlet
 		       // HistoryLog.Init(projectID).publish();
 
 				renderJson(resp, jsonResponse);
-			    FirebaseService.publish();
-
-	
+			    FirebaseService.publish();	
 	}
 	
 	private void doQuestioning(HttpServletRequest req, HttpServletResponse resp,

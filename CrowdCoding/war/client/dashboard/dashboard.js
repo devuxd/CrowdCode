@@ -2,10 +2,10 @@ var boardApp = angular.module('crowdCode')//,["firebase","ui.bootstrap","ngAnima
 
 boardApp.run();
 
-boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService',  function($scope,$rootScope,$firebase,$timeout,microtasksService){
+boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService','firebaseUrl',  function($scope,$rootScope,$firebase,$timeout,microtasksService,firebaseUrl){
 	console.log("controller loaded");
 	
-	var projectURL = 'https://crowdcode.firebaseio.com/projects/gabrielDemo';
+	var projectURL = firebaseUrl;
 
 	var types = [
 			'Review',
@@ -121,14 +121,7 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	
 	$scope.assignMicrotask = function(task){
 		var microtaskID = task.owningArtifactId+"-"+task.id;
-		console.log("id: "+microtaskID);
-		//console.log("id: "+id);
-//			if(task.assigned != true){
-//				task.assigned = true;
-//				console.log("task assigned: "+task.assigned);
-//			}
-//			$scope.microtasks.$save(task);
-		$rootScope.$broadcast('fetchMicrotaskTest',{microtaskID});
+		$rootScope.$broadcast('fetchSpecificMicrotask',{microtaskID});
 	}
 
 	$scope.assignRandom = function(){

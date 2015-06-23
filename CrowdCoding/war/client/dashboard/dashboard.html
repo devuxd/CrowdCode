@@ -1,6 +1,6 @@
 <div ng-controller="dashBoard" class="container-fluid dashboard" >
 		<div class="row">
-			<div class="col-md-10">
+			<div class="col-md-12">
 				<div class="title">Microtask Board</div>
 				<div id="filterBar" class="horizontal-bar">
 					<strong >Filter:</strong>
@@ -70,10 +70,6 @@
 							
 							<div class="points">Reward: {{microtask.points}} points</div>
 
-							
-							<div class="accept">
-								<button class="btn btn-primary" ng-click="assignMicrotask(i)">Finish</button>
-							</div>
 						</div>
 					</div>
 				</div>
@@ -89,32 +85,27 @@
 							<div class="points">Function: {{microtask.owningArtifact}} </div>
 							
 							<div class="points">Reward: {{microtask.points}} points</div>
-
-							
-							<div class="accept">
-								<button class="btn btn-primary" ng-click="assignMicrotask(i)">Work On This</button>
-							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		
 			
-			<div class="col-md-2 sidebar">
-				<div class="title">Simulator</div>
-				<div class="horizontal-bar"><strong>Commands</strong></div>
-				<button class="btn btn-primary btn-xs" ng-click="spawnRandom()">Spawn Random Microtask</button>
-				<button class="btn btn-primary btn-xs" ng-if="microtasks.length > 0" ng-click="assignRandom()">Assign Random Microtask</button>
+<!-- 			<div class="col-md-2 sidebar"> -->
+<!-- 				<div class="title">Simulator</div> -->
+<!-- 				<div class="horizontal-bar"><strong>Commands</strong></div> -->
+<!-- 				<button class="btn btn-primary btn-xs" ng-click="spawnRandom()">Spawn Random Microtask</button> -->
+<!-- 				<button class="btn btn-primary btn-xs" ng-if="microtasks.length > 0" ng-click="assignRandom()">Assign Random Microtask</button> -->
 				
-				<div class="horizontal-bar"><strong>Auto</strong></div>
-				<div style="padding:20px;">
-					<span>Action interval (seconds): {{intervalSlider.min}} - {{intervalSlider.max}}</span>
-					<input ng-model="intervalSlider.min" type="text" />
-					<input ng-model="intervalSlider.max" type="text" />
-					<button class="btn btn-primary btn-xs" ng-click="runAction()">Run</button>
-					<button class="btn btn-danger btn-xs" ng-click="stopAction()">Stop</button>
-				</div>
-			</div>
+<!-- 				<div class="horizontal-bar"><strong>Auto</strong></div> -->
+<!-- 				<div style="padding:20px;"> -->
+<!-- 					<span>Action interval (seconds): {{intervalSlider.min}} - {{intervalSlider.max}}</span> -->
+<!-- 					<input ng-model="intervalSlider.min" type="text" /> -->
+<!-- 					<input ng-model="intervalSlider.max" type="text" /> -->
+<!-- 					<button class="btn btn-primary btn-xs" ng-click="runAction()">Run</button> -->
+<!-- 					<button class="btn btn-danger btn-xs" ng-click="stopAction()">Stop</button> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
 		</div>
 
 	</div>

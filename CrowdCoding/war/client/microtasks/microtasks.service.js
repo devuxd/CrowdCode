@@ -59,10 +59,8 @@ angular
 		
 		function loadSpecificMicrotask(microtaskID){
 			// ask the microtask id
-			console.log('a/' + projectId + '/ajax/askMicrotask?id='+ microtaskID);
 			$http.get('/' + projectId + '/ajax/askMicrotask?id='+ microtaskID)
 				.success(function(data, status, headers, config) {
-					console.log('/' + projectId + '/ajax/askMicrotask?id='+ microtaskID);
 					console.log("success");
 					loadMicrotask(data);
 			})
