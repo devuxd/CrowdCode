@@ -24,6 +24,17 @@ $runBtn.on('click',function(){
 });
 
 $closeStubBtn.on('click',function(){
+    var inputs = JSON.parse($stubDiv.find('#stubKey').val());
+    var output = JSON.parse($stubDiv.find('#outputValue').val());
+    var functName = 'seconda';
+    var stub = Debugger.getStub(functName,inputs);
+    if( stub == -1 ){
+        var stubKey = JSON.stringify(inputs);
+        Debugger.functions[functName].stubs[stubKey] = { output: output };
+    } else {
+        stub.output = output;
+    }
+    
     $stubDiv.removeClass('show');
 })
 
@@ -44,13 +55,13 @@ function inspectOn(){
     fEditor.logInfo = new LogInfo(fEditor,{
         'editStub' : function(functionName,inputs){ 
             var stub = Debugger.getStub(functionName,inputs);
-
             var $stubForm = $stubDiv.find('.form')
             $stubForm.html('');
             for( var key in inputs)
                 $stubForm.append('<label>input'+key+'</label><pre>'+JSON.stringify(inputs[key])+'</pre>');
 
-            $stubForm.append('<label>output</label><textarea>'+JSON.stringify(stub.output)+'</textarea>');
+            $stubForm.append('<label>output</label><textarea id="outputValue">'+JSON.stringify(stub.output)+'</textarea>');
+            $stubForm.append('<textarea id="stubKey">'+JSON.stringify(inputs)+'</textarea>');
             $stubDiv.addClass('show');
         }
     });

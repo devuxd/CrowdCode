@@ -38,7 +38,7 @@ Debugger.runTest = function(testCode) {
 
 
 Debugger.setFunctions = function(functions){
-    Debugger.functions = [];
+    Debugger.functions = {};
     Debugger.functionsName = [];
     // parse all the functions 
     for( var functionName in functions ){
@@ -223,16 +223,17 @@ Debugger.getStub = function(name,inputs) {
     return -1;
 }
 
-Debugger.logCall = function(name,arguments,output){
+Debugger.logCall = function(name,inputs,output){
     var logObject = {
-        inputs : arguments,
+        inputs : inputs,
         output : output,
         time : Date.now()
     };
     if( !Debugger.logs.calls[name] )
         Debugger.logs.calls[name] = {};
 
-    var stubKey = JSON.stringify(arguments);
+    var stubKey = JSON.stringify(inputs);
+    console.log('logging call of ',name,inputs,output);
     Debugger.functions[name].stubs[stubKey] = {
         output: output
     };
@@ -258,6 +259,7 @@ Debugger.mockBody = function(){
     }
 
     // if( calleeNames.search( '%functionNameStr%' ) > -1 ){
+        console.log(inputs);
         Debugger.logCall( '%functionNameStr%', inputs, output ) ;
     // }
 

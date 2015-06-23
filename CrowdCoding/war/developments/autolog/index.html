@@ -104,13 +104,12 @@
 		<div id="fCode">function loggingFunction(first, second, third) {
     var a = { 
         a : first, 
-        b : second * third 
+        b : second*third 
     };
-    a = first;
+    for( var i = 0 ; i < 5 ; i++ ){
+        a = seconda(first*i, first*second + i, third*first/second - i);
+    }
 }
-		
-		
-		
 		</div>
 
 		<div id="stub">

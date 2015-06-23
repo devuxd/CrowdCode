@@ -30,6 +30,7 @@
 	<link rel="stylesheet" href="/include/angular-toaster/toaster.min.css" type="text/css" />
 	<link rel="stylesheet" href="/include/keys/keys.css" type="text/css" />
 
+	<link rel="stylesheet" href="/include/ui-layout/src/ui-layout.css" type="text/css" />
 	<link rel="stylesheet" href="/include/ng-tags-input/ng-tags-input.min.css" type="text/css" />
 
     
@@ -41,19 +42,49 @@
 <body disable-backspace ng-cloak >
 
 	<header>
-		<navbar></navbar>
+		<nav-bar></nav-bar>
 	</header>
 
-	<div class="main-wrapper" >
-	    <div class="container-flex-row">
-	    	<!-- LEFT BAR -->
-		    <left-bar id="sidebarLeft" class="sidebar order-1" ></left-bar>
-	        <!-- MAIN CONTENT -->
-	        <div id="content" class="order-3" >
-	        	<microtask-form></microtask-form>
-	        </div>
+
+	<div class="wrapper" >
+		<div class="btn-bar btn-bar-left">
+	      <div class="btn-group">
+	        <div class="btn" class="" ng-click="selectTab('newsfeed')">Newsfeed</div>
+	        <div class="btn" class="" ng-click="selectTab('questions')">Questions</div>
+	      </div>    
 	    </div>
+
+	    <div class="content">
+		    <div ui-layout="{ flow: 'column', dividerSize: 1 }">
+		    	<div ui-layout-container size="20%" min-size="200px" max-size="20%" >
+					<left-bar></left-bar>
+				</div>
+
+			    <div ui-layout-container size="65%" >
+			    	<microtask-form></microtask-form>
+			    </div>
+
+				<div ui-layout-container size="15%" min-size="10%" max-size="15%">
+					<right-bar></right-bar>
+				</div>
+		    </div>
+		</div>
+
+		
+
 	</div>
+
+		    <!--
+		    <div class="sidebar" ui-layout-container size="20%" min-size="200px" max-size="20%">
+		    	
+		    </div>-->
+		<!--
+	    <div class="container-flex-row">
+		    <left-bar id="sidebarLeft" class="sidebar order-1" ></left-bar>
+	        <div id="content" class="order-3" >
+	        	
+	        </div>
+	    </div>-->
 
 
 
@@ -88,7 +119,7 @@
 	<script src="/include/timeAgo.js"></script>
 	<script src="/include/angular-toaster/toaster.min.js"></script>
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
-
+	<script src="/include/ui-layout/src/ui-layout.js"></script>
 
 	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>
 

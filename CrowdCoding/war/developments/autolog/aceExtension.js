@@ -206,23 +206,23 @@ oop.inherits(LogTooltip, Tooltip);
 
     this.buildTemplate = function(){
         var log = this.logs[0];
-        console.log();
-        var tpl = '<div class="value">'+JSON.stringify(log.value,null,'  ') + '</div>';
+        var tpl = '';
 
         if( !this.locked ) {
+            tpl = '<div class="value">'+JSON.stringify(log.value,null,'  ') + '</div>';
             tpl += (this.logs.length > 1 ? '<div>(<i>'+(this.logs.length)+' times</i>)</div>' : '');
         }
         else {
             tpl = '<strong>'+this.editor.session.getTextRange(this.range)+'</strong>' + tpl ; 
-            
+
+
+            tpl += '<div class="value">'+JSON.stringify(log.value,null,'  ') + '</div>';
             if( log.callee ){
                 var inputsTpl = '';
                 for( var key in log.inputs )
-                    inputsTpl += '<div>'+JSON.stringify(log.inputs[key])+'</div>';
+                    inputsTpl += '<div>'+JSON.stringify(log.inputs[key],null,'  ')+'</div>';
                  
-                tpl = '<div class="inputs"></inputs>' + tpl;
-
-
+                // tpl += '<div class="inputs">'+inputsTpl+'</div>';
                 tpl += '<a href="#" class="stub-btn">stub this function call</a>';
             }
 

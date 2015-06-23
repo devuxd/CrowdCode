@@ -471,7 +471,7 @@ angular.module('ui.layout', [])
 
         scope.splitbar = LayoutContainer.Splitbar();
         scope.splitbar.element = element;
-
+/*
         //chevron <a> elements
         var prevButton = angular.element(element.children()[0]);
         var afterButton = angular.element(element.children()[1]);
@@ -605,7 +605,7 @@ angular.module('ui.layout', [])
             }
           }
         });
-
+*/
         element.on('mousedown touchstart', function(e) {
           ctrl.movingSplitbar = scope.splitbar;
           ctrl.processSplitbar(scope.splitbar);
