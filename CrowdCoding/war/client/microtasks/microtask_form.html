@@ -13,7 +13,8 @@
 			   data-placement="top" 
 			   data-container="body"
 			   data-animation="am-fade-and-scale"
-			   data-template="widgets/feedback.popover.html" 
+			   data-template="widgets/feedback.popover.html"
+			   tabindex="101"  
 			   bs-popover>Send Us Feedback!
 			</button>
 			<button 
@@ -25,6 +26,7 @@
 			   data-animation="am-fade-and-scale"
 			   data-animation="am-flip-x" 
 			   data-template="microtasks/help.popover.html"
+			   tabindex="102" 
 			   bs-popover>
 			   Confused?
 			</button>
@@ -49,7 +51,7 @@
        			Skip
        		</button>
 		  	<label class="btn btn-sm pull-right" ng-if="!breakMode && !noMicrotask" id="breakBtn">
-	  	    	<input type="checkbox" ng-model="model.startBreak" >
+	  	    	<input type="checkbox" ng-model="model.startBreak" tabindex="103" >
 	  	    	<span>Take a break</span>
 	  	   	</label>
 	  	   	

@@ -6,35 +6,41 @@ angular
     .module('crowdCode')
     .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $timeout, $rootScope, $alert, $modal, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
     
-    $scope.tests = $scope.funct.rec.tests || [];
+    $scope.data = {};
+
+    $scope.data.tests = $scope.funct.rec.tests || [];
+
+/*
+    $scope.data.tests = [
+        { description: 'description1', code:'//code1' },
+        { description: 'description2', code:'//code2' },
+        { description: 'description3', code:'//code3' },];*/
 
 
-    $scope.activeDescriptions = [];
-    $scope.currentIndex  = -1;
-    $scope.isComplete    = false;
-    $scope.editTest      = editTest;
+    $scope.data.expanded = [];
+    $scope.data.isComplete = false;
 
-    $scope.newTest = {
+    $scope.data.newTest = {
         description: 'should be the new test',
-        code: '//code of the new test'
+        code: '//code of the new test',
+        editing: true
     };
+
+    $scope.editTest = function(index){
+        var test = $scope.data.tests[index]
+        test.editing = !test.editing;
+    };
+
 
     var collectOff = $scope.$on( 'collectFormData', collectFormData );
     $scope.$on('$destroy',function(){ collectOff(); });
 
     if( $scope.microtask.promptType === 'edit' )
-        editBehavior($scope.behaviors.length-1);
-
-    function editTest(index){
-        if( $scope.activeDescriptions.indexOf(index) == -1 )
-            $scope.activeDescriptions.push(index);
-
-        $scope.currentIndex = index;
-    }
+        editTest(null,$scope.behaviors.length-1);
 
     function addTest(){
-        $scope.newTest.added = true;
-        $scope.tests.push($scope.newTest);
+        $scope.data.newTest.added = true;
+        $scope.data.tests.push($scope.data.newTest);
     }
 
     function collectFormData(event, microtaskForm) {

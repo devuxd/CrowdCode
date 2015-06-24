@@ -247,6 +247,9 @@ color: #525151 !important;
 .json-reader.ace-editor { background-color:transparent !important; }
 
 .js-editor { height: 400px;}
+
+.test-editor { height: 100px;}
+
 .console { position:inherit !important;}
 
 
@@ -443,6 +446,7 @@ h1, h2, h3, h4 {
 	top:20px;
 	bottom:0px;
 	background-color: rgb(240,240,240);
+	overflow:auto;
 }
 
 /* SIDEBAR LIST */
@@ -1278,12 +1282,12 @@ tutorial  { display:none; }
 .task-implementbehavior .job-description { background-color:  rgba(17,112,190,0.4); }
 
 
-/* rgba(254, 195, 36,1) yellow - yellow - describebehavior */
-.task-describebehavior .color          { color:  rgba(254, 195, 36,1); }
-.task-describebehavior .color-alpha    { color:  rgba(254, 195, 36, 0.4); }
-.task-describebehavior .bg-color       { background-color:  rgba(254, 195, 36,1); }
-.task-describebehavior .bg-color-alpha { background-color:  rgba(254, 195, 36,0.4); }
-.task-describebehavior .job-description { background-color:  rgba(254, 195, 36,0.4); }
+/* rgba(254, 195, 36,1) yellow - yellow - describefunctionbehavior */
+.task-describefunctionbehavior .color          { color:  rgba(254, 195, 36,1); }
+.task-describefunctionbehavior .color-alpha    { color:  rgba(254, 195, 36, 0.4); }
+.task-describefunctionbehavior .bg-color       { background-color:  rgba(254, 195, 36,1); }
+.task-describefunctionbehavior .bg-color-alpha { background-color:  rgba(254, 195, 36,0.4); }
+.task-describefunctionbehavior .job-description { background-color:  rgba(254, 195, 36,0.4); }
 
 .clip-copy {
 	background:url('/img/copy.png') no-repeat;
@@ -1457,4 +1461,22 @@ pre.json .jsonKey { color: black; }
 
 .ui-splitbar {
 	background-color:#AFAFAF;
+}
+
+.tests-list { margin-bottom: 10px;}
+
+.test-item { margin-bottom: 2px; font-family: 'Lato'; }
+
+.test-item .toggler { font-size:1.1em; padding: 5px; }
+.test-item .form { background-color: rgb(240,240,240); padding:5px; }
+
+.test-item input {border-radius:0px;}
+.test-item input.ng-dirty,
+.test-item input:focus { border:1px solid #ccc; box-shadow: none }
+
+.test-item .form .input-group-addon {
+	background-color:transparent;
+	border:none;
+	font-weight:bold;
+	padding: 6px 14px;
 }

@@ -5,7 +5,7 @@ angular
 function leaderboard($firebase, avatarFactory, firebaseUrl, workerId) {
     return {
         restrict: 'E',
-        templateUrl: '/client/leaderboard/leaderboard_panel.html',
+        templateUrl: '/client/leaderboard/leaderboard.template.html',
         controller: function($scope, $element) {
             var lbSync = $firebase(new Firebase(firebaseUrl + '/leaderboard/leaders'));
             $scope.avatar  = avatarFactory.get;

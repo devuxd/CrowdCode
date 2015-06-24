@@ -10,6 +10,7 @@ angular
 		var typeNames=[];
 		var nameToADT=[];
 		var ADTs=[];
+		var adts = [];
 		// Public functions
 		this.init                   = function() { return init(); };
 		this.isValidTypeName        = function(name) { return isValidTypeName(name); };
@@ -20,26 +21,28 @@ angular
 		this.getAllADTs				= function() { return getAllADTs(); };
 		this.getByName				= function(name){return getByName(name);};
 		this.getNameToADT			= function() { return nameToADT; };
+		this.getAll = function(){ return adts };
 
 		function init()
 		{
 			
 
 			// hook from firebase all the functions declarations of the project
-			var ADTSync = $firebase(new Firebase(firebaseUrl+'/ADTs/ADTs'));
-			var firebaseADTs=[];
-			firebaseADTs = ADTSync.$asArray();
-			firebaseADTs.$loaded().then(function(){
+			var ADTSync = $firebase(new Firebase(firebaseUrl+'/artifacts/ADTs'));
+			
+			adts = ADTSync.$asArray();
+			adts.$loaded().then(function(){
+				console.log('adts loaded',adts);
 				typeNames=[];
 				nameToADT=[];
 				ADTs=[];
 				addDefaultADT();
 
-				if(firebaseADTs.length>0){
-					for(var i=0; i<firebaseADTs.length;i++ ){
-						typeNames.push(firebaseADTs[i].name);
-						nameToADT[firebaseADTs[i].name] = firebaseADTs[i];
-						ADTs.push(firebaseADTs[i]);
+				if(adts.length>0){
+					for(var i=0; i<adts.length;i++ ){
+						typeNames.push(adts[i].name);
+						nameToADT[adts[i].name] = adts[i];
+						ADTs.push(adts[i]);
 					}
 				}
 
