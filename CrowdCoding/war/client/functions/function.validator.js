@@ -245,7 +245,7 @@ angular
 
         if (type == -1)
             errorMessage.push("The keyword " + keyword + "must be followed by a valid type name on line '" + line + "'.");
-        else if (!ADTService.isValidTypeName(type))
+        else if (!ADTService.isValidName(type))
             errorMessage.push(type + ' is not a valid type name. Valid type names are ' + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).');
         else if (keyword === '@param' && !isValidName(name))
             errorMessage.push(name + ' is not a valid name. Use upper and lowercase letters, numbers, and underscores.');

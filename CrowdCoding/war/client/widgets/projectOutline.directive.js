@@ -7,9 +7,10 @@ function projectOutline(ADTService, functionsService) {
         restrict: 'E',
         templateUrl: '/client/widgets/project_outline.template.html',
         controller: function($scope, $element) {
-            console.log(functionsService);
+
             $scope.functions = functionsService.getAll();
             $scope.dataTypes = ADTService.getAll();
+
 
             $scope.buildAdtDetail = function(adt){
                 var struct = '{';

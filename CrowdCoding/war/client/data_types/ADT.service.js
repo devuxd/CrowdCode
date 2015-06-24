@@ -9,33 +9,25 @@ angular
 
 		var typeNames=[];
 		var nameToADT=[];
-		var ADTs=[];
 		var adts = [];
-		// Public functions
-		this.init                   = function() { return init(); };
-		this.isValidTypeName        = function(name) { return isValidTypeName(name); };
-		this.validateFunctionName   = function(inputText, ignoreEmpty) { return validateFunctionName(inputText, ignoreEmpty); };
-		this.validateParamName      = function(inputText, ignoreEmpty) { return validateParamName(inputText, ignoreEmpty); };
-		this.validateParamTypeName  = function(inputText, paramName, ignoreEmpty) { return validateParamTypeName(inputText, paramName, ignoreEmpty); };
-		this.validateReturnTypeName = function(inputText, ignoreEmpty) { return validateReturnTypeName(inputText, ignoreEmpty); };
-		this.getAllADTs				= function() { return getAllADTs(); };
-		this.getByName				= function(name){return getByName(name);};
-		this.getNameToADT			= function() { return nameToADT; };
-		this.getAll = function(){ return adts };
+
+		this.init         = init;
+		this.getAll       = getAll;
+		this.getByName	  = getByName;
+		this.getNameToADT = function() { return nameToADT; };
+		this.isValidName  = isValidName;
 
 		function init(){
-			adts = $firebaseArray(new Firebase(firebaseUrl+'/ADTs'));
+			adts = $firebaseArray(new Firebase(firebaseUrl+'/artifacts/ADTs'));
 			adts.$loaded().then(function(){
+
 				typeNames=[];
 				nameToADT=[];
-				ADTs=[];
-				addDefaultADT();
 
 				if(adts.length>0){
 					for(var i=0; i<adts.length;i++ ){
 						typeNames.push(adts[i].name);
 						nameToADT[adts[i].name] = adts[i];
-						ADTs.push(adts[i]);
 					}
 				}
 
@@ -47,60 +39,20 @@ angular
 
 		}
 
-		function getByName(name)
-		{
-
-			var adt=[];
-
-			for(var i=0; i<ADTs.length; i++)
-				{
-				if(ADTs[i].name===name)
-					{
-
-					return ADTs[i];
-					}
-				}
-
-			return [];
+		function getByName(name){
+			return adts.filter(function(adt){
+				if( adt.name === name )
+					return true;
+				return false;
+			});
 		}
 
-		// Adds type names for primitives
-		function addDefaultADT()
-		{
-			typeNames.push('String');
-			ADTs.push( { name:'String',
-									description:'A String simply stores a series of characters like \"John Doe\".'+
-												'A string can be any text inside double quotes',
-									examples:[{name : 'default', value: '\"John Doe\"'}],
-									structure:[]
-									});
-
-			typeNames.push('Number');
-			ADTs.push( { name:'Number',
-									description:'Number is the only type of number.'+
-												'Numbers can be written with, or without, decimals.',
-
-									examples:[{name : 'default', value: '14'}],
-									structure:[]
-									});
-
-			typeNames.push('Boolean');
-			ADTs.push({ name:'Boolean',
-									description:'A Boolean represents one of two values: true or false.',
-									examples:[{name : 'default', value: 'true'}],
-									structure:[]
-									});
-
-		}
-
-		function getAllADTs()
-		{
-			return ADTs;
+		function getAll(){
+			return adts;
 		}
 
 		// Returns true if name is a valid type name and false otherwise.
-		function isValidTypeName(name)
-		{
+		function isValidName(name){
 			var simpleName;
 			// Check if there is any array characters at the end. If so, split off that portion of the string.
 			var arrayIndex = name.indexOf('[]');
@@ -120,118 +72,6 @@ angular
 			}
 
 			return true;
-		}
-
-
-		/*
-		 *  ADTandDataCheck check the integrity and validity of the data.
-		 */
-
-
-
-
-		function validateFunctionName(inputText, ignoreEmpty)
-		{
-			var value = inputText.val().trim();
-			inputText.val(value);
-
-			var nameList=[];
-
-			$("input[id=FunctionName").each(function(){
-
-				var value=($(this).val()).trim();
-				nameList.push(value);
-
-			});
-
-
-			if (ignoreEmpty && value == '')
-				return '';
-
-			// Check that the function name is syntactically valid by building an
-			// empty function and running JSHint against it. If there's an error, it's not valid.
-			// Also check that the function does not match a current function name.
-
-			var codeToTest = 'function ' + value + '() {}';
-
-
-			if (value == '')
-				return 'Missing a function name.<BR>';
-			else if (nameList.indexOf(value,nameList.indexOf(value) +1)!=-1)
-				return "The function name '" + value + "' is already taken. Please use another.<BR>";
-			else if(!JSHINT(codeToTest,getJSHintGlobals()))
-				return value + ' is not a valid function name.<BR>';
-			else
-				return '';
-		}
-
-
-		function hasDuplicates(nameList, value) {
-		    var valuesSoFar = {};
-		    for (var i = 0; i < array.length; ++i) {
-		        var value = array[i];
-		        if (Object.prototype.hasOwnProperty.call(valuesSoFar, value)) {
-		            return true;
-		        }
-		        valuesSoFar[value] = true;
-		    }
-		    return false;
-		}
-
-		function validateParamName(inputText, ignoreEmpty)
-		{
-			var value = inputText.val().trim();
-			inputText.val(value);
-
-			if (ignoreEmpty && value == '')
-				return '';
-
-			// Check that the function name is syntactically valid by building an
-			// empty function and running JSHint against it. If there's an error, it's not valid.
-			// Also check that the function does not match a current function name.
-
-			var codeToTest = 'function funcABC( ' + value + ') {}';
-			if (value == '')
-				return 'Missing a paramater name.<BR>';
-			else if(!JSHINT(codeToTest,getJSHintGlobals()))
-				return value + ' is not a valid paramater name.<BR>';
-			else
-				return '';
-		}
-
-		function validateParamTypeName(inputText, paramName, ignoreEmpty)
-		{
-
-			var value = inputText.val().trim();
-			inputText.val(value);
-
-			if (ignoreEmpty && value == '')
-				return '';
-
-			if (value == '')
-				return 'Missing a type name for ' + paramName + '.<BR>';
-			else if(!isValidTypeName(value))
-				return 'The type for ' + paramName + ' - ' + value + ' is not a valid type name. Valid type names are '
-				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';
-			else
-				return '';
-		}
-
-		function validateReturnTypeName(inputText, ignoreEmpty)
-		{
-			var value = inputText.val().trim();
-			inputText.val(value);
-
-			if (ignoreEmpty && value == '')
-				return '';
-
-			if (value == '')
-				return 'Missing a return type.<BR>';
-			else if(!isValidTypeName(value))
-				return 'The return type ' + value + ' is not a valid type name. Valid type names are '
-				  + 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]). <BR>';
-			else
-				return '';
 		}
 
 	}

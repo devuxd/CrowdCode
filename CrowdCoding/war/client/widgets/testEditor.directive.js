@@ -38,6 +38,7 @@ angular
                     
                 // });
 
+
                 _editor.setOptions(options);
                 _editor.commands.removeCommand('indent');
 			};

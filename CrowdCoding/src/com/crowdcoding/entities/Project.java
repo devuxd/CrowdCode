@@ -3,6 +3,7 @@ package com.crowdcoding.entities;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -17,6 +18,7 @@ import com.crowdcoding.dto.CRFunctionDTO;
 import com.crowdcoding.dto.ClientRequestDTO;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.microtask.submission.ADTDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ADTStructureDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionDescriptionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
@@ -122,6 +124,33 @@ public class Project
 			{
 				FunctionCommand.addClientRequestsArtifacts(CRfunctionDTO);
 			}
+			
+			ADTCommand.create(
+					"A String simply stores a series of characters like \"John Doe\". A string can be any text inside double quotes.", 
+					"String",
+					new HashMap<String, String>(),
+					true,
+					true
+			);
+			
+			ADTCommand.create(
+					"Number is the only type of number. Numbers can be written with, or without, decimals.", 
+					"Number",
+					new HashMap<String, String>(),
+					true,
+					true
+			);
+			
+			ADTCommand.create(
+					"A Boolean represents one of two values: true or false.", 
+					"Boolean",
+					new HashMap<String, String>(),
+					true,
+					true
+			);
+					
+
+					
 			for(ADTDTO ADT : dto.ADTs){
 				ADTCommand.create(ADT.description, ADT.name, ADT.getStructure(), true, ADT.isReadOnly);
 			}
