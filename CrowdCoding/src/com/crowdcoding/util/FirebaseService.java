@@ -253,7 +253,7 @@ public class FirebaseService
 
 	// Stores the specified function to Firebase
 	public static void writeFunction(FunctionInFirebase dto, long functionID, int version, String projectId){
-		enqueueWrite(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PATCH, projectId);
 		enqueueWrite(dto.json(), "/history/artifacts/functions/" + functionID + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}
 

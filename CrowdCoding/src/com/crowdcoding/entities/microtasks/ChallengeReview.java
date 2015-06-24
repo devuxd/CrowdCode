@@ -110,7 +110,7 @@ public class ChallengeReview extends Microtask
     	return new ChallengeReview( this.challengeText, this.challengerWorkerId, this.challengeeWorkerId, this.microtaskKeyUnderChallenge, this.reviewKeyUnderChallenge, this.functionId, this.projectId);
     }
 
-	protected void doSubmitWork(DTO dto, String workerID, String projectId)
+	protected void doSubmitWork(DTO dto, String workerID)
 	{
 		System.out.println("submitting");
 

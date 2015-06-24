@@ -8,7 +8,6 @@ angular
     
     $scope.tests = $scope.funct.rec.tests || [];
 
-
     $scope.activeDescriptions = [];
     $scope.currentIndex  = -1;
     $scope.isComplete    = false;

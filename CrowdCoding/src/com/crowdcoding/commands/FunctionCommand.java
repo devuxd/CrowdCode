@@ -1,23 +1,12 @@
 package com.crowdcoding.commands;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.List;
-
-import javax.print.attribute.standard.Sides;
-
 import com.crowdcoding.dto.CRFunctionDTO;
-import com.crowdcoding.dto.ClientRequestDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
-import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.StubDTO;
 import com.crowdcoding.entities.artifacts.Function;
-import com.crowdcoding.entities.artifacts.Test;
-import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior.PromptType;
 import com.crowdcoding.servlets.ThreadContext;
-import com.crowdcoding.util.FirebaseService;
-import com.googlecode.objectify.LoadResult;
-import com.googlecode.objectify.VoidWork;
 
 public abstract class FunctionCommand extends Command {
 	protected long functionId;
@@ -46,8 +35,8 @@ public abstract class FunctionCommand extends Command {
 		return new RunTests(functionId);
 	}
 
-	public static FunctionCommand submittedTestResult(long functionId, boolean result, long failedTestResult){
-		return new SubmittedTestResult(functionId, result, failedTestResult);
+	public static FunctionCommand submittedTestResult(long functionId, String jsonDTO){
+		return new SubmittedTestResult(functionId, jsonDTO);
 	}
 
 
@@ -248,17 +237,16 @@ public abstract class FunctionCommand extends Command {
 	}
 
 	protected static class SubmittedTestResult extends FunctionCommand {
-		private boolean result;
-		private long failedTestResult;
+		private String jsonDto;
 
-		public SubmittedTestResult(long functionId, boolean result, long failedTestResult) {
+		public SubmittedTestResult(long functionId, String jsonDto) {
 			super(functionId);
-			this.result=result;
-			this.failedTestResult=failedTestResult;
+
+			this.jsonDto = jsonDto;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.submittedTestResult(result, failedTestResult);
+			function.submittedTestResult(jsonDto);
 		}
 	}
 

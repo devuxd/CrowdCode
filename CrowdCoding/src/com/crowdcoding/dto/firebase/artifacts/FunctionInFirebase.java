@@ -20,6 +20,7 @@ public class FunctionInFirebase extends DTO
 	public int linesOfCode;
 	public List<Long> ADTsId;
 	public List<Long> calleesId;
+	public int testSuiteVersion;
 	public boolean isReadOnly;
 	public boolean isApiArtifact;
 	public boolean isDeleted;
@@ -37,7 +38,7 @@ public class FunctionInFirebase extends DTO
 
 	public FunctionInFirebase(String name, long id, int version, String returnType, List<String> paramNames,
 			List<String> paramTypes,List<String> paramDescriptions, String header, String description, String code, int linesOfCode,
-			List<Long> ADTsId, List<Long> calleesId, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted )
+			List<Long> ADTsId, List<Long> calleesId, int testSuiteVersion, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted )
 	{
 		this.name 		 = name;
 		this.id 		 = id;
@@ -55,10 +56,11 @@ public class FunctionInFirebase extends DTO
 		}
 
 
-		this.ADTsId		   = ADTsId;
-		this.calleesId 	   = calleesId;
-		this.isApiArtifact = isApiArtifact;
-		this.isDeleted     = isDeleted;
+		this.ADTsId		   	   = ADTsId;
+		this.calleesId 	       = calleesId;
+		this.testSuiteVersion = testSuiteVersion;
+		this.isApiArtifact     = isApiArtifact;
+		this.isDeleted         = isDeleted;
 
 
 	}

@@ -33,7 +33,9 @@ public class ImplementBehaviorInFirebase extends MicrotaskInFirebase
 
 		this.testId			  = testId;
 		this.disputeText	  = disputeText;
-		this.calleeId		  = calleeId;
+		if( calleeId!=0 )
+			this.calleeId		  = calleeId;
+		if( oldCalleeVersion!=0 )
 		this.oldCalleeVersion = oldCalleeVersion;
 
 	}

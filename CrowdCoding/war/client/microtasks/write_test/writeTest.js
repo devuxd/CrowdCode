@@ -3,7 +3,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('WriteTestController', ['$scope', '$rootScope', '$firebase', '$filter', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $filter, $alert,  functionsService, FunctionFactory, ADTService) {
+    .controller('WriteTestController', ['$scope', '$rootScope',  '$filter', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope,  $filter, $alert,  functionsService, FunctionFactory, ADTService) {
     // initialize testData
     // scope data 
     $scope.disputeFunction = {

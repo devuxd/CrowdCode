@@ -5,7 +5,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('ChallengeReviewController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', 'microtasksService', 'TestList', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService, microtasksService, TestList) {
+    .controller('ChallengeReviewController', ['$scope', '$rootScope',  '$alert',  'functionsService','FunctionFactory', 'ADTService', 'microtasksService', 'TestList', function($scope, $rootScope,  $alert,  functionsService, FunctionFactory, ADTService, microtasksService, TestList) {
     // scope variables
     $scope.review = {};
     $scope.review.reviewText = "";

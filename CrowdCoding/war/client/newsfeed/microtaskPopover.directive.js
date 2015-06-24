@@ -1,6 +1,6 @@
 angular
     .module('crowdCode')
-    .directive('microtaskPopover', function($timeout, $rootScope, $firebase,$popover, microtasksService, functionsService,FunctionFactory, TestList){
+    .directive('microtaskPopover', function($timeout, $rootScope, $popover, microtasksService, functionsService,FunctionFactory, TestList){
     return {
         
         scope: true,

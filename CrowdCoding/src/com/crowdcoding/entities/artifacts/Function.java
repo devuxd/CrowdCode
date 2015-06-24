@@ -2,6 +2,7 @@ package com.crowdcoding.entities.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.TestCommand;
+import com.crowdcoding.dto.DTO;
+import com.crowdcoding.dto.ajax.TestResultDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviorDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
@@ -24,7 +27,11 @@ import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior;
 import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior.PromptType;
 import com.crowdcoding.entities.microtasks.ImplementBehavior;
 import com.crowdcoding.entities.microtasks.Microtask;
+import com.crowdcoding.history.ArtifactCreated;
+import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.util.FirebaseService;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
 import com.googlecode.objectify.annotation.Index;
@@ -38,6 +45,7 @@ import com.googlecode.objectify.annotation.Index;
 @Subclass(index=true)
 public class Function extends Artifact
 {
+	//Function data
 	private String        code = "";
 	@Index private String name = "";
 	private String        returnType = "";
@@ -55,7 +63,7 @@ public class Function extends Artifact
 
 	private List<Long> testsId = new ArrayList<Long>();
 	private List<Long> stubsId = new ArrayList<Long>();
-	private List<Long> ADTsId  = new ArrayList<Long>();
+	private List<Long> ADTsId  = new ArrayList<Long>(); // ADTs used by the function
 
 
 	// Calls made by this function
@@ -105,6 +113,9 @@ public class Function extends Artifact
 		this.isCompleted=false;
 
 		ofy().save().entities(this).now();
+
+		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
+
 		lookForWork();
 		storeToFirebase();
 
@@ -177,19 +188,22 @@ public class Function extends Artifact
 	// If there is a microtasks available, marks it as ready to be done.
 	public void lookForWork()
 	{
-		//if the function is needed
+		//before checks if the function is still active
 		if( ! isDeleted()){
-
+			//  when there are no Describe Function Behavior in progress
 			if( describeFunctionBehaviorOut == null ){
-
+				//first checks if there are enqueued describe function behavior microtasks
 				if(queuedDescribeFunctionBehavior.isEmpty()){
-
+					// if the function is not complete, spawn a new describe function behavior microtask
 					if(! this.isCompleted){
 						Microtask mtask = new DescribeFunctionBehavior(getRef(), getId(), name, projectId);
 						ProjectCommand.queueMicrotask(mtask.getKey(), null);
 						describeFunctionBehaviorOut = Ref.create(mtask);
 					}
-					checkIfNeedImplementation();
+					// check if the function need to be implemented
+					//checkIfNeedImplementation();
+					createImplementBehavior();
+
 				}
 				else{
 
@@ -201,13 +215,23 @@ public class Function extends Artifact
 				}
 
 			} else if(((DescribeFunctionBehavior)( describeFunctionBehaviorOut.get())).getPromptType() == PromptType.WRITE){
-				checkIfNeedImplementation();
+				//checkIfNeedImplementation();
+				createImplementBehavior();
 
 			}
 
 		}
-	}
+		ofy().save().entity(this).now();
 
+	}
+	private void createImplementBehavior(){
+		if(testsId.size()>0){
+		isImplementationInProgress =  true;
+
+		newImplementBehavior(0L);
+		ofy().save().entities(this);
+		}
+	}
 	private void checkIfNeedImplementation(){
 		if(testsId.size() > 0 && ! isImplementationInProgress ){
 			isImplementationInProgress =  true;
@@ -292,6 +316,7 @@ public class Function extends Artifact
 		this.calleesId = submittedCalleeIds;
 	}
 
+	// checks if the new submitted description differs from the old one
 	public boolean isDescriptionChanged(FunctionDTO dto)
 	{
 		if( ! dto.returnType.equals(this.returnType))
@@ -308,6 +333,8 @@ public class Function extends Artifact
 	//////////////////////////////////////////////////////////////////////////////
 	//  MICROTASK COMPLETION HANDLERS
 	//////////////////////////////////////////////////////////////////////////////
+
+
 	public void describeFunctionBehaviorCompleted(DescribeFunctionBehaviorDTO dto)
 	{
 		System.out.println("DTO RECEIVED : "+dto.toString());
@@ -316,9 +343,10 @@ public class Function extends Artifact
 			if(testDTO.deleted)
 				TestCommand.delete(testDTO.id);
 
-			else if (testDTO.added )
+			else if (testDTO.added ){
+				System.out.println("crating test");
 				TestCommand.create(description, code, this.getId(), false, false);
-
+			}
 			else
 				TestCommand.update(testDTO.id, testDTO.description, testDTO.code);
 
@@ -347,7 +375,12 @@ public class Function extends Artifact
 		}
 	}
 
-
+	private void checkIfNeeded()
+	{
+		//if is not called by anyone means that is not anymore needed
+		if( this.callersId.isEmpty())
+			deactivateFunction(null);
+	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	//  COMMAND HANDLERS
@@ -358,13 +391,25 @@ public class Function extends Artifact
 		FirebaseService.writeTestJobQueue(this.getId(), this.version, testSuiteVersion, projectId);
 	}
 
-	public void submittedTestResult(boolean areTestsPassed, long failedTestId){
-		if(! areTestsPassed )
-			newImplementBehavior(failedTestId);
-		else{
-			isImplementationInProgress = false;
+	public void submittedTestResult(String jsonDto){
 
+		try {
+			TestResultDTO testResult = (TestResultDTO)DTO.read(jsonDto, TestResultDTO.class);
+
+			if(! testResult.areTestsPassed )
+				newImplementBehavior(testResult.failedTestId);
+			else{
+				isImplementationInProgress = false;
+
+			}
+		} catch( JsonParseException e) {
+			e.printStackTrace();
+		} catch( JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
 		ofy().save().entity(this).now();
 
 	}
@@ -390,13 +435,6 @@ public class Function extends Artifact
 		checkIfNeeded();
 
 		ofy().save().entity(this).now();
-	}
-
-	private void checkIfNeeded()
-	{
-		//if is not called by anyone means that is not anymore needed
-		if( this.callersId.isEmpty())
-			deactivateFunction(null);
 	}
 
 	public void calleeChangedInterface(long calleeId, int oldCalleeVersion){
@@ -436,10 +474,12 @@ public class Function extends Artifact
 
 	public void addTest(long testId){
 		testsId.add(testId);
+		incrementTestSuiteVersion();
 		ofy().save().entities(this);
 	}
 	public void addStub(long stubId){
 		stubsId.add(stubId);
+		incrementTestSuiteVersion();
 		ofy().save().entities(this);
 	}
 	//////////////////////////////////////////////////////////////////////////////
@@ -513,6 +553,7 @@ public class Function extends Artifact
 					linesOfCode,
 					ADTsId,
 					calleesId,
+					testSuiteVersion,
 					isReadOnly,
 					isAPIArtifact,
 					isDeleted

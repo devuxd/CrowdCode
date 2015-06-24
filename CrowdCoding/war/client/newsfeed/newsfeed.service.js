@@ -3,7 +3,7 @@
 /////////////////////////
 angular
     .module('crowdCode')
-    .factory('newsfeedService', ['$window','$rootScope', '$firebase','$http','$q', 'firebaseUrl', 'workerId', function($window, $rootScope, $firebase, $http, $q, firebaseUrl, workerId) {
+    .factory('newsfeedService', ['$window','$rootScope', '$http','$q','$firebaseArray', 'firebaseUrl', 'workerId', function($window, $rootScope,  $http, $q,$firebaseArray, firebaseUrl, workerId) {
 
 	// Private variables
 	var newsfeed;
@@ -18,8 +18,7 @@ angular
 		{
 		    // hook from firebase all the functions declarations of the project
 		   	var ref = new Firebase(firebaseUrl + '/workers/' + workerId + '/newsfeed');
-		   	var sync = $firebase(ref);
-			newsfeed = sync.$asArray();
+			newsfeed =$firebaseArray(ref);
 			newsfeed.$loaded().then(function(){
 				// tell the others that the newsfeed services is loaded
 				$rootScope.$broadcast('serviceLoaded','newsfeed');

@@ -1,4 +1,4 @@
-angular.module('crowdCode').directive('questionList',function($rootScope,$tooltip,$timeout,$firebase,workerId,firebaseUrl, questionsService, microtasksService){
+angular.module('crowdCode').directive('questionList',function($rootScope,$tooltip,$timeout,workerId,firebaseUrl, questionsService, microtasksService){
 	return {
 		scope: false,
 		restrict: 'AEC',

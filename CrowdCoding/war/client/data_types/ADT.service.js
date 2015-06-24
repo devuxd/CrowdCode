@@ -3,7 +3,7 @@
 ////////////////////
 angular
     .module('crowdCode')
-    .factory('ADTService', ['$window','$rootScope','$firebase','firebaseUrl', function($window,$rootScope,$firebase,firebaseUrl) {
+    .factory('ADTService', ['$window','$rootScope', '$firebaseArray', 'firebaseUrl', function($window,$rootScope, $firebaseArray,firebaseUrl) {
 
 	var service = new  function(){
 
@@ -26,9 +26,7 @@ angular
 			
 
 			// hook from firebase all the functions declarations of the project
-			var ADTSync = $firebase(new Firebase(firebaseUrl+'/ADTs/ADTs'));
-			var firebaseADTs=[];
-			firebaseADTs = ADTSync.$asArray();
+			var firebaseADTs = $firebaseArray(new Firebase(firebaseUrl+'/ADTs'));
 			firebaseADTs.$loaded().then(function(){
 				typeNames=[];
 				nameToADT=[];

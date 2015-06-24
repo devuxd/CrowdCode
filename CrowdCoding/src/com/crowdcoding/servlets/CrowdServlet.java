@@ -429,13 +429,12 @@ public class CrowdServlet extends HttpServlet
 	private void doSubmitTestResult(final HttpServletRequest req, final HttpServletResponse resp) throws IOException, FileUploadException {
 
 		final String projectID = (String) req.getAttribute("project");
-		final boolean areTestsPassed  = Boolean.parseBoolean(req.getParameter("areTestsPassed"));
-		final long testSuiteId = Long.parseLong(req.getParameter("testSuiteId"));
-		final long failedTestId = Long.parseLong(req.getParameter("failedTestId"));
+		final long functionId = Long.parseLong(req.getParameter("functionId"));
+		final String JsonDTO       = Util.convertStreamToString(req.getInputStream());
 
 	//	System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
 
-		FunctionCommand.submittedTestResult(testSuiteId, areTestsPassed, failedTestId);
+		FunctionCommand.submittedTestResult(functionId, JsonDTO);
 
 		executeCommands(projectID);
 	}

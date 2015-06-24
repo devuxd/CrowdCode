@@ -5,7 +5,7 @@
 ///////////////////////
 angular
     .module('crowdCode')
-    .factory('questionsService', ['$window','$rootScope','$http', '$q', '$firebase', 'firebaseUrl','workerId', function( $window, $rootScope, $http, $q, $firebase, firebaseUrl,workerId) {
+    .factory('questionsService', ['$window','$rootScope','$http', '$q','$firebaseArray', 'firebaseUrl','workerId', function( $window, $rootScope, $http, $q,$firebaseArray, firebaseUrl,workerId) {
 
 
 	var service = new function(){
@@ -14,7 +14,7 @@ angular
 		var allTags = [];
 
 		var loaded = false;
-		var questionsRef = $firebase(new Firebase(firebaseUrl+'/questions'));
+		var firebaseRef = new Firebase(firebaseUrl+'/questions');
 
 		var idx = lunr(function(){
 			this.ref('id');
@@ -86,7 +86,7 @@ angular
 		}
 
 		function init(){
-			questions = questionsRef.$asArray();
+			questions = $firebaseArray(firebaseRef);
 			questions.$loaded().then(function(){
 
 				// tell the others that the functions services is loaded

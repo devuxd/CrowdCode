@@ -15,6 +15,7 @@ import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.dto.firebase.artifacts.ADTInFirebase;
 import com.crowdcoding.dto.firebase.artifacts.TestInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
+import com.crowdcoding.history.ArtifactCreated;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
@@ -28,8 +29,12 @@ public class ADT extends Artifact
 
 	private String description;
 	private String name;
+
+	// Hash Map that describe the ADT Structure in the form "field Name", "Field type"
 	private HashMap<String, String> structure = new HashMap<String,String>();
-	private List<Long> functionsId; //functions that currently use the ADT
+
+	//functions that currently use the ADT
+	private List<Long> functionsId;
 
 	// Constructor for deserialization
 	protected ADT()
@@ -43,8 +48,10 @@ public class ADT extends Artifact
 		this.description = description;
 		this.structure	 = structure;
 		ofy().save().entity(this).now();
+
 		storeToFirebase();
-		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
+
+		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
 
 
 	}
