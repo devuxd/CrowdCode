@@ -1,0 +1,12 @@
+<div bs-collapse start-collapsed="false" allow-multiple="true">
+	<div ng-repeat="d in dataTypes">
+		<div bs-collapse-toggle>data type: {{d.name}}</div>
+		<div bs-collapse-target>
+			<pre>{{ buildAdtDetail(d) }}</pre>
+		</div>
+	</div>
+	<div ng-repeat="f in functions">
+		<div bs-collapse-toggle>function: {{f.name}}</div>
+		<div bs-collapse-target>{{f.name}} description</div>
+	</div>
+</ul>

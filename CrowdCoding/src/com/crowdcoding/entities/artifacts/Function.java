@@ -305,7 +305,7 @@ public class Function extends Artifact
 
 			else if (testDTO.added ){
 				System.out.println("crating test");
-				TestCommand.create(description, code, this.getId(), false, false);
+				TestCommand.create(testDTO.description, testDTO.code, this.getId(), false, false);
 			}
 			else
 				TestCommand.update(testDTO.id, testDTO.description, testDTO.code);

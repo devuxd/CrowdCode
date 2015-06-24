@@ -2,10 +2,10 @@ angular
     .module('crowdCode')
     .directive('leaderboard', ['avatarFactory','$firebaseArray','firebaseUrl','workerId', leaderboard]);
 
-function leaderboard( avatarFactory, firebaseUrl, workerId) {
+function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId) {
     return {
         restrict: 'E',
-        templateUrl: '/client/leaderboard/leaderboard_panel.html',
+        templateUrl: '/client/leaderboard/leaderboard.template.html',
         controller: function($scope, $element) {
             $scope.avatar  = avatarFactory.get;
             $scope.leaders = $firebaseArray(new Firebase(firebaseUrl + '/leaderboard/leaders'));

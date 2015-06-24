@@ -29,7 +29,6 @@ angular
 		this.getCount = function(){ return (functions === undefined)?0:functions.length; };
 	 	this.isLoaded = function() { return loaded; };
 		this.getAll = function(){ return functions;	};
-		this.parseFunction = function (codemirror) { return parseFunction(codemirror); };
 		this.parseFunctionFromAce = function (ace) { return parseFunctionFromAce(ace); };
 
 

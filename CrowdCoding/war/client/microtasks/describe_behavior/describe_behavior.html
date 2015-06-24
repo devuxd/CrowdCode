@@ -27,24 +27,66 @@
 		
 	</div>
 
-	<div class="section section-description" bs-collapse ng-model="activeDescriptions" data-allow-multiple="true">
-		<div class="section-title" >
-			<div class="dot bg-color"></div>
-			Already described behaviors
-		</div>
-		<div class="section-content">
-			<div style="margin-bottom:2px" ng-repeat="t in tests track by $index">
-				<div style="width:100%" ng-if="currentIndex != $index">
-					<div class="bg-color-alpha" bs-collapse-toggle> 
-						<span ng-bind="t.description"></span>
-						<button class="btn btn-sm" ng-if="currentIndex != $index" ng-click="editTest($index)">Edit</button>
-					</div>
-					<div class="" ng-bind="t.code" bs-collapse-target></div>
-				</div>
+
+	<div class="tests-list" bs-collapse ng-model="data.expanded" data-allow-multiple="true">
+		<div class="test-item" ng-repeat="t in data.tests track by $index">
+			<div class="toggler bg-color-alpha" bs-collapse-toggle> 
+				<strong> it </strong>
+				<span ng-bind="t.description"></span>
 			</div>
-		</div>	
+			<div ng-form="testForm" class="form" bs-collapse-target>
+				<div class="form-group">
+					<div class="input-group" >
+				      <span class="input-group-addon">it</span>
+				      <input 
+				      	class="form-control" 
+				      	name="description" 
+				      	ng-model="t.description"
+				      />
+				    </div>
+					
+				</div>
+				<div class="form-group">
+					<test-editor test="t"></test-editor>
+				</div>
+				
+			</div>
+		</div>
 	</div>
 
+
+	<div ng-init="t = data.newTest" class="test-item">
+		<div class="toggler bg-color-alpha">
+
+			<span class="pull-left">Describe new behavior</span>
+
+			<span class="pull-right" ng-if="data.tests.length > 0"> 
+				<input type="checkbox" ng-model="data.isComplete" ng-click="t.editing = !t.editing"> 
+				the function is completely described by the previous behaviors
+			</span>
+			<span class="clearfix"></span>
+		</div>
+		<div ng-form="newTestForm" class="form" ng-if="t.editing">
+			<div class="form-group">
+				<div class="input-group" >
+			      <span class="input-group-addon">it</span>
+			      <input 
+			      	class="form-control" 
+			      	name="description" 
+			      	ng-model="t.description"
+			      />
+			    </div>
+				
+			</div>
+			<div class="form-group">
+				<test-editor test="t"></test-editor>
+			</div>
+			<div class="form-group">
+				
+			</div>
+		</div>
+	</div>
+<!--
 	<div class="section section-form">
 
 		<div class="section-title" >
@@ -53,19 +95,18 @@
 		</div>
 		<div class="section-content">
 			<div class="form-group">
-				<label>description</label>
 				<input class="form-control" ng-model="newTest.description"></input>
 			</div>
 			<div class="form-group">
-				<label>code</label>
-				<textarea class="form-control" ng-model="newTest.code"></textarea>
+				<test-editor code="newTest.code"></test-editor>
 			</div>
 
-			<div ng-if="microtask.promptType == 'add' ">
-				<label><input type="checkbox" ng-model="isComplete">No more behavior to describe</label>
+			<div ng-if="microtask.promptType == 'WRITE' ">
+				<label><input type="checkbox" ng-model="isComplete">No more behaviors to describe</label>
 			</div>
 		</div>
 
 	</div>
-    
+    -->
+
 </div>
