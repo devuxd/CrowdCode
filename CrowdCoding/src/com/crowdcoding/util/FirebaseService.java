@@ -167,6 +167,13 @@ public class FirebaseService
 	{
 		enqueueWrite("{\"assigned\": "+Boolean.toString(assigned)+", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
+	
+	public static void writeMicrotaskExcludedWorkers( String microtaskKey,
+			String workerId, String projectId, String workerIDs)
+	{
+		System.out.print("im writing");
+		enqueueWrite("{\"excluded\": \"" +workerIDs+ "\", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+	}
 
 
 	// Writes information about microtask completition to Firebase

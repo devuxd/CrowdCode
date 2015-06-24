@@ -289,10 +289,23 @@ public class Project
 			excludedWorkersForMicrotask = new HashSet<String>();
 			excludedWorkers.put( microtaskKeyString , excludedWorkersForMicrotask);
 		}
-
+		
 		excludedWorkersForMicrotask.add(workerID);
+		
+		//TESTING LIST OF EXCLUDED WORKERS
+		String workerList = excludedWorkersToString(excludedWorkersForMicrotask);
+		FirebaseService.writeMicrotaskExcludedWorkers(microtaskKeyString,
+			workerID, this.getID(), workerList);
 	}
-
+	
+	private String excludedWorkersToString(HashSet<String> WorkersList){
+		String Ids = "";
+		for(String id : WorkersList){
+			Ids += id +",";
+		}
+		System.out.println("Testing: " + Ids);
+		return Ids;
+	}
 	// Gets the currently assigned microtask for the specified worker or returns null if the worker
 	// does not have a currently assigned microtask. Returns the microtaskID of the microtask.
 	public Key<Microtask> lookupMicrotaskAssignment(String workerID)

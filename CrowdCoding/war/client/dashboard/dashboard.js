@@ -2,7 +2,7 @@ var boardApp = angular.module('crowdCode')//,["firebase","ui.bootstrap","ngAnima
 
 boardApp.run();
 
-boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService','firebaseUrl',  function($scope,$rootScope,$firebase,$timeout,microtasksService,firebaseUrl){
+boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService','firebaseUrl','workerId',  function($scope,$rootScope,$firebase,$timeout,microtasksService,firebaseUrl, workerId){
 	console.log("controller loaded");
 	
 	var projectURL = firebaseUrl;
@@ -39,7 +39,7 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 		$scope.filterEnabled[value] = true;
 		$scope.typesCount[value] = 0;
 	});		
-		
+	
 	$scope.microtasks = [];
 	
 	// load microtasks
@@ -124,65 +124,7 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 		$rootScope.$broadcast('fetchSpecificMicrotask',{microtaskID});
 	}
 
-	$scope.assignRandom = function(){
 
-		var key, task,counter = 0;
-		do {
-			key = Math.floor(Math.random()*$scope.microtasks.length);
-			task = $scope.microtasks[key];
-			console.log("task assigned: "+task.assigned);
-		} while(task.assigned==true || counter++ < 5);
-		
-		if(counter >= 5){
-
-			task.assigned = true;
-			$scope.microtasks.$save(task);
-		}
-		else console.log("error submitting random microtask");
-		
-		return false;
-	}
-
-	$scope.intervalSlider = {
-		min: 500,
-		max: 900
-	};
-
-	$scope.$watch('intervalSlider',function(){
-
-   			console.log($scope.intervalSlider);
-	})
-
-	var promise = null;
-    $scope.runAction =  function(){
-		actionRunning = true;
-
-		// 
-		var actionProbability = Math.random();
-		if(actionProbability<0.7){
-			$scope.spawnRandom();
-		}else{
-			$scope.assignRandom();
-		}
-
-
-
-
-		// calc time for timeout
-		var interval  = parseInt($scope.intervalSlider.max)-parseInt($scope.intervalSlider.min);
-		var randomNum = Math.floor(Math.random()*interval);
-		var milliSec  = randomNum + parseInt($scope.intervalSlider.min);
-
-		console.log("do action! time: "+milliSec);//+"- interval: "+interval+" - random: "+randomNum+" - min: "+$scope.intervalSlider.min+" - max: "+$scope.intervalSlider.max);
-    	promise = $timeout($scope.runAction,milliSec);
-    }
-    $scope.stopAction = function(){
-		if(promise!=null){
-			$timeout.cancel(promise);
-			promise = null;
-		}
-    }
-     
 
 }]);
 
@@ -214,6 +156,28 @@ boardApp.filter('Assigned', function () {
     };
 });
 
+boardApp.filter('canChoose', function () {
+	 var listOfWorkers = [];
+    return function (microtasks) {
+		var items = {
+        	out: []
+        };
+        angular.forEach(microtasks, function (value, key) {
+            if (value.excluded != null) {
+                this.listOfWorkers = value.excluded.split(',');
+               	if(!this.listOfWorkers.indexOf(workerId)){                		
+                		this.out.push(value);
+                }
+                
+               
+            }
+            else
+            	this.out.push(value);
+        }, items);
+        return items.out;
+    };
+}); 
+
 boardApp.filter('Completed', function () {
     return function (microtasks) {
 		var items = {
@@ -242,3 +206,5 @@ boardApp.filter('byType', function () {
         return items.out;
     };
 });
+
+

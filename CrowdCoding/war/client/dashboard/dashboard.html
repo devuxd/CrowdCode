@@ -40,7 +40,7 @@
 				<div class="title">Available:</div>
 				<div id="board"  >	
 					<div id="columns">
-						<div class="pin" ng-repeat="(i,microtask) in microtasks | nonAssigned | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+						<div class="pin" ng-repeat="(i,microtask) in microtasks | nonAssigned | byType:filterEnabled | canChoose |  orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
 							<span class="typeLabel label-default pastel-{{types.keyAt(microtask.type)}}">{{microtask.type}}</span>
 							<div class="debug">{{microtask.promptType}}</div>							
 							
@@ -69,6 +69,7 @@
 							<div class="points">Function: {{microtask.owningArtifact}} </div>
 							
 							<div class="points">Reward: {{microtask.points}} points</div>
+
 
 						</div>
 					</div>

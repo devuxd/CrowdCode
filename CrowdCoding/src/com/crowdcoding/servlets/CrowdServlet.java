@@ -261,16 +261,13 @@ public class CrowdServlet extends HttpServlet
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
 		} else if (pathSeg[3].equals("askMicrotask")){
-			doAskMicrotask(req, resp,user);
+			doFetchSpecificMicrotask(req, resp,user,false);
 		} else if (pathSeg[3].equals("enqueue")){
 			doEnqueueSubmit(req, resp,user);
 		}
 	}
 	
-	private void doAskMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user)throws IOException{
-		doAskMicrotask(req,resp,user,false);
-	}
-	private void doAskMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
+	private void doFetchSpecificMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
 		// Since the transaction may fail and retry,
 				// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
 //				// And anything inside the transaction MUST not mutate the values produced.
