@@ -77,7 +77,7 @@ public class Test extends Artifact
 		int firebaseVersion = version + 1;
 
 		FirebaseService.writeTest(new TestInFirebase(this.id,
-													 this.version,
+													 firebaseVersion,
 													 this.description,
 													 this.code,
 													 this.functionId,

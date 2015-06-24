@@ -7,8 +7,12 @@ angular
     .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $timeout, $rootScope, $alert, $modal, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
     
     $scope.data = {};
-
-    $scope.data.tests = $scope.funct.rec.tests || [];
+    $scope.data.tests = [];
+    if( $scope.funct.rec.tests ){
+        for( var testId in $scope.funct.rec.tests ){
+            $scope.data.tests.push($scope.funct.rec.tests[testId]);
+        }
+    }
     $scope.data.expanded = [];
     $scope.data.isComplete = false;
     $scope.data.newTest = {
@@ -38,9 +42,19 @@ angular
         addTest();
         var formData = {
             functionVersion    : $scope.funct.rec.version,
-            tests              : $scope.tests,
+            tests              : [],
             isDescribeComplete : $scope.isComplete
         };
+
+        $scope.data.tests.map(function(test){
+            formData.tests.push({
+                id:          test.id,
+                description: test.description,
+                code:        test.code,
+                added:       test.added,
+                deleted:     test.deleted
+            });
+        });
         console.log(formData);
         $scope.$emit('submitMicrotask', formData);
     }
