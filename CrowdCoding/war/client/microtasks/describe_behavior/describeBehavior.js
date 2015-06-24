@@ -9,17 +9,8 @@ angular
     $scope.data = {};
 
     $scope.data.tests = $scope.funct.rec.tests || [];
-
-/*
-    $scope.data.tests = [
-        { description: 'description1', code:'//code1' },
-        { description: 'description2', code:'//code2' },
-        { description: 'description3', code:'//code3' },];*/
-
-
     $scope.data.expanded = [];
     $scope.data.isComplete = false;
-
     $scope.data.newTest = {
         description: 'should be the new test',
         code: '//code of the new test',

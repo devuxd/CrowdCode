@@ -1,17 +1,17 @@
 package com.crowdcoding.dto.ajax;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.entities.artifacts.Test;
 
 
 public class TestResultDTO extends DTO
 {
 
 	public boolean areTestsPassed;
-	public long functionId;
 	public long failedTestId;
+	public List < Long > passedTestsId = new ArrayList< Long >();
 
 
 	// Default constructor

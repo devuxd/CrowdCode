@@ -1,4 +1,4 @@
-angular.module('crowdCode').directive('questionForm',function($firebase,firebaseUrl,workerId, questionsService){
+angular.module('crowdCode').directive('questionForm',function(firebaseUrl,workerId, questionsService){
 	return {
 		scope: true,
 		restrict: 'AEC',

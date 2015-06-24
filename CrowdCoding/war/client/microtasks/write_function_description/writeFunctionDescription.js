@@ -4,7 +4,7 @@
 ////////////////////////////////////////////
 angular
     .module('crowdCode')
-    .controller('WriteFunctionDescriptionController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
+    .controller('WriteFunctionDescriptionController', ['$scope', '$rootScope',  '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope,  $alert,  functionsService, FunctionFactory, ADTService) {
     // initialization of models
     $scope.model = {};
     $scope.model.description = "";

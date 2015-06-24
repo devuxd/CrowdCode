@@ -99,7 +99,7 @@
 	<script src="/include/jshint.js"></script>
 	<script src="/include/simplediff/simplediff.js"></script>
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
-	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+	<script src="/include/firebase.js"></script>
 	<script src='/include/esprima.js'></script>
 	<script src='/include/escodegen.browser.js'></script>
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
@@ -118,7 +118,7 @@
 	<script src="/include/lunr.min.js"></script>
 	<script src="/include/timeAgo.js"></script>
 	<script src="/include/angular-toaster/toaster.min.js"></script>
-	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
+	<script src="/include/angularfire.min.js"></script> <!-- angularfire -->
 	<script src="/include/ui-layout/src/ui-layout.js"></script>
 
 	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>

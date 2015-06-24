@@ -4,7 +4,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('WriteFunctionController', ['$scope', '$rootScope', '$firebase',  'functionsService','FunctionFactory', 'ADTService', '$alert', function($scope, $rootScope, $firebase,  functionsService, FunctionFactory, ADTService, $alert) {
+    .controller('WriteFunctionController', ['$scope', '$rootScope',   'functionsService','FunctionFactory', 'ADTService', '$alert', function($scope, $rootScope,   functionsService, FunctionFactory, ADTService, $alert) {
     
     $scope.data = {};
     $scope.data.hasPseudo = false;

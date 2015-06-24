@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.dto.firebase.artifacts.StubInFirebase;
+import com.crowdcoding.history.ArtifactCreated;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
@@ -35,13 +36,18 @@ public class Stub extends Artifact
 		this.output 	= output;
 
 		ofy().save().entity(this).now();
+		storeToFirebase();
 
 		FunctionCommand.addStub(functionId, this.id);
 
-		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
+		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
 
 	}
+	public String getName(){
 
+		return "stub";
+
+	}
 	/******************************************************************************************
 	 * Commands
 	 *****************************************************************************************/

@@ -1,7 +1,7 @@
 
 angular
     .module('crowdCode')
-    .directive('chat', function($timeout, $rootScope, $firebase, $alert, firebaseUrl, avatarFactory, userService, workerId) {
+    .directive('chat', function($timeout, $rootScope,  $alert, firebaseUrl, avatarFactory, userService, workerId) {
     return {
         restrict: 'E',
         templateUrl: '/client/chat/chat_panel.html',

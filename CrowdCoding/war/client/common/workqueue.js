@@ -20,7 +20,7 @@ function DistributedWorker(workerID, queueRef, processingCallback) {
 	
 	// every time at queueRef one child is added
 	// retrieve the item and try to process it
-	queueRef.startAt().limit(1).on("child_added", function(snapshot) {
+	queueRef.startAt().limitToFirst(1).on("child_added", function(snapshot) {
 		this.currentItem = snapshot.ref();
 		this.tryToProcess();
 	}, this);

@@ -27,6 +27,8 @@ angular
 			this.version 			= this.rec.version;
 			this.written 			= this.rec.written;
 			this.parameters         = this.rec.parameters;
+			this.tests              = this.rec.tests;
+			this.stubs 				= this.rec.stubs;
 			this.fullDescription 	= this.getFullDescription();
 			this.signature			= this.getSignature();
 			this.functionCode 		= this.getFunctionCode();

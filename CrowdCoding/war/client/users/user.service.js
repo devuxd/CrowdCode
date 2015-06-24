@@ -3,7 +3,7 @@
 ////////////////////
 angular
     .module('crowdCode')
-    .factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','firebaseUrl','TestList','functionsService','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,firebaseUrl,TestList,functionsService,TestRunnerFactory) {
+    .factory('userService', ['$window','$rootScope','$timeout','$interval','$http','$firebaseObject', 'firebaseUrl','TestList','functionsService','TestRunnerFactory', function($window,$rootScope,$timeout,$interval,$http,$firebaseObject, firebaseUrl,TestList,functionsService,TestRunnerFactory) {
     var user = {};
 
  	// retrieve the firebase references
@@ -47,7 +47,7 @@ angular
 	});
 
 
-	user.data = $firebase(userProfile).$asObject();
+	user.data = $firebaseObject(userProfile);
 
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
@@ -85,20 +85,12 @@ angular
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
 
-			var implementedIdsJob    = jobData.implementedIds.split(',');
-			var implementedIdsClient = TestList.getImplementedIdsByFunctionId( jobData.functionId );
 			var functionClient = functionsService.get( jobData.functionId );
 			var unsynced = false;
 
-			// CHECK THE SYNC OF THE IMPLEMENTED TESTS
-			if( implementedIdsJob.length != implementedIdsClient.length ){
+			// CHECK THE SYNC OF THE TESTSUITE VERSION
+			if( !unsynced && functionClient.version != jobData.functionVersion ){
 				unsynced = true;
-			} else {
-				for( var v in implementedIdsJob ){
-					if( implementedIdsClient.indexOf( parseFloat(implementedIdsJob[v]) ) == -1 ){
-						unsynced = true;
-					}
-				}
 			}
 
 			// CHECK THE SYNC OF THE FUNCTION VERSION
@@ -122,7 +114,7 @@ angular
 					whenFinished();
 				},500);
 			} else {
-				console.log('running from user service');
+				console.log('running from user service' + jobData);
 				var testRunner = new TestRunnerFactory.instance({submitToServer: true});
 				testRunner.setTestedFunction( jobData.functionId );
 				try {
@@ -134,7 +126,7 @@ angular
 					});
 				} catch(e){
 					console.log('Exception in the TestRunner',e.stack);
-					jobRef.set( jobData );
+					//jobRef.set( jobData );
 					jobRef.onDisconnect().cancel();
 					whenFinished();
 				}

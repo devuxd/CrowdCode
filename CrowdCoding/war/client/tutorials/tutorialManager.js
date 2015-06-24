@@ -1,11 +1,11 @@
 
 angular
     .module('crowdCode')
-    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId) {
+    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebaseObject',  'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebaseObject, firebaseUrl,workerId) {
     
     // get the synced objects from the backend
-    var tutorialsOn        = $firebase( new Firebase( firebaseUrl + '/status/settings/tutorials') ).$asObject();
-    var completedTutorials = $firebase( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) ).$asObject();
+    var tutorialsOn        = $firebaseObject( new Firebase( firebaseUrl + '/status/settings/tutorials') );
+    var completedTutorials = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) );
 
     var queue    = [];
     var running  = false;

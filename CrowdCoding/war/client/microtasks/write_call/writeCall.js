@@ -4,7 +4,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('WriteCallController', ['$scope', '$rootScope', '$firebase', '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope, $firebase, $alert,  functionsService, FunctionFactory, ADTService) {
+    .controller('WriteCallController', ['$scope', '$rootScope',  '$alert',  'functionsService','FunctionFactory', 'ADTService', function($scope, $rootScope,  $alert,  functionsService, FunctionFactory, ADTService) {
     // INITIALIZATION OF FORM DATA MUST BE DONE HERE
     $scope.data = {};
     $scope.data.hasPseudo = false;

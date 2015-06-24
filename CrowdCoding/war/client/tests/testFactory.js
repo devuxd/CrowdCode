@@ -2,21 +2,21 @@
 // create the test list
 angular
     .module('crowdCode')
-    .factory("TestList", ['$firebase','firebaseUrl','TestFactory', function($firebase, firebaseUrl, TestFactory) {
+    .factory("TestList", ['$firebaseArray', 'firebaseUrl','TestFactory', function( $firebaseArray, firebaseUrl, TestFactory) {
 	var ref = new Firebase(firebaseUrl+'/artifacts/tests');
-	return $firebase(ref, {arrayFactory: "TestFactory"}).$asArray();
+	return $firebaseArray(ref, {arrayFactory: "TestFactory"});
 }]);
 
 
 angular
     .module('crowdCode')
-    .factory("TestFactory",['$FirebaseArray', '$firebaseUtils', '$firebase', 'Test', 'firebaseUrl', function( $FirebaseArray, $firebaseUtils, $firebase, Test, firebaseUrl){
+    .factory("TestFactory",['$firebaseArray', '$firebaseUtils',  'Test', 'firebaseUrl', function( $firebaseArray, $firebaseUtils,  Test, firebaseUrl){
 
 	var lastId = 0;
 	var objectsList = {};
 	var count = 0;
 
-	return $FirebaseArray.$extendFactory({
+	return $firebaseArray.$extend({
 
 		// override $$added method of AngularFire FirebaseArray factory
 		$$added: function(snap, prevChild) {

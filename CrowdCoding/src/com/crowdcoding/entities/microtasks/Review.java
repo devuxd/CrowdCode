@@ -71,7 +71,7 @@ public class Review extends Microtask
     	return new Review(microtaskKeyUnderReview, this.initiallySubmittedDTO, this.workerOfReviewedWork, functionId, projectId);
     }
 
-	protected void doSubmitWork(DTO dto, String workerID, String projectId)
+	protected void doSubmitWork(DTO dto, String workerID)
 	{
 
 		ReviewDTO reviewDTO = (ReviewDTO) dto;

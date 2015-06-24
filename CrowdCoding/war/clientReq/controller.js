@@ -1,5 +1,3 @@
-
-
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
@@ -19,47 +17,50 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 	});
 
 
+	// User stories are numbered from 0 to userStoryCount - 1 (as are ADTs).
+	$scope.ADTs = [];
 	$scope.functions = [];
 	$scope.projectName="";
+	$scope.addADT=function(){
+		var emptyAdt={	description:	"",
+						name: 			"",
+						structure:      [{ name:"",	type:""	}],
+						examples:      [{ name:"",	value:"" }]
+					 };
 
-	function ADTs(){
-		this.rec= [];
-
-
-	}
-
-	ADTs.prototype.add = function (){
-		this.rec.push( new ADT() );
+		$scope.ADTs.push(emptyAdt);
 	};
 
-	ADTs.prototype.delete = function (index){
-		this.rec.splice(index,1);
+	$scope.deleteADT=function(index)
+	{
+		$scope.ADTs.splice(index,1);
 	};
 
-	function ADT(){
-		this.description = "";
-		this.name        = "";
-		this.structure   = [{ name:"",	type:""	}];
-		this.examples    = [{ name:"",	value:"" }];
-	}
 
-	ADT.prototype.addStructure = function(){
-		this.structure.push({name:"",type:""});
+	$scope.addStructure=function(ADTindex)
+	{
+		$scope.ADTs[ADTindex].structure.push({name:"",type:""});
 	};
 
-	ADT.prototype.deleteStructure = function( structureIndex ){
-		this.structure.splice(structureIndex,1);
+	$scope.deleteStructure=function(ADTindex,structureIndex)
+	{
+		if($scope.ADTs[ADTindex].structure.length>1)
+			$scope.ADTs[ADTindex].structure.splice(structureIndex,1);
 	};
 
-	ADT.prototype.addExample = function(){
-		this.examples.push({name:"",type:""});
+	$scope.addExample=function(ADTindex)
+	{
+		if($scope.ADTs[ADTindex].examples===undefined)
+			$scope.ADTs[ADTindex].examples=[];
+
+		$scope.ADTs[ADTindex].examples.push({name:"",value:""});
 	};
 
-	ADT.prototype.deleteExample = function( exampleIndex ){
-		this.examples.splice(exampleIndex,1);
+	$scope.deleteExample=function(ADTindex,exampleIndex)
+	{
+		if($scope.ADTs[ADTindex].examples.length>1)
+			$scope.ADTs[ADTindex].examples.splice(exampleIndex,1);
 	};
-
-	$scope.ADTs = new ADTs();
 
 	$scope.addFunction=function()
 	{
@@ -68,7 +69,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		var emptyFunction={
 							    code          :	"{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}",
 								description   : "",
-								isReadOnly   : true,
+								readOnly      : true,
 								name          : "",
 								parameters    : [emptyParameter],
 								returnType    : "",
@@ -97,19 +98,16 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		$scope.functions[functionIndex].parameters.splice(parameterIndex,1);
 	};
 
-	$scope.addTest = function(index){
+	$scope.addStub = function(index){
 
 			if($scope.functions[index].stubs===undefined)
 				$scope.functions[index].stubs=[];
 
-			$scope.functions[index].stubs.push({	isReadOnly: true,
-													description: "",
-													inputs:      [""],
-													output:      "" });
+			$scope.functions[index].stubs.push({readOnly: true} );
 	};
 
 
-	$scope.deleteTest = function(functionIndex, testIndex){
+	$scope.deleteStub = function(functionIndex, testIndex){
 		$scope.functions[functionIndex].stubs.splice(testIndex,1);
 	};
 
@@ -129,7 +127,6 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 	}
 	
 	$scope.submit=function(form){
-		console.log($scope.functions[0].description);
 		makeDirty(form);
 
        if (form.$invalid) {
@@ -150,16 +147,16 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 				angular.forEach($scope.functions,function(funct,key){
 
+					//create the header
 					funct.header='function '+funct.name+'(';
 						for(var index in funct.parameters)
 							funct.header += funct.parameters[index].name + (index==funct.parameters.length-1 ? "" :", ");
 						funct.header+=")";
-
 				});
 
-				project.functions = $scope.functions;
+				project.functions=$scope.functions;
 
-				project.ADTs = $scope.ADTs;
+				project.ADTs=$scope.ADTs;
 
 
 				project.$save();
@@ -187,24 +184,6 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 		if(angular.isDefined(project.functions)){
 			$scope.functions=project.functions;
-			if(! angular.isDefined(project.functions[0].parameters)){
-				for(var functionIndex in project.functions)
-				{
-					$scope.functions[functionIndex].parameters=[];
-					for(var parameterIndex in $scope.functions[functionIndex].paramNames){
-						$scope.functions[functionIndex].parameters.push(
-											                {
-							                                  name        : $scope.functions[functionIndex].paramNames[parameterIndex],
-							                                  type        : $scope.functions[functionIndex].paramTypes[parameterIndex],
-							                                  description : $scope.functions[functionIndex].paramDescriptions[parameterIndex]
-								            	             });
-					}
-					delete $scope.functions[functionIndex].paramNames;
-					delete $scope.functions[functionIndex].paramTypes;
-					delete $scope.functions[functionIndex].paramDescriptions;
-				}
-
-			}
 		}
 		else
 			$scope.functions=[];

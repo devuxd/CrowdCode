@@ -4,6 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.dto.firebase.artifacts.TestInFirebase;
+import com.crowdcoding.history.ArtifactCreated;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
@@ -32,8 +33,9 @@ public class Test extends Artifact
 		this.code = code;
 
 		ofy().save().entity(this).now();
-		HistoryLog.Init(projectId).addEvent(new PropertyChange("implemented", "false", this));
 
+		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
+		storeToFirebase();
 		FunctionCommand.addTest(functionId, this.id);
 	}
 

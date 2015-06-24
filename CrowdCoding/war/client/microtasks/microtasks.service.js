@@ -3,7 +3,7 @@
 /////////////////////////
 angular
     .module('crowdCode')
-    .factory('microtasksService', ['$window','$rootScope','$firebase','$http','$q', 'firebaseUrl', 'userService', function($window,$rootScope,$firebase,$http,$q, firebaseUrl,userService) {
+    .factory('microtasksService', ['$window','$rootScope','$http','$q', '$firebaseObject', 'firebaseUrl', 'userService', function($window,$rootScope,$http,$q,$firebaseObject,firebaseUrl,userService) {
 
 	// Private variables
 	var microtasks;
@@ -15,8 +15,7 @@ angular
 
 		// Public functions
 		function get (id){
-			var microtaskSync = $firebase(new Firebase(firebaseUrl+'/microtasks/'+id));
-			var microtask = microtaskSync.$asObject();
+			var microtask = $firebaseObject(new Firebase(firebaseUrl+'/microtasks/'+id));
 			return microtask;
 		}
 

@@ -106,7 +106,7 @@ public /*abstract*/ class Microtask
 	// if it is still needed
 	protected boolean isStillNeeded(Project project) { return true; }
 
-	public void submit(String jsonDTOData, String workerID,int awardedPoint, String projectId)
+	public void submit(String jsonDTOData, String workerID,int awardedPoint)
 	{
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
@@ -116,7 +116,8 @@ public /*abstract*/ class Microtask
 
 		try {
 			DTO dto = DTO.read(jsonDTOData, getDTOClass());
-			doSubmitWork(dto, workerID, projectId);
+
+			doSubmitWork(dto, workerID);
 
 			this.completed = true;
 			ofy().save().entity(this).now();
@@ -195,7 +196,7 @@ public /*abstract*/ class Microtask
 	public String getUIURL() { return ""; }
 
 	// This method MUST be overridden in the subclass to do submit work.
-	protected void doSubmitWork(DTO dto, String workerID, String projectId)
+	protected void doSubmitWork(DTO dto, String workerID)
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}

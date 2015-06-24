@@ -5,7 +5,7 @@
 ///////////////////////
 angular
     .module('crowdCode')
-    .factory('notificationsService', [ '$rootScope', '$firebase', 'firebaseUrl', 'workerId', 'toaster', 'questionsService' , function( $rootScope, $firebase, firebaseUrl, workerId, toaster, questionsService) {
+    .factory('notificationsService', [ '$rootScope',  'firebaseUrl', 'workerId', 'toaster', 'questionsService' , function( $rootScope,  firebaseUrl, workerId, toaster, questionsService) {
 
 	var ref = new Firebase( firebaseUrl + '/notifications/' + workerId );
 	

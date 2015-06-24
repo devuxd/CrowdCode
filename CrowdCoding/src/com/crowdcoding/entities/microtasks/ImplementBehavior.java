@@ -24,14 +24,14 @@ public class ImplementBehavior extends Microtask
 	@Parent @Load private Ref<Function> function;
 	private PromptType promptType;
 
-	private Long testId;					//Only defined for WRITE
+	private long testId;					//Only defined for WRITE
 
-	private Integer oldCalleeVersion;			//Only defined for CALLEE_CHANGED
+	private int oldCalleeVersion;			//Only defined for CALLEE_CHANGED
 
 	private String disputeText;				// Only defined for CORRECT and REMOVE_CALLEE
-	private Long calleeId;					// Only defined for REMOVE_CALLEE and CALLEE_CHANGED
+	private long calleeId;					// Only defined for REMOVE_CALLEE and CALLEE_CHANGED
 
-	private Long   disputeId;				//id of the artifact that disputed this function
+	private long   disputeId;				//id of the artifact that disputed this function
 
 	// Default constructor for deserialization
 	private ImplementBehavior()
@@ -132,7 +132,7 @@ public class ImplementBehavior extends Microtask
 		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID, String projectId)
+	protected void doSubmitWork(DTO dto, String workerID)
 	{
 		function.get().implementBehaviorCompleted((ImplementBehaviorDTO) dto, disputeId , projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
