@@ -28,6 +28,7 @@ import com.crowdcoding.dto.firebase.SubscribersInFirebase;
 import com.crowdcoding.dto.firebase.TagsInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.dto.firebase.VotersIdInFirebase;
+import com.crowdcoding.dto.firebase.WorkerInFirebase;
 import com.crowdcoding.entities.Question;
 import com.crowdcoding.history.HistoryEvent;
 import com.crowdcoding.servlets.ThreadContext;
@@ -168,10 +169,11 @@ public class FirebaseService
 		enqueueWrite("{\"assigned\": "+Boolean.toString(assigned)+", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 	
+	
+	// Writes information about excluded workers to Firebase
 	public static void writeMicrotaskExcludedWorkers( String microtaskKey,
 			String workerId, String projectId, String workerIDs)
 	{
-		System.out.print("im writing");
 		enqueueWrite("{\"excluded\": \"" +workerIDs+ "\", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
@@ -274,6 +276,13 @@ public class FirebaseService
 	// Deletes the specified test in Firebase
 	public static void deleteTest(long testID, String projectId){
 		enqueueWrite("", "/artifacts/tests/" + testID + ".json", HTTPMethod.DELETE, projectId);
+	}
+	
+	
+	//stores worker information
+	public static void writeWorker(WorkerInFirebase dto,
+			String userid, String projectId) {
+		enqueueWrite(dto.json(), "/workers/Prototype/" + userid + ".json", HTTPMethod.PUT, projectId);		
 	}
 
 	// Stores the specified review to firebase
@@ -401,6 +410,8 @@ public class FirebaseService
 		String payload = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectID + ".json");
 		return !payload.equals("null");
 	}
+
+	
 
 
 

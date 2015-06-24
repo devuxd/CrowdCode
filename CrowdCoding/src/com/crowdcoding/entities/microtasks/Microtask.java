@@ -124,7 +124,7 @@ public /*abstract*/ class Microtask
 			// increase the stats counter
 			WorkerCommand.increaseStat(workerID, "microtasks",1);
 			WorkerCommand.awardPoints(workerID, awardedPoint);
-
+			WorkerCommand.addSubmittedMicrotask(workerID, this.keyToString(this.getKey()));
 			// write completed on firebase
 			FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), workerID, projectId, this.completed);
 

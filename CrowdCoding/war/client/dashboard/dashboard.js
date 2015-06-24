@@ -128,27 +128,13 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 
 }]);
 
-boardApp.filter('nonAssigned', function () {
-    return function (microtasks) {
-		var items = {
-        	out: []
-        };
-        angular.forEach(microtasks, function (value, key) {
-            if (value.assigned != true) {
-                this.out.push(value);
-            }
-        }, items);
-        return items.out;
-    };
-});
-
 boardApp.filter('Assigned', function () {
     return function (microtasks) {
 		var items = {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-            if (value.assigned == true) {
+            if (value.assigned == true && value.completed != true) {
                 this.out.push(value);
             }
         }, items);
@@ -157,22 +143,21 @@ boardApp.filter('Assigned', function () {
 });
 
 boardApp.filter('canChoose', function () {
-	 var listOfWorkers = [];
     return function (microtasks) {
 		var items = {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-            if (value.excluded != null) {
-                this.listOfWorkers = value.excluded.split(',');
-               	if(!this.listOfWorkers.indexOf(workerId)){                		
-                		this.out.push(value);
+        	if (value.assigned != true && value.completed != true) {
+               	if(value.excluded != null){
+               		if(value.excluded.search(workerId) == -1) 
+               			this.out.push(value);
+                } 
+                else{
+                	this.out.push(value);
                 }
-                
-               
             }
-            else
-            	this.out.push(value);
+           
         }, items);
         return items.out;
     };

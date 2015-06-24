@@ -13,6 +13,12 @@ public abstract class WorkerCommand extends Command
 
 	public static WorkerCommand awardPoints(String workerID, int points)
 	{ return new AwardPoints(workerID, points); }
+	
+	public static WorkerCommand addSubmittedMicrotask(String workerID, String microtaskKey)
+	{ return new AddSubmittedMicrotask(workerID, microtaskKey); }
+	
+	public static WorkerCommand addSkippedMicrotask(String workerID, String microtaskKey)
+	{ return new AddSkippedMicrotask(workerID, microtaskKey); }
 
 	public static WorkerCommand increaseStat(String workerID,String label, int increaseAmount)
 	{ return new IncreaseStat(workerID, label, increaseAmount); }
@@ -68,6 +74,42 @@ public abstract class WorkerCommand extends Command
 		{
 
 			worker.awardPoints(points, project.getID());
+		}
+
+	}
+	
+	protected static class AddSubmittedMicrotask extends WorkerCommand
+	{
+		private String microtaskKey;
+		
+		public AddSubmittedMicrotask(String workerID, String microtaskKey)
+		{
+			super(workerID);
+			this.microtaskKey = microtaskKey;
+		}
+
+		public void execute(Worker worker, Project project)
+		{
+
+			worker.addSubmittedMicrotask(microtaskKey, project.getID());
+		}
+
+	}
+	
+	protected static class AddSkippedMicrotask extends WorkerCommand
+	{
+		private String microtaskKey;
+
+		public AddSkippedMicrotask(String workerID, String microtaskKey)
+		{
+			super(workerID);
+			this.microtaskKey = microtaskKey;
+		}
+
+		public void execute(Worker worker, Project project)
+		{
+
+			worker.addSkippedMicrotask(microtaskKey, project.getID());
 		}
 
 	}

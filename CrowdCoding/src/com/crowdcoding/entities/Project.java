@@ -292,13 +292,14 @@ public class Project
 		
 		excludedWorkersForMicrotask.add(workerID);
 		
-		//TESTING LIST OF EXCLUDED WORKERS
+		//add/update excluded list inside firebase	
 		String workerList = excludedWorkersToString(excludedWorkersForMicrotask);
 		FirebaseService.writeMicrotaskExcludedWorkers(microtaskKeyString,
 			workerID, this.getID(), workerList);
 	}
 	
-	private String excludedWorkersToString(HashSet<String> WorkersList){
+	//transforms excluded workers IDs into one string, to save in firebase
+	private final String excludedWorkersToString(HashSet<String> WorkersList){
 		String Ids = "";
 		for(String id : WorkersList){
 			Ids += id +",";
@@ -646,8 +647,9 @@ public class Project
 			microtaskAssignments.put( workerID, null);
 			// save the queue and the assignments
 			ofy().save().entity(this).now();
-
+				
 			FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(currentAssignment) , workerID, project.getID(), false);
 		}
 		// write to firebase that the worker logged out
 		FirebaseService.writeWorkerLoggedOut( workerID, this.getID());

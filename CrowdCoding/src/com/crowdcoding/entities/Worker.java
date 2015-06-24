@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
+import com.crowdcoding.dto.firebase.TestInFirebase;
+import com.crowdcoding.dto.firebase.WorkerInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,8 +32,10 @@ public class Worker
 	@Parent Key<Project> project;
 	private String nickname;
 	@Id private String userid;
-
+	private List<String> SubmittedMicrotasks = new ArrayList<String>();
+	private List<String> SkippedMicrotasks = new ArrayList<String>();;
 	public int score;
+	public int level;
 
 	// Default constructor for deserialization
 	private Worker()
@@ -45,6 +49,9 @@ public class Worker
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
+		this.level = 0;
+		this.SubmittedMicrotasks = new ArrayList<String>();
+		this.SkippedMicrotasks = new ArrayList<String>();
 		ofy().save().entity(this).now();
 	}
 
@@ -59,7 +66,8 @@ public class Worker
 			FirebaseService.setPoints( worker.userid, worker.nickname, worker.score, project.getID());
 			FirebaseService.publish();
 		}
-
+		//worker.SubmittedMicrotasks = new ArrayList<String>();
+		//worker.SkippedMicrotasks = new ArrayList<String>();
 		return worker;
 	}
 
@@ -101,7 +109,14 @@ public class Worker
 	{
 		return Key.create(project, Worker.class, userid);
 	}
-
+	
+	
+	public void storeToFirebase(String projectId)
+	{
+		System.out.print("saving to firebase\n");
+		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,SubmittedMicrotasks, SkippedMicrotasks), this.userid, projectId);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -125,6 +140,21 @@ public class Worker
 		} else if (!userid.equals(other.userid))
 			return false;
 		return true;
+	}
+
+	public void addSubmittedMicrotask(String microtaskKey, String id) {
+		System.out.print("hello\n");
+		SubmittedMicrotasks.add(microtaskKey);	
+		ofy().save().entity(this).now();
+		this.storeToFirebase(id);
+		System.out.print(SubmittedMicrotasks);
+	}
+	
+	public void addSkippedMicrotask(String microtaskKey, String id) {
+		System.out.print("hello2\n");
+		SkippedMicrotasks.add(microtaskKey);
+		ofy().save().entity(this).now();
+		this.storeToFirebase(id);
 	}
 
 }
