@@ -81,11 +81,9 @@ public class Function extends Artifact
 
 
 
-
-
-	//////////////////////////////////////////////////////////////////////////////
-	//  CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////////
+	/******************************************************************************************
+	 * Constructor
+	 *****************************************************************************************/
 
 	// Constructor for deserialization
 	protected Function(){}
@@ -122,9 +120,9 @@ public class Function extends Artifact
 	}
 
 
-	//////////////////////////////////////////////////////////////////////////////
-	//  ACCESSORS
-	//////////////////////////////////////////////////////////////////////////////
+	/******************************************************************************************
+	 * Accessors
+	 *****************************************************************************************/
 
 	public String getName()
 	{
@@ -162,27 +160,9 @@ public class Function extends Artifact
 		return code;
 	}
 
-	//////////////////////////////////////////////////////////////////////////////
-	//  PRIVATE CORE FUNCTIONALITY
-	//////////////////////////////////////////////////////////////////////////////
-
-	// Queues the specified microtask and looks for work
-	public void queueDescribeFunctionBehavior(Microtask microtask)
-	{
-		queuedDescribeFunctionBehavior.add(Ref.create(microtask.getKey()));
-		lookForWork();
-	}
-
-	// Queues the specified microtask and looks for work
-	public void queueImplementFunctionBehavior(Microtask microtask)
-	{
-		queuedImplementBehavior.add(Ref.create(microtask.getKey()));
-		lookForWork();
-	}
-	private void newImplementBehavior(long failedTestId)
-	{
-		ProjectCommand.queueMicrotask(new ImplementBehavior(this, failedTestId, projectId).getKey(), null);
-	}
+	/******************************************************************************************
+	 * Private Core Functionalities
+	 *****************************************************************************************/
 
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
@@ -224,28 +204,6 @@ public class Function extends Artifact
 		ofy().save().entity(this).now();
 
 	}
-	private void createImplementBehavior(){
-		isImplementationInProgress =  true;
-
-		newImplementBehavior(0L);
-		ofy().save().entities(this);
-
-	}
-	private void checkIfNeedImplementation(){
-		if(testsId.size() > 0 && ! isImplementationInProgress ){
-			isImplementationInProgress =  true;
-			if( queuedImplementBehavior.isEmpty() ){
-				FunctionCommand.runTests(this.getId());
-			}
-			else{
-				ProjectCommand.queueMicrotask(queuedImplementBehavior.remove().getKey(), null);
-			}
-		}
-		ofy().save().entities(this).now();
-	}
-
-
-
 
 	private void onWorkEdit(FunctionDTO dto, String projectId)
 	{
@@ -286,53 +244,56 @@ public class Function extends Artifact
 	}
 
 
+	/******************************************************************************************
+	 * Microtasks Generations Hendlers
+	****************************************************************************************/
 
-
-	// Diffs the new and old callee list, sending notifications to callees about who their
-	// callers are as appropriate. Updates the callee list when done
-	private void rebuildCalleeList(List<Long> submittedCalleeIds)
+	// Queues the specified microtask and looks for work
+	public void queueDescribeFunctionBehavior(Microtask microtask)
 	{
-		// First, find new callees added, if any
-		List<Long> newCallees = new ArrayList<Long>(submittedCalleeIds);
-		newCallees.removeAll(this.calleesId);
-
-		// If there are any, send notifications to these functions that they have a new caller
-		for (Long newCalleeId : newCallees)
-		{
-			FunctionCommand.addCaller(newCalleeId, this.id);
-		}
-
-		// Next, find any callees removed, if any
-		List<Long> removedCallees = new ArrayList<Long>(this.calleesId);
-		removedCallees.removeAll(submittedCalleeIds);
-
-		// Send notifications to these functions that they no longer have this caller
-		for (Long removedCalleeIds : removedCallees)
-		{
-			FunctionCommand.removeCaller(removedCalleeIds, this.id);
-		}
-
-		this.calleesId = submittedCalleeIds;
+		queuedDescribeFunctionBehavior.add(Ref.create(microtask.getKey()));
+		lookForWork();
 	}
 
-	// checks if the new submitted description differs from the old one
-	public boolean isDescriptionChanged(FunctionDTO dto)
+	// Queues the specified microtask and looks for work
+	public void queueImplementFunctionBehavior(Microtask microtask)
 	{
-		if( ! dto.returnType.equals(this.returnType))
-			return true;
-		if( dto.parameters.size() != this.paramTypes.size())
-			return true;
-		for( FunctionParameterDTO parameter : dto.parameters){
-			if( ! paramTypes.contains( parameter.type ) )
-				return true;
-		}
-		return false;
+		queuedImplementBehavior.add(Ref.create(microtask.getKey()));
+		lookForWork();
+	}
+	private void newImplementBehavior(long failedTestId)
+	{
+		ProjectCommand.queueMicrotask(new ImplementBehavior(this, failedTestId, projectId).getKey(), null);
+	}
+
+	private void createImplementBehavior(){
+		isImplementationInProgress =  true;
+
+		newImplementBehavior(0L);
+		ofy().save().entities(this);
 
 	}
-	//////////////////////////////////////////////////////////////////////////////
-	//  MICROTASK COMPLETION HANDLERS
-	//////////////////////////////////////////////////////////////////////////////
+	private void checkIfNeedImplementation(){
+		if(testsId.size() > 0 && ! isImplementationInProgress ){
+			isImplementationInProgress =  true;
+			if( queuedImplementBehavior.isEmpty() ){
+				FunctionCommand.runTests(this.getId());
+			}
+			else{
+				ProjectCommand.queueMicrotask(queuedImplementBehavior.remove().getKey(), null);
+			}
+		}
+		ofy().save().entities(this).now();
+	}
 
+	private void disputeFunctionSignature(String issueDescription, long disputeId,String projectId)
+	{
+		queueImplementFunctionBehavior(new ImplementBehavior(this, issueDescription, projectId));
+	}
+
+	/******************************************************************************************
+	 * Microtasks Completions Hendlers
+	****************************************************************************************/
 
 	public void describeFunctionBehaviorCompleted(DescribeFunctionBehaviorDTO dto)
 	{
@@ -381,9 +342,9 @@ public class Function extends Artifact
 			deactivateFunction(null);
 	}
 
-	//////////////////////////////////////////////////////////////////////////////
-	//  COMMAND HANDLERS
-	//////////////////////////////////////////////////////////////////////////////
+	/******************************************************************************************
+	 * Command Receivers
+	****************************************************************************************/
 
 	public void runTests(){
 
@@ -448,11 +409,6 @@ public class Function extends Artifact
 	}
 
 
-	public void disputeFunctionSignature(String issueDescription, long disputeId,String projectId)
-	{
-		queueImplementFunctionBehavior(new ImplementBehavior(this, issueDescription, projectId));
-	}
-
 	public void testDeleted( long testId ){
 		testsId.remove(testId);
 		incrementTestSuiteVersion();
@@ -481,9 +437,10 @@ public class Function extends Artifact
 		incrementTestSuiteVersion();
 		ofy().save().entities(this);
 	}
-	//////////////////////////////////////////////////////////////////////////////
-	//   NOTIFICATION SENDERS
-	//////////////////////////////////////////////////////////////////////////////
+
+	/******************************************************************************************
+	 * Command Senders
+	****************************************************************************************/
 
 	//notify the test that the dispute is solved
 	private void notifyTestDisputeCompleted(long testId)
@@ -501,13 +458,7 @@ public class Function extends Artifact
 			FunctionCommand.calleeBecomeDeactivated(callerID, this.getId(), disputeFunctionText);
 	}
 
-	//Notify all tests that the function is active again
-	private void reactivateFunction()
-	{
-		unDeleteArtifact();
-		storeToFirebase();
-		lookForWork();
-	}
+
 
 	// Send out notifications, as appropriate, that the description or header of this
 	// function has changed
@@ -517,9 +468,60 @@ public class Function extends Artifact
 			FunctionCommand.calleeChangedInterface(callerID, this.getId(), this.version);
 	}
 
-	//////////////////////////////////////////////////////////////////////////////
-	//  UTILITY METHODS
-	//////////////////////////////////////////////////////////////////////////////
+	/******************************************************************************************
+	 * Utility Methods
+	****************************************************************************************/
+
+	//change status of the function from deleted to undeleted
+	private void reactivateFunction()
+	{
+		unDeleteArtifact();
+		storeToFirebase();
+		lookForWork();
+	}
+
+	// Diffs the new and old callee list, sending notifications to callees about who their
+	// callers are as appropriate. Updates the callee list when done
+	private void rebuildCalleeList(List<Long> submittedCalleeIds)
+	{
+		// First, find new callees added, if any
+		List<Long> newCallees = new ArrayList<Long>(submittedCalleeIds);
+		newCallees.removeAll(this.calleesId);
+
+		// If there are any, send notifications to these functions that they have a new caller
+		for (Long newCalleeId : newCallees)
+		{
+			FunctionCommand.addCaller(newCalleeId, this.id);
+		}
+
+		// Next, find any callees removed, if any
+		List<Long> removedCallees = new ArrayList<Long>(this.calleesId);
+		removedCallees.removeAll(submittedCalleeIds);
+
+		// Send notifications to these functions that they no longer have this caller
+		for (Long removedCalleeIds : removedCallees)
+		{
+			FunctionCommand.removeCaller(removedCalleeIds, this.id);
+		}
+
+		this.calleesId = submittedCalleeIds;
+	}
+
+	// checks if the new submitted description differs from the old one
+	public boolean isDescriptionChanged(FunctionDTO dto)
+	{
+		if( ! dto.returnType.equals(this.returnType))
+			return true;
+		if( dto.parameters.size() != this.paramTypes.size())
+			return true;
+		for( FunctionParameterDTO parameter : dto.parameters){
+			if( ! paramTypes.contains( parameter.type ) )
+				return true;
+		}
+		return false;
+
+	}
+
 	public void createStub(List<StubDTO> stubs)
 	{
 		for(StubDTO stub : stubs)
