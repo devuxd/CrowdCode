@@ -225,12 +225,11 @@ public class Function extends Artifact
 
 	}
 	private void createImplementBehavior(){
-		if(testsId.size()>0){
 		isImplementationInProgress =  true;
 
 		newImplementBehavior(0L);
 		ofy().save().entities(this);
-		}
+
 	}
 	private void checkIfNeedImplementation(){
 		if(testsId.size() > 0 && ! isImplementationInProgress ){

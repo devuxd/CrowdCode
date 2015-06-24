@@ -78,7 +78,7 @@ public class Stub extends Artifact
 		int firebaseVersion = version + 1;
 
 		FirebaseService.writeStub(new StubInFirebase(this.id,
-													 this.version,
+													 firebaseVersion,
 													 this.inputs,
 													 this.output,
 													 this.isReadOnly,
