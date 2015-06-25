@@ -1,4 +1,4 @@
-var boardApp = angular.module('crowdCode')//,["firebase","ui.bootstrap","ngAnimate"]);
+var boardApp = angular.module('crowdCode')
 
 boardApp.run();
 
@@ -47,7 +47,6 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	var microtasksSync = $firebase(microtasksRef);
 	$scope.microtasks = microtasksSync.$asArray();
 	$scope.microtasks.$loaded().then(function(){
-		console.log($scope.microtasks);
 	});	
 
 	$scope.microtasks.$watch(function(event){
@@ -57,7 +56,6 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 			case 'child_changed': if(task.assigned==true) $scope.typesCount[task.type]--; break;
 			default: 
 		}
-		console.log($scope.typesCount[task.type]);
 	});
 
 	$scope.orderPredicate = '';
@@ -78,7 +76,6 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	var functionsSync = $firebase(functionsRef);
 	$scope.functions = functionsSync.$asArray();
 	$scope.functions.$loaded().then(function(){
-		console.log($scope.functions);
 	});
 		
 	$scope.funcNames = []
@@ -104,7 +101,6 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	var testsSync = $firebase(testsRef);
 	$scope.tests = testsSync.$asArray();
 	$scope.tests.$loaded().then(function(){
-		console.log($scope.tests);
 	});
 	
 
@@ -134,7 +130,7 @@ boardApp.filter('Assigned', function () {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-            if (value.assigned == true && value.completed != true) {
+            if (value.assigned == true && value.completed != true && value.waitingReview == false) {
                 this.out.push(value);
             }
         }, items);
@@ -148,16 +144,15 @@ boardApp.filter('canChoose', function () {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-        	if (value.assigned != true && value.completed != true) {
+        	if (value.assigned != true && value.completed != true && value.waitingReview != true) {
                	if(value.excluded != null){
-               		if(value.excluded.search(workerId) == -1) 
+               		if(value.excluded.search(workerId) === -1) 
                			this.out.push(value);
                 } 
                 else{
                 	this.out.push(value);
                 }
-            }
-           
+            }           
         }, items);
         return items.out;
     };
@@ -169,7 +164,7 @@ boardApp.filter('Completed', function () {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-            if (value.completed == true) {
+            if (value.completed === true) {
                 this.out.push(value);
             }
         }, items);

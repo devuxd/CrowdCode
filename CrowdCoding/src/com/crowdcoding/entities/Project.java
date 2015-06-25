@@ -493,12 +493,14 @@ public class Project
 	// If the microtask has previously been submitted or is no longer open, the submission is
 	// dropped, ensuring workers cannot submit against already completed microtasks.
 	public void submitMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, Project project){
-
 		Microtask microtask = ofy().load().key( microtaskKey ).now();
-		if(microtask!=null){
+		if(microtask!=null){			
 			// submit only if the request come from
 			// the current assigned worker of the microtask
-			if(microtask.isAssignedTo(workerID) ){
+			if(microtask.isAssignedTo(workerID) ){		
+				//boolean to signal if review microtask was created -> microtask is waiting review
+				boolean waitReview = true;
+				
 				// If reviewing is enabled and the microtask
 				// is not in [Review, ReuseSearch,DebugTestFailure],
 				// spawn a new review microtask
@@ -513,6 +515,8 @@ public class Project
 								MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 							} else {
 								MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+								waitReview = false;
+								
 							}
 
 						}
@@ -527,6 +531,7 @@ public class Project
 							}
 							else{
 								MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+								waitReview = false;
 							}
 						}
 						else{
@@ -537,8 +542,13 @@ public class Project
 					// else submit the microtask
 					else {
 						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+						waitReview = false;
 					}
-
+					
+					
+					//Shows in firebase if microtask is waiting for a review
+					FirebaseService.writeMicrotaskWaitingReview(microtask.keyToString(microtaskKey),
+							workerID, this.getID(), waitReview);
 
 					// write the history log entry about the microtask submission
 					HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));

@@ -28,7 +28,6 @@ public class WorkerInFirebase extends DTO
 		this.score = score;
 		this.level = level;
 		this.SubmittedMicrotasks = submittedMicrotasks;
-		System.out.println(this.SubmittedMicrotasks);
 		this.SkippedMicrotasks = skippedMicrotasks;
 	}
 }

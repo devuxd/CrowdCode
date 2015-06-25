@@ -113,7 +113,6 @@ public class Worker
 	
 	public void storeToFirebase(String projectId)
 	{
-		System.out.print("saving to firebase\n");
 		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,SubmittedMicrotasks, SkippedMicrotasks), this.userid, projectId);
 	}
 	
@@ -143,15 +142,12 @@ public class Worker
 	}
 
 	public void addSubmittedMicrotask(String microtaskKey, String id) {
-		System.out.print("hello\n");
 		SubmittedMicrotasks.add(microtaskKey);	
 		ofy().save().entity(this).now();
 		this.storeToFirebase(id);
-		System.out.print(SubmittedMicrotasks);
 	}
 	
 	public void addSkippedMicrotask(String microtaskKey, String id) {
-		System.out.print("hello2\n");
 		SkippedMicrotasks.add(microtaskKey);
 		ofy().save().entity(this).now();
 		this.storeToFirebase(id);

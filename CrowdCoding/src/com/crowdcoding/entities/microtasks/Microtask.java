@@ -144,7 +144,7 @@ public /*abstract*/ class Microtask
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
 		if (this.completed){
-			Logger.getLogger("LOGGER").severe("MIRCORTASK ALREADY COMPLETED: "+this.toString());
+			Logger.getLogger("LOGGER").severe("MICROTASK ALREADY COMPLETED: "+this.toString());
 			return;
 		}
 		this.completed = true;
@@ -174,6 +174,7 @@ public /*abstract*/ class Microtask
 		// Increment the point value by 10
 			this.submitValue *= 1.2;
 		}
+		WorkerCommand.addSkippedMicrotask(workerID, this.keyToString(this.getKey()));
 		this.workerId = "";
 		ofy().save().entity(this).now();
 		FirebaseService.writeMicrotaskPoints(Microtask.keyToString(this.getKey()), this.submitValue, projectId);

@@ -176,11 +176,21 @@ public class FirebaseService
 	{
 		enqueueWrite("{\"excluded\": \"" +workerIDs+ "\", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
+	
+	
+
+	// Show if microtask is waiting for review
+	public static void writeMicrotaskWaitingReview( String microtaskKey,
+			String workerId, String projectId, boolean waiting)
+	{
+		enqueueWrite("{\"waitingReview\": " + waiting + "}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+	}
 
 
 	// Writes information about microtask completition to Firebase
 	public static void writeMicrotaskCompleted( String microtaskKey, String workerID, String projectId, boolean completed){
-		enqueueWrite("{\"completed\": \"" + completed + "\"}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"completed\": " + completed + "}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+		writeMicrotaskWaitingReview(microtaskKey,workerID, projectId, false);
 	}
 
 	// Writes information about an old microtask to retrieve the information to Firebase
