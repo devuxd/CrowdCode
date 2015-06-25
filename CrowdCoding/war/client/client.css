@@ -227,6 +227,10 @@ color: #FF0000 !important;
 color: #525151 !important;
 }
 
+.ace-disabled {
+	background-color:transparent;
+}
+
 
 
 .js-reader { 

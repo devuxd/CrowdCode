@@ -136,7 +136,7 @@ angular
             $scope.funct = functionsService.get($scope.review.microtask.functionID);
             $scope.calleeFunction = functionsService.get($scope.review.microtask.submission.functionId);
 
-        }else if ($scope.review.microtask.type == 'DebugTestFailure') {
+        } else if ($scope.review.microtask.type == 'DebugTestFailure') {
             $scope.funct = functionsService.get($scope.review.microtask.functionID);
 
             if( $scope.review.microtask.submission.hasPseudo){
@@ -167,6 +167,10 @@ angular
                 }
 
             }
+        } else if ($scope.review.microtask.type == 'DescribeFunctionBehavior') {
+            $scope.data = {};
+            $scope.data.tests = $scope.review.microtask.submission.tests;
+            console.log($scope.data);
         }
     });
 

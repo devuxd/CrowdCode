@@ -1,3 +1,4 @@
+var fEditor ;
 angular
     .module('crowdCode')
     .directive('aceEditJs', [ '$sce', 'functionsService', 'FunctionFactory', function($sce, functionsService, FunctionFactory) {
@@ -5,7 +6,6 @@ angular
     var apiFunctions    = [];
     var pseudoFunctions = [];
 
-    var editor    = null;
     var markers   = [];
 
     return {
@@ -31,17 +31,15 @@ angular
 
         	$scope.aceLoaded = function(_editor) {
 
-                ace.require("ace/ext/language_tools");
+
                 ace.require('ace/ext/crowdcode');
 
-                $scope.editor = editor = _editor;
+                $scope.editor = fEditor = _editor;
                 console.log($scope.editor);
 
 
                 var options = {
-                    // enableBasicAutocompletion: true
-                    // enableFunctionsList: true
-                    enableFunctionsList: true
+                    enableFunctionAutocompleter: true
                 };
 
                 var sessionOptions  = {
@@ -57,7 +55,7 @@ angular
                 _editor.session.setOptions(sessionOptions);
                 _editor.renderer.setOptions(rendererOptions);
 
-                loadFunctionsList();
+                // loadFunctionsList(_editor);
 
                 // event listeners
                 $element.on('focus', _editor.focus() );
@@ -76,12 +74,13 @@ angular
 
 
 
-            function onChange(e){
+            function onChange(event,editor){
+
                 var code = editor.getValue();
                 var ast = null;
                 try{
                     ast = esprima.parse( code, {loc: true});
-                } catch(e) { /*console.log(e.stack); */ast = null; }
+                } catch(exception) { /*console.log(e.stack); */ast = null; }
 
                 if( ast !== null ){
                     if( $scope.hasPseudo !== undefined )
@@ -91,14 +90,14 @@ angular
                         makeDescriptionReadOnly( ast);
 
 
-                    updateFunctionsList(ast);
+                    updateFunctionsList(ast,editor);
                 }
 
                 redrawMarkers(markers);
             }
 
-            function onClick(e){
-                var pos = e.$pos;
+            function onClick(event,editor){
+                var pos = event.$pos;
 
                 // for each marker check if the click position
                 // is inside on one of the highlighted ranges
@@ -120,7 +119,7 @@ angular
     };
 
 
-    function loadFunctionsList(){
+    function loadFunctionsList(editor){
         // load all the snippets
         apiFunctions = [];
         functionsService.getAll().$loaded().then(function(){
@@ -143,12 +142,14 @@ angular
                     snippet     : fun.name + '(' + paramsString + ')'
                 });
             });
-            editor.functions = apiFunctions.slice();
+
+            console.log('inside load ',editor);
+            editor.functioncompleter.functions = apiFunctions.slice();
         });
     }
 
 
-    function updateFunctionsList(ast){
+    function updateFunctionsList(ast,editor){
         // build the pseudocalls list
         pseudoFunctions = [];
         var firstLayer      = ast.body;
@@ -174,7 +175,7 @@ angular
         }
 
         // set the functions list as the apiFunctions + pseudoFunctions
-        editor.functions = apiFunctions.concat(pseudoFunctions);
+        editor.functioncompleter.functions = apiFunctions.concat(pseudoFunctions);
     }
 
     function updateIf(value){
