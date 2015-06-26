@@ -1,8 +1,8 @@
 angular
     .module('crowdCode')
-    .directive('microtaskForm', [ '$rootScope', '$firebase', '$http', '$interval', '$timeout','$modal',  'functionsService','FunctionFactory', 'userService', 'microtasksService','TestList', microtaskForm]); 
+    .directive('microtaskForm', [ '$rootScope', '$firebase', '$http', '$interval', '$timeout','$modal',  'functionsService','FunctionFactory', 'userService', 'microtasksService','TestList','userService', microtaskForm]); 
 
-function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal , functionsService, FunctionFactory, userService, microtasks, TestList) {
+function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal , functionsService, FunctionFactory, userService, microtasks, TestList, userService) {
     return {
         restrict: 'E',
         templateUrl: '/client/microtasks/microtask_form.html',
@@ -12,6 +12,7 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 			var templatesURL = "/client/microtasks/";
 			var templates = {
 				'NoMicrotask': 'no_microtask/no_microtask',
+				'Dashboard': 'dashboard/dashboard',
 				'Review': 'review/review',
 				'DebugTestFailure': 'debug_test_failure/debug_test_failure',
 				'ReuseSearch': 'reuse_search/reuse_search',
@@ -27,7 +28,7 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 			$scope.test = {};
 			$scope.microtask = {};
 			$scope.templatePath = ""; //"/html/templates/microtasks/";
-
+			
 			var waitTimeInSeconds = 15;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
@@ -81,15 +82,29 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 			}
-
+			
+			$scope.workerOption = "";
+			$scope.currentPrompt = function(){
+				$scope.workerOption = "Take a break";
+				if(userService.data.level >= 2)
+					$scope.workerOption = "Pick next microtask"				
+						
+				return $scope.workerOption;			
+			}
+			
 			function onNoMicrotask($event, fetchData) {
 
 				$scope.noMicrotask = true;
 
 				// reset the microtask submit reminder
 				$scope.$emit('reset-reminder');
-				
-				$scope.templatePath = '/client/dashboard/dashboard.html';
+				var WorkerLevel = userService.data.level;
+				if(WorkerLevel >= 2){
+					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
+					$scope.workerOption = "Pick next microtask"
+				}
+				else
+					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
 				// if is not in break mode, start to check the queue
 				if(! $scope.breakMode){
 					// initialize the countdown
@@ -105,7 +120,9 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 					}, waitTimeInSeconds*1000); 
 				}
 			}
-
+			
+			
+			
 			function fetchMicrotask($event, fetchData) {
 				// cancel checkQueuetimeout
 				if (checkQueueTimeout !== null) {

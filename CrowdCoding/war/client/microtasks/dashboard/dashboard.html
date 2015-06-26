@@ -60,7 +60,25 @@
 			<div class="title">Assigned:</div>
 				<div id="board"  >	
 					<div id="columns">
-						<div class="pin" ng-repeat="(i,microtask) in microtasks | Assigned | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+						<div class="pin" ng-repeat="(i,microtask) in microtasks | assigned | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+							<span class="typeLabel label-default pastel-{{types.keyAt(microtask.type)}}">{{microtask.type}}</span>
+							<div class="debug">{{microtask.promptType}}</div>
+							
+							
+							
+							<div class="points">Function: {{microtask.owningArtifact}} </div>
+							
+							<div class="points">Reward: {{microtask.points}} points</div>
+
+
+						</div>
+					</div>
+				</div>
+				
+				<div class="title">Waiting for review:</div>
+				<div id="board"  >	
+					<div id="columns">
+						<div class="pin" ng-repeat="(i,microtask) in microtasks | waitingReview | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
 							<span class="typeLabel label-default pastel-{{types.keyAt(microtask.type)}}">{{microtask.type}}</span>
 							<div class="debug">{{microtask.promptType}}</div>
 							
@@ -77,7 +95,7 @@
 			<div class="title">Completed:</div>
 				<div id="board"  >	
 					<div id="columns">
-						<div class="pin" ng-repeat="(i,microtask) in microtasks | Completed | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+						<div class="pin" ng-repeat="(i,microtask) in microtasks | completed | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
 							<span class="typeLabel label-default pastel-{{types.keyAt(microtask.type)}}">{{microtask.type}}</span>
 							<div class="debug">{{microtask.promptType}}</div>
 							

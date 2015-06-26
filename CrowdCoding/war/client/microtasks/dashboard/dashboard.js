@@ -103,7 +103,6 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	$scope.tests.$loaded().then(function(){
 	});
 	
-
 	$scope.spawnRandom = function(){
 		$scope.microtasks.$add({
 			id: $scope.microtasks.length+1 ,
@@ -124,13 +123,27 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 
 }]);
 
-boardApp.filter('Assigned', function () {
+boardApp.filter('assigned', function () {
     return function (microtasks) {
 		var items = {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
             if (value.assigned == true && value.completed != true && value.waitingReview == false) {
+                this.out.push(value);
+            }
+        }, items);
+        return items.out;
+    };
+});
+
+boardApp.filter('waitingReview', function () {
+    return function (microtasks) {
+		var items = {
+        	out: []
+        };
+        angular.forEach(microtasks, function (value, key) {
+            if (value.waitingReview == true) {
                 this.out.push(value);
             }
         }, items);
@@ -158,7 +171,7 @@ boardApp.filter('canChoose', function () {
     };
 }); 
 
-boardApp.filter('Completed', function () {
+boardApp.filter('completed', function () {
     return function (microtasks) {
 		var items = {
         	out: []

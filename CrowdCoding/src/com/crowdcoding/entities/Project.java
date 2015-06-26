@@ -304,7 +304,6 @@ public class Project
 		for(String id : WorkersList){
 			Ids += id +",";
 		}
-		System.out.println("Testing: " + Ids);
 		return Ids;
 	}
 	// Gets the currently assigned microtask for the specified worker or returns null if the worker

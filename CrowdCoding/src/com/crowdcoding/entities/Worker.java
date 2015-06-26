@@ -49,7 +49,7 @@ public class Worker
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
-		this.level = 0;
+		this.level = 1;
 		this.SubmittedMicrotasks = new ArrayList<String>();
 		this.SkippedMicrotasks = new ArrayList<String>();
 		ofy().save().entity(this).now();
@@ -88,9 +88,10 @@ public class Worker
 	// Adds the specified number of points to the score.
 	public void awardPoints(int points, String projectId)
 	{
-		score += points;
+		score += points;		
+		level = 1 + score/20;
 		ofy().save().entity(this).now();
-
+		storeToFirebase(projectId);
 		FirebaseService.setPoints(userid, nickname, score, projectId);
 	}
 

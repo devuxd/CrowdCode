@@ -12,8 +12,8 @@ public class WorkerInFirebase extends DTO
 
 	private String nickname;
 	private String userid;
-	public List<String> SubmittedMicrotasks = new ArrayList<String>();
-	public List<String> SkippedMicrotasks = new ArrayList<String>();
+	public List<String> submittedMicrotasks = new ArrayList<String>();
+	public List<String> skippedMicrotasks = new ArrayList<String>();
 	public int score;
 	public int level;
 	// Default constructor (required by Jackson JSON library)
@@ -27,7 +27,7 @@ public class WorkerInFirebase extends DTO
 		this.nickname = nickname;
 		this.score = score;
 		this.level = level;
-		this.SubmittedMicrotasks = submittedMicrotasks;
-		this.SkippedMicrotasks = skippedMicrotasks;
+		this.submittedMicrotasks = submittedMicrotasks;
+		this.skippedMicrotasks = skippedMicrotasks;
 	}
 }

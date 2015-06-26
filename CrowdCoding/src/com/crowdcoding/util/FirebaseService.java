@@ -292,7 +292,7 @@ public class FirebaseService
 	//stores worker information
 	public static void writeWorker(WorkerInFirebase dto,
 			String userid, String projectId) {
-		enqueueWrite(dto.json(), "/workers/Prototype/" + userid + ".json", HTTPMethod.PUT, projectId);		
+		enqueueWrite(dto.json(), "/workers/" + userid + ".json", HTTPMethod.PATCH, projectId);		
 	}
 
 	// Stores the specified review to firebase
