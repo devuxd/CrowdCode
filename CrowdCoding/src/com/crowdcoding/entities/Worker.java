@@ -32,8 +32,8 @@ public class Worker
 	@Parent Key<Project> project;
 	private String nickname;
 	@Id private String userid;
-	private List<String> SubmittedMicrotasks = new ArrayList<String>();
-	private List<String> SkippedMicrotasks = new ArrayList<String>();;
+	private List<String> submittedMicrotasks = new ArrayList<String>();
+	private List<String> skippedMicrotasks = new ArrayList<String>();;
 	public int score;
 	public int level;
 
@@ -49,10 +49,11 @@ public class Worker
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
-		this.level = 1;
-		this.SubmittedMicrotasks = new ArrayList<String>();
-		this.SkippedMicrotasks = new ArrayList<String>();
+		this.level = 2;
+		this.submittedMicrotasks = new ArrayList<String>();
+		this.skippedMicrotasks = new ArrayList<String>();
 		ofy().save().entity(this).now();
+		this.storeToFirebase(project.getID());
 	}
 
 	// Finds, or if it does not exist creates, a CrowdUser corresponding to user
@@ -89,9 +90,9 @@ public class Worker
 	public void awardPoints(int points, String projectId)
 	{
 		score += points;		
-		level = 1 + score/20;
+		level = 2 + score/40;
 		ofy().save().entity(this).now();
-		storeToFirebase(projectId);
+		this.storeToFirebase(projectId);
 		FirebaseService.setPoints(userid, nickname, score, projectId);
 	}
 
@@ -114,7 +115,7 @@ public class Worker
 	
 	public void storeToFirebase(String projectId)
 	{
-		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,SubmittedMicrotasks, SkippedMicrotasks), this.userid, projectId);
+		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,submittedMicrotasks, skippedMicrotasks), this.userid, projectId);
 	}
 	
 	@Override
@@ -143,13 +144,13 @@ public class Worker
 	}
 
 	public void addSubmittedMicrotask(String microtaskKey, String id) {
-		SubmittedMicrotasks.add(microtaskKey);	
+		submittedMicrotasks.add(microtaskKey);	
 		ofy().save().entity(this).now();
 		this.storeToFirebase(id);
 	}
 	
 	public void addSkippedMicrotask(String microtaskKey, String id) {
-		SkippedMicrotasks.add(microtaskKey);
+		skippedMicrotasks.add(microtaskKey);
 		ofy().save().entity(this).now();
 		this.storeToFirebase(id);
 	}

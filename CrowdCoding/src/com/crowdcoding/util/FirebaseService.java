@@ -172,9 +172,9 @@ public class FirebaseService
 	
 	// Writes information about excluded workers to Firebase
 	public static void writeMicrotaskExcludedWorkers( String microtaskKey,
-			String workerId, String projectId, String workerIDs)
+			String projectId, String workerIDs)
 	{
-		enqueueWrite("{\"excluded\": \"" +workerIDs+ "\", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"excluded\": \"" +workerIDs+ "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 	
 	

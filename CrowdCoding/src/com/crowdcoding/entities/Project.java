@@ -295,7 +295,7 @@ public class Project
 		//add/update excluded list inside firebase	
 		String workerList = excludedWorkersToString(excludedWorkersForMicrotask);
 		FirebaseService.writeMicrotaskExcludedWorkers(microtaskKeyString,
-			workerID, this.getID(), workerList);
+			this.getID(), workerList);
 	}
 	
 	//transforms excluded workers IDs into one string, to save in firebase
@@ -610,11 +610,19 @@ public class Project
 		{
 			// Add back the permanently excluded workers
 			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get( microtaskKeyStringified );
-
+			
+			//clean excluded list inside firebase	
+			FirebaseService.writeMicrotaskExcludedWorkers(microtaskKeyStringified,
+				this.getID(), "");
+			
 			excludedWorkers.remove(microtaskKeyStringified);
 
-			if (permanentlyExcludedWorkersForMicrotask != null)
+			if (permanentlyExcludedWorkersForMicrotask != null){
 				excludedWorkers.put(microtaskKeyStringified, permanentlyExcludedWorkersForMicrotask);
+				String workerList = excludedWorkersToString(permanentlyExcludedWorkersForMicrotask);
+				FirebaseService.writeMicrotaskExcludedWorkers(microtaskKeyStringified,
+					this.getID(), workerList);
+			}
 			ofy().save().entity(this).now();
 		}
 
