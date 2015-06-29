@@ -1,6 +1,7 @@
 package com.crowdcoding.dto.firebase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.crowdcoding.dto.DTO;
@@ -14,6 +15,7 @@ public class WorkerInFirebase extends DTO
 	private String userid;
 	public List<String> submittedMicrotasks = new ArrayList<String>();
 	public List<String> skippedMicrotasks = new ArrayList<String>();
+	public HashMap<String,Integer> microtaskHistory = new HashMap<String,Integer>();
 	public int score;
 	public int level;
 	// Default constructor (required by Jackson JSON library)
@@ -21,7 +23,7 @@ public class WorkerInFirebase extends DTO
 	{
 	}
 
-	public WorkerInFirebase(String userID, int score, int level, String nickname, List<String> submittedMicrotasks, List<String> skippedMicrotasks)
+	public WorkerInFirebase(String userID, int score, int level, String nickname, List<String> submittedMicrotasks, List<String> skippedMicrotasks, HashMap<String,Integer> microtaskHistory )
 	{
 		this.userid = userID;
 		this.nickname = nickname;
@@ -29,5 +31,6 @@ public class WorkerInFirebase extends DTO
 		this.level = level;
 		this.submittedMicrotasks = submittedMicrotasks;
 		this.skippedMicrotasks = skippedMicrotasks;
+		this.microtaskHistory = microtaskHistory;
 	}
 }

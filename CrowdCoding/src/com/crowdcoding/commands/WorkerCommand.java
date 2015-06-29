@@ -116,20 +116,20 @@ public abstract class WorkerCommand extends Command
 
 	protected static class IncreaseStat extends WorkerCommand
 	{
-	//	private String label;
-	//	private int increaseAmount;
+		private String label;
+		private int increaseAmount;
 
 		public IncreaseStat(String workerID, String label,int increaseAmount)
 		{
 			super(workerID);
-	//		this.label = label;
-	//		this.increaseAmount = increaseAmount;
+			this.label = label;
+			this.increaseAmount = increaseAmount;
 		}
 
 		public void execute(Worker worker, Project project)
 		{
 
-			//worker.increaseStat(label,increaseAmount, project);
+			worker.increaseStat(label,increaseAmount, project.getID());
 		}
 
 	}

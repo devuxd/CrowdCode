@@ -101,7 +101,6 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				var WorkerLevel = userService.data.level;
 				if(WorkerLevel >= 2){
 					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
-					$scope.workerOption = "Pick next microtask"
 				}
 				else
 					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";

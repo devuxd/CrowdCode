@@ -4,6 +4,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
@@ -33,6 +34,7 @@ public class Worker
 	private String nickname;
 	@Id private String userid;
 	private List<String> submittedMicrotasks = new ArrayList<String>();
+	private HashMap<String, Integer> microtaskHistory =  new HashMap<String, Integer>();
 	private List<String> skippedMicrotasks = new ArrayList<String>();;
 	public int score;
 	public int level;
@@ -51,6 +53,7 @@ public class Worker
 		this.score = 0;
 		this.level = 2;
 		this.submittedMicrotasks = new ArrayList<String>();
+		this.microtaskHistory = new HashMap<String, Integer>();
 		this.skippedMicrotasks = new ArrayList<String>();
 		ofy().save().entity(this).now();
 		this.storeToFirebase(project.getID());
@@ -99,6 +102,11 @@ public class Worker
 	// Update the stat label to the stat value.
 	public void increaseStat(String label,int amount, String projectId)
 	{
+		int value = amount;
+		if( microtaskHistory.get(label)!= null)
+			value = microtaskHistory.get(label)+amount;
+		microtaskHistory.put(label, value);
+		ofy().save().entity(this).now();
 //		FirebaseService.increaseStatBy(userid, label, amount, projectId);
 	}
 
@@ -115,7 +123,7 @@ public class Worker
 	
 	public void storeToFirebase(String projectId)
 	{
-		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,submittedMicrotasks, skippedMicrotasks), this.userid, projectId);
+		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,submittedMicrotasks, skippedMicrotasks, microtaskHistory), this.userid, projectId);
 	}
 	
 	@Override
@@ -144,15 +152,19 @@ public class Worker
 	}
 
 	public void addSubmittedMicrotask(String microtaskKey, String id) {
-		submittedMicrotasks.add(microtaskKey);	
+		if(!submittedMicrotasks.contains(microtaskKey)){
+			submittedMicrotasks.add(microtaskKey);	
 		ofy().save().entity(this).now();
 		this.storeToFirebase(id);
+		}
 	}
 	
 	public void addSkippedMicrotask(String microtaskKey, String id) {
-		skippedMicrotasks.add(microtaskKey);
+		if(!skippedMicrotasks.contains(microtaskKey)){
+			skippedMicrotasks.add(microtaskKey);	
 		ofy().save().entity(this).now();
 		this.storeToFirebase(id);
+		}
 	}
 
 }
