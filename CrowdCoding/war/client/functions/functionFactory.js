@@ -1,9 +1,12 @@
+
+
+
 angular
     .module('crowdCode')
-    .factory("FunctionFactory", function () {
+    .factory("FunctionObject", function (TestFactory) {
 
 
-	function FunctionFactory(rec){
+	function FunctionObject(rec){
 		//console.log("asfasfasf"+rec);
 		if( rec === undefined || rec === null )
 			this.rec = {};
@@ -22,24 +25,22 @@ angular
 			this.linesOfCode 		= this.rec.linesOfCode;
 			this.messageType 		= this.rec.messageType;
 			this.needsDebugging  	= this.rec.needsDebugging;
-			this.queuedMicrotasks 	= this.rec.queuedMicrotasks;
 			this.readOnly 			= this.rec.readOnly;
 			this.version 			= this.rec.version;
 			this.written 			= this.rec.written;
 			this.parameters         = this.rec.parameters;
-			this.tests              = this.rec.tests;
+			this.tests              = new TestFactory( this.rec.tests );
 			this.stubs 				= this.rec.stubs;
 			this.fullDescription 	= this.getFullDescription();
 			this.signature			= this.getSignature();
 			this.functionCode 		= this.getFunctionCode();
 			this.fullCode 			= this.getFullCode();
+			this.$id 				= this.rec.id;
 		}
 
 	}
 
-	FunctionFactory.prototype = {
-		//Compatibility Mode
-
+	FunctionObject.prototype = {
 		getName             : function(){ return this.rec.name; } ,
 		getCode 			: function(){ return this.rec.code; } ,
 		getParameters 	    : function(){ return this.rec.parameters; },
@@ -49,10 +50,13 @@ angular
 		getLinesOfCode 		: function(){ return this.rec.linesOfCode; },
 		getMessageType 		: function(){ return this.rec.messageType; },
 		getNeedsDebugging  	: function(){ return this.rec.needsDebugging; },
-		getQueuedMicrotasks : function(){ return this.rec.queuedMicrotasks; },
 		isReadOnly 			: function(){ return this.rec.readOnly; },
 		getVersion 			: function(){ return this.rec.version; },
 		isWritten 			: function(){ return this.rec.written; },
+		update   			: function( value ){
+			this.rec = value;
+			this.tests              = new TestFactory( this.rec.tests );
+		} ,
 		getParamNames        : function(){
 			var paramNames=[];
 			for(var index in this.rec.parameters)
@@ -137,7 +141,7 @@ angular
 			} else
 				return "";
 		},
-		getPseudoFunctionsList 	: function(){
+		getPseudofunctionsService 	: function(){
 			if(this.rec.pseudoFunctions){
 				var pseudoFunctionsDescription;
 				for(var i=0; i<this.rec.pseudoFunctions.length; i++ )
@@ -216,7 +220,7 @@ angular
 
 	};
 
-	return FunctionFactory;
+	return FunctionObject;
 });
 
 function instrumentedFunction(){

@@ -40,8 +40,8 @@ angular
 
                 var options = {
                     // enableBasicAutocompletion: true
-                    // enableFunctionsList: true
-                    enableFunctionsList: true
+                    // enablefunctionsService: true
+                    enablefunctionsService: true
                 };
 
                 var sessionOptions  = {
@@ -57,7 +57,7 @@ angular
                 _editor.session.setOptions(sessionOptions);
                 _editor.renderer.setOptions(rendererOptions);
 
-                loadFunctionsList();
+                loadfunctionsService();
 
                 // event listeners
                 $element.on('focus', _editor.focus() );
@@ -91,7 +91,7 @@ angular
                         makeDescriptionReadOnly( ast);
 
 
-                    updateFunctionsList(ast);
+                    updatefunctionsService(ast);
                 }
 
                 redrawMarkers(markers);
@@ -120,7 +120,7 @@ angular
     };
 
 
-    function loadFunctionsList(){
+    function loadfunctionsService(){
         // load all the snippets
         apiFunctions = [];
         functionsService.getAll().$loaded().then(function(){
@@ -148,7 +148,7 @@ angular
     }
 
 
-    function updateFunctionsList(ast){
+    function updatefunctionsService(ast){
         // build the pseudocalls list
         pseudoFunctions = [];
         var firstLayer      = ast.body;

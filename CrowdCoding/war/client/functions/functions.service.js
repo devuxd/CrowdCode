@@ -1,35 +1,57 @@
 
 
-////////////////////
+////////////////////////
 //FUNCTIONS SERVICE   //
-////////////////////
+////////////////////////
+
 angular
     .module('crowdCode')
-    .factory('functionsService', ['$window','$rootScope', '$filter', '$firebaseArray', '$firebaseObject', 'firebaseUrl','FunctionFactory', function( $window, $rootScope,  $filter, $firebaseArray, $firebaseObject, firebaseUrl,FunctionFactory) {
+    .factory("FunctionFactory",['$firebaseArray', '$firebaseUtils',  'FunctionObject', 'firebaseUrl', 'TestFactory', function( $firebaseArray, $firebaseUtils,  FunctionObject, firebaseUrl, TestFactory) {
+    	return $firebaseArray.$extend({
+    	   // change the added behavior to return Widget objects
+    	   $$added: function(snap) {
+    	     // instead of creating the default POJO (plain old JavaScript object)
+    	     // we will return an instance of the Widget class each time a child_added
+    	     // event is received from the server
+    	     return new FunctionObject(snap.val());
+    	   },
+
+    	   // override the update behavior to call Widget.update()
+    	   $$updated: function(snap) {
+    	     // we need to return true/false here or $watch listeners will not get triggered
+    	     // luckily, our FunctionObject.prototype.update() method already returns a boolean if
+    	     // anything has changed
+    	     return this.$getRecord(snap.key()).update(snap.val());
+    	     }
+
+    	   });
+
+    	}]);
+
+angular
+    .module('crowdCode')
+    .factory('functionsService', ['$window','$rootScope', '$filter', '$firebaseArray', '$firebaseObject', 'firebaseUrl','FunctionFactory','FunctionObject', 'TestFactory', function( $window, $rootScope,  $filter, $firebaseArray, $firebaseObject, firebaseUrl,FunctionFactory, FunctionObject, TestFactory) {
 
 
 	var service = new function(){
 		// Private variables
 		var functions;
-		var functionsHistory;
-		var loaded = false;
 
 		// Public functions
-		this.init =  init ;
-		this.allFunctionNames = function() { return allFunctionNames(); };
-		this.get = function(id) { return get(id); };
-		this.getVersion = function(id,version) { return getVersion(id, version); };
-		this.getByName = function(name) { return getByName(name); };
-		this.getNameById  = function(id) { return getNameById(id); };
-		this.getDescribedFunctionsCode = function(excludedFunctionId) { return getDescribedFunctionsCode(excludedFunctionId); };
-		this.getDescribedFunctionsName = function(excludedFunctionId) { return getDescribedFunctionsName(excludedFunctionId); };
-		this.getDescribedFunctionsId   = function(excludedFunctionId) { return getDescribedFunctionsId(excludedFunctionId); };
-		this.getDescribedFunctions     = function() { return getDescribedFunctions(); };
-		this.findMatches = function(searchText, functionSourceName) { return findMatches(searchText, functionSourceName); };
-		this.getCount = function(){ return (functions === undefined)?0:functions.length; };
-	 	this.isLoaded = function() { return loaded; };
-		this.getAll = function(){ return functions;	};
-		this.parseFunctionFromAce = function (ace) { return parseFunctionFromAce(ace); };
+		this.init 					   = init ;
+		this.allFunctionNames 		   = allFunctionNames;
+		this.get 					   = get;
+		this.getVersion 			   = getVersion;
+		this.getByName 			       = getByName;
+		this.getNameById  			   = getNameById;
+		this.getDescribedFunctionsCode = getDescribedFunctionsCode;
+		this.getDescribedFunctionsName = getDescribedFunctionsName;
+		this.getDescribedFunctionsId   = getDescribedFunctionsId;
+		this.getDescribedFunctions     = getDescribedFunctions;
+		this.findMatches 			   = findMatches;
+		this.getCount 				   = getCount;
+		this.getAll 				   = getAll;
+		this.parseFunctionFromAce 	   = parseFunctionFromAce;
 
 
 
@@ -38,47 +60,20 @@ angular
 		function init()
 		{
 		    // hook from firebase all the functions declarations of the project
-		    functions = $firebaseArray (new Firebase(firebaseUrl+'/artifacts/functions'));
+		    functions = FunctionFactory (new Firebase(firebaseUrl+'/artifacts/functions'));
 			functions.$loaded().then(function(){
+				console.log("functions",functions);
 				// tell the others that the functions services is loaded
 				$rootScope.$broadcast('serviceLoaded','functions');
 			});
 		}
 
-		// Replaces function code block with empty code. Function code blocks must start on the line
-		// after a function statement.
-		// Returns a block of text with the code block replaced or '' if no code block can be found
-		function replaceFunctionCodeBlock(text) {
-		    var lines = text.split('\n');
-		    for (var i = 0; i < lines.length; i++) {
-		        if (lines[i].startsWith('function')) {
-		            // If there is not any more lines after this one, return an error
-		            if (i + 1 >= lines.length - 1){
-		                return '';
-		            }
-
-		            // Return a string replacing everything from the start of the next line to the end
-		            // Concatenate all of the lines together
-		            var newText = '';
-		            for (var j = 0; j <= i; j++){
-		                newText += lines[j] + '\n';
-		            }
-
-		            newText += '{}';
-		            return newText;
-		        }
-		    }
-
-		    return '';
-		}
-
-
 		function allFunctionNames()
 		{
 			var functionsNames = [];
-			$.each(functions, function(i, value)
+			angular.forEach(functions, function(i, value)
 			{
-				functionsNames.push(value.nameget);
+				functionsNames.push(value.name);
 			});
 			return functionNames;
 		}
@@ -128,18 +123,12 @@ angular
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function get(id)
 		{
-			var funct = null;
-			angular.forEach(functions, function(value) {
-				if( funct === null && value.id == id ) {
-			  		funct = value;
-			  	}
-			});
+			return functions.$getRecord(id);
+		}
 
-			if( funct === null ){
-				return -1;
-			} else {
-				return new FunctionFactory(funct);
-			}
+		function getAll()
+		{
+			return functions;
 		}
 
 		// Get the function object, in FunctionInFirebase format, for the specified function id
@@ -157,7 +146,7 @@ angular
 			  		funct = value;
 			  	}
 			});
-			return new FunctionFactory(funct);
+			return funct;
 		}
 
 		function getNameById(id)
@@ -181,6 +170,9 @@ angular
 			return functionId;
 		}
 
+	function getCount(){
+		return functions.length;
+	}
 
 	// Given a String return all the functions that have either or in the description or in the header that String
 	function findMatches(searchText, functionSourceName)

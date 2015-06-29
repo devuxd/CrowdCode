@@ -6,6 +6,10 @@ angular
     .module('crowdCode')
     .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $timeout, $rootScope, $alert, $modal, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
     
+    var ciao = functionsService.get($scope.funct.rec.id);
+    console.log('message');
+    console.log(ciao);
+
     $scope.data = {};
     $scope.data.tests = [];
     if( $scope.funct.rec.tests ){

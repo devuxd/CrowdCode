@@ -15,7 +15,7 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
     else
         startCommandBindKey="Ctrl-Space";
 
-	var FunctionsList = function() {
+	var functionsService = function() {
 		this.filtered = [];
 
     	this.changeListener = this.changeListener.bind(this);
@@ -235,34 +235,34 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
         "Return"            : function(editor) { editor.functionslist.insertSelected(); editor.functionslist.detach(); },
     };
 
-	}).call(FunctionsList.prototype);
+	}).call(functionsService.prototype);
 
-	FunctionsList.startCommand = {
-	    name: "startFunctionsList",
+	functionsService.startCommand = {
+	    name: "startfunctionsService",
 	    exec: function(editor) {
 	        if (!editor.functionslist)
-	            editor.functionslist = new FunctionsList();
+	            editor.functionslist = new functionsService();
 	        editor.functionslist.attach(editor);
 	    },
 	    bindKey: startCommandBindKey
 	};
 
-	exports.FunctionsList = FunctionsList;
+	exports.functionsService = functionsService;
 });
 
 ace.define('ace/ext/crowdcode',function(require, exports, module) {
 
-	var FunctionsList = require('ace/crowdcode/functionslist').FunctionsList;
+	var functionsService = require('ace/crowdcode/functionslist').functionsService;
 
 	// extend editor
 	var Editor   = require("../editor").Editor;
 	require("../config").defineOptions(Editor.prototype, "editor", {
-	    enableFunctionsList: {
+	    enablefunctionsService: {
 	        set: function(val) {
 	            if (val) {
-	            	this.commands.addCommand(FunctionsList.startCommand);
+	            	this.commands.addCommand(functionsService.startCommand);
 	            } else {
-	                this.commands.removeCommand(FunctionsList.startCommand);
+	                this.commands.removeCommand(functionsService.startCommand);
 	            }
 	        },
 	        value: true
@@ -270,13 +270,13 @@ ace.define('ace/ext/crowdcode',function(require, exports, module) {
 	});
 
 	(function() {
-		// this.initFunctionsList = function(){
+		// this.initfunctionsService = function(){
 		// 	exports.CrowdCode = new CrowdCode(this);
 		// }
-		// this.setFunctionsList = function(list){
+		// this.setfunctionsService = function(list){
 	 //    	exports.CrowdCode.functionsList = list;
 	 //    };
-	 //    this.getFunctionsList = function(){
+	 //    this.getfunctionsService = function(){
 	 //    	return exports.CrowdCode.functionsList;
 	 //    };
 	}).call(Editor.prototype);
