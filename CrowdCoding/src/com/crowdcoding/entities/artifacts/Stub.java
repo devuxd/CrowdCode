@@ -21,6 +21,10 @@ public class Stub extends Artifact
 	private String output;
 
 
+	/******************************************************************************************
+	 * Constructor
+	 *****************************************************************************************/
+
 	// Constructor for deserialization
 	protected Stub()
 	{
@@ -43,6 +47,11 @@ public class Stub extends Artifact
 		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
 
 	}
+
+	/******************************************************************************************
+	 * Accessors
+	 *****************************************************************************************/
+
 	public String getName(){
 
 		return "stub";
@@ -70,7 +79,7 @@ public class Stub extends Artifact
 	}
 
 	/******************************************************************************************
-	 * Utility methods
+	 * Firebase methods
 	 *****************************************************************************************/
 
 	public void storeToFirebase()

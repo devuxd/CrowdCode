@@ -3,8 +3,9 @@
 angular
     .module('crowdCode')
     .factory("TestList", ['$firebaseArray', 'firebaseUrl','TestFactory', function( $firebaseArray, firebaseUrl, TestFactory) {
-	var ref = new Firebase(firebaseUrl+'/artifacts/tests');
-	return $firebaseArray(ref, {arrayFactory: "TestFactory"});
+	//var ref = new Firebase(firebaseUrl+'/artifacts/tests');
+	//return $firebaseArray(ref, {arrayFactory: "TestFactory"});
+	return {};
 }]);
 
 
@@ -13,63 +14,77 @@ angular
     .factory("TestFactory",['$firebaseArray', '$firebaseUtils',  'Test', 'firebaseUrl', function( $firebaseArray, $firebaseUtils,  Test, firebaseUrl){
 
 	var lastId = 0;
-	var objectsList = {};
+	var testsList = {};
 	var count = 0;
 
-	return $firebaseArray.$extend({
+	// return $firebaseArray.$extend({
 
-		// override $$added method of AngularFire FirebaseArray factory
-		$$added: function(snap, prevChild) {
-			var i = this.$indexFor(snap.name());
-			if( i === -1 ) {
+	// 	// override $$added method of AngularFire FirebaseArray factory
+	// 	$$added: function(snap, prevChild) {
+	// 		var i = this.$indexFor(snap.name());
+	// 		if( i === -1 ) {
 
-				var rec = snap.val();
-				if( !angular.isObject(rec) ) {
-					rec = { $value: rec };
+	// 			var rec = snap.val();
+	// 			if( !angular.isObject(rec) ) {
+	// 				rec = { $value: rec };
+	// 			}
+	// 			rec.$id = snap.name();
+	// 			rec.$priority = snap.getPriority();
+	// 			$firebaseUtils.applyDefaults(rec, this.$$defaults);
+
+	// 			this._process('child_added', rec, prevChild);
+
+	// 			// add the object to our list
+	// 			testsList[ snap.name() ] = new Test( snap.val() );
+	// 			if( parseInt(snap.name()) > lastId)
+	// 				lastId = parseInt(snap.name());
+
+	// 			count++;
+	// 		}
+	// 	},
+
+	// 	// override $$updated method of AngularFire FirebaseArray factory
+	// 	$$updated: function(snap) {
+	// 		var rec = this.$getRecord( snap.name() );
+	// 		console.log('updating test ',rec,(new Date()).getTime());
+	// 		if( angular.isObject(rec) ) {
+	// 			// apply changes to the record
+	// 			var changed = $firebaseUtils.updateRec(rec, snap);
+	// 			$firebaseUtils.applyDefaults(rec, this.$$defaults);
+	// 			if( changed ) {
+	// 				this._process('child_changed', rec);
+
+	// 				// UPDATE THE OBJECT IN OUR LIST
+	// 				testsList[ snap.name() ].update( snap.val() );
+	// 			}
+	// 		}
+	// 	},
+
+		function TestFactory(tests){
+
+			if( tests === undefined || tests === null )
+				testsList = {};
+			else{
+				for ( var key in tests ){
+				testsList[key] = new Test( tests[key] );
 				}
-				rec.$id = snap.name();
-				rec.$priority = snap.getPriority();
-				$firebaseUtils.applyDefaults(rec, this.$$defaults);
-
-				this._process('child_added', rec, prevChild);
-
-				// add the object to our list
-				objectsList[ snap.name() ] = new Test( snap.val() );
-				if( parseInt(snap.name()) > lastId)
-					lastId = parseInt(snap.name());
-
-				count++;
 			}
-		},
 
-		// override $$updated method of AngularFire FirebaseArray factory
-		$$updated: function(snap) {
-			var rec = this.$getRecord( snap.name() );
-			console.log('updating test ',rec,(new Date()).getTime());
-			if( angular.isObject(rec) ) {
-				// apply changes to the record
-				var changed = $firebaseUtils.updateRec(rec, snap);
-				$firebaseUtils.applyDefaults(rec, this.$$defaults);
-				if( changed ) {
-					this._process('child_changed', rec);
+		}
 
-					// UPDATE THE OBJECT IN OUR LIST
-					objectsList[ snap.name() ].update( snap.val() );
-				}
-			}
-		},
+		TestFactory.prototype = {
 
 		// retrieve the test with id = testId
 		get: function(testId){
-			if( objectsList.hasOwnProperty(testId) ){
-				return objectsList[testId];
+			if( testsList.hasOwnProperty(testId) ){
+				return testsList[testId];
 			}
 			return null;
 		},
 
 		// retrieve all the tests
 		getAll: function(){
-			return objectsList;
+			return testsList;
 		},
 		getImplementedByFunction: function(funct){
 			return this.getImplementedByFunctionId(funct.id);
@@ -79,7 +94,7 @@ angular
 		getImplementedByFunctionId: function(functionId){
 			var returnList = [];
 			console.log('searching implemented for fun'+functionId);
-			angular.forEach( objectsList, function( test, key){
+			angular.forEach( testsList, function( test, key){
 				if( test.getFunctionId() == functionId && test.isImplemented() && ! test.isDeleted()){
 					returnList.push(test);
 				}	
@@ -89,7 +104,7 @@ angular
 		},
 		getImplementedIdsByFunctionId: function(functionId){
 			var returnList = [];
-			angular.forEach( objectsList, function( test, key){
+			angular.forEach( testsList, function( test, key){
 				if( test.getFunctionId() == functionId && test.isImplemented() && ! test.isDeleted()){
 					returnList.push( test.getId() );
 				}	
@@ -100,7 +115,7 @@ angular
 		// the function with name = functionName
 		getImplementedByFunctionName: function(functionName){
 			var returnList = [];
-			angular.forEach( objectsList, function(test, key){
+			angular.forEach( testsList, function(test, key){
 				if( test.getFunctionName() == functionName  && test.isImplemented() && ! test.isDeleted())
 					returnList.push(test);
 			});
@@ -116,7 +131,7 @@ angular
 		// the function with id = functionId
 		getByFunctionId: function(functionId){
 			var returnList = [];
-			angular.forEach( objectsList, function( test, key){
+			angular.forEach( testsList, function( test, key){
 				if( test.getFunctionId() == functionId && ! test.isDeleted())
 					returnList.push(test);
 			});
@@ -127,7 +142,7 @@ angular
 		// the function with name = functionName
 		getByFunctionName: function(functionName){
 			var returnList = [];
-			angular.forEach( objectsList, function( test, key){
+			angular.forEach( testsList, function( test, key){
 				if( test.getFunctionName() == functionName  && ! test.isDeleted())
 					returnList.push(test);
 			});
@@ -141,11 +156,11 @@ angular
 			if(inputsValue === undefined || functionName === undefined)
 				return null;
 
-			// filter objectsList
+			// filter testsList
 			// return null if not found
 			var foundTest = null;
 			var found     = false;
-			angular.forEach( objectsList, function( test, key){
+			angular.forEach( testsList, function( test, key){
 				if( !found && test.getFunctionName() == functionName && 
 				    test.hasSimpleTest() &&
 				     ! test.isDeleted() &&
@@ -156,17 +171,6 @@ angular
 			});
 			return foundTest;
 		},
-
-		// add a test to the factory
-		// 1) search if already exists - there can't be two tests for the same function and with the same inputs
-        // add to the list of FirebaseArray
-		set: function(test){ 
-			var rec = test.toJSON();
-				// console.log(rec);
-			var ref = new Firebase(firebaseUrl+'/artifacts/tests/'+test.getId());
-			ref.set(rec);
-		},
-
 
 		searchOrBuild: function(functionId, functionName, inputsValue, outputValue){
 			if( this.search(functionName, inputsValue) === null ) {
@@ -182,25 +186,6 @@ angular
 			}
 			return true;
 		},
-
-		// searchAndAdd: function(functionId, functionName, inputsValue, outputValue){
-		// 	var test = this.search(functionName, inputsValue);
-
-		// 	if( test === null ){
-		// 		test = new Test();
-		// 		test.setId(++lastId);
-
-		// 		test.setImplemented(true);
-		// 		test.setMessageType("Test in firebase");
-		// 		test.setFunctionId( functionId );
-		// 	    test.setFunctionName( functionName );
-		// 	 	test.setSimpleTest(inputsValue,outputValue);
-		// 		test.setDescription("auto generated for test purposes");
-		// 		test.buildCode();
-		// 		this.set(test);
-		// 	}
-		// 	else console.log("TEST FOUND");
-		// },
 
 		buildStubsByFunctionName: function(functionName){
 			var tests = this.getByFunctionName(functionName);
@@ -242,8 +227,8 @@ angular
 		getCount: function(){
 			return count;
 		}
-
-	});
+	};
+	return TestFactory;
 }]);
 
 angular

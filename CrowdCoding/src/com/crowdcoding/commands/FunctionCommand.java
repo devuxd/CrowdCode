@@ -51,12 +51,6 @@ public abstract class FunctionCommand extends Command {
 		return new CalleeBecomeDeactivated(functionId, calleeId, disputeText);
 	}
 
-
-	public static FunctionCommand disputeFunctionSignature(long functionId,
-			String issueDescription, long artifactId) {
-		return new DisputeFunctionSignature(functionId, issueDescription, artifactId);
-	}
-
 	public static FunctionCommand addTest(long functionId, long testId) {
 		return new AddTest(functionId, testId);
 	}
@@ -218,21 +212,6 @@ public abstract class FunctionCommand extends Command {
 
 		public void execute(Function function, String projectId) {
 			function.calleeBecomeDeactivated(calleeId, disputeText );
-		}
-	}
-
-	protected static class DisputeFunctionSignature extends FunctionCommand {
-		private String issueDescription;
-		private long artifactId;
-
-		public DisputeFunctionSignature(long functionId, String issueDescription, long artifactId) {
-			super(functionId);
-			this.issueDescription = issueDescription;
-			this.artifactId = artifactId;
-		}
-
-		public void execute(Function function, String projectId) {
-			function.disputeFunctionSignature(issueDescription, artifactId, projectId);
 		}
 	}
 

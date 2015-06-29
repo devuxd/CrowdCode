@@ -147,7 +147,6 @@ angular
 
 			//retrieves the reference to the worker to log out
 			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
-			console.log("sono qua");
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 

@@ -36,6 +36,11 @@ public class ADT extends Artifact
 	//functions that currently use the ADT
 	private List<Long> functionsId;
 
+
+	/******************************************************************************************
+	 * Constructor
+	 *****************************************************************************************/
+
 	// Constructor for deserialization
 	protected ADT()
 	{
@@ -52,48 +57,20 @@ public class ADT extends Artifact
 		storeToFirebase();
 
 		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
-
-
 	}
+
+	/******************************************************************************************
+	 * Accessors
+	 *****************************************************************************************/
 
 	public String getDescription()
 	{
 		return description;
 	}
 
-
-	public void setDescription(String description)
-	{
-		this.description = description;
-
-		ofy().save().entity(this).now();
-		storeToFirebase(projectId);
-	}
-
 	public String getName()
 	{
 		return name;
-	}
-
-
-	public void storeToFirebase()
-	{
-		int firebaseVersion = version + 1;
-
-		FirebaseService.writeADT(new ADTInFirebase(
-										this.id,
-										firebaseVersion,
-										description,
-										name,
-										structure,
-										isReadOnly,
-										isAPIArtifact,
-										isDeleted),
-									this.id,
-									firebaseVersion,
-									projectId);
-
-		incrementVersion();
 	}
 
 
@@ -124,6 +101,30 @@ public class ADT extends Artifact
 	{
 		this.functionsId.add(functionId);
 		ofy().save().entity(this).now();
+	}
+
+	/******************************************************************************************
+	 * Firebase methods
+	 *****************************************************************************************/
+
+	public void storeToFirebase()
+	{
+		int firebaseVersion = version + 1;
+
+		FirebaseService.writeADT(new ADTInFirebase(
+										this.id,
+										firebaseVersion,
+										description,
+										name,
+										structure,
+										isReadOnly,
+										isAPIArtifact,
+										isDeleted),
+									this.id,
+									firebaseVersion,
+									projectId);
+
+		incrementVersion();
 	}
 
 	/******************************************************************************************

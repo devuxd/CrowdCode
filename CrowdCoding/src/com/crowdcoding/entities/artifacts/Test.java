@@ -18,6 +18,11 @@ public class Test extends Artifact
 	private String description;
 	private String code;
 
+
+	/******************************************************************************************
+	 * Constructor
+	 *****************************************************************************************/
+
 	// Constructor for deserialization
 	protected Test()
 	{
@@ -39,6 +44,10 @@ public class Test extends Artifact
 		FunctionCommand.addTest(functionId, this.id);
 	}
 
+	/******************************************************************************************
+	 * Accessors
+	 *****************************************************************************************/
+
 	public String getTestCode()
 	{
 		if(code == null)
@@ -54,15 +63,7 @@ public class Test extends Artifact
 	}
 
 
-	public void setDescription(String description)
-	{
-		this.description = description;
-
-		ofy().save().entity(this).now();
-		storeToFirebase(projectId);
-	}
-
-	public String getName()
+		public String getName()
 	{
 		return description;
 	}
@@ -72,25 +73,6 @@ public class Test extends Artifact
 		return functionId;
 	}
 
-	public void storeToFirebase()
-	{
-		int firebaseVersion = version + 1;
-
-		FirebaseService.writeTest(new TestInFirebase(this.id,
-													 firebaseVersion,
-													 this.description,
-													 this.code,
-													 this.functionId,
-													 this.isReadOnly,
-													 this.isAPIArtifact,
-													 this.isDeleted),
-									this.functionId,
-									this.id,
-									firebaseVersion,
-									projectId);
-
-		incrementVersion();
-	}
 
 	/******************************************************************************************
 	 * Commands
@@ -118,6 +100,29 @@ public class Test extends Artifact
 		FunctionCommand.incrementTestSuite(this.functionId);
 	}
 
+	/******************************************************************************************
+	 * Firebase methods
+	 *****************************************************************************************/
+
+	public void storeToFirebase()
+	{
+		int firebaseVersion = version + 1;
+
+		FirebaseService.writeTest(new TestInFirebase(this.id,
+													 firebaseVersion,
+													 this.description,
+													 this.code,
+													 this.functionId,
+													 this.isReadOnly,
+													 this.isAPIArtifact,
+													 this.isDeleted),
+									this.functionId,
+									this.id,
+									firebaseVersion,
+									projectId);
+
+		incrementVersion();
+	}
 
 	/******************************************************************************************
 	 * Objectify Datastore methods
