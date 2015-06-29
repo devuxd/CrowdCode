@@ -260,21 +260,21 @@ public class CrowdServlet extends HttpServlet
 //			doSubmitMicrotask(req, resp);
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
-		} else if (pathSeg[3].equals("askMicrotask")){
+		} else if (pathSeg[3].equals("pickMicrotask")){
 			doFetchSpecificMicrotask(req, resp,user,false);
 		} else if (pathSeg[3].equals("enqueue")){
 			doEnqueueSubmit(req, resp,user);
 		}
 	}
 	
+	
+	//assigns a specific microtask (chosen by worker)
 	private void doFetchSpecificMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
 		// Since the transaction may fail and retry,
-				// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
-//				// And anything inside the transaction MUST not mutate the values produced.
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
 				final String projectID = (String) req.getAttribute("project");
 				final String microtaskId = (String) req.getParameter("id");
-				System.out.print("proj: "+ projectID + "\n");
-				System.out.print("key: "+ microtaskId + "\n");
 				String jsonResponse = "{}";
 		    	try {
 		    		jsonResponse=ofy().transact( new Work<String>(){

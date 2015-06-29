@@ -1634,6 +1634,16 @@ pre.json .jsonKey { color: black; }
 
 .dashboard .title {
 	width:100%;
+	text-align:center;
+	background-color: rgb(61,61,61);
+	color:white;
+	font-width:1.2em;
+	font-weight:bold;
+	padding-left:10px;
+}
+
+.dashboard .subTitle {
+	width:100%;
 	background-color: rgb(61,61,61);
 	color:white;
 	font-width:1.2em;
@@ -1656,6 +1666,7 @@ pre.json .jsonKey { color: black; }
 .dashboard .horizontal-bar {
 	background-color:darkgray;
 	padding:5px 10px 10 10px;
+	height:20px;
 }
 
 #filterBar .label {

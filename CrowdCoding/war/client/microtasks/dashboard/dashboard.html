@@ -37,7 +37,7 @@
 						<span ng-if="orderPredicate=='owningArtifact' && orderReverse " class="glyphicon glyphicon-sort-by-attributes-alt"></span>
 					</span>
 				</div>
-				<div class="title">Available:</div>
+				<div class="subTitle">Available:</div>
 				<div id="board"  >	
 					<div id="columns">
 						<div class="pin" ng-repeat="(i,microtask) in microtasks | canChoose | byType:filterEnabled |  orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
@@ -48,16 +48,21 @@
 							<div class="points">Function: {{microtask.owningArtifact}}</div>
 							
 							<div class="points">Reward: {{microtask.points}} points</div>
-
+							
 							
 							<div class="accept">
 								<button class="btn btn-primary" ng-click="assignMicrotask(microtask)">Work On This</button>
 							</div>
+							
 						</div>
+						
 					</div>
+					<div ng-hide="breakMode" class="alert alert-warning no-microtask" role="alert" >SORRY, there aren't available microtasks at the moment.
+							The microtask queue will be checked again in <strong> {{checkQueueIn}} seconds </strong>.
+						</div>
 				</div>
 				
-			<div class="title">Assigned:</div>
+			<div class="subTitle">Assigned:</div>
 				<div id="board"  >	
 					<div id="columns">
 						<div class="pin" ng-repeat="(i,microtask) in microtasks | assigned | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
@@ -75,7 +80,7 @@
 					</div>
 				</div>
 				
-				<div class="title">Waiting for review:</div>
+				<div class="subTitle">Waiting for review:</div>
 				<div id="board"  >	
 					<div id="columns">
 						<div class="pin" ng-repeat="(i,microtask) in microtasks | waitingReview | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
@@ -92,7 +97,7 @@
 						</div>
 					</div>
 				</div>
-			<div class="title">Completed:</div>
+			<div class="subTitle">Completed:</div>
 				<div id="board"  >	
 					<div id="columns">
 						<div class="pin" ng-repeat="(i,microtask) in microtasks | completed | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">

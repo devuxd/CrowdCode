@@ -5,8 +5,6 @@ boardApp.run();
 boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService','firebaseUrl','workerId',  function($scope,$rootScope,$firebase,$timeout,microtasksService,firebaseUrl, workerId){
 	console.log("controller loaded");
 	
-	var projectURL = firebaseUrl;
-
 	var types = [
 			'Review',
 			'DebugTestFailure',
@@ -43,7 +41,7 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	$scope.microtasks = [];
 	
 	// load microtasks
-	var microtasksRef  = new Firebase(projectURL+'/microtasks/');
+	var microtasksRef  = new Firebase(firebaseUrl+'/microtasks/');
 	var microtasksSync = $firebase(microtasksRef);
 	$scope.microtasks = microtasksSync.$asArray();
 	$scope.microtasks.$loaded().then(function(){
@@ -72,54 +70,23 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	};
 	
 	// load functions
-	var functionsRef  = new Firebase(projectURL+'/artifacts/functions');
+	var functionsRef  = new Firebase(firebaseUrl+'/artifacts/functions');
 	var functionsSync = $firebase(functionsRef);
 	$scope.functions = functionsSync.$asArray();
 	$scope.functions.$loaded().then(function(){
 	});
-		
-	$scope.funcNames = []
-	$scope.funcNames = $scope.microtasks;
-	$scope.funcNames.keyAt = function(functionID){
-		for(var i=0;i<$scope.functions.length;i++)
-			if($scope.functions[i].id == functionID){
-				return i;
-			}
-		return -1;
-	};
-	
-	$scope.getFuncName = function(index){
-		num = $scope.funcNames.keyAt($scope.microtasks[index].functionID);
-		if(num >= 0)
-			return $scope.functions[num].name;
-		return 'blank';
-	}
-
 
 	// load tests
-	var testsRef  = new Firebase(projectURL+'/artifacts/tests');
+	var testsRef  = new Firebase(firebaseUrl+'/artifacts/tests');
 	var testsSync = $firebase(testsRef);
 	$scope.tests = testsSync.$asArray();
 	$scope.tests.$loaded().then(function(){
 	});
 	
-	$scope.spawnRandom = function(){
-		$scope.microtasks.$add({
-			id: $scope.microtasks.length+1 ,
-			type: types[Math.floor(Math.random()*8)],
-			points: Math.floor(Math.random()*10),
-			assigned: false,
-			completed: false
-		})
-		return false;
-	}
-	
 	$scope.assignMicrotask = function(task){
 		var microtaskID = task.owningArtifactId+"-"+task.id;
 		$rootScope.$broadcast('fetchSpecificMicrotask',{microtaskID});
 	}
-
-
 
 }]);
 

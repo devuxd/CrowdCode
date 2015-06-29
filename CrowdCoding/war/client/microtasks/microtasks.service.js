@@ -58,7 +58,7 @@ angular
 		
 		
 		function loadSpecificMicrotask(microtaskID){
-			$http.get('/' + projectId + '/ajax/askMicrotask?id='+ microtaskID)
+			$http.get('/' + projectId + '/ajax/pickMicrotask?id='+ microtaskID)
 				.success(function(data, status, headers, config) {
 					console.log("success");
 					loadMicrotask(data);
