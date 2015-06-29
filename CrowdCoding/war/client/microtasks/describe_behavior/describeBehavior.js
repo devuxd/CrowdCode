@@ -4,7 +4,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory', function($scope, $timeout, $rootScope, $alert, $modal, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
+    .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'FunctionFactory', 'TestList', 'TestRunnerFactory',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, FunctionFactory, TestList, TestRunnerFactory) {
     
     // prepare the data for the view
     $scope.data = {};
@@ -42,7 +42,8 @@ angular
             test.editing = false;
     }
 
-    function editTest(test){
+    function editTest(test,form){
+        console.log(form);
         test.editing = !test.editing;
         if( test.editing && !test.expanded )
             test.expanded = true;
@@ -77,13 +78,14 @@ angular
                 description: test.description,
                 code:        test.code,
                 added:       test.added,
-                edited:      fale,
+                // edited:      false,
                 deleted:     test.deleted
             });
         });
 
         // tell the microtaskForm that the data is ready
         $scope.$emit('submitMicrotask', formData);
+
     }
 
 }]);

@@ -225,6 +225,7 @@ public class Function extends Artifact
 
 	}
 	private void createImplementBehavior(){
+		System.out.println("create implement behavior #tests = "+this.testsId.size());
 		if( this.testsId.size() > 0 ){
 			isImplementationInProgress =  true;
 

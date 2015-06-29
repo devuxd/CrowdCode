@@ -16,6 +16,16 @@ ace.define('ace/ext/crowdcode',function(require, exports, module) {
                 }
             },
             value: true
+        },
+        enableTestAutocompleter: {
+            set: function(val) {
+                if (val) {
+                   
+                } else {
+                    
+                }
+            },
+            value: true
         }
     });
 
@@ -258,7 +268,6 @@ ace.define('ace/ext/crowdcode/autocomplete/function',function(require, exports, 
     FunctionAutocompleter.startCommand = {
         name: "startFunctionAutocompleter",
         exec: function(editor) {
-            console.log(editor);
             editor.functioncompleter.attach(editor);
         },
         bindKey: navigator.appVersion.indexOf("Mac")!=-1 ? "Alt-Space" : "Ctrl-Space"
@@ -267,5 +276,28 @@ ace.define('ace/ext/crowdcode/autocomplete/function',function(require, exports, 
 	exports.FunctionAutocompleter = FunctionAutocompleter;
 });
 
+
+ace.define('ace/ext/crowdcode/autocomplete/test',function(require, exports, module) {
+
+   
+    var TestAutocompleter = function() {
+        
+    };
+
+    (function() {
+
+
+    }).call(TestAutocompleter.prototype);
+    
+    TestAutocompleter.startCommand = {
+        name: "startFunctionAutocompleter",
+        exec: function(editor) {
+            
+        },
+        bindKey: navigator.appVersion.indexOf("Mac")!=-1 ? "Alt-Space" : "Ctrl-Space"
+    };
+
+    exports.TestAutocompleter = TestAutocompleter;
+});
 
 

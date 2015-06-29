@@ -10,7 +10,7 @@ angular
 
     return {
         restrict: 'EA',
-        templateUrl: '/client/widgets/ace_edit_js.html',
+        templateUrl: '/client/widgets/function_editor.html',
         scope: {
             editor           : '=',
             functionData     : '=function', // the firebase function object extended in FunctionFactory

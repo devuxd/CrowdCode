@@ -27,13 +27,13 @@
 		
 	</div>
 
-	<div class="section no-padding">
+	<div class="section no-padding" ng-if="data.tests.length > 0">
 		<div class="section-title"><div class="dot bg-color"></div>Previous described behaviors</div>
 
 		<div class="section-content">
 
 			<div class="tests-list" >
-				<div class="test-item" ng-repeat="t in data.tests track by $index">
+				<div class="test-item" ng-repeat="t in data.tests track by $index" ng-form="testForm" >
 					<div class="toggler bg-color-alpha" ng-click="toggleTest(t)">
 						<span class="pull-left">
 							<strong> it </strong>
@@ -42,13 +42,13 @@
 						<span class="pull-right">
 							<button 
 								class="btn btn-mini {{ t.editing ? 'btn-primary' : '' }}" 
-								ng-click="editTest(t); $event.stopPropagation();">
+								ng-click="editTest(t,testForm); $event.stopPropagation();">
 								<span class="glyphicon glyphicon-edit" ></span> Edit
 							</button> 
 						</span>
 						<span class="clearfix"></span>
 					</div>
-					<div ng-form="testForm" class="form" ng-if="t.expanded">
+					<div class="form" ng-if="t.expanded">
 						<div class="form-group" ng-if="t.editing">
 							<div class="input-group" >
 						      <span class="input-group-addon">it</span>
@@ -56,6 +56,7 @@
 						      	class="form-control" 
 						      	name="description" 
 						      	ng-model="t.description"
+						      	sync-focus-with="t.editing"
 						      />
 						    </div>
 						</div>
@@ -73,7 +74,7 @@
 		
 	<div class="section no-padding">
 		<div class="section-title">
-			<span><div class="dot bg-color"></div>Describe new behavior</span>
+			<span><div class="dot bg-color"></div>Describe a new behavior</span>
 			<span class="pull-right" ng-if="data.tests.length > 0"> 
 				<input type="checkbox" ng-model="data.isComplete" ng-click="t.editing = !t.editing"> 
 				the function is completely described by the previous behaviors
