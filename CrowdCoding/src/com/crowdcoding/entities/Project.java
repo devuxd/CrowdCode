@@ -397,7 +397,7 @@ public class Project
 
 			HistoryLog
 				.Init(project.getID())
-				.addEvent(new MicrotaskAssigned(microtask,workerID));
+				.addEvent(new MicrotaskAssigned(microtask,workerID,"assigned"));
 
 			// return the assigned microtask key
 			return microtask.getKey();
@@ -463,7 +463,7 @@ public class Project
 
 			HistoryLog
 				.Init(project.getID())
-				.addEvent(new MicrotaskAssigned(microtask,workerID));
+				.addEvent(new MicrotaskAssigned(microtask,workerID,"picked"));
 
 			// return the assigned microtask key
 			return microtask.getKey();

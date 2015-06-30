@@ -107,7 +107,7 @@ public class Worker
 			value = microtaskHistory.get(label)+amount;
 		microtaskHistory.put(label, value);
 		ofy().save().entity(this).now();
-//		FirebaseService.increaseStatBy(userid, label, amount, projectId);
+		this.storeToFirebase(projectId);
 	}
 
 	public Key<Worker> getKey()
@@ -151,19 +151,19 @@ public class Worker
 		return true;
 	}
 
-	public void addSubmittedMicrotask(String microtaskKey, String id) {
+	public void addSubmittedMicrotask(String microtaskKey, String projectId) {
 		if(!submittedMicrotasks.contains(microtaskKey)){
 			submittedMicrotasks.add(microtaskKey);	
 		ofy().save().entity(this).now();
-		this.storeToFirebase(id);
+		this.storeToFirebase(projectId);
 		}
 	}
 	
-	public void addSkippedMicrotask(String microtaskKey, String id) {
+	public void addSkippedMicrotask(String microtaskKey, String projectId) {
 		if(!skippedMicrotasks.contains(microtaskKey)){
 			skippedMicrotasks.add(microtaskKey);	
 		ofy().save().entity(this).now();
-		this.storeToFirebase(id);
+		this.storeToFirebase(projectId);
 		}
 	}
 

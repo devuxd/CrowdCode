@@ -96,7 +96,7 @@ boardApp.filter('assigned', function () {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-            if (value.assigned == true && value.completed != true && value.waitingReview == false) {
+            if (value.assigned == true && value.completed != true && value.waitingReview != true) {
                 this.out.push(value);
             }
         }, items);
