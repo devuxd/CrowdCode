@@ -165,7 +165,7 @@ public abstract class QuestioningCommand extends Command
 			AnswerDTO dto = null;
 			try {
 				dto = (AnswerDTO)DTO.read(jsonDTOData, AnswerDTO.class);
-				Answer answer = new Answer(dto.text, dto.questionId, workerId, workerHandle, projectId);
+				new Answer(dto.text, dto.questionId, workerId, workerHandle, projectId);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -189,7 +189,7 @@ public abstract class QuestioningCommand extends Command
 			CommentDTO dto = null;
 			try {
 				dto = (CommentDTO)DTO.read(jsonDTOData, CommentDTO.class);
-				Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
+				new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

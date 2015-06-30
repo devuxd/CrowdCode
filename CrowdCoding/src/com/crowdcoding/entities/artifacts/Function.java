@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
+import com.crowdcoding.commands.StubCommand;
 import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.TestResultDTO;
@@ -55,14 +56,14 @@ public class Function extends Artifact
 	private String        header = "";
 	private String        description = "";
 	private int           linesOfCode = 0;
-	private boolean 	  isCompleted;
+	private boolean 	  isCompleted; // flag to signal when all the behavior of the function have been written
 
 
-	private int testSuiteVersion;
+	private int testSuiteVersion;     // version of all the test suite, is increased every time that a test or a stub is changed
 
 
-	private List<Long> testsId = new ArrayList<Long>();
-	private List<Long> stubsId = new ArrayList<Long>();
+	private List<Long> testsId = new ArrayList<Long>(); // test associated to the function
+	private List<Long> stubsId = new ArrayList<Long>(); // stub associated to the function
 	private List<Long> ADTsId  = new ArrayList<Long>(); // ADTs used by the function
 
 
@@ -211,21 +212,25 @@ public class Function extends Artifact
 		// Looper over all of the callers, rebuilding our list of callers
 		rebuildCalleeList(dto.calleeIds);
 
-		// Check if the description or header changed (ignoring whitespace changes).
-		// If so, generate DescriptionChange microtasks for callers and tests.
-		Boolean isDescriptionChanged = isDescriptionChanged(dto);
-		Boolean isNameChanged = !this.name.equals(dto.name);
-
-		if ( isNameChanged || isDescriptionChanged )
+		// Check if the description is changed (considering only parameters name and type, return type and function name).
+		// If so, notify all the callers of this function.
+		if ( isDescriptionChanged(dto) ){
 			notifyDescriptionChanged();
+		}
 
+		// update all the data
 		this.name = dto.name;
 		this.description = dto.description;
 		this.header = dto.header;
+
         List<FunctionParameterDTO> parameters = dto.parameters;
+
+        //clear the previous lists
         this.paramNames.clear();
         this.paramTypes.clear();
         this.paramDescriptions.clear();
+        //creates the updated ones
+
         for(FunctionParameterDTO parameter : parameters)
         {
             this.paramNames.add(parameter.name);
@@ -234,6 +239,7 @@ public class Function extends Artifact
         }
 
 		this.returnType=dto.returnType;
+
 		// Update the function data
 		this.code = dto.code;
 
@@ -299,17 +305,15 @@ public class Function extends Artifact
 	{
 		System.out.println("DTO RECEIVED : "+dto.toString());
 		describeFunctionBehaviorOut = null;
+
+		//goes throug all the test to add delete or update them
 		for( TestDTO testDTO : dto.tests ){
 			if(testDTO.deleted)
 				TestCommand.delete(testDTO.id);
-
-			else if (testDTO.added ){
-				System.out.println("crating test");
+			else if (testDTO.added )
 				TestCommand.create(testDTO.description, testDTO.code, this.getId(), false, false);
-			}
-			else
+			else if (testDTO.edited )
 				TestCommand.update(testDTO.id, testDTO.description, testDTO.code);
-
 		}
 
 		if( dto.isDescribeComplete )
@@ -348,7 +352,7 @@ public class Function extends Artifact
 
 	public void runTests(){
 
-		FirebaseService.writeTestJobQueue(this.getId(), this.version, testSuiteVersion, projectId);
+		FirebaseService.writeTestJobQueue(getId(), version, testSuiteVersion, projectId);
 	}
 
 	public void submittedTestResult(String jsonDto){
@@ -406,25 +410,6 @@ public class Function extends Artifact
 		calleesId.remove(calleeId);
 		ofy().save().entity(this).now();
 		queueImplementFunctionBehavior(new ImplementBehavior(this, disputeText, calleeId, projectId));
-	}
-
-
-	public void testDeleted( long testId ){
-		testsId.remove(testId);
-		incrementTestSuiteVersion();
-	}
-
-	public void testEdited( long testId ){
-		incrementTestSuiteVersion();
-	}
-
-	public void stubDeleted( long stubId ){
-		stubsId.remove(stubId);
-		incrementTestSuiteVersion();
-	}
-
-	public void stubEdited( long stubId ){
-		incrementTestSuiteVersion();
 	}
 
 	public void addTest(long testId){
@@ -510,14 +495,24 @@ public class Function extends Artifact
 	// checks if the new submitted description differs from the old one
 	public boolean isDescriptionChanged(FunctionDTO dto)
 	{
+		// checks if the name has changed
+		if( ! dto.name.equals(this.name))
+			return true;
+
+		// checks if the return type has changed
 		if( ! dto.returnType.equals(this.returnType))
 			return true;
+
+		//checks if the number of parameters has changed
 		if( dto.parameters.size() != this.paramTypes.size())
 			return true;
+
+		// check for each parameter that the name and the type is still the same
 		for( FunctionParameterDTO parameter : dto.parameters){
-			if( ! paramTypes.contains( parameter.type ) )
+			if( ! paramTypes.contains( parameter.type ) || ! paramNames.contains( parameter.name ) )
 				return true;
 		}
+
 		return false;
 
 	}
@@ -526,7 +521,7 @@ public class Function extends Artifact
 	{
 		for(StubDTO stub : stubs)
 			{
-			//TODO
+			StubCommand.create(stub.inputs, stub.output, getId(), false, false);
 			}
 	}
 

@@ -1,12 +1,7 @@
 package com.crowdcoding.commands;
 
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
-
-
-
 import java.util.HashSet;
-
 import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.microtasks.Microtask;
