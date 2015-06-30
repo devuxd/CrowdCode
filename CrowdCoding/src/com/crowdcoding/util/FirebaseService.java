@@ -340,6 +340,10 @@ public class FirebaseService
 	public static void writeWorkerNotification(NotificationInFirebase notification, String workerID, String projectId){
 		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
 	}
+	
+	public static void writeLevelUpNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
+	}
 
 	public static void microtaskAssigned(String workerID, String projectId) {
 		enqueueWrite("{\"fetchTime\" : \"" +System.currentTimeMillis() +"\"}", "/workers/" + workerID + ".json", HTTPMethod.PATCH, projectId);
@@ -348,7 +352,7 @@ public class FirebaseService
 
 	// Writes information about microtask assignment to Firebase
 	public static void writeMicrotaskPoints( String microtaskKey, int points, String projectId){
-		enqueueWrite("{\"points\": \"" + points + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"points\": " + points + "}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
 	// Posts the specified JSON message to the specified workers newsfeed
@@ -385,7 +389,7 @@ public class FirebaseService
 	}
 
 	public static void updateQuestioningScore(int score, String path, String projectId){
-		enqueueWrite("{\"score\": \"" + score + "\"}", path +".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"score\": " + score + "}", path +".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void updateQuestioningSubscribers(SubscribersInFirebase subscribersId, String path, String projectId){

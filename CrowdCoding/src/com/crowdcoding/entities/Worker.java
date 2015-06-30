@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
+import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
 import com.crowdcoding.dto.firebase.WorkerInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
@@ -70,8 +71,6 @@ public class Worker
 			FirebaseService.setPoints( worker.userid, worker.nickname, worker.score, project.getID());
 			FirebaseService.publish();
 		}
-		//worker.SubmittedMicrotasks = new ArrayList<String>();
-		//worker.SkippedMicrotasks = new ArrayList<String>();
 		return worker;
 	}
 
@@ -92,14 +91,18 @@ public class Worker
 	// Adds the specified number of points to the score.
 	public void awardPoints(int points, String projectId)
 	{
-		score += points;		
+		score += points;	
+		int previousLevel = level;
 		level = 2 + score/40;
+		if(previousLevel != level){
+			FirebaseService.writeLevelUpNotification(new NotificationInFirebase("worker.levelup",previousLevel,level), this.getUserid(), projectId);
+		}
 		ofy().save().entity(this).now();
 		this.storeToFirebase(projectId);
 		FirebaseService.setPoints(userid, nickname, score, projectId);
 	}
 
-	// Update the stat label to the stat value.
+	// keep a list of microtasks done by the worker
 	public void increaseStat(String label,int amount, String projectId)
 	{
 		int value = amount;

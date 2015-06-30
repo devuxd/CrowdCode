@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.entities.microtasks.Microtask;
 
 public class NotificationInFirebase extends DTO
 {
@@ -15,7 +16,14 @@ public class NotificationInFirebase extends DTO
 	public NotificationInFirebase()
 	{
 	}
-
+	
+	public NotificationInFirebase(String type, int prev, int current)
+	{
+		this.type = type;
+		this.data = "{ \"prevLevel\": "+prev + ", \"currentLevel\": "+current + "}";
+		this.time = System.currentTimeMillis();
+	}
+	
 	public NotificationInFirebase(String type,String data)
 	{
 		this.type = type;

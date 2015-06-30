@@ -84,6 +84,11 @@ angular
 							};
 							toaster.pop( toast ); 
 							break;
+						case 'worker.levelup':
+							toast.type = 'success';
+							toast.body = 'Level up!\n'+json.prevLevel+'->'+json.currentLevel;
+							toaster.pop( toast ); 
+							break;
 
 						default:
 					}

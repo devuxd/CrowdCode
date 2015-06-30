@@ -443,7 +443,6 @@ public class Project
 				microtaskAssignments.put( workerID,  Microtask.keyToString( mtask.getKey() ) );
 
 				//ofy().save().entity(mtask).now();
-				System.out.println("assigning "+ mtask.getKey() +" to worker "+workerID);
 				microtask=mtask;
 			}
 			else{
