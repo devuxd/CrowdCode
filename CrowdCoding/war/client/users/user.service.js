@@ -3,7 +3,7 @@
 ////////////////////
 angular
     .module('crowdCode')
-    .factory('userService', ['$window','$rootScope','$timeout','$interval','$http','$firebaseObject', 'firebaseUrl','TestList','functionsService','TestRunnerFactory', function($window,$rootScope,$timeout,$interval,$http,$firebaseObject, firebaseUrl,TestList,functionsService,TestRunnerFactory) {
+    .factory('userService', ['$window','$rootScope','$timeout','$interval','$http','$firebaseObject', 'firebaseUrl','functionsService','TestRunnerFactory', function($window,$rootScope,$timeout,$interval,$http,$firebaseObject, firebaseUrl,functionsService,TestRunnerFactory) {
     var user = {};
 
  	// retrieve the firebase references
@@ -73,10 +73,8 @@ angular
 
 
 
-	// distributed test work
+	// distributed test runner
     user.listenForJobs = function(){
-		// worker
-
 		var queueRef = new Firebase(firebaseUrl+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
 			console.log('Receiving job ',jobData);
@@ -97,16 +95,15 @@ angular
 			if( !unsynced && functionClient.version != jobData.functionVersion ){
 				unsynced = true;
 			}
+
 			//if this job has be done more than 20 times force unsync to false so that the test can be executed
 			if( parseInt(jobData.bounceCounter) > 20) {
 				unsynced = false;
-				console.log(parseInt(jobData.bounceCounter));
 			}
 
 			// if some of the data is out of sync
 			// put back the job into the queue
 			if( unsynced){
-				console.log('REBOUNCING');
 				$timeout(function(){
 					jobData.bounceCounter = parseInt(jobData.bounceCounter) + 1;
 					jobRef.set( jobData );
@@ -114,22 +111,39 @@ angular
 					whenFinished();
 				},500);
 			} else {
-				console.log('running from user service' + jobData);
-				var testRunner = new TestRunnerFactory.instance({submitToServer: true});
-				testRunner.setTestedFunction( jobData.functionId );
-				try {
-					testRunner.runTests();
-					testRunner.onTestsFinish(function(){
-						console.log('------- tests finished received');
+				var runner = new TestRunnerFactory.instance();
+				var funct = functionsService.get(jobData.functionId);
+				var tests = angular.copy(funct.tests);
+
+				runner.run(tests,funct.name,funct.getFullCode());
+
+				var ajaxData = {
+					areTestsPassed: true,
+					failedTestId: null,
+					passedTestsId: []
+				};
+
+				tests.map(function(test){
+					if( test.passed ){
+						ajaxData.passedTestsId.push(test.id);
+					}
+					else if( ajaxData.failedTestId == null){
+						ajaxData.areTestsPassed = false;
+						ajaxData.failedTestId = test.id;
+					}
+				});
+
+				$http.post('/' + $rootScope.projectId + '/ajax/testResult?functionId='+funct.id,ajaxData)
+					.success(function(data, status, headers, config) {
+						console.log("test result submit success",ajaxData);
 						jobRef.onDisconnect().cancel();
 						whenFinished();
+					}).
+				  	error(function(data, status, headers, config) {
+				    	console.log("test result submit error");
+				    	jobRef.onDisconnect().cancel();
+						whenFinished();
 					});
-				} catch(e){
-					console.log('Exception in the TestRunner',e.stack);
-					//jobRef.set( jobData );
-					jobRef.onDisconnect().cancel();
-					whenFinished();
-				}
 			}
 		});
 	};

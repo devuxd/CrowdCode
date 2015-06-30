@@ -1,4 +1,4 @@
-var editor ;
+
 angular
     .module('crowdCode')
     .directive('testEditor', function() {
@@ -18,7 +18,7 @@ angular
 
 
         	$scope.aceLoaded = function(_editor) {
-                editor = _editor;
+                
                 $scope.test.editor = _editor;
                 $scope.$watch('test.editing',function(newValue,oldValue){
                     if ( newValue ) {
@@ -34,6 +34,7 @@ angular
 		    	   maxLines: Infinity,
                    minLines: 4,
                    enableLiveAutocompletion: true,
+                   useWorker: false
 		    	};
 
                 _editor.setOptions(options);
@@ -41,7 +42,6 @@ angular
 
                 var myCompleter = {
                     getCompletions: function(editor, session, pos, prefix, callback) {
-                        console.log(pos,prefix);
                         callback(null,[
                             {name: 'expect', value: 'expect', snippet: 'expect(${0:expression})', score: 1 },
                             {name: 'to', value: 'to', snippet: 'to(${0:expression})',score: 1 },

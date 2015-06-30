@@ -1,8 +1,8 @@
 angular
     .module('crowdCode')
-    .directive('microtaskForm', [ '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService','FunctionFactory', 'userService', 'microtasksService','TestList', microtaskForm]); 
+    .directive('microtaskForm', [ '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService', microtaskForm]); 
 
-function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functionsService, FunctionFactory, userService, microtasks, TestList) {
+function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks) {
     return {
         restrict: 'E',
         templateUrl: '/client/microtasks/microtask_form.html',

@@ -430,12 +430,11 @@ public class CrowdServlet extends HttpServlet
 
 		final String projectID = (String) req.getAttribute("project");
 		final long functionId = Long.parseLong(req.getParameter("functionId"));
-		final String JsonDTO       = Util.convertStreamToString(req.getInputStream());
+		final String JsonDTO  = Util.convertStreamToString(req.getInputStream());
 
-	//	System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
+	    System.out.println("--> SERVLET: received test results for "+functionId+": "+JsonDTO.toString());
 
 		FunctionCommand.submittedTestResult(functionId, JsonDTO);
-
 		executeCommands(projectID);
 	}
 

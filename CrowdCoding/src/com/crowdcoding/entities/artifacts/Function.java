@@ -181,8 +181,8 @@ public class Function extends Artifact
 						describeFunctionBehaviorOut = Ref.create(mtask);
 					}
 					// check if the function need to be implemented
-					//checkIfNeedImplementation();
-					createImplementBehavior();
+					checkIfNeedImplementation();
+//					createImplementBehavior();
 
 				}
 				else{
@@ -195,8 +195,8 @@ public class Function extends Artifact
 				}
 
 			} else if(((DescribeFunctionBehavior)( describeFunctionBehaviorOut.get())).getPromptType() == PromptType.WRITE){
-				//checkIfNeedImplementation();
-				createImplementBehavior();
+				checkIfNeedImplementation();
+//				createImplementBehavior();
 
 			}
 
@@ -274,7 +274,7 @@ public class Function extends Artifact
 
 	}
 	private void checkIfNeedImplementation(){
-		if(testsId.size() > 0 && ! isImplementationInProgress ){
+		if( testsId.size() > 0 && !isImplementationInProgress ){
 			isImplementationInProgress =  true;
 			if( queuedImplementBehavior.isEmpty() ){
 				FunctionCommand.runTests(this.getId());
@@ -297,7 +297,7 @@ public class Function extends Artifact
 
 	public void describeFunctionBehaviorCompleted(DescribeFunctionBehaviorDTO dto)
 	{
-		System.out.println("DTO RECEIVED : "+dto.toString());
+		System.out.println("DTO RECEIVED : "+dto.json());
 		describeFunctionBehaviorOut = null;
 		for( TestDTO testDTO : dto.tests ){
 			if(testDTO.deleted)

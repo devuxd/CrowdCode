@@ -21,6 +21,7 @@
 							<strong> it </strong>
 							<span ng-bind="t.description"></span>
 						</span> 
+						<span class="pull-right">{{t.result.passed ? 'passed' : 'failed'}}</span>
 						<span class="clearfix"></span>
 					</div>
 					<div ng-form="testForm" class="form" ng-if="t.expanded">
@@ -45,6 +46,7 @@
 						<strong> it </strong>
 						<span ng-bind="data.currentTest.description"></span>
 					</span> 
+					<span class="pull-right">{{t.result.passed ? 'passed' : 'failed'}}</span>
 					<span class="clearfix"></span>
 				</div>
 				<div ng-form="testForm" class="form">
@@ -60,19 +62,19 @@
 
 	<div class="section section-form">
 		<div class="pull-right">
-			<button>Run Tests</button>
+			<button ng-click="run()">Run Tests</button>
 			<button>Inspect</button>
 		</div>
 		<span class="clearfix"></span>
 
-		<ace-edit-js 
+		<function-editor
             function="funct" 
             editor="data.editor" 
             annotations="data.annotations"
             markers="data.markers"
             has-pseudo="data.hasPseudo"
             >
-        </ace-edit-js>
+        </function-editor>
 	</div>
 		
 </div>

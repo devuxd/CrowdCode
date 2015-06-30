@@ -8,7 +8,7 @@ angular
     return {
         scope: true, // {} = isolate, true = child, false/undefined = no change
         restrict: 'EA', 
-        templateUrl: '/client/functions/function_conventions.html',
+        templateUrl: '/client/widgets/function_conventions.html',
         controller: function($scope, $element, $attrs) {
             $scope.examplePseudocode = $sce.trustAsHtml(
                         '<strong>Example:</strong>\n'+

@@ -36,7 +36,7 @@ angular
                 validate(code);
 
                 scope.$emit('statements-updated', statements, maxNewStatements);
-
+                
                 if (errors.length > 0) {
                     ctrl.$setValidity('function', false);
                     ctrl.$error.function_errors = errors;
