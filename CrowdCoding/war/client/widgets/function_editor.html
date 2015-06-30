@@ -12,7 +12,7 @@
 			style="display:none"
 			function-validator 
 			max-new-statements="10"
-			function-id="{{functionData.getId()}}"
+			function-id="{{function.id}}"
 			ng-model="code">
 		</textarea>
 		<span class="recap" ng-if="functionForm.code.$error.function_errors.length > 0" > {{ functionForm.code.$error.function_errors.length }} problem(s) found: </span>

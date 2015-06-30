@@ -1,5 +1,43 @@
 
-ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
+ace.define('ace/ext/crowdcode',function(require, exports, module) {
+
+    var FunctionAutocompleter = require('ace/ext/crowdcode/autocomplete/function').FunctionAutocompleter;
+
+    // extend editor
+    var Editor   = require("../editor").Editor;
+    require("../config").defineOptions(Editor.prototype, "editor", {
+        enableFunctionAutocompleter: {
+            set: function(val) {
+                if (val) {
+                    this.functioncompleter = new FunctionAutocompleter();
+                    this.commands.addCommand(FunctionAutocompleter.startCommand);
+                } else {
+                    this.commands.removeCommand(FunctionAutocompleter.startCommand);
+                }
+            },
+            value: true
+        },
+        enableTestAutocompleter: {
+            set: function(val) {
+                if (val) {
+                   
+                } else {
+                    
+                }
+            },
+            value: true
+        }
+    });
+
+    (function() {
+        
+
+    }).call(Editor.prototype);
+
+});
+
+
+ace.define('ace/ext/crowdcode/autocomplete/function',function(require, exports, module) {
 
 	var HashHandler    = require("ace/keyboard/hash_handler").HashHandler;
 	var AcePopup       = require('ace/autocomplete/popup').AcePopup;
@@ -9,13 +47,7 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 	var lang           = require("ace/lib/lang");
 	var dom            = require("ace/lib/dom");
 
-    var startCommandBindKey = "";
-    if( navigator.appVersion.indexOf("Mac")!=-1)
-        startCommandBindKey="Alt-Space";
-    else
-        startCommandBindKey="Ctrl-Space";
-
-	var functionsService = function() {
+	var FunctionAutocompleter = function() {
 		this.filtered = [];
 
     	this.changeListener = this.changeListener.bind(this);
@@ -28,7 +60,7 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 
 	this.$init = function(){
 		this.popup = new AcePopup(document.body || document.documentElement);
-		this.popup.renderer.setStyle('ace_functions_list');
+		this.popup.renderer.setStyle('ace_crowdcode_function_autocomplete');
 		this.popup.on("click", function(e) {
 			this.insertSelected();
 			e.stop();
@@ -89,18 +121,12 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 
  		this.editor = editor;
 
-		if( !this.editor.functions ) 
-			this.editor.functions = [];
-
-        if (this.editor.functionslist != this) {
-            if (this.editor.functionslist)
-                this.editor.functionslist.detach();
-            this.editor.functionslist = this;
-        }
+		if( !this.functions ) 
+			this.functions = [];
 
         this.editor.on("changeSelection", this.changeListener);
-        this.editor.on('destroy', function(editor1){
-        	editor1.functionslist.detach();
+        this.editor.on('destroy', function(_editor){
+        	_editor.functioncompleter.detach();
         });
 
         this.editor.keyBinding.addKeyboardHandler(this.keyboardHandler);
@@ -138,13 +164,13 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
         var prefix  = util.retrievePrecedingIdentifier(line, pos.column);
 
         if( prefix.length > 0){
-	        this.filtered = this.editor.functions.filter(function(item){
+	        this.filtered = this.functions.filter(function(item){
 	        	if( item.name.search(prefix) > -1 ) 
 	        		return true;
 	        	return false;
 	        });
         } else {
-	   		this.filtered = this.editor.functions.slice();
+	   		this.filtered = this.functions.slice();
 	   	}
 
 	   	this.filtered.push({
@@ -227,61 +253,51 @@ ace.define('ace/crowdcode/functionslist',function(require, exports, module) {
 
 
     this.commands = {
-        "Up"                : function(editor) { editor.functionslist.goTo("up"); },
-        "Down"              : function(editor) { editor.functionslist.goTo("down"); },
+        "Up"                : function(editor) { editor.functioncompleter.goTo("up"); },
+        "Down"              : function(editor) { editor.functioncompleter.goTo("down"); },
 
-        "Esc"               : function(editor) { editor.functionslist.detach(); },
-        "Space"             : function(editor) { editor.functionslist.detach(); editor.insert(" ");},
-        "Return"            : function(editor) { editor.functionslist.insertSelected(); editor.functionslist.detach(); },
+        "Esc"               : function(editor) { editor.functioncompleter.detach(); },
+        "Space"             : function(editor) { editor.functioncompleter.detach(); editor.insert(" ");},
+        "Return"            : function(editor) { editor.functioncompleter.insertSelected(); editor.functioncompleter.detach(); },
     };
 
-	}).call(functionsService.prototype);
+    
 
-	functionsService.startCommand = {
-	    name: "startfunctionsService",
-	    exec: function(editor) {
-	        if (!editor.functionslist)
-	            editor.functionslist = new functionsService();
-	        editor.functionslist.attach(editor);
-	    },
-	    bindKey: startCommandBindKey
-	};
+	}).call(FunctionAutocompleter.prototype);
+    
+    FunctionAutocompleter.startCommand = {
+        name: "startFunctionAutocompleter",
+        exec: function(editor) {
+            editor.functioncompleter.attach(editor);
+        },
+        bindKey: navigator.appVersion.indexOf("Mac")!=-1 ? "Alt-Space" : "Ctrl-Space"
+    };
 
-	exports.functionsService = functionsService;
+	exports.FunctionAutocompleter = FunctionAutocompleter;
 });
 
-ace.define('ace/ext/crowdcode',function(require, exports, module) {
 
-	var functionsService = require('ace/crowdcode/functionslist').functionsService;
+ace.define('ace/ext/crowdcode/autocomplete/test',function(require, exports, module) {
 
-	// extend editor
-	var Editor   = require("../editor").Editor;
-	require("../config").defineOptions(Editor.prototype, "editor", {
-	    enablefunctionsService: {
-	        set: function(val) {
-	            if (val) {
-	            	this.commands.addCommand(functionsService.startCommand);
-	            } else {
-	                this.commands.removeCommand(functionsService.startCommand);
-	            }
-	        },
-	        value: true
-	    }
-	});
+   
+    var TestAutocompleter = function() {
+        
+    };
 
-	(function() {
-		// this.initfunctionsService = function(){
-		// 	exports.CrowdCode = new CrowdCode(this);
-		// }
-		// this.setfunctionsService = function(list){
-	 //    	exports.CrowdCode.functionsList = list;
-	 //    };
-	 //    this.getfunctionsService = function(){
-	 //    	return exports.CrowdCode.functionsList;
-	 //    };
-	}).call(Editor.prototype);
+    (function() {
 
+
+    }).call(TestAutocompleter.prototype);
+    
+    TestAutocompleter.startCommand = {
+        name: "startFunctionAutocompleter",
+        exec: function(editor) {
+            
+        },
+        bindKey: navigator.appVersion.indexOf("Mac")!=-1 ? "Alt-Space" : "Ctrl-Space"
+    };
+
+    exports.TestAutocompleter = TestAutocompleter;
 });
-
 
 

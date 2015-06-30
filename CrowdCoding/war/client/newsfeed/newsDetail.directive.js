@@ -1,7 +1,7 @@
 
 angular
     .module('crowdCode')
-    .directive('newsDetail', function(newsfeedService,functionsService, FunctionFactory, microtasksService){
+    .directive('newsDetail', function(newsfeedService,functionsService,microtasksService){
     return {
         templateUrl: "/client/newsfeed/news_detail.html",
         restrict:"AEC",

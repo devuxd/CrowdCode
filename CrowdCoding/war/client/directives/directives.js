@@ -77,16 +77,17 @@ angular
         scope: {
             focusValue: "=syncFocusWith"
         },
-        link: function(scope, element, attrs) {
-            var unwatch = $scope.watch("focusValue", function(currentValue, previousValue) {
+        link: function($scope, $element, attrs) {
+            var unwatch = $scope.$watch("focusValue", function(currentValue, previousValue) {
+                console.log('ajejebrazorf',currentValue,previousValue);
                 if (currentValue === true && !previousValue) {
-                    element[0].focus();
+                    $element[0].focus();
                 } else if (currentValue === false && previousValue) {
-                    element[0].blur();
+                    $element[0].blur();
                 }
             });
 
-            element.on('$destroy',function(){
+            $element.on('$destroy',function(){
                 unwatch();
             });
         }

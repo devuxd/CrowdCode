@@ -85,7 +85,7 @@ public class Test extends Artifact
 
 	/**updates this test if description and code differ from the old one */
 	public void update(String newDescription, String newCode){
-		if( ( this.description + this.code ).equals( description + newCode ) )
+		if( ! ( this.description + this.code ).equals( newDescription + newCode ) )
 		{
 			this.description     = newDescription;
 			this.code		     = newCode;

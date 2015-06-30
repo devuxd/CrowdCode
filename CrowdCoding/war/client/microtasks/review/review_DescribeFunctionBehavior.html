@@ -1,0 +1,9 @@
+<ul>
+
+	<li ng-repeat="t in data.tests">
+		<span ng-if="t.added">+</span>
+		<span ng-if="t.deleted">-</span>
+		<span ng-if="t.edited">diff</span>
+		{{t.description}}
+	</li>
+</ul>

@@ -8,52 +8,73 @@
         </div>
     </div>
 
-
-    <div class="section section-description" id="functionSignature">
-
+	<div class="section section-description">
 		<div class="section-title" >
 			<div class="dot bg-color"></div>
-			FUNCTION DESCRIPTION
-		</div>
-
-		<div class="section-link" ng-hide="funct.readOnly || dispute.active" >
-			<a ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
-				Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
-			</a>
-		</div>
-
-		<div class="section-content no-padding">
-			<ace-read-js code="::funct.getSignature()" ></ace-read-js>
-		</div>
-		
-	</div>
-
-	<div class="section section-description" bs-collapse ng-model="activeDescriptions" data-allow-multiple="true">
-		<div class="section-title" >
-			<div class="dot bg-color"></div>
-			Already implemented behaviors
+			Previously implemented behaviors
 		</div>
 		<div class="section-content">
-			<div style="margin-bottom:2px" ng-repeat="b in behaviors track by $index">
-				<div style="width:100%" ng-if="currentIndex != $index">
-					<div class="bg-color-alpha" bs-collapse-toggle> 
-						<span ng-bind="b.description"></span>
+			<div class="tests-list" >
+				<div class="test-item" ng-repeat="t in data.tests track by $index">
+					<div class="toggler bg-color-alpha" ng-click="toggleTest(t)">
+						<span class="pull-left">
+							<strong> it </strong>
+							<span ng-bind="t.description"></span>
+						</span> 
+						<span class="pull-right">{{t.result.passed ? 'passed' : 'failed'}}</span>
+						<span class="clearfix"></span>
 					</div>
-					<div class="" ng-bind="b.code" bs-collapse-target></div>
+					<div ng-form="testForm" class="form" ng-if="t.expanded">
+						<div class="form-group">
+							<test-editor test="t"></test-editor>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>	
 	</div>
 
+	<div class="section section-description" >
+		<div class="section-title" >
+			<div class="dot bg-color"></div>
+			Behavior to be implemented
+		</div>
+		<div class="section-content">
+			<div class="test-item">
+				<div class="toggler bg-color-alpha">
+					<span class="pull-left">
+						<strong> it </strong>
+						<span ng-bind="data.currentTest.description"></span>
+					</span> 
+					<span class="pull-right">{{t.result.passed ? 'passed' : 'failed'}}</span>
+					<span class="clearfix"></span>
+				</div>
+				<div ng-form="testForm" class="form">
+					<div class="form-group">
+						<test-editor test="data.currentTest"></test-editor>
+					</div>
+					
+				</div>
+			</div>
+
+		</div>	
+	</div>
+
 	<div class="section section-form">
-		<ace-edit-js 
-                        function="funct" 
-                        editor="data.editor" 
-                        annotations="data.annotations"
-                        markers="data.markers"
-                        has-pseudo="data.hasPseudo"
-                        >
-                    </ace-edit-js>
+		<div class="pull-right">
+			<button ng-click="run()">Run Tests</button>
+			<button>Inspect</button>
+		</div>
+		<span class="clearfix"></span>
+
+		<function-editor
+            function="funct" 
+            editor="data.editor" 
+            annotations="data.annotations"
+            markers="data.markers"
+            has-pseudo="data.hasPseudo"
+            >
+        </function-editor>
 	</div>
 		
 </div>
