@@ -1,3 +1,4 @@
+var fEditor;
 angular
     .module('crowdCode')
     .directive('functionEditor', [ '$sce', 'functionsService', function($sce, functionsService) {
@@ -12,7 +13,9 @@ angular
         scope: {
             editor : '=',
             'function' : '=', // the firebase function object extended in FunctionFactory
-            hasPseudo : '='
+            hasPseudo : '=',
+            logs: '=',
+            editStub: '='
         },
 
         controller: function($scope,$element){
@@ -26,10 +29,33 @@ angular
 
         	$scope.aceLoaded = function(_editor) {
 
-
+                fEditor = _editor;
                 ace.require('ace/ext/crowdcode');
+                var LogInfo = ace.require("ace/ext/crowdcode/log_info").LogInfo;
 
                 $scope.editor =  _editor;
+
+                $scope.$watch('logs',function(logs){
+
+                    console.log('changing logs', logs);
+
+                    if( logs === undefined ){
+                        if( _editor.logInfo !== undefined )
+                            _editor.logInfo.detach();
+                        return;
+                    }
+
+                    if( _editor.logInfo === undefined )
+                        new LogInfo(_editor,{
+                            'editStub' : function(functionName,inputs){ 
+                                console.log('edit stub',functionName,inputs);
+                            }
+                        });
+                    else 
+                        _editor.logInfo.attach();
+                    
+                    _editor.logInfo.logs = logs;
+                });
 
                 var options = {
                     enableFunctionAutocompleter: true
@@ -50,13 +76,13 @@ angular
 
                 // loadFunctionsList(_editor);
 
-
+                // editor event listeners
                 _editor.on('change', onChange);
                 // _editor.on('click' , onClick);
                 // _editor.on('destroy',function(){});
 
-                // event listeners
-                $element.on('focus', _editor.focus() );
+                // element event listeners
+                $element.on('focus', _editor.focus );
 			};      
 
             function onChange(event,editor){
@@ -70,8 +96,8 @@ angular
                     if( $scope.hasPseudo !== undefined )
                         $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
 
-                    if( $scope.function.readOnly )
-                        makeDescriptionReadOnly(ast,editor);
+                    // if( $scope.function.readOnly )
+                    //     makeDescriptionReadOnly(ast,editor);
 
 
                     updateFunctionsList(ast,editor);

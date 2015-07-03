@@ -115,35 +115,38 @@ angular
 				var funct = functionsService.get(jobData.functionId);
 				var tests = angular.copy(funct.tests);
 
-				runner.run(tests,funct.name,funct.getFullCode());
+				runner.run(tests,funct.name,funct.getFullCode()).then(function(tests){
+					var ajaxData = {
+						areTestsPassed: true,
+						failedTestId: null,
+						passedTestsId: []
+					};
 
-				var ajaxData = {
-					areTestsPassed: true,
-					failedTestId: null,
-					passedTestsId: []
-				};
+					tests.map(function(test){
+						console.log('TEST IS',test.result)
+						if( test.result.passed ){
+							ajaxData.passedTestsId.push(test.id);
+						}
+						else if( ajaxData.failedTestId == null){
+							ajaxData.areTestsPassed = false;
+							ajaxData.failedTestId = test.id;
+						}
+					});
 
-				tests.map(function(test){
-					if( test.passed ){
-						ajaxData.passedTestsId.push(test.id);
-					}
-					else if( ajaxData.failedTestId == null){
-						ajaxData.areTestsPassed = false;
-						ajaxData.failedTestId = test.id;
-					}
+					$http.post('/' + $rootScope.projectId + '/ajax/testResult?functionId='+funct.id,ajaxData)
+						.success(function(data, status, headers, config) {
+							console.log("test result submit success",ajaxData);
+							jobRef.onDisconnect().cancel();
+							whenFinished();
+						}).
+					  	error(function(data, status, headers, config) {
+					    	console.log("test result submit error");
+					    	jobRef.onDisconnect().cancel();
+							whenFinished();
+						});
 				});
 
-				$http.post('/' + $rootScope.projectId + '/ajax/testResult?functionId='+funct.id,ajaxData)
-					.success(function(data, status, headers, config) {
-						console.log("test result submit success",ajaxData);
-						jobRef.onDisconnect().cancel();
-						whenFinished();
-					}).
-				  	error(function(data, status, headers, config) {
-				    	console.log("test result submit error");
-				    	jobRef.onDisconnect().cancel();
-						whenFinished();
-					});
+				
 			}
 		});
 	};

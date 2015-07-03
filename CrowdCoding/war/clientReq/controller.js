@@ -69,7 +69,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		var emptyFunction={
 							    code          :	"{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}",
 								description   : "",
-								readOnly      : true,
+								isReadOnly      : true,
 								name          : "",
 								parameters    : [emptyParameter],
 								returnType    : "",

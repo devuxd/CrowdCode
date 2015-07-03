@@ -111,10 +111,10 @@ public class Function extends Artifact
 		this.isCompleted=false;
 
 		ofy().save().entities(this).now();
+		
+		FunctionCommand.lookForWork(this.id);
 
 		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
-
-		lookForWork();
 		storeToFirebase();
 
 	}
@@ -178,7 +178,7 @@ public class Function extends Artifact
 					if(! this.isCompleted){
 						Microtask mtask = new DescribeFunctionBehavior(getRef(), getId(), name, projectId);
 						ProjectCommand.queueMicrotask(mtask.getKey(), null);
-						describeFunctionBehaviorOut = Ref.create(mtask);
+						describeFunctionBehaviorOut =  Ref.create(mtask.getKey());
 					}
 					// check if the function need to be implemented
 					checkIfNeedImplementation();
@@ -194,10 +194,13 @@ public class Function extends Artifact
 					}
 				}
 
-			} else if(((DescribeFunctionBehavior)( describeFunctionBehaviorOut.get())).getPromptType() == PromptType.WRITE){
-				checkIfNeedImplementation();
-//				createImplementBehavior();
-
+			} else {
+				DescribeFunctionBehavior task = (DescribeFunctionBehavior) ofy().load().ref(describeFunctionBehaviorOut).now();
+				System.out.println("LOADED TASK FROM REF "+task + ", ref was "+describeFunctionBehaviorOut);
+				if( task.getPromptType() == PromptType.WRITE){
+					checkIfNeedImplementation();
+	//				createImplementBehavior();
+				}
 			}
 
 		}
@@ -238,9 +241,12 @@ public class Function extends Artifact
 		this.code = dto.code;
 
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
+		
 
-		lookForWork();
+		ofy().save().entities(this).now();
 		storeToFirebase();
+		
+		FunctionCommand.lookForWork(this.id);
 	}
 
 
@@ -270,7 +276,7 @@ public class Function extends Artifact
 		isImplementationInProgress =  true;
 
 		newImplementBehavior(0L);
-		ofy().save().entities(this);
+		ofy().save().entities(this).now();
 
 	}
 	private void checkIfNeedImplementation(){
@@ -315,7 +321,9 @@ public class Function extends Artifact
 		if( dto.isDescribeComplete )
 			this.isCompleted = true;
 
-		lookForWork();
+		ofy().save().entity(this).now();
+		
+		FunctionCommand.lookForWork(this.id);
 
 	}
 
@@ -430,12 +438,12 @@ public class Function extends Artifact
 	public void addTest(long testId){
 		testsId.add(testId);
 		incrementTestSuiteVersion();
-		ofy().save().entities(this);
+		ofy().save().entities(this).now();
 	}
 	public void addStub(long stubId){
 		stubsId.add(stubId);
 		incrementTestSuiteVersion();
-		ofy().save().entities(this);
+		ofy().save().entities(this).now();
 	}
 
 	/******************************************************************************************
@@ -532,7 +540,7 @@ public class Function extends Artifact
 
 	public void incrementTestSuiteVersion(){
 		testSuiteVersion++ ;
-		ofy().save().entities(this);
+		ofy().save().entities(this).now();
 		FirebaseService.incrementTestSuiteVersion(this.getId(), this.testSuiteVersion, projectId);
 	}
 

@@ -231,6 +231,24 @@ color: #525151 !important;
 	background-color:transparent;
 }
 
+.ace_inspected {
+	background-color: rgba(255, 18, 18, 0.3);
+	position:absolute;
+	z-index:6;
+	margin:0px 0px 0px 0px;
+}
+
+.ace_tooltip {
+	pointer-events:auto !important;
+	padding-right: 20px !important;
+}
+
+.ace_tooltip .close-btn {
+	position:absolute;
+	right:2px;
+	top:2px;
+	cursor: pointer;
+}
 
 
 .js-reader { 
@@ -1469,10 +1487,15 @@ pre.json .jsonKey { color: black; }
 
 .tests-list { margin-bottom: 10px;}
 
-.test-item { margin-bottom: 2px; font-family: 'Lato'; }
+.test-item { margin-bottom: 4px; font-family: 'Lato'; }
 
-.test-item .toggler { font-size:1.1em; padding: 5px; }
-.test-item .form { background-color: rgb(240,240,240); padding:5px; }
+.test-item .toggler { font-size:1.1em; padding: 5px; cursor: pointer; }
+.test-item .form   { background-color: white; padding:5px; }
+.test-item .result { background-color: white;padding:5px; }
+
+.test-item.passed   .toggler { background-color: #CFF5BF; }
+.test-item.failed   .toggler  { background-color: rgba(254, 188, 188, 0.5); }
+.test-item.disputed .toggler  { background-color: #FFB280; }
 
 .test-item input {border-radius:0px;}
 .test-item input.ng-dirty,

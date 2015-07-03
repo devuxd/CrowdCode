@@ -11,22 +11,41 @@
 	<div class="section section-description">
 		<div class="section-title" >
 			<div class="dot bg-color"></div>
-			Previously implemented behaviors
+			Described behaviors
 		</div>
 		<div class="section-content">
 			<div class="tests-list" >
-				<div class="test-item" ng-repeat="t in data.tests track by $index">
-					<div class="toggler bg-color-alpha" ng-click="toggleTest(t)">
-						<span class="pull-left">
-							<strong> it </strong>
-							<span ng-bind="t.description"></span>
-						</span> 
-						<span class="pull-right">{{t.result.passed ? 'passed' : 'failed'}}</span>
+				<div class="test-item {{ !t.running ? (t.result.passed ? 'passed' : 'failed' ) : '' }}" ng-repeat="t in data.tests track by $index">
+					<div class="toggler" ng-click="toggleTest($event,t)">
+						<strong class="pull-left">
+							it {{ t.description }}
+						</strong> 
+						<span class="pull-right">
+							<span ng-if="t.running">
+								running
+							</span>
+							<span ng-if="!t.running">
+								<button   ng-click="inspectTest($event,t);">Inspect</button>
+							</span>
+						</span>
 						<span class="clearfix"></span>
 					</div>
-					<div ng-form="testForm" class="form" ng-if="t.expanded">
-						<div class="form-group">
-							<test-editor test="t"></test-editor>
+					<div class="result" ng-if="t.expanded">
+						<div class="row">
+							<div class="col-md-1">Execution time</div>
+							<div class="col-md-11">{{ t.result.executionTime > -1 ? t.result.executionTime + 'ms' : 'timeout' }}</div>
+						</div>
+						<div class="row" ng-if="t.result.message">
+							<div class="col-md-1">Message</div>
+							<div class="col-md-11">{{t.result.message}}</div>
+						</div>
+						<div class="row" ng-if="t.result.showDiff">
+							<div class="col-md-1">Diff</div>
+							<div class="col-md-11">{{t.result.expected}} - {{t.result.actual}}</div>
+						</div>
+						<div class="row">
+							<div class="col-md-1">Code</div>
+							<div class="col-md-11"><test-editor test="t"></test-editor></div>
 						</div>
 					</div>
 				</div>
@@ -34,47 +53,30 @@
 		</div>	
 	</div>
 
-	<div class="section section-description" >
-		<div class="section-title" >
-			<div class="dot bg-color"></div>
-			Behavior to be implemented
-		</div>
+	<div class="section">
 		<div class="section-content">
-			<div class="test-item">
-				<div class="toggler bg-color-alpha">
-					<span class="pull-left">
-						<strong> it </strong>
-						<span ng-bind="data.currentTest.description"></span>
-					</span> 
-					<span class="pull-right">{{t.result.passed ? 'passed' : 'failed'}}</span>
-					<span class="clearfix"></span>
-				</div>
-				<div ng-form="testForm" class="form">
-					<div class="form-group">
-						<test-editor test="data.currentTest"></test-editor>
-					</div>
-					
-				</div>
+
+			<div class="pull-left" ng-if="data.inspecting">
+				currently inspecting {{data.inspected.description}}
 			</div>
+			<div class="pull-right">
+				<button 
+					ng-disabled="data.inspected == null" 
+					ng-click="toggleInspect();">
+					Inspect {{data.inspecting ? 'off' : 'on' }}
+				</button>
+				<button ng-click="run()">Run Tests</button>
+			</div>
+			<span class="clearfix"></span>
 
-		</div>	
-	</div>
-
-	<div class="section section-form">
-		<div class="pull-right">
-			<button ng-click="run()">Run Tests</button>
-			<button>Inspect</button>
-		</div>
-		<span class="clearfix"></span>
-
-		<function-editor
-            function="funct" 
-            editor="data.editor" 
-            annotations="data.annotations"
-            markers="data.markers"
-            has-pseudo="data.hasPseudo"
-            >
-        </function-editor>
+			<function-editor
+	            function="funct" 
+	            editor="data.editor" 
+	            logs="(data.running || data.inspecting) ? data.inspected.logs : undefined"
+	            edit-stub="data.editStub"
+	            >
+	        </function-editor>
+	    </div>
 	</div>
 		
 </div>

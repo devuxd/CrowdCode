@@ -21,9 +21,12 @@ angular
 		this.maxExecutionTime = 10*1000;
 
 		// set default values 
-		this.worker = new Worker('/clientDist/test_runner/testrunner-worker.js');
+		this.worker = null;
 
 		this.running = false;
+
+		this.name = '';
+		this.code = '';
 	}
 
 
@@ -33,16 +36,54 @@ angular
 		run: function(tests,name,code){
 			var deferred = $q.defer();
 			var self = this;
-			console.log('TESTED',name,code);
+
+			if( self.running )
+				deferred.reject();
+
+			self.running = true;
+			self.name = name;
+			self.code = code;
+			
+			self.initWorker(name,code).then(function(){
+				var totTests = tests.length;
+			    var currTest = -1;
+
+			    tests.map(function(test){
+			    	test.running = true;
+			    })
+
+			    var runNextTest = function(){
+			    	if( ++currTest < totTests ){
+			    		console.log('running test '+currTest);
+			    		self.runTest(tests[currTest],runNextTest);
+			    	} else {
+			    		console.log('tests finished');
+			    		self.running = false;
+			    		self.worker.terminate();
+			    		deferred.resolve(tests);
+			    	}
+			    };
+			    runNextTest();
+			});
+			return deferred.promise;
+		},
+
+
+		initWorker: function(name,code){
+			console.log('initializing worker');
+			var self = this;
+			var deferred = $q.defer();
+
 			functionsService.getAll().$loaded().then(function(){
 				var functions = {};
 				functionsService.getAll().map(function(functionObj){
 					if( functionObj.name !== name )
 						functions[functionObj.name] = {
-							code: functionObj.getFullCode()
+							code: functionObj.getFullCode(),
+							stubs: {},
 						}
 				});
-
+				self.worker = new Worker('/clientDist/test_runner/testrunner-worker.js');
 				// instantiate the worker
 				self.worker.postMessage({ 
 			    	'cmd'         : 'init', 
@@ -53,33 +94,45 @@ angular
 			    	},
 			    	'functions'   : functions,
 			    });
-
-			    var totTests = tests.length;
-			    var currTest = -1;
-
-			    var runNextTest = function(){
-			    	if( ++currTest < totTests ){
-			    		console.log('running test '+currTest);
-			    		self.runTest(tests[currTest],runNextTest);
-			    	} else {
-			    		console.log('tests finished');
-			    		deferred.resolve(tests);
-			    	}
-			    };
-			    runNextTest();
+			    self.worker.onmessage = function(message){
+			    	self.worker.onmessage = undefined;
+			    	if( message.data == 'initComplete' ) 
+			    		deferred.resolve();
+			    }
 			});
-			return deferred.promise;
+
+		    return deferred.promise;
 		},
 
 		runTest: function(test,onCompleteCallback){
+			var self = this;
+		   	var t = $timeout(function(){
+		   		$timeout.cancel(t);
+		   		test.result = { passed: false, message: 'timeout', executionTime: -1 };
+		    	test.running = false;
+		   		self.worker.terminate();
+		   		self.initWorker(self.name,self.code).then(function(){
+		   			onCompleteCallback.call();
+		   		});
+		   	},2000);
+		    var startTime = (new Date()).getTime();
+
 		   	// ask the worker to run the test
-		    this.worker.postMessage({ 
+		    self.worker.postMessage({ 
 		    	'cmd'  : 'run',
 		    	'testCode': test.code,
 		    });
+
 		    // when the worker finishes
-		    this.worker.onmessage = function(message){
-		    	test.result = message.data;
+		    self.worker.onmessage = function(message){
+		   		$timeout.cancel(t);
+
+		   		var data = JSON.parse(message.data);
+		    	test.result = data.result;
+		    	test.result.executionTime = (new Date()).getTime() - startTime;
+		    	test.logs = data.logs;
+		    	test.running = false;
+
 		    	onCompleteCallback.call();
 		    };
 		},
@@ -181,10 +234,5 @@ angular
 	return {
 		instance : TestRunner
 	};
-
-
-
-
-
 
 }]); 

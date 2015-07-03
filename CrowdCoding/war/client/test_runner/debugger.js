@@ -14,8 +14,12 @@ Debugger.resetLogs = function(){
     };
 };
 
-Debugger.run = function(testCode) {
+Debugger.run = function(testCode, callsLogs) {
     Debugger.resetLogs();
+
+    if( callsLogs !== undefined )
+        Debugger.logs.calls = callsLogs;
+
     var functCode = '';
     for( var functionName in Debugger.functions ){
         functCode += Debugger.functions[functionName].compiled + '\n';
@@ -25,23 +29,23 @@ Debugger.run = function(testCode) {
 
     var evalCode = functCode + '\n' 
                  + testCode;
+
+    // console.log( JSON.stringify(Debugger.logs) );
     // console.log(evalCode);
     
-    var testResult = {};
+    var _testResult = {};
     try {
         eval( evalCode );
-        testResult.passed = true;
+        _testResult.passed = true;
     } 
     catch( e ){
-        if( e instanceof chai.AssertionError ){
-            console.log(e);
-            testResult = e;
-        }
         console.log(e);
-        testResult.passed = false;
+        if( e instanceof chai.AssertionError ){
+            _testResult = e;
+        }
+        _testResult.passed = false;
     }
-
-    return testResult;
+    return _testResult;
 };
 
 
@@ -126,17 +130,12 @@ Debugger.instrumentFunction = function(fNode){
                 node = Debugger.instrumentTreeNode(node,scope);
             }
             else if( node.type === 'Identifier' && scope.variables.indexOf(node.name) > -1 ){
-                if( parent.type !== 'AssignmentExpression' ) {
+                if( parent.type !== 'AssignmentExpression' && parent.type !== 'VariableDeclarator' ) {
                     node = Debugger.instrumentTreeNode(node,scope);
                 }
                 else if ( node === parent.right ) {
                     node = Debugger.instrumentTreeNode(node,scope); 
                 }
-                
-                // if( parent.type !== 'Property' && node !== parent.key ){
-                //     console.log(2);
-                //     node = Debugger.instrumentTreeNode(node,scope);
-                // }
             } 
             else if( node.type === 'ObjectExpression' ){
                 node = Debugger.instrumentTreeNode(node,scope);8
@@ -202,7 +201,6 @@ Debugger.instrumentTreeNode = function(node,scope){
 };
 
 Debugger.logValue = function(value,logObject,context,isCallee){
-
     if( logObject.callee ){
         logObject.inputs = value.inputs;
         value  = value.output;
@@ -220,11 +218,13 @@ Debugger.logValue = function(value,logObject,context,isCallee){
 };
 
 Debugger.getStub = function(name,inputs) {
-    if( !this.functions[name].stubs )
-        this.functions[name].stubs = {};
+    var functions = Debugger.functions;
+
+    if( !functions[name].stubs )
+        functions[name].stubs = {};
 
     var inputsKey = JSON.stringify(inputs);
-    if( this.functions[name].stubs.hasOwnProperty(inputsKey) ){
+    if( functions[name].stubs.hasOwnProperty(inputsKey) ){
 
         console.log('stub trovata!');
         return this.functions[name].stubs[inputsKey];
@@ -232,6 +232,15 @@ Debugger.getStub = function(name,inputs) {
 
         console.log('stub non trovata!');
     return -1;
+}
+
+Debugger.getAllStubs = function(){
+    var stubs = {};
+    var functions = Debugger.functions;
+    for( var name in functions ){
+        stubs[name] = !functions[name].stubs ? {} : functions[name].stubs;
+    }
+    return stubs;
 }
 
 Debugger.logCall = function(name,inputs,output){
@@ -251,6 +260,7 @@ Debugger.logCall = function(name,inputs,output){
 
     Debugger.logs.calls[name][stubKey] = logObject;
 };
+
 
 Debugger.mockBody = function(){
     var inputs  =  arguments;

@@ -1,12 +1,11 @@
-function getNowTime(){
-	var now = new Date();
-	return now.getTime();
-}
 var testedName = undefined;
 var expect = undefined;
-self.addEventListener('message', function(e){
+var should = undefined;
 
-	var data = e.data;
+self.addEventListener('message', function(message){
+
+	var data = message.data;
+
 	switch ( data.cmd ) {
 		// initialize the the debugger
 		case 'init': 
@@ -28,11 +27,13 @@ self.addEventListener('message', function(e){
 			
 
 			expect = chai.expect;
-
+			should = chai.should();
+			testedName = data.tested.name;
 
 			Debugger.init({ functions : data.functions });
 			Debugger.setFunction(data.tested.name,{ code: data.tested.code },true);
 
+			self.postMessage('initComplete');
 
 			break;
 
@@ -42,17 +43,14 @@ self.addEventListener('message', function(e){
 			if ( data.testCode == undefined ) 
 				throw "ERROR: test code not defined! ";
 
-			// if ( data.stubs == undefined ) 
-			// 	throw "ERROR: stubs not defined";
-			
-			var startTime     = getNowTime();
 
-			var resultMessage = Debugger.run(data.testCode);
-			console.log('result message is ',resultMessage);
-			
-			resultMessage.executionTime = getNowTime()-startTime;
-			self.postMessage( resultMessage );
-			
+			var sendData = {};
+			sendData.result = Debugger.run(data.testCode);
+			sendData.logs   = Debugger.logs.values[testedName] === undefined ? {} : Debugger.logs.values[testedName];
+			sendData.stubs  = Debugger.getAllStubs();
+
+			self.postMessage( JSON.stringify( sendData ) );
+
 			break;
 
 		// stop 

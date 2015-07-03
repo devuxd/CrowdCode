@@ -101,14 +101,23 @@
 
 	<div id="editorContainer">
 		
-		<div id="fCode">function loggingFunction(first, second, third) {
-    var a = { 
-        a : first, 
-        b : second*third 
-    };
-    for( var i = 0 ; i < 5 ; i++ ){
-        a = seconda(first*i, first*second + i, third*first/second - i);
+		<div id="fCode">function calculate(command, numbers){
+    if( ['*','/','+','-'].indexOf(command) == -1 )
+        throw 'command not recognized';
+        
+    if( !(numbers instanceof Array) || numbers.length == 0)
+        throw 'numbers not valid';
+        
+    switch( command ){
+        case '+':
+            var res = sum(numbers[0],numbers[1]);
+            return res;
+        case '*': 
+            var res = product(numbers[0],numbers[1]);
+            return res;
+        default:
     }
+    return -1;
 }
 		</div>
 
@@ -135,7 +144,7 @@ loggingFunction(1,2,3);
 	<script src='debugger.js'></script>
 	<script src='aceExtension.js'></script>
 
-	<script src='estools.browser.js'></script>
+	<script src='/include/estools.browser.js'></script>
 
 	<script type="text/javascript" src="main.js"></script>
 </body>

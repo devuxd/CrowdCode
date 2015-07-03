@@ -2,7 +2,7 @@
 // check if a function code has errors
 angular
     .module('crowdCode')
-    .directive('functionValidator', ['$rootScope','ADTService', 'functionsService', function($rootScope,ADTService, functionsService) {
+    .directive('functionValidator', ['$rootScope','ADTService', 'functionsService', 'functionUtils', function($rootScope,ADTService, functionsService, functionUtils) {
 
     var functionId;
     var funct;
@@ -33,7 +33,7 @@ angular
             allFunctionCode  = functionsService.getDescribedFunctionsCode(functionId) + " var console = null; " ;
             ctrl.$formatters.unshift(function(viewValue) {
                 code=viewValue;
-                validate(code);
+                functionUtils.validate(code);
 
                 scope.$emit('statements-updated', statements, maxNewStatements);
                 

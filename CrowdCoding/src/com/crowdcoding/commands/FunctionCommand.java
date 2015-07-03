@@ -63,6 +63,11 @@ public abstract class FunctionCommand extends Command {
 		return new IncrementTestSuite(functionId);
 	}
 
+
+	public static FunctionCommand lookForWork(long functionId) {
+		return new LookForWork(functionId);
+	}
+	
 	private FunctionCommand(Long functionId) {
 		this.functionId = functionId;
 		queueCommand(this);
@@ -266,6 +271,19 @@ public abstract class FunctionCommand extends Command {
 
 		public void execute(Function function, String projectId) {
 			function.incrementTestSuiteVersion();
+		}
+	}
+	
+
+	protected static class LookForWork extends FunctionCommand {
+
+		public LookForWork(long functionId) {
+			super(functionId);
+
+		}
+
+		public void execute(Function function, String projectId) {
+			function.lookForWork();
 		}
 	}
 

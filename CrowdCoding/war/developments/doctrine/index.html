@@ -15,7 +15,7 @@
 				<h4>Function Declaration</h4>
 				<textarea id="funct">/**
  * this is the description of the function
- * @name functName
+ * @function functName
  * @param {number} firstPar - this is the first parameter
  * @param {string} secondPar - this is the second parameter
  * @param {custom} thirdPar - this is the third parameter
@@ -68,8 +68,9 @@
 					console.error( validationErrors );
 				}	
 				else {
-					var header = buildFunctionHeader( parsed );
-					console.log(header);
+					var description = buildFunctionDescription( parsed );
+					var header      = buildFunctionHeader( parsed );
+					console.log(description,header);
 					$('#parsedFunct').html( header );
 				} 
 			},200);
@@ -90,7 +91,9 @@
 
 			tags.forEach(function(tag){
 				switch (tag.title){
-					case 'name': 
+					case 'function': 
+					case 'name':
+
 						functObj.name = tag.name
 						break;
 
@@ -126,7 +129,7 @@
 		function validateFunctionDescription( functObj ){
 			var errors = [];
 
-			if( functObj.name === '' )
+			if( functObj.function === '' )
 				errors.push( 'You should provide a function name!');
 
 			if( functObj.description === '' )
@@ -140,6 +143,11 @@
 
 			return errors.join('\n');
 		}
+
+        function buildFunctionDescription( functObj ){
+
+        	console.log( functObj );
+        }
 
 		function buildFunctionHeader( functObj ){
 
