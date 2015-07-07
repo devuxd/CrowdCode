@@ -13,11 +13,8 @@ public class ImplementBehaviorDTO extends DTO
 	public FunctionDTO function;
 	public List < FunctionDescriptionDTO > addedFunctions = new ArrayList < FunctionDescriptionDTO >();
 	public List< ADTDTO > ADT = new ArrayList< ADTDTO>();
-
 	public List< TestDisputedDTO > disputedTests = new ArrayList< TestDisputedDTO >();
-
 	public String disputeFunctionText ;
-
 	public boolean functionNotImplementable;
 
 }

@@ -10,8 +10,8 @@ angular
     $scope.data = {};
     $scope.data.isComplete = false;
     $scope.data.newTest = {
-        description: 'should be the new test',
-        code: '//code of the new test',
+        description: '',
+        code: '//write the test code',
         editing: true,
         added: true
     };
@@ -66,7 +66,8 @@ angular
 
 
         // add the current test to the list
-        addTest();
+        if( !$scope.data.isComplete )
+            addTest();
 
         // for each of the tests, create a testDTO object
         formData.tests = $scope.data.tests.map(function(test){

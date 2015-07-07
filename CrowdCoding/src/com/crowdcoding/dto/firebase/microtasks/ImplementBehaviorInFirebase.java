@@ -3,10 +3,10 @@ package com.crowdcoding.dto.firebase.microtasks;
 public class ImplementBehaviorInFirebase extends MicrotaskInFirebase
 {
 	public String promptType;
-	long testId;
-	Long calleeId;
-	Integer oldCalleeVersion;
-	String disputeText;
+	public long testId;
+	public Long calleeId;
+	public Integer oldCalleeVersion;
+	public String disputeText;
 
 
 	public ImplementBehaviorInFirebase()

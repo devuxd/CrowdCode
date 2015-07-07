@@ -100,7 +100,7 @@
 	<script src="/include/simplediff/simplediff.js"></script>
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
 	<script src="/include/firebase.js"></script>
-	<script src='/include/esprima.js'></script>
+	<script src='/include/estools.browser.js'></script>
 	<script src='/include/escodegen.browser.js'></script>
 	<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 	<script src="/include/angular-messages/angular-messages.min.js"></script> <!-- AngularJS -->
@@ -122,6 +122,7 @@
 	<script src="/include/ui-layout/src/ui-layout.js"></script>
 
 	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>
+	<script src="/include/doctrine/doctrine.browser.js"></script>
 
 	<script>
 	var projectId    = '<%=projectID%>';

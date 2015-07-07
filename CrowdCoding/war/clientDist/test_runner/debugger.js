@@ -2,7 +2,9 @@ function Debugger(){}
 
 Debugger.init = function(data){
     Debugger.functions = {};
+    Debugger.stubs = {};
     Debugger.setFunctions( data.functions ? data.functions : {} );
+    Debugger.setStubs( data.stubs ? data.stubs : {} );
     Debugger.resetLogs();
 };
 
@@ -14,8 +16,12 @@ Debugger.resetLogs = function(){
     };
 };
 
-Debugger.run = function(testCode) {
+Debugger.run = function(testCode, callsLogs) {
     Debugger.resetLogs();
+
+    if( callsLogs !== undefined )
+        Debugger.logs.calls = callsLogs;
+
     var functCode = '';
     for( var functionName in Debugger.functions ){
         functCode += Debugger.functions[functionName].compiled + '\n';
@@ -25,23 +31,23 @@ Debugger.run = function(testCode) {
 
     var evalCode = functCode + '\n' 
                  + testCode;
-    // console.log(evalCode);
+
+    // console.log( JSON.stringify(Debugger.logs) );
+    //console.log(evalCode);
     
-    var testResult = {};
+    var _testResult = {};
     try {
         eval( evalCode );
-        testResult.passed = true;
+        _testResult.passed = true;
     } 
     catch( e ){
-        if( e instanceof chai.AssertionError ){
-            console.log(e);
-            testResult = e;
-        }
         console.log(e);
-        testResult.passed = false;
+        if( e instanceof chai.AssertionError ){
+            _testResult = e;
+        }
+        _testResult.passed = false;
     }
-
-    return testResult;
+    return _testResult;
 };
 
 
@@ -81,11 +87,14 @@ Debugger.setFunction = function(functName, functObj, trace) {
     }
 }
 
-Debugger.instrumentFunction = function(fNode){
-    // initialize scope
-    var scope  = new Scope(fNode.id.name);
+Debugger.setStubs = function(stubs){
+     // merge the function stubs in the main stubs container
+    Debugger.stubs = stubs;
+}
 
-    // insert the parameters in the scope
+Debugger.instrumentFunction = function(fNode){
+    // initialize scope pushing the parameters
+    var scope  = new Scope(fNode.id.name);
     fNode.params.map(function(param){
         scope.variables.push( param.name );
     });
@@ -126,17 +135,12 @@ Debugger.instrumentFunction = function(fNode){
                 node = Debugger.instrumentTreeNode(node,scope);
             }
             else if( node.type === 'Identifier' && scope.variables.indexOf(node.name) > -1 ){
-                if( parent.type !== 'AssignmentExpression' ) {
+                if( parent.type !== 'AssignmentExpression' && parent.type !== 'VariableDeclarator' ) {
                     node = Debugger.instrumentTreeNode(node,scope);
                 }
                 else if ( node === parent.right ) {
                     node = Debugger.instrumentTreeNode(node,scope); 
                 }
-                
-                // if( parent.type !== 'Property' && node !== parent.key ){
-                //     console.log(2);
-                //     node = Debugger.instrumentTreeNode(node,scope);
-                // }
             } 
             else if( node.type === 'ObjectExpression' ){
                 node = Debugger.instrumentTreeNode(node,scope);8
@@ -202,7 +206,6 @@ Debugger.instrumentTreeNode = function(node,scope){
 };
 
 Debugger.logValue = function(value,logObject,context,isCallee){
-
     if( logObject.callee ){
         logObject.inputs = value.inputs;
         value  = value.output;
@@ -219,61 +222,70 @@ Debugger.logValue = function(value,logObject,context,isCallee){
     return value;
 };
 
-Debugger.getStub = function(name,inputs) {
-    if( !this.functions[name].stubs )
-        this.functions[name].stubs = {};
+Debugger.getStub = function(functName,inputs) {
+    var stubs = Debugger.stubs;
+
+    if( !stubs.hasOwnProperty(functName) )
+        stubs[functName] = {};
 
     var inputsKey = JSON.stringify(inputs);
-    if( this.functions[name].stubs.hasOwnProperty(inputsKey) ){
-
-        console.log('stub trovata!');
-        return this.functions[name].stubs[inputsKey];
+    if( stubs[functName].hasOwnProperty(inputsKey) ){
+        return stubs[functName][inputsKey];
     }
 
-        console.log('stub non trovata!');
     return -1;
+}
+
+Debugger.getAllStubs = function(){
+    // var stubs = {};
+    // var functions = Debugger.functions;
+    // for( var name in functions ){
+    //     stubs[name] = !functions[name].stubs ? {} : functions[name].stubs;
+    // }
+    return Debugger.stubs;
 }
 
 Debugger.logCall = function(name,inputs,output){
     var logObject = {
         inputs : inputs,
-        output : output,
-        time : Date.now()
+        output : output
     };
+
+    var stubKey = JSON.stringify(inputs);
+
+    // log the call as a stub
+    if( !Debugger.stubs[name] )
+        Debugger.stubs[name] = {};
+
+    Debugger.stubs[name][stubKey] = logObject;
+
+
+    // log the call in the calls list
     if( !Debugger.logs.calls[name] )
         Debugger.logs.calls[name] = {};
 
-    var stubKey = JSON.stringify(inputs);
-    console.log('logging call of ',name,inputs,output);
-    Debugger.functions[name].stubs[stubKey] = {
-        output: output
-    };
+    if( !Debugger.logs.calls[name][stubKey] )
+        Debugger.logs.calls[name][stubKey] = {};
+    
+    Debugger.logs.calls[name][stubKey][Date.now()] = logObject;
 
-    Debugger.logs.calls[name][stubKey] = logObject;
 };
+
 
 Debugger.mockBody = function(){
     var inputs  =  arguments;
     var output  = null;
-
-
     var stub    = Debugger.getStub( '%functionNameStr%', inputs );
     if( stub != -1 ){
         output = stub.output;
     } else {
-        // try {
+        try {
             output = '%functionMockName%'.apply( null, arguments );
-        // } catch(e) {
-        //     Debugger.log(-1,'There was an exception in the callee \'' + '%functionNameStr%' + '\': '+e.message);
-        //     Debugger.log(-1,"Use the CALLEE STUBS panel to stub this function.");
-        // }
+        } catch(e) {
+            console.log('Exception in '+'%functionNameStr%'+': ',e);
+        }
     }
-
-    // if( calleeNames.search( '%functionNameStr%' ) > -1 ){
-        console.log(inputs);
-        Debugger.logCall( '%functionNameStr%', inputs, output ) ;
-    // }
-
+    Debugger.logCall( '%functionNameStr%', inputs, output ) ;
     return { inputs: inputs, output: output };
 }
 

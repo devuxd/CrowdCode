@@ -48,6 +48,10 @@ angular
 		$rootScope.$on('sendFeedback', sendFeedback);
 
 	
+
+        $rootScope.trustHtml = function (unsafeHtml){
+            return $sce.trustAsHtml(unsafeHtml);
+        };
 		$rootScope.makeDirty = makeFormDirty;
 		
 

@@ -77,7 +77,7 @@
 			<span><div class="dot bg-color"></div>Describe a new behavior</span>
 			<span class="pull-right" ng-if="data.tests.length > 0"> 
 				<input type="checkbox" ng-model="data.isComplete" ng-click="t.editing = !t.editing"> 
-				the function is completely described by the previous behaviors
+				the function is completely described by the previous behaviors {{data.isComplete}}
 			</span>
 			<span class="clearfix"></span>
 		</div>
@@ -94,6 +94,7 @@
 					      	class="form-control" 
 					      	name="description" 
 					      	ng-model="t.description"
+					      	placeholder="insert a behavior description"
 					      />
 					    </div>
 						

@@ -81,13 +81,17 @@ Debugger.instrumentFunction = function(fNode){
     estraverse.replace( fNode.body, {
         enter: function(node,parent){
 
+            
+
             // console.log(node.type,escodegen.generate(node));
             if (node.type === 'UpdateExpression') {
                 node = Debugger.instrumentTreeNode(node,scope);
                 this.skip();
             }
-            else if( parent.type === 'AssignmentExpression' && node === parent.left ){
-                this.skip();
+            else if( parent.type === 'AssignmentExpression' ){
+                
+                if( node === parent.left )
+                    this.skip();
             }
             else if( ['WhileStatement','ForStatement'].indexOf( node.type ) > -1 ){
 
@@ -114,13 +118,15 @@ Debugger.instrumentFunction = function(fNode){
                 node = Debugger.instrumentTreeNode(node,scope);
             }
             else if( node.type === 'Identifier' && scope.variables.indexOf(node.name) > -1 ){
-                console.log('entering identifier');
-                if( parent.type !== 'AssignmentExpression' ) {
+
+                console.log('ide', escodegen.generate(node), escodegen.generate(parent) , node, parent);
+                if( parent.type !== 'AssignmentExpression' && parent.type !== 'VariableDeclarator' ) {
                     node = Debugger.instrumentTreeNode(node,scope);
                 }
                 else if ( node === parent.right ) {
                     node = Debugger.instrumentTreeNode(node,scope); 
                 }
+                
                 
                 // if( parent.type !== 'Property' && node !== parent.key ){
                 //     console.log(2);

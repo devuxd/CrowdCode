@@ -19,12 +19,12 @@ angular
 		this.getVersion 			   = getVersion;
 		this.getByName 			       = getByName;
 		this.getNameById  			   = getNameById;
+		this.getIdByName  			   = getIdByName;
 		this.getDescribedFunctionsCode = getDescribedFunctionsCode;
 		this.getDescribedFunctionsName = getDescribedFunctionsName;
 		this.getDescribedFunctionsId   = getDescribedFunctionsId;
 		this.getDescribedFunctions     = getDescribedFunctions;
 		this.getAll 				   = getAll;
-		this.buildDtoFromAce = buildDtoFromAce;
 
 		// Function bodies
 		function init(){
@@ -39,11 +39,11 @@ angular
 
 		function allFunctionNames(){
 			var functionsNames = [];
-			angular.forEach(functions, function(i, value)
+			angular.forEach(functions, function(fun)
 			{
-				functionsNames.push(value.name);
+				functionsNames.push(fun.name);
 			});
-			return functionNames;
+			return functionsNames;
 		}
 
 
@@ -71,6 +71,7 @@ angular
 					describedNames.push(value.name);
 				}
 			});
+			console.log('desc',describedNames);
 			return describedNames;
 		}
 
@@ -112,6 +113,13 @@ angular
 			return funct;
 		}
 
+		function getIdByName(name){
+			var funct = getByName(name);
+			if( funct !== null )
+				return funct.id;
+			return -1;
+		}
+
 		function getNameById(id){
 			var funct = get(id);
 			if( funct !== null){
@@ -129,48 +137,6 @@ angular
 			  	}
 			});
 			return functionId;
-		}
-
-		function buildDtoFromAce( editor ){
-			var Range   = (window.ace || {}).require('ace/range').Range;
-			var session = editor.getSession();
-
-			var ast = esprima.parse( session.getValue(), {loc: true});
-			var calleeNames      = getCalleeNames(ast);
-			var fullDescription  = session.getTextRange( new Range(0, 0, ast.loc.start.line - 1, 0) );
-			var descriptionLines = fullDescription.split('\n');
-			var functionName     = ast.body[0].id.name;
-			var functionParsed   = parseDescription(descriptionLines, functionName);
-
-			functionParsed.code = session.getTextRange( new Range(ast.body[0].body.loc.start.line - 1,ast.body[0].body.loc.start.column,ast.body[0].body.loc.end.line- 1,ast.body[0].body.loc.end.column) );
-
-			functionParsed.pseudoFunctions=[];
-			var pseudoFunctionsName=[];
-			for( var i=1; i < ast.body.length; i++ ){
-				var prevPseudoBody = ast.body[i-1];
-				var currPseudoBody = ast.body[i];
-
-				var pseudoFunction={};
-				
-				pseudoFunction.description = session.getTextRange( new Range( prevPseudoBody.loc.end.line - 1, prevPseudoBody.loc.end.column, currPseudoBody.loc.end.line - 1, currPseudoBody.loc.end.column - 2) ).match(/.+/g).join("\n");
-				pseudoFunction.name = currPseudoBody.id.name;
-				
-				functionParsed.pseudoFunctions.push(pseudoFunction);
-				pseudoFunctionsName.push(ast.body[i].id.name);
-			}
-			functionParsed.calleeIds=[];
-
-			for(i =0; i< calleeNames.length; i++){
-				if(pseudoFunctionsName.indexOf(calleeNames[i])!==-1){
-					calleeNames.slice(i,1);
-				} else {
-					var functionId=getIdByName(calleeNames[i]);
-					if(functionId!=-1)
-						functionParsed.calleeIds.push(functionId);
-				}
-			}
-
-			return functionParsed;
 		}
 
 	};

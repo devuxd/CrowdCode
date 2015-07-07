@@ -31,12 +31,16 @@ angular
 		},
 
 		getHeader: function(){ 
-			if( this.described !== false )
+			if( this.described )
 				return this.header;
 			else{
-				var splittedDescription =this.description.split("\n");
-				if(splittedDescription && splittedDescription.length>0)
-					return  splittedDescription.pop();
+				var parNames = [];
+				this.parameters.map(function(par){
+					parNames.push(par.name);
+				});
+
+				var header = 'function '+this.name + '('+parNames.join(',')+')';
+				return header;
 			}
 		},
 
@@ -70,7 +74,7 @@ angular
 			}
 
 			if(this.returnType!=='')
-				descriptionLines.push('@returns {' + this.returnType + '}');
+				descriptionLines.push('@return {' + this.returnType + '}');
 
 			return '/**\n'
 				 + ' * '+descriptionLines.join('\n * ') + '\n'
@@ -84,7 +88,13 @@ angular
 
 		// 
 		getFunctionCode: function(){
-			return this.getSignature() + this.code;
+			if( this.code )
+				return this.getSignature() + this.code;
+			else {
+				var code = '{ return -1; }';
+				return this.getSignature() + code;
+			}
+
 		},
 
 		// the full code is the code of the function

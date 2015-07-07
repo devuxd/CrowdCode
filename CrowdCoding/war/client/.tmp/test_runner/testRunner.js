@@ -10,7 +10,8 @@ angular
 	'$timeout',
 	'$q',
 	'functionsService',
-	function($window,$rootScope,$http,$timeout,$q,functionsService) {
+	'Function',
+	function($window,$rootScope,$http,$timeout,$q,functionsService,Function) {
 
 		
 	function TestRunner( config ){
@@ -21,19 +22,100 @@ angular
 		this.maxExecutionTime = 10*1000;
 
 		// set default values 
-		this.worker = new Worker('/clientDist/test_runner/testrunner-worker.js');
+		this.worker = null;
 
 		this.running = false;
+
+		this.name = '';
+		this.code = '';
 	}
 
 
 	TestRunner.prototype = {
 
 
-		run: function(tests,name,code){
+		run: function(tests, functName, functCode, stubs, extraFunctions){
 			var deferred = $q.defer();
 			var self = this;
-			console.log('TESTED',name,code);
+
+			if( self.running )
+				deferred.reject();
+
+			self.running = true;
+			self.name = functName;
+			self.code = functCode;
+			
+			self
+				.initWorker(self.name, self.code, stubs, extraFunctions)
+				.then(function(){
+
+					var totTests = tests.length;
+				    var currTest = -1;
+
+				    tests.map(function(test){
+				    	test.running = true;
+				    })
+
+				    var runNextTest = function(){
+				    	if( ++currTest < totTests ){
+				    		self.runTest(tests[currTest],runNextTest);
+				    	} else {
+				    		self.running = false;
+				    		self.worker.postMessage({ 'cmd' : 'stubs'});
+				    		self.worker.onmessage = function(message){
+				    			deferred.resolve({
+				    				tests: tests,
+				    				stubs: JSON.parse(message.data)
+				    			});
+				    			self.worker.terminate();
+				    		}
+				    	}
+				    };
+				    runNextTest();
+				    
+				});
+
+			return deferred.promise;
+		},
+
+		runTest: function(test,onCompleteCallback){
+			var self = this;
+		   	var t = $timeout(function(){
+		   		$timeout.cancel(t);
+		   		test.result = { passed: false, message: 'timeout', executionTime: -1 };
+		    	test.running = false;
+		   		self.worker.terminate();
+		   		self.initWorker(self.name,self.code).then(function(){
+		   			onCompleteCallback.call();
+		   		});
+		   	},2000);
+		    var startTime = (new Date()).getTime();
+
+		   	// ask the worker to run the test
+		    self.worker.postMessage({ 
+		    	'cmd'  : 'run',
+		    	'testCode': test.code,
+		    });
+
+		    // when the worker finishes
+		    self.worker.onmessage = function(message){
+		   		$timeout.cancel(t);
+
+		   		var data = JSON.parse(message.data);
+		    	test.result = data.result;
+		    	test.result.executionTime = (new Date()).getTime() - startTime;
+		    	test.logs = data.logs;
+		    	test.running = false;
+
+		    	onCompleteCallback.call();
+		    };
+		},
+
+
+		initWorker: function(name,code,stubs,extraFunctions){
+			var self = this;
+			var deferred = $q.defer();
+
 			functionsService.getAll().$loaded().then(function(){
 				var functions = {};
 				functionsService.getAll().map(function(functionObj){
@@ -43,6 +125,17 @@ angular
 						}
 				});
 
+				extraFunctions = extraFunctions || [];
+				extraFunctions.map(function(dto){
+					var functionObj = new Function(dto);
+					if( functionObj.name !== name )
+						functions[functionObj.name] = {
+							code: functionObj.getFullCode()
+						}
+						
+				});
+
+				self.worker = new Worker('/clientDist/test_runner/testrunner-worker.js');
 				// instantiate the worker
 				self.worker.postMessage({ 
 			    	'cmd'         : 'init', 
@@ -52,36 +145,17 @@ angular
 			    		code: code
 			    	},
 			    	'functions'   : functions,
+			    	'stubs'       : stubs
 			    });
 
-			    var totTests = tests.length;
-			    var currTest = -1;
-
-			    var runNextTest = function(){
-			    	if( ++currTest < totTests ){
-			    		console.log('running test '+currTest);
-			    		self.runTest(tests[currTest],runNextTest);
-			    	} else {
-			    		console.log('tests finished');
-			    		deferred.resolve(tests);
-			    	}
-			    };
-			    runNextTest();
+			    self.worker.onmessage = function(message){
+			    	self.worker.onmessage = undefined;
+			    	if( message.data == 'initComplete' ) 
+			    		deferred.resolve();
+			    }
 			});
-			return deferred.promise;
-		},
 
-		runTest: function(test,onCompleteCallback){
-		   	// ask the worker to run the test
-		    this.worker.postMessage({ 
-		    	'cmd'  : 'run',
-		    	'testCode': test.code,
-		    });
-		    // when the worker finishes
-		    this.worker.onmessage = function(message){
-		    	test.result = message.data;
-		    	onCompleteCallback.call();
-		    };
+		    return deferred.promise;
 		},
 
 		// onTestsFinish: function(listener){
@@ -181,10 +255,5 @@ angular
 	return {
 		instance : TestRunner
 	};
-
-
-
-
-
 
 }]); 

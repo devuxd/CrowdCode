@@ -6,19 +6,12 @@
 	</div>
 	<statements-progress-bar></statements-progress-bar>
 	<div style=" " class="function-errors">
-		<textarea 
-			class="form-control" 
-			name="code" 
-			style="display:none"
-			function-validator 
-			max-new-statements="10"
-			function-id="{{function.id}}"
-			ng-model="code">
-		</textarea>
-		<span class="recap" ng-if="functionForm.code.$error.function_errors.length > 0" > {{ functionForm.code.$error.function_errors.length }} problem(s) found: </span>
-		<ul ng-if="functionForm.code.$error.function_errors.length > 0" >
-	        <li ng-repeat="error in functionForm.code.$error.function_errors track by $id($index)">
-	        	<span ng-bind-html="trustHtml(error)"></span>
+		<span class="recap" ng-if="errors.length > 0" > 
+			{{ functionForm.code.$error.function_errors.length }} problem(s) found: 
+		</span>
+		<ul ng-if="errors.length > 0" >
+	        <li ng-repeat="e in errors track by $id($index)">
+	        	<span ng-bind="e"></span>
 	        </li>
 		</ul>
 	</div>
