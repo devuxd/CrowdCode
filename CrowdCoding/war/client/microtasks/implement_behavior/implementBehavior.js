@@ -11,8 +11,9 @@ angular
     $scope.firstRun = false;
     $scope.data = {};
     $scope.data.running = false;
+    $scope.data.changedSinceLastRun  = null;
     $scope.data.inspected  = null;
-    $scope.data.inspecting = false;
+
 
     $scope.data.tests = $scope.funct.tests.map(function(test){
         test.expanded = false;
@@ -22,9 +23,14 @@ angular
     });
 
     $scope.toggleTest    = toggleTest;
-    $scope.toggleInspect = toggleInspect;
     $scope.inspectTest   = inspectTest;
+    $scope.editStub      = editStub;
     $scope.run = run;
+
+    $scope.codeChanged = function(){
+        $scope.data.inspected  = null;
+        $scope.data.changedSinceLastRun = true;
+    }
 
     $scope.$on('collectFormData', collectFormData );
 
@@ -40,30 +46,39 @@ angular
     function run(){
         var deferred = $q.defer();
         $scope.data.running = true;
-        $scope.data.inspecting = false;
+        $scope.data.inspected = null;
         var code = $scope.data.editor ? $scope.data.editor.getValue() : $scope.funct.getFullCode();
         runner.run($scope.data.tests,$scope.funct.name,code).then(function(tests){
             $scope.data.tests = tests;
             $scope.data.running = false;
+            $scope.data.changedSinceLastRun = false;
             deferred.resolve();
         });
         return deferred.promise;
     }
 
+    function editStub(functionName,inputs){
+        console.log(arguments);
+    }
     function toggleTest($event,test){
         test.expanded = !test.expanded;
         $event.preventDefault();
         $event.stopPropagation();
     }
 
-    function toggleInspect(){
-        $scope.data.inspecting = !$scope.data.inspecting;
-    }
-
     function inspectTest($event,test){
-        $scope.data.inspected  = test;
-        $scope.data.inspecting = true;
 
+        if( !$scope.data.changedSinceLastRun ){
+             if( $scope.data.inspected == test){
+                console.log('toggle off');
+                $scope.data.inspected  = null;
+            } 
+            else {
+                console.log('toggle on',test.logs);
+                $scope.data.inspected  = test;
+            }    
+        }
+           
         $event.preventDefault();
         $event.stopPropagation();
     }

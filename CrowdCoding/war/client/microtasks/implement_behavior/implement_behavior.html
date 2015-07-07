@@ -25,7 +25,9 @@
 								running
 							</span>
 							<span ng-if="!t.running">
-								<button   ng-click="inspectTest($event,t);">Inspect</button>
+								<button  class="btn btn-sm {{ data.inspected == t ? 'btn-primary' : '' }}" ng-click="inspectTest($event,t);">
+									<span class="glyphicon glyphicon-search"></span>
+								</button>
 							</span>
 						</span>
 						<span class="clearfix"></span>
@@ -50,30 +52,25 @@
 					</div>
 				</div>
 			</div>
+
+			<div>
+				<div class="pull-right">
+					<button class="btn btn-sm" ng-click="run()">Run Tests</button>
+				</div>
+				<span class="clearfix"></span>
+			</div>
 		</div>	
 	</div>
 
 	<div class="section">
-		<div class="section-content">
+		<div class="section-content no-padding">
 
-			<div class="pull-left" ng-if="data.inspecting">
-				currently inspecting {{data.inspected.description}}
-			</div>
-			<div class="pull-right">
-				<button 
-					ng-disabled="data.inspected == null" 
-					ng-click="toggleInspect();">
-					Inspect {{data.inspecting ? 'off' : 'on' }}
-				</button>
-				<button ng-click="run()">Run Tests</button>
-			</div>
-			<span class="clearfix"></span>
 
 			<function-editor
 	            function="funct" 
 	            editor="data.editor" 
-	            logs="(data.running || data.inspecting) ? data.inspected.logs : undefined"
-	            edit-stub="data.editStub"
+	            logs="(data.running || data.inspected) ? data.inspected.logs : undefined"
+	            callbacks="{ codeChanged: codeChanged, editStub: editStub }"
 	            >
 	        </function-editor>
 	    </div>

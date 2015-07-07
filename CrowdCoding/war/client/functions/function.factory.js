@@ -70,7 +70,7 @@ angular
 			}
 
 			if(this.returnType!=='')
-				descriptionLines.push('@returns {' + this.returnType + '}');
+				descriptionLines.push('@return {' + this.returnType + '}');
 
 			return '/**\n'
 				 + ' * '+descriptionLines.join('\n * ') + '\n'

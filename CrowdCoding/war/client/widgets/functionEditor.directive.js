@@ -5,7 +5,6 @@ angular
    
     var apiFunctions    = [];
     var pseudoFunctions = [];
-    var markers   = [];
 
     return {
         restrict: 'EA',
@@ -15,7 +14,7 @@ angular
             'function' : '=', // the firebase function object extended in FunctionFactory
             hasPseudo : '=',
             logs: '=',
-            editStub: '='
+            callbacks: '='
         },
 
         controller: function($scope,$element){
@@ -23,38 +22,27 @@ angular
 
             $scope.code = $scope.function.getFullCode();
 
-            $scope.trustHtml = function (unsafeHtml){
-                return $sce.trustAsHtml(unsafeHtml);
-            };
-
         	$scope.aceLoaded = function(_editor) {
 
                 fEditor = _editor;
                 ace.require('ace/ext/crowdcode');
                 var LogInfo = ace.require("ace/ext/crowdcode/log_info").LogInfo;
+                var Range = ace.require("ace/range").Range;
 
                 $scope.editor =  _editor;
 
                 $scope.$watch('logs',function(logs){
 
-                    console.log('changing logs', logs);
+                    if( _editor.logInfo !== undefined )
+                        _editor.logInfo.destroy();
 
                     if( logs === undefined ){
-                        if( _editor.logInfo !== undefined )
-                            _editor.logInfo.detach();
                         return;
-                    }
+                    }                    
 
-                    if( _editor.logInfo === undefined )
-                        new LogInfo(_editor,{
-                            'editStub' : function(functionName,inputs){ 
-                                console.log('edit stub',functionName,inputs);
-                            }
-                        });
-                    else 
-                        _editor.logInfo.attach();
-                    
-                    _editor.logInfo.logs = logs;
+                    new LogInfo(_editor, logs, {
+                        editStub : $scope.callbacks['editStub'] 
+                    });
                 });
 
                 var options = {
@@ -74,7 +62,7 @@ angular
                 _editor.session.setOptions(sessionOptions);
                 _editor.renderer.setOptions(rendererOptions);
 
-                // loadFunctionsList(_editor);
+                loadFunctionsList(_editor);
 
                 // editor event listeners
                 _editor.on('change', onChange);
@@ -86,6 +74,12 @@ angular
 			};      
 
             function onChange(event,editor){
+
+                if( $scope.callbacks && $scope.callbacks.codeChanged ){
+                    $scope.callbacks.codeChanged.apply();
+                }
+                
+
                 var code = editor.getValue();
                 var ast = null;
                 try{

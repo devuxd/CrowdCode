@@ -179,11 +179,11 @@ ace.define('ace/ext/crowdcode/autocomplete/function',function(require, exports, 
         	className: 'functions_command',
 	   		snippet : '\n'
                     + '/**\n'
-                    + ' * ${1:description of the function}\n'
-                    + ' * @param {${2:parameterType}} ${3:parameter name} - ${4:parameter description}\n'
-                    + ' * @returns {${4:returnType}}\n'
+                    + ' * ${1:description of the function}\n' 
+                    + ' * @function ${2:functionName}\n'
+                    + ' * @param {${3:parameterType}} ${4:parameterName} - ${5:parameterDescription}\n'
+                    + ' * @return {${6:returnType}}\n'
                     + ' */\n'
-                    + 'function ${5:functionName}(${6:argumentsList}){}\n'
 	   	});
 
     };
@@ -311,17 +311,15 @@ var Range = require("ace/range").Range;
 var LogTooltip = require("ace/ext/crowdcode/log_tooltip").LogTooltip;
 
 
-function LogInfo (editor, callbacks) {
+function LogInfo (editor, logs, callbacks) {
     if (editor.logInfo)
-        return;
-
-    if( editor.logInfo !== undefined && editor.logInfo !== this )
         editor.logInfo.destroy();
 
+    console.log('arrived');
     editor.logInfo = this;
     this.editor = editor;
 
-    this.logs     = [];
+    this.logs     = logs;
     this.currentLogs = [];
     this.tooltip     = new LogTooltip(editor,callbacks);
 
@@ -334,16 +332,27 @@ function LogInfo (editor, callbacks) {
 
 (function(){
 
+
+    this.destroy = function() {
+        this.detach();
+        delete this.editor.logInfo;
+    };
+
     this.attach = function(){
+
+        this.decorateGutter();
+
         var editor = this.editor;
+
         event.addListener(editor.renderer.scroller, "mousemove", this.onMouseMove);
         event.addListener(editor.renderer.scroller , "mouseout", this.onMouseOut);
         event.addListener(editor.renderer.scroller , "click", this.onClick);
 
-        editor.setOption('readOnly',true);
+        // event.addListener(editor,'change',this.destroy.bind(this));
     },
 
     this.detach = function(){
+        this.undecorateGutter();
 
         this.tooltip.unlock();
         this.tooltip.hide();
@@ -354,8 +363,27 @@ function LogInfo (editor, callbacks) {
         event.removeListener(editor.renderer.content, "click", this.onClick);
 
         editor.session.removeMarker(this.marker);
-        editor.setOption('readOnly',false);
     }
+
+    this.decorateGutter = function(){
+        var self = this;  
+        self.gutterDecorations = [];
+        self.logs.map(function(logObj){
+            if( self.gutterDecorations.indexOf(logObj.start.row) == -1 ){
+                self.editor.session.addGutterDecoration(logObj.start.row,'ace_inspected_gutter');
+                self.gutterDecorations.push(logObj.start.row);
+            }
+        });
+    },
+
+    this.undecorateGutter = function(){
+        var self = this;  
+        self.gutterDecorations.map(function(lineNumber){
+            self.editor.session.removeGutterDecoration(lineNumber,'ace_inspected_gutter');
+        });
+        self.gutterDecorations = [];
+    },
+
 
     this.onMouseMove = function(e) {
         var coords   = { x : e.clientX, y: e.clientY};
@@ -367,7 +395,7 @@ function LogInfo (editor, callbacks) {
 
             // highlight the first log range
             this.editor.session.removeMarker(this.marker);
-            this.marker = this.editor.session.addMarker(this.range, "ace_inspected", "text");
+            this.marker = this.editor.session.addMarker(this.range, "ace_inspected_marker", "text");
 
             if( ! this.tooltip.locked ) { 
                 // set the tooltip logs
@@ -420,10 +448,6 @@ function LogInfo (editor, callbacks) {
         Tooltip.prototype.setPosition.call(this, x+10, y+10);
     };
 
-    this.destroy = function() {
-        this.detach();
-        delete this.editor.logInfo;
-    };
 
 
     function getEditorPosition(editor,coords){

@@ -86,10 +86,8 @@ Debugger.setFunction = function(functName, functObj, trace) {
 }
 
 Debugger.instrumentFunction = function(fNode){
-    // initialize scope
+    // initialize scope pushing the parameters
     var scope  = new Scope(fNode.id.name);
-
-    // insert the parameters in the scope
     fNode.params.map(function(param){
         scope.variables.push( param.name );
     });
@@ -253,7 +251,6 @@ Debugger.logCall = function(name,inputs,output){
         Debugger.logs.calls[name] = {};
 
     var stubKey = JSON.stringify(inputs);
-    console.log('logging call of ',name,inputs,output);
     Debugger.functions[name].stubs[stubKey] = {
         output: output
     };
@@ -265,25 +262,17 @@ Debugger.logCall = function(name,inputs,output){
 Debugger.mockBody = function(){
     var inputs  =  arguments;
     var output  = null;
-
-
     var stub    = Debugger.getStub( '%functionNameStr%', inputs );
     if( stub != -1 ){
-        output = stub.output;
+        output = stub.utput;
     } else {
-        // try {
+        try {
             output = '%functionMockName%'.apply( null, arguments );
-        // } catch(e) {
-        //     Debugger.log(-1,'There was an exception in the callee \'' + '%functionNameStr%' + '\': '+e.message);
-        //     Debugger.log(-1,"Use the CALLEE STUBS panel to stub this function.");
-        // }
+        } catch(e) {
+            console.log('Exception in '+'%functionNameStr%'+': ',e);
+        }
     }
-
-    // if( calleeNames.search( '%functionNameStr%' ) > -1 ){
-        console.log(inputs);
-        Debugger.logCall( '%functionNameStr%', inputs, output ) ;
-    // }
-
+    Debugger.logCall( '%functionNameStr%', inputs, output ) ;
     return { inputs: inputs, output: output };
 }
 

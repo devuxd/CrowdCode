@@ -2,7 +2,7 @@
 // check if a functionName is already taken
 angular
     .module('crowdCode')
-    .factory('functionUtils', [ 'functionsService', function functionUtils(functionsService) {
+    .factory('functionUtils', [ 'functionsService', 'ADTService', function functionUtils(functionsService, ADTService) {
     return {
         parse               : parse,
         validate            : validate,
@@ -45,9 +45,7 @@ angular
         var requestedNames = [];
         var calleeNames = [];
 
-        console.log(ast);
-
-        if( ast.body.length > 0 ){
+        if( ast.body && ast.body.length > 0 && ast.body[0].type === 'FunctionDeclaration' ){
             // get the function body (function name(){ }) range
             var bodyNode = ast.body[0];
             var bodyRange = bodyNode.loc;
@@ -66,7 +64,7 @@ angular
             if( commentsOutside.length > 0 ){
                 // the first comment block is the actual function description
                 // extend the dto object with the parsed description
-                angular.extend(dto,parseDescription(commentsOutside[0].value));
+                angular.extend(dto,parseFunctionDoc(commentsOutside[0].value));
 
                 // the others comment blocks can be requestedFunctions or requestedDataTypes
                 for ( var i = 1 ; i < commentsOutside.length; i++ ) {
@@ -74,9 +72,9 @@ angular
                     
                     // if it's a function request block
                     if ( value.search('@function') != -1 ) {
+
                         var parsed = parseFunctionDoc( value );
                         requestedNames.push(parsed.name);
-                        console.log('adding',parsed.name);
                         dto.requestedFunctions.push(parsed);
                     }
                     // if it's a data type request block
@@ -108,52 +106,111 @@ angular
             dto.name   = bodyNode.id.name;
         }
         
-        console.log(dto);
         return {
+            ast: ast,
             dto: dto,
-            requestedNames: requestedNames
+            requestedNames: requestedNames,
+            calleeNames: calleeNames
         };
     }
 
-    function validate( code ){
+    function validate( code){
+        var MAX_NEW_STATEMENTS = 10;
+        var data = {
+            errors : [],
+            statements: undefined
+        };
+
+        // first jshint check: validate the syntax and check that there is only a function declaration
         var lint = { result: true };
 
-        // first jshint check: validate the syntax
         lint = lintCode(code,{latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true });
 
         if( !lint.result ){
-            console.log(lint.errors);
+            data.errors = data.errors.concat(lint.errors);
         }
+
+        if( lint.data.functions.length == 0 ){
+            data.errors.push('No function block could be found. Make sure that there is a line that starts with "function"');
+        }
+        else if( lint.data.functions.length > 1 ){
+            data.errors.push('Only one function declaration is allowed! To add a function, use the autocompleter.');
+        }
+        else {
+
+            // we've checked that there is only a function declaration, 
+            // let's set the value of the 'statements' for that function
+            data.statements = lint.data.functions[0].metrics.statements;
+        }
+        
+
+        // if the first linting produced errors, 
+        // return now before processing the ast
+        if( data.errors.length > 0 )
+            return data;
 
         // get the dto of the function
         var parsed = parse(code);
+        var ast = parsed.ast;
 
-        var apiFunctionsName = functionsService.allFunctionNames();
-        var allNames = apiFunctionsName.concat(parsed.requestedNames);
+        var apiFunctionNames = functionsService.allFunctionNames();
+        var allFunctionNames = apiFunctionNames.concat(parsed.requestedNames);
         
-        // first jshint check: validate the code with the functions definitions
-        var codeWithDefs = 'var '+allNames.join(',')+';\n' + code;
+        // first jshint check: validate the code checking for undef use
+        var codeWithDefs = 'var '+allFunctionNames.join(',')+';\n' + code;
+
         lint = lintCode(codeWithDefs,{latedef:false, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true });
 
         if( !lint.result ){
-            console.log(lint.errors);
+            data.errors = data.errors.concat(lint.errors);
+            return data;
         }
 
-
         // validate the main function description
-            // validate name correspondance
-            // validate parameters
-                // each parameter in the description is in the header
-                    // each parameter has the same position in the header
-                // each parameter has a description != ''
-                // each parameter has an existent data type 
-        // validate the requested function
-            // no duplicates
-            // name not busy
-            // validate parameters
-        // each function call is either a requested function or an api function
+        var funAst = ast.body[0];
+        var funDoc = parsed.dto;
 
-        return true;
+        // validate the parsed dto
+        data.errors = data.errors.concat(validateFunctionDoc(parsed.dto));
+
+        // validate the parameters
+        if( funAst.params.length !== funDoc.parameters.length ){
+            data.errors.push('The number of the parameter in the description does not match the number of parameters in the function header');
+        } 
+        else {
+
+            var orderError = false;
+            var paramHeaderNames = funAst.params.map(function(param){
+                return param.name;
+            });
+
+            for (var i = 0; i < funDoc.parameters.length ; i++) {
+
+                if ( paramHeaderNames.indexOf(funDoc.parameters[i].name) == -1 ) {
+                    data.errors.push('The parameter ' + funDoc.parameters[i].name + ' does not exist in the header of the function');
+                }
+                
+                if ( !orderError && funDoc.parameters[i].name != funAst.params[i].name ) {
+                    data.errors.push('The order of the parameters in the description does not match the order of the parameters in the function header') ;
+                    orderError = true;
+                }
+            }
+        }
+
+        // validate the requested functions
+        parsed.dto.requestedFunctions.map(function( requested ){
+            if( apiFunctionNames.indexOf(requested.name) > -1 ){
+                data.errors.push('The function name '+requested.name+' is already taken!');
+            }
+            else if ( parsed.calleeNames.indexOf(requested.name) == -1 ){
+                data.errors.push('The requested function '+requested.name+' is never used. Are you sure it\'s still needed?');
+            }
+            else {
+                data.errors = data.errors.concat(validateFunctionDoc(requested));
+            }
+        });
+
+        return data;
     }
 
     function lintCode(code,options){
@@ -166,7 +223,8 @@ angular
 
         return {
             result: lintResult,
-            errors: lintResult ? [] : checkForErrors(JSHINT.errors)
+            errors: lintResult ? [] : checkForErrors(JSHINT.errors),
+            data  : JSHINT.data()
         };
     }
 
@@ -192,23 +250,26 @@ angular
                     break;
 
                 case 'param':
-                    if ( tag.type.type === 'NameExpression' ) {
-                        functObj.parameters.push({
-                            name: tag.name,
-                            type: tag.type.name,
-                            description: tag.description
-                        });
-                    }
-                    else if ( tag.type.type === 'TypeApplication' ) {
-                        functObj.parameters.push({
-                            name: tag.name,
-                            type: tag.type.applications[0].name + '[]',
-                            description: tag.description
-                        });
+                    if( tag.type ){
+                        if ( tag.type.type === 'NameExpression' ) {
+                            functObj.parameters.push({
+                                name: tag.name,
+                                type: tag.type.name,
+                                description: tag.description
+                            });
+                        }
+                        else if ( tag.type.type === 'TypeApplication' ) {
+                            functObj.parameters.push({
+                                name: tag.name,
+                                type: tag.type.applications[0].name + '[]',
+                                description: tag.description
+                            });
+                        }
                     }
                     break;
 
                 case 'return':
+                case 'returns':
                     functObj.returnType = tag.type.name
                     break;
 
@@ -220,10 +281,51 @@ angular
         return functObj;
     }
 
-    function validateFunctionDoc(){
+    function validateFunctionDoc(parsed, strict){
+        var errors = [];
+        var paramTypes = [];
+        var apiNames = [];
 
+        if( parsed.name === '' ) {
+            errors.push('Please, write a name for the function');
+        }
+        else if( !parsed.description || parsed.description.length === 0 ){
+            errors.push('Please, provide a description for the function '+parsed.name);
+        }
+        else if( parsed.parameters.length === 0 ){
+            errors.push('Please, write at least one parameter for the function '+parsed.name);
+        }
+        else if( parsed.returnType.length === 0 ){
+            errors.push('Please, provide a return type for the function '+parsed.name);
+        }
+        else if ( ! ADTService.isValidName(parsed.returnType) ) {
+            errors.push('The return type '+parsed.returnType+' for the function '+parsed.name+' is not valid');
+        }
+        else {
+            for( var i = 0; i < parsed.parameters.length ; i++ ){
+                var par = parsed.parameters[i];
+
+                if( !par.type ){
+                    errors.push('Please, specify the type for the parameter '+par.name+' of the function '+parsed.name);
+                } 
+                else if( !ADTService.isValidName(par.type)  ) {
+                    errors.push('The type of the parameter '+par.name+' of the function '+parsed.name+' is not valid');
+                } 
+                else if( !par.description || par.description.length < 5 ){
+                    errors.push('Please, provide a valid description (min 5 chars) for the parameter '+par.name+' of the function '+parsed.name);
+                }
+            }
+        }
+
+        return errors;
     }
 
+
+    function isValidName(name) {
+        var regexp = /^[a-zA-Z0-9_]+$/;
+        if (name.search(regexp) == -1) return false;
+        return true;
+    }
 
 
     function getCalleeNames(ast) {

@@ -231,11 +231,14 @@ color: #525151 !important;
 	background-color:transparent;
 }
 
-.ace_inspected {
+.ace_inspected_marker {
 	background-color: rgba(255, 18, 18, 0.3);
 	position:absolute;
 	z-index:6;
 	margin:0px 0px 0px 0px;
+}
+.ace_inspected_gutter {
+	background-color: rgba(255, 18, 18, 0.3);
 }
 
 .ace_tooltip {
@@ -375,6 +378,14 @@ h1, h2, h3, h4 {
 	position: absolute;
 	z-index: 10;
 	width: 100%;
+}
+.section-statements .progress {
+
+	height: 7px;
+	width: 100%;
+	margin-bottom: 0px;
+	background-color: rgb(122, 122, 122);
+	border-radius: 0px;
 }
 
 .reminder {
