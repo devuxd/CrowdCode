@@ -1,4 +1,11 @@
-<pre data-ng-bind-html="test"></pre>
+<table style="width:100%">
+  <tr ng-repeat="value in chat">
+   
+    <td>{{value.workerHandle}}</td> 
+    <td>{{value.text}}</td>
+  </tr>
+</table>
+
 <div ng-repeat="(key, function) in code track by $index">
 <h2>{{function.name}}</h2>
 

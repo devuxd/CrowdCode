@@ -1,36 +1,3 @@
-<%@page contentType="text/html;charset=UTF-8" language="java"%>
-<%@page import="com.googlecode.objectify.Work"%>
-<%@page import="com.googlecode.objectify.Key"%>
-<%@page import="com.googlecode.objectify.ObjectifyService"%>
-<%@page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@page import="com.google.appengine.api.users.User"%>
-<%@page import="com.crowdcoding.entities.Project"%>
-<%@page import="com.crowdcoding.entities.Worker"%>
-<%@page import="java.util.logging.Logger"%>
-
-
-<%
-    // Create the project. This operation needs to be transactional to ensure one project is only
-    // created. Getting the leaderboard relies on the state of the project when it is created.
-    // But data in worker may be stale or even internally inconsistent, as other operations
-    // may be concurrently updating it.
-
-    final String projectID = (String) request.getAttribute("project");
-	final Logger log = Logger.getLogger(Project.class.getName());
-	User user = UserServiceFactory.getUserService().getCurrentUser();
-	Project project = ObjectifyService.ofy().transact(new Work<Project>()
-	{
-	    public Project run(){ return Project.Create(projectID); }
-	});
-
-	Worker worker = Worker.Create(user, project);
-
-	String workerID     = user.getUserId();
-	String workerHandle = user.getNickname();
-
-%>
-
-<!DOCTYPE html>
 <html lang="en" ng-app="statistics">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -62,8 +29,8 @@
 
 
 	<script>
-	var projectId    = '<%=(String) request.getAttribute("project") %>';
-	var workerId     = '<%=workerID%>';
+	var projectId    = '';
+	var workerId     = '';
 	</script> 
 
 	<!-- Javascript 3rd part libraries -->
@@ -93,7 +60,7 @@
 
 	<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 
-	<script src="/statistics/app.js"></script>
+	<script src="/statistics/chat.js"></script>
 
 
 </body>
