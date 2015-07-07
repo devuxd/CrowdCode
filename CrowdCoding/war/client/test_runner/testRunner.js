@@ -10,7 +10,8 @@ angular
 	'$timeout',
 	'$q',
 	'functionsService',
-	function($window,$rootScope,$http,$timeout,$q,functionsService) {
+	'Function',
+	function($window,$rootScope,$http,$timeout,$q,functionsService,Function) {
 
 		
 	function TestRunner( config ){
@@ -33,7 +34,7 @@ angular
 	TestRunner.prototype = {
 
 
-		run: function(tests,name,code){
+		run: function(tests, functName, functCode, stubs, extraFunctions){
 			var deferred = $q.defer();
 			var self = this;
 
@@ -41,67 +42,40 @@ angular
 				deferred.reject();
 
 			self.running = true;
-			self.name = name;
-			self.code = code;
+			self.name = functName;
+			self.code = functCode;
 			
-			self.initWorker(name,code).then(function(){
-				var totTests = tests.length;
-			    var currTest = -1;
+			self
+				.initWorker(self.name, self.code, stubs, extraFunctions)
+				.then(function(){
 
-			    tests.map(function(test){
-			    	test.running = true;
-			    })
+					var totTests = tests.length;
+				    var currTest = -1;
 
-			    var runNextTest = function(){
-			    	if( ++currTest < totTests ){
-			    		console.log('running test '+currTest);
-			    		self.runTest(tests[currTest],runNextTest);
-			    	} else {
-			    		console.log('tests finished');
-			    		self.running = false;
-			    		self.worker.terminate();
-			    		deferred.resolve(tests);
-			    	}
-			    };
-			    runNextTest();
-			});
-			return deferred.promise;
-		},
+				    tests.map(function(test){
+				    	test.running = true;
+				    })
 
-
-		initWorker: function(name,code){
-			console.log('initializing worker');
-			var self = this;
-			var deferred = $q.defer();
-
-			functionsService.getAll().$loaded().then(function(){
-				var functions = {};
-				functionsService.getAll().map(function(functionObj){
-					if( functionObj.name !== name )
-						functions[functionObj.name] = {
-							code: functionObj.getFullCode(),
-							stubs: {},
-						}
+				    var runNextTest = function(){
+				    	if( ++currTest < totTests ){
+				    		self.runTest(tests[currTest],runNextTest);
+				    	} else {
+				    		self.running = false;
+				    		self.worker.postMessage({ 'cmd' : 'stubs'});
+				    		self.worker.onmessage = function(message){
+				    			deferred.resolve({
+				    				tests: tests,
+				    				stubs: JSON.parse(message.data)
+				    			});
+				    			self.worker.terminate();
+				    		}
+				    	}
+				    };
+				    runNextTest();
+				    
 				});
-				self.worker = new Worker('/client/test_runner/testrunner-worker.js');
-				// instantiate the worker
-				self.worker.postMessage({ 
-			    	'cmd'         : 'init', 
-			    	'baseUrl'     : document.location.origin, 
-			    	'tested'      : {
-			    		name: name,
-			    		code: code
-			    	},
-			    	'functions'   : functions,
-			    });
-			    self.worker.onmessage = function(message){
-			    	self.worker.onmessage = undefined;
-			    	if( message.data == 'initComplete' ) 
-			    		deferred.resolve();
-			    }
-			});
 
-		    return deferred.promise;
+			return deferred.promise;
 		},
 
 		runTest: function(test,onCompleteCallback){
@@ -135,6 +109,53 @@ angular
 
 		    	onCompleteCallback.call();
 		    };
+		},
+
+
+		initWorker: function(name,code,stubs,extraFunctions){
+			var self = this;
+			var deferred = $q.defer();
+
+			functionsService.getAll().$loaded().then(function(){
+				var functions = {};
+				functionsService.getAll().map(function(functionObj){
+					if( functionObj.name !== name )
+						functions[functionObj.name] = {
+							code: functionObj.getFullCode()
+						}
+				});
+
+				extraFunctions = extraFunctions || [];
+				extraFunctions.map(function(dto){
+					var functionObj = new Function(dto);
+					if( functionObj.name !== name )
+						functions[functionObj.name] = {
+							code: functionObj.getFullCode()
+						}
+						
+				});
+
+				self.worker = new Worker('/client/test_runner/testrunner-worker.js');
+				// instantiate the worker
+				self.worker.postMessage({ 
+			    	'cmd'         : 'init', 
+			    	'baseUrl'     : document.location.origin, 
+			    	'tested'      : {
+			    		name: name,
+			    		code: code
+			    	},
+			    	'functions'   : functions,
+			    	'stubs'       : stubs
+			    });
+
+			    self.worker.onmessage = function(message){
+			    	self.worker.onmessage = undefined;
+			    	if( message.data == 'initComplete' ) 
+			    		deferred.resolve();
+			    }
+			});
+
+		    return deferred.promise;
 		},
 
 		// onTestsFinish: function(listener){

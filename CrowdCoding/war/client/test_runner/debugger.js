@@ -2,7 +2,9 @@ function Debugger(){}
 
 Debugger.init = function(data){
     Debugger.functions = {};
+    Debugger.stubs = {};
     Debugger.setFunctions( data.functions ? data.functions : {} );
+    Debugger.setStubs( data.stubs ? data.stubs : {} );
     Debugger.resetLogs();
 };
 
@@ -31,7 +33,7 @@ Debugger.run = function(testCode, callsLogs) {
                  + testCode;
 
     // console.log( JSON.stringify(Debugger.logs) );
-    // console.log(evalCode);
+    //console.log(evalCode);
     
     var _testResult = {};
     try {
@@ -83,6 +85,11 @@ Debugger.setFunction = function(functName, functObj, trace) {
     else {
         functObj.compiled = Debugger.mockFunction( bodyNode );
     }
+}
+
+Debugger.setStubs = function(stubs){
+     // merge the function stubs in the main stubs container
+    Debugger.stubs = stubs;
 }
 
 Debugger.instrumentFunction = function(fNode){
@@ -215,47 +222,53 @@ Debugger.logValue = function(value,logObject,context,isCallee){
     return value;
 };
 
-Debugger.getStub = function(name,inputs) {
-    var functions = Debugger.functions;
+Debugger.getStub = function(functName,inputs) {
+    var stubs = Debugger.stubs;
 
-    if( !functions[name].stubs )
-        functions[name].stubs = {};
+    if( !stubs.hasOwnProperty(functName) )
+        stubs[functName] = {};
 
     var inputsKey = JSON.stringify(inputs);
-    if( functions[name].stubs.hasOwnProperty(inputsKey) ){
-
-        console.log('stub trovata!');
-        return this.functions[name].stubs[inputsKey];
+    if( stubs[functName].hasOwnProperty(inputsKey) ){
+        return stubs[functName][inputsKey];
     }
 
-        console.log('stub non trovata!');
     return -1;
 }
 
 Debugger.getAllStubs = function(){
-    var stubs = {};
-    var functions = Debugger.functions;
-    for( var name in functions ){
-        stubs[name] = !functions[name].stubs ? {} : functions[name].stubs;
-    }
-    return stubs;
+    // var stubs = {};
+    // var functions = Debugger.functions;
+    // for( var name in functions ){
+    //     stubs[name] = !functions[name].stubs ? {} : functions[name].stubs;
+    // }
+    return Debugger.stubs;
 }
 
 Debugger.logCall = function(name,inputs,output){
     var logObject = {
         inputs : inputs,
-        output : output,
-        time : Date.now()
+        output : output
     };
+
+    var stubKey = JSON.stringify(inputs);
+
+    // log the call as a stub
+    if( !Debugger.stubs[name] )
+        Debugger.stubs[name] = {};
+
+    Debugger.stubs[name][stubKey] = logObject;
+
+
+    // log the call in the calls list
     if( !Debugger.logs.calls[name] )
         Debugger.logs.calls[name] = {};
 
-    var stubKey = JSON.stringify(inputs);
-    Debugger.functions[name].stubs[stubKey] = {
-        output: output
-    };
+    if( !Debugger.logs.calls[name][stubKey] )
+        Debugger.logs.calls[name][stubKey] = {};
+    
+    Debugger.logs.calls[name][stubKey][Date.now()] = logObject;
 
-    Debugger.logs.calls[name][stubKey] = logObject;
 };
 
 
@@ -264,7 +277,7 @@ Debugger.mockBody = function(){
     var output  = null;
     var stub    = Debugger.getStub( '%functionNameStr%', inputs );
     if( stub != -1 ){
-        output = stub.utput;
+        output = stub.output;
     } else {
         try {
             output = '%functionMockName%'.apply( null, arguments );

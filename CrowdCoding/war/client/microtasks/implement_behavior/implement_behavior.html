@@ -25,7 +25,7 @@
 								running
 							</span>
 							<span ng-if="!t.running">
-								<button  class="btn btn-sm {{ data.inspected == t ? 'btn-primary' : '' }}" ng-click="inspectTest($event,t);">
+								<button ng-disabled="data.changedSinceLastRun" class="btn btn-sm {{ data.inspected == t ? 'btn-primary' : '' }}" ng-click="inspectTest($event,t);">
 									<span class="glyphicon glyphicon-search"></span>
 								</button>
 							</span>
@@ -64,15 +64,18 @@
 
 	<div class="section">
 		<div class="section-content no-padding">
-
-
 			<function-editor
+				ng-show="!data.editingStub"
 	            function="funct" 
 	            editor="data.editor" 
 	            logs="(data.running || data.inspected) ? data.inspected.logs : undefined"
-	            callbacks="{ codeChanged: codeChanged, editStub: editStub }"
+	            callbacks="editorCallbacks"
 	            >
 	        </function-editor>
+	        <div ng-show="data.editingStub">
+	        	<input ng-model="data.editingStub.output">
+	        	<button ng-click="data.editingStub = false">close</button>
+	        </div>
 	    </div>
 	</div>
 		

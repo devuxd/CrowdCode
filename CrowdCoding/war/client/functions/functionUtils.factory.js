@@ -210,6 +210,8 @@ angular
             }
         });
 
+        data.dto = parsed.dto;
+        
         return data;
     }
 

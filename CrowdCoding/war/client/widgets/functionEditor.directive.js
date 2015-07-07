@@ -1,10 +1,15 @@
 var fEditor;
+
 angular
     .module('crowdCode')
-    .directive('functionEditor', [ '$sce', 'functionsService', function($sce, functionsService) {
+    .directive('functionEditor', [ '$sce', 'functionsService', 'functionUtils', 'Function', function($sce, functionsService, functionUtils, Function) {
    
+
+    var MAX_NEW_STATEMENTS = 10;
+    var statements = undefined;
+    var initialStatements = undefined;
     var apiFunctions    = [];
-    var pseudoFunctions = [];
+    var requestedFunctions = [];
 
     return {
         restrict: 'EA',
@@ -12,20 +17,22 @@ angular
         scope: {
             editor : '=',
             'function' : '=', // the firebase function object extended in FunctionFactory
-            hasPseudo : '=',
             logs: '=',
             callbacks: '='
         },
 
         controller: function($scope,$element){
 
-
-            $scope.code = $scope.function.getFullCode();
+            $scope.errors = '';
+            $scope.code   = $scope.function.getFullCode();
+            $scope.dto    = {};
 
         	$scope.aceLoaded = function(_editor) {
 
                 fEditor = _editor;
+
                 ace.require('ace/ext/crowdcode');
+
                 var LogInfo = ace.require("ace/ext/crowdcode/log_info").LogInfo;
                 var Range = ace.require("ace/range").Range;
 
@@ -41,7 +48,7 @@ angular
                     }                    
 
                     new LogInfo(_editor, logs, {
-                        editStub : $scope.callbacks['editStub'] 
+                        editStub : $scope.callbacks['onEditStub'] 
                     });
                 });
 
@@ -62,8 +69,7 @@ angular
                 _editor.session.setOptions(sessionOptions);
                 _editor.renderer.setOptions(rendererOptions);
 
-                loadFunctionsList(_editor);
-
+            
                 // editor event listeners
                 _editor.on('change', onChange);
                 // _editor.on('click' , onClick);
@@ -75,33 +81,47 @@ angular
 
             function onChange(event,editor){
 
-                if( $scope.callbacks && $scope.callbacks.codeChanged ){
-                    $scope.callbacks.codeChanged.apply();
+                if( $scope.callbacks && $scope.callbacks.onCodeChanged ){
+                    $scope.callbacks.onCodeChanged.call(null);
                 }
-                
-
+            
                 var code = editor.getValue();
-                var ast = null;
-                try{
-                    ast = esprima.parse( code, {loc: true});
-                } catch(exception) { /*console.log(e.stack); */ast = null; }
+                var validationData = functionUtils.validate(code);   
 
-                if( ast !== null ){
-                    if( $scope.hasPseudo !== undefined )
-                        $scope.hasPseudo = code.search('//#') > -1  || ast.body.length > 1;
+                // the # of statements validator doesn't relly depends on the 
+                // validation of the function code, so it's better to separate
+                // it from the functionUtils.validate method
+                if( validationData.statements ){
+                    statements        = validationData.statements;
+                    initialStatements = initialStatements || statements; 
 
-                    // if( $scope.function.readOnly )
-                    //     makeDescriptionReadOnly(ast,editor);
+                    if( statements - initialStatements > MAX_NEW_STATEMENTS ){
+                        validationData.errors.push("You are not allowed to add more than "+MAX_NEW_STATEMENTS+" statements");
+                    }
 
+                    $scope.$emit('statements-updated', statements - initialStatements, MAX_NEW_STATEMENTS );
+                } 
 
-                    updateFunctionsList(ast,editor);
+                $scope.errors = validationData.errors;
+                $scope.dto    = validationData.dto || {};
+
+                if ( $scope.errors.length == 0 ){
+                    loadFunctionsList(editor, $scope.dto.requestedFunctions);
+
+                    if( $scope.callbacks && $scope.callbacks.onFunctionParsed ){
+                        $scope.callbacks.onFunctionParsed.call(null,$scope.dto);
+                    }
                 }
+
             }
 
-            function loadFunctionsList(editor){
+            function loadFunctionsList(editor,requestedFunctions){
                 // load all the snippets
-                apiFunctions = [];
+                
                 functionsService.getAll().$loaded().then(function(){
+                    editor.functioncompleter.functions = [];
+
+                    // first of the API functions
                     var functs = functionsService.getAll();
                     functs.map(function( fun ){
                         var paramsString = fun.parameters
@@ -110,7 +130,7 @@ angular
                             })
                             .join(',');
 
-                        apiFunctions.push({ 
+                        editor.functioncompleter.functions.push({ 
                             name        : fun.name, 
                             meta        : 'API', 
                             className   : 'functions_api',
@@ -119,44 +139,27 @@ angular
                         });
                     });
 
-                    editor.functioncompleter.functions = apiFunctions.slice();
+                    // after of the requested, if any
+                    requestedFunctions = requestedFunctions || [];
+                    requestedFunctions.map(function( dto ){
+                        var fun = new Function(dto);
+                        var paramsString = fun.parameters
+                            .map(function(par,idx){ 
+                                return '${'+(idx+1)+':'+par.name+'}'; 
+                            })
+                            .join(',');
+
+                        editor.functioncompleter.functions.push({ 
+                            name        : fun.name, 
+                            meta        : 'PSEUDO', 
+                            className   : 'functions_api',
+                            description : fun.getFullDescription(),
+                            snippet     : fun.name + '(' + paramsString + ')'
+                        });
+                    });
                 });
             }
 
-
-            function updateFunctionsList(ast,editor){
-                // build the pseudocalls list
-                pseudoFunctions = [];
-
-                // from the ast, get the list of declaration
-                // jump the first (current function declaration)
-                // and add the record of the pseudocalls to the
-                // autocompleter list
-                var firstLayer = ast.body;
-                for( var f = 1; f < firstLayer.length ; f++){
-                    if( firstLayer[f].type == 'FunctionDeclaration' ){
-                        var name = firstLayer[f].id.name;
-
-                        // build the snippet parameter list in the format ${1:firstParName},${2:secondParName}
-                        var parString = firstLayer[f].params
-                                        .map(function(param,idx){
-                                            return '${'+(idx+1)+':'+param.name+'}';
-                                        })
-                                        .join(',');
-
-                        // add the pseudo to the list
-                        pseudoFunctions.push({
-                            name:    name,
-                            meta:    'pseudo',
-                            className: 'functions_pseudo',
-                            snippet: name + '('+ parString + ')'
-                        });
-                    }
-                }
-
-                // set the functions list as the apiFunctions + pseudoFunctions
-                editor.functioncompleter.functions = apiFunctions.concat(pseudoFunctions);
-            }
 
             function makeDescriptionReadOnly(ast,editor){
                 if( ast.body[0] === undefined )

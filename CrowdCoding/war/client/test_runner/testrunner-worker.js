@@ -21,7 +21,6 @@ self.addEventListener('message', function(message){
 
 
 			importScripts(data.baseUrl + '/client/test_runner/debugger.js');
-
 			importScripts(data.baseUrl + '/include/estools.browser.js');
 			importScripts(data.baseUrl + '/include/chai.js');
 			
@@ -30,7 +29,7 @@ self.addEventListener('message', function(message){
 			should = chai.should();
 			testedName = data.tested.name;
 
-			Debugger.init({ functions : data.functions });
+			Debugger.init({ functions : data.functions, stubs: data.stubs });
 			Debugger.setFunction(data.tested.name,{ code: data.tested.code },true);
 
 			self.postMessage('initComplete');
@@ -47,12 +46,15 @@ self.addEventListener('message', function(message){
 			var sendData = {};
 			sendData.result = Debugger.run(data.testCode);
 			sendData.logs   = Debugger.logs.values[testedName] === undefined ? {} : Debugger.logs.values[testedName];
-			sendData.stubs  = Debugger.getAllStubs();
-
 			self.postMessage( JSON.stringify( sendData ) );
 
 			break;
 
+		// stop 
+		case 'stubs': 
+			console.log('worker is sending stubs', Debugger.getAllStubs());
+			self.postMessage( JSON.stringify( Debugger.getAllStubs() ) );
+			break;
 		// stop 
 		case 'stop': 
 			self.close();
