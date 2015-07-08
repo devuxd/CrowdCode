@@ -112,7 +112,7 @@ public class Function extends Artifact
 		this.isCompleted=false;
 
 		ofy().save().entities(this).now();
-		
+
 		FunctionCommand.lookForWork(this.id);
 
 		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
@@ -213,7 +213,9 @@ public class Function extends Artifact
 	{
 
 		// Looper over all of the callers, rebuilding our list of callers
-		rebuildCalleeList(dto.calleeIds);
+		rebuildCalleeList(dto.callees);
+
+		createRequestedFunctionAndStub(dto.callees);
 
 		// Check if the description is changed (considering only parameters name and type, return type and function name).
 		// If so, notify all the callers of this function.
@@ -247,11 +249,11 @@ public class Function extends Artifact
 		this.code = dto.code;
 
 		linesOfCode = StringUtils.countMatches(dto.code, "\n") + 2;
-		
+
 
 		ofy().save().entities(this).now();
 		storeToFirebase();
-		
+
 		FunctionCommand.lookForWork(this.id);
 	}
 
@@ -326,7 +328,7 @@ public class Function extends Artifact
 			this.isCompleted = true;
 
 		ofy().save().entity(this).now();
-		
+
 		FunctionCommand.lookForWork(this.id);
 
 	}
@@ -342,7 +344,6 @@ public class Function extends Artifact
 			if(disputantId!=0){
 				notifyTestDisputeCompleted(disputantId);
 			}
-			createStub(dto.function.stubs);
 			onWorkEdit(dto.function, projectId);
 		}
 	}
@@ -405,6 +406,16 @@ public class Function extends Artifact
 		callersId.remove(functionId);
 
 		checkIfNeeded();
+
+		ofy().save().entity(this).now();
+	}
+
+	// Notifies the function that it has a new callee function
+	public void addCallee(long functionId)
+	{
+
+		//remove the function from the pseudocaller list
+		calleesId.add(functionId);
 
 		ofy().save().entity(this).now();
 	}
@@ -475,8 +486,15 @@ public class Function extends Artifact
 
 	// Diffs the new and old callee list, sending notifications to callees about who their
 	// callers are as appropriate. Updates the callee list when done
-	private void rebuildCalleeList(List<Long> submittedCalleeIds)
+	private void rebuildCalleeList(List<FunctionDTO> submittedCallees)
 	{
+		List<Long> submittedCalleeIds = new ArrayList<Long>();
+		//retrieves the Ids of the submitted functions
+		for(FunctionDTO callee : submittedCallees)
+			if(callee.id!= null)
+				submittedCalleeIds.add(callee.id);
+
+
 		// First, find new callees added, if any
 		List<Long> newCallees = new ArrayList<Long>(submittedCalleeIds);
 		newCallees.removeAll(this.calleesId);
@@ -525,12 +543,31 @@ public class Function extends Artifact
 
 	}
 
-	public void createStub(List<StubDTO> stubs)
+	// for each callee check, if the id is null create it passing the callee object with the stub inside
+	// otherwise just creates the stubs for the callee
+	public void createRequestedFunctionAndStub(List<FunctionDTO> callees)
 	{
-		for(StubDTO stub : stubs)
+		for(FunctionDTO callee : callees){
+			// if the id is null means that is a requested function
+			// so has also to create the function
+			if(callee.id == null)
 			{
-			StubCommand.create(stub.inputs, stub.output, getId(), false, false);
+				FunctionCommand.createRequestedFunction(getId(), callee);
+
 			}
+			else{
+				createStubs(callee);
+			}
+		}
+	}
+
+
+	public void createStubs(FunctionDTO callee)
+	{
+		for(StubDTO stub : callee.stubs){
+
+			StubCommand.create(stub.inputs, stub.output, callee.id, false, false);
+		}
 	}
 
 	public void incrementTestSuiteVersion(){
