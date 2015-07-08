@@ -36,7 +36,7 @@ public class Worker
 	@Id private String userid;
 	private List<String> submittedMicrotasks = new ArrayList<String>();
 	private HashMap<String, Integer> microtaskHistory =  new HashMap<String, Integer>();
-	private List<String> skippedMicrotasks = new ArrayList<String>();;
+	private List<String> skippedMicrotasks = new ArrayList<String>();
 	public int score;
 	public int level;
 
@@ -153,7 +153,11 @@ public class Worker
 			return false;
 		return true;
 	}
-
+	
+	public HashMap<String, Integer> getHistory(){
+		return microtaskHistory;
+	}
+	
 	public void addSubmittedMicrotask(String microtaskKey, String projectId) {
 		if(!submittedMicrotasks.contains(microtaskKey)){
 			submittedMicrotasks.add(microtaskKey);	

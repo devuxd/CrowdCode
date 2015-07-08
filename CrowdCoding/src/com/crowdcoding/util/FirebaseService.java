@@ -344,6 +344,10 @@ public class FirebaseService
 	public static void writeLevelUpNotification(NotificationInFirebase notification, String workerID, String projectId){
 		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
 	}
+	
+	public static void writeAchievementNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
+	}
 
 	public static void microtaskAssigned(String workerID, String projectId) {
 		enqueueWrite("{\"fetchTime\" : \"" +System.currentTimeMillis() +"\"}", "/workers/" + workerID + ".json", HTTPMethod.PATCH, projectId);

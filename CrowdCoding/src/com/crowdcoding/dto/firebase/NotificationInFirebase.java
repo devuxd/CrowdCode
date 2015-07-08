@@ -24,6 +24,14 @@ public class NotificationInFirebase extends DTO
 		this.time = System.currentTimeMillis();
 	}
 	
+	public NotificationInFirebase(String type, String message, String condition, int requirement)
+	{
+		int a = 2, b = 5;
+		this.type = type;
+		this.data = "{ \"message\": \""+message.toString()+"\",  \"condition\": \""+condition+"\",  \"requirement\": \""+requirement+"\" }";
+		this.time = System.currentTimeMillis();
+	}
+	
 	public NotificationInFirebase(String type,String data)
 	{
 		this.type = type;

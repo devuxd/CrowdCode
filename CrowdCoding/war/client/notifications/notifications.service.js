@@ -89,6 +89,13 @@ angular
 							toast.body = 'Level up!\n'+json.prevLevel+'->'+json.currentLevel;
 							toaster.pop( toast ); 
 							break;
+						case 'new.achievement':
+							console.log("achieved");
+							toast.type = 'success';
+							toast.body = json.message;
+							toaster.pop( toast ); 
+							break;
+							
 
 						default:
 					}
