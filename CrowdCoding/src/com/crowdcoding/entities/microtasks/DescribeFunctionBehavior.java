@@ -169,7 +169,6 @@ public class DescribeFunctionBehavior extends Microtask
 	}
 	public Artifact getOwningArtifact()
 	{
-		Artifact owning;
 		try {
 			return functionRef.safe();
 		} catch ( Exception e ){

@@ -6,7 +6,6 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.dto.firebase.artifacts.TestInFirebase;
 import com.crowdcoding.history.ArtifactCreated;
 import com.crowdcoding.history.HistoryLog;
-import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
@@ -17,6 +16,8 @@ public class Test extends Artifact
 	private long functionId;
 	private String description;
 	private String code;
+	private double creationTime;
+	private boolean hasEverPassed;	//flag to indicate that the test has passed at least once, doesn't say if in this moment is passing
 
 
 	/******************************************************************************************
@@ -33,14 +34,18 @@ public class Test extends Artifact
 		super(isApiArtifact, isReadOnly, projectId);
 
 
-		this.functionId = functionId;
-		this.description = description;
-		this.code = code;
+		this.functionId    = functionId;
+		this.description   = description;
+		this.code 		   = code;
+		this.creationTime  = System.currentTimeMillis();
+		this.hasEverPassed = false;
 
 		ofy().save().entity(this).now();
 
 		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
+
 		storeToFirebase();
+
 		FunctionCommand.addTest(functionId, this.id);
 	}
 
@@ -94,7 +99,15 @@ public class Test extends Artifact
 	/** Marks this test as deleted**/
 	public void delete()
 	{
-		this.isDeleted = true;
+		deleteArtifact();
+		storeToFirebase();
+		FunctionCommand.incrementTestSuite(this.functionId);
+	}
+
+	/** Sets the test has passed**/
+	public void hasPassed()
+	{
+		this.hasEverPassed = true;
 		ofy().save().entity(this).now();
 		storeToFirebase();
 		FunctionCommand.incrementTestSuite(this.functionId);
@@ -113,6 +126,8 @@ public class Test extends Artifact
 													 this.description,
 													 this.code,
 													 this.functionId,
+													 this.hasEverPassed,
+													 this.creationTime,
 													 this.isReadOnly,
 													 this.isAPIArtifact,
 													 this.isDeleted),

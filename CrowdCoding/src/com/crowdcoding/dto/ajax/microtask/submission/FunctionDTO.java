@@ -10,13 +10,14 @@ public class FunctionDTO extends DTO
 {
 	public String messageType = "FunctionDTO";
 
+	public Long   id;
 	public String description;
 	public String returnType;
 	public List<FunctionParameterDTO> parameters = new ArrayList<FunctionParameterDTO>();
 	public String header;
 	public String name;
 	public String code ;
-	public List<Long> calleeIds = new ArrayList<Long>();
+	public List<FunctionDTO> callees = new ArrayList<FunctionDTO>();
 	public List<StubDTO> stubs = new ArrayList<StubDTO>();
 
 }

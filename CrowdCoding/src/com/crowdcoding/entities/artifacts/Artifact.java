@@ -26,8 +26,7 @@ public /*abstract*/ class Artifact
 	@Index String projectId;
 	protected int version;		// version of the artifact
 
-	//true if the artifact is still needed false otherwise
-	protected boolean isAPIArtifact;
+	protected boolean isAPIArtifact;	// flag used to specify is an artifact is from the client request
 	protected boolean isReadOnly;
 	protected boolean isDeleted;
 
@@ -73,6 +72,7 @@ public /*abstract*/ class Artifact
 		if(! isAPIArtifact){
 			this.isDeleted = true;
 			ofy().save().entity(this).now();
+
 
 		}
 

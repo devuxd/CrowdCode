@@ -3,7 +3,6 @@ package com.crowdcoding.commands;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import com.crowdcoding.dto.ChallengeDTO;
 import com.crowdcoding.dto.DTO;
@@ -11,11 +10,9 @@ import com.crowdcoding.entities.microtasks.ChallengeReview;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.servlets.ThreadContext;
-import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.VoidWork;
 
 public abstract class MicrotaskCommand extends Command
 {

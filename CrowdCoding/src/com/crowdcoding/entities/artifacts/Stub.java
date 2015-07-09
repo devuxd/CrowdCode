@@ -16,7 +16,7 @@ import com.googlecode.objectify.annotation.Subclass;
 @Subclass(index=true)
 public class Stub extends Artifact
 {
-	private long functionId;
+	private long functionId;   //id of the stubbed function
 	private List<String> inputs;
 	private String output;
 
@@ -65,6 +65,7 @@ public class Stub extends Artifact
 	public void delete()
 	{
 		deleteArtifact();
+
 		storeToFirebase();
 
 	}

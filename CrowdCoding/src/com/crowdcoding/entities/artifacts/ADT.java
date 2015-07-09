@@ -84,6 +84,8 @@ public class ADT extends Artifact
 		this.isDeleted = true;
 		ofy().save().entity(this).now();
 		storeToFirebase(projectId);
+        HistoryLog.Init(projectId).addEvent(new PropertyChange("isDeleted", "true", this));
+
 
 	}
 
@@ -100,6 +102,12 @@ public class ADT extends Artifact
 	public void addFunction(long functionId)
 	{
 		this.functionsId.add(functionId);
+		ofy().save().entity(this).now();
+	}
+
+	public void removeFunction(long functionId)
+	{
+		this.functionsId.remove(functionId);
 		ofy().save().entity(this).now();
 	}
 

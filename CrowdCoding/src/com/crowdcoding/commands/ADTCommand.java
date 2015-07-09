@@ -1,15 +1,11 @@
 package com.crowdcoding.commands;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import com.crowdcoding.entities.artifacts.ADT;
+
+import com.crowdcoding.entities.artifacts.*;
 import com.crowdcoding.servlets.ThreadContext;
-import com.googlecode.objectify.LoadResult;
-import com.googlecode.objectify.VoidWork;
 
 public abstract class ADTCommand extends Command {
 	protected long ADTId;

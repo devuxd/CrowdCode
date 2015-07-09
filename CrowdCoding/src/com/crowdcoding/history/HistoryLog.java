@@ -21,12 +21,9 @@ import com.crowdcoding.util.Pair;
 public class HistoryLog
 {
 	private static HistoryLog historyLog = null;
-	private EventNode root;
-	//private ConcurrentLinkedQueue<EventNode> eventList = new ConcurrentLinkedQueue<EventNode>();
 	private String projectId = "";
 
 	public HistoryLog(){
-		//System.out.println("== NEW HISTORY LOG");
 	}
 
 	public static HistoryLog Init(String projectId){
@@ -42,21 +39,7 @@ public class HistoryLog
 
 	public void addEvent(HistoryEvent event){
 	    FirebaseService.writeHistoryEvent(event,projectId);
-
-//		EventNode node = new EventNode(event);
-	//	ThreadContext.get().addEventList(node);
 	}
-
-	public void publish(){}
-//		ConcurrentLinkedQueue<EventNode> eventList = ThreadContext.get().getEventList();
-//		Iterator<EventNode> eventIterator = eventList.iterator();
-//	    while(eventIterator.hasNext()) {
-//	    	EventNode node = eventIterator.next();
-//	    	HistoryEvent event = node.event;
-//		    FirebaseService.writeHistoryEvent(event,projectId);
-//		    eventIterator.remove();
-//	    }
-//	}
 
 	public class EventNode
 	{

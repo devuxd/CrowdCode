@@ -2,7 +2,9 @@ package com.crowdcoding.commands;
 
 
 import java.util.List;
+
 import com.crowdcoding.dto.CRFunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.StubDTO;
 import com.crowdcoding.entities.artifacts.Function;
@@ -21,6 +23,10 @@ public abstract class FunctionCommand extends Command {
 		return new Create(name, returnType, parameters, header, description, code, isApiArtifact, isReadOnly);
 	}
 
+	public static FunctionCommand createRequestedFunction(long requestingFunctionId, FunctionDTO requestedFunction) {
+		return new CreateRequestedFunction( requestingFunctionId, requestedFunction);
+	}
+
 	public static FunctionCommand removeCaller(long functionId,
 			long callerFunctionID) {
 		return new RemoveCaller(functionId, callerFunctionID);
@@ -29,6 +35,11 @@ public abstract class FunctionCommand extends Command {
 	public static FunctionCommand addCaller(long functionId,
 			long callerFunctionID) {
 		return new AddCaller(functionId, callerFunctionID);
+	}
+
+	public static FunctionCommand addCallee(long functionId,
+			long calleeFunctionId) {
+		return new AddCaller(functionId, calleeFunctionId);
 	}
 
 	public static FunctionCommand runTests(long functionId) {
@@ -67,7 +78,7 @@ public abstract class FunctionCommand extends Command {
 	public static FunctionCommand lookForWork(long functionId) {
 		return new LookForWork(functionId);
 	}
-	
+
 	private FunctionCommand(Long functionId) {
 		this.functionId = functionId;
 		queueCommand(this);
@@ -123,6 +134,7 @@ public abstract class FunctionCommand extends Command {
 			}
 		}
 	}
+
 	protected static class Create extends FunctionCommand {
 		private String name;
 		private String returnType;
@@ -151,6 +163,32 @@ public abstract class FunctionCommand extends Command {
 		}
 	}
 
+	protected static class CreateRequestedFunction extends FunctionCommand {
+
+		private FunctionDTO requestedFunction;
+		private long requestingFunctionId;
+
+		public CreateRequestedFunction(long requestingFunctionId, FunctionDTO requestedFunction) {
+			super(0L);
+
+			this.requestedFunction	  = requestedFunction;
+			this.requestingFunctionId = requestingFunctionId;
+		}
+
+		public void execute(Function funct, String projectId) {
+
+			Function function = new Function(requestedFunction.name, requestedFunction.returnType, requestedFunction.parameters, requestedFunction.header, requestedFunction.description, "", false, false, projectId);
+
+			function.addCaller(requestingFunctionId);
+
+			FunctionCommand.addCallee(requestingFunctionId, function.getId());
+			for( StubDTO stub : requestedFunction.stubs){
+				StubCommand.create(stub.inputs, stub.output, function.getId(), false, false);
+			}
+		}
+	}
+
+
 	protected static class RemoveCaller extends FunctionCommand {
 		private long callerFunctionID;
 
@@ -175,6 +213,20 @@ public abstract class FunctionCommand extends Command {
 		public void execute(Function function, String projectId)
 		{
 				function.addCaller(callerFunctionID);
+		}
+	}
+
+	protected static class AddCallee extends FunctionCommand {
+		private long calleeFunctionId;
+
+		public AddCallee(long functionId, long calleeFunctionId) {
+			super(functionId);
+			this.calleeFunctionId = calleeFunctionId;
+		}
+
+		public void execute(Function function, String projectId)
+		{
+				function.addCallee(calleeFunctionId);
 		}
 	}
 
@@ -273,7 +325,7 @@ public abstract class FunctionCommand extends Command {
 			function.incrementTestSuiteVersion();
 		}
 	}
-	
+
 
 	protected static class LookForWork extends FunctionCommand {
 

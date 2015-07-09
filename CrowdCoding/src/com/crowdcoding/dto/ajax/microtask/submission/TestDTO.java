@@ -12,6 +12,7 @@ public class TestDTO extends DTO
 	public String code;
 	public boolean deleted;
 	public boolean added;
+	public boolean edited;
 	public long id;				// id of the corresponding test. Only valid if added is false.
 
 
