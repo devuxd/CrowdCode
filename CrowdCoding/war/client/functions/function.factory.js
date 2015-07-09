@@ -78,7 +78,7 @@ angular
 
 			return '/**\n'
 				 + ' * '+descriptionLines.join('\n * ') + '\n'
-				 + '*/\n';
+				 + ' */\n';
 		},
 
 		//  signature is description + header

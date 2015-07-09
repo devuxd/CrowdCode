@@ -115,6 +115,17 @@ angular
     }
 
     function onEditStub(functionName,inputs){
+
+        var funct = functionsService.getByName(functionName);
+        if( funct == null ){
+            for( var i = 0; i < $scope.dto.requestedFunctions.length ; i++ ){
+                if( $scope.dto.requestedFunctions[i].name == functionName )
+                    funct = $scope.dto.requestedFunctions[i];
+            }
+        }
+        if( funct == null ) throw 'Cannot find the function '+functionName;
+        
+        $scope.data.returnType  = funct.returnType;
         $scope.data.editingStub = $scope.data.stubs[functionName][JSON.stringify(inputs)];
     }
 

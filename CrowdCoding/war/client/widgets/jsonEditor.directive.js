@@ -2,7 +2,7 @@
 
 angular
     .module('crowdCode')
-    .directive('aceEditJson', function() {
+    .directive('jsonEditor', function() {
     var stringified = false;
 
     return {
@@ -10,10 +10,7 @@ angular
 
         template:'<div class="ace_editor json-editor" ui-ace="{ onLoad : aceLoaded, mode: \'json\', theme:\'xcode\', showGutter: true, useWrapMode : true, showLineNumbers : false }" ng-model="stringValue" ></div> ',
         scope: {
-            focusIf   : "=",
-            minLines  : "=",
-            tabindex  : "@",
-            paramType : "@"
+            dataType : "@"
         },
         require: "ngModel",
 
@@ -24,8 +21,6 @@ angular
 
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-
-
                 if( ngModel.$viewValue === "") 
                     scope.stringValue = "";
                 else {
@@ -35,14 +30,11 @@ angular
                         scope.stringValue = ngModel.$viewValue;
                     }
                 }
-
-
             };
 
             // update the ngModel.$viewValue when the UI changes 
             scope.$watch('stringValue', function() {
                 ngModel.$setViewValue( scope.stringValue );
-                
             });
 
         },
@@ -57,23 +49,6 @@ angular
                 $element.on('focus',function(){
                     _editor.focus();
                 });
-
-                if( $scope.hasOwnProperty('tabindex') && $scope.tabindex ){
-                    $element.find('.ace_text-input').attr('tabindex', $scope.tabindex);
-                }
-
-                if( $scope.hasOwnProperty('focusIf') && $scope.focusIf ){
-                    _editor.focus();
-                }
-
-                if( $scope.hasOwnProperty('minLines') && $scope.minLines ){
-                   options.minLines = $scope.minLines;
-                }
-
-                // _editor.getSession().on('change', function(e) {
-                //     console.log('event change:', e.data);
-                    
-                // });
 
                 _editor.setOptions(options);
                 _editor.commands.removeCommand('indent');

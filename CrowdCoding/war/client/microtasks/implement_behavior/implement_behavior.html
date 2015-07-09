@@ -73,7 +73,7 @@
 	            >
 	        </function-editor>
 	        <div ng-show="data.editingStub">
-	        	<input ng-model="data.editingStub.output">
+	        	<json-editor ng-model="data.editingStub.output" data-type="data.returnType"></json-editor>
 	        	<button ng-click="data.editingStub = false">close</button>
 	        </div>
 	    </div>

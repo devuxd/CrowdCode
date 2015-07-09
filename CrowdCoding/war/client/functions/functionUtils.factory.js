@@ -25,7 +25,7 @@ angular
             header: '',
             name: '',
             code: '',
-            calleeIds: [],
+            callees: [],
             requestedFunctions: [],
             requestedDataTypes: [],
         };
@@ -143,6 +143,7 @@ angular
             data.statements = lint.data.functions[0].metrics.statements;
         }
         
+        console.log('lint data', lint.data);
 
         // if the first linting produced errors, 
         // return now before processing the ast

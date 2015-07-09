@@ -1,0 +1,11 @@
+
+
+<div 
+	class="ace_editor test-editor" 
+	ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'chrome', showGutter: true, useWrapMode : true, showLineNumbers : true }" 
+	ng-model="test.code" 
+	readonly="{{!test.editing}}" >
+</div>
+<ul>
+	<li ng-repeat="e in errors track by $index">{{e}}</li>
+</ul>

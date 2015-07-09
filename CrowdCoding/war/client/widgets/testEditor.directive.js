@@ -3,19 +3,22 @@ angular
     .module('crowdCode')
     .directive('testEditor', function() {
 
-
+    // var chains = ['to','be','been','is','that','which','and','has','have','with','at','of','same'];
+    // var methods = [ 'not','deep','any','all','a','include','ok','true','false','null','undefined','exists','empty','arguments','equal','above','least','below','most','within','instanceof','property','ownProperty','length','string','match','keys','throw','respondTo','itself','itself','satisfy','closeTo','members','change','increase','decrease'];
+    
     return {
         restrict: 'EA',
-        replace:true,
-        template:'<div class="ace_editor test-editor" ui-ace="{ onLoad : aceLoaded, mode: \'javascript\', theme:\'chrome\', showGutter: true, useWrapMode : true, showLineNumbers : true }" ng-model="test.code" readonly="{{!test.editing}}" ></div>',
+        templateUrl: '/client/widgets/test_editor.html',
         scope: {
-            test : '='
+            test : '=',
+            testedFunction: '=',
         },
         link: function ( $scope, $element, $attrs ) {
 
         },
         controller: function($scope,$element){
 
+            $scope.errors = [];
 
         	$scope.aceLoaded = function(_editor) {
                 
@@ -50,8 +53,40 @@ angular
                         ]);
                     }
                 }
+
+                _editor.on('change', onChange);
+
                 _editor.completers = [myCompleter];
                 // console.log(langTools);
+
+                function onChange(data,editor){
+
+                    // var defs = 'var '+Object.keys(chai.Assertion.prototype).join(',')+';';
+                    var tCode = editor.getValue();
+                    var code = tCode ; //+ defs;
+                    var lintResult =  JSHINT(code, {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true, expr:true});
+                    
+                    $scope.errors = [];
+                    if( !lintResult ){
+                        $scope.errors = checkForErrors(JSHINT.errors);
+                        $scope.$apply();
+                        console.log('errors',$scope.errors );
+                        
+                    }
+                    else {
+                        var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
+                        worker.postMessage({ 
+                            'baseUrl'     : document.location.origin, 
+                            'code'        : code,
+                        });
+                        worker.onmessage = function(message){
+                            if( message.data.error )
+                                $scope.errors = [message.data.error];
+
+                            worker.terminate();
+                        };
+                    }
+                }
 			};
         }
     };

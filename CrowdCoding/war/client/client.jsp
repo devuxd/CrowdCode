@@ -124,6 +124,9 @@
 	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>
 	<script src="/include/doctrine/doctrine.browser.js"></script>
 
+
+	<script src="/include/chai.js"></script>
+
 	<script>
 	var projectId    = '<%=projectID%>';
 	var workerId     = '<%=workerID%>';
