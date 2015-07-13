@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.crowdcoding.dto.DTO;
+import com.crowdcoding.entities.Achievement;
 import com.googlecode.objectify.annotation.Id;
 
 public class WorkerInFirebase extends DTO
@@ -12,9 +13,8 @@ public class WorkerInFirebase extends DTO
 	public String messageType = "WorkerInFirebase";
 
 	private String nickname;
-	private String userid;
-	public List<String> submittedMicrotasks = new ArrayList<String>();
-	public List<String> skippedMicrotasks = new ArrayList<String>();
+	private String userid;	
+	public List<Achievement> awardedAchievements = new ArrayList<Achievement>();
 	public HashMap<String,Integer> microtaskHistory = new HashMap<String,Integer>();
 	public int score;
 	public int level;
@@ -23,14 +23,13 @@ public class WorkerInFirebase extends DTO
 	{
 	}
 
-	public WorkerInFirebase(String userID, int score, int level, String nickname, List<String> submittedMicrotasks, List<String> skippedMicrotasks, HashMap<String,Integer> microtaskHistory )
+	public WorkerInFirebase(String userID, int score, int level, String nickname, List<Achievement> awardedAchievements, HashMap<String,Integer> microtaskHistory )
 	{
 		this.userid = userID;
 		this.nickname = nickname;
 		this.score = score;
 		this.level = level;
-		this.submittedMicrotasks = submittedMicrotasks;
-		this.skippedMicrotasks = skippedMicrotasks;
+		this.awardedAchievements = awardedAchievements;
 		this.microtaskHistory = microtaskHistory;
 	}
 }

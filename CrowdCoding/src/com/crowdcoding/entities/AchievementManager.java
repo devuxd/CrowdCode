@@ -15,6 +15,7 @@ import java.util.Scanner;
 
 import org.apache.tools.ant.Main;
 
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
 import com.crowdcoding.dto.firebase.NotificationInFirebase;
 import com.crowdcoding.dto.firebase.TestInFirebase;
@@ -37,8 +38,8 @@ import com.googlecode.objectify.cmd.Query;
 public class AchievementManager
 {
 
-	private List<Achievement> availableAchievements = new ArrayList<Achievement>();;
-	private static int id;
+	private List<Achievement> availableAchievements = new ArrayList<Achievement>();
+	private int id;
 	// Default constructor for deserialization
 	public AchievementManager()
 	{
@@ -58,17 +59,12 @@ public class AchievementManager
 		if(fileIn != null){
 			int totalAchievements = fileIn.nextInt();
 			for(int i = 0;i<totalAchievements;i++){
-				Achievement newObjective = new Achievement(fileIn.next(), fileIn.nextInt(), fileIn.nextInt());
+				Achievement newObjective = new Achievement(fileIn.next(), fileIn.nextInt());
 				System.out.println(newObjective.getCondition() + " " +  newObjective.getRequirement());
 				availableAchievements.add(newObjective);
 			}
 			fileIn.close();
 		}
-	}
-	
-	public void printList(){
-		for(int i = 0;i<availableAchievements.size();i++)
-			System.out.println(availableAchievements.get(i).getCondition());
 	}
 	
 	public void checkNewAchievement(String workerID, String projectId, HashMap<String,Integer> workerHistory){
@@ -78,15 +74,17 @@ public class AchievementManager
 			if( workerHistory.get(label)!= null){
 				value = 0;
 				value = workerHistory.get(label);
-				//if(value >= availableAchievements.get(i).getRequirement()){
-					AwardAchievement(availableAchievements.get(i),workerID,projectId);
-					availableAchievements.remove(i)	;
-				//}
+				if(value >= availableAchievements.get(i).getRequirement() 
+					&& !availableAchievements.get(i).getList().contains(workerID)){
+					awardAchievement(availableAchievements.get(i),workerID,projectId);
+					availableAchievements.get(i).addWorker(workerID);
+				}
 			}
 		}		
 	}
 
-	private void AwardAchievement(Achievement workerAchievement, String workerID, String projectId) {
+	private void awardAchievement(Achievement workerAchievement, String workerID, String projectId) {
+		WorkerCommand.addAchievement(workerAchievement, workerID);
 		FirebaseService.writeAchievementNotification(new NotificationInFirebase("new.achievement",workerAchievement.getMessage(), 
 				workerAchievement.getCondition(), workerAchievement.getRequirement()), workerID, projectId);
 	}

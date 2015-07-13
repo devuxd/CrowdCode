@@ -2,6 +2,7 @@ package com.crowdcoding.commands;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.entities.Achievement;
 import com.crowdcoding.entities.AchievementManager;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Worker;
@@ -16,11 +17,9 @@ public abstract class WorkerCommand extends Command
 	public static WorkerCommand awardPoints(String workerID, int points)
 	{ return new AwardPoints(workerID, points); }
 	
-	public static WorkerCommand addSubmittedMicrotask(String workerID, String microtaskKey)
-	{ return new AddSubmittedMicrotask(workerID, microtaskKey); }
+	public static WorkerCommand addAchievement(Achievement achievement, String workerID)
+	{ return new AddAchievement(achievement, workerID); }
 	
-	public static WorkerCommand addSkippedMicrotask(String workerID, String microtaskKey)
-	{ return new AddSkippedMicrotask(workerID, microtaskKey); }
 
 	public static WorkerCommand increaseStat(String workerID,String label, int increaseAmount)
 	{ return new IncreaseStat(workerID, label, increaseAmount, achievementManager); }
@@ -79,42 +78,6 @@ public abstract class WorkerCommand extends Command
 		}
 
 	}
-	
-	protected static class AddSubmittedMicrotask extends WorkerCommand
-	{
-		private String microtaskKey;
-		
-		public AddSubmittedMicrotask(String workerID, String microtaskKey)
-		{
-			super(workerID);
-			this.microtaskKey = microtaskKey;
-		}
-
-		public void execute(Worker worker, Project project)
-		{
-
-			worker.addSubmittedMicrotask(microtaskKey, project.getID());
-		}
-
-	}
-	
-	protected static class AddSkippedMicrotask extends WorkerCommand
-	{
-		private String microtaskKey;
-
-		public AddSkippedMicrotask(String workerID, String microtaskKey)
-		{
-			super(workerID);
-			this.microtaskKey = microtaskKey;
-		}
-
-		public void execute(Worker worker, Project project)
-		{
-
-			worker.addSkippedMicrotask(microtaskKey, project.getID());
-		}
-
-	}
 
 	protected static class IncreaseStat extends WorkerCommand
 	{
@@ -135,6 +98,24 @@ public abstract class WorkerCommand extends Command
 
 			worker.increaseStat(label,increaseAmount, project.getID());
 			_manager.checkNewAchievement(worker.getUserid(), project.getID(), worker.getHistory());
+		}
+
+	}
+	
+	protected static class AddAchievement extends WorkerCommand
+	{
+		private Achievement _achievement;
+
+		public AddAchievement(Achievement achievement, String workerID)
+		{
+			super(workerID);
+			this._achievement = achievement;
+		}
+
+		public void execute(Worker worker, Project project)
+		{
+
+			worker.addAchievement(_achievement, project.getID());
 		}
 
 	}

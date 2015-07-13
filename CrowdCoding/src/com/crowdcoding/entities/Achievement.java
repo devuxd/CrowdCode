@@ -31,19 +31,17 @@ public class Achievement
 
 	private String condition, message;
 	private int requirement;
-	public int difficulty = 1;
-
+	private List<String> workersAwarded = new ArrayList<String>();
 	// Default constructor for deserialization
 	private Achievement()
 	{
 	}
 
 	// Initialization constructor
-	public Achievement(String condition, int requirement, int difficulty)
+	public Achievement(String condition, int requirement)
 	{
 		this.condition = condition;
 		this.requirement = requirement;
-		this.difficulty = difficulty;
 		this.message = "You completed "+ this.requirement + " " + this.condition +". Congratulations!!";
 	}
 
@@ -51,7 +49,15 @@ public class Achievement
 	public String getMessage(){
 		return this.message;
 	}
-
+	
+	public void addWorker(String id){
+		this.workersAwarded.add(id);
+	}
+	
+	public List<String> getList(){
+		return this.workersAwarded;
+	}
+	
 	public String getCondition(){
 		return this.condition;
 	}

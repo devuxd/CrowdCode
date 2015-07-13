@@ -1,0 +1,24 @@
+<div id="leaderboardPanel" class="container-fluid achievements" >
+	<div>
+		<div id="board" >	
+		<div id="columns">
+		  	<div class="pin" ng-repeat="(i,achievement) in listOfachievements | orderBy:'-score'" ng-if="listOfachievements.length > 0" 
+				style="height:{{achievement.height}}px" >
+		  	<div class="icon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
+							
+			<div class="title">{{achievement.condition}}</div>			
+			<div class="info">{{achievement.message}}</div>
+							
+			
+		  	</div>
+		</div>
+		</div>
+		<span ng-if="listOfachievements.length == 0" >
+			no achievements.
+		</span>
+	</div>
+</div>
+
+
+
+

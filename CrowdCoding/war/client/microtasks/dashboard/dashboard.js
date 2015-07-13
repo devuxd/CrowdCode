@@ -2,8 +2,8 @@ var boardApp = angular.module('crowdCode')
 
 boardApp.run();
 
-boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService','firebaseUrl','workerId',  function($scope,$rootScope,$firebase,$timeout,microtasksService,firebaseUrl, workerId){
-	console.log("controller loaded");
+boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService','firebaseUrl','workerId',  
+                                 function($scope,$rootScope,$firebase,$timeout,microtasksService,firebaseUrl, workerId){
 	
 	var types = [
 			'Review',

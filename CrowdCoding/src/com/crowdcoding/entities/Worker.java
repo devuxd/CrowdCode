@@ -34,9 +34,8 @@ public class Worker
 	@Parent Key<Project> project;
 	private String nickname;
 	@Id private String userid;
-	private List<String> submittedMicrotasks = new ArrayList<String>();
 	private HashMap<String, Integer> microtaskHistory =  new HashMap<String, Integer>();
-	private List<String> skippedMicrotasks = new ArrayList<String>();
+	private List<Achievement> awardedAchievements = new ArrayList<Achievement>();
 	public int score;
 	public int level;
 
@@ -53,9 +52,6 @@ public class Worker
 		this.nickname = nickname;
 		this.score = 0;
 		this.level = 2;
-		this.submittedMicrotasks = new ArrayList<String>();
-		this.microtaskHistory = new HashMap<String, Integer>();
-		this.skippedMicrotasks = new ArrayList<String>();
 		ofy().save().entity(this).now();
 		this.storeToFirebase(project.getID());
 	}
@@ -126,7 +122,7 @@ public class Worker
 	
 	public void storeToFirebase(String projectId)
 	{
-		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,submittedMicrotasks, skippedMicrotasks, microtaskHistory), this.userid, projectId);
+		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,awardedAchievements, microtaskHistory), this.userid, projectId);
 	}
 	
 	@Override
@@ -157,21 +153,13 @@ public class Worker
 	public HashMap<String, Integer> getHistory(){
 		return microtaskHistory;
 	}
-	
-	public void addSubmittedMicrotask(String microtaskKey, String projectId) {
-		if(!submittedMicrotasks.contains(microtaskKey)){
-			submittedMicrotasks.add(microtaskKey);	
+		
+	public void addAchievement(Achievement achievement, String projectId) {
+		awardedAchievements.add(achievement);
 		ofy().save().entity(this).now();
 		this.storeToFirebase(projectId);
-		}
 	}
 	
-	public void addSkippedMicrotask(String microtaskKey, String projectId) {
-		if(!skippedMicrotasks.contains(microtaskKey)){
-			skippedMicrotasks.add(microtaskKey);	
-		ofy().save().entity(this).now();
-		this.storeToFirebase(projectId);
-		}
-	}
+
 
 }

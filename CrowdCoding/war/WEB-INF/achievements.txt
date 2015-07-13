@@ -1,13 +1,13 @@
 11
-test_cases 5 1 
-tests 5 1
-microtasks 5 1
-microtasks 1 1
-microtasks 10 1
-functions 10 2
-upvotes 1 2
-question_views 1 2
-microtasks 15 1
-reviews 5 1 
-test_cases 2 3
-microtasks 100 3
+test_cases 5
+tests 5
+microtasks 5
+microtasks 1
+microtasks 10
+functions 10
+upvotes 1
+question_views 1
+microtasks 15
+reviews 5
+test_cases 2
+microtasks 100
