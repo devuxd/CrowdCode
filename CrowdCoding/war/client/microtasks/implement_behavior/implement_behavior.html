@@ -1,82 +1,196 @@
-<div ng-controller="ImplementBehavior">
-    
-
-    <div class="section section-description " >
-        <div ng-include="'/client/microtasks/microtask_title.html'"></div>
-        <div class="section-content  job-description" >
-            Implement a behavior for this function
-        </div>
+<div ng-controller="ImplementBehavior" >
+  
+	<div class="header bg-color">
+		<span class="type  ">{{::microtask.title}}</span>
+		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
+		<span class="points">( {{::microtask.points}} pts )</span>
+		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); ">
+			<span class="glyphicon glyphicon-question-sign"></span> 
+		</button>
+		<span class="clearfix"></span>
     </div>
 
-	<div class="section section-description">
-		<div class="section-title" >
-			<div class="dot bg-color"></div>
-			Described behaviors
-		</div>
-		<div class="section-content">
-			<div class="tests-list" >
-				<div class="test-item {{ !t.running ? (t.result.passed ? 'passed' : 'failed' ) : '' }}" ng-repeat="t in data.tests track by $index">
-					<div class="toggler" ng-click="toggleTest($event,t)">
-						<strong class="pull-left">
-							it {{ t.description }}
-						</strong> 
-						<span class="pull-right">
-							<span ng-if="t.running">
-								running
-							</span>
-							<span ng-if="!t.running">
-								<button ng-disabled="data.changedSinceLastRun" class="btn btn-sm {{ data.inspected == t ? 'btn-primary' : '' }}" ng-click="inspectTest($event,t);">
-									<span class="glyphicon glyphicon-search"></span>
-								</button>
-							</span>
-						</span>
-						<span class="clearfix"></span>
-					</div>
-					<div class="result" ng-if="t.expanded">
-						<div class="row">
-							<div class="col-md-1">Execution time</div>
-							<div class="col-md-11">{{ t.result.executionTime > -1 ? t.result.executionTime + 'ms' : 'timeout' }}</div>
-						</div>
-						<div class="row" ng-if="t.result.message">
-							<div class="col-md-1">Message</div>
-							<div class="col-md-11">{{t.result.message}}</div>
-						</div>
-						<div class="row" ng-if="t.result.showDiff">
-							<div class="col-md-1">Diff</div>
-							<div class="col-md-11">{{t.result.expected}} - {{t.result.actual}}</div>
-						</div>
-						<div class="row">
-							<div class="col-md-1">Code</div>
-							<div class="col-md-11"><test-editor test="t"></test-editor></div>
-						</div>
-					</div>
-				</div>
-			</div>
+    <div class="sections" ui-layout="{ flow: 'row', dividerSize: 1 }">
 
-			<div>
-				<div class="pull-right">
-					<button class="btn btn-sm" ng-click="run()">Run Tests</button>
-				</div>
+	    <div class="section bg-color-alpha padding" ui-layout-container size="10%">
+			Implement a behavior for this function	
+		</div>
+
+
+
+		<div class="section" ui-layout-container size="30%">
+
+			<div class="section-bar">
+
+				<span class="pull-left title" ng-if="data.selected == -1">
+					Behaviors
+				</span>
+
+
+				<span class="pull-left" ng-if="data.selected != -1">
+					<button class="btn btn-sm" ng-click="toggleSelect($event)">
+						<span class="glyphicon glyphicon-arrow-left"></span>
+						Back
+					</button>
+				</span>
+
+				<span class="pull-right">
+					<button class="btn btn-sm btn-run" ng-click="run()">
+						<span class="glyphicon glyphicon-play"></span> 
+						Run Tests
+					</button>
+				</span>
+
+
+				<span class="pull-right separator" ng-if="data.selected != -1"></span>
+				<span class="pull-right" ng-if="data.selected != -1">
+					<button 
+						class="btn btn-sm btn-dispute {{ data.selected.inDispute ? 'active' : '' }}" 
+						ng-click="toggleDispute($event);">
+						<span class="glyphicon glyphicon-exclamation-sign"></span> 
+						Dispute this test
+					</button>
+					<button 
+						class="btn btn-sm btn-inspect {{ !data.changedSinceLastRun && data.inspecting ? 'active' : '' }}"
+						ng-disabled="data.changedSinceLastRun"  
+						ng-click="toggleInspect($event);">
+						<span class="glyphicon glyphicon-search"></span> 
+						Inspect code 
+					</button>
+				</span>
+
 				<span class="clearfix"></span>
 			</div>
-		</div>	
-	</div>
+			<div class="section-content padding slide from-left" ng-if="data.selected == -1" >
+				<div class="test-list " >
+					<div class="test-item {{ !t.running ? (t.inDispute ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) ) : '' }}" 
+						 ng-repeat="t in data.tests track by $index">
+						<div ng-click="toggleSelect($event,t);">
+							<strong class="pull-left">
+								it {{ t.description }}
+							</strong> 
+							<span class="pull-right">
+								<span ng-if="t.running">
+									running
+								</span>
+							</span>
+							<span class="clearfix"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="section-content padding slide from-right" ng-if="data.selected != -1" >
+				<div class="test-result">
+					<div class="row">
+						<div class="col-md-2 row-label">Status</div>
+						<div class="col-md-10"> {{ data.selected.result.passed ? 'passed' : 'failed' }}</div>
+					</div>
+					<div class="row">
+						<div class="col-md-2 row-label">description</div>
+						<div class="col-md-10">it {{data.selected.description}}</div>
+					</div>
+					<div class="row">
+						<div class="col-md-2 row-label">Execution time</div>
+						<div class="col-md-10">{{ data.selected.result.executionTime > -1 ? data.selected.result.executionTime + 'ms' : 'timeout' }}</div>
+					</div>
+					<div class="row" ng-if="t.result.message">
+						<div class="col-md-2 row-label">Message</div>
+						<div class="col-md-10">{{data.selected.result.message}}</div>
+					</div>
+					<div class="row" ng-if="t.result.showDiff">
+						<div class="col-md-2 row-label">Diff</div>
+						<div class="col-md-10">{{data.selected.result.expected}} - {{data.selected.result.actual}}</div>
+					</div>
+					<div class="row">
+						<div class="col-md-2 row-label">Code</div>
+						<div class="col-md-10"><test-editor test="data.selected"></test-editor></div>
+					</div>
+					<div class="row" ng-if="data.selected.inDispute">
+						<div class="col-md-2 row-label">Dispute reason</div>
+						<div class="col-md-10"><textarea class="dispute" ng-model="data.selected.disputeText"></textarea></div>
+					</div>
+				</div>
+			</div>					
+		</div>
 
-	<div class="section">
-		<div class="section-content no-padding">
-			<function-editor
-				ng-show="!data.editingStub"
-	            function="funct" 
-	            editor="data.editor" 
-	            logs="(data.running || data.inspected) ? data.inspected.logs : undefined"
-	            callbacks="editorCallbacks"
-	            >
-	        </function-editor>
-	        <div ng-show="data.editingStub">
-	        	<input ng-model="data.editingStub.output">
-	        	<button ng-click="data.editingStub = false">close</button>
+		<div class="section" ui-layout-container size="60%" min-size="40%" max-size="60%" >
+			<div class="section-bar" ng-show="!data.editingStub">
+				<span class="title">
+					Function Editor
+				</span>
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content slide from-left" ng-show="!data.editingStub">
+				<function-editor
+		            function="funct" 
+		            editor="data.editor" 
+		            logs="(!data.inspecting) ? undefined : data.selected.logs "
+		            callbacks="editorCallbacks"
+		            >
+		        </function-editor>
+			</div>
+
+			<div class="section-bar" ng-show="data.editingStub">
+				<span class="title">
+					Stub Editor
+				</span>
+				<span class="pull-right">
+					<button class="btn btn-sm" ng-click="saveStub()">Save stub</button>
+				</span>
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content padding slide from-right" ng-show="data.editingStub">
+				<div class="stub">
+					<div class="row">
+						<div class="col-md-2">
+						</div>
+						<div class="col-md-12 title">
+							Function Description
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-10">
+							<js-reader code="data.editingStub.functionDescription"></js-reader>
+						</div>
+					</div>
+					<div class="row ">
+						<div class="col-md-12 title">
+							Inputs
+						</div>
+					</div>
+					<div class="row" ng-repeat="p in data.editingStub.parameters">
+						<div class="col-md-2 row-label">
+							{{p.name}} 
+							<br />
+							<small>{{ '{' + p.type +'}' }}</small>
+						</div>
+						<div class="col-md-10">
+							<json-reader ng-model="p.value"></json-reader>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 title">
+							Output
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-2 row-label">
+							<small>{{ '{' + data.editingStub.output.type +'}' }}</small>
+						</div>
+						<div class="col-md-10">
+							<json-editor 
+								ng-model="data.editingStub.output.value" 
+								type="{{data.editingStub.output.type}}"
+								name="'output'">
+							</json-editor>
+						</div>
+					</div>
+				</div>
+	        	
 	        </div>
-	    </div>
+		</div>
+
 	</div>
+        
 		
 </div>

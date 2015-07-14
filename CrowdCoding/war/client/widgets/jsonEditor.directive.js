@@ -2,30 +2,25 @@
 
 angular
     .module('crowdCode')
-    .directive('aceEditJson', function() {
+    .directive('jsonEditor', ['AdtUtils',function(AdtUtils) {
     var stringified = false;
 
     return {
         restrict: 'EA',
 
-        template:'<div class="ace_editor json-editor" ui-ace="{ onLoad : aceLoaded, mode: \'json\', theme:\'xcode\', showGutter: true, useWrapMode : true, showLineNumbers : false }" ng-model="stringValue" ></div> ',
+        templateUrl:'/client/widgets/json_editor.html',
         scope: {
-            focusIf   : "=",
-            minLines  : "=",
-            tabindex  : "@",
-            paramType : "@"
+            type: '@',
+            name: '@'
         },
         require: "ngModel",
 
         link: function ( scope, element, attrs, ngModel ) {
             if( ngModel == undefined ) 
                 console.log("NG MODEL NOT DEFINED");
-            scope.stringValue = 4;
-
+            
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
-
-
                 if( ngModel.$viewValue === "") 
                     scope.stringValue = "";
                 else {
@@ -35,19 +30,16 @@ angular
                         scope.stringValue = ngModel.$viewValue;
                     }
                 }
-
-
             };
 
             // update the ngModel.$viewValue when the UI changes 
             scope.$watch('stringValue', function() {
                 ngModel.$setViewValue( scope.stringValue );
-                
             });
 
         },
         controller: function($scope,$element){
-
+            $scope.errors = [];
         	$scope.aceLoaded = function(_editor) {
 
         		var options = {
@@ -58,26 +50,17 @@ angular
                     _editor.focus();
                 });
 
-                if( $scope.hasOwnProperty('tabindex') && $scope.tabindex ){
-                    $element.find('.ace_text-input').attr('tabindex', $scope.tabindex);
-                }
-
-                if( $scope.hasOwnProperty('focusIf') && $scope.focusIf ){
-                    _editor.focus();
-                }
-
-                if( $scope.hasOwnProperty('minLines') && $scope.minLines ){
-                   options.minLines = $scope.minLines;
-                }
-
-                // _editor.getSession().on('change', function(e) {
-                //     console.log('event change:', e.data);
-                    
-                // });
-
                 _editor.setOptions(options);
+                _editor.session.setOptions({useWorker: false});
                 _editor.commands.removeCommand('indent');
+                _editor.on('change', onChange);
 			};
+
+            function onChange(event,editor){
+                var code = editor.getValue();
+                var validationData = AdtUtils.validate(code,$scope.type,$scope.name);  
+                $scope.errors = validationData.errors;
+            }
         }
     };
-});
+}]);

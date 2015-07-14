@@ -104,13 +104,12 @@ angular
 
 		// Get the function object, in FunctionInFirebase format, for the specified function name
 		function getByName(name){
-			var funct = null;
-			angular.forEach(functions, function(value) {
-				if( funct === null && value.name === name && value.described) {
-			  		funct = value;
+			for( var i = 0 ; i < functions.length ; i ++){
+				if( functions[i].name == name ) {
+			  		return functions[i];
 			  	}
-			});
-			return funct;
+			}
+			return null;
 		}
 
 		function getIdByName(name){

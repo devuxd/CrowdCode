@@ -10,7 +10,7 @@ public class StubInFirebase extends DTO
 	public String messageType = "StubInFirebase";
 	public long id;
 	public int version;
-	public List<String> inputs;
+	public String inputsKey;
 	public String output;
 	public boolean isReadOnly;
 	public boolean isApiArtifact;
@@ -20,11 +20,11 @@ public class StubInFirebase extends DTO
 	{
 	}
 
-	public StubInFirebase(long id, int version, List<String> inputs, String output, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted)
+	public StubInFirebase(long id, int version, String inputsKey, String output, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted)
 	{
 		this.id 		   = id;
 		this.version 	   = version;
-		this.inputs 	   = inputs;
+		this.inputsKey 	   = inputsKey;
 		this.output 	   = output;
 		this.isReadOnly    = isReadOnly;
 		this.isApiArtifact = isApiArtifact;

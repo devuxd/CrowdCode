@@ -25,7 +25,6 @@ angular
 
             $scope.errors = '';
             $scope.code   = $scope.function.getFullCode();
-            $scope.dto    = {};
 
         	$scope.aceLoaded = function(_editor) {
 
@@ -103,19 +102,18 @@ angular
                 } 
 
                 $scope.errors = validationData.errors;
-                $scope.dto    = validationData.dto || {};
+                loadFunctionsList(editor, validationData.requestedFunctions);
 
                 if ( $scope.errors.length == 0 ){
-                    loadFunctionsList(editor, $scope.dto.requestedFunctions);
-
                     if( $scope.callbacks && $scope.callbacks.onFunctionParsed ){
-                        $scope.callbacks.onFunctionParsed.call(null,$scope.dto);
+                        $scope.callbacks.onFunctionParsed.call(null,validationData.dto, validationData.requestedFunctions);
                     }
                 }
 
             }
 
             function loadFunctionsList(editor,requestedFunctions){
+                console.log('load list',requestedFunctions);
                 // load all the snippets
                 
                 functionsService.getAll().$loaded().then(function(){
@@ -141,20 +139,20 @@ angular
 
                     // after of the requested, if any
                     requestedFunctions = requestedFunctions || [];
-                    requestedFunctions.map(function( dto ){
-                        var fun = new Function(dto);
-                        var paramsString = fun.parameters
+                    requestedFunctions.map(function( requestedDto ){
+                        var requested = new Function(requestedDto);
+                        var paramsString = requested.parameters
                             .map(function(par,idx){ 
                                 return '${'+(idx+1)+':'+par.name+'}'; 
                             })
                             .join(',');
 
                         editor.functioncompleter.functions.push({ 
-                            name        : fun.name, 
+                            name        : requested.name, 
                             meta        : 'PSEUDO', 
                             className   : 'functions_api',
-                            description : fun.getFullDescription(),
-                            snippet     : fun.name + '(' + paramsString + ')'
+                            description : requested.getFullDescription(),
+                            snippet     : requested.name + '(' + paramsString + ')'
                         });
                     });
                 });

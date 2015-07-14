@@ -1,6 +1,9 @@
 <form id="microtaskForm" name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
-	<div id="task" class="task" microtask >
-		<ng-include class="{{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}" src="templatePath"></ng-include>
+	<div 
+		id="task"
+		class="task {{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}" 
+		ng-include="templatePath" 
+		>
 	</div>
 	<reminder></reminder>
 

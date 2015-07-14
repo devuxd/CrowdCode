@@ -55,7 +55,7 @@
 	    </div>
 
 	    <div class="content">
-		    <div ui-layout="{ flow: 'column', dividerSize: 1 }">
+		    <div ui-layout="{ flow: 'column', dividerSize: 2 }">
 		    	<div ui-layout-container size="20%" min-size="200px" max-size="20%" >
 					<left-bar></left-bar>
 				</div>
@@ -123,6 +123,8 @@
 
 	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>
 	<script src="/include/doctrine/doctrine.browser.js"></script>
+
+	
 
 	<script>
 	var projectId    = '<%=projectID%>';

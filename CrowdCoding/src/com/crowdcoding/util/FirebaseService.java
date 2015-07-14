@@ -183,7 +183,7 @@ public class FirebaseService
 	public static void writeTestJobQueue(long functionID, int functionVersion, int testSuiteVersion, String projectId)
 	{
 		System.out.println("ASKING FOR TEST RUN for function "+functionID);
-		enqueueWrite("{\"functionId\": \"" + functionID + "\", \"functionVersion\" : \"" +functionVersion +"\", \"testSuiteVersion\" : \"" +testSuiteVersion +"\", \"bounceCounter\" : \"0\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{\"functionId\": " + functionID + ", \"functionVersion\" : \"" +functionVersion +"\", \"testSuiteVersion\" : \"" +testSuiteVersion +"\", \"bounceCounter\" : \"0\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
 	}
 
 

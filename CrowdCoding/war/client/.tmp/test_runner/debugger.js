@@ -207,7 +207,7 @@ Debugger.instrumentTreeNode = function(node,scope){
 
 Debugger.logValue = function(value,logObject,context,isCallee){
     if( logObject.callee ){
-        logObject.inputs = value.inputs;
+        logObject.inputsKey = value.inputsKey;
         value  = value.output;
     }
 
@@ -222,13 +222,13 @@ Debugger.logValue = function(value,logObject,context,isCallee){
     return value;
 };
 
-Debugger.getStub = function(functName,inputs) {
+Debugger.getStub = function(functName,inputsKey) {
     var stubs = Debugger.stubs;
 
     if( !stubs.hasOwnProperty(functName) )
         stubs[functName] = {};
 
-    var inputsKey = JSON.stringify(inputs);
+    console.log('searching stub for',functName,inputsKey,JSON.stringify(stubs));
     if( stubs[functName].hasOwnProperty(inputsKey) ){
         return stubs[functName][inputsKey];
     }
@@ -237,45 +237,41 @@ Debugger.getStub = function(functName,inputs) {
 }
 
 Debugger.getAllStubs = function(){
-    // var stubs = {};
-    // var functions = Debugger.functions;
-    // for( var name in functions ){
-    //     stubs[name] = !functions[name].stubs ? {} : functions[name].stubs;
-    // }
     return Debugger.stubs;
 }
 
-Debugger.logCall = function(name,inputs,output){
+Debugger.logCall = function(functionName,inputsKey,output){
+
+    
     var logObject = {
-        inputs : inputs,
         output : output
     };
 
-    var stubKey = JSON.stringify(inputs);
-
     // log the call as a stub
-    if( !Debugger.stubs[name] )
-        Debugger.stubs[name] = {};
+    if( !Debugger.stubs[functionName] )
+        Debugger.stubs[functionName] = {};
 
-    Debugger.stubs[name][stubKey] = logObject;
-
+    if( !Debugger.stubs[functionName][inputsKey] )
+        Debugger.stubs[functionName][inputsKey] = {};
+    
+    Debugger.stubs[functionName][inputsKey].output = output;
 
     // log the call in the calls list
-    if( !Debugger.logs.calls[name] )
-        Debugger.logs.calls[name] = {};
+    // if( !Debugger.logs.calls[name] )
+    //     Debugger.logs.calls[name] = {};
 
-    if( !Debugger.logs.calls[name][stubKey] )
-        Debugger.logs.calls[name][stubKey] = {};
+    // if( !Debugger.logs.calls[name][inputsKey] )
+    //     Debugger.logs.calls[name][inputsKey] = {};
     
-    Debugger.logs.calls[name][stubKey][Date.now()] = logObject;
+    // Debugger.logs.calls[name][inputsKey][Date.now()] = logObject;
 
 };
 
 
 Debugger.mockBody = function(){
-    var inputs  =  arguments;
-    var output  = null;
-    var stub    = Debugger.getStub( '%functionNameStr%', inputs );
+    var inputsKey = JSON.stringify(arguments);
+    var output    = null;
+    var stub      = Debugger.getStub( '%functionNameStr%', inputsKey );
     if( stub != -1 ){
         output = stub.output;
     } else {
@@ -285,8 +281,8 @@ Debugger.mockBody = function(){
             console.log('Exception in '+'%functionNameStr%'+': ',e);
         }
     }
-    Debugger.logCall( '%functionNameStr%', inputs, output ) ;
-    return { inputs: inputs, output: output };
+    Debugger.logCall( '%functionNameStr%', inputsKey, output ) ;
+    return { inputsKey: inputsKey, output: output };
 }
 
 function Scope(context,parent){

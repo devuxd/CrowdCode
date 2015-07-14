@@ -44,8 +44,9 @@ self.addEventListener('message', function(message){
 
 
 			var sendData = {};
+			console.log('all stub before run',Debugger.getAllStubs());
 			sendData.result = Debugger.run(data.testCode);
-			sendData.logs   = Debugger.logs.values[testedName] === undefined ? {} : Debugger.logs.values[testedName];
+			sendData.logs   = Debugger.logs.values[testedName] === undefined ? [] : Debugger.logs.values[testedName];
 			self.postMessage( JSON.stringify( sendData ) );
 
 			break;

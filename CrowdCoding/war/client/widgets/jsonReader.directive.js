@@ -3,7 +3,7 @@
 
 angular
     .module('crowdCode')
-    .directive('aceReadJson', function() {
+    .directive('jsonReader', function() {
 
 
 

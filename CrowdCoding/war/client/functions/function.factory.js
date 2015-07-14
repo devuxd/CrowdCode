@@ -24,9 +24,6 @@ angular
 				for( var testId in rec.tests ){
 					this.tests.push(new Test(rec.tests[testId]));
 				}
-
-			this.stubs = {};
-
 			return true;
 		},
 
@@ -78,7 +75,7 @@ angular
 
 			return '/**\n'
 				 + ' * '+descriptionLines.join('\n * ') + '\n'
-				 + '*/\n';
+				 + ' */\n';
 		},
 
 		//  signature is description + header
@@ -109,6 +106,20 @@ angular
 					fullCode += this.pseudoFunctions[i].description + "\n\n";
 			}
 			return fullCode;
+		},
+
+		getStubs: function(){
+			if( !this.stubs )
+				return {};
+
+			var stubs = {};
+			for( var id in this.stubs){
+				stubs[ this.stubs[id].inputsKey ] = {
+					id: id,
+					output : this.stubs[id].output,
+				}
+			}
+			return stubs;
 		},
 
 	};

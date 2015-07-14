@@ -5,7 +5,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  'functionsService','ADTService', 'microtasksService', function($scope, $rootScope,  $alert,  functionsService, ADTService, microtasksService) {
+    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  'functionsService','AdtService', 'microtasksService', function($scope, $rootScope,  $alert,  functionsService, AdtService, microtasksService) {
     // scope variables
     $scope.review = {};
     $scope.review.reviewText = "";
@@ -24,8 +24,9 @@ angular
     $scope.review.microtask = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
     $scope.review.microtask.$loaded().then(function() {
 
-
         $scope.reviewed = $scope.review.microtask;
+        console.log($scope.reviewed);
+
 
         if ($scope.reviewed.type == 'WriteTestCases') {
             //load the version of the function with witch the test cases where made
@@ -170,6 +171,10 @@ angular
         } else if ($scope.review.microtask.type == 'DescribeFunctionBehavior') {
             $scope.data = {};
             $scope.data.tests = $scope.review.microtask.submission.tests;
+            console.log($scope.data);
+        } else if ($scope.review.microtask.type == 'ImplementFunctionBehavior') {
+            $scope.data = {};
+            
             console.log($scope.data);
         }
     });

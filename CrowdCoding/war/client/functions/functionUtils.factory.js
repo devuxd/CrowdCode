@@ -2,7 +2,7 @@
 // check if a functionName is already taken
 angular
     .module('crowdCode')
-    .factory('functionUtils', [ 'functionsService', 'ADTService', function functionUtils(functionsService, ADTService) {
+    .factory('functionUtils', [ 'functionsService', 'AdtUtils', function functionUtils(functionsService, AdtUtils) {
     return {
         parse               : parse,
         validate            : validate,
@@ -25,10 +25,10 @@ angular
             header: '',
             name: '',
             code: '',
-            calleeIds: [],
-            requestedFunctions: [],
-            requestedDataTypes: [],
+            callees: []
         };
+
+
 
 
         // configure esprima to parse comment blocks
@@ -42,6 +42,8 @@ angular
         var ast = esprima.parse( text, esprimaConf);
         var commentBlocks = ast.comments;
         var commentBlocksOutside = [];
+        var requestedFunctions = [];
+        var requestedDataTypes = [];
         var requestedNames = [];
         var calleeNames = [];
 
@@ -51,8 +53,9 @@ angular
             var bodyRange = bodyNode.loc;
             var bodyText = text
                             .split('\n')
-                            .slice(bodyRange.start.line-1,bodyRange.end.line-1)
+                            .slice(bodyRange.start.line-1,bodyRange.end.line)
                             .join('\n');
+
 
 
             // filter out the comment blocks inside the body of the function
@@ -75,7 +78,7 @@ angular
 
                         var parsed = parseFunctionDoc( value );
                         requestedNames.push(parsed.name);
-                        dto.requestedFunctions.push(parsed);
+                        requestedFunctions.push(parsed);
                     }
                     // if it's a data type request block
                     else if ( value.search('@typedef') != -1 ) {
@@ -96,7 +99,10 @@ angular
                 else {
                     var functionId = functionsService.getIdByName(calleeNames[i]);
                     if(functionId!=-1)
-                        dto.calleeIds.push(functionId);
+                        dto.callees.push({
+                            id: functionId,
+                            name: calleeNames[i]
+                        });
                 }
             }
 
@@ -109,6 +115,7 @@ angular
         return {
             ast: ast,
             dto: dto,
+            requestedFunctions: requestedFunctions,
             requestedNames: requestedNames,
             calleeNames: calleeNames
         };
@@ -142,7 +149,7 @@ angular
             // let's set the value of the 'statements' for that function
             data.statements = lint.data.functions[0].metrics.statements;
         }
-        
+    
 
         // if the first linting produced errors, 
         // return now before processing the ast
@@ -198,19 +205,20 @@ angular
         }
 
         // validate the requested functions
-        parsed.dto.requestedFunctions.map(function( requested ){
+        parsed.requestedFunctions.map(function( requested ){
             if( apiFunctionNames.indexOf(requested.name) > -1 ){
                 data.errors.push('The function name '+requested.name+' is already taken!');
-            }
-            else if ( parsed.calleeNames.indexOf(requested.name) == -1 ){
-                data.errors.push('The requested function '+requested.name+' is never used. Are you sure it\'s still needed?');
             }
             else {
                 data.errors = data.errors.concat(validateFunctionDoc(requested));
             }
+            if ( parsed.calleeNames.indexOf(requested.name) == -1 ){
+                data.errors.push('The requested function '+requested.name+' is never used. Are you sure it\'s still needed?');
+            }
         });
 
         data.dto = parsed.dto;
+        data.requestedFunctions = parsed.requestedFunctions;
         
         return data;
     }
@@ -300,7 +308,7 @@ angular
         else if( parsed.returnType.length === 0 ){
             errors.push('Please, provide a return type for the function '+parsed.name);
         }
-        else if ( ! ADTService.isValidName(parsed.returnType) ) {
+        else if ( ! AdtUtils.isValidName(parsed.returnType) ) {
             errors.push('The return type '+parsed.returnType+' for the function '+parsed.name+' is not valid');
         }
         else {
@@ -310,7 +318,7 @@ angular
                 if( !par.type ){
                     errors.push('Please, specify the type for the parameter '+par.name+' of the function '+parsed.name);
                 } 
-                else if( !ADTService.isValidName(par.type)  ) {
+                else if( !AdtUtils.isValidName(par.type)  ) {
                     errors.push('The type of the parameter '+par.name+' of the function '+parsed.name+' is not valid');
                 } 
                 else if( !par.description || par.description.length < 5 ){

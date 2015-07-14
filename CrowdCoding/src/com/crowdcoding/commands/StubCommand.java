@@ -12,12 +12,12 @@ import com.googlecode.objectify.VoidWork;
 public abstract class StubCommand extends Command {
 	protected long stubId;
 
-	public static StubCommand create( List<String> inputs, String output, long functionId, boolean isApiArtifact, boolean isReadOnly ) {
-		return new Create(inputs, output, functionId, isApiArtifact, isReadOnly);
+	public static StubCommand create( String inputsKey, String output, long functionId, boolean isApiArtifact, boolean isReadOnly ) {
+		return new Create(inputsKey, output, functionId, isApiArtifact, isReadOnly);
 	}
 
-	public static StubCommand update(long stubId, List<String> inputs, String output) {
-		return new Update(stubId, inputs, output );
+	public static StubCommand update(long stubId, String output) {
+		return new Update(stubId, output );
 	}
 
 	public static StubCommand delete(long stubId) {
@@ -56,15 +56,15 @@ public abstract class StubCommand extends Command {
 	public abstract void execute(Stub Stub, String projectId);
 
 	protected static class Create extends StubCommand {
-		private List<String> inputs;
+		private String inputsKey;
 		private String output;
 		private long functionId;
 		private boolean isApiArtifact;
 		private boolean isReadOnly;
 
-		public Create( List<String> inputs, String output, long functionId, boolean isApiArtifact, boolean isReadOnly) {
+		public Create( String inputsKey, String output, long functionId, boolean isApiArtifact, boolean isReadOnly) {
 			super(0L);
-			this.inputs 	   = inputs;
+			this.inputsKey 	   = inputsKey;
 			this.output 	   = output;
 			this.functionId	   = functionId;
 			this.isApiArtifact = isApiArtifact;
@@ -72,23 +72,21 @@ public abstract class StubCommand extends Command {
 		}
 
 		public void execute(Stub stub, String projectId) {
-			new Stub(inputs, output, functionId, isApiArtifact, isReadOnly, projectId);
+			new Stub(inputsKey, output, functionId, isApiArtifact, isReadOnly, projectId);
 		}
 	}
 
 	protected static class Update extends StubCommand {
 
-		private List<String> inputs;
 		private String output;
 
-		public Update( long stubId, List<String> inputs, String output ) {
+		public Update( long stubId, String output ) {
 			super(stubId);
-			this.inputs = inputs;
 			this.output = output;
 		}
 
 		public void execute(Stub stub, String projectId) {
-			stub.update( inputs, output );
+			stub.update( output );
 		}
 	}
 

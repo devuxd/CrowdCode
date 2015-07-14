@@ -83,16 +83,17 @@ angular
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
 
-			var functionClient = functionsService.get( jobData.functionId );
+			var funct = functionsService.get( jobData.functionId+"" );
+			console.log('loaded function', jobData.functionId,funct);
 			var unsynced = false;
 
 			// CHECK THE SYNC OF THE TESTSUITE VERSION
-			if( !unsynced && functionClient.version != jobData.functionVersion ){
+			if( !unsynced && funct.version != jobData.functionVersion ){
 				unsynced = true;
 			}
 
 			// CHECK THE SYNC OF THE FUNCTION VERSION
-			if( !unsynced && functionClient.version != jobData.functionVersion ){
+			if( !unsynced && funct.version != jobData.functionVersion ){
 				unsynced = true;
 			}
 
@@ -112,18 +113,16 @@ angular
 				},500);
 			} else {
 				var runner = new TestRunnerFactory.instance();
-				var funct = functionsService.get(jobData.functionId);
 				var tests = angular.copy(funct.tests);
 
-				runner.run(tests,funct.name,funct.getFullCode()).then(function(tests){
+				runner.run(tests,funct.name,funct.getFullCode()).then(function(results){
 					var ajaxData = {
 						areTestsPassed: true,
 						failedTestId: null,
 						passedTestsId: []
 					};
 
-					tests.map(function(test){
-						console.log('TEST IS',test.result)
+					results.tests.map(function(test){
 						if( test.result.passed ){
 							ajaxData.passedTestsId.push(test.id);
 						}

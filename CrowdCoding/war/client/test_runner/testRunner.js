@@ -116,13 +116,16 @@ angular
 			var self = this;
 			var deferred = $q.defer();
 
+			
+
 			functionsService.getAll().$loaded().then(function(){
+				// create the functions array
 				var functions = {};
 				functionsService.getAll().map(function(functionObj){
 					if( functionObj.name !== name )
 						functions[functionObj.name] = {
-							code: functionObj.getFullCode()
-						}
+							code: functionObj.getFullCode(),
+						};
 				});
 
 				extraFunctions = extraFunctions || [];
@@ -131,9 +134,20 @@ angular
 					if( functionObj.name !== name )
 						functions[functionObj.name] = {
 							code: functionObj.getFullCode()
-						}
+						};
 						
 				});
+
+				// if the stubs are not defined
+				if( !stubs ){
+					stubs = {};
+					functionsService.getAll().map(function(functionObj){
+						if( functionObj.name !== name )
+							stubs[functionObj.name] = functionObj.getStubs();
+					});
+				}
+
+				console.log('stubs in test runner', stubs);
 
 				self.worker = new Worker('/client/test_runner/testrunner-worker.js');
 				// instantiate the worker
