@@ -29,7 +29,7 @@
 				<span class="clearfix"></span>
 			</div>
 			<div class="section-content padding">
-				<ace-read-js code="::funct.getSignature()" ></ace-read-js>
+				<js-reader code="::funct.getSignature()" ></js-reader>
 			</div>					
 		</div>
 
@@ -61,7 +61,7 @@
 
 			<div class="section-content padding slide from-left" ng-if="data.tests.length > 0 && data.selected == -1">
 				<div class="tests-list">
-					<div class="test-item" ng-repeat="t in data.tests track by $index">
+					<div class="test-item clickable" ng-repeat="t in data.tests track by $index">
 						<div ng-click="toggleSelect($event,t)">
 							<span class="pull-left">
 								<strong> it </strong>

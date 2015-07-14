@@ -201,8 +201,6 @@ rgba(237,90,48,1)  Valencia - orange - review
 	background-color: white;
 }
 
-/* --------- CODEMIRROR OVERWRITE ---------  */
-.CodeMirror { border: none; font-size: 1.1em;}
 
 /* --------- ACE JSON OVERWRITE ---------  */
 
@@ -307,6 +305,11 @@ h1, h2, h3, h4 {
 
 	width:100%;
 	overflow:hidden;
+}
+
+
+.clickable {
+	cursor:pointer;
 }
 
 .btn-bar {
@@ -830,7 +833,7 @@ span.rating-star.full {
 }
 
 
-.stars-container { margin:10px; }
+.stars-container { margin:5px; }
 .stars-separator { float:left; content:'s'; width:1px; height:25px; background-color: black;}
 .star {
 	background-image: url('/img/stars.png');
@@ -848,7 +851,7 @@ span.rating-star.full {
 .rating-result {
 	font-weight: bold;
 	font-family: 'Lato';
-	margin:10px;
+	margin:5px;
 	line-height:25px;
 	text-transform: uppercase;
 }
@@ -1270,10 +1273,8 @@ pre.json .jsonKey { color: black; }
 	font-family: 'Lato';
 	background-color: rgb(235, 235, 235);
 	padding: 5px;
-	cursor: pointer;
 }
-
-.test-item:hover {
+.test-item.clickable {
 	background-color: rgb(229, 229, 229);
 }
 
@@ -1342,4 +1343,14 @@ pre.json .jsonKey { color: black; }
 
 .btn-run {
 	
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }

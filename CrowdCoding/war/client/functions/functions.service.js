@@ -6,7 +6,7 @@
 var fList = null;
 angular
     .module('crowdCode')
-    .factory('functionsService', ['$rootScope', '$filter', '$firebaseObject', 'firebaseUrl', 'FunctionArray', function($rootScope, $filter, $firebaseObject, firebaseUrl, FunctionArray) {
+    .factory('functionsService', ['$rootScope', '$q', '$filter', '$firebaseObject', 'firebaseUrl', 'FunctionArray', 'Function', function($rootScope, $q, $filter, $firebaseObject, firebaseUrl, FunctionArray, Function) {
 
 	var service = new function(){
 		// Private variables
@@ -98,8 +98,14 @@ angular
 
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function getVersion(id, version){
-			var ref = new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);
-			return $firebaseObject( ref );
+			var deferred = $q.defer();
+
+			var ref = new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);			
+			var obj = $firebaseObject( ref );
+			obj.$loaded().then(function(){
+				deferred.resolve(new Function(obj));
+			});
+			return deferred.promise;
 		}
 
 		// Get the function object, in FunctionInFirebase format, for the specified function name

@@ -1,9 +1,21 @@
 <div ng-controller="ReviewController">
 	
-	<div ng-if="reviewed !== undefined" ng-include="'/client/microtasks/review/review_' + reviewed.type + '.html'"></div>
+	<div class="header bg-color">
+		<span class="type  ">{{::microtask.title}} </span>
+		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
+		<span class="points">( {{::microtask.points}} pts )</span>
+		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); ">
+			<span class="glyphicon glyphicon-question-sign"></span> 
+		</button>
+		<span class="clearfix"></span>
+    </div>
+	
+	<div class="sections" 
+		 ui-layout="{ flow: 'row', dividerSize: 1 }" 
+		 ng-include="'/client/microtasks/review/review_' + reviewed.type + '.html'">
+	</div>
 
-	<alertcontainer></alertcontainer>
-
+<!--
 	<div class="section-cols" >
 		<div class="container-flex-row">
 			<div class="section section-help bg-color-alpha" style="width:30%">
@@ -62,5 +74,5 @@
 
 		</div>
 	</div>
-
+-->
 </div>

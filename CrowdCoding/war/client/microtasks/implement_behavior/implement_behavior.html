@@ -63,7 +63,7 @@
 			</div>
 			<div class="section-content padding slide from-left" ng-if="data.selected == -1" >
 				<div class="test-list " >
-					<div class="test-item {{ !t.running ? (t.inDispute ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) ) : '' }}" 
+					<div class="test-item clickable {{ !t.running ? (t.inDispute ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) ) : '' }}" 
 						 ng-repeat="t in data.tests track by $index">
 						<div ng-click="toggleSelect($event,t);">
 							<strong class="pull-left">
