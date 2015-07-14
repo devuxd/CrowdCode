@@ -2,6 +2,8 @@ package com.crowdcoding.entities;
 
 //import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +30,8 @@ import com.googlecode.objectify.cmd.Query;
 //@Entity
 public class Achievement
 {
-
+    
+	//@Id private long id;
 	private String condition, message;
 	private int requirement;
 	private List<String> workersAwarded = new ArrayList<String>();
@@ -43,6 +46,7 @@ public class Achievement
 		this.condition = condition;
 		this.requirement = requirement;
 		this.message = "You completed "+ this.requirement + " " + this.condition +". Congratulations!!";
+		//ofy().save().entity(this).now();
 	}
 
 
@@ -52,6 +56,7 @@ public class Achievement
 	
 	public void addWorker(String id){
 		this.workersAwarded.add(id);
+		//ofy().save().entity(this).now();
 	}
 	
 	public List<String> getList(){

@@ -12,7 +12,7 @@ import com.googlecode.objectify.VoidWork;
 public abstract class WorkerCommand extends Command
 {
 	protected String workerID;
-	protected static AchievementManager achievementManager = new AchievementManager();
+
 	
 	public static WorkerCommand awardPoints(String workerID, int points)
 	{ return new AwardPoints(workerID, points); }
@@ -22,7 +22,7 @@ public abstract class WorkerCommand extends Command
 	
 
 	public static WorkerCommand increaseStat(String workerID,String label, int increaseAmount)
-	{ return new IncreaseStat(workerID, label, increaseAmount, achievementManager); }
+	{ return new IncreaseStat(workerID, label, increaseAmount); }
 
 
 	private WorkerCommand(String workerID)
@@ -85,19 +85,18 @@ public abstract class WorkerCommand extends Command
 		private int increaseAmount;
 		private AchievementManager _manager;
 
-		public IncreaseStat(String workerID, String label,int increaseAmount, AchievementManager manager)
+		public IncreaseStat(String workerID, String label,int increaseAmount)
 		{
 			super(workerID);
 			this.label = label;
 			this.increaseAmount = increaseAmount;
-			this._manager = manager;
 		}
 
 		public void execute(Worker worker, Project project)
 		{
 
 			worker.increaseStat(label,increaseAmount, project.getID());
-			_manager.checkNewAchievement(worker.getUserid(), project.getID(), worker.getHistory());
+			AchievementManager.getInstance().checkNewAchievement(worker.getUserid(), project.getID(), worker.getHistory());
 		}
 
 	}

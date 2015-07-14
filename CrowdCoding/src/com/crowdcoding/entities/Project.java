@@ -54,9 +54,9 @@ public class Project
 	public static Project project;
 
 	Ref<Microtask> chiave = null;
-
+	
 	private IDGenerator idgenerator;
-
+	
 	@Id private String id;
 
 	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
@@ -103,10 +103,9 @@ public class Project
 	{
 		// set the id
 		this.id = id;
-
+		
 		// instantiate the id generator
 		idgenerator = new IDGenerator(false);
-
 		// save the project
 		ofy().save().entity(this).now();
 

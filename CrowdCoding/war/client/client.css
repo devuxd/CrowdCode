@@ -1852,6 +1852,13 @@ pre.json .jsonKey { color: black; }
 	font-weight:bold;
 }
 
+.achievements .title {
+	margin: 5px;
+	font-size:1.2em;
+	text-align: center;
+	font-weight:bold;
+}
+
 .achievements #board {
 	width: 100%;
 	height:auto;

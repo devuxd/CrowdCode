@@ -92,6 +92,9 @@ angular
 						case 'new.achievement':
 							toast.type = 'success';
 							toast.body = json.message;
+							toast.clickHandler = function(){ 
+								$rootScope.$broadcast('setLeftBarTab','achievements');
+							};
 							toaster.pop( toast ); 
 							break;
 							

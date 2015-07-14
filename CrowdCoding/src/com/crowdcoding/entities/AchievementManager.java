@@ -34,12 +34,20 @@ import com.googlecode.objectify.cmd.Query;
 
 
 
-//@Entity
+@Entity
 public class AchievementManager
 {
-
+	static AchievementManager instance = null;
 	private List<Achievement> availableAchievements = new ArrayList<Achievement>();
 	private int id;
+	
+	public static AchievementManager getInstance(){
+		if( instance == null )
+			instance = new AchievementManager();
+		
+		return instance;
+	}
+	
 	// Default constructor for deserialization
 	public AchievementManager()
 	{
