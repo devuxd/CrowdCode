@@ -9,45 +9,52 @@ angular
     // prepare the data for the view
     $scope.data = {};
     $scope.data.isComplete = false;
+    $scope.data.selected = -1;
     $scope.data.newTest = {
         description: '',
         code: '//write the test code',
         editing: true,
-        added: true
+        added: true,
     };
     // load the tests:
     // need to store the collection as array because
     // from firebase comes as an object collection
     $scope.data.tests = $scope.funct.tests.map(function(test){
-        test.editing  = false;
-        test.expanded = false;
+        test.editing = false;
+        test.edited = false;
         return angular.copy(test);
     });
 
     // expose the toggle and edit test functions to the scope
-    $scope.toggleTest = toggleTest;
-    $scope.editTest   = editTest;
+    $scope.toggleEdit   = toggleEdit;
+    $scope.toggleSelect = toggleSelect;
 
     // register the collect form data listeners 
     // and the microtask form destroy listener
     var collectOff = $scope.$on( 'collectFormData', collectFormData );
     $scope.$on('$destroy',function(){ collectOff(); });
 
-    function toggleTest(test){
-        test.expanded = !test.expanded;
-        if( !test.expanded && test.editing )
-            test.editing = false;
+    function toggleSelect($event,test){
+        if( $scope.data.selected == -1 )
+            $scope.data.selected = test;
+        else {
+            $scope.data.selected.editing = false;
+            $scope.data.selected = -1;
+        }
+            
+        $event.preventDefault();
+        $event.stopPropagation();
     }
 
-    function editTest(test,form){
-        test.edited = true;
-        test.editing = !test.editing;
-        if( test.editing && !test.expanded )
-            test.expanded = true;
-        else if( !test.editing ){
-            // check if the test was edited
-        }
+    function toggleEdit($event){
         
+        if( $scope.data.selected != -1 ) {
+            $scope.data.selected.editing = !$scope.data.selected.editing;
+            $scope.data.selected.edited = true;
+        }
+
+        $event.preventDefault();
+        $event.stopPropagation();
     }
 
     function addTest(){
@@ -61,7 +68,7 @@ angular
         var formData = {
             functionVersion    : $scope.funct.version,
             tests              : [],
-            isDescribeComplete : $scope.isComplete
+            isDescribeComplete : $scope.data.isComplete
         };
 
 
@@ -75,6 +82,7 @@ angular
                 id:          test.id,
                 description: test.description,
                 code:        test.code,
+                edited:      test.edited,
                 added:       test.added,
                 deleted:     test.deleted
             };

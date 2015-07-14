@@ -17,7 +17,7 @@ import com.googlecode.objectify.annotation.Subclass;
 public class Stub extends Artifact
 {
 	private long functionId;   //id of the stubbed function
-	private List<String> inputs;
+	private String inputsKey;
 	private String output;
 
 
@@ -30,13 +30,13 @@ public class Stub extends Artifact
 	{
 	}
 
-	public Stub(List<String> inputs, String output, long functionId, boolean isApiArtifact, boolean isReadOnly, String projectId)
+	public Stub(String inputsKey, String output, long functionId, boolean isApiArtifact, boolean isReadOnly, String projectId)
 	{
 		super(isApiArtifact, isReadOnly, projectId);
 
 
 		this.functionId = functionId;
-		this.inputs 	= inputs;
+		this.inputsKey 	= inputsKey;
 		this.output 	= output;
 
 		ofy().save().entity(this).now();
@@ -70,9 +70,8 @@ public class Stub extends Artifact
 
 	}
 
-	public void update(List<String> inputs, String output)
+	public void update(String output)
 	{
-		this.inputs	= inputs;
 		this.output	= output;
 		ofy().save().entities(this).now();
 		storeToFirebase();
@@ -89,7 +88,7 @@ public class Stub extends Artifact
 
 		FirebaseService.writeStub(new StubInFirebase(this.id,
 													 firebaseVersion,
-													 this.inputs,
+													 this.inputsKey,
 													 this.output,
 													 this.isReadOnly,
 													 this.isAPIArtifact,

@@ -1,18 +1,17 @@
-<ng-form name="functionForm">
-	<div
-		class="ace_editor js-editor"
-		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'twilight'  }" 
+<statements-progress-bar  class="function-statements"></statements-progress-bar>
+<div class="function-editor" style="">
+
+	<div 
+		style="height:100%;"
+		class="js-editor"
+		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }" 
 		ng-model="code" >
 	</div>
-	<statements-progress-bar></statements-progress-bar>
-	<div style=" " class="function-errors">
-		<span class="recap" ng-if="errors.length > 0" > 
-			{{ functionForm.code.$error.function_errors.length }} problem(s) found: 
-		</span>
-		<ul ng-if="errors.length > 0" >
-	        <li ng-repeat="e in errors track by $id($index)">
-	        	<span ng-bind="e"></span>
-	        </li>
-		</ul>
-	</div>
-</ng-form>
+</div>
+<div class="function-errors" style=""  >
+	<ul ng-if="errors.length > 0" >
+        <li ng-repeat="e in errors track by $id($index)">
+        	<span ng-bind="e"></span>
+        </li>
+	</ul>
+</div>

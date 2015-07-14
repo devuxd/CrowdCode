@@ -130,7 +130,7 @@ public abstract class FunctionCommand extends Command {
 										projectId);
 
 			for( StubDTO stub : CRFunctionDTO.stubs ){
-				StubCommand.create(stub.inputs, stub.output, funct.getId(), true, stub.isReadOnly);
+				StubCommand.create(stub.inputsKey, stub.output, funct.getId(), true, stub.isReadOnly);
 			}
 		}
 	}
@@ -177,13 +177,14 @@ public abstract class FunctionCommand extends Command {
 
 		public void execute(Function funct, String projectId) {
 
-			Function function = new Function(requestedFunction.name, requestedFunction.returnType, requestedFunction.parameters, requestedFunction.header, requestedFunction.description, "", false, false, projectId);
+			Function function = new Function(requestedFunction.name, requestedFunction.returnType, requestedFunction.parameters, requestedFunction.header, requestedFunction.description, "{\n    return -1;\n}", false, false, projectId);
 
 			function.addCaller(requestingFunctionId);
 
 			FunctionCommand.addCallee(requestingFunctionId, function.getId());
+			
 			for( StubDTO stub : requestedFunction.stubs){
-				StubCommand.create(stub.inputs, stub.output, function.getId(), false, false);
+				StubCommand.create(stub.inputsKey, stub.output, function.getId(), false, false);
 			}
 		}
 	}

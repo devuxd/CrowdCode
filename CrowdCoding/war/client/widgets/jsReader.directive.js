@@ -1,6 +1,6 @@
 angular
     .module('crowdCode')
-    .directive('aceReadJs',function($compile,functionsService) {
+    .directive('jsReader',function($compile,functionsService) {
 
     return {
         restrict: 'EA',

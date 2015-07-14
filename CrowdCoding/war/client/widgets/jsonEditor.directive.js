@@ -2,23 +2,23 @@
 
 angular
     .module('crowdCode')
-    .directive('jsonEditor', function() {
+    .directive('jsonEditor', ['AdtUtils',function(AdtUtils) {
     var stringified = false;
 
     return {
         restrict: 'EA',
 
-        template:'<div class="ace_editor json-editor" ui-ace="{ onLoad : aceLoaded, mode: \'json\', theme:\'xcode\', showGutter: true, useWrapMode : true, showLineNumbers : false }" ng-model="stringValue" ></div> ',
+        templateUrl:'/client/widgets/json_editor.html',
         scope: {
-            dataType : "@"
+            type: '@',
+            name: '@'
         },
         require: "ngModel",
 
         link: function ( scope, element, attrs, ngModel ) {
             if( ngModel == undefined ) 
                 console.log("NG MODEL NOT DEFINED");
-            scope.stringValue = 4;
-
+            
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
                 if( ngModel.$viewValue === "") 
@@ -39,7 +39,7 @@ angular
 
         },
         controller: function($scope,$element){
-
+            $scope.errors = [];
         	$scope.aceLoaded = function(_editor) {
 
         		var options = {
@@ -51,8 +51,16 @@ angular
                 });
 
                 _editor.setOptions(options);
+                _editor.session.setOptions({useWorker: false});
                 _editor.commands.removeCommand('indent');
+                _editor.on('change', onChange);
 			};
+
+            function onChange(event,editor){
+                var code = editor.getValue();
+                var validationData = AdtUtils.validate(code,$scope.type,$scope.name);  
+                $scope.errors = validationData.errors;
+            }
         }
     };
-});
+}]);

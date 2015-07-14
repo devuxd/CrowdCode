@@ -1,7 +1,7 @@
 
 angular
     .module('crowdCode')
-    .directive('examplesList',function($rootScope,$popover,ADTService){
+    .directive('examplesList',function($rootScope,$popover,AdtService){
     return {
         restrict: 'EA',
         scope:{
@@ -29,7 +29,7 @@ angular
                 var dimension=ADTName.match(/\[\]/g);
                 ADTName= ADTName.replace('[]','');
 
-                var examplesList =  ADTService.getByName(ADTName).examples;
+                var examplesList =  AdtService.getByName(ADTName).examples;
                 
                 //if the ADT is multidimensional adds the square brackets to all values of the examples
                 if(dimension!==null){

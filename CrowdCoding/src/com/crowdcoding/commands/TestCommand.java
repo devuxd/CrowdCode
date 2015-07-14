@@ -73,6 +73,7 @@ public abstract class TestCommand extends Command {
 		}
 
 		public void execute(Test test, String projectId) {
+			System.out.println("CREATING TEST "+description);
 			new Test(description, code, functionId, isApiArtifact, isReadOnly, projectId);
 		}
 	}
@@ -89,6 +90,7 @@ public abstract class TestCommand extends Command {
 		}
 
 		public void execute(Test test, String projectId) {
+			System.out.println("UPDATING TEST "+description);
 			test.update( description, code );
 		}
 	}

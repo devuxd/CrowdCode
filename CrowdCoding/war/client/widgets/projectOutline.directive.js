@@ -1,15 +1,15 @@
 angular
     .module('crowdCode')
-    .directive('projectOutline', ['ADTService','functionsService', projectOutline]);
+    .directive('projectOutline', ['AdtService','functionsService', projectOutline]);
 
-function projectOutline(ADTService, functionsService) {
+function projectOutline(AdtService, functionsService) {
     return {
         restrict: 'E',
         templateUrl: '/client/widgets/project_outline.template.html',
         controller: function($scope, $element) {
 
             $scope.functions = functionsService.getAll();
-            $scope.dataTypes = ADTService.getAll();
+            $scope.dataTypes = AdtService.getAll();
 
 
             $scope.buildAdtDetail = function(adt){

@@ -1,8 +1,6 @@
-
-
 angular
     .module('crowdCode')
-    .directive('aceReadJsonDiff', function() {
+    .directive('jsonDiffReader', function() {
 
 
     return {

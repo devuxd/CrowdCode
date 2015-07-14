@@ -650,7 +650,9 @@ oop.inherits(LogTooltip, Tooltip);
             function editStub(){
                 if( self.callbacks.hasOwnProperty('editStub') ){
                     var log = self.logs[self.currIt];
-                    self.callbacks.editStub.call(null,log.callee,log.inputs);
+                    console.log(log);
+                    self.callbacks.editStub.call(null,log.callee,log.inputsKey);
+                    unlockAndHide();
                 }
             }
         }

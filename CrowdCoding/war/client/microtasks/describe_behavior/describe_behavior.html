@@ -1,135 +1,138 @@
 <div  ng-controller="DescribeBehavior">
     
-
-    <div class="section section-description " >
-        <div ng-include="'/client/microtasks/microtask_title.html'"></div>
-        <div class="section-content  job-description" >
-            Describe the behavior of this function
-        </div>
+	<div class="header bg-color">
+		<span class="type  ">{{::microtask.title}}</span>
+		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
+		<span class="points">( {{::microtask.points}} pts )</span>
+		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); ">
+			<span class="glyphicon glyphicon-question-sign"></span> 
+		</button>
+		<span class="clearfix"></span>
     </div>
 
-    <div class="section section-description" id="functionSignature">
-
-		<div class="section-title" >
-			<div class="dot bg-color"></div>
-			FUNCTION DESCRIPTION
+    <div class="sections" ui-layout="{ flow: 'row', dividerSize: 1 }">
+    	
+    	<div class="section bg-color-alpha padding" ui-layout-container size="15%">
+			Describe the behaviors of this function				
 		</div>
 
-		<div class="section-link" ng-hide="funct.readOnly || dispute.active" >
-			<a ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
-				Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
-			</a>
+		<div class="section" ui-layout-container size="30%">
+			<div class="section-bar">
+				<span class="title">
+					Function Description
+				</span>
+				<span class="pull-right">
+					<button class="btn btn-mini" ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
+						Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
+					</button>
+				</span>
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content padding">
+				<ace-read-js code="::funct.getSignature()" ></ace-read-js>
+			</div>					
 		</div>
 
-		<div class="section-content no-padding">
-			<ace-read-js code="::funct.getSignature()" ></ace-read-js>
-		</div>
-		
-	</div>
+		<div class="section" ui-layout-container size="25%">	
+			<div class="section-bar">
+				<span class="pull-left title" ng-if="data.selected == -1">
+					Previous described behaviors
+				</span>
 
-	<div class="section no-padding" ng-if="data.tests.length > 0">
-		<div class="section-title"><div class="dot bg-color"></div>Previous described behaviors</div>
+				<span class="pull-left" ng-if="data.selected != -1">
+					<button class="btn btn-sm" ng-click="toggleSelect($event)">
+						<span class="glyphicon glyphicon-arrow-left"></span>
+					</button>
+				</span>
 
-		<div class="section-content">
+				<span class="pull-right" ng-if="data.selected != -1">
+					<button 
+						class="btn btn-mini btn-filled {{ data.selected.editing ? 'active' : '' }}" 
+						ng-click="toggleEdit($event)">
+						<span class="glyphicon glyphicon-edit" ></span> Edit
+					</button> 
+				</span>
 
-			<div class="tests-list" >
-				<div class="test-item" ng-repeat="t in data.tests track by $index" ng-form="testForm" >
-					<div class="toggler bg-color-alpha" ng-click="toggleTest(t)">
-						<span class="pull-left">
-							<strong> it </strong>
-							<span ng-bind="t.description"></span>
-						</span> 
-						<span class="pull-right">
-							<button 
-								class="btn btn-mini {{ t.editing ? 'btn-primary' : '' }}" 
-								ng-click="editTest(t,testForm); $event.stopPropagation();">
-								<span class="glyphicon glyphicon-edit" ></span> Edit
-							</button> 
-						</span>
-						<span class="clearfix"></span>
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content empty" ng-if="data.tests.length == 0">
+				<div>No previous behaviors described!</div>
+			</div>
+
+			<div class="section-content padding slide from-left" ng-if="data.tests.length > 0 && data.selected == -1">
+				<div class="tests-list">
+					<div class="test-item" ng-repeat="t in data.tests track by $index">
+						<div ng-click="toggleSelect($event,t)">
+							<span class="pull-left">
+								<strong> it </strong>
+								<span ng-bind="t.description"></span>
+							</span> 
+							<span class="pull-right">
+								details
+							</span>
+							<span class="clearfix"></span>
+						</div>
 					</div>
-					<div class="form" ng-if="t.expanded">
-						<div class="form-group" ng-if="t.editing">
+				</div>
+			</div>					
+			<div class="section-content padding slide from-right" ng-if="data.tests.length > 0 && data.selected != -1">
+				<div class="form" >
+					<div class="form-group" ng-if="t.editing">
+						<div class="input-group" >
+					      <span class="input-group-addon">it</span>
+					      <input 
+					      	class="form-control" 
+					      	name="description" 
+					      	ng-model="data.selected.description"
+					      />
+					    </div>
+					</div>
+					<div class="form-group">
+						<test-editor test="data.selected" tested-function="funct"></test-editor>
+					</div>	
+				</div>
+			</div>					
+		</div>
+
+		<div class="section" ui-layout-container size="30%">	
+			<div class="section-bar">
+				<span class="title" ng-if="!data.isComplete">
+					Describe a new behavior
+				</span>
+				<span class="pull-right" ng-if="data.tests.length > 0">
+					<input type="checkbox" ng-model="data.isComplete" ng-click="t.editing = !t.editing"> 
+				the function is completely described by the previous behaviors
+				</span>
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content" ng-if="!data.isComplete">
+				<div ng-init="t = data.newTest">
+					<div ng-form="newTestForm" class="form" >
+						<div class="form-group">
 							<div class="input-group" >
 						      <span class="input-group-addon">it</span>
 						      <input 
 						      	class="form-control" 
 						      	name="description" 
 						      	ng-model="t.description"
-						      	sync-focus-with="t.editing"
+						      	placeholder="insert a behavior description"
 						      />
 						    </div>
+							
 						</div>
 						<div class="form-group">
-							<test-editor test="t"></test-editor>
+							<test-editor test="t" tested-function="funct"></test-editor>
 						</div>
-						
+						<div class="form-group">
+							
+						</div>
 					</div>
 				</div>
-			</div>
+			</div>	
 
+			<div class="section-content empty" ng-if="data.isComplete">
+			</div>				
 		</div>
 	</div>
-
-		
-	<div class="section no-padding">
-		<div class="section-title">
-			<span><div class="dot bg-color"></div>Describe a new behavior</span>
-			<span class="pull-right" ng-if="data.tests.length > 0"> 
-				<input type="checkbox" ng-model="data.isComplete" ng-click="t.editing = !t.editing"> 
-				the function is completely described by the previous behaviors {{data.isComplete}}
-			</span>
-			<span class="clearfix"></span>
-		</div>
-
-		<div class="section-content">
-
-
-			<div ng-init="t = data.newTest" class="test-item">
-				<div ng-form="newTestForm" class="form" ng-if="t.editing">
-					<div class="form-group">
-						<div class="input-group" >
-					      <span class="input-group-addon">it</span>
-					      <input 
-					      	class="form-control" 
-					      	name="description" 
-					      	ng-model="t.description"
-					      	placeholder="insert a behavior description"
-					      />
-					    </div>
-						
-					</div>
-					<div class="form-group">
-						<test-editor test="t" tested-function="funct"></test-editor>
-					</div>
-					<div class="form-group">
-						
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-<!--
-	<div class="section section-form">
-
-		<div class="section-title" >
-			<div class="dot bg-color"></div>
-			Describe new behavior
-		</div>
-		<div class="section-content">
-			<div class="form-group">
-				<input class="form-control" ng-model="newTest.description"></input>
-			</div>
-			<div class="form-group">
-				<test-editor code="newTest.code"></test-editor>
-			</div>
-
-			<div ng-if="microtask.promptType == 'WRITE' ">
-				<label><input type="checkbox" ng-model="isComplete">No more behaviors to describe</label>
-			</div>
-		</div>
-
-	</div>
-    -->
 
 </div>

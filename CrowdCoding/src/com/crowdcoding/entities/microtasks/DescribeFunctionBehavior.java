@@ -189,7 +189,7 @@ public class DescribeFunctionBehavior extends Microtask
 
 	public String microtaskTitle()
 	{
-		return "DescribeFunctionBehavior";
+		return "Describe Function Behavior";
 	}
 
 	public String microtaskDescription()

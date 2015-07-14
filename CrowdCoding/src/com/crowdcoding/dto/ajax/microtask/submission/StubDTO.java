@@ -10,7 +10,8 @@ import com.crowdcoding.entities.artifacts.Test;
 
 public class StubDTO extends DTO
 {
-	public List<String> inputs;
+	public long id;
+	public String inputsKey;
 	public String output;
 	public boolean isReadOnly = false;
 

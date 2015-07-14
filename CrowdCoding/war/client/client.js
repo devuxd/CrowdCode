@@ -28,7 +28,7 @@ angular
     .constant('projectId'  ,projectId)
 	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
 	.constant('logoutUrl'  ,logoutURL)
-	.run(function($rootScope, $interval, $modal, $firebaseArray,  firebaseUrl, logoutUrl, userService,  functionsService, ADTService, avatarFactory, questionsService, notificationsService, newsfeedService ){
+	.run(function($rootScope, $interval, $modal, $firebaseArray,  firebaseUrl, logoutUrl, userService,  functionsService, AdtService, avatarFactory, questionsService, notificationsService, newsfeedService ){
 
 		// current session variables
 		$rootScope.projectId    = projectId;
@@ -58,7 +58,7 @@ angular
 		function loadServices(){
 			servicesLoadingStatus = {};
 			functionsService.init();
-			ADTService.init();
+			AdtService.init();
 			questionsService.init();
 			notificationsService.init();
 			newsfeedService.init();
