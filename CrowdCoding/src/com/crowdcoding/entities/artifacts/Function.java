@@ -337,15 +337,12 @@ public class Function extends Artifact
 	{
 		isImplementationInProgress = false;
 
-		if( dto.functionNotImplementable ){
-			deactivateFunction(dto.disputeFunctionText);
-		}
-		else{
+
 			if(disputantId!=0){
 				notifyTestDisputeCompleted(disputantId);
 			}
 			onWorkEdit(dto.function, projectId);
-		}
+
 	}
 
 	private void checkIfNeeded()
