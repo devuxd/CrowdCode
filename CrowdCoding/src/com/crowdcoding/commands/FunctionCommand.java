@@ -27,8 +27,7 @@ public abstract class FunctionCommand extends Command {
 		return new CreateRequestedFunction( requestingFunctionId, requestedFunction);
 	}
 
-	public static FunctionCommand removeCaller(long functionId,
-			long callerFunctionID) {
+	public static FunctionCommand removeCaller(long functionId,	long callerFunctionID) {
 		return new RemoveCaller(functionId, callerFunctionID);
 	}
 

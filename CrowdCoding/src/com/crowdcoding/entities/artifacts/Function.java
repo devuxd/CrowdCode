@@ -23,6 +23,7 @@ import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.StubDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDisputedDTO;
 import com.crowdcoding.dto.firebase.artifacts.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior;
 import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior.PromptType;
@@ -214,7 +215,7 @@ public class Function extends Artifact
 
 		// Looper over all of the callers, rebuilding our list of callers
 		rebuildCalleeList(dto.callees);
-		
+
 		// create the stubs for the given callees
 		createCalleeStubs(dto.callees);
 
@@ -235,7 +236,7 @@ public class Function extends Artifact
         this.paramNames.clear();
         this.paramTypes.clear();
         this.paramDescriptions.clear();
-        
+
         //creates the updated ones
         for(FunctionParameterDTO parameter : parameters)
         {
@@ -315,6 +316,10 @@ public class Function extends Artifact
 		System.out.println("DTO RECEIVED : "+dto.json());
 		describeFunctionBehaviorOut = null;
 
+		if(dto.disputeFunctionText !=null){
+			queueImplementFunctionBehavior( new ImplementBehavior(this, dto.disputeFunctionText, projectId) );
+		}
+
 		//goes throug all the test to add delete or update them
 		for( TestDTO testDTO : dto.tests ){
 			if(testDTO.deleted)
@@ -338,18 +343,23 @@ public class Function extends Artifact
 	{
 		isImplementationInProgress = false;
 
-		if( dto.functionNotImplementable ){
-			deactivateFunction(dto.disputeFunctionText);
+		//create a descrbie function behavior for each disputed test
+		for( TestDisputedDTO disputedTest : dto.disputedTests){
+			queueDescribeFunctionBehavior(  new DescribeFunctionBehavior(
+												this.getRef(),
+												getId(),
+												name,
+												disputedTest.id,
+												disputedTest.disputeText,
+												projectId));
 		}
-		else{
-			if(disputantId!=0){
-				notifyTestDisputeCompleted(disputantId);
-			}
-			
-			createRequestedFunctions(dto.requestedFunctions);
-			
-			onWorkEdit(dto.function, projectId);
-		}
+
+		// creates all the function requested if any
+		createRequestedFunctions(dto.requestedFunctions);
+
+		// update the submitted function
+		onWorkEdit(dto.function, projectId);
+
 	}
 
 	private void checkIfNeeded()
@@ -559,9 +569,9 @@ public class Function extends Artifact
 	{
 		for(FunctionDTO callee: callees){
 			for(StubDTO stub : callee.stubs){
-				if( stub.id == 0) 
+				if( stub.id == 0)
 					StubCommand.create(stub.inputsKey, stub.output, callee.id, false, false);
-				else 
+				else
 					StubCommand.update(stub.id, stub.output);
 			}
 		}
