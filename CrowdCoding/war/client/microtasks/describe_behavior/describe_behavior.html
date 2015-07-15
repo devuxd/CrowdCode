@@ -10,19 +10,19 @@
 		<span class="clearfix"></span>
     </div>
 
-    <div class="sections" ui-layout="{ flow: 'row', dividerSize: 1 }">
+    <div class="sections">
     	
-    	<div class="section bg-color-alpha padding" ui-layout-container size="15%">
+    	<div class="section bg-color-alpha padding" style="height:15%;">
 			Describe the behaviors of this function				
 		</div>
 
-		<div class="section" ui-layout-container size="30%">
+		<div class="section"  style="height:30%;">
 			<div class="section-bar">
 				<span class="title">
 					Function Description
 				</span>
 				<span class="pull-right">
-					<button class="btn btn-mini" ng-click="dispute.toggle(); $event.preventDefault(); $event.stopPropagation();">
+					<button class="btn btn-mini" ng-click="data.dispute.active = !data.dispute.active;" ng-if="!data.dispute.active">
 						Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
 					</button>
 				</span>
@@ -33,7 +33,28 @@
 			</div>					
 		</div>
 
-		<div class="section" ui-layout-container size="25%">	
+
+		<div class="section" style="height:30%;" ng-if="data.dispute.active">
+			<div class="section-bar">
+				<span class="title pull-left">Dispute Function Description</span>
+				<span class="pull-right">
+					<button class="btn btn-mini" ng-click="data.dispute.active = !data.dispute.active;" >
+						Cancel Dispute
+					</button>
+				</span>
+				<span class="clearfix"></span>
+			</div>
+
+			<div class="section-content">
+				<div class="form">
+					<div class="form-group">
+						<textarea name="disputeDescription" class="form-control" ng-model="data.dispute.text"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="section"  style="height:25%;" ng-if="!data.dispute.active">	
 			<div class="section-bar">
 				<span class="pull-left title" ng-if="data.selected == -1">
 					Previous described behaviors
@@ -75,26 +96,40 @@
 					</div>
 				</div>
 			</div>					
+
 			<div class="section-content padding slide from-right" ng-if="data.tests.length > 0 && data.selected != -1">
 				<div class="form" >
-					<div class="form-group" ng-if="t.editing">
-						<div class="input-group" >
-					      <span class="input-group-addon">it</span>
-					      <input 
-					      	class="form-control" 
-					      	name="description" 
-					      	ng-model="data.selected.description"
-					      />
-					    </div>
+					<div class="form-group" >
+						<div class="col-md-2 control-label">
+							description
+						</div>
+						<div class="col-md-10">
+							<span ng-if="!data.selected.editing">
+								it <span ng-bind="data.selected.description"></span>
+							</span>
+							<span class="input-group" ng-if="data.selected.editing">
+								<span class="input-group-addon">it</span>
+								<input 
+									class="form-control" 
+									name="description" 
+									ng-model="data.selected.description"
+								/>
+							</span>
+						</div>
 					</div>
 					<div class="form-group">
-						<test-editor test="data.selected" tested-function="funct"></test-editor>
+						<div class="col-md-2 control-label">
+							code
+						</div>
+						<div class="col-md-10">
+							<test-editor test="data.selected" tested-function="funct"></test-editor>
+						</div>
 					</div>	
 				</div>
 			</div>					
 		</div>
 
-		<div class="section" ui-layout-container size="30%">	
+		<div class="section"  style="height:30%;" ng-if="!data.dispute.active">	
 			<div class="section-bar">
 				<span class="title" ng-if="!data.isComplete">
 					Describe a new behavior

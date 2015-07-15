@@ -122,6 +122,14 @@ angular
 			return stubs;
 		},
 
+		getTestById : function(id){
+			for( var i = 0 ; i < this.tests.length ; i ++)
+				if( this.tests[i].id == id )
+					return this.tests[i];
+
+			return null;
+		}
+
 	};
 
 	return Function;

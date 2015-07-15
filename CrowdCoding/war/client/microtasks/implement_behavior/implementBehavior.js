@@ -19,7 +19,6 @@ angular
 
     // the data object is used inside the view
     $scope.data = {};
-    $scope.data.try = 6;
     $scope.data.running = false;
     $scope.data.changedSinceLastRun  = null;
     $scope.data.inspecting = false;
@@ -27,7 +26,7 @@ angular
     $scope.data.tests = $scope.funct.tests.map(function(test){
         test.editing = true;
         test.running = true;
-        test.inDuspute = false;
+        test.dispute = { active:false, text: 'aa' };
         return angular.copy(test);
     });
 
@@ -106,10 +105,10 @@ angular
     }
 
     function toggleDispute($event){
-        $scope.data.selected.inDispute = !$scope.data.selected.inDispute;
+        $scope.data.selected.dispute.active = !$scope.data.selected.dispute.active;
 
-        if( $scope.data.selected.inDispute ){
-            $scope.data.selected.disputeText = "";
+        if( $scope.data.selected.dispute.active ){
+            $scope.data.selected.dispute.text = "";
         }
            
         $event.preventDefault();
@@ -121,11 +120,18 @@ angular
             'function': functionDto,
             requestedFunctions: requestedFunctions,
             requestedADTs: [],
-            disputedTests: [],
-            disputeFunctionText: '',
-            functionNotImplementable: false
+            disputedTests: []
         };
 
+        // add the disputed tests
+        $scope.data.tests.map(function(test){
+            if( test.dispute.active ){
+                formData.disputedTests.push({
+                    id: test.id,
+                    disputeText: test.dispute.text
+                });
+            }
+        });
 
         // add the callee stubs
         formData.function.callees.map(function(callee){
@@ -159,7 +165,6 @@ angular
             }
         });
 
-        console.log(formData);
         $scope.$emit('submitMicrotask', formData);
     }
 

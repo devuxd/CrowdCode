@@ -316,7 +316,7 @@ public class Function extends Artifact
 		System.out.println("DTO RECEIVED : "+dto.json());
 		describeFunctionBehaviorOut = null;
 
-		if(dto.disputeFunctionText !=null){
+		if(dto.disputeFunctionText != null){
 			queueImplementFunctionBehavior( new ImplementBehavior(this, dto.disputeFunctionText, projectId) );
 		}
 

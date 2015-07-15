@@ -5,9 +5,10 @@
 angular
     .module('crowdCode')
     .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory) {
-    
+    console.log($scope.microtask);
     // prepare the data for the view
     $scope.data = {};
+    $scope.data.dispute = { active: false, text: '' }; 
     $scope.data.isComplete = false;
     $scope.data.selected = -1;
     $scope.data.newTest = {
@@ -68,25 +69,31 @@ angular
         var formData = {
             functionVersion    : $scope.funct.version,
             tests              : [],
-            isDescribeComplete : $scope.data.isComplete
+            isDescribeComplete : $scope.data.isComplete,
+            disputeFunctionText : ''
         };
 
+        if( $scope.data.dispute.active ){
+            formData.disputeFunctionText = $scope.data.dispute.text;
+        }
+        else {
+            // add the current test to the list
+            if( !$scope.data.isComplete )
+                addTest();
 
-        // add the current test to the list
-        if( !$scope.data.isComplete )
-            addTest();
-
-        // for each of the tests, create a testDTO object
-        formData.tests = $scope.data.tests.map(function(test){
-            return {
-                id:          test.id,
-                description: test.description,
-                code:        test.code,
-                edited:      test.edited,
-                added:       test.added,
-                deleted:     test.deleted
-            };
-        });
+            // for each of the tests, create a testDTO object
+            formData.tests = $scope.data.tests.map(function(test){
+                return {
+                    id:          test.id,
+                    description: test.description,
+                    code:        test.code,
+                    edited:      test.edited,
+                    added:       test.added,
+                    deleted:     test.deleted
+                };
+            }); 
+        }
+        
 
         console.log(formData);
 

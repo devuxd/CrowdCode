@@ -168,18 +168,35 @@ angular
             }
         } else if ($scope.review.microtask.type == 'DescribeFunctionBehavior') {
             $scope.data = {};
-            $scope.data.tests = $scope.review.microtask.submission.tests;
+
+            if( $scope.review.microtask.submission.disputeFunctionText.length > 0){
+                $scope.data.disputeText = $scope.review.microtask.submission.disputeFunctionText;
+            }
+            else {
+                $scope.data.tests = $scope.review.microtask.submission.tests;
+            }
 
             functionsService
-                .getVersion($scope.review.microtask.functionId,$scope.review.microtask.submission.functionVersion)
-                .then(function( functObj ){
-                    $scope.data.funct = functObj;
-                });
+                    .getVersion($scope.review.microtask.functionId,$scope.review.microtask.submission.functionVersion)
+                    .then(function( functObj ){
+                        $scope.data.funct = functObj;
+                    });
 
         } else if ($scope.review.microtask.type == 'ImplementBehavior') {
             $scope.data = {};
             $scope.data.funct = new Function($scope.review.microtask.submission['function']);
-            console.log('data',$scope.data);
+
+            if( $scope.review.microtask.submission.disputedTests ){
+
+                var loadedFunct = functionsService.get($scope.review.microtask.functionId);
+                $scope.data.disputedTests = $scope.review.microtask.submission.disputedTests
+                    .map(function(test){
+                        var testObj = loadedFunct.getTestById(test.id);
+                        testObj.disputeText = test.disputeText;
+                        return testObj;
+                    });
+
+            }
         }
     });
 

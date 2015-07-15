@@ -369,7 +369,7 @@ h1, h2, h3, h4 {
 	top: 0px;
 	left: 0px;
 	height:30px;
-	color:white;
+	color:rgb(85, 85, 85);
 }
 
 .task .header .type, 
@@ -392,8 +392,11 @@ h1, h2, h3, h4 {
 .task .header .btn:hover { color:#555;}
 
 .task .sections {
-	margin-top:30px;
-	background-color:white;
+	position: absolute;
+	top: 30px;
+	left: 0px;
+	right:0px;
+	bottom:0px;
     overflow-x:hidden;
     overflow-y:auto;
 }
@@ -944,7 +947,8 @@ tutorial  { display:none; }
 
 
 /* MICROTASK CONTAINER SECTIONS */
-.section {}
+.section { position:relative; 
+	background-color:white; }
 .section-bar {
 	background-color: rgb(235, 235, 235);
 	position: absolute;
@@ -984,7 +988,8 @@ tutorial  { display:none; }
 	left: 0px;
 	right: 0px;
 	bottom:0px;
-	overflow:auto;
+	overflow-x:none;
+	overflow-y:auto;
 	background-color:white;
 }
 .section-content.empty {
@@ -1331,6 +1336,10 @@ pre.json .jsonKey { color: black; }
 { margin-left: 0%; }
 
 
+.btn-filled.active {
+	background-color:rgb(109, 146, 171);;
+	color:white;
+}
 .btn-inspect.active {
 	background-color:rgb(109, 146, 171);;
 	color:white;

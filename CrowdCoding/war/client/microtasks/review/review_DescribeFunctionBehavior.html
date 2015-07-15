@@ -1,9 +1,9 @@
-<div class="section bg-color-alpha padding" ui-layout-container size="10%">
+<div class="section bg-color-alpha padding" style="height:10%">
 	review the described behaviors		
 </div>
 
 
-<div class="section" ui-layout-container size="25%">
+<div class="section" style="height:25%">
 	<div class="section-bar">
 		<span class="title">Function Description</span>
 	</div>
@@ -12,7 +12,7 @@
 	</div>
 </div>
 
-<div class="section" ui-layout-container size="45%">
+<div class="section" style="height:45%" ng-if="data.disputeText === undefined">
 	<div class="section-bar">
 		<span class="title">Described behaviors</span>
 	</div>
@@ -29,4 +29,14 @@
 	</div>
 </div>
 
-<div class="section" ui-layout-container size="20%" ng-include="'/client/microtasks/review/review_form.html'"></div>
+
+<div class="section" style="height:45%" ng-if="data.disputeText !== undefined">
+	<div class="section-bar">
+		<span class="title">Dispute description</span>
+	</div>
+	<div class="section-content padding">
+		<span ng-bind="data.disputeText"></span>
+	</div>
+</div>
+
+<div class="section" style="height:20%" ng-include="'/client/microtasks/review/review_form.html'"></div>
