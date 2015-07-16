@@ -359,6 +359,8 @@ public class Function extends Artifact
 
 		// update the submitted function
 		onWorkEdit(dto.function, projectId);
+		
+		
 
 	}
 
