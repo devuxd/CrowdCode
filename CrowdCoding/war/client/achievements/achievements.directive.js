@@ -17,15 +17,19 @@ function achievements($firebase, iconFactory, firebaseUrl, workerId) {
 
 
 angular.module('crowdCode').filter('byCurrent', function () {
+
     return function (listOfachievements) {
+       	var types = [];
         var items = {
             out: []
         };
         angular.forEach(listOfachievements, function (value, key) {
-            if (value.current > 0 && !value.isUnlocked  && this.out.length < 3) {
+            if (!value.isUnlocked  && this.out.length < 3 && types.indexOf(value.condition) == -1) {
                 this.out.push(value);
+                types.push(value.condition);
             }
         }, items);
+        types = [];
         return items.out;
     };
 });

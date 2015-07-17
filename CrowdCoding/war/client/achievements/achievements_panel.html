@@ -3,9 +3,9 @@
 		<div class="subTitle" style="color:yellow">Next Achievements:</div>
 			<div id="board" >	
 			<div id="columns">	
-			  	<div class="pin" ng-repeat="(i,achievement) in listOfachievements | byCurrent"
+			  	<div class="pin" ng-repeat="(i,achievement) in listOfachievements | orderBy:'-(current/requirement)' | byCurrent"
 					style="height:{{achievement.height}}px" >
-			  	<div class="icon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
+			  	<div class="grayIcon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
 								
 				<div class="title">{{achievement.condition}}</div>			
 				<div class="info">Completed {{achievement.current}} of {{achievement.requirement}} {{achievement.condition}}.</div>

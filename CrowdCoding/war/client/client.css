@@ -1865,8 +1865,18 @@ pre.json .jsonKey { color: black; }
 	padding:10px;
 }
 
-.achievements .icon { float:left;width:30px;height:100%; }
+.achievements .icon { 
+	float:left;
+	width:30px;
+	height:100%; 
+}
 
+.achievements .grayIcon { 
+	float:left;
+	width:30px;
+	height:100%; 
+	-webkit-filter: grayscale(100%);
+}
 .achievements .subTitle {
 	width:100%;	
 	background-color: rgb(40,40,40);
@@ -1877,6 +1887,8 @@ pre.json .jsonKey { color: black; }
 	padding-left:5px;
 	padding-top:5px;
 }
+
+.achievements .grayscale  {-webkit-filter: grayscale(100%);}
 
 /* Chrome, Safari, Opera */
 @-webkit-keyframes popout {
