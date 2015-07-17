@@ -1,4 +1,8 @@
-11
+15
+submits 5
+submits 1
+good_review 1
+perfect_review 3
 test_cases 5
 tests 5
 microtasks 5

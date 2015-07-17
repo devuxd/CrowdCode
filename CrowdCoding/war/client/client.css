@@ -1820,6 +1820,18 @@ pre.json .jsonKey { color: black; }
 }
 
 /* ACHIEVEMENTS CSS */
+
+.achievements.container-fluid {
+	background-color:#D3D3D3;
+	overflow: auto;	
+  	position: absolute;
+ 	top: 0px;
+  	bottom: 0px;
+	height: 100%;
+}
+
+.achievements::-webkit-scrollbar { width: 0 !important }
+
 .achievements .pin {
 	
 	width:100%;

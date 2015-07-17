@@ -17,7 +17,6 @@ function achievements($firebase, iconFactory, firebaseUrl, workerId) {
 
 
 angular.module('crowdCode').filter('byCurrent', function () {
-
     return function (listOfachievements) {
        	var types = [];
         var items = {
