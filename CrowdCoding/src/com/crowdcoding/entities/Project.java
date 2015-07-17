@@ -490,6 +490,7 @@ public class Project
 	// If the microtask has previously been submitted or is no longer open, the submission is
 	// dropped, ensuring workers cannot submit against already completed microtasks.
 	public void submitMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, Project project){
+		WorkerCommand.increaseStat(workerID, "submits",1);
 		Microtask microtask = ofy().load().key( microtaskKey ).now();
 		if(microtask!=null){			
 			// submit only if the request come from
@@ -571,6 +572,7 @@ public class Project
 	// Precondition - the worker must be assigned to this microtask
 	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Boolean disablePoint)
 	{
+		WorkerCommand.increaseStat(workerID, "skips",1);
 		Microtask microtask = ofy().load().key(microtaskKey).now();
 		if( microtask!=null && microtask.isAssignedTo(workerID)){
 

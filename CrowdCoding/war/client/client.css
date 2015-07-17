@@ -1867,7 +1867,16 @@ pre.json .jsonKey { color: black; }
 
 .achievements .icon { float:left;width:30px;height:100%; }
 
-
+.achievements .subTitle {
+	width:100%;	
+	background-color: rgb(40,40,40);
+	color:lime;
+	text-align: center;
+	font-width:1.5em;
+	font-weight:bold;
+	padding-left:5px;
+	padding-top:5px;
+}
 
 /* Chrome, Safari, Opera */
 @-webkit-keyframes popout {

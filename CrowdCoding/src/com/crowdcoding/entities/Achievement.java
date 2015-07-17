@@ -32,9 +32,9 @@ public class Achievement
 {
     
 	//@Id private long id;
-	private String condition, message;
-	private int requirement;
-	private List<String> workersAwarded = new ArrayList<String>();
+	public String condition, message;
+	public int requirement, current;
+	public Boolean isUnlocked = false;
 	// Default constructor for deserialization
 	private Achievement()
 	{
@@ -45,6 +45,7 @@ public class Achievement
 	{
 		this.condition = condition;
 		this.requirement = requirement;
+		this.current = 0;
 		this.message = "You completed "+ this.requirement + " " + this.condition +". Congratulations!!";
 		//ofy().save().entity(this).now();
 	}
@@ -53,20 +54,14 @@ public class Achievement
 	public String getMessage(){
 		return this.message;
 	}
-	
-	public void addWorker(String id){
-		this.workersAwarded.add(id);
-		//ofy().save().entity(this).now();
-	}
-	
-	public List<String> getList(){
-		return this.workersAwarded;
-	}
-	
+
 	public String getCondition(){
 		return this.condition;
 	}
 
+	public void updateCurrent(int current){
+		this.current = current;
+	}
 
 	public int getRequirement(){
 		return this.requirement;

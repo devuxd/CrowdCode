@@ -14,7 +14,7 @@ public class WorkerInFirebase extends DTO
 
 	private String nickname;
 	private String userid;	
-	public List<Achievement> awardedAchievements = new ArrayList<Achievement>();
+	public List<Achievement> listOfAchievements = new ArrayList<Achievement>();
 	public HashMap<String,Integer> microtaskHistory = new HashMap<String,Integer>();
 	public int score;
 	public int level;
@@ -23,13 +23,13 @@ public class WorkerInFirebase extends DTO
 	{
 	}
 
-	public WorkerInFirebase(String userID, int score, int level, String nickname, List<Achievement> awardedAchievements, HashMap<String,Integer> microtaskHistory )
+	public WorkerInFirebase(String userID, int score, int level, String nickname, List<Achievement> listOfAchievements, HashMap<String,Integer> microtaskHistory )
 	{
 		this.userid = userID;
 		this.nickname = nickname;
 		this.score = score;
 		this.level = level;
-		this.awardedAchievements = awardedAchievements;
+		this.listOfAchievements = listOfAchievements;
 		this.microtaskHistory = microtaskHistory;
 	}
 }

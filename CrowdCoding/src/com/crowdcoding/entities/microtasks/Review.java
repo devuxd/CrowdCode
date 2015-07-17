@@ -141,10 +141,14 @@ public class Review extends Microtask
         	System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" accepted");
 			reviewResult ="accepted";
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork, awardedPoints);
-
-
+			
+			if(reviewDTO.qualityScore == 5)
+				WorkerCommand.increaseStat(workerOfReviewedWork, "perfect_review",1);
+			else
+				WorkerCommand.increaseStat(workerOfReviewedWork, "good_review",1);
+			
 			HistoryLog.Init(projectId).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
-
+			
 			notification = new NotificationInFirebase(
 					"task.accepted",
 					"{ \"microtaskId\": \""+Microtask.keyToString(submittedMicrotask.getKey()) + "\", \"microtaskType\": \""+submittedMicrotask.microtaskName() + "\", \"artifactName\": \""+submittedMicrotask.getOwningArtifact().getName() + "\"}"

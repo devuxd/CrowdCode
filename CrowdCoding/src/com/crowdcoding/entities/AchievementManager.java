@@ -82,10 +82,10 @@ public class AchievementManager
 			if( workerHistory.get(label)!= null){
 				value = 0;
 				value = workerHistory.get(label);
-				if(value >= availableAchievements.get(i).getRequirement() 
-					&& !availableAchievements.get(i).getList().contains(workerID)){
-					awardAchievement(availableAchievements.get(i),workerID,projectId);
-					availableAchievements.get(i).addWorker(workerID);
+				if(value >= availableAchievements.get(i).getRequirement()){
+					//&& !availableAchievements.get(i).getList().contains(workerID)){
+					//awardAchievement(availableAchievements.get(i),workerID,projectId);
+					//availableAchievements.get(i).addWorker(workerID);
 				}
 			}
 		}		

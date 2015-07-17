@@ -83,7 +83,6 @@ public abstract class WorkerCommand extends Command
 	{
 		private String label;
 		private int increaseAmount;
-		private AchievementManager _manager;
 
 		public IncreaseStat(String workerID, String label,int increaseAmount)
 		{
@@ -96,7 +95,7 @@ public abstract class WorkerCommand extends Command
 		{
 
 			worker.increaseStat(label,increaseAmount, project.getID());
-			AchievementManager.getInstance().checkNewAchievement(worker.getUserid(), project.getID(), worker.getHistory());
+			//AchievementManager.getInstance().checkNewAchievement(worker.getUserid(), project.getID(), worker.getHistory());
 		}
 
 	}
