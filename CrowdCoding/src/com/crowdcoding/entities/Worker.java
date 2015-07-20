@@ -55,7 +55,7 @@ public class Worker
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
-		this.level = 2;
+		this.level = 1;
 		this.listOfAchievements = setAchievements();
 		ofy().save().entity(this).now();
 		this.storeToFirebase(project.getID());
@@ -128,6 +128,13 @@ public class Worker
 					addAchievement(achievement, projectId);
 				}
 			}
+		}
+		if(level < 2){
+			if(listOfAchievements.get(0).isUnlocked && listOfAchievements.get(1).isUnlocked){
+				FirebaseService.writeLevelUpNotification(new NotificationInFirebase("dashboard",1,level), 
+				this.getUserid(), projectId);
+				level = 2;
+			}				
 		}
 		ofy().save().entity(this).now();
 		this.storeToFirebase(projectId);

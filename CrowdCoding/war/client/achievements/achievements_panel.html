@@ -17,7 +17,7 @@
 		<div class="subTitle">Unlocked:</div>
 		<div id="board" >	
 		<div id="columns">			
-		  	<div class="pin" ng-repeat="(i,achievement) in listOfachievements" ng-if="listOfachievements.length > 0 && achievement.isUnlocked" 
+		  	<div class="pin" ng-repeat="(i,achievement) in listOfachievements | orderBy:'condition'" ng-if="listOfachievements.length > 0 && achievement.isUnlocked" 
 				style="height:{{achievement.height}}px" >
 		  	<div class="icon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
 							

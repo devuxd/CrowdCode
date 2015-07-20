@@ -97,6 +97,11 @@ angular
 							};
 							toaster.pop( toast ); 
 							break;
+						case 'dashboard':
+							toast.type = 'success';
+							toast.body = 'You unlocked the dashboard!';
+							toaster.pop( toast ); 
+							break;
 							
 
 						default:

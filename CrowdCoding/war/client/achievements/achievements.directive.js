@@ -23,7 +23,7 @@ angular.module('crowdCode').filter('byCurrent', function () {
             out: []
         };
         angular.forEach(listOfachievements, function (value, key) {
-            if (!value.isUnlocked  && this.out.length < 3 && types.indexOf(value.condition) == -1) {
+            if (!value.isUnlocked && types.indexOf(value.condition) == -1  && this.out.length < 3) {
                 this.out.push(value);
                 types.push(value.condition);
             }
