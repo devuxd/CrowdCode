@@ -1,6 +1,7 @@
-17
+18
 good_review 10
 reviews 5
+tutorial_completed 1
 submits 5
 submits 1
 good_review 1

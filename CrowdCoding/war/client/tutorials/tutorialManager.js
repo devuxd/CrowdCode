@@ -1,17 +1,17 @@
 
 angular
     .module('crowdCode')
-    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId) {
+    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId','$http', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId,$http) {
     
     // get the synced objects from the backend
     var tutorialsOn        = $firebase( new Firebase( firebaseUrl + '/status/settings/tutorials') ).$asObject();
     var completedTutorials = $firebase( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) ).$asObject();
-
+    var tutorialCounter = $firebase( new Firebase( firebaseUrl + '/workers/' + workerId + '/tutorialCounter' ) ).$asObject();
     var queue    = [];
     var running  = false;
     var currentId;
     var currentOnFinish;
-
+    //tutorialCounter = 0;
     return {
         restrict: 'E',
         scope: {},
@@ -52,7 +52,16 @@ angular
                     startTutorial();
                 }
             }
+            
+            function sendTutorialCompleted(){
+    			$http.get('/' + projectId + '/ajax/tutorialCompleted')
+    				.success(function(data, status, headers, config) {
+    			})
+    			.error(function(data, status, headers, config) {
 
+    			});
+    		}
+            
             // start the current tutorial
             function startTutorial(){
                 running = true;
@@ -95,11 +104,18 @@ angular
 
             // set tutorial with tutorialId as complete
             function setTutorialCompleted( tutorialId ){
-                if( completedTutorials.$value == undefined )
+                if( completedTutorials.$value == undefined ){
                     completedTutorials.$value = tutorialId;
-                else 
+                    tutorialCounter.$value =  1;
+                }
+                else{ 
                     completedTutorials.$value += ','+tutorialId; 
-
+                    tutorialCounter.$value +=  1;
+                }
+                if(tutorialCounter.$value == 3)
+                	sendTutorialCompleted();
+                
+                tutorialCounter.$save();
                 completedTutorials.$save();
             }
         }
