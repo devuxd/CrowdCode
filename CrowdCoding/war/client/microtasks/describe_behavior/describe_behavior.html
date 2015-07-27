@@ -96,7 +96,7 @@
 
 			<div class="section-content padding slide from-right" ng-if="data.tests.length > 0 && data.selected != -1">
 				<div class="form" >
-					<div class="form-group" >
+					<div class="form-group" ng-if="!data.selected.editing">
 						<div class="col-md-2 control-label">
 							description
 						</div>
@@ -113,14 +113,15 @@
 								/>
 							</span>
 						</div>
-					</div>
-					<div class="form-group">
 						<div class="col-md-2 control-label">
 							code
 						</div>
 						<div class="col-md-10">
-							<test-editor test="data.selected" tested-function="funct"></test-editor>
+							<js-reader code="data.selected.code"></js-reader>
 						</div>
+					</div>
+					<div class="form-group" ng-if="data.selected.editing">
+						<test-editor test="data.selected" tested-function="funct"></test-editor>
 					</div>	
 				</div>
 			</div>					
@@ -137,29 +138,8 @@
 				</span>
 				<span class="clearfix"></span>
 			</div>
-			<div class="section-content" ng-if="!data.isComplete">
-				<div ng-init="t = data.newTest">
-					<div ng-form="newTestForm" class="form" >
-						<div class="form-group">
-							<div class="input-group" >
-						      <span class="input-group-addon">it</span>
-						      <input 
-						      	class="form-control" 
-						      	name="description" 
-						      	ng-model="t.description"
-						      	placeholder="insert a behavior description"
-						      />
-						    </div>
-							
-						</div>
-						<div class="form-group">
-							<test-editor test="t" tested-function="funct"></test-editor>
-						</div>
-						<div class="form-group">
-							
-						</div>
-					</div>
-				</div>
+			<div class="section-content" ng-if="!data.isComplete" ng-init="t = data.newTest" >
+				<test-editor test="t" tested-function="funct"></test-editor>
 			</div>	
 
 			<div class="section-content empty" ng-if="data.isComplete">

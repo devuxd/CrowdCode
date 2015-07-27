@@ -273,6 +273,7 @@ public class FirebaseService
 	// Stores the specified adt to Firebase
 	public static void writeADT(ADTInFirebase dto, long ADTId, int version, String projectId){
 		enqueueWrite(dto.json(), "/artifacts/ADTs/" + ADTId + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{ \".priority\": \""+System.currentTimeMillis()+"\" }", "/artifacts/ADTs/" + ADTId + ".json", HTTPMethod.PATCH, projectId);
 		enqueueWrite(dto.json(), "/history/artifacts/ADTs/" + ADTId + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}
 

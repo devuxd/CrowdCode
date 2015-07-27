@@ -82,32 +82,65 @@
 			<div class="section-content padding slide from-right" ng-if="data.selected != -1" ng-init="t = data.selected" >
 				<div class="test-result">
 					<div class="row" ng-if="!t.dispute.active">
-						<div class="col-sm-2 col-md-2 row-label">Status</div>
-						<div class="col-sm-10 col-md-10"> 
-							{{ t.dispute.active ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) }}
-							{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}
+						<div class="{{ t.result.showDiff ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}" >
+							<div class="row" ng-if="!t.dispute.active">
+								<div class="col-sm-4 col-md-4 row-label">Status</div>
+								<div class="col-sm-8 col-md-8"> 
+									{{ t.dispute.active ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) }}
+									{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-4 col-md-4 row-label">description</div>
+								<div class="col-sm-8 col-md-8">it {{ t.description }}</div>
+							</div>
+							<div class="row" ng-if="t.result.message">
+								<div class="col-sm-4 col-md-4 row-label">Message</div>
+								<div class="col-sm-8 col-md-8">{{ t.result.message }}</div>
+							</div>
+							<div class="row" ng-if="t.result.showDiff">
+								<div class="col-sm-4 col-md-4 row-label">Diff</div>
+								<div class="col-sm-8 col-md-8">{{ t.result.expected }} - {{ t.result.actual }}</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-4 col-md-4 row-label">Code</div>
+								<div class="col-sm-8 col-md-8"><test-editor test="t"></test-editor></div>
+							</div>
+						</div>
+
+						<div class="col-sm-6 col-md-6" ng-if="t.result.showDiff">
+							<div class="row" >
+								<div class="col-sm-2 col-md-2 row-label">Diff</div>
+								<div class="col-sm-10 col-md-10">
+									{{ t.result.expected }} - {{ t.result.actual }}
+								</div>
+							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-sm-2 col-md-2 row-label">description</div>
-						<div class="col-sm-10 col-md-10">it {{ t.description }}</div>
-					</div>
+
 					<div class="row" ng-if="t.dispute.active">
-						<div class="col-sm-2 col-md-2 row-label">Dispute reason</div>
-						<div class="col-sm-10 col-md-10"><textarea class="dispute" ng-model="t.dispute.text"></textarea></div>
+
+						<div class="col-sm-6 col-md-6" >
+							<div class="row">
+								<div class="col-sm-4 col-md-4 row-label">description</div>
+								<div class="col-sm-8 col-md-8">it {{ t.description }}</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-4 col-md-4 row-label">Code</div>
+								<div class="col-sm-8 col-md-8"><test-editor test="t"></test-editor></div>
+							</div>
+						</div>
+
+						<div class="col-sm-6 col-md-6" >
+							<div class="row" >
+								<div class="col-sm-4 col-md-4 row-label">Dispute reason</div>
+								<div class="col-sm-8 col-md-8">
+									<textarea class="dispute" ng-model="t.dispute.text"></textarea>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="row" ng-if="!t.dispute.active && t.result.message">
-						<div class="col-sm-2 col-md-2 row-label">Message</div>
-						<div class="col-sm-10 col-md-10">{{ t.result.message }}</div>
-					</div>
-					<div class="row" ng-if="!t.dispute.active && t.result.showDiff">
-						<div class="col-sm-2 col-md-2 row-label">Diff</div>
-						<div class="col-sm-10 col-md-10">{{ t.result.expected }} - {{ t.result.actual }}</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-2 col-md-2 row-label">Code</div>
-						<div class="col-sm-10 col-md-10"><test-editor test="t"></test-editor></div>
-					</div>
+					
 				</div>
 			</div>					
 		</div>

@@ -271,7 +271,6 @@ color: #525151 !important;
 
 .js-editor { height: 400px;}
 
-.test-editor { height: 100px;}
 
 .console { position:inherit !important;}
 
@@ -338,17 +337,13 @@ h1, h2, h3, h4 {
 }
 
 .btn-bar .btn-group .btn:hover {
-	background-color: #e9eaed;
-	border-bottom:1px solid #555;
-	color:#555;
+	background-color: white;
+	/*border-bottom:1px solid #555;*/
 }
 
 .btn-bar .btn-group .btn.active {
-	background-color: #e9eaed;
+	background-color: #FBFBFB;
 	font-weight: bold;
-	border-left:1px solid #555;
-	border-right:1px solid #555;
-	color:#555;
 }
 
 
@@ -492,16 +487,16 @@ h1, h2, h3, h4 {
 
 .sidebar-panel .title {
 	top:0px;
-	height:20px;
+	height:30px;
 	background-color:#DEDEDE;
 	color:#555; 
 	font-family: 'Lato';
 	padding-left: 10px;
-	line-height: 20px;
+	line-height: 30px;
 }
 
 .sidebar-panel .content {
-	top:20px;
+	top:30px;
 	bottom:0px;
 	overflow:auto;
 }
@@ -520,16 +515,19 @@ h1, h2, h3, h4 {
 
 /* SIDEBAR NEWS PANEL */
 
+.news {
+
+	position:relative;
+	width:100%;
+	height:100%;
+}
 
 .news .news-list{
 	position:absolute;
-	top:5px;
+	top: 0px;
 	bottom:0px;
-	width:100%;
-	margin:0px;
-	padding:0px;
-	height:100%;
-	padding:5px;
+	right:0px;
+	left:0px;
 	overflow:auto;
 }
 
@@ -581,8 +579,12 @@ h1, h2, h3, h4 {
 .questions .top, 
 .questions .middle { position:absolute; right:0; left:0; }
 
-.questions .top    { top: 0px; height: 60px; }
-.questions .middle { top:60px; bottom:0px; overflow:auto; }
+.questions .list-view   .top    { top: 0px; height: 60px; }
+.questions .list-view   .middle { top:60px; bottom:0px; overflow:auto; }
+.questions .detail-view .top    { top: 0px; height: 20px; }
+.questions .detail-view .middle { top:20px; bottom:0px; overflow:auto; }
+.questions .form-view .top    { top: 0px; height: 60px; }
+.questions .form-view .middle { top:60px; bottom:0px; overflow:auto; }
 
 .questions .btn-toggle { background-color:transparent; color:#9A4E32; border-color:#9A4E32; padding: 2px 5px; font-size: 0.9em; }
 .questions .btn-toggle.btn-toggle-on { background-color:#9A4E32; color:white; border-color:#9A4E32; }
@@ -675,12 +677,10 @@ h1, h2, h3, h4 {
 	word-break: break-all;
 }
 
-.questions .list-group .question-item,
-.questions .list-group .answer-item {
-	padding:5px;
-	background-color:rgb(227, 227, 227);
-}
+.questions .list-group .list-group-item { border:0px; }
 
+.questions .list-group .question-item,
+.questions .list-group .answer-item { padding:5px;}
 .questions .list-group .comment-item { margin-left:10px; border-top:1px solid rgb(175, 175, 175); padding-right:0px;}
 
 .questions .list-group .list-group-item .content-panel {  }
@@ -732,9 +732,10 @@ h1, h2, h3, h4 {
 .questions .question-detail textarea  { min-height:10em; resize: none; }
 .questions .question-detail .command-item textarea { min-height:3em; resize: none; }
 
+.questions .detail-view .question-item {margin-bottom:5px;}
+.questions .detail-view .question-item.open { border-radius: 0px; border:none; background-color:rgba(255, 236, 186, 0.73); }
 
-
-
+.questions .detail-view .form-group { margin-bottom: 0px; }
 
 .questions > div {
 	display:block;
@@ -771,14 +772,9 @@ rgb(186,156,59,1)  Chimayo - brown - debugtestfailure
 rgba(237,90,48,1)  Valencia - orange - review
 
 */
-.news-element.writefunction            { border-left: 5px solid rgba(17,112,190,1);}
-.news-element.writetestcases           { border-left: 5px solid rgba(252,223,63,1);}
-.news-element.writetest                { border-left: 5px solid rgba(23,163,125,1);}
-.news-element.writefunctiondescription { border-left: 5px solid rgba(186,105,66,1);}
-.news-element.reusesearch              { border-left: 5px solid rgba(195,35,58,1);}
-.news-element.writecall                { border-left: 5px solid rgba(131,90,161,1);}
-.news-element.debugtestfailure         { border-left: 5px solid rgba(60, 146, 203,1);}
 .news-element.review                   { border-left: 5px solid rgba(237,90,48,1);}
+.news-element.implementbehavior        { border-left: 5px solid rgba(17,112,190,1);}
+.news-element.describefunctionbehavior { border-left: 5px solid rgba(252,223,63,1);}
 
 /* SIDEBAR LEADERBOARD PANEL */
 .user-list .avatar img { width:20px;}
@@ -1024,22 +1020,24 @@ tutorial  { display:none; }
 	margin:0px;
 }
 
-.test-result .col-md-2,
-.test-result .col-md-10,
-.test-result .col-md-11,
-.test-result .col-sm-2,
-.test-result .col-md-10,
-.stub .col-md-2,
-.stub .col-md-10,
-.stub .col-md-12,
-.stub .col-sm-2, 
-.stub .col-sm-10  {
+.section-content .col-sm-2,
+.section-content .col-sm-4,
+.section-content .col-sm-6,
+.section-content .col-sm-8,
+.section-content .col-sm-10,
+.section-content .col-sm-12,
+.section-content .col-md-2,
+.section-content .col-md-4,
+.section-content .col-md-6,
+.section-content .col-md-8,
+.section-content .col-md-10,
+.section-content .col-md-12 {
 	padding: 0px 5px 0px 5px;
 }
 
 .test-result .row,
 .stub .row {
-	border-bottom: 1px solid rgb(214, 214, 214) !important;
+	/*border-bottom: 1px solid rgb(214, 214, 214) !important;*/
 	padding: 0px;
 	margin-top: 2px;
 }
@@ -1247,6 +1245,24 @@ pre.json .jsonKey { color: black; }
 .function-errors ul { margin:0px; padding:0px; padding-left:16px; list-style-type:decimal;}
 .function-errors .recap { color:rgb(225, 225, 225); font-family:'Lato'; font-weight: 400; text-transform:uppercase; } 
 
+
+.test-description{
+	position:absolute;
+	top:0px;
+	right:0px;
+	left:0px;
+	width: 100%;
+}
+
+.test-editor {
+	position:absolute;width:100%;top:35px;bottom:50px;
+}
+
+.test-errors { position:absolute;padding:5px;bottom:0px;height:50px;width:100%; color: #555; background-color:rgb(235, 235, 235); overflow:auto;}
+.test-errors ul { margin:0px; padding:0px; padding-left:16px; list-style-type:decimal;}
+.test-errors .recap { color:rgb(225, 225, 225); font-family:'Lato'; font-weight: 400; text-transform:uppercase; } 
+
+
 .ace_gutter-cell.ace-gutter-error { background-color:yellow; }
 
 .ace_gutter-cell.ace_breakpoint{
@@ -1364,9 +1380,29 @@ pre.json .jsonKey { color: black; }
 	
 }
 
+/* PROJECT OUTLINE */
+.toggler { 
+	font-weight: bold; 
+	font-family: 'Lato'; 
+	padding: 3px;
+    margin-bottom: 2px;
+    cursor:pointer;
+}
+
+.toggled { 
+	padding: 5px;
+}
+
+
+
+.data-types .toggler { background-color: rgba(23,163,125,0.1); }
+.data-types .toggler:hover { background-color: rgba(23,163,125,0.3); }
+.functions  .toggler  { background-color: rgba(195,35,58,0.1); }
+.functions  .toggler:hover  { background-color: rgba(195,35,58,0.3); }
+
 ::-webkit-scrollbar {
     -webkit-appearance: none;
-    width: 4px;
+    width: 2px;
 }
 ::-webkit-scrollbar-thumb {
     border-radius: 2px;

@@ -11,8 +11,8 @@ function projectOutline(AdtService, functionsService) {
             $scope.functions = functionsService.getAll();
             $scope.dataTypes = AdtService.getAll();
 
-
-            $scope.buildAdtDetail = function(adt){
+            console.log($scope.dataTypes);
+            $scope.buildStructure = function(adt){
                 var struct = '{';
                 angular.forEach(adt.structure,function(field){
                     struct += '\n  '+field.name+': '+field.type;

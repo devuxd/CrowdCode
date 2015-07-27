@@ -26,6 +26,19 @@ angular
             var onShow = '';
             var onHide = '';
 
+            
+            $scope.destroy = function() {
+
+                // remove the tutorial from the document
+                $overlay.remove();
+                $content.remove();
+                $tutorialContainer.remove();
+                $overlay = null;
+                $content = null;
+                $tutorialContainer = null;
+                $scope.currentStep = 0;
+
+            };
         
             function open() {
 
@@ -77,8 +90,7 @@ angular
                 if ($scope.currentStep > $scope.totSteps) {
 
                     $scope.$emit('tutorial-finished');
-                    $scope.currentStep = 0;
-                    $scope.destroy();
+                    close();
                     return;
                 }
 
@@ -220,18 +232,6 @@ angular
 
             open();
 
-            $scope.destroy = function() {
-
-                // remove the tutorial from the document
-                $overlay.remove();
-                $content.remove();
-                $tutorialContainer.remove();
-                $overlay = null;
-                $content = null;
-                $tutorialContainer = null;
-                $scope.currentStep = 0;
-
-            };
         }
     };
 });
