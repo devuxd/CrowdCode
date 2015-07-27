@@ -1,7 +1,7 @@
 <div  ng-controller="DescribeBehavior">
     
 	<div class="header bg-color">
-		<span class="type  ">{{::microtask.title}}</span>
+		<span class="type  ">{{::microtask.title}} ({{::microtask.promptType}})</span>
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); ">
@@ -12,11 +12,11 @@
 
     <div class="sections">
     	
-    	<div class="section bg-color-alpha padding" style="height:15%;">
-			Describe the behaviors of this function				
+    	<div class="section bg-color-alpha padding" style="height:5%;">
+			Can you describe a behavior for this function?				
 		</div>
 
-		<div class="section"  style="height:30%;">
+		<div class="section"  style="height:35%;">
 			<div class="section-bar">
 				<span class="title">
 					Function Description
@@ -34,7 +34,7 @@
 		</div>
 
 
-		<div class="section" style="height:30%;" ng-if="data.dispute.active">
+		<div class="section" style="height:200px;" ng-if="data.dispute.active">
 			<div class="section-bar">
 				<span class="title pull-left">Dispute Function Description</span>
 				<span class="pull-right">
@@ -46,15 +46,15 @@
 			</div>
 
 			<div class="section-content">
-				<div class="form">
-					<div class="form-group">
-						<textarea name="disputeDescription" class="form-control" ng-model="data.dispute.text"></textarea>
+				<div class="form" style="height:100%">
+					<div class="form-group" style="height:100%">
+						<textarea style="height:100%;resize:none;" placeholder="write the reason of the dispute" name="disputeDescription" class="form-control" ng-model="data.dispute.text"></textarea>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="section"  style="height:25%;" ng-if="!data.dispute.active">	
+		<div class="section"  style="height:30%;" ng-if="!data.dispute.active">	
 			<div class="section-bar">
 				<span class="pull-left title" ng-if="data.selected == -1">
 					Previous described behaviors
@@ -88,9 +88,6 @@
 								<strong> it </strong>
 								<span ng-bind="t.description"></span>
 							</span> 
-							<span class="pull-right">
-								details
-							</span>
 							<span class="clearfix"></span>
 						</div>
 					</div>

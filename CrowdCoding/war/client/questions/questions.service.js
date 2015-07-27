@@ -216,7 +216,7 @@ angular
 		}
 
 		function setWorkerView(id,view){
-			questionsRef.$ref().child( id+'/views/'+workerId ).set( view );
+			firebaseRef.child( id+'/views/'+workerId ).set( view );
 		}
 
 		function addWorkerView(id){
