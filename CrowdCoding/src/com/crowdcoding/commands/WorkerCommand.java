@@ -3,7 +3,6 @@ package com.crowdcoding.commands;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import com.crowdcoding.entities.Achievement;
-import com.crowdcoding.entities.AchievementManager;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Worker;
 import com.crowdcoding.servlets.ThreadContext;

@@ -10,6 +10,7 @@ import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.QuestioningCommand;
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.DebugDTO;
 import com.crowdcoding.dto.TestDTO;
@@ -64,6 +65,7 @@ public class Question extends Questioning
 		
 		NotificationInFirebase notification = new NotificationInFirebase( "question.added", "{ \"questionId\": \""+this.id+"\", \"title\": \""+this.title+"\" }" );
 		ProjectCommand.notifyLoggedInWorkers(notification);
+		WorkerCommand.increaseStat(ownerId, "questions", 1);
 	}
 
 

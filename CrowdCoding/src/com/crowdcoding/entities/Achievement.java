@@ -32,7 +32,7 @@ public class Achievement
 {
     
 	//@Id private long id;
-	public String condition, message;
+	public String condition, message, title;
 	public int requirement, current;
 	public Boolean isUnlocked = false;
 	// Default constructor for deserialization
@@ -41,12 +41,13 @@ public class Achievement
 	}
 
 	// Initialization constructor
-	public Achievement(String condition, int requirement)
+	public Achievement(String condition, int requirement,String title, String message)
 	{
 		this.condition = condition;
 		this.requirement = requirement;
 		this.current = 0;
-		this.message = "You completed "+ this.requirement + " " + this.condition +". Congratulations!!";
+		this.title = title;
+		this.message = message;
 		//ofy().save().entity(this).now();
 	}
 

@@ -108,7 +108,13 @@ public class Worker
 		if(fileIn != null){
 			int totalAchievements = fileIn.nextInt();
 			for(int i = 0;i<totalAchievements;i++){
-				Achievement newObjective = new Achievement(fileIn.next(), fileIn.nextInt());
+				String condition = fileIn.next();
+				int requirement = fileIn.nextInt();
+				fileIn.nextLine();
+				String title = fileIn.nextLine();
+				String message = fileIn.nextLine();
+				//fileIn.nextLine();
+				Achievement newObjective = new Achievement(condition,requirement ,title, message );
 				achievementList.add(newObjective);
 			}
 			fileIn.close();

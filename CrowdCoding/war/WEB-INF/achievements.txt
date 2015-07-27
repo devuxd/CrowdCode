@@ -1,19 +1,80 @@
-18
+20
 good_review 10
+Good Reviews
+You received 10 good reviews. Congratulations!
+
 reviews 5
+Reviews
+You completed 5 reviews. Congratulations!
+
 tutorial_completed 1
-submits 5
+Tutorial
+You completed all tutorials. Congratulations!
+
+questions 1
+Question
+You asked your first question. Congratulations!
+
+answers 1
+Answer
+You answered a question. Congratulations!
+
 submits 1
+Submit
+You completed your first submit. Congratulations!
+
 good_review 1
-perfect_review 3
-test_cases 5
-tests 5
-microtasks 5
+Good Reviews
+You received 1 good review. Congratulations!
+
 microtasks 1
-microtasks 10
-functions 10
+Microtask
+You completed 1 microtask. Congratulations!
+
 upvotes 1
+Upvote
+You received 1 upvote. Congratulations!
+
 question_views 1
-microtasks 15
+Question Views
+Your question has 1 view. Congratulations!
+
 test_cases 2
+Test Cases
+You completed 2 test cases. Congratulations!
+
+perfect_review 3
+Perfect Score
+You received 10 good reviews. Congratulations!
+
+submits 5
+Submits
+You completed 10 submits. Congratulations!
+
+test_cases 5
+Test Cases
+You completed 5 test cases. Congratulations!
+
+tests 5
+Tests
+You completed 5 test. Congratulations!
+
+microtasks 5
+Microtasks
+You received 10 good reviews. Congratulations!
+
+microtasks 10
+Microtasks
+You completed 10 microtasks. Congratulations!
+
+functions 10
+Functions
+You completed 10 functions. Congratulations!
+
+microtasks 15
+Microtasks
+You completed 15 microtasks. Congratulations!
+
 microtasks 100
+Microtasks
+You completed 100 microtasks. Congratulations!

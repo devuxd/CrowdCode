@@ -9,6 +9,7 @@ import java.util.List;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.QuestioningCommand;
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.TestDTO;
 import com.crowdcoding.dto.firebase.AnswerInFirebase;
 import com.crowdcoding.dto.firebase.CommentInFirebase;
@@ -50,7 +51,7 @@ public class Answer extends Questioning
 		QuestioningCommand.incrementQuestionAnswers(this.questionId);
 		
 		QuestioningCommand.subscribeWorker(this.questionId, ownerId, false);
-		
+		WorkerCommand.increaseStat(ownerId, "answers", 1);
 		NotificationInFirebase notification = new NotificationInFirebase( "answer.added", "{ \"questionId\": \""+this.questionId.toString()+"\",  \"workerHandle\": \""+this.ownerHandle+"\",  \"text\": \""+this.questionId.toString()+"\" }" );
 		QuestioningCommand.notifySubscribers(this.questionId, notification, ownerId);
 

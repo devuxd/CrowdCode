@@ -97,7 +97,7 @@ public /*abstract*/ class Questioning
 			updateScore();
 			ofy().save().entity(this).now();
 			System.out.println("addVote");
-
+			WorkerCommand.increaseStat(ownerId, "upvotes", 1);
 			if(!removedVotersId.contains(workerId))
 				WorkerCommand.awardPoints(ownerId, points);
 
