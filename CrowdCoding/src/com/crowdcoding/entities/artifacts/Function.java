@@ -199,7 +199,7 @@ public class Function extends Artifact
 			} else {
 				DescribeFunctionBehavior task = (DescribeFunctionBehavior) ofy().load().ref(describeFunctionBehaviorOut).now();
 				System.out.println("LOADED TASK FROM REF "+task + ", ref was "+describeFunctionBehaviorOut);
-				if( task.getPromptType() == PromptType.WRITE){
+				if( task.getPromptType() == PromptType.WRITE && queuedDescribeFunctionBehavior.isEmpty()){
 					checkIfNeedImplementation();
 	//				createImplementBehavior();
 				}
