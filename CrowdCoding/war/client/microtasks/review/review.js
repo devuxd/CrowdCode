@@ -8,188 +8,192 @@ angular
     .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  'functionsService', 'Function', 'AdtService', 'microtasksService', function($scope, $rootScope,  $alert,  functionsService, Function, AdtService, microtasksService) {
     // scope variables
     $scope.review = {};
-    $scope.review.reviewText = "";
-    $scope.review.functionCode = "";
+    $scope.review.template = '';
+    $scope.review.text = "";
+    $scope.review.inDispute = false;
 
-    // private variables 
-    var oldCode;
-    var newCode;
-    var diffRes;
-    var diffCode;
-    var oldFunction;
-    var newFunction;
-    var functionSync;
 
     //load the microtask to review
-    $scope.review.microtask = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
-    $scope.review.microtask.$loaded().then(function() {
+    var reviewed = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
+    reviewed.$loaded().then(function() {
 
-        $scope.reviewed = $scope.review.microtask;
+        $scope.reviewed = reviewed;
+        var submission = reviewed.submission;
 
-        if ($scope.reviewed.type == 'WriteTestCases') {
-            //load the version of the function with witch the test cases where made
-            functionSync = functionsService.getVersion($scope.review.microtask.functionID,$scope.review.microtask.submission.functionVersion);
-            functionSync.$loaded().then(function() {
-            $scope.funct = new FunctionFactory(functionSync);
-            });
+        console.log(reviewed);
 
-            var testcases    = $scope.review.microtask.submission.testCases;
-            var testcasesDiff = [];
-            angular.forEach(testcases,function(tc,index){
-                if(tc.added)
-                    testcasesDiff.push({ class: 'add', text : tc.text });
-                else if( tc.deleted )
-                    testcasesDiff.push({ class: 'del', text : tc.text });
-                else {
-                    var oldTc = TestList.get(tc.id);
-                    if( tc.text != oldTc.getDescription() ) {
-                        testcasesDiff.push({ class: 'chg', old: oldTc.getDescription(), text : tc.text });
-                    }
-                    else
-                        testcasesDiff.push({ class: '', text : tc.text });
-                }
-            });
+        // if ($scope.reviewed.type == 'WriteTestCases') {
+        //     //load the version of the function with witch the test cases where made
+        //     functionSync = functionsService.getVersion($scope.review.microtask.functionID,$scope.review.microtask.submission.functionVersion);
+        //     functionSync.$loaded().then(function() {
+        //     $scope.funct = new FunctionFactory(functionSync);
+        //     });
 
-
-            $scope.review.testcases    = testcasesDiff;
-
-
-        } else if ($scope.review.microtask.type == 'WriteFunction') {
-
-            oldFunction = functionsService.get($scope.review.microtask.functionID);
-            newFunction = new FunctionFactory ( $scope.review.microtask.submission );
-
-            oldCode = oldFunction.getFullCode().split("\n");
-            newCode = newFunction.getFullCode().split("\n");
-
-            diffCode = "";
-            diffRes = diff(oldCode, newCode);
-            angular.forEach(diffRes, function(diffRow) {
-                if (diffRow[0] == "=")
-                    diffCode += diffRow[1].join("\n");
-                else
-                    for (var i = 0; i < diffRow[1].length; i++)
-                        diffCode += diffRow[0] + diffRow[1][i] + "\n";
-                diffCode += "\n";
-            });
-            $scope.review.functionCode = diffCode;
-
-            if ($scope.review.microtask.promptType == 'REMOVE_CALLEE')
-                $scope.callee=functionsService.get($scope.review.microtask.calleeId);
-
-            if ($scope.review.microtask.promptType == 'DESCRIPTION_CHANGE') {
-                oldCode = $scope.review.microtask.oldFullDescription.split("\n");
-                newCode = $scope.review.microtask.newFullDescription.split("\n");
-                diffRes = diff(oldCode, newCode);
-                diffCode = "";
-                angular.forEach(diffRes, function(diffRow) {
-                    if (diffRow[0] == "=") {
-                        diffCode += diffRow[1].join("\n");
-                    } else {
-                        for (var i = 0; i < diffRow[1].length; i++)
-                            diffCode += diffRow[0] + diffRow[1][i] + "\n";
-                    }
-                    diffCode += "\n";
-                });
-                $scope.calledDiffCode = diffCode;
-            }
-
-        } else if ($scope.review.microtask.type == 'WriteTest') {
-            functionSync = functionsService.getVersion($scope.review.microtask.functionID,$scope.review.microtask.submission.functionVersion);
-            functionSync.$loaded().then(function() {
-                $scope.funct = new FunctionFactory(functionSync);
-            });
+        //     var testcases    = $scope.review.microtask.submission.testCases;
+        //     var testcasesDiff = [];
+        //     angular.forEach(testcases,function(tc,index){
+        //         if(tc.added)
+        //             testcasesDiff.push({ class: 'add', text : tc.text });
+        //         else if( tc.deleted )
+        //             testcasesDiff.push({ class: 'del', text : tc.text });
+        //         else {
+        //             var oldTc = TestList.get(tc.id);
+        //             if( tc.text != oldTc.getDescription() ) {
+        //                 testcasesDiff.push({ class: 'chg', old: oldTc.getDescription(), text : tc.text });
+        //             }
+        //             else
+        //                 testcasesDiff.push({ class: '', text : tc.text });
+        //         }
+        //     });
 
 
-        } else if ($scope.review.microtask.type == 'WriteCall') {
-
-            oldFunction = functionsService.get($scope.review.microtask.functionID);
-            newFunction = new FunctionFactory ($scope.review.microtask.submission);
-            oldCode = oldFunction.getFunctionCode().split("\n");
-
-            newCode = newFunction.getFunctionCode().split("\n");
+        //     $scope.review.testcases    = testcasesDiff;
 
 
-            diffRes = diff(oldCode, newCode);
-            diffCode = "";
-            angular.forEach(diffRes, function(diffRow) {
-                if (diffRow[0] == "=") {
-                    diffCode += diffRow[1].join("\n");
-                } else {
-                    for (var i = 0; i < diffRow[1].length; i++)
-                        diffCode += diffRow[0] + diffRow[1][i] + "\n";
-                }
-                diffCode += "\n";
-            });
-            $scope.calleeFunction = functionsService.get($scope.review.microtask.calleeID);
-            $scope.functName =oldFunction.name;
-            $scope.review.functionCode = diffCode;
+        // } else if ($scope.review.microtask.type == 'WriteFunction') {
 
-            //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;
-        } else if ($scope.review.microtask.type == 'WriteFunctionDescription') {
-            $scope.review.funct=new FunctionFactory($scope.review.microtask.submission);
-            $scope.review.requestingFunction  = functionsService.get($scope.review.microtask.functionID);
+        //     oldFunction = functionsService.get($scope.review.microtask.functionID);
+        //     newFunction = new FunctionFactory ( $scope.review.microtask.submission );
 
-        } else if ($scope.review.microtask.type == 'ReuseSearch') {
-            //load the callee function
-            $scope.funct = functionsService.get($scope.review.microtask.functionID);
-            $scope.calleeFunction = functionsService.get($scope.review.microtask.submission.functionId);
+        //     oldCode = oldFunction.getFullCode().split("\n");
+        //     newCode = newFunction.getFullCode().split("\n");
 
-        } else if ($scope.review.microtask.type == 'DebugTestFailure') {
-            $scope.funct = functionsService.get($scope.review.microtask.functionID);
+        //     diffCode = "";
+        //     diffRes = diff(oldCode, newCode);
+        //     angular.forEach(diffRes, function(diffRow) {
+        //         if (diffRow[0] == "=")
+        //             diffCode += diffRow[1].join("\n");
+        //         else
+        //             for (var i = 0; i < diffRow[1].length; i++)
+        //                 diffCode += diffRow[0] + diffRow[1][i] + "\n";
+        //         diffCode += "\n";
+        //     });
+        //     $scope.review.functionCode = diffCode;
 
-            if( $scope.review.microtask.submission.hasPseudo){
-                oldFunction =  $scope.funct;
-                newFunction = new FunctionFactory ( $scope.review.microtask.submission.functionDTO );
+        //     if ($scope.review.microtask.promptType == 'REMOVE_CALLEE')
+        //         $scope.callee=functionsService.get($scope.review.microtask.calleeId);
 
-                oldCode = oldFunction.getFullCode().split("\n");
-                newCode = newFunction.getFullCode().split("\n");
+        //     if ($scope.review.microtask.promptType == 'DESCRIPTION_CHANGE') {
+        //         oldCode = $scope.review.microtask.oldFullDescription.split("\n");
+        //         newCode = $scope.review.microtask.newFullDescription.split("\n");
+        //         diffRes = diff(oldCode, newCode);
+        //         diffCode = "";
+        //         angular.forEach(diffRes, function(diffRow) {
+        //             if (diffRow[0] == "=") {
+        //                 diffCode += diffRow[1].join("\n");
+        //             } else {
+        //                 for (var i = 0; i < diffRow[1].length; i++)
+        //                     diffCode += diffRow[0] + diffRow[1][i] + "\n";
+        //             }
+        //             diffCode += "\n";
+        //         });
+        //         $scope.calledDiffCode = diffCode;
+        //     }
 
-                diffCode = "";
-                diffRes = diff(oldCode, newCode);
-                angular.forEach(diffRes, function(diffRow) {
-                    if (diffRow[0] == "=")
-                        diffCode += diffRow[1].join("\n");
-                    else
-                        for (var i = 0; i < diffRow[1].length; i++)
-                            diffCode += diffRow[0] + diffRow[1][i] + "\n";
-                    diffCode += "\n";
-                });
-                $scope.review.functionCode = diffCode;
-            } else {
-                $scope.tests= [];
-                var reviewTest;
-                for( var index in $scope.review.microtask.submission.disputedTests){
-                    reviewTest=TestList.get($scope.review.microtask.submission.disputedTests[index].id);
-                    reviewTest.disputeText = $scope.review.microtask.submission.disputedTests[index].disputeText;
-                    $scope.tests.push(reviewTest);
-                }
+        // } else if ($scope.review.microtask.type == 'WriteTest') {
+        //     functionSync = functionsService.getVersion($scope.review.microtask.functionID,$scope.review.microtask.submission.functionVersion);
+        //     functionSync.$loaded().then(function() {
+        //         $scope.funct = new FunctionFactory(functionSync);
+        //     });
 
-            }
-        } else if ($scope.review.microtask.type == 'DescribeFunctionBehavior') {
+
+        // } else if ($scope.review.microtask.type == 'WriteCall') {
+
+        //     oldFunction = functionsService.get($scope.review.microtask.functionID);
+        //     newFunction = new FunctionFactory ($scope.review.microtask.submission);
+        //     oldCode = oldFunction.getFunctionCode().split("\n");
+
+        //     newCode = newFunction.getFunctionCode().split("\n");
+
+
+        //     diffRes = diff(oldCode, newCode);
+        //     diffCode = "";
+        //     angular.forEach(diffRes, function(diffRow) {
+        //         if (diffRow[0] == "=") {
+        //             diffCode += diffRow[1].join("\n");
+        //         } else {
+        //             for (var i = 0; i < diffRow[1].length; i++)
+        //                 diffCode += diffRow[0] + diffRow[1][i] + "\n";
+        //         }
+        //         diffCode += "\n";
+        //     });
+        //     $scope.calleeFunction = functionsService.get($scope.review.microtask.calleeID);
+        //     $scope.functName =oldFunction.name;
+        //     $scope.review.functionCode = diffCode;
+
+        //     //      $scope.review.functionCode = functionsService.renderDescription($scope.review.microtask.submission) + $scope.review.microtask.submission.header + $scope.review.microtask.submission.code;
+        // } else if ($scope.review.microtask.type == 'WriteFunctionDescription') {
+        //     $scope.review.funct=new FunctionFactory($scope.review.microtask.submission);
+        //     $scope.review.requestingFunction  = functionsService.get($scope.review.microtask.functionID);
+
+        // } else if ($scope.review.microtask.type == 'ReuseSearch') {
+        //     //load the callee function
+        //     $scope.funct = functionsService.get($scope.review.microtask.functionID);
+        //     $scope.calleeFunction = functionsService.get($scope.review.microtask.submission.functionId);
+
+        // } else if ($scope.review.microtask.type == 'DebugTestFailure') {
+        //     $scope.funct = functionsService.get($scope.review.microtask.functionID);
+
+        //     if( $scope.review.microtask.submission.hasPseudo){
+        //         oldFunction =  $scope.funct;
+        //         newFunction = new FunctionFactory ( $scope.review.microtask.submission.functionDTO );
+
+        //         oldCode = oldFunction.getFullCode().split("\n");
+        //         newCode = newFunction.getFullCode().split("\n");
+
+        //         diffCode = "";
+        //         diffRes = diff(oldCode, newCode);
+        //         angular.forEach(diffRes, function(diffRow) {
+        //             if (diffRow[0] == "=")
+        //                 diffCode += diffRow[1].join("\n");
+        //             else
+        //                 for (var i = 0; i < diffRow[1].length; i++)
+        //                     diffCode += diffRow[0] + diffRow[1][i] + "\n";
+        //             diffCode += "\n";
+        //         });
+        //         $scope.review.functionCode = diffCode;
+        //     } else {
+        //         $scope.tests= [];
+        //         var reviewTest;
+        //         for( var index in $scope.review.microtask.submission.disputedTests){
+        //             reviewTest=TestList.get($scope.review.microtask.submission.disputedTests[index].id);
+        //             reviewTest.disputeText = $scope.review.microtask.submission.disputedTests[index].disputeText;
+        //             $scope.tests.push(reviewTest);
+        //         }
+
+        //     }
+        // } else 
+
+        if ( reviewed.type == 'DescribeFunctionBehavior') {
+
             $scope.data = {};
 
-            if( $scope.review.microtask.submission.disputeFunctionText.length > 0){
-                $scope.data.disputeText = $scope.review.microtask.submission.disputeFunctionText;
+            if( submission.disputeFunctionText.length > 0 ){
+                $scope.review.template    = 'describe_dispute';
+                $scope.review.fromDispute = true;
+                $scope.data.disputeText = submission.disputeFunctionText;
             }
             else {
-                $scope.data.tests = $scope.review.microtask.submission.tests;
+                $scope.review.template = 'describe';
+                $scope.data.tests = submission.tests;
             }
 
             functionsService
-                    .getVersion($scope.review.microtask.functionId,$scope.review.microtask.submission.functionVersion)
-                    .then(function( functObj ){
-                        $scope.data.funct = functObj;
-                    });
+                .getVersion( reviewed.functionId, submission.functionVersion )
+                .then(function( functObj ){
+                    $scope.data.fDescription = functObj.getSignature();
+                });
 
-        } else if ($scope.review.microtask.type == 'ImplementBehavior') {
+        } 
+        else if (reviewed.type == 'ImplementBehavior') {
             $scope.data = {};
-            $scope.data.funct = new Function($scope.review.microtask.submission['function']);
+            $scope.data.funct = new Function( submission['function'] );
 
-            if( $scope.review.microtask.submission.disputedTests ){
+            $scope.review.template    = 'implement';
 
-                var loadedFunct = functionsService.get($scope.review.microtask.functionId);
-                $scope.data.disputedTests = $scope.review.microtask.submission.disputedTests
+            if( submission.disputedTests ){
+                var loadedFunct = functionsService.get( reviewed.functionId );
+                $scope.data.disputedTests = submission.disputedTests
                     .map(function(test){
                         var testObj = loadedFunct.getTestById(test.id);
                         testObj.disputeText = test.disputeText;
@@ -251,9 +255,9 @@ angular
         else {
 
             formData = {
-                reviewText              :($scope.review.reviewText ===undefined ? "" : $scope.review.reviewText),
+                reviewText              :($scope.review.text ===undefined ? "" : $scope.review.text),
                 qualityScore            : $scope.review.rating,
-                fromDisputedMicrotask   :($scope.review.microtask.submission.inDispute ===true ? true : false)
+                fromDisputedMicrotask   : $scope.review.fromDispute
             };
             $scope.$emit('submitMicrotask', formData);
         }

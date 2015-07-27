@@ -1,5 +1,45 @@
 <div class="section bg-color-alpha padding" style="height:10%">
-	review the described behaviors		
+	<div ng-if="review.microtask.submission.disputeFunctionText==''">
+			<div ng-if="review.microtask.promptType=='WRITE'">
+				A worker was asked to describe a new behavior for the function <strong>{{funct.name}}</strong>.
+			</div>
+
+			<div ng-if="review.microtask.promptType=='CORRECT'">
+				A worker was asked to revise the the behavior 'name of the behavior' for the function 
+				<strong>{{funct.name}}</strong>  to address the following issue.
+			</div>
+
+			<div ng-if="review.microtask.promptType=='FUNCTION_CHANGED'">
+				A worker was asked to revise the following test for the function 
+				<strong>{{funct.name}}</strong> (if necessary) based on a change to the description of the test case.
+			</div>
+
+			<div ng-if="review.microtask.promptType=='CALLEE_CHANGED'">
+				A worker was asked to revise the following test for the function 
+				<strong>{{funct.name}}</strong> 
+				(if necessary) to work correctly with the new function signature specified below.
+			</div>
+
+
+			<div ng-if="review.microtask.promptType=='ADT_CHANGED'">
+				A worker was asked to revise the following test for the function 
+				<strong>{{funct.name}}</strong> 
+				(if necessary) to work correctly with the new function signature specified below.
+			</div>
+
+			<span>Can you review this work?</span>
+		</div>
+
+		<div ng-if="review.microtask.submission.disputeFunctionText!=''">
+			<div>
+				A worker reported the following issue with the function
+				<strong>{{funct.name}}</strong>.
+			</div>
+			<div>Can you review this issue?</div>
+			<span>
+				<strong>TIP:</strong>When you review an issue, high rate means that you agree on the issue.
+			</span>
+		</div>	
 </div>
 
 

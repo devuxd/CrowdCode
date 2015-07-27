@@ -581,14 +581,14 @@ h1, h2, h3, h4 {
 .questions .top, 
 .questions .middle { position:absolute; right:0; left:0; }
 
-.questions .top    { top: 0px; height: 35px; }
-.questions .middle { top:35px; bottom:0px; overflow:auto; }
+.questions .top    { top: 0px; height: 60px; }
+.questions .middle { top:60px; bottom:0px; overflow:auto; }
 
 .questions .btn-toggle { background-color:transparent; color:#9A4E32; border-color:#9A4E32; padding: 2px 5px; font-size: 0.9em; }
 .questions .btn-toggle.btn-toggle-on { background-color:#9A4E32; color:white; border-color:#9A4E32; }
 
 .questions .form-control.ng-dirty.ng-valid,
-.questions .form-control.ng-dirty.ng-invalid { border:none; box-shadow: none; -webkit-box-shadow: none;}
+.questions .form-control.ng-dirty.ng-invalid { box-shadow: none; -webkit-box-shadow: none;}
 
 
 .questions .tag {
@@ -677,6 +677,7 @@ h1, h2, h3, h4 {
 
 .questions .list-group .question-item,
 .questions .list-group .answer-item {
+	padding:5px;
 	background-color:rgb(227, 227, 227);
 }
 
@@ -687,8 +688,8 @@ h1, h2, h3, h4 {
 
 .questions .answer-item > .content-panel {  padding-bottom:1em; }
 
-.questions .list-view .top .search-box { position:relative; width: 75%; float: left;}
-.questions .list-view .top .new-question { width: 25%; float:right; line-height:2.4em; border-radius:0px; padding:0px;}
+.questions .list-view .top .search-box {  margin-bottom:5px; }
+.questions .list-view .top .new-question { border-radius:0px; padding:2px;}
 
 .questions .question-item .btn-edit { 
 	display:none; 
@@ -955,10 +956,11 @@ tutorial  { display:none; }
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	height: 30px;
+	height: 35px;
 	font-family: Lato;
   	padding-left: 5px;
   	padding-right: 5px;
+  	padding-top: 5px;
 }
 .section-bar .title {
 	line-height:30px;
@@ -984,12 +986,12 @@ tutorial  { display:none; }
 
 .section-content {
 	position: absolute;
-	top: 30px;
+	top: 35px;
 	left: 0px;
 	right: 0px;
 	bottom:0px;
 	overflow-x:none;
-	overflow-y:auto;
+	overflow-y:scroll;
 	background-color:white;
 }
 .section-content.empty {
@@ -1019,14 +1021,19 @@ tutorial  { display:none; }
 .stub .row {
 	margin-bottom:1px solid black;
 	padding:0px;
+	margin:0px;
 }
 
 .test-result .col-md-2,
 .test-result .col-md-10,
 .test-result .col-md-11,
+.test-result .col-sm-2,
+.test-result .col-md-10,
 .stub .col-md-2,
 .stub .col-md-10,
-.stub .col-md-12  {
+.stub .col-md-12,
+.stub .col-sm-2, 
+.stub .col-sm-10  {
 	padding: 0px 5px 0px 5px;
 }
 
@@ -1287,6 +1294,9 @@ pre.json .jsonKey { color: black; }
 .test-item .form   { background-color: white; padding:5px; }
 .test-item .result { background-color: white;padding:5px; }
 
+.test-item:hover { background-color: rgb(207, 207, 207);}
+
+
 .test-item.passed       { background-color: rgba(187, 235, 167, 0.5); }
 .test-item.passed:hover { background-color: rgba(187, 235, 167, 1);}
 
@@ -1356,10 +1366,10 @@ pre.json .jsonKey { color: black; }
 
 ::-webkit-scrollbar {
     -webkit-appearance: none;
-    width: 7px;
+    width: 4px;
 }
 ::-webkit-scrollbar-thumb {
-    border-radius: 4px;
+    border-radius: 2px;
     background-color: rgba(0,0,0,.5);
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }

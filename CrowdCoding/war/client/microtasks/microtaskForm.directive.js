@@ -26,7 +26,6 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 
 			// initialize microtask and templatePath
 			$scope.funct = {};
-			$scope.test = {};
 			$scope.microtask = {};
 			$scope.templatePath = ""; //"/html/templates/microtasks/";
 
