@@ -170,6 +170,7 @@ public class Function extends Artifact
 	// If there is a microtasks available, marks it as ready to be done.
 	public void lookForWork()
 	{
+		System.out.println("looking for work, function completed:"+this.isCompleted);
 		//before checks if the function is still active
 		if( ! isDeleted()){
 			//  when there are no Describe Function Behavior in progress
@@ -183,12 +184,11 @@ public class Function extends Artifact
 						describeFunctionBehaviorOut =  Ref.create(mtask.getKey());
 					}
 					// check if the function need to be implemented
-					checkIfNeedImplementation();
-//					createImplementBehavior();
+					checkImplementationNeeded();
 
 				}
 				else{
-
+					// only if an implementation is not in progress spawn a describe beahvior previously enqueued
 					if(! isImplementationInProgress){
 						Ref<Microtask> mtask = queuedDescribeFunctionBehavior.remove();
 						ProjectCommand.queueMicrotask(mtask.getKey(), null);
@@ -200,8 +200,7 @@ public class Function extends Artifact
 				DescribeFunctionBehavior task = (DescribeFunctionBehavior) ofy().load().ref(describeFunctionBehaviorOut).now();
 				System.out.println("LOADED TASK FROM REF "+task + ", ref was "+describeFunctionBehaviorOut);
 				if( task.getPromptType() == PromptType.WRITE && queuedDescribeFunctionBehavior.isEmpty()){
-					checkIfNeedImplementation();
-	//				createImplementBehavior();
+					checkImplementationNeeded();
 				}
 			}
 
@@ -274,6 +273,7 @@ public class Function extends Artifact
 	// Queues the specified microtask and looks for work
 	public void queueImplementFunctionBehavior(Microtask microtask)
 	{
+		System.out.println("queing ");
 		queuedImplementBehavior.add(Ref.create(microtask.getKey()));
 		lookForWork();
 	}
@@ -282,16 +282,12 @@ public class Function extends Artifact
 		ProjectCommand.queueMicrotask(new ImplementBehavior(this, failedTestId, projectId).getKey(), null);
 	}
 
-	private void createImplementBehavior(){
-		isImplementationInProgress =  true;
-
-		newImplementBehavior(0L);
-		ofy().save().entities(this).now();
-
-	}
-	private void checkIfNeedImplementation(){
+	private void checkImplementationNeeded(){
+		// if at least 1 test is present and there is no other implementation in progress
+		// if there is at least 1 implementation enqued spawn that otherwise run the tests
 		if( testsId.size() > 0 && !isImplementationInProgress ){
 			isImplementationInProgress =  true;
+
 			if( queuedImplementBehavior.isEmpty() ){
 				FunctionCommand.runTests(this.getId());
 			}
@@ -316,7 +312,7 @@ public class Function extends Artifact
 		System.out.println("DTO RECEIVED : "+dto.json());
 		describeFunctionBehaviorOut = null;
 
-		if(dto.disputeFunctionText != null){
+		if(dto.disputeFunctionText != null && dto.disputeFunctionText !=""){
 			queueImplementFunctionBehavior( new ImplementBehavior(this, dto.disputeFunctionText, projectId) );
 		}
 
@@ -359,8 +355,8 @@ public class Function extends Artifact
 
 		// update the submitted function
 		onWorkEdit(dto.function, projectId);
-		
-		
+
+
 
 	}
 
@@ -381,13 +377,14 @@ public class Function extends Artifact
 	}
 
 	public void submittedTestResult(String jsonDto){
-
+		System.out.println("test submitted "+ jsonDto);
 		try {
 			TestResultDTO testResult = (TestResultDTO)DTO.read(jsonDto, TestResultDTO.class);
 
 			if(! testResult.areTestsPassed )
 				newImplementBehavior(testResult.failedTestId);
 			else{
+				queuedImplementBehavior.clear();
 				isImplementationInProgress = false;
 
 			}
@@ -437,7 +434,7 @@ public class Function extends Artifact
 	}
 
 	public void calleeChangedInterface(long calleeId, int oldCalleeVersion){
-		checkIfNeedImplementation();
+		checkImplementationNeeded();
 	}
 
 	public void calleeBecomeDeactivated(long calleeId, String disputeText)
