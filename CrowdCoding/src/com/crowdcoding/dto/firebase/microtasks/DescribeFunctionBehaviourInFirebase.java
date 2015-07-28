@@ -1,13 +1,16 @@
 package com.crowdcoding.dto.firebase.microtasks;
 
+import java.util.List;
+
+import com.crowdcoding.dto.ajax.microtask.submission.TestDisputedDTO;
+
 public class DescribeFunctionBehaviourInFirebase extends MicrotaskInFirebase
 {
 	public String promptType;
 	public Integer oldFunctionVersion;
 	public Integer oldADTVersion;
 	public Long ADTId;
-	public String issueDescription;
-	public Long issuedTestId;
+	public List<TestDisputedDTO> disputedTests;
 	public Long calleeId;
 	public Integer oldCalleeVersion;
 
@@ -27,8 +30,7 @@ public class DescribeFunctionBehaviourInFirebase extends MicrotaskInFirebase
 			int oldFunctionVersion,
 			int oldADTVersion,
 			long ADTId,
-			String issueDescription,
-			long issuedTestId,
+			List<TestDisputedDTO> disputedTests,
 			long calleeId,
 			int oldCalleeVersion)
 	{
@@ -45,10 +47,7 @@ public class DescribeFunctionBehaviourInFirebase extends MicrotaskInFirebase
 		if( ADTId !=0 )
 			this.ADTId 				= ADTId;
 
-		this.issueDescription 	= issueDescription;
-
-		if( issuedTestId !=0 )
-			this.issuedTestId 		= issuedTestId;
+		this.disputedTests 	= disputedTests;
 
 		if( calleeId !=0 )
 			this.calleeId			= calleeId;

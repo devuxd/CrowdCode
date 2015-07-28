@@ -2,9 +2,12 @@ package com.crowdcoding.entities.microtasks;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.util.List;
+
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviorDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDisputedDTO;
 import com.crowdcoding.dto.firebase.microtasks.DescribeFunctionBehaviourInFirebase;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.artifacts.Artifact;
@@ -40,18 +43,19 @@ public class DescribeFunctionBehavior extends Microtask
 	private long ADTId;
 
 	// Data for CORRECT
-	private String issueDescription;    // Description of the problem with the test case
-	private long issuedTestId;      // Text of the test case in dispute
+	private List<TestDisputedDTO> disputedTests;    // Description of the problem with the test case
+	
 
 	//Data for CALLEE_CHANGED
 	private int oldCalleeVersion;
 	private long calleeId;
 
+
 	// Default constructor for deserialization
 	private DescribeFunctionBehavior()
 	{
 	}
-
+		
 	// Constructor for WRITE Prompt Type for write a new behaviour and test of a function
 	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, String projectId )
 	{
@@ -85,26 +89,26 @@ public class DescribeFunctionBehavior extends Microtask
 
 	}
 	// Constructor for CORRECT Prompt Type for ask to edit the test when has been issued
-	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, long issuedTestId, String issueDescription, String projectId)
+	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, List<TestDisputedDTO> disputedTests, String projectId)
 	{
 		super(projectId,functionId);
 		this.promptType			= PromptType.CORRECT;
 
-		this.issueDescription 	= issueDescription;
-		this.issuedTestId		= issuedTestId;
+		this.disputedTests 	= disputedTests;
+
 		describeFunctionBehavior( Function, functionId, functionName );
 	}
 
-	// Constructor for CORRECT Prompt Type for ask to edit the test when has been issued
-		public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, long calleeId, int oldCalleeVersion, String projectId)
-		{
-			super(projectId,functionId);
-			this.promptType			= PromptType.CALLEE_CHANGED;
+	// Constructor for CALLEE CHANGED Promp
+	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, long calleeId, int oldCalleeVersion, String projectId)
+	{
+		super(projectId,functionId);
+		this.promptType			= PromptType.CALLEE_CHANGED;
 
-			this.calleeId 			= calleeId;
-			this.oldCalleeVersion	= oldCalleeVersion;
-			describeFunctionBehavior( Function, functionId, functionName );
-		}
+		this.calleeId 			= calleeId;
+		this.oldCalleeVersion	= oldCalleeVersion;
+		describeFunctionBehavior( Function, functionId, functionName );
+	}
 
 	private void describeFunctionBehavior(Ref<Function> Function, long functionId, String functionName )
 	{
@@ -126,8 +130,7 @@ public class DescribeFunctionBehavior extends Microtask
 						oldFunctionVersion,
 						oldADTVersion,
 						ADTId,
-						issueDescription,
-						issuedTestId,
+						disputedTests,
 						calleeId,
 						oldCalleeVersion),
 				Microtask.keyToString(this.getKey()),
@@ -146,7 +149,7 @@ public class DescribeFunctionBehavior extends Microtask
 		case ADT_CHANGED:
 			return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.oldADTVersion, this.ADTId, this.projectId);
 		case CORRECT:
-			return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, issuedTestId, issueDescription, this.projectId);
+			return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.disputedTests, this.projectId);
 		default:
 			return null;
 		}

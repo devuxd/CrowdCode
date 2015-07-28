@@ -13,7 +13,13 @@
     <div class="sections">
     	
     	<div class="section bg-color-alpha padding" style="height:5%;">
-			Can you describe a behavior for this function?				
+			
+			<span ng-if="microtask.disputedTests === undefined "> 
+				Can you describe a behavior for this function?	
+			</span>		
+			<span ng-if="microtask.disputedTests !== undefined "> 
+				Can you fix the issues in the disputed tests?
+			</span>			
 		</div>
 
 		<div class="section"  style="height:35%;">
@@ -82,7 +88,7 @@
 
 			<div class="section-content padding slide from-left" ng-if="data.tests.length > 0 && data.selected == -1">
 				<div class="tests-list">
-					<div class="test-item clickable" ng-repeat="t in data.tests track by $index">
+					<div class="test-item clickable {{ t.dispute.active ? 'disputed' : '' }}" ng-repeat="t in data.tests track by $index">
 						<div ng-click="toggleSelect($event,t)">
 							<span class="pull-left">
 								<strong> it </strong>
@@ -96,25 +102,35 @@
 
 			<div class="section-content slide from-right" ng-if="data.tests.length > 0 && data.selected != -1">
 				<div class="form" >
-					<div class="form-group" ng-if="!data.selected.editing">
+					<div class="form-group" ng-if="data.selected.dispute">
 						<div class="col-md-2 col-sm-2 row-label">
-							description
+							DISPUTE REASON
 						</div>
 						<div class="col-sm-10 col-md-10">
-							<span>
-								it <span ng-bind="data.selected.description"></span>
-							</span>
+							{{data.selected.dispute.text}}
 						</div>
 					</div>
-					<div class="form-group" ng-if="!data.selected.editing">
-						<div class="col-sm-2 col-md-2 row-label">
-							code
+					<div style="position:relative;">
+						<div class="form-group" ng-if="!data.selected.editing">
+							<div class="col-md-2 col-sm-2 row-label">
+								description
+							</div>
+							<div class="col-sm-10 col-md-10">
+								<span>
+									it <span ng-bind="data.selected.description"></span>
+								</span>
+							</div>
 						</div>
-						<div class="col-sm-10 col-md-10">
-							<js-reader code="data.selected.code"></js-reader>
+						<div class="form-group" ng-if="!data.selected.editing">
+							<div class="col-sm-2 col-md-2 row-label">
+								code
+							</div>
+							<div class="col-sm-10 col-md-10">
+								<js-reader code="data.selected.code"></js-reader>
+							</div>
 						</div>
+						<test-editor ng-if="data.selected.editing" test="data.selected" tested-function="funct"></test-editor>
 					</div>
-					<test-editor ng-if="data.selected.editing" test="data.selected" tested-function="funct"></test-editor>
 				</div>
 			</div>					
 		</div>

@@ -23,6 +23,19 @@ angular
     $scope.data.tests = $scope.funct.tests.map(function(test){
         test.editing = false;
         test.edited = false;
+
+        if( $scope.microtask.disputedTests !== undefined )
+
+            for( var i = 0; i < $scope.microtask.disputedTests.length ; i++ ){
+                if( $scope.microtask.disputedTests[i].id == test.id ){
+                    test.dispute = { 
+                        active:true, 
+                        text: $scope.microtask.disputedTests[i].disputeText  
+                    };
+                    console.log('disputed! ',i);
+                }
+            }
+
         return angular.copy(test);
     });
 

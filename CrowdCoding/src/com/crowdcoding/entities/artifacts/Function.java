@@ -340,13 +340,12 @@ public class Function extends Artifact
 		isImplementationInProgress = false;
 
 		//create a descrbie function behavior for each disputed test
-		for( TestDisputedDTO disputedTest : dto.disputedTests){
+		if( dto.disputedTests.size() > 0 ){
 			queueDescribeFunctionBehavior(  new DescribeFunctionBehavior(
 												this.getRef(),
 												getId(),
 												name,
-												disputedTest.id,
-												disputedTest.disputeText,
+												dto.disputedTests,
 												projectId));
 		}
 
