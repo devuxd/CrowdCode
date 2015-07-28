@@ -45,12 +45,15 @@
 	</div>
 	<div class="section-content padding">
 		<div class="tests-list">
-			<div class="test-item" ng-repeat="t in data.tests track by $index">
-				<span>
-					it 
-					<span ng-bind="t.description"></span>
-				</span> 
-				<js-reader code="t.code"></js-reader>
+			<div class="test-item static" ng-repeat="t in data.tests track by $index">
+				<div class="row">
+					<div class="col-sm-2 col-md-2 row-label">description</div>
+					<div class="col-sm-10 col-md-10">it {{ t.description }}</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-2 col-md-2 row-label">Code</div>
+					<div class="col-sm-10 col-md-10"><js-reader code="t.code"></js-reader></div>
+				</div>
 			</div>
 		</div>
 	</div>

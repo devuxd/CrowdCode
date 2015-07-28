@@ -364,7 +364,7 @@ h1, h2, h3, h4 {
 	top: 0px;
 	left: 0px;
 	height:30px;
-	color:rgb(85, 85, 85);
+	color:white;
 }
 
 .task .header .type, 
@@ -984,7 +984,7 @@ tutorial  { display:none; }
 	position: absolute;
 	top: 35px;
 	left: 0px;
-	right: 0px;
+	right: -5px;
 	bottom:0px;
 	overflow-x:none;
 	overflow-y:scroll;
@@ -1031,10 +1031,16 @@ tutorial  { display:none; }
 
 .test-item { 
 	margin-bottom: 4px;
-	font-family: 'Lato';
+
 	background-color: rgb(235, 235, 235);
 	padding: 5px;
 }
+
+.test-item.static {
+	background-color: white;
+    border-bottom: 1px solid #ACACAC;
+}
+
 .test-item.clickable {
 	background-color: rgb(229, 229, 229);
 }
@@ -1044,7 +1050,7 @@ tutorial  { display:none; }
 .test-item .result { background-color: white;padding:5px; }
 
 .test-item:hover { background-color: rgb(207, 207, 207);}
-.test-item.static:hover { background-color: rgb(235, 235, 235);}
+.test-item.static:hover { background-color: white;}
 
 .test-item.passed       { background-color: rgba(187, 235, 167, 0.5); }
 .test-item.passed:hover { background-color: rgba(187, 235, 167, 1);}
@@ -1054,6 +1060,12 @@ tutorial  { display:none; }
 
 .test-item.disputed       { background-color: rgba(232, 139, 0, 0.5); }
 .test-item.disputed:hover { background-color: rgba(232, 139, 0, 0.7);}
+
+.color-passed, .color-failed, .color-disputed { font-family: 'Lato'; text-transform: uppercase; 
+    font-weight: bold;}
+.color-passed       { color: rgba(187, 235, 167, 1); }
+.color-failed       { color: rgba(255, 0, 0, 1); }
+.color-disputed     { color: rgba(232, 139, 0, 1); }
 
 .test-item input {border-radius:0px;}
 .test-item input.ng-dirty,
@@ -1279,17 +1291,17 @@ pre.json .jsonKey { color: black; }
 
 .test-description{
 	position:absolute;
-	top:0px;
+	top:5px;
 	right:0px;
 	left:0px;
 	width: 100%;
 }
 
 .test-editor {
-	position:absolute;width:100%;top:35px;bottom:50px;
+	position:absolute;width:100%;top:40px;bottom:50px;
 }
 
-.test-errors { position:absolute;padding:5px;bottom:0px;height:50px;width:100%; color: #555; background-color:rgb(235, 235, 235); overflow:auto;}
+.test-errors { position:absolute;padding:5px;bottom:0px;height:50px;width:100%; color: #555; overflow:auto;}
 .test-errors ul { margin:0px; padding:0px; padding-left:16px; list-style-type:decimal;}
 .test-errors .recap { color:rgb(225, 225, 225); font-family:'Lato'; font-weight: 400; text-transform:uppercase; } 
 
@@ -1393,7 +1405,8 @@ pre.json .jsonKey { color: black; }
 
 ::-webkit-scrollbar {
     -webkit-appearance: none;
-    width: 2px;
+    width: 3px;
+    height:3px;
 }
 ::-webkit-scrollbar-thumb {
     border-radius: 2px;

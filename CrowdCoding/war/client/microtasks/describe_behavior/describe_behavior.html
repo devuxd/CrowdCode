@@ -29,7 +29,7 @@
 				<span class="clearfix"></span>
 			</div>
 			<div class="section-content padding">
-				<js-reader code="::funct.getSignature()" ></js-reader>
+				<js-reader code="funct.getSignature()" ></js-reader>
 			</div>					
 		</div>
 
@@ -94,35 +94,27 @@
 				</div>
 			</div>					
 
-			<div class="section-content padding slide from-right" ng-if="data.tests.length > 0 && data.selected != -1">
+			<div class="section-content slide from-right" ng-if="data.tests.length > 0 && data.selected != -1">
 				<div class="form" >
 					<div class="form-group" ng-if="!data.selected.editing">
-						<div class="col-md-2 control-label">
+						<div class="col-md-2 col-sm-2 row-label">
 							description
 						</div>
-						<div class="col-md-10">
-							<span ng-if="!data.selected.editing">
+						<div class="col-sm-10 col-md-10">
+							<span>
 								it <span ng-bind="data.selected.description"></span>
 							</span>
-							<span class="input-group" ng-if="data.selected.editing">
-								<span class="input-group-addon">it</span>
-								<input 
-									class="form-control" 
-									name="description" 
-									ng-model="data.selected.description"
-								/>
-							</span>
 						</div>
-						<div class="col-md-2 control-label">
+					</div>
+					<div class="form-group" ng-if="!data.selected.editing">
+						<div class="col-sm-2 col-md-2 row-label">
 							code
 						</div>
-						<div class="col-md-10">
+						<div class="col-sm-10 col-md-10">
 							<js-reader code="data.selected.code"></js-reader>
 						</div>
 					</div>
-					<div class="form-group" ng-if="data.selected.editing">
-						<test-editor test="data.selected" tested-function="funct"></test-editor>
-					</div>	
+					<test-editor ng-if="data.selected.editing" test="data.selected" tested-function="funct"></test-editor>
 				</div>
 			</div>					
 		</div>

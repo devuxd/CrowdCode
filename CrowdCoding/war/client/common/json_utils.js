@@ -3,26 +3,7 @@
 /** 
  safe json parse 
 **/
-function safeJsonParse(json){
-    var obj = null;
-    if( json == 'Infinity' )
-        obj = Infinity;
-    else if( json == 'undefined' )
-        obj = undefined;
-    else if( json == 'NaN' )
-        obj = NaN;
-    else if( json == 'null' )
-        obj = null;
-    else {
-        try {
-            obj = JSON.parse(json);
-        } catch( e ){
-            obj = '"'+json+'"';
-        }
-    }
 
-    return obj;
-}
 
 
 /**

@@ -81,60 +81,59 @@
 			</div>
 			<div class="section-content padding slide from-right" ng-if="data.selected != -1" ng-init="t = data.selected" >
 				<div class="test-result">
-					<div class="row" ng-if="!t.dispute.active">
-						<div class="{{ t.result.showDiff ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}" >
-							<div class="row" ng-if="!t.dispute.active">
-								<div class="col-sm-4 col-md-4 row-label">Status</div>
-								<div class="col-sm-8 col-md-8"> 
-									{{ t.dispute.active ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) }}
-									{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}
+					<div class="row">
+						<div class="{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}" >
+							<div class="row">
+								<div class="col-sm-3 col-md-3 row-label">Status</div>
+								<div class="col-sm-9 col-md-9"> 
+									<span ng-if="!t.dispute.active">
+										<span ng-if="t.result.passed" class="color-passed"> 
+											<span class="glyphicon glyphicon-ok-sign"></span> passed 
+										</span>
+										<span ng-if="!t.result.passed" class="color-failed"> 
+											<span class="glyphicon glyphicon-remove-sign"></span> failed 
+										</span>
+										<span>
+											{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}
+										</span>
+									</span>
+									<span ng-if="t.dispute.active" class="color-disputed"> 
+										<span class="glyphicon glyphicon-exclamation-sign"></span> disputed 
+									</span>
+									
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-4 col-md-4 row-label">description</div>
-								<div class="col-sm-8 col-md-8">it {{ t.description }}</div>
+								<div class="col-sm-3 col-md-3 row-label">description</div>
+								<div class="col-sm-9 col-md-9">it {{ t.description }}</div>
 							</div>
 							<div class="row" ng-if="t.result.message">
-								<div class="col-sm-4 col-md-4 row-label">Message</div>
-								<div class="col-sm-8 col-md-8">{{ t.result.message }}</div>
-							</div>
-							<div class="row" ng-if="t.result.showDiff">
-								<div class="col-sm-4 col-md-4 row-label">Diff</div>
-								<div class="col-sm-8 col-md-8">{{ t.result.expected }} - {{ t.result.actual }}</div>
+								<div class="col-sm-3 col-md-3 row-label">Message</div>
+								<div class="col-sm-9 col-md-9">{{ t.result.message }}</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-4 col-md-4 row-label">Code</div>
-								<div class="col-sm-8 col-md-8"><js-reader code="t.code"></js-reader></div>
+								<div class="col-sm-3 col-md-3 row-label">Code</div>
+								<div class="col-sm-9 col-md-9"><js-reader code="t.code"></js-reader></div>
 							</div>
 						</div>
 
-						<div class="col-sm-6 col-md-6" ng-if="t.result.showDiff">
+						<div class="col-sm-6 col-md-6" ng-if="!t.dispute.active && t.result.showDiff">
 							<div class="row" >
-								<div class="col-sm-2 col-md-2 row-label">Diff</div>
-								<div class="col-sm-10 col-md-10">
-									{{ t.result.expected }} - {{ t.result.actual }}
+								<div class="col-sm-12 col-md-12 row-label">Expected vs Actual</div>
+							</div>
+							<div class="row" >
+								<div class="col-sm-12 col-md-12">
+									<json-diff-reader old="t.result.expected" new="t.result.actual"></json-diff-reader>
 								</div>
 							</div>
 						</div>
-					</div>
 
-					<div class="row" ng-if="t.dispute.active">
-
-						<div class="col-sm-6 col-md-6" >
-							<div class="row">
-								<div class="col-sm-4 col-md-4 row-label">description</div>
-								<div class="col-sm-8 col-md-8">it {{ t.description }}</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-4 col-md-4 row-label">Code</div>
-								<div class="col-sm-8 col-md-8"><js-reader code="t.code"></js-reader></div>
-							</div>
-						</div>
-
-						<div class="col-sm-6 col-md-6" >
+						<div class="col-sm-6 col-md-6" ng-if="t.dispute.active">
 							<div class="row" >
-								<div class="col-sm-4 col-md-4 row-label">Dispute reason</div>
-								<div class="col-sm-8 col-md-8">
+								<div class="col-sm-12 col-md-12 row-label">Dispute reason</div>
+							</div>
+							<div class="row" >
+								<div class="col-sm-12 col-md-12">
 									<textarea class="dispute" ng-model="t.dispute.text"></textarea>
 								</div>
 							</div>

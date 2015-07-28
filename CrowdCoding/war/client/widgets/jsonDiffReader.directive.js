@@ -2,6 +2,27 @@ angular
     .module('crowdCode')
     .directive('jsonDiffReader', function() {
 
+    function safeJsonParse(json){
+
+        var obj = null;
+        if( json == 'Infinity' )
+            obj = Infinity;
+        else if( json == 'undefined' )
+            obj = undefined;
+        else if( json == 'NaN' )
+            obj = NaN;
+        else if( json == 'null' )
+            obj = null;
+        else {
+            try {
+                obj = JSON.parse(json);
+            } catch( e ){
+                obj = '"'+json+'"';
+            }
+        }
+
+        return obj;
+    }
 
     return {
         restrict: 'EA',
@@ -15,13 +36,13 @@ angular
             var unwatch = scope.$watch('old+new',function(){
                 if( scope.old != undefined && scope.new != undefined){
                     
-                    
+
                     var oldObj,newObj;
 
                     // try to parse the old and new value to a JSON object
                     // if the conversion fails,  simply add quotes
-                    oldObj = safeJsonParse( scope.old );
-                    newObj = safeJsonParse( scope.new );
+                    oldObj = scope.old;
+                    newObj = scope.new;//safeJsonParse( scope.new );
 
                     // initialize the diff result
                     var diffHtml = '';
@@ -110,7 +131,9 @@ angular
                         // pick the appropriate set of brackets for the final diff result
                         if( newObj.constructor == Array )  scope.diffHtml = '[\n'+diffHtml+']';
                         if( newObj.constructor == Object ) scope.diffHtml = '{\n'+diffHtml+'}';
+                        
                     }
+
                     
 
                 }
