@@ -185,9 +185,7 @@ public class CrowdServlet extends HttpServlet
 					Key<Project> projectKey = Key.create(Project.class, projectId);
 					boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
 
-					if(!projectExists){
-						req.getRequestDispatcher("/404.jsp").forward(req, resp);
-					} else if ( pathSeg.length <= 2 ){
+					if ( pathSeg.length <= 2 ){
 						Worker.Create( user, Project.Create(projectId));
 						req.getRequestDispatcher("/clientDist/client.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("admin")){
@@ -197,6 +195,8 @@ public class CrowdServlet extends HttpServlet
 							req.getRequestDispatcher("/404.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("statistics")){
 						req.getRequestDispatcher("/statistics/index.jsp").forward(req, resp);
+					} else if(!projectExists){
+						req.getRequestDispatcher("/404.jsp").forward(req, resp);
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
 					} else if (pathSeg[2].equals("questions")){

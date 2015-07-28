@@ -8,7 +8,7 @@ angular
     .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  'functionsService', 'Function', 'AdtService', 'microtasksService', function($scope, $rootScope,  $alert,  functionsService, Function, AdtService, microtasksService) {
     // scope variables
     $scope.review = {};
-    $scope.review.template = '';
+    $scope.review.template = 'loading';
     $scope.review.text = "";
     $scope.review.inDispute = false;
 
