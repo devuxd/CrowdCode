@@ -1,12 +1,26 @@
 <div bs-collapse start-collapsed="false" allow-multiple="true">
-	<div ng-repeat="d in dataTypes">
-		<div bs-collapse-toggle>data type: {{d.name}}</div>
-		<div bs-collapse-target>
-			<pre>{{ buildAdtDetail(d) }}</pre>
+	<div ng-repeat="d in dataTypes" class="data-types">
+		<div bs-collapse-toggle class="toggler" >DT: {{d.name}}</div>
+		<div bs-collapse-target class="toggled">
+			<span ng-bind="::d.description"></span>
+
+
+			<pre ng-if="d.structure" ng-bind="::buildStructure(d)"></pre>
 		</div>
 	</div>
-	<div ng-repeat="f in functions">
-		<div bs-collapse-toggle>function: {{f.name}}</div>
-		<div bs-collapse-target>{{f.name}} description</div>
+	<div ng-repeat="f in functions" class="functions">
+		<div bs-collapse-toggle class="toggler" >API: {{f.name}}</div>
+		<div bs-collapse-target class="toggled">
+			<div ng-bind="f.description"></div>
+			<div><strong> Parameters </strong></div>
+			<div ng-repeat="p in f.parameters">
+				<span ng-bind="p.name"></span>
+				<span ng-bind="p.type"></span>
+			</div>
+			<div >
+				<strong>Return:</strong>
+				<span ng-bind="f.returnType"></span>
+			</div>
+		</div>
 	</div>
 </ul>

@@ -47,12 +47,7 @@
 
 
 	<div class="wrapper" >
-		<div class="btn-bar btn-bar-left">
-	      <div class="btn-group">
-	        <div class="btn" class="" ng-click="selectTab('newsfeed')">Newsfeed</div>
-	        <div class="btn" class="" ng-click="selectTab('questions')">Questions</div>
-	      </div>    
-	    </div>
+	    <left-bar-buttons></left-bar-buttons>
 
 	    <div class="content">
 		    <div ui-layout="{ flow: 'column', dividerSize: 2 }">

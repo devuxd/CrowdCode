@@ -56,10 +56,7 @@ public class Project
 	// The one and only project, which is always initialized in Create (which must be called first
 	// when a servlet begins).
 	public static Project project;
-
-	Ref<Microtask> chiave = null;
-
-
+ 
 	@Id private String id;
 
 	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
@@ -118,16 +115,13 @@ public class Project
 		String functions = FirebaseService.readClientRequest(this.getID());
 		ClientRequestDTO dto;
 		try {
-			dto = (ClientRequestDTO) DTO.read(functions, ClientRequestDTO.class);
 
-			for (CRFunctionDTO CRfunctionDTO : dto.functions)
-			{
-				FunctionCommand.addClientRequestsArtifacts(CRfunctionDTO);
-			}
+			dto = (ClientRequestDTO) DTO.read(functions, ClientRequestDTO.class);
+			
 			
 			ADTCommand.create(
-					"A String simply stores a series of characters like \"John Doe\". A string can be any text inside double quotes.", 
-					"String",
+					"A Boolean represents one of two values: true or false.", 
+					"Boolean",
 					new HashMap<String, String>(),
 					true,
 					true
@@ -140,21 +134,24 @@ public class Project
 					true,
 					true
 			);
-			
+
 			ADTCommand.create(
-					"A Boolean represents one of two values: true or false.", 
-					"Boolean",
+					"A String simply stores a series of characters like \"John Doe\". A string can be any text inside double quotes.", 
+					"String",
 					new HashMap<String, String>(),
 					true,
 					true
 			);
-					
-
-					
+			
 			for(ADTDTO ADT : dto.ADTs){
 				ADTCommand.create(ADT.description, ADT.name, ADT.getStructure(), true, ADT.isReadOnly);
 			}
 
+
+			for (CRFunctionDTO CRfunctionDTO : dto.functions)
+			{
+				FunctionCommand.addClientRequestsArtifacts(CRfunctionDTO);
+			}
 			// save project settings into firebase
 
 			FirebaseService.writeSetting("reviews", this.reviewsEnabled.toString() , this.getID());

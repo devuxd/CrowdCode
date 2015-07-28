@@ -1,11 +1,26 @@
-
-
-<div 
-	class="ace_editor test-editor" 
-	ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme:'chrome', showGutter: true, useWrapMode : true, showLineNumbers : true }" 
-	ng-model="test.code" 
-	readonly="{{!test.editing}}" >
+<div class="test-description">
+	<span class="input-group">
+		<span class="input-group-addon">it</span>
+		<input 
+			class="form-control" 
+			name="description" 
+			ng-model="test.description"
+		/>
+	</span>
 </div>
-<ul>
-	<li ng-repeat="e in errors track by $index">{{e}}</li>
-</ul>
+<div class="test-editor" style="">
+	<div 
+		style="height:100%;"
+		class="js-editor"
+		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }" 
+		ng-model="test.code"
+		readonly="{{!test.editing}}" >
+	</div>
+</div>
+<div class="test-errors" style=""  >
+	<ul ng-if="errors.length > 0" >
+        <li ng-repeat="e in errors track by $id($index)">
+        	<span ng-bind="e"></span>
+        </li>
+	</ul>
+</div>

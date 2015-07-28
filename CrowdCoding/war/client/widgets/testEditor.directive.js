@@ -34,8 +34,6 @@ angular
                 });
 
         		var options = {
-		    	   maxLines: Infinity,
-                   minLines: 4,
                    enableLiveAutocompletion: true,
                    useWorker: false
 		    	};

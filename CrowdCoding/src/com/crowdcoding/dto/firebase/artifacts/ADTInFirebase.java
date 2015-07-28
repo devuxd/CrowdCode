@@ -18,7 +18,7 @@ public class ADTInFirebase extends DTO
 	public boolean isReadOnly;
 	public boolean isApiArtifact;
 	public boolean isDeleted;
-
+	
 
 	// Default constructor
 	public ADTInFirebase()
