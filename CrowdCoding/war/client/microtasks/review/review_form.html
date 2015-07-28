@@ -4,8 +4,8 @@
 <div class="section-content">
 	<div class="form-horizontal">
 		<div class="form-group">
-			<div class="col-md-2 control-label"> Quality </div>
-			<div class="col-md-10">
+			<div class="col-sm-2 col-md-2 row-label" style="line-height:30px"> Quality </div>
+			<div class="col-sm-10 col-md-10">
 				<div id="ratingsDiv" class="stars-container pull-left" >
 					<span ng-repeat="currentValue in [1,2,3,4,5] track by $index"
 						  ng-mouseenter="review.mouseOn=currentValue"
@@ -23,10 +23,10 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<div class="col-md-2 control-label">
+			<div class="col-sm-2 col-md-2 row-label">
 				Comment
 			</div>
-			<div class="col-md-10">
+			<div class="col-sm-10 col-md-10">
 				<textarea id="reviewText" class="col-md-12 form-control input-sm" ng-model="review.reviewText" name="reviewText" ng-required="review.rating < 4" focus style="resize:none;height:80px;"></textarea>
 				<span class="help-block" ng-show="microtaskForm.reviewText.$dirty && microtaskForm.reviewText.$invalid && microtaskForm.reviewText.$error.required">This field is required!</span>
 			</div>
