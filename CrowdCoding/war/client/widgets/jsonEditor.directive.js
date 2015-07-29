@@ -16,9 +16,9 @@ angular
         require: "ngModel",
 
         link: function ( scope, element, attrs, ngModel ) {
-            if( ngModel == undefined ) 
+            if( ngModel === undefined ) 
                 console.log("NG MODEL NOT DEFINED");
-            
+
             // update the UI to reflect the ngModel.$viewValue changes
             ngModel.$render = function (){
                 if( ngModel.$viewValue === "") 
@@ -32,8 +32,20 @@ angular
                 }
             };
 
+            ngModel.$parsers.push(parser);
+            function parser(value) {
+              if (value) {
+                try{
+                    return angular.fromJson(value);
+                } catch(e){
+                   return value;
+                }
+              }
+            }
+
             // update the ngModel.$viewValue when the UI changes 
             scope.$watch('stringValue', function() {
+                //console.log(scope.stringValue);
                 ngModel.$setViewValue( scope.stringValue );
             });
 
@@ -45,7 +57,7 @@ angular
         		var options = {
 		    	   maxLines: Infinity
 		    	};
-                
+    
                 $element.on('focus',function(){
                     _editor.focus();
                 });

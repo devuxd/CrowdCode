@@ -4,7 +4,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('ImplementBehavior', ['$scope', '$q', 'functionsService', 'functionUtils', 'TestRunnerFactory', function($scope, $q, functionsService, functionUtils, TestRunnerFactory) {
+    .controller('ImplementBehavior', ['$scope', '$q', 'functionsService', 'functionUtils', 'Function', 'TestRunnerFactory', function($scope, $q, functionsService, functionUtils, Function, TestRunnerFactory) {
     
     var runner = new TestRunnerFactory.instance();
 
@@ -170,13 +170,13 @@ angular
 
     function onEditStub(functionName,inputsKey){
         var funct = functionsService.getByName(functionName);
-        if( funct == null ){
+        if( funct === null ){
             for( var i = 0; i < requestedFunctions.length ; i++ ){
                 if( requestedFunctions[i].name == functionName )
-                    funct = requestedFunctions[i];
+                    funct = new Function( requestedFunctions[i] );
             }
         }
-        if( funct == null ) throw 'Cannot find the function '+functionName;
+        if( funct === null ) throw 'Cannot find the function '+functionName;
         
         var inputs = JSON.parse(inputsKey);
         $scope.data.editingStub = { 
@@ -211,7 +211,6 @@ angular
         stubs[functionName][inputsKey]       = stub;
 
         $scope.data.editingStub = false;
-        console.log('saving stub',editedStubs[functionName][inputsKey]);
     }
 
     function onFunctionParsed(_functionDto,_requestedFunctions){

@@ -23,7 +23,7 @@ angular
         var data = {};
         data.errors = [];
 
-        var lintResult = JSHINT(code,{latedef:false, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true});
+        var lintResult = JSHINT(code,{quotmark: "double", latedef:false, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true});
 
         console.log('linting '+lintResult);
         // if the linting failed

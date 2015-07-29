@@ -253,10 +253,10 @@ angular
 
         tags.forEach(function(tag){
             switch (tag.title){
-                case 'function': 
+                case 'function':
                 case 'name':
 
-                    functObj.name = tag.name
+                    functObj.name = tag.name;
                     break;
 
                 case 'param':
@@ -280,7 +280,12 @@ angular
 
                 case 'return':
                 case 'returns':
-                    functObj.returnType = tag.type.name
+                    if( tag.type.name ){
+                        functObj.returnType = tag.type.name;
+                    }
+                    else if ( tag.type.type === 'TypeApplication' ) {
+                        functObj.returnType = tag.type.applications[0].name + '[]';
+                    }
                     break;
 
                 default:
