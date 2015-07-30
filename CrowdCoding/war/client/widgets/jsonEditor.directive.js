@@ -32,16 +32,6 @@ angular
                 }
             };
 
-            ngModel.$parsers.push(parser);
-            function parser(value) {
-              if (value) {
-                try{
-                    return angular.fromJson(value);
-                } catch(e){
-                   return value;
-                }
-              }
-            }
 
             // update the ngModel.$viewValue when the UI changes 
             scope.$watch('stringValue', function() {
@@ -69,6 +59,7 @@ angular
 			};
 
             function onChange(event,editor){
+                console.log("validating adt");
                 var code = editor.getValue();
                 var validationData = AdtUtils.validate(code,$scope.type,$scope.name);  
                 $scope.errors = validationData.errors;

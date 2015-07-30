@@ -34,7 +34,8 @@ angular
     $scope.toggleSelect   = toggleSelect;
     $scope.toggleInspect  = toggleInspect;
     $scope.toggleDispute  = toggleDispute;
-    $scope.saveStub      = saveStub;
+    $scope.saveStub       = saveStub;
+    $scope.cancelStub     = cancelStub;
     $scope.run = run;
 
     // functionEditor callbacks
@@ -187,7 +188,7 @@ angular
                 return {
                     name: par.name,
                     type: par.type,
-                    value: inputs[index]
+                    value: angular.toJson(inputs[index])
                 };
             }),
             output       : {
@@ -200,7 +201,8 @@ angular
     }
 
     function saveStub(){
-        var stub         = { output: $scope.data.editingStub.output.value };
+        var jsonValue = eval('('+$scope.data.editingStub.output.value+')') || "";
+        var stub         = { output: jsonValue };
         var functionName = $scope.data.editingStub.functionName;
         var inputsKey    = $scope.data.editingStub.inputsKey; 
 
@@ -210,6 +212,10 @@ angular
         editedStubs[functionName][inputsKey] = stub;
         stubs[functionName][inputsKey]       = stub;
 
+        $scope.data.editingStub = false;
+    }
+
+    function cancelStub(){
         $scope.data.editingStub = false;
     }
 

@@ -44,13 +44,14 @@ angular
                 var myCompleter = {
                     getCompletions: function(editor, session, pos, prefix, callback) {
                         callback(null,[
-                            {name: 'expect', value: 'expect', snippet: 'expect(${0:expression})', score: 1 },
-                            {name: 'to', value: 'to', snippet: 'to(${0:expression})',score: 1 },
-                            {name: 'be', value: 'be', snippet: 'be(${0:expression})',score: 1 },
-                            {name: 'equal', value: 'equal', snippet: 'equal(${0:expression})',score: 1 }
+                            {name: 'deepEqual', value: 'expect().to.deep.equal()', snippet: 'expect(${1:expression}).to.deep.equal(${2:expectedValue});',score: 1 },
+                            {name: 'property', value: 'expect().to.have.property()', snippet: 'expect(${1:expression}).to.have.property(${2:propertyName});',score: 1 },
+                            {name: 'length', value: 'expect().to.have.lenght()', snippet: 'expect(${1:expression}).to.have.length(${2:length});',score: 1 },
+                            {name: 'exception', value: 'expect().to.throw()', snippet: 'expect(${1:expression}).to.throw(${2:error});',score: 1 }
+
                         ]);
                     }
-                }
+                };
 
                 _editor.on('change', onChange);
 

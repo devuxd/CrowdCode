@@ -56,7 +56,7 @@ public class Project
 	// The one and only project, which is always initialized in Create (which must be called first
 	// when a servlet begins).
 	public static Project project;
- 
+
 	@Id private String id;
 
 	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
@@ -117,34 +117,37 @@ public class Project
 		try {
 
 			dto = (ClientRequestDTO) DTO.read(functions, ClientRequestDTO.class);
-			
-			
+
+
 			ADTCommand.create(
-					"A Boolean represents one of two values: true or false.", 
+					"A Boolean represents one of two values: true or false.",
 					"Boolean",
 					new HashMap<String, String>(),
-					true,
-					true
-			);
-			
-			ADTCommand.create(
-					"Number is the only type of number. Numbers can be written with, or without, decimals.", 
-					"Number",
 					new HashMap<String, String>(),
 					true,
 					true
 			);
 
 			ADTCommand.create(
-					"A String simply stores a series of characters like \"John Doe\". A string can be any text inside double quotes.", 
-					"String",
+					"Number is the only type of number. Numbers can be written with, or without, decimals.",
+					"Number",
+					new HashMap<String, String>(),
 					new HashMap<String, String>(),
 					true,
 					true
 			);
-			
+
+			ADTCommand.create(
+					"A String simply stores a series of characters like \"John Doe\". A string can be any text inside double quotes.",
+					"String",
+					new HashMap<String, String>(),
+					new HashMap<String, String>(),
+					true,
+					true
+			);
+
 			for(ADTDTO ADT : dto.ADTs){
-				ADTCommand.create(ADT.description, ADT.name, ADT.getStructure(), true, ADT.isReadOnly);
+				ADTCommand.create(ADT.description, ADT.name, ADT.getStructure(), ADT.getExamples(), true, ADT.isReadOnly);
 			}
 
 
@@ -350,7 +353,7 @@ public class Project
 			HistoryLog
 				.Init(this.getID())
 				.addEvent(new MicrotaskUnassigned( assignedMtask, workerID));
-			
+
 			FirebaseService.writeMicrotaskAssigned( assignedMicrotaskKey , workerID, project.getID(), false);
 		}
 

@@ -143,7 +143,7 @@ Debugger.instrumentFunction = function(fNode){
                 }
             } 
             else if( node.type === 'ObjectExpression' ){
-                node = Debugger.instrumentTreeNode(node,scope);8
+                node = Debugger.instrumentTreeNode(node,scope);
             }
             else if( node.type === 'Identifier' && parent.type === 'AssignmentExpression' && scope.isDeclared(node.name) > -1 ){
                 node = Debugger.instrumentTreeNode(node,scope);
@@ -230,15 +230,15 @@ Debugger.getStub = function(functName,inputsKey) {
 
     console.log('searching stub for',functName,inputsKey,JSON.stringify(stubs));
     if( stubs[functName].hasOwnProperty(inputsKey) ){
-        return stubs[functName][inputsKey];
+       return stubs[functName][inputsKey];
     }
 
     return -1;
-}
+};
 
 Debugger.getAllStubs = function(){
     return Debugger.stubs;
-}
+};
 
 Debugger.logCall = function(functionName,inputsKey,output){
 

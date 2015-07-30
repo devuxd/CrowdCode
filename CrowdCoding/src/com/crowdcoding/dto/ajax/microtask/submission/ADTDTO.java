@@ -27,4 +27,12 @@ public class ADTDTO extends DTO
 		}
 		return mapStructure;
 	}
+
+	public HashMap<String, String> getExamples(){
+		HashMap<String, String> mapStructure = new HashMap<String, String>();
+		for(ADTExampleDTO example : examples){
+			mapStructure.put(example.name, example.value);
+		}
+		return mapStructure;
+	}
 }

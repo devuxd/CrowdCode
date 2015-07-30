@@ -59,7 +59,7 @@
 			    	<microtask-form></microtask-form>
 			    </div>
 
-				<div ui-layout-container size="15%" min-size="10%" max-size="15%">
+				<div ui-layout-container size="15%" min-size="10%" max-size="25%">
 					<right-bar></right-bar>
 				</div>
 		    </div>
