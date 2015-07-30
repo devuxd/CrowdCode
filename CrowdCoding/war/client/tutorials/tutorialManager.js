@@ -53,7 +53,7 @@ angular
                 }
             }
             
-            function sendTutorialCompleted(){
+            function sendTutorialsCompleted(){
     			$http.get('/' + projectId + '/ajax/tutorialCompleted')
     				.success(function(data, status, headers, config) {
     			})
@@ -113,7 +113,7 @@ angular
                     tutorialCounter.$value +=  1;
                 }
                 if(tutorialCounter.$value == 3)
-                	sendTutorialCompleted();
+                	sendTutorialsCompleted();
                 
                 tutorialCounter.$save();
                 completedTutorials.$save();

@@ -12,10 +12,10 @@ angular
 		// Private variables
 		var questions;
 		var allTags = [];
-
+		var firstView = true;
 		var loaded = false;
 		var questionsRef = $firebase(new Firebase(firebaseUrl+'/questions'));
-
+		var viewsRef = $firebase(new Firebase(firebaseUrl+'/questions/') ).$asObject();
 		var idx = lunr(function(){
 			this.ref('id');
 			this.field('title'   ,{ boost: 10 });
@@ -212,10 +212,23 @@ angular
 			questionsRef.$ref().child( id+'/views/'+workerId ).set( view );
 		}
 
+		function updateViewCounter(questionId){
+			viewsRef = $firebase(new Firebase(firebaseUrl+'/questions/'+questionId + '/viewCounter' ) ).$asObject();
+			if(viewsRef.$value == undefined){
+				viewsRef.$value = 1;
+				console.log('empty');
+			}
+			else 
+				viewsRef.$value += 1;
+			viewsRef.$save();
+			console.log(viewsRef);
+		}
+		
 		function addWorkerView(id){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
+					updateViewCounter(id);
 					console.log('viewed');
 					deferred.resolve();
 				})

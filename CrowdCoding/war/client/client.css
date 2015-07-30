@@ -1821,20 +1821,20 @@ pre.json .jsonKey { color: black; }
 
 /* ACHIEVEMENTS CSS */
 
-.achievements.container-fluid {
-	background-color:#D3D3D3;
+.achievements .container-fluid {
 	overflow: auto;	
-  	position: absolute;
+	max-height: 355px;
+  	position: relative;
  	top: 0px;
-  	bottom: 0px;
-	height: 100%;
+   	bottom: 0px; 
+	height: 100%; 
+	width: 100%;
 }
 
 .achievements::-webkit-scrollbar { width: 0 !important }
 
 .achievements .pin {
-	
-	width:100%;
+	width:31%;	
 	position:relative;
 	display: inline-block;
 	background: #FEFEFE;
@@ -1858,6 +1858,14 @@ pre.json .jsonKey { color: black; }
 	text-align: center;
 }
 
+.achievements div.infohistory {
+	font-size:1.0em;
+	width:50%;
+	position:relative;
+	display: inline-block;
+	text-align: left;
+}
+
 .achievements .pin div.title {
 	font-size:1.2em;
 	text-align: center;
@@ -1869,6 +1877,18 @@ pre.json .jsonKey { color: black; }
 	font-size:1.2em;
 	text-align: center;
 	font-weight:bold;
+}
+
+.achievements #columns {	
+	-webkit-column-count: 1;
+	-webkit-column-gap: 10px;
+	-webkit-column-fill: auto;
+	-moz-column-count: 1;
+	-moz-column-gap: 10px;
+	-moz-column-fill: auto;
+	column-count: 1;
+	column-gap: 15px;
+	column-fill: auto;
 }
 
 .achievements #board {

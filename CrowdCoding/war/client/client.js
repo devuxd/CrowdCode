@@ -38,10 +38,14 @@ angular
 		$rootScope.logoutUrl    = logoutUrl;
 		$rootScope.avatar       = avatarFactory.get;
 		
+		
+		var userStatistics            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/achievements/achievements_panel.html', show: false});
 		var profileModal            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/widgets/popup_user_profile.html', show: false});
 		var servicesLoadingStatus   = {};
 		var loadingServicesInterval = $interval(loadServices(), 200);
-
+		
+		
+		$rootScope.$on('showUserStatistics', showStatistics);
 		$rootScope.$on('showProfileModal', showProfileModal);
 		$rootScope.$on('serviceLoaded'   , serviceLoaded);
 		$rootScope.$on('sendFeedback', sendFeedback);
@@ -80,6 +84,10 @@ angular
 
 		function showProfileModal() {
 			profileModal.$promise.then(profileModal.show);
+		}
+		
+		function showStatistics() {
+			userStatistics.$promise.then(userStatistics.show);
 		}
 
 

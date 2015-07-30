@@ -75,10 +75,8 @@ angular
                 
                 // if the tutorial is finished, destroy it
                 if ($scope.currentStep > $scope.totSteps) {
-
-                    $scope.$emit('tutorial-finished');
-                    $scope.currentStep = 0;
-                    $scope.destroy();
+                	 $scope.destroy();
+                     $scope.endTutorial();
                     return;
                 }
 

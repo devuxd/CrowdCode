@@ -113,7 +113,6 @@ public class Worker
 				fileIn.nextLine();
 				String title = fileIn.nextLine();
 				String message = fileIn.nextLine();
-				//fileIn.nextLine();
 				Achievement newObjective = new Achievement(condition,requirement ,title, message );
 				achievementList.add(newObjective);
 			}
@@ -149,8 +148,11 @@ public class Worker
 	public void increaseStat(String label,int amount, String projectId)
 	{
 		int value = amount;
-		if( microtaskHistory.get(label)!= null)
-			value = microtaskHistory.get(label)+amount;
+		if( microtaskHistory.get(label)!= null){
+			value += microtaskHistory.get(label);
+			if(label =="skips")
+				microtaskHistory.put("submits", 0);
+		}
 		microtaskHistory.put(label, value);
 		ofy().save().entity(this).now();
 		this.storeToFirebase(projectId);

@@ -91,15 +91,15 @@ angular
 							break;
 						case 'new.achievement':
 							toast.type = 'success';
-							toast.body = json.message;
+							toast.body = json.message + ' Congratulations!';
 							toast.clickHandler = function(){ 
-								$rootScope.$broadcast('setLeftBarTab','achievements');
+								$rootScope.$broadcast('showUserStatistics');
 							};
 							toaster.pop( toast ); 
 							break;
 						case 'dashboard':
 							toast.type = 'success';
-							toast.body = 'You unlocked the dashboard!';
+							toast.body = 'You unlocked the dashboard. Congratulations!';
 							toaster.pop( toast ); 
 							break;
 							
