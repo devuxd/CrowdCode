@@ -14,18 +14,7 @@
   display: none !important;
 }
 
-input.ng-dirty.ng-valid, select.ng-dirty.ng-valid, textarea.ng-dirty.ng-valid{
-	border-color: #3c763d;
-	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(60, 118, 61,.6);
-}
 
-input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-invalid{
-	border-color: #a94442;
-	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(169, 68, 66,.6);
-
-}
 
 .popover-news{
 	width: 65%;
@@ -94,7 +83,7 @@ rgba(237,90,48,1)  Valencia - orange - review
 .task-implementbehavior .microtask-title  { background-color: rgba(17,112,190,1);}
 
 .form-control { font-weight: normal;}
-.form-horizontal .form-group { margin: 0px;}
+.form-horizontal .form-group { margin-left: 0px; margin-right:0px;}
 .submit-alert {
 	 position:relative !important;
 	 margin-top: 0px !important;
@@ -202,6 +191,45 @@ rgba(237,90,48,1)  Valencia - orange - review
 }
 
 
+.row-eq-height {
+  display: table;
+}
+.row-eq-height > [class*="col-"] {
+	float: none;
+	display: table-cell;
+	vertical-align: top;
+}
+
+.help-block {
+	color:maroon;
+}
+
+.modal-content {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+}
+.modal-header {
+	padding:5px;
+	background-color: #DEDEDE;
+	color: #555;
+}
+
+.modal-footer { padding:5px; }
+
+.modal.center .modal-dialog{
+    position:absolute !important;
+    top:40%;left:50%;
+    min-width:320px;
+    max-width:630px;
+    width:50%;
+    -webkit-transform:translateX(-50%) translateY(-50%);
+    transform:translateX(-50%) translateY(-50%)
+} 
+
+
 /* --------- ACE JSON OVERWRITE ---------  */
 
 
@@ -269,9 +297,6 @@ color: #525151 !important;
 .json-editor .ace_gutter-layer  { width:20px !important; }
 .json-reader.ace-editor { background-color:transparent !important; }
 
-.js-editor { height: 400px;}
-
-
 .console { position:inherit !important;}
 
 
@@ -280,7 +305,7 @@ color: #525151 !important;
 
 body, html { height: 100%; }
 body {
-	font-family: 'Merriweather' !important;
+	font-family: 'Helvetica' !important;
 	font-style: normal;
 	font-size: 12px ;
 	background-color:rgb(222, 222, 222);
@@ -781,16 +806,6 @@ rgba(237,90,48,1)  Valencia - orange - review
 .user-list .avatar { float:left; margin-right:5px;}
 .user-list .name   { float:left; }
 
-.modal.center .modal-dialog{
-    position:absolute !important;
-    top:40%;left:50%;
-    min-width:320px;
-    max-width:630px;
-    width:50%;
-    -webkit-transform:translateX(-50%) translateY(-50%);
-    transform:translateX(-50%) translateY(-50%)
-} 
-
 
 
 
@@ -984,7 +999,7 @@ tutorial  { display:none; }
 	position: absolute;
 	top: 35px;
 	left: 0px;
-	right: -5px;
+	right: 0px;
 	bottom:0px;
 	overflow-x:none;
 	overflow-y:scroll;
@@ -1014,12 +1029,15 @@ tutorial  { display:none; }
 	margin-top: 2px;
 }
 
+
+
 .section-content .row-label {
 	text-align:right;
 	text-transform: uppercase;
 	font-weight:bold;
 	font-family: 'Lato';
 	font-size:0.9em;
+
 }
 
 .padding {
@@ -1290,19 +1308,27 @@ pre.json .jsonKey { color: black; }
 
 
 .test-description{
-	position:absolute;
-	top:5px;
-	right:0px;
-	left:0px;
-	width: 100%;
 }
 
 .test-editor {
-	position:absolute;width:100%;top:40px;bottom:50px;
+	position: absolute;
+    top: 60px;
+    bottom: 0px;
+    width: 100%;
 }
 
-.test-errors { position:absolute;padding:5px;bottom:0px;height:50px;width:100%; color: #555; overflow:auto;}
-.test-errors ul { margin:0px; padding:0px; padding-left:16px; list-style-type:decimal;}
+
+.test-errors {
+	height: 50px;
+    position: absolute;
+    bottom: 0px;
+    overflow: auto;
+    right: 0px;
+    left: 0px;
+	margin:0px;
+	padding-left:20px;
+}
+.test-errors ul { margin:0px; padding:0px; list-style-type:decimal;}
 .test-errors .recap { color:rgb(225, 225, 225); font-family:'Lato'; font-weight: 400; text-transform:uppercase; } 
 
 
@@ -1337,31 +1363,53 @@ pre.json .jsonKey { color: black; }
 	background-color:rgb(222, 222, 222);
 }
 
+.animate-show {
+  line-height: 20px;
+  opacity: 1;
+  padding: 10px;
+  border: 1px solid black;
+  background: white;
+}
 
+.animate-show.ng-hide-add.ng-hide-add-active,
+.animate-show.ng-hide-remove.ng-hide-remove-active {
+  -webkit-transition: all linear 0.5s;
+  transition: all linear 0.5s;
+}
+
+.animate-show.ng-hide {
+  line-height: 0;
+  opacity: 0;
+  padding: 0 10px;
+}
 
 /* slide animations */
 .slide.ng-enter, 
 .slide.ng-leave, 
-.slide.ng-hide-active, 
-.slide.ng-hide-remove
+.slide.ng-hide-add.ng-hide-add-active, 
+.slide.ng-hide-remove.ng-hide-remove-active
 { transition: all 0.5s ease; -webkit-transition: all 0.5s ease;}
 
 /* slide from left animation */
 .slide.from-left.ng-enter,
-.slide.from-left.ng-leave.ng-leave-active
-{ margin-left:-100%; }
+.slide.from-left.ng-leave.ng-leave-active,
+.slide.from-left.ng-hide
+{ margin-left:-100%; display:block !important;}
 
 .slide.from-left.ng-leave,
 .slide.from-left.ng-enter.ng-enter-active,
+.slide.from-left.ng-show
 { margin-left:0%; }
 
 /* slide from right animation */
 .slide.from-right.ng-enter,
-.slide.from-right.ng-leave.ng-leave-active
-{ margin-left: 100%; }
+.slide.from-right.ng-leave.ng-leave-active,
+.slide.from-right.ng-hide
+{ margin-left: 100%; display:block !important;}
 
 .slide.from-right.ng-leave,
-.slide.from-right.ng-enter.ng-enter-active  
+.slide.from-right.ng-enter.ng-enter-active,
+.slide.from-right.ng-show
 { margin-left: 0%; }
 
 
@@ -1403,13 +1451,78 @@ pre.json .jsonKey { color: black; }
 .functions  .toggler  { background-color: rgba(195,35,58,0.1); }
 .functions  .toggler:hover  { background-color: rgba(195,35,58,0.3); }
 
+
 ::-webkit-scrollbar {
     -webkit-appearance: none;
-    width: 3px;
-    height:3px;
+    width: 5px;
+    height:5px;
 }
 ::-webkit-scrollbar-thumb {
     border-radius: 2px;
     background-color: rgba(0,0,0,.5);
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
+
+
+/* forms */
+
+.form-group {
+	position: relative;
+    margin: 0 0 15px 0;
+    padding-top: 5px;
+}
+
+.form-control ~ label {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.form-group label {    
+	top: 0;
+    margin-bottom: 0;
+    font-size: 1em;
+    color: #888888;
+}
+.form-group .help-icon {
+	float:right;
+	top:0px;
+	font-size:1em;
+}
+.form-group .help-block {
+	position: absolute;
+    margin: 2px 0 0 0;
+    font-size: 0.9em;
+}
+
+/* form controls */
+
+.form-control { 
+	background: none;
+    border: 0;
+    border-bottom: 2px solid #e5e5e5;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    color: #333;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 1em;
+    height:auto;
+}
+
+.form-control { padding:0px; }
+.form-control.code > div { border: 1px solid #EBEBEB; }
+.form-control:focus { border-color: #3c763d; box-shadow: none; -webkit-box-shadow: none;}
+
+/* valid form controls */
+/*.form-control.ng-dirty.ng-valid { border-color: #3c763d; }*/
+
+/* invalid form controls */
+.form-control.ng-dirty.ng-invalid, .form-control.code.ng-invalid > div { border-color: #a94442; }
+

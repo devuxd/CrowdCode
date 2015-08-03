@@ -28,7 +28,7 @@
 					Function Description
 				</span>
 				<span class="pull-right">
-					<button class="btn btn-mini" ng-click="data.dispute.active = !data.dispute.active;" ng-if="!data.dispute.active">
+					<button class="btn btn-sm" ng-click="data.dispute.active = !data.dispute.active;" ng-if="!data.dispute.active">
 						Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
 					</button>
 				</span>
@@ -44,7 +44,7 @@
 			<div class="section-bar">
 				<span class="title pull-left">Dispute Function Description</span>
 				<span class="pull-right">
-					<button class="btn btn-mini" ng-click="data.dispute.active = !data.dispute.active;" >
+					<button class="btn btn-sm" ng-click="data.dispute.active = !data.dispute.active;" >
 						Cancel Dispute
 					</button>
 				</span>
@@ -60,10 +60,15 @@
 			</div>
 		</div>
 
-		<div class="section"  style="height:30%;" ng-if="!data.dispute.active">	
+		<div class="section"  style="height:60%;" ng-if="!data.dispute.active">	
 			<div class="section-bar">
 				<span class="pull-left title" ng-if="data.selected == -1">
-					Previous described behaviors
+					Described behaviors
+				</span>
+				<span class="pull-right" ng-if="data.selected == -1">
+					<button class="btn btn-sm" ng-click="addNew($event)">
+						<span class="glyphicon glyphicon-plus"></span> Add a new test
+					</button>
 				</span>
 
 				<span class="pull-left" ng-if="data.selected != -1">
@@ -73,11 +78,13 @@
 				</span>
 
 				<span class="pull-right" ng-if="data.selected != -1">
-					<button 
-						class="btn btn-mini btn-filled {{ data.selected.editing ? 'active' : '' }}" 
-						ng-click="toggleEdit($event)">
-						<span class="glyphicon glyphicon-edit" ></span> Edit
-					</button> 
+					<button class="btn btn-sm" ng-click="toggleDelete($event)" ng-if="!data.selected.deleted">
+						<span class="glyphicon glyphicon-remove" ></span> Remove test
+					</button>
+
+					<button class="btn btn-sm" ng-click="toggleDelete($event)" ng-if="data.selected.deleted">
+						<span class="glyphicon glyphicon-remove" ></span> Undo remove
+					</button>
 				</span>
 
 				<span class="clearfix"></span>
@@ -88,53 +95,105 @@
 
 			<div class="section-content padding slide from-left" ng-if="data.tests.length > 0 && data.selected == -1">
 				<div class="tests-list">
-					<div class="test-item clickable {{ t.dispute.active ? 'disputed' : '' }}" ng-repeat="t in data.tests track by $index">
+					<div class="test-item clickable {{ t.dispute.active ? 'disputed' : '' }}" 
+					     ng-repeat="t in data.tests track by $index">
 						<div ng-click="toggleSelect($event,t)">
 							<span class="pull-left">
-								<strong> it </strong>
-								<span ng-bind="t.description"></span>
+								<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
+								<span ng-if="t.description.length > 0" ng-bind="t.description"></span>
+								<span ng-if="!t.description || t.description.length == 0" >missing description</span>
 							</span> 
+							<span class="pull-right" ng-if="t.deleted">
+								<span class="glyphicon glyphicon-remove"  ></span>
+								removed
+							</span>
+							<span class="pull-right" ng-if="!t.deleted && !microtaskForm['testForm_'+$index].$valid">
+								<span class="glyphicon glyphicon-exclamation-sign"></span>
+								invalid
+							</span>
 							<span class="clearfix"></span>
 						</div>
 					</div>
 				</div>
-			</div>					
-
-			<div class="section-content slide from-right" ng-if="data.tests.length > 0 && data.selected != -1">
-				<div class="form" >
-					<div class="form-group" ng-if="data.selected.dispute">
-						<div class="col-md-2 col-sm-2 row-label">
-							DISPUTE REASON
-						</div>
-						<div class="col-sm-10 col-md-10">
-							{{data.selected.dispute.text}}
+			</div>	
+			
+			<div class="section-content slide from-right padding" 
+				 ng-repeat="t in data.tests track by $index" 
+				 ng-show="data.selected == t">
+				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" >
+					
+					<div class="form-group">
+						<label for="description">Description </label>
+						<input 
+							class="form-control" 
+							name="description" 
+							ng-model="t.description"
+							placeholder="insert the description"
+							ng-minlength="5"
+			           		ng-maxlength="120"
+							required
+						/>
+						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].description.$error">
+							<div ng-if="microtaskForm['testForm_'+$index].description.$dirty">
+								<div ng-message="required">the description can't be empty</div>
+							    <div ng-message="minlength">the description can't be less than 5 characters</div>
+							    <div ng-message="maxlength">the description can't exceed 150 characters</div>
+							</div>
 						</div>
 					</div>
-					<div style="position:relative;">
-						<div class="form-group" ng-if="!data.selected.editing">
-							<div class="col-md-2 col-sm-2 row-label">
-								description
-							</div>
-							<div class="col-sm-10 col-md-10">
-								<span>
-									it <span ng-bind="data.selected.description"></span>
-								</span>
-							</div>
+					<div class="form-group">
+						<label>Type</label>
+						<select class="form-control" 
+								ng-model="t.isSimple"
+					            ng-options="o.v as o.n for o in [{ n: 'simple', v: true }, { n: 'advanced', v: false }]">
+					    </select>
+					</div>
+					<div class="form-group" ng-if="!t.isSimple">
+						<label for="code">Code</label>
+						<div class="help-icon" >?</div>
+						<div class="form-control code" test-editor name="code" ng-model="t.code" required error="testError">
 						</div>
-						<div class="form-group" ng-if="!data.selected.editing">
-							<div class="col-sm-2 col-md-2 row-label">
-								code
-							</div>
-							<div class="col-sm-10 col-md-10">
-								<js-reader code="data.selected.code"></js-reader>
-							</div>
+						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].code.$error" >
+							<div ng-message="code">{{testError}}</div>
+							<div ng-message="required">the test code can't be empty</div>
 						</div>
-						<test-editor ng-if="data.selected.editing" test="data.selected" tested-function="funct"></test-editor>
+					</div>
+
+					<div class="form-group" ng-if="t.isSimple">
+						<label for="code">Input1</label>
+						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
+						</div>
+						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].code.$error" >
+							<div ng-message="code">{{testError}}</div>
+						</div>
+					</div>
+
+					<div class="form-group" ng-if="t.isSimple">
+						<label for="code">Input1</label>
+						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
+						</div>
+						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].code.$error" >
+							<div ng-message="code">{{testError}}</div>
+						</div>
+					</div>
+
+					<div class="form-group" ng-if="t.isSimple">
+						<label for="code">Input1</label>
+						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
+						</div>
+						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].code.$error" >
+							<div ng-message="code">{{testError}}</div>
+						</div>
 					</div>
 				</div>
-			</div>					
-		</div>
+			</div>	
 
+
+
+				
+
+		</div>
+<!--
 		<div class="section"  style="height:30%;" ng-if="!data.dispute.active">	
 			<div class="section-bar">
 				<span class="title" ng-if="!data.isComplete">
@@ -154,5 +213,5 @@
 			</div>				
 		</div>
 	</div>
-
+-->
 </div>

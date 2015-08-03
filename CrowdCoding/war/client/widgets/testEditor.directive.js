@@ -1,42 +1,72 @@
 
 angular
     .module('crowdCode')
-    .directive('testEditor', function() {
+    .directive('testEditor', ['$q',function($q) {
 
     // var chains = ['to','be','been','is','that','which','and','has','have','with','at','of','same'];
     // var methods = [ 'not','deep','any','all','a','include','ok','true','false','null','undefined','exists','empty','arguments','equal','above','least','below','most','within','instanceof','property','ownProperty','length','string','match','keys','throw','respondTo','itself','itself','satisfy','closeTo','members','change','increase','decrease'];
     
     return {
         restrict: 'EA',
+        require: '?ngModel',
         templateUrl: '/client/widgets/test_editor.html',
         scope: {
-            test : '=',
-            testedFunction: '=',
+            ngModel: '=',
+            error: '='
         },
-        link: function ( $scope, $element, $attrs ) {
+        link: function ( $scope, element, attrs, ngModelCtrl ) {
+            
+            // when model change, update our view (just update the div content)
+            ngModelCtrl.$render = function() {
+                console.log('rendering');
+                // checkValidity();
+            };
 
+            ngModelCtrl.$asyncValidators.code = function(modelValue, viewValue) {
+                var deferred  = $q.defer();
+
+                var code = modelValue || viewValue;
+                
+                var lintResult =  JSHINT(code, {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true, expr:true});
+                
+                if( !lintResult ){
+                    $scope.error = checkForErrors(JSHINT.errors)[0];
+                    deferred.reject();
+                }
+                else {
+                    var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
+                    worker.postMessage({ 
+                        'baseUrl'     : document.location.origin, 
+                        'code'        : code,
+                    });
+                    worker.onmessage = function(message){
+                        if( message.data.error ){
+                            deferred.reject();
+                            $scope.error = message.data.error;
+                        } else {
+                            deferred.resolve();
+                        }
+                            
+                        worker.terminate();
+                    };
+                }
+
+        
+                return deferred.promise;
+            };
+
+
+
+            
         },
         controller: function($scope,$element){
+            $scope.aceLoaded = function(_editor) {
 
-            $scope.errors = [];
-
-        	$scope.aceLoaded = function(_editor) {
-                
-                $scope.test.editor = _editor;
-                $scope.$watch('test.editing',function(newValue,oldValue){
-                    if ( newValue ) {
-                        _editor.renderer.setShowGutter(true);
-                        _editor.setReadOnly(false);
-                    } else {
-                        _editor.renderer.setShowGutter(false);
-                        _editor.setReadOnly(true);
-                    }
-                });
-
-        		var options = {
+                var options = {
                    enableLiveAutocompletion: true,
-                   useWorker: false
-		    	};
+                   useWorker: false,
+                   
+                };
 
                 _editor.setOptions(options);
                 _editor.commands.removeCommand('indent');
@@ -53,40 +83,9 @@ angular
                     }
                 };
 
-                _editor.on('change', onChange);
-
                 _editor.completers = [myCompleter];
-                // console.log(langTools);
-
-                function onChange(data,editor){
-
-                    // var defs = 'var '+Object.keys(chai.Assertion.prototype).join(',')+';';
-                    var tCode = editor.getValue();
-                    var code = tCode ; //+ defs;
-                    var lintResult =  JSHINT(code, {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true, expr:true});
-                    
-                    $scope.errors = [];
-                    if( !lintResult ){
-                        $scope.errors = checkForErrors(JSHINT.errors);
-                        $scope.$apply();
-                        console.log('errors',$scope.errors );
-                        
-                    }
-                    else {
-                        var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
-                        worker.postMessage({ 
-                            'baseUrl'     : document.location.origin, 
-                            'code'        : code,
-                        });
-                        worker.onmessage = function(message){
-                            if( message.data.error )
-                                $scope.errors = [message.data.error];
-
-                            worker.terminate();
-                        };
-                    }
-                }
-			};
+            };
+        	
         }
     };
-});
+}]);

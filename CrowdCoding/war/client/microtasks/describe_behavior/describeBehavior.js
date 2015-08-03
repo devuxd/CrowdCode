@@ -5,25 +5,29 @@
 angular
     .module('crowdCode')
     .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory) {
+    
     console.log($scope.microtask);
+    
     // prepare the data for the view
     $scope.data = {};
     $scope.data.dispute = { active: false, text: '' }; 
     $scope.data.isComplete = false;
     $scope.data.selected = -1;
-    $scope.data.newTest = {
+    
+    var newTest = {
         description: '',
+        isSimple : false,
         code: '//write the test code',
-        editing: true,
         added: true,
+        deleted: false
     };
     // load the tests:
     // need to store the collection as array because
     // from firebase comes as an object collection
     $scope.data.tests = $scope.funct.tests.map(function(test){
-        test.editing = false;
-        test.edited = false;
-
+        test.edited  = false;
+        test.deleted = false;
+        test.isSimple = false;
         if( $scope.microtask.disputedTests !== undefined )
 
             for( var i = 0; i < $scope.microtask.disputedTests.length ; i++ ){
@@ -32,7 +36,6 @@ angular
                         active:true, 
                         text: $scope.microtask.disputedTests[i].disputeText  
                     };
-                    console.log('disputed! ',i);
                 }
             }
 
@@ -41,12 +44,23 @@ angular
 
     // expose the toggle and edit test functions to the scope
     $scope.toggleEdit   = toggleEdit;
+    $scope.toggleDelete = toggleDelete;
     $scope.toggleSelect = toggleSelect;
+    $scope.addNew       = addNew;
 
     // register the collect form data listeners 
     // and the microtask form destroy listener
-    var collectOff = $scope.$on( 'collectFormData', collectFormData );
-    $scope.$on('$destroy',function(){ collectOff(); });
+    $scope.taskData.collectFormData = collectFormData;
+
+    
+    // addNew();
+    // $scope.data.selected = -1;
+
+    function addNew($event){
+        var lastAdded = angular.copy(newTest);
+        $scope.data.tests.push(lastAdded);
+        toggleSelect($event,lastAdded);
+    }
 
     function toggleSelect($event,test){
         if( $scope.data.selected == -1 )
@@ -56,8 +70,8 @@ angular
             $scope.data.selected = -1;
         }
             
-        $event.preventDefault();
-        $event.stopPropagation();
+        // $event.preventDefault();
+        // $event.stopPropagation();
     }
 
     function toggleEdit($event){
@@ -71,12 +85,35 @@ angular
         $event.stopPropagation();
     }
 
-    function addTest(){
-        $scope.data.newTest.added = true;
-        $scope.data.tests.push($scope.data.newTest);
+
+    function toggleDelete($event){
+        console.log('toggle delete');
+        if( $scope.data.selected != -1 ) {
+            $scope.data.selected.deleted = !$scope.data.selected.deleted;
+
+            if( $scope.data.selected.deleted )
+                $scope.data.selected = -1;
+        }
+
+
+
+        $event.preventDefault();
+        $event.stopPropagation();
     }
 
-    function collectFormData(event, microtaskForm) {
+
+    function collectFormData(form) {
+
+        // console.log('collecting form data',form.$valid,form);
+        // console.log('how many tests',$scope.data.tests.length);
+        // for( var i = 0 ; i < $scope.data.tests.length; i++ ){
+        //     if( !form['testForm_'+i].$valid )
+        //         console.error('test form '+i+' is INVALID!');
+        //     else 
+        //         console.log('test form '+i+' is VALID!');
+        // }
+
+        // $modal({template : '/client/microtasks/modal_form_invalid.html' , show: true});
 
         // prepare the microtask submit data
         var formData = {
@@ -91,8 +128,8 @@ angular
         }
         else {
             // add the current test to the list
-            if( !$scope.data.isComplete )
-                addTest();
+            // if( !$scope.data.isComplete )
+            //     addTest();
 
             // for each of the tests, create a testDTO object
             formData.tests = $scope.data.tests.map(function(test){
@@ -107,8 +144,6 @@ angular
             }); 
         }
         
-
-        console.log(formData);
 
         // tell the microtaskForm that the data is ready
         $scope.$emit('submitMicrotask', formData);

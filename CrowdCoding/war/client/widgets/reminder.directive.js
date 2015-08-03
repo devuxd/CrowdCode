@@ -53,7 +53,8 @@ angular
                 fetchTime = userService.getFetchTime();
 
                 $scope.skipMicrotaskIn = fetchTime + microtaskTimeout - startTime ;
-                microtaskInterval = $interval(doReminder, timeInterval); 
+                microtaskInterval      = $interval(doReminder, timeInterval); 
+
 
             });
 

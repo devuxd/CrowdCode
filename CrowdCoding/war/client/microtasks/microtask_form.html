@@ -1,72 +1,70 @@
-<form id="microtaskForm" name="microtaskForm" class="form-horizontal" novalidate microtask-shortcuts>
-	<div 
-		id="task"
-		class="task {{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}" 
-		ng-include="templatePath" 
-		>
+<div 
+	id="task"
+	class="task {{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}" 
+	ng-include="templatePath" 
+	>
+</div>
+<reminder></reminder>
+
+<div class="actions">
+	<div class="btn-group">
+	
+		<button
+		   type="button"
+		   class="btn btn-link btn-sm"
+		   data-placement="top" 
+		   data-container="body"
+		   data-animation="am-fade-and-scale"
+		   data-template="widgets/feedback.popover.html"
+		   tabindex="101"  
+		   bs-popover>Send Us Feedback!
+		</button>
+		<button 
+		   ng-if="!breakMode && !noMicrotask" 
+		   type="button"
+		   class="btn btn-link btn-sm" 
+		   data-placement="top" 
+		   data-container="body"
+		   data-animation="am-fade-and-scale"
+		   data-animation="am-flip-x" 
+		   data-template="microtasks/help.popover.html"
+		   tabindex="102" 
+		   bs-popover>
+		   Confused?
+		</button>
+
+
+	  	<button 
+	  		type="submit" 
+  			id="submitBtn"
+	  		class="btn btn-primary btn-sm pull-right"
+   			ng-if="!breakMode"
+	  		ng-disabled="noMicrotask"
+	  		tabindex="99" >
+	  		Submit
+	  	</button>
+  	   	<button type="button" 
+   	 		id= "skipBtn"
+   			class="btn btn-default btn-sm pull-right"
+   			ng-if="!breakMode"
+   			ng-click="$emit('submitMicrotask')" 
+   			ng-disabled="noMicrotask"
+   			tabindex="100" >
+   			Skip
+   		</button>
+	  	<label class="btn btn-sm pull-right" ng-if="!breakMode && !noMicrotask" id="breakBtn">
+  	    	<input type="checkbox" ng-model="model.startBreak" tabindex="103" >
+  	    	<span>Take a break</span>
+  	   	</label>
+  	   	
+		<button type="button"
+   			class="btn btn-primary btn-sm pull-right"
+   			ng-if="breakMode"
+   			ng-click="$emit('fecthMicrotask'); " 
+   			tabindex="100" >
+	       	Fetch a microtask
+   		</button>
+
+	    </div>
 	</div>
-	<reminder></reminder>
-
-	<div class="actions">
-		<div class="btn-group">
-		
-			<button
-			   type="button"
-			   class="btn btn-link btn-sm"
-			   data-placement="top" 
-			   data-container="body"
-			   data-animation="am-fade-and-scale"
-			   data-template="widgets/feedback.popover.html"
-			   tabindex="101"  
-			   bs-popover>Send Us Feedback!
-			</button>
-			<button 
-			   ng-if="!breakMode && !noMicrotask" 
-			   type="button"
-			   class="btn btn-link btn-sm" 
-			   data-placement="top" 
-			   data-container="body"
-			   data-animation="am-fade-and-scale"
-			   data-animation="am-flip-x" 
-			   data-template="microtasks/help.popover.html"
-			   tabindex="102" 
-			   bs-popover>
-			   Confused?
-			</button>
-
-
-		  	<button type="button" 
-      			id="submitBtn"
-		  		class="btn btn-primary btn-sm pull-right"
-       			ng-if="!breakMode"
-		  		ng-click="$parent.$broadcast('collectFormData', microtaskForm) " 
-		  		ng-disabled="noMicrotask"
-		  		tabindex="99" >
-		  		Submit
-		  	</button>
-	  	   	<button type="button" 
-       	 		id= "skipBtn"
-       			class="btn btn-default btn-sm pull-right"
-       			ng-if="!breakMode"
-       			ng-click="$emit('submitMicrotask')" 
-       			ng-disabled="noMicrotask"
-       			tabindex="100" >
-       			Skip
-       		</button>
-		  	<label class="btn btn-sm pull-right" ng-if="!breakMode && !noMicrotask" id="breakBtn">
-	  	    	<input type="checkbox" ng-model="model.startBreak" tabindex="103" >
-	  	    	<span>Take a break</span>
-	  	   	</label>
-	  	   	
-			<button type="button"
-       			class="btn btn-primary btn-sm pull-right"
-       			ng-if="breakMode"
-       			ng-click="$emit('fecthMicrotask'); " 
-       			tabindex="100" >
-		       	Fetch a microtask
-       		</button>
-
-		    </div>
-		</div>
-	</div>
-</form>
+</div>

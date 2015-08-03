@@ -1,39 +1,6 @@
-<div class="form-group test-description">
-	<div class="col-md-2 col-sm-2 row-label">
-		description
-	</div>
-	<div class="col-sm-10 col-md-10">
-		<span class="input-group">
-			<span class="input-group-addon">it</span>
-			<input 
-				class="form-control" 
-				name="description" 
-				ng-model="test.description"
-			/>
-		</span>
-	</div>
-</div>
-<div class="form-group test-editor">
-	<div class="col-sm-2 col-md-2 row-label">
-		code
-	</div>
-	<div class="col-sm-10 col-md-10" style="height:100%;">
-		<div 
-			style="height:100%;"
-			class="js-editor"
-			ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }" 
-			ng-model="test.code"
-			readonly="{{!test.editing}}" >
-		</div>
-	</div>
-</div>
-<div class="form-group test-errors">
-	<div class="col-sm-2 col-md-2"></div>
-	<div class="col-sm-10 col-md-10">
-		<ul ng-if="errors.length > 0" >
-	        <li ng-repeat="e in errors track by $id($index)">
-	        	<span ng-bind="e"></span>
-	        </li>
-		</ul>
-	</div>
+<div 
+	style="height:200px"
+	ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }" 
+	ng-model="ngModel"
+	>
 </div>

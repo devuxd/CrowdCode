@@ -16,6 +16,7 @@ public class Test extends Artifact
 	private long functionId;
 	private String description;
 	private String code;
+	private boolean isSimple;
 	private double creationTime;
 	private boolean hasEverPassed;	//flag to indicate that the test has passed at least once, doesn't say if in this moment is passing
 
@@ -39,6 +40,7 @@ public class Test extends Artifact
 		this.code 		   = code;
 		this.creationTime  = System.currentTimeMillis();
 		this.hasEverPassed = false;
+		this.isSimple      = false;
 
 		ofy().save().entity(this).now();
 
@@ -130,6 +132,7 @@ public class Test extends Artifact
 													 this.creationTime,
 													 this.isReadOnly,
 													 this.isAPIArtifact,
+													 this.isSimple,
 													 this.isDeleted),
 									this.functionId,
 									this.id,
