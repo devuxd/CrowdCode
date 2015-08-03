@@ -1,11 +1,11 @@
 <div class="ace_editor json-editor" 
-	 ui-ace="{ onLoad : aceLoaded, mode: 'json', theme: 'xcode', showGutter: true, useWrapMode : true, showLineNumbers : true }" ng-model="stringValue" >
+	ui-ace="{ 
+	 	onLoad : aceLoaded, 
+	 	mode: 'json', 
+	 	theme: 'xcode', 
+	 	showGutter: true, 
+	 	useWrapMode : true, 
+	 	showLineNumbers : true 
+	 	}" 
+	ng-model="ngModel" >
 </div> 
-
-<div class="field-errors" style=""  >
-    <ul ng-if="errors.length > 0" >
-        <li ng-repeat="e in errors track by $id($index)">
-            <span ng-bind="e"></span>
-        </li>
-    </ul>
-</div>

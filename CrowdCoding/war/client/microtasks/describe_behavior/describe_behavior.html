@@ -120,7 +120,7 @@
 			<div class="section-content slide from-right padding" 
 				 ng-repeat="t in data.tests track by $index" 
 				 ng-show="data.selected == t">
-				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" >
+				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
 					
 					<div class="form-group">
 						<label for="description">Description </label>
@@ -151,40 +151,58 @@
 					<div class="form-group" ng-if="!t.isSimple">
 						<label for="code">Code</label>
 						<div class="help-icon" >?</div>
-						<div class="form-control code" test-editor name="code" ng-model="t.code" required error="testError">
+						<div class="form-control code" 
+							 test-editor 
+							 name="code" 
+							 ng-model="t.code"
+							 errors="errors['code']"
+							 required >
 						</div>
 						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].code.$error" >
-							<div ng-message="code">{{testError}}</div>
 							<div ng-message="required">the test code can't be empty</div>
+							<div ng-repeat="(type,text) in errors['code']">
+						    	<div ng-message-exp="type">{{ text }}</div>
+					        </div>
+						</div>
+					</div>
+
+					<div class="form-group" ng-if="t.isSimple" ng-repeat="(pIdx,p) in funct.parameters track by p.name">
+						<label for="input{{$inputIdx}}">{{p.name + ' {' + p.type + '}' }}</label>
+						
+						<div
+							class="form-control code"
+							json-editor="{ type: p.type, name: p.name }" 
+							ng-model="t.inputs[pIdx]"
+							name="input_{{pIdx}}"
+							errors="errors[p.name]"
+							required>
+						</div>
+						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index][ 'input_'+ pIdx ].$error" >
+							<div ng-message="required">the field {{p.name}} cannot be empty</div>
+							<div ng-repeat="(type,text) in errors[p.name]">
+						    	<div ng-message-exp="type">{{ text }} - {{p.name}}</div>
+					        </div>
 						</div>
 					</div>
 
 					<div class="form-group" ng-if="t.isSimple">
-						<label for="code">Input1</label>
-						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
+						<label for="code">Output</label>
+						<div
+							class="form-control code"
+							json-editor="{ type: funct.returnType, name: 'output' }" 
+							ng-model="t.output"
+							name="output"
+							errors="errors['output']"
+							required>
 						</div>
-						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].code.$error" >
-							<div ng-message="code">{{testError}}</div>
+						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].output.$error" >
+							<div ng-message="required">the output can't be empty</div>
+							<div ng-repeat="(type,text) in errors['output']">
+						    	<div ng-message-exp="type">{{ text }}</div>
+					        </div>
 						</div>
 					</div>
 
-					<div class="form-group" ng-if="t.isSimple">
-						<label for="code">Input1</label>
-						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
-						</div>
-						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].code.$error" >
-							<div ng-message="code">{{testError}}</div>
-						</div>
-					</div>
-
-					<div class="form-group" ng-if="t.isSimple">
-						<label for="code">Input1</label>
-						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
-						</div>
-						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].code.$error" >
-							<div ng-message="code">{{testError}}</div>
-						</div>
-					</div>
 				</div>
 			</div>	
 

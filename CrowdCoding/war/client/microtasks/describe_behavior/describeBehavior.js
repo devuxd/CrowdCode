@@ -16,7 +16,8 @@ angular
     
     var newTest = {
         description: '',
-        isSimple : false,
+        isSimple : true,
+        
         code: '//write the test code',
         added: true,
         deleted: false
@@ -27,7 +28,6 @@ angular
     $scope.data.tests = $scope.funct.tests.map(function(test){
         test.edited  = false;
         test.deleted = false;
-        test.isSimple = false;
         if( $scope.microtask.disputedTests !== undefined )
 
             for( var i = 0; i < $scope.microtask.disputedTests.length ; i++ ){
@@ -52,9 +52,9 @@ angular
     // and the microtask form destroy listener
     $scope.taskData.collectFormData = collectFormData;
 
+
     
-    // addNew();
-    // $scope.data.selected = -1;
+    addNew();
 
     function addNew($event){
         var lastAdded = angular.copy(newTest);
