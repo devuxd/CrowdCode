@@ -265,6 +265,8 @@ public class CrowdServlet extends HttpServlet
 			doFetchSpecificMicrotask(req, resp,user,false);
 		} else if (pathSeg[3].equals("tutorialCompleted")){
 			doTutorialCompleted(req, resp,user,false);
+		} else if (pathSeg[3].equals("questionViews")){
+			doQuestionAchievement(req, resp,user,false);
 		} else if (pathSeg[3].equals("enqueue")){
 			doEnqueueSubmit(req, resp,user);
 		}
@@ -288,6 +290,41 @@ public class CrowdServlet extends HttpServlet
 		    				final Worker worker   = Worker.Create(user, project);
 		    				
 		    				worker.increaseStat("tutorial_completed",1,projectID);
+		    				
+		    				
+		    				return "success";
+		    			}
+		    			
+		        	});
+
+		    	} catch ( IllegalArgumentException e ){
+		    		e.printStackTrace();
+		    	}
+		       // HistoryLog.Init(projectID).publish();
+
+				renderJson(resp, jsonResponse);
+			    FirebaseService.publish();	
+	}
+	
+	private void doQuestionAchievement (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
+		// Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+				final String projectID = (String) req.getAttribute("project");
+				final int viewCount = Integer.parseInt(req.getParameter("id"));
+				String jsonResponse = "{}";
+		    	try {
+		    		jsonResponse=ofy().transact( new Work<String>(){
+
+		    			public String run() {
+		    				ThreadContext threadContext = ThreadContext.get();
+		    				threadContext.reset();
+
+		    		    	int firstFetch=0;
+		    		    	final Project project = Project.Create(projectID);
+		    				final Worker worker   = Worker.Create(user, project);
+		    				
+		    				worker.increaseStat("question_views",viewCount,projectID);
 		    				
 		    				
 		    				return "success";

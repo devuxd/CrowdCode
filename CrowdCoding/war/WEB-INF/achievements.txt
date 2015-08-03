@@ -35,9 +35,9 @@ upvotes 1
 Upvote
 You received 1 upvote. 
 
-question_views 1
+question_views 15
 Question Views
-Your question has 1 view. 
+Your question got 15 views. 
 
 test_cases 2
 Test Cases

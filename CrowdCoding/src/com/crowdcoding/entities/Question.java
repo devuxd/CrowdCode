@@ -55,7 +55,6 @@ public class Question extends Questioning
 		this.answersCount  = 0;
 		this.commentsCount = 0;
 		this.version       = 0;
-		
 		ofy().save().entity(this).now();
 		
 		this.firebasePath= "/questions/" + this.id ;
