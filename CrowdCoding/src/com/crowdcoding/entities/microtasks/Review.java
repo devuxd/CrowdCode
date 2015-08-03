@@ -145,7 +145,10 @@ public class Review extends Microtask
 			if(reviewDTO.qualityScore == 5){
 				WorkerCommand.increaseStat(workerOfReviewedWork, "perfect_review",1);
 			}
-			WorkerCommand.increaseStat(workerOfReviewedWork, "good_review",1);
+			else{
+				WorkerCommand.increaseStat(workerOfReviewedWork, "good_review",1);
+			}
+			WorkerCommand.increaseStat(workerOfReviewedWork, "accepted_microtask",1);
 			
 			HistoryLog.Init(projectId).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
 			

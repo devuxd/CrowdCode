@@ -1823,7 +1823,7 @@ pre.json .jsonKey { color: black; }
 
 .achievements .container-fluid {
 	overflow: auto;	
-	max-height: 355px;
+	max-height: 270px;
   	position: relative;
  	top: 0px;
    	bottom: 0px; 
@@ -1864,6 +1864,7 @@ pre.json .jsonKey { color: black; }
 	position:relative;
 	display: inline-block;
 	text-align: left;
+	font-weight:bold;
 }
 
 .achievements .pin div.title {

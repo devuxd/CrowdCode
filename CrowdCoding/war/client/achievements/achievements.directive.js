@@ -38,6 +38,20 @@ angular.module('crowdCode').filter('byCurrent', function () {
     };
 });
 
+angular.module('crowdCode').filter('statsToShow', function () {
+    return function (userStats) {
+        var items = {
+            out: []
+        };
+        angular.forEach(userStats, function (value, key) {
+            if (value.$id != 'question_views' && value.$id != 'tutorial_completed' && value.$id != 'accepted_microtask') {
+                this.out.push(value);
+            }
+        }, items);
+        return items.out;
+    };
+});
+
 
 
 

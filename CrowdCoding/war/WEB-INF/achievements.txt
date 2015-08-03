@@ -1,7 +1,7 @@
 20
-good_review 10
-Good Reviews
-You received 10 good reviews. 
+accepted_microtask 10
+Accepted Microtasks
+You got 10 accepted microtasks.
 
 reviews 5
 Reviews
@@ -35,10 +35,6 @@ upvotes 1
 Upvote
 You received 1 upvote. 
 
-question_views 15
-Question Views
-Your question got 15 views. 
-
 test_cases 2
 Test Cases
 You completed 2 test cases. 
@@ -63,6 +59,10 @@ microtasks 5
 Microtasks
 You completed 5 microtasks. 
 
+good_review 10
+Good Reviews
+You received 10 good reviews. 
+
 microtasks 10
 Microtasks
 You completed 10 microtasks. 
@@ -74,6 +74,14 @@ You completed 10 functions.
 microtasks 15
 Microtasks
 You completed 15 microtasks. 
+
+upvotes 15
+Upvote
+You received 15 upvotes. 
+
+question_views 15
+Question Views
+Your question got 15 views. 
 
 microtasks 100
 Microtasks

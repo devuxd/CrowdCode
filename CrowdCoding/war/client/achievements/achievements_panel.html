@@ -6,64 +6,64 @@
 				<h4 class="modal-title" style="text-align: center">Statistics</h4>				
 			</div>
 			<div id="achievementsPanel" class="modal-body achievements">
-				<div>
+			<div>
+				
 				<div class="subTitle" style="color: white">History:</div>
 						<div id="board" >	
 							<div id="columns">						
-						  		<div class="infohistory" ng-repeat="(i,stat) in userStats"  ng-if="userStats.length > 0 && stat.$value>0" ng-switch on="stat.$id">
+						  		<div class="infohistory" ng-repeat="(i,stat) in userStats | statsToShow | orderBy:'$id'"  ng-if="userStats.length > 0 && stat.$value>0" ng-switch on="stat.$id">
 								
 								<div ng-switch-when="microtasks">Microtasks: {{stat.$value}}</div>
-								<div ng-switch-when="perfect_review">Perfect Reviews: {{stat.$value}}</div>
-								<div ng-switch-when="good_review">Good Reviews: {{stat.$value}}</div>
+								<div ng-switch-when="perfect_review">Perfect Reviews (5 stars): {{stat.$value}}</div>
+								<div ng-switch-when="good_review">Good Reviews (4 stars): {{stat.$value}}</div>
 								<div ng-switch-when="reviews">Reviews: {{stat.$value}}</div>							
 								<div ng-switch-when="test_cases">Test Cases: {{stat.$value}}</div>								
 								<div ng-switch-when="submits">Submits (Consecutive): {{stat.$value}}</div>
 								<div ng-switch-when="questions">Questions: {{stat.$value}}</div>		
 								<div ng-switch-when="answers">Answers: {{stat.$value}}</div>		
-								<div ng-switch-when="functions">Functions: {{stat.$value}}</div>	
+								<div ng-switch-when="functions">Edit Function: {{stat.$value}}</div>	
 								<div ng-switch-when="skips">Skips: {{stat.$value}}</div>
 							
 						  		</div>
 							</div>
 						</div>
-				<div class="subTitle" style="color:yellow">Next Achievements:</div>
-						<div id="board" >	
-							<div id="columns">						
-						  		<div class="pin" ng-repeat="(i,achievement) in listOfachievements | orderBy:['-(current/requirement)','requirement'] | byCurrent"
-								style="height:{{achievement.height}}px" >						  	
-						  	
-						  	<div class="grayIcon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
-											
-							<div class="title">{{achievement.title}}</div>			
 						
-							<div class="info">Completed {{achievement.current}} of {{achievement.requirement}} {{achievement.title}}.</div>
-											
-							
-						  		</div>
-							</div>
+				<div class="subTitle" style="color:yellow">Next Achievements:</div>
+					<div id="board" >	
+						<div id="columns">						
+					  		<div class="pin" ng-repeat="(i,achievement) in listOfachievements | orderBy:['-(current/requirement)','requirement'] | byCurrent"
+							style="height:{{achievement.height}}px" >						  	
+					  	
+					  	<div class="grayIcon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
+										
+						<div class="title">{{achievement.title}}</div>			
+					
+						<div class="info">Completed {{achievement.current}} of {{achievement.requirement}} {{achievement.title}}.</div>
+										
+						
+					  		</div>
 						</div>
+					</div>
 						
 				<div class="subTitle">Unlocked Achievements:</div>
-						<div id="board" >	
-							<div id="columns" class="container-fluid">			
-					  			<div class="pin" ng-repeat="(i,achievement) in listOfachievements | orderBy:['condition','requirement']" 
-					  				ng-if="listOfachievements.length > 0 && achievement.isUnlocked" style="height:{{achievement.height}}px">
-					  			
-					  			<div class="icon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
-												
-								<div class="title">{{achievement.title}}</div>		
-								<div class="info">{{achievement.message}}</div>			
-												
-								
+					<div id="board" >	
+						<div id="columns" class="container-fluid">			
+				  			<div class="pin" ng-repeat="(i,achievement) in listOfachievements | orderBy:['condition','requirement']" 
+				  			ng-if="listOfachievements.length > 0 && achievement.isUnlocked" style="height:{{achievement.height}}px">
+				  			
+				  			<div class="icon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
+											
+							<div class="title">{{achievement.title}}</div>		
+							<div class="info">{{achievement.message}}</div>			
+											
+							
 							</div>
 						</div>
-						</div>
+					</div>
 			</div>
 			</div>
 			</div>
 		</div>
-	</div>
 </div>
-
 
 
