@@ -25,6 +25,7 @@
 
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="/include/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css" type="text/css" />
 	<link rel="stylesheet" href="/include/bootstrap-additions/dist/bootstrap-additions.min.css">
     <link rel="stylesheet" href="/include/angular-strap/libs.min.css">
 	<link rel="stylesheet" href="/include/angular-toaster/toaster.min.css" type="text/css" />
@@ -55,11 +56,11 @@
 					<left-bar></left-bar>
 				</div>
 
-			    <div ui-layout-container size="65%" >
-			    	<microtask-form></microtask-form>
+			    <div ui-layout-container size="60%" style="overflow:hidden;" >
+			    	<form class="form-horizontal" microtask-form name="microtaskForm" novalidate></form>
 			    </div>
 
-				<div ui-layout-container size="15%" min-size="10%" max-size="15%">
+				<div ui-layout-container size="20%" min-size="10%" max-size="20%">
 					<right-bar></right-bar>
 				</div>
 		    </div>
@@ -94,6 +95,7 @@
 	<script src="/include/jshint.js"></script>
 	<script src="/include/simplediff/simplediff.js"></script>
 	<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
+	<script src="/include/bootstrap-switch/dist/js/bootstrap-switch.min.js"></script>
 	<script src="/include/firebase.js"></script>
 	<script src='/include/estools.browser.js'></script>
 	<script src='/include/escodegen.browser.js'></script>

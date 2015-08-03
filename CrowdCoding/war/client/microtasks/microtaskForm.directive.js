@@ -4,9 +4,23 @@ angular
 
 function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks) {
     return {
-        restrict: 'E',
+        restrict: 'A',
+        scope: true,
+        require: 'form',
         templateUrl: '/client/microtasks/microtask_form.html',
+        link: function($scope,$element,$attrs,formController){
+
+        	$scope.formController = formController;
+        	$scope.taskData = {};
+        	$element.bind('submit',function(event){
+        		if( $scope.taskData.collectFormData !== undefined )
+        			$scope.taskData.collectFormData(formController);
+        	});
+        },
         controller: function($scope,$element,$attrs){
+
+        	
+
 			// private vars
 			var templatesURL = "/client/microtasks/";
 			var templates = {
