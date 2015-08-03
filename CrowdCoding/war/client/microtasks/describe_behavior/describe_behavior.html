@@ -143,12 +143,12 @@
 					</div>
 					<div class="form-group">
 						<label>Type</label>
-						<select class="form-control" ng-model="t.type">
-							<option value="simple">simple</option>
-							<option value="advanced">advanced</option>
-						</select>
+						<select class="form-control" 
+								ng-model="t.isSimple"
+					            ng-options="o.v as o.n for o in [{ n: 'simple', v: true }, { n: 'advanced', v: false }]">
+					    </select>
 					</div>
-					<div class="form-group" ng-if="t.type == 'advanced'">
+					<div class="form-group" ng-if="!t.isSimple">
 						<label for="code">Code</label>
 						<div class="help-icon" >?</div>
 						<div class="form-control code" test-editor name="code" ng-model="t.code" required error="testError">
@@ -159,7 +159,7 @@
 						</div>
 					</div>
 
-					<div class="form-group" ng-if="t.type == 'simple'">
+					<div class="form-group" ng-if="t.isSimple">
 						<label for="code">Input1</label>
 						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
 						</div>
@@ -168,7 +168,7 @@
 						</div>
 					</div>
 
-					<div class="form-group" ng-if="t.type == 'simple'">
+					<div class="form-group" ng-if="t.isSimple">
 						<label for="code">Input1</label>
 						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
 						</div>
@@ -177,7 +177,7 @@
 						</div>
 					</div>
 
-					<div class="form-group" ng-if="t.type == 'simple'">
+					<div class="form-group" ng-if="t.isSimple">
 						<label for="code">Input1</label>
 						<div class="form-control code" test-editor name="code" ng-model="t.code" error="testError">
 						</div>

@@ -19,6 +19,7 @@ public class TestInFirebase extends DTO
 	public boolean isDeleted;
 	public boolean hasEverPassed;
 	public double  creationTime;
+	public boolean isSimple;
 
 
 	// Default constructor (required by Jackson JSON library)
@@ -27,7 +28,7 @@ public class TestInFirebase extends DTO
 	}
 
 	public TestInFirebase(long id, int version, String description, String code, long functionId, boolean hasEverPassed, double creationTime,
-			boolean isReadOnly, boolean isApiArtifact, boolean isDeleted)
+			boolean isReadOnly, boolean isApiArtifact, boolean isSimple, boolean isDeleted)
 	{
 		this.id 		   = id;
 		this.version       = version;
@@ -37,5 +38,6 @@ public class TestInFirebase extends DTO
 		this.isDeleted	   = isDeleted;
 		this.isReadOnly	   = isReadOnly;
 		this.isApiArtifact = isApiArtifact;
+		this.isSimple      = isSimple;
 	}
 }

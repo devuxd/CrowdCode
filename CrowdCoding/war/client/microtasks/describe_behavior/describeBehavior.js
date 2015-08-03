@@ -16,7 +16,7 @@ angular
     
     var newTest = {
         description: '',
-        type : 'advanced',
+        isSimple : false,
         code: '//write the test code',
         added: true,
         deleted: false
@@ -27,7 +27,7 @@ angular
     $scope.data.tests = $scope.funct.tests.map(function(test){
         test.edited  = false;
         test.deleted = false;
-        test.type = 'simple';
+        test.isSimple = false;
         if( $scope.microtask.disputedTests !== undefined )
 
             for( var i = 0; i < $scope.microtask.disputedTests.length ; i++ ){

@@ -45,7 +45,7 @@ angular
     };
 
     // listener to the submit button click
-    $scope.$on('collectFormData', collectFormData );
+    $scope.taskData.collectFormData = collectFormData ;
 
 
     // run the tests for the first time
@@ -115,7 +115,7 @@ angular
         $event.stopPropagation();
     }
 
-    function collectFormData(event, microtaskForm) {
+    function collectFormData(microtaskForm) {
     	formData = {
             'function': functionDto,
             requestedFunctions: requestedFunctions,

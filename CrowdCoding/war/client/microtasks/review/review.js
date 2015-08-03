@@ -230,7 +230,10 @@ angular
             $scope.review.rating = value;
         }
     };
-    var collectOff = $scope.$on('collectFormData', function(event, microtaskForm) {
+
+    $scope.taskData.collectFormData = collectFormData;
+    
+    function collectFormData(microtaskForm) {
 
         if ($scope.review.rating <= 3)
             $scope.makeDirty(microtaskForm);
@@ -261,10 +264,6 @@ angular
             };
             $scope.$emit('submitMicrotask', formData);
         }
-    });
+    }
 
-
-    $scope.$on('$destroy',function(){
-        collectOff();
-    });
 }]);
