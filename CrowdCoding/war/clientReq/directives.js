@@ -16,7 +16,7 @@ clienRequestApp.directive('jsonValidator', function()  {
             		nameToADT[value.name]=value;
             	});
                  // initialize JSONValidator and execute errorCheck
-                validator.initialize(nameToADT,viewValue,attrs.jsonValidator)
+                validator.initialize(nameToADT,viewValue,attrs.jsonValidator);
                 validator.errorCheck();
                 if (!validator.isValid()) {
                    ctrl.$setValidity('json', false);

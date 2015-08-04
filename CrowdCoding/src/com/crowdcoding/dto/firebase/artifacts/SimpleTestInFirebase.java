@@ -5,27 +5,29 @@ import java.util.List;
 
 import com.crowdcoding.dto.DTO;
 
-public class StubInFirebase extends DTO
+public class SimpleTestInFirebase extends DTO
 {
 	public String messageType = "StubInFirebase";
 	public long id;
 	public int version;
-	public String inputsKey;
+	public List<String> inputs;
 	public String output;
+	public boolean isSimple;
 	public boolean isReadOnly;
 	public boolean isApiArtifact;
 	public boolean isDeleted;
 	// Default constructor (required by Jackson JSON library)
-	public StubInFirebase()
+	public SimpleTestInFirebase()
 	{
 	}
 
-	public StubInFirebase(long id, int version, String inputsKey, String output, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted)
+	public SimpleTestInFirebase(long id, int version, List<String> inputs, String output, boolean isSimple, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted)
 	{
 		this.id 		   = id;
 		this.version 	   = version;
-		this.inputsKey 	   = inputsKey;
+		this.inputs 	   = inputs;
 		this.output 	   = output;
+		this.isSimple	   = isSimple;
 		this.isReadOnly    = isReadOnly;
 		this.isApiArtifact = isApiArtifact;
 		this.isDeleted     = isDeleted;

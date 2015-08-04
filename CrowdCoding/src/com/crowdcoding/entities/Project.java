@@ -13,8 +13,7 @@ import java.util.logging.Logger;
 import com.crowdcoding.commands.ADTCommand;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
-import com.crowdcoding.commands.StubCommand;
-import com.crowdcoding.dto.CRFunctionDTO;
+import com.crowdcoding.commands.SimpleTestCommand;
 import com.crowdcoding.dto.ClientRequestDTO;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.microtask.submission.ADTDTO;
@@ -22,7 +21,7 @@ import com.crowdcoding.dto.ajax.microtask.submission.ADTStructureDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionDescriptionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
-import com.crowdcoding.dto.ajax.microtask.submission.StubDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
 import com.crowdcoding.entities.artifacts.Artifact;
 import com.crowdcoding.entities.microtasks.ChallengeReview;
@@ -151,9 +150,9 @@ public class Project
 			}
 
 
-			for (CRFunctionDTO CRfunctionDTO : dto.functions)
+			for (FunctionDTO functionDTO : dto.functions)
 			{
-				FunctionCommand.addClientRequestsArtifacts(CRfunctionDTO);
+				FunctionCommand.addClientRequestsArtifacts(functionDTO);
 			}
 			// save project settings into firebase
 

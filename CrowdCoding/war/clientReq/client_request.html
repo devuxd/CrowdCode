@@ -24,7 +24,7 @@
 
 
 		<script src="/client/common/errorCheck.js"></script>
-		<script src="/client/common/functionSupport.js"></script>
+		<!--<script src="/client/common/functionSupport.js"></script> -->
 		<script src="/client/common/JSONValidator.js"></script>
 
 		<!-- Angular Application -->
@@ -54,9 +54,8 @@
 					<div ng-form="projectNameForm" class=" form-horizontal form-group col-md-12">
 						<div class="col-md-3 form-group">
 							<alertcontainer></alertcontainer>
-							
-							<input class="form-control input-sm" type="text"   ng-model="projectName" name="projectName"
-							 placeholder="Project Name" ng-options="state for state in projectsName" placeholder="Enter state"  data-min-length="0" bs-typeahead required ng-pattern="/^[a-zA-Z0-9_]+$/" focus/>
+							<input class="form-control input-sm" type="text"  ng-model="projectName" name="projectName"
+							 placeholder="Project Name" bs-options="name for name in projectsName" data-min-length="0" data-watch-options="true" bs-typeahead required ng-pattern="/^[a-zA-Z0-9_]+$/" focus/>
 							<ul class="help-block" ng-show="projectNameForm.projectName.$dirty && projectNameForm.projectName.$invalid">
 								<li ng-show="projectNameForm.projectName.$error.required">This field is required!</li>
 								<li ng-show="projectNameForm.projectName.$error.pattern">Is not a valid name! only use a-zA-Z0-9_</li>
@@ -197,10 +196,6 @@
 										<li ng-show="functionForm{{$index}}.functionDescription.$error.pattern">The "\" and "/" are not allowed</li>
 									</ul>
 								</div>
-								<div class="col-sm-2">
-									<span>Description Read Only</span>
-									<input type="checkbox" ng-model="function.isReadOnly">
-								</div>
 							</div>
 							<div class="form-group">
 								<label for="returnType" class="col-sm-2 control-label reset-padding">return data type</label>
@@ -270,11 +265,7 @@
 								<div class="form-group col-sm-10 reset-padding" >
 									<div class="col-sm-12 row reset-padding" ng-repeat="stubs in function.stubs track by $index ">
 										<div ng-form="test{{$index}}" class="form-horizontal col-sm-11" >
-											<div class="form-group">
-												<label for="isReadOnly" class="col-sm-2 control-label reset-padding">isReadOnly: </label>
-												<input name="isReadOnly" type="checkbox" ng-model="stubs.isReadOnly">
-											</div>
-											<!-- form for each input parameter of the function -->
+										<!-- form for each input parameter of the function -->
 											<div  class="form-group" ng-form="inputForm{{$index}}" ng-repeat="(index,parameter) in function.parameters track by $index">
 												<label for="input" class="col-sm-2 control-label reset-padding"><b>{{parameter.name}}</b> ({{parameter.type}}) </label>
 												<div class="col-sm-10 reset-padding"  ng-form="singleInputForm"  >

@@ -29,6 +29,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 
+import com.crowdcoding.commands.AdvancedTestCommand;
 import com.crowdcoding.commands.Command;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
@@ -38,9 +39,10 @@ import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.UserPicture;
 import com.crowdcoding.entities.Worker;
 import com.crowdcoding.entities.artifacts.ADT;
+import com.crowdcoding.entities.artifacts.AdvancedTest;
 import com.crowdcoding.entities.artifacts.Artifact;
 import com.crowdcoding.entities.artifacts.Function;
-import com.crowdcoding.entities.artifacts.Stub;
+import com.crowdcoding.entities.artifacts.SimpleTest;
 import com.crowdcoding.entities.artifacts.Test;
 import com.crowdcoding.entities.microtasks.ChallengeReview;
 import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior;
@@ -94,7 +96,8 @@ public class CrowdServlet extends HttpServlet
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Function.class);
 		ObjectifyService.register(Test.class);
-		ObjectifyService.register(Stub.class);
+		ObjectifyService.register(SimpleTest.class);
+		ObjectifyService.register(AdvancedTest.class);
 		ObjectifyService.register(ADT.class);
 
 		ObjectifyService.register(UserPicture.class);

@@ -69,7 +69,6 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		var emptyFunction={
 							    code          :	"{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}",
 								description   : "",
-								isReadOnly      : true,
 								name          : "",
 								parameters    : [emptyParameter],
 								returnType    : "",
@@ -103,7 +102,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 			if($scope.functions[index].stubs===undefined)
 				$scope.functions[index].stubs=[];
 
-			$scope.functions[index].stubs.push({readOnly: true} );
+			$scope.functions[index].stubs.push({} );
 	};
 
 
@@ -184,6 +183,10 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 		if(angular.isDefined(project.functions)){
 			$scope.functions=project.functions;
+			for(var index in $scope.functions){
+				if($scope.functions[index].isReadOnly !== undefined)
+					delete $scope.functions[index].isReadOnly;
+			}
 		}
 		else
 			$scope.functions=[];

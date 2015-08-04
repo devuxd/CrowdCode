@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.crowdcoding.dto.DTO;
 
-public class TestInFirebase extends DTO
+public class AdvancedTestInFirebase extends DTO
 {
 	public String messageType = "TestInFirebase";
 
@@ -17,18 +17,17 @@ public class TestInFirebase extends DTO
 	public boolean isReadOnly;
 	public boolean isApiArtifact;
 	public boolean isDeleted;
-	public boolean hasEverPassed;
 	public double  creationTime;
 	public boolean isSimple;
 
 
 	// Default constructor (required by Jackson JSON library)
-	public TestInFirebase()
+	public AdvancedTestInFirebase()
 	{
 	}
 
-	public TestInFirebase(long id, int version, String description, String code, long functionId, boolean hasEverPassed, double creationTime,
-			boolean isReadOnly, boolean isApiArtifact, boolean isSimple, boolean isDeleted)
+	public AdvancedTestInFirebase(long id, int version, String description, String code, long functionId, double creationTime,
+			boolean isSimple, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted)
 	{
 		this.id 		   = id;
 		this.version       = version;
