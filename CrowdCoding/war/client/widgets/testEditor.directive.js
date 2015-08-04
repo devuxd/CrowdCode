@@ -6,6 +6,8 @@ angular
     // var chains = ['to','be','been','is','that','which','and','has','have','with','at','of','same'];
     // var methods = [ 'not','deep','any','all','a','include','ok','true','false','null','undefined','exists','empty','arguments','equal','above','least','below','most','within','instanceof','property','ownProperty','length','string','match','keys','throw','respondTo','itself','itself','satisfy','closeTo','members','change','increase','decrease'];
     
+    
+
     return {
         restrict: 'EA',
         require: '?ngModel',
@@ -15,17 +17,20 @@ angular
             errors: '='
         },
         link: function ( $scope, iElement, iAttrs, ngModelCtrl ) {
-            
+            var edited = -1 ;
             $scope.errors = {};
 
-            // when model change, update our view (just update the div content)
-            ngModelCtrl.$render = function() {
-                console.log('rendering');
-                // checkValidity();
-            };
+            var initialCode;
 
             ngModelCtrl.$asyncValidators.code = function(modelValue, viewValue) {
-                var deferred  = $q.defer();
+
+                if( !initialCode ) initialCode = modelValue;
+
+                var deferred = $q.defer();
+
+                // validate the code 
+                // 1) JSHINT check the syntax errors
+                // 2) test validator web worker check the execution errors
                 var code = modelValue || viewValue;
                 var lintResult =  JSHINT(code, {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true, expr:true});
                 
@@ -34,7 +39,6 @@ angular
                     deferred.reject();
                 }
                 else {
-                    console.log('attributes',iAttrs);
                     var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
                     worker.postMessage({ 
                         'baseUrl'     : document.location.origin, 
@@ -43,9 +47,7 @@ angular
                     });
                     worker.onmessage = function(message){
                         var data = message.data;
-                        console.log('received message',data);
                         if( data.error.length > 0 ){
-                            console.log
                             $scope.errors.code = message.data.error;
                             deferred.reject();
                         } else {
@@ -57,7 +59,10 @@ angular
                     };
                 }
 
-        
+                if( initialCode != code )
+                    ngModelCtrl.$setDirty();
+
+                // return the promise
                 return deferred.promise;
             };
 

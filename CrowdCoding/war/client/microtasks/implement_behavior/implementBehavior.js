@@ -23,12 +23,18 @@ angular
     $scope.data.changedSinceLastRun  = null;
     $scope.data.inspecting = false;
     $scope.data.selected = -1;
-    $scope.data.tests = $scope.funct.tests.map(function(test){
+
+    $scope.data.tests = [];
+    for( var i = 0; i < $scope.funct.tests.length ; i++ ){
+        if( $scope.funct.tests[i].isDeleted )
+            continue;
+
+        var test = angular.copy(test);
         test.editing = true;
         test.running = true;
         test.dispute = { active:false, text: 'aa' };
-        return angular.copy(test);
-    });
+        $scope.data.tests.push(test);
+    }
 
     // methods used inside the microtask view
     $scope.toggleSelect   = toggleSelect;

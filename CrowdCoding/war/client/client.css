@@ -981,8 +981,7 @@ tutorial  { display:none; }
 	left: 0px;
 	right: 0px;
 	bottom:0px;
-	overflow-x:none;
-	overflow-y:scroll;
+	overflow: auto;
 	background-color:white;
 }
 .section-content.empty {
@@ -1025,7 +1024,15 @@ tutorial  { display:none; }
 }
 
 
-.tests-list { margin-bottom: 10px;}
+.tests-list {  padding: 10px 10px 0px 10px; }
+
+.tests-list.has-next { position:absolute; top:0px; left:0px; right:0px; bottom:2em; overflow:auto; }
+.tests-list.has-next + div {
+	position:absolute; left:0px; right:0px; bottom:0px; height:2em;
+	line-height:2em;
+	padding:0px 5px 0px 5px;
+	background-color:#EBEBEB;
+}
 
 .test-item { 
 	margin-bottom: 4px;
@@ -1504,5 +1511,5 @@ pre.json .jsonKey { color: black; }
 /*.form-control.ng-dirty.ng-valid { border-color: #3c763d; }*/
 
 /* invalid form controls */
-.form-control.ng-dirty.ng-invalid, .form-control.code.ng-invalid > div { border-color: #a94442; }
+.form-control.ng-dirty.ng-invalid, .form-control.code.ng-dirty.ng-invalid > div { border-color: #a94442; }
 

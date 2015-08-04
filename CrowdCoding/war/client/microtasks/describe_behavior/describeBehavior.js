@@ -6,12 +6,12 @@ angular
     .module('crowdCode')
     .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory) {
     
-    console.log($scope.microtask);
-    
     // prepare the data for the view
     $scope.data = {};
     $scope.data.dispute = { active: false, text: '' }; 
+    $scope.data.tests = [];
     $scope.data.isComplete = false;
+    $scope.data.numDeleted = 0;
     $scope.data.selected = -1;
     
     var newTest = {
@@ -27,7 +27,11 @@ angular
     // load the tests:
     // need to store the collection as array because
     // from firebase comes as an object collection
-    $scope.data.tests = $scope.funct.tests.map(function(test){
+    for( var i = 0; i < $scope.funct.tests.length ; i++ ){
+        if( $scope.funct.tests[i].isDeleted )
+            continue;
+
+        var test = angular.copy($scope.funct.tests[i]);
         test.edited  = false;
         test.deleted = false;
         if( $scope.microtask.disputedTests !== undefined )
@@ -41,8 +45,8 @@ angular
                 }
             }
 
-        return angular.copy(test);
-    });
+        $scope.data.tests.push(test);
+    }
 
     // expose the toggle and edit test functions to the scope
     $scope.toggleEdit   = toggleEdit;
@@ -54,7 +58,6 @@ angular
     // and the microtask form destroy listener
     $scope.taskData.collectFormData = collectFormData;
 
-addNew();
 
     function addNew($event){
         var lastAdded = angular.copy(newTest);
@@ -74,10 +77,12 @@ addNew();
         // $event.stopPropagation();
     }
 
+    var tmpTestData = { };
     function toggleEdit($event){
         
         if( $scope.data.selected != -1 ) {
             $scope.data.selected.editing = !$scope.data.selected.editing;
+
             $scope.data.selected.edited = true;
         }
 
@@ -91,8 +96,13 @@ addNew();
         if( $scope.data.selected != -1 ) {
             $scope.data.selected.deleted = !$scope.data.selected.deleted;
 
-            if( $scope.data.selected.deleted )
+            if( $scope.data.selected.deleted ){
+                $scope.data.numDeleted ++;
                 $scope.data.selected = -1;
+            } else {
+                $scope.data.numDeleted --;
+            }
+                
         }
 
 
@@ -104,11 +114,13 @@ addNew();
 
     function collectFormData(form) {
 
+        $scope.data.selected = -1 ;
+
         if( form.$invalid ){
             $modal({template : '/client/microtasks/modal_form_invalid.html' , show: true});
+            form.$setDirty();
             return;
         }
-        
 
         // prepare the microtask submit data
         var formData = {
@@ -127,23 +139,35 @@ addNew();
             //     addTest();
 
             // for each of the tests, create a testDTO object
-            formData.tests = $scope.data.tests.map(function(test){
-                return {
+            for( var idx = 0 ; idx < $scope.data.tests.length ; idx++ ){
+                var test = $scope.data.tests[idx];
+
+                var testDto = {
                     id:          test.id,
                     description: test.description,
-                    edited:      test.edited,
-                    added:       test.added,
-                    deleted:     test.deleted,
                     isSimple:    test.isSimple,
                     code:        test.code,
                     inputs:      test.inputs,
                     output:      test.output
 
                 };
-            }); 
-        }
 
-        console.log('returning ',formData);
+                if( test.added && test.deleted )
+                    continue;
+
+                if( test.added ) 
+                    testDto.added    = true;
+                else if( test.deleted )
+                    testDto.deleted  = true;
+                else if( form['testForm_'+idx].$dirty )
+                    testDto.edited = true;
+
+                formData.tests.push(testDto);
+            } 
+
+
+        }
+        
         return formData;
 
     }

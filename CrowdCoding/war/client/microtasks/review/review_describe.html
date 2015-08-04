@@ -47,7 +47,11 @@
 		<div class="tests-list">
 			<div class="test-item static" ng-repeat="t in data.tests track by $index">
 				<div class="row">
-					<div class="col-md-1 col-sm-1">{{ t.edited ? 'edited' : t.added ? 'added' : '' }}</div>
+					<div class="col-md-1 col-sm-1">
+						<span ng-if="t.edited">edited</span>
+						<span ng-if="t.added">added</span>
+						<span ng-if="t.deleted">deleted</span>
+					</div>
 					<div class="col-md-11 col-sm-11">
 						<div class="row">
 							<div class="col-sm-2 col-md-2 row-label">description</div>

@@ -156,6 +156,13 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			// submit button pressed
 			function submitMicrotask() {
 
+				
+        
+		        if( !$scope.formController.$dirty ){
+		            $modal({template : '/client/microtasks/modal_form_pristine.html' , show: true});
+		            return;
+		        }
+
 				if( $scope.taskData.collectFormData !== undefined ){
         			var formData = $scope.taskData.collectFormData($scope.formController);
         			if( formData ){
