@@ -67,7 +67,8 @@
 						 ng-repeat="t in data.tests track by $index">
 						<div ng-click="toggleSelect($event,t);">
 							<strong class="pull-left">
-								it {{ t.description }}
+								<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
+								{{ t.description }}
 							</strong> 
 							<span class="pull-right">
 								<span ng-if="t.running">
@@ -210,10 +211,10 @@
 							<small>{{ '{' + data.editingStub.output.type +'}' }}</small>
 						</div>
 						<div class="col-md-10">
-							<json-editor 
-								ng-model="data.editingStub.output.value" 
-								type="{{data.editingStub.output.type}}"
-								name="'output'">
+							<div
+								json-editor="{ type: data.editingStub.output.type, name: 'output' }"
+								ng-model="data.editingStub.output.value"
+								name="output">
 							</json-editor>
 						</div>
 					</div>

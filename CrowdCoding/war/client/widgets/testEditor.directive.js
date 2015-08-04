@@ -14,7 +14,7 @@ angular
             ngModel: '=',
             errors: '='
         },
-        link: function ( $scope, element, attrs, ngModelCtrl ) {
+        link: function ( $scope, iElement, iAttrs, ngModelCtrl ) {
             
             $scope.errors = {};
 
@@ -34,13 +34,18 @@ angular
                     deferred.reject();
                 }
                 else {
+                    console.log('attributes',iAttrs);
                     var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
                     worker.postMessage({ 
                         'baseUrl'     : document.location.origin, 
                         'code'        : code,
+                        'functionName': iAttrs.functionName ? iAttrs.functionName : ''
                     });
                     worker.onmessage = function(message){
-                        if( message.data.error ){
+                        var data = message.data;
+                        console.log('received message',data);
+                        if( data.error.length > 0 ){
+                            console.log
                             $scope.errors.code = message.data.error;
                             deferred.reject();
                         } else {

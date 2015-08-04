@@ -40,6 +40,7 @@
 	  		class="btn btn-primary btn-sm pull-right"
    			ng-if="!breakMode"
 	  		ng-disabled="noMicrotask"
+	  		ng-click="submit()"
 	  		tabindex="99" >
 	  		Submit
 	  	</button>
@@ -47,20 +48,20 @@
    	 		id= "skipBtn"
    			class="btn btn-default btn-sm pull-right"
    			ng-if="!breakMode"
-   			ng-click="$emit('submitMicrotask')" 
+   			ng-click="skip()" 
    			ng-disabled="noMicrotask"
    			tabindex="100" >
    			Skip
    		</button>
 	  	<label class="btn btn-sm pull-right" ng-if="!breakMode && !noMicrotask" id="breakBtn">
-  	    	<input type="checkbox" ng-model="model.startBreak" tabindex="103" >
+  	    	<input type="checkbox" ng-model="taskData.startBreak" tabindex="103" >
   	    	<span>Take a break</span>
   	   	</label>
   	   	
 		<button type="button"
    			class="btn btn-primary btn-sm pull-right"
    			ng-if="breakMode"
-   			ng-click="$emit('fecthMicrotask'); " 
+   			ng-click="fetch()" 
    			tabindex="100" >
 	       	Fetch a microtask
    		</button>

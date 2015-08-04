@@ -9,17 +9,13 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
         require: 'form',
         templateUrl: '/client/microtasks/microtask_form.html',
         link: function($scope,$element,$attrs,formController){
-
         	$scope.formController = formController;
-        	$scope.taskData = {};
-        	$element.bind('submit',function(event){
-        		if( $scope.taskData.collectFormData !== undefined )
-        			$scope.taskData.collectFormData(formController);
-        	});
         },
-        controller: function($scope,$element,$attrs){
+        controller: function($scope){
 
         	
+
+        	$scope.taskData = {};
 
 			// private vars
 			var templatesURL = "/client/microtasks/";
@@ -42,15 +38,14 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			$scope.funct = {};
 			$scope.microtask = {};
 			$scope.templatePath = ""; //"/html/templates/microtasks/";
+			$scope.taskData.startBreak = false;
 
 			var waitTimeInSeconds = 3;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
 			$scope.noMicrotask   = true;
-			$scope.model = {
-				startBreak :false
-			};
+
 			$scope.checkQueueIn  = waitTimeInSeconds;
 
 			$scope.askQuestion = function(){
@@ -62,13 +57,14 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				$scope.$emit('queue-tutorial', $scope.microtask.type , true, function(){});
 			};
 
-
+			$scope.submit = submitMicrotask;
+			$scope.skip   = skipMicrotask;
+			$scope.fetch  = fetchMicrotask;
 
 			// ------- MESSAGE LISTENERS ------- //
 
+			$scope.$on('timeExpired'    , timeExpired);
 			$scope.$on('fecthMicrotask' , fetchMicrotask);
-			$scope.$on('submitMicrotask', submitMicrotask);
-
 			$scope.$on('microtaskLoaded', onMicrotaskLoaded);
 			$scope.$on('noMicrotask'    , onNoMicrotask);
 
@@ -125,23 +121,50 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				if (checkQueueTimeout !== null) {
 					$timeout.cancel(checkQueueTimeout);
 				}
+
+				// cancel breakMode
 				$scope.breakMode = false;
+
 				// show the loading screen
+				// and ask for a microtask fetch
 				$scope.templatePath  = templatesURL + "loading.html";
-				// ask for a microtask fetch
-				microtasks.fetch();
+				microtasks.fetch(); 
 			}
 
-
-			function submitMicrotask(event, formData, autoSkip) {
-
-				// if the form is valid, submit the microtask
-				if($scope.canSubmit){
-					if( $scope.model.startBreak ) { $scope.breakMode = true; $scope.model.startBreak = false; }
-					$scope.templatePath = templatesURL + "loading.html";
-					$scope.canSubmit=false;
-					microtasks.submit($scope.microtask,formData,autoSkip, !$scope.breakMode);
+			function checkBreakMode(){
+				if( $scope.taskData.startBreak ) { 
+					$scope.breakMode = true; 
+					$scope.taskData.startBreak = false; 
 				}
+			}
+
+			// time is expired, skip the microtask
+			function timeExpired(){
+				$scope.canSubmit    = false;
+				$scope.templatePath = templatesURL + "loading.html";
+				microtasks.submit($scope.microtask,undefined,true,true);
+			}
+
+			// skip button pressed
+			function skipMicrotask(){
+				checkBreakMode();
+				$scope.canSubmit    = false;
+				$scope.templatePath = templatesURL + "loading.html";
+				microtasks.submit($scope.microtask,undefined,false,!$scope.breakMode);
+			}
+
+			// submit button pressed
+			function submitMicrotask() {
+
+				if( $scope.taskData.collectFormData !== undefined ){
+        			var formData = $scope.taskData.collectFormData($scope.formController);
+        			if( formData ){
+        				checkBreakMode();
+						$scope.canSubmit    = false;
+						$scope.templatePath = templatesURL + "loading.html";
+						microtasks.submit($scope.microtask,formData,false,!$scope.breakMode);
+        			}
+        		}
 			}
         }
     };

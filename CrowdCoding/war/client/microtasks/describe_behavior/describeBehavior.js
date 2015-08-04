@@ -16,7 +16,7 @@ angular
     
     var newTest = {
         description: '',
-        isSimple : true,
+        isSimple : false,
         inputs: $scope.funct.parameters.map(function(par){ return ""; }),
         output: "",
         code: '//write the test code',
@@ -53,11 +53,7 @@ angular
     // and the microtask form destroy listener
     $scope.taskData.collectFormData = collectFormData;
 
-
-    
-    addNew();
-    console.log($scope.data.selected);
-
+addNew();
     function addNew($event){
         var lastAdded = angular.copy(newTest);
         $scope.data.tests.push(lastAdded);
@@ -108,7 +104,6 @@ angular
 
         if( form.$invalid ){
             $modal({template : '/client/microtasks/modal_form_invalid.html' , show: true});
-            console.log(form.$error)
             return;
         }
         
@@ -141,10 +136,9 @@ angular
                 };
             }); 
         }
-        
 
-        // tell the microtaskForm that the data is ready
-        $scope.$emit('submitMicrotask', formData);
+        console.log('returning ',formData);
+        return formData;
 
     }
 

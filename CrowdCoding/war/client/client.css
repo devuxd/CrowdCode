@@ -799,38 +799,29 @@ rgba(237,90,48,1)  Valencia - orange - review
 
 
 
-span.rating-star-fixed {
-	 background-image: url('/img/stars.png');
-	 background-position: 0px 0px;
-
-	 width:25px;
-	 height:25px;
-	 display:block;
-}
-
-span.rating-star {
-	 background-image: url('/img/stars.png');
-	 background-position: 25px 0px;
-
-	 width:25px;
-	 height:25px;
-	 display:block;
-	 float:left;
-}
-
+span.rating-star,
+span.rating-star-fixed,
 span.rating-star-news {
-	 background-image: url('/img/stars.png');
-	 background-position: 25px 0px;
-
-	 width:25px;
-	 height:25px;
+	 background-image: url('/img/stars_sm.png');
+	 width:15px;
+	 height:15px;
 	 display:block;
+}
+
+
+span.rating-star-fixed {
+	 background-position: 0px 0px;
+}
+
+span.rating-star-news,
+span.rating-star {
+	 background-position: 15px 0px;
 	 float:left;
 }
+
 span.rating-star-news.full {
 	 background-position: 0px 0px;
 }
-
 
 span.rating-star.full {
 	 background-position: 0px 0px;
@@ -838,13 +829,13 @@ span.rating-star.full {
 
 
 .stars-container { margin:5px; }
-.stars-separator { float:left; content:'s'; width:1px; height:25px; background-color: black;}
+.stars-separator { float:left; content:'s'; width:1px; height:15px; background-color: black;}
 .star {
-	background-image: url('/img/stars.png');
-	background-position: 25px 0px;
+	background-image: url('/img/stars_sm.png');
+	background-position: 15px 0px;
 
-	width:25px;
-	height:25px;
+	width:15px;
+	height:15px;
 	display:block;
 	float:left;
 }
@@ -856,7 +847,7 @@ span.rating-star.full {
 	font-weight: bold;
 	font-family: 'Lato';
 	margin:5px;
-	line-height:25px;
+	line-height:15px;
 	text-transform: uppercase;
 }
 

@@ -59,6 +59,7 @@ angular
     });
 
     function run(){
+        console.log('running');
         var deferred = $q.defer();
         $scope.data.running = true;
         $scope.data.inspecting = false;
@@ -165,8 +166,7 @@ angular
                 });
             }
         });
-
-        $scope.$emit('submitMicrotask', formData);
+        return formData;
     }
 
     function onEditStub(functionName,inputsKey){

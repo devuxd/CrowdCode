@@ -221,49 +221,26 @@ angular
         $scope.rate(3);
     };
 
-    //Star rating manager
-    // $scope.review.mouseOn = 0;
-    $scope.review.maxRating = 5;
-    $scope.review.rating    = -1;
-    $scope.rate = function(value) {
-        if (value >= 0 && value <= $scope.review.maxRating) {
-            $scope.review.rating = value;
-        }
-    };
 
     $scope.taskData.collectFormData = collectFormData;
     
-    function collectFormData(microtaskForm) {
+    function collectFormData(form) {
 
-        if ($scope.review.rating <= 3)
-            $scope.makeDirty(microtaskForm);
-
-        var error = "";
-        if ($scope.review.rating === -1)
-            error = "plese, select a score";
-        else if (microtaskForm.$invalid && $scope.review.rating <= 3)
-            error = "please, write an explanation for your choice";
-
-
-        if (error !== "")
-            $alert({
-                title: 'Error!',
-                content: error,
-                type: 'danger',
-                show: true,
-                duration: 3,
-                template: '/client/microtasks/alert_submit.html',
-                container: 'alertcontainer'
-            });
-        else {
-
-            formData = {
-                reviewText              :($scope.review.text ===undefined ? "" : $scope.review.text),
-                qualityScore            : $scope.review.rating,
-                fromDisputedMicrotask   : $scope.review.fromDispute
-            };
-            $scope.$emit('submitMicrotask', formData);
+        
+        if( form.$invalid ){
+            $modal({template : '/client/microtasks/modal_form_invalid.html' , show: true});
+            return;
         }
+
+        
+        var formData = {
+            reviewText              :($scope.review.text ===undefined ? "" : $scope.review.text),
+            qualityScore            : $scope.review.rating,
+            fromDisputedMicrotask   : $scope.review.fromDispute
+        };
+
+        return formData;
+
     }
 
 }]);
