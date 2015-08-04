@@ -164,8 +164,6 @@ angular
 
                 formData.tests.push(testDto);
             } 
-
-
         }
         
         return formData;

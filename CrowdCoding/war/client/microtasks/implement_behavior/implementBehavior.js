@@ -29,7 +29,7 @@ angular
         if( $scope.funct.tests[i].isDeleted )
             continue;
 
-        var test = angular.copy(test);
+        var test = angular.copy($scope.funct.tests[i]);
         test.editing = true;
         test.running = true;
         test.dispute = { active:false, text: 'aa' };
