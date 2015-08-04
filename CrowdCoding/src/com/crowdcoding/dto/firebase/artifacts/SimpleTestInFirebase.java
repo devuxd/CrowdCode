@@ -10,6 +10,7 @@ public class SimpleTestInFirebase extends DTO
 	public String messageType = "StubInFirebase";
 	public long id;
 	public int version;
+	public String description;
 	public List<String> inputs;
 	public String output;
 	public boolean isSimple;
@@ -21,12 +22,13 @@ public class SimpleTestInFirebase extends DTO
 	{
 	}
 
-	public SimpleTestInFirebase(long id, int version, List<String> inputs, String output, boolean isSimple, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted)
+	public SimpleTestInFirebase(long id, int version, List<String> inputs, String output, String description, boolean isSimple, boolean isReadOnly, boolean isApiArtifact, boolean isDeleted)
 	{
 		this.id 		   = id;
 		this.version 	   = version;
 		this.inputs 	   = inputs;
 		this.output 	   = output;
+		this.description   = description;
 		this.isSimple	   = isSimple;
 		this.isReadOnly    = isReadOnly;
 		this.isApiArtifact = isApiArtifact;
