@@ -16,7 +16,7 @@ public class FunctionDescriptionDTO extends DTO
 	public List<FunctionParameterDTO> parameters = new ArrayList<FunctionParameterDTO>();
 	public String header;
 	public String description;
-	public List<StubDTO> stubs = new ArrayList<StubDTO>();
+	public List<TestDTO> tests = new ArrayList<TestDTO>();
 
 	// Default constructor (required by Jackson JSON library)
 	public FunctionDescriptionDTO()

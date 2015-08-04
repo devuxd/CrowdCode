@@ -2,23 +2,19 @@ package com.crowdcoding.entities.artifacts;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.List;
-
 import com.crowdcoding.commands.FunctionCommand;
-import com.crowdcoding.dto.firebase.artifacts.StubInFirebase;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
+import com.crowdcoding.dto.firebase.artifacts.AdvancedTestInFirebase;
 import com.crowdcoding.history.ArtifactCreated;
 import com.crowdcoding.history.HistoryLog;
-import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.util.FirebaseService;
 import com.googlecode.objectify.Ref;
 import com.googlecode.objectify.annotation.Subclass;
 
 @Subclass(index=true)
-public class Stub extends Artifact
+public class AdvancedTest extends Test
 {
-	private long functionId;   //id of the stubbed function
-	private String inputsKey;
-	private String output;
+	private String code;
 
 
 	/******************************************************************************************
@@ -26,70 +22,97 @@ public class Stub extends Artifact
 	 *****************************************************************************************/
 
 	// Constructor for deserialization
-	protected Stub()
+	protected AdvancedTest()
 	{
 	}
 
-	public Stub(String inputsKey, String output, long functionId, boolean isApiArtifact, boolean isReadOnly, String projectId)
+	public AdvancedTest(TestDTO test, long functionId, boolean isApiArtifact,boolean isReadOnly, String projectId)
 	{
-		super(isApiArtifact, isReadOnly, projectId);
+		super(test.description, test.isSimple, functionId, isApiArtifact,isReadOnly, projectId);
 
 
-		this.functionId = functionId;
-		this.inputsKey 	= inputsKey;
-		this.output 	= output;
+		this.code 		   = test.code;
 
 		ofy().save().entity(this).now();
-		storeToFirebase();
-
-		FunctionCommand.addStub(functionId, this.id);
 
 		HistoryLog.Init(projectId).addEvent(new ArtifactCreated( this ));
 
+		storeToFirebase();
+
+		FunctionCommand.addTest(functionId, this.id);
 	}
 
 	/******************************************************************************************
 	 * Accessors
 	 *****************************************************************************************/
 
-	public String getName(){
-
-		return "stub";
-
+	public String getTestCode()
+	{
+		if(code == null)
+		{
+			return "";
+		}
+		return code;
 	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+
+		public String getName()
+	{
+		return description;
+	}
+
+	public long getFunctionId()
+	{
+		return functionId;
+	}
+
+
 	/******************************************************************************************
 	 * Commands
 	 *****************************************************************************************/
 
-	// Marks this test as deleted, removing it from the list of tests on its owning function.
+	/**updates this test if description and code differ from the old one */
+	public void update(String newDescription, String newCode){
+		if( ! ( this.description + this.code ).equals( newDescription + newCode ) )
+		{
+			this.description     = newDescription;
+			this.code		     = newCode;
+			ofy().save().entities(this).now();
+			storeToFirebase();
+			FunctionCommand.incrementTestSuite(this.functionId);
+		}
+
+	}
+
+	/** Marks this test as deleted**/
 	public void delete()
 	{
 		deleteArtifact();
-
 		storeToFirebase();
-
+		FunctionCommand.incrementTestSuite(this.functionId);
 	}
 
-	public void update(String output)
-	{
-		this.output	= output;
-		ofy().save().entities(this).now();
-		storeToFirebase();
-
-	}
 
 	/******************************************************************************************
 	 * Firebase methods
 	 *****************************************************************************************/
 
-	public void storeToFirebase()
+	private void storeToFirebase()
 	{
 		int firebaseVersion = version + 1;
 
-		FirebaseService.writeStub(new StubInFirebase(this.id,
+		FirebaseService.writeAdvancedTest(new AdvancedTestInFirebase(this.id,
 													 firebaseVersion,
-													 this.inputsKey,
-													 this.output,
+													 this.description,
+													 this.code,
+													 this.functionId,
+													 this.creationTime,
+													 this.isSimple,
 													 this.isReadOnly,
 													 this.isAPIArtifact,
 													 this.isDeleted),
@@ -100,22 +123,22 @@ public class Stub extends Artifact
 
 		incrementVersion();
 	}
+
 	/******************************************************************************************
 	 * Objectify Datastore methods
 	 *****************************************************************************************/
 
 	// Given a ref to a function that has not been loaded from the datastore,
 	// load it and get the object
-	public static Stub load(Ref<Stub> ref)
+	public static AdvancedTest load(Ref<AdvancedTest> ref)
 	{
 		return ofy().load().ref(ref).now();
 	}
 
 	// Given an id for a test, finds the corresponding test. Returns null if no such test exists.
-	public static Stub find(long id)
+	public static AdvancedTest find(long id)
 	{
-		return (Stub) ofy().load().key(Artifact.getKey(id)).now();
+		return (AdvancedTest) ofy().load().key(Artifact.getKey(id)).now();
 	}
 
 }
-

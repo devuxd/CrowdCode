@@ -259,13 +259,13 @@ public class FirebaseService
 
 
 	// Stores the specified test to Firebase
-	public static void writeTest(TestInFirebase dto, long functionId, long testID, int version, String projectId){
+	public static void writeAdvancedTest(AdvancedTestInFirebase dto, long functionId, long testID, int version, String projectId){
 		enqueueWrite(dto.json(), "/artifacts/functions/"+functionId+"/tests/" + testID + ".json", HTTPMethod.PUT, projectId);
 		enqueueWrite(dto.json(), "/history/artifacts/tests/" + testID + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}
 
 	// Stores the specified Stub to Firebase
-	public static void writeStub(StubInFirebase dto, long functionId, long stubId, int version, String projectId){
+	public static void writeSimpleTest(SimpleTestInFirebase dto, long functionId, long stubId, int version, String projectId){
 		enqueueWrite(dto.json(), "/artifacts/functions/" + functionId + "/stubs/" + stubId + ".json", HTTPMethod.PUT, projectId);
 		enqueueWrite(dto.json(), "/history/artifacts/stubs/" + stubId + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}

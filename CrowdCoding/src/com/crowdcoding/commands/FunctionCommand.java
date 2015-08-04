@@ -3,24 +3,21 @@ package com.crowdcoding.commands;
 
 import java.util.List;
 
-import com.crowdcoding.dto.CRFunctionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
-import com.crowdcoding.dto.ajax.microtask.submission.StubDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
 import com.crowdcoding.entities.artifacts.Function;
 import com.crowdcoding.servlets.ThreadContext;
 
 public abstract class FunctionCommand extends Command {
 	protected long functionId;
 
-	public static FunctionCommand addClientRequestsArtifacts(CRFunctionDTO CRFunctionDTO) {
-		return new AddClientRequestsArtifacts(CRFunctionDTO);
+	public static FunctionCommand addClientRequestsArtifacts(FunctionDTO functionDTO) {
+		return new AddClientRequestsArtifacts(functionDTO);
 	}
 
-	public static FunctionCommand create(String name, String returnType,
-			List<FunctionParameterDTO> parameters, String header, String description,
-			String code, boolean isApiArtifact, boolean isReadOnly) {
-		return new Create(name, returnType, parameters, header, description, code, isApiArtifact, isReadOnly);
+	public static FunctionCommand create(FunctionDTO functionDTO, boolean isApiArtifact, boolean isReadOnly) {
+		return new Create(functionDTO, isApiArtifact, isReadOnly);
 	}
 
 	public static FunctionCommand createRequestedFunction(long requestingFunctionId, FunctionDTO requestedFunction) {
@@ -108,82 +105,71 @@ public abstract class FunctionCommand extends Command {
 	public abstract void execute(Function function, String projectId);
 
 	protected static class AddClientRequestsArtifacts extends FunctionCommand {
-		private CRFunctionDTO CRFunctionDTO;
+		private FunctionDTO functionDTO;
 
-		public AddClientRequestsArtifacts(CRFunctionDTO CRFunctionDTO) {
+		public AddClientRequestsArtifacts(FunctionDTO functionDTO) {
 			super(0L);
-			this.CRFunctionDTO = CRFunctionDTO;
+			this.functionDTO = functionDTO;
 		}
 
 		public void execute(Function function, String projectId) {
 
 			Function funct = new Function(
-										this.CRFunctionDTO.name,
-										this.CRFunctionDTO.returnType,
-										this.CRFunctionDTO.parameters,
-										this.CRFunctionDTO.header,
-										this.CRFunctionDTO.description,
-										this.CRFunctionDTO.code,
+										functionDTO,
 										true,
-										this.CRFunctionDTO.isReadOnly,
+										true,
 										projectId);
 
-			for( StubDTO stub : CRFunctionDTO.stubs ){
-				StubCommand.create(stub.inputsKey, stub.output, funct.getId(), true, stub.isReadOnly);
+			for( TestDTO test : functionDTO.tests ){
+				if(test.isSimple)
+					SimpleTestCommand.create(test, funct.getId(), true, true);
+				else
+					AdvancedTestCommand.create(test, functionId, true, true);
 			}
 		}
 	}
 
 	protected static class Create extends FunctionCommand {
-		private String name;
-		private String returnType;
-		private List<FunctionParameterDTO> parameters;
-		private String header;
-		private String description;
-		private String code;
+		private FunctionDTO functionDTO;
 		private boolean isReadOnly;
 		private boolean isApiArtifact;
 
-		public Create(String name, String returnType, List<FunctionParameterDTO> parameters,
-				String header, String description, String code, boolean isApiArtifact, boolean isReadOnly) {
+		public Create(FunctionDTO functionDTO, boolean isApiArtifact, boolean isReadOnly) {
 			super(0L);
-			this.name 		   = name;
-			this.returnType    = returnType;
-			this.parameters    = parameters;
-			this.header        = header;
-			this.description   = description;
-			this.code 		   = code;
+			
+			this.functionDTO   = functionDTO;
 			this.isApiArtifact = isApiArtifact;
 			this.isReadOnly	   = isReadOnly;
 		}
 
 		public void execute(Function function, String projectId) {
-			new Function(name, returnType, parameters, header, description, code, isApiArtifact, isReadOnly, projectId);
+			new Function(functionDTO, isApiArtifact, isReadOnly, projectId);
 		}
 	}
 
 	protected static class CreateRequestedFunction extends FunctionCommand {
 
-		private FunctionDTO requestedFunction;
+		private FunctionDTO requestedFunctionDTO;
 		private long requestingFunctionId;
 
-		public CreateRequestedFunction(long requestingFunctionId, FunctionDTO requestedFunction) {
+		public CreateRequestedFunction(long requestingFunctionId, FunctionDTO requestedFunctionDTO) {
 			super(0L);
 
-			this.requestedFunction	  = requestedFunction;
+			this.requestedFunctionDTO = requestedFunctionDTO;
 			this.requestingFunctionId = requestingFunctionId;
 		}
 
 		public void execute(Function funct, String projectId) {
 
-			Function function = new Function(requestedFunction.name, requestedFunction.returnType, requestedFunction.parameters, requestedFunction.header, requestedFunction.description, "{\n    return -1;\n}", false, false, projectId);
+			requestedFunctionDTO.code = "{\n    return -1;\n}";
+			Function function = new Function(requestedFunctionDTO, false, false, projectId);
 
 			function.addCaller(requestingFunctionId);
 
 			FunctionCommand.addCallee(requestingFunctionId, function.getId());
 			
-			for( StubDTO stub : requestedFunction.stubs){
-				StubCommand.create(stub.inputsKey, stub.output, function.getId(), false, false);
+			for( TestDTO test : requestedFunctionDTO.tests){
+				SimpleTestCommand.create(test, function.getId(), false, false);
 			}
 		}
 	}

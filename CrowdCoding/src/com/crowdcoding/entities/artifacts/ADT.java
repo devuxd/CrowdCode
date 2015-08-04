@@ -13,7 +13,7 @@ import sun.security.krb5.internal.crypto.DesCbcCrcEType;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.dto.firebase.artifacts.ADTInFirebase;
-import com.crowdcoding.dto.firebase.artifacts.TestInFirebase;
+import com.crowdcoding.dto.firebase.artifacts.AdvancedTestInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.history.ArtifactCreated;
 import com.crowdcoding.history.HistoryLog;

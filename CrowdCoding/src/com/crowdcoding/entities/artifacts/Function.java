@@ -13,17 +13,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
-import com.crowdcoding.commands.StubCommand;
-import com.crowdcoding.commands.TestCommand;
+import com.crowdcoding.commands.SimpleTestCommand;
+import com.crowdcoding.commands.AdvancedTestCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.TestResultDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviorDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
-import com.crowdcoding.dto.ajax.microtask.submission.StubDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
-import com.crowdcoding.dto.ajax.microtask.submission.TestDisputedDTO;
 import com.crowdcoding.dto.firebase.artifacts.FunctionInFirebase;
 import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior;
 import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior.PromptType;
@@ -91,23 +89,22 @@ public class Function extends Artifact
 	protected Function(){}
 
 	// Constructor for a function that has a full description and code
-	public Function(String name, String returnType, List<FunctionParameterDTO> parameters, String header,
-			String description, String code, boolean isAPIArtifact, boolean isReadOnly, String projectId)
+	public Function(FunctionDTO functionDTO, boolean isAPIArtifact, boolean isReadOnly, String projectId)
 	{
 		super(isAPIArtifact, isReadOnly, projectId);
-		this.name = name;
-		this.returnType = returnType;
+		this.name = functionDTO.name;
+		this.returnType = functionDTO.returnType;
 
-		for(FunctionParameterDTO parameter : parameters)
+		for(FunctionParameterDTO parameter : functionDTO.parameters)
 		{
 			this.paramNames.add(parameter.name);
 			this.paramTypes.add(parameter.type);
 			this.paramDescriptions.add(parameter.description);
 		}
 
-		this.header = header;
-		this.description = description;
-		this.code = code;
+		this.header = functionDTO.header;
+		this.description = functionDTO.description;
+		this.code = functionDTO.code;
 		this.linesOfCode = StringUtils.countMatches(this.code, "\n") + 2;
 
 		this.isCompleted=false;
@@ -318,12 +315,10 @@ public class Function extends Artifact
 
 		//goes throug all the test to add delete or update them
 		for( TestDTO testDTO : dto.tests ){
-			if(testDTO.deleted)
-				TestCommand.delete(testDTO.id);
-			else if (testDTO.added )
-				TestCommand.create(testDTO.description, testDTO.code, this.getId(), false, false);
-			else if (testDTO.edited )
-				TestCommand.update(testDTO.id, testDTO.description, testDTO.code);
+			if(testDTO.isSimple)
+				doSimpleTest(testDTO);
+			else
+				doAdvancedTest(testDTO);
 		}
 
 		if( dto.isDescribeComplete )
@@ -562,15 +557,29 @@ public class Function extends Artifact
 		}
 	}
 
+	private void doAdvancedTest(TestDTO testDTO){
+		if(testDTO.deleted)
+			AdvancedTestCommand.delete(testDTO.id);
+		else if (testDTO.added )
+			AdvancedTestCommand.create(testDTO, this.getId(), false, false);
+		else if (testDTO.edited )
+			AdvancedTestCommand.update(testDTO.id, testDTO.description, testDTO.code);
 
-	public void createCalleeStubs(List<FunctionDTO> callees)
+	}
+	private void doSimpleTest(TestDTO testDTO){
+		if(testDTO.deleted)
+			SimpleTestCommand.delete(testDTO.id);
+		else if (testDTO.added )
+			SimpleTestCommand.create(testDTO, this.getId(), false, false);
+		else if (testDTO.edited )
+			SimpleTestCommand.update(testDTO.id, testDTO.output);
+
+	}
+	private void createCalleeStubs(List<FunctionDTO> callees)
 	{
 		for(FunctionDTO callee: callees){
-			for(StubDTO stub : callee.stubs){
-				if( stub.id == 0)
-					StubCommand.create(stub.inputsKey, stub.output, callee.id, false, false);
-				else
-					StubCommand.update(stub.id, stub.output);
+			for(TestDTO simpleTest : callee.tests){
+				doSimpleTest(simpleTest);
 			}
 		}
 	}

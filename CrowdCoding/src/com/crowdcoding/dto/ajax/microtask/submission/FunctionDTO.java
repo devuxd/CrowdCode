@@ -18,6 +18,6 @@ public class FunctionDTO extends DTO
 	public String name;
 	public String code ;
 	public List<FunctionDTO> callees = new ArrayList<FunctionDTO>();
-	public List<StubDTO> stubs = new ArrayList<StubDTO>();
+	public List<TestDTO> tests = new ArrayList<TestDTO>();
 
 }
