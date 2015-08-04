@@ -22,7 +22,7 @@ angular
 			this.tests = [];
 			if( rec.tests !== undefined )
 				for( var testId in rec.tests ){
-					this.tests.push(new Test(rec.tests[testId]));
+					this.tests.push(new Test(rec.tests[testId], rec.name));
 				}
 			return true;
 		},
@@ -73,9 +73,10 @@ angular
 			if(this.returnType!=='')
 				descriptionLines.push('@return {' + this.returnType + '}');
 
-			return '/**\n'
-				 + ' * '+descriptionLines.join('\n * ') + '\n'
-				 + ' */\n';
+			return '/**\n' +
+				   ' * ' + 
+				   descriptionLines.join('\n * ') +   '\n'	 + 
+				   ' */\n';
 		},
 
 		//  signature is description + header
@@ -109,16 +110,18 @@ angular
 		},
 
 		getStubs: function(){
-			if( !this.stubs )
-				return {};
 
 			var stubs = {};
-			for( var id in this.stubs){
-				stubs[ this.stubs[id].inputsKey ] = {
-					id: id,
-					output : eval ('('+ this.stubs[id].output+ ')'),
-				};
+			for( var id in this.tests){
+				if(this.tests[id].isSimple){
+					var inputsKey = this.tests[id].inputs.join(',');
+					stubs[ inputsKey ] = {
+						id: id,
+						output : eval ('('+ this.tests[id].output+ ')'),
+					};
+				}
 			}
+
 			return stubs;
 		},
 

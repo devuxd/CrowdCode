@@ -89,6 +89,7 @@ public class SimpleTest extends Test
 													 firebaseVersion,
 													 this.inputs,
 													 this.output,
+													 this.description,
 													 this.isSimple,
 													 this.isReadOnly,
 													 this.isAPIArtifact,

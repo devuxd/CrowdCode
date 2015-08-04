@@ -54,7 +54,7 @@ angular
 
 				    tests.map(function(test){
 				    	test.running = true;
-				    })
+				    });
 
 				    var runNextTest = function(){
 				    	if( ++currTest < totTests ){
@@ -68,7 +68,7 @@ angular
 				    				stubs: JSON.parse(message.data)
 				    			});
 				    			self.worker.terminate();
-				    		}
+				    		};
 				    	}
 				    };
 				    runNextTest();
@@ -166,7 +166,7 @@ angular
 			    	self.worker.onmessage = undefined;
 			    	if( message.data == 'initComplete' ) 
 			    		deferred.resolve();
-			    }
+			    };
 			});
 
 		    return deferred.promise;

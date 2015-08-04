@@ -133,17 +133,6 @@ angular
 			return '';
 		}
 
-		function getIdByName(name){
-			// console.log(name);
-			var functionId = -1;
-			angular.forEach(functions, function(value) {
-				if( functionId === -1 && value.name === name ) {
-			  		functionId = value.id;
-			  	}
-			});
-			return functionId;
-		}
-
 	};
 
 	return service;
