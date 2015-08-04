@@ -201,7 +201,7 @@ angular
     }
 
     function saveStub(){
-        var jsonValue = eval('('+$scope.data.editingStub.output.value+')') || "";
+        var jsonValue    = eval('('+$scope.data.editingStub.output.value+')') || "";
         var stub         = { output: jsonValue };
         var functionName = $scope.data.editingStub.functionName;
         var inputsKey    = $scope.data.editingStub.inputsKey; 

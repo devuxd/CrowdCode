@@ -12,10 +12,12 @@ angular
         templateUrl: '/client/widgets/test_editor.html',
         scope: {
             ngModel: '=',
-            error: '='
+            errors: '='
         },
         link: function ( $scope, element, attrs, ngModelCtrl ) {
             
+            $scope.errors = {};
+
             // when model change, update our view (just update the div content)
             ngModelCtrl.$render = function() {
                 console.log('rendering');
@@ -24,13 +26,11 @@ angular
 
             ngModelCtrl.$asyncValidators.code = function(modelValue, viewValue) {
                 var deferred  = $q.defer();
-
                 var code = modelValue || viewValue;
-                
                 var lintResult =  JSHINT(code, {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true, expr:true});
                 
                 if( !lintResult ){
-                    $scope.error = checkForErrors(JSHINT.errors)[0];
+                    $scope.errors.code = checkForErrors(JSHINT.errors)[0];
                     deferred.reject();
                 }
                 else {
@@ -41,9 +41,10 @@ angular
                     });
                     worker.onmessage = function(message){
                         if( message.data.error ){
+                            $scope.errors.code = message.data.error;
                             deferred.reject();
-                            $scope.error = message.data.error;
                         } else {
+                            $scope.errors = {};
                             deferred.resolve();
                         }
                             

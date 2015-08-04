@@ -2,7 +2,7 @@
 
 angular
     .module('crowdCode')
-    .directive('jsonEditor', ['AdtUtils',function(AdtUtils) {
+    .directive('jsonEditor', ['$q','AdtUtils',function($q,AdtUtils) {
     var stringified = false;
 
     return {
@@ -10,42 +10,39 @@ angular
 
         templateUrl:'/client/widgets/json_editor.html',
         scope: {
-            type: '@',
-            name: '@'
+            conf: '=jsonEditor',
+            ngModel: '=',
+            errors: '='
         },
         require: "ngModel",
+        link: function ( $scope, iElem, iAttrs, ngModelCtrl ) {
 
-        link: function ( scope, element, attrs, ngModel ) {
-            if( ngModel === undefined ) 
-                console.log("NG MODEL NOT DEFINED");
+            $scope.errors = {};
+            
+            ngModelCtrl.$validators.code = function(modelValue, viewValue) {
+                
+                var stringValue    = modelValue || viewValue;
 
-            // update the UI to reflect the ngModel.$viewValue changes
-            ngModel.$render = function (){
-                if( ngModel.$viewValue === "") 
-                    scope.stringValue = "";
+                var validationData = AdtUtils.validate(stringValue,$scope.conf.type,$scope.conf.name);  
+                
+                if( validationData.errors.length > 0 ){
+                    $scope.errors.code = validationData.errors[ 0 ];
+                    return false;
+                }
                 else {
-                    try{
-                        scope.stringValue = angular.toJson(angular.fromJson (ngModel.$viewValue),true);
-                    } catch(e){
-                        scope.stringValue = ngModel.$viewValue;
-                    }
+                    $scope.errors.code = "";
+                    return true;
                 }
             };
-
-
-            // update the ngModel.$viewValue when the UI changes 
-            scope.$watch('stringValue', function() {
-                //console.log(scope.stringValue);
-                ngModel.$setViewValue( scope.stringValue );
-            });
-
         },
+
         controller: function($scope,$element){
             $scope.errors = [];
         	$scope.aceLoaded = function(_editor) {
 
         		var options = {
-		    	   maxLines: Infinity
+		    	   // maxLines: Infinity
+                   showLineNumbers:true
 		    	};
     
                 $element.on('focus',function(){
@@ -55,15 +52,7 @@ angular
                 _editor.setOptions(options);
                 _editor.session.setOptions({useWorker: false});
                 _editor.commands.removeCommand('indent');
-                _editor.on('change', onChange);
 			};
-
-            function onChange(event,editor){
-                console.log("validating adt");
-                var code = editor.getValue();
-                var validationData = AdtUtils.validate(code,$scope.type,$scope.name);  
-                $scope.errors = validationData.errors;
-            }
         }
     };
 }]);
