@@ -56,6 +56,7 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 			$scope.$on('fetchSpecificMicrotask' , fetchSpecificMicrotask);
 			$scope.$on('microtaskLoaded', onMicrotaskLoaded);
 			$scope.$on('noMicrotask'    , onNoMicrotask);
+			$scope.$on('openDashboard' , openDashboard);
 			
 
 
@@ -90,6 +91,11 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 					$scope.workerOption = "Pick next microtask"				
 						
 				return $scope.workerOption;			
+			}
+			
+			function openDashboard(){
+				onNoMicrotask();
+				
 			}
 			
 			function onNoMicrotask($event, fetchData) {

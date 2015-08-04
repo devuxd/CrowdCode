@@ -150,8 +150,9 @@ public class Worker
 		int value = amount;
 		if( microtaskHistory.get(label)!= null){
 			value += microtaskHistory.get(label);
-			if(label =="skips")
+			if(label =="skips"){
 				microtaskHistory.put("submits", 0);
+			}
 		}
 		microtaskHistory.put(label, value);
 		ofy().save().entity(this).now();

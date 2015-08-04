@@ -76,7 +76,7 @@ Microtasks
 You completed 15 microtasks. 
 
 upvotes 15
-Upvote
+Upvotes
 You received 15 upvotes. 
 
 question_views 15

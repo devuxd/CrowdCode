@@ -100,6 +100,9 @@ angular
 						case 'dashboard':
 							toast.type = 'success';
 							toast.body = 'You unlocked the dashboard. Congratulations!';
+							toast.clickHandler = function(){ 
+								$rootScope.$broadcast('submitMicrotask');
+							};
 							toaster.pop( toast ); 
 							break;
 							
