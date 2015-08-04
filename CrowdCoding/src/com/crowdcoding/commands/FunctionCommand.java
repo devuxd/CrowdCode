@@ -62,10 +62,6 @@ public abstract class FunctionCommand extends Command {
 		return new AddTest(functionId, testId);
 	}
 
-	public static FunctionCommand addStub(long functionId, long stubId) {
-		return new AddTest(functionId, stubId);
-	}
-
 	public static FunctionCommand incrementTestSuite(long functionId) {
 		return new IncrementTestSuite(functionId);
 	}
@@ -89,17 +85,17 @@ public abstract class FunctionCommand extends Command {
 
 
 	public void execute(final String projectId) {
-	        	if (functionId != 0) {
-	    			Function function = Function.find(functionId);
-	    			if (function == null)
-	    				System.out
-	    						.println("Error Cannot execute FunctionCommand. Could not find the function for FunctionID "
-	    								+ functionId);
-	    			else {
-	    				execute(function, projectId);
-	    			}
-	    		} else
-	    			execute(null, projectId);
+    	if (functionId != 0) {
+			Function function = Function.find(functionId);
+			if (function == null)
+				System.out
+						.println("Error Cannot execute FunctionCommand. Could not find the function for FunctionID "
+								+ functionId);
+			else {
+				execute(function, projectId);
+			}
+		} else
+			execute(null, projectId);
 	}
 
 	public abstract void execute(Function function, String projectId);
@@ -124,7 +120,7 @@ public abstract class FunctionCommand extends Command {
 				if(test.isSimple)
 					SimpleTestCommand.create(test, funct.getId(), true, true);
 				else
-					AdvancedTestCommand.create(test, functionId, true, true);
+					AdvancedTestCommand.create(test, funct.getId(), true, true);
 			}
 		}
 	}
@@ -283,20 +279,6 @@ public abstract class FunctionCommand extends Command {
 
 		public void execute(Function function, String projectId) {
 			function.addTest(testId);
-		}
-	}
-
-	protected static class AddStub extends FunctionCommand {
-		private long stubId;
-
-		public AddStub(long functionId, long stubId) {
-			super(functionId);
-			this.stubId	= stubId;
-
-		}
-
-		public void execute(Function function, String projectId) {
-			function.addStub(stubId);
 		}
 	}
 

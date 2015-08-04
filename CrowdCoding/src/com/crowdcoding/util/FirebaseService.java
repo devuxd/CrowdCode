@@ -266,8 +266,8 @@ public class FirebaseService
 
 	// Stores the specified Stub to Firebase
 	public static void writeSimpleTest(SimpleTestInFirebase dto, long functionId, long stubId, int version, String projectId){
-		enqueueWrite(dto.json(), "/artifacts/functions/" + functionId + "/stubs/" + stubId + ".json", HTTPMethod.PUT, projectId);
-		enqueueWrite(dto.json(), "/history/artifacts/stubs/" + stubId + "/" + version + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite(dto.json(), "/artifacts/functions/" + functionId + "/tests/" + stubId + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite(dto.json(), "/history/artifacts/tests/" + stubId + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}
 
 	// Stores the specified adt to Firebase

@@ -108,7 +108,7 @@ angular
 
         if( form.$invalid ){
             $modal({template : '/client/microtasks/modal_form_invalid.html' , show: true});
-            console.log(form.$error)
+            console.log(form.$error);
             return;
         }
         
@@ -134,16 +134,21 @@ angular
                 return {
                     id:          test.id,
                     description: test.description,
-                    code:        test.code,
                     edited:      test.edited,
                     added:       test.added,
-                    deleted:     test.deleted
+                    deleted:     test.deleted,
+                    isSimple:    test.isSimple,
+                    code:        test.code,
+                    inputs:      test.inputs,
+                    output:      test.output
+
                 };
             }); 
         }
         
 
         // tell the microtaskForm that the data is ready
+        //console.log(formData);
         $scope.$emit('submitMicrotask', formData);
 
     }
