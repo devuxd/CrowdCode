@@ -23,6 +23,7 @@ angular
         added: true,
         deleted: false
     };
+
     // load the tests:
     // need to store the collection as array because
     // from firebase comes as an object collection
@@ -54,6 +55,7 @@ angular
     $scope.taskData.collectFormData = collectFormData;
 
 addNew();
+
     function addNew($event){
         var lastAdded = angular.copy(newTest);
         $scope.data.tests.push(lastAdded);
@@ -129,10 +131,14 @@ addNew();
                 return {
                     id:          test.id,
                     description: test.description,
-                    code:        test.code,
                     edited:      test.edited,
                     added:       test.added,
-                    deleted:     test.deleted
+                    deleted:     test.deleted,
+                    isSimple:    test.isSimple,
+                    code:        test.code,
+                    inputs:      test.inputs,
+                    output:      test.output
+
                 };
             }); 
         }

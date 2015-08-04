@@ -62,7 +62,6 @@ public class Function extends Artifact
 
 
 	private List<Long> testsId = new ArrayList<Long>(); // test associated to the function
-	private List<Long> stubsId = new ArrayList<Long>(); // stub associated to the function
 	private List<Long> ADTsId  = new ArrayList<Long>(); // ADTs used by the function
 
 
@@ -443,11 +442,7 @@ public class Function extends Artifact
 		incrementTestSuiteVersion();
 		ofy().save().entities(this).now();
 	}
-	public void addStub(long stubId){
-		stubsId.add(stubId);
-		incrementTestSuiteVersion();
-		ofy().save().entities(this).now();
-	}
+
 
 	/******************************************************************************************
 	 * Command Senders
