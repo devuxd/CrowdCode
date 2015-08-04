@@ -286,18 +286,7 @@ color: #525151 !important;
 }
 .js-reader .ace_active-line { background-color: transparent !important;}
 
-.json-editor .ace_scroller,
-.json-reader .ace_scroller {
-	left:17px !important;
-}
-.json-editor .ace_folding-enabled > .ace_gutter-cell {
-	padding:0px;
-	color:transparent;
-}
-.json-editor .ace_gutter-layer  { width:20px !important; }
-.json-reader.ace-editor { background-color:transparent !important; }
 
-.console { position:inherit !important;}
 
 
 /* GENERAL STYLES AND LAYOUT */

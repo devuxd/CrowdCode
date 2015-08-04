@@ -33,7 +33,8 @@ angular
         },
         link: function ( scope, iElement, iAttrs, ngModel ) {
 
-            var unwatch = scope.$watch('old+new',function(){
+            var unwatch = scope.$watch('[old,new]',function(){
+
                 if( scope.old != undefined && scope.new != undefined){
                     
 
@@ -134,11 +135,8 @@ angular
                         
                     }
 
-                    
-
                 }
-            });
-            
+            }, true );
         }
     };
 });

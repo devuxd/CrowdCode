@@ -10,8 +10,8 @@ import com.crowdcoding.servlets.ThreadContext;
 public abstract class ADTCommand extends Command {
 	protected long ADTId;
 
-	public static ADTCommand create (String description, String name, HashMap<String,String> structure, boolean isApiArtifact, boolean isReadOnly) {
-		return new Create( description, name, structure, isApiArtifact, isReadOnly );
+	public static ADTCommand create (String description, String name, HashMap<String,String> structure, HashMap<String,String> examples, boolean isApiArtifact, boolean isReadOnly) {
+		return new Create( description, name, structure, examples, isApiArtifact, isReadOnly );
 	}
 
 	public static ADTCommand update(long ADTId, String description, String name, HashMap<String,String> structure) {
@@ -57,22 +57,24 @@ public abstract class ADTCommand extends Command {
 		private String description;
 		private String name;
 		private HashMap<String,String> structure;
+		private HashMap<String,String> examples;
 		private boolean isApiArtifact;
 		private boolean isReadOnly;
 
 
-		public Create(String description, String name, HashMap<String,String> structure, boolean isApiArtifact, boolean isReadOnly) {
+		public Create(String description, String name, HashMap<String,String> structure,HashMap<String,String> examples, boolean isApiArtifact, boolean isReadOnly) {
 			super(0L);
 			this.description   = description;
 			this.name		   = name;
 			this.structure	   = structure;
+			this.examples	   = examples;
 			this.isApiArtifact = isApiArtifact;
 			this.isReadOnly    = isReadOnly;
 
 		}
 
 		public void execute(ADT ADT, String projectId) {
-			new ADT( description, name, structure, isApiArtifact, isReadOnly , projectId);
+			new ADT( description, name, structure, examples, isApiArtifact, isReadOnly , projectId);
 		}
 	}
 

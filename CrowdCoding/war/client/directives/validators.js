@@ -72,7 +72,7 @@ angular
 
             ctrl.$parsers.unshift(function(viewValue) {
                 var match = viewValue.match(/[a-zA-Z][\w\_]*/g);
-                var valid = match != null && viewValue == match[0];
+                var valid = match !== null && viewValue == match[0];
                 if (!valid) {
                     ctrl.$setValidity('var', false);
                     return viewValue;

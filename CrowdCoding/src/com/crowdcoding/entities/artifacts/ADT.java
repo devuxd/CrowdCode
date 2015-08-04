@@ -33,6 +33,8 @@ public class ADT extends Artifact
 	// Hash Map that describe the ADT Structure in the form "field Name", "Field type"
 	private HashMap<String, String> structure = new HashMap<String,String>();
 
+	private HashMap<String, String> examples = new HashMap<String,String>();
+
 	//functions that currently use the ADT
 	private List<Long> functionsId;
 
@@ -46,12 +48,13 @@ public class ADT extends Artifact
 	{
 	}
 
-	public ADT(String description, String name, HashMap<String,String> structure, boolean isApiArtifact, boolean isReadOnly, String projectId)
+	public ADT(String description, String name, HashMap<String,String> structure, HashMap<String,String> examples,boolean isApiArtifact, boolean isReadOnly, String projectId)
 	{
 		super(isApiArtifact, isReadOnly, projectId);
 		this.name		 = name;
 		this.description = description;
 		this.structure	 = structure;
+		this.examples 	 = examples;
 		ofy().save().entity(this).now();
 
 		storeToFirebase();
@@ -125,6 +128,7 @@ public class ADT extends Artifact
 										description,
 										name,
 										structure,
+										examples,
 										isReadOnly,
 										isAPIArtifact,
 										isDeleted),

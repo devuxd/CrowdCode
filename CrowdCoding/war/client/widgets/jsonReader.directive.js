@@ -27,7 +27,7 @@ angular
                 else if ((typeof(ngModel.$viewValue)=="number" && isNaN( ngModel.$viewValue)) || (typeof(ngModel.$viewValue)=="string") && ngModel.$viewValue=="NaN")
                     scope.prettyJson = "NaN";
                 else {
-                    scope.json = angular.toJson( angular.fromJson(ngModel.$viewValue), true) ;
+                    scope.json = angular.toJson( eval('('+ngModel.$viewValue+')'), true) ;
                     scope.prettyJson = jsonSyntaxHighlight( scope.json );
                 }
             };

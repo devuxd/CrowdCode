@@ -59,8 +59,7 @@
 			    <div ui-layout-container size="60%" style="overflow:hidden;" >
 			    	<form class="form-horizontal" microtask-form name="microtaskForm" novalidate></form>
 			    </div>
-
-				<div ui-layout-container size="20%" min-size="10%" max-size="20%">
+				<div ui-layout-container size="20%" min-size="10%" max-size="25%">
 					<right-bar></right-bar>
 				</div>
 		    </div>

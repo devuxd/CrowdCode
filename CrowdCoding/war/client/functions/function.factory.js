@@ -116,8 +116,8 @@ angular
 			for( var id in this.stubs){
 				stubs[ this.stubs[id].inputsKey ] = {
 					id: id,
-					output : this.stubs[id].output,
-				}
+					output : eval ('('+ this.stubs[id].output+ ')'),
+				};
 			}
 			return stubs;
 		},

@@ -17,7 +17,8 @@ angular
     var newTest = {
         description: '',
         isSimple : true,
-        
+        inputs: $scope.funct.parameters.map(function(par){ return ""; }),
+        output: "",
         code: '//write the test code',
         added: true,
         deleted: false
@@ -55,6 +56,7 @@ angular
 
     
     addNew();
+    console.log($scope.data.selected);
 
     function addNew($event){
         var lastAdded = angular.copy(newTest);
@@ -104,16 +106,12 @@ angular
 
     function collectFormData(form) {
 
-        // console.log('collecting form data',form.$valid,form);
-        // console.log('how many tests',$scope.data.tests.length);
-        // for( var i = 0 ; i < $scope.data.tests.length; i++ ){
-        //     if( !form['testForm_'+i].$valid )
-        //         console.error('test form '+i+' is INVALID!');
-        //     else 
-        //         console.log('test form '+i+' is VALID!');
-        // }
-
-        // $modal({template : '/client/microtasks/modal_form_invalid.html' , show: true});
+        if( form.$invalid ){
+            $modal({template : '/client/microtasks/modal_form_invalid.html' , show: true});
+            console.log(form.$error)
+            return;
+        }
+        
 
         // prepare the microtask submit data
         var formData = {

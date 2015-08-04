@@ -17,6 +17,7 @@ angular
     }
 
     function validate(stringValue,type,name){
+        console.log('validating',stringValue);
         // avoids jshint entering in json mode
         code = 'var _value = '+stringValue+';';
 
@@ -25,7 +26,7 @@ angular
 
         var lintResult = JSHINT(code,{latedef:false, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true});
 
-        console.log('linting '+lintResult);
+        //console.log('linting '+lintResult);
         // if the linting failed
         if( !lintResult ) {
             data.errors = data.errors.concat(checkForErrors(JSHINT.errors));
@@ -33,6 +34,7 @@ angular
         // otherwise check the structure
         else {
             eval(code);
+            console.log('evalued',_value);
             // validate the structure
             data.errors = validateStructure(_value, type, name).concat(data.errors);
         }
@@ -41,6 +43,7 @@ angular
     }
 
     function validateStructure(value,expectedType,name){
+
         // if it's a simple data type
         var errors = [];
         var dataType = getNameAndSuffix(expectedType);
@@ -50,7 +53,7 @@ angular
             // if is an instance of array, validate each element
             if( value instanceof Array ){
                 for( var i = 0; i < value.length ; i++ ){
-                    errors = validateStructure(value[i], dataType.name).concat(errors);
+                    errors = validateStructure(value[i], dataType.name, "element "+i).concat(errors);
                 }
             }
             else {
@@ -101,11 +104,12 @@ angular
 
             }  
         }
+        console.log(errors);
         return errors;
     }
 
 
-    function isValidName(name){        
+    function isValidName(name){      
         var dataType = getNameAndSuffix(name);
 
         // check if the name is one of the data types

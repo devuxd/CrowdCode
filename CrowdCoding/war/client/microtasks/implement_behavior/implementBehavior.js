@@ -4,7 +4,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('ImplementBehavior', ['$scope', '$q', 'functionsService', 'functionUtils', 'TestRunnerFactory', function($scope, $q, functionsService, functionUtils, TestRunnerFactory) {
+    .controller('ImplementBehavior', ['$scope', '$q', 'functionsService', 'functionUtils', 'Function', 'TestRunnerFactory', function($scope, $q, functionsService, functionUtils, Function, TestRunnerFactory) {
     
     var runner = new TestRunnerFactory.instance();
 
@@ -34,7 +34,8 @@ angular
     $scope.toggleSelect   = toggleSelect;
     $scope.toggleInspect  = toggleInspect;
     $scope.toggleDispute  = toggleDispute;
-    $scope.saveStub      = saveStub;
+    $scope.saveStub       = saveStub;
+    $scope.cancelStub     = cancelStub;
     $scope.run = run;
 
     // functionEditor callbacks
@@ -170,13 +171,13 @@ angular
 
     function onEditStub(functionName,inputsKey){
         var funct = functionsService.getByName(functionName);
-        if( funct == null ){
+        if( funct === null ){
             for( var i = 0; i < requestedFunctions.length ; i++ ){
                 if( requestedFunctions[i].name == functionName )
-                    funct = requestedFunctions[i];
+                    funct = new Function( requestedFunctions[i] );
             }
         }
-        if( funct == null ) throw 'Cannot find the function '+functionName;
+        if( funct === null ) throw 'Cannot find the function '+functionName;
         
         var inputs = JSON.parse(inputsKey);
         $scope.data.editingStub = { 
@@ -187,7 +188,7 @@ angular
                 return {
                     name: par.name,
                     type: par.type,
-                    value: inputs[index]
+                    value: angular.toJson(inputs[index])
                 };
             }),
             output       : {
@@ -200,7 +201,8 @@ angular
     }
 
     function saveStub(){
-        var stub         = { output: $scope.data.editingStub.output.value };
+        var jsonValue    = eval('('+$scope.data.editingStub.output.value+')') || "";
+        var stub         = { output: jsonValue };
         var functionName = $scope.data.editingStub.functionName;
         var inputsKey    = $scope.data.editingStub.inputsKey; 
 
@@ -211,7 +213,10 @@ angular
         stubs[functionName][inputsKey]       = stub;
 
         $scope.data.editingStub = false;
-        console.log('saving stub',editedStubs[functionName][inputsKey]);
+    }
+
+    function cancelStub(){
+        $scope.data.editingStub = false;
     }
 
     function onFunctionParsed(_functionDto,_requestedFunctions){
