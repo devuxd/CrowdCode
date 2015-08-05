@@ -1,3 +1,13 @@
+angular
+    .module('crowdCode')
+    .directive('includeReplace', function ($compile) {
+    return {
+        restrict: 'A', /* optional */
+        link: function (scope, el, attrs) {
+            el.replaceWith(el.children());
+        }
+    };
+});
 /* ---------- KEY LISTENERS ----------- */
 angular
     .module('crowdCode')

@@ -9,10 +9,8 @@
 		</button>
 		<span class="clearfix"></span>
     </div>
-    
-	<div class="sections" 
-		 ng-include="'/client/microtasks/review/review_' + review.template + '.html'">
-	</div>
+
+	<div ng-include src="'/client/microtasks/review/review_' + review.template + '.html'" ></div>
 
 <!--
 	<div class="section-cols" >

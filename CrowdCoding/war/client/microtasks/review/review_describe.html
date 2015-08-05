@@ -1,73 +1,76 @@
-<div class="section bg-color-alpha padding" style="height:10%">
-	<div ng-if="reviewed.promptType=='WRITE'">
-		A worker was asked to describe a new behavior for the function <strong>{{funct.name}}</strong>.
+<div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
+	
+	<div class="section bg-color-alpha padding" ui-layout-container size="10%">
+		<div ng-if="reviewed.promptType=='WRITE'">
+			A worker was asked to describe a new behavior for the function <strong>{{funct.name}}</strong>.
+		</div>
+
+		<div ng-if="reviewed.promptType=='CORRECT'">
+			A worker was asked to revise the the behavior 'name of the behavior' for the function 
+			<strong>{{funct.name}}</strong>  to address the following issue.
+		</div>
+
+		<div ng-if="reviewed.promptType=='FUNCTION_CHANGED'">
+			A worker was asked to revise the following test for the function 
+			<strong>{{funct.name}}</strong> (if necessary) based on a change to the description of the test case.
+		</div>
+
+		<div ng-if="reviewed.promptType=='CALLEE_CHANGED'">
+			A worker was asked to revise the following test for the function 
+			<strong>{{funct.name}}</strong> 
+			(if necessary) to work correctly with the new function signature specified below.
+		</div>
+
+
+		<div ng-if="reviewed.promptType=='ADT_CHANGED'">
+			A worker was asked to revise the following test for the function 
+			<strong>{{funct.name}}</strong> 
+			(if necessary) to work correctly with the new function signature specified below.
+		</div>
+
+		<span>Can you review this work?</span>
 	</div>
 
-	<div ng-if="reviewed.promptType=='CORRECT'">
-		A worker was asked to revise the the behavior 'name of the behavior' for the function 
-		<strong>{{funct.name}}</strong>  to address the following issue.
+
+	<div class="section" ui-layout-container size="25%">
+		<div class="section-bar">
+			<span class="title">Function Description</span>
+		</div>
+		<div class="section-content">
+			<js-reader code="::funct.getSignature()" ></js-reader>
+		</div>
 	</div>
 
-	<div ng-if="reviewed.promptType=='FUNCTION_CHANGED'">
-		A worker was asked to revise the following test for the function 
-		<strong>{{funct.name}}</strong> (if necessary) based on a change to the description of the test case.
-	</div>
-
-	<div ng-if="reviewed.promptType=='CALLEE_CHANGED'">
-		A worker was asked to revise the following test for the function 
-		<strong>{{funct.name}}</strong> 
-		(if necessary) to work correctly with the new function signature specified below.
-	</div>
-
-
-	<div ng-if="reviewed.promptType=='ADT_CHANGED'">
-		A worker was asked to revise the following test for the function 
-		<strong>{{funct.name}}</strong> 
-		(if necessary) to work correctly with the new function signature specified below.
-	</div>
-
-	<span>Can you review this work?</span>
-</div>
-
-
-<div class="section" style="height:25%">
-	<div class="section-bar">
-		<span class="title">Function Description</span>
-	</div>
-	<div class="section-content">
-		<js-reader code="::funct.getSignature()" ></js-reader>
-	</div>
-</div>
-
-<div class="section" style="height:40%" >
-	<div class="section-bar">
-		<span class="title">Described behaviors</span>
-	</div>
-	<div class="section-content padding">
-		<div class="tests-list">
-			<div class="test-item static" ng-repeat="t in data.tests track by $index">
-				<div class="row">
-					<div class="col-md-1 col-sm-1">
-						<span ng-if="t.edited">edited</span>
-						<span ng-if="t.added">added</span>
-						<span ng-if="t.deleted">deleted</span>
-					</div>
-					<div class="col-md-11 col-sm-11">
-						<div class="row">
-							<div class="col-sm-2 col-md-2 row-label">description</div>
-							<div class="col-sm-10 col-md-10">{{ t.description }}</div>
+	<div class="section" ui-layout-container size="40%" >
+		<div class="section-bar">
+			<span class="title">Described behaviors</span>
+		</div>
+		<div class="section-content padding">
+			<div class="tests-list">
+				<div class="test-item static" ng-repeat="t in data.tests track by $index">
+					<div class="row">
+						<div class="col-md-1 col-sm-1">
+							<span ng-if="t.edited">edited</span>
+							<span ng-if="t.added">added</span>
+							<span ng-if="t.deleted">deleted</span>
 						</div>
-						<div class="row">
-							<div class="col-sm-2 col-md-2 row-label">Code</div>
-							<div class="col-sm-10 col-md-10"><js-reader code="t.code"></js-reader></div>
+						<div class="col-md-11 col-sm-11">
+							<div class="row">
+								<div class="col-sm-2 col-md-2 row-label">description</div>
+								<div class="col-sm-10 col-md-10">{{ t.description }}</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-2 col-md-2 row-label">Code</div>
+								<div class="col-sm-10 col-md-10"><js-reader code="t.code"></js-reader></div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
+
+
+	<div class="section" ui-layout-container size="25%" ng-include="'/client/microtasks/review/review_form.html'"></div>
 </div>
-
-
-
-<div class="section" style="height:25%" ng-include="'/client/microtasks/review/review_form.html'"></div>
