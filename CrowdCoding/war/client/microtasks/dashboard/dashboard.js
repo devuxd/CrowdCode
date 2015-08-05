@@ -2,8 +2,8 @@ var boardApp = angular.module('crowdCode')
 
 boardApp.run();
 
-boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','microtasksService','firebaseUrl','workerId',  
-                                 function($scope,$rootScope,$firebase,$timeout,microtasksService,firebaseUrl, workerId){
+boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',  
+                                 function($scope,$rootScope,$firebase,$firebaseArray,$timeout,microtasksService,firebaseUrl, workerId){
 	
 	var types = [
 			'Review',
@@ -42,8 +42,8 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	
 	// load microtasks
 	var microtasksRef  = new Firebase(firebaseUrl+'/microtasks/');
-	var microtasksSync = $firebase(microtasksRef);
-	$scope.microtasks = microtasksSync.$asArray();
+	var microtasksSync = $firebaseArray(microtasksRef);
+	$scope.microtasks = microtasksSync;
 	$scope.microtasks.$loaded().then(function(){
 	});	
 
@@ -71,15 +71,15 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$timeout','m
 	
 	// load functions
 	var functionsRef  = new Firebase(firebaseUrl+'/artifacts/functions');
-	var functionsSync = $firebase(functionsRef);
-	$scope.functions = functionsSync.$asArray();
+	var functionsSync = $firebaseArray(functionsRef);
+	$scope.functions = functionsSync;
 	$scope.functions.$loaded().then(function(){
 	});
 
 	// load tests
 	var testsRef  = new Firebase(firebaseUrl+'/artifacts/tests');
-	var testsSync = $firebase(testsRef);
-	$scope.tests = testsSync.$asArray();
+	var testsSync = $firebaseArray(testsRef);
+	$scope.tests = testsSync;
 	$scope.tests.$loaded().then(function(){
 	});
 	

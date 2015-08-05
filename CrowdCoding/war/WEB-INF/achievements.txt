@@ -35,9 +35,9 @@ upvotes 1
 Upvote
 You received 1 upvote. 
 
-test_cases 2
-Test Cases
-You completed 2 test cases. 
+describe_behavior 2
+Describe Behavior
+You completed 2 describe behavior microtasks. 
 
 perfect_review 3
 Perfect Score
@@ -47,9 +47,9 @@ submits 5
 Submits
 You completed 5 submits. 
 
-test_cases 5
-Test Cases
-You completed 5 test cases. 
+describe_behavior 5
+Describe Behavior
+You completed 5 describe behavior microtasks. 
 
 tests 5
 Tests
@@ -68,8 +68,8 @@ Microtasks
 You completed 10 microtasks. 
 
 functions 10
-Functions
-You completed 10 functions. 
+Implement Behavior
+You completed 10 Implement Behavior.
 
 microtasks 15
 Microtasks
