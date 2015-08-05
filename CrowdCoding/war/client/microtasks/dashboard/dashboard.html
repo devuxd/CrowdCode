@@ -19,7 +19,7 @@
 				<div id="orderBar" class="horizontal-bar" ng-init="orderPredicate=''">
 					<strong >Sort by:</strong>
 					<span ng-click="order('type')" ng-class="{'disabled': orderPredicate!='type'}">
-						<span>type</span>
+						<span class="typeTitle">type</span>
 						<span ng-if="orderPredicate!='type'" class="glyphicon glyphicon-sort"></span>
 						<span ng-if="orderPredicate=='type' && !orderReverse " class="glyphicon glyphicon-sort-by-attributes"></span>
 						<span ng-if="orderPredicate=='type' && orderReverse "  class="glyphicon glyphicon-sort-by-attributes-alt"></span>

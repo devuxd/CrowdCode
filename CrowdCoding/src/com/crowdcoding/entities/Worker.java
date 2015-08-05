@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
-
 import com.crowdcoding.dto.firebase.WorkerInFirebase;
 import com.crowdcoding.dto.firebase.notification.AchievementNotificationInFirebase;
+import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -135,11 +135,11 @@ public class Worker
 			}
 		}
 		if(level < 2){
-			if(listOfAchievements.get(0).isUnlocked && listOfAchievements.get(1).isUnlocked){
-				//FirebaseService.writeLevelUpNotification(new AchievementNotificationInFirebase("dashboard",1,level), 
-				//this.getUserid(), projectId);
+			//if(listOfAchievements.get(0).isUnlocked && listOfAchievements.get(1).isUnlocked){
+				FirebaseService.writeLevelUpNotification(new NotificationInFirebase("dashboard"), 
+				this.getUserid(), projectId);
 				level = 2;
-			}				
+			//}				
 		}
 		ofy().save().entity(this).now();
 		this.storeToFirebase(projectId);

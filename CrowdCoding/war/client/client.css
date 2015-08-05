@@ -1531,6 +1531,12 @@ pre.json .jsonKey { color: black; }
 	padding-left:10px;
 }
 
+.dashboard .typeTitle {
+	font-width:1.8em;
+	height:100%;
+	font-weight:bold;
+}
+
 .dashboard .subTitle {
 	width:100%;
 	background-color: rgb(61,61,61);
