@@ -172,52 +172,40 @@
 				</span>
 				<span class="clearfix"></span>
 			</div>
-			<div class="section-content padding slide from-right" ng-show="data.editingStub">
-				<div class="stub">
-					<div class="row">
-						<div class="col-md-2">
-						</div>
-						<div class="col-md-12 title">
-							Function Description
-						</div>
+			<div class="section-content padding slide from-right"  style="z-index:100" ng-show="data.editingStub">
+				<div class="stub" ng-form="stubForm">
+					<div class="form-group">
+						<label>Function Description</label>
+						<js-reader class="form-control code" code="data.editingStub.functionDescription"></js-reader>
 					</div>
-					<div class="row">
-						<div class="col-md-10">
-							<js-reader code="data.editingStub.functionDescription"></js-reader>
-						</div>
+					
+					<div class="form-group"  ng-repeat="p in data.editingStub.parameters">
+						<label>
+							{{p.name + ' {' + p.type + '}' }}
+						</label>
+					
+						<json-reader class="form-control code" ng-model="p.value"></json-reader>
 					</div>
-					<div class="row ">
-						<div class="col-md-12 title">
-							Inputs
+
+					<div class="form-group" >
+						<label for="">
+							Output {{ '{' + data.editingStub.output.type + '}' }}
+						</label>
+
+						<div
+							class="form-control code"
+							json-editor="{ type: data.editingStub.output.type, name: 'output' }"
+							ng-model="data.editingStub.output.value"
+							errors="errors"
+							name="output"
+							required>
 						</div>
-					</div>
-					<div class="row" ng-repeat="p in data.editingStub.parameters">
-						<div class="col-md-2 row-label">
-							{{p.name}} 
-							<br />
-							<small>{{ '{' + p.type +'}' }}</small>
+
+						<div class="help-block" ng-messages="stubForm.output.$error" >
+							<div ng-message="required">the field output cannot be empty</div>
+							<div ng-message="code">{{errors.code}}</div>
 						</div>
-						<div class="col-md-10">
-							<json-reader ng-model="p.value"></json-reader>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12 title">
-							Output
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-2 row-label">
-							<small>{{ '{' + data.editingStub.output.type +'}' }}</small>
-						</div>
-						<div class="col-md-10">
-							<div
-								json-editor="{ type: data.editingStub.output.type, name: 'output' }"
-								ng-model="data.editingStub.output.value"
-								name="output">
-							</json-editor>
-						</div>
-					</div>
+					</div>	
 				</div>
 	        	
 	        </div>

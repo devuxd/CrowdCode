@@ -5,7 +5,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  'functionsService', 'Function', 'AdtService', 'microtasksService', function($scope, $rootScope,  $alert,  functionsService, Function, AdtService, microtasksService) {
+    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  '$modal', 'functionsService', 'Function', 'AdtService', 'microtasksService', function($scope, $rootScope,  $alert, $modal, functionsService, Function, AdtService, microtasksService) {
     // scope variables
     $scope.review = {};
     $scope.review.template = 'loading';

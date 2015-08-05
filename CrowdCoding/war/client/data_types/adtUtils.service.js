@@ -17,8 +17,7 @@ angular
     }
 
     function validate(stringValue,type,name){
-        console.log('validating',stringValue);
-        // avoids jshint entering in json mode
+                // avoids jshint entering in json mode
         code = 'var _value = '+stringValue+';';
 
         var data = {};
@@ -34,7 +33,6 @@ angular
         // otherwise check the structure
         else {
             eval(code);
-            console.log('evalued',_value);
             // validate the structure
             data.errors = validateStructure(_value, type, name).concat(data.errors);
         }
@@ -104,7 +102,7 @@ angular
 
             }  
         }
-        console.log(errors);
+
         return errors;
     }
 

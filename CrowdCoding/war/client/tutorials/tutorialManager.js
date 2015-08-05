@@ -27,6 +27,7 @@ angular
             // if the tutorial is forced or if 
             // is not completed, enqueue it
             function queueTutorial( event, tutorialId, force, onFinish ){
+                console.log('queuing tutorial',arguments);
                 tutorialsOn.$loaded().then(function(){
                     completedTutorials.$loaded().then(function(){
                         if( force || ( tutorialsOn.$value && !isTutorialCompleted(tutorialId) )){
@@ -45,8 +46,9 @@ angular
             // if the tutorials queue is not empty,
             // start the first tutorial in queue
             function checkQueue(){
+                console.log('checking queue',running,queue);
                 if( !running && queue.length > 0 ){
-                    var tutorial= queue.pop();
+                    var tutorial    = queue.pop();
                     currentId       = tutorial.id;
                     currentOnFinish = tutorial.onFinish;
                     startTutorial();

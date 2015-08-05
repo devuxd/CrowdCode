@@ -21,7 +21,12 @@ angular
             $scope.errors = {};
 
             var initialCode;
-
+            var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
+            worker.postMessage({ 
+                'baseUrl'     : document.location.origin, 
+                'command'     : 'init',
+                'functionName': iAttrs.functionName ? iAttrs.functionName : ''
+            });
             ngModelCtrl.$asyncValidators.code = function(modelValue, viewValue) {
 
                 if( !initialCode ) initialCode = modelValue;
@@ -39,11 +44,9 @@ angular
                     deferred.reject();
                 }
                 else {
-                    var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
+                    
                     worker.postMessage({ 
-                        'baseUrl'     : document.location.origin, 
-                        'code'        : code,
-                        'functionName': iAttrs.functionName ? iAttrs.functionName : ''
+                        'code'        : code
                     });
                     worker.onmessage = function(message){
                         var data = message.data;
@@ -54,19 +57,16 @@ angular
                             $scope.errors = {};
                             deferred.resolve();
                         }
-                            
-                        worker.terminate();
                     };
                 }
 
-                if( initialCode != code )
+                if( initialCode != code ){
                     ngModelCtrl.$setDirty();
+                }
 
                 // return the promise
                 return deferred.promise;
             };
-
-
 
             
         },
@@ -74,7 +74,8 @@ angular
             $scope.aceLoaded = function(_editor) {
 
                 var options = {
-                   enableLiveAutocompletion: true,
+                   enableLiveAutocompletion: false,
+                   enableBasicAutocompletion: true,
                    useWorker: false,
                    
                 };

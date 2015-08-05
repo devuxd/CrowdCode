@@ -143,15 +143,20 @@ angular
 
         // add the callee stubs
         formData.function.callees.map(function(callee){
+            console.log('creating callee stubs',callee.name,editedStubs[callee.name]);
             if( !editedStubs.hasOwnProperty(callee.name) )
                 return;
 
             var cStubs = editedStubs[callee.name];
-            callee.stubs = [];
+            callee.tests = [];
             for( var inputsKey in cStubs ){
-                callee.stubs.push({
+                callee.tests.push({
                     id: cStubs[inputsKey].id,
-                    inputsKey : inputsKey,
+                    added  : cStubs[inputsKey].id == undefined ? true : false,
+                    edited  : cStubs[inputsKey].id == undefined ? false : true,
+                    isSimple: true,
+                    description: 'auto generated',
+                    inputs : inputsKeyToInputs(inputsKey),
                     output : JSON.stringify(cStubs[inputsKey].output),
                 });
             }
@@ -163,16 +168,29 @@ angular
                 return;
 
             var rStubs = editedStubs[requested.name];
-            requested.stubs = [];
+            requested.tests = [];
             for( var inputsKey in rStubs ){
-                requested.stubs.push({
+                requested.tests.push({
                     id: rStubs[inputsKey].id,
-                    inputsKey : inputsKey,
+                    added: true,
+                    isSimple: true,
+                    description: 'auto generated',
+                    inputs : inputsKeyToInputs(inputsKey),
                     output : JSON.stringify(rStubs[inputsKey].output),
                 });
             }
         });
+        console.log(formData);
         return formData;
+    }
+
+    function inputsKeyToInputs(inputsKey){
+        var obj = JSON.parse(inputsKey);
+        var inputs = [];
+        for( var key in obj)
+            inputs.push(obj[key]);
+
+        return inputs;
     }
 
     function onEditStub(functionName,inputsKey){
@@ -199,7 +217,7 @@ angular
             }),
             output       : {
                 type  : funct.returnType,
-                value : stubs[functionName][inputsKey].output
+                value : JSON.stringify(stubs[functionName][inputsKey].output)
             }
         };
 

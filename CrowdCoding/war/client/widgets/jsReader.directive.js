@@ -23,7 +23,8 @@ angular
 
             $scope.aceLoaded = function(_editor) {
                 _editor.setOptions({
-                    maxLines: Infinity
+                    maxLines: Infinity,
+                    useWorker:false
                 });
                 var marker = [];
                 _editor.on('change',function(){

@@ -17,11 +17,14 @@ angular
         require: "ngModel",
         link: function ( $scope, iElem, iAttrs, ngModelCtrl ) {
 
+            var initialValue;
             $scope.errors = {};
             
             ngModelCtrl.$validators.code = function(modelValue, viewValue) {
-                
                 var stringValue    = modelValue || viewValue;
+
+                if( initialValue != stringValue )
+                    ngModelCtrl.$setDirty();
 
                 var validationData = AdtUtils.validate(stringValue,$scope.conf.type,$scope.conf.name);  
                 
