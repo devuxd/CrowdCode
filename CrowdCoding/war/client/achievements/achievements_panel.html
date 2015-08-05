@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" ng-click="$hide()">&times;</button>
-				<h4 class="modal-title" style="text-align: center">Statistics</h4>				
+				<h4 class="title" style="text-align: center">Statistics</h4>				
 			</div>
 			<div id="achievementsPanel" class="modal-body achievements">
 			<div>
@@ -34,11 +34,10 @@
 					  		<div class="pin" ng-repeat="(i,achievement) in listOfachievements | orderBy:['-(current/requirement)','requirement'] | byCurrent"
 							style="height:{{achievement.height}}px" >						  	
 					  	
-					  	<div class="grayIcon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
+					  		<div class="grayIcon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
 										
-						<div class="title">{{achievement.title}}</div>			
-					
-						<div class="info">Completed {{achievement.current}} of {{achievement.requirement}} {{achievement.title}}.</div>
+							<div class="title">{{achievement.title}}</div>						
+							<div class="info">Completed {{achievement.current}} of {{achievement.requirement}} {{achievement.title}}.</div>
 										
 						
 					  		</div>
