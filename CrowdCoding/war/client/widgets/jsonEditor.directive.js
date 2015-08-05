@@ -44,8 +44,9 @@ angular
         	$scope.aceLoaded = function(_editor) {
 
         		var options = {
-		    	   // maxLines: Infinity
-                   showLineNumbers:true
+                    minLines: 2,
+		    	    maxLines: Infinity,
+                    showLineNumbers:true
 		    	};
     
                 $element.on('focus',function(){
