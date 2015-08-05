@@ -136,8 +136,15 @@ public class Review extends Microtask
 			canBeChallenged=false;
         	System.out.println("--> REVIEW mtask "+submittedMicrotask.getKey().toString()+" accepted");
 			MicrotaskCommand.submit(microtaskKeyUnderReview, initiallySubmittedDTO, workerOfReviewedWork, awardedPoints);
-
-
+			
+			if(reviewDTO.qualityScore == 5){
+				WorkerCommand.increaseStat(workerOfReviewedWork, "perfect_review",1);
+			}
+			else{
+				WorkerCommand.increaseStat(workerOfReviewedWork, "good_review",1);
+			}
+			WorkerCommand.increaseStat(workerOfReviewedWork, "accepted_microtask",1);
+			
 			HistoryLog.Init(projectId).addEvent(new MicrotaskAccepted(submittedMicrotask,workerID));
 
 			notification = new MicrotaskNotificationInFirebase( "task.accepted",

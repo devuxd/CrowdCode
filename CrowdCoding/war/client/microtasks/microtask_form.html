@@ -32,8 +32,6 @@
 		   bs-popover>
 		   Confused?
 		</button>
-
-
 	  	<button 
 	  		type="submit" 
   			id="submitBtn"
@@ -55,7 +53,7 @@
    		</button>
 	  	<label class="btn btn-sm pull-right" ng-if="!breakMode && !noMicrotask" id="breakBtn">
   	    	<input type="checkbox" ng-model="taskData.startBreak" tabindex="103" >
-  	    	<span>Take a break</span>
+  	    	<span>{{currentPrompt()}}</span>
   	   	</label>
   	   	
 		<button type="button"
@@ -65,7 +63,5 @@
    			tabindex="100" >
 	       	Fetch a microtask
    		</button>
-
-	    </div>
 	</div>
 </div>

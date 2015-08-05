@@ -12,7 +12,7 @@ angular
 		this.get = get;
 		this.submit = submit;
 		this.fetch = fetch;
-
+		this.loadSpecificMicrotask = loadSpecificMicrotask;
 		// Public functions
 		function get (id){
 			var microtask = $firebaseObject(new Firebase(firebaseUrl+'/microtasks/'+id));
@@ -53,6 +53,17 @@ angular
 					$rootScope.$broadcast('microtaskLoaded',microtask, data.firstFetch);
 				});
 			}
+		}
+		
+		
+		function loadSpecificMicrotask(microtaskID){
+			$http.get('/' + projectId + '/ajax/pickMicrotask?id='+ microtaskID)
+				.success(function(data, status, headers, config) {
+					loadMicrotask(data);
+			})
+			.error(function(data, status, headers, config) {
+					$rootScope.$broadcast('noMicrotask');
+			});
 		}
 
 	}

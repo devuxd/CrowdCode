@@ -1,17 +1,19 @@
 
 angular
     .module('crowdCode')
-    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebaseObject',  'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebaseObject, firebaseUrl,workerId) {
+    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebaseObject',  'firebaseUrl','workerId','$http', function($rootScope, $compile, $timeout, $firebaseObject, firebaseUrl,workerId,$http) {
     
     // get the synced objects from the backend
     var tutorialsOn        = $firebaseObject( new Firebase( firebaseUrl + '/status/settings/tutorials') );
     var completedTutorials = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) );
+    var tutorialCounter    = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/tutorialCounter' ) );
+
 
     var queue    = [];
     var running  = false;
     var currentId;
     var currentOnFinish;
-
+    //tutorialCounter = 0;
     return {
         restrict: 'E',
         scope: {},
@@ -54,7 +56,16 @@ angular
                     startTutorial();
                 }
             }
+            
+            function sendTutorialsCompleted(){
+    			$http.get('/' + projectId + '/ajax/tutorialCompleted')
+    				.success(function(data, status, headers, config) {
+    			})
+    			.error(function(data, status, headers, config) {
 
+    			});
+    		}
+            
             // start the current tutorial
             function startTutorial(){
                 running = true;
@@ -89,7 +100,7 @@ angular
             // true if the tutorial with tutorialId is complete
             // false if not
             function isTutorialCompleted( tutorialId ){
-                if( completedTutorials.$value != undefined && completedTutorials.$value.search(tutorialId) > -1 ) 
+                if( completedTutorials.$value !== undefined && completedTutorials.$value.search(tutorialId) > -1 ) 
                     return true;
 
                 return false;
@@ -97,11 +108,18 @@ angular
 
             // set tutorial with tutorialId as complete
             function setTutorialCompleted( tutorialId ){
-                if( completedTutorials.$value == undefined )
+                if( completedTutorials.$value === undefined ){
                     completedTutorials.$value = tutorialId;
-                else 
+                    tutorialCounter.$value =  1;
+                }
+                else{ 
                     completedTutorials.$value += ','+tutorialId; 
-
+                    tutorialCounter.$value +=  1;
+                }
+                if(tutorialCounter.$value == 3)
+                	sendTutorialsCompleted();
+                
+                tutorialCounter.$save();
                 completedTutorials.$save();
             }
         }

@@ -17,6 +17,7 @@ public class NotificationInFirebase extends DTO
 	}
 
 	public NotificationInFirebase(String type)
+
 	{
 		this.type			= type;
 		this.time 			= System.currentTimeMillis();

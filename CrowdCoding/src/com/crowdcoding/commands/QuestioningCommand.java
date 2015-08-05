@@ -227,7 +227,7 @@ public abstract class QuestioningCommand extends Command
 
 	protected static class AddQuestionView extends QuestioningCommand {
 
-		private long questionId;
+		private long questionId;		
 		public AddQuestionView(long questionId, String workerId) {
 			super(0L,workerId);
 			this.questionId = questionId;
@@ -245,7 +245,7 @@ public abstract class QuestioningCommand extends Command
 		}
 
 		public void execute(Questioning questioning, String projectId) {
-
+			
 			Question question = (Question) questioning;
 			question.incrementAnswers();
 			question.save();

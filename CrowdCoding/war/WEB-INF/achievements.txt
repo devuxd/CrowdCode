@@ -1,0 +1,88 @@
+20
+accepted_microtask 10
+Accepted Microtasks
+You got 10 accepted microtasks.
+
+reviews 5
+Reviews
+You completed 5 reviews. 
+
+tutorial_completed 1
+Tutorial
+You completed all tutorials. 
+
+questions 1
+Question
+You asked your first question. 
+
+answers 1
+Answer
+You answered a question. 
+
+submits 1
+Submit
+You completed your first submit. 
+
+good_review 1
+Good Reviews
+You received 1 good review. 
+
+microtasks 1
+Microtask
+You completed 1 microtask. 
+
+upvotes 1
+Upvote
+You received 1 upvote. 
+
+test_cases 2
+Test Cases
+You completed 2 test cases. 
+
+perfect_review 3
+Perfect Score
+You received 3 Perfect Reviews. 
+
+submits 5
+Submits
+You completed 5 submits. 
+
+test_cases 5
+Test Cases
+You completed 5 test cases. 
+
+tests 5
+Tests
+You completed 5 test. 
+
+microtasks 5
+Microtasks
+You completed 5 microtasks. 
+
+good_review 10
+Good Reviews
+You received 10 good reviews. 
+
+microtasks 10
+Microtasks
+You completed 10 microtasks. 
+
+functions 10
+Functions
+You completed 10 functions. 
+
+microtasks 15
+Microtasks
+You completed 15 microtasks. 
+
+upvotes 15
+Upvotes
+You received 15 upvotes. 
+
+question_views 15
+Question Views
+Your question got 15 views. 
+
+microtasks 100
+Microtasks
+You completed 100 microtasks. 

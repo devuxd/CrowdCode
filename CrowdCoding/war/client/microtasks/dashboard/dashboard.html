@@ -1,0 +1,118 @@
+<div ng-controller="dashBoard" class="container-fluid dashboard" >
+		<div class="row">
+			<div class="col-md-12">
+				<div class="title">Microtask Board</div>
+				<div id="filterBar" class="horizontal-bar">
+					<strong >Filter:</strong>
+					<span >
+						<span class="label pastel-{{key}}"
+							  ng-if="typesCount[type]>0"
+							  ng-class="{'label-disabled':!filterEnabled[type]}"
+							  ng-click="filterEnabled[type]=!filterEnabled[type]"
+							  ng-repeat="(key,type) in types" >
+							  
+							  {{type}}
+						</span>	
+					</span>	
+				</div>
+
+				<div id="orderBar" class="horizontal-bar" ng-init="orderPredicate=''">
+					<strong >Sort by:</strong>
+					<span ng-click="order('type')" ng-class="{'disabled': orderPredicate!='type'}">
+						<span>type</span>
+						<span ng-if="orderPredicate!='type'" class="glyphicon glyphicon-sort"></span>
+						<span ng-if="orderPredicate=='type' && !orderReverse " class="glyphicon glyphicon-sort-by-attributes"></span>
+						<span ng-if="orderPredicate=='type' && orderReverse "  class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+					</span>
+					<span ng-click="order('points')"  ng-class="{'disabled': orderPredicate!='points' }">
+						<span>reward</span>
+						<span ng-if="orderPredicate!='points'" class="glyphicon glyphicon-sort"></span>
+						<span ng-if="orderPredicate=='points' && !orderReverse" class="glyphicon glyphicon-sort-by-attributes"></span>
+						<span ng-if="orderPredicate=='points' && orderReverse " class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+					</span>
+					<span ng-click="order('owningArtifact')"  ng-class="{'disabled': orderPredicate!='owningArtifact' }">
+						<span>function</span>
+						<span ng-if="orderPredicate!='owningArtifact'" class="glyphicon glyphicon-sort"></span>
+						<span ng-if="orderPredicate=='owningArtifact' && !orderReverse" class="glyphicon glyphicon-sort-by-attributes"></span>
+						<span ng-if="orderPredicate=='owningArtifact' && orderReverse " class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+					</span>
+				</div>
+				<div class="subTitle">Available:</div>
+				<div id="board"  >	
+					<div id="columns">
+						<div class="pin" ng-repeat="(i,microtask) in microtasks | canChoose | byType:filterEnabled |  orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+							<span class="typeLabel label-default pastel-{{types.keyAt(microtask.type)}}">{{microtask.type}}</span>
+							<div class="debug">{{microtask.promptType}}</div>							
+							
+							
+							<div class="points">Function: {{microtask.owningArtifact}}</div>
+							
+							<div class="points">Reward: {{microtask.points}} points</div>
+							
+							
+							<div class="accept">
+								<button class="btn btn-primary" ng-click="assignMicrotask(microtask)">Work On This</button>
+							</div>
+							
+						</div>
+						
+					</div>
+					<div ng-hide="breakMode" class="alert alert-warning no-microtask" role="alert" >SORRY, there aren't available microtasks at the moment.
+							The microtask queue will be checked again in <strong> {{checkQueueIn}} seconds </strong>.
+						</div>
+				</div>
+				
+			<div class="subTitle">Assigned:</div>
+				<div id="board"  >	
+					<div id="columns">
+						<div class="pin" ng-repeat="(i,microtask) in microtasks | assigned | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+							<span class="typeLabel label-default pastel-{{types.keyAt(microtask.type)}}">{{microtask.type}}</span>
+							<div class="debug">{{microtask.promptType}}</div>
+							
+							
+							
+							<div class="points">Function: {{microtask.owningArtifact}} </div>
+							
+							<div class="points">Reward: {{microtask.points}} points</div>
+
+
+						</div>
+					</div>
+				</div>
+				
+				<div class="subTitle">Waiting for review:</div>
+				<div id="board"  >	
+					<div id="columns">
+						<div class="pin" ng-repeat="(i,microtask) in microtasks | waitingReview | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+							<span class="typeLabel label-default pastel-{{types.keyAt(microtask.type)}}">{{microtask.type}}</span>
+							<div class="debug">{{microtask.promptType}}</div>
+							
+							
+							
+							<div class="points">Function: {{microtask.owningArtifact}} </div>
+							
+							<div class="points">Reward: {{microtask.points}} points</div>
+
+
+						</div>
+					</div>
+				</div>
+			<div class="subTitle">Completed:</div>
+				<div id="board"  >	
+					<div id="columns">
+						<div class="pin" ng-repeat="(i,microtask) in microtasks | completed | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+							<span class="typeLabel label-default pastel-{{types.keyAt(microtask.type)}}">{{microtask.type}}</span>
+							<div class="debug">{{microtask.promptType}}</div>
+							
+							
+							
+							<div class="points">Function: {{microtask.owningArtifact}} </div>
+							
+							<div class="points">Reward: {{microtask.points}} points</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>

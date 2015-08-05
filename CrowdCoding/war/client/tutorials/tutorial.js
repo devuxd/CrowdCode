@@ -73,7 +73,7 @@ angular
                 nextStep();
             }
 
-            var prevOnHide = undefined;
+            var prevOnHide;
 
             function close(){
                 $scope.destroy();
@@ -91,6 +91,7 @@ angular
 
                     $scope.$emit('tutorial-finished');
                     close();
+
                     return;
                 }
 
@@ -110,9 +111,9 @@ angular
 
                 if( highlight !== undefined ){
 
-                    var $highlightTag = $(document).find('#'+highlight)
+                    var $highlightTag = $(document).find('#'+highlight);
 
-                    if( $highlightTag.length == 0 ) {
+                    if( $highlightTag.length === 0 ) {
                         nextStep();
 
                     } else {
