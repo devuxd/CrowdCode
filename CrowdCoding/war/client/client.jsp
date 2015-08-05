@@ -69,20 +69,6 @@
 
 	</div>
 
-		    <!--
-		    <div class="sidebar" ui-layout-container size="20%" min-size="200px" max-size="20%">
-		    	
-		    </div>-->
-		<!--
-	    <div class="container-flex-row">
-		    <left-bar id="sidebarLeft" class="sidebar order-1" ></left-bar>
-	        <div id="content" class="order-3" >
-	        	
-	        </div>
-	    </div>-->
-
-
-
 	<ng-include src="'widgets/popup_template.html'"></ng-include>
 	
 	<tutorial-manager></tutorial-manager>

@@ -27,43 +27,51 @@ angular
                 'command'     : 'init',
                 'functionName': iAttrs.functionName ? iAttrs.functionName : ''
             });
+
             ngModelCtrl.$asyncValidators.code = function(modelValue, viewValue) {
 
-                if( !initialCode ) initialCode = modelValue;
 
-                var deferred = $q.defer();
-
-                // validate the code 
-                // 1) JSHINT check the syntax errors
-                // 2) test validator web worker check the execution errors
                 var code = modelValue || viewValue;
-                var lintResult =  JSHINT(code, {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true, expr:true});
-                
-                if( !lintResult ){
-                    $scope.errors.code = checkForErrors(JSHINT.errors)[0];
-                    deferred.reject();
-                }
-                else {
-                    
-                    worker.postMessage({ 
-                        'code'        : code
-                    });
-                    worker.onmessage = function(message){
-                        var data = message.data;
-                        if( data.error.length > 0 ){
-                            $scope.errors.code = message.data.error;
-                            deferred.reject();
-                        } else {
-                            $scope.errors = {};
-                            deferred.resolve();
-                        }
-                    };
-                }
 
-                if( initialCode != code ){
+                if( !initialCode ) initialCode = code;
+                if( !ngModelCtrl.$dirty && initialCode != code ){
                     ngModelCtrl.$setDirty();
                 }
 
+
+                var deferred = $q.defer();
+
+                setTimeout(function() {
+                    
+                    // validate the code 
+                    // 1) JSHINT check the syntax errors
+                    // 2) test validator web worker check the execution errors
+                    var lintResult =  JSHINT(code, {latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true, expr:true});
+                    
+                    if( !lintResult ){
+                        $scope.errors.code = checkForErrors(JSHINT.errors)[0];
+                        deferred.reject();
+                    }
+                    else {
+                        $scope.errors.code = "";
+                        worker.postMessage({ 
+                            'code'        : code
+                        });
+                        worker.onmessage = function(message){
+                            var data = message.data;
+                            if( data.error.length > 0 ){
+                                $scope.errors.code = message.data.error;
+                                deferred.reject();
+                            } else {
+                                $scope.errors = {};
+                                deferred.resolve();
+                            }
+                        };
+                    }
+
+                }, 200);
+
+            
                 // return the promise
                 return deferred.promise;
             };
@@ -77,6 +85,8 @@ angular
                    enableLiveAutocompletion: false,
                    enableBasicAutocompletion: true,
                    useWorker: false,
+                   minLines: 4,
+                   maxLines: Infinity
                    
                 };
 

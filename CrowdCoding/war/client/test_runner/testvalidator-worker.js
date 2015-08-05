@@ -1,6 +1,6 @@
 var expect = undefined;
 var should = undefined;
-var functionEmptyBody;
+var functionEmptyBody, functionName;
 
 self.addEventListener('message', function(message){
 
@@ -12,6 +12,7 @@ self.addEventListener('message', function(message){
 
 		console.log('INIT')
 
+		functionName = data.functionName;
 		functionEmptyBody = 'function '+data.functionName+'(){ _calls++; }\n';
 
 		importScripts(data.baseUrl + '/include/chai.js');
@@ -52,14 +53,16 @@ self.addEventListener('message', function(message){
 			else console.log(e);
 		} finally {
 
-			if( _calls == 0 ){
-				sendData.error = 'the function '+data.functionName+' is never called!';
-			} 
-			else if( _calls > 1 ){
-				sendData.error = 'the function '+data.functionName+' should be called one time!';
-			}
-			else if( _assertions == 0 ){
-				sendData.error = 'express at lest one assertion!'
+			if( sendData.error == "" ){
+				if( _calls == 0 ){
+				sendData.error = 'the function '+functionName+' is never called!';
+				} 
+				else if( _calls > 1 ){
+					sendData.error = 'the function '+functionName+' should be called one time!';
+				}
+				else if( _assertions == 0 ){
+					sendData.error = 'express at lest one assertion!'
+				}
 			}
 		}
 
