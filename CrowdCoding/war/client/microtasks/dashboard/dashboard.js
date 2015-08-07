@@ -7,13 +7,9 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$firebaseArr
 	
 	var types = [
 			'Review',
-			'DebugTestFailure',
-			'ReuseSearch',
-			'WriteFunction',
-			'WriteFunctionDescription',
-			'WriteTest',
-			'WriteTestCases',
-			'WriteCall',
+			'DescribeFunctionBehavior',
+			'ImplementBehavior',
+			'ChallengeReview'
 	];
 
 	$scope.types = types;
