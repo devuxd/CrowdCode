@@ -69,7 +69,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			$scope.$on('timeExpired'    , timeExpired);
 			$scope.$on('fecthMicrotask' , fetchMicrotask);
 
-			$scope.$on('submitMicrotask', submitMicrotask);
+			
 			$scope.$on('fetchSpecificMicrotask' , fetchSpecificMicrotask);
 
 			$scope.$on('microtaskLoaded', onMicrotaskLoaded);
@@ -108,6 +108,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			}
 			
 			function openDashboard(){
+				$scope.taskData.startBreak = true;
 				onNoMicrotask();
 				
 			}

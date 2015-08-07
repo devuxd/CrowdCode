@@ -5,7 +5,7 @@
 ///////////////////////
 angular
     .module('crowdCode')
-    .factory('questionsService', ['$window','$rootScope','$http', '$q','$firebaseArray', 'firebaseUrl','workerId', function( $window, $rootScope, $http, $q,$firebaseArray, firebaseUrl,workerId) {
+    .factory('questionsService', ['$window','$rootScope','$http', '$q','$firebaseArray','$firebaseObject', 'firebaseUrl','workerId', function( $window, $rootScope, $http, $q,$firebaseArray,$firebaseObject, firebaseUrl,workerId) {
 
 
 	var service = new function(){
@@ -219,7 +219,7 @@ angular
 		}
 
 		function updateViewCounter(questionId){	
-			var viewsObj = $firebase(new Firebase(firebaseUrl+'/questions/'+questionId)).$asObject();
+			var viewsObj = $firebaseObject(new Firebase(firebaseUrl+'/questions/'+questionId));
 			viewsObj.$loaded().then(function(){    
 			if(workerId != viewsObj.ownerId){
 				if(viewsObj.viewCounter == undefined){

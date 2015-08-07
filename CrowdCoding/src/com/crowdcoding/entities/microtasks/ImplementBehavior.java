@@ -138,7 +138,6 @@ public class ImplementBehavior extends Microtask
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
 		// increase the stats counter
 		WorkerCommand.increaseStat(workerID, "functions",1);
-
 	}
 
 	public PromptType getPromptType()

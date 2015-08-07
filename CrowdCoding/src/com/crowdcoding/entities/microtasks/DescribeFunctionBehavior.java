@@ -168,7 +168,7 @@ public class DescribeFunctionBehavior extends Microtask
 
 		WorkerCommand.awardPoints(workerId, this.submitValue);
 //		// increase the stats counter
-//		WorkerCommand.increaseStat(workerID, "test_cases",1);
+		WorkerCommand.increaseStat(workerId, "describe_behavior",1);
 	}
 	public Artifact getOwningArtifact()
 	{

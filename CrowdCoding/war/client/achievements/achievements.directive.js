@@ -1,6 +1,6 @@
 angular
     .module('crowdCode')
-    .controller('userAchievements', ['$scope','$firebase','iconFactory','firebaseUrl','workerId', function($scope,$firebase,iconFactory,firebaseUrl,workerId){
+    .controller('userAchievements', ['$scope','$firebase','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope,$firebase,iconFactory,$firebaseArray,firebaseUrl,workerId){
     	
     	
     $scope.userStats = [];
@@ -8,15 +8,15 @@ angular
     $scope.icon = iconFactory.get;    	 
     	 
     	var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
-     	var statsSync = $firebase(statsRef);
-     	$scope.userStats = statsSync.$asArray();
+     	var statsSync = $firebaseArray(statsRef);
+     	$scope.userStats = statsSync;
      	$scope.userStats.$loaded().then(function(){
      	});
      	
      	
     	var achievementsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/listOfAchievements');
-    	var achievementsSync = $firebase(achievementsRef);
-    	$scope.listOfachievements = achievementsSync.$asArray();
+    	var achievementsSync = $firebaseArray(achievementsRef);
+    	$scope.listOfachievements = achievementsSync;
     	$scope.listOfachievements.$loaded().then(function(){
     	});
 }]);
