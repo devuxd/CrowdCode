@@ -109,6 +109,28 @@ angular
 							};
 							toaster.pop( toast );
 							break;
+						case 'worker.levelup':
+							toast.type = 'success';
+							toast.body = 'Level up!\n'+val.prevLevel+'->'+val.currentLevel;
+							toaster.pop( toast ); 
+							break;
+						case 'new.achievement':
+							toast.type = 'success';
+							toast.body = val.message + ' Congratulations!';
+							toast.clickHandler = function(){ 
+								$rootScope.$broadcast('showUserStatistics');
+							};
+							toaster.pop( toast ); 
+							break;
+						case 'dashboard':
+							toast.type = 'success';
+							toast.body = 'You unlocked the dashboard. Congratulations!';
+							toast.clickHandler = function(){ 
+								$rootScope.$broadcast('submitMicrotask');
+							};
+							toaster.pop( toast ); 
+							break;
+							
 
 						default:
 					}

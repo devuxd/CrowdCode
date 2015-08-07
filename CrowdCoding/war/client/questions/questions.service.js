@@ -12,7 +12,6 @@ angular
 		// Private variables
 		var questions;
 		var allTags = [];
-
 		var loaded = false;
 		var firebaseRef = new Firebase(firebaseUrl+'/questions');
 
@@ -219,11 +218,37 @@ angular
 			firebaseRef.child( id+'/views/'+workerId ).set( view );
 		}
 
+		function updateViewCounter(questionId){	
+			var viewsObj = $firebase(new Firebase(firebaseUrl+'/questions/'+questionId)).$asObject();
+			viewsObj.$loaded().then(function(){    
+			if(workerId != viewsObj.ownerId){
+				if(viewsObj.viewCounter == undefined){
+					viewsObj.viewCounter = 1;
+				}
+				else {
+					viewsObj.viewCounter += 1;
+					if(viewsObj.viewCounter == 15)
+						sendQuestionViews(viewsObj.viewCounter);
+				}				
+					viewsObj.$save();
+			}
+			});
+		}
+		
+		function sendQuestionViews(views){
+			$http.get('/' + projectId + '/ajax/questionViews?id='+ views)
+			.success(function(data, status, headers, config) {
+			})
+			.error(function(data, status, headers, config) {
+
+			});		
+		}
+		
 		function addWorkerView(id){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
-					console.log('viewed');
+					updateViewCounter(id);
 					deferred.resolve();
 				})
 				.error(function(data, status, headers, config) {

@@ -125,7 +125,6 @@ public /*abstract*/ class Microtask
 			// increase the stats counter
 			WorkerCommand.increaseStat(workerID, "microtasks",1);
 			WorkerCommand.awardPoints(workerID, awardedPoint);
-
 			// write completed on firebase
 			FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), workerID, projectId, this.completed);
 
@@ -145,7 +144,7 @@ public /*abstract*/ class Microtask
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
 		if (this.completed){
-			Logger.getLogger("LOGGER").severe("MIRCORTASK ALREADY COMPLETED: "+this.toString());
+			Logger.getLogger("LOGGER").severe("MICROTASK ALREADY COMPLETED: "+this.toString());
 			return;
 		}
 		this.completed = true;

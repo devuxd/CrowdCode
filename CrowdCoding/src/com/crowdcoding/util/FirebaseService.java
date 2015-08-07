@@ -156,11 +156,29 @@ public class FirebaseService
 	{
 		enqueueWrite("{\"assigned\": "+Boolean.toString(assigned)+", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
+	
+	
+	// Writes information about excluded workers to Firebase
+	public static void writeMicrotaskExcludedWorkers( String microtaskKey,
+			String projectId, String workerIDs)
+	{
+		enqueueWrite("{\"excluded\": \"" +workerIDs+ "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+	}
+	
+	
+
+	// Show if microtask is waiting for review
+	public static void writeMicrotaskWaitingReview( String microtaskKey,
+			String workerId, String projectId, boolean waiting)
+	{
+		enqueueWrite("{\"waitingReview\": " + waiting + "}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+	}
 
 
 	// Writes information about microtask completition to Firebase
 	public static void writeMicrotaskCompleted( String microtaskKey, String workerID, String projectId, boolean completed){
-		enqueueWrite("{\"completed\": \"" + completed + "\"}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"completed\": " + completed + "}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+		writeMicrotaskWaitingReview(microtaskKey,workerID, projectId, false);
 	}
 	// Writes information about microtask completition to Firebase
 	public static void writeMicrotaskDeleted( String microtaskKey, String projectId){
@@ -282,6 +300,13 @@ public class FirebaseService
 	public static void deleteTest(long testID, String projectId){
 		enqueueWrite("", "/artifacts/tests/" + testID + ".json", HTTPMethod.DELETE, projectId);
 	}
+	
+	
+	//stores worker information
+	public static void writeWorker(WorkerInFirebase dto,
+			String userid, String projectId) {
+		enqueueWrite(dto.json(), "/workers/" + userid + ".json", HTTPMethod.PATCH, projectId);		
+	}
 
 	// Stores the specified review to firebase
 	public static void writeReview(ReviewSubmissionInFirebase reviewSubmission, String microtaskKey , String projectId){
@@ -329,6 +354,14 @@ public class FirebaseService
 	public static void writeWorkerNotification(NotificationInFirebase notification, String workerID, String projectId){
 		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
 	}
+	
+	public static void writeLevelUpNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
+	}
+	
+	public static void writeAchievementNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
+	}
 
 	public static void microtaskAssigned(String workerID, String projectId) {
 		enqueueWrite("{\"fetchTime\" : \"" +System.currentTimeMillis() +"\"}", "/workers/" + workerID + ".json", HTTPMethod.PATCH, projectId);
@@ -337,7 +370,7 @@ public class FirebaseService
 
 	// Writes information about microtask assignment to Firebase
 	public static void writeMicrotaskPoints( String microtaskKey, int points, String projectId){
-		enqueueWrite("{\"points\": \"" + points + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"points\": " + points + "}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
 	// Posts the specified JSON message to the specified workers newsfeed
@@ -378,7 +411,7 @@ public class FirebaseService
 	}
 
 	public static void updateQuestioningScore(int score, String path, String projectId){
-		enqueueWrite("{\"score\": \"" + score + "\"}", path +".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"score\": " + score + "}", path +".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void updateQuestioningSubscribers(SubscribersInFirebase subscribersId, String path, String projectId){
@@ -413,6 +446,8 @@ public class FirebaseService
 		String payload = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectID + ".json");
 		return !payload.equals("null");
 	}
+
+	
 
 
 

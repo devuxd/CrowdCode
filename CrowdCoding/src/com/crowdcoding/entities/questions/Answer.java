@@ -6,6 +6,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 
 import com.crowdcoding.commands.QuestioningCommand;
+import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.firebase.notification.AnswerNotificationInFirebase;
 import com.crowdcoding.dto.firebase.questions.AnswerInFirebase;
 import com.crowdcoding.util.FirebaseService;
@@ -37,6 +38,8 @@ public class Answer extends Questioning
 		QuestioningCommand.incrementQuestionAnswers(this.questionId);
 
 		QuestioningCommand.subscribeWorker(this.questionId, ownerId, false);
+	
+		WorkerCommand.increaseStat(ownerId, "answers", 1);
 
 		AnswerNotificationInFirebase notification = new AnswerNotificationInFirebase( "answer.added", this.questionId, this.ownerHandle, this.questionId.toString());
 
