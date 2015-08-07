@@ -167,6 +167,7 @@ angular
         if ( reviewed.type == 'DescribeFunctionBehavior') {
 
             $scope.data = {};
+            $scope.data.selected = -1;
 
             if( submission.disputeFunctionText.length > 0 ){
                 $scope.review.template    = 'describe_dispute';
@@ -175,7 +176,29 @@ angular
             }
             else {
                 $scope.review.template = 'describe';
-                $scope.data.tests = submission.tests;
+                $scope.data.tests = angular.copy(submission.tests);
+
+                // get the stats of the edits
+                $scope.data.stats = { added: 0, edited: 0, deleted: 0 };
+                $scope.data.tests.map(function(test){
+                    if( test.added )      $scope.data.stats.added++;
+                    else if( test.edited ) $scope.data.stats.edited++;
+                    else if( test.deleted ) $scope.data.stats.deleted++;
+                });
+
+                // sort them in added < edited < deleted
+                $scope.data.tests.sort(function(a,b){
+                    if( a.added && !b.added ) return -1;
+                    if( !a.added && b.added ) return 1;
+
+                    if( a.edited && !b.edited ) return -1;
+                    if( !a.edited && b.edited ) return 1;
+
+                    if( a.deleted && !b.deleted ) return -1;
+                    if( !a.deleted && b.deleted ) return 1;
+
+                    return 0;
+                });
             }
 
             functionsService

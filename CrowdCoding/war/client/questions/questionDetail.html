@@ -73,10 +73,7 @@
 
 		<li class="list-group-item answer-item" ng-repeat="a in sel.answers | orderObjectBy : 'createdAt' : false" ng-animate-children>
 			<div class="content-panel">
-				<div>
-					<span ng-bind-html="a.text"></span>
-					
-				</div>
+				<div ng-bind-html="a.text"></div>
 
 
 				<div>

@@ -42,31 +42,116 @@
 	</div>
 
 	<div class="section" ui-layout-container size="40%" >
-		<div class="section-bar">
-			<span class="title">Described behaviors</span>
+		<div class="section-bar" ng-if="data.selected == -1">
+			<span class="title">Tests</span>
+			<span class="pull-right">
+				<span> {{data.stats.added}} added </span> /
+				<span> {{data.stats.edited}} edited </span> /
+				<span> {{data.stats.deleted}} deleted </span>
+			</span>
 		</div>
-		<div class="section-content padding">
+		<div class="section-content slide from-left padding" ng-if="data.selected == -1">
 			<div class="tests-list">
-				<div class="test-item static" ng-repeat="t in data.tests track by $index">
-					<div class="row">
-						<div class="col-md-1 col-sm-1">
-							<span ng-if="t.edited">edited</span>
-							<span ng-if="t.added">added</span>
-							<span ng-if="t.deleted">deleted</span>
-						</div>
-						<div class="col-md-11 col-sm-11">
-							<div class="row">
-								<div class="col-sm-2 col-md-2 row-label">description</div>
-								<div class="col-sm-10 col-md-10">{{ t.description }}</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-2 col-md-2 row-label">Code</div>
-								<div class="col-sm-10 col-md-10"><js-reader code="t.code"></js-reader></div>
-							</div>
-						</div>
+				<div class="test-item clickable" 
+				     ng-repeat="t in data.tests track by $index">
+					<div ng-click="data.selected = t">
+						<span class="pull-left">
+							<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
+							<span ng-if="t.description.length > 0" ng-bind="t.description"></span>
+							<span ng-if="!t.description || t.description.length == 0" >missing description</span>
+						</span> 
+
+						<span class="pull-right" ng-if="t.edited">
+							edited
+							<span class="glyphicon glyphicon-pencil"  ></span>
+						</span>
+						<span class="pull-right" ng-if="t.added">
+							added
+							<span class="glyphicon glyphicon-plus"  ></span>
+						</span>
+						<span class="pull-right" ng-if="t.deleted">
+							removed
+							<span class="glyphicon glyphicon-remove"  ></span>
+						</span>
+						<span class="clearfix"></span>
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="section-bar" ng-if="data.selected != -1">
+			<span class="pull-left" ng-if="data.selected != -1">
+				<button class="btn btn-sm" ng-click="data.selected = -1">
+					<span class="glyphicon glyphicon-arrow-left"></span>
+				</button>
+			</span>
+		</div>
+		<div class="section-content slide from-right padding" 
+				 ng-repeat="t in data.tests track by $index" 
+				 ng-if="data.selected == t">
+				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
+					
+					<div class="form-group">
+						<label for="description">Status </label>
+						<div class="form-control form-control-static" name="description">
+							{{ t.added ? 'added' : t.edited ? 'edited' : t.deleted ? 'deleted' : 'untouched' }}
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="description">Description </label>
+						<div class="form-control form-control-static" name="description">
+							{{t.description}}
+						</div>
+					</div>
+					<div class="form-group">
+						<label>Type</label>
+						<div class="form-control form-control-static" name="description">
+							{{t.isSimple ? 'simple' : 'advanced'}}
+						</div>
+					</div>
+					<div class="form-group" ng-if="!t.isSimple">
+						<label for="code">Code</label>
+						<div class="form-control form-control-static" js-reader code="t.code"></div>
+					</div>
+
+					<div ng-if="t.isSimple" ng-form="inputs" >
+						<div class="form-group"  ng-repeat="(pIdx,p) in funct.parameters track by p.name">
+							<label for="inputs">
+								{{p.name + ' {' + p.type + '}' }}
+							</label>
+						
+							<div
+								class="form-control code"
+								json-editor="{ type: p.type, name: p.name }" 
+								name="{{p.name}}"
+								ng-model="t.inputs[pIdx]">
+							</div>
+						</div>
+
+					</div>
+
+					<div class="form-group" ng-if="t.isSimple">
+						<label for="code">Output {{ '{' + funct.returnType + '}'}}</label>
+						<div
+							class="form-control code"
+							json-editor="{ type: funct.returnType, name: 'output' }" 
+							ng-model="t.output"
+							name="output"
+							errors="errors['output']"
+							required>
+						</div>
+						<div class="help-block" 
+							ng-if="microtaskForm['testForm_'+$index].output.$dirty" 
+							ng-messages="microtaskForm['testForm_'+$index].output.$error" >
+							<div ng-message="required">the output can't be empty</div>
+							<div ng-message="code">{{errors['output'].code}}</div>
+						</div>
+					</div>
+
+
+					
+
+				</div>	
 		</div>
 	</div>
 

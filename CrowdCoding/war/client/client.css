@@ -947,21 +947,19 @@ tutorial  { display:none; }
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	height: 35px;
+	height: 25px;
 	font-family: Lato;
   	padding-left: 5px;
   	padding-right: 5px;
-  	padding-top: 5px;
 }
 .section-bar .title {
-	line-height:30px;
+	line-height:25px;
 	font-weight: bold;
 }
 .section-bar .btn {
 	background-color: transparent;
-	height: 24px;
-	margin-top: 3px;
-	line-height: 24px;
+	height: 25px;
+	line-height: 25px;
 	padding: 0px 5px 0px 5px;
 }
 .section-bar .btn:hover {
@@ -977,7 +975,7 @@ tutorial  { display:none; }
 
 .section-content {
 	position: absolute;
-	top: 35px;
+	top: 25px;
 	left: 0px;
 	right: 0px;
 	bottom:0px;

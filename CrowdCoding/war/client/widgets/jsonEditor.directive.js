@@ -23,8 +23,10 @@ angular
             ngModelCtrl.$validators.code = function(modelValue, viewValue) {
                 var stringValue    = modelValue || viewValue;
 
-                if( initialValue != stringValue )
+                if( !initialValue ) initialValue = stringValue;
+                if( !ngModelCtrl.$dirty && initialValue != stringValue ){
                     ngModelCtrl.$setDirty();
+                }
 
                 var validationData = AdtUtils.validate(stringValue,$scope.conf.type,$scope.conf.name);  
                 
