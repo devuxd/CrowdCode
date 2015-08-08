@@ -42,6 +42,8 @@ angular
 
     function validateStructure(value,expectedType,name){
 
+        if( value == null ) return [];
+        
         // if it's a simple data type
         var errors = [];
         var dataType = getNameAndSuffix(expectedType);

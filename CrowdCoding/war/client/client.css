@@ -363,10 +363,10 @@ h1, h2, h3, h4 {
 
 .task {
 	position:absolute;
-	top:15px;
-	left:15px;
-	right:15px;
-	bottom:50px;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:35px;
 }
 
 .task .header {
@@ -939,7 +939,7 @@ tutorial  { display:none; }
 
 
 /* MICROTASK CONTAINER SECTIONS */
-.section { position:relative; 
+.section { position:absolute; 
 	background-color:white; }
 .section-bar {
 	background-color: rgb(235, 235, 235);
@@ -947,21 +947,19 @@ tutorial  { display:none; }
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	height: 35px;
+	height: 25px;
 	font-family: Lato;
   	padding-left: 5px;
   	padding-right: 5px;
-  	padding-top: 5px;
 }
 .section-bar .title {
-	line-height:30px;
+	line-height:25px;
 	font-weight: bold;
 }
 .section-bar .btn {
 	background-color: transparent;
-	height: 24px;
-	margin-top: 3px;
-	line-height: 24px;
+	height: 25px;
+	line-height: 25px;
 	padding: 0px 5px 0px 5px;
 }
 .section-bar .btn:hover {
@@ -977,7 +975,7 @@ tutorial  { display:none; }
 
 .section-content {
 	position: absolute;
-	top: 35px;
+	top: 25px;
 	left: 0px;
 	right: 0px;
 	bottom:0px;
@@ -1274,8 +1272,10 @@ pre.json .jsonKey { color: black; }
 	top:0px;
 	right:0px;
 	left:0px;
+	z-index:100;
 	width: 100%;
 }
+
 
 .function-statements .progress {
 	height: 5px;
@@ -1283,6 +1283,12 @@ pre.json .jsonKey { color: black; }
 	margin-bottom: 0px;
 	background-color: rgb(122, 122, 122);
 	border-radius: 0px;
+}
+.function-statements .label {
+	background-color:white;
+	color:black;
+	top:5px;
+	left:5px;
 }
 
 .function-editor {
@@ -1511,7 +1517,11 @@ pre.json .jsonKey { color: black; }
 /*.form-control.ng-dirty.ng-valid { border-color: #3c763d; }*/
 
 /* invalid form controls */
-.form-control.ng-dirty.ng-invalid, .form-control.code.ng-dirty.ng-invalid > div { border-color: #a94442; }
+.form-control.ng-dirty.ng-invalid, 
+.form-control.code.ng-dirty > div
+{ border-color: #a94442; }
+.form-control.code.ng-dirty.ng-valid > div
+{ border-color: #EBEBEB; }
 
 /* DASHBOARD CSS */
 

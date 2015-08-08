@@ -1,7 +1,7 @@
 <div ng-controller="ReviewController">
 	
 	<div class="header bg-color">
-		<span class="type  ">{{::microtask.title}} </span>
+		<span class="type  ">{{::microtask.title}}</span>
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); ">
@@ -9,10 +9,8 @@
 		</button>
 		<span class="clearfix"></span>
     </div>
-    
-	<div class="sections" 
-		 ng-include="'/client/microtasks/review/review_' + review.template + '.html'">
-	</div>
+
+	<div ng-include src="'/client/microtasks/review/review_' + review.template + '.html'" ></div>
 
 <!--
 	<div class="section-cols" >

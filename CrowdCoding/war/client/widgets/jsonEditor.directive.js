@@ -23,8 +23,10 @@ angular
             ngModelCtrl.$validators.code = function(modelValue, viewValue) {
                 var stringValue    = modelValue || viewValue;
 
-                if( initialValue != stringValue )
+                if( !initialValue ) initialValue = stringValue;
+                if( !ngModelCtrl.$dirty && initialValue != stringValue ){
                     ngModelCtrl.$setDirty();
+                }
 
                 var validationData = AdtUtils.validate(stringValue,$scope.conf.type,$scope.conf.name);  
                 
@@ -44,8 +46,9 @@ angular
         	$scope.aceLoaded = function(_editor) {
 
         		var options = {
-		    	   // maxLines: Infinity
-                   showLineNumbers:true
+                    minLines: 2,
+		    	    maxLines: Infinity,
+                    showLineNumbers:true
 		    	};
     
                 $element.on('focus',function(){
