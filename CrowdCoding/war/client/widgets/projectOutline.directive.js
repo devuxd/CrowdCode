@@ -8,6 +8,7 @@ function projectOutline(AdtService, functionsService) {
         templateUrl: '/client/widgets/project_outline.template.html',
         controller: function($scope, $element) {
 
+            
             $scope.functions = functionsService.getAll();
             $scope.dataTypes = AdtService.getAll();
 

@@ -8,7 +8,6 @@
 <div class="middle padding">
 	<form name="questionForm" novalidate ng-submit="questionForm.$valid && postQuestion()">
 		<div class="form-group">
-			<label for="title">Title </label>
 			<input 
 				class="form-control" 
 				name="title" 
@@ -35,7 +34,7 @@
 			</textarea>
 		</div>
 		<div class="form-group">
-			<tags-input ng-model="tags"></tags-input>
+			<tags-input class="form-control" ng-model="tags"></tags-input>
 		</div>
 		<div class="form-group" ng-if="sel == null && loadedArtifact != null">
 			<label>

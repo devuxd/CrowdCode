@@ -2,6 +2,7 @@
     
 	<div class="header bg-color">
 		<span class="type  ">
+			{{microtask.promptType}}
 			<span ng-switch="microtask.promptType">
 				<span ng-switch-when="WRITE">Write a test</span>
 				<span ng-switch-when="CORRECT">Correct test(s)</span>
@@ -190,7 +191,7 @@
 						<label>Type</label>
 						<select class="form-control" 
 								ng-model="t.isSimple"
-					            ng-options="o.v as o.n for o in [{ n: 'simple', v: true }, { n: 'advanced', v: false }]">
+					            ng-options="o.v as o.n for o in [{ n: 'specify input/output', v: true }, { n: 'write test code', v: false }]">
 					    </select>
 					</div>
 					<div class="form-group" ng-if="!t.isSimple">

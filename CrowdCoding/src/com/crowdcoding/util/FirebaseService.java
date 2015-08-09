@@ -174,7 +174,7 @@ public class FirebaseService
 		enqueueWrite("{\"waitingReview\": " + waiting + "}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
 	}
 
-
+	
 	// Writes information about microtask completition to Firebase
 	public static void writeMicrotaskCompleted( String microtaskKey, String workerID, String projectId, boolean completed){
 		enqueueWrite("{\"completed\": " + completed + "}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);

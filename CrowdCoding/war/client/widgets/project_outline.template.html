@@ -1,22 +1,29 @@
 <div bs-collapse start-collapsed="false" allow-multiple="true">
-	<div ng-repeat="d in dataTypes" class="data-types">
+	<div ng-repeat="d in dataTypes" class="data-types" ng-init="d.selectedExample = d.examples[0]">
 		<div bs-collapse-toggle class="toggler" >DT: {{d.name}}</div>
-		<div bs-collapse-target class="toggled">
+		<div bs-collapse-target class="toggled" ng-init="structure = buildStructure(d)">
 			<span ng-bind="::d.description"></span>
-			<pre ng-if="d.structure" ng-bind="::buildStructure(d)"></pre>
-			<div ng-if="::d.examples" class="dropdown" ng-init="selectedExample=d.examples[0]" >
-               <h5 class="pull-left" for="exampleSelect">EXAMPLES:</h5>
-               <button name= "exampleSelect" 
-                       class="btn btn-default btn-xs pull-right dropdown-toggle"
-                       bs-select  
-                       ng-model="selectedExample" 
-                       data-html="1" 
-                       data-placement="bottom-right"
-                       bs-options="example.name for example in d.examples" >
-               </button>
-               <span class="clearfix"></span>
-               <div json-reader ng-model="::selectedExample.value" class="clearfix adt-detail" copy-allowed></div>
-           </div>
+			<div ng-if="d.structure" ng-bind="structure"></div>
+
+			<div ng-if="d.selectedExample != undefined">
+				<span class="pull-left" for="exampleSelect">EXAMPLES:</span>
+				<span class="pull-right">
+					<div ng-if="::d.examples" class="dropdown"  >
+		               <button name= "exampleSelect" 
+		                       class="btn btn-xs dropdown-toggle"
+		                       bs-select 
+		                       bs-options="e.name for e in d.examples"
+		                       data-html="1" 
+		                       data-placement="bottom-right"
+		                       ng-model="d.selectedExample" >
+		               </button>
+		            </div>
+				</span>
+					
+	  			<span class="clearfix"></span>
+	            <div json-reader ng-model="d.selectedExample.value" copy-allowed></div>
+			</div>
+	            
 		</div>
 	</div>
 	<div ng-repeat="f in functions" class="functions">

@@ -8,8 +8,8 @@
 		ng-model="code" >
 	</div>
 </div>
-<div class="function-errors" style=""  >
-	<ul ng-if="errors.length > 0" >
+<div class="function-errors " style=""  >
+	<ul class="help-block" ng-if="errors.length > 0" >
         <li ng-repeat="e in errors track by $id($index)">
         	<span ng-bind="e"></span>
         </li>

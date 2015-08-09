@@ -1,31 +1,33 @@
-<div class="section bg-color-alpha padding" style="height:10%">
-	<div>
-		A worker reported the following issue with the function
-		<strong>{{funct.name}}</strong>.
+<div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
+	<div class="section bg-color-alpha padding" ui-layout-container size="10%">
+		<div>
+			A worker reported the following issue with the function
+			<strong>{{funct.name}}</strong>.
+		</div>
+		<div>Can you review this issue?</div>
+		<span>
+			<strong>TIP:</strong>When you review an issue, high rate means that you agree on the issue.
+		</span>
 	</div>
-	<div>Can you review this issue?</div>
-	<span>
-		<strong>TIP:</strong>When you review an issue, high rate means that you agree on the issue.
-	</span>
+
+
+	<div class="section" ui-layout-container size="40%">
+		<div class="section-bar">
+			<span class="title">Function Description</span>
+		</div>
+		<div class="section-content">
+			<js-reader code="data.fDescription" ></js-reader>
+		</div>
+	</div>
+
+	<div class="section" ui-layout-container size="25%" >
+		<div class="section-bar">
+			<span class="title">Dispute description</span>
+		</div>
+		<div class="section-content padding">
+			<span ng-bind="data.disputeText"></span>
+		</div>
+	</div>
+
+	<div class="section" ui-layout-container size="25%" ng-include="'/client/microtasks/review/review_form.html'"></div>
 </div>
-
-
-<div class="section" style="height:40%">
-	<div class="section-bar">
-		<span class="title">Function Description</span>
-	</div>
-	<div class="section-content">
-		<js-reader code="data.fDescription" ></js-reader>
-	</div>
-</div>
-
-<div class="section" style="height:25%" >
-	<div class="section-bar">
-		<span class="title">Dispute description</span>
-	</div>
-	<div class="section-content padding">
-		<span ng-bind="data.disputeText"></span>
-	</div>
-</div>
-
-<div class="section" style="height:25%" ng-include="'/client/microtasks/review/review_form.html'"></div>

@@ -122,7 +122,7 @@
 						
 							<div
 								class="form-control code"
-								json-editor="{ type: p.type, name: p.name }" 
+								json-reader
 								name="{{p.name}}"
 								ng-model="t.inputs[pIdx]">
 							</div>
@@ -134,17 +134,9 @@
 						<label for="code">Output {{ '{' + funct.returnType + '}'}}</label>
 						<div
 							class="form-control code"
-							json-editor="{ type: funct.returnType, name: 'output' }" 
+							json-reader
 							ng-model="t.output"
-							name="output"
-							errors="errors['output']"
-							required>
-						</div>
-						<div class="help-block" 
-							ng-if="microtaskForm['testForm_'+$index].output.$dirty" 
-							ng-messages="microtaskForm['testForm_'+$index].output.$error" >
-							<div ng-message="required">the output can't be empty</div>
-							<div ng-message="code">{{errors['output'].code}}</div>
+							name="output">
 						</div>
 					</div>
 

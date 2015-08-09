@@ -12,7 +12,7 @@ angular
 		this.get = get;
 		this.submit = submit;
 		this.fetch = fetch;
-		this.loadSpecificMicrotask = loadSpecificMicrotask;
+		this.fetchSpecificMicrotask = fetchSpecificMicrotask;
 		// Public functions
 		function get (id){
 			var microtask = $firebaseObject(new Firebase(firebaseUrl+'/microtasks/'+id));
@@ -44,8 +44,23 @@ angular
 				});
 		}
 
+
+		function fetchSpecificMicrotask(microtaskId){
+			console.log('ask for loading '+microtaskId)
+			$http.get('/' + projectId + '/ajax/pickMicrotask?id='+ microtaskId)
+				.success(function(data, status, headers, config) {
+					console.log('task  '+microtaskId + " loaded",data)
+					loadMicrotask(data);
+			})
+			.error(function(data, status, headers, config) {
+					console.log('task '+microtaskId + " error loading")
+					$rootScope.$broadcast('noMicrotask');
+			});
+		}
+
 		function loadMicrotask (data){
-			if(data.microtaskKey===undefined) {
+			console.log('LOADING ',data);
+			if( data.microtaskKey === undefined ) {
 				$rootScope.$broadcast('noMicrotask');
 			} else {
 				var microtask = get(data.microtaskKey);
@@ -56,15 +71,6 @@ angular
 		}
 		
 		
-		function loadSpecificMicrotask(microtaskID){
-			$http.get('/' + projectId + '/ajax/pickMicrotask?id='+ microtaskID)
-				.success(function(data, status, headers, config) {
-					loadMicrotask(data);
-			})
-			.error(function(data, status, headers, config) {
-					$rootScope.$broadcast('noMicrotask');
-			});
-		}
 
 	}
 

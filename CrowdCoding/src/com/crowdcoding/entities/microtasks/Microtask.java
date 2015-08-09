@@ -60,6 +60,7 @@ public /*abstract*/ class Microtask
 
 	protected boolean assigned = false;
 	protected boolean completed = false;
+	protected boolean queued    = false;
 	protected String reissuedFrom = "";
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
 	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds

@@ -9,9 +9,7 @@ self.addEventListener('message', function(message){
 	if( data.command == 'init'){
 		if( data.baseUrl == undefined )
 			throw "ERROR: base url not defined! ";
-
-		console.log('INIT')
-
+		
 		functionName = data.functionName;
 		functionEmptyBody = 'function '+data.functionName+'(){ _calls++; }\n';
 
@@ -19,7 +17,6 @@ self.addEventListener('message', function(message){
 	} 
 	else {
 
-		console.log('validate');
 
 		var sendData = { error : '' };
 
@@ -50,7 +47,7 @@ self.addEventListener('message', function(message){
 			if( !( e instanceof chai.AssertionError ) ){
 				sendData.error = e.message;
 			}
-			else console.log(e);
+			// else console.log(e);
 		} finally {
 
 			if( sendData.error == "" ){
