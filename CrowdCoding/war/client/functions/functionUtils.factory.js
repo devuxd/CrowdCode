@@ -5,7 +5,7 @@ angular
     .factory('functionUtils', [ 'functionsService', 'AdtUtils', function functionUtils(functionsService, AdtUtils) {
     return {
         parse               : parse,
-        validate            : validate,
+        validate            : validate
         // parseDescription    : parseDescription,
         // validateDescription : validateDescription,
     };
@@ -353,6 +353,8 @@ angular
         });
         return calleeNames;
      }
+
+
 
 
 

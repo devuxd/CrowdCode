@@ -83,6 +83,7 @@ angular
 				userService.listenForJobs();
 				userService.listenForLogoutWorker();
 
+				// $rootScope.$broadcast('openDashboard');
 				$rootScope.$broadcast('fecthMicrotask');
 
 				$rootScope.$broadcast('queue-tutorial','main', false, function(){

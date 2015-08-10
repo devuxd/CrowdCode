@@ -53,7 +53,7 @@
 	    <div class="content">
 		    <div ui-layout="{ flow: 'column', dividerSize: 2 }">
 		    	<div ui-layout-container size="20%" min-size="200px" max-size="20%" >
-					<left-bar></left-bar>
+	               <left-bar></left-bar>
 				</div>
 
 			    <div ui-layout-container size="60%" style="overflow:hidden;" >

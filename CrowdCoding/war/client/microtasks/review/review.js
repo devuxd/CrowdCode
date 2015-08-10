@@ -5,7 +5,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  '$modal', 'functionsService', 'Function', 'AdtService', 'microtasksService', function($scope, $rootScope,  $alert, $modal, functionsService, Function, AdtService, microtasksService) {
+    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  '$modal', 'functionsService',  'functionUtils' , 'Function', 'AdtService', 'microtasksService', function($scope, $rootScope,  $alert, $modal, functionsService, functionUtils, Function, AdtService, microtasksService) {
     // scope variables
     $scope.review = {};
     $scope.review.template = 'loading';
@@ -181,6 +181,12 @@ angular
                 // get the stats of the edits
                 $scope.data.stats = { added: 0, edited: 0, deleted: 0 };
                 $scope.data.tests.map(function(test){
+                    // retrieve the old version
+                    if( test.edited ){
+
+                    }
+
+                    // increment the stats
                     if( test.added )      $scope.data.stats.added++;
                     else if( test.edited ) $scope.data.stats.edited++;
                     else if( test.deleted ) $scope.data.stats.deleted++;
@@ -214,7 +220,11 @@ angular
 
             $scope.review.template    = 'implement';
 
+            $scope.data.newCode = $scope.data.funct.getFullCode();
+            $scope.data.oldCode = $scope.funct.getFullCode();
+
             if( submission.disputedTests ){
+                $scope.review.template += "_dispute";
                 var loadedFunct = functionsService.get( reviewed.functionId );
                 $scope.data.disputedTests = submission.disputedTests
                     .map(function(test){

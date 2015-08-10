@@ -1,10 +1,9 @@
-var boardApp = angular.module('crowdCode')
-
-boardApp.run();
-
-boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',  
+angular
+	.module('crowdCode')
+	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',  
                                  function($scope,$rootScope,$firebase,$firebaseArray,$timeout,microtasksService,firebaseUrl, workerId){
 	
+
 	var types = [
 			'Review',
 			'DescribeFunctionBehavior',
@@ -80,13 +79,15 @@ boardApp.controller("dashBoard",['$scope','$rootScope','$firebase','$firebaseArr
 	});
 	
 	$scope.assignMicrotask = function(task){
-		var microtaskID = task.owningArtifactId+"-"+task.id;
-		$rootScope.$broadcast('fetchSpecificMicrotask',{microtaskID});
+		console.log('assigning '+task.$id);
+		$rootScope.$broadcast('fetchSpecificMicrotask',  task.$id );
 	}
 
 }]);
 
-boardApp.filter('assigned', function () {
+angular
+	.module('crowdCode')
+	.filter('assigned', function () {
     return function (microtasks) {
 		var items = {
         	out: []
@@ -100,7 +101,9 @@ boardApp.filter('assigned', function () {
     };
 });
 
-boardApp.filter('waitingReview', function () {
+angular
+	.module('crowdCode')
+	.filter('waitingReview', function () {
     return function (microtasks) {
 		var items = {
         	out: []
@@ -114,13 +117,15 @@ boardApp.filter('waitingReview', function () {
     };
 });
 
-boardApp.filter('canChoose', function () {
+angular
+	.module('crowdCode')
+	.filter('canChoose', function () {
     return function (microtasks) {
 		var items = {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-        	if (value.assigned != true && value.completed != true && value.waitingReview != true) {
+        	if (value.assigned != true && value.completed != true && value.waitingReview != true && value.queued ) {
                	if(value.excluded != null){
                		if(value.excluded.search(workerId) === -1) 
                			this.out.push(value);
@@ -134,7 +139,9 @@ boardApp.filter('canChoose', function () {
     };
 }); 
 
-boardApp.filter('completed', function () {
+angular
+	.module('crowdCode')
+	.filter('completed', function () {
     return function (microtasks) {
 		var items = {
         	out: []
@@ -148,7 +155,9 @@ boardApp.filter('completed', function () {
     };
 });
 
-boardApp.filter('byType', function () {
+angular
+	.module('crowdCode')
+	.filter('byType', function () {
     return function (microtasks, typesFilter) {
         var items = {
         		typesFilter: typesFilter,

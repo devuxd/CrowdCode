@@ -574,9 +574,7 @@ public class Function extends Artifact
 	{
 		for(FunctionDTO callee: callees){
 			for(TestDTO simpleTest : callee.tests){
-				simpleTest.isSimple = true;
-				simpleTest.added = true;
-				doSimpleTest(simpleTest);
+				SimpleTestCommand.create(simpleTest, callee.id, false, false);
 			}
 		}
 	}

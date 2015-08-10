@@ -15,6 +15,7 @@ angular
         link: function ( scope, iElement, iAttrs, ngModel ) {
             if( !ngModel ) return;
 
+            iElement.addClass('example')
             scope.copyAllowed = iAttrs.hasOwnProperty('copyAllowed') ? true : false;
             scope.json = scope.prettyJson = "";
             
