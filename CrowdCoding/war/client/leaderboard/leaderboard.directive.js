@@ -13,4 +13,3 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId) {
         }
     };
 }
-

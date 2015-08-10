@@ -109,8 +109,8 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			
 			function openDashboard(){
 				$scope.taskData.startBreak = true;
-				onNoMicrotask();
-				
+				$scope.breakMode = true;
+				onNoMicrotask();				
 			}
 			
 			function onNoMicrotask($event, fetchData) {
