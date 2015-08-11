@@ -46,10 +46,11 @@
 
 	<div class="pin-group">
 		<div class="title">
-			Available ({{ (microtasks | canChoose | byType:filterEnabled ).length }})
+			Available ({{ (microtasks | canChoose:microtaskQueue:reviewQueue:availableMicrotasks | byType:filterEnabled ).length }})
 		</div>
 		<div class="list">
-			<div class="pin" ng-repeat="(i,microtask) in microtasks | canChoose | byType:filterEnabled |  orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+			<div class="pin" ng-repeat="(i,microtask) in microtasks | canChoose: microtaskQueue:reviewQueue:availableMicrotasks| byType:filterEnabled |  orderBy: orderPredicate : orderReverse" 
+			style="height:{{microtask.height}}px" ng-animate="'animate'">
 				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
 				<div class="content" >
 					<div>function: {{microtask.owningArtifact}} </div>
@@ -65,10 +66,10 @@
 
 	<div class="pin-group">
 		<div class="title">
-			Assigned ({{ (microtasks | assigned | byType:filterEnabled ).length }})
+			Assigned ({{ (microtasks | assigned:availableMicrotasks | byType:filterEnabled ).length }})
 		</div>
 		<div class="list">
-			<div class="pin" ng-repeat="(i,microtask) in microtasks | assigned | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+			<div class="pin" ng-repeat="(i,microtask) in microtasks | assigned:availableMicrotasks | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
 				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
 				<div class="content">
 					<div>function: {{microtask.owningArtifact}} </div>
@@ -81,10 +82,10 @@
 
 	<div class="pin-group">
 		<div class="title">
-			In review ({{ (microtasks | waitingReview | byType:filterEnabled ).length }})
+			In review ({{ (microtasks | waitingReview:availableMicrotasks | byType:filterEnabled ).length }})
 		</div>
 		<div class="list">
-			<div class="pin" ng-repeat="(i,microtask) in microtasks | waitingReview | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+			<div class="pin" ng-repeat="(i,microtask) in microtasks | waitingReview:availableMicrotasks | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
 				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
 				<div class="content">
 					<div>function: {{microtask.owningArtifact}} </div>
@@ -97,10 +98,10 @@
 
 	<div class="pin-group">
 		<div class="title"> 
-			Completed ({{ (microtasks | completed | byType:filterEnabled ).length }})
+			Completed ({{ (microtasks | completed:availableMicrotasks | byType:filterEnabled ).length }})
 		</div>
 		<div class="list">
-			<div class="pin" ng-repeat="(i,microtask) in microtasks | completed | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
+			<div class="pin" ng-repeat="(i,microtask) in microtasks | completed:availableMicrotasks | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
 				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
 				<div class="content">
 					<div>function: {{microtask.owningArtifact}} </div>

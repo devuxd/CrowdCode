@@ -31,8 +31,27 @@ angular
 	angular.forEach(types,function(value,index){
 		$scope.filterEnabled[value] = true;
 		$scope.typesCount[value] = 0;
-	});		
+	});	
 	
+	
+	$scope.microtaskQueue = [];
+	
+	// load microtasks
+	var microtasksRef  = new Firebase(firebaseUrl+'/status/microtaskQueue/queue');
+	$scope.microtaskQueue = $firebaseArray(microtasksRef);
+	$scope.microtaskQueue.$loaded().then(function(){
+	});	
+	
+	$scope.reviewQueue = [];
+	
+	// load microtasks
+	var microtasksRef  = new Firebase(firebaseUrl+'/status/microtaskQueue/reviewQueue');
+	$scope.reviewQueue = $firebaseArray(microtasksRef);
+	$scope.reviewQueue.$loaded().then(function(){
+	});	
+	
+
+	$scope.availableMicrotasks = [];
 	$scope.microtasks = [];
 	
 	// load microtasks
@@ -63,21 +82,21 @@ angular
 			$scope.orderPredicate = predicate;
 		} 
 	};
-	
-	// load functions
-	var functionsRef  = new Firebase(firebaseUrl+'/artifacts/functions');
-	var functionsSync = $firebaseArray(functionsRef);
-	$scope.functions = functionsSync;
-	$scope.functions.$loaded().then(function(){
-	});
-
-	// load tests
-	var testsRef  = new Firebase(firebaseUrl+'/artifacts/tests');
-	var testsSync = $firebaseArray(testsRef);
-	$scope.tests = testsSync;
-	$scope.tests.$loaded().then(function(){
-	});
-	
+//	
+//	// load functions
+//	var functionsRef  = new Firebase(firebaseUrl+'/artifacts/functions');
+//	var functionsSync = $firebaseArray(functionsRef);
+//	$scope.functions = functionsSync;
+//	$scope.functions.$loaded().then(function(){
+//	});
+//
+//	// load tests
+//	var testsRef  = new Firebase(firebaseUrl+'/artifacts/tests');
+//	var testsSync = $firebaseArray(testsRef);
+//	$scope.tests = testsSync;
+//	$scope.tests.$loaded().then(function(){
+//	});
+//	
 	$scope.assignMicrotask = function(task){
 		console.log('assigning '+task.$id);
 		$rootScope.$broadcast('fetchSpecificMicrotask',  task.$id );
@@ -86,16 +105,58 @@ angular
 }]);
 
 angular
+.module('crowdCode')
+.filter('canChoose', function () {
+return function (microtasks,microtaskQueue,reviewQueue, availableMicrotasks) {
+	availableMicrotasks = [];
+	var items = {
+    	out: []
+    };
+    angular.forEach(microtasks, function (value, key) {
+    	var available = false;
+    	for(var i=0;i<microtaskQueue.length;i++){
+    		if(value.$id == microtaskQueue[i].$value){
+    			available = true;
+    			availableMicrotasks.push(value);
+    		}    			
+    	}
+    	if(!available){
+	    	for(var i=0;i<reviewQueue.length;i++){
+	    		if(value.$id == reviewQueue[i].$value){
+	    			availableMicrotasks.push(value);
+	    			available = true;
+	    		}
+	    	}
+    	}
+    	if(available){
+    	//if (value.assigned != true && value.completed != true && value.waitingReview != true) {
+           	if(value.excluded != null){
+           		if(value.excluded.search(workerId) === -1) 
+           			this.out.push(value);
+            } 
+            else{
+            	this.out.push(value);
+            }
+      //  } 
+    	}
+    }, items);
+    return items.out;
+};
+}); 
+
+angular
 	.module('crowdCode')
 	.filter('assigned', function () {
-    return function (microtasks) {
+    return function (microtasks,availableMicrotasks) {
 		var items = {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-            if (value.assigned == true && value.completed != true && value.waitingReview != true) {
-                this.out.push(value);
-            }
+        	if(availableMicrotasks.indexOf(value) == -1){
+	            if (value.assigned == true && value.completed != true && value.waitingReview != true) {
+	                this.out.push(value);
+	            }
+        	}
         }, items);
         return items.out;
     };
@@ -104,14 +165,16 @@ angular
 angular
 	.module('crowdCode')
 	.filter('waitingReview', function () {
-    return function (microtasks) {
+    return function (microtasks,availableMicrotasks,usedMicrotasks) {
 		var items = {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
+        if(availableMicrotasks.indexOf(value) == -1){
             if (value.waitingReview == true) {
                 this.out.push(value);
             }
+        }	
         }, items);
         return items.out;
     };
@@ -119,37 +182,17 @@ angular
 
 angular
 	.module('crowdCode')
-	.filter('canChoose', function () {
-    return function (microtasks) {
-		var items = {
-        	out: []
-        };
-        angular.forEach(microtasks, function (value, key) {
-        	if (value.assigned != true && value.completed != true && value.waitingReview != true && value.queued ) {
-               	if(value.excluded != null){
-               		if(value.excluded.search(workerId) === -1) 
-               			this.out.push(value);
-                } 
-                else{
-                	this.out.push(value);
-                }
-            }           
-        }, items);
-        return items.out;
-    };
-}); 
-
-angular
-	.module('crowdCode')
 	.filter('completed', function () {
-    return function (microtasks) {
+    return function (microtasks,availableMicrotasks,usedMicrotasks) {
 		var items = {
         	out: []
         };
         angular.forEach(microtasks, function (value, key) {
-            if (value.completed === true) {
-                this.out.push(value);
-            }
+        	if(availableMicrotasks.indexOf(value) == -1){
+	            if (value.completed === true) {
+	                this.out.push(value);
+	            }
+        	}
         }, items);
         return items.out;
     };
