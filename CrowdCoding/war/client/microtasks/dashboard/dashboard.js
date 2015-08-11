@@ -151,7 +151,7 @@ angular
 angular
 	.module('crowdCode')
 	.filter('waitingReview', function () {
-    return function (microtasks,availableMicrotasks,usedMicrotasks) {
+    return function (microtasks,availableMicrotasks) {
 		var items = {
         	out: []
         };
@@ -169,7 +169,7 @@ angular
 angular
 	.module('crowdCode')
 	.filter('completed', function () {
-    return function (microtasks,availableMicrotasks,usedMicrotasks) {
+    return function (microtasks,availableMicrotasks) {
 		var items = {
         	out: []
         };
