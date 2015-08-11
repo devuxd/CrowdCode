@@ -100,6 +100,7 @@ public /*abstract*/ class Microtask
 	// This method MUST be overridden in the subclass
 	public Microtask copy(String projectId)
 	{
+		System.out.println("COPYING TASK "+this);
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 

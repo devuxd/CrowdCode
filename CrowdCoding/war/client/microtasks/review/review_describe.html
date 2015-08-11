@@ -50,15 +50,14 @@
 				<span> {{data.stats.deleted}} deleted </span>
 			</span>
 		</div>
-		<div class="section-content slide from-left padding" ng-if="data.selected == -1">
+		<div class="section-content slide from-left" ng-if="data.selected == -1">
 			<div class="tests-list">
 				<div class="test-item clickable" 
 				     ng-repeat="t in data.tests track by $index">
 					<div ng-click="data.selected = t">
 						<span class="pull-left">
 							<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
-							<span ng-if="t.description.length > 0" ng-bind="t.description"></span>
-							<span ng-if="!t.description || t.description.length == 0" >missing description</span>
+							<span ng-bind="t.description"></span>
 						</span> 
 
 						<span class="pull-right" ng-if="t.edited">
@@ -80,7 +79,7 @@
 		</div>
 
 		<div class="section-bar" ng-if="data.selected != -1">
-			<span class="pull-left" ng-if="data.selected != -1">
+			<span class="pull-left" >
 				<button class="btn btn-sm" ng-click="data.selected = -1">
 					<span class="glyphicon glyphicon-arrow-left"></span>
 				</button>

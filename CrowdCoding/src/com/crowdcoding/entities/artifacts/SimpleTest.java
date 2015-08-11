@@ -87,6 +87,7 @@ public class SimpleTest extends Test
 
 		FirebaseService.writeSimpleTest(new SimpleTestInFirebase(this.id,
 													 firebaseVersion,
+													 "inputsKey",
 													 this.inputs,
 													 this.output,
 													 this.description,

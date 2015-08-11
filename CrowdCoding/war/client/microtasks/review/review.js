@@ -216,6 +216,7 @@ angular
         } 
         else if (reviewed.type == 'ImplementBehavior') {
             $scope.data = {};
+            $scope.data.selected = -1;
             $scope.data.funct = new Function( submission['function'] );
 
             $scope.review.template    = 'implement';
@@ -232,7 +233,6 @@ angular
                         testObj.disputeText = test.disputeText;
                         return testObj;
                     });
-
             }
         }
     });
@@ -267,7 +267,7 @@ angular
 
         
         var formData = {
-            reviewText              :($scope.review.text ===undefined ? "" : $scope.review.text),
+            reviewText              : ($scope.review.text === undefined ? "" : $scope.review.text ),
             qualityScore            : $scope.review.rating,
             fromDisputedMicrotask   : $scope.review.fromDispute
         };

@@ -114,7 +114,7 @@ angular
 			var stubs = {};
 			for( var id in this.tests){
 				if(this.tests[id].isSimple){
-					var inputsKey = this.tests[id].inputs.join(',');
+					var inputsKey = this.tests[id].getInputsKey();
 					stubs[ inputsKey ] = {
 						id: id,
 						output : eval ('('+ this.tests[id].output+ ')'),

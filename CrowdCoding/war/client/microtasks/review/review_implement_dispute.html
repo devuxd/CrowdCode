@@ -18,26 +18,83 @@
 	</div>
 
 	<div class="section" ui-layout-container size="30%" >
-		<div class="section-bar">
+		<div class="section-bar" ng-if="data.selected == -1">
 			<span class="title">Disputed Tests</span>
 		</div>
-		<div class="section-content padding">
+		<div class="section-content slide from-left" ng-if="data.selected == -1">
 			<div class="tests-list">
-				<div class="test-item static" ng-repeat="t in data.disputedTests track by $index">
-					<div class="row">
-						<div class="col-sm-2 col-md-2 row-label">description</div>
-						<div class="col-sm-10 col-md-10">it {{ t.description }}</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-2 col-md-2 row-label">Code</div>
-						<div class="col-sm-10 col-md-10"><js-reader code="t.code"></js-reader></div>
-					</div>
-					<div class="row">
-						<div class="col-sm-2 col-md-2 row-label">dispute reason</div>
-						<div class="col-sm-10 col-md-10">{{t.disputeText}}</div>
+				<div class="test-item clickable" ng-repeat="t in data.disputedTests track by $index">
+					<div ng-click="data.selected = t">
+						<span >
+							<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
+							<span ng-bind="t.description"></span>
+						</span> 
+						<span class="clearfix"></span>
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="section-bar" ng-if="data.selected != -1">
+			<span class="pull-left" >
+				<button class="btn btn-sm" ng-click="data.selected = -1">
+					<span class="glyphicon glyphicon-arrow-left"></span>
+				</button>
+			</span>
+		</div>
+		<div class="section-content slide from-right padding" 
+				 ng-repeat="t in data.disputedTests track by $index" 
+				 ng-if="data.selected == t">
+				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
+					
+					<div class="form-group">
+						<label for="disputetext">Dispute reason </label>
+						<div class="form-control form-control-static" name="disputetext">
+							{{ t.disputeText }}
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="description">Description </label>
+						<div class="form-control form-control-static" name="description">
+							{{t.description}}
+						</div>
+					</div>
+					<div class="form-group">
+						<label>Type</label>
+						<div class="form-control form-control-static" name="description">
+							{{t.isSimple ? 'simple' : 'advanced'}}
+						</div>
+					</div>
+					<div class="form-group" ng-if="!t.isSimple">
+						<label for="code">Code</label>
+						<div class="form-control form-control-static" js-reader code="t.code"></div>
+					</div>
+
+					<div ng-if="t.isSimple" ng-form="inputs" >
+						<div class="form-group"  ng-repeat="(pIdx,p) in funct.parameters track by p.name">
+							<label for="inputs">
+								{{p.name + ' {' + p.type + '}' }}
+							</label>
+						
+							<div
+								class="form-control code"
+								json-reader
+								name="{{p.name}}"
+								ng-model="t.inputs[pIdx]">
+							</div>
+						</div>
+
+					</div>
+
+					<div class="form-group" ng-if="t.isSimple">
+						<label for="code">Output {{ '{' + funct.returnType + '}'}}</label>
+						<div
+							class="form-control code"
+							json-reader
+							ng-model="t.output"
+							name="output">
+						</div>
+					</div>	
+				</div>	
 		</div>
 	</div>
 

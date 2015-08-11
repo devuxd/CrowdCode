@@ -269,7 +269,7 @@ Debugger.logCall = function(functionName,inputsKey,output){
 
 
 Debugger.mockBody = function(){
-    var inputsKey = JSON.stringify(arguments);
+    var inputsKey = generateInputsKey(arguments)
     var output    = null;
     var stub      = Debugger.getStub( '%functionNameStr%', inputsKey );
     if( stub != -1 ){
@@ -283,6 +283,15 @@ Debugger.mockBody = function(){
     }
     Debugger.logCall( '%functionNameStr%', inputsKey, output ) ;
     return { inputsKey: inputsKey, output: output };
+}
+
+
+function generateInputsKey(args){
+    var keys = [];
+    for( var key in args){
+        keys.push( JSON.stringify(args[key]) );
+    }
+    return keys.join(',')
 }
 
 function Scope(context,parent){

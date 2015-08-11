@@ -113,8 +113,7 @@ angular
             }
 
             function loadFunctionsList(editor,requestedFunctions){
-                console.log('load list',requestedFunctions);
-                // load all the snippets
+                
                 
                 functionsService.getAll().$loaded().then(function(){
                     editor.functioncompleter.functions = [];

@@ -17,7 +17,9 @@ angular
 	}
 
 	Test.prototype = {
-
+		getInputsKey: function(){
+			return this.inputs.join(',');
+		}
 	};
 
 	return Test;

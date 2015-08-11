@@ -1,8 +1,12 @@
 <div ng-controller="ImplementBehavior" >
   
 	<div class="header bg-color">
-		<span class="type  ">{{::microtask.title}}</span>
-		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
+		<span class="type  ">
+			<span ng-switch="microtask.promptType">
+				<span ng-switch-when="WRITE">Edit function</span>
+				<span ng-switch-when="CORRECT">Correct function</span>
+			</span>
+		</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); ">
 			<span class="glyphicon glyphicon-question-sign"></span> 
@@ -13,6 +17,13 @@
     <div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
 
 	    <div class="section bg-color-alpha padding" ui-layout-container size="10%" >
+
+
+			<div style="text-transform:uppercase;" ng-if="microtask.reissuedSubmission !== undefined">
+				THIS TASK HAS BEEN REISSUED {{microtask.reissueMotivation}}
+			</div>
+
+
 			Implement a behavior for this function	
 		</div>
 

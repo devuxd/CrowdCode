@@ -4,7 +4,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory) {
+    .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory', 'Test',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory, Test) {
     
     // prepare the data for the view
     $scope.data = {};
@@ -24,29 +24,57 @@ angular
         deleted: false
     };
 
-    // load the tests:
-    // need to store the collection as array because
-    // from firebase comes as an object collection
-    for( var i = 0; i < $scope.funct.tests.length ; i++ ){
-        if( $scope.funct.tests[i].isDeleted )
-            continue;
+    console.log($scope.microtask);
+    
+    // if the microtask is reissued
+    if( $scope.microtask.reissuedSubmission != undefined ){
 
-        var test = angular.copy($scope.funct.tests[i]);
-        test.edited  = false;
-        test.deleted = false;
-        if( $scope.microtask.disputedTests !== undefined )
+        $scope.data.isComplete = $scope.microtask.reissuedSubmission.isDescribeComplete;
 
-            for( var i = 0; i < $scope.microtask.disputedTests.length ; i++ ){
-                if( $scope.microtask.disputedTests[i].id == test.id ){
-                    test.dispute = { 
-                        active:true, 
-                        text: $scope.microtask.disputedTests[i].disputeText  
-                    };
-                }
-            }
+        if( $scope.microtask.reissuedSubmission.disputeFunctionText.length > 0 ){
+            $scope.data.dispute.active = true;
+            $scope.data.dispute.text   = $scope.microtask.reissuedSubmission.disputeFunctionText;
+        }
 
-        $scope.data.tests.push(test);
+
+        // load tests from the previous submission
+        var reissuedTests = $scope.microtask.reissuedSubmission.tests ;
+        for( var i = 0 ; i < reissuedTests.length ; i++ ){
+            var test = new Test(reissuedTests[i]);
+
+            $scope.data.tests.push(test);
+        }
     }
+    // otherwise 
+    else {
+
+        // load tests from the function 
+        for( var i = 0; i < $scope.funct.tests.length ; i++ ){
+            if( $scope.funct.tests[i].isDeleted )
+                continue;
+            
+            var test = angular.copy($scope.funct.tests[i]);
+            test.edited  = false;
+            test.deleted = false;
+            if( $scope.microtask.disputedTests !== undefined ){
+                for( var a = 0; a < $scope.microtask.disputedTests.length ; a++ ){
+                    if( $scope.microtask.disputedTests[a].id == test.id ){
+                        test.dispute = { 
+                            active:true, 
+                            text: $scope.microtask.disputedTests[a].disputeText  
+                        };
+                    }
+                } 
+            }
+            
+            $scope.data.tests.push(test);
+        } 
+    }
+
+
+    // flag the disputed test
+    
+
 
     // expose the toggle and edit test functions to the scope
     $scope.toggleEdit   = toggleEdit;

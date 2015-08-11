@@ -65,7 +65,7 @@ angular
     });
 
     function run(){
-        console.log('running');
+
         var deferred = $q.defer();
         $scope.data.running = true;
         $scope.data.inspecting = false;
@@ -143,7 +143,7 @@ angular
 
         // add the callee stubs
         formData.function.callees.map(function(callee){
-            console.log('creating callee stubs',callee.name,editedStubs[callee.name]);
+            
             if( !editedStubs.hasOwnProperty(callee.name) )
                 return;
 
@@ -180,20 +180,16 @@ angular
                 });
             }
         });
-        console.log(formData);
+
         return formData;
     }
 
     function inputsKeyToInputs(inputsKey){
-        var obj = JSON.parse(inputsKey);
-        var inputs = [];
-        for( var key in obj)
-            inputs.push(obj[key]);
-
-        return inputs;
+        return JSON.parse('['+inputsKey+' ]');
     }
 
     function onEditStub(functionName,inputsKey){
+
         var funct = functionsService.getByName(functionName);
         if( funct === null ){
             for( var i = 0; i < requestedFunctions.length ; i++ ){
@@ -203,7 +199,7 @@ angular
         }
         if( funct === null ) throw 'Cannot find the function '+functionName;
         
-        var inputs = JSON.parse(inputsKey);
+        var inputs = inputsKeyToInputs(inputsKey);
         $scope.data.editingStub = { 
             functionName : functionName,
             inputsKey    : inputsKey,
@@ -225,7 +221,7 @@ angular
     }
 
     function saveStub(){
-        var jsonValue    = eval('('+$scope.data.editingStub.output.value+')') || "";
+        var jsonValue    = eval('('+$scope.data.editingStub.output.value+')') || null;
         var stub         = { output: jsonValue };
         var functionName = $scope.data.editingStub.functionName;
         var inputsKey    = $scope.data.editingStub.inputsKey; 

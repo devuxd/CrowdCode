@@ -1,14 +1,13 @@
 <div ng-controller="DescribeBehavior">
     
 	<div class="header bg-color">
-		<span class="type  ">
-			{{microtask.promptType}}
+		<span class="type">
 			<span ng-switch="microtask.promptType">
 				<span ng-switch-when="WRITE">Write a test</span>
 				<span ng-switch-when="CORRECT">Correct test(s)</span>
 				<span ng-switch-when="FUNCTION_CHANGED'">Fix test(s)</span>
 			</span>
-		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
+		</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); ">
 			<span class="glyphicon glyphicon-question-sign"></span> 
@@ -21,12 +20,16 @@
 
     	<div class="section bg-color-alpha padding" ui-layout-container size="5%" >
 			
+			<div style="text-transform:uppercase;" ng-if="microtask.reissuedSubmission !== undefined">
+				THIS TASK HAS BEEN REISSUED {{microtask.reissueMotivation}}
+			</div>
 			<span ng-if="microtask.disputedTests === undefined "> 
 				Can you describe a behavior for this function?	
 			</span>		
 			<span ng-if="microtask.disputedTests !== undefined "> 
 				Can you fix the issues in the disputed tests?
 			</span>			
+
 		</div>
 
 		<div class="section"  ui-layout-container size="35%" >
@@ -35,7 +38,9 @@
 					Function Description
 				</span>
 				<span class="pull-right">
-					<button class="btn btn-sm" ng-click="data.dispute.active = !data.dispute.active;" ng-if="!data.dispute.active">
+					<button class="btn btn-sm" 
+						ng-if="!data.dispute.active"
+						ng-click="data.dispute.active = !data.dispute.active;" >
 						Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
 					</button>
 				</span>
