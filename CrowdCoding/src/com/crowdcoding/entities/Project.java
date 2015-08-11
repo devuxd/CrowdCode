@@ -553,7 +553,7 @@ public class Project
 					waitReview = false;
 				}
 
-
+				FirebaseService.writeMicrotaskWaitingReview(Microtask.keyToString(microtaskKey),workerID, this.id, waitReview);
 				// write the history log entry about the microtask submission
 				HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
 				FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);

@@ -99,13 +99,9 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			
 			
 			function openDashboard(){
-				$scope.taskData.startBreak = false;
-
-				var workerLevel = userService.data.level;
-				if(workerLevel >= 2)
-					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
-				else
-					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
+				$scope.taskData.startBreak = true;
+				$scope.breakMode = true;
+				onNoMicrotask();				
 			}
 			
 			function onNoMicrotask($event, fetchData) {
