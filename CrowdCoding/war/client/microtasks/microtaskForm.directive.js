@@ -106,14 +106,15 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			
 			function noMicrotasks() {
 				$scope.noMicrotask = true;
-				$scope.$emit('reset-reminder');
+				$scope.$emit('reset-reminder');			
 				setFetchTimer();
 
 				if(userService.data.level >= 2)
-					$scope.templatePath  = templatesURL + templates['Dashboard'] + ".html";		
+					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
 				else
-					$scope.templatePath  = templatesURL + templates['NoMicrotask'] + ".html";			
+					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";			
 			}
+			
 			
 			function setFetchTimer(){
 				// if is not in break mode, start to check the queue
