@@ -45,7 +45,7 @@ angular
 	$scope.reviewQueue = [];
 	
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/status/microtaskQueue/reviewQueue');
+	var microtasksRef  = new Firebase(firebaseUrl+'/status/reviewQueue/queue');
 	$scope.reviewQueue = $firebaseArray(microtasksRef);
 	$scope.reviewQueue.$loaded().then(function(){
 	});	
@@ -82,21 +82,7 @@ angular
 			$scope.orderPredicate = predicate;
 		} 
 	};
-//	
-//	// load functions
-//	var functionsRef  = new Firebase(firebaseUrl+'/artifacts/functions');
-//	var functionsSync = $firebaseArray(functionsRef);
-//	$scope.functions = functionsSync;
-//	$scope.functions.$loaded().then(function(){
-//	});
-//
-//	// load tests
-//	var testsRef  = new Firebase(firebaseUrl+'/artifacts/tests');
-//	var testsSync = $firebaseArray(testsRef);
-//	$scope.tests = testsSync;
-//	$scope.tests.$loaded().then(function(){
-//	});
-//	
+
 	$scope.assignMicrotask = function(task){
 		console.log('assigning '+task.$id);
 		$rootScope.$broadcast('fetchSpecificMicrotask',  task.$id );

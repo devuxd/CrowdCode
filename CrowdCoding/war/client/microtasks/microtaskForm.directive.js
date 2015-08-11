@@ -99,27 +99,25 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			
 			
 			function openDashboard(){
+				$scope.taskData.startBreak = true;
+				$scope.breakMode = true;			
+				setFetchTimer();
 
-	//			$scope.taskData.startBreak = true;
-	//			$scope.breakMode = true;
-	//			onNoMicrotask();				
-
-				$scope.taskData.startBreak = false;
-
-				var workerLevel = userService.data.level;
-				if(workerLevel >= 2)
+				if(userService.data.level >= 2)
 					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
 				else
-					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
-
+					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";			
 			}
 			
-			function onNoMicrotask($event, fetchData) {
+			function onNoMicrotask() {
 				console.log('no microtask');
 				$scope.noMicrotask = true;
 				$scope.$emit('reset-reminder');
 				setFetchTimer();
-				openDashboard();			
+				if(userService.data.level >= 2)
+					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
+				else
+					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";			
 			}
 			
 			function setFetchTimer(){
