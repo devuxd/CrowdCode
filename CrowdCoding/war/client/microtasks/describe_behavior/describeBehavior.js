@@ -172,14 +172,15 @@ angular
             for( var idx = 0 ; idx < $scope.data.tests.length ; idx++ ){
                 var test = $scope.data.tests[idx];
 
+
+
                 var testDto = {
                     id:          test.id,
                     description: test.description,
                     isSimple:    test.isSimple,
-                    code:        test.code,
-                    inputs:      test.inputs,
-                    output:      test.output
-
+                    code:        !test.isSimple  ? "" : test.code,
+                    inputs:      test.isSimple ? test.inputs : [] ,
+                    output:      test.isSimple ? test.output : "" 
                 };
 
                 if( test.added && test.deleted )
@@ -195,9 +196,9 @@ angular
                 formData.tests.push(testDto);
             } 
         }
+        console.log(formData.tests);
         
         return formData;
-        console.log(formData);
 
     }
 

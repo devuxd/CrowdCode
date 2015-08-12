@@ -169,12 +169,13 @@ angular
             var cStubs = editedStubs[callee.name];
             callee.tests = [];
             for( var inputsKey in cStubs ){
+                console.log('stub id ' + cStubs[inputsKey].id + ' is undefined?',cStubs[inputsKey].id == undefined);
                 callee.tests.push({
-                    id: cStubs[inputsKey].id,
-                    added  : cStubs[inputsKey].id == undefined ? true : false,
+                    id      : cStubs[inputsKey].id,
+                    added   : cStubs[inputsKey].id == undefined ? true : false,
                     edited  : cStubs[inputsKey].id == undefined ? false : true,
                     isSimple: true,
-                    description: 'auto generated',
+                    description: cStubs[inputsKey].id == undefined ? 'auto generated' : cStubs[inputsKey].description,
                     inputs : inputsKeyToInputs(inputsKey),
                     output : JSON.stringify(cStubs[inputsKey].output),
                 });
@@ -190,16 +191,16 @@ angular
             requested.tests = [];
             for( var inputsKey in rStubs ){
                 requested.tests.push({
-                    id: rStubs[inputsKey].id,
-                    added: true,
-                    isSimple: true,
-                    description: 'auto generated',
-                    inputs : inputsKeyToInputs(inputsKey),
-                    output : JSON.stringify(rStubs[inputsKey].output),
+                    id          : rStubs[inputsKey].id,
+                    added       : true,
+                    isSimple    : true,
+                    description : 'auto generated',
+                    inputs      : inputsKeyToInputs(inputsKey),
+                    output      : JSON.stringify(rStubs[inputsKey].output)
                 });
             }
         });
-
+        console.log('submitted function',formData);
         return formData;
     }
 
@@ -208,7 +209,7 @@ angular
     }
 
     function onEditStub(functionName,inputsKey){
-
+        console.log(stubs);
         var funct = functionsService.getByName(functionName);
         if( funct === null ){
             for( var i = 0; i < requestedFunctions.length ; i++ ){
@@ -236,20 +237,21 @@ angular
             }
         };
 
-        console.log('editing stub',$scope.data.editingStub);
+        console.log('editing stub',$scope.data.editingStub.id);
     }
 
     function saveStub(){
-        var jsonValue    = eval('('+$scope.data.editingStub.output.value+')') || null;
-        var stub         = { output: jsonValue };
+        var output       = eval('('+$scope.data.editingStub.output.value+')') || null;
         var functionName = $scope.data.editingStub.functionName;
         var inputsKey    = $scope.data.editingStub.inputsKey; 
 
         if( !editedStubs.hasOwnProperty(functionName) )
             editedStubs[functionName] = {};
 
-        editedStubs[functionName][inputsKey] = stub;
-        stubs[functionName][inputsKey]       = stub;
+        stubs[functionName][inputsKey].output = output;
+        editedStubs[functionName][inputsKey]  = stubs[functionName][inputsKey];
+
+        console.log('saving stub ',stubs[functionName][inputsKey].id);
 
         $scope.data.editingStub = false;
     }

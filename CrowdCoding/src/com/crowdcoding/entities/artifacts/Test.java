@@ -83,16 +83,11 @@ public class Test extends Artifact
 	
 	/**updates this test if description and code differ from the old one */
 	public void update(TestDTO testDto){
-		if( testDto.isSimple ) {
-			this.code = "";
-			this.inputs = testDto.inputs;
-			this.output = testDto.output;
-		}
-		else {
-			this.code = testDto.code;
-			this.inputs = new ArrayList<String>();
-			this.output = "";
-		}
+		this.isSimple = testDto.isSimple;
+	
+		this.code = testDto.code;
+		this.inputs = testDto.inputs;
+		this.output = testDto.output;
 		
 		this.description     = testDto.description;
 		
@@ -125,7 +120,6 @@ public class Test extends Artifact
 			FirebaseService.writeSimpleTest(
 				new SimpleTestInFirebase(this.id,
 					 firebaseVersion,
-					 "inputsKey",
 					 this.inputs,
 					 this.output,
 					 this.description,

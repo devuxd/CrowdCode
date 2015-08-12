@@ -314,6 +314,8 @@ public class Function extends Artifact
 
 		// process all the submitted tests
 		for( TestDTO testDTO : dto.tests ){
+
+			System.out.println("PROCESSING TEST "+testDTO.json());
 			processTest(testDTO);
 		}
 
@@ -537,8 +539,11 @@ public class Function extends Artifact
 	
 	private void createCalleeStubs(List<FunctionDTO> callees){
 		for(FunctionDTO callee: callees){
-			for(TestDTO simpleTest : callee.tests){
-				TestCommand.create(simpleTest, callee.id, false, false);
+			for(TestDTO test : callee.tests){
+				if( test.id == 0 )
+					TestCommand.create(test, callee.id, false, false);
+				else
+					TestCommand.update(test);
 			}
 		}
 	}

@@ -41,7 +41,7 @@ Debugger.run = function(testCode, callsLogs) {
         _testResult.passed = true;
     } 
     catch( e ){
-        console.log(e);
+        // console.log(e);
         if( e instanceof chai.AssertionError ){
             _testResult = e;
         }
@@ -228,7 +228,7 @@ Debugger.getStub = function(functName,inputsKey) {
     if( !stubs.hasOwnProperty(functName) )
         stubs[functName] = {};
 
-    console.log('searching stub for',functName,inputsKey,JSON.stringify(stubs));
+    // console.log('searching stub for',functName,inputsKey,JSON.stringify(stubs));
     if( stubs[functName].hasOwnProperty(inputsKey) ){
        return stubs[functName][inputsKey];
     }

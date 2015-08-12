@@ -112,12 +112,13 @@ angular
 		getStubs: function(){
 
 			var stubs = {};
-			for( var id in this.tests){
-				if(this.tests[id].isSimple){
-					var inputsKey = this.tests[id].getInputsKey();
+			for( var key in this.tests){
+				if(this.tests[key].isSimple){
+					var inputsKey = this.tests[key].getInputsKey();
 					stubs[ inputsKey ] = {
-						id: id,
-						output : eval ('('+ this.tests[id].output+ ')'),
+						id: this.tests[key].id,
+						description: this.tests[key].description,
+						output : eval ('('+ this.tests[key].output+ ')'),
 					};
 				}
 			}

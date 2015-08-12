@@ -147,7 +147,6 @@ angular
 					});
 				}
 
-				console.log('stubs in test runner', stubs);
 
 				self.worker = new Worker('/client/test_runner/testrunner-worker.js');
 				// instantiate the worker
