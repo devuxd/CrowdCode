@@ -3,7 +3,8 @@ angular
 	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',  
                                  function($scope,$rootScope,$firebase,$firebaseArray,$timeout,microtasksService,firebaseUrl, workerId){
 	
-
+	$scope.availableMicrotasks = [];
+	
 	var types = [
 			'Review',
 			'DescribeFunctionBehavior',
@@ -51,7 +52,7 @@ angular
 	});	
 	
 
-	$scope.availableMicrotasks = [];
+	
 	$scope.microtasks = [];
 	
 	// load microtasks

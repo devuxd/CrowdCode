@@ -1,4 +1,4 @@
-19
+20
 accepted_microtask 5
 Accepted Microtasks
 You got 5 accepted microtasks.
@@ -6,6 +6,10 @@ You got 5 accepted microtasks.
 reviews 5
 Reviews
 You completed 5 reviews. 
+
+tutorial_completed 1
+Tutorial
+You completed all tutorials. 
 
 questions 1
 Question
