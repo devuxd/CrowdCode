@@ -65,7 +65,7 @@ angular
 		var task = $scope.microtasks.$getRecord(event.key)
 		switch(event.event){
 			case 'child_added': if(task.assigned==false) $scope.typesCount[task.type]++; break;
-			case 'child_changed': if(task.assigned==true) $scope.typesCount[task.type]--; break;
+			// case 'child_changed': if(task.assigned==true) $scope.typesCount[task.type]--; break;
 			default: 
 		}
 	});

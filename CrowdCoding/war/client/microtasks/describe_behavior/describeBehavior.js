@@ -24,8 +24,7 @@ angular
         deleted: false
     };
 
-    console.log($scope.microtask);
-    
+
     // if the microtask is reissued
     if( $scope.microtask.reissuedSubmission != undefined ){
 
@@ -56,16 +55,6 @@ angular
             var test = angular.copy($scope.funct.tests[i]);
             test.edited  = false;
             test.deleted = false;
-            if( $scope.microtask.disputedTests !== undefined ){
-                for( var a = 0; a < $scope.microtask.disputedTests.length ; a++ ){
-                    if( $scope.microtask.disputedTests[a].id == test.id ){
-                        test.dispute = { 
-                            active:true, 
-                            text: $scope.microtask.disputedTests[a].disputeText  
-                        };
-                    }
-                } 
-            }
             
             $scope.data.tests.push(test);
         } 
@@ -73,7 +62,20 @@ angular
 
 
     // flag the disputed test
-    
+
+    if( $scope.microtask.disputedTests !== undefined ){
+        for( var a = 0; a < $scope.microtask.disputedTests.length ; a++ ){
+            for( var t = 0 ; t < $scope.data.tests.length; t++ ){
+                var test = $scope.data.tests[t];
+                if( $scope.microtask.disputedTests[a].id == test.id ){
+                    test.dispute = { 
+                        active:true, 
+                        text: $scope.microtask.disputedTests[a].disputeText  
+                    };
+                }
+            }
+        } 
+    }
 
 
     // expose the toggle and edit test functions to the scope
@@ -195,6 +197,7 @@ angular
         }
         
         return formData;
+        console.log(formData);
 
     }
 

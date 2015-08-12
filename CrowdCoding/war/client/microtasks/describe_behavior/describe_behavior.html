@@ -151,8 +151,12 @@
 						</div>
 					</div>
 				</div>
-				<div>
-					<input type="checkbox" ng-model="data.isComplete" id="isComplete" name="isComplete" ng-disabled="data.numDeleted == data.tests.length"> 
+				<div ng-if="microtask.promptType !== 'CORRECT'">
+					<input type="checkbox" 
+						ng-model="data.isComplete" 
+						id="isComplete" 
+						name="isComplete" 
+						ng-disabled="data.numDeleted == data.tests.length"> 
 					<label for="isComplete" >the function is completely described by the previous behaviors</label>
 				</div>
 			</div>	

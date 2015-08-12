@@ -174,7 +174,13 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				cancelFetchTimer();
 				$scope.breakMode     = false;
 				$scope.templatePath  = templatesURL + "loading.html";
-				microtasks.fetchSpecificMicrotask( microtaskId );
+				microtasks
+					.fetchSpecificMicrotask( microtaskId )					
+					.then( function(fetchData){
+						microtasks.load(fetchData);
+					}, function(){
+						noMicrotasks();
+					}); 
 			}
 
 

@@ -117,10 +117,7 @@ public abstract class FunctionCommand extends Command {
 										projectId);
 
 			for( TestDTO test : functionDTO.tests ){
-				if(test.isSimple)
-					SimpleTestCommand.create(test, funct.getId(), true, true);
-				else
-					AdvancedTestCommand.create(test, funct.getId(), true, true);
+				TestCommand.create(test, funct.getId(), true, true);
 			}
 		}
 	}
@@ -165,7 +162,7 @@ public abstract class FunctionCommand extends Command {
 			FunctionCommand.addCallee(requestingFunctionId, function.getId());
 			
 			for( TestDTO test : requestedFunctionDTO.tests){
-				SimpleTestCommand.create(test, function.getId(), false, false);
+				TestCommand.create(test, function.getId(), false, false);
 			}
 		}
 	}

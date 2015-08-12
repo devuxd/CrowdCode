@@ -13,8 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
-import com.crowdcoding.commands.SimpleTestCommand;
-import com.crowdcoding.commands.AdvancedTestCommand;
+import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.TestResultDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviorDTO;
@@ -315,8 +314,7 @@ public class Function extends Artifact
 
 		// process all the submitted tests
 		for( TestDTO testDTO : dto.tests ){
-			if(testDTO.isSimple) processSimpleTest(testDTO);
-			else                 processAdvancedTest(testDTO);
+			processTest(testDTO);
 		}
 
 		// check if is complete
@@ -528,28 +526,19 @@ public class Function extends Artifact
 		}
 	}
 
-	private void processAdvancedTest(TestDTO testDTO){
+	private void processTest(TestDTO testDTO){
 		if(testDTO.deleted)
-			AdvancedTestCommand.delete(testDTO.id);
+			TestCommand.delete(testDTO);
 		else if (testDTO.added )
-			AdvancedTestCommand.create(testDTO, this.getId(), false, false);
+			TestCommand.create(testDTO, this.getId(), false, false);
 		else if (testDTO.edited )
-			AdvancedTestCommand.update(testDTO.id, testDTO.description, testDTO.code);
-	}
-	
-	private void processSimpleTest(TestDTO testDTO){
-		if(testDTO.deleted)
-			SimpleTestCommand.delete(testDTO.id);
-		else if (testDTO.added )
-			SimpleTestCommand.create(testDTO, this.getId(), false, false);
-		else if (testDTO.edited )
-			SimpleTestCommand.update(testDTO.id, testDTO.output);
+			TestCommand.update(testDTO);
 	}
 	
 	private void createCalleeStubs(List<FunctionDTO> callees){
 		for(FunctionDTO callee: callees){
 			for(TestDTO simpleTest : callee.tests){
-				SimpleTestCommand.create(simpleTest, callee.id, false, false);
+				TestCommand.create(simpleTest, callee.id, false, false);
 			}
 		}
 	}
