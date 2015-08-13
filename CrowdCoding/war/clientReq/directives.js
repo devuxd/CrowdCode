@@ -150,11 +150,11 @@ clienRequestApp.directive('maxLength',function() {
                 {
                     if(splittedDescription[i].length>maxLength)
                     {
-                        splittedDescription[i]=splittedDescription[i].match(RegExp(regex, 'g')).join('\n  ');
+                        splittedDescription[i]=splittedDescription[i].match(RegExp(regex, 'g')).join('\n');
                     }
                 }
 
-                return '  '+splittedDescription.join('\n  ')+'\n';
+                return splittedDescription.join('\n')+'\n';
            });
             ctrl.$formatters.push(function (viewValue) {
                  return  viewValue.substring(2,viewValue.length-1).replace(/\n  /g,'\n');

@@ -37,14 +37,6 @@ padding: 7px !important; }
 	padding: 5px ;
 
 }
-.examples-list-popover {
-	width: 140px !important;
-	border-radius: 0px;
-	margin-top: 0px !important;
-	padding: 5px ;
-	margin-left: -20px !important
-
-}
 
 .example {
 	position:relative;
@@ -1492,10 +1484,21 @@ tutorial  { display:none; }
     font-size: 1em;
     color: #888888;
 }
+
 .form-group .help-icon {
-	float:right;
 	top:0px;
 	font-size:1em;
+	cursor:pointer;
+	float:right;
+	font-weight:bold;
+}
+
+.form-group .help-icon > span:hover {
+	color: #3F81AC;
+}
+
+.form-group .help-icon .popover {
+	font-weight:normal;
 }
 .form-group .help-block {
 	position: absolute;

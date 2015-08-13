@@ -50,6 +50,11 @@
 						<span class="glyphicon glyphicon-play"></span> 
 						Run Tests
 					</button>
+
+
+					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'running_tests', true); ">
+						<span class="glyphicon glyphicon-question-sign"></span> 
+					</button>
 				</span>
 
 
@@ -59,7 +64,7 @@
 						class="btn btn-sm btn-dispute {{ data.selected.dispute.active ? 'active' : '' }}" 
 						ng-click="toggleDispute($event);">
 						<span class="glyphicon glyphicon-exclamation-sign"></span> 
-						Dispute this test
+						Report an issue
 					</button>
 					<button 
 						class="btn btn-sm btn-inspect {{ !data.changedSinceLastRun && data.inspecting ? 'active' : '' }}"
@@ -110,7 +115,7 @@
 										</span>
 									</span>
 									<span ng-if="t.dispute.active" class="color-disputed"> 
-										<span class="glyphicon glyphicon-exclamation-sign"></span> disputed 
+										<span class="glyphicon glyphicon-exclamation-sign"></span> reported 
 									</span>
 									
 								</div>
@@ -142,7 +147,7 @@
 
 						<div class="col-sm-6 col-md-6" ng-if="t.dispute.active">
 							<div class="row" >
-								<div class="col-sm-12 col-md-12 row-label">Dispute reason</div>
+								<div class="col-sm-12 col-md-12 row-label">Reported reason</div>
 							</div>
 							<div class="row" >
 								<div class="col-sm-12 col-md-12">
@@ -160,6 +165,11 @@
 			<div class="section-bar" ng-show="!data.editingStub">
 				<span class="title">
 					Function Editor
+				</span>
+				<span class="pull-right">
+					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); ">
+						<span class="glyphicon glyphicon-question-sign"></span> 
+					</button>
 				</span>
 				<span class="clearfix"></span>
 			</div>

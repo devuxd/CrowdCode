@@ -20,14 +20,15 @@
 
     	<div class="section bg-color-alpha padding" ui-layout-container size="5%" >
 			
-			<div style="text-transform:uppercase;" ng-if="microtask.reissuedSubmission !== undefined">
-				THIS TASK HAS BEEN REISSUED {{microtask.reissueMotivation}}
+			<div ng-if="microtask.reissuedSubmission !== undefined">
+				THIS TASK HAS BEEN REISSUED 
+				<strong>{{microtask.reissueMotivation}}</strong>
 			</div>
 			<span ng-if="microtask.disputedTests === undefined "> 
-				Can you describe a behavior for this function?	
+				Can you write a test for this function?
 			</span>		
 			<span ng-if="microtask.disputedTests !== undefined "> 
-				Can you fix the issues in the disputed tests?
+				Can you fix the issues with the reported tests?
 			</span>			
 
 		</div>
@@ -55,7 +56,7 @@
 		<div class="section"  ui-layout-container size="60%" >	
 
 			<div class="section-bar" ng-if="data.dispute.active">
-				<span class="title pull-left">Dispute Function Description</span>
+				<span class="title pull-left">Report Function Description</span>
 				<span class="pull-right">
 					<button class="btn btn-sm" ng-click="data.dispute.active = !data.dispute.active;" >
 						Cancel Dispute
@@ -67,7 +68,7 @@
 			<div class="section-content padding" ng-if="data.dispute.active">
 				<div class="form" style="height:100%">
 					<div class="form-group" style="height:100%">
-						<label for="description">Dispute reason </label>
+						<label for="description">Report reason </label>
 						<textarea 
 							class="form-control" 
 							style="height:80%;resize:none;" 
@@ -82,7 +83,7 @@
 						<div class="help-block" 
 							 ng-if="microtaskForm.disputeDescription.$dirty" 
 							 ng-messages="microtaskForm.disputeDescription.$error" >
-							<div ng-message="required">the dispute description can't be empty</div>
+							<div ng-message="required">the report description can't be empty</div>
 							<div ng-message="minlength">the minimum length is 20 chars</div>
 							<div ng-message="maxlength">the maximum length is 500 chars</div>
 						</div>
@@ -114,6 +115,10 @@
 
 					<button class="btn btn-sm" ng-click="toggleDelete($event)" ng-if="data.selected.deleted">
 						<span class="glyphicon glyphicon-remove" ></span> Undo remove
+					</button>
+
+					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'create_edit_test', true); ">
+						<span class="glyphicon glyphicon-question-sign"></span> 
 					</button>
 				</span>
 
@@ -188,7 +193,7 @@
 						</div>
 					</div>
 					<div class="form-group" ng-if="t.dispute.active">
-						<label for="description">Dispute reason </label>
+						<label for="description">Report reason </label>
 						<input 
 							class="form-control" 
 							name="description" 
@@ -198,14 +203,38 @@
 					</div>
 					<div class="form-group">
 						<label>Type</label>
+						<span class="help-icon">
+							<span 
+								class="glyphicon glyphicon-question-sign"
+								ng-if="t.isSimple"  
+								ng-click="$emit('queue-tutorial', 'input_output_tests', true); ">
+							</span>
+							
+							<span 
+								class="glyphicon glyphicon-question-sign"
+								ng-if="!t.isSimple"  
+								ng-click="$emit('queue-tutorial', 'assertion_tests', true); ">
+							</span>
+
+						</span>
 						<select class="form-control" 
 								ng-model="t.isSimple"
-					            ng-options="o.v as o.n for o in [{ n: 'specify input/output', v: true }, { n: 'write test code', v: false }]">
+					            ng-options="o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]">
 					    </select>
 					</div>
 					<div class="form-group" ng-if="!t.isSimple">
 						<label for="code">Code</label>
-						<div class="help-icon" >?</div>
+						<div class="help-icon" >
+							<span 
+								class="glyphicon glyphicon-question-sign"
+								data-template="/client/widgets/test_editor_help.html" 
+								data-auto-close="1" 
+								data-placement="left"
+								data-title="title of th ehelp"
+								bs-popover
+								>
+							</span> 
+						</div>
 						<div class="form-control code" 
 							 test-editor 
 							 name="code" 
@@ -229,7 +258,9 @@
 							<label for="inputs">
 								{{p.name + ' {' + p.type + '}' }}
 							</label>
-						
+							<div class="help-icon" paste-example="{ type : p.type }" ng-model="t.inputs[pIdx]">
+								<span>paste example</span>
+							</div>
 							<div
 								class="form-control code"
 								json-editor="{ type: p.type, name: p.name }" 
@@ -251,6 +282,9 @@
 
 					<div class="form-group" ng-if="t.isSimple">
 						<label for="code">Output {{ '{' + funct.returnType + '}'}}</label>
+						<div class="help-icon" paste-example="{ type : funct.returnType }" ng-model="t.output">
+							<span>paste example</span>
+						</div>
 						<div
 							class="form-control code"
 							json-editor="{ type: funct.returnType, name: 'output' }" 

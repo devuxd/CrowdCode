@@ -21,6 +21,8 @@ angular
 
             // listen for the queue tutorial event
             $rootScope.$on('queue-tutorial',queueTutorial);
+            $scope.queueTutorial = queueTutorial;
+            $scope.isTutorialCompleted = isTutorialCompleted;
 
             // expose the endTutorial method to the $scope
             // it is called when the tutorial is closed
@@ -28,15 +30,17 @@ angular
 
             // if the tutorial is forced or if 
             // is not completed, enqueue it
-            function queueTutorial( event, tutorialId, force, onFinish ){
-                
+            function queueTutorial( event, tutorialId, force, onFinish, queueAfter ){
+                console.log('queuing tutorial '+tutorialId);
                 tutorialsOn.$loaded().then(function(){
                     completedTutorials.$loaded().then(function(){
                         if( force || ( tutorialsOn.$value && !isTutorialCompleted(tutorialId) )){
                             // queue tutorial
                             queue.push({
                                 id       : tutorialId,
-                                onFinish : onFinish,
+                                onFinish : queueAfter === undefined ? 
+                                           onFinish :
+                                           function(){ queueTutorial(null,queueAfter,true); }
                             });
                             checkQueue();
                         }
@@ -53,6 +57,8 @@ angular
                     var tutorial    = queue.pop();
                     currentId       = tutorial.id;
                     currentOnFinish = tutorial.onFinish;
+
+                    $scope.tutorialId = currentId;
                     startTutorial();
                 }
             }
@@ -69,7 +75,6 @@ angular
             // start the current tutorial
             function startTutorial(){
                 running = true;
-                
                 var templateUrl = '/client/tutorials/'+currentId+'.html';
                 $element.html( '<tutorial template-url="'+templateUrl+'"></tutorial>' );
                 $compile($element.contents())($scope);
@@ -86,8 +91,10 @@ angular
                 
                 $element.html( '' );
 
-                if( currentOnFinish !== undefined )
+                if( currentOnFinish !== undefined ){
+                    console.log('currentOnFinish');
                     currentOnFinish.apply();
+                }
 
                 currentId       = undefined;
                 currentOnFinish = undefined;
@@ -100,7 +107,8 @@ angular
             // true if the tutorial with tutorialId is complete
             // false if not
             function isTutorialCompleted( tutorialId ){
-                if( completedTutorials.$value !== undefined && completedTutorials.$value.search(tutorialId) > -1 ) 
+                console.log(completedTutorials);
+                if( completedTutorials.$value !== undefined && completedTutorials.$value !== null && completedTutorials.$value.search(tutorialId) > -1 ) 
                     return true;
 
                 return false;

@@ -178,7 +178,7 @@ angular
                     id:          test.id,
                     description: test.description,
                     isSimple:    test.isSimple,
-                    code:        !test.isSimple  ? "" : test.code,
+                    code:        test.isSimple ? "" : test.code,
                     inputs:      test.isSimple ? test.inputs : [] ,
                     output:      test.isSimple ? test.output : "" 
                 };
