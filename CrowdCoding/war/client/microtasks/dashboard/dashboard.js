@@ -166,7 +166,7 @@ angular
         };
         angular.forEach(microtasks, function (value, key) {
         if(availableMicrotasks.indexOf(value) == -1){
-            if (value.waitingReview == true) {
+            if (value.waitingReview == true && value.review == undefined) {
                 this.out.push(value);
             }
         }	

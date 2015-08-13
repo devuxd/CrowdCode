@@ -124,7 +124,9 @@ public class Review extends Microtask
 				MicrotaskCommand.reviseMicrotask(microtaskKeyUnderReview, initiallySubmittedDTO, reviewDTO.reviewText, workerOfReviewedWork, awardedPoints);
 
 			HistoryLog.Init(projectId).addEvent(new MicrotaskReissued(submittedMicrotask,workerID));
-
+			
+			FirebaseService.writeMicrotaskWaitingReview(Microtask.keyToString(submittedMicrotask.getKey()),workerID,this.projectId, false);
+			
 			notification = new MicrotaskNotificationInFirebase( "task.reissued",
 																Microtask.keyToString(submittedMicrotask.getKey()),
 																submittedMicrotask.microtaskName(),
