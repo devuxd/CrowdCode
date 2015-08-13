@@ -3,7 +3,8 @@ angular
 	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',  
                                  function($scope,$rootScope,$firebase,$firebaseArray,$timeout,microtasksService,firebaseUrl, workerId){
 	
-
+	$scope.availableMicrotasks = [];
+	
 	var types = [
 			'Review',
 			'DescribeFunctionBehavior',
@@ -51,7 +52,7 @@ angular
 	});	
 	
 
-	$scope.availableMicrotasks = [];
+	
 	$scope.microtasks = [];
 	
 	// load microtasks
@@ -64,8 +65,17 @@ angular
 	$scope.microtasks.$watch(function(event){
 		var task = $scope.microtasks.$getRecord(event.key)
 		switch(event.event){
-			case 'child_added': if(task.assigned==false) $scope.typesCount[task.type]++; break;
-			// case 'child_changed': if(task.assigned==true) $scope.typesCount[task.type]--; break;
+			case 'child_added':
+				if(task.excluded != null){
+	           		if(task.excluded.search(workerId) === -1) 
+	           			$scope.typesCount[task.type]++
+	            } 
+	            else{
+	            	$scope.typesCount[task.type]++
+	            }
+			
+				break;
+				
 			default: 
 		}
 	});
@@ -151,7 +161,7 @@ angular
 angular
 	.module('crowdCode')
 	.filter('waitingReview', function () {
-    return function (microtasks,availableMicrotasks,usedMicrotasks) {
+    return function (microtasks,availableMicrotasks) {
 		var items = {
         	out: []
         };
@@ -169,7 +179,7 @@ angular
 angular
 	.module('crowdCode')
 	.filter('completed', function () {
-    return function (microtasks,availableMicrotasks,usedMicrotasks) {
+    return function (microtasks,availableMicrotasks) {
 		var items = {
         	out: []
         };
