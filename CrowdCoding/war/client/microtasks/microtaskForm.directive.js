@@ -40,7 +40,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 
 			$scope.taskData.startBreak = false;
 
-			var waitTimeInSeconds = 5;
+			var waitTimeInSeconds = 15;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
@@ -89,6 +89,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				// retrieve the related function
 				if (angular.isDefined($scope.microtask.functionId))
 					$scope.funct = functionsService.get($scope.microtask.functionId);
+
 
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
@@ -155,7 +156,13 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			function timeExpired(){
 				$scope.canSubmit    = false;
 				$scope.templatePath = templatesURL + "loading.html";
-				microtasks.submit($scope.microtask,undefined,true,true);
+				microtasks
+					.submit($scope.microtask,undefined,true,true)
+					.then( function(fetchData){
+						microtasks.load(fetchData);
+					}, function(){
+						noMicrotasks();
+					});
 			}
 			
 			function fetchMicrotask($event, fetchData) {

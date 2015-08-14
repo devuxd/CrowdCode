@@ -4,6 +4,7 @@
 	ng-include="templatePath" 
 	>
 </div>
+
 <reminder></reminder>
 
 <div class="actions">
@@ -36,8 +37,7 @@
 	  		type="submit" 
   			id="submitBtn"
 	  		class="btn btn-primary btn-sm pull-right"
-   			ng-if="!breakMode"
-	  		ng-disabled="noMicrotask"
+   			ng-if="!breakMode && !noMicrotask"
 	  		ng-click="submit()"
 	  		tabindex="99" >
 	  		Submit
@@ -45,9 +45,8 @@
   	   	<button type="button" 
    	 		id= "skipBtn"
    			class="btn btn-default btn-sm pull-right"
-   			ng-if="!breakMode"
+   			ng-if="!breakMode && !noMicrotask"
    			ng-click="skip()" 
-   			ng-disabled="noMicrotask"
    			tabindex="100" >
    			Skip
    		</button>
@@ -58,7 +57,7 @@
   	   	
 		<button type="button"
    			class="btn btn-primary btn-sm pull-right"
-   			ng-if="breakMode"
+   			ng-if="breakMode "
    			ng-click="fetch()" 
    			tabindex="100" >
 	       	Fetch a microtask

@@ -424,6 +424,15 @@ h1, h2, h3, h4 {
 }
 .task .header .btn:hover { color:#555;}
 
+.task .header .reissued {
+	    background-color: #757575;
+    line-height: 30px;
+    padding: 0px 5px 0px 5px;
+    color: #FFFFFF;
+    font-weight: bold;
+    display: inline-block;
+}
+
 .task .sections {
 	position: absolute;
 	top: 30px;
@@ -572,7 +581,8 @@ h1, h2, h3, h4 {
 
 
 .news-list .list-group .list-group-item {
-	height:2.8em;
+	/*height:2.8em;*/
+	height:4.2em;
 	margin-bottom:5px; 
 	border-radius:0px;
 	word-break: break-all;
@@ -588,8 +598,8 @@ h1, h2, h3, h4 {
 }
 .news-element:hover { background-color:#E0E0E0 !important; }
 .news .type,
-.news .result 
-{ float:left; width:60%; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+.news .result,
+.news .stars { float:left; width:60%; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
 .news .points { position:absolute; top:2px; right:2px; font-weight: bold; }
 /*.news-element {  }
 */
@@ -1054,7 +1064,7 @@ tutorial  { display:none; }
 	position:absolute; left:0px; right:0px; bottom:0px; height:2em;
 	line-height:2em;
 	padding:0px 5px 0px 5px;
-	background-color:#EBEBEB;
+	background-color:#FDFCFC;
 }
 
 .test-item { 
@@ -1545,6 +1555,7 @@ tutorial  { display:none; }
 	width:100%;
 	height:100%;
 	padding:10px;
+	overflow:auto;
 }
 
 

@@ -223,7 +223,7 @@ angular
         $scope.data.editingStub = { 
             functionName : functionName,
             inputsKey    : inputsKey,
-            functionDescription : funct.getFullDescription(),
+            functionDescription : funct.getSignature(),
             parameters   : funct.parameters.map(function(par,index){
                 return {
                     name: par.name,

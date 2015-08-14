@@ -11,6 +11,7 @@
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); ">
 			<span class="glyphicon glyphicon-question-sign"></span> 
 		</button>
+		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
 		<span class="clearfix"></span>
     </div>
 
@@ -19,12 +20,18 @@
 	    <div class="section bg-color-alpha padding" ui-layout-container size="10%" >
 
 
-			<div style="text-transform:uppercase;" ng-if="microtask.reissuedSubmission !== undefined">
-				THIS TASK HAS BEEN REISSUED {{microtask.reissueMotivation}}
+			<div ng-switch="microtask.promptType">
+				<span ng-switch-when="WRITE">
+					Can you implement part of <strong ng-bind="function.name"></strong> by making one of the currently failing tests pass? If you don’t have enough time to make a test pass, you may also submit a partial solution.
+				</span>
+				<span ng-switch-when="CORRECT">
+					A worker reported an issue with the description of <strong ng-bind="function.name"></strong>. Can you fix the function to address this issue (if necessary)? 
+				</span>
 			</div>
 
-
-			Implement a behavior for this function	
+			<div ng-if="microtask.reissuedSubmission !== undefined">
+				This task has been reissued because of "<strong>{{microtask.reissueMotivation}}</strong>"
+			</div>
 		</div>
 
 
@@ -136,7 +143,14 @@
 
 						<div class="col-sm-6 col-md-6" ng-if="!t.dispute.active && t.result.showDiff">
 							<div class="row" >
-								<div class="col-sm-12 col-md-12 row-label">Expected vs Actual</div>
+								<div class="col-sm-12 col-md-12 row-label">
+									<span style="width:10px;height:10px;display:inline-block;background-color:#CDFFCD"></span>
+									Expected
+
+
+									<span style="width:10px;height:10px;display:inline-block;background-color:#FFD7D7"></span>
+									Actual
+								</div>
 							</div>
 							<div class="row" >
 								<div class="col-sm-12 col-md-12">

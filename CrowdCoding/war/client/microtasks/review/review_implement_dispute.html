@@ -1,10 +1,8 @@
 <div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
 	<div class="section bg-color-alpha padding" ui-layout-container size="10%">
-		<div>A worker was asked to edit the code of the function <strong>{{ funct.name }}</strong>.</div>
-		<div ng-if="data.disputedTests !== undefined">
-			He also disputed {{data.disputedTests.length}} test{{ data.disputedTests.length > 1 ? 's' : '' }}.
-		</div>
-		<span>Can you review this work?</span>
+		<span>
+			A worker was asked to implement part of the function functionName and also reported reported an issue with the following tests. Can you review this work?
+		</span>
 	</div>
 
 

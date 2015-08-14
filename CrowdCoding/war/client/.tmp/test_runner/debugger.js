@@ -184,7 +184,7 @@ Debugger.mockFunction = function(fNode){
 
     return mockBody + callBody ;
 };
-
+   
 
 
 Debugger.instrumentTreeNode = function(node,scope){
@@ -204,7 +204,7 @@ Debugger.instrumentTreeNode = function(node,scope){
     var newNode = esprima.parse(outerCode);
     return newNode.body[0].expression;
 };
-
+ 
 Debugger.logValue = function(value,logObject,context,isCallee){
     if( logObject.callee ){
         logObject.inputsKey = value.inputsKey;

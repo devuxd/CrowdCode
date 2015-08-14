@@ -1,34 +1,11 @@
 <div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
 	
 	<div class="section bg-color-alpha padding" ui-layout-container size="10%">
-		<div ng-if="reviewed.promptType=='WRITE'">
-			A worker was asked to describe a new behavior for the function <strong>{{funct.name}}</strong>.
-		</div>
-
-		<div ng-if="reviewed.promptType=='CORRECT'">
-			A worker was asked to revise the the behavior 'name of the behavior' for the function 
-			<strong>{{funct.name}}</strong>  to address the following issue.
-		</div>
-
-		<div ng-if="reviewed.promptType=='FUNCTION_CHANGED'">
-			A worker was asked to revise the following test for the function 
-			<strong>{{funct.name}}</strong> (if necessary) based on a change to the description of the test case.
-		</div>
-
-		<div ng-if="reviewed.promptType=='CALLEE_CHANGED'">
-			A worker was asked to revise the following test for the function 
-			<strong>{{funct.name}}</strong> 
-			(if necessary) to work correctly with the new function signature specified below.
-		</div>
+		<span>
+			The test suite for <strong ng-bind="function.name"></strong> has been updated by adding, editing, or deleting its tests. Can you review the changes to the test suite shown below?
 
 
-		<div ng-if="reviewed.promptType=='ADT_CHANGED'">
-			A worker was asked to revise the following test for the function 
-			<strong>{{funct.name}}</strong> 
-			(if necessary) to work correctly with the new function signature specified below.
-		</div>
-
-		<span>Can you review this work?</span>
+		</span>
 	</div>
 
 
@@ -51,7 +28,7 @@
 			</span>
 		</div>
 		<div class="section-content slide from-left" ng-if="data.selected == -1">
-			<div class="tests-list">
+			<div class="tests-list has-next ">
 				<div class="test-item clickable" 
 				     ng-repeat="t in data.tests track by $index">
 					<div ng-click="data.selected = t">
@@ -75,6 +52,9 @@
 						<span class="clearfix"></span>
 					</div>
 				</div>
+			</div>
+			<div>
+				<strong ng-if="data.isComplete">the function has been marked by completely described</strong>
 			</div>
 		</div>
 
@@ -105,7 +85,7 @@
 					<div class="form-group">
 						<label>Type</label>
 						<div class="form-control form-control-static" name="description">
-							{{t.isSimple ? 'simple' : 'advanced'}}
+							{{t.isSimple ? 'input/output' : 'assertion'}}
 						</div>
 					</div>
 					<div class="form-group" ng-if="!t.isSimple">
