@@ -16,8 +16,11 @@ angular
             $scope.nextStep = nextStep;
             $scope.close    = close;
 
+            console.log('TUTORIAL ID ',$scope.title);
             var btnNextHtml  = '<a href="#" class="btn-next" ng-click="showNext()">next</a>';
-            var btnCloseHtml = '<a href="#" class="btn-close" ng-click="close()">close</a>';
+            var btnCloseHtml = $scope.isTutorialCompleted($scope.tutorialId) ? 
+                                '<a href="#" class="btn-close" ng-click="close()">close</a>' : 
+                                '';
 
             var $tutorialContainer;
             var $overlay;
@@ -95,7 +98,7 @@ angular
                     return;
                 }
 
-                btnNextHtml  = '<a href="#" class="btn-next" ng-click="nextStep()">'+( $scope.currentStep == $scope.totSteps ? 'finish' : 'next' )+'</a>';
+                btnNextHtml  = '<a href="#" class="btn-next" ng-click="nextStep()">'+( $scope.currentStep == $scope.totSteps ? 'close' : 'next' )+'</a>';
 
                 // retrieve the current step DOM-element
                 // and the commands to apply on show/hide of the step content
@@ -203,7 +206,11 @@ angular
                     } 
 
                     $content.fadeOut(300,function(){
-                        $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
+                        $content.html(
+                            contentHtml + '<br/>' +btnNextHtml+
+                            ( $scope.currentStep == $scope.totSteps ? '' : btnCloseHtml)
+                        );
+
                         $compile($content.contents())($scope);
 
                         $content.attr('style',contentStyle);

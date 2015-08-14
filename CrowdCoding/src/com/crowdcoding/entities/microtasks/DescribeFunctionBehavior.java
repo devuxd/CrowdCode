@@ -139,19 +139,21 @@ public class DescribeFunctionBehavior extends Microtask
 		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 
 	}
-	public Microtask copy()
+	
+	public Microtask copy(String projectId)
 	{
 		switch (promptType) {
-		case WRITE:
-			return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.projectId);
-		case FUNCTION_CHANGED:
-			return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.oldFunctionVersion, this.projectId);
-		case ADT_CHANGED:
-			return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.oldADTVersion, this.ADTId, this.projectId);
-		case CORRECT:
-			return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.disputedTests, this.projectId);
-		default:
-			return null;
+			case WRITE:
+				return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.projectId);
+			case FUNCTION_CHANGED:
+				return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.oldFunctionVersion, this.projectId);
+			case ADT_CHANGED:
+				return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.oldADTVersion, this.ADTId, this.projectId);
+			case CORRECT:
+				return new DescribeFunctionBehavior( this.functionRef, this.functionId, this.functionName, this.disputedTests, this.projectId);
+			default:
+				
+				return null;
 		}
 	}
 

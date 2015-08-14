@@ -51,7 +51,8 @@ angular
 
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
-			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
+			var randomAvatar = (Math.floor(Math.random() * (16 - 1)) + 1);
+			user.data.avatarUrl = '/img/avatar_gallery/avatar'+randomAvatar+'.png';
 		}
 		user.data.workerHandle = workerHandle;
 		user.data.$save();

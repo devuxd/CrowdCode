@@ -9,6 +9,7 @@ angular
         parse               : parse,
         validate            : validate,
         isValidName         : isValidName,
+        getNameAndSuffix    : getNameAndSuffix
     };
 
 

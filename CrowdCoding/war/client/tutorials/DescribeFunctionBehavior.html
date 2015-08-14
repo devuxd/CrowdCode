@@ -1,43 +1,24 @@
 <step>
-	<div class="title">Describe a function behavior</div>
+	<div class="title">Write test</div>
 	<div class="text">
 		<p style="width:500px">
-			given the function description, your goal is to add one or more test cases to programmatically describe its behavior
-		</p>
-	</div>
-</step>
-<step>
-	<div class="text">
-		<p style="width:500px">
-			for example given the function EXAMPLEFUNCTION, 
-			some behaviors can be 
-			<ul>
-				<li> it should return null if the parameter is invalid </li>
-				<li> another test 1 </li>
-				<li> another test 2 </li>
-				<li> another test 3</li>
-			</ul>
-		</p>
-	</div>
-</step>
-<step>
-	<div class="text">
-		<p style="width:500px">
-			to add a new behavior click on 'add a new test' and the add form will be displayed
+			Given the function description, your goal is to add one or more test (in addition to the previous written tests) to describe every possible corner case.
 		</p>
 		<p style="width:500px">
-			you can choose either to implement the test as 'simple test' or as 'advanced test'
+			Follow this tutorials for more details:
 		</p>
-		<p style="width:500px">
-			simple tests are I/O tests where you have to specify the output of the function
-			when a specified set of inputs is provided
-		</p>
-		<p style="width:500px">
-			advaced tests allows you to check if a function result contains a determined property, 
-			....... <br />
-			Advanced tests in CrowdCode are implemented following the ChaiJs expect syntax. <br />
-			Click <a target="_blank" href="http://chaijs.com/api/bdd/">here</a> for the complete list.<br /><br />
-			While you're editing an advanced test, check out the suggestions pressing Alt + Cmd (Mac) or Alt + Ctrl (Win)!
-		</p>
+		<ul>
+			<li>
+				<a href="#" 
+					ng-click="$emit('queue-tutorial', 'create_edit_test', true, undefined, 'DescribeFunctionBehavior' ); close(); $event.preventDefault();">
+					creating a test
+				</a>
+			</li>
+			<li>
+				<a href="#" 
+					ng-click="$emit('queue-tutorial', 'input_output_tests', true, undefined, 'DescribeFunctionBehavior'); close(); $event.preventDefault();">
+					input/output tests</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'assertion_tests', true, undefined, 'DescribeFunctionBehavior'); close(); $event.preventDefault();">assertion tests</a></li>
+		</ul>
 	</div>
 </step>

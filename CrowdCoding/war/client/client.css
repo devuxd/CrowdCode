@@ -37,14 +37,6 @@ padding: 7px !important; }
 	padding: 5px ;
 
 }
-.examples-list-popover {
-	width: 140px !important;
-	border-radius: 0px;
-	margin-top: 0px !important;
-	padding: 5px ;
-	margin-left: -20px !important
-
-}
 
 .example {
 	position:relative;
@@ -432,6 +424,15 @@ h1, h2, h3, h4 {
 }
 .task .header .btn:hover { color:#555;}
 
+.task .header .reissued {
+	    background-color: #757575;
+    line-height: 30px;
+    padding: 0px 5px 0px 5px;
+    color: #FFFFFF;
+    font-weight: bold;
+    display: inline-block;
+}
+
 .task .sections {
 	position: absolute;
 	top: 30px;
@@ -449,6 +450,7 @@ h1, h2, h3, h4 {
 	bottom:0px;
 	background-color: #DEDEDE;
 	height:30px;
+	z-index:100;
 }
 
 .actions .btn-group { width:100%; }
@@ -579,7 +581,8 @@ h1, h2, h3, h4 {
 
 
 .news-list .list-group .list-group-item {
-	height:2.8em;
+	/*height:2.8em;*/
+	height:4.2em;
 	margin-bottom:5px; 
 	border-radius:0px;
 	word-break: break-all;
@@ -595,8 +598,8 @@ h1, h2, h3, h4 {
 }
 .news-element:hover { background-color:#E0E0E0 !important; }
 .news .type,
-.news .result 
-{ float:left; width:60%; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+.news .result,
+.news .stars { float:left; width:60%; overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
 .news .points { position:absolute; top:2px; right:2px; font-weight: bold; }
 /*.news-element {  }
 */
@@ -625,8 +628,8 @@ h1, h2, h3, h4 {
 .questions .top, 
 .questions .middle { position:absolute; right:0; left:0; }
 
-.questions .list-view   .top    { top: 0px; height: 60px; }
-.questions .list-view   .middle { top:60px; bottom:0px; overflow:auto; }
+.questions .list-view   .top    { top: 0px; height: 80px; }
+.questions .list-view   .middle { top:80px; bottom:0px; overflow:auto; }
 .questions .detail-view .top    { top: 0px; height: 20px; }
 .questions .detail-view .middle { top:20px; bottom:0px; overflow:auto; }
 .questions .form-view .top    { top: 0px; height: 60px; }
@@ -666,7 +669,7 @@ h1, h2, h3, h4 {
 .list-view .searchbox {}
 .list-view .searchbox .host {
 	margin:0px;
-	max-height:60px;
+	max-height:50px;
 }
 .list-view .searchbox .tags {
 	padding-left:2.2em;
@@ -706,7 +709,7 @@ h1, h2, h3, h4 {
 
 .list-view .form-control-feedback {
 	position:absolute;
-	top:0px;
+	top:5px;
 	left:0px;
 	line-height: 2.4em;
 	width: 2.0em;
@@ -1061,7 +1064,7 @@ tutorial  { display:none; }
 	position:absolute; left:0px; right:0px; bottom:0px; height:2em;
 	line-height:2em;
 	padding:0px 5px 0px 5px;
-	background-color:#EBEBEB;
+	background-color:#FDFCFC;
 }
 
 .test-item { 
@@ -1491,10 +1494,21 @@ tutorial  { display:none; }
     font-size: 1em;
     color: #888888;
 }
+
 .form-group .help-icon {
-	float:right;
 	top:0px;
 	font-size:1em;
+	cursor:pointer;
+	float:right;
+	font-weight:bold;
+}
+
+.form-group .help-icon > span:hover {
+	color: #3F81AC;
+}
+
+.form-group .help-icon .popover {
+	font-weight:normal;
 }
 .form-group .help-block {
 	position: absolute;
@@ -1541,6 +1555,7 @@ tutorial  { display:none; }
 	width:100%;
 	height:100%;
 	padding:10px;
+	overflow:auto;
 }
 
 

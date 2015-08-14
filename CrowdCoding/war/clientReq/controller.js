@@ -154,6 +154,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 				});
 
 				project.functions=$scope.functions;
+				console.log(project.functions);
 
 				project.ADTs=$scope.ADTs;
 

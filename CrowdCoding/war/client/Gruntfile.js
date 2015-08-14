@@ -3,7 +3,6 @@ module.exports = function (grunt) {
 	var dir     = require('./bower.json').appPath || 'app';
 	var distDir = dir + 'Dist';
 
-console.log(dir,distDir);
 	process.chdir('../');
 	// grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-contrib-jshint');

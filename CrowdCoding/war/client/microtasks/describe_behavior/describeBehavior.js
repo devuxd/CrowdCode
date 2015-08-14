@@ -4,7 +4,7 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory) {
+    .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory', 'Test',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory, Test) {
     
     // prepare the data for the view
     $scope.data = {};
@@ -16,7 +16,7 @@ angular
     
     var newTest = {
         description: '',
-        isSimple : false,
+        isSimple : true,
         inputs: $scope.funct.parameters.map(function(par){ return ""; }),
         output: "",
         code: '//write the test code',
@@ -24,29 +24,59 @@ angular
         deleted: false
     };
 
-    // load the tests:
-    // need to store the collection as array because
-    // from firebase comes as an object collection
-    for( var i = 0; i < $scope.funct.tests.length ; i++ ){
-        if( $scope.funct.tests[i].isDeleted )
-            continue;
 
-        var test = angular.copy($scope.funct.tests[i]);
-        test.edited  = false;
-        test.deleted = false;
-        if( $scope.microtask.disputedTests !== undefined )
+    // if the microtask is reissued
+    if( $scope.microtask.reissuedSubmission != undefined ){
 
-            for( var i = 0; i < $scope.microtask.disputedTests.length ; i++ ){
-                if( $scope.microtask.disputedTests[i].id == test.id ){
+        $scope.data.isComplete = $scope.microtask.reissuedSubmission.isDescribeComplete;
+
+        if( $scope.microtask.reissuedSubmission.disputeFunctionText.length > 0 ){
+            $scope.data.dispute.active = true;
+            $scope.data.dispute.text   = $scope.microtask.reissuedSubmission.disputeFunctionText;
+        }
+
+
+        // load tests from the previous submission
+        var reissuedTests = $scope.microtask.reissuedSubmission.tests ;
+        for( var i = 0 ; i < reissuedTests.length ; i++ ){
+            var test = new Test(reissuedTests[i]);
+
+            $scope.data.tests.push(test);
+        }
+    }
+    // otherwise 
+    else {
+
+        // load tests from the function 
+        for( var i = 0; i < $scope.funct.tests.length ; i++ ){
+            if( $scope.funct.tests[i].isDeleted )
+                continue;
+            
+            var test = angular.copy($scope.funct.tests[i]);
+            test.edited  = false;
+            test.deleted = false;
+            
+            $scope.data.tests.push(test);
+        } 
+    }
+
+
+    // flag the disputed test
+
+    if( $scope.microtask.disputedTests !== undefined ){
+        for( var a = 0; a < $scope.microtask.disputedTests.length ; a++ ){
+            for( var t = 0 ; t < $scope.data.tests.length; t++ ){
+                var test = $scope.data.tests[t];
+                if( $scope.microtask.disputedTests[a].id == test.id ){
                     test.dispute = { 
                         active:true, 
-                        text: $scope.microtask.disputedTests[i].disputeText  
+                        text: $scope.microtask.disputedTests[a].disputeText  
                     };
                 }
             }
-
-        $scope.data.tests.push(test);
+        } 
     }
+
 
     // expose the toggle and edit test functions to the scope
     $scope.toggleEdit   = toggleEdit;
@@ -142,14 +172,15 @@ angular
             for( var idx = 0 ; idx < $scope.data.tests.length ; idx++ ){
                 var test = $scope.data.tests[idx];
 
+
+
                 var testDto = {
                     id:          test.id,
                     description: test.description,
                     isSimple:    test.isSimple,
-                    code:        test.code,
-                    inputs:      test.inputs,
-                    output:      test.output
-
+                    code:        test.isSimple ? "" : test.code,
+                    inputs:      test.isSimple ? test.inputs : [] ,
+                    output:      test.isSimple ? test.output : "" 
                 };
 
                 if( test.added && test.deleted )
@@ -165,6 +196,7 @@ angular
                 formData.tests.push(testDto);
             } 
         }
+        console.log(formData.tests);
         
         return formData;
 

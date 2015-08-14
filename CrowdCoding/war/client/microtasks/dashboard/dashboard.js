@@ -65,7 +65,7 @@ angular
 	$scope.microtasks.$watch(function(event){
 		var task = $scope.microtasks.$getRecord(event.key)
 		switch(event.event){
-			case 'child_added':{
+			case 'child_added':
 				if(task.excluded != null){
 	           		if(task.excluded.search(workerId) === -1) 
 	           			$scope.typesCount[task.type]++
@@ -73,8 +73,9 @@ angular
 	            else{
 	            	$scope.typesCount[task.type]++
 	            }
-			}
+			
 				break;
+				
 			default: 
 		}
 	});

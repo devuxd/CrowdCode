@@ -44,7 +44,7 @@ self.addEventListener('message', function(message){
 
 
 			var sendData = {};
-			console.log('all stub before run',Debugger.getAllStubs());
+			// console.log('all stub before run',Debugger.getAllStubs());
 			sendData.result = Debugger.run(data.testCode);
 			sendData.logs   = Debugger.logs.values[testedName] === undefined ? [] : Debugger.logs.values[testedName];
 			self.postMessage( JSON.stringify( sendData ) );
@@ -53,7 +53,7 @@ self.addEventListener('message', function(message){
 
 		// stop 
 		case 'stubs': 
-			console.log('worker is sending stubs', Debugger.getAllStubs());
+			// console.log('worker is sending stubs', Debugger.getAllStubs());
 			self.postMessage( JSON.stringify( Debugger.getAllStubs() ) );
 			break;
 		// stop 

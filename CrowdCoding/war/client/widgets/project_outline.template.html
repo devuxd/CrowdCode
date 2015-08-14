@@ -3,7 +3,7 @@
 		<div bs-collapse-toggle class="toggler" >DT: {{d.name}}</div>
 		<div bs-collapse-target class="toggled" ng-init="structure = buildStructure(d)">
 			<span ng-bind="::d.description"></span>
-			<div ng-if="d.structure" ng-bind="structure"></div>
+			<pre ng-if="d.structure" ng-bind="structure"></pre>
 
 			<div ng-if="d.selectedExample != undefined">
 				<span class="pull-left" for="exampleSelect">EXAMPLES:</span>

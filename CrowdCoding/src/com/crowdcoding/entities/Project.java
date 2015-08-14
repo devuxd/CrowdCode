@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import com.crowdcoding.commands.ADTCommand;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
-import com.crowdcoding.commands.SimpleTestCommand;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.ClientRequestDTO;
 import com.crowdcoding.dto.DTO;

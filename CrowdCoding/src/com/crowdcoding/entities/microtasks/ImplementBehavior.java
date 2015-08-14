@@ -87,17 +87,17 @@ public class ImplementBehavior extends Microtask
 	public Microtask copy(String projectId)
 	{
 		switch (promptType) {
-		case WRITE:
-			return new ImplementBehavior( (Function) getOwningArtifact() , testId, projectId);
-		case CALLEE_CHANGE:
-			return new ImplementBehavior( (Function) getOwningArtifact() , calleeId, oldCalleeVersion, projectId);
-		case REMOVE_CALLEE:
-			return new ImplementBehavior( (Function) getOwningArtifact() , this.disputeText, disputeId, projectId);
-		case CORRECT:
-			return new ImplementBehavior((Function) getOwningArtifact(), this.disputeText, projectId);
-
-		default:
-			return null;
+			case WRITE:
+				return new ImplementBehavior( (Function) getOwningArtifact() , testId, projectId);
+			case CALLEE_CHANGE:
+				return new ImplementBehavior( (Function) getOwningArtifact() , calleeId, oldCalleeVersion, projectId);
+			case REMOVE_CALLEE:
+				return new ImplementBehavior( (Function) getOwningArtifact() , this.disputeText, disputeId, projectId);
+			case CORRECT:
+				return new ImplementBehavior((Function) getOwningArtifact(), this.disputeText, projectId);
+	
+			default:
+				return null;
 		}
 	}
 

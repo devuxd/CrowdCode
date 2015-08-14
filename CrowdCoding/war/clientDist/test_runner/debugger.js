@@ -41,7 +41,7 @@ Debugger.run = function(testCode, callsLogs) {
         _testResult.passed = true;
     } 
     catch( e ){
-        console.log(e);
+        // console.log(e);
         if( e instanceof chai.AssertionError ){
             _testResult = e;
         }
@@ -184,7 +184,7 @@ Debugger.mockFunction = function(fNode){
 
     return mockBody + callBody ;
 };
-
+   
 
 
 Debugger.instrumentTreeNode = function(node,scope){
@@ -204,7 +204,7 @@ Debugger.instrumentTreeNode = function(node,scope){
     var newNode = esprima.parse(outerCode);
     return newNode.body[0].expression;
 };
-
+ 
 Debugger.logValue = function(value,logObject,context,isCallee){
     if( logObject.callee ){
         logObject.inputsKey = value.inputsKey;
@@ -228,7 +228,7 @@ Debugger.getStub = function(functName,inputsKey) {
     if( !stubs.hasOwnProperty(functName) )
         stubs[functName] = {};
 
-    console.log('searching stub for',functName,inputsKey,JSON.stringify(stubs));
+    // console.log('searching stub for',functName,inputsKey,JSON.stringify(stubs));
     if( stubs[functName].hasOwnProperty(inputsKey) ){
        return stubs[functName][inputsKey];
     }
@@ -269,7 +269,7 @@ Debugger.logCall = function(functionName,inputsKey,output){
 
 
 Debugger.mockBody = function(){
-    var inputsKey = JSON.stringify(arguments);
+    var inputsKey = generateInputsKey(arguments)
     var output    = null;
     var stub      = Debugger.getStub( '%functionNameStr%', inputsKey );
     if( stub != -1 ){
@@ -283,6 +283,15 @@ Debugger.mockBody = function(){
     }
     Debugger.logCall( '%functionNameStr%', inputsKey, output ) ;
     return { inputsKey: inputsKey, output: output };
+}
+
+
+function generateInputsKey(args){
+    var keys = [];
+    for( var key in args){
+        keys.push( JSON.stringify(args[key]) );
+    }
+    return keys.join(',')
 }
 
 function Scope(context,parent){

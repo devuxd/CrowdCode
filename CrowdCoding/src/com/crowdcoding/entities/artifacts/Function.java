@@ -13,8 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.ProjectCommand;
-import com.crowdcoding.commands.SimpleTestCommand;
-import com.crowdcoding.commands.AdvancedTestCommand;
+import com.crowdcoding.commands.TestCommand;
 import com.crowdcoding.dto.DTO;
 import com.crowdcoding.dto.ajax.TestResultDTO;
 import com.crowdcoding.dto.ajax.microtask.submission.DescribeFunctionBehaviorDTO;
@@ -94,8 +93,7 @@ public class Function extends Artifact
 		this.name = functionDTO.name;
 		this.returnType = functionDTO.returnType;
 
-		for(FunctionParameterDTO parameter : functionDTO.parameters)
-		{
+		for(FunctionParameterDTO parameter : functionDTO.parameters){
 			this.paramNames.add(parameter.name);
 			this.paramTypes.add(parameter.type);
 			this.paramDescriptions.add(parameter.description);
@@ -164,49 +162,57 @@ public class Function extends Artifact
 
 	// If there is no microtask currently out for this artifact, looks at the queued microtasks.
 	// If there is a microtasks available, marks it as ready to be done.
-	public void lookForWork()
-	{
-		System.out.println("looking for work, function completed:"+this.isCompleted);
+	public void lookForWork(){
+		
 		//before checks if the function is still active
-		if( ! isDeleted()){
+		if( !isDeleted() ){
+			
 			//  when there are no Describe Function Behavior in progress
 			if( describeFunctionBehaviorOut == null ){
+				
 				//first checks if there are enqueued describe function behavior microtasks
 				if(queuedDescribeFunctionBehavior.isEmpty()){
+					
 					// if the function is not complete, spawn a new describe function behavior microtask
 					if(! this.isCompleted){
 						Microtask mtask = new DescribeFunctionBehavior(getRef(), getId(), name, projectId);
 						ProjectCommand.queueMicrotask(mtask.getKey(), null);
 						describeFunctionBehaviorOut =  Ref.create(mtask.getKey());
 					}
-					// check if the function need to be implemented
+					
+					// check if needs implementation
 					checkImplementationNeeded();
 
 				}
-				else{
-					// only if an implementation is not in progress spawn a describe beahvior previously enqueued
+				else {
+					
+					// if the implementation is not in progress, spawn
+					// the first describe task in queue 
 					if(! isImplementationInProgress){
-						Ref<Microtask> mtask = queuedDescribeFunctionBehavior.remove();
-						ProjectCommand.queueMicrotask(mtask.getKey(), null);
-						describeFunctionBehaviorOut = mtask;
+						Ref<Microtask> mtaskRef = queuedDescribeFunctionBehavior.remove();
+						ProjectCommand.queueMicrotask(mtaskRef.getKey(), null);
+						describeFunctionBehaviorOut = mtaskRef;
 					}
 				}
 
-			} else {
+			} 
+			else {
+				
 				DescribeFunctionBehavior task = (DescribeFunctionBehavior) ofy().load().ref(describeFunctionBehaviorOut).now();
-				System.out.println("LOADED TASK FROM REF "+task + ", ref was "+describeFunctionBehaviorOut);
-				if( task.getPromptType() == PromptType.WRITE && queuedDescribeFunctionBehavior.isEmpty()){
+				
+				if( task.getPromptType() == PromptType.WRITE && queuedDescribeFunctionBehavior.isEmpty() ){
 					checkImplementationNeeded();
 				}
+				
 			}
 
 		}
+		
 		ofy().save().entity(this).now();
 
 	}
 
-	private void onWorkEdit(FunctionDTO dto, String projectId)
-	{
+	private void onWorkEdit(FunctionDTO dto, String projectId){
 
 		// Looper over all of the callers, rebuilding our list of callers
 		rebuildCalleeList(dto.callees);
@@ -260,73 +266,66 @@ public class Function extends Artifact
 	****************************************************************************************/
 
 	// Queues the specified microtask and looks for work
-	public void queueDescribeFunctionBehavior(Microtask microtask)
-	{
+	public void queueDescribeFunctionBehavior(Microtask microtask){
 		queuedDescribeFunctionBehavior.add(Ref.create(microtask.getKey()));
 		lookForWork();
 	}
 
 	// Queues the specified microtask and looks for work
-	public void queueImplementFunctionBehavior(Microtask microtask)
-	{
-		System.out.println("queing ");
+	public void queueImplementFunctionBehavior(Microtask microtask){
 		queuedImplementBehavior.add(Ref.create(microtask.getKey()));
 		lookForWork();
 	}
-	private void newImplementBehavior(long failedTestId)
-	{
+	
+	private void newImplementBehavior(long failedTestId){
 		ProjectCommand.queueMicrotask(new ImplementBehavior(this, failedTestId, projectId).getKey(), null);
 	}
 
 	private void checkImplementationNeeded(){
 		// if at least 1 test is present and there is no other implementation in progress
-		// if there is at least 1 implementation enqued spawn that otherwise run the tests
 		if( testsId.size() > 0 && !isImplementationInProgress ){
 			isImplementationInProgress =  true;
 
-			if( queuedImplementBehavior.isEmpty() ){
-				FunctionCommand.runTests(this.getId());
-			}
-			else{
+			// if there are queued implementations, spawn the first
+			// otherwise run the tests
+			if( !queuedImplementBehavior.isEmpty() )
 				ProjectCommand.queueMicrotask(queuedImplementBehavior.remove().getKey(), null);
-			}
+			else
+				FunctionCommand.runTests(this.getId());
+			
 		}
+		
 		ofy().save().entities(this).now();
 	}
 
-	private void disputeFunctionSignature(String issueDescription, long disputeId,String projectId)
-	{
-		queueImplementFunctionBehavior(new ImplementBehavior(this, issueDescription, projectId));
-	}
 
 	/******************************************************************************************
 	 * Microtasks Completions Hendlers
 	****************************************************************************************/
 
-	public void describeFunctionBehaviorCompleted(DescribeFunctionBehaviorDTO dto)
-	{
-		System.out.println("DTO RECEIVED : "+dto.json());
+	public void describeFunctionBehaviorCompleted(DescribeFunctionBehaviorDTO dto){
+		
 		describeFunctionBehaviorOut = null;
 
-		if(dto.disputeFunctionText != null && dto.disputeFunctionText !=""){
+		// if the function is in dispute, spawn a implement behavior 
+		if( dto.disputeFunctionText != null && dto.disputeFunctionText !="" ){
 			queueImplementFunctionBehavior( new ImplementBehavior(this, dto.disputeFunctionText, projectId) );
 		}
 
-		//goes throug all the test to add delete or update them
+		// process all the submitted tests
 		for( TestDTO testDTO : dto.tests ){
-			if(testDTO.isSimple)
-				doSimpleTest(testDTO);
-			else
-				doAdvancedTest(testDTO);
+
+			System.out.println("PROCESSING TEST "+testDTO.json());
+			processTest(testDTO);
 		}
 
+		// check if is complete
 		if( dto.isDescribeComplete )
 			this.isCompleted = true;
 
 		ofy().save().entity(this).now();
 
 		FunctionCommand.lookForWork(this.id);
-
 	}
 
 	public void implementBehaviorCompleted(ImplementBehaviorDTO dto, long disputantId, String projectId)
@@ -335,12 +334,15 @@ public class Function extends Artifact
 
 		//create a descrbie function behavior for each disputed test
 		if( dto.disputedTests.size() > 0 ){
-			queueDescribeFunctionBehavior(  new DescribeFunctionBehavior(
-												this.getRef(),
-												getId(),
-												name,
-												dto.disputedTests,
-												projectId));
+			queueDescribeFunctionBehavior(  
+				new DescribeFunctionBehavior(
+						this.getRef(),
+						getId(),
+						name,
+						dto.disputedTests,
+						projectId
+					)
+			);
 		}
 
 		// creates all the function requested if any
@@ -348,16 +350,13 @@ public class Function extends Artifact
 
 		// update the submitted function
 		onWorkEdit(dto.function, projectId);
-
-
-
 	}
 
 	private void checkIfNeeded()
 	{
 		//if is not called by anyone means that is not anymore needed
 		if( this.callersId.isEmpty())
-			deactivateFunction(null);
+			deactivate(null);
 	}
 
 	/******************************************************************************************
@@ -365,21 +364,19 @@ public class Function extends Artifact
 	****************************************************************************************/
 
 	public void runTests(){
-
 		FirebaseService.writeTestJobQueue(getId(), version, testSuiteVersion, projectId);
 	}
 
 	public void submittedTestResult(String jsonDto){
-		System.out.println("test submitted "+ jsonDto);
-		try {
-			TestResultDTO testResult = (TestResultDTO)DTO.read(jsonDto, TestResultDTO.class);
 
-			if(! testResult.areTestsPassed )
-				newImplementBehavior(testResult.failedTestId);
-			else{
+		try {
+			TestResultDTO testResult = (TestResultDTO) DTO.read(jsonDto, TestResultDTO.class);
+
+			if( !testResult.areTestsPassed )
+				newImplementBehavior( testResult.failedTestId );
+			else {
 				queuedImplementBehavior.clear();
 				isImplementationInProgress = false;
-
 			}
 		} catch( JsonParseException e) {
 			e.printStackTrace();
@@ -390,39 +387,26 @@ public class Function extends Artifact
 		}
 
 		ofy().save().entity(this).now();
-
+		
 	}
 
 	// Notifies the function that it has a new caller function
-	public void addCaller(long functionId)
-	{
-
-		//remove the function from the pseudocaller list
+	public void addCaller(long functionId){
 		callersId.add(functionId);
-
-		if( isDeleted() )
-			reactivateFunction();
-
+		if( isDeleted() ) reactivate();
 		ofy().save().entity(this).now();
 	}
 
 	// Notifies the function that it is no longer called by the caller
-	public void removeCaller(long functionId)
-	{
+	public void removeCaller(long functionId){
 		callersId.remove(functionId);
-
 		checkIfNeeded();
-
 		ofy().save().entity(this).now();
 	}
 
 	// Notifies the function that it has a new callee function
-	public void addCallee(long functionId)
-	{
-
-		//remove the function from the pseudocaller list
+	public void addCallee(long functionId){
 		calleesId.add(functionId);
-
 		ofy().save().entity(this).now();
 	}
 
@@ -430,8 +414,7 @@ public class Function extends Artifact
 		checkImplementationNeeded();
 	}
 
-	public void calleeBecomeDeactivated(long calleeId, String disputeText)
-	{
+	public void calleeBecomeDeactivated(long calleeId, String disputeText){
 		calleesId.remove(calleeId);
 		ofy().save().entity(this).now();
 		queueImplementFunctionBehavior(new ImplementBehavior(this, disputeText, calleeId, projectId));
@@ -448,14 +431,8 @@ public class Function extends Artifact
 	 * Command Senders
 	****************************************************************************************/
 
-	//notify the test that the dispute is solved
-	private void notifyTestDisputeCompleted(long testId)
-	{
-		//TODO
-	}
-
 	//Notify all the callers and all the test of this function that is not anymore active
-	private void deactivateFunction(String disputeFunctionText)
+	private void deactivate(String disputeFunctionText)
 	{
 
 		deleteArtifact();
@@ -479,7 +456,7 @@ public class Function extends Artifact
 	****************************************************************************************/
 
 	//change status of the function from deleted to undeleted
-	private void reactivateFunction()
+	private void reactivate()
 	{
 		unDeleteArtifact();
 		storeToFirebase();
@@ -545,36 +522,28 @@ public class Function extends Artifact
 	}
 
 	// for each requested function, create it
-	public void createRequestedFunctions(List<FunctionDTO> functions)
-	{
+	public void createRequestedFunctions(List<FunctionDTO> functions){
 		for(FunctionDTO function : functions){
 			FunctionCommand.createRequestedFunction(getId(), function);
 		}
 	}
 
-	private void doAdvancedTest(TestDTO testDTO){
+	private void processTest(TestDTO testDTO){
 		if(testDTO.deleted)
-			AdvancedTestCommand.delete(testDTO.id);
+			TestCommand.delete(testDTO);
 		else if (testDTO.added )
-			AdvancedTestCommand.create(testDTO, this.getId(), false, false);
+			TestCommand.create(testDTO, this.getId(), false, false);
 		else if (testDTO.edited )
-			AdvancedTestCommand.update(testDTO.id, testDTO.description, testDTO.code);
-
+			TestCommand.update(testDTO);
 	}
-	private void doSimpleTest(TestDTO testDTO){
-		if(testDTO.deleted)
-			SimpleTestCommand.delete(testDTO.id);
-		else if (testDTO.added )
-			SimpleTestCommand.create(testDTO, this.getId(), false, false);
-		else if (testDTO.edited )
-			SimpleTestCommand.update(testDTO.id, testDTO.output);
-
-	}
-	private void createCalleeStubs(List<FunctionDTO> callees)
-	{
+	
+	private void createCalleeStubs(List<FunctionDTO> callees){
 		for(FunctionDTO callee: callees){
-			for(TestDTO simpleTest : callee.tests){
-				SimpleTestCommand.create(simpleTest, callee.id, false, false);
+			for(TestDTO test : callee.tests){
+				if( test.id == 0 )
+					TestCommand.create(test, callee.id, false, false);
+				else
+					TestCommand.update(test);
 			}
 		}
 	}
@@ -610,7 +579,6 @@ public class Function extends Artifact
 				),
 				this.id, firebaseVersion, projectId);
 		incrementVersion();
-
 	}
 
     // Given an id for a functon, finds the corresponding function. Returns null if no such function exists.
