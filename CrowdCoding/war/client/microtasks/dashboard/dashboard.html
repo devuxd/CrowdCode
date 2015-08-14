@@ -24,7 +24,7 @@
 			Available ({{ (microtasks | canChoose:microtaskQueue:reviewQueue:availableMicrotasks | byType:filterEnabled ).length }})
 		</div>
 		<div class="list">
-			<div class="pin" ng-repeat="(i,microtask) in microtasks | canChoose: microtaskQueue:reviewQueue:availableMicrotasks| byType:filterEnabled |  orderBy: orderPredicate : orderReverse" 
+			<div class="pin pinAvailable" ng-repeat="(i,microtask) in microtasks | canChoose: microtaskQueue:reviewQueue:availableMicrotasks| byType:filterEnabled |  orderBy: orderPredicate : orderReverse" 
 			style="height:{{microtask.height}}px" ng-animate="'animate'">
 				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
 				<div class="content" >
