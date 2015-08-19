@@ -41,7 +41,7 @@ angular
 		
 		
 		var userStatistics            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/achievements/achievements_panel.html', show: false});
-		var workerProfile            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/worker_profile/profile_panel.html', show: false});
+		var workerProfile 			= $modal({scope: $rootScope.$new(true), container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/worker_profile/workerStatsModal.html', show: false});
 		var profileModal            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/widgets/popup_user_profile.html', show: false});
 		var servicesLoadingStatus   = {};
 		var loadingServicesInterval = $interval(loadServices(), 200);
@@ -103,9 +103,8 @@ angular
 		}
 		
 		function showWorkerProfile($event, id) {
-			console.log('calling ' + id);
-			$rootScope.$broadcast('showNewProfile',id);
-			//workerProfile.$promise.then(workerProfile.show);
+			workerProfile.$scope.id = id;
+			workerProfile.$promise.then(workerProfile.show);
 		}
 
 

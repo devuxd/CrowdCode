@@ -6,7 +6,7 @@ angular
     $scope.userStats = [];
     $scope.listOfachievements = [];
     $scope.icon = iconFactory.get;    	 
-    	 
+    
     	var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
      	var statsSync = $firebaseArray(statsRef);
      	$scope.userStats = statsSync;
