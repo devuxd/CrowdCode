@@ -1,8 +1,8 @@
 angular
 	.module('crowdCode')
-	.directive('workerProfile', ['$firebase','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile])
+	.directive('workerProfile', ['$firebase','avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile])
 	
-function workerProfile($firebase, iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
+function workerProfile($firebase, avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
 return {
     restrict: 'EA',
     scope:{workerProfile:"="},
@@ -14,30 +14,27 @@ return {
       $scope.listOfachievements = [];
       $scope.icon = iconFactory.get;    	 
       $scope.currentId = 0;
+      $scope.avatar  = avatarFactory.get;
       
       $scope.gotAchievement = function(){
     	  $scope.hasAchievement = true;
       }
       
-      var nameObj = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/workerHandle'));
-      nameObj.$loaded().then(function(){
-    	  $scope.workerName = nameObj.$value;
-  	  });
-      
-      
-      	var statsRef  = new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/microtaskHistory');
-       	var statsSync = $firebaseArray(statsRef);
-       	$scope.workerStats = statsSync;
-       	$scope.workerStats.$loaded().then(function(){
-       });
+	var nameObj = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/workerHandle'));
+	  nameObj.$loaded().then(function(){
+		  $scope.workerName = nameObj.$value;
+	  });
+
+	var statsSync = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/microtaskHistory'));
+	   	$scope.workerStats = statsSync;
+	   	$scope.workerStats.$loaded().then(function(){
+	   });
        	
-       	
-      	var achievementsRef  = new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/listOfAchievements');
-      	var achievementsSync = $firebaseArray(achievementsRef);
-      	$scope.listOfachievements = achievementsSync;
-      	$scope.listOfachievements.$loaded().then(function(){
-      	});
-    	}
+	var achievementsSync = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/listOfAchievements'));
+		$scope.listOfachievements = achievementsSync;
+		$scope.listOfachievements.$loaded().then(function(){
+		});
+	}
 	}
 }
 
