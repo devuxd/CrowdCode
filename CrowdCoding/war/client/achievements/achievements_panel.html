@@ -1,9 +1,10 @@
 <div class="modal" tabindex="-1" role="dialog" ng-controller="userAchievements">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header achievements" style="height:60px">
 				<button type="button" class="close" ng-click="$hide()">&times;</button>
-				<h4 class="title" style="text-align: center">Statistics</h4>				
+				<div><img class="avatar" ng-src="{{ avatar(workerId).$value }}" /></div>
+				<div class="workerName">Your Profile</div>				
 			</div>
 			<div id="achievementsPanel" class="modal-body achievements">
 			<div>

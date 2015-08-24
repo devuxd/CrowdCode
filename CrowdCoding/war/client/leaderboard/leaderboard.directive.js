@@ -1,8 +1,8 @@
 angular
     .module('crowdCode')
-    .directive('leaderboard', ['avatarFactory','$firebaseArray','firebaseUrl','workerId', leaderboard]);
+    .directive('leaderboard', ['avatarFactory','$firebaseArray','firebaseUrl','workerId','$rootScope',leaderboard]);
 
-function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId) {
+function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId,$rootScope) {
     return {
         restrict: 'E',
         templateUrl: '/client/leaderboard/leaderboard.template.html',
@@ -10,6 +10,17 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId) {
             $scope.avatar  = avatarFactory.get;
             $scope.leaders = $firebaseArray(new Firebase(firebaseUrl + '/leaderboard/leaders'));
             $scope.leaders.$loaded().then(function() {});
+            
+            $scope.clicked = function(workerToShow){
+            	if(workerToShow.$id != workerId){
+            		$rootScope.$broadcast('showWorkerProfile',workerToShow.$id);
+            	}
+            	else{
+            		$rootScope.$broadcast('showUserStatistics');
+            	}
+            }
         }
+    
+   
     };
 }

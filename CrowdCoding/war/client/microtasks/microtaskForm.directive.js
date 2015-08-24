@@ -63,7 +63,6 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			$scope.$on('fetchSpecificMicrotask' , fetchSpecificMicrotask);
 			$scope.$on('microtaskLoaded', onMicrotaskLoaded);
 			$scope.$on('openDashboard' , openDashboard);
-			
 
 			$scope.workerOption = "";
 

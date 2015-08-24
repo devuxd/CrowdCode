@@ -135,11 +135,11 @@ public class Worker
 			}
 		}
 		if(level < 2){ 
-			//if(listOfAchievements.get(0).isUnlocked && listOfAchievements.get(1).isUnlocked){
+			if(listOfAchievements.get(0).isUnlocked && listOfAchievements.get(1).isUnlocked){
 				FirebaseService.writeLevelUpNotification(new NotificationInFirebase("dashboard"), 
 				this.getUserid(), projectId);
 				level = 2;
-				//}
+			}
 		}
 		ofy().save().entity(this).now();
 		this.storeToFirebase(projectId);
@@ -157,7 +157,7 @@ public class Worker
 		microtaskHistory.put(label, value);
 		ofy().save().entity(this).now();
 		this.storeToFirebase(projectId);
-		//checkNewAchievement(label, projectId);
+		checkNewAchievement(label, projectId);
 	}
 
 	public Key<Worker> getKey()

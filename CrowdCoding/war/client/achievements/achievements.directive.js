@@ -1,12 +1,13 @@
 angular
     .module('crowdCode')
-    .controller('userAchievements', ['$scope','$firebase','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope,$firebase,iconFactory,$firebaseArray,firebaseUrl,workerId){
+    .controller('userAchievements', ['$scope','$firebase','avatarFactory','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope,$firebase,avatarFactory,iconFactory,$firebaseArray,firebaseUrl,workerId){
     	
     	
     $scope.userStats = [];
     $scope.listOfachievements = [];
     $scope.icon = iconFactory.get;    	 
-    	 
+    $scope.avatar  = avatarFactory.get;
+    
     	var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
      	var statsSync = $firebaseArray(statsRef);
      	$scope.userStats = statsSync;
