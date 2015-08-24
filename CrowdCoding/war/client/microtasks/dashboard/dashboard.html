@@ -26,7 +26,26 @@
 		<div class="list">
 			<div class="pin" ng-repeat="(i,microtask) in microtasks | canChoose: microtaskQueue:reviewQueue:availableMicrotasks| byType:filterEnabled |  orderBy: orderPredicate : orderReverse" 
 			style="height:{{microtask.height}}px" ng-animate="'animate'">
-				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
+				<div class="title {{ microtask.type | lowercase }} alpha">
+
+					<span ng-switch="microtask.type">
+						<span ng-switch-when="ImplementBehavior" ng-switch="microtask.promptType">
+							<span ng-switch-when="WRITE">Edit function</span>
+							<span ng-switch-when="CORRECT">Correct function</span>
+						</span>
+
+						<span ng-switch-when="DescribeFunctionBehavior" ng-switch="microtask.promptType">
+							<span ng-switch-when="WRITE">Write a test</span>
+							<span ng-switch-when="CORRECT">Correct test(s)</span>
+							<span ng-switch-when="FUNCTION_CHANGED'">Fix test(s)</span>
+						</span>
+
+						<span ng-switch-when="Review">
+							Review
+						</span>
+					</span>
+					
+				</div>
 				<div class="content" >
 					<div>function: {{microtask.owningArtifact}} </div>
 					<div>reward: {{microtask.points}} points</div>	
@@ -44,7 +63,24 @@
 		</div>
 		<div class="list">
 			<div class="pin" ng-repeat="(i,microtask) in microtasks | assigned:availableMicrotasks | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
-				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
+				<div class="title {{ microtask.type | lowercase }} alpha">
+					<span ng-switch="microtask.type">
+						<span ng-switch-when="ImplementBehavior" ng-switch="microtask.promptType">
+							<span ng-switch-when="WRITE">Edit function</span>
+							<span ng-switch-when="CORRECT">Correct function</span>
+						</span>
+
+						<span ng-switch-when="DescribeFunctionBehavior" ng-switch="microtask.promptType">
+							<span ng-switch-when="WRITE">Write a test</span>
+							<span ng-switch-when="CORRECT">Correct test(s)</span>
+							<span ng-switch-when="FUNCTION_CHANGED'">Fix test(s)</span>
+						</span>
+
+						<span ng-switch-when="Review">
+							Review
+						</span>
+					</span>
+				</div>
 				<div class="content">
 					<div>function: {{microtask.owningArtifact}} </div>
 					<div>reward: {{microtask.points}} points</div>	
@@ -60,7 +96,24 @@
 		</div>
 		<div class="list">
 			<div class="pin" ng-repeat="(i,microtask) in microtasks | waitingReview:availableMicrotasks | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
-				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
+				<div class="title {{ microtask.type | lowercase }} alpha">
+					<span ng-switch="microtask.type">
+						<span ng-switch-when="ImplementBehavior" ng-switch="microtask.promptType">
+							<span ng-switch-when="WRITE">Edit function</span>
+							<span ng-switch-when="CORRECT">Correct function</span>
+						</span>
+
+						<span ng-switch-when="DescribeFunctionBehavior" ng-switch="microtask.promptType">
+							<span ng-switch-when="WRITE">Write a test</span>
+							<span ng-switch-when="CORRECT">Correct test(s)</span>
+							<span ng-switch-when="FUNCTION_CHANGED'">Fix test(s)</span>
+						</span>
+
+						<span ng-switch-when="Review">
+							Review
+						</span>
+					</span>
+				</div>
 				<div class="content">
 					<div>function: {{microtask.owningArtifact}} </div>
 					<div>reward: {{microtask.points}} points</div>	
@@ -76,7 +129,24 @@
 		</div>
 		<div class="list">
 			<div class="pin" ng-repeat="(i,microtask) in microtasks | completed:availableMicrotasks | byType:filterEnabled | orderBy: orderPredicate : orderReverse" style="height:{{microtask.height}}px" ng-animate="'animate'">
-				<div class="title {{ microtask.type | lowercase }} alpha">{{microtask.type}}</div>
+				<div class="title {{ microtask.type | lowercase }} alpha">
+					<span ng-switch="microtask.type">
+						<span ng-switch-when="ImplementBehavior" ng-switch="microtask.promptType">
+							<span ng-switch-when="WRITE">Edit function</span>
+							<span ng-switch-when="CORRECT">Correct function</span>
+						</span>
+
+						<span ng-switch-when="DescribeFunctionBehavior" ng-switch="microtask.promptType">
+							<span ng-switch-when="WRITE">Write a test</span>
+							<span ng-switch-when="CORRECT">Correct test(s)</span>
+							<span ng-switch-when="FUNCTION_CHANGED'">Fix test(s)</span>
+						</span>
+
+						<span ng-switch-when="Review">
+							Review
+						</span>
+					</span>
+				</div>
 				<div class="content">
 					<div>function: {{microtask.owningArtifact}} </div>
 					<div>reward: {{microtask.points}} points</div>	
