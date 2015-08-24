@@ -41,6 +41,7 @@ angular
             $rootScope.$on('reset-reminder', resetReminder );
 
             function microtaskLoaded($event, microtask,firstFetch){
+
                 if( firstFetch == '1')
                     userService.setFirstFetchTime();
 
@@ -56,13 +57,20 @@ angular
 
                 $scope.skipMicrotaskIn = fetchTime + microtaskTimeout - startTime ;
                 microtaskInterval      = $interval(doReminder, timeInterval); 
+
+                
+                console.log('REMINDER: microtask laoded ',{ fetchTime: fetchTime, startTime: startTime, diff: startTime-fetchTime},microtaskInterval);
+
             }
 
             function resetReminder(){
-               $scope.status = 'success' ;
-               $interval.cancel(microtaskInterval);
-               $scope.skipMicrotaskIn=undefined;
-               popupWarning.$promise.then(popupWarning.hide);
+                console.log('REMINDER: timer reset');
+
+                $scope.status = 'success' ;
+                $interval.cancel(microtaskInterval);
+                console.log('iterval',microtaskInterval);
+                $scope.skipMicrotaskIn=undefined;
+                popupWarning.$promise.then(popupWarning.hide);
             }
 
             function doReminder(){

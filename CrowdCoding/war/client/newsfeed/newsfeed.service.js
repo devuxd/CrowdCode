@@ -28,6 +28,7 @@ angular
 		function get (){
 			return newsfeed;
 		}
+		
 		function challengeReview(reviewKey, challengeText)
 		{
 			console.log(reviewKey);

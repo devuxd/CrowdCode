@@ -28,7 +28,7 @@ angular
     .constant('projectId'  ,projectId)
 	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
 	.constant('logoutUrl'  ,logoutURL)
-	.run(function($rootScope, $interval, $modal, $firebaseArray,  firebaseUrl, logoutUrl, userService,  functionsService, AdtService, avatarFactory, questionsService, notificationsService, newsfeedService ){
+	.run(function($rootScope, $interval, $modal, $firebaseArray,  firebaseUrl, logoutUrl, userService, functionsService, AdtService, avatarFactory, questionsService, notificationsService, newsfeedService ){
 
 		// current session variables
 		$rootScope.projectId    = projectId;
@@ -123,12 +123,12 @@ angular
 					// 'microtaskType': $scope.microtask.type,
 					// 'microtaskID': $scope.microtask.id,
 					'workerHandle': $rootScope.workerHandle,
-					'workerID': $rootScope.workerId,
-					'feedback': message.toString()
+					'workerID'    : $rootScope.workerId,
+					'feedback'    : message.toString()
 				};
 
 
-				feedbacks = $firebaseArray(new Firebase(firebaseUrl + '/feedback'));
+				var feedbacks = $firebaseArray(new Firebase(firebaseUrl + '/feedback'));
 				feedbacks.$loaded().then(function() {
 					feedbacks.$add(feedback);
 				});

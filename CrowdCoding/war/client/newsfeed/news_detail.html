@@ -1,43 +1,33 @@
 <div class="top padding">
-    <a href="#" class="pull-left" ng-click="updateView(); setUiView('list');">
+    <a href="#" class="pull-left" ng-click="$parent.setUiView('list');">
       <span class="glyphicon glyphicon-arrow-left"></span>
       back
-    </a>
-    <a href="#" class="pull-right" ng-click="toggleClosed(sel)" ng-if="sel.answersCount != null && sel.answersCount > 0">
-        {{ sel.closed ? 'Reopen for discussion' : 'Mark as closed' }}
     </a>
     <span class="clearfix"></span>
 </div>
 <div class="middle padding">
-    <div class="task-{{ selectedNews.microtaskType | lowercase }}">
-        <h3 >
-            <span>
-                Your work on 
-                <span ng-if="! selectedNews.isReview">{{selectedNews.microtask.title | lowercase}} </span>
-                <span ng-if="selectedNews.isReview"> review</span>
-            </span>
-        </h3>
+    <div class="task-{{ data.type | lowercase }}">
+
+
         <!-- MICROTASK DATA -->
-        <div ng-if="selectedNews.microtask.type" 
-             ng-include="'/client/newsfeed/news_detail_' + selectedNews.microtask.type + '.html'"></div>
-        <!-- REVIEW SCORE -->
-        <div ng-if="selectedNews.qualityScore">
-            <div style="line-height:25px">
-                <span class="pull-left" >
-                    <b ng-if="! selectedNews.isReview">Score received:</b> 
-                    <b ng-if="selectedNews.isReview">Given score:</b>
-                </span>
-                <span class="pull-left" style="padding-left:10px">
-                    <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  
-                          class="rating-star {{ selectedNews.qualityScore >= currentValue ? 'full' : '' }}">
-                    </span>
-                    <span class="clearfix"></span><br />
-                </span>
-                <span class="clearfix"></span>
-            </div>
-            <span ng-if="selectedNews.reviewText"> <b>Review: </b>{{selectedNews.reviewText}}</span>
+        <div ng-include="'/client/newsfeed/news_detail_' + data.templateUrl + '.html'">
         </div>
-        <a href="#" class="pull-right" ng-init="show=false" ng-show="!show && selectedNews.canBeChallenged" ng-click="show=true">challenge this review</a>
+
+        <!-- REVIEW SCORE -->
+        <label ng-if="!data.isReview">Received review</label>
+        <label ng-if="data.isReview">Given review</label>
+        <p>
+            <div>
+                <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  
+                      class="rating-star {{ data.review.score >= currentValue ? 'full' : '' }}">
+                </span>
+                <span class="clearfix"></span><br />
+            </div>
+            <div>{{data.review.text}}</div>
+        </p>
+
+<!--
+        <a href="#" class="pull-right" ng-init="show=false" ng-show="!show && data.canBeChallenged" ng-click="show=true">challenge this review</a>
         <span class="clearfix"></span>
         <form name="challengeForm" novalidate ng-show="show" ng-submit="challengeForm.$valid && challengeReview()">
             <div class="form-group">
@@ -49,6 +39,6 @@
             </span>
                 
             <div class="clearfix"></div>
-        </form>
+        </form>-->
     </div>
 </div>

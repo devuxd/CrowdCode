@@ -25,6 +25,7 @@ angular
 				setUiView('detail');
 			}
 			function setUiView(view){
+				
 				var prev = $scope.view;
 				if( (prev == 'list' && view == 'detail') || (prev == 'detail' && view == 'list'))
 					$scope.animation = 'from-right';

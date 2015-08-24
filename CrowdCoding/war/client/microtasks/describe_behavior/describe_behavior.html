@@ -20,22 +20,24 @@
     <div class="sections"  ui-layout="{ flow: 'row', dividerSize: 2 }">
     	
 
-    	<div class="section bg-color-alpha padding" ui-layout-container size="5%" >
-			
-			<div ng-switch="microtask.promptType">
-				<span ng-switch-when="WRITE">
-					Can you describe a new test in which this function might be used? For example, are there any unexpected corner cases that might not work? You may also edit or delete existing tests, or mark the test suite as complete if all cases are tested.
-				</span>
-				<span ng-switch-when="CORRECT">
-					An issue has been reported with one or more test cases. Can you fix the test(s) to address the issue?
-				</span>
-				<span ng-switch-when="FUNCTION_CHANGED'">
-					The signature of the function being tested has changed. As a result, the tests may no longer be correct. Can you update the tests, if necessary?
-				</span>
-			</div>
+    	<div class="section" ui-layout-container size="5%" >
+			<div class="section-content bg-color-alpha padding">
+				<div ng-switch="microtask.promptType">
+					<span ng-switch-when="WRITE">
+						Can you describe a new test in which this function might be used? For example, are there any unexpected corner cases that might not work? You may also edit or delete existing tests, or mark the test suite as complete if all cases are tested.
+					</span>
+					<span ng-switch-when="CORRECT">
+						An issue has been reported with one or more test cases. Can you fix the test(s) to address the issue?
+					</span>
+					<span ng-switch-when="FUNCTION_CHANGED'">
+						The signature of the function being tested has changed. As a result, the tests may no longer be correct. Can you update the tests, if necessary?
+					</span>
+				</div>
 
-			<div ng-if="microtask.reissuedSubmission !== undefined">
-				This task has been reissued because of "<strong>{{microtask.reissueMotivation}}</strong>"
+				<div ng-if="microtask.reissuedSubmission !== undefined">
+					This task has been reissued because of "<strong>{{microtask.reissueMotivation}}</strong>"
+				</div>
+
 			</div>
 		</div>
 

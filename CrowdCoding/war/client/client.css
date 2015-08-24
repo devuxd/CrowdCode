@@ -519,6 +519,7 @@ h1, h2, h3, h4 {
 	bottom:0px;
 	padding:5px;
 	background-color:#fbfbfb;
+	overflow-y:auto;
 }
 
 .sidebar-panel {
@@ -596,6 +597,7 @@ h1, h2, h3, h4 {
 	background-color: rgba(205, 205, 205, 0.35);
 	font-family: 'Lato'; 
 }
+
 .news-element:hover { background-color:#E0E0E0 !important; }
 .news .type,
 .news .result,
@@ -616,8 +618,18 @@ h1, h2, h3, h4 {
 .news-element .reissued { color: #f0ad4e;  }
 .news-element .rejected { color: #555; }
 
+.news-detail label {
 
-.news-detail h3 { font-size:1.4em; margin: 5px 0px;}
+    font-size: 1em;
+    color: #888888;
+    margin-bottom:0px;
+}
+.news-detail p {
+	margin-bottom:10px;
+}
+
+
+.news .tests-list { padding:0px; }
 
 .questions {
 	position:relative;
@@ -1010,13 +1022,18 @@ tutorial  { display:none; }
 
 .section-content {
 	position: absolute;
-	top: 25px;
+	top: 0px;
 	left: 0px;
 	right: 0px;
 	bottom:0px;
 	overflow: auto;
 	background-color:white;
 }
+
+.section-bar + .section-content {
+	top:25px;
+}
+
 .section-content.empty {
 	background-color:rgb(242, 242, 242);
 	font-family: 'Lato';

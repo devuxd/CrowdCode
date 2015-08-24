@@ -1,29 +1,13 @@
-<label>Title</label>
-<p ng-switch="data.promptType">
-    <span ng-switch-when="WRITE">write a test</span>
-    <span ng-switch-when="CORRECT">correct test(s)</span>
-    <span ng-switch-when="FUNCTION_CHANGED'">fix test(s)</span>
-</p>
-
-
 <label>Description</label>
-<p ng-switch="data.promptType">
-    <span ng-switch-when="WRITE">
-        Write test(s) for the function <strong>{{data.functionName}}</strong>.
-    </span>
-    <span ng-switch-when="CORRECT">
-        Correct a test for the function <strong>{{data.functionName}}</strong>
-    </span>
-    <span ng-switch-when="FUNCTION_CHANGED'">
-        Fix the test for the function <strong>{{data.functionName}}</strong> after a change of signature.
-    </span>
-</span>
+<p>
+    The test suite for <strong ng-bind="data.reviewed.functionName"></strong> has been updated by adding, editing, or deleting its tests. 
 </p>
+
 
 <label>Submitted tests</label>
 <p>
-    <div class="tests-list" bs-collapse ng-model="data.openedTests" data-allow-multiple="true">
-        <div ng-repeat="t in data.tests">
+    <div class="tests-list" bs-collapse ng-model="data.reviewed.openedTests" data-allow-multiple="true">
+        <div ng-repeat="t in data.reviewed.tests">
             <div class="test-item clickable" bs-collapse-toggle>
 
                 
@@ -45,7 +29,7 @@
             </div>
             <div bs-collapse-target style="padding:5px;">
                 <div ng-if="t.isSimple">
-                    <div class="form-group"  ng-repeat="(pIdx,p) in data.functionParameters track by p.name">
+                    <div class="form-group"  ng-repeat="(pIdx,p) in data.reviewed.functionParameters track by p.name">
                         <label for="inputs">
                             Input: {{p.name + ' {' + p.type + '}' }}
                         </label>
@@ -79,4 +63,3 @@
     </div>
     <strong ng-if="data.isComplete">the test suite is marked as complete</strong>
 </p>
-   

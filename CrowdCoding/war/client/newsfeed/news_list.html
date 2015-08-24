@@ -2,18 +2,24 @@
 <ul class="list-group" ng-if="news.length > 0">
 	<li class="list-group-item news-element {{ n.microtaskType | lowercase }}"
 		ng-repeat="n in news | orderBy:'-timeInMillis'"
-		 
+		ng-click="setSelected(n);"
 		>
-		<div class="type">{{::n.microtaskType}}</div>
+		<div class="type">
+			<span ng-switch on="n.microtaskType">
+				<span ng-switch-when="DescribeFunctionBehavior">Write test</span>
+				<span ng-switch-when="ImplementBehavior">Edit function</span>
+				<span ng-switch-when="Review">Review</span>
+			</span>
+		</div>
 		
 		<div class="stars" ng-if="n.score != -1">
-			
 			<span>
 				<span ng-repeat="currentValue in [1,2,3,4,5] track by $index">
 					<span class="star {{ n.score > $index || n.score == -1  ? 'full' : '' }}"></span>
 				</span>
 			</span>
 		</div>
+
 		<div class="result" ng-if="::(n.score != -1)">
 			<!--<span ng-if="::(n.score < 3)" class="rejected" >REJECTED</span>-->
 			<span ng-if="n.score <= 3" class="reissued">REISSUED</span>

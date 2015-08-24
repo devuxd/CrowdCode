@@ -1,0 +1,19 @@
+<label>Title </label>
+<p ng-switch="data.promptType">
+    <span ng-switch-when="WRITE">write a test</span>
+    <span ng-switch-when="CORRECT">correct test(s)</span>
+    <span ng-switch-when="FUNCTION_CHANGED'">fix test(s)</span>
+</p>
+
+
+<label>Description</label>
+<p ng-switch="data.promptType">
+    You reported an issue with the function <strong ng-bind="data.functionName"></strong>
+</span>
+</p>
+
+<label>Issue description</label>
+<p>
+    {{ data.disputeText }}
+</p>
+   

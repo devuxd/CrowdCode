@@ -1,10 +1,13 @@
 <div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
 	
-	<div class="section bg-color-alpha padding" ui-layout-container size="10%">
-		<span>
-			The test suite for <strong ng-bind="function.name"></strong> has been updated by adding, editing, or deleting its tests. Can you review the changes to the test suite shown below?
-		</span>
-		<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>
+	<div class="section" ui-layout-container size="10%">
+		<div class="section-content bg-color-alpha padding">
+			<span>
+				The test suite for <strong ng-bind="function.name"></strong> has been updated by adding, editing, or deleting its tests. Considering just <strong>the changes</strong> to the test suite rather than the test
+				suite as a whole, can you review them?
+			</span>
+			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>
+		</div>
 	</div>
 
 
@@ -53,7 +56,7 @@
 				</div>
 			</div>
 			<div>
-				<strong ng-if="data.isComplete">the function has been marked by completely described</strong>
+				<strong ng-if="data.isComplete">The test suite has been marked as complete.</strong>
 			</div>
 		</div>
 

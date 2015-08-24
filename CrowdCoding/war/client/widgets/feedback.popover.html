@@ -1,6 +1,5 @@
 <div class="popover">
   <div class="arrow"></div>
-  <h3 class="popover-title" >Send Us Feedback!</h3>
   <div class="popover-content">
     <div class="form-group">
         <div class="input-group">
@@ -15,10 +14,19 @@
         </div>
       </div>
       <div class="form-actions">
-        <button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
-        <button type="button" class="btn btn-primary" 
-            ng-click="$emit('sendFeedback',[feedbackText]) ; $hide()" 
-            ng-disabled="feedbackForm.$invalid">Send</button>
+        <button type="button" 
+          class="btn btn-xs btn-primary pull-right" 
+          ng-click="$emit('sendFeedback',[feedbackText]) ; $hide()" 
+          ng-disabled="feedbackForm.$invalid">
+          Send
+        </button>
+
+        <button type="button" 
+          class="btn btn-xs btn-default pull-right" 
+          ng-click="$hide()">
+          Close
+        </button>
+        <span class="clearfix"></span>
       </div>
     </div>
 

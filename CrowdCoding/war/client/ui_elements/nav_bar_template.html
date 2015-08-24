@@ -12,7 +12,13 @@
 
 	    <ul class="nav navbar-nav navbar-right">
 	    	<li>
-	        	<a nav-user-menu href="#">
+	        	<a  href="#"
+	        		data-container:"body"
+	        		data-placement="bottom"
+				    data-trigger="focus"
+				    data-template="ui_elements/nav_user_menu_template.html"
+				    bs-popover
+		   			>
 					{{ workerHandle}}
 					<img ng-src="{{ avatar(workerId).$value }}" class="profile-picture" />
 					<span class="caret"></span>

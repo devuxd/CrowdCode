@@ -37,14 +37,18 @@ angular
         // flag the test if is disputed
         if( $scope.microtask.reissuedSubmission != undefined ){
             var disputed = $scope.microtask.reissuedSubmission.disputedTests;
-            for( var d = 0 ; d < disputed.length ; d++ ){
-                if( disputed[d].id == test.id ){
-                    test.dispute = {
-                        active: true,
-                        text  : disputed[d].disputeText
+            if( disputed != undefined ){
+                for( var d = 0 ; d < disputed.length ; d++ ){
+                    if( disputed[d].id == test.id ){
+                        test.dispute = {
+                            active: true,
+                            text  : disputed[d].disputeText
+                        }
                     }
                 }
+
             }
+            
 
         }
 
