@@ -72,7 +72,8 @@ public class Function extends Artifact
 
 	//Microtask Data
 	protected Queue<Ref<Microtask>> queuedDescribeFunctionBehavior = new LinkedList<Ref<Microtask>>();
-	private Ref<Microtask> describeFunctionBehaviorOut = null;
+	private boolean isDescribeFunctionBehaviorOut = false;
+	private PromptType describeFunctionBehaviorPrompType;
 
 	protected Queue<Ref<Microtask>> queuedImplementBehavior = new LinkedList<Ref<Microtask>>();
 	private boolean isImplementationInProgress = false;
@@ -168,39 +169,34 @@ public class Function extends Artifact
 		if( !isDeleted() ){
 			
 			//  when there are no Describe Function Behavior in progress
-			if( describeFunctionBehaviorOut == null ){
+			if( ! isDescribeFunctionBehaviorOut){
 				
 				//first checks if there are enqueued describe function behavior microtasks
 				if(queuedDescribeFunctionBehavior.isEmpty()){
 					
 					// if the function is not complete, spawn a new describe function behavior microtask
-					if(! this.isCompleted){
-						Microtask mtask = new DescribeFunctionBehavior(getRef(), getId(), name, projectId);
-						ProjectCommand.queueMicrotask(mtask.getKey(), null);
-						describeFunctionBehaviorOut =  Ref.create(mtask.getKey());
+					if( ! this.isCompleted ){
+						makeDescribeBehaviorOut( new DescribeFunctionBehavior(this.getRef(), getId(), name, projectId) );
 					}
-					
+		
 					// check if needs implementation
 					checkImplementationNeeded();
-
 				}
 				else {
 					
 					// if the implementation is not in progress, spawn
 					// the first describe task in queue 
 					if(! isImplementationInProgress){
-						Ref<Microtask> mtaskRef = queuedDescribeFunctionBehavior.remove();
-						ProjectCommand.queueMicrotask(mtaskRef.getKey(), null);
-						describeFunctionBehaviorOut = mtaskRef;
+						Microtask mtask = ofy().load().ref(queuedDescribeFunctionBehavior.remove()).now();
+						makeDescribeBehaviorOut( mtask );
+						
 					}
 				}
 
 			} 
 			else {
-				
-				DescribeFunctionBehavior task = (DescribeFunctionBehavior) ofy().load().ref(describeFunctionBehaviorOut).now();
-				
-				if( task.getPromptType() == PromptType.WRITE && queuedDescribeFunctionBehavior.isEmpty() ){
+								
+				if( describeFunctionBehaviorPrompType == PromptType.WRITE && queuedDescribeFunctionBehavior.isEmpty() ){
 					checkImplementationNeeded();
 				}
 				
@@ -268,34 +264,40 @@ public class Function extends Artifact
 	// Queues the specified microtask and looks for work
 	public void queueDescribeFunctionBehavior(Microtask microtask){
 		queuedDescribeFunctionBehavior.add(Ref.create(microtask.getKey()));
-		lookForWork();
 	}
 
 	// Queues the specified microtask and looks for work
 	public void queueImplementFunctionBehavior(Microtask microtask){
 		queuedImplementBehavior.add(Ref.create(microtask.getKey()));
-		lookForWork();
+	}
+	
+	private void makeDescribeBehaviorOut( Microtask mtask ){
+		
+		ProjectCommand.queueMicrotask(mtask.getKey(), null);
+		isDescribeFunctionBehaviorOut = true;
+		describeFunctionBehaviorPrompType = ((DescribeFunctionBehavior) mtask).getPromptType();
 	}
 	
 	private void newImplementBehavior(long failedTestId){
 		ProjectCommand.queueMicrotask(new ImplementBehavior(this, failedTestId, projectId).getKey(), null);
 	}
+	
+	
 
 	private void checkImplementationNeeded(){
-		// if at least 1 test is present and there is no other implementation in progress
-		if( testsId.size() > 0 && !isImplementationInProgress ){
-			isImplementationInProgress =  true;
-
-			// if there are queued implementations, spawn the first
-			// otherwise run the tests
-			if( !queuedImplementBehavior.isEmpty() )
-				ProjectCommand.queueMicrotask(queuedImplementBehavior.remove().getKey(), null);
-			else
-				FunctionCommand.runTests(this.getId());
-			
-		}
 		
-		ofy().save().entities(this).now();
+		if( !isImplementationInProgress  ){
+			if( testsId.size() > 0 ){ // if there are enqueud microtask
+				ProjectCommand.queueMicrotask(queuedImplementBehavior.remove().getKey(), null);
+				isImplementationInProgress =  true;
+
+			} else if( ! queuedImplementBehavior.isEmpty() ) {	// if at least 1 test is present and there is no other implementation in progress
+				FunctionCommand.runTests(this.getId());
+				isImplementationInProgress =  true;
+
+			}
+			ofy().save().entities(this).now();
+		}
 	}
 
 
@@ -305,7 +307,7 @@ public class Function extends Artifact
 
 	public void describeFunctionBehaviorCompleted(DescribeFunctionBehaviorDTO dto){
 		
-		describeFunctionBehaviorOut = null;
+		isDescribeFunctionBehaviorOut = false;
 
 		// if the function is in dispute, spawn a implement behavior 
 		if( dto.disputeFunctionText != null && dto.disputeFunctionText !="" ){
@@ -332,7 +334,7 @@ public class Function extends Artifact
 	{
 		isImplementationInProgress = false;
 
-		//create a descrbie function behavior for each disputed test
+		//create a describe function behavior for all the disputed test
 		if( dto.disputedTests.size() > 0 ){
 			queueDescribeFunctionBehavior(  
 				new DescribeFunctionBehavior(
