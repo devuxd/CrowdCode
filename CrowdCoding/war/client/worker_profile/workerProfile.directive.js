@@ -1,9 +1,9 @@
 angular
 	.module('crowdCode')
-	.directive('workerProfile', ['$firebase','avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile])
+	.directive('workerProfile', ['$firebase','avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile]);
 	
 function workerProfile($firebase, avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
-return {
+  return {
     restrict: 'EA',
     scope:{workerProfile:"="},
     templateUrl: '/client/worker_profile/profile_panel.html',
@@ -20,37 +20,22 @@ return {
     	  $scope.hasAchievement = true;
       }
       
-	var nameObj = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/workerHandle'));
-	  nameObj.$loaded().then(function(){
-		  $scope.workerName = nameObj.$value;
-	  });
+    	var nameObj = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/workerHandle'));
+  	  nameObj.$loaded().then(function(){
+  		  $scope.workerName = nameObj.$value;
+  	  });
 
-	var statsSync = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/microtaskHistory'));
-	   	$scope.workerStats = statsSync;
-	   	$scope.workerStats.$loaded().then(function(){
-	   });
-       	
-	var achievementsSync = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/listOfAchievements'));
-		$scope.listOfachievements = achievementsSync;
-		$scope.listOfachievements.$loaded().then(function(){
-		});
-	}
+	   	$scope.workerStats = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/microtaskHistory'));
+  	  $scope.workerStats.$loaded().then(function(){
+	    });
+           	
+    	$scope.listOfachievements = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/listOfAchievements'));
+    	$scope.listOfachievements.$loaded().then(function(){
+        console.log('list of achievements loaded');
+    	});
+    }
 	}
 }
-
-angular.module('crowdCode').filter('statsToShow', function () {
-    return function (userStats) {
-        var items = {
-            out: []
-        };
-        angular.forEach(userStats, function (value, key) {
-            if (value.$id != 'question_views' && value.$id != 'tutorial_completed' && value.$id != 'accepted_microtask') {
-                this.out.push(value);
-            }
-        }, items);
-        return items.out;
-    };
-});
 
 
 

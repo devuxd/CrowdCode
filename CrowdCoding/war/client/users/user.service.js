@@ -62,11 +62,13 @@ angular
 
 	user.setFirstFetchTime = function (){
 		user.data.fetchTime = new Date().getTime();
+		console.log('saving first fetch time')
 		user.data.$save();
 	};
 
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;
+		console.log('saving avatar url');
 		user.data.$save().then(function(){
 			console.log('set avatar url: '+url);
 		});

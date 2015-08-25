@@ -126,7 +126,7 @@ angular
                 }
                 if(tutorialCounter.$value == 3)
                 	sendTutorialsCompleted();
-                
+                console.log('saving in tutorials')
                 tutorialCounter.$save();
                 completedTutorials.$save();
             }
