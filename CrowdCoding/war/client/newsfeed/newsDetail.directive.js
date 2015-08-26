@@ -108,9 +108,8 @@ angular
 
             function challengeReview(){
                 var challengeDTO= { challengeText : $scope.challengeText };
-                newsfeedService.challengeReview($scope.selectedNews.reviewKey, challengeDTO);
+                newsfeedService.challengeReview($scope.data.reviewKey, challengeDTO);
                 $scope.challengeText='';
-                $scope.setUiView('list');
 
             }
         }

@@ -11,7 +11,10 @@ angular
     $scope.review.reviewText = "";
     $scope.review.functionCode = "";
     $scope.review.isChallengeWon = "false";
-
+    $scope.reviewTemplate ="";
+    $scope.score = 0;
+    
+    
     // private variables 
     var oldCode;
     var newCode;
@@ -24,10 +27,20 @@ angular
     //load the microtask to review
     $scope.review.microtask = microtasksService.get($scope.microtask.microtaskKeyUnderChallenge);
     $scope.review.microtask.$loaded().then(function() {
-
-
+    	
+    	
         $scope.reviewed = $scope.review.microtask;
-
+        switch($scope.reviewed.type){
+        case 'DescribeFunctionBehavior':
+        	$scope.reviewTemplate = 'describe'
+        	console.log('here');
+        	break;
+        default:
+        	console.log('other');
+        }
+        console.log('blablabla');
+    	console.log($scope.reviewed);
+    	$scope.score = $scope.reviewed.review.qualityScore;
         if ($scope.reviewed.type == 'WriteTestCases') {
             //load the version of the function with witch the test cases where made
             functionSync = functionsService.getVersion($scope.review.microtask.functionID,$scope.review.microtask.submission.functionVersion);
@@ -137,7 +150,56 @@ angular
             $scope.funct = functionsService.get($scope.review.microtask.functionID);
             $scope.calleeFunction = functionsService.get($scope.review.microtask.submission.functionId);
 
-        }else if ($scope.review.microtask.type == 'DebugTestFailure') {
+        }else if($scope.reviewed.type == 'DescribeFunctionBehavior') {
+
+            $scope.data = {};
+            $scope.data.selected = -1;
+
+            if( $scope.review.microtask.submission.disputeFunctionText.length > 0 ){
+                $scope.review.template    = 'describe_dispute';
+                $scope.review.fromDispute = true;
+                $scope.data.disputeText = $scope.review.microtask.submission.disputeFunctionText;
+            }
+            else {
+                $scope.review.template = 'describe';
+                $scope.data.tests = angular.copy($scope.review.microtask.submission.tests);
+                $scope.data.isComplete = $scope.review.microtask.submission.isDescribeComplete;
+                // get the stats of the edits
+                $scope.data.stats = { added: 0, edited: 0, deleted: 0 };
+                $scope.data.tests.map(function(test){
+                    // retrieve the old version
+                    if( test.edited ){
+
+                    }
+
+                    // increment the stats
+                    if( test.added )      $scope.data.stats.added++;
+                    else if( test.edited ) $scope.data.stats.edited++;
+                    else if( test.deleted ) $scope.data.stats.deleted++;
+                });
+
+                // sort them in added < edited < deleted
+                $scope.data.tests.sort(function(a,b){
+                    if( a.added && !b.added ) return -1;
+                    if( !a.added && b.added ) return 1;
+
+                    if( a.edited && !b.edited ) return -1;
+                    if( !a.edited && b.edited ) return 1;
+
+                    if( a.deleted && !b.deleted ) return -1;
+                    if( !a.deleted && b.deleted ) return 1;
+
+                    return 0;
+                });
+            }
+
+            functionsService
+                .getVersion( $scope.review.microtask.functionId, $scope.review.microtask.submission.functionVersion )
+                .then(function( functObj ){
+                    $scope.data.fDescription = functObj.getSignature();
+                });
+
+        }else if($scope.review.microtask.type == 'DebugTestFailure') {
             $scope.funct = functionsService.get($scope.review.microtask.functionID);
 
             if( $scope.review.microtask.submission.hasPseudo){

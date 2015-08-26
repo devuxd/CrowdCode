@@ -26,8 +26,8 @@
             <div>{{data.review.text}}</div>
         </p>
 
-<!--
-        <a href="#" class="pull-right" ng-init="show=false" ng-show="!show && data.canBeChallenged" ng-click="show=true">challenge this review</a>
+
+        <a href="#" class="pull-right" ng-init="show=false" ng-show="!show && newObj.canBeChallenged" ng-click="show=true">challenge this review</a>
         <span class="clearfix"></span>
         <form name="challengeForm" novalidate ng-show="show" ng-submit="challengeForm.$valid && challengeReview()">
             <div class="form-group">
@@ -35,10 +35,10 @@
             </div>
             <span class="btn-group pull-right">
                 <button type="button" class="btn btn-xs btn-default" ng-click="show = false">Cancel</button>
-                <button type="submit" class="btn btn-xs btn-primary">Challenge</button>
+                <button type="submit" class="btn btn-xs btn-primary" ng-click="show = false">Challenge</button>
             </span>
                 
             <div class="clearfix"></div>
-        </form>-->
+        </form> 
     </div>
 </div>

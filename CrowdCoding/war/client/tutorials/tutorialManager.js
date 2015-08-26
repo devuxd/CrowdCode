@@ -31,21 +31,23 @@ angular
             // if the tutorial is forced or if 
             // is not completed, enqueue it
             function queueTutorial( event, tutorialId, force, onFinish, queueAfter ){
-                console.log('queuing tutorial '+tutorialId);
-                tutorialsOn.$loaded().then(function(){
-                    completedTutorials.$loaded().then(function(){
-                        if( force || ( tutorialsOn.$value && !isTutorialCompleted(tutorialId) )){
-                            // queue tutorial
-                            queue.push({
-                                id       : tutorialId,
-                                onFinish : queueAfter === undefined ? 
-                                           onFinish :
-                                           function(){ queueTutorial(null,queueAfter,true); }
-                            });
-                            checkQueue();
-                        }
-                    });
-                });
+            	if(tutorialId != 'ChallengeReview'){
+	                console.log('queuing tutorial '+tutorialId);
+	                tutorialsOn.$loaded().then(function(){
+	                    completedTutorials.$loaded().then(function(){
+	                        if( force || ( tutorialsOn.$value && !isTutorialCompleted(tutorialId) )){
+	                            // queue tutorial
+	                            queue.push({
+	                                id       : tutorialId,
+	                                onFinish : queueAfter === undefined ? 
+	                                           onFinish :
+	                                           function(){ queueTutorial(null,queueAfter,true); }
+	                            });
+	                            checkQueue();
+	                        }
+	                    });
+	                });
+              }
             }
 
 

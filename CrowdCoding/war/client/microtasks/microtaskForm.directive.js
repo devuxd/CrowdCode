@@ -92,7 +92,9 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-
+				if($scope.microtask.type == 'ChallengeReview'){
+					console.log($scope.templatePath);
+				}
 			}
 			
 
