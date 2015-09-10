@@ -18,7 +18,7 @@ public class DispatchFilter implements Filter
 		HttpServletRequest req = (HttpServletRequest) request;
 		String path = req.getRequestURI().substring(req.getContextPath().length());
 
-		if (path.startsWith("/clientDist/") || path.startsWith("/dist/") || path.startsWith("/img") ||path.startsWith("/include") || path.startsWith("/_ah")) {
+		if( path.startsWith("/developments/") || path.startsWith("/clientDist/") || path.startsWith("/dist/") || path.startsWith("/img") ||path.startsWith("/include") || path.startsWith("/_ah")) {
 		    System.out.println(path);
 		    chain.doFilter(request, response); // Goes to default servlet.
 		} else {

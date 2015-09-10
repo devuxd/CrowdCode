@@ -4,22 +4,18 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
 
-import com.crowdcoding.dto.AnswerDTO;
-import com.crowdcoding.dto.CommentDTO;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.DebugDTO;
-import com.crowdcoding.entities.Answer;
-import com.crowdcoding.entities.Artifact;
-import com.crowdcoding.entities.Comment;
-import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
-import com.crowdcoding.entities.Question;
 import com.crowdcoding.entities.Worker;
-import com.crowdcoding.dto.QuestionDTO;
-import com.crowdcoding.dto.firebase.NotificationInFirebase;
-import com.crowdcoding.entities.Questioning;
-import com.crowdcoding.entities.Test;
+import com.crowdcoding.dto.ajax.questions.AnswerDTO;
+import com.crowdcoding.dto.ajax.questions.CommentDTO;
+import com.crowdcoding.dto.ajax.questions.QuestionDTO;
+import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
+import com.crowdcoding.entities.artifacts.Artifact;
+import com.crowdcoding.entities.artifacts.Function;
+import com.crowdcoding.entities.artifacts.Test;
 import com.crowdcoding.entities.microtasks.Microtask;
+import com.crowdcoding.entities.questions.*;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.PropertyChange;
 import com.crowdcoding.history.QuestionViewed;
@@ -47,11 +43,11 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand createComment(String jsonDTOData, String workerId, String workerHandle){
 		return new CreateComment(jsonDTOData, workerId, workerHandle);
 	}
-	
+
 	public static QuestioningCommand incrementQuestionAnswers(long questionId){
 		return new IncrementQuestionAnswers(questionId);
 	}
-	
+
 	public static QuestioningCommand incrementQuestionComments(long questionId){
 		return new IncrementQuestionComments(questionId);
 	}
@@ -63,19 +59,19 @@ public abstract class QuestioningCommand extends Command
 	public static QuestioningCommand updateQuestion(long questionId, String jsonDTO, String workerId) {
 		return new UpdateQuestion(questionId,jsonDTO,workerId);
 	}
-	
+
 	public static QuestioningCommand vote(long questioningId, String workerId, boolean remove){
 		return new Vote(questioningId, workerId, remove);
 	}
-	
+
 	public static QuestioningCommand report(long questioningId, String workerId, boolean remove){
 		return new Report(questioningId, workerId, remove);
 	}
-	
+
 	public static QuestioningCommand linkArtifact(long questioningId, String artifactId, boolean remove ){
 		return new LinkArtifact(questioningId, artifactId, remove);
 	}
-	
+
 	public static QuestioningCommand subscribeWorker(long questioningId, String workerId, boolean remove){
 		return new SubscribeWorker(questioningId, workerId, remove);
 	}
@@ -88,7 +84,7 @@ public abstract class QuestioningCommand extends Command
 		return new SetClosed(questioningId,closed);
 	}
 
-	
+
 
 	private QuestioningCommand(long questioningId, String workerId) {
 		this.questioningId = questioningId;
@@ -150,7 +146,6 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 			new Question(dto.title, dto.text, dto.tags, dto.artifactId, workerId, workerHandle, projectId);
 		}
 	}
@@ -170,7 +165,7 @@ public abstract class QuestioningCommand extends Command
 			AnswerDTO dto = null;
 			try {
 				dto = (AnswerDTO)DTO.read(jsonDTOData, AnswerDTO.class);
-				Answer answer = new Answer(dto.text, dto.questionId, workerId, workerHandle, projectId);
+				new Answer(dto.text, dto.questionId, workerId, workerHandle, projectId);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -194,14 +189,14 @@ public abstract class QuestioningCommand extends Command
 			CommentDTO dto = null;
 			try {
 				dto = (CommentDTO)DTO.read(jsonDTOData, CommentDTO.class);
-				Comment comment = new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
+				new Comment(dto.text, dto.questionId, dto.answerId, workerId, workerHandle, projectId);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	protected static class UpdateQuestion extends QuestioningCommand {
 		private String jsonDTO;
 
@@ -225,23 +220,24 @@ public abstract class QuestioningCommand extends Command
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 
+
 	protected static class AddQuestionView extends QuestioningCommand {
 
-		private long questionId;
+		private long questionId;		
 		public AddQuestionView(long questionId, String workerId) {
 			super(0L,workerId);
 			this.questionId = questionId;
 		}
 
 		public void execute(Questioning questioning, String projectId) {
-			HistoryLog.Init(projectId).addEvent(new QuestionViewed(questionId,workerId,projectId));	
+			HistoryLog.Init(projectId).addEvent(new QuestionViewed(questionId,workerId,projectId));
 		}
 	}
-	
+
 	protected static class IncrementQuestionAnswers extends QuestioningCommand {
 
 		public IncrementQuestionAnswers(long questionId) {
@@ -249,13 +245,13 @@ public abstract class QuestioningCommand extends Command
 		}
 
 		public void execute(Questioning questioning, String projectId) {
-
+			
 			Question question = (Question) questioning;
 			question.incrementAnswers();
 			question.save();
 		}
 	}
-	
+
 	protected static class IncrementQuestionComments extends QuestioningCommand {
 
 		public IncrementQuestionComments(long questionId) {
@@ -269,7 +265,7 @@ public abstract class QuestioningCommand extends Command
 			question.save();
 		}
 	}
-	
+
 
 	protected static class Vote extends QuestioningCommand {
 
@@ -331,7 +327,7 @@ public abstract class QuestioningCommand extends Command
 
 		}
 	}
-	
+
 	protected static class SubscribeWorker extends QuestioningCommand {
 
 		private boolean remove;

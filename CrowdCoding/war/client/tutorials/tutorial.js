@@ -16,8 +16,11 @@ angular
             $scope.nextStep = nextStep;
             $scope.close    = close;
 
+            console.log('TUTORIAL ID ',$scope.title);
             var btnNextHtml  = '<a href="#" class="btn-next" ng-click="showNext()">next</a>';
-            var btnCloseHtml = '<a href="#" class="btn-close" ng-click="close()">close</a>';
+            var btnCloseHtml = $scope.isTutorialCompleted($scope.tutorialId) ? 
+                                '<a href="#" class="btn-close" ng-click="close()">close</a>' : 
+                                '';
 
             var $tutorialContainer;
             var $overlay;
@@ -26,6 +29,19 @@ angular
             var onShow = '';
             var onHide = '';
 
+            
+            $scope.destroy = function() {
+
+                // remove the tutorial from the document
+                $overlay.remove();
+                $content.remove();
+                $tutorialContainer.remove();
+                $overlay = null;
+                $content = null;
+                $tutorialContainer = null;
+                $scope.currentStep = 0;
+
+            };
         
             function open() {
 
@@ -60,7 +76,7 @@ angular
                 nextStep();
             }
 
-            var prevOnHide = undefined;
+            var prevOnHide;
 
             function close(){
                 $scope.destroy();
@@ -77,12 +93,12 @@ angular
                 if ($scope.currentStep > $scope.totSteps) {
 
                     $scope.$emit('tutorial-finished');
-                    $scope.currentStep = 0;
-                    $scope.destroy();
+                    close();
+
                     return;
                 }
 
-                btnNextHtml  = '<a href="#" class="btn-next" ng-click="nextStep()">'+( $scope.currentStep == $scope.totSteps ? 'finish' : 'next' )+'</a>';
+                btnNextHtml  = '<a href="#" class="btn-next" ng-click="nextStep()">'+( $scope.currentStep == $scope.totSteps ? 'close' : 'next' )+'</a>';
 
                 // retrieve the current step DOM-element
                 // and the commands to apply on show/hide of the step content
@@ -98,9 +114,9 @@ angular
 
                 if( highlight !== undefined ){
 
-                    var $highlightTag = $(document).find('#'+highlight)
+                    var $highlightTag = $(document).find('#'+highlight);
 
-                    if( $highlightTag.length == 0 ) {
+                    if( $highlightTag.length === 0 ) {
                         nextStep();
 
                     } else {
@@ -190,7 +206,11 @@ angular
                     } 
 
                     $content.fadeOut(300,function(){
-                        $content.html(contentHtml + '<br/>' +btnNextHtml+btnCloseHtml);
+                        $content.html(
+                            contentHtml + '<br/>' +btnNextHtml+
+                            ( $scope.currentStep == $scope.totSteps ? '' : btnCloseHtml)
+                        );
+
                         $compile($content.contents())($scope);
 
                         $content.attr('style',contentStyle);
@@ -220,18 +240,6 @@ angular
 
             open();
 
-            $scope.destroy = function() {
-
-                // remove the tutorial from the document
-                $overlay.remove();
-                $content.remove();
-                $tutorialContainer.remove();
-                $overlay = null;
-                $content = null;
-                $tutorialContainer = null;
-                $scope.currentStep = 0;
-
-            };
         }
     };
 });

@@ -3,25 +3,30 @@ package com.crowdcoding.entities;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.crowdcoding.commands.ADTCommand;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.WorkerCommand;
+import com.crowdcoding.dto.ClientRequestDTO;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.DebugDTO;
-import com.crowdcoding.dto.FunctionDTO;
-import com.crowdcoding.dto.FunctionDescriptionDTO;
-import com.crowdcoding.dto.FunctionDescriptionsDTO;
-import com.crowdcoding.dto.ReusedFunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ADTDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ADTStructureDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDescriptionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.ImplementBehaviorDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
 import com.crowdcoding.dto.firebase.QueueInFirebase;
-import com.crowdcoding.entities.microtasks.DebugTestFailure;
+import com.crowdcoding.entities.artifacts.Artifact;
+import com.crowdcoding.entities.microtasks.ChallengeReview;
+import com.crowdcoding.entities.microtasks.ImplementBehavior;
 import com.crowdcoding.entities.microtasks.Microtask;
-import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskAssigned;
@@ -31,13 +36,11 @@ import com.crowdcoding.history.MicrotaskSubmitted;
 import com.crowdcoding.history.MicrotaskUnassigned;
 import com.crowdcoding.history.ProjectCreated;
 import com.crowdcoding.util.FirebaseService;
-import com.crowdcoding.util.IDGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext.Impl;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Ref;
-import com.googlecode.objectify.VoidWork;
-import com.googlecode.objectify.Work;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Serialize;
@@ -53,14 +56,10 @@ public class Project
 	// when a servlet begins).
 	public static Project project;
 
-	Ref<Microtask> chiave = null;
-
-	private IDGenerator idgenerator;
-
 	@Id private String id;
 
 	private Boolean reviewsEnabled = true;			// Disabling this flag stops new review microtasks from being generated
-	private Boolean tutorialsEnabled = true;
+	private Boolean tutorialsEnabled = false;
 
 	// logged in workers
 	@Serialize private HashSet<String> loggedInWorkers = new HashSet<String>();
@@ -104,37 +103,56 @@ public class Project
 		// set the id
 		this.id = id;
 
-		// instantiate the id generator
-		idgenerator = new IDGenerator(false);
-
 		// save the project
 		ofy().save().entity(this).now();
 
 		// create log entry for the project created
 		HistoryLog.Init(this.getID()).addEvent(new ProjectCreated(this));
 
-		// Load ADTs from Firebase
-		FirebaseService.copyADTs(this.getID());
-
 		// Load functions from Firebase and
 		// for each function queue a function create command
-		String functions = FirebaseService.readClientRequestFunctions(this.getID());
-		FunctionDescriptionsDTO functionsDTO;
+		String functions = FirebaseService.readClientRequest(this.getID());
+		ClientRequestDTO dto;
 		try {
-			functionsDTO = (FunctionDescriptionsDTO) DTO.read(functions, FunctionDescriptionsDTO.class);
 
-			for (FunctionDescriptionDTO functionDTO : functionsDTO.functions)
+			dto = (ClientRequestDTO) DTO.read(functions, ClientRequestDTO.class);
+
+
+			ADTCommand.create(
+					"A Boolean represents one of two values: true or false.",
+					"Boolean",
+					new HashMap<String, String>(),
+					new HashMap<String, String>(),
+					true,
+					true
+			);
+
+			ADTCommand.create(
+					"Number is the only type of number. Numbers can be written with, or without, decimals.",
+					"Number",
+					new HashMap<String, String>(),
+					new HashMap<String, String>(),
+					true,
+					true
+			);
+
+			ADTCommand.create(
+					"A String simply stores a series of characters like \"John Doe\". A string can be any text inside double quotes.",
+					"String",
+					new HashMap<String, String>(),
+					new HashMap<String, String>(),
+					true,
+					true
+			);
+
+			for(ADTDTO ADT : dto.ADTs){
+				ADTCommand.create(ADT.description, ADT.name, ADT.getStructure(), ADT.getExamples(), true, ADT.isReadOnly);
+			}
+
+
+			for (FunctionDTO functionDTO : dto.functions)
 			{
-				System.out.println("Creating function command "+functionDTO.name);
-				FunctionCommand.create(
-						functionDTO.name,
-						functionDTO.returnType,
-						functionDTO.parameters,
-						functionDTO.header,
-						functionDTO.description,
-						functionDTO.code,
-						functionDTO.tests,
-						functionDTO.readOnly);
+				FunctionCommand.addClientRequestsArtifacts(functionDTO);
 			}
 			// save project settings into firebase
 
@@ -255,6 +273,26 @@ public class Project
 		ofy().save().entity(this).now();
 		FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), this.getID());
 	}
+	// Queues the microtask onto the project's microtask queue with 2 excluded workerID, the challenger and the challengee workers
+	public void queueChellengeReviewMicrotask( Key<Microtask> microtaskKey, String firstExcludedWorkerID, String secondExcludedWorkerID)
+	{
+		// if the microtask is not in the queue, add it
+		if( ! microtaskQueue.contains( Microtask.keyToString(microtaskKey) )  ){
+			microtaskQueue.addLast( Microtask.keyToString(microtaskKey) ) ;
+			HistoryLog
+				.Init(this.getID())
+				.addEvent( new MicrotaskQueued(  ofy().load().key(microtaskKey).now() ));
+		}
+
+		// add the workerId to the excluded workers for this microtask
+		addPermExcludedWorkerForMicrotask( microtaskKey, firstExcludedWorkerID );
+		addPermExcludedWorkerForMicrotask( microtaskKey, secondExcludedWorkerID );
+
+
+		// save the queue in Objectify and Firebase
+		ofy().save().entity(this).now();
+		FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
+	}
 
 	// adds a workerId to the permanent excluded workers for the microtask with microtaskKey
 	private void addPermExcludedWorkerForMicrotask( Key<Microtask> microtaskKey, String excludedWorkerID)
@@ -289,10 +327,23 @@ public class Project
 			excludedWorkersForMicrotask = new HashSet<String>();
 			excludedWorkers.put( microtaskKeyString , excludedWorkersForMicrotask);
 		}
-
+		
 		excludedWorkersForMicrotask.add(workerID);
+		
+		//add/update excluded list inside firebase	
+		String workerList = excludedWorkersToString(excludedWorkersForMicrotask);
+		FirebaseService.writeMicrotaskExcludedWorkers(microtaskKeyString,
+			this.getID(), workerList);
 	}
-
+	
+	//transforms excluded workers IDs into one string, to save in firebase
+	private final String excludedWorkersToString(HashSet<String> WorkersList){
+		String Ids = "";
+		for(String id : WorkersList){
+			Ids += id +",";
+		}
+		return Ids;
+	}
 	// Gets the currently assigned microtask for the specified worker or returns null if the worker
 	// does not have a currently assigned microtask. Returns the microtaskID of the microtask.
 	public Key<Microtask> lookupMicrotaskAssignment(String workerID)
@@ -314,8 +365,11 @@ public class Project
 			HistoryLog
 				.Init(this.getID())
 				.addEvent(new MicrotaskUnassigned( assignedMtask, workerID));
-		}
+			
+			FirebaseService.writeMicrotaskAssigned( assignedMicrotaskKey , workerID, project.getID(), false);
 
+		}
+		
 	}
 
 	// Assigns a microtask to worker and returns its microtaskKey.
@@ -382,7 +436,7 @@ public class Project
 
 			HistoryLog
 				.Init(project.getID())
-				.addEvent(new MicrotaskAssigned(microtask,workerID));
+				.addEvent(new MicrotaskAssigned(microtask,workerID,"assigned"));
 
 			// return the assigned microtask key
 			return microtask.getKey();
@@ -391,6 +445,72 @@ public class Project
 		return null;
 	}
 
+	public Key<Microtask> assignSpecificMicrotask( final String workerID, final String currentKey)
+	{
+		// Ensure that the worker is marked as logged in
+		loggedInWorkers.add( workerID );
+
+		// Look for a microtask, checking constraints on it along the way
+		String  microtaskKey = currentKey;
+		Boolean isReview = false, canAssign = false;
+		
+		//Checks if microtask is in Review or Microtask Queue
+		if(reviewQueue.contains(microtaskKey)){
+			isReview = true;
+			canAssign = true;
+		}
+		else if(microtaskQueue.contains(microtaskKey)){
+			canAssign = true;			
+		}
+		
+		Microtask microtask=null;
+		// If there are no more microtasks currently available, return null
+		//&& assignmentIsValid( microtaskKey, workerID)
+		if ( microtaskKey != null  && canAssign ) {
+			Microtask mtask = ofy().load().key( Microtask.stringToKey(microtaskKey) ).now();
+			if( mtask!=null ){
+
+				if( isReview ){
+					reviewQueue.remove( microtaskKey );
+					FirebaseService.writeReviewQueue(new QueueInFirebase(reviewQueue), project.getID() );
+				} else {
+					microtaskQueue.remove( microtaskKey );
+					FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), project.getID() );
+				}
+				// assign it to the worker
+				mtask.setWorkerId( workerID );
+				microtaskAssignments.put( workerID,  Microtask.keyToString( mtask.getKey() ) );
+
+				//ofy().save().entity(mtask).now();
+				microtask=mtask;
+			}
+			else{
+				System.out.println("((((((((((((erroooor mtask null");
+			}
+		}
+
+
+
+		if( microtask != null ){
+
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString( microtask.getKey() ), workerID, project.getID(), true);
+
+			HistoryLog
+				.Init(project.getID())
+				.addEvent( new MicrotaskDequeued(microtask));
+
+			HistoryLog
+				.Init(project.getID())
+				.addEvent(new MicrotaskAssigned(microtask,workerID,"picked"));
+
+			// return the assigned microtask key
+			return microtask.getKey();
+		}
+
+		return null;
+	}
+	
+	
 	// Checks both the excludedWorkers and skippedWorkers to see if microtaskKey is a valid
 	// microtask assignment for workerID. Returns true iff this is the case.
 	private boolean assignmentIsValid( String potentialMicrotaskKey, String workerID)
@@ -410,63 +530,32 @@ public class Project
 	// If the microtask has previously been submitted or is no longer open, the submission is
 	// dropped, ensuring workers cannot submit against already completed microtasks.
 	public void submitMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String workerID, Project project){
-
+		WorkerCommand.increaseStat(workerID, "submits",1);
 		Microtask microtask = ofy().load().key( microtaskKey ).now();
-		if(microtask!=null){
+		if(microtask!=null){			
 			// submit only if the request come from
 			// the current assigned worker of the microtask
-			if(microtask.isAssignedTo(workerID) ){
+			if(microtask.isAssignedTo(workerID) ){		
+				//boolean to signal if review microtask was created -> microtask is waiting review
+				boolean waitReview = true;
+				
 				// If reviewing is enabled and the microtask
 				// is not in [Review, ReuseSearch,DebugTestFailure],
 				// spawn a new review microtask
-				try {
-					if (reviewsEnabled && !( microtask.getClass().equals(Review.class)) ){
-						//temporary fix for the review
-						if( microtask.getClass().equals(ReuseSearch.class) )
-						{
+				if (reviewsEnabled && !( microtask.getClass().equals(Review.class) || microtask.getClass().equals(ChallengeReview.class)) ){
+					MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
 
-							ReusedFunctionDTO dto = (ReusedFunctionDTO)DTO.read(jsonDTOData, ReusedFunctionDTO.class);
-							if ( ! dto.noFunction ){
-								MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-							} else {
-								MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-							}
-
-						}
-						else if( microtask.getClass().equals(DebugTestFailure.class))
-						{
-
-							DebugDTO dto = (DebugDTO)DTO.read(jsonDTOData, DebugDTO.class);
-							System.out.println(dto.disputedTests);
-							if(dto.disputedTests.size() > 0 || dto.hasPseudo)
-							{
-								MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-							}
-							else{
-								MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-							}
-						}
-						else{
-							MicrotaskCommand.createReview(microtaskKey, workerID, jsonDTOData, workerID);
-						}
-					}
-
-					// else submit the microtask
-					else {
-						MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
-					}
-
-
-					// write the history log entry about the microtask submission
-					HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
-					FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
-				} catch( JsonParseException e) {
-					e.printStackTrace();
-				} catch( JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
+				// else submit the microtask
+				else {
+					MicrotaskCommand.submit(microtaskKey, jsonDTOData, workerID, microtask.getSubmitValue());
+					waitReview = false;
+				}
+
+				FirebaseService.writeMicrotaskWaitingReview(Microtask.keyToString(microtaskKey),workerID, this.id, waitReview);
+				// write the history log entry about the microtask submission
+				HistoryLog.Init(this.getID()).addEvent(new MicrotaskSubmitted(microtask, workerID));
+				FirebaseService.writeMicrotaskSubmission(jsonDTOData, Microtask.keyToString(microtaskKey), this.id);
 			}
 		}
 		else
@@ -481,6 +570,7 @@ public class Project
 	// Precondition - the worker must be assigned to this microtask
 	public void skipMicrotask(Key<Microtask> microtaskKey, String workerID, Boolean disablePoint)
 	{
+		WorkerCommand.increaseStat(workerID, "skips",1);
 		Microtask microtask = ofy().load().key(microtaskKey).now();
 		if( microtask!=null && microtask.isAssignedTo(workerID)){
 
@@ -499,6 +589,7 @@ public class Project
 
 
 			MicrotaskCommand.skip( microtaskKey, workerID, disablePoint);
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(microtaskKey) , workerID, project.getID(), false);	
 		}
 
 	}
@@ -517,11 +608,19 @@ public class Project
 		{
 			// Add back the permanently excluded workers
 			HashSet<String> permanentlyExcludedWorkersForMicrotask = permanentlyExcludedWorkers.get( microtaskKeyStringified );
-
+			
+			//clean excluded list inside firebase	
+			FirebaseService.writeMicrotaskExcludedWorkers(microtaskKeyStringified,
+				this.getID(), "");
+			
 			excludedWorkers.remove(microtaskKeyStringified);
 
-			if (permanentlyExcludedWorkersForMicrotask != null)
+			if (permanentlyExcludedWorkersForMicrotask != null){
 				excludedWorkers.put(microtaskKeyStringified, permanentlyExcludedWorkersForMicrotask);
+				String workerList = excludedWorkersToString(permanentlyExcludedWorkersForMicrotask);
+				FirebaseService.writeMicrotaskExcludedWorkers(microtaskKeyStringified,
+					this.getID(), workerList);
+			}
 			ofy().save().entity(this).now();
 		}
 
@@ -563,8 +662,9 @@ public class Project
 			microtaskAssignments.put( workerID, null);
 			// save the queue and the assignments
 			ofy().save().entity(this).now();
-
+				
 			FirebaseService.writeMicrotaskQueue(new QueueInFirebase(microtaskQueue), this.getID());
+			FirebaseService.writeMicrotaskAssigned( Microtask.keyToString(currentAssignment) , workerID, project.getID(), false);
 		}
 		// write to firebase that the worker logged out
 		FirebaseService.writeWorkerLoggedOut( workerID, this.getID());
@@ -611,15 +711,6 @@ public class Project
 		ofy().save().entity(this).now();
 	}
 
-	public long generateID(String tag)
-	{
-		long id = idgenerator.generateID(tag);
-
-		// State of embedded object (id generator) changed, so state must be saved.
-		ofy().save().entity(this).now();
-
-		return id;
-	}
 
 	public HashSet<String> getLoggedInWorkers() {
 		return loggedInWorkers;

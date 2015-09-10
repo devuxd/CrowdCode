@@ -12,23 +12,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
 import com.crowdcoding.commands.Command;
-import com.crowdcoding.dto.ReviewDTO;
-import com.crowdcoding.dto.firebase.AnswerInFirebase;
-import com.crowdcoding.dto.firebase.ArtifactsIdInFirebase;
-import com.crowdcoding.dto.firebase.CommentInFirebase;
-import com.crowdcoding.dto.firebase.FunctionInFirebase;
-import com.crowdcoding.dto.firebase.LeaderboardEntry;
-import com.crowdcoding.dto.firebase.MicrotaskInFirebase;
-import com.crowdcoding.dto.firebase.NotificationInFirebase;
-import com.crowdcoding.dto.firebase.QuestionInFirebase;
-import com.crowdcoding.dto.firebase.QueueInFirebase;
-import com.crowdcoding.dto.firebase.ReissueInFirebase;
-import com.crowdcoding.dto.firebase.ReportersIdInFirebase;
-import com.crowdcoding.dto.firebase.SubscribersInFirebase;
-import com.crowdcoding.dto.firebase.TagsInFirebase;
-import com.crowdcoding.dto.firebase.TestInFirebase;
-import com.crowdcoding.dto.firebase.VotersIdInFirebase;
-import com.crowdcoding.entities.Question;
+import com.crowdcoding.dto.ajax.microtask.submission.ReviewDTO;
+import com.crowdcoding.dto.firebase.*;
+import com.crowdcoding.dto.firebase.artifacts.*;
+import com.crowdcoding.dto.firebase.microtasks.*;
+import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
+import com.crowdcoding.dto.firebase.questions.*;
 import com.crowdcoding.history.HistoryEvent;
 import com.crowdcoding.servlets.ThreadContext;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -167,11 +156,33 @@ public class FirebaseService
 	{
 		enqueueWrite("{\"assigned\": "+Boolean.toString(assigned)+", \"workerId\": \"" + workerId + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
+	
+	
+	// Writes information about excluded workers to Firebase
+	public static void writeMicrotaskExcludedWorkers( String microtaskKey,
+			String projectId, String workerIDs)
+	{
+		enqueueWrite("{\"excluded\": \"" +workerIDs+ "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+	}
+	
+	
 
+	// Show if microtask is waiting for review
+	public static void writeMicrotaskWaitingReview( String microtaskKey,
+			String workerId, String projectId, boolean waiting)
+	{
+		enqueueWrite("{\"waitingReview\": " + waiting + "}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+	}
 
+	
 	// Writes information about microtask completition to Firebase
 	public static void writeMicrotaskCompleted( String microtaskKey, String workerID, String projectId, boolean completed){
-		enqueueWrite("{\"completed\": \"" + completed + "\"}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"completed\": " + completed + "}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
+		writeMicrotaskWaitingReview(microtaskKey,workerID, projectId, false);
+	}
+	// Writes information about microtask completition to Firebase
+	public static void writeMicrotaskDeleted( String microtaskKey, String projectId){
+		enqueueWrite("{\"deleted\": \"true\"}", "/microtasks/" + microtaskKey + "/.json", HTTPMethod.PATCH, projectId);
 	}
 
 	// Writes information about an old microtask to retrieve the information to Firebase
@@ -187,11 +198,13 @@ public class FirebaseService
 		enqueueWrite( "{\"canceled\": \"" + canceled + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
-	public static void writeTestJobQueue(long functionID, int functionVersion, String implementedIds, String projectId)
+	public static void writeTestJobQueue(long functionID, int functionVersion, int testSuiteVersion, String projectId)
 	{
-		System.out.println("appending test job for function "+functionID);
-		enqueueWrite("{\"functionId\": \"" + functionID + "\", \"functionVersion\" : \"" +functionVersion +"\", \"implementedIds\" : \"" +implementedIds +"\", \"bounceCounter\" : \"0\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
+		System.out.println("ASKING FOR TEST RUN for function "+functionID);
+		enqueueWrite("{\"functionId\": " + functionID + ", \"functionVersion\" : \"" +functionVersion +"\", \"testSuiteVersion\" : \"" +testSuiteVersion +"\", \"bounceCounter\" : \"0\"}", "/status/testJobQueue/"+functionID+".json", HTTPMethod.PUT, projectId);
 	}
+
+
 	public static String getAllCode(String projectId)
 	{
 		String absoluteUrl = getBaseURL( projectId ) + "/code.json";
@@ -252,28 +265,54 @@ public class FirebaseService
 		enqueueWrite(dto.json(), "/status/reviewQueue.json", HTTPMethod.PUT, projectId);
 	}
 
+	public static void incrementTestSuiteVersion(long functionID, int testSuiteVersion, String projectId){
+		enqueueWrite("{\"testSuiteVersion\" : \"" + testSuiteVersion +"\"}" , "/artifacts/functions/" + functionID + ".json", HTTPMethod.PATCH, projectId);
+	}
+
 	// Stores the specified function to Firebase
 	public static void writeFunction(FunctionInFirebase dto, long functionID, int version, String projectId){
-		enqueueWrite(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite(dto.json(), "/artifacts/functions/" + functionID + ".json", HTTPMethod.PATCH, projectId);
 		enqueueWrite(dto.json(), "/history/artifacts/functions/" + functionID + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}
 
+
 	// Stores the specified test to Firebase
-	public static void writeTest(TestInFirebase dto, long testID, int version, String projectId){
-		enqueueWrite(dto.json(), "/artifacts/tests/" + testID + ".json", HTTPMethod.PUT, projectId);
+	public static void writeAdvancedTest(AdvancedTestInFirebase dto, long functionId, long testID, int version, String projectId){
+		enqueueWrite(dto.json(), "/artifacts/functions/"+functionId+"/tests/" + testID + ".json", HTTPMethod.PUT, projectId);
 		enqueueWrite(dto.json(), "/history/artifacts/tests/" + testID + "/" + version + ".json", HTTPMethod.PUT, projectId);
 	}
+
+	// Stores the specified Stub to Firebase
+	public static void writeSimpleTest(SimpleTestInFirebase dto, long functionId, long stubId, int version, String projectId){
+		enqueueWrite(dto.json(), "/artifacts/functions/" + functionId + "/tests/" + stubId + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite(dto.json(), "/history/artifacts/tests/" + stubId + "/" + version + ".json", HTTPMethod.PUT, projectId);
+	}
+
+	// Stores the specified adt to Firebase
+	public static void writeADT(ADTInFirebase dto, long ADTId, int version, String projectId){
+		enqueueWrite(dto.json(), "/artifacts/ADTs/" + ADTId + ".json", HTTPMethod.PUT, projectId);
+		enqueueWrite("{ \".priority\": \""+System.currentTimeMillis()+"\" }", "/artifacts/ADTs/" + ADTId + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite(dto.json(), "/history/artifacts/ADTs/" + ADTId + "/" + version + ".json", HTTPMethod.PUT, projectId);
+	}
+
 
 	// Deletes the specified test in Firebase
 	public static void deleteTest(long testID, String projectId){
 		enqueueWrite("", "/artifacts/tests/" + testID + ".json", HTTPMethod.DELETE, projectId);
 	}
+	
+	
+	//stores worker information
+	public static void writeWorker(WorkerInFirebase dto,
+			String userid, String projectId) {
+		enqueueWrite(dto.json(), "/workers/" + userid + ".json", HTTPMethod.PATCH, projectId);		
+	}
 
 	// Stores the specified review to firebase
-	public static void writeReview(ReviewDTO dto, Long reviewId, String microtaskKey , String projectId){
-		enqueueWrite(dto.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, projectId);
-		enqueueWrite(reviewId.toString(), "/microtasks/" + microtaskKey + "/review/reviewId.json", HTTPMethod.PUT, projectId);
-	}
+	public static void writeReview(ReviewSubmissionInFirebase reviewSubmission, String microtaskKey , String projectId){
+		System.out.println(reviewSubmission.json());
+		enqueueWrite(reviewSubmission.json(), "/microtasks/" + microtaskKey + "/review.json", HTTPMethod.PUT, projectId);
+		}
 
 	public static void writeSetting(String name, String value, String projectId){
 		enqueueWrite(value, "/status/settings/"+name+".json", HTTPMethod.PUT, projectId);
@@ -297,10 +336,11 @@ public class FirebaseService
 	}
 
 	// Reads the functions for the specified project. If there are no functions, returns an empty string.
-	public static String readClientRequestFunctions(String projectId){
-		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectId + "/functions.json");
+	public static String readClientRequest(String projectId){
+		String result = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectId + ".json");
 		if (result == null || result.equals("null"))
 			result = "";
+		System.out.println(result);
 		return result;
 	}
 
@@ -314,6 +354,14 @@ public class FirebaseService
 	public static void writeWorkerNotification(NotificationInFirebase notification, String workerID, String projectId){
 		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
 	}
+	
+	public static void writeLevelUpNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
+	}
+	
+	public static void writeAchievementNotification(NotificationInFirebase notification, String workerID, String projectId){
+		enqueueWrite(notification.json(), "/notifications/" + workerID + ".json", HTTPMethod.POST, projectId);
+	}
 
 	public static void microtaskAssigned(String workerID, String projectId) {
 		enqueueWrite("{\"fetchTime\" : \"" +System.currentTimeMillis() +"\"}", "/workers/" + workerID + ".json", HTTPMethod.PATCH, projectId);
@@ -322,23 +370,27 @@ public class FirebaseService
 
 	// Writes information about microtask assignment to Firebase
 	public static void writeMicrotaskPoints( String microtaskKey, int points, String projectId){
-		enqueueWrite("{\"points\": \"" + points + "\"}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"points\": " + points + "}", "/microtasks/" + microtaskKey + ".json", HTTPMethod.PATCH, projectId);
 	}
 
 	// Posts the specified JSON message to the specified workers newsfeed
 	public static void postToNewsfeed(String workerID, String message, String microtaskKey, String projectId){
 		enqueueWrite(message, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
 	}
+	// change the status of a challenge to the specified workers newsfeed
+	public static void updateNewsfeed(String workerID, String data, String microtaskKey, String projectId){
+		enqueueWrite(data, "/workers/" + workerID + "/newsfeed/"+ microtaskKey +".json", HTTPMethod.PATCH, projectId);
+	}
 
 	// Writes the specified question to firebase
 	public static void writeQuestion(QuestionInFirebase dto, String projectId){
 		enqueueWrite(dto.json(), "/questions/"+dto.id+".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 	public static void writeQuestionVersion(QuestionInFirebase dto, String projectId){
 		enqueueWrite(dto.json(), "/history/questions/" + dto.id + "/" + dto.version + ".json", HTTPMethod.PUT, projectId);
 	}
-	
+
 	// Writes the specified question to firebase
 	public static void writeAnswerCreated(AnswerInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
@@ -348,7 +400,7 @@ public class FirebaseService
 	public static void writeCommentCreated(CommentInFirebase dto, String path, String projectId){
 		enqueueWrite(dto.json(), path +".json", HTTPMethod.PATCH, projectId);
 	}
-	
+
 
 	public static void updateQuestioningVoters(VotersIdInFirebase votersId, String path, String projectId)	{
 		enqueueWrite(votersId.json(), path +".json", HTTPMethod.PATCH, projectId);
@@ -359,7 +411,7 @@ public class FirebaseService
 	}
 
 	public static void updateQuestioningScore(int score, String path, String projectId){
-		enqueueWrite("{\"score\": \"" + score + "\"}", path +".json", HTTPMethod.PATCH, projectId);
+		enqueueWrite("{\"score\": " + score + "}", path +".json", HTTPMethod.PATCH, projectId);
 	}
 
 	public static void updateQuestioningSubscribers(SubscribersInFirebase subscribersId, String path, String projectId){
@@ -394,6 +446,8 @@ public class FirebaseService
 		String payload = readDataAbsolute("https://crowdcode.firebaseio.com/clientRequests/" + projectID + ".json");
 		return !payload.equals("null");
 	}
+
+	
 
 
 

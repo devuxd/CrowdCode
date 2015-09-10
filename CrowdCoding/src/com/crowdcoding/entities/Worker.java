@@ -2,11 +2,19 @@ package com.crowdcoding.entities;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import com.crowdcoding.dto.firebase.NewsItemInFirebase;
+import com.crowdcoding.dto.firebase.WorkerInFirebase;
+import com.crowdcoding.dto.firebase.notification.AchievementNotificationInFirebase;
+import com.crowdcoding.dto.firebase.notification.NotificationInFirebase;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.util.FirebaseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,8 +38,10 @@ public class Worker
 	@Parent Key<Project> project;
 	private String nickname;
 	@Id private String userid;
-
+	private HashMap<String, Integer> microtaskHistory =  new HashMap<String, Integer>();
+	private List<Achievement> listOfAchievements = new ArrayList<Achievement>();
 	public int score;
+	public int level;
 
 	// Default constructor for deserialization
 	private Worker()
@@ -45,7 +55,10 @@ public class Worker
 		this.userid = userid;
 		this.nickname = nickname;
 		this.score = 0;
+		this.level = 2;
+		this.listOfAchievements = setAchievements();
 		ofy().save().entity(this).now();
+		this.storeToFirebase(project.getID());
 	}
 
 	// Finds, or if it does not exist creates, a CrowdUser corresponding to user
@@ -59,7 +72,6 @@ public class Worker
 			FirebaseService.setPoints( worker.userid, worker.nickname, worker.score, project.getID());
 			FirebaseService.publish();
 		}
-
 		return worker;
 	}
 
@@ -80,16 +92,72 @@ public class Worker
 	// Adds the specified number of points to the score.
 	public void awardPoints(int points, String projectId)
 	{
-		score += points;
+		score += points;	
 		ofy().save().entity(this).now();
-
 		FirebaseService.setPoints(userid, nickname, score, projectId);
 	}
 
-	// Update the stat label to the stat value.
+	private List<Achievement> setAchievements() {	
+		Scanner fileIn = null;
+		List<Achievement> achievementList = new ArrayList<Achievement>();
+		try {
+			fileIn = new Scanner(new File("WEB-INF/achievements.txt"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if(fileIn != null){
+			int totalAchievements = fileIn.nextInt();
+			for(int i = 0;i<totalAchievements;i++){
+				String condition = fileIn.next();
+				int requirement = fileIn.nextInt();
+				fileIn.nextLine();
+				String title = fileIn.nextLine();
+				String message = fileIn.nextLine();
+				Achievement newObjective = new Achievement(condition,requirement ,title, message );
+				achievementList.add(newObjective);
+			}
+			fileIn.close();
+		}
+		return achievementList;
+	}
+	
+	
+	void checkNewAchievement(String label, String projectId){
+		int value = 0;
+		for(Achievement achievement : listOfAchievements){
+			if(achievement.getCondition().equals(label) && !achievement.isUnlocked){
+				value = 0;
+				value = microtaskHistory.get(label);
+				achievement.updateCurrent(value);
+				if(value >= achievement.getRequirement() ){
+					addAchievement(achievement, projectId);
+				}
+			}
+		}
+		if(level < 2){ 
+			if(listOfAchievements.get(0).isUnlocked && listOfAchievements.get(1).isUnlocked){
+				FirebaseService.writeLevelUpNotification(new NotificationInFirebase("dashboard"), 
+				this.getUserid(), projectId);
+				level = 2;
+			}
+		}
+		ofy().save().entity(this).now();
+		this.storeToFirebase(projectId);
+	}
+	// keep a list of microtasks done by the worker
 	public void increaseStat(String label,int amount, String projectId)
 	{
-//		FirebaseService.increaseStatBy(userid, label, amount, projectId);
+		int value = amount;
+		if( microtaskHistory.get(label)!= null){
+			value += microtaskHistory.get(label);
+			if(label =="skips"){
+				microtaskHistory.put("submits", 0);
+			}
+		}
+		microtaskHistory.put(label, value);
+		ofy().save().entity(this).now();
+		this.storeToFirebase(projectId);
+		checkNewAchievement(label, projectId);
 	}
 
 	public Key<Worker> getKey()
@@ -101,7 +169,13 @@ public class Worker
 	{
 		return Key.create(project, Worker.class, userid);
 	}
-
+	
+	
+	public void storeToFirebase(String projectId)
+	{
+		FirebaseService.writeWorker(new WorkerInFirebase(this.userid, score , level, nickname,listOfAchievements, microtaskHistory), this.userid, projectId);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -126,5 +200,21 @@ public class Worker
 			return false;
 		return true;
 	}
+	
+	public HashMap<String, Integer> getHistory(){
+		return microtaskHistory;
+	}
+	
+	public List<Achievement> getAchievements(){
+		return listOfAchievements;
+	}
+		
+	public void addAchievement(Achievement achievement, String projectId) {
+		achievement.isUnlocked = true;
+		FirebaseService.writeAchievementNotification(new AchievementNotificationInFirebase("new.achievement",achievement.getMessage(), 
+				achievement.getCondition(), achievement.getRequirement()), this.userid, projectId);	
+	}
+	
+
 
 }

@@ -1,6 +1,6 @@
 package com.crowdcoding.history;
 
-import com.crowdcoding.entities.Artifact;
+import com.crowdcoding.entities.artifacts.Artifact;
 
 public class MessageReceived extends HistoryEvent 
 {

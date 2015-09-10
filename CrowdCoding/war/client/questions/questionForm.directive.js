@@ -1,4 +1,4 @@
-angular.module('crowdCode').directive('questionForm',function($firebase,firebaseUrl,workerId, questionsService){
+angular.module('crowdCode').directive('questionForm',function(firebaseUrl,workerId, questionsService){
 	return {
 		scope: true,
 		restrict: 'AEC',
@@ -19,7 +19,7 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 					$scope.question = { 
 						id: $scope.sel.id, 
 						title: $scope.sel.title, 
-						text: $scope.sel.text
+						text: $scope.sel.text.replace(new RegExp('<br />', 'g'),'\n')
 					};
 					$scope.tags = [];
 					if( $scope.sel.tags !== undefined )
@@ -45,7 +45,7 @@ angular.module('crowdCode').directive('questionForm',function($firebase,firebase
 				console.log($scope.question);
 
 				questionsService
-					.submit('question',$scope.question)
+					.submit('question',angular.copy($scope.question))
 					.then(function(){
 						if( $scope.sel == null )
 							$scope.setUiView('list');

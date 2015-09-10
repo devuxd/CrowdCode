@@ -1,14 +1,11 @@
-<div class="top padding">
-	<!-- <span class="form-group has-feedback search-box">
-		<input type="text" ng-model="search" class="form-control" placeholder="filter questions">
-		<span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
-	</span> -->
+<div class="top">
 	<div class="form-group has-feedback search-box">
-		<tags-input class="searchbox" ng-model="search" on-tag-added="updateFilter()" on-tag-removed="updateFilter()" placeholder="filter"></tags-input>
+		<tags-input class="searchbox" ng-model="search" on-tag-added="updateFilter()" on-tag-removed="updateFilter()" placeholder="filter" ng-keypress="showTooltip()" tooltip="filterTooltip"></tags-input>
 		<span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
 	</div>
 	<button class="btn btn-sm btn-primary new-question" ng-click="setUiView('form'); ">Ask question</button>
 </div>
+
 <div class="middle">
 	<div class="padding">
 		<div class="padding" ng-if="questions.length == 0 && search.length > 0 ">

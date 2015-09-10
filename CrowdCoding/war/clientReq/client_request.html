@@ -24,7 +24,7 @@
 
 
 		<script src="/client/common/errorCheck.js"></script>
-		<script src="/client/common/functionSupport.js"></script>
+		<!--<script src="/client/common/functionSupport.js"></script> -->
 		<script src="/client/common/JSONValidator.js"></script>
 
 		<!-- Angular Application -->
@@ -54,9 +54,8 @@
 					<div ng-form="projectNameForm" class=" form-horizontal form-group col-md-12">
 						<div class="col-md-3 form-group">
 							<alertcontainer></alertcontainer>
-							
-							<input class="form-control input-sm" type="text"   ng-model="projectName" name="projectName"
-							 placeholder="Project Name" ng-options="state for state in projectsName" placeholder="Enter state"  data-min-length="0" bs-typeahead required ng-pattern="/^[a-zA-Z0-9_]+$/" focus/>
+							<input class="form-control input-sm" type="text"  ng-model="projectName" name="projectName"
+							 placeholder="Project Name" bs-options="name for name in projectsName" data-min-length="0" data-watch-options="true" bs-typeahead required ng-pattern="/^[a-zA-Z0-9_]+$/" focus/>
 							<ul class="help-block" ng-show="projectNameForm.projectName.$dirty && projectNameForm.projectName.$invalid">
 								<li ng-show="projectNameForm.projectName.$error.required">This field is required!</li>
 								<li ng-show="projectNameForm.projectName.$error.pattern">Is not a valid name! only use a-zA-Z0-9_</li>
@@ -181,7 +180,7 @@
 				<div class="section-content" >
 					<span>
 					Describe functions with a name, list of parameters, description, and code with surrounding
-					function brackets, and if needed some tests.
+					function brackets, and if needed some stubs.
 					<BR>
 					</span>
 					<div  ng-repeat="(functionIndex,function) in functions"   class="row">
@@ -189,17 +188,13 @@
 							<div class="form-group">
 								<label for="functionDescription" class="col-sm-2 control-label reset-padding">description</label>
 								<div class="col-sm-8 reset-padding">
-									<textarea class="form-control" name="functionDescription" placeholder="briefly describe the purpose and the behavior of the function" ng-model="function.description" required ng-pattern="/^[^/\\]+$/"  focus max-length="70" ></textarea>
+									<textarea class="form-control" name="functionDescription" placeholder="briefly describe the purpose and the behavior of the function" ng-model="function.description" required ng-pattern="/^[^/\\]+$/"  focus ></textarea>
 									
 
 									<ul class="help-block" ng-show="functionForm{{$index}}.functionDescription.$dirty && functionForm{{$index}}.functionDescription.$invalid">
 										<li ng-show="functionForm{{$index}}.functionDescription.$error.required">This field is required!</li>
 										<li ng-show="functionForm{{$index}}.functionDescription.$error.pattern">The "\" and "/" are not allowed</li>
 									</ul>
-								</div>
-								<div class="col-sm-2">
-									<span>Description Read Only</span>
-									<input type="checkbox" ng-model="function.readOnly">
 								</div>
 							</div>
 							<div class="form-group">
@@ -266,28 +261,15 @@
 								</div>
 							</div>
 							<div class="form-group col-sm-12">
-								<label class=" control-label col-sm-2 reset-padding">tests:</label>
+								<label class=" control-label col-sm-2 reset-padding">stubs:</label>
 								<div class="form-group col-sm-10 reset-padding" >
-									<div class="col-sm-12 row reset-padding" ng-repeat="tests in function.tests track by $index ">
+									<div class="col-sm-12 row reset-padding" ng-repeat="stubs in function.stubs track by $index ">
 										<div ng-form="test{{$index}}" class="form-horizontal col-sm-11" >
-											<div class="form-group">
-												<label for="readOnly" class="col-sm-2 control-label reset-padding">isReadOnly: </label>
-												<input name="readOnly" type="checkbox" ng-model="tests.readOnly">
-											</div>
-											<div  class="form-group">
-												<label for="input" class="col-sm-2 control-label reset-padding">Description:</label>
-												<div class="col-sm-10 reset-padding">
-													<input class="form-control" name="description" ng-model="tests.description" required/>
-													<ul class="help-block pull-left" ng-show="test{{$index}}.description.$invalid && test{{$index}}.description.$dirty">
-														<li ng-show="test{{$index}}.description.$error.required" >This field is required!</li>
-													</ul>
-												</div>
-											</div>
-											<!-- form for each input parameter of the function -->
+										<!-- form for each input parameter of the function -->
 											<div  class="form-group" ng-form="inputForm{{$index}}" ng-repeat="(index,parameter) in function.parameters track by $index">
 												<label for="input" class="col-sm-2 control-label reset-padding"><b>{{parameter.name}}</b> ({{parameter.type}}) </label>
 												<div class="col-sm-10 reset-padding"  ng-form="singleInputForm"  >
-													<textarea class="form-control" name="input" ng-model="tests.simpleTestInputs[index]" required json-validator="{{parameter.type}}"></textarea>
+													<textarea class="form-control" name="input" ng-model="stubs.inputs[index]" required json-validator="{{parameter.type}}"></textarea>
 													<ul class="help-block pull-left" ng-show="singleInputForm.$invalid && singleInputForm.$dirty">
 														<li ng-show="singleInputForm.input.$error.required" >This field is required!</li>
 														<li ng-show="singleInputForm.input.$error.json" ng-repeat="error in singleInputForm.input.$error.json">{{error}}</li>
@@ -298,24 +280,24 @@
 											<div class="form-group" ng-form="outputForm">
 												<label for="input" class="col-sm-2 control-label reset-padding"><b>return value</b> ({{function.returnType}})</label>
 												<div class="col-sm-10 reset-padding">
-													<textarea class="form-control" name="output" ng-model="tests.simpleTestOutput" required json-validator="{{function.returnType}}" allow-null="true" ></textarea>
+													<textarea class="form-control" name="output" ng-model="stubs.output" required json-validator="{{function.returnType}}" allow-null="true" ></textarea>
 													<ul class="help-block pull-left" ng-show="outputForm.$invalid && outputForm.$dirty">
 														<li ng-show="outputForm.output.$error.required" >This field is required!</li>
 														<li ng-show="outputForm.output.$error.json" ng-repeat="error in outputForm.output.$error.json" >{{error}}</li>
 													</ul>
 												</div>
 											</div>
-											<div ng-show="$index!=function.tests.length-1" class="line-separator"></div>
+											<div ng-show="$index!=function.stubs.length-1" class="line-separator"></div>
 										</div>
 										<div class="col-sm-1 reset-padding">
-											<button ng-click="deleteTest(functionIndex,$index)" class="btn  pull-right">X</button>
+											<button ng-click="deleteStub(functionIndex,$index)" class="btn  pull-right">X</button>
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="col-sm-12 reset-padding">
-									<button ng-click="addTest(functionIndex)" class="btn btn-mini pull-right">Add Test</button>
+									<button ng-click="addStub(functionIndex)" class="btn btn-mini pull-right">Add Stub</button>
 								</div>
 							</div>
 							<div ng-show="functionIndex!=functions.length-1" class="line-separator"></div>

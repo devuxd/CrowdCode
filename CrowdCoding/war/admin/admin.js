@@ -54,8 +54,8 @@ angular
 
       .state('code',{
         url: '/code',
-        templateUrl: 'feedback/feedback.html',
-        controller: 'FeedbackCtrl'
+        templateUrl: 'code/code.html',
+        controller: 'CodeCtrl'
       })
 
       .state('functions',{
@@ -106,4 +106,31 @@ angular
     $rootScope.time = new Date().getTime();
     
   }])
-.constant('firebaseUrl','https://crowdcode.firebaseio.com/projects/'+projectId);
+.constant('firebaseUrl','https://crowdcode.firebaseio.com/projects/'+projectId)
+.filter('keylength', function(){
+  return function(input){
+    if(angular.isObject(input)){
+      return Object.keys(input).length;
+    } else {
+      return null;
+    }
+  };
+})
+.filter('orderObjectBy', function() {
+  return function(items, field, reverse) {
+    var filtered = [];
+    
+    angular.forEach(items, function(item) {
+      filtered.push(item);
+    });
+
+    filtered.sort(function (a, b) {
+      return (a[field] > b[field] ? 1 : -1);
+    });
+
+    if(reverse) 
+      filtered.reverse();
+
+    return filtered;
+  };
+});

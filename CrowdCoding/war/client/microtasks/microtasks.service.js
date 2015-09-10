@@ -3,58 +3,93 @@
 /////////////////////////
 angular
     .module('crowdCode')
-    .factory('microtasksService', ['$window','$rootScope','$firebase','$http','$q', 'firebaseUrl', 'userService', function($window,$rootScope,$firebase,$http,$q, firebaseUrl,userService) {
+    .factory('microtasksService', ['$window','$rootScope','$http','$q', '$firebaseObject', 'firebaseUrl', 'userService', function($window,$rootScope,$http,$q,$firebaseObject,firebaseUrl,userService) {
 
 	// Private variables
 	var microtasks;
 	var service = new function(){
 
 		this.get = get;
+		this.load = load;
 		this.submit = submit;
 		this.fetch = fetch;
+		this.fetchSpecificMicrotask = fetchSpecificMicrotask;
 
 		// Public functions
 		function get (id){
-			var microtaskSync = $firebase(new Firebase(firebaseUrl+'/microtasks/'+id));
-			var microtask = microtaskSync.$asObject();
+			var microtask = $firebaseObject(new Firebase(firebaseUrl+'/microtasks/'+id));
 			return microtask;
 		}
 
 		function submit (microtask, formData, autoSkip, autoFetch){
+			var deferred = $q.defer();
+
 			var skip = formData === undefined ? 'true' : 'false' ;
 			autoFetch = (autoFetch ? 'true' : 'false');
 			var disablePoint = autoSkip ? 'true':'false';
+
 			// submit to the server
 			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
 				.success(function(data, status, headers, config) {
-					loadMicrotask(data);
+					if( data.microtaskKey === undefined )
+						deferred.reject();
+					else
+						deferred.resolve(data);
 				})
 				.error(function(data, status, headers, config) {
-					$rootScope.$broadcast('noMicrotask');
+					deferred.reject();
 				});
+
+			return deferred.promise;
 		}
 
 		function fetch (){
+			var deferred = $q.defer();
+
 			// ask the microtask id
 			$http.get('/' + projectId + '/ajax/fetch')
 				.success(function(data, status, headers, config) {
-					loadMicrotask(data);
+					if( data.microtaskKey === undefined )
+						deferred.reject();
+					else
+						deferred.resolve(data);
 				})
 				.error(function(data, status, headers, config) {
-					$rootScope.$broadcast('noMicrotask');
+					deferred.reject();
 				});
+
+			return deferred.promise;
 		}
 
-		function loadMicrotask (data){
-			if(data.microtaskKey===undefined) {
-				$rootScope.$broadcast('noMicrotask');
-			} else {
-				var microtask = get(data.microtaskKey);
+
+		function fetchSpecificMicrotask(microtaskId){
+			var deferred = $q.defer();
+
+			$http
+				.get('/' + projectId + '/ajax/pickMicrotask?id='+ microtaskId)
+				.success(function(data, status, headers, config) {
+					if( data.microtaskKey === undefined )
+						deferred.reject();
+					else
+						deferred.resolve(data);
+				})
+				.error(function(data, status, headers, config) {
+					deferred.reject();
+				});
+
+			return deferred.promise;
+		}
+
+		function load(fetchData){
+			if( fetchData.microtaskKey !== undefined ) {
+				var microtask = get(fetchData.microtaskKey);
 				microtask.$loaded().then(function() {
-					$rootScope.$broadcast('microtaskLoaded',microtask, data.firstFetch);
+					$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
 				});
 			}
 		}
+		
+		
 
 	}
 

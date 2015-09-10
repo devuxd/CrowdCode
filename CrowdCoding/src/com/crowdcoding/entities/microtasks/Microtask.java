@@ -9,9 +9,9 @@ import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.WorkerCommand;
 import com.crowdcoding.dto.DTO;
-import com.crowdcoding.dto.firebase.ReissueInFirebase;
-import com.crowdcoding.entities.Artifact;
+import com.crowdcoding.dto.firebase.microtasks.*;
 import com.crowdcoding.entities.Project;
+import com.crowdcoding.entities.artifacts.Artifact;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskSkipped;
 import com.crowdcoding.history.MicrotaskSubmitted;
@@ -58,8 +58,9 @@ public /*abstract*/ class Microtask
 	@Id protected Long id;
 	@Index String projectId;
 
-	protected boolean canceled = false;
+	protected boolean assigned = false;
 	protected boolean completed = false;
+	protected boolean queued    = false;
 	protected String reissuedFrom = "";
 	protected int submitValue = DEFAULT_SUBMIT_VALUE;
 	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
@@ -99,6 +100,7 @@ public /*abstract*/ class Microtask
 	// This method MUST be overridden in the subclass
 	public Microtask copy(String projectId)
 	{
+		System.out.println("COPYING TASK "+this);
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
@@ -106,7 +108,7 @@ public /*abstract*/ class Microtask
 	// if it is still needed
 	protected boolean isStillNeeded(Project project) { return true; }
 
-	public void submit(String jsonDTOData, String workerID,int awardedPoint, String projectId)
+	public void submit(String jsonDTOData, String workerID,int awardedPoint)
 	{
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
@@ -116,7 +118,8 @@ public /*abstract*/ class Microtask
 
 		try {
 			DTO dto = DTO.read(jsonDTOData, getDTOClass());
-			doSubmitWork(dto, workerID, projectId);
+
+			doSubmitWork(dto, workerID);
 
 			this.completed = true;
 			ofy().save().entity(this).now();
@@ -124,7 +127,6 @@ public /*abstract*/ class Microtask
 			// increase the stats counter
 			WorkerCommand.increaseStat(workerID, "microtasks",1);
 			WorkerCommand.awardPoints(workerID, awardedPoint);
-
 			// write completed on firebase
 			FirebaseService.writeMicrotaskCompleted( Microtask.keyToString(this.getKey()), workerID, projectId, this.completed);
 
@@ -144,7 +146,7 @@ public /*abstract*/ class Microtask
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
 		if (this.completed){
-			Logger.getLogger("LOGGER").severe("MIRCORTASK ALREADY COMPLETED: "+this.toString());
+			Logger.getLogger("LOGGER").severe("MICROTASK ALREADY COMPLETED: "+this.toString());
 			return;
 		}
 		this.completed = true;
@@ -195,7 +197,7 @@ public /*abstract*/ class Microtask
 	public String getUIURL() { return ""; }
 
 	// This method MUST be overridden in the subclass to do submit work.
-	protected void doSubmitWork(DTO dto, String workerID, String projectId)
+	protected void doSubmitWork(DTO dto, String workerID)
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
@@ -251,12 +253,6 @@ public /*abstract*/ class Microtask
 		return (LoadResult<Microtask>) ofy().load().key(microtaskKey);
 	}
 
-	public String toString()
-	{
-		return "" + this.id + " " + this.getClass().getSimpleName() +
-				(this.getOwningArtifact() != null ? (" on " + this.getOwningArtifact().getName()) : "") +
-				(completed ? " completed " : " incomplete ") + "points: " + submitValue;
-	}
 	public String toJSON(){
 		return toJSON(new JSONObject());
 	}
@@ -283,13 +279,5 @@ public /*abstract*/ class Microtask
 		boolean isAssigned= this.getWorkerId() != null && this.getWorkerId().equals( workerId );
 
 		return isAssigned;
-	}
-
-	public void setCanceled(Boolean value){
-		canceled = value;
-	}
-
-	public Boolean isCanceled(){
-		return canceled;
 	}
 }

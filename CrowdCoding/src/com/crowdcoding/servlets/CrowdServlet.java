@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JApplet;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -31,33 +30,27 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 
 import com.crowdcoding.commands.Command;
+import com.crowdcoding.commands.MicrotaskCommand;
 import com.crowdcoding.commands.ProjectCommand;
 import com.crowdcoding.commands.FunctionCommand;
 import com.crowdcoding.commands.QuestioningCommand;
-import com.crowdcoding.entities.Answer;
-import com.crowdcoding.entities.Artifact;
-import com.crowdcoding.entities.Comment;
-import com.crowdcoding.entities.Function;
 import com.crowdcoding.entities.Project;
-import com.crowdcoding.entities.Question;
-import com.crowdcoding.entities.Questioning;
-import com.crowdcoding.entities.Test;
 import com.crowdcoding.entities.UserPicture;
 import com.crowdcoding.entities.Worker;
-import com.crowdcoding.entities.microtasks.DebugTestFailure;
+import com.crowdcoding.entities.artifacts.ADT;
+import com.crowdcoding.entities.artifacts.Artifact;
+import com.crowdcoding.entities.artifacts.Function;
+import com.crowdcoding.entities.artifacts.Test;
+import com.crowdcoding.entities.microtasks.ChallengeReview;
+import com.crowdcoding.entities.microtasks.DescribeFunctionBehavior;
 import com.crowdcoding.entities.microtasks.Microtask;
-import com.crowdcoding.entities.microtasks.ReuseSearch;
 import com.crowdcoding.entities.microtasks.Review;
-import com.crowdcoding.entities.microtasks.WriteCall;
-import com.crowdcoding.entities.microtasks.WriteFunction;
-import com.crowdcoding.entities.microtasks.WriteFunctionDescription;
-import com.crowdcoding.entities.microtasks.WriteTest;
-import com.crowdcoding.entities.microtasks.WriteTestCases;
+import com.crowdcoding.entities.microtasks.ImplementBehavior;
+import com.crowdcoding.entities.questions.*;
 import com.crowdcoding.history.HistoryLog;
 import com.crowdcoding.history.MicrotaskDequeued;
 import com.crowdcoding.history.MicrotaskDequeuedFromWorkerQueue;
 import com.crowdcoding.util.FirebaseService;
-import com.crowdcoding.util.IDGenerator;
 import com.crowdcoding.util.Util;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.images.Image;
@@ -69,6 +62,7 @@ import com.google.appengine.api.log.LogServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.labs.repackaged.com.google.common.collect.LinkedListMultimap;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.googlecode.objectify.Key;
@@ -95,20 +89,19 @@ public class CrowdServlet extends HttpServlet
 		// And embedded classes are also not registered.
 		ObjectifyService.register(Project.class);
 		ObjectifyService.register(Worker.class);
+
 		ObjectifyService.register(Artifact.class);
 		ObjectifyService.register(Function.class);
 		ObjectifyService.register(Test.class);
+		ObjectifyService.register(ADT.class);
+
 		ObjectifyService.register(UserPicture.class);
 
 		ObjectifyService.register(Microtask.class);
-		ObjectifyService.register(ReuseSearch.class);
 		ObjectifyService.register(Review.class);
-		ObjectifyService.register(WriteFunction.class);
-		ObjectifyService.register(DebugTestFailure.class);
-		ObjectifyService.register(WriteCall.class);
-		ObjectifyService.register(WriteFunctionDescription.class);
-		ObjectifyService.register(WriteTest.class);
-		ObjectifyService.register(WriteTestCases.class);
+		ObjectifyService.register(ImplementBehavior.class);
+		ObjectifyService.register(DescribeFunctionBehavior.class);
+		ObjectifyService.register(ChallengeReview.class);
 
 		ObjectifyService.register(Questioning.class);
 		ObjectifyService.register(Question.class);
@@ -186,12 +179,9 @@ public class CrowdServlet extends HttpServlet
 					String projectId = pathSeg[1];
 
 					req.setAttribute("project", projectId);
+
 					Key<Project> projectKey = Key.create(Project.class, projectId);
 					boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
-
-					if(!projectExists){
-						req.getRequestDispatcher("/404.jsp").forward(req, resp);
-					}
 
 					if ( pathSeg.length <= 2 ){
 						Worker.Create( user, Project.Create(projectId));
@@ -203,13 +193,15 @@ public class CrowdServlet extends HttpServlet
 							req.getRequestDispatcher("/404.jsp").forward(req, resp);
 					} else if( pathSeg[2].equals("statistics")){
 						req.getRequestDispatcher("/statistics/index.jsp").forward(req, resp);
+					} else if(!projectExists){
+						req.getRequestDispatcher("/404.jsp").forward(req, resp);
 					} else if (pathSeg[2].equals("ajax")){
 						doAjax(req, resp, projectId, user, pathSeg);
-					}  else if (pathSeg[2].equals("questions")){
+					} else if (pathSeg[2].equals("questions")){
 						doQuestioning(req, resp, projectId, user, pathSeg);
-					}  else if (pathSeg[2].equals("code")){
+					} else if (pathSeg[2].equals("code")){
 						renderCode(resp, projectId);
-					}else if (pathSeg[2].equals("logout")){
+					} else if (pathSeg[2].equals("logout")){
 						doLogout(req,resp, projectId);
 					}
 
@@ -256,15 +248,141 @@ public class CrowdServlet extends HttpServlet
 		if (pathSeg[3].equals("fetch")){
 			doFetchMicrotask(req, resp, user);
 
-//		} else if (pathSeg[3].equals("submit")){
-//			doSubmitMicrotask(req, resp);
+		} else if (pathSeg[3].equals("challengeReview")){
+			doChallengeReview(req, resp);
 		} else if (pathSeg[3].equals("testResult")){
 			doSubmitTestResult(req, resp);
+		} else if (pathSeg[3].equals("pickMicrotask")){
+			doFetchSpecificMicrotask(req, resp,user,false);
+		} else if (pathSeg[3].equals("tutorialCompleted")){
+			doTutorialCompleted(req, resp,user,false);
+		} else if (pathSeg[3].equals("questionViews")){
+			doQuestionAchievement(req, resp,user,false);
 		} else if (pathSeg[3].equals("enqueue")){
 			doEnqueueSubmit(req, resp,user);
 		}
 	}
+	
+	private void doTutorialCompleted (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
+		// Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+				final String projectID = (String) req.getAttribute("project");
+				String jsonResponse = "{}";
+		    	try {
+		    		jsonResponse=ofy().transact( new Work<String>(){
 
+		    			public String run() {
+		    				ThreadContext threadContext = ThreadContext.get();
+		    				threadContext.reset();
+
+		    		    	int firstFetch=0;
+		    		    	final Project project = Project.Create(projectID);
+		    				final Worker worker   = Worker.Create(user, project);
+		    				
+		    				worker.increaseStat("tutorial_completed",1,projectID);
+		    				
+		    				
+		    				return "success";
+		    			}
+		    			
+		        	});
+
+		    	} catch ( IllegalArgumentException e ){
+		    		e.printStackTrace();
+		    	}
+		       // HistoryLog.Init(projectID).publish();
+
+				renderJson(resp, jsonResponse);
+			    FirebaseService.publish();	
+	}
+	
+	private void doQuestionAchievement (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
+		// Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+				final String projectID = (String) req.getAttribute("project");
+				final int viewCount = Integer.parseInt(req.getParameter("id"));
+				String jsonResponse = "{}";
+		    	try {
+		    		jsonResponse=ofy().transact( new Work<String>(){
+
+		    			public String run() {
+		    				ThreadContext threadContext = ThreadContext.get();
+		    				threadContext.reset();
+
+		    		    	int firstFetch=0;
+		    		    	final Project project = Project.Create(projectID);
+		    				final Worker worker   = Worker.Create(user, project);
+		    				
+		    				worker.increaseStat("question_views",viewCount,projectID);
+		    				
+		    				
+		    				return "success";
+		    			}
+		    			
+		        	});
+
+		    	} catch ( IllegalArgumentException e ){
+		    		e.printStackTrace();
+		    	}
+		       // HistoryLog.Init(projectID).publish();
+
+				renderJson(resp, jsonResponse);
+			    FirebaseService.publish();	
+	}
+	
+	
+	//assigns a specific microtask (chosen by worker)
+	private void doFetchSpecificMicrotask (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
+		// Since the transaction may fail and retry,
+		// anything that mutates the values of req and resp MUST be outside the transaction so it only occurs once.
+		// And anything inside the transaction MUST not mutate the values produced.
+				final String projectID = (String) req.getAttribute("project");
+				final String microtaskId = (String) req.getParameter("id");
+				String jsonResponse = "{}";
+		    	try {
+		    		jsonResponse=ofy().transact( new Work<String>(){
+
+		    			public String run() {
+		    				ThreadContext threadContext = ThreadContext.get();
+		    				threadContext.reset();
+
+		    				Key<Microtask> microtaskKey =  null;
+		    		    	int firstFetch=0;
+		    		    	final Project project = Project.Create(projectID);
+		    				final Worker worker   = Worker.Create(user, project);
+
+		    				if( ! isAlreadyUnassigned ){
+		    		    		microtaskKey = project.lookupMicrotaskAssignment( worker.getUserid() );
+		    		    	}
+
+		    		    	if( microtaskKey == null ){
+		    		    		microtaskKey = project.assignSpecificMicrotask( worker.getUserid(), microtaskId) ;
+		    		    		firstFetch = 1;
+		    		    	}
+		    				ofy().save().entity(project).now();
+
+		    				if (microtaskKey == null) {
+		    					return "{}";
+		    				} else{
+
+		    					return "{\"microtaskKey\": \""+Microtask.keyToString(microtaskKey)+"\", \"firstFetch\": \""+ firstFetch+"\"}";
+		    				}
+
+		    			}
+
+		        	});
+
+		    	} catch ( IllegalArgumentException e ){
+		    		e.printStackTrace();
+		    	}
+		       // HistoryLog.Init(projectID).publish();
+
+				renderJson(resp, jsonResponse);
+			    FirebaseService.publish();	
+	}
+	
 	private void doQuestioning(HttpServletRequest req, HttpServletResponse resp,
 			final String projectID, User user, final String[] pathSeg) throws IOException, FileUploadException
 	{
@@ -434,18 +552,12 @@ public class CrowdServlet extends HttpServlet
 	private void doSubmitTestResult(final HttpServletRequest req, final HttpServletResponse resp) throws IOException, FileUploadException {
 
 		final String projectID = (String) req.getAttribute("project");
-		final boolean result  = Boolean.parseBoolean(req.getParameter("result"));
-		final long functionID = Long.parseLong(req.getParameter("functionID"));
+		final long functionId = Long.parseLong(req.getParameter("functionId"));
+		final String JsonDTO  = Util.convertStreamToString(req.getInputStream());
 
-		System.out.println("--> SERVLET: submitted test result for function "+functionID+" is "+result);
+	    System.out.println("--> SERVLET: received test results for "+functionId+": "+JsonDTO.toString());
 
-		ThreadContext.get().reset();
-
-		if(result)
-			FunctionCommand.passedTests(functionID);
-		else
-			FunctionCommand.failedTests(functionID);
-
+		FunctionCommand.submittedTestResult(functionId, JsonDTO);
 		executeCommands(projectID);
 	}
 
@@ -491,19 +603,19 @@ public class CrowdServlet extends HttpServlet
 		QuestioningCommand.updateQuestion(questionId, payload, workerId);
 		executeCommands(projectId);
 	}
-	
+
 	public void doViewQuestion(final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
 		final String projectId  = (String) req.getAttribute("project");
 		final long   questionId = Long.parseLong((String) req.getParameter("id"));
 		final String workerId     = user.getUserId();
-		
+
 		// Reset the actual Thread Context
 		ThreadContext.get().reset();
 		QuestioningCommand.addQuestionView(questionId,workerId);
 		executeCommands(projectId);
 	}
-	
+
 
 	public void doReportQuestioning (final HttpServletRequest req, final HttpServletResponse resp, final User user) throws IOException
 	{
@@ -652,6 +764,8 @@ public class CrowdServlet extends HttpServlet
 	public void doFetchMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException{
 		doFetchMicrotask(req,resp,user,false);
 	}
+
+
 	public void unassignMicrotask(final HttpServletRequest req, final HttpServletResponse resp,final User user) throws IOException
 	{
 		// Since the transaction may fail and retry,
@@ -736,6 +850,20 @@ public class CrowdServlet extends HttpServlet
 
 
 	}
+
+	public void doChallengeReview(final HttpServletRequest req, final HttpServletResponse resp) throws IOException
+	{
+		final String projectId = (String) req.getAttribute("project");
+		final String reviewKey    = req.getParameter("reviewKey");
+		final String challengeTextDTO      = Util.convertStreamToString(req.getInputStream());
+
+		System.out.println("doChallenge review");
+		MicrotaskCommand.createChallengeReview(Microtask.stringToKey(reviewKey),challengeTextDTO);
+		executeCommands(projectId);
+
+	}
+
+
 
 	/**
 	 * Enqueue a submit task into the default task queue
@@ -850,7 +978,7 @@ public class CrowdServlet extends HttpServlet
 	private void executeCommands(final String projectId)
 	{
 		ThreadContext starting = ThreadContext.get();
-		LinkedBlockingQueue<Command> commandQueue    = new LinkedBlockingQueue<Command>(starting.getCommands());
+		LinkedList<Command> commandQueue    = new LinkedList<Command>(starting.getCommands());
 
 		// Execute commands until done, adding commands as created.
 	    while(! commandQueue.isEmpty()) {
@@ -872,13 +1000,15 @@ public class CrowdServlet extends HttpServlet
 
 
             ThreadContext threadContext = ThreadContext.get();
-	    	commandQueue.addAll(threadContext.getCommands());
+            //adds the new commands generated at the beginning of the list
+	    	commandQueue.addAll(0,threadContext.getCommands());
 	    	//HistoryLog.Init(projectId).publish();
 
 	    	// history log writes and the other
             // firebase writes are done
             // outside of the transactions
 	    	FirebaseService.publish();
+	    	threadContext.reset();
 
           }
 	}

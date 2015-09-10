@@ -3,7 +3,6 @@ module.exports = function (grunt) {
 	var dir     = require('./bower.json').appPath || 'app';
 	var distDir = dir + 'Dist';
 
-console.log(dir,distDir);
 	process.chdir('../');
 	// grunt.loadNpmTasks('grunt-karma');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -34,6 +33,7 @@ console.log(dir,distDir);
 				files: [ 
 					{ 
 						src: [ 
+							'aceExtensions.js', 
 							'client.js', 
 							'**/*.js', 
 							'!Gruntfile.js',
@@ -68,6 +68,7 @@ console.log(dir,distDir);
 				replacements: [
 					// replace all '/client' occurrences with 'client'
 					{ from: 'src="/'+dir+'/', to: 'src="/'+distDir+'/' }, 
+					{ from: 'href="/'+dir+'/', to: 'href="/'+distDir+'/' }, 
 				]
 			},
 

@@ -2,14 +2,17 @@ package com.crowdcoding.commands;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.logging.Logger;
+import java.io.IOException;
 
+import com.crowdcoding.dto.ChallengeDTO;
+import com.crowdcoding.dto.DTO;
+import com.crowdcoding.entities.microtasks.ChallengeReview;
 import com.crowdcoding.entities.microtasks.Microtask;
 import com.crowdcoding.entities.microtasks.Review;
 import com.crowdcoding.servlets.ThreadContext;
-import com.crowdcoding.util.FirebaseService;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.VoidWork;
 
 public abstract class MicrotaskCommand extends Command
 {
@@ -25,6 +28,9 @@ public abstract class MicrotaskCommand extends Command
 			String initiallySubmittedDTO, String workerOfReviewedWork)
 		{ return new CreateReview(microtaskKeyToReview, excludedWorkerID, initiallySubmittedDTO, workerOfReviewedWork); }
 
+	public static MicrotaskCommand createChallengeReview(Key<Microtask> reviewKey, String challengeTextDTO)
+		{ return new CreateChallengeReview(reviewKey, challengeTextDTO); }
+
 	// Creates a new copy of the specified microtask, reissuing the new microtask with specified
 	// worker excluded from performing it and save the reference to the reissued microtask.
 	public static MicrotaskCommand reviseMicrotask(Key<Microtask> microtaskKey, String jsonDTOData, String reissueMotivation, String excludedWorkerID, int awardedPoint)
@@ -35,11 +41,6 @@ public abstract class MicrotaskCommand extends Command
 	public static MicrotaskCommand rejectMicrotask(Key<Microtask> microtaskKey, String excludedWorkerID, int awardedPoint)
 		{ return new RejectMicrotask(microtaskKey, excludedWorkerID, awardedPoint); }
 
-
-	public static MicrotaskCommand cancelMicrotask(Key<Microtask> microtaskKey) {
-		return new CancelMicrotask(microtaskKey);
-
-	}
 
 	private MicrotaskCommand( Key<Microtask> microtaskKey )
 	{
@@ -52,7 +53,6 @@ public abstract class MicrotaskCommand extends Command
 	{
 		ThreadContext threadContext = ThreadContext.get();
         threadContext.addCommand(command);
-		//CommandContext.ctx.addCommand(command);
 	}
 
 	public void execute(final String projectId)
@@ -95,8 +95,7 @@ public abstract class MicrotaskCommand extends Command
 
 		public void execute(Microtask microtask, String projectId)
 		{
-
-			microtask.submit(jsonDTOData, workerID, awardedPoint, projectId);
+			microtask.submit(jsonDTOData, workerID, awardedPoint);
 		}
 	}
 
@@ -135,18 +134,44 @@ public abstract class MicrotaskCommand extends Command
 			this.workerOfReviewedWork = workerOfReviewedWork;
 		}
 
-		public void execute(Microtask microtask, String projectId)
+		public void execute(Microtask toReview, String projectId)
 		{
-			Microtask toReview = ofy().load().key( microtaskKeyToReview ).now();
-			if(toReview!=null){
 				Review review = new Review(microtaskKeyToReview, initiallySubmittedDTO, workerOfReviewedWork, toReview.getFunctionId(), projectId);
 				ProjectCommand.queueReviewMicrotask(review.getKey(), excludedWorkerID);
-			}
-			else
-			{
-				Logger.getLogger("LOGGER").severe("LOAD FAILED: MICROTASK "+microtaskKeyToReview);
-			}
 		}
+	}
+
+
+	protected static class CreateChallengeReview extends MicrotaskCommand
+	{
+		private String challengeTextDTO;
+		public CreateChallengeReview(Key<Microtask> reviewKey, String challengeTextDTO)
+		{
+			super(reviewKey);
+			this.challengeTextDTO=challengeTextDTO;
+		}
+		public void execute(Microtask review, String projectId)
+		{
+			ChallengeDTO dto=null;
+			try {
+				dto = (ChallengeDTO)(DTO.read(challengeTextDTO, ChallengeDTO.class));
+
+			} catch( JsonParseException e) {
+				e.printStackTrace();
+			} catch( JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			String reviewerWorkerId = review.getWorkerId();
+			String challengerWorkerId = ((Review)review).getWorkerOfReviewedWork();
+			Key<Microtask> microtaskUnderChallengeKey= ((Review)review).getMicrotaskKeyUnderReview();
+			long functionId = review.getFunctionId();
+			ChallengeReview challengeReview = new ChallengeReview(dto.challengeText, challengerWorkerId, reviewerWorkerId, microtaskUnderChallengeKey, review.getKey(), functionId, projectId);
+			ProjectCommand.queueChallengeReviewMicrotask(challengeReview.getKey(), reviewerWorkerId, challengerWorkerId);
+
+		}
+
 	}
 
 	protected static class RejectMicrotask extends MicrotaskCommand
@@ -194,20 +219,5 @@ public abstract class MicrotaskCommand extends Command
 			microtask.revise(jsonDTOData, excludedWorkerID ,awardedPoint,reissueMotivation, projectId);
 		}
 	}
-	protected static class CancelMicrotask extends MicrotaskCommand
-	{
 
-		public CancelMicrotask(Key<Microtask> microtaskKey)
-		{
-			super(microtaskKey);
-		}
-
-		// Overrides the default execute as no microtask is to be loaded.
-		public void execute(Microtask microtask, String projectId)
-		{
-			microtask.setCanceled(true);
-			FirebaseService.writeMicrotaskCanceled( Microtask.keyToString(microtask.getKey()), true, projectId );
-			ofy().save().entity(microtask).now();
-		}
-	}
 }

@@ -1,0 +1,56 @@
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header achievements" style="height:60px">
+			<button type="button" class="close" ng-click="$parent.$hide()">&times;</button>
+			<div><img class="avatar" ng-src="{{ avatar(workerProfile).$value }}" /></div>
+			<div class="workerName">{{workerName}}</div>					
+		</div>
+		<div id="achievementsPanel" class="modal-body achievements">
+			<div>
+				
+				<div class="subTitle" style="color: white">History:</div>
+				<div id="board" >	
+					<div id="columns">						
+				  		<div class="infohistory" ng-repeat="(i,stat) in workerStats | statsToShow | orderBy:'$id'"  ng-if="workerStats.length > 0 && stat.$value>0" ng-switch on="stat.$id">
+						
+						<div ng-switch-when="microtasks">Microtasks: {{stat.$value}}</div>
+						<div ng-switch-when="perfect_review">Perfect Reviews (5 stars): {{stat.$value}}</div>
+						<div ng-switch-when="good_review">Good Reviews (4 stars): {{stat.$value}}</div>
+						<div ng-switch-when="reviews">Reviews: {{stat.$value}}</div>							
+						<div ng-switch-when="describe_behavior">Describe Function Behavior: {{stat.$value}}</div>								
+						<div ng-switch-when="submits">Submits (Consecutive): {{stat.$value}}</div>
+						<div ng-switch-when="questions">Questions: {{stat.$value}}</div>		
+						<div ng-switch-when="answers">Answers: {{stat.$value}}</div>		
+						<div ng-switch-when="functions">Implement Function Behavior: {{stat.$value}}</div>	
+						<div ng-switch-when="skips">Skips: {{stat.$value}}</div>
+					
+				  		</div>
+					</div>
+				</div>
+						
+				<div class="subTitle" style="color: white">Achievements:</div>
+				<div id="board" >	
+					<div id="columns" class="container-fluid">			
+			  			<div class="pin" 
+			  				ng-repeat="(i,achievement) in listOfachievements |  orderBy:['condition','requirement']" 
+			  				ng-if="listOfachievements.length > 0 && achievement.isUnlocked" 
+			  				style="height:{{achievement.height}}px">
+			  			
+				  			<div class="icon"><img style="width:30px;height:{{achievement.height}}px" ng-src="{{ icon(achievement.condition).$value }}" /></div>					
+											
+							<div class="title">{{achievement.title}}</div>		
+							<div class="info">{{achievement.message}}</div>			
+							<div ng-if="!hasAchievement">{{gotAchievement()}}</div>		
+						
+						</div>
+					</div>
+						<div class="title" ng-if="!hasAchievement" >
+							This worker doesn't have any achievement yet.
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+

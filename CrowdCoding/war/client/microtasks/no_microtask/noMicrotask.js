@@ -3,13 +3,13 @@
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('NoMicrotaskController', ['$scope', '$rootScope', '$firebase', 'firebaseUrl', 'avatarFactory','workerId', function($scope, $rootScope, $firebase, firebaseUrl, avatarFactory, workerId) {
+    .controller('NoMicrotaskController', ['$scope', '$rootScope',  'firebaseUrl', '$firebaseArray', 'avatarFactory','workerId', function($scope, $rootScope,  firebaseUrl,$firebaseArray, avatarFactory, workerId) {
     
-    // create the reference and the sync
-
-	var lbSync = $firebase(new Firebase(firebaseUrl + '/leaderboard/leaders'));
 
 	$scope.avatar = avatarFactory.get;
-	$scope.leaders       = lbSync.$asArray();
+	// create the reference and the sync
+	$scope.leaders = $firebaseArray(new Firebase(firebaseUrl + '/leaderboard/leaders'));
 	$scope.leaders.$loaded().then(function() {});
+
+
 }]);

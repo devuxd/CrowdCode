@@ -2,6 +2,7 @@ package com.crowdcoding.commands;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
+import com.crowdcoding.entities.Achievement;
 import com.crowdcoding.entities.Project;
 import com.crowdcoding.entities.Worker;
 import com.crowdcoding.servlets.ThreadContext;
@@ -11,8 +12,13 @@ public abstract class WorkerCommand extends Command
 {
 	protected String workerID;
 
+	
 	public static WorkerCommand awardPoints(String workerID, int points)
 	{ return new AwardPoints(workerID, points); }
+	
+	public static WorkerCommand addAchievement(Achievement achievement, String workerID)
+	{ return new AddAchievement(achievement, workerID); }
+	
 
 	public static WorkerCommand increaseStat(String workerID,String label, int increaseAmount)
 	{ return new IncreaseStat(workerID, label, increaseAmount); }
@@ -74,20 +80,39 @@ public abstract class WorkerCommand extends Command
 
 	protected static class IncreaseStat extends WorkerCommand
 	{
-	//	private String label;
-	//	private int increaseAmount;
+		private String label;
+		private int increaseAmount;
 
 		public IncreaseStat(String workerID, String label,int increaseAmount)
 		{
 			super(workerID);
-	//		this.label = label;
-	//		this.increaseAmount = increaseAmount;
+			this.label = label;
+			this.increaseAmount = increaseAmount;
 		}
 
 		public void execute(Worker worker, Project project)
 		{
 
-			//worker.increaseStat(label,increaseAmount, project);
+			worker.increaseStat(label,increaseAmount, project.getID());
+			//AchievementManager.getInstance().checkNewAchievement(worker.getUserid(), project.getID(), worker.getHistory());
+		}
+
+	}
+	
+	protected static class AddAchievement extends WorkerCommand
+	{
+		private Achievement _achievement;
+
+		public AddAchievement(Achievement achievement, String workerID)
+		{
+			super(workerID);
+			this._achievement = achievement;
+		}
+
+		public void execute(Worker worker, Project project)
+		{
+
+			worker.addAchievement(_achievement, project.getID());
 		}
 
 	}

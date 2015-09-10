@@ -3,7 +3,7 @@
 ////////////////////
 angular
     .module('crowdCode')
-    .factory('userService', ['$window','$rootScope','$firebase','$timeout','$interval','$http','firebaseUrl','TestList','functionsService','TestRunnerFactory', function($window,$rootScope,$firebase,$timeout,$interval,$http,firebaseUrl,TestList,functionsService,TestRunnerFactory) {
+    .factory('userService', ['$window','$rootScope','$timeout','$interval','$http','$firebaseObject', 'firebaseUrl','functionsService','TestRunnerFactory', function($window,$rootScope,$timeout,$interval,$http,$firebaseObject, firebaseUrl,functionsService,TestRunnerFactory) {
     var user = {};
 
  	// retrieve the firebase references
@@ -47,11 +47,12 @@ angular
 	});
 
 
-	user.data = $firebase(userProfile).$asObject();
+	user.data = $firebaseObject(userProfile);
 
 	user.data.$loaded().then(function(){
 		if( user.data.avatarUrl === null || user.data.avatarUrl === undefined ){
-			user.data.avatarUrl = '/img/avatar_gallery/avatar1.png';
+			var randomAvatar = (Math.floor(Math.random() * (16 - 1)) + 1);
+			user.data.avatarUrl = '/img/avatar_gallery/avatar'+randomAvatar+'.png';
 		}
 		user.data.workerHandle = workerHandle;
 		user.data.$save();
@@ -61,21 +62,22 @@ angular
 
 	user.setFirstFetchTime = function (){
 		user.data.fetchTime = new Date().getTime();
+		console.log('saving first fetch time')
 		user.data.$save();
 	};
 
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;
+		console.log('saving avatar url');
 		user.data.$save().then(function(){
 			console.log('set avatar url: '+url);
 		});
 	};
 
 
-	// distributed test work
-    user.listenForJobs = function(){
-		// worker
 
+	// distributed test runner
+    user.listenForJobs = function(){
 		var queueRef = new Firebase(firebaseUrl+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
 			console.log('Receiving job ',jobData);
@@ -84,36 +86,28 @@ angular
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
 
-			var implementedIdsJob    = jobData.implementedIds.split(',');
-			var implementedIdsClient = TestList.getImplementedIdsByFunctionId( jobData.functionId );
-			var functionClient = functionsService.get( jobData.functionId );
+			var funct = functionsService.get( jobData.functionId+"" );
+			console.log('loaded function', jobData.functionId,funct);
 			var unsynced = false;
 
-			// CHECK THE SYNC OF THE IMPLEMENTED TESTS
-			if( implementedIdsJob.length != implementedIdsClient.length ){
+			// CHECK THE SYNC OF THE TESTSUITE VERSION
+			if( !unsynced && funct.version != jobData.functionVersion ){
 				unsynced = true;
-			} else {
-				for( var v in implementedIdsJob ){
-					if( implementedIdsClient.indexOf( parseFloat(implementedIdsJob[v]) ) == -1 ){
-						unsynced = true;
-					}
-				}
 			}
 
 			// CHECK THE SYNC OF THE FUNCTION VERSION
-			if( !unsynced && functionClient.version != jobData.functionVersion ){
+			if( !unsynced && funct.version != jobData.functionVersion ){
 				unsynced = true;
 			}
+
 			//if this job has be done more than 20 times force unsync to false so that the test can be executed
 			if( parseInt(jobData.bounceCounter) > 20) {
 				unsynced = false;
-				console.log(parseInt(jobData.bounceCounter));
 			}
 
 			// if some of the data is out of sync
 			// put back the job into the queue
 			if( unsynced){
-				console.log('REBOUNCING');
 				$timeout(function(){
 					jobData.bounceCounter = parseInt(jobData.bounceCounter) + 1;
 					jobRef.set( jobData );
@@ -121,22 +115,40 @@ angular
 					whenFinished();
 				},500);
 			} else {
-				console.log('running from user service');
-				var testRunner = new TestRunnerFactory.instance({submitToServer: true});
-				testRunner.setTestedFunction( jobData.functionId );
-				try {
-					testRunner.runTests();
-					testRunner.onTestsFinish(function(){
-						console.log('------- tests finished received');
-						jobRef.onDisconnect().cancel();
-						whenFinished();
+				var runner = new TestRunnerFactory.instance();
+				var tests = angular.copy(funct.tests);
+
+				runner.run(tests,funct.name,funct.getFullCode()).then(function(results){
+					var ajaxData = {
+						areTestsPassed: true,
+						failedTestId: null,
+						passedTestsId: []
+					};
+
+					results.tests.map(function(test){
+						if( test.result.passed ){
+							ajaxData.passedTestsId.push(test.id);
+						}
+						else if( ajaxData.failedTestId == null){
+							ajaxData.areTestsPassed = false;
+							ajaxData.failedTestId = test.id;
+						}
 					});
-				} catch(e){
-					console.log('Exception in the TestRunner',e.stack);
-					jobRef.set( jobData );
-					jobRef.onDisconnect().cancel();
-					whenFinished();
-				}
+
+					$http.post('/' + $rootScope.projectId + '/ajax/testResult?functionId='+funct.id,ajaxData)
+						.success(function(data, status, headers, config) {
+							console.log("test result submit success",ajaxData);
+							jobRef.onDisconnect().cancel();
+							whenFinished();
+						}).
+					  	error(function(data, status, headers, config) {
+					    	console.log("test result submit error");
+					    	jobRef.onDisconnect().cancel();
+							whenFinished();
+						});
+				});
+
+				
 			}
 		});
 	};
@@ -149,16 +161,16 @@ angular
     user.listenForLogoutWorker = function(){
     	var logoutQueue     = new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
 
+
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 
 			//retrieves the reference to the worker to log out
 			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
-
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 
 			var interval = $interval( timeoutCallBack, 10000);
-			var timeoutCallBack = function(){
+			function timeoutCallBack(){
 				//time of the client plus the timezone offset given by firebase
 				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field
@@ -183,7 +195,7 @@ angular
 						whenFinished();
 					}
 				});
-			};
+			}
 		});
 	};
 

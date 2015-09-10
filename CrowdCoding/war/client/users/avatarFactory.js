@@ -2,7 +2,7 @@
 
 angular
     .module('crowdCode')
-    .factory("avatarFactory",[ '$firebase','firebaseUrl', function( $firebase , firebaseUrl ){
+    .factory("avatarFactory",[ 'firebaseUrl','$firebaseObject', function( firebaseUrl, $firebaseObject ){
 
 	var loaded = {};
 
@@ -21,8 +21,7 @@ angular
 		if(loaded.hasOwnProperty(workerId)){
 			return loaded[workerId];
 		} else {
-			pictureSync = $firebase(new Firebase(firebaseUrl + '/workers/'+workerId+'/avatarUrl'));
-			loaded[workerId] = pictureSync.$asObject();
+			loaded[workerId] = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+workerId+'/avatarUrl'));
 			loaded[workerId].$loaded().then(function(){
 				return loaded[workerId];
 			});

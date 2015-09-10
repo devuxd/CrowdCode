@@ -1,5 +1,3 @@
-
-
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
@@ -71,11 +69,10 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		var emptyFunction={
 							    code          :	"{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}",
 								description   : "",
-								readOnly      : true,
 								name          : "",
 								parameters    : [emptyParameter],
 								returnType    : "",
-								tests         : []
+								stubs         : []
 							};
 
 
@@ -100,20 +97,17 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		$scope.functions[functionIndex].parameters.splice(parameterIndex,1);
 	};
 
-	$scope.addTest = function(index){
+	$scope.addStub = function(index){
 
-			if($scope.functions[index].tests===undefined)
-				$scope.functions[index].tests=[];
+			if($scope.functions[index].stubs===undefined)
+				$scope.functions[index].stubs=[];
 
-			$scope.functions[index].tests.push({	readOnly: true,
-													description: "",
-													simpleTestInputs:      [""],
-													simpleTestOutput:      "" });
+			$scope.functions[index].stubs.push({} );
 	};
 
 
-	$scope.deleteTest = function(functionIndex, testIndex){
-		$scope.functions[functionIndex].tests.splice(testIndex,1);
+	$scope.deleteStub = function(functionIndex, testIndex){
+		$scope.functions[functionIndex].stubs.splice(testIndex,1);
 	};
 
 	function makeDirty(form){
@@ -132,7 +126,6 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 	}
 	
 	$scope.submit=function(form){
-		console.log($scope.functions[0].description);
 		makeDirty(form);
 
        if (form.$invalid) {
@@ -153,32 +146,17 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 
 				angular.forEach($scope.functions,function(funct,key){
 
+					//create the header
 					funct.header='function '+funct.name+'(';
 						for(var index in funct.parameters)
 							funct.header += funct.parameters[index].name + (index==funct.parameters.length-1 ? "" :", ");
 						funct.header+=")";
-
-					angular.forEach(funct.tests,function(test,key){
-						var testCode = 'equal(' + funct.name + '(';
-						angular.forEach(test.simpleTestInputs, function(input, key) {
-						    testCode += input;
-						    testCode += (key != test.simpleTestInputs.length - 1) ? ',' : '';
-						});
-						testCode += '),' + test.simpleTestOutput + ',\'' + test.description + '\');';
-						test.code=testCode;
-					});
 				});
 
-				project.functions={};
-				project.functions.functions=$scope.functions;
+				project.functions=$scope.functions;
+				console.log(project.functions);
 
-				angular.forEach($scope.ADTs,function(value,key){
-
-					value.fullExample='var x = '+value.example+';';
-				});
-
-				project.ADTs= {};
-				project.ADTs.ADTs=$scope.ADTs;
+				project.ADTs=$scope.ADTs;
 
 
 				project.$save();
@@ -205,31 +183,17 @@ clienRequestApp.controller('ClientRequestController', ['$scope','$rootScope','$f
 		project.$loaded().then(function(){
 
 		if(angular.isDefined(project.functions)){
-			$scope.functions=project.functions.functions;
-			if(! angular.isDefined(project.functions.functions[0].parameters)){
-				for(var functionIndex in project.functions.functions)
-				{
-					$scope.functions[functionIndex].parameters=[];
-					for(var parameterIndex in $scope.functions[functionIndex].paramNames){
-						$scope.functions[functionIndex].parameters.push(
-											                {
-							                                  name        : $scope.functions[functionIndex].paramNames[parameterIndex],
-							                                  type        : $scope.functions[functionIndex].paramTypes[parameterIndex],
-							                                  description : $scope.functions[functionIndex].paramDescriptions[parameterIndex]
-								            	             });
-					}
-					delete $scope.functions[functionIndex].paramNames;
-					delete $scope.functions[functionIndex].paramTypes;
-					delete $scope.functions[functionIndex].paramDescriptions;
-				}
-
+			$scope.functions=project.functions;
+			for(var index in $scope.functions){
+				if($scope.functions[index].isReadOnly !== undefined)
+					delete $scope.functions[index].isReadOnly;
 			}
 		}
 		else
 			$scope.functions=[];
 
 		if(angular.isDefined(project.ADTs))
-			$scope.ADTs=project.ADTs.ADTs;
+			$scope.ADTs=project.ADTs;
 		else
 			$scope.ADTs=[];
 

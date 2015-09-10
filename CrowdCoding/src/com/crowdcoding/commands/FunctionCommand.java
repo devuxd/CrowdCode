@@ -1,104 +1,78 @@
 package com.crowdcoding.commands;
 
-import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.util.List;
 
-import javax.print.attribute.standard.Sides;
-
-import com.crowdcoding.dto.FunctionParameterDTO;
-import com.crowdcoding.dto.PseudoFunctionDTO;
-import com.crowdcoding.dto.TestDescriptionDTO;
-import com.crowdcoding.entities.Function;
-import com.crowdcoding.entities.Test;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.FunctionParameterDTO;
+import com.crowdcoding.dto.ajax.microtask.submission.TestDTO;
+import com.crowdcoding.entities.artifacts.Function;
 import com.crowdcoding.servlets.ThreadContext;
-import com.crowdcoding.util.FirebaseService;
-import com.googlecode.objectify.LoadResult;
-import com.googlecode.objectify.VoidWork;
 
 public abstract class FunctionCommand extends Command {
-	protected long functionID;
+	protected long functionId;
 
-	public static FunctionCommand create(String name, String returnType,
-			List<FunctionParameterDTO> parameters, String header, String description,
-			String code, List<TestDescriptionDTO> tests, boolean readOnly) {
-		return new Create(name, returnType, parameters, header, description, code, tests, readOnly);
+	public static FunctionCommand addClientRequestsArtifacts(FunctionDTO functionDTO) {
+		return new AddClientRequestsArtifacts(functionDTO);
 	}
 
-	public static FunctionCommand removeCaller(long functionID,
+	public static FunctionCommand create(FunctionDTO functionDTO, boolean isApiArtifact, boolean isReadOnly) {
+		return new Create(functionDTO, isApiArtifact, isReadOnly);
+	}
+
+	public static FunctionCommand createRequestedFunction(long requestingFunctionId, FunctionDTO requestedFunction) {
+		return new CreateRequestedFunction( requestingFunctionId, requestedFunction);
+	}
+
+	public static FunctionCommand removeCaller(long functionId,	long callerFunctionID) {
+		return new RemoveCaller(functionId, callerFunctionID);
+	}
+
+	public static FunctionCommand addCaller(long functionId,
 			long callerFunctionID) {
-		return new RemoveCaller(functionID, callerFunctionID);
+		return new AddCaller(functionId, callerFunctionID);
 	}
 
-	public static FunctionCommand addCaller(long functionID,
-			long callerFunctionID) {
-		return new AddCaller(functionID, callerFunctionID);
+	public static FunctionCommand addCallee(long functionId,
+			long calleeFunctionId) {
+		return new AddCaller(functionId, calleeFunctionId);
 	}
 
-	public static FunctionCommand addPseudocaller(long functionID,
-			long pseudoCallerId, String pseudoCallerName, String pseudoCallerDescription) {
-		return new AddPseudocaller(functionID, pseudoCallerId, pseudoCallerName, pseudoCallerDescription);
+	public static FunctionCommand runTests(long functionId) {
+		return new RunTests(functionId);
 	}
 
-	public static FunctionCommand removePseudocaller(long functionID, long pseudoCallerId) {
-		return new RemovePseudocaller(functionID, pseudoCallerId);
+	public static FunctionCommand submittedTestResult(long functionId, String jsonDTO){
+		return new SubmittedTestResult(functionId, jsonDTO);
 	}
 
-	public static FunctionCommand addTest(long functionID, long testID, String testDescription) {
-		return new AddTest(functionID, testID, testDescription);
+
+	public static FunctionCommand calleeChangedInterface(long functionId,
+			long calleeId, int oldCalleeVersion) {
+		return new CalleeChangedInterface(functionId, calleeId,
+				oldCalleeVersion);
 	}
 
-	public static FunctionCommand writeTestJobQueue(long functionID, int functionVersion, String implementedIds) {
-		return new WriteTestJobQueue(functionID, functionVersion, implementedIds);
-	}
-
-	public static FunctionCommand testBecameImplemented(long functionID,
-			long testID) {
-		return new TestBecameImplemented(functionID, testID);
-	}
-	public static FunctionCommand testReturnUnimplemented(long functionID,
-			long testID) {
-		return new TestReturnUnimplemented(functionID, testID);
-	}
-
-	public static FunctionCommand passedTests(long functionID) {
-		return new PassedTests(functionID);
-	}
-
-	public static FunctionCommand failedTests(long functionID) {
-		return new FailedTests(functionID);
-	}
-
-	public static FunctionCommand calleeChangedInterface(long functionID,
-			String oldFullDescription, String newFullDescription) {
-		return new CalleeChangedInterface(functionID, oldFullDescription,
-				newFullDescription);
-	}
-
-	public static FunctionCommand calleeBecameDescribed(long functionID,
-			long calleeId, String pseudoFunctionName) {
-		return new CalleeBecameDescribed(functionID, calleeId,
-				pseudoFunctionName);
-	}
-
-	public static FunctionCommand calleeBecomeDeactivated(long functionID,
+	public static FunctionCommand calleeBecomeDeactivated(long functionId,
 			long calleeId, String disputeText) {
-		return new CalleeBecomeDeactivated(functionID, calleeId, disputeText);
+		return new CalleeBecomeDeactivated(functionId, calleeId, disputeText);
 	}
 
-	public static FunctionCommand disputeTestCases(long functionID,
-			String issueDescription, String testDescription, long artifactId) {
-		return new DisputeTestCases(functionID, issueDescription,
-				testDescription, artifactId);
+	public static FunctionCommand addTest(long functionId, long testId) {
+		return new AddTest(functionId, testId);
 	}
 
-	public static FunctionCommand disputeFunctionSignature(long functionID,
-			String issueDescription, long artifactId) {
-		return new DisputeFunctionSignature(functionID, issueDescription, artifactId);
+	public static FunctionCommand incrementTestSuite(long functionId) {
+		return new IncrementTestSuite(functionId);
 	}
 
-	private FunctionCommand(Long functionID) {
-		this.functionID = functionID;
+
+	public static FunctionCommand lookForWork(long functionId) {
+		return new LookForWork(functionId);
+	}
+
+	private FunctionCommand(Long functionId) {
+		this.functionId = functionId;
 		queueCommand(this);
 	}
 
@@ -107,67 +81,98 @@ public abstract class FunctionCommand extends Command {
 	private static void queueCommand(Command command) {
 		ThreadContext threadContext = ThreadContext.get();
         threadContext.addCommand(command);
-		//CommandContext.ctx.addCommand(command);
 	}
 
 
 	public void execute(final String projectId) {
-	        	if (functionID != 0) {
-	    			Function function = Function.find(functionID);
-	    			if (function == null)
-	    				System.out
-	    						.println("errore Cannot execute FunctionCommand. Could not find the function for FunctionID "
-	    								+ functionID);
-	    			else {
-	    				execute(function, projectId);
-	    			}
-	    		} else
-	    			execute(null, projectId);
+    	if (functionId != 0) {
+			Function function = Function.find(functionId);
+			if (function == null)
+				System.out
+						.println("Error Cannot execute FunctionCommand. Could not find the function for FunctionID "
+								+ functionId);
+			else {
+				execute(function, projectId);
+			}
+		} else
+			execute(null, projectId);
 	}
 
 	public abstract void execute(Function function, String projectId);
 
-	protected static class Create extends FunctionCommand {
-		private String name;
-		private String returnType;
-		private List<FunctionParameterDTO> parameters;
-		private String header;
-		private String description;
-		private String code;
-		private boolean readOnly;
-		private List<TestDescriptionDTO> tests;
+	protected static class AddClientRequestsArtifacts extends FunctionCommand {
+		private FunctionDTO functionDTO;
 
-		public Create(String name, String returnType, List<FunctionParameterDTO> parameters,
-				String header, String description, String code,
-				List<TestDescriptionDTO> tests, boolean readOnly) {
+		public AddClientRequestsArtifacts(FunctionDTO functionDTO) {
 			super(0L);
-			this.name = name;
-			this.returnType = returnType;
-			this.parameters = parameters;
-			this.header = header;
-			this.description = description;
-			this.code = code;
-			this.tests = tests;
-			this.readOnly = readOnly;
+			this.functionDTO = functionDTO;
 		}
 
-		// Override the default execute behavior, as there is no function yet to
-		// be loaded.
 		public void execute(Function function, String projectId) {
 
-			System.out.println("Creating function  "+this.name);
-			Function newFunction = new Function(name, returnType, parameters, header, description, code,
-					readOnly, projectId);
-			newFunction.storeToFirebase(projectId);
-			newFunction.createTest(tests);
+			Function funct = new Function(
+										functionDTO,
+										true,
+										true,
+										projectId);
+
+			for( TestDTO test : functionDTO.tests ){
+				TestCommand.create(test, funct.getId(), true, true);
+			}
 		}
 	}
+
+	protected static class Create extends FunctionCommand {
+		private FunctionDTO functionDTO;
+		private boolean isReadOnly;
+		private boolean isApiArtifact;
+
+		public Create(FunctionDTO functionDTO, boolean isApiArtifact, boolean isReadOnly) {
+			super(0L);
+			
+			this.functionDTO   = functionDTO;
+			this.isApiArtifact = isApiArtifact;
+			this.isReadOnly	   = isReadOnly;
+		}
+
+		public void execute(Function function, String projectId) {
+			new Function(functionDTO, isApiArtifact, isReadOnly, projectId);
+		}
+	}
+
+	protected static class CreateRequestedFunction extends FunctionCommand {
+
+		private FunctionDTO requestedFunctionDTO;
+		private long requestingFunctionId;
+
+		public CreateRequestedFunction(long requestingFunctionId, FunctionDTO requestedFunctionDTO) {
+			super(0L);
+
+			this.requestedFunctionDTO = requestedFunctionDTO;
+			this.requestingFunctionId = requestingFunctionId;
+		}
+
+		public void execute(Function funct, String projectId) {
+
+			requestedFunctionDTO.code = "{\n    return -1;\n}";
+			Function function = new Function(requestedFunctionDTO, false, false, projectId);
+
+			function.addCaller(requestingFunctionId);
+
+			FunctionCommand.addCallee(requestingFunctionId, function.getId());
+			
+			for( TestDTO test : requestedFunctionDTO.tests){
+				TestCommand.create(test, function.getId(), false, false);
+			}
+		}
+	}
+
 
 	protected static class RemoveCaller extends FunctionCommand {
 		private long callerFunctionID;
 
-		public RemoveCaller(long functionID, long callerFunctionID) {
-			super(functionID);
+		public RemoveCaller(long functionId, long callerFunctionID) {
+			super(functionId);
 			this.callerFunctionID = callerFunctionID;
 		}
 
@@ -179,8 +184,8 @@ public abstract class FunctionCommand extends Command {
 	protected static class AddCaller extends FunctionCommand {
 		private long callerFunctionID;
 
-		public AddCaller(long functionID, long callerFunctionID) {
-			super(functionID);
+		public AddCaller(long functionId, long callerFunctionID) {
+			super(functionId);
 			this.callerFunctionID = callerFunctionID;
 		}
 
@@ -190,158 +195,43 @@ public abstract class FunctionCommand extends Command {
 		}
 	}
 
-	protected static class TestBecameImplemented extends FunctionCommand {
-		private long testID;
+	protected static class AddCallee extends FunctionCommand {
+		private long calleeFunctionId;
 
-		public TestBecameImplemented(long functionID, long testID) {
-			super(functionID);
-			this.testID = testID;
+		public AddCallee(long functionId, long calleeFunctionId) {
+			super(functionId);
+			this.calleeFunctionId = calleeFunctionId;
 		}
 
-		public void execute(Function function, String projectId) {
-
-			function.testBecameImplemented(testID);
-		}
-	}
-
-	protected static class TestReturnUnimplemented extends FunctionCommand {
-		private long testID;
-
-		public TestReturnUnimplemented(long functionID, long testID) {
-			super(functionID);
-			this.testID = testID;
-		}
-
-		public void execute(Function function, String projectId) {
-
-			function.testReturnUnimplemented(testID);
-		}
-	}
-	protected static class PassedTests extends FunctionCommand {
-		public PassedTests(long functionID) {
-			super(functionID);
-		}
-
-		public void execute(Function function, String projectId) {
-			function.passedTests(projectId);
-		}
-	}
-
-	protected static class FailedTests extends FunctionCommand {
-		public FailedTests(long functionID) {
-			super(functionID);
-		}
-
-		public void execute(Function function, String projectId) {
-			function.failedTests(projectId);
+		public void execute(Function function, String projectId)
+		{
+				function.addCallee(calleeFunctionId);
 		}
 	}
 
 	protected static class CalleeChangedInterface extends FunctionCommand {
-		private String oldFullDescription;
-		private String newFullDescription;
-
-		public CalleeChangedInterface(long functionID,
-				String oldFullDescription, String newFullDescription) {
-			super(functionID);
-			this.oldFullDescription = oldFullDescription;
-			this.newFullDescription = newFullDescription;
-		}
-
-		public void execute(Function function, String projectId) {
-			function.calleeChangedInterface(oldFullDescription,
-					newFullDescription, projectId);
-		}
-	}
-
-	protected static class AddPseudocaller extends FunctionCommand {
-
-		private String pseudoCallerName;
-		private String pseudoCallerDescription;
-		private long pseudoCallerId;
-
-		public AddPseudocaller(long functionID, long pseudoCallerId,
-				String pseudoCallerName, String pseudoCallerDescription) {
-			super(functionID);
-
-			this.pseudoCallerName = pseudoCallerName;
-			this.pseudoCallerDescription = pseudoCallerDescription;
-			this.pseudoCallerId = pseudoCallerId;
-		}
-
-		public void execute(Function function, String projectId) {
-			if(function!=null)
-				function.addPseudocaller(pseudoCallerId, pseudoCallerName, pseudoCallerDescription);
-			else
-			{
-				System.out.println("ERROR: function null in addPseudoccaller");
-			}
-		}
-	}
-
-	protected static class RemovePseudocaller extends FunctionCommand {
-
-		private long pseudoCallerId;
-
-		public RemovePseudocaller(long functionID, long pseudoCallerId) {
-			super(functionID);
-
-			this.pseudoCallerId = pseudoCallerId;
-		}
-
-		public void execute(Function function, String projectId) {
-			function.removePseudocaller(pseudoCallerId);
-		}
-	}
-
-
-	protected static class AddTest extends FunctionCommand {
-		private long testID;
-		private String testDescripiton;
-
-		public AddTest(long functionID, long testID, String testDescripiton) {
-			super(functionID);
-			this.testID = testID;
-			this.testDescripiton = testDescripiton;
-		}
-
-		public void execute(Function function, String projectId) {
-			function.addTest(testID, testDescripiton);
-		}
-	}
-
-	protected static class WriteTestJobQueue extends FunctionCommand {
-		private long functionID;
-		private int functionVersion;
-		private String implementedIds;
-
-		public WriteTestJobQueue(long functionID, int functionVersion,String implementedIds) {
-			super(functionID);
-			this.functionID = functionID;
-			this.functionVersion=functionVersion;
-			this.implementedIds = implementedIds;
-		}
-
-		public void execute(Function function, String projectId) {
-			FirebaseService.writeTestJobQueue(functionID,functionVersion, implementedIds, projectId);
-			System.out.println("@@@@@ ASKING TEST JOB @@@@@@");
-		}
-	}
-
-	protected static class CalleeBecameDescribed extends FunctionCommand {
-
 		private long calleeId;
-		private String pseudoFunctionName;
+		private int oldCalleeVersion;
 
-		public CalleeBecameDescribed(long functionID, long calleeId,
-				String pseudoFunctionName) {
-			super(functionID);
+		public CalleeChangedInterface(long functionId, long calleeId, int oldCalleeVersion) {
+			super(functionId);
 			this.calleeId = calleeId;
-			this.pseudoFunctionName = pseudoFunctionName;
+			this.oldCalleeVersion = oldCalleeVersion;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.calleeBecameDescribed(calleeId, pseudoFunctionName, projectId);
+			function.calleeChangedInterface(calleeId, oldCalleeVersion);
+		}
+	}
+
+	protected static class RunTests extends FunctionCommand {
+
+		public RunTests(long functionId) {
+			super(functionId);
+		}
+
+		public void execute(Function function, String projectId) {
+			function.runTests();
 		}
 	}
 
@@ -349,51 +239,69 @@ public abstract class FunctionCommand extends Command {
 		private long calleeId;
 		private String disputeText;
 
-		public CalleeBecomeDeactivated(long functionID, long calleeId,
+		public CalleeBecomeDeactivated(long functionId, long calleeId,
 				String disputeText) {
-			super(functionID);
+			super(functionId);
 			this.calleeId = calleeId;
 			this.disputeText = disputeText;
 		}
 
 		public void execute(Function function, String projectId) {
-			function.calleeBecomeDeactivated(calleeId, disputeText, projectId);
+			function.calleeBecomeDeactivated(calleeId, disputeText );
 		}
 	}
 
-	protected static class DisputeTestCases extends FunctionCommand {
-		private String issueDescription;
-		private String testDescription;
-		private long artifactId;
+	protected static class SubmittedTestResult extends FunctionCommand {
+		private String jsonDto;
 
+		public SubmittedTestResult(long functionId, String jsonDto) {
+			super(functionId);
 
-		public DisputeTestCases(long functionID, String issueDescription,
-				String testDescription, long artifactId) {
-			super(functionID);
-			this.issueDescription = issueDescription;
-			this.testDescription = testDescription;
-			this.artifactId = artifactId;
+			this.jsonDto = jsonDto;
+		}
+
+		public void execute(Function function, String projectId) {
+			function.submittedTestResult(jsonDto);
+		}
+	}
+
+	protected static class AddTest extends FunctionCommand {
+		private long testId;
+
+		public AddTest(long functionId, long testId) {
+			super(functionId);
+			this.testId	= testId;
 
 		}
 
 		public void execute(Function function, String projectId) {
-			function.disputeTestCases(issueDescription, testDescription, artifactId,
-					projectId);
+			function.addTest(testId);
 		}
 	}
 
-	protected static class DisputeFunctionSignature extends FunctionCommand {
-		private String issueDescription;
-		private long artifactId;
+	protected static class IncrementTestSuite extends FunctionCommand {
 
-		public DisputeFunctionSignature(long functionID, String issueDescription, long artifactId) {
-			super(functionID);
-			this.issueDescription = issueDescription;
-			this.artifactId = artifactId;
+		public IncrementTestSuite(long functionId) {
+			super(functionId);
+
 		}
 
 		public void execute(Function function, String projectId) {
-			function.disputeFunctionSignature(issueDescription, artifactId, projectId);
+			function.incrementTestSuiteVersion();
 		}
 	}
+
+
+	protected static class LookForWork extends FunctionCommand {
+
+		public LookForWork(long functionId) {
+			super(functionId);
+
+		}
+
+		public void execute(Function function, String projectId) {
+			function.lookForWork();
+		}
+	}
+
 }

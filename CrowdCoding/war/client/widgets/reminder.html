@@ -1,12 +1,12 @@
-<div  ng-init="show=false"  class="section-reminder"  ng-if = "skipMicrotaskIn">
-	<div ng-show="show || status=='danger'"
-		 style="width: {{(1-(skipMicrotaskIn / microtaskTimeout)) * 100| number :1}}%;
-	text-align: right;">
-		<b class="label-reminder text-{{status}}">
-			{{skipMicrotaskIn | date:'mm:ss'}}
-		</b>
-	</div>
-    <div id="remainingTimeBar" class="progress progress-bar-reminder">
+<div  ng-init="show=false"  class="reminder"  ng-if = "skipMicrotaskIn">
+	<span ng-show="show || status=='danger'"
+		 style="position:absolute; top:-20px; right:0px; text-align: right;">
+         <!-- left: {{(1-(skipMicrotaskIn / microtaskTimeout)) * 100| number :1}}%;  -->
+        <b class="label text-{{status}}">
+            {{skipMicrotaskIn | date:'mm:ss'}}
+        </b>
+	</span>
+    <div id="remainingTimeBar" class="progress">
         <div ng-mouseenter="show=true"
         	 ng-mouseleave="show=false"
         	 role="progressbar"
@@ -14,4 +14,6 @@
         	 style="width:{{(skipMicrotaskIn / microtaskTimeout) * 100| number :1}}%">
         </div>
     </div>
+
+    
 </div>

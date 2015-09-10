@@ -5,16 +5,15 @@
 ///////////////////////
 angular
     .module('crowdCode')
-    .factory('questionsService', ['$window','$rootScope','$http', '$q', '$firebase', 'firebaseUrl','workerId', function( $window, $rootScope, $http, $q, $firebase, firebaseUrl,workerId) {
+    .factory('questionsService', ['$window','$rootScope','$http', '$q','$firebaseArray','$firebaseObject', 'firebaseUrl','workerId', function( $window, $rootScope, $http, $q,$firebaseArray,$firebaseObject, firebaseUrl,workerId) {
 
 
 	var service = new function(){
 		// Private variables
 		var questions;
 		var allTags = [];
-
 		var loaded = false;
-		var questionsRef = $firebase(new Firebase(firebaseUrl+'/questions'));
+		var firebaseRef = new Firebase(firebaseUrl+'/questions');
 
 		var idx = lunr(function(){
 			this.ref('id');
@@ -86,7 +85,7 @@ angular
 		}
 
 		function init(){
-			questions = questionsRef.$asArray();
+			questions = $firebaseArray(firebaseRef);
 			questions.$loaded().then(function(){
 
 				// tell the others that the functions services is loaded
@@ -135,8 +134,15 @@ angular
 			var deferred = $q.defer();
 			var url = '';
 
-			if( type != 'question' || formData.id == 0 ) url = 'insert?type=' + type;
-			else                   url = 'update?id=' + formData.id;
+			if( type != 'question' || formData.id == 0 ) 
+				url = 'insert?type=' + type;
+			else                   
+				url = 'update?id=' + formData.id;
+
+			// replace all the occurrences of the newline '\n' with the html <br>
+			// TODO: check for other formatting syntax
+			formData.text = formData.text.replace(new RegExp('\n', 'g'),'<br />');
+			
 
 			$http.post('/' + $rootScope.projectId + '/questions/' + url , formData)
 				.success(function(data, status, headers, config) {
@@ -209,14 +215,40 @@ angular
 		}
 
 		function setWorkerView(id,view){
-			questionsRef.$ref().child( id+'/views/'+workerId ).set( view );
+			firebaseRef.child( id+'/views/'+workerId ).set( view );
 		}
 
+		function updateViewCounter(questionId){	
+			var viewsObj = $firebaseObject(new Firebase(firebaseUrl+'/questions/'+questionId));
+			viewsObj.$loaded().then(function(){    
+			if(workerId != viewsObj.ownerId){
+				if(viewsObj.viewCounter == undefined){
+					viewsObj.viewCounter = 1;
+				}
+				else {
+					viewsObj.viewCounter += 1;
+					if(viewsObj.viewCounter == 15)
+						sendQuestionViews(viewsObj.viewCounter);
+				}				
+					viewsObj.$save();
+			}
+			});
+		}
+		
+		function sendQuestionViews(views){
+			$http.get('/' + projectId + '/ajax/questionViews?id='+ views)
+			.success(function(data, status, headers, config) {
+			})
+			.error(function(data, status, headers, config) {
+
+			});		
+		}
+		
 		function addWorkerView(id){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
-					console.log('viewed');
+					updateViewCounter(id);
 					deferred.resolve();
 				})
 				.error(function(data, status, headers, config) {

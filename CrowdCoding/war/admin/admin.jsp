@@ -67,7 +67,7 @@
     <script src="/include/ui-ace-editor/src/ui-ace.js"> </script> <!-- UI Ace Editor-->
     <script src="/include/ace-editor/src-min-noconflict/ace.js"> </script> <!-- Ace Editor-->
     <script src="/include/angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
+    <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script> <!-- firebase -->
     <script src="https://cdn.firebase.com/libs/angularfire/0.9.0/angularfire.min.js"></script> <!-- angularfire -->
     <script src="/include/jsdiff-master/diff.js"></script>
 

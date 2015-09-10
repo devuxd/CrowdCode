@@ -1,17 +1,25 @@
 angular
     .module('crowdCode')
-    .directive('microtaskForm', [ '$rootScope', '$firebase', '$http', '$interval', '$timeout','$modal',  'functionsService','FunctionFactory', 'userService', 'microtasksService','TestList', microtaskForm]); 
+    .directive('microtaskForm', [ '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]); 
 
-function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal , functionsService, FunctionFactory, userService, microtasks, TestList) {
+function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
+
     return {
-        restrict: 'E',
+        restrict: 'A',
+        scope: true,
+        require: 'form',
         templateUrl: '/client/microtasks/microtask_form.html',
-        controller: function($scope,$element,$attrs){
-        	console.log('controller microtask form');
+        link: function($scope,$element,$attrs,formController){
+        	$scope.formController = formController;
+        },
+        controller: function($scope){
+        	$scope.taskData = {};
+
 			// private vars
 			var templatesURL = "/client/microtasks/";
 			var templates = {
 				'NoMicrotask': 'no_microtask/no_microtask',
+				'Dashboard': 'dashboard/dashboard',
 				'Review': 'review/review',
 				'DebugTestFailure': 'debug_test_failure/debug_test_failure',
 				'ReuseSearch': 'reuse_search/reuse_search',
@@ -20,43 +28,51 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				'WriteTest': 'write_test/write_test',
 				'WriteTestCases': 'write_test_cases/write_test_cases',
 				'WriteCall': 'write_call/write_call',
+				'DescribeFunctionBehavior': 'describe_behavior/describe_behavior',
+				'ImplementBehavior': 'implement_behavior/implement_behavior',
+				'ChallengeReview': 'challenge_review/challenge_review'
 			};
 
 			// initialize microtask and templatePath
 			$scope.funct = {};
-			$scope.test = {};
 			$scope.microtask = {};
 			$scope.templatePath = ""; //"/html/templates/microtasks/";
+
+			$scope.taskData.startBreak = false;
 
 			var waitTimeInSeconds = 15;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
 			$scope.noMicrotask   = true;
-			$scope.model = {
-				startBreak :false
-			};
+
 			$scope.checkQueueIn  = waitTimeInSeconds;
 
-			$scope.askQuestion = function(){
-				$rootScope.$broadcast('setLeftBarTab','questions');
-				$rootScope.$broadcast('askQuestion');
-			};
+			$scope.askQuestion = askQuestion();
+			$scope.openTutorial = openTutorial;
 
-			$scope.openTutorial = function(){
-				$scope.$emit('queue-tutorial', $scope.microtask.type , true, function(){});
-			};
 
+			$scope.submit = submitMicrotask;
+			$scope.skip   = skipMicrotask;
+			$scope.fetch  = fetchMicrotask;
 
 			// ------- MESSAGE LISTENERS ------- //
 
+			$scope.$on('timeExpired'    , timeExpired);
 			$scope.$on('fecthMicrotask' , fetchMicrotask);
-			$scope.$on('submitMicrotask', submitMicrotask);
-
+			$scope.$on('fetchSpecificMicrotask' , fetchSpecificMicrotask);
 			$scope.$on('microtaskLoaded', onMicrotaskLoaded);
-			$scope.$on('noMicrotask'    , onNoMicrotask);
+			$scope.$on('openDashboard' , openDashboard);
 
+			$scope.workerOption = "";
 
+			$scope.currentPrompt = function(){
+				$scope.workerOption = "Take a break";
+				if(userService.data.level >= 2)
+					$scope.workerOption = "Pick next microtask"				
+						
+				return $scope.workerOption;			
+			}
 
 			function onMicrotaskLoaded($event, microtask){
 
@@ -70,30 +86,39 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 				$scope.microtask = microtask;
 
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionID))
-					$scope.funct = functionsService.get($scope.microtask.functionID);
+				if (angular.isDefined($scope.microtask.functionId))
+					$scope.funct = functionsService.get($scope.microtask.functionId);
 
-				// retrieve the related test
-				if ( angular.isDefined($scope.microtask.testID) )
-					$scope.test = TestList.get($scope.microtask.testID).rec;
 
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 			}
+			
 
-			function onNoMicrotask($event, fetchData) {
-
+			
+			function openDashboard(){
+				$scope.taskData.startBreak = true;
+				$scope.breakMode = true;	
+				cancelFetchTimer();
+				$scope.templatePath  = templatesURL + templates['Dashboard'] + ".html";
+			}
+			
+			function noMicrotasks() {
 				$scope.noMicrotask = true;
+				$scope.$emit('reset-reminder');			
+				setFetchTimer();
 
-				// reset the microtask submit reminder
-				$scope.$emit('reset-reminder');
-
-				// set the no microtask template
-				$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
-
+				if(userService.data.level >= 2)
+					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
+				else
+					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";			
+			}
+			
+			
+			function setFetchTimer(){
 				// if is not in break mode, start to check the queue
-				if(! $scope.breakMode){
+				if(! $scope.breakMode ){
 					// initialize the countdown
 					$scope.checkQueueIn = waitTimeInSeconds;
 					// every second decremend the countdown
@@ -102,34 +127,117 @@ function microtaskForm($rootScope, $firebase, $http, $interval, $timeout, $modal
 					}, 1000);
 					// set the timeout to check the queue
 					checkQueueTimeout = $timeout(function() {
+						$scope.checkQueueIn = 0;
 						$interval.cancel(timerInterval);
-						$scope.$emit('fecthMicrotask');
+
+						$timeout(fetchMicrotask,1000);
+						
 					}, waitTimeInSeconds*1000); 
 				}
 			}
 
-			function fetchMicrotask($event, fetchData) {
+			function cancelFetchTimer(){
 				// cancel checkQueuetimeout
 				if (checkQueueTimeout !== null) {
 					$timeout.cancel(checkQueueTimeout);
 				}
+			}
+			
+
+			function checkBreakMode(){
+				if( $scope.taskData.startBreak ) { 
+					$scope.breakMode = true; 
+					$scope.taskData.startBreak = false; 
+				}
+			}
+
+			// time is expired, skip the microtask
+			function timeExpired(){
+				$scope.canSubmit    = false;
+				$scope.templatePath = templatesURL + "loading.html";
+				microtasks
+					.submit($scope.microtask,undefined,true,true)
+					.then( function(fetchData){
+						microtasks.load(fetchData);
+					}, function(){
+						noMicrotasks();
+					});
+			}
+			
+			function fetchMicrotask($event, fetchData) {
+				cancelFetchTimer();
 				$scope.breakMode = false;
-				// show the loading screen
+				microtasks
+					.fetch()
+					.then( function(fetchData){
+						microtasks.load(fetchData);
+					}, function(){
+						noMicrotasks();
+					}); 
+			}
+			
+			function fetchSpecificMicrotask($event, microtaskId ) {
+				cancelFetchTimer();
+				$scope.breakMode     = false;
 				$scope.templatePath  = templatesURL + "loading.html";
-				// ask for a microtask fetch
-				microtasks.fetch();
+				microtasks
+					.fetchSpecificMicrotask( microtaskId )					
+					.then( function(fetchData){
+						microtasks.load(fetchData);
+					}, function(){
+						noMicrotasks();
+					}); 
 			}
 
 
-			function submitMicrotask(event, formData, autoSkip) {
+			// skip button pressed
+			function skipMicrotask(){
+				checkBreakMode();
+				$scope.canSubmit    = false;
+				$scope.templatePath = templatesURL + "loading.html";
+				microtasks
+					.submit($scope.microtask,undefined,false,!$scope.breakMode)
+					.then( function(fetchData){
+						microtasks.load(fetchData);
+					}, function(){
+						noMicrotasks();
+					});
+			}
 
-				// if the form is valid, submit the microtask
-				if($scope.canSubmit){
-					if( $scope.model.startBreak ) { $scope.breakMode = true; $scope.model.startBreak = false; }
-					$scope.templatePath   = templatesURL + "loading.html";
-					$scope.canSubmit=false;
-					microtasks.submit($scope.microtask,formData,autoSkip, !$scope.breakMode);
-				}
+			// submit button pressed
+			function submitMicrotask() {
+				// check if form is untouched
+		        if( !$scope.formController.$dirty ){
+		            $modal({template : '/client/microtasks/modal_form_pristine.html' , show: true});
+		            return;
+		        }
+		        // collect form data and submit the microtask
+				if( $scope.taskData.collectFormData !== undefined ){
+        			var formData = $scope.taskData.collectFormData($scope.formController);
+        			if( formData ){
+        				checkBreakMode();
+						$scope.canSubmit    = false;
+						$scope.templatePath = templatesURL + "loading.html";
+
+
+						microtasks
+							.submit($scope.microtask,formData,false,!$scope.breakMode)
+							.then( function(fetchData){
+								microtasks.load(fetchData);
+							}, function(){
+								noMicrotasks();
+							});
+        			}
+        		}
+			}
+
+
+			function askQuestion(){
+				$rootScope.$broadcast('setLeftBarTab','questions');
+				$rootScope.$broadcast('askQuestion');
+			}
+			function openTutorial(){
+				$scope.$emit('queue-tutorial', $scope.microtask.type , true, function(){});
 			}
         }
     };

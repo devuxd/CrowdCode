@@ -1,17 +1,19 @@
 
 angular
     .module('crowdCode')
-    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebase', 'firebaseUrl','workerId', function($rootScope, $compile, $timeout, $firebase,firebaseUrl,workerId) {
+    .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebaseObject',  'firebaseUrl','workerId','$http', function($rootScope, $compile, $timeout, $firebaseObject, firebaseUrl,workerId,$http) {
     
     // get the synced objects from the backend
-    var tutorialsOn        = $firebase( new Firebase( firebaseUrl + '/status/settings/tutorials') ).$asObject();
-    var completedTutorials = $firebase( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) ).$asObject();
+    var tutorialsOn        = $firebaseObject( new Firebase( firebaseUrl + '/status/settings/tutorials') );
+    var completedTutorials = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) );
+    var tutorialCounter    = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/tutorialCounter' ) );
+
 
     var queue    = [];
     var running  = false;
     var currentId;
     var currentOnFinish;
-
+    //tutorialCounter = 0;
     return {
         restrict: 'E',
         scope: {},
@@ -19,6 +21,8 @@ angular
 
             // listen for the queue tutorial event
             $rootScope.$on('queue-tutorial',queueTutorial);
+            $scope.queueTutorial = queueTutorial;
+            $scope.isTutorialCompleted = isTutorialCompleted;
 
             // expose the endTutorial method to the $scope
             // it is called when the tutorial is closed
@@ -26,14 +30,17 @@ angular
 
             // if the tutorial is forced or if 
             // is not completed, enqueue it
-            function queueTutorial( event, tutorialId, force, onFinish ){
+            function queueTutorial( event, tutorialId, force, onFinish, queueAfter ){
+                console.log('queuing tutorial '+tutorialId);
                 tutorialsOn.$loaded().then(function(){
                     completedTutorials.$loaded().then(function(){
                         if( force || ( tutorialsOn.$value && !isTutorialCompleted(tutorialId) )){
                             // queue tutorial
                             queue.push({
                                 id       : tutorialId,
-                                onFinish : onFinish,
+                                onFinish : queueAfter === undefined ? 
+                                           onFinish :
+                                           function(){ queueTutorial(null,queueAfter,true); }
                             });
                             checkQueue();
                         }
@@ -45,18 +52,29 @@ angular
             // if the tutorials queue is not empty,
             // start the first tutorial in queue
             function checkQueue(){
+
                 if( !running && queue.length > 0 ){
-                    var tutorial= queue.pop();
+                    var tutorial    = queue.pop();
                     currentId       = tutorial.id;
                     currentOnFinish = tutorial.onFinish;
+
+                    $scope.tutorialId = currentId;
                     startTutorial();
                 }
             }
+            
+            function sendTutorialsCompleted(){
+    			$http.get('/' + projectId + '/ajax/tutorialCompleted')
+    				.success(function(data, status, headers, config) {
+    			})
+    			.error(function(data, status, headers, config) {
 
+    			});
+    		}
+            
             // start the current tutorial
             function startTutorial(){
                 running = true;
-                
                 var templateUrl = '/client/tutorials/'+currentId+'.html';
                 $element.html( '<tutorial template-url="'+templateUrl+'"></tutorial>' );
                 $compile($element.contents())($scope);
@@ -73,8 +91,10 @@ angular
                 
                 $element.html( '' );
 
-                if( currentOnFinish !== undefined )
+                if( currentOnFinish !== undefined ){
+                    console.log('currentOnFinish');
                     currentOnFinish.apply();
+                }
 
                 currentId       = undefined;
                 currentOnFinish = undefined;
@@ -87,7 +107,8 @@ angular
             // true if the tutorial with tutorialId is complete
             // false if not
             function isTutorialCompleted( tutorialId ){
-                if( completedTutorials.$value != undefined && completedTutorials.$value.search(tutorialId) > -1 ) 
+                console.log(completedTutorials);
+                if( completedTutorials.$value !== undefined && completedTutorials.$value !== null && completedTutorials.$value.search(tutorialId) > -1 ) 
                     return true;
 
                 return false;
@@ -95,11 +116,18 @@ angular
 
             // set tutorial with tutorialId as complete
             function setTutorialCompleted( tutorialId ){
-                if( completedTutorials.$value == undefined )
+                if( completedTutorials.$value === undefined ){
                     completedTutorials.$value = tutorialId;
-                else 
+                    tutorialCounter.$value =  1;
+                }
+                else{ 
                     completedTutorials.$value += ','+tutorialId; 
-
+                    tutorialCounter.$value +=  1;
+                }
+                if(tutorialCounter.$value == 3)
+                	sendTutorialsCompleted();
+                console.log('saving in tutorials')
+                tutorialCounter.$save();
                 completedTutorials.$save();
             }
         }
