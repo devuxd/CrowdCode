@@ -44,7 +44,6 @@ questionsRef.on('value',function(snap){
 				questions[ quest.id ].answeredAt = answ.createdAt;
 			}
 
-
 			if( answ.comments !== undefined ){
 				var commentsKey = Object.keys(answ.comments);
 				for( var k1 = 0; k1 < commentsKey.length ; k1++ ){
