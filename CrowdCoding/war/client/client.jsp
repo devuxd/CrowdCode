@@ -106,10 +106,8 @@
 	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>
 	<script src="/include/doctrine/doctrine.browser.js"></script>
 
-  <script src="/include/google-analytics/analytics.js"></script>
-  <script src="/include/angularytics/angularytics.min.js"></script>
-
-
+	<script src="/include/google-analytics/analytics.js"></script>
+	<script src="/include/angularytics/angularytics.min.js"></script>
 
 	<script>
 	var projectId    = '<%=projectID%>';
