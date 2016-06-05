@@ -34,13 +34,13 @@
 	<link rel="stylesheet" href="/include/ui-layout/src/ui-layout.css" type="text/css" />
 	<link rel="stylesheet" href="/include/ng-tags-input/ng-tags-input.min.css" type="text/css" />
 
-    
+
 	<link rel="stylesheet" href="/client/client.css" type="text/css" />
 
 
 </head>
 
-<body disable-backspace ng-cloak >
+<body disable-backspace ng-cloak ng-controller="TrackingCtrl">
 
 	<header>
 		<nav-bar></nav-bar>
@@ -65,12 +65,12 @@
 		    </div>
 		</div>
 
-		
+
 
 	</div>
 
 	<ng-include src="'widgets/popup_template.html'"></ng-include>
-	
+
 	<tutorial-manager></tutorial-manager>
 	<toaster-container></toaster-container>
 
@@ -106,7 +106,10 @@
 	<script src="/include/ng-tags-input/ng-tags-input.min.js"></script>
 	<script src="/include/doctrine/doctrine.browser.js"></script>
 
-	
+  <script src="/include/google-analytics/analytics.js"></script>
+  <script src="/include/angularytics/angularytics.min.js"></script>
+
+
 
 	<script>
 	var projectId    = '<%=projectID%>';
