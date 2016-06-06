@@ -31,9 +31,9 @@ angular
   .constant('projectId'  ,projectId)
 	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
 	.constant('logoutUrl'  ,logoutURL)
-	.controller('TrackingCtrl', function(Angularytics, $scope) {
-			$scope.trackInteraction = function(interactionCategory, userAction, event) {
-					triggerElement = event.target.innerHTML;
+	.controller('TrackingController', function(Angularytics, $scope) {
+			$scope.trackInteraction = function(interactionCategory, userAction, context) {
+					var triggerElement = userAction + ': ' + context.target.innerHTML;
 					Angularytics.trackEvent(interactionCategory, triggerElement, workerHandle);
 			};
 	})
