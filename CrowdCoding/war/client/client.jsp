@@ -40,7 +40,7 @@
 
 </head>
 
-<body disable-backspace ng-cloak ng-controller="TrackingController">
+<body disable-backspace ng-cloak>
 
 	<header>
 		<nav-bar></nav-bar>

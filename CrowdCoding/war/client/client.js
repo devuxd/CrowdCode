@@ -31,15 +31,7 @@ angular
   .constant('projectId'  ,projectId)
 	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
 	.constant('logoutUrl'  ,logoutURL)
-	.controller('TrackingController', function(Angularytics, $scope) {
-			$scope.trackInteraction = function(interactionCategory, userAction, context) {
-					var triggerElement = userAction + ': ' + context.target.innerHTML;
-					Angularytics.trackEvent(interactionCategory, triggerElement, workerHandle);
-			};
-	})
 	.run(function($rootScope, $interval, $modal, $firebaseArray,  firebaseUrl, logoutUrl, userService, functionsService, AdtService, avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics ){
-
-		Angularytics.init();
 
 		// current session variables
 		$rootScope.projectId    = projectId;
@@ -64,13 +56,17 @@ angular
 		$rootScope.$on('serviceLoaded'   , serviceLoaded);
 		$rootScope.$on('sendFeedback', sendFeedback);
 
-
-
-        $rootScope.trustHtml = function (unsafeHtml){
+    $rootScope.trustHtml = function (unsafeHtml){
             return $sce.trustAsHtml(unsafeHtml);
         };
 		$rootScope.makeDirty = makeFormDirty;
 
+		// Track interactions of interest and send to Google Analytics
+		Angularytics.init();
+		$rootScope.trackInteraction = function(interactionCategory, userAction, context) {
+			var triggerElement = userAction + ': ' + context.target.innerHTML;
+			Angularytics.trackEvent(interactionCategory, triggerElement, workerHandle);
+		};
 
 		function loadServices(){
 			servicesLoadingStatus = {};
