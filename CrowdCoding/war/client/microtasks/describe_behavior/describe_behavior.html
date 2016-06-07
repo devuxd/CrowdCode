@@ -9,7 +9,7 @@
 			</span>
 		</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
-		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial (Describe Behavior)', 'Microtask', $event)">
+		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)">
 			<span class="glyphicon glyphicon-question-sign"></span>
 		</button>
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
@@ -125,7 +125,7 @@
 						<span class="glyphicon glyphicon-remove" ></span> Undo remove
 					</button>
 
-					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial (Describe Behavior)', 'Edit Test', $event)">
+					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial, 'Describe Behavior - Edit Test', $event)">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</button>
 				</span>
@@ -215,13 +215,13 @@
 							<span
 								class="glyphicon glyphicon-question-sign"
 								ng-if="t.isSimple"
-								ng-click="$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial (Describe Behavior)', 'Input/Output Tests', $event)">
+								ng-click="$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)">
 							</span>
 
 							<span
 								class="glyphicon glyphicon-question-sign"
 								ng-if="!t.isSimple"
-								ng-click="$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial (Describe Behavior)', 'Assertion Tests', $event)">
+								ng-click="$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)">
 							</span>
 
 						</span>
@@ -232,7 +232,7 @@
 					</div>
 					<div class="form-group" ng-if="!t.isSimple">
 						<label for="code">Code</label>
-						<div class="help-icon" ng-click="trackInteraction('Click Tutorial (Describe Behavior)', 'Test Editor', $event)" >
+						<div class="help-icon" ng-click="trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)" >
 							<span
 								class="glyphicon glyphicon-question-sign"
 								data-template="/client/widgets/test_editor_help.html"

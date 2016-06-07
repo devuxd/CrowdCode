@@ -8,7 +8,7 @@
 			</span>
 		</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
-		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial (Implement Behavior)', 'Microtask', $event)">
+		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Implement Behavior - Microtask', $event)">
 			<span class="glyphicon glyphicon-question-sign"></span>
 		</button>
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
@@ -62,7 +62,7 @@
 					</button>
 
 
-					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial (Implement Behavior)', 'Running Tests', $event) ">
+					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) ">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</button>
 				</span>
@@ -184,7 +184,7 @@
 					Function Editor
 				</span>
 				<span class="pull-right">
-					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial (Implement Behavior)', 'Function Editor', $event)">
+					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</button>
 				</span>
