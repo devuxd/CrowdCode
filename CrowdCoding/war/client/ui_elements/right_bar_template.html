@@ -4,13 +4,13 @@
     <div class="sidebar-panel" ui-layout-container min-size="40px" size="50%">
       <div class="title">Project Outline</div>
       <div class="content">
-        <project-outline ng-click="trackInteraction('Right Bar', 'Clicked in Project Outline', $event)"></project-outline>
+        <project-outline ng-click="trackInteraction('Click Right Bar', 'Project Outline', $event)"></project-outline>
       </div>
     </div>
     <div class="sidebar-panel" ui-layout-container min-size="40px" size="50%">
       <div class="title">Leaderboard</div>
       <div class="content">
-        <leaderboard></leaderboard>
+        <leaderboard ng-click="trackInteraction('Click Right Bar', 'Leaderboard', $event)"></leaderboard>
       </div>
     </div>
   </div>
