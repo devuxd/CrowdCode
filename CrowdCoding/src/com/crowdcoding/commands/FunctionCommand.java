@@ -154,7 +154,7 @@ public abstract class FunctionCommand extends Command {
 
 		public void execute(Function funct, String projectId) {
 
-			requestedFunctionDTO.code = "{\n    return -1;\n}";
+			requestedFunctionDTO.code = "{\n //#Mark this function as implemented by removing this line. \n return {};\n}";
 			Function function = new Function(requestedFunctionDTO, false, false, projectId);
 
 			function.addCaller(requestingFunctionId);
