@@ -20,8 +20,8 @@
     <div class="sections"  ui-layout="{ flow: 'row', dividerSize: 2 }">
 
 
-    	<div class="section" ui-layout-container size="5%" >
-			<div class="section-content bg-color-alpha padding">
+    	<div class="section" ui-layout-container size="5%">
+			<div class="section-content bg-color-alpha padding" style="top:0px">
 				<div ng-switch="microtask.promptType">
 					<span ng-switch-when="WRITE">
 						Can you describe a new test in which this function might be used? For example, are there any unexpected corner cases that might not work? You may also edit or delete existing tests, or mark the test suite as complete if all cases are tested.
@@ -41,7 +41,7 @@
 			</div>
 		</div>
 
-		<div class="section"  ui-layout-container size="35%" >
+		<div class="section"  ui-layout-container size="35%">
 			<div class="section-bar">
 				<span class="title">
 					Function Description
