@@ -81,7 +81,7 @@ import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 @SuppressWarnings("serial")
 public class CrowdServlet extends HttpServlet
 {
-	private static HashMap<String, Class> microtaskTypes = new HashMap<String, Class>();
+	/*private static HashMap<String, Class> microtaskTypes = new HashMap<String, Class>();
 
 	static
 	{
@@ -221,6 +221,8 @@ public class CrowdServlet extends HttpServlet
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	private void doUser(HttpServletRequest req, HttpServletResponse resp, User user,
 			final String[] pathSeg) throws IOException, ServletException, FileUploadException
@@ -261,7 +263,165 @@ public class CrowdServlet extends HttpServlet
 		} else if (pathSeg[3].equals("enqueue")){
 			doEnqueueSubmit(req, resp,user);
 		}
+	}*/
+	
+//Below is the JS version of the lines commented out above
+var express = require('express');
+var app = express();
+
+
+app.get('/', function (req, res) {
+    res.sendFile(__dirname + '/welcome.html');
+});
+
+// TODO: combine with the previous case
+app.get('/welcome', function (req, res) {
+    res.sendFile(__dirname + '/welcome.html');
+});
+
+app.get('/user/info', function (req, res) {
+    // TODO: get actual userID
+	/**res.sendFIle(__dirname+ '/userInfo.html');**/
+    res.write(JSON.stringify({"user": "dummyData"}));
+    res.end('');
+});
+
+app.get('/worker', function (req, res) {
+
+    // TODO: handle case of microtask submit
+});
+
+
+
+app.get('/user/picture', function (req, res) {
+
+    // TODO: get the user picture
+});
+
+app.get('/user/pictureChange', function (req, res) {
+
+    // TODO: get the user picture
+});
+
+
+
+app.get('/clientRequest', function (req, res) {
+    res.sendFile(__dirname + '/clientReq/client_request.html');
+});
+
+
+app.get('/_admin/', function (req, res) {
+    // TODO: idk whatever 
+	if( userService.isUserAdmin() ){
+		res.sendFile(__dirname+'/SuperAdmin.html');} 
+	else
+		res.sendFile('/404.html');
+
+});
+
+app.get('/:projectid/admin', function(req, res){
+    // TODO: if admin, doAdmin(), else, 404.html
+	
+	if( userService.isUserAdmin() ){
+		doAdmin(req, resp, projectId, pathSeg);
+	} else
+		res.sendFile(__dirname+'/404.html');
+    
+});
+
+app.get('/[\\w]+(/[\\w]*)*', function (req,res){
+	var projectId = pathSeg[1];
+
+	req.project=projectId;
+
+	Key<Project> projectKey = Key.create(Project.class, projectId);
+	boolean projectExists =  (ObjectifyService.ofy().load().filterKey(projectKey).count() != 0 );
+
+	if ( pathSeg.length <= 2 ){
+		Worker.Create( user, Project.Create(projectId));
+		res.sendFile(__dirname+'/clientDist/client.html');
+	} else if( pathSeg[2].equals("admin")){
+		if( userService.isUserAdmin() ){
+			doAdmin(req, resp, projectId, pathSeg);
+		} else
+			res.sendFile(__dirname+'/404.html');
+}
+
+
+
+app.get('/:projectid/statistics', function(req, res) {
+    // TODO: /statistics/index.html
+	res.sendFile(__dirname+'/statistics/index.html');
+});
+
+function doUser(HttpServletRequest req, HttpServletResponse resp, User user,
+		final String[] pathSeg) throws IOException, ServletException, FileUploadException
+{
+    if( pathSeg.length >= 3 ){
+    	if (pathSeg[2].equals("picture")){
+			getUserPicture(req,resp);
+
+		} else if (pathSeg[2].equals("pictureChange")){
+			changeUserPicture(user,req,resp);
+
+		} else if (pathSeg[2].equals("info")){
+			renderJson(resp,"{userId:"+user.getUserId()+",userHandle:"+user.getNickname()+"}");
+		}
+    }
+}
+
+app.get('/:projectid/ajax', function(req, res) {
+    // TODO: doAjax()
+	if (pathSeg[3]==="fetch"){
+		doFetchMicrotask(req, resp, user);
+	} else if (pathSeg[3]==="challengeReview"){
+		doChallengeReview(req, resp);
+	} else if (pathSeg[3]==="testResult"){
+		doSubmitTestResult(req, resp);
+	} else if (pathSeg[3]==="pickMicrotask"){
+		doFetchSpecificMicrotask(req, resp,user,false);
+	} else if (pathSeg[3]==="tutorialCompleted"){
+		doTutorialCompleted(req, resp,user,false);
+	} else if (pathSeg[3]==="questionViews"){
+		doQuestionAchievement(req, resp,user,false);
+	} else if (pathSeg[3]==="enqueue"){
+		doEnqueueSubmit(req, resp,user);
 	}
+	
+	doChallengeReview{
+		var projectId = req.project.toString();
+		var reviewKey = req.reviewKey;
+		var challengeTextDTO = ??Util.convertStreamToString(req.getInputStream());
+		System.out.println("doChallenge review");
+		MicrotaskCommand.createChallengeReview(Microtask.stringToKey(reviewKey),challengeTextDTO);
+		executeCommands(projectId);
+	}	
+	
+});
+
+app.get('/:projectid/questions', function(req, res) {
+    // TODO: doQuestioning()
+});
+
+app.get('/:projectid/code', function(req, res) {
+    // TODO: renderCode()
+});
+
+app.get('/:projectid/logout', function(req, res) {
+    // TODO: doLogout()
+});
+
+app.get('/*', function(req, res) {
+    res.sendFile(__dirname + '/404.html'); // TODO: make the 404.html file lol
+});
+
+
+var server = app.listen(8888, function () {
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log("Server running on port 8888");
+});
+//end of the JS part
 	
 	private void doTutorialCompleted (final HttpServletRequest req, final HttpServletResponse resp,final User user, final boolean isAlreadyUnassigned) throws IOException{
 		// Since the transaction may fail and retry,
@@ -910,7 +1070,29 @@ public class CrowdServlet extends HttpServlet
 //		System.out.println(time + " - ADD: "+microtaskKey+" by "+workerId);
 	}
 
-	public void doExecuteSubmit(final HttpServletRequest req, final HttpServletResponse resp){
+	function doExecuteSubmit(req, resp){ //JS function
+
+		var projectID    = req.projectId;
+		var workerID     = req.workerId;
+		var microtaskKey = req.microtaskKey;
+		var JsonDTO      = req.JsonDTO;
+		var skip        = Boolean(req.skip);
+		var disablePoint = Boolean(req.disablepoint);
+
+		// Create the skip or submit commands
+		if (skip)
+			ProjectCommand.skipMicrotask( microtaskKey, workerID, disablePoint);
+		else{
+			ProjectCommand.submitMicrotask( microtaskKey, JsonDTO, workerID);
+		}
+
+		// Copy the command back out the context to initially populate the command queue.
+		executeCommands(projectID);
+		resp.setStatus(HttpServletResponse.SC_OK);
+
+	}
+
+	/*public void doExecuteSubmit(final HttpServletRequest req, final HttpServletResponse resp){
 
 		final String projectID    = req.getParameter("projectId") ;
 		final String workerID     = req.getParameter("workerId") ;
@@ -930,7 +1112,7 @@ public class CrowdServlet extends HttpServlet
 		executeCommands(projectID);
 		resp.setStatus(HttpServletResponse.SC_OK);
 
-	}
+	}*/ //the old Java function
 
 	private void renderJson(final HttpServletResponse resp,String json) throws IOException{
 		resp.setContentType("json;charset=utf-8");
@@ -1030,3 +1212,4 @@ public class CrowdServlet extends HttpServlet
 		out.flush();
 	}
 }
+
