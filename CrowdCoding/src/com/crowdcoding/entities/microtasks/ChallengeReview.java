@@ -32,37 +32,37 @@ import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
 @Subclass(index=true)
-public class ChallengeReview extends Microtask
+class ChallengeReview extends Microtask
 {
-	@Parent @Load private Ref<Artifact> artifact;
-	private Key<Microtask> microtaskKeyUnderChallenge;
-	private String challengeeWorkerId;
-	private String challengerWorkerId;
-	private String challengeText;
-	private Key<Microtask> reviewKeyUnderChallenge;
 
+	@Parent @Load private Ref<Artifact> artifact;
+	var microtaskKeyUnderChallenge;
+	var challengeeWorkerId;
+	var challengerWorkerId;
+	var challengeText;
+	var reviewKeyUnderChallenge;
 
 	// Default constructor for deserialization
-	private ChallengeReview()
+	constructor()
 	{
 	}
 
 	// Constructor for initial construction
-	public ChallengeReview( String challengeText, String challengerWorkerId, String challengeeWorkerId, Key<Microtask> microtaskKeyUnderChallenge, Key<Microtask> reviewKeyUnderChallenge, long functionId, String projectId)
+	constructor (challengeText, challengerWorkerId, challengeeWorkerId, microtaskKeyUnderChallenge, reviewKeyUnderChallenge, functionId, projectId)
 	{
-		super(projectId,functionId);
-		this.submitValue 				= 3;
+		super(projectId,functionId)
+		this.submitValue = 3;
 
-		this.challengeText 				= challengeText;
-		this.challengerWorkerId			= challengerWorkerId;
-		this.challengeeWorkerId			= challengeeWorkerId;
+		this.challengeText = challengeText;
+		this.challengerWorkerId = challengerWorkerId;
+		this.challengeeWorkerId = challengeeWorkerId;
 		this.microtaskKeyUnderChallenge = microtaskKeyUnderChallenge;
-		this.reviewKeyUnderChallenge	= reviewKeyUnderChallenge;
+		this.reviewKeyUnderChallenge = reviewKeyUnderChallenge;
 
-		Microtask microtaskUnderChallenge 	= ofy().load().key(microtaskKeyUnderChallenge).now();
-		Microtask reviewUnderChallenge		= ofy().load().key(reviewKeyUnderChallenge).now();
+		/*Microtask microtaskUnderChallenge = ofy().load().key(microtaskKeyUnderChallenge).now();
+		Microtask reviewUnderChallenge = ofy().load().key(reviewKeyUnderChallenge).now();
 		this.artifact = (Ref<Artifact>) Ref.create((Key<Artifact>) microtaskUnderChallenge.getOwningArtifact().getKey());
-		System.out.println("micrtoask created");
+		//console.log("micrtoask created");
 		ofy().save().entity(this).now();
 
 		FirebaseService.writeMicrotaskCreated(new ChallengeReviewInFirebase(
@@ -81,16 +81,8 @@ public class ChallengeReview extends Microtask
 
 		// send feedback
 		String udpatedData="{\"challengeStatus\": \"inProgress\", \"canBeChallenged\": false}";
-    	FirebaseService.updateNewsfeed(
-    			challengeeWorkerId,
-    			udpatedData,
-    			Microtask.keyToString(reviewKeyUnderChallenge),
-    			projectId);
-    	FirebaseService.updateNewsfeed(
-    			challengerWorkerId,
-    			udpatedData,
-    			Microtask.keyToString(microtaskKeyUnderChallenge),
-    			projectId);
+    	FirebaseService.updateNewsfeed(challengeeWorkerId, udpatedData, Microtask.keyToString(reviewKeyUnderChallenge),projectId);
+    	FirebaseService.updateNewsfeed(challengerWorkerId, udpatedData, Microtask.keyToString(microtaskKeyUnderChallenge),projectId);
 
 		FirebaseService.writeWorkerNotification(
 				new ChallengeNotificationInFirebase(
@@ -103,27 +95,27 @@ public class ChallengeReview extends Microtask
 		);
 
 		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
-	}
+	}*/
 
-    public Microtask copy(String projectId,Long functionId)
+    function copy(projectId, functionId)
     {
-    	return new ChallengeReview( this.challengeText, this.challengerWorkerId, this.challengeeWorkerId, this.microtaskKeyUnderChallenge, this.reviewKeyUnderChallenge, this.functionId, this.projectId);
+    	return new ChallengeReview(this.challengeText, this.challengerWorkerId, this.challengeeWorkerId, this.microtaskKeyUnderChallenge, this.reviewKeyUnderChallenge, this.functionId, this.projectId);
     }
 
-	protected void doSubmitWork(DTO dto, String workerID)
+	function doSubmitWork(DTO dto, String workerID)
 	{
-		System.out.println("submitting");
+		console.log("submitting");
 
-		ChallengeReviewDTO challengeDTO = (ChallengeReviewDTO) dto;
+		/*ChallengeReviewDTO challengeDTO = (ChallengeReviewDTO) dto;
 		Microtask microtaskUnderChallenge = ofy().load().key(microtaskKeyUnderChallenge).now();
 		Microtask reviewUnderChallenge = ofy().load().key(reviewKeyUnderChallenge).now();
 
 		String challengerResult = challengeDTO.isChallengeWon ? "won" : "lost";
 		String challengeeResult = challengeDTO.isChallengeWon ? "lost" : "won";
-
+		*/
 
 		// send feedback
-    	FirebaseService.postToNewsfeed(workerID, (
+    	/*FirebaseService.postToNewsfeed(workerID, (
     		new NewsItemInFirebase(
         		this.submitValue,
     			this.submitValue,
@@ -136,10 +128,10 @@ public class ChallengeReview extends Microtask
 	    	).json(),
 	    	Microtask.keyToString(reviewKeyUnderChallenge),
     		projectId
-	    );
-    	String challengeeUpdatedData;
-		String challengerUpdatedData;
-    	if(challengeDTO.isChallengeWon){
+	    );*/
+    	var challengeeUpdatedData;
+		var challengerUpdatedData;
+    	/*if(challengeDTO.isChallengeWon){
 			challengeeUpdatedData="{\"challengeStatus\": \"lost\", \"awardedPoints\": \"0\"}";
 			challengerUpdatedData="{\"challengeStatus\": \"won\", \"awardedPoints\": \""+microtaskUnderChallenge.submitValue+"\"}";
     	}
@@ -183,29 +175,23 @@ public class ChallengeReview extends Microtask
 
 		// increase the stats counter
 		//WorkerCommand.increaseStat(workerID, "reviews",1);
-
+*/
 	}
-
-    public Key<Microtask> getKey()
+    function getKey()
 	{
 		return Key.create( artifact.getKey(), Microtask.class, this.id );
 	}
-
-	protected Class getDTOClass()
+	function getDTOClass()
 	{
 		return ChallengeReviewDTO.class;
 	}
-
-	public Key<Microtask> getMicrotaskUnderChallengeKey()
+	function getMicrotaskUnderChallengeKey()
 	{
 		return microtaskKeyUnderChallenge;
 	}
-
-
-
-	public Artifact getOwningArtifact()
+	function getOwningArtifact()
 	{
-		Artifact owning;
+		//Artifact owning;
 		try {
 			return artifact.safe();
 		} catch ( Exception e ){
@@ -213,13 +199,11 @@ public class ChallengeReview extends Microtask
 			return artifact.get();
 		}
 	}
-
-	public String microtaskTitle()
+	function microtaskTitle()
 	{
 		return "Challenge Review";
 	}
-
-	public String microtaskDescription()
+	function microtaskDescription()
 	{
 		return "challenge a submitted review";
 	}
