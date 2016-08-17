@@ -25,39 +25,39 @@ import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
 @Subclass(index=true)
-public class DescribeFunctionBehavior extends Microtask
+class DescribeFunctionBehavior extends Microtask
 {
-	public enum PromptType { WRITE, CORRECT, FUNCTION_CHANGED, CALLEE_CHANGED, ADT_CHANGED };
+	//?public enum PromptType { WRITE, CORRECT, FUNCTION_CHANGED, CALLEE_CHANGED, ADT_CHANGED };
 
 	@Parent @Load Ref<Function> functionRef;
-	private Long functionId;
-	private String functionName;
+	var functionId;
+	var functionName;
 
-	private PromptType promptType;
+	var promptType;
 
 	//Data for FUNCTION_CHANGED
-	private int oldFunctionVersion;
+	var oldFunctionVersion;
 
 	//Data for ADT_CHANGED
-	private int oldADTVersion;
-	private long ADTId;
+	var oldADTVersion;
+	var ADTId;
 
 	// Data for CORRECT
-	private List<TestDisputedDTO> disputedTests;    // Description of the problem with the test case
+	var disputedTests;    // Description of the problem with the test case
 	
 
 	//Data for CALLEE_CHANGED
-	private int oldCalleeVersion;
-	private long calleeId;
+	var oldCalleeVersion;
+	var calleeId;
 
 
 	// Default constructor for deserialization
-	private DescribeFunctionBehavior()
+	constructor()
 	{
 	}
 		
 	// Constructor for WRITE Prompt Type for write a new behaviour and test of a function
-	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, String projectId )
+	constructor(Function, functionId, functionName, projectId )
 	{
 		super(projectId,functionId);
 		this.promptType	  = PromptType.WRITE;
@@ -66,10 +66,10 @@ public class DescribeFunctionBehavior extends Microtask
 	}
 
 	// Constructor for FUNCTION_CHANGED Prompt Type for ask to edit the test code on a change of a function signature
-	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, int oldFunctionVersion, String projectId)
+	constructor(Function, functionId, functionName, oldFunctionVersion, projectId)
 	{
 		super(projectId,functionId);
-		this.promptType	  		= PromptType.FUNCTION_CHANGED;
+		this.promptType	= PromptType.FUNCTION_CHANGED;
 
 		this.oldFunctionVersion = oldFunctionVersion;
 
@@ -77,42 +77,42 @@ public class DescribeFunctionBehavior extends Microtask
 
 	}
 	// Constructor for ADT_CHANGED Prompt Type for ask to edit the test code on a change of a ADT Structure
-	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, int oldADTVersion, long ADTId, String projectId)
+	constructor(Function, functionId, functionName, oldADTVersion, ADTId, projectId)
 	{
 		super(projectId, functionId);
-		this.promptType	  	= PromptType.ADT_CHANGED;
+		this.promptType	= PromptType.ADT_CHANGED;
 
-		this.oldADTVersion 	= oldADTVersion;
-		this.ADTId			= ADTId;
+		this.oldADTVersion = oldADTVersion;
+		this.ADTId = ADTId;
 
-		describeFunctionBehavior( Function, functionId, functionName );
+		describeFunctionBehavior(Function, functionId, functionName );
 
 	}
 	// Constructor for CORRECT Prompt Type for ask to edit the test when has been issued
-	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, List<TestDisputedDTO> disputedTests, String projectId)
+	constructor(Function, functionId, functionName, disputedTests, projectId)
 	{
 		super(projectId,functionId);
-		this.promptType			= PromptType.CORRECT;
+		this.promptType	= PromptType.CORRECT;
 
-		this.disputedTests 	= disputedTests;
+		this.disputedTests = disputedTests;
 
 		describeFunctionBehavior( Function, functionId, functionName );
 	}
 
 	// Constructor for CALLEE CHANGED Promp
-	public DescribeFunctionBehavior(Ref<Function> Function, long functionId, String functionName, long calleeId, int oldCalleeVersion, String projectId)
+	constructor(Function, functionId, functionName, calleeId, oldCalleeVersion, projectId)
 	{
 		super(projectId,functionId);
-		this.promptType			= PromptType.CALLEE_CHANGED;
+		this.promptType = PromptType.CALLEE_CHANGED;
 
-		this.calleeId 			= calleeId;
-		this.oldCalleeVersion	= oldCalleeVersion;
+		this.calleeId = calleeId;
+		this.oldCalleeVersion = oldCalleeVersion;
 		describeFunctionBehavior( Function, functionId, functionName );
 	}
 
-	private void describeFunctionBehavior(Ref<Function> Function, long functionId, String functionName )
+	constructor(Ref<Function> Function, long functionId, String functionName )
 	{
-		this.functionId   = functionId;
+		this.functionId = functionId;
 		this.functionName = functionName;
 		this.functionRef = Function;
 
@@ -140,7 +140,7 @@ public class DescribeFunctionBehavior extends Microtask
 
 	}
 	
-	public Microtask copy(String projectId)
+	function copy(projectId)
 	{
 		switch (promptType) {
 			case WRITE:
@@ -157,13 +157,13 @@ public class DescribeFunctionBehavior extends Microtask
 		}
 	}
 
-	public Key<Microtask> getKey()
+	function getKey()
 	{
 		return Key.create( this.functionRef.getKey(), Microtask.class, this.id );
 	}
 
 
-	protected void doSubmitWork(DTO dto, String workerId)
+	function doSubmitWork(DTO dto, String workerId)
 	{
 		Function function= functionRef.get();
 		function.describeFunctionBehaviorCompleted((DescribeFunctionBehaviorDTO)dto);
@@ -172,7 +172,7 @@ public class DescribeFunctionBehavior extends Microtask
 //		// increase the stats counter
 		WorkerCommand.increaseStat(workerId, "describe_behavior",1);
 	}
-	public Artifact getOwningArtifact()
+	function getOwningArtifact()
 	{
 		try {
 			return functionRef.safe();
@@ -182,22 +182,22 @@ public class DescribeFunctionBehavior extends Microtask
 		}
 	}
 
-	protected Class getDTOClass()
+	function getDTOClass()
 	{
 		return DescribeFunctionBehaviorDTO.class;
 	}
 
-	public PromptType getPromptType()
+	function getPromptType()
 	{
 		return promptType;
 	}
 
-	public String microtaskTitle()
+	function microtaskTitle()
 	{
 		return "Describe Function Behavior";
 	}
 
-	public String microtaskDescription()
+	function microtaskDescription()
 	{
 		return "Describe Function Behavior";
 	}
