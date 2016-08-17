@@ -18,28 +18,28 @@ import com.googlecode.objectify.annotation.Load;
 import com.googlecode.objectify.annotation.Parent;
 
 @Subclass(index=true)
-public class ImplementBehavior extends Microtask
+class ImplementBehavior extends Microtask
 {
-	public enum PromptType { WRITE, CALLEE_CHANGE, REMOVE_CALLEE, CORRECT };
+	//?public enum PromptType { WRITE, CALLEE_CHANGE, REMOVE_CALLEE, CORRECT };
 	@Parent @Load private Ref<Function> function;
-	private PromptType promptType;
+	var promptType;
 
-	private long testId;					//Only defined for WRITE
+	var testId;					//Only defined for WRITE
 
-	private int oldCalleeVersion;			//Only defined for CALLEE_CHANGED
+	var oldCalleeVersion;			//Only defined for CALLEE_CHANGED
 
-	private String disputeText;				// Only defined for CORRECT and REMOVE_CALLEE
-	private long calleeId;					// Only defined for REMOVE_CALLEE and CALLEE_CHANGED
+	var disputeText;				// Only defined for CORRECT and REMOVE_CALLEE
+	var calleeId;					// Only defined for REMOVE_CALLEE and CALLEE_CHANGED
 
-	private long   disputeId;				//id of the artifact that disputed this function
+	var  disputeId;				//id of the artifact that disputed this function
 
 	// Default constructor for deserialization
-	private ImplementBehavior()
+	constructor ImplementBehavior()
 	{
 	}
 
 	// Initialization constructor for a WRITE write function. Microtask is not ready.
-	public ImplementBehavior(Function function, long testId, String projectId)
+	constructor(function, testId, projectId)
 	{
 		super(projectId, function.getId());
 
@@ -51,8 +51,8 @@ public class ImplementBehavior extends Microtask
 	}
 
 	// Initialization constructor for a DESCRIPTION_CHANGE write function. Microtask is not ready.
-	public ImplementBehavior(Function function, long calleeId,
-			int oldCalleeVersion, String projectId)
+	constructor(function, calleeId,
+			 oldCalleeVersion, projectId)
 	{
 		super(projectId,function.getId());
 		this.promptType = PromptType.CALLEE_CHANGE;
@@ -64,7 +64,7 @@ public class ImplementBehavior extends Microtask
 	}
 
 	// Initialization constructor for a RE_EDIT write function. Microtask is not ready.
-	public ImplementBehavior(Function function, String disputeText, long calleeId, String projectId)
+	constructorafunction, disputeText, calleeId, projectId)
 	{
 		super(projectId,function.getId());
 		this.promptType = PromptType.REMOVE_CALLEE;
@@ -73,7 +73,7 @@ public class ImplementBehavior extends Microtask
 		this.calleeId = calleeId;
 		implementBehavior(function, projectId);
 	}
-	public ImplementBehavior(Function function, String disputeText, String projectId)
+	constructor(function, disputeText, projectId)
 	{
 		super(projectId,function.getId());
 		this.promptType = PromptType.CORRECT;
@@ -84,7 +84,7 @@ public class ImplementBehavior extends Microtask
 	}
 
 
-	public Microtask copy(String projectId)
+	function copy(projectId)
 	{
 		switch (promptType) {
 			case WRITE:
@@ -101,13 +101,13 @@ public class ImplementBehavior extends Microtask
 		}
 	}
 
-	public Key<Microtask> getKey()
+	function getKey()
 	{
 		return Key.create( function.getKey(), Microtask.class, this.id );
 	}
 
 
-	private void implementBehavior(Function function, String projectId)
+	function implementBehavior(function, projectId)
 	{
 		this.function = function.getRef();
 		ofy().load().ref(this.function);
@@ -132,7 +132,7 @@ public class ImplementBehavior extends Microtask
 		HistoryLog.Init(projectId).addEvent(new MicrotaskSpawned(this));
 	}
 
-	protected void doSubmitWork(DTO dto, String workerID)
+	function doSubmitWork(dto, workerID)
 	{
 		function.get().implementBehaviorCompleted((ImplementBehaviorDTO) dto, disputeId , projectId);
 //		WorkerCommand.awardPoints(workerID, this.submitValue);
@@ -140,23 +140,23 @@ public class ImplementBehavior extends Microtask
 		WorkerCommand.increaseStat(workerID, "functions",1);
 	}
 
-	public PromptType getPromptType()
+	function getPromptType()
 	{
 		return promptType;
 	}
 
-	protected Class getDTOClass()
+	function getDTOClass()
 	{
 		return ImplementBehaviorDTO.class;
 	}
 
-		public Function getFunction()
+	function getFunction()
 	{
 		return function.getValue();
 	}
 
 
-	public Artifact getOwningArtifact()
+	function getOwningArtifact()
 	{
 		Artifact owning;
 		try {
@@ -167,12 +167,12 @@ public class ImplementBehavior extends Microtask
 		}
 	}
 
-	public String microtaskTitle()
+	function microtaskTitle()
 	{
 		return "Implement function behavior";
 	}
 
-	public String microtaskDescription()
+	function microtaskDescription()
 	{
 		return "implement function behaviorn";
 	}
