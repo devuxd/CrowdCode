@@ -577,7 +577,6 @@ public class Project
 			microtask.setWorkerId(null);
 			addExcludedWorkerForMicrotask( microtaskKey, workerID);
 
-
 			// Add the work back to the appropriate queue
 			if(microtask.microtaskName() != "Review")
 				queueMicrotask( microtaskKey, null);
