@@ -232,7 +232,7 @@ public abstract class ProjectCommand extends Command
 	}
 
 	// skip a microtask
-	protected static class SkipMicrotask extends ProjectCommand
+	/*protected static class SkipMicrotask extends ProjectCommand
 	{
 		private Key<Microtask> microtaskKey;
 		private String workerID;
@@ -247,6 +247,27 @@ public abstract class ProjectCommand extends Command
 		}
 
 		public void execute(Project project)
+		{
+			project.skipMicrotask(microtaskKey, workerID, disablePoint);
+		}
+	}*/
+	
+	//JS function
+	class SkipMicrotask extends ProjectCommand
+	{
+		var microtaskKey;
+		var String workerID;
+		var disablePoint;
+
+		constructor(microtaskKey, workerID, disablePoint)
+		{
+			super();
+			this.microtaskKey = Microtask.stringToKey(microtaskKey) ;
+			this.workerID = workerID;
+			this.disablePoint = disablePoint;
+		}
+
+		function execute(Project project)
 		{
 			project.skipMicrotask(microtaskKey, workerID, disablePoint);
 		}
