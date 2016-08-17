@@ -34,61 +34,60 @@ import com.googlecode.objectify.annotation.Parent;
  * which needs to instantiate them to register subclasses.
  */
 @Entity
-public /*abstract*/ class Microtask
+class Microtask
 {
-	static public String keyToString(Key<Microtask> key){
-		String keyString = null;
+	function keyToString(key){
+		var keyString = null;
 		if( key != null )
 			keyString = key.getParent().getId()+"-"+key.getId();
 		return keyString;
 	}
-
-	static public Key<Microtask> stringToKey(String key){
-		Key<Microtask> keyObj = null;
+	function stringToKey(key){
+		/*Key<Microtask> keyObj = null; 
 		if( !( key == null || key.length() == 0) ){
 			String[] ids = key.split("-");
 			Key<Artifact> parentKey = Key.create(Artifact.class, Long.parseLong(ids[0]) );
 			keyObj = Key.create(parentKey,Microtask.class, Long.parseLong(ids[1]));
-		}
+		}*/ //replace with obj collection
 		return keyObj;
 	}
 
-	static protected int DEFAULT_SUBMIT_VALUE = 10;
+	var = 10;
 
 	@Id protected Long id;
 	@Index String projectId;
 
-	protected boolean assigned = false;
-	protected boolean completed = false;
-	protected boolean queued    = false;
-	protected String reissuedFrom = "";
-	protected int submitValue = DEFAULT_SUBMIT_VALUE;
-	protected long assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
-	protected String workerId;
-	protected Long functionId;
+	var assigned = false;
+	var completed = false;
+	var queued    = false;
+	var reissuedFrom = "";
+	var submitValue = DEFAULT_SUBMIT_VALUE;
+	var assignmentTimeInMillis;	// time when worker is assigned microtask, in milliseconds
+	var workerId;
+	var functionId;
 
-	public String getWorkerId() {
+	function getWorkerId() {
 		return workerId;
 	}
 
-	public Long getFunctionId() {
+	function getFunctionId() {
 		return functionId;
 	}
 
-	public void setWorkerId(String workerId) {
+	function setWorkerId(workerId) {
 		this.workerId = workerId;
-		ofy().save().entity(this).now();
+		ofy().save().entity(this).now(); 
 	}
 
 	// Default constructor for deserialization
-	protected Microtask()
+	constructor()
 	{
 	}
 
 	// Constructor for initialization. Microtask is set as ready.
-	protected Microtask(String projectId, Long functionId)
+	constructor (projectId, functionId)
 	{
-		this.workerId=null;
+		this.workerId = null;
 		this.projectId = projectId;
 		this.projectId  = projectId;
 		this.functionId = functionId;
@@ -98,17 +97,17 @@ public /*abstract*/ class Microtask
 	// Creates a copy of this microtask, identical in all respects except with a new microtaskID
 	// and with a reset completed and assignmentTime. The microtask is NOT queued onto the project work queue.
 	// This method MUST be overridden in the subclass
-	public Microtask copy(String projectId)
+	function copy(projectId)
 	{
-		System.out.println("COPYING TASK "+this);
+		console.log("COPYING TASK "+this);
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
 	// Override this method to allow the microtask to decide, right before it is assigned,
 	// if it is still needed
-	protected boolean isStillNeeded(Project project) { return true; }
+	function isStillNeeded(project) { return true; }
 
-	public void submit(String jsonDTOData, String workerID,int awardedPoint)
+	function submit(jsonDTOData, workerID, awardedPoint)
 	{
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
@@ -141,7 +140,7 @@ public /*abstract*/ class Microtask
 
 	}
 
-	public void revise (String jsonDTOData, String excludedWorkerID,int awardedPoint, String reissueMotivation, String projectId)
+	function revise (jsonDTOData, excludedWorkerID, awardedPoint, reissueMotivation, projectId)
 	{
 		// If this microtask has already been completed, drop it, and clear the worker from the microtask
 		// TODO: move this check to the project, as this check will be too late for work creating review microtasks.
@@ -170,7 +169,7 @@ public /*abstract*/ class Microtask
 
 	}
 
-	public void skip(String workerID, boolean disablePoint, String projectId)
+	function skip(workerID, disablePoint, projectId)
 	{
 		if(! disablePoint){
 		// Increment the point value by 10
@@ -183,27 +182,27 @@ public /*abstract*/ class Microtask
 	}
 
 
-	public Key<Microtask> getKey()
+	function getKey()
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
-	public long getID()
+	function getID()
 	{
 		return id;
 	}
 
 	// returns the relative path to the UI for this microtask
-	public String getUIURL() { return ""; }
+	function getUIURL() { return ""; }
 
 	// This method MUST be overridden in the subclass to do submit work.
-	protected void doSubmitWork(DTO dto, String workerID)
+	function doSubmitWork(dto, workerID)
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
 	// This method MUST be overridden in the subclass
-	protected Class getDTOClass()
+	function getDTOClass()
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
@@ -211,53 +210,53 @@ public /*abstract*/ class Microtask
 	// This method MUST be overridden in the subclass to provide the owning artifact.
 	// The owning artifact is the artifact that will be modified by this microtask. If multiple artifacts
 	// may be modified, the owning artifact is null.
-	public Artifact getOwningArtifact()
+	function getOwningArtifact()
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
 	// This method MUST be overridden in the subclass to provide the name of the microtask.
-	public String microtaskTitle()
+	function microtaskTitle()
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
 	// This method MUST be overridden in the subclass to provide the name of the microtask.
-	public String microtaskDescription()
+	function microtaskDescription()
 	{
 		throw new RuntimeException("Error - must implement in subclass!");
 	}
 
-	public String microtaskName()
+	function microtaskName()
 	{
 		// Get the name of the runtime microtask instance (e.g., ReuseSearch)
 		return this.getClass().getSimpleName();
 	}
 
-	public long assignmentTimeInMillis()
+	function assignmentTimeInMillis()
 	{
 		return assignmentTimeInMillis;
 	}
-	public void setReissuedFrom(String microtaskKey)
+	function setReissuedFrom(String microtaskKey)
 	{
 		this.reissuedFrom=microtaskKey;
 	}
-	public int getSubmitValue()
+	function getSubmitValue()
 	{
 		return submitValue;
 	}
 
 	// Should only be called from within the entity group of the owning artifact
-	public static LoadResult<Microtask> find(Key<Microtask> microtaskKey)
+	function LoadResult<Microtask> find(Key<Microtask> microtaskKey)
 	{
 		return (LoadResult<Microtask>) ofy().load().key(microtaskKey);
 	}
 
-	public String toJSON(){
+	fucntion toJSON(){
 		return toJSON(new JSONObject());
 	}
 
-	public String toJSON(JSONObject json){
+	function toJSON(JSONObject json){
 		try {
 			json.put("key", Microtask.keyToString(this.getKey()));
 			json.put("id", this.id);
@@ -272,7 +271,7 @@ public /*abstract*/ class Microtask
 		return json.toString();
 	}
 
-	public boolean isAssignedTo(String workerId){
+	function isAssignedTo(String workerId){
 		if(this.getWorkerId()!=null && this.getWorkerId().isEmpty())
 			return true;
 
