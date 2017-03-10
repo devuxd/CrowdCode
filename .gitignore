@@ -32,3 +32,17 @@ CrowdCoding/war/admin/.tmp/
 CrowdCoding/war/node_modules
 CrowdCoding/war/bower_components
 CrowdCoding/war/statistics/
+
+.idea/encodings.xml
+
+.idea/CrowdCoding2.iml
+
+.idea/misc.xml
+
+.idea/modules.xml
+
+.idea/jsLibraryMappings.xml
+
+.idea/vcs.xml
+
+.idea/workspace.xml
