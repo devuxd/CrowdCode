@@ -9,7 +9,7 @@ angular
     var statements = undefined;
     var initialStatements = undefined;
     var apiFunctions    = [];
-    var requestedFunctions = [];
+    var requestedFunctions = {};
 
     return {
         restrict: 'EA',
@@ -102,22 +102,19 @@ angular
                 } 
 
                 $scope.errors = validationData.errors;
+                    
                 loadFunctionsList(editor, validationData.requestedFunctions);
 
                 if ( $scope.errors.length == 0 ){
                     if( $scope.callbacks && $scope.callbacks.onFunctionParsed ){
                         $scope.callbacks.onFunctionParsed.call(null,validationData.dto, validationData.requestedFunctions);
                     }
-                }
+                } 
 
             }
 
-            function loadFunctionsList(editor,requestedFunctions){
-                
-                
+            function loadApiFunctionsList(){
                 functionsService.getAll().$loaded().then(function(){
-                    editor.functioncompleter.functions = [];
-
                     // first of the API functions
                     var functs = functionsService.getAll();
                     functs.map(function( fun ){
@@ -127,7 +124,7 @@ angular
                             })
                             .join(',');
 
-                        editor.functioncompleter.functions.push({ 
+                        apiFunctions.push({ 
                             name        : fun.name, 
                             meta        : 'API', 
                             className   : 'functions_api',
@@ -135,26 +132,44 @@ angular
                             snippet     : fun.name + '(' + paramsString + ')'
                         });
                     });
-
-                    // after of the requested, if any
-                    requestedFunctions = requestedFunctions || [];
-                    requestedFunctions.map(function( requestedDto ){
-                        var requested = new Function(requestedDto);
-                        var paramsString = requested.parameters
-                            .map(function(par,idx){ 
-                                return '${'+(idx+1)+':'+par.name+'}'; 
-                            })
-                            .join(',');
-
-                        editor.functioncompleter.functions.push({ 
-                            name        : requested.name, 
-                            meta        : 'PSEUDO', 
-                            className   : 'functions_api',
-                            description : requested.getFullDescription(),
-                            snippet     : requested.name + '(' + paramsString + ')'
-                        });
-                    });
                 });
+            }
+
+            function loadFunctionsList(editor,newRequestedFunctions,rewrite){
+                
+                // initialize with api functions
+                editor.functioncompleter.functions = apiFunctions.slice();
+
+                // after of the requested, if any
+                newRequestedFunctions = newRequestedFunctions || [];
+                newRequestedFunctions.map(function( requestedDto ){
+
+                    var requested = new Function(requestedDto);
+
+                    var paramsString = requested
+                        .parameters
+                        .map(function(par,idx){ 
+                            return '${'+(idx+1)+':'+par.name+'}'; 
+                        })
+                        .join(',');
+
+                    var functRec = { 
+                        name        : requested.name, 
+                        meta        : 'PSEUDO', 
+                        className   : 'functions_api',
+                        description : requested.getFullDescription(),
+                        snippet     : requested.name + '(' + paramsString + ')'
+                    };
+
+
+                    editor.functioncompleter.functions.push(functRec);
+                    
+                    
+                });
+                
+
+
+                
             }
 
 

@@ -1,7 +1,7 @@
 <div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
-	
+
 	<div class="section" ui-layout-container size="10%">
-		<div class="section-content bg-color-alpha padding">
+		<div class="section-content bg-color-alpha padding" style="top:0px">
 			<span>
 				The test suite for <strong ng-bind="function.name"></strong> has been updated by adding, editing, or deleting its tests. Considering just <strong>the changes</strong> to the test suite rather than the test
 				suite as a whole, can you review them?
@@ -31,13 +31,13 @@
 		</div>
 		<div class="section-content slide from-left" ng-if="data.selected == -1">
 			<div class="tests-list has-next ">
-				<div class="test-item clickable" 
+				<div class="test-item clickable"
 				     ng-repeat="t in data.tests track by $index">
 					<div ng-click="data.selected = t">
 						<span class="pull-left">
 							<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
 							<span ng-bind="t.description"></span>
-						</span> 
+						</span>
 
 						<span class="pull-right" ng-if="t.edited">
 							edited
@@ -67,11 +67,11 @@
 				</button>
 			</span>
 		</div>
-		<div class="section-content slide from-right padding" 
-				 ng-repeat="t in data.tests track by $index" 
+		<div class="section-content slide from-right padding"
+				 ng-repeat="t in data.tests track by $index"
 				 ng-if="data.selected == t">
 				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
-					
+
 					<div class="form-group">
 						<label for="description">Status </label>
 						<div class="form-control form-control-static" name="description">
@@ -100,7 +100,7 @@
 							<label for="inputs">
 								{{p.name + ' {' + p.type + '}' }}
 							</label>
-						
+
 							<div
 								class="form-control code"
 								json-reader
@@ -122,9 +122,9 @@
 					</div>
 
 
-					
 
-				</div>	
+
+				</div>
 		</div>
 	</div>
 

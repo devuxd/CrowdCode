@@ -1,10 +1,10 @@
 <div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
 	<div class="section" ui-layout-container size="10%">
-		<div class="section-content bg-color-alpha padding">
+		<div class="section-content bg-color-alpha padding" style="top:0px">
 			<span>
 				A worker was asked to implement part of the function <strong>{{data.functionName}}</strong> and also  reported an issue with the following tests. Can you review this work?
 			</span>
-			
+
 			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>
 		</div>
 	</div>
@@ -30,7 +30,7 @@
 						<span >
 							<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
 							<span ng-bind="t.description"></span>
-						</span> 
+						</span>
 						<span class="clearfix"></span>
 					</div>
 				</div>
@@ -43,11 +43,11 @@
 				</button>
 			</span>
 		</div>
-		<div class="section-content slide from-right padding" 
-				 ng-repeat="t in data.disputedTests track by $index" 
+		<div class="section-content slide from-right padding"
+				 ng-repeat="t in data.disputedTests track by $index"
 				 ng-if="data.selected == t">
 				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
-					
+
 					<div class="form-group">
 						<label for="disputetext">Dispute reason </label>
 						<div class="form-control form-control-static" name="disputetext">
@@ -76,7 +76,7 @@
 							<label for="inputs">
 								{{p.name + ' {' + p.type + '}' }}
 							</label>
-						
+
 							<div
 								class="form-control code"
 								json-reader
@@ -95,8 +95,8 @@
 							ng-model="t.output"
 							name="output">
 						</div>
-					</div>	
-				</div>	
+					</div>
+				</div>
 		</div>
 	</div>
 
