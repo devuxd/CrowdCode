@@ -7,5 +7,9 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+  <form name="test" id="test" method="get" action="/task_submitted">
+    <textarea name="data" form="test" rows="33" cols="200" required><%= data %></textarea><br/>
+    <button type="submit">Submit</button>
+  </form>
   </body>
 </html>
