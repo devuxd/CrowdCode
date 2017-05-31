@@ -1,0 +1,47 @@
+.diff { margin:0px; padding:0px; }
+.diff .line { width:100%; display:block; }
+.diff .line.added   { background-color:#CDFFCD;}
+.diff .line.removed { background-color:#FFD7D7;}
+
+
+.ace-editor { 
+    height: 200px;
+    background:transparent;
+}
+.ace-editor .ace_marker-layer .ace_selection { background: transparent; }
+.ace-editor .ace_hidden-cursors {opacity:0}
+
+.ace-github {
+color: green !important;
+}
+
+.ace-github .ace_support.ace_function, 
+.ace-github .ace_support.ace_function {
+color: #FF0000 !important;
+}
+
+.ace-github .ace_invisible {
+color: #525151 !important;
+}
+
+
+
+.js-reader { 
+	
+	background-color:transparent !important; 
+}
+.js-reader .ace_active-line { background-color: transparent !important;}
+
+.json-editor .ace_scroller,
+.json-reader .ace_scroller {
+	left:17px !important;
+}
+.json-editor .ace_folding-enabled > .ace_gutter-cell {
+	padding:0px;
+	color:transparent;
+}
+.json-editor .ace_gutter-layer  { width:20px !important; }
+.json-reader.ace-editor { background-color:transparent !important; }
+
+.js-editor { height: 400px;}
+.console { position:inherit !important;}

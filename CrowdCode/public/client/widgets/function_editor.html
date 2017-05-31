@@ -1,0 +1,17 @@
+<statements-progress-bar  class="function-statements"></statements-progress-bar>
+<div class="function-editor" style="">
+
+	<div 
+		style="height:100%;"
+		class="js-editor"
+		ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }" 
+		ng-model="code" >
+	</div>
+</div>
+<div class="function-errors " style=""  >
+	<ul class="help-block" ng-if="errors.length > 0" >
+        <li ng-repeat="e in errors track by $id($index)">
+        	<span ng-bind="e"></span>
+        </li>
+	</ul>
+</div>

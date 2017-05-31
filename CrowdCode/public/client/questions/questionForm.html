@@ -1,0 +1,52 @@
+<div class="top padding">
+	<a href="#" ng-click="setUiView( sel == null ? 'list' : 'detail' );">
+		<span class="glyphicon glyphicon-arrow-left"></span>
+		back
+	</a>
+	<h4 class="padding"> {{ sel == null ? 'New' : 'Edit'}} question: </h4>
+</div>
+<div class="middle padding">
+	<form name="questionForm" novalidate ng-submit="questionForm.$valid && postQuestion()">
+		<div class="form-group">
+			<input 
+				class="form-control" 
+				name="title" 
+				ng-model="question.title"
+				placeholder="insert a title for the question"
+				ng-minlength="5"
+           		ng-maxlength="100"
+				required
+			/>
+			<div class="help-block" ng-messages="questionForm.title.$error">
+				<div ng-if="questionForm.title.$dirty">
+					<div ng-message="required">the title can't be empty</div>
+				    <div ng-message="minlength">the title can't be less than 5 characters</div>
+				    <div ng-message="maxlength">the title can't exceed 100 characters</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<textarea name="text" 
+					  class="form-control" 
+					  style="resize:none;height:300px" 
+					  ng-model="question.text" 
+					  placeholder="text">
+			</textarea>
+		</div>
+		<div class="form-group">
+			<tags-input class="form-control" ng-model="tags"></tags-input>
+		</div>
+		<div class="form-group" ng-if="sel == null && loadedArtifact != null">
+			<label>
+				<input type="checkbox" 
+					ng-model="question.artifactId"> 
+   					linked to the function <strong>{{ loadedArtifact.name }}</strong>
+			</label>
+		</div>
+			
+		<div class="btn-group pull-right padding" role="group">	
+			<button class="btn btn-sm btn-default" type="button" ng-click="setUiView( sel == null ? 'list' : 'detail' ); questionForm.$setPristine();" >cancel</a>
+			<button class="btn btn-sm btn-primary" type="submit" >Submit</button>
+		</div>
+	</form>
+</div>

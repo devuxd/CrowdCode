@@ -1,0 +1,42 @@
+
+<table class="table">
+	<tr ng-repeat-start="q in questions | orderBy : 'createdAt' : false">
+		<td>
+			<h4>{{q.title}}</h4><br />
+			<pre>{{q.text}} </pre><br />
+			<div><span ng-repeat="tag in q.tags" class="badge">{{tag}}</span></div>
+		</td>
+		<td>
+			<small>{{q.ownerHandle}} at {{q.createdAt | date:'medium' }}</small>
+		</td>
+		<td><strong>({{q.score}})</strong></td>
+	</tr>
+	<tr colspan="3" ng-repeat-end> 
+		<table class="table" ng-if="( q.answers | keylength ) > 0">
+			<tr ng-repeat-start="a in q.answers | orderObjectBy : 'createdAt' : false">
+				<td>{{a.text}} </td> 
+				<td>
+					<small>{{a.ownerHandle}} at {{a.createdAt | date:'medium' }}</small>
+				</td> 
+				<td>
+					<strong>({{a.score}})</strong>
+				</td>
+			</tr>
+			<tr ng-repeat-end>
+				<td colspan="3">
+    				<div class="panel-heading">Comments ({{ a.comments | keylength }})</div>
+  
+					<ul class="list-group">
+						<li class="list-group-item" ng-repeat="c in a.comments | orderObjectBy : 'createdAt' : false">
+							<pre>{{c.text}}</pre> - 
+							<div>
+								<small>{{c.ownerHandle}} at {{c.createdAt | date:'medium' }}</small>
+								<strong>({{c.score}})</strong>
+							</div>
+						</li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</tr>
+</ul>

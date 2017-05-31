@@ -1,0 +1,129 @@
+<div class="top">
+	<div class="form-group has-feedback search-box">
+		<tags-input class="searchbox" ng-model="search" on-tag-added="updateFilter()" on-tag-removed="updateFilter()" placeholder="filter" ng-keypress="showTooltip()" tooltip="filterTooltip"></tags-input>
+		<span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+	</div>
+	<button class="btn btn-sm btn-primary new-question" ng-click="setUiView('form'); ">Ask question</button>
+</div>
+
+<div class="middle">
+	<div class="padding">
+		<div class="padding" ng-if="questions.length == 0 && search.length > 0 ">
+			No questions found matching the filter <strong>{{getFilterStr()}}</strong> 
+			(<a href="#" ng-click="resetFilter()">reset filter</a>)
+		</div>
+		<div class="padding" ng-if="questions.length == 0 && search.length == 0"> No questions yet! </div>
+	</div>
+
+	<ul class="list-group questions-list" ng-if="questions.length > 0">
+
+		<li class="list-group-item list-header" ng-show=" loadedArtifact != null ">
+			Related to {{loadedArtifact.name}}
+		</li>
+		<li ng-show=" loadedArtifact != null && ( questions | relatedToArtifact : loadedArtifact.id ).length == 0 "> 
+			No questions related to the function {{ loadedArtifact.name }} 
+		</li>
+		<li class="list-group-item question-item {{ q.closed ? '' : 'open' }}"
+			ng-show="loadedArtifact != null" 
+			ng-click="setSelected(q)" 
+			ng-repeat="q in questions | relatedToArtifact : loadedArtifact.id  | orderBy : 'closed'  "
+			>
+			<div> 
+				<span ng-if="!isUpdated(q)">{{q.title}}</span>
+				<span ng-if="isUpdated(q)">
+					<strong>{{q.title}}</strong>
+					<small><i>{{ getUpdateString(q) }}</i></small>
+				</span> 
+			</div>
+			<div >
+				<span class="pull-left">
+					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{q.updatedAt | date : 'medium'}}"></time-ago>
+				</span> 
+
+				<span class="pull-right" style="text-align:right;">
+					<span ng-repeat="tag in q.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>
+				</span> 
+
+				<span class="clearfix"></span>
+			</div>
+			<div>
+				
+				<span class="pull-left" >
+					<span>
+						<span class="glyphicon glyphicon-thumbs-up"></span>
+						{{ q.score }}
+					</span>
+					<span style="margin-left: 10px;">
+						<span class="glyphicon glyphicon-comment"></span>
+						{{ q.answers | objectLength }}
+					</span>
+					<span style="margin-left: 10px; font-family: 'Lato'; font-weight: bold; font-size: 1em;">
+						{{ q.closed ? 'CLOSED' : 'OPEN' }}
+					</span>				
+				</span>
+				
+
+				<span class="pull-right" ng-if="loadedArtifact != null">
+					<a href="#" class="btn btn-toggle btn-toggle-on" ng-click="toggleRelation(q); $event.stopPropagation();" style="font-size: 0.9em;">{{loadedArtifact.name}}</a>
+				</span>
+
+				<span class="clearfix"></span>
+				
+			</div>
+			
+		</li>
+
+		<li class="list-group-item list-header" ng-show=" ( questions | unrelatedToArtifact : loadedArtifact.id ).length > 0 ">
+			Other questions
+		</li>
+
+		<li class="list-group-item question-item {{ q.closed ? '' : 'open' }}"
+			ng-click="setSelected(q)" 
+			ng-repeat="q in questions | unrelatedToArtifact : loadedArtifact.id  | orderBy : 'closed'  "
+			>
+			<div> 
+				<span ng-if="!isUpdated(q)">{{q.title}}</span>
+				<span ng-if="isUpdated(q)">
+					<strong>{{q.title}}</strong>
+					<small><i>{{ getUpdateString(q) }}</i></small>
+				</span> 
+			</div>
+			<div >
+				<span class="pull-left">
+					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{q.updatedAt | date : 'medium'}}"></time-ago>
+				</span> 
+
+				<span class="pull-right" style="text-align:right;">
+					<span ng-repeat="tag in q.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>
+				</span> 
+
+				<span class="clearfix"></span>
+			</div>
+			<div>
+				<span class="pull-left" >
+					<span>
+						<span class="glyphicon glyphicon-thumbs-up"></span>
+						{{ q.score }}
+					</span>
+					<span style="margin-left: 10px;">
+						<span class="glyphicon glyphicon-comment"></span>
+						{{ q.answers | objectLength }}
+					</span>
+					<span style="margin-left: 10px; font-family: 'Lato'; font-weight: bold; font-size: 1em;">
+						{{ q.closed ? 'CLOSED' : 'OPEN' }}
+					</span>				
+				</span>
+				
+
+				<span class="pull-right" ng-if="loadedArtifact != null">
+					<a href="#" class="btn btn-toggle" ng-click="toggleRelation(q); $event.stopPropagation();" style="font-size: 0.9em;">{{loadedArtifact.name}}</a>
+				</span>
+
+				<span class="clearfix"></span>
+				
+			</div>
+			
+		</li>
+	</ul>
+
+</div>

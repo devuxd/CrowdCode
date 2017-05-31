@@ -1,0 +1,85 @@
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="mocha.js"></script>
+	<script type="text/javascript" src="chai.js"></script>
+</head>
+<body>
+
+	<button onclick="runSuite()">Run</button>
+
+<script type="text/javascript">
+
+function CustomReporter(runner) {
+
+  runner.on('start', function(){
+    // console.log('starting suite');
+  });
+
+  runner.on('test', function(test){
+    // console.log('Test '+test.title+' STARTED');
+  });
+
+  runner.on('test end', function(test){
+    // console.log('Test '+test.title+' ENDED');
+  });
+
+  runner.on('end', function(){
+    // console.log('end suite')
+  });
+}
+
+
+
+var expect = chai.expect;
+
+
+function runSuite(){
+	
+	mocha.setup('bdd');
+	mocha.reporter(CustomReporter);
+
+	var testCode =
+	describe('first test',function(){
+
+		// var tOut = undefined;
+		// beforeEach(function(done){
+		// 	console.log('before');
+		// 	done();
+		// 	// tOut = setTimeout(function(){ console.log('TIMEOUTED'); done(); },2000);
+		// });
+		// afterEach(function(done){
+		// 	console.log('after');
+		// 	done();
+		// 	// clearTimeout(tOut);
+		// });
+
+		it('1-1',function(done){
+			expect(null).to.equal(null);
+			expect(1).to.equal(1);
+			expect('asd').to.equal('asd');
+			done();
+		});
+
+		it('1-2',function(){
+			expect(1).to.equal(null);
+		});
+	});
+
+	function bla(){
+		while(1);
+	}
+
+	mocha.run(function(){
+		var tests = mocha.suite.suites[0].tests;
+		for( var t = 0; t < tests.length ; t++)
+			console.log(t,tests[t].state,tests[t])
+	});
+}
+
+runSuite();
+
+
+</script>
+</body>
+</html>

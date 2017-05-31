@@ -1,0 +1,134 @@
+<div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
+
+	<div class="section" ui-layout-container size="10%">
+		<div class="section-content bg-color-alpha padding" style="top:0px">
+			<span>
+				The test suite for <strong ng-bind="function.name"></strong> has been updated by adding, editing, or deleting its tests. Considering just <strong>the changes</strong> to the test suite rather than the test
+				suite as a whole, can you review them?
+			</span>
+			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>
+		</div>
+	</div>
+
+
+	<div class="section" ui-layout-container size="25%">
+		<div class="section-bar">
+			<span class="title">Function Description</span>
+		</div>
+		<div class="section-content">
+			<js-reader code="funct.getSignature()" ></js-reader>
+		</div>
+	</div>
+
+	<div class="section" ui-layout-container size="40%" >
+		<div class="section-bar" ng-if="data.selected == -1">
+			<span class="title">Tests</span>
+			<span class="pull-right">
+				<span> {{data.stats.added}} added </span> /
+				<span> {{data.stats.edited}} edited </span> /
+				<span> {{data.stats.deleted}} deleted </span>
+			</span>
+		</div>
+		<div class="section-content slide from-left" ng-if="data.selected == -1">
+			<div class="tests-list has-next ">
+				<div class="test-item clickable"
+				     ng-repeat="t in data.tests track by $index">
+					<div ng-click="data.selected = t">
+						<span class="pull-left">
+							<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
+							<span ng-bind="t.description"></span>
+						</span>
+
+						<span class="pull-right" ng-if="t.edited">
+							edited
+							<span class="glyphicon glyphicon-pencil"  ></span>
+						</span>
+						<span class="pull-right" ng-if="t.added">
+							added
+							<span class="glyphicon glyphicon-plus"  ></span>
+						</span>
+						<span class="pull-right" ng-if="t.deleted">
+							removed
+							<span class="glyphicon glyphicon-remove"  ></span>
+						</span>
+						<span class="clearfix"></span>
+					</div>
+				</div>
+			</div>
+			<div>
+				<strong ng-if="data.isComplete">The test suite has been marked as complete.</strong>
+			</div>
+		</div>
+
+		<div class="section-bar" ng-if="data.selected != -1">
+			<span class="pull-left" >
+				<button class="btn btn-sm" ng-click="data.selected = -1">
+					<span class="glyphicon glyphicon-arrow-left"></span>
+				</button>
+			</span>
+		</div>
+		<div class="section-content slide from-right padding"
+				 ng-repeat="t in data.tests track by $index"
+				 ng-if="data.selected == t">
+				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
+
+					<div class="form-group">
+						<label for="description">Status </label>
+						<div class="form-control form-control-static" name="description">
+							{{ t.added ? 'added' : t.edited ? 'edited' : t.deleted ? 'deleted' : 'untouched' }}
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="description">Description </label>
+						<div class="form-control form-control-static" name="description">
+							{{t.description}}
+						</div>
+					</div>
+					<div class="form-group">
+						<label>Type</label>
+						<div class="form-control form-control-static" name="description">
+							{{t.isSimple ? 'input/output' : 'assertion'}}
+						</div>
+					</div>
+					<div class="form-group" ng-if="!t.isSimple">
+						<label for="code">Code</label>
+						<div class="form-control form-control-static" js-reader code="t.code"></div>
+					</div>
+
+					<div ng-if="t.isSimple" ng-form="inputs" >
+						<div class="form-group"  ng-repeat="(pIdx,p) in funct.parameters track by p.name">
+							<label for="inputs">
+								{{p.name + ' {' + p.type + '}' }}
+							</label>
+
+							<div
+								class="form-control code"
+								json-reader
+								name="{{p.name}}"
+								ng-model="t.inputs[pIdx]">
+							</div>
+						</div>
+
+					</div>
+
+					<div class="form-group" ng-if="t.isSimple">
+						<label for="code">Output {{ '{' + funct.returnType + '}'}}</label>
+						<div
+							class="form-control code"
+							json-reader
+							ng-model="t.output"
+							name="output">
+						</div>
+					</div>
+
+
+
+
+				</div>
+		</div>
+	</div>
+
+
+
+	<div class="section" ui-layout-container size="25%" ng-include="'/client/microtasks/review/review_form.html'"></div>
+</div>

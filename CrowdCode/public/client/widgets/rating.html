@@ -1,0 +1,15 @@
+<div id="ratingsDiv" class="stars-container pull-left" >
+	<span ng-repeat="currentValue in [1,2,3,4,5] track by $index"
+		  ng-mouseenter="data.mouseOn = currentValue"
+		  ng-mouseleave="data.mouseOn = 0"
+		  ng-click="rate(currentValue)">
+		<span class="star {{ ( data.mouseOn > $index || data.value > $index ) ? 'full' : '' }}"></span>
+		<span ng-if="$index == 2" class="stars-separator" ></span>
+	</span>
+</div>
+	<span class="rating-result pull-left" ng-if="review.rating != -1">
+		<strong ng-if="data.value != -1 && data.value <= 3"><span class="glyphicon glyphicon-refresh"></span> revise work</strong>  
+		<strong ng-if="data.value > 3"><span class="glyphicon glyphicon-ok"></span> work accepted</strong>  
+	</span>
+	<span class="clearfix"></span>	
+</div>

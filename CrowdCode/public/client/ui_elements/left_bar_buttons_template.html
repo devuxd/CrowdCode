@@ -1,0 +1,6 @@
+<div class="btn-bar btn-bar-left">
+  <div class="btn-group">
+    <div class="btn {{ selectedTab == 'newsfeed' ? 'active' : '' }}" ng-click="selectTab('newsfeed'); trackInteraction('Click Left Bar', 'Toggle', $event)">Newsfeed</div>
+    <div class="btn {{ selectedTab == 'questions' ? 'active' : '' }}" ng-click="selectTab('questions'); trackInteraction('Click Left Bar', 'Toggle', $event)">Questions</div>
+  </div>
+</div>

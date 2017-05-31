@@ -1,0 +1,146 @@
+<div ng-controller="DebugTestFailureController"  >
+    
+
+    <div class="section section-description " >
+        
+        <div ng-include="'/client/microtasks/microtask_title.html'"></div>
+        <div class="section-content  job-description" >
+            One of the tests for the function <strong>{{funct.name}}</strong> has failed. <br />
+            Can you find and fix the bug (or report an issue with the test)?
+        </div>
+    </div>
+
+
+    <alertcontainer></alertcontainer>
+
+    <div ng-repeat="callee in data.callees">
+        <stubs-modal function-name="callee" stubs="currentTest.stubs[callee]"></stubs-modal>
+    </div>
+
+    <div ng-if="!dispute.active" 
+         class="section section-description"  >
+        <div class="section-title" >
+            <div class="dot bg-color"></div>
+            FAILING TEST 
+        </div>
+        <div class="section-content" >
+           
+            <div class="panel-group" ng-model="activePanelCurr" bs-collapse>
+            
+                <div class="panel panel-default test-result" >
+                    
+                    <div class="panel-heading {{ currentTest.status() }}" bs-collapse-toggle>
+                        <strong class="pull-left">    
+                            <span class="glyphicon glyphicon-chevron-{{ activePanelCurr == 0 ? 'down' : 'right' }}"></span>
+                            {{currentTest.rec.description}} 
+                        </strong>
+                        <span class="pull-right">
+                            <span ng-if="!currentTest.ready()"> running ... </span>
+                            <span ng-if="currentTest.ready()">
+                                <span ng-if="!currentTest.inTimeout">
+                                    <span>executed in {{currentTest.executionTime}} ms - </span>
+                                    <span>{{currentTest.status()}}</span>
+                                </span>
+                                <span ng-if="currentTest.inTimeout">timeout</span>
+                            </span>
+                        </span>
+                        
+                        <span class="clearfix"></span>
+                    </div>
+
+                    <div class="panel-collapse" bs-collapse-target>
+                        <test-result test="currentTest" funct="funct" ></test-result>
+                    </div>
+
+                </div>
+
+            </div>  
+
+        </div>
+    </div>
+
+    <div ng-if="!dispute.active && previousTests.length > 0" class="section section-description"  >
+        <div class="section-title" >
+            <div class="dot bg-color"></div>
+            OTHER TESTS
+        </div>
+        <div class="section-content" >
+            
+            <div class="panel-group" ng-model="activePanel" bs-collapse>
+            
+                <div class="panel panel-default test-result" 
+                    ng-repeat="(testIndex,test) in previousTests track by $index"
+                    ng-show="!test.output.result || !hidePassedTests">
+                    
+                    <div class="panel-heading {{ test.status() }}" bs-collapse-toggle>
+                        <strong class="pull-left">    
+                            <span class="glyphicon glyphicon-chevron-{{ activePanel == testIndex ? 'down' : 'right' }}"></span>
+                            {{test.rec.description}} 
+                        </strong>
+                        <span class="pull-right">
+                            <span ng-if="!test.ready()"> running ... </span>
+                            <span ng-if="test.ready()">
+                                <span ng-if="!test.inTimeout">
+                                    <span>executed in {{test.executionTime}} ms - </span>
+                                    <span>{{test.status()}}</span>
+                                </span>
+                                <span ng-if="test.inTimeout">timeout</span>
+                            </span>
+                        </span>
+                        
+                        <span class="clearfix"></span>
+                    </div>
+
+                    <div class="panel-collapse " bs-collapse-target>
+                        <div ng-if="activePanel != NaN && (activePanel%previousTests.length)==$index">    
+                            <test-result test="test" funct="funct" ></test-result>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>  
+
+        </div>
+    </div>
+
+    <!-- CODE EDITOR -->
+    <div class="section-cols " ng-show=" tabs.active == 2 ">
+        <div class="container-flex-row">
+            <div class="section section-help bg-color-alpha " style="width:30%">
+                <a ng-click="runTests()" class="btn btn-primary" style="margin:10px" ng-disabled="microtaskForm.functionForm.$invalid">
+                    <span class="glyphicon glyphicon-refresh"></span> 
+                    <span ng-if="!data.running">Run the tests</span> 
+                    <span ng-if="data.running">Tests running</span>
+                </a>
+                
+                <div class="section-title" > <div class="dot"></div> <javascript-helper ></javascript-helper></div>
+
+                <div class="section-title" >  <div class="dot"></div> DEBUGGER TIPS </div>
+                <div class="section-content" >
+                    <ul style="font-family:'Lato'; list-style:none; padding-left:5px; padding-right:5px;">
+                        <li style="border-bottom:1px solid #A9CAE0; ">use <strong>console.log(...)</strong> to monitor statements</li>
+                        <li>click on the highlighted function calls for opening the stubs popup</li>
+                    </ul>
+                </div>
+
+                <div class="section-title" >  <div class="dot"></div> AVAILABLE DATA TYPES </div>
+                <div class="section-content" >
+                    <adt-list></adt-list>
+                </div>
+            </div>
+            <div class="section section-form" style="width:70%">
+                <div class="section-content no-padding" >
+                    <ace-edit-js 
+                        function="funct" 
+                        editor="data.editor" 
+                        annotations="data.annotations"
+                        markers="data.markers"
+                        has-pseudo="data.hasPseudo"
+                        >
+                    </ace-edit-js>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
