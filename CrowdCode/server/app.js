@@ -20,7 +20,6 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../public')));
 
 app.post('/authenticate', wagner.invoke(function(AdminFirebase) {
   return function(req, res) {
@@ -49,6 +48,8 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/task_submitted', task_submitted);
 
+//app.use('/',index);
+app.use(express.static(path.join(__dirname, '../public')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -65,7 +66,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.sendFile(path.join(__dirname, '../public/404.html'));
 });
 
 module.exports = app;
