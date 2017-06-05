@@ -3,9 +3,27 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Sample FirebaseUI App - Logged In</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>crowdcode Logged In</title>
 </head>
 <script src="/include/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+  crossorigin="anonymous">
+<!-- Optional theme -->
+<link rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+  integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+  crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+  integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+  crossorigin="anonymous"></script>
+
 <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
 <script>
   var config = {
@@ -23,7 +41,18 @@
   <script type="text/javascript">
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        document.body.innerHTML = "<h1 align='center'> Congrats " + user.displayName + ", you are logged in</h1>";
+        document.body.innerHTML = `
+          <div align='center' class="container">
+            <h1> Congrats, ${user.displayName} you are logged in</h1>
+            <br />
+            <button id="btnLogout" class="btn btn-action">Log out</button>
+          </div>
+        `;
+        const btnLogout = document.getElementById('btnLogout');
+        btnLogout.addEventListener('click', e => {
+          firebase.auth().signOut();
+        });
+        
         firebase.auth().currentUser.getIdToken( /* forceRefresh */ true).then(function(idToken) {
           $.ajax({
             type: "POST",
@@ -41,6 +70,7 @@
         });
       } else {
         console.log("no user signed in");
+        window.location.href = '/login.html';
       }
     });
   </script>
