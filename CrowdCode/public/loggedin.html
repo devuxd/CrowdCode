@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Sample FirebaseUI App - Logged In</title>
+</head>
+<script src="/include/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+<script>
+  var config = {
+    apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
+    authDomain: "crowdcode2.firebaseapp.com",
+    databaseURL: "https://crowdcode2.firebaseio.com",
+    projectId: "crowdcode2",
+    storageBucket: "crowdcode2.appspot.com",
+    messagingSenderId: "382318704982"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<body>
+  <script type="text/javascript">
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        document.body.innerHTML = "<h1 align='center'> Congrats " + user.displayName + ", you are logged in</h1>";
+        firebase.auth().currentUser.getIdToken( /* forceRefresh */ true).then(function(idToken) {
+          $.ajax({
+            type: "POST",
+            url: "/authenticate",
+            data: {
+              "idToken": idToken
+            },
+            dataType: "json",
+            success: function(result) {
+              console.log(result);
+            }
+          });
+        }).catch(function(error) {
+          // Handle error
+        });
+      } else {
+        console.log("no user signed in");
+      }
+    });
+  </script>
+
+
+</body>
+
+</html>

@@ -8,6 +8,9 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var task_submitted = require('./routes/task_submitted');
+var cors = require('cors');
+var adminFirebase = require('./lib/firebase-admin-sdk');
+const userService = require('./lib/userService');
 var app = express();
 
 // view engine setup
@@ -18,9 +21,33 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
+
+app.use(cors());
+app.post('/authenticate', function(req, res) {
+  var idToken = req.body.idToken;
+  adminFirebase.auth().verifyIdToken(idToken)
+    .then(function(decodedToken) {
+      var uid = decodedToken.uid;
+      userService.getUserById(uid)
+        .then(function(userRecord) {
+          // See the UserRecord reference doc for the contents of userRecord.
+          console.log("Successfully fetched user data:", userRecord.toJSON());
+        })
+        .catch(function(error) {
+          console.log("Error fetching user data:", error);
+        });
+      res.json({
+        'Sucess': 200
+      })
+    }).catch(function(error) {
+      // Handle error
+    });
+});
 
 app.use('/', index);
 app.use('/users', users);

@@ -15,6 +15,8 @@
     "express": "~4.15.2",
     "express-session": "^1.15.3",
     "firebase": "^4.0.0",
+    "firebase-admin": "^5.0.0",
+    "firebaseui": "^2.0.0",
     "http-status": "^1.0.1",
     "morgan": "~1.8.1",
     "node-dev": "^3.1.3",
