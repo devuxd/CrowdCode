@@ -4,18 +4,19 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
-var index = require('./routes/index');
-var users = require('./routes/users');
-var task_submitted = require('./routes/task_submitted');
 var cors = require('cors');
+
 var adminFirebase = require('./lib/firebase-admin-sdk');
-const userService = require('./lib/userService');
+const userService = require('./util/user_service');
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'ejs');
+
+var index = require('./routes/index');
+var authenticate = require('./routes/authenticate');
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -25,34 +26,12 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../public')));
 
 app.use(cors());
-app.post('/authenticate', function(req, res) {
-  var idToken = req.body.idToken;
-  adminFirebase.auth().verifyIdToken(idToken)
-    .then(function(decodedToken) {
-      var uid = decodedToken.uid;
-      userService.getUserById(uid)
-        .then(function(userRecord) {
-          // See the UserRecord reference doc for the contents of userRecord.
-          console.log("Successfully fetched user data:", userRecord.toJSON());
-        })
-        .catch(function(error) {
-          console.log("Error fetching user data:", error);
-        });
-      res.json({
-        'Sucess': 200
-      })
-    }).catch(function(error) {
-      // Handle error
-    });
-});
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/task_submitted', task_submitted);
-
+//app.use('/',index);
+app.use('/authenticate', authenticate);
+app.use(express.static(path.join(__dirname, '../public')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -69,7 +48,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.sendFile(path.join(__dirname,'../public/404.html'));
 });
 
 module.exports = app;
