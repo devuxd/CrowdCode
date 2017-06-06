@@ -3,6 +3,8 @@ var path = require('path');
 var admin = require('firebase-admin');
 
 module.exports = function(wagner) {
+
+
   wagner.factory('AdminFirebase', function(Config) {
     return admin.initializeApp({
       credential: admin.credential.cert(Config.serviceAccount),
@@ -25,4 +27,9 @@ module.exports = function(wagner) {
     var firebase = require('firebase');
     return firebase.initializeApp(Config.firebaseConfig);
   })
+
+  wagner.factory('FirebaseService',function(AdminFirebase){
+    var firebase_service = require('../util/firebase_service')(AdminFirebase);
+    return firebase_service;
+    });
 };
