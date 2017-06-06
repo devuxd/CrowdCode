@@ -13,7 +13,8 @@ module.exports = function(wagner) {
 
   api.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase) {
     return function(req, res) {
-      var idToken = req.body.idToken;
+      var idToken = req.headers['authorization'].split(' ').pop();
+      //var idToken = req.body.idToken;
       AdminFirebase.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
           var uid = decodedToken.uid;
