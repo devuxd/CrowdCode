@@ -20,4 +20,9 @@ module.exports = function(wagner) {
   wagner.factory('UserService', function(AdminFirebase) {
     return require('./userService')(AdminFirebase);
   });
+
+  wagner.factory('Firebase', function(Config) {
+    var firebase = require('firebase');
+    return firebase.initializeApp(Config.firebaseConfig);
+  })
 };

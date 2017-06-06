@@ -17,7 +17,6 @@ module.exports = function(wagner) {
       AdminFirebase.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
           var uid = decodedToken.uid;
-          console.log(uid);
           UserService.getUserById(uid)
             .then(function(userRecord) {
               // See the UserRecord reference doc for the contents of userRecord.
