@@ -1,16 +1,12 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var wagner = require('wagner-core');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const wagner = require('wagner-core');
 require('./lib/dependencies')(wagner);
-var index = require('./routes/index');
-var users = require('./routes/users');
-var task_submitted = require('./routes/task_submitted');
-const userService = require('./lib/userService');
-var app = express();
+const app = express();
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -20,36 +16,12 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(cookieParser());
-
-app.post('/authenticate', wagner.invoke(function(AdminFirebase) {
-  return function(req, res) {
-    var idToken = req.body.idToken;
-    AdminFirebase.auth().verifyIdToken(idToken)
-      .then(function(decodedToken) {
-        var uid = decodedToken.uid;
-        userService(AdminFirebase).getUserById(uid)
-          .then(function(userRecord) {
-            // See the UserRecord reference doc for the contents of userRecord.
-            console.log("Successfully fetched user data:", userRecord.toJSON());
-          })
-          .catch(function(error) {
-            console.log("Error fetching user data:", error);
-          });
-        res.json({
-          'Sucess': 200
-        })
-      }).catch(function(error) {
-        // Handle error
-      });
-  };
+app.use('/api/v1', require('./routes/api')(wagner));
+app.use(express.static(path.join(__dirname, '../public'), {
+  maxAge: 4 * 60 * 60 * 1000 /* 2hrs */
 }));
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/task_submitted', task_submitted);
 
-//app.use('/',index);
-app.use(express.static(path.join(__dirname, '../public')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

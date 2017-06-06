@@ -16,4 +16,8 @@ module.exports = function(wagner) {
   wagner.factory('Config', function() {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '../../config', 'config.json')).toString());
   });
+
+  wagner.factory('UserService', function(AdminFirebase) {
+    return require('./userService')(AdminFirebase);
+  });
 };

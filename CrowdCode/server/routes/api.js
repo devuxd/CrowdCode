@@ -11,13 +11,14 @@ module.exports = function(wagner) {
   }));
   api.use(cors());
 
-  api.post('/authenticate', wagner.invoke(function(AdminFirebase) {
+  api.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase) {
     return function(req, res) {
       var idToken = req.body.idToken;
       AdminFirebase.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
           var uid = decodedToken.uid;
-          userService(AdminFirebase).getUserById(uid)
+          console.log(uid);
+          UserService.getUserById(uid)
             .then(function(userRecord) {
               // See the UserRecord reference doc for the contents of userRecord.
               console.log("Successfully fetched user data:", userRecord.toJSON());
@@ -35,7 +36,7 @@ module.exports = function(wagner) {
   }));
 
   /* Product API */
-  api.get('/project', wagner.invoke(function() {
+  api.get('/project/:id', wagner.invoke(function(AdminFirebase) {
     return function(req, res) {
       //TODO handle project retrieval here with firebase
       res.json({

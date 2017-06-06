@@ -52,11 +52,11 @@
         btnLogout.addEventListener('click', e => {
           firebase.auth().signOut();
         });
-        
+
         firebase.auth().currentUser.getIdToken( /* forceRefresh */ true).then(function(idToken) {
           $.ajax({
             type: "POST",
-            url: "/authenticate",
+            url: "api/v1/authenticate",
             data: {
               "idToken": idToken
             },
