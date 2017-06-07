@@ -48,7 +48,7 @@ module.exports  = function(AdminFirebase) {
 
     },
 
-
+    /* ---------------- ADT API ------------- */
     /* Add a new ADT in a project in firebase
      param project_id text
      param ADT name text
@@ -70,13 +70,28 @@ module.exports  = function(AdminFirebase) {
             example: example
         }
         var path = 'Projects/' + project_id + '/artifacts/ADTs';
-        var hiostory_path = 'Projects/' + project_id + '/history/artifacts/ADTs/';
+        var history_path = 'Projects/' + project_id + '/history/artifacts/ADTs/';
         var created_child = root_ref.child(path).push(ADT_schema);
-        var add_to_history = root_ref.child(hiostory_path).child(created_child.key).child('0').set(ADT_schema);
+        var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(ADT_schema);
         return created_child.key;
     },
 
+    /*Retrieve function from Project
+     param project id text
+     param function id text
+     return promise object
+     */
+    retrieveADT: function(project_id, ADT_id) {
+        var path = 'Projects/' + project_id + '/artifacts/ADTs/' + ADT_id;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            return data.val();
+        });
+        return promise;
+    },
 
+    /* ---------------- End ADT API ------------- */
+
+    /* ---------------- Function API ------------- */
     /* Adds a function to a Project in firebase
      param project_id text
      param function name text
@@ -102,13 +117,140 @@ module.exports  = function(AdminFirebase) {
             dependent: functions_dependent
         }
         var path = 'Projects/' + project_id + '/artifacts/Functions';
-        var hiostory_path = 'Projects/' + project_id + '/history/artifacts/Functions';
+        var history_path = 'Projects/' + project_id + '/history/artifacts/Functions';
         var created_child = root_ref.child(path).push(function_schema);
-        var add_to_history = root_ref.child(hiostory_path).child(created_child.key).child('0').set(function_schema);
+        var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(function_schema);
         return created_child.key;
     },
 
+    /* Update code in function in a project
+     param project  id text
+     param function id text
+     param function name text
+     param function type text
+     param function description text
+     param function code text
+     param test Array of test id's
+     param stubs Array of json objects with stub names and values
+     param parameters Array of json objects with name, type and description
+     param functions dependent Array of functions that call this function
+     */
+    updateFunction: function(project_id, function_id, function_name, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent){
+        var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
+        var history_path = 'Projects/' + project_id + '/history/artifacts/Functions/' + function_id;
+        root_ref.child(history_path).once("value",function(data){
+            var version_number = data.numChildren();
+            function_schema = {
+                name: function_name,
+                description: function_description,
+                code: function_code,
+                type: function_type,
+                version: version_number,
+                parameters: parameters,
+                stubs: stubs,
+                tests: tests,
+                dependent: functions_dependent
+            }
 
+            root_ref.child(path).update(function_schema);
+            var add_to_history = root_ref.child(history_path).child(version_number).set(function_schema);
+            return true;
+        });
+    },
+
+    /*Retrieve function from Project
+     param project id text
+     param function id text
+     return promise object
+     */
+    retrieveFunction: function(project_id, function_id) {
+        var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            return data.val();
+        });
+        return promise;
+    },
+    /* ---------------- End Function API ------------- */
+
+
+    /* ---------------- Test API ------------- */
+    /* Add a test to a Project in firebase
+     param project id text
+     param test name text
+     param test description text
+     param function id text
+     param test input array of json object with name and type
+     param test output text/object
+     returns test ID text
+     */
+    createTest:  function(project_id, function_id, test_type, test_name, test_description,  test_input, test_output) {
+        test_schema = {
+            name: test_name,
+            description: test_description,
+            function_id: function_id,
+            input: test_input,
+            output: test_output,
+            isPassed: false,
+            version: 0,
+            isDeleted: false,
+            type: test_type
+        }
+        var path = 'Projects/' + project_id + '/artifacts/Tests';
+        var history_path = 'Projects/' + project_id + '/history/artifacts/Tests';
+        var created_child = root_ref.child(path).push(test_schema);
+        var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(test_schema);
+        return created_child.key;
+    },
+
+    /* Update code in function in a project
+     param project  id text
+     param test id text
+     param test type text
+     param test name text,
+     param test_description,
+     param function id text
+     param test input array of json object with name and type
+     param test output text/object
+     param test result boolean
+     */
+    updateTest: function(project_id, function_id, test_id, test_type, test_name, test_description,  test_input, test_output, test_result){
+        var path = 'Projects/' + project_id + '/artifacts/Tests/' + test_id;
+        var history_path = 'Projects/' + project_id + '/history/artifacts/Tests/' + test_id;
+        root_ref.child(history_path).once("value",function(data){
+            var version_number = data.numChildren();
+            test_schema = {
+                name: test_name,
+                description: test_description,
+                function_id: function_id,
+                input: test_input,
+                output: test_output,
+                isPassed: test_result,
+                version: version_number,
+                isDeleted: false,
+                type: test_type
+            }
+
+            root_ref.child(path).update(test_schema);
+            var add_to_history = root_ref.child(history_path).child(version_number).set(test_schema);
+            return true;
+        });
+    },
+
+    /*Retrieve test from Project
+     param project id text
+     param test id text
+     return promise object
+     */
+    retrieveTest: function(project_id, test_id) {
+        var path = 'Projects/' + project_id + '/artifacts/Tests/' + test_id;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            return data.val();
+        });
+        return promise;
+    },
+    /* ---------------- End Test API ------------- */
+
+    /* ---------------- Microtask API ------------- */
     /* Add a implementation microtask to a Project in firebase
      param project id tect
      param microtask name text
@@ -126,20 +268,26 @@ module.exports  = function(AdminFirebase) {
             name: microtask_name,
             description: microtask_description,
             code: microtask_code,
-            test: "null",
             max_points: points,
             awarded_points: 0,
             function_id: function_id,
             function_name: function_name,
             function_version: function_version,
-            isReviewMode: false,
-            review: "null",
-            rating: "null",
             worker: worker_id
         }
         var path = 'Projects/' + project_id + '/microtasks/implementation';
         var created_child = root_ref.child(path).push(microtask_schema);
         return created_child.key;
+    },
+
+    /* Update the awarded points to a microtask after it is reviewed
+     param project id text
+     param microtask id text
+     param points number
+     */
+    updateMicrotaskPointsAwarded: function(project_id, microtask_id, points){
+        var path = 'Projects/' + project_id + '/microtasks/implementation/' + microtask_id;
+        root_ref.child(path).update({awarded_points: points});
     },
 
 
@@ -166,33 +314,50 @@ module.exports  = function(AdminFirebase) {
         return created_child.key;
     },
 
-    /* Add a test to a Project in firebase
+
+    /* Update the rating and review in review microtask
      param project id text
-     param test name text
-     param test description text
-     param function id text
-     param test input array of json object with name and type
-     param test output text/object
-     returns test ID text
+     param microtask id text
+     param rating number
+     param review text
+
      */
-    createTest:  function(project_id, test_name, test_description, function_id, test_input, test_output) {
-        test_schema = {
-            name: test_name,
-            description: test_description,
-            function_id: function_id,
-            input: test_input,
-            output: test_output,
-            code: "null",
-            isPassed: false,
-            version: 0,
-            isDeleted: false
-        }
-        var path = 'Projects/' + project_id + '/artifacts/Tests';
-        var hiostory_path = 'Projects/' + project_id + '/history/artifacts/Tests';
-        var created_child = root_ref.child(path).push(test_schema);
-        var add_to_history = root_ref.child(hiostory_path).child(created_child.key).child('0').set(test_schema);
-        return created_child.key;
+    updateReviewMicrotask: function(project_id, microtask_id, rating, review){
+        var path = 'Projects/' + project_id + '/microtasks/review/' + microtask_id;
+        root_ref.child(path).update({rating: rating, review: review});
+
+        //Update awarded points in the implementation task based on the rating
+        root_ref.child(path).once("value").then(function(data){
+            var reference_id = data.val().reference_id;
+            var implementation_path = 'Projects/' + project_id + '/microtasks/implementation/' + reference_id;
+            root_ref.child(implementation_path).once("value").then(function(value){
+                var max_points = value.val().max_points;
+                var points = max_points * (rating/5);
+                root_ref.child(implementation_path).update({"awarded_points": points});
+            });
+            return true;
+        });
     },
+
+
+    /*Retrieve task from Project
+     param project id text
+     param microtask type text -  - Implementation or Review
+     param microtask id text
+     return promise object
+     */
+    retrieveMicrotask: function(project_id, microtask_type, microtask_id) {
+        var path = 'Projects/' + project_id + '/microtasks/' + microtask_type + '/' + microtask_id;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            return data.val();
+        });
+        return promise;
+    },
+
+
+
+    /* ---------------- End Microtask API ------------- */
+
 
 
     /* Add an event in the history
@@ -240,9 +405,9 @@ module.exports  = function(AdminFirebase) {
             isClosed: false
         }
         var path = 'Projects/' + project_id + '/questions';
-        var hiostory_path = 'Projects/' + project_id + '/history/questions';
+        var history_path = 'Projects/' + project_id + '/history/questions';
         var created_child = root_ref.child(path).push(question_schema);
-        var add_to_history = root_ref.child(hiostory_path).child(created_child.key).child('0').set(question_schema);
+        var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(question_schema);
         return created_child.key;
     },
 
@@ -279,17 +444,8 @@ module.exports  = function(AdminFirebase) {
         var path = 'Workers';
         var created_child = root_ref.child(path).push(worker_schema);
         return created_child.key;
-    },
-
-    /* Update code in function in a project
-        param project  id text
-        param function id text
-        param function object json object
-        return
-    */
-    updateFunction: function(project_id, function_id, function_object){
-        
     }
+
 
     }
 }
