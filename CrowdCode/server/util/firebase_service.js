@@ -12,10 +12,11 @@ module.exports  = function(AdminFirebase) {
         project_schema = {
             name: project_name,
             owner: owner_id,
+            isComplete: "null",
             artifacts: {
                 ADTs: "null",
                 Functions: "null",
-                Tests: "null",
+                Tests: "null"
             },
             history: {
                 artifacts: {
@@ -359,6 +360,7 @@ module.exports  = function(AdminFirebase) {
     /* ---------------- End Microtask API ------------- */
 
 
+    /* ----------------Event API ------------- */
 
     /* Add an event in the history
      param project id text
@@ -382,6 +384,12 @@ module.exports  = function(AdminFirebase) {
         return created_child.key;
     },
 
+
+    /* ---------------- End Event API ------------- */
+
+
+    /* ---------------- Questions API ------------- */
+
     /* Create a question in a project
      param project id text
      param title text
@@ -390,26 +398,121 @@ module.exports  = function(AdminFirebase) {
      param owner id text
      param subscribe ids array of worker ids
      */
-    createQuestion: function(project_id, title, question, points, owner_id, subscriber_ids) {
+    createQuestion: function(project_id, title, question, points, owner_id) {
         question_schema = {
             title: title,
             question: question,
             points: points,
             owner_id: owner_id,
-            subscriber_ids: subscriber_ids,
+            subscriber_ids: "null",
             created_time: timestamp.getTime(),
             answers: "null",
             answer_count: 0,
             version: 0,
             updated_time: "null",
             isClosed: false
-        }
+        };
         var path = 'Projects/' + project_id + '/questions';
         var history_path = 'Projects/' + project_id + '/history/questions';
         var created_child = root_ref.child(path).push(question_schema);
+        root_ref.child(path).child(created_child.key).child('subscriber_ids').push(owner_id);
         var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(question_schema);
+        root_ref.child(history_path).child(created_child.key).child('subscriber_ids').push(owner_id);
         return created_child.key;
     },
+
+    /* Adds an answer to a question in the project
+        param project id text
+        param question id text
+        param answerer id text - worker id
+        param answer content text
+        returns answer ID text
+     */
+    addAnswer: function(project_id, question_id, answerer_id, answer_content ) {
+        answer_schema = {
+            answer: answer_content,
+            comments: "null",
+            owner_id: answerer_id
+        };
+        var path = 'Projects/' + project_id + '/questions/' + question_id ;
+        //add the answer
+        var created_child = root_ref.child(path).child('answers').push(answer_schema);
+        //update the updated time
+        root_ref.child(path).update({updated_time: timestamp.getTime()});
+        //increment answer count
+        root_ref.child(path).once("value").then(function(data){
+            var answer_count = data.val().answer_count + 1;
+            root_ref.child(path).child('answer_count').set(answer_count);
+        })
+        //add the answering worker to subscribers list
+        root_ref.child(path).child('subscriber_ids').once("value").then(function(data){
+            var isSubcribed = false;
+            var subscribers = data.forEach( function(subscriber) {
+                if(subscriber.val() === answerer_id){
+                    isSubcribed = true;
+                }
+            } );
+            if(!isSubcribed) {
+                root_ref.child(path).child('subscriber_ids').push(answerer_id);
+            }
+            return true;
+        });
+        return created_child.key;
+    },
+
+    /* Add comment to an answer
+        param project id text
+        param question id text
+        param answer id text
+        param commenter id text - worker id
+        param comment_content text
+        returns comment ID text
+     */
+    addComment: function (project_id, question_id, answer_id, commenter_id, comment_content){
+      comment_schema = {
+          comment: comment_content,
+          owner_id: commenter_id
+      };
+      //add the comment
+        var path = 'Projects/' + project_id + '/questions/' + question_id + '/answers/' + answer_id + '/comments';
+        var created_child = root_ref.child(path).push(comment_schema);
+
+        //add the subscriber if not already on the list
+        var question_path = 'Projects/' + project_id + '/questions/' + question_id;
+        root_ref.child(question_path).child('subscriber_ids').once("value").then(function(data){
+            var isSubcribed = false;
+            var subscribers = data.forEach( function(subscriber) {
+                if(subscriber.val() === commenter_id){
+                    isSubcribed = true;
+                }
+            } );
+            if(!isSubcribed){
+                root_ref.child(question_path).child('subscriber_ids').push(commenter_id);
+            }
+            return true;
+        });
+        return created_child.key;
+    },
+
+    /* Retrieves a question in project
+        param project id text
+        param question id text
+        return promise object
+    */
+    retrieveQuestion: function(project_id,question_id) {
+        var path = 'Projects/' + project_id + '/questions/' + question_id ;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            return data.val();
+        });
+        return promise;
+    },
+
+
+
+
+    /* ---------------- End Questions API ------------- */
+
+    /* ---------------- Notifications API ------------- */
 
     /* Create notifications in a project
      param project id text
@@ -427,13 +530,15 @@ module.exports  = function(AdminFirebase) {
         var created_child = root_ref.child(path).child(worker_id).push(notification_schema);
         return created_child.key;
     },
+    /* ---------------- End Notifications API ------------- */
 
+    /* ---------------- Workers API ------------- */
     /* Create a new worker profile in firebase
      param worker name text
      param avatar url text
      returns worker ID text
      */
-    createWorker: function(worker_name, avatar_url) {
+    createWorker: function(worker_id, worker_name, avatar_url) {
         worker_schema = {
             name: worker_name,
             avatar_url: avatar_url,
@@ -442,9 +547,38 @@ module.exports  = function(AdminFirebase) {
             achievements: "null"
         }
         var path = 'Workers';
-        var created_child = root_ref.child(path).push(worker_schema);
+        var created_child = root_ref.child(path).child(worker_id).set(worker_schema);
         return created_child.key;
+    },
+
+    /* Retrieve worker object
+        param worker id text
+        result promise object
+     */
+    retrieveWorker: function(worker_id){
+        var path = 'Workers/' + worker_id  ;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            return data.val();
+        });
+        return promise;
+    },
+
+    /* Retrieve worker object
+     param worker id text
+     result promise object
+     */
+    retrieveWorkersList: function(){
+        var path = 'Workers' ;
+        var promise = root_ref.child(path).once("value").then(function(data){
+           var workers_list = [];
+            data.forEach(function(worker){
+                workers_list.push(worker.key);
+            });
+            return workers_list;
+        });
+        return promise;
     }
+/* ---------------- End Workers API ------------- */
 
 
     }
