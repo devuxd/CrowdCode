@@ -11,7 +11,7 @@ module.exports = function(wagner) {
   }));
   api.use(cors());
 
-  api.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase) {
+  api.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase, FirebaseService) {
     return function(req, res) {
       var idToken = req.body.idToken;
       AdminFirebase.auth().verifyIdToken(idToken)
@@ -24,17 +24,15 @@ module.exports = function(wagner) {
               var worker_id = userRecord.uid;
               var worker_name = userRecord.displayName;
               var avatar_url = userRecord.photoURL;
-              wagner.invoke(function (FirebaseService) {
-                  var firebase = FirebaseService;
-                  var workers_list_promise = firebase.retrieveWorkersList();
-                  workers_list_promise.then(function(workers_list){
-                     if(workers_list.indexOf(worker_id) < 0){
-                         firebase.createWorker(worker_id, worker_name,avatar_url);
-                     }
-                  });
+              var firebase = FirebaseService;
+              var workers_list_promise = firebase.retrieveWorkersList();
+              workers_list_promise.then(function(workers_list) {
+                if (workers_list.indexOf(worker_id) < 0) {
+                  firebase.createWorker(worker_id, worker_name, avatar_url);
+                }
+              }).catch(err => {
 
               });
-
             })
             .catch(function(error) {
               console.log("Error fetching user data:", error);
@@ -59,13 +57,13 @@ module.exports = function(wagner) {
   }));
 
   /* Firebase test */
-  api.get('/fbtest',wagner.invoke(function(FirebaseService) {
-          return function (req, res) {
-              var firebase = FirebaseService;
-             var worker_id = '-Km8BF48Pz22aV4YmYUF';                   //firebase.createWorker("John","img/pic.jpg");
-             var worker_id1 = '-Kly2A89xf19wPdp6VIu';                //firebase.createWorker("Smith","img/pic1.jpg");
-             var worker_id2 = '-Kly2A89xf19wPdp6VIv';               //firebase.createWorker("Dave","img/pic2.jpg");
-              /*  var project_id = firebase.createProject("testproj2",worker_id);
+  api.get('/fbtest', wagner.invoke(function(FirebaseService) {
+    return function(req, res) {
+      var firebase = FirebaseService;
+      var worker_id = '-Km8BF48Pz22aV4YmYUF'; //firebase.createWorker("John","img/pic.jpg");
+      var worker_id1 = '-Kly2A89xf19wPdp6VIu'; //firebase.createWorker("Smith","img/pic1.jpg");
+      var worker_id2 = '-Kly2A89xf19wPdp6VIv'; //firebase.createWorker("Dave","img/pic2.jpg");
+      /*  var project_id = firebase.createProject("testproj2",worker_id);
              //var project_id = "-Kld2x3h5euH8IcBBUtI";
              var ADT_id = firebase.createADT(project_id,"testADT","Boolean","Flag to cheeck xyz",false,[{name: "t1",value:"boolean"}], [{name:"hi",value:"true"}]);
              var function_id = firebase.createFunction(project_id,"testFunction","Integer","adds two numbers","c = a+b;",['t1','t2'],
@@ -119,18 +117,17 @@ module.exports = function(wagner) {
                 console.log(value);
             });*/
 
-            var worker_promise = firebase.retrieveWorker(worker_id);
-            worker_promise.then(function(value){
-                console.log(value);
-            });
+      var worker_promise = firebase.retrieveWorker(worker_id);
+      worker_promise.then(function(value) {
+        console.log(value);
+      });
 
-            var workers_promise = firebase.retrieveWorkersList();
-            workers_promise.then(function(value){
-                console.log(value);
-            });
-          }
-      }
-  ));
+      var workers_promise = firebase.retrieveWorkersList();
+      workers_promise.then(function(value) {
+        console.log(value);
+      });
+    }
+  }));
 
 
   return api;

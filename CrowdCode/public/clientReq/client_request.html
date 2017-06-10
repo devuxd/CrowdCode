@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="clientRequest">
 	<head>
 		<title>CrowdCode Client Request Editor</title>
 		<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/clientReq/client_request.css">
-	  
+
 
 	</head>
 	<body ng-controller="ClientRequestController">
@@ -14,11 +13,8 @@
 		<script src="/include/jshint.js"></script>
 		<script src='/include/esprima.js'></script>
 		<script src='/include/escodegen.browser.js'></script>
-		<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
 		<script src="/include/angular/angular-animate.min.js"></script><!-- Angular animate -->
 		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
-		<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script> <!-- firebase -->
-		<script src="https://cdn.firebase.com/libs/angularfire/0.8.2/angularfire.min.js"></script> <!-- angularfire -->
 		<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
 		<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
 
@@ -29,10 +25,7 @@
 
 		<!-- Angular Application -->
 		<script src="/clientReq/application.js"></script>
-		<!-- Angular Controllers -->
-		<script src="/clientReq/controller.js"></script>
-		<!-- Angular directives -->
-		<script src="/clientReq/directives.js"></script>
+
 
 
 		<div ng-form="form" class="task">
@@ -50,7 +43,7 @@
 				<div class="section-content" >
 					Enter a project name in the textbox below to retrieve the client request for the project.
 					If it does not exist, it will be created. <BR><BR>
-					
+
 					<div ng-form="projectNameForm" class=" form-horizontal form-group col-md-12">
 						<div class="col-md-3 form-group">
 							<alertcontainer></alertcontainer>
@@ -171,7 +164,7 @@
 					</div>
 					<button ng-click="addADT()" class="btn btn-small">Add ADT</button>
 				</div>
-				
+
 			</div>
 			<div class="section section-description">
 				<div class="section-title" >
@@ -189,7 +182,7 @@
 								<label for="functionDescription" class="col-sm-2 control-label reset-padding">description</label>
 								<div class="col-sm-8 reset-padding">
 									<textarea class="form-control" name="functionDescription" placeholder="briefly describe the purpose and the behavior of the function" ng-model="function.description" required ng-pattern="/^[^/\\]+$/"  focus ></textarea>
-									
+
 
 									<ul class="help-block" ng-show="functionForm{{$index}}.functionDescription.$dirty && functionForm{{$index}}.functionDescription.$invalid">
 										<li ng-show="functionForm{{$index}}.functionDescription.$error.required">This field is required!</li>
@@ -319,4 +312,3 @@
 	    	<span class="clearfix"></span>
 	    </div>
 	</body>
-</html>
