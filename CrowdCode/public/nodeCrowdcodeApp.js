@@ -1,37 +1,43 @@
 'use strict';
 
 var crowdcodeApp = angular.module('nodeCrowdcodeApp', ['ui.router', 'firebase', 'mgcrea.ngStrap'])
-  .service('Auth', ['$q', '$firebase', '$firebaseAuth',
-    function($q, $firebase, $firebaseAuth) {
-      var auth = $firebaseAuth();
-      return auth;
+  .service('Auth', ['$firebaseAuth',
+    function($firebaseAuth) {
+      return $firebaseAuth();
     }
   ])
-  .factory('Users', function($firebaseArray, $firebaseObject) {
-    var usersRef = firebase.database().ref('users');
-    var users = $firebaseArray(usersRef);
+  .factory('Workers', ['$firebaseArray', '$firebaseObject', function($firebaseArray, $firebaseObject) {
+    var workersRef = firebase.database().ref('Workers');
+    var workers = $firebaseArray(workersRef);
 
-    var Users = {
+    var Workers = {
       getProfile: function(uid) {
-        return $firebaseObject(usersRef.child(uid));
+        return $firebaseObject(workersRef.child(uid));
       },
       getDisplayName: function(uid) {
-        return users.$getRecord(uid).displayName;
+        return workers.$getRecord(uid).name;
       },
-      all: users
+      all: workers
     };
 
-    return Users;
-  })
-  .run(["$rootScope", "$state", function($rootScope, $state) {
-    $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
-      // We can catch the error thrown when the $requireSignIn promise is rejected
-      // and redirect the user back to the home page
-      if (error === "AUTH_REQUIRED") {
-        $state.go("welcome");
-      }
-    });
+    return Workers;
   }])
+  .service('Projects', ['$http', function($http) {
+    this.fetch = function() {
+      return $http.get('/api/v1/projects');
+    }
+  }])
+  .run(function($transitions) {
+    $transitions.onStart({}, function() {
+      //console.log("started .....");
+    });
+    $transitions.onError({}, function(trans) {
+      var state = trans.injector().get('$state');
+      if (trans.error().detail === 'AUTH_REQUIRED') {
+        state.go('welcome');
+      }
+    })
+  })
   .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     var config = {
       apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
@@ -60,16 +66,18 @@ var crowdcodeApp = angular.module('nodeCrowdcodeApp', ['ui.router', 'firebase', 
           }]
         }
       })
+      .state('project', {
+        url: "/project/:projectname",
+        templateUrl: './clientDist/client.html',
+      })
       // clientRequest PAGE =================================
       .state('clientRequest', {
         url: '/clientRequest',
         templateUrl: './clientReq/client_request.html',
         controller: 'ClientRequestController as client',
         resolve: {
-          auth: function($state, Users, Auth) {
-            return Auth.$requireSignIn().catch(function() {
-              $state.go('welcome');
-            });
+          auth: function($state, Auth) {
+            return Auth.$requireSignIn();
           }
         }
       });
@@ -90,7 +98,7 @@ var crowdcodeApp = angular.module('nodeCrowdcodeApp', ['ui.router', 'firebase', 
           },
           responseType: "json",
         }).then(result => {
-          console.log(result);
+          //console.log(result);
         }).catch(err => {
           console.log(err);
         });
@@ -104,7 +112,6 @@ var crowdcodeApp = angular.module('nodeCrowdcodeApp', ['ui.router', 'firebase', 
   }])
   .controller('WelcomeCtrl', ['$rootScope', '$state', 'Auth', 'currentAuth', function($rootScope, $state, Auth, currentAuth) {
     var vm = this;
-    console.log(currentAuth.ie);
     vm.goto = function() {
       if ($rootScope.user) {
         $state.go('clientRequest');
