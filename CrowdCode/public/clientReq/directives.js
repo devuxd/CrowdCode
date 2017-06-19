@@ -1,5 +1,5 @@
 // directive for json field validation
-crowdcodeApp.directive('jsonValidator', function() {
+clienRequestApp.directive('jsonValidator', function() {
   return {
     restrict: 'A',
     require: 'ngModel',
@@ -34,7 +34,7 @@ crowdcodeApp.directive('jsonValidator', function() {
 
 
 //<div function-validator ng-model="somevar"></div>
-crowdcodeApp.directive('adtValidator', function() {
+clienRequestApp.directive('adtValidator', function() {
 
 
   var errors = [];
@@ -99,7 +99,7 @@ function isValidTypeName(name, typeNames) {
 }
 
 
-crowdcodeApp.directive('pressEnter', function() {
+clienRequestApp.directive('pressEnter', function() {
   return function(scope, element, attrs) {
     element.bind("keydown keypress", function(event) {
       if (event.which === 13) {
@@ -113,7 +113,7 @@ crowdcodeApp.directive('pressEnter', function() {
   };
 });
 
-crowdcodeApp.directive('syncFocusWith', function($timeout, $rootScope) {
+clienRequestApp.directive('syncFocusWith', function($timeout, $rootScope) {
   return {
     restrict: 'A',
     scope: {
@@ -132,7 +132,7 @@ crowdcodeApp.directive('syncFocusWith', function($timeout, $rootScope) {
 });
 
 //<div function-validator ng-model="somevar"></div>
-crowdcodeApp.directive('maxLength', function() {
+clienRequestApp.directive('maxLength', function() {
   return {
     restrict: 'A',
     require: 'ngModel',

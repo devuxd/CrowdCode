@@ -1,22 +1,21 @@
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
-crowdcodeApp.controller('ClientRequestController', ['$scope', '$rootScope', '$firebaseArray', '$firebaseObject', '$alert', '$http', 'projects',
-  function($scope, $rootScope, $firebaseArray, $firebaseObject, $alert, $http, projects) {
+clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '$firebaseArray', '$firebaseObject', '$alert',
+  function($scope, $rootScope, $firebaseArray, $firebaseObject, $alert) {
 
     var firebaseURL = 'https://crowdcode2.firebaseio.com';
     var firebaseRef;
-    console.log(projects);
-    $scope.projectsName = projects;
-    // //load all the projects name
-    // var ref = firebase.database().ref().child("clientRequests");;
-    // var projectNames = $firebaseArray(ref);
-    // //var projectNames = projectSync.$asArray();
-    // projectNames.$loaded().then(function() {
-    //   angular.forEach(projectNames, function(value, key) {
-    //     $scope.projectsName.push(value.$id);
-    //   });
-    // });
+    $scope.projectsName = [];
+    //load all the projects name
+    var ref = firebase.database().ref().child("clientRequests");;
+    var projectNames = $firebaseArray(ref);
+    //var projectNames = projectSync.$asArray();
+    projectNames.$loaded().then(function() {
+      angular.forEach(projectNames, function(value, key) {
+        $scope.projectsName.push(value.$id);
+      });
+    });
 
 
     // User stories are numbered from 0 to userStoryCount - 1 (as are ADTs).
