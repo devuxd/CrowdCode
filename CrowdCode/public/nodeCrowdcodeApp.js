@@ -78,7 +78,20 @@ var crowdcodeApp = angular.module('nodeCrowdcodeApp', ['ui.router', 'firebase', 
         resolve: {
           auth: function($state, Auth) {
             return Auth.$requireSignIn();
-          }
+          },
+          'projects': ['$firebaseArray', '$q', function($firebaseArray, $q) {
+            var ref = firebase.database().ref().child("clientRequests");;
+            var projectNames = $firebaseArray(ref);
+            var projects = [];
+            var deferred = $q.defer();
+            projectNames.$loaded().then(function() {
+              angular.forEach(projectNames, function(value, key) {
+                projects.push(value.$id);
+              });
+              deferred.resolve(projects);
+            });
+            return deferred.promise;
+          }]
         }
       });
   }])
