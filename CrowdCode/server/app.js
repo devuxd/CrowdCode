@@ -20,7 +20,7 @@ app.use('/api/v1', require('./routes/api')(wagner));
 app.use(express.static(path.join(__dirname, '../public'), {
   maxAge: 4 * 60 * 60 * 1000 /* 2hrs */
 }));
-
+app.use(require('./routes/app-routing'));
 
 
 // catch 404 and forward to error handler
