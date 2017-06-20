@@ -18,6 +18,12 @@ router.get('/clientRequest', function(req, res) {
   });
 
 });
+router.get('/login', function(req, res) {
+  res.sendFile('login.html', {
+    root: publicDir
+  });
+
+});
 router.get('/:projectname([a-zA-Z0-9]{3,})', function(req, res) {
   const projectName = req.params.projectname;
   console.log("Project Name : " + projectName + "------------------------------");

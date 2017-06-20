@@ -6,14 +6,44 @@
 	<link href='http://fonts.googleapis.com/css?family=Merriweather:300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic|Lato:100normal,100italic,300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic' rel='stylesheet'
 	  type='text/css'>
 	<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-
-
 	<script src="/include/jquery-2.1.0.min.js"></script>
 	<script src="/include/bootstrap/js/bootstrap.min.js">
 	</script>
-	<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
-	<!-- firebase -->
-
+	<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+	<script>
+		var config = {
+			apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
+			authDomain: "crowdcode2.firebaseapp.com",
+			databaseURL: "https://crowdcode2.firebaseio.com",
+			projectId: "crowdcode2",
+			storageBucket: "crowdcode2.appspot.com",
+			messagingSenderId: "382318704982"
+		};
+		firebase.initializeApp(config);
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (user) {
+				// User is signed in.
+				var idToken = user.ie;
+				$.ajax({
+					type: "POST",
+					url: "api/v1/authenticate",
+					data: {
+						"idToken": idToken
+					},
+					headers: {
+						'Authorization': 'Bearer ' + idToken
+					},
+					dataType: "json",
+					success: function(result) {
+						console.log(result);
+					}
+				});
+				// ...
+			} else {
+				window.location.href = "/login";
+			}
+		});
+	</script>
 	<style type="text/css">
 		body {
 			font-size: 18px;
@@ -159,13 +189,13 @@
 			});
 		}
 
-		var ref = new Firebase('https://crowdcode.firebaseio.com/defaultProject');
+		var ref = firebase.database().ref('defaultProject');
 		ref.once('value', function(snap) {
 			console.log('default project is ' + snap.val());
 			if (snap.val() != null)
 				$('#btnStart').attr('href', '/' + snap.val());
 			else
-				$('#btnStart').attr('href', '/allTogetherDrawV6');
+				$('#btnStart').attr('href', '/meysam');
 
 		});
 	</script>

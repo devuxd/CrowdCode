@@ -19,7 +19,7 @@
   <script type="text/javascript">
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
-      window.location.replace("loggedin.html");
+      window.location.replace("/");
     } else {
       console.log("no user signed in");
     }
@@ -30,7 +30,7 @@
   <script type="text/javascript">
     // FirebaseUI config.
     var uiConfig = {
-      signInSuccessUrl: 'loggedin.html',
+      signInSuccessUrl: '/',
       signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
