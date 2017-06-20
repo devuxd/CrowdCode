@@ -49,6 +49,35 @@ module.exports  = function(AdminFirebase) {
 
     },
 
+    /* Retrieve list of projects
+     result promise object
+     */
+    retrieveProjectsList: function(){
+        var path = 'Projects' ;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            var projects_list = [];
+            data.forEach(function(project){
+               projects_list.push(project.key);
+            });
+            return projects_list;
+        });
+        return promise;
+    },
+
+    /*Retrieve Project from Projects
+     param project id text
+     param function id text
+     return promise object
+     */
+    retrieveProject: function(project_id) {
+        var path = 'Projects/' + project_id;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            return data.val();
+        });
+        return promise;
+    },
+
+
     /* ---------------- ADT API ------------- */
     /* Add a new ADT in a project in firebase
      param project_id text
@@ -60,11 +89,11 @@ module.exports  = function(AdminFirebase) {
      param example array of json objects with name and value
      returns ADT ID text
      */
-        createADT: function(project_id, ADT_name, ADT_description, isReadOnly, isDeleted, structure, example) {
+        createADT: function(project_id, ADT_name, ADT_description, isReadOnly, structure, example) {
         ADT_schema = {
             name: ADT_name,
             description: ADT_description,
-            isDeleted: isDeleted,
+            isDeleted: false,
             isReadOnly: isReadOnly,
             version: 0,
             structure: structure,
@@ -77,9 +106,9 @@ module.exports  = function(AdminFirebase) {
         return created_child.key;
     },
 
-    /*Retrieve function from Project
+    /*Retrieve ADT from Project
      param project id text
-     param function id text
+     param ADT id text
      return promise object
      */
     retrieveADT: function(project_id, ADT_id) {
@@ -577,7 +606,7 @@ module.exports  = function(AdminFirebase) {
             return workers_list;
         });
         return promise;
-    }
+    },
 /* ---------------- End Workers API ------------- */
 
 

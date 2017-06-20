@@ -55,6 +55,95 @@ module.exports = function(wagner) {
       })
     };
   }));
+    function generateProjectNamesList(){
+        return wagner.invoke(function(FirebaseService){
+            var firebase = FirebaseService;
+            var project_names_list = new Map();
+            var projects_promise = firebase.retrieveProjectsList();
+            var result = projects_promise.then(function(projects){
+                projects.forEach(function(project_id){
+                    var project_promise = firebase.retrieveProject(project_id);
+                    return project_promise.then(function(project){
+                        var project_name = project.name;
+                        var owner_id = project.owner;
+                        var worker_promise = firebase.retrieveWorker(owner_id);
+                        worker_promise.then(function(worker){
+                            var worker_name = worker.name;
+                            project_names_list.set(project_id,project_name+' -- '+worker_name);
+                            return project_names_list;
+                        });
+                        return project_names_list;
+                    });
+                    return project_names_list;
+                });
+                return project_names_list;
+            });
+            return result;
+        });
+    }
+
+
+  /* Project Names List API */
+  api.get('/projectNamesList',wagner.invoke(function(FirebaseService){
+      return function(req, res) {
+      var firebase = FirebaseService;
+      var project_names_list = null;
+      var last_promise;
+      var projects_promise = firebase.retrieveProjectsList();
+      var result = projects_promise.then(function(projects){
+          projects.forEach(function(project_id){
+              var project_promise = firebase.retrieveProject(project_id);
+              last_promise = project_promise.then(function(project){
+                 var project_name = project.name;
+                 var owner_id = project.owner;
+                 var worker_promise = firebase.retrieveWorker(owner_id);
+                 return worker_promise.then(function(worker){
+                    var worker_name = worker.name;
+                    var project_obj = '{'+
+                        'project_id:'+ project_id+','+
+                        'project_name:'+ project_name+','+
+                        'project_owner:'+ worker_name+
+                    '}';
+                     /*var project_obj = {
+                         project_id: project_id,
+                         project_name: project_name,
+                         project_owner: worker_name,
+                         };*/
+                     if(project_names_list == null)
+                     {
+                        return project_names_list = project_obj;
+                     }
+
+                    return project_names_list += ','+ project_obj;
+                  });
+              });
+          });
+          return last_promise;
+      });
+      result.then(function (data) {
+        var response = '{' + data + '}';
+        console.log(response);
+         res.json(response);
+         res.sendStatus(200);
+      });
+      }
+  }));
+
+
+  /*Load project details   */
+    api.get('/project',wagner.invoke(function(FirebaseService){
+        return function(req, res) {
+            var firebase = FirebaseService;
+            var project_id = req.query.pid;
+            var project = firebase.retrieveProject(project_id);
+            project.then(function(data){
+                console.log(data.artifacts   );
+                res.json(data.artifacts);
+                res.sendStatus(200);
+            })
+        }
+    }));
+
 
   /* Firebase test */
   api.get('/fbtest', wagner.invoke(function(FirebaseService) {
@@ -65,7 +154,7 @@ module.exports = function(wagner) {
       var worker_id2 = '-Kly2A89xf19wPdp6VIv'; //firebase.createWorker("Dave","img/pic2.jpg");
       /*  var project_id = firebase.createProject("testproj2",worker_id);
              //var project_id = "-Kld2x3h5euH8IcBBUtI";
-             var ADT_id = firebase.createADT(project_id,"testADT","Boolean","Flag to cheeck xyz",false,[{name: "t1",value:"boolean"}], [{name:"hi",value:"true"}]);
+             var ADT_id = firebase.createADT(project_id,"testADT","Boolean","Flag to cheeck xyz",[{name: "t1",value:"boolean"}], [{name:"hi",value:"true"}]);
              var function_id = firebase.createFunction(project_id,"testFunction","Integer","adds two numbers","c = a+b;",['t1','t2'],
              [{name:"Math", value:"Integer" }],[{name:"a",type:"Integer",description:"first digit"},{name:"b",type:"Integer",description:"second digit"}],"null");
              var microtask_id = firebase.createImplementationMicrotask(project_id,"Add items",10,function_id,"testFunction",0,"Write code to add two numbers","//a + b = c",false,worker_id1);
