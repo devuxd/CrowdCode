@@ -10,18 +10,6 @@ module.exports = function(AdminFirebase) {
     getUserByEmail: function(email) {
       return AdminFirebase.auth().getUserByEmail(email);
     },
-    // create user
-    // return promise
-    createUser: function(userObject) {
-      return AdminFirebase.auth().createUser({
-        email: userObject.email,
-        emailVerified: userObject.emailVerified,
-        password: userObject.password,
-        displayName: userObject.displayName,
-        photoURL: userObject.photoURL,
-        disabled: userObject.disabled
-      });
-    },
     // update user
     // return promise
     updateUser: function(uid, userObject) {

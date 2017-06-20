@@ -32,4 +32,9 @@ module.exports = function(wagner) {
     var firebase_service = require('../util/firebase_service')(AdminFirebase);
     return firebase_service;
     });
+
+  wagner.factory('MicrotaskService',function(){
+    var microtask_service = require('./microtask_service');
+    return microtask_service;
+    });
 };

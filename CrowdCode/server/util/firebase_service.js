@@ -1,4 +1,5 @@
 module.exports  = function(AdminFirebase) {
+    var wagner = require('wagner-core');
     var timestamp = new Date();
     const root_ref = AdminFirebase.database().ref();
     return {
@@ -131,7 +132,7 @@ module.exports  = function(AdminFirebase) {
      param test Array of test id's
      param stubs Array of json objects with stub names and values
      param parameters Array of json objects with name, type and description
-     param functions dependent Array of functions that call this function
+     param functions dependent Array of functions that this function calls
      returns function ID text
      */
     createFunction: function(project_id, function_name, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent) {
@@ -144,7 +145,9 @@ module.exports  = function(AdminFirebase) {
             parameters: parameters,
             stubs: stubs,
             tests: tests,
-            dependent: functions_dependent
+            dependent: functions_dependent,
+            isComplete: false,
+            isAssigned: false
         }
         var path = 'Projects/' + project_id + '/artifacts/Functions';
         var history_path = 'Projects/' + project_id + '/history/artifacts/Functions';
@@ -164,8 +167,10 @@ module.exports  = function(AdminFirebase) {
      param stubs Array of json objects with stub names and values
      param parameters Array of json objects with name, type and description
      param functions dependent Array of functions that call this function
+     param isComplete Boolean if the implementation of this function is complete
+     param isAssigned Boolean if the function has already a microtask
      */
-    updateFunction: function(project_id, function_id, function_name, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent){
+    updateFunction: function(project_id, function_id, function_name, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent, isComplete, isAssigned){
         var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
         var history_path = 'Projects/' + project_id + '/history/artifacts/Functions/' + function_id;
         root_ref.child(history_path).once("value",function(data){
@@ -179,13 +184,53 @@ module.exports  = function(AdminFirebase) {
                 parameters: parameters,
                 stubs: stubs,
                 tests: tests,
-                dependent: functions_dependent
+                dependent: functions_dependent,
+                isComplete: isComplete,
+                isAssigned:isAssigned
             }
 
             root_ref.child(path).update(function_schema);
             var add_to_history = root_ref.child(history_path).child(version_number).set(function_schema);
             return true;
         });
+    },
+
+    /* Update complete and assigned status of a function in a project
+     param project  id text
+     param function id text
+     param isComplete Boolean if the implementation of this function is complete
+     param isAssigned Boolean if the function has already a microtask
+     */
+    updateFunctionStatus: function(project_id, function_id, isComplete, isAssigned){
+       return wagner.invoke(function(FirebaseService){
+           var firebase = FirebaseService;
+            var function_promise = firebase.retrieveFunction(project_id,function_id);
+            function_promise.then(function(func){
+            var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
+            var history_path = 'Projects/' + project_id + '/history/artifacts/Functions/' + function_id;
+            root_ref.child(history_path).once("value",function(data){
+                var version_number = data.numChildren();
+                function_schema = {
+                    name: func.name,
+                    description: func.description,
+                    code: func.code,
+                    type: func.type,
+                    version: version_number,
+                    parameters: func.parameters,
+                    stubs: func.stubs,
+                    tests: func.tests,
+                    dependent: func.dependent,
+                    isComplete: isComplete,
+                    isAssigned:isAssigned
+                }
+
+                root_ref.child(path).update(function_schema);
+                var add_to_history = root_ref.child(history_path).child(version_number).set(function_schema);
+                return true;
+            });
+            });
+        });
+
     },
 
     /*Retrieve function from Project
@@ -197,6 +242,22 @@ module.exports  = function(AdminFirebase) {
         var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
         var promise = root_ref.child(path).once("value").then(function(data){
             return data.val();
+        });
+        return promise;
+    },
+
+    /* Retrieve list of functions
+        param Project_id text
+     result promise object
+     */
+    retrieveFunctionsList: function(project_id){
+        var path = 'Projects/' + project_id + '/artifacts/Functions' ;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            var functions_list = [];
+            data.forEach(function(func){
+                functions_list.push(func.key);
+            });
+            return functions_list;
         });
         return promise;
     },
@@ -278,6 +339,22 @@ module.exports  = function(AdminFirebase) {
         });
         return promise;
     },
+
+    /* Retrieve list of tests
+     param Project_id text
+     result promise object
+     */
+    retrieveTestsList: function(project_id){
+        var path = 'Projects/' + project_id + '/artifacts/Tests' ;
+        var promise = root_ref.child(path).once("value").then(function(data){
+            var tests_list = [];
+            data.forEach(function(test){
+                tests_list.push(test.key);
+            });
+            return tests_list;
+        });
+        return promise;
+    },
     /* ---------------- End Test API ------------- */
 
     /* ---------------- Microtask API ------------- */
@@ -293,7 +370,7 @@ module.exports  = function(AdminFirebase) {
      param isReviewMode boolean
      return micrtotask ID text
      */
-    createImplementationMicrotask: function (project_id, microtask_name, points, function_id, function_name, function_version, microtask_description, microtask_code, isReviewMode, worker_id) {
+    createImplementationMicrotask: function (project_id, microtask_name, points, function_id, function_name, function_version, microtask_description, microtask_code, tests) {
         microtask_schema = {
             name: microtask_name,
             description: microtask_description,
@@ -303,7 +380,8 @@ module.exports  = function(AdminFirebase) {
             function_id: function_id,
             function_name: function_name,
             function_version: function_version,
-            worker: worker_id
+            tests: tests,
+            worker: "null"
         }
         var path = 'Projects/' + project_id + '/microtasks/implementation';
         var created_child = root_ref.child(path).push(microtask_schema);
@@ -592,8 +670,7 @@ module.exports  = function(AdminFirebase) {
         return promise;
     },
 
-    /* Retrieve worker object
-     param worker id text
+    /* Retrieve list of workers
      result promise object
      */
     retrieveWorkersList: function(){
@@ -606,7 +683,7 @@ module.exports  = function(AdminFirebase) {
             return workers_list;
         });
         return promise;
-    },
+    }
 /* ---------------- End Workers API ------------- */
 
 
