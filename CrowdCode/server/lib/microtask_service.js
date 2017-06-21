@@ -78,7 +78,11 @@ function loadTests(project_id,tests,functions){
 /* Generate implementation microtasks for a project
     param project id
  */
-function generateImplementationMicrotasks(project_id, function_id, functions, tests, microtasks){
+function generateImplementationMicrotasks(project_id, function_id){
+    var project = Projects.get(project_id);
+    var functions = project.get('functions');
+    var tests = project.get('tests');
+    var microtasks = project.get('microtasks');
     var func = functions.get(function_id);
 
     if(func.dependent == "null") {
@@ -97,7 +101,6 @@ function generateImplementationMicrotasks(project_id, function_id, functions, te
             }
         });
         function_tests += '}';
-
         var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name,function_version,microtask_description,function_code,function_tests);
 
         var microtask_object = {
@@ -125,7 +128,37 @@ function generateImplementationMicrotasks(project_id, function_id, functions, te
     }
 }
 
+/* Generate a review microtask for a implementation task
+    param project id text
+    param microtask id text
+ */
+function generateReviewMicrotask(project_id, reference_task__id){
+    var microtask_object = {
+        name: "review the changes",
+        points: points,
+        awarded_points: 0,
+        reference_id: reference_task__id,
+        rating: "null",
+        review: "null",
+        worker:"null"
+    }
+    var microtask_id = firebase.createReviewMicrotask(project_id,"review the change",10,reference_task__id);
+    var project = Projects.get(project_id);
+    var microtasks = project.get('microtasks');
+    microtasks.set(microtask_id,microtask_object);
 
+}
 
+/*Submit implementation microtask
+    param project id text
+    param microtask id text
+ */
+function submitImplementationMicrotask(project_id,microtask_id, microtask_code, microtask_tests, worker_id){
+    var update_promise = firebase.updateImplementationMicrotask(project_id,microtask_id,microtask_code,microtask_tests,worker_id);
+    update_promise.then(function(){
+        generateReviewMicrotask(project_id,microtask_id);
+    })
+
+}
 
 module.exports.loadProject = loadProject;
