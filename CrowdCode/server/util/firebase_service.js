@@ -201,7 +201,7 @@ module.exports = function(AdminFirebase) {
      param isAssigned Boolean if the function has already a microtask
      */
     updateFunctionStatus: function(project_id, function_id, isComplete, isAssigned) {
-      var function_promise = retrieveFunction(project_id, function_id);
+      var function_promise = this.retrieveFunction(project_id, function_id);
       function_promise.then(function(func) {
         var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
         var history_path = 'Projects/' + project_id + '/history/artifacts/Functions/' + function_id;
@@ -383,6 +383,22 @@ module.exports = function(AdminFirebase) {
       return created_child.key;
     },
 
+    /* Update a implementation microtask to a Project in firebase
+        param project id tect
+        param microtask id text
+        param microtask code text
+        param tests array of test objects
+        param worker id text
+        param isFUnctionCOmplete boolean
+        return promise object
+    */
+    updateImplementationMicrotask: function(project_id, microtask_id, microtask_code, tests, worker_id, isFunctionComplete) {
+        var path = 'Projects/' + project_id + '/microtasks/implementation/' + microtask_id;
+        var update_promise = root_ref.child(path).update({ "code":microtask_code, "tests":tests, "worker":worker_id, "isFunctionComplete":isFunctionComplete});
+        return update_promise;
+    },
+
+
     /* Update the awarded points to a microtask after it is reviewed
      param project id text
      param microtask id text
@@ -390,9 +406,7 @@ module.exports = function(AdminFirebase) {
      */
     updateMicrotaskPointsAwarded: function(project_id, microtask_id, points) {
       var path = 'Projects/' + project_id + '/microtasks/implementation/' + microtask_id;
-      root_ref.child(path).update({
-        awarded_points: points
-      });
+      root_ref.child(path).update({ "awarded_points": points });
     },
 
 
@@ -404,7 +418,7 @@ module.exports = function(AdminFirebase) {
      param worker id text
      return microtask ID text
      */
-    createReviewMicrotask: function(project_id, microtask_name, points, reference_id, worker_id) {
+    createReviewMicrotask: function(project_id, microtask_name, points, reference_id) {
       microtask_schema = {
         name: microtask_name,
         points: points,
@@ -412,7 +426,7 @@ module.exports = function(AdminFirebase) {
         reference_id: reference_id,
         rating: "null",
         review: "null",
-        worker: worker_id
+        worker: "null"
       }
       var path = 'Projects/' + project_id + '/microtasks/review';
       var created_child = root_ref.child(path).push(microtask_schema);
@@ -425,14 +439,12 @@ module.exports = function(AdminFirebase) {
      param microtask id text
      param rating number
      param review text
-
+     param worker id text
+     return promise object
      */
-    updateReviewMicrotask: function(project_id, microtask_id, rating, review) {
+    updateReviewMicrotask: function(project_id, microtask_id, rating, review, worker_id) {
       var path = 'Projects/' + project_id + '/microtasks/review/' + microtask_id;
-      root_ref.child(path).update({
-        rating: rating,
-        review: review
-      });
+      var update_promise = root_ref.child(path).update({ "rating": rating, "review": review, "worker": worker_id });
 
       //Update awarded points in the implementation task based on the rating
       root_ref.child(path).once("value").then(function(data) {
@@ -447,6 +459,7 @@ module.exports = function(AdminFirebase) {
         });
         return true;
       });
+      return update_promise;
     },
 
 
@@ -618,11 +631,12 @@ module.exports = function(AdminFirebase) {
       return promise;
     },
 
+      /* ---------------- End Questions API ------------- */
 
     /* ---------------- clientRequests services ------- */
     retrieveClientRequests: function(id) {
       var path = id !== undefined ? ("clientRequests/" + id) : "clientRequests";
-      return root_ref.child(path).once("value").then(data => {
+      return root_ref.child(path).once("value").then(function(data){
         return data.val();
       });
     },
@@ -634,7 +648,7 @@ module.exports = function(AdminFirebase) {
 
     /* ----------------End clientRequests services ---- */
 
-    /* ---------------- End Questions API ------------- */
+
 
     /* ---------------- Notifications API ------------- */
 
