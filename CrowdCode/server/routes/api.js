@@ -55,33 +55,6 @@ module.exports = function(wagner) {
       })
     };
   }));
-    function generateProjectNamesList(){
-        return wagner.invoke(function(FirebaseService){
-            var firebase = FirebaseService;
-            var project_names_list = new Map();
-            var projects_promise = firebase.retrieveProjectsList();
-            var result = projects_promise.then(function(projects){
-                projects.forEach(function(project_id){
-                    var project_promise = firebase.retrieveProject(project_id);
-                    return project_promise.then(function(project){
-                        var project_name = project.name;
-                        var owner_id = project.owner;
-                        var worker_promise = firebase.retrieveWorker(owner_id);
-                        worker_promise.then(function(worker){
-                            var worker_name = worker.name;
-                            project_names_list.set(project_id,project_name+' -- '+worker_name);
-                            return project_names_list;
-                        });
-                        return project_names_list;
-                    });
-                    return project_names_list;
-                });
-                return project_names_list;
-            });
-            return result;
-        });
-    }
-
 
   /* Project Names List API */
   api.get('/projectNamesList',wagner.invoke(function(FirebaseService){
@@ -137,13 +110,21 @@ module.exports = function(wagner) {
             var project_id = req.query.pid;
             var project = firebase.retrieveProject(project_id);
             project.then(function(data){
-                console.log(data.artifacts   );
                 res.json(data.artifacts);
                 res.sendStatus(200);
             })
         }
     }));
 
+    /*Load project details   */
+    api.get('/microtest',wagner.invoke(function(MicrotaskService){
+        return function(req, res) {
+            var microtask = MicrotaskService;
+            microtask.loadProject('-Km7yhGBm9-3s2o_oebe');
+                res.sendStatus(200);
+
+        }
+    }));
 
   /* Firebase test */
   api.get('/fbtest', wagner.invoke(function(FirebaseService) {
