@@ -102,6 +102,33 @@ module.exports = function(wagner) {
       }
   }));
 
+  api.get('/clientRequests', wagner.invoke(function(FirebaseService) {
+  return function(req, res) {
+    var clientReqs = FirebaseService.retrieveClientRequests();
+    clientReqs.then(data => {
+      res.json(data);
+    });
+  };
+}));
+api.get('/clientRequests/:id', wagner.invoke(function(FirebaseService) {
+  return function(req, res) {
+    var clientReqs = FirebaseService.retrieveClientRequests(req.params.id);
+    clientReqs.then(data => {
+      res.json(data);
+    });
+  };
+}));
+
+api.post('/clientRequests', wagner.invoke(function(FirebaseService) {
+  return function(req, res) {
+    var clientReq = req.body;
+    var key = FirebaseService.createClientRequest(clientReq);
+    res.json({
+      'key': key
+    });
+  };
+}));
+
 
   /*Load project details   */
     api.get('/project',wagner.invoke(function(FirebaseService){
@@ -125,6 +152,8 @@ module.exports = function(wagner) {
 
         }
     }));
+
+
 
   /* Firebase test */
   api.get('/fbtest', wagner.invoke(function(FirebaseService) {
