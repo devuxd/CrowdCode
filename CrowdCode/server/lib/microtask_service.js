@@ -12,19 +12,19 @@ wagner.invoke(function(FirebaseService){
  */
 function loadProject(project_id) {
     Projects.set(project_id, new Map());
-    var Project = Projects.set(project_id, new Map());
+    var Project = Projects.get(project_id);
     Project.set('functions',new Map());
     Project.set('tests',new Map());
     Project.set('microtasks',new Map());
     var functions = Project.get('functions');
     var tests = Project.get('tests');
     var microtasks = Project.get('microtasks');
-    var function_load_result = loadFunctions(project_id,functions);
+    var function_load_result = loadFunctions(project_id);
     function_load_result.then(function(data){
-        var test_load_result = loadTests(project_id,tests,functions);
+        var test_load_result = loadTests(project_id);
         test_load_result.then(function(data){
             functions.forEach(function(content,function_id){
-                generateImplementationMicrotasks(project_id,function_id,functions,tests,microtasks);
+                generateImplementationMicrotasks(project_id,function_id);
             });
 
         });
@@ -38,7 +38,9 @@ function loadProject(project_id) {
     param functions Map object
     returns boolean
  */
-function loadFunctions(project_id,functions){
+function loadFunctions(project_id){
+    var Project = Projects.get(project_id);
+    var functions = Project.get('functions');
     var functions_list_promise = firebase.retrieveFunctionsList(project_id);
     var result = functions_list_promise.then(function(functions_list){
         var function_promise;
@@ -62,6 +64,9 @@ function loadFunctions(project_id,functions){
  returns boolean
  */
 function loadTests(project_id,tests,functions){
+    var Project = Projects.get(project_id);
+    var functions = Project.get('functions');
+    var tests = Project.get('tests');
     var test_promise;
     functions.forEach(function(content, function_id){
         content.tests.forEach(function(test_id){
@@ -79,10 +84,10 @@ function loadTests(project_id,tests,functions){
     param project id
  */
 function generateImplementationMicrotasks(project_id, function_id){
-    var project = Projects.get(project_id);
-    var functions = project.get('functions');
-    var tests = project.get('tests');
-    var microtasks = project.get('microtasks');
+    var Project = Projects.get(project_id);
+    var functions = Project.get('functions');
+    var tests = Project.get('tests');
+    var microtasks = Project.get('microtasks');
     var func = functions.get(function_id);
 
     if(func.dependent == "null") {
@@ -143,8 +148,8 @@ function generateReviewMicrotask(project_id, reference_task__id){
         worker:"null"
     }
     var microtask_id = firebase.createReviewMicrotask(project_id,"review the change",10,reference_task__id);
-    var project = Projects.get(project_id);
-    var microtasks = project.get('microtasks');
+    var Project = Projects.get(project_id);
+    var microtasks = Project.get('microtasks');
     microtasks.set(microtask_id,microtask_object);
 
 }
@@ -154,6 +159,13 @@ function generateReviewMicrotask(project_id, reference_task__id){
     param microtask id text
  */
 function submitImplementationMicrotask(project_id,microtask_id, microtask_code, microtask_tests, worker_id){
+    var Project = Projects.get(project_id);
+    var microtasks = Project.get('microtasks');
+    var microtask_object = microtasks.get(microtask_id);
+    microtask_object.code = microtask_code;
+    microtask_object.tests = microtask_tests;
+    microtask_object.worker = worker_id;
+    microtasks.set(microtask_id, microtask_object);
     var update_promise = firebase.updateImplementationMicrotask(project_id,microtask_id,microtask_code,microtask_tests,worker_id);
     update_promise.then(function(){
         generateReviewMicrotask(project_id,microtask_id);
@@ -161,4 +173,42 @@ function submitImplementationMicrotask(project_id,microtask_id, microtask_code, 
 
 }
 
+/*Submit review microtask
+    param project_id text
+    param microtask id text
+ */
+function submitReviewMicrotask(project_id,microtask_id,review, rating, worker_id){
+    var Project = Projects.get(project_id);
+    var functions = Project.get('functions');
+    var tests = Project.get('tests');
+    var microtasks = Project.get('microtasks');
+    var microtask_object = microtasks.get(microtask_id);
+    microtask_object.rating = rating;
+    microtask_object.review = review;
+    microtask_object.worker = worker_id;
+    microtasks.set(microtask_id, microtask_object);
+
+    var update_promise = firebase.updateReviewMicrotask(project_id,microtask_id,rating,review,worker_id);
+    update_promise.then(function(){
+        if(rating === 4 || rating === 5){
+            //update function object and tests
+            var implementation_task_id = microtask_object.reference_id;
+            var implementation_object = microtasks.get(implementation_task_id);
+            var function_object = functions.get(implementation_object.function_id);
+            function_object.code = implementation_object.code;
+            //Create list of test id's add it to function and then add each test object to tests map
+            //function_object.tests =
+            if(implementation_object.isFunctionComplete === true){
+                //Update firebase with function and tests
+                // Remove function aand tests from map
+            }
+            if(implementation_object.isFunctionComplete === false)
+            {
+                //Generate new implementation task with function
+            }
+        }
+
+    })
+
+}
 module.exports.loadProject = loadProject;
