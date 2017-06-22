@@ -44,7 +44,7 @@ module.exports = function(AdminFirebase) {
         workers: "null"
       };
 
-      var created_child = root_ref.child('Projects').push(project_schema);
+      var created_child = root_ref.child('Projects').child(project_name).set(project_schema);
       return created_child.key;
 
     },
@@ -635,8 +635,8 @@ module.exports = function(AdminFirebase) {
 
     /* ---------------- clientRequests services ------- */
 
-    createClientRequest: function(clientReq) {
-      var created_child = root_ref.child('clientRequests').push(clientReq);
+    createClientRequest: function(id,clientReq) {
+      var created_child = root_ref.child('clientRequests').child(id).set(clientReq);
       return created_child.key;
     },
 
