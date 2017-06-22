@@ -168,6 +168,7 @@ module.exports = function(AdminFirebase) {
      param functions dependent Array of functions that call this function
      param isComplete Boolean if the implementation of this function is complete
      param isAssigned Boolean if the function has already a microtask
+     return update promise object
      */
     updateFunction: function(project_id, function_id, function_name, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent, isComplete, isAssigned) {
       var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
@@ -188,9 +189,9 @@ module.exports = function(AdminFirebase) {
           isAssigned: isAssigned
         }
 
-        root_ref.child(path).update(function_schema);
+        var update_promise = root_ref.child(path).update(function_schema);
         var add_to_history = root_ref.child(history_path).child(version_number).set(function_schema);
-        return true;
+        return update_promise;
       });
     },
 
@@ -298,6 +299,7 @@ module.exports = function(AdminFirebase) {
      param test input array of json object with name and type
      param test output text/object
      param test result boolean
+     return update promise object
      */
     updateTest: function(project_id, function_id, test_id, test_type, test_name, test_description, test_input, test_output, test_result) {
       var path = 'Projects/' + project_id + '/artifacts/Tests/' + test_id;
@@ -316,9 +318,9 @@ module.exports = function(AdminFirebase) {
           type: test_type
         }
 
-        root_ref.child(path).update(test_schema);
+        var update_promise = root_ref.child(path).update(test_schema);
         var add_to_history = root_ref.child(history_path).child(version_number).set(test_schema);
-        return true;
+        return update_promise;
       });
     },
 
