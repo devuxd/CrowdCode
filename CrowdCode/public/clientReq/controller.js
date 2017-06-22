@@ -1,19 +1,21 @@
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
-clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '$firebaseArray', '$firebaseObject', '$alert',
-  function($scope, $rootScope, $firebaseArray, $firebaseObject, $alert) {
+clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '$firebaseArray', '$firebaseObject', '$alert', '$http',
+  function($scope, $rootScope, $firebaseArray, $firebaseObject, $alert, $http) {
 
     var firebaseURL = 'https://crowdcode2.firebaseio.com';
     var firebaseRef;
     $scope.projectsName = [];
+    $scope.allProjects = {};
     //load all the projects name
-    var ref = firebase.database().ref().child("clientRequests");;
+    var ref = firebase.database().ref().child("clientRequests");
     var projectNames = $firebaseArray(ref);
     //var projectNames = projectSync.$asArray();
     projectNames.$loaded().then(function() {
       angular.forEach(projectNames, function(value, key) {
-        $scope.projectsName.push(value.$id);
+        $scope.allProjects[value.name] = value.$id
+        $scope.projectsName.push(value.name);
       });
     });
 
@@ -155,63 +157,103 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
           container: 'alertcontainer'
         });
       } else {
-        var ref = firebase.database().ref().child("clientRequests").child($scope.projectName);
-        var project = $firebaseObject(ref);
-        //project = projectSync.$asObject();
-        project.$loaded().then(function() {
+        var project = {};
+        angular.forEach($scope.functions, function(funct, key) {
 
-          angular.forEach($scope.functions, function(funct, key) {
-
-            //create the header
-            funct.header = 'function ' + funct.name + '(';
-            for (var index in funct.parameters)
-              funct.header += funct.parameters[index].name + (index == funct.parameters.length - 1 ? "" : ", ");
-            funct.header += ")";
-          });
-
-          project.functions = $scope.functions;
-          console.log(project.functions);
-
-          project.ADTs = $scope.ADTs;
-
-
-          project.$save();
-          $alert({
-            title: 'Success!',
-            content: 'Submit successful',
-            type: 'success',
-            show: true,
-            duration: 3,
-            template: '/client/microtasks/alert_submit.html',
-            container: 'alertcontainer'
-          });
+          //create the header
+          funct.header = 'function ' + funct.name + '(';
+          for (var index in funct.parameters)
+            funct.header += funct.parameters[index].name + (index == funct.parameters.length - 1 ? "" : ", ");
+          funct.header += ")";
         });
+        project.functions = $scope.functions;
+        console.log(project.functions);
+        project.name = $scope.projectName;
+        project.ADTs = $scope.ADTs;
+        var uid = $scope.allProjects[$scope.projectName];
+        if (uid) {
+          $http({
+            method: "PUT",
+            url: "api/v1/clientRequests/" + uid,
+            data: project,
+            responseType: "json",
+          }).then(function(payload) {
+            console.log(payload.data);
+          }).catch(err => {
+            console.log(err);
+          });
+        } else {
+          $http({
+            method: "POST",
+            url: "api/v1/clientRequests",
+            data: project,
+            responseType: "json",
+          }).then(function(payload) {
+            $scope.allProjects[$scope.projectName] = payload.data.key;
+          }).catch(err => {
+            console.log(err);
+          });
+        }
+        // var ref = firebase.database().ref().child("clientRequests").child($scope.projectName);
+        // var project = $firebaseObject(ref);
+        // //project = projectSync.$asObject();
+        // project.$loaded().then(function() {
+        //
+        //   angular.forEach($scope.functions, function(funct, key) {
+        //
+        //     //create the header
+        //     funct.header = 'function ' + funct.name + '(';
+        //     for (var index in funct.parameters)
+        //       funct.header += funct.parameters[index].name + (index == funct.parameters.length - 1 ? "" : ", ");
+        //     funct.header += ")";
+        //   });
+        //
+        //   project.functions = $scope.functions;
+        //   console.log(project.functions);
+        //   project.name = $scope.projectName;
+        //   project.ADTs = $scope.ADTs;
+        //
+        //
+        //   project.$save();
+        //   $alert({
+        //     title: 'Success!',
+        //     content: 'Submit successful',
+        //     type: 'success',
+        //     show: true,
+        //     duration: 3,
+        //     template: '/client/microtasks/alert_submit.html',
+        //     container: 'alertcontainer'
+        //   });
+        // });
       }
 
     };
 
 
     $scope.load = function() {
-      var ref = firebase.database().ref().child("clientRequests").child($scope.projectName);
-      var project = $firebaseObject(ref);
-      //project = projectSync.$asObject();
-      project.$loaded().then(function() {
+      var uid = $scope.allProjects[$scope.projectName];
+      if (uid) {
+        var ref = firebase.database().ref().child("clientRequests").child(uid);
+        var project = $firebaseObject(ref);
+        //project = projectSync.$asObject();
+        project.$loaded().then(function() {
 
-        if (angular.isDefined(project.functions)) {
-          $scope.functions = project.functions;
-          for (var index in $scope.functions) {
-            if ($scope.functions[index].isReadOnly !== undefined)
-              delete $scope.functions[index].isReadOnly;
-          }
-        } else
-          $scope.functions = [];
+          if (angular.isDefined(project.functions)) {
+            $scope.functions = project.functions;
+            for (var index in $scope.functions) {
+              if ($scope.functions[index].isReadOnly !== undefined)
+                delete $scope.functions[index].isReadOnly;
+            }
+          } else
+            $scope.functions = [];
 
-        if (angular.isDefined(project.ADTs))
-          $scope.ADTs = project.ADTs;
-        else
-          $scope.ADTs = [];
+          if (angular.isDefined(project.ADTs))
+            $scope.ADTs = project.ADTs;
+          else
+            $scope.ADTs = [];
 
-      });
+        });
+      }
     };
 
 

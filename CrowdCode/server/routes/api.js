@@ -57,101 +57,91 @@ module.exports = function(wagner) {
   }));
 
   /* Project Names List API */
-  api.get('/projectNamesList',wagner.invoke(function(FirebaseService){
-      return function(req, res) {
+  api.get('/projectNamesList', wagner.invoke(function(FirebaseService) {
+    return function(req, res) {
       var firebase = FirebaseService;
       var project_names_list = null;
       var last_promise;
       var projects_promise = firebase.retrieveProjectsList();
-      var result = projects_promise.then(function(projects){
-          projects.forEach(function(project_id){
-              var project_promise = firebase.retrieveProject(project_id);
-              last_promise = project_promise.then(function(project){
-                 var project_name = project.name;
-                 var owner_id = project.owner;
-                 var worker_promise = firebase.retrieveWorker(owner_id);
-                 return worker_promise.then(function(worker){
-                    var worker_name = worker.name;
-                    var project_obj = '{'+
-                        'project_id:'+ project_id+','+
-                        'project_name:'+ project_name+','+
-                        'project_owner:'+ worker_name+
-                    '}';
-                     /*var project_obj = {
-                         project_id: project_id,
-                         project_name: project_name,
-                         project_owner: worker_name,
-                         };*/
-                     if(project_names_list == null)
-                     {
-                        return project_names_list = project_obj;
-                     }
+      var result = projects_promise.then(function(projects) {
+        projects.forEach(function(project_id) {
+          var project_promise = firebase.retrieveProject(project_id);
+          last_promise = project_promise.then(function(project) {
+            var project_name = project.name;
+            var owner_id = project.owner;
+            var worker_promise = firebase.retrieveWorker(owner_id);
+            return worker_promise.then(function(worker) {
+              var worker_name = worker.name;
+              var project_obj = '{' +
+                'project_id:' + project_id + ',' +
+                'project_name:' + project_name + ',' +
+                'project_owner:' + worker_name +
+                '}';
+              /*var project_obj = {
+                  project_id: project_id,
+                  project_name: project_name,
+                  project_owner: worker_name,
+                  };*/
+              if (project_names_list == null) {
+                return project_names_list = project_obj;
+              }
 
-                    return project_names_list += ','+ project_obj;
-                  });
-              });
+              return project_names_list += ',' + project_obj;
+            });
           });
-          return last_promise;
+        });
+        return last_promise;
       });
-      result.then(function (data) {
+      result.then(function(data) {
         var response = '{' + data + '}';
         console.log(response);
-         res.json(response);
-         res.sendStatus(200);
+        res.json(response);
+        res.sendStatus(200);
       });
-      }
+    }
   }));
 
-  api.get('/clientRequests', wagner.invoke(function(FirebaseService) {
-  return function(req, res) {
-    var clientReqs = FirebaseService.retrieveClientRequests();
-    clientReqs.then(data => {
-      res.json(data);
-    });
-  };
-}));
-api.get('/clientRequests/:id', wagner.invoke(function(FirebaseService) {
-  return function(req, res) {
-    var clientReqs = FirebaseService.retrieveClientRequests(req.params.id);
-    clientReqs.then(data => {
-      res.json(data);
-    });
-  };
-}));
+  api.post('/clientRequests', wagner.invoke(function(FirebaseService) {
+    return function(req, res) {
+      var clientReq = req.body;
+      var createdKey = FirebaseService.createClientRequest(clientReq);
+      res.json({
+        key: createdKey
+      });
+    };
+  }));
 
-api.post('/clientRequests', wagner.invoke(function(FirebaseService) {
-  return function(req, res) {
-    var clientReq = req.body;
-    var key = FirebaseService.createClientRequest(clientReq);
-    res.json({
-      'key': key
-    });
-  };
-}));
-
+  api.put('/clientRequests/:id', wagner.invoke(function(FirebaseService) {
+    return function(req, res) {
+      let id = req.params.id;
+      let clientReq = req.body;
+      let isUpdated = FirebaseService.updateClientRequest(id, clientReq);
+      res.json({"updated": isUpdated});
+    }
+  }));
 
   /*Load project details   */
-    api.get('/project',wagner.invoke(function(FirebaseService){
-        return function(req, res) {
-            var firebase = FirebaseService;
-            var project_id = req.query.pid;
-            var project = firebase.retrieveProject(project_id);
-            project.then(function(data){
-                res.json(data.artifacts);
-                res.sendStatus(200);
-            })
-        }
-    }));
+  api.get('/project', wagner.invoke(function(FirebaseService) {
+    return function(req, res) {
+      var firebase = FirebaseService;
+      var project_id = req.query.pid;
+      var project = firebase.retrieveProject(project_id);
+      project.then(function(data) {
+        res.json(data.artifacts);
+        res.sendStatus(200);
+      })
+    }
+  }));
 
-    /*Load project details   */
-    api.get('/microtest',wagner.invoke(function(MicrotaskService){
-        return function(req, res) {
-            var microtask = MicrotaskService;
-            microtask.loadProject('-Km7yhGBm9-3s2o_oebe');
-                res.sendStatus(200);
+  /*Load project details   */
+  api.get('/microtest', wagner.invoke(function(MicrotaskService) {
+    return function(req, res) {
+      var microtask = MicrotaskService;
+      microtask.loadProject('-Km7yhGBm9-3s2o_oebe');
+      res.sendStatus(200);
 
-        }
-    }));
+    }
+  }));
 
 
 

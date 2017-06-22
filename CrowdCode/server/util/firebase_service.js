@@ -620,16 +620,16 @@ module.exports = function(AdminFirebase) {
 
 
     /* ---------------- clientRequests services ------- */
-    retrieveClientRequests: function(id) {
-      var path = id !== undefined ? ("clientRequests/" + id) : "clientRequests";
-      return root_ref.child(path).once("value").then(data => {
-        return data.val();
-      });
+
+    createClientRequest: function(clientReq) {
+      var created_child = root_ref.child('clientRequests').push(clientReq);
+      return created_child.key;
     },
 
-    createClientRequest: function(clientRequest) {
-      var created_child = root_ref.child('clientRequests').push(clientRequest);
-      return created_child.key;
+    updateClientRequest: function(id, clientReq) {
+      return root_ref.child("clientRequests").child(id).update(clientReq, function() {
+        return true;
+      });
     },
 
     /* ----------------End clientRequests services ---- */
