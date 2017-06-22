@@ -103,15 +103,16 @@ function generateImplementationMicrotasks(project_id, function_id){
         var function_version = func.version;
         var function_code = func.code;
         var max_points = 10;
-        var function_tests = '{';
+        var temp_tests = '{';
         func.tests.forEach(function(test_id){
-            if(function_tests === '{'){
-                function_tests +=  test_id + ': {' + tests.get(test_id).toString() +'}';
+            if(temp_tests === '{'){
+                temp_tests +=  test_id + ': {' + tests.get(test_id).toString() +'}';
             }else {
-                function_tests += ',' + test_id + ': {' + tests.get(test_id).toString() + '}';
+                temp_tests += ',' + test_id + ': {' + tests.get(test_id).toString() + '}';
             }
         });
-        function_tests += '}';
+        temp_tests += '}';
+        var function_tests = JSON.parse(temp_tests);
         var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name,function_version,microtask_description,function_code,function_tests);
 
         var microtask_object = {
@@ -205,14 +206,17 @@ function submitReviewMicrotask(project_id,microtask_id,review, rating, worker_id
     update_promise.then(function(){
         if(rating === 4 || rating === 5){
             //update function object and tests
-
             var function_object = functions.get(function_id);
             function_object.code = implementation_object.code;
-            //Create list of test id's add it to function and then add each test object to tests map
+            var test_set = implementation_object.tests;
+            var test_list = new Array();
+            test_set.keys(test).forEach(function(test_id){
+                test_list.push(test_id);
+                tests.set(test_id,test[test_id]);
 
+            });
             if(implementation_object.isFunctionComplete === true){
                 //Update function and test in firebase and remove function and its tests from memory
-                var test_list = function_object.tests;
                 var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.type,function_object.description,function_object.code,function_object.tests,function_object.stubs,function_object.parameters,function_object.dependent,function_object.isFunctionComplete, function_object.isAssigned);
                 function_update_promise.remove(implementation_object.function_id);
                 test_list.forEach(function(test_id){
@@ -239,4 +243,32 @@ function submitReviewMicrotask(project_id,microtask_id,review, rating, worker_id
     })
 
 }
-module.exports.loadProject = loadProject;
+
+/* Fetch a microtask in the queue
+    param project_id text
+    return microtask object
+ */
+function fetchMicrotask(project_id){
+    var Project = Projects.get(project_id);
+    var microtasks = Project.get('microtasks');
+    var reviewQ = Project.get('reviewQ');
+    var microtask_id;
+    var microtask_type;
+    if(reviewQ.length === 0){
+        var implementationQ= Project.get('implementationQ');
+        microtask_id = implementationQ.shift();
+        microtask_type = "implementation";
+    }
+    if(reviewQ.length > 0){
+        microtask_id = reviewQ.shift();
+        microtask_type = "review";
+    }
+    var microtask_object = microtasks.get(microtask_id);
+    var return_object = {"id":microtask_id,"type":microtask_type,"object":microtask_object};
+    return return_object;
+}
+
+module.exports.loadProjects = loadProjects;
+module.exports.submitImplementationMicrotask = submitImplementationMicrotask;
+module.exports.submitReviewMicrotask = submitReviewMicrotask;
+module.exports.fetchMicrotask = fetchMicrotask;
