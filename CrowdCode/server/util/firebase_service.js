@@ -638,14 +638,11 @@ module.exports = function(AdminFirebase) {
     /* ---------------- clientRequests services ------- */
 
     createClientRequest: function(id,clientReq) {
-      var created_child = root_ref.child('clientRequests').child(id).set(clientReq);
-      return created_child.key;
+      return root_ref.child('clientRequests').child(id).set(clientReq);
     },
 
     updateClientRequest: function(id, clientReq) {
-      return root_ref.child("clientRequests").child(id).update(clientReq, function() {
-        return true;
-      });
+      return root_ref.child("clientRequests").child(id).update(clientReq);
     },
 
     /* ----------------End clientRequests services ---- */

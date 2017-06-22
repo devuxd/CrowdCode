@@ -101,12 +101,14 @@ module.exports = function(wagner) {
     }
   }));
 
-  api.post('/clientRequests', wagner.invoke(function(FirebaseService) {
+  api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService) {
     return function(req, res) {
+      let id = req.params.id;
       var clientReq = req.body;
-      var createdKey = FirebaseService.createClientRequest(clientReq);
+      var createdKey = FirebaseService.createClientRequest(id,clientReq);
+      console.log(createdKey);
       res.json({
-        key: createdKey
+        key: "200"
       });
     };
   }));
@@ -137,7 +139,7 @@ module.exports = function(wagner) {
   api.get('/microtest', wagner.invoke(function(MicrotaskService) {
     return function(req, res) {
       var microtask = MicrotaskService;
-      microtask.loadProject('-Km7yhGBm9-3s2o_oebe');
+      microtask.loadProjects('-Km7yhGBm9-3s2o_oebe');
       res.sendStatus(200);
 
     }
