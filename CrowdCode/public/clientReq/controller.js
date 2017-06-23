@@ -170,41 +170,51 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
 
         project.ADTs = $scope.ADTs;
         var exist = $scope.projectsName.filter(function(name) {
-          if(name === $scope.projectName) return true;
+          if (name === $scope.projectName) return true;
           else return false;
-        })
-        if (exist.length > 0) {
-          $http({
-            method: "PUT",
-            url: "api/v1/clientRequests/" + $scope.projectName,
-            data: project,
-            responseType: "json",
-          }).then(function(payload) {
-            console.log(payload.data);
-          }).catch(err => {
-            console.log(err);
+        });
+        firebase.auth().currentUser.getIdToken( /* forceRefresh */ true).then(function(idToken) {
+          if (exist.length > 0) {
+            $http({
+              method: "PUT",
+              url: "api/v1/clientRequests/" + $scope.projectName,
+              data: project,
+              headers: {
+                'Authorization': 'Bearer ' + idToken
+              },
+              responseType: "json",
+            }).then(function(payload) {
+              console.log(payload.data);
+            }).catch(err => {
+              console.log(err);
+            });
+          } else {
+            $http({
+              method: "POST",
+              url: "api/v1/clientRequests/" + $scope.projectName,
+              data: project,
+              headers: {
+                'Authorization': 'Bearer ' + idToken
+              },
+              responseType: "json",
+            }).then(function(payload) {
+              $scope.projectsName.push($scope.projectName);
+              console.log(payload.data);
+            }).catch(err => {
+              console.log(err);
+            });
+          }
+          $alert({
+            title: 'Success!',
+            content: 'Submit successful',
+            type: 'success',
+            show: true,
+            duration: 3,
+            template: '/client/microtasks/alert_submit.html',
+            container: 'alertcontainer'
           });
-        } else {
-          $http({
-            method: "POST",
-            url: "api/v1/clientRequests/" + $scope.projectName,
-            data: project,
-            responseType: "json",
-          }).then(function(payload) {
-            $scope.projectsName.push($scope.projectName);
-            console.log(payload.data);
-          }).catch(err => {
-            console.log(err);
-          });
-        }
-        $alert({
-          title: 'Success!',
-          content: 'Submit successful',
-          type: 'success',
-          show: true,
-          duration: 3,
-          template: '/client/microtasks/alert_submit.html',
-          container: 'alertcontainer'
+        }).catch(function(error) {
+          console.log(error);
         });
         // var ref = firebase.database().ref().child("clientRequests").child($scope.projectName);
         // var project = $firebaseObject(ref);

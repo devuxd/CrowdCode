@@ -10,7 +10,7 @@ module.exports = function(wagner) {
       credential: admin.credential.cert(Config.serviceAccount),
       databaseURL: "https://crowdcode2.firebaseio.com",
       databaseAuthVariableOverride: {
-        uid: "my-service-worker"
+        uid: "ddYEWGMCU7SFLhqwO7r8ciX69sG3"
       }
     });
   });

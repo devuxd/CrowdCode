@@ -5,6 +5,16 @@ module.exports = function(AdminFirebase) {
     getUserById: function(uid) {
       return AdminFirebase.auth().getUser(uid);
     },
+    getUserByToken: function(idToken) {
+      var self = this;
+      return AdminFirebase.auth().verifyIdToken(idToken)
+        .then(function(decodedToken) {
+          var uid = decodedToken.uid;
+          return self.getUserById(uid);
+        }).catch(err => {
+          console.log(err);
+        });
+    },
     // retrieve user by email
     // return promise
     getUserByEmail: function(email) {

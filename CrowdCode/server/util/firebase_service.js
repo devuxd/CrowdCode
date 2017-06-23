@@ -9,7 +9,7 @@ module.exports = function(AdminFirebase) {
      returns Project ID text
      */
     createProject: function(project_name, owner_id) {
-      project_schema = {
+      let project_schema = {
         name: project_name,
         owner: owner_id,
         isComplete: "null",
@@ -43,9 +43,11 @@ module.exports = function(AdminFirebase) {
         },
         workers: "null"
       };
-
       var created_child = root_ref.child('Projects').child(project_name).set(project_schema);
-      return created_child.key;
+      return created_child.then(err => {
+        if (err) throw err;
+        else return "created the project Successfully";
+      });
 
     },
 
@@ -395,9 +397,14 @@ module.exports = function(AdminFirebase) {
         return promise object
     */
     updateImplementationMicrotask: function(project_id, microtask_id, microtask_code, tests, worker_id, isFunctionComplete) {
-        var path = 'Projects/' + project_id + '/microtasks/implementation/' + microtask_id;
-        var update_promise = root_ref.child(path).update({ "code":microtask_code, "tests":tests, "worker":worker_id, "isFunctionComplete":isFunctionComplete});
-        return update_promise;
+      var path = 'Projects/' + project_id + '/microtasks/implementation/' + microtask_id;
+      var update_promise = root_ref.child(path).update({
+        "code": microtask_code,
+        "tests": tests,
+        "worker": worker_id,
+        "isFunctionComplete": isFunctionComplete
+      });
+      return update_promise;
     },
 
 
@@ -408,7 +415,9 @@ module.exports = function(AdminFirebase) {
      */
     updateMicrotaskPointsAwarded: function(project_id, microtask_id, points) {
       var path = 'Projects/' + project_id + '/microtasks/implementation/' + microtask_id;
-      root_ref.child(path).update({ "awarded_points": points });
+      root_ref.child(path).update({
+        "awarded_points": points
+      });
     },
 
 
@@ -446,7 +455,11 @@ module.exports = function(AdminFirebase) {
      */
     updateReviewMicrotask: function(project_id, microtask_id, rating, review, worker_id) {
       var path = 'Projects/' + project_id + '/microtasks/review/' + microtask_id;
-      var update_promise = root_ref.child(path).update({ "rating": rating, "review": review, "worker": worker_id });
+      var update_promise = root_ref.child(path).update({
+        "rating": rating,
+        "review": review,
+        "worker": worker_id
+      });
 
       //Update awarded points in the implementation task based on the rating
       root_ref.child(path).once("value").then(function(data) {
@@ -633,16 +646,41 @@ module.exports = function(AdminFirebase) {
       return promise;
     },
 
-      /* ---------------- End Questions API ------------- */
+    /* ---------------- End Questions API ------------- */
 
     /* ---------------- clientRequests services ------- */
 
-    createClientRequest: function(id,clientReq) {
-      return root_ref.child('clientRequests').child(id).set(clientReq);
+    createClientRequest: function(id, clientReq, workderId) {
+      var self = this;
+      root_ref.child('clientRequests').child(id).set(clientReq, function(error) {
+        if (error) {
+          console.log("client Request could not be saved." + error);
+        } else {
+          self.createProject(id, workderId).then(result => {
+            if (typeof clientReq.functions !== 'undefined') {
+              clientReq.functions.forEach(func => self.createFunction(id,func.name, "type_unknown", func.description, func.code, "null_tests", "nill","params", "dependent"));
+            }
+            if (typeof clientReq.ADTs !== 'undefined') {
+              clientReq.ADTs.forEach(adt => self.createADT(id, adt.name, adt.description, true, adt.structure, adt.examples));
+            }
+          }).catch(err => {
+            console.log(err);
+          });
+          console.log("client Request saved successfully. ");
+
+        }
+      });
+
     },
 
     updateClientRequest: function(id, clientReq) {
-      return root_ref.child("clientRequests").child(id).update(clientReq);
+      return root_ref.child("clientRequests").child(id).update(clientReq, function(error) {
+        if (error) {
+          console.log("Data could not be saved." + error);
+        } else {
+          console.log("Data updated successfully.");
+        }
+      });
     },
 
     /* ----------------End clientRequests services ---- */

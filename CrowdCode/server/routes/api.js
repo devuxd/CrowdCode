@@ -13,7 +13,8 @@ module.exports = function(wagner) {
 
   api.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase, FirebaseService) {
     return function(req, res) {
-      var idToken = req.body.idToken;
+      //var idToken = req.body.idToken;
+      var idToken = req.headers['authorization'].split(' ').pop();
       AdminFirebase.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
           var uid = decodedToken.uid;
@@ -101,15 +102,23 @@ module.exports = function(wagner) {
     }
   }));
 
-  api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService) {
+  api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService, UserService) {
     return function(req, res) {
       let id = req.params.id;
+      var idToken = req.headers['authorization'].split(' ').pop();
       var clientReq = req.body;
-      var createdKey = FirebaseService.createClientRequest(id,clientReq);
-      console.log(createdKey);
-      res.json({
-        key: "200"
+      UserService.getUserByToken(idToken).then(user => {
+        FirebaseService.createClientRequest(id,clientReq, user.uid);
+        res.json({
+          "result": "created"
+        });
+      }).catch(err => {
+        res.status(status.EXPECTATION_FAILED);
+        res.json({
+          "result": "failed"
+        });
       });
+
     };
   }));
 
@@ -117,8 +126,8 @@ module.exports = function(wagner) {
     return function(req, res) {
       let id = req.params.id;
       let clientReq = req.body;
-      let isUpdated = FirebaseService.updateClientRequest(id, clientReq);
-      res.json({"updated": isUpdated});
+      FirebaseService.updateClientRequest(id, clientReq);
+      res.json({"result": "updated"});
     }
   }));
 
