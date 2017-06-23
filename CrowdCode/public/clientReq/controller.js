@@ -169,12 +169,14 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
         console.log(project.functions);
 
         project.ADTs = $scope.ADTs;
-        var exist = $scope.projectsName.filter(function(name) {
-          if (name === $scope.projectName) return true;
-          else return false;
+        var exist = false;
+        projectNames.$loaded().then(function() {
+          angular.forEach(projectNames, function(value, key) {
+            if (value.$id === $scope.projectName) exist = true;
+          });
         });
         firebase.auth().currentUser.getIdToken( /* forceRefresh */ true).then(function(idToken) {
-          if (exist.length > 0) {
+          if (exist) {
             $http({
               method: "PUT",
               url: "api/v1/clientRequests/" + $scope.projectName,

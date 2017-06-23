@@ -86,26 +86,76 @@ module.exports = function(AdminFirebase) {
      param ADT name text
      param ADT description text
      param isReadOnly boolean
-     param isDeleted boolean
+     param isApiArtifact boolean
      param structure array of json objects with name and value
      param example array of json objects with name and value
      returns ADT ID text
      */
-    createADT: function(project_id, ADT_name, ADT_description, isReadOnly, structure, example) {
-      ADT_schema = {
+    createADT: function(project_id, ADT_name, ADT_description, isReadOnly, isApiArtifact, structure, examples) {
+      let ADT_schema = {
         name: ADT_name,
         description: ADT_description,
         isDeleted: false,
         isReadOnly: isReadOnly,
+        isApiArtifact: isApiArtifact,
         version: 0,
         structure: structure,
-        example: example
+        examples: examples
       }
       var path = 'Projects/' + project_id + '/artifacts/ADTs';
       var history_path = 'Projects/' + project_id + '/history/artifacts/ADTs/';
       var created_child = root_ref.child(path).push(ADT_schema);
       var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(ADT_schema);
       return created_child.key;
+    },
+
+    /* Add String, Number and Boolean ADTs in a project in firebase
+     returns Array of ADT IDs text
+     */
+    createDefaultADTS: function(project_id) {
+      let path = 'Projects/' + project_id + '/artifacts/ADTs';
+      let history_path = 'Projects/' + project_id + '/history/artifacts/ADTs/';
+      let ids = [];
+      let string= {
+        name: "String",
+        description: "A String simply stores a series of characters like \"John Doe\". A string can be any text inside double quotes.",
+        isDeleted: false,
+        isReadOnly: true,
+        isApiArtifact: true,
+        version: 0,
+        structure: {},
+        examples: {}
+      };
+      let created_string = root_ref.child(path).push(string);
+      ids.push(created_string.key);
+      root_ref.child(history_path).child(created_string.key).child('0').set(string);
+      let number= {
+        name: "Number",
+        description: "Number is the only type of number. Numbers can be written with, or without, decimals.",
+        isDeleted: false,
+        isReadOnly: true,
+        isApiArtifact: true,
+        version: 0,
+        structure: {},
+        examples: {}
+      };
+      let created_number = root_ref.child(path).push(number);
+      ids.push(created_number.key);
+      root_ref.child(history_path).child(created_number.key).child('0').set(number);
+      let boolean= {
+        name: "Boolean",
+        description: "A Boolean represents one of two values: true or false.",
+        isDeleted: false,
+        isReadOnly: true,
+        isApiArtifact: true,
+        version: 0,
+        structure: {},
+        examples: {}
+      };
+      let created_boolean = root_ref.child(path).push(boolean);
+      root_ref.child(history_path).child(created_boolean.key).child('0').set(boolean);
+      ids.push(created_boolean.key);
+      return ids;
     },
 
     /*Retrieve ADT from Project
@@ -127,6 +177,7 @@ module.exports = function(AdminFirebase) {
     /* Adds a function to a Project in firebase
      param project_id text
      param function name text
+     param function header text
      param function type text
      param function description text
      param function code text
@@ -136,9 +187,10 @@ module.exports = function(AdminFirebase) {
      param functions dependent Array of functions that this function calls
      returns function ID text
      */
-    createFunction: function(project_id, function_name, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent) {
+    createFunction: function(project_id, function_name, header, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent) {
       function_schema = {
         name: function_name,
+        header: header,
         description: function_description,
         code: function_code,
         type: function_type,
@@ -658,11 +710,12 @@ module.exports = function(AdminFirebase) {
         } else {
           self.createProject(id, workderId).then(result => {
             if (typeof clientReq.functions !== 'undefined') {
-              clientReq.functions.forEach(func => self.createFunction(id,func.name, "type_unknown", func.description, func.code, "null_tests", "nill","params", "dependent"));
+              clientReq.functions.forEach(func => self.createFunction(id,func.name,func.header, func.returnType, func.description, func.code, [], func.stubs, func.parameters, []));
             }
             if (typeof clientReq.ADTs !== 'undefined') {
-              clientReq.ADTs.forEach(adt => self.createADT(id, adt.name, adt.description, true, adt.structure, adt.examples));
+              clientReq.ADTs.forEach(adt => self.createADT(id, adt.name, adt.description, true, true, adt.structure, adt.examples));
             }
+            self.createDefaultADTS(id);
           }).catch(err => {
             console.log(err);
           });
