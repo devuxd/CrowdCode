@@ -1,5 +1,26 @@
 module.exports = function(AdminFirebase) {
-  var timestamp = new Date();
+  const now = (unit) => {
+    const hrTime = process.hrtime();
+    switch (unit) {
+      case 'milli':
+        return hrTime[0] * 1000 + hrTime[1] / 1000000;
+      case 'micro':
+        return hrTime[0] * 1000000 + hrTime[1] / 1000;
+      case 'nano':
+        return hrTime[0] * 1000000000 + hrTime[1];
+        break;
+      default:
+        return hrTime[0] * 1000000000 + hrTime[1];
+    }
+  };
+  const timeOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  };
   const root_ref = AdminFirebase.database().ref();
   return {
 
@@ -105,57 +126,60 @@ module.exports = function(AdminFirebase) {
       var path = 'Projects/' + project_id + '/artifacts/ADTs';
       var history_path = 'Projects/' + project_id + '/history/artifacts/ADTs/';
       var created_child = root_ref.child(path).push(ADT_schema);
+      ADT_schema.id = created_child.key;
       var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(ADT_schema);
       return created_child.key;
+    },
+
+    /* Wrapper function for creating ADT using ADT object
+      param project_id String
+      param ADTObject Object
+      returns ADT ID text
+    */
+    createADTWrapper: function(project_id, ADTObject) {
+      return this.createADT(project_id,ADTObject.name,ADTObject.description,ADTObject.isReadOnly,ADTObject.isApiArtifact,ADTObject.structure,ADTObject.examples);
     },
 
     /* Add String, Number and Boolean ADTs in a project in firebase
      returns Array of ADT IDs text
      */
     createDefaultADTS: function(project_id) {
-      let path = 'Projects/' + project_id + '/artifacts/ADTs';
-      let history_path = 'Projects/' + project_id + '/history/artifacts/ADTs/';
-      let ids = [];
-      let string= {
+      let string = {
         name: "String",
         description: "A String simply stores a series of characters like \"John Doe\". A string can be any text inside double quotes.",
         isDeleted: false,
         isReadOnly: true,
         isApiArtifact: true,
         version: 0,
-        structure: {},
-        examples: {}
+        structure: "null",
+        examples: "null"
       };
-      let created_string = root_ref.child(path).push(string);
-      ids.push(created_string.key);
-      root_ref.child(history_path).child(created_string.key).child('0').set(string);
-      let number= {
+      let stringKey = this.createADTWrapper(project_id, string);
+      this.createEvent(project_id, "ADT", stringKey, "String", "ADT.Created", "Create ADT from client request", "null");
+      let number = {
         name: "Number",
         description: "Number is the only type of number. Numbers can be written with, or without, decimals.",
         isDeleted: false,
         isReadOnly: true,
         isApiArtifact: true,
         version: 0,
-        structure: {},
-        examples: {}
+        structure: "null",
+        examples: "null"
       };
-      let created_number = root_ref.child(path).push(number);
-      ids.push(created_number.key);
-      root_ref.child(history_path).child(created_number.key).child('0').set(number);
-      let boolean= {
+      let numberKey = this.createADTWrapper(project_id, number);
+      this.createEvent(project_id, "ADT", numberKey, "Number", "ADT.Created", "Create ADT from client request", "null");
+      let boolean = {
         name: "Boolean",
         description: "A Boolean represents one of two values: true or false.",
         isDeleted: false,
         isReadOnly: true,
         isApiArtifact: true,
         version: 0,
-        structure: {},
-        examples: {}
+        structure: "null",
+        examples: "null"
       };
-      let created_boolean = root_ref.child(path).push(boolean);
-      root_ref.child(history_path).child(created_boolean.key).child('0').set(boolean);
-      ids.push(created_boolean.key);
-      return ids;
+      let booleanKey = this.createADTWrapper(project_id, boolean);
+      this.createEvent(project_id, "ADT", booleanKey, "Boolean", "ADT.Created", "Create ADT from client request", "null");
     },
 
     /*Retrieve ADT from Project
@@ -187,24 +211,27 @@ module.exports = function(AdminFirebase) {
      param functions dependent Array of functions that this function calls
      returns function ID text
      */
-    createFunction: function(project_id, function_name, header, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent) {
+    createFunction: function(project_id, function_name, header, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent, ADTsId, isApiArtifact) {
       function_schema = {
         name: function_name,
         header: header,
         description: function_description,
         code: function_code,
-        type: function_type,
+        returnType: function_type,
         version: 0,
         parameters: parameters,
         stubs: stubs,
         tests: tests,
+        ADTsId: ADTsId,
         dependent: functions_dependent,
         isComplete: false,
-        isAssigned: false
+        isAssigned: false,
+        isApiArtifact: isApiArtifact
       }
       var path = 'Projects/' + project_id + '/artifacts/Functions';
       var history_path = 'Projects/' + project_id + '/history/artifacts/Functions';
       var created_child = root_ref.child(path).push(function_schema);
+      function_schema.id = created_child.key;
       var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(function_schema);
       return created_child.key;
     },
@@ -555,19 +582,23 @@ module.exports = function(AdminFirebase) {
      param project id text
      param artifact type text
      param artifact id text
+     param artifact name text
      param event type text
-     param microtask id
+     param event description
      return event ID text
      */
-    createEvent: function(project_id, artifact_type, artifact_id, event_type, microtask_id, event_description) {
-      event_schema = {
-        artifact_type: artifact_type,
-        artifact_id: artifact_id,
-        event_type: event_type,
-        event_description: event_description,
-        microtask_id: microtask_id,
-        timestamp: timestamp.getTime()
-      }
+    createEvent: function(project_id, artifact_type, artifact_id, artifact_name, event_type, event_description, parent_id) {
+      let event_schema = {
+        parentId: parent_id,
+        artifactType: artifact_type,
+        artifactId: artifact_id,
+        artifactName: artifact_name,
+        eventType: event_type,
+        eventDescription: event_description,
+        projectId: project_id,
+        timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
+        timeInMicros: now('micro')
+      };
       var path = 'Projects/' + project_id + '/history/events';
       var created_child = root_ref.child(path).push(event_schema);
       return created_child.key;
@@ -594,7 +625,7 @@ module.exports = function(AdminFirebase) {
         points: points,
         owner_id: owner_id,
         subscriber_ids: "null",
-        created_time: timestamp.getTime(),
+        created_time: now('micro'),
         answers: "null",
         answer_count: 0,
         version: 0,
@@ -628,7 +659,7 @@ module.exports = function(AdminFirebase) {
       var created_child = root_ref.child(path).child('answers').push(answer_schema);
       //update the updated time
       root_ref.child(path).update({
-        updated_time: timestamp.getTime()
+        updated_time: now('micro')
       });
       //increment answer count
       root_ref.child(path).once("value").then(function(data) {
@@ -702,28 +733,39 @@ module.exports = function(AdminFirebase) {
 
     /* ---------------- clientRequests services ------- */
 
-    createClientRequest: function(id, clientReq, workderId) {
+    createClientRequest: function(id, clientReq, workerId) {
       var self = this;
       root_ref.child('clientRequests').child(id).set(clientReq, function(error) {
         if (error) {
           console.log("client Request could not be saved." + error);
         } else {
-          self.createProject(id, workderId).then(result => {
-            if (typeof clientReq.functions !== 'undefined') {
-              clientReq.functions.forEach(func => self.createFunction(id,func.name,func.header, func.returnType, func.description, func.code, [], func.stubs, func.parameters, []));
-            }
-            if (typeof clientReq.ADTs !== 'undefined') {
-              clientReq.ADTs.forEach(adt => self.createADT(id, adt.name, adt.description, true, true, adt.structure, adt.examples));
-            }
-            self.createDefaultADTS(id);
-          }).catch(err => {
-            console.log(err);
-          });
+          self.createProjectFromClientRequest(id, clientReq, workerId);
           console.log("client Request saved successfully. ");
-
         }
       });
 
+    },
+
+    createProjectFromClientRequest: function(id, clientReq, workerId) {
+      this.createProject(id, workerId).then(result => {
+        // create an event for project creation
+        this.createEvent(id, "", "", "", "Project.Created", "create project from client request", "null");
+        this.createDefaultADTS(id);
+        if (typeof clientReq.ADTs !== 'undefined') {
+          clientReq.ADTs.forEach(adt => {
+            var adtKey = this.createADT(id, adt.name, adt.description, true, true, adt.structure, adt.examples);
+            this.createEvent(id, "ADT", adtKey, adt.name, "ADT.Created", "Create ADT from client request", "null");
+          });
+        }
+        if (typeof clientReq.functions !== 'undefined') {
+          clientReq.functions.forEach(func => {
+            var funcKey = this.createFunction(id, func.name, func.header, func.returnType, func.description, func.code, "null", func.stubs, func.parameters, "null", "null", true);
+            this.createEvent(id, "Function", funcKey, func.name, "Function.Created", "Create Function from client request", "null");
+          });
+        }
+      }).catch(err => {
+        console.log(err);
+      });
     },
 
     updateClientRequest: function(id, clientReq) {
@@ -752,7 +794,7 @@ module.exports = function(AdminFirebase) {
       notification_schema = {
         type: type,
         data: data,
-        created_time: timestamp.getTime()
+        created_time: now('micro')
       }
       var path = 'Projects/' + project_id + '/notifications';
       var created_child = root_ref.child(path).child(worker_id).push(notification_schema);

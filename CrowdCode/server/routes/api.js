@@ -102,13 +102,14 @@ module.exports = function(wagner) {
     }
   }));
 
-  api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService, UserService) {
+  api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService, UserService, MicrotaskService) {
     return function(req, res) {
       let id = req.params.id;
       var idToken = req.headers['authorization'].split(' ').pop();
       var clientReq = req.body;
       UserService.getUserByToken(idToken).then(user => {
         FirebaseService.createClientRequest(id,clientReq, user.uid);
+        MicrotaskService.loadProjects();
         res.json({
           "result": "created"
         });
