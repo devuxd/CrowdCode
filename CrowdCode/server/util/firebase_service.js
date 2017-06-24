@@ -122,7 +122,7 @@ module.exports = function(AdminFirebase) {
         version: 0,
         structure: structure,
         examples: examples
-      }
+      };
       var path = 'Projects/' + project_id + '/artifacts/ADTs';
       var history_path = 'Projects/' + project_id + '/history/artifacts/ADTs/';
       var created_child = root_ref.child(path).push(ADT_schema);
@@ -137,7 +137,7 @@ module.exports = function(AdminFirebase) {
       returns ADT ID text
     */
     createADTWrapper: function(project_id, ADTObject) {
-      return this.createADT(project_id,ADTObject.name,ADTObject.description,ADTObject.isReadOnly,ADTObject.isApiArtifact,ADTObject.structure,ADTObject.examples);
+      return this.createADT(project_id, ADTObject.name, ADTObject.description, ADTObject.isReadOnly, ADTObject.isApiArtifact, ADTObject.structure, ADTObject.examples);
     },
 
     /* Add String, Number and Boolean ADTs in a project in firebase
@@ -195,6 +195,20 @@ module.exports = function(AdminFirebase) {
       return promise;
     },
 
+    /* retrieve project's ADTs
+      param project id String
+
+      return promise object containing Array of ADTs
+    */
+    retrieveADTList: function(project_id) {
+      return root_ref.child('Projects').child(project_id).child('artifacts').child('ADTs').once('value').then(data => {
+        return data.val();
+      }, function(err) {
+        console.log("Error in retrieving ADT list");
+        //console.log(err);
+      });
+    },
+
     /* ---------------- End ADT API ------------- */
 
     /* ---------------- Function API ------------- */
@@ -211,13 +225,14 @@ module.exports = function(AdminFirebase) {
      param functions dependent Array of functions that this function calls
      returns function ID text
      */
-    createFunction: function(project_id, function_name, header, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent, ADTsId, isApiArtifact) {
-      function_schema = {
+    createFunction: function(project_id, function_name, header, function_description, function_code,
+      return_type, parameters, stubs, tests, ADTsId, functions_dependent, isApiArtifact) {
+      let function_schema = {
         name: function_name,
         header: header,
         description: function_description,
         code: function_code,
-        returnType: function_type,
+        returnType: return_type,
         version: 0,
         parameters: parameters,
         stubs: stubs,
@@ -227,7 +242,7 @@ module.exports = function(AdminFirebase) {
         isComplete: false,
         isAssigned: false,
         isApiArtifact: isApiArtifact
-      }
+      };
       var path = 'Projects/' + project_id + '/artifacts/Functions';
       var history_path = 'Projects/' + project_id + '/history/artifacts/Functions';
       var created_child = root_ref.child(path).push(function_schema);
@@ -240,35 +255,42 @@ module.exports = function(AdminFirebase) {
      param project  id text
      param function id text
      param function name text
-     param function type text
+     param header text
      param function description text
      param function code text
-     param test Array of test id's
-     param stubs Array of json objects with stub names and values
+     param return type text
      param parameters Array of json objects with name, type and description
+     param stubs Array of json objects with stub names and values
+     param test Array of test id's
+     param ADTsId Array of ADT Ids that is used in this function
      param functions dependent Array of functions that call this function
      param isComplete Boolean if the implementation of this function is complete
      param isAssigned Boolean if the function has already a microtask
+     param isApiArtifact Boolean if the artifact is for the API
      return update promise object
      */
-    updateFunction: function(project_id, function_id, function_name, function_type, function_description, function_code, tests, stubs, parameters, functions_dependent, isComplete, isAssigned) {
+    updateFunction: function(project_id, function_id, function_name, header, function_description, function_code,
+      return_type, parameters, stubs, tests, ADTsId, functions_dependent, isComplete, isAssigned, isApiArtifact) {
       var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
       var history_path = 'Projects/' + project_id + '/history/artifacts/Functions/' + function_id;
       root_ref.child(history_path).once("value", function(data) {
         var version_number = data.numChildren();
-        function_schema = {
+        let function_schema = {
           name: function_name,
+          header: header,
           description: function_description,
           code: function_code,
-          type: function_type,
+          returnType: return_type,
           version: version_number,
           parameters: parameters,
           stubs: stubs,
           tests: tests,
+          ADTsId: ADTsId,
           dependent: functions_dependent,
           isComplete: isComplete,
-          isAssigned: isAssigned
-        }
+          isAssigned: isAssigned,
+          isApiArtifact: isApiArtifact
+        };
 
         var update_promise = root_ref.child(path).update(function_schema);
         var add_to_history = root_ref.child(history_path).child(version_number).set(function_schema);
@@ -759,7 +781,7 @@ module.exports = function(AdminFirebase) {
         }
         if (typeof clientReq.functions !== 'undefined') {
           clientReq.functions.forEach(func => {
-            var funcKey = this.createFunction(id, func.name, func.header, func.returnType, func.description, func.code, "null", func.stubs, func.parameters, "null", "null", true);
+            var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", "null", true);
             this.createEvent(id, "Function", funcKey, func.name, "Function.Created", "Create Function from client request", "null");
           });
         }
