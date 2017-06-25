@@ -783,6 +783,7 @@ module.exports = function(AdminFirebase) {
           clientReq.functions.forEach(func => {
             var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", "null", true);
             this.createEvent(id, "Function", funcKey, func.name, "Function.Created", "Create Function from client request", "null");
+            this.createImplementationMicrotask(id, "Implement function behavior", 10, funcKey, func.name, 0, "Implement function behavior with all the related tests", func.code, "null");
           });
         }
       }).catch(err => {
