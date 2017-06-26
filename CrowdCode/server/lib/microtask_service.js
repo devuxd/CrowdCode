@@ -30,20 +30,19 @@ function loadProject(project_id) {
                     test_load_result.then(function (data) {
                         functions.forEach(function (content, function_id) {
                             generateImplementationMicrotasks(project_id, function_id);
-                        }).catch(function (err) {
-                            console.log(err);
                         });
                     }).catch(function (err) {
                         console.log(err);
+                    });
+                }else {
+                    functions.forEach(function (content, function_id) {
+                        generateImplementationMicrotasks(project_id, function_id);
                     });
                 }
             }).catch(function (err) {
                 console.log(err);
             });
         }
-
-        console.log(Projects.get('meysam'));
-
     }
 
 }
@@ -118,13 +117,15 @@ function generateImplementationMicrotasks(project_id, function_id){
         var function_code = func.code;
         var max_points = 10;
         var temp_tests = '{';
-        func.tests.forEach(function(test_id){
-            if(temp_tests === '{'){
-                temp_tests +=  test_id + ': {' + tests.get(test_id).toString() +'}';
-            }else {
-                temp_tests += ',' + test_id + ': {' + tests.get(test_id).toString() + '}';
-            }
-        });
+        if(func.tests !== "null") {
+            func.tests.forEach(function (test_id) {
+                if (temp_tests === '{') {
+                    temp_tests += test_id + ': {' + tests.get(test_id).toString() + '}';
+                } else {
+                    temp_tests += ',' + test_id + ': {' + tests.get(test_id).toString() + '}';
+                }
+            });
+        }
         temp_tests += '}';
         var function_tests = JSON.parse(temp_tests);
         var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name,function_version,microtask_description,function_code,function_tests);
@@ -144,7 +145,7 @@ function generateImplementationMicrotasks(project_id, function_id){
         microtasks.set(microtask_id,microtask_object);
         implementationQ.push(microtask_id);
         func.isAssigned = true;
-        firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
+       // firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
 
     }
     else{
