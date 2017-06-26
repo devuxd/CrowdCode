@@ -10,30 +10,40 @@ wagner.invoke(function(FirebaseService){
     param project id text
     returns boolean
  */
-function loadProjects() {
-    var project_list_promise = firebase.retrieveProjectsList();
-    project_list_promise.then(function(project_list){
-        project_list.forEach(function(project_id){
-            Projects.set(project_id, new Map());
-            var Project = Projects.get(project_id);
-            Project.set('functions',new Map());
-            Project.set('tests',new Map());
-            Project.set('microtasks',new Map());
-            Project.set('implementationQ', new Array());
-            Project.set('reviewQ',new Array());
-            var functions = Project.get('functions');
-            var function_load_result = loadFunctions(project_id);
-            function_load_result.then(function(data){
-                var test_load_result = loadTests(project_id);
-                test_load_result.then(function(data){
-                    functions.forEach(function(content,function_id){
-                        generateImplementationMicrotasks(project_id,function_id);
-                    });
-                });
-            });
-        })
-    })
+function loadProject(project_id) {
+    if(Projects.has(project_id) === false) {
 
+        Projects.set(project_id, new Map());
+        var Project = Projects.get(project_id);
+        Project.set('functions', new Map());
+        Project.set('tests', new Map());
+        Project.set('microtasks', new Map());
+        Project.set('implementationQ', new Array());
+        Project.set('reviewQ', new Array());
+        var functions = Project.get('functions');
+
+        var function_load_result = loadFunctions(project_id);
+        if (function_load_result !== null) {
+            function_load_result.then(function (data) {
+                var test_load_result = loadTests(project_id);
+                if (test_load_result !== null) {
+                    test_load_result.then(function (data) {
+                        functions.forEach(function (content, function_id) {
+                            generateImplementationMicrotasks(project_id, function_id);
+                        });
+                    }).catch(function (err) {
+                        console.log(err);
+                    });
+                }else {
+                    functions.forEach(function (content, function_id) {
+                        generateImplementationMicrotasks(project_id, function_id);
+                    });
+                }
+            }).catch(function (err) {
+                console.log(err);
+            });
+        }
+    }
 
 }
 
@@ -48,7 +58,7 @@ function loadFunctions(project_id){
     var functions = Project.get('functions');
     var functions_list_promise = firebase.retrieveFunctionsList(project_id);
     var result = functions_list_promise.then(function(functions_list){
-        var function_promise;
+        var function_promise = null;
        functions_list.forEach(function(function_id){
            function_promise = firebase.retrieveFunction(project_id,function_id);
            function_promise.then(function(data){
@@ -72,15 +82,18 @@ function loadTests(project_id){
     var Project = Projects.get(project_id);
     var functions = Project.get('functions');
     var tests = Project.get('tests');
-    var test_promise;
+    var test_promise = null;
     functions.forEach(function(content, function_id){
-        content.tests.forEach(function(test_id){
-            test_promise = firebase.retrieveTest(project_id, test_id);
-            test_promise.then(function (data) {
-                tests.set(test_id, data);
+        if(content.tests !== "null") {
+            content.tests.forEach(function (test_id) {
+                test_promise = firebase.retrieveTest(project_id, test_id);
+                test_promise.then(function (data) {
+                    tests.set(test_id, data);
+                }).catch(function(err){
+                    console.log(err);
+                });
             });
-        });
-
+        }
     });return test_promise;
 };
 
@@ -104,13 +117,15 @@ function generateImplementationMicrotasks(project_id, function_id){
         var function_code = func.code;
         var max_points = 10;
         var temp_tests = '{';
-        func.tests.forEach(function(test_id){
-            if(temp_tests === '{'){
-                temp_tests +=  test_id + ': {' + tests.get(test_id).toString() +'}';
-            }else {
-                temp_tests += ',' + test_id + ': {' + tests.get(test_id).toString() + '}';
-            }
-        });
+        if(func.tests !== "null") {
+            func.tests.forEach(function (test_id) {
+                if (temp_tests === '{') {
+                    temp_tests += test_id + ': {' + tests.get(test_id).toString() + '}';
+                } else {
+                    temp_tests += ',' + test_id + ': {' + tests.get(test_id).toString() + '}';
+                }
+            });
+        }
         temp_tests += '}';
         var function_tests = JSON.parse(temp_tests);
         var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name,function_version,microtask_description,function_code,function_tests);
@@ -130,7 +145,7 @@ function generateImplementationMicrotasks(project_id, function_id){
         microtasks.set(microtask_id,microtask_object);
         implementationQ.push(microtask_id);
         func.isAssigned = true;
-        firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
+       // firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
 
     }
     else{
@@ -268,7 +283,7 @@ function fetchMicrotask(project_id){
     return return_object;
 }
 
-module.exports.loadProjects = loadProjects;
+module.exports.loadProject = loadProject;
 module.exports.submitImplementationMicrotask = submitImplementationMicrotask;
 module.exports.submitReviewMicrotask = submitReviewMicrotask;
 module.exports.fetchMicrotask = fetchMicrotask;

@@ -1,5 +1,7 @@
 var express = require('express');
 var path = require('path');
+var microtaskService = require('../lib/microtask_service');
+
 var router = express.Router({
   caseSensitive: true
 });
@@ -25,7 +27,9 @@ router.get('/login', function(req, res) {
 
 });
 router.get('/:projectname([a-zA-Z0-9]{3,})', function(req, res) {
+
   const projectName = req.params.projectname;
+  microtaskService.loadProject(projectName);
   console.log("Project Name : " + projectName + "------------------------------");
   res.sendFile('clientDist/client.html', {
     root: publicDir
