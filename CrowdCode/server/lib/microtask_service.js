@@ -20,11 +20,11 @@ function loadProject(project_id) {
         Project.set('microtasks', new Map());
         Project.set('implementationQ', new Array());
         Project.set('reviewQ', new Array());
+        var result = null;
         var functions = Project.get('functions');
-
         var function_load_result = loadFunctions(project_id);
         if (function_load_result !== null) {
-            function_load_result.then(function (data) {
+            result =function_load_result.then(function (data) {
                 var test_load_result = loadTests(project_id);
                 if (test_load_result !== null) {
                     test_load_result.then(function (data) {
@@ -39,10 +39,13 @@ function loadProject(project_id) {
                         generateImplementationMicrotasks(project_id, function_id);
                     });
                 }
+                console.log(Project.get('implementationQ'));
+                return Project.get('implementationQ');
             }).catch(function (err) {
                 console.log(err);
             });
         }
+        return result;
     }
 
 }
@@ -145,7 +148,7 @@ function generateImplementationMicrotasks(project_id, function_id){
         microtasks.set(microtask_id,microtask_object);
         implementationQ.push(microtask_id);
         func.isAssigned = true;
-       // firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
+        firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
 
     }
     else{

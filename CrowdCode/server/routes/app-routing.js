@@ -29,7 +29,10 @@ router.get('/login', function(req, res) {
 router.get('/:projectname([a-zA-Z0-9]{3,})', function(req, res) {
 
   const projectName = req.params.projectname;
-  microtaskService.loadProject(projectName);
+  var project_promise = microtaskService.loadProject(projectName);
+  project_promise.then(function(data){
+      console.log(data);
+    });
   console.log("Project Name : " + projectName + "------------------------------");
   res.sendFile('clientDist/client.html', {
     root: publicDir
