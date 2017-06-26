@@ -680,6 +680,9 @@ exports.LogTooltip = LogTooltip;
 });
 
 
+var path = window.location.pathname.split("/");
+if(path.length > 2) window.location.href = "/";
+const projectId = path[path.length-1];
 // create the AngularJS app, load modules and start
 
 // create CrowdCodeWorker App and load modules
@@ -701,6 +704,15 @@ angular
 		'angularytics',
 	])
 	.config(function($dropdownProvider, ngClipProvider, AngularyticsProvider ) {
+		var config = {
+      apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
+      authDomain: "crowdcode2.firebaseapp.com",
+      databaseURL: "https://crowdcode2.firebaseio.com",
+      projectId: "crowdcode2",
+      storageBucket: "crowdcode2.appspot.com",
+      messagingSenderId: "382318704982"
+    };
+    firebase.initializeApp(config);
 
 		AngularyticsProvider.setEventHandlers(['Console', 'GoogleUniversal']);
 
@@ -711,7 +723,7 @@ angular
 	})
 	.constant('workerId'   ,workerId)
   .constant('projectId'  ,projectId)
-	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
+	.constant('firebaseUrl', 'https://crowdcode2.firebaseio.com/Projects/' + projectId )
 	.constant('logoutUrl'  ,logoutURL)
 	.run(function($rootScope, $interval, $modal, $firebaseArray,  firebaseUrl, logoutUrl, userService, functionsService, AdtService, avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics ){
 
@@ -723,7 +735,6 @@ angular
 		$rootScope.userData     = userService.data;
 		$rootScope.logoutUrl    = logoutUrl;
 		$rootScope.avatar       = avatarFactory.get;
-
 
 		var userStatistics            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: 'achievements/achievements_panel.html', show: false});
 		var workerProfile 			= $modal({scope: $rootScope.$new(true), container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: 'worker_profile/workerStatsModal.html', show: false});
@@ -754,9 +765,9 @@ angular
 			servicesLoadingStatus = {};
 			functionsService.init();
 			AdtService.init();
-			questionsService.init();
-			notificationsService.init();
-			newsfeedService.init();
+			//questionsService.init();
+			//notificationsService.init();
+			//newsfeedService.init();
 		}
 
 		function serviceLoaded(event,nameOfTheService){
@@ -822,9 +833,8 @@ angular
 					'workerID'    : $rootScope.workerId,
 					'feedback'    : message.toString()
 				};
-
-
-				var feedbacks = $firebaseArray(new Firebase(firebaseUrl + '/feedback'));
+				var feedbackRef = firebase.database().ref().child('Projects').child(projectId).child('feedback');
+				var feedbacks = $firebaseArray(feedbackRef);
 				feedbacks.$loaded().then(function() {
 					feedbacks.$add(feedback);
 				});
@@ -834,25 +844,28 @@ angular
 
 angular
     .module('crowdCode')
-    .controller('userAchievements', ['$scope','$firebase','avatarFactory','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope,$firebase,avatarFactory,iconFactory,$firebaseArray,firebaseUrl,workerId){
-    	
-    	
+    .controller('userAchievements', ['$scope','avatarFactory','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope, avatarFactory,iconFactory,$firebaseArray,firebaseUrl,workerId){
+
+
     $scope.userStats = [];
     $scope.listOfachievements = [];
-    $scope.icon = iconFactory.get;    	 
+    $scope.icon = iconFactory.get;
     $scope.avatar  = avatarFactory.get;
-    
-    	var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
-     	var statsSync = $firebaseArray(statsRef);
-     	$scope.userStats = statsSync;
+      var statsRef = firebase.database().ref().child('Workers').child(workerId).child('microtaskHistory');
+    	//var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
+     	//var statsSync = $firebaseArray(statsRef);
+     	$scope.userStats = $firebaseArray(statsRef);
      	$scope.userStats.$loaded().then(function(){
+        console.log($scope.userStats);
      	});
-     	
-     	
-    	var achievementsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/listOfAchievements');
-    	var achievementsSync = $firebaseArray(achievementsRef);
-    	$scope.listOfachievements = achievementsSync;
+
+
+    	var achievementsRef  = firebase.database().ref().child('Workers').child(workerId).child('listOfAchievements');
+      //new Firebase(firebaseUrl + '/workers/'+workerId+'/listOfAchievements');
+    	//var achievementsSync = $firebaseArray(achievementsRef);
+    	$scope.listOfachievements = $firebaseArray(achievementsRef);
     	$scope.listOfachievements.$loaded().then(function(){
+        console.log($scope.listOfachievements);
     	});
 }]);
 
@@ -893,7 +906,7 @@ angular.module('crowdCode').filter('statsToShow', function () {
 //angular
 //.module('crowdCode')
 //.directive('userAchievements', ['$firebase','iconFactory','firebaseUrl','workerId', achievements])
-//	
+//
 //function achievements($firebase, iconFactory, firebaseUrl, workerId) {
 //return {
 //    restrict: 'E',
@@ -924,30 +937,26 @@ angular.module('crowdCode').filter('statsToShow', function () {
 //};
 //});
 
+angular
+  .module('crowdCode')
+  .factory("iconFactory", ['firebaseUrl', function(firebaseUrl) {
 
+    var loaded = {};
 
+    var factory = {};
+    factory.get = function(condition) {
+      return {
+        $value: '/img/achievements/' + condition + '.png'
+      };
+    };
 
+    return factory;
+  }]);
 
 
 angular
     .module('crowdCode')
-    .factory("iconFactory",[ '$firebase','firebaseUrl', function( $firebase , firebaseUrl ){
-
-	var loaded = {};
-
-	var factory = {};
-	factory.get = function(condition){
-			return {
-				$value: '/img/achievements/'+condition+'.png'
-			};
-	};
-
-	return factory;
-}]);
-
-angular
-    .module('crowdCode')
-    .directive('chat', function($timeout, $rootScope,  $alert, firebaseUrl, avatarFactory, userService, workerId) {
+    .directive('chat', function($timeout, $rootScope,  $alert, firebaseUrl, avatarFactory, userService, workerId, projectId) {
     return {
         restrict: 'E',
         templateUrl: 'chat/chat_panel.html',
@@ -965,9 +974,10 @@ angular
             });
         },
         controller: function($scope, $element, $rootScope) {
-            // syncs and references to firebase 
-            var chatRef = new Firebase( firebaseUrl + '/chat');
-            
+            // syncs and references to firebase
+            var chatRef = firebase.database().ref().child('Chat').child(projectId);
+            //new Firebase( firebaseUrl + '/chat');
+
             // data about the 'new message' alert
             var alertData = {
                 duration : 4, // in seconds
@@ -985,7 +995,7 @@ angular
             $rootScope.unreadMessages=0;
             $scope.messages = [];
 
-            // for each added message 
+            // for each added message
             chatRef.on('child_added',function(childSnap, prevChildName){
 
                     // get the message data and add it to the list
@@ -998,18 +1008,18 @@ angular
                     if( last !== undefined && last.workerId == message.workerId && ( message.createdAt - last.createdAt ) < 5 * 1000 ) {
                         last.text += '<br />' + message.text;
                         last.createdAt = message.createdAt;
-                    } else 
+                    } else
                         $scope.messages.push(message);
 
                     /*
-                    // if the chat is hidden and the timestamp is 
+                    // if the chat is hidden and the timestamp is
                     // after the timestamp of the page load
-                    if( message.createdAt > startLoadingTime ) 
+                    if( message.createdAt > startLoadingTime )
                         if( !$rootScope.chatActive ){
 
                              // increase the number of unread messages
                             $rootScope.unreadMessages++;
-                            
+
                             // if the current message has been sent
                             // from the same worker of the previous one
                             // and the alert is still on
@@ -1017,26 +1027,26 @@ angular
                                 // append the new text to the current alert
                                 alertData.text += '<br/>'+message.text;
                                 alertData.object.hide();
-                            } else { 
+                            } else {
                                 // set data for the new alert
                                 alertData.text   = message.text;
                                 alertData.worker = message.workerHandle;
                             }
-                           
+
                             // record the creation time of the alert
-                            // and show it 
+                            // and show it
                             alertData.createdAt = new Date().getTime();
                             alertData.object    = $alert({
-                                title    : alertData.worker, 
-                                content  : alertData.text , 
+                                title    : alertData.worker,
+                                content  : alertData.text ,
                                 duration : alertData.duration ,
-                                template : 'chat/alert_chat.html', 
-                                keyboard : true, 
+                                template : 'chat/alert_chat.html',
+                                keyboard : true,
                                 show: true
                             });
-                        } 
+                        }
                     */
-                    
+
                     $timeout( function(){ $scope.$apply() }, 100);
             });
 
@@ -1065,6 +1075,135 @@ angular
         }
     };
 });
+
+/*
+ *  A JSONValitator provides a way to validate json texts.
+ *
+ */
+
+function JSONValidator() {
+  // private variables
+  var text;
+  var isValidParam;
+  var paramType; // String indicating type of parameter
+  var errors = [];
+  var nameToADT = [];
+
+  this.initialize = function(myNameToAdt, myText, myParamType) {
+    text = myText
+    nameToADT = myNameToAdt; //
+    paramType = myParamType;
+
+    isValidParam = false;
+  };
+
+  this.isValid = function() {
+    return isValid();
+  };
+  this.errorCheck = function() {
+    return errorCheck();
+  };
+  this.getErrors = function() {
+    return errors;
+  };
+
+  // Returns true iff the text contained is currently valid
+  function isValid() {
+    return isValidParam;
+  }
+
+  function errorCheck() {
+    errors = [];
+
+    // wrap the value as an assignment to a variable, then syntax check it
+    var stmtToTest = 'var stmt = ' + text + ';';
+    if (!JSHINT(stmtToTest, getJSHintGlobals()))
+      errors.concat(checkForErrors(JSHINT.errors));
+
+    // If there are no syntax errors, check the structure.
+    if (errors == "") {
+      try {
+        errors = checkStructure(JSON.parse(text), paramType);
+      } catch (e) {
+        if (e.message != 'Unexpected token o')
+          errors.push(e.message);
+
+        // We can get an error here if the 1) field names are not surrounded by double quotes, 2) there's a trailing ,
+        // Also need to check that strings are surrounded by double quotes, not single quotes....
+        // errors.push("1) property names are surrounded by double quotes");
+        // errors.push("2) strings are surrounded by double quotes not by single quotes" );
+        // errors.push("3) there are no trailing commas in the list of fields.");
+      }
+    }
+
+    isValidParam = (errors.length == 0) ? true : false;
+  }
+
+  // Checks that the provided struct is correctly formatted as the type in typeName.
+  // Returns an empty string if no errors and an html formatted error string if there are.
+  function checkStructure(struct, typeName, level) {
+    if (struct === null) {
+      // null is an accepted value for any field
+    } else if (typeName == 'String') {
+      if (typeof struct != 'string')
+        errors.push("'" + JSON.stringify(struct) + "' should be a String, but is not");
+    } else if (typeName == "Number") {
+      if (typeof struct != 'number')
+        errors.push("'" + JSON.stringify(struct) + "' should be a Number, but is not");
+    } else if (typeName == "Boolean") {
+      if (typeof struct != 'boolean')
+        errors.push("'" + JSON.stringify(struct) + "' should be a Boolean, but is not");
+    }
+    // Recursive case: check for typeNames that are arrays
+    else if (typeName.endsWith("[]")) {
+      // Check that struct is an array.
+      if (Array.prototype.isPrototypeOf(struct)) {
+        // Recurse on each array element, passing the typename minus the last []
+        for (var i = 0; i < struct.length; i++) {
+          errors.concat(checkStructure(struct[i], typeName.substring(0, typeName.length - 2), level + 1));
+        }
+      } else {
+        errors.push("'" + JSON.stringify(struct) + "' should be an array, but is not. Try enclosing the value in array bracks ([]).");
+      }
+    }
+    // Recursive case: typeName is an ADT name. Recursively check that
+    else if (nameToADT.hasOwnProperty(typeName)) {
+      if (typeof struct == 'object') {
+        var typeDescrip = nameToADT[typeName].structure;
+        var typeFieldNames = [];
+
+        // Loop over all the fields defined in typeName, checking that each is present in struct
+        // and (recursively) that they are of the correct type.
+        for (var i = 0; i < typeDescrip.length; i++) {
+          typeFieldNames.push(typeDescrip[i].name);
+
+          var fieldName = typeDescrip[i].name;
+          var fieldType = typeDescrip[i].type;
+
+
+          if (struct.hasOwnProperty(fieldName))
+            errors.concat(checkStructure(struct[fieldName], fieldType, level + 1));
+          else
+            errors.push("'" + JSON.stringify(struct) + "' is missing the required property " + fieldName);
+        }
+
+        // Loop over all the fields defined in the struct, checking that each
+        // is part of the data type
+        var structFieldNames = Object.keys(struct);
+        for (var f = 0; f < structFieldNames.length; f++)
+          if (typeFieldNames.indexOf(structFieldNames[f]) == -1)
+            errors.push("'" + structFieldNames[f] + "' is not a field of the data type " + typeName);
+
+      } else {
+        errors.push("'" + JSON.stringify(struct) + "' is not an " + typeName);
+      }
+    } else {
+      errors.push("Internal error - " + typeName + " is not a valid type name");
+    }
+
+    return errors;
+  }
+}
 
 function checkForErrors(e)
 {
@@ -1323,7 +1462,8 @@ angular
 		this.getNameToAdt = getNameToAdt;
 
 		function init(){
-			adts = $firebaseArray(new Firebase(firebaseUrl+'/artifacts/ADTs'));
+      adtRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('ADTs');
+			adts = $firebaseArray(adtRef);
 			adts.$loaded().then(function(){
 				// tell the others that the adts services is loaded
 				$rootScope.$broadcast('serviceLoaded','adts');
@@ -1357,7 +1497,7 @@ angular
 			return nameToAdt;
 		}
 
-		
+
 
 	}
 
@@ -1368,14 +1508,14 @@ angular
 // check if a variable type is a valid ADT
 angular
     .module('crowdCode')
-    .directive('adtValidator', ['AdtService', function(AdtService) {
+    .directive('adtValidator', ['AdtUtils', function(AdtUtils) {
     return {
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
 
             ctrl.$parsers.unshift(function(viewValue) {
-                var valid =  viewValue === ""|| viewValue === undefined || AdtService.isValidName(viewValue) ;
+                var valid =  viewValue === ""|| viewValue === undefined || AdtUtils.isValidName(viewValue) ;
                 if (!valid) {
                     ctrl.$setValidity('adt', false);
                     ctrl.$error.adt = "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
@@ -1390,6 +1530,7 @@ angular
         }
     };
 }]);
+
 ////////////////////
 //ADT SERVICE   //
 ////////////////////
@@ -1940,13 +2081,14 @@ angular
 function FunctionArray($firebaseArray, Function) {
 	return $firebaseArray.$extend({
 		$$added: function(snap, prevChild) {
-			return new Function(snap.val(),snap.key());
+			return new Function(snap.val(),snap.key);
 		},
 		$$updated: function(snap) {
-			return this.$getRecord(snap.key()).update(snap.val());
+			return this.$getRecord(snap.key).update(snap.val());
 		}
 	});
 }
+
 
 // check if a functionName is already taken
 angular
@@ -2340,8 +2482,10 @@ angular
 		// Function bodies
 		function init(){
 		    // hook from firebase all the functions declarations of the project
-		    functions = new FunctionArray(new Firebase(firebaseUrl+'/artifacts/functions'));
+        var funcRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Functions');
+		    functions = new FunctionArray(funcRef);
 			functions.$loaded().then(function(){
+        console.log(functions);
 				fList = functions;
 				// tell the others that the functions services is loaded
 				$rootScope.$broadcast('serviceLoaded','functions');
@@ -2411,7 +2555,8 @@ angular
 		function getVersion(id, version){
 			var deferred = $q.defer();
 
-			var ref = new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);			
+			var funcRef = firebase.database().ref().child('Projects').child('history').child('artifacts').child('Functions').child(id).child(version);
+      //new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);
 			var obj = $firebaseObject( ref );
 			obj.$loaded().then(function(){
 				deferred.resolve(new Function(obj));
@@ -2448,7 +2593,6 @@ angular
 
 	return service;
 }]);
-
 
 
 //////////////////////
@@ -2499,9 +2643,10 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId,$root
         templateUrl: 'leaderboard/leaderboard.template.html',
         controller: function($scope, $element) {
             $scope.avatar  = avatarFactory.get;
-            $scope.leaders = $firebaseArray(new Firebase(firebaseUrl + '/leaderboard/leaders'));
+            var leaderRef = firebase.database().ref().child('Projects').child('leaderboard').child('leaders');
+            $scope.leaders = $firebaseArray(leaderRef);
             $scope.leaders.$loaded().then(function() {});
-            
+
             $scope.clicked = function(workerToShow){
             	if(workerToShow.$id != workerId){
             		$rootScope.$broadcast('showWorkerProfile',workerToShow.$id);
@@ -2511,10 +2656,11 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId,$root
             	}
             }
         }
-    
-   
+
+
     };
 }
+
 
 
 ///////////////////////////////
@@ -4059,7 +4205,8 @@ angular
 
 		// Public functions
 		function get (id){
-			var microtask = $firebaseObject(new Firebase(firebaseUrl+'/microtasks/'+id));
+      var microtaskRef = firebase.database().ref().child('Projects').child(projectId).child('microtasks').child(id);
+			var microtask = $firebaseObject(microtaskRef);
 			return microtask;
 		}
 
@@ -4071,7 +4218,7 @@ angular
 			var disablePoint = autoSkip ? 'true':'false';
 
 			// submit to the server
-			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
+			$http.post('/api/v1/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -4089,7 +4236,7 @@ angular
 			var deferred = $q.defer();
 
 			// ask the microtask id
-			$http.get('/' + projectId + '/ajax/fetch')
+			$http.get('/api/v1' + projectId + '/ajax/fetch')
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -4108,7 +4255,7 @@ angular
 			var deferred = $q.defer();
 
 			$http
-				.get('/' + projectId + '/ajax/pickMicrotask?id='+ microtaskId)
+				.get('/api/v1/' + projectId + '/ajax/pickMicrotask?id='+ microtaskId)
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -4130,13 +4277,14 @@ angular
 				});
 			}
 		}
-		
-		
+
+
 
 	}
 
 	return service;
 }]);
+
 ///////////////////////////////
 //  NO MICROTASK CONTROLLER //
 ///////////////////////////////

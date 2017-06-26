@@ -47,6 +47,40 @@ module.exports = function(wagner) {
     };
   }));
 
+  api.post('/:projectId/ajax/enqueue', wagner.invoke(function(FirebaseService, MicrotaskService) {
+    return function(req, res) {
+      let projectId = req.params.projectId;
+      let type = req.query.type;
+      let key = req.query.key;
+      let skip = req.query.skip;
+      let disablepoint = req.query.disablepoint;
+      let autoFetch = req.query.autoFetch;
+      let data = req.body;
+      res.sendStatus(status.ACCEPTED);
+    };
+  }));
+
+  api.get('/:projectId/ajax/fetch', wagner.invoke(function(FirebaseService, MicrotaskService) {
+    return function(req, res) {
+      let projectId = req.params.projectId;
+      FirebaseService.retrieveMicrotaskList(projectId).then(data => {
+        res.json(data);
+      }).catch(err => {
+        res.sendStatus(status.BAD_REQUEST);
+      });
+    };
+  }));
+
+  api.get('/:projectId/ajax/pickMicrotask', wagner.invoke(function(FirebaseService, MicrotaskService) {
+    return function(req, res) {
+      let projectId = req.params.projectId;
+      let microtaskId = req.query.id;
+      res.json({
+        projectId: projectId
+      });
+    };
+  }));
+
   /* Product API */
   api.get('/project/:id', wagner.invoke(function(AdminFirebase) {
     return function(req, res) {
@@ -108,8 +142,7 @@ module.exports = function(wagner) {
       var idToken = req.headers['authorization'].split(' ').pop();
       var clientReq = req.body;
       UserService.getUserByToken(idToken).then(user => {
-        FirebaseService.createClientRequest(id,clientReq, user.uid);
-        MicrotaskService.loadProjects();
+        FirebaseService.createClientRequest(id, clientReq, user.uid);
         res.json({
           "result": "created"
         });
@@ -128,7 +161,9 @@ module.exports = function(wagner) {
       let id = req.params.id;
       let clientReq = req.body;
       FirebaseService.updateClientRequest(id, clientReq);
-      res.json({"result": "updated"});
+      res.json({
+        "result": "updated"
+      });
     }
   }));
 

@@ -481,9 +481,10 @@ module.exports = function(AdminFirebase) {
         function_name: function_name,
         function_version: function_version,
         tests: tests,
+        type: "implementationMicrotask",
         worker: "null"
       }
-      var path = 'Projects/' + project_id + '/microtasks/implementation';
+      var path = 'Projects/' + project_id + '/microtasks/';
       var created_child = root_ref.child(path).push(microtask_schema);
       return created_child.key;
     },
@@ -591,6 +592,13 @@ module.exports = function(AdminFirebase) {
         return data.val();
       });
       return promise;
+    },
+
+    retrieveMicrotaskList: function(projectId) {
+       var path = 'Projects/' + projectId + '/microtasks';
+       return root_ref.child(path).once("value").then(function(data) {
+         return data.val();
+       });
     },
 
 
