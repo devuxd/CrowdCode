@@ -61,6 +61,36 @@ module.exports = function(wagner) {
     };
   }));
 
+  api.post('/:projectId/ajax/challengeReview', wagner.invoke(function(FirebaseService) {
+    return (req, res) => {
+      let reviewKey = req.query.reviewKey;
+      let data = req.body;
+      res.json({
+        result: "not implemented yet"
+      });
+    };
+  }));
+
+  api.post('/:projectId/ajax/testResult', wagner.invoke(function(FirebaseService) {
+    return (req, res) => {
+      let functionId = req.query.functionId;
+      let data = req.body;
+      res.json({
+        result: "not implemented yet"
+      });
+    };
+  }));
+
+  api.post('/:projectId/logout', wagner.invoke(function(FirebaseService) {
+    return (req, res) => {
+      let workerid = req.query.workerid;
+      let data = req.body;
+      res.json({
+        result: "not implemented yet"
+      });
+    };
+  }));
+
   api.get('/:projectId/ajax/fetch', wagner.invoke(function(FirebaseService, MicrotaskService) {
     return function(req, res) {
       let projectId = req.params.projectId;

@@ -765,9 +765,9 @@ angular
 			servicesLoadingStatus = {};
 			functionsService.init();
 			AdtService.init();
-			//questionsService.init();
-			//notificationsService.init();
-			//newsfeedService.init();
+			questionsService.init();
+			notificationsService.init();
+			newsfeedService.init();
 		}
 
 		function serviceLoaded(event,nameOfTheService){
@@ -2898,15 +2898,15 @@ angular
 
 angular
 	.module('crowdCode')
-	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',  
+	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',
                                  function($scope,$rootScope,$firebase,$firebaseArray,$timeout,microtasksService,firebaseUrl, workerId){
-	
+
 	$scope.availableMicrotasks = [];
-	
+
 	var types = [
 			'Review',
 			'DescribeFunctionBehavior',
-			'ImplementBehavior',
+      'ImplementBehavior',
 			'ChallengeReview'
 	];
 
@@ -2923,58 +2923,61 @@ angular
 		return -1;
 	};
 
-	
+
 	// populate filters with microtasks types
 	$scope.filterEnabled = {};
 
 	angular.forEach(types,function(value,index){
 		$scope.filterEnabled[value] = true;
 		$scope.typesCount[value] = 0;
-	});	
-	
-	
+	});
+
+
 	$scope.microtaskQueue = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/status/microtaskQueue/queue');
+	var microtasksRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('microtaskQueue').child('queue');
+	// new Firebase(firebaseUrl+'/status/microtaskQueue/queue');
 	$scope.microtaskQueue = $firebaseArray(microtasksRef);
 	$scope.microtaskQueue.$loaded().then(function(){
-	});	
-	
+	});
+
 	$scope.reviewQueue = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/status/reviewQueue/queue');
+	var microtasksRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('reviewQueue').child('queue');
+	//new Firebase(firebaseUrl+'/status/reviewQueue/queue');
 	$scope.reviewQueue = $firebaseArray(microtasksRef);
 	$scope.reviewQueue.$loaded().then(function(){
-	});	
-	
+	});
 
-	
+
+
 	$scope.microtasks = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/microtasks/');
+	var microtasksRef  =  firebase.database().ref().child('Projects').child(projectId).child('microtasks').child('implementation');
+	// new Firebase(firebaseUrl+'/microtasks/');
 	var microtasksSync = $firebaseArray(microtasksRef);
 	$scope.microtasks = microtasksSync;
 	$scope.microtasks.$loaded().then(function(){
-	});	
+	});
 
 	$scope.microtasks.$watch(function(event){
 		var task = $scope.microtasks.$getRecord(event.key)
 		switch(event.event){
 			case 'child_added':
 				if(task.excluded != null){
-	           		if(task.excluded.search(workerId) === -1) 
+	           		if(task.excluded.search(workerId) === -1)
 	           			$scope.typesCount[task.type]++
-	            } 
+	            }
 	            else{
 	            	$scope.typesCount[task.type]++
 	            }
-			
+
 				break;
-				
-			default: 
+
+			default:
 		}
 	});
 
@@ -2988,7 +2991,7 @@ angular
 		else {
 			$scope.orderReverse   = true;
 			$scope.orderPredicate = predicate;
-		} 
+		}
 	};
 
 	$scope.assignMicrotask = function(task){
@@ -3012,7 +3015,7 @@ return function (microtasks,microtaskQueue,reviewQueue, availableMicrotasks) {
     		if(value.$id == microtaskQueue[i].$value){
     			available = true;
     			availableMicrotasks.push(value);
-    		}    			
+    		}
     	}
     	if(!available){
 	    	for(var i=0;i<reviewQueue.length;i++){
@@ -3025,18 +3028,18 @@ return function (microtasks,microtaskQueue,reviewQueue, availableMicrotasks) {
     	if(available){
     	//if (value.assigned != true && value.completed != true && value.waitingReview != true) {
            	if(value.excluded != null){
-           		if(value.excluded.search(workerId) === -1) 
+           		if(value.excluded.search(workerId) === -1)
            			this.out.push(value);
-            } 
+            }
             else{
             	this.out.push(value);
             }
-      //  } 
+      //  }
     	}
     }, items);
     return items.out;
 };
-}); 
+});
 
 angular
 	.module('crowdCode')
@@ -3068,7 +3071,7 @@ angular
             if (value.waitingReview == true && value.review == undefined) {
                 this.out.push(value);
             }
-        }	
+        }
         }, items);
         return items.out;
     };
@@ -3108,8 +3111,6 @@ angular
         return items.out;
     };
 });
-
-
 
 
 // ///////////////////////////////
@@ -4205,7 +4206,7 @@ angular
 
 		// Public functions
 		function get (id){
-      var microtaskRef = firebase.database().ref().child('Projects').child(projectId).child('microtasks').child(id);
+      var microtaskRef = firebase.database().ref().child('Projects').child(projectId).child('microtasks').child('implementation').child(id);
 			var microtask = $firebaseObject(microtaskRef);
 			return microtask;
 		}
@@ -4236,7 +4237,7 @@ angular
 			var deferred = $q.defer();
 
 			// ask the microtask id
-			$http.get('/api/v1' + projectId + '/ajax/fetch')
+			$http.get('/api/v1/' + projectId + '/ajax/fetch')
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -4291,11 +4292,12 @@ angular
 angular
     .module('crowdCode')
     .controller('NoMicrotaskController', ['$scope', '$rootScope',  'firebaseUrl', '$firebaseArray', 'avatarFactory','workerId', function($scope, $rootScope,  firebaseUrl,$firebaseArray, avatarFactory, workerId) {
-    
+
 
 	$scope.avatar = avatarFactory.get;
 	// create the reference and the sync
-	$scope.leaders = $firebaseArray(new Firebase(firebaseUrl + '/leaderboard/leaders'));
+  var leadersRef = firebase.database().ref().child('Projects').child(projectId).child('leaderboard').child('leaders');
+	$scope.leaders = $firebaseArray(leadersRef);
 	$scope.leaders.$loaded().then(function() {});
 
 
@@ -4785,12 +4787,13 @@ angular
 		this.get = get;
 		this.init = init;
 		this.challengeReview=challengeReview;
-		
+
 		// Function bodies
 		function init()
 		{
 		    // hook from firebase all the functions declarations of the project
-		   	var ref = new Firebase(firebaseUrl + '/workers/' + workerId + '/newsfeed');
+		   	var ref = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('newsfeed');
+        //new Firebase(firebaseUrl + '/workers/' + workerId + '/newsfeed');
 			newsfeed =$firebaseArray(ref);
 			newsfeed.$loaded().then(function(){
 				// tell the others that the newsfeed services is loaded
@@ -4801,7 +4804,7 @@ angular
 		function get (){
 			return newsfeed;
 		}
-		
+
 		function challengeReview(reviewKey, challengeText)
 		{
 			console.log(reviewKey);
@@ -4822,6 +4825,7 @@ angular
 }]);
 
 
+
 ///////////////////////
 // QUESTIONS SERVICE //
 ///////////////////////
@@ -4829,8 +4833,9 @@ angular
     .module('crowdCode')
     .factory('notificationsService', [ '$rootScope',  'firebaseUrl', 'workerId', 'toaster', 'questionsService' , function( $rootScope,  firebaseUrl, workerId, toaster, questionsService) {
 
-	var ref = new Firebase( firebaseUrl + '/notifications/' + workerId );
-	
+	var ref = firebase.database().ref().child('Projects').child(projectId).child('notifications').child(workerId);
+  // new Firebase( firebaseUrl + '/notifications/' + workerId );
+
 	var service = new function(){
 		this.init = function(){
 			ref.on('child_added',function(snap){
@@ -4925,7 +4930,7 @@ angular
 						case 'challenge.won':
 							toast.type = 'success';
 							toast.body = 'You won the challenge on the '+val.microtaskType+' on the artifact '+val.artifactName;
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('setLeftBarTab','newsfeed');
 								$rootScope.$broadcast('showNews', val.microtaskId );
 							};
@@ -4934,38 +4939,37 @@ angular
 						case 'worker.levelup':
 							toast.type = 'success';
 							toast.body = 'Level up!\n'+val.prevLevel+'->'+val.currentLevel;
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
 						case 'new.achievement':
 							toast.type = 'success';
 							toast.body = val.message + ' Congratulations!';
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('showUserStatistics');
 							};
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
 						case 'dashboard':
 							toast.type = 'success';
 							toast.body = 'You unlocked the dashboard. Congratulations!';
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('openDashboard');
 							};
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
-							
+
 
 						default:
 					}
 
-					snap.ref().update({'read':true});      
+					snap.ref().update({'read':true});
 				}
 			});
 		};
 	};
 
-	return service; 
+	return service;
 }]);
-
 
 angular.module('crowdCode').directive('questionDetail',function($timeout,firebaseUrl,workerId,questionsService){
 	return {
@@ -5234,7 +5238,8 @@ angular
 		var questions;
 		var allTags = [];
 		var loaded = false;
-		var firebaseRef = new Firebase(firebaseUrl+'/questions');
+		var firebaseRef = firebase.database().ref().child('Projects').child(projectId).child('questions');
+    // new Firebase(firebaseUrl+'/questions');
 
 		var idx = lunr(function(){
 			this.ref('id');
@@ -5329,7 +5334,7 @@ angular
 							idx.add( doc );
 							addToAllTags(q.tags);
 							break;
-						case 'child_changed': 
+						case 'child_changed':
 							idx.update( doc );
 							break;
 						case 'child_removed':
@@ -5339,7 +5344,7 @@ angular
 					}
 				});
 			});
-			
+
 
 		}
 
@@ -5355,15 +5360,15 @@ angular
 			var deferred = $q.defer();
 			var url = '';
 
-			if( type != 'question' || formData.id == 0 ) 
+			if( type != 'question' || formData.id == 0 )
 				url = 'insert?type=' + type;
-			else                   
+			else
 				url = 'update?id=' + formData.id;
 
 			// replace all the occurrences of the newline '\n' with the html <br>
 			// TODO: check for other formatting syntax
 			formData.text = formData.text.replace(new RegExp('\n', 'g'),'<br />');
-			
+
 
 			$http.post('/' + $rootScope.projectId + '/questions/' + url , formData)
 				.success(function(data, status, headers, config) {
@@ -5374,7 +5379,7 @@ angular
 				});
 			return deferred.promise;
 		}
-		
+
 		function tag(id, tag, remove){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/tag?id=' + id + '&tag='+tag+'&remove='+remove)
@@ -5439,9 +5444,9 @@ angular
 			firebaseRef.child( id+'/views/'+workerId ).set( view );
 		}
 
-		function updateViewCounter(questionId){	
+		function updateViewCounter(questionId){
 			var viewsObj = $firebaseObject(new Firebase(firebaseUrl+'/questions/'+questionId));
-			viewsObj.$loaded().then(function(){    
+			viewsObj.$loaded().then(function(){
 			if(workerId != viewsObj.ownerId){
 				if(viewsObj.viewCounter == undefined){
 					viewsObj.viewCounter = 1;
@@ -5450,21 +5455,21 @@ angular
 					viewsObj.viewCounter += 1;
 					if(viewsObj.viewCounter == 15)
 						sendQuestionViews(viewsObj.viewCounter);
-				}				
+				}
 					viewsObj.$save();
 			}
 			});
 		}
-		
+
 		function sendQuestionViews(views){
 			$http.get('/' + projectId + '/ajax/questionViews?id='+ views)
 			.success(function(data, status, headers, config) {
 			})
 			.error(function(data, status, headers, config) {
 
-			});		
+			});
 		}
-		
+
 		function addWorkerView(id){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
@@ -5480,9 +5485,8 @@ angular
 		}
 	};
 
-	return service; 
+	return service;
 }]);
-
 
 angular.module('crowdCode').directive('questionList',function($rootScope,$tooltip,$timeout,workerId,firebaseUrl, questionsService, microtasksService){
 	return {
@@ -5975,11 +5979,11 @@ angular
 angular
     .module('crowdCode')
     .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebaseObject',  'firebaseUrl','workerId','$http', function($rootScope, $compile, $timeout, $firebaseObject, firebaseUrl,workerId,$http) {
-    
+
     // get the synced objects from the backend
-    var tutorialsOn        = $firebaseObject( new Firebase( firebaseUrl + '/status/settings/tutorials') );
-    var completedTutorials = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) );
-    var tutorialCounter    = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/tutorialCounter' ) );
+    var tutorialsOn        = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('status').child('settings').child('tutorials'));
+    var completedTutorials = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('completedTutorials'));
+    var tutorialCounter    = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('tutorialCounter'));
 
 
     var queue    = [];
@@ -6001,7 +6005,7 @@ angular
             // it is called when the tutorial is closed
             $scope.endTutorial = endTutorial;
 
-            // if the tutorial is forced or if 
+            // if the tutorial is forced or if
             // is not completed, enqueue it
             function queueTutorial( event, tutorialId, force, onFinish, queueAfter ){
                 console.log('queuing tutorial '+tutorialId);
@@ -6011,7 +6015,7 @@ angular
                             // queue tutorial
                             queue.push({
                                 id       : tutorialId,
-                                onFinish : queueAfter === undefined ? 
+                                onFinish : queueAfter === undefined ?
                                            onFinish :
                                            function(){ queueTutorial(null,queueAfter,true); }
                             });
@@ -6035,7 +6039,7 @@ angular
                     startTutorial();
                 }
             }
-            
+
             function sendTutorialsCompleted(){
     			$http.get('/' + projectId + '/ajax/tutorialCompleted')
     				.success(function(data, status, headers, config) {
@@ -6044,7 +6048,7 @@ angular
 
     			});
     		}
-            
+
             // start the current tutorial
             function startTutorial(){
                 running = true;
@@ -6061,7 +6065,7 @@ angular
 
                 if( !isTutorialCompleted(currentId) )
                     setTutorialCompleted(currentId);
-                
+
                 $element.html( '' );
 
                 if( currentOnFinish !== undefined ){
@@ -6071,7 +6075,7 @@ angular
 
                 currentId       = undefined;
                 currentOnFinish = undefined;
-                
+
                 checkQueue();
 
                 $rootScope.$broadcast('tutorial-finished');
@@ -6081,7 +6085,7 @@ angular
             // false if not
             function isTutorialCompleted( tutorialId ){
                 console.log(completedTutorials);
-                if( completedTutorials.$value !== undefined && completedTutorials.$value !== null && completedTutorials.$value.search(tutorialId) > -1 ) 
+                if( completedTutorials.$value !== undefined && completedTutorials.$value !== null && completedTutorials.$value.search(tutorialId) > -1 )
                     return true;
 
                 return false;
@@ -6093,8 +6097,8 @@ angular
                     completedTutorials.$value = tutorialId;
                     tutorialCounter.$value =  1;
                 }
-                else{ 
-                    completedTutorials.$value += ','+tutorialId; 
+                else{
+                    completedTutorials.$value += ','+tutorialId;
                     tutorialCounter.$value +=  1;
                 }
                 if(tutorialCounter.$value == 3)
@@ -6226,7 +6230,8 @@ angular
 		if(loaded.hasOwnProperty(workerId)){
 			return loaded[workerId];
 		} else {
-			loaded[workerId] = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+workerId+'/avatarUrl'));
+
+			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('avatarUrl'));
 			loaded[workerId].$loaded().then(function(){
 				return loaded[workerId];
 			});
@@ -6235,6 +6240,7 @@ angular
 
 	return factory;
 }]);
+
 ////////////////////
 // USER SERVICE   //
 ////////////////////
@@ -6245,15 +6251,20 @@ angular
 
  	// retrieve the firebase references
 
- 	var fbRef = new Firebase(firebaseUrl);
+ 	// var fbRef = new Firebase(firebaseUrl);
 
-	var userProfile    = fbRef.child('/workers/' + workerId);
+	var userProfile    = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId);
+  // fbRef.child('/workers/' + workerId);
 
-	var isConnected    = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-	var offsetRef 	   = new Firebase("https://crowdcode.firebaseio.com/.info/serverTimeOffset");
-	
-	var loginRef  = fbRef.child('/status/loggedInWorkers/' + workerId);
-	var logoutRef = fbRef.child('/status/loggedOutWorkers/'+ workerId);
+	var isConnected    = firebase.database().ref().child('.info').child('connected');
+  //new Firebase('https://crowdcode.firebaseio.com/.info/connected');
+	var offsetRef 	   = firebase.database().ref().child('.info').child('serverTimeOffset');
+  // new Firebase("https://crowdcode.firebaseio.com/.info/serverTimeOffset");
+
+	var loginRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedInWorkers').child(workerId);
+  // fbRef.child('/status/loggedInWorkers/' + workerId);
+	var logoutRef = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedOutWorkers').child(workerId);
+  //fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
 	var updateLogInTime = function(){
 		loginRef.setWithPriority({
@@ -6315,7 +6326,9 @@ angular
 
 	// distributed test runner
     user.listenForJobs = function(){
-		var queueRef = new Firebase(firebaseUrl+ "/status/testJobQueue/");
+
+		var queueRef = firebase.database().ref().child('Projects').child(projectId).child('status').child('testJobQueue');
+    // new Firebase(firebaseUrl+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
 			console.log('Receiving job ',jobData);
 
@@ -6385,7 +6398,7 @@ angular
 						});
 				});
 
-				
+
 			}
 		});
 	};
@@ -6396,13 +6409,14 @@ angular
 	// and then send the logout command to the server
 	// distributed logout work
     user.listenForLogoutWorker = function(){
-    	var logoutQueue     = new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
+    	var logoutQueue     = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedOutWorkers');
+      // new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
 
 
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 
 			//retrieves the reference to the worker to log out
-			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
+			var logoutWorker = logoutQueue.child(jobData.workerId);
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 
@@ -6411,7 +6425,8 @@ angular
 				//time of the client plus the timezone offset given by firebase
 				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field
-				var userLoginRef  = new Firebase( firebaseUrl + '/status/loggedInWorkers/' + jobData.workerId );
+				var userLoginRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedInWorkers').child(jobData.workerId);
+        // new Firebase( firebaseUrl + '/status/loggedInWorkers/' + jobData.workerId );
 				userLoginRef.once("value", function(userLogin) {
 					//if the user doesn't uddate the timer for more than 30 seconds than log it out
 				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){
@@ -7367,9 +7382,9 @@ angular
 
 angular
 	.module('crowdCode')
-	.directive('workerProfile', ['$firebase','avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile]);
-	
-function workerProfile($firebase, avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
+	.directive('workerProfile', ['avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile]);
+
+function workerProfile(avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
   return {
     restrict: 'EA',
     scope:{workerProfile:"="},
@@ -7379,34 +7394,29 @@ function workerProfile($firebase, avatarFactory,iconFactory, firebaseUrl,$fireba
       $scope.hasAchievement = false;
       $scope.workerStats = [];
       $scope.listOfachievements = [];
-      $scope.icon = iconFactory.get;    	 
+      $scope.icon = iconFactory.get;
       $scope.currentId = 0;
       $scope.avatar  = avatarFactory.get;
-      
+
       $scope.gotAchievement = function(){
     	  $scope.hasAchievement = true;
       }
-      
-    	var nameObj = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/workerHandle'));
+    	var nameObj = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('workerHandle'));
   	  nameObj.$loaded().then(function(){
   		  $scope.workerName = nameObj.$value;
   	  });
 
-	   	$scope.workerStats = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/microtaskHistory'));
+	   	$scope.workerStats = $firebaseArray(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('microtaskHistory'));
   	  $scope.workerStats.$loaded().then(function(){
 	    });
-           	
-    	$scope.listOfachievements = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/listOfAchievements'));
+
+    	$scope.listOfachievements = $firebaseArray(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('listOfAchievements'));
     	$scope.listOfachievements.$loaded().then(function(){
         console.log('list of achievements loaded');
     	});
     }
 	}
 }
-
-
-
-
 
 angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
 
