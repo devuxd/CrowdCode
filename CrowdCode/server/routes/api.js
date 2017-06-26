@@ -56,6 +56,7 @@ module.exports = function(wagner) {
       let disablepoint = req.query.disablepoint;
       let autoFetch = req.query.autoFetch;
       let data = req.body;
+      //TODO implement the function to return proper result
       res.sendStatus(status.ACCEPTED);
     };
   }));
@@ -63,11 +64,7 @@ module.exports = function(wagner) {
   api.get('/:projectId/ajax/fetch', wagner.invoke(function(FirebaseService, MicrotaskService) {
     return function(req, res) {
       let projectId = req.params.projectId;
-      FirebaseService.retrieveMicrotaskList(projectId).then(data => {
-        res.json(data);
-      }).catch(err => {
-        res.sendStatus(status.BAD_REQUEST);
-      });
+      res.sendStatus(status.ACCEPTED);
     };
   }));
 
@@ -143,6 +140,7 @@ module.exports = function(wagner) {
       var clientReq = req.body;
       UserService.getUserByToken(idToken).then(user => {
         FirebaseService.createClientRequest(id, clientReq, user.uid);
+        //MicrotaskService.loadProjects();
         res.json({
           "result": "created"
         });
