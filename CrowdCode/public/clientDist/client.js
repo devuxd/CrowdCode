@@ -6332,7 +6332,7 @@ angular
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
 			console.log('Receiving job ',jobData);
 
-			var jobRef = queueRef.child('/'+jobData.functionId);
+			var jobRef = queueRef.child(jobData.functionId);
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
 

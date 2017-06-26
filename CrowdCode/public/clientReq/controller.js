@@ -163,6 +163,8 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
           for (var index in funct.parameters)
             funct.header += funct.parameters[index].name + (index == funct.parameters.length - 1 ? "" : ", ");
           funct.header += ")";
+          console.log(funct.stubs);
+          if(funct.stubs.length === 0) funct.stubs = '';
         });
 
         project.functions = $scope.functions;

@@ -94,7 +94,8 @@ module.exports = function(wagner) {
   api.get('/:projectId/ajax/fetch', wagner.invoke(function(FirebaseService, MicrotaskService) {
     return function(req, res) {
       let projectId = req.params.projectId;
-      res.sendStatus(status.ACCEPTED);
+      let microtask = MicrotaskService.fetchMicrotask(projectId);
+      res.json(microtask);
     };
   }));
 
