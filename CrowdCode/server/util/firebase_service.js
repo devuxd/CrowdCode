@@ -151,8 +151,8 @@ module.exports = function(AdminFirebase) {
         isReadOnly: true,
         isApiArtifact: true,
         version: 0,
-        structure: "null",
-        examples: "null"
+        structure: [],
+        examples: []
       };
       let stringKey = this.createADTWrapper(project_id, string);
       this.createEvent(project_id, "ADT", stringKey, "String", "ADT.Created", "Create ADT from client request", "null");
@@ -163,8 +163,8 @@ module.exports = function(AdminFirebase) {
         isReadOnly: true,
         isApiArtifact: true,
         version: 0,
-        structure: "null",
-        examples: "null"
+        structure: [],
+        examples: []
       };
       let numberKey = this.createADTWrapper(project_id, number);
       this.createEvent(project_id, "ADT", numberKey, "Number", "ADT.Created", "Create ADT from client request", "null");
@@ -175,8 +175,8 @@ module.exports = function(AdminFirebase) {
         isReadOnly: true,
         isApiArtifact: true,
         version: 0,
-        structure: "null",
-        examples: "null"
+        structure: [],
+        examples: []
       };
       let booleanKey = this.createADTWrapper(project_id, boolean);
       this.createEvent(project_id, "ADT", booleanKey, "Boolean", "ADT.Created", "Create ADT from client request", "null");

@@ -1,3 +1,6 @@
+var path = window.location.pathname.split("/");
+if(path.length > 2) window.location.href = "/";
+const projectId = path[path.length-1];
 // create the AngularJS app, load modules and start
 
 // create CrowdCodeWorker App and load modules
@@ -19,6 +22,15 @@ angular
 		'angularytics',
 	])
 	.config(function($dropdownProvider, ngClipProvider, AngularyticsProvider ) {
+		var config = {
+      apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
+      authDomain: "crowdcode2.firebaseapp.com",
+      databaseURL: "https://crowdcode2.firebaseio.com",
+      projectId: "crowdcode2",
+      storageBucket: "crowdcode2.appspot.com",
+      messagingSenderId: "382318704982"
+    };
+    firebase.initializeApp(config);
 
 		AngularyticsProvider.setEventHandlers(['Console', 'GoogleUniversal']);
 
@@ -29,7 +41,7 @@ angular
 	})
 	.constant('workerId'   ,workerId)
   .constant('projectId'  ,projectId)
-	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
+	.constant('firebaseUrl', 'https://crowdcode2.firebaseio.com/Projects/' + projectId )
 	.constant('logoutUrl'  ,logoutURL)
 	.run(function($rootScope, $interval, $modal, $firebaseArray,  firebaseUrl, logoutUrl, userService, functionsService, AdtService, avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics ){
 
@@ -41,7 +53,6 @@ angular
 		$rootScope.userData     = userService.data;
 		$rootScope.logoutUrl    = logoutUrl;
 		$rootScope.avatar       = avatarFactory.get;
-
 
 		var userStatistics            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/achievements/achievements_panel.html', show: false});
 		var workerProfile 			= $modal({scope: $rootScope.$new(true), container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: '/client/worker_profile/workerStatsModal.html', show: false});
@@ -140,9 +151,8 @@ angular
 					'workerID'    : $rootScope.workerId,
 					'feedback'    : message.toString()
 				};
-
-
-				var feedbacks = $firebaseArray(new Firebase(firebaseUrl + '/feedback'));
+				var feedbackRef = firebase.database().ref().child('Projects').child(projectId).child('feedback');
+				var feedbacks = $firebaseArray(feedbackRef);
 				feedbacks.$loaded().then(function() {
 					feedbacks.$add(feedback);
 				});
