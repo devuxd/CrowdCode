@@ -39,7 +39,6 @@ function loadProject(project_id) {
                         generateImplementationMicrotasks(project_id, function_id);
                     });
                 }
-                console.log(Project.get('implementationQ'));
                 return Project.get('implementationQ');
             }).catch(function (err) {
                 console.log(err);
@@ -148,7 +147,7 @@ function generateImplementationMicrotasks(project_id, function_id){
         microtasks.set(microtask_id,microtask_object);
         implementationQ.push(microtask_id);
         func.isAssigned = true;
-        firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
+        //firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
 
     }
     else{
