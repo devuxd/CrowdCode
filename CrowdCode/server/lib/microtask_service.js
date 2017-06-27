@@ -384,8 +384,8 @@ function skipMicrotask(project_id, worker_id){
         var skipped_task = worker.get('skipped');
         var assigned_task = worker.get('assigned');
 
-        //Worker cannot skip more than
-        if(skipped_task.length > 0 && skipped_task.length < 5){
+        //Can add upper limit to allowed number of skips
+        if(skipped_task.length >= 0 ){
             var microtask_id = assigned_task.get('id');
             var microtask_type = assigned_task.get('type');
 
