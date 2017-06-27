@@ -317,12 +317,13 @@ function fetchMicrotask(project_id, worker_id){
                 microtask_id = null;
             } else {
                 microtask_id = implementationQ.shift();
-                microtask_type = "implementation";
+                microtask_type = "DescribeFunctionBehavior";
             }
         }
         if (reviewQ.length > 0) {
             microtask_id = reviewQ.shift();
-            microtask_type = "review";
+            microtask_type = "Review";
+
         }
     }
     else{
@@ -333,10 +334,10 @@ function fetchMicrotask(project_id, worker_id){
         assigned_task.set('id',microtask_id);
         assigned_task.set('type',microtask_type);
         var microtask_object = microtasks.get(microtask_id);
-        var return_object = {"id": microtask_id, "type": microtask_type, "object": microtask_object};
+        var return_object = {"microtaskKey":microtask_id,"type":microtask_type,"object":microtask_object};
     }
     else{
-        var return_object = {"id": "none"};
+        var return_object = {"microtaskKey": "none"};
     }
     return return_object;
 }
