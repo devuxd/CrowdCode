@@ -12,7 +12,6 @@ wagner.invoke(function(FirebaseService){
  */
 function loadProject(project_id) {
     if(Projects.has(project_id) === false) {
-
         Projects.set(project_id, new Map());
         var Project = Projects.get(project_id);
         Project.set('functions', new Map());
@@ -45,6 +44,9 @@ function loadProject(project_id) {
             });
         }
         return result;
+    }
+    else {
+        return null;
     }
 
 }
@@ -273,15 +275,24 @@ function fetchMicrotask(project_id){
     var microtask_type;
     if(reviewQ.length === 0){
         var implementationQ= Project.get('implementationQ');
-        microtask_id = implementationQ.shift();
-        microtask_type = "implementation";
+        if(implementationQ.length === 0){
+            microtask_id = null;
+        }else {
+            microtask_id = implementationQ.shift();
+            microtask_type = "implementation";
+        }
     }
     if(reviewQ.length > 0){
-        microtask_id = reviewQ.shift();
-        microtask_type = "review";
+            microtask_id = reviewQ.shift();
+            microtask_type = "review";
     }
-    var microtask_object = microtasks.get(microtask_id);
-    var return_object = {"id":microtask_id,"type":microtask_type,"object":microtask_object};
+    if(microtask_id !== null) {
+        var microtask_object = microtasks.get(microtask_id);
+        var return_object = {"id": microtask_id, "type": microtask_type, "object": microtask_object};
+    }
+    else{
+        var return_object = {"id": "none"};
+    }
     return return_object;
 }
 

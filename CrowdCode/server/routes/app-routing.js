@@ -30,12 +30,14 @@ router.get('/:projectname([a-zA-Z0-9]{3,})', function(req, res) {
 
   const projectName = req.params.projectname;
   var project_promise = microtaskService.loadProject(projectName);
-  project_promise.then(function(){
-  console.log("Project Name : " + projectName + "------------------------------");
-  res.sendFile('clientDist/client.html', {
-    root: publicDir
-  });
-});
+  if(project_promise !== null) {
+      project_promise.then(function () {
+          console.log("Project Name : " + projectName + "------------------------------");
+          res.sendFile('clientDist/client.html', {
+              root: publicDir
+          });
+      });
+  }
 });
 
 module.exports = router;
