@@ -19,6 +19,7 @@ function loadProject(project_id) {
         Project.set('microtasks', new Map());
         Project.set('implementationQ', new Array());
         Project.set('reviewQ', new Array());
+        Project.set('workers',new Map());
         var result = null;
         var functions = Project.get('functions');
         var function_load_result = loadFunctions(project_id);
@@ -190,6 +191,14 @@ function generateReviewMicrotask(project_id, reference_task__id){
 function submitImplementationMicrotask(project_id,microtask_id, microtask_code, microtask_tests, worker_id){
     var Project = Projects.get(project_id);
     var microtasks = Project.get('microtasks');
+    var workers = Project.get('workers');
+    var worker = workers.get(worker_id);
+    var assigned_task = worker.get('assigned');
+    assigned_task.set('id',null);
+    assigned_task.set('type',null);
+    var completed_task = worker.get('completed');
+    completed_task.push(microtask_id);
+
     var microtask_object = microtasks.get(microtask_id);
     microtask_object.code = microtask_code;
     microtask_object.tests = microtask_tests;
@@ -211,6 +220,14 @@ function submitReviewMicrotask(project_id,microtask_id,review, rating, worker_id
     var functions = Project.get('functions');
     var tests = Project.get('tests');
     var microtasks = Project.get('microtasks');
+    var workers = Project.get('workers');
+    var worker = workers.get(worker_id);
+    var assigned_task = worker.get('assigned');
+    assigned_task.set('id',null);
+    assigned_task.set('type',null);
+    var completed_task = worker.get('completed');
+    completed_task.push(microtask_id);
+
     var microtask_object = microtasks.get(microtask_id);
     microtask_object.rating = rating;
     microtask_object.review = review;
@@ -267,26 +284,54 @@ function submitReviewMicrotask(project_id,microtask_id,review, rating, worker_id
     param project_id text
     return microtask object
  */
-function fetchMicrotask(project_id){
+function fetchMicrotask(project_id, worker_id){
     var Project = Projects.get(project_id);
     var microtasks = Project.get('microtasks');
     var reviewQ = Project.get('reviewQ');
+    var workers = Project.get('workers');
+    if(workers.has(worker_id)){
+        var worker = workers.get(worker_id);
+    }else{
+        workers.set(worker_id, new Map());
+        var worker = workers.get(worker_id);
+        worker.set('assigned',new Map());
+        worker.set('completed', new Array());
+        worker.set('skipped',new Array());
+        let assigned_task = worker.get('assigned');
+        assigned_task.set('id',null);
+        assigned_task.set('type',null);
+    }
+
     var microtask_id;
     var microtask_type;
-    if(reviewQ.length === 0){
-        var implementationQ= Project.get('implementationQ');
-        if(implementationQ.length === 0){
-            microtask_id = null;
-        }else {
-            microtask_id = implementationQ.shift();
-            microtask_type = "implementation";
+    var assigned_task = worker.get('assigned');
+    var skipped_task = worker.get('skipped');
+
+    if(assigned_task.get('id') === null) {
+        if (reviewQ.length === 0) {
+            var implementationQ = Project.get('implementationQ');
+            if (implementationQ.length === 0) {
+                if(skipped_task.length > 0){
+                    microtask_id = skipped_task.pop();
+                }
+                microtask_id = null;
+            } else {
+                microtask_id = implementationQ.shift();
+                microtask_type = "implementation";
+            }
         }
-    }
-    if(reviewQ.length > 0){
+        if (reviewQ.length > 0) {
             microtask_id = reviewQ.shift();
             microtask_type = "review";
+        }
+    }
+    else{
+        microtask_id = assigned_task.get('id');
+        microtask_type = assigned_task.get('type');
     }
     if(microtask_id !== null) {
+        assigned_task.set('id',microtask_id);
+        assigned_task.set('type',microtask_type);
         var microtask_object = microtasks.get(microtask_id);
         var return_object = {"id": microtask_id, "type": microtask_type, "object": microtask_object};
     }
