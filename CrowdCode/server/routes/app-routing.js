@@ -37,6 +37,11 @@ router.get('/:projectname([a-zA-Z0-9]{3,})', function(req, res) {
               root: publicDir
           });
       });
+  }else{
+      console.log("Project Name : " + projectName + "------------------------------");
+      res.sendFile('clientDist/client.html', {
+          root: publicDir
+      });
   }
 });
 
