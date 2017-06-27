@@ -1368,8 +1368,8 @@ function joinLines(text,cssClass,identation){
 }
 
 /**
- * This class manages a list of Firebase elements and dispatches items in it to 
- * be processed. It is designed to only process one item at a time. 
+ * This class manages a list of Firebase elements and dispatches items in it to
+ * be processed. It is designed to only process one item at a time.
  *
  * It uses transactions to grab queue elements, so it's safe to run multiple
  * workers at the same time processing the same queue.
@@ -1378,22 +1378,22 @@ function joinLines(text,cssClass,identation){
  * @param processingCallback The callback to be called for each work item
  */
 function DistributedWorker(workerID, queueRef, processingCallback) {
-	
+
 	this.workerID = workerID;
-	
+
 	// retrieve callback
-	this.processingCallback = processingCallback; 
-	
+	this.processingCallback = processingCallback;
+
 	// start busy as FALSE
 	this.busy = false;
-	
+
 	// every time at queueRef one child is added
 	// retrieve the item and try to process it
 	queueRef.startAt().limitToFirst(1).on("child_added", function(snapshot) {
-		this.currentItem = snapshot.ref();
+		this.currentItem = snapshot.ref;
 		this.tryToProcess();
 	}, this);
-	
+
 }
 
 //reset busy flag and try again to process
@@ -1430,7 +1430,7 @@ DistributedWorker.prototype.tryToProcess = function() {
 
 			if (error) throw error;
 
-			if(committed) { // if transaction committed 
+			if(committed) { // if transaction committed
 				//execute callback and after again ready to process
 				self.processingCallback(dataToProcess, function() {
 					self.readyToProcess();
@@ -2485,7 +2485,6 @@ angular
         var funcRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Functions');
 		    functions = new FunctionArray(funcRef);
 			functions.$loaded().then(function(){
-        console.log(functions);
 				fList = functions;
 				// tell the others that the functions services is loaded
 				$rootScope.$broadcast('serviceLoaded','functions');
@@ -3414,10 +3413,10 @@ angular
 angular
     .module('crowdCode')
     .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory', 'Test',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory, Test) {
-    
+
     // prepare the data for the view
     $scope.data = {};
-    $scope.data.dispute = { active: false, text: '' }; 
+    $scope.data.dispute = { active: false, text: '' };
     $scope.data.tests = [];
     $scope.data.isComplete = false;
     $scope.data.numDeleted = 0;
@@ -3453,20 +3452,20 @@ angular
             $scope.data.tests.push(test);
         }
     }
-    // otherwise 
+    // otherwise
     else {
 
-        // load tests from the function 
+        // load tests from the function
         for( var i = 0; i < $scope.funct.tests.length ; i++ ){
             if( $scope.funct.tests[i].isDeleted )
                 continue;
-            
+
             var test = angular.copy($scope.funct.tests[i]);
             test.edited  = false;
             test.deleted = false;
-            
+
             $scope.data.tests.push(test);
-        } 
+        }
     }
 
 
@@ -3477,13 +3476,13 @@ angular
             for( var t = 0 ; t < $scope.data.tests.length; t++ ){
                 var test = $scope.data.tests[t];
                 if( $scope.microtask.disputedTests[a].id == test.id ){
-                    test.dispute = { 
-                        active:true, 
-                        text: $scope.microtask.disputedTests[a].disputeText  
+                    test.dispute = {
+                        active:true,
+                        text: $scope.microtask.disputedTests[a].disputeText
                     };
                 }
             }
-        } 
+        }
     }
 
 
@@ -3493,7 +3492,7 @@ angular
     $scope.toggleSelect = toggleSelect;
     $scope.addNew       = addNew;
 
-    // register the collect form data listeners 
+    // register the collect form data listeners
     // and the microtask form destroy listener
     $scope.taskData.collectFormData = collectFormData;
 
@@ -3511,14 +3510,14 @@ angular
             $scope.data.selected.editing = false;
             $scope.data.selected = -1;
         }
-            
+
         // $event.preventDefault();
         // $event.stopPropagation();
     }
 
     var tmpTestData = { };
     function toggleEdit($event){
-        
+
         if( $scope.data.selected != -1 ) {
             $scope.data.selected.editing = !$scope.data.selected.editing;
 
@@ -3541,7 +3540,7 @@ angular
             } else {
                 $scope.data.numDeleted --;
             }
-                
+
         }
 
 
@@ -3589,13 +3588,13 @@ angular
                     isSimple:    test.isSimple,
                     code:        test.isSimple ? "" : test.code,
                     inputs:      test.isSimple ? test.inputs : [] ,
-                    output:      test.isSimple ? test.output : "" 
+                    output:      test.isSimple ? test.output : ""
                 };
 
                 if( test.added && test.deleted )
                     continue;
 
-                if( test.added ) 
+                if( test.added )
                     testDto.added    = true;
                 else if( test.deleted )
                     testDto.deleted  = true;
@@ -3603,15 +3602,16 @@ angular
                     testDto.edited = true;
 
                 formData.tests.push(testDto);
-            } 
+            }
         }
         console.log(formData.tests);
-        
+
         return formData;
 
     }
 
 }]);
+
 
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
@@ -3892,7 +3892,7 @@ angular
 }]);
 angular
     .module('crowdCode')
-    .directive('microtaskForm', [ '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]); 
+    .directive('microtaskForm', [ '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]);
 
 function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
 
@@ -3961,9 +3961,9 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			$scope.currentPrompt = function(){
 				$scope.workerOption = "Take a break";
 				if(userService.data.level >= 2)
-					$scope.workerOption = "Pick next microtask"				
-						
-				return $scope.workerOption;			
+					$scope.workerOption = "Pick next microtask"
+
+				return $scope.workerOption;
 			}
 
 			function onMicrotaskLoaded($event, microtask){
@@ -3981,33 +3981,32 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				if (angular.isDefined($scope.microtask.functionId))
 					$scope.funct = functionsService.get($scope.microtask.functionId);
 
-
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 			}
-			
 
-			
+
+
 			function openDashboard(){
 				$scope.taskData.startBreak = true;
-				$scope.breakMode = true;	
+				$scope.breakMode = true;
 				cancelFetchTimer();
 				$scope.templatePath  = templatesURL + templates['Dashboard'] + ".html";
 			}
-			
+
 			function noMicrotasks() {
 				$scope.noMicrotask = true;
-				$scope.$emit('reset-reminder');			
+				$scope.$emit('reset-reminder');
 				setFetchTimer();
 
 				if(userService.data.level >= 2)
 					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
 				else
-					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";			
+					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
 			}
-			
-			
+
+
 			function setFetchTimer(){
 				// if is not in break mode, start to check the queue
 				if(! $scope.breakMode ){
@@ -4023,8 +4022,8 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						$interval.cancel(timerInterval);
 
 						$timeout(fetchMicrotask,1000);
-						
-					}, waitTimeInSeconds*1000); 
+
+					}, waitTimeInSeconds*1000);
 				}
 			}
 
@@ -4034,12 +4033,12 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 					$timeout.cancel(checkQueueTimeout);
 				}
 			}
-			
+
 
 			function checkBreakMode(){
-				if( $scope.taskData.startBreak ) { 
-					$scope.breakMode = true; 
-					$scope.taskData.startBreak = false; 
+				if( $scope.taskData.startBreak ) {
+					$scope.breakMode = true;
+					$scope.taskData.startBreak = false;
 				}
 			}
 
@@ -4055,7 +4054,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						noMicrotasks();
 					});
 			}
-			
+
 			function fetchMicrotask($event, fetchData) {
 				cancelFetchTimer();
 				$scope.breakMode = false;
@@ -4065,20 +4064,20 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						microtasks.load(fetchData);
 					}, function(){
 						noMicrotasks();
-					}); 
+					});
 			}
-			
+
 			function fetchSpecificMicrotask($event, microtaskId ) {
 				cancelFetchTimer();
 				$scope.breakMode     = false;
 				$scope.templatePath  = templatesURL + "loading.html";
 				microtasks
-					.fetchSpecificMicrotask( microtaskId )					
+					.fetchSpecificMicrotask( microtaskId )
 					.then( function(fetchData){
 						microtasks.load(fetchData);
 					}, function(){
 						noMicrotasks();
-					}); 
+					});
 			}
 
 
@@ -4134,6 +4133,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
         }
     };
 }
+
 
 angular
     .module('crowdCode')
@@ -4272,10 +4272,13 @@ angular
 
 		function load(fetchData){
 			if( fetchData.microtaskKey !== undefined ) {
-				var microtask = get(fetchData.microtaskKey);
-				microtask.$loaded().then(function() {
-					$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
-				});
+				var microtask = fetchData.object;
+        microtask.type = fetchData.type;
+        $rootScope.$broadcast('microtaskLoaded',microtask, 0/*fetchData.firstFetch*/);
+        // get(fetchData.microtaskKey);
+				// microtask.$loaded().then(function() {
+				// 	$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
+				// });
 			}
 		}
 
