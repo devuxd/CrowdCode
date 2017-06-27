@@ -120,6 +120,9 @@ function generateImplementationMicrotasks(project_id, function_id){
         var function_name = func.name;
         var function_version = func.version;
         var function_code = func.code;
+        var function_description = func.description;
+        var function_return_type = func.returnType;
+        var function_parameters = func.parameters;
         var max_points = 10;
         var temp_tests = '{';
         if(func.tests !== "null") {
@@ -133,7 +136,7 @@ function generateImplementationMicrotasks(project_id, function_id){
         }
         temp_tests += '}';
         var function_tests = JSON.parse(temp_tests);
-        var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name,function_version,microtask_description,function_code,function_tests);
+        var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name, function_description, function_version,microtask_description,function_code, function_return_type, function_parameters, function_tests);
 
         var microtask_object = {
             name: microtask_name,
@@ -144,6 +147,9 @@ function generateImplementationMicrotasks(project_id, function_id){
             function_id: function_id,
             function_name: function_name,
             function_version: function_version,
+            function_description: function_description,
+            return_type: function_return_type,
+            parameters: function_parameters,
             tests: function_tests,
             worker: "null"
         };
@@ -366,7 +372,7 @@ function fetchMicrotask(project_id, worker_id){
         var return_object = {"microtaskKey":microtask_id,"type":microtask_type,"object":microtask_object};
     }
     else{
-        var return_object = {"microtaskKey""none"};
+        var return_object = {"microtaskKey":"none"};
     }
     return return_object;
 }
