@@ -306,30 +306,59 @@ function fetchMicrotask(project_id, worker_id){
     var microtask_type;
     var assigned_task = worker.get('assigned');
     var skipped_task = worker.get('skipped');
-
+    //If the worker doesnt have any task already assigned
     if(assigned_task.get('id') === null) {
+        //If there are no review tasks go to implementation tasks
         if (reviewQ.length === 0) {
             var implementationQ = Project.get('implementationQ');
+            //If there are no implementation tasks return null
             if (implementationQ.length === 0) {
-                if(skipped_task.length > 0){
-                    microtask_id = skipped_task.pop();
-                }
                 microtask_id = null;
             } else {
-                microtask_id = implementationQ.shift();
+                var temp = new Array();
+                do{
+                    //Pick the first task from implementation queue
+                    microtask_id = implementationQ.shift();
+                    //If the task was already skipped by the worker put in a temp array and try the next task
+                    if(skipped_task.indexOf(microtask_id) >= 0){
+                        temp.push(microtask_id);
+                        microtask_id = null;
+                    }
+                }while(microtask_id === null);
+                //put the rejected tasks back in the queue
+                temp.forEach(function(id){
+                   implementationQ.unshift(id);
+                });
                 microtask_type = "DescribeFunctionBehavior";
             }
         }
+        //If there are review taskss in the queue assigned those first
         if (reviewQ.length > 0) {
-            microtask_id = reviewQ.shift();
+            var temp = new Array();
+            do{
+                //Pick the first task from review queue
+                microtask_id = reviewQ.shift();
+                //If the task was already skipped by the worker put in a temp array and try the next task
+                if(skipped_task.indexOf(microtask_id) >= 0){
+                    temp.push(microtask_id);
+                    microtask_id = null;
+                }
+            }while(microtask_id === null);
+            //put the rejected tasks back in the queue
+            temp.forEach(function(id){
+                reviewQ.unshift(id);
+            });
             microtask_type = "Review";
-
         }
     }
+    //If the worker already has as on going task
     else{
         microtask_id = assigned_task.get('id');
         microtask_type = assigned_task.get('type');
     }
+
+
+    //Check if there was any task assigned
     if(microtask_id !== null) {
         assigned_task.set('id',microtask_id);
         assigned_task.set('type',microtask_type);
@@ -337,7 +366,42 @@ function fetchMicrotask(project_id, worker_id){
         var return_object = {"microtaskKey":microtask_id,"type":microtask_type,"object":microtask_object};
     }
     else{
-        var return_object = {"microtaskKey": "none"};
+        var return_object = {"microtaskKey""none"};
+    }
+    return return_object;
+}
+
+
+function skipMicrotask(project_id, worker_id){
+    var Project = Projects.get(project_id);
+    var microtasks = Project.get('microtasks');
+    var implementationQ= Project.get('implementationQ');
+    var reviewQ = Project.get('reviewQ');
+    var workers = Project.get('workers');
+    var return_object =  null;
+    if(workers.has(worker_id)) {
+        var worker = workers.get(worker_id);
+        var skipped_task = worker.get('skipped');
+        var assigned_task = worker.get('assigned');
+
+        //Worker cannot skip more than
+        if(skipped_task.length > 0 && skipped_task.length < 5){
+            var microtask_id = assigned_task.get('id');
+            var microtask_type = assigned_task.get('type');
+
+
+            skipped_task.push(microtask_id);
+            assigned_task.set('id',null);
+            assigned_task.set('type',null);
+
+            if(microtask_type === "DescribeFunctionBehavior"){
+                implementationQ.unshift(microtask_id);
+            }
+            if(microtask_type === 'Review'){
+                reviewQ.unshift(microtask_id);
+            }
+        }
+        return_object = fetchMicrotask(project_id,worker_id);
     }
     return return_object;
 }
@@ -346,3 +410,4 @@ module.exports.loadProject = loadProject;
 module.exports.submitImplementationMicrotask = submitImplementationMicrotask;
 module.exports.submitReviewMicrotask = submitReviewMicrotask;
 module.exports.fetchMicrotask = fetchMicrotask;
+module.exports.skipMicrotask = skipMicrotask;
