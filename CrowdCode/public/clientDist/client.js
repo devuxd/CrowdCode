@@ -1938,7 +1938,7 @@ angular
     .factory('Function', [ 'Test', function(Test) {
 
 	function Function(rec,key){
-		this.$id = rec.id + '';
+		this.$id = key + '';
 		this.update(rec);
 	}
 
@@ -1955,14 +1955,15 @@ angular
 			// and if the function record has tests
 			// create an array of Test objects from them
 			this.tests = [];
-			if( rec.tests !== undefined )
+
+			if( rec.tests !== undefined && angular.isArray(rec.tests))
 				for( var testId in rec.tests ){
 					this.tests.push(new Test(rec.tests[testId], rec.name));
 				}
 			return true;
 		},
 
-		getHeader: function(){ 
+		getHeader: function(){
 			if( this.described )
 				return this.header;
 			else{
@@ -1976,7 +1977,7 @@ angular
 			}
 		},
 
-		getDescription: function(){ 
+		getDescription: function(){
 			if(this.described!==false)
 				return this.description;
 			else {
@@ -1990,13 +1991,13 @@ angular
 		getFullDescription: function(){
 			if(this.getDescription()===undefined)
 				return "";
-			
+
 			var descriptionLines = this.getDescription().split('\n');
 
 			if(this.parameters!==undefined && this.parameters.length>0){
 				for(var i=0; i<this.parameters.length; i++)
 					descriptionLines.push(
-						[ 
+						[
 							'@param',
 							'{' + this.parameters[i].type + '}',
 							this.parameters[i].name,
@@ -2009,8 +2010,8 @@ angular
 				descriptionLines.push('@return {' + this.returnType + '}');
 
 			return '/**\n' +
-				   ' * ' + 
-				   descriptionLines.join('\n * ') +   '\n'	 + 
+				   ' * ' +
+				   descriptionLines.join('\n * ') +   '\n'	 +
 				   ' */\n';
 		},
 
@@ -2019,7 +2020,7 @@ angular
 			return this.getFullDescription() + this.getHeader();
 		},
 
-		// 
+		//
 		getFunctionCode: function(){
 			if( this.code )
 				return this.getSignature() + this.code;
@@ -2035,7 +2036,7 @@ angular
 		getFullCode: function(){
 
 			var fullCode = this.getFunctionCode();
-			
+
 			if(this.pseudoFunctions){
 				fullCode += "\n\n";
 				for(var i=0; i<this.pseudoFunctions.length; i++ )
@@ -2073,6 +2074,7 @@ angular
 
 	return Function;
 }]);
+
 
 angular
     .module('crowdCode')
@@ -4061,6 +4063,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				microtasks
 					.fetch()
 					.then( function(fetchData){
+            console.log(fetchData);
 						microtasks.load(fetchData);
 					}, function(){
 						noMicrotasks();
@@ -4274,7 +4277,7 @@ angular
 			if( fetchData.microtaskKey !== undefined ) {
 				var microtask = fetchData.object;
         microtask.type = fetchData.type;
-        $rootScope.$broadcast('microtaskLoaded',microtask, 0/*fetchData.firstFetch*/);
+        $rootScope.$broadcast('microtaskLoaded',microtask, 1/*fetchData.firstFetch*/);
         // get(fetchData.microtaskKey);
 				// microtask.$loaded().then(function() {
 				// 	$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
@@ -6172,7 +6175,8 @@ angular
 
         link: function($scope, $element) {
 
-            var functionsRef = new Firebase(firebaseUrl+'/artifacts/functions/');
+            var functionsRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Functions');
+            // new Firebase(firebaseUrl+'/artifacts/functions/');
             $scope.functionsCount = 0;
             functionsRef.on('child_added',function (snapshot){
                 $scope.functionsCount ++;
@@ -6189,7 +6193,8 @@ angular
 
 
         
-            var testsRef = new Firebase(firebaseUrl+'/artifacts/tests');
+            var testsRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Tests');
+            // new Firebase(firebaseUrl+'/artifacts/tests');
             $scope.testsCount = 0;
             testsRef.on('child_added',function(snapshot){
                 $scope.testsCount ++;
@@ -6198,6 +6203,7 @@ angular
         }
     };
 });
+
 angular
     .module('crowdCode')
     .directive('rightBar', function($rootScope){
@@ -7086,11 +7092,11 @@ function projectOutline(AdtService, functionsService) {
         templateUrl: 'widgets/project_outline.template.html',
         controller: function($scope, $element) {
 
-            
+
             $scope.functions = functionsService.getAll();
             $scope.dataTypes = AdtService.getAll();
 
-            console.log($scope.dataTypes);
+            //console.log($scope.dataTypes);
             $scope.buildStructure = function(adt){
                 var struct = '{';
                 angular.forEach(adt.structure,function(field){
@@ -7102,7 +7108,6 @@ function projectOutline(AdtService, functionsService) {
         }
     };
 }
-
 
 
 angular
@@ -7187,7 +7192,7 @@ angular
             $rootScope.$on('reset-reminder', resetReminder );
 
             function microtaskLoaded($event, microtask,firstFetch){
-
+              console.log(microtask);
                 if( firstFetch == '1')
                     userService.setFirstFetchTime();
 
@@ -7202,9 +7207,9 @@ angular
                 fetchTime = userService.getFetchTime();
 
                 $scope.skipMicrotaskIn = fetchTime + microtaskTimeout - startTime ;
-                microtaskInterval      = $interval(doReminder, timeInterval); 
+                microtaskInterval      = $interval(doReminder, timeInterval);
 
-                
+
                 console.log('REMINDER: microtask laoded ',{ fetchTime: fetchTime, startTime: startTime, diff: startTime-fetchTime},microtaskInterval);
 
             }
@@ -7220,7 +7225,7 @@ angular
             }
 
             function doReminder(){
-                //if no tutorial are open 
+                //if no tutorial are open
                 if( tutorialOpen===0 ){
                     //update the remaining time both in the popup and in the progress bar
                     popupWarning.$scope.skipMicrotaskIn = $scope.skipMicrotaskIn -= timeInterval;
@@ -7232,7 +7237,7 @@ angular
                         $scope.status='warning';
 
                     }
-                    else if( $scope.skipMicrotaskIn < microtaskFirstWarning / 2 && 
+                    else if( $scope.skipMicrotaskIn < microtaskFirstWarning / 2 &&
                              $scope.skipMicrotaskIn > 0 ){
                         $scope.status='danger';
                     }
