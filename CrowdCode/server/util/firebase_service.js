@@ -1,3 +1,5 @@
+var s = require("underscore.string");
+
 module.exports = function(AdminFirebase) {
   const now = (unit) => {
     const hrTime = process.hrtime();
@@ -232,6 +234,7 @@ module.exports = function(AdminFirebase) {
         header: header,
         description: function_description,
         code: function_code,
+        linesOfCode: s.count(function_code,"\n") + 2,
         returnType: return_type,
         version: 0,
         parameters: parameters,
@@ -280,6 +283,7 @@ module.exports = function(AdminFirebase) {
           header: header,
           description: function_description,
           code: function_code,
+          linesOfCode: s.count(function_code,"\n") + 2, 
           returnType: return_type,
           version: version_number,
           parameters: parameters,
