@@ -8550,7 +8550,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "	<div class=\"header bg-color\">\n" +
     "		<span class=\"type\">\n" +
     "			<span ng-switch=\"microtask.promptType\">\n" +
-    "				<span ng-switch-when=\"WRITE\">Write a test</span>\n" +
+    "				<span ng-switch-when=\"WRITE\">Implement Function behaviour</span>\n" +
     "				<span ng-switch-when=\"CORRECT\">Correct test(s)</span>\n" +
     "				<span ng-switch-when=\"FUNCTION_CHANGED'\">Fix test(s)</span>\n" +
     "			</span>\n" +
@@ -8588,27 +8588,45 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\"  ui-layout-container size=\"35%\">\n" +
+    "		<div class=\"section\"  ui-layout-container size=\"45%\">\n" +
     "			<div class=\"section-bar\">\n" +
     "				<span class=\"title\">\n" +
-    "					Function Description\n" +
+    "					Function\n" +
     "				</span>\n" +
     "				<span class=\"pull-right\">\n" +
+    "					<button class=\"btn btn-sm btn-run\" ng-click=\"run()\">\n" +
+    "						<span class=\"glyphicon glyphicon-play\"></span>\n" +
+    "						Run Tests\n" +
+    "					</button>\n" +
+    "\n" +
+    "\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) \">\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "					</button>\n" +
+    "				</span>\n" +
+    "				<!-- <span class=\"pull-right\">\n" +
     "					<button class=\"btn btn-sm\"\n" +
     "						ng-if=\"!data.dispute.active\"\n" +
     "						ng-click=\"data.dispute.active = !data.dispute.active; trackInteraction('Click Dispute Function', 'Describe Behavior', $event)\" >\n" +
     "						Report an issue with the function <span class=\"glyphicon glyphicon-exclamation-sign\"></span>\n" +
     "					</button>\n" +
-    "				</span>\n" +
+    "				</span> -->\n" +
     "				<span class=\"clearfix\"></span>\n" +
+    "\n" +
     "			</div>\n" +
     "			<div class=\"section-content padding\">\n" +
-    "				<js-reader code=\"funct.getSignature()\" ></js-reader>\n" +
+    "				<function-editor\n" +
+    "		            function=\"funct\"\n" +
+    "		            editor=\"data.editor\"\n" +
+    "		            logs=\"(!data.inspecting) ? undefined : data.selected.logs \"\n" +
+    "		            callbacks=\"editorCallbacks\"\n" +
+    "		            >\n" +
+    "		        </function-editor>\n" +
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
     "\n" +
-    "		<div class=\"section\"  ui-layout-container size=\"60%\" >\n" +
+    "		<div class=\"section\"  ui-layout-container size=\"50%\" >\n" +
     "\n" +
     "			<div class=\"section-bar\" ng-if=\"data.dispute.active\">\n" +
     "				<span class=\"title pull-left\">Report Function Description</span>\n" +
