@@ -28,9 +28,12 @@ app.use(session({
 const validateFirebaseIdToken = wagner.invoke(function(AdminFirebase) {
   var admin = AdminFirebase;
   return (req, res, next) => {
+    if(req.session.user) {
+      req.user = req.session.user;
+      return next();
+    }
     console.log('Check if request is authorized with Firebase ID token');
-    if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
-      !req.session.idToken) {
+    if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) && !req.session.idToken) {
       console.error('No Firebase ID token was passed as a Bearer token in the Authorization header.',
         'Make sure you authorize your request by providing the following HTTP header:',
         'Authorization: Bearer <Firebase ID Token>',
@@ -53,6 +56,7 @@ const validateFirebaseIdToken = wagner.invoke(function(AdminFirebase) {
     admin.auth().verifyIdToken(idToken).then(decodedIdToken => {
       //console.log('ID Token correctly decoded', decodedIdToken);
       req.user = decodedIdToken;
+      req.session.user = decodedIdToken;
       next();
     }).catch(error => {
       console.error('Error while verifying Firebase ID token:', error);
@@ -66,7 +70,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser());
 //app.use(validateFirebaseIdToken);
-app.use('/api/v1', validateFirebaseIdToken,require('./routes/api')(wagner));
+app.use('/api/v1', validateFirebaseIdToken, require('./routes/api')(wagner));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(require('./routes/app-routing'));
 // catch 404 and forward to error handler

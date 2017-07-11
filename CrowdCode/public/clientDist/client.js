@@ -711,18 +711,25 @@ angular
   .factory('httpRequestInterceptor', function($q, Auth) {
     return {
       request: function(config) {
-				Auth.$onAuthStateChanged(user => {
-					if (user) {
-						var idToken = user.ie;
-						console.log(idToken);
-					} else {
-					}
-				});
-				config.headers['Authorization'] = 'Bearer ' + 'idToken';
-				return config;
+        if (sessionStorage.getItem('accessToken')) {
+          //console.log("token[" + window.localStorage.getItem('accessToken') + "], config.headers: ", config.headers);
+          config.headers.authorization = 'Bearer ' + sessionStorage.getItem('accessToken');
+        }
+        return config || $q.when(config);
+      },
+      responseError: function(rejection) {
+
+        console.log("Found responseError: ", rejection);
+        if (rejection.status == 401) {
+
+          console.log("Access denied (error 401), please login again");
+          //$location.nextAfterLogin = $location.path();
+          //window.location.href = '/login';
+        }
+        return $q.reject(rejection);
       }
     };
-   })
+  })
   .config(function($dropdownProvider, ngClipProvider, AngularyticsProvider, $httpProvider) {
     var config = {
       apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",

@@ -17,13 +17,18 @@
     firebase.initializeApp(config);
   </script>
   <script type="text/javascript">
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      window.location.replace("/");
-    } else {
-      console.log("no user signed in");
-    }
-  });
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        if (typeof(Storage) !== "undefined") {
+          sessionStorage.setItem('accessToken', user.ie);
+        } else {
+          // Sorry! No Web Storage support..
+        }
+        window.location.replace("/");
+      } else {
+        console.log("no user signed in");
+      }
+    });
   </script>
   <script src="https://cdn.firebase.com/libs/firebaseui/2.0.0/firebaseui.js"></script>
   <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.0.0/firebaseui.css" />
