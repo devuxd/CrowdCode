@@ -94,7 +94,9 @@ module.exports = function(wagner) {
   api.get('/:projectId/ajax/fetch', wagner.invoke(function(FirebaseService, MicrotaskService) {
     return function(req, res){
       let projectId = req.params.projectId;
-      let microtask = MicrotaskService.fetchMicrotask(projectId); console.log(microtask);
+      var user = req.user;
+      if(user === undefined || user === null) res.status(status.UNAUTHORIZED).send('Unauthorized');
+      let microtask = MicrotaskService.fetchMicrotask(projectId, user.uid); console.log(microtask);
       res.json(microtask);
 
     };
@@ -168,21 +170,13 @@ module.exports = function(wagner) {
   api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService, UserService, MicrotaskService) {
     return function(req, res) {
       let id = req.params.id;
-      var idToken = req.headers['authorization'].split(' ').pop();
+      var user = req.user;
+      if(user === undefined || user === null) res.status(status.UNAUTHORIZED).send('Unauthorized');
       var clientReq = req.body;
-      UserService.getUserByToken(idToken).then(user => {
-        FirebaseService.createClientRequest(id, clientReq, user.uid);
-        //MicrotaskService.loadProjects();
-        res.json({
-          "result": "created"
-        });
-      }).catch(err => {
-        res.status(status.EXPECTATION_FAILED);
-        res.json({
-          "result": "failed"
-        });
+      FirebaseService.createClientRequest(id, clientReq, user.uid);
+      res.json({
+        "result": "created"
       });
-
     };
   }));
 
