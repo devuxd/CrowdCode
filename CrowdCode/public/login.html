@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>CrowdCode App</title>
   <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js" charset="utf-8"></script>
   <script>
     var config = {
       apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
@@ -16,26 +17,12 @@
     };
     firebase.initializeApp(config);
   </script>
-  <script type="text/javascript">
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        if (typeof(Storage) !== "undefined") {
-          sessionStorage.setItem('accessToken', user.ie);
-        } else {
-          // Sorry! No Web Storage support..
-        }
-        window.location.replace("/");
-      } else {
-        console.log("no user signed in");
-      }
-    });
-  </script>
   <script src="https://cdn.firebase.com/libs/firebaseui/2.0.0/firebaseui.js"></script>
   <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.0.0/firebaseui.css" />
   <script type="text/javascript">
     // FirebaseUI config.
     var uiConfig = {
-      signInSuccessUrl: '/',
+      signInSuccessUrl: '/loggedin.html',
       signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,

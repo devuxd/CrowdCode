@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require('express-session');
-var FileStore = require('session-file-store')(session);
+const FileStore = require('session-file-store')(session);
 const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
@@ -25,52 +25,59 @@ app.use(session({
   resave: true,
   store: new FileStore()
 }));
-const validateFirebaseIdToken = wagner.invoke(function(AdminFirebase) {
-  var admin = AdminFirebase;
+const isAuth = wagner.invoke(function() {
   return (req, res, next) => {
-    if(req.session.user) {
+    if(req.session.user || req.path==='/login' || req.path === '/loggedin.html') {
       req.user = req.session.user;
-      return next();
-    }
-    console.log('Check if request is authorized with Firebase ID token');
-    if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) && !req.session.idToken) {
-      console.error('No Firebase ID token was passed as a Bearer token in the Authorization header.',
-        'Make sure you authorize your request by providing the following HTTP header:',
-        'Authorization: Bearer <Firebase ID Token>',
-        'or by passing a "__session" cookie.');
-      res.status(status.UNAUTHORIZED).send('Unauthorized');
-      return;
-    }
-    let idToken;
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-      //console.log('Found "Authorization" header');
-      // Read the ID Token from the Authorization header.
-      idToken = req.headers.authorization.split('Bearer ')[1];
-      req.session.idToken = idToken;
-    } else {
-      //console.log('Found "session.idToken"');
-      // Read the ID Token from cookie.
-      idToken = req.session.idToken;
-      //req.cookies.__session;
-    }
-    admin.auth().verifyIdToken(idToken).then(decodedIdToken => {
-      //console.log('ID Token correctly decoded', decodedIdToken);
-      req.user = decodedIdToken;
-      req.session.user = decodedIdToken;
       next();
-    }).catch(error => {
-      console.error('Error while verifying Firebase ID token:', error);
-      res.status(status.UNAUTHORIZED).send('Unauthorized');
-    });
+    } else {
+      res.redirect('/login');
+    }
   };
 });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+app.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase, FirebaseService) {
+  return function(req, res) {
+    //var idToken = req.body.idToken;
+    var idToken = req.headers['authorization'].split(' ').pop();
+    AdminFirebase.auth().verifyIdToken(idToken)
+      .then(function(decodedToken) {
+        var uid = decodedToken.uid;
+        req.session.user = decodedToken;
+        UserService.getUserById(uid)
+          .then(function(userRecord) {
+            // See the UserRecord reference doc for the contents of userRecord.
+            console.log("Successfully fetched user data:", userRecord.toJSON());
+            var worker_id = userRecord.uid;
+            var worker_name = userRecord.displayName;
+            var avatar_url = userRecord.photoURL;
+            var firebase = FirebaseService;
+            var workers_list_promise = firebase.retrieveWorkersList();
+            workers_list_promise.then(function(workers_list) {
+              if (workers_list.indexOf(worker_id) < 0) {
+                firebase.createWorker(worker_id, worker_name, avatar_url);
+              }
+            }).catch(err => {
+
+            });
+          })
+          .catch(function(error) {
+            console.log("Error fetching user data:", error);
+          });
+        res.json({
+          'Success': 200
+        })
+      }).catch(function(error) {
+        // Handle error
+      });
+  };
+}));
 app.use(cookieParser());
-//app.use(validateFirebaseIdToken);
-app.use('/api/v1', validateFirebaseIdToken, require('./routes/api')(wagner));
+app.use(isAuth);
+app.use('/api/v1', require('./routes/api')(wagner));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(require('./routes/app-routing'));
 // catch 404 and forward to error handler

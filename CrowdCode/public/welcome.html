@@ -20,29 +20,6 @@
 			messagingSenderId: "382318704982"
 		};
 		firebase.initializeApp(config);
-		firebase.auth().onAuthStateChanged(function(user) {
-			if (user) {
-				// User is signed in.
-				var idToken = user.ie;
-				$.ajax({
-					type: "POST",
-					url: "api/v1/authenticate",
-					data: {
-						"idToken": idToken
-					},
-					headers: {
-						'Authorization': 'Bearer ' + idToken
-					},
-					dataType: "json",
-					success: function(result) {
-						console.log(result);
-					}
-				});
-				// ...
-			} else {
-				window.location.href = "/login";
-			}
-		});
 	</script>
 	<style type="text/css">
 		body {

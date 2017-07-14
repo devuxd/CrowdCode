@@ -11,42 +11,6 @@ module.exports = function(wagner) {
   }));
   api.use(cors());
 
-  api.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase, FirebaseService) {
-    return function(req, res) {
-      //var idToken = req.body.idToken;
-      var idToken = req.headers['authorization'].split(' ').pop();
-      AdminFirebase.auth().verifyIdToken(idToken)
-        .then(function(decodedToken) {
-          var uid = decodedToken.uid;
-          UserService.getUserById(uid)
-            .then(function(userRecord) {
-              // See the UserRecord reference doc for the contents of userRecord.
-              console.log("Successfully fetched user data:", userRecord.toJSON());
-              var worker_id = userRecord.uid;
-              var worker_name = userRecord.displayName;
-              var avatar_url = userRecord.photoURL;
-              var firebase = FirebaseService;
-              var workers_list_promise = firebase.retrieveWorkersList();
-              workers_list_promise.then(function(workers_list) {
-                if (workers_list.indexOf(worker_id) < 0) {
-                  firebase.createWorker(worker_id, worker_name, avatar_url);
-                }
-              }).catch(err => {
-
-              });
-            })
-            .catch(function(error) {
-              console.log("Error fetching user data:", error);
-            });
-          res.json({
-            'Success': 200
-          })
-        }).catch(function(error) {
-          // Handle error
-        });
-    };
-  }));
-
   api.post('/:projectId/ajax/enqueue', wagner.invoke(function(FirebaseService, MicrotaskService) {
     return function(req, res) {
       let projectId = req.params.projectId;

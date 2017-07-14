@@ -5,7 +5,6 @@ var microtaskService = require('../lib/microtask_service');
 var router = express.Router({
   caseSensitive: true
 });
-var firebase = require('../util/firebase_service');
 const publicDir = path.join(__dirname, '..', '..', 'public');
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -21,6 +20,7 @@ router.get('/clientRequest', function(req, res) {
 
 });
 router.get('/login', function(req, res) {
+  if(req.user) return res.redirect('/');
   res.sendFile('login.html', {
     root: publicDir
   });
