@@ -20,8 +20,14 @@ module.exports = function(wagner) {
       let disablepoint = req.query.disablepoint;
       let autoFetch = req.query.autoFetch;
       let data = req.body;
-      //TODO implement the function to return proper result
-      res.sendStatus(status.ACCEPTED);
+      let workerId = req.user.uid;
+      if(skip) {
+        let fetchedData = MicrotaskService.skipMicrotask(projectId, workerId);
+        console.log(fetchedData);
+        res.json(fetchedData);
+      } else {
+        //TODO to be implemented
+      }
     };
   }));
 

@@ -38,7 +38,7 @@ router.get('/:projectname([a-zA-Z0-9]{3,})', function(req, res) {
           });
       });
   }else{
-      console.log("Project Name : " + projectName + "------------------------------");
+      console.log("Project Name loaded from memory: " + projectName + "------------------------------");
       res.sendFile('clientDist/client.html', {
           root: publicDir
       });
