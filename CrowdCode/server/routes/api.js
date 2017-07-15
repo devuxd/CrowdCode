@@ -23,10 +23,14 @@ module.exports = function(wagner) {
       let workerId = req.user.uid;
       if(skip) {
         let fetchedData = MicrotaskService.skipMicrotask(projectId, workerId);
-        console.log(fetchedData);
         res.json(fetchedData);
       } else {
-        //TODO to be implemented
+        if(type === 'DescribeFunctionBehavior') {
+          console.log('submitting implementation behavior....');
+          MicrotaskService.submitImplementationMicrotask(project_id,microtask_id, microtask_code, microtask_tests, worker_id);
+        } else {
+
+        }
       }
     };
   }));

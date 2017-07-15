@@ -79,7 +79,7 @@ app.use(cookieParser());
 app.use(isAuth);
 app.use('/api/v1', require('./routes/api')(wagner));
 app.use(express.static(path.join(__dirname, '../public')));
-app.use(require('./routes/app-routing'));
+app.use(require('./routes/app-routing')(wagner));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

@@ -33,8 +33,12 @@ module.exports = function(wagner) {
     return firebase_service;
     });
 
-  wagner.factory('MicrotaskService',function(){
-    var microtask_service = require('./microtask_service');
+  wagner.factory('MicrotaskService',function(FirebaseService, Q){
+    var microtask_service = require('./microtask_service')(FirebaseService, Q);
     return microtask_service;
+    });
+
+    wagner.factory('Q', () => {
+      return require('q');
     });
 };
