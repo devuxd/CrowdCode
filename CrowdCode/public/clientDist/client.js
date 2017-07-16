@@ -2607,10 +2607,9 @@ angular
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function getVersion(id, version){
 			var deferred = $q.defer();
-
-			var funcRef = firebase.database().ref().child('Projects').child('history').child('artifacts').child('Functions').child(id).child(version);
+			var funcRef = firebase.database().ref().child('Projects').child(projectId).child('history').child('artifacts').child('Functions').child(id).child(version);
       //new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);
-			var obj = $firebaseObject( ref );
+			var obj = $firebaseObject( funcRef );
 			obj.$loaded().then(function(){
 				deferred.resolve(new Function(obj));
 			});
@@ -4382,12 +4381,27 @@ angular
     reviewed.$loaded().then(function() {
         $scope.reviewed = reviewed;
         var submission = reviewed.submission;
-        reviewed.type = 'ImplementBehavior';
+        reviewed.type = 'DescribeFunctionBehavior';
 
         if ( reviewed.type == 'DescribeFunctionBehavior') {
 
             $scope.data = {};
             $scope.data.selected = -1;
+            // TODO: uncomment the code below after merging implement_behavior and describe_behavior
+            // $scope.data.funct = new Function( submission['function'] );
+            // $scope.data.newCode = $scope.data.funct.getFullCode();
+            $scope.data.oldCode = $scope.funct.getFullCode();
+            console.log("$scope.data.oldCode ", $scope.data.oldCode );
+            if( submission.disputedTests ){
+                $scope.review.template += "_dispute";
+                var loadedFunct = functionsService.get( reviewed.functionId );
+                $scope.data.disputedTests = submission.disputedTests
+                    .map(function(test){
+                        var testObj = loadedFunct.getTestById(test.id);
+                        testObj.disputeText = test.disputeText;
+                        return testObj;
+                    });
+            }
 
             if( submission.disputeFunctionText.length > 0 ){
                 $scope.review.template    = 'describe_dispute';
@@ -9683,8 +9697,7 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
     "	<div class=\"section\" ui-layout-container size=\"10%\">\n" +
     "		<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "			<span>\n" +
-    "				The test suite for <strong ng-bind=\"function.name\"></strong> has been updated by adding, editing, or deleting its tests. Considering just <strong>the changes</strong> to the test suite rather than the test\n" +
-    "				suite as a whole, can you review them?\n" +
+    "				The test suite and implementation for <strong ng-bind=\"function.name\"></strong> has been updated by adding, editing, or deleting its tests and implementation. Considering just <strong>the changes</strong> to the test suite and function implementation, can you review them?\n" +
     "			</span>\n" +
     "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
     "		</div>\n" +
@@ -9696,7 +9709,7 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
     "			<span class=\"title\">Function Description</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content\">\n" +
-    "			<js-reader code=\"funct.getSignature()\" ></js-reader>\n" +
+    "			<js-reader code=\"funct.getFunctionCode()\" ></js-reader>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
