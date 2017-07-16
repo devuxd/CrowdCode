@@ -19,17 +19,25 @@ module.exports = function(wagner) {
       let skip = req.query.skip;
       let disablepoint = req.query.disablepoint;
       let autoFetch = req.query.autoFetch;
-      let data = req.body;
+      let tests = req.body.tests;
+      let code = req.body.code ? req.body.code : "";
       let workerId = req.user.uid;
-      if(skip) {
+      if(skip === true) {
         let fetchedData = MicrotaskService.skipMicrotask(projectId, workerId);
         res.json(fetchedData);
       } else {
         if(type === 'DescribeFunctionBehavior') {
-          console.log('submitting implementation behavior....');
-          MicrotaskService.submitImplementationMicrotask(project_id,microtask_id, microtask_code, microtask_tests, worker_id);
+          let promise = MicrotaskService.submitImplementationMicrotask(projectId,key, code, tests, workerId);
+          promise.then((data) => {
+            console.log("data being returned ", data);
+            let microtask = MicrotaskService.fetchMicrotask(projectId, req.user.uid);
+            console.log("Next microtask being fetched ", microtask);
+            res.json(microtask);
+          }).catch(err => {
+            console.log("error", err);
+          });
         } else {
-
+          console.log("microtask2 is being submitted ----------------------");
         }
       }
     };
@@ -70,7 +78,8 @@ module.exports = function(wagner) {
       let projectId = req.params.projectId;
       var user = req.user;
       if(user === undefined || user === null) res.status(status.UNAUTHORIZED).send('Unauthorized');
-      let microtask = MicrotaskService.fetchMicrotask(projectId, user.uid); console.log(microtask);
+      let microtask = MicrotaskService.fetchMicrotask(projectId, user.uid);
+      console.log("Microtask being fetched ", microtask);
       res.json(microtask);
 
     };

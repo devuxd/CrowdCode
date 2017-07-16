@@ -173,7 +173,7 @@ module.exports = function(FirebaseService, Q) {
   function generateReviewMicrotask(project_id, reference_task__id){
       var microtask_object = {
           name: "review the changes",
-          points: points,
+          points: 10,
           awarded_points: 0,
           reference_id: reference_task__id,
           rating: "null",
@@ -185,7 +185,8 @@ module.exports = function(FirebaseService, Q) {
       var microtasks = Project.get('microtasks');
       var reviewQ = Project.get('reviewQ');
       microtasks.set(microtask_id,microtask_object);
-      reviewQ.set(microtask_id);
+      reviewQ.push(microtask_id);
+      return microtask_id;
 
   }
 
@@ -194,7 +195,7 @@ module.exports = function(FirebaseService, Q) {
       param microtask id text
    */
   function submitImplementationMicrotask(project_id,microtask_id, microtask_code, microtask_tests, worker_id){
-
+    let deferred = q.defer();
       var Project = Projects.get(project_id);
       var microtasks = Project.get('microtasks');
       var workers = Project.get('workers');
@@ -210,12 +211,14 @@ module.exports = function(FirebaseService, Q) {
       microtask_object.tests = microtask_tests;
       microtask_object.worker = worker_id;
       microtasks.set(microtask_id, microtask_object);
-      var update_promise = firebase.updateImplementationMicrotask(project_id,microtask_id,microtask_code,microtask_tests,worker_id);
+      var update_promise = firebase.updateImplementationMicrotask(project_id,microtask_id,microtask_code,microtask_tests,worker_id, false);
       update_promise.then(function(){
-        console.log('generating review task for the microtask: ', microtask_id)
-          generateReviewMicrotask(project_id,microtask_id);
-      })
-
+          let review_id = generateReviewMicrotask(project_id,microtask_id);
+          deferred.resolve(review_id);
+      }).catch((err) => {
+        deferred.reject(new Error(err));
+      });
+      return deferred.promise;
   }
 
   /*Submit review microtask
