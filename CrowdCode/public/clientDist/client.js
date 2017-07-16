@@ -4260,8 +4260,8 @@ angular
 		this.fetchSpecificMicrotask = fetchSpecificMicrotask;
 
 		// Public functions
-		function get (id){
-      var microtaskRef = firebase.database().ref().child('Projects').child(projectId).child('microtasks').child('implementation').child(id);
+		function get (id, type){
+      var microtaskRef = firebase.database().ref().child('Projects').child(projectId).child('microtasks').child(type).child(id);
 			var microtask = $firebaseObject(microtaskRef);
 			return microtask;
 		}
@@ -4329,6 +4329,7 @@ angular
 			if( fetchData.microtaskKey !== undefined ) {
 				var microtask = fetchData.object;
         microtask.type = fetchData.type;
+        microtask.$id = fetchData.microtaskKey;
         $rootScope.$broadcast('microtaskLoaded',microtask, 1/*fetchData.firstFetch*/);
         // get(fetchData.microtaskKey);
 				// microtask.$loaded().then(function() {
@@ -4377,11 +4378,11 @@ angular
 
 
     //load the microtask to review
-    var reviewed = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
+    var reviewed = microtasksService.get($scope.microtask.reference_id, "implementation");
     reviewed.$loaded().then(function() {
-
         $scope.reviewed = reviewed;
         var submission = reviewed.submission;
+        reviewed.type = 'ImplementBehavior';
 
         if ( reviewed.type == 'DescribeFunctionBehavior') {
 
@@ -4396,7 +4397,7 @@ angular
             else {
                 $scope.review.template = 'describe';
                 $scope.data.tests = angular.copy(submission.tests);
-                $scope.data.isComplete = submission.isDescribeComplete;
+                $scope.data.isComplete = reviewed.isFunctionComplete;
                 // get the stats of the edits
                 $scope.data.stats = { added: 0, edited: 0, deleted: 0 };
                 $scope.data.tests.map(function(test){
@@ -4432,7 +4433,7 @@ angular
                     $scope.data.fDescription = functObj.getSignature();
                 });
 
-        } 
+        }
         else if (reviewed.type == 'ImplementBehavior') {
             $scope.data = {};
             $scope.data.selected = -1;
@@ -4475,16 +4476,16 @@ angular
 
 
     $scope.taskData.collectFormData = collectFormData;
-    
+
     function collectFormData(form) {
 
-        
+
         if( form.$invalid ){
             $modal({template : 'microtasks/modal_form_invalid.html' , show: true});
             return;
         }
 
-        
+
         var formData = {
             reviewText              : ($scope.review.text === undefined ? "" : $scope.review.text ),
             qualityScore            : $scope.review.rating,

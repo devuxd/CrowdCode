@@ -234,7 +234,7 @@ module.exports = function(AdminFirebase) {
         header: header,
         description: function_description,
         code: function_code,
-        linesOfCode: s.count(function_code,"\n") + 2,
+        linesOfCode: s.count(function_code, "\n") + 2,
         returnType: return_type,
         version: 0,
         parameters: parameters,
@@ -283,7 +283,7 @@ module.exports = function(AdminFirebase) {
           header: header,
           description: function_description,
           code: function_code,
-          linesOfCode: s.count(function_code,"\n") + 2, 
+          linesOfCode: s.count(function_code, "\n") + 2,
           returnType: return_type,
           version: version_number,
           parameters: parameters,
@@ -506,11 +506,15 @@ module.exports = function(AdminFirebase) {
         param isFUnctionCOmplete boolean
         return promise object
     */
-    updateImplementationMicrotask: function(project_id, microtask_id, microtask_code, tests, worker_id, isFunctionComplete) {
+    updateImplementationMicrotask: function(project_id, microtask_id, funct, tests, worker_id, isFunctionComplete) {
       var path = 'Projects/' + project_id + '/microtasks/implementation/' + microtask_id;
       var update_promise = root_ref.child(path).update({
-        "code": microtask_code,
-        "tests": tests,
+        "submission": {
+          "disputeFunctionText": tests.disputeFunctionText,
+          "functionVersion": tests.functionVersion,
+          "function": funct,
+          "tests": tests.tests
+        },
         "worker": worker_id,
         "isFunctionComplete": isFunctionComplete
       });
@@ -539,12 +543,13 @@ module.exports = function(AdminFirebase) {
      param worker id text
      return microtask ID text
      */
-    createReviewMicrotask: function(project_id, microtask_name, points, reference_id) {
+    createReviewMicrotask: function(project_id, microtask_name, points, reference_id, functionId) {
       microtask_schema = {
         name: microtask_name,
         points: points,
         awarded_points: 0,
         reference_id: reference_id,
+        functionId: functionId,
         rating: "null",
         review: "null",
         worker: "null"
@@ -568,7 +573,11 @@ module.exports = function(AdminFirebase) {
       var update_promise = root_ref.child(path).update({
         "rating": rating,
         "review": review,
-        "worker": worker_id
+        "worker": worker_id,
+        "submission": {
+          "qualityScore": rating,
+          "reviewText": review
+        }
       });
 
       //Update awarded points in the implementation task based on the rating

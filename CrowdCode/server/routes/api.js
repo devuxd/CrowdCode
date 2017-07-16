@@ -19,15 +19,15 @@ module.exports = function(wagner) {
       let skip = req.query.skip;
       let disablepoint = req.query.disablepoint;
       let autoFetch = req.query.autoFetch;
-      let tests = req.body.tests;
-      let code = req.body.code ? req.body.code : "";
       let workerId = req.user.uid;
       if(skip === true) {
         let fetchedData = MicrotaskService.skipMicrotask(projectId, workerId);
         res.json(fetchedData);
       } else {
         if(type === 'DescribeFunctionBehavior') {
-          let promise = MicrotaskService.submitImplementationMicrotask(projectId,key, code, tests, workerId);
+          let tests = req.body;
+          let funct = req.body.funct ? req.body.funct : {"defaultCode": "Code"};
+          let promise = MicrotaskService.submitImplementationMicrotask(projectId,key, funct, tests, workerId);
           promise.then((data) => {
             console.log("data being returned ", data);
             let microtask = MicrotaskService.fetchMicrotask(projectId, req.user.uid);
@@ -37,7 +37,18 @@ module.exports = function(wagner) {
             console.log("error", err);
           });
         } else {
-          console.log("microtask2 is being submitted ----------------------");
+          let review = req.body.reviewText;
+          let rating = req.body.qualityScore;
+          let fromDisputedMicrotask = req.body.fromDisputedMicrotask;
+          let promise = MicrotaskService.submitReviewMicrotask(projectId,key,review, rating, workerId);
+          promise.then((data) => {
+            console.log("data being returned ", data);
+            let microtask = MicrotaskService.fetchMicrotask(projectId, req.user.uid);
+            console.log("Next microtask being fetched ", microtask);
+            res.json(microtask);
+          }).catch(err => {
+            console.log("error", err);
+          });
         }
       }
     };

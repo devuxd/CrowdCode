@@ -170,17 +170,18 @@ module.exports = function(FirebaseService, Q) {
       param project id text
       param microtask id text
    */
-  function generateReviewMicrotask(project_id, reference_task__id){
+  function generateReviewMicrotask(project_id, reference_task__id, functionId){
       var microtask_object = {
           name: "review the changes",
           points: 10,
           awarded_points: 0,
           reference_id: reference_task__id,
+          functionId: functionId,
           rating: "null",
           review: "null",
           worker:"null"
       }
-      var microtask_id = firebase.createReviewMicrotask(project_id,"review the change",10,reference_task__id);
+      var microtask_id = firebase.createReviewMicrotask(project_id,"review the change",10,reference_task__id, functionId);
       var Project = Projects.get(project_id);
       var microtasks = Project.get('microtasks');
       var reviewQ = Project.get('reviewQ');
@@ -194,7 +195,7 @@ module.exports = function(FirebaseService, Q) {
       param project id text
       param microtask id text
    */
-  function submitImplementationMicrotask(project_id,microtask_id, microtask_code, microtask_tests, worker_id){
+  function submitImplementationMicrotask(project_id,microtask_id, funct, microtask_tests, worker_id){
     let deferred = q.defer();
       var Project = Projects.get(project_id);
       var microtasks = Project.get('microtasks');
@@ -207,13 +208,14 @@ module.exports = function(FirebaseService, Q) {
       completed_task.push(microtask_id);
 
       var microtask_object = microtasks.get(microtask_id);
-      microtask_object.code = microtask_code;
-      microtask_object.tests = microtask_tests;
+      microtask_object.code = funct.code ? funct.code : "defaultCode";
+      microtask_object.tests = microtask_tests.tests;
       microtask_object.worker = worker_id;
+      microtask_object.isFunctionComplete =  microtask_tests.isDescribeComplete;
       microtasks.set(microtask_id, microtask_object);
-      var update_promise = firebase.updateImplementationMicrotask(project_id,microtask_id,microtask_code,microtask_tests,worker_id, false);
+      var update_promise = firebase.updateImplementationMicrotask(project_id, microtask_id, funct, microtask_tests, worker_id, microtask_tests.isDescribeComplete);
       update_promise.then(function(){
-          let review_id = generateReviewMicrotask(project_id,microtask_id);
+          let review_id = generateReviewMicrotask(project_id,microtask_id, microtask_object.functionId);
           deferred.resolve(review_id);
       }).catch((err) => {
         deferred.reject(new Error(err));
@@ -226,6 +228,7 @@ module.exports = function(FirebaseService, Q) {
       param microtask id text
    */
   function submitReviewMicrotask(project_id,microtask_id,review, rating, worker_id){
+      var deferred = q.defer();
       var Project = Projects.get(project_id);
       var functions = Project.get('functions');
       var tests = Project.get('tests');
@@ -246,8 +249,7 @@ module.exports = function(FirebaseService, Q) {
 
       var implementation_task_id = microtask_object.reference_id;
       var implementation_object = microtasks.get(implementation_task_id);
-      var function_id = implementation_object.function_id;
-
+      var function_id = implementation_object.functionId;
       var update_promise = firebase.updateReviewMicrotask(project_id,microtask_id,rating,review,worker_id);
       update_promise.then(function(){
           if(rating === 4 || rating === 5){
@@ -256,11 +258,11 @@ module.exports = function(FirebaseService, Q) {
               function_object.code = implementation_object.code;
               var test_set = implementation_object.tests;
               var test_list = new Array();
-              test_set.keys(test).forEach(function(test_id){
-                  test_list.push(test_id);
-                  tests.set(test_id,test[test_id]);
-
-              });
+              // test_set.keys(test).forEach(function(test_id){
+              //     test_list.push(test_id);
+              //     tests.set(test_id,test[test_id]);
+              //
+              // });
               if(implementation_object.isFunctionComplete === true){
                   //Update function and test in firebase and remove function and its tests from memory
                   var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.type,function_object.description,function_object.code,function_object.tests,function_object.stubs,function_object.parameters,function_object.dependent,function_object.isFunctionComplete, function_object.isAssigned);
@@ -272,10 +274,12 @@ module.exports = function(FirebaseService, Q) {
                           tests.remove(test_id);
                       });
                   });
+                  deferred.resolve({"isFunctionComplete": true, "functionApproved" : true});
 
               }
               if(implementation_object.isFunctionComplete === false)
               {
+                  deferred.resolve({"isFunctionComplete": false, "functionApproved" : true});
                   //Generate new implementation task with function
                   generateImplementationMicrotasks(project_id,function_id);
               }
@@ -284,10 +288,13 @@ module.exports = function(FirebaseService, Q) {
               //No changes made to function
               // Generate new implementation task with function
               generateImplementationMicrotasks(project_id,function_id);
+              deferred.resolve({"isFunctionComplete": false, "functionApproved" : false});
           }
 
-      })
-
+      }).catch(err => {
+        deferred.reject(err);
+      });
+      return deferred.promise;
   }
 
   /* Fetch a microtask in the queue
