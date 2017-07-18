@@ -516,7 +516,8 @@ module.exports = function(AdminFirebase) {
           "tests": tests.tests
         },
         "worker": worker_id,
-        "isFunctionComplete": isFunctionComplete
+        "isFunctionComplete": isFunctionComplete,
+        "code": funct.code
       });
       return update_promise;
     },
