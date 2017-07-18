@@ -3475,6 +3475,10 @@ angular
     $scope.data.isComplete = false;
     $scope.data.numDeleted = 0;
     $scope.data.selected = -1;
+    $scope.data.running = false;
+    $scope.data.changedSinceLastRun  = null;
+    $scope.data.inspecting = false;
+    $scope.data.selected1 = -1;
 
     var newTest = {
         description: '',
@@ -3527,44 +3531,220 @@ angular
             var test = angular.copy($scope.funct.tests[i]);
             test.edited  = false;
             test.deleted = false;
+            test.dispute = { active:false, text: 'aa' };
+
+            // flag the test if is disputed
+            if( $scope.microtask.reissuedSubmission != undefined ){
+                var disputed = $scope.microtask.reissuedSubmission.disputedTests;
+                if( disputed != undefined ){
+                    for( var d = 0 ; d < disputed.length ; d++ ){
+                        if( disputed[d].id == test.id ){
+                            test.dispute = {
+                                active: true,
+                                text  : disputed[d].disputeText
+                            }
+                        }
+                    }
+
+                }
+
+            }
 
             $scope.data.tests.push(test);
         }
     }
 
-    console.log("$scope.data.tests", $scope.data.tests);
-
-
     // flag the disputed test
 
-    if( $scope.microtask.disputedTests !== undefined ){
-        for( var a = 0; a < $scope.microtask.disputedTests.length ; a++ ){
-            for( var t = 0 ; t < $scope.data.tests.length; t++ ){
-                var test = $scope.data.tests[t];
-                if( $scope.microtask.disputedTests[a].id == test.id ){
-                    test.dispute = {
-                        active:true,
-                        text: $scope.microtask.disputedTests[a].disputeText
-                    };
-                }
-            }
-        }
-    }
+    // if( $scope.microtask.disputedTests !== undefined ){
+    //     for( var a = 0; a < $scope.microtask.disputedTests.length ; a++ ){
+    //         for( var t = 0 ; t < $scope.data.tests.length; t++ ){
+    //             var test = $scope.data.tests[t];
+    //             if( $scope.microtask.disputedTests[a].id == test.id ){
+    //                 test.dispute = {
+    //                     active:true,
+    //                     text: $scope.microtask.disputedTests[a].disputeText
+    //                 };
+    //             }
+    //         }
+    //     }
+    // }
 
 
     // expose the toggle and edit test functions to the scope
     $scope.toggleEdit   = toggleEdit;
     $scope.toggleDelete = toggleDelete;
     $scope.toggleSelect = toggleSelect;
+    $scope.toggleSelect1 = toggleSelect1;
     $scope.addNew       = addNew;
+    $scope.toggleInspect  = toggleInspect;
+    $scope.toggleDispute  = toggleDispute;
+    $scope.saveStub       = saveStub;
+    $scope.cancelStub     = cancelStub;
+    $scope.run = run;
+
+    // run the tests for the first time
+    run().then(function(){
+        $scope.data.tests.sort(function(tA,tB){
+            if( tA.result.passed && !tB.result.passed ) return -1;
+            if( !tA.result.passed && tB.result.passed ) return 1;
+            return 0;
+        });
+    });
+
+    function run(){
+
+        var deferred = $q.defer();
+        $scope.data.running = true;
+        $scope.data.inspecting = false;
+
+        var code = $scope.data.editor ? $scope.data.editor.getValue() : $scope.funct.getFullCode();
+        runner
+            .run(
+                $scope.data.tests,
+                $scope.funct.name,
+                code,
+                stubs,
+                requestedFunctions
+                )
+            .then(function(result){
+                stubs = result.stubs;
+                $scope.data.tests = result.tests;
+                $scope.data.running = false;
+                $scope.data.changedSinceLastRun = false;
+                deferred.resolve();
+            });
+        return deferred.promise;
+    }
+
+
+    function toggleSelect($event,test){
+        if( $scope.data.selected == -1 )
+            $scope.data.selected = test;
+        else {
+            $scope.data.inspecting = false;
+            $scope.data.selected = -1;
+        }
+
+
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+
+    // functionEditor callbacks
+    $scope.editorCallbacks = {
+        onCodeChanged : onCodeChanged,
+        onFunctionParsed : onFunctionParsed,
+        onEditStub : onEditStub
+    };
+
+    function toggleInspect($event){
+        if( !$scope.data.changedSinceLastRun ){
+            $scope.data.inspecting = !$scope.data.inspecting;
+        }
+
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+
+    function toggleDispute($event){
+        $scope.data.selected.dispute.active = !$scope.data.selected.dispute.active;
+
+        if( $scope.data.selected.dispute.active ){
+            $scope.data.selected.dispute.text = "";
+        }
+
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+
+    function cancelStub(){
+        $scope.data.editingStub = false;
+    }
+
+    function onFunctionParsed(_functionDto,_requestedFunctions){
+        functionDto = _functionDto;
+        requestedFunctions = _requestedFunctions;
+    }
+
+    function onCodeChanged(){
+        $scope.data.inspecting = false;
+        $scope.data.changedSinceLastRun = true;
+    }
+
+    function onEditStub(functionName,inputsKey){
+        console.log(stubs);
+        var funct = functionsService.getByName(functionName);
+        if( funct === null ){
+            for( var i = 0; i < requestedFunctions.length ; i++ ){
+                if( requestedFunctions[i].name == functionName )
+                    funct = new Function( requestedFunctions[i] );
+            }
+        }
+        if( funct === null ) throw 'Cannot find the function '+functionName;
+
+        var inputs = inputsKeyToInputs(inputsKey);
+        $scope.data.editingStub = {
+            functionName : functionName,
+            inputsKey    : inputsKey,
+            functionDescription : funct.getSignature(),
+            parameters   : funct.parameters.map(function(par,index){
+                return {
+                    name: par.name,
+                    type: par.type,
+                    value: angular.toJson(inputs[index])
+                };
+            }),
+            output       : {
+                type  : funct.returnType,
+                value : JSON.stringify(stubs[functionName][inputsKey].output)
+            }
+        };
+
+        console.log('editing stub',$scope.data.editingStub.id);
+    }
+
+    function saveStub(){
+        var output       = eval('('+$scope.data.editingStub.output.value+')') || null;
+        var functionName = $scope.data.editingStub.functionName;
+        var inputsKey    = $scope.data.editingStub.inputsKey;
+
+        if( !editedStubs.hasOwnProperty(functionName) )
+            editedStubs[functionName] = {};
+
+        stubs[functionName][inputsKey].output = output;
+        editedStubs[functionName][inputsKey]  = stubs[functionName][inputsKey];
+
+        console.log('saving stub ',stubs[functionName][inputsKey].id);
+
+        $scope.data.editingStub = false;
+    }
+
+    function inputsKeyToInputs(inputsKey){
+        return JSON.parse('['+inputsKey+' ]');
+    }
 
     // register the collect form data listeners
     // and the microtask form destroy listener
     $scope.taskData.collectFormData = collectFormData;
 
+    function toggleSelect1($event,test){
+        if( $scope.data.selected1 == -1 )
+            $scope.data.selected1 = test;
+        else {
+            $scope.data.inspecting = false;
+            $scope.data.selected1 = -1;
+        }
+
+
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+
 
     function addNew($event){
         var lastAdded = angular.copy(newTest);
+        lastAdded.dispute = { active:false, text: 'aa' };
         $scope.data.tests.push(lastAdded);
         toggleSelect($event,lastAdded);
     }
@@ -3621,6 +3801,7 @@ angular
         $scope.data.selected = -1 ;
 
         if( form.$invalid ){
+          console.log("form is invalid ----", form.$error);
             $modal({template : 'microtasks/modal_form_invalid.html' , show: true});
             form.$setDirty();
             return;
@@ -3631,7 +3812,11 @@ angular
             functionVersion    : $scope.funct.version,
             tests              : [],
             isDescribeComplete : $scope.data.isComplete,
-            disputeFunctionText : ''
+            disputeFunctionText : '',
+            'function': functionDto,
+            requestedFunctions: requestedFunctions,
+            requestedADTs: [],
+            disputedTests: []
         };
 
         if( $scope.data.dispute.active ){
@@ -3671,6 +3856,58 @@ angular
             }
         }
         console.log(formData.tests);
+
+        // add the disputed tests
+        $scope.data.tests.map(function(test){
+            if( test.dispute.active ){
+                formData.disputedTests.push({
+                    id: test.id,
+                    disputeText: test.dispute.text
+                });
+            }
+        });
+
+        // add the callee stubs
+        formData.function.callees.map(function(callee){
+
+            if( !editedStubs.hasOwnProperty(callee.name) )
+                return;
+
+            var cStubs = editedStubs[callee.name];
+            callee.tests = [];
+            for( var inputsKey in cStubs ){
+                console.log('stub id ' + cStubs[inputsKey].id + ' is undefined?',cStubs[inputsKey].id == undefined);
+                callee.tests.push({
+                    id      : cStubs[inputsKey].id,
+                    added   : cStubs[inputsKey].id == undefined ? true : false,
+                    edited  : cStubs[inputsKey].id == undefined ? false : true,
+                    isSimple: true,
+                    description: cStubs[inputsKey].id == undefined ? 'auto generated' : cStubs[inputsKey].description,
+                    inputs : inputsKeyToInputs(inputsKey),
+                    output : JSON.stringify(cStubs[inputsKey].output),
+                });
+            }
+        });
+
+        // add the requested functions stubs
+        formData.requestedFunctions.map(function(requested){
+            if( !editedStubs.hasOwnProperty(requested.name) )
+                return;
+
+            var rStubs = editedStubs[requested.name];
+            requested.tests = [];
+            for( var inputsKey in rStubs ){
+                requested.tests.push({
+                    id          : rStubs[inputsKey].id,
+                    added       : true,
+                    isSimple    : true,
+                    description : 'auto generated',
+                    inputs      : inputsKeyToInputs(inputsKey),
+                    output      : JSON.stringify(rStubs[inputsKey].output)
+                });
+            }
+        });
+        console.log('submitted form data',formData);
 
         return formData;
 
@@ -7507,7 +7744,7 @@ function workerProfile(avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$fi
 	}
 }
 
-angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/implement_behavior/modal_for_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
+angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
 
 angular.module("achievements/achievements_panel.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("achievements/achievements_panel.html",
@@ -8673,13 +8910,13 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "			<div class=\"section-bar\">\n" +
     "\n" +
-    "				<span class=\"pull-left title\" ng-if=\"data.selected == -1\">\n" +
+    "				<span class=\"pull-left title\" ng-if=\"data.selected1 == -1\">\n" +
     "					Behaviors\n" +
     "				</span>\n" +
     "\n" +
     "\n" +
-    "				<span class=\"pull-left\" ng-if=\"data.selected != -1\">\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"toggleSelect($event)\">\n" +
+    "				<span class=\"pull-left\" ng-if=\"data.selected1 != -1\">\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"toggleSelect1($event)\">\n" +
     "						<span class=\"glyphicon glyphicon-arrow-left\"></span> Back\n" +
     "				</button>\n" +
     "				</span>\n" +
@@ -8696,10 +8933,10 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</span>\n" +
     "\n" +
     "\n" +
-    "				<span class=\"pull-right separator\" ng-if=\"data.selected != -1\"></span>\n" +
-    "				<span class=\"pull-right\" ng-if=\"data.selected != -1\">\n" +
+    "				<span class=\"pull-right separator\" ng-if=\"data.selected1 != -1\"></span>\n" +
+    "				<span class=\"pull-right\" ng-if=\"data.selected1 != -1\">\n" +
     "					<button\n" +
-    "						class=\"btn btn-sm btn-dispute {{ data.selected.dispute.active ? 'active' : '' }}\"\n" +
+    "						class=\"btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}\"\n" +
     "						ng-click=\"toggleDispute($event);\">\n" +
     "						<span class=\"glyphicon glyphicon-exclamation-sign\"></span> Report an issue\n" +
     "				</button>\n" +
@@ -8714,7 +8951,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			<div class=\"section-content padding slide from-left\" ng-if=\"data.selected == -1\">\n" +
     "				<div class=\"test-list \">\n" +
     "					<div class=\"test-item clickable {{ !t.running ? (t.dispute.active ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"t in data.tests track by $index\">\n" +
-    "						<div ng-click=\"toggleSelect($event,t);\">\n" +
+    "						<div ng-click=\"toggleSelect1($event,t);\">\n" +
     "							<strong class=\"pull-left\">\n" +
     "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
     "								{{ t.description }}\n" +
@@ -8729,7 +8966,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					</div>\n" +
     "				</div>\n" +
     "			</div>\n" +
-    "			<div class=\"section-content padding slide from-right\" ng-if=\"data.selected != -1\" ng-init=\"t = data.selected\">\n" +
+    "			<div class=\"section-content padding slide from-right\" ng-if=\"data.selected1 != -1\" ng-init=\"t = data.selected1\">\n" +
     "				<div class=\"test-result\">\n" +
     "					<div class=\"row\">\n" +
     "						<div class=\"{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}\">\n" +
@@ -8814,7 +9051,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
     "			<div class=\"section-content slide from-left\" ng-show=\"!data.editingStub\">\n" +
-    "				<function-editor function=\"funct\" editor=\"data.editor\" logs=\"(!data.inspecting) ? undefined : data.selected.logs \" callbacks=\"editorCallbacks\">\n" +
+    "				<function-editor function=\"funct\" editor=\"data.editor\" logs=\"(!data.inspecting) ? undefined : data.selected1.logs \" callbacks=\"editorCallbacks\">\n" +
     "				</function-editor>\n" +
     "			</div>\n" +
     "\n" +
@@ -8828,7 +9065,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</span>\n" +
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
-    "			<div class=\"section-content padding slide from-right\" style=\"z-index:100\" ng-show=\"data.editingStub\">\n" +
+    "			<!-- <div class=\"section-content padding slide from-right\" style=\"z-index:100\" ng-show=\"data.editingStub\">\n" +
     "				<div class=\"stub\" ng-form=\"stubForm\">\n" +
     "					<div class=\"form-group\">\n" +
     "						<label>Function Description</label>\n" +
@@ -8858,7 +9095,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					</div>\n" +
     "				</div>\n" +
     "\n" +
-    "			</div>\n" +
+    "			</div> -->\n" +
     "		</div>\n" +
     "\n" +
     "\n" +
@@ -9307,164 +9544,6 @@ angular.module("microtasks/implement_behavior/implement_behavior.html", []).run(
     "	</div>\n" +
     "\n" +
     "\n" +
-    "</div>\n" +
-    "");
-}]);
-
-angular.module("microtasks/implement_behavior/modal_for_behavior.html", []).run(["$templateCache", function ($templateCache) {
-  $templateCache.put("microtasks/implement_behavior/modal_for_behavior.html",
-    "<div class=\"modal center\" tabindex=\"-1\" role=\"dialog\">\n" +
-    "  <div class=\"modal-dialog\">\n" +
-    "    <div class=\"modal-content\">\n" +
-    "      <div class=\"modal-header\">\n" +
-    "        <button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
-    "        <h4 class=\"modal-title\">Behaviors </h4>\n" +
-    "      </div>\n" +
-    "      <div class=\"modal-body\">\n" +
-    "        <div style=\"height: 250px;\">\n" +
-    "\n" +
-    "    			<div class=\"section-bar\">\n" +
-    "\n" +
-    "    				<span class=\"pull-left title\" ng-if=\"data.selected == -1\">\n" +
-    "    					Behaviors\n" +
-    "    				</span>\n" +
-    "\n" +
-    "\n" +
-    "    				<span class=\"pull-left\" ng-if=\"data.selected != -1\">\n" +
-    "    					<button class=\"btn btn-sm\" ng-click=\"toggleSelect($event)\">\n" +
-    "    						<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
-    "    						Back\n" +
-    "    					</button>\n" +
-    "    				</span>\n" +
-    "\n" +
-    "    				<span class=\"pull-right\">\n" +
-    "    					<button class=\"btn btn-sm btn-run\" ng-click=\"run()\">\n" +
-    "    						<span class=\"glyphicon glyphicon-play\"></span>\n" +
-    "    						Run Tests\n" +
-    "    					</button>\n" +
-    "\n" +
-    "\n" +
-    "    					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) \">\n" +
-    "    						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
-    "    					</button>\n" +
-    "    				</span>\n" +
-    "\n" +
-    "\n" +
-    "    				<span class=\"pull-right separator\" ng-if=\"data.selected != -1\"></span>\n" +
-    "    				<span class=\"pull-right\" ng-if=\"data.selected != -1\">\n" +
-    "    					<button\n" +
-    "    						class=\"btn btn-sm btn-dispute {{ data.selected.dispute.active ? 'active' : '' }}\"\n" +
-    "    						ng-click=\"toggleDispute($event);\">\n" +
-    "    						<span class=\"glyphicon glyphicon-exclamation-sign\"></span>\n" +
-    "    						Report an issue\n" +
-    "    					</button>\n" +
-    "    					<button\n" +
-    "    						class=\"btn btn-sm btn-inspect {{ !data.changedSinceLastRun && data.inspecting ? 'active' : '' }}\"\n" +
-    "    						ng-disabled=\"data.changedSinceLastRun\"\n" +
-    "    						ng-click=\"toggleInspect($event);\">\n" +
-    "    						<span class=\"glyphicon glyphicon-search\"></span>\n" +
-    "    						Inspect code\n" +
-    "    					</button>\n" +
-    "    				</span>\n" +
-    "\n" +
-    "    				<span class=\"clearfix\"></span>\n" +
-    "    			</div>\n" +
-    "    			<div class=\"section-content padding slide from-left\" ng-if=\"data.selected == -1\" >\n" +
-    "    				<div class=\"test-list \" >\n" +
-    "    					<div class=\"test-item clickable {{ !t.running ? (t.dispute.active ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) ) : '' }}\"\n" +
-    "    						 ng-repeat=\"t in data.tests track by $index\">\n" +
-    "    						<div ng-click=\"toggleSelect($event,t);\">\n" +
-    "    							<strong class=\"pull-left\">\n" +
-    "    								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
-    "    								{{ t.description }}\n" +
-    "    							</strong>\n" +
-    "    							<span class=\"pull-right\">\n" +
-    "    								<span ng-if=\"t.running\">\n" +
-    "    									running\n" +
-    "    								</span>\n" +
-    "    							</span>\n" +
-    "    							<span class=\"clearfix\"></span>\n" +
-    "    						</div>\n" +
-    "    					</div>\n" +
-    "    				</div>\n" +
-    "    			</div>\n" +
-    "    			<div class=\"section-content padding slide from-right\" ng-if=\"data.selected != -1\" ng-init=\"t = data.selected\" >\n" +
-    "    				<div class=\"test-result\">\n" +
-    "    					<div class=\"row\">\n" +
-    "    						<div class=\"{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}\" >\n" +
-    "    							<div class=\"row\">\n" +
-    "    								<div class=\"col-sm-3 col-md-3 row-label\">Status</div>\n" +
-    "    								<div class=\"col-sm-9 col-md-9\">\n" +
-    "    									<span ng-if=\"!t.dispute.active\">\n" +
-    "    										<span ng-if=\"t.result.passed\" class=\"color-passed\">\n" +
-    "    											<span class=\"glyphicon glyphicon-ok-sign\"></span> passed\n" +
-    "    										</span>\n" +
-    "    										<span ng-if=\"!t.result.passed\" class=\"color-failed\">\n" +
-    "    											<span class=\"glyphicon glyphicon-remove-sign\"></span> failed\n" +
-    "    										</span>\n" +
-    "    										<span>\n" +
-    "    											{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}\n" +
-    "    										</span>\n" +
-    "    									</span>\n" +
-    "    									<span ng-if=\"t.dispute.active\" class=\"color-disputed\">\n" +
-    "    										<span class=\"glyphicon glyphicon-exclamation-sign\"></span> reported\n" +
-    "    									</span>\n" +
-    "\n" +
-    "    								</div>\n" +
-    "    							</div>\n" +
-    "    							<div class=\"row\">\n" +
-    "    								<div class=\"col-sm-3 col-md-3 row-label\">description</div>\n" +
-    "    								<div class=\"col-sm-9 col-md-9\">it {{ t.description }}</div>\n" +
-    "    							</div>\n" +
-    "    							<div class=\"row\" ng-if=\"t.result.message\">\n" +
-    "    								<div class=\"col-sm-3 col-md-3 row-label\">Message</div>\n" +
-    "    								<div class=\"col-sm-9 col-md-9\">{{ t.result.message }}</div>\n" +
-    "    							</div>\n" +
-    "    							<div class=\"row\">\n" +
-    "    								<div class=\"col-sm-3 col-md-3 row-label\">Code</div>\n" +
-    "    								<div class=\"col-sm-9 col-md-9\"><js-reader code=\"t.code\"></js-reader></div>\n" +
-    "    							</div>\n" +
-    "    						</div>\n" +
-    "\n" +
-    "    						<div class=\"col-sm-6 col-md-6\" ng-if=\"!t.dispute.active && t.result.showDiff\">\n" +
-    "    							<div class=\"row\" >\n" +
-    "    								<div class=\"col-sm-12 col-md-12 row-label\">\n" +
-    "    									<span style=\"width:10px;height:10px;display:inline-block;background-color:#CDFFCD\"></span>\n" +
-    "    									Expected\n" +
-    "\n" +
-    "\n" +
-    "    									<span style=\"width:10px;height:10px;display:inline-block;background-color:#FFD7D7\"></span>\n" +
-    "    									Actual\n" +
-    "    								</div>\n" +
-    "    							</div>\n" +
-    "    							<div class=\"row\" >\n" +
-    "    								<div class=\"col-sm-12 col-md-12\">\n" +
-    "    									<json-diff-reader old=\"t.result.expected\" new=\"t.result.actual\"></json-diff-reader>\n" +
-    "    								</div>\n" +
-    "    							</div>\n" +
-    "    						</div>\n" +
-    "\n" +
-    "    						<div class=\"col-sm-6 col-md-6\" ng-if=\"t.dispute.active\">\n" +
-    "    							<div class=\"row\" >\n" +
-    "    								<div class=\"col-sm-12 col-md-12 row-label\">Reported reason</div>\n" +
-    "    							</div>\n" +
-    "    							<div class=\"row\" >\n" +
-    "    								<div class=\"col-sm-12 col-md-12\">\n" +
-    "    									<textarea class=\"dispute\" ng-model=\"t.dispute.text\"></textarea>\n" +
-    "    								</div>\n" +
-    "    							</div>\n" +
-    "    						</div>\n" +
-    "    					</div>\n" +
-    "\n" +
-    "    				</div>\n" +
-    "    			</div>\n" +
-    "    		</div>\n" +
-    "      </div>\n" +
-    "      <div class=\"modal-footer\">\n" +
-    "        <button type=\"button\" class=\"btn btn-sm\" ng-click=\"$hide()\">Close</button>\n" +
-    "      </div>\n" +
-    "    </div>\n" +
-    "  </div>\n" +
     "</div>\n" +
     "");
 }]);

@@ -27,7 +27,7 @@ module.exports = function(wagner) {
       } else {
         if(type === 'DescribeFunctionBehavior') {
           let tests = req.body;
-          let funct = req.body.funct ? req.body.funct : {"defaultCode": "Code"};
+          let funct = req.body.function;
           let promise = MicrotaskService.submitImplementationMicrotask(projectId,key, funct, tests, workerId);
           promise.then((data) => {
             console.log("data being returned ", data);
