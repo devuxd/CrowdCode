@@ -16,10 +16,11 @@ module.exports = function(wagner) {
       let projectId = req.params.projectId;
       let type = req.query.type;
       let key = req.query.key;
-      let skip = req.query.skip;
-      let disablepoint = req.query.disablepoint;
-      let autoFetch = req.query.autoFetch;
+      let skip = (req.query.skip == 'true');
+      let disablepoint = (req.query.disablepoint == 'true');
+      let autoFetch = (req.query.autoFetch == 'true');
       let workerId = req.user.uid;
+
       if(skip === true) {
         let fetchedData = MicrotaskService.skipMicrotask(projectId, workerId);
         res.json(fetchedData);
