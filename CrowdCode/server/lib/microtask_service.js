@@ -157,7 +157,7 @@ module.exports = function(FirebaseService, Q) {
           microtasks.set(microtask_id,microtask_object);
           implementationQ.push(microtask_id);
           func.isAssigned = true;
-          //firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
+          firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
 
       }
       else{
@@ -262,7 +262,7 @@ module.exports = function(FirebaseService, Q) {
               function_object.version = implementation_object.functionVersion + 1;
               function_object.code = implementation_object.code;
               var test_set = implementation_object.tests;
-              var test_list = null;
+              var test_list = new Array();
                /*test_set.keys().forEach(function(test_id){
                    test_list.push(test_id);
                    //tests.set(test_id,test_set.get(test_id));
@@ -270,7 +270,7 @@ module.exports = function(FirebaseService, Q) {
               console.log("UPDATED FUNCTION _____________");
               console.log(function_object);
               //Update function and test in firebase
-              var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.header,function_object.description,function_object.code,function_object.returnType,function_object.parameters,function_object.stubs,function_object.tests,"null",function_object.dependent,function_object.isComplete, function_object.isAssigned, function_object.isApiArtifact);
+              var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.header,function_object.description,function_object.code,function_object.returnType,function_object.parameters,function_object.stubs,function_object.tests,"null",function_object.dependent,function_object.isComplete, "false", function_object.isApiArtifact);
                 test_list.forEach(function(test_id){
                   var test_object = tests.get(test_id);
                   var test_update_promise = firebase.updateTest(project_id,function_id, test_id, test_object.type,test_object.name,test_object.description,test_object.input, test_object.output,test_object.result);
@@ -314,6 +314,7 @@ module.exports = function(FirebaseService, Q) {
    */
   function fetchMicrotask(project_id, worker_id){
       var Project = Projects.get(project_id);
+      var functions = Project.get('functions');
       var microtasks = Project.get('microtasks');
       var reviewQ = Project.get('reviewQ');
       var workers = Project.get('workers');
@@ -391,7 +392,8 @@ module.exports = function(FirebaseService, Q) {
           assigned_task.set('id',microtask_id);
           assigned_task.set('type',microtask_type);
           var microtask_object = microtasks.get(microtask_id);
-          var return_object = {"microtaskKey":microtask_id,"type":microtask_type,"object":microtask_object};
+          var funct = functions.get(microtask_object.functionId);
+          var return_object = {"microtaskKey":microtask_id,"type":microtask_type,"object":microtask_object,"function":funct};
       }
       else{
           var return_object = {"microtaskKey":"none"};
