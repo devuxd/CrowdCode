@@ -4638,9 +4638,8 @@ angular
 
             $scope.data = {};
             $scope.data.selected = -1;
-            // TODO: uncomment the code below after merging implement_behavior and describe_behavior
-            // $scope.data.funct = new Function( submission['function'] );
-            // $scope.data.newCode = $scope.data.funct.getFullCode();
+            $scope.data.funct = new Function( submission['function'] );
+            $scope.data.newCode = $scope.data.funct.getFullCode();
             $scope.data.oldCode = $scope.funct.getFullCode();
             console.log("$scope.data.oldCode ", $scope.data.oldCode );
             if( submission.disputedTests ){
@@ -10038,17 +10037,16 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"25%\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"35%\" >\n" +
     "		<div class=\"section-bar\">\n" +
-    "			<span class=\"title\">Function Description</span>\n" +
+    "			<span class=\"title\">Code edits</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content\">\n" +
-    "			<js-reader code=\"funct.getFunctionCode()\" ></js-reader>\n" +
+    "			<js-reader mode=\"diff\" code=\"data.newCode\" old-code=\"data.oldCode\" ></js-reader>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"40%\" >\n" +
+    "	<div class=\"section\" ui-layout-container size=\"30%\" >\n" +
     "		<div class=\"section-bar\" ng-if=\"data.selected == -1\">\n" +
     "			<span class=\"title\">Tests</span>\n" +
     "			<span class=\"pull-right\">\n" +
