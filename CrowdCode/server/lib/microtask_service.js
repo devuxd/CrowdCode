@@ -270,7 +270,7 @@ module.exports = function(FirebaseService, Q) {
               console.log("UPDATED FUNCTION _____________");
               console.log(function_object);
               //Update function and test in firebase
-              var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.header,function_object.description,function_object.code,function_object.returnType,function_object.parameters,function_object.stubs,function_object.tests,"null",function_object.dependent,function_object.isComplete, "false", function_object.isApiArtifact);
+              var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.header,function_object.description,function_object.code,function_object.returnType,function_object.parameters,function_object.stubs,function_object.tests,"null",function_object.dependent,function_object.isComplete, false, function_object.isApiArtifact);
                 test_list.forEach(function(test_id){
                   var test_object = tests.get(test_id);
                   var test_update_promise = firebase.updateTest(project_id,function_id, test_id, test_object.type,test_object.name,test_object.description,test_object.input, test_object.output,test_object.result);
