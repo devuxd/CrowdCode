@@ -4196,9 +4196,9 @@ angular
 
 angular
     .module('crowdCode')
-    .directive('microtaskForm', [ '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]);
+    .directive('microtaskForm', ['Function', '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]);
 
-function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
+function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
 
     return {
         restrict: 'A',
@@ -4280,10 +4280,13 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				// initialize microtask data
 				$scope.canSubmit = true;
 				$scope.microtask = microtask;
+        console.log("Microtaks ", 	$scope.microtask);
 
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionId))
-					$scope.funct = functionsService.get($scope.microtask.functionId);
+				if (angular.isDefined($scope.microtask.function))
+					$scope.funct = new Function( $scope.microtask.function );
+          //functionsService.get($scope.microtask.functionId);
+          // new Function( $scope.microtask.function );
 
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
@@ -4365,7 +4368,6 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				microtasks
 					.fetch()
 					.then( function(fetchData){
-            console.log(fetchData);
 						microtasks.load(fetchData);
 					}, function(){
 						noMicrotasks();
@@ -7049,20 +7051,20 @@ angular
             mode: '@',
             highlight: '=',
         },
-        controller: function($scope,$element){ 
-            
+        controller: function($scope,$element){
+
             if($scope.mode===undefined){
                 $scope.mode='javascript';
                 $scope.theme='xcode';
             }
             else
-                $scope.theme='github';   
+                $scope.theme='github';
 
             if( $scope.mode == 'diff' && $scope.oldCode != undefined ){
                 $scope.code = calculateDiff($scope.oldCode,$scope.code);
             }
 
-            console.log($scope.mode,$scope.oldCode);
+            //console.log($scope.mode,$scope.oldCode);
             if( $scope.mode == 'diff' && $scope.oldCode != undefined ){
                 $scope.code = calculateDiff($scope.oldCode,$scope.code);
             }
@@ -7091,11 +7093,11 @@ angular
                                 // console.log('added marker for  '+val.needle, range, marker);
                                // console.log(_editor.getSession().getMarkers());
                             }
-                            
+
                         });
                     }
                 });
-                
+
             };
         }
     };
@@ -7509,7 +7511,6 @@ angular
             $rootScope.$on('reset-reminder', resetReminder );
 
             function microtaskLoaded($event, microtask,firstFetch){
-              console.log(microtask);
                 if( firstFetch == '1')
                     userService.setFirstFetchTime();
 

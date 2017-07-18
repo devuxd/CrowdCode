@@ -393,10 +393,9 @@ module.exports = function(FirebaseService, Q) {
           assigned_task.set('type',microtask_type);
           var microtask_object = microtasks.get(microtask_id);
           var funct = functions.get(microtask_object.functionId);
-          var return_object = {"microtaskKey":microtask_id,"type":microtask_type,"functionId":microtask_object.functionId,"function":funct};
-          if(microtask_type==="Review"){
-              return_object = {"microtaskKey":microtask_id,"type":microtask_type,"functionId":microtask_object.functionId,"referenceID": microtask_object.reference_id,"function":funct};
-          }
+          microtask_object.function = funct;
+          var return_object = {"microtaskKey":microtask_id,"type":microtask_type, "object": microtask_object};
+
       }
       else{
           var return_object = {"microtaskKey":"none"};
