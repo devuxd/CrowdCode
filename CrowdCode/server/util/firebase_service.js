@@ -518,12 +518,8 @@ module.exports = function(AdminFirebase) {
         },
         "worker": worker_id,
         "isFunctionComplete": isFunctionComplete,
-<<<<<<< HEAD
         "code":funct.code,
         "tests":tests.tests,
-=======
-       
->>>>>>> 80923d51c6e08220fa7f888aaf7ccf8621d2f5f0
       });
       return update_promise;
     },
