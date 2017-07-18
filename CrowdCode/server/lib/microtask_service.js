@@ -157,7 +157,7 @@ module.exports = function(FirebaseService, Q) {
           microtasks.set(microtask_id,microtask_object);
           implementationQ.push(microtask_id);
           func.isAssigned = true;
-          firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
+         // firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
 
       }
       else{
@@ -393,7 +393,10 @@ module.exports = function(FirebaseService, Q) {
           assigned_task.set('type',microtask_type);
           var microtask_object = microtasks.get(microtask_id);
           var funct = functions.get(microtask_object.functionId);
-          var return_object = {"microtaskKey":microtask_id,"type":microtask_type,"object":microtask_object,"function":funct};
+          var return_object = {"microtaskKey":microtask_id,"type":microtask_type,"functionId":microtask_object.functionId,"function":funct};
+          if(microtask_type==="Review"){
+              return_object = {"microtaskKey":microtask_id,"type":microtask_type,"functionId":microtask_object.functionId,"referenceID": microtask_object.reference_id,"function":funct};
+          }
       }
       else{
           var return_object = {"microtaskKey":"none"};
@@ -419,7 +422,7 @@ module.exports = function(FirebaseService, Q) {
               var microtask_id = assigned_task.get('id');
               var microtask_type = assigned_task.get('type');
 
-
+             if(reviewQ.length > 0 || implementationQ.length > 0){
               skipped_task.push(microtask_id);
               assigned_task.set('id',null);
               assigned_task.set('type',null);
@@ -430,6 +433,7 @@ module.exports = function(FirebaseService, Q) {
               if(microtask_type === 'Review'){
                   reviewQ.unshift(microtask_id);
               }
+             }
           }
           return_object = fetchMicrotask(project_id,worker_id);
       }
