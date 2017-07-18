@@ -121,6 +121,7 @@ module.exports = function(FirebaseService, Q) {
           var function_description = func.description;
           var function_return_type = func.returnType;
           var function_parameters = func.parameters;
+          var function_header = func.header;
           var max_points = 10;
           var temp_tests = '{';
           if(func.tests !== "null") {
@@ -134,7 +135,7 @@ module.exports = function(FirebaseService, Q) {
           }
           temp_tests += '}';
           var function_tests = JSON.parse(temp_tests);
-          var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name, function_description, function_version,microtask_description,function_code, function_return_type, function_parameters, function_tests);
+          var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name, function_description, function_version,microtask_description,function_code, function_return_type, function_parameters, function_header, function_tests);
 
           var microtask_object = {
               name: microtask_name,
@@ -148,6 +149,7 @@ module.exports = function(FirebaseService, Q) {
               functionVersion: function_version,
               functionDescription: function_description,
               returnType: function_return_type,
+              header: function_header,
               parameters: function_parameters,
               tests: function_tests,
               worker: "null"
@@ -209,6 +211,7 @@ module.exports = function(FirebaseService, Q) {
 
       var microtask_object = microtasks.get(microtask_id);
       microtask_object.code = funct.code ? funct.code : "defaultCode";
+      microtask_object.header = funct.header;
       microtask_object.tests = microtask_tests.tests;
       microtask_object.worker = worker_id;
       microtask_object.isFunctionComplete =  microtask_tests.isDescribeComplete;
@@ -217,7 +220,7 @@ module.exports = function(FirebaseService, Q) {
       update_promise.then(function(){
           let review_id = generateReviewMicrotask(project_id,microtask_id, microtask_object.functionId);
           deferred.resolve(review_id);
-      }).catch((err) => {
+      }).catch(err => {
         deferred.reject(new Error(err));
       });
       return deferred.promise;
@@ -241,6 +244,7 @@ module.exports = function(FirebaseService, Q) {
       var completed_task = worker.get('completed');
       completed_task.push(microtask_id);
 
+
       var microtask_object = microtasks.get(microtask_id);
       microtask_object.rating = rating;
       microtask_object.review = review;
@@ -255,28 +259,35 @@ module.exports = function(FirebaseService, Q) {
           if(rating === 4 || rating === 5){
               //update function object and tests
               var function_object = functions.get(function_id);
+              function_object.version = implementation_object.functionVersion + 1;
               function_object.code = implementation_object.code;
               var test_set = implementation_object.tests;
-              var test_list = new Array();
-              // test_set.keys(test).forEach(function(test_id){
-              //     test_list.push(test_id);
-              //     tests.set(test_id,test[test_id]);
-              //
-              // });
-              if(implementation_object.isFunctionComplete === true){
-                  //Update function and test in firebase and remove function and its tests from memory
-                  var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.type,function_object.description,function_object.code,function_object.tests,function_object.stubs,function_object.parameters,function_object.dependent,function_object.isFunctionComplete, function_object.isAssigned);
-                  function_update_promise.remove(implementation_object.function_id);
-                  test_list.forEach(function(test_id){
-                      var test_object = tests.get(test_id);
-                      var test_update_promise = firebase.updateTest(project_id,function_id, test_id, test_object.type,test_object.name,test_object.description,test_object.input, test_object.output,test_object.result);
-                      test_update_promise.then(function(){
-                          tests.remove(test_id);
-                      });
+              var test_list = null;
+               /*test_set.keys().forEach(function(test_id){
+                   test_list.push(test_id);
+                   //tests.set(test_id,test_set.get(test_id));
+               });*/
+              console.log("UPDATED FUNCTION _____________");
+              console.log(function_object);
+              //Update function and test in firebase
+              var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.header,function_object.description,function_object.code,function_object.returnType,function_object.parameters,function_object.stubs,function_object.tests,"null",function_object.dependent,function_object.isComplete, function_object.isAssigned, function_object.isApiArtifact);
+                test_list.forEach(function(test_id){
+                  var test_object = tests.get(test_id);
+                  var test_update_promise = firebase.updateTest(project_id,function_id, test_id, test_object.type,test_object.name,test_object.description,test_object.input, test_object.output,test_object.result);
+                  test_update_promise.then(function(){
+                      tests.remove(test_id);
                   });
-                  deferred.resolve({"isFunctionComplete": true, "functionApproved" : true});
+              });
+              deferred.resolve({"isFunctionComplete": true, "functionApproved" : true});
 
+              //remove function and its tests from memory
+              if(implementation_object.isFunctionComplete === true){
+                  functions.remove(implementation_object.function_id);
+                  test_list.forEach(function(test_id){
+                          tests.remove(test_id);
+                  });
               }
+
               if(implementation_object.isFunctionComplete === false)
               {
                   deferred.resolve({"isFunctionComplete": false, "functionApproved" : true});
@@ -291,9 +302,9 @@ module.exports = function(FirebaseService, Q) {
               deferred.resolve({"isFunctionComplete": false, "functionApproved" : false});
           }
 
-      }).catch(err => {
-        deferred.reject(err);
-      });
+      }).catch(function(err) {
+          deferred.reject(err);
+  });
       return deferred.promise;
   }
 

@@ -476,7 +476,7 @@ module.exports = function(AdminFirebase) {
      param isReviewMode boolean
      return micrtotask ID text
      */
-    createImplementationMicrotask: function(project_id, microtask_name, points, function_id, function_name, function_description, function_version, microtask_description, microtask_code, microtask_return_type, microtask_parameters, tests) {
+    createImplementationMicrotask: function(project_id, microtask_name, points, function_id, function_name, function_description, function_version, microtask_description, microtask_code, microtask_return_type, microtask_parameters, function_header, tests) {
       microtask_schema = {
         name: microtask_name,
         description: microtask_description,
@@ -489,6 +489,7 @@ module.exports = function(AdminFirebase) {
         functionDescription: function_description,
         returnType: microtask_return_type,
         parameters: microtask_parameters,
+        header: function_header,
         tests: tests,
         worker: "null"
       }
@@ -516,7 +517,9 @@ module.exports = function(AdminFirebase) {
           "tests": tests.tests
         },
         "worker": worker_id,
-        "isFunctionComplete": isFunctionComplete
+        "isFunctionComplete": isFunctionComplete,
+        "code":funct.code,
+        "tests":tests.tests,
       });
       return update_promise;
     },
