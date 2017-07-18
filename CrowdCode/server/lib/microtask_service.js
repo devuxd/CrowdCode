@@ -420,18 +420,38 @@ module.exports = function(FirebaseService, Q) {
           if(skipped_task.length >= 0 ){
               var microtask_id = assigned_task.get('id');
               var microtask_type = assigned_task.get('type');
-
+            //Check if there are tasks available
              if(reviewQ.length > 0 || implementationQ.length > 0){
-              skipped_task.push(microtask_id);
-              assigned_task.set('id',null);
-              assigned_task.set('type',null);
+                 var review_skipped = 0;
+                 var implementation_skipped = 0;
 
-              if(microtask_type === "DescribeFunctionBehavior"){
-                  implementationQ.unshift(microtask_id);
-              }
-              if(microtask_type === 'Review'){
-                  reviewQ.unshift(microtask_id);
-              }
+                 //Check if tasks that are already skipped available
+                 reviewQ.forEach(function(microtask_id){
+                     if(skipped_task.indexOf(microtask_id) >= 0){
+                         review_skipped++;
+                     }
+                 });
+                 implementationQ.forEach(function(microtask_id){
+                     if(skipped_task.indexOf(microtask_id) >= 0){
+                         implementation_skipped++;
+                     }
+                 });
+                 var review_available = reviewQ.length - review_skipped;
+                 var implementation_available = implementationQ.length - implementation_skipped;
+
+                 //if there are no tasks that are not sakipped then return the current task
+                 if(review_available > 0 || implementation_available > 0) {
+                     skipped_task.push(microtask_id);
+                     assigned_task.set('id', null);
+                     assigned_task.set('type', null);
+
+                     if (microtask_type === "DescribeFunctionBehavior") {
+                         implementationQ.unshift(microtask_id);
+                     }
+                     if (microtask_type === 'Review') {
+                         reviewQ.unshift(microtask_id);
+                     }
+                 }
              }
           }
           return_object = fetchMicrotask(project_id,worker_id);
