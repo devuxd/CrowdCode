@@ -78,13 +78,39 @@ module.exports = function(AdminFirebase, Q) {
       let path = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders').child(worker_id);
       let deferred = Q.defer();
       path.update({
-          name: worker_name,
-          score: worker_score
-        }).then(err => {
-          if(err) deferred.reject(err);
-          else deferred.resolve();
-        });
-        return deferred.promise;
+        name: worker_name,
+        score: worker_score
+      }).then(err => {
+        if (err) deferred.reject(err);
+        else deferred.resolve();
+      });
+      return deferred.promise;
+    },
+
+    // Tests to see if /leaderboard/<workerId> has any data.
+    checkIfWorkerIsInLeaderboard: function(project_name, worker_id) {
+      let deferred = Q.defer();
+      let workerRef = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders');
+      workerRef.child(worker_id).once('value', function(snapshot) {
+        var exists = (snapshot.val() !== null);
+        deferred.resolve(exists);
+      }).catch(err => {
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    },
+
+    // Tests to see if /leaderboard/<workerId> has any data.
+    checkIfWorkerExists: function(worker_id) {
+      let deferred = Q.defer();
+      let workerRef = root_ref.child('Workers');
+      workerRef.child(worker_id).once('value', function(snapshot) {
+        var exists = (snapshot.val() !== null);
+        deferred.resolve(exists);
+      }).catch(err => {
+        deferred.reject(err);
+      });
+      return deferred.promise;
     },
 
     /* Retrieve list of projects
@@ -528,8 +554,8 @@ module.exports = function(AdminFirebase, Q) {
         },
         "worker": worker_id,
         "isFunctionComplete": isFunctionComplete,
-        "code":funct.code,
-        "tests":tests.tests,
+        "code": funct.code,
+        "tests": tests.tests,
       });
       return update_promise;
     },
