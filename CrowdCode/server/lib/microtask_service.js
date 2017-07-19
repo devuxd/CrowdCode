@@ -317,6 +317,7 @@ module.exports = function(FirebaseService, Q) {
       var functions = Project.get('functions');
       var microtasks = Project.get('microtasks');
       var reviewQ = Project.get('reviewQ');
+      var implementationQ = Project.get('implementationQ');
       var workers = Project.get('workers');
       if(workers.has(worker_id)){
           var worker = workers.get(worker_id);
@@ -335,13 +336,32 @@ module.exports = function(FirebaseService, Q) {
       var microtask_type;
       var assigned_task = worker.get('assigned');
       var skipped_task = worker.get('skipped');
+      var completed_task = worker.get('completed');
       //If the worker doesnt have any task already assigned
       if(assigned_task.get('id') === null) {
+
+          var review_skipped = 0;
+          var implementation_skipped = 0;
+
+          //Check if tasks that are already skipped available or if review tasks are not for implementation by the worker
+          reviewQ.forEach(function(id){
+              var review_object = microtasks.get(id);
+              if(skipped_task.indexOf(id) >= 0  || completed_task.indexOf(review_object.reference_id) >= 0){
+                  review_skipped++;
+              }
+          });
+          implementationQ.forEach(function(id){
+              if(skipped_task.indexOf(id) >= 0){
+                  implementation_skipped++;
+              }
+          });
+
+          var review_available = reviewQ.length - review_skipped;
+          var implementation_available = implementationQ.length - implementation_skipped;
           //If there are no review tasks go to implementation tasks
-          if (reviewQ.length === 0) {
-              var implementationQ = Project.get('implementationQ');
+          if (review_available === 0) {
               //If there are no implementation tasks return null
-              if (implementationQ.length === 0) {
+              if (implementation_available === 0) {console.log('yes');
                   microtask_id = null;
               } else {
                   var temp = new Array();
@@ -362,13 +382,14 @@ module.exports = function(FirebaseService, Q) {
               }
           }
           //If there are review taskss in the queue assigned those first
-          if (reviewQ.length > 0) {
+          if (review_available > 0) {
               var temp = new Array();
               do{
                   //Pick the first task from review queue
                   microtask_id = reviewQ.shift();
+                  var review_object = microtasks.get(microtask_id);console.log(microtask_id+'-----------'+review_object.reference_id)
                   //If the task was already skipped by the worker put in a temp array and try the next task
-                  if(skipped_task.indexOf(microtask_id) >= 0){
+                  if(skipped_task.indexOf(microtask_id) >= 0 || completed_task.indexOf(review_object.reference_id) >= 0){
                       temp.push(microtask_id);
                       microtask_id = null;
                   }
@@ -398,7 +419,7 @@ module.exports = function(FirebaseService, Q) {
 
       }
       else{
-          var return_object = {"microtaskKey":"none"};
+          var return_object = {"microtaskKey":undefined};
       }
       return return_object;
   }
@@ -426,31 +447,34 @@ module.exports = function(FirebaseService, Q) {
                  var implementation_skipped = 0;
 
                  //Check if tasks that are already skipped available
-                 reviewQ.forEach(function(microtask_id){
-                     if(skipped_task.indexOf(microtask_id) >= 0){
+                 reviewQ.forEach(function(id){
+                     if(skipped_task.indexOf(id) >= 0){
                          review_skipped++;
                      }
                  });
-                 implementationQ.forEach(function(microtask_id){
-                     if(skipped_task.indexOf(microtask_id) >= 0){
+                 implementationQ.forEach(function(id){
+                     if(skipped_task.indexOf(id) >= 0){
                          implementation_skipped++;
                      }
                  });
                  var review_available = reviewQ.length - review_skipped;
                  var implementation_available = implementationQ.length - implementation_skipped;
+                 //if there are no tasks that are not skipped then clear the list of skipped tasks
+                 if(!(review_available > 0 || implementation_available > 0)) {
+                     skipped_task = new Array();
+                 }
+                 skipped_task.push(microtask_id);
+                 worker.set('skipped',skipped_task);
+                 assigned_task.set('id', null);
+                 assigned_task.set('type', null);
 
-                 //if there are no tasks that are not sakipped then return the current task
-                 if(review_available > 0 || implementation_available > 0) {
-                     skipped_task.push(microtask_id);
-                     assigned_task.set('id', null);
-                     assigned_task.set('type', null);
-
-                     if (microtask_type === "DescribeFunctionBehavior") {
-                         implementationQ.unshift(microtask_id);
-                     }
-                     if (microtask_type === 'Review') {
-                         reviewQ.unshift(microtask_id);
-                     }
+                 if (microtask_type === "DescribeFunctionBehavior") {
+                     implementationQ.unshift(microtask_id);
+                     Project.set('implementationQ',implementationQ);
+                 }
+                 if (microtask_type === 'Review') {
+                     reviewQ.unshift(microtask_id);
+                     Project.set('reviewQ',reviewQ);
                  }
              }
           }
