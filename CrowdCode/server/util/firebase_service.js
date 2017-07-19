@@ -394,7 +394,6 @@ module.exports = function(AdminFirebase, Q) {
      */
     createTest: function(project_id, function_id, test_type, test_name, test_description, test_input, test_output) {
       test_schema = {
-        name: test_name,
         description: test_description,
         functionId: function_id,
         input: test_input,
@@ -423,23 +422,21 @@ module.exports = function(AdminFirebase, Q) {
      param test result boolean
      return update promise object
      */
-    updateTest: function(project_id, function_id, test_id, test_type, test_name, test_description, test_input, test_output, test_result) {
+    updateTest: function(project_id, function_id, test_id, test_description, test_input, test_output, test_code) {
       var path = 'Projects/' + project_id + '/artifacts/Tests/' + test_id;
       var history_path = 'Projects/' + project_id + '/history/artifacts/Tests/' + test_id;
       root_ref.child(history_path).once("value", function(data) {
         var version_number = data.numChildren();
         test_schema = {
-          name: test_name,
-          description: test_description,
-          functionId: function_id,
-          input: test_input,
-          output: test_output,
-          isPassed: test_result,
-          version: version_number,
-          isDeleted: false,
-          type: test_type
+            functionId: function_id,
+            description: test_description,
+            inputs: test_input,
+            output: test_output,
+            code: test_code,
+            isPassed: false,
+            version: version_number,
+            isDeleted: false,
         }
-
         var update_promise = root_ref.child(path).update(test_schema);
         var add_to_history = root_ref.child(history_path).child(version_number).set(test_schema);
         return update_promise;

@@ -110,7 +110,7 @@ module.exports = function(FirebaseService, Q) {
       var tests = Project.get('tests');
       var microtasks = Project.get('microtasks');
       var implementationQ= Project.get('implementationQ');
-      var func = functions.get(function_id);
+      var func = functions.get(function_id);console.log('2----'+function_id);
 
       if(func.dependent == "null") {
           var microtask_name = "Implementment behaviour";
@@ -123,7 +123,7 @@ module.exports = function(FirebaseService, Q) {
           var function_parameters = func.parameters;
           var function_header = func.header;
           var max_points = 10;
-          var temp_tests = '{';
+          /*var temp_tests = '{';
           if(func.tests !== "null") {
               func.tests.forEach(function (test_id) {
                   if (temp_tests === '{') {
@@ -133,10 +133,18 @@ module.exports = function(FirebaseService, Q) {
                   }
               });
           }
-          temp_tests += '}';
-          var function_tests = JSON.parse(temp_tests);
-          var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name, function_description, function_version,microtask_description,function_code, function_return_type, function_parameters, function_header, function_tests);
+          temp_tests += '}';*/
+          var temp_tests = new Array();
+          if(func.tests !== "null") {
+              func.tests.forEach(function (test_id) {
+                      temp_tests.push(tests.get(test_id));
 
+              });
+          }
+
+          var function_tests = temp_tests;
+          var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name, function_description, function_version,microtask_description,function_code, function_return_type, function_parameters, function_header, function_tests);
+          console.log('3----'+microtask_id);
           var microtask_object = {
               name: microtask_name,
               description: microtask_description,
@@ -156,7 +164,7 @@ module.exports = function(FirebaseService, Q) {
           };
           microtasks.set(microtask_id,microtask_object);
           implementationQ.push(microtask_id);
-          func.isAssigned = true;
+          func.isAssigned = true;console.log('4-------'+implementationQ);
          // firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
 
       }
@@ -263,20 +271,17 @@ module.exports = function(FirebaseService, Q) {
               function_object.code = implementation_object.code;
               var test_set = implementation_object.tests;
               var test_list = new Array();
-               /*test_set.keys().forEach(function(test_id){
-                   test_list.push(test_id);
-                   //tests.set(test_id,test_set.get(test_id));
-               });*/
-              console.log("UPDATED FUNCTION _____________");
-              console.log(function_object);
+               for(var test_id=0;test_id<test_set.length;test_id++){
+                   test_list.push(function_id+''+test_id);
+                   tests.set(function_id+''+test_id,test_set[test_id]);
+               }
+              function_object.tests = test_list;
+              functions.set(function_id,function_object);
               //Update function and test in firebase
               var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.header,function_object.description,function_object.code,function_object.returnType,function_object.parameters,function_object.stubs,function_object.tests,"null",function_object.dependent,function_object.isComplete, false, function_object.isApiArtifact);
                 test_list.forEach(function(test_id){
                   var test_object = tests.get(test_id);
-                  var test_update_promise = firebase.updateTest(project_id,function_id, test_id, test_object.type,test_object.name,test_object.description,test_object.input, test_object.output,test_object.result);
-                  test_update_promise.then(function(){
-                      tests.remove(test_id);
-                  });
+                  var test_update_promise = firebase.updateTest(project_id,function_id,test_id,test_object.description,test_object.inputs, test_object.output,test_object.code);
               });
               deferred.resolve({"isFunctionComplete": true, "functionApproved" : true});
 
@@ -291,6 +296,7 @@ module.exports = function(FirebaseService, Q) {
               if(implementation_object.isFunctionComplete === false)
               {
                   deferred.resolve({"isFunctionComplete": false, "functionApproved" : true});
+                  console.log('1');
                   //Generate new implementation task with function
                   generateImplementationMicrotasks(project_id,function_id);
               }
@@ -361,7 +367,7 @@ module.exports = function(FirebaseService, Q) {
           //If there are no review tasks go to implementation tasks
           if (review_available === 0) {
               //If there are no implementation tasks return null
-              if (implementation_available === 0) {console.log('yes');
+              if (implementation_available === 0) {
                   microtask_id = null;
               } else {
                   var temp = new Array();
@@ -387,7 +393,7 @@ module.exports = function(FirebaseService, Q) {
               do{
                   //Pick the first task from review queue
                   microtask_id = reviewQ.shift();
-                  var review_object = microtasks.get(microtask_id);console.log(microtask_id+'-----------'+review_object.reference_id)
+                  var review_object = microtasks.get(microtask_id);
                   //If the task was already skipped by the worker put in a temp array and try the next task
                   if(skipped_task.indexOf(microtask_id) >= 0 || completed_task.indexOf(review_object.reference_id) >= 0){
                       temp.push(microtask_id);
