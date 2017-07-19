@@ -3528,7 +3528,7 @@ angular
     }
     // otherwise
     else {
-
+      console.log("Tests in function: ", $scope.funct.tests);
         // load tests from the function
         for( var i = 0; i < $scope.funct.tests.length ; i++ ){
             if( $scope.funct.tests[i].isDeleted )
@@ -4286,12 +4286,14 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 				// initialize microtask data
 				$scope.canSubmit = true;
 				$scope.microtask = microtask;
-
+        console.log("microtask ---------", microtask);
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.function))
-					$scope.funct = new Function( $scope.microtask.function );
+				if (angular.isDefined($scope.microtask.function)) {
+          $scope.funct = new Function( $scope.microtask.function );
+          if(angular.isDefined($scope.microtask.tests) && angular.isArray($scope.microtask.tests))
+            $scope.funct.tests = $scope.microtask.tests;
           //functionsService.get($scope.microtask.functionId);
-
+        }
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
@@ -8952,16 +8954,16 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
-    "			<div class=\"section-content padding slide from-left\" ng-if=\"data.selected == -1\">\n" +
+    "			<div class=\"section-content padding slide from-left\" ng-if=\"data.selected1 == -1\">\n" +
     "				<div class=\"test-list \">\n" +
-    "					<div class=\"test-item clickable {{ !t.running ? (t.dispute.active ? 'disputed' : ( t.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"t in data.tests track by $index\">\n" +
-    "						<div ng-click=\"toggleSelect1($event,t);\">\n" +
+    "					<div class=\"test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
+    "						<div ng-click=\"toggleSelect1($event,te);\">\n" +
     "							<strong class=\"pull-left\">\n" +
     "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
-    "								{{ t.description }}\n" +
+    "								{{ te.description }}\n" +
     "							</strong>\n" +
     "							<span class=\"pull-right\">\n" +
-    "								<span ng-if=\"t.running\">\n" +
+    "								<span ng-if=\"te.running\">\n" +
     "									running\n" +
     "								</span>\n" +
     "							</span>\n" +
@@ -9069,7 +9071,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</span>\n" +
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
-    "			<!-- <div class=\"section-content padding slide from-right\" style=\"z-index:100\" ng-show=\"data.editingStub\">\n" +
+    "			<div class=\"section-content padding slide from-right\" style=\"z-index:100\" ng-if=\"data.editingStub\">\n" +
     "				<div class=\"stub\" ng-form=\"stubForm\">\n" +
     "					<div class=\"form-group\">\n" +
     "						<label>Function Description</label>\n" +
@@ -9099,7 +9101,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					</div>\n" +
     "				</div>\n" +
     "\n" +
-    "			</div> -->\n" +
+    "			</div>\n" +
     "		</div>\n" +
     "\n" +
     "\n" +
