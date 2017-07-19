@@ -34,23 +34,40 @@ module.exports = function(wagner) {
         if(project_promise !== null) {
             project_promise.then(function () {
                 console.log("Project Name : " + projectName + "------------------------------");
-                FirebaseService.updateLeaderBoard(projectName, req.user.uid, req.user.email, 0).then(() => {
+                FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then((exists) => {
+                  if(exists === false) {
+                    FirebaseService.updateLeaderBoard(projectName, req.user.uid, req.user.email, 0).then(() => {
+                    }).catch(err => {
+                      throw err;
+                    })
+                  }
                   res.render('clientDist/client.ejs', {
                       workerId: req.user.uid,
                       workerHandle: req.user.email,
                       projectId: projectName
                   });
                 }).catch(err => {
+                  console.error(err);
                   throw err;
-                })
-
+                });
             });
         }else{
             console.log("Project Name loaded from memory: " + projectName + "------------------------------");
-            res.render('clientDist/client.ejs', {
-                workerId: req.user.uid,
-                workerHandle: req.user.email,
-                projectId: projectName
+            FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then((exists) => {
+              if(exists === false) {
+                FirebaseService.updateLeaderBoard(projectName, req.user.uid, req.user.email, 0).then(() => {
+                }).catch(err => {
+                  throw err;
+                })
+              }
+              res.render('clientDist/client.ejs', {
+                  workerId: req.user.uid,
+                  workerHandle: req.user.email,
+                  projectId: projectName
+              });
+            }).catch(err => {
+              console.error(err);
+              throw err;
             });
         }
       }
