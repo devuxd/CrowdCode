@@ -336,15 +336,17 @@ module.exports = function(FirebaseService, Q) {
       var microtask_type;
       var assigned_task = worker.get('assigned');
       var skipped_task = worker.get('skipped');
+      var completed_task = worker.get('completed');
       //If the worker doesnt have any task already assigned
       if(assigned_task.get('id') === null) {
 
           var review_skipped = 0;
           var implementation_skipped = 0;
 
-          //Check if tasks that are already skipped available
+          //Check if tasks that are already skipped available or if review tasks are not for implementation by the worker
           reviewQ.forEach(function(id){
-              if(skipped_task.indexOf(id) >= 0){
+              var review_object = microtasks.get(id);
+              if(skipped_task.indexOf(id) >= 0  || completed_task.indexOf(review_object.reference_id) >= 0){
                   review_skipped++;
               }
           });
@@ -386,8 +388,9 @@ module.exports = function(FirebaseService, Q) {
               do{
                   //Pick the first task from review queue
                   microtask_id = reviewQ.shift();
+                  var review_object = microtasks.get(microtask_id);console.log(microtask_id+'-----------'+review_object.reference_id)
                   //If the task was already skipped by the worker put in a temp array and try the next task
-                  if(skipped_task.indexOf(microtask_id) >= 0){
+                  if(skipped_task.indexOf(microtask_id) >= 0 || completed_task.indexOf(review_object.reference_id) >= 0){
                       temp.push(microtask_id);
                       microtask_id = null;
                   }
