@@ -360,9 +360,8 @@ module.exports = function(FirebaseService, Q) {
           var implementation_available = implementationQ.length - implementation_skipped;
           //If there are no review tasks go to implementation tasks
           if (review_available === 0) {
-
               //If there are no implementation tasks return null
-              if (implementation_available === 0) {
+              if (implementation_available === 0) {console.log('yes');
                   microtask_id = null;
               } else {
                   var temp = new Array();
@@ -420,7 +419,7 @@ module.exports = function(FirebaseService, Q) {
 
       }
       else{
-          var return_object = {"microtaskKey":"none"};
+          var return_object = {"microtaskKey":undefined};
       }
       return return_object;
   }
