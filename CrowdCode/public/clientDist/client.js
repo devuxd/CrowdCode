@@ -680,9 +680,6 @@ exports.LogTooltip = LogTooltip;
 });
 
 
-var path = window.location.pathname.split("/");
-if (path.length > 2) window.location.href = "/";
-const projectId = path[path.length - 1];
 // create the AngularJS app, load modules and start
 
 // create CrowdCodeWorker App and load modules
@@ -708,6 +705,15 @@ angular
       return $firebaseAuth();
     }
   ])
+  .service('CurrentUserID', function($http, $q) {
+    var deferred = $q.defer();
+    $http.get('/api/v1/currentWorkerId').then(function(payload) {
+      q.resolve(payload.data);
+    }, function(err) {
+      q.reject(err);
+    });
+    return deferred.promise;
+  })
   .factory('httpRequestInterceptor', function($q, Auth) {
     return {
       request: function(config) {
@@ -2695,7 +2701,7 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId,$root
         templateUrl: 'leaderboard/leaderboard.template.html',
         controller: function($scope, $element) {
             $scope.avatar  = avatarFactory.get;
-            var leaderRef = firebase.database().ref().child('Projects').child('leaderboard').child('leaders');
+            var leaderRef = firebase.database().ref().child('Projects').child(projectId).child('leaderboard').child('leaders');
             $scope.leaders = $firebaseArray(leaderRef);
             $scope.leaders.$loaded().then(function() {});
 
@@ -4280,13 +4286,11 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 				// initialize microtask data
 				$scope.canSubmit = true;
 				$scope.microtask = microtask;
-        console.log("Microtaks ", 	$scope.microtask);
 
 				// retrieve the related function
 				if (angular.isDefined($scope.microtask.function))
 					$scope.funct = new Function( $scope.microtask.function );
           //functionsService.get($scope.microtask.functionId);
-          // new Function( $scope.microtask.function );
 
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";

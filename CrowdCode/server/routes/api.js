@@ -209,6 +209,10 @@ module.exports = function(wagner) {
     }
   }));
 
+  api.get('/currentWorker', (req, res) => {
+    res.json(req.user);
+  })
+
 
 
   /* Firebase test */

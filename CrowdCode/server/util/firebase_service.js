@@ -1,6 +1,6 @@
 var s = require("underscore.string");
 
-module.exports = function(AdminFirebase) {
+module.exports = function(AdminFirebase, Q) {
   const now = (unit) => {
     const hrTime = process.hrtime();
     switch (unit) {
@@ -72,6 +72,19 @@ module.exports = function(AdminFirebase) {
         else return "created the project Successfully";
       });
 
+    },
+
+    updateLeaderBoard: function(project_name, worker_id, worker_name, worker_score) {
+      let path = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders').child(worker_id);
+      let deferred = Q.defer();
+      path.update({
+          name: worker_name,
+          score: worker_score
+        }).then(err => {
+          if(err) deferred.reject(err);
+          else deferred.resolve();
+        });
+        return deferred.promise;
     },
 
     /* Retrieve list of projects

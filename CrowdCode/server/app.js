@@ -13,6 +13,9 @@ const status = require('http-status');
 const wagner = require('wagner-core');
 require('./lib/dependencies')(wagner);
 const app = express();
+// set the view engine to ejs
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, path.join('..', 'public')));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

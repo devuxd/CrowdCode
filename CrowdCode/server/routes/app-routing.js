@@ -26,7 +26,7 @@ module.exports = function(wagner) {
     });
 
   });
-  router.get('/:projectname([a-zA-Z0-9]{3,})', wagner.invoke(function(MicrotaskService) {
+  router.get('/:projectname([a-zA-Z0-9]{3,})', wagner.invoke(function(MicrotaskService, FirebaseService) {
     return  function(req, res) {
 
         const projectName = req.params.projectname;
@@ -34,14 +34,23 @@ module.exports = function(wagner) {
         if(project_promise !== null) {
             project_promise.then(function () {
                 console.log("Project Name : " + projectName + "------------------------------");
-                res.sendFile('clientDist/client.html', {
-                    root: publicDir
-                });
+                FirebaseService.updateLeaderBoard(projectName, req.user.uid, req.user.email, 0).then(() => {
+                  res.render('clientDist/client.ejs', {
+                      workerId: req.user.uid,
+                      workerHandle: req.user.email,
+                      projectId: projectName
+                  });
+                }).catch(err => {
+                  throw err;
+                })
+
             });
         }else{
             console.log("Project Name loaded from memory: " + projectName + "------------------------------");
-            res.sendFile('clientDist/client.html', {
-                root: publicDir
+            res.render('clientDist/client.ejs', {
+                workerId: req.user.uid,
+                workerHandle: req.user.email,
+                projectId: projectName
             });
         }
       }

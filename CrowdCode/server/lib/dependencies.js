@@ -28,8 +28,8 @@ module.exports = function(wagner) {
     return firebase.initializeApp(Config.firebaseConfig);
   })
 
-  wagner.factory('FirebaseService',function(AdminFirebase){
-    var firebase_service = require('../util/firebase_service')(AdminFirebase);
+  wagner.factory('FirebaseService',function(AdminFirebase, Q){
+    var firebase_service = require('../util/firebase_service')(AdminFirebase, Q);
     return firebase_service;
     });
 
