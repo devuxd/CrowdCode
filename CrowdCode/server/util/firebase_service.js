@@ -848,6 +848,21 @@ module.exports = function(AdminFirebase, Q) {
       });
     },
 
+    resetProject: function(clientReqId, workerId) {
+      let path = 'clientRequests/' + clientReqId;
+      let deferred = Q.defer();
+      var self = this;
+      root_ref.child(path).once("value").then(function(data) {
+         let clientReq = data.val();
+         console.log("clientReq", clientReq);
+         self.createProjectFromClientRequest(clientReqId, clientReq, workerId);
+         deferred.resolve();
+      }).catch(function(err) {
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    },
+
     updateClientRequest: function(id, clientReq) {
       return root_ref.child("clientRequests").child(id).update(clientReq, function(error) {
         if (error) {

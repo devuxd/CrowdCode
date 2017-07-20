@@ -211,7 +211,19 @@ module.exports = function(wagner) {
 
   api.get('/currentWorker', (req, res) => {
     res.json(req.user);
-  })
+  });
+
+  api.get('/:projectId/reset', wagner.invoke((FirebaseService) => {
+    return (req, res) => {
+      let projectId = req.params.projectId;
+      FirebaseService.resetProject(projectId,req.user.uid).then(() => {
+        res.json({'result': 'successful'});
+      }, err => {
+        console.error(err);
+        res.status(status.INTERNAL_SERVER_ERROR).json({'result' : 'failed, please contact administrator!'});
+      })
+    }
+  }));
 
 
 
