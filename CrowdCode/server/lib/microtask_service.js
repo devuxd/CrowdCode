@@ -87,7 +87,7 @@ module.exports = function(FirebaseService, Q) {
       var tests = Project.get('tests');
       var test_promise = null;
       functions.forEach(function(content, function_id){
-          if(content.tests !== "null") {
+          if(content.hasOwnProperty('tests') && content.tests !== "null") {
               content.tests.forEach(function (test_id) {
                   test_promise = firebase.retrieveTest(project_id, test_id);
                   test_promise.then(function (data) {
@@ -110,7 +110,7 @@ module.exports = function(FirebaseService, Q) {
       var tests = Project.get('tests');
       var microtasks = Project.get('microtasks');
       var implementationQ= Project.get('implementationQ');
-      var func = functions.get(function_id);console.log('2----'+function_id);
+      var func = functions.get(function_id);
 
       if(func.dependent == "null") {
           var microtask_name = "Implementment behaviour";
@@ -135,7 +135,7 @@ module.exports = function(FirebaseService, Q) {
           }
           temp_tests += '}';*/
           var temp_tests = new Array();
-          if(func.tests !== "null") {
+          if(func.hasOwnProperty('tests') && func.tests !== "null") {
               func.tests.forEach(function (test_id) {
                       temp_tests.push(tests.get(test_id));
 
@@ -144,7 +144,6 @@ module.exports = function(FirebaseService, Q) {
 
           var function_tests = temp_tests;
           var microtask_id = firebase.createImplementationMicrotask(project_id,microtask_name,max_points,function_id,function_name, function_description, function_version,microtask_description,function_code, function_return_type, function_parameters, function_header, function_tests);
-          console.log('3----'+microtask_id);
           var microtask_object = {
               name: microtask_name,
               description: microtask_description,
@@ -164,7 +163,7 @@ module.exports = function(FirebaseService, Q) {
           };
           microtasks.set(microtask_id,microtask_object);
           implementationQ.push(microtask_id);
-          func.isAssigned = true;console.log('4-------'+implementationQ);
+          func.isAssigned = true;
          // firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
 
       }
@@ -264,49 +263,56 @@ module.exports = function(FirebaseService, Q) {
       var function_id = implementation_object.functionId;
       var update_promise = firebase.updateReviewMicrotask(project_id,microtask_id,rating,review,worker_id);
       update_promise.then(function(){
-          if(rating === 4 || rating === 5){
-              //update function object and tests
-              var function_object = functions.get(function_id);
-              function_object.version = implementation_object.functionVersion + 1;
-              function_object.code = implementation_object.code;
-              var test_set = implementation_object.tests;
-              var test_list = new Array();
-               for(var test_id=0;test_id<test_set.length;test_id++){
-                   test_list.push(function_id+''+test_id);
-                   tests.set(function_id+''+test_id,test_set[test_id]);
-               }
-              function_object.tests = test_list;
-              functions.set(function_id,function_object);
-              //Update function and test in firebase
-              var function_update_promise = firebase.updateFunction(project_id,function_id,function_object.name,function_object.header,function_object.description,function_object.code,function_object.returnType,function_object.parameters,function_object.stubs,function_object.tests,"null",function_object.dependent,function_object.isComplete, false, function_object.isApiArtifact);
-                test_list.forEach(function(test_id){
-                  var test_object = tests.get(test_id);
-                  var test_update_promise = firebase.updateTest(project_id,function_id,test_id,test_object.description,test_object.inputs, test_object.output,test_object.code);
-              });
-              deferred.resolve({"isFunctionComplete": true, "functionApproved" : true});
+                    firebase.incrementReviewTasks(project_id, worker_id);
+                    firebase.incrementPointsScored(project_id, worker_id, 5);
+                    firebase.updateLeaderBoardScore(project_id,worker_id, 5);
+                    if (rating === 4 || rating === 5) {
+                        //update function object and tests
 
-              //remove function and its tests from memory
-              if(implementation_object.isFunctionComplete === true){
-                  functions.remove(implementation_object.function_id);
-                  test_list.forEach(function(test_id){
-                          tests.remove(test_id);
-                  });
-              }
+                        var function_object = functions.get(function_id);
+                        function_object.version = implementation_object.functionVersion + 1;
+                        function_object.code = implementation_object.code;
+                        var test_set = implementation_object.tests;
+                        var test_list = new Array();
+                        for (var test_id = 0; test_id < test_set.length; test_id++) {
+                            test_list.push(function_id + '' + test_id);
+                            tests.set(function_id + '' + test_id, test_set[test_id]);
+                        }
+                        function_object.tests = test_list;
+                        functions.set(function_id, function_object);
+                        //Update function and test in firebase
+                        var function_update_promise = firebase.updateFunction(project_id, function_id, function_object.name, function_object.header, function_object.description, function_object.code, function_object.returnType, function_object.parameters, function_object.stubs, function_object.tests, "null", function_object.dependent, function_object.isComplete, false, function_object.isApiArtifact);
+                        test_list.forEach(function (test_id) {
+                            var test_object = tests.get(test_id);
+                            var test_update_promise = firebase.updateTest(project_id, function_id, test_id, test_object);
+                        });
+                        deferred.resolve({"isFunctionComplete": true, "functionApproved": true});
 
-              if(implementation_object.isFunctionComplete === false)
-              {
-                  deferred.resolve({"isFunctionComplete": false, "functionApproved" : true});
-                  console.log('1');
-                  //Generate new implementation task with function
-                  generateImplementationMicrotasks(project_id,function_id);
-              }
-          }
-          else if( rating === 1 || rating === 2 || rating === 3){
-              //No changes made to function
-              // Generate new implementation task with function
-              generateImplementationMicrotasks(project_id,function_id);
-              deferred.resolve({"isFunctionComplete": false, "functionApproved" : false});
-          }
+                        //remove function and its tests from memory
+                        if (implementation_object.isFunctionComplete === true) {
+                            functions.remove(implementation_object.function_id);
+                            test_list.forEach(function (test_id) {
+                                tests.remove(test_id);
+                            });
+                        }
+
+                        if (implementation_object.isFunctionComplete === false) {
+                            deferred.resolve({"isFunctionComplete": false, "functionApproved": true});
+                            //Generate new implementation task with function
+                            generateImplementationMicrotasks(project_id, function_id);
+                        }
+                        firebase.incrementImplementationTasks(project_id, implementation_object.worker);
+                    }
+                    else if (rating === 1 || rating === 2 || rating === 3) {
+                        //No changes made to function
+                        // Generate new implementation task with function
+                        generateImplementationMicrotasks(project_id, function_id);
+                        deferred.resolve({"isFunctionComplete": false, "functionApproved": false});
+                        firebase.incrementRejectedTasks(project_id, implementation_object.worker);
+                    }
+                    var points = implementation_object.points * (rating / 5);
+                    firebase.incrementPointsScored(project_id, implementation_object.worker, points);
+                    firebase.updateLeaderBoardScore(project_id, implementation_object.worker, points);
 
       }).catch(function(err) {
           deferred.reject(err);
@@ -328,6 +334,7 @@ module.exports = function(FirebaseService, Q) {
       if(workers.has(worker_id)){
           var worker = workers.get(worker_id);
       }else{
+          firebase.createProjectWorker(project_id,worker_id);
           workers.set(worker_id, new Map());
           var worker = workers.get(worker_id);
           worker.set('assigned',new Map());
