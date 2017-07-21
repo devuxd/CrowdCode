@@ -448,22 +448,17 @@ module.exports = function(AdminFirebase, Q) {
      param test result boolean
      return update promise object
      */
-    updateTest: function(project_id, function_id, test_id, test_description, test_input, test_output, test_code) {
+    updateTest: function(project_id, function_id, test_id, test_object) {
       var path = 'Projects/' + project_id + '/artifacts/Tests/' + test_id;
       var history_path = 'Projects/' + project_id + '/history/artifacts/Tests/' + test_id;
       root_ref.child(history_path).once("value", function(data) {
         var version_number = data.numChildren();
         test_schema = {
-            functionId: function_id,
-            description: test_description,
-            inputs: test_input,
-            output: test_output,
-            code: test_code,
-            isPassed: false,
             version: version_number,
-            isDeleted: false,
         }
+        var update_promise = root_ref.child(path).update(test_object);
         var update_promise = root_ref.child(path).update(test_schema);
+        root_ref.child(history_path).child(version_number).set(test_object);
         var add_to_history = root_ref.child(history_path).child(version_number).set(test_schema);
         return update_promise;
       });
