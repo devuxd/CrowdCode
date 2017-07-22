@@ -454,14 +454,14 @@ module.exports = function(AdminFirebase, Q) {
       root_ref.child(history_path).once("value", function(data) {
         var version_number = data.numChildren();
         test_schema = {
-            functionId: function_id,
-            description: test_description,
-            inputs: test_input,
-            output: test_output,
-            code: test_code,
-            isPassed: false,
-            version: version_number,
-            isDeleted: false,
+          functionId: function_id,
+          description: test_description,
+          inputs: test_input,
+          output: test_output,
+          code: test_code,
+          isPassed: false,
+          version: version_number,
+          isDeleted: false,
         }
         var update_promise = root_ref.child(path).update(test_schema);
         var add_to_history = root_ref.child(history_path).child(version_number).set(test_schema);
@@ -853,10 +853,10 @@ module.exports = function(AdminFirebase, Q) {
       let deferred = Q.defer();
       var self = this;
       root_ref.child(path).once("value").then(function(data) {
-         let clientReq = data.val();
-         console.log("clientReq", clientReq);
-         self.createProjectFromClientRequest(clientReqId, clientReq, workerId);
-         deferred.resolve();
+        let clientReq = data.val();
+        console.log("clientReq", clientReq);
+        self.createProjectFromClientRequest(clientReqId, clientReq, workerId);
+        deferred.resolve();
       }).catch(function(err) {
         deferred.reject(err);
       });
@@ -941,8 +941,35 @@ module.exports = function(AdminFirebase, Q) {
         return workers_list;
       });
       return promise;
-    }
+    },
     /* ---------------- End Workers API ------------- */
+
+    /* ---------------- newsfeed -------------------- */
+    createNewsFeed: function(project_name, worker_id, awarded_points, can_be_challenged, challenge_status, max_points, microtask_key, microtask_type, score, type) {
+      let deferred = Q.defer();
+      let newsfeed = root_ref.child('Projects').child(project_name).child('workers').child(worker_id).child('newsfeed').child(microtask_key);
+      let newsfeed_schema = {
+        awardedPoints: awarded_points,
+        canBeChallenged: can_be_challenged,
+        challengeStatus: challenge_status,
+        maxPoints: max_points,
+        microtaskKey: microtask_key,
+        microtaskType: microtask_type,
+        score: score,
+        timeInMillis: now("milli"),
+        type: type
+      };
+      newsfeed.set(newsfeed_schema).then(function(err) {
+        if(err) {
+          deferred.reject(err);
+        }
+        else {
+          deferred.resolve();
+        }
+      });
+      return deferred.promise;
+
+    }
 
 
   }
