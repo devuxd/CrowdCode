@@ -7090,10 +7090,11 @@ angular
                 $scope.code = calculateDiff($scope.oldCode,$scope.code);
             }
 
-            //console.log($scope.mode,$scope.oldCode);
-            if( $scope.mode == 'diff' && $scope.oldCode != undefined ){
-                $scope.code = calculateDiff($scope.oldCode,$scope.code);
-            }
+            $scope.$watch('oldCode', function() {
+              if( $scope.mode == 'diff' && $scope.oldCode != undefined ){
+                  $scope.code = calculateDiff($scope.oldCode,$scope.code);
+              }
+            });
 
             $scope.aceLoaded = function(_editor) {
                 _editor.setOptions({
