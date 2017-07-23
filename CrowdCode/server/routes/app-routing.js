@@ -37,6 +37,7 @@ module.exports = function(wagner) {
                 FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then((exists) => {
                   if(exists === false) {
                     FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.email).then(() => {
+                      FirebaseService.createProjectWorker(projectName,req.user.uid);
                     }).catch(err => {
                       throw err;
                     });
@@ -56,6 +57,7 @@ module.exports = function(wagner) {
             FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then((exists) => {
               if(exists === false) {
                 FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.email).then(() => {
+                  FirebaseService.createProjectWorker(projectName,req.user.uid);
                 }).catch(err => {
                   throw err;
                 });

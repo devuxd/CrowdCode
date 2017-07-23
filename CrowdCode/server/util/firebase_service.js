@@ -470,7 +470,7 @@ module.exports = function(AdminFirebase, Q) {
      param isReviewMode boolean
      return micrtotask ID text
      */
-    createImplementationMicrotask: function(project_id, microtask_name, points, function_id, function_name, function_description, function_version, microtask_description, microtask_code, microtask_return_type, microtask_parameters, function_header, tests) {
+    createImplementationMicrotask: function(project_id, microtask_name, points, function_id, function_name, function_description, function_version, microtask_description, microtask_code, microtask_return_type, microtask_parameters, function_header, tests, prompt_type) {
       microtask_schema = {
         name: microtask_name,
         description: microtask_description,
@@ -484,6 +484,8 @@ module.exports = function(AdminFirebase, Q) {
         returnType: microtask_return_type,
         parameters: microtask_parameters,
         header: function_header,
+        type: "DescribeFunctionBehavior",
+        promptType: prompt_type,
         tests: tests,
         worker: "null"
       }
@@ -540,13 +542,15 @@ module.exports = function(AdminFirebase, Q) {
      param worker id text
      return microtask ID text
      */
-    createReviewMicrotask: function(project_id, microtask_name, points, reference_id, functionId) {
+    createReviewMicrotask: function(project_id, microtask_name, points, reference_id, functionId, prompt_type) {
       microtask_schema = {
         name: microtask_name,
         points: points,
         awarded_points: 0,
         reference_id: reference_id,
         functionId: functionId,
+        promptType: prompt_type,
+        type: "Review",
         rating: "null",
         review: "null",
         worker: "null"
@@ -585,7 +589,11 @@ module.exports = function(AdminFirebase, Q) {
           var max_points = value.val().points;
           var points = max_points * (rating / 5);
           root_ref.child(implementation_path).update({
-            "awarded_points": points
+            "awarded_points": points,
+            "review": {
+              "qualityScore": rating,
+              "reviewText": review
+            },
              });
            });
         });

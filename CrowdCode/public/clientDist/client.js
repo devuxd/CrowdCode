@@ -4945,11 +4945,11 @@ angular
             $scope.challengeReview=challengeReview;
 
             $scope.data = {};
-
-            var microtask = microtasksService.get($scope.newObj.microtaskKey);
+            var type = $scope.newObj.microtaskType === 'DescribeFunctionBehavior' ? 'implementation' : 'review';
+            var microtask = microtasksService.get($scope.newObj.microtaskKey, type);
             microtask.$loaded().then(function() {
-                $scope.data = loadMicrotaskData(microtask) ;
-                console.log($scope.data);
+                $scope.data = loadMicrotaskData(microtask);
+                console.log("Newsfeed data", $scope.data);
             });
 
             function loadMicrotaskData(microtask){
@@ -4977,12 +4977,31 @@ angular
                     };
                 }
 
-                data.functionName = microtask.owningArtifact;
+                data.functionName = microtask.functionName;
 
                 switch(microtask.type){
-                    case 'DescribeFunctionBehavior': 
-                        
+                    case 'DescribeFunctionBehavior':
+
                         var submission = microtask.submission;
+                        var newFunction = new Function(submission.function);
+                        functionsService.getVersion(microtask.functionId, microtask.functionVersion).then(function( funct ){
+                            data.oldCode = funct.getFullCode();
+                            data.newCode = newFunction.getFullCode();
+                        });
+                        if( submission.disputedTests){
+                            data.templateUrl += '_disputed';
+                            data.openedTests = [];
+                            data.functionParameters = funct.parameters;
+                            data.functionReturnType = funct.returnType;
+                            data.disputedTests = submission
+                                .disputedTests
+                                .map(function(test){
+                                    var testObj = funct.getTestById(test.id);
+                                    testObj.disputeText = test.disputeText;
+                                    return testObj;
+                                });
+                        }
+
                         if( submission.disputeFunctionText.length > 0 ) {
                             data.disputeText = submission.disputeFunctionText;
                             data.templateUrl += '_disputed';
@@ -4992,8 +5011,8 @@ angular
                             data.functionParameters = functionsService.get(microtask.functionId).parameters;
                             data.functionReturnType = functionsService.get(microtask.functionId).returnType;
                             data.openedTests = [];
-                            data.isComplete  = submission.isDescribeComplete;
-                        }          
+                            data.isComplete  = microtask.isFunctionComplete;
+                        }
 
                         break;
 
@@ -5024,7 +5043,7 @@ angular
 
                     case 'Review':
                         data.reviewed = {};
-                        var rev = microtasksService.get(microtask.microtaskKeyUnderReview);
+                        var rev = microtasksService.get(microtask.reference_id, 'implementation');
                         rev.$loaded().then(function() {
                             data.reviewed = loadMicrotaskData(rev);
                             data.templateUrl = 'Review_' + data.reviewed.templateUrl;
@@ -5046,6 +5065,7 @@ angular
         }
     };
 });
+
 angular
     .module('crowdCode').directive('newsList',function($rootScope,$timeout,firebaseUrl, workerId, questionsService, functionsService, microtasksService){
 
@@ -10412,7 +10432,7 @@ angular.module("newsfeed/news_detail.html", []).run(["$templateCache", function 
     "        <label ng-if=\"data.isReview\">Given review</label>\n" +
     "        <p>\n" +
     "            <div>\n" +
-    "                <span ng-repeat=\"currentValue in [1,2,3,4,5] track by $index\"  \n" +
+    "                <span ng-repeat=\"currentValue in [1,2,3,4,5] track by $index\"\n" +
     "                      class=\"rating-star {{ data.review.score >= currentValue ? 'full' : '' }}\">\n" +
     "                </span>\n" +
     "                <span class=\"clearfix\"></span><br />\n" +
@@ -10431,19 +10451,20 @@ angular.module("newsfeed/news_detail.html", []).run(["$templateCache", function 
     "                <button type=\"button\" class=\"btn btn-xs btn-default\" ng-click=\"show = false\">Cancel</button>\n" +
     "                <button type=\"submit\" class=\"btn btn-xs btn-primary\">Challenge</button>\n" +
     "            </span>\n" +
-    "                \n" +
+    "\n" +
     "            <div class=\"clearfix\"></div>\n" +
     "        </form>-->\n" +
     "    </div>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("newsfeed/news_detail_DescribeFunctionBehavior.html",
     "<label>Title</label>\n" +
     "<p ng-switch=\"data.promptType\">\n" +
-    "    <span ng-switch-when=\"WRITE\">write a test</span>\n" +
-    "    <span ng-switch-when=\"CORRECT\">correct test(s)</span>\n" +
+    "    <span ng-switch-when=\"WRITE\"> You were asked to implement part of the function and/or write a test for function <strong ng-bind=\"funct.name\"></strong> </span>\n" +
+    "    <span ng-switch-when=\"CORRECT\">You were asked to fix an issue that was reported for the function <strong ng-bind=\"funct.name\"></strong>. correct implementation and/or test(s)</span>\n" +
     "    <span ng-switch-when=\"FUNCTION_CHANGED'\">fix test(s)</span>\n" +
     "</p>\n" +
     "\n" +
@@ -10451,10 +10472,10 @@ angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$
     "<label>Description</label>\n" +
     "<p ng-switch=\"data.promptType\">\n" +
     "    <span ng-switch-when=\"WRITE\">\n" +
-    "        Write test(s) for the function <strong>{{data.functionName}}</strong>.\n" +
+    "        Write implementation and/or test(s) for the function <strong>{{data.functionName}}</strong>.\n" +
     "    </span>\n" +
     "    <span ng-switch-when=\"CORRECT\">\n" +
-    "        Correct a test for the function <strong>{{data.functionName}}</strong>\n" +
+    "        Correct implementation and/or a test for the function <strong>{{data.functionName}}</strong>\n" +
     "    </span>\n" +
     "    <span ng-switch-when=\"FUNCTION_CHANGED'\">\n" +
     "        Fix the test for the function <strong>{{data.functionName}}</strong> after a change of signature.\n" +
@@ -10462,13 +10483,18 @@ angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$
     "</span>\n" +
     "</p>\n" +
     "\n" +
-    "<label>Submitted tests</label>\n" +
+    "<label>Code edits</label>\n" +
     "<p>\n" +
+    "    <js-reader mode=\"diff\" code=\"data.newCode\" old-code=\"data.oldCode\" ></js-reader>\n" +
+    "</p>\n" +
+    "\n" +
+    "<label ng-if=\"data.tests.length > 0\">Submitted tests</label>\n" +
+    "<p ng-if=\"data.tests.length > 0\">\n" +
     "    <div class=\"tests-list\" bs-collapse ng-model=\"data.openedTests\" data-allow-multiple=\"true\">\n" +
     "        <div ng-repeat=\"t in data.tests\">\n" +
     "            <div class=\"test-item clickable\" bs-collapse-toggle>\n" +
     "\n" +
-    "                \n" +
+    "\n" +
     "                <strong>{{t.description}}</strong>\n" +
     "\n" +
     "                <small class=\"pull-right\" ng-if=\"t.edited\">\n" +
@@ -10491,7 +10517,7 @@ angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$
     "                        <label for=\"inputs\">\n" +
     "                            Input: {{p.name + ' {' + p.type + '}' }}\n" +
     "                        </label>\n" +
-    "                    \n" +
+    "\n" +
     "                        <div\n" +
     "                            class=\"form-control code\"\n" +
     "                            json-reader\n" +
@@ -10521,7 +10547,7 @@ angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$
     "    </div>\n" +
     "    <strong ng-if=\"data.isComplete\">the test suite is marked as complete</strong>\n" +
     "</p>\n" +
-    "   ");
+    "");
 }]);
 
 angular.module("newsfeed/news_detail_DescribeFunctionBehavior_disputed.html", []).run(["$templateCache", function ($templateCache) {
@@ -10647,17 +10673,23 @@ angular.module("newsfeed/news_detail_Review_DescribeFunctionBehavior.html", []).
   $templateCache.put("newsfeed/news_detail_Review_DescribeFunctionBehavior.html",
     "<label>Description</label>\n" +
     "<p>\n" +
-    "    The test suite for <strong ng-bind=\"data.reviewed.functionName\"></strong> has been updated by adding, editing, or deleting its tests. \n" +
+    "    The test suite and function implementation for <strong ng-bind=\"data.reviewed.functionName\"></strong> has been updated by adding, editing, or deleting its tests. Can you review this work?\n" +
     "</p>\n" +
     "\n" +
     "\n" +
-    "<label>Submitted tests</label>\n" +
+    "<label>Code edits</label>\n" +
     "<p>\n" +
+    "    <js-reader mode=\"diff\" code=\"data.reviewed.newCode\" old-code=\"data.reviewed.oldCode\" ></js-reader>\n" +
+    "</p>\n" +
+    "\n" +
+    "\n" +
+    "<label ng-if=\"data.reviewed.tests.length > 0\">Submitted tests</label>\n" +
+    "<p ng-if=\"data.reviewed.tests.length > 0\">\n" +
     "    <div class=\"tests-list\" bs-collapse ng-model=\"data.reviewed.openedTests\" data-allow-multiple=\"true\">\n" +
     "        <div ng-repeat=\"t in data.reviewed.tests\">\n" +
     "            <div class=\"test-item clickable\" bs-collapse-toggle>\n" +
     "\n" +
-    "                \n" +
+    "\n" +
     "                <strong>{{t.description}}</strong>\n" +
     "\n" +
     "                <small class=\"pull-right\" ng-if=\"t.edited\">\n" +
@@ -10680,7 +10712,7 @@ angular.module("newsfeed/news_detail_Review_DescribeFunctionBehavior.html", []).
     "                        <label for=\"inputs\">\n" +
     "                            Input: {{p.name + ' {' + p.type + '}' }}\n" +
     "                        </label>\n" +
-    "                    \n" +
+    "\n" +
     "                        <div\n" +
     "                            class=\"form-control code\"\n" +
     "                            json-reader\n" +
@@ -10724,6 +10756,62 @@ angular.module("newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.ht
     "<label>Reported issue</label>\n" +
     "<p>\n" +
     "    {{ data.reviewed.disputeText }}\n" +
+    "</p>\n" +
+    "\n" +
+    "<label>Code edits</label>\n" +
+    "<p>\n" +
+    "    <js-reader mode=\"diff\" code=\"data.reviewed.newCode\" old-code=\"data.reviewed.oldCode\" ></js-reader>\n" +
+    "</p>\n" +
+    "\n" +
+    "\n" +
+    "<label>Reported tests</label>\n" +
+    "<p>\n" +
+    "    <div class=\"tests-list\" bs-collapse ng-model=\"data.reviewed.openedTests\" data-allow-multiple=\"true\">\n" +
+    "        <div ng-repeat=\"t in data.reviewed.disputedTests\">\n" +
+    "            <div class=\"test-item clickable\" bs-collapse-toggle>\n" +
+    "                <strong>{{t.description}}</strong>\n" +
+    "            </div>\n" +
+    "            <div bs-collapse-target style=\"padding:5px\">\n" +
+    "                <div class=\"form-group\">\n" +
+    "					<label for=\"disputetext\">Report description </label>\n" +
+    "					<div class=\"form-control form-control-static\" name=\"disputetext\">\n" +
+    "						{{ t.disputeText }}\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "                <div ng-if=\"t.isSimple\">\n" +
+    "                    <div class=\"form-group\"  ng-repeat=\"(pIdx,p) in data.reviewed.functionParameters track by p.name\">\n" +
+    "                        <label for=\"inputs\">\n" +
+    "                            Input: {{p.name + ' {' + p.type + '}' }}\n" +
+    "                        </label>\n" +
+    "\n" +
+    "                        <div\n" +
+    "                            class=\"form-control code\"\n" +
+    "                            json-reader\n" +
+    "                            name=\"{{p.name}}\"\n" +
+    "                            ng-model=\"t.inputs[pIdx]\">\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                    <div class=\"form-group\" ng-if=\"t.isSimple\">\n" +
+    "                        <label for=\"code\">Output {{ '{' + funct.returnType + '}'}}</label>\n" +
+    "                        <div\n" +
+    "                            class=\"form-control code\"\n" +
+    "                            json-reader\n" +
+    "                            ng-model=\"t.output\"\n" +
+    "                            name=\"output\">\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "                <div ng-if=\"!t.isSimple\">\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label for=\"code\">Code</label>\n" +
+    "                        <div class=\"form-control form-control-static\" js-reader code=\"t.code\"></div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <strong ng-if=\"data.isComplete\">the test suite is marked as complete</strong>\n" +
     "</p>\n" +
     "");
 }]);
