@@ -3521,14 +3521,13 @@ angular
         // load tests from the previous submission
         var reissuedTests = $scope.microtask.reissuedSubmission.tests ;
         for( var i = 0 ; i < reissuedTests.length ; i++ ){
-            var test = new Test(reissuedTests[i]);
+            var test = new Test(reissuedTests[i], $scope.funct.name);
 
             $scope.data.tests.push(test);
         }
     }
     // otherwise
     else {
-      console.log("Tests in function: ", $scope.funct.tests);
         // load tests from the function
         for( var i = 0; i < $scope.funct.tests.length ; i++ ){
             if( $scope.funct.tests[i].deleted )
@@ -3606,6 +3605,14 @@ angular
         $scope.data.inspecting = false;
 
         var code = $scope.data.editor ? $scope.data.editor.getValue() : $scope.funct.getFullCode();
+        var tobeTested = [];
+        angular.forEach($scope.data.tests, function(value, key) {
+          if(value.added == true) {
+            this.push(new Test(value, $scope.funct.name));
+          } else {
+            this.push(value);
+          }
+        }, tobeTested);
         runner
             .run(
                 $scope.data.tests,
@@ -3622,20 +3629,6 @@ angular
                 deferred.resolve();
             });
         return deferred.promise;
-    }
-
-
-    function toggleSelect($event,test){
-        if( $scope.data.selected == -1 )
-            $scope.data.selected = test;
-        else {
-            $scope.data.inspecting = false;
-            $scope.data.selected = -1;
-        }
-
-
-        $event.preventDefault();
-        $event.stopPropagation();
     }
 
     // functionEditor callbacks
@@ -3736,8 +3729,10 @@ angular
     $scope.taskData.collectFormData = collectFormData;
 
     function toggleSelect1($event,test){
-        if( $scope.data.selected1 == -1 )
-            $scope.data.selected1 = test;
+        if( $scope.data.selected1 == -1 ) {
+          var mytest = new Test(test, $scope.funct.name);
+          $scope.data.selected1 = mytest;
+        }
         else {
             $scope.data.inspecting = false;
             $scope.data.selected1 = -1;
@@ -3767,6 +3762,19 @@ angular
         // $event.preventDefault();
         // $event.stopPropagation();
     }
+
+    // function toggleSelect($event,test){
+    //     if( $scope.data.selected == -1 )
+    //         $scope.data.selected = test;
+    //     else {
+    //         $scope.data.inspecting = false;
+    //         $scope.data.selected = -1;
+    //     }
+    //
+    //
+    //     $event.preventDefault();
+    //     $event.stopPropagation();
+    // }
 
     var tmpTestData = { };
     function toggleEdit($event){
@@ -4290,9 +4298,10 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
         console.log("microtask ---------", microtask);
 				// retrieve the related function
 				if (angular.isDefined($scope.microtask.function)) {
-          $scope.funct = new Function( $scope.microtask.function );
+          var funct = $scope.microtask.function;
           if(angular.isDefined($scope.microtask.tests) && angular.isArray($scope.microtask.tests))
-            $scope.funct.tests = $scope.microtask.tests;
+            funct.tests = $scope.microtask.tests;
+          $scope.funct = new Function(funct);
           //functionsService.get($scope.microtask.functionId);
         }
 				//set up the right template
