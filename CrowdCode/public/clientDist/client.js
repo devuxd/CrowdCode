@@ -3531,12 +3531,13 @@ angular
       console.log("Tests in function: ", $scope.funct.tests);
         // load tests from the function
         for( var i = 0; i < $scope.funct.tests.length ; i++ ){
-            if( $scope.funct.tests[i].isDeleted )
+            if( $scope.funct.tests[i].deleted )
                 continue;
 
             var test = angular.copy($scope.funct.tests[i]);
             test.edited  = false;
             test.deleted = false;
+            test.added = false;
             test.dispute = { active:false, text: 'aa' };
 
             // flag the test if is disputed
