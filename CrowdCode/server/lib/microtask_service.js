@@ -315,8 +315,8 @@ module.exports = function(FirebaseService, Q) {
       var points = implementation_object.points * (rating / 5);
       firebase.incrementPointsScored(project_id, implementation_object.worker, points);
       firebase.updateLeaderBoardScore(project_id, implementation_object.worker, points);
-      firebase.createNewsFeed(project_id, implementation_object.worker, 10, false, "none", 10, implementation_task_id, "DescribeFunctionBehavior", rating, "WorkReviewed").then(function() {
-        firebase.createNewsFeed("meysam", worker_id, 10, false, "none", 10, microtask_id, "Review", -1, "SubmittedReview").then(function() {
+      firebase.createNewsFeed(project_id, implementation_object.worker, points, false, "none", implementation_object.points, implementation_task_id, "DescribeFunctionBehavior", rating, "WorkReviewed").then(function() {
+        firebase.createNewsFeed("meysam", worker_id, 5, false, "none", 5, microtask_id, "Review", -1, "SubmittedReview").then(function() {
           deferred.resolve();
         }, function(error) {
           deferred.reject(error);
