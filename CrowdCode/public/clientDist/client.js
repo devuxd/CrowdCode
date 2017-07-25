@@ -3607,7 +3607,7 @@ angular
         var code = $scope.data.editor ? $scope.data.editor.getValue() : $scope.funct.getFullCode();
         var tobeTested = [];
         angular.forEach($scope.data.tests, function(value, key) {
-          if(value.added == true) {
+          if(value.isSimple && value.added == true) {
             this.push(new Test(value, $scope.funct.name));
           } else {
             this.push(value);
@@ -3730,8 +3730,9 @@ angular
 
     function toggleSelect1($event,test){
         if( $scope.data.selected1 == -1 ) {
-          var mytest = new Test(test, $scope.funct.name);
-          $scope.data.selected1 = mytest;
+          if(test.isSimple === true)
+            test.code = (new Test(test, $scope.funct.name)).code;
+          $scope.data.selected1 = test;
         }
         else {
             $scope.data.inspecting = false;
