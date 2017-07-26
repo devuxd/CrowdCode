@@ -183,7 +183,7 @@ module.exports = function(FirebaseService, Q) {
   function generateReviewMicrotask(project_id, reference_task__id, functionId) {
     var microtask_object = {
       name: "review the changes",
-      points: 10,
+      points: 5,
       awarded_points: 0,
       reference_id: reference_task__id,
       functionId: functionId,
@@ -193,7 +193,7 @@ module.exports = function(FirebaseService, Q) {
       review: "null",
       worker: "null"
     }
-    var microtask_id = firebase.createReviewMicrotask(project_id, "review the change", 10, reference_task__id, functionId, "WRITE");
+    var microtask_id = firebase.createReviewMicrotask(project_id, "review the change", 5, reference_task__id, functionId, "WRITE");
     var Project = Projects.get(project_id);
     var microtasks = Project.get('microtasks');
     var reviewQ = Project.get('reviewQ');
@@ -278,8 +278,11 @@ module.exports = function(FirebaseService, Q) {
         var test_set = implementation_object.tests;
         var test_list = new Array();
         for (var test_id = 0; test_id < test_set.length; test_id++) {
-          test_list.push(function_id + '' + test_id);
-          tests.set(function_id + '' + test_id, test_set[test_id]);
+          let testId  = function_id + '' + test_id;
+          let mytest = test_set[test_id];
+          mytest.id = testId;
+          test_list.push(testId);
+          tests.set(testId, mytest);
         }
         function_object.tests = test_list;
         functions.set(function_id, function_object);

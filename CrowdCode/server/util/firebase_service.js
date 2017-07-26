@@ -506,12 +506,7 @@ module.exports = function(AdminFirebase, Q) {
     updateImplementationMicrotask: function(project_id, microtask_id, funct, tests, worker_id, isFunctionComplete) {
       var path = 'Projects/' + project_id + '/microtasks/implementation/' + microtask_id;
       var update_promise = root_ref.child(path).update({
-        "submission": {
-          "disputeFunctionText": tests.disputeFunctionText,
-          "functionVersion": tests.functionVersion,
-          "function": funct,
-          "tests": tests.tests
-        },
+        "submission": tests,
         "worker": worker_id,
         "isFunctionComplete": isFunctionComplete,
         "code": funct.code,
@@ -592,6 +587,7 @@ module.exports = function(AdminFirebase, Q) {
             "awarded_points": points,
             "review": {
               "qualityScore": rating,
+              "reviewKey": microtask_id,
               "reviewText": review
             },
              });

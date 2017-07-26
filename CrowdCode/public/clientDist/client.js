@@ -3648,10 +3648,10 @@ angular
     }
 
     function toggleDispute($event){
-        $scope.data.selected.dispute.active = !$scope.data.selected.dispute.active;
+        $scope.data.selected1.dispute.active = !$scope.data.selected1.dispute.active;
 
-        if( $scope.data.selected.dispute.active ){
-            $scope.data.selected.dispute.text = "";
+        if( $scope.data.selected1.dispute.active ){
+            $scope.data.selected1.dispute.text = "";
         }
 
         $event.preventDefault();
@@ -3777,7 +3777,6 @@ angular
     //     $event.stopPropagation();
     // }
 
-    var tmpTestData = { };
     function toggleEdit($event){
 
         if( $scope.data.selected != -1 ) {
@@ -3815,6 +3814,7 @@ angular
     function collectFormData(form) {
 
         $scope.data.selected = -1 ;
+        $scope.data.selected1 = -1 ;
 
         if( form.$invalid ){
           console.log("form is invalid ----", form.$error);
@@ -4252,7 +4252,7 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 
 			$scope.taskData.startBreak = false;
 
-			var waitTimeInSeconds = 15;
+			var waitTimeInSeconds = 10;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
@@ -8974,6 +8974,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				<span class=\"pull-right separator\" ng-if=\"data.selected1 != -1\"></span>\n" +
     "				<span class=\"pull-right\" ng-if=\"data.selected1 != -1\">\n" +
     "					<button\n" +
+    "						ng-disabled=\"data.selected1.id === undefined\"\n" +
     "						class=\"btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}\"\n" +
     "						ng-click=\"toggleDispute($event);\">\n" +
     "						<span class=\"glyphicon glyphicon-exclamation-sign\"></span> Report an issue\n" +
@@ -9084,6 +9085,12 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				<span class=\"pull-right\">\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)\">\n" +
     "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "				</button>\n" +
+    "				</span>\n" +
+    "				<span class=\"pull-right\">\n" +
+    "        	<button class=\"btn btn-sm\" ng-if=\"!data.dispute.active\" style=\"padding-left: 30px\"\n" +
+    "					ng-click=\"data.dispute.active = !data.dispute.active; trackInteraction('Click Dispute Function', 'Describe Behavior', $event)\" >\n" +
+    "           Report an issue with the function <span class=\"glyphicon glyphicon-exclamation-sign\"></span>\n" +
     "				</button>\n" +
     "				</span>\n" +
     "				<span class=\"clearfix\"></span>\n" +
@@ -9773,7 +9780,7 @@ angular.module("microtasks/review/review.html", []).run(["$templateCache", funct
     "<div ng-controller=\"ReviewController\">\n" +
     "\n" +
     "	<div class=\"header bg-color\">\n" +
-    "		<span class=\"type  \">{{::microtask.title}}</span>\n" +
+    "		<span class=\"type  \">Review Work</span>\n" +
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
     "		<span class=\"points\">( {{::microtask.points}} pts )</span>\n" +
     "		<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Review - Microtask', $event)\">\n" +
@@ -10213,22 +10220,96 @@ angular.module("microtasks/review/review_describe_dispute.html", []).run(["$temp
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"40%\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"35%\" >\n" +
     "		<div class=\"section-bar\">\n" +
-    "			<span class=\"title\">Function Description</span>\n" +
+    "			<span class=\"title\">Code edits</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content\">\n" +
-    "			<js-reader code=\"data.fDescription\" ></js-reader>\n" +
+    "			<js-reader mode=\"diff\" code=\"data.newCode\" old-code=\"data.oldCode\" ></js-reader>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"25%\" >\n" +
-    "		<div class=\"section-bar\">\n" +
-    "			<span class=\"title\">Report description</span>\n" +
+    "	<div class=\"section\" ui-layout-container size=\"30%\" >\n" +
+    "		<div class=\"section-bar\" ng-if=\"data.selected == -1\">\n" +
+    "			<span class=\"title\">Reported Description/Tests</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content padding\">\n" +
     "			<span ng-bind=\"data.disputeText\"></span>\n" +
+    "		</div>\n" +
+    "		<div class=\"section-content slide from-left\" ng-if=\"data.selected == -1\">\n" +
+    "			<div class=\"tests-list\">\n" +
+    "				<div class=\"test-item clickable\" ng-repeat=\"t in data.disputedTests track by $index\">\n" +
+    "					<div ng-click=\"data.selected = t\">\n" +
+    "						<span >\n" +
+    "							<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
+    "							<span ng-bind=\"t.description\"></span>\n" +
+    "						</span>\n" +
+    "						<span class=\"clearfix\"></span>\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "			</div>\n" +
+    "		</div>\n" +
+    "		<div class=\"section-bar\" ng-if=\"data.selected != -1\">\n" +
+    "			<span class=\"pull-left\" >\n" +
+    "				<button class=\"btn btn-sm\" ng-click=\"data.selected = -1\">\n" +
+    "					<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
+    "				</button>\n" +
+    "			</span>\n" +
+    "		</div>\n" +
+    "		<div class=\"section-content slide from-right padding\"\n" +
+    "				 ng-repeat=\"t in data.disputedTests track by $index\"\n" +
+    "				 ng-if=\"data.selected == t\">\n" +
+    "				<div ng-form=\"{{ 'testForm_'+$index }}\" class=\"form form-material\" ng-init=\"errors = {}\">\n" +
+    "\n" +
+    "					<div class=\"form-group\">\n" +
+    "						<label for=\"disputetext\">Dispute reason </label>\n" +
+    "						<div class=\"form-control form-control-static\" name=\"disputetext\">\n" +
+    "							{{ t.disputeText }}\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "					<div class=\"form-group\">\n" +
+    "						<label for=\"description\">Description </label>\n" +
+    "						<div class=\"form-control form-control-static\" name=\"description\">\n" +
+    "							{{t.description}}\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "					<div class=\"form-group\">\n" +
+    "						<label>Type</label>\n" +
+    "						<div class=\"form-control form-control-static\" name=\"description\">\n" +
+    "							{{t.isSimple ? 'simple' : 'advanced'}}\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "					<div class=\"form-group\" ng-if=\"!t.isSimple\">\n" +
+    "						<label for=\"code\">Code</label>\n" +
+    "						<div class=\"form-control form-control-static\" js-reader code=\"t.code\"></div>\n" +
+    "					</div>\n" +
+    "\n" +
+    "					<div ng-if=\"t.isSimple\" ng-form=\"inputs\" >\n" +
+    "						<div class=\"form-group\"  ng-repeat=\"(pIdx,p) in funct.parameters track by p.name\">\n" +
+    "							<label for=\"inputs\">\n" +
+    "								{{p.name + ' {' + p.type + '}' }}\n" +
+    "							</label>\n" +
+    "\n" +
+    "							<div\n" +
+    "								class=\"form-control code\"\n" +
+    "								json-reader\n" +
+    "								name=\"{{p.name}}\"\n" +
+    "								ng-model=\"t.inputs[pIdx]\">\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "\n" +
+    "					</div>\n" +
+    "\n" +
+    "					<div class=\"form-group\" ng-if=\"t.isSimple\">\n" +
+    "						<label for=\"code\">Output {{ '{' + funct.returnType + '}'}}</label>\n" +
+    "						<div\n" +
+    "							class=\"form-control code\"\n" +
+    "							json-reader\n" +
+    "							ng-model=\"t.output\"\n" +
+    "							name=\"output\">\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "				</div>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
