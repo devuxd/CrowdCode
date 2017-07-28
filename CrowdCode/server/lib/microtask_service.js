@@ -180,7 +180,7 @@ module.exports = function(FirebaseService, Q) {
       param project id text
       param microtask id text
    */
-  function generateReviewMicrotask(project_id, reference_task__id, functionId) {
+  function generateReviewMicrotask(project_id, reference_task__id, functionId, prompt_type) {
     var microtask_object = {
       name: "review the changes",
       points: 5,
@@ -188,12 +188,12 @@ module.exports = function(FirebaseService, Q) {
       reference_id: reference_task__id,
       functionId: functionId,
       type: "Review",
-      promptType: "WRITE",
+      promptType: prompt_type,
       rating: "null",
       review: "null",
       worker: "null"
     }
-    var microtask_id = firebase.createReviewMicrotask(project_id, "review the change", 5, reference_task__id, functionId, "WRITE");
+    var microtask_id = firebase.createReviewMicrotask(project_id, "review the change", 5, reference_task__id, functionId, prompt_type);
     var Project = Projects.get(project_id);
     var microtasks = Project.get('microtasks');
     var reviewQ = Project.get('reviewQ');
@@ -224,11 +224,12 @@ module.exports = function(FirebaseService, Q) {
     microtask_object.header = funct.header;
     microtask_object.tests = microtask_tests.tests;
     microtask_object.worker = worker_id;
+    microtask_object.submission = microtask_tests;
     microtask_object.isFunctionComplete = microtask_tests.isDescribeComplete;
     microtasks.set(microtask_id, microtask_object);
     var update_promise = firebase.updateImplementationMicrotask(project_id, microtask_id, funct, microtask_tests, worker_id, microtask_tests.isDescribeComplete);
     update_promise.then(function() {
-      let review_id = generateReviewMicrotask(project_id, microtask_id, microtask_object.functionId);
+      let review_id = generateReviewMicrotask(project_id, microtask_id, microtask_object.functionId, "WRITE");
       deferred.resolve(review_id);
     }).catch(err => {
       deferred.reject(new Error(err));
@@ -281,6 +282,7 @@ module.exports = function(FirebaseService, Q) {
           let testId  = function_id + '' + test_id;
           let mytest = test_set[test_id];
           mytest.id = testId;
+          mytest.functionName = function_object.name;
           test_list.push(testId);
           tests.set(testId, mytest);
         }

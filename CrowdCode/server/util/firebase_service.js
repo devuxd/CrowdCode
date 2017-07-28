@@ -422,7 +422,7 @@ module.exports = function(AdminFirebase, Q) {
         var update_promise = root_ref.child(path).update(test_object);
         var update_promise = root_ref.child(path).update(test_schema);
         root_ref.child(history_path).child(version_number).set(test_object);
-        var add_to_history = root_ref.child(history_path).child(version_number).set(test_schema);
+        var add_to_history = root_ref.child(history_path).child(version_number).update(test_schema);
         return update_promise;
       });
     },
@@ -979,7 +979,7 @@ module.exports = function(AdminFirebase, Q) {
         answers: 0
       }
       var path = 'Projects/' + project_id + '/workers';
-      var create_promise = root_ref.child(path).child(worker_id).set(worker_schema);
+      var create_promise = root_ref.child(path).child(worker_id).update(worker_schema);
       return create_promise;
     },
 

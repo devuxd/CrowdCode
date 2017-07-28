@@ -762,7 +762,8 @@ angular
   .constant('projectId', projectId)
   .constant('firebaseUrl', 'https://crowdcode2.firebaseio.com/Projects/' + projectId)
   .constant('logoutUrl', logoutURL)
-  .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, functionsService, AdtService, avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics) {
+  .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, functionsService, AdtService,
+    avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics, testsService) {
 
     // current session variables
     $rootScope.projectId = projectId;
@@ -826,6 +827,8 @@ angular
       questionsService.init();
       notificationsService.init();
       newsfeedService.init();
+      testsService.init();
+
     }
 
     function serviceLoaded(event, nameOfTheService) {
@@ -834,7 +837,8 @@ angular
       if (servicesLoadingStatus.hasOwnProperty('functions') &&
         servicesLoadingStatus.hasOwnProperty('adts') &&
         servicesLoadingStatus.hasOwnProperty('questions') &&
-        servicesLoadingStatus.hasOwnProperty('newsfeed')) {
+        servicesLoadingStatus.hasOwnProperty('newsfeed') &&
+        servicesLoadingStatus.hasOwnProperty('tests')) {
 
         $interval.cancel(loadingServicesInterval);
         loadingServicesInterval = undefined;
@@ -2603,6 +2607,7 @@ angular
 
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function get(id){
+      console.log("getFunctionById -----------------", functions);
 			return functions.$getRecord(id);
 		}
 
@@ -4638,7 +4643,8 @@ angular
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  '$modal', 'functionsService',  'functionUtils' , 'Function', 'AdtService', 'microtasksService', function($scope, $rootScope,  $alert, $modal, functionsService, functionUtils, Function, AdtService, microtasksService) {
+    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  '$modal', 'functionsService',  'functionUtils' , 'Function', 'AdtService', 'microtasksService', "testsService",
+    function($scope, $rootScope,  $alert, $modal, functionsService, functionUtils, Function, AdtService, microtasksService, testsService) {
     // scope variables
     $scope.review = {};
     $scope.review.template = 'loading';
@@ -4660,13 +4666,13 @@ angular
             $scope.data.funct = new Function( submission['function'] );
             $scope.data.newCode = $scope.data.funct.getFullCode();
             $scope.data.oldCode = $scope.funct.getFullCode();
-            console.log("$scope.data.oldCode ", $scope.data.oldCode );
             if( submission.disputedTests ){
-                $scope.review.template += "_dispute";
+                $scope.review.template = "describe_dispute";
                 var loadedFunct = functionsService.get( reviewed.functionId );
                 $scope.data.disputedTests = submission.disputedTests
                     .map(function(test){
-                        var testObj = loadedFunct.getTestById(test.id);
+                        var testObj = testsService.get(test.id);
+                        // loadedFunct.getTestById(test.id);
                         testObj.disputeText = test.disputeText;
                         return testObj;
                     });
@@ -6069,7 +6075,7 @@ angular
 		if( rec === undefined || rec === null )
 			return false;
 
-
+    this.$id = rec.id + '';
 		if(rec.isSimple)
 			rec.code = 'expect(' + functionName + '(' + rec.inputs.join(',') + ')).to.deep.equal(' + rec.output + ');';
 
@@ -6089,6 +6095,78 @@ angular
 
 	return Test;
 }]);
+
+////////////////////////
+//TEST SERVICE   //
+////////////////////////
+angular
+  .module('crowdCode')
+  .factory('testsService', ['$rootScope', '$q', '$filter', '$firebaseObject', 'firebaseUrl', 'TestArray', 'Test', function($rootScope, $q, $filter, $firebaseObject, firebaseUrl, TestArray, Test) {
+
+    var service = new function() {
+      // Private variables
+      var tests;
+
+      // Public tests
+      this.init = init;
+      this.get = get;
+      this.getVersion = getVersion;
+      this.getAll = getAll;
+
+      // Test bodies
+      function init() {
+        // hook from firebase all the tests declarations of the project
+        var testRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Tests');
+        tests = new TestArray(testRef);
+        tests.$loaded().then(function() {
+          // tell the others that the tests services is loaded
+          $rootScope.$broadcast('serviceLoaded', 'tests');
+        });
+      }
+
+      // Get the test object, for the specified test id
+      function get(id) {
+        return tests.$getRecord(id);
+      }
+
+      function getAll() {
+        return tests;
+      }
+
+      // Get the function object, in FunctionInFirebase format, for the specified function id
+      function getVersion(id, version) {
+        var deferred = $q.defer();
+        var testRef = firebase.database().ref().child('Projects').child(projectId).child('history').child('artifacts').child('Tests').child(id).child(version);
+        //new Firebase(firebaseUrl+ '/history/artifacts/tests/' + id+ '/' + version);
+        var obj = $firebaseObject(testRef);
+        obj.$loaded().then(function() {
+          deferred.resolve(new Test(obj));
+        });
+        return deferred.promise;
+      }
+
+    };
+
+    return service;
+  }]);
+
+
+angular
+    .module('crowdCode')
+    .factory("TestArray",['$firebaseArray','Test', TestArray ]);
+
+function TestArray($firebaseArray, Test) {
+	return $firebaseArray.$extend({
+		$$added: function(snap, prevChild) {
+      var test = snap.val();
+			return new Test(test,test.functionName);
+		},
+		$$updated: function(snap) {
+			return this.$getRecord(snap.key).update(snap.val());
+		}
+	});
+}
+
 angular
     .module('crowdCode')
     .directive('tutorial', function($rootScope,$compile) {
@@ -10210,17 +10288,17 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
 angular.module("microtasks/review/review_describe_dispute.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("microtasks/review/review_describe_dispute.html",
     "<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
-    "	<div class=\"section\" ui-layout-container size=\"10%\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"5%\">\n" +
     "		<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "			<span>\n" +
-    "				A worker reported an issue with the description of <strong ng-bind=\"function.name\"></strong>. Can you review the reported issue?\n" +
+    "				A worker reported an issue with the description of <strong ng-bind=\"data.funct.name\"></strong>. Can you review the reported issue?\n" +
     "			</span>\n" +
     "\n" +
     "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"35%\" >\n" +
+    "	<div class=\"section\" ui-layout-container size=\"30%\" >\n" +
     "		<div class=\"section-bar\">\n" +
     "			<span class=\"title\">Code edits</span>\n" +
     "		</div>\n" +
@@ -10229,12 +10307,18 @@ angular.module("microtasks/review/review_describe_dispute.html", []).run(["$temp
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"30%\" >\n" +
-    "		<div class=\"section-bar\" ng-if=\"data.selected == -1\">\n" +
-    "			<span class=\"title\">Reported Description/Tests</span>\n" +
+    "	<div class=\"section\" ui-layout-container size=\"{{!data.disputedTests ? 40 : 10}}%\" ng-if=\"data.disputeText\">\n" +
+    "		<div class=\"section-bar\">\n" +
+    "			<span class=\"title\">Report description</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content padding\">\n" +
     "			<span ng-bind=\"data.disputeText\"></span>\n" +
+    "		</div>\n" +
+    "	</div>\n" +
+    "\n" +
+    "	<div class=\"section\" ui-layout-container size=\"{{!data.disputeText ? 40 : 30}}%\" ng-if=\"data.disputedTests\">\n" +
+    "		<div class=\"section-bar\" ng-if=\"data.selected == -1\">\n" +
+    "			<span class=\"title\">Reported Tests</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content slide from-left\" ng-if=\"data.selected == -1\">\n" +
     "			<div class=\"tests-list\">\n" +
