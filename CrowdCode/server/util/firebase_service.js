@@ -317,6 +317,9 @@ module.exports = function(AdminFirebase, Q) {
         var history_path = 'Projects/' + project_id + '/history/artifacts/Functions/' + function_id;
         root_ref.child(history_path).once("value", function(data) {
           var version_number = data.numChildren();
+          if(!func.hasOwnProperty('tests')){
+            func.tests = "null";
+          }
           function_schema = {
             name: func.name,
             description: func.description,

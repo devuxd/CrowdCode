@@ -104,76 +104,76 @@ module.exports = function(FirebaseService, Q) {
   /* Generate implementation microtasks for a project
       param project id
    */
-  function generateImplementationMicrotasks(project_id, function_id) {
+  function generateImplementationMicrotasks(project_id, function_id) { console.log('entering generate implementation'+function_id);
     var Project = Projects.get(project_id);
     var functions = Project.get('functions');
     var tests = Project.get('tests');
     var microtasks = Project.get('microtasks');
     var implementationQ = Project.get('implementationQ');
     var func = functions.get(function_id);
-
-    if (func.dependent == "null") {
-      var microtask_name = "Implementment behaviour";
-      var microtask_description = "Write a test for a behaviour and write code to pass the test";
-      var function_name = func.name;
-      var function_version = func.version;
-      var function_code = func.code;
-      var function_description = func.description;
-      var function_return_type = func.returnType;
-      var function_parameters = func.parameters;
-      var function_header = func.header;
-      var max_points = 10;
-      /*var temp_tests = '{';
-      if(func.tests !== "null") {
-          func.tests.forEach(function (test_id) {
-              if (temp_tests === '{') {
-                  temp_tests += test_id + ': {' + tests.get(test_id).toString() + '}';
-              } else {
-                  temp_tests += ',' + test_id + ': {' + tests.get(test_id).toString() + '}';
-              }
-          });
-      }
-      temp_tests += '}';*/
-      var temp_tests = new Array();
-      if (func.hasOwnProperty('tests') && func.tests !== "null") {
-        func.tests.forEach(function(test_id) {
-          temp_tests.push(tests.get(test_id));
-
+    var isDependentsComplete = true;
+    if (func.dependent !== "null") {
+        func.dependent.forEach(function(dependent_function_id) {
+        var parent_fucntion = functions.get(dependent_function_id);
+         if(parent_fucntion.isComplete === false) {
+           isDependentsComplete = false;
+           if (parent_fucntion.isAssigned === false) {
+               generateImplementationMicrotasks(project_id, dependent_function_id, functions, tests, microtasks);
+           }
+         }
         });
-      }
-
-      var function_tests = temp_tests;
-      var microtask_id = firebase.createImplementationMicrotask(project_id, microtask_name, max_points, function_id, function_name,
-        function_description, function_version, microtask_description, function_code, function_return_type, function_parameters, function_header, function_tests, "WRITE");
-      var microtask_object = {
-        name: microtask_name,
-        description: microtask_description,
-        code: function_code,
-        points: max_points,
-        awarded_points: 0,
-        promptType: "WRITE",
-        type: "DescribeFunctionBehavior",
-        functionId: function_id,
-        functionName: function_name,
-        functionVersion: function_version,
-        functionDescription: function_description,
-        returnType: function_return_type,
-        header: function_header,
-        parameters: function_parameters,
-        tests: function_tests,
-        worker: "null"
-      };
-      microtasks.set(microtask_id, microtask_object);
-      implementationQ.push(microtask_id);
-      func.isAssigned = true;
-      // firebase.updateFunctionStatus(project_id,function_id,func.isComplete,func.isAssigned);
-
-    } else {
-      func.dependent.forEach(function(dependent_function_id) {
-        generateImplementationMicrotasks(project_id, dependent_function_id, functions, tests, microtasks);
-      });
-      generateImplementationMicrotasks(project_id, function_id);
     }
+    //Check if all depenedent functions are completely implemented
+    if(isDependentsComplete === true) {
+        var microtask_name = "Implementment behaviour";
+        var microtask_description = "Write a test for a behaviour and write code to pass the test";
+        var function_name = func.name;
+        var function_version = func.version;
+        var function_code = func.code;
+        var function_description = func.description;
+        var function_return_type = func.returnType;
+        var function_parameters = func.parameters;
+        var function_header = func.header;
+        var max_points = 10;
+        var temp_tests = new Array();
+        if (func.hasOwnProperty('tests') && func.tests !== "null") {
+            func.tests.forEach(function (test_id) {
+                temp_tests.push(tests.get(test_id));
+
+            });
+        }
+
+        var function_tests = temp_tests;
+        var microtask_id = firebase.createImplementationMicrotask(project_id, microtask_name, max_points, function_id, function_name,
+            function_description, function_version, microtask_description, function_code, function_return_type, function_parameters, function_header, function_tests, "WRITE");
+        var microtask_object = {
+            name: microtask_name,
+            description: microtask_description,
+            code: function_code,
+            points: max_points,
+            awarded_points: 0,
+            promptType: "WRITE",
+            type: "DescribeFunctionBehavior",
+            functionId: function_id,
+            functionName: function_name,
+            functionVersion: function_version,
+            functionDescription: function_description,
+            returnType: function_return_type,
+            header: function_header,
+            parameters: function_parameters,
+            tests: function_tests,
+            worker: "null"
+        };
+        microtasks.set(microtask_id, microtask_object);
+        implementationQ.push(microtask_id);
+        func.isAssigned = true;
+        firebase.updateFunctionStatus(project_id, function_id, func.isComplete, func.isAssigned);
+        console.log('4-----------' + implementationQ);
+    }else{
+        func.isAssigned = false;
+        firebase.updateFunctionStatus(project_id, function_id, func.isComplete, func.isAssigned);
+    }
+
   }
 
   /* Generate a review microtask for a implementation task
@@ -287,6 +287,39 @@ module.exports = function(FirebaseService, Q) {
           tests.set(testId, mytest);
         }
         function_object.tests = test_list;
+        var submission_object = implementation_object.submission;
+        if(submission_object.hasOwnProperty('requestedFunctions') && submission_object.requestedFunctions !== "null"){
+          submission_object.requestedFunctions.forEach(function(func){
+                var dependent_id = firebase.createFunction(project_id,func.name,"null",func.description,"#Implement the function",func.returnType,func.parameters,"null","null","null","null",false);
+                var dependent_object = {
+                    name: func.name,
+                    header: "null",
+                    description: func.description,
+                    code: "\n{\n#Implement the function\n\nreturn {};\n}",
+                    linesOfCode: 2,
+                    returnType: func.returnType,
+                    version: 0,
+                    parameters: func.parameters,
+                    stubs: "null",
+                    tests: "null",
+                    ADTsId: "null",
+                    dependent: "null",
+                    isComplete: false,
+                    isAssigned: false,
+                    isApiArtifact: false
+                }
+                functions.set(dependent_id,dependent_object);
+                if(function_object.dependent === "null"){
+                  function_object.dependent = new Array();
+                  function_object.dependent.push(dependent_id);
+
+                }else{
+                    function_object.dependent.push(dependent_id);
+                }
+            });
+        }
+
+
         functions.set(function_id, function_object);
         //Update function and test in firebase
         var function_update_promise = firebase.updateFunction(project_id, function_id, function_object.name, function_object.header, function_object.description, function_object.code, function_object.returnType, function_object.parameters, function_object.stubs, function_object.tests, "null", function_object.dependent, function_object.isComplete, false, function_object.isApiArtifact);
@@ -297,6 +330,7 @@ module.exports = function(FirebaseService, Q) {
 
         //remove function and its tests from memory
         if (implementation_object.isFunctionComplete === true) {
+          firebase.updateFunctionStatus(project_id, function_id, func.isComplete, false);
           functions.remove(implementation_object.function_id);
           test_list.forEach(function(test_id) {
             tests.remove(test_id);
