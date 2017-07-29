@@ -4703,13 +4703,15 @@ angular
                 $scope.review.fromDispute = true;
                 $scope.data.disputeText = submission.disputeFunctionText;
                 var loadedFunct = functionsService.get( reviewed.functionId );
-                $scope.data.disputedTests = submission.disputedTests
-                    .map(function(test){
-                        var testObj = testsService.get(test.id);
-                        // loadedFunct.getTestById(test.id);
-                        testObj.disputeText = test.disputeText;
-                        return testObj;
-                    });
+                if(submission.disputedTests) {
+                  $scope.data.disputedTests = submission.disputedTests
+                      .map(function(test){
+                          var testObj = testsService.get(test.id);
+                          // loadedFunct.getTestById(test.id);
+                          testObj.disputeText = test.disputeText;
+                          return testObj;
+                  });
+                }
             }
             else {
                 $scope.review.template = 'describe';
