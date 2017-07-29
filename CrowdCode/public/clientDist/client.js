@@ -2607,7 +2607,6 @@ angular
 
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function get(id){
-      console.log("getFunctionById -----------------", functions);
 			return functions.$getRecord(id);
 		}
 
@@ -3517,18 +3516,48 @@ angular
 
         $scope.data.isComplete = $scope.microtask.reissuedSubmission.isDescribeComplete;
 
-        if( $scope.microtask.reissuedSubmission.disputeFunctionText.length > 0 ){
-            $scope.data.dispute.active = true;
-            $scope.data.dispute.text   = $scope.microtask.reissuedSubmission.disputeFunctionText;
-        }
+        // if( $scope.microtask.reissuedSubmission.disputeFunctionText.length > 0 ){
+        //     $scope.data.dispute.active = true;
+        //     $scope.data.dispute.text   = $scope.microtask.reissuedSubmission.disputeFunctionText;
+        // }
 
+        if( $scope.microtask.reissuedSubmission.disputedTests != undefined ){
+            var disputed = $scope.microtask.reissuedSubmission.disputedTests;
+        }
 
         // load tests from the previous submission
         var reissuedTests = $scope.microtask.reissuedSubmission.tests ;
-        for( var i = 0 ; i < reissuedTests.length ; i++ ){
-            var test = new Test(reissuedTests[i], $scope.funct.name);
+        if(angular.isDefined(reissuedTests)) {
+          for( var i = 0 ; i < reissuedTests.length ; i++ ){
+              var test = new Test(reissuedTests[i], $scope.funct.name);
+              // flag the test if is disputed
+              if( disputed != undefined ){
+                  for( var d = 0 ; d < disputed.length ; d++ ){
+                      if( disputed[d].id == test.id ){
+                          test.dispute = {
+                              active: true,
+                              text  : disputed[d].disputeText
+                          }
+                      } else {
+                        test.dispute = {
+                            active: false,
+                            text  : 'aa'
+                        }
+                      }
+                  }
 
-            $scope.data.tests.push(test);
+              } else {
+                test.dispute = {
+                    active: false,
+                    text  : 'aa'
+                }
+              }
+              test.edited  = false;
+              test.deleted = false;
+              test.added = false;
+
+              $scope.data.tests.push(test);
+          }
         }
     }
     // otherwise
@@ -3852,8 +3881,6 @@ angular
             for( var idx = 0 ; idx < $scope.data.tests.length ; idx++ ){
                 var test = $scope.data.tests[idx];
 
-
-
                 var testDto = {
                     id:          test.id,
                     description: test.description,
@@ -3872,6 +3899,11 @@ angular
                     testDto.deleted  = true;
                 else if( form['testForm_'+idx].$dirty )
                     testDto.edited = true;
+                // else if(formData.disputeFunctionText.length > 0 || test.dispute.active === true) {
+                //   if(!angular.isDefined(testDto.added) && !angular.isDefined(testDto.deleted) && !angular.isDefined(testDto.edited)) {
+                //     testDto.added    = true;
+                //   }
+                // }
 
                 formData.tests.push(testDto);
             }
@@ -4666,8 +4698,10 @@ angular
             $scope.data.funct = new Function( submission['function'] );
             $scope.data.newCode = $scope.data.funct.getFullCode();
             $scope.data.oldCode = $scope.funct.getFullCode();
-            if( submission.disputedTests ){
-                $scope.review.template = "describe_dispute";
+            if( submission.disputeFunctionText.length > 0 || submission.disputedTests){
+                $scope.review.template    = 'describe_dispute';
+                $scope.review.fromDispute = true;
+                $scope.data.disputeText = submission.disputeFunctionText;
                 var loadedFunct = functionsService.get( reviewed.functionId );
                 $scope.data.disputedTests = submission.disputedTests
                     .map(function(test){
@@ -4676,12 +4710,6 @@ angular
                         testObj.disputeText = test.disputeText;
                         return testObj;
                     });
-            }
-
-            if( submission.disputeFunctionText.length > 0 ){
-                $scope.review.template    = 'describe_dispute';
-                $scope.review.fromDispute = true;
-                $scope.data.disputeText = submission.disputeFunctionText;
             }
             else {
                 $scope.review.template = 'describe';
@@ -6076,18 +6104,21 @@ angular
 			return false;
 
     this.$id = rec.id + '';
-		if(rec.isSimple)
-			rec.code = 'expect(' + functionName + '(' + rec.inputs.join(',') + ')).to.deep.equal(' + rec.output + ');';
-
-		angular.extend(this,rec);
-
-		this.inputs = [];
-		for( var key in rec.inputs ){
-			this.inputs.push(rec.inputs[key]);
-		}
+    this.update(rec, functionName);
 	}
 
 	Test.prototype = {
+    update: function(rec, functionName) {
+      if(rec.isSimple)
+  			rec.code = 'expect(' + functionName + '(' + rec.inputs.join(',') + ')).to.deep.equal(' + rec.output + ');';
+
+  		angular.extend(this,rec);
+
+  		this.inputs = [];
+  		for( var key in rec.inputs ){
+  			this.inputs.push(rec.inputs[key]);
+  		}
+    },
 		getInputsKey: function(){
 			return this.inputs.join(',');
 		}
@@ -9001,14 +9032,15 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "	<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
     "\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"5%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"7%\">\n" +
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
     "						Can you implement part of <strong ng-bind=\"funct.name\"></strong> by making one of the currently failing tests pass? If you don’t have enough time to make a test pass, you may also submit a partial solution.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"CORRECT\">\n" +
-    "						An issue has been reported with one or more test cases. Can you fix the test(s) to address the issue?\n" +
+    "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
+    "						If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function,click on <span class=\"glyphicon glyphicon-question-sign\"></span> in the Function editor.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"FUNCTION_CHANGED'\">\n" +
     "						The signature of the function being tested has changed. As a result, the tests may no longer be correct. Can you update the tests, if necessary?\n" +
@@ -9016,13 +9048,13 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</div>\n" +
     "\n" +
     "				<div ng-if=\"microtask.reissuedSubmission !== undefined\">\n" +
-    "					This task has been reissued because of \"<strong>{{microtask.reissueMotivation}}</strong>\"\n" +
+    "					This task has been reissued because of \"<strong>{{microtask.reissuedMotivation}}</strong>\"\n" +
     "				</div>\n" +
     "\n" +
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"20%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"18%\">\n" +
     "\n" +
     "			<div class=\"section-bar\">\n" +
     "\n" +
@@ -9051,7 +9083,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "				<span class=\"pull-right separator\" ng-if=\"data.selected1 != -1\"></span>\n" +
     "				<span class=\"pull-right\" ng-if=\"data.selected1 != -1\">\n" +
-    "					<button\n" +
+    "					<button ng-if=\"!microtask.reissuedSubmission\"\n" +
     "						ng-disabled=\"data.selected1.id === undefined\"\n" +
     "						class=\"btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}\"\n" +
     "						ng-click=\"toggleDispute($event);\">\n" +
@@ -9067,7 +9099,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "			<div class=\"section-content padding slide from-left\" ng-if=\"data.selected1 == -1\">\n" +
     "				<div class=\"test-list \">\n" +
-    "					<div class=\"test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
+    "					<div class=\"test-item clickable {{ !te.running ? ((t.dispute.active && !microtask.reissuedSubmission) ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
     "						<div ng-click=\"toggleSelect1($event,te);\">\n" +
     "							<strong class=\"pull-left\">\n" +
     "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
@@ -9090,7 +9122,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "							<div class=\"row\">\n" +
     "								<div class=\"col-sm-3 col-md-3 row-label\">Status</div>\n" +
     "								<div class=\"col-sm-9 col-md-9\">\n" +
-    "									<span ng-if=\"!t.dispute.active\">\n" +
+    "									<span ng-if=\"!t.dispute.active || microtask.reissuedSubmission\">\n" +
     "										<span ng-if=\"t.result.passed\" class=\"color-passed\">\n" +
     "											<span class=\"glyphicon glyphicon-ok-sign\"></span> passed\n" +
     "									</span>\n" +
@@ -9101,7 +9133,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "											{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}\n" +
     "										</span>\n" +
     "									</span>\n" +
-    "									<span ng-if=\"t.dispute.active\" class=\"color-disputed\">\n" +
+    "									<span ng-if=\"t.dispute.active && !microtask.reissuedSubmission\" class=\"color-disputed\">\n" +
     "										<span class=\"glyphicon glyphicon-exclamation-sign\"></span> reported\n" +
     "									</span>\n" +
     "\n" +
@@ -9123,7 +9155,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "							</div>\n" +
     "						</div>\n" +
     "\n" +
-    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"!t.dispute.active && t.result.showDiff\">\n" +
+    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"(!t.dispute.active || microtask.reissuedSubmission) && t.result.showDiff\">\n" +
     "							<div class=\"row\">\n" +
     "								<div class=\"col-sm-12 col-md-12 row-label\">\n" +
     "									<span style=\"width:10px;height:10px;display:inline-block;background-color:#CDFFCD\"></span> Expected\n" +
@@ -9139,7 +9171,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "							</div>\n" +
     "						</div>\n" +
     "\n" +
-    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"t.dispute.active\">\n" +
+    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"t.dispute.active && !microtask.reissuedSubmission\">\n" +
     "							<div class=\"row\">\n" +
     "								<div class=\"col-sm-12 col-md-12 row-label\">Reported reason</div>\n" +
     "							</div>\n" +
@@ -10288,17 +10320,20 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
 angular.module("microtasks/review/review_describe_dispute.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("microtasks/review/review_describe_dispute.html",
     "<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
-    "	<div class=\"section\" ui-layout-container size=\"5%\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"7%\">\n" +
     "		<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
-    "			<span>\n" +
+    "			<span ng-if=\"data.disputeText\">\n" +
     "				A worker reported an issue with the description of <strong ng-bind=\"data.funct.name\"></strong>. Can you review the reported issue?\n" +
+    "			</span>\n" +
+    "			<span ng-if=\"data.disputedTests\">\n" +
+    "				A worker was asked to implement part of the function and also reported an issue with the following tests. Can you review this work?\n" +
     "			</span>\n" +
     "\n" +
     "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"30%\" >\n" +
+    "	<div class=\"section\" ui-layout-container size=\"33%\" >\n" +
     "		<div class=\"section-bar\">\n" +
     "			<span class=\"title\">Code edits</span>\n" +
     "		</div>\n" +
@@ -10307,7 +10342,7 @@ angular.module("microtasks/review/review_describe_dispute.html", []).run(["$temp
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"{{!data.disputedTests ? 40 : 10}}%\" ng-if=\"data.disputeText\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"{{!data.disputedTests ? 35 : 10}}%\" ng-if=\"data.disputeText\">\n" +
     "		<div class=\"section-bar\">\n" +
     "			<span class=\"title\">Report description</span>\n" +
     "		</div>\n" +
@@ -10316,7 +10351,7 @@ angular.module("microtasks/review/review_describe_dispute.html", []).run(["$temp
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"{{!data.disputeText ? 40 : 30}}%\" ng-if=\"data.disputedTests\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"{{!data.disputeText ? 35 : 25}}%\" ng-if=\"data.disputedTests\">\n" +
     "		<div class=\"section-bar\" ng-if=\"data.selected == -1\">\n" +
     "			<span class=\"title\">Reported Tests</span>\n" +
     "		</div>\n" +

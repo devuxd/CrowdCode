@@ -100,6 +100,43 @@ module.exports = function(FirebaseService, Q) {
     return test_promise;
   };
 
+  function generateReissuedMicrotaks(project_id, function_id, reissuedSubmissionObject) {
+    var Project = Projects.get(project_id);
+    var functions = Project.get('functions');
+    var tests = Project.get('tests');
+    var microtasks = Project.get('microtasks');
+    var implementationQ = Project.get('implementationQ');
+    var func = functions.get(function_id);
+
+    var microtask_name = "Implementment behavior";
+    var microtask_description = "Write a test for a behavior and write code to pass the test";
+    var function_name = func.name;
+    var function_version = func.version;
+    var function_code = func.code;
+    var function_description = func.description;
+    var function_return_type = func.returnType;
+    var function_parameters = func.parameters;
+    var function_header = func.header;
+    var max_points = 10;
+
+    var temp_tests = new Array();
+    if (func.hasOwnProperty('tests') && func.tests !== "null") {
+      func.tests.forEach(function(test_id) {
+        temp_tests.push(tests.get(test_id));
+      });
+    }
+
+    var function_tests = temp_tests;
+    firebase.createReissuedMicrotask(project_id, microtask_name, max_points, function_id, function_name,
+      function_description, function_version, microtask_description, function_code, function_return_type,
+      function_parameters, function_header, function_tests, "CORRECT", reissuedSubmissionObject)
+      .then(function(reissuedMicrotask) {
+        microtasks.set(reissuedMicrotask.id, reissuedMicrotask.microtask);
+        implementationQ.push(reissuedMicrotask.id);
+        func.isAssigned = true;
+      });
+  };
+
 
   /* Generate implementation microtasks for a project
       param project id
@@ -113,8 +150,8 @@ module.exports = function(FirebaseService, Q) {
     var func = functions.get(function_id);
 
     if (func.dependent == "null") {
-      var microtask_name = "Implementment behaviour";
-      var microtask_description = "Write a test for a behaviour and write code to pass the test";
+      var microtask_name = "Implementment behavior";
+      var microtask_description = "Write a test for a behavior and write code to pass the test";
       var function_name = func.name;
       var function_version = func.version;
       var function_code = func.code;
@@ -266,56 +303,83 @@ module.exports = function(FirebaseService, Q) {
     var implementation_object = microtasks.get(implementation_task_id);
     var function_id = implementation_object.functionId;
     var update_promise = firebase.updateReviewMicrotask(project_id, microtask_id, rating, review, worker_id);
-    update_promise.then(function() {
+    update_promise.then(function(data) {
+      let reissuedSubmissionObj = {
+        "reissuedMotivation": data.reissuedMotivation,
+        "reissuedMicrotaskKey": data.reissuedMicrotaskKey,
+        "reissuedSubmission": data.reissuedSubmission
+      };
       firebase.incrementReviewTasks(project_id, worker_id);
       firebase.incrementPointsScored(project_id, worker_id, 5);
       firebase.updateLeaderBoardScore(project_id, worker_id, 5);
-      if (rating === 4 || rating === 5) {
-        //update function object and tests
+      //update function object and tests
+      var function_object = functions.get(function_id);
+      function_object.version = implementation_object.functionVersion + 1;
+      function_object.code = implementation_object.code;
+      var test_set = implementation_object.tests;
+      var test_list = new Array();
+      for (var test_id = 0; test_id < test_set.length; test_id++) {
+        let testId  = function_id + '' + test_id;
+        let mytest = test_set[test_id];
+        mytest.id = testId;
+        mytest.functionName = function_object.name;
+        test_list.push(testId);
+        tests.set(testId, mytest);
+      }
+      function_object.tests = test_list;
+      functions.set(function_id, function_object);
+      //Update function and test in firebase
+      var function_update_promise = firebase.updateFunction(project_id, function_id, function_object.name, function_object.header, function_object.description, function_object.code, function_object.returnType, function_object.parameters, function_object.stubs, function_object.tests, "null", function_object.dependent, function_object.isComplete, false, function_object.isApiArtifact);
+      test_list.forEach(function(test_id) {
+        var test_object = tests.get(test_id);
+        var test_update_promise = firebase.updateTest(project_id, function_id, test_id, test_object);
+      });
 
-        var function_object = functions.get(function_id);
-        function_object.version = implementation_object.functionVersion + 1;
-        function_object.code = implementation_object.code;
-        var test_set = implementation_object.tests;
-        var test_list = new Array();
-        for (var test_id = 0; test_id < test_set.length; test_id++) {
-          let testId  = function_id + '' + test_id;
-          let mytest = test_set[test_id];
-          mytest.id = testId;
-          mytest.functionName = function_object.name;
-          test_list.push(testId);
-          tests.set(testId, mytest);
+      if(data.isDisputed === true) {
+        // if reissued and microtask is approved
+        if(rating === 4 || rating === 5) {
+          generateReissuedMicrotaks(project_id, function_id, reissuedSubmissionObj);
+          firebase.incrementRejectedTasks(project_id, implementation_object.worker);
+        } //else if reissued but microtask is not approved
+        else {
+          //remove function and its tests from memory
+          if (implementation_object.isFunctionComplete === true) {
+            functions.remove(implementation_object.function_id);
+            test_list.forEach(function(test_id) {
+              tests.remove(test_id);
+            });
+            //deferred.resolve({"isFunctionComplete": true, "functionApproved" : true});
+          } else {
+            //deferred.resolve({"isFunctionComplete": false, "functionApproved" : true});
+            //console.log('1');
+            //Generate new implementation task with function
+            generateImplementationMicrotasks(project_id, function_id);
+          }
+          firebase.incrementImplementationTasks(project_id, implementation_object.worker);
         }
-        function_object.tests = test_list;
-        functions.set(function_id, function_object);
-        //Update function and test in firebase
-        var function_update_promise = firebase.updateFunction(project_id, function_id, function_object.name, function_object.header, function_object.description, function_object.code, function_object.returnType, function_object.parameters, function_object.stubs, function_object.tests, "null", function_object.dependent, function_object.isComplete, false, function_object.isApiArtifact);
-        test_list.forEach(function(test_id) {
-          var test_object = tests.get(test_id);
-          var test_update_promise = firebase.updateTest(project_id, function_id, test_id, test_object);
-        });
-
-        //remove function and its tests from memory
-        if (implementation_object.isFunctionComplete === true) {
-          functions.remove(implementation_object.function_id);
-          test_list.forEach(function(test_id) {
-            tests.remove(test_id);
-          });
-          //deferred.resolve({"isFunctionComplete": true, "functionApproved" : true});
-        } else {
-          //deferred.resolve({"isFunctionComplete": false, "functionApproved" : true});
-          //console.log('1');
-          //Generate new implementation task with function
-          generateImplementationMicrotasks(project_id, function_id);
+      } else {
+        // if normal submission and review approves the microtask
+        if(rating === 4 || rating === 5) {
+          //remove function and its tests from memory
+          if (implementation_object.isFunctionComplete === true) {
+            functions.remove(implementation_object.function_id);
+            test_list.forEach(function(test_id) {
+              tests.remove(test_id);
+            });
+            //deferred.resolve({"isFunctionComplete": true, "functionApproved" : true});
+          } else {
+            //deferred.resolve({"isFunctionComplete": false, "functionApproved" : true});
+            //console.log('1');
+            //Generate new implementation task with function
+            generateImplementationMicrotasks(project_id, function_id);
+          }
+          firebase.incrementImplementationTasks(project_id, implementation_object.worker);
+        } //else if normal submission but microtask is not approved
+        else {
+          // Generate new implementation task with function
+          generateReissuedMicrotaks(project_id, function_id, reissuedSubmissionObj);
+          firebase.incrementRejectedTasks(project_id, implementation_object.worker);
         }
-
-        firebase.incrementImplementationTasks(project_id, implementation_object.worker);
-      } else if (rating === 1 || rating === 2 || rating === 3) {
-        //No changes made to function
-        // Generate new implementation task with function
-        generateImplementationMicrotasks(project_id, function_id);
-        //deferred.resolve({"isFunctionComplete": false, "functionApproved": false});
-        firebase.incrementRejectedTasks(project_id, implementation_object.worker);
       }
       var points = implementation_object.points * (rating / 5);
       firebase.incrementPointsScored(project_id, implementation_object.worker, points);
