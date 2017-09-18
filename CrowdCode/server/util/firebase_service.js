@@ -1163,14 +1163,30 @@ module.exports = function(AdminFirebase, Q) {
         var worker_schema = [];
     //Update the status of each worker
       workers.forEach(function (value, key){
+        var skipped_tasks = null;
+        var assigned_id = null;
+        var assigned_type = null;
+        var completed_task = null;
+        if(value.has('skipped')){
+          skipped_tasks = value.get('skipped');
+        }
+        if(value.has('assigned')){
+          if(value.get('assigned').has('id')){
+            assigned_id = value.get('assigned').get('id');
+            assigned_type = value.get('assigned').get('type');
+          }
+        }
+        if(value.has('completed')){
+          completed_task = value.get('completed');
+        }
              worker_schema.push({
                   id: key,
-                  skipped_tasks: value.get('skipped'),
+                  skipped_tasks: skipped_tasks,
                   assigned_task: {
-                      id: value.get('assigned').get('id'),
-                      type: value.get('assigned').get('type')
+                      id: assigned_id,
+                      type: assigned_type
                   },
-                  completed_tasks: value.get('completed')
+                  completed_tasks: completed_task
               });
       });
       root_ref.child(path).child('workers').set(worker_schema);
