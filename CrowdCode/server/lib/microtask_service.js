@@ -17,20 +17,21 @@ module.exports = function(FirebaseService, Q) {
       Project.set('microtasks', new Map());
       Project.set('implementationQ', new Array());
       Project.set('reviewQ', new Array());
+      Project.set('inProgressQ', new Map());
       Project.set('workers', new Map());
 
       var functions = Project.get('functions');
       var function_load_result = loadFunctions(project_id);
-      if (function_load_result !== null) {
+      if (function_load_result !== "null") {
         return function_load_result.then(function(data) {
           var test_load_result = loadTests(project_id);
-          if (test_load_result !== null) {
+          if (test_load_result !== "null") {
             return test_load_result.then(function(data) {
                 var load_project_state = loadState(project_id);
                 return load_project_state.then(function(state_exists) {
                     if (state_exists) {
                           var load_microtask_result = loadMicrotasks(project_id);
-                            if(load_microtask_result !== null){
+                            if(load_microtask_result !== "null"){
                             return load_microtask_result.then(function (data) {
                                 return true;
                             }).catch(function (err) {
@@ -53,7 +54,7 @@ module.exports = function(FirebaseService, Q) {
               return load_project_state.then(function(state_exists){
                   if (state_exists) {
                           var load_microtask_result = loadMicrotasks(project_id);
-                          if(load_microtask_result !== null){
+                          if(load_microtask_result !== "null"){
                               return load_microtask_result.then(function (data) {
                                   console.log("Project Loaded "+ project_id);
                                   console.log(Project);
@@ -100,7 +101,7 @@ module.exports = function(FirebaseService, Q) {
         var functions = Project.get('functions');
         var functions_list_promise = firebase.retrieveFunctionsList(project_id);
         var result = functions_list_promise.then(function(functions_list) {
-          var function_promise = null;
+          var function_promise = "null";
           functions_list.forEach(function(function_id) {
             function_promise = firebase.retrieveFunction(project_id, function_id);
             function_promise.then(function(data) {
@@ -134,7 +135,7 @@ module.exports = function(FirebaseService, Q) {
         var Project = Projects.get(project_id);
           var functions = Project.get('functions');
           var tests = Project.get('tests');
-          var test_promise = null;
+          var test_promise = "null";
           functions.forEach(function(content, function_id) {
               if (content.hasOwnProperty('tests') && content.tests !== "null") {
                   content.tests.forEach(function(test_id) {
@@ -168,6 +169,7 @@ module.exports = function(FirebaseService, Q) {
             var Project = Projects.get(project_id);
             var implementationQ = Project.get('implementationQ');
             var reviewQ = Project.get('reviewQ');
+            var inProgressQ = Project.get('inProgressQ');
             var workers = Project.get('workers');
 
             var load_state_promise = firebase.retrieveState(project_id);
@@ -226,12 +228,34 @@ module.exports = function(FirebaseService, Q) {
                       worker.set('completed',completed_tasks);
                       worker.set('skipped', skipped_tasks);
                       workers.set(worker_id,worker);
-                  })
+                  });
+              }
+
+              if(data.hasOwnProperty('inProgressQ') && data.inProgressQ !== "null"){
+                state_exists = true;
+
+                data.inProgressQ.forEach(function(value){
+                    console.log('m= '+value.microtask_id +'   w = '+value.worker_id+'  t= '+value.assigned_time);
+                    inProgressQ.set(value.microtask_id,new Map());
+                    var inProgress_task = inProgressQ.get(value.microtask_id);
+                    inProgress_task.set('worker',value.worker_id);
+                    inProgress_task.set('assigned_time',value.assigned_time);
+                    inProgressQ.set(value.microtask_id,inProgress_task);
+                    var time_left = new Date().getTime()-value.assigned_time;
+                    if(time_left > 5){
+                        setTimeout(unassignLockedMicrotask,time_left,project_id,value.microtask_id,value.worker_id);
+                    }else{
+                        setTimeout(unassignLockedMicrotask,5,project_id,value.microtask_id,value.worker_id);
+                    }
+
+
+                });
               }
 
               Project.set('implementationQ',implementationQ);
               Project.set('reviewQ',reviewQ);
               Project.set('workers',workers);
+              Project.set('inprogressQ',inProgressQ);
               Projects.set(project_id,Project);
               return state_exists;
             }).catch(function(err){
@@ -261,8 +285,8 @@ module.exports = function(FirebaseService, Q) {
             var reviewQ = Project.get('reviewQ');
             var microtasks = Project.get('microtasks');
             var workers = Project.get('workers');
-            var result = null;
-            var result2 = null;
+            var result = "null";
+            var result2 = "null";
             var refernece_ids = [];
 
             implementationQ.forEach(function(microtask_id){
@@ -296,7 +320,7 @@ module.exports = function(FirebaseService, Q) {
             workers.forEach(function(worker){
                 if(worker.has('assigned')) {
                     var assigned_task = worker.get('assigned');
-                    if (assigned_task.has('id') && assigned_task.get('id') !== null) {
+                    if (assigned_task.has('id') && assigned_task.get('id') !== "null") {
                         var microtask_id = assigned_task.get('id');
                         var microtask_type = assigned_task.get('type')
                         var microtask_promise = firebase.retrieveMicrotask(project_id, microtask_type, microtask_id);
@@ -494,11 +518,12 @@ module.exports = function(FirebaseService, Q) {
           var Project = Projects.get(project_id);
           var microtasks = Project.get('microtasks');
           var workers = Project.get('workers');
+          var inProgressQ = Project.get('inProgressQ');
           var worker = workers.get(worker_id);
           var assigned_task = worker.get('assigned');
           var skipped_tasks = worker.get('skipped');
-          assigned_task.set('id', null);
-          assigned_task.set('type', null);
+          assigned_task.set('id', "null");
+          assigned_task.set('type', "null");
           var completed_task = worker.get('completed');
           completed_task.push(microtask_id);
 
@@ -510,12 +535,13 @@ module.exports = function(FirebaseService, Q) {
           microtask_object.submission = microtask_tests;
           microtask_object.isFunctionComplete = microtask_tests.isDescribeComplete;
           microtasks.set(microtask_id, microtask_object);
+          inProgressQ.delete(microtask_id);
           var update_promise = firebase.updateImplementationMicrotask(project_id, microtask_id, funct, microtask_tests, worker_id, microtask_tests.isDescribeComplete);
           update_promise.then(function () {
-              let review_id = generateReviewMicrotask(project_id, microtask_id, microtask_object.functionId, "WRITE");
+              var review_id = generateReviewMicrotask(project_id, microtask_id, microtask_object.functionId, "WRITE");
               skipped_tasks.push(review_id);
               deferred.resolve(review_id);
-          }).catch(err => {
+          }).catch(function(err){
               deferred.reject(new Error(err));
       })
           ;
@@ -524,6 +550,7 @@ module.exports = function(FirebaseService, Q) {
           worker.set('completed', completed_task);
           workers.set(worker_id, worker);
           Project.set('workers', workers);
+          Project.set('inProgressQ',inProgressQ);
           Project.set('microtasks', microtasks);
           Projects.set(project_id, Project);
           firebase.backupState(project_id, Project);
@@ -551,11 +578,12 @@ module.exports = function(FirebaseService, Q) {
         var functions = Project.get('functions');
         var tests = Project.get('tests');
         var microtasks = Project.get('microtasks');
+        var inProgressQ = Project.get('inProgressQ');
         var workers = Project.get('workers');
         var worker = workers.get(worker_id);
         var assigned_task = worker.get('assigned');
-        assigned_task.set('id', null);
-        assigned_task.set('type', null);
+        assigned_task.set('id', "null");
+        assigned_task.set('type', "null");
         var completed_task = worker.get('completed');
         completed_task.push(microtask_id);
 
@@ -565,6 +593,7 @@ module.exports = function(FirebaseService, Q) {
         microtask_object.review = review;
         microtask_object.worker = worker_id;
         microtasks.set(microtask_id, microtask_object);
+        inProgressQ.delete(microtask_id);
 
         var implementation_task_id = microtask_object.reference_id;
         var implementation_object = microtasks.get(implementation_task_id);
@@ -683,6 +712,7 @@ module.exports = function(FirebaseService, Q) {
           worker.set('completed',completed_task);
           workers.set(worker_id,worker);
           Project.set('workers',workers);
+          Project.set('inProgressQ',inProgressQ);
           Project.set('functions',functions);
           Project.set('tests',tests);
           Project.set('microtasks',microtasks);
@@ -712,6 +742,7 @@ module.exports = function(FirebaseService, Q) {
         var microtasks = Project.get('microtasks');
         var reviewQ = Project.get('reviewQ');
         var implementationQ = Project.get('implementationQ');
+        var inProgressQ = Project.get('inProgressQ');
         var workers = Project.get('workers');
         if (workers.has(worker_id)) {
           var worker = workers.get(worker_id);
@@ -723,8 +754,8 @@ module.exports = function(FirebaseService, Q) {
           worker.set('completed', new Array());
           worker.set('skipped', new Array());
           let assigned_task = worker.get('assigned');
-          assigned_task.set('id', null);
-          assigned_task.set('type', null);
+          assigned_task.set('id', "null");
+          assigned_task.set('type', "null");
         }
 
         var microtask_id;
@@ -733,7 +764,7 @@ module.exports = function(FirebaseService, Q) {
         var skipped_task = worker.get('skipped');
         var completed_task = worker.get('completed');
         //If the worker doesnt have any task already assigned
-        if (assigned_task.get('id') === null) {
+        if (assigned_task.get('id') === "null") {
             var review_skipped = 0;
           var implementation_skipped = 0;
 
@@ -754,9 +785,9 @@ module.exports = function(FirebaseService, Q) {
           var implementation_available = implementationQ.length - implementation_skipped;
           //If there are no review tasks go to implementation tasks
           if (review_available === 0) {
-            //If there are no implementation tasks return null
+            //If there are no implementation tasks return "null"
             if (implementation_available === 0) {
-              microtask_id = null;
+              microtask_id = "null";
             } else {
               var temp = new Array();
               do {
@@ -765,9 +796,9 @@ module.exports = function(FirebaseService, Q) {
                 //If the task was already skipped by the worker put in a temp array and try the next task
                 if (skipped_task.indexOf(microtask_id) >= 0) {
                   temp.push(microtask_id);
-                  microtask_id = null;
+                  microtask_id = "null";
                 }
-              } while (microtask_id === null);
+              } while (microtask_id === "null");
               //put the rejected tasks back in the queue
               temp.forEach(function(id) {
                 implementationQ.unshift(id);
@@ -785,9 +816,9 @@ module.exports = function(FirebaseService, Q) {
               //If the task was already skipped by the worker put in a temp array and try the next task
               if (skipped_task.indexOf(microtask_id) >= 0 || completed_task.indexOf(review_object.reference_id) >= 0) {
                 temp.push(microtask_id);
-                microtask_id = null;
+                microtask_id = "null";
               }
-            } while (microtask_id === null);
+            } while (microtask_id === "null");
             //put the rejected tasks back in the queue
             temp.forEach(function(id) {
               reviewQ.unshift(id);
@@ -803,7 +834,7 @@ module.exports = function(FirebaseService, Q) {
 
 
         //Check if there was any task assigned
-        if (microtask_id !== null) {
+        if (microtask_id !== "null") {
           assigned_task.set('id', microtask_id);
           assigned_task.set('type', microtask_type);
           var microtask_object = microtasks.get(microtask_id);
@@ -813,7 +844,17 @@ module.exports = function(FirebaseService, Q) {
             "microtaskKey": microtask_id,
             "type": microtask_type,
             "object": microtask_object
-          };console.log("========== RETURN ID "+return_object.microtaskKey+" OBJECT SENT  " + return_object.type +'\n'+return_object.functionId);
+          };
+
+          //Add the assigned microtask to in progress queue that will store the microtask id, worker id and the time assigned
+          inProgressQ.set(microtask_id,new Map());
+          var inProgress_task = inProgressQ.get(microtask_id);
+          inProgress_task.set('worker',worker_id);
+          inProgress_task.set('assigned_time',new Date().getTime());
+          inProgressQ.set(microtask_id,inProgress_task);
+
+          //Calls a function after 10 minutes to check if the task is still with the same worker, if so removes it and put the task back in queue
+          setTimeout(unassignLockedMicrotask,600000,project_id,microtask_id,worker_id);
         } else {
           var return_object = {
             "microtaskKey": undefined
@@ -827,6 +868,7 @@ module.exports = function(FirebaseService, Q) {
           Project.set('microtasks',microtasks);
           Project.set('implementationQ',implementationQ);
           Project.set('reviewQ',reviewQ);
+          Project.set('inProgress',inProgressQ)
           Projects.set(project_id,Project);
           firebase.backupState(project_id,Project);
         return return_object;
@@ -849,8 +891,9 @@ module.exports = function(FirebaseService, Q) {
           var microtasks = Project.get('microtasks');
           var implementationQ = Project.get('implementationQ');
           var reviewQ = Project.get('reviewQ');
+          var inProgressQ = Project.get('inProgressQ');
           var workers = Project.get('workers');
-          var return_object = null;
+          var return_object = "null";
           if (workers.has(worker_id)) {
               var worker = workers.get(worker_id);
               var skipped_task = worker.get('skipped');
@@ -896,8 +939,9 @@ module.exports = function(FirebaseService, Q) {
                       }
 
                       worker.set('skipped', skipped_task);
-                      assigned_task.set('id', null);
-                      assigned_task.set('type', null);
+                      assigned_task.set('id', "null");
+                      assigned_task.set('type', "null");
+                      inProgressQ.delete(microtask_id);
 
                   }
               }console.log('calling fetch')
@@ -910,6 +954,7 @@ module.exports = function(FirebaseService, Q) {
           Project.set('microtasks',microtasks);
           Project.set('implementationQ',implementationQ);
           Project.set('reviewQ',reviewQ);
+          Project.set('inProgressQ',inProgressQ);
           Projects.set(project_id,Project);
           firebase.backupState(project_id,Project);
           return return_object;
@@ -918,6 +963,51 @@ module.exports = function(FirebaseService, Q) {
           var load_project_promise = loadProject(project_id);
           load_project_promise.then(function(){
               skipMicrotask(project_id, worker_id);
+          }).catch(function(err){
+              console.log(err);console.trace(err);
+              return false;
+          });
+      }
+  }
+
+  function unassignLockedMicrotask(project_id, microtask_id, worker_id){
+      if(Projects.has(project_id)){
+          var Project = Projects.get(project_id);
+          var implementationQ = Project.get('implementationQ');
+          var reviewQ = Project.get('reviewQ');
+          var inProgressQ = Project.get('inProgressQ');
+          var workers = Project.get('workers');
+          var worker = workers.get(worker_id);
+          var assigned_task = worker.get('assigned');
+          var assigned_microtask_id = assigned_task.get('id');
+          var assigned_microtask_type = assigned_task.get('type');
+
+          if(assigned_microtask_id === microtask_id){
+              assigned_task.set('id',"null");
+              assigned_task.set('type',"null");
+              if(assigned_microtask_type === "DescribeFunctionBehavior"){
+                  implementationQ.push(microtask_id);
+              }
+              if(assigned_microtask_type === "Review"){
+                  reviewQ.push(microtask_id);
+              }
+
+              inProgressQ.delete(microtask_id);
+
+          worker.set('assigned',assigned_task);
+          workers.set(worker_id,worker);
+          Project.set('workers',workers);
+          Project.set('inProgressQ',inProgressQ);
+          Project.set('implementationQ',implementationQ);
+          Project.set('reviewQ',reviewQ);
+          Projects.set(project_id,Project);
+          firebase.backupState(project_id,Project);
+          }
+      }
+      else{console.log('Reloading project');
+          var load_project_promise = loadProject(project_id);
+          load_project_promise.then(function(){
+              unassignLockedMicrotask(project_id, microtask_id, worker_id);
           }).catch(function(err){
               console.log(err);console.trace(err);
               return false;

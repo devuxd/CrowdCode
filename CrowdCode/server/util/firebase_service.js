@@ -68,7 +68,8 @@ module.exports = function(AdminFirebase, Q) {
         state: {
             implementationQ: "null",
             reviewQ: "null",
-            workers: "null"
+            workers: "null",
+            inProgressQ: "null"
         }
       };
       var created_child = root_ref.child('Projects').child(project_name).set(project_schema);
@@ -1154,13 +1155,30 @@ module.exports = function(AdminFirebase, Q) {
       var Project = project_object;
       var implementationQ = Project.get('implementationQ');
       var reviewQ = Project.get('reviewQ');
+      var inProgressQ = Project.get('inProgressQ');
       var workers = Project.get('workers');
 
     //Update the microtask queues
       var path = 'Projects/' + project_id +'/state';
       root_ref.child(path).child('implementationQ').set(implementationQ);
       root_ref.child(path).child('reviewQ').set(reviewQ);
-        var worker_schema = [];
+
+    //Update the current list assigned tasks
+      var progress_schema = [];
+      inProgressQ.forEach(function(value,key){
+          var microtask_id = key;
+          var worker_id = value.get('worker');
+          var assigned_time = value.get('assigned_time');
+
+          progress_schema.push({
+              microtask_id: microtask_id,
+              worker_id: worker_id,
+              assigned_time: assigned_time
+          });
+      });
+      root_ref.child(path).child('inProgressQ').set(progress_schema);
+
+      var worker_schema = [];
     //Update the status of each worker
       workers.forEach(function (value, key){
         var skipped_tasks = null;
