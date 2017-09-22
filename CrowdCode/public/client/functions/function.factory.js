@@ -3,7 +3,7 @@ angular
     .factory('Function', [ 'Test', function(Test) {
 
 	function Function(rec,key){
-		this.$id = rec.id + '';
+		this.$id = key + '';
 		this.update(rec);
 	}
 
@@ -20,14 +20,15 @@ angular
 			// and if the function record has tests
 			// create an array of Test objects from them
 			this.tests = [];
-			if( rec.tests !== undefined )
+
+			if( rec.tests !== undefined && angular.isArray(rec.tests))
 				for( var testId in rec.tests ){
 					this.tests.push(new Test(rec.tests[testId], rec.name));
 				}
 			return true;
 		},
 
-		getHeader: function(){ 
+		getHeader: function(){
 			if( this.described )
 				return this.header;
 			else{
@@ -41,7 +42,7 @@ angular
 			}
 		},
 
-		getDescription: function(){ 
+		getDescription: function(){
 			if(this.described!==false)
 				return this.description;
 			else {
@@ -55,13 +56,13 @@ angular
 		getFullDescription: function(){
 			if(this.getDescription()===undefined)
 				return "";
-			
+
 			var descriptionLines = this.getDescription().split('\n');
 
 			if(this.parameters!==undefined && this.parameters.length>0){
 				for(var i=0; i<this.parameters.length; i++)
 					descriptionLines.push(
-						[ 
+						[
 							'@param',
 							'{' + this.parameters[i].type + '}',
 							this.parameters[i].name,
@@ -74,8 +75,8 @@ angular
 				descriptionLines.push('@return {' + this.returnType + '}');
 
 			return '/**\n' +
-				   ' * ' + 
-				   descriptionLines.join('\n * ') +   '\n'	 + 
+				   ' * ' +
+				   descriptionLines.join('\n * ') +   '\n'	 +
 				   ' */\n';
 		},
 
@@ -84,7 +85,7 @@ angular
 			return this.getFullDescription() + this.getHeader();
 		},
 
-		// 
+		//
 		getFunctionCode: function(){
 			if( this.code )
 				return this.getSignature() + this.code;
@@ -100,7 +101,7 @@ angular
 		getFullCode: function(){
 
 			var fullCode = this.getFunctionCode();
-			
+
 			if(this.pseudoFunctions){
 				fullCode += "\n\n";
 				for(var i=0; i<this.pseudoFunctions.length; i++ )

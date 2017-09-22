@@ -12,12 +12,13 @@ angular
 		this.get = get;
 		this.init = init;
 		this.challengeReview=challengeReview;
-		
+
 		// Function bodies
 		function init()
 		{
 		    // hook from firebase all the functions declarations of the project
-		   	var ref = new Firebase(firebaseUrl + '/workers/' + workerId + '/newsfeed');
+		   	var ref = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('newsfeed');
+        //new Firebase(firebaseUrl + '/workers/' + workerId + '/newsfeed');
 			newsfeed =$firebaseArray(ref);
 			newsfeed.$loaded().then(function(){
 				// tell the others that the newsfeed services is loaded
@@ -28,7 +29,7 @@ angular
 		function get (){
 			return newsfeed;
 		}
-		
+
 		function challengeReview(reviewKey, challengeText)
 		{
 			console.log(reviewKey);

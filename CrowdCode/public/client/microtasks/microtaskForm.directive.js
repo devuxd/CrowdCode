@@ -1,8 +1,8 @@
 angular
     .module('crowdCode')
-    .directive('microtaskForm', [ '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]); 
+    .directive('microtaskForm', ['Function', '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]);
 
-function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
+function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
 
     return {
         restrict: 'A',
@@ -40,7 +40,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 
 			$scope.taskData.startBreak = false;
 
-			var waitTimeInSeconds = 15;
+			var waitTimeInSeconds = 10;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
@@ -69,9 +69,9 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			$scope.currentPrompt = function(){
 				$scope.workerOption = "Take a break";
 				if(userService.data.level >= 2)
-					$scope.workerOption = "Pick next microtask"				
-						
-				return $scope.workerOption;			
+					$scope.workerOption = "Pick next microtask"
+
+				return $scope.workerOption;
 			}
 
 			function onMicrotaskLoaded($event, microtask){
@@ -84,38 +84,41 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				// initialize microtask data
 				$scope.canSubmit = true;
 				$scope.microtask = microtask;
-
+        console.log("microtask ---------", microtask);
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionId))
-					$scope.funct = functionsService.get($scope.microtask.functionId);
-
-
+				if (angular.isDefined($scope.microtask.function)) {
+          var funct = $scope.microtask.function;
+          if(angular.isDefined($scope.microtask.tests) && angular.isArray($scope.microtask.tests))
+            funct.tests = $scope.microtask.tests;
+          $scope.funct = new Function(funct);
+          //functionsService.get($scope.microtask.functionId);
+        }
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 			}
-			
 
-			
+
+
 			function openDashboard(){
 				$scope.taskData.startBreak = true;
-				$scope.breakMode = true;	
+				$scope.breakMode = true;
 				cancelFetchTimer();
 				$scope.templatePath  = templatesURL + templates['Dashboard'] + ".html";
 			}
-			
+
 			function noMicrotasks() {
 				$scope.noMicrotask = true;
-				$scope.$emit('reset-reminder');			
+				$scope.$emit('reset-reminder');
 				setFetchTimer();
 
 				if(userService.data.level >= 2)
 					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
 				else
-					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";			
+					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
 			}
-			
-			
+
+
 			function setFetchTimer(){
 				// if is not in break mode, start to check the queue
 				if(! $scope.breakMode ){
@@ -131,8 +134,8 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						$interval.cancel(timerInterval);
 
 						$timeout(fetchMicrotask,1000);
-						
-					}, waitTimeInSeconds*1000); 
+
+					}, waitTimeInSeconds*1000);
 				}
 			}
 
@@ -142,12 +145,12 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 					$timeout.cancel(checkQueueTimeout);
 				}
 			}
-			
+
 
 			function checkBreakMode(){
-				if( $scope.taskData.startBreak ) { 
-					$scope.breakMode = true; 
-					$scope.taskData.startBreak = false; 
+				if( $scope.taskData.startBreak ) {
+					$scope.breakMode = true;
+					$scope.taskData.startBreak = false;
 				}
 			}
 
@@ -163,7 +166,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						noMicrotasks();
 					});
 			}
-			
+
 			function fetchMicrotask($event, fetchData) {
 				cancelFetchTimer();
 				$scope.breakMode = false;
@@ -173,20 +176,20 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						microtasks.load(fetchData);
 					}, function(){
 						noMicrotasks();
-					}); 
+					});
 			}
-			
+
 			function fetchSpecificMicrotask($event, microtaskId ) {
 				cancelFetchTimer();
 				$scope.breakMode     = false;
 				$scope.templatePath  = templatesURL + "loading.html";
 				microtasks
-					.fetchSpecificMicrotask( microtaskId )					
+					.fetchSpecificMicrotask( microtaskId )
 					.then( function(fetchData){
 						microtasks.load(fetchData);
 					}, function(){
 						noMicrotasks();
-					}); 
+					});
 			}
 
 

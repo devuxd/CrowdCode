@@ -1,8 +1,8 @@
 angular
 	.module('crowdCode')
-	.directive('workerProfile', ['$firebase','avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile]);
-	
-function workerProfile($firebase, avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
+	.directive('workerProfile', ['avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile]);
+
+function workerProfile(avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
   return {
     restrict: 'EA',
     scope:{workerProfile:"="},
@@ -12,31 +12,26 @@ function workerProfile($firebase, avatarFactory,iconFactory, firebaseUrl,$fireba
       $scope.hasAchievement = false;
       $scope.workerStats = [];
       $scope.listOfachievements = [];
-      $scope.icon = iconFactory.get;    	 
+      $scope.icon = iconFactory.get;
       $scope.currentId = 0;
       $scope.avatar  = avatarFactory.get;
-      
+
       $scope.gotAchievement = function(){
     	  $scope.hasAchievement = true;
       }
-      
-    	var nameObj = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/workerHandle'));
+    	var nameObj = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('workerHandle'));
   	  nameObj.$loaded().then(function(){
   		  $scope.workerName = nameObj.$value;
   	  });
 
-	   	$scope.workerStats = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/microtaskHistory'));
+	   	$scope.workerStats = $firebaseArray(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('microtaskHistory'));
   	  $scope.workerStats.$loaded().then(function(){
 	    });
-           	
-    	$scope.listOfachievements = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/listOfAchievements'));
+
+    	$scope.listOfachievements = $firebaseArray(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('listOfAchievements'));
     	$scope.listOfachievements.$loaded().then(function(){
         console.log('list of achievements loaded');
     	});
     }
 	}
 }
-
-
-
-

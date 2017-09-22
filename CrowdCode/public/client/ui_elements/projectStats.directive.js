@@ -17,7 +17,8 @@ angular
 
         link: function($scope, $element) {
 
-            var functionsRef = new Firebase(firebaseUrl+'/artifacts/functions/');
+            var functionsRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Functions');
+            // new Firebase(firebaseUrl+'/artifacts/functions/');
             $scope.functionsCount = 0;
             functionsRef.on('child_added',function (snapshot){
                 $scope.functionsCount ++;
@@ -34,7 +35,8 @@ angular
 
 
         
-            var testsRef = new Firebase(firebaseUrl+'/artifacts/tests');
+            var testsRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Tests');
+            // new Firebase(firebaseUrl+'/artifacts/tests');
             $scope.testsCount = 0;
             testsRef.on('child_added',function(snapshot){
                 $scope.testsCount ++;

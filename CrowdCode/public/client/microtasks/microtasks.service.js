@@ -16,8 +16,9 @@ angular
 		this.fetchSpecificMicrotask = fetchSpecificMicrotask;
 
 		// Public functions
-		function get (id){
-			var microtask = $firebaseObject(new Firebase(firebaseUrl+'/microtasks/'+id));
+		function get (id, type){
+      var microtaskRef = firebase.database().ref().child('Projects').child(projectId).child('microtasks').child(type).child(id);
+			var microtask = $firebaseObject(microtaskRef);
 			return microtask;
 		}
 
@@ -29,7 +30,7 @@ angular
 			var disablePoint = autoSkip ? 'true':'false';
 
 			// submit to the server
-			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
+			$http.post('/api/v1/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -47,7 +48,7 @@ angular
 			var deferred = $q.defer();
 
 			// ask the microtask id
-			$http.get('/' + projectId + '/ajax/fetch')
+			$http.get('/api/v1/' + projectId + '/ajax/fetch')
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -66,7 +67,7 @@ angular
 			var deferred = $q.defer();
 
 			$http
-				.get('/' + projectId + '/ajax/pickMicrotask?id='+ microtaskId)
+				.get('/api/v1/' + projectId + '/ajax/pickMicrotask?id='+ microtaskId)
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -82,14 +83,18 @@ angular
 
 		function load(fetchData){
 			if( fetchData.microtaskKey !== undefined ) {
-				var microtask = get(fetchData.microtaskKey);
-				microtask.$loaded().then(function() {
-					$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
-				});
+				var microtask = fetchData.object;
+        microtask.type = fetchData.type;
+        microtask.$id = fetchData.microtaskKey;
+        $rootScope.$broadcast('microtaskLoaded',microtask, 1/*fetchData.firstFetch*/);
+        // get(fetchData.microtaskKey);
+				// microtask.$loaded().then(function() {
+				// 	$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
+				// });
 			}
 		}
-		
-		
+
+
 
 	}
 

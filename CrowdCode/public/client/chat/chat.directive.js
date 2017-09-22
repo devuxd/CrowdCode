@@ -1,7 +1,7 @@
 
 angular
     .module('crowdCode')
-    .directive('chat', function($timeout, $rootScope,  $alert, firebaseUrl, avatarFactory, userService, workerId) {
+    .directive('chat', function($timeout, $rootScope,  $alert, firebaseUrl, avatarFactory, userService, workerId, projectId) {
     return {
         restrict: 'E',
         templateUrl: '/client/chat/chat_panel.html',
@@ -19,9 +19,10 @@ angular
             });
         },
         controller: function($scope, $element, $rootScope) {
-            // syncs and references to firebase 
-            var chatRef = new Firebase( firebaseUrl + '/chat');
-            
+            // syncs and references to firebase
+            var chatRef = firebase.database().ref().child('Chat').child(projectId);
+            //new Firebase( firebaseUrl + '/chat');
+
             // data about the 'new message' alert
             var alertData = {
                 duration : 4, // in seconds
@@ -39,7 +40,7 @@ angular
             $rootScope.unreadMessages=0;
             $scope.messages = [];
 
-            // for each added message 
+            // for each added message
             chatRef.on('child_added',function(childSnap, prevChildName){
 
                     // get the message data and add it to the list
@@ -52,18 +53,18 @@ angular
                     if( last !== undefined && last.workerId == message.workerId && ( message.createdAt - last.createdAt ) < 5 * 1000 ) {
                         last.text += '<br />' + message.text;
                         last.createdAt = message.createdAt;
-                    } else 
+                    } else
                         $scope.messages.push(message);
 
                     /*
-                    // if the chat is hidden and the timestamp is 
+                    // if the chat is hidden and the timestamp is
                     // after the timestamp of the page load
-                    if( message.createdAt > startLoadingTime ) 
+                    if( message.createdAt > startLoadingTime )
                         if( !$rootScope.chatActive ){
 
                              // increase the number of unread messages
                             $rootScope.unreadMessages++;
-                            
+
                             // if the current message has been sent
                             // from the same worker of the previous one
                             // and the alert is still on
@@ -71,26 +72,26 @@ angular
                                 // append the new text to the current alert
                                 alertData.text += '<br/>'+message.text;
                                 alertData.object.hide();
-                            } else { 
+                            } else {
                                 // set data for the new alert
                                 alertData.text   = message.text;
                                 alertData.worker = message.workerHandle;
                             }
-                           
+
                             // record the creation time of the alert
-                            // and show it 
+                            // and show it
                             alertData.createdAt = new Date().getTime();
                             alertData.object    = $alert({
-                                title    : alertData.worker, 
-                                content  : alertData.text , 
+                                title    : alertData.worker,
+                                content  : alertData.text ,
                                 duration : alertData.duration ,
-                                template : '/client/chat/alert_chat.html', 
-                                keyboard : true, 
+                                template : '/client/chat/alert_chat.html',
+                                keyboard : true,
                                 show: true
                             });
-                        } 
+                        }
                     */
-                    
+
                     $timeout( function(){ $scope.$apply() }, 100);
             });
 

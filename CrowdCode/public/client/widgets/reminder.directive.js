@@ -41,7 +41,6 @@ angular
             $rootScope.$on('reset-reminder', resetReminder );
 
             function microtaskLoaded($event, microtask,firstFetch){
-
                 if( firstFetch == '1')
                     userService.setFirstFetchTime();
 
@@ -56,9 +55,9 @@ angular
                 fetchTime = userService.getFetchTime();
 
                 $scope.skipMicrotaskIn = fetchTime + microtaskTimeout - startTime ;
-                microtaskInterval      = $interval(doReminder, timeInterval); 
+                microtaskInterval      = $interval(doReminder, timeInterval);
 
-                
+
                 console.log('REMINDER: microtask laoded ',{ fetchTime: fetchTime, startTime: startTime, diff: startTime-fetchTime},microtaskInterval);
 
             }
@@ -74,7 +73,7 @@ angular
             }
 
             function doReminder(){
-                //if no tutorial are open 
+                //if no tutorial are open
                 if( tutorialOpen===0 ){
                     //update the remaining time both in the popup and in the progress bar
                     popupWarning.$scope.skipMicrotaskIn = $scope.skipMicrotaskIn -= timeInterval;
@@ -86,7 +85,7 @@ angular
                         $scope.status='warning';
 
                     }
-                    else if( $scope.skipMicrotaskIn < microtaskFirstWarning / 2 && 
+                    else if( $scope.skipMicrotaskIn < microtaskFirstWarning / 2 &&
                              $scope.skipMicrotaskIn > 0 ){
                         $scope.status='danger';
                     }

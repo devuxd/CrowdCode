@@ -8,15 +8,20 @@ angular
 
  	// retrieve the firebase references
 
- 	var fbRef = new Firebase(firebaseUrl);
+ 	// var fbRef = new Firebase(firebaseUrl);
 
-	var userProfile    = fbRef.child('/workers/' + workerId);
+	var userProfile    = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId);
+  // fbRef.child('/workers/' + workerId);
 
-	var isConnected    = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-	var offsetRef 	   = new Firebase("https://crowdcode.firebaseio.com/.info/serverTimeOffset");
-	
-	var loginRef  = fbRef.child('/status/loggedInWorkers/' + workerId);
-	var logoutRef = fbRef.child('/status/loggedOutWorkers/'+ workerId);
+	var isConnected    = firebase.database().ref().child('.info').child('connected');
+  //new Firebase('https://crowdcode.firebaseio.com/.info/connected');
+	var offsetRef 	   = firebase.database().ref().child('.info').child('serverTimeOffset');
+  // new Firebase("https://crowdcode.firebaseio.com/.info/serverTimeOffset");
+
+	var loginRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedInWorkers').child(workerId);
+  // fbRef.child('/status/loggedInWorkers/' + workerId);
+	var logoutRef = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedOutWorkers').child(workerId);
+  //fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
 	var updateLogInTime = function(){
 		loginRef.setWithPriority({
@@ -78,11 +83,13 @@ angular
 
 	// distributed test runner
     user.listenForJobs = function(){
-		var queueRef = new Firebase(firebaseUrl+ "/status/testJobQueue/");
+
+		var queueRef = firebase.database().ref().child('Projects').child(projectId).child('status').child('testJobQueue');
+    // new Firebase(firebaseUrl+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
 			console.log('Receiving job ',jobData);
 
-			var jobRef = queueRef.child('/'+jobData.functionId);
+			var jobRef = queueRef.child(jobData.functionId);
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
 
@@ -148,7 +155,7 @@ angular
 						});
 				});
 
-				
+
 			}
 		});
 	};
@@ -159,13 +166,14 @@ angular
 	// and then send the logout command to the server
 	// distributed logout work
     user.listenForLogoutWorker = function(){
-    	var logoutQueue     = new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
+    	var logoutQueue     = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedOutWorkers');
+      // new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
 
 
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 
 			//retrieves the reference to the worker to log out
-			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
+			var logoutWorker = logoutQueue.child(jobData.workerId);
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 
@@ -174,7 +182,8 @@ angular
 				//time of the client plus the timezone offset given by firebase
 				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field
-				var userLoginRef  = new Firebase( firebaseUrl + '/status/loggedInWorkers/' + jobData.workerId );
+				var userLoginRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedInWorkers').child(jobData.workerId);
+        // new Firebase( firebaseUrl + '/status/loggedInWorkers/' + jobData.workerId );
 				userLoginRef.once("value", function(userLogin) {
 					//if the user doesn't uddate the timer for more than 30 seconds than log it out
 				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){

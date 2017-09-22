@@ -29,7 +29,8 @@ angular
 		// Function bodies
 		function init(){
 		    // hook from firebase all the functions declarations of the project
-		    functions = new FunctionArray(new Firebase(firebaseUrl+'/artifacts/functions'));
+        var funcRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Functions');
+		    functions = new FunctionArray(funcRef);
 			functions.$loaded().then(function(){
 				fList = functions;
 				// tell the others that the functions services is loaded
@@ -99,9 +100,9 @@ angular
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function getVersion(id, version){
 			var deferred = $q.defer();
-
-			var ref = new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);			
-			var obj = $firebaseObject( ref );
+			var funcRef = firebase.database().ref().child('Projects').child(projectId).child('history').child('artifacts').child('Functions').child(id).child(version);
+      //new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);
+			var obj = $firebaseObject( funcRef );
 			obj.$loaded().then(function(){
 				deferred.resolve(new Function(obj));
 			});
@@ -137,4 +138,3 @@ angular
 
 	return service;
 }]);
-

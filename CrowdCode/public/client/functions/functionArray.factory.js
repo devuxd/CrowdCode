@@ -6,10 +6,10 @@ angular
 function FunctionArray($firebaseArray, Function) {
 	return $firebaseArray.$extend({
 		$$added: function(snap, prevChild) {
-			return new Function(snap.val(),snap.key());
+			return new Function(snap.val(),snap.key);
 		},
 		$$updated: function(snap) {
-			return this.$getRecord(snap.key()).update(snap.val());
+			return this.$getRecord(snap.key).update(snap.val());
 		}
 	});
 }

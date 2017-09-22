@@ -3,24 +3,22 @@
 	<div class="section" ui-layout-container size="10%">
 		<div class="section-content bg-color-alpha padding" style="top:0px">
 			<span>
-				The test suite for <strong ng-bind="function.name"></strong> has been updated by adding, editing, or deleting its tests. Considering just <strong>the changes</strong> to the test suite rather than the test
-				suite as a whole, can you review them?
+				The test suite and implementation for <strong ng-bind="function.name"></strong> has been updated by adding, editing, or deleting its tests and implementation. Considering just <strong>the changes</strong> to the test suite and function implementation, can you review them?
 			</span>
 			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>
 		</div>
 	</div>
 
-
-	<div class="section" ui-layout-container size="25%">
+	<div class="section" ui-layout-container size="35%" >
 		<div class="section-bar">
-			<span class="title">Function Description</span>
+			<span class="title">Code edits</span>
 		</div>
 		<div class="section-content">
-			<js-reader code="funct.getSignature()" ></js-reader>
+			<js-reader mode="diff" code="data.newCode" old-code="data.oldCode" ></js-reader>
 		</div>
 	</div>
 
-	<div class="section" ui-layout-container size="40%" >
+	<div class="section" ui-layout-container size="30%" >
 		<div class="section-bar" ng-if="data.selected == -1">
 			<span class="title">Tests</span>
 			<span class="pull-right">

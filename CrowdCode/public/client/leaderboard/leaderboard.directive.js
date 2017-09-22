@@ -8,9 +8,10 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId,$root
         templateUrl: '/client/leaderboard/leaderboard.template.html',
         controller: function($scope, $element) {
             $scope.avatar  = avatarFactory.get;
-            $scope.leaders = $firebaseArray(new Firebase(firebaseUrl + '/leaderboard/leaders'));
+            var leaderRef = firebase.database().ref().child('Projects').child(projectId).child('leaderboard').child('leaders');
+            $scope.leaders = $firebaseArray(leaderRef);
             $scope.leaders.$loaded().then(function() {});
-            
+
             $scope.clicked = function(workerToShow){
             	if(workerToShow.$id != workerId){
             		$rootScope.$broadcast('showWorkerProfile',workerToShow.$id);
@@ -20,7 +21,7 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId,$root
             	}
             }
         }
-    
-   
+
+
     };
 }

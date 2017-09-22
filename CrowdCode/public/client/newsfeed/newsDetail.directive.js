@@ -15,11 +15,11 @@ angular
             $scope.challengeReview=challengeReview;
 
             $scope.data = {};
-
-            var microtask = microtasksService.get($scope.newObj.microtaskKey);
+            var type = $scope.newObj.microtaskType === 'DescribeFunctionBehavior' ? 'implementation' : 'review';
+            var microtask = microtasksService.get($scope.newObj.microtaskKey, type);
             microtask.$loaded().then(function() {
-                $scope.data = loadMicrotaskData(microtask) ;
-                console.log($scope.data);
+                $scope.data = loadMicrotaskData(microtask);
+                console.log("Newsfeed data", $scope.data);
             });
 
             function loadMicrotaskData(microtask){
@@ -47,12 +47,31 @@ angular
                     };
                 }
 
-                data.functionName = microtask.owningArtifact;
+                data.functionName = microtask.functionName;
 
                 switch(microtask.type){
-                    case 'DescribeFunctionBehavior': 
-                        
+                    case 'DescribeFunctionBehavior':
+
                         var submission = microtask.submission;
+                        var newFunction = new Function(submission.function);
+                        functionsService.getVersion(microtask.functionId, microtask.functionVersion).then(function( funct ){
+                            data.oldCode = funct.getFullCode();
+                            data.newCode = newFunction.getFullCode();
+                        });
+                        if( submission.disputedTests){
+                            data.templateUrl += '_disputed';
+                            data.openedTests = [];
+                            data.functionParameters = funct.parameters;
+                            data.functionReturnType = funct.returnType;
+                            data.disputedTests = submission
+                                .disputedTests
+                                .map(function(test){
+                                    var testObj = funct.getTestById(test.id);
+                                    testObj.disputeText = test.disputeText;
+                                    return testObj;
+                                });
+                        }
+
                         if( submission.disputeFunctionText.length > 0 ) {
                             data.disputeText = submission.disputeFunctionText;
                             data.templateUrl += '_disputed';
@@ -62,8 +81,8 @@ angular
                             data.functionParameters = functionsService.get(microtask.functionId).parameters;
                             data.functionReturnType = functionsService.get(microtask.functionId).returnType;
                             data.openedTests = [];
-                            data.isComplete  = submission.isDescribeComplete;
-                        }          
+                            data.isComplete  = microtask.isFunctionComplete;
+                        }
 
                         break;
 
@@ -94,7 +113,7 @@ angular
 
                     case 'Review':
                         data.reviewed = {};
-                        var rev = microtasksService.get(microtask.microtaskKeyUnderReview);
+                        var rev = microtasksService.get(microtask.reference_id, 'implementation');
                         rev.$loaded().then(function() {
                             data.reviewed = loadMicrotaskData(rev);
                             data.templateUrl = 'Review_' + data.reviewed.templateUrl;

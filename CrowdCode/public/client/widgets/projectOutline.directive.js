@@ -8,11 +8,11 @@ function projectOutline(AdtService, functionsService) {
         templateUrl: '/client/widgets/project_outline.template.html',
         controller: function($scope, $element) {
 
-            
+
             $scope.functions = functionsService.getAll();
             $scope.dataTypes = AdtService.getAll();
 
-            console.log($scope.dataTypes);
+            //console.log($scope.dataTypes);
             $scope.buildStructure = function(adt){
                 var struct = '{';
                 angular.forEach(adt.structure,function(field){
@@ -24,4 +24,3 @@ function projectOutline(AdtService, functionsService) {
         }
     };
 }
-

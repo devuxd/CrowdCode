@@ -13,7 +13,8 @@ angular
 		var questions;
 		var allTags = [];
 		var loaded = false;
-		var firebaseRef = new Firebase(firebaseUrl+'/questions');
+		var firebaseRef = firebase.database().ref().child('Projects').child(projectId).child('questions');
+    // new Firebase(firebaseUrl+'/questions');
 
 		var idx = lunr(function(){
 			this.ref('id');
@@ -108,7 +109,7 @@ angular
 							idx.add( doc );
 							addToAllTags(q.tags);
 							break;
-						case 'child_changed': 
+						case 'child_changed':
 							idx.update( doc );
 							break;
 						case 'child_removed':
@@ -118,7 +119,7 @@ angular
 					}
 				});
 			});
-			
+
 
 		}
 
@@ -134,15 +135,15 @@ angular
 			var deferred = $q.defer();
 			var url = '';
 
-			if( type != 'question' || formData.id == 0 ) 
+			if( type != 'question' || formData.id == 0 )
 				url = 'insert?type=' + type;
-			else                   
+			else
 				url = 'update?id=' + formData.id;
 
 			// replace all the occurrences of the newline '\n' with the html <br>
 			// TODO: check for other formatting syntax
 			formData.text = formData.text.replace(new RegExp('\n', 'g'),'<br />');
-			
+
 
 			$http.post('/' + $rootScope.projectId + '/questions/' + url , formData)
 				.success(function(data, status, headers, config) {
@@ -153,7 +154,7 @@ angular
 				});
 			return deferred.promise;
 		}
-		
+
 		function tag(id, tag, remove){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/tag?id=' + id + '&tag='+tag+'&remove='+remove)
@@ -218,9 +219,9 @@ angular
 			firebaseRef.child( id+'/views/'+workerId ).set( view );
 		}
 
-		function updateViewCounter(questionId){	
+		function updateViewCounter(questionId){
 			var viewsObj = $firebaseObject(new Firebase(firebaseUrl+'/questions/'+questionId));
-			viewsObj.$loaded().then(function(){    
+			viewsObj.$loaded().then(function(){
 			if(workerId != viewsObj.ownerId){
 				if(viewsObj.viewCounter == undefined){
 					viewsObj.viewCounter = 1;
@@ -229,21 +230,21 @@ angular
 					viewsObj.viewCounter += 1;
 					if(viewsObj.viewCounter == 15)
 						sendQuestionViews(viewsObj.viewCounter);
-				}				
+				}
 					viewsObj.$save();
 			}
 			});
 		}
-		
+
 		function sendQuestionViews(views){
 			$http.get('/' + projectId + '/ajax/questionViews?id='+ views)
 			.success(function(data, status, headers, config) {
 			})
 			.error(function(data, status, headers, config) {
 
-			});		
+			});
 		}
-		
+
 		function addWorkerView(id){
 			var deferred = $q.defer();
 			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
@@ -259,6 +260,5 @@ angular
 		}
 	};
 
-	return service; 
+	return service;
 }]);
-

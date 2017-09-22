@@ -1,24 +1,27 @@
 angular
     .module('crowdCode')
-    .controller('userAchievements', ['$scope','$firebase','avatarFactory','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope,$firebase,avatarFactory,iconFactory,$firebaseArray,firebaseUrl,workerId){
-    	
-    	
+    .controller('userAchievements', ['$scope','avatarFactory','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope, avatarFactory,iconFactory,$firebaseArray,firebaseUrl,workerId){
+
+
     $scope.userStats = [];
     $scope.listOfachievements = [];
-    $scope.icon = iconFactory.get;    	 
+    $scope.icon = iconFactory.get;
     $scope.avatar  = avatarFactory.get;
-    
-    	var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
-     	var statsSync = $firebaseArray(statsRef);
-     	$scope.userStats = statsSync;
+      var statsRef = firebase.database().ref().child('Workers').child(workerId).child('microtaskHistory');
+    	//var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
+     	//var statsSync = $firebaseArray(statsRef);
+     	$scope.userStats = $firebaseArray(statsRef);
      	$scope.userStats.$loaded().then(function(){
+        console.log($scope.userStats);
      	});
-     	
-     	
-    	var achievementsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/listOfAchievements');
-    	var achievementsSync = $firebaseArray(achievementsRef);
-    	$scope.listOfachievements = achievementsSync;
+
+
+    	var achievementsRef  = firebase.database().ref().child('Workers').child(workerId).child('listOfAchievements');
+      //new Firebase(firebaseUrl + '/workers/'+workerId+'/listOfAchievements');
+    	//var achievementsSync = $firebaseArray(achievementsRef);
+    	$scope.listOfachievements = $firebaseArray(achievementsRef);
     	$scope.listOfachievements.$loaded().then(function(){
+        console.log($scope.listOfachievements);
     	});
 }]);
 
@@ -59,7 +62,7 @@ angular.module('crowdCode').filter('statsToShow', function () {
 //angular
 //.module('crowdCode')
 //.directive('userAchievements', ['$firebase','iconFactory','firebaseUrl','workerId', achievements])
-//	
+//
 //function achievements($firebase, iconFactory, firebaseUrl, workerId) {
 //return {
 //    restrict: 'E',
@@ -89,6 +92,3 @@ angular.module('crowdCode').filter('statsToShow', function () {
 //    return items.out;
 //};
 //});
-
-
-

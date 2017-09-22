@@ -18,7 +18,7 @@
         <label ng-if="data.isReview">Given review</label>
         <p>
             <div>
-                <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"  
+                <span ng-repeat="currentValue in [1,2,3,4,5] track by $index"
                       class="rating-star {{ data.review.score >= currentValue ? 'full' : '' }}">
                 </span>
                 <span class="clearfix"></span><br />
@@ -37,7 +37,7 @@
                 <button type="button" class="btn btn-xs btn-default" ng-click="show = false">Cancel</button>
                 <button type="submit" class="btn btn-xs btn-primary">Challenge</button>
             </span>
-                
+
             <div class="clearfix"></div>
         </form>-->
     </div>

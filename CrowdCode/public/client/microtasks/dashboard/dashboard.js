@@ -1,14 +1,14 @@
 angular
 	.module('crowdCode')
-	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',  
+	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',
                                  function($scope,$rootScope,$firebase,$firebaseArray,$timeout,microtasksService,firebaseUrl, workerId){
-	
+
 	$scope.availableMicrotasks = [];
-	
+
 	var types = [
 			'Review',
 			'DescribeFunctionBehavior',
-			'ImplementBehavior',
+      'ImplementBehavior',
 			'ChallengeReview'
 	];
 
@@ -25,58 +25,61 @@ angular
 		return -1;
 	};
 
-	
+
 	// populate filters with microtasks types
 	$scope.filterEnabled = {};
 
 	angular.forEach(types,function(value,index){
 		$scope.filterEnabled[value] = true;
 		$scope.typesCount[value] = 0;
-	});	
-	
-	
+	});
+
+
 	$scope.microtaskQueue = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/status/microtaskQueue/queue');
+	var microtasksRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('microtaskQueue').child('queue');
+	// new Firebase(firebaseUrl+'/status/microtaskQueue/queue');
 	$scope.microtaskQueue = $firebaseArray(microtasksRef);
 	$scope.microtaskQueue.$loaded().then(function(){
-	});	
-	
+	});
+
 	$scope.reviewQueue = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/status/reviewQueue/queue');
+	var microtasksRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('reviewQueue').child('queue');
+	//new Firebase(firebaseUrl+'/status/reviewQueue/queue');
 	$scope.reviewQueue = $firebaseArray(microtasksRef);
 	$scope.reviewQueue.$loaded().then(function(){
-	});	
-	
+	});
 
-	
+
+
 	$scope.microtasks = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/microtasks/');
+	var microtasksRef  =  firebase.database().ref().child('Projects').child(projectId).child('microtasks').child('implementation');
+	// new Firebase(firebaseUrl+'/microtasks/');
 	var microtasksSync = $firebaseArray(microtasksRef);
 	$scope.microtasks = microtasksSync;
 	$scope.microtasks.$loaded().then(function(){
-	});	
+	});
 
 	$scope.microtasks.$watch(function(event){
 		var task = $scope.microtasks.$getRecord(event.key)
 		switch(event.event){
 			case 'child_added':
 				if(task.excluded != null){
-	           		if(task.excluded.search(workerId) === -1) 
+	           		if(task.excluded.search(workerId) === -1)
 	           			$scope.typesCount[task.type]++
-	            } 
+	            }
 	            else{
 	            	$scope.typesCount[task.type]++
 	            }
-			
+
 				break;
-				
-			default: 
+
+			default:
 		}
 	});
 
@@ -90,7 +93,7 @@ angular
 		else {
 			$scope.orderReverse   = true;
 			$scope.orderPredicate = predicate;
-		} 
+		}
 	};
 
 	$scope.assignMicrotask = function(task){
@@ -114,7 +117,7 @@ return function (microtasks,microtaskQueue,reviewQueue, availableMicrotasks) {
     		if(value.$id == microtaskQueue[i].$value){
     			available = true;
     			availableMicrotasks.push(value);
-    		}    			
+    		}
     	}
     	if(!available){
 	    	for(var i=0;i<reviewQueue.length;i++){
@@ -127,18 +130,18 @@ return function (microtasks,microtaskQueue,reviewQueue, availableMicrotasks) {
     	if(available){
     	//if (value.assigned != true && value.completed != true && value.waitingReview != true) {
            	if(value.excluded != null){
-           		if(value.excluded.search(workerId) === -1) 
+           		if(value.excluded.search(workerId) === -1)
            			this.out.push(value);
-            } 
+            }
             else{
             	this.out.push(value);
             }
-      //  } 
+      //  }
     	}
     }, items);
     return items.out;
 };
-}); 
+});
 
 angular
 	.module('crowdCode')
@@ -170,7 +173,7 @@ angular
             if (value.waitingReview == true && value.review == undefined) {
                 this.out.push(value);
             }
-        }	
+        }
         }, items);
         return items.out;
     };
@@ -210,5 +213,3 @@ angular
         return items.out;
     };
 });
-
-

@@ -21,7 +21,8 @@ angular
 		if(loaded.hasOwnProperty(workerId)){
 			return loaded[workerId];
 		} else {
-			loaded[workerId] = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+workerId+'/avatarUrl'));
+
+			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('avatarUrl'));
 			loaded[workerId].$loaded().then(function(){
 				return loaded[workerId];
 			});

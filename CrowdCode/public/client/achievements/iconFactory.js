@@ -1,17 +1,15 @@
-
-
 angular
-    .module('crowdCode')
-    .factory("iconFactory",[ '$firebase','firebaseUrl', function( $firebase , firebaseUrl ){
+  .module('crowdCode')
+  .factory("iconFactory", ['firebaseUrl', function(firebaseUrl) {
 
-	var loaded = {};
+    var loaded = {};
 
-	var factory = {};
-	factory.get = function(condition){
-			return {
-				$value: '/img/achievements/'+condition+'.png'
-			};
-	};
+    var factory = {};
+    factory.get = function(condition) {
+      return {
+        $value: '/img/achievements/' + condition + '.png'
+      };
+    };
 
-	return factory;
-}]);
+    return factory;
+  }]);

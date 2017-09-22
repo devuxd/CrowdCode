@@ -3,10 +3,10 @@
 	<div class="header bg-color">
 		<span class="type">
 			<span ng-switch="microtask.promptType">
-				<span ng-switch-when="WRITE">Write a test</span>
-				<span ng-switch-when="CORRECT">Correct test(s)</span>
-				<span ng-switch-when="FUNCTION_CHANGED'">Fix test(s)</span>
-			</span>
+				<span ng-switch-when="WRITE">Implement Function behavior</span>
+		<span ng-switch-when="CORRECT">Correct function and test(s)</span>
+		<span ng-switch-when="FUNCTION_CHANGED'">Fix function and test(s)</span>
+		</span>
 		</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)">
@@ -14,20 +14,21 @@
 		</button>
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
 		<span class="clearfix"></span>
-    </div>
+	</div>
 
 
-    <div class="sections"  ui-layout="{ flow: 'row', dividerSize: 2 }">
+	<div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
 
 
-    	<div class="section" ui-layout-container size="5%">
+		<div class="section" ui-layout-container size="7%">
 			<div class="section-content bg-color-alpha padding" style="top:0px">
 				<div ng-switch="microtask.promptType">
 					<span ng-switch-when="WRITE">
-						Can you describe a new test in which this function might be used? For example, are there any unexpected corner cases that might not work? You may also edit or delete existing tests, or mark the test suite as complete if all cases are tested.
+						Can you implement part of <strong ng-bind="funct.name"></strong> by making one of the currently failing tests pass? If you don’t have enough time to make a test pass, you may also submit a partial solution.
 					</span>
 					<span ng-switch-when="CORRECT">
-						An issue has been reported with one or more test cases. Can you fix the test(s) to address the issue?
+						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?
+						If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function,click on <span class="glyphicon glyphicon-question-sign"></span> in the Function editor.
 					</span>
 					<span ng-switch-when="FUNCTION_CHANGED'">
 						The signature of the function being tested has changed. As a result, the tests may no longer be correct. Can you update the tests, if necessary?
@@ -35,33 +36,213 @@
 				</div>
 
 				<div ng-if="microtask.reissuedSubmission !== undefined">
-					This task has been reissued because of "<strong>{{microtask.reissueMotivation}}</strong>"
+					This task has been reissued because of "<strong>{{microtask.reissuedMotivation}}</strong>"
 				</div>
 
 			</div>
 		</div>
 
-		<div class="section"  ui-layout-container size="35%">
+		<div class="section" ui-layout-container size="18%">
+
 			<div class="section-bar">
+
+				<span class="pull-left title" ng-if="data.selected1 == -1">
+					Behaviors
+				</span>
+
+
+				<span class="pull-left" ng-if="data.selected1 != -1">
+					<button class="btn btn-sm" ng-click="toggleSelect1($event)">
+						<span class="glyphicon glyphicon-arrow-left"></span> Back
+				</button>
+				</span>
+
+				<span class="pull-right">
+					<button class="btn btn-sm btn-run" ng-click="run()">
+						<span class="glyphicon glyphicon-play"></span> Run Tests
+				</button>
+
+
+				<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) ">
+						<span class="glyphicon glyphicon-question-sign"></span>
+					</button>
+				</span>
+
+
+				<span class="pull-right separator" ng-if="data.selected1 != -1"></span>
+				<span class="pull-right" ng-if="data.selected1 != -1">
+					<button
+						ng-disabled="data.selected1.id === undefined"
+						class="btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}"
+						ng-click="toggleDispute($event);">
+						<span class="glyphicon glyphicon-exclamation-sign"></span> Report an issue
+				</button>
+				<button class="btn btn-sm btn-inspect {{ !data.changedSinceLastRun && data.inspecting ? 'active' : '' }}" ng-disabled="data.changedSinceLastRun" ng-click="toggleInspect($event);">
+						<span class="glyphicon glyphicon-search"></span>
+						Inspect code
+					</button>
+				</span>
+
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content padding slide from-left" ng-if="data.selected1 == -1">
+				<div class="test-list ">
+					<div class="test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}" ng-repeat="te in data.tests track by $index">
+						<div ng-click="toggleSelect1($event,te);">
+							<strong class="pull-left">
+								<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
+								{{ te.description }}
+							</strong>
+							<span class="pull-right">
+								<span ng-if="te.running">
+									running
+								</span>
+							</span>
+							<span class="clearfix"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="section-content padding slide from-right" ng-if="data.selected1 != -1" ng-init="t = data.selected1">
+				<div class="test-result">
+					<div class="row">
+						<div class="{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}">
+							<div class="row">
+								<div class="col-sm-3 col-md-3 row-label">Status</div>
+								<div class="col-sm-9 col-md-9">
+									<span ng-if="!t.dispute.active">
+										<span ng-if="t.result.passed" class="color-passed">
+											<span class="glyphicon glyphicon-ok-sign"></span> passed
+									</span>
+									<span ng-if="!t.result.passed" class="color-failed">
+											<span class="glyphicon glyphicon-remove-sign"></span> failed
+									</span>
+									<span>
+											{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}
+										</span>
+									</span>
+									<span ng-if="t.dispute.active" class="color-disputed">
+										<span class="glyphicon glyphicon-exclamation-sign"></span> reported
+									</span>
+
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-3 col-md-3 row-label">description</div>
+								<div class="col-sm-9 col-md-9">it {{ t.description }}</div>
+							</div>
+							<div class="row" ng-if="t.result.message">
+								<div class="col-sm-3 col-md-3 row-label">Message</div>
+								<div class="col-sm-9 col-md-9">{{ t.result.message }}</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-3 col-md-3 row-label">Code</div>
+								<div class="col-sm-9 col-md-9">
+									<js-reader code="t.code"></js-reader>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-6 col-md-6" ng-if="!t.dispute.active && t.result.showDiff">
+							<div class="row">
+								<div class="col-sm-12 col-md-12 row-label">
+									<span style="width:10px;height:10px;display:inline-block;background-color:#CDFFCD"></span> Expected
+
+
+									<span style="width:10px;height:10px;display:inline-block;background-color:#FFD7D7"></span> Actual
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 col-md-12">
+									<json-diff-reader old="t.result.expected" new="t.result.actual"></json-diff-reader>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-6 col-md-6" ng-if="t.dispute.active">
+							<div class="row">
+								<div class="col-sm-12 col-md-12 row-label">Reported reason</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 col-md-12">
+									<textarea class="dispute" ng-model="t.dispute.text"></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="section" ui-layout-container size="45%">
+			<div class="section-bar" ng-show="!data.editingStub">
 				<span class="title">
-					Function Description
+					Function Editor
 				</span>
 				<span class="pull-right">
-					<button class="btn btn-sm"
-						ng-if="!data.dispute.active"
-						ng-click="data.dispute.active = !data.dispute.active; trackInteraction('Click Dispute Function', 'Describe Behavior', $event)" >
-						Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
-					</button>
+					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)">
+						<span class="glyphicon glyphicon-question-sign"></span>
+				</button>
+				</span>
+				<span class="pull-right">
+        	<button class="btn btn-sm" ng-if="!data.dispute.active" style="padding-left: 30px"
+					ng-click="data.dispute.active = !data.dispute.active; trackInteraction('Click Dispute Function', 'Describe Behavior', $event)" >
+           Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
+				</button>
 				</span>
 				<span class="clearfix"></span>
 			</div>
-			<div class="section-content padding">
-				<js-reader code="funct.getSignature()" ></js-reader>
+			<div class="section-content slide from-left" ng-show="!data.editingStub">
+				<function-editor function="funct" editor="data.editor" logs="(!data.inspecting) ? undefined : data.selected1.logs " callbacks="editorCallbacks">
+				</function-editor>
+			</div>
+
+			<div class="section-bar" ng-show="data.editingStub">
+				<span class="title">
+					Stub Editor
+				</span>
+				<span class="pull-right">
+					<button class="btn btn-sm" ng-click="cancelStub()">Cancel</button>
+					<button class="btn btn-sm" ng-click="saveStub()">Save stub</button>
+				</span>
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content padding slide from-right" style="z-index:100" ng-if="data.editingStub">
+				<div class="stub" ng-form="stubForm">
+					<div class="form-group">
+						<label>Function Description</label>
+						<js-reader class="form-control code" code="data.editingStub.functionDescription"></js-reader>
+					</div>
+
+					<div class="form-group" ng-repeat="p in data.editingStub.parameters">
+						<label>
+							{{p.name + ' {' + p.type + '}' }}
+						</label>
+
+						<json-reader class="form-control code" ng-model="p.value"></json-reader>
+					</div>
+
+					<div class="form-group">
+						<label for="">
+							Output {{ '{' + data.editingStub.output.type + '}' }}
+						</label>
+
+						<div class="form-control code" json-editor="{ type: data.editingStub.output.type, name: 'output' }" ng-model="data.editingStub.output.value" errors="errors" name="output" required>
+						</div>
+
+						<div class="help-block" ng-messages="stubForm.output.$error">
+							<div ng-message="required">the field output cannot be empty</div>
+							<div ng-message="code">{{errors.code}}</div>
+						</div>
+					</div>
+				</div>
+
 			</div>
 		</div>
 
 
-		<div class="section"  ui-layout-container size="60%" >
+		<div class="section" ui-layout-container size="30%">
 
 			<div class="section-bar" ng-if="data.dispute.active">
 				<span class="title pull-left">Report Function Description</span>
@@ -77,20 +258,9 @@
 				<div class="form" style="height:100%">
 					<div class="form-group" style="height:100%">
 						<label for="description">Report reason </label>
-						<textarea
-							class="form-control"
-							style="height:80%;resize:none;"
-							placeholder="write the reason of the dispute"
-							name="disputeDescription"
-							ng-model="data.dispute.text"
-							required
-							focus
-							ng-minlength="20"
-							ng-maxlength="500">
+						<textarea class="form-control" style="height:80%;resize:none;" placeholder="write the reason of the dispute" name="disputeDescription" ng-model="data.dispute.text" required focus ng-minlength="20" ng-maxlength="500">
 						</textarea>
-						<div class="help-block"
-							 ng-if="microtaskForm.disputeDescription.$dirty"
-							 ng-messages="microtaskForm.disputeDescription.$error" >
+						<div class="help-block" ng-if="microtaskForm.disputeDescription.$dirty" ng-messages="microtaskForm.disputeDescription.$error">
 							<div ng-message="required">the report description can't be empty</div>
 							<div ng-message="minlength">the minimum length is 20 chars</div>
 							<div ng-message="maxlength">the maximum length is 500 chars</div>
@@ -107,25 +277,25 @@
 				<span class="pull-right" ng-if="data.selected == -1 && data.tests.length > 0">
 					<button class="btn btn-sm" ng-click="addNew($event)">
 						<span class="glyphicon glyphicon-plus"></span> Add a new test
-					</button>
+				</button>
 				</span>
 
 				<span class="pull-left" ng-if="data.selected != -1">
 					<button class="btn btn-sm" ng-click="toggleSelect($event)">
 						<span class="glyphicon glyphicon-arrow-left"></span>
-					</button>
+				</button>
 				</span>
 
 				<span class="pull-right" ng-if="data.selected != -1">
 					<button class="btn btn-sm" ng-click="toggleDelete($event)" ng-if="!data.selected.deleted">
 						<span class="glyphicon glyphicon-remove" ></span> Remove test
-					</button>
+				</button>
 
-					<button class="btn btn-sm" ng-click="toggleDelete($event)" ng-if="data.selected.deleted">
+				<button class="btn btn-sm" ng-click="toggleDelete($event)" ng-if="data.selected.deleted">
 						<span class="glyphicon glyphicon-remove" ></span> Undo remove
 					</button>
 
-					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial', 'Describe Behavior - Edit Test', $event)">
+				<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial', 'Describe Behavior - Edit Test', $event)">
 						<span class="glyphicon glyphicon-question-sign"></span>
 					</button>
 				</span>
@@ -144,70 +314,46 @@
 
 			<div class="section-content slide from-left" ng-if="!data.dispute.active && data.tests.length > 0 && data.selected == -1">
 				<div class="tests-list has-next ">
-					<div class="test-item clickable {{ t.dispute.active ? 'disputed' : '' }}"
-					     ng-repeat="t in data.tests track by $index">
+					<div class="test-item clickable {{ t.dispute.active ? 'disputed' : '' }}" ng-repeat="t in data.tests track by $index">
 						<div ng-click="toggleSelect($event,t)">
 							<span class="pull-left">
 								<span class="glyphicon glyphicon glyphicon-chevron-right"></span>
-								<span ng-if="t.description.length > 0" ng-bind="t.description"></span>
-								<span ng-if="!t.description || t.description.length == 0" >missing description</span>
+							<span ng-if="t.description.length > 0" ng-bind="t.description"></span>
+							<span ng-if="!t.description || t.description.length == 0">missing description</span>
 							</span>
 							<span class="pull-right" ng-if="t.deleted">
-								<span class="glyphicon glyphicon-remove"  ></span>
-								removed
+								<span class="glyphicon glyphicon-remove"  ></span> removed
 							</span>
 							<span class="pull-right" ng-if="!t.deleted && !microtaskForm['testForm_'+$index].$valid">
-								<span class="glyphicon glyphicon-exclamation-sign"></span>
-								invalid
+								<span class="glyphicon glyphicon-exclamation-sign"></span> invalid
 							</span>
 							<span class="clearfix"></span>
 						</div>
 					</div>
 				</div>
 				<div ng-if="microtask.promptType !== 'CORRECT'">
-					<input type="checkbox"
-						ng-model="data.isComplete"
-						id="isComplete"
-						name="isComplete"
-						ng-disabled="data.numDeleted == data.tests.length">
-					<label for="isComplete" >the function is completely described by the previous behaviors</label>
+					<input type="checkbox" ng-model="data.isComplete" id="isComplete" name="isComplete" ng-disabled="data.numDeleted == data.tests.length">
+					<label for="isComplete">the function is completely described by the previous behaviors</label>
 				</div>
 			</div>
 
-			<div class="section-content slide from-right padding"
-				 ng-repeat="t in data.tests track by $index"
-				 ng-if="!data.dispute.active && (!t.deleted || data.selected == t)"
-				 ng-show="data.selected == t">
+			<div class="section-content slide from-right padding" ng-repeat="t in data.tests track by $index" ng-if="!data.dispute.active && (!t.deleted || data.selected == t)" ng-show="data.selected == t">
 				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
 
 					<div class="form-group">
 						<label for="description">Description </label>
-						<input
-							class="form-control"
-							name="description"
-							ng-model="t.description"
-							placeholder="insert the description"
-							ng-minlength="5"
-			           		ng-maxlength="120"
-			           		focus
-							required
-						/>
+						<input class="form-control" name="description" ng-model="t.description" placeholder="insert the description" ng-minlength="5" ng-maxlength="120" focus required />
 						<div class="help-block" ng-messages="microtaskForm['testForm_'+$index].description.$error">
 							<div ng-if="microtaskForm['testForm_'+$index].description.$dirty">
 								<div ng-message="required">the description can't be empty</div>
-							    <div ng-message="minlength">the description can't be less than 5 characters</div>
-							    <div ng-message="maxlength">the description can't exceed 150 characters</div>
+								<div ng-message="minlength">the description can't be less than 5 characters</div>
+								<div ng-message="maxlength">the description can't exceed 150 characters</div>
 							</div>
 						</div>
 					</div>
 					<div class="form-group" ng-if="t.dispute.active">
 						<label for="description">Report reason </label>
-						<input
-							class="form-control"
-							name="description"
-							ng-model="t.dispute.text"
-			           		disabled="disabled"
-						/>
+						<input class="form-control" name="description" ng-model="t.dispute.text" disabled="disabled" />
 					</div>
 					<div class="form-group">
 						<label>Type</label>
@@ -218,69 +364,41 @@
 								ng-click="$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)">
 							</span>
 
-							<span
-								class="glyphicon glyphicon-question-sign"
-								ng-if="!t.isSimple"
-								ng-click="$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)">
+						<span class="glyphicon glyphicon-question-sign" ng-if="!t.isSimple" ng-click="$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)">
 							</span>
 
 						</span>
-						<select class="form-control"
-								ng-model="t.isSimple"
-					            ng-options="o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]">
+						<select class="form-control" ng-model="t.isSimple" ng-options="o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]">
 					    </select>
 					</div>
 					<div class="form-group" ng-if="!t.isSimple">
 						<label for="code">Code</label>
-						<div class="help-icon" ng-click="trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)" >
-							<span
-								class="glyphicon glyphicon-question-sign"
-								data-template="/client/widgets/test_editor_help.html"
-								data-auto-close="1"
-								data-placement="left"
-								data-title="title of th ehelp"
-								bs-popover
-								>
+						<div class="help-icon" ng-click="trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)">
+							<span class="glyphicon glyphicon-question-sign" data-template="/client/widgets/test_editor_help.html" data-auto-close="1" data-placement="left" data-title="title of th ehelp" bs-popover>
 							</span>
 						</div>
-						<div class="form-control code"
-							 test-editor
-							 name="code"
-							 function-name="{{funct.name}}"
-							 ng-model="t.code"
-							 errors="errors['code']"
-							 required >
+						<div class="form-control code" test-editor name="code" function-name="{{funct.name}}" ng-model="t.code" errors="errors['code']" required>
 						</div>
-						<div class="help-block"
-							 ng-if="microtaskForm['testForm_'+$index].code.$dirty"
-							 ng-messages="microtaskForm['testForm_'+$index].code.$error" >
+						<div class="help-block" ng-if="microtaskForm['testForm_'+$index].code.$dirty" ng-messages="microtaskForm['testForm_'+$index].code.$error">
 							<div ng-message="required">the test code can't be empty</div>
 							<div ng-repeat="(type,text) in errors['code']">
-						    	<div ng-message-exp="type">{{ text }}</div>
-					        </div>
+								<div ng-message-exp="type">{{ text }}</div>
+							</div>
 						</div>
 					</div>
 
-					<div ng-if="t.isSimple" ng-form="inputs" >
-						<div class="form-group"  ng-repeat="(pIdx,p) in funct.parameters track by p.name">
+					<div ng-if="t.isSimple" ng-form="inputs">
+						<div class="form-group" ng-repeat="(pIdx,p) in funct.parameters track by p.name">
 							<label for="inputs">
 								{{p.name + ' {' + p.type + '}' }}
 							</label>
 							<div class="help-icon" paste-example="{ type : p.type }" ng-model="t.inputs[pIdx]">
 								<span>paste example</span>
 							</div>
-							<div
-								class="form-control code"
-								json-editor="{ type: p.type, name: p.name }"
-								name="{{p.name}}"
-								ng-model="t.inputs[pIdx]"
-								errors="errors[p.name]"
-								required>
+							<div class="form-control code" json-editor="{ type: p.type, name: p.name }" name="{{p.name}}" ng-model="t.inputs[pIdx]" errors="errors[p.name]" required>
 							</div>
 
-							<div class="help-block"
-								ng-if="inputs[p.name].$dirty"
-								ng-messages="inputs[p.name].$error" >
+							<div class="help-block" ng-if="inputs[p.name].$dirty" ng-messages="inputs[p.name].$error">
 								<div ng-message="required">the field {{p.name}} cannot be empty</div>
 								<div ng-message="code">{{errors[p.name].code}}</div>
 							</div>
@@ -293,17 +411,9 @@
 						<div class="help-icon" paste-example="{ type : funct.returnType }" ng-model="t.output">
 							<span>paste example</span>
 						</div>
-						<div
-							class="form-control code"
-							json-editor="{ type: funct.returnType, name: 'output' }"
-							ng-model="t.output"
-							name="output"
-							errors="errors['output']"
-							required>
+						<div class="form-control code" json-editor="{ type: funct.returnType, name: 'output' }" ng-model="t.output" name="output" errors="errors['output']" required>
 						</div>
-						<div class="help-block"
-							ng-if="microtaskForm['testForm_'+$index].output.$dirty"
-							ng-messages="microtaskForm['testForm_'+$index].output.$error" >
+						<div class="help-block" ng-if="microtaskForm['testForm_'+$index].output.$dirty" ng-messages="microtaskForm['testForm_'+$index].output.$error">
 							<div ng-message="required">the output can't be empty</div>
 							<div ng-message="code">{{errors['output'].code}}</div>
 						</div>
@@ -317,4 +427,4 @@
 		</div>
 
 
-</div>
+	</div>

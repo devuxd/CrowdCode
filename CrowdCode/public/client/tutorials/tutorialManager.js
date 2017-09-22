@@ -2,11 +2,11 @@
 angular
     .module('crowdCode')
     .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebaseObject',  'firebaseUrl','workerId','$http', function($rootScope, $compile, $timeout, $firebaseObject, firebaseUrl,workerId,$http) {
-    
+
     // get the synced objects from the backend
-    var tutorialsOn        = $firebaseObject( new Firebase( firebaseUrl + '/status/settings/tutorials') );
-    var completedTutorials = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) );
-    var tutorialCounter    = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/tutorialCounter' ) );
+    var tutorialsOn        = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('status').child('settings').child('tutorials'));
+    var completedTutorials = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('completedTutorials'));
+    var tutorialCounter    = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('tutorialCounter'));
 
 
     var queue    = [];
@@ -28,7 +28,7 @@ angular
             // it is called when the tutorial is closed
             $scope.endTutorial = endTutorial;
 
-            // if the tutorial is forced or if 
+            // if the tutorial is forced or if
             // is not completed, enqueue it
             function queueTutorial( event, tutorialId, force, onFinish, queueAfter ){
                 console.log('queuing tutorial '+tutorialId);
@@ -38,7 +38,7 @@ angular
                             // queue tutorial
                             queue.push({
                                 id       : tutorialId,
-                                onFinish : queueAfter === undefined ? 
+                                onFinish : queueAfter === undefined ?
                                            onFinish :
                                            function(){ queueTutorial(null,queueAfter,true); }
                             });
@@ -62,7 +62,7 @@ angular
                     startTutorial();
                 }
             }
-            
+
             function sendTutorialsCompleted(){
     			$http.get('/' + projectId + '/ajax/tutorialCompleted')
     				.success(function(data, status, headers, config) {
@@ -71,7 +71,7 @@ angular
 
     			});
     		}
-            
+
             // start the current tutorial
             function startTutorial(){
                 running = true;
@@ -88,7 +88,7 @@ angular
 
                 if( !isTutorialCompleted(currentId) )
                     setTutorialCompleted(currentId);
-                
+
                 $element.html( '' );
 
                 if( currentOnFinish !== undefined ){
@@ -98,7 +98,7 @@ angular
 
                 currentId       = undefined;
                 currentOnFinish = undefined;
-                
+
                 checkQueue();
 
                 $rootScope.$broadcast('tutorial-finished');
@@ -108,7 +108,7 @@ angular
             // false if not
             function isTutorialCompleted( tutorialId ){
                 console.log(completedTutorials);
-                if( completedTutorials.$value !== undefined && completedTutorials.$value !== null && completedTutorials.$value.search(tutorialId) > -1 ) 
+                if( completedTutorials.$value !== undefined && completedTutorials.$value !== null && completedTutorials.$value.search(tutorialId) > -1 )
                     return true;
 
                 return false;
@@ -120,8 +120,8 @@ angular
                     completedTutorials.$value = tutorialId;
                     tutorialCounter.$value =  1;
                 }
-                else{ 
-                    completedTutorials.$value += ','+tutorialId; 
+                else{
+                    completedTutorials.$value += ','+tutorialId;
                     tutorialCounter.$value +=  1;
                 }
                 if(tutorialCounter.$value == 3)

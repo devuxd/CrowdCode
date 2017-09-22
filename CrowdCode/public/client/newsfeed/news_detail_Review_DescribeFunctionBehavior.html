@@ -1,16 +1,22 @@
 <label>Description</label>
 <p>
-    The test suite for <strong ng-bind="data.reviewed.functionName"></strong> has been updated by adding, editing, or deleting its tests. 
+    The test suite and function implementation for <strong ng-bind="data.reviewed.functionName"></strong> has been updated by adding, editing, or deleting its tests. Can you review this work?
 </p>
 
 
-<label>Submitted tests</label>
+<label>Code edits</label>
 <p>
+    <js-reader mode="diff" code="data.reviewed.newCode" old-code="data.reviewed.oldCode" ></js-reader>
+</p>
+
+
+<label ng-if="data.reviewed.tests.length > 0">Submitted tests</label>
+<p ng-if="data.reviewed.tests.length > 0">
     <div class="tests-list" bs-collapse ng-model="data.reviewed.openedTests" data-allow-multiple="true">
         <div ng-repeat="t in data.reviewed.tests">
             <div class="test-item clickable" bs-collapse-toggle>
 
-                
+
                 <strong>{{t.description}}</strong>
 
                 <small class="pull-right" ng-if="t.edited">
@@ -33,7 +39,7 @@
                         <label for="inputs">
                             Input: {{p.name + ' {' + p.type + '}' }}
                         </label>
-                    
+
                         <div
                             class="form-control code"
                             json-reader

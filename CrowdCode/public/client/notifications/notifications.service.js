@@ -7,8 +7,9 @@ angular
     .module('crowdCode')
     .factory('notificationsService', [ '$rootScope',  'firebaseUrl', 'workerId', 'toaster', 'questionsService' , function( $rootScope,  firebaseUrl, workerId, toaster, questionsService) {
 
-	var ref = new Firebase( firebaseUrl + '/notifications/' + workerId );
-	
+	var ref = firebase.database().ref().child('Projects').child(projectId).child('notifications').child(workerId);
+  // new Firebase( firebaseUrl + '/notifications/' + workerId );
+
 	var service = new function(){
 		this.init = function(){
 			ref.on('child_added',function(snap){
@@ -103,7 +104,7 @@ angular
 						case 'challenge.won':
 							toast.type = 'success';
 							toast.body = 'You won the challenge on the '+val.microtaskType+' on the artifact '+val.artifactName;
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('setLeftBarTab','newsfeed');
 								$rootScope.$broadcast('showNews', val.microtaskId );
 							};
@@ -112,35 +113,34 @@ angular
 						case 'worker.levelup':
 							toast.type = 'success';
 							toast.body = 'Level up!\n'+val.prevLevel+'->'+val.currentLevel;
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
 						case 'new.achievement':
 							toast.type = 'success';
 							toast.body = val.message + ' Congratulations!';
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('showUserStatistics');
 							};
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
 						case 'dashboard':
 							toast.type = 'success';
 							toast.body = 'You unlocked the dashboard. Congratulations!';
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('openDashboard');
 							};
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
-							
+
 
 						default:
 					}
 
-					snap.ref().update({'read':true});      
+					snap.ref().update({'read':true});
 				}
 			});
 		};
 	};
 
-	return service; 
+	return service;
 }]);
-

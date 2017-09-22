@@ -16,7 +16,8 @@ angular
 		this.getNameToAdt = getNameToAdt;
 
 		function init(){
-			adts = $firebaseArray(new Firebase(firebaseUrl+'/artifacts/ADTs'));
+      adtRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('ADTs');
+			adts = $firebaseArray(adtRef);
 			adts.$loaded().then(function(){
 				// tell the others that the adts services is loaded
 				$rootScope.$broadcast('serviceLoaded','adts');
@@ -50,7 +51,7 @@ angular
 			return nameToAdt;
 		}
 
-		
+
 
 	}
 
