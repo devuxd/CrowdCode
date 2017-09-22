@@ -4289,7 +4289,7 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 
 			$scope.taskData.startBreak = false;
 
-			var waitTimeInSeconds = 10;
+			var waitTimeInSeconds = 3;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
@@ -6707,7 +6707,7 @@ angular
 			return loaded[workerId];
 		} else {
 
-			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('avatarUrl'));
+			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Workers').child(workerId).child('avatarUrl'));
 			loaded[workerId].$loaded().then(function(){
 				return loaded[workerId];
 			});
@@ -6729,7 +6729,7 @@ angular
 
  	// var fbRef = new Firebase(firebaseUrl);
 
-	var userProfile    = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId);
+	var userProfile    = firebase.database().ref().child('Workers').child(workerId);
   // fbRef.child('/workers/' + workerId);
 
 	var isConnected    = firebase.database().ref().child('.info').child('connected');
