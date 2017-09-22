@@ -4289,7 +4289,7 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 
 			$scope.taskData.startBreak = false;
 
-			var waitTimeInSeconds = 10;
+			var waitTimeInSeconds = 3;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
@@ -4613,6 +4613,7 @@ angular
 		}
 
 
+		/*
 		function fetchSpecificMicrotask(microtaskId){
 			var deferred = $q.defer();
 
@@ -4629,7 +4630,8 @@ angular
 				});
 
 			return deferred.promise;
-		}
+		} 
+		*/
 
 		function load(fetchData){
 			if( fetchData.microtaskKey !== undefined ) {
@@ -6707,7 +6709,7 @@ angular
 			return loaded[workerId];
 		} else {
 
-			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('avatarUrl'));
+			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Workers').child(workerId).child('avatarUrl'));
 			loaded[workerId].$loaded().then(function(){
 				return loaded[workerId];
 			});
@@ -6729,8 +6731,13 @@ angular
 
  	// var fbRef = new Firebase(firebaseUrl);
 
-	var userProfile    = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId);
-  // fbRef.child('/workers/' + workerId);
+	//stores user avatar n fetch time inside every project
+	//var userProfile    = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId);
+
+	//stores user avatar and fetch time outside the project node in firebase
+    var userProfile    = firebase.database().ref().child('Workers').child(workerId);
+
+    // fbRef.child('/workers/' + workerId);
 
 	var isConnected    = firebase.database().ref().child('.info').child('connected');
   //new Firebase('https://crowdcode.firebaseio.com/.info/connected');
