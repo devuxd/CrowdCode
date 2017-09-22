@@ -64,7 +64,13 @@ module.exports = function(AdminFirebase, Q) {
           },
           notifications: "null"
         },
-        workers: "null"
+        workers: "null",
+        state: {
+            implementationQ: "null",
+            reviewQ: "null",
+            workers: "null",
+            inProgressQ: "null"
+        }
       };
       var created_child = root_ref.child('Projects').child(project_name).set(project_schema);
       return created_child.then(err => {
@@ -420,7 +426,7 @@ module.exports = function(AdminFirebase, Q) {
       root_ref.child(history_path).once("value", function(data) {
         var version_number = data.numChildren();
         test_schema = {
-          version: version_number,
+            version: version_number,
         }
         var update_promise = root_ref.child(path).update(test_object);
         var update_promise = root_ref.child(path).update(test_schema);
@@ -518,32 +524,6 @@ module.exports = function(AdminFirebase, Q) {
       return update_promise;
     },
 
-    createReissuedMicrotask: function(project_id, microtask_name, points, function_id, function_name,
-      function_description, function_version, microtask_description, microtask_code, microtask_return_type,
-      microtask_parameters, function_header, tests, prompt_type, reissuedSubmission) {
-
-      let deferred = Q.defer();
-      let microtaskKey = this.createImplementationMicrotask(project_id, microtask_name, points, function_id,
-        function_name, function_description, function_version, microtask_description, microtask_code, microtask_return_type,
-        microtask_parameters, function_header, tests, prompt_type);
-
-      let path = 'Projects/' + project_id + '/microtasks/implementation/' + microtaskKey;
-      var self = this;
-      root_ref.child(path).update(reissuedSubmission).then(function(err) {
-        if(err) deferred.reject(err);
-        else {
-          self.retrieveMicrotask(project_id,"implementation", microtaskKey).then(function(microtask) {
-            deferred.resolve({
-              "id": microtaskKey,
-              "microtask": microtask
-            });
-          });
-        }
-      }, function(err) {
-        deferred.reject(err);
-      });
-      return deferred.promise;
-    },
 
     /* Update the awarded points to a microtask after it is reviewed
      param project id text
@@ -594,60 +574,35 @@ module.exports = function(AdminFirebase, Q) {
      return promise object
      */
     updateReviewMicrotask: function(project_id, microtask_id, rating, review, worker_id) {
-      let deferred = Q.defer();
       var path = 'Projects/' + project_id + '/microtasks/review/' + microtask_id;
-      root_ref.child(path).update({
+      var update_promise = root_ref.child(path).update({
         "rating": rating,
         "review": review,
         "worker": worker_id,
         "submission": {
-          "qualityScore": rating,
-          "reviewText": review
-        }
-      }).then(function(err) {
-        if (err) deferred.reject(err);
-        else {
-          //Update awarded points in the implementation task based on the rating
-          root_ref.child(path).once("value").then(function(data) {
-            var reference_id = data.val().reference_id;
-            var implementation_path = 'Projects/' + project_id + '/microtasks/implementation/' + reference_id;
-            root_ref.child(implementation_path).once("value").then(function(value) {
-              let implObj = value.val();
-              var max_points = implObj.points;
-              var points = max_points * (rating / 5);
-              let isDisputed = implObj.submission.disputeFunctionText.length > 0 || implObj.submission.disputedTests !== undefined;
-              root_ref.child(implementation_path).update({
-                "awarded_points": points,
-                "review": {
-                  "qualityScore": rating,
-                  "reviewKey": microtask_id,
-                  "reviewText": review
-                },
-              }).then(function(err) {
-                if (err) deferred.reject(err);
-                else {
-                  if (isDisputed) {
-                    deferred.resolve({
-                      "isDisputed": true,
-                      "reissuedMotivation": review,
-                      "reissuedMicrotaskKey": reference_id,
-                      "reissuedSubmission": implObj.submission
-                    });
-                  } else {
-                    deferred.resolve({
-                      "isDisputed": false,
-                      "reissuedMotivation": review,
-                      "reissuedMicrotaskKey": reference_id,
-                      "reissuedSubmission": implObj.submission
-                    });
-                  }
-                }
-              });
-            });
-          });
+        "qualityScore": rating,
+        "reviewText": review
         }
       });
-      return deferred.promise;
+
+      //Update awarded points in the implementation task based on the rating
+       root_ref.child(path).once("value").then(function(data) {
+        var reference_id = data.val().reference_id;
+        var implementation_path = 'Projects/' + project_id + '/microtasks/implementation/' + reference_id;
+        root_ref.child(implementation_path).once("value").then(function(value) {
+          var max_points = value.val().points;
+          var points = max_points * (rating / 5);
+          root_ref.child(implementation_path).update({
+            "awarded_points": points,
+            "review": {
+              "qualityScore": rating,
+              "reviewKey": microtask_id,
+              "reviewText": review
+            },
+             });
+           });
+        });
+      return update_promise;
     },
 
 
@@ -658,6 +613,12 @@ module.exports = function(AdminFirebase, Q) {
      return promise object
      */
     retrieveMicrotask: function(project_id, microtask_type, microtask_id) {
+      if(microtask_type === 'DescribeFunctionBehavior'){
+        microtask_type = 'implementation';
+      }
+      if(microtask_type === "Review"){
+        microtask_type = 'review';
+      }
       var path = 'Projects/' + project_id + '/microtasks/' + microtask_type + '/' + microtask_id;
       var promise = root_ref.child(path).once("value").then(function(data) {
         return data.val();
@@ -670,35 +631,35 @@ module.exports = function(AdminFirebase, Q) {
     /* ---------------- End Microtask API ------------- */
 
     /*-----------------LeaderBoard API -------------- */
-    addWorkerToLeaderBoard: function(project_name, worker_id, worker_name) {
-      let path = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders').child(worker_id);
-      let deferred = Q.defer();
-      path.update({
-        name: worker_name,
-        score: 0
-      }).then(err => {
-        if (err) deferred.reject(err);
-        else deferred.resolve();
+      addWorkerToLeaderBoard: function(project_name, worker_id, worker_name) {
+          let path = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders').child(worker_id);
+          let deferred = Q.defer();
+          path.update({
+              name: worker_name,
+              score: 0
+          }).then(err => {
+              if (err) deferred.reject(err);
+          else deferred.resolve();
       });
-      return deferred.promise;
-    },
+          return deferred.promise;
+      },
 
-    updateLeaderBoardScore: function(project_name, worker_id, points) {
-      let path = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders').child(worker_id);
-      let deferred = Q.defer();
-      path.once('value').then(function(data) {
-        var current_score = data.val().score;
-        var total_score = current_score + points;
-        path.update({
-          score: total_score
-        }).then(err => {
-          if (err) deferred.reject(err);
-          else
-            deferred.resolve();
-        });
-      });
-      return deferred.promise;
-    },
+      updateLeaderBoardScore: function(project_name, worker_id, points) {
+          let path = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders').child(worker_id);
+          let deferred = Q.defer();
+            path.once('value').then(function(data) {
+                var current_score = data.val().score;
+                var total_score = current_score + points;
+                path.update({
+                    score: total_score
+                }).then(err => {
+                    if (err) deferred.reject(err);
+                    else
+                    deferred.resolve();
+                });
+          });
+          return deferred.promise;
+      },
 
 
 
@@ -902,10 +863,10 @@ module.exports = function(AdminFirebase, Q) {
       let deferred = Q.defer();
       var self = this;
       root_ref.child(path).once("value").then(function(data) {
-        let clientReq = data.val();
-        console.log("clientReq", clientReq);
-        self.createProjectFromClientRequest(clientReqId, clientReq, workerId);
-        deferred.resolve();
+         let clientReq = data.val();
+         console.log("clientReq", clientReq);
+         self.createProjectFromClientRequest(clientReqId, clientReq, workerId);
+         deferred.resolve();
       }).catch(function(err) {
         deferred.reject(err);
       });
@@ -992,28 +953,28 @@ module.exports = function(AdminFirebase, Q) {
 
     // Tests to see if /leaderboard/<workerId> has any data.
     checkIfWorkerIsInLeaderboard: function(project_name, worker_id) {
-      let deferred = Q.defer();
-      let workerRef = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders');
-      workerRef.child(worker_id).once('value', function(snapshot) {
-        var exists = (snapshot.val() !== null);
-        deferred.resolve(exists);
-      }).catch(err => {
-        deferred.reject(err);
-      });
-      return deferred.promise;
+        let deferred = Q.defer();
+        let workerRef = root_ref.child('Projects').child(project_name).child('leaderboard').child('leaders');
+        workerRef.child(worker_id).once('value', function(snapshot) {
+            var exists = (snapshot.val() !== null);
+            deferred.resolve(exists);
+        }).catch(err => {
+            deferred.reject(err);
+    });
+        return deferred.promise;
     },
 
     // Tests to see if /Workers/<workerId> has any data.
     checkIfWorkerExists: function(worker_id) {
-      let deferred = Q.defer();
-      let workerRef = root_ref.child('Workers');
-      workerRef.child(worker_id).once('value', function(snapshot) {
-        var exists = (snapshot.val() !== null);
-        deferred.resolve(exists);
-      }).catch(err => {
-        deferred.reject(err);
-      });
-      return deferred.promise;
+        let deferred = Q.defer();
+        let workerRef = root_ref.child('Workers');
+        workerRef.child(worker_id).once('value', function(snapshot) {
+            var exists = (snapshot.val() !== null);
+            deferred.resolve(exists);
+        }).catch(err => {
+            deferred.reject(err);
+    });
+        return deferred.promise;
     },
 
     /* Add the worker into a project
@@ -1021,7 +982,7 @@ module.exports = function(AdminFirebase, Q) {
       param worker id text
       return promise object
     */
-    createProjectWorker: function(project_id, worker_id) {
+    createProjectWorker: function(project_id, worker_id){
       var worker_schema = {
         implementationTasks: 0,
         reviewTasks: 0,
@@ -1041,17 +1002,17 @@ module.exports = function(AdminFirebase, Q) {
       param project id text
       param worker id text
      */
-    incrementImplementationTasks: function(project_id, worker_id) {
+    incrementImplementationTasks : function(project_id,worker_id){
       var path = 'Projects/' + project_id + '/workers/' + worker_id;
       root_ref.child(path).once("value", function(obj) {
-        var data = obj.val();
-        var implementationTasks = data.implementationTasks + 1;
-        var totalTasks = data.totalTasks + 1;
-        worker_update = {
-          implementationTasks: implementationTasks,
-          totalTasks: totalTasks
-        }
-        root_ref.child(path).update(worker_update);
+          var data = obj.val();
+          var implementationTasks = data.implementationTasks + 1;
+          var totalTasks = data.totalTasks + 1;
+          worker_update = {
+              implementationTasks: implementationTasks,
+              totalTasks: totalTasks
+      }
+          root_ref.child(path).update(worker_update);
       });
     },
 
@@ -1059,103 +1020,103 @@ module.exports = function(AdminFirebase, Q) {
      param project id text
      param worker id text
      */
-    incrementReviewTasks: function(project_id, worker_id) {
-      var path = 'Projects/' + project_id + '/workers/' + worker_id;
-      root_ref.child(path).once("value", function(obj) {
-        var data = obj.val();
-        var reviewTasks = data.reviewTasks + 1;
-        var totalTasks = data.totalTasks + 1;
-        worker_update = {
-          reviewTasks: reviewTasks,
-          totalTasks: totalTasks
+    incrementReviewTasks : function(project_id,worker_id) {
+        var path = 'Projects/' + project_id + '/workers/' + worker_id;
+        root_ref.child(path).once("value", function (obj) {
+            var data = obj.val();
+            var reviewTasks = data.reviewTasks + 1;
+            var totalTasks = data.totalTasks + 1;
+            worker_update = {
+                reviewTasks: reviewTasks,
+                totalTasks: totalTasks
         }
-        root_ref.child(path).update(worker_update);
-      });
-    },
+            root_ref.child(path).update(worker_update);
+        });
+     },
 
     /* Update number of rejected tasks
      param project id text
      param worker id text
      */
-    incrementRejectedTasks: function(project_id, worker_id) {
-      var path = 'Projects/' + project_id + '/workers/' + worker_id;
-      root_ref.child(path).once("value", function(obj) {
-        var data = obj.val();
-        var rejectedTasks = data.rejectedTasks + 1;
-        worker_update = {
-          rejectedTasks: rejectedTasks
-        }
-        root_ref.child(path).update(worker_update);
-      });
-    },
+    incrementRejectedTasks : function(project_id,worker_id) {
+        var path = 'Projects/' + project_id + '/workers/' + worker_id;
+        root_ref.child(path).once("value", function (obj) {
+            var data = obj.val();
+            var rejectedTasks = data.rejectedTasks + 1;
+            worker_update = {
+                rejectedTasks: rejectedTasks
+            }
+            root_ref.child(path).update(worker_update);
+        });
+      },
 
     /* Update number of questions asked
      param project id text
      param worker id text
      */
-    incrementQuestionsAsked: function(project_id, worker_id) {
-      var path = 'Projects/' + project_id + '/workers/' + worker_id;
-      root_ref.child(path).once("value", function(obj) {
-        var data = obj.val();
-        var questions = data.questions + 1;
-        worker_update = {
-          questions: reviewTasks,
-        }
-        root_ref.child(path).update(worker_update);
-      });
-    },
+    incrementQuestionsAsked : function(project_id,worker_id) {
+        var path = 'Projects/' + project_id + '/workers/' + worker_id;
+        root_ref.child(path).once("value", function (obj) {
+            var data = obj.val();
+            var questions = data.questions + 1;
+            worker_update = {
+                questions: reviewTasks,
+            }
+            root_ref.child(path).update(worker_update);
+        });
+      },
 
     /* Update number of questions answered
      param project id text
      param worker id text
      */
-    incrementQuestionsAnswered: function(project_id, worker_id) {
-      var path = 'Projects/' + project_id + '/workers/' + worker_id;
-      root_ref.child(path).once("value", function(obj) {
-        var data = obj.val();
-        var answers = data.answers + 1;
-        worker_update = {
-          answers: answers,
-        }
-        root_ref.child(path).update(worker_update);
-      });
-    },
+    incrementQuestionsAnswered : function(project_id,worker_id) {
+        var path = 'Projects/' + project_id + '/workers/' + worker_id;
+        root_ref.child(path).once("value", function (obj) {
+            var data = obj.val();
+            var answers = data.answers + 1;
+            worker_update = {
+                answers: answers,
+            }
+            root_ref.child(path).update(worker_update);
+        });
+     },
 
     /* Update number of points
      param project id text
      param worker id text
      */
-    incrementPointsScored: function(project_id, worker_id, points) {
-      var path = 'Projects/' + project_id + '/workers/' + worker_id;
-      root_ref.child(path).once("value", function(obj) {
-        var data = obj.val();
-        var totalPoints = data.points + points;
-        worker_update = {
-          points: totalPoints
-        }
-        root_ref.child(path).update(worker_update);
-      });
-    },
+    incrementPointsScored : function(project_id,worker_id, points) {
+        var path = 'Projects/' + project_id + '/workers/' + worker_id;
+        root_ref.child(path).once("value", function (obj) {
+            var data = obj.val();
+            var totalPoints = data.points + points;
+            worker_update = {
+                points: totalPoints
+            }
+            root_ref.child(path).update(worker_update);
+        });
+      },
 
     /* Update number of achievements unclocked
      param project id text
      param worker id text
      */
-    incrementAchievementsUnlocked: function(project_id, worker_id) {
-      var path = 'Projects/' + project_id + '/workers/' + worker_id;
-      root_ref.child(path).once("value", function(obj) {
-        var data = obj.val();
-        var achievements = data.achievements + 1;
-        worker_update = {
-          achievements: achievements,
-        }
-        root_ref.child(path).update(worker_update);
-      });
-    },
+    incrementAchievementsUnlocked : function(project_id,worker_id) {
+        var path = 'Projects/' + project_id + '/workers/' + worker_id;
+        root_ref.child(path).once("value", function (obj) {
+            var data = obj.val();
+            var achievements = data.achievements + 1;
+            worker_update = {
+                achievements: achievements,
+            }
+            root_ref.child(path).update(worker_update);
+        });
+      },
 
-    /* ---------------- End Workers API ------------- */
+      /* ---------------- End Workers API ------------- */
 
-    /* ---------------- newsfeed -------------------- */
+      /* ---------------- Newsfeed API -------------------- */
     createNewsFeed: function(project_name, worker_id, awarded_points, can_be_challenged, challenge_status, max_points, microtask_key, microtask_type, score, type) {
       let deferred = Q.defer();
       let newsfeed = root_ref.child('Projects').child(project_name).child('workers').child(worker_id).child('newsfeed').child(microtask_key);
@@ -1171,15 +1132,97 @@ module.exports = function(AdminFirebase, Q) {
         type: type
       };
       newsfeed.set(newsfeed_schema).then(function(err) {
-        if (err) {
+        if(err) {
           deferred.reject(err);
-        } else {
+        }
+        else {
           deferred.resolve();
         }
       });
       return deferred.promise;
 
+    },
+    /* ---------------- End Newsfeed API ------------- */
+
+    /* ---------------- State API ------------- */
+    /* Updates the microtask queues and all the workers' assigned, skipped and completed tasks
+        param project id text
+        param project object map
+       return void
+     */
+    backupState: function(project_id, project_object){
+      console.log("Backing Up---------"+project_id);
+      var Project = project_object;
+      var implementationQ = Project.get('implementationQ');
+      var reviewQ = Project.get('reviewQ');
+      var inProgressQ = Project.get('inProgressQ');
+      var workers = Project.get('workers');
+
+    //Update the microtask queues
+      var path = 'Projects/' + project_id +'/state';
+      root_ref.child(path).child('implementationQ').set(implementationQ);
+      root_ref.child(path).child('reviewQ').set(reviewQ);
+
+    //Update the current list assigned tasks
+      var progress_schema = [];
+      inProgressQ.forEach(function(value,key){
+          var microtask_id = key;
+          var worker_id = value.get('worker');
+          var assigned_time = value.get('assigned_time');
+
+          progress_schema.push({
+              microtask_id: microtask_id,
+              worker_id: worker_id,
+              assigned_time: assigned_time
+          });
+      });
+      root_ref.child(path).child('inProgressQ').set(progress_schema);
+
+      var worker_schema = [];
+    //Update the status of each worker
+      workers.forEach(function (value, key){
+        var skipped_tasks = null;
+        var assigned_id = null;
+        var assigned_type = null;
+        var completed_task = null;
+        if(value.has('skipped')){
+          skipped_tasks = value.get('skipped');
+        }
+        if(value.has('assigned')){
+          if(value.get('assigned').has('id')){
+            assigned_id = value.get('assigned').get('id');
+            assigned_type = value.get('assigned').get('type');
+          }
+        }
+        if(value.has('completed')){
+          completed_task = value.get('completed');
+        }
+             worker_schema.push({
+                  id: key,
+                  skipped_tasks: skipped_tasks,
+                  assigned_task: {
+                      id: assigned_id,
+                      type: assigned_type
+                  },
+                  completed_tasks: completed_task
+              });
+      });
+      root_ref.child(path).child('workers').set(worker_schema);
+    },
+
+
+    retrieveState: function(project_id){
+      var path = 'Projects/' + project_id + '/state';
+      var promise = root_ref.child(path).once("value").then(function(data) {
+            return data.val();
+        });
+        return promise;
     }
+
+
+
+
+    /* ---------------- End State API ------------- */
 
 
   }
