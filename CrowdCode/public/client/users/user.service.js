@@ -10,7 +10,7 @@ angular
 
  	// var fbRef = new Firebase(firebaseUrl);
 
-	var userProfile    = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId);
+	var userProfile    = firebase.database().ref().child('Workers').child(workerId);
   // fbRef.child('/workers/' + workerId);
 
 	var isConnected    = firebase.database().ref().child('.info').child('connected');
@@ -187,14 +187,14 @@ angular
 				userLoginRef.once("value", function(userLogin) {
 					//if the user doesn't uddate the timer for more than 30 seconds than log it out
 				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){
-				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
+				  	/*	$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
 					  		.success(function(data, status, headers, config) {
 					  			console.log("logged out seccessfully");
 					  			userLoginRef.remove();
 					  			$interval.cancel(interval);
 					  			logoutWorker.onDisconnect().cancel();
 					  			whenFinished();
-					  		});
+					  		}); */
 					 //if the timestamp of the login is more than the timesatmp of the logout means that the user logged in again
 					 //so cancel the work
 					} else if(userLogin.val()!==null && userLogin.val().timeStamp - jobData.timeStamp > 1000)

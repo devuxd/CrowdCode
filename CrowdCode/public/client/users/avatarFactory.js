@@ -22,7 +22,7 @@ angular
 			return loaded[workerId];
 		} else {
 
-			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('avatarUrl'));
+			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Workers').child(workerId).child('avatarUrl'));
 			loaded[workerId].$loaded().then(function(){
 				return loaded[workerId];
 			});

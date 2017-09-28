@@ -684,175 +684,250 @@ exports.LogTooltip = LogTooltip;
 
 // create CrowdCodeWorker App and load modules
 angular
-	.module('crowdCode',[
-		'templates-main',
-		'firebase',
-		'ngAnimate',
-		'ngMessages',
-		'ngSanitize',
-		'ngClipboard',
-		'ngTagsInput',
-		'mgcrea.ngStrap',
-		'ui.ace',
-		'ui.layout',
-		'luegg.directives',
-		'toaster',
-		'yaru22.angular-timeago',
-		'angularytics',
-	])
-	.config(function($dropdownProvider, ngClipProvider, AngularyticsProvider ) {
+  .module('crowdCode', [
+    'templates-main',
+    'firebase',
+    'ngAnimate',
+    'ngMessages',
+    'ngSanitize',
+    'ngClipboard',
+    'ngTagsInput',
+    'mgcrea.ngStrap',
+    'ui.ace',
+    'ui.layout',
+    'luegg.directives',
+    'toaster',
+    'yaru22.angular-timeago',
+    'angularytics',
+  ])
+  .service('Auth', ['$firebaseAuth',
+    function($firebaseAuth) {
+      return $firebaseAuth();
+    }
+  ])
+  .service('CurrentUserID', function($http, $q) {
+    var deferred = $q.defer();
+    $http.get('/api/v1/currentWorkerId').then(function(payload) {
+      q.resolve(payload.data);
+    }, function(err) {
+      q.reject(err);
+    });
+    return deferred.promise;
+  })
+  .factory('httpRequestInterceptor', function($q, Auth) {
+    return {
+      request: function(config) {
+        if (sessionStorage.getItem('accessToken')) {
+          //console.log("token[" + window.localStorage.getItem('accessToken') + "], config.headers: ", config.headers);
+          config.headers.authorization = 'Bearer ' + sessionStorage.getItem('accessToken');
+        }
+        return config || $q.when(config);
+      },
+      responseError: function(rejection) {
 
-		AngularyticsProvider.setEventHandlers(['Console', 'GoogleUniversal']);
+        console.log("Found responseError: ", rejection);
+        if (rejection.status == 401) {
 
-		ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
+          console.log("Access denied (error 401), please login again");
+          //$location.nextAfterLogin = $location.path();
+          //window.location.href = '/login';
+        }
+        return $q.reject(rejection);
+      }
+    };
+  })
+  .config(function($dropdownProvider, ngClipProvider, AngularyticsProvider, $httpProvider) {
+    var config = {
+      apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
+      authDomain: "crowdcode2.firebaseapp.com",
+      databaseURL: "https://crowdcode2.firebaseio.com",
+      projectId: "crowdcode2",
+      storageBucket: "crowdcode2.appspot.com",
+      messagingSenderId: "382318704982"
+    };
+    firebase.initializeApp(config);
 
-		angular.extend($dropdownProvider.defaults, { html: true });
+    //$httpProvider.interceptors.push('httpRequestInterceptor');
 
-	})
-	.constant('workerId'   ,workerId)
-  .constant('projectId'  ,projectId)
-	.constant('firebaseUrl', 'https://crowdcode.firebaseio.com/projects/' + projectId )
-	.constant('logoutUrl'  ,logoutURL)
-	.run(function($rootScope, $interval, $modal, $firebaseArray,  firebaseUrl, logoutUrl, userService, functionsService, AdtService, avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics ){
+    AngularyticsProvider.setEventHandlers(['Console', 'GoogleUniversal']);
 
-		// current session variables
-		$rootScope.projectId    = projectId;
-		$rootScope.workerId     = workerId;
-		$rootScope.workerHandle = workerHandle;
-		$rootScope.firebaseUrl  = firebaseUrl;
-		$rootScope.userData     = userService.data;
-		$rootScope.logoutUrl    = logoutUrl;
-		$rootScope.avatar       = avatarFactory.get;
+    ngClipProvider.setPath("/include/zeroclipboard-2.2.0/dist/ZeroClipboard.swf");
+
+    angular.extend($dropdownProvider.defaults, {
+      html: true
+    });
+
+  })
+  .constant('workerId', workerId)
+  .constant('projectId', projectId)
+  .constant('firebaseUrl', 'https://crowdcode2.firebaseio.com/Projects/' + projectId)
+  .constant('logoutUrl', logoutURL)
+  .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, functionsService, AdtService,
+    avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics, testsService) {
+
+    // current session variables
+    $rootScope.projectId = projectId;
+    $rootScope.workerId = workerId;
+    $rootScope.workerHandle = workerHandle;
+    $rootScope.firebaseUrl = firebaseUrl;
+    $rootScope.userData = userService.data;
+    $rootScope.logoutUrl = logoutUrl;
+    $rootScope.avatar = avatarFactory.get;
+
+    var userStatistics = $modal({
+      scope: $rootScope,
+      container: 'body',
+      animation: 'am-fade-and-scale',
+      placement: 'center',
+      template: 'achievements/achievements_panel.html',
+      show: false
+    });
+    var workerProfile = $modal({
+      scope: $rootScope.$new(true),
+      container: 'body',
+      animation: 'am-fade-and-scale',
+      placement: 'center',
+      template: 'worker_profile/workerStatsModal.html',
+      show: false
+    });
+    var profileModal = $modal({
+      scope: $rootScope,
+      container: 'body',
+      animation: 'am-fade-and-scale',
+      placement: 'center',
+      template: 'widgets/popup_user_profile.html',
+      show: false
+    });
+    var servicesLoadingStatus = {};
+    var loadingServicesInterval = $interval(loadServices(), 200);
 
 
-		var userStatistics            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: 'achievements/achievements_panel.html', show: false});
-		var workerProfile 			= $modal({scope: $rootScope.$new(true), container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: 'worker_profile/workerStatsModal.html', show: false});
-		var profileModal            = $modal({scope: $rootScope, container: 'body', animation: 'am-fade-and-scale', placement: 'center', template: 'widgets/popup_user_profile.html', show: false});
-		var servicesLoadingStatus   = {};
-		var loadingServicesInterval = $interval(loadServices(), 200);
+    $rootScope.$on('showUserStatistics', showStatistics);
+    $rootScope.$on('showWorkerProfile', showWorkerProfile);
+    $rootScope.$on('showProfileModal', showProfileModal);
+    $rootScope.$on('serviceLoaded', serviceLoaded);
+    $rootScope.$on('sendFeedback', sendFeedback);
+
+    $rootScope.trustHtml = function(unsafeHtml) {
+      return $sce.trustAsHtml(unsafeHtml);
+    };
+    $rootScope.makeDirty = makeFormDirty;
+
+    // Track interactions of interest and send to Google Analytics
+    Angularytics.init();
+    $rootScope.trackInteraction = function(interactionCategory, userAction, context) {
+      var triggerElement = userAction + ': ' + context.target.innerHTML;
+      Angularytics.trackEvent(interactionCategory, triggerElement, workerHandle);
+    };
+
+    function loadServices() {
+      servicesLoadingStatus = {};
+      functionsService.init();
+      AdtService.init();
+      questionsService.init();
+      notificationsService.init();
+      newsfeedService.init();
+      testsService.init();
+
+    }
+
+    function serviceLoaded(event, nameOfTheService) {
+      servicesLoadingStatus[nameOfTheService] = true;
+
+      if (servicesLoadingStatus.hasOwnProperty('functions') &&
+        servicesLoadingStatus.hasOwnProperty('adts') &&
+        servicesLoadingStatus.hasOwnProperty('questions') &&
+        servicesLoadingStatus.hasOwnProperty('newsfeed') &&
+        servicesLoadingStatus.hasOwnProperty('tests')) {
+
+        $interval.cancel(loadingServicesInterval);
+        loadingServicesInterval = undefined;
 
 
-		$rootScope.$on('showUserStatistics', showStatistics);
-		$rootScope.$on('showWorkerProfile', showWorkerProfile);
-		$rootScope.$on('showProfileModal', showProfileModal);
-		$rootScope.$on('serviceLoaded'   , serviceLoaded);
-		$rootScope.$on('sendFeedback', sendFeedback);
+        userService.listenForJobs();
+        userService.listenForLogoutWorker();
 
-    $rootScope.trustHtml = function (unsafeHtml){
-            return $sce.trustAsHtml(unsafeHtml);
+        // $rootScope.$broadcast('openDashboard');
+        $rootScope.$broadcast('fecthMicrotask');
+
+        $rootScope.$broadcast('queue-tutorial', 'main', false, function() {
+          $rootScope.$broadcast('showProfileModal');
+        });
+      }
+    }
+
+    function showProfileModal() {
+      profileModal.$promise.then(profileModal.show);
+    }
+
+    function showStatistics() {
+      userStatistics.$promise.then(userStatistics.show);
+    }
+
+    function showWorkerProfile($event, id) {
+      workerProfile.$scope.id = id;
+      workerProfile.$promise.then(workerProfile.show);
+    }
+
+
+    function makeFormDirty(form) {
+      angular.forEach(form, function(formElement, fieldName) {
+        // If the fieldname doesn't start with a '$' sign, it means it's form
+        if (fieldName[0] !== '$') {
+          if (angular.isFunction(formElement.$setDirty))
+            formElement.$setDirty();
+
+          //if formElement as the proprety $addControl means that have other form inside him
+          if (formElement !== undefined && formElement.$addControl)
+            makeFormDirty(formElement);
+        }
+      });
+    }
+
+    function sendFeedback(event, message) {
+
+      if (message.toString() != '') {
+        ////console.log("message " + message.toString());
+        var feedback = {
+          // 'microtaskType': $scope.microtask.type,
+          // 'microtaskID': $scope.microtask.id,
+          'workerHandle': $rootScope.workerHandle,
+          'workerID': $rootScope.workerId,
+          'feedback': message.toString()
         };
-		$rootScope.makeDirty = makeFormDirty;
-
-		// Track interactions of interest and send to Google Analytics
-		Angularytics.init();
-		$rootScope.trackInteraction = function(interactionCategory, userAction, context) {
-			var triggerElement = userAction + ': ' + context.target.innerHTML;
-			Angularytics.trackEvent(interactionCategory, triggerElement, workerHandle);
-		};
-
-		function loadServices(){
-			servicesLoadingStatus = {};
-			functionsService.init();
-			AdtService.init();
-			questionsService.init();
-			notificationsService.init();
-			newsfeedService.init();
-		}
-
-		function serviceLoaded(event,nameOfTheService){
-			servicesLoadingStatus[nameOfTheService] = true;
-
-			if ( servicesLoadingStatus.hasOwnProperty('functions') &&
-				 servicesLoadingStatus.hasOwnProperty('adts') &&
-				 servicesLoadingStatus.hasOwnProperty('questions') &&
-				 servicesLoadingStatus.hasOwnProperty('newsfeed')) {
-
-				$interval.cancel(loadingServicesInterval);
-				loadingServicesInterval = undefined;
-
-
-				userService.listenForJobs();
-				userService.listenForLogoutWorker();
-
-				// $rootScope.$broadcast('openDashboard');
-				$rootScope.$broadcast('fecthMicrotask');
-
-				$rootScope.$broadcast('queue-tutorial','main', false, function(){
-					$rootScope.$broadcast('showProfileModal');
-				});
-			}
-		}
-
-		function showProfileModal() {
-			profileModal.$promise.then(profileModal.show);
-		}
-
-		function showStatistics() {
-			userStatistics.$promise.then(userStatistics.show);
-		}
-
-		function showWorkerProfile($event, id) {
-			workerProfile.$scope.id = id;
-			workerProfile.$promise.then(workerProfile.show);
-		}
-
-
-		function makeFormDirty(form){
-			angular.forEach(form, function(formElement, fieldName) {
-				// If the fieldname doesn't start with a '$' sign, it means it's form
-				if (fieldName[0] !== '$'){
-					if(angular.isFunction(formElement.$setDirty))
-		                formElement.$setDirty();
-
-					//if formElement as the proprety $addControl means that have other form inside him
-					if (formElement !== undefined && formElement.$addControl)
-						makeFormDirty(formElement);
-				}
-			});
-		}
-
-		function sendFeedback(event, message) {
-
-			if( message.toString() != '' ){
-					////console.log("message " + message.toString());
-				var feedback = {
-					// 'microtaskType': $scope.microtask.type,
-					// 'microtaskID': $scope.microtask.id,
-					'workerHandle': $rootScope.workerHandle,
-					'workerID'    : $rootScope.workerId,
-					'feedback'    : message.toString()
-				};
-
-
-				var feedbacks = $firebaseArray(new Firebase(firebaseUrl + '/feedback'));
-				feedbacks.$loaded().then(function() {
-					feedbacks.$add(feedback);
-				});
-			}
-		}
-	});
+        var feedbackRef = firebase.database().ref().child('Projects').child(projectId).child('feedback');
+        var feedbacks = $firebaseArray(feedbackRef);
+        feedbacks.$loaded().then(function() {
+          feedbacks.$add(feedback);
+        });
+      }
+    }
+  });
 
 angular
     .module('crowdCode')
-    .controller('userAchievements', ['$scope','$firebase','avatarFactory','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope,$firebase,avatarFactory,iconFactory,$firebaseArray,firebaseUrl,workerId){
-    	
-    	
+    .controller('userAchievements', ['$scope','avatarFactory','iconFactory','$firebaseArray','firebaseUrl','workerId', function($scope, avatarFactory,iconFactory,$firebaseArray,firebaseUrl,workerId){
+
+
     $scope.userStats = [];
     $scope.listOfachievements = [];
-    $scope.icon = iconFactory.get;    	 
+    $scope.icon = iconFactory.get;
     $scope.avatar  = avatarFactory.get;
-    
-    	var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
-     	var statsSync = $firebaseArray(statsRef);
-     	$scope.userStats = statsSync;
+      var statsRef = firebase.database().ref().child('Workers').child(workerId).child('microtaskHistory');
+    	//var statsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/microtaskHistory');
+     	//var statsSync = $firebaseArray(statsRef);
+     	$scope.userStats = $firebaseArray(statsRef);
      	$scope.userStats.$loaded().then(function(){
+        console.log($scope.userStats);
      	});
-     	
-     	
-    	var achievementsRef  = new Firebase(firebaseUrl + '/workers/'+workerId+'/listOfAchievements');
-    	var achievementsSync = $firebaseArray(achievementsRef);
-    	$scope.listOfachievements = achievementsSync;
+
+
+    	var achievementsRef  = firebase.database().ref().child('Workers').child(workerId).child('listOfAchievements');
+      //new Firebase(firebaseUrl + '/workers/'+workerId+'/listOfAchievements');
+    	//var achievementsSync = $firebaseArray(achievementsRef);
+    	$scope.listOfachievements = $firebaseArray(achievementsRef);
     	$scope.listOfachievements.$loaded().then(function(){
+        console.log($scope.listOfachievements);
     	});
 }]);
 
@@ -893,7 +968,7 @@ angular.module('crowdCode').filter('statsToShow', function () {
 //angular
 //.module('crowdCode')
 //.directive('userAchievements', ['$firebase','iconFactory','firebaseUrl','workerId', achievements])
-//	
+//
 //function achievements($firebase, iconFactory, firebaseUrl, workerId) {
 //return {
 //    restrict: 'E',
@@ -924,30 +999,26 @@ angular.module('crowdCode').filter('statsToShow', function () {
 //};
 //});
 
+angular
+  .module('crowdCode')
+  .factory("iconFactory", ['firebaseUrl', function(firebaseUrl) {
 
+    var loaded = {};
 
+    var factory = {};
+    factory.get = function(condition) {
+      return {
+        $value: '/img/achievements/' + condition + '.png'
+      };
+    };
 
+    return factory;
+  }]);
 
 
 angular
     .module('crowdCode')
-    .factory("iconFactory",[ '$firebase','firebaseUrl', function( $firebase , firebaseUrl ){
-
-	var loaded = {};
-
-	var factory = {};
-	factory.get = function(condition){
-			return {
-				$value: '/img/achievements/'+condition+'.png'
-			};
-	};
-
-	return factory;
-}]);
-
-angular
-    .module('crowdCode')
-    .directive('chat', function($timeout, $rootScope,  $alert, firebaseUrl, avatarFactory, userService, workerId) {
+    .directive('chat', function($timeout, $rootScope,  $alert, firebaseUrl, avatarFactory, userService, workerId, projectId) {
     return {
         restrict: 'E',
         templateUrl: 'chat/chat_panel.html',
@@ -965,9 +1036,10 @@ angular
             });
         },
         controller: function($scope, $element, $rootScope) {
-            // syncs and references to firebase 
-            var chatRef = new Firebase( firebaseUrl + '/chat');
-            
+            // syncs and references to firebase
+            var chatRef = firebase.database().ref().child('Chat').child(projectId);
+            //new Firebase( firebaseUrl + '/chat');
+
             // data about the 'new message' alert
             var alertData = {
                 duration : 4, // in seconds
@@ -985,7 +1057,7 @@ angular
             $rootScope.unreadMessages=0;
             $scope.messages = [];
 
-            // for each added message 
+            // for each added message
             chatRef.on('child_added',function(childSnap, prevChildName){
 
                     // get the message data and add it to the list
@@ -998,18 +1070,18 @@ angular
                     if( last !== undefined && last.workerId == message.workerId && ( message.createdAt - last.createdAt ) < 5 * 1000 ) {
                         last.text += '<br />' + message.text;
                         last.createdAt = message.createdAt;
-                    } else 
+                    } else
                         $scope.messages.push(message);
 
                     /*
-                    // if the chat is hidden and the timestamp is 
+                    // if the chat is hidden and the timestamp is
                     // after the timestamp of the page load
-                    if( message.createdAt > startLoadingTime ) 
+                    if( message.createdAt > startLoadingTime )
                         if( !$rootScope.chatActive ){
 
                              // increase the number of unread messages
                             $rootScope.unreadMessages++;
-                            
+
                             // if the current message has been sent
                             // from the same worker of the previous one
                             // and the alert is still on
@@ -1017,26 +1089,26 @@ angular
                                 // append the new text to the current alert
                                 alertData.text += '<br/>'+message.text;
                                 alertData.object.hide();
-                            } else { 
+                            } else {
                                 // set data for the new alert
                                 alertData.text   = message.text;
                                 alertData.worker = message.workerHandle;
                             }
-                           
+
                             // record the creation time of the alert
-                            // and show it 
+                            // and show it
                             alertData.createdAt = new Date().getTime();
                             alertData.object    = $alert({
-                                title    : alertData.worker, 
-                                content  : alertData.text , 
+                                title    : alertData.worker,
+                                content  : alertData.text ,
                                 duration : alertData.duration ,
-                                template : 'chat/alert_chat.html', 
-                                keyboard : true, 
+                                template : 'chat/alert_chat.html',
+                                keyboard : true,
                                 show: true
                             });
-                        } 
+                        }
                     */
-                    
+
                     $timeout( function(){ $scope.$apply() }, 100);
             });
 
@@ -1065,6 +1137,135 @@ angular
         }
     };
 });
+
+/*
+ *  A JSONValitator provides a way to validate json texts.
+ *
+ */
+
+function JSONValidator() {
+  // private variables
+  var text;
+  var isValidParam;
+  var paramType; // String indicating type of parameter
+  var errors = [];
+  var nameToADT = [];
+
+  this.initialize = function(myNameToAdt, myText, myParamType) {
+    text = myText
+    nameToADT = myNameToAdt; //
+    paramType = myParamType;
+
+    isValidParam = false;
+  };
+
+  this.isValid = function() {
+    return isValid();
+  };
+  this.errorCheck = function() {
+    return errorCheck();
+  };
+  this.getErrors = function() {
+    return errors;
+  };
+
+  // Returns true iff the text contained is currently valid
+  function isValid() {
+    return isValidParam;
+  }
+
+  function errorCheck() {
+    errors = [];
+
+    // wrap the value as an assignment to a variable, then syntax check it
+    var stmtToTest = 'var stmt = ' + text + ';';
+    if (!JSHINT(stmtToTest, getJSHintGlobals()))
+      errors.concat(checkForErrors(JSHINT.errors));
+
+    // If there are no syntax errors, check the structure.
+    if (errors == "") {
+      try {
+        errors = checkStructure(JSON.parse(text), paramType);
+      } catch (e) {
+        if (e.message != 'Unexpected token o')
+          errors.push(e.message);
+
+        // We can get an error here if the 1) field names are not surrounded by double quotes, 2) there's a trailing ,
+        // Also need to check that strings are surrounded by double quotes, not single quotes....
+        // errors.push("1) property names are surrounded by double quotes");
+        // errors.push("2) strings are surrounded by double quotes not by single quotes" );
+        // errors.push("3) there are no trailing commas in the list of fields.");
+      }
+    }
+
+    isValidParam = (errors.length == 0) ? true : false;
+  }
+
+  // Checks that the provided struct is correctly formatted as the type in typeName.
+  // Returns an empty string if no errors and an html formatted error string if there are.
+  function checkStructure(struct, typeName, level) {
+    if (struct === null) {
+      // null is an accepted value for any field
+    } else if (typeName == 'String') {
+      if (typeof struct != 'string')
+        errors.push("'" + JSON.stringify(struct) + "' should be a String, but is not");
+    } else if (typeName == "Number") {
+      if (typeof struct != 'number')
+        errors.push("'" + JSON.stringify(struct) + "' should be a Number, but is not");
+    } else if (typeName == "Boolean") {
+      if (typeof struct != 'boolean')
+        errors.push("'" + JSON.stringify(struct) + "' should be a Boolean, but is not");
+    }
+    // Recursive case: check for typeNames that are arrays
+    else if (typeName.endsWith("[]")) {
+      // Check that struct is an array.
+      if (Array.prototype.isPrototypeOf(struct)) {
+        // Recurse on each array element, passing the typename minus the last []
+        for (var i = 0; i < struct.length; i++) {
+          errors.concat(checkStructure(struct[i], typeName.substring(0, typeName.length - 2), level + 1));
+        }
+      } else {
+        errors.push("'" + JSON.stringify(struct) + "' should be an array, but is not. Try enclosing the value in array bracks ([]).");
+      }
+    }
+    // Recursive case: typeName is an ADT name. Recursively check that
+    else if (nameToADT.hasOwnProperty(typeName)) {
+      if (typeof struct == 'object') {
+        var typeDescrip = nameToADT[typeName].structure;
+        var typeFieldNames = [];
+
+        // Loop over all the fields defined in typeName, checking that each is present in struct
+        // and (recursively) that they are of the correct type.
+        for (var i = 0; i < typeDescrip.length; i++) {
+          typeFieldNames.push(typeDescrip[i].name);
+
+          var fieldName = typeDescrip[i].name;
+          var fieldType = typeDescrip[i].type;
+
+
+          if (struct.hasOwnProperty(fieldName))
+            errors.concat(checkStructure(struct[fieldName], fieldType, level + 1));
+          else
+            errors.push("'" + JSON.stringify(struct) + "' is missing the required property " + fieldName);
+        }
+
+        // Loop over all the fields defined in the struct, checking that each
+        // is part of the data type
+        var structFieldNames = Object.keys(struct);
+        for (var f = 0; f < structFieldNames.length; f++)
+          if (typeFieldNames.indexOf(structFieldNames[f]) == -1)
+            errors.push("'" + structFieldNames[f] + "' is not a field of the data type " + typeName);
+
+      } else {
+        errors.push("'" + JSON.stringify(struct) + "' is not an " + typeName);
+      }
+    } else {
+      errors.push("Internal error - " + typeName + " is not a valid type name");
+    }
+
+    return errors;
+  }
+}
 
 function checkForErrors(e)
 {
@@ -1229,8 +1430,8 @@ function joinLines(text,cssClass,identation){
 }
 
 /**
- * This class manages a list of Firebase elements and dispatches items in it to 
- * be processed. It is designed to only process one item at a time. 
+ * This class manages a list of Firebase elements and dispatches items in it to
+ * be processed. It is designed to only process one item at a time.
  *
  * It uses transactions to grab queue elements, so it's safe to run multiple
  * workers at the same time processing the same queue.
@@ -1239,22 +1440,22 @@ function joinLines(text,cssClass,identation){
  * @param processingCallback The callback to be called for each work item
  */
 function DistributedWorker(workerID, queueRef, processingCallback) {
-	
+
 	this.workerID = workerID;
-	
+
 	// retrieve callback
-	this.processingCallback = processingCallback; 
-	
+	this.processingCallback = processingCallback;
+
 	// start busy as FALSE
 	this.busy = false;
-	
+
 	// every time at queueRef one child is added
 	// retrieve the item and try to process it
 	queueRef.startAt().limitToFirst(1).on("child_added", function(snapshot) {
-		this.currentItem = snapshot.ref();
+		this.currentItem = snapshot.ref;
 		this.tryToProcess();
 	}, this);
-	
+
 }
 
 //reset busy flag and try again to process
@@ -1291,7 +1492,7 @@ DistributedWorker.prototype.tryToProcess = function() {
 
 			if (error) throw error;
 
-			if(committed) { // if transaction committed 
+			if(committed) { // if transaction committed
 				//execute callback and after again ready to process
 				self.processingCallback(dataToProcess, function() {
 					self.readyToProcess();
@@ -1323,7 +1524,8 @@ angular
 		this.getNameToAdt = getNameToAdt;
 
 		function init(){
-			adts = $firebaseArray(new Firebase(firebaseUrl+'/artifacts/ADTs'));
+      adtRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('ADTs');
+			adts = $firebaseArray(adtRef);
 			adts.$loaded().then(function(){
 				// tell the others that the adts services is loaded
 				$rootScope.$broadcast('serviceLoaded','adts');
@@ -1357,7 +1559,7 @@ angular
 			return nameToAdt;
 		}
 
-		
+
 
 	}
 
@@ -1368,14 +1570,14 @@ angular
 // check if a variable type is a valid ADT
 angular
     .module('crowdCode')
-    .directive('adtValidator', ['AdtService', function(AdtService) {
+    .directive('adtValidator', ['AdtUtils', function(AdtUtils) {
     return {
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
 
             ctrl.$parsers.unshift(function(viewValue) {
-                var valid =  viewValue === ""|| viewValue === undefined || AdtService.isValidName(viewValue) ;
+                var valid =  viewValue === ""|| viewValue === undefined || AdtUtils.isValidName(viewValue) ;
                 if (!valid) {
                     ctrl.$setValidity('adt', false);
                     ctrl.$error.adt = "Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).";
@@ -1390,6 +1592,7 @@ angular
         }
     };
 }]);
+
 ////////////////////
 //ADT SERVICE   //
 ////////////////////
@@ -1797,7 +2000,7 @@ angular
     .factory('Function', [ 'Test', function(Test) {
 
 	function Function(rec,key){
-		this.$id = rec.id + '';
+		this.$id = key + '';
 		this.update(rec);
 	}
 
@@ -1814,14 +2017,15 @@ angular
 			// and if the function record has tests
 			// create an array of Test objects from them
 			this.tests = [];
-			if( rec.tests !== undefined )
+
+			if( rec.tests !== undefined && angular.isArray(rec.tests))
 				for( var testId in rec.tests ){
 					this.tests.push(new Test(rec.tests[testId], rec.name));
 				}
 			return true;
 		},
 
-		getHeader: function(){ 
+		getHeader: function(){
 			if( this.described )
 				return this.header;
 			else{
@@ -1835,7 +2039,7 @@ angular
 			}
 		},
 
-		getDescription: function(){ 
+		getDescription: function(){
 			if(this.described!==false)
 				return this.description;
 			else {
@@ -1849,13 +2053,13 @@ angular
 		getFullDescription: function(){
 			if(this.getDescription()===undefined)
 				return "";
-			
+
 			var descriptionLines = this.getDescription().split('\n');
 
 			if(this.parameters!==undefined && this.parameters.length>0){
 				for(var i=0; i<this.parameters.length; i++)
 					descriptionLines.push(
-						[ 
+						[
 							'@param',
 							'{' + this.parameters[i].type + '}',
 							this.parameters[i].name,
@@ -1868,8 +2072,8 @@ angular
 				descriptionLines.push('@return {' + this.returnType + '}');
 
 			return '/**\n' +
-				   ' * ' + 
-				   descriptionLines.join('\n * ') +   '\n'	 + 
+				   ' * ' +
+				   descriptionLines.join('\n * ') +   '\n'	 +
 				   ' */\n';
 		},
 
@@ -1878,7 +2082,7 @@ angular
 			return this.getFullDescription() + this.getHeader();
 		},
 
-		// 
+		//
 		getFunctionCode: function(){
 			if( this.code )
 				return this.getSignature() + this.code;
@@ -1894,7 +2098,7 @@ angular
 		getFullCode: function(){
 
 			var fullCode = this.getFunctionCode();
-			
+
 			if(this.pseudoFunctions){
 				fullCode += "\n\n";
 				for(var i=0; i<this.pseudoFunctions.length; i++ )
@@ -1933,6 +2137,7 @@ angular
 	return Function;
 }]);
 
+
 angular
     .module('crowdCode')
     .factory("FunctionArray",['$firebaseArray','Function', FunctionArray ]);
@@ -1940,13 +2145,14 @@ angular
 function FunctionArray($firebaseArray, Function) {
 	return $firebaseArray.$extend({
 		$$added: function(snap, prevChild) {
-			return new Function(snap.val(),snap.key());
+			return new Function(snap.val(),snap.key);
 		},
 		$$updated: function(snap) {
-			return this.$getRecord(snap.key()).update(snap.val());
+			return this.$getRecord(snap.key).update(snap.val());
 		}
 	});
 }
+
 
 // check if a functionName is already taken
 angular
@@ -2340,7 +2546,8 @@ angular
 		// Function bodies
 		function init(){
 		    // hook from firebase all the functions declarations of the project
-		    functions = new FunctionArray(new Firebase(firebaseUrl+'/artifacts/functions'));
+        var funcRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Functions');
+		    functions = new FunctionArray(funcRef);
 			functions.$loaded().then(function(){
 				fList = functions;
 				// tell the others that the functions services is loaded
@@ -2410,9 +2617,9 @@ angular
 		// Get the function object, in FunctionInFirebase format, for the specified function id
 		function getVersion(id, version){
 			var deferred = $q.defer();
-
-			var ref = new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);			
-			var obj = $firebaseObject( ref );
+			var funcRef = firebase.database().ref().child('Projects').child(projectId).child('history').child('artifacts').child('Functions').child(id).child(version);
+      //new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);
+			var obj = $firebaseObject( funcRef );
 			obj.$loaded().then(function(){
 				deferred.resolve(new Function(obj));
 			});
@@ -2448,7 +2655,6 @@ angular
 
 	return service;
 }]);
-
 
 
 //////////////////////
@@ -2499,9 +2705,10 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId,$root
         templateUrl: 'leaderboard/leaderboard.template.html',
         controller: function($scope, $element) {
             $scope.avatar  = avatarFactory.get;
-            $scope.leaders = $firebaseArray(new Firebase(firebaseUrl + '/leaderboard/leaders'));
+            var leaderRef = firebase.database().ref().child('Projects').child(projectId).child('leaderboard').child('leaders');
+            $scope.leaders = $firebaseArray(leaderRef);
             $scope.leaders.$loaded().then(function() {});
-            
+
             $scope.clicked = function(workerToShow){
             	if(workerToShow.$id != workerId){
             		$rootScope.$broadcast('showWorkerProfile',workerToShow.$id);
@@ -2511,10 +2718,11 @@ function leaderboard( avatarFactory, $firebaseArray, firebaseUrl, workerId,$root
             	}
             }
         }
-    
-   
+
+
     };
 }
+
 
 
 ///////////////////////////////
@@ -2752,15 +2960,15 @@ angular
 
 angular
 	.module('crowdCode')
-	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',  
+	.controller("Dashboard",['$scope','$rootScope','$firebase','$firebaseArray','$timeout','microtasksService','firebaseUrl','workerId',
                                  function($scope,$rootScope,$firebase,$firebaseArray,$timeout,microtasksService,firebaseUrl, workerId){
-	
+
 	$scope.availableMicrotasks = [];
-	
+
 	var types = [
 			'Review',
 			'DescribeFunctionBehavior',
-			'ImplementBehavior',
+      'ImplementBehavior',
 			'ChallengeReview'
 	];
 
@@ -2777,58 +2985,61 @@ angular
 		return -1;
 	};
 
-	
+
 	// populate filters with microtasks types
 	$scope.filterEnabled = {};
 
 	angular.forEach(types,function(value,index){
 		$scope.filterEnabled[value] = true;
 		$scope.typesCount[value] = 0;
-	});	
-	
-	
+	});
+
+
 	$scope.microtaskQueue = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/status/microtaskQueue/queue');
+	var microtasksRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('microtaskQueue').child('queue');
+	// new Firebase(firebaseUrl+'/status/microtaskQueue/queue');
 	$scope.microtaskQueue = $firebaseArray(microtasksRef);
 	$scope.microtaskQueue.$loaded().then(function(){
-	});	
-	
+	});
+
 	$scope.reviewQueue = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/status/reviewQueue/queue');
+	var microtasksRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('reviewQueue').child('queue');
+	//new Firebase(firebaseUrl+'/status/reviewQueue/queue');
 	$scope.reviewQueue = $firebaseArray(microtasksRef);
 	$scope.reviewQueue.$loaded().then(function(){
-	});	
-	
+	});
 
-	
+
+
 	$scope.microtasks = [];
-	
+
 	// load microtasks
-	var microtasksRef  = new Firebase(firebaseUrl+'/microtasks/');
+	var microtasksRef  =  firebase.database().ref().child('Projects').child(projectId).child('microtasks').child('implementation');
+	// new Firebase(firebaseUrl+'/microtasks/');
 	var microtasksSync = $firebaseArray(microtasksRef);
 	$scope.microtasks = microtasksSync;
 	$scope.microtasks.$loaded().then(function(){
-	});	
+	});
 
 	$scope.microtasks.$watch(function(event){
 		var task = $scope.microtasks.$getRecord(event.key)
 		switch(event.event){
 			case 'child_added':
 				if(task.excluded != null){
-	           		if(task.excluded.search(workerId) === -1) 
+	           		if(task.excluded.search(workerId) === -1)
 	           			$scope.typesCount[task.type]++
-	            } 
+	            }
 	            else{
 	            	$scope.typesCount[task.type]++
 	            }
-			
+
 				break;
-				
-			default: 
+
+			default:
 		}
 	});
 
@@ -2842,7 +3053,7 @@ angular
 		else {
 			$scope.orderReverse   = true;
 			$scope.orderPredicate = predicate;
-		} 
+		}
 	};
 
 	$scope.assignMicrotask = function(task){
@@ -2866,7 +3077,7 @@ return function (microtasks,microtaskQueue,reviewQueue, availableMicrotasks) {
     		if(value.$id == microtaskQueue[i].$value){
     			available = true;
     			availableMicrotasks.push(value);
-    		}    			
+    		}
     	}
     	if(!available){
 	    	for(var i=0;i<reviewQueue.length;i++){
@@ -2879,18 +3090,18 @@ return function (microtasks,microtaskQueue,reviewQueue, availableMicrotasks) {
     	if(available){
     	//if (value.assigned != true && value.completed != true && value.waitingReview != true) {
            	if(value.excluded != null){
-           		if(value.excluded.search(workerId) === -1) 
+           		if(value.excluded.search(workerId) === -1)
            			this.out.push(value);
-            } 
+            }
             else{
             	this.out.push(value);
             }
-      //  } 
+      //  }
     	}
     }, items);
     return items.out;
 };
-}); 
+});
 
 angular
 	.module('crowdCode')
@@ -2922,7 +3133,7 @@ angular
             if (value.waitingReview == true && value.review == undefined) {
                 this.out.push(value);
             }
-        }	
+        }
         }, items);
         return items.out;
     };
@@ -2962,8 +3173,6 @@ angular
         return items.out;
     };
 });
-
-
 
 
 // ///////////////////////////////
@@ -3266,16 +3475,21 @@ angular
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory', 'Test',  function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory, Test) {
-    
+    .controller('DescribeBehavior', ['$scope', '$timeout', '$rootScope', '$alert', '$modal', 'functionsService', 'TestRunnerFactory', 'Test', 'functionUtils', 'Function', '$q',
+    function($scope, $timeout, $rootScope, $alert, $modal, functionsService, TestRunnerFactory, Test, functionUtils, Function, $q) {
+
     // prepare the data for the view
     $scope.data = {};
-    $scope.data.dispute = { active: false, text: '' }; 
+    $scope.data.dispute = { active: false, text: '' };
     $scope.data.tests = [];
     $scope.data.isComplete = false;
     $scope.data.numDeleted = 0;
     $scope.data.selected = -1;
-    
+    $scope.data.running = false;
+    $scope.data.changedSinceLastRun  = null;
+    $scope.data.inspecting = false;
+    $scope.data.selected1 = -1;
+
     var newTest = {
         description: '',
         isSimple : true,
@@ -3286,73 +3500,288 @@ angular
         deleted: false
     };
 
+    var runner = new TestRunnerFactory.instance();
+
+    // dto empty object, it's updated
+    // every time the functionEditor performs
+    // a successful validation of the code
+    var functionDto = {};
+    var requestedFunctions = [];
+    var stubs;
+    var editedStubs = {};
+
 
     // if the microtask is reissued
     if( $scope.microtask.reissuedSubmission != undefined ){
 
         $scope.data.isComplete = $scope.microtask.reissuedSubmission.isDescribeComplete;
 
-        if( $scope.microtask.reissuedSubmission.disputeFunctionText.length > 0 ){
-            $scope.data.dispute.active = true;
-            $scope.data.dispute.text   = $scope.microtask.reissuedSubmission.disputeFunctionText;
-        }
+        // if( $scope.microtask.reissuedSubmission.disputeFunctionText.length > 0 ){
+        //     $scope.data.dispute.active = true;
+        //     $scope.data.dispute.text   = $scope.microtask.reissuedSubmission.disputeFunctionText;
+        // }
 
+        if( $scope.microtask.reissuedSubmission.disputedTests != undefined ){
+            var disputed = $scope.microtask.reissuedSubmission.disputedTests;
+        }
 
         // load tests from the previous submission
         var reissuedTests = $scope.microtask.reissuedSubmission.tests ;
-        for( var i = 0 ; i < reissuedTests.length ; i++ ){
-            var test = new Test(reissuedTests[i]);
+        if(angular.isDefined(reissuedTests)) {
+          for( var i = 0 ; i < reissuedTests.length ; i++ ){
+              var test = new Test(reissuedTests[i], $scope.funct.name);
+              // flag the test if is disputed
+              if( disputed != undefined ){
+                  for( var d = 0 ; d < disputed.length ; d++ ){
+                      if( disputed[d].id == test.id ){
+                          test.dispute = {
+                              active: true,
+                              text  : disputed[d].disputeText
+                          }
+                      } else {
+                        test.dispute = {
+                            active: false,
+                            text  : 'aa'
+                        }
+                      }
+                  }
+
+              } else {
+                test.dispute = {
+                    active: false,
+                    text  : 'aa'
+                }
+              }
+              test.edited  = false;
+              test.deleted = false;
+              test.added = false;
+
+              $scope.data.tests.push(test);
+          }
+        }
+    }
+    // otherwise
+    else {
+        // load tests from the function
+        for( var i = 0; i < $scope.funct.tests.length ; i++ ){
+            if( $scope.funct.tests[i].deleted )
+                continue;
+
+            var test = angular.copy($scope.funct.tests[i]);
+            test.edited  = false;
+            test.deleted = false;
+            test.added = false;
+            test.dispute = { active:false, text: 'aa' };
+
+            // flag the test if is disputed
+            if( $scope.microtask.reissuedSubmission != undefined ){
+                var disputed = $scope.microtask.reissuedSubmission.disputedTests;
+                if( disputed != undefined ){
+                    for( var d = 0 ; d < disputed.length ; d++ ){
+                        if( disputed[d].id == test.id ){
+                            test.dispute = {
+                                active: true,
+                                text  : disputed[d].disputeText
+                            }
+                        }
+                    }
+
+                }
+
+            }
 
             $scope.data.tests.push(test);
         }
     }
-    // otherwise 
-    else {
-
-        // load tests from the function 
-        for( var i = 0; i < $scope.funct.tests.length ; i++ ){
-            if( $scope.funct.tests[i].isDeleted )
-                continue;
-            
-            var test = angular.copy($scope.funct.tests[i]);
-            test.edited  = false;
-            test.deleted = false;
-            
-            $scope.data.tests.push(test);
-        } 
-    }
-
 
     // flag the disputed test
 
-    if( $scope.microtask.disputedTests !== undefined ){
-        for( var a = 0; a < $scope.microtask.disputedTests.length ; a++ ){
-            for( var t = 0 ; t < $scope.data.tests.length; t++ ){
-                var test = $scope.data.tests[t];
-                if( $scope.microtask.disputedTests[a].id == test.id ){
-                    test.dispute = { 
-                        active:true, 
-                        text: $scope.microtask.disputedTests[a].disputeText  
-                    };
-                }
-            }
-        } 
-    }
+    // if( $scope.microtask.disputedTests !== undefined ){
+    //     for( var a = 0; a < $scope.microtask.disputedTests.length ; a++ ){
+    //         for( var t = 0 ; t < $scope.data.tests.length; t++ ){
+    //             var test = $scope.data.tests[t];
+    //             if( $scope.microtask.disputedTests[a].id == test.id ){
+    //                 test.dispute = {
+    //                     active:true,
+    //                     text: $scope.microtask.disputedTests[a].disputeText
+    //                 };
+    //             }
+    //         }
+    //     }
+    // }
 
 
     // expose the toggle and edit test functions to the scope
     $scope.toggleEdit   = toggleEdit;
     $scope.toggleDelete = toggleDelete;
     $scope.toggleSelect = toggleSelect;
+    $scope.toggleSelect1 = toggleSelect1;
     $scope.addNew       = addNew;
+    $scope.toggleInspect  = toggleInspect;
+    $scope.toggleDispute  = toggleDispute;
+    $scope.saveStub       = saveStub;
+    $scope.cancelStub     = cancelStub;
+    $scope.run = run;
 
-    // register the collect form data listeners 
+    // run the tests for the first time
+    run().then(function(){
+        $scope.data.tests.sort(function(tA,tB){
+            if( tA.result.passed && !tB.result.passed ) return -1;
+            if( !tA.result.passed && tB.result.passed ) return 1;
+            return 0;
+        });
+    });
+
+    function run(){
+
+        var deferred = $q.defer();
+        $scope.data.running = true;
+        $scope.data.inspecting = false;
+
+        var code = $scope.data.editor ? $scope.data.editor.getValue() : $scope.funct.getFullCode();
+        var tobeTested = [];
+        angular.forEach($scope.data.tests, function(value, key) {
+          if(value.isSimple && value.added == true) {
+            this.push(new Test(value, $scope.funct.name));
+          } else {
+            this.push(value);
+          }
+        }, tobeTested);
+        runner
+            .run(
+                $scope.data.tests,
+                $scope.funct.name,
+                code,
+                stubs,
+                requestedFunctions
+                )
+            .then(function(result){
+                stubs = result.stubs;
+                $scope.data.tests = result.tests;
+                $scope.data.running = false;
+                $scope.data.changedSinceLastRun = false;
+                deferred.resolve();
+            });
+        return deferred.promise;
+    }
+
+    // functionEditor callbacks
+    $scope.editorCallbacks = {
+        onCodeChanged : onCodeChanged,
+        onFunctionParsed : onFunctionParsed,
+        onEditStub : onEditStub
+    };
+
+    function toggleInspect($event){
+        if( !$scope.data.changedSinceLastRun ){
+            $scope.data.inspecting = !$scope.data.inspecting;
+        }
+
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+
+    function toggleDispute($event){
+        $scope.data.selected1.dispute.active = !$scope.data.selected1.dispute.active;
+
+        if( $scope.data.selected1.dispute.active ){
+            $scope.data.selected1.dispute.text = "";
+        }
+
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
+
+    function cancelStub(){
+        $scope.data.editingStub = false;
+    }
+
+    function onFunctionParsed(_functionDto,_requestedFunctions){
+        functionDto = _functionDto;
+        requestedFunctions = _requestedFunctions;
+    }
+
+    function onCodeChanged(){
+        $scope.data.inspecting = false;
+        $scope.data.changedSinceLastRun = true;
+    }
+
+    function onEditStub(functionName,inputsKey){
+        console.log(stubs);
+        var funct = functionsService.getByName(functionName);
+        if( funct === null ){
+            for( var i = 0; i < requestedFunctions.length ; i++ ){
+                if( requestedFunctions[i].name == functionName )
+                    funct = new Function( requestedFunctions[i] );
+            }
+        }
+        if( funct === null ) throw 'Cannot find the function '+functionName;
+
+        var inputs = inputsKeyToInputs(inputsKey);
+        $scope.data.editingStub = {
+            functionName : functionName,
+            inputsKey    : inputsKey,
+            functionDescription : funct.getSignature(),
+            parameters   : funct.parameters.map(function(par,index){
+                return {
+                    name: par.name,
+                    type: par.type,
+                    value: angular.toJson(inputs[index])
+                };
+            }),
+            output       : {
+                type  : funct.returnType,
+                value : JSON.stringify(stubs[functionName][inputsKey].output)
+            }
+        };
+
+        console.log('editing stub',$scope.data.editingStub.id);
+    }
+
+    function saveStub(){
+        var output       = eval('('+$scope.data.editingStub.output.value+')') || null;
+        var functionName = $scope.data.editingStub.functionName;
+        var inputsKey    = $scope.data.editingStub.inputsKey;
+
+        if( !editedStubs.hasOwnProperty(functionName) )
+            editedStubs[functionName] = {};
+
+        stubs[functionName][inputsKey].output = output;
+        editedStubs[functionName][inputsKey]  = stubs[functionName][inputsKey];
+
+        console.log('saving stub ',stubs[functionName][inputsKey].id);
+
+        $scope.data.editingStub = false;
+    }
+
+    function inputsKeyToInputs(inputsKey){
+        return JSON.parse('['+inputsKey+' ]');
+    }
+
+    // register the collect form data listeners
     // and the microtask form destroy listener
     $scope.taskData.collectFormData = collectFormData;
+
+    function toggleSelect1($event,test){
+        if( $scope.data.selected1 == -1 ) {
+          if(test.isSimple === true)
+            test.code = (new Test(test, $scope.funct.name)).code;
+          $scope.data.selected1 = test;
+        }
+        else {
+            $scope.data.inspecting = false;
+            $scope.data.selected1 = -1;
+        }
+
+
+        $event.preventDefault();
+        $event.stopPropagation();
+    }
 
 
     function addNew($event){
         var lastAdded = angular.copy(newTest);
+        lastAdded.dispute = { active:false, text: 'aa' };
         $scope.data.tests.push(lastAdded);
         toggleSelect($event,lastAdded);
     }
@@ -3364,14 +3793,26 @@ angular
             $scope.data.selected.editing = false;
             $scope.data.selected = -1;
         }
-            
+
         // $event.preventDefault();
         // $event.stopPropagation();
     }
 
-    var tmpTestData = { };
+    // function toggleSelect($event,test){
+    //     if( $scope.data.selected == -1 )
+    //         $scope.data.selected = test;
+    //     else {
+    //         $scope.data.inspecting = false;
+    //         $scope.data.selected = -1;
+    //     }
+    //
+    //
+    //     $event.preventDefault();
+    //     $event.stopPropagation();
+    // }
+
     function toggleEdit($event){
-        
+
         if( $scope.data.selected != -1 ) {
             $scope.data.selected.editing = !$scope.data.selected.editing;
 
@@ -3394,7 +3835,7 @@ angular
             } else {
                 $scope.data.numDeleted --;
             }
-                
+
         }
 
 
@@ -3407,8 +3848,10 @@ angular
     function collectFormData(form) {
 
         $scope.data.selected = -1 ;
+        $scope.data.selected1 = -1 ;
 
         if( form.$invalid ){
+          console.log("form is invalid ----", form.$error);
             $modal({template : 'microtasks/modal_form_invalid.html' , show: true});
             form.$setDirty();
             return;
@@ -3419,7 +3862,11 @@ angular
             functionVersion    : $scope.funct.version,
             tests              : [],
             isDescribeComplete : $scope.data.isComplete,
-            disputeFunctionText : ''
+            disputeFunctionText : '',
+            'function': functionDto,
+            requestedFunctions: requestedFunctions,
+            requestedADTs: [],
+            disputedTests: []
         };
 
         if( $scope.data.dispute.active ){
@@ -3434,37 +3881,93 @@ angular
             for( var idx = 0 ; idx < $scope.data.tests.length ; idx++ ){
                 var test = $scope.data.tests[idx];
 
-
-
                 var testDto = {
                     id:          test.id,
                     description: test.description,
                     isSimple:    test.isSimple,
                     code:        test.isSimple ? "" : test.code,
                     inputs:      test.isSimple ? test.inputs : [] ,
-                    output:      test.isSimple ? test.output : "" 
+                    output:      test.isSimple ? test.output : ""
                 };
 
                 if( test.added && test.deleted )
                     continue;
 
-                if( test.added ) 
+                if( test.added )
                     testDto.added    = true;
                 else if( test.deleted )
                     testDto.deleted  = true;
                 else if( form['testForm_'+idx].$dirty )
                     testDto.edited = true;
+                // else if(formData.disputeFunctionText.length > 0 || test.dispute.active === true) {
+                //   if(!angular.isDefined(testDto.added) && !angular.isDefined(testDto.deleted) && !angular.isDefined(testDto.edited)) {
+                //     testDto.added    = true;
+                //   }
+                // }
 
                 formData.tests.push(testDto);
-            } 
+            }
         }
         console.log(formData.tests);
-        
+
+        // add the disputed tests
+        $scope.data.tests.map(function(test){
+            if( test.dispute.active ){
+                formData.disputedTests.push({
+                    id: test.id,
+                    disputeText: test.dispute.text
+                });
+            }
+        });
+
+        // add the callee stubs
+        formData.function.callees.map(function(callee){
+
+            if( !editedStubs.hasOwnProperty(callee.name) )
+                return;
+
+            var cStubs = editedStubs[callee.name];
+            callee.tests = [];
+            for( var inputsKey in cStubs ){
+                console.log('stub id ' + cStubs[inputsKey].id + ' is undefined?',cStubs[inputsKey].id == undefined);
+                callee.tests.push({
+                    id      : cStubs[inputsKey].id,
+                    added   : cStubs[inputsKey].id == undefined ? true : false,
+                    edited  : cStubs[inputsKey].id == undefined ? false : true,
+                    isSimple: true,
+                    description: cStubs[inputsKey].id == undefined ? 'auto generated' : cStubs[inputsKey].description,
+                    inputs : inputsKeyToInputs(inputsKey),
+                    output : JSON.stringify(cStubs[inputsKey].output),
+                });
+            }
+        });
+
+        // add the requested functions stubs
+        formData.requestedFunctions.map(function(requested){
+            if( !editedStubs.hasOwnProperty(requested.name) )
+                return;
+
+            var rStubs = editedStubs[requested.name];
+            requested.tests = [];
+            for( var inputsKey in rStubs ){
+                requested.tests.push({
+                    id          : rStubs[inputsKey].id,
+                    added       : true,
+                    isSimple    : true,
+                    description : 'auto generated',
+                    inputs      : inputsKeyToInputs(inputsKey),
+                    output      : JSON.stringify(rStubs[inputsKey].output)
+                });
+            }
+        });
+        console.log('submitted form data',formData);
+
         return formData;
 
     }
 
 }]);
+
 
 ///////////////////////////////
 //  DEBUG TEST FAILURE CONTROLLER //
@@ -3743,11 +4246,12 @@ angular
 
 
 }]);
+
 angular
     .module('crowdCode')
-    .directive('microtaskForm', [ '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]); 
+    .directive('microtaskForm', ['Function', '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]);
 
-function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
+function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
 
     return {
         restrict: 'A',
@@ -3785,7 +4289,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 
 			$scope.taskData.startBreak = false;
 
-			var waitTimeInSeconds = 15;
+			var waitTimeInSeconds = 3;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;
@@ -3814,9 +4318,9 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 			$scope.currentPrompt = function(){
 				$scope.workerOption = "Take a break";
 				if(userService.data.level >= 2)
-					$scope.workerOption = "Pick next microtask"				
-						
-				return $scope.workerOption;			
+					$scope.workerOption = "Pick next microtask"
+
+				return $scope.workerOption;
 			}
 
 			function onMicrotaskLoaded($event, microtask){
@@ -3829,38 +4333,41 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 				// initialize microtask data
 				$scope.canSubmit = true;
 				$scope.microtask = microtask;
-
+        console.log("microtask ---------", microtask);
 				// retrieve the related function
-				if (angular.isDefined($scope.microtask.functionId))
-					$scope.funct = functionsService.get($scope.microtask.functionId);
-
-
+				if (angular.isDefined($scope.microtask.function)) {
+          var funct = $scope.microtask.function;
+          if(angular.isDefined($scope.microtask.tests) && angular.isArray($scope.microtask.tests))
+            funct.tests = $scope.microtask.tests;
+          $scope.funct = new Function(funct);
+          //functionsService.get($scope.microtask.functionId);
+        }
 				//set up the right template
 				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
 
 			}
-			
 
-			
+
+
 			function openDashboard(){
 				$scope.taskData.startBreak = true;
-				$scope.breakMode = true;	
+				$scope.breakMode = true;
 				cancelFetchTimer();
 				$scope.templatePath  = templatesURL + templates['Dashboard'] + ".html";
 			}
-			
+
 			function noMicrotasks() {
 				$scope.noMicrotask = true;
-				$scope.$emit('reset-reminder');			
+				$scope.$emit('reset-reminder');
 				setFetchTimer();
 
 				if(userService.data.level >= 2)
 					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
 				else
-					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";			
+					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
 			}
-			
-			
+
+
 			function setFetchTimer(){
 				// if is not in break mode, start to check the queue
 				if(! $scope.breakMode ){
@@ -3876,8 +4383,8 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						$interval.cancel(timerInterval);
 
 						$timeout(fetchMicrotask,1000);
-						
-					}, waitTimeInSeconds*1000); 
+
+					}, waitTimeInSeconds*1000);
 				}
 			}
 
@@ -3887,12 +4394,12 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 					$timeout.cancel(checkQueueTimeout);
 				}
 			}
-			
+
 
 			function checkBreakMode(){
-				if( $scope.taskData.startBreak ) { 
-					$scope.breakMode = true; 
-					$scope.taskData.startBreak = false; 
+				if( $scope.taskData.startBreak ) {
+					$scope.breakMode = true;
+					$scope.taskData.startBreak = false;
 				}
 			}
 
@@ -3908,7 +4415,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						noMicrotasks();
 					});
 			}
-			
+
 			function fetchMicrotask($event, fetchData) {
 				cancelFetchTimer();
 				$scope.breakMode = false;
@@ -3918,20 +4425,20 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
 						microtasks.load(fetchData);
 					}, function(){
 						noMicrotasks();
-					}); 
+					});
 			}
-			
+
 			function fetchSpecificMicrotask($event, microtaskId ) {
 				cancelFetchTimer();
 				$scope.breakMode     = false;
 				$scope.templatePath  = templatesURL + "loading.html";
 				microtasks
-					.fetchSpecificMicrotask( microtaskId )					
+					.fetchSpecificMicrotask( microtaskId )
 					.then( function(fetchData){
 						microtasks.load(fetchData);
 					}, function(){
 						noMicrotasks();
-					}); 
+					});
 			}
 
 
@@ -3987,6 +4494,7 @@ function microtaskForm($rootScope,  $http, $interval, $timeout, $modal , functio
         }
     };
 }
+
 
 angular
     .module('crowdCode')
@@ -4058,8 +4566,9 @@ angular
 		this.fetchSpecificMicrotask = fetchSpecificMicrotask;
 
 		// Public functions
-		function get (id){
-			var microtask = $firebaseObject(new Firebase(firebaseUrl+'/microtasks/'+id));
+		function get (id, type){
+      var microtaskRef = firebase.database().ref().child('Projects').child(projectId).child('microtasks').child(type).child(id);
+			var microtask = $firebaseObject(microtaskRef);
 			return microtask;
 		}
 
@@ -4071,7 +4580,7 @@ angular
 			var disablePoint = autoSkip ? 'true':'false';
 
 			// submit to the server
-			$http.post('/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
+			$http.post('/api/v1/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -4089,7 +4598,7 @@ angular
 			var deferred = $q.defer();
 
 			// ask the microtask id
-			$http.get('/' + projectId + '/ajax/fetch')
+			$http.get('/api/v1/' + projectId + '/ajax/fetch')
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -4108,7 +4617,7 @@ angular
 			var deferred = $q.defer();
 
 			$http
-				.get('/' + projectId + '/ajax/pickMicrotask?id='+ microtaskId)
+				.get('/api/v1/' + projectId + '/ajax/pickMicrotask?id='+ microtaskId)
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
@@ -4124,30 +4633,36 @@ angular
 
 		function load(fetchData){
 			if( fetchData.microtaskKey !== undefined ) {
-				var microtask = get(fetchData.microtaskKey);
-				microtask.$loaded().then(function() {
-					$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
-				});
+				var microtask = fetchData.object;
+        microtask.type = fetchData.type;
+        microtask.$id = fetchData.microtaskKey;
+        $rootScope.$broadcast('microtaskLoaded',microtask, 1/*fetchData.firstFetch*/);
+        // get(fetchData.microtaskKey);
+				// microtask.$loaded().then(function() {
+				// 	$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
+				// });
 			}
 		}
-		
-		
+
+
 
 	}
 
 	return service;
 }]);
+
 ///////////////////////////////
 //  NO MICROTASK CONTROLLER //
 ///////////////////////////////
 angular
     .module('crowdCode')
     .controller('NoMicrotaskController', ['$scope', '$rootScope',  'firebaseUrl', '$firebaseArray', 'avatarFactory','workerId', function($scope, $rootScope,  firebaseUrl,$firebaseArray, avatarFactory, workerId) {
-    
+
 
 	$scope.avatar = avatarFactory.get;
 	// create the reference and the sync
-	$scope.leaders = $firebaseArray(new Firebase(firebaseUrl + '/leaderboard/leaders'));
+  var leadersRef = firebase.database().ref().child('Projects').child(projectId).child('leaderboard').child('leaders');
+	$scope.leaders = $firebaseArray(leadersRef);
 	$scope.leaders.$loaded().then(function() {});
 
 
@@ -4160,7 +4675,8 @@ angular
 ///////////////////////////////
 angular
     .module('crowdCode')
-    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  '$modal', 'functionsService',  'functionUtils' , 'Function', 'AdtService', 'microtasksService', function($scope, $rootScope,  $alert, $modal, functionsService, functionUtils, Function, AdtService, microtasksService) {
+    .controller('ReviewController', ['$scope', '$rootScope',  '$alert',  '$modal', 'functionsService',  'functionUtils' , 'Function', 'AdtService', 'microtasksService', "testsService",
+    function($scope, $rootScope,  $alert, $modal, functionsService, functionUtils, Function, AdtService, microtasksService, testsService) {
     // scope variables
     $scope.review = {};
     $scope.review.template = 'loading';
@@ -4169,26 +4685,38 @@ angular
 
 
     //load the microtask to review
-    var reviewed = microtasksService.get($scope.microtask.microtaskKeyUnderReview);
+    var reviewed = microtasksService.get($scope.microtask.reference_id, "implementation");
     reviewed.$loaded().then(function() {
-
         $scope.reviewed = reviewed;
         var submission = reviewed.submission;
+        reviewed.type = 'DescribeFunctionBehavior';
 
         if ( reviewed.type == 'DescribeFunctionBehavior') {
 
             $scope.data = {};
             $scope.data.selected = -1;
-
-            if( submission.disputeFunctionText.length > 0 ){
+            $scope.data.funct = new Function( submission['function'] );
+            $scope.data.newCode = $scope.data.funct.getFullCode();
+            $scope.data.oldCode = $scope.funct.getFullCode();
+            if( submission.disputeFunctionText.length > 0 || submission.disputedTests){
                 $scope.review.template    = 'describe_dispute';
                 $scope.review.fromDispute = true;
                 $scope.data.disputeText = submission.disputeFunctionText;
+                var loadedFunct = functionsService.get( reviewed.functionId );
+                if(submission.disputedTests) {
+                  $scope.data.disputedTests = submission.disputedTests
+                      .map(function(test){
+                          var testObj = testsService.get(test.id);
+                          // loadedFunct.getTestById(test.id);
+                          testObj.disputeText = test.disputeText;
+                          return testObj;
+                  });
+                }
             }
             else {
                 $scope.review.template = 'describe';
                 $scope.data.tests = angular.copy(submission.tests);
-                $scope.data.isComplete = submission.isDescribeComplete;
+                $scope.data.isComplete = reviewed.isFunctionComplete;
                 // get the stats of the edits
                 $scope.data.stats = { added: 0, edited: 0, deleted: 0 };
                 $scope.data.tests.map(function(test){
@@ -4224,7 +4752,7 @@ angular
                     $scope.data.fDescription = functObj.getSignature();
                 });
 
-        } 
+        }
         else if (reviewed.type == 'ImplementBehavior') {
             $scope.data = {};
             $scope.data.selected = -1;
@@ -4267,16 +4795,16 @@ angular
 
 
     $scope.taskData.collectFormData = collectFormData;
-    
+
     function collectFormData(form) {
 
-        
+
         if( form.$invalid ){
             $modal({template : 'microtasks/modal_form_invalid.html' , show: true});
             return;
         }
 
-        
+
         var formData = {
             reviewText              : ($scope.review.text === undefined ? "" : $scope.review.text ),
             qualityScore            : $scope.review.rating,
@@ -4464,11 +4992,11 @@ angular
             $scope.challengeReview=challengeReview;
 
             $scope.data = {};
-
-            var microtask = microtasksService.get($scope.newObj.microtaskKey);
+            var type = $scope.newObj.microtaskType === 'DescribeFunctionBehavior' ? 'implementation' : 'review';
+            var microtask = microtasksService.get($scope.newObj.microtaskKey, type);
             microtask.$loaded().then(function() {
-                $scope.data = loadMicrotaskData(microtask) ;
-                console.log($scope.data);
+                $scope.data = loadMicrotaskData(microtask);
+                console.log("Newsfeed data", $scope.data);
             });
 
             function loadMicrotaskData(microtask){
@@ -4496,12 +5024,31 @@ angular
                     };
                 }
 
-                data.functionName = microtask.owningArtifact;
+                data.functionName = microtask.functionName;
 
                 switch(microtask.type){
-                    case 'DescribeFunctionBehavior': 
-                        
+                    case 'DescribeFunctionBehavior':
+
                         var submission = microtask.submission;
+                        var newFunction = new Function(submission.function);
+                        functionsService.getVersion(microtask.functionId, microtask.functionVersion).then(function( funct ){
+                            data.oldCode = funct.getFullCode();
+                            data.newCode = newFunction.getFullCode();
+                        });
+                        if( submission.disputedTests){
+                            data.templateUrl += '_disputed';
+                            data.openedTests = [];
+                            data.functionParameters = funct.parameters;
+                            data.functionReturnType = funct.returnType;
+                            data.disputedTests = submission
+                                .disputedTests
+                                .map(function(test){
+                                    var testObj = funct.getTestById(test.id);
+                                    testObj.disputeText = test.disputeText;
+                                    return testObj;
+                                });
+                        }
+
                         if( submission.disputeFunctionText.length > 0 ) {
                             data.disputeText = submission.disputeFunctionText;
                             data.templateUrl += '_disputed';
@@ -4511,8 +5058,8 @@ angular
                             data.functionParameters = functionsService.get(microtask.functionId).parameters;
                             data.functionReturnType = functionsService.get(microtask.functionId).returnType;
                             data.openedTests = [];
-                            data.isComplete  = submission.isDescribeComplete;
-                        }          
+                            data.isComplete  = microtask.isFunctionComplete;
+                        }
 
                         break;
 
@@ -4543,7 +5090,7 @@ angular
 
                     case 'Review':
                         data.reviewed = {};
-                        var rev = microtasksService.get(microtask.microtaskKeyUnderReview);
+                        var rev = microtasksService.get(microtask.reference_id, 'implementation');
                         rev.$loaded().then(function() {
                             data.reviewed = loadMicrotaskData(rev);
                             data.templateUrl = 'Review_' + data.reviewed.templateUrl;
@@ -4565,6 +5112,7 @@ angular
         }
     };
 });
+
 angular
     .module('crowdCode').directive('newsList',function($rootScope,$timeout,firebaseUrl, workerId, questionsService, functionsService, microtasksService){
 
@@ -4637,12 +5185,13 @@ angular
 		this.get = get;
 		this.init = init;
 		this.challengeReview=challengeReview;
-		
+
 		// Function bodies
 		function init()
 		{
 		    // hook from firebase all the functions declarations of the project
-		   	var ref = new Firebase(firebaseUrl + '/workers/' + workerId + '/newsfeed');
+		   	var ref = firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('newsfeed');
+        //new Firebase(firebaseUrl + '/workers/' + workerId + '/newsfeed');
 			newsfeed =$firebaseArray(ref);
 			newsfeed.$loaded().then(function(){
 				// tell the others that the newsfeed services is loaded
@@ -4653,7 +5202,7 @@ angular
 		function get (){
 			return newsfeed;
 		}
-		
+
 		function challengeReview(reviewKey, challengeText)
 		{
 			console.log(reviewKey);
@@ -4674,6 +5223,7 @@ angular
 }]);
 
 
+
 ///////////////////////
 // QUESTIONS SERVICE //
 ///////////////////////
@@ -4681,8 +5231,9 @@ angular
     .module('crowdCode')
     .factory('notificationsService', [ '$rootScope',  'firebaseUrl', 'workerId', 'toaster', 'questionsService' , function( $rootScope,  firebaseUrl, workerId, toaster, questionsService) {
 
-	var ref = new Firebase( firebaseUrl + '/notifications/' + workerId );
-	
+	var ref = firebase.database().ref().child('Projects').child(projectId).child('notifications').child(workerId);
+  // new Firebase( firebaseUrl + '/notifications/' + workerId );
+
 	var service = new function(){
 		this.init = function(){
 			ref.on('child_added',function(snap){
@@ -4777,7 +5328,7 @@ angular
 						case 'challenge.won':
 							toast.type = 'success';
 							toast.body = 'You won the challenge on the '+val.microtaskType+' on the artifact '+val.artifactName;
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('setLeftBarTab','newsfeed');
 								$rootScope.$broadcast('showNews', val.microtaskId );
 							};
@@ -4786,38 +5337,37 @@ angular
 						case 'worker.levelup':
 							toast.type = 'success';
 							toast.body = 'Level up!\n'+val.prevLevel+'->'+val.currentLevel;
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
 						case 'new.achievement':
 							toast.type = 'success';
 							toast.body = val.message + ' Congratulations!';
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('showUserStatistics');
 							};
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
 						case 'dashboard':
 							toast.type = 'success';
 							toast.body = 'You unlocked the dashboard. Congratulations!';
-							toast.clickHandler = function(){ 
+							toast.clickHandler = function(){
 								$rootScope.$broadcast('openDashboard');
 							};
-							toaster.pop( toast ); 
+							toaster.pop( toast );
 							break;
-							
+
 
 						default:
 					}
 
-					snap.ref().update({'read':true});      
+					snap.ref().update({'read':true});
 				}
 			});
 		};
 	};
 
-	return service; 
+	return service;
 }]);
-
 
 angular.module('crowdCode').directive('questionDetail',function($timeout,firebaseUrl,workerId,questionsService){
 	return {
@@ -4866,14 +5416,14 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,firebas
 				var remove = false;
 				if( questioning.votersId && questioning.votersId.indexOf(workerId) !==-1)
 					remove = true;
-				questionsService.vote(questioning.id,remove);
+				questionsService.vote($scope.sel.id,questioning.id,remove);
 			}
 
 			function toggleVoteDown(questioning){
 				var remove = false;
 				if( questioning.reportersId && questioning.reportersId.indexOf(workerId) !==-1)
 					remove= true;
-				questionsService.report(questioning.id,remove);
+				questionsService.report($scope.sel.id,questioning.id,remove);
 			}
 
 			function addTag(){
@@ -5086,7 +5636,8 @@ angular
 		var questions;
 		var allTags = [];
 		var loaded = false;
-		var firebaseRef = new Firebase(firebaseUrl+'/questions');
+		var firebaseRef = firebase.database().ref().child('Projects').child(projectId).child('questions');
+    // new Firebase(firebaseUrl+'/questions');
 
 		var idx = lunr(function(){
 			this.ref('id');
@@ -5181,7 +5732,7 @@ angular
 							idx.add( doc );
 							addToAllTags(q.tags);
 							break;
-						case 'child_changed': 
+						case 'child_changed':
 							idx.update( doc );
 							break;
 						case 'child_removed':
@@ -5191,7 +5742,7 @@ angular
 					}
 				});
 			});
-			
+
 
 		}
 
@@ -5207,17 +5758,17 @@ angular
 			var deferred = $q.defer();
 			var url = '';
 
-			if( type != 'question' || formData.id == 0 ) 
-				url = 'insert?type=' + type;
-			else                   
-				url = 'update?id=' + formData.id;
+			if( type != 'question' || formData.id == 0 )
+				url = 'insert?workerId='+workerId+'&type=' + type;
+			else
+				url = 'update?workerId='+workerId+'&id=' + formData.id;
 
 			// replace all the occurrences of the newline '\n' with the html <br>
 			// TODO: check for other formatting syntax
 			formData.text = formData.text.replace(new RegExp('\n', 'g'),'<br />');
-			
 
-			$http.post('/' + $rootScope.projectId + '/questions/' + url , formData)
+
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/' + url , formData)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5226,10 +5777,10 @@ angular
 				});
 			return deferred.promise;
 		}
-		
+
 		function tag(id, tag, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/tag?id=' + id + '&tag='+tag+'&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/tag?workerId='+workerId+'&id=' + id + '&tag='+tag+'&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5239,9 +5790,9 @@ angular
 			return deferred.promise;
 		}
 
-		function vote(id, remove){
+		function vote(questionId, id, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/vote?workerId='+workerId+'&questionId='+ questionId +'&id=' + id + '&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5251,9 +5802,9 @@ angular
 			return deferred.promise;
 		}
 
-		function report(id, remove){
+		function report(questionId, id, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/report?id=' + id + '&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/report?workerId='+workerId+'&questionId='+ questionId +'&id=' + id + '&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5265,7 +5816,7 @@ angular
 
 		function linkArtifact(id, artifactId, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/link?id=' + id + '&artifactId='+artifactId+'&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/link?workerId='+workerId+'&id=' + id + '&artifactId='+artifactId+'&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5277,7 +5828,7 @@ angular
 
 		function setClosed(id, closed){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/close?id=' + id + '&closed='+closed)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/close?workerId='+workerId+'&id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5291,9 +5842,9 @@ angular
 			firebaseRef.child( id+'/views/'+workerId ).set( view );
 		}
 
-		function updateViewCounter(questionId){	
+		function updateViewCounter(questionId){
 			var viewsObj = $firebaseObject(new Firebase(firebaseUrl+'/questions/'+questionId));
-			viewsObj.$loaded().then(function(){    
+			viewsObj.$loaded().then(function(){
 			if(workerId != viewsObj.ownerId){
 				if(viewsObj.viewCounter == undefined){
 					viewsObj.viewCounter = 1;
@@ -5302,24 +5853,24 @@ angular
 					viewsObj.viewCounter += 1;
 					if(viewsObj.viewCounter == 15)
 						sendQuestionViews(viewsObj.viewCounter);
-				}				
+				}
 					viewsObj.$save();
 			}
 			});
 		}
-		
+
 		function sendQuestionViews(views){
-			$http.get('/' + projectId + '/ajax/questionViews?id='+ views)
+			$http.get('/api/v1/' + $rootScope.projectId + '/questionViews?workerId='+workerId+'&id='+ views)
 			.success(function(data, status, headers, config) {
 			})
 			.error(function(data, status, headers, config) {
 
-			});		
+			});
 		}
-		
+
 		function addWorkerView(id){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/view?workerId='+workerId+'&id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
 					updateViewCounter(id);
 					deferred.resolve();
@@ -5332,9 +5883,8 @@ angular
 		}
 	};
 
-	return service; 
+	return service;
 }]);
-
 
 angular.module('crowdCode').directive('questionList',function($rootScope,$tooltip,$timeout,workerId,firebaseUrl, questionsService, microtasksService){
 	return {
@@ -5555,19 +6105,22 @@ angular
 		if( rec === undefined || rec === null )
 			return false;
 
-
-		if(rec.isSimple)
-			rec.code = 'expect(' + functionName + '(' + rec.inputs.join(',') + ')).to.deep.equal(' + rec.output + ');';
-
-		angular.extend(this,rec);
-
-		this.inputs = [];
-		for( var key in rec.inputs ){
-			this.inputs.push(rec.inputs[key]);
-		}
+    this.$id = rec.id + '';
+    this.update(rec, functionName);
 	}
 
 	Test.prototype = {
+    update: function(rec, functionName) {
+      if(rec.isSimple)
+  			rec.code = 'expect(' + functionName + '(' + rec.inputs.join(',') + ')).to.deep.equal(' + rec.output + ');';
+
+  		angular.extend(this,rec);
+
+  		this.inputs = [];
+  		for( var key in rec.inputs ){
+  			this.inputs.push(rec.inputs[key]);
+  		}
+    },
 		getInputsKey: function(){
 			return this.inputs.join(',');
 		}
@@ -5575,6 +6128,78 @@ angular
 
 	return Test;
 }]);
+
+////////////////////////
+//TEST SERVICE   //
+////////////////////////
+angular
+  .module('crowdCode')
+  .factory('testsService', ['$rootScope', '$q', '$filter', '$firebaseObject', 'firebaseUrl', 'TestArray', 'Test', function($rootScope, $q, $filter, $firebaseObject, firebaseUrl, TestArray, Test) {
+
+    var service = new function() {
+      // Private variables
+      var tests;
+
+      // Public tests
+      this.init = init;
+      this.get = get;
+      this.getVersion = getVersion;
+      this.getAll = getAll;
+
+      // Test bodies
+      function init() {
+        // hook from firebase all the tests declarations of the project
+        var testRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Tests');
+        tests = new TestArray(testRef);
+        tests.$loaded().then(function() {
+          // tell the others that the tests services is loaded
+          $rootScope.$broadcast('serviceLoaded', 'tests');
+        });
+      }
+
+      // Get the test object, for the specified test id
+      function get(id) {
+        return tests.$getRecord(id);
+      }
+
+      function getAll() {
+        return tests;
+      }
+
+      // Get the function object, in FunctionInFirebase format, for the specified function id
+      function getVersion(id, version) {
+        var deferred = $q.defer();
+        var testRef = firebase.database().ref().child('Projects').child(projectId).child('history').child('artifacts').child('Tests').child(id).child(version);
+        //new Firebase(firebaseUrl+ '/history/artifacts/tests/' + id+ '/' + version);
+        var obj = $firebaseObject(testRef);
+        obj.$loaded().then(function() {
+          deferred.resolve(new Test(obj));
+        });
+        return deferred.promise;
+      }
+
+    };
+
+    return service;
+  }]);
+
+
+angular
+    .module('crowdCode')
+    .factory("TestArray",['$firebaseArray','Test', TestArray ]);
+
+function TestArray($firebaseArray, Test) {
+	return $firebaseArray.$extend({
+		$$added: function(snap, prevChild) {
+      var test = snap.val();
+			return new Test(test,test.functionName);
+		},
+		$$updated: function(snap) {
+			return this.$getRecord(snap.key).update(snap.val());
+		}
+	});
+}
+
 angular
     .module('crowdCode')
     .directive('tutorial', function($rootScope,$compile) {
@@ -5827,11 +6452,11 @@ angular
 angular
     .module('crowdCode')
     .directive('tutorialManager', [ '$rootScope', '$compile', '$timeout', '$firebaseObject',  'firebaseUrl','workerId','$http', function($rootScope, $compile, $timeout, $firebaseObject, firebaseUrl,workerId,$http) {
-    
+
     // get the synced objects from the backend
-    var tutorialsOn        = $firebaseObject( new Firebase( firebaseUrl + '/status/settings/tutorials') );
-    var completedTutorials = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/completedTutorials' ) );
-    var tutorialCounter    = $firebaseObject( new Firebase( firebaseUrl + '/workers/' + workerId + '/tutorialCounter' ) );
+    var tutorialsOn        = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('status').child('settings').child('tutorials'));
+    var completedTutorials = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('completedTutorials'));
+    var tutorialCounter    = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('tutorialCounter'));
 
 
     var queue    = [];
@@ -5853,7 +6478,7 @@ angular
             // it is called when the tutorial is closed
             $scope.endTutorial = endTutorial;
 
-            // if the tutorial is forced or if 
+            // if the tutorial is forced or if
             // is not completed, enqueue it
             function queueTutorial( event, tutorialId, force, onFinish, queueAfter ){
                 console.log('queuing tutorial '+tutorialId);
@@ -5863,7 +6488,7 @@ angular
                             // queue tutorial
                             queue.push({
                                 id       : tutorialId,
-                                onFinish : queueAfter === undefined ? 
+                                onFinish : queueAfter === undefined ?
                                            onFinish :
                                            function(){ queueTutorial(null,queueAfter,true); }
                             });
@@ -5887,7 +6512,7 @@ angular
                     startTutorial();
                 }
             }
-            
+
             function sendTutorialsCompleted(){
     			$http.get('/' + projectId + '/ajax/tutorialCompleted')
     				.success(function(data, status, headers, config) {
@@ -5896,7 +6521,7 @@ angular
 
     			});
     		}
-            
+
             // start the current tutorial
             function startTutorial(){
                 running = true;
@@ -5913,7 +6538,7 @@ angular
 
                 if( !isTutorialCompleted(currentId) )
                     setTutorialCompleted(currentId);
-                
+
                 $element.html( '' );
 
                 if( currentOnFinish !== undefined ){
@@ -5923,7 +6548,7 @@ angular
 
                 currentId       = undefined;
                 currentOnFinish = undefined;
-                
+
                 checkQueue();
 
                 $rootScope.$broadcast('tutorial-finished');
@@ -5933,7 +6558,7 @@ angular
             // false if not
             function isTutorialCompleted( tutorialId ){
                 console.log(completedTutorials);
-                if( completedTutorials.$value !== undefined && completedTutorials.$value !== null && completedTutorials.$value.search(tutorialId) > -1 ) 
+                if( completedTutorials.$value !== undefined && completedTutorials.$value !== null && completedTutorials.$value.search(tutorialId) > -1 )
                     return true;
 
                 return false;
@@ -5945,8 +6570,8 @@ angular
                     completedTutorials.$value = tutorialId;
                     tutorialCounter.$value =  1;
                 }
-                else{ 
-                    completedTutorials.$value += ','+tutorialId; 
+                else{
+                    completedTutorials.$value += ','+tutorialId;
                     tutorialCounter.$value +=  1;
                 }
                 if(tutorialCounter.$value == 3)
@@ -6017,7 +6642,8 @@ angular
 
         link: function($scope, $element) {
 
-            var functionsRef = new Firebase(firebaseUrl+'/artifacts/functions/');
+            var functionsRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Functions');
+            // new Firebase(firebaseUrl+'/artifacts/functions/');
             $scope.functionsCount = 0;
             functionsRef.on('child_added',function (snapshot){
                 $scope.functionsCount ++;
@@ -6034,7 +6660,8 @@ angular
 
 
         
-            var testsRef = new Firebase(firebaseUrl+'/artifacts/tests');
+            var testsRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Tests');
+            // new Firebase(firebaseUrl+'/artifacts/tests');
             $scope.testsCount = 0;
             testsRef.on('child_added',function(snapshot){
                 $scope.testsCount ++;
@@ -6043,6 +6670,7 @@ angular
         }
     };
 });
+
 angular
     .module('crowdCode')
     .directive('rightBar', function($rootScope){
@@ -6078,7 +6706,8 @@ angular
 		if(loaded.hasOwnProperty(workerId)){
 			return loaded[workerId];
 		} else {
-			loaded[workerId] = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+workerId+'/avatarUrl'));
+
+			loaded[workerId] = $firebaseObject(firebase.database().ref().child('Workers').child(workerId).child('avatarUrl'));
 			loaded[workerId].$loaded().then(function(){
 				return loaded[workerId];
 			});
@@ -6087,6 +6716,7 @@ angular
 
 	return factory;
 }]);
+
 ////////////////////
 // USER SERVICE   //
 ////////////////////
@@ -6097,15 +6727,20 @@ angular
 
  	// retrieve the firebase references
 
- 	var fbRef = new Firebase(firebaseUrl);
+ 	// var fbRef = new Firebase(firebaseUrl);
 
-	var userProfile    = fbRef.child('/workers/' + workerId);
+	var userProfile    = firebase.database().ref().child('Workers').child(workerId);
+  // fbRef.child('/workers/' + workerId);
 
-	var isConnected    = new Firebase('https://crowdcode.firebaseio.com/.info/connected');
-	var offsetRef 	   = new Firebase("https://crowdcode.firebaseio.com/.info/serverTimeOffset");
-	
-	var loginRef  = fbRef.child('/status/loggedInWorkers/' + workerId);
-	var logoutRef = fbRef.child('/status/loggedOutWorkers/'+ workerId);
+	var isConnected    = firebase.database().ref().child('.info').child('connected');
+  //new Firebase('https://crowdcode.firebaseio.com/.info/connected');
+	var offsetRef 	   = firebase.database().ref().child('.info').child('serverTimeOffset');
+  // new Firebase("https://crowdcode.firebaseio.com/.info/serverTimeOffset");
+
+	var loginRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedInWorkers').child(workerId);
+  // fbRef.child('/status/loggedInWorkers/' + workerId);
+	var logoutRef = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedOutWorkers').child(workerId);
+  //fbRef.child('/status/loggedOutWorkers/'+ workerId);
 
 	var updateLogInTime = function(){
 		loginRef.setWithPriority({
@@ -6167,11 +6802,13 @@ angular
 
 	// distributed test runner
     user.listenForJobs = function(){
-		var queueRef = new Firebase(firebaseUrl+ "/status/testJobQueue/");
+
+		var queueRef = firebase.database().ref().child('Projects').child(projectId).child('status').child('testJobQueue');
+    // new Firebase(firebaseUrl+ "/status/testJobQueue/");
 		new DistributedWorker( $rootScope.workerId, queueRef, function(jobData, whenFinished) {
 			console.log('Receiving job ',jobData);
 
-			var jobRef = queueRef.child('/'+jobData.functionId);
+			var jobRef = queueRef.child(jobData.functionId);
 			//console.log(jobRef,jobData);
 			jobRef.onDisconnect().set(jobData);
 
@@ -6237,7 +6874,7 @@ angular
 						});
 				});
 
-				
+
 			}
 		});
 	};
@@ -6248,13 +6885,14 @@ angular
 	// and then send the logout command to the server
 	// distributed logout work
     user.listenForLogoutWorker = function(){
-    	var logoutQueue     = new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
+    	var logoutQueue     = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedOutWorkers');
+      // new Firebase( firebaseUrl + '/status/loggedOutWorkers/');
 
 
 		new DistributedWorker($rootScope.workerId,logoutQueue, function(jobData, whenFinished) {
 
 			//retrieves the reference to the worker to log out
-			var logoutWorker = logoutQueue.child('/'+jobData.workerId);
+			var logoutWorker = logoutQueue.child(jobData.workerId);
 			//if a disconnection occures during the process reeset the element in the queue
 			logoutWorker.onDisconnect().set(jobData);
 
@@ -6263,18 +6901,19 @@ angular
 				//time of the client plus the timezone offset given by firebase
 				var clientTime = new Date().getTime() + timeZoneOffset;
 				//retrieves the information of the login field
-				var userLoginRef  = new Firebase( firebaseUrl + '/status/loggedInWorkers/' + jobData.workerId );
+				var userLoginRef  = firebase.database().ref().child('Projects').child(projectId).child('status').child('loggedInWorkers').child(jobData.workerId);
+        // new Firebase( firebaseUrl + '/status/loggedInWorkers/' + jobData.workerId );
 				userLoginRef.once("value", function(userLogin) {
 					//if the user doesn't uddate the timer for more than 30 seconds than log it out
 				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){
-				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
+				  	/*	$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
 					  		.success(function(data, status, headers, config) {
 					  			console.log("logged out seccessfully");
 					  			userLoginRef.remove();
 					  			$interval.cancel(interval);
 					  			logoutWorker.onDisconnect().cancel();
 					  			whenFinished();
-					  		});
+					  		}); */
 					 //if the timestamp of the login is more than the timesatmp of the logout means that the user logged in again
 					 //so cancel the work
 					} else if(userLogin.val()!==null && userLogin.val().timeStamp - jobData.timeStamp > 1000)
@@ -6560,23 +7199,24 @@ angular
             mode: '@',
             highlight: '=',
         },
-        controller: function($scope,$element){ 
-            
+        controller: function($scope,$element){
+
             if($scope.mode===undefined){
                 $scope.mode='javascript';
                 $scope.theme='xcode';
             }
             else
-                $scope.theme='github';   
+                $scope.theme='github';
 
             if( $scope.mode == 'diff' && $scope.oldCode != undefined ){
                 $scope.code = calculateDiff($scope.oldCode,$scope.code);
             }
 
-            console.log($scope.mode,$scope.oldCode);
-            if( $scope.mode == 'diff' && $scope.oldCode != undefined ){
-                $scope.code = calculateDiff($scope.oldCode,$scope.code);
-            }
+            $scope.$watch('oldCode', function() {
+              if( $scope.mode == 'diff' && $scope.oldCode != undefined ){
+                  $scope.code = calculateDiff($scope.oldCode,$scope.code);
+              }
+            });
 
             $scope.aceLoaded = function(_editor) {
                 _editor.setOptions({
@@ -6602,11 +7242,11 @@ angular
                                 // console.log('added marker for  '+val.needle, range, marker);
                                // console.log(_editor.getSession().getMarkers());
                             }
-                            
+
                         });
                     }
                 });
-                
+
             };
         }
     };
@@ -6920,11 +7560,11 @@ function projectOutline(AdtService, functionsService) {
         templateUrl: 'widgets/project_outline.template.html',
         controller: function($scope, $element) {
 
-            
+
             $scope.functions = functionsService.getAll();
             $scope.dataTypes = AdtService.getAll();
 
-            console.log($scope.dataTypes);
+            //console.log($scope.dataTypes);
             $scope.buildStructure = function(adt){
                 var struct = '{';
                 angular.forEach(adt.structure,function(field){
@@ -6936,7 +7576,6 @@ function projectOutline(AdtService, functionsService) {
         }
     };
 }
-
 
 
 angular
@@ -7021,7 +7660,6 @@ angular
             $rootScope.$on('reset-reminder', resetReminder );
 
             function microtaskLoaded($event, microtask,firstFetch){
-
                 if( firstFetch == '1')
                     userService.setFirstFetchTime();
 
@@ -7036,9 +7674,9 @@ angular
                 fetchTime = userService.getFetchTime();
 
                 $scope.skipMicrotaskIn = fetchTime + microtaskTimeout - startTime ;
-                microtaskInterval      = $interval(doReminder, timeInterval); 
+                microtaskInterval      = $interval(doReminder, timeInterval);
 
-                
+
                 console.log('REMINDER: microtask laoded ',{ fetchTime: fetchTime, startTime: startTime, diff: startTime-fetchTime},microtaskInterval);
 
             }
@@ -7054,7 +7692,7 @@ angular
             }
 
             function doReminder(){
-                //if no tutorial are open 
+                //if no tutorial are open
                 if( tutorialOpen===0 ){
                     //update the remaining time both in the popup and in the progress bar
                     popupWarning.$scope.skipMicrotaskIn = $scope.skipMicrotaskIn -= timeInterval;
@@ -7066,7 +7704,7 @@ angular
                         $scope.status='warning';
 
                     }
-                    else if( $scope.skipMicrotaskIn < microtaskFirstWarning / 2 && 
+                    else if( $scope.skipMicrotaskIn < microtaskFirstWarning / 2 &&
                              $scope.skipMicrotaskIn > 0 ){
                         $scope.status='danger';
                     }
@@ -7219,9 +7857,9 @@ angular
 
 angular
 	.module('crowdCode')
-	.directive('workerProfile', ['$firebase','avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile]);
-	
-function workerProfile($firebase, avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
+	.directive('workerProfile', ['avatarFactory','iconFactory','firebaseUrl','$firebaseArray','$firebaseObject','workerId', workerProfile]);
+
+function workerProfile(avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$firebaseObject, workerId) {
   return {
     restrict: 'EA',
     scope:{workerProfile:"="},
@@ -7231,34 +7869,29 @@ function workerProfile($firebase, avatarFactory,iconFactory, firebaseUrl,$fireba
       $scope.hasAchievement = false;
       $scope.workerStats = [];
       $scope.listOfachievements = [];
-      $scope.icon = iconFactory.get;    	 
+      $scope.icon = iconFactory.get;
       $scope.currentId = 0;
       $scope.avatar  = avatarFactory.get;
-      
+
       $scope.gotAchievement = function(){
     	  $scope.hasAchievement = true;
       }
-      
-    	var nameObj = $firebaseObject(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/workerHandle'));
+    	var nameObj = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('workerHandle'));
   	  nameObj.$loaded().then(function(){
   		  $scope.workerName = nameObj.$value;
   	  });
 
-	   	$scope.workerStats = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/microtaskHistory'));
+	   	$scope.workerStats = $firebaseArray(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('microtaskHistory'));
   	  $scope.workerStats.$loaded().then(function(){
 	    });
-           	
-    	$scope.listOfachievements = $firebaseArray(new Firebase(firebaseUrl + '/workers/'+ $scope.workerProfile+'/listOfAchievements'));
+
+    	$scope.listOfachievements = $firebaseArray(firebase.database().ref().child('Projects').child(projectId).child('workers').child($scope.workerProfile).child('listOfAchievements'));
     	$scope.listOfachievements.$loaded().then(function(){
         console.log('list of achievements loaded');
     	});
     }
 	}
 }
-
-
-
-
 
 angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
 
@@ -8384,10 +9017,10 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "	<div class=\"header bg-color\">\n" +
     "		<span class=\"type\">\n" +
     "			<span ng-switch=\"microtask.promptType\">\n" +
-    "				<span ng-switch-when=\"WRITE\">Write a test</span>\n" +
-    "				<span ng-switch-when=\"CORRECT\">Correct test(s)</span>\n" +
-    "				<span ng-switch-when=\"FUNCTION_CHANGED'\">Fix test(s)</span>\n" +
-    "			</span>\n" +
+    "				<span ng-switch-when=\"WRITE\">Implement Function behavior</span>\n" +
+    "		<span ng-switch-when=\"CORRECT\">Correct function and test(s)</span>\n" +
+    "		<span ng-switch-when=\"FUNCTION_CHANGED'\">Fix function and test(s)</span>\n" +
+    "		</span>\n" +
     "		</span>\n" +
     "		<span class=\"points\">( {{::microtask.points}} pts )</span>\n" +
     "		<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)\">\n" +
@@ -8395,20 +9028,21 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "		</button>\n" +
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
     "		<span class=\"clearfix\"></span>\n" +
-    "    </div>\n" +
+    "	</div>\n" +
     "\n" +
     "\n" +
-    "    <div class=\"sections\"  ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
+    "	<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
     "\n" +
     "\n" +
-    "    	<div class=\"section\" ui-layout-container size=\"5%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"7%\">\n" +
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
-    "						Can you describe a new test in which this function might be used? For example, are there any unexpected corner cases that might not work? You may also edit or delete existing tests, or mark the test suite as complete if all cases are tested.\n" +
+    "						Can you implement part of <strong ng-bind=\"funct.name\"></strong> by making one of the currently failing tests pass? If you don’t have enough time to make a test pass, you may also submit a partial solution.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"CORRECT\">\n" +
-    "						An issue has been reported with one or more test cases. Can you fix the test(s) to address the issue?\n" +
+    "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
+    "						If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function,click on <span class=\"glyphicon glyphicon-question-sign\"></span> in the Function editor.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"FUNCTION_CHANGED'\">\n" +
     "						The signature of the function being tested has changed. As a result, the tests may no longer be correct. Can you update the tests, if necessary?\n" +
@@ -8416,33 +9050,213 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</div>\n" +
     "\n" +
     "				<div ng-if=\"microtask.reissuedSubmission !== undefined\">\n" +
-    "					This task has been reissued because of \"<strong>{{microtask.reissueMotivation}}</strong>\"\n" +
+    "					This task has been reissued because of \"<strong>{{microtask.reissuedMotivation}}</strong>\"\n" +
     "				</div>\n" +
     "\n" +
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\"  ui-layout-container size=\"35%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"18%\">\n" +
+    "\n" +
     "			<div class=\"section-bar\">\n" +
+    "\n" +
+    "				<span class=\"pull-left title\" ng-if=\"data.selected1 == -1\">\n" +
+    "					Behaviors\n" +
+    "				</span>\n" +
+    "\n" +
+    "\n" +
+    "				<span class=\"pull-left\" ng-if=\"data.selected1 != -1\">\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"toggleSelect1($event)\">\n" +
+    "						<span class=\"glyphicon glyphicon-arrow-left\"></span> Back\n" +
+    "				</button>\n" +
+    "				</span>\n" +
+    "\n" +
+    "				<span class=\"pull-right\">\n" +
+    "					<button class=\"btn btn-sm btn-run\" ng-click=\"run()\">\n" +
+    "						<span class=\"glyphicon glyphicon-play\"></span> Run Tests\n" +
+    "				</button>\n" +
+    "\n" +
+    "\n" +
+    "				<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) \">\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "					</button>\n" +
+    "				</span>\n" +
+    "\n" +
+    "\n" +
+    "				<span class=\"pull-right separator\" ng-if=\"data.selected1 != -1\"></span>\n" +
+    "				<span class=\"pull-right\" ng-if=\"data.selected1 != -1\">\n" +
+    "					<button\n" +
+    "						ng-disabled=\"data.selected1.id === undefined\"\n" +
+    "						class=\"btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}\"\n" +
+    "						ng-click=\"toggleDispute($event);\">\n" +
+    "						<span class=\"glyphicon glyphicon-exclamation-sign\"></span> Report an issue\n" +
+    "				</button>\n" +
+    "				<button class=\"btn btn-sm btn-inspect {{ !data.changedSinceLastRun && data.inspecting ? 'active' : '' }}\" ng-disabled=\"data.changedSinceLastRun\" ng-click=\"toggleInspect($event);\">\n" +
+    "						<span class=\"glyphicon glyphicon-search\"></span>\n" +
+    "						Inspect code\n" +
+    "					</button>\n" +
+    "				</span>\n" +
+    "\n" +
+    "				<span class=\"clearfix\"></span>\n" +
+    "			</div>\n" +
+    "			<div class=\"section-content padding slide from-left\" ng-if=\"data.selected1 == -1\">\n" +
+    "				<div class=\"test-list \">\n" +
+    "					<div class=\"test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
+    "						<div ng-click=\"toggleSelect1($event,te);\">\n" +
+    "							<strong class=\"pull-left\">\n" +
+    "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
+    "								{{ te.description }}\n" +
+    "							</strong>\n" +
+    "							<span class=\"pull-right\">\n" +
+    "								<span ng-if=\"te.running\">\n" +
+    "									running\n" +
+    "								</span>\n" +
+    "							</span>\n" +
+    "							<span class=\"clearfix\"></span>\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "			</div>\n" +
+    "			<div class=\"section-content padding slide from-right\" ng-if=\"data.selected1 != -1\" ng-init=\"t = data.selected1\">\n" +
+    "				<div class=\"test-result\">\n" +
+    "					<div class=\"row\">\n" +
+    "						<div class=\"{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}\">\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-3 col-md-3 row-label\">Status</div>\n" +
+    "								<div class=\"col-sm-9 col-md-9\">\n" +
+    "									<span ng-if=\"!t.dispute.active\">\n" +
+    "										<span ng-if=\"t.result.passed\" class=\"color-passed\">\n" +
+    "											<span class=\"glyphicon glyphicon-ok-sign\"></span> passed\n" +
+    "									</span>\n" +
+    "									<span ng-if=\"!t.result.passed\" class=\"color-failed\">\n" +
+    "											<span class=\"glyphicon glyphicon-remove-sign\"></span> failed\n" +
+    "									</span>\n" +
+    "									<span>\n" +
+    "											{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}\n" +
+    "										</span>\n" +
+    "									</span>\n" +
+    "									<span ng-if=\"t.dispute.active\" class=\"color-disputed\">\n" +
+    "										<span class=\"glyphicon glyphicon-exclamation-sign\"></span> reported\n" +
+    "									</span>\n" +
+    "\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-3 col-md-3 row-label\">description</div>\n" +
+    "								<div class=\"col-sm-9 col-md-9\">it {{ t.description }}</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\" ng-if=\"t.result.message\">\n" +
+    "								<div class=\"col-sm-3 col-md-3 row-label\">Message</div>\n" +
+    "								<div class=\"col-sm-9 col-md-9\">{{ t.result.message }}</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-3 col-md-3 row-label\">Code</div>\n" +
+    "								<div class=\"col-sm-9 col-md-9\">\n" +
+    "									<js-reader code=\"t.code\"></js-reader>\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "\n" +
+    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"!t.dispute.active && t.result.showDiff\">\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-12 col-md-12 row-label\">\n" +
+    "									<span style=\"width:10px;height:10px;display:inline-block;background-color:#CDFFCD\"></span> Expected\n" +
+    "\n" +
+    "\n" +
+    "									<span style=\"width:10px;height:10px;display:inline-block;background-color:#FFD7D7\"></span> Actual\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-12 col-md-12\">\n" +
+    "									<json-diff-reader old=\"t.result.expected\" new=\"t.result.actual\"></json-diff-reader>\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "\n" +
+    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"t.dispute.active\">\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-12 col-md-12 row-label\">Reported reason</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-12 col-md-12\">\n" +
+    "									<textarea class=\"dispute\" ng-model=\"t.dispute.text\"></textarea>\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "\n" +
+    "				</div>\n" +
+    "			</div>\n" +
+    "		</div>\n" +
+    "\n" +
+    "		<div class=\"section\" ui-layout-container size=\"45%\">\n" +
+    "			<div class=\"section-bar\" ng-show=\"!data.editingStub\">\n" +
     "				<span class=\"title\">\n" +
-    "					Function Description\n" +
+    "					Function Editor\n" +
     "				</span>\n" +
     "				<span class=\"pull-right\">\n" +
-    "					<button class=\"btn btn-sm\"\n" +
-    "						ng-if=\"!data.dispute.active\"\n" +
-    "						ng-click=\"data.dispute.active = !data.dispute.active; trackInteraction('Click Dispute Function', 'Describe Behavior', $event)\" >\n" +
-    "						Report an issue with the function <span class=\"glyphicon glyphicon-exclamation-sign\"></span>\n" +
-    "					</button>\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)\">\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "				</button>\n" +
+    "				</span>\n" +
+    "				<span class=\"pull-right\">\n" +
+    "        	<button class=\"btn btn-sm\" ng-if=\"!data.dispute.active\" style=\"padding-left: 30px\"\n" +
+    "					ng-click=\"data.dispute.active = !data.dispute.active; trackInteraction('Click Dispute Function', 'Describe Behavior', $event)\" >\n" +
+    "           Report an issue with the function <span class=\"glyphicon glyphicon-exclamation-sign\"></span>\n" +
+    "				</button>\n" +
     "				</span>\n" +
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
-    "			<div class=\"section-content padding\">\n" +
-    "				<js-reader code=\"funct.getSignature()\" ></js-reader>\n" +
+    "			<div class=\"section-content slide from-left\" ng-show=\"!data.editingStub\">\n" +
+    "				<function-editor function=\"funct\" editor=\"data.editor\" logs=\"(!data.inspecting) ? undefined : data.selected1.logs \" callbacks=\"editorCallbacks\">\n" +
+    "				</function-editor>\n" +
+    "			</div>\n" +
+    "\n" +
+    "			<div class=\"section-bar\" ng-show=\"data.editingStub\">\n" +
+    "				<span class=\"title\">\n" +
+    "					Stub Editor\n" +
+    "				</span>\n" +
+    "				<span class=\"pull-right\">\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"cancelStub()\">Cancel</button>\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"saveStub()\">Save stub</button>\n" +
+    "				</span>\n" +
+    "				<span class=\"clearfix\"></span>\n" +
+    "			</div>\n" +
+    "			<div class=\"section-content padding slide from-right\" style=\"z-index:100\" ng-if=\"data.editingStub\">\n" +
+    "				<div class=\"stub\" ng-form=\"stubForm\">\n" +
+    "					<div class=\"form-group\">\n" +
+    "						<label>Function Description</label>\n" +
+    "						<js-reader class=\"form-control code\" code=\"data.editingStub.functionDescription\"></js-reader>\n" +
+    "					</div>\n" +
+    "\n" +
+    "					<div class=\"form-group\" ng-repeat=\"p in data.editingStub.parameters\">\n" +
+    "						<label>\n" +
+    "							{{p.name + ' {' + p.type + '}' }}\n" +
+    "						</label>\n" +
+    "\n" +
+    "						<json-reader class=\"form-control code\" ng-model=\"p.value\"></json-reader>\n" +
+    "					</div>\n" +
+    "\n" +
+    "					<div class=\"form-group\">\n" +
+    "						<label for=\"\">\n" +
+    "							Output {{ '{' + data.editingStub.output.type + '}' }}\n" +
+    "						</label>\n" +
+    "\n" +
+    "						<div class=\"form-control code\" json-editor=\"{ type: data.editingStub.output.type, name: 'output' }\" ng-model=\"data.editingStub.output.value\" errors=\"errors\" name=\"output\" required>\n" +
+    "						</div>\n" +
+    "\n" +
+    "						<div class=\"help-block\" ng-messages=\"stubForm.output.$error\">\n" +
+    "							<div ng-message=\"required\">the field output cannot be empty</div>\n" +
+    "							<div ng-message=\"code\">{{errors.code}}</div>\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "\n" +
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
     "\n" +
-    "		<div class=\"section\"  ui-layout-container size=\"60%\" >\n" +
+    "		<div class=\"section\" ui-layout-container size=\"30%\">\n" +
     "\n" +
     "			<div class=\"section-bar\" ng-if=\"data.dispute.active\">\n" +
     "				<span class=\"title pull-left\">Report Function Description</span>\n" +
@@ -8458,20 +9272,9 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				<div class=\"form\" style=\"height:100%\">\n" +
     "					<div class=\"form-group\" style=\"height:100%\">\n" +
     "						<label for=\"description\">Report reason </label>\n" +
-    "						<textarea\n" +
-    "							class=\"form-control\"\n" +
-    "							style=\"height:80%;resize:none;\"\n" +
-    "							placeholder=\"write the reason of the dispute\"\n" +
-    "							name=\"disputeDescription\"\n" +
-    "							ng-model=\"data.dispute.text\"\n" +
-    "							required\n" +
-    "							focus\n" +
-    "							ng-minlength=\"20\"\n" +
-    "							ng-maxlength=\"500\">\n" +
+    "						<textarea class=\"form-control\" style=\"height:80%;resize:none;\" placeholder=\"write the reason of the dispute\" name=\"disputeDescription\" ng-model=\"data.dispute.text\" required focus ng-minlength=\"20\" ng-maxlength=\"500\">\n" +
     "						</textarea>\n" +
-    "						<div class=\"help-block\"\n" +
-    "							 ng-if=\"microtaskForm.disputeDescription.$dirty\"\n" +
-    "							 ng-messages=\"microtaskForm.disputeDescription.$error\" >\n" +
+    "						<div class=\"help-block\" ng-if=\"microtaskForm.disputeDescription.$dirty\" ng-messages=\"microtaskForm.disputeDescription.$error\">\n" +
     "							<div ng-message=\"required\">the report description can't be empty</div>\n" +
     "							<div ng-message=\"minlength\">the minimum length is 20 chars</div>\n" +
     "							<div ng-message=\"maxlength\">the maximum length is 500 chars</div>\n" +
@@ -8488,25 +9291,25 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				<span class=\"pull-right\" ng-if=\"data.selected == -1 && data.tests.length > 0\">\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"addNew($event)\">\n" +
     "						<span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +
-    "					</button>\n" +
+    "				</button>\n" +
     "				</span>\n" +
     "\n" +
     "				<span class=\"pull-left\" ng-if=\"data.selected != -1\">\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"toggleSelect($event)\">\n" +
     "						<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
-    "					</button>\n" +
+    "				</button>\n" +
     "				</span>\n" +
     "\n" +
     "				<span class=\"pull-right\" ng-if=\"data.selected != -1\">\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"!data.selected.deleted\">\n" +
     "						<span class=\"glyphicon glyphicon-remove\" ></span> Remove test\n" +
-    "					</button>\n" +
+    "				</button>\n" +
     "\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"data.selected.deleted\">\n" +
+    "				<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"data.selected.deleted\">\n" +
     "						<span class=\"glyphicon glyphicon-remove\" ></span> Undo remove\n" +
     "					</button>\n" +
     "\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial', 'Describe Behavior - Edit Test', $event)\">\n" +
+    "				<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial', 'Describe Behavior - Edit Test', $event)\">\n" +
     "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
     "					</button>\n" +
     "				</span>\n" +
@@ -8525,70 +9328,46 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "			<div class=\"section-content slide from-left\" ng-if=\"!data.dispute.active && data.tests.length > 0 && data.selected == -1\">\n" +
     "				<div class=\"tests-list has-next \">\n" +
-    "					<div class=\"test-item clickable {{ t.dispute.active ? 'disputed' : '' }}\"\n" +
-    "					     ng-repeat=\"t in data.tests track by $index\">\n" +
+    "					<div class=\"test-item clickable {{ t.dispute.active ? 'disputed' : '' }}\" ng-repeat=\"t in data.tests track by $index\">\n" +
     "						<div ng-click=\"toggleSelect($event,t)\">\n" +
     "							<span class=\"pull-left\">\n" +
     "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
-    "								<span ng-if=\"t.description.length > 0\" ng-bind=\"t.description\"></span>\n" +
-    "								<span ng-if=\"!t.description || t.description.length == 0\" >missing description</span>\n" +
+    "							<span ng-if=\"t.description.length > 0\" ng-bind=\"t.description\"></span>\n" +
+    "							<span ng-if=\"!t.description || t.description.length == 0\">missing description</span>\n" +
     "							</span>\n" +
     "							<span class=\"pull-right\" ng-if=\"t.deleted\">\n" +
-    "								<span class=\"glyphicon glyphicon-remove\"  ></span>\n" +
-    "								removed\n" +
+    "								<span class=\"glyphicon glyphicon-remove\"  ></span> removed\n" +
     "							</span>\n" +
     "							<span class=\"pull-right\" ng-if=\"!t.deleted && !microtaskForm['testForm_'+$index].$valid\">\n" +
-    "								<span class=\"glyphicon glyphicon-exclamation-sign\"></span>\n" +
-    "								invalid\n" +
+    "								<span class=\"glyphicon glyphicon-exclamation-sign\"></span> invalid\n" +
     "							</span>\n" +
     "							<span class=\"clearfix\"></span>\n" +
     "						</div>\n" +
     "					</div>\n" +
     "				</div>\n" +
     "				<div ng-if=\"microtask.promptType !== 'CORRECT'\">\n" +
-    "					<input type=\"checkbox\"\n" +
-    "						ng-model=\"data.isComplete\"\n" +
-    "						id=\"isComplete\"\n" +
-    "						name=\"isComplete\"\n" +
-    "						ng-disabled=\"data.numDeleted == data.tests.length\">\n" +
-    "					<label for=\"isComplete\" >the function is completely described by the previous behaviors</label>\n" +
+    "					<input type=\"checkbox\" ng-model=\"data.isComplete\" id=\"isComplete\" name=\"isComplete\" ng-disabled=\"data.numDeleted == data.tests.length\">\n" +
+    "					<label for=\"isComplete\">the function is completely described by the previous behaviors</label>\n" +
     "				</div>\n" +
     "			</div>\n" +
     "\n" +
-    "			<div class=\"section-content slide from-right padding\"\n" +
-    "				 ng-repeat=\"t in data.tests track by $index\"\n" +
-    "				 ng-if=\"!data.dispute.active && (!t.deleted || data.selected == t)\"\n" +
-    "				 ng-show=\"data.selected == t\">\n" +
+    "			<div class=\"section-content slide from-right padding\" ng-repeat=\"t in data.tests track by $index\" ng-if=\"!data.dispute.active && (!t.deleted || data.selected == t)\" ng-show=\"data.selected == t\">\n" +
     "				<div ng-form=\"{{ 'testForm_'+$index }}\" class=\"form form-material\" ng-init=\"errors = {}\">\n" +
     "\n" +
     "					<div class=\"form-group\">\n" +
     "						<label for=\"description\">Description </label>\n" +
-    "						<input\n" +
-    "							class=\"form-control\"\n" +
-    "							name=\"description\"\n" +
-    "							ng-model=\"t.description\"\n" +
-    "							placeholder=\"insert the description\"\n" +
-    "							ng-minlength=\"5\"\n" +
-    "			           		ng-maxlength=\"120\"\n" +
-    "			           		focus\n" +
-    "							required\n" +
-    "						/>\n" +
+    "						<input class=\"form-control\" name=\"description\" ng-model=\"t.description\" placeholder=\"insert the description\" ng-minlength=\"5\" ng-maxlength=\"120\" focus required />\n" +
     "						<div class=\"help-block\" ng-messages=\"microtaskForm['testForm_'+$index].description.$error\">\n" +
     "							<div ng-if=\"microtaskForm['testForm_'+$index].description.$dirty\">\n" +
     "								<div ng-message=\"required\">the description can't be empty</div>\n" +
-    "							    <div ng-message=\"minlength\">the description can't be less than 5 characters</div>\n" +
-    "							    <div ng-message=\"maxlength\">the description can't exceed 150 characters</div>\n" +
+    "								<div ng-message=\"minlength\">the description can't be less than 5 characters</div>\n" +
+    "								<div ng-message=\"maxlength\">the description can't exceed 150 characters</div>\n" +
     "							</div>\n" +
     "						</div>\n" +
     "					</div>\n" +
     "					<div class=\"form-group\" ng-if=\"t.dispute.active\">\n" +
     "						<label for=\"description\">Report reason </label>\n" +
-    "						<input\n" +
-    "							class=\"form-control\"\n" +
-    "							name=\"description\"\n" +
-    "							ng-model=\"t.dispute.text\"\n" +
-    "			           		disabled=\"disabled\"\n" +
-    "						/>\n" +
+    "						<input class=\"form-control\" name=\"description\" ng-model=\"t.dispute.text\" disabled=\"disabled\" />\n" +
     "					</div>\n" +
     "					<div class=\"form-group\">\n" +
     "						<label>Type</label>\n" +
@@ -8599,69 +9378,41 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "								ng-click=\"$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)\">\n" +
     "							</span>\n" +
     "\n" +
-    "							<span\n" +
-    "								class=\"glyphicon glyphicon-question-sign\"\n" +
-    "								ng-if=\"!t.isSimple\"\n" +
-    "								ng-click=\"$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)\">\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign\" ng-if=\"!t.isSimple\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)\">\n" +
     "							</span>\n" +
     "\n" +
     "						</span>\n" +
-    "						<select class=\"form-control\"\n" +
-    "								ng-model=\"t.isSimple\"\n" +
-    "					            ng-options=\"o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]\">\n" +
+    "						<select class=\"form-control\" ng-model=\"t.isSimple\" ng-options=\"o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]\">\n" +
     "					    </select>\n" +
     "					</div>\n" +
     "					<div class=\"form-group\" ng-if=\"!t.isSimple\">\n" +
     "						<label for=\"code\">Code</label>\n" +
-    "						<div class=\"help-icon\" ng-click=\"trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)\" >\n" +
-    "							<span\n" +
-    "								class=\"glyphicon glyphicon-question-sign\"\n" +
-    "								data-template=\"widgets/test_editor_help.html\"\n" +
-    "								data-auto-close=\"1\"\n" +
-    "								data-placement=\"left\"\n" +
-    "								data-title=\"title of th ehelp\"\n" +
-    "								bs-popover\n" +
-    "								>\n" +
+    "						<div class=\"help-icon\" ng-click=\"trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)\">\n" +
+    "							<span class=\"glyphicon glyphicon-question-sign\" data-template=\"widgets/test_editor_help.html\" data-auto-close=\"1\" data-placement=\"left\" data-title=\"title of th ehelp\" bs-popover>\n" +
     "							</span>\n" +
     "						</div>\n" +
-    "						<div class=\"form-control code\"\n" +
-    "							 test-editor\n" +
-    "							 name=\"code\"\n" +
-    "							 function-name=\"{{funct.name}}\"\n" +
-    "							 ng-model=\"t.code\"\n" +
-    "							 errors=\"errors['code']\"\n" +
-    "							 required >\n" +
+    "						<div class=\"form-control code\" test-editor name=\"code\" function-name=\"{{funct.name}}\" ng-model=\"t.code\" errors=\"errors['code']\" required>\n" +
     "						</div>\n" +
-    "						<div class=\"help-block\"\n" +
-    "							 ng-if=\"microtaskForm['testForm_'+$index].code.$dirty\"\n" +
-    "							 ng-messages=\"microtaskForm['testForm_'+$index].code.$error\" >\n" +
+    "						<div class=\"help-block\" ng-if=\"microtaskForm['testForm_'+$index].code.$dirty\" ng-messages=\"microtaskForm['testForm_'+$index].code.$error\">\n" +
     "							<div ng-message=\"required\">the test code can't be empty</div>\n" +
     "							<div ng-repeat=\"(type,text) in errors['code']\">\n" +
-    "						    	<div ng-message-exp=\"type\">{{ text }}</div>\n" +
-    "					        </div>\n" +
+    "								<div ng-message-exp=\"type\">{{ text }}</div>\n" +
+    "							</div>\n" +
     "						</div>\n" +
     "					</div>\n" +
     "\n" +
-    "					<div ng-if=\"t.isSimple\" ng-form=\"inputs\" >\n" +
-    "						<div class=\"form-group\"  ng-repeat=\"(pIdx,p) in funct.parameters track by p.name\">\n" +
+    "					<div ng-if=\"t.isSimple\" ng-form=\"inputs\">\n" +
+    "						<div class=\"form-group\" ng-repeat=\"(pIdx,p) in funct.parameters track by p.name\">\n" +
     "							<label for=\"inputs\">\n" +
     "								{{p.name + ' {' + p.type + '}' }}\n" +
     "							</label>\n" +
     "							<div class=\"help-icon\" paste-example=\"{ type : p.type }\" ng-model=\"t.inputs[pIdx]\">\n" +
     "								<span>paste example</span>\n" +
     "							</div>\n" +
-    "							<div\n" +
-    "								class=\"form-control code\"\n" +
-    "								json-editor=\"{ type: p.type, name: p.name }\"\n" +
-    "								name=\"{{p.name}}\"\n" +
-    "								ng-model=\"t.inputs[pIdx]\"\n" +
-    "								errors=\"errors[p.name]\"\n" +
-    "								required>\n" +
+    "							<div class=\"form-control code\" json-editor=\"{ type: p.type, name: p.name }\" name=\"{{p.name}}\" ng-model=\"t.inputs[pIdx]\" errors=\"errors[p.name]\" required>\n" +
     "							</div>\n" +
     "\n" +
-    "							<div class=\"help-block\"\n" +
-    "								ng-if=\"inputs[p.name].$dirty\"\n" +
-    "								ng-messages=\"inputs[p.name].$error\" >\n" +
+    "							<div class=\"help-block\" ng-if=\"inputs[p.name].$dirty\" ng-messages=\"inputs[p.name].$error\">\n" +
     "								<div ng-message=\"required\">the field {{p.name}} cannot be empty</div>\n" +
     "								<div ng-message=\"code\">{{errors[p.name].code}}</div>\n" +
     "							</div>\n" +
@@ -8674,17 +9425,9 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "						<div class=\"help-icon\" paste-example=\"{ type : funct.returnType }\" ng-model=\"t.output\">\n" +
     "							<span>paste example</span>\n" +
     "						</div>\n" +
-    "						<div\n" +
-    "							class=\"form-control code\"\n" +
-    "							json-editor=\"{ type: funct.returnType, name: 'output' }\"\n" +
-    "							ng-model=\"t.output\"\n" +
-    "							name=\"output\"\n" +
-    "							errors=\"errors['output']\"\n" +
-    "							required>\n" +
+    "						<div class=\"form-control code\" json-editor=\"{ type: funct.returnType, name: 'output' }\" ng-model=\"t.output\" name=\"output\" errors=\"errors['output']\" required>\n" +
     "						</div>\n" +
-    "						<div class=\"help-block\"\n" +
-    "							ng-if=\"microtaskForm['testForm_'+$index].output.$dirty\"\n" +
-    "							ng-messages=\"microtaskForm['testForm_'+$index].output.$error\" >\n" +
+    "						<div class=\"help-block\" ng-if=\"microtaskForm['testForm_'+$index].output.$dirty\" ng-messages=\"microtaskForm['testForm_'+$index].output.$error\">\n" +
     "							<div ng-message=\"required\">the output can't be empty</div>\n" +
     "							<div ng-message=\"code\">{{errors['output'].code}}</div>\n" +
     "						</div>\n" +
@@ -8698,7 +9441,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "		</div>\n" +
     "\n" +
     "\n" +
-    "</div>\n" +
+    "	</div>\n" +
     "");
 }]);
 
@@ -9149,7 +9892,7 @@ angular.module("microtasks/review/review.html", []).run(["$templateCache", funct
     "<div ng-controller=\"ReviewController\">\n" +
     "\n" +
     "	<div class=\"header bg-color\">\n" +
-    "		<span class=\"type  \">{{::microtask.title}}</span>\n" +
+    "		<span class=\"type  \">Review Work</span>\n" +
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
     "		<span class=\"points\">( {{::microtask.points}} pts )</span>\n" +
     "		<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Review - Microtask', $event)\">\n" +
@@ -9446,24 +10189,22 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
     "	<div class=\"section\" ui-layout-container size=\"10%\">\n" +
     "		<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "			<span>\n" +
-    "				The test suite for <strong ng-bind=\"function.name\"></strong> has been updated by adding, editing, or deleting its tests. Considering just <strong>the changes</strong> to the test suite rather than the test\n" +
-    "				suite as a whole, can you review them?\n" +
+    "				The test suite and implementation for <strong ng-bind=\"function.name\"></strong> has been updated by adding, editing, or deleting its tests and implementation. Considering just <strong>the changes</strong> to the test suite and function implementation, can you review them?\n" +
     "			</span>\n" +
     "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"25%\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"35%\" >\n" +
     "		<div class=\"section-bar\">\n" +
-    "			<span class=\"title\">Function Description</span>\n" +
+    "			<span class=\"title\">Code edits</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content\">\n" +
-    "			<js-reader code=\"funct.getSignature()\" ></js-reader>\n" +
+    "			<js-reader mode=\"diff\" code=\"data.newCode\" old-code=\"data.oldCode\" ></js-reader>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"40%\" >\n" +
+    "	<div class=\"section\" ui-layout-container size=\"30%\" >\n" +
     "		<div class=\"section-bar\" ng-if=\"data.selected == -1\">\n" +
     "			<span class=\"title\">Tests</span>\n" +
     "			<span class=\"pull-right\">\n" +
@@ -9581,32 +10322,115 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
 angular.module("microtasks/review/review_describe_dispute.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("microtasks/review/review_describe_dispute.html",
     "<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
-    "	<div class=\"section\" ui-layout-container size=\"10%\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"7%\">\n" +
     "		<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
-    "			<span>\n" +
-    "				A worker reported an issue with the description of <strong ng-bind=\"function.name\"></strong>. Can you review the reported issue?\n" +
+    "			<span ng-if=\"data.disputeText\">\n" +
+    "				A worker reported an issue with the description of <strong ng-bind=\"data.funct.name\"></strong>. Can you review the reported issue?\n" +
+    "			</span>\n" +
+    "			<span ng-if=\"data.disputedTests\">\n" +
+    "				A worker was asked to implement part of the function and also reported an issue with the following tests. Can you review this work?\n" +
     "			</span>\n" +
     "\n" +
     "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"40%\">\n" +
+    "	<div class=\"section\" ui-layout-container size=\"33%\" >\n" +
     "		<div class=\"section-bar\">\n" +
-    "			<span class=\"title\">Function Description</span>\n" +
+    "			<span class=\"title\">Code edits</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content\">\n" +
-    "			<js-reader code=\"data.fDescription\" ></js-reader>\n" +
+    "			<js-reader mode=\"diff\" code=\"data.newCode\" old-code=\"data.oldCode\" ></js-reader>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div class=\"section\" ui-layout-container size=\"25%\" >\n" +
+    "	<div class=\"section\" ui-layout-container size=\"{{!data.disputedTests ? 35 : 10}}%\" ng-if=\"data.disputeText\">\n" +
     "		<div class=\"section-bar\">\n" +
     "			<span class=\"title\">Report description</span>\n" +
     "		</div>\n" +
     "		<div class=\"section-content padding\">\n" +
     "			<span ng-bind=\"data.disputeText\"></span>\n" +
+    "		</div>\n" +
+    "	</div>\n" +
+    "\n" +
+    "	<div class=\"section\" ui-layout-container size=\"{{!data.disputeText ? 35 : 25}}%\" ng-if=\"data.disputedTests\">\n" +
+    "		<div class=\"section-bar\" ng-if=\"data.selected == -1\">\n" +
+    "			<span class=\"title\">Reported Tests</span>\n" +
+    "		</div>\n" +
+    "		<div class=\"section-content slide from-left\" ng-if=\"data.selected == -1\">\n" +
+    "			<div class=\"tests-list\">\n" +
+    "				<div class=\"test-item clickable\" ng-repeat=\"t in data.disputedTests track by $index\">\n" +
+    "					<div ng-click=\"data.selected = t\">\n" +
+    "						<span >\n" +
+    "							<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
+    "							<span ng-bind=\"t.description\"></span>\n" +
+    "						</span>\n" +
+    "						<span class=\"clearfix\"></span>\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "			</div>\n" +
+    "		</div>\n" +
+    "		<div class=\"section-bar\" ng-if=\"data.selected != -1\">\n" +
+    "			<span class=\"pull-left\" >\n" +
+    "				<button class=\"btn btn-sm\" ng-click=\"data.selected = -1\">\n" +
+    "					<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
+    "				</button>\n" +
+    "			</span>\n" +
+    "		</div>\n" +
+    "		<div class=\"section-content slide from-right padding\"\n" +
+    "				 ng-repeat=\"t in data.disputedTests track by $index\"\n" +
+    "				 ng-if=\"data.selected == t\">\n" +
+    "				<div ng-form=\"{{ 'testForm_'+$index }}\" class=\"form form-material\" ng-init=\"errors = {}\">\n" +
+    "\n" +
+    "					<div class=\"form-group\">\n" +
+    "						<label for=\"disputetext\">Dispute reason </label>\n" +
+    "						<div class=\"form-control form-control-static\" name=\"disputetext\">\n" +
+    "							{{ t.disputeText }}\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "					<div class=\"form-group\">\n" +
+    "						<label for=\"description\">Description </label>\n" +
+    "						<div class=\"form-control form-control-static\" name=\"description\">\n" +
+    "							{{t.description}}\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "					<div class=\"form-group\">\n" +
+    "						<label>Type</label>\n" +
+    "						<div class=\"form-control form-control-static\" name=\"description\">\n" +
+    "							{{t.isSimple ? 'simple' : 'advanced'}}\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "					<div class=\"form-group\" ng-if=\"!t.isSimple\">\n" +
+    "						<label for=\"code\">Code</label>\n" +
+    "						<div class=\"form-control form-control-static\" js-reader code=\"t.code\"></div>\n" +
+    "					</div>\n" +
+    "\n" +
+    "					<div ng-if=\"t.isSimple\" ng-form=\"inputs\" >\n" +
+    "						<div class=\"form-group\"  ng-repeat=\"(pIdx,p) in funct.parameters track by p.name\">\n" +
+    "							<label for=\"inputs\">\n" +
+    "								{{p.name + ' {' + p.type + '}' }}\n" +
+    "							</label>\n" +
+    "\n" +
+    "							<div\n" +
+    "								class=\"form-control code\"\n" +
+    "								json-reader\n" +
+    "								name=\"{{p.name}}\"\n" +
+    "								ng-model=\"t.inputs[pIdx]\">\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "\n" +
+    "					</div>\n" +
+    "\n" +
+    "					<div class=\"form-group\" ng-if=\"t.isSimple\">\n" +
+    "						<label for=\"code\">Output {{ '{' + funct.returnType + '}'}}</label>\n" +
+    "						<div\n" +
+    "							class=\"form-control code\"\n" +
+    "							json-reader\n" +
+    "							ng-model=\"t.output\"\n" +
+    "							name=\"output\">\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "				</div>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
@@ -9822,7 +10646,7 @@ angular.module("newsfeed/news_detail.html", []).run(["$templateCache", function 
     "        <label ng-if=\"data.isReview\">Given review</label>\n" +
     "        <p>\n" +
     "            <div>\n" +
-    "                <span ng-repeat=\"currentValue in [1,2,3,4,5] track by $index\"  \n" +
+    "                <span ng-repeat=\"currentValue in [1,2,3,4,5] track by $index\"\n" +
     "                      class=\"rating-star {{ data.review.score >= currentValue ? 'full' : '' }}\">\n" +
     "                </span>\n" +
     "                <span class=\"clearfix\"></span><br />\n" +
@@ -9841,19 +10665,20 @@ angular.module("newsfeed/news_detail.html", []).run(["$templateCache", function 
     "                <button type=\"button\" class=\"btn btn-xs btn-default\" ng-click=\"show = false\">Cancel</button>\n" +
     "                <button type=\"submit\" class=\"btn btn-xs btn-primary\">Challenge</button>\n" +
     "            </span>\n" +
-    "                \n" +
+    "\n" +
     "            <div class=\"clearfix\"></div>\n" +
     "        </form>-->\n" +
     "    </div>\n" +
-    "</div>");
+    "</div>\n" +
+    "");
 }]);
 
 angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("newsfeed/news_detail_DescribeFunctionBehavior.html",
     "<label>Title</label>\n" +
     "<p ng-switch=\"data.promptType\">\n" +
-    "    <span ng-switch-when=\"WRITE\">write a test</span>\n" +
-    "    <span ng-switch-when=\"CORRECT\">correct test(s)</span>\n" +
+    "    <span ng-switch-when=\"WRITE\"> You were asked to implement part of the function and/or write a test for function <strong ng-bind=\"funct.name\"></strong> </span>\n" +
+    "    <span ng-switch-when=\"CORRECT\">You were asked to fix an issue that was reported for the function <strong ng-bind=\"funct.name\"></strong>. correct implementation and/or test(s)</span>\n" +
     "    <span ng-switch-when=\"FUNCTION_CHANGED'\">fix test(s)</span>\n" +
     "</p>\n" +
     "\n" +
@@ -9861,10 +10686,10 @@ angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$
     "<label>Description</label>\n" +
     "<p ng-switch=\"data.promptType\">\n" +
     "    <span ng-switch-when=\"WRITE\">\n" +
-    "        Write test(s) for the function <strong>{{data.functionName}}</strong>.\n" +
+    "        Write implementation and/or test(s) for the function <strong>{{data.functionName}}</strong>.\n" +
     "    </span>\n" +
     "    <span ng-switch-when=\"CORRECT\">\n" +
-    "        Correct a test for the function <strong>{{data.functionName}}</strong>\n" +
+    "        Correct implementation and/or a test for the function <strong>{{data.functionName}}</strong>\n" +
     "    </span>\n" +
     "    <span ng-switch-when=\"FUNCTION_CHANGED'\">\n" +
     "        Fix the test for the function <strong>{{data.functionName}}</strong> after a change of signature.\n" +
@@ -9872,13 +10697,18 @@ angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$
     "</span>\n" +
     "</p>\n" +
     "\n" +
-    "<label>Submitted tests</label>\n" +
+    "<label>Code edits</label>\n" +
     "<p>\n" +
+    "    <js-reader mode=\"diff\" code=\"data.newCode\" old-code=\"data.oldCode\" ></js-reader>\n" +
+    "</p>\n" +
+    "\n" +
+    "<label ng-if=\"data.tests.length > 0\">Submitted tests</label>\n" +
+    "<p ng-if=\"data.tests.length > 0\">\n" +
     "    <div class=\"tests-list\" bs-collapse ng-model=\"data.openedTests\" data-allow-multiple=\"true\">\n" +
     "        <div ng-repeat=\"t in data.tests\">\n" +
     "            <div class=\"test-item clickable\" bs-collapse-toggle>\n" +
     "\n" +
-    "                \n" +
+    "\n" +
     "                <strong>{{t.description}}</strong>\n" +
     "\n" +
     "                <small class=\"pull-right\" ng-if=\"t.edited\">\n" +
@@ -9901,7 +10731,7 @@ angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$
     "                        <label for=\"inputs\">\n" +
     "                            Input: {{p.name + ' {' + p.type + '}' }}\n" +
     "                        </label>\n" +
-    "                    \n" +
+    "\n" +
     "                        <div\n" +
     "                            class=\"form-control code\"\n" +
     "                            json-reader\n" +
@@ -9931,7 +10761,7 @@ angular.module("newsfeed/news_detail_DescribeFunctionBehavior.html", []).run(["$
     "    </div>\n" +
     "    <strong ng-if=\"data.isComplete\">the test suite is marked as complete</strong>\n" +
     "</p>\n" +
-    "   ");
+    "");
 }]);
 
 angular.module("newsfeed/news_detail_DescribeFunctionBehavior_disputed.html", []).run(["$templateCache", function ($templateCache) {
@@ -10057,17 +10887,23 @@ angular.module("newsfeed/news_detail_Review_DescribeFunctionBehavior.html", []).
   $templateCache.put("newsfeed/news_detail_Review_DescribeFunctionBehavior.html",
     "<label>Description</label>\n" +
     "<p>\n" +
-    "    The test suite for <strong ng-bind=\"data.reviewed.functionName\"></strong> has been updated by adding, editing, or deleting its tests. \n" +
+    "    The test suite and function implementation for <strong ng-bind=\"data.reviewed.functionName\"></strong> has been updated by adding, editing, or deleting its tests. Can you review this work?\n" +
     "</p>\n" +
     "\n" +
     "\n" +
-    "<label>Submitted tests</label>\n" +
+    "<label>Code edits</label>\n" +
     "<p>\n" +
+    "    <js-reader mode=\"diff\" code=\"data.reviewed.newCode\" old-code=\"data.reviewed.oldCode\" ></js-reader>\n" +
+    "</p>\n" +
+    "\n" +
+    "\n" +
+    "<label ng-if=\"data.reviewed.tests.length > 0\">Submitted tests</label>\n" +
+    "<p ng-if=\"data.reviewed.tests.length > 0\">\n" +
     "    <div class=\"tests-list\" bs-collapse ng-model=\"data.reviewed.openedTests\" data-allow-multiple=\"true\">\n" +
     "        <div ng-repeat=\"t in data.reviewed.tests\">\n" +
     "            <div class=\"test-item clickable\" bs-collapse-toggle>\n" +
     "\n" +
-    "                \n" +
+    "\n" +
     "                <strong>{{t.description}}</strong>\n" +
     "\n" +
     "                <small class=\"pull-right\" ng-if=\"t.edited\">\n" +
@@ -10090,7 +10926,7 @@ angular.module("newsfeed/news_detail_Review_DescribeFunctionBehavior.html", []).
     "                        <label for=\"inputs\">\n" +
     "                            Input: {{p.name + ' {' + p.type + '}' }}\n" +
     "                        </label>\n" +
-    "                    \n" +
+    "\n" +
     "                        <div\n" +
     "                            class=\"form-control code\"\n" +
     "                            json-reader\n" +
@@ -10134,6 +10970,62 @@ angular.module("newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.ht
     "<label>Reported issue</label>\n" +
     "<p>\n" +
     "    {{ data.reviewed.disputeText }}\n" +
+    "</p>\n" +
+    "\n" +
+    "<label>Code edits</label>\n" +
+    "<p>\n" +
+    "    <js-reader mode=\"diff\" code=\"data.reviewed.newCode\" old-code=\"data.reviewed.oldCode\" ></js-reader>\n" +
+    "</p>\n" +
+    "\n" +
+    "\n" +
+    "<label>Reported tests</label>\n" +
+    "<p>\n" +
+    "    <div class=\"tests-list\" bs-collapse ng-model=\"data.reviewed.openedTests\" data-allow-multiple=\"true\">\n" +
+    "        <div ng-repeat=\"t in data.reviewed.disputedTests\">\n" +
+    "            <div class=\"test-item clickable\" bs-collapse-toggle>\n" +
+    "                <strong>{{t.description}}</strong>\n" +
+    "            </div>\n" +
+    "            <div bs-collapse-target style=\"padding:5px\">\n" +
+    "                <div class=\"form-group\">\n" +
+    "					<label for=\"disputetext\">Report description </label>\n" +
+    "					<div class=\"form-control form-control-static\" name=\"disputetext\">\n" +
+    "						{{ t.disputeText }}\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "                <div ng-if=\"t.isSimple\">\n" +
+    "                    <div class=\"form-group\"  ng-repeat=\"(pIdx,p) in data.reviewed.functionParameters track by p.name\">\n" +
+    "                        <label for=\"inputs\">\n" +
+    "                            Input: {{p.name + ' {' + p.type + '}' }}\n" +
+    "                        </label>\n" +
+    "\n" +
+    "                        <div\n" +
+    "                            class=\"form-control code\"\n" +
+    "                            json-reader\n" +
+    "                            name=\"{{p.name}}\"\n" +
+    "                            ng-model=\"t.inputs[pIdx]\">\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                    <div class=\"form-group\" ng-if=\"t.isSimple\">\n" +
+    "                        <label for=\"code\">Output {{ '{' + funct.returnType + '}'}}</label>\n" +
+    "                        <div\n" +
+    "                            class=\"form-control code\"\n" +
+    "                            json-reader\n" +
+    "                            ng-model=\"t.output\"\n" +
+    "                            name=\"output\">\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "                <div ng-if=\"!t.isSimple\">\n" +
+    "\n" +
+    "                    <div class=\"form-group\">\n" +
+    "                        <label for=\"code\">Code</label>\n" +
+    "                        <div class=\"form-control form-control-static\" js-reader code=\"t.code\"></div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <strong ng-if=\"data.isComplete\">the test suite is marked as complete</strong>\n" +
     "</p>\n" +
     "");
 }]);

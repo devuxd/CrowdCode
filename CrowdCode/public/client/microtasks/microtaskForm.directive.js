@@ -40,7 +40,7 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 
 			$scope.taskData.startBreak = false;
 
-			var waitTimeInSeconds = 10;
+			var waitTimeInSeconds = 3;
 			var checkQueueTimeout = null;
 			var timerInterval     = null;
 			$scope.breakMode     = false;

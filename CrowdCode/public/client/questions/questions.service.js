@@ -136,16 +136,16 @@ angular
 			var url = '';
 
 			if( type != 'question' || formData.id == 0 )
-				url = 'insert?type=' + type;
+				url = 'insert?workerId='+workerId+'&type=' + type;
 			else
-				url = 'update?id=' + formData.id;
+				url = 'update?workerId='+workerId+'&id=' + formData.id;
 
 			// replace all the occurrences of the newline '\n' with the html <br>
 			// TODO: check for other formatting syntax
 			formData.text = formData.text.replace(new RegExp('\n', 'g'),'<br />');
 
 
-			$http.post('/' + $rootScope.projectId + '/questions/' + url , formData)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/' + url , formData)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -157,7 +157,7 @@ angular
 
 		function tag(id, tag, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/tag?id=' + id + '&tag='+tag+'&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/tag?workerId='+workerId+'&id=' + id + '&tag='+tag+'&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -167,9 +167,9 @@ angular
 			return deferred.promise;
 		}
 
-		function vote(id, remove){
+		function vote(questionId, id, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/vote?workerId='+workerId+'&questionId='+ questionId +'&id=' + id + '&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -179,9 +179,9 @@ angular
 			return deferred.promise;
 		}
 
-		function report(id, remove){
+		function report(questionId, id, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/report?id=' + id + '&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/report?workerId='+workerId+'&questionId='+ questionId +'&id=' + id + '&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -193,7 +193,7 @@ angular
 
 		function linkArtifact(id, artifactId, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/link?id=' + id + '&artifactId='+artifactId+'&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/link?workerId='+workerId+'&id=' + id + '&artifactId='+artifactId+'&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -205,7 +205,7 @@ angular
 
 		function setClosed(id, closed){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/close?id=' + id + '&closed='+closed)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/close?workerId='+workerId+'&id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -237,7 +237,7 @@ angular
 		}
 
 		function sendQuestionViews(views){
-			$http.get('/' + projectId + '/ajax/questionViews?id='+ views)
+			$http.get('/api/v1/' + $rootScope.projectId + '/questionViews?workerId='+workerId+'&id='+ views)
 			.success(function(data, status, headers, config) {
 			})
 			.error(function(data, status, headers, config) {
@@ -247,7 +247,7 @@ angular
 
 		function addWorkerView(id){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/view?workerId='+workerId+'&id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
 					updateViewCounter(id);
 					deferred.resolve();

@@ -5416,14 +5416,14 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,firebas
 				var remove = false;
 				if( questioning.votersId && questioning.votersId.indexOf(workerId) !==-1)
 					remove = true;
-				questionsService.vote(questioning.id,remove);
+				questionsService.vote($scope.sel.id,questioning.id,remove);
 			}
 
 			function toggleVoteDown(questioning){
 				var remove = false;
 				if( questioning.reportersId && questioning.reportersId.indexOf(workerId) !==-1)
 					remove= true;
-				questionsService.report(questioning.id,remove);
+				questionsService.report($scope.sel.id,questioning.id,remove);
 			}
 
 			function addTag(){
@@ -5759,16 +5759,16 @@ angular
 			var url = '';
 
 			if( type != 'question' || formData.id == 0 )
-				url = 'insert?type=' + type;
+				url = 'insert?workerId='+workerId+'&type=' + type;
 			else
-				url = 'update?id=' + formData.id;
+				url = 'update?workerId='+workerId+'&id=' + formData.id;
 
 			// replace all the occurrences of the newline '\n' with the html <br>
 			// TODO: check for other formatting syntax
 			formData.text = formData.text.replace(new RegExp('\n', 'g'),'<br />');
 
 
-			$http.post('/' + $rootScope.projectId + '/questions/' + url , formData)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/' + url , formData)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5780,7 +5780,7 @@ angular
 
 		function tag(id, tag, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/tag?id=' + id + '&tag='+tag+'&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/tag?workerId='+workerId+'&id=' + id + '&tag='+tag+'&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5790,9 +5790,9 @@ angular
 			return deferred.promise;
 		}
 
-		function vote(id, remove){
+		function vote(questionId, id, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/vote?id=' + id + '&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/vote?workerId='+workerId+'&questionId='+ questionId +'&id=' + id + '&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5802,9 +5802,9 @@ angular
 			return deferred.promise;
 		}
 
-		function report(id, remove){
+		function report(questionId, id, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/report?id=' + id + '&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/report?workerId='+workerId+'&questionId='+ questionId +'&id=' + id + '&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5816,7 +5816,7 @@ angular
 
 		function linkArtifact(id, artifactId, remove){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/link?id=' + id + '&artifactId='+artifactId+'&remove='+remove)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/link?workerId='+workerId+'&id=' + id + '&artifactId='+artifactId+'&remove='+remove)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5828,7 +5828,7 @@ angular
 
 		function setClosed(id, closed){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/close?id=' + id + '&closed='+closed)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/close?workerId='+workerId+'&id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
 					deferred.resolve();
 				})
@@ -5860,7 +5860,7 @@ angular
 		}
 
 		function sendQuestionViews(views){
-			$http.get('/' + projectId + '/ajax/questionViews?id='+ views)
+			$http.get('/api/v1/' + $rootScope.projectId + '/questionViews?workerId='+workerId+'&id='+ views)
 			.success(function(data, status, headers, config) {
 			})
 			.error(function(data, status, headers, config) {
@@ -5870,7 +5870,7 @@ angular
 
 		function addWorkerView(id){
 			var deferred = $q.defer();
-			$http.post('/' + $rootScope.projectId + '/questions/view?id=' + id + '&closed='+closed)
+			$http.post('/api/v1/' + $rootScope.projectId + '/questions/view?workerId='+workerId+'&id=' + id + '&closed='+closed)
 				.success(function(data, status, headers, config) {
 					updateViewCounter(id);
 					deferred.resolve();
@@ -6906,14 +6906,14 @@ angular
 				userLoginRef.once("value", function(userLogin) {
 					//if the user doesn't uddate the timer for more than 30 seconds than log it out
 				  	if(userLogin.val()===null || clientTime - userLogin.val().timeStamp > 30000){
-				  		$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
+				  	/*	$http.post('/' + $rootScope.projectId + '/logout?workerid=' + jobData.workerId)
 					  		.success(function(data, status, headers, config) {
 					  			console.log("logged out seccessfully");
 					  			userLoginRef.remove();
 					  			$interval.cancel(interval);
 					  			logoutWorker.onDisconnect().cancel();
 					  			whenFinished();
-					  		});
+					  		}); */
 					 //if the timestamp of the login is more than the timesatmp of the logout means that the user logged in again
 					 //so cancel the work
 					} else if(userLogin.val()!==null && userLogin.val().timeStamp - jobData.timeStamp > 1000)
@@ -9085,7 +9085,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "				<span class=\"pull-right separator\" ng-if=\"data.selected1 != -1\"></span>\n" +
     "				<span class=\"pull-right\" ng-if=\"data.selected1 != -1\">\n" +
-    "					<button ng-if=\"!microtask.reissuedSubmission\"\n" +
+    "					<button\n" +
     "						ng-disabled=\"data.selected1.id === undefined\"\n" +
     "						class=\"btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}\"\n" +
     "						ng-click=\"toggleDispute($event);\">\n" +
@@ -9101,7 +9101,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "			<div class=\"section-content padding slide from-left\" ng-if=\"data.selected1 == -1\">\n" +
     "				<div class=\"test-list \">\n" +
-    "					<div class=\"test-item clickable {{ !te.running ? ((t.dispute.active && !microtask.reissuedSubmission) ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
+    "					<div class=\"test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
     "						<div ng-click=\"toggleSelect1($event,te);\">\n" +
     "							<strong class=\"pull-left\">\n" +
     "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
@@ -9124,7 +9124,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "							<div class=\"row\">\n" +
     "								<div class=\"col-sm-3 col-md-3 row-label\">Status</div>\n" +
     "								<div class=\"col-sm-9 col-md-9\">\n" +
-    "									<span ng-if=\"!t.dispute.active || microtask.reissuedSubmission\">\n" +
+    "									<span ng-if=\"!t.dispute.active\">\n" +
     "										<span ng-if=\"t.result.passed\" class=\"color-passed\">\n" +
     "											<span class=\"glyphicon glyphicon-ok-sign\"></span> passed\n" +
     "									</span>\n" +
@@ -9135,7 +9135,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "											{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}\n" +
     "										</span>\n" +
     "									</span>\n" +
-    "									<span ng-if=\"t.dispute.active && !microtask.reissuedSubmission\" class=\"color-disputed\">\n" +
+    "									<span ng-if=\"t.dispute.active\" class=\"color-disputed\">\n" +
     "										<span class=\"glyphicon glyphicon-exclamation-sign\"></span> reported\n" +
     "									</span>\n" +
     "\n" +
@@ -9157,7 +9157,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "							</div>\n" +
     "						</div>\n" +
     "\n" +
-    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"(!t.dispute.active || microtask.reissuedSubmission) && t.result.showDiff\">\n" +
+    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"!t.dispute.active && t.result.showDiff\">\n" +
     "							<div class=\"row\">\n" +
     "								<div class=\"col-sm-12 col-md-12 row-label\">\n" +
     "									<span style=\"width:10px;height:10px;display:inline-block;background-color:#CDFFCD\"></span> Expected\n" +
@@ -9173,7 +9173,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "							</div>\n" +
     "						</div>\n" +
     "\n" +
-    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"t.dispute.active && !microtask.reissuedSubmission\">\n" +
+    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"t.dispute.active\">\n" +
     "							<div class=\"row\">\n" +
     "								<div class=\"col-sm-12 col-md-12 row-label\">Reported reason</div>\n" +
     "							</div>\n" +

@@ -45,14 +45,14 @@ angular.module('crowdCode').directive('questionDetail',function($timeout,firebas
 				var remove = false;
 				if( questioning.votersId && questioning.votersId.indexOf(workerId) !==-1)
 					remove = true;
-				questionsService.vote(questioning.id,remove);
+				questionsService.vote($scope.sel.id,questioning.id,remove);
 			}
 
 			function toggleVoteDown(questioning){
 				var remove = false;
 				if( questioning.reportersId && questioning.reportersId.indexOf(workerId) !==-1)
 					remove= true;
-				questionsService.report(questioning.id,remove);
+				questionsService.report($scope.sel.id,questioning.id,remove);
 			}
 
 			function addTag(){
