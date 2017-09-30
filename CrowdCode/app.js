@@ -1,6 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const MemoryStore = require('session-memory-store')(session);
+const MemcachedStore = require('connect-memjs')(session);
 const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
@@ -11,6 +13,8 @@ const cors = require('cors')({
 });
 const status = require('http-status');
 const wagner = require('wagner-core');
+const MEMCACHE_URL = '127.0.0.1:11211';
+
 require('./lib/dependencies')(wagner);
 const app = express();
 // set the view engine to ejs
@@ -25,7 +29,10 @@ app.use(session({
   secret: 'my express secret',
   saveUninitialized: true,
   resave: true,
-  store: new FileStore()
+  store: new MemoryStore({
+      expires: 43200,
+      checkperiod: 600
+  })
 }));
 const isAuth = wagner.invoke(function() {
   return (req, res, next) => {
@@ -62,18 +69,19 @@ app.post('/authenticate', wagner.invoke(function(UserService, AdminFirebase, Fir
               if (workers_list.indexOf(worker_id) < 0) {
                 firebase.createWorker(worker_id, worker_name, avatar_url);
               }
-            }).catch(err => {
-
+            }).catch(function(err) {
+                console.trace(err);
             });
           })
-          .catch(function(error) {
-            console.log("Error fetching user data:", error);
+          .catch(function(err) {
+            console.log("Error fetching user data:", err);
           });
         res.json({
           'Success': 200
         })
-      }).catch(function(error) {
+      }).catch(function(err) {
         // Handle error
+        console.trace(err);
       });
   };
 }));

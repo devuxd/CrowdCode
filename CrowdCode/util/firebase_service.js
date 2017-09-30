@@ -1588,7 +1588,8 @@ module.exports = function(AdminFirebase, Q) {
       worker_schema = {
         name: worker_name,
         avatarUrl: avatar_url,
-        workerHandle: "null"
+        workerHandle: "null",
+        fetchTime: "null"
       }
       var path = 'Workers';
       var created_child = root_ref.child(path).child(worker_id).set(worker_schema);
