@@ -6455,8 +6455,8 @@ angular
 
     // get the synced objects from the backend
     var tutorialsOn        = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('status').child('settings').child('tutorials'));
-    var completedTutorials = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('completedTutorials'));
-    var tutorialCounter    = $firebaseObject(firebase.database().ref().child('Projects').child(projectId).child('workers').child(workerId).child('tutorialCounter'));
+    var completedTutorials = $firebaseObject(firebase.database().ref().child('Workers').child(workerId).child('completedTutorials'));
+    var tutorialCounter    = $firebaseObject(firebase.database().ref().child('Workers').child(workerId).child('tutorialCounter'));
 
 
     var queue    = [];

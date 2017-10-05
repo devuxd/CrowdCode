@@ -29,9 +29,11 @@ app.use(session({
   secret: 'my express secret',
   saveUninitialized: true,
   resave: true,
-  store: new MemoryStore({
-      expires: 43200,
-      checkperiod: 600
+  store: new FileStore({
+      retries: 10,
+      minTimeout: 100,
+      maxTimeout: 200,
+      path: path.join(__dirname,'sessions')
   })
 }));
 const isAuth = wagner.invoke(function() {
