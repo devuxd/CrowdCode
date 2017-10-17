@@ -161,8 +161,8 @@ module.exports = function(wagner) {
     }
   }));
 
-  api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService, UserService, MicrotaskService) {
-    return function(req, res) {
+  api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService) {
+    return function(req, res) {console.log("5");
       let id = req.params.id;
       var user = req.user;
       if(user === undefined || user === null) res.status(status.UNAUTHORIZED).send('Unauthorized');
@@ -204,11 +204,15 @@ module.exports = function(wagner) {
   });
 
   api.get('/:projectId/reset', wagner.invoke(function(FirebaseService, MicrotaskService){
+    var firebase = FirebaseService;
+    var microtask = MicrotaskService;
     return function(req, res){
-      let projectId = req.params.projectId;
-      FirebaseService.resetProject(projectId,req.user.uid).then(function(){
-        //MicrotaskService.loadProject(projectId);
-        res.json({'result': 'successful'});
+      var projectId = req.params.projectId;
+
+      var reset_promise = firebase.resetProject(projectId,req.user.uid);
+        reset_promise.then(function(){
+              microtask.deleteProject(projectId);
+              res.json({'result': 'successful'});
       }).catch(function(err){
         console.error(err);
         res.status(status.INTERNAL_SERVER_ERROR).json({'result' : 'failed, please contact administrator!'});

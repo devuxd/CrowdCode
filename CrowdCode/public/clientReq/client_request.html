@@ -261,7 +261,35 @@
 								</div>
 							</div>
 							<div class="form-group col-sm-12">
-								<label class=" control-label col-sm-2 reset-padding">stubs:</label>
+								<label class=" control-label col-sm-2 reset-padding">Required functions</label>
+								<div class="form-group col-sm-10 reset-padding" >
+									<div class="col-sm-12 row reset-padding" ng-repeat="dependent in function.dependent track by $index ">
+										<div ng-form="test{{$index}}" class="form-horizontal col-sm-11" >
+											<div class="col-sm-3 reset-padding">
+												<input type="text" class="form-control pull-left" ng-model="dependent.functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="function1" name="functionName"/>
+												<ul class="help-block" ng-show="param{{$index}}.functionName.$dirty && param{{$index}}.functionName.$invalid">
+													<li ng-show="param{{$index}}.functionName.$error.required">This field is required!</li>
+													<li ng-show="param{{$index}}.functionName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
+												</ul>
+											</div>
+											<div class="col-sm-5 reset-padding">
+												<span class="pull-left"><b>()</b></span>
+											</div>
+										</div>
+										<div class="col-sm-1 reset-padding">
+											<button ng-click="deleteDependent(functionIndex,$index)" class="btn  pull-right">X</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-12 reset-padding">
+									<button ng-click="addDependent(functionIndex)" class="btn btn-mini pull-right">Add Function</button>
+								</div>
+							</div>
+							<div ng-show="functionIndex!=functions.length-1" class="line-separator"></div>
+							<div class="form-group col-sm-12">
+								<label class=" control-label col-sm-2 reset-padding">stubs</label>
 								<div class="form-group col-sm-10 reset-padding" >
 									<div class="col-sm-12 row reset-padding" ng-repeat="stubs in function.stubs track by $index ">
 										<div ng-form="test{{$index}}" class="form-horizontal col-sm-11" >
@@ -311,7 +339,7 @@
 			</div>
 		</div>
 	    <div class="button-bar">
-	    	<div class="btn-group pull-left" role="group"  >
+	    	<div class="btn-group pull-right" role="group"  >
 	    	  <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-sm">Submit</button>
 	    	</div>
 

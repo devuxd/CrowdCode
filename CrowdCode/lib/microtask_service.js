@@ -56,6 +56,7 @@ module.exports = function(FirebaseService, Q) {
                           var load_microtask_result = loadMicrotasks(project_id);
                           if(load_microtask_result !== "null"){
                               return load_microtask_result.then(function (data) {
+                                  firebase.createEvent(project_id,"Project.Loaded","Project id: "+project_id+" is loaded","Project",project_id);
                                   console.log("Project Loaded "+ project_id);
                                   console.log(Project);
                                   return true;
@@ -65,6 +66,7 @@ module.exports = function(FirebaseService, Q) {
                               });
                           }
                           else{
+                              firebase.createEvent(project_id,"Project.Loaded","Project id: "+project_id+" is loaded","Project",project_id);
                               console.log("Project Loaded "+ project_id);
                               console.log(Project);
                               return true;
@@ -74,10 +76,12 @@ module.exports = function(FirebaseService, Q) {
                         functions.forEach(function (content, function_id) {
                           generateImplementationMicrotasks(project_id, function_id);
                       });
+                      firebase.createEvent(project_id,"Project.Loaded","Project id: "+project_id+" is loaded","Project",project_id);
                         return true;
                   }
               });
           }
+
         }).catch(function(err) {
           console.log(err);console.trace(err);
         });
@@ -373,6 +377,16 @@ module.exports = function(FirebaseService, Q) {
         }
     }
 
+    /* delete the project i.e. delete the contents from memory
+        param project id text
+        return true boolean
+     */
+    function deleteProject(project_id){
+        if(Projects.has(project_id)) {
+            Projects.delete(project_id);
+            return true;
+        }
+    }
 
 
   /* Generate implementation microtasks for a project
@@ -454,6 +468,7 @@ module.exports = function(FirebaseService, Q) {
           Project.set('implementationQ',implementationQ);
           Projects.set(project_id,Project);
           firebase.backupState(project_id,Project);
+          firebase.createEvent(project_id,"Implementation.Generated","Implementation task: "+microtask_id+" is generated","Implementation",microtask_id);
         return true;
       }
     else{console.log('Reloading project');
@@ -495,6 +510,7 @@ module.exports = function(FirebaseService, Q) {
         Project.set('reviewQ',reviewQ);
         Projects.set(project_id,Project);
         firebase.backupState(project_id,Project);
+        firebase.createEvent(project_id,"Review.Generated","Review task: "+microtask_id+" is generated","Review",microtask_id);
         return microtask_id;
       }
     else{console.log('Reloading project');
@@ -554,6 +570,7 @@ module.exports = function(FirebaseService, Q) {
           Project.set('microtasks', microtasks);
           Projects.set(project_id, Project);
           firebase.backupState(project_id, Project);
+          firebase.createEvent(project_id,"Implementation.Submitted","Implementation task: "+microtask_id+" is submitted by worker: "+ worker_id,"Implementation",microtask_id);
           return deferred.promise;
       }
       else{console.log('Reloading project');
@@ -623,7 +640,7 @@ module.exports = function(FirebaseService, Q) {
             var submission_object = implementation_object.submission;
             if(submission_object.hasOwnProperty('requestedFunctions') && submission_object.requestedFunctions !== "null"){
               submission_object.requestedFunctions.forEach(function(func){
-                    var dependent_id = firebase.createFunction(project_id,func.name,"null",func.description,"#Implement the function",func.returnType,func.parameters,"null","null","null","null",false);
+                    var dependent_id = firebase.createFunction(project_id,func.name,"null",func.description,"{\n\t//Implementation code here \n\treturn  \n}",func.returnType,func.parameters,"null","null","null","null",false);
                     var dependent_object = {
                         name: func.name,
                         header: "null",
@@ -683,13 +700,14 @@ module.exports = function(FirebaseService, Q) {
               //Generate new implementation task with function
               generateImplementationMicrotasks(project_id, function_id);
             }
-
+            firebase.createNotification(project_id,implementation_object.worker,"task.accepted",{microtaskId: implementation_task_id, microtaskType: "Implementation", artifactName: implementation_object.functionName});
             firebase.incrementImplementationTasks(project_id, implementation_object.worker);
           } else if (rating === 1 || rating === 2 || rating === 3) {
             //No changes made to function
             // Generate new implementation task with function
             generateImplementationMicrotasks(project_id, function_id);
             //deferred.resolve({"isFunctionComplete": false, "functionApproved": false});
+            firebase.createNotification(project_id,implementation_object.worker,"task.reissued",{"microtaskId": implementation_task_id, "microtaskType": "Implementation", "artifactName": implementation_object.functionName});
             firebase.incrementRejectedTasks(project_id, implementation_object.worker);
           }
           var points = implementation_object.points * (rating / 5);
@@ -718,6 +736,9 @@ module.exports = function(FirebaseService, Q) {
           Project.set('microtasks',microtasks);
           Projects.set(project_id,Project);
         firebase.backupState(project_id,Project);
+          firebase.createEvent(project_id,"Review.Submitted","Review task: "+microtask_id+" is submitted by worker: "+ worker_id,"Review",microtask_id);
+          firebase.createEvent(project_id,"Implementation.Reviewed","Implementation task: "+implementation_task_id+" is reviewed by worker: "+ worker_id,"Implementation",implementation_task_id);
+          firebase.createEvent(project_id,"Implementation.Rated","Implementation task: "+implementation_task_id+" is rated "+ rating,"Implementation",implementation_task_id);
         return deferred.promise;
       }
       else{console.log('Reloading project');
@@ -1002,6 +1023,7 @@ module.exports = function(FirebaseService, Q) {
           Project.set('reviewQ',reviewQ);
           Projects.set(project_id,Project);
           firebase.backupState(project_id,Project);
+              firebase.createEvent(project_id,"Task.Skipped",assigned_microtask_type+" task: "+microtask_id+" is skipped by worker: "+ worker_id,assigned_microtask_type,assigned_microtask_id);
           }
       }
       else{console.log('Reloading project');
@@ -1017,6 +1039,7 @@ module.exports = function(FirebaseService, Q) {
 
   return {
     loadProject: loadProject,
+    deleteProject: deleteProject,
     submitImplementationMicrotask: submitImplementationMicrotask,
     submitReviewMicrotask: submitReviewMicrotask,
     fetchMicrotask: fetchMicrotask,

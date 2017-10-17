@@ -10,11 +10,9 @@
 		  <li ng-repeat="leader in leaders track by $index | orderBy:'-score'" ng-if="leaders.length > 0" 
 		  	  class="{{ leaders.$keyAt(leader) == workerId ? 'self' : '' }}" >
 		  	
-		  		<div class="position">#{{$index+1}}</div>
-		  		<div class="avatar"><img ng-src="{{ avatar(leaders.$keyAt(leader)).$value }}" alt="{{ ::leader.name }}" /></div>
-		  		<div class="score">{{ leader.score }} pts</div>
-		  		<div class="name">{{::(leader.name) }}</div>
-
+		  		<div class="position">#{{$index+1}} - {{ leader.score }} pts</div>
+		  		<div class="avatar"><img ng-src="{{ avatar(leaders.$keyAt(leader)).$value }}" alt="{{ ::leader.name }}" style="width:50px; height:55px"/></div>
+			    <div class="name">{{::(leader.name) }}</div>
 		  		<div class="clearfix"></div>
 
 			

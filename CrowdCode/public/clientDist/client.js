@@ -4800,7 +4800,7 @@ angular
 
 
         if( form.$invalid ){
-            $modal({template : 'microtasks/modal_form_invalid.html' , show: true});
+            $modal({template : 'microtasks/modal_form_comments.html' , show: true});
             return;
         }
 
@@ -5245,52 +5245,59 @@ angular
 						type: 'info',
 						body: 'body',
 						clickHandler: function(){ },
-						bodyOutputType: 'trustedHtml'
+						bodyOutputType: 'trustedHtml',
+						timeout: 3000
 					};
 
-					switch( type ){
-						case 'question.added':
-							toast.title = 'A new question has been asked:';
-							toast.body = val.title;
-							toast.clickHandler = function(){
-								$rootScope.$broadcast('setLeftBarTab','questions');
-								$rootScope.$broadcast('showQuestion', val.questionId );
+					switch( type ) {
+                        case 'question.added':
+							toast.body = 'A new question has been asked <strong>' + val.data.title +'</strong>';
+							toast.clickHandler = function () {
+								$rootScope.$broadcast('setLeftBarTab', 'questions');
+								$rootScope.$broadcast('showQuestion', val.data.questionId);
 							};
-							toaster.pop( toast );
+							toaster.pop(toast);
 							break;
 
 						case 'answer.added':
-							toast.body = 'The worker '+val.workerHandle+' has answered your question';
-							toast.clickHandler = function(){
-								$rootScope.$broadcast('setLeftBarTab','questions');
-								$rootScope.$broadcast('showQuestion', val.questionId );
-							};
-							questionsService.get( val.questionId ).then(function(q){
-								if( q !== null ){
-									toast.body += ' <strong>'+q.title+'</strong>';
-								}
-								toaster.pop( toast );
-							});
+							var workerId = val.data.workerId;
+            				var path = firebase.database().ref().child('Workers').child(workerId);
+            				path.once('value').then(function (worker) {
+								toast.body = 'The worker <strong>'+worker.val().name+'</strong> has answered the question ';
+								toast.clickHandler = function(){
+									$rootScope.$broadcast('setLeftBarTab','questions');
+									$rootScope.$broadcast('showQuestion', val.data.questionId );
+								};
+								questionsService.get( val.data.questionId ).then(function(q){
+									if( q !== null ){
+										toast.body += '<strong>'+q.title+'</strong>';
+									}
+									toaster.pop(toast);
+								});
+            				});
 							break;
 
 						case 'comment.added':
-						console.log('comment addedd');
-							toast.body = 'The worker '+val.workerHandle+' has commented the question';
-							toast.clickHandler = function(){
-								$rootScope.$broadcast('setLeftBarTab','questions');
-								$rootScope.$broadcast('showQuestion', val.questionId );
-							};
-							questionsService.get( val.questionId ).then(function(q){
-								if( q !== null ){
-									toast.body += ' <strong>'+q.title+'</strong>';
-								}
-								toaster.pop( toast );
-							});
+                            var workerId = val.data.workerId;
+                            var path = firebase.database().ref().child('Workers').child(workerId);
+                            path.once('value').then(function (worker) {
+                                toast.body = 'The worker <strong>' + worker.val().name + '</strong> has commented the question ';
+                                toast.clickHandler = function () {
+                                    $rootScope.$broadcast('setLeftBarTab', 'questions');
+                                    $rootScope.$broadcast('showQuestion', val.data.questionId);
+                                };
+                                questionsService.get(val.data.questionId).then(function (q) {
+                                    if (q !== null) {
+                                        toast.body += '<strong>' + q.title + '</strong>';
+                                    }
+                                    toaster.pop(toast);
+                                });
+                            });
 							break;
 
 						case 'task.accepted':
 							toast.type = 'success';
-							toast.body = 'Your work of '+val.microtaskType+' on the artifact '+val.artifactName+' has been accepted';
+							toast.body = 'Your work of '+val.data.microtaskType+' on the artifact '+val.data.artifactName+' has been accepted';
 							toast.clickHandler = function(){
 								$rootScope.$broadcast('setLeftBarTab','newsfeed');
 								$rootScope.$broadcast('showNews', val.microtaskId );
@@ -5300,14 +5307,14 @@ angular
 
 						case 'task.reissued':
 							toast.type = 'error';
-							toast.body = 'Your work of '+val.microtaskType+' on the artifact '+val.artifactName+' has been reissued';
+							toast.body = 'Your work of '+val.data.microtaskType+' on the artifact '+val.data.artifactName+' has been reissued';
 							toast.clickHandler = function(){
 								$rootScope.$broadcast('setLeftBarTab','newsfeed');
 								$rootScope.$broadcast('showNews', val.microtaskId );
 							};
 							toaster.pop( toast );
 							break;
-						case 'challenge.inProgress':
+						/*case 'challenge.inProgress':
 							toast.type = 'danger';
 							toast.body = 'Your work of '+val.microtaskType+' on the artifact '+val.artifactName+' has been challenged';
 							toast.clickHandler = function(){
@@ -5355,8 +5362,7 @@ angular
 							};
 							toaster.pop( toast );
 							break;
-
-
+*/
 						default:
 					}
 
@@ -7893,7 +7899,7 @@ function workerProfile(avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$fi
 	}
 }
 
-angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
+angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
 
 angular.module("achievements/achievements_panel.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("achievements/achievements_panel.html",
@@ -9023,7 +9029,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "		</span>\n" +
     "		</span>\n" +
     "		<span class=\"points\">( {{::microtask.points}} pts )</span>\n" +
-    "		<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)\">\n" +
+    "		<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)\">\n" +
     "			<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
     "		</button>\n" +
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
@@ -9038,7 +9044,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
-    "						Can you implement part of <strong ng-bind=\"funct.name\"></strong> by making one of the currently failing tests pass? If you don’t have enough time to make a test pass, you may also submit a partial solution.\n" +
+    "						Please implement the function <strong ng-bind=\"funct.name\"></strong> based on it's description and work done by previously. You can write the code as well as write test cases for testing the behavior. You must click the submit button before time expires to save your work.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"CORRECT\">\n" +
     "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
@@ -9347,7 +9353,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</div>\n" +
     "				<div ng-if=\"microtask.promptType !== 'CORRECT'\">\n" +
     "					<input type=\"checkbox\" ng-model=\"data.isComplete\" id=\"isComplete\" name=\"isComplete\" ng-disabled=\"data.numDeleted == data.tests.length\">\n" +
-    "					<label for=\"isComplete\">the function is completely described by the previous behaviors</label>\n" +
+    "					<label for=\"isComplete\">This function is completely implemented</label>\n" +
     "				</div>\n" +
     "			</div>\n" +
     "\n" +
@@ -9799,6 +9805,26 @@ angular.module("microtasks/microtask_title.html", []).run(["$templateCache", fun
     "");
 }]);
 
+angular.module("microtasks/modal_form_comments.html", []).run(["$templateCache", function ($templateCache) {
+  $templateCache.put("microtasks/modal_form_comments.html",
+    "<div class=\"modal center\" tabindex=\"-1\" role=\"dialog\">\n" +
+    "    <div class=\"modal-dialog\">\n" +
+    "        <div class=\"modal-content\" >\n" +
+    "            <div class=\"modal-header\">\n" +
+    "                <button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
+    "                <h4 class=\"modal-title\">Review is incomplete!</h4>\n" +
+    "            </div>\n" +
+    "            <div class=\"modal-body\">\n" +
+    "                <div style=\"text-align: center\"> Please provide comments on the why the work was rejected</div>\n" +
+    "            </div>\n" +
+    "            <div class=\"modal-footer\">\n" +
+    "                <button type=\"button\" class=\"btn btn-sm\" ng-click=\"$hide()\">Close</button>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "</div>");
+}]);
+
 angular.module("microtasks/modal_form_invalid.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("microtasks/modal_form_invalid.html",
     "<div class=\"modal center\" tabindex=\"-1\" role=\"dialog\">\n" +
@@ -9853,11 +9879,9 @@ angular.module("microtasks/no_microtask/no_microtask.html", []).run(["$templateC
     "		  <li ng-repeat=\"leader in leaders track by $index | orderBy:'-score'\" ng-if=\"leaders.length > 0\" \n" +
     "		  	  class=\"{{ leaders.$keyAt(leader) == workerId ? 'self' : '' }}\" >\n" +
     "		  	\n" +
-    "		  		<div class=\"position\">#{{$index+1}}</div>\n" +
-    "		  		<div class=\"avatar\"><img ng-src=\"{{ avatar(leaders.$keyAt(leader)).$value }}\" alt=\"{{ ::leader.name }}\" /></div>\n" +
-    "		  		<div class=\"score\">{{ leader.score }} pts</div>\n" +
-    "		  		<div class=\"name\">{{::(leader.name) }}</div>\n" +
-    "\n" +
+    "		  		<div class=\"position\">#{{$index+1}} - {{ leader.score }} pts</div>\n" +
+    "		  		<div class=\"avatar\"><img ng-src=\"{{ avatar(leaders.$keyAt(leader)).$value }}\" alt=\"{{ ::leader.name }}\" style=\"width:50px; height:55px\"/></div>\n" +
+    "			    <div class=\"name\">{{::(leader.name) }}</div>\n" +
     "		  		<div class=\"clearfix\"></div>\n" +
     "\n" +
     "			\n" +
@@ -11592,18 +11616,61 @@ angular.module("tutorials/DescribeFunctionBehavior.html", []).run(["$templateCac
 angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/ImplementBehavior.html",
     "<step>\n" +
-    "	<div class=\"title\">Edit function</div>\n" +
+    "	<div class=\"title\">Implement Function</div>\n" +
     "	<div class=\"text\">\n" +
     "		<p style=\"width:500px\">\n" +
-    "			Given the test suite for a function, your goal is to implement some code for letting one (or more) test to pass.\n" +
+    "			Given the function description, you have 10 minutes to implement this function fully/partially.\n" +
+    "			You can write/edit the code in the function editor, create/edit/remove tests cases and run the tests suite on your code.\n" +
     "		</p>\n" +
     "		<p style=\"width:500px\">\n" +
     "			Follow this tutorials for more details:\n" +
     "		</p>\n" +
     "		<ul>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true); close(); $event.preventDefault();\">running and debugging tests</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true); close(); $event.preventDefault();\">using the function editor</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true , undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">running and debugging tests</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">using the function editor</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'ImplementBehavior' ); close(); $event.preventDefault();\">creating a test</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">input/output tests</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">assertion tests</a></li>\n" +
     "		</ul>\n" +
+    "	</div>\n" +
+    "</step>\n" +
+    "\n" +
+    "<step style=\"width:500px;\">\n" +
+    "	<div class=\"title\">Function Implementation Complete</div>\n" +
+    "	<div class=\"text\">\n" +
+    "\n" +
+    "		<p style=\"width: 500px\">\n" +
+    "			Once you have implemented the function completely, you can click the checkbox in the test editor panel as shown below and then submit this task.\n" +
+    "		</p>\n" +
+    "\n" +
+    "		<img src=\"/img/tutorial/implementation/implementation_complete.png\" width=\"470px\"/>\n" +
+    "\n" +
+    "	</div>\n" +
+    "</step>\n" +
+    "\n" +
+    "<step style=\"width:500px;\">\n" +
+    "	<div class=\"title\">Function Implementation Incomplete</div>\n" +
+    "	<div class=\"text\">\n" +
+    "\n" +
+    "		<p style=\"width: 500px\">\n" +
+    "			If you have partially implemented the function, please describe the unfinished sections as pseudo code to notify the next programmer.\n" +
+    "		</p>\n" +
+    "\n" +
+    "		<img src=\"/img/tutorial/implementation/psuedo_code.png\" width=\"470px\"/>\n" +
+    "\n" +
+    "	</div>\n" +
+    "</step>\n" +
+    "\n" +
+    "<step style=\"width:500px;\">\n" +
+    "	<div class=\"title\">Comment Code</div>\n" +
+    "	<div class=\"text\">\n" +
+    "\n" +
+    "		<p style=\"width: 500px\">\n" +
+    "			Please write the code with appropriate comments as this will help the following programmers understand your code quickly.\n" +
+    "		</p>\n" +
+    "\n" +
+    "		<img src=\"/img/tutorial/implementation/comment_code.png\" width=\"470px\"/>\n" +
+    "\n" +
     "	</div>\n" +
     "</step>");
 }]);
@@ -11671,20 +11738,25 @@ angular.module("tutorials/function_editor.html", []).run(["$templateCache", func
     "	<div class=\"title\">Calling a function</div>\n" +
     "	<div class=\"text\">\n" +
     "		<p style=\"width:500px\">\n" +
-    "			To see the list of all functions in the system, type ALT+SPACE (Mac) or CTRL+SPACE (Win/Linux)\n" +
+    "			To see the list of all functions in the system, type ALT+SPACE (Mac) or CTRL+SPACE (Windows/Linux)\n" +
     "		</p>\n" +
     "\n" +
     "		<img src=\"/img/tutorial/running/functions_list.png\" />\n" +
     "	</div>\n" +
     "</step>\n" +
+    "\n" +
     "<step>\n" +
     "	<div class=\"title\">Creating a new function</div>\n" +
     "	<div class=\"text\">\n" +
     "		<p style=\"width:500px\">\n" +
-    "			To create a new function, type ALT SPACE and select “Add a new function”, where you can write a comment specifying the function name, description, parameters, and parameter types. \n" +
+    "			If you need a supporting function to realize the implementation, you can create a new function and submit your task.\n" +
+    "			This function will then be assigned to programmers to implement.\n" +
+    "			To create a new function, type ALT SPACE(Mac) or CTRL SPACE(Windows/Linux) and select “Add a new function”,\n" +
+    "			where you can write a comment specifying the function name, description, parameters, parameter types and return type.\n" +
     "		</p>\n" +
-    "\n" +
-    "		<img src=\"/img/tutorial/running/new_function.png\" />\n" +
+    "		<img src=\"/img/tutorial/running/add_function.png\" width=\"500px\"/>\n" +
+    "		<br/><br/>\n" +
+    "		<img src=\"/img/tutorial/running/new_function.png\" width=\"500px\"/>\n" +
     "	</div>\n" +
     "</step>");
 }]);
@@ -11708,6 +11780,17 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "	<div class=\"title\">CrowdCode Tutorial</div>\n" +
     "	<div class=\"text\">\n" +
     "		Welcome to the CrowdCode tutorial. Here, we’ll help get you up to speed.\n" +
+    "		<ul>\n" +
+    "			<li><a href=\"#\" ng-click=\"nextStep()\">Introduction</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();\">Implementing a function</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'Review', true, undefined, 'main'); close(); $event.preventDefault();\">Reviewing implemented function</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'main'); close(); $event.preventDefault();\">using the function editor</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'main' ); close(); $event.preventDefault();\">creating a test</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'main'); close(); $event.preventDefault();\">input/output tests</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'main'); close(); $event.preventDefault();\">assertion tests</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true, undefined, 'main'); close(); $event.preventDefault();\">running and debugging tests</a></li>\n" +
+    "\n" +
+    "		</ul>\n" +
     "	</div>\n" +
     "</step>\n" +
     "\n" +
@@ -11740,17 +11823,16 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "	<div class=\"title\">Skip</div>\n" +
     "	<div class=\"text\">\n" +
     "		Not the right microtask for you? Skip it. <br />\n" +
-    "		But be careful - skipping makes it more valuable for others and <strong>you can't go back!</strong>\n" +
     "	</div>\n" +
     "</step>\n" +
     "\n" +
-    "\n" +
+    "<!--\n" +
     "<step highlight=\"breakBtn\" placement=\"top-left\" style=\"width:200px;\" >\n" +
     "	<div class=\"title\">Pick next microtask</div>\n" +
     "	<div class=\"text\">\n" +
     "		Want to pick the next microtask to work on? Click <strong>Pick next microtask</strong> before you Submit or Skip.\n" +
     "	</div>\n" +
-    "</step>\n" +
+    "</step>-->\n" +
     "\n" +
     "<step style=\"width:500px;\">\n" +
     "	<div class=\"title\">Have a question? The Crowd might have answered it!</div>\n" +
@@ -11821,6 +11903,13 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "	</div>\n" +
     "</step>\n" +
     "\n" +
+    "<step highlight=\"newsfeedBtn\" placement=\"right-center\" style=\"width:200px;\"\n" +
+    "	  on-show=\"$broadcast('setLeftBarTab','newsfeed');\">\n" +
+    "	<div class=\"title\">Your Activity</div>\n" +
+    "	<div class=\"text\">\n" +
+    "		See what you’ve done, see how the crowd rated it.\n" +
+    "	</div>\n" +
+    "</step>\n" +
     "\n" +
     "<step>\n" +
     "\n" +
@@ -11834,15 +11923,9 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "		<img src=\"/img/tutorial/main/questionmark.jpg\"/>\n" +
     "	</div>\n" +
     "</step>\n" +
-    "<!--\n" +
-    "<step highlight=\"newsfeedBtn\" placement=\"right-center\" style=\"width:200px;\"\n" +
-    "	on-show=\"$broadcast('setLeftBarTab','newsfeed');\">\n" +
-    "	<div class=\"title\">Your Activity</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		See what you’ve done, see how the crowd rated it.\n" +
-    "	</div>\n" +
-    "</step>\n" +
     "\n" +
+    "\n" +
+    "<!--\n" +
     "<step highlight=\"questionsBtn\" placement=\"right-center\" style=\"width:200px;\"\n" +
     "	on-show=\"$broadcast('setLeftBarTab','questions');\">\n" +
     "	<div class=\"title\">Questions</div>\n" +

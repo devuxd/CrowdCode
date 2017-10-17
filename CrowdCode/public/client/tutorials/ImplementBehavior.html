@@ -1,15 +1,58 @@
 <step>
-	<div class="title">Edit function</div>
+	<div class="title">Implement Function</div>
 	<div class="text">
 		<p style="width:500px">
-			Given the test suite for a function, your goal is to implement some code for letting one (or more) test to pass.
+			Given the function description, you have 10 minutes to implement this function fully/partially.
+			You can write/edit the code in the function editor, create/edit/remove tests cases and run the tests suite on your code.
 		</p>
 		<p style="width:500px">
 			Follow this tutorials for more details:
 		</p>
 		<ul>
-			<li><a href="#" ng-click="$emit('queue-tutorial', 'running_tests', true); close(); $event.preventDefault();">running and debugging tests</a></li>
-			<li><a href="#" ng-click="$emit('queue-tutorial', 'function_editor', true); close(); $event.preventDefault();">using the function editor</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'running_tests', true , undefined, 'ImplementBehavior'); close(); $event.preventDefault();">running and debugging tests</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'function_editor', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();">using the function editor</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'create_edit_test', true, undefined, 'ImplementBehavior' ); close(); $event.preventDefault();">creating a test</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'input_output_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();">input/output tests</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'assertion_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();">assertion tests</a></li>
 		</ul>
+	</div>
+</step>
+
+<step style="width:500px;">
+	<div class="title">Function Implementation Complete</div>
+	<div class="text">
+
+		<p style="width: 500px">
+			Once you have implemented the function completely, you can click the checkbox in the test editor panel as shown below and then submit this task.
+		</p>
+
+		<img src="/img/tutorial/implementation/implementation_complete.png" width="470px"/>
+
+	</div>
+</step>
+
+<step style="width:500px;">
+	<div class="title">Function Implementation Incomplete</div>
+	<div class="text">
+
+		<p style="width: 500px">
+			If you have partially implemented the function, please describe the unfinished sections as pseudo code to notify the next programmer.
+		</p>
+
+		<img src="/img/tutorial/implementation/psuedo_code.png" width="470px"/>
+
+	</div>
+</step>
+
+<step style="width:500px;">
+	<div class="title">Comment Code</div>
+	<div class="text">
+
+		<p style="width: 500px">
+			Please write the code with appropriate comments as this will help the following programmers understand your code quickly.
+		</p>
+
+		<img src="/img/tutorial/implementation/comment_code.png" width="470px"/>
+
 	</div>
 </step>

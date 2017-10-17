@@ -73,6 +73,7 @@ module.exports = function(AdminFirebase, Q) {
         }
       };
       var created_child = root_ref.child('Projects').child(project_name).set(project_schema);
+      this.createEvent(project_name, "Project.Created","Created Project "+project_name+" from client request","Project", project_name);
       return created_child.then(err => {
         if (err) throw err;
         else return "created the project Successfully";
@@ -138,6 +139,7 @@ module.exports = function(AdminFirebase, Q) {
       var created_child = root_ref.child(path).push(ADT_schema);
       ADT_schema.id = created_child.key;
       var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(ADT_schema);
+      this.createEvent(project_id, "ADT.Created","Created ADT "+ADT_name,"ADT", created_child.key);
       return created_child.key;
     },
 
@@ -165,7 +167,6 @@ module.exports = function(AdminFirebase, Q) {
         examples: []
       };
       let stringKey = this.createADTWrapper(project_id, string);
-      this.createEvent(project_id, "ADT", stringKey, "String", "ADT.Created", "Create ADT from client request", "null");
       let number = {
         name: "Number",
         description: "Number is the only type of number. Numbers can be written with, or without, decimals.",
@@ -177,7 +178,6 @@ module.exports = function(AdminFirebase, Q) {
         examples: []
       };
       let numberKey = this.createADTWrapper(project_id, number);
-      this.createEvent(project_id, "ADT", numberKey, "Number", "ADT.Created", "Create ADT from client request", "null");
       let boolean = {
         name: "Boolean",
         description: "A Boolean represents one of two values: true or false.",
@@ -189,7 +189,6 @@ module.exports = function(AdminFirebase, Q) {
         examples: []
       };
       let booleanKey = this.createADTWrapper(project_id, boolean);
-      this.createEvent(project_id, "ADT", booleanKey, "Boolean", "ADT.Created", "Create ADT from client request", "null");
     },
 
     /*Retrieve ADT from Project
@@ -259,6 +258,7 @@ module.exports = function(AdminFirebase, Q) {
       var created_child = root_ref.child(path).push(function_schema);
       function_schema.id = created_child.key;
       var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(function_schema);
+      this.createEvent(project_id, "Function.Created","Created Function "+function_name,"Function", created_child.key);
       return created_child.key;
     },
 
@@ -284,6 +284,7 @@ module.exports = function(AdminFirebase, Q) {
       return_type, parameters, stubs, tests, ADTsId, functions_dependent, isComplete, isAssigned, isApiArtifact) {
       var path = 'Projects/' + project_id + '/artifacts/Functions/' + function_id;
       var history_path = 'Projects/' + project_id + '/history/artifacts/Functions/' + function_id;
+      var self = this;
       root_ref.child(history_path).once("value", function(data) {
         var version_number = data.numChildren();
         let function_schema = {
@@ -306,6 +307,7 @@ module.exports = function(AdminFirebase, Q) {
 
         var update_promise = root_ref.child(path).update(function_schema);
         var add_to_history = root_ref.child(history_path).child(version_number).set(function_schema);
+        self.createEvent(project_id, "Function.Updated","Updated Function "+function_name,"Function", function_id);
         return update_promise;
       });
     },
@@ -405,6 +407,7 @@ module.exports = function(AdminFirebase, Q) {
       var history_path = 'Projects/' + project_id + '/history/artifacts/Tests';
       var created_child = root_ref.child(path).push(test_schema);
       var add_to_history = root_ref.child(history_path).child(created_child.key).child('0').set(test_schema);
+      this.createEvent(project_id, "Test.Created","Created Test "+test_name,"Function", created_child.key);
       return created_child.key;
     },
 
@@ -432,6 +435,7 @@ module.exports = function(AdminFirebase, Q) {
         var update_promise = root_ref.child(path).update(test_schema);
         root_ref.child(history_path).child(version_number).set(test_object);
         var add_to_history = root_ref.child(history_path).child(version_number).update(test_schema);
+        this.createEvent(project_id, "Test.Updated","Updated Test "+test_id,"Function", test_id);
         return update_promise;
       });
     },
@@ -665,37 +669,6 @@ module.exports = function(AdminFirebase, Q) {
 
 
     /* -------------------- End LeaderBoard API ---------- */
-    /* ----------------Event API ------------- */
-
-    /* Add an event in the history
-     param project id text
-     param artifact type text
-     param artifact id text
-     param artifact name text
-     param event type text
-     param event description
-     return event ID text
-     */
-    createEvent: function(project_id, artifact_type, artifact_id, artifact_name, event_type, event_description, parent_id) {
-      let event_schema = {
-        parentId: parent_id,
-        artifactType: artifact_type,
-        artifactId: artifact_id,
-        artifactName: artifact_name,
-        eventType: event_type,
-        eventDescription: event_description,
-        projectId: project_id,
-        timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
-        timeInMicros: now('micro')
-      };
-      var path = 'Projects/' + project_id + '/history/events';
-      var created_child = root_ref.child(path).push(event_schema);
-      return created_child.key;
-    },
-
-
-    /* ---------------- End Event API ------------- */
-
 
     /* ---------------- Questions API ------------- */
 
@@ -727,6 +700,7 @@ module.exports = function(AdminFirebase, Q) {
           version: 0,
           views: "null"
       };
+      var self = this;
       var path = 'Projects/' + project_id + '/questions';
       var history_path = 'Projects/' + project_id + '/history/questions';
       var created_child = root_ref.child(path).push(question_schema);
@@ -734,6 +708,7 @@ module.exports = function(AdminFirebase, Q) {
          var update_id_promise = root_ref.child(path).child(created_child.key).update({id:created_child.key});
          update_id_promise.then(function() {
              root_ref.child(path).once("value").then(function (question_object) {
+                 self.createNotification(project_id,owner_id,"question.added",{questionId:created_child.key , title: title});
                  return root_ref.child(history_path).child(created_child.key).child('0').set(question_object.val());
              }).catch(function (err) {
                  console.trace(err);
@@ -744,7 +719,8 @@ module.exports = function(AdminFirebase, Q) {
       }).catch(function (err) {
             console.trace(err);
         });
-      return created_child;
+        this.createEvent(project_id, "Question.Created","Question "+title+"  created by worker "+owner_id,"Question", created_child.key);
+        return created_child;
     },
 
     /*Updates a question
@@ -783,6 +759,7 @@ module.exports = function(AdminFirebase, Q) {
               }).catch(function (err) {
                   console.trace(err);
               });
+          this.createEvent(project_id, "Question.Updated","Question "+title +" updated by worker "+owner_id,"Question", question_id);
           return update_child_promise
           }
         })
@@ -805,6 +782,7 @@ module.exports = function(AdminFirebase, Q) {
         text: answer,
         score: 0
       };
+      var self = this;
       var path = 'Projects/' + project_id + '/questions/' + question_id;
       var history_path = 'Projects/' + project_id + '/history/questions';
 
@@ -812,6 +790,7 @@ module.exports = function(AdminFirebase, Q) {
       var created_child = root_ref.child(path).child('answers').push(answer_schema);
       created_child.then(function(){
           root_ref.child(path).child('answers').child(created_child.key).update({id:created_child.key});
+
       });
       //increment answer count and updated time
       root_ref.child(path).once("value").then(function(data) {
@@ -827,9 +806,13 @@ module.exports = function(AdminFirebase, Q) {
           if (subscriber.val() === worker_id) {
             isSubcribed = true;
           }
+            //Add notification to all the workers in the existing list
+         self.createNotification(project_id,subscriber.val(),"answer.added",{questionId:question_id , answerId:created_child.key, workerId: worker_id, text: answer});
         });
+        //If the owner is not on the subscribers list add and set notification
         if (!isSubcribed) {
           root_ref.child(path).child('subscribersId').push(worker_id);
+          self.createNotification(project_id,worker_id,"answer.added",{questionId:question_id , answerId:created_child.key, workerId: worker_id, text: answer});
         }
         return true;
       }).catch(function (err) {
@@ -847,6 +830,7 @@ module.exports = function(AdminFirebase, Q) {
         }).catch(function (err) {
             console.trace(err);
         });
+      this.createEvent(project_id, "Answer.Created","Question "+question_id+" Answered  "+created_child.key +" by worker "+worker_id,"Answer", created_child.key);
       return add_to_history;
     },
 
@@ -868,24 +852,29 @@ module.exports = function(AdminFirebase, Q) {
         score: 0
       };
       //add the comment
+      var self = this;
       var path = 'Projects/' + project_id + '/questions/' + question_id;
       var history_path = 'Projects/' + project_id + '/history/questions';
       var created_child = root_ref.child(path).child('answers').child(answer_id).child('comments').push(comment_schema);
       created_child.then(function(){
           root_ref.child(path).child('answers').child(answer_id).child('comments').child(created_child.key).update({id:created_child.key});
-      }).catch(function (err) {
+         }).catch(function (err) {
           console.trace(err);
       });
-      //add the subscriber if not already on the list
-      root_ref.child(path).child('subscribersId').once("value").then(function(data) {
-        var isSubcribed = false;
-        var subscribers = data.val().forEach(function(subscriber) {
+      //add the subscriber if not already on the list and add notification to all the subscribers
+        root_ref.child(path).child('subscribersId').once("value").then(function(data) {
+            var isSubcribed = false;
+            var subscribers = data.forEach(function(subscriber) {
           if (subscriber.val() === worker_id) {
             isSubcribed = true;
           }
+          //Add notification to all the workers in the existing list
+          self.createNotification(project_id,subscriber.val(),"comment.added",{questionId:question_id , answerId:answer_id, workerId: worker_id, text: comment});
         });
+        //If the owner is not on the list add and set notification
         if (!isSubcribed) {
           root_ref.child(path).child('subscribesId').push(worker_id);
+         self.createNotification(project_id,worker_id,"comment.added",{questionId:question_id , answerId:answer_id, workerId: worker_id, text: comment});
         }
         return true;
       }).catch(function (err) {
@@ -903,6 +892,7 @@ module.exports = function(AdminFirebase, Q) {
       }).catch(function (err) {
           console.trace(err);
       });
+      this.createEvent(project_id, "Comment.Created","Answer "+answer_id+" Commented  "+created_child.key +" by worker "+worker_id,"Comment", created_child.key);
       return add_to_history;
     },
 
@@ -1008,6 +998,23 @@ module.exports = function(AdminFirebase, Q) {
           var path = 'Projects/' + project_id + '/questions/'+question_id;
           var history_path = 'Projects/' + project_id + '/history/questions';
           var score = '';
+
+          root_ref.child(path).child('subscribersId').once("value").then(function(data) {
+              var isSubcribed = false;
+              var subscribers = data.forEach(function(subscriber) {
+                  if (subscriber.val() === worker_id) {
+                      isSubcribed = true;
+                  }
+              });
+              //If the owner is not on the subscribers list add and set notification
+              if (!isSubcribed) {
+                  root_ref.child(path).child('subscribersId').push(worker_id);
+              }
+              return true;
+          }).catch(function (err) {
+              console.trace(err);
+          });
+
           //If the vote is not for the question
           if (question_id !== element_id) {
               root_ref.child(path).once("value").then(function(data) {
@@ -1508,20 +1515,20 @@ module.exports = function(AdminFirebase, Q) {
 
     createProjectFromClientRequest: function(id, clientReq, workerId) {
       this.createProject(id, workerId).then(result => {
-        // create an event for project creation
-        this.createEvent(id, "", "", "", "Project.Created", "create project from client request", "null");
         this.createDefaultADTS(id);
         if (typeof clientReq.ADTs !== 'undefined') {
           clientReq.ADTs.forEach(adt => {
             var adtKey = this.createADT(id, adt.name, adt.description, true, true, adt.structure, adt.examples);
-            this.createEvent(id, "ADT", adtKey, adt.name, "ADT.Created", "Create ADT from client request", "null");
-          });
+            });
         }
         if (typeof clientReq.functions !== 'undefined') {
           clientReq.functions.forEach(func => {
-            var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", "null", true);
-            this.createEvent(id, "Function", funcKey, func.name, "Function.Created", "Create Function from client request", "null");
-            //this.createImplementationMicrotask(id, "Implement function behavior", 10, funcKey, func.name, 0, "Implement function behavior with all the related tests", func.code, "null");
+            var dependents = [];
+            func.dependent.forEach(obj => {
+              dependents.push(obj.functionName);
+            });
+            var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", dependents, true);
+           //this.createImplementationMicrotask(id, "Implement function behavior", 10, funcKey, func.name, 0, "Implement function behavior with all the related tests", func.code, "null");
           });
         }
       }).catch(err => {
@@ -1555,28 +1562,6 @@ module.exports = function(AdminFirebase, Q) {
     },
 
     /* ----------------End clientRequests services ---- */
-
-
-
-    /* ---------------- Notifications API ------------- */
-
-    /* Create notifications in a project
-     param project id text
-     param worker id text
-     param dat text
-     returns Notification ID text
-     */
-    createNotification: function(project_id, worker_id, type, data) {
-      notification_schema = {
-        type: type,
-        data: data,
-        created_time: now('micro')
-      }
-      var path = 'Projects/' + project_id + '/notifications';
-      var created_child = root_ref.child(path).child(worker_id).push(notification_schema);
-      return created_child.key;
-    },
-    /* ---------------- End Notifications API ------------- */
 
     /* ---------------- Workers API ------------- */
     /* Create a new worker profile in firebase
@@ -1788,6 +1773,55 @@ module.exports = function(AdminFirebase, Q) {
 
       /* ---------------- End Workers API ------------- */
 
+      /* ----------------Event API ------------- */
+
+      /* Add an event in the history
+       param project id text
+       param artifact type text
+       param artifact id text
+       param artifact name text
+       param event type text
+       param event description
+       return event ID text
+       */
+        createEvent: function(project_id, event_type, event_description, artifact_type, artifact_id) {
+            let event_schema = {
+                artifactType: artifact_type,
+                artifactId: artifact_id,
+                eventType: event_type,
+                eventDescription: event_description,
+                timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
+                timeInMicros: now('micro')
+            };
+            var path = 'Projects/' + project_id + '/history/events';
+            var created_child = root_ref.child(path).push(event_schema);
+            return created_child.key;
+        },
+
+
+      /* ---------------- End Event API ------------- */
+
+      /* ---------------- Notifications API ------------- */
+
+      /* Create notifications in a project
+       param project id text
+       param worker id text
+       param dat text
+       returns Notification ID text
+       */
+        createNotification: function(project_id, worker_id, type, data) {
+            notification_schema = {
+                type: type,
+                data: data,
+                timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
+                created_time: now('micro')
+            }
+            var path = 'Projects/' + project_id + '/notifications';
+            var created_child = root_ref.child(path).child(worker_id).push(notification_schema);
+            return created_child.key;
+        },
+      /* ---------------- End Notifications API ------------- */
+
       /* ---------------- Newsfeed API -------------------- */
     createNewsFeed: function(project_name, worker_id, awarded_points, can_be_challenged, challenge_status, max_points, microtask_key, microtask_type, score, type) {
       let deferred = Q.defer();
@@ -1890,9 +1924,6 @@ module.exports = function(AdminFirebase, Q) {
         });
         return promise;
     }
-
-
-
 
     /* ---------------- End State API ------------- */
 

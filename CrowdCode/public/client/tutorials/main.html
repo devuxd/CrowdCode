@@ -3,6 +3,17 @@
 	<div class="title">CrowdCode Tutorial</div>
 	<div class="text">
 		Welcome to the CrowdCode tutorial. Here, we’ll help get you up to speed.
+		<ul>
+			<li><a href="#" ng-click="nextStep()">Introduction</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();">Implementing a function</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'Review', true, undefined, 'main'); close(); $event.preventDefault();">Reviewing implemented function</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'function_editor', true, undefined, 'main'); close(); $event.preventDefault();">using the function editor</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'create_edit_test', true, undefined, 'main' ); close(); $event.preventDefault();">creating a test</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'input_output_tests', true, undefined, 'main'); close(); $event.preventDefault();">input/output tests</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'assertion_tests', true, undefined, 'main'); close(); $event.preventDefault();">assertion tests</a></li>
+			<li><a href="#" ng-click="$emit('queue-tutorial', 'running_tests', true, undefined, 'main'); close(); $event.preventDefault();">running and debugging tests</a></li>
+
+		</ul>
 	</div>
 </step>
 
@@ -35,17 +46,16 @@
 	<div class="title">Skip</div>
 	<div class="text">
 		Not the right microtask for you? Skip it. <br />
-		But be careful - skipping makes it more valuable for others and <strong>you can't go back!</strong>
 	</div>
 </step>
 
-
+<!--
 <step highlight="breakBtn" placement="top-left" style="width:200px;" >
 	<div class="title">Pick next microtask</div>
 	<div class="text">
 		Want to pick the next microtask to work on? Click <strong>Pick next microtask</strong> before you Submit or Skip.
 	</div>
-</step>
+</step>-->
 
 <step style="width:500px;">
 	<div class="title">Have a question? The Crowd might have answered it!</div>
@@ -116,6 +126,13 @@
 	</div>
 </step>
 
+<step highlight="newsfeedBtn" placement="right-center" style="width:200px;"
+	  on-show="$broadcast('setLeftBarTab','newsfeed');">
+	<div class="title">Your Activity</div>
+	<div class="text">
+		See what you’ve done, see how the crowd rated it.
+	</div>
+</step>
 
 <step>
 
@@ -129,15 +146,9 @@
 		<img src="/img/tutorial/main/questionmark.jpg"/>
 	</div>
 </step>
-<!--
-<step highlight="newsfeedBtn" placement="right-center" style="width:200px;"
-	on-show="$broadcast('setLeftBarTab','newsfeed');">
-	<div class="title">Your Activity</div>
-	<div class="text">
-		See what you’ve done, see how the crowd rated it.
-	</div>
-</step>
 
+
+<!--
 <step highlight="questionsBtn" placement="right-center" style="width:200px;"
 	on-show="$broadcast('setLeftBarTab','questions');">
 	<div class="title">Questions</div>

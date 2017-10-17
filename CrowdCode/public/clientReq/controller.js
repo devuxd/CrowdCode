@@ -79,12 +79,13 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
       };
 
       var emptyFunction = {
-        code: "{\n\t//#Mark this function as implemented by removing this line.\n\treturn {}; \n}",
+        code: "{\n\t//Implementation code here \n\treturn  \n}",
         description: "",
         name: "",
         parameters: [emptyParameter],
         returnType: "",
-        stubs: []
+        stubs: [],
+        dependent: []
       };
 
 
@@ -123,6 +124,20 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
 
     $scope.deleteStub = function(functionIndex, testIndex) {
       $scope.functions[functionIndex].stubs.splice(testIndex, 1);
+    };
+
+
+    $scope.addDependent = function(index) {
+
+        if ($scope.functions[index].dependent === undefined)
+            $scope.functions[index].dependent = [];
+
+        $scope.functions[index].dependent.push({});
+    };
+
+
+    $scope.deleteDependent = function(functionIndex, testIndex) {
+        $scope.functions[functionIndex].dependent.splice(testIndex, 1);
     };
 
     function makeDirty(form) {
@@ -181,7 +196,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
           if (exist) {
             $http({
               method: "PUT",
-              url: "api/v1/clientRequests/" + $scope.projectName,
+              url: "/api/v1/clientRequests/" + $scope.projectName,
               data: project,
               headers: {
                 'Authorization': 'Bearer ' + idToken
@@ -195,7 +210,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
           } else {
             $http({
               method: "POST",
-              url: "api/v1/clientRequests/" + $scope.projectName,
+              url: "/api/v1/clientRequests/" + $scope.projectName,
               data: project,
               headers: {
                 'Authorization': 'Bearer ' + idToken

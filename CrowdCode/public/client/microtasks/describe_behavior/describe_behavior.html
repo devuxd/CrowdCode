@@ -9,7 +9,7 @@
 		</span>
 		</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
-		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)">
+		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'ImplementBehavior', true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)">
 			<span class="glyphicon glyphicon-question-sign"></span>
 		</button>
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
@@ -24,7 +24,7 @@
 			<div class="section-content bg-color-alpha padding" style="top:0px">
 				<div ng-switch="microtask.promptType">
 					<span ng-switch-when="WRITE">
-						Can you implement part of <strong ng-bind="funct.name"></strong> by making one of the currently failing tests pass? If you don’t have enough time to make a test pass, you may also submit a partial solution.
+						Please implement the function <strong ng-bind="funct.name"></strong> based on it's description and work done by previously. You can write the code as well as write test cases for testing the behavior. You must click the submit button before time expires to save your work.
 					</span>
 					<span ng-switch-when="CORRECT">
 						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?
@@ -333,7 +333,7 @@
 				</div>
 				<div ng-if="microtask.promptType !== 'CORRECT'">
 					<input type="checkbox" ng-model="data.isComplete" id="isComplete" name="isComplete" ng-disabled="data.numDeleted == data.tests.length">
-					<label for="isComplete">the function is completely described by the previous behaviors</label>
+					<label for="isComplete">This function is completely implemented</label>
 				</div>
 			</div>
 

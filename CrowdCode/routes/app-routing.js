@@ -36,7 +36,7 @@ module.exports = function(wagner) {
                 console.log("Project Name : " + projectName + "------------------------------");
                 FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then((exists) => {
                   if(exists === false) {
-                    FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.email).then(() => {
+                    FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.name).then(() => {
                       FirebaseService.createProjectWorker(projectName,req.user.uid);
                     }).catch(err => {
                       throw err;
@@ -56,7 +56,7 @@ module.exports = function(wagner) {
             console.log("Project Name loaded from memory: " + projectName + "------------------------------");
             FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then((exists) => {
               if(exists === false) {
-                FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.email).then(() => {
+                FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.name).then(() => {
                   FirebaseService.createProjectWorker(projectName,req.user.uid);
                 }).catch(err => {
                   throw err;

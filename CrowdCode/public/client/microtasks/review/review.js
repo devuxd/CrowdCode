@@ -130,7 +130,7 @@ angular
 
 
         if( form.$invalid ){
-            $modal({template : '/client/microtasks/modal_form_invalid.html' , show: true});
+            $modal({template : '/client/microtasks/modal_form_comments.html' , show: true});
             return;
         }
 
