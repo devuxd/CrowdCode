@@ -226,6 +226,7 @@ module.exports = function(FirebaseService, Q) {
                       if(value.hasOwnProperty('assigned_task')) {
                           assigned_task.set('id', value.assigned_task.id);
                           assigned_task.set('type', value.assigned_task.type);
+                          assigned_task.set('fetch_time',value.assigned_task.fetch_time);
                       }
 
                       worker.set('assigned',assigned_task);
@@ -777,10 +778,12 @@ module.exports = function(FirebaseService, Q) {
           let assigned_task = worker.get('assigned');
           assigned_task.set('id', "null");
           assigned_task.set('type', "null");
+          assigned_task.set('fetch_time',"null");
         }
 
         var microtask_id;
         var microtask_type;
+        var fetch_time;
         var assigned_task = worker.get('assigned');
         var skipped_task = worker.get('skipped');
         var completed_task = worker.get('completed');
@@ -846,11 +849,13 @@ module.exports = function(FirebaseService, Q) {
             });
             microtask_type = "Review";
           }
+          fetch_time = new Date().getTime();
         }
         //If the worker already has as on going task
         else {
           microtask_id = assigned_task.get('id');
           microtask_type = assigned_task.get('type');
+          fetch_time = assigned_task.get('fetch_time');
         }
 
 
@@ -858,12 +863,14 @@ module.exports = function(FirebaseService, Q) {
         if (microtask_id !== "null") {
           assigned_task.set('id', microtask_id);
           assigned_task.set('type', microtask_type);
+          assigned_task.set('fetch_time',fetch_time);
           var microtask_object = microtasks.get(microtask_id);
           var funct = functions.get(microtask_object.functionId);
           microtask_object.function = funct;
           var return_object = {
             "microtaskKey": microtask_id,
             "type": microtask_type,
+            "fetch_time": fetch_time,
             "object": microtask_object
           };
 
@@ -1006,6 +1013,7 @@ module.exports = function(FirebaseService, Q) {
           if(assigned_microtask_id === microtask_id){
               assigned_task.set('id',"null");
               assigned_task.set('type',"null");
+              assigned_task.set('fetch_time',"null");
               if(assigned_microtask_type === "DescribeFunctionBehavior"){
                   implementationQ.push(microtask_id);
               }

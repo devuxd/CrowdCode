@@ -42,6 +42,72 @@
 			</div>
 		</div>
 
+		<div class="section" ui-layout-container size="45%">
+			<div class="section-bar" ng-show="!data.editingStub">
+				<span class="title">
+					Function Editor
+				</span>
+				<span class="pull-right">
+					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)">
+						<span class="glyphicon glyphicon-question-sign"></span>
+				</button>
+				</span>
+				<span class="pull-right">
+        	<button class="btn btn-sm" ng-if="!data.dispute.active" style="padding-left: 30px"
+					ng-click="data.dispute.active = !data.dispute.active; trackInteraction('Click Dispute Function', 'Describe Behavior', $event)" >
+           Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
+				</button>
+				</span>
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content slide from-left" ng-show="!data.editingStub">
+				<function-editor function="funct" editor="data.editor" logs="(!data.inspecting) ? undefined : data.selected1.logs " callbacks="editorCallbacks">
+				</function-editor>
+			</div>
+
+			<div class="section-bar" ng-show="data.editingStub">
+				<span class="title">
+					Stub Editor
+				</span>
+				<span class="pull-right">
+					<button class="btn btn-sm" ng-click="cancelStub()">Cancel</button>
+					<button class="btn btn-sm" ng-click="saveStub()">Save stub</button>
+				</span>
+				<span class="clearfix"></span>
+			</div>
+			<div class="section-content padding slide from-right" style="z-index:100" ng-if="data.editingStub">
+				<div class="stub" ng-form="stubForm">
+					<div class="form-group">
+						<label>Function Description</label>
+						<js-reader class="form-control code" code="data.editingStub.functionDescription"></js-reader>
+					</div>
+
+					<div class="form-group" ng-repeat="p in data.editingStub.parameters">
+						<label>
+							{{p.name + ' {' + p.type + '}' }}
+						</label>
+
+						<json-reader class="form-control code" ng-model="p.value"></json-reader>
+					</div>
+
+					<div class="form-group">
+						<label for="">
+							Output {{ '{' + data.editingStub.output.type + '}' }}
+						</label>
+
+						<div class="form-control code" json-editor="{ type: data.editingStub.output.type, name: 'output' }" ng-model="data.editingStub.output.value" errors="errors" name="output" required>
+						</div>
+
+						<div class="help-block" ng-messages="stubForm.output.$error">
+							<div ng-message="required">the field output cannot be empty</div>
+							<div ng-message="code">{{errors.code}}</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
 		<div class="section" ui-layout-container size="18%">
 
 			<div class="section-bar">
@@ -72,9 +138,9 @@
 				<span class="pull-right separator" ng-if="data.selected1 != -1"></span>
 				<span class="pull-right" ng-if="data.selected1 != -1">
 					<button
-						ng-disabled="data.selected1.id === undefined"
-						class="btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}"
-						ng-click="toggleDispute($event);">
+							ng-disabled="data.selected1.id === undefined"
+							class="btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}"
+							ng-click="toggleDispute($event);">
 						<span class="glyphicon glyphicon-exclamation-sign"></span> Report an issue
 				</button>
 				<button class="btn btn-sm btn-inspect {{ !data.changedSinceLastRun && data.inspecting ? 'active' : '' }}" ng-disabled="data.changedSinceLastRun" ng-click="toggleInspect($event);">
@@ -174,73 +240,6 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="section" ui-layout-container size="45%">
-			<div class="section-bar" ng-show="!data.editingStub">
-				<span class="title">
-					Function Editor
-				</span>
-				<span class="pull-right">
-					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)">
-						<span class="glyphicon glyphicon-question-sign"></span>
-				</button>
-				</span>
-				<span class="pull-right">
-        	<button class="btn btn-sm" ng-if="!data.dispute.active" style="padding-left: 30px"
-					ng-click="data.dispute.active = !data.dispute.active; trackInteraction('Click Dispute Function', 'Describe Behavior', $event)" >
-           Report an issue with the function <span class="glyphicon glyphicon-exclamation-sign"></span>
-				</button>
-				</span>
-				<span class="clearfix"></span>
-			</div>
-			<div class="section-content slide from-left" ng-show="!data.editingStub">
-				<function-editor function="funct" editor="data.editor" logs="(!data.inspecting) ? undefined : data.selected1.logs " callbacks="editorCallbacks">
-				</function-editor>
-			</div>
-
-			<div class="section-bar" ng-show="data.editingStub">
-				<span class="title">
-					Stub Editor
-				</span>
-				<span class="pull-right">
-					<button class="btn btn-sm" ng-click="cancelStub()">Cancel</button>
-					<button class="btn btn-sm" ng-click="saveStub()">Save stub</button>
-				</span>
-				<span class="clearfix"></span>
-			</div>
-			<div class="section-content padding slide from-right" style="z-index:100" ng-if="data.editingStub">
-				<div class="stub" ng-form="stubForm">
-					<div class="form-group">
-						<label>Function Description</label>
-						<js-reader class="form-control code" code="data.editingStub.functionDescription"></js-reader>
-					</div>
-
-					<div class="form-group" ng-repeat="p in data.editingStub.parameters">
-						<label>
-							{{p.name + ' {' + p.type + '}' }}
-						</label>
-
-						<json-reader class="form-control code" ng-model="p.value"></json-reader>
-					</div>
-
-					<div class="form-group">
-						<label for="">
-							Output {{ '{' + data.editingStub.output.type + '}' }}
-						</label>
-
-						<div class="form-control code" json-editor="{ type: data.editingStub.output.type, name: 'output' }" ng-model="data.editingStub.output.value" errors="errors" name="output" required>
-						</div>
-
-						<div class="help-block" ng-messages="stubForm.output.$error">
-							<div ng-message="required">the field output cannot be empty</div>
-							<div ng-message="code">{{errors.code}}</div>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-
 
 		<div class="section" ui-layout-container size="30%">
 

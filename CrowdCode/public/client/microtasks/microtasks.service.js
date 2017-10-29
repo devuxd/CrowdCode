@@ -86,7 +86,8 @@ angular
 				var microtask = fetchData.object;
         microtask.type = fetchData.type;
         microtask.$id = fetchData.microtaskKey;
-        $rootScope.$broadcast('microtaskLoaded',microtask, 1/*fetchData.firstFetch*/);
+        microtask.fetch_time = fetchData.fetch_time;
+        $rootScope.$broadcast('microtaskLoaded',microtask);
         // get(fetchData.microtaskKey);
 				// microtask.$loaded().then(function() {
 				// 	$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);

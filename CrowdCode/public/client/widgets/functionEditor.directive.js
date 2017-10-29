@@ -5,7 +5,7 @@ angular
     .directive('functionEditor', [ '$sce', 'functionsService', 'functionUtils', 'Function', function($sce, functionsService, functionUtils, Function) {
    
 
-    var MAX_NEW_STATEMENTS = 10;
+    var MAX_NEW_STATEMENTS = 2500;
     var statements = undefined;
     var initialStatements = undefined;
     var apiFunctions    = [];
@@ -56,7 +56,8 @@ angular
                 };
 
                 var sessionOptions  = {
-                    useWorker: false
+                    useWorker: false,
+                    useWrapMode: true
                 };
 
                 var rendererOptions = {

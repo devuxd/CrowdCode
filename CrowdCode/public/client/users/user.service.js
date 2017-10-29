@@ -63,13 +63,13 @@ angular
 		user.data.$save();
 	});
 
-	user.getFetchTime = function(){ return user.data.fetchTime; };
+	/*user.getFetchTime = function(){ return user.data.fetchTime; };
 
 	user.setFirstFetchTime = function (){
 		user.data.fetchTime = new Date().getTime();
 		console.log('saving first fetch time')
 		user.data.$save();
-	};
+	};*/
 
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;

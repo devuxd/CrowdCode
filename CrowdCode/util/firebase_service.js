@@ -1523,10 +1523,13 @@ module.exports = function(AdminFirebase, Q) {
         }
         if (typeof clientReq.functions !== 'undefined') {
           clientReq.functions.forEach(func => {
-            var dependents = [];
-            func.dependent.forEach(obj => {
-              dependents.push(obj.functionName);
+            var dependents = "null";
+            if(func.dependent !== undefined && func.dependent !== null && func.dependent.length > 0) {
+              dependents = [];
+                func.dependent.forEach(obj => {
+                    dependents.push(obj.functionName);
             });
+            }
             var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", dependents, true);
            //this.createImplementationMicrotask(id, "Implement function behavior", 10, funcKey, func.name, 0, "Implement function behavior with all the related tests", func.code, "null");
           });
@@ -1890,6 +1893,7 @@ module.exports = function(AdminFirebase, Q) {
         var skipped_tasks = null;
         var assigned_id = null;
         var assigned_type = null;
+        var assigned_time = null;
         var completed_task = null;
         if(value.has('skipped')){
           skipped_tasks = value.get('skipped');
@@ -1898,6 +1902,7 @@ module.exports = function(AdminFirebase, Q) {
           if(value.get('assigned').has('id')){
             assigned_id = value.get('assigned').get('id');
             assigned_type = value.get('assigned').get('type');
+            assigned_time = value.get('assigned').get('fetch_time');
           }
         }
         if(value.has('completed')){
@@ -1908,7 +1913,8 @@ module.exports = function(AdminFirebase, Q) {
                   skipped_tasks: skipped_tasks,
                   assigned_task: {
                       id: assigned_id,
-                      type: assigned_type
+                      type: assigned_type,
+                      fetch_time: assigned_time
                   },
                   completed_tasks: completed_task
               });

@@ -1931,10 +1931,10 @@ angular.module("microtasks/modal_form_invalid.html", []).run(["$templateCache", 
     "		<div class=\"modal-content\" >\n" +
     "			<div class=\"modal-header\">\n" +
     "				<button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
-    "				<h4 class=\"modal-title\">The form is invalid!</h4>\n" +
+    "				<h4 class=\"modal-title\">The task is invalid!</h4>\n" +
     "			</div>\n" +
     "			<div class=\"modal-body\">\n" +
-    "				<div style=\"text-align: center\"> Please, fix all the errors before submitting the microtask!</div>\n" +
+    "				<div style=\"text-align: center\"> Please fix all the errors in the function code and tests before submitting the microtask!</div>\n" +
     "            </div>\n" +
     "			<div class=\"modal-footer\">\n" +
     "				<button type=\"button\" class=\"btn btn-sm\" ng-click=\"$hide()\">Close</button>\n" +
@@ -1951,10 +1951,10 @@ angular.module("microtasks/modal_form_pristine.html", []).run(["$templateCache",
     "		<div class=\"modal-content\" >\n" +
     "			<div class=\"modal-header\">\n" +
     "				<button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
-    "				<h4 class=\"modal-title\">The form has not been touched!</h4>\n" +
+    "				<h4 class=\"modal-title\">The task has not been touched!</h4>\n" +
     "			</div>\n" +
     "			<div class=\"modal-body\">\n" +
-    "				<div style=\"text-align: center\"> It seems that you didn't work on this microtask. Before to submit, work a littel bit!</div>\n" +
+    "				<div style=\"text-align: center\"> It seems that you didn't work on this microtask. Before you submit, work a little bit or you can skip this task</div>\n" +
     "            </div>\n" +
     "			<div class=\"modal-footer\">\n" +
     "				<button type=\"button\" class=\"btn btn-sm\" ng-click=\"$hide()\">Close</button>\n" +
@@ -4154,7 +4154,7 @@ angular.module("ui_elements/left_bar_buttons_template.html", []).run(["$template
 
 angular.module("ui_elements/left_bar_template.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("ui_elements/left_bar_template.html",
-    "<div class=\"sidebar\"> \n" +
+    "<div class=\"sidebar-left\">\n" +
     "  <div class=\"content\">\n" +
     "    <news-panel   ng-show=\"selectedTab == 'newsfeed'\">project</news-panel>\n" +
     "    <questions-panel ng-show=\"selectedTab == 'questions'\"></questions-panel>\n" +
@@ -4213,7 +4213,7 @@ angular.module("ui_elements/nav_user_menu_template.html", []).run(["$templateCac
 
 angular.module("ui_elements/right_bar_template.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("ui_elements/right_bar_template.html",
-    "<div class=\"sidebar\">\n" +
+    "<div class=\"sidebar-right\">\n" +
     "\n" +
     "  <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
     "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"50%\">\n" +

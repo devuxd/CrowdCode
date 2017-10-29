@@ -79,7 +79,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
       };
 
       var emptyFunction = {
-        code: "{\n\t//Implementation code here \n\treturn  \n}",
+        code: "{\n\t//Implementation code here \n\treturn {}; \n}",
         description: "",
         name: "",
         parameters: [emptyParameter],
@@ -178,8 +178,18 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
           for (var index in funct.parameters)
             funct.header += funct.parameters[index].name + (index == funct.parameters.length - 1 ? "" : ", ");
           funct.header += ")";
-          console.log(funct.stubs);
+          //Set stubs as empty
           if(funct.stubs.length === 0) funct.stubs = '';
+          //Add new line to function description
+           var clean = funct.description.replace(/\n/g,"");
+           console.log("Cleaned " + clean);
+           var temp = clean.match(/[\s\S]{1,100}/g);
+           var description = '';
+           for(var i=0;i<temp.length;i++){
+             description += temp[i]+"\n";
+           }
+           funct.description = description;
+
         });
 
         project.functions = $scope.functions;

@@ -4636,7 +4636,8 @@ angular
 				var microtask = fetchData.object;
         microtask.type = fetchData.type;
         microtask.$id = fetchData.microtaskKey;
-        $rootScope.$broadcast('microtaskLoaded',microtask, 1/*fetchData.firstFetch*/);
+        microtask.fetch_time = fetchData.fetch_time;
+        $rootScope.$broadcast('microtaskLoaded',microtask);
         // get(fetchData.microtaskKey);
 				// microtask.$loaded().then(function() {
 				// 	$rootScope.$broadcast('microtaskLoaded',microtask, fetchData.firstFetch);
@@ -6788,13 +6789,13 @@ angular
 		user.data.$save();
 	});
 
-	user.getFetchTime = function(){ return user.data.fetchTime; };
+	/*user.getFetchTime = function(){ return user.data.fetchTime; };
 
 	user.setFirstFetchTime = function (){
 		user.data.fetchTime = new Date().getTime();
 		console.log('saving first fetch time')
 		user.data.$save();
-	};
+	};*/
 
 	user.setAvatarUrl = function(url){
 		user.data.avatarUrl = url;
@@ -6979,7 +6980,7 @@ angular
     .directive('functionEditor', [ '$sce', 'functionsService', 'functionUtils', 'Function', function($sce, functionsService, functionUtils, Function) {
    
 
-    var MAX_NEW_STATEMENTS = 10;
+    var MAX_NEW_STATEMENTS = 2500;
     var statements = undefined;
     var initialStatements = undefined;
     var apiFunctions    = [];
@@ -7030,7 +7031,8 @@ angular
                 };
 
                 var sessionOptions  = {
-                    useWorker: false
+                    useWorker: false,
+                    useWrapMode: true
                 };
 
                 var rendererOptions = {
@@ -7630,8 +7632,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  10 * 60 * 1000; //in second
-    var microtaskFirstWarning =  4  * 60 * 1000; //in second
+    var microtaskTimeout      =  25 * 60 * 1000; //in second
+    var microtaskFirstWarning =  5  * 60 * 1000; //in second
     var timeInterval          = 500; //interval time in milliseconds
 
     var fetchTime = 0;
@@ -7665,9 +7667,9 @@ angular
             $rootScope.$on('microtaskLoaded', microtaskLoaded);
             $rootScope.$on('reset-reminder', resetReminder );
 
-            function microtaskLoaded($event, microtask,firstFetch){
-                if( firstFetch == '1')
-                    userService.setFirstFetchTime();
+            function microtaskLoaded($event, microtask){
+                /*if( firstFetch == '1')
+                    userService.setFirstFetchTime();*/
 
                 resetReminder();
 
@@ -7677,7 +7679,7 @@ angular
                 //actual time of the system in seconds
                 startTime = new Date().getTime();
                 //time when user fetched the microtask for the first time in milliseonds
-                fetchTime = userService.getFetchTime();
+                fetchTime = microtask.fetch_time;
 
                 $scope.skipMicrotaskIn = fetchTime + microtaskTimeout - startTime ;
                 microtaskInterval      = $interval(doReminder, timeInterval);
@@ -7738,7 +7740,7 @@ angular
         restrict: 'AE',
         link: function (scope, elm, attrs, ctrl) {
             scope.statements=0;
-            scope.max=10;
+            scope.max=2500;
             scope.$on('statements-updated',function(event,statements,max){
                 scope.statements=statements;
                 scope.max=max;
@@ -9832,10 +9834,10 @@ angular.module("microtasks/modal_form_invalid.html", []).run(["$templateCache", 
     "		<div class=\"modal-content\" >\n" +
     "			<div class=\"modal-header\">\n" +
     "				<button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
-    "				<h4 class=\"modal-title\">The form is invalid!</h4>\n" +
+    "				<h4 class=\"modal-title\">The task is invalid!</h4>\n" +
     "			</div>\n" +
     "			<div class=\"modal-body\">\n" +
-    "				<div style=\"text-align: center\"> Please, fix all the errors before submitting the microtask!</div>\n" +
+    "				<div style=\"text-align: center\"> Please fix all the errors in the function code and tests before submitting the microtask!</div>\n" +
     "            </div>\n" +
     "			<div class=\"modal-footer\">\n" +
     "				<button type=\"button\" class=\"btn btn-sm\" ng-click=\"$hide()\">Close</button>\n" +
@@ -9852,10 +9854,10 @@ angular.module("microtasks/modal_form_pristine.html", []).run(["$templateCache",
     "		<div class=\"modal-content\" >\n" +
     "			<div class=\"modal-header\">\n" +
     "				<button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
-    "				<h4 class=\"modal-title\">The form has not been touched!</h4>\n" +
+    "				<h4 class=\"modal-title\">The task has not been touched!</h4>\n" +
     "			</div>\n" +
     "			<div class=\"modal-body\">\n" +
-    "				<div style=\"text-align: center\"> It seems that you didn't work on this microtask. Before to submit, work a littel bit!</div>\n" +
+    "				<div style=\"text-align: center\"> It seems that you didn't work on this microtask. Before you submit, work a little bit or you can skip this task</div>\n" +
     "            </div>\n" +
     "			<div class=\"modal-footer\">\n" +
     "				<button type=\"button\" class=\"btn btn-sm\" ng-click=\"$hide()\">Close</button>\n" +
@@ -12055,7 +12057,7 @@ angular.module("ui_elements/left_bar_buttons_template.html", []).run(["$template
 
 angular.module("ui_elements/left_bar_template.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("ui_elements/left_bar_template.html",
-    "<div class=\"sidebar\"> \n" +
+    "<div class=\"sidebar-left\">\n" +
     "  <div class=\"content\">\n" +
     "    <news-panel   ng-show=\"selectedTab == 'newsfeed'\">project</news-panel>\n" +
     "    <questions-panel ng-show=\"selectedTab == 'questions'\"></questions-panel>\n" +
@@ -12114,7 +12116,7 @@ angular.module("ui_elements/nav_user_menu_template.html", []).run(["$templateCac
 
 angular.module("ui_elements/right_bar_template.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("ui_elements/right_bar_template.html",
-    "<div class=\"sidebar\">\n" +
+    "<div class=\"sidebar-right\">\n" +
     "\n" +
     "  <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
     "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"50%\">\n" +

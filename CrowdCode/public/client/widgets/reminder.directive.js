@@ -5,8 +5,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  10 * 60 * 1000; //in second
-    var microtaskFirstWarning =  4  * 60 * 1000; //in second
+    var microtaskTimeout      =  25 * 60 * 1000; //in second
+    var microtaskFirstWarning =  5  * 60 * 1000; //in second
     var timeInterval          = 500; //interval time in milliseconds
 
     var fetchTime = 0;
@@ -40,9 +40,9 @@ angular
             $rootScope.$on('microtaskLoaded', microtaskLoaded);
             $rootScope.$on('reset-reminder', resetReminder );
 
-            function microtaskLoaded($event, microtask,firstFetch){
-                if( firstFetch == '1')
-                    userService.setFirstFetchTime();
+            function microtaskLoaded($event, microtask){
+                /*if( firstFetch == '1')
+                    userService.setFirstFetchTime();*/
 
                 resetReminder();
 
@@ -52,7 +52,7 @@ angular
                 //actual time of the system in seconds
                 startTime = new Date().getTime();
                 //time when user fetched the microtask for the first time in milliseonds
-                fetchTime = userService.getFetchTime();
+                fetchTime = microtask.fetch_time;
 
                 $scope.skipMicrotaskIn = fetchTime + microtaskTimeout - startTime ;
                 microtaskInterval      = $interval(doReminder, timeInterval);

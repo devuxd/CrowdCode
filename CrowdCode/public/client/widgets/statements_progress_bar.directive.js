@@ -7,7 +7,7 @@ angular
         restrict: 'AE',
         link: function (scope, elm, attrs, ctrl) {
             scope.statements=0;
-            scope.max=10;
+            scope.max=2500;
             scope.$on('statements-updated',function(event,statements,max){
                 scope.statements=statements;
                 scope.max=max;
