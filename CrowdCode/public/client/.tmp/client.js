@@ -9064,140 +9064,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"18%\">\n" +
-    "\n" +
-    "			<div class=\"section-bar\">\n" +
-    "\n" +
-    "				<span class=\"pull-left title\" ng-if=\"data.selected1 == -1\">\n" +
-    "					Behaviors\n" +
-    "				</span>\n" +
-    "\n" +
-    "\n" +
-    "				<span class=\"pull-left\" ng-if=\"data.selected1 != -1\">\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"toggleSelect1($event)\">\n" +
-    "						<span class=\"glyphicon glyphicon-arrow-left\"></span> Back\n" +
-    "				</button>\n" +
-    "				</span>\n" +
-    "\n" +
-    "				<span class=\"pull-right\">\n" +
-    "					<button class=\"btn btn-sm btn-run\" ng-click=\"run()\">\n" +
-    "						<span class=\"glyphicon glyphicon-play\"></span> Run Tests\n" +
-    "				</button>\n" +
-    "\n" +
-    "\n" +
-    "				<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) \">\n" +
-    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
-    "					</button>\n" +
-    "				</span>\n" +
-    "\n" +
-    "\n" +
-    "				<span class=\"pull-right separator\" ng-if=\"data.selected1 != -1\"></span>\n" +
-    "				<span class=\"pull-right\" ng-if=\"data.selected1 != -1\">\n" +
-    "					<button\n" +
-    "						ng-disabled=\"data.selected1.id === undefined\"\n" +
-    "						class=\"btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}\"\n" +
-    "						ng-click=\"toggleDispute($event);\">\n" +
-    "						<span class=\"glyphicon glyphicon-exclamation-sign\"></span> Report an issue\n" +
-    "				</button>\n" +
-    "				<button class=\"btn btn-sm btn-inspect {{ !data.changedSinceLastRun && data.inspecting ? 'active' : '' }}\" ng-disabled=\"data.changedSinceLastRun\" ng-click=\"toggleInspect($event);\">\n" +
-    "						<span class=\"glyphicon glyphicon-search\"></span>\n" +
-    "						Inspect code\n" +
-    "					</button>\n" +
-    "				</span>\n" +
-    "\n" +
-    "				<span class=\"clearfix\"></span>\n" +
-    "			</div>\n" +
-    "			<div class=\"section-content padding slide from-left\" ng-if=\"data.selected1 == -1\">\n" +
-    "				<div class=\"test-list \">\n" +
-    "					<div class=\"test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
-    "						<div ng-click=\"toggleSelect1($event,te);\">\n" +
-    "							<strong class=\"pull-left\">\n" +
-    "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
-    "								{{ te.description }}\n" +
-    "							</strong>\n" +
-    "							<span class=\"pull-right\">\n" +
-    "								<span ng-if=\"te.running\">\n" +
-    "									running\n" +
-    "								</span>\n" +
-    "							</span>\n" +
-    "							<span class=\"clearfix\"></span>\n" +
-    "						</div>\n" +
-    "					</div>\n" +
-    "				</div>\n" +
-    "			</div>\n" +
-    "			<div class=\"section-content padding slide from-right\" ng-if=\"data.selected1 != -1\" ng-init=\"t = data.selected1\">\n" +
-    "				<div class=\"test-result\">\n" +
-    "					<div class=\"row\">\n" +
-    "						<div class=\"{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}\">\n" +
-    "							<div class=\"row\">\n" +
-    "								<div class=\"col-sm-3 col-md-3 row-label\">Status</div>\n" +
-    "								<div class=\"col-sm-9 col-md-9\">\n" +
-    "									<span ng-if=\"!t.dispute.active\">\n" +
-    "										<span ng-if=\"t.result.passed\" class=\"color-passed\">\n" +
-    "											<span class=\"glyphicon glyphicon-ok-sign\"></span> passed\n" +
-    "									</span>\n" +
-    "									<span ng-if=\"!t.result.passed\" class=\"color-failed\">\n" +
-    "											<span class=\"glyphicon glyphicon-remove-sign\"></span> failed\n" +
-    "									</span>\n" +
-    "									<span>\n" +
-    "											{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}\n" +
-    "										</span>\n" +
-    "									</span>\n" +
-    "									<span ng-if=\"t.dispute.active\" class=\"color-disputed\">\n" +
-    "										<span class=\"glyphicon glyphicon-exclamation-sign\"></span> reported\n" +
-    "									</span>\n" +
-    "\n" +
-    "								</div>\n" +
-    "							</div>\n" +
-    "							<div class=\"row\">\n" +
-    "								<div class=\"col-sm-3 col-md-3 row-label\">description</div>\n" +
-    "								<div class=\"col-sm-9 col-md-9\">it {{ t.description }}</div>\n" +
-    "							</div>\n" +
-    "							<div class=\"row\" ng-if=\"t.result.message\">\n" +
-    "								<div class=\"col-sm-3 col-md-3 row-label\">Message</div>\n" +
-    "								<div class=\"col-sm-9 col-md-9\">{{ t.result.message }}</div>\n" +
-    "							</div>\n" +
-    "							<div class=\"row\">\n" +
-    "								<div class=\"col-sm-3 col-md-3 row-label\">Code</div>\n" +
-    "								<div class=\"col-sm-9 col-md-9\">\n" +
-    "									<js-reader code=\"t.code\"></js-reader>\n" +
-    "								</div>\n" +
-    "							</div>\n" +
-    "						</div>\n" +
-    "\n" +
-    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"!t.dispute.active && t.result.showDiff\">\n" +
-    "							<div class=\"row\">\n" +
-    "								<div class=\"col-sm-12 col-md-12 row-label\">\n" +
-    "									<span style=\"width:10px;height:10px;display:inline-block;background-color:#CDFFCD\"></span> Expected\n" +
-    "\n" +
-    "\n" +
-    "									<span style=\"width:10px;height:10px;display:inline-block;background-color:#FFD7D7\"></span> Actual\n" +
-    "								</div>\n" +
-    "							</div>\n" +
-    "							<div class=\"row\">\n" +
-    "								<div class=\"col-sm-12 col-md-12\">\n" +
-    "									<json-diff-reader old=\"t.result.expected\" new=\"t.result.actual\"></json-diff-reader>\n" +
-    "								</div>\n" +
-    "							</div>\n" +
-    "						</div>\n" +
-    "\n" +
-    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"t.dispute.active\">\n" +
-    "							<div class=\"row\">\n" +
-    "								<div class=\"col-sm-12 col-md-12 row-label\">Reported reason</div>\n" +
-    "							</div>\n" +
-    "							<div class=\"row\">\n" +
-    "								<div class=\"col-sm-12 col-md-12\">\n" +
-    "									<textarea class=\"dispute\" ng-model=\"t.dispute.text\"></textarea>\n" +
-    "								</div>\n" +
-    "							</div>\n" +
-    "						</div>\n" +
-    "					</div>\n" +
-    "\n" +
-    "				</div>\n" +
-    "			</div>\n" +
-    "		</div>\n" +
-    "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"45%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"60%\">\n" +
     "			<div class=\"section-bar\" ng-show=\"!data.editingStub\">\n" +
     "				<span class=\"title\">\n" +
     "					Function Editor\n" +
@@ -9263,103 +9130,120 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
+    "		<div class=\"section\" ui-layout-container size=\"4%\">\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"30%\">\n" +
-    "\n" +
-    "			<div class=\"section-bar\" ng-if=\"data.dispute.active\">\n" +
-    "				<span class=\"title pull-left\">Report Function Description</span>\n" +
-    "				<span class=\"pull-right\">\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"data.dispute.active = !data.dispute.active;\" >\n" +
-    "						Cancel Dispute\n" +
-    "					</button>\n" +
-    "				</span>\n" +
-    "				<span class=\"clearfix\"></span>\n" +
+    "			<div class=\"section-bar tests-section-tab-bar\">\n" +
+    "				<ul class=\"nav nav-tabs\">\n" +
+    "					<li class=\"active\">\n" +
+    "						<a data-toggle=\"tab\" class=\"title\" href=\"#edit-tests\">\n" +
+    "							<span class=\"title\">Edit Tests</span>\n" +
+    "						</a>\n" +
+    "					</li>\n" +
+    "					<li>\n" +
+    "						<a data-toggle=\"tab\" class=\"title\" href=\"#run-tests\">\n" +
+    "							<span class=\"title\">Run Tests</span>\n" +
+    "						</a>\n" +
+    "					</li>\n" +
+    "				</ul>\n" +
     "			</div>\n" +
+    "		</div>\n" +
     "\n" +
-    "			<div class=\"section-content padding\" ng-if=\"data.dispute.active\">\n" +
-    "				<div class=\"form\" style=\"height:100%\">\n" +
-    "					<div class=\"form-group\" style=\"height:100%\">\n" +
-    "						<label for=\"description\">Report reason </label>\n" +
-    "						<textarea class=\"form-control\" style=\"height:80%;resize:none;\" placeholder=\"write the reason of the dispute\" name=\"disputeDescription\" ng-model=\"data.dispute.text\" required focus ng-minlength=\"20\" ng-maxlength=\"500\">\n" +
-    "						</textarea>\n" +
-    "						<div class=\"help-block\" ng-if=\"microtaskForm.disputeDescription.$dirty\" ng-messages=\"microtaskForm.disputeDescription.$error\">\n" +
-    "							<div ng-message=\"required\">the report description can't be empty</div>\n" +
-    "							<div ng-message=\"minlength\">the minimum length is 20 chars</div>\n" +
-    "							<div ng-message=\"maxlength\">the maximum length is 500 chars</div>\n" +
+    "		<div class=\"section tab-content\" ui-layout-container size=\"29%\">\n" +
+    "			<div id=\"edit-tests\" class=\"tab-pane active\">\n" +
+    "\n" +
+    "				<div class=\"section-bar\" ng-if=\"data.dispute.active\">\n" +
+    "					<span class=\"title pull-left\">Report Function Description</span>\n" +
+    "					<span class=\"pull-right\">\n" +
+    "						<button class=\"btn btn-sm\" ng-click=\"data.dispute.active = !data.dispute.active;\" >\n" +
+    "							Cancel Dispute\n" +
+    "						</button>\n" +
+    "					</span>\n" +
+    "					<span class=\"clearfix\"></span>\n" +
+    "				</div>\n" +
+    "\n" +
+    "				<div class=\"section-content padding\" ng-if=\"data.dispute.active\">\n" +
+    "					<div class=\"form\" style=\"height:100%\">\n" +
+    "						<div class=\"form-group\" style=\"height:100%\">\n" +
+    "							<label for=\"description\">Report reason </label>\n" +
+    "							<textarea class=\"form-control\" style=\"height:80%;resize:none;\" placeholder=\"write the reason of the dispute\" name=\"disputeDescription\" ng-model=\"data.dispute.text\" required focus ng-minlength=\"20\" ng-maxlength=\"500\">\n" +
+    "							</textarea>\n" +
+    "							<div class=\"help-block\" ng-if=\"microtaskForm.disputeDescription.$dirty\" ng-messages=\"microtaskForm.disputeDescription.$error\">\n" +
+    "								<div ng-message=\"required\">the report description can't be empty</div>\n" +
+    "								<div ng-message=\"minlength\">the minimum length is 20 chars</div>\n" +
+    "								<div ng-message=\"maxlength\">the maximum length is 500 chars</div>\n" +
+    "							</div>\n" +
     "						</div>\n" +
     "					</div>\n" +
     "				</div>\n" +
-    "			</div>\n" +
     "\n" +
+    "				<div class=\"section-bar\" ng-if=\"!data.dispute.active\">\n" +
+    "					<span class=\"pull-left title\" ng-if=\"data.selected == -1\">\n" +
+    "					<!-- Tests -->\n" +
+    "					</span>\n" +
+    "					<span class=\"pull-right\" ng-if=\"data.selected == -1 && data.tests.length > 0\">\n" +
+    "						<button class=\"btn btn-sm\" ng-click=\"addNew($event)\">\n" +
+    "							<span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +
+    "					</button>\n" +
+    "					</span>\n" +
     "\n" +
-    "			<div class=\"section-bar\" ng-if=\"!data.dispute.active\">\n" +
-    "				<span class=\"pull-left title\" ng-if=\"data.selected == -1\">\n" +
-    "					Tests\n" +
-    "				</span>\n" +
-    "				<span class=\"pull-right\" ng-if=\"data.selected == -1 && data.tests.length > 0\">\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"addNew($event)\">\n" +
-    "						<span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +
-    "				</button>\n" +
-    "				</span>\n" +
+    "					<span class=\"pull-left\" ng-if=\"data.selected != -1\">\n" +
+    "						<button class=\"btn btn-sm\" ng-click=\"toggleSelect($event)\">\n" +
+    "							<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
+    "					</button>\n" +
+    "					</span>\n" +
     "\n" +
-    "				<span class=\"pull-left\" ng-if=\"data.selected != -1\">\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"toggleSelect($event)\">\n" +
-    "						<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
-    "				</button>\n" +
-    "				</span>\n" +
-    "\n" +
-    "				<span class=\"pull-right\" ng-if=\"data.selected != -1\">\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"!data.selected.deleted\">\n" +
-    "						<span class=\"glyphicon glyphicon-remove\" ></span> Remove test\n" +
-    "				</button>\n" +
-    "\n" +
-    "				<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"data.selected.deleted\">\n" +
-    "						<span class=\"glyphicon glyphicon-remove\" ></span> Undo remove\n" +
+    "					<span class=\"pull-right\" ng-if=\"data.selected != -1\">\n" +
+    "						<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"!data.selected.deleted\">\n" +
+    "							<span class=\"glyphicon glyphicon-remove\" ></span> Remove test\n" +
     "					</button>\n" +
     "\n" +
-    "				<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial', 'Describe Behavior - Edit Test', $event)\">\n" +
-    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
-    "					</button>\n" +
-    "				</span>\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"data.selected.deleted\">\n" +
+    "							<span class=\"glyphicon glyphicon-remove\" ></span> Undo remove\n" +
+    "						</button>\n" +
     "\n" +
-    "				<span class=\"clearfix\"></span>\n" +
-    "			</div>\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial', 'Describe Behavior - Edit Test', $event)\">\n" +
+    "							<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "						</button>\n" +
+    "					</span>\n" +
     "\n" +
-    "			<div class=\"section-content empty\" ng-if=\"!data.dispute.active && data.tests.length == 0\">\n" +
-    "				<div>\n" +
-    "					<div>No previous tests written!</div><br />\n" +
-    "					<button class=\"btn btn-sm\" ng-click=\"addNew($event)\">\n" +
-    "						<span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +
-    "					</button>\n" +
+    "					<span class=\"clearfix\"></span>\n" +
     "				</div>\n" +
-    "			</div>\n" +
     "\n" +
-    "			<div class=\"section-content slide from-left\" ng-if=\"!data.dispute.active && data.tests.length > 0 && data.selected == -1\">\n" +
-    "				<div class=\"tests-list has-next \">\n" +
-    "					<div class=\"test-item clickable {{ t.dispute.active ? 'disputed' : '' }}\" ng-repeat=\"t in data.tests track by $index\">\n" +
-    "						<div ng-click=\"toggleSelect($event,t)\">\n" +
-    "							<span class=\"pull-left\">\n" +
-    "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
-    "							<span ng-if=\"t.description.length > 0\" ng-bind=\"t.description\"></span>\n" +
-    "							<span ng-if=\"!t.description || t.description.length == 0\">missing description</span>\n" +
-    "							</span>\n" +
-    "							<span class=\"pull-right\" ng-if=\"t.deleted\">\n" +
-    "								<span class=\"glyphicon glyphicon-remove\"  ></span> removed\n" +
-    "							</span>\n" +
-    "							<span class=\"pull-right\" ng-if=\"!t.deleted && !microtaskForm['testForm_'+$index].$valid\">\n" +
-    "								<span class=\"glyphicon glyphicon-exclamation-sign\"></span> invalid\n" +
-    "							</span>\n" +
-    "							<span class=\"clearfix\"></span>\n" +
-    "						</div>\n" +
+    "				<div class=\"section-content empty\" ng-if=\"!data.dispute.active && data.tests.length == 0\">\n" +
+    "					<div>\n" +
+    "						<div>No previous tests written!</div><br />\n" +
+    "						<button class=\"btn btn-sm\" ng-click=\"addNew($event)\">\n" +
+    "							<span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +
+    "						</button>\n" +
     "					</div>\n" +
     "				</div>\n" +
-    "				<div ng-if=\"microtask.promptType !== 'CORRECT'\">\n" +
-    "					<input type=\"checkbox\" ng-model=\"data.isComplete\" id=\"isComplete\" name=\"isComplete\" ng-disabled=\"data.numDeleted == data.tests.length\">\n" +
-    "					<label for=\"isComplete\">This function is completely implemented</label>\n" +
-    "				</div>\n" +
-    "			</div>\n" +
     "\n" +
-    "			<div class=\"section-content slide from-right padding\" ng-repeat=\"t in data.tests track by $index\" ng-if=\"!data.dispute.active && (!t.deleted || data.selected == t)\" ng-show=\"data.selected == t\">\n" +
+    "				<div class=\"section-content slide from-left\" ng-if=\"!data.dispute.active && data.tests.length > 0 && data.selected == -1\">\n" +
+    "					<div class=\"tests-list has-next \">\n" +
+    "						<div class=\"test-item clickable {{ t.dispute.active ? 'disputed' : '' }}\" ng-repeat=\"t in data.tests track by $index\">\n" +
+    "							<div ng-click=\"toggleSelect($event,t)\">\n" +
+    "								<span class=\"pull-left\">\n" +
+    "									<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
+    "								<span ng-if=\"t.description.length > 0\" ng-bind=\"t.description\"></span>\n" +
+    "								<span ng-if=\"!t.description || t.description.length == 0\">missing description</span>\n" +
+    "								</span>\n" +
+    "								<span class=\"pull-right\" ng-if=\"t.deleted\">\n" +
+    "									<span class=\"glyphicon glyphicon-remove\"  ></span> removed\n" +
+    "								</span>\n" +
+    "								<span class=\"pull-right\" ng-if=\"!t.deleted && !microtaskForm['testForm_'+$index].$valid\">\n" +
+    "									<span class=\"glyphicon glyphicon-exclamation-sign\"></span> invalid\n" +
+    "								</span>\n" +
+    "								<span class=\"clearfix\"></span>\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "					<div ng-if=\"microtask.promptType !== 'CORRECT'\">\n" +
+    "						<input type=\"checkbox\" ng-model=\"data.isComplete\" id=\"isComplete\" name=\"isComplete\" ng-disabled=\"data.numDeleted == data.tests.length\">\n" +
+    "						<label for=\"isComplete\">This function is completely implemented</label>\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "\n" +
+    "				<div class=\"section-content slide from-right padding\" ng-repeat=\"t in data.tests track by $index\" ng-if=\"!data.dispute.active && (!t.deleted || data.selected == t)\" ng-show=\"data.selected == t\">\n" +
     "				<div ng-form=\"{{ 'testForm_'+$index }}\" class=\"form form-material\" ng-init=\"errors = {}\">\n" +
     "\n" +
     "					<div class=\"form-group\">\n" +
@@ -9446,8 +9330,144 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "				</div>\n" +
     "			</div>\n" +
-    "		</div>\n" +
     "\n" +
+    "			</div>\n" +
+    "\n" +
+    "			<div id=\"run-tests\" class=\"tab-pane\">\n" +
+    "\n" +
+    "				<div class=\"section-bar\">\n" +
+    "\n" +
+    "				<span class=\"pull-left title\" ng-if=\"data.selected1 == -1\">\n" +
+    "\n" +
+    "				</span>\n" +
+    "\n" +
+    "\n" +
+    "				<span class=\"pull-left\" ng-if=\"data.selected1 != -1\">\n" +
+    "					<button class=\"btn btn-sm\" ng-click=\"toggleSelect1($event)\">\n" +
+    "						<span class=\"glyphicon glyphicon-arrow-left\"></span> Back\n" +
+    "				</button>\n" +
+    "				</span>\n" +
+    "\n" +
+    "				<span class=\"pull-right\">\n" +
+    "					<button class=\"btn btn-sm btn-run\" ng-click=\"run()\">\n" +
+    "						<span class=\"glyphicon glyphicon-play\"></span> Run Tests\n" +
+    "				</button>\n" +
+    "\n" +
+    "\n" +
+    "				<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) \">\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "					</button>\n" +
+    "				</span>\n" +
+    "\n" +
+    "\n" +
+    "				<span class=\"pull-right separator\" ng-if=\"data.selected1 != -1\"></span>\n" +
+    "				<span class=\"pull-right\" ng-if=\"data.selected1 != -1\">\n" +
+    "					<button\n" +
+    "							ng-disabled=\"data.selected1.id === undefined\"\n" +
+    "							class=\"btn btn-sm btn-dispute {{ data.selected1.dispute.active ? 'active' : '' }}\"\n" +
+    "							ng-click=\"toggleDispute($event);\">\n" +
+    "						<span class=\"glyphicon glyphicon-exclamation-sign\"></span> Report an issue\n" +
+    "				</button>\n" +
+    "				<button class=\"btn btn-sm btn-inspect {{ !data.changedSinceLastRun && data.inspecting ? 'active' : '' }}\" ng-disabled=\"data.changedSinceLastRun\" ng-click=\"toggleInspect($event);\">\n" +
+    "						<span class=\"glyphicon glyphicon-search\"></span>\n" +
+    "						Inspect code\n" +
+    "					</button>\n" +
+    "				</span>\n" +
+    "\n" +
+    "				<span class=\"clearfix\"></span>\n" +
+    "			</div>\n" +
+    "\n" +
+    "				<div class=\"section-content padding slide from-left\" ng-if=\"data.selected1 == -1\">\n" +
+    "				<div class=\"test-list \">\n" +
+    "					<div class=\"test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
+    "						<div ng-click=\"toggleSelect1($event,te);\">\n" +
+    "							<strong class=\"pull-left\">\n" +
+    "								<span class=\"glyphicon glyphicon glyphicon-chevron-right\"></span>\n" +
+    "								{{ te.description }}\n" +
+    "							</strong>\n" +
+    "							<span class=\"pull-right\">\n" +
+    "								<span ng-if=\"te.running\">\n" +
+    "									running\n" +
+    "								</span>\n" +
+    "							</span>\n" +
+    "							<span class=\"clearfix\"></span>\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "				</div>\n" +
+    "			</div>\n" +
+    "\n" +
+    "				<div class=\"section-content padding slide from-right\" ng-if=\"data.selected1 != -1\" ng-init=\"t = data.selected1\">\n" +
+    "				<div class=\"test-result\">\n" +
+    "					<div class=\"row\">\n" +
+    "						<div class=\"{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}\">\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-3 col-md-3 row-label\">Status</div>\n" +
+    "								<div class=\"col-sm-9 col-md-9\">\n" +
+    "									<span ng-if=\"!t.dispute.active\">\n" +
+    "										<span ng-if=\"t.result.passed\" class=\"color-passed\">\n" +
+    "											<span class=\"glyphicon glyphicon-ok-sign\"></span> passed\n" +
+    "									</span>\n" +
+    "									<span ng-if=\"!t.result.passed\" class=\"color-failed\">\n" +
+    "											<span class=\"glyphicon glyphicon-remove-sign\"></span> failed\n" +
+    "									</span>\n" +
+    "									<span>\n" +
+    "											{{ t.result.executionTime > -1 ? ' - ' + t.result.executionTime + 'ms' : ' - timeout'  }}\n" +
+    "										</span>\n" +
+    "									</span>\n" +
+    "									<span ng-if=\"t.dispute.active\" class=\"color-disputed\">\n" +
+    "										<span class=\"glyphicon glyphicon-exclamation-sign\"></span> reported\n" +
+    "									</span>\n" +
+    "\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-3 col-md-3 row-label\">description</div>\n" +
+    "								<div class=\"col-sm-9 col-md-9\">it {{ t.description }}</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\" ng-if=\"t.result.message\">\n" +
+    "								<div class=\"col-sm-3 col-md-3 row-label\">Message</div>\n" +
+    "								<div class=\"col-sm-9 col-md-9\">{{ t.result.message }}</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-3 col-md-3 row-label\">Code</div>\n" +
+    "								<div class=\"col-sm-9 col-md-9\">\n" +
+    "									<js-reader code=\"t.code\"></js-reader>\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "\n" +
+    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"!t.dispute.active && t.result.showDiff\">\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-12 col-md-12 row-label\">\n" +
+    "									<span style=\"width:10px;height:10px;display:inline-block;background-color:#CDFFCD\"></span> Expected\n" +
+    "\n" +
+    "\n" +
+    "									<span style=\"width:10px;height:10px;display:inline-block;background-color:#FFD7D7\"></span> Actual\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-12 col-md-12\">\n" +
+    "									<json-diff-reader old=\"t.result.expected\" new=\"t.result.actual\"></json-diff-reader>\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "\n" +
+    "						<div class=\"col-sm-6 col-md-6\" ng-if=\"t.dispute.active\">\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-12 col-md-12 row-label\">Reported reason</div>\n" +
+    "							</div>\n" +
+    "							<div class=\"row\">\n" +
+    "								<div class=\"col-sm-12 col-md-12\">\n" +
+    "									<textarea class=\"dispute\" ng-model=\"t.dispute.text\"></textarea>\n" +
+    "								</div>\n" +
+    "							</div>\n" +
+    "						</div>\n" +
+    "					</div>\n" +
+    "\n" +
+    "				</div>\n" +
+    "			</div>\n" +
+    "			</div>\n" +
+    "		</div>\n" +
     "\n" +
     "	</div>\n" +
     "");
@@ -12203,20 +12223,24 @@ angular.module("widgets/function_editor.html", []).run(["$templateCache", functi
   $templateCache.put("widgets/function_editor.html",
     "<statements-progress-bar  class=\"function-statements\"></statements-progress-bar>\n" +
     "<div class=\"function-editor\" style=\"\">\n" +
+    "	<div ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
+    "		<div\n" +
+    "			ui-layout-container size=\"80%\"\n" +
+    "			style=\"height:100%;\"\n" +
+    "			class=\"js-editor\"\n" +
+    "			ui-ace=\"{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }\"\n" +
+    "			ng-model=\"code\" >\n" +
+    "		</div>\n" +
     "\n" +
-    "	<div \n" +
-    "		style=\"height:100%;\"\n" +
-    "		class=\"js-editor\"\n" +
-    "		ui-ace=\"{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }\" \n" +
-    "		ng-model=\"code\" >\n" +
+    "\n" +
+    "		<div class=\"function-errors \" ui-layout-container size=\"20%\" style=\"\"  >\n" +
+    "			<ul class=\"help-block\" ng-if=\"errors.length > 0\" >\n" +
+    "				<li ng-repeat=\"e in errors track by $id($index)\">\n" +
+    "					<span ng-bind=\"e\"></span>\n" +
+    "				</li>\n" +
+    "			</ul>\n" +
+    "		</div>\n" +
     "	</div>\n" +
-    "</div>\n" +
-    "<div class=\"function-errors \" style=\"\"  >\n" +
-    "	<ul class=\"help-block\" ng-if=\"errors.length > 0\" >\n" +
-    "        <li ng-repeat=\"e in errors track by $id($index)\">\n" +
-    "        	<span ng-bind=\"e\"></span>\n" +
-    "        </li>\n" +
-    "	</ul>\n" +
     "</div>");
 }]);
 
