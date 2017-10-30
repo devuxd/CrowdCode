@@ -20,7 +20,7 @@
 	<div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
 
 
-		<div class="section" ui-layout-container size="7%">
+		<div class="section" ui-layout-container size="8%">
 			<div class="section-content bg-color-alpha padding" style="top:0px">
 				<div ng-switch="microtask.promptType">
 					<span ng-switch-when="WRITE">
@@ -42,7 +42,7 @@
 			</div>
 		</div>
 
-		<div class="section" ui-layout-container size="60%">
+		<div class="section" ui-layout-container size="63%">
 			<div class="section-bar" ng-show="!data.editingStub">
 				<span class="title">
 					Function Editor
@@ -108,8 +108,7 @@
 			</div>
 		</div>
 
-		<div class="section" ui-layout-container size="4%">
-
+		<div class="section tab-content" ui-layout-container size="29%">
 			<div class="section-bar tests-section-tab-bar">
 				<ul class="nav nav-tabs">
 					<li class="active">
@@ -124,12 +123,10 @@
 					</li>
 				</ul>
 			</div>
-		</div>
 
-		<div class="section tab-content" ui-layout-container size="29%">
 			<div id="edit-tests" class="tab-pane active">
 
-				<div class="section-bar" ng-if="data.dispute.active">
+				<div class="section-bar-2" ng-if="data.dispute.active">
 					<span class="title pull-left">Report Function Description</span>
 					<span class="pull-right">
 						<button class="btn btn-sm" ng-click="data.dispute.active = !data.dispute.active;" >
@@ -139,7 +136,7 @@
 					<span class="clearfix"></span>
 				</div>
 
-				<div class="section-content padding" ng-if="data.dispute.active">
+				<div class="section-content-2 padding" ng-if="data.dispute.active">
 					<div class="form" style="height:100%">
 						<div class="form-group" style="height:100%">
 							<label for="description">Report reason </label>
@@ -154,7 +151,7 @@
 					</div>
 				</div>
 
-				<div class="section-bar" ng-if="!data.dispute.active">
+				<div class="section-bar-2" ng-if="!data.dispute.active">
 					<span class="pull-left title" ng-if="data.selected == -1">
 					<!-- Tests -->
 					</span>
@@ -187,7 +184,7 @@
 					<span class="clearfix"></span>
 				</div>
 
-				<div class="section-content empty" ng-if="!data.dispute.active && data.tests.length == 0">
+				<div class="section-content-2 empty" ng-if="!data.dispute.active && data.tests.length == 0">
 					<div>
 						<div>No previous tests written!</div><br />
 						<button class="btn btn-sm" ng-click="addNew($event)">
@@ -196,7 +193,7 @@
 					</div>
 				</div>
 
-				<div class="section-content slide from-left" ng-if="!data.dispute.active && data.tests.length > 0 && data.selected == -1">
+				<div class="section-content-2 slide from-left" ng-if="!data.dispute.active && data.tests.length > 0 && data.selected == -1">
 					<div class="tests-list has-next ">
 						<div class="test-item clickable {{ t.dispute.active ? 'disputed' : '' }}" ng-repeat="t in data.tests track by $index">
 							<div ng-click="toggleSelect($event,t)">
@@ -221,7 +218,7 @@
 					</div>
 				</div>
 
-				<div class="section-content slide from-right padding" ng-repeat="t in data.tests track by $index" ng-if="!data.dispute.active && (!t.deleted || data.selected == t)" ng-show="data.selected == t">
+				<div class="section-content-2 slide from-right padding" ng-repeat="t in data.tests track by $index" ng-if="!data.dispute.active && (!t.deleted || data.selected == t)" ng-show="data.selected == t">
 				<div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
 
 					<div class="form-group">
@@ -313,7 +310,7 @@
 
 			<div id="run-tests" class="tab-pane">
 
-				<div class="section-bar">
+				<div class="section-bar-2">
 
 				<span class="pull-left title" ng-if="data.selected1 == -1">
 
@@ -355,7 +352,7 @@
 				<span class="clearfix"></span>
 			</div>
 
-				<div class="section-content padding slide from-left" ng-if="data.selected1 == -1">
+				<div class="section-content-2 padding slide from-left" ng-if="data.selected1 == -1">
 				<div class="test-list ">
 					<div class="test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}" ng-repeat="te in data.tests track by $index">
 						<div ng-click="toggleSelect1($event,te);">
@@ -374,7 +371,7 @@
 				</div>
 			</div>
 
-				<div class="section-content padding slide from-right" ng-if="data.selected1 != -1" ng-init="t = data.selected1">
+				<div class="section-content-2 padding slide from-right" ng-if="data.selected1 != -1" ng-init="t = data.selected1">
 				<div class="test-result">
 					<div class="row">
 						<div class="{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}">
@@ -448,3 +445,4 @@
 		</div>
 
 	</div>
+</div>

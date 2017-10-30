@@ -9042,7 +9042,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "	<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
     "\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"7%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"8%\">\n" +
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
@@ -9064,7 +9064,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"60%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"63%\">\n" +
     "			<div class=\"section-bar\" ng-show=\"!data.editingStub\">\n" +
     "				<span class=\"title\">\n" +
     "					Function Editor\n" +
@@ -9130,8 +9130,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"4%\">\n" +
-    "\n" +
+    "		<div class=\"section tab-content\" ui-layout-container size=\"29%\">\n" +
     "			<div class=\"section-bar tests-section-tab-bar\">\n" +
     "				<ul class=\"nav nav-tabs\">\n" +
     "					<li class=\"active\">\n" +
@@ -9146,12 +9145,10 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					</li>\n" +
     "				</ul>\n" +
     "			</div>\n" +
-    "		</div>\n" +
     "\n" +
-    "		<div class=\"section tab-content\" ui-layout-container size=\"29%\">\n" +
     "			<div id=\"edit-tests\" class=\"tab-pane active\">\n" +
     "\n" +
-    "				<div class=\"section-bar\" ng-if=\"data.dispute.active\">\n" +
+    "				<div class=\"section-bar-2\" ng-if=\"data.dispute.active\">\n" +
     "					<span class=\"title pull-left\">Report Function Description</span>\n" +
     "					<span class=\"pull-right\">\n" +
     "						<button class=\"btn btn-sm\" ng-click=\"data.dispute.active = !data.dispute.active;\" >\n" +
@@ -9161,7 +9158,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					<span class=\"clearfix\"></span>\n" +
     "				</div>\n" +
     "\n" +
-    "				<div class=\"section-content padding\" ng-if=\"data.dispute.active\">\n" +
+    "				<div class=\"section-content-2 padding\" ng-if=\"data.dispute.active\">\n" +
     "					<div class=\"form\" style=\"height:100%\">\n" +
     "						<div class=\"form-group\" style=\"height:100%\">\n" +
     "							<label for=\"description\">Report reason </label>\n" +
@@ -9176,7 +9173,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					</div>\n" +
     "				</div>\n" +
     "\n" +
-    "				<div class=\"section-bar\" ng-if=\"!data.dispute.active\">\n" +
+    "				<div class=\"section-bar-2\" ng-if=\"!data.dispute.active\">\n" +
     "					<span class=\"pull-left title\" ng-if=\"data.selected == -1\">\n" +
     "					<!-- Tests -->\n" +
     "					</span>\n" +
@@ -9209,7 +9206,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					<span class=\"clearfix\"></span>\n" +
     "				</div>\n" +
     "\n" +
-    "				<div class=\"section-content empty\" ng-if=\"!data.dispute.active && data.tests.length == 0\">\n" +
+    "				<div class=\"section-content-2 empty\" ng-if=\"!data.dispute.active && data.tests.length == 0\">\n" +
     "					<div>\n" +
     "						<div>No previous tests written!</div><br />\n" +
     "						<button class=\"btn btn-sm\" ng-click=\"addNew($event)\">\n" +
@@ -9218,7 +9215,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					</div>\n" +
     "				</div>\n" +
     "\n" +
-    "				<div class=\"section-content slide from-left\" ng-if=\"!data.dispute.active && data.tests.length > 0 && data.selected == -1\">\n" +
+    "				<div class=\"section-content-2 slide from-left\" ng-if=\"!data.dispute.active && data.tests.length > 0 && data.selected == -1\">\n" +
     "					<div class=\"tests-list has-next \">\n" +
     "						<div class=\"test-item clickable {{ t.dispute.active ? 'disputed' : '' }}\" ng-repeat=\"t in data.tests track by $index\">\n" +
     "							<div ng-click=\"toggleSelect($event,t)\">\n" +
@@ -9243,7 +9240,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					</div>\n" +
     "				</div>\n" +
     "\n" +
-    "				<div class=\"section-content slide from-right padding\" ng-repeat=\"t in data.tests track by $index\" ng-if=\"!data.dispute.active && (!t.deleted || data.selected == t)\" ng-show=\"data.selected == t\">\n" +
+    "				<div class=\"section-content-2 slide from-right padding\" ng-repeat=\"t in data.tests track by $index\" ng-if=\"!data.dispute.active && (!t.deleted || data.selected == t)\" ng-show=\"data.selected == t\">\n" +
     "				<div ng-form=\"{{ 'testForm_'+$index }}\" class=\"form form-material\" ng-init=\"errors = {}\">\n" +
     "\n" +
     "					<div class=\"form-group\">\n" +
@@ -9335,7 +9332,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "			<div id=\"run-tests\" class=\"tab-pane\">\n" +
     "\n" +
-    "				<div class=\"section-bar\">\n" +
+    "				<div class=\"section-bar-2\">\n" +
     "\n" +
     "				<span class=\"pull-left title\" ng-if=\"data.selected1 == -1\">\n" +
     "\n" +
@@ -9377,7 +9374,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
     "\n" +
-    "				<div class=\"section-content padding slide from-left\" ng-if=\"data.selected1 == -1\">\n" +
+    "				<div class=\"section-content-2 padding slide from-left\" ng-if=\"data.selected1 == -1\">\n" +
     "				<div class=\"test-list \">\n" +
     "					<div class=\"test-item clickable {{ !te.running ? (te.dispute.active ? 'disputed' : ( te.result.passed ? 'passed' : 'failed' ) ) : '' }}\" ng-repeat=\"te in data.tests track by $index\">\n" +
     "						<div ng-click=\"toggleSelect1($event,te);\">\n" +
@@ -9396,7 +9393,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</div>\n" +
     "			</div>\n" +
     "\n" +
-    "				<div class=\"section-content padding slide from-right\" ng-if=\"data.selected1 != -1\" ng-init=\"t = data.selected1\">\n" +
+    "				<div class=\"section-content-2 padding slide from-right\" ng-if=\"data.selected1 != -1\" ng-init=\"t = data.selected1\">\n" +
     "				<div class=\"test-result\">\n" +
     "					<div class=\"row\">\n" +
     "						<div class=\"{{ t.result.showDiff || t.dispute.active ? 'col-sm-6 col-md-6' : 'col-sm-12 col-md-12' }}\">\n" +
@@ -9470,7 +9467,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "		</div>\n" +
     "\n" +
     "	</div>\n" +
-    "");
+    "</div>");
 }]);
 
 angular.module("microtasks/implement_behavior/implement_behavior.html", []).run(["$templateCache", function ($templateCache) {
@@ -12221,8 +12218,12 @@ angular.module("widgets/feedback.popover.html", []).run(["$templateCache", funct
 
 angular.module("widgets/function_editor.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("widgets/function_editor.html",
-    "<statements-progress-bar  class=\"function-statements\"></statements-progress-bar>\n" +
-    "<div class=\"function-editor\" style=\"\">\n" +
+    "<div ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
+    "	<div ui-layout-container size=\"1%\">\n" +
+    "		<statements-progress-bar  class=\"function-statements\"></statements-progress-bar>\n" +
+    "	</div>\n" +
+    "\n" +
+    "	<div class=\"function-editor\" style=\"\" ui-layout-container size=\"99%\">\n" +
     "	<div ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
     "		<div\n" +
     "			ui-layout-container size=\"80%\"\n" +
@@ -12233,7 +12234,7 @@ angular.module("widgets/function_editor.html", []).run(["$templateCache", functi
     "		</div>\n" +
     "\n" +
     "\n" +
-    "		<div class=\"function-errors \" ui-layout-container size=\"20%\" style=\"\"  >\n" +
+    "		<div class=\"function-errors \" ui-layout-container size=\"18%\" style=\"\"  >\n" +
     "			<ul class=\"help-block\" ng-if=\"errors.length > 0\" >\n" +
     "				<li ng-repeat=\"e in errors track by $id($index)\">\n" +
     "					<span ng-bind=\"e\"></span>\n" +

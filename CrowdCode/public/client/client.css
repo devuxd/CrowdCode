@@ -1025,6 +1025,38 @@ tutorial  { display:none; }
 	margin: 5px 2px 0px 2px;
 }
 
+.section-bar-2 {
+	background-color: #FFFFFF;
+	position: absolute;
+	top: 25px;
+	left: 0px;
+	right: 0px;
+	height: 25px;
+	font-family: Lato;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.section-bar-2 .title {
+	line-height:25px;
+	font-weight: bold;
+}
+.section-bar-2 .btn {
+	background-color: transparent;
+	height: 25px;
+	line-height: 25px;
+	padding: 0px 5px 0px 5px;
+}
+.section-bar-2 .btn:hover {
+	border:1px solid rgb(175,175,175);
+}
+
+.section-bar-2 .separator {
+	border-left: 1px solid rgb(172, 172, 172);
+	display: block;
+	height: 20px;
+	margin: 5px 2px 0px 2px;
+}
+
 .section-content {
 	position: absolute;
 	top: 25px;
@@ -1064,6 +1096,53 @@ tutorial  { display:none; }
 }
 
 .section-content .row-label {
+	text-align:right;
+	text-transform: uppercase;
+	font-weight:bold;
+	font-family: 'Lato';
+	font-size:0.9em;
+
+}
+
+.section-content-2 {
+	position: absolute;
+	top: 50px;
+	left: 0px;
+	right: 0px;
+	bottom:0px;
+	overflow: auto;
+	background-color:white;
+}
+
+.section-bar-2 + .section-content-2 {
+	top:50px;
+}
+
+.section-content-2.empty {
+	background-color:#FFFFFF;
+	font-family: 'Lato';
+	font-size: 1.2em;
+}
+
+.section-content-2.empty > * {
+	position: relative;
+	top: 40%;
+	text-align: center;
+	width: 100%;
+}
+
+
+.section-content-2 [class*="col-"] {
+	padding: 0px 5px 0px 5px;
+}
+
+.section-content-2 .row {
+	/*border-bottom: 1px solid rgb(214, 214, 214) !important;*/
+	padding: 0px;
+	margin-top: 2px;
+}
+
+.section-content-2 .row-label {
 	text-align:right;
 	text-transform: uppercase;
 	font-weight:bold;
