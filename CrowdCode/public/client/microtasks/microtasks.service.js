@@ -32,7 +32,7 @@ angular
 			// submit to the server
 			$http.post('/api/v1/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
 				.success(function(data, status, headers, config) {
-					if( data.microtaskKey === undefined )
+					if( data !== "success" )
 						deferred.reject();
 					else
 						deferred.resolve(data);

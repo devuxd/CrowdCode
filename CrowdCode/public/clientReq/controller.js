@@ -22,6 +22,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
     $scope.ADTs = [];
     $scope.functions = [];
     $scope.projectName = "";
+    $scope.projectDescription = "";
     $scope.addADT = function() {
       var emptyAdt = {
         description: "",
@@ -171,8 +172,10 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
         });
       } else {
         let project = {};
-        angular.forEach($scope.functions, function(funct, key) {
 
+
+
+        angular.forEach($scope.functions, function(funct, key) {
           //create the header
           funct.header = 'function ' + funct.name + '(';
           for (var index in funct.parameters)
@@ -180,6 +183,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
           funct.header += ")";
           //Set stubs as empty
           if(funct.stubs.length === 0) funct.stubs = '';
+
           //Add new line to function description
            var clean = funct.description.replace(/\n/g,"");
            console.log("Cleaned " + clean);
@@ -192,9 +196,8 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
 
         });
 
+        project.description = $scope.projectDescription;
         project.functions = $scope.functions;
-        console.log(project.functions);
-
         project.ADTs = $scope.ADTs;
         var exist = false;
         projectNames.$loaded().then(function() {
@@ -286,7 +289,9 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
       var project = $firebaseObject(ref);
       //project = projectSync.$asObject();
       project.$loaded().then(function() {
-
+        if(angular.isDefined([project.description])){
+          $scope.projectDescription = project.description;
+        }
         if (angular.isDefined(project.functions)) {
           $scope.functions = project.functions;
           for (var index in $scope.functions) {

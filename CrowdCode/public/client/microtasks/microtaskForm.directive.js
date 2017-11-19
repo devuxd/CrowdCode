@@ -20,6 +20,7 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 			var templates = {
 				'NoMicrotask': 'no_microtask/no_microtask',
 				'Dashboard': 'dashboard/dashboard',
+				'Dashboard2': 'dashboard/dashboard2',
 				'Review': 'review/review',
 				'DebugTestFailure': 'debug_test_failure/debug_test_failure',
 				'ReuseSearch': 'reuse_search/reuse_search',
@@ -104,16 +105,15 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 				$scope.taskData.startBreak = true;
 				$scope.breakMode = true;
 				cancelFetchTimer();
-				$scope.templatePath  = templatesURL + templates['Dashboard'] + ".html";
+				$scope.templatePath  = templatesURL + templates['Dashboard2'] + ".html";
 			}
 
 			function noMicrotasks() {
 				$scope.noMicrotask = true;
 				$scope.$emit('reset-reminder');
 				setFetchTimer();
-
-				if(userService.data.level >= 2)
-					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
+				if(userService.data.level >= 0)
+					$scope.templatePath = templatesURL + templates['Dashboard2'] + ".html";
 				else
 					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
 			}
@@ -201,7 +201,9 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 				microtasks
 					.submit($scope.microtask,undefined,false,!$scope.breakMode)
 					.then( function(fetchData){
-						microtasks.load(fetchData);
+                        //microtasks.load(fetchData);
+                        console.log("------------------------"+fetchData);
+                        openDashboard();
 					}, function(){
 						noMicrotasks();
 					});
@@ -226,7 +228,9 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 						microtasks
 							.submit($scope.microtask,formData,false,!$scope.breakMode)
 							.then( function(fetchData){
-								microtasks.load(fetchData);
+								//microtasks.load(fetchData);
+                                console.log("------------------------"+fetchData);
+                                openDashboard();
 							}, function(){
 								noMicrotasks();
 							});

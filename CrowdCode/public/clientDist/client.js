@@ -4269,6 +4269,7 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 			var templates = {
 				'NoMicrotask': 'no_microtask/no_microtask',
 				'Dashboard': 'dashboard/dashboard',
+				'Dashboard2': 'dashboard/dashboard2',
 				'Review': 'review/review',
 				'DebugTestFailure': 'debug_test_failure/debug_test_failure',
 				'ReuseSearch': 'reuse_search/reuse_search',
@@ -4353,16 +4354,15 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 				$scope.taskData.startBreak = true;
 				$scope.breakMode = true;
 				cancelFetchTimer();
-				$scope.templatePath  = templatesURL + templates['Dashboard'] + ".html";
+				$scope.templatePath  = templatesURL + templates['Dashboard2'] + ".html";
 			}
 
 			function noMicrotasks() {
 				$scope.noMicrotask = true;
 				$scope.$emit('reset-reminder');
 				setFetchTimer();
-
-				if(userService.data.level >= 2)
-					$scope.templatePath = templatesURL + templates['Dashboard'] + ".html";
+				if(userService.data.level >= 0)
+					$scope.templatePath = templatesURL + templates['Dashboard2'] + ".html";
 				else
 					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
 			}
@@ -4450,7 +4450,9 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 				microtasks
 					.submit($scope.microtask,undefined,false,!$scope.breakMode)
 					.then( function(fetchData){
-						microtasks.load(fetchData);
+                        //microtasks.load(fetchData);
+                        console.log("------------------------"+fetchData);
+                        openDashboard();
 					}, function(){
 						noMicrotasks();
 					});
@@ -4475,7 +4477,9 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 						microtasks
 							.submit($scope.microtask,formData,false,!$scope.breakMode)
 							.then( function(fetchData){
-								microtasks.load(fetchData);
+								//microtasks.load(fetchData);
+                                console.log("------------------------"+fetchData);
+                                openDashboard();
 							}, function(){
 								noMicrotasks();
 							});
@@ -4582,7 +4586,7 @@ angular
 			// submit to the server
 			$http.post('/api/v1/' + $rootScope.projectId + '/ajax/enqueue?type=' + microtask.type + '&key=' + microtask.$id+ '&skip=' + skip + '&disablepoint=' + disablePoint+ '&autoFetch=' + autoFetch, formData)
 				.success(function(data, status, headers, config) {
-					if( data.microtaskKey === undefined )
+					if( data !== "success" )
 						deferred.reject();
 					else
 						deferred.resolve(data);
@@ -7901,7 +7905,7 @@ function workerProfile(avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$fi
 	}
 }
 
-angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
+angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/dashboard/dashboard2.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
 
 angular.module("achievements/achievements_panel.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("achievements/achievements_panel.html",
@@ -8865,6 +8869,18 @@ angular.module("microtasks/dashboard/dashboard.html", []).run(["$templateCache",
     "</div>\n" +
     "\n" +
     "");
+}]);
+
+angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache", function ($templateCache) {
+  $templateCache.put("microtasks/dashboard/dashboard2.html",
+    "<div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
+    "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"100%\">\n" +
+    "        <div class=\"title\">Project Outline</div>\n" +
+    "        <div class=\"content\">\n" +
+    "            <project-outline ng-click=\"trackInteraction('Click Right Bar', 'Project Outline', $event)\"></project-outline>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "</div>");
 }]);
 
 angular.module("microtasks/debug_test_failure/debug_test_failure.html", []).run(["$templateCache", function ($templateCache) {
@@ -12241,6 +12257,7 @@ angular.module("widgets/function_editor.html", []).run(["$templateCache", functi
     "				</li>\n" +
     "			</ul>\n" +
     "		</div>\n" +
+    "	</div>\n" +
     "	</div>\n" +
     "</div>");
 }]);

@@ -22,8 +22,8 @@ module.exports = function(wagner) {
       let workerId = req.user.uid;
 
       if(skip === true) {
-        let fetchedData = MicrotaskService.skipMicrotask(projectId, workerId);
-        res.json(fetchedData);
+        MicrotaskService.skipMicrotask(projectId, workerId);
+        res.send("success");
       } else {
         if(type === 'DescribeFunctionBehavior') {
           let tests = req.body;
@@ -31,9 +31,11 @@ module.exports = function(wagner) {
           let promise = MicrotaskService.submitImplementationMicrotask(projectId,key, funct, tests, workerId);
           promise.then((data) => {
             console.log("data being returned ", data);
-            let microtask = MicrotaskService.fetchMicrotask(projectId, req.user.uid);
+            //let microtask = MicrotaskService.fetchMicrotask(projectId, req.user.uid);
             //console.log("Next microtask being fetched ", microtask);
-            res.json(microtask);
+            //res.json(microtask);
+
+            res.send("success");
           }).catch(err => {
             console.log("error", err);
           });
@@ -44,9 +46,11 @@ module.exports = function(wagner) {
           let promise = MicrotaskService.submitReviewMicrotask(projectId,key,review, rating, workerId);
           promise.then((data) => {
             console.log("data being returned ", data);
-            let microtask = MicrotaskService.fetchMicrotask(projectId, req.user.uid);
+            //let microtask = MicrotaskService.fetchMicrotask(projectId, req.user.uid);
             //console.log("Next microtask being fetched ", microtask);
-            res.json(microtask);
+            //res.json(microtask);
+
+            res.send("success");
           }).catch(err => {
             console.log("error", err);
           });

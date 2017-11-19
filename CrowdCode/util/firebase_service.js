@@ -31,10 +31,11 @@ module.exports = function(AdminFirebase, Q) {
      param owner_id text
      returns Project ID text
      */
-    createProject: function(project_name, owner_id) {
+    createProject: function(project_name, project_description, owner_id) {
       let project_schema = {
         name: project_name,
         owner: owner_id,
+        description:project_description,
         isComplete: "null",
         artifacts: {
           ADTs: "null",
@@ -1514,7 +1515,8 @@ module.exports = function(AdminFirebase, Q) {
     },
 
     createProjectFromClientRequest: function(id, clientReq, workerId) {
-      this.createProject(id, workerId).then(result => {
+      this.createProject(id, clientReq.description, workerId).then(result => {
+
         this.createDefaultADTS(id);
         if (typeof clientReq.ADTs !== 'undefined') {
           clientReq.ADTs.forEach(adt => {

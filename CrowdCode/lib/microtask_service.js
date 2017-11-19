@@ -973,7 +973,7 @@ module.exports = function(FirebaseService, Q) {
 
                   }
               }console.log('calling fetch')
-              return_object = fetchMicrotask(project_id, worker_id);
+              //return_object = fetchMicrotask(project_id, worker_id);
           }
           worker.set('assigned',assigned_task);
           worker.set('skipped',skipped_task);
@@ -985,7 +985,7 @@ module.exports = function(FirebaseService, Q) {
           Project.set('inProgressQ',inProgressQ);
           Projects.set(project_id,Project);
           firebase.backupState(project_id,Project);
-          return return_object;
+          return ;
       }
       else{console.log('Reloading project at skip');
           var load_project_promise = loadProject(project_id);
