@@ -1778,6 +1778,46 @@ tutorial  { display:none; }
 }
 
 
+/* DASHBOARD 2 CSS */
+.dashboard2 .title{
+	font-family: Lato;
+	font-size: 2em;
+	font-weight: 700;
+	text-align: left;
+}
+.dashboard2 .content .section-header{
+	font-weight: 700;
+	font-size: 1.3em;
+	font-stretch: expanded;
+}
+
+.dashboard2 .content .toggler {
+	font-weight: bold;
+	font-family: 'Lato';
+	padding: 3px;
+	margin-bottom: 2px;
+	cursor:pointer;
+	background-color: rgba(178, 176, 176,0.3);
+}
+
+.dashboard2 .content .toggled {
+	padding: 5px;
+	background-color: rgba(255, 255, 255,0.6);
+}
+
+.dashboard2 .content .toggler:hover { background-color: rgba(222, 222, 222,0.5); }
+
+
+::-webkit-scrollbar {
+	-webkit-appearance: none;
+	width: 5px;
+	height:5px;
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 2px;
+	background-color: rgba(0,0,0,.5);
+	-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
 
 
 /* ACHIEVEMENTS CSS */

@@ -60,7 +60,7 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 			// ------- MESSAGE LISTENERS ------- //
 
 			$scope.$on('timeExpired'    , timeExpired);
-			$scope.$on('fecthMicrotask' , fetchMicrotask);
+			$scope.$on('fetchMicrotask' , fetchMicrotask);
 			$scope.$on('fetchSpecificMicrotask' , fetchSpecificMicrotask);
 			$scope.$on('microtaskLoaded', onMicrotaskLoaded);
 			$scope.$on('openDashboard' , openDashboard);
@@ -105,6 +105,7 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 				$scope.taskData.startBreak = true;
 				$scope.breakMode = true;
 				cancelFetchTimer();
+                $rootScope.$broadcast("reset-reminder");
 				$scope.templatePath  = templatesURL + templates['Dashboard2'] + ".html";
 			}
 
@@ -202,7 +203,6 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 					.submit($scope.microtask,undefined,false,!$scope.breakMode)
 					.then( function(fetchData){
                         //microtasks.load(fetchData);
-                        console.log("------------------------"+fetchData);
                         openDashboard();
 					}, function(){
 						noMicrotasks();
@@ -229,7 +229,6 @@ function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal
 							.submit($scope.microtask,formData,false,!$scope.breakMode)
 							.then( function(fetchData){
 								//microtasks.load(fetchData);
-                                console.log("------------------------"+fetchData);
                                 openDashboard();
 							}, function(){
 								noMicrotasks();

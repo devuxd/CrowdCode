@@ -966,11 +966,63 @@ angular.module("microtasks/dashboard/dashboard.html", []).run(["$templateCache",
 
 angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("microtasks/dashboard/dashboard2.html",
-    "<div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
-    "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"100%\">\n" +
-    "        <div class=\"title\">Project Outline</div>\n" +
-    "        <div class=\"content\">\n" +
-    "            <project-outline ng-click=\"trackInteraction('Click Right Bar', 'Project Outline', $event)\"></project-outline>\n" +
+    "<div class=\"dashboard2\">\n" +
+    "    <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
+    "        <div ui-layout-container min-size=\"40px\" size=\"100%\">\n" +
+    "            <div class=\"title\">DashBoard</div>\n" +
+    "            <div class=\"content\">\n" +
+    "\n" +
+    "                <span class=\"section-header\">Name</span>\n" +
+    "                <span ng-bind=\"projectName\"></span><br/>\n" +
+    "\n" +
+    "                <span class=\"section-header\">Description</span><br/>\n" +
+    "                <span ng-bind=\"projectDescription\"></span><br/>\n" +
+    "\n" +
+    "                <div bs-collapse start-collapsed=\"false\" allow-multiple=\"true\">\n" +
+    "                    <span class=\"section-header\">Data Types</span><br/>\n" +
+    "                    <div ng-repeat=\"d in dataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
+    "                        <div bs-collapse-toggle class=\"toggler\" >{{d.name}}</div>\n" +
+    "                        <div bs-collapse-target class=\"toggled\" ng-init=\"structure = buildStructure(d)\">\n" +
+    "                            <span ng-bind=\"::d.description\"></span>\n" +
+    "                            <pre ng-if=\"d.structure\" ng-bind=\"structure\"></pre>\n" +
+    "                            <div ng-if=\"d.selectedExample != undefined\">\n" +
+    "                                <span class=\"pull-left\" for=\"exampleSelect\">EXAMPLES:</span>\n" +
+    "                                <span class=\"pull-right\">\n" +
+    "                                    <div ng-if=\"::d.examples\" class=\"dropdown\"  >\n" +
+    "                                       <button name= \"exampleSelect\"\n" +
+    "                                               class=\"btn btn-xs dropdown-toggle\"\n" +
+    "                                               bs-select\n" +
+    "                                               bs-options=\"e.name for e in d.examples\"\n" +
+    "                                               data-html=\"1\"\n" +
+    "                                               data-placement=\"bottom-right\"\n" +
+    "                                               ng-model=\"d.selectedExample\" >\n" +
+    "                                       </button>\n" +
+    "                                    </div>\n" +
+    "                                </span>\n" +
+    "                                <span class=\"clearfix\"></span>\n" +
+    "                                <div json-reader ng-model=\"d.selectedExample.value\" copy-allowed></div>\n" +
+    "                            </div>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                    <br/>\n" +
+    "                    <span class=\"section-header\">Functions</span><br/>\n" +
+    "                    <div ng-repeat=\"f in functions\" class=\"functions\">\n" +
+    "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
+    "                        <div bs-collapse-target class=\"toggled\">\n" +
+    "                            <div ng-bind=\"f.description\"></div>\n" +
+    "                            <div><strong> Parameters </strong></div>\n" +
+    "                            <div ng-repeat=\"p in f.parameters\">\n" +
+    "                                <span ng-bind=\"p.name\"></span>\n" +
+    "                                <span ng-bind=\"p.type\"></span>\n" +
+    "                            </div>\n" +
+    "                            <div >\n" +
+    "                                <strong>Return:</strong>\n" +
+    "                                <span ng-bind=\"f.returnType\"></span>\n" +
+    "                            </div>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
     "</div>");
@@ -1900,10 +1952,10 @@ angular.module("microtasks/microtask_form.html", []).run(["$templateCache", func
     "   			tabindex=\"100\" >\n" +
     "   			Skip\n" +
     "   		</button>\n" +
-    "	  	<label class=\"btn btn-sm pull-right\" ng-if=\"!breakMode && !noMicrotask\" id=\"breakBtn\">\n" +
+    "	  	<!--<label class=\"btn btn-sm pull-right\" ng-if=\"!breakMode && !noMicrotask\" id=\"breakBtn\">\n" +
     "  	    	<input type=\"checkbox\" ng-model=\"taskData.startBreak\" tabindex=\"103\" >\n" +
     "  	    	<span>{{currentPrompt()}}</span>\n" +
-    "  	   	</label>\n" +
+    "  	   	</label>-->\n" +
     "  	   	\n" +
     "		<button type=\"button\"\n" +
     "   			class=\"btn btn-primary btn-sm pull-right\"\n" +
