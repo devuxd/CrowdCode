@@ -18,5 +18,16 @@
     "projectId": "crowdcode2",
     "storageBucket": "crowdcode2.appspot.com",
     "messagingSenderId": "382318704982"
+  },
+  "heroku":{
+    "token": "4cb548ac-f3a9-498f-bd10-7401dcb852db"
+  },
+  "github":{
+    "username": "crowdcodev2",
+    "token": "6d880d63c80e37fc993d7cc65c991c398593f40b"
+  },
+  "travis":{
+    "token": "Gto3IqdjFI43hWc4YGcuaA",
+    "userId": "1066726"
   }
 }

@@ -80,7 +80,7 @@ angular
   .constant('projectId', projectId)
   .constant('firebaseUrl', 'https://crowdcode2.firebaseio.com/Projects/' + projectId)
   .constant('logoutUrl', logoutURL)
-  .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, functionsService, AdtService,
+  .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, projectService, functionsService, AdtService,
     avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics, testsService) {
 
     // current session variables
@@ -140,6 +140,7 @@ angular
 
     function loadServices() {
       servicesLoadingStatus = {};
+      projectService.init();
       functionsService.init();
       AdtService.init();
       questionsService.init();
@@ -152,7 +153,8 @@ angular
     function serviceLoaded(event, nameOfTheService) {
       servicesLoadingStatus[nameOfTheService] = true;
 
-      if (servicesLoadingStatus.hasOwnProperty('functions') &&
+      if (servicesLoadingStatus.hasOwnProperty('project') &&
+          servicesLoadingStatus.hasOwnProperty('functions') &&
         servicesLoadingStatus.hasOwnProperty('adts') &&
         servicesLoadingStatus.hasOwnProperty('questions') &&
         servicesLoadingStatus.hasOwnProperty('newsfeed') &&

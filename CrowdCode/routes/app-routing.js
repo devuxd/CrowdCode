@@ -34,11 +34,11 @@ module.exports = function(wagner) {
         if(project_promise !== null) {
             project_promise.then(function () {
                 console.log("Project Name : " + projectName + "------------------------------");
-                FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then((exists) => {
+                FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then(function(exists){
                   if(exists === false) {
-                    FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.name).then(() => {
+                    FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.name).then(function(){
                       FirebaseService.createProjectWorker(projectName,req.user.uid);
-                    }).catch(err => {
+                    }).catch(function(err){
                       throw err;
                     });
                   }
@@ -47,18 +47,18 @@ module.exports = function(wagner) {
                       workerHandle: req.user.email,
                       projectId: projectName
                   });
-                }).catch(err => {
+                }).catch(function(err){
                   console.error(err);
                   throw err;
                 });
             });
         }else{
             console.log("Project Name loaded from memory: " + projectName + "------------------------------");
-            FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then((exists) => {
+            FirebaseService.checkIfWorkerIsInLeaderboard(projectName, req.user.uid).then(function(exists){
               if(exists === false) {
-                FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.name).then(() => {
+                FirebaseService.addWorkerToLeaderBoard(projectName, req.user.uid, req.user.name).then(function(){
                   FirebaseService.createProjectWorker(projectName,req.user.uid);
-                }).catch(err => {
+                }).catch(function(err) {
                   throw err;
                 });
               }
@@ -67,13 +67,31 @@ module.exports = function(wagner) {
                   workerHandle: req.user.email,
                   projectId: projectName
               });
-            }).catch(err => {
+            }).catch(function(err){
               console.error(err);
               throw err;
             });
         }
       }
   }));
+
+  router.get('/:projectId/deploy', wagner.invoke(function(DeploymentService){
+    return function(req,res){
+        var project_id = req.params.projectId;
+        var result = DeploymentService.createMicroService(project_id);
+        result.then(function(response){
+            if(response) {
+                res.send("Micro service created! You can access it at /" + project_id+"/{endpoint}");
+            }
+        }).catch(function(err){
+            console.log(err);
+        })
+
+    }
+  }));
+
+
+
 
   return router;
 

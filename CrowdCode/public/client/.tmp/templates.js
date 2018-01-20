@@ -966,7 +966,7 @@ angular.module("microtasks/dashboard/dashboard.html", []).run(["$templateCache",
 
 angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("microtasks/dashboard/dashboard2.html",
-    "<div class=\"dashboard2\">\n" +
+    "<div class=\"dashboard2\" ng-controller=\"dashboard2\">\n" +
     "    <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
     "        <div ui-layout-container min-size=\"40px\" size=\"100%\">\n" +
     "            <div class=\"title\">DashBoard</div>\n" +
@@ -980,7 +980,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "\n" +
     "                <div bs-collapse start-collapsed=\"false\" allow-multiple=\"true\">\n" +
     "                    <span class=\"section-header\">Data Types</span><br/>\n" +
-    "                    <div ng-repeat=\"d in dataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
+    "                    <div ng-repeat=\"d in DataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{d.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\" ng-init=\"structure = buildStructure(d)\">\n" +
     "                            <span ng-bind=\"::d.description\"></span>\n" +
@@ -1006,7 +1006,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                    </div>\n" +
     "                    <br/>\n" +
     "                    <span class=\"section-header\">Functions</span><br/>\n" +
-    "                    <div ng-repeat=\"f in functions\" class=\"functions\">\n" +
+    "                    <div ng-repeat=\"f in Functions\" class=\"functions\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
     "                            <div ng-bind=\"f.description\"></div>\n" +

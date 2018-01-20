@@ -193,16 +193,15 @@
 				</div>
 				<div class="section-content" >
 					<span>
-					Describe functions with a name, list of parameters, description, and code with surrounding
-					function brackets, and if needed some stubs.
+					Describe End points of your micro service with a name, list of parameters, description.
 					<BR>
 					</span>
 					<div  ng-repeat="(functionIndex,function) in functions"   class="row">
 						<div ng-form="functionForm{{$index}}" class="col-sm-10 form-horizontal" role="form">
 							<div class="form-group">
-								<label for="functionDescription" class="col-sm-2 control-label reset-padding">description</label>
+								<label for="functionDescription" class="col-sm-2 control-label reset-padding">Description</label>
 								<div class="col-sm-8 reset-padding">
-									<textarea class="form-control" name="functionDescription" placeholder="briefly describe the purpose and the behavior of the function" ng-model="function.description" required focus ></textarea>
+									<textarea class="form-control" name="functionDescription" placeholder="List the requirements of the function and describe its behavior" ng-model="function.description" required focus ></textarea>
 
 
 									<ul class="help-block" ng-show="functionForm{{$index}}.functionDescription.$dirty && functionForm{{$index}}.functionDescription.$invalid">
@@ -211,8 +210,9 @@
 									</ul>
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="returnType" class="col-sm-2 control-label reset-padding">return data type</label>
+
+                            <div class="form-group">
+								<label for="returnType" class="col-sm-2 control-label reset-padding">Return type</label>
 								<div class="col-sm-10 reset-padding">
 									<input type="text" class="form-control" name="returnType" ng-model="function.returnType" adt-validator required placeholder="insert the return data type" press-enter="addParameter()" >
 									<ul class="help-block" ng-show="functionForm{{$index}}.returnType.$dirty && functionForm{{$index}}.returnType.$invalid">
@@ -221,16 +221,18 @@
 									</ul>
 								</div>
 							</div>
+
 							<div class="form-group">
-								<label for="functionName" class="col-sm-2 control-label reset-padding">function name</label>
+								<label for="functionName" class="col-sm-2 control-label reset-padding">Endpoint name</label>
 								<div class="col-sm-10 reset-padding">
-									<input type="text" class="form-control" name="functionName" ng-model="function.name" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="insert the function name" press-enter="addParameter()">
+									<input type="text" class="form-control" name="functionName" ng-model="function.name" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="insert the endpoint name" press-enter="addParameter()">
 									<ul class="help-block" ng-show="functionForm{{$index}}.functionName.$dirty && functionForm{{$index}}.functionName.$invalid">
 										<li ng-show="functionForm{{$index}}.functionName.$error.required">This field is required!</li>
 										<li ng-show="functionForm{{$index}}.functionName.$error.pattern">Is not a valid function name! Please use only alphanumerical characters and the _ symbol</li>
 									</ul>
 								</div>
 							</div>
+
 							<div class="form-group col-sm-12">
 								<label class=" control-label col-sm-2 reset-padding">parameters</label>
 								<div class="form-group col-sm-10 reset-padding" >
@@ -268,82 +270,8 @@
 									<button ng-click="addParameter(functionIndex)" class="btn btn-mini pull-right">Add Parameter</button>
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="code" class="col-sm-2 control-label reset-padding">code</label>
-								<div class="col-sm-10 reset-padding">
-									<textarea class="form-control" name="code" placeholder="briefly describe the purpose and the behavior of the function" ng-model="function.code"></textarea>
-								</div>
-							</div>
-							<div class="form-group col-sm-12">
-								<label class=" control-label col-sm-2 reset-padding">Required functions</label>
-								<div class="form-group col-sm-10 reset-padding" >
-									<div class="col-sm-12 row reset-padding" ng-repeat="dependent in function.dependent track by $index ">
-										<div ng-form="test{{$index}}" class="form-horizontal col-sm-11" >
-											<div class="col-sm-3 reset-padding">
-												<input type="text" class="form-control pull-left" ng-model="dependent.functionName" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="function1" name="functionName"/>
-												<ul class="help-block" ng-show="param{{$index}}.functionName.$dirty && param{{$index}}.functionName.$invalid">
-													<li ng-show="param{{$index}}.functionName.$error.required">This field is required!</li>
-													<li ng-show="param{{$index}}.functionName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
-												</ul>
-											</div>
-											<div class="col-sm-5 reset-padding">
-												<span class="pull-left"><b>()</b></span>
-											</div>
-										</div>
-										<div class="col-sm-1 reset-padding">
-											<button ng-click="deleteDependent(functionIndex,$index)" class="btn  pull-right">X</button>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-12 reset-padding">
-									<button ng-click="addDependent(functionIndex)" class="btn btn-mini pull-right">Add Function</button>
-								</div>
-							</div>
 
-							<div class="form-group col-sm-12">
-								<label class=" control-label col-sm-2 reset-padding">stubs</label>
-								<div class="form-group col-sm-10 reset-padding" >
-									<div class="col-sm-12 row reset-padding" ng-repeat="stubs in function.stubs track by $index ">
-										<div ng-form="test{{$index}}" class="form-horizontal col-sm-11" >
-										<!-- form for each input parameter of the function -->
-											<div  class="form-group" ng-form="inputForm{{$index}}" ng-repeat="(index,parameter) in function.parameters track by $index">
-												<label for="input" class="col-sm-2 control-label reset-padding"><b>{{parameter.name}}</b> ({{parameter.type}}) </label>
-												<div class="col-sm-10 reset-padding"  ng-form="singleInputForm"  >
-													<textarea class="form-control" name="input" ng-model="stubs.inputs[index]" required json-validator="{{parameter.type}}"></textarea>
-													<ul class="help-block pull-left" ng-show="singleInputForm.$invalid && singleInputForm.$dirty">
-														<li ng-show="singleInputForm.input.$error.required" >This field is required!</li>
-														<li ng-show="singleInputForm.input.$error.json" ng-repeat="error in singleInputForm.input.$error.json">{{error}}</li>
-													</ul>
-												</div>
-											</div>
-											<!-- form for the output of the function -->
-											<div class="form-group" ng-form="outputForm">
-												<label for="input" class="col-sm-2 control-label reset-padding"><b>return value</b> ({{function.returnType}})</label>
-												<div class="col-sm-10 reset-padding">
-													<textarea class="form-control" name="output" ng-model="stubs.output" required json-validator="{{function.returnType}}" allow-null="true" ></textarea>
-													<ul class="help-block pull-left" ng-show="outputForm.$invalid && outputForm.$dirty">
-														<li ng-show="outputForm.output.$error.required" >This field is required!</li>
-														<li ng-show="outputForm.output.$error.json" ng-repeat="error in outputForm.output.$error.json" >{{error}}</li>
-													</ul>
-												</div>
-											</div>
-											<div ng-show="$index!=function.stubs.length-1" class="line-separator"></div>
-										</div>
-										<div class="col-sm-1 reset-padding">
-											<button ng-click="deleteStub(functionIndex,$index)" class="btn  pull-right">X</button>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-12 reset-padding">
-									<button ng-click="addStub(functionIndex)" class="btn btn-mini pull-right">Add Stub</button>
-								</div>
-							</div>
-							<div ng-show="functionIndex!=functions.length-1" class="line-separator"></div>
-						</div>
+
 						<div class="col-sm-1">
 							<button ng-click="deleteFunction(functionIndex)" class="btn  pull-right">X</button>
 						</div>
@@ -352,11 +280,12 @@
 				</div>
 			</div>
 		</div>
-	    <div class="button-bar">
-	    	<div class="btn-group pull-right" role="group"  >
-	    	  <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-sm">Submit</button>
-	    	</div>
 
+
+        <div class="button-bar">
+	    	<div class="btn-group pull-right" role="group"  >
+	    	  <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-lg">Submit</button>
+	    	</div>
 
 	    	<span class="clearfix"></span>
 	    </div>

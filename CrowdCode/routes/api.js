@@ -166,7 +166,7 @@ module.exports = function(wagner) {
   }));
 
   api.post('/clientRequests/:id', wagner.invoke(function(FirebaseService) {
-    return function(req, res) {console.log("5");
+    return function(req, res) {
       let id = req.params.id;
       var user = req.user;
       if(user === undefined || user === null) res.status(status.UNAUTHORIZED).send('Unauthorized');
@@ -344,5 +344,7 @@ module.exports = function(wagner) {
             res.send(toggle_close_promise);
         }
     }));
+
+
     return api;
 }

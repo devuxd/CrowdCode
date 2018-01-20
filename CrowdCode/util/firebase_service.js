@@ -425,6 +425,7 @@ module.exports = function(AdminFirebase, Q) {
      return update promise object
      */
     updateTest: function(project_id, function_id, test_id, test_object) {
+      var self = this;
       var path = 'Projects/' + project_id + '/artifacts/Tests/' + test_id;
       var history_path = 'Projects/' + project_id + '/history/artifacts/Tests/' + test_id;
       root_ref.child(history_path).once("value", function(data) {
@@ -436,7 +437,7 @@ module.exports = function(AdminFirebase, Q) {
         var update_promise = root_ref.child(path).update(test_schema);
         root_ref.child(history_path).child(version_number).set(test_object);
         var add_to_history = root_ref.child(history_path).child(version_number).update(test_schema);
-        this.createEvent(project_id, "Test.Updated","Updated Test "+test_id,"Function", test_id);
+        self.createEvent(project_id, "Test.Updated","Updated Test "+test_id,"Function", test_id);
         return update_promise;
       });
     },

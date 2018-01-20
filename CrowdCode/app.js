@@ -1,8 +1,6 @@
 const express = require('express');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-const MemoryStore = require('session-memory-store')(session);
-const MemcachedStore = require('connect-memjs')(session);
 const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
@@ -13,7 +11,6 @@ const cors = require('cors')({
 });
 const status = require('http-status');
 const wagner = require('wagner-core');
-const MEMCACHE_URL = '127.0.0.1:11211';
 
 require('./lib/dependencies')(wagner);
 const app = express();

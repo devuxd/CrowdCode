@@ -132,7 +132,7 @@ input.ng-dirty.ng-invalid, select.ng-dirty.ng-invalid, textarea.ng-dirty.ng-inva
 	padding-right: 10px;
 	padding-top: 5px;
 	padding-bottom: 5px;
-	height: 40px;
+	height: 50px;
 	background-color: #AFAFAF;
 	position: absolute;
 	width: 100%;

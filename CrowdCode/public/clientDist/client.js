@@ -762,7 +762,7 @@ angular
   .constant('projectId', projectId)
   .constant('firebaseUrl', 'https://crowdcode2.firebaseio.com/Projects/' + projectId)
   .constant('logoutUrl', logoutURL)
-  .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, functionsService, AdtService,
+  .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, projectService, functionsService, AdtService,
     avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics, testsService) {
 
     // current session variables
@@ -822,6 +822,7 @@ angular
 
     function loadServices() {
       servicesLoadingStatus = {};
+      projectService.init();
       functionsService.init();
       AdtService.init();
       questionsService.init();
@@ -834,7 +835,8 @@ angular
     function serviceLoaded(event, nameOfTheService) {
       servicesLoadingStatus[nameOfTheService] = true;
 
-      if (servicesLoadingStatus.hasOwnProperty('functions') &&
+      if (servicesLoadingStatus.hasOwnProperty('project') &&
+          servicesLoadingStatus.hasOwnProperty('functions') &&
         servicesLoadingStatus.hasOwnProperty('adts') &&
         servicesLoadingStatus.hasOwnProperty('questions') &&
         servicesLoadingStatus.hasOwnProperty('newsfeed') &&
@@ -3176,37 +3178,22 @@ angular
 
 angular
     .module('crowdCode')
-    .directive('dashboard2', ['AdtService','functionsService', '$firebaseArray','firebaseUrl', loadDashboard]);
+    .controller('dashboard2', ['$scope','projectService','AdtService','functionsService', '$firebaseObject','firebaseUrl', loadDashboard]);
 
-function loadDashboard($scope,AdtService,functionsService,$firebaseArray,firebaseUrl) {
-    $scope.projectName = projectId;
-    return {
-        restrict: 'E',
-        templateUrl: 'dashboard/dashboard2.html',
-        controller: function($scope) {
-            $scope.projectName = projectId;
-            projectRef = firebase.database().ref().child('Projects').child(projectId);
-            var projectData = $firebaseArray(projectRef);
-            projectData.$loaded().then(function (data) { console.log(data);
-                $scope.projectDescription = data.description;
-
-
-            $scope.functions = functionsService.getAll();
-            $scope.dataTypes = AdtService.getAll();
-
-            //console.log($scope.dataTypes);
-            $scope.buildStructure = function(adt){
-                var struct = '{';
-                angular.forEach(adt.structure,function(field){
-                    struct += '\n  '+field.name+': '+field.type;
-                })
-                struct += '\n}';
-                return struct;
-            };
-            });
+        function loadDashboard($scope,projectService,AdtService,functionsService,$firebaseObject,firebaseUrl) {
+                    $scope.Functions = functionsService.getAll();
+                    $scope.DataTypes = AdtService.getAll();
+                    $scope.projectName = projectService.getName();
+                    $scope.projectDescription = projectService.getDescription();
+                    $scope.buildStructure = function (adt) {
+                        var struct = '{';
+                        angular.forEach(adt.structure, function (field) {
+                            struct += '\n  ' + field.name + ': ' + field.type;
+                        })
+                        struct += '\n}';
+                        return struct;
+                    };
         }
-    };
-}
 
 
 // ///////////////////////////////
@@ -5412,6 +5399,45 @@ angular
 
 	return service;
 }]);
+
+////////////////////
+//ADT SERVICE   //
+////////////////////
+angular
+    .module('crowdCode')
+    .factory('projectService', ['$rootScope', '$firebaseObject', 'firebaseUrl', function($rootScope, $firebaseObject,firebaseUrl) {
+
+        var service = new  function(){
+
+            var project;
+
+            this.init         = init;
+            this.getAll       = getAll;
+            this.getName      = getName;
+            this.getDescription  = getDescription;
+
+            function init(){
+                projectRef = firebase.database().ref().child('Projects').child(projectId);
+                project = $firebaseObject(projectRef);
+                project.$loaded().then(function(){
+                    // tell the others that the adts services is loaded
+                    $rootScope.$broadcast('serviceLoaded','project');
+
+                });
+            }
+            function getAll(){
+                return project;
+            }
+            function getName(){
+                return projectId;
+            }
+            function getDescription(){
+                return project.description;
+            }
+        }
+
+        return service;
+    }]);
 
 angular.module('crowdCode').directive('questionDetail',function($timeout,firebaseUrl,workerId,questionsService){
 	return {
@@ -8906,7 +8932,7 @@ angular.module("microtasks/dashboard/dashboard.html", []).run(["$templateCache",
 
 angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("microtasks/dashboard/dashboard2.html",
-    "<div class=\"dashboard2\">\n" +
+    "<div class=\"dashboard2\" ng-controller=\"dashboard2\">\n" +
     "    <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
     "        <div ui-layout-container min-size=\"40px\" size=\"100%\">\n" +
     "            <div class=\"title\">DashBoard</div>\n" +
@@ -8920,7 +8946,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "\n" +
     "                <div bs-collapse start-collapsed=\"false\" allow-multiple=\"true\">\n" +
     "                    <span class=\"section-header\">Data Types</span><br/>\n" +
-    "                    <div ng-repeat=\"d in dataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
+    "                    <div ng-repeat=\"d in DataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{d.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\" ng-init=\"structure = buildStructure(d)\">\n" +
     "                            <span ng-bind=\"::d.description\"></span>\n" +
@@ -8946,7 +8972,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                    </div>\n" +
     "                    <br/>\n" +
     "                    <span class=\"section-header\">Functions</span><br/>\n" +
-    "                    <div ng-repeat=\"f in functions\" class=\"functions\">\n" +
+    "                    <div ng-repeat=\"f in Functions\" class=\"functions\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
     "                            <div ng-bind=\"f.description\"></div>\n" +

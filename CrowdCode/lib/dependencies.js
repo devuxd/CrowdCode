@@ -20,7 +20,7 @@ module.exports = function(wagner) {
   });
 
   wagner.factory('UserService', function(AdminFirebase) {
-    return require('./userService')(AdminFirebase);
+    return require('../util/user_service')(AdminFirebase);
   });
 
   wagner.factory('Firebase', function(Config) {
@@ -34,11 +34,22 @@ module.exports = function(wagner) {
     });
 
   wagner.factory('MicrotaskService',function(FirebaseService, Q){
-    var microtask_service = require('./microtask_service')(FirebaseService, Q);
+    var microtask_service = require('../util/microtask_service')(FirebaseService, Q);
     return microtask_service;
     });
 
-    wagner.factory('Q', () => {
-      return require('q');
-    });
+  wagner.factory('ExpressGenerator',function(){
+      var express_generator = require('./express-generator/bin/express-cli');
+      return express_generator;
+  });
+
+  wagner.factory('DeploymentService',function(FirebaseService, ExpressGenerator, Config, Q){
+      var deployment_service = require('../util/deployment_service')(FirebaseService, ExpressGenerator, Config, Q);
+      return deployment_service;
+  });
+
+
+  wagner.factory('Q', function(){
+    return require('q');
+  });
 };
