@@ -78,11 +78,7 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
 
     }
 
-    function runCommand(command, path){
-        var child = cmd(command, {cwd: path} );
 
-        return child;
-    }
 
     function initGit(project_id,path) {
         var Git = new gitCommandLine(path);
@@ -103,17 +99,24 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
         var git_request = https.request(git_options, function (res) {
 
             //Initialize folder as a local repo
+
             Git.init()
             .then(function (res) {
+                console.log("user name set");
                 return Git.direct('config user.name "Crowd Code"');     //Set user name for the repo commits
 
             }).then(function (res) {
-                return Git.direct('config user.email "crowdcodev2@gmail.com');  //Set user email for repo commits
+                console.log(res);
+                console.log("mail set");
+                return Git.direct('config user.email "crowdcodev2@gmail.com"');  //Set user email for repo commits
 
             }).then(function (res) {
+                console.log(res);
+                console.log("path set");
                 return Git.add('-A', {cwd: path});           //Add the files to repo
 
             }).then(function (res) {
+                console.log(res);
                 return Git.commit('-m "Initial commit"');           //Commit
 
             }).then(function (res) {
@@ -122,22 +125,6 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
             }).then(function (res) {
                 return Git.push('-u origin master');            //push the files to the master branch
 
-            }).then(function (res) {
-                console.log('Success: ', res);
-                console.log("SYNC---------------------");
-                //initTravis(project_id);
-                var a = runCommand("curl -s -X POST -H \"Content-Type: application/json\"  -H \"Accept: application/json\"  -H \"Travis-API-Version: 3\"  -H \"Authorization: token Gto3IqdjFI43hWc4YGcuaA\" https://api.travis-ci.org/user/1066726/sync\n","./services")
-                  console.log(a.toString());
-                console.log("LIST---------------------");
-                var x = runCommand("curl -s -X GET -H \"Content-Type: application/json\"  -H \"Accept: application/json\"  -H \"Travis-API-Version: 3\"  -H \"Authorization: token Gto3IqdjFI43hWc4YGcuaA\" https://api.travis-ci.org/repos","./services")
-                console.log(x.toString());
-                console.log("ACTIVATE---------------------");
-                var b = runCommand("curl -s -X POST -H \"Content-Type: application/json\"  -H \"Accept: application/json\"  -H \"Travis-API-Version: 3\"  -H \"Authorization: token Gto3IqdjFI43hWc4YGcuaA\" https://api.travis-ci.org/repo/crowdcodev2%2Fmeysam/activate\n","./services")
-                    console.log(b.toString());
-                console.log("BUILD---------------------");
-                var c = runCommand("curl -s -X GET -H \"Content-Type: application/json\"  -H \"Accept: application/json\"  -H \"Travis-API-Version: 3\"  -H \"Authorization: token Gto3IqdjFI43hWc4YGcuaA\" https://api.travis-ci.org/repo/crowdcodev2%2Fmeysam/requests","./services")
-                    console.log(c.toString());
-                console.log("END---------------------");
             }).fail(function (err) {
                 console.error(err);
             });
@@ -151,82 +138,13 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
 
     }
 
+    function runCommand(command, path){
+        var child = cmd(command, {cwd: path} );
 
-
-    function initTravis(project_id) {
-
-        var travis_sync_options = {
-            hostname: "api.travis-ci.org",
-            port: "443",
-            path: "/user/" + Config.travis["userId"] + "/sync",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Travis-API-Version": "3",
-                "Authorization": "token " + Config.travis["token"]
-            }
-        };
-
-        var travis_activate_options = {
-            hostname: "api.travis-ci.org",
-            port: "443",
-            path: "/repo/" + Config.github["username"] + "%2F" + project_id + "/activate",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Travis-API-Version": "3",
-                "Authorization": "token " + Config.travis["token"]
-            }
-        };
-
-        var travis_build_options = {
-            hostname: "api.travis-ci.org",
-            port: "443",
-            path: "/repo/" + Config.github["username"] + "%2F" + project_id + "/requests",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Travis-API-Version": "3",
-                "Authorization": "token " + Config.travis["token"]
-            }
-        };
-
-        //Sync the repo in travis
-        var travis_sync_request = https.request(travis_sync_options, function (res) {
-            res.on('data', function (response) {
-                console.log("Sync  " + response);
-
-                //Activate the repo in travis
-                var travis_activate_request = https.request(travis_activate_options, function (res) {
-                    res.on('data', function (response) {
-                        console.log("Activate  " + response);
-
-                        //Trigger build
-                        var travis_build_request = https.request(travis_build_options, function (res) {
-                            res.on('data', function (response) {
-                                console.log("build  " + response);
-                            });
-                            travis_build_request.on('error', function (e) {
-                                console.log('problem with travis build request: ' + e.message);
-                            });
-                            travis_build_request.end();
-                        });
-                        travis_activate_request.on('error', function (e) {
-                            console.log('problem with travis activate request: ' + e.message);
-                        });
-                        travis_activate_request.end();
-                    });
-                });
-                travis_sync_request.on('error', function (e) {
-                    console.log('problem with travis sync request: ' + e.message);
-                });
-                travis_sync_request.end();
-            });
-        });
+        return child;
     }
+
+
 
 
     return{
