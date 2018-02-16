@@ -24,7 +24,7 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
             //if end points are complete, create a template express app
             if(isComplete) {
                 //if the template is created, add the code and routing
-                if (ExpressGenerator.createApplication(project_id, path, port)) {
+                if (ExpressGenerator.createEndPints(project_id, path, port)) {
                     //create a single object with code from all complete functions
                     for(var func in functions){
                         if(functions[func].isComplete) {
@@ -63,8 +63,8 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
                         }
                     }
                     ExpressGenerator.createRouter(project_id,path,routes);
-                    var token = Config.heroku["token"];
-                    ExpressGenerator.createTravisFile(project_id,path, token);
+                 //   var token = Config.heroku["token"];
+                  //  ExpressGenerator.createTravisFile(project_id,path, token);
                     initGit(project_id,path+'/'+project_id);
                 return true;
                 }
@@ -103,12 +103,12 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
             Git.init()
             .then(function (res) {
                 console.log("user name set");
-                return Git.direct('config user.name "Crowd Code"');     //Set user name for the repo commits
+                return Git.direct('config user.name "Emad Aghayi"');     //Set user name for the repo commits
 
             }).then(function (res) {
                 console.log(res);
                 console.log("mail set");
-                return Git.direct('config user.email "crowdcodev2@gmail.com"');  //Set user email for repo commits
+                return Git.direct('config user.email "emad.aghayi@gmail.com"');  //Set user email for repo commits
 
             }).then(function (res) {
                 console.log(res);
@@ -120,7 +120,7 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
                 return Git.commit('-m "Initial commit"');           //Commit
 
             }).then(function (res) {
-                return Git.remote('add origin https://' + Config.github["token"] + '@github.com/crowdcodev2/' + project_id + '.git/');      //Create a remote named origin
+                return Git.remote('add origin https://' + Config.github["token"] + '@github.com/eaghayi/' + project_id + '.git/');      //Create a remote named origin
 
             }).then(function (res) {
                 return Git.push('-u origin master');            //push the files to the master branch

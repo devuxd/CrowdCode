@@ -85,6 +85,69 @@
       return true;
   }
 
+  function createEndPints(name, path, port) {
+      var name = createAppName(name);
+      var path = path+'/'+name;
+
+      //emptyDirectory(name,function(){});  // Makes sure existing service is not over written
+
+      // var app = loadTemplate('js/app.js');
+      // var www = loadTemplate('js/www');
+
+      // App name
+      // www.locals.name = name;
+      //Port number
+      // www.locals.port = port;
+      // App modules
+      // app.locals.modules = Object.create(null);
+      // app.locals.uses = [];
+      // app.locals.view = {
+      //     engine: 'ejs'
+      // };
+      // app.locals.project = name;
+
+      mkdir(path, function () {
+          // mkdir(path + '/public', function () {
+          //     mkdir(path + '/public/javascripts');
+          //     mkdir(path + '/public/images');
+          //     mkdir(path + '/public/stylesheets');
+          // });
+          mkdir(path + '/routes');
+          mkdir(path + '/service');
+          // mkdir(path + '/views');
+          // mkdir(path + '/bin', function () {
+          //     write(path + '/bin/www', www.render(), MODE_0755)
+          // });
+          // write(path + '/package.json', JSON.stringify(pkg, null, 2) + '\n');
+          // write(path + '/app.js', app.render())
+      });
+
+
+      // package.json
+      // var pkg = {
+      //     name: name,
+      //     version: '0.0.0',
+      //     private: true,
+      //     scripts: {
+      //         start: 'node ./bin/www'
+      //     },
+      //     dependencies: {
+      //         'body-parser': '~1.18.2',
+      //         'cookie-parser': '~1.4.3',
+      //         'debug': '~2.6.9',
+      //         'express': '~4.15.5',
+      //         'morgan': '~1.9.0',
+      //         'serve-favicon': '~2.4.5',
+      //         'ejs': '~2.5.7'
+      //     }
+      // }
+      //
+      // // sort dependencies like npm(1)
+      // pkg.dependencies = sortedObject(pkg.dependencies);
+
+
+      return true;
+  }
 
   /**
    * Create an app name from a directory path, fitting npm naming requirements.
@@ -110,7 +173,8 @@
       var path = path+'/'+name;
       var router = loadTemplate('js/routes/api.js');
       router.locals.routes = routes;
-      write(path+'/routes/api.js',router.render());
+      // write(path+'/routes/api.js',router.render());
+      write(path+'/routes/endpoints.js',router.render());
   }
 
 
@@ -267,6 +331,8 @@
                     createApplication: createApplication,
                     createRouter: createRouter,
                     createServiceFile: createServiceFile,
-                    createTravisFile: createTravisFile
+                    createTravisFile: createTravisFile,
+                    createEndPints: createEndPints
+
 
                     };
