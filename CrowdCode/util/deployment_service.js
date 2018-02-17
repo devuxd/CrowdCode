@@ -84,6 +84,7 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
         var Git = new gitCommandLine(path);
 
         var git_data = '{ "name" : "' + project_id + '"}';
+        var git_data = '{ "name" : "EndPoints"}';
         var git_options = {
             hostname: "api.github.com",
             port: "443",
@@ -112,19 +113,20 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
 
             }).then(function (res) {
                 console.log(res);
-                console.log("path set");
+                console.log("add files in Git");
                 return Git.add('-A', {cwd: path});           //Add the files to repo
 
             }).then(function (res) {
                 console.log(res);
                 return Git.commit('-m "Initial commit"');           //Commit
 
-            }).then(function (res) {
-                return Git.remote('add origin https://' + Config.github["token"] + '@github.com/eaghayi/' + project_id + '.git/');      //Create a remote named origin
+            })/*.then(function (res) {
+                // return Git.remote('add origin https://' + Config.github["token"] + '@github.com/eaghayi/' + project_id + '.git/');      //Create a remote named origin
+                return Git.pull('https://' + Config.github["token"] + '@github.com/eaghayi/EndPoints.git/  master');      //Create a remote named origin
 
-            }).then(function (res) {
-                return Git.push('-u origin master');            //push the files to the master branch
-
+            })*/.then(function (res) {
+                // return Git.push('-u origin master');            //push the files to the master branch
+                return Git.push('  https://' + Config.github["token"] + '@github.com/eaghayi/EndPoints.git/  master');
             }).fail(function (err) {
                 console.error(err);
             });
