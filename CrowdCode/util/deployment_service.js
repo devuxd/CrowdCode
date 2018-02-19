@@ -84,7 +84,7 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
         var Git = new gitCommandLine(path);
 
         var git_data = '{ "name" : "' + project_id + '"}';
-        var git_data = '{ "name" : "EndPoints"}';
+        var git_data = '{ "name" : "EndPoints2"}';
         var git_options = {
             hostname: "api.github.com",
             port: "443",
