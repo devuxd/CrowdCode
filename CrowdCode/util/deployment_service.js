@@ -120,13 +120,13 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
                 console.log(res);
                 return Git.commit('-m "Initial commit"');           //Commit
 
-            })/*.then(function (res) {
+            }).then(function (res) {
                 // return Git.remote('add origin https://' + Config.github["token"] + '@github.com/eaghayi/' + project_id + '.git/');      //Create a remote named origin
-                return Git.pull('https://' + Config.github["token"] + '@github.com/eaghayi/EndPoints.git/  master');      //Create a remote named origin
+                return Git.pull('https://' + Config.github["token"] + '@github.com/eaghayi/EndPoints2.git/  master --allow-unrelated-histories');      //Create a remote named origin
 
-            })*/.then(function (res) {
+            }).then(function (res) {
                 // return Git.push('-u origin master');            //push the files to the master branch
-                return Git.push('  https://' + Config.github["token"] + '@github.com/eaghayi/EndPoints.git/  master');
+                return Git.push('  https://' + Config.github["token"] + '@github.com/eaghayi/EndPoints2.git/  master');
             }).fail(function (err) {
                 console.error(err);
             });
@@ -142,6 +142,8 @@ module.exports = function(FirebaseService, ExpressGenerator, Config, Q) {
 
     function runCommand(command, path){
         var child = cmd(command, {cwd: path} );
+
+
 
         return child;
     }
