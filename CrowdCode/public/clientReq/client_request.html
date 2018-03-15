@@ -1,89 +1,95 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="clientRequest">
-	<head>
-		<title>CrowdCode Client Request Editor</title>
-		<link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/clientReq/client_request.css">
+<head>
+    <title>CrowdCode Client Request Editor</title>
+    <link rel="stylesheet" href="/include/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/clientReq/client_request.css">
 
 
-	</head>
-	<body ng-controller="ClientRequestController">
-		<script src="/include/jquery-2.1.0.min.js"></script>
-		<script src="/include/bootstrap/js/bootstrap.min.js"> </script>
-		<script src="/include/polyfill.js"></script>
-		<script src="/include/jshint.js"></script>
-		<script src='/include/esprima.js'></script>
-		<script src='/include/escodegen.browser.js'></script>
-		<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
-		<script src="/include/angular/angular-animate.min.js"></script><!-- Angular animate -->
-		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script> 
-		<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
-		<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
-		<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
+</head>
+<body ng-controller="ClientRequestController">
+<script src="/include/jquery-2.1.0.min.js"></script>
+<script src="/include/bootstrap/js/bootstrap.min.js"></script>
+<script src="/include/polyfill.js"></script>
+<script src="/include/jshint.js"></script>
+<script src='/include/esprima.js'></script>
+<script src='/include/escodegen.browser.js'></script>
+<script src="/include/angular/angular.min.js"></script> <!-- AngularJS -->
+<script src="/include/angular/angular-animate.min.js"></script><!-- Angular animate -->
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-sanitize.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+<script src="/include/angular-strap/dist/angular-strap.min.js"></script>
+<script src="/include/angular-strap/dist/angular-strap.tpl.min.js"></script>
 
 
-		<script src="/client/common/errorCheck.js"></script>
-		<!--<script src="/client/common/functionSupport.js"></script> -->
-		<script src="/client/common/JSONValidator.js"></script>
+<script src="/client/common/errorCheck.js"></script>
+<!--<script src="/client/common/functionSupport.js"></script> -->
+<script src="/client/common/JSONValidator.js"></script>
 
-		<!-- Angular Application -->
-		<script src="/clientReq/application.js"></script>
-		<!-- Angular Controllers -->
-		<script src="/clientReq/controller.js"></script>
-		<!-- Angular directives -->
-		<script src="/clientReq/directives.js"></script>
+<!-- Angular Application -->
+<script src="/clientReq/application.js"></script>
+<!-- Angular Controllers -->
+<script src="/clientReq/controller.js"></script>
+<!-- Angular directives -->
+<script src="/clientReq/directives.js"></script>
 
 
-		<div ng-form="form" class="task">
-			<div class="section section-description " >
-				<div class="section-content no-padding" >
-					<ul class="microtask-details clearfix">
-						<li>Welcome to the <b>CrowdCode Client Request Editor</b></li>
-					</ul>
-				</div>
-			</div>
-			<div class="section section-description">
-				<div class="section-title" >
-					Project Name
-				</div>
-				<div class="section-content" >
-					Enter a project name in the textbox below to retrieve the client request for the project.
-					If it does not exist, it will be created. <BR><BR>
+<div ng-form="form" class="task">
+    <div class="section section-description ">
+        <div class="section-content no-padding">
+            <ul class="microtask-details clearfix">
+                <li>Welcome to the <b>CrowdCode Client Request Editor</b></li>
+            </ul>
+        </div>
+    </div>
+    <div class="section section-description">
+        <div class="section-title">
+            <h2>Project Name</h2>
+        </div>
+        <div class="section-content">
+            Enter a project name in the textbox below to retrieve the client request for the project.
+            If it does not exist, it will be created. <BR><BR>
 
-					<div ng-form="projectNameForm" class=" form-horizontal form-group col-md-12">
-						<div class="col-md-3 form-group">
-							<alertcontainer></alertcontainer>
-							<input class="form-control input-sm" type="text"  ng-model="projectName" name="projectName"
-							 placeholder="Project Name" bs-options="name for name in projectsName" data-min-length="0" data-watch-options="true" bs-typeahead required ng-pattern="/^[a-zA-Z0-9_]+$/" focus/>
-							<ul class="help-block" ng-show="projectNameForm.projectName.$dirty && projectNameForm.projectName.$invalid">
-								<li ng-show="projectNameForm.projectName.$error.required">This field is required!</li>
-								<li ng-show="projectNameForm.projectName.$error.pattern">Is not a valid name! only use a-zA-Z0-9_</li>
-							</ul>
-						</div>
-						<button ng-click="load()" class="col-md-1 btn btn-small " ng-disabled="projectNameForm.$invalid || !projectNameForm.projectName.$dirty">Load</button>
-					</div>
-					<div class="clearfix"></div>
-				</div>
-			</div>
+            <div ng-form="projectNameForm" class=" form-horizontal form-group col-md-12">
+                <div class="col-md-3 form-group">
+                    <alertcontainer></alertcontainer>
+                    <input class="form-control input-sm" type="text" ng-model="projectName" name="projectName"
+                           placeholder="Project Name" bs-options="name for name in projectsName" data-min-length="0"
+                           data-watch-options="true" bs-typeahead required ng-pattern="/^[a-zA-Z0-9_]+$/" focus/>
+                    <ul class="help-block"
+                        ng-show="projectNameForm.projectName.$dirty && projectNameForm.projectName.$invalid">
+                        <li ng-show="projectNameForm.projectName.$error.required">This field is required!</li>
+                        <li ng-show="projectNameForm.projectName.$error.pattern">Is not a valid name! only use
+                            a-zA-Z0-9_
+                        </li>
+                    </ul>
+                </div>
 
-			<div class="section section-description">
-				<div class="section-title" >
-					Description
-				</div>
-				<div class="section-content" >
+                <button ng-click="load()" class="btn btn-primary btn-lg"
+                        ng-disabled="projectNameForm.$invalid || !projectNameForm.projectName.$dirty">Load or Create </button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    <div class="section section-description">
+        <div class="section-title">
+            <h2>  Description</h2>
+        </div>
+        <div class="section-content">
 					<span>
 					Describe the Project with the its intended use cases and briefly explain its requirements <BR><BR>
 					</span>
-					<textarea class="form-control" name="project-description" ng-model="projectDescription" required></textarea>
-				</div>
-			</div>
+            <textarea class="form-control" name="project-description" ng-model="projectDescription" required></textarea>
+        </div>
+    </div>
 
-			<div class="section section-description">
-				<div class="section-title" >
-					ADTs
-				</div>
-				<div class="section-content" >
+    <div class="section section-description">
+        <div class="section-title">
+           <h2>ADTs</h2>
+        </div>
+        <div class="section-content">
 					<span>
 					Describe ADTs with a description, name, structure, and some example. The JSON structure should be of the form
 					<b>fieldA: TypeName</b>, where each TypeName is either defined separately as an
@@ -91,203 +97,291 @@
 					n sets of brackets after the type name (e.g., 2 dimensional array - TypeName[][]). The description should describe
 					any rules about the ADT and include an example of a value of the ADT in JSON format.<BR><BR>
 					</span>
-					<div  ng-repeat="(ADTindex, ADT) in ADTs track by $index"   class="row">
-						<div ng-form="ADTForm{{$index}}" class="col-sm-10 form-horizontal" role="form">
-							<div class="form-group">
-								<label for="description" class="col-sm-2 control-label reset-padding">description</label>
-								<div class="col-sm-10 reset-padding">
-									<textarea class="form-control" name="description" placeholder="briefly describe the purpose and the behavior of the ADT" ng-model="ADT.description" required ng-pattern="/^[^/\\]+$/"></textarea>
-									<ul class="help-block" ng-show="ADTForm{{$index}}.description.$dirty && ADTForm{{$index}}.description.$invalid">
-										<li ng-show="ADTForm{{$index}}.description.$error.required">This field is required!</li>
-										<li ng-show="ADTForm{{$index}}.description.$error.pattern">The "\" and "/" are not allowed</li>
-									</ul>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="ADTName" class="col-sm-2 control-label reset-padding">ADT name</label>
-								<div class="col-sm-10 reset-padding">
-									<input type="text" class="form-control" name="ADTName" ng-model="ADT.name" required ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator placeholder="insert the ADT name" press-enter="addParameter()">
-									<ul class="help-block" ng-show="ADTForm{{$index}}.ADTName.$dirty && ADTForm{{$index}}.ADTName.$invalid">
-										<li ng-show="ADTForm{{$index}}.ADTName.$error.required">This field is required!</li>
-										<li ng-show="ADTForm{{$index}}.ADTName.$error.pattern">Is not a valid function name! Please use only alphanumerical characters and the _ symbol</li>
-									</ul>
-								</div>
-							</div>
-							<div class="form-group col-sm-12">
-								<label class=" control-label col-sm-2 reset-padding">JSON structure:</label>
-								<div class="form-group col-sm-10 reset-padding" >
-									<div ng-repeat="structure in ADT.structure track by $index" >
-										<div ng-form="ADTStructureForm{{$index}}" class="form-horizontal form-container" >
-											<div class="col-sm-3 reset-padding">
-												<input class="form-control pull-left" type="text" ng-model="structure.name" name="fieldName"
-												placeholder="Field Name" required ng-pattern="/^[a-zA-Z0-9_]+$/"/>
-												<ul class="help-block" ng-show="ADTStructureForm{{$index}}.fieldName.$dirty && ADTStructureForm{{$index}}.fieldName.$invalid">
-													<li ng-show="ADTStructureForm{{$index}}.fieldName.$error.required">This field is required!</li>
-													<li ng-show="ADTStructureForm{{$index}}.fieldName.$error.pattern">Is not a valid Field name! Only use a-zA-Z0-9_</li>
-												</ul>
-											</div>
-											<div class="col-sm-3 reset-padding">
-												<input class="form-control pull-left" type="text" ng-model="structure.type" name="fieldType"
-												placeholder="Field Type" adt-validator required press-enter="addStructure(ADTindex)"/>
-												<ul class="help-block" ng-show="ADTStructureForm{{$index}}.fieldType.$dirty && ADTStructureForm{{$index}}.fieldType.$invalid">
-													<li ng-show="ADTStructureForm{{$index}}.fieldType.$error.required">This field is required!</li>
-													<li ng-show="ADTStructureForm{{$index}}.fieldType.$error.adt">Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).</li>
-												</ul>
-											</div>
-											<div class="col-sm-1 reset-padding pull-left">
-												<button ng-click="deleteStructure(ADTindex,$index)" class="btn  pull-right">X</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-12 reset-padding">
-									<button ng-click="addStructure(ADTindex)" class="btn btn-mini pull-right">Add Field</button>
-								</div>
-							</div>
-							<div class="form-group col-sm-12">
-								<label class=" control-label col-sm-2 reset-padding">Examples:</label>
-								<div class="form-group col-sm-10 reset-padding" >
-									<div ng-form="ADTExamplesForm{{$index}}" class="form-horizontal form-container" ng-repeat="example in ADT.examples track by $index">
-										<div class="col-sm-3 reset-padding">
-											<input class="form-control" type="text" ng-model="example.name" name="exampleName"
-											placeholder="Example Name" required/>
-											<ul class="help-block" ng-show="ADTExamplesForm{{$index}}.exampleName.$dirty && ADTExamplesForm{{$index}}.exampleName.$invalid">
-												<li ng-show="ADTExamplesForm{{$index}}.exampleName.$error.required">This field is required!</li>
-											</ul>
-										</div>
-										<div ng-form="exampleForm" class="col-sm-5 reset-padding">
-											<textarea class="form-control" type="text" ng-model="example.value" name="exampleValue"
-											placeholder="Insert the value of the example" json-validator="{{ADT.name}}" required press-enter="addExample(ADTindex)"></textarea>
-											<ul class="help-block" ng-show="exampleForm.exampleValue.$dirty && exampleForm.exampleValue.$invalid">
-												<li ng-show="exampleForm.exampleValue.$error.required">This field is required!</li>
-												<li ng-show="exampleForm.exampleValue.$error.json" ng-repeat="error in exampleForm.exampleValue.$error.json">{{error}}</li>
-											</ul>
-										</div>
-										<div class="col-sm-1 reset-padding">
-											<button ng-click="deleteExample(ADTindex,$index)" class="btn  pull-right">X</button>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-12 reset-padding">
-									<button ng-click="addExample(ADTindex)" class="btn btn-mini pull-right">Add Example</button>
-								</div>
-							</div>
-							<div ng-show="ADTindex!=ADTs.length-1" class="line-separator"></div>
-						</div>
-						<div class="col-sm-1">
-							<button ng-click="deleteADT(ADTindex)" class="btn  pull-right">X</button>
-						</div>
-					</div>
-					<button ng-click="addADT()" class="btn btn-small">Add ADT</button>
-				</div>
+            <div ng-repeat="(ADTindex, ADT) in ADTs track by $index" class="row">
+                <div ng-form="ADTForm{{$index}}" class="col-sm-10 form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="description" class="col-sm-2 control-label reset-padding">description</label>
+                        <div class="col-sm-10 reset-padding">
+                            <textarea class="form-control" name="description"
+                                      placeholder="briefly describe the purpose and the behavior of the ADT"
+                                      ng-model="ADT.description" required ng-pattern="/^[^/\\]+$/"></textarea>
+                            <ul class="help-block"
+                                ng-show="ADTForm{{$index}}.description.$dirty && ADTForm{{$index}}.description.$invalid">
+                                <li ng-show="ADTForm{{$index}}.description.$error.required">This field is required!</li>
+                                <li ng-show="ADTForm{{$index}}.description.$error.pattern">The "\" and "/" are not
+                                    allowed
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ADTName" class="col-sm-2 control-label reset-padding">ADT name</label>
+                        <div class="col-sm-10 reset-padding">
+                            <input type="text" class="form-control" name="ADTName" ng-model="ADT.name" required
+                                   ng-pattern="/^[a-zA-Z0-9_]+$/" function-name-validator
+                                   placeholder="insert the ADT name" press-enter="addParameter()">
+                            <ul class="help-block"
+                                ng-show="ADTForm{{$index}}.ADTName.$dirty && ADTForm{{$index}}.ADTName.$invalid">
+                                <li ng-show="ADTForm{{$index}}.ADTName.$error.required">This field is required!</li>
+                                <li ng-show="ADTForm{{$index}}.ADTName.$error.pattern">Is not a valid function name!
+                                    Please use only alphanumerical characters and the _ symbol
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label class=" control-label col-sm-2 reset-padding">JSON structure:</label>
+                        <div class="form-group col-sm-10 reset-padding">
+                            <div ng-repeat="structure in ADT.structure track by $index">
+                                <div ng-form="ADTStructureForm{{$index}}" class="form-horizontal form-container">
+                                    <div class="col-sm-3 reset-padding">
+                                        <input class="form-control pull-left" type="text" ng-model="structure.name"
+                                               name="fieldName"
+                                               placeholder="Field Name" required ng-pattern="/^[a-zA-Z0-9_]+$/"/>
+                                        <ul class="help-block"
+                                            ng-show="ADTStructureForm{{$index}}.fieldName.$dirty && ADTStructureForm{{$index}}.fieldName.$invalid">
+                                            <li ng-show="ADTStructureForm{{$index}}.fieldName.$error.required">This
+                                                field is required!
+                                            </li>
+                                            <li ng-show="ADTStructureForm{{$index}}.fieldName.$error.pattern">Is not a
+                                                valid Field name! Only use a-zA-Z0-9_
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-3 reset-padding">
+                                        <input class="form-control pull-left" type="text" ng-model="structure.type"
+                                               name="fieldType"
+                                               placeholder="Field Type" adt-validator required
+                                               press-enter="addStructure(ADTindex)"/>
+                                        <ul class="help-block"
+                                            ng-show="ADTStructureForm{{$index}}.fieldType.$dirty && ADTStructureForm{{$index}}.fieldType.$invalid">
+                                            <li ng-show="ADTStructureForm{{$index}}.fieldType.$error.required">This
+                                                field is required!
+                                            </li>
+                                            <li ng-show="ADTStructureForm{{$index}}.fieldType.$error.adt">Is not a valid
+                                                type name. Valid type names are 'String, Number, Boolean, a data
+                                                structure name, and arrays of any of these (e.g., String[]).
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-1 reset-padding pull-left">
+                                        <button ng-click="deleteStructure(ADTindex,$index)" class="btn btn-danger btn-xs">delete Structure</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4 center-block">
+                            <button ng-click="addStructure(ADTindex)" class="btn btn-primary btn-xs pull-right">Add Field</button>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-12">
+                        <label class=" control-label col-sm-2 reset-padding">Examples:</label>
+                        <div class="form-group col-sm-10 reset-padding">
+                            <div ng-form="ADTExamplesForm{{$index}}" class="form-horizontal form-container"
+                                 ng-repeat="example in ADT.examples track by $index">
+                                <div class="col-sm-3 reset-padding">
+                                    <input class="form-control" type="text" ng-model="example.name" name="exampleName"
+                                           placeholder="Example Name" required/>
+                                    <ul class="help-block"
+                                        ng-show="ADTExamplesForm{{$index}}.exampleName.$dirty && ADTExamplesForm{{$index}}.exampleName.$invalid">
+                                        <li ng-show="ADTExamplesForm{{$index}}.exampleName.$error.required">This field
+                                            is required!
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div ng-form="exampleForm" class="col-sm-5 reset-padding">
+											<textarea class="form-control" type="text" ng-model="example.value"
+                                                      name="exampleValue"
+                                                      placeholder="Insert the value of the example"
+                                                      json-validator="{{ADT.name}}" required
+                                                      press-enter="addExample(ADTindex)"></textarea>
+                                    <ul class="help-block"
+                                        ng-show="exampleForm.exampleValue.$dirty && exampleForm.exampleValue.$invalid">
+                                        <li ng-show="exampleForm.exampleValue.$error.required">This field is required!
+                                        </li>
+                                        <li ng-show="exampleForm.exampleValue.$error.json"
+                                            ng-repeat="error in exampleForm.exampleValue.$error.json">{{error}}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-1 reset-padding">
+                                    <button ng-click="deleteExample(ADTindex,$index)" class="btn btn-danger btn-xs">delete Example</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4 center-block">
+                            <button ng-click="addExample(ADTindex)" class="btn btn-primary btn-xs pull-right">Add Example</button>
+                        </div>
+                    </div>
+                    <div ng-show="ADTindex!=ADTs.length-1" class="line-separator"></div>
+                </div>
+                <div class="col-sm-1">
+                    <button ng-click="deleteADT(ADTindex)" class="btn btn-danger btn-xs">delete ADT</button>
+                </div>
+            </div>
+            <button ng-click="addADT()" class="btn btn-primary btn-block btn-lg">Add new ADT</button>
+        </div>
 
-			</div>
+    </div>
 
-			<div class="section section-description">
-				<div class="section-title" >
-					Functions
-				</div>
-				<div class="section-content" >
+    <div class="section section-description">
+        <div class="section-title">
+            <h2>Functions</h2>
+        </div>
+        <div class="section-content">
 					<span>
 					Describe End points of your micro service with a name, list of parameters, description.
 					<BR>
 					</span>
-					<div  ng-repeat="(functionIndex,function) in functions"   class="row">
-						<div ng-form="functionForm{{$index}}" class="col-sm-10 form-horizontal" role="form">
-							<div class="form-group">
-								<label for="functionDescription" class="col-sm-2 control-label reset-padding">Description</label>
-								<div class="col-sm-8 reset-padding">
-									<textarea class="form-control" name="functionDescription" placeholder="List the requirements of the function and describe its behavior" ng-model="function.description" required focus ></textarea>
+
+            <div ng-repeat="(functionIndex,function) in functions" class="row">
+                <div ng-form="functionForm{{$index}}" class="col-sm-10 form-horizontal" role="form">
+
+                    <div class="form-group">
+                        <label for="functionDescription"
+                               class="col-sm-2 control-label reset-padding">Description</label>
+                        <div class="col-sm-10 reset-padding">
+                            <textarea class="form-control" name="functionDescription"
+                                      placeholder="List the requirements of the function and describe its behavior"
+                                      ng-model="function.description" required focus></textarea>
 
 
-									<ul class="help-block" ng-show="functionForm{{$index}}.functionDescription.$dirty && functionForm{{$index}}.functionDescription.$invalid">
-										<li ng-show="functionForm{{$index}}.functionDescription.$error.required">This field is required!</li>
-										<li ng-show="functionForm{{$index}}.functionDescription.$error.pattern">The "\" and "/" are not allowed</li>
-									</ul>
-								</div>
-							</div>
+                            <ul class="help-block"
+                                ng-show="functionForm{{$index}}.functionDescription.$dirty && functionForm{{$index}}.functionDescription.$invalid">
+                                <li ng-show="functionForm{{$index}}.functionDescription.$error.required">This field is
+                                    required!
+                                </li>
+                                <li ng-show="functionForm{{$index}}.functionDescription.$error.pattern">The "\" and "/"
+                                    are not allowed
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
-                            <div class="form-group">
-								<label for="returnType" class="col-sm-2 control-label reset-padding">Return type</label>
-								<div class="col-sm-10 reset-padding">
-									<input type="text" class="form-control" name="returnType" ng-model="function.returnType" adt-validator required placeholder="insert the return data type" press-enter="addParameter()" >
-									<ul class="help-block" ng-show="functionForm{{$index}}.returnType.$dirty && functionForm{{$index}}.returnType.$invalid">
-										<li ng-show="functionForm{{$index}}.returnType.$error.required">This field is required!</li>
-										<li ng-show="functionForm{{$index}}.returnType.$error.adt">Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).</li>
-									</ul>
-								</div>
-							</div>
+                    <div class="form-group">
+                        <label for="returnType" class="col-sm-2 control-label reset-padding">Return type</label>
+                        <div class="col-sm-10 reset-padding">
+                            <input type="text" class="form-control" name="returnType" ng-model="function.returnType"
+                                   adt-validator required placeholder="insert the return data type"
+                                   press-enter="addParameter()">
+                            <ul class="help-block"
+                                ng-show="functionForm{{$index}}.returnType.$dirty && functionForm{{$index}}.returnType.$invalid">
+                                <li ng-show="functionForm{{$index}}.returnType.$error.required">This field is
+                                    required!
+                                </li>
+                                <li ng-show="functionForm{{$index}}.returnType.$error.adt">Is not a valid type name.
+                                    Valid type names are 'String, Number, Boolean, a data structure name, and arrays of
+                                    any of these (e.g., String[]).
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
-							<div class="form-group">
-								<label for="functionName" class="col-sm-2 control-label reset-padding">Endpoint name</label>
-								<div class="col-sm-10 reset-padding">
-									<input type="text" class="form-control" name="functionName" ng-model="function.name" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="insert the endpoint name" press-enter="addParameter()">
-									<ul class="help-block" ng-show="functionForm{{$index}}.functionName.$dirty && functionForm{{$index}}.functionName.$invalid">
-										<li ng-show="functionForm{{$index}}.functionName.$error.required">This field is required!</li>
-										<li ng-show="functionForm{{$index}}.functionName.$error.pattern">Is not a valid function name! Please use only alphanumerical characters and the _ symbol</li>
-									</ul>
-								</div>
-							</div>
+                    <div class="form-group">
+                        <label for="functionName" class="col-sm-2 control-label reset-padding">Endpoint name</label>
+                        <div class="col-sm-10 reset-padding">
+                            <input type="text" class="form-control" name="functionName" ng-model="function.name"
+                                   required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="insert the endpoint name"
+                                   press-enter="addParameter()">
+                            <ul class="help-block"
+                                ng-show="functionForm{{$index}}.functionName.$dirty && functionForm{{$index}}.functionName.$invalid">
+                                <li ng-show="functionForm{{$index}}.functionName.$error.required">This field is
+                                    required!
+                                </li>
+                                <li ng-show="functionForm{{$index}}.functionName.$error.pattern">Is not a valid function
+                                    name! Please use only alphanumerical characters and the _ symbol
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
-							<div class="form-group col-sm-12">
-								<label class=" control-label col-sm-2 reset-padding">parameters</label>
-								<div class="form-group col-sm-10 reset-padding" >
-									<div ng-form="param{{$index}}" class="form-horizontal form-container" ng-repeat="parameter in function.parameters track by $index ">
-										<div class="col-sm-3 reset-padding">
-											<input type="text" class="form-control pull-left" ng-model="parameter.name" required ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName" unic-name parameters="parameters" press-enter="addParameter()"/>
-											<ul class="help-block" ng-show="param{{$index}}.parameterName.$dirty && param{{$index}}.parameterName.$invalid">
-												<li ng-show="param{{$index}}.parameterName.$error.required">This field is required!</li>
-												<li ng-show="param{{$index}}.parameterName.$error.unic">The parameter name is already taken, please change it</li>
-												<li ng-show="param{{$index}}.parameterName.$error.pattern">Is not a valid parameter name!Please use only alphanumerical characters and the _ symbol</li>
-											</ul>
-										</div>
-										<div class="col-sm-3 reset-padding">
-											<input type="text" class="form-control pull-left" name="parameterType" ng-model="parameter.type" required adt-validator placeholder="type" press-enter="addParameter()"/>
-											<ul class="help-block" ng-show="param{{$index}}.parameterType.$dirty && param{{$index}}.parameterType.$invalid">
-												<li ng-show="param{{$index}}.parameterType.$error.required">This field is required!</li>
-												<li ng-show="param{{$index}}.parameterType.$error.adt">Is not a valid type name. Valid type names are 'String, Number, Boolean, a data structure name, and arrays of any of these (e.g., String[]).</li>
-											</ul>
-										</div>
-										<div class="col-sm-5 reset-padding">
-											<input type="text" class="form-control pull-left" name="parameterDescritpion" placeholder="description" ng-model="parameter.description" required ng-pattern="/^[a-zA-Z0-9_-\s\(\),:]+$/" press-enter="addParameter()"/>
-											<ul class="help-block" ng-show="param{{$index}}.parameterDescritpion.$dirty && param{{$index}}.parameterDescritpion.$invalid">
-												<li ng-show="param{{$index}}.parameterDescritpion.$error.required">This field is required!</li>
-												<li ng-show="param{{$index}}.parameterDescritpion.$error.pattern">Please use only alphanumerical characters or - and _ symbols</li>
-											</ul>
-										</div>
-										<div class="col-sm-1 reset-padding">
-											<button ng-click="deleteParameter(functionIndex,$index)" class="btn  pull-right">X</button>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-12 reset-padding">
-									<button ng-click="addParameter(functionIndex)" class="btn btn-mini pull-right">Add Parameter</button>
-								</div>
-							</div>
+                    <div class="form-group col-sm-12">
+                        <label class=" control-label col-sm-2 reset-padding">parameters</label>
+                        <div class="form-group col-sm-10 reset-padding">
+                            <div ng-form="param{{$index}}" class="form-horizontal form-container"
+                                 ng-repeat="parameter in function.parameters track by $index ">
+                                <div class="col-sm-3 reset-padding">
+                                    <input type="text" class="form-control pull-left" ng-model="parameter.name" required
+                                           ng-pattern="/^[a-zA-Z0-9_]+$/" placeholder="name" name="parameterName"
+                                           unic-name parameters="parameters" press-enter="addParameter()"/>
+                                    <ul class="help-block"
+                                        ng-show="param{{$index}}.parameterName.$dirty && param{{$index}}.parameterName.$invalid">
+                                        <li ng-show="param{{$index}}.parameterName.$error.required">This field is
+                                            required!
+                                        </li>
+                                        <li ng-show="param{{$index}}.parameterName.$error.unic">The parameter name is
+                                            already taken, please change it
+                                        </li>
+                                        <li ng-show="param{{$index}}.parameterName.$error.pattern">Is not a valid
+                                            parameter name!Please use only alphanumerical characters and the _ symbol
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-3 reset-padding">
+                                    <input type="text" class="form-control pull-left" name="parameterType"
+                                           ng-model="parameter.type" required adt-validator placeholder="type"
+                                           press-enter="addParameter()"/>
+                                    <ul class="help-block"
+                                        ng-show="param{{$index}}.parameterType.$dirty && param{{$index}}.parameterType.$invalid">
+                                        <li ng-show="param{{$index}}.parameterType.$error.required">This field is
+                                            required!
+                                        </li>
+                                        <li ng-show="param{{$index}}.parameterType.$error.adt">Is not a valid type name.
+                                            Valid type names are 'String, Number, Boolean, a data structure name, and
+                                            arrays of any of these (e.g., String[]).
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-5 reset-padding">
+                                    <input type="text" class="form-control pull-left" name="parameterDescritpion"
+                                           placeholder="description" ng-model="parameter.description" required
+                                           ng-pattern="/^[a-zA-Z0-9_-\s\(\),:]+$/" press-enter="addParameter()"/>
+                                    <ul class="help-block"
+                                        ng-show="param{{$index}}.parameterDescritpion.$dirty && param{{$index}}.parameterDescritpion.$invalid">
+                                        <li ng-show="param{{$index}}.parameterDescritpion.$error.required">This field is
+                                            required!
+                                        </li>
+                                        <li ng-show="param{{$index}}.parameterDescritpion.$error.pattern">Please use
+                                            only alphanumerical characters or - and _ symbols
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-1 reset-padding">
+                                    <button ng-click="deleteParameter(functionIndex,$index)" class="btn btn-danger btn-xs">Delete this Param</button>
+                                </div>
+                                <div   class="line-separator"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-4 center-block">
+                            <button ng-click="addParameter(functionIndex)" class="btn btn-primary btn-xs pull-right">Add new Param</button>
+                        </div>
+                    </div>
 
+                    <div   class="line-separator"></div>
+                </div>
+                <div >
+                    <button ng-click="deleteFunction(functionIndex)" class=" btn btn-danger btn-xs">Delete this Function</button>
+                </div>
 
-						<div class="col-sm-1">
-							<button ng-click="deleteFunction(functionIndex)" class="btn  pull-right">X</button>
-						</div>
-					</div>
-					<button ng-click="addFunction()" class="btn btn-small">Add function</button><BR>
-				</div>
-			</div>
-		</div>
+            </div>
 
+            <div>
+                <button ng-click="addFunction()" class="btn btn-primary btn-small  btn-block">Add new function</button>
+            </div>
+        </div>
+    </div>
 
-        <div class="button-bar">
-	    	<div class="btn-group pull-right" role="group"  >
-	    	  <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-lg">Submit</button>
-	    	</div>
-
-	    	<span class="clearfix"></span>
-	    </div>
-	</body>
+    <div   class="line-separator"></div>
+    <div   class="line-separator"></div>
+    <div   class="line-separator"></div>
+            <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-lg btn-block">Save or update the Project</button>
+    </div>
+</div>
+</body>
 </html>
