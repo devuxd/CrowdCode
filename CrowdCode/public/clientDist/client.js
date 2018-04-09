@@ -763,7 +763,7 @@ angular
   .constant('firebaseUrl', 'https://crowdcode2.firebaseio.com/Projects/' + projectId)
   .constant('logoutUrl', logoutURL)
   .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, projectService, functionsService, AdtService,
-    avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics, testsService) {
+    avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics, testsService, thirdPartyAPIService) {
 
     // current session variables
     $rootScope.projectId = projectId;
@@ -829,6 +829,7 @@ angular
       notificationsService.init();
       newsfeedService.init();
       testsService.init();
+        thirdPartyAPIService.init();
 
     }
 
@@ -6270,6 +6271,147 @@ function TestArray($firebaseArray, Test) {
 	});
 }
 
+
+
+////////////////////////
+//FUNCTIONS SERVICE   //
+////////////////////////
+var fList = null;
+angular
+    .module('crowdCode')
+    .factory('thirdPartyAPIService', ['$rootScope', '$q', '$filter', '$firebaseObject', 'firebaseUrl', 'FunctionArray', 'Function', function($rootScope, $q, $filter, $firebaseObject, firebaseUrl, FunctionArray, Function) {
+
+        var service = new function(){
+            // Private variables
+            var functions;
+
+            // Public functions
+            this.init 					   = init ;
+            this.allFunctionNames 		   = allFunctionNames;
+            this.get 					   = get;
+            this.getVersion 			   = getVersion;
+            this.getByName 			       = getByName;
+            this.getNameById  			   = getNameById;
+            this.getIdByName  			   = getIdByName;
+            this.getDescribedFunctionsCode = getDescribedFunctionsCode;
+            this.getDescribedFunctionsName = getDescribedFunctionsName;
+            this.getDescribedFunctionsId   = getDescribedFunctionsId;
+            this.getDescribedFunctions     = getDescribedFunctions;
+            this.getAll 				   = getAll;
+
+            // Function bodies
+            function init(){
+                // hook from firebase all the functions declarations of the project
+                var funcRef = firebase.database().ref().child('Projects').child(projectId).child('artifacts').child('Functions');
+                functions = new FunctionArray(funcRef);
+                functions.$loaded().then(function(){
+                    fList = functions;
+                    // tell the others that the functions services is loaded
+                    $rootScope.$broadcast('serviceLoaded','functions');
+                });
+            }
+
+            function allFunctionNames(){
+                var functionsNames = [];
+                angular.forEach(functions, function(fun)
+                {
+                    functionsNames.push(fun.name);
+                });
+                return functionsNames;
+            }
+
+
+            // Returns an array with every current function ID
+            function getDescribedFunctions(){
+                return $filter('filter')(functions, { described: true });
+            }
+
+            // Returns an array with every current function ID
+            function getDescribedFunctionsId(excludedFunctionId){
+                var describedIds = [];
+                angular.forEach( getDescribedFunctions(), function(value){
+                    if( value.id !== excludedFunctionId ){
+                        describedIds.push(value.id);
+                    }
+                });
+                return describedIds;
+            }
+
+            // Returns all the described function Names except the one with the passed ID
+            function getDescribedFunctionsName(excludedFunctionId){
+                var describedNames = [];
+                angular.forEach( getDescribedFunctions(), function(value){
+                    if( value.id != excludedFunctionId ){
+                        describedNames.push(value.name);
+                    }
+                });
+                console.log('desc',describedNames);
+                return describedNames;
+            }
+
+            // Returns all the described function signature except the one with the passed ID
+            function getDescribedFunctionsCode(excludedFunctionId){
+                var describedCode = '';
+                angular.forEach( getDescribedFunctions(), function(value){
+                    if( value.id != excludedFunctionId ){
+                        describedCode += value.header+'{ }';
+                    }
+                });
+                return describedCode;
+            }
+
+
+            // Get the function object, in FunctionInFirebase format, for the specified function id
+            function get(id){
+                return functions.$getRecord(id);
+            }
+
+            function getAll(){
+                return functions;
+            }
+
+            // Get the function object, in FunctionInFirebase format, for the specified function id
+            function getVersion(id, version){
+                var deferred = $q.defer();
+                var funcRef = firebase.database().ref().child('Projects').child(projectId).child('history').child('artifacts').child('Functions').child(id).child(version);
+                //new Firebase(firebaseUrl+ '/history/artifacts/functions/' + id+ '/' + version);
+                var obj = $firebaseObject( funcRef );
+                obj.$loaded().then(function(){
+                    deferred.resolve(new Function(obj));
+                });
+                return deferred.promise;
+            }
+
+            // Get the function object, in FunctionInFirebase format, for the specified function name
+            function getByName(name){
+                for( var i = 0 ; i < functions.length ; i ++){
+                    if( functions[i].name == name ) {
+                        return functions[i];
+                    }
+                }
+                return null;
+            }
+
+            function getIdByName(name){
+                var funct = getByName(name);
+                if( funct !== null )
+                    return funct.id;
+                return -1;
+            }
+
+            function getNameById(id){
+                var funct = get(id);
+                if( funct !== null){
+                    return funct.name;
+                }
+                return '';
+            }
+
+        };
+
+        return service;
+    }]);
+
 angular
     .module('crowdCode')
     .directive('tutorial', function($rootScope,$compile) {
@@ -7623,9 +7765,9 @@ angular
 	}]);
 angular
     .module('crowdCode')
-    .directive('projectOutline', ['AdtService','functionsService', projectOutline]);
+    .directive('projectOutline', ['AdtService','functionsService','thirdPartyAPIService', projectOutline]);
 
-function projectOutline(AdtService, functionsService) {
+function projectOutline(AdtService, functionsService, thirdPartyAPIService) {
     return {
         restrict: 'E',
         templateUrl: 'widgets/project_outline.template.html',
@@ -7634,6 +7776,7 @@ function projectOutline(AdtService, functionsService) {
 
             $scope.functions = functionsService.getAll();
             $scope.dataTypes = AdtService.getAll();
+            $scope.thirdPartyAPIs = thirdPartyAPIService.getAll();
 
             //console.log($scope.dataTypes);
             $scope.buildStructure = function(adt){
@@ -12264,7 +12407,7 @@ angular.module("ui_elements/right_bar_template.html", []).run(["$templateCache",
     "\n" +
     "  <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
     "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"50%\">\n" +
-    "      <div class=\"title\">Project Outline</div>\n" +
+    "      <div class=\"title\">Project Outline and Third party API</div>\n" +
     "      <div class=\"content\">\n" +
     "        <project-outline ng-click=\"trackInteraction('Click Right Bar', 'Project Outline', $event)\"></project-outline>\n" +
     "      </div>\n" +
@@ -12563,7 +12706,23 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "		</div>\n" +
     "	</div>\n" +
     "	<div ng-repeat=\"f in functions\" class=\"functions\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" >API: {{f.name}}</div>\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" > API: {{f.name}}</div>\n" +
+    "		<div bs-collapse-target class=\"toggled\">\n" +
+    "			<div ng-bind=\"f.description\"></div>\n" +
+    "			<div><strong> Parameters </strong></div>\n" +
+    "			<div ng-repeat=\"p in f.parameters\">\n" +
+    "				<span ng-bind=\"p.name\"></span>\n" +
+    "				<span ng-bind=\"p.type\"></span>\n" +
+    "			</div>\n" +
+    "			<div >\n" +
+    "				<strong>Return:</strong>\n" +
+    "				<span ng-bind=\"f.returnType\"></span>\n" +
+    "			</div>\n" +
+    "		</div>\n" +
+    "	</div>\n" +
+    "\n" +
+    "	<div ng-repeat=\"f in thirdPartyAPIs\" class=\"functions\">\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" > Third party API: {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
     "			<div ng-bind=\"f.description\"></div>\n" +
     "			<div><strong> Parameters </strong></div>\n" +

@@ -81,7 +81,7 @@ angular
   .constant('firebaseUrl', 'https://crowdcode2.firebaseio.com/Projects/' + projectId)
   .constant('logoutUrl', logoutURL)
   .run(function($rootScope, $interval, $modal, $firebaseArray, firebaseUrl, logoutUrl, userService, projectService, functionsService, AdtService,
-    avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics, testsService) {
+    avatarFactory, questionsService, notificationsService, newsfeedService, Angularytics, testsService, thirdPartyAPIService) {
 
     // current session variables
     $rootScope.projectId = projectId;
@@ -147,6 +147,7 @@ angular
       notificationsService.init();
       newsfeedService.init();
       testsService.init();
+        thirdPartyAPIService.init();
 
     }
 
