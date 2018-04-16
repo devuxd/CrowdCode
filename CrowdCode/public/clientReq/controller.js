@@ -241,7 +241,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
             content: 'Submit successful',
             type: 'success',
             show: true,
-            duration: 3,
+            duration: 6,
             template: '/client/microtasks/alert_submit.html',
             container: 'alertcontainer'
           });
