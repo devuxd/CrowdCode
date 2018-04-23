@@ -49,6 +49,8 @@ angular
 				.initWorker(self.name, self.code, stubs, extraFunctions)
 				.then(function(){
 
+                    console.log('extraFunctions', stubs, extraFunctions);
+
 					var totTests = tests.length;
 				    var currTest = -1;
 

@@ -4298,7 +4298,7 @@ angular.module("ui_elements/right_bar_template.html", []).run(["$templateCache",
     "\n" +
     "  <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
     "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"50%\">\n" +
-    "      <div class=\"title\">Project Outline</div>\n" +
+    "      <div class=\"title\">Project Outline and Third party API</div>\n" +
     "      <div class=\"content\">\n" +
     "        <project-outline ng-click=\"trackInteraction('Click Right Bar', 'Project Outline', $event)\"></project-outline>\n" +
     "      </div>\n" +
@@ -4597,7 +4597,23 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "		</div>\n" +
     "	</div>\n" +
     "	<div ng-repeat=\"f in functions\" class=\"functions\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" >API: {{f.name}}</div>\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" > API: {{f.name}}</div>\n" +
+    "		<div bs-collapse-target class=\"toggled\">\n" +
+    "			<div ng-bind=\"f.description\"></div>\n" +
+    "			<div><strong> Parameters </strong></div>\n" +
+    "			<div ng-repeat=\"p in f.parameters\">\n" +
+    "				<span ng-bind=\"p.name\"></span>\n" +
+    "				<span ng-bind=\"p.type\"></span>\n" +
+    "			</div>\n" +
+    "			<div >\n" +
+    "				<strong>Return:</strong>\n" +
+    "				<span ng-bind=\"f.returnType\"></span>\n" +
+    "			</div>\n" +
+    "		</div>\n" +
+    "	</div>\n" +
+    "\n" +
+    "	<div ng-repeat=\"f in thirdPartyAPIs\" class=\"functions\">\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" > Third party API: {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
     "			<div ng-bind=\"f.description\"></div>\n" +
     "			<div><strong> Parameters </strong></div>\n" +

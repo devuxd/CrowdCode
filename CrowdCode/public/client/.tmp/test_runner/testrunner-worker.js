@@ -2,10 +2,12 @@ var testedName = undefined;
 var expect = undefined;
 var should = undefined;
 
+self.importScripts('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.core.js');
+
 self.addEventListener('message', function(message){
 
 	var data = message.data;
-
+// console.log('tetrunner-worker addEventListener',data);
 	switch ( data.cmd ) {
 		// initialize the the debugger
 		case 'init': 
@@ -44,7 +46,8 @@ self.addEventListener('message', function(message){
 
 
 			var sendData = {};
-			// console.log('all stub before run',Debugger.getAllStubs());
+			console.log('all stub before run',Debugger.functions);
+			console.log('all function before run',Debugger.stubs);
 			sendData.result = Debugger.run(data.testCode);
 			sendData.logs   = Debugger.logs.values[testedName] === undefined ? [] : Debugger.logs.values[testedName];
 			self.postMessage( JSON.stringify( sendData ) );
@@ -54,6 +57,7 @@ self.addEventListener('message', function(message){
 		// stop 
 		case 'stubs': 
 			// console.log('worker is sending stubs', Debugger.getAllStubs());
+
 			self.postMessage( JSON.stringify( Debugger.getAllStubs() ) );
 			break;
 		// stop 

@@ -25,13 +25,14 @@ Debugger.run = function(testCode, callsLogs) {
     var functCode = '';
     for( var functionName in Debugger.functions ){
         functCode += Debugger.functions[functionName].compiled + '\n';
+        console.log('functionCode in debugger',functCode);
         // if( functionName == 'loggingFunction')
         //     console.log(Debugger.functions[functionName].compiled );
     }
 
     var evalCode = functCode + '\n' 
                  + testCode;
-
+console.log('real', evalCode);
     // console.log( JSON.stringify(Debugger.logs) );
     //console.log(evalCode);
     
@@ -201,6 +202,7 @@ Debugger.instrumentTreeNode = function(node,scope){
 
     var innerCode = escodegen.generate(node,{indent:false});
     var outerCode = 'Debugger.logValue('+innerCode+','+JSON.stringify(logObject)+',\''+scope.context+'\');';
+    console.log('outerCode: ',outerCode)
     var newNode = esprima.parse(outerCode);
     return newNode.body[0].expression;
 };
