@@ -142,7 +142,7 @@ angular
 						default:
 					}
 
-					snap.ref().update({'read':true});
+					snap.ref.update({'read':true});
 				}
 			});
 		};
