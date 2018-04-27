@@ -1,6 +1,7 @@
 <div bs-collapse start-collapsed="false" allow-multiple="true">
+	<div style="text-align: center"><strong> Data Types: </strong></div>
 	<div ng-repeat="d in dataTypes" class="data-types" ng-init="d.selectedExample = d.examples[0]">
-		<div bs-collapse-toggle class="toggler" >DT: {{d.name}}</div>
+		<div bs-collapse-toggle class="toggler" >Data Type: {{d.name}}</div>
 		<div bs-collapse-target class="toggled" ng-init="structure = buildStructure(d)">
 			<span ng-bind="::d.description"></span>
 			<pre ng-if="d.structure" ng-bind="structure"></pre>
@@ -26,6 +27,7 @@
 	            
 		</div>
 	</div>
+	<div style="text-align: center"><strong> Functions: </strong></div>
 	<div ng-repeat="f in functions" class="functions">
 		<div bs-collapse-toggle class="toggler" > API: {{f.name}}</div>
 		<div bs-collapse-target class="toggled">
@@ -42,19 +44,20 @@
 		</div>
 	</div>
 
-	<div ng-repeat="f in thirdPartyAPIs" class="functions">
-		<div bs-collapse-toggle class="toggler" > Third party API: {{f.name}}</div>
-		<div bs-collapse-target class="toggled">
-			<div ng-bind="f.description"></div>
-			<div><strong> Parameters </strong></div>
-			<div ng-repeat="p in f.parameters">
-				<span ng-bind="p.name"></span>
-				<span ng-bind="p.type"></span>
-			</div>
-			<div >
-				<strong>Return:</strong>
-				<span ng-bind="f.returnType"></span>
-			</div>
-		</div>
-	</div>
+	<!--<div ng-repeat="f in thirdPartyAPIs" class="functions">-->
+		<!--<div bs-collapse-toggle class="toggler" > Third party API: {{f.name}}</div>-->
+		<!--<div bs-collapse-target class="toggled">-->
+			<!--<div ng-bind="f.description"></div>-->
+			<!--<div><strong> Parameters </strong></div>-->
+			<!--<div ng-repeat="p in f.parameters">-->
+				<!--<span ng-bind="p.name"></span>-->
+				<!--<span ng-bind="p.type"></span>-->
+			<!--</div>-->
+			<!--<div >-->
+				<!--<strong>Return:</strong>-->
+				<!--<span ng-bind="f.returnType"></span>-->
+			<!--</div>-->
+		<!--</div>-->
+	<!--</div>-->
+
 </div>
