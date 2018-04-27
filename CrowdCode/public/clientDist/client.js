@@ -5392,7 +5392,7 @@ angular
 						default:
 					}
 
-					snap.ref().update({'read':true});
+					snap.ref.update({'read':true});
 				}
 			});
 		};
@@ -12678,8 +12678,9 @@ angular.module("widgets/popup_user_profile.html", []).run(["$templateCache", fun
 angular.module("widgets/project_outline.template.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("widgets/project_outline.template.html",
     "<div bs-collapse start-collapsed=\"false\" allow-multiple=\"true\">\n" +
+    "	<div style=\"text-align: center\"><strong> Data Types: </strong></div>\n" +
     "	<div ng-repeat=\"d in dataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" >DT: {{d.name}}</div>\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" >Data Type: {{d.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\" ng-init=\"structure = buildStructure(d)\">\n" +
     "			<span ng-bind=\"::d.description\"></span>\n" +
     "			<pre ng-if=\"d.structure\" ng-bind=\"structure\"></pre>\n" +
@@ -12705,6 +12706,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "	            \n" +
     "		</div>\n" +
     "	</div>\n" +
+    "	<div style=\"text-align: center\"><strong> Functions: </strong></div>\n" +
     "	<div ng-repeat=\"f in functions\" class=\"functions\">\n" +
     "		<div bs-collapse-toggle class=\"toggler\" > API: {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
@@ -12721,21 +12723,22 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div ng-repeat=\"f in thirdPartyAPIs\" class=\"functions\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" > Third party API: {{f.name}}</div>\n" +
-    "		<div bs-collapse-target class=\"toggled\">\n" +
-    "			<div ng-bind=\"f.description\"></div>\n" +
-    "			<div><strong> Parameters </strong></div>\n" +
-    "			<div ng-repeat=\"p in f.parameters\">\n" +
-    "				<span ng-bind=\"p.name\"></span>\n" +
-    "				<span ng-bind=\"p.type\"></span>\n" +
-    "			</div>\n" +
-    "			<div >\n" +
-    "				<strong>Return:</strong>\n" +
-    "				<span ng-bind=\"f.returnType\"></span>\n" +
-    "			</div>\n" +
-    "		</div>\n" +
-    "	</div>\n" +
+    "	<!--<div ng-repeat=\"f in thirdPartyAPIs\" class=\"functions\">-->\n" +
+    "		<!--<div bs-collapse-toggle class=\"toggler\" > Third party API: {{f.name}}</div>-->\n" +
+    "		<!--<div bs-collapse-target class=\"toggled\">-->\n" +
+    "			<!--<div ng-bind=\"f.description\"></div>-->\n" +
+    "			<!--<div><strong> Parameters </strong></div>-->\n" +
+    "			<!--<div ng-repeat=\"p in f.parameters\">-->\n" +
+    "				<!--<span ng-bind=\"p.name\"></span>-->\n" +
+    "				<!--<span ng-bind=\"p.type\"></span>-->\n" +
+    "			<!--</div>-->\n" +
+    "			<!--<div >-->\n" +
+    "				<!--<strong>Return:</strong>-->\n" +
+    "				<!--<span ng-bind=\"f.returnType\"></span>-->\n" +
+    "			<!--</div>-->\n" +
+    "		<!--</div>-->\n" +
+    "	<!--</div>-->\n" +
+    "\n" +
     "</div>");
 }]);
 
