@@ -28,7 +28,7 @@
 		</div>
 	</div>
 	<div style="text-align: center"><strong> Functions: </strong></div>
-	<div ng-repeat="f in functions" class="functions">
+	<div ng-repeat="f in functions" ng-show="!f.isThirdPartyAPI" class="functions">
 		<div bs-collapse-toggle class="toggler" > API: {{f.name}}</div>
 		<div bs-collapse-target class="toggled">
 			<div ng-bind="f.description"></div>
@@ -44,6 +44,22 @@
 		</div>
 	</div>
 
+	<div style="text-align: center"><strong> 3rd Party API: </strong></div>
+	<div ng-repeat="f in functions" ng-show="f.isThirdPartyAPI" class="functions">
+		<div bs-collapse-toggle class="toggler" > API: {{f.name}}</div>
+		<div bs-collapse-target class="toggled">
+			<div ng-bind="f.description"></div>
+			<div><strong> Parameters </strong></div>
+			<div ng-repeat="p in f.parameters">
+				<span ng-bind="p.name"></span>
+				<span ng-bind="p.type"></span>
+			</div>
+			<div >
+				<strong>Return:</strong>
+				<span ng-bind="f.returnType"></span>
+			</div>
+		</div>
+	</div>
 	<!--<div ng-repeat="f in thirdPartyAPIs" class="functions">-->
 		<!--<div bs-collapse-toggle class="toggler" > Third party API: {{f.name}}</div>-->
 		<!--<div bs-collapse-target class="toggled">-->
