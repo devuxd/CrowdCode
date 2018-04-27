@@ -29,7 +29,7 @@
 	</div>
 	<div style="text-align: center"><strong> Functions: </strong></div>
 	<div ng-repeat="f in functions" ng-show="!f.isThirdPartyAPI" class="functions">
-		<div bs-collapse-toggle class="toggler" > API: {{f.name}}</div>
+		<div bs-collapse-toggle class="toggler" > Function: {{f.name}}</div>
 		<div bs-collapse-target class="toggled">
 			<div ng-bind="f.description"></div>
 			<div><strong> Parameters </strong></div>

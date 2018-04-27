@@ -38,7 +38,24 @@
                     </div>
                     <br/>
                     <span class="section-header">Functions</span><br/>
-                    <div ng-repeat="f in Functions" class="functions">
+                    <div ng-repeat="f in Functions" ng-show="!f.isThirdPartyAPI"  class="functions">
+                        <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
+                        <div bs-collapse-target class="toggled">
+                            <div ng-bind="f.description"></div>
+                            <div><strong> Parameters </strong></div>
+                            <div ng-repeat="p in f.parameters">
+                                <span ng-bind="p.name"></span>
+                                <span ng-bind="p.type"></span>
+                            </div>
+                            <div >
+                                <strong>Return:</strong>
+                                <span ng-bind="f.returnType"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <span class="section-header">3rd Party APIs</span><br/>
+                    <div ng-repeat="f in Functions" ng-show="f.isThirdPartyAPI" class="functions">
                         <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
                         <div bs-collapse-target class="toggled">
                             <div ng-bind="f.description"></div>
