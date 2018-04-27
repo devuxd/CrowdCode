@@ -259,7 +259,8 @@ module.exports = function (AdminFirebase, Q) {
                 dependent: functions_dependent,
                 isComplete: false,
                 isAssigned: false,
-                isApiArtifact: isApiArtifact
+                isApiArtifact: isApiArtifact,
+                isThirdPartyAPI:false
             };
             var path = 'Projects/' + project_id + '/artifacts/Functions';
             var history_path = 'Projects/' + project_id + '/history/artifacts/Functions';
