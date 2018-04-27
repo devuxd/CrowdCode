@@ -41,7 +41,6 @@ self.addEventListener('message', function(message){
 		evalCode += data.code;
 
 		try{
-			console.log('testValidotr',evalCode);
 			eval(evalCode);
 		} catch(e){
 			// if it not an assertion error, show it

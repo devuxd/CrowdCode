@@ -95,3 +95,11 @@ CrowdCode/public/client/.tmp/test_runner/testrunner-worker.js
 CrowdCode/public/client/.tmp/test_runner/debugger.js
 CrowdCode/public/client/.tmp/templates.js
 CrowdCode/public/client/.tmp/client.js
+
+CrowdCode/sessions/*.json
+
+
+
+
+
+
