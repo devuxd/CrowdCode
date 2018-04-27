@@ -311,7 +311,8 @@ module.exports = function (AdminFirebase, Q) {
                     dependent: functions_dependent,
                     isComplete: isComplete,
                     isAssigned: isAssigned,
-                    isApiArtifact: isApiArtifact
+                    isApiArtifact: isApiArtifact,
+                    isThirdPartyAPI:false
                 };
 
                 var update_promise = root_ref.child(path).update(function_schema);
@@ -350,7 +351,8 @@ module.exports = function (AdminFirebase, Q) {
                         isApiArtifact: func.isApiArtifact,
                         dependent: func.dependent,
                         isComplete: isComplete,
-                        isAssigned: isAssigned
+                        isAssigned: isAssigned,
+                        isThirdPartyAPI:false
                     }
 
                     root_ref.child(path).update(function_schema);
