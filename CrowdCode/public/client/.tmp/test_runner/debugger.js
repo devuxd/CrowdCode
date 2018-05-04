@@ -24,11 +24,11 @@ Debugger.run = function (testCode, callsLogs) {
         Debugger.logs.calls = callsLogs;
 
     var functCode = '';
-    functCode +=  ' var objTemp = [];' + '\n' ;
+    functCode += ' var objTemp = [];' + '\n';
     for (var functionName in Debugger.functions) {
 
 
-            functCode += Debugger.functions[functionName].compiled + '\n';
+        functCode += Debugger.functions[functionName].compiled + '\n';
 
         // if( functionName == 'loggingFunction')
         //     console.log(Debugger.functions[functionName].compiled );
@@ -194,10 +194,15 @@ Debugger.mockFunction = function (fNode) {
         + ')';
 
     if (name == 'SaveObject') {
-        callBody +=  '\n' +
-            '  {\n '  +
-            '     objTemp.push(todo);\n'  +
-            '     return todo;' +
+        callBody += '\n' +
+            '  {\n ' +
+            ' for(var i=0; i<objTemp.length; i++) {\n' +
+            '         if(objTemp[i].todoId == todo.todoId) {\n' +
+            '           return \'Duplicate\';   \n' +
+            '        } \n' +
+            '  }\n' +
+            '  objTemp.push(todo);\n' +
+            '  return todo; ' +
             '}' + '\n';
     } else if (name == 'FetchObject') {
         callBody += '\n' +
@@ -216,11 +221,28 @@ Debugger.mockFunction = function (fNode) {
             '           objTemp[i]=todo; \n' +
             '            return todo; }\n' +
             '    }\n' +
-            'return null; \n'+
+            'return null; \n' +
 
             '}' + '\n';
 
-    } else {
+    } else if (name == 'DeleteObject') {
+        callBody += '\n' +
+            '{ ' +
+            'for(var i=0; i<objTemp.length; i++) {\n ' +
+            '       if (objTemp[i].todoId == todo.todoId){\n    ' +
+            '            objTemp.splice(i,1); \n         ' +
+            '           return todo; \n     ' +
+            '        }\n    ' +
+            ' }\n   ' +
+            'return null;\n } ';
+
+    }else if (name == 'FetchAllObjects') {
+        callBody += '\n' +
+            '{ ' +
+             'return objTemp;\n } ';
+
+    }
+    else {
 
 
         callBody += escodegen.generate(fNode.body);
