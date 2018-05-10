@@ -4633,7 +4633,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "\n" +
     "	<div style=\"text-align: center\"><strong> 3rd Party API: </strong></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" > API: {{f.name}}</div>\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" > API: {{f.name}}Implementation</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
     "			<div ng-bind=\"f.description\"></div>\n" +
     "			<div><strong> Parameters </strong></div>\n" +
