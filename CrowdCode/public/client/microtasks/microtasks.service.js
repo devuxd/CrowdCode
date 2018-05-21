@@ -52,8 +52,10 @@ angular
 				.success(function(data, status, headers, config) {
 					if( data.microtaskKey === undefined )
 						deferred.reject();
-					else
-						deferred.resolve(data);
+					else {
+						//console.log('datadatadatadatadatadatadata',data);
+                        deferred.resolve(data);
+                    }
 				})
 				.error(function(data, status, headers, config) {
 					deferred.reject();

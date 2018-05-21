@@ -3,7 +3,7 @@ function checkForErrors(e)
 	/**JSHINT CONFIG*/
 	/*jshint camelcase: false, white: false, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true*/
 	/*global window: false, document: false, $: false, log: false, bleep: false,test: false*/
-	  
+
 	var anyErrors = false;
 	var arrayOfErrors = [];
 	for (var i = 0; i < e.length; i++) 
@@ -20,8 +20,14 @@ function checkForErrors(e)
 //			debugger;
 		    if (e[i] != null)
 		    {
-				arrayOfErrors.push("Line " + e[i].line + ": " + e[i].reason) ;
-				anyErrors = true;
+                                // ignore errors from calling third party APIs, Their names finish with implementation
+                if(e[i].reason.endsWith('Implementation\' is not defined.')){
+                	console.log('enterd',e[i]);
+                    return "";
+                } else {
+                    arrayOfErrors.push("Line " + e[i].line + ": " + e[i].reason);
+                    anyErrors = true;
+                }
 		    }
 //		}
 	}

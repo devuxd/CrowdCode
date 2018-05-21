@@ -226,7 +226,7 @@ angular
     }
 
     function onFunctionParsed(_functionDto,_requestedFunctions){
-        functionDto = _functionDto;
+            functionDto = _functionDto;
         requestedFunctions = _requestedFunctions;
     }
 

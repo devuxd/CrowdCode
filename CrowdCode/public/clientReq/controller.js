@@ -106,7 +106,12 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
         description: ""
       };
 
-      $scope.functions[index].parameters.push(emptyParameter);
+      if( $scope.functions[index].parameters !== undefined) {
+          $scope.functions[index].parameters.push(emptyParameter);
+      }else{
+          $scope.functions[index].parameters= [emptyParameter];
+
+      }
     };
 
 

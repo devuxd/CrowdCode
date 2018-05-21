@@ -69,15 +69,17 @@ Debugger.setFunctions = function (functions) {
 
 Debugger.setFunction = function (functName, functObj, trace) {
     Debugger.functions[functName] = functObj;
-    if (Debugger.functionsName.indexOf(functName) == -1)
+    if (Debugger.functionsName.indexOf(functName) == -1) {
         Debugger.functionsName.push(functName);
+    }
 
     // create the abstract syntax tree
     var bodyNode = esprima.parse(functObj.code, {loc: true}).body[0];
 
     // if it's not a function declaration throw exception
-    if (bodyNode.type !== 'FunctionDeclaration')
+    if (bodyNode.type !== 'FunctionDeclaration') {
         throw new Error('This is not a function declaration!');
+    }
 
     // if the function has to be traced
     // keep the body in the array of the 
@@ -193,7 +195,7 @@ Debugger.mockFunction = function (fNode) {
             .join(',')
         + ')';
 
-    if (name == 'SaveObject') {
+  if (name == 'SaveObject') {
         callBody += '\n' +
             '  {\n ' +
             ' for(var i=0; i<objTemp.length; i++) {\n' +
@@ -236,10 +238,10 @@ Debugger.mockFunction = function (fNode) {
             ' }\n   ' +
             'return null;\n } ';
 
-    }else if (name == 'FetchAllObjects') {
+    } else if (name == 'FetchAllObjects') {
         callBody += '\n' +
             '{ ' +
-             'return objTemp;\n } ';
+            'return objTemp;\n } ';
 
     }
     else {
@@ -250,7 +252,7 @@ Debugger.mockFunction = function (fNode) {
 
     return mockBody + callBody;
 
-    
+
 };
 
 
