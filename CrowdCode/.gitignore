@@ -1,5 +1,4 @@
-# ignore all temp file that Grunt copy them in client dist
-CrowdCode/public/client/.tmp/
 
+CrowdCode/CrowdCode/services/meysam/*
 # ignore all session files
 CrowdCode/CrowdCode/sessions/*.json
