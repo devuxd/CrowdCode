@@ -1184,11 +1184,12 @@ function JSONValidator() {
     var stmtToTest = 'var stmt = ' + text + ';';
     if (!JSHINT(stmtToTest, getJSHintGlobals()))
       errors.concat(checkForErrors(JSHINT.errors));
-
+     console.log('syntax',errors);
     // If there are no syntax errors, check the structure.
     if (errors == "") {
       try {
         errors = checkStructure(JSON.parse(text), paramType);
+          console.log('structure',errors);
       } catch (e) {
         if (e.message != 'Unexpected token o')
           errors.push(e.message);
@@ -1275,7 +1276,7 @@ function checkForErrors(e)
 	/**JSHINT CONFIG*/
 	/*jshint camelcase: false, white: false, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true*/
 	/*global window: false, document: false, $: false, log: false, bleep: false,test: false*/
-	  
+	  console.log('check Errors');
 	var anyErrors = false;
 	var arrayOfErrors = [];
 	for (var i = 0; i < e.length; i++) 
@@ -1292,13 +1293,22 @@ function checkForErrors(e)
 //			debugger;
 		    if (e[i] != null)
 		    {
-				arrayOfErrors.push("Line " + e[i].line + ": " + e[i].reason) ;
-				anyErrors = true;
+                console.log('check Errors', e[i].line + ": " + e[i].reason);
+
+                // ignore errors from calling third party APIs, Their names finish with implementation
+                if(e[i].reason.endsWith('Implementation\' is not defined.')){
+                	console.log('enterd',e[i]);
+                    return "";
+                } else {
+                    arrayOfErrors.push("Line " + e[i].line + ": " + e[i].reason);
+                    anyErrors = true;
+                }
 		    }
 //		}
 	}
 	if(anyErrors)
 	{
+        console.log('check Errors,anyErrors', anyErrors);
 		return arrayOfErrors; 
 	}
 	return "";
@@ -1325,6 +1335,7 @@ function getJSHintForStatements()
 
 function getUnitTestGlobals()
 {
+	console.log('Unit test global');
 	// if related to unittest for lint add here
 	return "/*global window: false, document: false, $: false, throws:false, log: false, bleep: false, equal: false, notEqual: false, deepEqual: false, notDeepEqual: false, raises: false*/";
 }
@@ -2162,368 +2173,400 @@ function FunctionArray($firebaseArray, Function) {
 	});
 }
 
-
 // check if a functionName is already taken
 angular
     .module('crowdCode')
-    .factory('functionUtils', [ 'functionsService', 'AdtUtils', function functionUtils(functionsService, AdtUtils) {
-    return {
-        parse               : parse,
-        validate            : validate
-        // parseDescription    : parseDescription,
-        // validateDescription : validateDescription,
-    };
-
-    function isInRange(where,range){
-        if( where.start.line > range.start.line && where.end.line < range.end.line )
-            return true;
-        return false;
-    }
-
-    function parse (text) {
-
-        var dto = {
-            description: '',
-            returnType: '',
-            parameters: [],
-            header: '',
-            name: '',
-            code: '',
-            callees: []
-        };
-
-
-
-
-        // configure esprima to parse comment blocks
-        // and the ranges of all the block
-        var esprimaConf = {
-            loc: true, 
-            comment: true
-        };
-
-        // build the syntactic tree from the text
-        var ast = esprima.parse( text, esprimaConf);
-        var commentBlocks = ast.comments;
-        var commentBlocksOutside = [];
-        var requestedFunctions = [];
-        var requestedDataTypes = [];
-        var requestedNames = [];
-        var calleeNames = [];
-
-        if( ast.body && ast.body.length > 0 && ast.body[0].type === 'FunctionDeclaration' ){
-            // get the function body (function name(){ }) range
-            var bodyNode = ast.body[0];
-            var bodyRange = bodyNode.loc;
-            var bodyText = text
-                            .split('\n')
-                            .slice(bodyRange.start.line-1,bodyRange.end.line)
-                            .join('\n');
-
-
-
-            // filter out the comment blocks inside the body of the function
-            var commentsOutside = commentBlocks.filter(function(block){
-                return !isInRange(block.loc, bodyRange);
-            });
-
-                
-            if( commentsOutside.length > 0 ){
-                // the first comment block is the actual function description
-                // extend the dto object with the parsed description
-                angular.extend(dto,parseFunctionDoc(commentsOutside[0].value));
-
-                // the others comment blocks can be requestedFunctions or requestedDataTypes
-                for ( var i = 1 ; i < commentsOutside.length; i++ ) {
-                    var value = commentsOutside[i].value;
-                    
-                    // if it's a function request block
-                    if ( value.search('@function') != -1 ) {
-
-                        var parsed = parseFunctionDoc( value );
-                        requestedNames.push(parsed.name);
-                        requestedFunctions.push(parsed);
-                    }
-                    // if it's a data type request block
-                    else if ( value.search('@typedef') != -1 ) {
-                        console.log('requested data type!')
-                    }
-                }
-            }
-
-                
-            // get the callee names and for those that
-            // are not the requested functions, search
-            // the relative Id
-            calleeNames = getCalleeNames(ast);
-            for(i =0; i< calleeNames.length; i++) {
-                if ( requestedNames.indexOf( calleeNames[i] ) > -1 ) {
-                    calleeNames.slice(i,1);
-                } 
-                else {
-                    var functionId = functionsService.getIdByName(calleeNames[i]);
-                    if(functionId!=-1)
-                        dto.callees.push({
-                            id: functionId,
-                            name: calleeNames[i]
-                        });
-                }
-            }
-
-            // complete the dto data
-            dto.header = bodyText.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*/g)[0];
-            dto.code   = bodyText.slice(dto.header.length);
-            dto.name   = bodyNode.id.name;
-        }
-        
+    .factory('functionUtils', ['functionsService', 'AdtUtils', function functionUtils(functionsService, AdtUtils) {
         return {
-            ast: ast,
-            dto: dto,
-            requestedFunctions: requestedFunctions,
-            requestedNames: requestedNames,
-            calleeNames: calleeNames
-        };
-    }
-
-    function validate( code){
-        var MAX_NEW_STATEMENTS = 10;
-        var data = {
-            errors : [],
-            statements: undefined
+            parse: parse,
+            validate: validate
+            // parseDescription    : parseDescription,
+            // validateDescription : validateDescription,
         };
 
-        // first jshint check: validate the syntax and check that there is only a function declaration
-        var lint = { result: true };
-
-        lint = lintCode(code,{latedef:false, camelcase:true, undef:false, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true });
-
-        if( !lint.result ){
-            data.errors = data.errors.concat(lint.errors);
+        function isInRange(where, range) {
+            if (where.start.line > range.start.line && where.end.line < range.end.line)
+                return true;
+            return false;
         }
 
-        if( lint.data.functions.length == 0 ){
-            data.errors.push('No function block could be found. Make sure that there is a line that starts with "function"');
+        function parse(text) {
+
+            var dto = {
+                description: '',
+                returnType: '',
+                parameters: [],
+                header: '',
+                name: '',
+                code: '',
+                callees: []
+            };
+
+
+            // configure esprima to parse comment blocks
+            // and the ranges of all the block
+            var esprimaConf = {
+                loc: true,
+                comment: true
+            };
+
+            // build the syntactic tree from the text
+            var ast = esprima.parse(text, esprimaConf);
+            var commentBlocks = ast.comments;
+            var commentBlocksOutside = [];
+            var requestedFunctions = [];
+            var requestedDataTypes = [];
+            var requestedNames = [];
+            var calleeNames = [];
+            console.log('FunctionUtil check 2');
+            if (ast.body && ast.body.length > 0 && ast.body[0].type === 'FunctionDeclaration') {
+                // get the function body (function name(){ }) range
+                var bodyNode = ast.body[0];
+                var bodyRange = bodyNode.loc;
+                var bodyText = text
+                    .split('\n')
+                    .slice(bodyRange.start.line - 1, bodyRange.end.line)
+                    .join('\n');
+
+
+                // filter out the comment blocks inside the body of the function
+                var commentsOutside = commentBlocks.filter(function (block) {
+                    return !isInRange(block.loc, bodyRange);
+                });
+
+
+                if (commentsOutside.length > 0) {
+                    // the first comment block is the actual function description
+                    // extend the dto object with the parsed description
+                    angular.extend(dto, parseFunctionDoc(commentsOutside[0].value));
+
+                    // the others comment blocks can be requestedFunctions or requestedDataTypes
+                    for (var i = 1; i < commentsOutside.length; i++) {
+                        var value = commentsOutside[i].value;
+
+                        // if it's a function request block
+                        if (value.search('@function') != -1) {
+
+                            var parsed = parseFunctionDoc(value);
+                            requestedNames.push(parsed.name);
+                            requestedFunctions.push(parsed);
+                        }
+                        // if it's a data type request block
+                        else if (value.search('@typedef') != -1) {
+                            console.log('requested data type!')
+                        }
+                    }
+                }
+
+
+                // get the callee names and for those that
+                // are not the requested functions, search
+                // the relative Id
+                calleeNames = getCalleeNames(ast);
+                for (i = 0; i < calleeNames.length; i++) {
+                    if (requestedNames.indexOf(calleeNames[i]) > -1) {
+                        calleeNames.slice(i, 1);
+                    }
+                    else {
+                        var functionId = functionsService.getIdByName(calleeNames[i]);
+                        if (functionId != -1)
+                            dto.callees.push({
+                                id: functionId,
+                                name: calleeNames[i]
+                            });
+                    }
+                }
+
+                // complete the dto data
+                dto.header = bodyText.match(/\bfunction\s+\w+\s*\((\s*\w+\s*,)*(\s*\w+\s*)?\)\s*/g)[0];
+                dto.code = bodyText.slice(dto.header.length);
+                dto.name = bodyNode.id.name;
+            }
+
+            return {
+                ast: ast,
+                dto: dto,
+                requestedFunctions: requestedFunctions,
+                requestedNames: requestedNames,
+                calleeNames: calleeNames
+            };
         }
-        else if( lint.data.functions.length > 1 ){
-            data.errors.push('Only one function declaration is allowed! To add a function, use the autocompleter.');
-        }
-        else {
 
-            // we've checked that there is only a function declaration, 
-            // let's set the value of the 'statements' for that function
-            data.statements = lint.data.functions[0].metrics.statements;
-        }
-    
+        function validate(code) {
+            var MAX_NEW_STATEMENTS = 10;
+            var data = {
+                errors: [],
+                statements: undefined
+            };
+            console.log('FunctionUtil check 3');
+            // first jshint check: validate the syntax and check that there is only a function declaration
+            var lint = {result: true};
 
-        // if the first linting produced errors, 
-        // return now before processing the ast
-        if( data.errors.length > 0 )
-            return data;
-
-        // get the dto of the function
-        var parsed = parse(code);
-        var ast = parsed.ast;
-
-        var apiFunctionNames = functionsService.allFunctionNames();
-        var allFunctionNames = apiFunctionNames.concat(parsed.requestedNames);
-        
-        // first jshint check: validate the code checking for undef use
-        var codeWithDefs = 'var '+allFunctionNames.join(',')+';\n' + code;
-
-        lint = lintCode(codeWithDefs,{latedef:false, camelcase:true, undef:true, unused:false, boss:true, eqnull:true,laxbreak:true,laxcomma:true,smarttabs:true,shadow:true,jquery:true,worker:true,browser:true });
-
-        if( !lint.result ){
-            data.errors = data.errors.concat(lint.errors);
-            return data;
-        }
-
-        // validate the main function description
-        var funAst = ast.body[0];
-        var funDoc = parsed.dto;
-
-        // validate the parsed dto
-        data.errors = data.errors.concat(validateFunctionDoc(parsed.dto));
-
-        // validate the parameters
-        if( funAst.params.length !== funDoc.parameters.length ){
-            data.errors.push('The number of the parameter in the description does not match the number of parameters in the function header');
-        } 
-        else {
-
-            var orderError = false;
-            var paramHeaderNames = funAst.params.map(function(param){
-                return param.name;
+            lint = lintCode(code, {
+                latedef: false,
+                camelcase: true,
+                undef: false,
+                unused: false,
+                boss: true,
+                eqnull: true,
+                laxbreak: true,
+                laxcomma: true,
+                smarttabs: true,
+                shadow: true,
+                jquery: true,
+                worker: true,
+                browser: true
             });
 
-            for (var i = 0; i < funDoc.parameters.length ; i++) {
-
-                if ( paramHeaderNames.indexOf(funDoc.parameters[i].name) == -1 ) {
-                    data.errors.push('The parameter ' + funDoc.parameters[i].name + ' does not exist in the header of the function');
-                }
-                
-                if ( !orderError && funDoc.parameters[i].name != funAst.params[i].name ) {
-                    data.errors.push('The order of the parameters in the description does not match the order of the parameters in the function header') ;
-                    orderError = true;
-                }
+            if (!lint.result) {
+                console.log('lint.errors',lint.errors);
+                data.errors = data.errors.concat(lint.errors);
             }
-        }
 
-        // validate the requested functions
-        parsed.requestedFunctions.map(function( requested ){
-            if( apiFunctionNames.indexOf(requested.name) > -1 ){
-                data.errors.push('The function name '+requested.name+' is already taken!');
+            if (lint.data.functions.length == 0) {
+                data.errors.push('No function block could be found. Make sure that there is a line that starts with "function"');
+            }
+            else if (lint.data.functions.length > 1) {
+                data.errors.push('Only one function declaration is allowed! To add a function, use the autocompleter.');
             }
             else {
-                data.errors = data.errors.concat(validateFunctionDoc(requested));
+
+                // we've checked that there is only a function declaration,
+                // let's set the value of the 'statements' for that function
+                data.statements = lint.data.functions[0].metrics.statements;
             }
-            if ( parsed.calleeNames.indexOf(requested.name) == -1 ){
-                data.errors.push('The requested function '+requested.name+' is never used. Are you sure it\'s still needed?');
+
+
+            console.log('lint.errors2',lint.errors);
+            // if the first linting produced errors,
+            // return now before processing the ast
+            if (data.errors.length > 0)
+                return data;
+
+            // get the dto of the function
+            var parsed = parse(code);
+            var ast = parsed.ast;
+
+            //add function third party API names to be validated
+            var thirdPartyAPINames = ['SaveObjectImplementation', 'FetchObjectImplementation', 'DeleteObjectImplementation', 'UpdateObjectImplementation','FetchAllObjectsImplementation'];
+            // all defined functions for crowd
+            var apiFunctionNames = functionsService.allFunctionNames();
+
+            var allFunctionNames = apiFunctionNames.concat(parsed.requestedNames).concat(thirdPartyAPINames);
+
+            // first jshint check: validate the code checking for undef use
+            var codeWithDefs = 'var ' + allFunctionNames.join(',') + ';\n' + code;
+
+            console.log('codeWithDefs',codeWithDefs);
+            lint = lintCode(codeWithDefs, {
+                latedef: false,
+                camelcase: true,
+                undef: true,
+                unused: false,
+                boss: true,
+                eqnull: true,
+                laxbreak: true,
+                laxcomma: true,
+                smarttabs: true,
+                shadow: true,
+                jquery: true,
+                worker: true,
+                browser: true
+            });
+            console.log('lint.errors3',lint.errors);
+            if (!lint.result) {
+                data.errors = data.errors.concat(lint.errors);
+                return data;
             }
-        });
 
-        data.dto = parsed.dto;
-        data.requestedFunctions = parsed.requestedFunctions;
-        
-        return data;
-    }
+            // validate the main function description
+            var funAst = ast.body[0];
+            var funDoc = parsed.dto;
 
-    function lintCode(code,options){
-        var lintResult;
-        try {
-            lintResult = JSHINT(code, options);
-        } catch (e) {
-            console.log(e);
-        }
+            // validate the parsed dto
+            data.errors = data.errors.concat(validateFunctionDoc(parsed.dto));
 
-        return {
-            result: lintResult,
-            errors: lintResult ? [] : checkForErrors(JSHINT.errors),
-            data  : JSHINT.data()
-        };
-    }
-
-    function parseFunctionDoc( text ){
-        var parsed = doctrine.parse(text,{unwrap:true});
-        var tags = parsed.tags;
-
-        var functObj = {
-            name: '',
-            description: '',
-            parameters: [],
-            returnType: ''
-        };
-
-        functObj.description = parsed.description;
-
-        tags.forEach(function(tag){
-            switch (tag.title){
-                case 'function':
-                case 'name':
-
-                    functObj.name = tag.name;
-                    break;
-
-                case 'param':
-                    if( tag.type ){
-                        if ( tag.type.type === 'NameExpression' ) {
-                            functObj.parameters.push({
-                                name: tag.name,
-                                type: tag.type.name,
-                                description: tag.description
-                            });
-                        }
-                        else if ( tag.type.type === 'TypeApplication' ) {
-                            functObj.parameters.push({
-                                name: tag.name,
-                                type: tag.type.applications[0].name + '[]',
-                                description: tag.description
-                            });
-                        }
-                    }
-                    break;
-
-                case 'return':
-                case 'returns':
-                    if( tag.type.name ){
-                        functObj.returnType = tag.type.name;
-                    }
-                    else if ( tag.type.type === 'TypeApplication' ) {
-                        functObj.returnType = tag.type.applications[0].name + '[]';
-                    }
-                    break;
-
-                default:
-                    break;
+            // validate the parameters
+            if (funAst.params.length !== funDoc.parameters.length) {
+                data.errors.push('The number of the parameter in the description does not match the number of parameters in the function header');
             }
-        });
+            else {
 
-        return functObj;
-    }
+                var orderError = false;
+                var paramHeaderNames = funAst.params.map(function (param) {
+                    return param.name;
+                });
 
-    function validateFunctionDoc(parsed, strict){
-        var errors = [];
-        var paramTypes = [];
-        var apiNames = [];
+                for (var i = 0; i < funDoc.parameters.length; i++) {
 
-        if( parsed.name === '' ) {
-            errors.push('Please, write a name for the function');
-        }
-        else if( !parsed.description || parsed.description.length === 0 ){
-            errors.push('Please, provide a description for the function '+parsed.name);
-        }
-        else if( parsed.parameters.length === 0 ){
-            errors.push('Please, write at least one parameter for the function '+parsed.name);
-        }
-        else if( parsed.returnType.length === 0 ){
-            errors.push('Please, provide a return type for the function '+parsed.name);
-        }
-        else if ( ! AdtUtils.isValidName(parsed.returnType) ) {
-            errors.push('The return type '+parsed.returnType+' for the function '+parsed.name+' is not valid');
-        }
-        else {
-            for( var i = 0; i < parsed.parameters.length ; i++ ){
-                var par = parsed.parameters[i];
+                    if (paramHeaderNames.indexOf(funDoc.parameters[i].name) == -1) {
+                        data.errors.push('The parameter ' + funDoc.parameters[i].name + ' does not exist in the header of the function');
+                    }
 
-                if( !par.type ){
-                    errors.push('Please, specify the type for the parameter '+par.name+' of the function '+parsed.name);
-                } 
-                else if( !AdtUtils.isValidName(par.type)  ) {
-                    errors.push('The type of the parameter '+par.name+' of the function '+parsed.name+' is not valid');
-                } 
-                else if( !par.description || par.description.length < 5 ){
-                    errors.push('Please, provide a valid description (min 5 chars) for the parameter '+par.name+' of the function '+parsed.name);
+                    if (!orderError && funDoc.parameters[i].name != funAst.params[i].name) {
+                        data.errors.push('The order of the parameters in the description does not match the order of the parameters in the function header');
+                        orderError = true;
+                    }
                 }
             }
+
+            // validate the requested functions
+            parsed.requestedFunctions.map(function (requested) {
+                if (apiFunctionNames.indexOf(requested.name) > -1) {
+                    data.errors.push('The function name ' + requested.name + ' is already taken!');
+                }
+                else {
+                    data.errors = data.errors.concat(validateFunctionDoc(requested));
+                }
+                if (parsed.calleeNames.indexOf(requested.name) == -1) {
+                    data.errors.push('The requested function ' + requested.name + ' is never used. Are you sure it\'s still needed?');
+                }
+            });
+
+            data.dto = parsed.dto;
+            data.requestedFunctions = parsed.requestedFunctions;
+
+            return data;
         }
 
-        return errors;
-    }
-
-
-    function isValidName(name) {
-        var regexp = /^[a-zA-Z0-9_]+$/;
-        if (name.search(regexp) == -1) return false;
-        return true;
-    }
-
-
-    function getCalleeNames(ast) {
-        var calleeNames = [];
-        estraverse.traverse(ast, {
-            enter: function (node, parent) {
-                if (node.type == 'CallExpression' && calleeNames.indexOf(node.callee.name) == -1)
-                    calleeNames.push(node.callee.name);
+        function lintCode(code, options) {
+            var lintResult;
+            try {
+                lintResult = JSHINT(code, options);
+                console.log('lintResult', lintResult);
+            } catch (e) {
+                console.log(e);
             }
-        });
-        return calleeNames;
-     }
+
+            return {
+                result: lintResult,
+                errors: lintResult ? [] : checkForErrors(JSHINT.errors),
+                data: JSHINT.data()
+            };
+        }
+
+        function parseFunctionDoc(text) {
+            var parsed = doctrine.parse(text, {unwrap: true});
+            var tags = parsed.tags;
+            console.log('FunctionUtil check 4');
+            var functObj = {
+                name: '',
+                description: '',
+                parameters: [],
+                returnType: ''
+            };
+
+            functObj.description = parsed.description;
+
+            tags.forEach(function (tag) {
+                switch (tag.title) {
+                    case 'function':
+                    case 'name':
+
+                        functObj.name = tag.name;
+                        break;
+
+                    case 'param':
+                        if (tag.type) {
+                            if (tag.type.type === 'NameExpression') {
+                                functObj.parameters.push({
+                                    name: tag.name,
+                                    type: tag.type.name,
+                                    description: tag.description
+                                });
+                            }
+                            else if (tag.type.type === 'TypeApplication') {
+                                functObj.parameters.push({
+                                    name: tag.name,
+                                    type: tag.type.applications[0].name + '[]',
+                                    description: tag.description
+                                });
+                            }
+                        }
+                        break;
+
+                    case 'return':
+                    case 'returns':
+                        if (tag.type.name) {
+                            functObj.returnType = tag.type.name;
+                        }
+                        else if (tag.type.type === 'TypeApplication') {
+                            functObj.returnType = tag.type.applications[0].name + '[]';
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            });
+
+            return functObj;
+        }
+
+        function validateFunctionDoc(parsed, strict) {
+            console.log('FunctionUtil check 5');
+            var errors = [];
+            var paramTypes = [];
+            var apiNames = [];
+
+            if (parsed.name === '') {
+                errors.push('Please, write a name for the function');
+            }
+            else if (!parsed.description || parsed.description.length === 0) {
+                errors.push('Please, provide a description for the function ' + parsed.name);
+            }
+            else if (parsed.parameters.length === 0) {
+                errors.push('Please, write at least one parameter for the function ' + parsed.name);
+            }
+            else if (parsed.returnType.length === 0) {
+                errors.push('Please, provide a return type for the function ' + parsed.name);
+            }
+            else if (!AdtUtils.isValidName(parsed.returnType)) {
+                errors.push('The return type ' + parsed.returnType + ' for the function ' + parsed.name + ' is not valid');
+            }
+            else {
+                for (var i = 0; i < parsed.parameters.length; i++) {
+                    var par = parsed.parameters[i];
+
+                    if (!par.type) {
+                        errors.push('Please, specify the type for the parameter ' + par.name + ' of the function ' + parsed.name);
+                    }
+                    else if (!AdtUtils.isValidName(par.type)) {
+                        errors.push('The type of the parameter ' + par.name + ' of the function ' + parsed.name + ' is not valid');
+                    }
+                    else if (!par.description || par.description.length < 5) {
+                        errors.push('Please, provide a valid description (min 5 chars) for the parameter ' + par.name + ' of the function ' + parsed.name);
+                    }
+                }
+            }
+
+            return errors;
+        }
 
 
+        function isValidName(name) {
+            console.log('FunctionUtil check 7');
+            var regexp = /^[a-zA-Z0-9_]+$/;
+            if (name.search(regexp) == -1) return false;
+            return true;
+        }
 
 
+        function getCalleeNames(ast) {
+            console.log('FunctionUtil check 8');
+            var calleeNames = [];
+            estraverse.traverse(ast, {
+                enter: function (node, parent) {
+                    if (node.type == 'CallExpression' && calleeNames.indexOf(node.callee.name) == -1)
+                        calleeNames.push(node.callee.name);
+                }
+            });
+            console.log('calleeNames',calleeNames);
+            return calleeNames;
+        }
 
 
-}]);
+    }]);
 
 
 ////////////////////////
@@ -3725,8 +3768,9 @@ angular
     }
 
     function onFunctionParsed(_functionDto,_requestedFunctions){
-        functionDto = _functionDto;
+            functionDto = _functionDto;
         requestedFunctions = _requestedFunctions;
+        console.log('functionDto, requestedFunctions',functionDto, requestedFunctions);
     }
 
     function onCodeChanged(){
@@ -3878,6 +3922,7 @@ angular
         $scope.data.selected = -1 ;
         $scope.data.selected1 = -1 ;
 
+
         if( form.$invalid ){
           console.log("form is invalid ----", form.$error);
             $modal({template : 'microtasks/modal_form_invalid.html' , show: true});
@@ -3936,7 +3981,6 @@ angular
                 formData.tests.push(testDto);
             }
         }
-        console.log(formData.tests);
 
         // add the disputed tests
         $scope.data.tests.map(function(test){
@@ -3948,6 +3992,7 @@ angular
             }
         });
 
+        console.log('formData',formData);
         // add the callee stubs
         formData.function.callees.map(function(callee){
 
@@ -4277,251 +4322,254 @@ angular
 
 angular
     .module('crowdCode')
-    .directive('microtaskForm', ['Function', '$rootScope',  '$http', '$interval', '$timeout','$modal',  'functionsService', 'userService', 'microtasksService','userService', microtaskForm]);
+    .directive('microtaskForm', ['Function', '$rootScope', '$http', '$interval', '$timeout', '$modal', 'functionsService', 'userService', 'microtasksService', 'userService', microtaskForm]);
 
-function microtaskForm(Function, $rootScope,  $http, $interval, $timeout, $modal , functionsService, userService, microtasks,userService) {
+function microtaskForm(Function, $rootScope, $http, $interval, $timeout, $modal, functionsService, userService, microtasks, userService) {
 
     return {
         restrict: 'A',
         scope: true,
         require: 'form',
         templateUrl: 'microtasks/microtask_form.html',
-        link: function($scope,$element,$attrs,formController){
-        	$scope.formController = formController;
+        link: function ($scope, $element, $attrs, formController) {
+            $scope.formController = formController;
         },
-        controller: function($scope){
-        	$scope.taskData = {};
+        controller: function ($scope) {
+            $scope.taskData = {};
 
-			// private vars
-			var templatesURL = "microtasks/";
-			var templates = {
-				'NoMicrotask': 'no_microtask/no_microtask',
-				'Dashboard': 'dashboard/dashboard',
-				'Dashboard2': 'dashboard/dashboard2',
-				'Review': 'review/review',
-				'DebugTestFailure': 'debug_test_failure/debug_test_failure',
-				'ReuseSearch': 'reuse_search/reuse_search',
-				'WriteFunction': 'write_function/write_function',
-				'WriteFunctionDescription': 'write_function_description/write_function_description',
-				'WriteTest': 'write_test/write_test',
-				'WriteTestCases': 'write_test_cases/write_test_cases',
-				'WriteCall': 'write_call/write_call',
-				'DescribeFunctionBehavior': 'describe_behavior/describe_behavior',
-				'ImplementBehavior': 'implement_behavior/implement_behavior',
-				'ChallengeReview': 'challenge_review/challenge_review'
-			};
+            // private vars
+            var templatesURL = "microtasks/";
+            var templates = {
+                'NoMicrotask': 'no_microtask/no_microtask',
+                'Dashboard': 'dashboard/dashboard',
+                'Dashboard2': 'dashboard/dashboard2',
+                'Review': 'review/review',
+                'DebugTestFailure': 'debug_test_failure/debug_test_failure',
+                'ReuseSearch': 'reuse_search/reuse_search',
+                'WriteFunction': 'write_function/write_function',
+                'WriteFunctionDescription': 'write_function_description/write_function_description',
+                'WriteTest': 'write_test/write_test',
+                'WriteTestCases': 'write_test_cases/write_test_cases',
+                'WriteCall': 'write_call/write_call',
+                'DescribeFunctionBehavior': 'describe_behavior/describe_behavior',
+                'ImplementBehavior': 'implement_behavior/implement_behavior',
+                'ChallengeReview': 'challenge_review/challenge_review'
+            };
 
-			// initialize microtask and templatePath
-			$scope.funct = {};
-			$scope.microtask = {};
-			$scope.templatePath = ""; //"/html/templates/microtasks/";
+            // initialize microtask and templatePath
+            $scope.funct = {};
+            $scope.microtask = {};
+            $scope.templatePath = ""; //"/html/templates/microtasks/";
 
-			$scope.taskData.startBreak = false;
+            $scope.taskData.startBreak = false;
 
-			var waitTimeInSeconds = 3;
-			var checkQueueTimeout = null;
-			var timerInterval     = null;
-			$scope.breakMode     = false;
-			$scope.noMicrotask   = true;
+            var waitTimeInSeconds = 3;
+            var checkQueueTimeout = null;
+            var timerInterval = null;
+            $scope.breakMode = false;
+            $scope.noMicrotask = true;
 
-			$scope.checkQueueIn  = waitTimeInSeconds;
+            $scope.checkQueueIn = waitTimeInSeconds;
 
-			$scope.askQuestion = askQuestion();
-			$scope.openTutorial = openTutorial;
-
-
-			$scope.submit = submitMicrotask;
-			$scope.skip   = skipMicrotask;
-			$scope.fetch  = fetchMicrotask;
-
-			// ------- MESSAGE LISTENERS ------- //
-
-			$scope.$on('timeExpired'    , timeExpired);
-			$scope.$on('fetchMicrotask' , fetchMicrotask);
-			$scope.$on('fetchSpecificMicrotask' , fetchSpecificMicrotask);
-			$scope.$on('microtaskLoaded', onMicrotaskLoaded);
-			$scope.$on('openDashboard' , openDashboard);
-
-			$scope.workerOption = "";
-
-			$scope.currentPrompt = function(){
-				$scope.workerOption = "Take a break";
-				if(userService.data.level >= 2)
-					$scope.workerOption = "Pick next microtask"
-
-				return $scope.workerOption;
-			}
-
-			function onMicrotaskLoaded($event, microtask){
-
-				// start the microtask tutorial
-				$scope.$emit('queue-tutorial', microtask.type , false, function(){});
-
-				$scope.noMicrotask = false;
-
-				// initialize microtask data
-				$scope.canSubmit = true;
-				$scope.microtask = microtask;
-        console.log("microtask ---------", microtask);
-				// retrieve the related function
-				if (angular.isDefined($scope.microtask.function)) {
-          var funct = $scope.microtask.function;
-          if(angular.isDefined($scope.microtask.tests) && angular.isArray($scope.microtask.tests))
-            funct.tests = $scope.microtask.tests;
-          $scope.funct = new Function(funct);
-          //functionsService.get($scope.microtask.functionId);
-        }
-				//set up the right template
-				$scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
-
-			}
+            $scope.askQuestion = askQuestion();
+            $scope.openTutorial = openTutorial;
 
 
+            $scope.submit = submitMicrotask;
+            $scope.skip = skipMicrotask;
+            $scope.fetch = fetchMicrotask;
 
-			function openDashboard(){
-				$scope.taskData.startBreak = true;
-				$scope.breakMode = true;
-				cancelFetchTimer();
+            // ------- MESSAGE LISTENERS ------- //
+
+            $scope.$on('timeExpired', timeExpired);
+            $scope.$on('fetchMicrotask', fetchMicrotask);
+            $scope.$on('fetchSpecificMicrotask', fetchSpecificMicrotask);
+            $scope.$on('microtaskLoaded', onMicrotaskLoaded);
+            $scope.$on('openDashboard', openDashboard);
+
+            $scope.workerOption = "";
+
+            $scope.currentPrompt = function () {
+                $scope.workerOption = "Take a break";
+                if (userService.data.level >= 2)
+                    $scope.workerOption = "Pick next microtask"
+
+                return $scope.workerOption;
+            }
+
+            function onMicrotaskLoaded($event, microtask) {
+
+                // start the microtask tutorial
+                $scope.$emit('queue-tutorial', microtask.type, false, function () {
+                });
+
+                $scope.noMicrotask = false;
+
+                // initialize microtask data
+                $scope.canSubmit = true;
+                $scope.microtask = microtask;
+                console.log("microtask ---------", microtask);
+                // retrieve the related function
+                if (angular.isDefined($scope.microtask.function)) {
+                    var funct = $scope.microtask.function;
+                    if (angular.isDefined($scope.microtask.tests) && angular.isArray($scope.microtask.tests))
+                        funct.tests = $scope.microtask.tests;
+                    $scope.funct = new Function(funct);
+                    //functionsService.get($scope.microtask.functionId);
+                }
+                //set up the right template
+                $scope.templatePath = templatesURL + templates[$scope.microtask.type] + ".html";
+
+            }
+
+
+            function openDashboard() {
+                $scope.taskData.startBreak = true;
+                $scope.breakMode = true;
+                cancelFetchTimer();
                 $rootScope.$broadcast("reset-reminder");
-				$scope.templatePath  = templatesURL + templates['Dashboard2'] + ".html";
-			}
+                $scope.templatePath = templatesURL + templates['Dashboard2'] + ".html";
+            }
 
-			function noMicrotasks() {
-				$scope.noMicrotask = true;
-				$scope.$emit('reset-reminder');
-				setFetchTimer();
-				if(userService.data.level >= 0)
-					$scope.templatePath = templatesURL + templates['Dashboard2'] + ".html";
-				else
-					$scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
-			}
-
-
-			function setFetchTimer(){
-				// if is not in break mode, start to check the queue
-				if(! $scope.breakMode ){
-					// initialize the countdown
-					$scope.checkQueueIn = waitTimeInSeconds;
-					// every second decremend the countdown
-					timerInterval = $interval(function(){
-						$scope.checkQueueIn -- ;
-					}, 1000);
-					// set the timeout to check the queue
-					checkQueueTimeout = $timeout(function() {
-						$scope.checkQueueIn = 0;
-						$interval.cancel(timerInterval);
-
-						$timeout(fetchMicrotask,1000);
-
-					}, waitTimeInSeconds*1000);
-				}
-			}
-
-			function cancelFetchTimer(){
-				// cancel checkQueuetimeout
-				if (checkQueueTimeout !== null) {
-					$timeout.cancel(checkQueueTimeout);
-				}
-			}
+            function noMicrotasks() {
+                $scope.noMicrotask = true;
+                $scope.$emit('reset-reminder');
+                setFetchTimer();
+                if (userService.data.level >= 0)
+                    $scope.templatePath = templatesURL + templates['Dashboard2'] + ".html";
+                else
+                    $scope.templatePath = templatesURL + templates['NoMicrotask'] + ".html";
+            }
 
 
-			function checkBreakMode(){
-				if( $scope.taskData.startBreak ) {
-					$scope.breakMode = true;
-					$scope.taskData.startBreak = false;
-				}
-			}
+            function setFetchTimer() {
+                // if is not in break mode, start to check the queue
+                if (!$scope.breakMode) {
+                    // initialize the countdown
+                    $scope.checkQueueIn = waitTimeInSeconds;
+                    // every second decremend the countdown
+                    timerInterval = $interval(function () {
+                        $scope.checkQueueIn--;
+                    }, 1000);
+                    // set the timeout to check the queue
+                    checkQueueTimeout = $timeout(function () {
+                        $scope.checkQueueIn = 0;
+                        $interval.cancel(timerInterval);
 
-			// time is expired, skip the microtask
-			function timeExpired(){
-				$scope.canSubmit    = false;
-				$scope.templatePath = templatesURL + "loading.html";
-				microtasks
-					.submit($scope.microtask,undefined,true,true)
-					.then( function(fetchData){
-						microtasks.load(fetchData);
-					}, function(){
-						noMicrotasks();
-					});
-			}
+                        $timeout(fetchMicrotask, 1000);
 
-			function fetchMicrotask($event, fetchData) {
-				cancelFetchTimer();
-				$scope.breakMode = false;
-				microtasks
-					.fetch()
-					.then( function(fetchData){
-						microtasks.load(fetchData);
-					}, function(){
-						noMicrotasks();
-					});
-			}
+                    }, waitTimeInSeconds * 1000);
+                }
+            }
 
-			function fetchSpecificMicrotask($event, microtaskId ) {
-				cancelFetchTimer();
-				$scope.breakMode     = false;
-				$scope.templatePath  = templatesURL + "loading.html";
-				microtasks
-					.fetchSpecificMicrotask( microtaskId )
-					.then( function(fetchData){
-						microtasks.load(fetchData);
-					}, function(){
-						noMicrotasks();
-					});
-			}
+            function cancelFetchTimer() {
+                // cancel checkQueuetimeout
+                if (checkQueueTimeout !== null) {
+                    $timeout.cancel(checkQueueTimeout);
+                }
+            }
 
 
-			// skip button pressed
-			function skipMicrotask(){
-				checkBreakMode();
-				$scope.canSubmit    = false;
-				$scope.templatePath = templatesURL + "loading.html";
-				microtasks
-					.submit($scope.microtask,undefined,false,!$scope.breakMode)
-					.then( function(fetchData){
+            function checkBreakMode() {
+                if ($scope.taskData.startBreak) {
+                    $scope.breakMode = true;
+                    $scope.taskData.startBreak = false;
+                }
+            }
+
+            // time is expired, skip the microtask
+            function timeExpired() {
+                $scope.canSubmit = false;
+                $scope.templatePath = templatesURL + "loading.html";
+                microtasks
+                    .submit($scope.microtask, undefined, true, true)
+                    .then(function (fetchData) {
+                        microtasks.load(fetchData);
+                    }, function () {
+                        noMicrotasks();
+                    });
+            }
+
+            function fetchMicrotask($event, fetchData) {
+                cancelFetchTimer();
+                $scope.breakMode = false;
+                microtasks
+                    .fetch()
+                    .then(function (fetchData) {
+                        microtasks.load(fetchData);
+                    }, function () {
+                        noMicrotasks();
+                    });
+            }
+
+            function fetchSpecificMicrotask($event, microtaskId) {
+                cancelFetchTimer();
+                $scope.breakMode = false;
+                $scope.templatePath = templatesURL + "loading.html";
+                microtasks
+                    .fetchSpecificMicrotask(microtaskId)
+                    .then(function (fetchData) {
+                        microtasks.load(fetchData);
+                    }, function () {
+                        noMicrotasks();
+                    });
+            }
+
+
+            // skip button pressed
+            function skipMicrotask() {
+                checkBreakMode();
+                $scope.canSubmit = false;
+                $scope.templatePath = templatesURL + "loading.html";
+                microtasks
+                    .submit($scope.microtask, undefined, false, !$scope.breakMode)
+                    .then(function (fetchData) {
                         //microtasks.load(fetchData);
                         openDashboard();
-					}, function(){
-						noMicrotasks();
-					});
-			}
+                    }, function () {
+                        noMicrotasks();
+                    });
+            }
 
-			// submit button pressed
-			function submitMicrotask() {
-				// check if form is untouched
-		        if( !$scope.formController.$dirty ){
-		            $modal({template : 'microtasks/modal_form_pristine.html' , show: true});
-		            return;
-		        }
-		        // collect form data and submit the microtask
-				if( $scope.taskData.collectFormData !== undefined ){
-        			var formData = $scope.taskData.collectFormData($scope.formController);
-        			if( formData ){
-        				checkBreakMode();
-						$scope.canSubmit    = false;
-						$scope.templatePath = templatesURL + "loading.html";
+            // submit button pressed
+            function submitMicrotask() {
+                // check if form is untouched
+                if (!$scope.formController.$dirty) {
+                    $modal({template: 'microtasks/modal_form_pristine.html', show: true});
+                    return;
+                }
+                // collect form data and submit the microtask
+                if ($scope.taskData.collectFormData !== undefined) {
+
+                    var formData = $scope.taskData.collectFormData($scope.formController);
+                    if (formData) {
+                        checkBreakMode();
+                        $scope.canSubmit = false;
+                        $scope.templatePath = templatesURL + "loading.html";
 
 
-						microtasks
-							.submit($scope.microtask,formData,false,!$scope.breakMode)
-							.then( function(fetchData){
-								//microtasks.load(fetchData);
+                        microtasks
+                            .submit($scope.microtask, formData, false, !$scope.breakMode)
+                            .then(function (fetchData) {
+                                //microtasks.load(fetchData);
                                 openDashboard();
-							}, function(){
-								noMicrotasks();
-							});
-        			}
-        		}
-			}
+                            }, function () {
+                                noMicrotasks();
+                            });
+                    }
+                }
+            }
 
 
-			function askQuestion(){
-				$rootScope.$broadcast('setLeftBarTab','questions');
-				$rootScope.$broadcast('askQuestion');
-			}
-			function openTutorial(){
-				$scope.$emit('queue-tutorial', $scope.microtask.type , true, function(){});
-			}
+            function askQuestion() {
+                $rootScope.$broadcast('setLeftBarTab', 'questions');
+                $rootScope.$broadcast('askQuestion');
+            }
+
+            function openTutorial() {
+                $scope.$emit('queue-tutorial', $scope.microtask.type, true, function () {
+                });
+            }
         }
     };
 }
@@ -7636,7 +7684,7 @@ angular
 
             var initialValue;
             $scope.errors = {};
-            
+            console.log('json editor link');
             ngModelCtrl.$validators.code = function(modelValue, viewValue) {
                 var stringValue    = modelValue || viewValue;
 
@@ -7660,6 +7708,7 @@ angular
 
         controller: function($scope,$element){
             $scope.errors = [];
+            console.log('json editor controller');
         	$scope.aceLoaded = function(_editor) {
 
         		var options = {
@@ -7987,6 +8036,7 @@ angular
 
             var initialCode;
             var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
+            console.log('linke test editor');
             worker.postMessage({ 
                 'baseUrl'     : document.location.origin, 
                 'command'     : 'init',
@@ -7997,7 +8047,7 @@ angular
 
 
                 var code = modelValue || viewValue;
-
+                console.log('code',code);
                 if( !initialCode ) initialCode = code;
                 if( !ngModelCtrl.$dirty && initialCode != code ){
                     ngModelCtrl.$setDirty();
