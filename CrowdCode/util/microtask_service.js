@@ -758,9 +758,11 @@ module.exports = function(FirebaseService, Q) {
       return microtask object
    */
   function fetchMicrotask(project_id, worker_id) {
+      console.log('entered backedn fetch mircos');
       if(Projects.has(project_id)) {
         var Project = Projects.get(project_id);
         var functions = Project.get('functions');
+         // console.log('entered backedn fetch mircos functions',functions);
         var microtasks = Project.get('microtasks');
         var reviewQ = Project.get('reviewQ');
         var implementationQ = Project.get('implementationQ');
