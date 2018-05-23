@@ -9,7 +9,7 @@ self.addEventListener('message', function(message){
 	if( data.command == 'init'){
 		if( data.baseUrl == undefined )
 			throw "ERROR: base url not defined! ";
-        console.log('test validator worker init');
+
 		functionName = data.functionName;
 		functionEmptyBody = 'function '+data.functionName+'(){ _calls++; }\n';
 
@@ -40,8 +40,6 @@ self.addEventListener('message', function(message){
 
 		// add the test code
 		evalCode += data.code;
-       //console.log('evalCode',evalCode);
-    //   console.log('data code',data.code);
 		try{
 			eval(evalCode);
 		} catch(e){

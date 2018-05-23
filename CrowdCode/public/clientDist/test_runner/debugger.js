@@ -39,7 +39,7 @@ Debugger.run = function (testCode, callsLogs) {
         + testCode;
 
     // console.log( JSON.stringify(Debugger.logs) );
-    console.log('Function Code + testCode: ', evalCode);
+    console.log('Fnction Code + testCode: ', evalCode);
 
     var _testResult = {};
     try {
@@ -47,7 +47,7 @@ Debugger.run = function (testCode, callsLogs) {
         _testResult.passed = true;
     }
     catch (e) {
-         console.log(e);
+        // console.log(e);
         if (e instanceof chai.AssertionError) {
             _testResult = e;
         }
@@ -61,10 +61,8 @@ Debugger.run = function (testCode, callsLogs) {
 Debugger.setFunctions = function (functions) {
     Debugger.functions = {};
     Debugger.functionsName = [];
-
     // parse all the functions 
     for (var functionName in functions) {
-        console.log('Test runner, Debugger.setFunctions, function name', functionName) ;
         Debugger.setFunction(functionName, functions[functionName]);
     }
 }

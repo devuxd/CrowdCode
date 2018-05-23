@@ -1184,12 +1184,11 @@ function JSONValidator() {
     var stmtToTest = 'var stmt = ' + text + ';';
     if (!JSHINT(stmtToTest, getJSHintGlobals()))
       errors.concat(checkForErrors(JSHINT.errors));
-     console.log('syntax',errors);
+
     // If there are no syntax errors, check the structure.
     if (errors == "") {
       try {
         errors = checkStructure(JSON.parse(text), paramType);
-          console.log('structure',errors);
       } catch (e) {
         if (e.message != 'Unexpected token o')
           errors.push(e.message);
@@ -1276,7 +1275,7 @@ function checkForErrors(e)
 	/**JSHINT CONFIG*/
 	/*jshint camelcase: false, white: false, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true*/
 	/*global window: false, document: false, $: false, log: false, bleep: false,test: false*/
-	  console.log('check Errors');
+
 	var anyErrors = false;
 	var arrayOfErrors = [];
 	for (var i = 0; i < e.length; i++) 
@@ -1293,9 +1292,7 @@ function checkForErrors(e)
 //			debugger;
 		    if (e[i] != null)
 		    {
-                console.log('check Errors', e[i].line + ": " + e[i].reason);
-
-                // ignore errors from calling third party APIs, Their names finish with implementation
+                                // ignore errors from calling third party APIs, Their names finish with implementation
                 if(e[i].reason.endsWith('Implementation\' is not defined.')){
                 	console.log('enterd',e[i]);
                     return "";
@@ -1308,7 +1305,6 @@ function checkForErrors(e)
 	}
 	if(anyErrors)
 	{
-        console.log('check Errors,anyErrors', anyErrors);
 		return arrayOfErrors; 
 	}
 	return "";
@@ -1335,7 +1331,6 @@ function getJSHintForStatements()
 
 function getUnitTestGlobals()
 {
-	console.log('Unit test global');
 	// if related to unittest for lint add here
 	return "/*global window: false, document: false, $: false, throws:false, log: false, bleep: false, equal: false, notEqual: false, deepEqual: false, notDeepEqual: false, raises: false*/";
 }
@@ -2218,8 +2213,7 @@ angular
             var requestedDataTypes = [];
             var requestedNames = [];
             var calleeNames = [];
-            console.log('FunctionUtil check 2');
-            if (ast.body && ast.body.length > 0 && ast.body[0].type === 'FunctionDeclaration') {
+           if (ast.body && ast.body.length > 0 && ast.body[0].type === 'FunctionDeclaration') {
                 // get the function body (function name(){ }) range
                 var bodyNode = ast.body[0];
                 var bodyRange = bodyNode.loc;
@@ -2298,7 +2292,7 @@ angular
                 errors: [],
                 statements: undefined
             };
-            console.log('FunctionUtil check 3');
+
             // first jshint check: validate the syntax and check that there is only a function declaration
             var lint = {result: true};
 
@@ -2319,7 +2313,7 @@ angular
             });
 
             if (!lint.result) {
-                console.log('lint.errors',lint.errors);
+
                 data.errors = data.errors.concat(lint.errors);
             }
 
@@ -2337,7 +2331,7 @@ angular
             }
 
 
-            console.log('lint.errors2',lint.errors);
+
             // if the first linting produced errors,
             // return now before processing the ast
             if (data.errors.length > 0)
@@ -2357,7 +2351,7 @@ angular
             // first jshint check: validate the code checking for undef use
             var codeWithDefs = 'var ' + allFunctionNames.join(',') + ';\n' + code;
 
-            console.log('codeWithDefs',codeWithDefs);
+
             lint = lintCode(codeWithDefs, {
                 latedef: false,
                 camelcase: true,
@@ -2373,7 +2367,7 @@ angular
                 worker: true,
                 browser: true
             });
-            console.log('lint.errors3',lint.errors);
+
             if (!lint.result) {
                 data.errors = data.errors.concat(lint.errors);
                 return data;
@@ -2433,7 +2427,7 @@ angular
             var lintResult;
             try {
                 lintResult = JSHINT(code, options);
-                console.log('lintResult', lintResult);
+
             } catch (e) {
                 console.log(e);
             }
@@ -2448,7 +2442,7 @@ angular
         function parseFunctionDoc(text) {
             var parsed = doctrine.parse(text, {unwrap: true});
             var tags = parsed.tags;
-            console.log('FunctionUtil check 4');
+
             var functObj = {
                 name: '',
                 description: '',
@@ -2504,7 +2498,7 @@ angular
         }
 
         function validateFunctionDoc(parsed, strict) {
-            console.log('FunctionUtil check 5');
+
             var errors = [];
             var paramTypes = [];
             var apiNames = [];
@@ -2545,7 +2539,7 @@ angular
 
 
         function isValidName(name) {
-            console.log('FunctionUtil check 7');
+
             var regexp = /^[a-zA-Z0-9_]+$/;
             if (name.search(regexp) == -1) return false;
             return true;
@@ -2553,7 +2547,7 @@ angular
 
 
         function getCalleeNames(ast) {
-            console.log('FunctionUtil check 8');
+
             var calleeNames = [];
             estraverse.traverse(ast, {
                 enter: function (node, parent) {
@@ -3770,7 +3764,6 @@ angular
     function onFunctionParsed(_functionDto,_requestedFunctions){
             functionDto = _functionDto;
         requestedFunctions = _requestedFunctions;
-        console.log('functionDto, requestedFunctions',functionDto, requestedFunctions);
     }
 
     function onCodeChanged(){
@@ -3922,7 +3915,6 @@ angular
         $scope.data.selected = -1 ;
         $scope.data.selected1 = -1 ;
 
-
         if( form.$invalid ){
           console.log("form is invalid ----", form.$error);
             $modal({template : 'microtasks/modal_form_invalid.html' , show: true});
@@ -3981,6 +3973,7 @@ angular
                 formData.tests.push(testDto);
             }
         }
+        console.log(formData.tests);
 
         // add the disputed tests
         $scope.data.tests.map(function(test){
@@ -3992,7 +3985,6 @@ angular
             }
         });
 
-        console.log('formData',formData);
         // add the callee stubs
         formData.function.callees.map(function(callee){
 
@@ -7684,7 +7676,7 @@ angular
 
             var initialValue;
             $scope.errors = {};
-            console.log('json editor link');
+            
             ngModelCtrl.$validators.code = function(modelValue, viewValue) {
                 var stringValue    = modelValue || viewValue;
 
@@ -7708,7 +7700,6 @@ angular
 
         controller: function($scope,$element){
             $scope.errors = [];
-            console.log('json editor controller');
         	$scope.aceLoaded = function(_editor) {
 
         		var options = {
@@ -8036,7 +8027,6 @@ angular
 
             var initialCode;
             var worker = new Worker('/clientDist/test_runner/testvalidator-worker.js');
-            console.log('linke test editor');
             worker.postMessage({ 
                 'baseUrl'     : document.location.origin, 
                 'command'     : 'init',
@@ -8047,7 +8037,7 @@ angular
 
 
                 var code = modelValue || viewValue;
-                console.log('code',code);
+
                 if( !initialCode ) initialCode = code;
                 if( !ngModelCtrl.$dirty && initialCode != code ){
                     ngModelCtrl.$setDirty();
@@ -12783,7 +12773,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "	</div>\n" +
     "	<div style=\"text-align: center\"><strong> Functions: </strong></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"!f.isThirdPartyAPI\" class=\"functions\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" > Function: {{f.name}}</div>\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" >  {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
     "			<div ng-bind=\"f.description\"></div>\n" +
     "			<div><strong> Parameters </strong></div>\n" +
@@ -12799,8 +12789,8 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "	</div>\n" +
     "\n" +
     "	<div style=\"text-align: center\"><strong> 3rd Party API: </strong></div>\n" +
-    "	<div ng-repeat=\"f in functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" > API: {{f.name}}Implementation</div>\n" +
+    "	<div ng-repeat=\"f in functions\" ng-show=\"f.isThirdPartyAPI\" class=\"third-party-api\">\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" > {{f.name}}Implementation</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
     "			<div ng-bind=\"f.description\"></div>\n" +
     "			<div><strong> Parameters </strong></div>\n" +

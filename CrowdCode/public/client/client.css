@@ -1573,8 +1573,12 @@ tutorial  { display:none; }
 
 .data-types .toggler { background-color: rgba(23,163,125,0.1); }
 .data-types .toggler:hover { background-color: rgba(23,163,125,0.3); }
-.functions  .toggler  { background-color: rgba(195,35,58,0.1); }
-.functions  .toggler:hover  { background-color: rgba(195,35,58,0.3); }
+.functions  .toggler  { background-color: rgba(14, 54, 255, 0.1); }
+.functions  .toggler:hover  { background-color: rgba(14, 54, 255, 0.3); }
+
+.third-party-api  .toggler  { background-color: rgba(255, 248, 46, 0.44); }
+.third-party-api  .toggler:hover  { background-color: rgba(255, 248, 46, 0.82); }
+
 
 
 ::-webkit-scrollbar {

@@ -4616,7 +4616,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "	</div>\n" +
     "	<div style=\"text-align: center\"><strong> Functions: </strong></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"!f.isThirdPartyAPI\" class=\"functions\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" > Function: {{f.name}}</div>\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" >  {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
     "			<div ng-bind=\"f.description\"></div>\n" +
     "			<div><strong> Parameters </strong></div>\n" +
@@ -4632,8 +4632,8 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "	</div>\n" +
     "\n" +
     "	<div style=\"text-align: center\"><strong> 3rd Party API: </strong></div>\n" +
-    "	<div ng-repeat=\"f in functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\">\n" +
-    "		<div bs-collapse-toggle class=\"toggler\" > API: {{f.name}}Implementation</div>\n" +
+    "	<div ng-repeat=\"f in functions\" ng-show=\"f.isThirdPartyAPI\" class=\"third-party-api\">\n" +
+    "		<div bs-collapse-toggle class=\"toggler\" > {{f.name}}Implementation</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
     "			<div ng-bind=\"f.description\"></div>\n" +
     "			<div><strong> Parameters </strong></div>\n" +
