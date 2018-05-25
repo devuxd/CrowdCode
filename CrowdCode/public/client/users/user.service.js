@@ -161,7 +161,7 @@ angular
 	};
 
 	// distributed worker logout
-	// due to sincronization problem wait 5 seconds, after check that the user is not logged any more
+	// due to synchronization problem wait 5 seconds, after check that the user is not logged any more
 	// checking that is null the value i the loggedIn worker
 	// and then send the logout command to the server
 	// distributed logout work

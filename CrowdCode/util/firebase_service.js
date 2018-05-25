@@ -243,7 +243,7 @@ module.exports = function (AdminFirebase, Q) {
          returns function ID text
          */
         createFunction: function (project_id, function_name, header, function_description, function_code,
-                                  return_type, parameters, stubs, tests, ADTsId, functions_dependent, isApiArtifact) {
+                                  return_type, parameters, stubs, tests, ADTsId, functions_dependent, isApiArtifact,isThirdPartyAPI) {
             let function_schema = {
                 name: function_name,
                 header: header,
@@ -260,7 +260,7 @@ module.exports = function (AdminFirebase, Q) {
                 isComplete: false,
                 isAssigned: false,
                 isApiArtifact: isApiArtifact,
-                isThirdPartyAPI:false
+                isThirdPartyAPI:isThirdPartyAPI
             };
             var path = 'Projects/' + project_id + '/artifacts/Functions';
             var history_path = 'Projects/' + project_id + '/history/artifacts/Functions';
@@ -1573,8 +1573,8 @@ module.exports = function (AdminFirebase, Q) {
                     console.log("Funcsion dependent is added: " + obj.functionName)
                 });
                 }
-                console.log("Funcsion is added: " + func.name)
-                var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", dependents, true);
+                console.log("Funcsion is added: " + func.name);
+                var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", dependents, true,func.isThirdPartyAPI);
                 //this.createImplementationMicrotask(id, "Implement function behavior", 10, funcKey, func.name, 0, "Implement function behavior with all the related tests", func.code, "null");
             });
             }

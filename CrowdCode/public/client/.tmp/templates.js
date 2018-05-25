@@ -4314,13 +4314,13 @@ angular.module("ui_elements/right_bar_template.html", []).run(["$templateCache",
     "<div class=\"sidebar-right\">\n" +
     "\n" +
     "  <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
-    "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"50%\">\n" +
+    "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"80%\">\n" +
     "      <div class=\"title\">Project Outline and Third party API</div>\n" +
     "      <div class=\"content\">\n" +
     "        <project-outline ng-click=\"trackInteraction('Click Right Bar', 'Project Outline', $event)\"></project-outline>\n" +
     "      </div>\n" +
     "    </div>\n" +
-    "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"50%\">\n" +
+    "    <div class=\"sidebar-panel\" ui-layout-container min-size=\"40px\" size=\"20%\">\n" +
     "      <div class=\"title\">Leaderboard</div>\n" +
     "      <div class=\"content\">\n" +
     "        <leaderboard ng-click=\"trackInteraction('Click Right Bar', 'Leaderboard', $event)\"></leaderboard>\n" +
