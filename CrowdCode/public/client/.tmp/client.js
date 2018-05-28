@@ -4725,6 +4725,7 @@ angular
 	return service;
 }]);
 
+
 ///////////////////////////////
 //  NO MICROTASK CONTROLLER //
 ///////////////////////////////
@@ -9129,10 +9130,10 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "            <div class=\"title\">DashBoard</div>\n" +
     "            <div class=\"content\">\n" +
     "\n" +
-    "                <span class=\"section-header\">Name</span>\n" +
+    "                <span class=\"section-header\">Project Name: </span>\n" +
     "                <span ng-bind=\"projectName\"></span><br/>\n" +
     "\n" +
-    "                <span class=\"section-header\">Description</span><br/>\n" +
+    "                <span class=\"section-header\">Project Description:</span><br/>\n" +
     "                <span ng-bind=\"projectDescription\"></span><br/>\n" +
     "\n" +
     "                <div bs-collapse start-collapsed=\"false\" allow-multiple=\"true\">\n" +
@@ -9162,7 +9163,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                        </div>\n" +
     "                    </div>\n" +
     "                    <br/>\n" +
-    "                    <span class=\"section-header\">Functions</span><br/>\n" +
+    "                    <span class=\"section-header\">Functions (you choose function to implement from the below list ):</span><br/>\n" +
     "                    <div ng-repeat=\"f in Functions\" ng-show=\"!f.isThirdPartyAPI\"  class=\"functions\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
@@ -9179,7 +9180,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                        </div>\n" +
     "                    </div>\n" +
     "                    <br/>\n" +
-    "                    <span class=\"section-header\">3rd Party APIs</span><br/>\n" +
+    "                    <span class=\"section-header\">3rd Party APIs (functions are already implemented, They can be called in the body of the functions you want to implement )</span><br/>\n" +
     "                    <div ng-repeat=\"f in Functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +

@@ -4,10 +4,10 @@
             <div class="title">DashBoard</div>
             <div class="content">
 
-                <span class="section-header">Name</span>
+                <span class="section-header">Project Name: </span>
                 <span ng-bind="projectName"></span><br/>
 
-                <span class="section-header">Description</span><br/>
+                <span class="section-header">Project Description:</span><br/>
                 <span ng-bind="projectDescription"></span><br/>
 
                 <div bs-collapse start-collapsed="false" allow-multiple="true">
@@ -37,7 +37,7 @@
                         </div>
                     </div>
                     <br/>
-                    <span class="section-header">Functions</span><br/>
+                    <span class="section-header">Functions (you choose function to implement from the below list ):</span><br/>
                     <div ng-repeat="f in Functions" ng-show="!f.isThirdPartyAPI"  class="functions">
                         <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
                         <div bs-collapse-target class="toggled">
@@ -54,7 +54,7 @@
                         </div>
                     </div>
                     <br/>
-                    <span class="section-header">3rd Party APIs</span><br/>
+                    <span class="section-header">3rd Party APIs (functions are already implemented, They can be called in the body of the functions you want to implement )</span><br/>
                     <div ng-repeat="f in Functions" ng-show="f.isThirdPartyAPI" class="functions">
                         <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
                         <div bs-collapse-target class="toggled">
