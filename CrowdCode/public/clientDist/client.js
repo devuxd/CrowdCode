@@ -4725,7 +4725,6 @@ angular
 	return service;
 }]);
 
-
 ///////////////////////////////
 //  NO MICROTASK CONTROLLER //
 ///////////////////////////////
@@ -8349,7 +8348,8 @@ angular.module("leaderboard/leaderboard.template.html", []).run(["$templateCache
     "		  	  class=\"{{ leaders.$keyAt(leader) == workerId ? 'self' : '' }}\" >\n" +
     "		  		<div class=\"avatar\" ><img style=\"width:25px\" ng-src=\"{{ avatar(leaders.$keyAt(leader)).$value }}\" alt=\"{{ ::leader.name }}\" /></div>\n" +
     "		  		<div class=\"score\">{{ leader.score }} pts</div>\n" +
-    "		  		<div class=\"name\" style=\"cursor:pointer\" ng-click=\"clicked(leader)\">{{::(leader.name) }}</div>\n" +
+    "		  		<div class=\"name\" >{{::(leader.name) }}</div>\n" +
+    "		  		<!--<div class=\"name\" style=\"cursor:pointer\" ng-click=\"clicked(leader)\">{{::(leader.name) }}</div>-->\n" +
     "		  		<div class=\"clearfix\"></div>\n" +
     "		  	</li>\n" +
     "		</ul>\n" +
