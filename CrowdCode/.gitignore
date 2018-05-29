@@ -1,4 +1,0 @@
-
-CrowdCode/CrowdCode/services/meysam/*
-# ignore all session files
-CrowdCode/CrowdCode/sessions/*.json
