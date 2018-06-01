@@ -1,0 +1,25 @@
+<div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
+	<div class="section" ui-layout-container size="10%">
+		<div class="section-content bg-color-alpha padding" style="top:0px">
+			<span>
+				A worker was asked to implement part of the function <strong>{{data.functionName}}</strong>. Can you review this work?
+			</span>
+
+			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>
+		</div>
+	</div>
+
+
+	<div class="section" ui-layout-container size="65%" >
+		<div class="section-bar">
+			<span class="title">Code edits</span>
+		</div>
+		<div class="section-content">
+			<js-reader mode="diff" code="data.newCode" old-code="data.oldCode" ></js-reader>
+		</div>
+	</div>
+
+	<div class="section" ui-layout-container size="25%" >
+		<div ng-include="'/client/microtasks/review/review_form.html'" include-replace></div>
+	</div>
+</div>

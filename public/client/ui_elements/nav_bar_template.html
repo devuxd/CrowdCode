@@ -1,0 +1,31 @@
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container-fluid">
+
+		<div class="navbar-header">
+	      <a class="navbar-brand" href="#">CrowdCode 2.2</a>
+	    </div>
+
+		<ul class="nav navbar-nav">
+	        <li><a href="#"><strong>project:</strong> {{ projectId }}</a></li>
+	        <li><a href="#"><project-stats ng-click="trackInteraction('Click Navigation Bar', 'Statistics', $event)"></project-stats></a></li>
+	    </ul>
+
+	    <ul class="nav navbar-nav navbar-right">
+	    	<li>
+	        	<a  href="#"
+	        		data-container:"body"
+	        		data-placement="bottom"
+				    data-trigger="focus"
+				    data-template="ui_elements/nav_user_menu_template.html"
+				    bs-popover
+		   			>
+					{{ workerHandle}}
+					<img ng-src="{{ avatar(workerId).$value }}" class="profile-picture" />
+					<span class="caret"></span>
+	        	</a>
+	        </li>
+	    </ul>
+
+
+	</div>
+</div>
