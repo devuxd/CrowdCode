@@ -1,1 +1,1 @@
-web: node ./CrowdCode/CrowdCode/bin/www
+web: node ./bin/www
