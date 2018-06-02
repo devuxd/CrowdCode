@@ -22,7 +22,6 @@ ace.define('ace/ext/crowdcode',function(require, exports, module) {
                 if (val) {
                    
                 } else {
-
                     
                 }
             },

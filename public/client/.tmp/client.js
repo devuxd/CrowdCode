@@ -14,7 +14,6 @@ ace.define('ace/ext/crowdcode',function(require, exports, module) {
                 } else {
                     this.commands.removeCommand(FunctionAutocompleter.startCommand);
                 }
-
             },
             value: true
         },
