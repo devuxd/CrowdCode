@@ -241,7 +241,13 @@ Debugger.mockFunction = function (fNode) {
     } else if (name == 'FetchAllObjects') {
         callBody += '\n' +
             '{ ' +
-            'return objTemp;\n } ';
+            'var resultOFFetchAllObject=[];' +
+            'for(var i=0; i<objTemp.length; i++) {\n ' +
+            '       if (objTemp[i].userId == userId){\n    ' +
+            '            resultOFFetchAllObject.push(objTemp[i]); \n ' +
+            '        }\n    ' +
+            ' }\n   ' +
+            'return resultOFFetchAllObject;\n } ';
 
     }
     else {
