@@ -9378,7 +9378,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "	<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
     "\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"8%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"5%\">\n" +
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
@@ -9400,7 +9400,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"63%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"62%\">\n" +
     "			<div class=\"section-bar\" ng-show=\"!data.editingStub\">\n" +
     "				<span class=\"title\">\n" +
     "					Function Editor\n" +
@@ -9466,7 +9466,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section tab-content\" ui-layout-container size=\"29%\">\n" +
+    "		<div class=\"section tab-content\" ui-layout-container size=\"33%\">\n" +
     "			<div class=\"section-bar tests-section-tab-bar\">\n" +
     "				<ul class=\"nav nav-tabs\">\n" +
     "					<li class=\"active\">\n" +
@@ -12132,9 +12132,9 @@ angular.module("tutorials/input_output_tests.html", []).run(["$templateCache", f
 angular.module("tutorials/main.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/main.html",
     "<step>\n" +
-    "	<div class=\"title\">CrowdCode Tutorial</div>\n" +
+    "	<div class=\"title\">Crowd Microservices Application Tutorial</div>\n" +
     "	<div class=\"text\">\n" +
-    "		Welcome to the CrowdCode tutorial. Here, we’ll help get you up to speed.\n" +
+    "		Welcome to the Crowd Microservices tutorial. Here, we’ll help get you up to speed.\n" +
     "		<ul>\n" +
     "			<li><a href=\"#\" ng-click=\"nextStep()\">Introduction</a></li>\n" +
     "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();\">Implementing a function</a></li>\n" +
@@ -12232,7 +12232,7 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "	<div class=\"text\">\n" +
     "\n" +
     "		<p style=\"width: 450px\"> \n" +
-    "			When a worker asks a question, everyone in the system gets notified. You now have the opportunity to participate in the discussion. CrowdCode provides several ways to participate. If you have an answer, you can add a new answer. If you see answers that others have provided, you can Comment on the answer. And if you see Questions, Answers, and Comments with which you agree (or disagree), you can <strong>up vote</strong> or <strong>down vote</strong> the item.\n" +
+    "			When a worker asks a question, everyone in the system gets notified. You now have the opportunity to participate in the discussion. Crowd Microservices provides several ways to participate. If you have an answer, you can add a new answer. If you see answers that others have provided, you can Comment on the answer. And if you see Questions, Answers, and Comments with which you agree (or disagree), you can <strong>up vote</strong> or <strong>down vote</strong> the item.\n" +
     "		</p>\n" +
     "\n" +
     "		<img src=\"/img/tutorial/main/question3.png\"/>\n" +
@@ -12311,7 +12311,7 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "<step on-hide=\"showProfileModal(); \" style=\"width:300px\">\n" +
     "	<div class=\"title\">Congratulations! </div>\n" +
     "	<div class=\"text\">\n" +
-    "		You have completed the CrowdCode getting started tutorial!\n" +
+    "		You have completed the Crowd Microservicesvvv getting started tutorial!\n" +
     "	</div>\n" +
     "</step>");
 }]);
@@ -12424,7 +12424,7 @@ angular.module("ui_elements/nav_bar_template.html", []).run(["$templateCache", f
     "	<div class=\"container-fluid\">\n" +
     "\n" +
     "		<div class=\"navbar-header\">\n" +
-    "	      <a class=\"navbar-brand\" href=\"#\">CrowdCode 2.2</a>\n" +
+    "	      <a class=\"navbar-brand\" href=\"#\">Crowd Microservices</a>\n" +
     "	    </div>\n" +
     "\n" +
     "		<ul class=\"nav navbar-nav\">\n" +
@@ -12562,15 +12562,15 @@ angular.module("widgets/function_editor.html", []).run(["$templateCache", functi
     "	<div class=\"function-editor\" style=\"\" ui-layout-container size=\"99%\">\n" +
     "	<div ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
     "		<div\n" +
-    "			ui-layout-container size=\"80%\"\n" +
-    "			style=\"height:100%;\"\n" +
+    "			ui-layout-container size=\"88%\"\n" +
+    "			style=\"height:100%;width: 100%\"\n" +
     "			class=\"js-editor\"\n" +
     "			ui-ace=\"{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }\"\n" +
     "			ng-model=\"code\" >\n" +
     "		</div>\n" +
     "\n" +
     "\n" +
-    "		<div class=\"function-errors \" ui-layout-container size=\"18%\" style=\"\"  >\n" +
+    "		<div class=\"function-errors \" ui-layout-container size=\"12%\" style=\"\"  >\n" +
     "			<ul class=\"help-block\" ng-if=\"errors.length > 0\" >\n" +
     "				<li ng-repeat=\"e in errors track by $id($index)\">\n" +
     "					<span ng-bind=\"e\"></span>\n" +
