@@ -60,15 +60,15 @@ self.addEventListener('message', function(message){
 
 			if( sendData.error == "" ) {
 
-               if( _calls == 0 && !data.code.includes(functionName)){
-				sendData.error = 'the function '+functionName+' is never called!';
-				} 
+               // if( _calls == 0 && !data.code.includes(functionName)){
+				// sendData.error = 'the function '+functionName+' is never called!';
+				// }
 				/*else if( _calls > 1 ){
 					sendData.error = 'the function '+functionName+' should be called one time!';
 				}*/
-				else if( _assertions == 0  && !data.code.includes('expect(')){
-					sendData.error = 'express at lest one assertion!'
-				}
+				// else if( _assertions == 0  && !data.code.includes('expect(')){
+				// 	sendData.error = 'express at lest one assertion!'
+				// }
 			}
 		}
 

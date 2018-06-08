@@ -2555,7 +2555,7 @@ angular
                         calleeNames.push(node.callee.name);
                 }
             });
-            console.log('calleeNames',calleeNames);
+            //console.log('calleeNames',calleeNames);
             return calleeNames;
         }
 
