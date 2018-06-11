@@ -3,13 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/client.js" afterPath="$PROJECT_DIR$/public/client/.tmp/client.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/templates.js" afterPath="$PROJECT_DIR$/public/client/.tmp/templates.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" afterPath="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" />
-      <change beforePath="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" afterPath="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
-      <change beforePath="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" afterPath="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" />
-      <change beforePath="$PROJECT_DIR$/public/client/widgets/reminder.directive.js" afterPath="$PROJECT_DIR$/public/client/widgets/reminder.directive.js" />
-      <change beforePath="$PROJECT_DIR$/public/clientDist/client.js" afterPath="$PROJECT_DIR$/public/clientDist/client.js" />
+      <change beforePath="$PROJECT_DIR$/public/img/welcome_implementation.png" afterPath="$PROJECT_DIR$/public/img/welcome_implementation.png" />
+      <change beforePath="$PROJECT_DIR$/public/welcome.html" afterPath="$PROJECT_DIR$/public/welcome.html" />
+      <change beforePath="$PROJECT_DIR$/sessions/E9R0NSleN-PHP1r8cbZZovt_uqq-Sm3J.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/aNt9I1DrmV63h1qwGzXZTclbiABXnswZ.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/fzwFtOsCFbcE7k5K-zEqS_O0Vq38fdOg.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/wsLaLh53sdMjMF1HbX6uZdCtVVdkk1Jj.json" afterPath="" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -26,12 +25,15 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="welcome.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="welcome.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/welcome.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="167" column="40" lean-forward="false" selection-start-line="167" selection-start-column="40" selection-end-line="167" selection-end-column="40" />
+            <state relative-caret-position="447">
+              <caret line="156" column="61" lean-forward="false" selection-start-line="156" selection-start-column="39" selection-end-line="156" selection-end-column="61" />
               <folding>
+                <element signature="n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#div#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
@@ -73,7 +75,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dashboard2.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="dashboard2.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="126">
@@ -131,7 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>errors.length &gt; 0</find>
       <find>function-editor</find>
       <find>size</find>
       <find>@param</find>
@@ -161,6 +162,7 @@
       <find>you choose function to implement from the below list</find>
       <find>Project Description</find>
       <find>DashBoard</find>
+      <find>/img/welcome_implementation.png</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -185,11 +187,11 @@
         <option value="$PROJECT_DIR$/public/include/ace-editor/src-min-noconflict/ace.js" />
         <option value="$PROJECT_DIR$/public/client/functions/functionUtils.factory.js" />
         <option value="$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js" />
-        <option value="$PROJECT_DIR$/public/welcome.html" />
         <option value="$PROJECT_DIR$/public/client/widgets/reminder.directive.js" />
         <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
         <option value="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" />
         <option value="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" />
+        <option value="$PROJECT_DIR$/public/welcome.html" />
       </list>
     </option>
   </component>
@@ -309,6 +311,12 @@
               <item name="client" type="462c0819:PsiDirectoryNode" />
               <item name="widgets" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="img" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -325,11 +333,12 @@
     <property name="js.buildTools.grunt.grunt-cli.package" value="$PROJECT_DIR$/node_modules/grunt-cli" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/public/video" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/img" />
+      <recent name="$PROJECT_DIR$/public/video" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -385,7 +394,7 @@
       <workItem from="1528139873747" duration="4409000" />
       <workItem from="1528212798799" duration="1759000" />
       <workItem from="1528420451245" duration="2669000" />
-      <workItem from="1528732582289" duration="1794000" />
+      <workItem from="1528732582289" duration="2571000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -433,7 +442,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24782000" />
+    <option name="totallyTimeSpent" value="25559000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -446,13 +455,12 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="977" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945284" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45731708" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3282887" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3993015" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282887" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3993015" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18550107" sideWeight="0.47147846" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18550107" sideWeight="0.52852154" order="2" side_tool="true" content_ui="tabs" />
@@ -538,13 +546,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/client/client.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-26">
-          <caret line="2" column="10" lean-forward="false" selection-start-line="2" selection-start-column="10" selection-end-line="2" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package-lock.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -840,16 +841,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/welcome.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="167" column="40" lean-forward="false" selection-start-line="167" selection-start-column="40" selection-end-line="167" selection-end-column="40" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -911,6 +902,24 @@
           <caret line="14" column="81" lean-forward="false" selection-start-line="14" selection-start-column="81" selection-end-line="14" selection-end-column="81" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_implementation.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/welcome.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="447">
+          <caret line="156" column="61" lean-forward="false" selection-start-line="156" selection-start-column="39" selection-end-line="156" selection-end-column="61" />
+          <folding>
+            <element signature="n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#div#0;n#div#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
