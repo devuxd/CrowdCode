@@ -5,7 +5,7 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  45 * 60 * 1000; //in second
+    var microtaskTimeout      =  20 * 60 * 1000; //in second
     var microtaskFirstWarning =  5  * 60 * 1000; //in second
     var timeInterval          = 500; //interval time in milliseconds
 

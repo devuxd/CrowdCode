@@ -7886,7 +7886,7 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  45 * 60 * 1000; //in second
+    var microtaskTimeout      =  20 * 60 * 1000; //in second
     var microtaskFirstWarning =  5  * 60 * 1000; //in second
     var timeInterval          = 500; //interval time in milliseconds
 
@@ -9127,7 +9127,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "<div class=\"dashboard2\" ng-controller=\"dashboard2\">\n" +
     "    <div ui-layout=\"{ flow: 'row', dividerSize: 1 }\">\n" +
     "        <div ui-layout-container min-size=\"40px\" size=\"100%\">\n" +
-    "            <div class=\"title\">DashBoard</div>\n" +
+    "            <div class=\"title\" style=\"text-align: center\">DashBoard</div>\n" +
     "            <div class=\"content\">\n" +
     "\n" +
     "                <span class=\"section-header\">Project Name: </span>\n" +
@@ -9137,7 +9137,8 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                <span ng-bind=\"projectDescription\"></span><br/>\n" +
     "\n" +
     "                <div bs-collapse start-collapsed=\"false\" allow-multiple=\"true\">\n" +
-    "                    <span class=\"section-header\">Data Types</span><br/>\n" +
+    "                    <span class=\"section-header\">Data Types:</span><br/>\n" +
+    "                    <span>Arguments of the functions you want to implement</span>\n" +
     "                    <div ng-repeat=\"d in DataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{d.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\" ng-init=\"structure = buildStructure(d)\">\n" +
@@ -9163,7 +9164,8 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                        </div>\n" +
     "                    </div>\n" +
     "                    <br/>\n" +
-    "                    <span class=\"section-header\">Functions (you choose function to implement from the below list ):</span><br/>\n" +
+    "                    <span class=\"section-header\">Functions: </span><br/>\n" +
+    "                    <span>You choose function to implement from the below list</span>\n" +
     "                    <div ng-repeat=\"f in Functions\" ng-show=\"!f.isThirdPartyAPI\"  class=\"functions\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
@@ -9180,7 +9182,8 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                        </div>\n" +
     "                    </div>\n" +
     "                    <br/>\n" +
-    "                    <span class=\"section-header\">3rd Party APIs (functions are already implemented, They can be called in the body of the functions you want to implement )</span><br/>\n" +
+    "                    <span class=\"section-header\">3rd Party APIs</span><br/>\n" +
+    "                    <span>functions are already implemented, They can be called in the body of the functions you want to implement</span>\n" +
     "                    <div ng-repeat=\"f in Functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
@@ -9378,11 +9381,12 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "	<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
     "\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"5%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"7%\">\n" +
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
-    "						Please implement the function <strong ng-bind=\"funct.name\"></strong> based on it's description and work done by previously. You can write the code as well as write test cases for testing the behavior. You must click the submit button before time expires to save your work.\n" +
+    "						Here’s a function <strong ng-bind=\"funct.name\"></strong> that needs some work. Please identify a behavior in its description that is not yet implemented, write a test for this behavior, and then implement it. You can run the tests for the function by clicking RunTests. Remember, you only have 15 minutes, so be sure to submit your work before time runs out.\n" +
+    "						<!--Please implement the function <strong ng-bind=\"funct.name\"></strong> based on it's description and work done by previously. You can write the code as well as write test cases for testing the behavior. You must click the submit button before time expires to save your work.-->\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"CORRECT\">\n" +
     "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
@@ -9400,10 +9404,10 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"62%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"60%\">\n" +
     "			<div class=\"section-bar\" ng-show=\"!data.editingStub\">\n" +
     "				<span class=\"title\">\n" +
-    "					Function Editor\n" +
+    "					Write your code in the bellow Function Editor\n" +
     "				</span>\n" +
     "				<span class=\"pull-right\">\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)\">\n" +
@@ -12744,7 +12748,7 @@ angular.module("widgets/popup_user_profile.html", []).run(["$templateCache", fun
 angular.module("widgets/project_outline.template.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("widgets/project_outline.template.html",
     "<div bs-collapse start-collapsed=\"false\" allow-multiple=\"true\">\n" +
-    "	<div style=\"text-align: center\"><strong> Data Types: </strong></div>\n" +
+    "	<div style=\"text-align: center\"><strong> Data types or arguments of the functions you want to implement: </strong></div>\n" +
     "	<div ng-repeat=\"d in dataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
     "		<div bs-collapse-toggle class=\"toggler\" >Data Type: {{d.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\" ng-init=\"structure = buildStructure(d)\">\n" +
@@ -12772,7 +12776,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "	            \n" +
     "		</div>\n" +
     "	</div>\n" +
-    "	<div style=\"text-align: center\"><strong> Functions: </strong></div>\n" +
+    "	<div style=\"text-align: center\"><strong> Functions you may implement: </strong></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"!f.isThirdPartyAPI\" class=\"functions\">\n" +
     "		<div bs-collapse-toggle class=\"toggler\" >  {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
@@ -12789,7 +12793,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div style=\"text-align: center\"><strong> 3rd Party API: </strong></div>\n" +
+    "	<div style=\"text-align: center\"><strong> 3rd Party persisting API for calling in the body of the functions you want to implement: </strong></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"f.isThirdPartyAPI\" class=\"third-party-api\">\n" +
     "		<div bs-collapse-toggle class=\"toggler\" > {{f.name}}Implementation</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +

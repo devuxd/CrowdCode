@@ -1,5 +1,5 @@
 <div bs-collapse start-collapsed="false" allow-multiple="true">
-	<div style="text-align: center"><strong> Data Types: </strong></div>
+	<div style="text-align: center"><strong> Data types or arguments of the functions you want to implement: </strong></div>
 	<div ng-repeat="d in dataTypes" class="data-types" ng-init="d.selectedExample = d.examples[0]">
 		<div bs-collapse-toggle class="toggler" >Data Type: {{d.name}}</div>
 		<div bs-collapse-target class="toggled" ng-init="structure = buildStructure(d)">
@@ -27,7 +27,7 @@
 	            
 		</div>
 	</div>
-	<div style="text-align: center"><strong> Functions: </strong></div>
+	<div style="text-align: center"><strong> Functions you may implement: </strong></div>
 	<div ng-repeat="f in functions" ng-show="!f.isThirdPartyAPI" class="functions">
 		<div bs-collapse-toggle class="toggler" >  {{f.name}}</div>
 		<div bs-collapse-target class="toggled">
@@ -44,7 +44,7 @@
 		</div>
 	</div>
 
-	<div style="text-align: center"><strong> 3rd Party API: </strong></div>
+	<div style="text-align: center"><strong> 3rd Party persisting API for calling in the body of the functions you want to implement: </strong></div>
 	<div ng-repeat="f in functions" ng-show="f.isThirdPartyAPI" class="third-party-api">
 		<div bs-collapse-toggle class="toggler" > {{f.name}}Implementation</div>
 		<div bs-collapse-target class="toggled">

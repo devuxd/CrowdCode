@@ -20,11 +20,12 @@
 	<div class="sections" ui-layout="{ flow: 'row', dividerSize: 2 }">
 
 
-		<div class="section" ui-layout-container size="5%">
+		<div class="section" ui-layout-container size="7%">
 			<div class="section-content bg-color-alpha padding" style="top:0px">
 				<div ng-switch="microtask.promptType">
 					<span ng-switch-when="WRITE">
-						Please implement the function <strong ng-bind="funct.name"></strong> based on it's description and work done by previously. You can write the code as well as write test cases for testing the behavior. You must click the submit button before time expires to save your work.
+						Here’s a function <strong ng-bind="funct.name"></strong> that needs some work. Please identify a behavior in its description that is not yet implemented, write a test for this behavior, and then implement it. You can run the tests for the function by clicking RunTests. Remember, you only have 15 minutes, so be sure to submit your work before time runs out.
+						<!--Please implement the function <strong ng-bind="funct.name"></strong> based on it's description and work done by previously. You can write the code as well as write test cases for testing the behavior. You must click the submit button before time expires to save your work.-->
 					</span>
 					<span ng-switch-when="CORRECT">
 						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?
@@ -42,10 +43,10 @@
 			</div>
 		</div>
 
-		<div class="section" ui-layout-container size="62%">
+		<div class="section" ui-layout-container size="60%">
 			<div class="section-bar" ng-show="!data.editingStub">
 				<span class="title">
-					Function Editor
+					Write your code in the bellow Function Editor
 				</span>
 				<span class="pull-right">
 					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)">

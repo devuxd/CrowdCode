@@ -1,7 +1,7 @@
 <div class="dashboard2" ng-controller="dashboard2">
     <div ui-layout="{ flow: 'row', dividerSize: 1 }">
         <div ui-layout-container min-size="40px" size="100%">
-            <div class="title">DashBoard</div>
+            <div class="title" style="text-align: center">DashBoard</div>
             <div class="content">
 
                 <span class="section-header">Project Name: </span>
@@ -11,7 +11,8 @@
                 <span ng-bind="projectDescription"></span><br/>
 
                 <div bs-collapse start-collapsed="false" allow-multiple="true">
-                    <span class="section-header">Data Types</span><br/>
+                    <span class="section-header">Data Types:</span><br/>
+                    <span>Arguments of the functions you want to implement</span>
                     <div ng-repeat="d in DataTypes" class="data-types" ng-init="d.selectedExample = d.examples[0]">
                         <div bs-collapse-toggle class="toggler" >{{d.name}}</div>
                         <div bs-collapse-target class="toggled" ng-init="structure = buildStructure(d)">
@@ -37,7 +38,8 @@
                         </div>
                     </div>
                     <br/>
-                    <span class="section-header">Functions (you choose function to implement from the below list ):</span><br/>
+                    <span class="section-header">Functions: </span><br/>
+                    <span>You choose function to implement from the below list</span>
                     <div ng-repeat="f in Functions" ng-show="!f.isThirdPartyAPI"  class="functions">
                         <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
                         <div bs-collapse-target class="toggled">
@@ -54,7 +56,8 @@
                         </div>
                     </div>
                     <br/>
-                    <span class="section-header">3rd Party APIs (functions are already implemented, They can be called in the body of the functions you want to implement )</span><br/>
+                    <span class="section-header">3rd Party APIs</span><br/>
+                    <span>functions are already implemented, They can be called in the body of the functions you want to implement</span>
                     <div ng-repeat="f in Functions" ng-show="f.isThirdPartyAPI" class="functions">
                         <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
                         <div bs-collapse-target class="toggled">
