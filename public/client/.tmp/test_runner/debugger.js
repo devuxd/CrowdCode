@@ -199,7 +199,7 @@ Debugger.mockFunction = function (fNode) {
         callBody += '\n' +
             '  {\n ' +
             ' for(var i=0; i<objTemp.length; i++) {\n' +
-            '         if(objTemp[i].todoId == todo.todoId) {\n' +
+            '         if(objTemp[i].id == todo.id) {\n' +
             '           return \'Duplicate\';   \n' +
             '        } \n' +
             '  }\n' +
@@ -210,7 +210,7 @@ Debugger.mockFunction = function (fNode) {
         callBody += '\n' +
             '  {\n ' +
             '  for(var i=0; i<objTemp.length; i++) {\n' +
-            '        if (objTemp[i].todoId == todoId){\n ' +
+            '        if (objTemp[i].id == objectId){\n ' +
             '             return objTemp[i];}\n' +
             '    }' +
             ' return null;' + '\n' +
@@ -219,7 +219,7 @@ Debugger.mockFunction = function (fNode) {
         callBody += '\n' +
             ' {' +
             '  for(var i=0; i<objTemp.length; i++) {\n' +
-            '        if (objTemp[i].todoId == todo.todoId){\n' +
+            '        if (objTemp[i].id == todo.id){\n' +
             '           objTemp[i]=todo; \n' +
             '            return todo; }\n' +
             '    }\n' +
@@ -231,7 +231,7 @@ Debugger.mockFunction = function (fNode) {
         callBody += '\n' +
             '{ ' +
             'for(var i=0; i<objTemp.length; i++) {\n ' +
-            '       if (objTemp[i].todoId == todo.todoId){\n    ' +
+            '       if (objTemp[i].id == todo.id){\n    ' +
             '            objTemp.splice(i,1); \n         ' +
             '           return todo; \n     ' +
             '        }\n    ' +

@@ -2417,7 +2417,7 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
     "			<span>\n" +
     "				The test suite and implementation for <strong ng-bind=\"function.name\"></strong> has been updated by adding, editing, or deleting its tests and implementation. Considering just <strong>the changes</strong> to the test suite and function implementation, can you review them?\n" +
     "			</span>\n" +
-    "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
+    "			<span>TIP:If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
@@ -2557,7 +2557,7 @@ angular.module("microtasks/review/review_describe_dispute.html", []).run(["$temp
     "				A worker was asked to implement part of the function and also reported an issue with the following tests. Can you review this work?\n" +
     "			</span>\n" +
     "\n" +
-    "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
+    "			<span>TIP:If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
@@ -2710,7 +2710,7 @@ angular.module("microtasks/review/review_implement.html", []).run(["$templateCac
     "				A worker was asked to implement part of the function <strong>{{data.functionName}}</strong>. Can you review this work?\n" +
     "			</span>\n" +
     "\n" +
-    "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
+    "			<span>TIP:If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
@@ -2740,7 +2740,7 @@ angular.module("microtasks/review/review_implement_dispute.html", []).run(["$tem
     "				A worker was asked to implement part of the function <strong>{{data.functionName}}</strong> and also  reported an issue with the following tests. Can you review this work?\n" +
     "			</span>\n" +
     "\n" +
-    "			<span>TIP:When you review an issue, high rate means that you agree on the issue.</span>\n" +
+    "			<span>TIP:If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.</span>\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
