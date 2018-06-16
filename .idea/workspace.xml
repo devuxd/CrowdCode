@@ -2,20 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/client.js" afterPath="$PROJECT_DIR$/public/client/.tmp/client.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/templates.js" afterPath="$PROJECT_DIR$/public/client/.tmp/templates.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/test_runner/debugger.js" afterPath="$PROJECT_DIR$/public/client/.tmp/test_runner/debugger.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/microtasks/review/review_describe.html" afterPath="$PROJECT_DIR$/public/client/microtasks/review/review_describe.html" />
-      <change beforePath="$PROJECT_DIR$/public/client/microtasks/review/review_describe_dispute.html" afterPath="$PROJECT_DIR$/public/client/microtasks/review/review_describe_dispute.html" />
-      <change beforePath="$PROJECT_DIR$/public/client/microtasks/review/review_implement.html" afterPath="$PROJECT_DIR$/public/client/microtasks/review/review_implement.html" />
-      <change beforePath="$PROJECT_DIR$/public/client/microtasks/review/review_implement_dispute.html" afterPath="$PROJECT_DIR$/public/client/microtasks/review/review_implement_dispute.html" />
-      <change beforePath="$PROJECT_DIR$/public/clientDist/client.js" afterPath="$PROJECT_DIR$/public/clientDist/client.js" />
-      <change beforePath="$PROJECT_DIR$/public/clientDist/test_runner/debugger.js" afterPath="$PROJECT_DIR$/public/clientDist/test_runner/debugger.js" />
-      <change beforePath="$PROJECT_DIR$/sessions/4UVMZpvV-NnYoc4iNOqYBYtYLoW2Mjka.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/sessions/8LhKIAWcEl3s100oE0bloo2JTIjK4IbO.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/sessions/J4vw_K1xc9s2fjIgoXOB1uLgJXj5fDJD.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/sessions/vaeYN4ofd6HVeWUkZYdj_oveK7C7lM5Y.json" afterPath="" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/public/video/CrowdDemoLight.mp4" />
+      <change beforePath="$PROJECT_DIR$/public/welcome.html" afterPath="$PROJECT_DIR$/public/welcome.html" />
+      <change beforePath="$PROJECT_DIR$/sessions/HkLVtI1LGB8758vnj9UGHMXkKY2bL6XP.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/RDY_UDe60jOy0N_ugJswKmuxGdGCZz4m.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/bN2-pHP_C_dSX7WDPeBSgT7uIubKmbuV.json" afterPath="" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -35,7 +26,7 @@
       <file leaf-file-name="functionUtils.factory.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/client/functions/functionUtils.factory.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
+            <state relative-caret-position="2610">
               <caret line="174" column="39" lean-forward="false" selection-start-line="174" selection-start-column="39" selection-end-line="174" selection-end-column="39" />
               <folding />
             </state>
@@ -45,19 +36,31 @@
       <file leaf-file-name="debugger.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/client/test_runner/debugger.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
+            <state relative-caret-position="3180">
               <caret line="212" column="50" lean-forward="false" selection-start-line="212" selection-start-column="42" selection-end-line="212" selection-end-column="50" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="describe_behavior.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="describe_behavior.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="217" column="48" lean-forward="false" selection-start-line="217" selection-start-column="48" selection-end-line="217" selection-end-column="48" />
+            <state relative-caret-position="283">
+              <caret line="242" column="33" lean-forward="false" selection-start-line="242" selection-start-column="33" selection-end-line="242" selection-end-column="33" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="welcome.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/public/welcome.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="141">
+              <caret line="78" column="0" lean-forward="false" selection-start-line="78" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+              <folding>
+                <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -88,7 +91,7 @@
         <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review_describe.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="105">
-              <caret line="7" column="67" lean-forward="true" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
+              <caret line="7" column="67" lean-forward="false" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
               <folding />
             </state>
           </provider>
@@ -124,22 +127,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="deployment_service.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/util/deployment_service.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="60" lean-forward="false" selection-start-line="11" selection-start-column="60" selection-end-line="11" selection-end-column="60" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>submit()</find>
-      <find>test Result</find>
       <find>Debugger.run</find>
       <find>setOption</find>
       <find>editor.setOptions</find>
@@ -168,11 +159,16 @@
       <find>onsidering just the changes to the test suite and function im</find>
       <find>test suite and implemen</find>
       <find>this function is com</find>
+      <find>Demo</find>
+      <find>CrowdDemoLight</find>
     </findStrings>
     <replaceStrings>
       <replace>objTemp[i].id</replace>
       <replace>todo.id</replace>
     </replaceStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$/public/video</dir>
+    </dirStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -199,12 +195,12 @@
         <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
         <option value="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" />
         <option value="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" />
-        <option value="$PROJECT_DIR$/public/welcome.html" />
         <option value="$PROJECT_DIR$/public/client/test_runner/debugger.js" />
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_describe.html" />
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_describe_dispute.html" />
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_implement.html" />
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_implement_dispute.html" />
+        <option value="$PROJECT_DIR$/public/welcome.html" />
       </list>
     </option>
   </component>
@@ -268,8 +264,6 @@
       <foldersAlwaysOnTop value="false" />
     </navigator>
     <panes>
-      <pane id="NBKnowledgePane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -299,44 +293,6 @@
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
               <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
               <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="challenge_review" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="describe_behavior" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="review" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="test_runner" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
               <item name="video" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -348,7 +304,9 @@
           <select />
         </subPane>
       </pane>
+      <pane id="NBKnowledgePane" />
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -359,12 +317,12 @@
     <property name="js.buildTools.grunt.grunt-cli.package" value="$PROJECT_DIR$/node_modules/grunt-cli" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/public/video" />
       <recent name="$PROJECT_DIR$/public/img" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -423,6 +381,7 @@
       <workItem from="1528732582289" duration="3618000" />
       <workItem from="1528771578415" duration="1501000" />
       <workItem from="1528907862771" duration="4025000" />
+      <workItem from="1529167430798" duration="1904000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -470,7 +429,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="32132000" />
+    <option name="totallyTimeSpent" value="34036000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -482,22 +441,21 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1680" height="947" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="23" width="1680" height="947" extended-state="0" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945284" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45731708" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32810616" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39927623" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18520783" sideWeight="0.46200243" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45731708" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39927623" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18520783" sideWeight="0.4571773" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18520783" sideWeight="0.5379976" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18520783" sideWeight="0.54282266" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2907117" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.4912689" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26066098" sideWeight="0.3538999" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Notes" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -809,7 +767,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -817,7 +774,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -825,9 +781,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="465">
           <caret line="31" column="46" lean-forward="false" selection-start-line="31" selection-start-column="46" selection-end-line="31" selection-end-column="46" />
-          <folding>
-            <element signature="n#style#0;n#step#2;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -835,10 +788,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
           <caret line="24" column="53" lean-forward="false" selection-start-line="24" selection-start-column="53" selection-end-line="24" selection-end-column="53" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#div#2;n#div#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -846,9 +795,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="14" column="81" lean-forward="false" selection-start-line="14" selection-start-column="81" selection-end-line="14" selection-end-column="81" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -857,22 +803,10 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/welcome.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
-          <folding>
-            <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#div#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/client/widgets/reminder.directive.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="35" lean-forward="false" selection-start-line="7" selection-start-column="35" selection-end-line="7" selection-end-column="35" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -886,7 +820,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/functions/functionUtils.factory.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
+        <state relative-caret-position="2610">
           <caret line="174" column="39" lean-forward="false" selection-start-line="174" selection-start-column="39" selection-end-line="174" selection-end-column="39" />
           <folding />
         </state>
@@ -894,7 +828,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/test_runner/debugger.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
+        <state relative-caret-position="3180">
           <caret line="212" column="50" lean-forward="false" selection-start-line="212" selection-start-column="42" selection-end-line="212" selection-end-column="50" />
           <folding />
         </state>
@@ -945,16 +879,26 @@
     <entry file="file://$PROJECT_DIR$/public/client/microtasks/review/review_describe.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
-          <caret line="7" column="67" lean-forward="true" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
+          <caret line="7" column="67" lean-forward="false" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="217" column="48" lean-forward="false" selection-start-line="217" selection-start-column="48" selection-end-line="217" selection-end-column="48" />
+        <state relative-caret-position="283">
+          <caret line="242" column="33" lean-forward="false" selection-start-line="242" selection-start-column="33" selection-end-line="242" selection-end-column="33" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/welcome.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="78" column="0" lean-forward="false" selection-start-line="78" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+          <folding>
+            <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
