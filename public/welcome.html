@@ -76,7 +76,7 @@
 		<div class="row">
 			<h1>Before going to the next step watch this video carefully</h1>
 			<video width="800" controls >
-				<source src="/video/CrowdDemoLight2.mp4" type="video/mp4">
+				<source src="/video/CrowdDemoLight.mp4" type="video/mp4">
 			</video>
 		</div>
 		<hr />
@@ -194,12 +194,15 @@
 			});
 		}
 
-		var ref = firebase.database().ref('defaultProject');
+		// it is commented because in the firest load it takes long time. if this change does not fix the problem revert it
+		// var ref = firebase.database().ref('defaultProject');
+
+		var ref = firebase.database().ref().child('Projects').child('todo');
 		ref.once('value', function(snap) {
 			console.log('default project is ' + snap.val());
-			if (snap.val() != null)
-				$('#btnStart').attr('href', '/' + snap.val());
-			else
+			// if (snap.val() != null)
+			// 	$('#btnStart').attr('href', '/' + snap.val());
+			// else
 				$('#btnStart').attr('href', '/todo');
 
 		});
@@ -207,3 +210,4 @@
 </body>
 
 </html>
+Ø
