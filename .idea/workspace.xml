@@ -2,11 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/public/video/CrowdDemoLight.mp4" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/public/video/CrowdDemoLight2.mp4" afterPath="$PROJECT_DIR$/public/video/CrowdDemoLight.mp4" />
-      <change beforePath="$PROJECT_DIR$/public/welcome.html" afterPath="$PROJECT_DIR$/public/welcome.html" />
-      <change beforePath="$PROJECT_DIR$/sessions/aHkZY_y90jA5Qa8NQtuAWMM636FBMNni.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/public/client/.tmp/client.js" afterPath="$PROJECT_DIR$/public/client/.tmp/client.js" />
+      <change beforePath="$PROJECT_DIR$/public/client/.tmp/templates.js" afterPath="$PROJECT_DIR$/public/client/.tmp/templates.js" />
+      <change beforePath="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" afterPath="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" />
+      <change beforePath="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" afterPath="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
+      <change beforePath="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" afterPath="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" />
+      <change beforePath="$PROJECT_DIR$/public/clientDist/client.js" afterPath="$PROJECT_DIR$/public/clientDist/client.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -23,104 +25,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="welcome.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/public/welcome.html">
+      <file leaf-file-name="dashboard2.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="366">
-              <caret line="92" column="24" lean-forward="false" selection-start-line="92" selection-start-column="24" selection-end-line="92" selection-end-column="24" />
+            <state relative-caret-position="404">
+              <caret line="58" column="73" lean-forward="false" selection-start-line="58" selection-start-column="73" selection-end-line="58" selection-end-column="73" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="project_outline.template.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/client/widgets/project_outline.template.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="48" column="74" lean-forward="false" selection-start-line="48" selection-start-column="60" selection-end-line="48" selection-end-column="74" />
               <folding>
-                <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+                <element signature="n#style#0;n#div#4;n#div#0;n#!!top" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dashboard.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/admin/dashboard/dashboard.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1789">
-              <caret line="123" column="17" lean-forward="false" selection-start-line="123" selection-start-column="17" selection-end-line="123" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dashboard.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/admin/dashboard/dashboard.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" column="45" lean-forward="false" selection-start-line="12" selection-start-column="45" selection-end-line="12" selection-end-column="45" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="client.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/client.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2850">
-              <caret line="218" column="26" lean-forward="false" selection-start-line="218" selection-start-column="26" selection-end-line="218" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="client.jsp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/client.jsp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1223">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="client.ejs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/clientDist/client.ejs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1367">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="client.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/clientDist/client.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-19">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="loggedin.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/loggedin.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-122">
-              <caret line="17" column="22" lean-forward="false" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".buildignore" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/admin/.buildignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="404.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/404.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -129,12 +51,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>remainingTimeBar</find>
-      <find>Function Editor</find>
-      <find>Functions:</find>
-      <find>Data Types:</find>
-      <find>you choose function to implement from the below list</find>
-      <find>Project Description</find>
       <find>DashBoard</find>
       <find>/img/welcome_implementation.png</find>
       <find>saveObje</find>
@@ -159,6 +75,12 @@
       <find>irebase.database().ref()</find>
       <find>Workers</find>
       <find>crowdde</find>
+      <find>ou choose function to implement from the bel</find>
+      <find>rd Party persisting API for calling in the body of the functions you want to implemen</find>
+      <find>Functions you may implement:</find>
+      <find>ase identify a behavior in its description that is not yet implemented, write a test for this behavior, and then implement it. You can run the tests for the f</find>
+      <find>e functions are library functions offered by the environment. You can call the</find>
+      <find>3rd Party persisting API.These f</find>
     </findStrings>
     <replaceStrings>
       <replace>objTemp[i].id</replace>
@@ -190,15 +112,15 @@
         <option value="$PROJECT_DIR$/public/client/functions/functionUtils.factory.js" />
         <option value="$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js" />
         <option value="$PROJECT_DIR$/public/client/widgets/reminder.directive.js" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
-        <option value="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" />
         <option value="$PROJECT_DIR$/public/client/test_runner/debugger.js" />
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_describe.html" />
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_describe_dispute.html" />
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_implement.html" />
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_implement_dispute.html" />
         <option value="$PROJECT_DIR$/public/welcome.html" />
+        <option value="$PROJECT_DIR$/public/client/widgets/project_outline.template.html" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html" />
       </list>
     </option>
   </component>
@@ -244,8 +166,8 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
-    <option name="width" value="1680" />
-    <option name="height" value="947" />
+    <option name="width" value="1920" />
+    <option name="height" value="977" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -262,7 +184,8 @@
       <foldersAlwaysOnTop value="false" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="NBKnowledgePane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -274,6 +197,42 @@
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
               <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
               <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
+              <item name="dashboard" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
+              <item name="describe_behavior" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="widgets" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
@@ -291,8 +250,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="NBKnowledgePane" />
-      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -371,7 +329,9 @@
       <workItem from="1529330805569" duration="1524000" />
       <workItem from="1529514067416" duration="2407000" />
       <workItem from="1529721142245" duration="2660000" />
-      <workItem from="1529801207432" duration="900000" />
+      <workItem from="1529801207432" duration="974000" />
+      <workItem from="1529936847791" duration="640000" />
+      <workItem from="1530117768044" duration="1219000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -419,7 +379,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="42095000" />
+    <option name="totallyTimeSpent" value="44028000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -431,21 +391,22 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1680" height="947" extended-state="6" />
+    <frame x="0" y="23" width="1920" height="977" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945284" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32810616" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45731708" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39927623" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18520783" sideWeight="0.5862485" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32712457" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39813736" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.06076759" sideWeight="0.5750873" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18520783" sideWeight="0.4137515" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2907117" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.06076759" sideWeight="0.4249127" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2887078" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.4912689" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26066098" sideWeight="0.3538999" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Notes" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -627,20 +588,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/widgets/project_outline.template.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="53" lean-forward="false" selection-start-line="24" selection-start-column="53" selection-end-line="24" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="81" lean-forward="false" selection-start-line="14" selection-start-column="81" selection-end-line="14" selection-end-column="81" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/img/welcome_implementation.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -716,18 +663,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3630">
-          <caret line="242" column="33" lean-forward="false" selection-start-line="242" selection-start-column="33" selection-end-line="242" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/config.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
           <caret line="24" column="12" lean-forward="false" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -763,7 +702,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -771,7 +709,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
           <caret line="29" column="36" lean-forward="false" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -779,7 +716,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="975">
           <caret line="90" column="0" lean-forward="false" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -787,7 +723,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4725">
           <caret line="315" column="11" lean-forward="false" selection-start-line="315" selection-start-column="11" selection-end-line="315" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -795,7 +730,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4725">
           <caret line="315" column="11" lean-forward="false" selection-start-line="315" selection-start-column="11" selection-end-line="315" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -803,7 +737,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" column="54" lean-forward="false" selection-start-line="9" selection-start-column="54" selection-end-line="9" selection-end-column="54" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -811,13 +744,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="18" column="75" lean-forward="false" selection-start-line="18" selection-start-column="40" selection-end-line="18" selection-end-column="75" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/admin/dashboard/dashboard.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1789">
+        <state relative-caret-position="1845">
           <caret line="123" column="17" lean-forward="false" selection-start-line="123" selection-start-column="17" selection-end-line="123" selection-end-column="17" />
           <folding />
         </state>
@@ -827,14 +759,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="12" column="45" lean-forward="false" selection-start-line="12" selection-start-column="45" selection-end-line="12" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/client.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2850">
-          <caret line="218" column="26" lean-forward="false" selection-start-line="218" selection-start-column="26" selection-end-line="218" selection-end-column="26" />
           <folding />
         </state>
       </provider>
@@ -857,7 +781,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/client.jsp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1223">
+        <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
@@ -865,7 +789,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/clientDist/client.ejs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1367">
+        <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
@@ -873,7 +797,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/clientDist/client.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-19">
+        <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
@@ -881,7 +805,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/loggedin.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-122">
+        <state relative-caret-position="255">
           <caret line="17" column="22" lean-forward="false" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
           <folding />
         </state>
@@ -889,11 +813,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/welcome.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="92" column="24" lean-forward="false" selection-start-line="92" selection-start-column="24" selection-end-line="92" selection-end-column="24" />
+        <state relative-caret-position="420">
+          <caret line="119" column="28" lean-forward="false" selection-start-line="119" selection-start-column="28" selection-end-line="119" selection-end-column="28" />
           <folding>
             <element signature="n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/client.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3270">
+          <caret line="218" column="26" lean-forward="false" selection-start-line="218" selection-start-column="26" selection-end-line="218" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="34" column="27" lean-forward="true" selection-start-line="34" selection-start-column="27" selection-end-line="34" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/widgets/project_outline.template.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="48" column="74" lean-forward="false" selection-start-line="48" selection-start-column="60" selection-end-line="48" selection-end-column="74" />
+          <folding>
+            <element signature="n#style#0;n#div#4;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="404">
+          <caret line="58" column="73" lean-forward="false" selection-start-line="58" selection-start-column="73" selection-end-line="58" selection-end-column="73" />
+          <folding />
         </state>
       </provider>
     </entry>

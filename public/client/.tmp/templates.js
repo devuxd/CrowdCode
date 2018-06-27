@@ -1008,7 +1008,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                    </div>\n" +
     "                    <br/>\n" +
     "                    <span class=\"section-header\">Functions: </span><br/>\n" +
-    "                    <span>You choose function to implement from the below list</span>\n" +
+    "                    <span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on.</span>\n" +
     "                    <div ng-repeat=\"f in Functions\" ng-show=\"!f.isThirdPartyAPI\"  class=\"functions\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
@@ -1026,9 +1026,9 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                    </div>\n" +
     "                    <br/>\n" +
     "                    <span class=\"section-header\">3rd Party APIs</span><br/>\n" +
-    "                    <span>functions are already implemented, They can be called in the body of the functions you want to implement</span>\n" +
+    "                    <span>These functions are library functions offered by the environment. You can call them from function implementations as well as from tests.</span>\n" +
     "                    <div ng-repeat=\"f in Functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\">\n" +
-    "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
+    "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}Implementation</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
     "                            <div ng-bind=\"f.description\"></div>\n" +
     "                            <div><strong> Parameters </strong></div>\n" +
@@ -1228,8 +1228,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
-    "						Here’s a function <strong ng-bind=\"funct.name\"></strong> that needs some work. Please identify a behavior in its description that is not yet implemented, write a test for this behavior, and then implement it. You can run the tests for the function by clicking RunTests. Remember, you only have 15 minutes, so be sure to submit your work before time runs out.\n" +
-    "						<!--Please implement the function <strong ng-bind=\"funct.name\"></strong> based on it's description and work done by previously. You can write the code as well as write test cases for testing the behavior. You must click the submit button before time expires to save your work.-->\n" +
+    "						Here’s a function <strong ng-bind=\"funct.name\"></strong> that needs some work. Please identify a behavior in its description that is not yet implemented; firstly, write a test for this behavior,secondly implement it. You can run the tests for the function by clicking RunTests. Remember, you only have 15 minutes, so be sure to submit your work before time runs out.You don’t need to (and probably don’t have time) to finish the function implementation. Instead, find a single behavior, write a test, and implement just that behavior.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"CORRECT\">\n" +
     "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
@@ -4619,7 +4618,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "	            \n" +
     "		</div>\n" +
     "	</div>\n" +
-    "	<div style=\"text-align: center\"><strong> Functions you may implement: </strong></div>\n" +
+    "	<div style=\"text-align: center\"><strong>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on. </strong></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"!f.isThirdPartyAPI\" class=\"functions\">\n" +
     "		<div bs-collapse-toggle class=\"toggler\" >  {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
@@ -4636,7 +4635,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div style=\"text-align: center\"><strong> 3rd Party persisting API for calling in the body of the functions you want to implement: </strong></div>\n" +
+    "	<div style=\"text-align: center\"><strong> 3rd Party persisting API.These functions are library functions offered by the environment. You can call them from function implementations as well as from tests. </strong></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"f.isThirdPartyAPI\" class=\"third-party-api\">\n" +
     "		<div bs-collapse-toggle class=\"toggler\" > {{f.name}}Implementation</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +

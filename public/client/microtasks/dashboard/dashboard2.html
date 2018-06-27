@@ -39,7 +39,7 @@
                     </div>
                     <br/>
                     <span class="section-header">Functions: </span><br/>
-                    <span>You choose function to implement from the below list</span>
+                    <span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on.</span>
                     <div ng-repeat="f in Functions" ng-show="!f.isThirdPartyAPI"  class="functions">
                         <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
                         <div bs-collapse-target class="toggled">
@@ -56,10 +56,10 @@
                         </div>
                     </div>
                     <br/>
-                    <span class="section-header">3rd Party APIs</span><br/>
-                    <span>functions are already implemented, They can be called in the body of the functions you want to implement</span>
+                    <span class="section-header">3rd Party persisting API</span><br/>
+                    <span>These functions are library functions offered by the environment. You can call them from function implementations as well as from tests.</span>
                     <div ng-repeat="f in Functions" ng-show="f.isThirdPartyAPI" class="functions">
-                        <div bs-collapse-toggle class="toggler" >{{f.name}}</div>
+                        <div bs-collapse-toggle class="toggler" >{{f.name}}Implementation</div>
                         <div bs-collapse-target class="toggled">
                             <div ng-bind="f.description"></div>
                             <div><strong> Parameters </strong></div>
