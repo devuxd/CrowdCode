@@ -5,7 +5,7 @@
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Review - Microtask', $event)">
-			<span class="glyphicon glyphicon-question-sign"></span>
+			<span class="glyphicon glyphicon-question-sign " style="color:blue"></span>
 		</button>
 		<span class="clearfix"></span>
     </div>

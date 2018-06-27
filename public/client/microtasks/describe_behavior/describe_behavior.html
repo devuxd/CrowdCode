@@ -10,7 +10,7 @@
 		</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'ImplementBehavior', true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)">
-			<span class="glyphicon glyphicon-question-sign"></span>
+			<span class="glyphicon glyphicon-question-sign" style="color:blue"></span>
 		</button>
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
 		<span class="clearfix"></span>
@@ -28,7 +28,7 @@
 					</span>
 					<span ng-switch-when="CORRECT">
 						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?
-						If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function,click on <span class="glyphicon glyphicon-question-sign"></span> in the Function editor.
+						If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function,click on <span class="glyphicon glyphicon-question-sign" style="color:blue"></span> in the Function editor.
 					</span>
 					<span ng-switch-when="FUNCTION_CHANGED'">
 						The signature of the function being tested has changed. As a result, the tests may no longer be correct. Can you update the tests, if necessary?
@@ -49,7 +49,7 @@
 				</span>
 				<span class="pull-right">
 					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)">
-						<span class="glyphicon glyphicon-question-sign"></span>
+						<span class="glyphicon glyphicon-question-sign " style="color:blue"></span>
 				</button>
 				</span>
 				<span class="pull-right">
@@ -177,7 +177,7 @@
 						</button>
 
 					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial', 'Describe Behavior - Edit Test', $event)">
-							<span class="glyphicon glyphicon-question-sign"></span>
+							<span class="glyphicon glyphicon-question-sign" style="color:blue"></span>
 						</button>
 					</span>
 
@@ -240,12 +240,12 @@
 						<label>Type</label>
 						<span class="help-icon">
 							<span
-								class="glyphicon glyphicon-question-sign"
+								class="glyphicon glyphicon-question-sign" style="color:blue"
 								ng-if="t.isSimple"
 								ng-click="$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)">
 							</span>
 
-						<span class="glyphicon glyphicon-question-sign" ng-if="!t.isSimple" ng-click="$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)">
+						<span class="glyphicon glyphicon-question-sign" style="color:blue" ng-if="!t.isSimple" ng-click="$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)">
 							</span>
 
 						</span>
@@ -255,7 +255,7 @@
 					<div class="form-group" ng-if="!t.isSimple">
 						<label for="code">Code</label>
 						<div class="help-icon" ng-click="trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)">
-							<span class="glyphicon glyphicon-question-sign" data-template="/client/widgets/test_editor_help.html" data-auto-close="1" data-placement="left" data-title="title of th ehelp" bs-popover>
+							<span class="glyphicon glyphicon-question-sign" style="color:blue" data-template="/client/widgets/test_editor_help.html" data-auto-close="1" data-placement="left" data-title="title of th ehelp" bs-popover>
 							</span>
 						</div>
 						<div class="form-control code" test-editor name="code" function-name="{{funct.name}}" ng-model="t.code" errors="errors['code']" required>
@@ -273,8 +273,8 @@
 							<label for="inputs">
 								{{p.name + ' {' + p.type + '}' }}
 							</label>
-							<div class="help-icon" paste-example="{ type : p.type }" ng-model="t.inputs[pIdx]">
-								<span>paste example</span>
+							<div  class="help-icon pull-right" paste-example="{ type : p.type }" ng-model="t.inputs[pIdx]"  data-title="adfadfadfadfdasfafa" >
+								<span class="glyphicon glyphicon-plus-sign" ></span> paste example
 							</div>
 							<div class="form-control code" json-editor="{ type: p.type, name: p.name }" name="{{p.name}}" ng-model="t.inputs[pIdx]" errors="errors[p.name]" required>
 							</div>
@@ -289,8 +289,8 @@
 
 					<div class="form-group" ng-if="t.isSimple">
 						<label for="code">Output {{ '{' + funct.returnType + '}'}}</label>
-						<div class="help-icon" paste-example="{ type : funct.returnType }" ng-model="t.output">
-							<span>paste example</span>
+						<div class="help-icon pull-right" paste-example="{ type : funct.returnType }" ng-model="t.output">
+                            <span class="glyphicon glyphicon-plus-sign" ></span> paste example
 						</div>
 						<div class="form-control code" json-editor="{ type: funct.returnType, name: 'output' }" ng-model="t.output" name="output" errors="errors['output']" required>
 						</div>
@@ -330,7 +330,7 @@
 
 
 				<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) ">
-						<span class="glyphicon glyphicon-question-sign"></span>
+						<span class="glyphicon glyphicon-question-sign" style="color:blue"></span>
 					</button>
 				</span>
 

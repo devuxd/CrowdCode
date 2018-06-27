@@ -9,7 +9,7 @@
 		</span>
 		<span class="points">( {{::microtask.points}} pts )</span>
 		<button class="btn btn-sm" ng-click="$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Implement Behavior - Microtask', $event)">
-			<span class="glyphicon glyphicon-question-sign"></span>
+			<span class="glyphicon glyphicon-question-sign" style="color:blue"></span>
 		</button>
 		<span class="reissued" ng-if="microtask.reissuedSubmission !== undefined">REISSUED</span>
 		<span class="clearfix"></span>
@@ -27,7 +27,7 @@
 					<span ng-switch-when="CORRECT">
 						A worker reported an issue with the description of <strong ng-bind="funct.name"></strong>. Can you fix the function to address this issue (if necessary)?
 					</span>
-					If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function, click on <span class="glyphicon glyphicon-question-sign"></span> in the function editor.
+					If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function, click on <span class="glyphicon glyphicon-question-sign " style="color:blue"></span> in the function editor.
 				</div>
 
 				<br />
@@ -63,7 +63,7 @@
 
 
 					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) ">
-						<span class="glyphicon glyphicon-question-sign"></span>
+						<span class="glyphicon glyphicon-question-sign " style="color:blue"></span>
 					</button>
 				</span>
 
@@ -185,7 +185,7 @@
 				</span>
 				<span class="pull-right">
 					<button class="btn btn-sm" ng-click="$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)">
-						<span class="glyphicon glyphicon-question-sign"></span>
+						<span class="glyphicon glyphicon-question-sign" style="color:blue"></span>
 					</button>
 				</span>
 				<span class="clearfix"></span>

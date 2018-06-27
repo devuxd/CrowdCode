@@ -1025,7 +1025,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                        </div>\n" +
     "                    </div>\n" +
     "                    <br/>\n" +
-    "                    <span class=\"section-header\">3rd Party APIs</span><br/>\n" +
+    "                    <span class=\"section-header\">3rd Party persisting API</span><br/>\n" +
     "                    <span>These functions are library functions offered by the environment. You can call them from function implementations as well as from tests.</span>\n" +
     "                    <div ng-repeat=\"f in Functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}Implementation</div>\n" +
@@ -1214,7 +1214,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "		</span>\n" +
     "		<span class=\"points\">( {{::microtask.points}} pts )</span>\n" +
     "		<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)\">\n" +
-    "			<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "			<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
     "		</button>\n" +
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
     "		<span class=\"clearfix\"></span>\n" +
@@ -1232,7 +1232,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					</span>\n" +
     "					<span ng-switch-when=\"CORRECT\">\n" +
     "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
-    "						If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function,click on <span class=\"glyphicon glyphicon-question-sign\"></span> in the Function editor.\n" +
+    "						If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function,click on <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span> in the Function editor.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"FUNCTION_CHANGED'\">\n" +
     "						The signature of the function being tested has changed. As a result, the tests may no longer be correct. Can you update the tests, if necessary?\n" +
@@ -1253,7 +1253,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</span>\n" +
     "				<span class=\"pull-right\">\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)\">\n" +
-    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign \" style=\"color:blue\"></span>\n" +
     "				</button>\n" +
     "				</span>\n" +
     "				<span class=\"pull-right\">\n" +
@@ -1381,7 +1381,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "						</button>\n" +
     "\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true); trackInteraction('Click Tutorial', 'Describe Behavior - Edit Test', $event)\">\n" +
-    "							<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "							<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
     "						</button>\n" +
     "					</span>\n" +
     "\n" +
@@ -1444,12 +1444,12 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "						<label>Type</label>\n" +
     "						<span class=\"help-icon\">\n" +
     "							<span\n" +
-    "								class=\"glyphicon glyphicon-question-sign\"\n" +
+    "								class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"\n" +
     "								ng-if=\"t.isSimple\"\n" +
     "								ng-click=\"$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)\">\n" +
     "							</span>\n" +
     "\n" +
-    "						<span class=\"glyphicon glyphicon-question-sign\" ng-if=\"!t.isSimple\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)\">\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\" ng-if=\"!t.isSimple\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)\">\n" +
     "							</span>\n" +
     "\n" +
     "						</span>\n" +
@@ -1459,7 +1459,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					<div class=\"form-group\" ng-if=\"!t.isSimple\">\n" +
     "						<label for=\"code\">Code</label>\n" +
     "						<div class=\"help-icon\" ng-click=\"trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)\">\n" +
-    "							<span class=\"glyphicon glyphicon-question-sign\" data-template=\"/client/widgets/test_editor_help.html\" data-auto-close=\"1\" data-placement=\"left\" data-title=\"title of th ehelp\" bs-popover>\n" +
+    "							<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\" data-template=\"/client/widgets/test_editor_help.html\" data-auto-close=\"1\" data-placement=\"left\" data-title=\"title of th ehelp\" bs-popover>\n" +
     "							</span>\n" +
     "						</div>\n" +
     "						<div class=\"form-control code\" test-editor name=\"code\" function-name=\"{{funct.name}}\" ng-model=\"t.code\" errors=\"errors['code']\" required>\n" +
@@ -1477,8 +1477,8 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "							<label for=\"inputs\">\n" +
     "								{{p.name + ' {' + p.type + '}' }}\n" +
     "							</label>\n" +
-    "							<div class=\"help-icon\" paste-example=\"{ type : p.type }\" ng-model=\"t.inputs[pIdx]\">\n" +
-    "								<span>paste example</span>\n" +
+    "							<div  class=\"help-icon pull-right\" paste-example=\"{ type : p.type }\" ng-model=\"t.inputs[pIdx]\"  data-title=\"adfadfadfadfdasfafa\" >\n" +
+    "								<span class=\"glyphicon glyphicon-plus-sign\" ></span> paste example\n" +
     "							</div>\n" +
     "							<div class=\"form-control code\" json-editor=\"{ type: p.type, name: p.name }\" name=\"{{p.name}}\" ng-model=\"t.inputs[pIdx]\" errors=\"errors[p.name]\" required>\n" +
     "							</div>\n" +
@@ -1493,8 +1493,8 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "					<div class=\"form-group\" ng-if=\"t.isSimple\">\n" +
     "						<label for=\"code\">Output {{ '{' + funct.returnType + '}'}}</label>\n" +
-    "						<div class=\"help-icon\" paste-example=\"{ type : funct.returnType }\" ng-model=\"t.output\">\n" +
-    "							<span>paste example</span>\n" +
+    "						<div class=\"help-icon pull-right\" paste-example=\"{ type : funct.returnType }\" ng-model=\"t.output\">\n" +
+    "                            <span class=\"glyphicon glyphicon-plus-sign\" ></span> paste example\n" +
     "						</div>\n" +
     "						<div class=\"form-control code\" json-editor=\"{ type: funct.returnType, name: 'output' }\" ng-model=\"t.output\" name=\"output\" errors=\"errors['output']\" required>\n" +
     "						</div>\n" +
@@ -1534,7 +1534,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "\n" +
     "				<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) \">\n" +
-    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
     "					</button>\n" +
     "				</span>\n" +
     "\n" +
@@ -1665,7 +1665,7 @@ angular.module("microtasks/implement_behavior/implement_behavior.html", []).run(
     "		</span>\n" +
     "		<span class=\"points\">( {{::microtask.points}} pts )</span>\n" +
     "		<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Implement Behavior - Microtask', $event)\">\n" +
-    "			<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "			<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
     "		</button>\n" +
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
     "		<span class=\"clearfix\"></span>\n" +
@@ -1683,7 +1683,7 @@ angular.module("microtasks/implement_behavior/implement_behavior.html", []).run(
     "					<span ng-switch-when=\"CORRECT\">\n" +
     "						A worker reported an issue with the description of <strong ng-bind=\"funct.name\"></strong>. Can you fix the function to address this issue (if necessary)?\n" +
     "					</span>\n" +
-    "					If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function, click on <span class=\"glyphicon glyphicon-question-sign\"></span> in the function editor.\n" +
+    "					If you think that some of the functionality should be implemented in another function, you can request a new function to be created. For info on how to request a new function, click on <span class=\"glyphicon glyphicon-question-sign \" style=\"color:blue\"></span> in the function editor.\n" +
     "				</div>\n" +
     "\n" +
     "				<br />\n" +
@@ -1719,7 +1719,7 @@ angular.module("microtasks/implement_behavior/implement_behavior.html", []).run(
     "\n" +
     "\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'running_tests', true); trackInteraction('Click Tutorial', 'Implement Behavior - Running Tests', $event) \">\n" +
-    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign \" style=\"color:blue\"></span>\n" +
     "					</button>\n" +
     "				</span>\n" +
     "\n" +
@@ -1841,7 +1841,7 @@ angular.module("microtasks/implement_behavior/implement_behavior.html", []).run(
     "				</span>\n" +
     "				<span class=\"pull-right\">\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)\">\n" +
-    "						<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "						<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
     "					</button>\n" +
     "				</span>\n" +
     "				<span class=\"clearfix\"></span>\n" +
@@ -1999,7 +1999,7 @@ angular.module("microtasks/microtask_title.html", []).run(["$templateCache", fun
     "</span>\n" +
     "<span class=\"pull-right\">\n" +
     "	<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Microtask Title', $event)\">\n" +
-    "		<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "		<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
     "	</button>\n" +
     "</span>\n" +
     "<span class=\"clearfix\"></span>\n" +
@@ -2121,7 +2121,7 @@ angular.module("microtasks/review/review.html", []).run(["$templateCache", funct
     "		<span class=\"reissued\" ng-if=\"microtask.reissuedSubmission !== undefined\">REISSUED</span>\n" +
     "		<span class=\"points\">( {{::microtask.points}} pts )</span>\n" +
     "		<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', microtask.type, true); trackInteraction('Click Tutorial', 'Review - Microtask', $event)\">\n" +
-    "			<span class=\"glyphicon glyphicon-question-sign\"></span>\n" +
+    "			<span class=\"glyphicon glyphicon-question-sign \" style=\"color:blue\"></span>\n" +
     "		</button>\n" +
     "		<span class=\"clearfix\"></span>\n" +
     "    </div>\n" +
