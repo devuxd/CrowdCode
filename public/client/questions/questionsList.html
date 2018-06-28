@@ -90,8 +90,9 @@
 			</div>
 			<div >
 				<span class="pull-left">
-					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{q.updatedAt | date : 'medium'}}"></time-ago>
-				</span> 
+					<!--<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{q.updatedAt | date : 'medium'}}"></time-ago>-->
+					<time-ago style="font-style: italic; font-size: 0.8em;" from-time="{{q.updatedAt | date : 'MM/dd/yyyy'}}"></time-ago>
+				</span>
 
 				<span class="pull-right" style="text-align:right;">
 					<span ng-repeat="tag in q.tags" class="tag" ng-click="addToFilter(tag); $event.stopPropagation();">{{tag}}</span>

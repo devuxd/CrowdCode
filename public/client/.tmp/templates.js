@@ -3433,8 +3433,9 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "					<span ng-repeat=\"tag in sel.tags\" class=\"tag\">{{tag}}</span>\n" +
     "				</span> \n" +
     "				<span class=\"pull-left\">\n" +
-    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{sel.createdAt | date : 'medium'}}\"></time-ago>\n" +
-    "				</span> \n" +
+    "					<!--<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{sel.createdAt | date : 'medium'}}\"></time-ago>-->\n" +
+    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{sel.createdAt | date : 'MM/dd/yyyy'}}\"></time-ago>\n" +
+    "				</span>\n" +
     "				<span class=\"clearfix\"></span>\n" +
     "			</div>\n" +
     "			<div>\n" +
@@ -3489,8 +3490,9 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "				<div>\n" +
     "\n" +
     "					<span class=\"pull-left\">\n" +
-    "						<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{a.createdAt | date : 'medium'}}\"></time-ago>\n" +
-    "						- \n" +
+    "						<!--<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{a.createdAt | date : 'medium'}}\"></time-ago>-->\n" +
+    "						<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{a.createdAt | date : 'MM/dd/yyyy'}}\"></time-ago>\n" +
+    "						-\n" +
     "						<span>{{ a.ownerId == workerId ? 'you' : a.ownerHandle }}</span>\n" +
     "					</span> \n" +
     "					<div class=\"pull-right\">\n" +
@@ -3525,7 +3527,8 @@ angular.module("questions/questionDetail.html", []).run(["$templateCache", funct
     "						<div>\n" +
     "\n" +
     "							<span class=\"pull-left\">\n" +
-    "								<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{c.createdAt | date : 'medium'}}\"></time-ago>\n" +
+    "								<!--<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{c.createdAt | date : 'medium'}}\"></time-ago>-->\n" +
+    "								<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{c.createdAt | date : 'MM/dd/yyyy'}}\"></time-ago>\n" +
     "								-\n" +
     "								<span>{{ c.ownerId == workerId ? 'you' : c.ownerHandle }}</span>\n" +
     "							</span> \n" +
@@ -3737,8 +3740,9 @@ angular.module("questions/questionsList.html", []).run(["$templateCache", functi
     "			</div>\n" +
     "			<div >\n" +
     "				<span class=\"pull-left\">\n" +
-    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.updatedAt | date : 'medium'}}\"></time-ago>\n" +
-    "				</span> \n" +
+    "					<!--<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.updatedAt | date : 'medium'}}\"></time-ago>-->\n" +
+    "					<time-ago style=\"font-style: italic; font-size: 0.8em;\" from-time=\"{{q.updatedAt | date : 'MM/dd/yyyy'}}\"></time-ago>\n" +
+    "				</span>\n" +
     "\n" +
     "				<span class=\"pull-right\" style=\"text-align:right;\">\n" +
     "					<span ng-repeat=\"tag in q.tags\" class=\"tag\" ng-click=\"addToFilter(tag); $event.stopPropagation();\">{{tag}}</span>\n" +

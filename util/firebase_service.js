@@ -699,7 +699,7 @@ module.exports = function (AdminFirebase, Q) {
                 answersCount: 0,
                 closed: false,
                 commentsCount: 0,
-                createdAt: now('nano'),
+                createdAt: new Date().toLocaleTimeString("en-us", timeOptions),
                 id: "null",
                 messageType: "QuestionInFirebase",
                 ownerId: owner_id,
@@ -708,7 +708,7 @@ module.exports = function (AdminFirebase, Q) {
                 tags: tags,
                 text: question,
                 title: title,
-                updatedAt: "null",
+                updatedAt: new Date().toLocaleTimeString("en-us", timeOptions),
                 version: 0,
                 views: "null"
             };
@@ -761,7 +761,7 @@ module.exports = function (AdminFirebase, Q) {
                         tags: tags,
                         text: question,
                         title: title,
-                        updatedAt: now(""),
+                        updatedAt: new Date().toLocaleTimeString("en-us", timeOptions),
                         version: version
                     };
                     var update_child_promise = root_ref.child(path).child(question_id).update(question_schema);
@@ -790,7 +790,7 @@ module.exports = function (AdminFirebase, Q) {
         addAnswer: function (project_id, question_id, answer, worker_id) {
             answer_schema = {
                 comments: "null",
-                createdAt: now('nano'),
+                createdAt: new Date().toLocaleTimeString("en-us", timeOptions),
                 id: "null",
                 messageType: "AnswerInFireBase",
                 ownerId: worker_id,
@@ -810,7 +810,7 @@ module.exports = function (AdminFirebase, Q) {
             //increment answer count and updated time
             root_ref.child(path).once("value").then(function (data) {
                 var answer_count = data.val().answersCount + 1;
-                root_ref.child(path).update({answersCount: answer_count, updatedAt: now('nano')});
+                root_ref.child(path).update({answersCount: answer_count, updatedAt: new Date().toLocaleTimeString("en-us", timeOptions)});
             }).catch(function (err) {
                 console.trace(err);
             });
@@ -869,7 +869,7 @@ module.exports = function (AdminFirebase, Q) {
          */
         addComment: function (project_id, question_id, answer_id, comment, worker_id) {
             comment_schema = {
-                createdAt: now('nano'),
+                createdAt: new Date().toLocaleTimeString("en-us", timeOptions),
                 id: "null",
                 messageType: "CommentInFireBase",
                 ownerId: worker_id,
