@@ -4651,13 +4651,13 @@ angular.module("ui_elements/nav_bar_template.html", []).run(["$templateCache", f
 angular.module("ui_elements/nav_user_menu_template.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("ui_elements/nav_user_menu_template.html",
     "<div class=\"popover user-menu-popover\">\n" +
-    "	Score: <strong>{{userData.score }}</strong>  points <br />\n" +
-    "	{{ popover }}\n" +
+    "	<!--Score: <strong>{{userData.score }}</strong>  points <br />-->\n" +
+    "	<!--{{ popover }}-->\n" +
     "\n" +
-    "	<a href=\"#\" ng-click=\" $emit('showUserStatistics'); close() \">Open profile</a><br />\n" +
+    "	<!--<a href=\"#\" ng-click=\" $emit('showUserStatistics'); close() \">Open profile</a><br />-->\n" +
     "	<a href=\"#\" ng-click=\" $emit('showProfileModal'); close() \">Change profile picture</a><br />\n" +
     "	<a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true); close();\">Tutorial</a><br />\n" +
-    "	<a href=\"{{logoutUrl}}\" ng-click=\"close()\">Logout</a>\n" +
+    "	<!--<a href=\"{{logoutUrl}}\" ng-click=\"close()\">Logout</a>-->\n" +
     "</div>");
 }]);
 
