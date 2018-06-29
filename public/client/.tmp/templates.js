@@ -1,4 +1,4 @@
-angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/dashboard/dashboard2.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
+angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/dashboard/dashboard2.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/introduction_tutorial.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
 
 angular.module("achievements/achievements_panel.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("achievements/achievements_panel.html",
@@ -3979,56 +3979,38 @@ angular.module("tutorials/input_output_tests.html", []).run(["$templateCache", f
     "</step>");
 }]);
 
-angular.module("tutorials/main.html", []).run(["$templateCache", function ($templateCache) {
-  $templateCache.put("tutorials/main.html",
-    "<step>\n" +
-    "	<div class=\"title\">Crowd Microservices Application Tutorial</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		Welcome to the Crowd Microservices tutorial. Here, we’ll help get you up to speed.\n" +
-    "		<ul>\n" +
-    "			<li><a href=\"#\" ng-click=\"nextStep()\">Introduction</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();\">Implementing a function</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'Review', true, undefined, 'main'); close(); $event.preventDefault();\">Reviewing implemented function</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'main'); close(); $event.preventDefault();\">using the function editor</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'main' ); close(); $event.preventDefault();\">creating a test</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'main'); close(); $event.preventDefault();\">input/output tests</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'main'); close(); $event.preventDefault();\">assertion tests</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true, undefined, 'main'); close(); $event.preventDefault();\">running and debugging tests</a></li>\n" +
-    "\n" +
-    "		</ul>\n" +
-    "	</div>\n" +
-    "</step>\n" +
-    "\n" +
+angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache", function ($templateCache) {
+  $templateCache.put("tutorials/introduction_tutorial.html",
     "<step highlight=\"task\" placement=\"left\" style=\"width:150px;\">\n" +
-    "	<div class=\"title\">Microtask</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		Here’s the current microtask. <br />\n" +
-    "		Can you do it?\n" +
+    "    <div class=\"title\">Microtask</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        Here’s the current microtask. <br />\n" +
+    "        Can you do it?\n" +
     "\n" +
-    "	</div>\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "<step highlight=\"remainingTimeBar\" placement=\"top\" style=\"width:300px;\">\n" +
-    "	<div class=\"title\">Hurry up!</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		For each microtask, you have <strong>10 minutes</strong> to submit the work\n" +
-    "		or the microtask will be automatically skipped. <br /> \n" +
-    "		The bar on the bottom represents the remaining time for submitting the current microtask.<br />\n" +
-    "	</div>\n" +
+    "    <div class=\"title\">Hurry up!</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        For each microtask, you have <strong>15 minutes</strong> to submit the work\n" +
+    "        or the microtask will be automatically skipped. <br />\n" +
+    "        The bar on the bottom represents the remaining time for submitting the current microtask.<br />\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "<step highlight=\"submitBtn\" placement=\"top-left\" style=\"width:150px;\" >\n" +
-    "	<div class=\"title\">Submit</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		All done? Submit your work for review.\n" +
-    "	</div>\n" +
+    "    <div class=\"title\">Submit</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        All done? Submit your work for review.\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "<step highlight=\"skipBtn\" placement=\"top-left\" style=\"width:200px;\" >\n" +
-    "	<div class=\"title\">Skip</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		Not the right microtask for you? Skip it. <br />\n" +
-    "	</div>\n" +
+    "    <div class=\"title\">Skip</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        Not the right microtask for you? Skip it. <br />\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "<!--\n" +
@@ -4040,93 +4022,93 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "</step>-->\n" +
     "\n" +
     "<step style=\"width:500px;\">\n" +
-    "	<div class=\"title\">Have a question? The Crowd might have answered it!</div>\n" +
-    "	<div class=\"text\">\n" +
+    "    <div class=\"title\">Have a question? The Crowd might have answered it!</div>\n" +
+    "    <div class=\"text\">\n" +
     "\n" +
-    "		<p style=\"width: 500px\"> \n" +
-    "			The <strong>questions tab</strong> lets you search for answers and see questions related to the function that you’re currently working on (or testing). If you find a Question that looks relevant, clicking on it opens its discussion. \n" +
-    "		</p>\n" +
+    "        <p style=\"width: 500px\">\n" +
+    "            The <strong>questions tab</strong> lets you search for answers and see questions related to the function that you’re currently working on (or testing). If you find a Question that looks relevant, clicking on it opens its discussion.\n" +
+    "        </p>\n" +
     "\n" +
-    "		<img src=\"/img/tutorial/main/question1.png\"/>\n" +
+    "        <img src=\"/img/tutorial/main/question1.png\"/>\n" +
     "\n" +
-    "		<p style=\"width: 500px\"> \n" +
-    "			You can even edit which questions are related to the current function by toggling the <strong>function name button</strong> to mark the question as related or unrelated (e.g., clicking on “doSpreadsheetCommand” in the example above).\n" +
-    "		</p>\n" +
-    "		<p style=\"width: 500px\"> \n" +
-    "			If you can't find what you’re looking for, you can <strong>ask a question</strong>.\n" +
-    "		</p>\n" +
-    "	</div>\n" +
+    "        <p style=\"width: 500px\">\n" +
+    "            You can even edit which questions are related to the current function by toggling the <strong>function name button</strong> to mark the question as related or unrelated (e.g., clicking on “doSpreadsheetCommand” in the example above).\n" +
+    "        </p>\n" +
+    "        <p style=\"width: 500px\">\n" +
+    "            If you can't find what you’re looking for, you can <strong>ask a question</strong>.\n" +
+    "        </p>\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "\n" +
     "<step style=\"width:520px;\">\n" +
-    "	<div class=\"title\">... or ask a new question ... </div>\n" +
-    "	<div class=\"text\">\n" +
-    "		<div class=\"pull-left\">\n" +
-    "			<img src=\"/img/tutorial/main/question2.png\" style=\"width:280px;margin-right:10px;\"/>\n" +
-    "		</div>\n" +
-    "		<div class=\"pull-left\" style=\"width:200px\">\n" +
-    "			<p>\n" +
-    "				Questions let you get answers from the crowd. You might have a question about the Debug microtask, the meaning of a field in a data structure, or a design decision. Questions can help in any of these cases. \n" +
-    "			</p>\n" +
-    "			<p>\n" +
-    "				To ask a question, you just need to provide a title and description. Additionally, you can add <strong>tags</strong> to group the question with other related questions (e.g., debugging, error handing). If the question is about the behavior or implementation of a function you’re working on (or testing), you can mark it as <strong>related</strong> to the function.\n" +
-    "			</p>\n" +
-    "		</div>\n" +
-    "		<span class=\"clearfix\"></span>\n" +
-    "	</div>\n" +
+    "    <div class=\"title\">... or ask a new question ... </div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <div class=\"pull-left\">\n" +
+    "            <img src=\"/img/tutorial/main/question2.png\" style=\"width:280px;margin-right:10px;\"/>\n" +
+    "        </div>\n" +
+    "        <div class=\"pull-left\" style=\"width:200px\">\n" +
+    "            <p>\n" +
+    "                Questions let you get answers from the crowd. You might have a question about the Debug microtask, the meaning of a field in a data structure, or a design decision. Questions can help in any of these cases.\n" +
+    "            </p>\n" +
+    "            <p>\n" +
+    "                To ask a question, you just need to provide a title and description. Additionally, you can add <strong>tags</strong> to group the question with other related questions (e.g., debugging, error handing). If the question is about the behavior or implementation of a function you’re working on (or testing), you can mark it as <strong>related</strong> to the function.\n" +
+    "            </p>\n" +
+    "        </div>\n" +
+    "        <span class=\"clearfix\"></span>\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "\n" +
     "<step style=\"width:500px;\">\n" +
-    "	<div class=\"text\">\n" +
+    "    <div class=\"text\">\n" +
     "\n" +
-    "		<p style=\"width: 450px\"> \n" +
-    "			When a worker asks a question, everyone in the system gets notified. You now have the opportunity to participate in the discussion. Crowd Microservices provides several ways to participate. If you have an answer, you can add a new answer. If you see answers that others have provided, you can Comment on the answer. And if you see Questions, Answers, and Comments with which you agree (or disagree), you can <strong>up vote</strong> or <strong>down vote</strong> the item.\n" +
-    "		</p>\n" +
+    "        <p style=\"width: 450px\">\n" +
+    "            When a worker asks a question, everyone in the system gets notified. You now have the opportunity to participate in the discussion. Crowd Microservices provides several ways to participate. If you have an answer, you can add a new answer. If you see answers that others have provided, you can Comment on the answer. And if you see Questions, Answers, and Comments with which you agree (or disagree), you can <strong>up vote</strong> or <strong>down vote</strong> the item.\n" +
+    "        </p>\n" +
     "\n" +
-    "		<img src=\"/img/tutorial/main/question3.png\"/>\n" +
+    "        <img src=\"/img/tutorial/main/question3.png\"/>\n" +
     "\n" +
-    "		<p style=\"width: 450px\"> \n" +
-    "			When you think that discussion on a Question has been concluded, you can mark a Question as <strong>answered</strong>. This lets the crowd know that the question has been answered, and that no further answers are required. In the list of questions, Open questions are indicated with a yellow background while closed questions are indicated with a gray background.\n" +
-    "		</p>\n" +
-    "		<p style=\"width: 450px\"> \n" +
-    "			If you see a closed question that needs more discussion, you can reopen it.\n" +
-    "		</p>\n" +
-    "	</div>\n" +
+    "        <p style=\"width: 450px\">\n" +
+    "            When you think that discussion on a Question has been concluded, you can mark a Question as <strong>answered</strong>. This lets the crowd know that the question has been answered, and that no further answers are required. In the list of questions, Open questions are indicated with a yellow background while closed questions are indicated with a gray background.\n" +
+    "        </p>\n" +
+    "        <p style=\"width: 450px\">\n" +
+    "            If you see a closed question that needs more discussion, you can reopen it.\n" +
+    "        </p>\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "\n" +
     "<step>\n" +
-    "	<div class=\"title\">Resizing panels</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		<p style=\"width: 450px\"> \n" +
-    "			If you need more space while working on a microtask, you can resize every panel.\n" +
-    "		</p>\n" +
+    "    <div class=\"title\">Resizing panels</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p style=\"width: 450px\">\n" +
+    "            If you need more space while working on a microtask, you can resize every panel.\n" +
+    "        </p>\n" +
     "\n" +
-    "		<img src=\"/img/tutorial/main/resize.jpg\"/>\n" +
-    "	</div>\n" +
+    "        <img src=\"/img/tutorial/main/resize.jpg\"/>\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "<step highlight=\"newsfeedBtn\" placement=\"right-center\" style=\"width:200px;\"\n" +
-    "	  on-show=\"$broadcast('setLeftBarTab','newsfeed');\">\n" +
-    "	<div class=\"title\">Your Activity</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		See what you’ve done, see how the crowd rated it.\n" +
-    "	</div>\n" +
+    "      on-show=\"$broadcast('setLeftBarTab','newsfeed');\">\n" +
+    "    <div class=\"title\">Your Activity</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        See what you’ve done, see how the crowd rated it.\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "<step>\n" +
     "\n" +
-    "	<div class=\"title\">Tutorials</div>\n" +
-    "	<div class=\"text\">\n" +
+    "    <div class=\"title\">Tutorials</div>\n" +
+    "    <div class=\"text\">\n" +
     "\n" +
-    "		<p style=\"width: 450px\"> \n" +
-    "			If you're in trouble and don't know what to do, you can open the tutorials by clicking on the question mark icons.\n" +
-    "		</p>\n" +
+    "        <p style=\"width: 450px\">\n" +
+    "            If you're in trouble and don't know what to do, you can open the tutorials by clicking on the question mark icons.\n" +
+    "        </p>\n" +
     "\n" +
-    "		<img src=\"/img/tutorial/main/questionmark.jpg\"/>\n" +
-    "	</div>\n" +
+    "        <img src=\"/img/tutorial/main/questionmark.jpg\"/>\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "\n" +
@@ -4158,12 +4140,200 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "</step>\n" +
     "-->\n" +
     "\n" +
-    "<step on-hide=\"showProfileModal(); \" style=\"width:300px\">\n" +
-    "	<div class=\"title\">Congratulations! </div>\n" +
+    "<!--<step on-hide=\"showProfileModal(); \" style=\"width:300px\">-->\n" +
+    "<!--<div class=\"title\">Congratulations! </div>-->\n" +
+    "<!--<div class=\"text\">-->\n" +
+    "<!--You have completed the Crowd Microservices getting started tutorial!-->\n" +
+    "<!--</div>-->\n" +
+    "<!--</step>-->");
+}]);
+
+angular.module("tutorials/main.html", []).run(["$templateCache", function ($templateCache) {
+  $templateCache.put("tutorials/main.html",
+    "<step>\n" +
+    "	<div class=\"title\">Crowd Microservices Application Tutorial</div>\n" +
     "	<div class=\"text\">\n" +
-    "		You have completed the Crowd Microservicesvvv getting started tutorial!\n" +
+    "		Welcome to the Crowd Microservices tutorial. Here, we’ll help get you up to speed.\n" +
+    "		<ul>\n" +
+    "			<!--<li><a href=\"#\" ng-click=\"nextStep()\">Introduction</a></li>-->\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'introduction_tutorial', true, undefined, 'main'); close(); $event.preventDefault();\">Introduction</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();\">Implementing a function</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'Review', true, undefined, 'main'); close(); $event.preventDefault();\">Reviewing implemented function</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'main'); close(); $event.preventDefault();\">using the function editor</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'main' ); close(); $event.preventDefault();\">creating a test</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'main'); close(); $event.preventDefault();\">input/output tests</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'main'); close(); $event.preventDefault();\">assertion tests</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true, undefined, 'main'); close(); $event.preventDefault();\">running and debugging tests</a></li>\n" +
+    "\n" +
+    "		</ul>\n" +
     "	</div>\n" +
-    "</step>");
+    "</step>\n" +
+    "\n" +
+    "<!--<step highlight=\"task\" placement=\"left\" style=\"width:150px;\">-->\n" +
+    "	<!--<div class=\"title\">Microtask</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--Here’s the current microtask. <br />-->\n" +
+    "		<!--Can you do it?-->\n" +
+    "\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "<!--<step highlight=\"remainingTimeBar\" placement=\"top\" style=\"width:300px;\">-->\n" +
+    "	<!--<div class=\"title\">Hurry up!</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--For each microtask, you have <strong>15 minutes</strong> to submit the work-->\n" +
+    "		<!--or the microtask will be automatically skipped. <br /> -->\n" +
+    "		<!--The bar on the bottom represents the remaining time for submitting the current microtask.<br />-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "<!--<step highlight=\"submitBtn\" placement=\"top-left\" style=\"width:150px;\" >-->\n" +
+    "	<!--<div class=\"title\">Submit</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--All done? Submit your work for review.-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "<!--<step highlight=\"skipBtn\" placement=\"top-left\" style=\"width:200px;\" >-->\n" +
+    "	<!--<div class=\"title\">Skip</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--Not the right microtask for you? Skip it. <br />-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "<!--&lt;!&ndash;-->\n" +
+    "<!--<step highlight=\"breakBtn\" placement=\"top-left\" style=\"width:200px;\" >-->\n" +
+    "	<!--<div class=\"title\">Pick next microtask</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--Want to pick the next microtask to work on? Click <strong>Pick next microtask</strong> before you Submit or Skip.-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>&ndash;&gt;-->\n" +
+    "\n" +
+    "<!--<step style=\"width:500px;\">-->\n" +
+    "	<!--<div class=\"title\">Have a question? The Crowd might have answered it!</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "\n" +
+    "		<!--<p style=\"width: 500px\"> -->\n" +
+    "			<!--The <strong>questions tab</strong> lets you search for answers and see questions related to the function that you’re currently working on (or testing). If you find a Question that looks relevant, clicking on it opens its discussion. -->\n" +
+    "		<!--</p>-->\n" +
+    "\n" +
+    "		<!--<img src=\"/img/tutorial/main/question1.png\"/>-->\n" +
+    "\n" +
+    "		<!--<p style=\"width: 500px\"> -->\n" +
+    "			<!--You can even edit which questions are related to the current function by toggling the <strong>function name button</strong> to mark the question as related or unrelated (e.g., clicking on “doSpreadsheetCommand” in the example above).-->\n" +
+    "		<!--</p>-->\n" +
+    "		<!--<p style=\"width: 500px\"> -->\n" +
+    "			<!--If you can't find what you’re looking for, you can <strong>ask a question</strong>.-->\n" +
+    "		<!--</p>-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "\n" +
+    "<!--<step style=\"width:520px;\">-->\n" +
+    "	<!--<div class=\"title\">... or ask a new question ... </div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--<div class=\"pull-left\">-->\n" +
+    "			<!--<img src=\"/img/tutorial/main/question2.png\" style=\"width:280px;margin-right:10px;\"/>-->\n" +
+    "		<!--</div>-->\n" +
+    "		<!--<div class=\"pull-left\" style=\"width:200px\">-->\n" +
+    "			<!--<p>-->\n" +
+    "				<!--Questions let you get answers from the crowd. You might have a question about the Debug microtask, the meaning of a field in a data structure, or a design decision. Questions can help in any of these cases. -->\n" +
+    "			<!--</p>-->\n" +
+    "			<!--<p>-->\n" +
+    "				<!--To ask a question, you just need to provide a title and description. Additionally, you can add <strong>tags</strong> to group the question with other related questions (e.g., debugging, error handing). If the question is about the behavior or implementation of a function you’re working on (or testing), you can mark it as <strong>related</strong> to the function.-->\n" +
+    "			<!--</p>-->\n" +
+    "		<!--</div>-->\n" +
+    "		<!--<span class=\"clearfix\"></span>-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "\n" +
+    "<!--<step style=\"width:500px;\">-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "\n" +
+    "		<!--<p style=\"width: 450px\"> -->\n" +
+    "			<!--When a worker asks a question, everyone in the system gets notified. You now have the opportunity to participate in the discussion. Crowd Microservices provides several ways to participate. If you have an answer, you can add a new answer. If you see answers that others have provided, you can Comment on the answer. And if you see Questions, Answers, and Comments with which you agree (or disagree), you can <strong>up vote</strong> or <strong>down vote</strong> the item.-->\n" +
+    "		<!--</p>-->\n" +
+    "\n" +
+    "		<!--<img src=\"/img/tutorial/main/question3.png\"/>-->\n" +
+    "\n" +
+    "		<!--<p style=\"width: 450px\"> -->\n" +
+    "			<!--When you think that discussion on a Question has been concluded, you can mark a Question as <strong>answered</strong>. This lets the crowd know that the question has been answered, and that no further answers are required. In the list of questions, Open questions are indicated with a yellow background while closed questions are indicated with a gray background.-->\n" +
+    "		<!--</p>-->\n" +
+    "		<!--<p style=\"width: 450px\"> -->\n" +
+    "			<!--If you see a closed question that needs more discussion, you can reopen it.-->\n" +
+    "		<!--</p>-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "\n" +
+    "<!--<step>-->\n" +
+    "	<!--<div class=\"title\">Resizing panels</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--<p style=\"width: 450px\"> -->\n" +
+    "			<!--If you need more space while working on a microtask, you can resize every panel.-->\n" +
+    "		<!--</p>-->\n" +
+    "\n" +
+    "		<!--<img src=\"/img/tutorial/main/resize.jpg\"/>-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "<!--<step highlight=\"newsfeedBtn\" placement=\"right-center\" style=\"width:200px;\"-->\n" +
+    "	  <!--on-show=\"$broadcast('setLeftBarTab','newsfeed');\">-->\n" +
+    "	<!--<div class=\"title\">Your Activity</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--See what you’ve done, see how the crowd rated it.-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "<!--<step>-->\n" +
+    "\n" +
+    "	<!--<div class=\"title\">Tutorials</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "\n" +
+    "		<!--<p style=\"width: 450px\"> -->\n" +
+    "			<!--If you're in trouble and don't know what to do, you can open the tutorials by clicking on the question mark icons.-->\n" +
+    "		<!--</p>-->\n" +
+    "\n" +
+    "		<!--<img src=\"/img/tutorial/main/questionmark.jpg\"/>-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "\n" +
+    "<!--&lt;!&ndash;-->\n" +
+    "<!--<step highlight=\"questionsBtn\" placement=\"right-center\" style=\"width:200px;\"-->\n" +
+    "	<!--on-show=\"$broadcast('setLeftBarTab','questions');\">-->\n" +
+    "	<!--<div class=\"title\">Questions</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--Don’t worry. You’re still cool, even if someone has 400 points more than you.-->\n" +
+    "\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "\n" +
+    "<!--<step highlight=\"leaderboardBtn\" placement=\"right-center\" style=\"width:200px;\"-->\n" +
+    "	<!--on-show=\"$broadcast('setLeftBarTab','leaderboard');\">-->\n" +
+    "	<!--<div class=\"title\">Leaderboard</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--Don’t worry. You’re still cool, even if someone has 400 points more than you.-->\n" +
+    "\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "<!--<step highlight=\"feedbackBtn\" placement=\"top-center\" style=\"width:100px;\">-->\n" +
+    "	<!--<div class=\"title\">Send us feedback</div>-->\n" +
+    "	<!--<div class=\"text\">-->\n" +
+    "		<!--See something wrong with CrowdCode? Let us know!-->\n" +
+    "	<!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "<!--&ndash;&gt;-->\n" +
+    "\n" +
+    "<!--&lt;!&ndash;<step on-hide=\"showProfileModal(); \" style=\"width:300px\">&ndash;&gt;-->\n" +
+    "	<!--&lt;!&ndash;<div class=\"title\">Congratulations! </div>&ndash;&gt;-->\n" +
+    "	<!--&lt;!&ndash;<div class=\"text\">&ndash;&gt;-->\n" +
+    "		<!--&lt;!&ndash;You have completed the Crowd Microservices getting started tutorial!&ndash;&gt;-->\n" +
+    "	<!--&lt;!&ndash;</div>&ndash;&gt;-->\n" +
+    "<!--&lt;!&ndash;</step>&ndash;&gt;-->");
 }]);
 
 angular.module("tutorials/review_describe.html", []).run(["$templateCache", function ($templateCache) {
@@ -4251,8 +4421,8 @@ angular.module("ui_elements/left_bar_buttons_template.html", []).run(["$template
   $templateCache.put("ui_elements/left_bar_buttons_template.html",
     "<div class=\"btn-bar btn-bar-left\">\n" +
     "  <div class=\"btn-group\">\n" +
-    "    <div class=\"btn {{ selectedTab == 'newsfeed' ? 'active' : '' }}\" ng-click=\"selectTab('newsfeed'); trackInteraction('Click Left Bar', 'Toggle', $event)\">Newsfeed</div>\n" +
     "    <div class=\"btn {{ selectedTab == 'questions' ? 'active' : '' }}\" ng-click=\"selectTab('questions'); trackInteraction('Click Left Bar', 'Toggle', $event)\">Questions</div>\n" +
+    "    <div class=\"btn {{ selectedTab == 'newsfeed' ? 'active' : '' }}\" ng-click=\"selectTab('newsfeed'); trackInteraction('Click Left Bar', 'Toggle', $event)\">Newsfeed</div>\n" +
     "  </div>\n" +
     "</div>\n" +
     "");
