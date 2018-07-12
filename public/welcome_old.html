@@ -1,0 +1,213 @@
+<html>
+
+<head>
+	<title>Crowd Microservices</title>
+
+	<link href='https://fonts.googleapis.com/css?family=Merriweather:300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic|Lato:100normal,100italic,300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic' rel='stylesheet'
+	  type='text/css'>
+	<!--
+	<link rel="stylesheet" href="include/bootstrap/css/bootstrap.min.css">
+	<script src="include/jquery.min.js" type="text/javascript"></script>
+	<script src="include/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	-->
+	<!-- JQuery JavaScript -->
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+			integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+			crossorigin="anonymous"></script>
+	<!--  Bootstrap minified CSS -->
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<!-- Bootstrap JavaScript -->
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+
+	<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+	<script>
+		var config = {
+			apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
+			authDomain: "crowdcode2.firebaseapp.com",
+			databaseURL: "https://crowdcode2.firebaseio.com",
+			projectId: "crowdcode2",
+			storageBucket: "crowdcode2.appspot.com",
+			messagingSenderId: "382318704982"
+		};
+		firebase.initializeApp(config);
+	</script>
+	<style type="text/css">
+		body {
+			font-size: 18px;
+			text-align: center;
+			font-family: 'Lato' !important;
+		}
+
+		.navbar {
+			font-family: 'Lato' !important;
+			background-color: #555;
+		}
+
+		.navbar .navbar-brand {
+			color: white;
+		}
+
+		.container-fluid {}
+
+		h1 {
+			font-size: 2.0em;
+			font-weight: 800;
+			line-height: 2.5em;
+		}
+
+		h2 {
+			font-size: 1.4em;
+			font-weight: 800;
+		}
+
+		img {
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<div class="container-fluid">
+
+
+		<div class="row">
+			<h2>Step zero: Watch the video below to learn how to get started</h2>
+			<video width="1400" height="800" controls >
+				<source src="/video/CrowdDemoLight.mp4" type="video/mp4">
+			</video>
+		</div>
+		<hr />
+		<hr />
+
+		<div class="row">
+			<div class="col-md-12 col-sm-12">
+
+				<div class="row">
+					<div class="col-md-offset-1 col-md-10 col-sm-12">
+						<h1>Programming, re-envisioned</h1>
+						<img src="/img/welcome_first.png" />
+						<img src="/img/welcome_second.png" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-offset-1 col-md-5 col-sm-12">
+						<h2>Microtasks</h2>
+						<p>
+							Crowd Microservices organizes programming into microtasks, small units you can pick and do like writing a few lines of code and brain- storming tests.
+						</p>
+					</div>
+					<div class="col-md-5 col-sm-12">
+						<h2>Start it, or finish it!</h2>
+						<p>
+							Write some pseudocode, leave it for the crowd. The crowd will write the functions as well as test it for you.
+						</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-offset-1 col-md-5 col-sm-12">
+						<h2>Automatic task generation</h2>
+						<p>
+							Crowd Microservices tracks what needs to be done, generating and managing microtasks.
+						</p>
+					</div>
+					<div class="col-md-5 col-sm-12">
+						<h2>Code, Tested</h2>
+						<p>
+							All code is unit tested. <br />When the tests pass, it’s ready to go.
+						</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<hr />
+		<hr />
+
+		<div class="row">
+			<div class="col-md-12 col-sm-12">
+				<div class="row">
+					<div class="col-md-offset-1 col-md-10 col-sm-12">
+						<h1>Your work, your credit</h1>
+						<img src="/img/welcome_third.png" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-offset-1 col-md-5 col-sm-12">
+						<h2>Points</h2>
+						<p>
+							Microtasks are worth points; the harder the work, the more points it’s worth.
+						</p>
+					</div>
+					<div class="col-md-5 col-sm-12">
+						<h2>Reviews</h2>
+						<p>
+							Microtasks you submit are reviewed by the crowd. If accepted, you get the points; if rejected, you get nothing. You get points to review others work as well.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<hr />
+		<hr />
+		<!--<div class="row">-->
+
+			<!--<div class="col-md-12 col-sm-12">-->
+
+				<!--<div class="row">-->
+					<!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
+						<!--<h1>Write code, with the crowd. </h1>-->
+						<!--<img src="/img/welcome_implementation.png" style="box-shadow: 0px 0px 5px 5px #CBCBCB;" />-->
+
+					<!--</div>-->
+				<!--</div>-->
+			<!--</div>-->
+		<!--</div>-->
+
+		<!--<hr />-->
+		<!--<hr />-->
+
+
+
+
+		<div class="row">
+			<div class="jumbotron" style="text-align:center;">
+				<a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
+			</div>
+		</div>
+
+	</div>
+
+
+	<script>
+		var isChromium = window.chrome,
+			vendorName = window.navigator.vendor;
+
+		if (!(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.")) {
+			$('#btnStart').on('click', function(event) {
+				event.preventDefault();
+				alert('Please, use Google Chrome!');
+			});
+		}
+
+		// it is commented because in the firest load it takes long time. if this change does not fix the problem revert it
+		// var ref = firebase.database().ref('defaultProject');
+
+		var ref = firebase.database().ref().child('Projects').child('todo');
+		ref.once('value', function(snap) {
+			console.log('default project is ' + snap.val());
+			// if (snap.val() != null)
+			// 	$('#btnStart').attr('href', '/' + snap.val());
+			// else
+				$('#btnStart').attr('href', '/todo');
+
+		});
+	</script>
+</body>
+
+</html>
+Ø

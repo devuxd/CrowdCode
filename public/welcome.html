@@ -1,213 +1,237 @@
 <html>
 
 <head>
-	<title>Crowd Microservices</title>
+    <title>Crowd Microservices</title>
 
-	<link href='https://fonts.googleapis.com/css?family=Merriweather:300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic|Lato:100normal,100italic,300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic' rel='stylesheet'
-	  type='text/css'>
-	<!--
-	<link rel="stylesheet" href="include/bootstrap/css/bootstrap.min.css">
-	<script src="include/jquery.min.js" type="text/javascript"></script>
-	<script src="include/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-	-->
-	<!-- JQuery JavaScript -->
-	<script src="https://code.jquery.com/jquery-2.2.4.min.js"
-			integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-			crossorigin="anonymous"></script>
-	<!--  Bootstrap minified CSS -->
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-	<!-- Bootstrap JavaScript -->
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic|Lato:100normal,100italic,300normal,300italic,400normal,400italic,700normal,700italic,900normal,900italic'
+          rel='stylesheet'
+          type='text/css'>
+    <!--
+    <link rel="stylesheet" href="include/bootstrap/css/bootstrap.min.css">
+    <script src="include/jquery.min.js" type="text/javascript"></script>
+    <script src="include/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    -->
+    <!-- JQuery JavaScript -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"></script>
+    <!--  Bootstrap minified CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <!-- Bootstrap JavaScript -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
 
-	<script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
-	<script>
-		var config = {
-			apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
-			authDomain: "crowdcode2.firebaseapp.com",
-			databaseURL: "https://crowdcode2.firebaseio.com",
-			projectId: "crowdcode2",
-			storageBucket: "crowdcode2.appspot.com",
-			messagingSenderId: "382318704982"
-		};
-		firebase.initializeApp(config);
-	</script>
-	<style type="text/css">
-		body {
-			font-size: 18px;
-			text-align: center;
-			font-family: 'Lato' !important;
-		}
+    <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+    <script>
+        var config = {
+            apiKey: "AIzaSyCmhzDIbe7pp8dl0gveS2TtOH4n8mvMzsU",
+            authDomain: "crowdcode2.firebaseapp.com",
+            databaseURL: "https://crowdcode2.firebaseio.com",
+            projectId: "crowdcode2",
+            storageBucket: "crowdcode2.appspot.com",
+            messagingSenderId: "382318704982"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <style type="text/css">
+        body {
+            font-size: 18px;
+            text-align: center;
+            font-family: 'Lato' !important;
+        }
 
-		.navbar {
-			font-family: 'Lato' !important;
-			background-color: #555;
-		}
+        .navbar {
+            font-family: 'Lato' !important;
+            background-color: #555;
+        }
 
-		.navbar .navbar-brand {
-			color: white;
-		}
+        .navbar .navbar-brand {
+            color: white;
+        }
 
-		.container-fluid {}
+        .container-fluid {
+        }
 
-		h1 {
-			font-size: 2.0em;
-			font-weight: 800;
-			line-height: 2.5em;
-		}
+        h1 {
+            font-size: 2.0em;
+            font-weight: 800;
+            line-height: 2.5em;
+        }
 
-		h2 {
-			font-size: 1.4em;
-			font-weight: 800;
-		}
+        h2 {
+            font-size: 1.4em;
+            font-weight: 800;
+        }
 
-		img {
-			width: 100%;
-		}
-	</style>
+        img {
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body>
 
 
-	<div class="container-fluid">
+<div class="container-fluid">
 
 
-		<div class="row">
-			<h1>Before going to the next step watch this video carefully</h1>
-			<video width="800" controls >
-				<source src="/video/CrowdDemoLight.mp4" type="video/mp4">
-			</video>
-		</div>
-		<hr />
-		<hr />
+    <h1> 1: Watch the video below to learn how to get started</h1>
+    <div class="row ">
+        <div class="col-lg-12">
+            <video width="1400" height="800" controls>
+                <source src="/video/CrowdDemoLight.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+    <hr/>
+    <hr/>
 
-		<div class="row">
-			<div class="col-md-12 col-sm-12">
+    <h1> 2: You will faced with two types of tasks to accomplish. Read the below workflow</h1>
+    <div class="row justify-content-start">
+        <div class="col-sm-4">
+            <h2 class="pull-left"> Type A: Implement behaviour tasks </h2>
+        </div>
+    </div>
+    <div class="row justify-content-start">
+        <div class="col-lg-4">
+            <h5 class="pull-left">Step 1: Find a behavior in function description that is not yet implemented</h5>
+            <img src="/img/Behave-step1-blur.png" border="5"/>
+        </div>
+        <div class="col-lg-3">
+            <h5 class="pull-left">Step 2: write a test for this behavior</h5>
+            <img src="/img/Behave-step2.png"/>
+        </div>
+        <div class="col-lg-3">
+            <h5 class="pull-left">Step 3: Implement the behaviour in the function editor</h5>
+            <img src="/img/Behave-step3.png"/>
+        </div>
+        <h5 class="pull-left">Step 4: Congrats! Submit the task</h5>
+        <div class="col-lg-1">
+            <img  src="/img/SubmitButton.png"/>
+        </div>
+    </div>
+    <hr />
+    <div class="row justify-content-start">
+        <div class="col-sm-4" class="row justify-content-start">
+            <h2 class="pull-left"> Type B: Review tasks</h2>
 
-				<div class="row">
-					<div class="col-md-offset-1 col-md-10 col-sm-12">
-						<h1>Programming, re-envisioned</h1>
-						<img src="/img/welcome_first.png" />
-						<img src="/img/welcome_second.png" />
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-offset-1 col-md-5 col-sm-12">
-						<h2>Microtasks</h2>
-						<p>
-							Crowd Microservices organizes programming into microtasks, small units you can pick and do like writing a few lines of code and brain- storming tests.
-						</p>
-					</div>
-					<div class="col-md-5 col-sm-12">
-						<h2>Start it, or finish it!</h2>
-						<p>
-							Write some pseudocode, leave it for the crowd. The crowd will write the functions as well as test it for you.
-						</p>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-offset-1 col-md-5 col-sm-12">
-						<h2>Automatic task generation</h2>
-						<p>
-							Crowd Microservices tracks what needs to be done, generating and managing microtasks.
-						</p>
-					</div>
-					<div class="col-md-5 col-sm-12">
-						<h2>Code, Tested</h2>
-						<p>
-							All code is unit tested. <br />When the tests pass, it’s ready to go.
-						</p>
-					</div>
-				</div>
+        </div>
 
-			</div>
-		</div>
-
-		<hr />
-		<hr />
-
-		<div class="row">
-			<div class="col-md-12 col-sm-12">
-				<div class="row">
-					<div class="col-md-offset-1 col-md-10 col-sm-12">
-						<h1>Your work, your credit</h1>
-						<img src="/img/welcome_third.png" />
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-offset-1 col-md-5 col-sm-12">
-						<h2>Points</h2>
-						<p>
-							Microtasks are worth points; the harder the work, the more points it’s worth.
-						</p>
-					</div>
-					<div class="col-md-5 col-sm-12">
-						<h2>Reviews</h2>
-						<p>
-							Microtasks you submit are reviewed by the crowd. If accepted, you get the points; if rejected, you get nothing. You get points to review others work as well.
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<hr />
-		<hr />
-		<!--<div class="row">-->
-
-			<!--<div class="col-md-12 col-sm-12">-->
-
-				<!--<div class="row">-->
-					<!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
-						<!--<h1>Write code, with the crowd. </h1>-->
-						<!--<img src="/img/welcome_implementation.png" style="box-shadow: 0px 0px 5px 5px #CBCBCB;" />-->
-
-					<!--</div>-->
-				<!--</div>-->
-			<!--</div>-->
-		<!--</div>-->
-
-		<!--<hr />-->
-		<!--<hr />-->
+    </div>
+    <div class="row justify-content-start">
+        <div class="col-lg-4">
+            <h5 class="pull-left">Step 1: review implementation of the behavior</h5>
+            <img src="/img/review-step1.png" border="5"/>
+        </div>
+        <div class="col-lg-3">
+            <h5 class="pull-left">Step 2: review tests of this behavior</h5>
+            <img src="/img/review-step2.png"/>
+        </div>
+        <div class="col-lg-3">
+            <h5 class="pull-left">Step 3: rate the contribution and make a comment</h5>
+            <img src="/img/review-step3.png"/>
+        </div>
+        <h5 class="pull-left">Step 4: Congrats! Submit the task</h5>
+        <div class="col-lg-1">
+            <img height="" src="/img/SubmitButton.png"/>
+        </div>
+    </div>
+    <!--<div class="row">-->
 
 
+        <!--Here’s a function getAllDoneTodos that needs some work. Please identify a behavior in its description that is-->
+        <!--not yet implemented;-->
+        <!--firstly, write a test for this behavior,-->
+        <!--secondly implement it.-->
+        <!--You can run the tests for the function by clicking RunTests.-->
+        <!--Remember, you only have 15 minutes, so be sure to submit your work before time runs out.You don’t need to (and-->
+        <!--probably don’t have time) to finish the function implementation.-->
+        <!--Instead, find a single behavior, write a test, and implement just that behavior.-->
+        <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
+        <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
+    <!--The test suite and implementation for has been updated by adding, editing, or deleting its tests and implementation.-->
+    <!--Considering just the changes to the test suite and function implementation, can you review them?-->
+    <!--TIP:If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.-->
+
+        <!--<div class="row">-->
+        <!--<div class="col-md-12 col-sm-12">-->
+        <!--<div class="row">-->
+        <!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
+        <!--<h1>Your work, your credit</h1>-->
+        <!--<img src="/img/welcome_third.png"/>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="row">-->
+        <!--<div class="col-md-offset-1 col-md-5 col-sm-12">-->
+        <!--<h2>Points</h2>-->
+        <!--<p>-->
+        <!--Microtasks are worth points; the harder the work, the more points it’s worth.-->
+        <!--</p>-->
+        <!--</div>-->
+        <!--<div class="col-md-5 col-sm-12">-->
+        <!--<h2>Reviews</h2>-->
+        <!--<p>-->
+        <!--Microtasks you submit are reviewed by the crowd. If accepted, you get the points; if rejected,-->
+        <!--you get nothing. You get points to review others work as well.-->
+        <!--</p>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <!--<hr/>-->
+        <!--<hr/>-->
+        <!--<div class="row">-->
+
+        <!--<div class="col-md-12 col-sm-12">-->
+
+        <!--<div class="row">-->
+        <!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
+        <!--<h1>Write code, with the crowd. </h1>-->
+        <!--<img src="/img/welcome_implementation.png" style="box-shadow: 0px 0px 5px 5px #CBCBCB;" />-->
+
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <!--<hr />-->
+        <!--<hr />-->
 
 
-		<div class="row">
-			<div class="jumbotron" style="text-align:center;">
-				<a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
-			</div>
-		</div>
+        <div class="row">
+            <div class="jumbotron" style="text-align:center;">
+                <a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
+            </div>
+        </div>
 
-	</div>
+    </div>
 
 
-	<script>
-		var isChromium = window.chrome,
-			vendorName = window.navigator.vendor;
+    <script>
+        var isChromium = window.chrome,
+            vendorName = window.navigator.vendor;
 
-		if (!(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.")) {
-			$('#btnStart').on('click', function(event) {
-				event.preventDefault();
-				alert('Please, use Google Chrome!');
-			});
-		}
+        if (!(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.")) {
+            $('#btnStart').on('click', function (event) {
+                event.preventDefault();
+                alert('Please, use Google Chrome!');
+            });
+        }
 
-		// it is commented because in the firest load it takes long time. if this change does not fix the problem revert it
-		// var ref = firebase.database().ref('defaultProject');
+        // it is commented because in the firest load it takes long time. if this change does not fix the problem revert it
+        // var ref = firebase.database().ref('defaultProject');
 
-		var ref = firebase.database().ref().child('Projects').child('todo');
-		ref.once('value', function(snap) {
-			console.log('default project is ' + snap.val());
-			// if (snap.val() != null)
-			// 	$('#btnStart').attr('href', '/' + snap.val());
-			// else
-				$('#btnStart').attr('href', '/todo');
+        var ref = firebase.database().ref().child('Projects').child('todo');
+        ref.once('value', function (snap) {
+            console.log('default project is ' + snap.val());
+            // if (snap.val() != null)
+            // 	$('#btnStart').attr('href', '/' + snap.val());
+            // else
+            $('#btnStart').attr('href', '/todo');
 
-		});
-	</script>
+        });
+    </script>
 </body>
 
 </html>
-Ø

@@ -1249,7 +1249,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "		<div class=\"section\" ui-layout-container size=\"60%\">\n" +
     "			<div class=\"section-bar\" ng-show=\"!data.editingStub\">\n" +
     "				<span class=\"title\">\n" +
-    "					Write your code in the bellow Function Editor\n" +
+    "					Write your code in the function editor below\n" +
     "				</span>\n" +
     "				<span class=\"pull-right\">\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"$emit('queue-tutorial', 'function_editor', true); trackInteraction('Click Tutorial', 'Implement Behavior - Function Editor', $event)\">\n" +
