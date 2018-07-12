@@ -7886,8 +7886,8 @@ angular
 
     var microtaskInterval;
 
-    var microtaskTimeout      =  20 * 60 * 1000; //in second
-    var microtaskFirstWarning =  5  * 60 * 1000; //in second
+    var microtaskTimeout      =  15 * 60 * 1000; //in second
+    var microtaskFirstWarning =  1  * 60 * 1000; //in second
     var timeInterval          = 500; //interval time in milliseconds
 
     var fetchTime = 0;
@@ -9385,7 +9385,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
-    "						Here’s a function <strong ng-bind=\"funct.name\"></strong> that needs some work. Please identify a behavior in its description that is not yet implemented; firstly, write a test for this behavior,secondly implement it. You can run the tests for the function by clicking RunTests. Remember, you only have 15 minutes, so be sure to submit your work before time runs out.You don’t need to (and probably don’t have time) to finish the function implementation. Instead, find a single behavior, write a test, and implement just that behavior.\n" +
+    "						Here’s a function <strong ng-bind=\"funct.name\"></strong> that needs some work. <strong>Step 1: </strong> identify a behavior in its description(comments above the function) that is not yet implemented; <strong> Step 2: </strong>Hit \"add new test button\" in test section and write a test for this behavior. You can run the tests for the function by clicking \"RunTests\" button.;<strong> Step 3: </strong>implement it in function editor. <strong> Step 4: </strong> if you are done hit the \"submit\" button. <br/><strong> Some important Notes: </strong>Remember, you only have only <strong>15</strong> minutes, so be sure to submit your work before time runs out.You don’t need to (and probably don’t have time) to finish the function implementation. Instead, find a single behavior, write a test, and implement just that behavior.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"CORRECT\">\n" +
     "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
@@ -12979,20 +12979,20 @@ angular.module("widgets/popup_reminder.html", []).run(["$templateCache", functio
     "		<div class=\"modal-content\" >\n" +
     "			<div class=\"modal-header\">\n" +
     "				<button type=\"button\" class=\"close\" ng-click=\"$hide()\">&times;</button>\n" +
-    "				<h4 class=\"modal-title\">You've been working on this for a while now...</h4>\n" +
+    "				<h4 class=\"modal-title\">You've been working on this for a while now</h4>\n" +
     "			</div>\n" +
     "			<div class=\"modal-body\">\n" +
-    "				<div style=\"text-align: center\"> ...maybe it's time to submit or skip and let the crowd take a look?</div>\n" +
+    "                <div style=\"text-align: center\">It's time to hitting <strong>submit button</strong> and let the crowd take a look.</div>\n" +
     "        \n" +
     "                <br /> <br />\n" +
     "                <div style=\"text-align: center\">\n" +
-    "                  This microtask will be auto skipped in: <br />\n" +
+    "                  This microtask will be auto <strong>skipped</strong>  in: <br />\n" +
     "                  <h4>{{skipMicrotaskIn | date:'mm:ss'}}</h4>\n" +
     "                </div>\n" +
     "\n" +
     "                <br /> <br />\n" +
     "\n" +
-    "                <div style=\"text-align: center\">\n" +
+    "                <div style=\"  text-align: center\">\n" +
     "                  If you don't know how to do this microtask, click on the \n" +
     "                  <span class=\"tutorial-btn glyphicon glyphicon-question-sign color\"></span>\n" +
     "                  on the top-right corner for opening the tutorial!\n" +
