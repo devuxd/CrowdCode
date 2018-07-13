@@ -3560,7 +3560,7 @@ angular
         isSimple : false,
         inputs: $scope.funct.parameters.map(function(par){ return ""; }),
         output: "",
-        code: '//write the test code',
+        code: '//write the test code. // Before coding read the above help tutorial in a blue button',
         added: true,
         deleted: false
     };
@@ -8155,7 +8155,7 @@ function workerProfile(avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$fi
 	}
 }
 
-angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/dashboard/dashboard2.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/introduction_tutorial.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'tutorials/test_section.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
+angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/dashboard/dashboard2.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/introduction_tutorial.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'tutorials/test_editor_help.html', 'tutorials/test_section.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
 
 angular.module("achievements/achievements_panel.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("achievements/achievements_panel.html",
@@ -9406,7 +9406,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"section\" ui-layout-container size=\"58%\">\n" +
+    "        <div class=\"section\" ui-layout-container size=\"50%\">\n" +
     "            <div class=\"section-bar\" ng-show=\"!data.editingStub\">\n" +
     "				<span class=\"title\">\n" +
     "					Write your code in the function editor below\n" +
@@ -9477,7 +9477,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
-    "        <div class=\"section tab-content\" ui-layout-container size=\"33%\">\n" +
+    "        <div class=\"section tab-content\" ui-layout-container size=\"41%\">\n" +
     "            <div class=\"section-bar tests-section-tab-bar\">\n" +
     "                <ul class=\"nav nav-tabs\">\n" +
     "                    <li class=\"active\">\n" +
@@ -9559,11 +9559,11 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "                <div class=\"section-content-2 empty\" ng-if=\"!data.dispute.active && data.tests.length == 0\">\n" +
     "                    <div>\n" +
-    "                        <div>No previous tests written! </div>\n" +
+    "                        <div>No previous tests written!</div>\n" +
     "                        <br/>\n" +
     "                        <button class=\"btn btn-primary btn-sm\" ng-click=\"addNew($event)\" data-trigger=\"hover\"\n" +
     "                                data-placement=\"top\"\n" +
-    "                                data-title=\"Create a new test\" bs-popover >\n" +
+    "                                data-title=\"Create a new test\" bs-popover>\n" +
     "                            <span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +
     "                        </button>\n" +
     "                    </div>\n" +
@@ -9601,51 +9601,62 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                <div class=\"section-content-2 slide from-right padding\" ng-repeat=\"t in data.tests track by $index\"\n" +
     "                     ng-if=\"!data.dispute.active && (!t.deleted || data.selected == t)\" ng-show=\"data.selected == t\">\n" +
     "                    <div ng-form=\"{{ 'testForm_'+$index }}\" class=\"form form-material\" ng-init=\"errors = {}\">\n" +
+    "                        <div class=\"container-fluid\">\n" +
+    "                            <div class=\"row\">\n" +
+    "                                <div class=\"col-sm-6\">\n" +
+    "                                    <label for=\"desc\">Description </label>\n" +
+    "                                    <input id=\"desc\" name=\"description\" ng-model=\"t.description\" style=\"min-width: 10cm\"\n" +
+    "                                              placeholder=\"insert the description\" ng-minlength=\"5\" ng-maxlength=\"220\"\n" +
+    "                                              focus required/>\n" +
+    "                                    <div ng-messages=\"microtaskForm['testForm_'+$index].description.$error\">\n" +
+    "                                        <div ng-if=\"microtaskForm['testForm_'+$index].description.$dirty\">\n" +
+    "                                            <div style=\"color: red\" ng-message=\"required\">the description can't be empty</div>\n" +
+    "                                            <div style=\"color: red\" ng-message=\"minlength\">the description can't be less than 5\n" +
+    "                                                characters\n" +
+    "                                            </div>\n" +
+    "                                            <div ng-message=\"maxlength\">the description can't exceed 150 characters\n" +
+    "                                            </div>\n" +
+    "                                        </div>\n" +
+    "                                    </div>\n" +
+    "                                </div>\n" +
+    "                                <div class=\"col-sm-3\" ng-if=\"t.dispute.active\">\n" +
+    "                                    <label >Report reason </label>\n" +
+    "                                    <input class=\"form-control\" name=\"description\" ng-model=\"t.dispute.text\"\n" +
+    "                                           disabled=\"disabled\"/>\n" +
+    "                                </div>\n" +
+    "                                <div class=\"col-sm-3 pull-right\">\n" +
+    "                                    <label>Type</label>\n" +
+    "                                    <select title=\"adfadfaf\" ng-model=\"t.isSimple\"\n" +
+    "                                            ng-options=\"o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]\">\n" +
+    "                                    </select>\n" +
+    "                                    <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"\n" +
+    "                                          ng-if=\"t.isSimple\"\n" +
+    "                                          ng-click=\"$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)\">\n" +
+    "                                    </span>\n" +
     "\n" +
-    "                        <div class=\"form-group\">\n" +
-    "                            <label for=\"description\">Description </label>\n" +
-    "                            <input class=\"form-control\" name=\"description\" ng-model=\"t.description\"\n" +
-    "                                   placeholder=\"insert the description\" ng-minlength=\"5\" ng-maxlength=\"120\" focus\n" +
-    "                                   required/>\n" +
-    "                            <div class=\"help-block\" ng-messages=\"microtaskForm['testForm_'+$index].description.$error\">\n" +
-    "                                <div ng-if=\"microtaskForm['testForm_'+$index].description.$dirty\">\n" +
-    "                                    <div ng-message=\"required\">the description can't be empty</div>\n" +
-    "                                    <div ng-message=\"minlength\">the description can't be less than 5 characters</div>\n" +
-    "                                    <div ng-message=\"maxlength\">the description can't exceed 150 characters</div>\n" +
+    "                                    <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"\n" +
+    "                                          ng-if=\"!t.isSimple\"\n" +
+    "                                          ng-click=\"$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)\">\n" +
+    "                                    </span>\n" +
+    "\n" +
     "                                </div>\n" +
     "                            </div>\n" +
     "                        </div>\n" +
-    "                        <div class=\"form-group\" ng-if=\"t.dispute.active\">\n" +
-    "                            <label for=\"description\">Report reason </label>\n" +
-    "                            <input class=\"form-control\" name=\"description\" ng-model=\"t.dispute.text\"\n" +
-    "                                   disabled=\"disabled\"/>\n" +
-    "                        </div>\n" +
-    "                        <div class=\"form-group\">\n" +
-    "                            <label>Type</label>\n" +
-    "                            <span class=\"help-icon\">\n" +
-    "							<span\n" +
-    "                                    class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"\n" +
-    "                                    ng-if=\"t.isSimple\"\n" +
-    "                                    ng-click=\"$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)\">\n" +
-    "							</span>\n" +
+    "                        <div ng-if=\"!t.isSimple\">\n" +
     "\n" +
-    "						<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\" ng-if=\"!t.isSimple\"\n" +
-    "                              ng-click=\"$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)\">\n" +
-    "							</span>\n" +
-    "\n" +
-    "						</span>\n" +
-    "                            <select class=\"form-control\" ng-model=\"t.isSimple\"\n" +
-    "                                    ng-options=\"o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]\">\n" +
-    "                            </select>\n" +
-    "                        </div>\n" +
-    "                        <div class=\"form-group\" ng-if=\"!t.isSimple\">\n" +
-    "                            <label for=\"code\">Code</label>\n" +
-    "                            <div class=\"help-icon\"\n" +
-    "                                 ng-click=\"trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)\">\n" +
-    "							<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"\n" +
-    "                                  data-template=\"widgets/test_editor_help.html\" data-auto-close=\"1\"\n" +
-    "                                  data-placement=\"left\" data-title=\"title of th ehelp\" bs-popover>\n" +
-    "							</span>\n" +
+    "                            <div ng-click=\"trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)\">\n" +
+    "                                <label>Code</label>\n" +
+    "                                <!--<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"-->\n" +
+    "                                      <!--data-template=\"widgets/test_editor_help.html\" data-auto-close=\"1\"-->\n" +
+    "                                      <!--data-placement=\"right\" data-title=\"title of the help\" data-style=\"\" bs-popover>-->\n" +
+    "							    <!--</span>-->\n" +
+    "                                <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"\n" +
+    "                                      ng-if=\"!t.isSimple\"\n" +
+    "                                      ng-click=\"$emit('queue-tutorial', 'test_editor_help', true); trackInteraction('Click Tutorial', 'Describe Behavior - Test editor', $event)\"\n" +
+    "                                      data-trigger=\"hover\"\n" +
+    "                                      data-placement=\"right\"\n" +
+    "                                      data-title=\"Help for coding in test section\" bs-popover>\n" +
+    "							    </span>\n" +
     "                            </div>\n" +
     "                            <div class=\"form-control code\" test-editor name=\"code\" function-name=\"{{funct.name}}\"\n" +
     "                                 ng-model=\"t.code\" errors=\"errors['code']\" required>\n" +
@@ -9661,11 +9672,11 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "                        <div ng-if=\"t.isSimple\" ng-form=\"inputs\">\n" +
     "                            <div class=\"form-group\" ng-repeat=\"(pIdx,p) in funct.parameters track by p.name\">\n" +
-    "                                <label for=\"inputs\">\n" +
+    "                                <label >\n" +
     "                                    {{p.name + ' {' + p.type + '}' }}\n" +
     "                                </label>\n" +
     "                                <div class=\"help-icon pull-right\" paste-example=\"{ type : p.type }\"\n" +
-    "                                     ng-model=\"t.inputs[pIdx]\" data-title=\"adfadfadfadfdasfafa\">\n" +
+    "                                     ng-model=\"t.inputs[pIdx]\">\n" +
     "                                    <span class=\"glyphicon glyphicon-plus-sign\"></span> paste example\n" +
     "                                </div>\n" +
     "                                <div class=\"form-control code\" json-editor=\"{ type: p.type, name: p.name }\"\n" +
@@ -9682,7 +9693,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                        </div>\n" +
     "\n" +
     "                        <div class=\"form-group\" ng-if=\"t.isSimple\">\n" +
-    "                            <label for=\"code\">Output {{ '{' + funct.returnType + '}'}}</label>\n" +
+    "                            <label >Output {{ '{' + funct.returnType + '}'}}</label>\n" +
     "                            <div class=\"help-icon pull-right\" paste-example=\"{ type : funct.returnType }\"\n" +
     "                                 ng-model=\"t.output\">\n" +
     "                                <span class=\"glyphicon glyphicon-plus-sign\"></span> paste example\n" +
@@ -12703,6 +12714,32 @@ angular.module("tutorials/running_tests.html", []).run(["$templateCache", functi
     "</step>");
 }]);
 
+angular.module("tutorials/test_editor_help.html", []).run(["$templateCache", function ($templateCache) {
+  $templateCache.put("tutorials/test_editor_help.html",
+    "<step>\n" +
+    "    <div class=\"title\">Test editor</div>\n" +
+    "    <div class=\"text\" style=\"width:600px\">\n" +
+    "        <p>\n" +
+    "            In the test editor you can use ChaiJs website via <a href=\"http://chaijs.com/api/bdd/\" target=\"_blank\"><strong>Link</strong></a>.\n" +
+    "        </p>\n" +
+    "        <p>\n" +
+    "            example:\n" +
+    "\n" +
+    "        <pre>var res = calculate('+',[1,2]);\n" +
+    "             expect(res).to.deep.equal(3);</pre>\n" +
+    "\n" +
+    "        <pre>var badFn = function () { throw new TypeError('Illegal salmon!'); };\n" +
+    "                expect(badFn).to.throw(TypeError);</pre>\n" +
+    "\n" +
+    "        </p>\n" +
+    "        <p>\n" +
+    "            While editing the test code, you can open the auto-complete by pressing ALT+SPACE (Mac) or CTRL+SPACE\n" +
+    "            (Win/Linux).\n" +
+    "        </p>\n" +
+    "    </div>\n" +
+    "</step>");
+}]);
+
 angular.module("tutorials/test_section.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/test_section.html",
     "<step>\n" +
@@ -13306,23 +13343,27 @@ angular.module("widgets/test_editor.html", []).run(["$templateCache", function (
 
 angular.module("widgets/test_editor_help.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("widgets/test_editor_help.html",
-    "<div class=\"popover\">\n" +
-    "  <div class=\"arrow\"></div>\n" +
-    "  <div class=\"popover-content\">\n" +
-    "  	<p>\n" +
-    "  		In the test editor you can use ChaiJs <a href=\"http://chaijs.com/api/bdd/\" target=\"_blank\"><strong>expect</strong></a> syntax\n" +
-    "  	</p>\n" +
+    "<div class=\"popover\" style=\"top: 125px;\">\n" +
+    "    <div class=\"arrow\"></div>\n" +
+    "    <div >\n" +
+    "        <p>\n" +
+    "            In the test editor you can use ChaiJs website: <a href=\"http://chaijs.com/api/bdd/\" target=\"_blank\"><strong>Link</strong></a>.\n" +
+    "        </p>\n" +
+    "        <p>\n" +
+    "            example:\n" +
     "\n" +
-    "  	<p>\n" +
-    "  		Example:\n" +
-    "  		<pre>var res = calculate('+',[1,2]);\n" +
-    "expect(res).to.deep.equal(3);</pre>\n" +
+    "        <pre>var res = calculate('+',[1,2]);\n" +
+    "             expect(res).to.deep.equal(3);</pre>\n" +
     "\n" +
-    "  	</p>\n" +
-    "  	<p>\n" +
-    "  		While editing the test code, you can open the autocomplete by pressing ALT+SPACE (Mac) or CTRL+SPACE (Win/Linux).\n" +
-    "  	</p>\n" +
-    "  </div>\n" +
+    "        <pre>var badFn = function () { throw new TypeError('Illegal salmon!'); };\n" +
+    "                expect(badFn).to.throw(TypeError);</pre>\n" +
+    "\n" +
+    "        </p>\n" +
+    "        <p>\n" +
+    "            While editing the test code, you can open the auto-complete by pressing ALT+SPACE (Mac) or CTRL+SPACE\n" +
+    "            (Win/Linux).\n" +
+    "        </p>\n" +
+    "    </div>\n" +
     "</div>\n" +
     "");
 }]);

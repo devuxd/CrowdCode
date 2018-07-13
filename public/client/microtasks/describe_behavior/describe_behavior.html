@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <div class="section" ui-layout-container size="58%">
+        <div class="section" ui-layout-container size="50%">
             <div class="section-bar" ng-show="!data.editingStub">
 				<span class="title">
 					Write your code in the function editor below
@@ -116,7 +116,7 @@
             </div>
         </div>
 
-        <div class="section tab-content" ui-layout-container size="33%">
+        <div class="section tab-content" ui-layout-container size="41%">
             <div class="section-bar tests-section-tab-bar">
                 <ul class="nav nav-tabs">
                     <li class="active">
@@ -198,11 +198,11 @@
 
                 <div class="section-content-2 empty" ng-if="!data.dispute.active && data.tests.length == 0">
                     <div>
-                        <div>No previous tests written! </div>
+                        <div>No previous tests written!</div>
                         <br/>
                         <button class="btn btn-primary btn-sm" ng-click="addNew($event)" data-trigger="hover"
                                 data-placement="top"
-                                data-title="Create a new test" bs-popover >
+                                data-title="Create a new test" bs-popover>
                             <span class="glyphicon glyphicon-plus"></span> Add a new test
                         </button>
                     </div>
@@ -240,51 +240,62 @@
                 <div class="section-content-2 slide from-right padding" ng-repeat="t in data.tests track by $index"
                      ng-if="!data.dispute.active && (!t.deleted || data.selected == t)" ng-show="data.selected == t">
                     <div ng-form="{{ 'testForm_'+$index }}" class="form form-material" ng-init="errors = {}">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="desc">Description </label>
+                                    <input id="desc" name="description" ng-model="t.description" style="min-width: 10cm"
+                                              placeholder="insert the description" ng-minlength="5" ng-maxlength="220"
+                                              focus required/>
+                                    <div ng-messages="microtaskForm['testForm_'+$index].description.$error">
+                                        <div ng-if="microtaskForm['testForm_'+$index].description.$dirty">
+                                            <div style="color: red" ng-message="required">the description can't be empty</div>
+                                            <div style="color: red" ng-message="minlength">the description can't be less than 5
+                                                characters
+                                            </div>
+                                            <div ng-message="maxlength">the description can't exceed 150 characters
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3" ng-if="t.dispute.active">
+                                    <label >Report reason </label>
+                                    <input class="form-control" name="description" ng-model="t.dispute.text"
+                                           disabled="disabled"/>
+                                </div>
+                                <div class="col-sm-3 pull-right">
+                                    <label>Type</label>
+                                    <select title="adfadfaf" ng-model="t.isSimple"
+                                            ng-options="o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]">
+                                    </select>
+                                    <span class="glyphicon glyphicon-question-sign" style="color:blue"
+                                          ng-if="t.isSimple"
+                                          ng-click="$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)">
+                                    </span>
 
-                        <div class="form-group">
-                            <label for="description">Description </label>
-                            <input class="form-control" name="description" ng-model="t.description"
-                                   placeholder="insert the description" ng-minlength="5" ng-maxlength="120" focus
-                                   required/>
-                            <div class="help-block" ng-messages="microtaskForm['testForm_'+$index].description.$error">
-                                <div ng-if="microtaskForm['testForm_'+$index].description.$dirty">
-                                    <div ng-message="required">the description can't be empty</div>
-                                    <div ng-message="minlength">the description can't be less than 5 characters</div>
-                                    <div ng-message="maxlength">the description can't exceed 150 characters</div>
+                                    <span class="glyphicon glyphicon-question-sign" style="color:blue"
+                                          ng-if="!t.isSimple"
+                                          ng-click="$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)">
+                                    </span>
+
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group" ng-if="t.dispute.active">
-                            <label for="description">Report reason </label>
-                            <input class="form-control" name="description" ng-model="t.dispute.text"
-                                   disabled="disabled"/>
-                        </div>
-                        <div class="form-group">
-                            <label>Type</label>
-                            <span class="help-icon">
-							<span
-                                    class="glyphicon glyphicon-question-sign" style="color:blue"
-                                    ng-if="t.isSimple"
-                                    ng-click="$emit('queue-tutorial', 'input_output_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Input/Output Tests', $event)">
-							</span>
+                        <div ng-if="!t.isSimple">
 
-						<span class="glyphicon glyphicon-question-sign" style="color:blue" ng-if="!t.isSimple"
-                              ng-click="$emit('queue-tutorial', 'assertion_tests', true); trackInteraction('Click Tutorial', 'Describe Behavior - Assertion Tests', $event)">
-							</span>
-
-						</span>
-                            <select class="form-control" ng-model="t.isSimple"
-                                    ng-options="o.v as o.n for o in [{ n: 'input/output', v: true }, { n: 'assertion', v: false }]">
-                            </select>
-                        </div>
-                        <div class="form-group" ng-if="!t.isSimple">
-                            <label for="code">Code</label>
-                            <div class="help-icon"
-                                 ng-click="trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)">
-							<span class="glyphicon glyphicon-question-sign" style="color:blue"
-                                  data-template="/client/widgets/test_editor_help.html" data-auto-close="1"
-                                  data-placement="left" data-title="title of th ehelp" bs-popover>
-							</span>
+                            <div ng-click="trackInteraction('Click Tutorial', 'Describe Behavior - Test Editor', $event)">
+                                <label>Code</label>
+                                <!--<span class="glyphicon glyphicon-question-sign" style="color:blue"-->
+                                      <!--data-template="/client/widgets/test_editor_help.html" data-auto-close="1"-->
+                                      <!--data-placement="right" data-title="title of the help" data-style="" bs-popover>-->
+							    <!--</span>-->
+                                <span class="glyphicon glyphicon-question-sign" style="color:blue"
+                                      ng-if="!t.isSimple"
+                                      ng-click="$emit('queue-tutorial', 'test_editor_help', true); trackInteraction('Click Tutorial', 'Describe Behavior - Test editor', $event)"
+                                      data-trigger="hover"
+                                      data-placement="right"
+                                      data-title="Help for coding in test section" bs-popover>
+							    </span>
                             </div>
                             <div class="form-control code" test-editor name="code" function-name="{{funct.name}}"
                                  ng-model="t.code" errors="errors['code']" required>
@@ -300,11 +311,11 @@
 
                         <div ng-if="t.isSimple" ng-form="inputs">
                             <div class="form-group" ng-repeat="(pIdx,p) in funct.parameters track by p.name">
-                                <label for="inputs">
+                                <label >
                                     {{p.name + ' {' + p.type + '}' }}
                                 </label>
                                 <div class="help-icon pull-right" paste-example="{ type : p.type }"
-                                     ng-model="t.inputs[pIdx]" data-title="adfadfadfadfdasfafa">
+                                     ng-model="t.inputs[pIdx]">
                                     <span class="glyphicon glyphicon-plus-sign"></span> paste example
                                 </div>
                                 <div class="form-control code" json-editor="{ type: p.type, name: p.name }"
@@ -321,7 +332,7 @@
                         </div>
 
                         <div class="form-group" ng-if="t.isSimple">
-                            <label for="code">Output {{ '{' + funct.returnType + '}'}}</label>
+                            <label >Output {{ '{' + funct.returnType + '}'}}</label>
                             <div class="help-icon pull-right" paste-example="{ type : funct.returnType }"
                                  ng-model="t.output">
                                 <span class="glyphicon glyphicon-plus-sign"></span> paste example
