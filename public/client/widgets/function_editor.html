@@ -1,26 +1,26 @@
 <div ui-layout="{ flow: 'row', dividerSize: 2 }">
-    <div ui-layout-container size="1%">
-        <statements-progress-bar class="function-statements"></statements-progress-bar>
-    </div>
+	<div ui-layout-container size="1%">
+		<statements-progress-bar  class="function-statements"></statements-progress-bar>
+	</div>
 
-    <div class="function-editor" style="" ui-layout-container size="99%">
-        <div ui-layout="{ flow: 'row', dividerSize: 2 }">
-            <div
-                    ui-layout-container size="88%"
-                    style="height:100%;width: 100%"
-                    class="js-editor"
-                    ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }"
-                    ng-model="code">
-            </div>
+	<div class="function-editor" style="" ui-layout-container size="99%">
+	<div ui-layout="{ flow: 'row', dividerSize: 2 }">
+		<div
+			ui-layout-container size="88%"
+			style="height:100%;width: 100%"
+			class="js-editor"
+			ui-ace="{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }"
+			ng-model="code" >
+		</div>
 
 
-            <div class="function-errors " ui-layout-container size="12%" style="">
-                <ul class="help-block" ng-if="errors.length > 0">
-                    <li ng-repeat="e in errors track by $id($index)">
-                        <span ng-bind="e"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+		<div class="function-errors " ui-layout-container size="12%" style=""  >
+			<ul class="help-block" ng-if="errors.length > 0" >
+				<li ng-repeat="e in errors track by $id($index)">
+					<span ng-bind="e"></span>
+				</li>
+			</ul>
+		</div>
+	</div>
+	</div>
 </div>
