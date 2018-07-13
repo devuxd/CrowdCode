@@ -52,14 +52,14 @@
 
 	    <div class="content">
 		    <div ui-layout="{ flow: 'column', dividerSize: 2 }">
-		    	<div ui-layout-container size="20%" min-size="200px" max-size="20%" >
+		    	<div ui-layout-container size="17%" min-size="200px" max-size="20%" >
 	               <left-bar></left-bar>
 				</div>
 
-			    <div ui-layout-container size="60%" style="overflow:hidden;" >
+			    <div ui-layout-container size="65%" style="overflow:hidden;" >
 			    	<form class="form-horizontal" microtask-form name="microtaskForm" novalidate></form>
 			    </div>
-				<div ui-layout-container size="20%" min-size="10%" max-size="25%">
+				<div ui-layout-container size="18%" min-size="10%" max-size="20%">
 					<right-bar></right-bar>
 				</div>
 		    </div>

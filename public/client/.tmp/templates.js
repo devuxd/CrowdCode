@@ -1224,11 +1224,11 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "	<div class=\"sections\" ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
     "\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"7%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"9%\">\n" +
     "			<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
     "				<div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
-    "						Here’s a function <strong ng-bind=\"funct.name\"></strong> that needs some work. <strong>Step 1: </strong> identify a behavior in its description(comments above the function) that is not yet implemented; <strong> Step 2: </strong>Hit \"add new test button\" in test section and write a test for this behavior. You can run the tests for the function by clicking \"RunTests\" button.;<strong> Step 3: </strong>implement it in function editor. <strong> Step 4: </strong> if you are done hit the \"submit\" button. <br/><strong> Some important Notes: </strong>Remember, you only have only <strong>15</strong> minutes, so be sure to submit your work before time runs out.You don’t need to (and probably don’t have time) to finish the function implementation. Instead, find a single behavior, write a test, and implement just that behavior.\n" +
+    "						Here’s a function <strong ng-bind=\"funct.name\"></strong> that needs some work. <strong>Step 1: </strong> identify a behavior in its description(It placed like comments above the function) that is not yet implemented; <strong> Step 2: </strong>Hit \"add new test button\" in test section and write a test for this behavior. You can run the tests for the function by clicking \"RunTests\" button;<strong> Step 3: </strong>implement it in function editor. <strong> Step 4: </strong> if you are done hit the \"submit\" button. <br/><strong> Some important Notes: </strong>Remember, you only have only <strong>15</strong> minutes, so be sure to submit your work before time runs out.You don’t need to (and probably don’t have time) to finish the function implementation. Instead, find a single behavior, write a test, and implement just that behavior.\n" +
     "					</span>\n" +
     "					<span ng-switch-when=\"CORRECT\">\n" +
     "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
@@ -1246,7 +1246,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "			</div>\n" +
     "		</div>\n" +
     "\n" +
-    "		<div class=\"section\" ui-layout-container size=\"60%\">\n" +
+    "		<div class=\"section\" ui-layout-container size=\"58%\">\n" +
     "			<div class=\"section-bar\" ng-show=\"!data.editingStub\">\n" +
     "				<span class=\"title\">\n" +
     "					Write your code in the function editor below\n" +
@@ -4749,30 +4749,30 @@ angular.module("widgets/feedback.popover.html", []).run(["$templateCache", funct
 angular.module("widgets/function_editor.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("widgets/function_editor.html",
     "<div ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
-    "	<div ui-layout-container size=\"1%\">\n" +
-    "		<statements-progress-bar  class=\"function-statements\"></statements-progress-bar>\n" +
-    "	</div>\n" +
+    "    <div ui-layout-container size=\"1%\">\n" +
+    "        <statements-progress-bar class=\"function-statements\"></statements-progress-bar>\n" +
+    "    </div>\n" +
     "\n" +
-    "	<div class=\"function-editor\" style=\"\" ui-layout-container size=\"99%\">\n" +
-    "	<div ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
-    "		<div\n" +
-    "			ui-layout-container size=\"88%\"\n" +
-    "			style=\"height:100%;width: 100%\"\n" +
-    "			class=\"js-editor\"\n" +
-    "			ui-ace=\"{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }\"\n" +
-    "			ng-model=\"code\" >\n" +
-    "		</div>\n" +
+    "    <div class=\"function-editor\" style=\"\" ui-layout-container size=\"99%\">\n" +
+    "        <div ui-layout=\"{ flow: 'row', dividerSize: 2 }\">\n" +
+    "            <div\n" +
+    "                    ui-layout-container size=\"88%\"\n" +
+    "                    style=\"height:100%;width: 100%\"\n" +
+    "                    class=\"js-editor\"\n" +
+    "                    ui-ace=\"{ onLoad : aceLoaded, mode: 'javascript', theme: 'chrome'  }\"\n" +
+    "                    ng-model=\"code\">\n" +
+    "            </div>\n" +
     "\n" +
     "\n" +
-    "		<div class=\"function-errors \" ui-layout-container size=\"12%\" style=\"\"  >\n" +
-    "			<ul class=\"help-block\" ng-if=\"errors.length > 0\" >\n" +
-    "				<li ng-repeat=\"e in errors track by $id($index)\">\n" +
-    "					<span ng-bind=\"e\"></span>\n" +
-    "				</li>\n" +
-    "			</ul>\n" +
-    "		</div>\n" +
-    "	</div>\n" +
-    "	</div>\n" +
+    "            <div class=\"function-errors \" ui-layout-container size=\"12%\" style=\"\">\n" +
+    "                <ul class=\"help-block\" ng-if=\"errors.length > 0\">\n" +
+    "                    <li ng-repeat=\"e in errors track by $id($index)\">\n" +
+    "                        <span ng-bind=\"e\"></span>\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
