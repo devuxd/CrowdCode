@@ -13123,7 +13123,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "	            \n" +
     "		</div>\n" +
     "	</div>\n" +
-    "	<div style=\"text-align: center\"><strong>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on. </strong></div>\n" +
+    "	<div style=\"text-align: center\"><strong>Functions</strong><br/><span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on. </span></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"!f.isThirdPartyAPI\" class=\"functions\">\n" +
     "		<div bs-collapse-toggle class=\"toggler\" >  {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
@@ -13140,7 +13140,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
-    "	<div style=\"text-align: center\"><strong> 3rd Party persisting API.These functions are library functions offered by the environment. You can call them from function implementations as well as from tests. </strong></div>\n" +
+    "	<div style=\"text-align: center\"><strong> 3rd Party persisting API</strong><br/><span>These functions are library functions offered by the environment. You can call them from function implementations as well as from tests. </span></div>\n" +
     "	<div ng-repeat=\"f in functions\" ng-show=\"f.isThirdPartyAPI\" class=\"third-party-api\">\n" +
     "		<div bs-collapse-toggle class=\"toggler\" > {{f.name}}Implementation</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
