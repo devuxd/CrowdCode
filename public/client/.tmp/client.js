@@ -13343,27 +13343,23 @@ angular.module("widgets/test_editor.html", []).run(["$templateCache", function (
 
 angular.module("widgets/test_editor_help.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("widgets/test_editor_help.html",
-    "<div class=\"popover\" style=\"top: 125px;\">\n" +
-    "    <div class=\"arrow\"></div>\n" +
-    "    <div >\n" +
-    "        <p>\n" +
-    "            In the test editor you can use ChaiJs website: <a href=\"http://chaijs.com/api/bdd/\" target=\"_blank\"><strong>Link</strong></a>.\n" +
-    "        </p>\n" +
-    "        <p>\n" +
-    "            example:\n" +
+    "<div class=\"popover\">\n" +
+    "  <div class=\"arrow\"></div>\n" +
+    "  <div class=\"popover-content\">\n" +
+    "  	<p>\n" +
+    "  		In the test editor you can use ChaiJs <a href=\"http://chaijs.com/api/bdd/\" target=\"_blank\"><strong>expect</strong></a> syntax\n" +
+    "  	</p>\n" +
     "\n" +
-    "        <pre>var res = calculate('+',[1,2]);\n" +
-    "             expect(res).to.deep.equal(3);</pre>\n" +
+    "  	<p>\n" +
+    "  		Example:\n" +
+    "  		<pre>var res = calculate('+',[1,2]);\n" +
+    "expect(res).to.deep.equal(3);</pre>\n" +
     "\n" +
-    "        <pre>var badFn = function () { throw new TypeError('Illegal salmon!'); };\n" +
-    "                expect(badFn).to.throw(TypeError);</pre>\n" +
-    "\n" +
-    "        </p>\n" +
-    "        <p>\n" +
-    "            While editing the test code, you can open the auto-complete by pressing ALT+SPACE (Mac) or CTRL+SPACE\n" +
-    "            (Win/Linux).\n" +
-    "        </p>\n" +
-    "    </div>\n" +
+    "  	</p>\n" +
+    "  	<p>\n" +
+    "  		While editing the test code, you can open the autocomplete by pressing ALT+SPACE (Mac) or CTRL+SPACE (Win/Linux).\n" +
+    "  	</p>\n" +
+    "  </div>\n" +
     "</div>\n" +
     "");
 }]);
