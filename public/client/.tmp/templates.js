@@ -2030,7 +2030,9 @@ angular.module("microtasks/microtask_form.html", []).run(["$templateCache", func
     "                class=\"btn btn-primary btn-md pull-right \"\n" +
     "                ng-if=\"breakMode \"\n" +
     "                ng-click=\"fetch()\"\n" +
-    "                tabindex=\"100\">\n" +
+    "                tabindex=\"100\" data-trigger=\"hover\"\n" +
+    "                data-placement=\"top\"\n" +
+    "                data-title=\"Randomly fetch a microtask from server and assign to you\" bs-popover>\n" +
     "            Fetch a microtask\n" +
     "        </button>\n" +
     "    </div>\n" +
