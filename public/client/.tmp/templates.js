@@ -1402,9 +1402,11 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "\n" +
     "                <div class=\"section-content-2 empty\" ng-if=\"!data.dispute.active && data.tests.length == 0\">\n" +
     "                    <div>\n" +
-    "                        <div>No previous tests written! You can write a test by hitting the below button</div>\n" +
+    "                        <div>No previous tests written! </div>\n" +
     "                        <br/>\n" +
-    "                        <button class=\"btn btn-lg\" ng-click=\"addNew($event)\">\n" +
+    "                        <button class=\"btn btn-primary btn-sm\" ng-click=\"addNew($event)\" data-trigger=\"hover\"\n" +
+    "                                data-placement=\"top\"\n" +
+    "                                data-title=\"Create a new test\" bs-popover >\n" +
     "                            <span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +
     "                        </button>\n" +
     "                    </div>\n" +
@@ -1960,71 +1962,78 @@ angular.module("microtasks/loading.html", []).run(["$templateCache", function ($
 
 angular.module("microtasks/microtask_form.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("microtasks/microtask_form.html",
-    "<div \n" +
-    "	id=\"task\"\n" +
-    "	class=\"task {{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}\" \n" +
-    "	ng-include=\"templatePath\" \n" +
-    "	>\n" +
+    "<div\n" +
+    "        id=\"task\"\n" +
+    "        class=\"task {{ !noMicrotask ? 'task-' + (microtask.type | lowercase) : '' }}\"\n" +
+    "        ng-include=\"templatePath\"\n" +
+    ">\n" +
     "</div>\n" +
     "\n" +
     "<reminder></reminder>\n" +
     "\n" +
     "<div class=\"actions\">\n" +
-    "	<div class=\"btn-group\">\n" +
-    "	\n" +
-    "		<button\n" +
-    "		   type=\"button\"\n" +
-    "		   class=\"btn btn-link btn-sm\"\n" +
-    "		   data-placement=\"top\" \n" +
-    "		   data-container=\"body\"\n" +
-    "		   data-animation=\"am-fade-and-scale\"\n" +
-    "		   data-template=\"widgets/feedback.popover.html\"\n" +
-    "		   tabindex=\"101\"  \n" +
-    "		   bs-popover>Send Us Feedback!\n" +
-    "		</button>\n" +
-    "		<button \n" +
-    "		   ng-if=\"!breakMode && !noMicrotask\" \n" +
-    "		   type=\"button\"\n" +
-    "		   class=\"btn btn-link btn-sm\" \n" +
-    "		   data-placement=\"top\" \n" +
-    "		   data-container=\"body\"\n" +
-    "		   data-animation=\"am-fade-and-scale\"\n" +
-    "		   data-trigger=\"focus\"\n" +
-    "		   data-template=\"widgets/confused.popover.html\"\n" +
-    "		   tabindex=\"102\" \n" +
-    "		   bs-popover>\n" +
-    "		   Confused?\n" +
-    "		</button>\n" +
-    "	  	<button \n" +
-    "	  		type=\"submit\" \n" +
-    "  			id=\"submitBtn\"\n" +
-    "	  		class=\"btn btn-primary btn-sm pull-right\"\n" +
-    "   			ng-if=\"!breakMode && !noMicrotask\"\n" +
-    "	  		ng-click=\"submit()\"\n" +
-    "	  		tabindex=\"99\" >\n" +
-    "	  		Submit\n" +
-    "	  	</button>\n" +
-    "  	   	<button type=\"button\" \n" +
-    "   	 		id= \"skipBtn\"\n" +
-    "   			class=\"btn btn-default btn-sm pull-right\"\n" +
-    "   			ng-if=\"!breakMode && !noMicrotask\"\n" +
-    "   			ng-click=\"skip()\" \n" +
-    "   			tabindex=\"100\" >\n" +
-    "   			Skip\n" +
-    "   		</button>\n" +
-    "	  	<!--<label class=\"btn btn-sm pull-right\" ng-if=\"!breakMode && !noMicrotask\" id=\"breakBtn\">\n" +
-    "  	    	<input type=\"checkbox\" ng-model=\"taskData.startBreak\" tabindex=\"103\" >\n" +
-    "  	    	<span>{{currentPrompt()}}</span>\n" +
-    "  	   	</label>-->\n" +
-    "  	   	\n" +
-    "		<button type=\"button\"\n" +
-    "   			class=\"btn btn-primary btn-sm pull-right\"\n" +
-    "   			ng-if=\"breakMode \"\n" +
-    "   			ng-click=\"fetch()\" \n" +
-    "   			tabindex=\"100\" >\n" +
-    "	       	Fetch a microtask\n" +
-    "   		</button>\n" +
-    "	</div>\n" +
+    "    <div class=\"btn-group\">\n" +
+    "\n" +
+    "        <button\n" +
+    "                type=\"button\"\n" +
+    "                class=\"btn btn-link btn-sm\"\n" +
+    "                data-placement=\"top\"\n" +
+    "                data-container=\"body\"\n" +
+    "                data-animation=\"am-fade-and-scale\"\n" +
+    "                data-template=\"widgets/feedback.popover.html\"\n" +
+    "                tabindex=\"101\"\n" +
+    "                bs-popover>Send Us Feedback!\n" +
+    "        </button>\n" +
+    "        <button\n" +
+    "                ng-if=\"!breakMode && !noMicrotask\"\n" +
+    "                type=\"button\"\n" +
+    "                class=\"btn btn-link btn-sm\"\n" +
+    "                data-placement=\"top\"\n" +
+    "                data-container=\"body\"\n" +
+    "                data-animation=\"am-fade-and-scale\"\n" +
+    "                data-trigger=\"focus\"\n" +
+    "                data-template=\"widgets/confused.popover.html\"\n" +
+    "                tabindex=\"102\"\n" +
+    "                bs-popover>\n" +
+    "            Confused?\n" +
+    "        </button>\n" +
+    "        <button\n" +
+    "                type=\"submit\"\n" +
+    "                id=\"submitBtn\"\n" +
+    "                class=\"btn btn-primary btn-md pull-right\"\n" +
+    "                ng-if=\"!breakMode && !noMicrotask\"\n" +
+    "                ng-click=\"submit()\"\n" +
+    "                tabindex=\"99\"\n" +
+    "                data-trigger=\"hover\"\n" +
+    "                data-placement=\"top\"\n" +
+    "                data-title=\"Submit the task and show the dashboard.\" bs-popover>\n" +
+    "            Submit\n" +
+    "        </button>\n" +
+    "        <button type=\"button\"\n" +
+    "                id=\"skipBtn\"\n" +
+    "                class=\"btn btn-default btn-sm pull-right\"\n" +
+    "                ng-if=\"!breakMode && !noMicrotask\"\n" +
+    "                ng-click=\"skip()\"\n" +
+    "                tabindex=\"100\"\n" +
+    "                data-trigger=\"hover\"\n" +
+    "                data-placement=\"top\"\n" +
+    "                data-title=\"Discard all your changes and show the dashboard\" bs-popover>\n" +
+    "            Skip\n" +
+    "\n" +
+    "        </button>\n" +
+    "        <!--<label class=\"btn btn-sm pull-right\" ng-if=\"!breakMode && !noMicrotask\" id=\"breakBtn\">\n" +
+    "            <input type=\"checkbox\" ng-model=\"taskData.startBreak\" tabindex=\"103\" >\n" +
+    "            <span>{{currentPrompt()}}</span>\n" +
+    "           </label>-->\n" +
+    "\n" +
+    "        <button type=\"button\"\n" +
+    "                class=\"btn btn-primary btn-md pull-right \"\n" +
+    "                ng-if=\"breakMode \"\n" +
+    "                ng-click=\"fetch()\"\n" +
+    "                tabindex=\"100\">\n" +
+    "            Fetch a microtask\n" +
+    "        </button>\n" +
+    "    </div>\n" +
     "</div>\n" +
     "");
 }]);

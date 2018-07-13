@@ -198,9 +198,11 @@
 
                 <div class="section-content-2 empty" ng-if="!data.dispute.active && data.tests.length == 0">
                     <div>
-                        <div>No previous tests written! You can write a test by hitting the below button</div>
+                        <div>No previous tests written! </div>
                         <br/>
-                        <button class="btn btn-lg" ng-click="addNew($event)">
+                        <button class="btn btn-primary btn-sm" ng-click="addNew($event)" data-trigger="hover"
+                                data-placement="top"
+                                data-title="Create a new test" bs-popover >
                             <span class="glyphicon glyphicon-plus"></span> Add a new test
                         </button>
                     </div>
