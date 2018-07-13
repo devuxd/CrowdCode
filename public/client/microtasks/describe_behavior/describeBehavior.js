@@ -21,7 +21,7 @@ angular
 
     var newTest = {
         description: '',
-        isSimple : true,
+        isSimple : false,
         inputs: $scope.funct.parameters.map(function(par){ return ""; }),
         output: "",
         code: '//write the test code',
