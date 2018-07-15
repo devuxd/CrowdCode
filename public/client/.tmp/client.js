@@ -9528,20 +9528,21 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "					<!-- Tests -->\n" +
     "					</span>\n" +
     "                    <span class=\"pull-right\" ng-if=\"data.selected == -1 && data.tests.length > 0\">\n" +
-    "						<button class=\"btn btn-sm\" ng-click=\"addNew($event)\">\n" +
-    "							<span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +
+    "						<button class=\"btn btn-sm\" ng-click=\"addNew($event)\"\n" +
+    "                                data-trigger=\"hover\"  data-placement=\"left\" data-title=\"Create a new test\" bs-popover>\n" +
+    "							<span class=\"glyphicon glyphicon-plus\" style=\"color: #3b9e3b\"></span> Add a new test\n" +
     "					</button>\n" +
     "					</span>\n" +
     "\n" +
     "                    <span class=\"pull-left\" ng-if=\"data.selected != -1\">\n" +
-    "						<button class=\"btn btn-sm\" ng-click=\"toggleSelect($event)\">\n" +
+    "						<button class=\"btn btn-sm\" ng-click=\"toggleSelect($event)\" >\n" +
     "							<span class=\"glyphicon glyphicon-arrow-left\"></span>\n" +
     "					</button>\n" +
     "					</span>\n" +
     "\n" +
     "                    <span class=\"pull-right\" ng-if=\"data.selected != -1\">\n" +
     "						<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"!data.selected.deleted\">\n" +
-    "							<span class=\"glyphicon glyphicon-remove\"></span> Remove test\n" +
+    "							<span class=\"glyphicon glyphicon-remove\" style=\"color: red\"></span> Remove test\n" +
     "					</button>\n" +
     "\n" +
     "					<button class=\"btn btn-sm\" ng-click=\"toggleDelete($event)\" ng-if=\"data.selected.deleted\">\n" +
@@ -12720,7 +12721,7 @@ angular.module("tutorials/test_editor_help.html", []).run(["$templateCache", fun
     "    <div class=\"title\">Test editor</div>\n" +
     "    <div class=\"text\" style=\"width:600px\">\n" +
     "        <p>\n" +
-    "            In the test editor you can use ChaiJs website via <a href=\"http://chaijs.com/api/bdd/\" target=\"_blank\"><strong>Link</strong></a>.\n" +
+    "            In the test editor you can use ChaiJs website via ----->  <a href=\"http://chaijs.com/api/bdd/\" target=\"_blank\"><strong>Link</strong></a>.\n" +
     "        </p>\n" +
     "        <p>\n" +
     "            example:\n" +

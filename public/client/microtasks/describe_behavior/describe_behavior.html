@@ -167,20 +167,21 @@
 					<!-- Tests -->
 					</span>
                     <span class="pull-right" ng-if="data.selected == -1 && data.tests.length > 0">
-						<button class="btn btn-sm" ng-click="addNew($event)">
-							<span class="glyphicon glyphicon-plus"></span> Add a new test
+						<button class="btn btn-sm" ng-click="addNew($event)"
+                                data-trigger="hover"  data-placement="left" data-title="Create a new test" bs-popover>
+							<span class="glyphicon glyphicon-plus" style="color: #3b9e3b"></span> Add a new test
 					</button>
 					</span>
 
                     <span class="pull-left" ng-if="data.selected != -1">
-						<button class="btn btn-sm" ng-click="toggleSelect($event)">
+						<button class="btn btn-sm" ng-click="toggleSelect($event)" >
 							<span class="glyphicon glyphicon-arrow-left"></span>
 					</button>
 					</span>
 
                     <span class="pull-right" ng-if="data.selected != -1">
 						<button class="btn btn-sm" ng-click="toggleDelete($event)" ng-if="!data.selected.deleted">
-							<span class="glyphicon glyphicon-remove"></span> Remove test
+							<span class="glyphicon glyphicon-remove" style="color: red"></span> Remove test
 					</button>
 
 					<button class="btn btn-sm" ng-click="toggleDelete($event)" ng-if="data.selected.deleted">
