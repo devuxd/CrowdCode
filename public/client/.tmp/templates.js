@@ -4564,7 +4564,8 @@ angular.module("tutorials/test_editor_help.html", []).run(["$templateCache", fun
     "    <div class=\"title\">Test editor</div>\n" +
     "    <div class=\"text\" style=\"width:600px\">\n" +
     "        <p>\n" +
-    "            In the test editor you can use ChaiJs website via ----->  <a href=\"http://chaijs.com/api/bdd/\" target=\"_blank\"><strong>Link</strong></a>.\n" +
+    "            In the test editor you can use ChaiJs website via -----> <a href=\"http://chaijs.com/api/bdd/\"\n" +
+    "                                                                        target=\"_blank\"><strong>Link</strong></a>.\n" +
     "        </p>\n" +
     "        <p>\n" +
     "            example:\n" +
@@ -4743,7 +4744,8 @@ angular.module("ui_elements/nav_user_menu_template.html", []).run(["$templateCac
     "	<!--{{ popover }}-->\n" +
     "\n" +
     "	<!--<a href=\"#\" ng-click=\" $emit('showUserStatistics'); close() \">Open profile</a><br />-->\n" +
-    "	<a href=\"#\" ng-click=\" $emit('showProfileModal'); close() \">Change profile picture</a><br />\n" +
+    "	<a href=\"#\" ng-click=\" $emit('showProfileModal'); close() \">\n" +
+    "		Change profile picture</a><br />\n" +
     "	<a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true); close();\">Tutorial</a><br />\n" +
     "	<!--<a href=\"{{logoutUrl}}\" ng-click=\"close()\">Logout</a>-->\n" +
     "</div>");
