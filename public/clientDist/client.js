@@ -9730,8 +9730,8 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "				</span>\n" +
     "\n" +
     "                    <span class=\"pull-right\">\n" +
-    "					<button class=\"btn btn-sm btn-run\" ng-click=\"run()\">\n" +
-    "						<span class=\"glyphicon glyphicon-play\"></span> Run Tests\n" +
+    "					<button class=\"btn  btn-sm\" ng-click=\"run()\"  >\n" +
+    "						<span class=\"glyphicon glyphicon-play\" style=\"color: green\"></span> Run Tests\n" +
     "				</button>\n" +
     "\n" +
     "\n" +
