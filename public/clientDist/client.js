@@ -9390,7 +9390,11 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                <div ng-switch=\"microtask.promptType\">\n" +
     "					<span ng-switch-when=\"WRITE\">\n" +
     "						Here’s a function <strong\n" +
-    "                            ng-bind=\"funct.name\"></strong> that needs some work. <strong>Step 1: </strong> identify a behavior in its description(It placed like comments above the function) that is not yet implemented; <strong> Step 2: </strong>Hit \"add new test button\" in test section and write a test for this behavior. You can run the tests for the function by clicking \"RunTests\" button;<strong> Step 3: </strong>implement it in function editor. <strong> Step 4: </strong> if you are done hit the \"submit\" button. <br/><strong> Some important Notes: </strong>Remember, you only have only <strong>15</strong> minutes, so be sure to submit your work before time runs out.You don’t need to (and probably don’t have time) to finish the function implementation. Instead, find a single behavior, write a test, and implement just that behavior.\n" +
+    "                            ng-bind=\"funct.name\"></strong> that needs some work. <strong>Step 1: </strong> identify a behavior in its description(in the comments above the function) that is not yet implemented;\n" +
+    "                        <strong> Step 2: </strong>click “Add a new test” in the test pane, and write a test for this behavior. You can run the tests for the function by clicking \"RunTests\" button;\n" +
+    "                        <strong> Step 3: </strong>implement the behavior in function editor.\n" +
+    "                        <strong> Step 4: </strong>once you’re finished, click “Submit” button.<br/>\n" +
+    "                        <strong> Some important Notes: </strong>remember, you only have only <strong>15</strong> minutes, so be sure to submit your work before time runs out.You don’t need to (and probably don’t have time) to finish the function implementation. Instead, find a single behavior, write a test, and implement just that behavior.\n" +
     "					</span>\n" +
     "                    <span ng-switch-when=\"CORRECT\">\n" +
     "						An issue has been reported with one or more test cases and/or Function Implementation. Can you fix the test(s) and/or Implementation to address the issue?\n" +
