@@ -856,11 +856,14 @@ angular
                 $rootScope.$broadcast('queue-tutorial', 'main', false, function () {
                     $rootScope.$broadcast('showProfileModal');
                 });
+                $rootScope.$emit('queue-tutorial', 'main', true);
+
             }
         }
 
         function showProfileModal() {
             profileModal.$promise.then(profileModal.show);
+            // $rootScope.$emit('queue-tutorial', 'main', true);
         }
 
         function showStatistics() {
@@ -3560,7 +3563,7 @@ angular
         isSimple : false,
         inputs: $scope.funct.parameters.map(function(par){ return ""; }),
         output: "",
-        code: '//write the test code. // Before coding read the above help tutorial in a blue button',
+        code: '//write the test code.',
         added: true,
         deleted: false
     };
@@ -12452,6 +12455,7 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'main'); close(); $event.preventDefault();\">assertion tests</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true, undefined, 'main'); close(); $event.preventDefault();\">running and debugging tests</a></li>-->\n" +
     "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_section', true, undefined, 'main'); close(); $event.preventDefault();\">Creating, running and debugging unit tests</a></li>\n" +
+    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_editor_help', true, undefined, 'main'); close(); $event.preventDefault();\">Coding in test editor</a></li>\n" +
     "\n" +
     "\n" +
     "		</ul>\n" +
@@ -12719,25 +12723,29 @@ angular.module("tutorials/test_editor_help.html", []).run(["$templateCache", fun
   $templateCache.put("tutorials/test_editor_help.html",
     "<step>\n" +
     "    <div class=\"title\">Test editor</div>\n" +
-    "    <div class=\"text\" style=\"width:600px\">\n" +
+    "    <div class=\"text\" style=\"width:700px\">\n" +
     "        <p>\n" +
-    "            In the test editor you can use ChaiJs website via -----> <a href=\"http://chaijs.com/api/bdd/\"\n" +
-    "                                                                        target=\"_blank\"><strong>Link</strong></a>.\n" +
+    "            In the test editor you can use ChaiJs website. open -----> <a href=\"http://chaijs.com/api/bdd/\"\n" +
+    "                                                                          target=\"_blank\"><strong>Link</strong></a>.\n" +
     "        </p>\n" +
     "        <p>\n" +
-    "            example:\n" +
-    "\n" +
-    "        <pre>var res = calculate('+',[1,2]);\n" +
-    "             expect(res).to.deep.equal(3);</pre>\n" +
-    "\n" +
-    "        <pre>var badFn = function () { throw new TypeError('Illegal salmon!'); };\n" +
+    "            <p> example 1:</p>\n" +
+    "                <pre> var res = createGroup(todoArray,todoGroupId);\n" +
+    "    expect(res).to.deep.equal(true);\n" +
+    "                </pre>\n" +
+    "            <p> example 2:</p>\n" +
+    "            <p style=\"text-align: center\">Function in function editor: </p>\n" +
+    "                <pre> function addTodo(todo){\n" +
+    "                    throw new TypeError('Illegal salmon!');\n" +
+    "            return todo;\n" +
+    "                    };\n" +
+    "                </pre>\n" +
+    "            <p style=\"text-align: center\">Test in test editor: </p>\n" +
+    "            <pre>var badFn = addTodo(todo);\n" +
     "                expect(badFn).to.throw(TypeError);</pre>\n" +
     "\n" +
     "        </p>\n" +
-    "        <p>\n" +
-    "            While editing the test code, you can open the auto-complete by pressing ALT+SPACE (Mac) or CTRL+SPACE\n" +
-    "            (Win/Linux).\n" +
-    "        </p>\n" +
+    "        <p>While editing the test code, you can open the auto-complete by pressing ALT+SPACE (Mac) or CTRL+SPACE (Win/Linux).</p>\n" +
     "    </div>\n" +
     "</step>");
 }]);

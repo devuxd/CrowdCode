@@ -24,7 +24,7 @@ angular
         isSimple : false,
         inputs: $scope.funct.parameters.map(function(par){ return ""; }),
         output: "",
-        code: '//write the test code. // Before coding read the above help tutorial in a blue button',
+        code: '//write the test code.',
         added: true,
         deleted: false
     };

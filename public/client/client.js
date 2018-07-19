@@ -174,11 +174,14 @@ angular
                 $rootScope.$broadcast('queue-tutorial', 'main', false, function () {
                     $rootScope.$broadcast('showProfileModal');
                 });
+                $rootScope.$emit('queue-tutorial', 'main', true);
+
             }
         }
 
         function showProfileModal() {
             profileModal.$promise.then(profileModal.show);
+            // $rootScope.$emit('queue-tutorial', 'main', true);
         }
 
         function showStatistics() {
