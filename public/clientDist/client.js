@@ -9562,7 +9562,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                    <div>\n" +
     "                        <div>No previous tests written!</div>\n" +
     "                        <br/>\n" +
-    "                        <button class=\"btn btn-primary btn-sm\" ng-click=\"addNew($event)\" data-trigger=\"hover\"\n" +
+    "                        <button class=\"btn btn-primary btn-sm\" ng-click=\"addNew($event);$emit('queue-tutorial', 'test_editor_help', true); trackInteraction('Click Tutorial', 'Describe Behavior - Test editor', $event)\" data-trigger=\"hover\"\n" +
     "                                data-placement=\"top\"\n" +
     "                                data-title=\"Create a new test\" bs-popover>\n" +
     "                            <span class=\"glyphicon glyphicon-plus\"></span> Add a new test\n" +

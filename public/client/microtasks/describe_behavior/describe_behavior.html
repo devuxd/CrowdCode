@@ -201,7 +201,7 @@
                     <div>
                         <div>No previous tests written!</div>
                         <br/>
-                        <button class="btn btn-primary btn-sm" ng-click="addNew($event)" data-trigger="hover"
+                        <button class="btn btn-primary btn-sm" ng-click="addNew($event);$emit('queue-tutorial', 'test_editor_help', true); trackInteraction('Click Tutorial', 'Describe Behavior - Test editor', $event)" data-trigger="hover"
                                 data-placement="top"
                                 data-title="Create a new test" bs-popover>
                             <span class="glyphicon glyphicon-plus"></span> Add a new test
