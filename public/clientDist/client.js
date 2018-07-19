@@ -9494,7 +9494,8 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                    </li>\n" +
     "                    <li>\n" +
     "                        <a data-toggle=\"tab\" class=\"title\" href=\"#run-tests\">\n" +
-    "                            <span class=\"title\">Run Tests</span>\n" +
+    "                            <span class=\"glyphicon glyphicon-play\" style=\"color: green\"></span>\n" +
+    "                            <span class=\"title\" >Run Tests</span>\n" +
     "                        </a>\n" +
     "                    </li>\n" +
     "                </ul>\n" +
