@@ -76,15 +76,15 @@
 
 
     <h1> 1: Watch the video below to learn how to get started</h1>
-    <div class="row ">
-        <div class="col-lg-12">
-            <video width="1400" height="800" controls>
-                <source src="/video/CrowdDemoLight.mp4" type="video/mp4">
-            </video>
+    <!--<div class="row ">-->
+        <div class="embed-responsive embed-responsive-16by9" >
+            <!--<video  controls>-->
+                <!--<source src="/video/CrowdDemoLight.mp4" type="video/mp4">-->
+            <!--</video>-->
+            <iframe class="embed-responsive-item" src="/video/CrowdDemoLight.mp4" allowfullscreen ></iframe>
         </div>
-    </div>
-    <hr/>
-    <hr/>
+    <!--</div>-->
+    <hr style="border-top: 18px double #8c8b8b"/>
 
     <h2> 2: You will faced with two types of tasks to accomplish. Read the below workflow</h2>
     <div class="row justify-content-start">
@@ -92,151 +92,161 @@
             <h3 class="pull-left"> Type A: implement behaviour tasks </h3>
         </div>
     </div>
-    <div class="row justify-content-start">
+    <div class="row">
+        <div class="col-md-1"></div>
         <div class="col-sm-6">
-            <h3 class="pull-left">Step 1: find a behavior in the function description that is not yet implemented</h3>
-            <img src="/img/Behave-step1-blur.png" />
+            <h3 >Step 1: find a behavior in the function description(in the comments above the function) that is not yet implemented</h3>
+            <img src="/img/Behave-step1-blur.png" style="max-height: 5cm"/>
         </div>
-        <div class="col-sm-6">
-            <h3 class="pull-left">Step 2: write a test for this behavior</h3>
-            <img src="/img/behave-step2-assertion-code.png"/>
+        <div class="col-sm-4">
+            <h3 >Step 2: write a test for this behavior</h3>
+            <img src="/img/behave-step2-assertion-code.png" style="max-height: 5cm"/>
         </div>
     </div>
-    <div class="row justify-content-start">
-        <div class="col-sm-9">
-            <h3 class="pull-left">Step 3: implement the behaviour in the function editor</h3>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-sm-5">
+            <h3 >Step 3: implement the behaviour in the function editor</h3>
             <!--<img  src="/img/SubmitButton.png"/>-->
-            <img  src="/img/behave-Step3.png"/>
+            <img src="/img/behave-Step3.png" style="max-height: 5cm"/>
         </div>
-        <div class="col-sm-3">
-            <h3 class="pull-left">Step 4: once you’re finished, click “Submit” button.</h3>
-            <img  src="/img/SubmitButton.png"/>
+        <div class="col-md-1"></div>
+        <div class="col-md-2">
+            <h3 >Step 4: once you’re finished, click “Submit” button.</h3>
+            <img src="/img/SubmitButton.png" style="max-height: 3cm;max-width: 5cm"/>
         </div>
     </div>
-    <hr />
-    <div class="row justify-content-start">
+    <hr style="border-top: 6px double #8c8b8b"/>
+
+    <div class="row">
         <div class="col-sm-4" class="row justify-content-start">
             <h3 class="pull-left"> Type B: review tasks</h3>
 
         </div>
 
     </div>
-    <div class="row justify-content-start">
-        <div class="col-sm-6">
-            <h3 class="pull-left">Step 1: review implementation of the behavior</h3>
-            <img src="/img/review-step1.png" border="5"/>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-4">
+            <h3 >Step 1: review implementation of the behavior</h3>
+            <img src="/img/review-step1.png" style="max-height: 5cm"/>
         </div>
-        <div class="col-sm-6">
-            <h3 class="pull-left">Step 2: review tests of this behavior</h3>
-            <img src="/img/review-step2.png"/>
-        </div>
-    </div>
-    <div class="row justify-content-start">
-        <div class="col-sm-9">
-            <h3 class="pull-left">Step 3: rate the contribution and give a feedback to the development</h3>
-            <img src="/img/review-step3.png"/>
-        </div>
-        <div class="col-sm-3">
-        <h3 class="pull-left">Step 4: once you’re finished, click “Submit” button</h3>
-            <img  src="/img/SubmitButton.png"/>
+        <div class="col-md-1"></div>
+        <div class="col-md-4">
+            <h3 >Step 2: review tests of this behavior</h3>
+            <img src="/img/review-step2.png" style="max-height: 5cm"/>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+            <h3 >Step 3: rate the contribution and give a feedback to the development</h3>
+            <img src="/img/review-step3.png" style="max-height: 5cm"/>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-2">
+            <h3 >Step 4: once you’re finished, click “Submit” button</h3>
+            <img src="/img/SubmitButton.png" style="max-height: 3cm;max-width: 5cm"/>
+        </div>
+    </div>
+    <hr style="border-top: 18px double #8c8b8b"/>
     <!--<div class="row">-->
 
 
-        <!--Here’s a function getAllDoneTodos that needs some work. Please identify a behavior in its description that is-->
-        <!--not yet implemented;-->
-        <!--firstly, write a test for this behavior,-->
-        <!--secondly implement it.-->
-        <!--You can run the tests for the function by clicking RunTests.-->
-        <!--Remember, you only have 15 minutes, so be sure to submit your work before time runs out.You don’t need to (and-->
-        <!--probably don’t have time) to finish the function implementation.-->
-        <!--Instead, find a single behavior, write a test, and implement just that behavior.-->
-        <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
-        <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
+    <!--Here’s a function getAllDoneTodos that needs some work. Please identify a behavior in its description that is-->
+    <!--not yet implemented;-->
+    <!--firstly, write a test for this behavior,-->
+    <!--secondly implement it.-->
+    <!--You can run the tests for the function by clicking RunTests.-->
+    <!--Remember, you only have 15 minutes, so be sure to submit your work before time runs out.You don’t need to (and-->
+    <!--probably don’t have time) to finish the function implementation.-->
+    <!--Instead, find a single behavior, write a test, and implement just that behavior.-->
+    <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
     <!--The test suite and implementation for has been updated by adding, editing, or deleting its tests and implementation.-->
     <!--Considering just the changes to the test suite and function implementation, can you review them?-->
     <!--TIP:If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.-->
 
-        <!--<div class="row">-->
-        <!--<div class="col-md-12 col-sm-12">-->
-        <!--<div class="row">-->
-        <!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
-        <!--<h1>Your work, your credit</h1>-->
-        <!--<img src="/img/welcome_third.png"/>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div class="row">-->
-        <!--<div class="col-md-offset-1 col-md-5 col-sm-12">-->
-        <!--<h2>Points</h2>-->
-        <!--<p>-->
-        <!--Microtasks are worth points; the harder the work, the more points it’s worth.-->
-        <!--</p>-->
-        <!--</div>-->
-        <!--<div class="col-md-5 col-sm-12">-->
-        <!--<h2>Reviews</h2>-->
-        <!--<p>-->
-        <!--Microtasks you submit are reviewed by the crowd. If accepted, you get the points; if rejected,-->
-        <!--you get nothing. You get points to review others work as well.-->
-        <!--</p>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
+    <!--<div class="row">-->
+    <!--<div class="col-md-12 col-sm-12">-->
+    <!--<div class="row">-->
+    <!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
+    <!--<h1>Your work, your credit</h1>-->
+    <!--<img src="/img/welcome_third.png"/>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<div class="row">-->
+    <!--<div class="col-md-offset-1 col-md-5 col-sm-12">-->
+    <!--<h2>Points</h2>-->
+    <!--<p>-->
+    <!--Microtasks are worth points; the harder the work, the more points it’s worth.-->
+    <!--</p>-->
+    <!--</div>-->
+    <!--<div class="col-md-5 col-sm-12">-->
+    <!--<h2>Reviews</h2>-->
+    <!--<p>-->
+    <!--Microtasks you submit are reviewed by the crowd. If accepted, you get the points; if rejected,-->
+    <!--you get nothing. You get points to review others work as well.-->
+    <!--</p>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
 
-        <!--<hr/>-->
-        <!--<hr/>-->
-        <!--<div class="row">-->
+    <!--<hr/>-->
+    <!--<hr/>-->
+    <!--<div class="row">-->
 
-        <!--<div class="col-md-12 col-sm-12">-->
+    <!--<div class="col-md-12 col-sm-12">-->
 
-        <!--<div class="row">-->
-        <!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
-        <!--<h1>Write code, with the crowd. </h1>-->
-        <!--<img src="/img/welcome_implementation.png" style="box-shadow: 0px 0px 5px 5px #CBCBCB;" />-->
+    <!--<div class="row">-->
+    <!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
+    <!--<h1>Write code, with the crowd. </h1>-->
+    <!--<img src="/img/welcome_implementation.png" style="box-shadow: 0px 0px 5px 5px #CBCBCB;" />-->
 
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
 
-        <!--<hr />-->
-        <!--<hr />-->
+    <!--<hr />-->
+    <!--<hr />-->
 
 
-        <div class="row">
-            <div class="jumbotron" style="text-align:center;">
-                <a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
-            </div>
+    <div class="row" style="margin-bottom: 50px">
+        <h5>If you donot have any question and you are ready click “Get Started!” </h5>
+        <div  style="text-align:center;">
+            <a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
         </div>
-
     </div>
 
+</div>
 
-    <script>
-        var isChromium = window.chrome,
-            vendorName = window.navigator.vendor;
 
-        if (!(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.")) {
-            $('#btnStart').on('click', function (event) {
-                event.preventDefault();
-                alert('Please, use Google Chrome!');
-            });
-        }
+<script>
+    var isChromium = window.chrome,
+        vendorName = window.navigator.vendor;
 
-        // it is commented because in the firest load it takes long time. if this change does not fix the problem revert it
-        // var ref = firebase.database().ref('defaultProject');
-
-        var ref = firebase.database().ref().child('Projects').child('todo');
-        ref.once('value', function (snap) {
-            console.log('default project is ' + snap.val());
-            // if (snap.val() != null)
-            // 	$('#btnStart').attr('href', '/' + snap.val());
-            // else
-            $('#btnStart').attr('href', '/todo');
-
+    if (!(isChromium !== null && isChromium !== undefined && vendorName === "Google Inc.")) {
+        $('#btnStart').on('click', function (event) {
+            event.preventDefault();
+            alert('Please, use Google Chrome!');
         });
-    </script>
+    }
+
+    // it is commented because in the firest load it takes long time. if this change does not fix the problem revert it
+    // var ref = firebase.database().ref('defaultProject');
+
+    var ref = firebase.database().ref().child('Projects').child('todo');
+    ref.once('value', function (snap) {
+        console.log('default project is ' + snap.val());
+        // if (snap.val() != null)
+        // 	$('#btnStart').attr('href', '/' + snap.val());
+        // else
+        $('#btnStart').attr('href', '/todo');
+
+    });
+</script>
 </body>
 
 </html>
