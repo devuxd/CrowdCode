@@ -119,8 +119,8 @@ angular
         var servicesLoadingStatus = {};
         var loadingServicesInterval = $interval(loadServices(), 200);
 
-
         $rootScope.$on('showUserStatistics', showStatistics);
+
         $rootScope.$on('showWorkerProfile', showWorkerProfile);
         $rootScope.$on('showProfileModal', showProfileModal);
         $rootScope.$on('serviceLoaded', serviceLoaded);
@@ -171,17 +171,16 @@ angular
                 $rootScope.$broadcast('openDashboard');
                 //$rootScope.$broadcast('fetchMicrotask');
 
-                $rootScope.$broadcast('queue-tutorial', 'main', false, function () {
-                    $rootScope.$broadcast('showProfileModal');
-                });
-                $rootScope.$emit('queue-tutorial', 'main', true);
+                // $rootScope.$broadcast('queue-tutorial', 'main', false, function () {
+                //     // $rootScope.$broadcast('showProfileModal');
+                // });
 
             }
         }
 
         function showProfileModal() {
             profileModal.$promise.then(profileModal.show);
-            // $rootScope.$emit('queue-tutorial', 'main', true);
+
         }
 
         function showStatistics() {

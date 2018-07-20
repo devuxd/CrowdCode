@@ -62,7 +62,7 @@ module.exports = function (AdminFirebase, Q) {
                     loggedOut: "null",
                     settings: {
                         reviews: true,
-                        tutorials: false
+                        tutorials: true
                     },
                     notifications: "null"
                 },
