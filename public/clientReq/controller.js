@@ -1,6 +1,7 @@
 ////////////////////
 // APP CONTROLLER //
 ////////////////////
+// var wrapperUtil = require('word-wrap');
 clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '$firebaseArray', '$firebaseObject', '$alert', '$http',
     function ($scope, $rootScope, $firebaseArray, $firebaseObject, $alert, $http) {
 
@@ -190,12 +191,14 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
 
                     //Add new line to function description
                     var clean = funct.description.replace(/\n/g, "");
-                    console.log("Cleaned " + clean);
-                    var temp = clean.match(/[\s\S]{1,100}/g);
-                    var description = '';
-                    for (var i = 0; i < temp.length; i++) {
-                        description += temp[i] + "\n";
-                    }
+                   console.log("Cleaned " + clean);
+                   var temp = clean.match(/[\s\S]{1,154}\w*/g);
+                   var description = '';
+                   for (var i = 0; i < temp.length; i++) {
+                       description += temp[i] + "\n";
+                   }
+                  // var descriptionNew = wrapperUtil(funct.description.replace(/\n/g, ""),{width: 150});
+                  //   funct.description = descriptionNew;
                     funct.description = description;
                     if(funct.isThirdPartyAPI == undefined){
                         funct.isThirdPartyAPI=false;
