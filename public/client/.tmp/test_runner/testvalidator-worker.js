@@ -45,7 +45,7 @@ self.addEventListener('message', function(message){
 		} catch(e){
 			console.log('excption',e);
 			// if it not an assertion error, show it
-			if( !( e instanceof chai.AssertionError ) ){
+			if( !( e instanceof chai.AssertionError ) && !(e instanceof TypeError)){
 
                     sendData.error = e.message;
 

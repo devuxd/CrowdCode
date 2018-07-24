@@ -45,13 +45,18 @@ Debugger.run = function (testCode, callsLogs) {
     try {
         eval(evalCode);
         _testResult.passed = true;
-    }
-    catch (e) {
-        // console.log(e);
+    } catch (e) {
+        console.log('run test result', e);
         if (e instanceof chai.AssertionError) {
             _testResult = e;
         }
         _testResult.passed = false;
+        //ignore throw exception in body of method for cheking valid argument exception
+        if(e instanceof TypeError){
+            console.log('entered chai throw');
+            _testResult.passed = true;
+        }
+
     }
     console.log('test Result: ', _testResult);
     return _testResult;
@@ -195,7 +200,7 @@ Debugger.mockFunction = function (fNode) {
             .join(',')
         + ')';
 
-  if (name == 'SaveObject') {
+    if (name == 'SaveObject') {
         callBody += '\n' +
             '  {\n ' +
             ' for(var i=0; i<objTemp.length; i++) {\n' +
