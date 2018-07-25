@@ -75,52 +75,64 @@
 <div class="container-fluid">
 
 
-    <h1> 1: Watch the video below to learn how to get started</h1>
+    <h1> Tutorial 1: watch the video below to learn how to get started</h1>
     <!--<div class="row ">-->
-        <div class="embed-responsive embed-responsive-16by9" >
-            <!--<video  controls>-->
+    <div class='row'>
+        <div class='col-md-2'></div>
+        <div class='col-md-8'>
+            <div class="embed-responsive embed-responsive-16by9 " >
+                <!--<video  controls>-->
                 <!--<source src="/video/CrowdDemoLight.mp4" type="video/mp4">-->
-            <!--</video>-->
-            <iframe class="embed-responsive-item" src="/video/CrowdDemoLight.mp4" allowfullscreen ></iframe>
+                <!--</video>-->
+                <iframe class="embed-responsive-item" src="/video/CrowdDemoLight.mp4" allowfullscreen
+                        autoplay="0"></iframe>
+            </div>
         </div>
+        <div class='col-md-2'></div>
+    </div>
     <!--</div>-->
     <hr style="border-top: 18px double #8c8b8b"/>
 
-    <h2> 2: You will faced with two types of tasks to accomplish. Read the below workflow</h2>
+    <h2> Tutorial 2: you will faced with two types of tasks to accomplish. type A: coding only one behavior; type B: reviewing a code and tests which are
+        implemented by other programmers. Read the below screenshots</h2>
     <div class="row justify-content-start">
-        <div class="col-md-5">
-            <h3 class="pull-left"> Type A: implement behaviour tasks </h3>
+        <div class="col-md-9">
+            <h3 class="pull-left"> Type A: coding tasks (implement one behavior tasks), follow 4 bellow steps in
+                screenshots for each task of coding</h3>
         </div>
     </div>
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-6">
-            <h3 >Step 1: find a behavior in the function description(in the comments above the function) that is not yet implemented</h3>
-            <img src="/img/Behave-step1-blur.png" style="max-height: 5cm"/>
+        <div class="col-md-8">
+            <h3>Step 1: find only one behavior in the function description(in the comments above the function) that is
+                not yet implemented, for example: only choose "it should check arguments to be valid" </h3>
+            <img src="/img/Behave-step1.png" style="max-height: 5cm;;max-width: 24cm"/>
         </div>
-        <div class="col-md-4">
-            <h3 >Step 2: write a test for this behavior</h3>
-            <img src="/img/behave-step2-assertion-code.png" style="max-height: 5cm"/>
+        <div class="col-md-3">
+            <h3>Step 2: write a test for the behavior you have chosen</h3>
+            <img src="/img/behvae-step2-assertion-code.png" style="max-height: 7cm;;max-width: 24cm"/>
         </div>
     </div>
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-5">
-            <h3 >Step 3: implement the behaviour in the function editor</h3>
+        <div class="col-md-8">
+            <h3>Step 3: implement the behavior in the function editor, just implement one bahvior, it does not need to
+                implement more than one bahvior. For example: only implement "it thow TypeError if argmunents are null or empty." </h3>
             <!--<img  src="/img/SubmitButton.png"/>-->
-            <img src="/img/behave-Step3.png" style="max-height: 5cm"/>
+            <img src="/img/behave-Step3.png" style="max-height: 5cm;max-width: 18cm"/>
         </div>
-        <div class="col-md-1"></div>
-        <div class="col-md-4">
-            <h3 >Step 4: once you’re finished, click “Submit” button.</h3>
+
+        <div class="col-md-3">
+            <h3>Step 4: once you’re finished, click “Submit” button.</h3>
             <img src="/img/SubmitButton.png" style="max-height: 3cm;max-width: 5cm"/>
         </div>
     </div>
     <hr style="border-top: 6px double #8c8b8b"/>
 
     <div class="row">
-        <div class="col-md-5" class="row justify-content-start">
-            <h3 class="pull-left"> Type B: review tasks</h3>
+        <div class="col-md-9" class="row justify-content-start">
+            <h3 class="pull-left"> Type B: review tasks (reviewing code of the other programmer), follow 4 bellow steps
+                in screenshots for each task</h3>
 
         </div>
 
@@ -128,24 +140,24 @@
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-4">
-            <h3 >Step 1: review implementation of the behavior</h3>
+            <h3>Step 1: review implementation of the behavior which is written by other programmer</h3>
             <img src="/img/review-step1.png" style="max-height: 5cm"/>
         </div>
-        <div class="col-md-1"></div>
+
         <div class="col-md-4">
-            <h3 >Step 2: review tests of this behavior</h3>
+            <h3>Step 2: review tests of this behavior</h3>
             <img src="/img/review-step2.png" style="max-height: 5cm"/>
         </div>
     </div>
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-5">
-            <h3 >Step 3: rate the contribution and give a feedback to the development</h3>
+            <h3>Step 3: rate the contribution and give a feedback to the development</h3>
             <img src="/img/review-step3.png" style="max-height: 5cm"/>
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-4">
-            <h3 >Step 4: once you’re finished, click “Submit” button</h3>
+            <h3>Step 4: once you’re finished, click “Submit” button</h3>
             <img src="/img/SubmitButton.png" style="max-height: 3cm;max-width: 5cm"/>
         </div>
     </div>
@@ -215,7 +227,7 @@
 
     <div class="row" style="margin-bottom: 50px">
         <h5>If you are ready click “Get Started!” </h5>
-        <div  style="text-align:center;">
+        <div style="text-align:center;">
             <a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
         </div>
     </div>
