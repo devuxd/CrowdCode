@@ -3887,95 +3887,141 @@ angular.module("tutorials/DescribeFunctionBehavior.html", []).run(["$templateCac
 
 angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/ImplementBehavior.html",
-    "<step>\n" +
-    "	<div class=\"title\">Implement Function</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		<p style=\"width:500px\">\n" +
-    "			Given the function description, you have 10 minutes to implement this function fully/partially.\n" +
-    "			You can write/edit the code in the function editor, create/edit/remove tests cases and run the tests suite on your code.\n" +
-    "		</p>\n" +
-    "		<!--<p style=\"width:500px\">-->\n" +
-    "			<!--Follow this tutorials for more details:-->\n" +
-    "		<!--</p>-->\n" +
-    "		<!--<ul>-->\n" +
-    "			<!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true , undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">running and debugging tests</a></li>&ndash;&gt;-->\n" +
-    "			<!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">using the function editor</a></li>&ndash;&gt;-->\n" +
-    "			<!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'ImplementBehavior' ); close(); $event.preventDefault();\">creating a test</a></li>&ndash;&gt;-->\n" +
-    "			<!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">input/output tests</a></li>&ndash;&gt;-->\n" +
-    "			<!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">assertion tests</a></li>&ndash;&gt;-->\n" +
-    "		<!--</ul>-->\n" +
-    "	</div>\n" +
+    "<step style=\"width:800px\">\n" +
+    "    <div class=\"title\">Implement Function</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p>\n" +
+    "            Given the function description, you have 15 minutes to implement this function fully/partially.\n" +
+    "            You can write/edit the code in the function editor, create/edit/remove tests cases and run the tests suite\n" +
+    "            on your code.\n" +
+    "        </p>\n" +
+    "        <!--<p style=\"width:500px\">-->\n" +
+    "        <!--Follow this tutorials for more details:-->\n" +
+    "        <!--</p>-->\n" +
+    "        <!--<ul>-->\n" +
+    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true , undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">running and debugging tests</a></li>&ndash;&gt;-->\n" +
+    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">using the function editor</a></li>&ndash;&gt;-->\n" +
+    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'ImplementBehavior' ); close(); $event.preventDefault();\">creating a test</a></li>&ndash;&gt;-->\n" +
+    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">input/output tests</a></li>&ndash;&gt;-->\n" +
+    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">assertion tests</a></li>&ndash;&gt;-->\n" +
+    "        <!--</ul>-->\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step style=\"width:600px;\">\n" +
-    "	<div class=\"title\">Function Implementation Complete</div>\n" +
-    "	<div class=\"text\">\n" +
+    "<step style=\"width:1000px;\">\n" +
+    "    <div class=\"title\">Function Implementation Complete</div>\n" +
+    "    <div class=\"text\">\n" +
     "\n" +
-    "		<p style=\"width: 590px\">\n" +
-    "			Once you have implemented the function completely, you can click the checkbox in the test editor panel as shown below and then submit this task.\n" +
-    "		</p>\n" +
+    "        <p>\n" +
+    "            Once you have implemented the function completely, you can click the checkbox in the test editor panel as\n" +
+    "            shown below and then submit this task.\n" +
+    "        </p>\n" +
     "\n" +
-    "		<img src=\"/img/tutorial/implementation/implementation_complete.png\" width=\"590px\"/>\n" +
+    "        <img src=\"/img/tutorial/implementation/implementation_complete.png\"\n" +
+    "             style=\" max-width:800px; max-height: 800px\"/>\n" +
     "\n" +
-    "	</div>\n" +
+    "    </div>\n" +
+    "</step>\n" +
+    "<step style=\"width: 900px\">\n" +
+    "    <div class=\"title\">coding tasks (implement one behavior tasks)\n" +
+    "    </div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p><strong> Step 1: </strong> find only one behavior in the function description(in the comments above the\n" +
+    "            function) that is not yet implemented, for example: \"it should check arguments to be valid\"\n" +
+    "        </p>\n" +
+    "        <img src=\"/img/Behave-step1.png\" style=\"max-height: 5cm;;max-width: 24cm\"/>\n" +
+    "\n" +
+    "        <p><strong> Step 2: </strong> write a test for the behavior you have chosen</p>\n" +
+    "        implement the behavior in the function editor, just implement one bahvior, it does not need to\n" +
+    "        implement more than one bahvior. For example: only implement \"it thow TypeError if argmunents are null or\n" +
+    "        empty.\" </p>\n" +
+    "        <img src=\"/img/behvae-step2-assertion-code.png\" style=\"max-height: 5cm;;max-width: 24cm\"/>\n" +
+    "\n" +
+    "        <p><strong> Step 3: </strong> implement the behavior in the function editor, just implement one bahvior, it does\n" +
+    "            not need to\n" +
+    "            implement more than one bahvior. For example: only implement \"it thow TypeError if argmunents are null or\n" +
+    "            empty.\" </p>\n" +
+    "\n" +
+    "        <img src=\"/img/behave-Step3.png\" style=\"max-height: 5cm;max-width: 16cm; \"/>\n" +
+    "        <p><strong> Step 4: </strong> once you’re finished, click “Submit” button.</p>\n" +
+    "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 2cm;max-width: 5cm\"/>\n" +
+    "\n" +
+    "    </div>\n" +
+    "</step>\n" +
+    "<step style=\"width:800px;\">\n" +
+    "    <div class=\"title\">Function Implementation Incomplete</div>\n" +
+    "    <div class=\"text\">\n" +
+    "\n" +
+    "        <p>\n" +
+    "            If you have partially implemented the function, please describe the unfinished sections as pseudo code to\n" +
+    "            notify the next programmer.\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <img src=\"/img/tutorial/implementation/psuedo_code.png\" width=\"470px\"/>\n" +
+    "\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step style=\"width:500px;\">\n" +
-    "	<div class=\"title\">Function Implementation Incomplete</div>\n" +
-    "	<div class=\"text\">\n" +
+    "<step style=\"width:800px;\">\n" +
+    "    <div class=\"title\">Comment Code</div>\n" +
+    "    <div class=\"text\">\n" +
     "\n" +
-    "		<p style=\"width: 500px\">\n" +
-    "			If you have partially implemented the function, please describe the unfinished sections as pseudo code to notify the next programmer.\n" +
-    "		</p>\n" +
+    "        <p>\n" +
+    "            Please write the code with appropriate comments as this will help the following programmers understand your\n" +
+    "            code quickly.\n" +
+    "        </p>\n" +
     "\n" +
-    "		<img src=\"/img/tutorial/implementation/psuedo_code.png\" width=\"470px\"/>\n" +
+    "        <img src=\"/img/tutorial/implementation/comment_code.png\" width=\"470px\"/>\n" +
     "\n" +
-    "	</div>\n" +
+    "    </div>\n" +
+    "</step>\n" +
+    "<step style=\"width:800px\">\n" +
+    "    <div class=\"title\">Calling a function</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p>\n" +
+    "            To see the list of all functions in the system, type OPTION+SPACE (Mac) or CTRL+SPACE (Windows/Linux)\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <img src=\"/img/tutorial/running/functions_list.png\"/>\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step style=\"width:500px;\">\n" +
-    "	<div class=\"title\">Comment Code</div>\n" +
-    "	<div class=\"text\">\n" +
-    "\n" +
-    "		<p style=\"width: 500px\">\n" +
-    "			Please write the code with appropriate comments as this will help the following programmers understand your code quickly.\n" +
-    "		</p>\n" +
-    "\n" +
-    "		<img src=\"/img/tutorial/implementation/comment_code.png\" width=\"470px\"/>\n" +
-    "\n" +
-    "	</div>\n" +
+    "<step style=\"width:800px\">\n" +
+    "    <div class=\"title\">Creating a new function</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p>\n" +
+    "            If you need a supporting function to realize the implementation, you can create a new function and submit\n" +
+    "            your task.\n" +
+    "            This function will then be assigned to programmers to implement.\n" +
+    "            To create a new function, type ALT SPACE(Mac) or CTRL SPACE(Windows/Linux) and select “Add a new function”,\n" +
+    "            where you can write a comment specifying the function name, description, parameters, parameter types and\n" +
+    "            return type.\n" +
+    "        </p>\n" +
+    "        <img src=\"/img/tutorial/running/add_function.png\" width=\"470px\"/>\n" +
+    "        <br/><br/>\n" +
+    "        <img src=\"/img/tutorial/running/new_function.png\" width=\"470px\"/>\n" +
+    "    </div>\n" +
     "</step>\n" +
-    "<step>\n" +
-    "	<div class=\"title\">Calling a function</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		<p style=\"width:500px\">\n" +
-    "			To see the list of all functions in the system, type ALT+SPACE (Mac) or CTRL+SPACE (Windows/Linux)\n" +
-    "		</p>\n" +
-    "\n" +
-    "		<img src=\"/img/tutorial/running/functions_list.png\" />\n" +
-    "	</div>\n" +
-    "</step>\n" +
-    "\n" +
-    "<step>\n" +
-    "	<div class=\"title\">Creating a new function</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		<p style=\"width:470px\">\n" +
-    "			If you need a supporting function to realize the implementation, you can create a new function and submit your task.\n" +
-    "			This function will then be assigned to programmers to implement.\n" +
-    "			To create a new function, type ALT SPACE(Mac) or CTRL SPACE(Windows/Linux) and select “Add a new function”,\n" +
-    "			where you can write a comment specifying the function name, description, parameters, parameter types and return type.\n" +
-    "		</p>\n" +
-    "		<img src=\"/img/tutorial/running/add_function.png\" width=\"470px\"/>\n" +
-    "		<br/><br/>\n" +
-    "		<img src=\"/img/tutorial/running/new_function.png\" width=\"470px\"/>\n" +
-    "	</div>\n" +
+    "<step style=\"width:800px\">\n" +
+    "    <div class=\"title\">Last not least\n" +
+    "    </div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p >\n" +
+    "            You should be aware implement only one behavior.\n" +
+    "            In the function description(in the comments above the function) there is a lot of behaviors , but choose one of them for implement. for example: in the below screenshot function has\n" +
+    "            behaviors like 1) it update status of a todo 2) it return false if it can not find the todo. 3)it should call 3rd party api for interacting with database\n" +
+    "            4) it throw an exception if arguments be invalid\n" +
+    "            <strong style=\"color: red\">But, you should implement just one of these behaviors, NOT ALL BEHAVIORS</strong>\n" +
+    "        </p>\n" +
+    "        <img src=\"/img/function-description.png\" style=\"max-height: 5cm;;max-width: 20cm\"/>\n" +
+    "    </div>\n" +
     "</step>\n" +
     "\n" +
     "<step on-hide=\"showProfileModal(); \" style=\"width:450px\">\n" +
-    "	<div class=\"title\">Implementing a function tutorial is completed!</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		You have completed Implementing a function! The next tutorial is <strong>Reviewing implemented function</strong>.\n" +
-    "	</div>\n" +
+    "    <div class=\"title\">Implementing a function tutorial is completed!</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        You have completed Implementing a function! The next tutorial is <strong>Reviewing implemented function</strong>.\n" +
+    "    </div>\n" +
     "</step>");
 }]);
 
@@ -3984,8 +4030,25 @@ angular.module("tutorials/Review.html", []).run(["$templateCache", function ($te
     "<step>\n" +
     "	<div class=\"title\">Review </div>\n" +
     "	<div class=\"text\">\n" +
-    "		<p>In Review Work, your goal is to assess work submitted by the crowd.</p>\n" +
+    "		<p>In Review Work, your goal is to assess work submitted by the crowd.You should read function codes and test, after that accept or reject the implementation</p>\n" +
     "		<img src=\"/img/tutorial/review/microtask.png\" style=\" max-width:800px; max-height: 800px\"/>\n" +
+    "	</div>\n" +
+    "</step>\n" +
+    "<step style=\"width: 900px\">\n" +
+    "	<div class=\"title\">review tasks (reviewing code of the other programmer)\n" +
+    "	</div>\n" +
+    "	<div class=\"text\">\n" +
+    "		<p><strong> Step 1: </strong> review implementation of the behavior which is written by other programmer</p>\n" +
+    "            <img src=\"/img/review-step1.png\" style=\"max-height: 5cm;max-width: 12cm\"/>\n" +
+    "\n" +
+    "		<p><strong> Step 2: </strong> review tests of this behavior</p>\n" +
+    "            <img src=\"/img/review-step2.png\" style=\"max-height: 5cm;max-width: 12cm\"/>\n" +
+    "\n" +
+    "		<p><strong> Step 3: </strong> rate the contribution and give a feedback to the development</p>\n" +
+    "        <img src=\"/img/review-step3.png\" style=\"max-height: 5cm\"/>\n" +
+    "		<p><strong> Step 4: </strong> once you’re finished, click “Submit” button</p>\n" +
+    "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 2cm;max-width: 5cm\"/>\n" +
+    "\n" +
     "	</div>\n" +
     "</step>\n" +
     "<step>\n" +
@@ -4005,6 +4068,20 @@ angular.module("tutorials/Review.html", []).run(["$templateCache", function ($te
     "	</div>\n" +
     "</step>\n" +
     "\n" +
+    "<step style=\"width:800px\">\n" +
+    "    <div class=\"title\">Last not least\n" +
+    "    </div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p >\n" +
+    "            You should be aware only one behavior is implemented by other programmer, while you assess the implementation just consider the behavior that the code implemented.\n" +
+    "            In the function description(in the comments above the function) there is a lot of behaviors are written, but one of them is implemented. for example: in the below screenshot function has\n" +
+    "            behaviors like 1) it update status of a todo 2) it return false if it can not find the todo. 3)it should call 3rd party api for interacting with database\n" +
+    "            4) it throw an exception if arguments be invalid\n" +
+    "            <strong style=\"color: red\">But, you should evaluate just one of these behaviors which is implemented, NOT ALL BEHAVIORS</strong>\n" +
+    "        </p>\n" +
+    "        <img src=\"/img/function-description.png\" style=\"max-height: 5cm;;max-width: 20cm\"/>\n" +
+    "    </div>\n" +
+    "</step>\n" +
     "\n" +
     "<step on-hide=\"showProfileModal(); \" style=\"width:475px\">\n" +
     "	<div class=\"title\">Reviewing implemented function is completed!</div>\n" +
@@ -4223,7 +4300,7 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
     "<step>\n" +
     "    <div class=\"title\">Your Activity</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p style=\"width: 200px\">\n" +
+    "        <p style=\"width: 300px\">\n" +
     "            See what you’ve done, see how the crowd rated it.\n" +
     "        </p>\n" +
     "\n" +
