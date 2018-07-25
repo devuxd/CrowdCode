@@ -3984,13 +3984,13 @@ angular.module("tutorials/Review.html", []).run(["$templateCache", function ($te
     "<step>\n" +
     "	<div class=\"title\">Review </div>\n" +
     "	<div class=\"text\">\n" +
-    "		<img src=\"/img/tutorial/review/microtask.png\" />\n" +
     "		<p>In Review Work, your goal is to assess work submitted by the crowd.</p>\n" +
+    "		<img src=\"/img/tutorial/review/microtask.png\" style=\" max-width:800px; max-height: 800px\"/>\n" +
     "	</div>\n" +
     "</step>\n" +
     "<step>\n" +
     "	<div class=\"text\">\n" +
-    "		<p style=\"width:500px\">\n" +
+    "		<p style=\"width:800px;\">\n" +
     "			If you rate work with <strong>1 to 3 stars</strong>, the work will be marked as needing revision. In this case, you must describe aspects of the work that you feel must be improved.\n" +
     "		</p>\n" +
     "		<img src=\"/img/tutorial/review/revise.png\" />\n" +
@@ -3998,7 +3998,7 @@ angular.module("tutorials/Review.html", []).run(["$templateCache", function ($te
     "</step>\n" +
     "<step>\n" +
     "	<div class=\"text\">\n" +
-    "		<p style=\"width:500px\">\n" +
+    "		<p style=\"width:800px\">\n" +
     "			If you feel that the work as submitted is already of high quality, you should rate it with <strong>4 or 5 stars</strong>. In this case, the work will be accepted as is. You can also (optionally) include a message describing your assessment of the work, which will be provided back to the crowd worker that did the work.\n" +
     "		</p>\n" +
     "		<img src=\"/img/tutorial/review/accepted.png\" />\n" +
@@ -4096,26 +4096,35 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step highlight=\"remainingTimeBar\" placement=\"top\" style=\"width:300px;\">\n" +
+    "<!--<step highlight=\"remainingTimeBar\" placement=\"top\" style=\"width:300px;\">-->\n" +
+    "<step style=\"width:600px;\">\n" +
     "    <div class=\"title\">Hurry up!</div>\n" +
     "    <div class=\"text\">\n" +
     "        For each microtask, you have <strong>15 minutes</strong> to submit the work\n" +
-    "        or the microtask will be automatically skipped. <br/>\n" +
-    "        The bar on the bottom represents the remaining time for submitting the current microtask.<br/>\n" +
+    "        or the microtask will be automatically skipped.\n" +
+    "\n" +
+    "       <p>The bar on the bottom represents the remaining time for submitting the current microtask.</p>\n" +
+    "\n" +
+    "        <img src=\"/img/tutorial/main/reminder-bar.png\" style=\"width:250px;margin-top: 5px\">\n" +
+    "\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step highlight=\"submitBtn\" placement=\"top-left\" style=\"width:150px;\">\n" +
+    "<!--<step highlight=\"submitBtn\" placement=\"top-left\" style=\"width:150px;\">-->\n" +
+    "<step style=\"width:400px;\">\n" +
     "    <div class=\"title\">Submit</div>\n" +
     "    <div class=\"text\">\n" +
-    "        All done? Submit your work for review.\n" +
+    "        <p>All done? Submit your work for review.</p>\n" +
+    "        <img src=\"/img/tutorial/main/SubmitButton.png\" style=\"max-width: 200px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step highlight=\"skipBtn\" placement=\"top-left\" style=\"width:200px;\">\n" +
+    "<!--<step highlight=\"skipBtn\" placement=\"top-left\" style=\"width:200px;\">-->\n" +
+    "<step  style=\"width:400px;\">\n" +
     "    <div class=\"title\">Skip</div>\n" +
     "    <div class=\"text\">\n" +
-    "        Not the right microtask for you? Skip it. <br/>\n" +
+    "       <p> Not the right microtask for you? Skip it. </p>\n" +
+    "        <img src=\"/img/tutorial/main/SubmitButton.png\" style=\"max-width: 200px\" />\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
@@ -4137,12 +4146,11 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
     "            opens its discussion.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/main/question1.png\"/>\n" +
+    "        <img src=\"/img/tutorial/main/question-filter.png\"/>\n" +
     "\n" +
     "        <p style=\"width: 590px\">\n" +
-    "            You can even edit which questions are related to the current function by toggling the <strong>function name\n" +
-    "            button</strong> to mark the question as related or unrelated (e.g., clicking on “doSpreadsheetCommand” in\n" +
-    "            the example above).\n" +
+    "            You can even edit which questions are related to the current function by toggling the <strong>tag</strong>\n" +
+    "            to mark the question as related or unrelated.\n" +
     "        </p>\n" +
     "        <p style=\"width: 590px\">\n" +
     "            If you can't find what you’re looking for, you can <strong>ask a question</strong>.\n" +
@@ -4155,7 +4163,7 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
     "    <div class=\"title\">... or ask a new question ...</div>\n" +
     "    <div class=\"text\">\n" +
     "        <div class=\"pull-left\">\n" +
-    "            <img src=\"/img/tutorial/main/question2.png\" style=\"width:280px;margin-right:10px;\"/>\n" +
+    "            <img src=\"/img/tutorial/main/question-asking.png\" style=\"width:280px;margin-right:10px;\"/>\n" +
     "        </div>\n" +
     "        <div class=\"pull-left\" style=\"width:200px\">\n" +
     "            <p>\n" +
@@ -4185,7 +4193,7 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
     "            vote</strong> or <strong>down vote</strong> the item.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/main/question3.png\"/>\n" +
+    "        <img src=\"/img/tutorial/main/question-reply.png\"/>\n" +
     "\n" +
     "        <p style=\"width: 450px\">\n" +
     "            When you think that discussion on a Question has been concluded, you can mark a Question as\n" +
@@ -4212,7 +4220,6 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
     "</step>\n" +
     "\n" +
     "\n" +
-    "\n" +
     "<step>\n" +
     "    <div class=\"title\">Your Activity</div>\n" +
     "    <div class=\"text\">\n" +
@@ -4225,11 +4232,11 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
     "</step>\n" +
     "\n" +
     "<!--<step highlight=\"newsfeedBtn\" placement=\"right-center\" style=\"width:200px;\"-->\n" +
-    "      <!--on-show=\"$broadcast('setLeftBarTab','newsfeed');\">-->\n" +
-    "    <!--<div class=\"title\">Your Activity</div>-->\n" +
-    "    <!--<div class=\"text\">-->\n" +
-    "        <!--See what you’ve done, see how the crowd rated it.-->\n" +
-    "    <!--</div>-->\n" +
+    "<!--on-show=\"$broadcast('setLeftBarTab','newsfeed');\">-->\n" +
+    "<!--<div class=\"title\">Your Activity</div>-->\n" +
+    "<!--<div class=\"text\">-->\n" +
+    "<!--See what you’ve done, see how the crowd rated it.-->\n" +
+    "<!--</div>-->\n" +
     "<!--</step>-->\n" +
     "\n" +
     "<step>\n" +
@@ -4484,7 +4491,7 @@ angular.module("tutorials/review_describe.html", []).run(["$templateCache", func
     "</step>\n" +
     "<step>\n" +
     "	<div class=\"text\">\n" +
-    "		<p style=\"width:500px\">\n" +
+    "		<p style=\"width:700px\">\n" +
     "			If you rate work with <strong>1 to 3 stars</strong>, the work will be marked as needing revision. In this case, you must describe aspects of the work that you feel must be improved.\n" +
     "		</p>\n" +
     "		<img src=\"/img/tutorial/review/revise.png\" />\n" +
@@ -4492,7 +4499,7 @@ angular.module("tutorials/review_describe.html", []).run(["$templateCache", func
     "</step>\n" +
     "<step>\n" +
     "	<div class=\"text\">\n" +
-    "		<p style=\"width:500px\">\n" +
+    "		<p style=\"width:600px\">\n" +
     "			If you feel that the work as submitted is already of high quality, you should rate it with <strong>4 or 5 stars</strong>. In this case, the work will be accepted as is. You can also (optionally) include a message describing your assessment of the work, which will be provided back to the crowd worker that did the work.\n" +
     "		</p>\n" +
     "		<img src=\"/img/tutorial/review/accepted.png\" />\n" +
