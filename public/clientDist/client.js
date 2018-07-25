@@ -12454,24 +12454,23 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
 angular.module("tutorials/main.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/main.html",
     "<step>\n" +
-    "	<div class=\"title\">Crowd Microservices Application Tutorial</div>\n" +
-    "	<div class=\"text\">\n" +
-    "		Welcome to the Crowd Microservices tutorial. Here, we’ll help get you up to speed.\n" +
-    "		<ul>\n" +
+    "	<div class=\"title\">Crowd Microservices Tutorial</div>\n" +
+    "	<div class=\"text\" style=\"width: 500px\">Here, we’ll help get you up to speed by readin these 5 tutorials.\n" +
+    "		<ol>\n" +
     "			<!--<li><a href=\"#\" ng-click=\"nextStep()\">Introduction</a></li>-->\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'introduction_tutorial', true, undefined, 'main'); close(); $event.preventDefault();\">Introduction</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();\">Implementing a function</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'Review', true, undefined, 'main'); close(); $event.preventDefault();\">Reviewing implemented function</a></li>\n" +
+    "			<li style=\"margin-bottom: 5px;margin-top: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'introduction_tutorial', true, undefined, 'main'); close(); $event.preventDefault();\">Dashboard</a></li>\n" +
+    "			<li style=\"margin-bottom: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();\">Implementing a function</a></li>\n" +
+    "			<li style=\"margin-bottom: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'Review', true, undefined, 'main'); close(); $event.preventDefault();\">Reviewing implemented function</a></li>\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'main'); close(); $event.preventDefault();\">using the function editor</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'main' ); close(); $event.preventDefault();\">creating a test</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'main'); close(); $event.preventDefault();\">input/output tests</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'main'); close(); $event.preventDefault();\">assertion tests</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true, undefined, 'main'); close(); $event.preventDefault();\">running and debugging tests</a></li>-->\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_section', true, undefined, 'main'); close(); $event.preventDefault();\">Creating, running and debugging unit tests</a></li>\n" +
-    "			<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_editor_help', true, undefined, 'main'); close(); $event.preventDefault();\">Coding in test editor</a></li>\n" +
+    "			<li style=\"margin-bottom: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_section', true, undefined, 'main'); close(); $event.preventDefault();\">Creating, running and debugging unit tests</a></li>\n" +
+    "			<li style=\"margin-bottom: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_editor_help', true, undefined, 'main'); close(); $event.preventDefault();\">Coding in test editor</a></li>\n" +
     "\n" +
     "\n" +
-    "		</ul>\n" +
+    "		</ol>\n" +
     "	</div>\n" +
     "</step>\n" +
     "\n" +
