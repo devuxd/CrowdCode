@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/public/img/Behave-step1.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/public/img/behvae-step2-assertion-code.png" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/public/img/behave-Step3.png" afterPath="$PROJECT_DIR$/public/img/behave-Step3.png" />
+      <change beforePath="$PROJECT_DIR$/public/img/review-step1.png" afterPath="$PROJECT_DIR$/public/img/review-step1.png" />
+      <change beforePath="$PROJECT_DIR$/public/img/review-step2.png" afterPath="$PROJECT_DIR$/public/img/review-step2.png" />
       <change beforePath="$PROJECT_DIR$/public/welcome.html" afterPath="$PROJECT_DIR$/public/welcome.html" />
-      <change beforePath="$PROJECT_DIR$/sessions/GOlInHNPJJqKlVfnb1s_CNCoFhdfoeME.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/sessions/mbNCKTraTFMM0afBl2BZeXZQXbIJNPzY.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/3K0u-oxo2scVG8UX80YgsWRM2U7wKNxo.json" afterPath="$PROJECT_DIR$/sessions/3K0u-oxo2scVG8UX80YgsWRM2U7wKNxo.json" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -28,13 +26,12 @@
       <file leaf-file-name="welcome.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/welcome.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="110" column="30" lean-forward="false" selection-start-line="110" selection-start-column="30" selection-end-line="110" selection-end-column="30" />
+            <state relative-caret-position="301">
+              <caret line="121" column="65" lean-forward="false" selection-start-line="121" selection-start-column="65" selection-end-line="121" selection-end-column="65" />
               <folding>
                 <element signature="n#style#0;n#hr#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#0;n#div#1;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#img#0;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#hr#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#img#0;n#div#1;n#div#5;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -58,13 +55,6 @@
       </file>
       <file leaf-file-name="behave-step2-assertion-code.png" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/img/behave-step2-assertion-code.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="review-step2.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/img/review-step2.png">
           <provider selected="true" editor-type-id="images">
             <state />
           </provider>
@@ -406,7 +396,7 @@
       <workItem from="1532015497613" duration="11454000" />
       <workItem from="1532096634059" duration="12745000" />
       <workItem from="1532395436056" duration="4258000" />
-      <workItem from="1532527526408" duration="5934000" />
+      <workItem from="1532527526408" duration="6901000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -454,7 +444,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="150278000" />
+    <option name="totallyTimeSpent" value="151245000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -927,13 +917,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/welcome.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="110" column="30" lean-forward="false" selection-start-line="110" selection-start-column="30" selection-end-line="110" selection-end-column="30" />
+        <state relative-caret-position="301">
+          <caret line="121" column="65" lean-forward="false" selection-start-line="121" selection-start-column="65" selection-end-line="121" selection-end-column="65" />
           <folding>
             <element signature="n#style#0;n#hr#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#1;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#img#0;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#hr#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#img#0;n#div#1;n#div#5;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
