@@ -12082,7 +12082,7 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step style=\"width:1000px;\">\n" +
+    "<step style=\"max-width:800px;max-height: 900px\">\n" +
     "    <div class=\"title\">Function Implementation Complete</div>\n" +
     "    <div class=\"text\">\n" +
     "\n" +
@@ -12092,33 +12092,29 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "        </p>\n" +
     "\n" +
     "        <img src=\"/img/tutorial/implementation/implementation_complete.png\"\n" +
-    "             style=\" max-width:800px; max-height: 800px\"/>\n" +
+    "             style=\" max-width:750px; max-height: 650px\"/>\n" +
     "\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step style=\"width: 900px\">\n" +
+    "<step style=\"width: 900px; height: 800px\">\n" +
     "    <div class=\"title\">coding tasks (implement one behavior tasks)\n" +
     "    </div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p><strong> Step 1: </strong> find only one behavior in the function description(in the comments above the\n" +
-    "            function) that is not yet implemented, for example: \"it should check arguments to be valid\"\n" +
+    "        <p><strong> Step 1: </strong> find only one behavior in the function description(in the comments above the function) that is not yet implemented, for example: \"it should check arguments to be valid\"\n" +
     "        </p>\n" +
-    "        <img src=\"/img/Behave-step1.png\" style=\"max-height: 5cm;;max-width: 24cm\"/>\n" +
+    "        <img src=\"/img/Behave-step1.png\" style=\"max-height: 200px;width: 400px\"/>\n" +
     "\n" +
-    "        <p><strong> Step 2: </strong> write a test for the behavior you have chosen</p>\n" +
-    "        implement the behavior in the function editor, just implement one bahvior, it does not need to\n" +
-    "        implement more than one bahvior. For example: only implement \"it thow TypeError if argmunents are null or\n" +
-    "        empty.\" </p>\n" +
-    "        <img src=\"/img/behvae-step2-assertion-code.png\" style=\"max-height: 5cm;;max-width: 24cm\"/>\n" +
+    "        <p><strong> Step 2: </strong> write a test for the behavior you have chosen implement the behavior in the function editor, just implement one bahvior, it does not need to\n" +
+    "        implement more than one bahvior. For example: only implement \"it thow TypeError if argmunents are null or empty.\" </p>\n" +
+    "        <img src=\"/img/behvae-step2-assertion-code.png\" style=\"max-height: 200px;width: 400px\"/>\n" +
     "\n" +
     "        <p><strong> Step 3: </strong> implement the behavior in the function editor, just implement one bahvior, it does\n" +
-    "            not need to\n" +
-    "            implement more than one bahvior. For example: only implement \"it thow TypeError if argmunents are null or\n" +
+    "            not need to implement more than one bahvior. For example: only implement \"it thow TypeError if argmunents are null or\n" +
     "            empty.\" </p>\n" +
     "\n" +
-    "        <img src=\"/img/behave-Step3.png\" style=\"max-height: 5cm;max-width: 16cm; \"/>\n" +
+    "        <img src=\"/img/behave-Step3.png\" style=\"max-height: 200px;width: 400px\"/>\n" +
     "        <p><strong> Step 4: </strong> once you’re finished, click “Submit” button.</p>\n" +
-    "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 2cm;max-width: 5cm\"/>\n" +
+    "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 80px;width: 100px\"/>\n" +
     "\n" +
     "    </div>\n" +
     "</step>\n" +
@@ -12182,10 +12178,10 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "    <div class=\"text\">\n" +
     "        <p >\n" +
     "            You should be aware implement only one behavior.\n" +
-    "            In the function description(in the comments above the function) there is a lot of behaviors , but choose one of them for implement. for example: in the below screenshot function has\n" +
+    "            In the function description(in the comments above the function) there is a lot of behaviors , but choose one of them for implement. for example: in the below screenshot, function has\n" +
     "            behaviors like 1) it update status of a todo 2) it return false if it can not find the todo. 3)it should call 3rd party api for interacting with database\n" +
-    "            4) it throw an exception if arguments be invalid\n" +
-    "            <strong style=\"color: red\">But, you should implement just one of these behaviors, NOT ALL BEHAVIORS</strong>\n" +
+    "            4) it throw an exception if arguments be invalid.\n" +
+    "            <strong style=\"color: red\"> But, you should implement just one of these behaviors such as specified via rectangle in screenshot, NOT ALL BEHAVIORS</strong>\n" +
     "        </p>\n" +
     "        <img src=\"/img/function-description.png\" style=\"max-height: 5cm;;max-width: 20cm\"/>\n" +
     "    </div>\n" +
@@ -12201,27 +12197,27 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
 
 angular.module("tutorials/Review.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/Review.html",
-    "<step>\n" +
+    "<step style=\" max-width:800px; max-height: 800px\">\n" +
     "	<div class=\"title\">Review </div>\n" +
     "	<div class=\"text\">\n" +
     "		<p>In Review Work, your goal is to assess work submitted by the crowd.You should read function codes and test, after that accept or reject the implementation</p>\n" +
-    "		<img src=\"/img/tutorial/review/microtask.png\" style=\" max-width:800px; max-height: 800px\"/>\n" +
+    "		<img src=\"/img/tutorial/review/microtask.png\" style=\" max-width:700px; max-height: 700px\"/>\n" +
     "	</div>\n" +
     "</step>\n" +
-    "<step style=\"width: 900px\">\n" +
+    "<step style=\"width: 600px; max-height: 800px\">\n" +
     "	<div class=\"title\">review tasks (reviewing code of the other programmer)\n" +
     "	</div>\n" +
     "	<div class=\"text\">\n" +
     "		<p><strong> Step 1: </strong> review implementation of the behavior which is written by other programmer. + sign shows these lines are added. - sign shows these lines are deleted from the code.</p>\n" +
-    "            <img src=\"/img/review-step1.png\" style=\"max-height: 5cm;max-width: 20cm\"/>\n" +
+    "            <img src=\"/img/review-step1.png\" style=\"max-height: 200px;width: 400px\"/>\n" +
     "\n" +
     "		<p><strong> Step 2: </strong> review tests of this behavior</p>\n" +
-    "            <img src=\"/img/review-step2.png\" style=\"max-height: 5cm;max-width: 20cm\"/>\n" +
+    "            <img src=\"/img/review-step2.png\" style=\"max-height: 200px;width: 400px\"/>\n" +
     "\n" +
     "		<p><strong> Step 3: </strong> rate the contribution and give a feedback to the development</p>\n" +
-    "        <img src=\"/img/review-step3.png\" style=\"max-height: 5cm\"/>\n" +
+    "        <img src=\"/img/review-step3.png\" style=\"max-height: 100px;width: 400px\"/>\n" +
     "		<p><strong> Step 4: </strong> once you’re finished, click “Submit” button</p>\n" +
-    "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 2cm;\"/>\n" +
+    "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 80px;max-width: 100px\"/>\n" +
     "\n" +
     "	</div>\n" +
     "</step>\n" +
