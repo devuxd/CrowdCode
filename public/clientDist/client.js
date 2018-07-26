@@ -12206,16 +12206,16 @@ angular.module("tutorials/Review.html", []).run(["$templateCache", function ($te
     "	<div class=\"title\">review tasks (reviewing code of the other programmer)\n" +
     "	</div>\n" +
     "	<div class=\"text\">\n" +
-    "		<p><strong> Step 1: </strong> review implementation of the behavior which is written by other programmer</p>\n" +
-    "            <img src=\"/img/review-step1.png\" style=\"max-height: 5cm;max-width: 12cm\"/>\n" +
+    "		<p><strong> Step 1: </strong> review implementation of the behavior which is written by other programmer. + sign shows these lines are added. - sign shows these lines are deleted from the code.</p>\n" +
+    "            <img src=\"/img/review-step1.png\" style=\"max-height: 5cm;max-width: 20cm\"/>\n" +
     "\n" +
     "		<p><strong> Step 2: </strong> review tests of this behavior</p>\n" +
-    "            <img src=\"/img/review-step2.png\" style=\"max-height: 5cm;max-width: 12cm\"/>\n" +
+    "            <img src=\"/img/review-step2.png\" style=\"max-height: 5cm;max-width: 20cm\"/>\n" +
     "\n" +
     "		<p><strong> Step 3: </strong> rate the contribution and give a feedback to the development</p>\n" +
     "        <img src=\"/img/review-step3.png\" style=\"max-height: 5cm\"/>\n" +
     "		<p><strong> Step 4: </strong> once you’re finished, click “Submit” button</p>\n" +
-    "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 2cm;max-width: 5cm\"/>\n" +
+    "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 2cm;\"/>\n" +
     "\n" +
     "	</div>\n" +
     "</step>\n" +
@@ -12307,7 +12307,7 @@ angular.module("tutorials/function_editor.html", []).run(["$templateCache", func
     "		<p style=\"width:500px\">\n" +
     "			If you need a supporting function to realize the implementation, you can create a new function and submit your task.\n" +
     "			This function will then be assigned to programmers to implement.\n" +
-    "			To create a new function, type ALT SPACE(Mac) or CTRL SPACE(Windows/Linux) and select “Add a new function”,\n" +
+    "			To create a new function, type OPTION SPACE(Mac) or CTRL SPACE(Windows/Linux) and select “Add a new function”,\n" +
     "			where you can write a comment specifying the function name, description, parameters, parameter types and return type.\n" +
     "		</p>\n" +
     "		<img src=\"/img/tutorial/running/add_function.png\" width=\"500px\"/>\n" +
@@ -12817,31 +12817,47 @@ angular.module("tutorials/running_tests.html", []).run(["$templateCache", functi
 
 angular.module("tutorials/test_editor_help.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/test_editor_help.html",
-    "<step>\n" +
-    "    <div class=\"title\">Test editor</div>\n" +
-    "    <div class=\"text\" style=\"width:700px\">\n" +
-    "        <p>\n" +
-    "            In the test editor you can use ChaiJs website. open -----> <a href=\"http://chaijs.com/api/bdd/\"\n" +
-    "                                                                          target=\"_blank\"><strong>Link</strong></a>.\n" +
-    "        </p>\n" +
-    "        <p>\n" +
-    "            <p> example 1:</p>\n" +
-    "                <pre> var res = createGroup(todoArray,todoGroupId);\n" +
-    "    expect(res).to.deep.equal(true);\n" +
-    "                </pre>\n" +
-    "            <p> example 2:</p>\n" +
-    "            <p style=\"text-align: center\">Function in function editor: </p>\n" +
-    "                <pre> function addTodo(todo){\n" +
-    "                    throw new TypeError('Illegal salmon!');\n" +
-    "            return todo;\n" +
-    "                    };\n" +
-    "                </pre>\n" +
-    "            <p style=\"text-align: center\">Test in test editor: </p>\n" +
-    "            <pre>var badFn = addTodo(todo);\n" +
-    "                expect(badFn).to.throw(TypeError);</pre>\n" +
+    "<step style=\"width:900px;\">\n" +
+    "    <div class=\"title\">In the test editor you can use ChaiJs. Two bellow example might be useful:</div>\n" +
     "\n" +
+    "    <div class=\"pull-left text-left \" style=\"margin-left: 15px\">\n" +
+    "        <div style=\"max-width: 880px\">\n" +
+    "\n" +
+    "        <h3 style=\"text-align: center\"> example 1:</h3>\n" +
+    "        <h4 style=\"text-align: left\">Function in function editor: </h4>\n" +
+    "        <code> function addTodo(todo){</code><br/>\n" +
+    "        <code> throw new TypeError('IllegalArgumentException');</code><br/>\n" +
+    "        <code> return todo;</code><br/>\n" +
+    "        <code> };</code>\n" +
+    "        <h4 style=\"text-align: left\">Tests in test editor: </h4>\n" +
+    "\n" +
+    "        <pre>var badFn = addTodo(null);\n" +
+    "expect(badFn).to.throw(TypeError);</pre>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <div style=\"max-width: 880px\">\n" +
+    "        <h3 style=\"text-align: center\"> example 2:</h3>\n" +
+    "        <h4 style=\"text-align: left\">Function in function editor: </h4>\n" +
+    "        <code> function addTodo(todo){</code><br/>\n" +
+    "        <code> var result = SaveObjectImplementation(todo);</code><br/>\n" +
+    "        <code> return result;</code><br/>\n" +
+    "        <code> };</code>\n" +
+    "        <h4 style=\"text-align: left\">Tests in test editor: </h4>\n" +
+    "        <pre > var param ={ \"title\": \"coding\",\"description\": \"work on the crowd cod\",\n" +
+    "\"dueDate\": \"03/14/2018\",\"dataStoreId\": \"todo3\",\"userId\": \"emad.aghayi\", \"id\": 1,\"status\": 1,\n" +
+    "\"schoolworks\",\"createdTime\": \"13:51\",\"createdDate\": \"05/21/2018\", \"priority\": 1,\"address\": \"Fairfax,VA,US 22032\"\n" +
+    "};\n" +
+    "var result1= addTodo(param);\n" +
+    "var fetched = FetchObjectImplementation(1);\n" +
+    "expect(fetched).to.deep.equal(result1);</pre>\n" +
+    "\n" +
+    "        </div>\n" +
+    "        <p>TIP: While editing the test code, you can open the auto-complete by pressing OPTION+SPACE (Mac) or CTRL+SPACE\n" +
+    "            (Win/Linux).</p>\n" +
+    "        <p>Need more information? if all the above tutorials do not solve your problem, comprehensive guide available on : <a\n" +
+    "                href=\"http://chaijs.com/api/bdd/\"\n" +
+    "                target=\"_blank\"><strong>Link</strong></a>.\n" +
     "        </p>\n" +
-    "        <p>While editing the test code, you can open the auto-complete by pressing ALT+SPACE (Mac) or CTRL+SPACE (Win/Linux).</p>\n" +
     "    </div>\n" +
     "</step>");
 }]);
@@ -12872,13 +12888,13 @@ angular.module("tutorials/test_section.html", []).run(["$templateCache", functio
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step>\n" +
+    "<step style=\"width:900px\">\n" +
     "    <div class=\"title\">Assertion tests</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p style=\"width:500px\">\n" +
+    "        <p >\n" +
     "            Assertion tests afford more flexibility, letting you check only parts of the output (e.g., if an object has a specific property), using function calls to check properties of the output (e.g., length of an array), using complex expressions to construct input values, and even using multiple asserts.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/testing/assertion.png\" />\n" +
+    "        <img src=\"/img/tutorial/testing/assertion.png\" style=\"max-width: 870px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
@@ -12965,35 +12981,46 @@ angular.module("ui_elements/left_bar_template.html", []).run(["$templateCache", 
 angular.module("ui_elements/nav_bar_template.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("ui_elements/nav_bar_template.html",
     "<div class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n" +
-    "	<div class=\"container-fluid\">\n" +
+    "    <div class=\"container-fluid\">\n" +
     "\n" +
-    "		<div class=\"navbar-header\">\n" +
-    "	      <a class=\"navbar-brand\" href=\"#\">Crowd Microservices</a>\n" +
-    "	    </div>\n" +
+    "        <div class=\"navbar-header\">\n" +
+    "            <a class=\"navbar-brand\" href=\"#\">Crowd Microservices</a>\n" +
+    "        </div>\n" +
     "\n" +
-    "		<ul class=\"nav navbar-nav\">\n" +
-    "	        <li><a href=\"#\"><strong>project:</strong> {{ projectId }}</a></li>\n" +
-    "	        <li><a href=\"#\"><project-stats ng-click=\"trackInteraction('Click Navigation Bar', 'Statistics', $event)\"></project-stats></a></li>\n" +
-    "	    </ul>\n" +
+    "        <ul class=\"nav navbar-nav\">\n" +
+    "            <li><a href=\"#\"><strong>project:</strong> {{ projectId }}</a></li>\n" +
+    "            <li><a href=\"#\">\n" +
+    "                <project-stats\n" +
+    "                        ng-click=\"trackInteraction('Click Navigation Bar', 'Statistics', $event)\"></project-stats>\n" +
+    "            </a></li>\n" +
+    "        </ul>\n" +
     "\n" +
-    "	    <ul class=\"nav navbar-nav navbar-right\">\n" +
-    "	    	<li>\n" +
-    "	        	<a  href=\"#\"\n" +
-    "	        		data-container:\"body\"\n" +
-    "	        		data-placement=\"bottom\"\n" +
-    "				    data-trigger=\"focus\"\n" +
-    "				    data-template=\"ui_elements/nav_user_menu_template.html\"\n" +
-    "				    bs-popover\n" +
-    "		   			>\n" +
-    "					{{ workerHandle}}\n" +
-    "					<img ng-src=\"{{ avatar(workerId).$value }}\" class=\"profile-picture\" />\n" +
-    "					<span class=\"caret\"></span>\n" +
-    "	        	</a>\n" +
-    "	        </li>\n" +
-    "	    </ul>\n" +
+    "        <ul class=\"nav navbar-nav navbar-right\">\n" +
+    "            <li>\n" +
+    "                <a href=\"#\"  data-container:\"body\" data-placement=\"bottom\"\n" +
+    "                data-trigger=\"focus\"\n" +
+    "                data-template=\"ui_elements/nav_user_menu_template.html\"\n" +
+    "                bs-popover\n" +
+    "                >\n" +
+    "                {{ workerHandle}}\n" +
+    "                <img ng-src=\"{{ avatar(workerId).$value }}\" class=\"profile-picture\"/>\n" +
+    "                <span class=\"caret\"></span>\n" +
+    "                </a>\n" +
+    "            </li>\n" +
+    "        </ul>\n" +
     "\n" +
+    "        <!--<ul class=\"nav navbar-nav navbar-right\">-->\n" +
+    "        <!--<span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>-->\n" +
+    "        <!--<a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true);\">Tutorial</a><br />-->\n" +
+    "        <!--</ul>-->\n" +
     "\n" +
-    "	</div>\n" +
+    "        <ul class=\"nav navbar-nav navbar-right\" style=\"margin-top: 2px; margin-right: 5px\">\n" +
+    "	        <button class=\"btn btn-sm\"\n" +
+    "                    ng-click=\"$emit('queue-tutorial', 'main', true);\">Help\n" +
+    "		        <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
+    "	        </button>\n" +
+    "        </ul>\n" +
+    "    </div>\n" +
     "</div>\n" +
     "");
 }]);
@@ -13007,7 +13034,7 @@ angular.module("ui_elements/nav_user_menu_template.html", []).run(["$templateCac
     "	<!--<a href=\"#\" ng-click=\" $emit('showUserStatistics'); close() \">Open profile</a><br />-->\n" +
     "	<a href=\"#\" ng-click=\" $emit('showProfileModal'); close() \">\n" +
     "		Change profile picture</a><br />\n" +
-    "	<a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true); close();\">Tutorial</a><br />\n" +
+    "	<!--<a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true); close();\">Tutorial</a><br />-->\n" +
     "	<!--<a href=\"{{logoutUrl}}\" ng-click=\"close()\">Logout</a>-->\n" +
     "</div>");
 }]);

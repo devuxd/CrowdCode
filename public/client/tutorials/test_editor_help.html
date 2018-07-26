@@ -1,27 +1,43 @@
-<step>
-    <div class="title">Test editor</div>
-    <div class="text" style="width:700px">
-        <p>
-            In the test editor you can use ChaiJs website. open -----> <a href="http://chaijs.com/api/bdd/"
-                                                                          target="_blank"><strong>Link</strong></a>.
-        </p>
-        <p>
-            <p> example 1:</p>
-                <pre> var res = createGroup(todoArray,todoGroupId);
-    expect(res).to.deep.equal(true);
-                </pre>
-            <p> example 2:</p>
-            <p style="text-align: center">Function in function editor: </p>
-                <pre> function addTodo(todo){
-                    throw new TypeError('Illegal salmon!');
-            return todo;
-                    };
-                </pre>
-            <p style="text-align: center">Test in test editor: </p>
-            <pre>var badFn = addTodo(todo);
-                expect(badFn).to.throw(TypeError);</pre>
+<step style="width:900px;">
+    <div class="title">In the test editor you can use ChaiJs. Two bellow examples might be useful:</div>
 
+    <div class="pull-left text-left " style="margin-left: 15px">
+        <div style="max-width: 880px">
+
+        <h3 style="text-align: center"> example 1:</h3>
+        <h4 style="text-align: left">Function in function editor: </h4>
+        <code> function addTodo(todo){</code><br/>
+        <code> throw new TypeError('IllegalArgumentException');</code><br/>
+        <code> return todo;</code><br/>
+        <code> };</code>
+        <h4 style="text-align: left">Tests in test editor: </h4>
+
+        <pre>var badFn = addTodo(null);
+expect(badFn).to.throw(TypeError);</pre>
+
+        </div>
+        <div style="max-width: 880px">
+        <h3 style="text-align: center"> example 2:</h3>
+        <h4 style="text-align: left">Function in function editor: </h4>
+        <code> function addTodo(todo){</code><br/>
+        <code> var result = SaveObjectImplementation(todo);</code><br/>
+        <code> return result;</code><br/>
+        <code> };</code>
+        <h4 style="text-align: left">Tests in test editor: </h4>
+        <pre > var param ={ "title": "coding","description": "work on the crowd cod",
+"dueDate": "03/14/2018","dataStoreId": "todo3","userId": "emad.aghayi", "id": 1,"status": 1,
+"schoolworks","createdTime": "13:51","createdDate": "05/21/2018", "priority": 1,"address": "Fairfax,VA,US 22032"
+};
+var result1= addTodo(param);
+var fetched = FetchObjectImplementation(1);
+expect(fetched).to.deep.equal(result1);</pre>
+
+        </div>
+        <p>TIP: While editing the test code, you can open the auto-complete by pressing OPTION+SPACE (Mac) or CTRL+SPACE
+            (Win/Linux).</p>
+        <p>Need more information? if all the above tutorials do not solve your problem, comprehensive guide available on : <a
+                href="http://chaijs.com/api/bdd/"
+                target="_blank"><strong>Link</strong></a>.
         </p>
-        <p>While editing the test code, you can open the auto-complete by pressing ALT+SPACE (Mac) or CTRL+SPACE (Win/Linux).</p>
     </div>
 </step>
