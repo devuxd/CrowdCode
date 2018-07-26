@@ -982,7 +982,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                <div bs-collapse start-collapsed=\"false\" allow-multiple=\"true\">\n" +
     "                    <span class=\"section-header\">Data Types:</span><br/>\n" +
     "                    <span>Arguments of the functions you want to implement</span>\n" +
-    "                    <div ng-repeat=\"d in DataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\">\n" +
+    "                    <div ng-repeat=\"d in DataTypes\" class=\"data-types\" ng-init=\"d.selectedExample = d.examples[0]\" style=\"background-color: rgba(23,163,125,0.3);\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{d.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\" ng-init=\"structure = buildStructure(d)\">\n" +
     "                            <span ng-bind=\"::d.description\"></span>\n" +
@@ -1009,7 +1009,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                    <br/>\n" +
     "                    <span class=\"section-header\">Functions: </span><br/>\n" +
     "                    <span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on.</span>\n" +
-    "                    <div ng-repeat=\"f in Functions\" ng-show=\"!f.isThirdPartyAPI\"  class=\"functions\">\n" +
+    "                    <div ng-repeat=\"f in Functions\" ng-show=\"!f.isThirdPartyAPI\"  class=\"functions\" style=\"background-color: rgba(14, 54, 255, 0.3);\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
     "                            <div ng-bind=\"f.description\"></div>\n" +
@@ -1027,7 +1027,7 @@ angular.module("microtasks/dashboard/dashboard2.html", []).run(["$templateCache"
     "                    <br/>\n" +
     "                    <span class=\"section-header\">3rd Party persisting API</span><br/>\n" +
     "                    <span>These functions are library functions offered by the environment. You can call them from function implementations as well as from tests.</span>\n" +
-    "                    <div ng-repeat=\"f in Functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\">\n" +
+    "                    <div ng-repeat=\"f in Functions\" ng-show=\"f.isThirdPartyAPI\" class=\"functions\" style=\"background-color: rgba(255, 248, 46, 0.82);\">\n" +
     "                        <div bs-collapse-toggle class=\"toggler\" >{{f.name}}Implementation</div>\n" +
     "                        <div bs-collapse-target class=\"toggled\">\n" +
     "                            <div ng-bind=\"f.description\"></div>\n" +
@@ -4650,7 +4650,7 @@ angular.module("tutorials/running_tests.html", []).run(["$templateCache", functi
 angular.module("tutorials/test_editor_help.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/test_editor_help.html",
     "<step style=\"width:900px;\">\n" +
-    "    <div class=\"title\">In the test editor you can use ChaiJs. Two bellow example might be useful:</div>\n" +
+    "    <div class=\"title\">In the test editor you can use ChaiJs. Two bellow examples might be useful:</div>\n" +
     "\n" +
     "    <div class=\"pull-left text-left \" style=\"margin-left: 15px\">\n" +
     "        <div style=\"max-width: 880px\">\n" +
@@ -5177,7 +5177,7 @@ angular.module("widgets/project_outline.template.html", []).run(["$templateCache
     "		</div>\n" +
     "	</div>\n" +
     "	<div style=\"text-align: center\"><strong>Functions</strong><br/><span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on. </span></div>\n" +
-    "	<div ng-repeat=\"f in functions\" ng-show=\"!f.isThirdPartyAPI\" class=\"functions\">\n" +
+    "	<div ng-repeat=\"f in functions\" ng-show=\"!f.isThirdPartyAPI\" class=\"functions\" >\n" +
     "		<div bs-collapse-toggle class=\"toggler\" >  {{f.name}}</div>\n" +
     "		<div bs-collapse-target class=\"toggled\">\n" +
     "			<div ng-bind=\"f.description\"></div>\n" +

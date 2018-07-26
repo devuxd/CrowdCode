@@ -28,7 +28,7 @@
 		</div>
 	</div>
 	<div style="text-align: center"><strong>Functions</strong><br/><span>Here’s a list of all functions in the system that are written by the crowd. When you fetch a microtask, the system will pick one of these functions for you to work on. </span></div>
-	<div ng-repeat="f in functions" ng-show="!f.isThirdPartyAPI" class="functions">
+	<div ng-repeat="f in functions" ng-show="!f.isThirdPartyAPI" class="functions" >
 		<div bs-collapse-toggle class="toggler" >  {{f.name}}</div>
 		<div bs-collapse-target class="toggled">
 			<div ng-bind="f.description"></div>
