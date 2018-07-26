@@ -5,14 +5,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/public/client/.tmp/client.js" afterPath="$PROJECT_DIR$/public/client/.tmp/client.js" />
       <change beforePath="$PROJECT_DIR$/public/client/.tmp/templates.js" afterPath="$PROJECT_DIR$/public/client/.tmp/templates.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html" afterPath="$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html" />
-      <change beforePath="$PROJECT_DIR$/public/client/tutorials/Review.html" afterPath="$PROJECT_DIR$/public/client/tutorials/Review.html" />
       <change beforePath="$PROJECT_DIR$/public/clientDist/client.js" afterPath="$PROJECT_DIR$/public/clientDist/client.js" />
-      <change beforePath="$PROJECT_DIR$/sessions/Hw4xw6cxjJR6jNmdpAD6zwy9CBpnccA1.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/sessions/JwwBPdIO_GAAVzkQvhnVpk7_AKo7W1rb.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/sessions/NQPHaLilaCfSoysKoTPb9xTsxw6Dz2II.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/sessions/grn1j6hm2h3KROrmatGF3O21q-Rbiw8f.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/sessions/jjzNbkfXpokk4ZQiWZHA8tfsSmZrPEbr.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/public/welcome.html" afterPath="$PROJECT_DIR$/public/welcome.html" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -29,62 +23,55 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="nav_user_menu_template.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/ui_elements/nav_user_menu_template.html">
+      <file leaf-file-name="welcome.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/public/welcome.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="50" lean-forward="false" selection-start-line="5" selection-start-column="34" selection-end-line="5" selection-end-column="50" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="client.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/client.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="178" column="9" lean-forward="false" selection-start-line="178" selection-start-column="9" selection-end-line="178" selection-end-column="9" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Review.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/Review.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="213">
-              <caret line="15" column="83" lean-forward="false" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="83" />
+            <state relative-caret-position="380">
+              <caret line="227" column="64" lean-forward="false" selection-start-line="227" selection-start-column="64" selection-end-line="227" selection-end-column="64" />
               <folding>
-                <element signature="n#style#0;n#step#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#0;n#div#1;n#step#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#0;n#div#1;n#step#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#1;n#div#1;n#step#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#2;n#div#1;n#step#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#3;n#div#1;n#step#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#0;n#div#2;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImplementBehavior.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html">
+      <file leaf-file-name="accepted.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/accepted.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="microtask.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/microtask.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="submission.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/submission.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dashboard2.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
-              <caret line="96" column="13" lean-forward="true" selection-start-line="96" selection-start-column="13" selection-end-line="96" selection-end-column="13" />
+            <state relative-caret-position="385">
+              <caret line="60" column="104" lean-forward="false" selection-start-line="60" selection-start-column="98" selection-end-line="60" selection-end-column="149" />
               <folding>
-                <element signature="n#style#0;n#step#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#0;n#div#1;n#step#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#0;n#div#1;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#1;n#div#1;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#2;n#div#1;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#3;n#div#1;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#3;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#4;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#5;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#6;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#p#0;n#div#1;n#step#7;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -101,7 +88,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>if( !( e instanceof chai.AssertionError</find>
       <find>assert.th</find>
       <find>est suite and implementation for has been updated by adding, editing, or deleting its tests and implementation. Considering just the changes to the test suite and function implementation, can you review them</find>
       <find>n. Considering just the changes to the test suite and function implementation, can you review them</find>
@@ -131,6 +117,7 @@
       <find>change pr</find>
       <find>it('queue-tutorial', 'main', true)</find>
       <find>showProfileModal</find>
+      <find>3rd party</find>
     </findStrings>
     <replaceStrings>
       <replace>objTemp[i].id</replace>
@@ -179,7 +166,6 @@
         <option value="$PROJECT_DIR$/public/client/test_runner/testvalidator-worker.js" />
         <option value="$PROJECT_DIR$/public/client/test_runner/debugger.js" />
         <option value="$PROJECT_DIR$/public/client/users/user.service.js" />
-        <option value="$PROJECT_DIR$/public/welcome.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/review_describe.html" />
         <option value="$PROJECT_DIR$/public/client/ui_elements/nav_user_menu_template.html" />
         <option value="$PROJECT_DIR$/public/client/ui_elements/nav_bar_template.html" />
@@ -198,6 +184,7 @@
         <option value="$PROJECT_DIR$/public/client/client.js" />
         <option value="$PROJECT_DIR$/public/client/tutorials/Review.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html" />
+        <option value="$PROJECT_DIR$/public/welcome.html" />
       </list>
     </option>
   </component>
@@ -261,8 +248,6 @@
       <foldersAlwaysOnTop value="false" />
     </navigator>
     <panes>
-      <pane id="NBKnowledgePane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -411,67 +396,15 @@
               <item name="public" type="462c0819:PsiDirectoryNode" />
               <item name="img" type="462c0819:PsiDirectoryNode" />
               <item name="tutorial" type="462c0819:PsiDirectoryNode" />
-              <item name="implementation" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorial" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorial" type="462c0819:PsiDirectoryNode" />
               <item name="review" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorial" type="462c0819:PsiDirectoryNode" />
-              <item name="testing" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="angular-strap" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="angular-strap" type="462c0819:PsiDirectoryNode" />
-              <item name="dist" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-              <item name="angular-strap" type="462c0819:PsiDirectoryNode" />
-              <item name="dist" type="462c0819:PsiDirectoryNode" />
-              <item name="angular-strap.js" type="620a8d5e:NestingTreeNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scratches" />
+      <pane id="Scope" />
+      <pane id="NBKnowledgePane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -608,6 +541,7 @@
       <workItem from="1532395436056" duration="4258000" />
       <workItem from="1532527526408" duration="24186000" />
       <workItem from="1532617653748" duration="4026000" />
+      <workItem from="1532643622952" duration="2461000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -655,7 +589,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="172556000" />
+    <option name="totallyTimeSpent" value="175017000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -667,17 +601,17 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1680" height="947" extended-state="6" />
+    <frame x="0" y="23" width="1680" height="947" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945284" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19179735" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19179735" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4388824" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29674307" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.200489" sideWeight="0.6260555" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.200489" sideWeight="0.62002414" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.200489" sideWeight="0.37394452" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.200489" sideWeight="0.3799759" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17129071" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.4912689" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3993015" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -815,21 +749,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/microtask.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/accepted.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/submission.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/img/tutorial/implementation/comment_code.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -866,10 +785,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="34" column="89" lean-forward="false" selection-start-line="34" selection-start-column="89" selection-end-line="34" selection-end-column="89" />
-          <folding>
-            <element signature="n#style#0;n#ul#2;n#div#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#span#0;n#button#0;n#ul#2;n#div#0;n#div#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -932,13 +847,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/welcome.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="163" column="49" lean-forward="false" selection-start-line="163" selection-start-column="49" selection-end-line="163" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/client/tutorials/test_editor_help.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
@@ -961,13 +869,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
           <caret line="30" column="83" lean-forward="false" selection-start-line="30" selection-start-column="83" selection-end-line="30" selection-end-column="83" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="16" column="37" lean-forward="false" selection-start-line="16" selection-start-column="37" selection-end-line="16" selection-end-column="37" />
         </state>
       </provider>
     </entry>
@@ -999,9 +900,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1260">
           <caret line="84" column="88" lean-forward="false" selection-start-line="84" selection-start-column="88" selection-end-line="84" selection-end-column="88" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1009,7 +907,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2535">
           <caret line="169" column="21" lean-forward="false" selection-start-line="169" selection-start-column="21" selection-end-line="169" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1037,9 +934,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
-          <folding>
-            <element signature="n#style#0;n#p#0;n#div#1;n#step#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1047,7 +941,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1055,10 +948,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="124">
           <caret line="12" column="155" lean-forward="false" selection-start-line="12" selection-start-column="155" selection-end-line="12" selection-end-column="155" />
-          <folding>
-            <element signature="n#style#0;n#span#0;n#button#0;n#div#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#span#0;n#div#0;n#div#1;n#div#0;n#div#5;n#div#1;n#div#2;n#div#1;n#div#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1066,7 +955,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1074,9 +962,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="279">
           <caret line="194" column="55" lean-forward="false" selection-start-line="194" selection-start-column="55" selection-end-line="194" selection-end-column="55" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1085,7 +970,6 @@
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="45">
             <caret line="3" column="42" lean-forward="false" selection-start-line="3" selection-start-column="42" selection-end-line="3" selection-end-column="42" />
-            <folding />
           </first_editor>
           <second_editor />
         </state>
@@ -1095,7 +979,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1109,7 +992,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/client.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
+        <state relative-caret-position="2670">
           <caret line="178" column="9" lean-forward="false" selection-start-line="178" selection-start-column="9" selection-end-line="178" selection-end-column="9" />
           <folding />
         </state>
@@ -1117,37 +1000,81 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/tutorials/Review.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
+        <state relative-caret-position="225">
           <caret line="15" column="83" lean-forward="false" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="83" />
           <folding>
-            <element signature="n#style#0;n#step#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#1;n#step#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#1;n#step#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#1;n#div#1;n#step#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#2;n#div#1;n#step#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#3;n#div#1;n#step#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#step#0;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#step#0;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#1;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#step#1;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#1;n#div#1;n#step#1;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#2;n#div#1;n#step#1;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#3;n#div#1;n#step#1;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="96" column="13" lean-forward="true" selection-start-line="96" selection-start-column="13" selection-end-line="96" selection-end-column="13" />
+        <state relative-caret-position="634">
+          <caret line="115" column="22" lean-forward="false" selection-start-line="115" selection-start-column="22" selection-end-line="115" selection-end-column="22" />
           <folding>
-            <element signature="n#style#0;n#step#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#1;n#step#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#1;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#1;n#div#1;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#2;n#div#1;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#3;n#div#1;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#3;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#4;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#5;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#6;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strong#0;n#p#0;n#div#1;n#step#7;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#step#1;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#step#1;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#1;n#div#1;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#2;n#div#1;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#3;n#div#1;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#3;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#4;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#5;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#6;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#strong#0;n#p#0;n#div#1;n#step#7;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="385">
+          <caret line="60" column="104" lean-forward="false" selection-start-line="60" selection-start-column="98" selection-end-line="60" selection-end-column="149" />
+          <folding>
+            <element signature="n#style#0;n#div#2;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/microtask.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/submission.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/accepted.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/welcome.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="227" column="64" lean-forward="false" selection-start-line="227" selection-start-column="64" selection-end-line="227" selection-end-column="64" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#div#2;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

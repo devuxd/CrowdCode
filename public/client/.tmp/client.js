@@ -12118,7 +12118,7 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step style=\"width:800px;\">\n" +
+    "<step style=\"width:600px;\">\n" +
     "    <div class=\"title\">Function Implementation Incomplete</div>\n" +
     "    <div class=\"text\">\n" +
     "\n" +
@@ -12132,7 +12132,7 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step style=\"width:800px;\">\n" +
+    "<step style=\"width:600px;\">\n" +
     "    <div class=\"title\">Comment Code</div>\n" +
     "    <div class=\"text\">\n" +
     "\n" +
@@ -12145,7 +12145,7 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step style=\"width:800px\">\n" +
+    "<step style=\"width:600px\">\n" +
     "    <div class=\"title\">Calling a function</div>\n" +
     "    <div class=\"text\">\n" +
     "        <p>\n" +
