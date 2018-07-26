@@ -8,8 +8,8 @@
 		<span ng-switch-when="FUNCTION_CHANGED'">Fix function and test(s)</span>
 		</span>
 		</span>
-        <span class="points">( {{::microtask.points}} pts )</span>
-        <button class="btn btn-sm"
+        <span class="points">( {{::microtask.points}} pts ) </span>
+        <button class="btn btn-md"
                 ng-click="$emit('queue-tutorial', 'ImplementBehavior', true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)">
             <span class="glyphicon glyphicon-question-sign" style="color:blue"></span>
         </button>
@@ -249,7 +249,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <label for="desc">Description </label>
+                                    <label for="desc">Description of the choosen behavior. </label>
                                     <input id="desc" name="description" ng-model="t.description" style="min-width: 10cm"
                                               placeholder="insert the description" ng-minlength="5" ng-maxlength="220"
                                               focus required/>
@@ -295,7 +295,7 @@
                                       <!--data-template="/client/widgets/test_editor_help.html" data-auto-close="1"-->
                                       <!--data-placement="right" data-title="title of the help" data-style="" bs-popover>-->
 							    <!--</span>-->
-                                <span class="glyphicon glyphicon-question-sign" style="color:blue"
+                                <span class="glyphicon glyphicon-question-sign" style="color:blue;margin-left: 15px"
                                       ng-if="!t.isSimple"
                                       ng-click="$emit('queue-tutorial', 'test_editor_help', true); trackInteraction('Click Tutorial', 'Describe Behavior - Test editor', $event)"
                                       data-trigger="hover"

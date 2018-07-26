@@ -9380,8 +9380,8 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "		<span ng-switch-when=\"FUNCTION_CHANGED'\">Fix function and test(s)</span>\n" +
     "		</span>\n" +
     "		</span>\n" +
-    "        <span class=\"points\">( {{::microtask.points}} pts )</span>\n" +
-    "        <button class=\"btn btn-sm\"\n" +
+    "        <span class=\"points\">( {{::microtask.points}} pts ) </span>\n" +
+    "        <button class=\"btn btn-md\"\n" +
     "                ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true); trackInteraction('Click Tutorial', 'Describe Behavior - Microtask', $event)\">\n" +
     "            <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
     "        </button>\n" +
@@ -9621,7 +9621,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                        <div class=\"container-fluid\">\n" +
     "                            <div class=\"row\">\n" +
     "                                <div class=\"col-sm-6\">\n" +
-    "                                    <label for=\"desc\">Description </label>\n" +
+    "                                    <label for=\"desc\">Description of the choosen behavior. </label>\n" +
     "                                    <input id=\"desc\" name=\"description\" ng-model=\"t.description\" style=\"min-width: 10cm\"\n" +
     "                                              placeholder=\"insert the description\" ng-minlength=\"5\" ng-maxlength=\"220\"\n" +
     "                                              focus required/>\n" +
@@ -9667,7 +9667,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                                      <!--data-template=\"widgets/test_editor_help.html\" data-auto-close=\"1\"-->\n" +
     "                                      <!--data-placement=\"right\" data-title=\"title of the help\" data-style=\"\" bs-popover>-->\n" +
     "							    <!--</span>-->\n" +
-    "                                <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"\n" +
+    "                                <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue;margin-left: 15px\"\n" +
     "                                      ng-if=\"!t.isSimple\"\n" +
     "                                      ng-click=\"$emit('queue-tutorial', 'test_editor_help', true); trackInteraction('Click Tutorial', 'Describe Behavior - Test editor', $event)\"\n" +
     "                                      data-trigger=\"hover\"\n" +
@@ -10648,10 +10648,15 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
     "\n" +
     "	<div class=\"section\" ui-layout-container size=\"10%\">\n" +
     "		<div class=\"section-content bg-color-alpha padding\" style=\"top:0px\">\n" +
-    "			<span>\n" +
-    "				The test suite and implementation for <strong ng-bind=\"function.name\"></strong> has been updated by adding, editing, or deleting its tests and implementation. Considering just <strong>the changes</strong> to the test suite and function implementation, can you review them?\n" +
+    "			<span>The test suite and implementation for the function has been updated by adding, editing, or deleting its tests and implementation.\n" +
+    "				Considering just <strong>the changes(+ means added or updated line of code, - means deleted line of code)</strong> to the test suite and function implementation, can you review them?\n" +
+    "				<strong>Step 1: </strong> identify a behavior in its description(in the test section) that is implemented as well as read and review implementation the behavior in function editor.\n" +
+    "                        <strong> Step 2: </strong>read and review test codes in the test pane.\n" +
+    "                        <strong> Step 3: </strong> rate the contribution and give a feedback to the development in the review pane. If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.\n" +
+    "                        <strong> Step 4: </strong>once you’re finished, click “Submit” button.<br/>\n" +
+    "\n" +
     "			</span>\n" +
-    "			<span>TIP:If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.</span>\n" +
+    "\n" +
     "		</div>\n" +
     "	</div>\n" +
     "\n" +
@@ -10723,7 +10728,7 @@ angular.module("microtasks/review/review_describe.html", []).run(["$templateCach
     "						</div>\n" +
     "					</div>\n" +
     "					<div class=\"form-group\">\n" +
-    "						<label for=\"description\">Description </label>\n" +
+    "						<label for=\"description\">Description of the implemented behavior </label>\n" +
     "						<div class=\"form-control form-control-static\" name=\"description\">\n" +
     "							{{t.description}}\n" +
     "						</div>\n" +
@@ -12063,6 +12068,7 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "            You can write/edit the code in the function editor, create/edit/remove tests cases and run the tests suite\n" +
     "            on your code.\n" +
     "        </p>\n" +
+    "        <p><strong>TIP:</strong> Everywhere in website you can open the tutorials by clicking on the question mark icons. <img src=\"/img/tutorial/main/questionmark2.png\"/> </p>\n" +
     "        <!--<p style=\"width:500px\">-->\n" +
     "        <!--Follow this tutorials for more details:-->\n" +
     "        <!--</p>-->\n" +
@@ -12260,13 +12266,13 @@ angular.module("tutorials/Review.html", []).run(["$templateCache", function ($te
 
 angular.module("tutorials/assertion_tests.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/assertion_tests.html",
-    "<step>\n" +
+    "<step style=\"width:800px\">\n" +
     "	<div class=\"title\">Assertion tests</div>\n" +
     "	<div class=\"text\">\n" +
-    "		<p style=\"width:500px\">\n" +
+    "		<p >\n" +
     "			Assertion tests afford more flexibility, letting you check only parts of the output (e.g., if an object has a specific property), using function calls to check properties of the output (e.g., length of an array), using complex expressions to construct input values, and even using multiple asserts.\n" +
     "		</p>\n" +
-    "		<img src=\"/img/tutorial/testing/assertion.png\" />\n" +
+    "		<img src=\"/img/tutorial/testing/assertion.png\" style=\"max-width: 790px\"/>\n" +
     "	</div>\n" +
     "</step>");
 }]);
@@ -12484,17 +12490,17 @@ angular.module("tutorials/introduction_tutorial.html", []).run(["$templateCache"
     "<!--</div>-->\n" +
     "<!--</step>-->\n" +
     "\n" +
-    "<step>\n" +
+    "<step style=\"width: 500px\">\n" +
     "\n" +
     "    <div class=\"title\">Tutorials</div>\n" +
     "    <div class=\"text\">\n" +
     "\n" +
-    "        <p style=\"width: 450px\">\n" +
+    "        <p >\n" +
     "            If you're in trouble and don't know what to do, you can open the tutorials by clicking on the question mark\n" +
     "            icons.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/main/questionmark.jpg\"/>\n" +
+    "        <img src=\"/img/tutorial/main/questionmark2.png\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
@@ -12539,7 +12545,7 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
   $templateCache.put("tutorials/main.html",
     "<step>\n" +
     "	<div class=\"title\">Crowd Microservices Tutorial</div>\n" +
-    "	<div class=\"text\" style=\"width: 500px\">Here, we’ll help get you up to speed by readin these 5 tutorials.\n" +
+    "	<div class=\"text\" style=\"width: 600px\">Here, we’ll help get you up to speed by readin these 5 tutorials.\n" +
     "		<ol>\n" +
     "			<!--<li><a href=\"#\" ng-click=\"nextStep()\">Introduction</a></li>-->\n" +
     "			<li style=\"margin-bottom: 5px;margin-top: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'introduction_tutorial', true, undefined, 'main'); close(); $event.preventDefault();\">Dashboard</a></li>\n" +
@@ -12555,6 +12561,7 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "\n" +
     "\n" +
     "		</ol>\n" +
+    "		<p><strong>TIP:</strong> Everywhere in website you can open the tutorials by clicking on the question mark icons. <img src=\"/img/tutorial/main/questionmark2.png\"/> </p>\n" +
     "	</div>\n" +
     "</step>\n" +
     "\n" +
