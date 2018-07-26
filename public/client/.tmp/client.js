@@ -13017,10 +13017,9 @@ angular.module("ui_elements/nav_bar_template.html", []).run(["$templateCache", f
     "        <!--<a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true);\">Tutorial</a><br />-->\n" +
     "        <!--</ul>-->\n" +
     "\n" +
-    "        <ul class=\"nav navbar-nav navbar-right\" style=\"margin-top: 2px; margin-right: 5px\">\n" +
-    "	        <button class=\"btn btn-sm\"\n" +
-    "                    ng-click=\"$emit('queue-tutorial', 'main', true);\">Help\n" +
-    "		        <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span>\n" +
+    "        <ul class=\"nav navbar-nav navbar-right\" >\n" +
+    "            <li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true);\" >Do you need help <span class=\"glyphicon glyphicon-question-sign\" style=\"color:blue\"></span></a></li>\n" +
+    "\n" +
     "	        </button>\n" +
     "        </ul>\n" +
     "    </div>\n" +
