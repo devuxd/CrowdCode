@@ -13041,7 +13041,7 @@ angular.module("ui_elements/nav_user_menu_template.html", []).run(["$templateCac
     "	<!--<a href=\"#\" ng-click=\" $emit('showUserStatistics'); close() \">Open profile</a><br />-->\n" +
     "	<a href=\"#\" ng-click=\" $emit('showProfileModal'); close() \">\n" +
     "		Change profile picture</a><br />\n" +
-    "	<!--<a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true); close();\">Tutorial</a><br />-->\n" +
+    "	<a href=\"#\" ng-click=\"$emit('queue-tutorial', 'main', true); close();\">Tutorial</a><br />\n" +
     "	<!--<a href=\"{{logoutUrl}}\" ng-click=\"close()\">Logout</a>-->\n" +
     "</div>");
 }]);

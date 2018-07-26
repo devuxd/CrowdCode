@@ -192,7 +192,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                     //Add new line to function description
                     var clean = funct.description.replace(/\n/g, "");
                    console.log("Cleaned " + clean);
-                   var temp = clean.match(/[\s\S]{1,154}\w*/g);
+                   var temp = clean.match(/[\s\S]{1,140}\w*/g);
                    var description = '';
                    for (var i = 0; i < temp.length; i++) {
                        description += temp[i] + "\n";
