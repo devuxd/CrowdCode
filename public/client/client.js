@@ -171,9 +171,9 @@ angular
                 $rootScope.$broadcast('openDashboard');
                 //$rootScope.$broadcast('fetchMicrotask');
 
-                // $rootScope.$broadcast('queue-tutorial', 'main', false, function () {
-                //     // $rootScope.$broadcast('showProfileModal');
-                // });
+                $rootScope.$broadcast('queue-tutorial', 'main', false, function () {
+                    // $rootScope.$broadcast('showProfileModal');
+                });
 
             }
         }
