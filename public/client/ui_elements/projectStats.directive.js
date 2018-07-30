@@ -2,7 +2,8 @@
 // VIEWS THE STATS
 angular
     .module('crowdCode')
-    .directive('projectStats', function($rootScope,firebaseUrl) {
+    .directive(
+        'projectStats', function($rootScope,firebaseUrl) {
 
     return {
         restrict: 'E',
