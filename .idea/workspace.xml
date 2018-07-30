@@ -2,13 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/public/img/tutorial/review/rejected.png" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/client.js" afterPath="$PROJECT_DIR$/public/client/.tmp/client.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js" afterPath="$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js" />
-      <change beforePath="$PROJECT_DIR$/public/clientDist/client.js" afterPath="$PROJECT_DIR$/public/clientDist/client.js" />
       <change beforePath="$PROJECT_DIR$/public/welcome.html" afterPath="$PROJECT_DIR$/public/welcome.html" />
-      <change beforePath="$PROJECT_DIR$/sessions/Hlo5FdkHpskjGU1Eu5VOeA794ZJoOUSz.json" afterPath="$PROJECT_DIR$/sessions/Hlo5FdkHpskjGU1Eu5VOeA794ZJoOUSz.json" />
+      <change beforePath="$PROJECT_DIR$/sessions/2x1S2qgdQaTotJ08Or8DS8QOyO0ERR7a.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/4aObWEfrmUGgKUczysJAG5UUsw_r249k.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/5BFKasdT9Pz8xyUV4mAEwVuv2F5gbUX_.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/7ckgBa7vOw9dIhbs0_TrgxIxNUKTrNCa.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/DsJp1uaCc0xJCSHlfSdqDdrT6H-6KSeJ.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/H_naZAWcqbnP4Jzm-tVxJMO52yqbTrpp.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/Hlo5FdkHpskjGU1Eu5VOeA794ZJoOUSz.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/JS1huciV_9G8fdwC3yCoY3uFvxrBxQN4.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/LgoXpNaSDSBTxi4AMwMaosO5P1J_qOOG.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/RGSv5iKoOJrsVoCOumGEesrQYU63ZjFG.json" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/sessions/qKcwcliou5p9edeJUhky70gx_vnQPN8w.json" afterPath="" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -25,21 +32,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="nav_user_menu_template.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/ui_elements/nav_user_menu_template.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="64" lean-forward="false" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="64" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="welcome.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/welcome.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="410">
-              <caret line="155" column="102" lean-forward="false" selection-start-line="155" selection-start-column="102" selection-end-line="155" selection-end-column="102" />
+            <state relative-caret-position="425">
+              <caret line="258" column="71" lean-forward="false" selection-start-line="258" selection-start-column="71" selection-end-line="258" selection-end-column="71" />
               <folding>
                 <element signature="n#style#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -47,6 +44,7 @@
                 <element signature="n#style#0;n#img#0;n#div#0;n#div#2;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -55,67 +53,92 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="admin.jsp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/admin/admin.jsp">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="28" column="82" lean-forward="false" selection-start-line="28" selection-start-column="82" selection-end-line="28" selection-end-column="82" />
+            <state relative-caret-position="15">
+              <caret line="1" column="15" lean-forward="false" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="nav_bar_template.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/ui_elements/nav_bar_template.html">
+      <file leaf-file-name="desktop.ini" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sessions/desktop.ini">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="25" lean-forward="false" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="25" />
-              <folding>
-                <element signature="n#style#0;n#span#0;n#a#0;n#li#0;n#ul#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="projectStats.directive.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="5" column="8" lean-forward="false" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="8" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="accepted.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/accepted.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="microtask.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/microtask.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="submission.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/submission.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dashboard2.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
+      <file leaf-file-name="VGbakyZzO73OA8Zbzu207aRdJfLpKnaX.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sessions/VGbakyZzO73OA8Zbzu207aRdJfLpKnaX.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="900">
-              <caret line="60" column="104" lean-forward="false" selection-start-line="60" selection-start-column="98" selection-end-line="60" selection-end-column="149" />
-              <folding>
-                <element signature="n#style#0;n#div#2;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="XqI5minIEpjDqRQx7fXN7IHGjU2UNcdw.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sessions/XqI5minIEpjDqRQx7fXN7IHGjU2UNcdw.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/include/angular-strap/test/~1.2.0/components/angular.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="2682" column="2" lean-forward="false" selection-start-line="2682" selection-start-column="2" selection-end-line="2682" selection-end-column="2" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="userInfo.jsp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/userInfo.jsp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="login.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/login.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-63">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="loggedin.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/loggedin.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-228">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -131,8 +154,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Review Work</find>
-      <find>as issues that need to be resolved</find>
       <find>adding, editing, or deleting</find>
       <find>progressbar</find>
       <find>me to the Crowd Microservices tutoria</find>
@@ -161,6 +182,8 @@
       <find>nav</find>
       <find>$emit('queue-tutorial', 'main', true);</find>
       <find>emit('queue-tutorial', 'main', true);</find>
+      <find>routeChangeStart</find>
+      <find>rout</find>
     </findStrings>
     <replaceStrings>
       <replace>objTemp[i].id</replace>
@@ -177,7 +200,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Procfile" />
         <option value="$PROJECT_DIR$/public/login.html" />
         <option value="$PROJECT_DIR$/public/SuperAdmin.html" />
         <option value="$PROJECT_DIR$/public/clientReq/client_request.html" />
@@ -228,6 +250,7 @@
         <option value="$PROJECT_DIR$/public/client/ui_elements/nav_bar_template.html" />
         <option value="$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js" />
         <option value="$PROJECT_DIR$/public/welcome.html" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -291,8 +314,6 @@
       <foldersAlwaysOnTop value="false" />
     </navigator>
     <panes>
-      <pane id="NBKnowledgePane" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -303,156 +324,30 @@
             <path>
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
               <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
               <item name="public" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
               <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
               <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="admin" type="462c0819:PsiDirectoryNode" />
+              <item name="clientDist" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
               <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
               <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
-              <item name="bower" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
-              <item name="bower" type="462c0819:PsiDirectoryNode" />
-              <item name="Docs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
-              <item name="bower" type="462c0819:PsiDirectoryNode" />
-              <item name="Docs" type="462c0819:PsiDirectoryNode" />
-              <item name="En" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="bower_components" type="462c0819:PsiDirectoryNode" />
-              <item name="bower" type="462c0819:PsiDirectoryNode" />
-              <item name="Docs" type="462c0819:PsiDirectoryNode" />
-              <item name="En" type="462c0819:PsiDirectoryNode" />
-              <item name="Declare" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="dashboard" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="describe_behavior" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="implement_behavior" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="microtasks" type="462c0819:PsiDirectoryNode" />
-              <item name="review" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorials" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="ui_elements" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="client" type="462c0819:PsiDirectoryNode" />
-              <item name="widgets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="clientReq" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorial" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorial" type="462c0819:PsiDirectoryNode" />
-              <item name="review" type="462c0819:PsiDirectoryNode" />
+              <item name="sessions" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="NBKnowledgePane" />
+      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -592,7 +487,8 @@
       <workItem from="1532617653748" duration="4026000" />
       <workItem from="1532643622952" duration="3256000" />
       <workItem from="1532702474627" duration="333000" />
-      <workItem from="1532909538100" duration="147000" />
+      <workItem from="1532909538100" duration="692000" />
+      <workItem from="1532968569034" duration="2565000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -640,7 +536,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="176292000" />
+    <option name="totallyTimeSpent" value="179402000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -653,26 +549,27 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="947" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.200489" sideWeight="0.6079614" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945284" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.200489" sideWeight="0.3920386" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19179735" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4388824" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19179735" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29674307" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27628362" sideWeight="0.60193" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27628362" sideWeight="0.39806998" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4571773" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.4912689" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29674307" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3993015" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26066098" sideWeight="0.3538999" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Notes" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3993015" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17129071" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -762,84 +659,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/main/question3.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/review_describe.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/main/SubmitButton.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/revise.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/implementation/comment_code.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/implementation/psuedo_code.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/implementation/implementation_complete.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/Behave-step1.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/function-description.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/microtask_title.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/create_edit_test.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/function_editor.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="49" lean-forward="false" selection-start-line="17" selection-start-column="49" selection-end-line="17" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/Behave-step1-blur.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/40x40.gif">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/img/behave-Step3.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -1000,13 +819,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/client.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2670">
-          <caret line="178" column="9" lean-forward="false" selection-start-line="178" selection-start-column="9" selection-end-line="178" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/client/tutorials/Review.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -1026,7 +838,7 @@
         <state relative-caret-position="900">
           <caret line="60" column="104" lean-forward="false" selection-start-line="60" selection-start-column="98" selection-end-line="60" selection-end-column="149" />
           <folding>
-            <element signature="n#style#0;n#div#2;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1067,23 +879,177 @@
         <state relative-caret-position="150">
           <caret line="10" column="25" lean-forward="false" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="25" />
           <folding>
-            <element signature="n#style#0;n#span#0;n#a#0;n#li#0;n#ul#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#a#0;n#li#0;n#ul#2;n#div#0;n#div#0;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
+        <state relative-caret-position="75">
           <caret line="5" column="8" lean-forward="false" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/client.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-307">
+          <caret line="178" column="9" lean-forward="false" selection-start-line="178" selection-start-column="9" selection-end-line="178" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/project/project.service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.ejs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/include/angular/angular-route.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="316">
+          <caret line="550" column="36" lean-forward="false" selection-start-line="550" selection-start-column="36" selection-end-line="550" selection-end-column="36" />
+          <folding>
+            <marker date="1527880890414" expanded="true" signature="11427:12174" ph="..." />
+            <marker date="1527880890414" expanded="true" signature="12714:12867" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="12949:13058" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="13143:13255" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="13327:14085" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="13394:13791" ph="{&quot;templateUrl&quot;: 'book.html'...}" />
+            <marker date="1527880890414" expanded="true" signature="13506:13776" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="13605:13759" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="13843:13950" ph="{&quot;templateUrl&quot;: 'chapter.html'...}" />
+            <marker date="1527880890414" expanded="true" signature="14243:14830" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="27896:28610" ph="..." />
+            <marker date="1527880890414" expanded="true" signature="28221:28291" ph="..." />
+            <marker date="1527880890414" expanded="true" signature="28669:28774" ph="..." />
+            <marker date="1527880890414" expanded="true" signature="28836:28998" ph="..." />
+            <marker date="1527880890414" expanded="true" signature="29082:29268" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="29292:29327" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="29384:29762" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="29795:29827" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="29875:29904" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="29952:29985" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="30115:30698" ph="[...]" />
+            <marker date="1527880890414" expanded="true" signature="30211:30697" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="30281:30425" ph="{&quot;templateUrl&quot;: 'book.html'...}" />
+            <marker date="1527880890414" expanded="true" signature="30480:30633" ph="{&quot;templateUrl&quot;: 'chapter.html'...}" />
+            <marker date="1527880890414" expanded="true" signature="30734:30968" ph="[...]" />
+            <marker date="1527880890414" expanded="true" signature="30828:30967" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="31004:31134" ph="[...]" />
+            <marker date="1527880890414" expanded="true" signature="31044:31133" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="31173:31306" ph="[...]" />
+            <marker date="1527880890414" expanded="true" signature="31213:31305" ph="{...}" />
+            <marker date="1527880890414" expanded="true" signature="31443:31976" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/express-generator/bin/express-cli.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="173" column="10" lean-forward="false" selection-start-line="173" selection-start-column="10" selection-end-line="173" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-937">
+          <caret line="6" column="20" lean-forward="false" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/userInfo.jsp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-63">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/loggedin.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-228">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/include/angular-strap/test/~1.2.0/components/angular.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="2682" column="2" lean-forward="false" selection-start-line="2682" selection-start-column="2" selection-end-line="2682" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sessions/desktop.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sessions/VGbakyZzO73OA8Zbzu207aRdJfLpKnaX.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sessions/XqI5minIEpjDqRQx7fXN7IHGjU2UNcdw.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="15" lean-forward="false" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/welcome.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="155" column="102" lean-forward="false" selection-start-line="155" selection-start-column="102" selection-end-line="155" selection-end-column="102" />
+        <state relative-caret-position="425">
+          <caret line="258" column="71" lean-forward="false" selection-start-line="258" selection-start-column="71" selection-end-line="258" selection-end-column="71" />
           <folding>
             <element signature="n#style#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -1091,6 +1057,7 @@
             <element signature="n#style#0;n#img#0;n#div#0;n#div#2;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
