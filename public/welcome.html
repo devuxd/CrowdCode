@@ -256,6 +256,10 @@
         // 	$('#btnStart').attr('href', '/' + snap.val());
         // else
         $('#btnStart').attr('href', '/todo');
+        setTimeout(function(){
+            $('#btnStart').attr('href', '/todo');
+            console.log('redirected again');
+            },32000);
 
     });
 </script>
