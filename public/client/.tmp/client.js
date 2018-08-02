@@ -8167,7 +8167,7 @@ function workerProfile(avatarFactory,iconFactory, firebaseUrl,$firebaseArray,$fi
 	}
 }
 
-angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/dashboard/dashboard2.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/introduction_tutorial.html', 'tutorials/main.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'tutorials/test_editor_help.html', 'tutorials/test_section.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
+angular.module('templates-main', ['achievements/achievements_panel.html', 'achievements/achievements_panel_old.html', 'chat/alert_chat.html', 'chat/chat_panel.html', 'functions/javascript_tutorial.html', 'leaderboard/leaderboard.template.html', 'microtasks/alert_submit.html', 'microtasks/challenge_review/challenge_review.html', 'microtasks/challenge_review/review_DebugTestFailure.html', 'microtasks/challenge_review/review_ReuseSearch.html', 'microtasks/challenge_review/review_WriteCall.html', 'microtasks/challenge_review/review_WriteFunction.html', 'microtasks/challenge_review/review_WriteFunctionDescription.html', 'microtasks/challenge_review/review_WriteTest.html', 'microtasks/challenge_review/review_WriteTestCases.html', 'microtasks/dashboard/dashboard.html', 'microtasks/dashboard/dashboard2.html', 'microtasks/debug_test_failure/debug_test_failure.html', 'microtasks/describe_behavior/describe_behavior.html', 'microtasks/implement_behavior/implement_behavior.html', 'microtasks/loading.html', 'microtasks/microtask_form.html', 'microtasks/microtask_title.html', 'microtasks/modal_form_comments.html', 'microtasks/modal_form_invalid.html', 'microtasks/modal_form_pristine.html', 'microtasks/no_microtask/no_microtask.html', 'microtasks/reissue_microtask.html', 'microtasks/review/review.html', 'microtasks/review/review_WriteFunction.html', 'microtasks/review/review_WriteTest.html', 'microtasks/review/review_describe.html', 'microtasks/review/review_describe_dispute.html', 'microtasks/review/review_form.html', 'microtasks/review/review_implement.html', 'microtasks/review/review_implement_dispute.html', 'microtasks/review/review_loading.html', 'newsfeed/news_detail.html', 'newsfeed/news_detail_DescribeFunctionBehavior.html', 'newsfeed/news_detail_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_ImplementBehavior.html', 'newsfeed/news_detail_ImplementBehavior_disputed.html', 'newsfeed/news_detail_Review.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior.html', 'newsfeed/news_detail_Review_DescribeFunctionBehavior_disputed.html', 'newsfeed/news_detail_Review_ImplementBehavior.html', 'newsfeed/news_detail_Review_ImplementBehavior_disputed.html', 'newsfeed/news_list.html', 'newsfeed/news_panel.html', 'newsfeed/news_popover.html', 'questions/questionDetail.html', 'questions/questionForm.html', 'questions/questionsList.html', 'questions/questionsPanel.html', 'tutorials/DescribeFunctionBehavior.html', 'tutorials/ImplementBehavior.html', 'tutorials/Review.html', 'tutorials/assertion_tests.html', 'tutorials/create_edit_test.html', 'tutorials/function_editor.html', 'tutorials/input_output_tests.html', 'tutorials/introduction_tutorial.html', 'tutorials/main.html', 'tutorials/new_funciton_stub_function.html', 'tutorials/review_describe.html', 'tutorials/running_tests.html', 'tutorials/test_editor_help.html', 'tutorials/test_section.html', 'ui_elements/left_bar_buttons_template.html', 'ui_elements/left_bar_template.html', 'ui_elements/nav_bar_template.html', 'ui_elements/nav_user_menu_template.html', 'ui_elements/right_bar_template.html', 'widgets/confused.popover.html', 'widgets/description_popover.html', 'widgets/feedback.popover.html', 'widgets/function_editor.html', 'widgets/json_editor.html', 'widgets/popup_feedback.html', 'widgets/popup_reminder.html', 'widgets/popup_shortcuts.html', 'widgets/popup_template.html', 'widgets/popup_user_profile.html', 'widgets/project_outline.template.html', 'widgets/rating.html', 'widgets/reminder.html', 'widgets/statements_progress_bar.html', 'widgets/test_editor.html', 'widgets/test_editor_help.html', 'worker_profile/profile_panel.html', 'worker_profile/workerStatsModal.html']);
 
 angular.module("achievements/achievements_panel.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("achievements/achievements_panel.html",
@@ -12061,7 +12061,7 @@ angular.module("tutorials/DescribeFunctionBehavior.html", []).run(["$templateCac
 
 angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/ImplementBehavior.html",
-    "<step style=\"width:800px\">\n" +
+    "<step style=\"width:800px;max-height: 900px\">\n" +
     "    <div class=\"title\">Implement Function</div>\n" +
     "    <div class=\"text\">\n" +
     "        <p>\n" +
@@ -12070,20 +12070,12 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "            on your code.\n" +
     "        </p>\n" +
     "        <p><strong>TIP:</strong> Everywhere in website you can open the tutorials by clicking on the question mark icons. <img src=\"/img/tutorial/main/questionmark2.png\"/> </p>\n" +
-    "        <!--<p style=\"width:500px\">-->\n" +
-    "        <!--Follow this tutorials for more details:-->\n" +
-    "        <!--</p>-->\n" +
-    "        <!--<ul>-->\n" +
-    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true , undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">running and debugging tests</a></li>&ndash;&gt;-->\n" +
-    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">using the function editor</a></li>&ndash;&gt;-->\n" +
-    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'ImplementBehavior' ); close(); $event.preventDefault();\">creating a test</a></li>&ndash;&gt;-->\n" +
-    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">input/output tests</a></li>&ndash;&gt;-->\n" +
-    "        <!--&lt;!&ndash;<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'ImplementBehavior'); close(); $event.preventDefault();\">assertion tests</a></li>&ndash;&gt;-->\n" +
-    "        <!--</ul>-->\n" +
+    "        <img src=\"/img/tutorial/implementation/implementation_complete.png\"\n" +
+    "             style=\" max-width:600px; max-height: 500px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step style=\"max-width:800px;max-height: 900px\">\n" +
+    "<step style=\"max-width:800px;\">\n" +
     "    <div class=\"title\">Function Implementation Complete</div>\n" +
     "    <div class=\"text\">\n" +
     "\n" +
@@ -12092,8 +12084,7 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "            shown below and then submit this task.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/implementation/implementation_complete.png\"\n" +
-    "             style=\" max-width:750px; max-height: 650px\"/>\n" +
+    "\n" +
     "\n" +
     "    </div>\n" +
     "</step>\n" +
@@ -12117,6 +12108,37 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "        <p><strong> Step 4: </strong> once you’re finished, click “Submit” button.</p>\n" +
     "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 80px;width: 100px\"/>\n" +
     "\n" +
+    "    </div>\n" +
+    "</step>\n" +
+    "\n" +
+    "<!--<step style=\"width:600px\">-->\n" +
+    "    <!--<div class=\"title\">Calling a function</div>-->\n" +
+    "    <!--<div class=\"text\">-->\n" +
+    "        <!--<p>-->\n" +
+    "            <!--To see the list of all functions in the system, type OPTION+SPACE (Mac) or CTRL+SPACE (Windows/Linux)-->\n" +
+    "        <!--</p>-->\n" +
+    "\n" +
+    "        <!--<img src=\"/img/tutorial/running/functions_list.png\"/>-->\n" +
+    "    <!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
+    "<step style=\"width:800px\">\n" +
+    "    <div class=\"title\">Creating a new function</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p>\n" +
+    "            If you need a supporting function to realize the implementation, you can create a new function and submit\n" +
+    "            your task.\n" +
+    "            This function will then be assigned to OTHER programmers to implement, <strong style=\"color: red\">you should NOT implement the new function,\n" +
+    "            you should just write a description in the below of main function and call the new function in the body of your main function.</strong>\n" +
+    "            To create a new function, use shortcut key  OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select “Add a new function”.\n" +
+    "        </p>\n" +
+    "        <img src=\"/img/tutorial/running/add_function.png\" width=\"570px\"/>\n" +
+    "        <p> You should write a comment specifying the function name, description, parameters, parameter types and\n" +
+    "            return type. The body of the new function will be implemented by other programmer. The final output will be something like this. <strong style=\"color: red\">\n" +
+    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub feature to sutbbing the new function returning value. </strong>\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <img src=\"/img/tutorial/running/new_function.png\" width=\"570px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width:600px;\">\n" +
@@ -12144,33 +12166,6 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "\n" +
     "        <img src=\"/img/tutorial/implementation/comment_code.png\" width=\"470px\"/>\n" +
     "\n" +
-    "    </div>\n" +
-    "</step>\n" +
-    "<step style=\"width:600px\">\n" +
-    "    <div class=\"title\">Calling a function</div>\n" +
-    "    <div class=\"text\">\n" +
-    "        <p>\n" +
-    "            To see the list of all functions in the system, type OPTION+SPACE (Mac) or CTRL+SPACE (Windows/Linux)\n" +
-    "        </p>\n" +
-    "\n" +
-    "        <img src=\"/img/tutorial/running/functions_list.png\"/>\n" +
-    "    </div>\n" +
-    "</step>\n" +
-    "\n" +
-    "<step style=\"width:800px\">\n" +
-    "    <div class=\"title\">Creating a new function</div>\n" +
-    "    <div class=\"text\">\n" +
-    "        <p>\n" +
-    "            If you need a supporting function to realize the implementation, you can create a new function and submit\n" +
-    "            your task.\n" +
-    "            This function will then be assigned to programmers to implement.\n" +
-    "            To create a new function, type ALT SPACE(Mac) or CTRL SPACE(Windows/Linux) and select “Add a new function”,\n" +
-    "            where you can write a comment specifying the function name, description, parameters, parameter types and\n" +
-    "            return type.\n" +
-    "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/add_function.png\" width=\"470px\"/>\n" +
-    "        <br/><br/>\n" +
-    "        <img src=\"/img/tutorial/running/new_function.png\" width=\"470px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width:800px\">\n" +
@@ -12213,27 +12208,31 @@ angular.module("tutorials/Review.html", []).run(["$templateCache", function ($te
     "            <img src=\"/img/review-step1.png\" style=\"max-height: 200px;width: 400px\"/>\n" +
     "\n" +
     "		<p><strong> Step 2: </strong> review tests of this behavior</p>\n" +
-    "            <img src=\"/img/review-step2.png\" style=\"max-height: 200px;width: 400px\"/>\n" +
+    "            <img src=\"/img/review-step2.png\" style=\"max-height: 200px;width: 350px\"/>\n" +
     "\n" +
     "		<p><strong> Step 3: </strong> rate the contribution and give a feedback to the development</p>\n" +
-    "        <img src=\"/img/review-step3.png\" style=\"max-height: 100px;width: 400px\"/>\n" +
+    "        <img src=\"/img/tutorial/review/rejected.png\" style=\"max-height: 100px;width: 400px\"/>\n" +
+    "        <!--<img src=\"/img/review-step3.png\" style=\"max-height: 100px;width: 400px\"/>-->\n" +
     "		<p><strong> Step 4: </strong> once you’re finished, click “Submit” button</p>\n" +
     "        <img src=\"/img/SubmitButton.png\" style=\"max-height: 80px;max-width: 100px\"/>\n" +
     "\n" +
     "	</div>\n" +
     "</step>\n" +
-    "<step>\n" +
+    "<step style=\"width:800px;\">\n" +
     "	<div class=\"text\">\n" +
-    "		<p style=\"width:800px;\">\n" +
-    "			If you rate work with <strong>1 to 3 stars</strong>, the work will be marked as needing revision. In this case, you must describe aspects of the work that you feel must be improved.\n" +
+    "		<p >If you rate work with <strong>1 to 3 stars</strong>, the work will be marked as needing revision.\n" +
+    "			In this case, you must describe aspects of the work that you feel must be improved.\n" +
     "		</p>\n" +
-    "		<img src=\"/img/tutorial/review/revise.png\" />\n" +
+    "		<img src=\"/img/tutorial/review/rejected.png\" />\n" +
+    "\n" +
     "	</div>\n" +
     "</step>\n" +
-    "<step>\n" +
+    "<step style=\"width:800px\">\n" +
     "	<div class=\"text\">\n" +
-    "		<p style=\"width:800px\">\n" +
-    "			If you feel that the work as submitted is already of high quality, you should rate it with <strong>4 or 5 stars</strong>. In this case, the work will be accepted as is. You can also (optionally) include a message describing your assessment of the work, which will be provided back to the crowd worker that did the work.\n" +
+    "		<p>\n" +
+    "			If you feel that the work as submitted is already of high quality, you should rate it with <strong>4 or 5 stars</strong>.\n" +
+    "			In this case, the work will be accepted as is. You can also (optionally) include a message describing your assessment of the work,\n" +
+    "			which will be provided back to the crowd worker that did the work.\n" +
     "		</p>\n" +
     "		<img src=\"/img/tutorial/review/accepted.png\" />\n" +
     "	</div>\n" +
@@ -12542,23 +12541,25 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
   $templateCache.put("tutorials/main.html",
     "<step>\n" +
     "	<div class=\"title\">Crowd Microservices Tutorial</div>\n" +
-    "	<div class=\"text\" style=\"width: 600px\">Here, we’ll help get you up to speed by readin these 5 tutorials.\n" +
-    "		<ol>\n" +
+    "	<!--<div class=\"text\" style=\"width: 600px\">Here, we’ll help get you up to speed by reading these tutorials.-->\n" +
+    "	<div class=\"text\" style=\"width: 600px\">Please read the below tutorials completely.\n" +
+    "		<ul>\n" +
     "			<!--<li><a href=\"#\" ng-click=\"nextStep()\">Introduction</a></li>-->\n" +
-    "			<li style=\"margin-bottom: 5px;margin-top: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'introduction_tutorial', true, undefined, 'main'); close(); $event.preventDefault();\">Dashboard</a></li>\n" +
-    "			<li style=\"margin-bottom: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();\">Implementing a function</a></li>\n" +
-    "			<li style=\"margin-bottom: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'Review', true, undefined, 'main'); close(); $event.preventDefault();\">Reviewing implemented function</a></li>\n" +
+    "			<li style=\"margin-bottom: 8px;margin-top: 8px\">Tutorial 1: <a href=\"#\" ng-click=\"$emit('queue-tutorial', 'introduction_tutorial', true, undefined, 'main'); close(); $event.preventDefault();\">Dashboard</a></li>\n" +
+    "			<li style=\"margin-bottom: 8px\">Tutorial 2: <a href=\"#\" ng-click=\"$emit('queue-tutorial', 'ImplementBehavior', true, undefined, 'main'); close(); $event.preventDefault();\">Implementing a function</a></li>\n" +
+    "			<li style=\"margin-bottom: 8px\">Tutorial 3: <a href=\"#\" ng-click=\"$emit('queue-tutorial', 'Review', true, undefined, 'main'); close(); $event.preventDefault();\">Reviewing implemented function</a></li>\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'function_editor', true, undefined, 'main'); close(); $event.preventDefault();\">using the function editor</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'create_edit_test', true, undefined, 'main' ); close(); $event.preventDefault();\">creating a test</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'input_output_tests', true, undefined, 'main'); close(); $event.preventDefault();\">input/output tests</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'assertion_tests', true, undefined, 'main'); close(); $event.preventDefault();\">assertion tests</a></li>-->\n" +
     "			<!--<li><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'running_tests', true, undefined, 'main'); close(); $event.preventDefault();\">running and debugging tests</a></li>-->\n" +
-    "			<li style=\"margin-bottom: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_section', true, undefined, 'main'); close(); $event.preventDefault();\">Creating, running and debugging unit tests</a></li>\n" +
-    "			<li style=\"margin-bottom: 5px\"><a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_editor_help', true, undefined, 'main'); close(); $event.preventDefault();\">Coding in test editor</a></li>\n" +
+    "			<li style=\"margin-bottom: 8px\">Tutorial 4: <a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_section', true, undefined, 'main'); close(); $event.preventDefault();\">Creating, running and debugging unit tests</a></li>\n" +
+    "			<li style=\"margin-bottom: 8px\">Tutorial 5: <a href=\"#\" ng-click=\"$emit('queue-tutorial', 'test_editor_help', true, undefined, 'main'); close(); $event.preventDefault();\">Coding in test editor</a></li>\n" +
+    "			<li style=\"margin-bottom: 8px\">Tutorial 6: <a href=\"#\" ng-click=\"$emit('queue-tutorial', 'new_funciton_stub_function', true, undefined, 'main'); close(); $event.preventDefault();\">Creating a new function, Stub a function call</a></li>\n" +
     "\n" +
     "\n" +
-    "		</ol>\n" +
-    "		<p><strong>TIP:</strong> Everywhere in website you can open the tutorials by clicking on the question mark icons. <img src=\"/img/tutorial/main/questionmark2.png\"/> </p>\n" +
+    "		</ul>\n" +
+    "		<p><strong>TIP:</strong> Everywhere in website you can open the tutorials by clicking on the question mark icons. <img style=\"max-width: 20px;max-height: 20px\" src=\"/img/tutorial/main/questionmark2.png\"/> </p>\n" +
     "	</div>\n" +
     "</step>\n" +
     "\n" +
@@ -12729,6 +12730,42 @@ angular.module("tutorials/main.html", []).run(["$templateCache", function ($temp
     "<!--&lt;!&ndash;</step>&ndash;&gt;-->");
 }]);
 
+angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateCache", function ($templateCache) {
+  $templateCache.put("tutorials/new_funciton_stub_function.html",
+    "<step style=\"width:800px\">\n" +
+    "    <div class=\"title\">Creating a new function</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p>\n" +
+    "            If you need a supporting function to realize the implementation, you can create a new function and submit\n" +
+    "            your task.\n" +
+    "            This function will then be assigned to OTHER programmers to implement, <strong style=\"color: red\">you should NOT implement the new function,\n" +
+    "            you should just write a description in the below of main function and call the new function in the body of your main function.</strong>\n" +
+    "            To create a new function, use shortcut key  OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select “Add a new function”.\n" +
+    "        </p>\n" +
+    "        <img src=\"/img/tutorial/running/add_function.png\" width=\"570px\"/>\n" +
+    "        <p> You should write a comment specifying the function name, description, parameters, parameter types and\n" +
+    "            return type. The body of the new function will be implemented by other programmer. The final output will be something like this. <strong style=\"color: red\">\n" +
+    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub feature to sutbbing the new function returning value. </strong>\n" +
+    "        </p>\n" +
+    "\n" +
+    "        <img src=\"/img/tutorial/running/new_function.png\" width=\"570px\"/>\n" +
+    "    </div>\n" +
+    "</step>\n" +
+    "<step style=\"width:700px\">\n" +
+    "    <div class=\"title\">Stub a function call</div>\n" +
+    "    <div class=\"text\">\n" +
+    "        <p>\n" +
+    "            While in \"inspect mode\", clicking on a function call opens a popup that allows to stub a function.\n" +
+    "        </p>\n" +
+    "        <img src=\"/img/tutorial/running/function_stub_1.png\" />\n" +
+    "        <p>\n" +
+    "            If a function call is producing an incorrect output, the function should be stubbed. In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with a stub for an alternative specific output, and creating a new test with the stub for the invoked function.\n" +
+    "        </p>\n" +
+    "        <img src=\"/img/tutorial/running/function_stub_2.png\" />\n" +
+    "    </div>\n" +
+    "</step>");
+}]);
+
 angular.module("tutorials/review_describe.html", []).run(["$templateCache", function ($templateCache) {
   $templateCache.put("tutorials/review_describe.html",
     "<step>\n" +
@@ -12807,10 +12844,10 @@ angular.module("tutorials/running_tests.html", []).run(["$templateCache", functi
     "		<img src=\"/img/tutorial/running/function_stub_2.png\" />\n" +
     "	</div>\n" +
     "</step>\n" +
-    "<step>\n" +
+    "<step style=\"width:500px\">\n" +
     "	<div class=\"title\">Reporting an issue</div>\n" +
     "	<div class=\"text\">\n" +
-    "		<p style=\"width:500px\">\n" +
+    "		<p >\n" +
     "			If a test itself is incorrect, click “Report an issue” in the test detail page to report the issue to be addressed, temporarily disabling the test.\n" +
     "		</p>\n" +
     "\n" +
@@ -12902,50 +12939,50 @@ angular.module("tutorials/test_section.html", []).run(["$templateCache", functio
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step>\n" +
+    "<step style=\"width:500px\">\n" +
     "    <div class=\"title\">Running and debugging tests</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p style=\"width:500px\">\n" +
+    "        <p >\n" +
     "            Click “Run” to run all of the function’s tests and view the list of passing and failing tests.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/run.png\" />\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step>\n" +
+    "<step style=\"width:600px\">\n" +
     "    <div class=\"title\">Test details</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p style=\"width:500px\">\n" +
+    "        <p >\n" +
     "            Click on a listed test to see the test code and its result.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/detail.png\" />\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step>\n" +
+    "<step style=\"width:700px\">\n" +
     "    <div class=\"title\">Inspecting the code</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p style=\"width:500px\">\n" +
+    "        <p >\n" +
     "            Click “inspect” to invoke a mode in the function editor where you can hover over expressions to see an expression value popup. After editing the function, click “Run” and then again click “Inspect” to see the updated values.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/inspector.png\" />\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step>\n" +
+    "<step style=\"width:700px\">\n" +
     "    <div class=\"title\">Stub a function call</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p style=\"width:500px\">\n" +
+    "        <p>\n" +
     "            While in \"inspect mode\", clicking on a function call opens a popup that allows to stub a function.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/function_stub_1.png\" />\n" +
-    "        <p style=\"width:500px\">\n" +
+    "        <p>\n" +
     "            If a function call is producing an incorrect output, the function should be stubbed. In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with a stub for an alternative specific output, and creating a new test with the stub for the invoked function.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/function_stub_2.png\" />\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step>\n" +
+    "<step style=\"width:400px\">\n" +
     "    <div class=\"title\">Reporting an issue</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p style=\"width:500px\">\n" +
+    "        <p >\n" +
     "            If a test itself is incorrect, click “Report an issue” in the test detail page to report the issue to be addressed, temporarily disabling the test.\n" +
     "        </p>\n" +
     "\n" +
