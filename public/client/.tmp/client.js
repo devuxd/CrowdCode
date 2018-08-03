@@ -12078,14 +12078,9 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "<step style=\"max-width:800px;\">\n" +
     "    <div class=\"title\">Function Implementation Complete</div>\n" +
     "    <div class=\"text\">\n" +
-    "\n" +
-    "        <p>\n" +
-    "            Once you have implemented the function completely, you can click the checkbox in the test editor panel as\n" +
-    "            shown below and then submit this task.\n" +
-    "        </p>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
+    " <p>Once you have implemented the ALL behaviors of a function completely, you can click the checkbox in the test editor panel as\n" +
+    "            shown below and then submit this task. Before clicking the checkbox you should controll that the implementation and tests covers all function description. </p>\n" +
+    "        <img src=\"/img/tutorial/implementation/completed_check.png\" style=\"max-height: 200px;width: 400px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width: 900px; height: 800px\">\n" +
@@ -12249,7 +12244,7 @@ angular.module("tutorials/Review.html", []).run(["$templateCache", function ($te
     "            4) it throw an exception if arguments be invalid\n" +
     "            <strong style=\"color: red\">But, you should evaluate just one of these behaviors which is implemented, NOT ALL BEHAVIORS</strong>\n" +
     "        </p>\n" +
-    "        <img src=\"/img/function-description.png\" style=\"max-height: 5cm;;max-width: 20cm\"/>\n" +
+    "        <img src=\"/img/tutorial/choose_behave.png\" style=\"max-height: 5cm;;max-width: 20cm\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
@@ -12740,12 +12735,13 @@ angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateC
     "            your task.\n" +
     "            This function will then be assigned to OTHER programmers to implement, <strong style=\"color: red\">you should NOT implement the new function,\n" +
     "            you should just write a description in the below of main function and call the new function in the body of your main function.</strong>\n" +
-    "            To create a new function, use shortcut key  OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select “Add a new function”.\n" +
+    "            To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select “Add a new function”.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/add_function.png\" width=\"570px\"/>\n" +
-    "        <p> You should write a comment specifying the function name, description, parameters, parameter types and\n" +
-    "            return type. The body of the new function will be implemented by other programmer. The final output will be something like this. <strong style=\"color: red\">\n" +
-    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub feature to sutbbing the new function returning value. </strong>\n" +
+    "        <p> You should ONLY write a comment specifying the function name, description, parameters, parameter types and\n" +
+    "            return type. The body of the new function will be implemented by other programmers. <strong style=\"color: red\">\n" +
+    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub feature to stubbing the new function returning value. </strong>\n" +
+    "            The final output will be something like this.\n" +
     "        </p>\n" +
     "\n" +
     "        <img src=\"/img/tutorial/running/new_function.png\" width=\"570px\"/>\n" +
