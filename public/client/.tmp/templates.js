@@ -4827,19 +4827,36 @@ angular.module("tutorials/test_section.html", []).run(["$templateCache", functio
     "        <img src=\"/img/tutorial/running/inspector.png\" />\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step style=\"width:700px\">\n" +
+    "<step style=\"width:800px\">\n" +
     "    <div class=\"title\">Stub a function call</div>\n" +
     "    <div class=\"text\">\n" +
     "        <p>\n" +
-    "            While in \"inspect mode\", clicking on a function call opens a popup that allows to stub a function.\n" +
+    "            Step 1: In \"inspect mode\", clicking on inspect code  <img src=\"/img/tutorial/running/inspect_button.png\"\n" +
+    "                                                                      width=\"300px\"/> </p>\n" +
+    "        <p> Step 2: Clicking on a function call opens a popup that allows to stub a function.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/function_stub_1.png\" />\n" +
+    "\n" +
+    "        <img src=\"/img/tutorial/running/new_function_stub_1.png\" width=\"700px\" height=\"270px\"/>\n" +
     "        <p>\n" +
-    "            If a function call is producing an incorrect output, the function should be stubbed. In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with a stub for an alternative specific output, and creating a new test with the stub for the invoked function.\n" +
+    "            Step 3: In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with\n" +
+    "            a stub for an alternative specific output, and run the tests again with the stub for the invoked function.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/function_stub_2.png\" />\n" +
+    "        <img src=\"/img/tutorial/running/new_function_stub_2.png\" width=\"700px\" height=\"270px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
+    "<!--<step style=\"width:700px\">-->\n" +
+    "    <!--<div class=\"title\">Stub a function call</div>-->\n" +
+    "    <!--<div class=\"text\">-->\n" +
+    "        <!--<p>-->\n" +
+    "            <!--While in \"inspect mode\", clicking on a function call opens a popup that allows to stub a function.-->\n" +
+    "        <!--</p>-->\n" +
+    "        <!--<img src=\"/img/tutorial/running/function_stub_1.png\" />-->\n" +
+    "        <!--<p>-->\n" +
+    "            <!--If a function call is producing an incorrect output, the function should be stubbed. In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with a stub for an alternative specific output, and creating a new test with the stub for the invoked function.-->\n" +
+    "        <!--</p>-->\n" +
+    "        <!--<img src=\"/img/tutorial/running/function_stub_2.png\" />-->\n" +
+    "    <!--</div>-->\n" +
+    "<!--</step>-->\n" +
     "<step style=\"width:400px\">\n" +
     "    <div class=\"title\">Reporting an issue</div>\n" +
     "    <div class=\"text\">\n" +
