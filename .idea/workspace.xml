@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/client.js" afterPath="$PROJECT_DIR$/public/client/.tmp/client.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/.tmp/templates.js" afterPath="$PROJECT_DIR$/public/client/.tmp/templates.js" />
-      <change beforePath="$PROJECT_DIR$/public/client/tutorials/test_section.html" afterPath="$PROJECT_DIR$/public/client/tutorials/test_section.html" />
-      <change beforePath="$PROJECT_DIR$/public/clientDist/client.js" afterPath="$PROJECT_DIR$/public/clientDist/client.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/public/img/tutorial/review/review_step1.png" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/public/img/tutorial/review/review_step2.png" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/public/img/tutorial/review/review_step3.png" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/public/welcome.html" afterPath="$PROJECT_DIR$/public/welcome.html" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -22,111 +23,40 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="new_funciton_stub_function.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/new_funciton_stub_function.html">
+      <file leaf-file-name="welcome.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/public/welcome.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="41" selection-end-column="7" />
+            <state relative-caret-position="293">
+              <caret line="147" column="97" lean-forward="false" selection-start-line="147" selection-start-column="97" selection-end-line="147" selection-end-column="97" />
               <folding>
-                <element signature="n#style#0;n#step#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#0;n#div#1;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="create_edit_test.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/create_edit_test.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test_section.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/test_section.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
-              <caret line="52" column="13" lean-forward="false" selection-start-line="52" selection-start-column="13" selection-end-line="52" selection-end-column="13" />
-              <folding>
-                <element signature="n#style#0;n#step#5;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#6;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#7;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ImplementBehavior.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="402">
-              <caret line="91" column="27" lean-forward="false" selection-start-line="91" selection-start-column="27" selection-end-line="91" selection-end-column="27" />
-              <folding>
-                <element signature="n#style#0;n#img#0;n#div#1;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#1;n#div#1;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#2;n#div#1;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#3;n#div#1;n#step#2;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#3;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#p#0;n#div#1;n#step#3;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#p#1;n#div#1;n#step#3;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#4;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#5;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#6;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#img#0;n#div#1;n#step#6;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#step#7;n#!!top" expanded="true" />
-                <marker date="1533748157417" expanded="false" signature="3433:3443" ph="..." />
-                <marker date="1533748157417" expanded="false" signature="4175:4185" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DescribeFunctionBehavior.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/DescribeFunctionBehavior.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/client/tutorials/main.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="85" lean-forward="false" selection-start-line="4" selection-start-column="85" selection-end-line="4" selection-end-column="85" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="inspect_button.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/inspect_button.png">
+      <file leaf-file-name="review-step1.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/img/review-step1.png">
           <provider selected="true" editor-type-id="images">
             <state />
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="add_function2.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/add_function2.png">
+      <file leaf-file-name="review_step1.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/review_step1.png">
           <provider selected="true" editor-type-id="images">
             <state />
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="new_function2.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/new_function2.png">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="add_function.png" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/add_function.png">
+      <file leaf-file-name="review_step2.png" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/review_step2.png">
           <provider selected="true" editor-type-id="images">
             <state />
           </provider>
@@ -231,7 +161,6 @@
         <option value="$PROJECT_DIR$/public/client/ui_elements/nav_bar_template.html" />
         <option value="$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/public/welcome.html" />
         <option value="$PROJECT_DIR$/public/client/widgets/reminder.directive.js" />
         <option value="$PROJECT_DIR$/public/client/tutorials/running_tests.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/main.html" />
@@ -240,6 +169,7 @@
         <option value="$PROJECT_DIR$/public/client/tutorials/new_funciton_stub_function.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/test_section.html" />
+        <option value="$PROJECT_DIR$/public/welcome.html" />
       </list>
     </option>
   </component>
@@ -426,23 +356,7 @@
               <item name="public" type="462c0819:PsiDirectoryNode" />
               <item name="img" type="462c0819:PsiDirectoryNode" />
               <item name="tutorial" type="462c0819:PsiDirectoryNode" />
-              <item name="implementation" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorial" type="462c0819:PsiDirectoryNode" />
-              <item name="running" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
-              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-              <item name="tutorial" type="462c0819:PsiDirectoryNode" />
-              <item name="writefunction" type="462c0819:PsiDirectoryNode" />
+              <item name="review" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
@@ -472,13 +386,14 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
+      <recent name="$PROJECT_DIR$/public/img/tutorial" />
       <recent name="$PROJECT_DIR$/public/img/tutorial/running" />
       <recent name="$PROJECT_DIR$/public/img/tutorial/implementation" />
-      <recent name="$PROJECT_DIR$/public/img/tutorial" />
-      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
       <recent name="$PROJECT_DIR$/public/img/tutorial/main" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -607,7 +522,7 @@
       <workItem from="1533305355453" duration="1787000" />
       <workItem from="1533607318629" duration="539000" />
       <workItem from="1533664207762" duration="2449000" />
-      <workItem from="1533738530265" duration="3703000" />
+      <workItem from="1533738530265" duration="4502000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -655,7 +570,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="203164000" />
+    <option name="totallyTimeSpent" value="203963000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -778,37 +693,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/running_tests.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="30" column="29" lean-forward="false" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/accepted.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/implementation/comment_code.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/util/microtask_service.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3150">
-          <caret line="593" column="52" lean-forward="false" selection-start-line="593" selection-start-column="52" selection-end-line="593" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/client.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1995">
-          <caret line="133" column="61" lean-forward="false" selection-start-line="133" selection-start-column="61" selection-end-line="133" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/admin/bower.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="465">
@@ -1110,18 +994,18 @@
         <state relative-caret-position="402">
           <caret line="91" column="27" lean-forward="false" selection-start-line="91" selection-start-column="27" selection-end-line="91" selection-end-column="27" />
           <folding>
-            <element signature="n#style#0;n#img#0;n#div#1;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#1;n#div#1;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#2;n#div#1;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#3;n#div#1;n#step#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#3;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strong#0;n#p#0;n#div#1;n#step#3;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strong#0;n#p#1;n#div#1;n#step#3;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#4;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#5;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#6;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#1;n#step#6;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#7;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#1;n#div#1;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#2;n#div#1;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#3;n#div#1;n#step#2;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#3;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#strong#0;n#p#0;n#div#1;n#step#3;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#strong#0;n#p#1;n#div#1;n#step#3;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#4;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#5;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#6;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#step#6;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#7;n#!!top" expanded="false" />
             <marker date="1533748157417" expanded="false" signature="3433:3443" ph="..." />
             <marker date="1533748157417" expanded="false" signature="4175:4185" ph="..." />
           </folding>
@@ -1133,8 +1017,8 @@
         <state relative-caret-position="361">
           <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="41" selection-end-column="7" />
           <folding>
-            <element signature="n#style#0;n#step#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#step#0;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#1;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1152,9 +1036,45 @@
         <state relative-caret-position="80">
           <caret line="52" column="13" lean-forward="false" selection-start-line="52" selection-start-column="13" selection-end-line="52" selection-end-column="13" />
           <folding>
-            <element signature="n#style#0;n#step#5;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#6;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#step#7;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#step#5;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#6;n#!!top" expanded="false" />
+            <element signature="n#style#0;n#step#7;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/welcome_first.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/review-step1.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/review_step2.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/review_step1.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/welcome.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="293">
+          <caret line="147" column="97" lean-forward="false" selection-start-line="147" selection-start-column="97" selection-end-line="147" selection-end-column="97" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#div#1;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#1;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#2;n#div#2;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
