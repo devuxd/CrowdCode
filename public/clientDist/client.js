@@ -12084,8 +12084,7 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width: 900px; height: 800px\">\n" +
-    "    <div class=\"title\">coding tasks (implement one behavior tasks)\n" +
-    "    </div>\n" +
+    "    <div class=\"title\">Implement Function Behavior</div>\n" +
     "    <div class=\"text\">\n" +
     "        <p><strong> Step 1: </strong> find only one behavior in the function description(in the comments above the function) that is not yet implemented, for example: \"it should check arguments to be valid\"\n" +
     "        </p>\n" +
@@ -12117,25 +12116,53 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "    <!--</div>-->\n" +
     "<!--</step>-->\n" +
     "\n" +
+    "<!--<step style=\"width:800px\">-->\n" +
+    "    <!--<div class=\"title\">Creating a new function</div>-->\n" +
+    "    <!--<div class=\"text\">-->\n" +
+    "        <!--<p>-->\n" +
+    "            <!--If you need a supporting function to realize the implementation, you can create a new function and submit-->\n" +
+    "            <!--your task.-->\n" +
+    "            <!--This function will then be assigned to OTHER programmers to implement, <strong style=\"color: red\">you should NOT implement the new function,-->\n" +
+    "            <!--you should just write a description in the below of main function and call the new function in the body of your main function.</strong>-->\n" +
+    "            <!--To create a new function, use shortcut key  OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select “Add a new function”.-->\n" +
+    "        <!--</p>-->\n" +
+    "        <!--<img src=\"/img/tutorial/running/add_function.png\" width=\"570px\"/>-->\n" +
+    "        <!--<p> You should write a comment specifying the function name, description, parameters, parameter types and-->\n" +
+    "            <!--return type. The body of the new function will be implemented by other programmer. The final output will be something like this. <strong style=\"color: red\">-->\n" +
+    "                <!--When you want to run your tests, since this new function is not implemented yet, you should use Stub feature to sutbbing the new function returning value. </strong>-->\n" +
+    "        <!--</p>-->\n" +
+    "\n" +
+    "        <!--<img src=\"/img/tutorial/running/new_function.png\" width=\"570px\"/>-->\n" +
+    "    <!--</div>-->\n" +
+    "<!--</step>-->\n" +
+    "\n" +
     "<step style=\"width:800px\">\n" +
     "    <div class=\"title\">Creating a new function</div>\n" +
     "    <div class=\"text\">\n" +
     "        <p>\n" +
     "            If you need a supporting function to realize the implementation, you can create a new function and submit\n" +
     "            your task.\n" +
-    "            This function will then be assigned to OTHER programmers to implement, <strong style=\"color: red\">you should NOT implement the new function,\n" +
-    "            you should just write a description in the below of main function and call the new function in the body of your main function.</strong>\n" +
-    "            To create a new function, use shortcut key  OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select “Add a new function”.\n" +
+    "            This function will then be assigned to OTHER programmers to implement, <strong style=\"color: red\">you should\n" +
+    "            NOT implement the new function,\n" +
+    "            you should just write a description in the below of main function and call the new function in the body of\n" +
+    "            your main function.</strong>\n" +
+    "            To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select\n" +
+    "            “Add a new function”.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/add_function.png\" width=\"570px\"/>\n" +
-    "        <p> You should write a comment specifying the function name, description, parameters, parameter types and\n" +
-    "            return type. The body of the new function will be implemented by other programmer. The final output will be something like this. <strong style=\"color: red\">\n" +
-    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub feature to sutbbing the new function returning value. </strong>\n" +
+    "        <img src=\"/img/tutorial/running/add_function3.png\" width=\"700px\"/>\n" +
+    "        <p> You should ONLY write a comment specifying the function name, description, parameters, parameter types and\n" +
+    "            return type. The body of the new function will be implemented by other programmers. <strong\n" +
+    "                    style=\"color: red\">\n" +
+    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub\n" +
+    "                feature to stubbing the new function returning value. </strong>\n" +
+    "            The final output will be something like this.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/running/new_function.png\" width=\"570px\"/>\n" +
+    "        <img src=\"/img/tutorial/running/new_function3.png\" width=\"700px\" height=\"300px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
+    "\n" +
+    "\n" +
     "<step style=\"width:600px;\">\n" +
     "    <div class=\"title\">Function Implementation Incomplete</div>\n" +
     "    <div class=\"text\">\n" +
@@ -12154,10 +12181,8 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "    <div class=\"title\">Comment Code</div>\n" +
     "    <div class=\"text\">\n" +
     "\n" +
-    "        <p>\n" +
-    "            Please write the code with appropriate comments as this will help the following programmers understand your\n" +
-    "            code quickly.\n" +
-    "        </p>\n" +
+    "        <p> Please write the code with appropriate comments as this will help the following programmers understand your\n" +
+    "            code quickly.</p>\n" +
     "\n" +
     "        <img src=\"/img/tutorial/implementation/comment_code.png\" width=\"470px\"/>\n" +
     "\n" +
@@ -12733,31 +12758,40 @@ angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateC
     "        <p>\n" +
     "            If you need a supporting function to realize the implementation, you can create a new function and submit\n" +
     "            your task.\n" +
-    "            This function will then be assigned to OTHER programmers to implement, <strong style=\"color: red\">you should NOT implement the new function,\n" +
-    "            you should just write a description in the below of main function and call the new function in the body of your main function.</strong>\n" +
-    "            To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select “Add a new function”.\n" +
+    "            This function will then be assigned to OTHER programmers to implement, <strong style=\"color: red\">you should\n" +
+    "            NOT implement the new function,\n" +
+    "            you should just write a description in the below of main function and call the new function in the body of\n" +
+    "            your main function.</strong>\n" +
+    "            To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and select\n" +
+    "            “Add a new function”.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/add_function.png\" width=\"570px\"/>\n" +
+    "        <img src=\"/img/tutorial/running/add_function2.png\" width=\"700px\"/>\n" +
     "        <p> You should ONLY write a comment specifying the function name, description, parameters, parameter types and\n" +
-    "            return type. The body of the new function will be implemented by other programmers. <strong style=\"color: red\">\n" +
-    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub feature to stubbing the new function returning value. </strong>\n" +
+    "            return type. The body of the new function will be implemented by other programmers. <strong\n" +
+    "                    style=\"color: red\">\n" +
+    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub\n" +
+    "                feature to stubbing the new function returning value. </strong>\n" +
     "            The final output will be something like this.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/running/new_function.png\" width=\"570px\"/>\n" +
+    "        <img src=\"/img/tutorial/running/new_function2.png\" width=\"700px\" height=\"300px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
-    "<step style=\"width:700px\">\n" +
+    "<step style=\"width:800px\">\n" +
     "    <div class=\"title\">Stub a function call</div>\n" +
     "    <div class=\"text\">\n" +
     "        <p>\n" +
-    "            While in \"inspect mode\", clicking on a function call opens a popup that allows to stub a function.\n" +
+    "            Step 1: In \"inspect mode\", clicking on inspect code  <img src=\"/img/tutorial/running/inspect_button.png\"\n" +
+    "                                                                     width=\"300px\"/> </p>\n" +
+    "        <p> Step 2: Clicking on a function call opens a popup that allows to stub a function.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/function_stub_1.png\" />\n" +
+    "\n" +
+    "        <img src=\"/img/tutorial/running/new_function_stub_1.png\" width=\"700px\" height=\"270px\"/>\n" +
     "        <p>\n" +
-    "            If a function call is producing an incorrect output, the function should be stubbed. In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with a stub for an alternative specific output, and creating a new test with the stub for the invoked function.\n" +
+    "            Step 3: In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with\n" +
+    "            a stub for an alternative specific output, and run the tests again with the stub for the invoked function.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/function_stub_2.png\" />\n" +
+    "        <img src=\"/img/tutorial/running/new_function_stub_2.png\" width=\"700px\" height=\"270px\"/>\n" +
     "    </div>\n" +
     "</step>");
 }]);
