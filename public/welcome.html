@@ -75,7 +75,7 @@
 <div class="container-fluid">
 
 
-    <h3 > Tutorial : watch the video below to learn how to get started</h3>
+    <h2 style="margin-bottom: 50px;"> Tutorial : watch the video below to learn how to get started</h2>
     <!--<div class="row ">-->
     <div class='row'>
         <div class='col-md-2'></div>
@@ -91,146 +91,167 @@
         <div class='col-md-2'></div>
     </div>
 
-<div style="margin-top: 100px; color: darkblue">
-    <h3 >Crowd Microservices contains two types of microtasks you’ll be asked to do: ImplementFunction Behavior  and Review.</h3>
+    <div style="background-color: rgba(42,56,85,0.2);">
+        <div style="margin-top: 150px;">
+            <h2>Crowd Microservices contains two types of microtasks you’ll be asked to do: Implement Function Behavior
+                and
+                Review.</h2>
+        </div>
+        <div>
+            <div class="row">
+
+                <div class="col-md-9">
+                    <h3 class="pull-left"><strong> Type A: Implement Function Behavior Microtask</strong></h3>
+                    <!--<h3>Here are the steps to follow:</h3>-->
+                </div>
+            </div>
+            <div class="row">
+                <!--<div class="col-md-1"></div>-->
+                <div class="col-md-8">
+                    <h4><strong>Step 1: </strong>In the function description, located in the comments above the
+                        function, find one, and
+                        only
+                        one, behavior that is not yet implemented. For example: “test validation of input
+                        arguments”. </h4>
+                    <img src="/img/Behave-step1.png" style="max-height: 5cm;;max-width: 24cm"/>
+                </div>
+                <div class="col-md-3">
+                    <h4><strong>Step 2: </strong>Write a test for the behavior you have chosen</h4>
+                    <img src="/img/behvae-step2-assertion-code.png" style="max-height: 7cm;;max-width: 24cm"/>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 20px;margin-bottom: 15px">
+                <!--<div class="col-sm-1"></div>-->
+                <div class="col-md-8 ">
+                    <h4><strong>Step 3: </strong>For the <strong>one</strong> behavior you selected, implement the
+                        behavior in the
+                        function
+                        editor. For example, to implment “test validation of input arguments” </h4>
+                    <!--<img  src="/img/SubmitButton.png"/>-->
+                    <img src="/img/behave-Step3.png" style="max-height: 5cm;max-width: 16cm; margin-bottom: 10px "/>
+                </div>
+
+                <div class="col-md-3">
+                    <h4><strong>Step 4: </strong>Once you’re finished, click “Submit” button.</h4>
+                    <img src="/img/SubmitButton.png" style="max-height: 3cm;max-width: 5cm"/>
+                </div>
+            </div>
+        </div>
+        <div>
+
+            <div class="row">
+                <div class="col-md-9" class="row justify-content-start">
+                    <h3 class="pull-left"><strong>Type B: Review Microtask</strong></h3>
+                    <!--<p>Here are the steps to follow:</p>-->
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <h4><strong>Step 1:</strong> Review implementation of the behavior which is written by other
+                        programmer</h4>
+                    <img src="/img/tutorial/review/review_step1.png" style="max-height: 8cm;max-width: 12cm"/>
+                </div>
+
+                <div class="col-md-4">
+                    <h4><strong>Step 2:</strong> Review tests of this behavior</h4>
+                    <img src="/img/tutorial/review/review_step2.png" style="height: 130px"/>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 20px">
+                <div class="col-md-1"></div>
+                <div class="col-md-5">
+                    <h4><strong>Step 3:</strong> Rate the contribution and give a feedback to the development</h4>
+                    <img src="/img/tutorial/review/review_step3.png"
+                         style="max-height: 200px;max-width: 450px; margin-bottom: 10px"/>
+                </div>
+
+                <div class="col-md-4">
+                    <h4><strong>Step 4:</strong> Once you’re finished, click “Submit” button</h4>
+                    <img src="/img/SubmitButton.png" style="max-height: 80px;max-width: 5cm"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="background-color: rgba(42,56,85,0.2); margin-top: 20px;">
+        <div>
+            <p style="text-align: start">
+                <Strong>TIP 1: </strong>In each Implement behavior Function microtask. You should be aware implement
+                only one behavior, write for only one behavior and submit the task.
+                In the function description(in the comments above the function) there is a lot of behaviors,
+                but choose one of them for implement. for example: in the below screenshot, function has
+                behaviors like 1) it update status of a todo 2) it return false if it can not find the todo.
+                3) it should call 3rd party api for interacting with database.
+                4) it throw an exception if arguments be invalid.
+                <strong style="color: red"> But, you should implement and submit just one of these behaviors such as
+                    specified via rectangle in screenshot, NOT ALL BEHAVIORS.</strong>
+            </p>
+            <img src="/img/function-description.png" style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+        </div>
+    </div>
+
+    <div style="background-color: rgba(42,56,85,0.2); margin-top: 20px;">
+        <div>
+
+
+            <p style="text-align: start">
+                <Strong>TIP 2: </strong>Sometimes, behaviors are complicated and you want to create a new function which is responsible for that behavior.
+                If you need a supporting function to realize the implementation, you can create a new function and
+                submit
+                your task.
+                This function will then be assigned to OTHER programmers to implement, <strong style="color: red">you
+                should
+                NOT implement the new function,
+                you should just write a description in the below of main function and call the new function in the body
+                of
+                your main function and finally submit it.</strong>
+                To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and
+                select
+                “Add a new function”.
+            </p>
+            <img src="/img/tutorial/running/add_function2.png"
+                 style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+            <p style="text-align: start"> You should ONLY write a comment specifying the function name, description, parameters, parameter types
+                and
+                return type. The body of the new function will be implemented by other programmers. <strong
+                        style="color: red">
+                    When you want to run your tests, since this new function is not implemented yet, you should use Stub
+                    feature to stubbing the new function returning value. </strong>
+                The final output will be something like this.
+            </p>
+
+            <img src="/img/tutorial/running/new_function2.png"
+                 style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+
+            <p style="text-align: start">
+                 For stubbing a function, In "inspect mode", clicking on inspect code
+            </p>
+            <img src="/img/tutorial/running/inspect_button.png"  style="max-height: 300px; max-width: 400px;margin-bottom: 10px"/>
+            <p style="text-align: start"> Clicking on a function call opens a popup that allows to stub a function.
+            </p>
+
+            <img src="/img/tutorial/running/new_function_stub_1.png"
+                 style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+            <p style="text-align: start">
+                 In the expression value popup, click on “stub this function call” to automatically replace a
+                function call for a specific input with
+                a stub for an alternative specific output, and run the tests again with the stub for the invoked
+                function.
+            </p>
+            <img src="/img/tutorial/running/new_function_stub_2.png"
+                 style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+        </div>
+    </div>
 </div>
-    <div style="background-color: rgba(42,56,85,0.2);">
-        <div class="row justify-content-start">
-            <div class="col-md-9">
-                <h3 class="pull-left"> Type A: Implement Function Behavior Microtask</h3>
-                <!--<h3>Here are the steps to follow:</h3>-->
-            </div>
-        </div>
-        <div class="row">
-            <!--<div class="col-md-1"></div>-->
-            <div class="col-md-8">
-                <h4>Step 1: In the function description, located in the comments above the function, find one, and only
-                    one, behavior that is not yet implemented. For example: “test validation of input arguments”. </h4>
-                <img src="/img/Behave-step1.png" style="max-height: 5cm;;max-width: 24cm"/>
-            </div>
-            <div class="col-md-3">
-                <h4>Step 2: Write a test for the behavior you have chosen</h4>
-                <img src="/img/behvae-step2-assertion-code.png" style="max-height: 7cm;;max-width: 24cm"/>
-            </div>
-        </div>
-        <div class="row" style="margin-top: 20px;margin-bottom: 15px">
-            <!--<div class="col-sm-1"></div>-->
-            <div class="col-md-8 ">
-                <h4>Step 3: For the <strong>one</strong> behavior you selected, implement the behavior in the function
-                    editor. For example, to implment “test validation of input arguments” </h4>
-                <!--<img  src="/img/SubmitButton.png"/>-->
-                <img src="/img/behave-Step3.png" style="max-height: 5cm;max-width: 16cm; margin-bottom: 10px "/>
-            </div>
 
-            <div class="col-md-3">
-                <h4>Step 4: Once you’re finished, click “Submit” button.</h4>
-                <img src="/img/SubmitButton.png" style="max-height: 3cm;max-width: 5cm"/>
-            </div>
-        </div>
+<div class="row" style="margin-bottom: 50px;margin-top: 50px">
+    <h5>If you are ready click “Get Started!” </h5>
+    <div style="text-align:center;">
+        <a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
     </div>
-    <div style="background-color: rgba(42,56,85,0.2);">
-        <div class="row">
-            <div class="col-md-9" class="row justify-content-start">
-                <h3 class="pull-left"> Type B: Review Microtask</h3>
-                <!--<p>Here are the steps to follow:</p>-->
-            </div>
-
-        </div>
-        <div class="row">
-
-            <div class="col-md-6">
-                <h4>Step 1: Review implementation of the behavior which is written by other programmer</h4>
-                <img src="/img/tutorial/review/review_step1.png" style="max-height: 8cm;max-width: 12cm"/>
-            </div>
-
-            <div class="col-md-4">
-                <h4>Step 2: Review tests of this behavior</h4>
-                <img src="/img/tutorial/review/review_step2.png" style="  height: 150px; width: 200px"/>
-            </div>
-        </div>
-
-        <div class="row" style="margin-top: 20px">
-            <div class="col-md-1"></div>
-            <div class="col-md-5">
-                <h4>Step 3: Rate the contribution and give a feedback to the development</h4>
-                <img src="/img/tutorial/review/review_step3.png" style="max-height: 200px;max-width: 450px; margin-bottom: 10px"/>
-            </div>
-
-            <div class="col-md-4">
-                <h4>Step 4: Once you’re finished, click “Submit” button</h4>
-                <img src="/img/SubmitButton.png" style="max-height: 80px;max-width: 5cm"/>
-            </div>
-        </div>
-    </div>
-    <!--<div class="row">-->
-
-
-    <!--Here’s a function getAllDoneTodos that needs some work. Please identify a behavior in its description that is-->
-    <!--not yet implemented;-->
-    <!--firstly, write a test for this behavior,-->
-    <!--secondly implement it.-->
-    <!--You can run the tests for the function by clicking RunTests.-->
-    <!--Remember, you only have 15 minutes, so be sure to submit your work before time runs out.You don’t need to (and-->
-    <!--probably don’t have time) to finish the function implementation.-->
-    <!--Instead, find a single behavior, write a test, and implement just that behavior.-->
-    <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
-    <!--&lt;!&ndash;<hr/>&ndash;&gt;-->
-    <!--The test suite and implementation for has been updated by adding, editing, or deleting its tests and implementation.-->
-    <!--Considering just the changes to the test suite and function implementation, can you review them?-->
-    <!--TIP:If you think this contribution has issues that need to be resolved, you should rate it with 1-3 stars. If you think this contribution is ready to, rate it with 4 or 5 stars.-->
-
-    <!--<div class="row">-->
-    <!--<div class="col-md-12 col-sm-12">-->
-    <!--<div class="row">-->
-    <!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
-    <!--<h1>Your work, your credit</h1>-->
-    <!--<img src="/img/welcome_third.png"/>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--<div class="row">-->
-    <!--<div class="col-md-offset-1 col-md-5 col-sm-12">-->
-    <!--<h2>Points</h2>-->
-    <!--<p>-->
-    <!--Microtasks are worth points; the harder the work, the more points it’s worth.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--<div class="col-md-5 col-sm-12">-->
-    <!--<h2>Reviews</h2>-->
-    <!--<p>-->
-    <!--Microtasks you submit are reviewed by the crowd. If accepted, you get the points; if rejected,-->
-    <!--you get nothing. You get points to review others work as well.-->
-    <!--</p>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-
-    <!--<hr/>-->
-    <!--<hr/>-->
-    <!--<div class="row">-->
-
-    <!--<div class="col-md-12 col-sm-12">-->
-
-    <!--<div class="row">-->
-    <!--<div class="col-md-offset-1 col-md-10 col-sm-12">-->
-    <!--<h1>Write code, with the crowd. </h1>-->
-    <!--<img src="/img/welcome_implementation.png" style="box-shadow: 0px 0px 5px 5px #CBCBCB;" />-->
-
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-    <!--</div>-->
-
-    <!--<hr />-->
-    <!--<hr />-->
-
-
-    <div class="row" style="margin-bottom: 50px;margin-top: 50px">
-        <h5>If you are ready click “Get Started!” </h5>
-        <div style="text-align:center;">
-            <a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
-        </div>
-    </div>
+</div>
 
 </div>
 
@@ -256,10 +277,10 @@
         // 	$('#btnStart').attr('href', '/' + snap.val());
         // else
         $('#btnStart').attr('href', '/todo');
-        setTimeout(function(){
+        setTimeout(function () {
             $('#btnStart').attr('href', '/todo');
             console.log('redirected again');
-            },32000);
+        }, 32000);
 
     });
 </script>
