@@ -12959,13 +12959,13 @@ angular.module("tutorials/test_section.html", []).run(["$templateCache", functio
     "    </div>\n" +
     "</step>\n" +
     "\n" +
-    "<step style=\"width:900px\">\n" +
+    "<step style=\"width:800px\">\n" +
     "    <div class=\"title\">Assertion tests</div>\n" +
     "    <div class=\"text\">\n" +
     "        <p >\n" +
     "            Assertion tests afford more flexibility, letting you check only parts of the output (e.g., if an object has a specific property), using function calls to check properties of the output (e.g., length of an array), using complex expressions to construct input values, and even using multiple asserts.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/testing/assertion.png\" style=\"max-width: 870px\"/>\n" +
+    "        <img src=\"/img/tutorial/testing/assertion.png\" style=\"width: 700px; height: 180px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
@@ -12990,8 +12990,11 @@ angular.module("tutorials/test_section.html", []).run(["$templateCache", functio
     "<step style=\"width:700px\">\n" +
     "    <div class=\"title\">Inspecting the code</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p >\n" +
-    "            Click “inspect” to invoke a mode in the function editor where you can hover over expressions to see an expression value popup. After editing the function, click “Run” and then again click “Inspect” to see the updated values.\n" +
+    "        <p > Step 1: In \"inspect mode\", clicking on inspect code  <img src=\"/img/tutorial/running/inspect_button.png\"\n" +
+    "                                                                       width=\"300px\"/>\n" +
+    "        </p>\n" +
+    "        <p>\n" +
+    "            Step 2: In the function editor where you can hover over expressions to see an expression value popup. After editing the function, click “Run” and then again click “Inspect” to see the updated values.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/inspector.png\" />\n" +
     "    </div>\n" +
