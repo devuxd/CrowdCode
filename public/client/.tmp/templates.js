@@ -3984,8 +3984,8 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "        <p> You should ONLY write a comment specifying the function name, description, parameters, parameter types and\n" +
     "            return type. The body of the new function will be implemented by other programmers. <strong\n" +
     "                    style=\"color: red\">\n" +
-    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub\n" +
-    "                feature to stubbing the new function returning value. </strong>\n" +
+    "                When you want to run your tests, since this new function is not implemented yet,\n" +
+    "                you can use the stub feature to replace the actual value (undefined, as the function does not yet exist) with the intended output that the implementation will eventually produce.</strong>\n" +
     "            The final output will be something like this.\n" +
     "        </p>\n" +
     "\n" +
@@ -4600,8 +4600,9 @@ angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateC
     "        <p> You should ONLY write a comment specifying the function name, description, parameters, parameter types and\n" +
     "            return type. The body of the new function will be implemented by other programmers. <strong\n" +
     "                    style=\"color: red\">\n" +
-    "                When you want to run your tests, since this new function is not implemented yet, you should use Stub\n" +
-    "                feature to stubbing the new function returning value. </strong>\n" +
+    "                When you want to run your tests, since this new function is not implemented yet,\n" +
+    "                You can use the stub feature to replace the actual value (undefined, as the function does not yet exist) with\n" +
+    "                the intended output that the implementation will eventually produce. </strong>\n" +
     "            The final output will be something like this.\n" +
     "        </p>\n" +
     "\n" +
@@ -4619,8 +4620,9 @@ angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateC
     "\n" +
     "        <img src=\"/img/tutorial/running/new_function_stub_1.png\" width=\"700px\" height=\"270px\"/>\n" +
     "        <p>\n" +
-    "            Step 3: In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with\n" +
-    "            a stub for an alternative specific output, and run the tests again with the stub for the invoked function.\n" +
+    "            Step 3: In the stub editor, you can replace the actual output with a stub value representing a desired output(click on “stub this function call”).\n" +
+    "            This will then automatically replace all calls to this function with this input with the output you specified.\n" +
+    "            Whenever you run the tests, whatever stubs have been created will be used in place of calling actual functions. Run the tests again with the stub for the invoked function.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/new_function_stub_2.png\" width=\"700px\" height=\"270px\"/>\n" +
     "    </div>\n" +
