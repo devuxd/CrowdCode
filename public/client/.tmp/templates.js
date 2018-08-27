@@ -4620,7 +4620,7 @@ angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateC
     "            select “Add a new function”.\n" +
     "\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/add_function2.png\" width=\"700px\" style=\"\"/>\n" +
+    "        <img src=\"/img/tutorial/running/add_function2.png\" width=\"700px\"  />\n" +
     "        <p> Step 2: You should ONLY write a comment specifying the function name, description, parameters, parameter\n" +
     "            types and\n" +
     "            return type. The body of the new function will be implemented by other programmers. <strong\n" +
@@ -4632,7 +4632,7 @@ angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateC
     "            The final output will be something like this.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/running/new_function2.png\" width=\"700px\" height=\"300px\"  border=\"5\"/>\n" +
+    "        <img src=\"/img/tutorial/running/new_function2.png\" width=\"700px\" height=\"300px\" />\n" +
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width:800px\">\n" +

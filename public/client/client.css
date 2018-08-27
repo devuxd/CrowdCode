@@ -1988,3 +1988,8 @@ tutorial  { display:none; }
 .dashboard .pastel-5 { background-color: #f47d44;}
 .dashboard .pastel-6 { background-color: #006bb6;}
 .dashboard .pastel-7 { background-color: #b163a3;}
+
+img {
+	padding:1px;
+	border:1px solid #021a40;
+}
