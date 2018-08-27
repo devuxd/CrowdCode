@@ -193,57 +193,106 @@
     </div>
 
     <div style="background-color: rgba(42,56,85,0.2); margin-top: 20px;">
-        <div>
 
 
-            <p style="text-align: start">
-                <Strong>TIP 2: </strong>Sometimes, behaviors are complicated and you want to create a new function which is responsible for that behavior.
-                If you need a supporting function to realize the implementation, you can create a new function and
-                submit
-                your task.
-                This function will then be assigned to OTHER programmers to implement, <strong style="color: red">you
-                should
-                NOT implement the new function,
-                you should just write a description in the below of main function and call the new function in the body
-                of
-                your main function and finally submit it.</strong>
-                To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and
-                select
-                “Add a new function”.
-            </p>
-            <img src="/img/tutorial/running/add_function2.png"
-                 style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
-            <p style="text-align: start"> You should ONLY write a comment specifying the function name, description, parameters, parameter types
-                and
-                return type. The body of the new function will be implemented by other programmers. <strong
-                        style="color: red">
-                    When you want to run your tests, since this new function is not implemented yet, you can use the stub feature to replace the actual value (undefined, as the function does not yet exist) with the intended output that the implementation will eventually produce.</strong>
-                The final output will be something like this.
-            </p>
+        <p style="text-align: start">
+            <Strong>TIP 2: </strong>
+            Sometimes, behaviors are complicated and you want to create a new function which is responsible for
+            that behavior. If you need a supporting function to realize the implementation, you can create a new
+            function and
+            submit your task. This function will then be assigned to OTHER programmers to implement,
+            <strong style="color: red">you should NOT implement the new function, you should just write a
+                description in the below of main function and call the new function in the body
+                of your main function and finally submit it.</strong>
+        </p>
 
-            <img src="/img/tutorial/running/new_function2.png"
-                 style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-10">
 
-            <p style="text-align: start">
-                To stub a function, first click “Inspect code” to enter the inspect mode.
-            </p>
-            <img src="/img/tutorial/running/inspect_button.png"  style="max-height: 300px; max-width: 400px;margin-bottom: 10px"/>
-            <p style="text-align: start"> Clicking on a function call opens a popup that allows to stub a function.
-            </p>
+                <p style="text-align: start">
+                    <strong>Step 1:</strong> create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL +
+                    SPACE(Windows/Linux) and
+                    select “Add a new function”.
+                </p>
+                <img src="/img/tutorial/running/add_function2.png"
+                     style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+
+            <div class="col-md-10">
+
+                <p style="text-align: start"> You should ONLY write a comment specifying the function name,
+                    description,
+                    parameters, parameter types and return type. The body of the new function will be implemented by
+                    other programmers. <strong style="color: red"> When you want to run your tests, since this new
+                        function is not implemented yet, you can use the
+                        stub feature to replace the actual value (undefined, as the function does not yet exist) with
+                        the intended output that the implementation will eventually produce.</strong>
+                    The final output will be something like this.
+                </p>
+
+                <img src="/img/tutorial/running/new_function2.png"
+                     style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+
+            <div class="col-md-10">
+                <p style="text-align: start">
+                    <Strong>Step 2: </strong>
+                    To stub a function, first click “Inspect code” to enter the inspect mode.
+                </p>
+
+                <img src="/img/tutorial/running/inspect_button.png"
+                     style="max-height: 300px; max-width: 400px;margin-bottom: 10px"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+            </div>
+
+            <div class="col-md-10">
+                <p style="text-align: start">
+                    <Strong>Step 3: </strong> Clicking on a function call opens a popup that allows to stub a function.
+                </p>
+            </div>
             <img src="/img/tutorial/running/new_function_stub_1.png"
                  style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
-            <p style="text-align: start">
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+            </div>
 
-                In the stub editor, you can replace the actual output with a stub value representing a desired output.
-                This will then automatically replace all calls to this function with this input with the output you specified.
-                Whenever you run the tests, whatever stubs have been created will be used in place of calling actual functions. Run the tests again with the stub for the invoked
-                function.
-            </p>
-            <img src="/img/tutorial/running/new_function_stub_2.png"
-                 style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+            <div class="col-md-10">
+                <p style="text-align: start">
+                    <Strong>Step 4: </strong>
+
+                    In the stub editor, you can replace the actual output with a stub value representing a desired
+                    output.
+                    This will then automatically replace all calls to this function with this input with the output you
+                    specified.
+                    Whenever you run the tests, whatever stubs have been created will be used in place of calling actual
+                    functions. Run the tests again with the stub for the invoked
+                    function.
+                </p>
+                <img src="/img/tutorial/running/new_function_stub_2.png"
+                     style="max-height: 300px; max-width: 800px;margin-bottom: 10px"/>
+            </div>
         </div>
     </div>
+</div>
 </div>
 
 <div class="row" style="margin-bottom: 50px;margin-top: 50px">
@@ -276,9 +325,9 @@
         // if (snap.val() != null)
         // 	$('#btnStart').attr('href', '/' + snap.val());
         // else
-        $('#btnStart').attr('href', '/todoPilot');
+        $('#btnStart').attr('href', '/todo');
         setTimeout(function () {
-            $('#btnStart').attr('href', '/todoPilot');
+            $('#btnStart').attr('href', '/todo');
             console.log('redirected again');
         }, 32000);
 
