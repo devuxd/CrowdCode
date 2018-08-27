@@ -3982,12 +3982,14 @@ angular.module("tutorials/ImplementBehavior.html", []).run(["$templateCache", fu
     "            you should just write a description in the below of main function and call the new function in the body\n" +
     "            of\n" +
     "            your main function and finally submit it.</strong>\n" +
-    "            To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and\n" +
+    "        </p>\n" +
+    "        <p>\n" +
+    "           Step1: To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and\n" +
     "            select\n" +
     "            “Add a new function”.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/add_function3.png\" width=\"700px\"/>\n" +
-    "        <p> You should ONLY write a comment specifying the function name, description, parameters, parameter types and\n" +
+    "        <p> Step 2: You should ONLY write a comment specifying the function name, description, parameters, parameter types and\n" +
     "            return type. The body of the new function will be implemented by other programmers. <strong\n" +
     "                    style=\"color: red\">\n" +
     "                When you want to run your tests, since this new function is not implemented yet,\n" +
@@ -4604,17 +4606,23 @@ angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateC
     "    <div class=\"text\">\n" +
     "\n" +
     "\n" +
-    "        <p>Sometimes, behaviors are complicated and you want to create a new function which is responsible for that behavior. </p>\n" +
+    "        <p>Sometimes, behaviors are complicated and you want to create a new function which is responsible for that\n" +
+    "            behavior. </p>\n" +
     "        <p>\n" +
-    "        If you need a supporting function to realize the implementation, you can create a new function and\n" +
-    "        submit your task. This function will then be assigned to OTHER programmers to implement,\n" +
-    "         <strong style=\"color: red\">you should NOT implement the new function, you should just write a description in the below of main function and call the new function in the body\n" +
-    "        of your main function and finally submit it.</strong>\n" +
-    "        To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and  select  “Add a new function”.\n" +
+    "            If you need a supporting function to realize the implementation, you can create a new function and\n" +
+    "            submit your task. This function will then be assigned to OTHER programmers to implement,\n" +
+    "            <strong style=\"color: red\">you should NOT implement the new function, you should just write a description in\n" +
+    "                the below of main function and call the new function in the body\n" +
+    "                of your main function and finally submit it.</strong>\n" +
+    "        </p>\n" +
+    "        <p>\n" +
+    "            Step 1: To create a new function, use shortcut keys OPTION + SPACE(Mac) or CTRL + SPACE(Windows/Linux) and\n" +
+    "            select “Add a new function”.\n" +
     "\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/add_function2.png\" width=\"700px\"/>\n" +
-    "        <p> You should ONLY write a comment specifying the function name, description, parameters, parameter types and\n" +
+    "        <img src=\"/img/tutorial/running/add_function2.png\" width=\"700px\" style=\"\"/>\n" +
+    "        <p> Step 2: You should ONLY write a comment specifying the function name, description, parameters, parameter\n" +
+    "            types and\n" +
     "            return type. The body of the new function will be implemented by other programmers. <strong\n" +
     "                    style=\"color: red\">\n" +
     "                When you want to run your tests, since this new function is not implemented yet,\n" +
@@ -4624,12 +4632,15 @@ angular.module("tutorials/new_funciton_stub_function.html", []).run(["$templateC
     "            The final output will be something like this.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/running/new_function2.png\" width=\"700px\" height=\"300px\"/>\n" +
+    "        <img src=\"/img/tutorial/running/new_function2.png\" width=\"700px\" height=\"300px\"  border=\"5\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width:800px\">\n" +
     "    <div class=\"title\">Stub a function call</div>\n" +
     "    <div class=\"text\">\n" +
+    "        <p>When you want to run your tests, since this new function is not implemented yet, You can use the stub feature\n" +
+    "            to replace the actual value (undefined, as the function does not yet exist) with the intended output that\n" +
+    "            the implementation will eventually produce.</p>\n" +
     "        <p>\n" +
     "            Step 1: In \"inspect mode\", clicking on inspect code <img src=\"/img/tutorial/running/inspect_button.png\"\n" +
     "                                                                     width=\"300px\"/></p>\n" +
@@ -4718,6 +4729,11 @@ angular.module("tutorials/running_tests.html", []).run(["$templateCache", functi
     "<step>\n" +
     "	<div class=\"title\">Stub a function call</div>\n" +
     "	<div class=\"text\">\n" +
+    "		<p>When you want to run your tests, it is possible some functions are not implemented yet or return wrong value,\n" +
+    "			You can use the stub feature\n" +
+    "			to replace the actual value with the intended output that\n" +
+    "			the implementation will eventually produce.</p>\n" +
+    "		<p>\n" +
     "		<p style=\"width:500px\">\n" +
     "			While in \"inspect mode\", clicking on a function call opens a popup that allows to stub a function.\n" +
     "		</p>\n" +
@@ -4795,11 +4811,12 @@ angular.module("tutorials/test_section.html", []).run(["$templateCache", functio
     "        <p style=\"width:500px\">\n" +
     "            To create a new unit test, click “Add a new test”.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/testing/add.png\" />\n" +
+    "        <img src=\"/img/tutorial/testing/add.png\"/>\n" +
     "        <p style=\"width:500px\">\n" +
-    "            You can write a brief description of the purpose of the unit test and select either an Input/Output test or an Assertion test.\n" +
+    "            You can write a brief description of the purpose of the unit test and select either an Input/Output test or\n" +
+    "            an Assertion test.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/testing/test_prompt.png\" />\n" +
+    "        <img src=\"/img/tutorial/testing/test_prompt.png\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
@@ -4807,17 +4824,20 @@ angular.module("tutorials/test_section.html", []).run(["$templateCache", functio
     "    <div class=\"title\">Input/Output tests</div>\n" +
     "    <div class=\"text\">\n" +
     "        <p style=\"width:500px\">\n" +
-    "            Input/output tests specify the desired behavior of the function providing an object definition for all the inputs and for the output.\n" +
+    "            Input/output tests specify the desired behavior of the function providing an object definition for all the\n" +
+    "            inputs and for the output.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/testing/input_output.png\" />\n" +
+    "        <img src=\"/img/tutorial/testing/input_output.png\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
     "<step style=\"width:800px\">\n" +
     "    <div class=\"title\">Assertion tests</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p >\n" +
-    "            Assertion tests afford more flexibility, letting you check only parts of the output (e.g., if an object has a specific property), using function calls to check properties of the output (e.g., length of an array), using complex expressions to construct input values, and even using multiple asserts.\n" +
+    "        <p>\n" +
+    "            Assertion tests afford more flexibility, letting you check only parts of the output (e.g., if an object has\n" +
+    "            a specific property), using function calls to check properties of the output (e.g., length of an array),\n" +
+    "            using complex expressions to construct input values, and even using multiple asserts.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/testing/assertion.png\" style=\"width: 700px; height: 180px\"/>\n" +
     "    </div>\n" +
@@ -4826,71 +4846,78 @@ angular.module("tutorials/test_section.html", []).run(["$templateCache", functio
     "<step style=\"width:500px\">\n" +
     "    <div class=\"title\">Running and debugging tests</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p >\n" +
+    "        <p>\n" +
     "            Click “Run” to run all of the function’s tests and view the list of passing and failing tests.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/run.png\" />\n" +
+    "        <img src=\"/img/tutorial/running/run.png\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width:600px\">\n" +
     "    <div class=\"title\">Test details</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p >\n" +
+    "        <p>\n" +
     "            Click on a listed test to see the test code and its result.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/detail.png\" />\n" +
+    "        <img src=\"/img/tutorial/running/detail.png\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width:700px\">\n" +
     "    <div class=\"title\">Inspecting the code</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p > Step 1: In \"inspect mode\", clicking on inspect code  <img src=\"/img/tutorial/running/inspect_button.png\"\n" +
-    "                                                                       width=\"300px\"/>\n" +
+    "        <p> Step 1: In \"inspect mode\", clicking on inspect code <img src=\"/img/tutorial/running/inspect_button.png\"\n" +
+    "                                                                     width=\"300px\"/>\n" +
     "        </p>\n" +
     "        <p>\n" +
-    "            Step 2: In the function editor where you can hover over expressions to see an expression value popup. After editing the function, click “Run” and then again click “Inspect” to see the updated values.\n" +
+    "            Step 2: In the function editor where you can hover over expressions to see an expression value popup. After\n" +
+    "            editing the function, click “Run” and then again click “Inspect” to see the updated values.\n" +
     "        </p>\n" +
-    "        <img src=\"/img/tutorial/running/inspector.png\" />\n" +
+    "        <img src=\"/img/tutorial/running/inspector.png\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "<step style=\"width:800px\">\n" +
     "    <div class=\"title\">Stub a function call</div>\n" +
     "    <div class=\"text\">\n" +
+    "        <p>When you want to run your tests, it is possible some functions are not implemented yet or return wrong value,\n" +
+    "            You can use the stub feature\n" +
+    "            to replace the actual value with the intended output that\n" +
+    "            the implementation will eventually produce.</p>\n" +
     "        <p>\n" +
-    "            Step 1: In \"inspect mode\", clicking on inspect code  <img src=\"/img/tutorial/running/inspect_button.png\"\n" +
-    "                                                                      width=\"300px\"/> </p>\n" +
+    "            Step 1: In \"inspect mode\", clicking on inspect code <img src=\"/img/tutorial/running/inspect_button.png\"\n" +
+    "                                                                     width=\"300px\"/></p>\n" +
     "        <p> Step 2: Clicking on a function call opens a popup that allows to stub a function.\n" +
     "        </p>\n" +
     "\n" +
     "        <img src=\"/img/tutorial/running/new_function_stub_1.png\" width=\"700px\" height=\"270px\"/>\n" +
     "        <p>\n" +
-    "            Step 3: In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with\n" +
+    "            Step 3: In the expression value popup, click on “stub this function call” to automatically replace a\n" +
+    "            function call for a specific input with\n" +
     "            a stub for an alternative specific output, and run the tests again with the stub for the invoked function.\n" +
     "        </p>\n" +
     "        <img src=\"/img/tutorial/running/new_function_stub_2.png\" width=\"700px\" height=\"270px\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "<!--<step style=\"width:700px\">-->\n" +
-    "    <!--<div class=\"title\">Stub a function call</div>-->\n" +
-    "    <!--<div class=\"text\">-->\n" +
-    "        <!--<p>-->\n" +
-    "            <!--While in \"inspect mode\", clicking on a function call opens a popup that allows to stub a function.-->\n" +
-    "        <!--</p>-->\n" +
-    "        <!--<img src=\"/img/tutorial/running/function_stub_1.png\" />-->\n" +
-    "        <!--<p>-->\n" +
-    "            <!--If a function call is producing an incorrect output, the function should be stubbed. In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with a stub for an alternative specific output, and creating a new test with the stub for the invoked function.-->\n" +
-    "        <!--</p>-->\n" +
-    "        <!--<img src=\"/img/tutorial/running/function_stub_2.png\" />-->\n" +
-    "    <!--</div>-->\n" +
+    "<!--<div class=\"title\">Stub a function call</div>-->\n" +
+    "<!--<div class=\"text\">-->\n" +
+    "<!--<p>-->\n" +
+    "<!--While in \"inspect mode\", clicking on a function call opens a popup that allows to stub a function.-->\n" +
+    "<!--</p>-->\n" +
+    "<!--<img src=\"/img/tutorial/running/function_stub_1.png\" />-->\n" +
+    "<!--<p>-->\n" +
+    "<!--If a function call is producing an incorrect output, the function should be stubbed. In the expression value popup, click on “stub this function call” to automatically replace a function call for a specific input with a stub for an alternative specific output, and creating a new test with the stub for the invoked function.-->\n" +
+    "<!--</p>-->\n" +
+    "<!--<img src=\"/img/tutorial/running/function_stub_2.png\" />-->\n" +
+    "<!--</div>-->\n" +
     "<!--</step>-->\n" +
     "<step style=\"width:400px\">\n" +
     "    <div class=\"title\">Reporting an issue</div>\n" +
     "    <div class=\"text\">\n" +
-    "        <p >\n" +
-    "            If a test itself is incorrect, click “Report an issue” in the test detail page to report the issue to be addressed, temporarily disabling the test.\n" +
+    "        <p>\n" +
+    "            If a test itself is incorrect, click “Report an issue” in the test detail page to report the issue to be\n" +
+    "            addressed, temporarily disabling the test.\n" +
     "        </p>\n" +
     "\n" +
-    "        <img src=\"/img/tutorial/running/report.png\" />\n" +
+    "        <img src=\"/img/tutorial/running/report.png\"/>\n" +
     "    </div>\n" +
     "</step>\n" +
     "\n" +
