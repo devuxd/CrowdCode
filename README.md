@@ -1,5 +1,5 @@
-# CrowdCode
-Crowd Microservices
+# Crowd Microservices
+Demo of Crowd Microservices environment
 
 
 
