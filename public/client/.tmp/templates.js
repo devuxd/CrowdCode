@@ -1443,7 +1443,7 @@ angular.module("microtasks/describe_behavior/describe_behavior.html", []).run(["
     "                    <div ng-if=\"microtask.promptType !== 'CORRECT'\">\n" +
     "                        <input type=\"checkbox\" ng-model=\"data.isComplete\" id=\"isComplete\" name=\"isComplete\"\n" +
     "                               ng-disabled=\"data.numDeleted == data.tests.length\">\n" +
-    "                        <label for=\"isComplete\">This function is completely implemented</label>\n" +
+    "                        <label for=\"isComplete\">All behaviors of this function are completely implemented</label>\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "\n" +
