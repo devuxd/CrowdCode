@@ -294,15 +294,34 @@
     </div>
 </div>
 </div>
+<div>
+    <h4>If you are ready, please insert the name project in the bellow input field then click "Get Started!" </h4>
+    <div class="row">
+        <div class="col-md-4"></div>
 
-<div class="row" style="margin-bottom: 50px;margin-top: 50px">
-    <h5>If you are ready click “Get Started!” </h5>
-    <div style="text-align:center;">
-        <a class="btn btn-lg btn-primary" href="#" id="btnStart" role="button">Get Started!</a>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="projectName">Name of project:</label>
+                <!--<div style="text-align:center;">-->
+                <input type="text" class="form-control "  id="projectName" placeholder="Enter name of the project" required>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <a type="button" class="btn btn-primary btn-lg" href=""
+                   onclick="this.href=document.getElementById('projectName').value" id="btnStart" role="button">Get
+                    Started!</a>
+            </div>
+        </div>
+
+
     </div>
 </div>
 
-</div>
 
 
 <script>
@@ -318,6 +337,7 @@
 
     // it is commented because in the firest load it takes long time. if this change does not fix the problem revert it
     // var ref = firebase.database().ref('defaultProject');
+    //var inputProjectName = document.getElementById("projectName").value;
 
     var ref = firebase.database().ref().child('Projects').child('todo');
     ref.once('value', function (snap) {
@@ -326,17 +346,23 @@
         // 	$('#btnStart').attr('href', '/' + snap.val());
         // else
         // $('#btnStart').attr('href', '/todoComplement');
-        $('#btnStart').attr('href', '/AlignNumber');
+        // if(inputProjectName.length==0 || inputProjectName === "" || ! inputProjectName){
+        //     console.log('334 inputProjectName',inputProjectName);
+        // }else {
+        //     console.log('336 inputProjectName',$("#projectName").val());
+        //  $('#btnStart').attr('href', $('#projectName').val());
         // $('#btnStart').attr('href', '/todoComplementary');
         setTimeout(function () {
 
             // $('#btnStart').attr('href', '/todoComplement');
-            $('#btnStart').attr('href', '/todo');
+            //  $('#btnStart').attr('href', '/todo');
             // $('#btnStart').attr('href', '/todoComplementary');
             console.log('redirected again');
         }, 32000);
+        // }
 
     });
+
 </script>
 </body>
 
