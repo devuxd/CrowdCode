@@ -48,7 +48,7 @@
             <h2>Project Name</h2>
         </div>
         <div class="section-content">
-            Enter a project name in the textbox below to retrieve the client request for the project.
+            Enter a project name in the input text below to retrieve the client request for the project.
             If it does not exist, it will be created. <BR><BR>
 
             <div ng-form="projectNameForm" class=" form-horizontal form-group col-md-12">
@@ -66,7 +66,7 @@
                     </ul>
                 </div>
 
-                <button ng-click="load()" class="btn btn-primary btn-lg"
+                <button ng-click="load()" class="btn btn-primary btn-block btn-lg"
                         ng-disabled="projectNameForm.$invalid || !projectNameForm.projectName.$dirty">Load or Create </button>
             </div>
             <div class="clearfix"></div>
@@ -75,7 +75,7 @@
 
     <div class="section section-description">
         <div class="section-title">
-            <h2>  Description</h2>
+            <h2> Description</h2>
         </div>
         <div class="section-content">
 					<span>
@@ -87,7 +87,7 @@
 
     <div class="section section-description">
         <div class="section-title">
-           <h2>ADTs</h2>
+            <h2>ADTs</h2>
         </div>
         <div class="section-content">
 					<span>
@@ -165,7 +165,9 @@
                                         </ul>
                                     </div>
                                     <div class="col-sm-1 reset-padding pull-left">
-                                        <button ng-click="deleteStructure(ADTindex,$index)" class="btn btn-danger btn-xs">delete Structure</button>
+                                        <button ng-click="deleteStructure(ADTindex,$index)"
+                                                class="btn btn-danger btn-xs">delete Structure
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -173,7 +175,9 @@
                     </div>
                     <div class="form-group">
                         <div class="col-md-4 center-block">
-                            <button ng-click="addStructure(ADTindex)" class="btn btn-primary btn-xs pull-right">Add Field</button>
+                            <button ng-click="addStructure(ADTindex)" class="btn btn-primary btn-xs pull-right">Add
+                                Field
+                            </button>
                         </div>
                     </div>
                     <div class="form-group col-sm-12">
@@ -207,14 +211,18 @@
                                     </ul>
                                 </div>
                                 <div class="col-sm-1 reset-padding">
-                                    <button ng-click="deleteExample(ADTindex,$index)" class="btn btn-danger btn-xs">delete Example</button>
+                                    <button ng-click="deleteExample(ADTindex,$index)" class="btn btn-danger btn-xs">
+                                        delete Example
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-md-4 center-block">
-                            <button ng-click="addExample(ADTindex)" class="btn btn-primary btn-xs pull-right">Add Example</button>
+                            <button ng-click="addExample(ADTindex)" class="btn btn-primary btn-xs pull-right">Add
+                                Example
+                            </button>
                         </div>
                     </div>
                     <div ng-show="ADTindex!=ADTs.length-1" class="line-separator"></div>
@@ -301,7 +309,7 @@
                     <div class="form-group">
                         <label for="thirdPartyAPI" class="col-sm-2 control-label reset-padding">Third party API</label>
                         <div class="col-sm-10 reset-padding">
-                        <input id= 'thirdPartyAPI'type="checkbox" ng-model="function.isThirdPartyAPI"  >
+                            <input id='thirdPartyAPI' type="checkbox" ng-model="function.isThirdPartyAPI">
                         </div>
                     </div>
 
@@ -357,37 +365,142 @@
                                     </ul>
                                 </div>
                                 <div class="col-sm-1 reset-padding">
-                                    <button ng-click="deleteParameter(functionIndex,$index)" class="btn btn-danger btn-xs">Delete this Param</button>
+                                    <button ng-click="deleteParameter(functionIndex,$index)"
+                                            class="btn btn-danger btn-xs">Delete this Param
+                                    </button>
                                 </div>
-                                <div   class="line-separator"></div>
+                                <div class="line-separator"></div>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-md-4 center-block">
-                            <button ng-click="addParameter(functionIndex)" class="btn btn-primary btn-xs pull-right">Add new Param</button>
+                            <button ng-click="addParameter(functionIndex)" class="btn btn-primary btn-xs pull-right">Add
+                                new Param
+                            </button>
                         </div>
                     </div>
 
-                    <div   class="line-separator"></div>
+                    <div class="line-separator"></div>
                 </div>
-                <div >
-                    <button ng-click="deleteFunction(functionIndex)" class=" btn btn-danger btn-xs">Delete this Function</button>
+                <div>
+                    <button ng-click="deleteFunction(functionIndex)" class=" btn btn-danger btn-xs">Delete this
+                        Function
+                    </button>
                 </div>
 
             </div>
 
             <div>
-                <button ng-click="addFunction()" class="btn btn-primary btn-small  ">Add new function</button>
+                <button ng-click="addFunction()" class="btn btn-primary btn-block btn-lg">Add new function</button>
             </div>
         </div>
     </div>
 
-    <div   class="line-separator"></div>
-    <div   class="line-separator"></div>
-    <div   class="line-separator"></div>
-            <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-lg ">Save or update the Project</button>
+
+    <!--GitHub repo Config-->
+
+
+    <div class="section section-description">
+        <div class="section-title">
+            <h2>DEPLOYMENT INFO</h2>
+        </div>
+        <div class="section-content">
+					<span>
+				After the crowd finishes the implementation of a microservice, You may choose to create and deploy the microservice to a hosting site.
+                        Invoking the Publish command first creates a new node.js GitHub project which includes each function implemented by the crowd. For endpoint functions, the environment automatically generates an HTTP request handler function for the endpoint.
+                        To do that the Crowd Microservices needs your information.
+					</span>
+            <br/>
+            <span> <b>If you do NOT enter the deployment info, the microservice will be pushed on the Crowd Microsrvices GitHub account (https://github.com/Microtasking). </b> </span>
+
+            <div class="form-group">
+                <div class="row">
+                    <label for="GitFirstName" class="col-sm-3 control-label ">First Name of the GitHub's
+                        user</label>
+                    <div class="col-sm-4 ">
+                        <input class="form-control" name="GitFirstName" id="GitFirstName" ng-model="firstName"
+                               placeholder="Enter the first name assigned to the GitHub account"/>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="GitLastName" class="col-sm-3 control-label ">Last Name of the GitHub's
+                        user</label>
+                    <div class="col-sm-4 ">
+                        <input class="form-control" name="GitLastName" id="GitLastName" ng-model="lastName"
+                               placeholder="Enter the last name assigned to the GitHub account"/>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="GitEmail" class="col-sm-3 control-label ">Email of the GitHub's
+                        user</label>
+                    <div class="col-sm-4 ">
+                        <input class="form-control" name="GitEmail" id="GitEmail" ng-model="gitEmail"
+                               placeholder="Enter the email assigned to the GitHub account"/>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="GitUserId" class="col-sm-3 control-label ">GitHub user ID</label>
+                    <div class="col-sm-4 ">
+                        <input class="form-control" name="GitUserId" id="GitUserId" ng-model="gitUserId"
+                               placeholder="Enter the user ID assigned to the GitHub account"/>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="GitToken" class="col-sm-3 control-label ">GitHub token</label>
+                    <div class="col-sm-4 ">
+                        <input class="form-control"  name="GitToken" id="GitToken" ng-model="gitToken"
+                               placeholder="Enter the token of the GitHub account"/>
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label for="GitRepoName" class="col-sm-3 control-label ">GitHub repository
+                        name </label>
+                    <div class="col-sm-4 ">
+                        <input class="form-control" name="GitRepoName" id="GitRepoName"  ng-model="gitRepoName"
+                               placeholder="Enter the name of the GitHub repository"/>
+
+                    </div>
+                </div>
+            </div>
+
+            <!--<label for="comment" class="col-sm-2 control-label reset-padding">description</label>-->
+            <!--<textarea class="form-control" name="comment" id="comment"-->
+                      <!--placeholder="briefly describe the purpose and the behavior of the ADT"-->
+                      <!--ng-model="ADT.description" required ng-pattern="/^[^/\\]+$/"></textarea>-->
+
+
+        </div>
+
     </div>
+    <div class="section section-description ">
+        <div class="section-content no-padding">
+            <ul class="microtask-details clearfix">
+                <li>Great! You have created or updated a project. Next, click on the bellow button for add it to Crowd Microservices's projects. </b></li>
+            </ul>
+        </div>
+    </div>
+
+    <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-block btn-lg">Save or update the
+        project
+    </button>
+
 </div>
 </body>
 </html>

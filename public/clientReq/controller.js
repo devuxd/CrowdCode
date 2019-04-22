@@ -179,8 +179,9 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                     container: 'alertcontainer'
                 });
             } else {
+
                 let project = {};
-               angular.forEach($scope.functions, function (funct, key) {
+                angular.forEach($scope.functions, function (funct, key) {
                     //create the header
                     funct.header = 'function ' + funct.name + '(';
                     for (var index in funct.parameters)
@@ -191,17 +192,17 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
 
                     //Add new line to function description
                     var clean = funct.description.replace(/\n/g, "");
-                   console.log("Cleaned " + clean);
-                   var temp = clean.match(/[\s\S]{1,130}\w*/g);
-                   var description = '';
-                   for (var i = 0; i < temp.length; i++) {
-                       description += temp[i] + "\n";
-                   }
-                  // var descriptionNew = wrapperUtil(funct.description.replace(/\n/g, ""),{width: 150});
-                  //   funct.description = descriptionNew;
+                    //console.log("Cleaned " + clean);
+                    var temp = clean.match(/[\s\S]{1,130}\w*/g);
+                    var description = '';
+                    for (var i = 0; i < temp.length; i++) {
+                        description += temp[i] + "\n";
+                    }
+                    // var descriptionNew = wrapperUtil(funct.description.replace(/\n/g, ""),{width: 150});
+                    //   funct.description = descriptionNew;
                     funct.description = description;
-                    if(funct.isThirdPartyAPI == undefined){
-                        funct.isThirdPartyAPI=false;
+                    if (funct.isThirdPartyAPI == undefined) {
+                        funct.isThirdPartyAPI = false;
                     }
 
                 });
@@ -209,6 +210,14 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                 project.description = $scope.projectDescription;
                 project.functions = $scope.functions;
                 project.ADTs = $scope.ADTs;
+                project.gitHubInfo = {
+                    firstName: $scope.firstName,
+                    lastName: $scope.lastName,
+                    gitEmail: $scope.gitEmail,
+                    gitUserId: $scope.gitUserId,
+                    gitToken: $scope.gitToken,
+                    gitRepoName: $scope.gitRepoName
+                };
                 var exist = false;
                 projectNames.$loaded().then(function () {
                     angular.forEach(projectNames, function (value, key) {
@@ -229,7 +238,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                             console.log(payload.data);
                         }).catch(err => {
                             console.log(err);
-                    })
+                        })
                         ;
                     } else {
                         $http({
@@ -245,7 +254,7 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                             console.log(payload.data);
                         }).catch(err => {
                             console.log(err);
-                    })
+                        })
                         ;
                     }
                     $alert({
@@ -318,7 +327,23 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                 else
                     $scope.ADTs = [];
 
-            });
+                if (angular.isDefined(project.gitHubInfo)) {
+                    $scope.firstName = project.gitHubInfo.firstName;
+                    $scope.lastName = project.gitHubInfo.lastName;
+                    $scope.gitEmail = project.gitHubInfo.gitEmail;
+                    $scope.gitUserId = project.gitHubInfo.gitUserId;
+                    $scope.gitToken = project.gitHubInfo.gitToken;
+                    $scope.gitRepoName = project.gitHubInfo.gitRepoName;
+
+                } else {
+                    $scope.firstName = "";
+                    $scope.lastName = "";
+                    $scope.gitEmail = "";
+                    $scope.gitUserId = "";
+                    $scope.gitToken = "";
+                    $scope.gitRepoName = "";
+                }
+                });
         };
 
 
