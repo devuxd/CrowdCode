@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="">
+    <list default="true" id="5304ebeb-4f9d-4bfe-855d-9fe2f89cf93f" name="Default" comment="change welcome page">
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/public/welcome.html" afterPath="$PROJECT_DIR$/public/welcome.html" />
+      <change beforePath="$PROJECT_DIR$/config/config.json" afterPath="$PROJECT_DIR$/config/config.json" />
+      <change beforePath="$PROJECT_DIR$/routes/app-routing.js" afterPath="$PROJECT_DIR$/routes/app-routing.js" />
+      <change beforePath="$PROJECT_DIR$/services/todocomplement" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/util/deployment_service.js" afterPath="$PROJECT_DIR$/util/deployment_service.js" />
+      <change beforePath="$PROJECT_DIR$/util/firebase_service.js" afterPath="$PROJECT_DIR$/util/firebase_service.js" />
       <change beforePath="$PROJECT_DIR$/util/microtask_service.js" afterPath="$PROJECT_DIR$/util/microtask_service.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -21,23 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="welcome.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/public/welcome.html">
+      <file leaf-file-name="deployment_service.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/util/deployment_service.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="750">
-              <caret line="335" column="9" lean-forward="false" selection-start-line="335" selection-start-column="9" selection-end-line="335" selection-end-column="9" />
-              <folding>
-                <element signature="n#style#0;n#p#0;n#div#1;n#div#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="microtask_service.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/util/microtask_service.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="337" column="20" lean-forward="false" selection-start-line="337" selection-start-column="20" selection-end-line="337" selection-end-column="20" />
+            <state relative-caret-position="6">
+              <caret line="62" column="36" lean-forward="false" selection-start-line="62" selection-start-column="20" selection-end-line="62" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -46,28 +39,38 @@
       <file leaf-file-name="firebase_service.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/util/firebase_service.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3240">
-              <caret line="216" column="23" lean-forward="false" selection-start-line="216" selection-start-column="23" selection-end-line="216" selection-end-column="23" />
+            <state relative-caret-position="246">
+              <caret line="1589" column="29" lean-forward="false" selection-start-line="1589" selection-start-column="29" selection-end-line="1589" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/routes/api.js">
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/node_modules/git-command-line/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1500">
-              <caret line="100" column="4" lean-forward="false" selection-start-line="100" selection-start-column="4" selection-end-line="100" selection-end-column="4" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app.js">
+      <file leaf-file-name="app-routing.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/routes/app-routing.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="645">
-              <caret line="43" column="2" lean-forward="false" selection-start-line="43" selection-start-column="2" selection-end-line="43" selection-end-column="2" />
+            <state relative-caret-position="264">
+              <caret line="84" column="26" lean-forward="false" selection-start-line="84" selection-start-column="26" selection-end-line="84" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="express-cli.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/express-generator/bin/express-cli.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1102">
+              <caret line="87" column="11" lean-forward="false" selection-start-line="87" selection-start-column="11" selection-end-line="87" selection-end-column="11" />
               <folding />
             </state>
           </provider>
@@ -85,45 +88,47 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>request</find>
-      <find>requestedf</find>
-      <find>Calling a function</find>
-      <find>analytics</find>
-      <find>events</find>
-      <find>Implementation.Submitted</find>
-      <find>firebase.createEvent</find>
-      <find>review.html</find>
-      <find>should be aware implement only one behavior.</find>
-      <find>step</find>
-      <find>if</find>
-      <find>For stubbing a function, In</find>
-      <find>he inspect mode, clicking on a fun</find>
-      <find>uld use Stub feature to stubbing the</find>
-      <find>al output will be something like</find>
-      <find>n the inspect mode, clicking on a function call opens a popup that offers an option to stub a functio</find>
-      <find>u need a supporting function to realize the implemen</find>
-      <find>img</find>
-      <find>Write your code in the function editor below</find>
-      <find>stub</find>
-      <find>Tests in test editor:</find>
-      <find>schoolworks</find>
-      <find>requestedFunctions</find>
-      <find>depend</find>
-      <find>newsfeed</find>
-      <find>Created Function</find>
-      <find>isDescribeComplete</find>
-      <find>isComplete:</find>
-      <find>Workers Stats</find>
-      <find>entered backend fetch micro tasks</find>
+      <find>reset-padding</find>
+      <find>pad</find>
+      <find>git_options</find>
+      <find>projectDescription</find>
+      <find>functions</find>
+      <find>functionForm</find>
+      <find>project</find>
+      <find>ADTs</find>
+      <find>ADTForm</find>
+      <find>Cleaned</find>
+      <find>Project Name loaded from memo</find>
+      <find>repoName</find>
+      <find>path</find>
+      <find>clientR</find>
+      <find>Config</find>
+      <find>confi</find>
+      <find>createDeploymentInfo</find>
+      <find>gitHubInfo</find>
+      <find>microservice-template</find>
+      <find>firstName</find>
+      <find>createApplication</find>
+      <find>WebSockets request was expected</find>
+      <find>Micro service created! Yo</find>
+      <find>routes</find>
+      <find>emptyDirectory</find>
+      <find>createEndPints</find>
+      <find>gitUserName</find>
+      <find>Micro service create</find>
+      <find>ExpressGenerator</find>
+      <find>endpi</find>
     </findStrings>
     <replaceStrings>
       <replace>objTemp[i].id</replace>
       <replace>todo.id</replace>
+      <replace>deploymentInfo</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/public/video</dir>
       <dir>$PROJECT_DIR$/public/client/questions</dir>
       <dir>$PROJECT_DIR$</dir>
+      <dir>$PROJECT_DIR$/public</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -132,13 +137,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/public/client/microtasks/review/review_implement.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/review/review_implement_dispute.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/microtask_title.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/implement_behavior/implement_behavior.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/review/review.html" />
-        <option value="$PROJECT_DIR$/public/client/questions/questionDetail.html" />
-        <option value="$PROJECT_DIR$/public/analysis/codeCorrectness/session2.html" />
         <option value="$PROJECT_DIR$/public/client/questions/questionsList.html" />
         <option value="$PROJECT_DIR$/public/client/ui_elements/left_bar_buttons_template.html" />
         <option value="$PROJECT_DIR$/public/client/widgets/popup_reminder.html" />
@@ -161,7 +159,6 @@
         <option value="$PROJECT_DIR$/public/client/microtasks/review/review_describe.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/assertion_tests.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/introduction_tutorial.html" />
-        <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
         <option value="$PROJECT_DIR$/public/client/client.js" />
         <option value="$PROJECT_DIR$/public/client/ui_elements/nav_bar_template.html" />
         <option value="$PROJECT_DIR$/public/client/ui_elements/projectStats.directive.js" />
@@ -169,7 +166,6 @@
         <option value="$PROJECT_DIR$/public/client/widgets/reminder.directive.js" />
         <option value="$PROJECT_DIR$/public/client/tutorials/main.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/Review.html" />
-        <option value="$PROJECT_DIR$/public/clientReq/controller.js" />
         <option value="$PROJECT_DIR$/public/client/tutorials/function_editor.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html" />
         <option value="$PROJECT_DIR$/public/client/tutorials/test_section.html" />
@@ -180,9 +176,18 @@
         <option value="$PROJECT_DIR$/public/client/microtasks/microtasks.service.js" />
         <option value="$PROJECT_DIR$/public/client/tutorials/test_editor_help.html" />
         <option value="$PROJECT_DIR$/edit.js" />
-        <option value="$PROJECT_DIR$/util/firebase_service.js" />
-        <option value="$PROJECT_DIR$/util/microtask_service.js" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html" />
+        <option value="$PROJECT_DIR$/public/client/microtasks/review/review.js" />
+        <option value="$PROJECT_DIR$/public/client/functions/functionUtils.factory.js" />
+        <option value="$PROJECT_DIR$/public/client/functions/javascriptTutorial.directive.js" />
         <option value="$PROJECT_DIR$/public/welcome.html" />
+        <option value="$PROJECT_DIR$/routes/app-routing.js" />
+        <option value="$PROJECT_DIR$/public/clientReq/controller.js" />
+        <option value="$PROJECT_DIR$/public/clientReq/client_request.html" />
+        <option value="$PROJECT_DIR$/util/microtask_service.js" />
+        <option value="$PROJECT_DIR$/config/config.json" />
+        <option value="$PROJECT_DIR$/util/firebase_service.js" />
+        <option value="$PROJECT_DIR$/util/deployment_service.js" />
       </list>
     </option>
   </component>
@@ -243,6 +248,12 @@
     </gruntfile>
   </component>
   <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
@@ -252,11 +263,12 @@
     <handled-path value="$PROJECT_DIR$/node_modules" />
     <handled-path value="$PROJECT_DIR$/public/node_modules" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
-    <option name="width" value="1680" />
-    <option name="height" value="1050" />
+  <component name="ProjectFrameBounds">
+    <option name="y" value="53" />
+    <option name="width" value="1909" />
+    <option name="height" value="947" />
   </component>
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectView">
@@ -274,9 +286,9 @@
       <foldersAlwaysOnTop value="false" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="NBKnowledgePane" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -287,11 +299,47 @@
             <path>
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
               <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
               <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="express-generator" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="express-generator" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
+              <item name="deploy610" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CrowdCode" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CrowdCode" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
+              <item name="deploy610" type="462c0819:PsiDirectoryNode" />
               <item name="routes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -309,21 +357,23 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
-    <property name="settings.editor.selected.configurable" value="Images" />
+    <property name="settings.editor.selected.configurable" value="settings.github" />
     <property name="js.buildTools.grunt.grunt-cli.package" value="$PROJECT_DIR$/node_modules/grunt-cli" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
-      <recent name="$PROJECT_DIR$/public/img/tutorial" />
-      <recent name="$PROJECT_DIR$/public/img/tutorial/running" />
-      <recent name="$PROJECT_DIR$/public/img/tutorial/implementation" />
-      <recent name="$PROJECT_DIR$/public/img/tutorial/main" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
       <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/doc" />
+      <recent name="$PROJECT_DIR$/public/video" />
+      <recent name="$PROJECT_DIR$/public/img/tutorial/review" />
+      <recent name="$PROJECT_DIR$/public/img/tutorial" />
+      <recent name="$PROJECT_DIR$/public/img/tutorial/running" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -373,11 +423,19 @@
       </tasks>
       <envs />
     </configuration>
-    <configuration name="concat" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+    <configuration name="copy" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
       <node-interpreter value="project" />
       <gruntfile value="$PROJECT_DIR$/public/client/Gruntfile.js" />
       <tasks>
-        <task value="concat" />
+        <task value="copy" />
+      </tasks>
+      <envs />
+    </configuration>
+    <configuration name="html2js" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
+      <node-interpreter value="project" />
+      <gruntfile value="$PROJECT_DIR$/public/client/Gruntfile.js" />
+      <tasks>
+        <task value="html2js" />
       </tasks>
       <envs />
     </configuration>
@@ -389,30 +447,22 @@
       </tasks>
       <envs />
     </configuration>
-    <configuration name="watch" type="js.build_tools.grunt" factoryName="Grunt.js" temporary="true">
-      <node-interpreter value="project" />
-      <gruntfile value="$PROJECT_DIR$/public/client/Gruntfile.js" />
-      <tasks>
-        <task value="watch" />
-      </tasks>
-      <envs />
-    </configuration>
     <list size="7">
       <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.questionsList.html" />
       <item index="1" class="java.lang.String" itemvalue="Node.js.Node Run" />
-      <item index="2" class="java.lang.String" itemvalue="Grunt.js.build" />
-      <item index="3" class="java.lang.String" itemvalue="Grunt.js.replace" />
-      <item index="4" class="java.lang.String" itemvalue="Grunt.js.concat" />
-      <item index="5" class="java.lang.String" itemvalue="Grunt.js.watch" />
-      <item index="6" class="java.lang.String" itemvalue="Grunt.js.build (1)" />
+      <item index="2" class="java.lang.String" itemvalue="Grunt.js.html2js" />
+      <item index="3" class="java.lang.String" itemvalue="Grunt.js.copy" />
+      <item index="4" class="java.lang.String" itemvalue="Grunt.js.replace" />
+      <item index="5" class="java.lang.String" itemvalue="Grunt.js.build (1)" />
+      <item index="6" class="java.lang.String" itemvalue="Grunt.js.build" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Grunt.js.build" />
         <item index="1" class="java.lang.String" itemvalue="Grunt.js.build (1)" />
-        <item index="2" class="java.lang.String" itemvalue="Grunt.js.watch" />
-        <item index="3" class="java.lang.String" itemvalue="Grunt.js.concat" />
-        <item index="4" class="java.lang.String" itemvalue="Grunt.js.replace" />
+        <item index="2" class="java.lang.String" itemvalue="Grunt.js.replace" />
+        <item index="3" class="java.lang.String" itemvalue="Grunt.js.copy" />
+        <item index="4" class="java.lang.String" itemvalue="Grunt.js.html2js" />
       </list>
     </recent_temporary>
   </component>
@@ -490,6 +540,44 @@
       <workItem from="1537117540117" duration="493000" />
       <workItem from="1537306719061" duration="338000" />
       <workItem from="1537368485525" duration="1832000" />
+      <workItem from="1537542419156" duration="6000" />
+      <workItem from="1537971922840" duration="7086000" />
+      <workItem from="1538069685943" duration="901000" />
+      <workItem from="1538263228883" duration="6024000" />
+      <workItem from="1538407280515" duration="2467000" />
+      <workItem from="1538580193840" duration="125000" />
+      <workItem from="1539015792935" duration="697000" />
+      <workItem from="1539041658845" duration="1129000" />
+      <workItem from="1540234759241" duration="695000" />
+      <workItem from="1541381265782" duration="660000" />
+      <workItem from="1541457531618" duration="395000" />
+      <workItem from="1541530684792" duration="1795000" />
+      <workItem from="1542143804550" duration="667000" />
+      <workItem from="1542315189218" duration="496000" />
+      <workItem from="1542402032886" duration="3201000" />
+      <workItem from="1542472288657" duration="171000" />
+      <workItem from="1543538838927" duration="1900000" />
+      <workItem from="1543878173049" duration="811000" />
+      <workItem from="1544201070604" duration="72000" />
+      <workItem from="1544201148967" duration="318000" />
+      <workItem from="1544232466425" duration="795000" />
+      <workItem from="1544454354839" duration="449000" />
+      <workItem from="1544547637965" duration="494000" />
+      <workItem from="1544656934714" duration="544000" />
+      <workItem from="1544906873592" duration="560000" />
+      <workItem from="1546888975840" duration="511000" />
+      <workItem from="1547491629412" duration="208000" />
+      <workItem from="1548883679929" duration="1000" />
+      <workItem from="1552328593292" duration="560000" />
+      <workItem from="1552331232963" duration="418000" />
+      <workItem from="1553201467957" duration="605000" />
+      <workItem from="1554149491057" duration="536000" />
+      <workItem from="1554591376104" duration="5000" />
+      <workItem from="1554845989104" duration="482000" />
+      <workItem from="1555691063478" duration="6975000" />
+      <workItem from="1555938681356" duration="17528000" />
+      <workItem from="1555973826201" duration="490000" />
+      <workItem from="1556044416359" duration="25008000" />
     </task>
     <task id="LOCAL-00001" summary="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo.">
       <created>1527885411741</created>
@@ -533,11 +621,60 @@
       <option name="project" value="LOCAL" />
       <updated>1528432116107</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="change welcome page">
+      <created>1544201262250</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1544201262250</updated>
+    </task>
+    <task id="LOCAL-00008" summary="change welcome page">
+      <created>1552329015674</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1552329015674</updated>
+    </task>
+    <task id="LOCAL-00009" summary="change welcome page">
+      <created>1552329039957</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1552329039957</updated>
+    </task>
+    <task id="LOCAL-00010" summary="change welcome page to AlignNumber">
+      <created>1555691187894</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1555691187894</updated>
+    </task>
+    <task id="LOCAL-00011" summary="add documents to the project">
+      <created>1555693848399</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1555693848399</updated>
+    </task>
+    <task id="LOCAL-00012" summary="change welcome page, add enter name of the project">
+      <created>1555716004135</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1555716004136</updated>
+    </task>
+    <task id="LOCAL-00013" summary="add deployment info to Client Request page">
+      <created>1555974075885</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1555974075885</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="234319000" />
+    <option name="totallyTimeSpent" value="320104000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -549,28 +686,28 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="53" width="1909" height="947" extended-state="0" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19029851" sideWeight="0.49186993" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945284" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19029851" sideWeight="0.5081301" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28252032" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3465447" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17490953" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3570567" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29166666" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15603217" sideWeight="0.5910736" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15603217" sideWeight="0.40892643" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27503017" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.4912689" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29166666" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22436671" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26066098" sideWeight="0.3538999" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Notes" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3385744" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2851153" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -581,17 +718,18 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945284" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36786962" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38882422" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26332623" sideWeight="0.4912689" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24213837" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2148847" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29166666" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1716418" sideWeight="0.5680894" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26332623" sideWeight="0.50873107" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32945284" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1716418" sideWeight="0.43191057" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22357723" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.4912689" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3343496" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26066098" sideWeight="0.3538999" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Notes" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
@@ -641,10 +779,18 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/services/todocomplement" />
+    </ignored-roots>
     <MESSAGE value="move folders from CrowdeCode to root. Heroku can not read files in sub folder. it expects to find package.json in root of the repo." />
     <MESSAGE value="update gitignore. heroku needs to instal node madules by itself. it can read all dependencies from package.json" />
     <MESSAGE value="stop auto-playing" />
-    <option name="LAST_COMMIT_MESSAGE" value="stop auto-playing" />
+    <MESSAGE value="change welcome page" />
+    <MESSAGE value="change welcome page to AlignNumber" />
+    <MESSAGE value="add documents to the project" />
+    <MESSAGE value="change welcome page, add enter name of the project" />
+    <MESSAGE value="add deployment info to Client Request page" />
+    <option name="LAST_COMMIT_MESSAGE" value="add deployment info to Client Request page" />
     <option name="PRESELECT_EXISTING_CHANGELIST" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -716,21 +862,109 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/util/microtask_service.js</url>
-          <line>182</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/util/microtask_service.js</url>
           <line>337</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/deployment_service.js</url>
+          <line>108</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/routes/app-routing.js</url>
+          <line>84</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/routes/app-routing.js</url>
+          <line>33</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/deployment_service.js</url>
+          <line>136</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/deployment_service.js</url>
+          <line>144</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/deployment_service.js</url>
+          <line>150</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/deployment_service.js</url>
+          <line>15</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/deployment_service.js</url>
+          <line>113</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/deployment_service.js</url>
+          <line>27</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/util/deployment_service.js</url>
+          <line>39</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="42" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="21" />
+      <option name="time" value="43" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>project.deploymentInfo[credential].gitUserName</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>project.deploymentInfo</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>deploymentInfo</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>project.deploymentInfo.firstName</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>project.gitHubInfo</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Config.github[&quot;email&quot;]</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>e.message</expression-string>
+        <language-id>JavaScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>Project</expression-string>
         <language-id>JavaScript</language-id>
@@ -739,313 +973,595 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/new_function_stub_2.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/public/analysis/backup_spreadsheetV5.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-264">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/DescribeFunctionBehavior.html">
+    <entry file="file://$PROJECT_DIR$/public/analysis/codeCorrectness/session2.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2418">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/analysis/completionTime/data.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/inspect_button.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/add_function.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/add_function2.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/running/new_function2.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/welcome_first.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/review_step1.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/review-step1.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/main.html">
+    <entry file="file://$PROJECT_DIR$/public/analysis/completionTime/data_s2.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-94">
-          <caret line="4" column="85" lean-forward="false" selection-start-line="4" selection-start-column="85" selection-end-line="4" selection-end-column="85" />
+        <state relative-caret-position="-1183">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/review_step3.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/public/analysis/completionTime/extractor.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="404">
+          <caret line="73" column="52" lean-forward="true" selection-start-line="73" selection-start-column="52" selection-end-line="73" selection-end-column="52" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/submission.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/public/analysis/completionTime/extractor_s1.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="81" column="0" lean-forward="true" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/accepted.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/public/analysis/completionTime/extractor_s2.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/rejected.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/dashboard/dashboard2.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="615">
+          <caret line="41" column="111" lean-forward="false" selection-start-line="41" selection-start-column="111" selection-end-line="41" selection-end-column="111" />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/tutorial/review/review_step2.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/img/function-description.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/function_editor.html">
+    <entry file="file://$PROJECT_DIR$/public/client/widgets/project_outline.template.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
-          <caret line="29" column="8" lean-forward="false" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="8" />
+          <caret line="29" column="158" lean-forward="false" selection-start-line="29" selection-start-column="158" selection-end-line="29" selection-end-column="158" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/.tmp/templates.js">
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/microtask_form.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1005">
+          <caret line="67" column="27" lean-forward="false" selection-start-line="67" selection-start-column="27" selection-end-line="67" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.dom.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226440">
+          <caret line="15109" column="17" lean-forward="false" selection-start-line="15109" selection-start-column="17" selection-end-line="15109" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/microtaskForm.directive.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2805">
+          <caret line="187" column="33" lean-forward="false" selection-start-line="187" selection-start-column="33" selection-end-line="187" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/microtasks/microtasks.service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1035">
+          <caret line="71" column="66" lean-forward="false" selection-start-line="71" selection-start-column="53" selection-end-line="71" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/functions/functions.service.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+    <entry file="file://$PROJECT_DIR$/public/client/functions/functionUtils.factory.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="9" lean-forward="false" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/functions/javascript_tutorial.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="77" lean-forward="false" selection-start-line="2" selection-start-column="77" selection-end-line="2" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/client/functions/javascriptTutorial.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/ImplementBehavior.html">
+    <entry file="file://$PROJECT_DIR$/public/client/functions/javascriptTutorial.directive.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1455">
-          <caret line="97" column="20" lean-forward="false" selection-start-line="97" selection-start-column="20" selection-end-line="97" selection-end-column="20" />
+        <state relative-caret-position="150">
+          <caret line="10" column="1352" lean-forward="false" selection-start-line="10" selection-start-column="1352" selection-end-line="10" selection-end-column="1352" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/test_section.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="72" column="8" lean-forward="false" selection-start-line="72" selection-start-column="8" selection-end-line="76" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/running_tests.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="11" lean-forward="false" selection-start-line="34" selection-start-column="11" selection-end-line="34" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/create_edit_test.html">
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.ejs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/statistics/main.css">
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="52395">
+          <caret line="3493" column="86" lean-forward="false" selection-start-line="3493" selection-start-column="86" selection-end-line="3493" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientDist/client.jsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/style.css">
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/welcome.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="323" column="0" lean-forward="false" selection-start-line="323" selection-start-column="0" selection-end-line="323" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/userService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="4" lean-forward="false" selection-start-line="24" selection-start-column="4" selection-end-line="24" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/user_service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="24" column="10" lean-forward="false" selection-start-line="24" selection-start-column="10" selection-end-line="24" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/dependencies.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="61">
+          <caret line="17" column="17" lean-forward="false" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientReq/application.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/welcomeStyles.css">
+    <entry file="file://$PROJECT_DIR$/public/clientReq/client_request.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/clientReq/directives.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1009">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/client/client.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="29865">
-          <caret line="1991" column="3" lean-forward="false" selection-start-line="1991" selection-start-column="0" selection-end-line="1991" selection-end-column="3" />
+        <state relative-caret-position="453">
+          <caret line="1261" column="0" lean-forward="false" selection-start-line="1261" selection-start-column="0" selection-end-line="1261" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/new_funciton_stub_function.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="31" column="88" lean-forward="false" selection-start-line="31" selection-start-column="88" selection-end-line="31" selection-end-column="88" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Datatest.js" />
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describe_behavior.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5461">
-          <caret line="54" column="20" lean-forward="false" selection-start-line="54" selection-start-column="20" selection-end-line="54" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/microtaskForm.directive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-126">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/grunt-contrib-uglify/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="214">
-            <caret line="552" column="50" lean-forward="false" selection-start-line="552" selection-start-column="50" selection-end-line="552" selection-end-column="50" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/microtasks.service.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-146">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/implement_behavior/implementBehavior.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="266" column="44" lean-forward="false" selection-start-line="266" selection-start-column="44" selection-end-line="266" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/tutorials/test_editor_help.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="12" lean-forward="false" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/functions/functionUtils.factory.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="41" column="16" lean-forward="false" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/util/deployment_service.js">
+    <entry file="file://$PROJECT_DIR$/public/clientReq/controller.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/client.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1245">
-          <caret line="83" column="74" lean-forward="false" selection-start-line="83" selection-start-column="74" selection-end-line="83" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/newsfeed/newsfeed.service.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="41" column="55" lean-forward="false" selection-start-line="41" selection-start-column="55" selection-end-line="41" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sessions/7uGAnyBPEHuoWT6ZUYHK4TmmLMPwnr2S.json" />
-    <entry file="file://$PROJECT_DIR$/sessions/13LeHcNGwFX0PFcQDITREhJ1bPRlzjbb.json" />
-    <entry file="file://$PROJECT_DIR$/sessions/DJ7i79DeMR8ujgdzWC-djatp6lFsB-Pw.json" />
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/describe_behavior/describeBehavior.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="458">
-          <caret line="408" column="61" lean-forward="true" selection-start-line="408" selection-start-column="61" selection-end-line="408" selection-end-column="61" />
+          <caret line="342" column="41" lean-forward="false" selection-start-line="342" selection-start-column="41" selection-end-line="342" selection-end-column="41" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/microtask_service.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="671" column="0" lean-forward="true" selection-start-line="671" selection-start-column="0" selection-end-line="671" selection-end-column="0" />
+        <state relative-caret-position="-7542">
+          <caret line="209" column="26" lean-forward="false" selection-start-line="209" selection-start-column="26" selection-end-line="209" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/client/microtasks/no_microtask/no_microtask.html">
+    <entry file="file://$PROJECT_DIR$/public/clientReq/client_request.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="8" lean-forward="false" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
+        <state relative-caret-position="85">
+          <caret line="401" column="0" lean-forward="false" selection-start-line="401" selection-start-column="0" selection-end-line="401" selection-end-column="0" />
+          <folding>
+            <element signature="n#div#4;n#div#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/microtask_service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="163">
+          <caret line="25" column="66" lean-forward="false" selection-start-line="25" selection-start-column="66" selection-end-line="25" selection-end-column="66" />
+          <folding>
+            <marker date="1556117185062" expanded="true" signature="47:53653" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="135:344" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="382:5281" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="432:5232" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="1053:5221" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="1120:5085" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="1241:2898" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="1312:2682" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="1571:2654" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="1623:2307" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="1791:2273" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="1883:1983" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="2006:2233" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="2313:2624" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="2401:2539" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="2705:2874" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="2904:5066" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="3157:5042" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="3205:4568" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="3365:4121" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="3453:3851" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="3874:4085" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="4159:4537" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="4574:5016" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="4658:4788" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="5108:5205" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="5238:5274" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="5288:5459" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="5499:6737" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="5539:6485" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="5811:6446" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="5922:6389" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="6073:6369" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="6130:6347" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="6499:6731" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="6661:6719" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="6744:6908" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="6944:8224" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="6984:7976" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="7239:7931" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="7322:7917" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="7385:7897" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="7528:7729" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="7752:7873" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="7990:8218" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="8152:8206" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="8231:8367" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="8403:13484" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="8443:13236" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="8860:13059" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="8999:9202" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="9107:9182" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="9283:9470" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="9383:9450" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="9551:11551" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="9652:11531" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="9760:10108" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="10447:10648" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="10526:10620" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="10717:10914" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="10794:10886" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="10983:11261" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="11640:12736" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="11746:12716" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="12390:12542" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="12548:12692" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="13082:13197" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="13250:13478" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="13412:13466" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="13491:13659" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="13700:18293" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="13740:17902" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="14180:14751" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="14375:14581" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="14604:14735" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="14808:15521" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="14987:15351" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="15374:15505" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="15571:16839" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="15617:16825" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="15770:16807" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="16113:16597" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="16382:16571" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="16620:16783" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="16893:17861" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="16941:17815" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="17014:17795" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="17261:17545" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="17568:17731" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="17916:18287" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="18078:18137" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="18160:18275" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="18299:18423" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="18463:18586" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="18503:18580" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="18593:18677" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="18749:23588" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="18789:23166" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="19254:19298" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="19387:19985" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="19461:19969" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="19525:19951" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="19717:19929" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="20107:22449" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="20817:20982" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="20877:20962" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="21398:22172" ph="{&quot;name&quot;: microtask_name...}" />
+            <marker date="1556117185062" expanded="true" signature="22455:22617" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="23180:23582" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="23342:23432" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="23455:23570" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="23594:23720" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="23815:25499" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="23855:25054" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="23892:24271" ph="{&quot;name&quot;: &quot;review the changes&quot;...}" />
+            <marker date="1556117185062" expanded="true" signature="25068:25493" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="25230:25343" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="25366:25481" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="25505:25608" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="25713:28603" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="25753:28149" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="27135:27363" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="27386:27450" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="28163:28597" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="28325:28447" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="28470:28585" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="28609:28704" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="28793:39203" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="28833:38764" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="30184:37594" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="30455:35865" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="30936:31291" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="31556:33283" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="31643:33259" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="31947:32789" ph="{&quot;name&quot;: func.name...}" />
+            <marker date="1556117185062" expanded="true" signature="32935:33118" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="33124:33233" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="33867:34070" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="34213:35135" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="34446:34524" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="34715:35009" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="34861:34983" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="35141:35422" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="35167:35317" ph="//..." />
+            <marker date="1556117185062" expanded="true" signature="35530:35744" ph="{&quot;microtaskId&quot;: implementation_task_id...}" />
+            <marker date="1556117185062" expanded="true" signature="35921:36662" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="35943:36042" ph="//..." />
+            <marker date="1556117185062" expanded="true" signature="36327:36547" ph="{&quot;microtaskId&quot;: implementation_task_id...}" />
+            <marker date="1556117185062" expanded="true" signature="37162:37493" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="37316:37383" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="37402:37473" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="37516:37577" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="37617:37670" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="38778:39197" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="38940:39047" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="39070:39185" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="39209:39312" ph="/*...*/" />
+            <marker date="1556117185062" expanded="true" signature="39364:47057" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="39462:46655" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="39890:39958" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="39964:40526" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="40905:44307" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="41204:41489" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="41406:41471" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="41546:41694" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="41603:41676" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="41984:43121" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="42115:42185" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="42191:43103" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="42268:42774" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="42605:42748" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="42926:43010" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="43242:44181" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="43311:43902" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="43749:43880" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="44046:44114" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="44312:44505" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="44600:45935" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="45005:45211" ph="{&quot;microtaskKey&quot;: microtask_id...}" />
+            <marker date="1556117185062" expanded="true" signature="45941:46059" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="45979:46044" ph="{&quot;microtaskKey&quot;: undefined...}" />
+            <marker date="1556117185062" expanded="true" signature="46660:47051" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="46831:46901" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="46924:47039" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="47110:51091" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="47150:50682" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="47564:50151" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="47849:50012" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="48114:49994" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="48353:48521" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="48580:48724" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="48856:49028" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="48921:49002" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="49093:49273" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="49158:49247" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="49652:49735" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="50696:51085" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="50866:50935" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="50958:51073" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="51167:53357" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="51207:52932" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="51781:52922" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="52016:52091" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="52150:52217" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="52946:53351" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="53108:53201" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="53224:53339" ph="{...}" />
+            <marker date="1556117185062" expanded="true" signature="53370:53650" ph="{&quot;loadProject&quot;: loadProject...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deployment1052/routes/endpoints.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deployment1052/service/microservice.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-8">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/api.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1500">
-          <caret line="100" column="4" lean-forward="false" selection-start-line="100" selection-start-column="4" selection-end-line="100" selection-end-column="4" />
+        <state relative-caret-position="191">
+          <caret line="173" column="22" lean-forward="false" selection-start-line="173" selection-start-column="22" selection-end-line="173" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="28" column="13" lean-forward="false" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deploy237/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deploy237/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-95">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deploy237/package-lock.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deploy237/travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deploy237/service/microservice.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deploy237/routes/api.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deploy237/routes/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/deploy237/routes/users.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/util/firebase_service.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3240">
-          <caret line="216" column="23" lean-forward="false" selection-start-line="216" selection-start-column="23" selection-end-line="216" selection-end-column="23" />
+        <state relative-caret-position="246">
+          <caret line="1589" column="29" lean-forward="false" selection-start-line="1589" selection-start-column="29" selection-end-line="1589" selection-end-column="29" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edit.js" />
-    <entry file="file://$PROJECT_DIR$/app.js">
+    <entry file="file://$PROJECT_DIR$/node_modules/git-command-line/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="43" column="2" lean-forward="false" selection-start-line="43" selection-start-column="2" selection-end-line="43" selection-end-column="2" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/util/microtask_service.js">
+    <entry file="file://$PROJECT_DIR$/routes/app-routing.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="337" column="20" lean-forward="false" selection-start-line="337" selection-start-column="20" selection-end-line="337" selection-end-column="20" />
+        <state relative-caret-position="264">
+          <caret line="84" column="26" lean-forward="false" selection-start-line="84" selection-start-column="26" selection-end-line="84" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/welcome.html">
+    <entry file="file://$PROJECT_DIR$/lib/express-generator/bin/express-cli.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="335" column="9" lean-forward="false" selection-start-line="335" selection-start-column="9" selection-end-line="335" selection-end-column="9" />
-          <folding>
-            <element signature="n#style#0;n#p#0;n#div#1;n#div#0;n#div#3;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-          </folding>
+        <state relative-caret-position="-1102">
+          <caret line="87" column="11" lean-forward="false" selection-start-line="87" selection-start-column="11" selection-end-line="87" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/deployment_service.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6">
+          <caret line="62" column="36" lean-forward="false" selection-start-line="62" selection-start-column="20" selection-end-line="62" selection-end-column="36" />
+          <folding />
         </state>
       </provider>
     </entry>

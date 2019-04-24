@@ -23,8 +23,12 @@
     "token": "4cb548ac-f3a9-498f-bd10-7401dcb852db"
   },
   "github":{
-    "username": "eaghayi",
-    "token": "761f0f46dbf1c189f8a56207293ab4c12c27b24a"
+    "username": "Microtasking",
+    "token": "cd34657de4a4ad4f21719a38de163e60293c425a",
+    "firstName" :"Microtasking",
+    "lastName" :"Programing",
+    "email" :"crowdcodev2@gmail.com",
+    "repoName" :"microservice-template"
   },
   "travis":{
     "token": "Gto3IqdjFI43hWc4YGcuaA",

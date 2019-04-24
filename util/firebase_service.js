@@ -2,19 +2,19 @@ var s = require("underscore.string");
 
 module.exports = function (AdminFirebase, Q) {
     const now = (unit) => {
-        const hrTime = process.hrtime();
-        switch (unit) {
-            case 'milli':
-                return hrTime[0] * 1000 + hrTime[1] / 1000000;
-            case 'micro':
-                return hrTime[0] * 1000000 + hrTime[1] / 1000;
-            case 'nano':
-                return hrTime[0] * 1000000000 + hrTime[1];
-                break;
-            default:
-                return hrTime[0] * 1000000000 + hrTime[1];
+            const hrTime = process.hrtime();
+            switch (unit) {
+                case 'milli':
+                    return hrTime[0] * 1000 + hrTime[1] / 1000000;
+                case 'micro':
+                    return hrTime[0] * 1000000 + hrTime[1] / 1000;
+                case 'nano':
+                    return hrTime[0] * 1000000000 + hrTime[1];
+                    break;
+                default:
+                    return hrTime[0] * 1000000000 + hrTime[1];
+            }
         }
-    }
     ;
     const timeOptions = {
         weekday: "long",
@@ -77,11 +77,11 @@ module.exports = function (AdminFirebase, Q) {
             var created_child = root_ref.child('Projects').child(project_name).set(project_schema);
             this.createEvent(project_name, "Project.Created", "Created Project " + project_name + " from client request", "Project", project_name);
             return created_child.then(err => {
-                if(err) throw err;
-        else
-            return "created the project Successfully";
-        })
-            ;
+                if (err) throw err;
+                else
+                    return "created the project Successfully";
+            })
+                ;
 
         },
 
@@ -214,16 +214,15 @@ module.exports = function (AdminFirebase, Q) {
         */
         retrieveADTList: function (project_id) {
             return root_ref.child('Projects').child(project_id).child('artifacts').child('ADTs').once('value').then(data => {
-                return data.val();
-        },
+                    return data.val();
+                },
 
-            function (err) {
-                console.log("Error in retrieving ADT list");
-                //console.log(err);
-            }
-
-        )
-            ;
+                function (err) {
+                    console.log("Error in retrieving ADT list");
+                    //console.log(err);
+                }
+            )
+                ;
         },
 
         /* ---------------- End ADT API ------------- */
@@ -243,7 +242,7 @@ module.exports = function (AdminFirebase, Q) {
          returns function ID text
          */
         createFunction: function (project_id, function_name, header, function_description, function_code,
-                                  return_type, parameters, stubs, tests, ADTsId, functions_dependent, isApiArtifact,isThirdPartyAPI) {
+                                  return_type, parameters, stubs, tests, ADTsId, functions_dependent, isApiArtifact, isThirdPartyAPI) {
             let function_schema = {
                 name: function_name,
                 header: header,
@@ -260,7 +259,7 @@ module.exports = function (AdminFirebase, Q) {
                 isComplete: false,
                 isAssigned: false,
                 isApiArtifact: isApiArtifact,
-                isThirdPartyAPI:isThirdPartyAPI
+                isThirdPartyAPI: isThirdPartyAPI
             };
             var path = 'Projects/' + project_id + '/artifacts/Functions';
             var history_path = 'Projects/' + project_id + '/history/artifacts/Functions';
@@ -312,7 +311,7 @@ module.exports = function (AdminFirebase, Q) {
                     isComplete: isComplete,
                     isAssigned: isAssigned,
                     isApiArtifact: isApiArtifact,
-                    isThirdPartyAPI:false
+                    isThirdPartyAPI: false
                 };
 
                 var update_promise = root_ref.child(path).update(function_schema);
@@ -352,7 +351,7 @@ module.exports = function (AdminFirebase, Q) {
                         dependent: func.dependent,
                         isComplete: isComplete,
                         isAssigned: isAssigned,
-                        isThirdPartyAPI:false
+                        isThirdPartyAPI: false
                     }
 
                     root_ref.child(path).update(function_schema);
@@ -653,10 +652,10 @@ module.exports = function (AdminFirebase, Q) {
                 name: worker_name,
                 score: 0
             }).then(err => {
-                if(err) deferred.reject(err);
-        else
-            deferred.resolve();
-        })
+                if (err) deferred.reject(err);
+                else
+                    deferred.resolve();
+            })
             ;
             return deferred.promise;
         },
@@ -670,10 +669,10 @@ module.exports = function (AdminFirebase, Q) {
                 path.update({
                     score: total_score
                 }).then(err => {
-                    if(err) deferred.reject(err);
-            else
-                deferred.resolve();
-            })
+                    if (err) deferred.reject(err);
+                    else
+                        deferred.resolve();
+                })
                 ;
             });
             return deferred.promise;
@@ -810,7 +809,10 @@ module.exports = function (AdminFirebase, Q) {
             //increment answer count and updated time
             root_ref.child(path).once("value").then(function (data) {
                 var answer_count = data.val().answersCount + 1;
-                root_ref.child(path).update({answersCount: answer_count, updatedAt: new Date().toLocaleTimeString("en-us", timeOptions)});
+                root_ref.child(path).update({
+                    answersCount: answer_count,
+                    updatedAt: new Date().toLocaleTimeString("en-us", timeOptions)
+                });
             }).catch(function (err) {
                 console.trace(err);
             });
@@ -1556,32 +1558,38 @@ module.exports = function (AdminFirebase, Q) {
             this.createProject(id, clientReq.description, workerId).then(result => {
 
                 this.createDefaultADTS(id);
-            if (typeof clientReq.ADTs !== 'undefined') {
-                clientReq.ADTs.forEach(adt => {
-                    var adtKey = this.createADT(id, adt.name, adt.description, true, true, adt.structure, adt.examples);
-                console.log("ADT is added: " + adt.name)
-            })
-                ;
-            }
-            if (typeof clientReq.functions !== 'undefined') {
-                clientReq.functions.forEach(func => {
-                    var dependents = "null";
-                if (func.dependent !== undefined && func.dependent !== null && func.dependent.length > 0) {
-                    dependents = [];
-                    func.dependent.forEach(obj => {
-                        dependents.push(obj.functionName);
-                    console.log("Funcsion dependent is added: " + obj.functionName)
-                });
+                if (typeof clientReq.ADTs !== 'undefined') {
+                    clientReq.ADTs.forEach(adt => {
+                        var adtKey = this.createADT(id, adt.name, adt.description, true, true, adt.structure, adt.examples);
+                        console.log("ADT is added: " + adt.name)
+                    })
+                    ;
                 }
-                console.log("Funcsion is added: " + func.name);
-                var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", dependents, true,func.isThirdPartyAPI);
-                //this.createImplementationMicrotask(id, "Implement function behavior", 10, funcKey, func.name, 0, "Implement function behavior with all the related tests", func.code, "null");
-            });
-            }
-        }).
-            catch(err => {
+                if (typeof clientReq.functions !== 'undefined') {
+                    clientReq.functions.forEach(func => {
+                        var dependents = "null";
+                        if (func.dependent !== undefined && func.dependent !== null && func.dependent.length > 0) {
+                            dependents = [];
+                            func.dependent.forEach(obj => {
+                                dependents.push(obj.functionName);
+                                console.log("Funcsion dependent is added: " + obj.functionName)
+                            });
+                        }
+                        console.log("Funcsion is added: " + func.name);
+                        var funcKey = this.createFunction(id, func.name, func.header, func.description, func.code, func.returnType, func.parameters, func.stubs, "null", "null", dependents, true, func.isThirdPartyAPI);
+                        //this.createImplementationMicrotask(id, "Implement function behavior", 10, funcKey, func.name, 0, "Implement function behavior with all the related tests", func.code, "null");
+                    });
+                }
+
+                if ( !clientReq.gitHubInfo && typeof clientReq.gitHubInfo !== undefined) {
+                    this.createDeploymentInfo(id, clientReq.gitHubInfo.gitUserId, clientReq.gitHubInfo.gitToken, clientReq.gitHubInfo.firstName,
+                        clientReq.gitHubInfo.lastName, clientReq.gitHubInfo.gitEmail, clientReq.gitHubInfo.gitRepoName);
+
+
+                }
+            }).catch(err => {
                 console.log(err);
-        })
+            })
             ;
         },
 
@@ -1666,7 +1674,7 @@ module.exports = function (AdminFirebase, Q) {
                 deferred.resolve(exists);
             }).catch(err => {
                 deferred.reject(err);
-        })
+            })
             ;
             return deferred.promise;
         },
@@ -1680,7 +1688,7 @@ module.exports = function (AdminFirebase, Q) {
                 deferred.resolve(exists);
             }).catch(err => {
                 deferred.reject(err);
-        })
+            })
             ;
             return deferred.promise;
         },
@@ -1977,9 +1985,35 @@ module.exports = function (AdminFirebase, Q) {
                 return data.val();
             });
             return promise;
-        }
+        },
 
         /* ---------------- End State API ------------- */
+
+        /*-----------------GitHub Deployment API -------------- */
+        /* Read deployment info from Client request then create gitHubInfo in the Prjoce in a project
+       param project id text
+       param gitUserName text
+       param gitToken text
+       param gitUserFirstLastName text
+       param email text
+       param gitRepoName text
+       returns void
+       */
+        createDeploymentInfo: function (project_id, gitUserName, gitToken, gitUserFirstName, gitUserLastName, gitEmail, gitRepoName) {
+            deploymentInfo_schema = {
+                gitUserName: gitUserName,
+                gitToken: gitToken,
+                gitUserLastName: gitUserLastName,
+                gitUserFirstName: gitUserFirstName,
+                gitEmail: gitEmail,
+                gitRepoName: gitRepoName
+            }
+            var path = 'Projects/' + project_id + '/deploymentInfo';
+            var created_child = root_ref.child(path).push(deploymentInfo_schema);
+
+        }
+
+        /*-----------------End of GitHub Deployment API -------------- */
 
 
     }

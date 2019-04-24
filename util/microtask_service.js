@@ -377,7 +377,7 @@ module.exports = function (FirebaseService, Q) {
                     });
                 }
                 return result2;
-            })
+            });
 
             return result3;
         }

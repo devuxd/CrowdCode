@@ -77,6 +77,7 @@ module.exports = function(wagner) {
 
   router.get('/:projectId/deploy', wagner.invoke(function(DeploymentService){
     return function(req,res){
+        console.log('app-routing, req.user.uid: ', req.user.uid);
         var project_id = req.params.projectId;
         var result = DeploymentService.createMicroService(project_id);
         result.then(function(response){
