@@ -26,7 +26,7 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
 
                 };
                 //if in the client request deployment info are inserted, it overwrite the deployment info, otherwise it reads data from the Config file
-                if (project.deploymentInfo && project.deploymentInfo.gitUserId !== "" && project.deploymentInfo.gitToken !== "" && project.deploymentInfo.gitRepoName !== "") {
+                if (project.deploymentInfo && project.deploymentInfo !== 'undefined' && project.deploymentInfo.gitUserId !== "" && project.deploymentInfo.gitToken !== "" && project.deploymentInfo.gitRepoName !== "") {
                     // project.deploymentInfo.firstName !== "" &&   project.deploymentInfo.lastName !== "" && project.deploymentInfo.gitEmail !== "" &&
                     console.log("it used the client request github credential");
                     for (var credential in project.deploymentInfo) {

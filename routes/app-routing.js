@@ -85,7 +85,9 @@ module.exports = function(wagner) {
             if(response) {
                 res.send("Microservice created! If you did not provide your Deployment information in the Client-Request Crowd Microservices is using the default GitHub repository, you can access microservice  at https://microservice-template-2.herokuapp.com/endpoints/{endpoint}");
             }
+
         }).catch(function(err){
+            res.send("Error happend: "+err);
             console.log(err);
         })
 

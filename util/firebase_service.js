@@ -1581,7 +1581,8 @@ module.exports = function (AdminFirebase, Q) {
                     });
                 }
 
-                if ( clientReq.gitHubInfo && typeof clientReq.gitHubInfo !== undefined) {
+                if ( clientReq.gitHubInfo && typeof clientReq.gitHubInfo !== 'undefined'
+                    && typeof clientReq.gitHubInfo.gitUserId !== 'undefined' && typeof clientReq.gitHubInfo.gitToken !== 'undefined' && typeof clientReq.gitHubInfo.gitRepoName !== 'undefined') {
                     this.createDeploymentInfo(id, clientReq.gitHubInfo.gitUserId, clientReq.gitHubInfo.gitToken, clientReq.gitHubInfo.gitRepoName);
 
 
