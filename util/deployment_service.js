@@ -13,81 +13,67 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
     function createMicroService(project_id) {
         //Fetch the project from firebase
         var project_promise = FirebaseService.retrieveProject(project_id);
-        var result = project_promise.then(function (project) {
-            var functions = project.artifacts.Functions;
-            // read GitHub credential from Config file in Config directory
-            var deploymentInfo = {
-                repoName: Config.github["repoName"],
-                token: Config.github["token"],
-                // firstName: Config.github["firstName"],
-                // lastName: Config.github["lastName"],
-                // email: Config.github["email"],
-                userId: Config.github["username"],
+        return result = project_promise.then(function (project) {
+                var functions = project.artifacts.Functions;
+                // read GitHub credential from Config file in Config directory
+                var deploymentInfo = {
+                    repoName: Config.github["repoName"],
+                    token: Config.github["token"],
+                    // firstName: Config.github["firstName"],
+                    // lastName: Config.github["lastName"],
+                    // email: Config.github["email"],
+                    userId: Config.github["username"],
 
-            };
-            //if in the client request deployment info are inserted, it overwrite the deployment info, otherwise it reads data from the Config file
-            if (project.deploymentInfo && project.deploymentInfo.gitUserId !== "" && project.deploymentInfo.gitToken !== "" && project.deploymentInfo.gitRepoName !== "") {
-                // project.deploymentInfo.firstName !== "" &&   project.deploymentInfo.lastName !== "" && project.deploymentInfo.gitEmail !== "" &&
-                console.log("it used the client request github credential");
-                for (var credential in project.deploymentInfo) {
-                    deploymentInfo.userId = project.deploymentInfo[credential].gitUserName;
-                    deploymentInfo.token = project.deploymentInfo[credential].gitToken;
-                    // deploymentInfo.firstName = project.deploymentInfo[credential].gitUserFirstName;
-                    // deploymentInfo.lastName = project.deploymentInfo[credential].gitUserLastName;
-                    // deploymentInfo.email = project.deploymentInfo[credential].gitEmail;
-                    deploymentInfo.repoName = project.deploymentInfo[credential].gitRepoName;
+                };
+                //if in the client request deployment info are inserted, it overwrite the deployment info, otherwise it reads data from the Config file
+                if (project.deploymentInfo && project.deploymentInfo.gitUserId !== "" && project.deploymentInfo.gitToken !== "" && project.deploymentInfo.gitRepoName !== "") {
+                    // project.deploymentInfo.firstName !== "" &&   project.deploymentInfo.lastName !== "" && project.deploymentInfo.gitEmail !== "" &&
+                    console.log("it used the client request github credential");
+                    for (var credential in project.deploymentInfo) {
+                        deploymentInfo.userId = project.deploymentInfo[credential].gitUserName;
+                        deploymentInfo.token = project.deploymentInfo[credential].gitToken;
+                        // deploymentInfo.firstName = project.deploymentInfo[credential].gitUserFirstName;
+                        // deploymentInfo.lastName = project.deploymentInfo[credential].gitUserLastName;
+                        // deploymentInfo.email = project.deploymentInfo[credential].gitEmail;
+                        deploymentInfo.repoName = project.deploymentInfo[credential].gitRepoName;
+                    }
+                }
+                var isComplete = false;
+
+                //Check if all the end points are complete
+                for (var func in functions) {
+                    if (functions[func].isApiArtifact) {
+                        isComplete = functions[func].isComplete;
+                    }
+                }
+                //if end points are complete, create a template express app
+                if (isComplete) {
+                    //if the template is created, add the code and routing
+                    //  if (ExpressGenerator.createEndPints(project_id, path, port)) {
+
+                    ExpressGenerator.createDir(rootPath + '/' + project_id);
+                    //return new Promise(function (resolve, reject) {
+                        var resultTmp = initGit(project_id, rootPath + '/' + project_id, deploymentInfo, functions);
+
+                   // });
+                    return true;
+                }
+                else {
+                    return false;
                 }
             }
-            var isComplete = false;
-
-            //Check if all the end points are complete
-            for (var func in functions) {
-                if (functions[func].isApiArtifact) {
-                    isComplete = functions[func].isComplete;
-                }
-            }
-            //if end points are complete, create a template express app
-            if (isComplete) {
-                //if the template is created, add the code and routing
-                //  if (ExpressGenerator.createEndPints(project_id, path, port)) {
-
-                ExpressGenerator.createDir(rootPath + '/' + project_id);
-                var gitPromise = new Promise(function (resolve,reject){
-                  var resultTmp=  initGit(project_id, rootPath + '/' + project_id, deploymentInfo, functions);
-                  console.log('********',resultTmp);
-
-                });
-                // gitPromise.then(function (resultPromise) {
-                //    return resultPromise;
-                // });
-                return true;
-                // var response = function () {
-                //     gitPromise
-                //         .then(function (fulfilled) {
-                //             // yay, you got a new phone
-                //             console.log(fulfilled);
-                //             return true;
-                //         })
-                //         .catch(function (error) {
-                //             // ops, mom don't buy it
-                //             console.log(error.message);
-                //             return false;
-                //         });
-                // };
-                // return response();
-
-
-            } else {
-                return false;
-            }
-        }).catch(function (err) {
+        ).catch(function (err) {
             console.trace(err);
+
         });
-        return result;
+
 
     }
 
     function initGit(project_id, projectPath, deploymentInfo, functions) {
+        //   return new Promise(function (resolve, reject) {
+
+
         var Git = new gitCommandLine(projectPath);
 
         // var git_data = '{ "name" : "' + project_id + '"}';
@@ -108,36 +94,21 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
         var git_request = https.request(git_options, function (res) {
 
             //Initialize folder as a local repo
+            Git.init().then(function (res) {
+                //         console.log("user name set");
 
-            Git.init()
-                .then(function (res) {
-            //         console.log("user name set");
-            //         return Git.direct('config user.name "' + deploymentInfo.firstName + ' ' + deploymentInfo.firstName + '"');     //Set user name for the repo commits
-            //
-            //     }).then(function (res) {
-            //     console.log(res);
-            //     console.log("mail set");
-            //     return Git.direct('config user.email "' + deploymentInfo.email + '"');  //Set user email for repo commits
-            // }).then(function (res) {
-                // return Git.remote('add origin https://' + Config.github["token"] + '@github.com/eaghayi/' + project_id + '.git/');      //Create a remote named origin
-                // return Git.pull('https://' + Config.github["token"] + '@github.com/eaghayi/EndPoints2.git/  master --allow-unrelated-histories');      //Create a remote named origin
                 return Git.pull('https://' + deploymentInfo.token + '@github.com/' + deploymentInfo.userId + '/' + deploymentInfo.repoName + '.git/  master --allow-unrelated-histories');      //Create a remote named origin
             }).then(function (res) {
                 buildMicroserviceFiles(project_id, functions);
 
             }).then(function (res) {
                 // console.log(res);
-                console.log("add files in Git");
+                //  console.log("add files in Git");
                 return Git.add('-A', {cwd: projectPath});           //Add the files to repo
 
             }).then(function (res) {
                 // console.log(res);
                 return Git.commit('-m "add files"');           //Commit
-                // It pull code to the Path dir then add the microservice and route to it, then push it to repo
-                //     }).then(function (res) {
-                //         // return Git.remote('add origin https://' + Config.github["token"] + '@github.com/eaghayi/' + project_id + '.git/');      //Create a remote named origin
-                //         // return Git.pull('https://' + Config.github["token"] + '@github.com/eaghayi/EndPoints2.git/  master --allow-unrelated-histories');      //Create a remote named origin
-                //         return Git.pull('https://' + deploymentInfo.token + '@github.com/' + deploymentInfo.userId+ '/' + deploymentInfo.repoName + '.git/  master --allow-unrelated-histories');      //Create a remote named origin
 
             }).then(function (res) {
                 return Git.push('  https://' + deploymentInfo.token + '@github.com/' + deploymentInfo.userId + '/' + deploymentInfo.repoName + '.git/  master');
@@ -145,21 +116,25 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
                 rimraf(projectPath, function () {
                     console.log(" Pulled dir (temp files) is removed from server! ");
                 });
-              //  resolve(true);
+                //return  resolve(true);
             }).fail(function (err) {
                 rimraf(projectPath, function () {
                     console.log(" Pulled dir (temp files) is removed from server! ");
                 });
                 console.error(err);
-               // reject(false);
+                //return reject(err);
             });
         });
 
         git_request.on('error', function (e) {
             console.log('problem with git request: ' + e.message);
+            // return reject(e);
         });
+
         git_request.write(git_data);
         git_request.end();
+        //return git_request;
+        //});
 
     }
 

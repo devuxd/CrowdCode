@@ -412,7 +412,7 @@
                         To do that the Crowd Microservices needs your information.
 					</span>
             <br/>
-            <span> <b>If you do NOT enter the deployment info, the microservice will be pushed on the Crowd Microsrvices GitHub account (https://github.com/Microtasking). </b> </span>
+            <span> <b>If you do NOT enter the bellow deployment info, the microservice will be pushed on the Crowd Microsrvices GitHub repository (https://github.com/Microtasking/microservice-template.git). </b> </span>
 
             <!--<div class="form-group">-->
                 <!--<div class="row">-->
@@ -448,32 +448,30 @@
                     <!--</div>-->
                 <!--</div>-->
             <!--</div>-->
-            <div class="form-group">
+            <div class="form-group ">
                 <div class="row">
-                    <label for="GitUserId" class="col-sm-3 control-label ">GitHub user ID</label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitUserId" id="GitUserId" ng-model="gitUserId"
-                               placeholder="Enter the user ID assigned to the GitHub account"/>
+                    <label for="GitUserId" class="control-label col-sm-2">https://github.com/</label>
+                    <div class="col-sm-3">
+                          <input class="form-control pull-left" name="GitUserId"  id="GitUserId" ng-model="gitUserId"  placeholder="GitHub user ID example: eaghayi"/>
+                    </div>
+                <!--</div>-->
+            <!--</div>-->
+
+            <!--<div class="form-group">-->
+                <!--<div class="row">-->
+                    <label for="GitRepoName" class="col-xs-1 control-label ">/</label>
+                    <div class="col-sm-3">
+                        <input class="form-control col-sm-pull-4" name="GitRepoName" id="GitRepoName"  ng-model="gitRepoName" required ng-pattern="/^[a-zA-Z0-9_-]+$/"
+                               placeholder="Repo name example: microservice-template"/>
 
                     </div>
+                    <label for="GitRepoName" class="col-sm-1 control-label ">.git</label>
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="row">
-                    <label for="GitRepoName" class="col-sm-3 control-label ">GitHub repository
-                        name (if the GitHub URL of the desired repository is something like https://github.com/Microtasking/microservice-template.git then the repository name is "microservice-template" ) </label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitRepoName" id="GitRepoName"  ng-model="gitRepoName" required ng-pattern="/^[a-zA-Z0-9_-]+$/"
-                               placeholder="Enter the name of the GitHub repository example: microservice-template"/>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitToken" class="col-sm-3 control-label ">GitHub token</label>
+                    <label for="GitToken" class="col-sm-2 control-label ">GitHub token</label>
                     <div class="col-sm-4 ">
                         <input class="form-control"  name="GitToken" id="GitToken" ng-model="gitToken"
                                placeholder="Enter the token of the GitHub account"/>
