@@ -139,7 +139,7 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
     }
 
 
-    async function buildMicroserviceFiles(project_id, functions) {
+     function buildMicroserviceFiles(project_id, functions) {
         var code = '';
         var routes = '';
         var exports = 'module.exports = {';
