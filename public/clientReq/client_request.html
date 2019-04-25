@@ -414,40 +414,40 @@
             <br/>
             <span> <b>If you do NOT enter the deployment info, the microservice will be pushed on the Crowd Microsrvices GitHub account (https://github.com/Microtasking). </b> </span>
 
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitFirstName" class="col-sm-3 control-label ">First Name of the GitHub's
-                        user</label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitFirstName" id="GitFirstName" ng-model="firstName"
-                               placeholder="Enter the first name assigned to the GitHub account"/>
+            <!--<div class="form-group">-->
+                <!--<div class="row">-->
+                    <!--<label for="GitFirstName" class="col-sm-3 control-label ">First Name of the GitHub's-->
+                        <!--user</label>-->
+                    <!--<div class="col-sm-4 ">-->
+                        <!--<input class="form-control" name="GitFirstName" id="GitFirstName" ng-model="firstName"-->
+                               <!--placeholder="Enter the first name assigned to the GitHub account"/>-->
 
-                    </div>
+                    <!--</div>-->
 
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitLastName" class="col-sm-3 control-label ">Last Name of the GitHub's
-                        user</label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitLastName" id="GitLastName" ng-model="lastName"
-                               placeholder="Enter the last name assigned to the GitHub account"/>
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+                <!--<div class="row">-->
+                    <!--<label for="GitLastName" class="col-sm-3 control-label ">Last Name of the GitHub's-->
+                        <!--user</label>-->
+                    <!--<div class="col-sm-4 ">-->
+                        <!--<input class="form-control" name="GitLastName" id="GitLastName" ng-model="lastName"-->
+                               <!--placeholder="Enter the last name assigned to the GitHub account"/>-->
 
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitEmail" class="col-sm-3 control-label ">Email of the GitHub's
-                        user</label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitEmail" id="GitEmail" ng-model="gitEmail"
-                               placeholder="Enter the email assigned to the GitHub account"/>
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+                <!--<div class="row">-->
+                    <!--<label for="GitEmail" class="col-sm-3 control-label ">Email of the GitHub's-->
+                        <!--user</label>-->
+                    <!--<div class="col-sm-4 ">-->
+                        <!--<input class="form-control" name="GitEmail" id="GitEmail" ng-model="gitEmail"-->
+                               <!--placeholder="Enter the email assigned to the GitHub account"/>-->
 
-                    </div>
-                </div>
-            </div>
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="form-group">
                 <div class="row">
                     <label for="GitUserId" class="col-sm-3 control-label ">GitHub user ID</label>
@@ -458,23 +458,25 @@
                     </div>
                 </div>
             </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <label for="GitRepoName" class="col-sm-3 control-label ">GitHub repository
+                        name (if the GitHub URL of the desired repository is something like https://github.com/Microtasking/microservice-template.git then the repository name is "microservice-template" ) </label>
+                    <div class="col-sm-4 ">
+                        <input class="form-control" name="GitRepoName" id="GitRepoName"  ng-model="gitRepoName" required ng-pattern="/^[a-zA-Z0-9_-]+$/"
+                               placeholder="Enter the name of the GitHub repository example: microservice-template"/>
+
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <div class="row">
                     <label for="GitToken" class="col-sm-3 control-label ">GitHub token</label>
                     <div class="col-sm-4 ">
                         <input class="form-control"  name="GitToken" id="GitToken" ng-model="gitToken"
                                placeholder="Enter the token of the GitHub account"/>
-
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitRepoName" class="col-sm-3 control-label ">GitHub repository
-                        name </label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitRepoName" id="GitRepoName"  ng-model="gitRepoName"
-                               placeholder="Enter the name of the GitHub repository"/>
 
                     </div>
                 </div>
