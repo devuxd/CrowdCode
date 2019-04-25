@@ -62,6 +62,7 @@ module.exports = function(wagner) {
                   throw err;
                 });
               }
+
               res.render('clientDist/client.ejs', {
                   workerId: req.user.uid,
                   workerHandle: req.user.email,
