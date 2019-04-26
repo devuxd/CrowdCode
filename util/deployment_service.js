@@ -19,22 +19,22 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
                 var deploymentInfo = {
                     repoName: Config.github["repoName"],
                     token: Config.github["token"],
-                    // firstName: Config.github["firstName"],
-                    // lastName: Config.github["lastName"],
-                    // email: Config.github["email"],
+                    firstName: Config.github["firstName"],
+                    lastName: Config.github["lastName"],
+                    email: Config.github["email"],
                     userId: Config.github["username"],
 
                 };
                 //if in the client request deployment info are inserted, it overwrite the deployment info, otherwise it reads data from the Config file
-                if (project.deploymentInfo && project.deploymentInfo !== 'undefined' && project.deploymentInfo.gitUserId !== "" && project.deploymentInfo.gitToken !== "" && project.deploymentInfo.gitRepoName !== "") {
-                    // project.deploymentInfo.firstName !== "" &&   project.deploymentInfo.lastName !== "" && project.deploymentInfo.gitEmail !== "" &&
+                if (project.deploymentInfo && project.deploymentInfo !== 'undefined' && project.deploymentInfo.gitUserId !== "" && project.deploymentInfo.gitToken !== "" && project.deploymentInfo.gitRepoName !== "" &&
+                    project.deploymentInfo.firstName !== "" &&   project.deploymentInfo.lastName !== "" && project.deploymentInfo.gitEmail !== "" ) {
                     console.log("it used the client request github credential");
                     for (var credential in project.deploymentInfo) {
                         deploymentInfo.userId = project.deploymentInfo[credential].gitUserName;
                         deploymentInfo.token = project.deploymentInfo[credential].gitToken;
-                        // deploymentInfo.firstName = project.deploymentInfo[credential].gitUserFirstName;
-                        // deploymentInfo.lastName = project.deploymentInfo[credential].gitUserLastName;
-                        // deploymentInfo.email = project.deploymentInfo[credential].gitEmail;
+                        deploymentInfo.firstName = project.deploymentInfo[credential].gitUserFirstName;
+                        deploymentInfo.lastName = project.deploymentInfo[credential].gitUserLastName;
+                        deploymentInfo.email = project.deploymentInfo[credential].gitEmail;
                         deploymentInfo.repoName = project.deploymentInfo[credential].gitRepoName;
                     }
                 }
@@ -94,7 +94,16 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
         var git_request = https.request(git_options, function (res) {
 
             //Initialize folder as a local repo
-            Git.init().then(function (res) {
+            Git.init()
+                .then(function (res) {
+                    console.log("user name set");
+                    return Git.direct('config user.name "' +deploymentInfo.firstName +' '+deploymentInfo.firstName + '"');     //Set user name for the repo commits
+
+                }).then(function (res) {
+                console.log(res);
+                console.log("mail set");
+                return Git.direct('config user.email "' + deploymentInfo.email + '"');  //Set user email for repo commits
+            }). then(function (res) {
                 //         console.log("user name set");
 
                 return Git.pull('https://' + deploymentInfo.token + '@github.com/' + deploymentInfo.userId + '/' + deploymentInfo.repoName + '.git/  master --allow-unrelated-histories');      //Create a remote named origin
