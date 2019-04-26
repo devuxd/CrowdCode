@@ -162,7 +162,7 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
         }
         exports = exports.substr(0, exports.length - 1) + " }";
         //Create the file with all the functions in the project
-        ExpressGenerator.createServiceFile(project_id, rootPath, code + "\n" + exports);
+        ExpressGenerator.createServiceFile(project_id, rootPath, code + "\n" + exports +"\n"+"//"+new Date());
 
         //create both get and post handlers for each end point
 
