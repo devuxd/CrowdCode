@@ -69,7 +69,7 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
 
 
     }
-
+// it pull the code from repo then add 2 files to the repo and push it back
     function initGit(project_id, projectPath, deploymentInfo, functions) {
         //   return new Promise(function (resolve, reject) {
 
