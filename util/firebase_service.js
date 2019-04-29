@@ -1583,7 +1583,9 @@ module.exports = function (AdminFirebase, Q) {
 
                 if ( clientReq.gitHubInfo && typeof clientReq.gitHubInfo !== 'undefined'
                     && typeof clientReq.gitHubInfo.gitUserId !== 'undefined' && typeof clientReq.gitHubInfo.gitToken !== 'undefined' && typeof clientReq.gitHubInfo.gitRepoName !== 'undefined') {
-                    this.createDeploymentInfo(id, clientReq.gitHubInfo.gitUserId, clientReq.gitHubInfo.gitToken, clientReq.gitHubInfo.gitRepoName);
+                    this.createDeploymentInfo(id, clientReq.gitHubInfo.gitUserId, clientReq.gitHubInfo.gitToken, clientReq.gitHubInfo.gitUserFirstName,
+                        clientReq.gitHubInfo.gitUserLastName,clientReq.gitHubInfo.gitEmail,clientReq.gitHubInfo.gitRepoName);
+
 
 
                 }
@@ -1999,14 +2001,14 @@ module.exports = function (AdminFirebase, Q) {
        param gitRepoName text
        returns void
        */
-        // createDeploymentInfo: function (project_id, gitUserName, gitToken, gitUserFirstName, gitUserLastName, gitEmail, gitRepoName) {
-        createDeploymentInfo: function (project_id, gitUserName, gitToken, gitRepoName) {
+        createDeploymentInfo: function (project_id, gitUserName, gitToken, gitUserFirstName, gitUserLastName, gitEmail, gitRepoName) {
+        // createDeploymentInfo: function (project_id, gitUserName, gitToken, gitRepoName) {
             deploymentInfo_schema = {
                 gitUserName: gitUserName,
                 gitToken: gitToken,
-                // gitUserLastName: gitUserLastName,
-                // gitUserFirstName: gitUserFirstName,
-                // gitEmail: gitEmail,
+                gitUserLastName: gitUserLastName,
+                gitUserFirstName: gitUserFirstName,
+                gitEmail: gitEmail,
                 gitRepoName: gitRepoName
             }
             var path = 'Projects/' + project_id + '/deploymentInfo';

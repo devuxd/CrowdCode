@@ -211,9 +211,9 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                 project.functions = $scope.functions;
                 project.ADTs = $scope.ADTs;
                 project.gitHubInfo = {
-                    // firstName: $scope.firstName,
-                    // lastName: $scope.lastName,
-                    // gitEmail: $scope.gitEmail,
+                    gitUserFirstName: $scope.gitUserFirstName,
+                    gitUserLastName: $scope.gitUserLastName,
+                    gitEmail: $scope.gitEmail,
                     gitUserId: $scope.gitUserId,
                     gitToken: $scope.gitToken,
                     gitRepoName: $scope.gitRepoName
@@ -328,17 +328,17 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                     $scope.ADTs = [];
 
                 if (angular.isDefined(project.gitHubInfo)) {
-                    // $scope.firstName = project.gitHubInfo.firstName;
-                    // $scope.lastName = project.gitHubInfo.lastName;
-                    // $scope.gitEmail = project.gitHubInfo.gitEmail;
+                    $scope.gitUserFirstName = project.gitHubInfo.gitUserFirstName;
+                    $scope.gitUserLastName = project.gitHubInfo.gitUserLastName;
+                    $scope.gitEmail = project.gitHubInfo.gitEmail;
                     $scope.gitUserId = project.gitHubInfo.gitUserId;
                     $scope.gitToken = project.gitHubInfo.gitToken;
                     $scope.gitRepoName = project.gitHubInfo.gitRepoName;
 
                 } else {
-                    // $scope.firstName = "";
-                    // $scope.lastName = "";
-                    // $scope.gitEmail = "";
+                    $scope.gitUserFirstName = "";
+                    $scope.gitUserLastName = "";
+                    $scope.gitEmail = "";
                     $scope.gitUserId = "";
                     $scope.gitToken = "";
                     $scope.gitRepoName = "";

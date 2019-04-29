@@ -67,7 +67,8 @@
                 </div>
 
                 <button ng-click="load()" class="btn btn-primary btn-block btn-lg"
-                        ng-disabled="projectNameForm.$invalid || !projectNameForm.projectName.$dirty">Load or Create </button>
+                        ng-disabled="projectNameForm.$invalid || !projectNameForm.projectName.$dirty">Load or Create
+                </button>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -403,104 +404,158 @@
 
     <div class="section section-description">
         <div class="section-title">
-            <h2>DEPLOYMENT INFO</h2>
+            <h2>GitHub INFO</h2>
         </div>
         <div class="section-content">
 					<span>
 				After the crowd finishes the implementation of a microservice, You may choose to create and deploy the microservice to a hosting site.
-                        Invoking the Publish command first creates a new node.js GitHub project which includes each function implemented by the crowd. For endpoint functions, the environment automatically generates an HTTP request handler function for the endpoint.
-                        To do that the Crowd Microservices needs your information.
+                        Invoking the Publish command first creates a node.js GitHub project which includes each function implemented by the crowd. For endpoint functions, the environment automatically generates an HTTP request handler function for the endpoint.
+                        To do that the Crowd Microservices needs your GitHub information.
 					</span>
             <br/>
-            <span> <b>If you do NOT enter the bellow deployment info, the microservice will be pushed on the Crowd Microsrvices GitHub repository (https://github.com/Microtasking/microservice-template.git). </b> </span>
 
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitFirstName" class="col-sm-3 control-label ">First Name of the GitHub's
-                        user</label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitFirstName" id="GitFirstName" ng-model="firstName"
-                               placeholder="Enter the first name assigned to the GitHub account"/>
-
-                    </div>
-
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitLastName" class="col-sm-3 control-label ">Last Name of the GitHub's
-                        user</label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitLastName" id="GitLastName" ng-model="lastName"
-                               placeholder="Enter the last name assigned to the GitHub account"/>
-
+            <div ng-form="gitHubForm">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-1"></div>
+                        <div class="col-xs-1">
+                            <input id='enableGitHubInfo' name="GitHubInfoCheckBox" type="checkbox" checked
+                                   onchange="document.getElementById('GitFirstName').disabled = this.checked;
+                               document.getElementById('GitEmail').disabled = this.checked;
+                               document.getElementById('GitLastName').disabled = this.checked;
+                               document.getElementById('GitUserId').disabled = this.checked;
+                               document.getElementById('GitRepoName').disabled = this.checked;
+                               document.getElementById('GitToken').disabled = this.checked;"
+                            >
+                        </div>
+                        <label for="enableGitHubInfo" class="col-sm-10 control-label">If you select the checkbox, the
+                            microservice will be pushed on the Crowd Microservices GitHub repository
+                            (https://github.com/Microtasking/microservice-template.git). otherwise, you
+                            must insert your own GitHub info to enable Crowd Microservices to push the final
+                            microservice on your repository.</label>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitEmail" class="col-sm-3 control-label ">Email of the GitHub's
-                        user</label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control" name="GitEmail" id="GitEmail" ng-model="gitEmail"
-                               placeholder="Enter the email assigned to the GitHub account"/>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="GitFirstName" class="col-sm-2 control-label ">First Name</label>
+                        <div class="col-sm-3 ">
+                            <input class="form-control" name="GitFirstName" id="GitFirstName" ng-model="gitUserFirstName" disabled
+                                   placeholder="First name assigned to the account"/>
+
+                        </div>
 
                     </div>
                 </div>
-            </div>
-            <div class="form-group ">
-                <div class="row">
-                    <label for="GitUserId" class="control-label col-sm-2">https://github.com/</label>
-                    <div class="col-sm-3">
-                          <input class="form-control pull-left" name="GitUserId"  id="GitUserId" ng-model="gitUserId"  placeholder="GitHub user ID example: eaghayi"/>
-                    </div>
-                <!--</div>-->
-            <!--</div>-->
+                <div class="form-group">
+                    <div class="row">
+                        <label for="GitLastName" class="col-sm-2 control-label ">Last Name</label>
+                        <div class="col-sm-3 ">
+                            <input class="form-control" name="GitLastName" id="GitLastName" ng-model="gitUserLastName" disabled
+                                   placeholder="Last name assigned to the account"/>
 
-            <!--<div class="form-group">-->
-                <!--<div class="row">-->
-                    <label for="GitRepoName" class="col-xs-1 control-label ">/</label>
-                    <div class="col-sm-3">
-                        <input class="form-control col-sm-pull-4" name="GitRepoName" id="GitRepoName"  ng-model="gitRepoName"  ng-pattern="/^[a-zA-Z0-9_-]+$/"
-                               placeholder="Repo name example: microservice-template"/>
-
+                        </div>
                     </div>
-                    <label for="GitRepoName" class="col-sm-1 control-label ">.git</label>
                 </div>
-            </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label for="GitEmail" class="col-sm-2 control-label ">Email</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" name="GitEmail" id="GitEmail" ng-model="gitEmail" disabled
+                                   placeholder="Email assigned to the account"/>
 
-            <div class="form-group">
-                <div class="row">
-                    <label for="GitToken" class="col-sm-2 control-label ">GitHub token</label>
-                    <div class="col-sm-4 ">
-                        <input class="form-control"  name="GitToken" id="GitToken" ng-model="gitToken"
-                               placeholder="Enter the token of the GitHub account"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <div class="row">
+                        <label for="GitUserId" class="control-label col-sm-2">https://github.com/</label>
+                        <div class="col-sm-3">
+                            <input class="form-control pull-left" name="GitUserId" id="GitUserId" ng-model="gitUserId"
+                                   disabled
+                                   placeholder="User ID example: eaghayi"/>
+                        </div>
+                        <!--</div>-->
+                        <!--</div>-->
 
+                        <!--<div class="form-group">-->
+                        <!--<div class="row">-->
+                        <label for="GitRepoName" class="col-xs-1 control-label ">/</label>
+                        <div class="col-sm-3">
+                            <input class="form-control col-sm-pull-4" name="GitRepoName" id="GitRepoName" disabled
+                                   ng-model="gitRepoName" ng-pattern="/^[a-zA-Z0-9_-]+$/"
+                                   placeholder="Rep name ex: microservice-template"/>
+
+                        </div>
+                        <label for="GitRepoName" class="col-sm-1 control-label ">.git</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <label for="GitToken" class="col-sm-2 control-label ">Access Token</label>
+                        <div class="col-sm-3 ">
+                            <input class="form-control" name="GitToken" id="GitToken" ng-model="gitToken" disabled
+                                   placeholder="Access token"/>
+
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!--<label for="comment" class="col-sm-2 control-label reset-padding">description</label>-->
             <!--<textarea class="form-control" name="comment" id="comment"-->
-                      <!--placeholder="briefly describe the purpose and the behavior of the ADT"-->
-                      <!--ng-model="ADT.description" required ng-pattern="/^[^/\\]+$/"></textarea>-->
+            <!--placeholder="briefly describe the purpose and the behavior of the ADT"-->
+            <!--ng-model="ADT.description" required ng-pattern="/^[^/\\]+$/"></textarea>-->
 
 
         </div>
 
     </div>
+
+    <!--Heroku -->
+
+
+    <div class="section section-description">
+        <div class="section-title">
+            <h2>Heroku Deployment</h2>
+        </div>
+        <div class="section-content">
+					<span>
+				       The last step is deploying the microservice on a server. When you are using the default repository and do not enter you GitHub info in the previous step,
+                        the microservice is automatically deployed on Heroku (a container-based cloud Platform as a Service (PaaS)), as a result, it is accessible on https://microservice-template-2.herokuapp.com.
+                        Otherwise, you can sign up in Heroku then connect your repository to the Heroku (https://www.heroku.com/). You can do it by the straightforward visual procedure in Heroku's dashboard, firstly "create a new app" then connect it the GitHub repository via "Deployment method".
+					</span>
+
+
+        </div>
+
+    </div>
+    <!-- Done!-->
     <div class="section section-description ">
         <div class="section-content no-padding">
             <ul class="microtask-details clearfix">
-                <li>Great! You have created or updated a project. Next, click on the bellow button for add it to Crowd Microservices's projects. </b></li>
+                <li>Great! You have created or updated a project. Next, click on the bellow button for add it to Crowd
+                    Microservices's projects. </b></li>
             </ul>
         </div>
     </div>
 
-    <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-block btn-lg">Save or update the
+    <button type="button" ng-click="submit(form)" tabindex="99" class="btn btn-primary btn-block btn-lg">Save or update
+        the
         project
     </button>
 
 </div>
+<!--<script>-->
+<!--$(document).ready(function(){-->
+<!--$("select[name='GitHubInfoCheckBox']").on('change',function(){-->
+<!--if($(this).val()==1){-->
+<!--$("input[name='stock']").prop("disabled",false);-->
+<!--}else{-->
+<!--$("input[name='stock']").prop("disabled",true);-->
+<!--}-->
+<!--});-->
+<!--});-->
+<!--</script>-->
 </body>
 </html>
