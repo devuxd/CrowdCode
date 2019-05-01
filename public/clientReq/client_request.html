@@ -408,8 +408,11 @@
         </div>
         <div class="section-content">
 					<span>
-				After the crowd finishes the implementation of a microservice, You may choose to create and deploy the microservice to a hosting site.
-                        Invoking the Publish command first creates a node.js GitHub project which includes each function implemented by the crowd. For endpoint functions, the environment automatically generates an HTTP request handler function for the endpoint.
+				After the crowd finishes the implementation of a microservice, you may choose to create and push the microservice to a GitHub repository.
+                       After the crowd finshed, invoking the Publish command (<a
+                            href="http://crowdcode5.herokuapp.com/{{projectName}}/deploy" target="_blank">http://crowdcode5.herokuapp.com/{{projectName}}/deploy</a>)
+                        creates a microsrevice which includes each function implemented by the crowd, then push it on the repository.
+                        In fact, for endpoint functions, the environment automatically generates an HTTP request handler function for the endpoint.
                         To do that the Crowd Microservices needs your GitHub information.
 					</span>
             <br/>
@@ -430,7 +433,8 @@
                         </div>
                         <label for="enableGitHubInfo" class="col-sm-10 control-label">If you select the checkbox, the
                             microservice will be pushed on the Crowd Microservices GitHub repository
-                            (https://github.com/Microtasking/microservice-template.git). otherwise, you
+                            (<a target="_blank" href="https://github.com/Microtasking/microservice-template.git">https://github.com/Microtasking/microservice-template.git</a>).
+                            Otherwise, you
                             must insert your own GitHub info to enable Crowd Microservices to push the final
                             microservice on your repository.</label>
                     </div>
@@ -439,8 +443,9 @@
                     <div class="row">
                         <label for="GitFirstName" class="col-sm-2 control-label ">First Name</label>
                         <div class="col-sm-3 ">
-                            <input class="form-control" name="GitFirstName" id="GitFirstName" ng-model="gitUserFirstName" disabled
-                                   placeholder="First name assigned to the account"/>
+                            <input class="form-control" name="GitFirstName" id="GitFirstName"
+                                   ng-model="gitUserFirstName" disabled
+                                   placeholder="First name associate with the account"/>
 
                         </div>
 
@@ -450,8 +455,9 @@
                     <div class="row">
                         <label for="GitLastName" class="col-sm-2 control-label ">Last Name</label>
                         <div class="col-sm-3 ">
-                            <input class="form-control" name="GitLastName" id="GitLastName" ng-model="gitUserLastName" disabled
-                                   placeholder="Last name assigned to the account"/>
+                            <input class="form-control" name="GitLastName" id="GitLastName" ng-model="gitUserLastName"
+                                   disabled
+                                   placeholder="Last name associate with the account"/>
 
                         </div>
                     </div>
@@ -461,7 +467,7 @@
                         <label for="GitEmail" class="col-sm-2 control-label ">Email</label>
                         <div class="col-sm-3">
                             <input class="form-control" name="GitEmail" id="GitEmail" ng-model="gitEmail" disabled
-                                   placeholder="Email assigned to the account"/>
+                                   placeholder="Email associate with the account"/>
 
                         </div>
                     </div>
@@ -472,7 +478,7 @@
                         <div class="col-sm-3">
                             <input class="form-control pull-left" name="GitUserId" id="GitUserId" ng-model="gitUserId"
                                    disabled
-                                   placeholder="User ID example: eaghayi"/>
+                                   placeholder="User ID"/>
                         </div>
                         <!--</div>-->
                         <!--</div>-->
@@ -483,7 +489,7 @@
                         <div class="col-sm-3">
                             <input class="form-control col-sm-pull-4" name="GitRepoName" id="GitRepoName" disabled
                                    ng-model="gitRepoName" ng-pattern="/^[a-zA-Z0-9_-]+$/"
-                                   placeholder="Rep name ex: microservice-template"/>
+                                   placeholder="Repository name"/>
 
                         </div>
                         <label for="GitRepoName" class="col-sm-1 control-label ">.git</label>
@@ -522,8 +528,30 @@
         <div class="section-content">
 					<span>
 				       The last step is deploying the microservice on a server. When you are using the default repository and do not enter you GitHub info in the previous step,
-                        the microservice is automatically deployed on Heroku (a container-based cloud Platform as a Service (PaaS)), as a result, it is accessible on https://microservice-template-2.herokuapp.com.
-                        Otherwise, you can sign up in Heroku then connect your repository to the Heroku (https://www.heroku.com/). You can do it by the straightforward visual procedure in Heroku's dashboard, firstly "create a new app" then connect it the GitHub repository via "Deployment method".
+                        the microservice is automatically deployed on Heroku (a container-based cloud Platform as a Service (PaaS)),
+                        as a result, it is accessible on <a href="https://microservice-template-2.herokuapp.com"
+                                                            target="_blank">https://microservice-template-2.herokuapp.com</a>.
+                        Otherwise, you can sign up (<a href="https://www.heroku.com">https://www.heroku.com</a>) in Heroku then connect your repository to the Heroku.
+                        You can do it by the straightforward visual procedure in Heroku's dashboard.
+                        <h6>Create Your Heroku App:</h6>
+                        <ol>
+                             <li>From your browser, navigate to the Heroku dashboard, <a href="https://id.heroku.com"
+                                                                                         target="_blank">https://id.heroku.com</a>. </li>
+                             <li>Click <b>New</b>. </li>
+                             <li>Select <b>Create new app</b>. </li>
+                             <li>Click <b>Create app</b>. </li>
+                             <li>Once your app is created you are redirected to the Heroku dashboard. Click <b>Open app</b>. </li>
+                             <li> Congratulations! You have created your first Heroku app. </li>
+                         </ol>
+                         <h6>Enabling GitHub integration (<a
+                                 href="https://devcenter.heroku.com/articles/github-integration"
+                                 target="_blank"> Guide</a>): </h6>
+                         <ol>
+                            <li>You can configure GitHub integration in the Deploy tab of apps in the <a
+                                    href="https://dashboard.heroku.com/" target="_blank">Heroku Dashboard</a>. </li>
+                            <li>To configure GitHub integration, you have to authenticate with GitHub. You only have to do this once per Heroku account.</li>
+                            <li>After you link your Heroku app to a GitHub repo, you can selectively deploy from branches or configure auto-deploys.</li>
+                         </ol>
 					</span>
 
 
