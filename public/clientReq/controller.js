@@ -224,22 +224,32 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                         if (value.$id === $scope.projectName) exist = true;
                     });
                 });
+
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function (idToken) {
                     if (exist) {
-                        $http({
-                            method: "PUT",
-                            url: "/api/v1/clientRequests/" + $scope.projectName,
-                            data: project,
-                            headers: {
-                                'Authorization': 'Bearer ' + idToken
-                            },
-                            responseType: "json",
-                        }).then(function (payload) {
-                            console.log(payload.data);
-                        }).catch(err => {
-                            console.log(err);
-                        })
-                        ;
+                        $alert({
+                            title: 'Error!',
+                            content: 'A project with this name already exists, if you would like to update the project you have to choose a new name for it! each project or each version of the project must have an unique name. ',
+                            type: 'danger',
+                            show: true,
+                            duration: 10,
+                            template: '/client/microtasks/alert_submit.html',
+                            container: 'alertcontainer'
+                        });
+                        // $http({
+                        //     method: "PUT",
+                        //     url: "/api/v1/clientRequests/" + $scope.projectName,
+                        //     data: project,
+                        //     headers: {
+                        //         'Authorization': 'Bearer ' + idToken
+                        //     },
+                        //     responseType: "json",
+                        // }).then(function (payload) {
+                        //     console.log(payload.data);
+                        // }).catch(err => {
+                        //     console.log(err);
+                        // })
+                        // ;
                     } else {
                         $http({
                             method: "POST",
@@ -257,15 +267,17 @@ clienRequestApp.controller('ClientRequestController', ['$scope', '$rootScope', '
                         })
                         ;
                     }
-                    $alert({
-                        title: 'Success!',
-                        content: 'Submit successful',
-                        type: 'success',
-                        show: true,
-                        duration: 6,
-                        template: '/client/microtasks/alert_submit.html',
-                        container: 'alertcontainer'
-                    });
+                    if(!exist) {
+                        $alert({
+                            title: 'Success!',
+                            content: 'Submit successful',
+                            type: 'success',
+                            show: true,
+                            duration: 10,
+                            template: '/client/microtasks/alert_submit.html',
+                            container: 'alertcontainer'
+                        });
+                    }
                 }).catch(function (error) {
                     console.log(error);
                 });
