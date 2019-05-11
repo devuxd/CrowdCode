@@ -14,51 +14,37 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
         //Fetch the project from firebase
         var project_promise = FirebaseService.retrieveProject(project_id);
         return result = project_promise.then(function (project) {
-                var functions = project.artifacts.Functions;
-                // read GitHub credential from Config file in Config directory
-                var deploymentInfo = {
-                    repoName: Config.github["repoName"],
-                    token: Config.github["token"],
-                    firstName: Config.github["firstName"],
-                    lastName: Config.github["lastName"],
-                    email: Config.github["email"],
-                    userId: Config.github["username"],
+                if (project != null) {
+                    var functions = project.artifacts.Functions;
+                    // read GitHub credential from Config file in Config directory
+                    var deploymentInfo = {
+                        repoName: Config.github["repoName"],
+                        token: Config.github["token"],
+                        firstName: Config.github["firstName"],
+                        lastName: Config.github["lastName"],
+                        email: Config.github["email"],
+                        userId: Config.github["username"],
 
-                };
-                //if in the client request deployment info are inserted, it overwrite the deployment info, otherwise it reads data from the Config file
-                if (project.deploymentInfo && project.deploymentInfo !== 'undefined' && project.deploymentInfo.gitUserId !== "" && project.deploymentInfo.gitToken !== "" && project.deploymentInfo.gitRepoName !== "" &&
-                    project.deploymentInfo.firstName !== "" &&   project.deploymentInfo.lastName !== "" && project.deploymentInfo.gitEmail !== "" ) {
-                    console.log("it used the client request github credential");
-                    for (var credential in project.deploymentInfo) {
-                        deploymentInfo.userId = project.deploymentInfo[credential].gitUserName;
-                        deploymentInfo.token = project.deploymentInfo[credential].gitToken;
-                        deploymentInfo.firstName = project.deploymentInfo[credential].gitUserFirstName;
-                        deploymentInfo.lastName = project.deploymentInfo[credential].gitUserLastName;
-                        deploymentInfo.email = project.deploymentInfo[credential].gitEmail;
-                        deploymentInfo.repoName = project.deploymentInfo[credential].gitRepoName;
+                    };
+                    //if in the client request deployment info are inserted, it overwrite the deployment info, otherwise it reads data from the Config file
+                    if (project.deploymentInfo && project.deploymentInfo !== 'undefined' && project.deploymentInfo.gitUserId !== "" && project.deploymentInfo.gitToken !== "" && project.deploymentInfo.gitRepoName !== "" &&
+                        project.deploymentInfo.firstName !== "" && project.deploymentInfo.lastName !== "" && project.deploymentInfo.gitEmail !== "") {
+                        console.log("it used the client request github credential");
+                        for (var credential in project.deploymentInfo) {
+                            deploymentInfo.userId = project.deploymentInfo[credential].gitUserName;
+                            deploymentInfo.token = project.deploymentInfo[credential].gitToken;
+                            deploymentInfo.firstName = project.deploymentInfo[credential].gitUserFirstName;
+                            deploymentInfo.lastName = project.deploymentInfo[credential].gitUserLastName;
+                            deploymentInfo.email = project.deploymentInfo[credential].gitEmail;
+                            deploymentInfo.repoName = project.deploymentInfo[credential].gitRepoName;
+                        }
                     }
-                }
-                var isComplete = false;
-
-                //Check if all the end points are complete
-                for (var func in functions) {
-                    if (functions[func].isApiArtifact) {
-                        isComplete = functions[func].isComplete;
-                    }
-                }
-                //if end points are complete, create a template express app
-                if (isComplete) {
-                    //if the template is created, add the code and routing
-                    //  if (ExpressGenerator.createEndPints(project_id, path, port)) {
-
                     ExpressGenerator.createDir(rootPath + '/' + project_id);
                     //return new Promise(function (resolve, reject) {
-                        var resultTmp = initGit(project_id, rootPath + '/' + project_id, deploymentInfo, functions);
+                    var resultTmp = initGit(project_id, rootPath + '/' + project_id, deploymentInfo, functions);
 
-                   // });
                     return true;
-                }
-                else {
+                }else{
                     return false;
                 }
             }
@@ -69,6 +55,7 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
 
 
     }
+
 // it pull the code from repo then add 2 files to the repo and push it back
     function initGit(project_id, projectPath, deploymentInfo, functions) {
         //   return new Promise(function (resolve, reject) {
@@ -97,13 +84,13 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
             Git.init()
                 .then(function (res) {
                     console.log("user name set");
-                    return Git.direct('config user.name "' +deploymentInfo.firstName +' '+deploymentInfo.firstName + '"');     //Set user name for the repo commits
+                    return Git.direct('config user.name "' + deploymentInfo.firstName + ' ' + deploymentInfo.firstName + '"');     //Set user name for the repo commits
 
                 }).then(function (res) {
                 console.log(res);
                 console.log("mail set");
                 return Git.direct('config user.email "' + deploymentInfo.email + '"');  //Set user email for repo commits
-            }). then(function (res) {
+            }).then(function (res) {
                 //         console.log("user name set");
 
                 return Git.pull('https://' + deploymentInfo.token + '@github.com/' + deploymentInfo.userId + '/' + deploymentInfo.repoName + '.git/  master --allow-unrelated-histories');      //Create a remote named origin
@@ -148,26 +135,26 @@ module.exports = function (FirebaseService, ExpressGenerator, Config, Q) {
     }
 
 
-     function buildMicroserviceFiles(project_id, functions) {
+    function buildMicroserviceFiles(project_id, functions) {
         var code = '';
         var routes = '';
         var exports = 'module.exports = {';
 
         //create a single object with code from all complete functions
         for (var func in functions) {
-            if (functions[func].isComplete) {
-                code += "\n\n\n" + functions[func].header + '\n' + functions[func].code;
-                exports += "\n" + functions[func].name + ":" + functions[func].name + ",";
-            }
+            // if (functions[func].isComplete) {
+            code += "\n\n\n" + functions[func].header + '\n' + functions[func].code;
+            exports += "\n" + functions[func].name + ":" + functions[func].name + ",";
+            // }
         }
         exports = exports.substr(0, exports.length - 1) + " }";
         //Create the file with all the functions in the project
-        ExpressGenerator.createServiceFile(project_id, rootPath, code + "\n" + exports +"\n"+"//"+new Date());
+        ExpressGenerator.createServiceFile(project_id, rootPath, code + "\n" + exports + "\n" + "//" + new Date());
 
         //create both get and post handlers for each end point
 
         for (var func in functions) {
-            if (functions[func].isApiArtifact && functions[func].isComplete) {
+            if (functions[func].isApiArtifact /*&& functions[func].isComplete*/) {
                 var get_parameters = '';
                 var post_parameters = '';
                 //Generate all parameters to be passed
