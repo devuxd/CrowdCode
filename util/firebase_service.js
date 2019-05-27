@@ -1852,9 +1852,39 @@ module.exports = function (AdminFirebase, Q) {
                 eventType: event_type,
                 eventDescription: event_description,
                 timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
-                timeInMicros: now('micro')
+                timeInMicros: now('micro'),
+                epochTime:{'.sv': 'timestamp'}
             };
             var path = 'Projects/' + project_id + '/history/events';
+            var created_child = root_ref.child(path).push(event_schema);
+            return created_child.key;
+        },
+        /* Add an event in the history, it stores log for fetching, submitting review and implementation microtasks
+         param project id text
+         param artifact type text
+         param artifact id text
+         param artifact name text
+         param event type text
+         param event description
+         return event ID text
+         */
+        createLogEvent: function (project_id, event_type, event_description, artifact_type, artifact_id,worker_id, microtask_id,microtask_object,function_object_previous_version,function_object) {
+
+            let event_schema = {
+                artifactType: artifact_type,
+                artifactId: artifact_id,
+                eventType: event_type,
+                eventDescription: event_description,
+                timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
+                timeInMicros: now('micro'),
+                epochTime:{'.sv': 'timestamp'},
+                workerId: worker_id,
+                microtaskId:microtask_id,
+                microtaskObject:microtask_object ? microtask_object:null,
+                functionObjectPreviousVersion: JSON.parse( JSON.stringify(function_object_previous_version ?  function_object_previous_version :null) ) ,
+                functionObjectCurrentVersion:JSON.parse( JSON.stringify(function_object ? function_object: null) )
+            };
+            var path = 'Projects/' + project_id + '/history/logs';
             var created_child = root_ref.child(path).push(event_schema);
             return created_child.key;
         },
