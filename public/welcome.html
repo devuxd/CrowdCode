@@ -303,7 +303,8 @@
             <div class="form-group">
                 <label for="projectName">Name of project:</label>
                 <!--<div style="text-align:center;">-->
-                <input type="text" class="form-control "  id="projectName" placeholder="Enter name of the project" required>
+                <input type="text" class="form-control " id="projectName" placeholder="Enter name of the project"
+                       required>
             </div>
         </div>
 
@@ -323,7 +324,6 @@
 </div>
 
 
-
 <script>
     var isChromium = window.chrome,
         vendorName = window.navigator.vendor;
@@ -332,6 +332,20 @@
         $('#btnStart').on('click', function (event) {
             event.preventDefault();
             alert('Please, use Google Chrome!');
+        });
+    } else {
+        $('#btnStart').on('click', function (event) {
+            var ref = firebase.database().ref().child('Projects').child(document.getElementById('projectName').value).child('history').child('logs');
+            var userInfo = firebase.auth().currentUser;
+            ref.push({
+                eventType:"Landed.dashboard",
+                eventDescription: "Get Started Clicked",
+                epochTime: firebase.database.ServerValue.TIMESTAMP,
+                userEmail: userInfo.email,
+                userId: userInfo.uid,
+                userDisplayName: userInfo.displayName
+            });
+
         });
     }
 

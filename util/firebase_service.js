@@ -1,4 +1,5 @@
 var s = require("underscore.string");
+var firebase = require('firebase');
 
 module.exports = function (AdminFirebase, Q) {
     const now = (unit) => {
@@ -1851,9 +1852,7 @@ module.exports = function (AdminFirebase, Q) {
                 artifactId: artifact_id,
                 eventType: event_type,
                 eventDescription: event_description,
-                timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
-                timeInMicros: now('micro'),
-                epochTime:{'.sv': 'timestamp'}
+                epochTime: firebase.database.ServerValue.TIMESTAMP,
             };
             var path = 'Projects/' + project_id + '/history/events';
             var created_child = root_ref.child(path).push(event_schema);
@@ -1875,9 +1874,8 @@ module.exports = function (AdminFirebase, Q) {
                 artifactId: artifact_id,
                 eventType: event_type,
                 eventDescription: event_description,
-                timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
-                timeInMicros: now('micro'),
-                epochTime:{'.sv': 'timestamp'},
+                     // epochTime:{'.sv': 'timestamp'},
+                epochTime: firebase.database.ServerValue.TIMESTAMP,
                 workerId: worker_id,
                 microtaskId:microtask_id,
                 microtaskObject:microtask_object ? microtask_object:null,
@@ -1905,7 +1903,8 @@ module.exports = function (AdminFirebase, Q) {
                 type: type,
                 data: data,
                 timestamp: new Date().toLocaleTimeString("en-us", timeOptions),
-                created_time: now('micro')
+                created_time: now('micro'),
+                epochTime:firebase.database.ServerValue.TIMESTAMP
             }
             var path = 'Projects/' + project_id + '/notifications';
             var created_child = root_ref.child(path).child(worker_id).push(notification_schema);
