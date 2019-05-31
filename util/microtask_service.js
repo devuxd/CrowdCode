@@ -52,7 +52,7 @@ module.exports = function (FirebaseService, Q) {
                         }).catch(function (err) {
                             console.log(err);
                             console.trace(err);
-                            console.trace(err);
+
                         });
                     } else {
                         //load state of the project saved in firebase and populates the project map
@@ -341,7 +341,7 @@ module.exports = function (FirebaseService, Q) {
                     var assigned_task = worker.get('assigned');
                     if (assigned_task.has('id') && assigned_task.get('id') !== "null") {
                         var microtask_id = assigned_task.get('id');
-                        var microtask_type = assigned_task.get('type')
+                        var microtask_type = assigned_task.get('type');
                         var microtask_promise = firebase.retrieveMicrotask(project_id, microtask_type, microtask_id);
                         result = microtask_promise.then(function (microtask_object) {
                             microtasks.set(microtask_id, microtask_object);
@@ -378,7 +378,7 @@ module.exports = function (FirebaseService, Q) {
                     });
                 }
                 return result2;
-            });
+            })
 
             return result3;
         }
@@ -570,7 +570,7 @@ module.exports = function (FirebaseService, Q) {
             completed_task.push(microtask_id);
 
             var microtask_object = microtasks.get(microtask_id);
-            var functionObjectPreviousVersion = JSON.parse(JSON.stringify(microtask_object)) ;
+            var functionObjectPreviousVersion = JSON.parse(JSON.stringify(microtask_object));
             microtask_object.code = funct.code ? funct.code : "defaultCode";
             microtask_object.header = funct.header;
             microtask_object.tests = microtask_tests.tests;
@@ -598,7 +598,7 @@ module.exports = function (FirebaseService, Q) {
             Projects.set(project_id, Project);
             firebase.backupState(project_id, Project);
             firebase.createEvent(project_id, "Implementation.Submitted", "Implementation task: " + microtask_id + " is submitted by worker: " + worker_id, "Implementation", microtask_id);
-            firebase.createLogEvent(project_id, "Implementation.Submitted", "Implementation task: " + microtask_id + " is submitted by worker: " + worker_id, "Implementation", microtask_id,worker_id,microtask_id,microtask_object,functionObjectPreviousVersion,null);
+            firebase.createLogEvent(project_id, "Implementation.Submitted", "Implementation task: " + microtask_id + " is submitted by worker: " + worker_id, "Implementation", microtask_object.functionId, worker_id, microtask_id, microtask_object, functionObjectPreviousVersion);
             return deferred.promise;
         }
         else {
@@ -655,12 +655,12 @@ module.exports = function (FirebaseService, Q) {
 
                     var function_object = functions.get(function_id);
                     //copy functino object for storing in log
-                    var function_object_previous_version = JSON.parse(JSON.stringify(function_object));
+                    // var function_object_previous_version = JSON.parse(JSON.stringify(function_object));
                     function_object.version = implementation_object.functionVersion + 1;
                     function_object.code = implementation_object.code;
                     var test_set = implementation_object.tests;
                     var test_list = new Array();
-                    if(typeof test_set !== 'undefined') {
+                    if (typeof test_set !== 'undefined') {
                         for (var test_id = 0; test_id < test_set.length; test_id++) {
                             let testId = function_id + '' + test_id;
                             let mytest = test_set[test_id];
@@ -759,14 +759,15 @@ module.exports = function (FirebaseService, Q) {
                     firebase.createNewsFeed(project_id, worker_id, 5, false, "none", 5, microtask_id, "Review", -1, "SubmittedReview").then(function () {
                         deferred.resolve();
                     }, function (error) {
+                        console.log('review submit in createNewsFeed nested error: ', err);
                         deferred.reject(error);
                     });
                 }).catch(function (err) {
+                    console.log('review submit createNewsFeed error: ', err);
                     deferred.reject(err);
                 });
-                // log microtask, previous version, current version
-                firebase.createLogEvent(project_id, "Review.Submitted", "Review task: " + microtask_id + " is submitted by worker: " + worker_id, "Review", microtask_id, worker_id, microtask_id, microtask_object, function_object_previous_version, function_object);
             }).catch(function (err) {
+                console.log('review submit error: ', err);
                 deferred.reject(err);
             });
             worker.set('assigned', assigned_task);
@@ -779,6 +780,20 @@ module.exports = function (FirebaseService, Q) {
             Project.set('microtasks', microtasks);
             Projects.set(project_id, Project);
             firebase.backupState(project_id, Project);
+            // log microtask, previous version, current version
+            var reviewMicrotaskSubmitted = {
+                microtaskID: microtask_id,
+                rating: microtask_object.rating,
+                review: microtask_object.review,
+                worker: microtask_object.worker,
+                points: implementation_object.points,
+                functionName: implementation_object.functionName,
+                functionId: implementation_object.functionId,
+                code: implementation_object.code,
+                tests: implementation_object.tests
+            };
+            firebase.createReviewSubmissionLogEvent(project_id, "Review.Submitted", "Review task: " + microtask_id + " is submitted by worker: " + worker_id, "Review", implementation_object.functionId, worker_id, microtask_id, reviewMicrotaskSubmitted, null);
+
             firebase.createEvent(project_id, "Review.Submitted", "Review task: " + microtask_id + " is submitted by worker: " + worker_id, "Review", microtask_id);
             firebase.createEvent(project_id, "Implementation.Reviewed", "Implementation task: " + implementation_task_id + " is reviewed by worker: " + worker_id, "Implementation", implementation_task_id);
             firebase.createEvent(project_id, "Implementation.Rated", "Implementation task: " + implementation_task_id + " is rated " + rating, "Implementation", implementation_task_id);
@@ -926,7 +941,7 @@ module.exports = function (FirebaseService, Q) {
                 inProgressQ.set(microtask_id, inProgress_task);
 
                 // log microtask, previous version
-                firebase.createLogEvent(project_id, "Fetch.Microtask", "Fetch Microtask: " + microtask_id + " is fetched by worker: " + worker_id, microtask_type, microtask_id, worker_id, microtask_id, return_object,funct,null);
+                firebase.createLogEvent(project_id, "Fetch.Microtask", "Fetch Microtask: " + microtask_id + " is fetched by worker: " + worker_id, microtask_type, microtask_object.functionId, worker_id, microtask_id, return_object, funct);
                 //Calls a function after 10 minutes to check if the task is still with the same worker, if so removes it and put the task back in queue
                 setTimeout(unassignLockedMicrotask, 600000, project_id, microtask_id, worker_id);
             } else {
@@ -1035,7 +1050,7 @@ module.exports = function (FirebaseService, Q) {
             Projects.set(project_id, Project);
             firebase.backupState(project_id, Project);
             // log microtask, previous version
-            firebase.createLogEvent(project_id, "Skipped Microtask", "Skipped Microtask: " + microtask_id + " is skipped by worker: " + worker_id, microtask_type, microtask_id, worker_id, microtask_id,null ,null,null);
+            firebase.createLogEvent(project_id, "Skipped Microtask", "Skipped Microtask: " + microtask_id + " is skipped by worker: " + worker_id, microtask_type, null, worker_id, microtask_id, null, null);
             return;
         }
         else {
